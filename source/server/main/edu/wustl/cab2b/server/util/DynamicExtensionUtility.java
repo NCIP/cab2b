@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.server.util;
 
 import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DE_0003;
+import static edu.wustl.cab2b.common.util.Constants.CAB2B_ENTITY_GROUP;
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domain.SemanticAnnotatableInterface;
 import edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface;
@@ -27,7 +28,7 @@ import gov.nih.nci.cagrid.metadata.common.SemanticMetadata;
  */
 public class DynamicExtensionUtility {
     //static EntityManagerInterface entityManager = EntityManager.getInstance();
-    
+
     /**
      * Persist given entity using dynamic extension APIs.
      * Whether to create dataspace (table) for this entity or not is decided by {@link PathConstants.CREATE_TABLE_FOR_ENTITY} 
@@ -136,13 +137,15 @@ public class DynamicExtensionUtility {
         }
 
     }
+
     /**
      * Stores the SemanticMetadata to the owner which can be class or attribute
      * @param owner EntityInterface OR AttributeInterface
      * @param semanticMetadataArr Semantic Metadata array to set.
      */
-    public static void setSemanticMetadata(SemanticAnnotatableInterface owner, SemanticMetadata[] semanticMetadataArr) {
-        if(semanticMetadataArr==null) {
+    public static void setSemanticMetadata(SemanticAnnotatableInterface owner,
+                                           SemanticMetadata[] semanticMetadataArr) {
+        if (semanticMetadataArr == null) {
             return;
         }
         DomainObjectFactory deFactory = DomainObjectFactory.getInstance();
@@ -154,19 +157,21 @@ public class DynamicExtensionUtility {
             owner.addSemanticProperty(semanticProp);
         }
     }
+
     /**
      * Creates a tagged value and adds it to the owner.
      * @param owner Owner of the tagged value
      * @param key Key to be used for tagging
      * @param value Actual value of the tag.
      */
-    public static void addTaggedValue(AbstractMetadataInterface owner,String key,String value) {
+    public static void addTaggedValue(AbstractMetadataInterface owner, String key, String value) {
         DomainObjectFactory deFactory = DomainObjectFactory.getInstance();
         TaggedValueInterface taggedValue = deFactory.createTaggedValue();
         taggedValue.setKey(key);
         taggedValue.setValue(value);
         owner.addTaggedValue(taggedValue);
     }
+
     /**
      * This method searches for is there any entity group present with given name. 
      * If present it returns the entity group.If not present then it creates a entity group with given name.
@@ -179,18 +184,30 @@ public class DynamicExtensionUtility {
         try {
             entityGroup = EntityManager.getInstance().getEntityGroupByName(name);
         } catch (DynamicExtensionsSystemException e) {
-            throw new RuntimeException("Got System exception from Dynamic Extnsion while fetching entity group",e, ErrorCodeConstants.DB_0001);
+            throw new RuntimeException("Got System exception from Dynamic Extnsion while fetching entity group",
+                    e, ErrorCodeConstants.DB_0001);
         } catch (DynamicExtensionsApplicationException e) {
-            throw new RuntimeException("Got System exception from Dynamic Extnsion while fetching entity group",e, ErrorCodeConstants.DB_0001);
+            throw new RuntimeException("Got System exception from Dynamic Extnsion while fetching entity group",
+                    e, ErrorCodeConstants.DB_0001);
         }
         if (entityGroup == null) {
-            entityGroup = DomainObjectFactory.getInstance().createEntityGroup();
+            entityGroup = createEntityGroup();
             entityGroup.setShortName(name);
             entityGroup.setName(name);
             entityGroup.setLongName(name);
             entityGroup.setDescription(name);
             DynamicExtensionUtility.persistEntityGroup(entityGroup);
         }
+        return entityGroup;
+    }
+
+    /**
+     * creates a new entity group, and tags it to identify caB2b entity group.
+     * @return EntityGroupInterface newly created unsaved entity group.
+     */
+    public static EntityGroupInterface createEntityGroup() {
+        EntityGroupInterface entityGroup = DomainObjectFactory.getInstance().createEntityGroup();
+        addTaggedValue(entityGroup, CAB2B_ENTITY_GROUP, CAB2B_ENTITY_GROUP);
         return entityGroup;
     }
 }

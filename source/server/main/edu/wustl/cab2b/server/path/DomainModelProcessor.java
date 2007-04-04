@@ -79,13 +79,15 @@ public class DomainModelProcessor {
     public DomainModelProcessor(DomainModelParser parser, String applicationName) {
         Logger.out.info("Creating entity group for application : " + applicationName);
 
-        entityGroup = deFactory.createEntityGroup();
+        entityGroup = DynamicExtensionUtility.createEntityGroup();
         entityGroup.setShortName(applicationName);
         entityGroup.setName(parser.getDomainModel().getProjectLongName());
         entityGroup.setLongName(parser.getDomainModel().getProjectLongName());
         entityGroup.setDescription(parser.getDomainModel().getProjectDescription());
         DynamicExtensionUtility.addTaggedValue(entityGroup, PROJECT_VERSION,
                                                parser.getDomainModel().getProjectVersion());
+
+        
 
         UMLClass[] umlClasses = parser.getUmlClasses();
         int noOfClasses = umlClasses.length;

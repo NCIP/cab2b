@@ -106,13 +106,29 @@ public class Utility {
      * @return Returns parent Entity Group
      */
     public static EntityGroupInterface getEntityGroup(EntityInterface entity) {
-        Collection<EntityGroupInterface> collection = entity.getEntityGroupCollection();
-        if (collection.size() != 1) {
-            throw new RuntimeException("This entity has more than one parent entity groups",
-                    new java.lang.RuntimeException(), ErrorCodeConstants.DE_0003);
+        for (EntityGroupInterface entityGroup : entity.getEntityGroupCollection()) {
+            Collection<TaggedValueInterface> taggedValues = entityGroup.getTaggedValueCollection();
+            if (getTaggedValue(taggedValues, Constants.CAB2B_ENTITY_GROUP) != null) {
+                return entityGroup;
+            }
         }
-        EntityGroupInterface eg = collection.iterator().next();
-        return eg;
+        throw new RuntimeException("This entity does not have DE entity group", new java.lang.RuntimeException(),
+                ErrorCodeConstants.DE_0003);
+    }
+
+    /**
+     * return tagged value for given key in given tagged value collection.
+     * @param taggedValues
+     * @param key
+     * @return
+     */
+    public static TaggedValueInterface getTaggedValue(Collection<TaggedValueInterface> taggedValues, String key) {
+        for (TaggedValueInterface taggedValue : taggedValues) {
+            if (taggedValue.getKey().equals(key)) {
+                return taggedValue;
+            }
+        }
+        return null;
     }
 
     /**
@@ -121,12 +137,11 @@ public class Utility {
      * @return Returns TRUE if given entity is Category, else returns false.
      */
     public static boolean isCategory(EntityInterface entity) {
-        for (TaggedValueInterface tag : entity.getTaggedValueCollection()) {
-            if (tag.getKey().equals(Constants.TYPE_CATEGORY)) {
-                return true;
-            }
+        boolean isCategory = false;
+        if (getTaggedValue(entity.getTaggedValueCollection(), Constants.TYPE_CATEGORY) != null) {
+            isCategory = true;
         }
-        return false;
+        return isCategory;
     }
 
     //    /**
@@ -229,67 +244,67 @@ public class Utility {
         return buff.toString();
     }
 
-//    /**
-//     * Checks whether passed attribute/association is inheriated.
-//     * @param abstractAttribute Attribute/Association to check.
-//     * @return TRUE if it is inherited else returns FALSE
-//     */
-//    public static boolean isInherited(AbstractAttributeInterface abstractAttribute) {
-//        for (TaggedValueInterface tag : abstractAttribute.getTaggedValueCollection()) {
-//            if (tag.getKey().equals(Constants.TYPE_DERIVED)) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
-//    /**
-//     * Returns actual attribute if passed attribute is a derieved one. Else returns the passed attribute
-//     * @param attribute Attribute for which actual attribute is expected.
-//     * @return The actual attribute
-//     */
-//    public static AttributeInterface getActualAttribute(AttributeInterface attribute) {
-//        if (!isInherited(attribute)) {
-//            return attribute;
-//        }
-//        EntityInterface parent = attribute.getEntity().getParentEntity();
-//        String attributeName = attribute.getName();
-//        while (true) {
-//            for (AttributeInterface attributeFromParent : parent.getAttributeCollection()) {
-//                if (attributeName.equals(attributeFromParent.getName())) {
-//                    if (isInherited(attributeFromParent)) {
-//                        parent = parent.getParentEntity();
-//                        break;
-//                    } else {
-//                        return attributeFromParent;
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Returns actual association if passed association is a derieved one. Else returns the passed association
-//     * @param association Attribute for which actual association is expected.
-//     * @return The actual association
-//     */
-//    public AssociationInterface getActualAassociation(AssociationInterface association) {
-//        if (!isInherited(association)) {
-//            return association;
-//        }
-//        String key=""; 
-//        for (TaggedValueInterface tag : association.getTaggedValueCollection()) {
-//            if (tag.getKey().equals(Constants.ORIGINAL_ASSOCIATION_POINTER)) {
-//                key = tag.getValue();
-//                break;
-//            }
-//        }
-//        EntityCache cache = EntityCache.getInstance();
-//        AssociationInterface actualAssociation = cache.getAssociationBySrcEntityTargetRole(key);
-//        return actualAssociation;
-//    }
-//
-//    public static String generateUniqueId(AssociationInterface association) {
-//        return association.getEntity().getName() + CONNECTOR + association.getTargetRole().getName();
-//    }
+    //    /**
+    //     * Checks whether passed attribute/association is inheriated.
+    //     * @param abstractAttribute Attribute/Association to check.
+    //     * @return TRUE if it is inherited else returns FALSE
+    //     */
+    //    public static boolean isInherited(AbstractAttributeInterface abstractAttribute) {
+    //        for (TaggedValueInterface tag : abstractAttribute.getTaggedValueCollection()) {
+    //            if (tag.getKey().equals(Constants.TYPE_DERIVED)) {
+    //                return true;
+    //            }
+    //        }
+    //        return false;
+    //    }
+    //
+    //    /**
+    //     * Returns actual attribute if passed attribute is a derieved one. Else returns the passed attribute
+    //     * @param attribute Attribute for which actual attribute is expected.
+    //     * @return The actual attribute
+    //     */
+    //    public static AttributeInterface getActualAttribute(AttributeInterface attribute) {
+    //        if (!isInherited(attribute)) {
+    //            return attribute;
+    //        }
+    //        EntityInterface parent = attribute.getEntity().getParentEntity();
+    //        String attributeName = attribute.getName();
+    //        while (true) {
+    //            for (AttributeInterface attributeFromParent : parent.getAttributeCollection()) {
+    //                if (attributeName.equals(attributeFromParent.getName())) {
+    //                    if (isInherited(attributeFromParent)) {
+    //                        parent = parent.getParentEntity();
+    //                        break;
+    //                    } else {
+    //                        return attributeFromParent;
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
+    //
+    //    /**
+    //     * Returns actual association if passed association is a derieved one. Else returns the passed association
+    //     * @param association Attribute for which actual association is expected.
+    //     * @return The actual association
+    //     */
+    //    public AssociationInterface getActualAassociation(AssociationInterface association) {
+    //        if (!isInherited(association)) {
+    //            return association;
+    //        }
+    //        String key=""; 
+    //        for (TaggedValueInterface tag : association.getTaggedValueCollection()) {
+    //            if (tag.getKey().equals(Constants.ORIGINAL_ASSOCIATION_POINTER)) {
+    //                key = tag.getValue();
+    //                break;
+    //            }
+    //        }
+    //        EntityCache cache = EntityCache.getInstance();
+    //        AssociationInterface actualAssociation = cache.getAssociationBySrcEntityTargetRole(key);
+    //        return actualAssociation;
+    //    }
+    //
+    //    public static String generateUniqueId(AssociationInterface association) {
+    //        return association.getEntity().getName() + CONNECTOR + association.getTargetRole().getName();
+    //    }
 }

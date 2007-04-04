@@ -69,4 +69,9 @@ public class Constants
      * Represents the String used as field connector to connect intermediate path Ids, while generating the file.
      */
     public static final String CONNECTOR = "_";
+    
+    /**
+     * tagged key constant to identify cab2b entity group
+     */
+    public static final String CAB2B_ENTITY_GROUP = "caB2BEntityGroup";  
 }
