@@ -8,16 +8,17 @@
 	   	<property name="show_sql">false</property>
 
 
-<!-- use data source -->   
+<!-- use data source    -->  
     	  
     	<property name="connection.datasource">java:/cab2bDS</property>
 
-<!-- use Local Database --> 
+  	  
+<!-- use Local Database 
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
        	<property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password"></property>
         <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/cab2b</property>
---> 
+  --> 
 
     	<property name="hibernate.transaction.factory_class">net.sf.hibernate.transaction.JDBCTransactionFactory</property>
 	
