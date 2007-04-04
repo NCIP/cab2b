@@ -20,26 +20,24 @@ public interface DataListBusinessInterface extends BusinessInterface
 	/**
 	 * Saves the data list.
 	 * @param dataList
-	 * @throws BizLogicException
 	 * @throws UserNotAuthorizedException
 	 * @throws RemoteException
 	 * @throws DynamicExtensionsApplicationException
 	 * @throws DynamicExtensionsSystemException
-	 * @throws DAOException
-	 * @throws ClassNotFoundException 
+	 * @throws BizLogicException 
+	 * @throws DAOException 
 	 */
-	public Long saveDataList(DataList dataList) throws BizLogicException, UserNotAuthorizedException, RemoteException, DynamicExtensionsApplicationException, DynamicExtensionsSystemException, DAOException, ClassNotFoundException;
+	public Long saveDataList(DataList dataList) throws RemoteException, DynamicExtensionsApplicationException, DynamicExtensionsSystemException, DAOException, BizLogicException, UserNotAuthorizedException;
 
 	/**
 	 * Retrieves annotation information for all the data lists stored.
 	 * @return
-	 * @throws BizLogicException
-	 * @throws UserNotAuthorizedException
 	 * @throws RemoteException
-	 * @throws DAOException
-	 * @throws ClassNotFoundException
+	 * @throws DynamicExtensionsSystemException 
+	 * @throws ClassNotFoundException 
+	 * @throws DAOException 
 	 */
-	public List<DataListMetadata> retrieveAllDataListMetadata() throws BizLogicException, UserNotAuthorizedException, RemoteException, DAOException, ClassNotFoundException;
+	public List<DataListMetadata> retrieveAllDataListMetadata() throws RemoteException, DynamicExtensionsSystemException, DAOException, ClassNotFoundException;
 
 	/**
 	 * Returns a data list along with annotation.

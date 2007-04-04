@@ -81,7 +81,26 @@
             insert="true"
             column="AMD_LAST_UPDATED_ON"
         />
-
+		
+		<joined-subclass
+            name="edu.wustl.cab2b.common.domain.DataListMetadata"
+            table="datalist"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="DL_ID"
+        />
+        <property
+            name="entityId"
+            type="long"
+            update="true"
+            insert="true"
+            column="ENT_ID"
+        />
+        
+		</joined-subclass>
+		
         <joined-subclass
             name="edu.wustl.cab2b.common.domain.ExperimentGroup"
             table="experimentgroup"
@@ -145,17 +164,6 @@
         
         
         <joined-subclass
-            name="edu.wustl.cab2b.common.domain.DataListMetadata"
-            table="datalist"
-            dynamic-update="false"
-            dynamic-insert="false"
-        >
-        <key
-            column="DL_ID"
-        />
-        </joined-subclass>
-        
-        <joined-subclass
             name="edu.wustl.cab2b.common.domain.Experiment"
             table="experiment"
             dynamic-update="false"
@@ -185,7 +193,29 @@
               />
 
         </set>
+	
+		<set
+            name="dataListMetadataCollection"
+            table="dlexpmap"
+            lazy="false"
+            inverse="false"
+            cascade="save-update"
+            sort="unsorted"
+        >
 
+              <key
+                  column="EXP_ID"
+              />
+
+              <many-to-many
+                  class="edu.wustl.cab2b.common.domain.DataListMetadata"
+                  column="DL_ID"
+                  outer-join="auto"
+              />
+
+        </set>
+		
+	
         <joined-subclass
             name="edu.wustl.cab2b.common.domain.MicroarrayExperiment"
             table="microarrayexperiment"

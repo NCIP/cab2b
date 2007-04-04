@@ -22,6 +22,9 @@ public class Experiment extends AdditionalMetadata implements java.io.Serializab
     private java.util.Collection experimentGroupCollection = 
         new java.util.HashSet();
     
+    private java.util.Collection dataListMetadataCollection = 
+        new java.util.HashSet();
+    
     /**
      * Returns a collection of experiment groups to which this experiment belongs to.
      * @return a collection of experiment groups to which this experiment belongs to.
@@ -89,6 +92,24 @@ public class Experiment extends AdditionalMetadata implements java.io.Serializab
 
         return h;
     }
+
+    /**
+     * Returns a collection of experiment groups to which this experiment belongs to.
+     * @return a collection of experiment groups to which this experiment belongs to.
+     * @hibernate.set name="dataListMetadataCollection" table="DLExpMap" cascade="save-update"
+     * @hibernate.collection-key column="EXP_ID"
+     * @hibernate.collection-many-to-many class="edu.wustl.cab2b.common.domain.DataListMetadata" column="DL_ID"
+     */
+	public java.util.Collection getDataListMetadataCollection()
+	{
+		return dataListMetadataCollection;
+	}
+
+	
+	public void setDataListMetadataCollection(java.util.Collection dataListMetadataCollection)
+	{
+		this.dataListMetadataCollection = dataListMetadataCollection;
+	}
 
 
 }

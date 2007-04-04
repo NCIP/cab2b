@@ -21,10 +21,13 @@ public class DataListBean extends AbstractStatelessSessionBean
 	private static final long serialVersionUID = 1234567890L;
 
 	/**
+	 * @throws DynamicExtensionsSystemException 
+	 * @throws ClassNotFoundException 
+	 * @throws DAOException 
 	 * @see DataListBusinessInterface#retrieveAllDataListMetadata()
 	 */
-	public List<DataListMetadata> retrieveAllDataListMetadata() throws BizLogicException,
-			UserNotAuthorizedException, RemoteException, DAOException, ClassNotFoundException
+	public List<DataListMetadata> retrieveAllDataListMetadata() throws 
+			RemoteException, DynamicExtensionsSystemException, DAOException, ClassNotFoundException
 	{
 		return (new DataListOperations()).retrieveAllDataListMetadata();
 	}
@@ -39,13 +42,15 @@ public class DataListBean extends AbstractStatelessSessionBean
 	}
 
 	/**
+	 * @throws UserNotAuthorizedException 
+	 * @throws BizLogicException 
+	 * @throws DAOException 
 	 * @throws RemoteException 
 	 * @throws ClassNotFoundException 
 	 * @see DataListBusinessInterface#saveDataList(DataList)
 	 */
-	public Long saveDataList(DataList dataList) throws BizLogicException,
-			UserNotAuthorizedException, DynamicExtensionsApplicationException,
-			DynamicExtensionsSystemException, DAOException, RemoteException, ClassNotFoundException
+	public Long saveDataList(DataList dataList) throws DynamicExtensionsApplicationException,
+			DynamicExtensionsSystemException, DAOException, BizLogicException, UserNotAuthorizedException
 	{
 		return (new DataListOperations()).save(dataList);
 	}

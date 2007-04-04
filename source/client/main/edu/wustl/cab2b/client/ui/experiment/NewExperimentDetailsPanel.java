@@ -1,3 +1,4 @@
+
 package edu.wustl.cab2b.client.ui.experiment;
 
 import java.awt.BorderLayout;
@@ -11,14 +12,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -35,7 +37,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.jdesktop.swingx.JXTree;
 
-import edu.wustl.cab2b.client.ui.RiverLayout;
+import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -45,7 +47,12 @@ import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.BusinessInterface;
+import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
+import edu.wustl.cab2b.common.datalist.DataListHome;
+import edu.wustl.cab2b.common.domain.DataListMetadata;
+import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
+import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.experiment.ExperimentGroupBusinessInterface;
 import edu.wustl.cab2b.common.experiment.ExperimentGroupHome;
@@ -60,396 +67,587 @@ import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
 
-public class NewExperimentDetailsPanel extends Cab2bPanel {
+/**
+ * This class shows a panel to create new experiments with GUI controls
+ * for specifying experiment name, description, parent experiment group, etc.
+ * 
+ * experiment create date, last modified date are implicit, which is the current 
+ * system date.
+ *  
+ * @author chetan_bh
+ */
+public class NewExperimentDetailsPanel extends Cab2bPanel
+{
+
+	private static final long serialVersionUID = 6029827434064457102L;
 	
+	/**
+	 * A text field component to accept experiment name from user.
+	 */
 	JTextField expNameTextField;
 	
+	/**
+	 * A tree component to show experiment and experiment group hierarchy.
+	 */
 	JXTree projectsTree;
-	
+
 	JScrollPane treeScrollPane;
 	
+	/**
+	 * A text area component to accept experiment description from the user.
+	 */
 	JTextArea expDescTextArea;
 	
-	JButton addNewButton;
+	/**
+	 * A button component to listen for users "create new experiment group" action.
+	 */
+	Cab2bButton addNewButton;
+	
+	/**
+	 * A dialog component to show this panel in it.
+	 */
 	JDialog dialog;
-	
+
+	/**
+	 * A button component to listen for users "save experiment" action.
+	 */
 	Cab2bButton saveButton;
+	/**
+	 * A button component to listen for users cancel "save experiment" action.
+	 */
 	Cab2bButton cancelButton;
-	
-	private JScrollPane m_descSrollPane;
-	
+
 	public NewExperimentDetailsPanel()
 	{
 		//initGUI();
 		initGUIGBL();
 	}
-		
 	
+	/**
+	 * Initialize this panel with all components using {@link GridBagLayout}.
+	 */
 	private void initGUIGBL()
 	{
-		this.removeAll();				
-	
-		JLabel mandatoryNodeLabel = new Cab2bLabel(ApplicationProperties.getValue("label.mandatorynote.text"));
-		
+		this.removeAll();
+
+		JLabel mandatoryNodeLabel = new Cab2bLabel(ApplicationProperties
+				.getValue("label.mandatorynote.text"));
+
 		JLabel expNameLabel = new Cab2bLabel("* Experiment Name : ");
 		expNameTextField = new Cab2bTextField();
 		expNameTextField.setColumns(22);
-		
+
 		JLabel projectsLabel = new Cab2bLabel("* Project : ");
 		
-		// // EJB code start
-		BusinessInterface bus = null;
+		Vector dataVector = null;
+		final ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils
+				.getBusinessInterface(EjbNamesConstants.EXPERIMENT, ExperimentHome.class);
 		try
 		{
-			bus = Locator.getInstance().locate("Experiment", ExperimentHome.class);
-		}
-		catch (LocatorException e1)
-		{
-			//JXErrorDialog.showDialog(this, "Error", e1);
-			e1.printStackTrace();
-		}
-		Vector dataVector = null;
-        ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) bus;
-        try {
 			dataVector = expBus.getExperimentHierarchy();
-		} catch (RemoteException e1) {
-			CommonUtils.handleException(e1, this, true, true, false, false);
-		} catch (ClassNotFoundException e1) {
-			CommonUtils.handleException(e1, this, true, true, false, false);
-		} catch (DAOException e1) {
+		}
+		catch (RemoteException e1)
+		{
 			CommonUtils.handleException(e1, this, true, true, false, false);
 		}
-        
-		// EJB code end
+		catch (ClassNotFoundException e1)
+		{
+			CommonUtils.handleException(e1, this, true, true, false, false);
+		}
+		catch (DAOException e1)
+		{
+			CommonUtils.handleException(e1, this, true, true, false, false);
+		}
+
 		GenerateTree treeGenerator = new GenerateTree();
-		projectsTree = (JXTree) treeGenerator.createTree(dataVector,edu.wustl.common.util.global.Constants.EXPERIMETN_TREE_ID, true);
+		projectsTree = (JXTree) treeGenerator.createTree(dataVector,
+				edu.wustl.common.util.global.Constants.EXPERIMETN_TREE_ID, true);
 		projectsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		projectsTree.setEditable(true);
 		projectsTree.getModel().addTreeModelListener(new MyTreeModelListener());
-		
+
 		projectsTree.setCellRenderer(new MyRenderer());
-		
+
 		JLabel expDescLabel = new Cab2bLabel("Description : ");
 		expDescTextArea = new JTextArea();
 		expDescTextArea.setColumns(35);
 		expDescTextArea.setRows(5);
-		 
-		
+
 		this.setLayout(new BorderLayout());
-		
-		Cab2bPanel centerPanel = new Cab2bPanel();		
+
+		Cab2bPanel centerPanel = new Cab2bPanel();
 		GridBagLayout gbl = new GridBagLayout();
 		centerPanel.setLayout(gbl);
-		
+
 		GridBagConstraints gbc = new GridBagConstraints();
-		
-		gbc.insets = new Insets(5,5,5,5);
-				
-		gbc.weighty = 0.75;
+
+		gbc.insets = new Insets(5, 5, 5, 5);
+
+		gbc.weighty = 0.0;
 		gbc.weightx = 1.0;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.gridwidth = 3;
-        gbc.gridheight = 1;		
-        gbc.fill = GridBagConstraints.BOTH;
-        centerPanel.add(mandatoryNodeLabel,gbc);
-        
-        gbc.gridx = 0;
+		gbc.gridwidth = 4;
+		gbc.gridheight = 1;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		centerPanel.add(mandatoryNodeLabel, gbc);
+
+		gbc.weighty = 0.0;
+		gbc.weightx = 0.0;
+		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        centerPanel.add(expNameLabel,gbc);
-        
-        gbc.gridx = 1;
+		gbc.gridheight = 1;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		centerPanel.add(expNameLabel, gbc);
+
+		gbc.gridx = 1;
 		gbc.gridy = 1;
-		gbc.gridwidth =4;
-        gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        centerPanel.add(expNameTextField,gbc);       
-        
-        gbc.gridx = 0;
+		gbc.gridwidth = 3;
+		gbc.gridheight = 1;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		centerPanel.add(expNameTextField, gbc);
+
+		gbc.gridx = 0;
 		gbc.gridy = 2;
 		gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        centerPanel.add(projectsLabel,gbc);
-        
-        
+		gbc.gridheight = 1;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		centerPanel.add(projectsLabel, gbc);
+
 		treeScrollPane = new JScrollPane(projectsTree);
-		treeScrollPane.setPreferredSize(new Dimension(250,300));
-		
+		treeScrollPane.setPreferredSize(new Dimension(250, 300));
+
 		addNewButton = new Cab2bButton("Add New");
 		addNewButton.addActionListener(new ActionListener()
-					{
-						public void actionPerformed(ActionEvent e) {
-							
-							Object obj = null;
-							
-							if(projectsTree.getSelectionCount() > 0)
-								obj = projectsTree.getSelectionPath().getLastPathComponent();
-							DefaultMutableTreeNode selectedTreeNode = (DefaultMutableTreeNode) obj;
-							//	There's no selection. Default to the root node.
-														
-							if(selectedTreeNode == null )
-							{
-								selectedTreeNode = (DefaultMutableTreeNode)projectsTree.getModel().getRoot();
-							}
-							else
-							{
-								ExperimentTreeNode expTreeNode = (ExperimentTreeNode) selectedTreeNode.getUserObject();
-								if(! expTreeNode.isExperimentGroup())
-									return;
-							}
-							// ------- inline editing ----------
-							DefaultTreeModel m_model = (DefaultTreeModel)projectsTree.getModel();
-							
-							DefaultMutableTreeNode newNode = new DefaultMutableTreeNode("New Node");
-			                  m_model.insertNodeInto(newNode, selectedTreeNode, selectedTreeNode.getChildCount());
-			                  
-			                //make the node visible by scroll to it
-			                TreeNode[] nodes = m_model.getPathToRoot(newNode);
-			                TreePath path = new TreePath(nodes);
-			                projectsTree.scrollPathToVisible(path);
-			                
-			                //select the newly added node
-			                projectsTree.setSelectionPath(path);
-			                
-			                //Make the newly added node editable
-			                projectsTree.startEditingAtPath(path);
-						}
-					});
-		
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				Object obj = null;
+
+				if (projectsTree.getSelectionCount() > 0)
+					obj = projectsTree.getSelectionPath().getLastPathComponent();
+				DefaultMutableTreeNode selectedTreeNode = (DefaultMutableTreeNode) obj;
+				//	There's no selection. Default to the root node.
+
+				if (selectedTreeNode == null)
+				{
+					selectedTreeNode = (DefaultMutableTreeNode) projectsTree.getModel().getRoot();
+				}
+				else
+				{
+					ExperimentTreeNode expTreeNode = (ExperimentTreeNode) selectedTreeNode
+							.getUserObject();
+					if (!expTreeNode.isExperimentGroup())
+						return;
+				}
+				// ------- inline editing ----------
+				DefaultTreeModel m_model = (DefaultTreeModel) projectsTree.getModel();
+
+				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode("New Node");
+				m_model.insertNodeInto(newNode, selectedTreeNode, selectedTreeNode.getChildCount());
+
+				//make the node visible by scroll to it
+				TreeNode[] nodes = m_model.getPathToRoot(newNode);
+				TreePath path = new TreePath(nodes);
+				projectsTree.scrollPathToVisible(path);
+
+				//select the newly added node
+				projectsTree.setSelectionPath(path);
+
+				//Make the newly added node editable
+				projectsTree.startEditingAtPath(path);
+			}
+		});
+
 		gbc.gridx = 1;
 		gbc.gridy = 2;
 		gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.weightx = 0; 
-        gbc.fill = GridBagConstraints.NONE;
-        centerPanel.add(addNewButton,gbc);        
-        
-    	gbc.gridx = 1;
+		gbc.gridheight = 1;
+		gbc.weightx = 0;
+		gbc.fill = GridBagConstraints.NONE;
+		centerPanel.add(addNewButton, gbc);
+
+		gbc.gridx = 1;
 		gbc.gridy = 3;
-		gbc.gridwidth = 4;
-        gbc.gridheight = 5;
-        gbc.weightx = 1.0; 
-        gbc.fill = GridBagConstraints.BOTH;
-        centerPanel.add(treeScrollPane,gbc);	
-	
-        
-        gbc.gridx = 0;
-		gbc.gridy = 8;
+		gbc.gridwidth = 3;
+		gbc.gridheight = 4;
+		gbc.weightx = 1.0;
+		gbc.weighty = 0.6;
+		gbc.fill = GridBagConstraints.BOTH;
+		centerPanel.add(treeScrollPane, gbc);
+
+		gbc.gridx = 0;
+		gbc.gridy = 7;
 		gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        centerPanel.add(expDescLabel,gbc);       
-    
-        gbc.gridx = 1;
-		gbc.gridy = 8;
-		gbc.gridwidth = 4;
-        gbc.gridheight = 2;
-        gbc.fill = GridBagConstraints.BOTH;
-        centerPanel.add(new JScrollPane(expDescTextArea),gbc);
-		
+		gbc.gridheight = 1;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		centerPanel.add(expDescLabel, gbc);
+
+		gbc.gridx = 1;
+		gbc.gridy = 7;
+		gbc.gridwidth = 3;
+		gbc.gridheight = 2;
+		gbc.weightx = 1.0;
+		gbc.weighty = 0.4;
+		gbc.fill = GridBagConstraints.BOTH;
+		centerPanel.add(new JScrollPane(expDescTextArea), gbc);
+
 		saveButton = new Cab2bButton("Save");
 		saveButton.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent e){				
-				Logger.out.info("Save Button is clicked.");		
+			public void actionPerformed(ActionEvent e)
+			{
+				if (projectsTree.getSelectionCount() == 0)
+				{
+					JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this,
+							"Select an experiment group to add to");
+					return;
+				}
 				
+				Object obj = projectsTree.getSelectionPath().getLastPathComponent();
+				DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) obj;
+
+				ExperimentTreeNode expTreeNode = (ExperimentTreeNode) treeNode.getUserObject();
+
+				if (!expTreeNode.isExperimentGroup())
+				{
+					JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this,
+							"Select experiment group");
+					return;
+				}
 				
+				List<DataListMetadata> dlMetadatas = null;
+
+				try
+				{
+					dlMetadatas = getDataLlistMetadatas();
+				}
+				catch (Exception exp)
+				{
+					exp.printStackTrace();
+				}
+				Logger.out.info("projectsTree.getSelectionCount() "
+						+ projectsTree.getSelectionCount());
+
+				Long expGrpId = expTreeNode.getIdentifier();
+				Logger.out.info("exp grp id " + expGrpId);
+
+				String experimentName = expNameTextField.getText();
+				if (experimentName == null || experimentName.equals(""))
+				{
+					Date currentDate = new Date(System.currentTimeMillis());
+					experimentName = currentDate.toString();
+				}
+				String experimentDescription = expDescTextArea.getText();
+
+				Experiment experiment = new Experiment();
+				experiment.setName(experimentName);
+				experiment.setDescription(experimentDescription);
+				experiment.setCreatedOn(new Date());
+				experiment.setLastUpdatedOn(new Date());
+				experiment.setActivityStatus("active");
+
+				ExperimentGroupBusinessInterface expGrpBI = (ExperimentGroupBusinessInterface) CommonUtils
+						.getBusinessInterface(EjbNamesConstants.EXPERIMENT_GROUP,
+								ExperimentGroupHome.class);
+
+				ExperimentGroup expGrpToAddTo = null;
+				try
+				{
+					expGrpToAddTo = expGrpBI.getExperimentGroup(expGrpId.toString());
+					Logger.out.info("expGrpToAddTo " + expGrpToAddTo.getName());
+					
+					// TODO Replace this with actual data list.
+					experiment.getDataListMetadataCollection().add(dlMetadatas.get(1));
+					
+					experiment.getExperimentGroupCollection().add(expGrpToAddTo);
+					Logger.out.info("expGrpToAddTo experiment collection size :: "
+							+ expGrpToAddTo.getExperimentCollection().size());
+					
+					expBus.addExperiment(experiment);
+					Logger.out.info("Saved Experiment Successfully !!! " + experiment.getId());
+					
+				}
+				catch (RemoteException e1) {
+					CommonUtils.handleException(e1, NewExperimentDetailsPanel.this, true, true, false, false);
+				}
+				catch (DAOException e1)	{
+					CommonUtils.handleException(e1, NewExperimentDetailsPanel.this, true, true, false, false);
+				}
+				catch (BizLogicException e1) {
+					CommonUtils.handleException(e1, NewExperimentDetailsPanel.this, true, true, false, false);
+				}
+				catch (UserNotAuthorizedException e1) {
+					CommonUtils.handleException(e1, NewExperimentDetailsPanel.this, true, true, false, false);
+				}
 			}
 		});
-		
+
 		cancelButton = new Cab2bButton("Cancel");
 		cancelButton.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent e){
-				Logger.out.info("Cancel Button is clicked.");
+			public void actionPerformed(ActionEvent e)
+			{
 				dialog.dispose();
 			}
 		});
-		
-		
+
 		/*this.add("br br right",saveButton);
-		this.add("tab right",cancelButton);*/
-				
-		Cab2bPanel bottomPanel =  new Cab2bPanel();
-        FlowLayout flowLayout = new FlowLayout();
-     	flowLayout.setAlignment(FlowLayout.RIGHT);
- 		flowLayout.setHgap(10);
- 		bottomPanel.setLayout(flowLayout);
-        bottomPanel.add(cancelButton);
-        bottomPanel.add(saveButton);
-        
-        gbc.gridx = 4;
+		 this.add("tab right",cancelButton);*/
+
+		Cab2bPanel bottomPanel = new Cab2bPanel();
+		FlowLayout flowLayout = new FlowLayout();
+		flowLayout.setAlignment(FlowLayout.RIGHT);
+		flowLayout.setHgap(10);
+		bottomPanel.setLayout(flowLayout);
+		bottomPanel.add(cancelButton);
+		bottomPanel.add(saveButton);
+
+		gbc.gridx = 4;
 		gbc.gridy = 11;
 		gbc.gridwidth = 1;
-        gbc.gridheight =1;
-        gbc.fill = GridBagConstraints.BOTH;
-        
-        this.add(centerPanel,BorderLayout.CENTER);
-        this.add(bottomPanel,BorderLayout.SOUTH);
-        
-        this.validate();		
-		this.updateUI();		
-	}
-	
-	
-	private void initGUI()
-	{		
-		this.removeAll();
-		this.setLayout(new RiverLayout());
-		JLabel mandatoryNodeLabel = new Cab2bLabel(ApplicationProperties.getValue("label.mandatorynote.text"));
-		
-		JLabel expNameLabel = new Cab2bLabel("* Experiment Name : ");
-		expNameTextField = new Cab2bTextField();
-		expNameTextField.setColumns(22);
-		
-		JLabel projectsLabel = new Cab2bLabel("* Project : ");
-		
-		// // EJB code start
-		BusinessInterface bus = null;
-		try
-		{
-			bus = Locator.getInstance().locate("Experiment", ExperimentHome.class);
-		}
-		catch (LocatorException e1)
-		{
-			//JXErrorDialog.showDialog(this, "Error", e1);
-			e1.printStackTrace();
-		}
-		Vector dataVector = null;
-        ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) bus;
-        try {
-			dataVector = expBus.getExperimentHierarchy();
-		} catch (RemoteException e1) {
-			CommonUtils.handleException(e1, this, true, true, false, false);
-		} catch (ClassNotFoundException e1) {
-			CommonUtils.handleException(e1, this, true, true, false, false);
-		} catch (DAOException e1) {
-			CommonUtils.handleException(e1, this, true, true, false, false);
-		}
-        
-		// EJB code end
-		GenerateTree treeGenerator = new GenerateTree();
-		projectsTree = (JXTree) treeGenerator.createTree(dataVector,edu.wustl.common.util.global.Constants.EXPERIMETN_TREE_ID, true);
-		projectsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		projectsTree.setEditable(true);
-		projectsTree.getModel().addTreeModelListener(new MyTreeModelListener());
-		
-		projectsTree.setCellRenderer(new MyRenderer());
-		
-		JLabel expDescLabel = new Cab2bLabel("Description : ");
-		expDescTextArea = new JTextArea();
-		expDescTextArea.setColumns(35);
-		expDescTextArea.setRows(5);
-		
-		this.add("p",mandatoryNodeLabel);
-		this.add("p",expNameLabel);
-		this.add("tab", expNameTextField);
-		
-		this.add("p vtop",projectsLabel);
-		treeScrollPane = new JScrollPane(projectsTree);
-		treeScrollPane.setPreferredSize(new Dimension(250,300));
-		
-		addNewButton = new Cab2bButton("Add New");
-		addNewButton.addActionListener(new ActionListener()
-					{
-						public void actionPerformed(ActionEvent e) {
-							
-							Object obj = null;
-							
-							if(projectsTree.getSelectionCount() > 0)
-								obj = projectsTree.getSelectionPath().getLastPathComponent();
-							DefaultMutableTreeNode selectedTreeNode = (DefaultMutableTreeNode) obj;
-							//	There's no selection. Default to the root node.
-														
-							if(selectedTreeNode == null )
-							{
-								selectedTreeNode = (DefaultMutableTreeNode)projectsTree.getModel().getRoot();
-							}
-							else
-							{
-								ExperimentTreeNode expTreeNode = (ExperimentTreeNode) selectedTreeNode.getUserObject();
-								if(! expTreeNode.isExperimentGroup())
-									return;
-							}
-							// ------- inline editing ----------
-							DefaultTreeModel m_model = (DefaultTreeModel)projectsTree.getModel();
-							
-							DefaultMutableTreeNode newNode = new DefaultMutableTreeNode("New Node");
-			                  m_model.insertNodeInto(newNode, selectedTreeNode, selectedTreeNode.getChildCount());
-			                  
-			                  //make the node visible by scroll to it
-			                TreeNode[] nodes = m_model.getPathToRoot(newNode);
-			                TreePath path = new TreePath(nodes);
-			                projectsTree.scrollPathToVisible(path);
-			                
-			                //select the newly added node
-			                projectsTree.setSelectionPath(path);
-			                
-			                //Make the newly added node editable
-			                projectsTree.startEditingAtPath(path);
-						}
-					});
-			
-		this.add("tab",addNewButton);
-		this.add("br tab ", treeScrollPane);
-	
-		this.add("br vtop", expDescLabel);
-		this.add("tab ",new JScrollPane(expDescTextArea));		
-		
-		saveButton = new Cab2bButton("Save");
-		saveButton.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e){
-				Logger.out.info("Save Button is clicked.");
-			}
-		});
-		
-		cancelButton = new Cab2bButton("Cancel");
-		cancelButton.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e){
-				Logger.out.info("Cancel Button is clicked.");
-				dialog.dispose();
-			}
-		});
-		
-		
-		/*this.add("br br right",saveButton);
-		this.add("tab right",cancelButton);*/
-				
-		Cab2bPanel bottomPanel =  new Cab2bPanel();
-        FlowLayout flowLayout = new FlowLayout();
-     	flowLayout.setAlignment(FlowLayout.RIGHT);
- 		flowLayout.setHgap(10);
- 		bottomPanel.setLayout(flowLayout);
-        bottomPanel.add(cancelButton);
-        bottomPanel.add(saveButton);
-        this.add("br right", bottomPanel);
-        
+		gbc.gridheight = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+
+		this.add(centerPanel, BorderLayout.CENTER);
+		this.add(bottomPanel, BorderLayout.SOUTH);
+
 		this.validate();
 		this.updateUI();
 	}
-	
-	   public JDialog showInDialog()
-       {
-		   Dimension dimension = MainFrame.mainframeScreenDimesion;
-		   dialog = WindowUtilities.setInDialog( NewWelcomePanel.mainFrame,this, "Create New Experiment",new Dimension((int) (dimension.width * 0.43),
-				(int) (dimension.height * 0.60)), true, false);
-       	
-       	Logger.out.info("dialog initialized ########## "+dialog);
-       	dialog.setVisible(true);
-       	return dialog;
-       }
-	
+
+	//	private void initGUI()
+	//	{
+	//		this.removeAll();
+	//		this.setLayout(new RiverLayout());
+	//		JLabel mandatoryNodeLabel = new Cab2bLabel(ApplicationProperties
+	//				.getValue("label.mandatorynote.text"));
+	//
+	//		JLabel expNameLabel = new Cab2bLabel("* Experiment Name : ");
+	//		expNameTextField = new Cab2bTextField();
+	//		expNameTextField.setColumns(22);
+	//
+	//		JLabel projectsLabel = new Cab2bLabel("* Project : ");
+	//
+	//		// // EJB code start
+	//		BusinessInterface bus = null;
+	//		try
+	//		{
+	//			bus = Locator.getInstance().locate("Experiment", ExperimentHome.class);
+	//		}
+	//		catch (LocatorException e1)
+	//		{
+	//			//JXErrorDialog.showDialog(this, "Error", e1);
+	//			e1.printStackTrace();
+	//		}
+	//		Vector dataVector = null;
+	//		final ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) bus;
+	//		try
+	//		{
+	//			dataVector = expBus.getExperimentHierarchy();
+	//		}
+	//		catch (RemoteException e1)
+	//		{
+	//			CommonUtils.handleException(e1, this, true, true, false, false);
+	//		}
+	//		catch (ClassNotFoundException e1)
+	//		{
+	//			CommonUtils.handleException(e1, this, true, true, false, false);
+	//		}
+	//		catch (DAOException e1)
+	//		{
+	//			CommonUtils.handleException(e1, this, true, true, false, false);
+	//		}
+	//
+	//		// EJB code end
+	//		GenerateTree treeGenerator = new GenerateTree();
+	//		projectsTree = (JXTree) treeGenerator.createTree(dataVector,
+	//				edu.wustl.common.util.global.Constants.EXPERIMETN_TREE_ID, true);
+	//		projectsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+	//		projectsTree.setEditable(true);
+	//		projectsTree.getModel().addTreeModelListener(new MyTreeModelListener());
+	//
+	//		projectsTree.setCellRenderer(new MyRenderer());
+	//
+	//		JLabel expDescLabel = new Cab2bLabel("Description : ");
+	//		expDescTextArea = new JTextArea();
+	//		expDescTextArea.setColumns(35);
+	//		expDescTextArea.setRows(5);
+	//
+	//		this.add("p", mandatoryNodeLabel);
+	//		this.add("p", expNameLabel);
+	//		this.add("tab", expNameTextField);
+	//
+	//		this.add("p vtop", projectsLabel);
+	//		treeScrollPane = new JScrollPane(projectsTree);
+	//		treeScrollPane.setPreferredSize(new Dimension(250, 300));
+	//
+	//		addNewButton = new Cab2bButton("Add New");
+	//		addNewButton.addActionListener(new ActionListener()
+	//		{
+	//
+	//			public void actionPerformed(ActionEvent e)
+	//			{
+	//
+	//				Object obj = null;
+	//
+	//				if (projectsTree.getSelectionCount() > 0)
+	//					obj = projectsTree.getSelectionPath().getLastPathComponent();
+	//				DefaultMutableTreeNode selectedTreeNode = (DefaultMutableTreeNode) obj;
+	//				//	There's no selection. Default to the root node.
+	//
+	//				if (selectedTreeNode == null)
+	//				{
+	//					selectedTreeNode = (DefaultMutableTreeNode) projectsTree.getModel().getRoot();
+	//				}
+	//				else
+	//				{
+	//					ExperimentTreeNode expTreeNode = (ExperimentTreeNode) selectedTreeNode
+	//							.getUserObject();
+	//					if (!expTreeNode.isExperimentGroup())
+	//						return;
+	//				}
+	//				// ------- inline editing ----------
+	//				DefaultTreeModel m_model = (DefaultTreeModel) projectsTree.getModel();
+	//
+	//				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode("New Node");
+	//				m_model.insertNodeInto(newNode, selectedTreeNode, selectedTreeNode.getChildCount());
+	//
+	//				//make the node visible by scroll to it
+	//				TreeNode[] nodes = m_model.getPathToRoot(newNode);
+	//				TreePath path = new TreePath(nodes);
+	//				projectsTree.scrollPathToVisible(path);
+	//
+	//				//select the newly added node
+	//				projectsTree.setSelectionPath(path);
+	//
+	//				//Make the newly added node editable
+	//				projectsTree.startEditingAtPath(path);
+	//			}
+	//		});
+	//
+	//		this.add("tab", addNewButton);
+	//		this.add("br tab ", treeScrollPane);
+	//
+	//		this.add("br vtop", expDescLabel);
+	//		this.add("tab ", new JScrollPane(expDescTextArea));
+	//
+	//		saveButton = new Cab2bButton("Save");
+	//		saveButton.addActionListener(new ActionListener()
+	//		{
+	//
+	//			public void actionPerformed(ActionEvent e)
+	//			{
+	//				Logger.out.info("Save Button is clicked. asdasd");
+	//
+	//				List<DataListMetadata> dlMetadats = null;
+	//
+	//				try
+	//				{
+	//					dlMetadats = getDataLlistMetadatas();
+	//				}
+	//				catch (Exception exp)
+	//				{
+	//					exp.printStackTrace();
+	//				}
+	//				Logger.out.info("projectsTree.getSelectionCount() "
+	//						+ projectsTree.getSelectionCount());
+	//				if (projectsTree.getSelectionCount() == 0)
+	//				{
+	//					JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this,
+	//							"Select an experiment group to add to");
+	//				}
+	//				else
+	//				{
+	//					Object obj = projectsTree.getSelectionPath().getLastPathComponent();
+	//					Logger.out.info("tree selection " + obj.getClass());
+	//
+	//					String experimentName = expNameTextField.getText();
+	//					if (experimentName == null || experimentName.equals(""))
+	//					{
+	//						Date currentDate = new Date(System.currentTimeMillis());
+	//						experimentName = currentDate.toString();
+	//					}
+	//					String experimentDescription = expDescTextArea.getText();
+	//
+	//					Experiment experiment = new Experiment();
+	//					experiment.setName(experimentName);
+	//					experiment.setDescription(experimentDescription);
+	//					//experiment.setExperimentGroupCollection(experimentGroupCollection)
+	//					experiment.setActivityStatus("active");
+	//					experiment.setDataListMetadataCollection(dlMetadats);
+	//
+	//					//					ExperimentBusinessInterface expBI = (ExperimentBusinessInterface)CommonUtils.
+	//					//									getBusinessInterface(EjbNamesConstants.EXPERIMENT, ExperimentHome.class);
+	//					//					
+	//					//					try
+	//					//					{
+	//					//						expBus.addExperiment(experiment);
+	//					//					}
+	//					//					catch (RemoteException e1)
+	//					//					{
+	//					//						e1.printStackTrace();
+	//					//					}
+	//					//					catch (BizLogicException e1)
+	//					//					{
+	//					//						e1.printStackTrace();
+	//					//					}
+	//					//					catch (UserNotAuthorizedException e1)
+	//					//					{
+	//					//						e1.printStackTrace();
+	//					//					}
+	//
+	//				}
+	//
+	//			}
+	//		});
+	//
+	//		cancelButton = new Cab2bButton("Cancel");
+	//		cancelButton.addActionListener(new ActionListener()
+	//		{
+	//
+	//			public void actionPerformed(ActionEvent e)
+	//			{
+	//				Logger.out.info("Cancel Button is clicked.");
+	//				dialog.dispose();
+	//			}
+	//		});
+	//
+	//		/*this.add("br br right",saveButton);
+	//		 this.add("tab right",cancelButton);*/
+	//
+	//		Cab2bPanel bottomPanel = new Cab2bPanel();
+	//		FlowLayout flowLayout = new FlowLayout();
+	//		flowLayout.setAlignment(FlowLayout.RIGHT);
+	//		flowLayout.setHgap(10);
+	//		bottomPanel.setLayout(flowLayout);
+	//		bottomPanel.add(cancelButton);
+	//		bottomPanel.add(saveButton);
+	//		this.add("br right", bottomPanel);
+	//
+	//		this.validate();
+	//		this.updateUI();
+	//	}
+
+	public JDialog showInDialog()
+	{
+		Dimension dimension = MainFrame.mainframeScreenDimesion;
+		dialog = WindowUtilities.setInDialog(NewWelcomePanel.mainFrame, this,
+				"Create New Experiment", new Dimension((int) (dimension.width * 0.43),
+						(int) (dimension.height * 0.60)), true, false);
+
+		Logger.out.info("dialog initialized ########## " + dialog);
+		dialog.setVisible(true);
+		return dialog;
+	}
+
 	private void addNewExperimentGroupNode(String expGrpName, DefaultMutableTreeNode newNode)
 	{
-		ExperimentTreeNode selectedExperimentNode = (ExperimentTreeNode)((DefaultMutableTreeNode)newNode.getParent()).getUserObject();
+		ExperimentTreeNode selectedExperimentNode = (ExperimentTreeNode) ((DefaultMutableTreeNode) newNode
+				.getParent()).getUserObject();
 		// = (ExperimentTreeNode)selectedTreeNode.getUserObject();
-		
+
 		BusinessInterface bus = null;
 		try
 		{
@@ -459,162 +657,192 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 		{
 			CommonUtils.handleException(e1, this, true, true, false, false);
 		}
-        ExperimentGroupBusinessInterface expGrpBus = (ExperimentGroupBusinessInterface) bus;
-        Long parentExpGrpID = selectedExperimentNode.getIdentifier();
-        ExperimentGroup parentExperimentGroup = null;
-        
-		if(expGrpName != null && !expGrpName.equals(""))
+		ExperimentGroupBusinessInterface expGrpBus = (ExperimentGroupBusinessInterface) bus;
+		Long parentExpGrpID = selectedExperimentNode.getIdentifier();
+		ExperimentGroup parentExperimentGroup = null;
+
+		if (expGrpName != null && !expGrpName.equals(""))
 		{
 			ExperimentGroup newExpGrp = new ExperimentGroup();
 			newExpGrp.setName(expGrpName);
 			newExpGrp.setDescription("Testing Experiment Group creation from UI");
 			newExpGrp.setCreatedOn(new Date());
 			newExpGrp.setLastUpdatedOn(new Date());
-			
-	        try {
-	        	parentExperimentGroup = expGrpBus.getExperimentGroup(parentExpGrpID.toString());
-	        	newExpGrp.setParentGroup(parentExperimentGroup);
+
+			try
+			{
+				parentExperimentGroup = expGrpBus.getExperimentGroup(parentExpGrpID.toString());
+				newExpGrp.setParentGroup(parentExperimentGroup);
 				parentExperimentGroup.getChildrenGroupCollection().add(newExpGrp);
-				
+
 				ExperimentGroup returnedExpGrp = expGrpBus.addExperimentGroup(newExpGrp);
 				newExpGrp = returnedExpGrp;
-				Logger.out.info("returner expGrp id "+returnedExpGrp.getId() );
-			} catch (RemoteException e1) {
+				Logger.out.info("returner expGrp id " + returnedExpGrp.getId());
+			}
+			catch (RemoteException e1)
+			{
 				CommonUtils.handleException(e1, this, true, true, false, false);
-			} catch (BizLogicException e1) {
+			}
+			catch (BizLogicException e1)
+			{
 				CommonUtils.handleException(e1, this, true, true, false, false);
-			} catch (UserNotAuthorizedException e1) {
+			}
+			catch (UserNotAuthorizedException e1)
+			{
 				CommonUtils.handleException(e1, this, true, true, false, false);
-			} catch (DAOException e1) {
+			}
+			catch (DAOException e1)
+			{
 				CommonUtils.handleException(e1, this, true, true, false, false);
 			}
 			// TODO refresh the tree.
 			// TODO this is a temporary hack, actually only tree should be refreshed.
 			// but this one is updating the whole panel, which is not correct.
 			//initGUI();
-			
-			Logger.out.info("newExpGrp "+newExpGrp.getId());
-			
-			
-			ExperimentTreeNode newNodeExperimentTreeNode = new ExperimentTreeNode();			
+
+			Logger.out.info("newExpGrp " + newExpGrp.getId());
+
+			ExperimentTreeNode newNodeExperimentTreeNode = new ExperimentTreeNode();
 			newNodeExperimentTreeNode.setIdentifier(newExpGrp.getId());
 			newNodeExperimentTreeNode.setName(expGrpName);
 			newNodeExperimentTreeNode.setExperimentGroup(true);
 			newNode.setUserObject(newNodeExperimentTreeNode);
 		}
 	}
-	
-	class MyRenderer extends DefaultTreeCellRenderer {
-        Icon expIcon = new ImageIcon("resources/images/experiment.gif");
-        Icon expEmpty = new ImageIcon("resources/images/empty_folder.ico");
-        Icon expGrpOpenIcon = new ImageIcon("resources/images/folder_open.ico");
-        Icon expGrpClosedIcon = new ImageIcon("resources/images/folder_closed.ico");
-        
-        public MyRenderer() {
-        	
-        }
-        public Component getTreeCellRendererComponent(
-                            JTree tree,
-                            Object value,
-                            boolean sel,
-                            boolean expanded,
-                            boolean leaf,
-                            int row,
-                            boolean hasFocus) {
 
-            super.getTreeCellRendererComponent(
-                            tree, value, sel,
-                            expanded, leaf, row,
-                            hasFocus);
-            
-            
-            if(value instanceof DefaultMutableTreeNode)
-            {
-            	DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
-            	Object userObj = treeNode.getUserObject();
-            	
-            	ExperimentTreeNode expTreeNode = null;
-            	if(userObj instanceof ExperimentTreeNode)
-            		expTreeNode = (ExperimentTreeNode)userObj;
-            	
-            	
-            	if(expTreeNode != null)
-            	{
-            		if(expTreeNode.isExperimentGroup())
-            		{
-            			if(tree.isExpanded(row))
-            			{
-            				setIcon(UIManager.getIcon("Tree.openIcon"));
-            			}else
-            			{
-            				setIcon(UIManager.getIcon("Tree.closedIcon"));
-            			}
-            		}else
-            		{
-            			setIcon(expIcon);
-            		}
-            	}else   // this condition to take care of newly created experiment group node.
-            	{
-            		setIcon(UIManager.getIcon("Tree.closedIcon"));
-            	}
-            }
-            
-            return this;
-        }
-    }
-	
-	class MyTreeModelListener implements TreeModelListener {
-	    public void treeNodesChanged(TreeModelEvent e) {
-	        DefaultMutableTreeNode node;
-	        node = (DefaultMutableTreeNode)
-	                 (e.getTreePath().getLastPathComponent());
-	        
-	        /*
-	         * If the event lists children, then the changed
-	         * node is the child of the node we've already
-	         * gotten.  Otherwise, the changed node and the
-	         * specified node are the same.
-	         */
-	        try {
-	            int index = e.getChildIndices()[0];
-	            node = (DefaultMutableTreeNode)
-	                   (node.getChildAt(index));
-	        } catch (NullPointerException exc) {
-	        	Logger.out.error(exc.getMessage());
-	        }
-	        
-	        Logger.out.info("The user has finished editing the node.");
-	        Logger.out.info("New value: " + node.getUserObject());
-	        
-	        addNewExperimentGroupNode(node.getUserObject().toString(), node);
-	        
-	    }
-	    public void treeNodesInserted(TreeModelEvent e) {
-	    }
-	    public void treeNodesRemoved(TreeModelEvent e) {
-	    }
-	    public void treeStructureChanged(TreeModelEvent e) {
-	    }
+	class MyRenderer extends DefaultTreeCellRenderer
+	{
+
+		Icon expIcon = new ImageIcon("resources/images/experiment_small.gif");
+		Icon expEmpty = new ImageIcon("resources/images/empty_folder.ico");
+		Icon expGrpOpenIcon = new ImageIcon("resources/images/folder_open.ico");
+		Icon expGrpClosedIcon = new ImageIcon("resources/images/folder_closed.ico");
+
+		public MyRenderer()
+		{
+
+		}
+
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
+				boolean expanded, boolean leaf, int row, boolean hasFocus)
+		{
+
+			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+
+			if (value instanceof DefaultMutableTreeNode)
+			{
+				DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
+				Object userObj = treeNode.getUserObject();
+
+				ExperimentTreeNode expTreeNode = null;
+				if (userObj instanceof ExperimentTreeNode)
+					expTreeNode = (ExperimentTreeNode) userObj;
+
+				if (expTreeNode != null)
+				{
+					if (expTreeNode.isExperimentGroup())
+					{
+						if (tree.isExpanded(row))
+						{
+							setIcon(UIManager.getIcon("Tree.openIcon"));
+						}
+						else
+						{
+							setIcon(UIManager.getIcon("Tree.closedIcon"));
+						}
+					}
+					else
+					{
+						setIcon(expIcon);
+					}
+				}
+				else
+				// this condition to take care of newly created experiment group node.
+				{
+					setIcon(UIManager.getIcon("Tree.closedIcon"));
+				}
+			}
+
+			return this;
+		}
 	}
-	
-	
+
+	class MyTreeModelListener implements TreeModelListener
+	{
+
+		public void treeNodesChanged(TreeModelEvent e)
+		{
+			DefaultMutableTreeNode node;
+			node = (DefaultMutableTreeNode) (e.getTreePath().getLastPathComponent());
+
+			/*
+			 * If the event lists children, then the changed
+			 * node is the child of the node we've already
+			 * gotten.  Otherwise, the changed node and the
+			 * specified node are the same.
+			 */
+			try
+			{
+				int index = e.getChildIndices()[0];
+				node = (DefaultMutableTreeNode) (node.getChildAt(index));
+			}
+			catch (NullPointerException exc)
+			{
+				Logger.out.error(exc.getMessage());
+			}
+
+			Logger.out.info("The user has finished editing the node.");
+			Logger.out.info("New value: " + node.getUserObject());
+
+			addNewExperimentGroupNode(node.getUserObject().toString(), node);
+
+		}
+
+		public void treeNodesInserted(TreeModelEvent e)
+		{
+		}
+
+		public void treeNodesRemoved(TreeModelEvent e)
+		{
+		}
+
+		public void treeStructureChanged(TreeModelEvent e)
+		{
+		}
+	}
+
+	public static List<DataListMetadata> getDataLlistMetadatas() throws RemoteException,
+			DynamicExtensionsSystemException, DAOException, ClassNotFoundException
+	{
+
+		DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils
+				.getBusinessInterface(EjbNamesConstants.DATALIST_BEAN, DataListHome.class);
+
+		List<DataListMetadata> dataListMetadatas = dataListBI.retrieveAllDataListMetadata();
+		System.out.println("dataListMetadatas " + dataListMetadatas);
+
+		return dataListMetadatas;
+	}
+
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		
+	public static void main(String[] args)
+	{
+
+		Logger.configure("");
 		WindowUtilities.setNativeLookAndFeel();
-		
+
 		ApplicationProperties.initBundle("Cab2bApplicationResources");
-		
+
 		NewExperimentDetailsPanel expDetailsPanel = new NewExperimentDetailsPanel();
-		
+
 		JFrame frame = new JFrame("New Exp Details -- caB2B");
-		frame.setSize(new Dimension(800,600));
+		frame.setSize(new Dimension(800, 600));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(expDetailsPanel);
 		frame.setVisible(true);
-		
+
 	}
 
 }

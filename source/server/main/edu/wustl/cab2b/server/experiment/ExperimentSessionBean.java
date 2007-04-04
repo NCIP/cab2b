@@ -56,6 +56,7 @@ public class ExperimentSessionBean extends DefaultBizLogic implements SessionBea
 	public void addExperiment(Object exp) throws BizLogicException, UserNotAuthorizedException, RemoteException 
 	{
 		insert(exp, daoType);
+		Logger.out.info("experiment saved Successfully "+((Experiment)exp).getId());
 	}
 	
 	/**
@@ -150,55 +151,10 @@ public class ExperimentSessionBean extends DefaultBizLogic implements SessionBea
 		
 		DAO dao = DAOFactory.getInstance().getDAO(daoType);
 		((AbstractDAO)dao).openSession(null);
-		//returner = dao.executeQuery(hql, null, false, null);
-		//String[] whereCol = {"parentGroup"};
-		//String colConditions[] = {"is null"};		
-		//returner = dao.retrieve(ExperimentGroup.class.getName(),null,whereCol,colConditions,null,null);		
+				
 		try{
-			// ----- test code block -----
-			
-			String selectSQL = "select * from additionalmetadata";
-			
-			Connection conn = null;
-
-	           try
-	           {
-	               String userName = "root";
-	               String password = "root123";
-	               String url = "jdbc:mysql://localhost/cab2b";
-	               Class.forName ("com.mysql.jdbc.Driver").newInstance ();
-	               conn = DriverManager.getConnection (url, userName, password);
-	               System.out.println ("Database connection established");
-	               
-	               Statement  stat = conn.createStatement();
-	               ResultSet resultSet = stat.executeQuery(selectSQL);
-	               System.out.println("resultSet "+resultSet);
-	               while(resultSet.next())
-	               {
-	            	   System.out.println("name "+resultSet.getString(1)+", "+resultSet.getString(2));
-	               }
-	           }
-	           catch (Exception e)
-	           {
-	               System.err.println ("Cannot connect to database server");
-	           }
-	           finally
-	           {
-	               if (conn != null)
-	               {
-	                   try
-	                   {
-	                       conn.close ();
-	                       System.out.println ("Database connection terminated");
-	                   }
-	                   catch (Exception e) { /* ignore close errors */ }
-	               }
-	           }
-			// ------- one more test -------
-	           
-	           List myReturner = dao.executeQuery("from ExperimentGroup", null, false, null);
-	           System.out.println("returner expGrp ::::::: "+myReturner);
-			// ---------------------------
+	        //List myReturner = dao.executeQuery("from ExperimentGroup", null, false, null);
+	        //Logger.out.info("returner expGrp ::::::: "+myReturner);
 			returner = dao.executeQuery(hql, null, false, null);
 			
 		}catch(Exception exp)
@@ -216,25 +172,11 @@ public class ExperimentSessionBean extends DefaultBizLogic implements SessionBea
 		{
 			exp.printStackTrace();
 		}
-		//Logger.out.info("returner123 "+returner1);
 		
 		returner.addAll(returner1);
 		
 		((AbstractDAO)dao).closeSession();
 		
-		
-		for (int i = 0; i < returner.size(); i++)
-		{
-			Object obj = returner.get(i);
-			if(obj instanceof Experiment)
-			{
-				Experiment exp = (Experiment) obj;
-			}
-			else {
-				ExperimentGroup expGrp = (ExperimentGroup) obj;
-			}
-			
-		}
 		
 		expHierarchyData = getExperimentMetadataHierarchy(returner);
 		

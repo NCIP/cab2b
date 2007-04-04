@@ -36,6 +36,8 @@ import edu.wustl.common.util.logger.Logger;
 
 public class SearchNavigationPanel extends Cab2bPanel implements ActionListener
 {
+	private static final long serialVersionUID = 1234567890L;
+
 	/* The reference to the parent panel.*/
 	private MainSearchPanel m_mainSearchPanel = null;
 
@@ -100,10 +102,10 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener
 	{
 		String strActionCommand = ((Cab2bButton)event.getSource()).getActionCommand();		
 		if(strActionCommand.equals("Save Data List"))
-		{			
+		{
 			Logger.out.info("Clicked on save Data List button");
 			
-			SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel();
+			SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(m_mainSearchPanel);
 			saveDataListPanel.showInDialog();
 		}else
 		if(strActionCommand.equals("Add to Experiment"))
@@ -112,14 +114,14 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener
 			//check if Data List is saved
 			if(SaveDatalistPanel.isDataListSaved == false)
 			{
-				SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel();
+				SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(m_mainSearchPanel);
 				saveDataListPanel.showInDialog();	
 			}	
 			if(SaveDatalistPanel.isDataListSaved)
 			{
 				NewExperimentDetailsPanel newExperimentDetailsPanel = new NewExperimentDetailsPanel();
 				newExperimentDetailsPanel.showInDialog();
-			}			
+			}
 		}else
 		if(strActionCommand.equals("Next"))
 		{
@@ -132,7 +134,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener
                 //logical operators between the rules.
                 //m_mainSearchPanel.updateQueryObject();
                 if(m_mainSearchPanel.getQueryObject()!= null)
-                {     
+                {
                 	/*
     				 * Also cause for the next card in the dialog to be added
     				 * dynamically to the dialog.
@@ -206,7 +208,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener
 								String urlKey = (String) ittr.next();
 								Object[][] results = allRecords.get(urlKey);															
 								if( results.length == 0 || queryResults.getAllRecords().size() == 0 )
-								{ 						
+								{
 									JOptionPane.showMessageDialog(null, "No result found.", "", JOptionPane.INFORMATION_MESSAGE);
 									srhButton.setVisible(true);   
 									gotoAddLimitPanel();
@@ -268,7 +270,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener
             }
         }
 		else if(strActionCommand.equals("Previous"))
-		{			
+		{
 			/*
 			 * Implies the previous button was clicked. Call show card with boolean set to false.
 			 * 
@@ -335,7 +337,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener
 	 * corresponding updated can be abstracted into the top panel class itself
 	 */
 	public void showCard(boolean blnNext)
-	{				
+	{
 		/* Get the center Panel through the parent.*/
 		SearchCenterPanel centerPanel  = this.m_mainSearchPanel.getCenterPanel();
 		/* Get the layout associated with the center panel*/
@@ -346,7 +348,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener
 		SearchTopPanel topPanel  = this.m_mainSearchPanel.getTopPanel();
 		 		
 		if(blnNext)
-		{			
+		{
 			/*
 			 * validate and increment index to get the corresponding identifier, and use that
 			 * to show the card. Also increment the index to indicate the currently selected card.
@@ -360,7 +362,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener
 			}
 		}
 		else
-		{			
+		{
 			/*
 			 * validate and increment index to get the corresponding identifier, and use that
 			 * to show the card. Also increment the index to indicate the currently selected card.

@@ -19,6 +19,7 @@ import java.util.Date;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -31,6 +32,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.DataListHome;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
@@ -60,12 +62,14 @@ public class SaveDatalistPanel extends Cab2bPanel
 	private JScrollPane m_srollPane;
 
 	JDialog dialog;
-
+	MainSearchPanel mainSearchPanel;
+	
 	//flag used to indicate status of data list  
 	public static boolean isDataListSaved = false;
 
-	SaveDatalistPanel()
+	SaveDatalistPanel(MainSearchPanel mainSearchpanel)
 	{
+		this.mainSearchPanel = mainSearchpanel;
 		initGUIWithGBL();
 	}
 
@@ -86,18 +90,16 @@ public class SaveDatalistPanel extends Cab2bPanel
 			{
 				Logger.out.info("disposing save data list dialog... ");
 				dialog.dispose();
-
 			}
 		});
 
 		saveButton = new Cab2bButton("Save");
 		saveButton.addActionListener(new ActionListener()
 		{
-
 			public void actionPerformed(ActionEvent arg0)
 			{
 				isDataListSaved = true;
-				dialog.dispose();
+				//dialog.dispose();
 
 				String dataListName = txtTitle.getText();
 				if (dataListName == null || dataListName.equals(""))
@@ -114,53 +116,72 @@ public class SaveDatalistPanel extends Cab2bPanel
 
 				MainSearchPanel.dataList.setDataListAnnotation(dataListAnnotation);
 
-				DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils
+				
+				CustomSwingWorker sw = new CustomSwingWorker(SaveDatalistPanel.this)
+				{
+					Long id;
+					
+					@Override
+					protected void doNonUILogic() throws RuntimeException
+					{
+						DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils
 						.getBusinessInterface(EjbNamesConstants.DATALIST_BEAN, DataListHome.class,
 								SaveDatalistPanel.this);
-				try
-				{
-					dataListBI.saveDataList(MainSearchPanel.dataList);
-					Logger.out.info("data list saved successfully ");
-				}
-				catch (RemoteException e)
-				{
-					CommonUtils
-							.handleException(e, SaveDatalistPanel.this, true, true, false, false);
-				}
-				catch (DynamicExtensionsApplicationException e)
-				{
-					CommonUtils
-							.handleException(e, SaveDatalistPanel.this, true, true, false, false);
-				}
-				catch (DynamicExtensionsSystemException e)
-				{
-					CommonUtils
-							.handleException(e, SaveDatalistPanel.this, true, true, false, false);
-				}
-				catch (BizLogicException e)
-				{
-					CommonUtils
-							.handleException(e, SaveDatalistPanel.this, true, true, false, false);
-				}
-				catch (UserNotAuthorizedException e)
-				{
-					CommonUtils
-							.handleException(e, SaveDatalistPanel.this, true, true, false, false);
-				}
-				catch (DAOException e)
-				{
-					CommonUtils
-							.handleException(e, SaveDatalistPanel.this, true, true, false, false);
-				}
-				catch (ClassNotFoundException e)
-				{
-					CommonUtils
-							.handleException(e, SaveDatalistPanel.this, true, true, false, false);
-				}
-				finally
-				{
-					dialog.dispose();
-				}
+						
+						try
+						{
+							id = dataListBI.saveDataList(MainSearchPanel.dataList);
+							Logger.out.info("data list saved successfully (in entity with id) : "+id);
+							
+						}
+						catch (RemoteException e)
+						{
+							CommonUtils
+									.handleException(e, SaveDatalistPanel.this, true, true, false, false);
+						}
+						catch (DynamicExtensionsApplicationException e)
+						{
+							CommonUtils
+									.handleException(e, SaveDatalistPanel.this, true, true, false, false);
+						}
+						catch (DynamicExtensionsSystemException e)
+						{
+							CommonUtils
+									.handleException(e, SaveDatalistPanel.this, true, true, false, false);
+						}
+						catch (DAOException e)
+						{
+							CommonUtils
+									.handleException(e, SaveDatalistPanel.this, true, true, false, false);
+						}
+						catch (BizLogicException e)
+						{
+							CommonUtils
+									.handleException(e, SaveDatalistPanel.this, true, true, false, false);
+						}
+						catch (UserNotAuthorizedException e)
+						{
+							CommonUtils
+									.handleException(e, SaveDatalistPanel.this, true, true, false, false);
+						}
+						finally
+						{
+							dialog.dispose();
+						}
+					}
+
+					@Override
+					protected void doUIUpdateLogic() throws RuntimeException
+					{
+						dialog.dispose();
+						if(id > 0)
+							JOptionPane.showMessageDialog(mainSearchPanel, "Data List saved successfully !");
+						else
+							Logger.out.debug("data list not saved ! "+id);
+					}
+					
+				};
+				sw.start();
 
 				// ---------- Remove this code (Used to serialize datalist)-------
 				//try{
@@ -246,7 +267,7 @@ public class SaveDatalistPanel extends Cab2bPanel
 
 	public static void main(String[] args)
 	{
-		SaveDatalistPanel obj = new SaveDatalistPanel();
+		SaveDatalistPanel obj = new SaveDatalistPanel(null);
 
 		JFrame frame = new JFrame("Experiment");
 		frame.setSize(550, 400);

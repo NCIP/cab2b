@@ -34,6 +34,8 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class MainFrame extends JXFrame {
 	
+	private static final long serialVersionUID = 1234567890L;
+
 	/** Resource bundle name for getting error codes and its description. */
 	public static String errorCodesFileName = "errorcodes";
 	
