@@ -11,7 +11,7 @@
 <!-- use data source -->   
     	  
     	<property name="connection.datasource">java:/cab2bDS</property>
- <!-- 	  
+
 <!-- use Local Database --> 
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
        	<property name="hibernate.connection.username">root</property>
