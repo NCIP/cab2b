@@ -19,7 +19,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -81,12 +80,7 @@ public class PathBuilder {
     public static void buildAndLoadAllModels(Connection connection) {
         new File(PATH_FILE_NAME).delete(); // Delete previously generated paths from file.
         Logger.out.info("Deleted the file : " + PATH_FILE_NAME);
-        try {
-            System.setErr(new PrintStream(new File("C:/Documents and Settings/chandrakant_talele/uselessErr.txt")));
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+
         for (String applicationName : PropertyLoader.getAllApplications()) {
             String path = PropertyLoader.getModelPath(applicationName);
             storeModelAndGeneratePaths(path, applicationName, connection);
@@ -247,7 +241,7 @@ public class PathBuilder {
         PreparedStatement prepareStatement = connection.prepareStatement("select ASSOCIATION_ID from intra_model_association where DE_ASSOCIATION_ID = ?");
 
         List<String> pathList = readFullFile();
-        BufferedWriter pathFile = new BufferedWriter(new FileWriter(new File(PATH_FILE_NAME+"Transformed")));
+        BufferedWriter pathFile = new BufferedWriter(new FileWriter(new File(PATH_FILE_NAME)));
 
         for (int i = 0; i < pathList.size(); i++) {
             Logger.out.info("Transforming Path : " + i);
@@ -327,7 +321,6 @@ public class PathBuilder {
             }
             allPossiblePaths = newPathList;
         }
-        if(allPossiblePaths.isEmpty()) return new ArrayList<String>(0);
         return allPossiblePaths;
     }
 
@@ -345,10 +338,7 @@ public class PathBuilder {
             throws SQLException {
         List<AssociationInterface> associations = srcDesVsAssociations.get(source + CONNECTOR + target);
         if (associations == null || associations.size() == 0) {
-            //throw new RuntimeException("No association present in entity : " + source + " and entity: " + target);
-            System.err.println("No association present in entity : " + source + " and entity: " + target);
-            System.out.println("No association present in entity : " + source + " and entity: " + target);
-            return new  ArrayList<Long> (0);
+            throw new RuntimeException("No association present in entity : " + source + " and entity: " + target);
         }
 
         ArrayList<Long> list = new ArrayList<Long>(associations.size());
