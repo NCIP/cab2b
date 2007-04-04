@@ -142,10 +142,10 @@ public class ClassNodeRenderer implements IGraphNodeRenderer
         Rectangle2D.union(m_maxMinRectangle, bounds, bounds);
         
         ClassNode classNode = (ClassNode)(node.getLookup().lookup(ClassNode.class));
-        java.util.List associationList = classNode.getAssociations();
+        java.util.List<IGraphPort> associationList = classNode.getSourcePorts();
         for(int i=0; i< associationList.size(); i++)
 		{
-        	IGraphPort port = classNode.getAssociationPort((IExpressionId)associationList.get(i));
+        	IGraphPort port = associationList.get(i);
 			helper.setPortRelativeLocation(port, new Point(m_maxMinRectangle.x + m_maxMinRectangle.width+ 5, m_maxMinRectangle.y + 5));
 		}
         java.util.List<IGraphPort> targetPortList = classNode.getTargetPortList();
@@ -251,7 +251,7 @@ public class ClassNodeRenderer implements IGraphNodeRenderer
 	private void layoutAssociations(IGraphNode node, Graphics2D gr)
 	{
 		ClassNode classNode = (ClassNode)(node.getLookup().lookup(ClassNode.class));
-        java.util.List associationList = classNode.getAssociations();
+        java.util.List<IGraphPort> associationList = classNode.getSourcePorts();
         if(associationList.size() == 0)
         {
         	return;
@@ -270,7 +270,7 @@ public class ClassNodeRenderer implements IGraphNodeRenderer
 			m_assRectangles[i].width = m_textRect.width;
 			m_assRectangles[i].height = m_textRect.height;
 			m_assRectangles[i].translate(m_textRect.x, m_assRectangles[i-1].height + m_assRectangles[i-1].y);
-			IGraphPort port = classNode.getAssociationPort((IExpressionId)associationList.get(i-1));
+			IGraphPort port = associationList.get(i-1);
 			helper.setPortRelativeLocation(port, new Point(m_assRectangles[i].x + m_assRectangles[i].width + 5, m_assRectangles[i].y + 5));
 		}
 	}
@@ -409,7 +409,7 @@ public class ClassNodeRenderer implements IGraphNodeRenderer
 		
 		// If node has associations to display
         ClassNode classNode = (ClassNode)node.getLookup().lookup(ClassNode.class);
-        java.util.List associationList = classNode.getAssociations();
+        java.util.List<IGraphPort> associationList = classNode.getSourcePorts();
         
 		//	Get the node bounds 
     	Rectangle rect = helper.getBounds(node);
@@ -551,7 +551,7 @@ public class ClassNodeRenderer implements IGraphNodeRenderer
 	 * @param currY Current y location where association box has to render
 	 * @param associationList List of associations to draw on node
 	 */
-	private void drawAssociation(ClassNode classNode, Graphics2D gr, int currX, int currY, java.util.List associationList)
+	private void drawAssociation(ClassNode classNode, Graphics2D gr, int currX, int currY, java.util.List<IGraphPort> associationList)
 	{
 		final FontMetrics fontMetrics = gr.getFontMetrics(font);
         final int ascent = fontMetrics.getAscent();
@@ -561,7 +561,8 @@ public class ClassNodeRenderer implements IGraphNodeRenderer
         for(int i=1; i<m_assRectangles.length; i++)
     	{
     		currY += m_assRectangles[i-1].height;
-    		IExpressionId expId = (IExpressionId)associationList.get(i-1);
+    		
+    		IExpressionId expId = classNode.getLinkForSourcePort(associationList.get(i-1)).getDestinationExpressionId();
     		Rectangle assRect = fontMetrics.getStringBounds(String.valueOf(expId.getInt()), gr).getBounds();
     		assRect.width += 10;
     		assRect.height += 4;
@@ -574,7 +575,7 @@ public class ClassNodeRenderer implements IGraphNodeRenderer
             gr.drawString(String.valueOf(expId.getInt()), assRect.x+5, assRect.y+3 + ascent);
             if(i<m_assRectangles.length-1)
             {
-            	drawCustomCombo(classNode.getLogicalOperator(expId), currX, currY, gr);
+            	drawCustomCombo(classNode.getLogicalOperator(associationList.get(i-1)), currX, currY, gr);
             }
         }
 	}

@@ -2,12 +2,15 @@ package edu.wustl.cab2b.client.ui.dag;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -16,24 +19,24 @@ import javax.swing.JScrollPane;
 
 import org.netbeans.graph.api.GraphFactory;
 import org.netbeans.graph.api.model.GraphEvent;
-import org.netbeans.graph.api.model.IGraphLink;
-import org.netbeans.graph.api.model.IGraphNode;
 import org.netbeans.graph.api.model.IGraphPort;
 import org.netbeans.graph.api.model.builtin.GraphDocument;
-import org.netbeans.graph.api.model.builtin.GraphLink;
 import org.netbeans.graph.api.model.builtin.GraphPort;
 
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.IUpdateAddLimitUIInterface;
+import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.dag.ambiguityresolver.AmbiguityObject;
+import edu.wustl.cab2b.client.ui.dag.ambiguityresolver.AutoConnectAmbiguityResolver;
 import edu.wustl.cab2b.client.ui.dag.ambiguityresolver.ResolveAmbiguity;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.query.IPathFinder;
 import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImageConstants;
-import edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface;
 import edu.wustl.cab2b.common.queryengine.Cab2bQueryObjectFactory;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
+import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
 import edu.wustl.common.querysuite.queryobject.IExpression;
@@ -73,12 +76,18 @@ public class MainDagPanel extends Cab2bPanel
 		m_pathFinder = pathFinder;
 		initGUI();
 	}
-	
+	/**
+	 * Set the query object 
+	 * @param queryObject
+	 */
 	public void setQueryObject (IClientQueryBuilderInterface queryObject)
 	{
 		m_queryObject = queryObject;
 	}
 	
+	/**
+	 * Initialize user interface
+	 */
 	private void initGUI()
 	{				
 		m_controlPanel = new DagControlPanel(this, m_dagImageMap);
@@ -95,7 +104,6 @@ public class MainDagPanel extends Cab2bPanel
 	/**
 	 * Method to add node to a graph
 	 * @throws MultipleRootsException 
-	 *
 	 */
 	public void updateGraph(IExpressionId expressionId) throws MultipleRootsException
 	{
@@ -103,10 +111,7 @@ public class MainDagPanel extends Cab2bPanel
 		IConstraintEntity constraintEntity = expression.getConstraintEntity();
 		ClassNode node = new ClassNode();
 
-		//set proper display class name 
 		node.setDisplayName( edu.wustl.cab2b.common.util.Utility.getDisplayName(constraintEntity.getDynamicExtensionsEntity()));		
-		//node.setDisplayName(constraintEntity.getDynamicExtensionsEntity().getName());
-		
 		node.setExpressionId(expression);
 		node.setID(String.valueOf(expressionId.getInt()));
 		m_currentNodeList.add(node);
@@ -114,28 +119,21 @@ public class MainDagPanel extends Cab2bPanel
 		m_document.addComponents(GraphEvent.createSingle(node));
 		m_expressionPanel.setText(getExprssionString());
 	}
-	
+	/**
+	 * Method to update the graph when new expression is added to the query
+	 * @param expressionIdString
+	 * @throws MultipleRootsException
+	 */
 	public void updateGraph(String expressionIdString) throws MultipleRootsException
 	{
 		int expressionIdInt = Integer.parseInt(expressionIdString);
 		IExpressionId expressionId = Cab2bQueryObjectFactory.createExpressionId(expressionIdInt);
 		updateGraph(expressionId);
 	}
-	
 	/**
-	 * Method to invoke a DAG view
-	 * @param args
+	 * Get instance of GraphDocument 
+	 * @return
 	 */
-	public static void main(String[] args)
-	{
-		/*JFrame frame = new JFrame("The diagramtaic view of Query interface");
-		MainDagPanel dagPanel = new MainDagPanel(null);
-		frame.getContentPane().add(dagPanel);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(500, 500);
-		frame.setVisible(true);*/
-	}
-
 	public GraphDocument getDocument() 
 	{
 		return m_document;
@@ -150,17 +148,6 @@ public class MainDagPanel extends Cab2bPanel
 		{
 			errorMessage = "Please select two nodes for linking";
 			status = false;
-		}
-		else
-		{
-			ClassNode sourceNode = selectedNodes.get(0);
-			ClassNode destinationNode = selectedNodes.get(1);
-			if((sourceNode.getAssociations().contains(destinationNode.getExpressionId())) ||
-						(destinationNode.getAssociations().contains(sourceNode.getExpressionId())))
-			{
-				errorMessage = "The selected categories are already linked";
-				status = false;
-			}
 		}
 		if(false == status)
 		{
@@ -178,13 +165,6 @@ public class MainDagPanel extends Cab2bPanel
 		// If number of nodes to connect is not 2, set warning user
 		if(true == isLinkingValid())
 		{
-		
-			// 1. Get Expression Ids from selected nodes
-			// 2. Get paths for selected nodes
-			// 3. For multiple paths show link with red color and ask user to resolve ambiguity
-			// 4. Else show link with green color
-			// 5. Change source nodes to show added association
-			// 6. Update query interface accordingly
 			ClassNode sourceNode = selectedNodes.get(0);
 			ClassNode destinationNode =  selectedNodes.get(1);
 			linkNode(sourceNode, destinationNode);
@@ -192,6 +172,12 @@ public class MainDagPanel extends Cab2bPanel
 		m_expressionPanel.setText(getExprssionString());
 	}
 	
+	/**
+	 * Method to get list of paths between source and destination entity
+	 * @param sourceNode The source node to connect
+	 * @param destNode The taget node to connect
+	 * @return List of selected paths between source and destination
+	 */
 	private List<IPath> getPaths(ClassNode sourceNode, ClassNode destNode)
 	{
 		/**
@@ -206,82 +192,12 @@ public class MainDagPanel extends Cab2bPanel
         ResolveAmbiguity resolveAmbigity = new ResolveAmbiguity(obj,m_pathFinder);
         Map<AmbiguityObject, List<IPath>> map = resolveAmbigity.getPathsForAllAmbiguities();
         return map.get(obj);
-        
     }
 	
 	/**
-	 * Method to clone the node and all its links
-	 * @param node to clone
-	 * @return list of Class Nodes generated by clonning ClassNodes
-	 */
-	private List<ClassNode> createNodeCopies(ClassNode node, int numOfCopies)
-	{
-		List<ClassNode> nodeList = new ArrayList<ClassNode>();
-		for(int i=0; i<numOfCopies; i++)
-		{
-			IExpressionId  expressionId = node.getExpressionId(); // Get the expressId of node to clone
-			IExpression sourceExpression = m_queryObject.getQuery().getConstraints().getExpression(expressionId);
-			
-			//Create copy of this node and add it to graph document
-			IExpressionId newExpressionId = m_queryObject.createExpressionCopy(sourceExpression);
-			IConstraintEntity constraintEntity = sourceExpression.getConstraintEntity();
-			ClassNode newNode = new ClassNode();
-			
-			//set proper class display name 
-			newNode.setDisplayName(edu.wustl.cab2b.common.util.Utility.getDisplayName(constraintEntity.getDynamicExtensionsEntity()));
-			//newNode.setDisplayName(constraintEntity.getDynamicExtensionsEntity().getName());
-			
-			newNode.setExpressionId(m_queryObject.getQuery().getConstraints().getExpression(newExpressionId));
-			newNode.setID(String.valueOf(newExpressionId.getInt()));
-			newNode.setOperatorBetAttrAndAss(node.getOperatorBetAttrAndAss());
-			m_document.addComponents(GraphEvent.createSingle(newNode));
-			m_currentNodeList.add(newNode);
-			
-			// Add associations for which the current node is 
-			// acting as a source node
-			List associationList = node.getAssociations();
-			for(int assIdx=0; assIdx < associationList.size(); assIdx++)
-			{
-				IExpressionId associationExpId = (IExpressionId)associationList.get(assIdx);
-							
-				// Get the port associated with is expression
-				IGraphPort port = node.getAssociationPort(associationExpId);
-				
-				// Get all the links associated with this port
-				IGraphLink[] links = port.getLinks();
-				
-				//get the destination node for this port
-				IGraphNode destNode = links[0].getTargetPort().getNode();
-				
-				// Now add link between source and destination node
-				LinkTwoNode(newNode, (ClassNode)destNode.getLookup().lookup(ClassNode.class), node.getAssociationPath(associationExpId)); // TODO actual Path Object
-				newNode.setLogicalOperator(associationExpId, node.getLogicalOperator(associationExpId));
-			}
-			
-			// Add associations for which the current node is 
-			// acting as a destination node
-			List<IGraphPort> ports = node.getTargetPortList();
-			for(int targetPortIdx=0; targetPortIdx<ports.size(); targetPortIdx++)
-			{
-				// Get all the links associated with this port
-				IGraphLink[] links = ports.get(targetPortIdx).getLinks();
-				
-				//get the destination node for this port
-				ClassNode sourceNode = (ClassNode)links[0].getSourcePort().getNode().getLookup().lookup(ClassNode.class);
-				
-				// Now add link between source and destination node
-				LinkTwoNode(sourceNode, newNode, sourceNode.getAssociationPath(expressionId)); // TODO actual Path Object
-			}
-			nodeList.add(newNode);
-		}
-		return nodeList;
-	}
-	
-	
-	/**
 	 * This method link nodes if association is available between them
-	 * @param sourceNode
-	 * @param destNode
+	 * @param sourceNode Source node to connect
+	 * @param destNode Target node to connect
 	 */
 	private void linkNode(ClassNode sourceNode, ClassNode destNode)
 	{
@@ -289,38 +205,32 @@ public class MainDagPanel extends Cab2bPanel
 		List<IPath> paths = getPaths(sourceNode, destNode);
 		if(paths == null || paths.size() == 0)
 		{
-			JOptionPane.showMessageDialog(this, "No path available/selected between source and destination categories", "Connect Nodes warning", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this, "No path available/selected between source and destination categories", 
+												"Connect Nodes warning", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		if(false == m_queryObject.isPathCreatesCyclicGraph(sourceNode.getExpressionId(), destNode.getExpressionId(), paths.get(0)))
 		{
-			// If user selected paths are more than 1, then makecopies of the destination node
-			// and add them to UI
-			List<ClassNode> destinationNodes = new ArrayList<ClassNode>();
-			if(paths.size()>1)
+			for(int i=0; i<paths.size(); i++)
 			{
-				destinationNodes = createNodeCopies(destNode, paths.size()-1);
-			}
-			destinationNodes.add(destNode); // put the current node also into the list 
-			for(int i=0; i<destinationNodes.size(); i++)
-			{
-				LinkTwoNode(sourceNode, destinationNodes.get(i), paths.get(i));
+				LinkTwoNode(sourceNode, destNode, paths.get(i));
 			}
 		}
 		else
 		{
-			JOptionPane.showMessageDialog(this, "Cannot connect selected nodes as it creates cycle in the query graph", "Connect Nodes warning", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Cannot connect selected nodes as it creates cycle in the query graph", 
+					                            "Connect Nodes warning", JOptionPane.WARNING_MESSAGE);
 		}
 	}
 	/**
 	 * Method to link two nodes with given path
-	 * @param sourceNode
-	 * @param destNode
-	 * @param path
+	 * @param sourceNode The source node to connect
+	 * @param destNode The destination  node to connect
+	 * @param path The path of connection
 	 */
-	private void LinkTwoNode(ClassNode sourceNode, ClassNode destNode, IPath path) 
+	private boolean LinkTwoNode(ClassNode sourceNode, ClassNode destNode, IPath path) 
 	{
-		//   Update query object to have this association path set
+		// Update query object to have this association path set
         List<IExpressionId> intermediateExpressions = null;
 		try 
 		{
@@ -328,8 +238,9 @@ public class MainDagPanel extends Cab2bPanel
 		}
 		catch (CyclicException e)
 		{
-			JOptionPane.showMessageDialog(this, "Cannot connect nodes as it creates cycle in graph", "Connect Nodes warning", JOptionPane.WARNING_MESSAGE);
-			return;
+			JOptionPane.showMessageDialog(this, "Cannot connect nodes as it creates cycle in graph", 
+					                            "Connect Nodes warning", JOptionPane.WARNING_MESSAGE);
+			return false;
 		}
 		
 		//	From the query object get list of associations between these two node
@@ -337,25 +248,23 @@ public class MainDagPanel extends Cab2bPanel
 		sourceNode.addPort(sourcePort);
 		GraphPort targetPort = new GraphPort();
 		destNode.addPort(targetPort);
-		sourceNode.setAssociationPort(destNode.getExpressionId(), sourcePort);
+		int assPosition = sourceNode.addSourcePort(sourcePort); // The location where node is added now
 		destNode.addTargetPort(targetPort);
 		
 		//	now create the visual link..
-        GraphLink link = new GraphLink();
+		PathLink link = new PathLink();
         link.setSourcePort((GraphPort) sourcePort);
         link.setTargetPort((GraphPort) targetPort);
-        link.setTooltipText(edu.wustl.cab2b.client.ui.query.Utility.getPathDisplayString(path));
+        link.setAssociationExpressions(intermediateExpressions);
+        link.setDestinationExpressionId(destNode.getExpressionId());
+        link.setSourceExpressionId(sourceNode.getExpressionId());
+        link.setPath(path);
+        sourceNode.setLinkForSourcePort(sourcePort, link);
+        link.setTooltipText(edu.wustl.cab2b.common.util.Utility.getPathDisplayString(path));
         m_document.addComponents(GraphEvent.createSingle(link));
         
-        // Add association Id to the source list
-        int assPosition = sourceNode.addAssociation(destNode.getExpressionId()); 
-        sourceNode.setAssociationPath(destNode.getExpressionId(), path); // Set the association path object
-        
-        // ===================== IMPORTANT QUERY UPDATION STARTS HERE ==========
-        sourceNode.setIntermediateExpressionIdsForAssociation(destNode.getExpressionId(), intermediateExpressions);
-          
         // If the first association is added, put operator between attribute condition and association
-        String operator;
+        String operator = null;
         if(assPosition == 0)
         {
         	operator = sourceNode.getOperatorBetAttrAndAss();
@@ -364,22 +273,25 @@ public class MainDagPanel extends Cab2bPanel
         {
         	operator = sourceNode.getLogicalOperator(assPosition-1); 
         }
-      
-        IExpressionId destId = sourceNode.getLogicalConnectorExpressionForAssociation(destNode.getExpressionId());
-        m_queryObject.setLogicalConnector(sourceNode.getExpressionId(), destId  , edu.wustl.cab2b.client.ui.query.Utility.getLogicalOperator(operator));
+        
+        // Get the expressionId between which to add logical operator
+        IExpressionId destId = link.getLogicalConnectorExpressionId();
+        m_queryObject.setLogicalConnector(sourceNode.getExpressionId(), destId  , 
+        								  edu.wustl.cab2b.client.ui.query.Utility.getLogicalOperator(operator));
         
         // Put appropriate parenthesis
         if(assPosition != 0)
         {
-        	IExpressionId previousExpId = sourceNode.getLogicalConnectorExpressionForAssociation((IExpressionId)(sourceNode.getAssociations().get(0)));
+        	IExpressionId previousExpId = sourceNode.getLinkForSourcePort(sourceNode.getSourcePortAt(0))
+        								  .getLogicalConnectorExpressionId();
         	m_queryObject.addParantheses(sourceNode.getExpressionId(), previousExpId, destId);
         }
-        //      ==================== IMPORTANT QUERY UPDATION ENDS HERE ===========
         // Update user interface
         m_viewController.getHelper().scheduleNodeToLayout(sourceNode);
         m_viewController.getHelper().scheduleNodeToLayout(destNode);
         m_viewController.getHelper().scheduleLinkToLayout(link);
         m_viewController.getHelper().recalculate();
+        return true;
 	}
 	
 	/**
@@ -426,13 +338,13 @@ public class MainDagPanel extends Cab2bPanel
 	 * @param sourceNode Source entity of path
 	 * @param destinationNode target entity of path
 	 */
-	public void deletePath(ClassNode sourceNode, ClassNode destinationNode)
+	public void deletePath(PathLink link)
 	{
-		List<IExpressionId> expressionIds = sourceNode.getIntermediateExpressionIdsForAssociation(destinationNode.getExpressionId());
+		List<IExpressionId> expressionIds = link.getAssociationExpressions();
 		// If the association is direct association, remove the respective association 
 		if(0 == expressionIds.size())
 		{
-			m_queryObject.removeAssociation(sourceNode.getExpressionId(), destinationNode.getExpressionId());
+			m_queryObject.removeAssociation(link.getSourceExpressionId(), link.getDestinationExpressionId());
 		}
 		else
 		{
@@ -441,16 +353,15 @@ public class MainDagPanel extends Cab2bPanel
 				m_queryObject.removeExpression(expressionIds.get(i));
 			}
 		}
-		sourceNode.removeIntermediateExpressionIdsForAssociation(destinationNode.getExpressionId());
 		m_expressionPanel.setText(getExprssionString());
 	}
 	
 	/**
 	 * Method to change logical operator of association
 	 */
-	public void updateLogicalOperatorForAssociation(ClassNode sourceNode, IExpressionId destinationNodeId, String operator)
+	public void updateLogicalOperatorForAssociation(ClassNode sourceNode, PathLink link, String operator)
 	{
-		IExpressionId destinationId = sourceNode.getLogicalConnectorExpressionForAssociation(destinationNodeId);
+		IExpressionId destinationId = link.getLogicalConnectorExpressionId();
 		m_queryObject.setLogicalConnector(sourceNode.getExpressionId(), destinationId, edu.wustl.cab2b.client.ui.query.Utility.getLogicalOperator(operator));
 		m_expressionPanel.setText(getExprssionString());
 	}
@@ -460,7 +371,8 @@ public class MainDagPanel extends Cab2bPanel
 	 */
 	public void updateLogicalOperatorForAttributes(ClassNode sourceNode, String operator)
 	{
-		IExpressionId destinationId = sourceNode.getLogicalConnectorExpressionForAssociation((IExpressionId)(sourceNode.getAssociations().get(0)));
+		PathLink link = sourceNode.getLinkForSourcePort(sourceNode.getSourcePortAt(0));
+		IExpressionId destinationId = link.getLogicalConnectorExpressionId();
 		m_queryObject.setLogicalConnector(sourceNode.getExpressionId(), destinationId, edu.wustl.cab2b.client.ui.query.Utility.getLogicalOperator(operator));
 		m_expressionPanel.setText(getExprssionString());
 	}
@@ -499,7 +411,7 @@ public class MainDagPanel extends Cab2bPanel
 	    	IExpressionId expressionId = m_currentNodeList.get(i).getExpressionId();
 	    	if(expressionsCovered.contains(expressionId) == false)
 	    	{
-	    		if(m_currentNodeList.get(i).getAssociations().size() == 0)
+	    		if(m_currentNodeList.get(i).getSourcePorts().size() == 0)
 	    		{
 	    			nonConnectedExpressions+=expressionId.getInt();
 	    			nonConnectedExpressions+=", ";
@@ -538,31 +450,32 @@ public class MainDagPanel extends Cab2bPanel
 	{
 		StringBuffer sb = new StringBuffer();
 		int expressionId = node.getExpressionId().getInt();
-		List<IExpressionId> associatedNodes = (List<IExpressionId>)node.getAssociations();
-		if(associatedNodes.size() > 0)
+		List<IGraphPort> ports = node.getSourcePorts();
+		if(ports.size() > 0)
 		{
 			sb.append("( [").append(expressionId).append("] ").append(node.getOperatorBetAttrAndAss().toString()).append(" ");
-			if(associatedNodes.size()>1)
+			if(ports.size()>1)
 			{
 				sb.append("( ");
 			}
-			for(int i=0; i<associatedNodes.size(); i++)
+			for(int i=0; i<ports.size(); i++)
 			{
+				IExpressionId associationNode = node.getLinkForSourcePort(ports.get(i)).getDestinationExpressionId();
 				if(i > 0)
 				{
 					sb.append(" ").append(node.getLogicalOperator(i-1)).append(" ");
 				}
-				if(null != expressionToStringMap.get(associatedNodes.get(i)))
+				if(null != expressionToStringMap.get(associationNode))
 				{
-					sb.append(expressionToStringMap.get(associatedNodes.get(i)));
+					sb.append(expressionToStringMap.get(associationNode));
 				}
 				else
 				{
-					sb.append( FormExpression(expressionToStringMap, expressionsCovered, getNode(associatedNodes.get(i))));
+					sb.append( FormExpression(expressionToStringMap, expressionsCovered, getNode(associationNode)));
 				}
-				expressionsCovered.add(associatedNodes.get(i));
+				expressionsCovered.add(associationNode);
 			}
-			if(associatedNodes.size()>1)
+			if(ports.size()>1)
 			{
 				sb.append(") ");
 			}
@@ -600,5 +513,139 @@ public class MainDagPanel extends Cab2bPanel
 	public void performAutoConnect()
 	{
 		System.out.println("User clicked auto-connect functionality");
+		List<ClassNode> selectedNodes = m_viewController.getCurrentNodeSelection();
+		if(selectedNodes == null || selectedNodes.size() <=1)
+		{
+			// Cannot perform connect all functionality
+			JOptionPane.showMessageDialog(this, "Cannot perform connect all as minimum two nodes needs to be selected.", 
+												"Auto-Connect warning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		if(false == isAutoConnectValid(selectedNodes))
+		{
+			// Cannot perform connect all functionality
+			JOptionPane.showMessageDialog(this, "Cannot perform connect all as some of the selected nodes are already connected.", 
+												"Auto-Connect warning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		Set<EntityInterface> entitySet = new HashSet<EntityInterface>();
+		for(int i=0; i<selectedNodes.size(); i++)
+		{
+			IExpression expression = m_queryObject.getQuery().getConstraints().getExpression(selectedNodes.get(i).getExpressionId());
+			EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
+			entitySet.add(entity);
+		}
+		Set<ICuratedPath> paths = m_pathFinder.autoConnect(entitySet);
+		ICuratedPath path = getSelectedCuratedPath(paths);
+		if(path == null)
+		{
+			// Show ambiguity resolver to get a curated path
+			AutoConnectAmbiguityResolver childPanel = new AutoConnectAmbiguityResolver(paths);
+			WindowUtilities.showInDialog(edu.wustl.cab2b.client.ui.util.CommonUtils.FrameReference, childPanel , 
+					"Available curated paths Panel", new Dimension(600, 370), true, false);
+			path = childPanel.getUserSelectedpaths();
+		}
+		if(path != null)
+		{
+			autoConnectNodes(selectedNodes, path);
+		}
+	}
+	
+	/**
+	 * Method to connect selected nodes with the selected curated path
+	 * @param selectedNodes The node list selected for auto-connection
+	 * @param path The curated path with which to connect a list
+	 */
+	private void autoConnectNodes(List<ClassNode> selectedNodes, ICuratedPath curatedPath)
+	{
+		Set<IPath> paths = curatedPath.getPaths();
+		Iterator<IPath> iter = paths.iterator();
+		while(iter.hasNext())
+		{
+			IPath path = iter.next();
+			List<ClassNode> sourceNodes = getNodesWithEntity(selectedNodes, path.getSourceEntity());
+			List<ClassNode> destinationNodes = getNodesWithEntity(selectedNodes, path.getTargetEntity());
+			for(int i=0; i<sourceNodes.size(); i++)
+			{
+				for(int j=0; j<destinationNodes.size(); j++)
+				{
+					LinkTwoNode(sourceNodes.get(i), destinationNodes.get(j), path);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * The to validate auto-connect event
+	 * @param selectedNodes Nodes to auto-connect
+	 * @return true if auto-connect is valid, else return false
+	 */
+	private boolean isAutoConnectValid(List<ClassNode> selectedNodes)
+	{
+		for(int i=0; i<selectedNodes.size(); i++)
+		{
+			ClassNode sourceNode = selectedNodes.get(i);
+			List<IGraphPort> ports = sourceNode.getSourcePorts();
+			for(int j=0; j<ports.size(); j++)
+			{
+				IExpressionId id = sourceNode.getLinkForSourcePort(ports.get(j)).getDestinationExpressionId();
+				for(int k=0; k<selectedNodes.size(); k++)
+				{
+					if(id.equals(selectedNodes.get(k).getExpressionId()))
+					{
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Method to get a IGraph node associated with given entityInterface
+	 * @param classNodes The list of IGraph Nodes 
+	 * @param entity The Entity to match
+	 * @return List of Nodes matching to given entity interface
+	 */
+	private List<ClassNode> getNodesWithEntity(List<ClassNode> classNodes, EntityInterface entity)
+	{
+		List<ClassNode> entityNodes = new ArrayList<ClassNode>();
+		
+		for(int i=0; i<classNodes.size(); i++)
+		{
+			ClassNode node = classNodes.get(i);
+			IExpression expression = m_queryObject.getQuery().getConstraints().getExpression(node.getExpressionId());
+			EntityInterface currentEntity = expression.getConstraintEntity().getDynamicExtensionsEntity();
+			if(true == entity.equals(currentEntity))
+			{
+				entityNodes.add(node);
+			}
+		}
+		return entityNodes;
+	}
+	
+	/**
+	 * Method to return selected curated path from a set of curated paths
+	 * @param paths Set of curated paths 
+	 * @return The deafult selected path if any from a set of curated paths else returns false
+	 */
+	private ICuratedPath getSelectedCuratedPath(Set<ICuratedPath> paths)
+	{
+		Iterator<ICuratedPath> iter = paths.iterator();
+		if(paths.size() == 1)
+		{
+			return iter.next();
+		}
+		while(iter.hasNext())
+		{
+			ICuratedPath path = iter.next();
+			
+			if(true == path.isSelected())
+			{
+				return path;
+			}
+		}
+		return null;
 	}
 }

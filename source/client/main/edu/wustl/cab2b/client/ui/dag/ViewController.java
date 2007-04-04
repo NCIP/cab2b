@@ -143,11 +143,11 @@ public class ViewController extends DefaultViewController implements ActionListe
 		ClassNode destinationNode = (ClassNode)targetPort.getNode().getLookup().lookup(ClassNode.class);
 		
 		// Clear the port related data structures of ClassNode class
-		sourceNode.removeAssociation(destinationNode.getExpressionId());
-		destinationNode.deleteTargetPortFromList(targetPort);
+		sourceNode.removeSourcePort(sourcePort);
+		destinationNode.deleteTargetPort(targetPort);
 		
 		// Delete association from query object
-		m_mainPanel.deletePath(sourceNode, destinationNode);
+		m_mainPanel.deletePath(link.getLookup().lookup(PathLink.class));
 		getHelper().scheduleNodeToLayout(sourceNode);
 		getHelper().recalculate();
 		final IGraphNode[] _nodes = new IGraphNode[] {};
@@ -211,7 +211,10 @@ public class ViewController extends DefaultViewController implements ActionListe
        	}
        	return false;
     }
-    
+    /**
+     * Method to get currently selected node
+     * @return
+     */
     public List<ClassNode> getCurrentNodeSelection()
     {
     	//  delete nodes from m_selectedNodes which are not selected 
@@ -265,7 +268,7 @@ public class ViewController extends DefaultViewController implements ActionListe
     		else
     		{
     			classNode.setLogicalOperator(index, ANDOPERATOR);
-    			m_mainPanel.updateLogicalOperatorForAssociation(classNode, (IExpressionId)(classNode.getAssociations().get(index+1)),ANDOPERATOR );
+    			m_mainPanel.updateLogicalOperatorForAssociation(classNode, classNode.getLinkForSourcePort(classNode.getSourcePortAt(index+1)),ANDOPERATOR );
     		}
     		getHelper().scheduleNodeToLayout(m_currentNode);
 			getHelper().recalculate();
@@ -283,7 +286,7 @@ public class ViewController extends DefaultViewController implements ActionListe
     		else
     		{
     			classNode.setLogicalOperator(index, OROPERATOR);
-    			m_mainPanel.updateLogicalOperatorForAssociation(classNode, (IExpressionId)(classNode.getAssociations().get(index+1)),OROPERATOR );
+    			m_mainPanel.updateLogicalOperatorForAssociation(classNode, classNode.getLinkForSourcePort(classNode.getSourcePortAt(index+1)),OROPERATOR );
     		}
     		getHelper().scheduleNodeToLayout(m_currentNode);
 			getHelper().recalculate();

@@ -10,7 +10,6 @@ import org.netbeans.graph.api.model.IGraphNode;
 import org.netbeans.graph.api.model.IGraphPort;
 
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
@@ -21,31 +20,34 @@ public class ClassNode extends GenericNode
 {
 	private IExpressionId m_expressionId;
 	private IExpression m_expression;
-	private List<IExpressionId> m_associationList;
+
 	// Map holding association expression to logical operator map
-	private HashMap<IExpressionId, String> m_associationToLogicalOperatorMap;
-	// Map holding association expression to port map
-	private HashMap<IExpressionId, IGraphPort> m_associationToPortMap;
-	// Map to hold association expression to association Path object
-	private HashMap<IExpressionId, IPath> m_associationToPathMap;
-	//	Map to hold association expression to association Path object
-	private HashMap<IExpressionId, List<IExpressionId>> m_associationToIntermediateExpressionIdsMap;
+	private HashMap<IGraphPort, String> m_associationToLogicalOperatorMap;
 	
+	// Ordered list of target ports
 	private List<IGraphPort> targetPorts;
+	
+	// Ordered lsit of source ports
+	private List<IGraphPort> sourcePorts;
+	
+	// Source Port to link map
+	private HashMap<IGraphPort, PathLink> m_sourcePortToPathLinkMap;
+	
 	private String m_OperatorBetweenAttrAndAss;
 	private static final String ANDOPERATOR = "AND";
 	private static final String OROPERATOR = "OR";
 	
 	public ClassNode()
 	{
-		m_associationList = new ArrayList<IExpressionId>();
-		m_associationToLogicalOperatorMap = new HashMap<IExpressionId, String>();
-		m_associationToPortMap = new HashMap<IExpressionId, IGraphPort>();
+	
+		m_associationToLogicalOperatorMap = new HashMap<IGraphPort, String>();
 		targetPorts = new ArrayList<IGraphPort> ();
-		m_associationToPathMap = new HashMap<IExpressionId, IPath> ();
-		m_associationToIntermediateExpressionIdsMap = new HashMap<IExpressionId, List<IExpressionId>>();
+		sourcePorts = new ArrayList<IGraphPort> ();
+		m_sourcePortToPathLinkMap =  new HashMap<IGraphPort, PathLink>();
+		
 		m_OperatorBetweenAttrAndAss = ANDOPERATOR;
 	}
+	
 	public void addTargetPort(IGraphPort port)
 	{
 		targetPorts.add(port);
@@ -56,18 +58,55 @@ public class ClassNode extends GenericNode
 		return targetPorts;
 	}
 	
-	public void deleteTargetPortFromList(IGraphPort port)
+	/**
+	 * Method to added source port in source Port list
+	 * @param port
+	 */
+	public int addSourcePort(IGraphPort port)
 	{
-		targetPorts.remove(port);
-	}
-	public void setAssociationPort(IExpressionId expressionId, IGraphPort port)
-	{
-		m_associationToPortMap.put(expressionId, port);
+		sourcePorts.add(port);
+		m_associationToLogicalOperatorMap.put(port, OROPERATOR);
+		return (sourcePorts.size()-1);
 	}
 	
-	public IGraphPort getAssociationPort(IExpressionId expressionId)
+	/**
+	 * Method to get source Ports added to this list
+	 * @return
+	 */
+	public List<IGraphPort> getSourcePorts()
 	{
-		return m_associationToPortMap.get(expressionId);
+		return sourcePorts;
+	}
+	
+	/**
+	 * Method to get source port at specified location
+	 * @param port
+	 */
+	public IGraphPort getSourcePortAt(int i)
+	{
+		return sourcePorts.get(i);
+	}
+	
+	public void removeSourcePort(IGraphPort port)
+	{
+		m_associationToLogicalOperatorMap.remove(port);
+		m_sourcePortToPathLinkMap.remove(port);
+		sourcePorts.remove(port);
+	}
+	
+	public void setLinkForSourcePort(IGraphPort port, PathLink link)
+	{
+		m_sourcePortToPathLinkMap.put(port, link);
+	}
+	
+	public PathLink getLinkForSourcePort(IGraphPort port)
+	{
+		return m_sourcePortToPathLinkMap.get(port);
+	}
+	
+	public void deleteTargetPort(IGraphPort port)
+	{
+		targetPorts.remove(port);
 	}
 	public IGraphNodeRenderer createNodeRenderer(GraphHelper helper, IGraphNode node) 
 	{
@@ -84,50 +123,25 @@ public class ClassNode extends GenericNode
 	{
 		return m_expressionId;
 	}
-	/**
-	 * Method to add association expression to list and returns the postion of
-	 * added association in list
-	 * @param expressionId
-	 * @return
-	 */
-	public int addAssociation(IExpressionId expressionId)
+	
+	public void setLogicalOperator(IGraphPort port, String operator)
 	{
-		m_associationList.add(expressionId);
-		m_associationToLogicalOperatorMap.put(expressionId, OROPERATOR);
-		return (m_associationList.size()-1);
+		m_associationToLogicalOperatorMap.put(port, operator);
 	}
 	
-	public void removeAssociation(IExpressionId expressionId)
+	public String getLogicalOperator(IGraphPort port)
 	{
-		m_associationToLogicalOperatorMap.remove(expressionId);
-		m_associationToPortMap.remove(expressionId);
-		m_associationToPathMap.remove(expressionId);
-		m_associationList.remove(expressionId);
-	}
-	
-	public List getAssociations()
-	{
-		return m_associationList;
-	}
-	
-	public void setLogicalOperator(IExpressionId expressionId, String operator)
-	{
-		m_associationToLogicalOperatorMap.put(expressionId, operator);
-	}
-	
-	public String getLogicalOperator(IExpressionId expressionId)
-	{
-		return m_associationToLogicalOperatorMap.get(expressionId);
+		return m_associationToLogicalOperatorMap.get(port);
 	}
 	
 	public void setLogicalOperator(int associationIdx, String operator)
 	{
-		m_associationToLogicalOperatorMap.put(m_associationList.get(associationIdx), operator);
+		m_associationToLogicalOperatorMap.put(sourcePorts.get(associationIdx), operator);
 	}
 	
 	public String getLogicalOperator(int associationIdx)
 	{
-		return m_associationToLogicalOperatorMap.get(m_associationList.get(associationIdx));
+		return m_associationToLogicalOperatorMap.get(sourcePorts.get(associationIdx));
 	}
 	public String getOperatorBetAttrAndAss()
 	{
@@ -137,43 +151,6 @@ public class ClassNode extends GenericNode
 	public void setOperatorBetAttrAndAss(String operator)
 	{
 		m_OperatorBetweenAttrAndAss = operator;
-	}
-	
-	public void setAssociationPath(IExpressionId expressionId, IPath path)
-	{
-		m_associationToPathMap.put(expressionId, path);
-	}
-	
-	public IPath getAssociationPath(IExpressionId expressionId)
-	{
-		return m_associationToPathMap.get(expressionId);
-	}
-	/**
-	 * Method to set intermediate exprssion Ids for a path 
-	 * @param expressionId
-	 * @param expressionIdList
-	 */
-	public void setIntermediateExpressionIdsForAssociation(IExpressionId expressionId, List<IExpressionId> expressionIdList)
-	{
-		m_associationToIntermediateExpressionIdsMap.put(expressionId, expressionIdList);
-	}
-	
-	public List<IExpressionId> getIntermediateExpressionIdsForAssociation(IExpressionId expressionId)
-	{
-		return m_associationToIntermediateExpressionIdsMap.get(expressionId);
-	}
-	
-	public IExpressionId getLogicalConnectorExpressionForAssociation(IExpressionId expressionId)
-	{
-		List<IExpressionId> list = m_associationToIntermediateExpressionIdsMap.get(expressionId);
-		if(list.size() == 0)
-			return expressionId;
-		else
-			return list.get(0);
-	}
-	public void removeIntermediateExpressionIdsForAssociation(IExpressionId expressionId)
-	{
-		m_associationToIntermediateExpressionIdsMap.remove(expressionId);
 	}
 	
 	public String getTooltipText()
