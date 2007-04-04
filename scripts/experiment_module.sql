@@ -1,182 +1,95 @@
-USE cab2b_test
-;
-
-
-
---  Drop Tables 
-DROP TABLE IF EXISTS AbstractDomainObject
-;
-
-DROP TABLE IF EXISTS AdditionalMetaData
-;
-
-DROP TABLE IF EXISTS ArrayDesign
-;
-
-DROP TABLE IF EXISTS Experiment
-;
-
-DROP TABLE IF EXISTS ExperimentGroup
-;
-
-DROP TABLE IF EXISTS ExpGrpMapping
-;
-
-DROP TABLE IF EXISTS MicroarrayChip
-;
-
-DROP TABLE IF EXISTS MicroarrayExperiment
-;
-
-DROP TABLE IF EXISTS MicroExpChipMap
-;
-
-
---  Create Tables 
-CREATE TABLE AbstractDomainObject
-(
-	ADO_ID BIGINT auto_increment,
-	ADO_ACTIVITY_STATUS VARCHAR(20),
-	PRIMARY KEY (ADO_ID)	
-) 
-;
-CREATE TABLE AdditionalMetaData
-(
-	AMD_ID BIGINT auto_increment,
-	AMD_NAME VARCHAR(50),
-	AMD_DESCRIPTION VARCHAR(200),
-	AMD_CREATED_ON DATE,
-	AMD_LAST_UPDATED_ON DATE,
-	PRIMARY KEY (AMD_ID),
-	KEY (AMD_ID)
-) 
-;
-CREATE TABLE ArrayDesign
-(
-	ARD_ID BIGINT auto_increment,
-	ARD_NAME VARCHAR(50),
-	PRIMARY KEY (ARD_ID),
-	KEY (ARD_ID)
-) 
-;
-CREATE TABLE Experiment
-(
-	EXP_ID BIGINT auto_increment,
-	PRIMARY KEY (EXP_ID),
-	KEY (EXP_ID)
-) 
-;
-CREATE TABLE ExperimentGroup
-(
-	EXG_ID BIGINT auto_increment,
-	PARENT_EXG_ID BIGINT default NULL,
-	PRIMARY KEY (EXG_ID),
-	KEY (EXG_ID)
-) 
-;
-CREATE TABLE ExpGrpMapping
-(
-	IDENTIFIER BIGINT auto_increment,
-	EXP_ID BIGINT NOT NULL,
-	EXG_ID BIGINT NOT NULL,
-	PRIMARY KEY (IDENTIFIER),
-	KEY (EXP_ID),
-	KEY (EXG_ID)
-) 
-;
-CREATE TABLE MicroarrayChip
-(
-	MIC_ID BIGINT auto_increment,
-	MIC_DESCRIPTION VARCHAR(200),
-	MIC_LABEL VARCHAR(50),	
-	ARD_ID BIGINT NOT NULL,
-	PRIMARY KEY (MIC_ID),
-	KEY (MIC_ID),
-	KEY (ARD_ID)
-) 
-;
-CREATE TABLE MicroarrayExperiment
-(
-	MEX_ID BIGINT auto_increment,
-	PRIMARY KEY (MEX_ID),
-	KEY (MEX_ID)
-) 
-;
-CREATE TABLE MicroExpChipMap
-(
-	IDENTIFIER BIGINT auto_increment,
-	MEX_ID BIGINT NOT NULL,
-	MIC_ID BIGINT NOT NULL,
-	PRIMARY KEY (IDENTIFIER),
-	KEY (MIC_ID),
-	KEY (MEX_ID)
-) 
-;
-
-
-# ----------- Table for saving data list annontation information ------------
-CREATE TABLE DataList
-(
-	DL_ID BIGINT auto_increment,
-	ENT_ID BIGINT DEFAULT NULL,
-	KEY (DL_ID)
-) 
-;
-
-
-# ----------- Table for saving the many-to-many mapping between experiment and datalist -------------
-CREATE TABLE DLExpMap
-(
-	IDENTIFIER BIGINT auto_increment,
-	EXP_ID BIGINT NOT NULL,
-	DL_ID BIGINT NOT NULL,
-	PRIMARY KEY (IDENTIFIER),
-	KEY (EXP_ID),
-	KEY (DL_ID)
-) 
-;
-
-
---  Create Foreign Key Constraints 
-ALTER TABLE AdditionalMetaData ADD CONSTRAINT FK_AdditionalMetaData_AbstractDomainObject 
-	FOREIGN KEY (AMD_ID) REFERENCES AbstractDomainObject (ADO_ID)
-;
-
-ALTER TABLE Experiment ADD CONSTRAINT FK_Experiment_AdditionalMetaData 
-	FOREIGN KEY (EXP_ID) REFERENCES AdditionalMetaData (AMD_ID)
-;
-
-ALTER TABLE ExperimentGroup ADD CONSTRAINT FK_ExperimentGroup_AdditionalMetaData 
-	FOREIGN KEY (EXG_ID) REFERENCES AdditionalMetaData (AMD_ID)
-;
-
-ALTER TABLE ExpGrpMapping ADD CONSTRAINT FK_ExpGrpMapping_Experiment 
-	FOREIGN KEY (EXP_ID) REFERENCES Experiment (EXP_ID)
-;
-
-ALTER TABLE ExpGrpMapping ADD CONSTRAINT FK_ExpGrpMapping_ExperimentGroup 
-	FOREIGN KEY (EXG_ID) REFERENCES ExperimentGroup (EXG_ID)
-;
-
-ALTER TABLE MicroarrayExperiment ADD CONSTRAINT FK_MicroarrayExperiment_Experiment 
-	FOREIGN KEY (MEX_ID) REFERENCES Experiment (EXP_ID)
-;
-
-ALTER TABLE MicroExpChipMap ADD CONSTRAINT FK_MicroExpChipMap_MicroarrayChip 
-	FOREIGN KEY (MIC_ID) REFERENCES MicroarrayChip (MIC_ID)
-;
-
-
-# --------- Constraints corresponding to DataList and Experiment assocation ------------
-
-ALTER TABLE DataList ADD CONSTRAINT FK_DataList_AdditionalMetadata
-	FOREIGN KEY (DL_ID) REFERENCES AdditionalMetadata(AMD_ID)
-;
-
-ALTER TABLE DLExpMap ADD CONSTRAINT FK_DLMap_Experiment
-	FOREIGN KEY (EXP_ID) REFERENCES Experiment(EXP_ID)
-;
-
-ALTER TABLE DLExpMap ADD CONSTRAINT FK_DLMap_DataList
-	FOREIGN KEY (DL_ID) REFERENCES DataList(DL_ID)
-;
+alter table experiment drop foreign key FKFAE9DBFD7ABC429D;
+alter table datalist drop foreign key FK6AADBB483E23832;
+alter table microarraychip drop foreign key FKDDA74FE1738EDEA7;
+alter table dlexpmap drop foreign key FK983F90A73E23832;
+alter table dlexpmap drop foreign key FK983F90A77ABC429D;
+alter table additionalmetadata drop foreign key FK74035C5673486922;
+alter table microarrayexperiment drop foreign key FKD5AAD3D2875AEBFA;
+alter table experimentgroup drop foreign key FKD9A210A264FE787B;
+alter table experimentgroup drop foreign key FKD9A210A27AB82B46;
+alter table microexpchipmap drop foreign key FK9F6302978789BE33;
+alter table microexpchipmap drop foreign key FK9F630297875AEBFA;
+alter table expgrpmapping drop foreign key FKCD7AF6267AB82B46;
+alter table expgrpmapping drop foreign key FKCD7AF6267ABC429D;
+drop table if exists experiment;
+drop table if exists datalist;
+drop table if exists arraydesign;
+drop table if exists microarraychip;
+drop table if exists dlexpmap;
+drop table if exists additionalmetadata;
+drop table if exists microarrayexperiment;
+drop table if exists abstractdomainobject;
+drop table if exists experimentgroup;
+drop table if exists microexpchipmap;
+drop table if exists expgrpmapping;
+create table experiment (
+   EXP_ID bigint not null,
+   primary key (EXP_ID)
+);
+create table datalist (
+   DL_ID bigint not null,
+   ENT_ID bigint,
+   primary key (DL_ID)
+);
+create table arraydesign (
+   ARD_ID bigint not null auto_increment,
+   ARD_NAME varchar(50),
+   primary key (ARD_ID)
+);
+create table microarraychip (
+   MIC_ID bigint not null auto_increment,
+   MIC_DESCRIPTION varchar(200),
+   MIC_LABEL varchar(50),
+   ARD_ID bigint,
+   primary key (MIC_ID)
+);
+create table dlexpmap (
+   EXP_ID bigint not null,
+   DL_ID bigint not null,
+   primary key (EXP_ID, DL_ID)
+);
+create table additionalmetadata (
+   AMD_ID bigint not null,
+   AMD_NAME varchar(50),
+   AMD_DESCRIPTION varchar(50),
+   AMD_CREATED_ON date,
+   AMD_LAST_UPDATED_ON date,
+   primary key (AMD_ID)
+);
+create table microarrayexperiment (
+   MEX_ID bigint not null,
+   primary key (MEX_ID)
+);
+create table abstractdomainobject (
+   ADO_ID bigint not null auto_increment,
+   ADO_ACTIVITY_STATUS varchar(50),
+   primary key (ADO_ID)
+);
+create table experimentgroup (
+   EXG_ID bigint not null,
+   PARENT_EXG_ID bigint,
+   primary key (EXG_ID)
+);
+create table microexpchipmap (
+   MEX_ID bigint not null,
+   MIC_ID bigint not null,
+   primary key (MIC_ID, MEX_ID)
+);
+create table expgrpmapping (
+   EXG_ID bigint not null,
+   EXP_ID bigint not null,
+   primary key (EXP_ID, EXG_ID)
+);
+alter table experiment add index FKFAE9DBFD7ABC429D (EXP_ID), add constraint FKFAE9DBFD7ABC429D foreign key (EXP_ID) references additionalmetadata (AMD_ID);
+alter table datalist add index FK6AADBB483E23832 (DL_ID), add constraint FK6AADBB483E23832 foreign key (DL_ID) references additionalmetadata (AMD_ID);
+alter table microarraychip add index FKDDA74FE1738EDEA7 (ARD_ID), add constraint FKDDA74FE1738EDEA7 foreign key (ARD_ID) references arraydesign (ARD_ID);
+alter table dlexpmap add index FK983F90A73E23832 (DL_ID), add constraint FK983F90A73E23832 foreign key (DL_ID) references datalist (DL_ID);
+alter table dlexpmap add index FK983F90A77ABC429D (EXP_ID), add constraint FK983F90A77ABC429D foreign key (EXP_ID) references experiment (EXP_ID);
+alter table additionalmetadata add index FK74035C5673486922 (AMD_ID), add constraint FK74035C5673486922 foreign key (AMD_ID) references abstractdomainobject (ADO_ID);
+alter table microarrayexperiment add index FKD5AAD3D2875AEBFA (MEX_ID), add constraint FKD5AAD3D2875AEBFA foreign key (MEX_ID) references experiment (EXP_ID);
+alter table experimentgroup add index FKD9A210A264FE787B (PARENT_EXG_ID), add constraint FKD9A210A264FE787B foreign key (PARENT_EXG_ID) references experimentgroup (EXG_ID);
+alter table experimentgroup add index FKD9A210A27AB82B46 (EXG_ID), add constraint FKD9A210A27AB82B46 foreign key (EXG_ID) references additionalmetadata (AMD_ID);
+alter table microexpchipmap add index FK9F6302978789BE33 (MIC_ID), add constraint FK9F6302978789BE33 foreign key (MIC_ID) references microarraychip (MIC_ID);
+alter table microexpchipmap add index FK9F630297875AEBFA (MEX_ID), add constraint FK9F630297875AEBFA foreign key (MEX_ID) references microarrayexperiment (MEX_ID);
+alter table expgrpmapping add index FKCD7AF6267AB82B46 (EXG_ID), add constraint FKCD7AF6267AB82B46 foreign key (EXG_ID) references experimentgroup (EXG_ID);
+alter table expgrpmapping add index FKCD7AF6267ABC429D (EXP_ID), add constraint FKCD7AF6267ABC429D foreign key (EXP_ID) references experiment (EXP_ID);
