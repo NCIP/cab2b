@@ -57,6 +57,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bCheckBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * Each JPageElement should know its pageIndex(String) and index in that page.
@@ -136,10 +137,12 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
 		//hyperlink = new JXHyperlink();
 		hyperlink = new Cab2bHyperlink();
 		hyperlink.setText(pageElement.getDisplayName());
+		Logger.out.info("Entity : " + pageElement.getDisplayName());
 		hyperlink.setUserObject(pageElement);            
 		descriptionLabel = new Cab2bLabel(pageElement.getDescription());
 		FontMetrics fontMetrics = descriptionLabel.getFontMetrics(descriptionLabel.getFont());
 		int stringWidth = fontMetrics.stringWidth(pageElement.getDescription());
+		Logger.out.info("Description : " + pageElement.getDescription());
 		descriptionLabel.setToolTipText(getWrappedText(stringWidth, pageElement.getDescription()));
 		
 		if(isSelectable && pagination != null)
@@ -170,17 +173,30 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
 		int textLength = text.length();
 		if(textLength == 0)
 			return sb.toString();
+		
+		Logger.out.info("");
 		int pixelPerChar = (int) (textSizeInPixel / textLength);
 		int charsPerLine = (int)(MAXCHARSONLINE /pixelPerChar); 
 		int numberoflines = textLength /charsPerLine;
+		Logger.out.info("Max CharonLine : " + MAXCHARSONLINE);
+		Logger.out.info("Text-Size in Pixel : " + textSizeInPixel);
+		Logger.out.info("textLength  : "+ textLength + " pixelPerChar : " + pixelPerChar + " charsPerLine   : " + charsPerLine + "  numberoflines :" + numberoflines );
+		
 		if(textLength% charsPerLine != 0)
 			numberoflines = numberoflines + 1;
+		
 		sb.append("<HTML>");
 		int currentStart=0;
 		for(int i=0; i<numberoflines-1; i++)
 		{
 			sb.append("<P>").append(text.substring(currentStart, currentStart+charsPerLine));
 			currentStart += charsPerLine;
+			
+			if((currentStart+charsPerLine) > textLength)
+				break;
+			
+			Logger.out.info ("Text Lines : " + text + "  currentStart :" + currentStart);
+			
 			//	Check if text has borken, if broken take next word 
 			if(((text.charAt(currentStart-1) != ' '))&&(text.charAt(currentStart) != ' '))
 			{
@@ -196,8 +212,8 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
 					return sb.toString();
 				}
 			}
-			if((currentStart+charsPerLine) > textLength)
-				break;
+		/*	if((currentStart+charsPerLine) > textLength)
+				break;*/
 		}
 		sb.append("<P>").append(text.substring(currentStart));
 		sb.append("</HTML>");
@@ -286,6 +302,6 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
 		
 		WindowUtilities.showInFrame(pageElementPanel1, "");
 		
-	}
+	}	
 	
 }
