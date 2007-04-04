@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,6 +33,8 @@ import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.common.dynamicextensions.domaininterface.UserDefinedDEInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.common.querysuite.metadata.associations.IAssociation;
+import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.queryobject.DataType;
 import edu.wustl.common.util.logger.Logger;
 
@@ -243,6 +246,21 @@ public class Utility {
         buff.append(name.substring(name.lastIndexOf(".") + 1, name.length()));
         return buff.toString();
     }
+    
+    public static String getPathDisplayString(IPath path)
+	{
+		StringBuffer sb = new StringBuffer();
+		sb.append("<HTML><B>Path</B>:");
+		List<IAssociation> list = path.getIntermediateAssociations();
+		sb.append(Utility.getDisplayName(path.getSourceEntity()));
+		for(int i=0; i<list.size(); i++)
+		{
+			sb.append("<B>----></B>");
+			sb.append(Utility.getDisplayName(list.get(i).getTargetEntity()));
+		}
+		sb.append("<HTML>");
+		return sb.toString();
+	}
 
     //    /**
     //     * Checks whether passed attribute/association is inheriated.
