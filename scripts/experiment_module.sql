@@ -1,4 +1,4 @@
-USE cab2b
+USE cab2b_test
 ;
 
 
@@ -118,8 +118,9 @@ CREATE TABLE MicroExpChipMap
 CREATE TABLE DataList
 (
 	DL_ID BIGINT auto_increment,
+	ENT_ID BIGINT DEFAULT NULL,
 	KEY (DL_ID)
-)
+) 
 ;
 
 
@@ -132,7 +133,7 @@ CREATE TABLE DLExpMap
 	PRIMARY KEY (IDENTIFIER),
 	KEY (EXP_ID),
 	KEY (DL_ID)
-)
+) 
 ;
 
 
