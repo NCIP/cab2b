@@ -12,6 +12,6 @@ public interface ExperimentGroupBusinessInterface extends BusinessInterface {
 	
 	public ExperimentGroup addExperimentGroup(Object expGrp) throws BizLogicException, UserNotAuthorizedException, RemoteException;
 	
-	public ExperimentGroup getExperimentGroup(String identifier) throws DAOException, RemoteException;
+	public ExperimentGroup getExperimentGroup(Long identifier) throws DAOException, RemoteException;
 	
 }

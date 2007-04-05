@@ -38,7 +38,17 @@ public interface DataListBusinessInterface extends BusinessInterface
 	 * @throws DAOException 
 	 */
 	public List<DataListMetadata> retrieveAllDataListMetadata() throws RemoteException, DynamicExtensionsSystemException, DAOException, ClassNotFoundException;
-
+	
+	/**
+	 * Retrives annotation for given datalist id.
+	 * @param id
+	 * @return
+	 * @throws RemoteException
+	 * @throws DAOException 
+	 */
+	public DataListMetadata retrieveDataListMetadata(Long id) throws RemoteException, DAOException;
+	
+	
 	/**
 	 * Returns a data list along with annotation.
 	 * @param dataListId
@@ -47,6 +57,6 @@ public interface DataListBusinessInterface extends BusinessInterface
 	 * @throws UserNotAuthorizedException
 	 * @throws RemoteException
 	 */
-	public DataList retreiveDataList(Long dataListId) throws BizLogicException, UserNotAuthorizedException, RemoteException;
+	public DataList retrieveDataList(Long dataListId) throws BizLogicException, UserNotAuthorizedException, RemoteException;
 	
 }

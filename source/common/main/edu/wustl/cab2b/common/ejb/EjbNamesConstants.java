@@ -6,9 +6,9 @@ public interface EjbNamesConstants {
 	
 	final static String ENTITY_CACHE = "EntityCache";
 	
-	final static String EXPERIMENT = "Experiment";
+	final static String EXPERIMENT = "edu.wustl.cab2b.server.ejb.experiment.Experiment";
 	
-	final static String EXPERIMENT_GROUP = "ExperimentGroup";
+	final static String EXPERIMENT_GROUP = "edu.wustl.cab2b.server.ejb.experiment.ExperimentGroup";
 	
     final static String SQL_QUERY_BEAN = "edu.wustl.cab2b.server.ejb.sqlquery.SQLQueryBean";
 
