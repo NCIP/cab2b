@@ -32,10 +32,10 @@ import edu.wustl.common.querysuite.metadata.path.IPath;
  * @author gautam_shetty
  * @author Chandrakant Talele
  */
-public class CaB2BPathFinder implements IPathFinder {
+public class ClientPathFinder implements IPathFinder {
     private PathFinderBusinessInterface pathFinder = null;
 
-    public CaB2BPathFinder() {
+    public ClientPathFinder() {
         //	Locate the PathFinder bean.
         pathFinder = (PathFinderBusinessInterface) Locator.getInstance().locate(
                                                    EjbNamesConstants.PATH_FINDER_BEAN,

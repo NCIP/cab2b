@@ -24,12 +24,11 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.dag.MainDagPanel;
 import edu.wustl.cab2b.client.ui.main.IComponent;
+import edu.wustl.cab2b.client.ui.query.ClientPathFinder;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
-import edu.wustl.cab2b.client.ui.query.CaB2BPathFinder;
+import edu.wustl.cab2b.client.ui.query.IPathFinder;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImageConstants;
-import edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface;
-import edu.wustl.cab2b.common.ejb.path.PathFinderHomeInterface;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
@@ -156,7 +155,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
 		imageMap.put(DagImageConstants.DocumentPaperIcon,Utilities.loadImage ("paper_grid.png"));
 		imageMap.put(DagImageConstants.PortImageIcon,Utilities.loadImage ("port.gif"));
 		
-		CaB2BPathFinder pathFinder = new CaB2BPathFinder();
+		IPathFinder pathFinder = new ClientPathFinder();
 		m_contentForBottomCenterPanel = new MainDagPanel(this, imageMap, pathFinder);
         m_bottomCenterPanel.add(m_contentForBottomCenterPanel);
 
