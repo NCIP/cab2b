@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.common.datalist.DataList;
+import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -33,7 +34,10 @@ public class MainSearchPanel extends Cab2bPanel
 
 	/** Data list of the user.*/
 	public static DataList dataList = new DataList();
-
+	
+	/** Reference to datalist metadata of the current datalist.  */
+	public static DataListMetadata savedDataListMetadata = null;
+	
 	/**
 	 * @return Returns the queryObject.
 	 */

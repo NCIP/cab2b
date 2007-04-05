@@ -131,6 +131,9 @@ public class SaveDatalistPanel extends Cab2bPanel
 						try
 						{
 							id = dataListBI.saveDataList(MainSearchPanel.dataList);
+							
+							MainSearchPanel.savedDataListMetadata = dataListBI.retrieveDataListMetadata(id);
+							
 							Logger.out.info("data list saved successfully (in entity with id) : "+id);
 							
 						}
@@ -178,6 +181,8 @@ public class SaveDatalistPanel extends Cab2bPanel
 							JOptionPane.showMessageDialog(mainSearchPanel, "Data List saved successfully !");
 						else
 							Logger.out.debug("data list not saved ! "+id);
+						Logger.out.info("datalist id : "+MainSearchPanel.dataList.getDataListAnnotation().getId());
+						Logger.out.info("entity id for dl : "+MainSearchPanel.dataList.getDataListAnnotation().getEntityId());
 					}
 					
 				};
