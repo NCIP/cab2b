@@ -1,30 +1,18 @@
 package edu.wustl.cab2b.server.experiment;
 
-import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import javax.ejb.EJBException;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
-
 import edu.wustl.cab2b.common.domain.AdditionalMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
-import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.dao.DAOFactory;
-import edu.wustl.common.dao.HibernateDAO;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.tree.ExperimentTreeNode;
@@ -33,14 +21,9 @@ import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.logger.Logger;
 
-/**
- * A class containing experiment related business logic.
- * @author chetan_bh
- *
- */
-public class ExperimentSessionBean extends DefaultBizLogic implements SessionBean, ExperimentBusinessInterface, Serializable{
 
-	
+public class ExperimentOperations extends DefaultBizLogic
+{
 	/**
 	 * Hibernate DAO Type to use.
 	 */
@@ -53,7 +36,7 @@ public class ExperimentSessionBean extends DefaultBizLogic implements SessionBea
 	 * @throws UserNotAuthorizedException 
 	 * @throws BizLogicException
 	 */
-	public void addExperiment(Object exp) throws BizLogicException, UserNotAuthorizedException, RemoteException 
+	public void addExperiment(Object exp) throws BizLogicException, UserNotAuthorizedException 
 	{
 		insert(exp, daoType);
 		Logger.out.info("experiment saved Successfully "+((Experiment)exp).getId());
@@ -69,7 +52,7 @@ public class ExperimentSessionBean extends DefaultBizLogic implements SessionBea
 	 * @throws BizLogicException 
 	 * @throws Exception 
 	 */
-	public void move(Object exp, Object srcExpGrp, Object tarExpGrp) throws DAOException, BizLogicException, UserNotAuthorizedException, RemoteException
+	public void move(Object exp, Object srcExpGrp, Object tarExpGrp) throws BizLogicException, UserNotAuthorizedException
 	{
 		Experiment experiment = (Experiment) exp;
 		
@@ -120,7 +103,7 @@ public class ExperimentSessionBean extends DefaultBizLogic implements SessionBea
 	 * @throws UserNotAuthorizedException 
 	 * @throws Exception 
 	 */
-	public void copy(Object exp, Object tarExpGrp) throws BizLogicException, UserNotAuthorizedException, RemoteException
+	public void copy(Object exp, Object tarExpGrp) throws BizLogicException, UserNotAuthorizedException
 	{
 		Experiment experiment = (Experiment) exp;
 		experiment.getName();
@@ -141,7 +124,7 @@ public class ExperimentSessionBean extends DefaultBizLogic implements SessionBea
 		
 	}
 	
-	public Vector getExperimentHierarchy() throws ClassNotFoundException, DAOException, RemoteException
+	public Vector getExperimentHierarchy() throws DAOException
 	{
 		Vector expHierarchyData = new Vector();
 		List returner = new ArrayList();
@@ -263,42 +246,6 @@ public class ExperimentSessionBean extends DefaultBizLogic implements SessionBea
 		}
 	}
 	
-//	public static void main(String[] args)
-//	{
-//		Experiment exp1 = new Experiment();
-//			exp1.setName("exp1"); 	exp1.setId(new Long(1));
-//		Experiment exp2 = new Experiment();
-//			exp2.setName("exp2"); 	exp2.setId(new Long(2));
-//		Experiment exp3 = new Experiment();
-//			exp3.setName("exp3");	exp3.setId(new Long(3));
-//		Experiment exp4 = new Experiment();
-//			exp4.setName("exp4");	exp4.setId(new Long(4));
-//		
-//		ExperimentGroup expGrp1 = new ExperimentGroup();
-//			expGrp1.setName("expGrp1");		expGrp1.setId(new Long(1));
-//		ExperimentGroup expGrp2 = new ExperimentGroup();
-//			expGrp2.setName("expGrp2");		expGrp2.setId(new Long(2));
-//		ExperimentGroup expGrp3 = new ExperimentGroup();
-//			expGrp3.setName("expGrp3");		expGrp3.setId(new Long(3));
-//		
-//		expGrp1.getExperimentCollection().add(exp1); 		exp1.getExperimentGroupCollection().add(expGrp1);
-//		expGrp2.getChildrenGroupCollection().add(expGrp3);  expGrp3.setParentGroup(expGrp2);
-//		expGrp2.getExperimentCollection().add(exp4); 		exp4.getExperimentGroupCollection().add(expGrp2);
-//		expGrp3.getExperimentCollection().add(exp3); 		exp3.getExperimentGroupCollection().add(expGrp3);
-//		
-//		Vector firstLevelNodes = new Vector();
-//		firstLevelNodes.add(expGrp1);
-//		firstLevelNodes.add(expGrp2);
-//		firstLevelNodes.add(exp2);
-//		
-//		ExperimentSessionBean expBizLogic = new ExperimentSessionBean();
-//		
-//		Vector expMetadata =  expBizLogic.getExperimentMetadataHierarchy(firstLevelNodes);
-//		
-//		Logger.out.info("expMetadata "+expMetadata);
-//		
-//	}
-	
 	
 	/**
 	 * A validation function to check the containment of an experiment in a experiment group
@@ -331,61 +278,6 @@ public class ExperimentSessionBean extends DefaultBizLogic implements SessionBea
 			throw new DAOException("Experiment name empty");
 		}
 		return true;
-    }
-	
-	public static void main(String[] args)
-	{
-		DAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
-		try
-		{
-			((HibernateDAO)dao).openSession(null);
-			Experiment mExp = (Experiment)dao.retrieve(Experiment.class.getName(),new Long(1));
-			ExperimentGroup eGroup1 = (ExperimentGroup) dao.retrieve(ExperimentGroup.class.getName(),new Long(5));
-			ExperimentGroup eGroup2 = (ExperimentGroup) dao.retrieve(ExperimentGroup.class.getName(),new Long(6));
-			// $$$$$$ moving and copying of experiments %%%%%%%
-	        ExperimentSessionBean expBizLogic = new ExperimentSessionBean();
-	        Logger.out.info("Copying experiment from group-1 to group-2");
-	        //expBizLogic.copy((Object)mExp, (Object)eGroup2);
-	        
-	        Logger.out.info("Moving experiment from group-1 to group-2");        
-	        //expBizLogic.move((Object)mExp, (Object)eGroup1, (Object)eGroup2);
-	        // $$$$$$  ########  %%%%%%%
-	        
-	        expBizLogic.getExperimentHierarchy();
-	        
-		}
-		catch (DAOException e)
-		{
-			e.printStackTrace();
-		}catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	public void ejbActivate() throws EJBException, RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void ejbPassivate() throws EJBException, RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void ejbRemove() throws EJBException, RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void ejbCreate()
-    {
-        
     }
 	
 }

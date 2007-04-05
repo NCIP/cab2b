@@ -1,14 +1,6 @@
 package edu.wustl.cab2b.server.experiment;
 
-import java.io.Serializable;
-import java.rmi.RemoteException;
-
-import javax.ejb.EJBException;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
-
 import edu.wustl.cab2b.common.domain.MicroarrayChip;
-import edu.wustl.cab2b.common.experiment.MicroarrayChipBusinessInterface;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.exception.BizLogicException;
@@ -17,14 +9,9 @@ import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
-/**
- * A class containing microarray chip related business logic.
- * @author chetan_bh
- *
- */
-public class MicroarrayChipSessionBean extends DefaultBizLogic implements SessionBean, Serializable, MicroarrayChipBusinessInterface
+
+public class MicroarrayChipOperations extends DefaultBizLogic
 {
-	
 	/**
 	 * Hibernate DAO Type to use.
 	 */
@@ -61,36 +48,5 @@ public class MicroarrayChipSessionBean extends DefaultBizLogic implements Sessio
 		}
 		//Logger.out.info("MicroarrayChipSessionBean : validate : returning true");
 		return true;
-    }
-	
-	
-	public static void main(String[] args)
-	{
-		
-	}
-
-	public void ejbActivate() throws EJBException, RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void ejbPassivate() throws EJBException, RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void ejbRemove() throws EJBException, RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void ejbCreate()
-    {
-        
     }
 }

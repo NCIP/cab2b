@@ -1,31 +1,18 @@
 package edu.wustl.cab2b.server.experiment;
 
-import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.EJBException;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
-
 import edu.wustl.cab2b.common.domain.AdditionalMetadata;
-import edu.wustl.cab2b.common.experiment.MetadataBusinessInterface;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.dao.JDBCDAOImpl;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.logger.Logger;
 
-/**
- * A class containing metadata related business logic.
- * @author chetan_bh
- *
- */
-public class MetadataSessionBean extends DefaultBizLogic implements SessionBean, Serializable, MetadataBusinessInterface
+
+public class MetadataOperations extends DefaultBizLogic
 {
-	
 	/**
 	 * Hibernate DAO Type to use.
 	 */
@@ -88,63 +75,4 @@ public class MetadataSessionBean extends DefaultBizLogic implements SessionBean,
 		
 		return expGrp;
 	}
-	
-	
-	public static void main(String[] args)
-	{
-		MetadataSessionBean mdataBizLogic = new MetadataSessionBean();
-		List metadataHierarchy;
-		try
-		{
-			metadataHierarchy = mdataBizLogic.getMetadataHierarchy(new Long(-1));
-			Logger.out.info("metadataHierarchy <> "+metadataHierarchy);
-		}
-		catch (DAOException e)
-		{
-			e.printStackTrace();
-		}
-		catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		
-		AdditionalMetadata metadata;
-		try
-		{
-			metadata = mdataBizLogic.getMetadata(2);
-			Logger.out.info("metadata "+metadata);
-			Logger.out.info("medataBizLogic <> "+metadata.getName()+", "+metadata.getActivityStatus());
-		}
-		catch (DAOException e)
-		{
-			e.printStackTrace();
-		}
-		
-		
-	}
-
-	public void ejbActivate() throws EJBException, RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void ejbPassivate() throws EJBException, RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void ejbRemove() throws EJBException, RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void ejbCreate()
-    {
-        
-    }
 }

@@ -1,16 +1,10 @@
 package edu.wustl.cab2b.server.experiment;
 
-import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.List;
-
-import javax.ejb.EJBException;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
 
 import edu.wustl.cab2b.common.domain.ArrayDesign;
 import edu.wustl.cab2b.common.domain.MicroarrayChip;
-import edu.wustl.cab2b.common.experiment.ArrayDesignBusinessInterface;
+import edu.wustl.cab2b.server.ejb.experiment.ArrayDesignSessionBean;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAO;
@@ -22,12 +16,8 @@ import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
 
-/**
- * A class containing array design related business logic.
- * @author chetan_bh
- *
- */
-public class ArrayDesignSessionBean extends DefaultBizLogic implements SessionBean, Serializable, ArrayDesignBusinessInterface
+
+public class ArrayDesignOperations extends DefaultBizLogic
 {
 	/**
 	 * Hibernate DAO Type to use.
@@ -98,12 +88,12 @@ public class ArrayDesignSessionBean extends DefaultBizLogic implements SessionBe
 		DAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
 		
 		ArrayDesign ad = null;
-		List results;
+		List results = null;
 		try
 		{
 			((HibernateDAO)dao).openSession(null);
 			ad = (ArrayDesign) dao.retrieve(ArrayDesign.class.getName(), new Long(1));
-			results = adBizLogic.getAllChipsFor(ad);
+			//results = adBizLogic.getAllChipsFor(ad);
 			for (int i = 0; i < results.size(); i++)
 			{
 				MicroarrayChip mChip = (MicroarrayChip)results.get(i);
@@ -113,35 +103,6 @@ public class ArrayDesignSessionBean extends DefaultBizLogic implements SessionBe
 		catch (DAOException e)
 		{
 			e.printStackTrace();
-		}
-		catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
 		}		
 	}
-
-	public void ejbActivate() throws EJBException, RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void ejbPassivate() throws EJBException, RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void ejbRemove() throws EJBException, RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-	public void ejbCreate()
-    {
-        
-    }
-	
 }
