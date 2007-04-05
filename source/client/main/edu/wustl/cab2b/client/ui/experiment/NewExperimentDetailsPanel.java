@@ -38,6 +38,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.jdesktop.swingx.JXTree;
 
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
+import edu.wustl.cab2b.client.ui.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -355,19 +356,21 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 				ExperimentGroup expGrpToAddTo = null;
 				try
 				{
-					expGrpToAddTo = expGrpBI.getExperimentGroup(expGrpId.toString());
-					Logger.out.info("expGrpToAddTo " + expGrpToAddTo.getName());
+					if(expGrpId != 0)
+					{
+						expGrpToAddTo = expGrpBI.getExperimentGroup(expGrpId);
+						experiment.getExperimentGroupCollection().add(expGrpToAddTo);
+						Logger.out.info("expGrpToAddTo " + expGrpToAddTo.getName());
+						
+						Logger.out.info("expGrpToAddTo experiment collection size :: "
+								+ expGrpToAddTo.getExperimentCollection().size());
+					}
 					
-					// TODO Replace this with actual data list.
-					experiment.getDataListMetadataCollection().add(dlMetadatas.get(1));
-					
-					experiment.getExperimentGroupCollection().add(expGrpToAddTo);
-					Logger.out.info("expGrpToAddTo experiment collection size :: "
-							+ expGrpToAddTo.getExperimentCollection().size());
+					experiment.getDataListMetadataCollection().add(MainSearchPanel.savedDataListMetadata);
 					
 					expBus.addExperiment(experiment);
 					Logger.out.info("Saved Experiment Successfully !!! " + experiment.getId());
-					
+					JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this, "Experiment saved successfully !");
 				}
 				catch (RemoteException e1) {
 					CommonUtils.handleException(e1, NewExperimentDetailsPanel.this, true, true, false, false);
@@ -380,6 +383,9 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 				}
 				catch (UserNotAuthorizedException e1) {
 					CommonUtils.handleException(e1, NewExperimentDetailsPanel.this, true, true, false, false);
+				}finally
+				{
+					dialog.dispose();
 				}
 			}
 		});
@@ -416,219 +422,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 		this.validate();
 		this.updateUI();
 	}
-
-	//	private void initGUI()
-	//	{
-	//		this.removeAll();
-	//		this.setLayout(new RiverLayout());
-	//		JLabel mandatoryNodeLabel = new Cab2bLabel(ApplicationProperties
-	//				.getValue("label.mandatorynote.text"));
-	//
-	//		JLabel expNameLabel = new Cab2bLabel("* Experiment Name : ");
-	//		expNameTextField = new Cab2bTextField();
-	//		expNameTextField.setColumns(22);
-	//
-	//		JLabel projectsLabel = new Cab2bLabel("* Project : ");
-	//
-	//		// // EJB code start
-	//		BusinessInterface bus = null;
-	//		try
-	//		{
-	//			bus = Locator.getInstance().locate("Experiment", ExperimentHome.class);
-	//		}
-	//		catch (LocatorException e1)
-	//		{
-	//			//JXErrorDialog.showDialog(this, "Error", e1);
-	//			e1.printStackTrace();
-	//		}
-	//		Vector dataVector = null;
-	//		final ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) bus;
-	//		try
-	//		{
-	//			dataVector = expBus.getExperimentHierarchy();
-	//		}
-	//		catch (RemoteException e1)
-	//		{
-	//			CommonUtils.handleException(e1, this, true, true, false, false);
-	//		}
-	//		catch (ClassNotFoundException e1)
-	//		{
-	//			CommonUtils.handleException(e1, this, true, true, false, false);
-	//		}
-	//		catch (DAOException e1)
-	//		{
-	//			CommonUtils.handleException(e1, this, true, true, false, false);
-	//		}
-	//
-	//		// EJB code end
-	//		GenerateTree treeGenerator = new GenerateTree();
-	//		projectsTree = (JXTree) treeGenerator.createTree(dataVector,
-	//				edu.wustl.common.util.global.Constants.EXPERIMETN_TREE_ID, true);
-	//		projectsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-	//		projectsTree.setEditable(true);
-	//		projectsTree.getModel().addTreeModelListener(new MyTreeModelListener());
-	//
-	//		projectsTree.setCellRenderer(new MyRenderer());
-	//
-	//		JLabel expDescLabel = new Cab2bLabel("Description : ");
-	//		expDescTextArea = new JTextArea();
-	//		expDescTextArea.setColumns(35);
-	//		expDescTextArea.setRows(5);
-	//
-	//		this.add("p", mandatoryNodeLabel);
-	//		this.add("p", expNameLabel);
-	//		this.add("tab", expNameTextField);
-	//
-	//		this.add("p vtop", projectsLabel);
-	//		treeScrollPane = new JScrollPane(projectsTree);
-	//		treeScrollPane.setPreferredSize(new Dimension(250, 300));
-	//
-	//		addNewButton = new Cab2bButton("Add New");
-	//		addNewButton.addActionListener(new ActionListener()
-	//		{
-	//
-	//			public void actionPerformed(ActionEvent e)
-	//			{
-	//
-	//				Object obj = null;
-	//
-	//				if (projectsTree.getSelectionCount() > 0)
-	//					obj = projectsTree.getSelectionPath().getLastPathComponent();
-	//				DefaultMutableTreeNode selectedTreeNode = (DefaultMutableTreeNode) obj;
-	//				//	There's no selection. Default to the root node.
-	//
-	//				if (selectedTreeNode == null)
-	//				{
-	//					selectedTreeNode = (DefaultMutableTreeNode) projectsTree.getModel().getRoot();
-	//				}
-	//				else
-	//				{
-	//					ExperimentTreeNode expTreeNode = (ExperimentTreeNode) selectedTreeNode
-	//							.getUserObject();
-	//					if (!expTreeNode.isExperimentGroup())
-	//						return;
-	//				}
-	//				// ------- inline editing ----------
-	//				DefaultTreeModel m_model = (DefaultTreeModel) projectsTree.getModel();
-	//
-	//				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode("New Node");
-	//				m_model.insertNodeInto(newNode, selectedTreeNode, selectedTreeNode.getChildCount());
-	//
-	//				//make the node visible by scroll to it
-	//				TreeNode[] nodes = m_model.getPathToRoot(newNode);
-	//				TreePath path = new TreePath(nodes);
-	//				projectsTree.scrollPathToVisible(path);
-	//
-	//				//select the newly added node
-	//				projectsTree.setSelectionPath(path);
-	//
-	//				//Make the newly added node editable
-	//				projectsTree.startEditingAtPath(path);
-	//			}
-	//		});
-	//
-	//		this.add("tab", addNewButton);
-	//		this.add("br tab ", treeScrollPane);
-	//
-	//		this.add("br vtop", expDescLabel);
-	//		this.add("tab ", new JScrollPane(expDescTextArea));
-	//
-	//		saveButton = new Cab2bButton("Save");
-	//		saveButton.addActionListener(new ActionListener()
-	//		{
-	//
-	//			public void actionPerformed(ActionEvent e)
-	//			{
-	//				Logger.out.info("Save Button is clicked. asdasd");
-	//
-	//				List<DataListMetadata> dlMetadats = null;
-	//
-	//				try
-	//				{
-	//					dlMetadats = getDataLlistMetadatas();
-	//				}
-	//				catch (Exception exp)
-	//				{
-	//					exp.printStackTrace();
-	//				}
-	//				Logger.out.info("projectsTree.getSelectionCount() "
-	//						+ projectsTree.getSelectionCount());
-	//				if (projectsTree.getSelectionCount() == 0)
-	//				{
-	//					JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this,
-	//							"Select an experiment group to add to");
-	//				}
-	//				else
-	//				{
-	//					Object obj = projectsTree.getSelectionPath().getLastPathComponent();
-	//					Logger.out.info("tree selection " + obj.getClass());
-	//
-	//					String experimentName = expNameTextField.getText();
-	//					if (experimentName == null || experimentName.equals(""))
-	//					{
-	//						Date currentDate = new Date(System.currentTimeMillis());
-	//						experimentName = currentDate.toString();
-	//					}
-	//					String experimentDescription = expDescTextArea.getText();
-	//
-	//					Experiment experiment = new Experiment();
-	//					experiment.setName(experimentName);
-	//					experiment.setDescription(experimentDescription);
-	//					//experiment.setExperimentGroupCollection(experimentGroupCollection)
-	//					experiment.setActivityStatus("active");
-	//					experiment.setDataListMetadataCollection(dlMetadats);
-	//
-	//					//					ExperimentBusinessInterface expBI = (ExperimentBusinessInterface)CommonUtils.
-	//					//									getBusinessInterface(EjbNamesConstants.EXPERIMENT, ExperimentHome.class);
-	//					//					
-	//					//					try
-	//					//					{
-	//					//						expBus.addExperiment(experiment);
-	//					//					}
-	//					//					catch (RemoteException e1)
-	//					//					{
-	//					//						e1.printStackTrace();
-	//					//					}
-	//					//					catch (BizLogicException e1)
-	//					//					{
-	//					//						e1.printStackTrace();
-	//					//					}
-	//					//					catch (UserNotAuthorizedException e1)
-	//					//					{
-	//					//						e1.printStackTrace();
-	//					//					}
-	//
-	//				}
-	//
-	//			}
-	//		});
-	//
-	//		cancelButton = new Cab2bButton("Cancel");
-	//		cancelButton.addActionListener(new ActionListener()
-	//		{
-	//
-	//			public void actionPerformed(ActionEvent e)
-	//			{
-	//				Logger.out.info("Cancel Button is clicked.");
-	//				dialog.dispose();
-	//			}
-	//		});
-	//
-	//		/*this.add("br br right",saveButton);
-	//		 this.add("tab right",cancelButton);*/
-	//
-	//		Cab2bPanel bottomPanel = new Cab2bPanel();
-	//		FlowLayout flowLayout = new FlowLayout();
-	//		flowLayout.setAlignment(FlowLayout.RIGHT);
-	//		flowLayout.setHgap(10);
-	//		bottomPanel.setLayout(flowLayout);
-	//		bottomPanel.add(cancelButton);
-	//		bottomPanel.add(saveButton);
-	//		this.add("br right", bottomPanel);
-	//
-	//		this.validate();
-	//		this.updateUI();
-	//	}
+	
 
 	public JDialog showInDialog()
 	{
@@ -659,6 +453,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 		}
 		ExperimentGroupBusinessInterface expGrpBus = (ExperimentGroupBusinessInterface) bus;
 		Long parentExpGrpID = selectedExperimentNode.getIdentifier();
+		Logger.out.info("addNewExperimentGroupNode :: parentExpGrpID : "+parentExpGrpID);
 		ExperimentGroup parentExperimentGroup = null;
 
 		if (expGrpName != null && !expGrpName.equals(""))
@@ -671,10 +466,12 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 
 			try
 			{
-				parentExperimentGroup = expGrpBus.getExperimentGroup(parentExpGrpID.toString());
-				newExpGrp.setParentGroup(parentExperimentGroup);
-				parentExperimentGroup.getChildrenGroupCollection().add(newExpGrp);
-
+				if(parentExpGrpID != 0)
+				{
+					parentExperimentGroup = expGrpBus.getExperimentGroup(parentExpGrpID);
+					newExpGrp.setParentGroup(parentExperimentGroup);
+					parentExperimentGroup.getChildrenGroupCollection().add(newExpGrp);
+				}
 				ExperimentGroup returnedExpGrp = expGrpBus.addExperimentGroup(newExpGrp);
 				newExpGrp = returnedExpGrp;
 				Logger.out.info("returner expGrp id " + returnedExpGrp.getId());
