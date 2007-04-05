@@ -107,7 +107,7 @@ public class DataListOperations extends DefaultBizLogic
 		return allDataList;
 	}
 
-	public DataList retreiveDataList(Long dataListId)
+	public DataList retrieveDataList(Long dataListId)
 	{
 		DataList dataList = new DataList();
 		//TODO Yet to implement this functionality.

@@ -35,12 +35,20 @@ public class DataListBean extends AbstractStatelessSessionBean
 	/**
 	 * @see DataListBusinessInterface#retreiveDataList(Long)
 	 */
-	public DataList retreiveDataList(Long dataListId) throws BizLogicException,
+	public DataList retrieveDataList(Long dataListId) throws BizLogicException,
 			UserNotAuthorizedException, RemoteException
 	{
-		return (new DataListOperations()).retreiveDataList(dataListId);
+		return (new DataListOperations()).retrieveDataList(dataListId);
 	}
-
+	
+	public DataListMetadata retrieveDataListMetadata(Long id) throws RemoteException, DAOException
+	{
+		List results = (new DataListOperations()).retrieve("DataListMetadata", "id", id);
+		if(results != null && results.size() > 0)
+			return (DataListMetadata)results.get(0);
+		return null;
+	}
+	
 	/**
 	 * @throws UserNotAuthorizedException 
 	 * @throws BizLogicException 
