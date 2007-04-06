@@ -29,7 +29,7 @@
             <ejb-name>edu.wustl.cab2b.server.ejb.experiment.Experiment</ejb-name>
             <home>edu.wustl.cab2b.common.experiment.ExperimentHome</home>
             <remote>edu.wustl.cab2b.common.experiment.ExperimentRemoteInterface</remote>
-            <ejb-class>edu.wustl.cab2b.server.experiment.ExperimentSessionBean</ejb-class>
+            <ejb-class>edu.wustl.cab2b.server.ejb.experiment.ExperimentSessionBean</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Bean</transaction-type>
        </session>
@@ -37,7 +37,7 @@
             <ejb-name>edu.wustl.cab2b.server.ejb.experiment.ExperimentGroup</ejb-name>
             <home>edu.wustl.cab2b.common.experiment.ExperimentGroupHome</home>
             <remote>edu.wustl.cab2b.common.experiment.ExperimentGroupRemoteInterface</remote>
-            <ejb-class>edu.wustl.cab2b.server.experiment.ExperimentGroupSessionBean</ejb-class>
+            <ejb-class>edu.wustl.cab2b.server.ejb.experiment.ExperimentGroupSessionBean</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Bean</transaction-type>
        </session>
