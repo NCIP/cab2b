@@ -47,7 +47,6 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.DataListHome;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
@@ -58,8 +57,6 @@ import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.experiment.ExperimentGroupBusinessInterface;
 import edu.wustl.cab2b.common.experiment.ExperimentGroupHome;
 import edu.wustl.cab2b.common.experiment.ExperimentHome;
-import edu.wustl.cab2b.common.locator.Locator;
-import edu.wustl.cab2b.common.locator.LocatorException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.tree.ExperimentTreeNode;
@@ -81,29 +78,29 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 {
 
 	private static final long serialVersionUID = 6029827434064457102L;
-	
+
 	/**
 	 * A text field component to accept experiment name from user.
 	 */
 	JTextField expNameTextField;
-	
+
 	/**
 	 * A tree component to show experiment and experiment group hierarchy.
 	 */
 	JXTree projectsTree;
 
 	JScrollPane treeScrollPane;
-	
+
 	/**
 	 * A text area component to accept experiment description from the user.
 	 */
 	JTextArea expDescTextArea;
-	
+
 	/**
 	 * A button component to listen for users "create new experiment group" action.
 	 */
 	Cab2bButton addNewButton;
-	
+
 	/**
 	 * A dialog component to show this panel in it.
 	 */
@@ -123,7 +120,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 		//initGUI();
 		initGUIGBL();
 	}
-	
+
 	/**
 	 * Initialize this panel with all components using {@link GridBagLayout}.
 	 */
@@ -139,7 +136,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 		expNameTextField.setColumns(22);
 
 		JLabel projectsLabel = new Cab2bLabel("* Project : ");
-		
+
 		Vector dataVector = null;
 		final ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils
 				.getBusinessInterface(EjbNamesConstants.EXPERIMENT, ExperimentHome.class);
@@ -222,6 +219,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 		addNewButton = new Cab2bButton("Add New");
 		addNewButton.addActionListener(new ActionListener()
 		{
+
 			public void actionPerformed(ActionEvent e)
 			{
 				Object obj = null;
@@ -297,6 +295,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 		saveButton = new Cab2bButton("Save");
 		saveButton.addActionListener(new ActionListener()
 		{
+
 			public void actionPerformed(ActionEvent e)
 			{
 				if (projectsTree.getSelectionCount() == 0)
@@ -305,7 +304,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 							"Select an experiment group to add to");
 					return;
 				}
-				
+
 				Object obj = projectsTree.getSelectionPath().getLastPathComponent();
 				DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) obj;
 
@@ -317,7 +316,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 							"Select experiment group");
 					return;
 				}
-				
+
 				List<DataListMetadata> dlMetadatas = null;
 
 				try
@@ -356,34 +355,45 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 				ExperimentGroup expGrpToAddTo = null;
 				try
 				{
-					if(expGrpId != 0)
+					if (expGrpId != 0)
 					{
 						expGrpToAddTo = expGrpBI.getExperimentGroup(expGrpId);
 						experiment.getExperimentGroupCollection().add(expGrpToAddTo);
 						Logger.out.info("expGrpToAddTo " + expGrpToAddTo.getName());
-						
+
 						Logger.out.info("expGrpToAddTo experiment collection size :: "
 								+ expGrpToAddTo.getExperimentCollection().size());
 					}
-					
-					experiment.getDataListMetadataCollection().add(MainSearchPanel.savedDataListMetadata);
-					
+
+					experiment.getDataListMetadataCollection().add(
+							MainSearchPanel.savedDataListMetadata);
+
 					expBus.addExperiment(experiment);
 					Logger.out.info("Saved Experiment Successfully !!! " + experiment.getId());
-					JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this, "Experiment saved successfully !");
+					JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this,
+							"Experiment saved successfully !");
 				}
-				catch (RemoteException e1) {
-					CommonUtils.handleException(e1, NewExperimentDetailsPanel.this, true, true, false, false);
+				catch (RemoteException e1)
+				{
+					CommonUtils.handleException(e1, NewExperimentDetailsPanel.this, true, true,
+							false, false);
 				}
-				catch (DAOException e1)	{
-					CommonUtils.handleException(e1, NewExperimentDetailsPanel.this, true, true, false, false);
+				catch (DAOException e1)
+				{
+					CommonUtils.handleException(e1, NewExperimentDetailsPanel.this, true, true,
+							false, false);
 				}
-				catch (BizLogicException e1) {
-					CommonUtils.handleException(e1, NewExperimentDetailsPanel.this, true, true, false, false);
+				catch (BizLogicException e1)
+				{
+					CommonUtils.handleException(e1, NewExperimentDetailsPanel.this, true, true,
+							false, false);
 				}
-				catch (UserNotAuthorizedException e1) {
-					CommonUtils.handleException(e1, NewExperimentDetailsPanel.this, true, true, false, false);
-				}finally
+				catch (UserNotAuthorizedException e1)
+				{
+					CommonUtils.handleException(e1, NewExperimentDetailsPanel.this, true, true,
+							false, false);
+				}
+				finally
 				{
 					dialog.dispose();
 				}
@@ -393,6 +403,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 		cancelButton = new Cab2bButton("Cancel");
 		cancelButton.addActionListener(new ActionListener()
 		{
+
 			public void actionPerformed(ActionEvent e)
 			{
 				dialog.dispose();
@@ -422,7 +433,6 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 		this.validate();
 		this.updateUI();
 	}
-	
 
 	public JDialog showInDialog()
 	{
@@ -440,20 +450,11 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 	{
 		ExperimentTreeNode selectedExperimentNode = (ExperimentTreeNode) ((DefaultMutableTreeNode) newNode
 				.getParent()).getUserObject();
-		// = (ExperimentTreeNode)selectedTreeNode.getUserObject();
 
-		BusinessInterface bus = null;
-		try
-		{
-			bus = Locator.getInstance().locate("ExperimentGroup", ExperimentGroupHome.class);
-		}
-		catch (LocatorException e1)
-		{
-			CommonUtils.handleException(e1, this, true, true, false, false);
-		}
-		ExperimentGroupBusinessInterface expGrpBus = (ExperimentGroupBusinessInterface) bus;
+		ExperimentGroupBusinessInterface expGrpBus = (ExperimentGroupBusinessInterface) CommonUtils
+				.getBusinessInterface(EjbNamesConstants.EXPERIMENT_GROUP, ExperimentGroupHome.class);
 		Long parentExpGrpID = selectedExperimentNode.getIdentifier();
-		Logger.out.info("addNewExperimentGroupNode :: parentExpGrpID : "+parentExpGrpID);
+		Logger.out.info("addNewExperimentGroupNode :: parentExpGrpID : " + parentExpGrpID);
 		ExperimentGroup parentExperimentGroup = null;
 
 		if (expGrpName != null && !expGrpName.equals(""))
@@ -466,7 +467,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 
 			try
 			{
-				if(parentExpGrpID != 0)
+				if (parentExpGrpID != 0)
 				{
 					parentExperimentGroup = expGrpBus.getExperimentGroup(parentExpGrpID);
 					newExpGrp.setParentGroup(parentExperimentGroup);
@@ -509,7 +510,9 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 
 	class MyRenderer extends DefaultTreeCellRenderer
 	{
-
+		
+		private static final long serialVersionUID = 8552472456633962811L;
+		
 		Icon expIcon = new ImageIcon("resources/images/experiment_small.gif");
 		Icon expEmpty = new ImageIcon("resources/images/empty_folder.ico");
 		Icon expGrpOpenIcon = new ImageIcon("resources/images/folder_open.ico");
