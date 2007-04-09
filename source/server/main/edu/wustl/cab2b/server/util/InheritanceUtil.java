@@ -114,9 +114,9 @@ public class InheritanceUtil {
         builder.append(CONNECTOR);
         builder.append(srcRoleName);
         builder.append(CONNECTOR);
-        builder.append(tgtEntityName);
-        builder.append(CONNECTOR);
         builder.append(tgtRoleName);
+        builder.append(CONNECTOR);
+        builder.append(tgtEntityName);
         return builder.toString();
 
     }
