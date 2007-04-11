@@ -21,7 +21,9 @@ import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.CustomizableBorder;
+import edu.wustl.cab2b.client.ui.experiment.ExperimentPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
@@ -50,6 +52,8 @@ public class MainFrame extends JXFrame {
 	
 	public static SearchDataWelcomePanel searchDataWelcomePanel = null;
 	
+	public static ExperimentPanel openExperimentWelcomePanel = null;
+	
 	public static NewWelcomePanel newWelcomePanel = null; 
 	
 	/**
@@ -74,6 +78,7 @@ public class MainFrame extends JXFrame {
 	
 	JSplitPane splitPane;
 	
+	public static JXPanel splitPanelPanel;
 	
 	public MainFrame() {
 		this("");
@@ -96,8 +101,8 @@ public class MainFrame extends JXFrame {
 	 */
 	private void initGUI()
 	{
-		setExtendedState(JXFrame.MAXIMIZED_BOTH); 
-		//setSize(Toolkit.getDefaultToolkit().getScreenSize());
+		setExtendedState(JXFrame.MAXIMIZED_BOTH);
+
 		this.setLayout(new BorderLayout());
 		
 		globalNavigationPanel = new GlobalNavigationPanel(this);
@@ -115,9 +120,8 @@ public class MainFrame extends JXFrame {
 		splitPane.setOneTouchExpandable(true);
 		Dimension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
 		splitPane.setDividerLocation(dim.width);
-		
-		
-		JXPanel splitPanelPanel = new Cab2bPanel(new RiverLayout());
+				
+		splitPanelPanel = new Cab2bPanel(new RiverLayout());
 		splitPanelPanel.add("hfill vfill",splitPane);
 		splitPanelPanel.setBorder(new CustomizableBorder(new Insets(10,0,6,10), true, true));
 		
@@ -135,6 +139,25 @@ public class MainFrame extends JXFrame {
 		
 	}
 	
+	public void setOpenExperimentWelcomePanel()
+	{
+		CustomSwingWorker swingWorker = new CustomSwingWorker(this.splitPanelPanel)
+		{		
+		@Override
+		protected void doNonUILogic() throws RuntimeException {
+			openExperimentWelcomePanel = new ExperimentPanel("My Experiments");
+		}
+
+		@Override
+		protected void doUIUpdateLogic() throws RuntimeException {
+			// TODO Auto-generated method stub
+			MainFrame.this.remove(splitPanelPanel);
+			MainFrame.this.add(openExperimentWelcomePanel);			
+		}		
+		};
+		swingWorker.start();	
+	}
+	
 	public void setSearchDataWelcomePanel()
 	{
 		if(searchDataWelcomePanel == null)
@@ -145,7 +168,7 @@ public class MainFrame extends JXFrame {
 		setWelcomePanel();			
 	}
 	
-	public void setNewWelcomePanel()
+	public void setHomeWelcomePanel()
 	{
 		if(newWelcomePanel == null)
 		{
@@ -162,6 +185,11 @@ public class MainFrame extends JXFrame {
 		splitPane.setOneTouchExpandable(true);
 		Dimension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
 		splitPane.setDividerLocation(dim.width);
+		if(openExperimentWelcomePanel != null && openExperimentWelcomePanel.isVisible()==true)
+		{
+			this.remove(openExperimentWelcomePanel);
+			this.add(splitPanelPanel);		
+		}
 	}
 	
 	public void setDataForMySearchQueriesPanel(Vector data)
@@ -241,11 +269,8 @@ public class MainFrame extends JXFrame {
 		popularSearchCategories.add("Microarray Annotation");
 		popularSearchCategories.add("Tissue Biospecimens");
 		popularSearchCategories.add("Molecular Biospecimens");
-		mainFrame.setDataForPopularSearchCategoriesPanel(popularSearchCategories);
-		
-		mainFrame.setVisible(true);
-		
-	}
-	
+		mainFrame.setDataForPopularSearchCategoriesPanel(popularSearchCategories);		
+		mainFrame.setVisible(true);		
+	}	
 }
 
