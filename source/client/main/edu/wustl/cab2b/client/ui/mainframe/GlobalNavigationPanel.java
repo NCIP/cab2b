@@ -33,6 +33,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bStandardFonts;
+import edu.wustl.cab2b.client.ui.experiment.ExperimentPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 
 import edu.wustl.common.util.logger.Logger;
@@ -316,7 +317,7 @@ public class GlobalNavigationPanel extends Cab2bPanel implements ActionListener
 					if(this.frame instanceof MainFrame)
 					{
 						 MainFrame mainframePanel = (MainFrame)this.frame;
-						 mainframePanel.setNewWelcomePanel();
+						 mainframePanel.setHomeWelcomePanel();
 						 Logger.out.info("Global Nagigation Panel Home Button");
 					}					
 				}else
@@ -328,9 +329,8 @@ public class GlobalNavigationPanel extends Cab2bPanel implements ActionListener
 						 mainframePanel.setSearchDataWelcomePanel();
 
 						 // reset DataList Save status
-						SaveDatalistPanel.isDataListSaved = false;
-						 
-						 Logger.out.info("Global Nagigation Panel Search Button");
+						SaveDatalistPanel.isDataListSaved = false;						 
+						Logger.out.info("Global Nagigation Panel Search Button");
 					}
 		/*			mainSearchPanel = new MainSearchPanel();					
 					Dimension relDimension = CommonUtils.getRelativeDimension(MainFrame.mainframeScreenDimesion, 0.90f, 0.85f);
@@ -352,7 +352,29 @@ public class GlobalNavigationPanel extends Cab2bPanel implements ActionListener
 					mainSearchPanel = null;	*/				
 				}else if(tabButtons[i].getActionCommand().equals("Experiment"))
 				{
-					JOptionPane.showMessageDialog(frame, "Yet to Implement");					
+					
+					 MainFrame mainframePanel = (MainFrame)this.frame;
+					 mainframePanel.setOpenExperimentWelcomePanel();
+					
+					/*//deepak-start
+					
+					ExperimentPanel experimentPanel = new ExperimentPanel("test");					
+					Dimension relDimension = CommonUtils.getRelativeDimension(MainFrame.mainframeScreenDimesion, 0.90f, 0.85f);
+					experimentPanel.setPreferredSize(relDimension);
+					experimentPanel.setSize(relDimension);
+					
+					edu.wustl.cab2b.client.ui.util.CommonUtils.FrameReference = frame;
+					
+					// Update the variable for latest screen dimension from the toolkit, this is to handle the situations were
+					// Application is started and then screen resolution is changed, but the variable stiil holds old resolution size.
+					MainFrame.mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
+					Dimension dimension = MainFrame.mainframeScreenDimesion;
+					
+					WindowUtilities.showInDialog(frame, experimentPanel, "My Experiment", new Dimension((int)(dimension.width * 0.90), (int)(dimension.height * 0.85)), true, true);				
+					experimentPanel = null;	*/
+					
+					//deepak-end
+								
 					return;
 				}
 			}
