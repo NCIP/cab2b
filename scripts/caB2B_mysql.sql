@@ -8,7 +8,7 @@ drop table if exists ID_TABLE;
 
 /*INTERMEDIATE_PATH contains  ASSOCIATION(ASSOCIATION_ID) connected by underscore */
 create table PATH(
-     PATH_ID           bigint         not null auto_increment,
+     PATH_ID           bigint         not null,
      FIRST_ENTITY_ID   bigint         null,
      INTERMEDIATE_PATH varchar(1000)  null,
      LAST_ENTITY_ID    bigint         null,
