@@ -24,11 +24,11 @@ public interface SQLQueryBusinessInterface extends BusinessInterface {
      * This method executes the given SELECT SQL query using passes parameters.
      * @param sql The SQL statement.
      * @param params All the parameter objects.
-     * @return Object[][] as result of the query with each row represents one record of result set and 
+     * @return String[][] as result of the query with each row represents one record of result set and 
      * each column in array is a column present in SELECT clause. 
      * The order of columns is same as that present in the passes SQL.   
      * @throws RemoteException EJB specific exception.
      * @throws SQLException SQLException if some error occured while executing the SQL statement.
      */
-    public Object[][] executeQuery(String sql, Object... params)  throws RemoteException,SQLException;
+    public String[][] executeQuery(String sql, Object... params)  throws RemoteException,SQLException;
 }

@@ -41,6 +41,7 @@ import edu.common.dynamicextensions.entitymanager.EntityManagerInterface;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.util.IdGenerator;
 import edu.wustl.cab2b.server.path.pathgen.GraphPathFinder;
 import edu.wustl.cab2b.server.path.pathgen.Path;
 import edu.wustl.cab2b.server.path.pathgen.PathToFileWriter;
@@ -222,10 +223,10 @@ public class PathBuilder {
             nextId++;
         }
         String columns = "(ASSOCIATION_ID,ASSOCIATION_TYPE)";
-        loadDataFromFile(connection, ASSOCIATION_FILE_NAME, columns, "ASSOCIATION");
+        loadDataFromFile(connection, ASSOCIATION_FILE_NAME, columns, "ASSOCIATION",new Class[]{Long.class,Integer.class});
 
         columns = "(ASSOCIATION_ID,DE_ASSOCIATION_ID)";
-        loadDataFromFile(connection, INTRA_MODEL_ASSOCIATION_FILE_NAME, columns, "INTRA_MODEL_ASSOCIATION");
+        loadDataFromFile(connection, INTRA_MODEL_ASSOCIATION_FILE_NAME, columns, "INTRA_MODEL_ASSOCIATION",new Class[]{Long.class,Long.class});
         Logger.out.debug("All the associations are registered");
     }
 
@@ -242,7 +243,7 @@ public class PathBuilder {
 
         List<String> pathList = readFullFile();
         BufferedWriter pathFile = new BufferedWriter(new FileWriter(new File(PATH_FILE_NAME)));
-
+        IdGenerator.setInitialValue(getNextPathId(connection));
         for (int i = 0; i < pathList.size(); i++) {
             Logger.out.info("Transforming Path : " + i);
 
@@ -253,6 +254,8 @@ public class PathBuilder {
             Long[] allEntitiesInPath = getEntityIdSequence(firstEntityId, columnValues[1], lastEntityId);
 
             for (String iPath : getIntraModelPaths(allEntitiesInPath, prepareStatement)) {
+                pathFile.write(Long.toString(IdGenerator.getNextId()));
+                pathFile.write(FIELD_SEPARATOR);
                 pathFile.write(Long.toString(firstEntityId));
                 pathFile.write(FIELD_SEPARATOR);
                 pathFile.write(iPath);
@@ -263,9 +266,9 @@ public class PathBuilder {
             }
         }
         prepareStatement.close();
-        String pathColumns = "(FIRST_ENTITY_ID,INTERMEDIATE_PATH,LAST_ENTITY_ID)";
+        String pathColumns = "(PATH_ID,FIRST_ENTITY_ID,INTERMEDIATE_PATH,LAST_ENTITY_ID)";
         Logger.out.info("Generated the paths to file : " + PATH_FILE_NAME);
-        loadDataFromFile(connection, PATH_FILE_NAME, pathColumns, "PATH");
+        loadDataFromFile(connection, PATH_FILE_NAME, pathColumns, "PATH",new Class[]{Long.class,Long.class,String.class,Long.class});
     }
 
     /**
@@ -344,13 +347,13 @@ public class PathBuilder {
         ArrayList<Long> list = new ArrayList<Long>(associations.size());
         for (AssociationInterface association : associations) {
             prepareStatement.setLong(1, association.getId());
-            Object[][] res = SQLQueryUtil.executeQuery(prepareStatement);
+            String[][] res = SQLQueryUtil.executeQuery(prepareStatement);
             if (res.length != 1 || res[0].length != 1) {
                 throw new RuntimeException(
                         "More than one OR Zero rows found in INTRA_MODEL_ASSOCIATION for DE_ASSOCIATION_ID : "
                                 + association.getId());
             }
-            list.add((Long) res[0][0]);
+            list.add(Long.parseLong(res[0][0]));
         }
         return list;
     }
@@ -384,11 +387,11 @@ public class PathBuilder {
      * @return Next available ID to insert records in ASSOCIATION table.
      */
     static synchronized Long getNextAssociationId(int noOfAssociations, Connection connection) {
-        Object[][] result = SQLQueryUtil.executeQuery("select NEXT_ASSOCIATION_ID from ID_TABLE;", connection);
+        String[][] result = SQLQueryUtil.executeQuery("select NEXT_ASSOCIATION_ID from ID_TABLE", connection);
         if (result.length != 1) {
             throw new RuntimeException("Zero or more than one rows found in ID_TABLE");
         }
-        Long nextId = (Long) result[0][0];
+        Long nextId = Long.parseLong(result[0][0]);
         String updateNextIdSql = "update ID_TABLE set NEXT_ASSOCIATION_ID = " + (nextId + noOfAssociations);
 
         SQLQueryUtil.executeUpdate(updateNextIdSql, connection);
@@ -401,8 +404,8 @@ public class PathBuilder {
      * @param fileName Full path of data file.
      * @param columns Data columns in table. They should be in format "(column1,column2,...)"
      * @param tableName Name of the table in which data to load.
-     */
-    static void loadDataFromFile(Connection connection, String fileName, String columns, String tableName) {
+     */   /*
+ static void loadDataFromFile(Connection connection, String fileName, String columns, String tableName) {
         Logger.out.debug("Entering method loadDataFromFile()");
 
         StringBuffer buffer = new StringBuffer();
@@ -418,6 +421,51 @@ public class PathBuilder {
         Logger.out.info("Loading data to database from file : " + fileName);
         SQLQueryUtil.executeUpdate(buffer.toString(), connection);
         Logger.out.info("Loading data to database from file : " + fileName + " DONE");
+        Logger.out.debug("Leaving method loadDataFromFile()");
+    }
+*/
+    static void loadDataFromFile(Connection connection, String fileName, String columns, String tableName,Class<?>[] dataTypes) {
+        Logger.out.debug("Entering method loadDataFromFile()");
+
+        BufferedReader bufferedReader = null;
+        try {
+            bufferedReader = new BufferedReader(new FileReader(fileName));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("File not found :" + fileName, e, IO_0001);
+        }
+        int columnCount = columns.split(",").length;
+        StringBuffer sql = new StringBuffer();
+        sql.append("insert into ").append(tableName).append(" ").append(columns).append(" values(");
+        for (int i = 0; i < columnCount; i++) {
+            sql.append("?,");
+        }
+        sql.deleteCharAt(sql.length() - 1);
+        sql.append(")");
+        System.out.println(sql);
+        PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement(sql.toString());
+            String oneRecord = "";
+            while ((oneRecord = bufferedReader.readLine()) != null) {
+                String[] values = oneRecord.split(FIELD_SEPARATOR);
+                for (int j = 0; j < columnCount; j++) {
+                    if (dataTypes[j].equals(String.class)) {
+                        ps.setString(j + 1, values[j]);
+                    } else if (dataTypes[j].equals(Long.class)) {
+                        ps.setLong(j + 1, Long.parseLong(values[j]));
+                    } else if (dataTypes[j].equals(Integer.class)) {
+                        ps.setInt(j + 1, Integer.parseInt(values[j]));
+                    }
+                }
+                ps.executeUpdate();
+                ps.clearParameters();
+            }
+            bufferedReader.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Logger.out.debug("Leaving method loadDataFromFile()");
     }
 
@@ -454,10 +502,10 @@ public class PathBuilder {
             nextId++;
         }
         String columns = "(ASSOCIATION_ID,ASSOCIATION_TYPE)";
-        loadDataFromFile(connection, ASSOCIATION_FILE_NAME, columns, "ASSOCIATION");
+        loadDataFromFile(connection, ASSOCIATION_FILE_NAME, columns, "ASSOCIATION",new Class[] {Long.class,Integer.class});
 
         columns = "(ASSOCIATION_ID,LEFT_ENTITY_ID,LEFT_ATTRIBUTE_ID,RIGHT_ENTITY_ID,RIGHT_ATTRIBUTE_ID)";
-        loadDataFromFile(connection, INTER_MODEL_ASSOCIATION_FILE_NAME, columns, "INTER_MODEL_ASSOCIATION");
+        loadDataFromFile(connection, INTER_MODEL_ASSOCIATION_FILE_NAME, columns, "INTER_MODEL_ASSOCIATION",new Class[] {Long.class,Long.class,Long.class,Long.class,Long.class});
     }
 
     /**
@@ -556,5 +604,15 @@ public class PathBuilder {
         Connection con = DriverManager.getConnection(url, userName, password);
         PathBuilder.buildAndLoadAllModels(con);
         con.close();
+    }
+    private static long getNextPathId(Connection connection) {
+        String[][] result = SQLQueryUtil.executeQuery("select MAX(PATH_ID) from PATH", connection);
+        Long maxId;
+        if (result[0][0] == null) {
+            maxId = 0L;
+        } else {
+            maxId = Long.parseLong(result[0][0]);
+        }
+        return maxId + 1;
     }
 }

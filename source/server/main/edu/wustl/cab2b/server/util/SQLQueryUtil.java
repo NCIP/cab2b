@@ -48,13 +48,13 @@ public class SQLQueryUtil {
      * It uses prepare statement and maintains a static map of those to reuse those if same query is fired again.
      * @param sql The SQL statement.
      * @param params All the parameter objects.
-     * @return Object[][] as result of the query with each row represents one record of result set and 
+     * @return String[][] as result of the query with each row represents one record of result set and 
      * each column in array is a column present in SELECT clause. 
      * The order of columns is same as that present in the passes SQL.   
      * @throws RemoteException EJB specific exception.
      * @throws SQLException SQLException if some error occured while executing the SQL statement.
      */
-    public static Object[][] executeQuery(String sql, Connection connection, Object... params) {
+    public static String[][] executeQuery(String sql, Connection connection, Object... params) {
         
         PreparedStatement prepareStatement = null;
         ResultSet rs = null;
@@ -109,13 +109,13 @@ public class SQLQueryUtil {
      * It uses prepare statement and maintains a static map of those to reuse those if same query is fired again.
      * @param sql The SQL statement.
      * @param params All the parameter objects.
-     * @return Object[][] as result of the query with each row represents one record of result set and 
+     * @return String[][] as result of the query with each row represents one record of result set and 
      * each column in array is a column present in SELECT clause. 
      * The order of columns is same as that present in the passes SQL.   
      * @throws RemoteException EJB specific exception.
      * @throws SQLException SQLException if some error occured while executing the SQL statement.
      */
-    public static Object[][] executeQuery(PreparedStatement prepareStatement) {
+    public static String[][] executeQuery(PreparedStatement prepareStatement) {
         try {
             ResultSet rs = prepareStatement.executeQuery();
             return getResult(rs);
@@ -124,18 +124,23 @@ public class SQLQueryUtil {
         }
     }
     
-    public static Object[][] getResult(ResultSet rs) throws SQLException {
-        List<Object[]> results = new ArrayList<Object[]>();
+    /**
+     * @param rs Result set to process
+     * @return String[][] created by getting all records of result set
+     * @throws SQLException if some error occured while processing result set
+     */
+    public static String[][] getResult(ResultSet rs) throws SQLException {
+        List<String[]> results = new ArrayList<String[]>();
         int noOfColumns = rs.getMetaData().getColumnCount();
 
         while (rs.next()) {
-            Object[] oneRow = new Object[noOfColumns];
+            String[] oneRow = new String[noOfColumns];
             for (int i = 1; i <= noOfColumns; i++) {
-                oneRow[i - 1] = rs.getObject(i);
+                oneRow[i - 1] = rs.getString(i);
             }
             results.add(oneRow);
         }
 
-        return results.toArray(new Object[0][0]);
+        return results.toArray(new String[0][0]);
     }
 }

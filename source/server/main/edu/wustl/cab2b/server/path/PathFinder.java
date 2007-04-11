@@ -276,7 +276,7 @@ public class PathFinder {
             return interModelConnections;
         }
         String sql = "select LEFT_ENTITY_ID,LEFT_ATTRIBUTE_ID,RIGHT_ENTITY_ID,RIGHT_ATTRIBUTE_ID from INTER_MODEL_ASSOCIATION";
-        Object[][] result = executeQuery(sql, con);
+        String[][] result = executeQuery(sql, con);
         List<InterModelConnection> list = getInterModelAssociations(result);
         return list;
     }
@@ -344,24 +344,24 @@ public class PathFinder {
      */
     IAssociation getAssociation(Long associationId, Connection con) {
         Logger.out.debug("executing SQL for association Id :" + associationId);
-        Object[] result = runSqlToGetOneRecord(
+        String[] result = runSqlToGetOneRecord(
                                                "select ASSOCIATION_TYPE from ASSOCIATION where ASSOCIATION_ID = ?",
                                                con, associationId);
-        Integer type = (Integer) result[0];
+        Integer type = Integer.parseInt(result[0]);
         if (type.equals(INTRA_MODEL_ASSOCIATION_TYPE)) {
             String sql = "select DE_ASSOCIATION_ID from INTRA_MODEL_ASSOCIATION where ASSOCIATION_ID = ?";
             result = runSqlToGetOneRecord(sql, con, associationId);
-            AssociationInterface association = cache.getAssociationById((Long) result[0]);
+            AssociationInterface association = cache.getAssociationById(Long.parseLong(result[0]));
             return new IntraModelAssociation(association);
 
         } else if (type.equals(INTER_MODEL_ASSOCIATION_TYPE)) {
             String sql = "select LEFT_ENTITY_ID,LEFT_ATTRIBUTE_ID,RIGHT_ENTITY_ID,RIGHT_ATTRIBUTE_ID from INTER_MODEL_ASSOCIATION where ASSOCIATION_ID = ?";
 
             result = runSqlToGetOneRecord(sql, con, associationId);
-            Long sourceEntityId = (Long) result[0];
-            Long sourceAttributeId = (Long) result[1];
-            Long targetEntityId = (Long) result[2];
-            Long targetAttributeId = (Long) result[3];
+            Long sourceEntityId = Long.parseLong(result[0]);
+            Long sourceAttributeId = Long.parseLong(result[1]);
+            Long targetEntityId = Long.parseLong(result[2]);
+            Long targetAttributeId = Long.parseLong(result[3]);
             AttributeInterface sourceAttribute = getAttribute(sourceEntityId, sourceAttributeId);
             AttributeInterface targetAttribute = getAttribute(targetEntityId, targetAttributeId);
             return new InterModelAssociation(sourceAttribute, targetAttribute);
@@ -376,7 +376,7 @@ public class PathFinder {
      */
     public IPath getPathById(Long id, Connection connection) {
         String sql = "select PATH_ID,FIRST_ENTITY_ID,INTERMEDIATE_PATH,LAST_ENTITY_ID from PATH where PATH_ID = ?";
-        Object[] resultSet = runSqlToGetOneRecord(sql, connection, id);
+        String[] resultSet = runSqlToGetOneRecord(sql, connection, id);
         List<PathRecord> list = new ArrayList<PathRecord>();
         list.add(getPathRecord(resultSet));
         List<Path> result = getPathList(list, connection);
@@ -413,7 +413,7 @@ public class PathFinder {
         if (pathRecordCache == null) { 
             String sql = "select PATH_ID,FIRST_ENTITY_ID,INTERMEDIATE_PATH,LAST_ENTITY_ID from PATH";
             
-            Object[][] resultSet = executeQuery(sql, connection);
+            String[][] resultSet = executeQuery(sql, connection);
             pathRecordCache = new HashMap<String, List<PathRecord>>(resultSet.length);
             idVsPathRecord = new HashMap<Long, PathRecord>(resultSet.length);
             for (int i = 0; i < resultSet.length; i++) {
@@ -438,11 +438,11 @@ public class PathFinder {
      * @param record
      * @return
      */
-    private PathRecord getPathRecord(Object[] record) {
-        Long pathId = (Long) record[0];
-        Long firstId = (Long) record[1];
-        String path = (String) record[2];
-        Long lastId = (Long) record[3];
+    private PathRecord getPathRecord(String[] record) {
+        Long pathId = Long.parseLong(record[0]);
+        Long firstId = Long.parseLong(record[1]);
+        String path = record[2];
+        Long lastId = Long.parseLong(record[3]);
         Logger.out.debug(pathId + "  " + firstId + " " + path + " " + lastId);
         return new PathRecord(pathId, firstId, path, lastId);
 
@@ -479,7 +479,7 @@ public class PathFinder {
 
         String sql = "select LEFT_ENTITY_ID,LEFT_ATTRIBUTE_ID,RIGHT_ENTITY_ID,RIGHT_ATTRIBUTE_ID from inter_model_association where left_entity_id = ?";
 
-        Object[][] result = executeQuery(sql, connection, sourceEntityId);
+        String[][] result = executeQuery(sql, connection, sourceEntityId);
         List<IInterModelAssociation> list = new ArrayList<IInterModelAssociation>();
         for (InterModelConnection conn : getInterModelAssociations(result)) {
             list.add(getInterModelAssociation(conn));
@@ -492,13 +492,13 @@ public class PathFinder {
      * Order of column is LEFT_ENTITY_ID,LEFT_ATTRIBUTE_ID,RIGHT_ENTITY_ID,RIGHT_ATTRIBUTE_ID 
      * @return List of InterModelConnection.
      */
-    private List<InterModelConnection> getInterModelAssociations(Object[][] result) {
+    private List<InterModelConnection> getInterModelAssociations(String[][] result) {
         List<InterModelConnection> list = new ArrayList<InterModelConnection>(result.length);
         for (int i = 0; i < result.length; i++) {
-            Long leftEntityId = (Long) result[i][0];
-            Long leftAttrId = (Long) result[i][1];
-            Long rightEntityId = (Long) result[i][2];
-            Long rightAttrId = (Long) result[i][3];
+            Long leftEntityId = Long.parseLong(result[i][0]);
+            Long leftAttrId = Long.parseLong(result[i][1]);
+            Long rightEntityId = Long.parseLong(result[i][2]);
+            Long rightAttrId = Long.parseLong(result[i][3]);
 
             AttributeInterface leftAttr = getAttribute(leftEntityId, leftAttrId);
             AttributeInterface rightAttr = getAttribute(rightEntityId, rightAttrId);
@@ -515,7 +515,7 @@ public class PathFinder {
      * @return 2-D array of results with rows as records and columns as COLUMNS in select. 
      */
     //this method is package scoped for testing purpose
-    Object[][] executeQuery(String sql, Connection connection, Object... params) {
+    String[][] executeQuery(String sql, Connection connection, Object... params) {
         return SQLQueryUtil.executeQuery(sql, connection, params);
     }
 
@@ -526,8 +526,8 @@ public class PathFinder {
      * @return Only one record
      */
     //  this method is package scoped for testing purpose
-    Object[] runSqlToGetOneRecord(String sql, Connection connection, Object... params) {
-        Object[][] resultSet = SQLQueryUtil.executeQuery(sql, connection, params);
+    String[] runSqlToGetOneRecord(String sql, Connection connection, Object... params) {
+        String[][] resultSet = SQLQueryUtil.executeQuery(sql, connection, params);
         if (resultSet.length != 1) {
             throw new RuntimeException("Only one record is expected for SQL " + sql,
                     new java.lang.RuntimeException(), ErrorCodeConstants.DE_0003);
@@ -584,16 +584,16 @@ public class PathFinder {
         Map<String,Set<ICuratedPath>> entitySetStringVsCuratedPath = new HashMap<String,Set<ICuratedPath>>();
         HashMap<Long,CuratedPath> idVsCuratedPath = new HashMap<Long, CuratedPath>();
         String sql = "SELECT CURATED_PATH.curated_path_Id,entity_ids,selected,path_id from CURATED_PATH JOIN CURATED_PATH_TO_PATH ON CURATED_PATH.curated_path_Id = CURATED_PATH_TO_PATH.curated_path_Id";
-        Object[][] resultSet = executeQuery(sql, con);
-        for(Object[] oneRecord : resultSet) {
-            Long curatedPathId = (Long)oneRecord[0];
+        String[][] resultSet = executeQuery(sql, con);
+        for(String[] oneRecord : resultSet) {
+            Long curatedPathId = Long.parseLong(oneRecord[0]);
             CuratedPath curatedPath = null;
             if(idVsCuratedPath.containsKey(curatedPathId)) {
                 curatedPath = idVsCuratedPath.get(curatedPathId);
             } else {
-                String entitySetString = (String)oneRecord[1];
+                String entitySetString = oneRecord[1];
                 Set<EntityInterface> entitySet = getEntitySet(entitySetString);
-                Boolean isSelected = (Boolean)oneRecord[2];
+                Boolean isSelected = Boolean.parseBoolean(oneRecord[2]);
                 curatedPath = new CuratedPath(curatedPathId,entitySet,isSelected);
                 idVsCuratedPath.put(curatedPathId,curatedPath);
                 Set<ICuratedPath> paths = entitySetStringVsCuratedPath.get(entitySetString);
@@ -603,7 +603,7 @@ public class PathFinder {
                 }
                 paths.add(curatedPath);
             }
-            Long pathId = (Long)oneRecord[3];
+            Long pathId = Long.parseLong(oneRecord[3]);
             PathRecord pathRecord = idVsPathRecord.get(pathId);
             curatedPath.addPath(getPath(pathRecord, con));
         }
