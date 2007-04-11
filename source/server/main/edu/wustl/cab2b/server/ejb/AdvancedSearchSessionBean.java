@@ -26,7 +26,6 @@ import edu.wustl.cab2b.common.entityCache.EntityCacheHome;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.server.advancedsearch.AdvancedSearch;
 import edu.wustl.cab2b.server.advancedsearch.IAdvancedSearch;
-import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
  * AdvancedSearchSessionBean is a stateless session bean for the advanced search.
@@ -40,7 +39,6 @@ public class AdvancedSearchSessionBean extends AbstractStatelessSessionBean
     
     private static final long serialVersionUID = 1234567890L;
     
-    private SessionContext sessionContext;
     
     private IAdvancedSearch advancedSearch;
     /**
@@ -75,7 +73,7 @@ public class AdvancedSearchSessionBean extends AbstractStatelessSessionBean
     public void setSessionContext(SessionContext sessionContext)
             throws EJBException, RemoteException
     {
-        this.sessionContext = sessionContext;
+       super.setSessionContext(sessionContext);
         try
         {
             InitialContext ctx = new InitialContext();
