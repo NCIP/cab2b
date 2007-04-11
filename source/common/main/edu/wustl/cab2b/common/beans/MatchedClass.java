@@ -1,6 +1,6 @@
 /**
  * <p>Title: MatchedClass Class>
- * <p>Description:	This Class encapsulates the searched Entity classes and 
+ * <p>Description:  This Class encapsulates the searched Entity classes and 
  * the matched attributes in advance search.</p>
  * Copyright:    Copyright (c) year
  * Company: Washington University, School of Medicine, St. Louis.
@@ -22,49 +22,58 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
  * the matched attributes in advance search.
  * @author gautam_shetty
  */
-public class MatchedClass implements Serializable, IMatchedClass
-{
+public class MatchedClass implements Serializable {
     private static final long serialVersionUID = 1234567890L;
-    
+
     /**
      * Collection of matched entities.
      */
     Set<EntityInterface> entityCollection = new HashSet<EntityInterface>();
-    
+
     /**
      * Collection of matched attributes.
      */
-    Set<AttributeInterface> matchedAttributeCollection = new HashSet<AttributeInterface>();
-    
+    Set<AttributeInterface> attributeCollection = new HashSet<AttributeInterface>();
+
     /**
      * @return Returns the entityCollection.
      */
-    public Set<EntityInterface> getEntityCollection()
-    {
+    public Set<EntityInterface> getEntityCollection() {
         return entityCollection;
     }
-    
+
     /**
      * @param entityCollection The entityCollection to set.
      */
-    public void setEntityCollection(Set<EntityInterface> entityCollection)
-    {
+    public void setEntityCollection(Set<EntityInterface> entityCollection) {
         this.entityCollection = entityCollection;
     }
-    
+
     /**
-     * @return Returns the matchedAttributeCollection.
+     * @return Returns the matched Attribute Collection.
      */
-    public Set<AttributeInterface> getMatchedAttributeCollection()
-    {
-        return matchedAttributeCollection;
+    public Set<AttributeInterface> getAttributeCollection() {
+        return attributeCollection;
     }
-    
+
     /**
-     * @param matchedAttributeCollection The matchedAttributeCollection to set.
+     * @param attributeCollection The attribute Collection to set.
      */
-    public void setMatchedAttributeCollection(Set<AttributeInterface> matchedAttributeCollection)
-    {
-        this.matchedAttributeCollection = matchedAttributeCollection;
+    public void setMatchedAttributeCollection(Set<AttributeInterface> attributeCollection) {
+        this.attributeCollection = attributeCollection;
+    }
+
+    /**
+     * @param entity Entity to add
+     */
+    public void addEntity(EntityInterface entity) {
+        entityCollection.add(entity);
+    }
+
+    /**
+     * @param attribute attribute to add
+     */
+    public void addAttribute(AttributeInterface attribute) {
+        attributeCollection.add(attribute);
     }
 }
