@@ -539,7 +539,6 @@ public class DataListOperations extends DefaultBizLogic
 	 */
 	public Long saveDataListMetadata(DataListMetadata datalistMetadata) throws 
 			BizLogicException, UserNotAuthorizedException
-
 	{
 		insert(datalistMetadata, DAO_TYPE);
 		Logger.out.info("########### saved matadata successfully ");
