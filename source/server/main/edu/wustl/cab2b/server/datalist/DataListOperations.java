@@ -94,7 +94,7 @@ public class DataListOperations extends DefaultBizLogic
 	EntityInterface dataListEntity;
 
 	public List<DataListMetadata> retrieveAllDataListMetadata()
-			throws DynamicExtensionsSystemException, DAOException, ClassNotFoundException
+			throws DAOException, ClassNotFoundException
 	{
 		List<DataListMetadata> allDataList = null;
 
@@ -127,7 +127,7 @@ public class DataListOperations extends DefaultBizLogic
 	 * @throws DAOException 
 	 */
 	public Long save(DataList dataListToSave) throws DynamicExtensionsApplicationException,
-			DynamicExtensionsSystemException, DAOException, BizLogicException, UserNotAuthorizedException
+			DynamicExtensionsSystemException, BizLogicException, UserNotAuthorizedException
 	{
 		Logger.out.info("DataListOperations :: save() " + dataListToSave);
 		List<IDataRow> dataRows = dataListToSave.getDataList();
@@ -220,7 +220,7 @@ public class DataListOperations extends DefaultBizLogic
 		DataListMetadata dataListMetadata = dataListToSave.getDataListAnnotation();
 		dataListMetadata.setEntityId(entityId);
 		
-		Long dataListId =saveDataListMetadata(dataListMetadata);
+		Long dataListId = saveDataListMetadata(dataListMetadata);
 
 		return dataListId;
 	}
@@ -399,7 +399,7 @@ public class DataListOperations extends DefaultBizLogic
 							mapOfNewEntities.put(dataRow.getEntityInterface().getName() + "_"
 									+ treeLevel, newChildEntity);
 						}
-	
+
 						AssociationInterface deAsso = mapOfNewAssociations.get(newEntity.getName()
 								+ "_" + newChildEntity.getName());
 						if (deAsso == null)
@@ -411,11 +411,11 @@ public class DataListOperations extends DefaultBizLogic
 							newEntity.addAssociation(deAsso);
 						}
 						List<Map> listOfMapToAppend = (List<Map>) mapToConstruct.get(deAsso);
-	
+
 						Map<AbstractAttributeInterface, Object> mapToAppend = new HashMap<AbstractAttributeInterface, Object>();
-	
+
 						constructDataRowMap(dataRow, mapToAppend, newChildEntity, treeLevel);
-	
+
 						listOfMapToAppend.add(mapToAppend);
 					}
 				}
@@ -537,13 +537,10 @@ public class DataListOperations extends DefaultBizLogic
 	 * @throws BizLogicException 
 	 * @see DataListBusinessInterface#saveDataListMetadata(DataListMetadata)
 	 */
-	public Long saveDataListMetadata(DataListMetadata datalistMetadata) throws DAOException,
+	public Long saveDataListMetadata(DataListMetadata datalistMetadata) throws 
 			BizLogicException, UserNotAuthorizedException
 
 	{
-		//DAO dao = DAOFactory.getInstance().getDAO(DAO_TYPE);
-		//((AbstractDAO) dao).openSession(null);
-
 		insert(datalistMetadata, DAO_TYPE);
 		Logger.out.info("########### saved matadata successfully ");
 		return datalistMetadata.getId();
