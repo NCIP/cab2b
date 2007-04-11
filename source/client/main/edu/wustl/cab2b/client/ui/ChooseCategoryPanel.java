@@ -12,6 +12,8 @@ import edu.wustl.cab2b.client.ui.dag.MainDagPanel;
 import edu.wustl.cab2b.client.ui.main.B2BStackedBox;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
+import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 
@@ -103,8 +105,8 @@ public class ChooseCategoryPanel extends ContentPanel
 		}
 		catch (MultipleRootsException e) 
 		{
-			CommonUtils.handleException(e, this, true, true, false, false);
-			//e.printStackTrace();
+			CheckedException checkedException = new CheckedException(e.getMessage(), e, ErrorCodeConstants.QM_0003);
+     		CommonUtils.handleException(checkedException, this, true, true, true, false);			
 		}
         this.updateUI();
 	}
