@@ -144,8 +144,8 @@ public class DateTypePanel extends AbstractTypePanel
 		private void initGUI()
 		{
 			datePicker = new Cab2bDatePicker();
-			datePicker.setFormats(strDateFormats);
-			datePicker.setDate(null);
+			/*datePicker.setFormats(strDateFormats);
+			datePicker.setDate(null);*/
 			
 			dateFormatLabel = new Cab2bLabel(" yyyy-mm-dd");
 			dateFormatLabel.setOpaque(false);

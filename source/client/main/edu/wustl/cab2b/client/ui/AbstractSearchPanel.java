@@ -140,8 +140,7 @@ public abstract class AbstractSearchPanel extends Cab2bPanel
 	
 		/* Add the components to the panel.*/
 		this.add(m_srhButton);
-		this.add("br",m_advSearchPanel);
-		
+		this.add("br",m_advSearchPanel);		
 	}
 	
 	/**
@@ -277,15 +276,13 @@ public abstract class AbstractSearchPanel extends Cab2bPanel
 					{
 						if(isErrorDispayed == false )
 						{
-						//show error msg
-						Cab2bLabel errorMsg =  new Cab2bLabel("No result found.");
-						errorMsgPanel = new Cab2bPanel();
-						errorMsgPanel.add(errorMsg);
-						addResultsPanel(errorMsgPanel);						
-						isErrorDispayed = true;
-						//showMessageDialog( "No Results found.","Error", JOptionPane.ERROR_MESSAGE);
-						}
-						//JOptionPane.showMessageDialog(null, "No result found.", "Error", JOptionPane.ERROR_MESSAGE); 
+							//show error msg
+							Cab2bLabel errorMsg =  new Cab2bLabel("No result found.");							
+							errorMsgPanel = new Cab2bPanel();
+							errorMsgPanel.add(errorMsg);
+							addResultsPanel(errorMsgPanel);						
+							isErrorDispayed = true;						
+						}						 
 					}
 				}
             };

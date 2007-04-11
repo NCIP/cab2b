@@ -593,9 +593,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 
 			Logger.out.info("The user has finished editing the node.");
 			Logger.out.info("New value: " + node.getUserObject());
-
 			addNewExperimentGroupNode(node.getUserObject().toString(), node);
-
 		}
 
 		public void treeNodesInserted(TreeModelEvent e)
@@ -642,7 +640,5 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(expDetailsPanel);
 		frame.setVisible(true);
-
 	}
-
 }

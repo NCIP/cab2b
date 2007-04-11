@@ -46,8 +46,7 @@ public class AddLimitAdvancedSearchPanel extends AbstractAdvancedSearchPanel
 		//Add all the componenets as required by this panel.
 		m_taskPane.add(m_chkClass);
 		m_taskPane.add("tab", m_chkClassDesc);
-		m_taskPane.add("br", m_chkAttribute);
-	//	m_taskPane.add("tab",m_chkClassDef);
+		m_taskPane.add("br", m_chkAttribute);	
 		m_taskPane.add("tab",m_chkPermissibleValues);
 		
 		m_taskPane.add("br", m_radioText);

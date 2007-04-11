@@ -34,7 +34,6 @@ public class MyStackedBox extends Cab2bPanel
 		this.setLayout(new BorderLayout());
 		stackedBox = new StackedBox();
 		stackedBox.setTitleBackgroundColor(new Color(200, 200, 220));
-		//stackedBox.setTitleBackgroundColor(new Color(224, 224, 224));
 		JScrollPane scrollPane = new JScrollPane(stackedBox);
 		scrollPane.setBorder(null);
 		this.add(scrollPane, BorderLayout.CENTER);
@@ -136,8 +135,5 @@ public class MyStackedBox extends Cab2bPanel
 		myStackedBox.setDataForPopularSearchCategoriesPanel(data);
 		
 		
-	}
-	
-	
-	
+	}	
 }

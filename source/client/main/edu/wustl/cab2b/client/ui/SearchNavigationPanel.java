@@ -138,18 +138,26 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener
                 	/*
     				 * Also cause for the next card in the dialog to be added
     				 * dynamically to the dialog.
-    				 */
+    				 */                	
+                	
                 	AdvancedDefineViewPanel defineViewPanel = new AdvancedDefineViewPanel(this.m_mainSearchPanel.getCenterPanel());
-                	if(null != m_mainSearchPanel.getCenterPanel().m_arrCards[2])
+                	
+                	if(AdvancedDefineViewPanel.isMultipleGraphException == true)
                 	{
-                		m_mainSearchPanel.getCenterPanel().remove(m_mainSearchPanel.getCenterPanel().m_arrCards[2]);
+                		gotoAddLimitPanel();
+                	}else
+                	{                		
+                		if(null != m_mainSearchPanel.getCenterPanel().m_arrCards[2])
+                		{
+                			m_mainSearchPanel.getCenterPanel().remove(m_mainSearchPanel.getCenterPanel().m_arrCards[2]);
+                		}	
+                		m_mainSearchPanel.getCenterPanel().m_arrCards[2] = defineViewPanel;
+                		m_mainSearchPanel.getCenterPanel().add(defineViewPanel, SearchCenterPanel.m_strDefineSearchResultslbl);
+                		/*
+                		 * 	Implies the next button was clicked. Call show card with boolean set to true.
+                		 */
+                		showCard(true);
                 	}
-                	m_mainSearchPanel.getCenterPanel().m_arrCards[2] = defineViewPanel;
-                	m_mainSearchPanel.getCenterPanel().add(defineViewPanel, SearchCenterPanel.m_strDefineSearchResultslbl);
-                	   /*
-            		 * Implies the next button was clicked. Call show card with boolean set to true.
-            		 */
-            		showCard(true);   
                 }
                 else
                 {
@@ -172,17 +180,9 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener
             		{
             			/* Get the Functional class for root and update query object
             			 * with it.
-            			 */
-            				//m_mainSearchPanel.dataList = new DataList();
-            				queryResults = CommonUtils.executeQuery((ICab2bQuery)m_mainSearchPanel.getQueryObject().getQuery(), m_mainSearchPanel); 
-            				//Logger.out.info("queryResults >>> queryExecuted ##>> "+queryResults);
-            				
-            				//TODO generate a separate error message in errorMessage class 
-            				//JOptionPane.showMessageDialog(null, ex.getMessage(), "Errsfsdfor", JOptionPane.ERROR_MESSAGE);
-            				
-                        	 /*
-                    		 * Implies the next button was clicked. Call show card with boolean set to true.
-                    		 */     
+            			 */            			
+            			queryResults = CommonUtils.executeQuery((ICab2bQuery)m_mainSearchPanel.getQueryObject().getQuery(), m_mainSearchPanel);     				
+    				         				            				     
             		}
             		@Override
             		protected void doUIUpdateLogic()
@@ -374,7 +374,6 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener
 				topPanel.setFocus(iSelectedCard-1,false);
 			}
 		}
-		
 	}
 	
 	/**
@@ -385,6 +384,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener
 	public void gotoAddLimitPanel()
 	{
 		Logger.out.info("gotoAddLimitPanel");
+		srhButton.setVisible(true);
 		SearchCenterPanel centerPanel  = this.m_mainSearchPanel.getCenterPanel();
 		CardLayout layout = (CardLayout)centerPanel.getLayout();	
 		

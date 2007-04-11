@@ -1,5 +1,8 @@
 package edu.wustl.cab2b.client.ui.experiment;
 
+import java.awt.CardLayout;
+import java.awt.Dimension;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JSplitPane;
@@ -24,7 +27,7 @@ public class ExperimentPanel extends Cab2bTitledPanel
 {
 	JSplitPane splitPane;
 	JButton newExperiment;
-	JXPanel parentPanel;
+	JXPanel displayExperimentPanel;
 	ExperimentDetailsPanel expDetailsPanel;
 	ExperimentHierarchyPanel expHierarchyPanel;
 	
@@ -36,9 +39,12 @@ public class ExperimentPanel extends Cab2bTitledPanel
 	
 	private void initGUI()
 	{
-		parentPanel = new Cab2bPanel(new RiverLayout());
+		Logger.out.info("Inside Constructor.");	
+		
+		displayExperimentPanel = new Cab2bPanel(new RiverLayout());
 		
 		newExperiment = new Cab2bButton("Create New Experiment");
+		newExperiment.setPreferredSize(new Dimension(180,22));
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		splitPane.setDividerLocation(200);
 		
@@ -48,10 +54,10 @@ public class ExperimentPanel extends Cab2bTitledPanel
 		expHierarchyPanel = new ExperimentHierarchyPanel(expDetailsPanel);
 		splitPane.setLeftComponent(expHierarchyPanel);
 		
-		parentPanel.add("br",newExperiment);
-		parentPanel.add("br hfill vfill",splitPane);
+		displayExperimentPanel.add("br",newExperiment);
+		displayExperimentPanel.add("br hfill vfill",splitPane);
 		
-		this.add(parentPanel);
+		this.add(displayExperimentPanel);
 	}
 	
 	public static void main(String[] args)
@@ -68,5 +74,4 @@ public class ExperimentPanel extends Cab2bTitledPanel
 		frame.getContentPane().add(expPanel);
 		frame.setVisible(true);
 	}
-
 }

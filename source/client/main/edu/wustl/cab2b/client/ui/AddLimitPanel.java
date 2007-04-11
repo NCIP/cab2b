@@ -162,7 +162,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
 		/* Add components to the conetent pane.*/
 		this.m_innerPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, m_topCenterPanel,
 				m_bottomCenterPanel);
-		this.m_innerPane.setDividerLocation(0.1D);
+		this.m_innerPane.setDividerLocation(0.5D);
 		this.m_innerPane.setOneTouchExpandable(true);
 		
 		
