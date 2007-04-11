@@ -351,34 +351,73 @@ public class DataListOperations extends DefaultBizLogic
 				treeLevel++;
 				for (IDataRow dataRow : children)
 				{
-					EntityInterface newChildEntity = mapOfNewEntities.get(dataRow
-							.getEntityInterface().getName()
-							+ "_" + treeLevel);
-					if (newChildEntity == null)
+					
+					if(dataRow.getEntityInterface() == null)
 					{
-						newChildEntity = getNewEntity(dataRow.getEntityInterface());
-						mapOfNewEntities.put(dataRow.getEntityInterface().getName() + "_"
-								+ treeLevel, newChildEntity);
+						for(IDataRow subDR : dataRow.getChildren())
+						{
+							EntityInterface newChildEntity = mapOfNewEntities.get(subDR.getEntityInterface().getName()+"_"+treeLevel);
+							if(newChildEntity == null)
+							{
+								newChildEntity = getNewEntity(subDR.getEntityInterface());
+								mapOfNewEntities.put(subDR.getEntityInterface().getName()+"_"+treeLevel, newChildEntity);
+							}
+							
+							AssociationInterface deAsso = mapOfNewAssociations.get(newEntity.getName()+"_"+newChildEntity.getName());
+							
+							if(deAsso == null)
+							{
+								deAsso = createNewOneToManyAsso(newEntity, newChildEntity);
+								mapOfNewAssociations.put(newEntity.getName()+"_"+newChildEntity.getName(), deAsso);
+								mapToConstruct.put(deAsso, new ArrayList<Map>());
+								newEntity.addAssociation(deAsso);
+							}
+							List<Map> listOfMapToAppend = (List<Map>) mapToConstruct.get(deAsso);
+							/* This if block is needed because same association may be used in g1-(p1,p2)  and also in g2-(p3,p4) 
+							 * In this case we have to add the DE association and new arraylist to the new map to construct for 
+							 * second association  */
+							if(listOfMapToAppend == null)
+							{
+								listOfMapToAppend = new ArrayList<Map>();
+								mapToConstruct.put(deAsso, listOfMapToAppend);
+							}
+							Map<AbstractAttributeInterface, Object> mapToAppend = new HashMap<AbstractAttributeInterface, Object>();
+							
+							constructDataRowMap(subDR, mapToAppend, newChildEntity, treeLevel+1);
+							
+							listOfMapToAppend.add(mapToAppend);
+							
+						}
 					}
-
-					AssociationInterface deAsso = mapOfNewAssociations.get(newEntity.getName()
-							+ "_" + newChildEntity.getName());
-					if (deAsso == null)
-					{
-
-						deAsso = createNewOneToManyAsso(newEntity, newChildEntity);
-						mapOfNewAssociations.put(newEntity.getName() + "_"
-								+ newChildEntity.getName(), deAsso);
-						mapToConstruct.put(deAsso, new ArrayList<Map>());
-						newEntity.addAssociation(deAsso);
+					else{
+						EntityInterface newChildEntity = mapOfNewEntities.get(dataRow
+								.getEntityInterface().getName()
+								+ "_" + treeLevel);
+						if (newChildEntity == null)
+						{
+							newChildEntity = getNewEntity(dataRow.getEntityInterface());
+							mapOfNewEntities.put(dataRow.getEntityInterface().getName() + "_"
+									+ treeLevel, newChildEntity);
+						}
+	
+						AssociationInterface deAsso = mapOfNewAssociations.get(newEntity.getName()
+								+ "_" + newChildEntity.getName());
+						if (deAsso == null)
+						{	
+							deAsso = createNewOneToManyAsso(newEntity, newChildEntity);
+							mapOfNewAssociations.put(newEntity.getName() + "_"
+									+ newChildEntity.getName(), deAsso);
+							mapToConstruct.put(deAsso, new ArrayList<Map>());
+							newEntity.addAssociation(deAsso);
+						}
+						List<Map> listOfMapToAppend = (List<Map>) mapToConstruct.get(deAsso);
+	
+						Map<AbstractAttributeInterface, Object> mapToAppend = new HashMap<AbstractAttributeInterface, Object>();
+	
+						constructDataRowMap(dataRow, mapToAppend, newChildEntity, treeLevel);
+	
+						listOfMapToAppend.add(mapToAppend);
 					}
-					List<Map> listOfMapToAppend = (List<Map>) mapToConstruct.get(deAsso);
-
-					Map<AbstractAttributeInterface, Object> mapToAppend = new HashMap<AbstractAttributeInterface, Object>();
-
-					constructDataRowMap(dataRow, mapToAppend, newChildEntity, treeLevel);
-
-					listOfMapToAppend.add(mapToAppend);
 				}
 			}
 		}
