@@ -1,15 +1,22 @@
 package edu.wustl.cab2b.server.advancedsearch;
 
 import java.util.Set;
+
+import com.meterware.servletunit.ServletTestCase;
+
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.beans.MatchedClass;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.server.cache.EntityCache;
-import junit.framework.TestCase;
 
-public class AdvancedSearchTest extends TestCase {
-	MatchedClass resultMatchedClass;
+public class AdvancedSearchTest extends ServletTestCase {
+	
+    protected AdvancedSearchTest(String arg0) {
+        super(arg0);
+    }
+
+    MatchedClass resultMatchedClass;
 
 	AdvancedSearch advaceSearch;
 
