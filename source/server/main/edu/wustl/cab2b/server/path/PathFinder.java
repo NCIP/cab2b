@@ -62,12 +62,9 @@ public class PathFinder {
         if (pathFinder == null) {
             Logger.out.info("PathFinder Called first Time.Loading cache...");
             pathFinder = new PathFinder();
-            pathFinder.init();
+            pathFinder.setCache(EntityCache.getInstance());
         }
         return pathFinder;
-    }
-    private void init() {
-        setCache(EntityCache.getInstance());
     }
     /**
      * Finds all curated paths defined for given source and desination entity.
@@ -632,6 +629,6 @@ public class PathFinder {
     public void refreshCache() {
         interModelConnections = null;
         pathRecordCache = null;
-        init();
+        setCache(EntityCache.getInstance());
     }
 }
