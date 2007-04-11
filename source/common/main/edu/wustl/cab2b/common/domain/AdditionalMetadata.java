@@ -126,10 +126,7 @@ public class AdditionalMetadata extends AbstractDomainObject implements java.io.
 
         if (getId() != null) {
             h += getId().hashCode();
-        }
-
+        }        
         return h;
     }
-
-
 }

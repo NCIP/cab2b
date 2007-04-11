@@ -88,6 +88,4 @@ public class AbstractDomainObject implements java.io.Serializable {
 
         return h;
     }
-
-
 }
