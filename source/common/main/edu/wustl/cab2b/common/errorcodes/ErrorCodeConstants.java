@@ -63,4 +63,6 @@ public interface ErrorCodeConstants {
     public static final String CATEGORY_SAVE_ERROR = "CT.0001";
     
     public static final String CATEGORY_RETRIEVE_ERROR = "CT.0002";
+    
+    public static final String QM_0003 = "QM.0003";
 }
