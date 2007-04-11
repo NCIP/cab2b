@@ -86,7 +86,7 @@ public class InheritanceUtil {
                     "Inconsistent database state !!! Found one inherited association without, tagged value having key as Constants.ORIGINAL_ASSOCIATION_POINTER");
         }
 
-        if (association.isSystemGenerated()) {
+        if (association.getIsSystemGenerated()) {
             originalAssociationPointer = reverse(originalAssociationPointer);
         }
         AssociationInterface actualAssociation = EntityCache.getInstance().getAssociationByUniqueStringIdentifier(
