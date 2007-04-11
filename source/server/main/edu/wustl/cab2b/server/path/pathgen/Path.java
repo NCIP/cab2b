@@ -62,7 +62,7 @@ public class Path {
         Set<Node> nodesSet = new HashSet<Node>(getIntermediateNodes());
         nodesSet.add(fromNode());
         nodesSet.add(toNode());
-        return nodesSet.size() == getIntermediateNodes().size() + 2;
+        return nodesSet.size() < getIntermediateNodes().size() + 2;
     }
 
     public boolean isSelfEdge() {
