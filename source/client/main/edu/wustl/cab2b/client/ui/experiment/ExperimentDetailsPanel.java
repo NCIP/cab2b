@@ -20,6 +20,8 @@ import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
+import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
+import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
 import edu.wustl.common.tree.ExperimentTreeNode;
@@ -33,7 +35,7 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class ExperimentDetailsPanel extends Cab2bPanel
 {
-	JXTable expTable;
+	Cab2bTable expTable;
 	
 	Object[] tableHeader = {"Title","Date Created","Last Updated","Description"};
 	Object[][] tableData = {{"SNP Experiment","12-Jul-2003","22-Jan-2004","Scott"},
@@ -45,6 +47,8 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 	Vector tHeader = new Vector();
 	
 	JButton deleteButton; 
+	
+	 ExperimentOpenPanel expPanel = null;
 	
 	public ExperimentDetailsPanel()
 	{
@@ -60,16 +64,13 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 		this.setLayout(new RiverLayout());
 		
 		expTable = new Cab2bTable(true, emptyTableData, tableHeader);
-		expTable.getColumn(1).setCellRenderer(new LinkRenderer());
-		expTable.getColumn(1).setCellEditor(new LinkRenderer(new MyLinkAction()));
 		
+		MyLinkAction myLinkAction  =new MyLinkAction();		
+		expTable.getColumn(1).setCellRenderer(new LinkRenderer(myLinkAction));
+		expTable.getColumn(1).setCellEditor(new LinkRenderer(myLinkAction));
+				
 		HighlighterPipeline highlighters = new HighlighterPipeline();
 		highlighters.addHighlighter(new AlternateRowHighlighter());
-//		PatternHighlighter pattern = new PatternHighlighter();
-//		pattern.setPattern(".*", 0);
-//		pattern.setBackground(Color.BLUE);
-//		pattern.setForeground(Color.WHITE);
-//		highlighters.addHighlighter(pattern);
 		expTable.setHighlighters(highlighters);
 		
 		
@@ -103,8 +104,10 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 		}
 		
 		expTable = new Cab2bTable(true, newTableData,tHeader);
-		expTable.getColumn(1).setCellRenderer(new LinkRenderer());
-		expTable.getColumn(1).setCellEditor(new LinkRenderer(new MyLinkAction()));
+		MyLinkAction myLinkAction  =new MyLinkAction();		
+		expTable.getColumn(1).setCellRenderer(new LinkRenderer(myLinkAction));
+		expTable.getColumn(1).setCellEditor(new LinkRenderer(myLinkAction));
+
 		
 		Component comp = this.getComponent(0);
 		this.removeAll();
@@ -141,8 +144,10 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 		Object[][] newTableData = {{exp.getName(),exp.getCreatedOn(),exp.getLastUpdatedOn(),exp.getDescription()}};
 		//expTable.setModel(new Cab2bTable(newTableData, tableHeader));
 		expTable = new Cab2bTable(true, newTableData,tableHeader);
-		expTable.getColumn(1).setCellRenderer(new LinkRenderer());
-		expTable.getColumn(1).setCellEditor(new LinkRenderer(new MyLinkAction()));
+		MyLinkAction myLinkAction  =new MyLinkAction();		
+		expTable.getColumn(1).setCellRenderer(new LinkRenderer(myLinkAction));
+		expTable.getColumn(1).setCellEditor(new LinkRenderer(myLinkAction));
+		
 		
 		Component comp = this.getComponent(0);
 		this.removeAll();
@@ -174,8 +179,9 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 		}
 		
 		expTable = new Cab2bTable(true, newTableData,tableHeader);
-		expTable.getColumn(1).setCellRenderer(new LinkRenderer());
-		expTable.getColumn(1).setCellEditor(new LinkRenderer(new MyLinkAction()));
+		MyLinkAction myLinkAction  =new MyLinkAction();		
+		expTable.getColumn(1).setCellRenderer(new LinkRenderer(myLinkAction));
+		expTable.getColumn(1).setCellEditor(new LinkRenderer(myLinkAction));
 		
 		this.removeAll();
 		this.add("br hfill vfill",new JScrollPane(expTable));
@@ -209,7 +215,25 @@ public class ExperimentDetailsPanel extends Cab2bPanel
         public void actionPerformed(ActionEvent e) 
         {
             Logger.out.info("link is working");
-            setVisited(true);
+            setVisited(true);       
+            
+            Logger.out.info("Panel visible");           
+            
+            CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.openExperimentWelcomePanel)
+    		{		
+    		@Override
+    		protected void doNonUILogic() throws RuntimeException {		
+    			ExperimentDetailsPanel.this.expPanel =	new ExperimentOpenPanel();
+    		}
+
+    		@Override
+    		protected void doUIUpdateLogic() throws RuntimeException {    			
+    		    MainFrame.openExperimentWelcomePanel.removeAll();
+                MainFrame.openExperimentWelcomePanel.add(ExperimentDetailsPanel.this.expPanel);
+                updateUI();
+    		}		
+    	  };
+    		swingWorker.start();    		          
         }
         
     }
