@@ -329,7 +329,7 @@ public class DataListOperations extends DefaultBizLogic
 	{
 		Object[] values = dataRowToSave.getRow();
 
-		// if a DataRow has the values it means it is a record.
+		// if a DataRow has values, it means it is a record.
 		if (values != null)
 		{
 			/* Find an existing entity in the newEntitiesMap for with same name and same tree level */
@@ -345,14 +345,13 @@ public class DataListOperations extends DefaultBizLogic
 			}
 
 			List<IDataRow> children = dataRowToSave.getChildren();
-			//Logger.out.info("in if children.size()  ####  " + children.size());
+			
 			if (children != null && children.size() > 0)
 			{
 				treeLevel++;
 				for (IDataRow dataRow : children)
-				{
-					
-					if(dataRow.getEntityInterface() == null)
+				{					
+					if(dataRow.getEntityInterface() == null) // or if row values == null
 					{
 						for(IDataRow subDR : dataRow.getChildren())
 						{
@@ -411,7 +410,12 @@ public class DataListOperations extends DefaultBizLogic
 							newEntity.addAssociation(deAsso);
 						}
 						List<Map> listOfMapToAppend = (List<Map>) mapToConstruct.get(deAsso);
-
+						if(listOfMapToAppend == null)
+						{
+							listOfMapToAppend = new ArrayList<Map>();
+							mapToConstruct.put(deAsso, listOfMapToAppend);
+						}
+						
 						Map<AbstractAttributeInterface, Object> mapToAppend = new HashMap<AbstractAttributeInterface, Object>();
 
 						constructDataRowMap(dataRow, mapToAppend, newChildEntity, treeLevel);
@@ -501,6 +505,10 @@ public class DataListOperations extends DefaultBizLogic
 			newAttribute = domainObjectFactory.createLongAttribute();
 		else if (oldAttributeType.equals(EntityManagerConstantsInterface.BOOLEAN_ATTRIBUTE_TYPE))
 			newAttribute = domainObjectFactory.createBooleanAttribute();
+		else if (oldAttributeType.equals(EntityManagerConstantsInterface.FLOAT_ATTRIBUTE_TYPE))
+			newAttribute = domainObjectFactory.createFloatAttribute();
+		else if (oldAttributeType.equals(EntityManagerConstantsInterface.DATE_TIME_ATTRIBUTE_TYPE))
+			newAttribute = domainObjectFactory.createDateAttribute();
 		else
 		{
 			Logger.out.debug("Extra attribute not mapped");
@@ -515,6 +523,8 @@ public class DataListOperations extends DefaultBizLogic
 	 */
 	private EntityInterface getNewEntity(EntityInterface oldEntity)
 	{
+		//Logger.out.info("oldEntity #### "+oldEntity.getName());
+		//Logger.out.info("oldEntity attribs "+oldEntity.getAttributeCollection());
 		EntityInterface newEntity = domainObjectFactory.createEntity();
 		newEntity.addEntityGroupInterface(dataListEntityGroup);
 		dataListEntityGroup.addEntity(newEntity);
@@ -524,6 +534,7 @@ public class DataListOperations extends DefaultBizLogic
 		Collection<AttributeInterface> oldAttribs = oldEntity.getAttributeCollection();
 		for (AttributeInterface oldAttrib : oldAttribs)
 		{
+			//Logger.out.info("oldAttri #### "+oldAttrib);
 			AttributeInterface newAttrib = getNewAttribute(oldAttrib);
 			newAttrib.setName(oldAttrib.getName());
 			newEntity.addAttribute(newAttrib);
