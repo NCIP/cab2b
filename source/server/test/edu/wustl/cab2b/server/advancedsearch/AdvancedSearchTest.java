@@ -2,7 +2,7 @@ package edu.wustl.cab2b.server.advancedsearch;
 
 import java.util.Set;
 
-import com.meterware.servletunit.ServletTestCase;
+import org.apache.cactus.ServletTestCase;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.beans.MatchedClass;
@@ -11,11 +11,6 @@ import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.server.cache.EntityCache;
 
 public class AdvancedSearchTest extends ServletTestCase {
-	
-    protected AdvancedSearchTest(String arg0) {
-        super(arg0);
-    }
-
     MatchedClass resultMatchedClass;
 
 	AdvancedSearch advaceSearch;
