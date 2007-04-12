@@ -49,7 +49,7 @@ public class SQLQueryBeanTest extends TestCase {
 
         String selectSQL = "SELECT id,name FROM test_table WHERE name like ?";
         int recordCount = 0;
-        Object[][] rs = null;
+        String[][] rs = null;
         try {
             rs = sqlQueryBean.executeQuery(selectSQL, "%A%");
         } catch (SQLException e) {
@@ -60,7 +60,7 @@ public class SQLQueryBeanTest extends TestCase {
         for (int i = 0; i < rs.length; i++) {
 
             recordCount++;
-            Long id = (Long) rs[i][0];
+            Long id = Long.parseLong(rs[i][0]);
             String name = (String) rs[i][1];
             assertTrue(id != 4);
             assertTrue(name.indexOf((char) 'A') != -1);
