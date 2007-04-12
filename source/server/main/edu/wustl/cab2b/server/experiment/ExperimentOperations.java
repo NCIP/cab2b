@@ -72,7 +72,7 @@ public class ExperimentOperations extends DefaultBizLogic
 			throw (new BizLogicException("Experiment already belongs to target Experiment Group."));
 		}
 		
-		if(srcExpGrp == tarExpGrp){
+		if(sourceExpGroup == targetExpGroup){
 			throw (new BizLogicException("Source and Target Experiment Groups are same."));
 		}
 		
@@ -83,8 +83,8 @@ public class ExperimentOperations extends DefaultBizLogic
 		
 		//Logger.out.info("updating target source group collection");
 		
-		experiment.getExperimentGroupCollection().remove(srcExpGrp);
-		experiment.getExperimentGroupCollection().add(tarExpGrp);
+		experiment.getExperimentGroupCollection().remove(sourceExpGroup);
+		experiment.getExperimentGroupCollection().add(targetExpGroup);
 		
 		update(experiment, daoType);
 		update(sourceExpGroup, daoType);
@@ -117,7 +117,7 @@ public class ExperimentOperations extends DefaultBizLogic
 		
 		targetExperimentGroup.getExperimentCollection().add(experiment);
 		
-		experiment.getExperimentGroupCollection().add(tarExpGrp);
+		experiment.getExperimentGroupCollection().add(targetExperimentGroup);
 		
 		update(experiment, daoType);
 		update(targetExperimentGroup, daoType);
