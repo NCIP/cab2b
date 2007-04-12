@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
+import edu.common.dynamicextensions.domain.TaggedValue;
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.RoleInterface;
+import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.entitymanager.EntityManagerConstantsInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManagerInterface;
@@ -433,18 +435,20 @@ public class DataListOperations extends DefaultBizLogic
 	 */
 	private EntityInterface getNewEntity(EntityInterface oldEntity)
 	{
-		//Logger.out.info("oldEntity #### "+oldEntity.getName());
-		//Logger.out.info("oldEntity attribs "+oldEntity.getAttributeCollection());
 		EntityInterface newEntity = domainObjectFactory.createEntity();
 		newEntity.addEntityGroupInterface(dataListEntityGroup);
 		dataListEntityGroup.addEntity(newEntity);
 
 		newEntity.setName(oldEntity.getName());
-
+		
+		TaggedValueInterface taggedValue = domainObjectFactory.createTaggedValue();
+		taggedValue.setKey("original_entity_id");
+		taggedValue.setValue(oldEntity.getId().toString());
+		newEntity.addTaggedValue(taggedValue);
+		
 		Collection<AttributeInterface> oldAttribs = oldEntity.getAttributeCollection();
 		for (AttributeInterface oldAttrib : oldAttribs)
 		{
-			//Logger.out.info("oldAttri #### "+oldAttrib);
 			AttributeInterface newAttrib = getNewAttribute(oldAttrib);
 			newAttrib.setName(oldAttrib.getName());
 			newEntity.addAttribute(newAttrib);
