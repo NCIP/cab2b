@@ -15,6 +15,7 @@ import org.jdesktop.swingx.JXTaskPane;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.common.util.logger.Logger;
 
 
 /**
@@ -111,6 +112,8 @@ public class JPaginationDemo extends JSplitPane
 	
 	public static void main(String[] args)
 	{
+		Logger.configure("");
+		
 		JPaginationDemo paginationDemo = new JPaginationDemo();
 		
 		WindowUtilities.showInFrame(paginationDemo, "JPagination Demo");

@@ -131,7 +131,6 @@ public class DataListOperations extends DefaultBizLogic
 	public Long save(DataList dataListToSave) throws DynamicExtensionsApplicationException,
 			DynamicExtensionsSystemException, BizLogicException, UserNotAuthorizedException
 	{
-		Logger.out.info("DataListOperations :: save() " + dataListToSave);
 		List<IDataRow> dataRows = dataListToSave.getDataList();
 
 		/* There will always be one root node is the datalist tree. */
@@ -141,8 +140,6 @@ public class DataListOperations extends DefaultBizLogic
 
 		for (IDataRow firstLevelTypeDataRow : rootDataRow.getChildren())
 		{
-			//AssociationInterface newAssociation = null;
-
 			if (firstLevelTypeDataRow.isData() == false)
 			{
 				List<IDataRow> valueDataRowsForThisType = firstLevelTypeDataRow.getChildren();
@@ -172,7 +169,16 @@ public class DataListOperations extends DefaultBizLogic
 
 		return dataListId;
 	}
-
+	
+	/**
+	 * Creates new entities and associations if they are not already created.
+	 * @param mapToConstruct
+	 * @param dataRow
+	 * @param entity
+	 * @param treeLevel
+	 * @throws DynamicExtensionsApplicationException
+	 * @throws DynamicExtensionsSystemException
+	 */
 	private void createNewEntityAndAssociation(Map<AbstractAttributeInterface, Object> mapToConstruct, IDataRow dataRow,
 			EntityInterface entity, int treeLevel) throws DynamicExtensionsApplicationException,
 			DynamicExtensionsSystemException
@@ -257,7 +263,7 @@ public class DataListOperations extends DefaultBizLogic
 	}
 
 	/**
-	 * 
+	 * Constructs the top level data map.
 	 * @param dataListMetadata
 	 */
 	private void createMapForDataListEntity(DataListMetadata dataListMetadata)
