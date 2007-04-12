@@ -102,7 +102,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 		m_NameEdit = getFirstComponent();
 		m_OtherEdit = getSecondComponent();
 		
-		m_Name.setPreferredSize(new Dimension(190,20));
+		m_Name.setPreferredSize(new Dimension(235,20));
 		add("tab", m_Name);
 		add("tab", new Cab2bLabel());
 		add("tab", new Cab2bLabel());
