@@ -93,8 +93,8 @@ public class DataListOperations extends DefaultBizLogic
 	 */
 	EntityInterface dataListEntity;
 
-	public List<DataListMetadata> retrieveAllDataListMetadata()
-			throws DAOException, ClassNotFoundException
+	public List<DataListMetadata> retrieveAllDataListMetadata() throws DAOException,
+			ClassNotFoundException
 	{
 		List<DataListMetadata> allDataList = null;
 
@@ -139,73 +139,19 @@ public class DataListOperations extends DefaultBizLogic
 
 		for (IDataRow firstLevelTypeDataRow : rootDataRow.getChildren())
 		{
-			AssociationInterface newAssociation = null;
+			//AssociationInterface newAssociation = null;
 
 			if (firstLevelTypeDataRow.isData() == false)
 			{
 				List<IDataRow> valueDataRowsForThisType = firstLevelTypeDataRow.getChildren();
 				for (IDataRow firstLevelDataRow : valueDataRowsForThisType)
 				{
-					EntityInterface newCurrentEntity = mapOfNewEntities.get(firstLevelDataRow
-							.getEntityInterface().getName()
-							+ "_" + 2);
-					if (newCurrentEntity == null)
-					{
-						newCurrentEntity = getNewEntity(firstLevelDataRow.getEntityInterface());
-						mapOfNewEntities.put(firstLevelDataRow.getEntityInterface().getName() + "_"
-								+ 2, newCurrentEntity);
-					}
-
-					newAssociation = mapOfNewAssociations.get(dataListEntity.getName() + "_"
-							+ firstLevelDataRow.getEntityInterface().getName());
-
-					if (newAssociation == null)
-					{
-						newAssociation = createNewOneToManyAsso(dataListEntity, newCurrentEntity);
-						mapOfNewAssociations.put(dataListEntity.getName() + "_"
-								+ firstLevelDataRow.getEntityInterface().getName(), newAssociation);
-						dataListAttributesMap.put(newAssociation, new ArrayList());
-						dataListEntity.addAssociation(newAssociation);
-					}
-					List<Map> listOfSubMaps = (List<Map>) dataListAttributesMap.get(newAssociation);
-
-					Map<AbstractAttributeInterface, Object> mapForFirstLevelDataRow = new HashMap<AbstractAttributeInterface, Object>();
-					constructDataRowMap(firstLevelDataRow, mapForFirstLevelDataRow,
-							newCurrentEntity, 3);
-					//Logger.out.info("InsertThis ####### " + mapForFirstLevelDataRow);
-
-					listOfSubMaps.add(mapForFirstLevelDataRow);
+					createNewEntityAndAssociation(dataListAttributesMap, firstLevelDataRow, dataListEntity, 2);
 				}
 			}
 			else
 			{
-				EntityInterface newCurrentEntity = mapOfNewEntities.get(firstLevelTypeDataRow
-						.getEntityInterface().getName()
-						+ "_" + 2);
-				if (newCurrentEntity == null)
-				{
-					newCurrentEntity = getNewEntity(firstLevelTypeDataRow.getEntityInterface());
-					mapOfNewEntities.put(firstLevelTypeDataRow.getEntityInterface().getName() + "_"
-							+ 2, newCurrentEntity);
-				}
-
-				newAssociation = mapOfNewAssociations.get(dataListEntity.getName() + "_"
-						+ firstLevelTypeDataRow.getEntityInterface().getName());
-				if (newAssociation == null)
-				{
-					newAssociation = createNewOneToManyAsso(dataListEntity, newCurrentEntity);
-					mapOfNewAssociations.put(dataListEntity.getName() + "_"
-							+ firstLevelTypeDataRow.getEntityInterface().getName(), newAssociation);
-					dataListAttributesMap.put(newAssociation, new ArrayList());
-					dataListEntity.addAssociation(newAssociation);
-				}
-				List<Map> listOfSubMaps = (List<Map>) dataListAttributesMap.get(newAssociation);
-
-				Map<AbstractAttributeInterface, Object> mapForFirstLevelDataRow = new HashMap<AbstractAttributeInterface, Object>();
-				constructDataRowMap(firstLevelTypeDataRow, mapForFirstLevelDataRow,
-						newCurrentEntity, 3);
-
-				listOfSubMaps.add(mapForFirstLevelDataRow);
+				createNewEntityAndAssociation(dataListAttributesMap, firstLevelTypeDataRow, dataListEntity, 2);
 			}
 		}
 
@@ -219,10 +165,48 @@ public class DataListOperations extends DefaultBizLogic
 
 		DataListMetadata dataListMetadata = dataListToSave.getDataListAnnotation();
 		dataListMetadata.setEntityId(entityId);
-		
+
 		Long dataListId = saveDataListMetadata(dataListMetadata);
 
 		return dataListId;
+	}
+
+	private void createNewEntityAndAssociation(Map<AbstractAttributeInterface, Object> mapToConstruct, IDataRow dataRow,
+			EntityInterface entity, int treeLevel) throws DynamicExtensionsApplicationException,
+			DynamicExtensionsSystemException
+	{
+		EntityInterface newEntity = mapOfNewEntities.get(dataRow.getEntityInterface()
+				.getName()
+				+ "_" + treeLevel);
+		if (newEntity == null)
+		{
+			newEntity = getNewEntity(dataRow.getEntityInterface());
+			mapOfNewEntities
+					.put(dataRow.getEntityInterface().getName() + "_" + treeLevel, newEntity);
+		}
+
+		AssociationInterface newAssociation = mapOfNewAssociations.get(entity.getName()
+				+ "_" + dataRow.getEntityInterface().getName());
+		if (newAssociation == null)
+		{
+			newAssociation = createNewOneToManyAsso(entity, newEntity);
+			mapOfNewAssociations.put(entity.getName() + "_"
+					+ dataRow.getEntityInterface().getName(), newAssociation);
+			mapToConstruct.put(newAssociation, new ArrayList());
+			entity.addAssociation(newAssociation);
+		}
+		List<Map> listOfSubMaps = (List<Map>) mapToConstruct.get(newAssociation);
+		
+		if (listOfSubMaps == null)
+		{
+			listOfSubMaps = new ArrayList<Map>();
+			mapToConstruct.put(newAssociation, listOfSubMaps);
+		}
+		
+		Map<AbstractAttributeInterface, Object> mapToAdd = new HashMap<AbstractAttributeInterface, Object>();
+		constructDataRowMap(dataRow, mapToAdd, newEntity, treeLevel);
+
+		listOfSubMaps.add(mapToAdd);
 	}
 
 	/**
@@ -329,113 +313,39 @@ public class DataListOperations extends DefaultBizLogic
 	{
 		Object[] values = dataRowToSave.getRow();
 
-		// if a DataRow has values, it means it is a record.
-		if (values != null)
+		/* Find an existing entity in the newEntitiesMap for with same name and same tree level */
+
+		List<AttributeInterface> newAttributes = getOrderedAttributes(
+				dataRowToSave.getAttributes(), newEntity.getAttributeCollection());
+
+		for (int i = 0; i < newAttributes.size(); i++)
 		{
-			/* Find an existing entity in the newEntitiesMap for with same name and same tree level */
-
-			List<AttributeInterface> newAttributes = getOrderedAttributes(dataRowToSave
-					.getAttributes(), newEntity.getAttributeCollection());
-
-			for (int i = 0; i < newAttributes.size(); i++)
-			{
-				AttributeInterface attribute = newAttributes.get(i);
-				Object value = values[i];
-				mapToConstruct.put(attribute, value);
-			}
-
-			List<IDataRow> children = dataRowToSave.getChildren();
-			
-			if (children != null && children.size() > 0)
-			{
-				treeLevel++;
-				for (IDataRow dataRow : children)
-				{					
-					if(dataRow.getEntityInterface() == null) // or if row values == null
-					{
-						for(IDataRow subDR : dataRow.getChildren())
-						{
-							EntityInterface newChildEntity = mapOfNewEntities.get(subDR.getEntityInterface().getName()+"_"+treeLevel);
-							if(newChildEntity == null)
-							{
-								newChildEntity = getNewEntity(subDR.getEntityInterface());
-								mapOfNewEntities.put(subDR.getEntityInterface().getName()+"_"+treeLevel, newChildEntity);
-							}
-							
-							AssociationInterface deAsso = mapOfNewAssociations.get(newEntity.getName()+"_"+newChildEntity.getName());
-							
-							if(deAsso == null)
-							{
-								deAsso = createNewOneToManyAsso(newEntity, newChildEntity);
-								mapOfNewAssociations.put(newEntity.getName()+"_"+newChildEntity.getName(), deAsso);
-								mapToConstruct.put(deAsso, new ArrayList<Map>());
-								newEntity.addAssociation(deAsso);
-							}
-							List<Map> listOfMapToAppend = (List<Map>) mapToConstruct.get(deAsso);
-							/* This if block is needed because same association may be used in g1-(p1,p2)  and also in g2-(p3,p4) 
-							 * In this case we have to add the DE association and new arraylist to the new map to construct for 
-							 * second association  */
-							if(listOfMapToAppend == null)
-							{
-								listOfMapToAppend = new ArrayList<Map>();
-								mapToConstruct.put(deAsso, listOfMapToAppend);
-							}
-							Map<AbstractAttributeInterface, Object> mapToAppend = new HashMap<AbstractAttributeInterface, Object>();
-							
-							constructDataRowMap(subDR, mapToAppend, newChildEntity, treeLevel+1);
-							
-							listOfMapToAppend.add(mapToAppend);
-							
-						}
-					}
-					else{
-						EntityInterface newChildEntity = mapOfNewEntities.get(dataRow
-								.getEntityInterface().getName()
-								+ "_" + treeLevel);
-						if (newChildEntity == null)
-						{
-							newChildEntity = getNewEntity(dataRow.getEntityInterface());
-							mapOfNewEntities.put(dataRow.getEntityInterface().getName() + "_"
-									+ treeLevel, newChildEntity);
-						}
-
-						AssociationInterface deAsso = mapOfNewAssociations.get(newEntity.getName()
-								+ "_" + newChildEntity.getName());
-						if (deAsso == null)
-						{	
-							deAsso = createNewOneToManyAsso(newEntity, newChildEntity);
-							mapOfNewAssociations.put(newEntity.getName() + "_"
-									+ newChildEntity.getName(), deAsso);
-							mapToConstruct.put(deAsso, new ArrayList<Map>());
-							newEntity.addAssociation(deAsso);
-						}
-						List<Map> listOfMapToAppend = (List<Map>) mapToConstruct.get(deAsso);
-						if(listOfMapToAppend == null)
-						{
-							listOfMapToAppend = new ArrayList<Map>();
-							mapToConstruct.put(deAsso, listOfMapToAppend);
-						}
-						
-						Map<AbstractAttributeInterface, Object> mapToAppend = new HashMap<AbstractAttributeInterface, Object>();
-
-						constructDataRowMap(dataRow, mapToAppend, newChildEntity, treeLevel);
-
-						listOfMapToAppend.add(mapToAppend);
-					}
-				}
-			}
+			AttributeInterface attribute = newAttributes.get(i);
+			Object value = values[i];
+			mapToConstruct.put(attribute, value);
 		}
-		else
+
+		List<IDataRow> children = dataRowToSave.getChildren();
+
+		if (children != null && children.size() > 0)
 		{
-			List<IDataRow> children = dataRowToSave.getChildren();
-			if (children != null)
+			treeLevel++;
+			for (IDataRow dataRow : children)
 			{
-				for (IDataRow dataRow : children)
+				if (dataRow.isData() == false) // or if row values == null
 				{
-					constructDataRowMap(dataRow, mapToConstruct, newEntity, treeLevel);
+					for (IDataRow subDR : dataRow.getChildren())
+					{
+						createNewEntityAndAssociation(mapToConstruct, subDR, newEntity, treeLevel);
+					}
+				}
+				else
+				{
+					createNewEntityAndAssociation(mapToConstruct, dataRow, newEntity, treeLevel);
 				}
 			}
 		}
+
 	}
 
 	/**
@@ -548,8 +458,8 @@ public class DataListOperations extends DefaultBizLogic
 	 * @throws BizLogicException 
 	 * @see DataListBusinessInterface#saveDataListMetadata(DataListMetadata)
 	 */
-	public Long saveDataListMetadata(DataListMetadata datalistMetadata) throws 
-			BizLogicException, UserNotAuthorizedException
+	public Long saveDataListMetadata(DataListMetadata datalistMetadata) throws BizLogicException,
+			UserNotAuthorizedException
 	{
 		insert(datalistMetadata, DAO_TYPE);
 		Logger.out.info("########### saved matadata successfully ");
