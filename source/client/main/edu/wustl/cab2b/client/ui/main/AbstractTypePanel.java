@@ -90,6 +90,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 		
 		/* Initializing  conditions can't be abstracted, since it varies from string type to number to date */
 		m_Conditions = new Cab2bComboBox();
+		m_Conditions.setPreferredSize(new Dimension(125,20));
 		Collections.sort(conditionList);
 		DefaultComboBoxModel model = new DefaultComboBoxModel();
 		for(int i = 0;i < conditionList.size(); i++)
