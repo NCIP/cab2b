@@ -160,22 +160,53 @@ public class MainFrame extends JXFrame {
 	
 	public void setSearchDataWelcomePanel()
 	{
-		if(searchDataWelcomePanel == null)
-		{
-			searchDataWelcomePanel = new SearchDataWelcomePanel(this);			
+		
+		CustomSwingWorker swingWorker = new CustomSwingWorker(this)
+		{		
+		@Override
+		protected void doNonUILogic() throws RuntimeException {
+			if(searchDataWelcomePanel == null)
+			{
+				searchDataWelcomePanel = new SearchDataWelcomePanel(MainFrame.this);			
+			}
+			homePanel = searchDataWelcomePanel; 
 		}
-		homePanel = searchDataWelcomePanel; 
-		setWelcomePanel();			
+		
+		@Override
+		protected void doUIUpdateLogic() throws RuntimeException {
+			// TODO Auto-generated method stub
+			
+			setWelcomePanel();					
+		}		
+		};
+		swingWorker.start();			
 	}
 	
 	public void setHomeWelcomePanel()
 	{
-		if(newWelcomePanel == null)
-		{
-			newWelcomePanel = new NewWelcomePanel(this);				
+			
+		CustomSwingWorker swingWorker = new CustomSwingWorker(this)
+		{		
+		@Override
+		protected void doNonUILogic() throws RuntimeException {
+			if(newWelcomePanel == null)
+			{
+				newWelcomePanel = new NewWelcomePanel(MainFrame.this);				
+			}
+			homePanel = newWelcomePanel;
 		}
-		homePanel = newWelcomePanel;
-		setWelcomePanel();
+		
+		@Override
+		protected void doUIUpdateLogic() throws RuntimeException {
+			// TODO Auto-generated method stub
+			
+			setWelcomePanel();					
+		}		
+		};
+		swingWorker.start();
+		
+		
+		
 	}
 	
 	public void setWelcomePanel()
@@ -188,8 +219,9 @@ public class MainFrame extends JXFrame {
 		if(openExperimentWelcomePanel != null && openExperimentWelcomePanel.isVisible()==true)
 		{
 			this.remove(openExperimentWelcomePanel);
-			this.add(splitPanelPanel);		
-		}
+			this.add(splitPanelPanel);			
+			this.validate();
+		}		
 	}
 	
 	public void setDataForMySearchQueriesPanel(Vector data)
