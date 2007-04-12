@@ -9,6 +9,7 @@ import edu.wustl.cab2b.common.beans.MatchedClass;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.server.cache.EntityCache;
+import edu.wustl.common.util.logger.Logger;
 
 public class AdvancedSearchTest extends ServletTestCase {
     MatchedClass resultMatchedClass;
@@ -17,6 +18,7 @@ public class AdvancedSearchTest extends ServletTestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+        Logger.configure();
 		EntityCache entityCache = EntityCache.getInstance();
 		resultMatchedClass = new MatchedClass();
 		advaceSearch = new AdvancedSearch(entityCache);
