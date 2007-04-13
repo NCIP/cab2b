@@ -39,7 +39,7 @@ import edu.wustl.common.util.logger.Logger;
  * 
  * @author chetan_bh
  */
-public class AvailablePathsPanel extends Cab2bTitledPanel implements IDialogInterface
+public class AvailablePathsPanel extends Cab2bPanel implements IDialogInterface
 {
 	
 	/**
@@ -109,17 +109,12 @@ public class AvailablePathsPanel extends Cab2bTitledPanel implements IDialogInte
 	 */
 	private void initGUI()
 	{
-		this.setTitle("Available Paths");
 		parentPanel = new Cab2bPanel();
 		parentPanel.setLayout(new RiverLayout());
 		ambiguityDescLabel = new Cab2bLabel("");
 		
 		parentPanel.add("br", ambiguityDescLabel);
 
-		filterPathsPanel = new FilterPathsPanel();
-		parentPanel.add("br", filterPathsPanel);
-		
-		
 		tableHeader = new String[3];
 		tableHeader[0] = "Select";
 		tableHeader[1] ="Paths";

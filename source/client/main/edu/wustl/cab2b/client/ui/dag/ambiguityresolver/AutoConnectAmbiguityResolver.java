@@ -34,7 +34,7 @@ import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.util.Utility;
 
-public class AutoConnectAmbiguityResolver extends Cab2bTitledPanel implements IDialogInterface
+public class AutoConnectAmbiguityResolver extends Cab2bPanel implements IDialogInterface
 {
 	ICuratedPath[] m_paths;
 	
@@ -89,13 +89,12 @@ public class AutoConnectAmbiguityResolver extends Cab2bTitledPanel implements ID
 	 */
 	private void initGUI()
 	{
-		this.setTitle("Available Paths");
 		parentPanel = new Cab2bPanel();
 		parentPanel.setLayout(new RiverLayout());
-
-		filterPathsPanel = new FilterPathsPanel();
-		parentPanel.add("br", filterPathsPanel);
 		
+		JLabel label = new JLabel("There are multiple paths available for connecting selected categories. Select the appropriate paths.");
+		parentPanel.add("br", label);
+		parentPanel.add("br", new JLabel(""));
 		
 		tableHeader = new String[3];
 		tableHeader[0] = "Select";
@@ -153,6 +152,7 @@ public class AutoConnectAmbiguityResolver extends Cab2bTitledPanel implements ID
 			parentPanel.add("tab", new JLabel(""));
 		parentPanel.add("tab", addPathsButton);
 		this.add(parentPanel);
+		label.setFont(pathsTable.getFont());
 	}
 	
 	/**

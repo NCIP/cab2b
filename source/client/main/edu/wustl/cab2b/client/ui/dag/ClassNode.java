@@ -139,11 +139,11 @@ public class ClassNode extends GenericNode
 	{
 		m_associationToLogicalOperatorMap.put(sourcePorts.get(associationIdx), operator);
 	}
-	
+	/*
 	public String getLogicalOperator(int associationIdx)
 	{
 		return m_associationToLogicalOperatorMap.get(sourcePorts.get(associationIdx));
-	}
+	}*/
 	public String getOperatorBetAttrAndAss()
 	{
 		return m_OperatorBetweenAttrAndAss;

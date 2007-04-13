@@ -94,8 +94,11 @@ public class ResolveAmbiguity
 		}
 		
 		if(edu.wustl.cab2b.client.ui.util.CommonUtils.FrameReference == null)
-			System.out.println("Frame object null");
-		WindowUtilities.showInDialog(edu.wustl.cab2b.client.ui.util.CommonUtils.FrameReference, availablePathsPanel, "Ambiguity resolver", new Dimension(600, 370), true, false);
+		{
+			Logger.out.info("Frame object null");
+		}
+		WindowUtilities.showInDialog(edu.wustl.cab2b.client.ui.util.CommonUtils.FrameReference, 
+									 availablePathsPanel, "Ambiguity resolver", new Dimension(600, 350), true, false);
 		return availablePathsPanel.getUserSelectedpaths();
 	}
 	

@@ -304,7 +304,7 @@ public class ClassNodeRenderer implements IGraphNodeRenderer
         m_maxMinRectangle.x = m_textRect.x+m_textRect.width;
         m_maxMinRectangle.y = m_textRect.y + 5;
         
-//      Option area setup
+        // Option area setup
        	m_option = fontMetrics.getStringBounds("Options", gr).getBounds();
         m_option.width += 10;
         m_option.height +=10;
@@ -315,14 +315,6 @@ public class ClassNodeRenderer implements IGraphNodeRenderer
         Rectangle2D.union(m_maxMinRectangle, bounds, bounds);
         Rectangle2D.union(m_option, bounds, bounds);
         
-        /*ClassNode classNode = (ClassNode)(node.getLookup().lookup(ClassNode.class));
-        java.util.List associationList = classNode.getAssociations();
-        for(int i=0; i< associationList.size(); i++)
-		{
-        	IGraphPort port = classNode.getAssociationPort((IExpressionId)associationList.get(i));
-			helper.setPortRelativeLocation(port, new Point(m_maxMinRectangle.x + m_maxMinRectangle.width+ 5, m_maxMinRectangle.y + 5));
-		}
-        */
         ClassNode classNode = (ClassNode)(node.getLookup().lookup(ClassNode.class));
         java.util.List<IGraphPort> associationList = classNode.getSourcePorts();
         for(int i=0; i< associationList.size(); i++)
@@ -800,7 +792,7 @@ public class ClassNodeRenderer implements IGraphNodeRenderer
             gr.drawString(String.valueOf(expId.getInt()), assRect.x+5, assRect.y+3 + ascent);
             if(i<m_assRectangles.length-1)
             {
-            	drawCustomCombo(classNode.getLogicalOperator(associationList.get(i-1)), currX, currY, gr);
+            	drawCustomCombo(classNode.getLogicalOperator(associationList.get(i)), currX, currY, gr);
             }
         }
 	}
@@ -934,7 +926,7 @@ public class ClassNodeRenderer implements IGraphNodeRenderer
 				{
 					if(true == m_assRectangles[i].contains(tempPoint))
 					{
-						m_associationIndx = i-1;
+						m_associationIndx = i;
 						return true;
 					}
 				}
@@ -964,11 +956,11 @@ public class ClassNodeRenderer implements IGraphNodeRenderer
 		Point p = new Point();
 		p.x = nodePosition.x + m_textRect.width;
 		p.y = nodePosition.y + m_textRect.height + m_option.height;
-		for(int i=0; i<=m_associationIndx; i++)
+		for(int i=0; i<m_associationIndx; i++)
 		{
 			p.y += m_assRectangles[i].height;
 		}
-		p.y += 4;
+		p.y += 7;
 		return p;
 	}
 }

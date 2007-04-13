@@ -22,6 +22,7 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.queryengine.Cab2bQueryObjectFactory;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
+import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.querysuite.metadata.path.IPath;
@@ -193,17 +194,21 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface
      * @param logicalOperator The logical operator to be set.
      */
     public void setLogicalConnector(IExpressionId parentExpressionId,
-                IExpressionId childExpressionId, LogicalOperator logicalOperator)
+                IExpressionId childExpressionId, LogicalOperator logicalOperator, boolean isUpdate)
     {
-        ILogicalConnector logicalConnector = Cab2bQueryObjectFactory.createLogicalConnector(logicalOperator);
-        IExpression parentExpression = query.getConstraints().getExpression(parentExpressionId);
-        
+    	IExpression parentExpression = query.getConstraints().getExpression(parentExpressionId);
         int childIndex = parentExpression.indexOfOperand(childExpressionId);
         if (childIndex != 0)
         {
             int parentIndex = childIndex - 1;
-            parentExpression.setLogicalConnector(parentIndex,
-                    childIndex, logicalConnector);
+        	if(false == isUpdate)
+            {
+            	parentExpression.setLogicalConnector(parentIndex, childIndex, QueryObjectFactory.createLogicalConnector(logicalOperator));
+            }
+        	else
+        	{
+        		parentExpression.getLogicalConnector(parentIndex, childIndex).setLogicalOperator(logicalOperator);
+        	}
         }
     }
     

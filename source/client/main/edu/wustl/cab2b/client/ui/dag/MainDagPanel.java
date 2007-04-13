@@ -33,9 +33,9 @@ import edu.wustl.cab2b.client.ui.dag.ambiguityresolver.AutoConnectAmbiguityResol
 import edu.wustl.cab2b.client.ui.dag.ambiguityresolver.ResolveAmbiguity;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.query.IPathFinder;
+import edu.wustl.cab2b.client.ui.query.Utility;
 import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImageConstants;
 import edu.wustl.cab2b.common.queryengine.Cab2bQueryObjectFactory;
-import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -123,7 +123,7 @@ public class MainDagPanel extends Cab2bPanel
 		IExpression expression = m_queryObject.getQuery().getConstraints().getExpression(expressionId);
 		IConstraintEntity constraintEntity = expression.getConstraintEntity();
 		ClassNode node = new ClassNode();
-		node.setDisplayName(Utility.getDisplayName(constraintEntity.getDynamicExtensionsEntity()));
+		node.setDisplayName(edu.wustl.cab2b.common.util.Utility.getDisplayName(constraintEntity.getDynamicExtensionsEntity()));
 		node.setExpressionId(expression);
 		node.setID(String.valueOf(expressionId.getInt()));
 		node.setType(getNodeType(expressionId));
@@ -283,13 +283,20 @@ public class MainDagPanel extends Cab2bPanel
         link.setSourceExpressionId(sourceNode.getExpressionId());
         link.setPath(path);
         sourceNode.setLinkForSourcePort(sourcePort, link);
-        link.setTooltipText(Utility.getPathDisplayString(path));
+        link.setTooltipText(edu.wustl.cab2b.common.util.Utility.getPathDisplayString(path));
         m_document.addComponents(GraphEvent.createSingle(link));
         
         // ===================== IMPORTANT QUERY UPDATION STARTS HERE ==========
        if(updateQueryRequired)
 		{
-			updateQueryObject(link, sourceNode, destNode, assPosition);
+			if(assPosition == 0)
+			{
+				updateQueryObject(link, sourceNode, destNode, null);
+			}
+			else
+			{
+				updateQueryObject(link, sourceNode, destNode, sourcePort);
+			}
 		}
 		else
 		{
@@ -347,26 +354,26 @@ public class MainDagPanel extends Cab2bPanel
         m_viewController.getHelper().recalculate();
     }
 	
-	private void updateQueryObject(PathLink link , ClassNode sourceNode, ClassNode destNode, int assPosition)
+	private void updateQueryObject(PathLink link , ClassNode sourceNode, ClassNode destNode, GraphPort sourcePort)
 	{
 		 // If the first association is added, put operator between attribute condition and association
         String operator = null;
-        if(assPosition == 0)
+        if(sourcePort == null)
         {
         	operator = sourceNode.getOperatorBetAttrAndAss();
         }
         else // Get the logical operator associated with previous association
         {
-        	operator = sourceNode.getLogicalOperator(assPosition-1); 
+        	operator = sourceNode.getLogicalOperator(sourcePort); 
         }
         
         // Get the expressionId between which to add logical operator
         IExpressionId destId = link.getLogicalConnectorExpressionId();
         m_queryObject.setLogicalConnector(sourceNode.getExpressionId(), destId  , 
-        								  edu.wustl.cab2b.client.ui.query.Utility.getLogicalOperator(operator));
+        								  edu.wustl.cab2b.client.ui.query.Utility.getLogicalOperator(operator), false);
         
         // Put appropriate parenthesis
-        if(assPosition != 0)
+        if(sourcePort != null)
         {
         	IExpressionId previousExpId = sourceNode.getLinkForSourcePort(sourceNode.getSourcePortAt(0))
         								  .getLogicalConnectorExpressionId();
@@ -442,7 +449,8 @@ public class MainDagPanel extends Cab2bPanel
 	public void updateLogicalOperatorForAssociation(ClassNode sourceNode, PathLink link, String operator)
 	{
 		IExpressionId destinationId = link.getLogicalConnectorExpressionId();
-		m_queryObject.setLogicalConnector(sourceNode.getExpressionId(), destinationId, edu.wustl.cab2b.client.ui.query.Utility.getLogicalOperator(operator));
+		m_queryObject.setLogicalConnector(sourceNode.getExpressionId(), destinationId, 
+				edu.wustl.cab2b.client.ui.query.Utility.getLogicalOperator(operator), true);
 		m_expressionPanel.setText(getExprssionString());
 	}
 	
@@ -453,7 +461,8 @@ public class MainDagPanel extends Cab2bPanel
 	{
 		PathLink link = sourceNode.getLinkForSourcePort(sourceNode.getSourcePortAt(0));
 		IExpressionId destinationId = link.getLogicalConnectorExpressionId();
-		m_queryObject.setLogicalConnector(sourceNode.getExpressionId(), destinationId, edu.wustl.cab2b.client.ui.query.Utility.getLogicalOperator(operator));
+		m_queryObject.setLogicalConnector(sourceNode.getExpressionId(), destinationId,
+					  edu.wustl.cab2b.client.ui.query.Utility.getLogicalOperator(operator), true);
 		m_expressionPanel.setText(getExprssionString());
 	}
 	
@@ -552,7 +561,7 @@ public class MainDagPanel extends Cab2bPanel
 				IExpressionId associationNode = node.getLinkForSourcePort(ports.get(i)).getDestinationExpressionId();
 				if(i > 0 && !getNodeType(associationNode).equals(ClassNodeType.ViewOnlyNode))
 				{
-					sb.append(" ").append(node.getLogicalOperator(i-1)).append(" ");
+					sb.append(" ").append(node.getLogicalOperator(ports.get(i))).append(" ");
 				}
 				if(null != expressionToStringMap.get(associationNode))
 				{

@@ -104,7 +104,7 @@ public interface IClientQueryBuilderInterface
      * @param logicalOperator The logical operator to be set.
      */
     public void setLogicalConnector(IExpressionId parentExpressionId,
-                IExpressionId childExpressionId, LogicalOperator logicalOperator);
+                IExpressionId childExpressionId, LogicalOperator logicalOperator, boolean isUpdate);
     
     /**
      * Creates a copy of the source expression passed and 
