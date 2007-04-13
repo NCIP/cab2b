@@ -33,9 +33,9 @@ import edu.wustl.cab2b.client.ui.dag.ambiguityresolver.AutoConnectAmbiguityResol
 import edu.wustl.cab2b.client.ui.dag.ambiguityresolver.ResolveAmbiguity;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.query.IPathFinder;
-import edu.wustl.cab2b.client.ui.query.Utility;
 import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImageConstants;
 import edu.wustl.cab2b.common.queryengine.Cab2bQueryObjectFactory;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -123,7 +123,7 @@ public class MainDagPanel extends Cab2bPanel
 		IExpression expression = m_queryObject.getQuery().getConstraints().getExpression(expressionId);
 		IConstraintEntity constraintEntity = expression.getConstraintEntity();
 		ClassNode node = new ClassNode();
-		node.setDisplayName(Utility.getDisplayNameForEntity(constraintEntity.getDynamicExtensionsEntity()));
+		node.setDisplayName(Utility.getDisplayName(constraintEntity.getDynamicExtensionsEntity()));
 		node.setExpressionId(expression);
 		node.setID(String.valueOf(expressionId.getInt()));
 		node.setType(getNodeType(expressionId));
@@ -283,7 +283,7 @@ public class MainDagPanel extends Cab2bPanel
         link.setSourceExpressionId(sourceNode.getExpressionId());
         link.setPath(path);
         sourceNode.setLinkForSourcePort(sourcePort, link);
-        link.setTooltipText(edu.wustl.cab2b.common.util.Utility.getPathDisplayString(path));
+        link.setTooltipText(Utility.getPathDisplayString(path));
         m_document.addComponents(GraphEvent.createSingle(link));
         
         // ===================== IMPORTANT QUERY UPDATION STARTS HERE ==========
