@@ -2,26 +2,29 @@ package edu.wustl.cab2b.common.util;
 
 
 /**
+ * Class to be used for ID generation.
+ * For use create a instance of this class, and use it for id generation.
+ * Any number of instances are allowed for this class.
  * @author Chandrakant Talele
  */
 public class IdGenerator {
 
     /**
-     * 
+     * Maintains next avaible id
      */
-    static long id;
+    private long nextAvailableId;
 
     /**
-     * @param value
+     * @param value Initial value for id.
      */
-    public static void setInitialValue(long value) {
-        id = value;
+    public IdGenerator(long value) {
+        nextAvailableId = value;
     }
-
+    
     /**
-     * @return
+     * @return next avaible id.
      */
-    public static synchronized long getNextId() {
-        return id++;
+    public synchronized long getNextId() {
+        return nextAvailableId++;
     }
 }

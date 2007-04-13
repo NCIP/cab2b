@@ -243,7 +243,7 @@ public class PathBuilder {
 
         List<String> pathList = readFullFile();
         BufferedWriter pathFile = new BufferedWriter(new FileWriter(new File(PATH_FILE_NAME)));
-        IdGenerator.setInitialValue(getNextPathId(connection));
+        IdGenerator idGenerator = new IdGenerator(getNextPathId(connection));
         for (int i = 0; i < pathList.size(); i++) {
             Logger.out.info("Transforming Path : " + i);
 
@@ -254,7 +254,7 @@ public class PathBuilder {
             Long[] allEntitiesInPath = getEntityIdSequence(firstEntityId, columnValues[1], lastEntityId);
 
             for (String iPath : getIntraModelPaths(allEntitiesInPath, prepareStatement)) {
-                pathFile.write(Long.toString(IdGenerator.getNextId()));
+                pathFile.write(Long.toString(idGenerator.getNextId()));
                 pathFile.write(FIELD_SEPARATOR);
                 pathFile.write(Long.toString(firstEntityId));
                 pathFile.write(FIELD_SEPARATOR);
