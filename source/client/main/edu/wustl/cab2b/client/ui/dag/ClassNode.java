@@ -34,8 +34,9 @@ public class ClassNode extends GenericNode
 	private HashMap<IGraphPort, PathLink> m_sourcePortToPathLinkMap;
 	
 	private String m_OperatorBetweenAttrAndAss;
-	private static final String ANDOPERATOR = "AND";
-	private static final String OROPERATOR = "OR";
+	public static final String ANDOPERATOR = "AND";
+	public static final String OROPERATOR = "OR";
+	private ClassNodeType type = ClassNodeType.ConstraintOnlyNode;
 	
 	public ClassNode()
 	{
@@ -108,9 +109,9 @@ public class ClassNode extends GenericNode
 	{
 		targetPorts.remove(port);
 	}
-	public IGraphNodeRenderer createNodeRenderer(GraphHelper helper, IGraphNode node) 
+	public IGraphNodeRenderer createNodeRenderer(GraphHelper helper, IGraphNode node, boolean isForView) 
 	{
-		 return new ClassNodeRenderer (helper, node); // sanjeev
+		 return new ClassNodeRenderer (helper, node, isForView);
 	}
 	
 	public void setExpressionId(IExpression expression)
@@ -156,7 +157,15 @@ public class ClassNode extends GenericNode
 	public String getTooltipText()
 	{
 		StringBuffer sb = new StringBuffer();
-		IRule rule = (IRule)m_expression.getOperand(0);
+		IRule rule = null;
+		if(!((IExpression)m_expression).containsRule())
+		{
+			return "";
+		}
+		else
+		{
+			rule = (IRule)m_expression.getOperand(0);
+		}
 		int totalConditions = rule.size();
 		// Populate panels with corresponding value
 		sb.append("<HTML>");
@@ -213,5 +222,13 @@ public class ClassNode extends GenericNode
 		}
 		sb.append("</HTML>");
 		return sb.toString();
+	}
+	public ClassNodeType getType()
+	{
+		return type;
+	}
+	public void setType(ClassNodeType type)
+	{
+		this.type = type;
 	}
 }

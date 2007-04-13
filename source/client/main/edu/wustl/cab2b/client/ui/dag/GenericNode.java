@@ -15,6 +15,6 @@ public abstract class GenericNode extends GraphNode
     	port.setID (Integer.toString (++lastID));
 	    super.addPort (port);
 	}
-    public abstract IGraphNodeRenderer createNodeRenderer (GraphHelper helper, IGraphNode node);
+    public abstract IGraphNodeRenderer createNodeRenderer (GraphHelper helper, IGraphNode node, boolean isForView);
 
 }

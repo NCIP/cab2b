@@ -11,13 +11,15 @@ import org.netbeans.graph.api.model.IGraphPort;
 
 public class DocumentRenderer extends SimpleDocumentRenderer 
 {
-	public DocumentRenderer(Image image, Image portImage)
+	private boolean isForView= false;
+	public DocumentRenderer(Image image, Image portImage, boolean forView)
 	{
 		super(image, portImage);
+		isForView = forView;
 	}
 	public IGraphNodeRenderer getNodeRenderer (IGraphNode node)
 	{
-	        return ((GenericNode) node.getLookup ().lookup (GenericNode.class)).createNodeRenderer (helper, node);
+	        return ((GenericNode) node.getLookup ().lookup (GenericNode.class)).createNodeRenderer (helper, node, isForView);
 	}
 
 	public IGraphPortRenderer getPortRenderer (IGraphPort port) 

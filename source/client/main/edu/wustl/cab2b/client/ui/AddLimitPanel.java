@@ -156,7 +156,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
 		imageMap.put(DagImageConstants.PortImageIcon,Utilities.loadImage ("port.gif"));
 		
 		IPathFinder pathFinder = new ClientPathFinder();
-		m_contentForBottomCenterPanel = new MainDagPanel(this, imageMap, pathFinder);
+		m_contentForBottomCenterPanel = new MainDagPanel(this, imageMap, pathFinder, false);
         m_bottomCenterPanel.add(m_contentForBottomCenterPanel);
 
 		/* Add components to the conetent pane.*/

@@ -20,6 +20,8 @@ import org.netbeans.graph.api.model.IGraphNode;
 import org.netbeans.graph.api.model.IGraphPort;
 import org.netbeans.graph.api.model.builtin.GraphPort;
 
+import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
+import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 
 public class ViewController extends DefaultViewController implements ActionListener
@@ -27,6 +29,8 @@ public class ViewController extends DefaultViewController implements ActionListe
 	private JPopupMenu singleNodePopup;
 	private JMenuItem miDelete;
 	private JMenuItem miEditProp;
+	private JMenuItem miAddToView;
+	private JMenuItem miDeleteFromView;
 	private JMenuItem miViewAssProp;
 		
 	private JPopupMenu m_logicalOperatorMenu;
@@ -46,28 +50,43 @@ public class ViewController extends DefaultViewController implements ActionListe
 		//	TODO Auto-generated constructor stub
 		singleNodePopup = new JPopupMenu();
         
-		miEditProp = new JMenuItem("Edit Limits");
-		miEditProp.addActionListener(this);
-        singleNodePopup.add(miEditProp);
-        
-        miDelete = new JMenuItem("Delete Limits");
-        miDelete.addActionListener(this);
-        singleNodePopup.add(miDelete);
-               
-        miViewAssProp = new JMenuItem("Show associations");
-        miViewAssProp.addActionListener(this);
-        singleNodePopup.add(miViewAssProp);
-        miViewAssProp.setEnabled(false);
-        
-        m_logicalOperatorMenu = new JPopupMenu();
-        m_andOperator = new JMenuItem("AND");
-        m_andOperator.addActionListener(this);
-        m_logicalOperatorMenu.add(m_andOperator);
-        
-        m_orOperator = new JMenuItem("OR");
-        m_orOperator.addActionListener(this);
-        m_logicalOperatorMenu.add(m_orOperator);
-        m_logicalOperatorMenu.setBackground(Color.WHITE);
+		if (!mainPanel.isDAGForView())
+		{
+			miEditProp = new JMenuItem("Edit Limits");
+			miEditProp.addActionListener(this);
+			singleNodePopup.add(miEditProp);
+
+			miDelete = new JMenuItem("Delete Limits");
+			miDelete.addActionListener(this);
+			singleNodePopup.add(miDelete);
+
+			miViewAssProp = new JMenuItem("Show associations");
+			miViewAssProp.addActionListener(this);
+			singleNodePopup.add(miViewAssProp);
+			miViewAssProp.setEnabled(false);
+
+			m_logicalOperatorMenu = new JPopupMenu();
+			m_andOperator = new JMenuItem("AND");
+			m_andOperator.addActionListener(this);
+			m_logicalOperatorMenu.add(m_andOperator);
+
+			m_orOperator = new JMenuItem("OR");
+			m_orOperator.addActionListener(this);
+			m_logicalOperatorMenu.add(m_orOperator);
+			m_logicalOperatorMenu.setBackground(Color.WHITE);
+		}
+		else
+		{
+			miAddToView = new JMenuItem("Add to View");
+			miAddToView.addActionListener(this);
+			singleNodePopup.add(miAddToView);
+
+			miDeleteFromView = new JMenuItem("Delete from View");
+			miDeleteFromView.addActionListener(this);
+			singleNodePopup.add(miDeleteFromView);
+		}
+		
+     
     }
 	
 	protected boolean keyPressed(int modifiersEx, int keyCode)
@@ -110,6 +129,36 @@ public class ViewController extends DefaultViewController implements ActionListe
 	 */
 	private void deleteNode(IGraphNode node)
 	{
+		IExpressionId expressionId = ((ClassNode)node.getLookup().lookup(ClassNode.class)).getExpressionId();
+		ClassNodeType nodeType = m_mainPanel.getNodeType(expressionId);
+		if(m_mainPanel.isDAGForView())
+		{
+			if(nodeType.equals(ClassNodeType.ConstraintViewNode))
+			{
+				ClassNode classNode = (ClassNode)node.getLookup().lookup(ClassNode.class);
+				m_mainPanel.removeExpressionFromView(classNode.getExpressionId());
+				classNode.setType(m_mainPanel.getNodeType(classNode.getExpressionId()));
+				getHelper().scheduleNodeToLayout(m_currentNode);
+				getHelper().recalculate();
+			}
+			else if(nodeType.equals(ClassNodeType.ViewOnlyNode))
+			{
+				deleteNodeFromView(node);
+		        //	      Delete node from query object
+				m_mainPanel.deleteExpression(expressionId);
+			}
+			
+		}
+		else
+		{
+			deleteNodeFromView(node);
+	        //	      Delete node from query object
+			m_mainPanel.deleteExpression(expressionId);
+		}
+	}
+
+	private void deleteNodeFromView(IGraphNode node)
+	{
 		IGraphPort[] ports = node.getPorts();
 		if(ports != null)
 		{
@@ -123,13 +172,10 @@ public class ViewController extends DefaultViewController implements ActionListe
 				}
 			}
 		}
-		
-		// Delete node from query object
-		m_mainPanel.deleteExpression(((ClassNode)node.getLookup().lookup(ClassNode.class)).getExpressionId());
-		
+				
 		final IGraphNode[] _nodes = new IGraphNode[] {node};
-        final IGraphLink[] _links = new IGraphLink[]{};
-        m_mainPanel.getDocument().removeComponents(GraphEvent.create(_nodes, _links));
+		final IGraphLink[] _links = new IGraphLink[]{};
+		m_mainPanel.getDocument().removeComponents(GraphEvent.create(_nodes, _links));
 	}
 	/**
 	 * DElete link between two nodes
@@ -141,7 +187,23 @@ public class ViewController extends DefaultViewController implements ActionListe
 		IGraphPort targetPort = link.getTargetPort();
 		ClassNode sourceNode = (ClassNode)sourcePort.getNode().getLookup().lookup(ClassNode.class);
 		ClassNode destinationNode = (ClassNode)targetPort.getNode().getLookup().lookup(ClassNode.class);
-		
+		if(m_mainPanel.isDAGForView())
+		{
+			ClassNodeType sourceNodeType = m_mainPanel.getNodeType(sourceNode.getExpressionId());
+			ClassNodeType destNodeType = m_mainPanel.getNodeType(destinationNode.getExpressionId());
+			if(sourceNodeType.equals(ClassNodeType.ViewOnlyNode) || destNodeType.equals(ClassNodeType.ViewOnlyNode))
+			{
+				deleteLinkData(link, sourcePort, targetPort, sourceNode, destinationNode);
+			}
+		}
+		else
+		{
+			deleteLinkData(link, sourcePort, targetPort, sourceNode, destinationNode);
+		}
+	}
+
+	private void deleteLinkData(IGraphLink link, IGraphPort sourcePort, IGraphPort targetPort, ClassNode sourceNode, ClassNode destinationNode)
+	{
 		// Clear the port related data structures of ClassNode class
 		sourceNode.removeSourcePort(sourcePort);
 		destinationNode.deleteTargetPort(targetPort);
@@ -155,7 +217,6 @@ public class ViewController extends DefaultViewController implements ActionListe
         sourceNode.removePort((GraphPort)sourcePort.getLookup().lookup(GraphPort.class));
         destinationNode.removePort((GraphPort)targetPort.getLookup().lookup(GraphPort.class));
         m_mainPanel.getDocument().removeComponents(GraphEvent.create(_nodes, _links));
-		
 	}
 	/**
 	 * Clear all the paths associated with all the nodes
@@ -200,6 +261,20 @@ public class ViewController extends DefaultViewController implements ActionListe
     		else if(true == nodeRenderer.isOptionPopupShow(node, point))
     		{
     			Rectangle r = getHelper().getBounds(node);
+    			ClassNode classNode = (ClassNode)node.getLookup().lookup(ClassNode.class);
+    			if(m_mainPanel.isDAGForView())
+    			{
+	    	        if(classNode.getType().equals(ClassNodeType.ViewOnlyNode) || classNode.getType().equals(ClassNodeType.ConstraintViewNode))
+	    	        {
+	    	        	miAddToView.setEnabled(false);
+	    	        	miDeleteFromView.setEnabled(true);
+	    	        }
+	    	        else
+	    	        {
+	    	        	miAddToView.setEnabled(true);
+	    	        	miDeleteFromView.setEnabled(false);
+	    	        }
+    			}
     			singleNodePopup.show (getViewPresenter().getView(), r.x + r.width+2, r.y );
     		}
     		else if (true == nodeRenderer.isAssociationPopupShow(node, point))
@@ -308,6 +383,19 @@ public class ViewController extends DefaultViewController implements ActionListe
 			// Edit the selected node
 			ClassNode classNode = (ClassNode)m_currentNode.getLookup().lookup(ClassNode.class);
 			m_mainPanel.showNodeDetails(classNode);
+		}
+		else if (event.getSource() == miAddToView)
+		{
+			// Edit the selected node
+			ClassNode classNode = (ClassNode)m_currentNode.getLookup().lookup(ClassNode.class);
+			m_mainPanel.addExpressionToView(classNode.getExpressionId());
+			classNode.setType(m_mainPanel.getNodeType(classNode.getExpressionId()));
+			getHelper().scheduleNodeToLayout(m_currentNode);
+			getHelper().recalculate();
+		}
+		else if (event.getSource() == miDeleteFromView)
+		{
+			deleteNode(m_currentNode);
 		}
 	}
 	/**

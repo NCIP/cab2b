@@ -35,6 +35,7 @@ import edu.wustl.common.querysuite.queryobject.IOutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
+import edu.wustl.common.querysuite.queryobject.impl.ConstraintEntity;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -83,6 +84,7 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface
                                         .createConstrainedEntity(rule.getCondition(0)
                                                 .getAttribute().getEntity());
         IExpression expression = query.getConstraints().addExpression(constraintEntity);
+        expression.setInView(true);
         expression.addOperand(rule);
         
         return expression.getExpressionId();
@@ -316,7 +318,7 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface
      * @param secondValues The second values in the conditions.
      * @return the list of conditions given the attributes, operators and the values for the attributes.
      */
-    private List<ICondition> getConditions(List<AttributeInterface> attributes,
+    public List<ICondition> getConditions(List<AttributeInterface> attributes,
             List<String> operators, List<String> firstValues,
             List<String> secondValues)
     {
@@ -390,6 +392,8 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface
 		{
 				EntityInterface targetEntity = associations.get(i).getTargetEntity();
 				IExpressionId targetExpressionId = createDummyExpression(targetEntity);
+				IExpression targetExpression = this.query.getConstraints().getExpression(targetExpressionId);
+				targetExpression.setVisible(false);
 				intermediateExpressionIds.add(targetExpressionId);
 				try
 				{
@@ -499,6 +503,14 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface
 			// TODO Auto-generated catch block
 			return true;
 		}
+	}
+	
+	public IExpressionId addExpression(EntityInterface entity)
+	{
+		IConstraintEntity constraintEntity = new ConstraintEntity(entity);
+		IExpression expression = query.getConstraints().addExpression(constraintEntity);
+		expression.setInView(true);
+		return expression.getExpressionId();
 	}
 
 	
