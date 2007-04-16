@@ -275,8 +275,8 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel
 				MainSearchPanel.dataList.addDataRows(selectedUserObjects);
 				updateMyDataListPanel();
 				updateUI();
-				JOptionPane.showMessageDialog(titledSearchResultsPanel, "Added " + selectedUserObjects.size() + " elements to data list" , "Information",
-						JOptionPane.INFORMATION_MESSAGE);
+//				JOptionPane.showMessageDialog(titledSearchResultsPanel, "Added " + selectedUserObjects.size() + " elements to data list" , "Information",
+//						JOptionPane.INFORMATION_MESSAGE);
 			}	
 			
 		});
