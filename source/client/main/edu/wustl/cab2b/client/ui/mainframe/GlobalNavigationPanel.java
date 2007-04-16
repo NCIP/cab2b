@@ -66,7 +66,7 @@ public class GlobalNavigationPanel extends Cab2bPanel implements ActionListener
 	JXPanel middlePanel;
 	JXPanel topMiddlePanel;
 	JXPanel tabsPanel;
-	
+	MainFrame mainFrame;
 	/**
 	 * Label to show details of the logged in user to the application. 
 	 */
@@ -323,7 +323,22 @@ public class GlobalNavigationPanel extends Cab2bPanel implements ActionListener
 				}else
 				if (tabButtons[i].getActionCommand().equals("Search Data"))
 				{
-					if(this.frame instanceof MainFrame)
+					GlobalNavigationPanel.mainSearchPanel = new MainSearchPanel();					
+					Dimension relDimension = CommonUtils.getRelativeDimension(MainFrame.mainframeScreenDimesion, 0.90f, 0.85f);
+					GlobalNavigationPanel.mainSearchPanel.setPreferredSize(relDimension);
+					GlobalNavigationPanel.mainSearchPanel.setSize(relDimension);
+					
+					edu.wustl.cab2b.client.ui.util.CommonUtils.FrameReference = mainFrame;
+					
+					// Update the variable for latest screen dimension from the toolkit, this is to handle the situations were
+					// Application is started and then screen resolution is changed, but the variable stiil holds old resolution size.
+					MainFrame.mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
+					Dimension dimension = MainFrame.mainframeScreenDimesion;			
+					
+					WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel, "Search Data", new Dimension((int)(dimension.width * 0.90), (int)(dimension.height * 0.85)), true, true);
+					GlobalNavigationPanel.mainSearchPanel.dataList.clear();
+					GlobalNavigationPanel.mainSearchPanel = null;	
+					/*if(this.frame instanceof MainFrame)
 					{
 						 MainFrame mainframePanel = (MainFrame)this.frame;
 						 mainframePanel.setSearchDataWelcomePanel();
@@ -331,7 +346,7 @@ public class GlobalNavigationPanel extends Cab2bPanel implements ActionListener
 						 // reset DataList Save status
 						SaveDatalistPanel.isDataListSaved = false;						 
 						Logger.out.info("Global Nagigation Panel Search Button");
-					}
+					}*/
 		/*			mainSearchPanel = new MainSearchPanel();					
 					Dimension relDimension = CommonUtils.getRelativeDimension(MainFrame.mainframeScreenDimesion, 0.90f, 0.85f);
 					mainSearchPanel.setPreferredSize(relDimension);
