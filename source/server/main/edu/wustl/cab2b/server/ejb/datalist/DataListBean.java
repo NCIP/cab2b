@@ -43,10 +43,7 @@ public class DataListBean extends AbstractStatelessSessionBean
 	
 	public DataListMetadata retrieveDataListMetadata(Long id) throws RemoteException, DAOException
 	{
-		List results = (new DataListOperations()).retrieve("DataListMetadata", "id", id);
-		if(results != null && results.size() > 0)
-			return (DataListMetadata)results.get(0);
-		return null;
+		return (new DataListOperations()).retrieveDataListMetadata(id);
 	}
 	
 	/**

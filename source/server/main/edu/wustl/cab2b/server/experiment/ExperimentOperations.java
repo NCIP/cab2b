@@ -168,7 +168,7 @@ public class ExperimentOperations extends DefaultBizLogic
 	
 	public Vector getExperimentMetadataHierarchy(Collection firstLevelRootNodes)
 	{
-		System.out.println("In getExperimentMetadataHierarchy() "+firstLevelRootNodes);
+		//System.out.println("In getExperimentMetadataHierarchy() "+firstLevelRootNodes);
 		Vector returner = new Vector();
 		Iterator iter = firstLevelRootNodes.iterator();
 		while(iter.hasNext())

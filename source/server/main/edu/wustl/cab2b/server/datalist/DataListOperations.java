@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
-import edu.common.dynamicextensions.domain.TaggedValue;
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -30,9 +29,6 @@ import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
-import edu.wustl.common.dao.AbstractDAO;
-import edu.wustl.common.dao.DAO;
-import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
@@ -51,7 +47,7 @@ public class DataListOperations extends DefaultBizLogic
 	 * Hibernate DAO Type to use.
 	 */
 	private static final int DAO_TYPE = Constants.HIBERNATE_DAO;
-
+	
 	/**
 	 * DE's Entity manager instance.
 	 */
@@ -95,16 +91,12 @@ public class DataListOperations extends DefaultBizLogic
 	 */
 	EntityInterface dataListEntity;
 
-	public List<DataListMetadata> retrieveAllDataListMetadata() throws DAOException,
-			ClassNotFoundException
+	public List<DataListMetadata> retrieveAllDataListMetadata() throws DAOException
 	{
 		List<DataListMetadata> allDataList = null;
 
-		String hql = "from DataListMetadata";
-		DAO dao = DAOFactory.getInstance().getDAO(DAO_TYPE);
-		((AbstractDAO) dao).openSession(null);
-
-		allDataList = (List<DataListMetadata>) dao.executeQuery(hql, null, false, null);
+		allDataList = (List<DataListMetadata>) retrieve("DataListMetadata");
+		
 		Logger.out.info("allDataListMetadata.size() ########### " + allDataList.size());
 		return allDataList;
 	}
@@ -115,7 +107,15 @@ public class DataListOperations extends DefaultBizLogic
 		//TODO Yet to implement this functionality.
 		return dataList;
 	}
-
+	
+	public DataListMetadata retrieveDataListMetadata(Long id) throws DAOException
+	{
+		List results = (new DataListOperations()).retrieve("DataListMetadata", "id", id);
+		if(results != null && results.size() > 0)
+			return (DataListMetadata)results.get(0);
+		return null;
+	}
+	
 	/**
 	 * Constructs the recursive map {@link DataListOperations#dataListAttributesMap}} recursively 
 	 * and persists it to the database using Dynamic Extension APIs.
@@ -157,8 +157,7 @@ public class DataListOperations extends DefaultBizLogic
 		Long entityId = entityManager.persistEntity(dataListEntity).getId();
 
 		Long recordId = entityManager.insertData(dataListEntity, dataListAttributesMap);
-
-		Logger.out.info("this is final schema for DataList " + dataListEntity);
+		
 		Logger.out.info("DataList saved successfully !!!! (entityId, recordId) :: " + entityId
 				+ ", " + recordId);
 
@@ -437,7 +436,7 @@ public class DataListOperations extends DefaultBizLogic
 	/**
 	 * Creates and returns a new entity given an old entity.
 	 * @param oldEntity
-	 * @return
+	 * @return new entity.
 	 */
 	private EntityInterface getNewEntity(EntityInterface oldEntity)
 	{
