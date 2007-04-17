@@ -69,15 +69,15 @@ public class AdvancedSearch implements IAdvancedSearch {
         if (searchString == null) {
             throw new CheckedException("Search string cannot be null");
         }
-        MatchedClass resultMatchedClass = new MatchedClass();
-        MatchedClass matchedClass = null;
-        matchedClass = searchSplit(searchTarget, searchString, basedOn);
-        if (matchedClass.getEntityCollection().isEmpty() == false) {
+        MatchedClass resultMatchedClass = null;
+        //MatchedClass matchedClass = null;
+        resultMatchedClass = searchSplit(searchTarget, searchString, basedOn);
+       /* if (matchedClass.getEntityCollection().isEmpty() == false) {
             resultMatchedClass.getEntityCollection().addAll(matchedClass.getEntityCollection());
         }
         if (matchedClass.getAttributeCollection().isEmpty() == false) {
             resultMatchedClass.getAttributeCollection().addAll(matchedClass.getAttributeCollection());
-        }
+        }*/
         return resultMatchedClass;
     }
 
