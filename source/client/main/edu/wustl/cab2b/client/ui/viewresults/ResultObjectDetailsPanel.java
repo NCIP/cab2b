@@ -157,7 +157,7 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
                 Logger.out.info("add to data list action");
                 Vector<Object> selectedUserObjects = new Vector<Object>();
                 selectedUserObjects.add(dataRow);
-                MainSearchPanel.dataList.addDataRows(selectedUserObjects);
+                MainSearchPanel.getDataList().addDataRows(selectedUserObjects);
 
                 ViewSearchResultsSimplePanel.updateMyDataListPanel();
                 updateUI();

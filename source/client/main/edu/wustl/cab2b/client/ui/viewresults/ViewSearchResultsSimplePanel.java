@@ -272,7 +272,7 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel
 			public void actionPerformed(ActionEvent event)
 			{
 				List selectedUserObjects = pagination.getSelectedPageElementsUserObjects();
-				MainSearchPanel.dataList.addDataRows(selectedUserObjects);
+				MainSearchPanel.getDataList().addDataRows(selectedUserObjects);
 				updateMyDataListPanel();
 				updateUI();
 //				JOptionPane.showMessageDialog(titledSearchResultsPanel, "Added " + selectedUserObjects.size() + " elements to data list" , "Information",
@@ -292,7 +292,7 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel
 			{
 				// Perform apply all action
 				List selectedUserObjects = pagination.getSelectedPageElementsUserObjects();
-				if((selectedUserObjects.size() > 0)&& (false == MainSearchPanel.dataList.isTreeEmpty()))
+				if((selectedUserObjects.size() > 0)&& (false == MainSearchPanel.getDataList().isTreeEmpty()))
 				{
 					performApplyAllAction(selectedUserObjects, (JComponent)titledSearchResultsPanel);
 					
@@ -375,7 +375,7 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel
 					pathEnitites.add(0, dataRow);
 					dataRow = dataRow.getParent();
 				}	
-				List<IDataRow> entityTreetoFetch = MainSearchPanel.dataList.getTreeForApplyAll(pathEnitites);
+				List<IDataRow> entityTreetoFetch = MainSearchPanel.getDataList().getTreeForApplyAll(pathEnitites);
 				if(entityTreetoFetch.size() == 0)
 					return;
 				// For every selected entity fetch corresponding data
@@ -392,7 +392,7 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel
 				List<IDataRow> childRows = entityTreetoFetch.get(0).getChildren();
 				for(int i=0; i<parentRows.size(); i++)
 				{
-					MainSearchPanel.dataList.addDataRow(parentRows.get(i));
+					MainSearchPanel.getDataList().addDataRow(parentRows.get(i));
 					for(int j=0; j<childRows.size(); j++)
 					{
 						queryCallables.add(new QueryExecutionCallable(parentRows.get(i), childRows.get(j), queryEngineBus, childRows.get(j).getChildren()));
@@ -433,7 +433,7 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel
 						List<IDataRow> childRows =  queryResult.getChilds();
 						for(int i=0; i<parentRows.size(); i++)
 						{
-							MainSearchPanel.dataList.addDataRow(parentRows.get(i));
+							MainSearchPanel.getDataList().addDataRow(parentRows.get(i));
 							for(int j=0; j<childRows.size(); j++)
 							{
 								queryCallables.add(new QueryExecutionCallable(parentRows.get(i), childRows.get(j), 
@@ -462,7 +462,7 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel
 	 */
 	public static void updateMyDataListPanel()
 	{		
-		final List <IDataRow> datalistTree = MainSearchPanel.dataList.getDataList();
+		final List <IDataRow> datalistTree = MainSearchPanel.getDataList().getDataList();
 		//removing all previously added hyperlinks
 		ViewSearchResultsSimplePanel.myDataListPanel.removeAll();		
 		IDataRow rootNode = datalistTree.get(0); // This node is hidden node in the tree view		

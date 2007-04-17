@@ -23,8 +23,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
-import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -37,9 +35,6 @@ import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.DataListHome;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
-import edu.wustl.common.exception.BizLogicException;
-import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
-import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -114,7 +109,7 @@ public class SaveDatalistPanel extends Cab2bPanel
 				dataListAnnotation.setCreatedOn(new Date());
 				dataListAnnotation.setLastUpdatedOn(new Date());
 
-				MainSearchPanel.dataList.setDataListAnnotation(dataListAnnotation);
+				MainSearchPanel.getDataList().setDataListAnnotation(dataListAnnotation);
 
 				
 				CustomSwingWorker sw = new CustomSwingWorker(SaveDatalistPanel.this)
@@ -130,7 +125,7 @@ public class SaveDatalistPanel extends Cab2bPanel
 						
 						try
 						{
-							id = dataListBI.saveDataList(MainSearchPanel.dataList);
+							id = dataListBI.saveDataList(MainSearchPanel.getDataList());
 							
 							MainSearchPanel.savedDataListMetadata = dataListBI.retrieveDataListMetadata(id);
 							
@@ -138,31 +133,6 @@ public class SaveDatalistPanel extends Cab2bPanel
 							
 						}
 						catch (RemoteException e)
-						{
-							CommonUtils
-									.handleException(e, SaveDatalistPanel.this, true, true, false, false);
-						}
-						catch (DynamicExtensionsApplicationException e)
-						{
-							CommonUtils
-									.handleException(e, SaveDatalistPanel.this, true, true, false, false);
-						}
-						catch (DynamicExtensionsSystemException e)
-						{
-							CommonUtils
-									.handleException(e, SaveDatalistPanel.this, true, true, false, false);
-						}
-						catch (DAOException e)
-						{
-							CommonUtils
-									.handleException(e, SaveDatalistPanel.this, true, true, false, false);
-						}
-						catch (BizLogicException e)
-						{
-							CommonUtils
-									.handleException(e, SaveDatalistPanel.this, true, true, false, false);
-						}
-						catch (UserNotAuthorizedException e)
 						{
 							CommonUtils
 									.handleException(e, SaveDatalistPanel.this, true, true, false, false);
@@ -181,8 +151,8 @@ public class SaveDatalistPanel extends Cab2bPanel
 							JOptionPane.showMessageDialog(mainSearchPanel, "Data List saved successfully !");
 						else
 							Logger.out.debug("data list not saved ! "+id);
-						Logger.out.info("datalist id : "+MainSearchPanel.dataList.getDataListAnnotation().getId());
-						Logger.out.info("entity id for dl : "+MainSearchPanel.dataList.getDataListAnnotation().getEntityId());
+						Logger.out.info("datalist id : "+MainSearchPanel.getDataList().getDataListAnnotation().getId());
+						Logger.out.info("entity id for dl : "+MainSearchPanel.getDataList().getDataListAnnotation().getEntityId());
 					}
 					
 				};

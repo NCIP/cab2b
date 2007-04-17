@@ -408,11 +408,11 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener
     	}
     	if(datarow == null)
     	{
-    		dataListPanel = new DataListPanel(MainSearchPanel.dataList);
+    		dataListPanel = new DataListPanel(MainSearchPanel.getDataList());
     	}
     	else
     	{
-    		dataListPanel = new DataListPanel(MainSearchPanel.dataList, datarow);
+    		dataListPanel = new DataListPanel(MainSearchPanel.getDataList(), datarow);
     	}
     	
     	m_mainSearchPanel.getCenterPanel().m_arrCards[4] = dataListPanel;

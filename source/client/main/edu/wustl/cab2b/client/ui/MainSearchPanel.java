@@ -33,7 +33,7 @@ public class MainSearchPanel extends Cab2bPanel
 	public IClientQueryBuilderInterface queryObject = null;
 
 	/** Data list of the user.*/
-	public static DataList dataList = new DataList();
+	private static DataList dataList = new DataList();
 	
 	/** Reference to datalist metadata of the current datalist.  */
 	public static DataListMetadata savedDataListMetadata = null;
@@ -106,7 +106,12 @@ public class MainSearchPanel extends Cab2bPanel
 		
 		//Logger.configure();
 	}
-
+	
+	public static DataList getDataList()
+	{
+		return dataList;
+	}
+	
 	public static void main(String[] args)
 	{
 		Logger.configure();
