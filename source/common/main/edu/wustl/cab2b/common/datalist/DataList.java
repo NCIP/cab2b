@@ -23,7 +23,9 @@ import edu.wustl.cab2b.common.domain.DataListMetadata;
  */
 public class DataList implements Serializable
 {
-    /**
+    private static final long serialVersionUID = 3683597366517167529L;
+
+	/**
      * Annotation about the the datalist like name, description, etc.
      */
 	DataListMetadata dataListAnnotation;
@@ -46,6 +48,7 @@ public class DataList implements Serializable
     	 dataRow.setData(false);
     	 dataList.add(dataRow);
     }
+    
     /**
      * @return Returns the dataList.
      */
