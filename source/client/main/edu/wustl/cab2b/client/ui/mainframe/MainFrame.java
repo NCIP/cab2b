@@ -105,7 +105,7 @@ public class MainFrame extends JXFrame {
 
 		this.setLayout(new BorderLayout());
 		
-		globalNavigationPanel = new GlobalNavigationPanel(this);
+		globalNavigationPanel = new GlobalNavigationPanel(this,this);
 		this.add(globalNavigationPanel, BorderLayout.NORTH);
 		
 		//set new welcome panel 

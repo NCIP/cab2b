@@ -101,8 +101,9 @@ public class GlobalNavigationPanel extends Cab2bPanel implements ActionListener
 
 	public static MainSearchPanel mainSearchPanel = null;
 	
-	public GlobalNavigationPanel(JXFrame frame)
+	public GlobalNavigationPanel(JXFrame frame, MainFrame mainFrame)
 	{
+		this.mainFrame=mainFrame;
 		this.frame = frame;
 		this.setBackground(bgColor);
 		this.setLayout(new RiverLayout(0, 0));
@@ -338,7 +339,7 @@ public class GlobalNavigationPanel extends Cab2bPanel implements ActionListener
 					WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel, "Search Data", new Dimension((int)(dimension.width * 0.90), (int)(dimension.height * 0.85)), true, true);
 					GlobalNavigationPanel.mainSearchPanel.dataList.clear();
 					GlobalNavigationPanel.mainSearchPanel = null;	
-					/*if(this.frame instanceof MainFrame)
+				/*	if(this.frame instanceof MainFrame)
 					{
 						 MainFrame mainframePanel = (MainFrame)this.frame;
 						 mainframePanel.setSearchDataWelcomePanel();
@@ -407,7 +408,7 @@ public class GlobalNavigationPanel extends Cab2bPanel implements ActionListener
 		 */
 		public static void main(String[] args) {
 			Logger.configure("");
-			GlobalNavigationPanel globalNavigationPanel = new GlobalNavigationPanel(new JXFrame());
+			GlobalNavigationPanel globalNavigationPanel = new GlobalNavigationPanel(new JXFrame(),new MainFrame());
 			
 			//JFrame frame = WindowUtilities.openInJFrame(globalNavigationPanel, 1024, 70, "Global Navigation Panel");
 			
