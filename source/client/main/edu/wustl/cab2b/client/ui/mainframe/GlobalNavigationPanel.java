@@ -16,26 +16,19 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 
-import javax.swing.JOptionPane;
-
-
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXPanel;
 
-
 import edu.wustl.cab2b.client.ui.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.RiverLayout;
-import edu.wustl.cab2b.client.ui.SaveDatalistPanel;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bStandardFonts;
-import edu.wustl.cab2b.client.ui.experiment.ExperimentPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -337,7 +330,7 @@ public class GlobalNavigationPanel extends Cab2bPanel implements ActionListener
 					Dimension dimension = MainFrame.mainframeScreenDimesion;			
 					
 					WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel, "Search Data", new Dimension((int)(dimension.width * 0.90), (int)(dimension.height * 0.85)), true, true);
-					GlobalNavigationPanel.mainSearchPanel.dataList.clear();
+					GlobalNavigationPanel.mainSearchPanel.getDataList().clear();
 					GlobalNavigationPanel.mainSearchPanel = null;	
 				/*	if(this.frame instanceof MainFrame)
 					{

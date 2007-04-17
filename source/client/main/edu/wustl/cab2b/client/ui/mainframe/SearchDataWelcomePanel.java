@@ -70,7 +70,7 @@ public class SearchDataWelcomePanel extends Cab2bPanel{
 					Dimension dimension = MainFrame.mainframeScreenDimesion;			
 					
 					WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel, "Search Data", new Dimension((int)(dimension.width * 0.90), (int)(dimension.height * 0.85)), true, true);
-					GlobalNavigationPanel.mainSearchPanel.dataList.clear();
+					GlobalNavigationPanel.mainSearchPanel.getDataList().clear();
 					GlobalNavigationPanel.mainSearchPanel = null;			
 				}			
 			});
