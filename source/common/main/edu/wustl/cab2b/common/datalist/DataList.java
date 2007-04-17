@@ -243,8 +243,9 @@ public class DataList implements Serializable
     				else if(pos<pathEnitites.size())
     				{
     					List<IDataRow> childDataList = currentRow.getChildren();
-    					getDataRowWithEntity(pos+1, childDataList, listWithEntity, pathEnitites);
+    					findNodeInDataList(pos+1, childDataList, listWithEntity, pathEnitites);
     				}
+    				break;
     			}
     		}
     		else
