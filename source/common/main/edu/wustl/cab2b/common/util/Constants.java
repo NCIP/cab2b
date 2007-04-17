@@ -32,7 +32,7 @@ public class Constants
     
     public static final int INLUDE_CLASSES_ATTRIBUTE = 7;
     
-
+    public static final String OLD_ENTITY_ID_TAG_NAME = "original_entity_id";
     
     /**
      * Constant which represents String that will be used as URL KEY in tagged value
