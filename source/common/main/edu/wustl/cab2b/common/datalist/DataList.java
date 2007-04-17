@@ -199,6 +199,7 @@ public class DataList implements Serializable
     private IDataRow getDataRow(IDataRow searchDataRow, List<IDataRow> dataList)
     {
         // Get the path of current entity
+    	IDataRow actualRow = searchDataRow;
 		List<IDataRow> pathEnitites = new ArrayList<IDataRow>();
 		while(searchDataRow != null)
 		{
@@ -208,10 +209,14 @@ public class DataList implements Serializable
 		//	Find this entity in the current datalist first
     	List<IDataRow> entityDataList = new ArrayList<IDataRow>();
     	findNodeInDataList(0, dataList, entityDataList, pathEnitites);
-        if(entityDataList.size()>0)
-    		return entityDataList.get(0);
-    	else
-    		return null;
+    	for(int i=0; i<entityDataList.size(); i++)
+        {
+    		if(true == actualRow.equals(entityDataList.get(i)))
+        	{
+    			return entityDataList.get(i);
+        	}
+        }
+    	return null;
     }
     
     /**
