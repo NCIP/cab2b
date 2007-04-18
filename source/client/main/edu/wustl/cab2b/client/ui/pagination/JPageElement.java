@@ -191,10 +191,6 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
 		{
 			sb.append("<P>").append(text.substring(currentStart, currentStart+charsPerLine));
 			currentStart += charsPerLine;
-			
-			if((currentStart+charsPerLine) > textLength)
-				break;
-			
 			Logger.out.info ("Text Lines : " + text + "  currentStart :" + currentStart);
 			
 			//	Check if text has borken, if broken take next word 
@@ -212,6 +208,8 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
 					return sb.toString();
 				}
 			}
+			if((currentStart+charsPerLine) > textLength)
+				break;
 		/*	if((currentStart+charsPerLine) > textLength)
 				break;*/
 		}
