@@ -46,24 +46,24 @@ public class TreePanel extends Cab2bPanel
     /**
      * Constructor.
      */
-    public TreePanel(List<IDataRow> dataList)
+    public TreePanel(IDataRow rootDataRow)
     {
-        if(dataList.size() > 0)
+        if(rootDataRow != null)
         {
-        	initGUI(dataList);
+        	initGUI(rootDataRow);
         }
     }
     
     /**
      * Initializes the GUI.
      */
-    public void initGUI(List<IDataRow> dataList)
+    public void initGUI(IDataRow rootDataRow)
     {
         this.setLayout(new RiverLayout());
         
         //Generate the tree.
         GenerateTree generateTree = new GenerateTree();
-        tree = (JXTree)generateTree.createTree((TreeNodeImpl)dataList.get(0), true);
+        tree = (JXTree)generateTree.createTree((TreeNodeImpl)rootDataRow, true);
         tree.setRolloverEnabled(true);
         tree.setHighlighters(new HighlighterPipeline());
         

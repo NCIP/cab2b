@@ -461,11 +461,10 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel
 	 *
 	 */
 	public static void updateMyDataListPanel()
-	{		
-		final List <IDataRow> datalistTree = MainSearchPanel.getDataList().getDataList();
+	{
 		//removing all previously added hyperlinks
 		ViewSearchResultsSimplePanel.myDataListPanel.removeAll();		
-		IDataRow rootNode = datalistTree.get(0); // This node is hidden node in the tree view		
+		IDataRow rootNode = MainSearchPanel.getDataList().getRootDataRow(); //datalistTree.get(0); // This node is hidden node in the tree view		
 		for(int i=0;i<rootNode.getChildren().size();i++)
 		{
 	   		final IDataRow currentNode = rootNode.getChildren().get(i);

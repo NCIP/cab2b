@@ -130,7 +130,7 @@ public class DataListPanel extends Cab2bPanel
         detailsPanel = new DataListDetailsPanel();
         splitPane.setRightComponent(detailsPanel);
         
-        treePanel = new TreePanel(dataList.getDataList());
+        treePanel = new TreePanel(dataList.getRootDataRow());
         splitPane.setLeftComponent(treePanel);
         treePanel.setMinimumSize(new Dimension(242,this.getPreferredSize().height));
         
