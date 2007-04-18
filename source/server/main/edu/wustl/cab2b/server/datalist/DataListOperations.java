@@ -65,9 +65,8 @@ public class DataListOperations extends DefaultBizLogic
 	/**
 	 * Returns a list of all available data list metadata. 
 	 * @return list of data list metadata.
-	 * @throws DAOException
 	 */
-	public List<DataListMetadata> retrieveAllDataListMetadata() throws RuntimeException
+	public List<DataListMetadata> retrieveAllDataListMetadata()
 	{
 		List<DataListMetadata> allDataList = null;
 
@@ -99,9 +98,8 @@ public class DataListOperations extends DefaultBizLogic
 	 * Returns a data list metadata.
 	 * @param id
 	 * @return
-	 * @throws DAOException
 	 */
-	public DataListMetadata retrieveDataListMetadata(Long id) throws RuntimeException
+	public DataListMetadata retrieveDataListMetadata(Long id)
 	{
 		List<DataListMetadata> results = null;
 		try
@@ -125,23 +123,14 @@ public class DataListOperations extends DefaultBizLogic
 	 *  
 	 * @param dataListToSave
 	 * @return idetifier of the new root level entity(new DataList entity) created.
-	 * @throws DynamicExtensionsApplicationException
-	 * @throws DynamicExtensionsSystemException
-	 * @throws UserNotAuthorizedException 
-	 * @throws BizLogicException 
-	 * @throws DAOException 
 	 */
-	public Long save(DataList dataListToSave) throws RuntimeException
-	{
-		List<IDataRow> dataRows = dataListToSave.getDataList();
-
-		/**
-		 * DE's Entity manager instance.
-		 */
+	public Long save(DataList dataListToSave)
+	{		
+		// DE's Entity manager instance.		 
 		EntityManagerInterface entityManager = EntityManager.getInstance();
 
 		/* There will always be one root node is the datalist tree. */
-		IDataRow rootDataRow = dataRows.get(0);
+		IDataRow rootDataRow = dataListToSave.getRootDataRow();
 
 		Map<AbstractAttributeInterface, Object> dataListAttributesMap = new HashMap<AbstractAttributeInterface, Object>();
 
@@ -150,7 +139,7 @@ public class DataListOperations extends DefaultBizLogic
 		dataListEntity.addEntityGroupInterface(dataListEntityGroup);
 		dataListEntityGroup.addEntity(dataListEntity);
 
-		/**
+		/*
 		 * Map to maintain list of new entities created so that 
 		 * we can reuse the existing entiy later.
 		 * 
@@ -159,7 +148,7 @@ public class DataListOperations extends DefaultBizLogic
 		 */
 		Map<String, EntityInterface> mapOfNewEntities = new HashMap<String, EntityInterface>();
 
-		/**
+		/*
 		 * Map to maintain list of new Associations created between
 		 * new entities to reuse later. 
 		 */
@@ -466,7 +455,7 @@ public class DataListOperations extends DefaultBizLogic
 	 * Saves data list metadata.
 	 * @see DataListBusinessInterface#saveDataListMetadata(DataListMetadata)
 	 */
-	public Long saveDataListMetadata(DataListMetadata datalistMetadata) throws RuntimeException
+	public Long saveDataListMetadata(DataListMetadata datalistMetadata)
 	{
 		try
 		{
@@ -482,5 +471,4 @@ public class DataListOperations extends DefaultBizLogic
 		}
 		return datalistMetadata.getId();
 	}
-
 }
