@@ -97,6 +97,10 @@ public class DataListOperations extends DefaultBizLogic
 	
 	public List<EntityRecord> getEntityRecord(Long entityId)
 	{
+		
+		//		 DE's Entity manager instance.		 
+		EntityManagerInterface entityManager = EntityManager.getInstance();
+		
 		Object entityRecord[][] = null;	
 		List<EntityRecord> entityRecords = null;
 		try {
