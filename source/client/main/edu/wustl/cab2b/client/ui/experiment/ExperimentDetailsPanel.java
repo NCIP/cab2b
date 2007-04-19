@@ -3,6 +3,7 @@ package edu.wustl.cab2b.client.ui.experiment;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -10,21 +11,28 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
+import org.apache.commons.collections.functors.InstanceofPredicate;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.LinkRenderer;
 import org.jdesktop.swingx.action.LinkAction;
 import org.jdesktop.swingx.decorator.AlternateRowHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterPipeline;
+import org.jmock.core.constraint.IsInstanceOf;
 
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
+import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
+import edu.wustl.cab2b.common.exception.CheckedException;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.common.tree.ExperimentTreeNode;
+import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -35,13 +43,10 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class ExperimentDetailsPanel extends Cab2bPanel
 {
-	Cab2bTable expTable;
+	Cab2bTable expTable;	
 	
 	Object[] tableHeader = {"Title","Date Created","Last Updated","Description"};
-	Object[][] tableData = {{"SNP Experiment","12-Jul-2003","22-Jan-2004","Scott"},
-							{"Microarray Experiment","12-Jul-2004","","Scott"},
-							{"Human SNP Experiment","12-Dec-2003","","Rakesh"},
-							{"Mouse SNP Experiment","22-Jul-2003","","Scott"},};
+	
 	Object[][] emptyTableData = {};
 	
 	Vector tHeader = new Vector();
@@ -77,12 +82,12 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 		this.add("br hfill vfill",new JScrollPane(expTable));
 		deleteButton = new Cab2bButton("Delete");
 		deleteButton.addActionListener(new ActionListener()
-					{
-						public void actionPerformed(ActionEvent arg0)
-						{
+		{
+			public void actionPerformed(ActionEvent arg0)
+			{
 							
-						}
-					});
+		    }
+		});
 		this.add("br",deleteButton);
 		highlighters.updateUI();
 	}
@@ -93,7 +98,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 		if(expTreeNode.getChildNodes().size() == 0)
 		{
 			Vector firstRow = new Vector();
-			firstRow.add(expTreeNode.getName());
+			firstRow.add(expTreeNode);
 			firstRow.add(expTreeNode.getCreatedOn());
 			firstRow.add(expTreeNode.getLastUpdatedOn());
 			firstRow.add(expTreeNode.getDesc());
@@ -121,15 +126,18 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 	private void updateTableData(ExperimentTreeNode treeNode, Vector tableData)
 	{
 		Vector nextRow = new Vector();
-		nextRow.add(treeNode.getName());
+		/*nextRow.add(treeNode);
 		nextRow.add(treeNode.getCreatedOn());
 		nextRow.add(treeNode.getLastUpdatedOn());
 		nextRow.add(treeNode.getDesc());
 		
-		tableData.add(nextRow);
+		tableData.add(nextRow);*/
 		
 		if(treeNode.getChildNodes().size() == 0)
+		{
+			Logger.out.info("found child node zero");
 			return ;
+		}
 		
 		Iterator iter = treeNode.getChildNodes().iterator();
 		while(iter.hasNext())
@@ -141,7 +149,9 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 	
 	public void refreshDetails(Experiment exp)
 	{
-		Object[][] newTableData = {{exp.getName(),exp.getCreatedOn(),exp.getLastUpdatedOn(),exp.getDescription()}};
+		//Object[][] newTableData = {{exp.getName(),exp.getCreatedOn(),exp.getLastUpdatedOn(),exp.getDescription()}};
+		Object[][] newTableData = {{exp,exp.getCreatedOn(),exp.getLastUpdatedOn(),exp.getDescription()}};
+		
 		//expTable.setModel(new Cab2bTable(newTableData, tableHeader));
 		expTable = new Cab2bTable(true, newTableData,tableHeader);
 		MyLinkAction myLinkAction  =new MyLinkAction();		
@@ -170,7 +180,8 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 			if(obj instanceof Experiment)
 			{
 				Experiment exp = (Experiment) obj;
-				newTableData[counter++] = new Object[] {exp.getName(),exp.getCreatedOn(),exp.getLastUpdatedOn(),exp.getDescription()};
+				//newTableData[counter++] = new Object[] {exp.getName(),exp.getCreatedOn(),exp.getLastUpdatedOn(),exp.getDescription()};
+				newTableData[counter++] = new Object[] {exp,exp.getCreatedOn(),exp.getLastUpdatedOn(),exp.getDescription()};
 				
 			}else if(obj instanceof ExperimentGroup )
 			{
@@ -179,9 +190,11 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 		}
 		
 		expTable = new Cab2bTable(true, newTableData,tableHeader);
-		MyLinkAction myLinkAction  =new MyLinkAction();		
+		
+		/*Adding Hyperlink to experiment Name*/
+		MyLinkAction myLinkAction  =new MyLinkAction();	
 		expTable.getColumn(1).setCellRenderer(new LinkRenderer(myLinkAction));
-		expTable.getColumn(1).setCellEditor(new LinkRenderer(myLinkAction));
+		expTable.getColumn(1).setCellEditor(new LinkRenderer(myLinkAction));		
 		
 		this.removeAll();
 		this.add("br hfill vfill",new JScrollPane(expTable));
@@ -200,6 +213,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 		frame.setVisible(true);
 	}
 	
+	/*Class used for adding hyperlinks in Jtable rows*/	
     class MyLinkAction extends LinkAction
     {
         public MyLinkAction(Object obj) 
@@ -217,25 +231,54 @@ public class ExperimentDetailsPanel extends Cab2bPanel
             Logger.out.info("link is working");
             setVisited(true);       
             
-            Logger.out.info("Panel visible");           
+            //getting the selected hyperlink row
+            int selectionIndex = expTable.getSelectionModel().getLeadSelectionIndex();
             
+            //getting object associated with hyperlink
+            //column Number will be always 1
+            final  Object expObj = (ExperimentTreeNode) expTable.getValueAt(selectionIndex, 1); 
+
+                       
             CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.openExperimentWelcomePanel)
     		{		
     		@Override
-    		protected void doNonUILogic() throws RuntimeException {		
-    			ExperimentDetailsPanel.this.expPanel =	new ExperimentOpenPanel();
+    		protected void doNonUILogic() throws RuntimeException { 
+    			
+    			if(expObj instanceof ExperimentTreeNode)
+    	         {
+    	        	   ExperimentTreeNode expNodeObj = (ExperimentTreeNode) expObj;	        	   
+    	        	   if( expNodeObj.isExperimentGroup() == false )
+    	        	   {
+    	        		   ExperimentDetailsPanel.this.expPanel =	new ExperimentOpenPanel(expNodeObj,ExperimentDetailsPanel.this);    	        		   
+    	        	   }else
+    	        	   {
+    	        		   //TODO
+    	        		   /*If user clicks on experimentGroup name then Refresh the table  
+        	        	    * and display all child nodes for selected experimentGroup */   
+    	        	   }
+    	         }    			
     		}
-
     		@Override
-    		protected void doUIUpdateLogic() throws RuntimeException {    			
-    		    MainFrame.openExperimentWelcomePanel.removeAll();
-                MainFrame.openExperimentWelcomePanel.add(ExperimentDetailsPanel.this.expPanel);
-                updateUI();
+    		protected void doUIUpdateLogic() throws RuntimeException {   		
+    			
+
+    			if(expObj instanceof ExperimentTreeNode)
+    	         {
+    	        	   ExperimentTreeNode expNodeObj = (ExperimentTreeNode) expObj;   	        	   
+    	        	   
+    	        	   if ( expNodeObj.isExperimentGroup() == false )
+    	        	   { 
+    	        		   /*If user clicks on experiment name then Open experiment 
+        	        	    * in new ExperimentOpenPanel with details*/
+    	        		    Logger.out.info("ExperimentTreeNode node :" + expNodeObj.getIdentifier() + " is not a experimentGroup");
+    	        		    MainFrame.openExperimentWelcomePanel.removeAll();
+    	                    MainFrame.openExperimentWelcomePanel.add(ExperimentDetailsPanel.this.expPanel);
+    	                    updateUI();    	        		   
+    	        	   }    					
+    	         }   		
     		}		
     	  };
     		swingWorker.start();    		          
-        }
-        
-    }
-	
+        }        
+    }	
 }
