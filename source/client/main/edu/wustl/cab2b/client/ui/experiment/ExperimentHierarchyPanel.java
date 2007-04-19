@@ -1,17 +1,23 @@
 package edu.wustl.cab2b.client.ui.experiment;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.Vector;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
@@ -87,6 +93,7 @@ public class ExperimentHierarchyPanel extends Cab2bPanel
 		// EJB code end		
 		GenerateTree treeGenerator = new GenerateTree();
 		expTree = (JXTree) treeGenerator.createTree(dataVector,edu.wustl.common.util.global.Constants.EXPERIMETN_TREE_ID, true);
+		expTree.setCellRenderer(new MyRenderer());
 		expTree.setRolloverEnabled(true);
 		expTree.setHighlighters(new HighlighterPipeline());		
 		expTree.addTreeSelectionListener(new TreeSelectionListener() {
@@ -134,6 +141,74 @@ public class ExperimentHierarchyPanel extends Cab2bPanel
 		
 		this.add("br hfill vfill",new JScrollPane(expTree));
 	}
+	
+	class MyRenderer extends DefaultTreeCellRenderer
+	{
+		
+		private static final long serialVersionUID = 8552472456633962811L;
+		
+		Icon expIcon = new ImageIcon("resources/images/experiment_small.gif");
+		Icon expEmpty = new ImageIcon("resources/images/empty_folder.ico");
+		Icon expGrpOpenIcon = new ImageIcon("resources/images/folder_open.ico");
+		Icon expGrpClosedIcon = new ImageIcon("resources/images/folder_closed.ico");
+
+		public MyRenderer()
+		{
+
+		}
+
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
+				boolean expanded, boolean leaf, int row, boolean hasFocus)
+		{
+
+			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+
+			if (value instanceof DefaultMutableTreeNode)
+			{
+				DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
+				Object userObj = treeNode.getUserObject();
+
+				ExperimentTreeNode expTreeNode = null;
+				if (userObj instanceof ExperimentTreeNode)
+					expTreeNode = (ExperimentTreeNode) userObj;
+
+				if (expTreeNode != null)
+				{
+					if (expTreeNode.isExperimentGroup())
+					{
+						if (tree.isExpanded(row))
+						{
+							setIcon(UIManager.getIcon("Tree.openIcon"));
+						}
+						else
+						{
+							setIcon(UIManager.getIcon("Tree.closedIcon"));
+						}
+					}
+					else
+					{
+						setIcon(expIcon);
+					}
+				}
+				else
+				// this condition to take care of newly created experiment group node.
+				{
+					setIcon(UIManager.getIcon("Tree.closedIcon"));
+				}
+			}
+			return this;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public static void main(String[] args)
 	{
