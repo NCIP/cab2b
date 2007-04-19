@@ -4,6 +4,7 @@ package edu.wustl.cab2b.server.datalist;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.entitymanager.EntityManagerConstantsInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManagerInterface;
+import edu.common.dynamicextensions.entitymanager.EntityRecord;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.common.dynamicextensions.util.global.Constants.AssociationDirection;
@@ -90,8 +92,31 @@ public class DataListOperations extends DefaultBizLogic
 	public DataList retrieveDataList(Long dataListId)
 	{
 		DataList dataList = new DataList();
-		//TODO Yet to implement this functionality.
 		return dataList;
+	}	
+	
+	public List<EntityRecord> getEntityRecord(Long entityId)
+	{
+		Object entityRecord[][] = null;	
+		List<EntityRecord> entityRecords = null;
+		try {
+			EntityInterface entity = entityManager.getEntityByIdentifier(entityId);
+			entityRecords = entityManager.getAllRecords(entity);			
+			/*Iterator it = entityRecords.iterator();
+			
+			while(it.hasNext())
+			{
+				EntityRecord entityRec = (EntityRecord) it.next();	
+			}*/
+			
+		} catch (DynamicExtensionsSystemException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DynamicExtensionsApplicationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		return entityRecords;
 	}
 
 	/**
