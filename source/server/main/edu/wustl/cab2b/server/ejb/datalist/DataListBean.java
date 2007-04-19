@@ -4,13 +4,7 @@ package edu.wustl.cab2b.server.ejb.datalist;
 import java.rmi.RemoteException;
 import java.util.List;
 
-<<<<<<< DataListBean.java
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecord;
-import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
-import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
-=======
->>>>>>> 1.5
 import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
