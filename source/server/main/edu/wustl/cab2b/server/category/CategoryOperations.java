@@ -18,6 +18,7 @@ import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
+import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.metadata.path.Path;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
@@ -67,7 +68,7 @@ public class CategoryOperations extends DefaultBizLogic {
             throw new RuntimeException(ErrorCodeConstants.CATEGORY_RETRIEVE_ERROR);
         }
         Category category = getCategoryFromList(list);
-        postRetrivalProcess(category, con);
+        postRetrievalProcess(category, EntityCache.getInstance(),con);
         return category;
     }
 
@@ -92,7 +93,7 @@ public class CategoryOperations extends DefaultBizLogic {
             throw new RuntimeException("Problem in code; probably db schema");
         }
         Category category = getCategoryFromList(list);
-        postRetrivalProcess(category, con);
+        postRetrievalProcess(category, EntityCache.getInstance(),con);
         return category;
     }
 
@@ -140,21 +141,39 @@ public class CategoryOperations extends DefaultBizLogic {
 
     }
 
-    private void postRetrivalProcess(Category category, Connection con) {
-        processCategorialClass(category.getRootClass(), con);
+    private void postRetrievalProcess(Category category, EntityCache cache,Connection con) {
+        long deEntityId = category.getDeEntityId();
+        EntityInterface categoryEntity = cache.getEntityById(deEntityId);
+        category.setCategoryEntity(categoryEntity);
+        processCategorialClass(category.getRootClass(),cache, con);
         for (Category subCategory : category.getSubCategories()) {
-            postRetrivalProcess(subCategory, con);
+            postRetrievalProcess(subCategory,cache, con);
         }
     }
 
-    private void processCategorialClass(CategorialClass categorialClass, Connection con) {
+    private void processCategorialClass(CategorialClass categorialClass,EntityCache cache, Connection con) {
         Long pathId = categorialClass.getPathFromParentId();
         if (pathId != null && pathId.intValue() != -1) {
             // this is a NON - root class
-            categorialClass.setPathFromParent((Path) PathFinder.getInstance().getPathById(pathId, con));
+            IPath path = PathFinder.getInstance().getPathById(pathId, con);
+            categorialClass.setPathFromParent((Path) path);
+        }
+        long deEntityId = categorialClass.getDeEntityId();
+        EntityInterface entity = cache.getEntityById(deEntityId);
+        categorialClass.setCategorialClassEntity(entity);
+        
+        EntityInterface categoryEntity = categorialClass.getCategory().getCategoryEntity();
+        for(CategorialAttribute attribute : categorialClass.getCategorialAttributeCollection()) {
+            long srcClassAttributeId = attribute.getDeSourceClassAttributeId();
+            AttributeInterface attributeOfSrcClass = entity.getAttributeByIdentifier(srcClassAttributeId);
+            attribute.setSourceClassAttribute(attributeOfSrcClass);
+            
+            long categoryEntityAttributeId = attribute.getDeCategoryAttributeId();
+            AttributeInterface attributeOfCategoryEntity = categoryEntity.getAttributeByIdentifier(categoryEntityAttributeId);
+            attribute.setCategoryAttribute(attributeOfCategoryEntity);
         }
         for (CategorialClass child : categorialClass.getChildren()) {
-            processCategorialClass(child, con);
+            processCategorialClass(child,cache,con);
         }
     }
 
