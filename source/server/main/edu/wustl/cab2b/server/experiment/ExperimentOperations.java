@@ -1,12 +1,22 @@
 package edu.wustl.cab2b.server.experiment;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.common.dynamicextensions.entitymanager.EntityManager;
+import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
+import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
+import edu.common.dynamicextensions.domaininterface.AssociationInterface;
+import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.domain.AdditionalMetadata;
+import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
@@ -124,6 +134,10 @@ public class ExperimentOperations extends DefaultBizLogic
 		
 	}
 	
+	
+	
+	
+	
 	public Vector getExperimentHierarchy() throws DAOException
 	{
 		Vector expHierarchyData = new Vector();
@@ -181,29 +195,27 @@ public class ExperimentOperations extends DefaultBizLogic
 				//Logger.out.info("------expGrp------  "+expGrp+"  ----------");
 				ExperimentTreeNode expTreeNode = new ExperimentTreeNode();
 				expTreeNode.setExperimentGroup(true);
-				Collection childrenExpNodes = expGrp.getExperimentCollection(); 
 				
+				Collection childrenExpNodes = expGrp.getExperimentCollection(); 				
 				Collection childrenGrpNodes =expGrp.getChildrenGroupCollection();
 				
 				updateMetadataHierarchy((AdditionalMetadata)expGrp, expTreeNode, childrenExpNodes);  // exp    1
 				updateMetadataHierarchy((AdditionalMetadata)expGrp, expTreeNode, childrenGrpNodes);  // expGrp 3 
-				
+				//expTreeNode.setU
 				returner.add(expTreeNode);
 				
 			}else
 			{
 				//Logger.out.info("------exp------  "+metadata+"  ----------");
 				Long nodeId = metadata.getId();
-				String nodeName = metadata.getName();
-				
+				String nodeName = metadata.getName();				
 				ExperimentTreeNode expTreeNode = new ExperimentTreeNode(nodeId,nodeName);
 				expTreeNode.setDesc(metadata.getDescription());
 				expTreeNode.setCreatedOn(metadata.getCreatedOn());
-				expTreeNode.setLastUpdatedOn(metadata.getLastUpdatedOn());
-				expTreeNode.setExperimentGroup(false);
+				expTreeNode.setLastUpdatedOn(metadata.getLastUpdatedOn());				
+				expTreeNode.setExperimentGroup(false);				
 				returner.add(expTreeNode);
 			}
-
 		}
 		return returner;
 	}
@@ -279,5 +291,52 @@ public class ExperimentOperations extends DefaultBizLogic
 		}
 		return true;
     }
+	
+	public Experiment getExperiment(Long identifier) throws DAOException
+	{
+		List expList = retrieve("Experiment", "id", identifier);
+		Experiment exp = null;
+		if (identifier != 0)
+		{
+			exp = (Experiment) expList.get(0);
+		}
+
+		return exp;
+	}	
+	
+	public Set<EntityInterface> getDataListEntityNames(Experiment exp) 
+	{
+		Set<EntityInterface> entitySet = new HashSet<EntityInterface>();
+		for (DataListMetadata dataListMetadata : exp.getDataListMetadataCollection()) 
+		{
+         Long rootDataListEntityId = dataListMetadata.getEntityId();
+         EntityInterface rootDataListEntity = null;
+		 try {
+			rootDataListEntity = EntityManager.getInstance().getEntityByIdentifier(rootDataListEntityId);			
+			
+		 } catch (DynamicExtensionsSystemException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		 } catch (DynamicExtensionsApplicationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}         
+         getAssociatedEntities(rootDataListEntity,entitySet);          
+	 	}
+		return entitySet;  
+	}
+         
+	
+	private void getAssociatedEntities(EntityInterface entity, Set<EntityInterface> entitySet) {
+        for(AssociationInterface association: entity.getAssociationCollection()) {
+            EntityInterface targetEntity = association.getTargetEntity();
+            entitySet.add(targetEntity);
+            Logger.out.info("Entity Names :"+targetEntity);
+            getAssociatedEntities(targetEntity,entitySet);
+        }
+    }
+	
+	
+	
 	
 }
