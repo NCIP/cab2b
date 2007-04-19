@@ -25,11 +25,24 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel{
 	 */
 
 
-	JTabbedPane tabComponent; 
-	Cab2bPanel experimentDataPanel; 
-	Cab2bPanel analysisDataPanel; 
+	/*Tab component*/
+	JTabbedPane tabComponent;
+	
+	/*Panel to display experiment data when data category node is selected 
+	 * First tab panel on tab Component*/
+	Cab2bPanel experimentDataPanel;	
+	
+	/*Panel to display analysis performed on experiment 
+	 * Second tab panel on tab component*/
+	Cab2bPanel analysisDataPanel;
+	
+	/*Button to save data category */
 	Cab2bButton saveDataCategoryButton;
+		
 	Cab2bButton saveButton;
+	
+	/*Table to display records on Experiment Data panels, when user selects any
+	 * data category node */
 	Cab2bTable table;
 		
 	String[] columnNames = {"First Name",
@@ -57,12 +70,15 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel{
 		experimentDataPanel = new Cab2bPanel();
 		analysisDataPanel = new Cab2bPanel();
 		
-		table = new Cab2bTable(true, data, columnNames);				
+		table = new Cab2bTable(true, data, columnNames);
+		
+		/*Adding scrollpane*/
 		JScrollPane scrollPane = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);		
 		experimentDataPanel.add("hfill vfill",scrollPane);
 		
 		saveDataCategoryButton = new Cab2bButton("Save Data Category");		
 		saveDataCategoryButton.setPreferredSize(new Dimension(160,22));
+		
 		Cab2bPanel northPanel = new Cab2bPanel();
 		northPanel.add(saveDataCategoryButton);
 		this.add(northPanel, BorderLayout.NORTH);
