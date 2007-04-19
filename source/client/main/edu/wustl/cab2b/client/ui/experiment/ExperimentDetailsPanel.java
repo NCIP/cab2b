@@ -85,7 +85,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 		{
 			public void actionPerformed(ActionEvent arg0)
 			{
-							
+		
 		    }
 		});
 		this.add("br",deleteButton);
@@ -109,10 +109,9 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 		}
 		
 		expTable = new Cab2bTable(true, newTableData,tHeader);
-		MyLinkAction myLinkAction  =new MyLinkAction();		
+		MyLinkAction myLinkAction  =new MyLinkAction();
 		expTable.getColumn(1).setCellRenderer(new LinkRenderer(myLinkAction));
 		expTable.getColumn(1).setCellEditor(new LinkRenderer(myLinkAction));
-
 		
 		Component comp = this.getComponent(0);
 		this.removeAll();
@@ -124,15 +123,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 	
 	
 	private void updateTableData(ExperimentTreeNode treeNode, Vector tableData)
-	{
-		Vector nextRow = new Vector();
-		/*nextRow.add(treeNode);
-		nextRow.add(treeNode.getCreatedOn());
-		nextRow.add(treeNode.getLastUpdatedOn());
-		nextRow.add(treeNode.getDesc());
-		
-		tableData.add(nextRow);*/
-		
+	{		
 		if(treeNode.getChildNodes().size() == 0)
 		{
 			Logger.out.info("found child node zero");
@@ -140,11 +131,22 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 		}
 		
 		Iterator iter = treeNode.getChildNodes().iterator();
+		int i=0;
+		
 		while(iter.hasNext())
 		{
 			ExperimentTreeNode child = (ExperimentTreeNode) iter.next();
-			updateTableData(child, tableData);
-		}
+			if(child.isExperimentGroup() == false )
+			{
+				Vector nextRow = new Vector();			
+				nextRow.add(child);
+				nextRow.add(child.getCreatedOn());
+				nextRow.add(child.getLastUpdatedOn());
+				nextRow.add(child.getDesc());		
+				tableData.add(nextRow);			
+				updateTableData(child, tableData);
+			}
+		}		
 	}
 	
 	public void refreshDetails(Experiment exp)
