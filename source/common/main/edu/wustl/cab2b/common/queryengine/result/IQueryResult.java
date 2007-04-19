@@ -1,10 +1,7 @@
 package edu.wustl.cab2b.common.queryengine.result;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.common.querysuite.queryobject.IBaseQueryObject;
 
 /**
@@ -12,14 +9,12 @@ import edu.wustl.common.querysuite.queryobject.IBaseQueryObject;
  * @author srinath_k
  */
 public interface IQueryResult extends IBaseQueryObject, Serializable {
-
-    List<AttributeInterface> getAttributes();
-
     /**
-     * Returns map with key as the service url, and value as the records (a 2-d
-     * matrix with rows as records and columns as attributes' values' String
-     * representation) obtained from that service.
-     * @return the results.
+     * Indicates the type of the results, which is dependent on the desired
+     * output of the query.
+     * @return <code>true</code> if the results are for a category;
+     *         <code>false</code> if results are for a class.
+     * @see edu.wustl.cab2b.common.queryengine.ICab2bQuery#getOutputEntity()
      */
-    Map<String, String[][]> getAllRecords();
+    boolean isCategoryResult();
 }

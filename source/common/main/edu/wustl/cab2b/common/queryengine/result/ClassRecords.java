@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.wustl.cab2b.common.queryengine.result;
 
 import java.util.ArrayList;
@@ -10,17 +7,17 @@ import java.util.Map;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 
-/**
- * @author Chandrakant Talele
- */
-public class QueryResult implements IQueryResult {
-    private static final long serialVersionUID = 843570396152737801L;
+public class ClassRecords implements IClassRecords {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6884879809051274129L;
 
     private List<AttributeInterface> attributes;
 
     private Map<String, String[][]> urlToRecords;
 
-    public QueryResult() {
+    public ClassRecords() {
         urlToRecords = new HashMap<String, String[][]>();
         attributes = new ArrayList<AttributeInterface>();
     }
@@ -63,4 +60,7 @@ public class QueryResult implements IQueryResult {
         return urlToRecords;
     }
 
+    public boolean isCategoryResult() {
+        return false;
+    }
 }
