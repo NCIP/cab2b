@@ -270,8 +270,14 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 			/*
 			 * If Entity is a Category iterate over that category's entities to
 			 * get all the entity names
+			 * 
+			 * 19th Apr : With support for category in output, there is no need
+			 * to break down category in constituent classes. Just add the
+			 * EntityInterface
 			 */
-			if (Utility.isCategory(entity)) {
+			
+			
+		/*	if (Utility.isCategory(entity)) {
 				CategoryBusinessInterface catBusInter = null;
 				if (catBusInter == null) {
 					catBusInter = (CategoryBusinessInterface) CommonUtils
@@ -284,7 +290,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 					Category category = catBusInter
 							.getCategoryByEntityId(entity.getId());
 
-					/* Add to this map for later use. */
+					 Add to this map for later use. 
 
 					Set<EntityInterface> entitiesInCategory = catBusInter
 							.getAllSourceClasses(category);
@@ -292,11 +298,11 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 					for (EntityInterface entityInCategory : entitiesInCategory) {
 						allEntities.add(entityInCategory);
 						String entityName = entityInCategory.getName();
-						/*
+						
 						 * Add an entity name if it doesn't exist, so that the
 						 * drop down items are unique.
-						 */
-						/* Add entity for later use */
+						 
+						 Add entity for later use 
 						if (!returner.contains(entityName))
 							returner.add(entityName);
 					}
@@ -305,12 +311,12 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 					CommonUtils.handleException(re, this, true, true, true,
 							false);
 				}
-				/*
+				
 				 * If it is an entity, just get its name and add to the
 				 * collection
-				 */
+				 
 			} else {
-				/* Add entity for later use */
+*/				/* Add entity for later use */
 				allEntities.add(entity);
 
 				String entityName = entity.getName();
@@ -320,7 +326,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 				 */
 				if (!returner.contains(entityName))
 					returner.add(entityName);
-			}
+			//}
 
 		}
 
