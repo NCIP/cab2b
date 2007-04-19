@@ -32,6 +32,7 @@ import edu.wustl.cab2b.common.datalist.DataRow;
 import edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface;
 import edu.wustl.cab2b.common.ejb.path.PathFinderHomeInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.result.IClassRecords;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -172,13 +173,18 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel
 	{
 		//Check if you got only one record
 		JXPanel simpleSearchResultPanel =  null;
-        Map<String, String[][]> allRecords = queryResult.getAllRecords();
+		
+		/**
+		 * 18th Apr : Type cast the results to IClassRecords
+		 */
+		IClassRecords classRecords = (IClassRecords)queryResult;
+        Map<String, String[][]> allRecords = classRecords.getAllRecords();
 		Iterator ittr = allRecords.keySet().iterator();
 		if (ittr.hasNext())
 		{
 				String urlKey = (String) ittr.next();
 				Object[][] results = allRecords.get(urlKey);	
-				String className = edu.wustl.cab2b.common.util.Utility.getDisplayName(queryResult.getAttributes().get(0).getEntity());				
+				String className = edu.wustl.cab2b.common.util.Utility.getDisplayName(classRecords.getAttributes().get(0).getEntity());				
 				Logger.out.info("Result Length :" + results.length);
 				
 				if( results.length == 0 )
@@ -197,7 +203,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel
 					}*/
 
 						/* Initialize the count for number of attributes to be shown in the */
-						int attributeSize = queryResult.getAttributes().size();
+						int attributeSize = classRecords.getAttributes().size();
 						int attributeLimitInDescStr = (attributeSize < 5) ? attributeSize : 5;			
 						
 						Object[] row = results[0];
@@ -222,7 +228,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel
 						element.setDescription(descStr);
 
 						DataRow dataRow = new DataRow();
-						List<AttributeInterface> attributes = queryResult.getAttributes();
+						List<AttributeInterface> attributes = classRecords.getAttributes();
 						
 						AttributeInterface attrib = attributes.get(0);
 						/*
@@ -246,7 +252,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel
 						dataRow.setURL(urlKey);				
 						Vector interIntraAccoClassCol = getInterIntraAssociatedObjectsCollection(dataRow);
 						
-						simpleSearchResultPanel = new ResultObjectDetailsPanel(dataRow, queryResult.getAttributes(), breadCrumbsAL, associatedDataAL, viewPanel, interIntraAccoClassCol);							
+						simpleSearchResultPanel = new ResultObjectDetailsPanel(dataRow, classRecords.getAttributes(), breadCrumbsAL, associatedDataAL, viewPanel, interIntraAccoClassCol);							
 			    	}					
 				}
 		return simpleSearchResultPanel;
@@ -282,9 +288,16 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel
 		 * The key is the userObject that sits behind the hyperlinks in the
 		 * bread-crumbs.
 		 */
-		this.mapResultLabel.put(key, queryResult.getAttributes());
+		/**/
+		
+		/**
+		 * 18th Apr : Type cast the results to IClassRecords
+		 */
+		IClassRecords classRecords = (IClassRecords)queryResult;
+		
+		this.mapResultLabel.put(key, classRecords.getAttributes());
 		/*Set also directly the attribute list*/
-		this.attributeList = queryResult.getAttributes();
+		this.attributeList = classRecords.getAttributes();
 		
 		this.m_breadCrumbPanel = new Cab2bPanel();
 		this.m_breadCrumbPanel.setLayout( new CardLayout());		
@@ -306,8 +319,13 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel
 	
 	private String getClassNameFromIattribute()
 	{
+		/**
+		 * 18th Apr : Type cast the results to IClassRecords
+		 */
+		IClassRecords classRecords = (IClassRecords)queryResult;
+		
 		String strClassName = null;
-		List attributes = queryResult.getAttributes();
+		List attributes = classRecords.getAttributes();
 		if(attributes != null && attributes.size() >0){
 			
             AttributeInterface attribute = (AttributeInterface)attributes.get(0);
@@ -617,21 +635,28 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel
 		    /* Get result by executing the Query in a worker thread. */
             CustomSwingWorker swingWorker = new CustomSwingWorker((JXPanel)breadCrumbPanel, queryResult)
             {
+            	/**
+				 * 18th Apr : Type cast the results to IClassRecords
+				 */
+				IClassRecords classRecords = (IClassRecords)queryResult;
+				
 				@Override
 				protected void doNonUILogic() throws RuntimeException
 				{
 					queryResult = CommonUtils.executeQuery((ICab2bQuery)queryObject.getQuery(),(JComponent)breadCrumbPanel);
-					Logger.out.info("queryResult "+queryResult.getAllRecords().values());
+					Logger.out.info("queryResult "+classRecords.getAllRecords().values());
 				}
 
 				@Override
 				protected void doUIUpdateLogic() throws RuntimeException
 				{
+					
+					
 					breadCrumbPanel.panelCount++;
 		            int currentCount = breadCrumbPanel.panelCount;
 		            /*Get attributes and set in map, for later when the user is navigating, and for now directly set it.*/
-		            breadCrumbPanel.mapResultLabel.put(currentCount+"#"+breadCrumbText,queryResult.getAttributes());
-		            breadCrumbPanel.attributeList = queryResult.getAttributes();
+		            breadCrumbPanel.mapResultLabel.put(currentCount+"#"+breadCrumbText,classRecords.getAttributes());
+		            breadCrumbPanel.attributeList = classRecords.getAttributes();
 		            
 		            /*
 		             * Add a new instance of ViewSearchResultsSimplePanel.

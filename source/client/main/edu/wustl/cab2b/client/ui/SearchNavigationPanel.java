@@ -10,8 +10,8 @@ import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.Map;
 
-
 import javax.swing.JOptionPane;
+
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.experiment.NewExperimentDetailsPanel;
@@ -21,6 +21,7 @@ import edu.wustl.cab2b.client.ui.viewresults.DataListPanel;
 import edu.wustl.cab2b.client.ui.viewresults.ViewSearchResultsPanel;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.result.IClassRecords;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.common.util.logger.Logger;
  
@@ -183,7 +184,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener
             			 */            			
             			queryResults = CommonUtils.executeQuery((ICab2bQuery)m_mainSearchPanel.getQueryObject().getQuery(), m_mainSearchPanel);     				
     				         				            				     
-            		}
+            		}            		
+            	            		
             		@Override
             		protected void doUIUpdateLogic()
             		{
@@ -195,26 +197,36 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener
             			
             			if(queryResults != null)
             			{
-            			//		GUI update code 
-            			/*
-            			 * Add the next card dynamically over here.For now we can use the dummy object.
-            			 */
-            				Logger.out.info("Inside doUIUpdateLogic ");         			
-            				Map<String, String[][]> allRecords = queryResults.getAllRecords();
-							Iterator ittr = allRecords.keySet().iterator();
-							if (ittr.hasNext())
-							{
-								/* Set the url for each data row. */
-								String urlKey = (String) ittr.next();
-								Object[][] results = allRecords.get(urlKey);															
-								if( results.length == 0 || queryResults.getAllRecords().size() == 0 )
-								{
-									JOptionPane.showMessageDialog(null, "No result found.", "", JOptionPane.INFORMATION_MESSAGE);
-									srhButton.setVisible(true);   
-									gotoAddLimitPanel();
+            			
+            				Logger.out.info("Inside doUIUpdateLogic ");
+            			
+            				/*
+        					 * Based on the output selected i.e. class or category, cast
+        					 * the results class accordingly. Basic assumptions is
+        					 * object returned will not be null.
+        					 */
+                    		
+            				
+            				if(!queryResults.isCategoryResult())
+            				{
+            				
+            					IClassRecords classRecords = (IClassRecords)queryResults;	
+            					
+            					Map<String, String[][]> allRecords = classRecords.getAllRecords();
+            					Iterator ittr = allRecords.keySet().iterator();
+            					if (ittr.hasNext())
+            					{
+            						/* Set the url for each data row. */
+            						String urlKey = (String) ittr.next();
+            						Object[][] results = allRecords.get(urlKey);															
+            						if( results.length == 0 || classRecords.getAllRecords().size() == 0 )
+            						{
+            							JOptionPane.showMessageDialog(null, "No result found.", "", JOptionPane.INFORMATION_MESSAGE);
+            							srhButton.setVisible(true);   
+            							gotoAddLimitPanel();
             			      	
-								}else
-								{
+            						}else
+            						{
 									    ViewSearchResultsPanel viewSearchResultsPanel = new ViewSearchResultsPanel(queryResults,m_mainSearchPanel);		                	
 										if(null != m_mainSearchPanel.getCenterPanel().m_arrCards[3])
 										{
@@ -226,7 +238,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener
 										 * 	Implies the next button was clicked. Call show card with boolean set to true.
 										 */
 										showCard(true);								
-								}
+            						}
+            					}
 							}
 						}else
 						{

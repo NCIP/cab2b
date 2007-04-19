@@ -431,7 +431,7 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface
         IOutputTreeNode output = Cab2bQueryObjectFactory.createOutputTreeNode(outputEntity);
         query.setRootOutputClass(output);
         
-        ((ICab2bQuery)query).setOutputClassUrls(Arrays.asList(outputServiceUrls));
+        ((ICab2bQuery)query).setOutputUrls(Arrays.asList(outputServiceUrls));
     }
     
     
@@ -444,7 +444,7 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface
         List list = new ArrayList();
         list.add(strURL);
         
-        ((ICab2bQuery)query).setOutputClassUrls(list);
+        ((ICab2bQuery)query).setOutputUrls(list);
     }
     
     

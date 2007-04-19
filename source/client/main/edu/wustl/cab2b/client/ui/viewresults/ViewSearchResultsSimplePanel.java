@@ -54,6 +54,7 @@ import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
+import edu.wustl.cab2b.common.queryengine.result.IClassRecords;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.util.logger.Logger;
@@ -138,8 +139,13 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel
 	private void initData()
 	{
 		elements = new Vector<PageElement>();
-
-		Map<String, String[][]> allRecords = queryResult.getAllRecords();
+		/**
+		 * 18th Apr : Type cast the results to IClassRecords
+		 */
+		IClassRecords classRecords = (IClassRecords)queryResult;
+		
+		
+		Map<String, String[][]> allRecords = classRecords.getAllRecords();
 		Iterator ittr = allRecords.keySet().iterator();
 		while (ittr.hasNext())
 		{
@@ -151,7 +157,7 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel
 
 			//String className = queryResult.getAttributes().get(0).getEntity().getName();
 			//edu.wustl.cab2b.common.util.Utility.getDisplayName(queryResult.getAttributes().get(0).getEntity());
-			String className = edu.wustl.cab2b.common.util.Utility.getDisplayName(queryResult.getAttributes().get(0).getEntity());
+			String className = edu.wustl.cab2b.common.util.Utility.getDisplayName(classRecords.getAttributes().get(0).getEntity());
 			Logger.out.info(className);
 			if (className == null || className.length() == 0)
 			{
@@ -160,7 +166,7 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel
 			}
 
 			/* Initialize the count for number of attributes to be shown in the */
-			int attributeSize = queryResult.getAttributes().size();
+			int attributeSize = classRecords.getAttributes().size();
 			int attributeLimitInDescStr = (attributeSize < 5) ? attributeSize : 5;
 			for (int i = 0; i < results.length; i++)
 			{
@@ -187,7 +193,7 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel
 				element.setDescription(descStr);
 
 				DataRow dataRow = new DataRow();
-				List<AttributeInterface> attributes = queryResult.getAttributes();
+				List<AttributeInterface> attributes = classRecords.getAttributes();
 
 				AttributeInterface attrib = attributes.get(0);
 
@@ -224,7 +230,11 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel
 	private String getClassNameFromIattribute()
 	{
 		String strClassName = null;
-		List attributes = queryResult.getAttributes();
+		/**
+		 * 18th Apr : Type cast the results to IClassRecords
+		 */
+		IClassRecords classRecords = (IClassRecords)queryResult;
+		List attributes = classRecords.getAttributes();
 		if (attributes != null && attributes.size() > 0)
 		{
 

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.query.ClientQueryBuilder;
@@ -15,6 +16,7 @@ import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.result.IClassRecords;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -127,7 +129,12 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
 			Logger.out.error("Error in exeuting query :" + e.getMessage());
 			return null;
 		}
-		Map<String, String[][]> allRecords = relatedQueryResults.getAllRecords();
+		
+		/* 19th Apr
+		 * Based on the changes for category in output class output would be of type IClassRecords.*/
+		IClassRecords classRecords = (IClassRecords)relatedQueryResults;
+		//Map<String, String[][]> allRecords = relatedQueryResults.getAllRecords();
+		Map<String, String[][]> allRecords =classRecords.getAllRecords();
 		Iterator ittr = allRecords.keySet().iterator();
 		List<IDataRow> dataRows = new ArrayList<IDataRow>();
 		while(ittr.hasNext())
@@ -138,7 +145,9 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
 			{
 				Object[] row = results[resultCnt];
 				DataRow dataRow = new DataRow();
-				attributes = relatedQueryResults.getAttributes();
+				//attributes = relatedQueryResults.getAttributes();
+				attributes = classRecords.getAttributes();
+				
 				AttributeInterface attrib = attributes.get(0);
 				EntityInterface presentEntityInterface = attrib.getEntity();
 				//set proper class name
