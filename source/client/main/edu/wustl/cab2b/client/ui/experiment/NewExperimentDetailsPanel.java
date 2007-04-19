@@ -312,8 +312,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 
 				if (!expTreeNode.isExperimentGroup())
 				{
-					JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this,
-							"Select experiment group");
+					JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this, "Select experiment group");
 					return;
 				}
 
@@ -349,8 +348,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 				experiment.setActivityStatus("active");
 
 				ExperimentGroupBusinessInterface expGrpBI = (ExperimentGroupBusinessInterface) CommonUtils
-						.getBusinessInterface(EjbNamesConstants.EXPERIMENT_GROUP,
-								ExperimentGroupHome.class);
+						.getBusinessInterface(EjbNamesConstants.EXPERIMENT_GROUP, ExperimentGroupHome.class);
 
 				ExperimentGroup expGrpToAddTo = null;
 				try
@@ -360,7 +358,6 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 						expGrpToAddTo = expGrpBI.getExperimentGroup(expGrpId);
 						experiment.getExperimentGroupCollection().add(expGrpToAddTo);
 						Logger.out.info("expGrpToAddTo " + expGrpToAddTo.getName());
-
 						Logger.out.info("expGrpToAddTo experiment collection size :: "
 								+ expGrpToAddTo.getExperimentCollection().size());
 					}
@@ -562,7 +559,6 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 					setIcon(UIManager.getIcon("Tree.closedIcon"));
 				}
 			}
-
 			return this;
 		}
 	}
