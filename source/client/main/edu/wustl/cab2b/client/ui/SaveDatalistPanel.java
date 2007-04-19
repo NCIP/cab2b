@@ -136,26 +136,6 @@ public class SaveDatalistPanel extends Cab2bPanel
 						}
 						catch (RemoteException e)
 						{
-							CommonUtils.handleException(e, SaveDatalistPanel.this, true, true, false, false);
-						} catch (DynamicExtensionsApplicationException e) {
-							// TODO Auto-generated catch block
-							CommonUtils.handleException(e, SaveDatalistPanel.this, true, true, false, false);
-							e.printStackTrace();
-						} catch (DynamicExtensionsSystemException e) {
-							// TODO Auto-generated catch block
-							CommonUtils.handleException(e, SaveDatalistPanel.this, true, true, false, false);
-							e.printStackTrace();
-						} catch (DAOException e) {
-							// TODO Auto-generated catch block
-							CommonUtils.handleException(e, SaveDatalistPanel.this, true, true, false, false);
-							e.printStackTrace();
-						} catch (BizLogicException e) {
-							// TODO Auto-generated catch block
-							CommonUtils.handleException(e, SaveDatalistPanel.this, true, true, false, false);
-							e.printStackTrace();
-						} catch (UserNotAuthorizedException e) {
-							// TODO Auto-generated catch block
-							CommonUtils.handleException(e, SaveDatalistPanel.this, true, true, false, false);
 							e.printStackTrace();
 						}
 						finally
