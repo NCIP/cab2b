@@ -30,6 +30,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.RiverLayout;
+import edu.wustl.cab2b.client.ui.SaveDatalistPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -160,6 +161,7 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
                 MainSearchPanel.getDataList().addDataRows(selectedUserObjects);
 
                 ViewSearchResultsSimplePanel.updateMyDataListPanel();
+                SaveDatalistPanel.isDataListSaved =  false;
                 updateUI();
             }
         });
