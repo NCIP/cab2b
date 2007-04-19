@@ -23,6 +23,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
+import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -35,6 +37,9 @@ import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.DataListHome;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
+import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
+import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -53,7 +58,6 @@ public class SaveDatalistPanel extends Cab2bPanel
 	private Cab2bButton saveButton;
 	private Cab2bPanel centerPanel;
 	private Cab2bPanel bottomPanel;
-
 	private JScrollPane m_srollPane;
 
 	JDialog dialog;
@@ -88,18 +92,17 @@ public class SaveDatalistPanel extends Cab2bPanel
 			}
 		});
 
-		saveButton = new Cab2bButton("Save");
+		saveButton = new Cab2bButton("Save");		
 		saveButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent arg0)
 			{
 				isDataListSaved = true;
-				//dialog.dispose();
 
 				String dataListName = txtTitle.getText();
 				if (dataListName == null || dataListName.equals(""))
 				{
-					dataListName = "" + System.currentTimeMillis();
+					dataListName = "" + new Date();
 				}
 				String dataListDesc = txtDesc.getText();
 
@@ -110,7 +113,6 @@ public class SaveDatalistPanel extends Cab2bPanel
 				dataListAnnotation.setLastUpdatedOn(new Date());
 
 				MainSearchPanel.getDataList().setDataListAnnotation(dataListAnnotation);
-
 				
 				CustomSwingWorker sw = new CustomSwingWorker(SaveDatalistPanel.this)
 				{
@@ -134,8 +136,27 @@ public class SaveDatalistPanel extends Cab2bPanel
 						}
 						catch (RemoteException e)
 						{
-							CommonUtils
-									.handleException(e, SaveDatalistPanel.this, true, true, false, false);
+							CommonUtils.handleException(e, SaveDatalistPanel.this, true, true, false, false);
+						} catch (DynamicExtensionsApplicationException e) {
+							// TODO Auto-generated catch block
+							CommonUtils.handleException(e, SaveDatalistPanel.this, true, true, false, false);
+							e.printStackTrace();
+						} catch (DynamicExtensionsSystemException e) {
+							// TODO Auto-generated catch block
+							CommonUtils.handleException(e, SaveDatalistPanel.this, true, true, false, false);
+							e.printStackTrace();
+						} catch (DAOException e) {
+							// TODO Auto-generated catch block
+							CommonUtils.handleException(e, SaveDatalistPanel.this, true, true, false, false);
+							e.printStackTrace();
+						} catch (BizLogicException e) {
+							// TODO Auto-generated catch block
+							CommonUtils.handleException(e, SaveDatalistPanel.this, true, true, false, false);
+							e.printStackTrace();
+						} catch (UserNotAuthorizedException e) {
+							// TODO Auto-generated catch block
+							CommonUtils.handleException(e, SaveDatalistPanel.this, true, true, false, false);
+							e.printStackTrace();
 						}
 						finally
 						{
@@ -148,7 +169,7 @@ public class SaveDatalistPanel extends Cab2bPanel
 					{
 						dialog.dispose();
 						if(id > 0)
-							JOptionPane.showMessageDialog(mainSearchPanel, "Data List saved successfully !");
+							JOptionPane.showMessageDialog(mainSearchPanel, "Data List " + MainSearchPanel.getDataList().getDataListAnnotation().getName() + " saved successfully !");
 						else
 							Logger.out.debug("data list not saved ! "+id);
 						Logger.out.info("datalist id : "+MainSearchPanel.getDataList().getDataListAnnotation().getId());
@@ -156,26 +177,12 @@ public class SaveDatalistPanel extends Cab2bPanel
 					}
 					
 				};
-				sw.start();
-
-				// ---------- Remove this code (Used to serialize datalist)-------
-				//try{
-				//	File dataListFile = new File("dataList.ser");
-				//	FileOutputStream fos = new FileOutputStream(dataListFile);
-				//	ObjectOutputStream oos = new ObjectOutputStream(fos);
-				//	// serialize the data list.
-				//	oos.writeObject(MainSearchPanel.dataList);
-				//}catch(Exception exp)
-				//{
-				//	exp.printStackTrace();
-				//}
-				// --------------------------------------------------------------- 
+				sw.start();			
 			}
 
 		});
 
 		GridBagLayout gbl = new GridBagLayout();
-
 		centerPanel = new Cab2bPanel();
 		centerPanel.setLayout(gbl);
 
