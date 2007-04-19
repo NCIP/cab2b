@@ -1,8 +1,13 @@
 package edu.wustl.cab2b.server.ejb.experiment;
 
 import java.rmi.RemoteException;
+import java.util.Set;
 import java.util.Vector;
 
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
+import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
+import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.experiment.ExperimentOperations;
@@ -39,5 +44,18 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
 	{
 		(new ExperimentOperations()).move(exp, srcExpGrp, tarExpGrp); 
 	}
+
+	public Experiment getExperiment(Long id) throws RemoteException, DAOException {
+		
+		return (new ExperimentOperations()).getExperiment(id);
+	}	
+
+	public Set<EntityInterface> getDataListEntityNames(Experiment exp) throws RemoteException {
+		// TODO Auto-generated method stub
+		return (new ExperimentOperations()).getDataListEntityNames(exp);
+	}
+
+
+
 	
 }
