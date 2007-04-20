@@ -13,16 +13,51 @@ import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 
+/**
+ * Provides details regarding the result of expanding a category expression into
+ * its constituent expressions. Auxiliary info related to the categories (e.g.
+ * category for entity) in the query is also provided to enhance performance.
+ * @author srinath_k
+ */
 public class CategoryPreprocessorResult {
+    /**
+     * key = entity of a category <br>
+     * value = set of rootnodes. Each rootNode points to the rootExpression
+     * obtained on breaking an expression on a category entity (the key of this
+     * map). The treeNode provides a "view" of the joinGraph. Traversing this
+     * view will cover all the expressions created by breaking a category
+     * expression.
+     */
     private Map<EntityInterface, Set<TreeNode<IExpression>>> exprsSourcedFromCategories;
 
+    /**
+     * A redundant expr is one which satisfies the following conditions :<br>
+     * <ul>
+     * <li>It is created during the process of expanding a category expression
+     * (i.e. an expression originally defined on a class as part of IQuery will
+     * never be marked redundant.)</li>
+     * <li>It contains no rules</li>
+     * <li>Each subExpression of this expression is a redundant expresssion
+     * (recursive).</li>
+     * </ul>
+     */
     private Set<IExpression> redundantExprs;
 
+    /**
+     * key = expression<br>
+     * value = the categorial class for which this expression was created.
+     */
     private Map<IExpression, CategorialClass> catClassForExpr;
 
     // this would be needed when pivoting catResults...
     private List<CategorialClass> originallyRootCatClasses;
 
+    /**
+     * key = entity<br>
+     * value = category for this entity<br>
+     * Finding this info is a database call. So it is present primarily so that
+     * clients of the categorypreprocessor need not perform more database calls.
+     */
     private Map<EntityInterface, Category> categoryForEntity;
 
     public CategoryPreprocessorResult() {
