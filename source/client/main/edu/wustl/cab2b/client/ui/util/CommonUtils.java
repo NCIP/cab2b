@@ -26,6 +26,7 @@ import edu.wustl.cab2b.common.locator.Locator;
 import edu.wustl.cab2b.common.locator.LocatorException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.util.logger.Logger;
 
 public class CommonUtils
@@ -605,8 +606,7 @@ public class CommonUtils
 		for (int i = 0; i < attributes.size(); i++)
 		{
 			AttributeInterface attribute = attributes.get(i);
-			String attribName = attribute.getName();
-			if (attribName.equalsIgnoreCase("id") || attribName.equalsIgnoreCase("identifier"))
+			if (Utility.isIdentifierAttribute(attribute))
 			{
 				identifierIndex = i;
 				break;

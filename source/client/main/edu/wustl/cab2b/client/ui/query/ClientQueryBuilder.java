@@ -13,6 +13,7 @@ package edu.wustl.cab2b.client.ui.query;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +22,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.queryengine.Cab2bQueryObjectFactory;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -30,7 +32,6 @@ import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
-import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.IOutputEntity;
 import edu.wustl.common.querysuite.queryobject.IOutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.IQuery;
@@ -425,26 +426,19 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface
      */
     public void setOutputForQuery(EntityInterface entity)
     {
-        IOutputEntity outputEntity = Cab2bQueryObjectFactory.createOutputEntity(entity);
         String[] outputServiceUrls = edu.wustl.cab2b.common.util.Utility.getServiceURLS(entity);
-        
-        IOutputTreeNode output = Cab2bQueryObjectFactory.createOutputTreeNode(outputEntity);
-        query.setRootOutputClass(output);
-        
-        ((ICab2bQuery)query).setOutputUrls(Arrays.asList(outputServiceUrls));
+        setOutputForQuery(entity, Arrays.asList(outputServiceUrls));     
     }
     
+    public void setOutputForQuery(EntityInterface entity, List<String> urls) {
+        ICab2bQuery cab2bQuery = (ICab2bQuery)query;        
+        cab2bQuery.setOutputUrls(urls);
+        cab2bQuery.setOutputEntity(entity);
+    }
     
     public void setOutputForQueryForSpecifiedURL(EntityInterface entity, String strURL)
     {
-        IOutputEntity outputEntity = Cab2bQueryObjectFactory.createOutputEntity(entity);        
-        IOutputTreeNode output = Cab2bQueryObjectFactory.createOutputTreeNode(outputEntity);
-        query.setRootOutputClass(output);
-        
-        List list = new ArrayList();
-        list.add(strURL);
-        
-        ((ICab2bQuery)query).setOutputUrls(list);
+        setOutputForQuery(entity, Collections.singletonList(strURL));
     }
     
     

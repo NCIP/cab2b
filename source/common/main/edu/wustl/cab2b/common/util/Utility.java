@@ -262,6 +262,22 @@ public class Utility {
 		return sb.toString();
 	}
 
+    public static AttributeInterface getIdAttribute(EntityInterface entity) {
+        for (AttributeInterface attribute : entity.getAttributeCollection())
+        {
+            String attribName = attribute.getName();
+            if (attribName.equalsIgnoreCase("id") || attribName.equalsIgnoreCase("identifier"))
+            {
+                return attribute;
+            }
+        }
+        return null;
+    }
+
+    public static boolean isIdentifierAttribute(AttributeInterface attribute) {
+        String attribName = attribute.getName();        
+        return attribName.equalsIgnoreCase("id") || attribName.equalsIgnoreCase("identifier"); 
+    }
     //    /**
     //     * Checks whether passed attribute/association is inheriated.
     //     * @param abstractAttribute Attribute/Association to check.
