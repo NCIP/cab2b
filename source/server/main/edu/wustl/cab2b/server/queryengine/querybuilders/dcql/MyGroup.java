@@ -31,7 +31,7 @@ class ImmutableGroup {
     }
 }
 
-class MyGroup extends ImmutableGroup {
+public class MyGroup extends ImmutableGroup {
     private List<Association> associations;
 
     private List<Attribute> attributes;
@@ -42,7 +42,7 @@ class MyGroup extends ImmutableGroup {
 
     private int numElements;
 
-    MyGroup() {
+    public MyGroup() {
         super(new Group());
         // this.group = Group.Factory.newInstance();
         // this.mutable = true;
@@ -53,7 +53,7 @@ class MyGroup extends ImmutableGroup {
         numElements = 0;
     }
 
-    MyGroup(LogicalOperator logicalOperator) {
+    public MyGroup(LogicalOperator logicalOperator) {
         this();
         setLogicRelation(logicalOperator);
     }
@@ -100,7 +100,7 @@ class MyGroup extends ImmutableGroup {
         incNumElems();
     }
 
-    void addConstraint(DcqlConstraint constraint) {
+    public void addConstraint(DcqlConstraint constraint) {
         switch (constraint.getConstraintType()) {
             case Attribute:
                 AttributeConstraint attributeConstraint = (AttributeConstraint) constraint;
@@ -145,7 +145,7 @@ class MyGroup extends ImmutableGroup {
      * Call if you're not sure about the contents/size of the group.
      * @return appropriate constraint.
      */
-    DcqlConstraint getDcqlConstraint() {
+    public DcqlConstraint getDcqlConstraint() {
         if (this.numElements > 1) {
             return new GroupConstraint(getGroup());
         }

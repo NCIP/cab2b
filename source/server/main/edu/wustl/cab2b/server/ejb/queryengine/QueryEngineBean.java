@@ -12,6 +12,6 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements
     private static final long serialVersionUID = 8416841912609836063L;
 
     public IQueryResult executeQuery(ICab2bQuery query) {
-        return QueryExecutor.executeQuery(query);
+        return new QueryExecutor(query).executeQuery();
     }
 }

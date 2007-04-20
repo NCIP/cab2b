@@ -10,7 +10,7 @@ import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.DcqlCon
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 
-class ConstraintsBuilderResult {
+public class ConstraintsBuilderResult {
     private Map<IExpression, DcqlConstraint> expressionToConstraintMap = new HashMap<IExpression, DcqlConstraint>();
 
     private Map<EntityInterface, List<DcqlConstraint>> classToDcqlConstraintsMap = new HashMap<EntityInterface, List<DcqlConstraint>>();

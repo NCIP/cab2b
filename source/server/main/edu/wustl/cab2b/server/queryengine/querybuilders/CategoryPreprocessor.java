@@ -14,8 +14,8 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.category.CategoryOperations;
+import edu.wustl.cab2b.server.queryengine.utils.TreeNode;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
@@ -32,69 +32,67 @@ import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IJoinGraph;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
+import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.util.logger.Logger;
 
 public class CategoryPreprocessor {
-    private IConstraints constraints;
 
-    private EntityInterface masterEntryPoint;
+    private IQuery query;
 
-    private Map<Long, Category> entityIdToCategory = new HashMap<Long, Category>();
-
-    private static EntityCache cache = EntityCache.getInstance();
-    
     private Connection connection;
 
+    private CategoryPreprocessorResult categoryPreprocessorResult;
+
+    private List<IExpressionId> catExprIds = new ArrayList<IExpressionId>();
+
     /**
-     * The constraints object is modified appropriately.
+     * The query object is modified appropriately.
      */
-    // TODO this is plain pathetic... taking outputEntity in here. the whole
-    // thing needs to be thought over for multiple outputs or when category is
-    // in outputs. Lots of scenarios in here to think about.
-    /**
-     * @param constraints
-     * @param masterEntryPoint
-     *            this is considered as the entry point for the category which
-     *            constrains the root expression.
-     */
-    public void processCategories(IConstraints constraints,
-                                  EntityInterface masterEntryPoint, Connection connection) {
-        this.constraints = constraints;
-        this.masterEntryPoint = masterEntryPoint;
+    // TODO output categories related stuff for common...
+    public CategoryPreprocessorResult processCategories(IQuery query,
+                                                        Connection connection) {
+        clear();
+        this.query = query;
         this.connection = connection;
+        this.categoryPreprocessorResult = new CategoryPreprocessorResult();
         processCategories();
+        return this.categoryPreprocessorResult;
+    }
+
+    private void clear() {
+        this.catExprIds.clear();
     }
 
     private void processCategories() {
-        Enumeration<IExpressionId> exprIds = constraints.getExpressionIds();
-        List<IExpressionId> catExprIds = new ArrayList<IExpressionId>();
+        Enumeration<IExpressionId> exprIds = getConstraints().getExpressionIds();
+
         while (exprIds.hasMoreElements()) {
             IExpressionId exprId = exprIds.nextElement();
-            IExpression expr = constraints.getExpression(exprId);
+            IExpression expr = getConstraints().getExpression(exprId);
 
             if (!Utility.isCategory(expr.getConstraintEntity().getDynamicExtensionsEntity())) {
                 continue;
             }
             processCategoryExpression(expr);
-            catExprIds.add(exprId);
+            this.catExprIds.add(exprId);
         }
-        removeCategoryExpressions(catExprIds);
+        removeCategoryExpressions();
         // check there is a single root.
         try {
-            constraints.getRootExpressionId();
+            getConstraints().getRootExpressionId();
         } catch (MultipleRootsException e) {
             throw new RuntimeException("Problem in code...", e);
         }
     }
 
-    private void removeCategoryExpressions(List<IExpressionId> catExprIds) {
-        for (IExpressionId expressionId : catExprIds) {
+    private void removeCategoryExpressions() {
+        for (IExpressionId expressionId : this.catExprIds) {
             // by this time, none of the cat expressions should have any
             // parents...
-            assert getJoinGraph().getParentList(expressionId).isEmpty();
-            constraints.removeExpressionWithId(expressionId);
+            // assert getJoinGraph().getParentList(expressionId).isEmpty();
+            getConstraints().removeExpressionWithId(expressionId);
         }
     }
 
@@ -103,23 +101,23 @@ public class CategoryPreprocessor {
         List<IExpressionId> parentExprIds = getJoinGraph().getParentList(exprId);
         if (parentExprIds.isEmpty()) {
             // implies that this is the root expr.
-            // TODO since this is the root, treat output class as
-            // entryPoint
 
-            transformCategoryExpression(expr, this.masterEntryPoint);
+            // transformCategoryExpression(expr, this.masterEntryPoint);
 
-            // below is okish code; doesn't work though.
-            // EntityInterface catEntity =
-            // expr.getConstraintEntity().getDynamicExtensionsEntity();
-            // Category category = getCategoryFromEntity(catEntity);
-            // transformCategoryExpression(
-            // expr,
-            // getEntityById(category.getRootClass().getDeEntityId()));
-
-            // return;
+            EntityInterface catEntity = expr.getConstraintEntity().getDynamicExtensionsEntity();
+            Category category = getCategoryFromEntity(catEntity);
+            transformCategoryExpression(
+                                        expr,
+                                        category.getRootClass().getCategorialClassEntity());
         } else {
             for (IExpressionId parentExprId : parentExprIds) {
-                IExpression parentExpr = constraints.getExpression(parentExprId);
+                if (this.catExprIds.contains(parentExprId)) {
+                    // this parent will be removed in the future; so don't heed
+                    // it.
+                    continue;
+                }
+                IExpression parentExpr = getConstraints().getExpression(
+                                                                        parentExprId);
                 IAssociation association = getJoinGraph().getAssociation(
                                                                          parentExprId,
                                                                          exprId);
@@ -140,43 +138,31 @@ public class CategoryPreprocessor {
                             "Problem in code... might be due to invalid input.",
                             e);
                 }
+                getJoinGraph().removeAssociation(parentExprId, exprId);
             }
         }
     }
 
     private Category getCategoryFromEntity(EntityInterface catEntity) {
         Long entityId = catEntity.getId();
-        if (this.entityIdToCategory.containsKey(entityId)) {
-            return this.entityIdToCategory.get(entityId);
-        }
-        return new CategoryOperations().getCategoryByEntityId(entityId, connection);
-//        CategoryBusinessInterface catBus;
-//        try {
-//            catBus = (CategoryBusinessInterface) Locator.getInstance().locate(
-//                                                                              EjbNamesConstants.CATEGORY_BEAN,
-//                                                                              CategoryHomeInterface.class);
-//            Category category = catBus.getCategoryByEntityId(catEntity.getId());
-//            this.entityIdToCategory.put(entityId, category);
-//            return category;
-//        } catch (RemoteException e) {
-//            throw new RuntimeException("Exception while fetching category.", e);
-//        } catch (LocatorException e) {
-//            throw new RuntimeException(
-//                    "Unable to locate category bean in queryBuilder", e,
-//                    ErrorCodeConstants.JN_0001);
-//        }
+        return new CategoryOperations().getCategoryByEntityId(entityId,
+                                                              connection);
     }
 
     private Category pivot(Category category, EntityInterface requiredRoot) {
         Category clonedCat = cloneCategorialClasses(category);
+        clonedCat.setCategoryEntity(category.getCategoryEntity());
+
+        getResult().getOriginallyRootCatClasses().add(clonedCat.getRootClass());
+
         List<CategorialClass> catClassesPath = findCategorialClassesPathFromRoot(
                                                                                  clonedCat.getRootClass(),
                                                                                  requiredRoot);
         if (catClassesPath.isEmpty()) {
-            // throw new RuntimeException(
-            // "Problem in code; could not find entry point in category");
-            // TODO this is a hack for single outputs....
-            return clonedCat;
+            throw new RuntimeException(
+                    "Problem in code; could not find entry point in category");
+            // TODO this is a hack for single outputs.... ????
+            // return clonedCat;
         }
         Collections.reverse(catClassesPath);
         catClassesPath.get(0).setParent(null);
@@ -257,8 +243,9 @@ public class CategoryPreprocessor {
                                                  CategorialClass categorialClassToClone) {
         CategorialClass clone = new CategorialClass();
         clone.setDeEntityId(categorialClassToClone.getDeEntityId());
+        clone.setId(categorialClassToClone.getId());
         // clone.setPathFromParent(categorialClassToClone.getPathFromParent());
-
+        clone.setCategorialClassEntity(categorialClassToClone.getCategorialClassEntity());
         for (CategorialAttribute origAttr : categorialClassToClone.getCategorialAttributeCollection()) {
             clone.addCategorialAttribute(cloneCategorialAttribute(origAttr));
         }
@@ -271,6 +258,9 @@ public class CategoryPreprocessor {
         CategorialAttribute clone = new CategorialAttribute();
         clone.setDeCategoryAttributeId(categorialAttributeToClone.getDeCategoryAttributeId());
         clone.setDeSourceClassAttributeId(categorialAttributeToClone.getDeSourceClassAttributeId());
+        clone.setCategoryAttribute(categorialAttributeToClone.getCategoryAttribute());
+        clone.setSourceClassAttribute(categorialAttributeToClone.getSourceClassAttribute());
+        clone.setId(categorialAttributeToClone.getId());
         return clone;
     }
 
@@ -299,21 +289,22 @@ public class CategoryPreprocessor {
         return res;
     }
 
-    private EntityInterface getEntityById(Long entityId) {
-        return cache.getEntityById(entityId);
-    }
-
-    private AttributeInterface getAttributeById(Long entityId, Long attributeId) {
-        return getEntityById(entityId).getAttributeByIdentifier(attributeId);
-    }
-
     private IExpression transformCategoryExpression(IExpression catExpr,
                                                     EntityInterface entryPoint) {
         EntityInterface catEntity = catExpr.getConstraintEntity().getDynamicExtensionsEntity();
-        Category category = pivot(getCategoryFromEntity(catEntity), entryPoint);
+        Category originalCategory = getCategoryFromEntity(catEntity);
+        getResult().getCategoryForEntity().put(catEntity, originalCategory);
+
+        Category category = pivot(originalCategory, entryPoint);
 
         CategorialClass rootCatClass = category.getRootClass();
-        IExpression rootExpr = createExpression(getEntityById(rootCatClass.getDeEntityId()));
+        IExpression rootExpr = createExpression(
+                                                rootCatClass.getCategorialClassEntity(),
+                                                catExpr.isInView());
+
+        TreeNode<IExpression> rootExprNode = new TreeNode<IExpression>(rootExpr);
+        getResult().addExprSourcedFromCategory(catEntity, rootExprNode);
+        getResult().getCatClassForExpr().put(rootExpr, rootCatClass);
 
         Map<Integer, Integer> followingConnIndexOrigToNew = new HashMap<Integer, Integer>();
 
@@ -333,12 +324,19 @@ public class CategoryPreprocessor {
                 List<IAssociation> associationsFromRoot = findAssociationsFromRoot(
                                                                                    rootCatClass,
                                                                                    exitPoint);
-                IExpression newExpr = createExpressionsForAssociations(
-                                                                       rootExpr,
-                                                                       associationsFromRoot);
+                TreeNode<IExpression> newExprNode = createExpressionsForAssociations(
+                                                                                     rootExpr,
+                                                                                     associationsFromRoot,
+                                                                                     new HashSet<IExpressionId>(),
+                                                                                     catExpr.isInView(),
+                                                                                     rootExprNode);
+                IExpression newExpr = newExprNode.getValue();
                 // set external expr as subexpr for last expression...
-                IExpression externalExpr = constraints.getExpression(externalExprId);
+                IExpression externalExpr = getConstraints().getExpression(
+                                                                          externalExprId);
                 addSubExpr(newExpr, externalExpr, exitAssociation);
+
+                // TODO TODO mapping these expressions to cat classes...
 
             } else {
                 // it is a rule
@@ -350,6 +348,10 @@ public class CategoryPreprocessor {
 
                 Map<CategorialClass, IExpression> exprForCatClass = new HashMap<CategorialClass, IExpression>();
                 exprForCatClass.put(rootCatClass, rootExpr);
+
+                Map<CategorialClass, TreeNode<IExpression>> treeNodeForCatClass = new HashMap<CategorialClass, TreeNode<IExpression>>();
+                treeNodeForCatClass.put(rootCatClass, rootExprNode);
+
                 Set<CategorialClass> currCatClasses = new HashSet<CategorialClass>();
                 currCatClasses.addAll(rootCatClass.getChildren());
 
@@ -361,20 +363,27 @@ public class CategoryPreprocessor {
                         nextCatClasses.addAll(categorialClass.getChildren());
 
                         CategorialClass parentCatClass = categorialClass.getParent();
-                        IExpression newExpr = createExpressionsForAssociations(
-                                                                               exprForCatClass.get(parentCatClass),
-                                                                               categorialClass.getPathFromParent().getIntermediateAssociations(),
-                                                                               possiblyRedundantExprIds);
+                        TreeNode<IExpression> newExprNode = createExpressionsForAssociations(
+                                                                                             exprForCatClass.get(parentCatClass),
+                                                                                             categorialClass.getPathFromParent().getIntermediateAssociations(),
+                                                                                             possiblyRedundantExprIds,
+                                                                                             catExpr.isInView(),
+                                                                                             treeNodeForCatClass.get(parentCatClass));
 
+                        IExpression newExpr = newExprNode.getValue();
                         addRuleToExpr(newExpr, gleanConditions(categorialClass,
                                                                rule));
                         exprForCatClass.put(categorialClass, newExpr);
+                        treeNodeForCatClass.put(categorialClass, newExprNode);
+                        getResult().getCatClassForExpr().put(newExpr,
+                                                             categorialClass);
                     }
                     currCatClasses = nextCatClasses;
                 }
                 for (IExpressionId possiblyRedundantExprId : possiblyRedundantExprIds) {
-                    removeExprIfRedundant(possiblyRedundantExprId,
-                                          possiblyRedundantExprIds);
+                    processRedundantExprs(possiblyRedundantExprId,
+                                          possiblyRedundantExprIds,
+                                          !catExpr.isInView());
                 }
             }
             if (i < catExpr.numberOfOperands() - 1) {
@@ -406,26 +415,76 @@ public class CategoryPreprocessor {
         return rootExpr;
     }
 
-    private void removeExprIfRedundant(
+    private void processRedundantExprs(
                                        IExpressionId possiblyRedundantExprId,
-                                       Set<IExpressionId> possiblyRedundantExprIds) {
-        IExpression expr = constraints.getExpression(possiblyRedundantExprId);
-        if (expr == null) {
+                                       Set<IExpressionId> possiblyRedundantExprIds,
+                                       boolean removeIfRedundant) {
+        IExpression possiblyRedundantExpr = getConstraints().getExpression(
+                                                                           possiblyRedundantExprId);
+        if (possiblyRedundantExpr == null) {
             // the child was already killed along with its parents... one
             // problem with dead expresssions is that you can't kill 'em.
+
+            // this won't happen now since we're not REMOVING the expressions...
             return;
         }
 
         for (IExpressionId possiblyRedundantChildExprId : getJoinGraph().getChildrenList(
                                                                                          possiblyRedundantExprId)) {
-            removeExprIfRedundant(possiblyRedundantChildExprId,
-                                  possiblyRedundantExprIds);
+            processRedundantExprs(possiblyRedundantChildExprId,
+                                  possiblyRedundantExprIds, removeIfRedundant);
         }
-        if (expr.numberOfOperands() == 0
-                && possiblyRedundantExprIds.contains(possiblyRedundantExprId)) {
-            constraints.removeExpressionWithId(possiblyRedundantExprId);
+        if (possiblyRedundantExprIds.contains(possiblyRedundantExprId)) {
+            // if (removeIfRedundant) {
+            // getConstraints().removeExpressionWithId(possiblyRedundantExprId);
+            // } else {
+            // TODO removing from exprs is insufficient, we would have to remove
+            // from treenodes as well...
+
+            List<IExpressionId> childExprIds = getJoinGraph().getChildrenList(
+                                                                              possiblyRedundantExpr.getExpressionId());
+            if (possiblyRedundantExpr.numberOfOperands() == childExprIds.size()) {
+                // this means that possiblyRedundantExpr has no rules
+                boolean redundant = true;
+                for (IExpressionId childExprId : childExprIds) {
+                    IExpression childExpr = getConstraints().getExpression(
+                                                                           childExprId);
+                    if (!getResult().getRedundantExprs().contains(childExpr)) {
+                        redundant = false;
+                        break;
+                    }
+                }
+                if (redundant) {
+                    // all child exprs are redundant, so this expr is redundant.
+                    getResult().getRedundantExprs().add(possiblyRedundantExpr);
+                }
+            }
+            // }
         }
     }
+
+    // /**
+    // * Creates expressions corresponding to the associations; also sets the
+    // * subexpressions in parentExpr.
+    // * @param parentExpr
+    // * the parentExpr that which is start-point for the expressions
+    // * created.
+    // * @param associationsToLastChild
+    // * the associations that lead from parentExpr's entity to the
+    // * entity for which the expr is to be created.
+    // * @return the last expression.
+    // */
+    // private IExpression createExpressionsForAssociations(
+    // IExpression parentExpr,
+    // List<IAssociation> associationsToLastChild) {
+    // IExpression lastChild = parentExpr;
+    // for (IAssociation association : associationsToLastChild) {
+    // parentExpr = lastChild;
+    // lastChild = createExpression(association.getTargetEntity());
+    // addSubExpr(parentExpr, lastChild, association);
+    // }
+    // return lastChild;
+    // }
 
     /**
      * Creates expressions corresponding to the associations; also sets the
@@ -438,41 +497,26 @@ public class CategoryPreprocessor {
      *            entity for which the expr is to be created.
      * @return the last expression.
      */
-    private IExpression createExpressionsForAssociations(
-                                                         IExpression parentExpr,
-                                                         List<IAssociation> associationsToLastChild) {
-        IExpression lastChild = parentExpr;
+    private TreeNode<IExpression> createExpressionsForAssociations(
+                                                                   IExpression parentExpr,
+                                                                   List<IAssociation> associationsToLastChild,
+                                                                   Set<IExpressionId> expressionsAdded,
+                                                                   boolean inView,
+                                                                   TreeNode<IExpression> parentExprNode) {
+        IExpression lastChildExpr = parentExpr;
+        TreeNode<IExpression> lastChildNode = parentExprNode;
         for (IAssociation association : associationsToLastChild) {
-            parentExpr = lastChild;
-            lastChild = createExpression(association.getTargetEntity());
-            addSubExpr(parentExpr, lastChild, association);
-        }
-        return lastChild;
-    }
+            parentExpr = lastChildExpr;
+            parentExprNode = lastChildNode;
+            lastChildExpr = createExpression(association.getTargetEntity(),
+                                             inView);
+            lastChildNode = new TreeNode<IExpression>(lastChildExpr);
+            expressionsAdded.add(lastChildExpr.getExpressionId());
 
-    /**
-     * Creates expressions corresponding to the associations; also sets the
-     * subexpressions in parentExpr.
-     * @param parentExpr
-     *            the parentExpr that which is start-point for the expressions
-     *            created.
-     * @param associationsToLastChild
-     *            the associations that lead from parentExpr's entity to the
-     *            entity for which the expr is to be created.
-     * @return the last expression.
-     */
-    private IExpression createExpressionsForAssociations(
-                                                         IExpression parentExpr,
-                                                         List<IAssociation> associationsToLastChild,
-                                                         Set<IExpressionId> expressionsAdded) {
-        IExpression lastChild = parentExpr;
-        for (IAssociation association : associationsToLastChild) {
-            parentExpr = lastChild;
-            lastChild = createExpression(association.getTargetEntity());
-            expressionsAdded.add(lastChild.getExpressionId());
-            addSubExpr(parentExpr, lastChild, association);
+            addSubExpr(parentExpr, lastChildExpr, association);
+            parentExprNode.addChild(lastChildNode);
         }
-        return lastChild;
+        return lastChildNode;
     }
 
     private List<IAssociation> findAssociationsFromRoot(
@@ -495,10 +539,7 @@ public class CategoryPreprocessor {
             ICondition condition = rule.getCondition(i);
             AttributeInterface catAttr = condition.getAttribute();
 
-            Long origAttrid = categorialClass.findSourceAttributeId(catAttr.getId());
-            AttributeInterface origAttr = getAttributeById(
-                                                           categorialClass.getDeEntityId(),
-                                                           origAttrid);
+            AttributeInterface origAttr = categorialClass.findSourceAttribute(catAttr);
             if (origAttr != null) {
                 newRule.addCondition(cloneWithSpecifiedAttribute(condition,
                                                                  origAttr));
@@ -546,14 +587,22 @@ public class CategoryPreprocessor {
         }
     }
 
-    private IExpression createExpression(EntityInterface entity) {
-        IConstraintEntity constraintEntity = QueryObjectFactory.createConstrainedEntity(entity);
-        IExpression expr = constraints.addExpression(constraintEntity);
-
+    private IExpression createExpression(EntityInterface entity, boolean inView) {
+        IConstraintEntity constraintEntity = QueryObjectFactory.createConstraintEntity(entity);
+        IExpression expr = getConstraints().addExpression(constraintEntity);
+        expr.setInView(inView);
         return expr;
     }
 
     private IJoinGraph getJoinGraph() {
-        return constraints.getJoinGraph();
+        return getConstraints().getJoinGraph();
+    }
+
+    private IConstraints getConstraints() {
+        return query.getConstraints();
+    }
+
+    private CategoryPreprocessorResult getResult() {
+        return this.categoryPreprocessorResult;
     }
 }

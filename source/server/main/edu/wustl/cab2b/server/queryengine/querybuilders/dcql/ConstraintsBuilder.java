@@ -8,13 +8,16 @@ import java.util.Set;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessorResult;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.AbstractAssociationConstraint;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.AttributeConstraint;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.DcqlConstraint;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.ForeignAssociationConstraint;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.LocalAssociationConstraint;
 import edu.wustl.cab2b.server.queryengine.utils.TransformerUtil;
+import edu.wustl.cab2b.server.queryengine.utils.TreeNode;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
@@ -54,11 +57,13 @@ import gov.nih.nci.cagrid.dcql.Object;
  * step may change when we move to multiple outputs).
  * @author srinath_k
  */
-class ConstraintsBuilder {
+public class ConstraintsBuilder {
 
     private ConstraintsBuilderResult result;
 
     private IConstraints constraints;
+
+    private CategoryPreprocessorResult categoryPreprocessorResult;
 
     private IExpression rootExpr;
 
@@ -85,8 +90,11 @@ class ConstraintsBuilder {
         this.rootExpr = rootExpr;
     }
 
-    public ConstraintsBuilder(IConstraints constraints) {
-        setConstraints(constraints);
+    public ConstraintsBuilder(
+            ICab2bQuery query,
+            CategoryPreprocessorResult categoryPreprocessorResult) {
+        setConstraints(query.getConstraints());
+        setCategoryPreprocessorResult(categoryPreprocessorResult);
         setResult(new ConstraintsBuilderResult());
         setRootExpr(findRootExpression());
     }
@@ -102,29 +110,47 @@ class ConstraintsBuilder {
     }
 
     // BEGIN CONSTRAINING EACH EXPR BY PARENTS
+    private Set<IExpressionId> getOutputExpressionIds() {
+        Set<TreeNode<IExpression>> outputExpressions = getCategoryPreprocessorResult().getOutputExpressions();
+        Set<IExpressionId> outputExpressionIds = new HashSet<IExpressionId>(
+                outputExpressions.size());
+        for (TreeNode<IExpression> exprNode : outputExpressions) {
+            outputExpressionIds.add(exprNode.getValue().getExpressionId());
+        }
+        return outputExpressionIds;
+    }
+
     private void constrainByParentExpressions() {
-        Set<IExpressionId> processedExpressions = new HashSet<IExpressionId>();
+        Set<IExpressionId> outputExprIds = getOutputExpressionIds();
+        // Set<IExpressionId> processedExpressions = new
+        // HashSet<IExpressionId>();
         Set<IExpressionId> currExprIds = new HashSet<IExpressionId>();
         currExprIds.add(getRootExpr().getExpressionId());
 
         while (!currExprIds.isEmpty()) {
             Set<IExpressionId> nextExprIds = new HashSet<IExpressionId>();
             for (IExpressionId currExprId : currExprIds) {
-                if (processedExpressions.contains(currExprId)) {
-                    continue;
-                }
+                // TODO why is this needed??
+                // if (processedExpressions.contains(currExprId)) {
+                // continue;
+                // }
                 List<IExpressionId> parentExprIds = getJoinGraph().getParentList(
                                                                                  currExprId);
 
-                assert processedExpressions.containsAll(parentExprIds);
+                // assert processedExpressions.containsAll(parentExprIds);
                 constrainChildByParents(currExprId, parentExprIds);
 
-                nextExprIds.addAll(getJoinGraph().getChildrenList(currExprId));
-                processedExpressions.add(currExprId);
+                // do "constrain by parents" only till the output expressions.
+                if (!outputExprIds.contains(currExprId)) {
+                    nextExprIds.addAll(getJoinGraph().getChildrenList(
+                                                                      currExprId));
+                }
+                // processedExpressions.add(currExprId);
             }
             currExprIds = nextExprIds;
         }
-        assert processedExpressions.equals(getResult().getExpressionToConstraintMap().keySet());
+        // assert
+        // processedExpressions.equals(getResult().getExpressionToConstraintMap().keySet());
     }
 
     private void constrainChildByParents(IExpressionId childExprId,
@@ -148,9 +174,7 @@ class ConstraintsBuilder {
             }
             DcqlConstraint parentConstraint = getResult().getConstraintForExpression(
                                                                                      parentExpr);
-            AbstractAssociationConstraint associationConstraint = createAssociation(
-                                                                                    association,
-                                                                                    true);
+            AbstractAssociationConstraint associationConstraint = createAssociation(association.reverse());
             associationConstraint.addChildConstraint(parentConstraint);
             group.addConstraint(associationConstraint);
         }
@@ -173,17 +197,24 @@ class ConstraintsBuilder {
 
     }
 
-    private DcqlConstraint createDcqlConstraintForExpression(IExpression expr) {
+    private boolean isExprRedundant(IExpressionId exprId) {
+        return getCategoryPreprocessorResult().getRedundantExprs().contains(
+                                                                            getExpression(exprId));
+    }
 
+    private DcqlConstraint createDcqlConstraintForExpression(IExpression expr) {
         List<DcqlConstraint> dcqlConstraintsList = new ArrayList<DcqlConstraint>(
                 expr.numberOfOperands());
 
         for (int i = 0; i < expr.numberOfOperands(); i++) {
             IExpressionOperand operand = expr.getOperand(i);
             if (operand.isSubExpressionOperand()) {
+                IExpressionId exprId = (IExpressionId) operand;
+                // if (!isExprRedundant(exprId)) {
                 dcqlConstraintsList.add(createDcqlConstraintForChildExpression(
                                                                                expr.getExpressionId(),
-                                                                               (IExpressionId) operand));
+                                                                               exprId));
+                // }
             } else {
                 dcqlConstraintsList.add(createDcqlConstraintForRule((IRule) operand));
             }
@@ -191,6 +222,7 @@ class ConstraintsBuilder {
 
         DcqlConstraint dcqlConstraint = mergeConstraints(expr,
                                                          dcqlConstraintsList);
+
         getResult().putConstraintForExpression(expr, dcqlConstraint,
                                                !constrainByParentExpressions);
         return dcqlConstraint;
@@ -230,98 +262,68 @@ class ConstraintsBuilder {
             childExprDcqlConstraint = createDcqlConstraintForExpression(childExpr);
         }
 
-        IAssociation association = getJoinGraph().getAssociation(
-                                                                 parentExpressionId,
-                                                                 childExpressionId);
+        DcqlConstraint dcqlConstraint;
+        if (isExprRedundant(childExpressionId)) {
+            dcqlConstraint = createAnyConstraint();
+        } else {
+            IAssociation association = getJoinGraph().getAssociation(
+                                                                     parentExpressionId,
+                                                                     childExpressionId);
 
-        AbstractAssociationConstraint dcqlConstraint = createAssociation(
-                                                                         association,
-                                                                         false);
-        dcqlConstraint.addChildConstraint(childExprDcqlConstraint);
+            AbstractAssociationConstraint associationConstraint = createAssociation(association);
+            associationConstraint.addChildConstraint(childExprDcqlConstraint);
+
+            dcqlConstraint = associationConstraint;
+        }
         return dcqlConstraint;
     }
 
-    private AbstractAssociationConstraint createAssociation(
-                                                            IAssociation association,
-                                                            boolean reverseDir) {
+    private DcqlConstraint createAnyConstraint() {
+        return new DcqlConstraint();
+    }
 
-        if (reverseDir && !isAssociationBidirectional(association)) {
-            throw new IllegalArgumentException(
-                    "Cannot do reverseDirection if association ain't bidirectional...");
-        }
+    public static AbstractAssociationConstraint createAssociation(
+                                                                  IAssociation association) {
+
         AbstractAssociationConstraint dcqlConstraint;
 
         if (association instanceof IIntraModelAssociation) {
-            dcqlConstraint = createLocalAssociation(
-                                                    (IIntraModelAssociation) association,
-                                                    reverseDir);
+            dcqlConstraint = createLocalAssociation((IIntraModelAssociation) association);
         } else {
-            dcqlConstraint = createForeignAssociation(
-                                                      (IInterModelAssociation) association,
-                                                      reverseDir);
+            dcqlConstraint = createForeignAssociation((IInterModelAssociation) association);
         }
         return dcqlConstraint;
     }
 
-    private boolean isAssociationBidirectional(IAssociation association) {
-        // if (association instanceof IIntraModelAssociation) {
-        // return ((IIntraModelAssociation)
-        // association).getDynamicExtensionsAssociation().getAssociationDirection()
-        // == AssociationDirection.BI_DIRECTIONAL;
-        // } else {
-        // return true;
-        // }
-        return association.isBidirectional();
-    }
-
-    private LocalAssociationConstraint createLocalAssociation(
-                                                              IIntraModelAssociation intraModelAssociation,
-                                                              boolean reverseDir) {
+    private static LocalAssociationConstraint createLocalAssociation(
+                                                                     IIntraModelAssociation intraModelAssociation) {
         Association association = new Association();
 
         AssociationInterface deAssociation = intraModelAssociation.getDynamicExtensionsAssociation();
-        if (reverseDir) {
-            association.setRoleName(deAssociation.getSourceRole().getName());
-            association.setName(deAssociation.getEntity().getName());
-        } else {
-            association.setRoleName(deAssociation.getTargetRole().getName());
-            association.setName(deAssociation.getTargetEntity().getName());
-        }
+        association.setRoleName(deAssociation.getTargetRole().getName());
+        association.setName(deAssociation.getTargetEntity().getName());
 
         return new LocalAssociationConstraint(association);
     }
 
-    private ForeignAssociationConstraint createForeignAssociation(
-                                                                  IInterModelAssociation interModelAssociation,
-                                                                  boolean reverseDir) {
+    private static ForeignAssociationConstraint createForeignAssociation(
+                                                                         IInterModelAssociation interModelAssociation) {
         // 1. create foreign object
         // TODO multiple urls...
-        String leftServiceUrl = interModelAssociation.getSourceServiceUrl();
+        // String leftServiceUrl = interModelAssociation.getSourceServiceUrl();
         String rightServiceUrl = interModelAssociation.getTargetServiceUrl();
 
         Object foreignObject = new Object();
         ForeignAssociation association = new ForeignAssociation();
         JoinCondition joinCondition = new JoinCondition();
         joinCondition.setPredicate(ForeignPredicate.EQUAL_TO);
-        if (reverseDir) {
-            foreignObject.setName(interModelAssociation.getSourceAttribute().getEntity().getName());
-            association.setTargetServiceURL(leftServiceUrl);
+        foreignObject.setName(interModelAssociation.getTargetEntity().getName());
+        association.setTargetServiceURL(rightServiceUrl);
 
-            // 2. create join condition
-            joinCondition.setLocalAttributeName(interModelAssociation.getTargetAttribute().getName());
-            joinCondition.setForeignAttributeName(interModelAssociation.getSourceAttribute().getName());
-            association.setForeignObject(foreignObject);
-            association.setJoinCondition(joinCondition);
+        // 2. create join condition
 
-        } else {
-            foreignObject.setName(interModelAssociation.getTargetEntity().getName());
-            association.setTargetServiceURL(rightServiceUrl);
-
-            // 2. create join condition
-            // TODO check new dcql jar.
-            joinCondition.setLocalAttributeName(interModelAssociation.getSourceAttribute().getName());
-            joinCondition.setForeignAttributeName(interModelAssociation.getTargetAttribute().getName());
-        }
+        joinCondition.setLocalAttributeName(interModelAssociation.getSourceAttribute().getName());
+        joinCondition.setForeignAttributeName(interModelAssociation.getTargetAttribute().getName());
         association.setForeignObject(foreignObject);
         association.setJoinCondition(joinCondition);
         return new ForeignAssociationConstraint(association);
@@ -348,9 +350,11 @@ class ConstraintsBuilder {
         return createAttribute(attributeName, operator, null, dataType);
     }
 
-    private AttributeConstraint createAttribute(String attributeName,
-                                                RelationalOperator operator,
-                                                String value, DataType dataType) {
+    public static AttributeConstraint createAttribute(
+                                                      String attributeName,
+                                                      RelationalOperator operator,
+                                                      String value,
+                                                      DataType dataType) {
         Attribute attribute = new Attribute();
         attribute.setName(attributeName);
         attribute.setPredicate(TransformerUtil.getCqlPredicate(operator));
@@ -360,15 +364,16 @@ class ConstraintsBuilder {
         return new AttributeConstraint(attribute);
     }
 
-    private String modifyDateValue(String value) {
+    private static String modifyDateValue(String value) {
         // TODO this doesn't work... may need to follow up with Scott/ later
         // cagrid releases.
         // return DateUtils.getDateString(Date.valueOf(value));
         return value;
     }
 
-    private String modifyValue(String value, RelationalOperator operator,
-                               DataType dataType) {
+    private static String modifyValue(String value,
+                                      RelationalOperator operator,
+                                      DataType dataType) {
         if (dataType == DataType.Date) {
             return modifyDateValue(value);
         }
@@ -490,5 +495,14 @@ class ConstraintsBuilder {
 
     private IExpression getExpression(IExpressionId expressionId) {
         return getConstraints().getExpression(expressionId);
+    }
+
+    public CategoryPreprocessorResult getCategoryPreprocessorResult() {
+        return categoryPreprocessorResult;
+    }
+
+    public void setCategoryPreprocessorResult(
+                                              CategoryPreprocessorResult categoryPreprocessorResult) {
+        this.categoryPreprocessorResult = categoryPreprocessorResult;
     }
 }

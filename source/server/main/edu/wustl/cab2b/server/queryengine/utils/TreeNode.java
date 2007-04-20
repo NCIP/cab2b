@@ -39,6 +39,10 @@ public class TreeNode<T> {
         return children;
     }
 
+    public void addChild(TreeNode<T> child) {
+        getChildren().add(child);
+    }
+
     /**
      * @return Returns the parent.
      */

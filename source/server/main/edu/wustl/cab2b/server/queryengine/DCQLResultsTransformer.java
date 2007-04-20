@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
-import edu.wustl.cab2b.common.queryengine.result.QueryResult;
+import edu.wustl.cab2b.common.queryengine.result.ClassRecords;
+import edu.wustl.cab2b.common.queryengine.result.IClassRecords;
 import gov.nih.nci.cagrid.cqlresultset.CQLQueryResults;
 import gov.nih.nci.cagrid.data.utilities.CQLQueryResultsIterator;
 import gov.nih.nci.cagrid.dcqlresult.DCQLQueryResultsCollection;
@@ -13,10 +13,10 @@ import gov.nih.nci.cagrid.dcqlresult.DCQLResult;
 
 public class DCQLResultsTransformer {
 
-    IQueryResult getQueryResults(
+    IClassRecords getClassRecords(
                                  DCQLQueryResultsCollection queryResultsCollection,
                                  List<AttributeInterface> attributes) {
-        QueryResult queryResult = new QueryResult();
+        ClassRecords queryResult = new ClassRecords();
         queryResult.setAttributes(attributes);
         for (DCQLResult dcqlQueryResult : queryResultsCollection.getDCQLResult()) {
             CQLQueryResults cqlQueryResult = dcqlQueryResult.getCQLQueryResultCollection();
