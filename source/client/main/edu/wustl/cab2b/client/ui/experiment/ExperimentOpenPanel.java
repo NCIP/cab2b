@@ -2,31 +2,21 @@ package edu.wustl.cab2b.client.ui.experiment;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.rmi.RemoteException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+
 
 import javax.swing.JFrame;
 import javax.swing.JSplitPane;
 
-import edu.common.dynamicextensions.domaininterface.AssociationInterface;
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.common.dynamicextensions.entitymanager.EntityManager;
-import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
-import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
-import edu.wustl.cab2b.common.domain.DataListMetadata;
+
 import edu.wustl.cab2b.common.domain.Experiment;
-import edu.wustl.cab2b.common.domain.ExperimentGroup;
+
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
-import edu.wustl.cab2b.common.experiment.ExperimentGroupBusinessInterface;
-import edu.wustl.cab2b.common.experiment.ExperimentGroupHome;
+
 import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -34,10 +24,9 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.controls.CustomizableBorder;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-import edu.wustl.cab2b.server.experiment.ExperimentOperations;
+
 import edu.wustl.common.tree.ExperimentTreeNode;
 import edu.wustl.common.util.dbManager.DAOException;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * A panel to display details of the selected experiment  
