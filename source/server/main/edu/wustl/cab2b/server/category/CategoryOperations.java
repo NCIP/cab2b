@@ -145,13 +145,13 @@ public class CategoryOperations extends DefaultBizLogic {
         long deEntityId = category.getDeEntityId();
         EntityInterface categoryEntity = cache.getEntityById(deEntityId);
         category.setCategoryEntity(categoryEntity);
-        processCategorialClass(category.getRootClass(),cache, con);
+        processCategorialClass(categoryEntity, category.getRootClass(),cache, con);
         for (Category subCategory : category.getSubCategories()) {
             postRetrievalProcess(subCategory,cache, con);
         }
     }
 
-    private void processCategorialClass(CategorialClass categorialClass,EntityCache cache, Connection con) {
+    private void processCategorialClass(EntityInterface categoryEntity, CategorialClass categorialClass,EntityCache cache, Connection con) {
         Long pathId = categorialClass.getPathFromParentId();
         if (pathId != null && pathId.intValue() != -1) {
             // this is a NON - root class
@@ -162,7 +162,7 @@ public class CategoryOperations extends DefaultBizLogic {
         EntityInterface entity = cache.getEntityById(deEntityId);
         categorialClass.setCategorialClassEntity(entity);
         
-        EntityInterface categoryEntity = categorialClass.getCategory().getCategoryEntity();
+//        EntityInterface categoryEntity = categorialClass.getCategory().getCategoryEntity();
         for(CategorialAttribute attribute : categorialClass.getCategorialAttributeCollection()) {
             long srcClassAttributeId = attribute.getDeSourceClassAttributeId();
             AttributeInterface attributeOfSrcClass = entity.getAttributeByIdentifier(srcClassAttributeId);
@@ -173,7 +173,7 @@ public class CategoryOperations extends DefaultBizLogic {
             attribute.setCategoryAttribute(attributeOfCategoryEntity);
         }
         for (CategorialClass child : categorialClass.getChildren()) {
-            processCategorialClass(child,cache,con);
+            processCategorialClass(categoryEntity, child,cache,con);
         }
     }
 
