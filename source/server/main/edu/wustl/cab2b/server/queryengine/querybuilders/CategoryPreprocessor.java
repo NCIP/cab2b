@@ -321,20 +321,32 @@ public class CategoryPreprocessor {
                                                                              catExpr.getExpressionId(),
                                                                              externalExprId);
                 EntityInterface exitPoint = exitAssociation.getSourceEntity();
-                List<IAssociation> associationsFromRoot = findAssociationsFromRoot(
-                                                                                   rootCatClass,
-                                                                                   exitPoint);
-                TreeNode<IExpression> newExprNode = createExpressionsForAssociations(
-                                                                                     rootExpr,
-                                                                                     associationsFromRoot,
-                                                                                     new HashSet<IExpressionId>(),
-                                                                                     catExpr.isInView(),
-                                                                                     rootExprNode);
-                IExpression newExpr = newExprNode.getValue();
+
+                List<CategorialClass> catClassesPath = findCategorialClassesPathFromRoot(
+                                                                                         rootCatClass,
+                                                                                         exitPoint);
+
+                IExpression lastExpr = rootExpr;
+                TreeNode<IExpression> lastExprNode = rootExprNode;
+                for (int j = 1; j < catClassesPath.size(); j++) {
+                    CategorialClass catClass = catClassesPath.get(j);
+                    List<IAssociation> associations = catClass.getPathFromParent().getIntermediateAssociations();
+                    TreeNode<IExpression> newExprNode = createExpressionsForAssociations(
+                                                                                         lastExpr,
+                                                                                         associations,
+                                                                                         new HashSet<IExpressionId>(),
+                                                                                         catExpr.isInView(),
+                                                                                         lastExprNode);
+                    IExpression newExpr = newExprNode.getValue();
+                    getResult().getCatClassForExpr().put(newExpr, catClass);
+
+                    lastExpr = newExpr;
+                    lastExprNode = newExprNode;
+                }
                 // set external expr as subexpr for last expression...
                 IExpression externalExpr = getConstraints().getExpression(
                                                                           externalExprId);
-                addSubExpr(newExpr, externalExpr, exitAssociation);
+                addSubExpr(lastExpr, externalExpr, exitAssociation);
 
                 // TODO TODO mapping these expressions to cat classes...
 
@@ -517,20 +529,6 @@ public class CategoryPreprocessor {
             parentExprNode.addChild(lastChildNode);
         }
         return lastChildNode;
-    }
-
-    private List<IAssociation> findAssociationsFromRoot(
-                                                        CategorialClass rootCatClass,
-                                                        EntityInterface exitPoint) {
-
-        List<CategorialClass> catClassesPath = findCategorialClassesPathFromRoot(
-                                                                                 rootCatClass,
-                                                                                 exitPoint);
-        List<IAssociation> associations = new ArrayList<IAssociation>();
-        for (int i = 1; i < catClassesPath.size(); i++) {
-            associations.addAll(catClassesPath.get(i).getPathFromParent().getIntermediateAssociations());
-        }
-        return associations;
     }
 
     private IRule gleanConditions(CategorialClass categorialClass, IRule rule) {

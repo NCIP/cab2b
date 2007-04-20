@@ -15,7 +15,7 @@ class DcqlLogger {
             + "/dcqlLog";
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
-            "d MMM yyyy HH_mm_ss");
+            "d MMM yyyy hh_mm_ss a");
 
     private static final String LOG_FILE_NAME_PREFIX = "dcql_";
 

@@ -61,7 +61,7 @@ public class ConstraintsBuilder {
 
     private ConstraintsBuilderResult result;
 
-    private IConstraints constraints;
+    private ICab2bQuery query;
 
     private CategoryPreprocessorResult categoryPreprocessorResult;
 
@@ -93,7 +93,7 @@ public class ConstraintsBuilder {
     public ConstraintsBuilder(
             ICab2bQuery query,
             CategoryPreprocessorResult categoryPreprocessorResult) {
-        setConstraints(query.getConstraints());
+        setQuery(query);
         setCategoryPreprocessorResult(categoryPreprocessorResult);
         setResult(new ConstraintsBuilderResult());
         setRootExpr(findRootExpression());
@@ -111,7 +111,8 @@ public class ConstraintsBuilder {
 
     // BEGIN CONSTRAINING EACH EXPR BY PARENTS
     private Set<IExpressionId> getOutputExpressionIds() {
-        Set<TreeNode<IExpression>> outputExpressions = getCategoryPreprocessorResult().getOutputExpressions();
+        Set<TreeNode<IExpression>> outputExpressions = getCategoryPreprocessorResult().getExprsSourcedFromCategories().get(
+                                                                                                                           getQuery().getOutputEntity());
         Set<IExpressionId> outputExpressionIds = new HashSet<IExpressionId>(
                 outputExpressions.size());
         for (TreeNode<IExpression> exprNode : outputExpressions) {
@@ -482,11 +483,7 @@ public class ConstraintsBuilder {
     }
 
     public IConstraints getConstraints() {
-        return constraints;
-    }
-
-    public void setConstraints(IConstraints constraints) {
-        this.constraints = constraints;
+        return getQuery().getConstraints();
     }
 
     private IJoinGraph getJoinGraph() {
@@ -504,5 +501,13 @@ public class ConstraintsBuilder {
     public void setCategoryPreprocessorResult(
                                               CategoryPreprocessorResult categoryPreprocessorResult) {
         this.categoryPreprocessorResult = categoryPreprocessorResult;
+    }
+
+    public ICab2bQuery getQuery() {
+        return query;
+    }
+
+    public void setQuery(ICab2bQuery query) {
+        this.query = query;
     }
 }
