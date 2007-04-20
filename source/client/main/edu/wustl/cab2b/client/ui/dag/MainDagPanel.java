@@ -635,6 +635,13 @@ public class MainDagPanel extends Cab2bPanel
 			entitySet.add(entity);
 		}
 		Set<ICuratedPath> paths = m_pathFinder.autoConnect(entitySet);
+		if(paths == null || paths.size() <=0)
+		{
+			// Cannot perform connect all functionality
+			JOptionPane.showMessageDialog(this, "No curated path available between selected nodes.", 
+														"Auto-Connect warning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
 		ICuratedPath path = getSelectedCuratedPath(paths);
 		if(path == null)
 		{
