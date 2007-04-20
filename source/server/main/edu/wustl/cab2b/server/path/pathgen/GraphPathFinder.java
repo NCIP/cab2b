@@ -24,6 +24,8 @@ public class GraphPathFinder {
 
     private void wrapup() {
         getCache().cleanup();
+        this.inputGraph = null;
+        this.cache = null;
     }
 
     private GraphPathFinderCache getCache() {
