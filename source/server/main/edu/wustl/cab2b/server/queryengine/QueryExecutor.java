@@ -1,17 +1,12 @@
 package edu.wustl.cab2b.server.queryengine;
 
-import java.io.File;
 import java.sql.Connection;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -46,7 +41,6 @@ import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 import edu.wustl.common.util.logger.Logger;
-import gov.nih.nci.cagrid.common.Utils;
 import gov.nih.nci.cagrid.dcql.DCQLQuery;
 import gov.nih.nci.cagrid.dcql.Object;
 import gov.nih.nci.cagrid.dcqlresult.DCQLQueryResultsCollection;
@@ -61,37 +55,17 @@ import gov.nih.nci.cagrid.fqp.processor.exceptions.FederatedQueryProcessingExcep
 
 // TODO move logging to separate class...
 public class QueryExecutor {
-    private static final String LOG_BASE_DIR = System.getProperty("user.home")
-            + "/dcqlLog";
-
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
-            "MM-dd-yy_HH-mm");
-
-    private static final String LOG_FILE_NAME_PREFIX = "dcql_";
-
-    private static int i = 0;
-
-    static {
-        File file = new File(LOG_BASE_DIR);
-        file.mkdir();
-    }
-
     private ICab2bQuery query;
 
     private ConstraintsBuilderResult constraintsBuilderResult;
 
     private CategoryPreprocessorResult categoryPreprocessorResult;
 
+    private DcqlLogger dcqlLogger;
+
     public QueryExecutor(ICab2bQuery query) {
         setQuery(query);
-    }
-
-    public ICab2bQuery getQuery() {
-        return query;
-    }
-
-    public void setQuery(ICab2bQuery query) {
-        this.query = query;
+        setDcqlLogger(new DcqlLogger());
     }
 
     private DCQLQuery createDCQLQuery(String outputName,
@@ -148,6 +122,14 @@ public class QueryExecutor {
 
     }
 
+    public ICab2bQuery getQuery() {
+        return query;
+    }
+
+    public void setQuery(ICab2bQuery query) {
+        this.query = query;
+    }
+
     /**
      * This methods generates DCQL out of input ICab2bQuery object and fires it,
      * and returns the results.
@@ -156,6 +138,7 @@ public class QueryExecutor {
      * @return Returns the IQueryResult
      */
     public IQueryResult executeQuery() {
+        Logger.out.info("Entered QueryExecutor...");
         this.categoryPreprocessorResult = preProcessCategories(query);
         ConstraintsBuilder constraintsBuilder = new ConstraintsBuilder(query,
                 categoryPreprocessorResult);
@@ -165,9 +148,6 @@ public class QueryExecutor {
         IQueryResult queryResult;
 
         if (isCategoryOutput()) {
-            // queryResult = null;
-            // Map<IExpression, List<IClassRecords>> allRecordsForExpression =
-            // new HashMap<IExpression, List<IClassRecords>>();
             Set<TreeNode<IExpression>> rootOutputExprNodes = this.categoryPreprocessorResult.getExprsSourcedFromCategories().get(
                                                                                                                                  getOutputEntity());
             List<CategoryResult> categoryResults = new ArrayList<CategoryResult>(
@@ -215,6 +195,7 @@ public class QueryExecutor {
             // log(dcqlQuery);
             queryResult = executeDCQL(dcqlQuery);
         }
+        Logger.out.info("Exiting QueryExecutor.");
         return queryResult;
     }
 
@@ -412,30 +393,16 @@ public class QueryExecutor {
         return classRecs;
     }
 
-    private static boolean logDCQL() {
-        return Logger.out.isInfoEnabled();
+    private void log(DCQLQuery dcqlQuery) {
+        getDcqlLogger().log(dcqlQuery);
     }
 
-    private static void log(DCQLQuery dcqlQuery) {
-        if (!logDCQL()) {
-            return;
-        }
-        try {
-            Utils.serializeDocument(
-                                    LOG_BASE_DIR + "/" + getLogFileName(),
-                                    dcqlQuery,
-                                    new QName(
-                                            "http://caGrid.caBIG/1.0/gov.nih.nci.cagrid.dcql",
-                                            "DCQLQuery"));
-        } catch (Exception e) {
-            Logger.out.info("Could not log dcql.");
-        }
-
+    public DcqlLogger getDcqlLogger() {
+        return dcqlLogger;
     }
 
-    private static synchronized String getLogFileName() {
-        Date currDate = new Date(System.currentTimeMillis());
-        return LOG_FILE_NAME_PREFIX + dateFormat.format(currDate) + i++
-                + ".xml";
+    public void setDcqlLogger(DcqlLogger dcqlLogger) {
+        this.dcqlLogger = dcqlLogger;
     }
+
 }

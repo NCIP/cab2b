@@ -6,6 +6,7 @@ import java.util.List;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.result.ClassRecords;
 import edu.wustl.cab2b.common.queryengine.result.IClassRecords;
+import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.cagrid.cqlresultset.CQLQueryResults;
 import gov.nih.nci.cagrid.data.utilities.CQLQueryResultsIterator;
 import gov.nih.nci.cagrid.dcqlresult.DCQLQueryResultsCollection;
@@ -14,10 +15,11 @@ import gov.nih.nci.cagrid.dcqlresult.DCQLResult;
 public class DCQLResultsTransformer {
 
     IClassRecords getClassRecords(
-                                 DCQLQueryResultsCollection queryResultsCollection,
-                                 List<AttributeInterface> attributes) {
+                                  DCQLQueryResultsCollection queryResultsCollection,
+                                  List<AttributeInterface> attributes) {
         ClassRecords queryResult = new ClassRecords();
         queryResult.setAttributes(attributes);
+        int numRecs = 0;
         for (DCQLResult dcqlQueryResult : queryResultsCollection.getDCQLResult()) {
             CQLQueryResults cqlQueryResult = dcqlQueryResult.getCQLQueryResultCollection();
             List<String[]> recordList = new ArrayList<String[]>();
@@ -28,11 +30,14 @@ public class DCQLResultsTransformer {
                 String singleRecordXml = (String) itr.next();
                 String[] row = getOneRow(singleRecordXml, attributes);
                 recordList.add(row);
+
+                numRecs++;
             }
             String[][] arr = recordList.toArray(new String[0][0]);
             queryResult.putRecords(dcqlQueryResult.getTargetServiceURL(), arr);
         }
 
+        Logger.out.info("No. of records found and transformed : " + numRecs);
         return queryResult;
 
     }
