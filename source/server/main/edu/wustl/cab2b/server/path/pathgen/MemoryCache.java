@@ -49,10 +49,10 @@ class MemoryCache extends GraphPathFinderCache {
      * whose ignoredNodesSet is a superset of the specified ignoredNodes.<br>
      * i.e. Suppose that entries P[i->j, Ni] (for some i's) existed in the
      * cache. If addEntry() is called with P[i->j, M], then each entry P[i->j,
-     * Ni] where Ni &sub; M is removed from the cache (see
+     * Ni] where Ni &sube; M is removed from the cache (see
      * {@link GraphPathFinderCache}).<br>
      * We can remove such entries, since, P[i->j, N1] can be computed trivially
-     * from P[i->j, N2] if N1 &sub; N2, by ignoring the paths that contain the
+     * from P[i->j, N2] if N1 &sube; N2, by ignoring the paths that contain the
      * nodes in {N2 - N1}.<br>
      * This is to prevent memory usage from exploding. The corresponding adverse
      * on performance is relatively minor.

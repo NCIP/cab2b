@@ -13,7 +13,7 @@ import java.util.Set;
  * nodes in N, i.e. none of paths in P(i->j, N) will contain any of the nodes in
  * N.<br>
  * Note that for a given source-dest pair (sdp), P(i->j, N1) can be computed
- * trivially from P(i->j, N2) if N1 &sub; N2, by ignoring the paths that contain
+ * trivially from P(i->j, N2) if N1 &sube; N2, by ignoring the paths that contain
  * the nodes in {N2 - N1}.<br>
  * @author srinath_k
  */
