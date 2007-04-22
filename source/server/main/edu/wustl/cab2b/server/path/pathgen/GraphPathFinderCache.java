@@ -9,13 +9,11 @@ import java.util.Set;
  * The cache concrete implementations of this class should always call
  * checkAlive() first in each method to check that the cache is still usable.<br>
  * The following notation is used to represent an entry in this cache <br>:
- * P[i->j, {x1, x2, ..., xn}] represents the set of paths from i to j obtained
- * by ignoring the nodes {x1, ... ,xn}, i.e. none of paths in P[(A, B), {x1, x2,
- * ..., xn}] will contain any of the nodes in {x1, ... , xn}. Also, N is used to
- * represent a set of ignored nodes; thus P[i->j, {x1, x2, ..., xn}] is also
- * written as P[i->j, N]<br>
- * Note that for a given source-dest pair (sdp), P[i->j, N1] can be computed
- * trivially from P[i->j, N2] if N1 &sub; N2, by ignoring the paths that contain
+ * P(i->j, N) represents the set of paths from i to j obtained by ignoring the
+ * nodes in N, i.e. none of paths in P(i->j, N) will contain any of the nodes in
+ * N.<br>
+ * Note that for a given source-dest pair (sdp), P(i->j, N1) can be computed
+ * trivially from P(i->j, N2) if N1 &sub; N2, by ignoring the paths that contain
  * the nodes in {N2 - N1}.<br>
  * @author srinath_k
  */

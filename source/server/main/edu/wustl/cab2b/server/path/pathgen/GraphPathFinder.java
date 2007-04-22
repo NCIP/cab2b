@@ -18,20 +18,23 @@ import edu.wustl.common.util.logger.Logger;
  * For each pair of nodes {i, j : i &epsilon; V, j &epsilon; V, i!= j} in the
  * graph, call getPaths(i->j, {}). Self-edges (a self-edge is a path of the form
  * i->i) are then added to the resulting set of paths.<br>
- * getPaths() is the method where the core of the algorithm resides. Suppose P
- * is the set of paths about to be returned from getPaths().<br>
+ * getPaths() is the method where the core of the algorithm resides. Suppose
+ * P(i->j, N) is the set of paths about to be returned from getPaths().<br>
  * Following is what happens on a call getPaths(i->j, N) where N is the
  * ignoredNodesSet : <br>
  * <ol>
- * <li>If i->j &epsilon; E then add a path i->j to P.</li>
+ * <li>If an entry (i->j, N) exists in the cache, return its corresponding set
+ * of paths; else continue.
+ * <li>If i->j &epsilon; E then add a path i->j to P(i->j, N).</li>
  * <li>Let K = {k : k &epsilon; V, k !&epsilon; N, k->j &epsilon E). For each k
  * &epsilon; K, do the following : <br>
  * <ol>
  * <li>Call getPaths (k->j, N &cup; {i}). Suppose the returned set of paths is
  * R.</li>
- * <li>For each path Rx (0 < x < |R|), add the path i->Rx to P.</li>
+ * <li>For each path Rx (0 < x < |R|), add the path i->Rx to P(i->j, N).</li>
  * </ol>
- * <li>Return P</li>
+ * <li>Add P(i->j, N) to the cache.
+ * <li>Return P(i->j, N)</li>
  * </ol>
  * @author srinath_k
  */
