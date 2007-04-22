@@ -10,11 +10,33 @@ import java.util.Set;
 import edu.wustl.common.util.logger.Logger;
 
 /**
- * @see edu.wustl.cab2b.server.path.pathgen.GraphPathFinderInput
+ * Computes all possible paths present in a directed graph. No path returned
+ * should contain a cycle. Suppose the graph is (V, E) where V is the set of
+ * vertices and E is the set of edges. A source-dest pair is represented as
+ * i->j.<br>
+ * The algorithm is as follows : <br>
+ * For each pair of nodes {i, j : i &epsilon; V, j &epsilon; V, i!= j} in the
+ * graph, call getPaths(i->j, {}). Self-edges (a self-edge is a path of the form
+ * i->i) are then added to the resulting set of paths.<br>
+ * getPaths() is the method where the core of the algorithm resides. Suppose P
+ * is the set of paths about to be returned from getPaths().<br>
+ * Following is what happens on a call getPaths(i->j, N) where N is the
+ * ignoredNodesSet : <br>
+ * <ol>
+ * <li>If i->j &epsilon; E then add a path i->j to P.</li>
+ * <li>Let K = {k : k &epsilon; V, k !&epsilon; N, k->j &epsilon E). For each k
+ * &epsilon; K, do the following : <br>
+ * <ol>
+ * <li>Call getPaths (k->j, N &cup; {i}). Suppose the returned set of paths is
+ * R.</li>
+ * <li>For each path Rx (0 < x < |R|), add the path i->Rx to P.</li>
+ * </ol>
+ * <li>Return P</li>
+ * </ol>
  * @author srinath_k
  */
 public class GraphPathFinder {
-    public static boolean KEEP_WRITING = false;
+    // public static boolean KEEP_WRITING = false;
 
     public static boolean MEM_CACHE = true;
 
@@ -23,8 +45,8 @@ public class GraphPathFinder {
     private GraphPathFinderCache cache;
 
     private void wrapup() {
-        getCache().cleanup();
         this.inputGraph = null;
+        this.cache.cleanup();
         this.cache = null;
     }
 
@@ -59,11 +81,10 @@ public class GraphPathFinder {
 
                 Set<Path> srcDestPaths = getPaths(sdp, new HashSet<Node>());
                 numPaths += srcDestPaths.size();
-                // result.addAll(srcDestPaths);
-                if (KEEP_WRITING) {
-                    PathToFileWriter.APPEND = true;
-                    PathToFileWriter.writePathsToFile(srcDestPaths, null);
-                }
+                // if (KEEP_WRITING) {
+                // PathToFileWriter.APPEND = true;
+                // PathToFileWriter.writePathsToFile(srcDestPaths, null);
+                // }
             }
         }
         Set<Path> result = new HashSet<Path>();
@@ -80,6 +101,7 @@ public class GraphPathFinder {
         result = PathReplicationUtil.replicatePaths(result, replicationNodes);
         long endTime = System.currentTimeMillis();
         Logger.out.info("Time taken GraphPathFinder : " + (endTime - startTime));
+        Logger.out.info("Exiting GraphPathFinder.");
         return result;
     }
 

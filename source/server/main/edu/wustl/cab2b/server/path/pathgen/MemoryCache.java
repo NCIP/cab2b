@@ -7,6 +7,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+/**
+ * A concrete cache impl that uses in-memory data structures. Use this cache if
+ * the estimated no. of paths is less, and high speed in desired. Typically,
+ * this cache should be the first choice; you consider using an alternate cache
+ * if and only if you encounter an {@link java.lang.OutOfMemoryError} using this
+ * cache.<br>
+ * @author srinath_k
+ */
 class MemoryCache extends GraphPathFinderCache {
     private class PathsOnIgnoringNodes {
 
@@ -36,7 +44,23 @@ class MemoryCache extends GraphPathFinderCache {
         this.calculatedPaths = new HashMap<SourceDestinationPair, PathsOnIgnoringNodes>();
     }
 
-    public void addEntry(SourceDestinationPair sdp, Set<Node> ignoredNodes, Set<Path> paths) {
+    /**
+     * Adds the specified entry to cache, and removes all entries from the cache
+     * whose ignoredNodesSet is a superset of the specified ignoredNodes.<br>
+     * i.e. Suppose that entries P[i->j, Ni] (for some i's) existed in the
+     * cache. If addEntry() is called with P[i->j, M], then each entry P[i->j,
+     * Ni] where Ni &sub; M is removed from the cache (see
+     * {@link GraphPathFinderCache}).<br>
+     * We can remove such entries, since, P[i->j, N1] can be computed trivially
+     * from P[i->j, N2] if N1 &sub; N2, by ignoring the paths that contain the
+     * nodes in {N2 - N1}.<br>
+     * This is to prevent memory usage from exploding. The corresponding adverse
+     * on performance is relatively minor.
+     * @see edu.wustl.cab2b.server.path.pathgen.GraphPathFinderCache#addEntry(edu.wustl.cab2b.server.path.pathgen.SourceDestinationPair,
+     *      java.util.Set, java.util.Set)
+     */
+    public void addEntry(SourceDestinationPair sdp, Set<Node> ignoredNodes,
+                         Set<Path> paths) {
         checkAlive();
         PathsOnIgnoringNodes pathsOnIgnoringNodes;
         if (this.calculatedPaths.containsKey(sdp)) {
@@ -56,7 +80,12 @@ class MemoryCache extends GraphPathFinderCache {
         pathsOnIgnoringNodes.addEntry(ignoredNodes, paths);
     }
 
-    public Set<Path> getPathsOnIgnoringNodes(SourceDestinationPair sdp, Set<Node> ignoredNodes) {
+    /**
+     * @see edu.wustl.cab2b.server.path.pathgen.GraphPathFinderCache#getPathsOnIgnoringNodes(edu.wustl.cab2b.server.path.pathgen.SourceDestinationPair,
+     *      java.util.Set)
+     */
+    public Set<Path> getPathsOnIgnoringNodes(SourceDestinationPair sdp,
+                                             Set<Node> ignoredNodes) {
         checkAlive();
         if (haveWeSeenThisSDPBefore(sdp)) {
             PathsOnIgnoringNodes pathsOnIgnoringNodes = getCalculatedPaths(sdp);
@@ -76,7 +105,8 @@ class MemoryCache extends GraphPathFinderCache {
             if (foundSubset) {
                 Set<Path> res = new HashSet<Path>();
                 for (Path path : allEntries.get(subset)) {
-                    Set<Node> pathNodes = new HashSet<Node>(path.getIntermediateNodes());
+                    Set<Node> pathNodes = new HashSet<Node>(
+                            path.getIntermediateNodes());
                     pathNodes.retainAll(ignoredNodes);
                     if (pathNodes.isEmpty()) {
                         res.add(path);
@@ -97,10 +127,15 @@ class MemoryCache extends GraphPathFinderCache {
     }
 
     public void cleanup() {
+        checkAlive();
         this.calculatedPaths = null;
         super.cleanup();
     }
 
+    /**
+     * Returns all the entries in the cache.
+     * @see edu.wustl.cab2b.server.path.pathgen.GraphPathFinderCache#getAllPaths()
+     */
     Set<Path> getAllPaths() {
         Set<Path> res = new HashSet<Path>();
         Iterator<Entry<SourceDestinationPair, PathsOnIgnoringNodes>> calcPathsIter = this.calculatedPaths.entrySet().iterator();
@@ -109,7 +144,7 @@ class MemoryCache extends GraphPathFinderCache {
             for (Set<Path> paths : entry.getValue().getAllEntries().values()) {
                 res.addAll(paths);
             }
-            calcPathsIter.remove();
+            // calcPathsIter.remove();
         }
         return res;
     }
