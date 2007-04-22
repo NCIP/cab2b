@@ -13,28 +13,38 @@ import edu.wustl.common.util.logger.Logger;
  * Computes all possible paths present in a directed graph. No path returned
  * should contain a cycle. Suppose the graph is (V, E) where V is the set of
  * vertices and E is the set of edges. A source-dest pair is represented as
- * i->j.<br>
+ * <code>i->j</code>.<br>
  * The algorithm is as follows : <br>
- * For each pair of nodes {i, j : i &epsilon; V, j &epsilon; V, i!= j} in the
- * graph, call getPaths(i->j, {}). Self-edges (a self-edge is a path of the form
- * i->i) are then added to the resulting set of paths.<br>
- * getPaths() is the method where the core of the algorithm resides. Suppose
- * P(i->j, N) is the set of paths about to be returned from getPaths().<br>
- * Following is what happens on a call getPaths(i->j, N) where N is the
- * ignoredNodesSet : <br>
+ * For each pair of nodes <code>{i, j : i &isin; V, j &isin; V, i &ne; j}</code>
+ * in the graph, call <code>getPaths(i->j, {})</code>. Self-edges (a
+ * self-edge is a path of the form <code>i->i</code>) are then added to the
+ * resulting set of paths.<br>
+ * <code>getPaths()</code> is the method where the core of the algorithm
+ * resides. Suppose<code>
+ * P(i->j, N) </code>is the set of paths about to be
+ * returned from <code>getPaths()</code>.<br>
+ * Following is what happens on a call <code>getPaths(i->j, N)</code>, where
+ * N is the ignoredNodesSet : <br>
  * <ol>
- * <li>If an entry (i->j, N) exists in the cache, return its corresponding set
- * of paths; else continue.
- * <li>If i->j &epsilon; E then add a path i->j to P(i->j, N).</li>
- * <li>Let K = {k : k &epsilon; V, k !&epsilon; N, k->j &epsilon E). For each k
- * &epsilon; K, do the following : <br>
+ * <li>Let <code>X =
+ * {@link edu.wustl.cab2b.server.path.pathgen.GraphPathFinderCache#getPathsOnIgnoringNodes(SourceDestinationPair, Set)}
+ * with (i->j, N)</code>
+ * as parameters; if <code>X != null</code>, then <code>P(i->j, N) =
+ * X</code>;
+ * return <code>P(i->j, N)</code>. Else continue.
+ * <li>If <code>i->j &isin; E</code> then add a path <code>i->j</code> to
+ * <code>P(i->j, N)</code>.</li>
+ * <li>Let
+ * <code>K = {k : k &isin; V, k &ne; i, k &ne; j, k &isin; N, k->j &isin; E)</code>.
+ * For each <code>k &isin; K</code>, do the following : <br>
  * <ol>
- * <li>Call getPaths (k->j, N &cup; {i}). Suppose the returned set of paths is
- * R.</li>
- * <li>For each path Rx (0 < x < |R|), add the path i->Rx to P(i->j, N).</li>
+ * <li>Call <code>getPaths (k->j, N &cup; {i})</code>. Suppose the returned
+ * set of paths is R.</li>
+ * <li>For each path <code>Rx (0 < x < |R|) in R</code>, add the path
+ * <code>i->Rx to P(i->j, N)</code>.</li>
  * </ol>
- * <li>Add P(i->j, N) to the cache.
- * <li>Return P(i->j, N)</li>
+ * <li>Add <code>P(i->j, N)</code> to the cache.
+ * <li>Return <code>P(i->j, N)</code></li>
  * </ol>
  * @author srinath_k
  */

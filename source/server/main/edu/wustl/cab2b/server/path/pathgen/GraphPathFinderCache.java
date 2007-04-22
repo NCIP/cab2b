@@ -6,15 +6,12 @@ import java.util.Set;
  * Defines the operations that are to be supported by any cache that can be used
  * by {@link edu.wustl.cab2b.server.path.pathgen.GraphPathFinder} and contains
  * implementation to check that the cache is alive.<br>
- * The cache concrete implementations of this class should always call
- * checkAlive() first in each method to check that the cache is still usable.<br>
- * The following notation is used to represent an entry in this cache <br>:
- * P(i->j, N) represents the set of paths from i to j obtained by ignoring the
- * nodes in N, i.e. none of paths in P(i->j, N) will contain any of the nodes in
- * N.<br>
- * Note that for a given source-dest pair (sdp), P(i->j, N1) can be computed
- * trivially from P(i->j, N2) if N1 &sube; N2, by ignoring the paths that contain
- * the nodes in {N2 - N1}.<br>
+ * The concrete implementations of this class should always call checkAlive()
+ * first in each method to check that the cache is still usable.<br>
+ * The following notation is used to represent an entry in this cache : <br>
+ * <code>P(i->j, N)</code> represents the set of paths from i to j obtained by
+ * ignoring the nodes in N, i.e. none of paths in <code>P(i->j, N)</code> will
+ * contain any of the nodes in N.
  * @author srinath_k
  */
 abstract class GraphPathFinderCache {
@@ -40,19 +37,31 @@ abstract class GraphPathFinderCache {
                            Set<Path> paths);
 
     /**
-     * If there is an entry with given keys, the paths are returned. Otherwise
-     * an entry is found whose ignoredNodes is a subset of the specified
-     * ignoredNodes. The paths thus found are pruned to remove any nodes that
-     * may need to be ignored.
+     * Returns the set of paths for given src-dest pair and ignored nodes.
+     * Denote the src-dest pair by <code>i->j</code>, and ignoredNodes by N.<br>
+     * Let <code>n(p)</code> denote the nodes in a path p. Then, given that
+     * <code>N1 &sube; N2</code>, we can compute <code>P(i->j, N1</code>
+     * from <code>P(i->j, N2)</code> using the following formula<br>
+     * <code>
+     * P(i->j, N1) = {p : p &isin; P(i->j, N2), n(p) &cap; N1 = {} }.</code><br>
+     * Thus this method is expected to do the following : <br>
+     * <ol>
+     * <li>If there is an entry in the cache <code>P(i->j, N)</code>, return
+     * it, else continue.</li>
+     * <li>If there exists an entry in the cache <code>P(i->j, M)</code> such
+     * that <code>M &sube;
+     * N</code> then compute <code>P(i->j, N)</code>
+     * using above formula and return it, else continue</li>
+     * <li>Return null</li>
+     * </ol>
+     * Note that if an empty set of paths is returned, it means that it has been
+     * computed already that there are no paths present, i.e.
+     * <code>P(i->j, N) = {}</code>.
      * @param sdp
-     *            source-dest pait.
+     *            source-dest pair.
      * @param ignoredNodes
-     *            ignored nodes
-     * @return the set of paths; if no corresponding entry is present in the
-     *         cache, then <code>null</code> is returned. Note that an empty
-     *         set will be returned if P[sdp, ignoredNodes] is in fact empty
-     *         i.e. there are no paths for the given src-dest pair on ignoring
-     *         the specified nodes.
+     *            ignored nodes.
+     * @return the set of paths as found using the steps mentioned above.
      */
     abstract Set<Path> getPathsOnIgnoringNodes(SourceDestinationPair sdp,
                                                Set<Node> ignoredNodes);

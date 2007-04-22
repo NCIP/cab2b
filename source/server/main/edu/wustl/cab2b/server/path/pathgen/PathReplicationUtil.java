@@ -8,13 +8,14 @@ import edu.wustl.common.util.logger.Logger;
 
 /**
  * Replicates paths through a node for a given set of equivalent nodes. <br>
- * e.g. if replicationNodes has an entry [i, {n1, n2}], then each path that
- * contains the node i is replicated to pass through the nodes n1, n2 instead of
- * i; for instance a path a->b->i->c will be replicated to form the paths
- * a->b->n1->c, a->b->n2->c<br>
- * A special case is that of a self-edge. If a path i->i existed, it would be
- * replicated to form paths {s->d : s &epsilon; {i, n1, n2}, d &epsilon; {i, n1,
- * n2}}.
+ * e.g. if replicationNodes has an entry <code>[i, {n1, n2}]</code>, then
+ * each path that contains the node i is replicated to pass through the nodes
+ * n1, n2 instead of i; for instance a path <code>a->b->i->c</code> will be
+ * replicated to form the paths <code>a->b->n1->c, a->b->n2->c.</code><br>
+ * A special case is that of a self-edge. If a path <code>i->i</code> existed,
+ * it would be replicated to form paths
+ * <code>{s->d : s &isin; {i, n1, n2}, d &isin; {i, n1,
+ * n2}}</code>.
  * @author srinath_k
  */
 class PathReplicationUtil {

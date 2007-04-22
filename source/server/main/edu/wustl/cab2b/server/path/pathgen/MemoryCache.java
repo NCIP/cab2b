@@ -12,7 +12,7 @@ import java.util.Map.Entry;
  * the estimated no. of paths is less, and high speed in desired. Typically,
  * this cache should be the first choice; you consider using an alternate cache
  * if and only if you encounter an {@link java.lang.OutOfMemoryError} using this
- * cache.<br>
+ * cache.
  * @author srinath_k
  */
 class MemoryCache extends GraphPathFinderCache {
@@ -46,14 +46,14 @@ class MemoryCache extends GraphPathFinderCache {
 
     /**
      * Adds the specified entry to cache, and removes all entries from the cache
-     * whose ignoredNodesSet is a superset of the specified ignoredNodes.<br>
-     * i.e. Suppose that entries P[i->j, Ni] (for some i's) existed in the
-     * cache. If addEntry() is called with P[i->j, M], then each entry P[i->j,
-     * Ni] where Ni &sube; M is removed from the cache (see
-     * {@link GraphPathFinderCache}).<br>
-     * We can remove such entries, since, P[i->j, N1] can be computed trivially
-     * from P[i->j, N2] if N1 &sube; N2, by ignoring the paths that contain the
-     * nodes in {N2 - N1}.<br>
+     * whose ignoredNodesSet is a superset of the specified ignoredNodes. e.g
+     * Suppose that entries <code>P(i->j, Ni)</code> (for some i's) existed in
+     * the cache. If addEntry() is called with <code>P(i->j, M)</code>, then
+     * each entry <code>P(i->j, Ni)</code> where <code>Ni &sube; M</code> is
+     * removed from the cache; as mentioned in contract for
+     * {@link GraphPathFinderCache#addEntry(SourceDestinationPair, Set, Set)},
+     * <code>P(i->j, Ni)</code> can and will be computed from
+     * <code>P(i->j, M)</code> if needed.<br>
      * This is to prevent memory usage from exploding. The corresponding adverse
      * on performance is relatively minor.
      * @see edu.wustl.cab2b.server.path.pathgen.GraphPathFinderCache#addEntry(edu.wustl.cab2b.server.path.pathgen.SourceDestinationPair,
