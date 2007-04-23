@@ -140,9 +140,7 @@ public class PathBuilder {
         GraphPathFinder graphPathfinder = new GraphPathFinder();
         Set<Path> paths = graphPathfinder.getAllPaths(adjacencyMatrix, replicationNodes, conn);
 
-        PathToFileWriter.APPEND = true;
-        PathToFileWriter.FILE_NAME = PathConstants.PATH_FILE_NAME;
-        PathToFileWriter.writePathsToFile(paths, entityIds.toArray(new Long[0]));
+        PathToFileWriter.writePathsToFile(paths, entityIds.toArray(new Long[0]), true);
     }
 
     /**
