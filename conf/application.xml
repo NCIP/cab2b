@@ -10,7 +10,7 @@
 	<module><java>asm-attrs.jar</java></module>
 	<module><java>cglib-2.1.jar</java></module>
 	<module><java>ehcache-1.1.jar</java></module>
-	<module><java>mysql-connector-java-3.0.16-ga-bin.jar</java></module>
+
 	<module><java>odmg.jar</java></module>
 	<module><java>struts.jar</java></module>
 	<module><java>commonpackage.jar</java></module>
