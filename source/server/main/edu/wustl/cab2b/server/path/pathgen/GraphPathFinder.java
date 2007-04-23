@@ -35,7 +35,7 @@ import edu.wustl.common.util.logger.Logger;
  * <li>If <code>i->j &isin; E</code> then add a path <code>i->j</code> to
  * <code>P(i->j, N)</code>.</li>
  * <li>Let
- * <code>K = {k : k &isin; V, k &ne; i, k &ne; j, k &isin; N, k->j &isin; E)</code>.
+ * <code>K = {k : k &isin; V, k &ne; i, k &ne; j, k &isin; N, i->k &isin; E)</code>.
  * For each <code>k &isin; K</code>, do the following : <br>
  * <ol>
  * <li>Call <code>getPaths (k->j, N &cup; {i})</code>. Suppose the returned
