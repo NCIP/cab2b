@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
@@ -110,7 +111,7 @@ public class ConstraintsBuilder {
     }
 
     // BEGIN CONSTRAINING EACH EXPR BY PARENTS
-    private Set<IExpressionId> getOutputExpressionIds() {
+    private Set<IExpressionId> getCategoryOutputExpressionIds() {
         Set<TreeNode<IExpression>> outputExpressions = getCategoryPreprocessorResult().getExprsSourcedFromCategories().get(
                                                                                                                            getQuery().getOutputEntity());
         Set<IExpressionId> outputExpressionIds = new HashSet<IExpressionId>(
@@ -121,8 +122,16 @@ public class ConstraintsBuilder {
         return outputExpressionIds;
     }
 
+    private EntityInterface getOutputEntity() {
+        return getQuery().getOutputEntity();
+    }
+
     private void constrainByParentExpressions() {
-        Set<IExpressionId> outputExprIds = getOutputExpressionIds();
+        boolean isCategoryOutput = Utility.isCategory(getOutputEntity());
+        Set<IExpressionId> outputExprIds = null;
+        if (isCategoryOutput) {
+            outputExprIds = getCategoryOutputExpressionIds();
+        }
         // Set<IExpressionId> processedExpressions = new
         // HashSet<IExpressionId>();
         Set<IExpressionId> currExprIds = new HashSet<IExpressionId>();
@@ -135,6 +144,7 @@ public class ConstraintsBuilder {
                 // if (processedExpressions.contains(currExprId)) {
                 // continue;
                 // }
+                IExpression currExpr = getExpression(currExprId);
                 List<IExpressionId> parentExprIds = getJoinGraph().getParentList(
                                                                                  currExprId);
 
@@ -142,7 +152,10 @@ public class ConstraintsBuilder {
                 constrainChildByParents(currExprId, parentExprIds);
 
                 // do "constrain by parents" only till the output expressions.
-                if (!outputExprIds.contains(currExprId)) {
+                boolean isOutputExpr = (isCategoryOutput && outputExprIds.contains(currExprId))
+                        || currExpr.getConstraintEntity().equals(
+                                                                 getOutputEntity());
+                if (!isOutputExpr) {
                     nextExprIds.addAll(getJoinGraph().getChildrenList(
                                                                       currExprId));
                 }
