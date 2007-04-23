@@ -42,12 +42,7 @@
 
 	<property name="client.jar.dir" location="${workArea.dir}/jar" />
 	<property name="client.jar.file" location="${workArea.dir}/cab2bClient.jar" />
-	<!-- property name="clientDependencies.jar.file" location="${workArea.dir}/clientDependencies.jar"/ -->
-	<property name="cab2bClientSetup.zip.file" location="${workArea.dir}/cab2bClientSetup.zip">
-	</property>
-
-	<property name="dynamicExtension.jar.file" location="lib/common/DynamicExtensions.jar" />
-	<property name="commonpackage.jar.file" location="lib/common/commonpackage.jar" />
+	<property name="cab2bClientSetup.zip.file" location="${workArea.dir}/cab2bClientSetup.zip"/>
 
 	<path id="common.classpath">
 		<fileset dir="lib/common">
@@ -71,6 +66,7 @@
 
 	<path id="cactus.classpath">
 		<path refid="server.classpath" />
+		<path refid="client.classpath" />
 		<fileset dir="lib/junitTest/">
 			<include name="**/*.jar" />
 		</fileset>
@@ -79,13 +75,6 @@
 		<pathelement location="${server.classes.dir}" />
 		<pathelement location="${common.classes.dir}" />
 	</path>
-
-
-	<!--path id="javadoc.classpath">
-		<path refid="common.classpath" />
-		<path refid="client.classpath" />
-		<path refid="server.classpath" />
-	</path-->
 
 	<!-- ===========================================================================
 			Cleans Everything in work area folder
@@ -133,10 +122,6 @@
 	<target name="compile.all" depends="clean.all, compile.client,compile.server" />
 	<!-- ================================================================================== -->
 	<target name="client.jar" depends="compile.client" description="Creates client jar file">
-		<!--
-				classes in this jar will refer to jbossall-client.jar. 
-				Make this jar available on client side 
-		-->
 		<mkdir dir="${client.jar.dir}" />
 
 		<delete includeemptydirs="true">
@@ -296,57 +281,46 @@
 				<include name="**/*" />
 			</fileset>
 		</delete>
-
-		<mkdir dir="${ear.dir}/META-INF" />
-		<copy todir="${ear.dir}/META-INF">
-			<fileset dir="conf">
-				<include name="application.xml" />
-			</fileset>
-		</copy>
-
 		<copy overwrite="true" file="${server.jar.file}" todir="${ear.dir}" />
-		<!--copy overwrite="true" file="${dynamicExtension.jar.file}" todir="${ear.dir}" /-->
-
 		<copy todir="${ear.dir}" overwrite="true">
 			<fileset dir="lib/common">
 				<include name="**/*.jar" />
 				<exclude name="j2ee.jar" />
 				<exclude name="jbossall-client.jar" />
-				<!--exclude name="commons-collections-3.2.jar" /-->
 				<exclude name="commons-logging-1.0.4.jar" />
 				<exclude name="log4j-1.2.9.jar" />
 				<exclude name="jaxrpc.jar" />
+				<exclude name="oracleDriver.jar" />
+				<exclude name="mysql-connector-java-3.0.16-ga-bin.jar" />
+				
 			</fileset>
 			<fileset dir="lib/server">
 				<include name="**/*.jar" />
 				<exclude name="commons-logging.jar" />
 			</fileset>
 		</copy>
-		<jar basedir="${ear.dir}" destfile="${ear.file}">
-			<include name="**/*.*" />
-		</jar>
+		<ear basedir="${ear.dir}" destfile="${ear.file}" appxml="conf/application.xml" includes="**/*.*" />
 	</target>
 
 	<!-- ===========================================================================
 					Deploy
-			================================================================================ -->
-	<!--copy needed libs to jboss lib
-	    copy ear file to jboss
-	    copy configuraion files to jboss  -->
-
+	================================================================================ -->
 	<target name="deployToJboss" depends="clean.all,build.ear" description="Deploys EAR file to JBoss application server">
 		<delete dir="${jboss.home}/server/default/tmp/deploy" />
-		<copy overwrite="true" file="${ear.file}" todir="${deploy.dir}" />
-		<copy overwrite="true" file="${cab2bDS.file}" todir="${deploy.dir}" />
-		<copy overwrite="true" file="${jbossjca.service.xml}" todir="${deploy.dir}" />
+		<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
+		<copy overwrite="true" file="${cab2bDS.file}" todir="${jboss.deploy.dir}" />
+		<copy overwrite="true" file="${jbossjca.service.xml}" todir="${jboss.deploy.dir}" />
+		<copy overwrite="true" file="lib/common/oracleDriver.jar" todir="${jboss.common.lib.dir}" />
+		<copy overwrite="true" file="lib/common/mysql-connector-java-3.0.16-ga-bin.jar" todir="${jboss.common.lib.dir}" />
+		<delete dir="${jboss.log.dir}"/>
+		<mkdir dir="${jboss.log.dir}"/>
+		<echo message="" file="${jboss.log.dir}/caB2B.log" append="false"/>
 	</target>
 
 
-	<!-- ==================================================================================
-	  **
-	  **   Cactus TESTS
-	  **
-	  **  =================================================================================-->
+	<!-- ============================================================================
+	 			Cactus TESTS
+	================================================================================= -->
 	<taskdef resource="cactus.tasks" classpathref="cactus.classpath" />
 
 	<target name="run.cactus">
@@ -363,11 +337,12 @@
 
 			<batchtest>
 				<fileset dir="${server.classes.dir}" includes="${Test.Includes}" />
+				<fileset dir="${client.classes.dir}" includes="${Test.Includes}" />
+				<fileset dir="${common.classes.dir}" includes="${Test.Includes}" />
 			</batchtest>
 		</cactus>
 		<antcall target="Cactusreports" />
 	</target>
-
 
 	<target name="Cactusreports">
 		<mkdir dir="${cactusReports.dir}/cactusReports/Reports" />
@@ -382,6 +357,7 @@
 
 	<!-- Start JBoss, call the task & To be used during Devlopment -->
 	<target name="run.unittests" depends="compile.all,deployToJboss">
+	
 		<copy todir="${testcase.properties.folder}" overwrite="true">
 			<fileset dir="conf">
 				<include name="jndi.properties" />
@@ -391,22 +367,24 @@
 
 		<javac srcdir="${server.test}" destdir="${server.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
 		<javac srcdir="${common.test}" destdir="${common.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
+		<javac srcdir="${client.test}" destdir="${client.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
 		<!-- for queryengine unit tests -->
 		<copy todir="${server.classes.dir}">
 			<fileset dir="${server.test}" includes="**/*.res" />
 		</copy>
 
-		<javac srcdir="${client.test}" destdir="${client.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
+
 		<cactifyear srcfile="${workArea.dir}/cab2bServer.ear" destfile="${jboss.home}/server/default/deploy/cab2bServer.ear">
-			<cactuswar context="/ejbTestFramework" version="2.3">
-				<classes dir="${server.classes.dir}">
-					<include name="**/*.class" />
-				</classes>
+			<cactuswar context="/ejbTestFramework" version="2.3" >
+
 				<classes dir="${client.classes.dir}">
-					<include name="**/*.class" />
+					<include name="**/*Test.class" />
 				</classes>
 				<classes dir="${common.classes.dir}">
-					<include name="**/*.class" />
+					<include name="**/*Test.class" />
+				</classes>
+				<classes dir="${server.classes.dir}">
+					<include name="**/*Test.class" />
 				</classes>
 			</cactuswar>
 		</cactifyear>
