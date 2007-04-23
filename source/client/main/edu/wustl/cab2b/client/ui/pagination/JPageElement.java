@@ -170,6 +170,41 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
 	private String getWrappedText(int textSizeInPixel, String text)
 	{
 		StringBuffer sb = new StringBuffer();
+		sb.append("<HTML>");
+		int textLength=text.length();
+		//Logger.out.info (textLength);
+		int currentStart=0;
+		String currentString=null;
+		int offset=75;
+		int strLen=0;
+		int len=0;
+		while(currentStart<textLength && textLength>offset)
+		{
+			currentString=text.substring(currentStart, (currentStart+offset));
+			strLen=strLen+currentString.length()+len;
+			sb.append(currentString);
+			int index = text.indexOf(" ", (currentStart+offset));
+			if(index != -1)
+			{
+				len=index-strLen;
+				currentString=text.substring((currentStart+offset), (currentStart+offset+len));
+				sb.append(currentString);
+				sb.append("<P>");
+			}
+			else
+			{
+				sb.append(text.substring(currentStart));
+				return sb.toString();
+			}
+			
+			currentStart = currentStart+offset+len;
+			if((currentStart+offset+len)>textLength)
+			break;
+		}
+		sb.append(text.substring(currentStart));
+		sb.append("</HTML>");
+		return sb.toString();
+		/*StringBuffer sb = new StringBuffer();
 		int textLength = text.length();
 		if(textLength == 0)
 			return sb.toString();
@@ -210,12 +245,12 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
 			}
 			if((currentStart+charsPerLine) > textLength)
 				break;
-		/*	if((currentStart+charsPerLine) > textLength)
-				break;*/
+			if((currentStart+charsPerLine) > textLength)
+				break;
 		}
 		sb.append("<P>").append(text.substring(currentStart));
 		sb.append("</HTML>");
-		return sb.toString();
+		return sb.toString();*/
 	}
 	/**
 	 * Returns true if this is selected, else false.

@@ -249,16 +249,49 @@ public class Utility {
     
     public static String getPathDisplayString(IPath path)
 	{
-		StringBuffer sb = new StringBuffer();
-		sb.append("<HTML><B>Path</B>:");
-		List<IAssociation> list = path.getIntermediateAssociations();
-		sb.append(Utility.getDisplayName(path.getSourceEntity()));
-		for(int i=0; i<list.size(); i++)
+    	String text="<HTML><B>Path</B>:";
+    	//text=text.concat("<HTML><B>Path</B>:");
+    	List<IAssociation> pathList = path.getIntermediateAssociations();
+    	text=text.concat(Utility.getDisplayName(path.getSourceEntity()));
+    	for(int i=0; i<pathList.size(); i++)
 		{
-			sb.append("<B>----></B>");
-			sb.append(Utility.getDisplayName(list.get(i).getTargetEntity()));
+    		text=text.concat("<B>----></B>");
+			text=text.concat(Utility.getDisplayName(pathList.get(i).getTargetEntity()));
 		}
-		sb.append("<HTML>");
+    	text=text.concat("</HTML>");
+    	Logger.out.info (text);
+    	StringBuffer sb = new StringBuffer();
+		int textLength=text.length();
+		Logger.out.info (textLength);
+		int currentStart=0;
+		String currentString=null;
+		int offset=100;
+		int strLen=0;
+		int len=0;
+		while(currentStart<textLength && textLength>offset)
+		{
+			currentString=text.substring(currentStart, (currentStart+offset));
+			strLen=strLen+currentString.length()+len;
+			sb.append(currentString);
+			int index = text.indexOf("<B>----></B>", (currentStart+offset));
+			if(index != -1)
+			{
+				len=index-strLen;
+				currentString=text.substring((currentStart+offset), (currentStart+offset+len));
+				sb.append(currentString);
+				sb.append("<P>");
+			}
+			else
+			{
+				sb.append(text.substring(currentStart));
+				return sb.toString();
+			}
+			
+			currentStart = currentStart+offset+len;
+			if((currentStart+offset+len)>textLength)
+			break;
+		}
+		sb.append(text.substring(currentStart));
 		return sb.toString();
 	}
 
