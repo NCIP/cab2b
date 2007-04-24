@@ -6,12 +6,16 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import org.jdesktop.swingx.JXFrame;
 
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
@@ -27,9 +31,47 @@ public class MyStackedBox extends Cab2bPanel
 	JPanel mySearchQueriesPanel;
 	JPanel popularSearchCategoryPanel;
 	JPanel myExperimentsPanel;
-	
+	MainFrame mainFrame;
 	public MyStackedBox()
 	{
+		//this.setBorder(new LineBorder(Color.BLACK));  
+		this.setLayout(new BorderLayout());
+		stackedBox = new StackedBox();
+		stackedBox.setTitleBackgroundColor(new Color(200, 200, 220));
+		JScrollPane scrollPane = new JScrollPane(stackedBox);
+		scrollPane.setBorder(null);
+		this.add(scrollPane, BorderLayout.CENTER);
+
+		// the status pane
+		mySearchQueriesPanel = new Cab2bPanel();
+		mySearchQueriesPanel.setLayout(new RiverLayout(10, 5));
+		mySearchQueriesPanel.setPreferredSize(new Dimension(250, 150));
+		mySearchQueriesPanel.setOpaque(false);
+		stackedBox.addBox("My Search Queries", mySearchQueriesPanel,"resources/images/mysearchqueries_icon.gif");
+
+		// the profiling results
+		popularSearchCategoryPanel = new Cab2bPanel();
+		popularSearchCategoryPanel.setLayout(new RiverLayout(10, 5));
+		popularSearchCategoryPanel.setOpaque(false);
+		popularSearchCategoryPanel.setPreferredSize(new Dimension(250, 150));
+		stackedBox.addBox("Popular Categories", popularSearchCategoryPanel,"resources/images/popularcategories_icon.gif");
+
+		// the saved snapshots pane
+		myExperimentsPanel = new Cab2bPanel();
+		myExperimentsPanel.setLayout(new RiverLayout(10, 5));
+		myExperimentsPanel.setPreferredSize(new Dimension(250, 150));
+		myExperimentsPanel.setOpaque(false);
+		stackedBox.addBox("My Experiments", myExperimentsPanel,"resources/images/arrow_icon_mo.gif"); 
+		
+		stackedBox.setPreferredSize(new Dimension(250,500));
+		stackedBox.setMinimumSize(new Dimension(250,500));
+	}
+	
+	public MyStackedBox(MainFrame mainFrame)
+	{
+		this.mainFrame=mainFrame;
+		
+		
 		//this.setBorder(new LineBorder(Color.BLACK));  
 		this.setLayout(new BorderLayout());
 		stackedBox = new StackedBox();
@@ -101,6 +143,7 @@ public class MyStackedBox extends Cab2bPanel
 	
 	public void setDataForMyExperimentsPanel(Vector data)
 	{
+		
 		Logger.out.info("setDataForMyExperimentsPanel :: data "+data);
 		myExperimentsPanel.removeAll();
 		myExperimentsPanel.add(new Cab2bLabel());
@@ -112,6 +155,18 @@ public class MyStackedBox extends Cab2bPanel
 			Cab2bHyperlink hyperlink = new Cab2bHyperlink();
 			hyperlink.setBounds(new Rectangle(5,5,5,5));
 			hyperlink.setText(hyperlinkName);
+			hyperlink.addActionListener(new ActionListener()
+					{
+						public void actionPerformed(ActionEvent e)
+						{
+							Logger.out.info("Clicked on expt link");
+						
+							mainFrame.setOpenExperimentWelcomePanel();
+							mainFrame.globalNavigationPanel.tabButtons[0].setBackground(mainFrame.globalNavigationPanel.navigationButtonBgColorUnSelected);
+							mainFrame.globalNavigationPanel.tabButtons[2].setBackground(mainFrame.globalNavigationPanel.navigationButtonBgColorSelected);
+							updateUI();
+						}			
+					});
 			myExperimentsPanel.add("br",hyperlink);
 		}
 		myExperimentsPanel.revalidate();

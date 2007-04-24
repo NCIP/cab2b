@@ -124,7 +124,7 @@ public class MainFrame extends JXFrame {
 		homePanel = newWelcomePanel;	
 		homePanel.setBorder(new CustomizableBorder(new Insets(1,1,1,1), true, true));
 		
-		myStackedBoxPanel = new MyStackedBox();
+		myStackedBoxPanel = new MyStackedBox(this);
 		myStackedBoxPanel.setBorder(new CustomizableBorder(new Insets(1,1,1,1), true, true));
 		
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myStackedBoxPanel, homePanel);
@@ -230,6 +230,7 @@ public class MainFrame extends JXFrame {
 		if(openExperimentWelcomePanel != null && openExperimentWelcomePanel.isVisible()==true)
 		{ 
 			Logger.out.info("Removing openExperimentWelcomePanel");
+			openExperimentWelcomePanel.removeAll();
 			this.remove(openExperimentWelcomePanel);
 			this.add(splitPanelPanel);			
 			this.validate();

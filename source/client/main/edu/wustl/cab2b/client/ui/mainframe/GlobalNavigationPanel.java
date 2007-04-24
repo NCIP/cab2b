@@ -79,8 +79,8 @@ public class GlobalNavigationPanel extends Cab2bPanel implements ActionListener
 	 * Buttons to show in the navigation panel.
 	 */
 	JButton[] tabButtons = new Cab2bButton[tabs.length];
-	Color navigationButtonBgColorSelected = new Color(221, 221, 221);
-	Color navigationButtonBgColorUnSelected = new Color(168, 168, 168);
+	public Color navigationButtonBgColorSelected = new Color(221, 221, 221);
+	public Color navigationButtonBgColorUnSelected = new Color(168, 168, 168);
 	
 	/**
 	 * Top level panel to hold all sub panels.
