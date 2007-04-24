@@ -110,7 +110,7 @@ public class ExperimentStackBox extends Cab2bPanel{
 		while(iter.hasNext())
 		{
 			EntityInterface entity = (EntityInterface) iter.next();		
-			String displyaName = edu.wustl.cab2b.common.util.Utility.getDisplayName(entity);
+			String displyaName = edu.wustl.cab2b.common.util.Utility.getTaggedValue(entity.getTaggedValueCollection(),edu.wustl.cab2b.common.util.Constants.ENTITY_DISPLAY_NAME).getValue();			 
 			Logger.out.info(""+displyaName);
 			node = new DefaultMutableTreeNode(entity);			
 			//node.setUserObject(entity);
@@ -120,32 +120,7 @@ public class ExperimentStackBox extends Cab2bPanel{
 	/*	//creating datalist tree*/
 		datalistTree = new JXTree(rootNode);
 		datalistTree.addTreeSelectionListener(new TreeSelectionListener() {			
-		public void valueChanged(TreeSelectionEvent e)  {			
-			
-			
-/*
-			CustomSwingWorker swingWorker = new CustomSwingWorker(datalistTree)
-			{		
-			@Override
-			protected void doNonUILogic() throws RuntimeException {
-				
-			}
-
-			@Override
-			protected void doUIUpdateLogic() throws RuntimeException {
-				m_experimentDataCategoryGridPanel.refreshTable(columnName,recordObject);
-			}		
-			};
-			swingWorker.start();	
-			*/
-			
-			
-			
-			
-			
-			
-			
-			
+		public void valueChanged(TreeSelectionEvent e)  {		
 			
 			Logger.out.info("Clicked on datalist");
 		        DefaultMutableTreeNode node = (DefaultMutableTreeNode)
@@ -173,7 +148,7 @@ public class ExperimentStackBox extends Cab2bPanel{
 		     			while(it.hasNext())
 		     			{
 		     				AbstractAttributeInterface attribute  = (AbstractAttributeInterface)it.next();		     			
-		     				columnName[i++] = attribute.getName();
+		     				columnName[i++] = CommonUtils.getFormattedString(attribute.getName());		     					
 		     				Logger.out.info("Header :" +attribute.getName());
 		     			}
 		     			
