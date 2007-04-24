@@ -3,8 +3,8 @@ package edu.wustl.cab2b.server.datalist;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -15,12 +15,9 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.RoleInterface;
-import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.entitymanager.EntityManagerConstantsInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManagerInterface;
-import edu.common.dynamicextensions.entitymanager.EntityRecord;
-import edu.common.dynamicextensions.entitymanager.EntityRecordInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
@@ -33,6 +30,7 @@ import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.util.AttributeInterfaceComparator;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;
@@ -97,6 +95,11 @@ public class DataListOperations extends DefaultBizLogic
 		return dataList;
 	}	
 	
+	/**
+	 * Returns entity record object 
+	 * @param Long entityId
+	 * @return a EntityRecordResultInterface obj
+	 */
 	public EntityRecordResultInterface getEntityRecord(Long entityId)
 	{
 		
@@ -104,21 +107,17 @@ public class DataListOperations extends DefaultBizLogic
 		EntityManagerInterface entityManager = EntityManager.getInstance();
 		
 		EntityRecordResultInterface recordResultInterface = null;
-		try {
-			
-			
-			EntityInterface entity = entityManager.getEntityByIdentifier(entityId);
-			
+		try {			
+			EntityInterface entity = entityManager.getEntityByIdentifier(entityId);			
 			ArrayList attributeList = new ArrayList(entity.getAttributeCollection());
-			recordResultInterface = entityManager.getEntityRecords(entity,attributeList, null);		 
-			
-			
+			Collections.sort(attributeList, new AttributeInterfaceComparator());
+			recordResultInterface = entityManager.getEntityRecords(entity,attributeList, null);			
 		} catch (DynamicExtensionsSystemException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DE_0004));			
 		} catch (DynamicExtensionsApplicationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DE_0004));			
 		}		
 		return recordResultInterface;
 	}
@@ -208,13 +207,9 @@ public class DataListOperations extends DefaultBizLogic
 		{
 			Long entityId = entityManager.persistEntity(dataListEntity,false).getId();
 			
-			Logger.out.info("One sentense pass");
+	
 
 			Long recordId = entityManager.insertData(dataListEntity, dataListAttributesMap);
-
-			Logger.out.info("DataList saved successfully !!!! (entityId, recordId) :: " + entityId
-					+ ", " + recordId);
-
 			DataListMetadata dataListMetadata = dataListToSave.getDataListAnnotation();
 			dataListMetadata.setEntityId(entityId);
 
@@ -466,10 +461,16 @@ public class DataListOperations extends DefaultBizLogic
 
 		newEntity.setName(oldEntity.getName());
 
-		TaggedValueInterface taggedValue = domainObjectFactory.createTaggedValue();
+		/*TaggedValueInterface taggedValue = domainObjectFactory.createTaggedValue();
 		taggedValue.setKey(edu.wustl.cab2b.common.util.Constants.OLD_ENTITY_ID_TAG_NAME);
-		taggedValue.setValue(oldEntity.getId().toString());
-		newEntity.addTaggedValue(taggedValue);
+		taggedValue.setValue(oldEntity.getId().toString());*/		
+		/*newEntity.addTaggedValue(taggedValue);*/		
+		
+		DynamicExtensionUtility.addTaggedValue(newEntity, edu.wustl.cab2b.common.util.Constants.OLD_ENTITY_ID_TAG_NAME, oldEntity.getId().toString());
+		
+		//addding tagged value for display name
+		DynamicExtensionUtility.addTaggedValue(newEntity, edu.wustl.cab2b.common.util.Constants.ENTITY_DISPLAY_NAME, edu.wustl.cab2b.common.util.Utility.getDisplayName(oldEntity));
+		
 
 		Collection<AttributeInterface> oldAttribs = oldEntity.getAttributeCollection();
 		for (AttributeInterface oldAttrib : oldAttribs)
