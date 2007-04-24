@@ -20,6 +20,8 @@ import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.entitymanager.EntityManagerConstantsInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManagerInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecord;
+import edu.common.dynamicextensions.entitymanager.EntityRecordInterface;
+import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.common.dynamicextensions.util.global.Constants.AssociationDirection;
@@ -95,23 +97,21 @@ public class DataListOperations extends DefaultBizLogic
 		return dataList;
 	}	
 	
-	public List<EntityRecord> getEntityRecord(Long entityId)
+	public EntityRecordResultInterface getEntityRecord(Long entityId)
 	{
 		
 		//		 DE's Entity manager instance.		 
 		EntityManagerInterface entityManager = EntityManager.getInstance();
 		
-		Object entityRecord[][] = null;	
-		List<EntityRecord> entityRecords = null;
+		EntityRecordResultInterface recordResultInterface = null;
 		try {
-			EntityInterface entity = entityManager.getEntityByIdentifier(entityId);
-			entityRecords = entityManager.getAllRecords(entity);			
-			/*Iterator it = entityRecords.iterator();
 			
-			while(it.hasNext())
-			{
-				EntityRecord entityRec = (EntityRecord) it.next();	
-			}*/
+			
+			EntityInterface entity = entityManager.getEntityByIdentifier(entityId);
+			
+			ArrayList attributeList = new ArrayList(entity.getAttributeCollection());
+			recordResultInterface = entityManager.getEntityRecords(entity,attributeList, null);		 
+			
 			
 		} catch (DynamicExtensionsSystemException e) {
 			// TODO Auto-generated catch block
@@ -120,7 +120,7 @@ public class DataListOperations extends DefaultBizLogic
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
-		return entityRecords;
+		return recordResultInterface;
 	}
 
 	/**
@@ -201,12 +201,14 @@ public class DataListOperations extends DefaultBizLogic
 				createNewEntityAndAssociation(dataListAttributesMap, firstLevelTypeDataRow,
 						dataListEntity, 2, mapOfNewEntities, mapOfNewAssociations);
 			}
-		}
-
+		}	
+		
 		Long dataListId = null;
 		try
 		{
-			Long entityId = entityManager.persistEntity(dataListEntity).getId();
+			Long entityId = entityManager.persistEntity(dataListEntity,false).getId();
+			
+			Logger.out.info("One sentense pass");
 
 			Long recordId = entityManager.insertData(dataListEntity, dataListAttributesMap);
 
@@ -288,8 +290,8 @@ public class DataListOperations extends DefaultBizLogic
 			EntityInterface tarEntity)
 	{
 		AssociationInterface returner = domainObjectFactory.createAssociation();
-		String associationName = "AssociationName_" + srcEntity.getAssociationCollection().size()
-				+ 1;
+		String associationName = "AssociationName_" + (srcEntity.getAssociationCollection().size()
+				+ 1);
 		returner.setName(associationName);
 		returner.setAssociationDirection(AssociationDirection.SRC_DESTINATION);
 		returner.setEntity(srcEntity);
@@ -473,7 +475,7 @@ public class DataListOperations extends DefaultBizLogic
 		for (AttributeInterface oldAttrib : oldAttribs)
 		{
 			AttributeInterface newAttrib = getNewAttribute(oldAttrib);
-			newAttrib.setName(oldAttrib.getName());
+			newAttrib.setName(oldAttrib.getName()); // only for testing
 			newEntity.addAttribute(newAttrib);
 		}
 
