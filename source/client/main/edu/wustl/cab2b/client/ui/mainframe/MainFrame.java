@@ -311,17 +311,6 @@ public class MainFrame extends JXFrame {
 			CommonUtils.handleException(e1, this, true, true, false, false);
 		}
 		
-		/*Experiment expt=new Experiment();
-		Experiment exptTwo=new Experiment();
-		
-		ExperimentGroup exptGroup=new ExperimentGroup();
-		
-		expt.setName("expt1");
-		exptTwo.setName("expt2");
-		exptGroup.setName("expt group");
-		dataVector.add(expt);
-		dataVector.add(exptTwo);
-		dataVector.add(exptGroup);*/
 		return dataVector;
 	}
 	
