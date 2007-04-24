@@ -34,7 +34,6 @@ public class MyStackedBox extends Cab2bPanel
 	MainFrame mainFrame;
 	public MyStackedBox()
 	{
-		//this.setBorder(new LineBorder(Color.BLACK));  
 		this.setLayout(new BorderLayout());
 		stackedBox = new StackedBox();
 		stackedBox.setTitleBackgroundColor(new Color(200, 200, 220));
@@ -69,10 +68,8 @@ public class MyStackedBox extends Cab2bPanel
 	
 	public MyStackedBox(MainFrame mainFrame)
 	{
-		this.mainFrame=mainFrame;
+		this.mainFrame=mainFrame;		
 		
-		
-		//this.setBorder(new LineBorder(Color.BLACK));  
 		this.setLayout(new BorderLayout());
 		stackedBox = new StackedBox();
 		stackedBox.setTitleBackgroundColor(new Color(200, 200, 220));
@@ -183,12 +180,8 @@ public class MyStackedBox extends Cab2bPanel
 		Logger.configure("");
 		MyStackedBox myStackedBox = new MyStackedBox();
 		WindowUtilities.showInFrame(myStackedBox, "MyStacked Box");
-		
 		Vector data = new Vector();
 		data.add("SNP Experiment");
-		
 		myStackedBox.setDataForPopularSearchCategoriesPanel(data);
-		
-		
 	}	
 }
