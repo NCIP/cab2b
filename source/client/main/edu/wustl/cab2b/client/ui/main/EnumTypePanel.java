@@ -8,7 +8,7 @@ import javax.swing.JComponent;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bListBox;
-import edu.wustl.cab2b.client.ui.controls.PermissibleValueComparator;
+import edu.wustl.cab2b.common.util.PermissibleValueComparator;
 
 public class EnumTypePanel extends AbstractTypePanel 
 {
