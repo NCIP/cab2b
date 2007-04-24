@@ -81,7 +81,7 @@ public class ExperimentHierarchyPanel extends Cab2bPanel
 
         ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) bus;
         try {
-			dataVector = expBus.getExperimentHierarchy();
+			dataVector = expBus.getExperimentHierarchy();			
 		} catch (RemoteException e1) {
 			CommonUtils.handleException(e1, this, true, true, false, false);
 		} catch (ClassNotFoundException e1) {
@@ -127,6 +127,7 @@ public class ExperimentHierarchyPanel extends Cab2bPanel
 				});		
 		
 		addNewButton = new Cab2bButton("Add New");
+		addNewButton.setEnabled(false);
 		this.add("br",addNewButton);
 		
 		/*JButton searchButton = new Cab2bButton("Search");
