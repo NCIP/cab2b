@@ -45,6 +45,7 @@ public class ExperimentPanel extends Cab2bTitledPanel
 		
 		newExperiment = new Cab2bButton("Create New Experiment");
 		newExperiment.setPreferredSize(new Dimension(180,22));
+		newExperiment.setEnabled(false);
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		splitPane.setDividerLocation(200);
 		
