@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 import edu.common.dynamicextensions.entitymanager.EntityRecord;
+import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
 import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
@@ -54,11 +55,8 @@ public class DataListBean extends AbstractStatelessSessionBean
 		return (new DataListOperations()).save(dataList);
 	}
 
-	public List<EntityRecord> getEntityRecord(Long entityId) throws RemoteException {
+	public EntityRecordResultInterface getEntityRecord(Long entityId) throws RemoteException {
 		return (new DataListOperations()).getEntityRecord(entityId);
 	}
-
-	
-
 	
 }
