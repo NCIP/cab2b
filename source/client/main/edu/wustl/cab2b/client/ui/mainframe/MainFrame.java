@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.rmi.RemoteException;
+import java.util.Iterator;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Vector;
@@ -16,6 +18,7 @@ import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXStatusBar;
 
+import edu.wustl.caB2B.experiment.ExperimentGroup;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -24,9 +27,17 @@ import edu.wustl.cab2b.client.ui.controls.CustomizableBorder;
 import edu.wustl.cab2b.client.ui.experiment.ExperimentPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
+import edu.wustl.cab2b.common.BusinessInterface;
+import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
+import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
+import edu.wustl.cab2b.common.experiment.ExperimentHome;
+import edu.wustl.cab2b.common.locator.Locator;
+import edu.wustl.cab2b.common.locator.LocatorException;
+import edu.wustl.common.tree.ExperimentTreeNode;
+import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
 
@@ -217,7 +228,8 @@ public class MainFrame extends JXFrame {
 		Dimension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
 		splitPane.setDividerLocation(dim.width);
 		if(openExperimentWelcomePanel != null && openExperimentWelcomePanel.isVisible()==true)
-		{
+		{ 
+			Logger.out.info("Removing openExperimentWelcomePanel");
 			this.remove(openExperimentWelcomePanel);
 			this.add(splitPanelPanel);			
 			this.validate();
@@ -272,6 +284,48 @@ public class MainFrame extends JXFrame {
 		}
 	}
 	
+	public Vector getExperiments()
+	{
+		Vector dataVector = new Vector();
+		
+		// EJB code start
+		BusinessInterface bus = null;
+		try
+		{
+			bus = Locator.getInstance().locate(edu.wustl.cab2b.common.ejb.EjbNamesConstants.EXPERIMENT, ExperimentHome.class);
+		}
+		catch (LocatorException e1)
+		{
+			CommonUtils.handleException(e1, this, true, true, false, false);
+		}
+
+        ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) bus;
+        try {
+			dataVector = expBus.getExperimentHierarchy();
+		} catch (RemoteException e1) {
+			CommonUtils.handleException(e1, this, true, true, false, false);
+		} catch (ClassNotFoundException e1) {
+			CommonUtils.handleException(e1, this, true, true, false, false);
+		} catch (DAOException e1) {
+			CommonUtils.handleException(e1, this, true, true, false, false);
+		}
+		
+		/*Experiment expt=new Experiment();
+		Experiment exptTwo=new Experiment();
+		
+		ExperimentGroup exptGroup=new ExperimentGroup();
+		
+		expt.setName("expt1");
+		exptTwo.setName("expt2");
+		exptGroup.setName("expt group");
+		dataVector.add(expt);
+		dataVector.add(exptTwo);
+		dataVector.add(exptGroup);*/
+		return dataVector;
+	}
+	
+	
+	
 	/**
 	 * @param args
 	 */
@@ -286,9 +340,21 @@ public class MainFrame extends JXFrame {
 		Toolkit.getDefaultToolkit().setDynamicLayout(true);
 		
 		Vector<String> myRecentExperiments = new Vector<String>();
+		Vector exptVector=mainFrame.getExperiments();
+		Iterator iter = exptVector.iterator();
+		Logger.out.info("Vect Size :"+exptVector.size());
+		while(iter.hasNext())
+		{
+			
+			ExperimentTreeNode exp = (ExperimentTreeNode)iter.next();		
+			myRecentExperiments.add(exp.getName());						
+		}
+		
+		
+		/*Vector<String> myRecentExperiments = new Vector<String>();
 		myRecentExperiments.add("Breast Cancer Microarrays (Hu133 Plus 2.0)");
 		myRecentExperiments.add("Breast Cancer Microarrays (MOE430 Plus 2.0)");
-		myRecentExperiments.add("Acute Myelogenous Leukemia Microarrays");
+		myRecentExperiments.add("Acute Myelogenous Leukemia Microarrays");*/
 		mainFrame.setDataForMyExperimentsPanel(myRecentExperiments);
 		
 		Vector<String> mySearchQueries = new Vector<String>();
