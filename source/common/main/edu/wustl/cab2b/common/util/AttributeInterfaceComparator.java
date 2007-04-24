@@ -1,4 +1,4 @@
-package edu.wustl.cab2b.client.ui.controls;
+package edu.wustl.cab2b.common.util;
 
 import java.util.Comparator;
 

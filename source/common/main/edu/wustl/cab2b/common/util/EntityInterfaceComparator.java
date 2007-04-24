@@ -1,9 +1,8 @@
-package edu.wustl.cab2b.client.ui.controls;
+package edu.wustl.cab2b.common.util;
 
 import java.util.Comparator;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.cab2b.common.util.Utility;
 
 public class EntityInterfaceComparator implements Comparator {
 
