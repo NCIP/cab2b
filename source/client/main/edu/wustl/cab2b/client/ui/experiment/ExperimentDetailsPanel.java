@@ -51,9 +51,9 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 	
 	Vector tHeader = new Vector();
 	
-	JButton deleteButton; 
+	Cab2bButton deleteButton; 
 	
-	 ExperimentOpenPanel expPanel = null;
+	ExperimentOpenPanel expPanel = null;
 	
 	public ExperimentDetailsPanel()
 	{
@@ -88,6 +88,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel
 		
 		    }
 		});
+		deleteButton.setEnabled(false);
 		this.add("br",deleteButton);
 		highlighters.updateUI();
 	}
@@ -251,7 +252,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel
     	        	   ExperimentTreeNode expNodeObj = (ExperimentTreeNode) expObj;	        	   
     	        	   if( expNodeObj.isExperimentGroup() == false )
     	        	   {
-    	        		   ExperimentDetailsPanel.this.expPanel =	new ExperimentOpenPanel(expNodeObj,ExperimentDetailsPanel.this);    	        		   
+    	        		   ExperimentDetailsPanel.this.expPanel =	new ExperimentOpenPanel(expNodeObj,ExperimentDetailsPanel.this);    	        	
     	        	   }else
     	        	   {
     	        		   //TODO
