@@ -34,109 +34,12 @@ public class Utility
      */
     public static RelationalOperator getRelationalOperator(String operator)
     {
-        RelationalOperator relationalOperator = null;
-        if (operator.equals("Starts With"))
-        {
-        	relationalOperator = RelationalOperator.StartsWith;
-        }
-        else if (operator.equals("Ends With"))
-        {
-            relationalOperator = RelationalOperator.EndsWith;
-        }else if (operator.equals("Contains"))
-        {
-            relationalOperator = RelationalOperator.Contains;
-        }else if (operator.equals("Equals"))
-        {
-            relationalOperator = RelationalOperator.Equals;
-        }else if (operator.equals("Not Equals"))
-        {
-            relationalOperator = RelationalOperator.NotEquals;
-        }else if (operator.equals("Is Null"))
-        {
-            relationalOperator = RelationalOperator.IsNull;
-        }else if (operator.equals("Is Not Null"))
-        {
-            relationalOperator = RelationalOperator.IsNotNull;
-        }else if (operator.equals("Between"))
-        {
-            relationalOperator = RelationalOperator.Between;
-        }else if (operator.equals("Less than"))
-        {
-            relationalOperator = RelationalOperator.LessThan;
-        }else if (operator.equals("Less than or Equal to"))
-        {
-            relationalOperator = RelationalOperator.LessThanOrEquals;
-        }else if (operator.equals("Greater than"))
-        {
-            relationalOperator = RelationalOperator.GreaterThan;
-        }else if (operator.equals("Greater than or Equal to"))
-        {
-            relationalOperator = RelationalOperator.GreaterThanOrEquals;
-        }else if (operator.equals("In"))
-        {
-            relationalOperator = RelationalOperator.In;
-        }else if (operator.equals("Not In"))
-        {
-            relationalOperator = RelationalOperator.NotIn;
-        }
-        
-        return relationalOperator;
+       return RelationalOperator.getOperatorForStringRepresentation(operator);
     }
     
     public static String displayStringForRelationalOperator(RelationalOperator relationalOperator)
     {
-    	String displayString = null;
-    	if(relationalOperator == RelationalOperator.StartsWith)
-    	{
-    		displayString = "Starts With";
-    	}
-    	else if (relationalOperator == RelationalOperator.EndsWith)
-        {
-           displayString = "Ends With";
-        }else if (relationalOperator == RelationalOperator.Contains)
-        {
-            
-            displayString = "Contains";
-        }else if (relationalOperator == RelationalOperator.Equals)
-        {
-            displayString = "Equals";
-        }else if (relationalOperator == RelationalOperator.NotEquals)
-        {
-            
-            displayString = "Not Equals";
-        }else if (relationalOperator == RelationalOperator.IsNull)
-        {
-            displayString = "Is Null";
-        }else if (relationalOperator == RelationalOperator.IsNotNull)
-        {
-            displayString = "Is Not Null";
-        }else if (relationalOperator == RelationalOperator.Between)
-        {
-            
-            displayString = "Between";
-        }else if (relationalOperator == RelationalOperator.LessThan)
-        {
-            
-            displayString = "Less than";
-        }else if (relationalOperator == RelationalOperator.LessThanOrEquals)
-        {
-            displayString = "Less than or Equal to";
-        }else if (relationalOperator == RelationalOperator.GreaterThan)
-        {
-            displayString = "Greater than";
-        }else if (relationalOperator == RelationalOperator.GreaterThanOrEquals)
-        {
-            displayString = "Greater than or Equal to";
-        }else if (relationalOperator == RelationalOperator.In)
-        {
-        	displayString = "In";
-        }else if (relationalOperator == RelationalOperator.NotIn)
-        {
-            displayString = "Not In";
-        }
-        
-    	
-    	return displayString;
+    	return relationalOperator.getStringRepresentation();
     }
     
     /**
