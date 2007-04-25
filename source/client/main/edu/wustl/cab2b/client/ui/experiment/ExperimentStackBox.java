@@ -2,6 +2,7 @@ package edu.wustl.cab2b.client.ui.experiment;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
 import java.util.Collection;
@@ -18,6 +19,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTree;
 
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
@@ -73,8 +75,14 @@ public class ExperimentStackBox extends Cab2bPanel{
 	
 	JXTree datalistTree; 
 	
+	
+	JScrollPane treeViewScrollPane;
 	ExperimentBusinessInterface m_experimentBusinessInterface;
 	Experiment m_selectedExperiment = null; 
+	
+	String columnName[] = null;
+	Object recordObject[][] = null;
+
 	
 	public ExperimentStackBox(ExperimentBusinessInterface expBus,Experiment selectedExperiment)
 	{
@@ -104,97 +112,38 @@ public class ExperimentStackBox extends Cab2bPanel{
 			e.printStackTrace();
 		}		
 		Iterator iter  = entitySet.iterator();
-		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("");
+		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Experiment Data Categories");
 		DefaultMutableTreeNode node = null;		    
 
 		while(iter.hasNext())
 		{
-			EntityInterface entity = (EntityInterface) iter.next();		
-			String displyaName = edu.wustl.cab2b.common.util.Utility.getTaggedValue(entity.getTaggedValueCollection(),edu.wustl.cab2b.common.util.Constants.ENTITY_DISPLAY_NAME).getValue();			 
-			Logger.out.info(""+displyaName);
-			node = new DefaultMutableTreeNode(entity);			
+			EntityInterface entity = (EntityInterface) iter.next();
+			ExperimentEntity expEnity = new ExperimentEntity();
+			expEnity.setEntityInterface(entity);
+			node = new DefaultMutableTreeNode(expEnity);	
 			//node.setUserObject(entity);
 			rootNode.add(node);						
 		}	
 		
-	/*	//creating datalist tree*/
-		datalistTree = new JXTree(rootNode);
+		//creating datalist tree
+		datalistTree = new JXTree(rootNode);	
 		datalistTree.addTreeSelectionListener(new TreeSelectionListener() {			
-		public void valueChanged(TreeSelectionEvent e)  {		
-			
-			Logger.out.info("Clicked on datalist");
-		        DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-		                           datalistTree.getLastSelectedPathComponent();
-		        if (node == null) return;
-		        Object nodeInfo = node.getUserObject();
-		        
-		        if (nodeInfo instanceof EntityInterface) {
-		        	EntityInterface entityNode = (EntityInterface)nodeInfo;  	
-		        	entityNode.getAttributeCollection();
-		        	Logger.out.info("ID :: "+entityNode.getId());		
-		        	
-		        	DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils
-					.getBusinessInterface(EjbNamesConstants.DATALIST_BEAN, DataListHome.class);
-		        	
-		        	try {
-		        		EntityRecordResultInterface  recordResultInterface =  dataListBI.getEntityRecord(entityNode.getId());		        		
-		        		
-		    			
-		        		List<AbstractAttributeInterface>  headerList = recordResultInterface.getEntityRecordMetadata().getAttributeList();
-		     			Iterator it = headerList.iterator();    
-		     			String columnName[] = new String[headerList.size()];
-		     			
-		     			int i=0;		     			
-		     			while(it.hasNext())
-		     			{
-		     				AbstractAttributeInterface attribute  = (AbstractAttributeInterface)it.next();		     			
-		     				columnName[i++] = CommonUtils.getFormattedString(attribute.getName());		     					
-		     				Logger.out.info("Header :" +attribute.getName());
-		     			}
-		     			
-		     			
-		     			List<EntityRecordInterface>  recordList = recordResultInterface.getEntityRecordList();
-		     			it = recordList.iterator();
-		     			Object recordObject[][] = new Object[recordList.size()][headerList.size()];
-		     			Logger.out.info("Record Size :: " + recordList.size());
-		     			i=0;
-		     			while(it.hasNext())
-		     			{
-		     				EntityRecordInterface record = 	(EntityRecordInterface) it.next();			
-		     				List recordValueList = record.getRecordValueList();
-		     				int j=0;
-		     				Iterator iterList = recordValueList.iterator();		     				
-		     				while(iterList.hasNext())
-		     				{
-		     					recordObject[i][j] = new Object();
-		     					recordObject[i][j] = iterList.next();		     					
-		     					Logger.out.info("Data ["+i+"]"+"["+j+"]"+recordObject[i][j]);
-		     					j++;
-		     				}
-		     				i++;
-		     			}
-		     			m_experimentDataCategoryGridPanel.refreshTable(columnName,recordObject);		     			 
-		     			
-					} catch (RemoteException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-		        		
-				}
-			 }				
+		public void valueChanged(TreeSelectionEvent e)  {
+			treeSelectionListenerAction();
+		}				
 		});
 
-		/*Adding Select data category pane*/		
-		JScrollPane treeView = new JScrollPane(datalistTree);		
-		stackedBox.addBox("Select Data Category", treeView,"resources/images/mysearchqueries_icon.gif");		
+		//Adding Select data category pane		
+		treeViewScrollPane = new JScrollPane(datalistTree);
+		stackedBox.addBox("Select Data Category", treeViewScrollPane,"resources/images/mysearchqueries_icon.gif");		
 		
-		/*Adding Filter data category panel*/
+		//Adding Filter data category panel
 		dataFilterPanel = new Cab2bPanel();
 		dataFilterPanel.setPreferredSize(new Dimension(250, 150));
 		dataFilterPanel.setOpaque(false);
 		stackedBox.addBox("Filter Data ", dataFilterPanel,"resources/images/mysearchqueries_icon.gif");
 				
-		/*Adding Analyse data  panel*/
+		//Adding Analyse data  panel
 		analyseDataPanel = new Cab2bPanel();
 		analyseDataPanel.setPreferredSize(new Dimension(250, 150));
 		analyseDataPanel.setOpaque(false);
@@ -205,9 +154,149 @@ public class ExperimentStackBox extends Cab2bPanel{
 		this.add(stackedBox);
 	}
 	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+	/**
+    * Method to perform tree node selection action
+    * for currently selected node 
+    */
 
+	public void treeSelectionListenerAction(){	
+		
+		 CustomSwingWorker swingWorker = new CustomSwingWorker(datalistTree)
+	     {
+				@Override
+				protected void doNonUILogic() throws RuntimeException
+				{
+					 Logger.out.info("Clicked on datalist");
+						DefaultMutableTreeNode node = (DefaultMutableTreeNode)datalistTree.getLastSelectedPathComponent();
+						if (node == null)		
+							return;
+						
+						//if rot node is selected, clear all table content 
+						if(node.isRoot() == true)
+						{
+							m_experimentDataCategoryGridPanel.refreshTable(null,null); 
+							return;
+						}	
+						
+						Object nodeInfo = node.getUserObject();
+						if (nodeInfo instanceof ExperimentEntity) {
+							EntityInterface entityNode = ((ExperimentEntity)nodeInfo).getEntityInterface();  	
+							entityNode.getAttributeCollection();
+							Logger.out.info("ID :: "+entityNode.getId());		
+				        	
+							//getting datalist entity interface
+							DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils
+							.getBusinessInterface(EjbNamesConstants.DATALIST_BEAN, DataListHome.class);
+				        	try {
+				        			//getting list of attributes
+									EntityRecordResultInterface  recordResultInterface =  dataListBI.getEntityRecord(entityNode.getId());
+				    				List<AbstractAttributeInterface>  headerList = recordResultInterface.getEntityRecordMetadata().getAttributeList();
+				    				Iterator it = headerList.iterator();    
+				    				columnName = new String[headerList.size()];	     			
+				    				int i=0;		     			
+				    				while(it.hasNext())
+				    				{
+				    					AbstractAttributeInterface attribute  = (AbstractAttributeInterface)it.next();		     			
+				    					columnName[i++] = CommonUtils.getFormattedString(attribute.getName());		     					
+				    					Logger.out.info("Table Header :" +attribute.getName());
+				    				}  			
+				    				
+				        			//getting actual records
+				    				List<EntityRecordInterface>  recordList = recordResultInterface.getEntityRecordList();
+				    				it = recordList.iterator();
+				    				recordObject = new Object[recordList.size()][headerList.size()];
+				    				Logger.out.info("Record Size :: " + recordList.size());
+				    				i=0;
+				    				while(it.hasNext())
+				    				{
+				    					EntityRecordInterface record = 	(EntityRecordInterface) it.next();			
+				    					List recordValueList = record.getRecordValueList();
+				    					int j=0;
+				    					Iterator iterList = recordValueList.iterator();		     				
+				    					while(iterList.hasNext())
+				    					{
+				    						recordObject[i][j] = new Object();
+				    						recordObject[i][j] = iterList.next();		     					
+				    						Logger.out.info("Data ["+i+"]"+"["+j+"]"+recordObject[i][j]);
+				    						j++;
+				    					}
+				    					i++;
+				    				}  			
+    				   			} catch (RemoteException e1) {					
+								e1.printStackTrace();
+							}	        		
+						}			
+						
+				}
+				protected void doUIUpdateLogic() throws RuntimeException
+				{
+					m_experimentDataCategoryGridPanel.refreshTable(columnName,recordObject);
+				}    	
+	     };
+    swingWorker.start();
+    
+    /*Logger.out.info("Clicked on datalist");
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode)datalistTree.getLastSelectedPathComponent();
+			if (node == null)		
+				return;
+			
+			//if rot node is selected, clear all table content 
+			if(node.isRoot() == true)
+			{
+				m_experimentDataCategoryGridPanel.refreshTable(null,null); 
+				return;
+			}	
+			
+			Object nodeInfo = node.getUserObject();
+			if (nodeInfo instanceof ExperimentEntity) {
+				EntityInterface entityNode = ((ExperimentEntity)nodeInfo).getEntityInterface();  	
+				entityNode.getAttributeCollection();
+				Logger.out.info("ID :: "+entityNode.getId());		
+	        	
+				//getting datalist entity interface
+				DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils
+				.getBusinessInterface(EjbNamesConstants.DATALIST_BEAN, DataListHome.class);
+	        	try {
+	        			//getting list of attributes
+						EntityRecordResultInterface  recordResultInterface =  dataListBI.getEntityRecord(entityNode.getId());
+	    				List<AbstractAttributeInterface>  headerList = recordResultInterface.getEntityRecordMetadata().getAttributeList();
+	    				Iterator it = headerList.iterator();    
+	    				columnName = new String[headerList.size()];	     			
+	    				int i=0;		     			
+	    				while(it.hasNext())
+	    				{
+	    					AbstractAttributeInterface attribute  = (AbstractAttributeInterface)it.next();		     			
+	    					columnName[i++] = CommonUtils.getFormattedString(attribute.getName());		     					
+	    					Logger.out.info("Table Header :" +attribute.getName());
+	    				}  			
+	    				
+	        			//getting actual records
+	    				List<EntityRecordInterface>  recordList = recordResultInterface.getEntityRecordList();
+	    				it = recordList.iterator();
+	    				recordObject = new Object[recordList.size()][headerList.size()];
+	    				Logger.out.info("Record Size :: " + recordList.size());
+	    				i=0;
+	    				while(it.hasNext())
+	    				{
+	    					EntityRecordInterface record = 	(EntityRecordInterface) it.next();			
+	    					List recordValueList = record.getRecordValueList();
+	    					int j=0;
+	    					Iterator iterList = recordValueList.iterator();		     				
+	    					while(iterList.hasNext())
+	    					{
+	    						recordObject[i][j] = new Object();
+	    						recordObject[i][j] = iterList.next();		     					
+	    						Logger.out.info("Data ["+i+"]"+"["+j+"]"+recordObject[i][j]);
+	    						j++;
+	    					}
+	    					i++;
+	    				}
+	    				m_experimentDataCategoryGridPanel.refreshTable(columnName,recordObject);
+	    				updateUI();
+	     			} catch (RemoteException e1) {					
+					e1.printStackTrace();
+				}	        		
+			}			
+		}*/	
 	}
-
 }
