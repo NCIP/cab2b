@@ -2,7 +2,8 @@ package edu.wustl.cab2b.server.path;
 
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.apache.cactus.ServletTestCase;
+
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.entitymanager.EntityManagerInterface;
@@ -17,7 +18,7 @@ import edu.wustl.common.util.logger.Logger;
  * 
  * @author Chandrakant Talele
  */
-public class PathFinderFetchPathRecordsTest extends TestCase {
+public class PathFinderFetchPathRecordsTest extends ServletTestCase {
     SQLQueryBusinessInterface sqlQueryBean = null;
 
     /**
