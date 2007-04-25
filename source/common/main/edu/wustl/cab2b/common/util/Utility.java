@@ -306,6 +306,24 @@ public class Utility {
         }
         return null;
     }
+    
+    /**
+     * Returns true if an application returns associatied objects information in result of CQLs.  
+     * @param entity Entity to check
+     * @return true/false
+     */
+    public static boolean isOutGoingAssociationSupported(EntityInterface entity) {
+        EntityGroupInterface eg = getEntityGroup(entity);
+        String shortName = eg.getShortName();
+        boolean isOutGoingAssociationSupported = false;
+
+        String supportOutGoingAssociation = props.getProperty(shortName + ".supportOutGoingAssociation");
+        if (supportOutGoingAssociation != null && supportOutGoingAssociation.equalsIgnoreCase("true")) {
+            isOutGoingAssociationSupported = true;
+        }
+
+        return isOutGoingAssociationSupported;
+    }
 
     public static boolean isIdentifierAttribute(AttributeInterface attribute) {
         String attribName = attribute.getName();        
