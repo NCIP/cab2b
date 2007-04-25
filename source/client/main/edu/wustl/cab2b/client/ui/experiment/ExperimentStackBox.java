@@ -174,8 +174,8 @@ public class ExperimentStackBox extends Cab2bPanel{
 						//if rot node is selected, clear all table content 
 						if(node.isRoot() == true)
 						{
-							m_experimentDataCategoryGridPanel.refreshTable(null,null); 
-							return;
+							columnName = null;
+							recordObject = null;							
 						}	
 						
 						Object nodeInfo = node.getUserObject();
