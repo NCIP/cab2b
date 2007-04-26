@@ -36,6 +36,7 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.SaveDatalistPanel;
+import edu.wustl.cab2b.client.ui.SearchNavigationPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -286,8 +287,11 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel
 				MainSearchPanel.getDataList().addDataRows(selectedUserObjects);
 				updateMyDataListPanel();
 				SaveDatalistPanel.isDataListSaved =  false;
-				updateUI();
 				
+                 SearchNavigationPanel.messageLabel.setText(" *Added " + selectedUserObjects.size()                                                            
+                                                            + " elements to data list");
+                 updateUI();
+                 
 //				JOptionPane.showMessageDialog(titledSearchResultsPanel, "Added " + selectedUserObjects.size() + " elements to data list" , "Information",
 //						JOptionPane.INFORMATION_MESSAGE);
 			}	
@@ -418,8 +422,9 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel
 			{
 				// TODO Auto-generated method stub
 				updateMyDataListPanel();
-				JOptionPane.showMessageDialog(component, "Apply All operation completed successfully", "Information",
-						JOptionPane.INFORMATION_MESSAGE);
+			/*	JOptionPane.showMessageDialog(component, "Apply All operation completed successfully", "Information",
+						JOptionPane.INFORMATION_MESSAGE);*/
+                 SearchNavigationPanel.messageLabel.setText("Apply All operation completed successfully");
 			}
         };
         swingWorker.start();
