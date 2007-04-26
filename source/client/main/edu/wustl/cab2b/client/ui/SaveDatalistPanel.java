@@ -37,6 +37,7 @@ import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
+ * Panel used to display Save Data list dialog
  * @author deepak_shingan
  *
  */
