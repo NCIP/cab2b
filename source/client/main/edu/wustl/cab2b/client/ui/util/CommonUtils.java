@@ -29,6 +29,10 @@ import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.util.logger.Logger;
 
+/**
+ * @author Chetan B H
+ * @author Mahesh Iyer
+ */
 public class CommonUtils {
     public static Frame FrameReference = null;
 
@@ -49,7 +53,7 @@ public class CommonUtils {
         BusinessInterface businessInterface = null;
 
         try {
-            businessInterface = getBusinessInterface(beanName, homeClassForBean);
+            businessInterface = Locator.getInstance().locate(beanName, homeClassForBean);
         } catch (LocatorException e1) {
             handleException(e1, parentComponent, true, true, false, false);
         }
@@ -121,19 +125,11 @@ public class CommonUtils {
      * and uses the interace to remotely execute the query.
      */
     public static IQueryResult executeQuery(ICab2bQuery query, JComponent comp) {
-        IQueryResult iQueryResult = null;
         QueryEngineBusinessInterface queryEngineBus = (QueryEngineBusinessInterface) getBusinessInterface(
                                                                                                           EjbNamesConstants.QUERY_ENGINE_BEAN,
                                                                                                           QueryEngineHome.class,
                                                                                                           comp);
-        try {
-            iQueryResult = executeQuery(query, queryEngineBus);
-        } catch (RuntimeException re) {
-            handleException(re, comp, true, true, false, false);
-        } catch (RemoteException e1) {
-            handleException(e1, comp, true, true, false, false);
-        }
-        return iQueryResult;
+        return executeQuery(query, queryEngineBus, comp);
     }
 
     /**
@@ -145,7 +141,7 @@ public class CommonUtils {
                                             JComponent comp) {
         IQueryResult iQueryResult = null;
         try {
-            iQueryResult = executeQuery(query, queryEngineBus);
+            iQueryResult = executeQuery(query,queryEngineBus);
         } catch (RuntimeException re) {
             handleException(re, comp, true, true, false, false);
         } catch (RemoteException e1) {
@@ -158,18 +154,14 @@ public class CommonUtils {
      * The method executes the encapsulated B2B query. For this it uses the
      * Locator service to locate an instance of the QueryEngineBusinessInterface
      * and uses the interace to remotely execute the query.
+     * @param query
+     * @param queryEngineBus
+     * @throws RuntimeException
+     * @throws RemoteException
      */
     public static IQueryResult executeQuery(ICab2bQuery query, QueryEngineBusinessInterface queryEngineBus)
             throws RuntimeException, RemoteException {
-        IQueryResult iQueryResult = null;
-        try {
-            iQueryResult = queryEngineBus.executeQuery(query);
-        } catch (RuntimeException re) {
-            throw re;
-        } catch (RemoteException e1) {
-            throw e1;
-        }
-        return iQueryResult;
+        return queryEngineBus.executeQuery(query);
     }
 
     /**
@@ -189,7 +181,7 @@ public class CommonUtils {
     /** 
      * Utility method to find the number of occurrence of a particular character in the String 
      **/
-    public int countCharacterIn(String str, char character) {
+    public static int countCharacterIn(String str, char character) {
         int count = 0;
 
         char[] chars = str.toCharArray();
@@ -201,20 +193,14 @@ public class CommonUtils {
         return count;
     }
 
-    protected static String capitalizeString(String str) {
-        String returner = "";
-        //System.out.println("STRING to CAPITALIZE "+str);
+    static String capitalizeFirstCharacter(String str) {
         char[] chars = str.toCharArray();
-
         char firstChar = chars[0];
         chars[0] = Character.toUpperCase(firstChar);
-
-        returner = new String(chars);
-
-        return returner;
+        return new String(chars);
     }
 
-    protected static String[] splitCamelCaseString(String str, int countOfUpperCaseLetter) {
+    static String[] splitCamelCaseString(String str, int countOfUpperCaseLetter) {
         //System.out.println("str "+str+" count "+countOfUpperCaseLetter);
         String[] splitStrings = new String[countOfUpperCaseLetter + 1];
 
@@ -249,7 +235,7 @@ public class CommonUtils {
                                 || (Character.isLowerCase(previousCharacter) && Character.isLowerCase(nextCharacter))) {
                             String split = str.substring(firstIndex, lastIndex);
                             if (splitStrCount == 0) {
-                                split = capitalizeString(split);
+                                split = capitalizeFirstCharacter(split);
                             }
                             splitStrings[splitStrCount] = split;
                             splitStrCount++;
@@ -272,7 +258,7 @@ public class CommonUtils {
         return splitStrings;
     }
 
-    protected static int countUpperCaseLetters(String str) {
+    static int countUpperCaseLetters(String str) {
         /* This is the count of Capital letters in a string excluding first character, 
          * and continuos uppercase letter in the string. */
         int countOfCapitalLetters = 0;
@@ -330,7 +316,7 @@ public class CommonUtils {
             splitStrings = splitCamelCaseString(str, upperCaseCount);
             returner = getFormattedString(splitStrings);
         } else {
-            returner = capitalizeString(str);
+            returner = capitalizeFirstCharacter(str);
         }
         return returner;
     }
@@ -373,17 +359,6 @@ public class CommonUtils {
         Logger.out.info("relative dimension " + relativeDimension + " reference dimension " + referenceDimnesion
                 + " percentage(width, height): (" + percentageWidth + "," + percentageHeight + ")");
         return relativeDimension;
-    }
-
-    public static void main(String[] args) {
-        /*Logger.configure("");
-         String[] sampleStrs = {"xaQaUtWsdkjsSbAd","tomDickAndHarry","id","pubmedCount","organism","chromosomeMap","pubmed5Count","1234"};
-         for(String str: sampleStrs)
-         System.out.println("Formatted String ####>>> "+getFormattedString(str));
-         
-         Dimension srcDimension = Toolkit.getDefaultToolkit().getScreenSize();
-         getRelativeDimension(srcDimension,0.75f, 0.5f);*/
-        splitStringWithTextQualifier("\"prat,ibha\", \"fdf\"vishaldhok\"", '"', ',');
     }
 
     /**
@@ -465,10 +440,6 @@ public class CommonUtils {
         result = new String(charsWithoutContinousSpaceChars);
         result = result.trim();
         return result;
-    }
-
-    public static int getQueryRecordCount(IQueryResult queryResults) {
-        return 0;
     }
 
     /** 
