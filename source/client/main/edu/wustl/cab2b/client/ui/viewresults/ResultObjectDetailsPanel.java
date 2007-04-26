@@ -89,6 +89,8 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
 
     Collection<AssociationInterface> incomingIntraModelAssociationCollection;
 
+    Collection<AssociationInterface> outgoingIntraModelAssociationCollection;
+
     Collection<IInterModelAssociation> interModelAssociationCollection;
 
     public ResultObjectDetailsPanel(
@@ -108,6 +110,9 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
 
         this.interModelAssociationCollection = (Collection<IInterModelAssociation>) interIntraAssoClass.get(0);
         this.incomingIntraModelAssociationCollection = (Collection<AssociationInterface>) interIntraAssoClass.get(1);
+        if (interIntraAssoClass.size() > 2) {
+            this.outgoingIntraModelAssociationCollection = (Collection<AssociationInterface>) interIntraAssoClass.get(2);
+        }
 
         breadCrumbActionListener = bcAL;
         associatedDataActionListener = assoDataAL;
@@ -228,7 +233,27 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
                  * association.
                  */
                 IIntraModelAssociation intraModelAssociation = (IIntraModelAssociation) QueryObjectFactory.createIntraModelAssociation(deAssociation);
-                relatedDataPanel.add("br", addHyperlink(associatedEntityInterface, intraModelAssociation));
+                String tooTipText = "Target role name : "
+                        + intraModelAssociation.getDynamicExtensionsAssociation().getSourceRole().getName();
+
+                relatedDataPanel.add("br", addHyperlink(associatedEntityInterface, intraModelAssociation,
+                                                        tooTipText));
+            }
+        }
+        /* Add outgoing association if supported
+         * 
+         */
+        if (outgoingIntraModelAssociationCollection != null) {
+            JLabel label = new JLabel(" Outgoing Associations : ");
+            label.setForeground(Color.red);
+            relatedDataPanel.add("br", label);
+
+            for (AssociationInterface outgoingAssociation : outgoingIntraModelAssociationCollection) {
+                EntityInterface targetEntity = outgoingAssociation.getTargetEntity();
+                IIntraModelAssociation intraModelAssociation = (IIntraModelAssociation) QueryObjectFactory.createIntraModelAssociation(outgoingAssociation);
+                String tooTipText = "Target role name : "
+                        + intraModelAssociation.getDynamicExtensionsAssociation().getTargetRole().getName();
+                relatedDataPanel.add("br", addHyperlink(targetEntity, intraModelAssociation, tooTipText));
             }
         }
 
@@ -236,12 +261,11 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
          * We also must be able to add Intermodel association. Call the Path
          * finder code to add the intermodel association.
          */
-
-        JLabel label = new JLabel(" Inter Model Associations : ");
-        label.setForeground(Color.red);
-        relatedDataPanel.add("br", label);
-
         if (interModelAssociationCollection != null) {
+            JLabel label = new JLabel(" Inter Model Associations : ");
+            label.setForeground(Color.red);
+            relatedDataPanel.add("br", label);
+
             Iterator interAssocIttr = interModelAssociationCollection.iterator();
             while (interAssocIttr.hasNext()) {
                 IInterModelAssociation interModelAssociation = (IInterModelAssociation) interAssocIttr.next();
@@ -249,7 +273,10 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
                     continue;
                 }
                 EntityInterface associatedEntityInterface = interModelAssociation.getTargetEntity();
-                relatedDataPanel.add("br", addHyperlink(associatedEntityInterface, interModelAssociation));
+                String tooTipText = "Target attribute name : "
+                        + interModelAssociation.getSourceAttribute().getName();
+                relatedDataPanel.add("br", addHyperlink(associatedEntityInterface, interModelAssociation,
+                                                        tooTipText));
             }
         }
 
@@ -266,29 +293,30 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
      * target and source entities for the association, as well as the
      * association itself are remembered by the link
      */
-    private Cab2bHyperlink addHyperlink(EntityInterface targetEntity, IAssociation association) {
+    private Cab2bHyperlink addHyperlink(EntityInterface targetEntity, IAssociation association, String toolTipText) {
         /* Trim off the assoc class name */
         Cab2bHyperlink hyperlink = new Cab2bHyperlink();
 
         /* Set the hyperlink text */
         hyperlink.setText(edu.wustl.cab2b.common.util.Utility.getDisplayName(targetEntity));
 
-        if (association instanceof IIntraModelAssociation) {
-            /* Get the target role name for the intramodel association. */
-            IIntraModelAssociation intraModelAssociation = (IIntraModelAssociation) (association);
-            String strRoleName = intraModelAssociation.getDynamicExtensionsAssociation().getSourceRole().getName();
-            /* Set a tool tip for showing role names */
-            hyperlink.setToolTipText("Target role name : " + strRoleName);
-        } else if (association instanceof IInterModelAssociation) {
-            /* Get the target role name for the intramodel association. */
-            IInterModelAssociation interModelAssociation = (IInterModelAssociation) (association);
-
-            String strRoleName = interModelAssociation.getSourceAttribute().getName();
-            /* Set a tool tip for showing role names */
-            hyperlink.setToolTipText("Target attribute name : " + strRoleName);
-            // TODO : Where do i get the target role name for inter model
-            // associations.
-        }
+        //        if (association instanceof IIntraModelAssociation) {
+        //            /* Get the target role name for the intramodel association. */
+        //            IIntraModelAssociation intraModelAssociation = (IIntraModelAssociation) (association);
+        //            String strRoleName = intraModelAssociation.getDynamicExtensionsAssociation().getSourceRole().getName();
+        //            /* Set a tool tip for showing role names */
+        //            hyperlink.setToolTipText("Target role name : " + strRoleName);
+        //        } else if (association instanceof IInterModelAssociation) {
+        //            /* Get the target role name for the intramodel association. */
+        //            IInterModelAssociation interModelAssociation = (IInterModelAssociation) (association);
+        //
+        //            String strRoleName = interModelAssociation.getSourceAttribute().getName();
+        //            /* Set a tool tip for showing role names */
+        //            hyperlink.setToolTipText("Target attribute name : " + strRoleName);
+        //            // TODO : Where do i get the target role name for inter model
+        //            // associations.
+        //        }
+        hyperlink.setToolTipText(toolTipText);
 
         hyperlink.addActionListener(associatedDataActionListener);
         /* TODO : Please replace this with an appropriate data structure. */
