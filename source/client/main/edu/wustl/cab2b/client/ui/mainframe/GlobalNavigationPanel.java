@@ -316,6 +316,7 @@ public class GlobalNavigationPanel extends Cab2bPanel implements ActionListener 
                     // Application is started and then screen resolution is changed, but the variable stiil holds old resolution size.
                     MainFrame.mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
                     Dimension dimension = MainFrame.mainframeScreenDimesion;
+                    WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel, "Search Data", new Dimension((int)(dimension.width * 0.90), (int)(dimension.height * 0.85)), true, true);
 
                     GlobalNavigationPanel.mainSearchPanel.getDataList().clear();
                     GlobalNavigationPanel.mainSearchPanel = null;
