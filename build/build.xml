@@ -25,6 +25,9 @@
 	<property name="javadoc.dir" location="${Reports.dir}/javadoc" />
 
 	<property name="XmlLogger.file" value="${buildReports.dir}\log.xml" />
+	<tstamp prefix="Report-">
+	    <format property="TODAY" pattern="MMMM-dd-yyyy" locale="en"/>
+    </tstamp>
 
 	<property name="client.classes.dir" location="${workArea.dir}/client/classes" />
 	<property name="server.classes.dir" location="${workArea.dir}/server/classes" />
@@ -352,7 +355,7 @@
 			</fileset>
 			<report format="frames" todir="${cactusReports.dir}/cactusReports/Reports" />
 		</junitreport>
-		<jar basedir="${cactusReports.dir}/cactusReports/Reports" destfile="${cactusReports.dir}/cactusreport.zip" />
+		<!-- zip basedir="${cactusReports.dir}/cactusReports/Reports" destfile="${cactusReports.dir}/cactusreport.zip" /-->
 	</target>
 
 	<!-- Start JBoss, call the task & To be used during Devlopment -->
@@ -396,7 +399,7 @@
 	</target>
 	<!-- ================================================================================== -->
 	<target name="nightly.build" depends="clean.all,run.unittests,javadoc">
-
+		<zip basedir="${workArea.dir}/reports" destfile="${workArea.dir}/${TODAY}.zip" />
 		<property name="MailLogger.properties.file" value="build\Mail.properties" />
 	</target>
 	<!-- ================================================================================== -->
@@ -459,7 +462,7 @@
 			</bottom>
 		</javadoc>
 
-		<jar basedir="${javadoc.dir}" destfile="${javadoc.dir}/javadoc.zip" />
+		<!--zip basedir="${javadoc.dir}" destfile="${javadoc.dir}/javadoc.zip" /-->
 	</target>
 	<target name="caB2B.standalone.jar" depends="compile.all" description="Generate the jar of client,common and server classes which will in standalone manner">
 		<mkdir dir="${workArea.dir}/cab2bStandAloneJar" />
