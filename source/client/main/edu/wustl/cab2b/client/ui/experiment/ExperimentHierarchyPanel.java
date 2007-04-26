@@ -90,7 +90,7 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
         expTree.setRolloverEnabled(true);
         expTree.setHighlighters(new HighlighterPipeline());
 
-        ;
+    
         if (expTree.getRowCount() >= 2) {
             expTree.setSelectionRow(1);
             expTree.expandRow(1);
