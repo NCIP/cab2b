@@ -65,6 +65,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
     private void initGUI() {
         messageLabel = new Cab2bLabel("");
+        messageLabel.setForeground(Color.blue);
         messagePanel = new Cab2bPanel();
         messagePanel.setBackground(Color.LIGHT_GRAY);
         messagePanel.add(messageLabel);
