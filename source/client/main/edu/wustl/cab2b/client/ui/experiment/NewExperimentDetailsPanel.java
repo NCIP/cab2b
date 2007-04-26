@@ -39,6 +39,7 @@ import org.jdesktop.swingx.JXTree;
 
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.client.ui.MainSearchPanel;
+import edu.wustl.cab2b.client.ui.SearchNavigationPanel;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -115,9 +116,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 	 */
 	Cab2bButton cancelButton;
 
-	public NewExperimentDetailsPanel()
-	{
-		//initGUI();
+	public NewExperimentDetailsPanel(){		
 		initGUIGBL();
 	}
 
@@ -176,7 +175,6 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 		Cab2bPanel centerPanel = new Cab2bPanel();
 		GridBagLayout gbl = new GridBagLayout();
 		centerPanel.setLayout(gbl);
-
 		GridBagConstraints gbc = new GridBagConstraints();
 
 		gbc.insets = new Insets(5, 5, 5, 5);
@@ -365,10 +363,11 @@ public class NewExperimentDetailsPanel extends Cab2bPanel
 					experiment.getDataListMetadataCollection().add(
 							MainSearchPanel.savedDataListMetadata);
 
-					expBus.addExperiment(experiment);
-					Logger.out.info("Saved Experiment Successfully !!! " + experiment.getId());
-					JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this,
-							"Experiment saved successfully !");
+					expBus.addExperiment(experiment);					
+					SearchNavigationPanel.messageLabel.setText("* Experiment '"+experiment.getName()+"' saved successfully .");
+					updateUI();
+					/*JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this,
+							"Experiment saved successfully !");*/
 				}
 				catch (RemoteException e1)
 				{

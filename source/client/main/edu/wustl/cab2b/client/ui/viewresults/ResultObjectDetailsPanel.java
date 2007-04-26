@@ -31,6 +31,7 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.SaveDatalistPanel;
+import edu.wustl.cab2b.client.ui.SearchNavigationPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -85,18 +86,18 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
     private Cab2bButton m_applyAllButton;
 
     private Cab2bPanel m_sidePanel;
-    
+
     Collection<AssociationInterface> incomingIntraModelAssociationCollection;
-	Collection<IInterModelAssociation> interModelAssociationCollection;
-    
+
+    Collection<IInterModelAssociation> interModelAssociationCollection;
+
     public ResultObjectDetailsPanel(
             DataRow dataRow,
             List<AttributeInterface> attributes,
             ActionListener bcAL,
             ActionListener assoDataAL,
             ViewSearchResultsPanel viewPanel,
-            Vector interIntraAssoClass
-            ) {
+            Vector interIntraAssoClass) {
         /* Set the parent entity interface. Note : This can never be null. */
         this.dataRow = dataRow;
         this.parentEntityInterface = dataRow.getEntityInterface();
@@ -104,10 +105,10 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
         this.viewPanel = viewPanel;
         this.objectDetails = dataRow.getRow();
         this.attributes = attributes;
-        
+
         this.interModelAssociationCollection = (Collection<IInterModelAssociation>) interIntraAssoClass.get(0);
-        this.incomingIntraModelAssociationCollection = (Collection<AssociationInterface>) interIntraAssoClass.get(1); 
-        
+        this.incomingIntraModelAssociationCollection = (Collection<AssociationInterface>) interIntraAssoClass.get(1);
+
         breadCrumbActionListener = bcAL;
         associatedDataActionListener = assoDataAL;
         initData();
@@ -116,8 +117,7 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
     }
 
     public void addDataSummaryPanel() {
-        m_sidePanel.add(ViewSearchResultsSimplePanel.myDataListTitledPanel,
-                        BorderLayout.CENTER);
+        m_sidePanel.add(ViewSearchResultsSimplePanel.myDataListTitledPanel, BorderLayout.CENTER);
     }
 
     private void initData() {
@@ -161,7 +161,9 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
                 MainSearchPanel.getDataList().addDataRows(selectedUserObjects);
 
                 ViewSearchResultsSimplePanel.updateMyDataListPanel();
-                SaveDatalistPanel.isDataListSaved =  false;
+                SaveDatalistPanel.isDataListSaved = false;
+                SearchNavigationPanel.messageLabel.setText(" *Added " + selectedUserObjects.size()
+                        + " elements to data list");
                 updateUI();
             }
         });
@@ -175,8 +177,7 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
                 // Perform apply all action
                 Vector<Object> selectedUserObjects = new Vector<Object>();
                 selectedUserObjects.add(dataRow);
-                ViewSearchResultsSimplePanel.performApplyAllAction(
-                                                                   selectedUserObjects,
+                ViewSearchResultsSimplePanel.performApplyAllAction(selectedUserObjects,
                                                                    (JComponent) detailsTablePanel);
             }
         });
@@ -186,11 +187,10 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
 
         this.add(detailsTablePanel, BorderLayout.CENTER);
 
-        m_sidePanel = new Cab2bPanel(new GridLayout(2,1,5,5));
+        m_sidePanel = new Cab2bPanel(new GridLayout(2, 1, 5, 5));
 
-        
         ViewSearchResultsSimplePanel.initDataListSummaryPanel();
-        
+
         m_sidePanel.add(relatedDataTitledPanel);
         m_sidePanel.add(ViewSearchResultsSimplePanel.myDataListTitledPanel);
         this.add(m_sidePanel, BorderLayout.EAST);
@@ -198,9 +198,8 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
 
     private void initRelatedDataPanel() {
         relatedDataTitledPanel = new Cab2bTitledPanel("Related Data");
-        GradientPaint gp1 = new GradientPaint(new Point2D.Double(.05d, 0),
-                new Color(185, 211, 238), new Point2D.Double(.95d, 0),
-                Color.WHITE);
+        GradientPaint gp1 = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
+                new Point2D.Double(.95d, 0), Color.WHITE);
         relatedDataTitledPanel.setTitlePainter(new BasicGradientPainter(gp1));
         relatedDataTitledPanel.setTitleForeground(Color.BLACK);
         relatedDataPanel = new Cab2bPanel();
@@ -209,63 +208,57 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
 
         /* Get all the incoming intramodel associations. */
         PathFinderBusinessInterface busInt = (PathFinderBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                      "edu.wustl.cab2b.server.ejb.path.PathFinderBean",
-                                                                                      PathFinderHomeInterface.class,
-                                                                                      null);
-        
-		if(incomingIntraModelAssociationCollection != null)
-		{
-			Iterator assoIter = incomingIntraModelAssociationCollection.iterator();
-	         while (assoIter.hasNext()) {
-	        	 /*
-	        	  * Get the Association and from that get the actual associated
-	        	  * class in the form of EntityInterface.
-	        	  */
-	        	 Association deAssociation = (Association) assoIter.next();
-	        	 /* Get the target entity. */
-	        	 EntityInterface associatedEntityInterface = deAssociation.getEntity();
-	        	 
-	        	 /*
-	        	  * Map the DE association to an instance of Intramodel
-	        	  * association.
-	        	  */
-	        	 IIntraModelAssociation intraModelAssociation = (IIntraModelAssociation) QueryObjectFactory.createIntraModelAssociation(deAssociation);
-	        	 relatedDataPanel.add("br",
-		                          addHyperlink(associatedEntityInterface,
-		                                                  intraModelAssociation));
-		      }
-		}
+                                                                                                            "edu.wustl.cab2b.server.ejb.path.PathFinderBean",
+                                                                                                            PathFinderHomeInterface.class,
+                                                                                                            null);
 
-	    /*
-	     * We also must be able to add Intermodel association. Call the Path
-	     * finder code to add the intermodel association.
-	     */
-		
-	    JLabel label = new JLabel(" Inter Model Associations : ");
-	    label.setForeground(Color.red);
-	    relatedDataPanel.add("br", label);
-	    
-	    if(interModelAssociationCollection != null)
-	    {
-	    	Iterator interAssocIttr = interModelAssociationCollection.iterator();
-		    while (interAssocIttr.hasNext()) {
-		    	IInterModelAssociation interModelAssociation = (IInterModelAssociation) interAssocIttr.next();
-		        if (!interModelAssociation.isBidirectional()) {
-		               continue;
-		        }
-		        EntityInterface associatedEntityInterface = interModelAssociation.getTargetEntity();
-		        relatedDataPanel.add("br",
-		        				addHyperlink(associatedEntityInterface,
-		                                                  interModelAssociation));
-		      }
-	    }
-	            
-	    relatedDataPanel.add("br", new Cab2bLabel("       "));
-	    JScrollPane relatedDataPane = new JScrollPane(relatedDataPanel);
-	    relatedDataPane.getViewport().setBackground(Color.WHITE);
-	    relatedDataTitledPanel.add(relatedDataPane);
-	    
-	    relatedDataTitledPanel.setBorder(new CustomizableBorder(new Insets(1,1,1,1),true,true));
+        if (incomingIntraModelAssociationCollection != null) {
+            Iterator assoIter = incomingIntraModelAssociationCollection.iterator();
+            while (assoIter.hasNext()) {
+                /*
+                 * Get the Association and from that get the actual associated
+                 * class in the form of EntityInterface.
+                 */
+                Association deAssociation = (Association) assoIter.next();
+                /* Get the target entity. */
+                EntityInterface associatedEntityInterface = deAssociation.getEntity();
+
+                /*
+                 * Map the DE association to an instance of Intramodel
+                 * association.
+                 */
+                IIntraModelAssociation intraModelAssociation = (IIntraModelAssociation) QueryObjectFactory.createIntraModelAssociation(deAssociation);
+                relatedDataPanel.add("br", addHyperlink(associatedEntityInterface, intraModelAssociation));
+            }
+        }
+
+        /*
+         * We also must be able to add Intermodel association. Call the Path
+         * finder code to add the intermodel association.
+         */
+
+        JLabel label = new JLabel(" Inter Model Associations : ");
+        label.setForeground(Color.red);
+        relatedDataPanel.add("br", label);
+
+        if (interModelAssociationCollection != null) {
+            Iterator interAssocIttr = interModelAssociationCollection.iterator();
+            while (interAssocIttr.hasNext()) {
+                IInterModelAssociation interModelAssociation = (IInterModelAssociation) interAssocIttr.next();
+                if (!interModelAssociation.isBidirectional()) {
+                    continue;
+                }
+                EntityInterface associatedEntityInterface = interModelAssociation.getTargetEntity();
+                relatedDataPanel.add("br", addHyperlink(associatedEntityInterface, interModelAssociation));
+            }
+        }
+
+        relatedDataPanel.add("br", new Cab2bLabel("       "));
+        JScrollPane relatedDataPane = new JScrollPane(relatedDataPanel);
+        relatedDataPane.getViewport().setBackground(Color.WHITE);
+        relatedDataTitledPanel.add(relatedDataPane);
+
+        relatedDataTitledPanel.setBorder(new CustomizableBorder(new Insets(1, 1, 1, 1), true, true));
     }
 
     /*
@@ -273,14 +266,13 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
      * target and source entities for the association, as well as the
      * association itself are remembered by the link
      */
-    private Cab2bHyperlink addHyperlink(EntityInterface targetEntity,
-                                        IAssociation association) {
+    private Cab2bHyperlink addHyperlink(EntityInterface targetEntity, IAssociation association) {
         /* Trim off the assoc class name */
         Cab2bHyperlink hyperlink = new Cab2bHyperlink();
-        
+
         /* Set the hyperlink text */
         hyperlink.setText(edu.wustl.cab2b.common.util.Utility.getDisplayName(targetEntity));
-        
+
         if (association instanceof IIntraModelAssociation) {
             /* Get the target role name for the intramodel association. */
             IIntraModelAssociation intraModelAssociation = (IIntraModelAssociation) (association);
@@ -334,8 +326,7 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
 
         while (attriIntCollecIter.hasNext()) {
             AttributeInterface attrib = (AttributeInterface) attriIntCollecIter.next();
-            if (attrib.getName().equalsIgnoreCase("id")
-                    || attrib.getName().equalsIgnoreCase("identifier")) {
+            if (attrib.getName().equalsIgnoreCase("id") || attrib.getName().equalsIgnoreCase("identifier")) {
                 targetIdentifierData.add(attrib); // attribute
                 targetIdentifierData.add("Equals"); // predicate
 
