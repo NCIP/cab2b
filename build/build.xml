@@ -399,7 +399,6 @@
 	</target>
 	<!-- ================================================================================== -->
 	<target name="nightly.build" depends="clean.all,run.unittests,javadoc">
-		<zip basedir="${workArea.dir}/reports" destfile="${workArea.dir}/${TODAY}.zip" />
 		<property name="MailLogger.properties.file" value="build\Mail.properties" />
 	</target>
 	<!-- ================================================================================== -->
@@ -408,6 +407,7 @@
 		<copy file="build\log.xsl" tofile="${buildReports.dir}\log.xsl" />
 		<copy file="build\index.html" todir="${Reports.dir}" overwrite="true" />
 		<mkdir dir="${Reports.dir}/WEB-INF" />
+		<zip basedir="${workArea.dir}/reports" destfile="${workArea.dir}/${TODAY}.zip" />
 	</target>
 	<!-- ================================================================================== -->
 
