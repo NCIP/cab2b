@@ -25,7 +25,7 @@
 	<property name="javadoc.dir" location="${Reports.dir}/javadoc" />
 
 	<property name="XmlLogger.file" value="${buildReports.dir}\log.xml" />
-	<tstamp prefix="Report-">
+	<tstamp>
 	    <format property="TODAY" pattern="MMMM-dd-yyyy" locale="en"/>
     </tstamp>
 
