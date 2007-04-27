@@ -57,4 +57,18 @@ public class ExperimentGroupOperations extends DefaultBizLogic
 		}
 		return true;
 	}
+
+    /**
+     * @param parentExperimentGroupId
+     * @param experimentGroup
+     * @return
+     * @throws DAOException
+     * @throws BizLogicException
+     * @throws UserNotAuthorizedException
+     */
+    public ExperimentGroup addExperimentGroup(Long parentExperimentGroupId, ExperimentGroup experimentGroup) throws DAOException, BizLogicException, UserNotAuthorizedException {
+        ExperimentGroup parentExperimentGroup =  getExperimentGroup(parentExperimentGroupId);
+        experimentGroup.setParentGroup(parentExperimentGroup);
+        return addExperimentGroup(experimentGroup);
+    }
 }
