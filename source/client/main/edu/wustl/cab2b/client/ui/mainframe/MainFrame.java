@@ -86,7 +86,7 @@ public class MainFrame extends JXFrame {
 
     JSplitPane splitPane;
 
-    public static JXPanel splitPanelPanel;
+    public static JXPanel mainPanel;
 
     public MainFrame() {
         this("");
@@ -126,11 +126,11 @@ public class MainFrame extends JXFrame {
         Dimension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
         splitPane.setDividerLocation(dim.width);
 
-        splitPanelPanel = new Cab2bPanel(new RiverLayout());
-        splitPanelPanel.add("hfill vfill", splitPane);
-        splitPanelPanel.setBorder(new CustomizableBorder(new Insets(10, 0, 6, 10), true, true));
+        mainPanel = new Cab2bPanel(new RiverLayout());
+        mainPanel.add("hfill vfill", splitPane);
+        mainPanel.setBorder(new CustomizableBorder(new Insets(10, 0, 6, 10), true, true));
 
-        this.add(splitPanelPanel, BorderLayout.CENTER);
+        this.add(mainPanel, BorderLayout.CENTER);
 
         statusBar = WindowUtilities.getStatusBar(this);
         JXStatusBar.Constraint c1 = new JXStatusBar.Constraint();
@@ -144,8 +144,9 @@ public class MainFrame extends JXFrame {
 
     }
 
+    /** Method to set experiment home panel */
     public void setOpenExperimentWelcomePanel() {
-        CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.splitPanelPanel) {
+        CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.mainPanel) {
             @Override
             protected void doNonUILogic() throws RuntimeException {
                 openExperimentWelcomePanel = new ExperimentPanel("My Experiments");
@@ -153,13 +154,15 @@ public class MainFrame extends JXFrame {
 
             @Override
             protected void doUIUpdateLogic() throws RuntimeException {
-                MainFrame.this.remove(splitPanelPanel);
+                mainPanel.removeAll();
+                MainFrame.this.remove(mainPanel);
                 MainFrame.this.add(openExperimentWelcomePanel);
             }
         };
         swingWorker.start();
     }
 
+    /** Method to set data search home panel */
     public void setSearchDataWelcomePanel() {
 
         CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
@@ -179,6 +182,7 @@ public class MainFrame extends JXFrame {
         swingWorker.start();
     }
 
+    /** Method to set home panel */
     public void setHomeWelcomePanel() {
 
         CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
@@ -199,19 +203,25 @@ public class MainFrame extends JXFrame {
 
     }
 
+    /** Method to set Welcome panel */
     public void setWelcomePanel() {
         homePanel.setBorder(new CustomizableBorder(new Insets(1, 1, 1, 1), true, true));
         splitPane.setRightComponent(homePanel);
         splitPane.setOneTouchExpandable(true);
         Dimension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
         splitPane.setDividerLocation(dim.width);
+        mainPanel.removeAll();
+        mainPanel.add("hfill vfill", splitPane);
+        mainPanel.setBorder(new CustomizableBorder(new Insets(10, 0, 6, 10), true, true));
+        
         if (openExperimentWelcomePanel != null && openExperimentWelcomePanel.isVisible() == true) {
             Logger.out.info("Removing openExperimentWelcomePanel");
             openExperimentWelcomePanel.removeAll();
-            this.remove(openExperimentWelcomePanel);
-            this.add(splitPanelPanel);
+            this.remove(openExperimentWelcomePanel);   
             this.validate();
         }
+        
+        this.add(mainPanel);
     }
 
     public void setDataForMySearchQueriesPanel(Vector data) {
