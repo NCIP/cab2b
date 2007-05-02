@@ -57,9 +57,7 @@ public class CommonUtilsTest extends TestCase {
     }
 
     public void testSplitStringWithTextQualifier() {
-        ArrayList<String> res = CommonUtils.splitStringWithTextQualifier("\"prat,ibha\", \"fdf\"vishaldhok\"",
-                                                                        '"', ',');
-        System.out.println(res.get(1)); 
+        ArrayList<String> res = CommonUtils.splitStringWithTextQualifier("\"prat,ibha\", \"fdf\"vishaldhok\"",'"', ',');
         assertEquals(3, res.size());
         assertEquals("prat,ibha", res.get(0));
         assertEquals(" fdf", res.get(1));
@@ -70,5 +68,13 @@ public class CommonUtilsTest extends TestCase {
         AttributeInterface attr = DomainObjectFactory.getInstance().createStringAttribute();
         attr.setName(name);
         return attr;
+    }
+    public void testCountCharacterIn() {
+        int count  = CommonUtils.countCharacterIn("abcdefghan",'a');
+        assertEquals(count,2);
+    }
+    public void testCountCharacterInNotPresent() {
+        int count  = CommonUtils.countCharacterIn("abcdefghan",'z');
+        assertEquals(count,0);
     }
 }
