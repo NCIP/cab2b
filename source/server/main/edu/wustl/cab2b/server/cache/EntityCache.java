@@ -126,12 +126,12 @@ public class EntityCache implements IEntityCache, Serializable {
                 continue; //Ignoring entity group of datalist for caching
             }
             for (EntityInterface entity : entityGroup.getEntityCollection()) {
-                idVsEntity.put(entity.getId(), entity);
-                createAssociationCache(entity);
-                createPermissibleValueCache(entity);
+                addEntityToCache(entity);
             }
         }
     }
+    
+    
 
     /**
      * @param entity
@@ -304,5 +304,14 @@ public class EntityCache implements IEntityCache, Serializable {
                             + uniqueStringIdentifier);
         }
         return association;
+    }
+    
+    /**
+     * @see edu.wustl.cab2b.common.entityCache.IEntityCache#addEntity(edu.common.dynamicextensions.domaininterface.EntityInterface)
+     */
+    public void addEntityToCache(EntityInterface entity) {
+        idVsEntity.put(entity.getId(), entity);
+        createAssociationCache(entity);
+        createPermissibleValueCache(entity);        
     }
 }
