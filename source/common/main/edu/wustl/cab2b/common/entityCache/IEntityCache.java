@@ -67,4 +67,12 @@ public interface IEntityCache {
      * fields in the passed entity object.
      */
     public MatchedClass getCategoriesAttributes(Collection<AttributeInterface> attributeCollection);
+    
+    
+    /**
+     * This method adds entity and its other details like associaion and permissible values into the cache.
+     * 
+     * @param entity entity to add
+     */
+    public void addEntityToCache(EntityInterface entity);
 }
