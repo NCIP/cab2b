@@ -4,8 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JScrollPane;
@@ -16,6 +18,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.jdesktop.swingx.JXTree;
 
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
@@ -70,6 +73,7 @@ public class ExperimentStackBox extends Cab2bPanel {
     String columnName[] = null;
 
     Object recordObject[][] = null;
+    Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
 
     public ExperimentStackBox(ExperimentBusinessInterface expBus, Experiment selectedExperiment) {
         m_experimentBusinessInterface = expBus;
@@ -130,7 +134,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 
                 @Override
                 protected void doUIUpdateLogic() throws RuntimeException {
-                    m_experimentDataCategoryGridPanel.refreshTable(columnName, recordObject);
+                    m_experimentDataCategoryGridPanel.refreshTable(columnName, recordObject,attributeMap);
                 }
             };
             swingWorker.start();
@@ -175,6 +179,7 @@ public class ExperimentStackBox extends Cab2bPanel {
             @Override
             protected void doNonUILogic() throws RuntimeException {
                 Logger.out.info("Clicked on datalist");
+                ExperimentDataCategoryGridPanel.clearMap();
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent();
                 if (node == null)
                     return;
@@ -193,7 +198,7 @@ public class ExperimentStackBox extends Cab2bPanel {
             }
 
             protected void doUIUpdateLogic() throws RuntimeException {
-                m_experimentDataCategoryGridPanel.refreshTable(columnName, recordObject);
+                m_experimentDataCategoryGridPanel.refreshTable(columnName, recordObject,attributeMap);
             }
         };
         swingWorker.start();
@@ -222,8 +227,10 @@ public class ExperimentStackBox extends Cab2bPanel {
             columnName = new String[headerList.size()];
             int i = 0;
             while (it.hasNext()) {
-                AbstractAttributeInterface attribute = (AbstractAttributeInterface) it.next();
+                AttributeInterface attribute = (AttributeInterface) it.next();
+                
                 columnName[i++] = CommonUtils.getFormattedString(attribute.getName());
+                attributeMap.put(columnName[i-1],attribute);
                 Logger.out.info("Table Header :" + attribute.getName());
             }
 
