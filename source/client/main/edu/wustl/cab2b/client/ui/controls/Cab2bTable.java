@@ -2,6 +2,7 @@ package edu.wustl.cab2b.client.ui.controls;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseListener;
 import java.util.Vector;
 
 import javax.swing.AbstractButton;
@@ -83,7 +84,7 @@ public class Cab2bTable extends JXTable
 /**
  * ItemListener to listen to header click event
  */
-class HeaderItemListener implements ItemListener 
+class HeaderItemListener implements ItemListener
 {
 	Cab2bDefaultTableModel m_tableModel;
 	public HeaderItemListener(Cab2bDefaultTableModel tableModel)
