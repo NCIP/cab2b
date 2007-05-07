@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import junit.framework.TestCase;
-import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.cab2b.server.util.TestUtil;
 
 /**
  * @author Chandrakant Talele
@@ -20,15 +22,15 @@ public class CommonUtilsTest extends TestCase {
 
     public void testGetIdAttributeIndexFromAttributesWithId() {
         List<AttributeInterface> attributes = new ArrayList<AttributeInterface>();
-        attributes.add(getAttr("name"));
-        attributes.add(getAttr("id"));
+        attributes.add(TestUtil.getAttribute("name"));
+        attributes.add(TestUtil.getAttribute("id"));
         int index = CommonUtils.getIdAttributeIndexFromAttributes(attributes);
         assertEquals(1, index);
     }
 
     public void testGetIdAttributeIndexFromAttributesWithoutId() {
         List<AttributeInterface> attributes = new ArrayList<AttributeInterface>();
-        attributes.add(getAttr("name"));
+        attributes.add(TestUtil.getAttribute("name"));
         int index = CommonUtils.getIdAttributeIndexFromAttributes(attributes);
         assertEquals(-1, index);
     }
@@ -57,24 +59,50 @@ public class CommonUtilsTest extends TestCase {
     }
 
     public void testSplitStringWithTextQualifier() {
-        ArrayList<String> res = CommonUtils.splitStringWithTextQualifier("\"prat,ibha\", \"fdf\"vishaldhok\"",'"', ',');
+        ArrayList<String> res = CommonUtils.splitStringWithTextQualifier("\"prat,ibha\", \"fdf\"vishaldhok\"",
+                                                                         '"', ',');
         assertEquals(3, res.size());
         assertEquals("prat,ibha", res.get(0));
         assertEquals(" fdf", res.get(1));
         assertEquals("\"vishaldhok", res.get(2));
     }
-
-    private AttributeInterface getAttr(String name) {
-        AttributeInterface attr = DomainObjectFactory.getInstance().createStringAttribute();
-        attr.setName(name);
-        return attr;
-    }
     public void testCountCharacterIn() {
-        int count  = CommonUtils.countCharacterIn("abcdefghan",'a');
-        assertEquals(count,2);
+        int count = CommonUtils.countCharacterIn("abcdefgha" + "n", 'a');
+        assertEquals(count, 2);
     }
+
     public void testCountCharacterInNotPresent() {
-        int count  = CommonUtils.countCharacterIn("abcdefghan",'z');
-        assertEquals(count,0);
+        int count = CommonUtils.countCharacterIn("abcdefghan", 'z');
+        assertEquals(count, 0);
+    }
+    public void testRemoveContinuousSpaceCharsAndTrimNoChange() {
+        String str = "someString";
+        String res = CommonUtils.removeContinuousSpaceCharsAndTrim(str);
+        assertEquals(str, res);
+    }
+
+    public void testRemoveContinuousSpaceCharsAndTrim() {
+        String str = "  gene       \t\t     anno       ";
+        String res = CommonUtils.removeContinuousSpaceCharsAndTrim(str);
+        assertEquals("gene anno", res);
+    }
+
+    public void testSearchNodeForNull() {
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
+        Integer userObject = 3;
+        DefaultMutableTreeNode res = CommonUtils.searchNode(rootNode, userObject);
+        assertNull(res);
+    }
+
+    public void testSearchNode() {
+        Integer userObject = new Integer(2);
+        DefaultMutableTreeNode node1 = new DefaultMutableTreeNode();
+        node1.setUserObject(userObject);
+
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
+        rootNode.add(node1);
+        DefaultMutableTreeNode res = CommonUtils.searchNode(rootNode, userObject);
+        assertEquals(node1, res);
+        assertEquals(userObject, res.getUserObject());
     }
 }
