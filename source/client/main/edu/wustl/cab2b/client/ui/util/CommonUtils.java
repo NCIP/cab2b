@@ -417,29 +417,19 @@ public class CommonUtils {
      * @return procssed string with no continuos space characters.
      */
     public static String removeContinuousSpaceCharsAndTrim(String str) {
-        String result = "";
-
-        char[] chars = str.toCharArray();
-
-        char[] charsWithoutContinousSpaceChars = new char[chars.length];
-
-        char character;
+        char[] charsWithoutContinousSpaceChars = new char[str.length()];
         char prevCharacter = 'a';
         int index = 0;
 
-        for (int i = 0; i < chars.length; i++) {
-            character = chars[i];
-            if (!Character.isSpaceChar(character) && !Character.isSpaceChar(prevCharacter)
-                    || (Character.isSpaceChar(character) && !Character.isSpaceChar(prevCharacter))
-                    || (!Character.isSpaceChar(character)) && Character.isSpaceChar(prevCharacter)) {
+        for (char character : str.toCharArray()) {
+            if (!(Character.isWhitespace(character) && Character.isWhitespace(prevCharacter))) {  
                 charsWithoutContinousSpaceChars[index++] = character;
             }
             prevCharacter = character;
         }
 
-        result = new String(charsWithoutContinousSpaceChars);
-        result = result.trim();
-        return result;
+        String result = new String(charsWithoutContinousSpaceChars);
+        return result.trim();
     }
 
     /** 
