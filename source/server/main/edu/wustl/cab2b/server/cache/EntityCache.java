@@ -1,11 +1,3 @@
-/**
- * <p>Title: EntityCache class>
- * <p>Description:	This class is used to cache the Entity and its Attribute objects.</p>
- * Copyright:    Copyright (c) year
- * Company: Washington University, School of Medicine, St. Louis.
- * @author Gautam Shetty
- * @version 1.00
- */
 package edu.wustl.cab2b.server.cache;
 
 import java.io.Serializable;
