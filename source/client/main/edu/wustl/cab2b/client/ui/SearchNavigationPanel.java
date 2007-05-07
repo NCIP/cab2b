@@ -15,12 +15,16 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.experiment.NewExperimentDetailsPanel;
+import edu.wustl.cab2b.client.ui.query.TransferCategoryResult;
+import edu.wustl.cab2b.client.ui.treetable.B2BTreeNode;
+import edu.wustl.cab2b.client.ui.treetable.JTreeTable;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.viewresults.DataListPanel;
 import edu.wustl.cab2b.client.ui.viewresults.ViewSearchResultsPanel;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.result.CategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.IClassRecords;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.common.util.logger.Logger;
@@ -55,6 +59,14 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     private Cab2bPanel messagePanel;
 
     public static Cab2bLabel messageLabel;
+
+    IQueryResult queryResults;
+
+    B2BTreeNode b2bTreeNode;
+
+    Cab2bPanel treePanel;
+
+    JTreeTable myTestTable;
 
     SearchNavigationPanel(MainSearchPanel panel) {
         this.m_mainSearchPanel = panel;
@@ -117,6 +129,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
             SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(m_mainSearchPanel);
             saveDataListPanel.showInDialog();
+            Logger.out.info("After showInDialog");
+
         } else if (strActionCommand.equals("Add to Experiment")) {
             Logger.out.info("Clicked on Add to Experiment button");
             //check if Data List is saved
@@ -175,7 +189,6 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
             } else if (m_mainSearchPanel.getCenterPanel().getSelectedCardIndex() == 2) {
                 CustomSwingWorker swingWorker = new CustomSwingWorker(this.m_mainSearchPanel) {
-                    IQueryResult queryResults;
 
                     @Override
                     protected void doNonUILogic() {
@@ -185,6 +198,12 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                         queryResults = CommonUtils.executeQuery(
                                                                 (ICab2bQuery) m_mainSearchPanel.getQueryObject().getQuery(),
                                                                 m_mainSearchPanel);
+
+                        if (queryResults.isCategoryResult()) {
+                            TransferCategoryResult transferCategoryResult = new TransferCategoryResult(
+                                    (CategoryResult) queryResults);
+                            b2bTreeNode = transferCategoryResult.getB2BRootTreeNode();
+                        }
 
                     }
 
@@ -198,7 +217,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
                         if (queryResults != null) {
 
-                            Logger.out.info("Inside doUIUpdateLogic ");
+                            Logger.out.info("Inside doUIUpdateLogic");
 
                             /*
                              * Based on the output selected i.e. class or category, cast
@@ -239,6 +258,10 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                                         showCard(true);
                                     }
                                 }
+                            } else //if the results are categoryResult
+                            {
+                                //displaying the tree node
+                                b2bTreeNode.showInDialog();
                             }
                         } else {
                             srhButton.setVisible(true);
@@ -332,7 +355,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
     /*
      * The method sets the focus appropriately for the top panel. Also, update
-     * the indexes. TODO: Please note that the setting of the focus, and the
+     * the indexes. 
      * corresponding updated can be abstracted into the top panel class itself
      */
     public void showCard(boolean blnNext) {
