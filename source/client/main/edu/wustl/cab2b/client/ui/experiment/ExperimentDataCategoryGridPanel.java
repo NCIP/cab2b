@@ -33,48 +33,50 @@ import edu.wustl.cab2b.client.ui.filter.Cab2bFilterPopup;
 import edu.wustl.cab2b.client.ui.filter.PatternPopup;
 import edu.wustl.cab2b.client.ui.filter.RangeFilter;
 import edu.wustl.cab2b.client.ui.filter.RangePopup;
+import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.common.querysuite.queryobject.DataType;
+import edu.wustl.common.util.logger.Logger;
 
-/*
- * Class used to display selected Category records
+/**
+ * This class displays the experiment table. Also provides filtering tool for
+ * the class
+ * 
+ * @author hrishikesh_rajpathak
+ * @author deepak_shingan
+ * 
  */
-
 public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
+	private JTabbedPane tabComponent;
+
 	/**
-	 * @param args
-	 */
-
-	/* Tab component */
-	JTabbedPane tabComponent;
-
-	/*
 	 * Panel to display experiment data when data category node is selected
 	 * First tab panel on tab Component
 	 */
-	Cab2bPanel experimentDataPanel;
+	private Cab2bPanel experimentDataPanel;
 
-	/*
+	/**
 	 * Panel to display analysis performed on experiment Second tab panel on tab
 	 * component
 	 */
-	Cab2bPanel analysisDataPanel;
+	private Cab2bPanel analysisDataPanel;
 
-	/* Button to save data category */
-	Cab2bButton saveDataCategoryButton;
+	/** Button to save data category */
+	private Cab2bButton saveDataCategoryButton;
 
-	Cab2bButton prevButton;
+	private Cab2bButton prevButton;
 
-	/*
+	/**
 	 * Table to display records on Experiment Data panels, when user selects any
 	 * data category node
 	 */
-	ExperimentTableModel table;
+	private ExperimentTableModel table;
 
-	Vector m_columnVector = new Vector();
+	private Vector tableColumnVector = new Vector();
 
-	Vector m_dataRecordVector = new Vector();
+	private Vector tableDataRecordVector = new Vector();
 
-	JScrollPane theScrollPane = new JScrollPane();
+	private JScrollPane theScrollPane = new JScrollPane();
 
 	private static Map<String, CaB2BFilterInterface> filterMap = new HashMap<String, CaB2BFilterInterface>();
 
@@ -83,24 +85,26 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	}
 
 	/**
-	 * @param columnName
-	 * @param filter
+	 * Adding a filter to the filter map
 	 */
 	public static void addFilter(String columnName, CaB2BFilterInterface filter) {
 		filterMap.put(columnName, filter);
 	}
-	
-	public static void clearMap(){
-	filterMap.clear();		
+
+	public static void clearMap() {
+		filterMap.clear();
 	}
 
 	public ExperimentDataCategoryGridPanel(Vector columnVector,
 			Vector dataRecordVector) {
-		m_columnVector = columnVector;
-		m_dataRecordVector = dataRecordVector;
+		tableColumnVector = columnVector;
+		tableDataRecordVector = dataRecordVector;
 		initGUI();
 	}
 
+	/**
+	 * Building/refreshing the table
+	 */
 	public void refreshTable(Object columnVector[],
 			Object[][] dataRecordVector,
 			Map<String, AttributeInterface> attributeMap) {
@@ -131,6 +135,9 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		this.updateUI();
 	}
 
+	/**
+	 * Initializing the GUI. Building the table initially.
+	 */
 	public void initGUI() {
 		this.setLayout(new BorderLayout());
 		tabComponent = new JTabbedPane();
@@ -139,8 +146,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		experimentDataPanel.setBorder(null);
 		analysisDataPanel = new Cab2bPanel();
 
-		table = new ExperimentTableModel(false, m_dataRecordVector,
-				m_columnVector);
+		table = new ExperimentTableModel(false, tableDataRecordVector,
+				tableColumnVector);
 		MouseListener mouseListener = new myMouseListener();
 		// add the listener specifically to the header
 		table.addMouseListener(mouseListener);
@@ -169,7 +176,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		this.add(bottomPanel, BorderLayout.SOUTH);
 	}
 
-	/*
+	/**
 	 * Action listener for the header click for filteration purpose.
 	 */
 	class myMouseListener extends MouseAdapter {
@@ -186,9 +193,11 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 				int columnIndex = ((JXTableHeader) e.getComponent())
 						.columnAtPoint(e.getPoint());
 
-				String dataType = table.getColumnAttribute(
-						table.getColumnName(columnIndex)).getDataType();
-
+				DataType dataType = Utility.getDataType(table
+						.getColumnAttribute(table.getColumnName(columnIndex))
+						.getAttributeTypeInformation());
+				Logger.out.info(dataType);
+				String dataTypeString = dataType.toString();
 				String columnName = table.getColumnName(columnIndex);
 				CaB2BFilterInterface oldFilter = null;
 				if (filterMap.containsKey(columnName)) {
@@ -198,25 +207,27 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 				Cab2bFilterPopup filterPopup = null;
 
 				// If the clicked column is of type String.
-				if (dataType.equals("string")) {
+				if (dataTypeString.equals("String")) {
 
 					filterPopup = new PatternPopup(
 							(CaB2BPatternFilter) oldFilter, columnName,
 							columnIndex);
 					// If the clicked column is of type int/long
-				} else if (dataType.equals("long")) {
+				} else if (dataTypeString.equals("Long")) {
 
 					filterPopup = new RangePopup((RangeFilter) oldFilter,
 							columnName, columnIndex);
 				}
-				
+
 				filterPopup.showInDialog();
 				applyFilter();
 			}
 
 		}
 
-		// Applying filter according to the the values in the map
+		/**
+		 * Applying filter according to the the values in the map
+		 */
 		public void applyFilter() {
 			int len = filterMap.size();
 			Filter[] filters = new Filter[len];

@@ -1,11 +1,3 @@
-/**
- * <p>Title: RangePopup Class>
- * Copyright:    Copyright (c) year
- * Company: Washington University, School of Medicine, St. Louis.
- * @author Hrishikesh Rajpathak
- * @version 1.0
- */
-
 package edu.wustl.cab2b.client.ui.filter;
 
 import java.awt.Dimension;
@@ -17,8 +9,10 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 /**
  * This class generates a pop-up of Range filter type when clicked on a header
  * of a table that displays selected Category records
+ * 
+ * @author hrishikesh_rajpathak
+ * 
  */
-
 public class RangePopup extends Cab2bFilterPopup {
 
 	private Cab2bLabel minLable, maxLable;
@@ -57,6 +51,7 @@ public class RangePopup extends Cab2bFilterPopup {
 
 		this.setPreferredSize(new Dimension(250, 250));
 	}
+
 	/**
 	 * This method creates the filter taking its input from the text filed.
 	 */

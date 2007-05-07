@@ -1,11 +1,3 @@
-/**
- * <p>Title: PatternPopup Class>
- * Copyright:    Copyright (c) year
- * Company: Washington University, School of Medicine, St. Louis.
- * @author Hrishikesh Rajpathak
- * @version 1.0
- */
-
 package edu.wustl.cab2b.client.ui.filter;
 
 import java.awt.Dimension;
@@ -20,8 +12,10 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 /**
  * This class generates a pop-up of Pattern filter type when clicked on a header
  * of a table that displays selected Category records
+ * 
+ * @author hrishikesh_rajpathak
+ *
  */
-
 public class PatternPopup extends Cab2bFilterPopup {
 
 	private Cab2bLabel myLable1;

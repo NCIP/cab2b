@@ -1,16 +1,12 @@
-/**
- * <p>Title: RangeFilter Class>
- * Copyright:    Copyright (c) year
- * Company: Washington University, School of Medicine, St. Louis.
- * @author Hrishikesh Rajpathak
- * @version 1.0
- */
 package edu.wustl.cab2b.client.ui.filter;
 
 /**
  * This class implements a filter of range type that filters out all the rows
  * that are out of bound of the specified minimum and maximum range values by
  * user.
+ * 
+ * @author hrishikesh_rajpathak
+ * 
  */
 public class RangeFilter extends CaB2BFilter {
 	int minRange;

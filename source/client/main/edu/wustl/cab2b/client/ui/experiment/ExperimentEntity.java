@@ -16,7 +16,8 @@ public class ExperimentEntity
 	}
 	public String toString()
 	{
-		String displyaName = edu.wustl.cab2b.common.util.Utility.getTaggedValue(m_entity.getTaggedValueCollection(),edu.wustl.cab2b.common.util.Constants.ENTITY_DISPLAY_NAME).getValue();			 
+	//String displyaName = edu.wustl.cab2b.common.util.Utility.getTaggedValue(m_entity.getTaggedValueCollection(),edu.wustl.cab2b.common.util.Constants.ENTITY_DISPLAY_NAME).getValue();			 
+		String displyaName ="abc";
 		return displyaName;
 		
 	}

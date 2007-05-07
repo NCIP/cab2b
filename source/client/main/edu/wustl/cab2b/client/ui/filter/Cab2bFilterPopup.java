@@ -1,12 +1,5 @@
 package edu.wustl.cab2b.client.ui.filter;
 
-/**
- * <p>Title: Cab2bFilterPopup Class>
- * Copyright:    Copyright (c) year
- * Company: Washington University, School of Medicine, St. Louis.
- * @author Hrishikesh Rajpathak
- * @version 1.0
- */
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,7 +10,14 @@ import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
+import edu.wustl.cab2b.client.ui.experiment.ExperimentDataCategoryGridPanel;
 
+/**
+ * Class to implement the filter pop-up
+ * 
+ * @author hrishikesh_rajpathak
+ * 
+ */
 public abstract class Cab2bFilterPopup extends Cab2bPanel {
 
 	protected JDialog dialog;
@@ -28,6 +28,12 @@ public abstract class Cab2bFilterPopup extends Cab2bPanel {
 
 	protected int columnIndex;
 
+	/**
+	 * Constructor to generate pop-up
+	 * 
+	 * @param colName
+	 * @param colIndex
+	 */
 	public Cab2bFilterPopup(String colName, int colIndex) {
 		this.columnName = colName;
 		this.columnIndex = colIndex;
@@ -45,14 +51,20 @@ public abstract class Cab2bFilterPopup extends Cab2bPanel {
 
 				CaB2BFilterInterface filter = okActionPerformed(e);
 
-				edu.wustl.cab2b.client.ui.experiment.ExperimentDataCategoryGridPanel
-						.addFilter(columnName, filter);
+				ExperimentDataCategoryGridPanel.addFilter(columnName, filter);
 				dialog.dispose();
 			}
 
 		});
 	}
 
+	/**
+	 * Abstract method to be implemented by individual pop-ups on "OK" buttom
+	 * click.
+	 * 
+	 * @param e
+	 * @return
+	 */
 	protected abstract CaB2BFilterInterface okActionPerformed(ActionEvent e);
 
 	public JDialog showInDialog() {
