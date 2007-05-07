@@ -4,7 +4,6 @@ import static edu.wustl.cab2b.common.util.Constants.CATEGORY_ENTITY_GROUP_NAME;
 import static edu.wustl.cab2b.common.util.Constants.TYPE_CATEGORY;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,30 +11,16 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
-import edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.common.dynamicextensions.domaininterface.BooleanValueInterface;
-import edu.common.dynamicextensions.domaininterface.DataElementInterface;
-import edu.common.dynamicextensions.domaininterface.DateValueInterface;
-import edu.common.dynamicextensions.domaininterface.DoubleValueInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.common.dynamicextensions.domaininterface.FloatValueInterface;
-import edu.common.dynamicextensions.domaininterface.IntegerValueInterface;
-import edu.common.dynamicextensions.domaininterface.LongValueInterface;
-import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
 import edu.common.dynamicextensions.domaininterface.RoleInterface;
-import edu.common.dynamicextensions.domaininterface.SemanticPropertyInterface;
-import edu.common.dynamicextensions.domaininterface.StringValueInterface;
-import edu.common.dynamicextensions.domaininterface.UserDefinedDEInterface;
 import edu.common.dynamicextensions.util.global.Constants;
-import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
-import edu.wustl.common.querysuite.queryobject.DataType;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -139,7 +124,7 @@ public class PersistCategory {
             categorialAttributeSet.add(categorialAttribute);
 
             nameVsCategorialAttr.put(name, categorialAttribute);
-            categoryEntity.addAttribute(getCopy(originalAttr, name));
+            categoryEntity.addAttribute(DynamicExtensionUtility.getAttributeCopy(originalAttr, name));
         }
 
         categorialClass.setCategorialAttributeCollection(categorialAttributeSet);
@@ -165,139 +150,8 @@ public class PersistCategory {
         return entityGroup;
     }
 
-    /**
-     * @param source
-     * @param name
-     * @return
-     */
-    private AttributeInterface getCopy(AttributeInterface source, String name) {
-        DomainObjectFactory domainObjectFactory = DomainObjectFactory.getInstance();
-        AttributeInterface attribute = null;
-        DataType type = Utility.getDataType(source.getAttributeTypeInformation());
-        DataElementInterface dataEle = source.getAttributeTypeInformation().getDataElement();
-        switch (type) {
-            case String:
-                attribute = domainObjectFactory.createStringAttribute();
-                if (dataEle instanceof UserDefinedDEInterface) {
-                    UserDefinedDEInterface userDefinedDE = domainObjectFactory.createUserDefinedDE();
-                    for (PermissibleValueInterface val : ((UserDefinedDEInterface) dataEle).getPermissibleValueCollection()) {
-                        StringValueInterface value = domainObjectFactory.createStringValue();
-                        value.setValue((String) val.getValueAsObject());
-                        userDefinedDE.addPermissibleValue(value);
-                    }
-                    attribute.getAttributeTypeInformation().setDataElement(
-                                                                           userDefinedDE);
-                }
-                break;
-
-            case Double:
-                attribute = domainObjectFactory.createDoubleAttribute();
-                if (dataEle instanceof UserDefinedDEInterface) {
-                    UserDefinedDEInterface userDefinedDE = domainObjectFactory.createUserDefinedDE();
-                    for (PermissibleValueInterface val : ((UserDefinedDEInterface) dataEle).getPermissibleValueCollection()) {
-                        DoubleValueInterface value = domainObjectFactory.createDoubleValue();
-                        value.setValue((Double) val.getValueAsObject());
-                        userDefinedDE.addPermissibleValue(value);
-                    }
-                    attribute.getAttributeTypeInformation().setDataElement(
-                                                                           userDefinedDE);
-                }
-                break;
-
-            case Integer:
-                attribute = domainObjectFactory.createIntegerAttribute();
-                if (dataEle instanceof UserDefinedDEInterface) {
-                    UserDefinedDEInterface userDefinedDE = domainObjectFactory.createUserDefinedDE();
-                    for (PermissibleValueInterface val : ((UserDefinedDEInterface) dataEle).getPermissibleValueCollection()) {
-                        IntegerValueInterface value = domainObjectFactory.createIntegerValue();
-                        value.setValue((Integer) val.getValueAsObject());
-                        userDefinedDE.addPermissibleValue(value);
-                    }
-                    attribute.getAttributeTypeInformation().setDataElement(
-                                                                           userDefinedDE);
-                }
-                break;
-
-            case Date:
-                attribute = domainObjectFactory.createDateAttribute();
-                if (dataEle instanceof UserDefinedDEInterface) {
-                    UserDefinedDEInterface userDefinedDE = domainObjectFactory.createUserDefinedDE();
-                    for (PermissibleValueInterface val : ((UserDefinedDEInterface) dataEle).getPermissibleValueCollection()) {
-                        DateValueInterface value = domainObjectFactory.createDateValue();
-                        value.setValue((Date) val.getValueAsObject());
-                        userDefinedDE.addPermissibleValue(value);
-                    }
-                    attribute.getAttributeTypeInformation().setDataElement(
-                                                                           userDefinedDE);
-                }
-                break;
-
-            case Float:
-                attribute = domainObjectFactory.createFloatAttribute();
-                if (dataEle instanceof UserDefinedDEInterface) {
-                    UserDefinedDEInterface userDefinedDE = domainObjectFactory.createUserDefinedDE();
-                    for (PermissibleValueInterface val : ((UserDefinedDEInterface) dataEle).getPermissibleValueCollection()) {
-                        FloatValueInterface value = domainObjectFactory.createFloatValue();
-                        value.setValue((Float) val.getValueAsObject());
-                        userDefinedDE.addPermissibleValue(value);
-                    }
-                    attribute.getAttributeTypeInformation().setDataElement(
-                                                                           userDefinedDE);
-                }
-                break;
-
-            case Boolean:
-                attribute = domainObjectFactory.createBooleanAttribute();
-                if (dataEle instanceof UserDefinedDEInterface) {
-                    UserDefinedDEInterface userDefinedDE = domainObjectFactory.createUserDefinedDE();
-                    for (PermissibleValueInterface val : ((UserDefinedDEInterface) dataEle).getPermissibleValueCollection()) {
-                        BooleanValueInterface value = domainObjectFactory.createBooleanValue();
-                        value.setValue((Boolean) val.getValueAsObject());
-                        userDefinedDE.addPermissibleValue(value);
-                    }
-                    attribute.getAttributeTypeInformation().setDataElement(
-                                                                           userDefinedDE);
-                }
-                break;
-
-            case Long:
-                attribute = domainObjectFactory.createLongAttribute();
-                if (dataEle instanceof UserDefinedDEInterface) {
-                    UserDefinedDEInterface userDefinedDE = domainObjectFactory.createUserDefinedDE();
-                    for (PermissibleValueInterface val : ((UserDefinedDEInterface) dataEle).getPermissibleValueCollection()) {
-                        LongValueInterface value = domainObjectFactory.createLongValue();
-                        value.setValue((Long) val.getValueAsObject());
-                        userDefinedDE.addPermissibleValue(value);
-                    }
-                    attribute.getAttributeTypeInformation().setDataElement(
-                                                                           userDefinedDE);
-                }
-                break;
-
-        }
-        attribute.setName(name);
-        attribute.setDescription(source.getDescription());
-        copySemanticProperties(source, attribute);
-        return attribute;
-    }
-
-    /**
-     * Stores the SemanticMetadata to the owner which can be class or attribute
-     * @param owner
-     *            EntityInterface OR AttributeInterface
-     * @param semanticMetadataArr
-     *            Semantic Metadata array to set.
-     */
-    void copySemanticProperties(AbstractMetadataInterface copyFrom,
-                                AbstractMetadataInterface copyTo) {
-        DomainObjectFactory domainObjectFactory = DomainObjectFactory.getInstance();
-        for (SemanticPropertyInterface p : copyFrom.getSemanticPropertyCollection()) {
-            SemanticPropertyInterface semanticProp = domainObjectFactory.createSemanticProperty();
-            semanticProp.setTerm(p.getTerm());
-            semanticProp.setConceptCode(p.getConceptCode());
-            copyTo.addSemanticProperty(semanticProp);
-        }
-    }
+  
+   
 
     /**
      * @return Returns the categoryEntity.
