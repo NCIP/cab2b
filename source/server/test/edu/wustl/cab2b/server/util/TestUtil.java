@@ -11,10 +11,9 @@ import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.common.dynamicextensions.util.global.Constants;
 
 public class TestUtil {
+    private static DomainObjectFactory deFactory = DomainObjectFactory.getInstance();
     public static EntityInterface getEntity(String entityName, String attrName, EntityInterface parent) {
-        DomainObjectFactory deFactory = DomainObjectFactory.getInstance();
-        AttributeInterface a = deFactory.createStringAttribute();
-        a.setName(attrName);
+        AttributeInterface a = getAttribute(attrName);
 
         EntityInterface e1 = deFactory.createEntity();
         e1.setName(entityName);
@@ -27,10 +26,7 @@ public class TestUtil {
     }
 
     public static EntityInterface getEntity(String entityName, String attrName) {
-        DomainObjectFactory deFactory = DomainObjectFactory.getInstance();
-        AttributeInterface a = deFactory.createStringAttribute();
-        a.setName(attrName);
-
+        AttributeInterface a = getAttribute(attrName);
         EntityInterface e1 = getEntity(entityName);
         e1.addAttribute(a);
         a.setEntity(e1);
@@ -38,14 +34,13 @@ public class TestUtil {
     }
 
     public static EntityInterface getEntity(String entityName) {
-        DomainObjectFactory deFactory = DomainObjectFactory.getInstance();
         EntityInterface e1 = deFactory.createEntity();
         e1.setName(entityName);
         return e1;
     }
 
     public static void markInherited(AbstractMetadataInterface owner) {
-        TaggedValueInterface taggedValue = DomainObjectFactory.getInstance().createTaggedValue();
+        TaggedValueInterface taggedValue = deFactory.createTaggedValue();
         taggedValue.setKey(TYPE_DERIVED);
         taggedValue.setValue(TYPE_DERIVED);
         owner.addTaggedValue(taggedValue);
@@ -55,7 +50,7 @@ public class TestUtil {
         EntityInterface src = getEntity(srcEntityName);
         EntityInterface target = getEntity(targetEntityName);
 
-        AssociationInterface association = DomainObjectFactory.getInstance().createAssociation();
+        AssociationInterface association = deFactory.createAssociation();
         association.setName("AssociationName_" + src.getAssociationCollection().size() + 1);
         association.setEntity(src);
         src.addAssociation(association);
@@ -67,11 +62,16 @@ public class TestUtil {
     }
 
     private static RoleInterface getRole(String roleName) {
-        RoleInterface role = DomainObjectFactory.getInstance().createRole();
+        RoleInterface role = deFactory.createRole();
         role.setAssociationsType(Constants.AssociationType.ASSOCIATION);
         role.setName(roleName);
         role.setMaximumCardinality(Constants.Cardinality.MANY);
         role.setMinimumCardinality(Constants.Cardinality.MANY);
         return role;
+    }
+    public static AttributeInterface getAttribute(String name) {
+        AttributeInterface a = deFactory.createStringAttribute();
+        a.setName(name);
+        return a;
     }
 }
