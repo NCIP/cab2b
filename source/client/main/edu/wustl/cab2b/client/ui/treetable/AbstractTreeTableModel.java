@@ -3,14 +3,7 @@ package edu.wustl.cab2b.client.ui.treetable;
 import javax.swing.tree.*;
 import javax.swing.event.*;
  
-/**
- * An abstract implementation of the TreeTableModel interface, handling 
- * the list of listeners. 
- *
- * @version %I% %G%
- *
- * @author Philip Milne
- */
+
 
 public abstract class AbstractTreeTableModel implements TreeTableModel 
 {
