@@ -15,7 +15,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.experiment.NewExperimentDetailsPanel;
-import edu.wustl.cab2b.client.ui.query.TransferCategoryResult;
+import edu.wustl.cab2b.client.ui.query.TransformCategoryResult;
 import edu.wustl.cab2b.client.ui.treetable.B2BTreeNode;
 import edu.wustl.cab2b.client.ui.treetable.JTreeTable;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
@@ -200,7 +200,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                                                                 m_mainSearchPanel);
 
                         if (queryResults.isCategoryResult()) {
-                            TransferCategoryResult transferCategoryResult = new TransferCategoryResult(
+                            TransformCategoryResult transferCategoryResult = new TransformCategoryResult(
                                     (CategoryResult) queryResults);
                             b2bTreeNode = transferCategoryResult.getB2BRootTreeNode();
                         }
