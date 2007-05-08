@@ -68,8 +68,23 @@ public abstract class Cab2bFilterPopup extends Cab2bPanel {
 	protected abstract CaB2BFilterInterface okActionPerformed(ActionEvent e);
 
 	public JDialog showInDialog() {
+		Dimension dimension=null;
+		if(this instanceof PatternPopup)
+		{
+			dimension=new Dimension(250,100);
+		}
+		else
+			if(this instanceof RangePopup)
+			{
+				dimension=new Dimension(250,125);
+			}
+			else
+				if(this instanceof EnumeratedFilterPopUp)
+				{
+					dimension=new Dimension(250,175);
+				}
 		dialog = WindowUtilities.setInDialog(NewWelcomePanel.mainFrame, this,
-				"Set Filter", new Dimension(250, 150), true, false);
+				"Set Filter", dimension, true, false);
 		dialog.setVisible(true);
 		return dialog;
 	}
