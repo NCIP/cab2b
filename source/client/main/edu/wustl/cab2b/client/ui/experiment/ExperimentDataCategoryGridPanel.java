@@ -13,6 +13,8 @@ import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -25,17 +27,18 @@ import org.jdesktop.swingx.decorator.Filter;
 import org.jdesktop.swingx.decorator.FilterPipeline;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.filter.CaB2BFilterInterface;
 import edu.wustl.cab2b.client.ui.filter.CaB2BPatternFilter;
 import edu.wustl.cab2b.client.ui.filter.Cab2bFilterPopup;
+import edu.wustl.cab2b.client.ui.filter.EnumeratedFilterPopUp;
 import edu.wustl.cab2b.client.ui.filter.PatternPopup;
 import edu.wustl.cab2b.client.ui.filter.RangeFilter;
 import edu.wustl.cab2b.client.ui.filter.RangePopup;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.DataType;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * This class displays the experiment table. Also provides filtering tool for
@@ -78,6 +81,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
 	private JScrollPane theScrollPane = new JScrollPane();
 
+	public static ArrayList<String> values = new ArrayList<String>();
+
 	private static Map<String, CaB2BFilterInterface> filterMap = new HashMap<String, CaB2BFilterInterface>();
 
 	public ExperimentDataCategoryGridPanel() {
@@ -95,8 +100,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		filterMap.clear();
 	}
 
-	public ExperimentDataCategoryGridPanel(Vector columnVector,
-			Vector dataRecordVector) {
+	public ExperimentDataCategoryGridPanel(Vector columnVector, Vector dataRecordVector) {
 		tableColumnVector = columnVector;
 		tableDataRecordVector = dataRecordVector;
 		initGUI();
@@ -105,19 +109,16 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	/**
 	 * Building/refreshing the table
 	 */
-	public void refreshTable(Object columnVector[],
-			Object[][] dataRecordVector,
+	public void refreshTable(Object columnVector[], Object[][] dataRecordVector,
 			Map<String, AttributeInterface> attributeMap) {
 		this.removeAll();
 		experimentDataPanel.removeAll();
-		table = new ExperimentTableModel(false, dataRecordVector, columnVector,
-				attributeMap);
+		table = new ExperimentTableModel(false, dataRecordVector, columnVector, attributeMap);
 		MouseListener mouseListener = new myMouseListener();
 		// add the listener specifically to the header
 		table.addMouseListener(mouseListener);
 		table.getTableHeader().addMouseListener(mouseListener);
-		theScrollPane.getViewport().add(table,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+		theScrollPane.getViewport().add(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		experimentDataPanel.add("hfill vfill", theScrollPane);
 
@@ -146,16 +147,14 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		experimentDataPanel.setBorder(null);
 		analysisDataPanel = new Cab2bPanel();
 
-		table = new ExperimentTableModel(false, tableDataRecordVector,
-				tableColumnVector);
+		table = new ExperimentTableModel(false, tableDataRecordVector, tableColumnVector);
 		MouseListener mouseListener = new myMouseListener();
 		// add the listener specifically to the header
 		table.addMouseListener(mouseListener);
 		table.getTableHeader().addMouseListener(mouseListener);
 
 		/* Adding scrollpane */
-		theScrollPane.getViewport().add(table,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+		theScrollPane.getViewport().add(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		experimentDataPanel.add("hfill vfill", theScrollPane);
 
@@ -190,35 +189,35 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
 			if (obj instanceof JXTableHeader) {
 
-				int columnIndex = ((JXTableHeader) e.getComponent())
-						.columnAtPoint(e.getPoint());
-
-				DataType dataType = Utility.getDataType(table
-						.getColumnAttribute(table.getColumnName(columnIndex))
-						.getAttributeTypeInformation());
-				Logger.out.info(dataType);
-				String dataTypeString = dataType.toString();
+				int columnIndex = ((JXTableHeader) e.getComponent()).columnAtPoint(e.getPoint());
+				Cab2bFilterPopup filterPopup = null;
 				String columnName = table.getColumnName(columnIndex);
 				CaB2BFilterInterface oldFilter = null;
 				if (filterMap.containsKey(columnName)) {
 					oldFilter = filterMap.get(columnName);
 				}
+				AttributeInterface attribute = table.getColumnAttribute(columnName);
+				if (Utility.isEnumerated(attribute)) {
+					Collection<PermissibleValueInterface> permissibleValueCollection = Utility
+							.getPermissibleValues(attribute);
+					filterPopup = new EnumeratedFilterPopUp(columnName, columnIndex,
+							permissibleValueCollection, (CaB2BPatternFilter) oldFilter);
+				} else {
+					DataType dataType = Utility
+							.getDataType(attribute.getAttributeTypeInformation());
+					// If the clicked column is of type String.
+					if (DataType.String == dataType) {
 
-				Cab2bFilterPopup filterPopup = null;
+						filterPopup = new PatternPopup((CaB2BPatternFilter) oldFilter, columnName,
+								columnIndex);
+						// If the clicked column is of type int/long
+					} else if (DataType.Long == dataType || DataType.Integer == dataType
+							|| DataType.Double == dataType || DataType.Float == dataType) {
+						filterPopup = new RangePopup((RangeFilter) oldFilter, columnName,
+								columnIndex);
+					}
 
-				// If the clicked column is of type String.
-				if (dataTypeString.equals("String")) {
-
-					filterPopup = new PatternPopup(
-							(CaB2BPatternFilter) oldFilter, columnName,
-							columnIndex);
-					// If the clicked column is of type int/long
-				} else if (dataTypeString.equals("Long")) {
-
-					filterPopup = new RangePopup((RangeFilter) oldFilter,
-							columnName, columnIndex);
 				}
-
 				filterPopup.showInDialog();
 				applyFilter();
 			}
