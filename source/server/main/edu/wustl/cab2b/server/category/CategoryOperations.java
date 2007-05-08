@@ -143,15 +143,14 @@ public class CategoryOperations extends DefaultBizLogic {
 
     private void postRetrievalProcess(Category category, EntityCache cache,Connection con) {
         long deEntityId = category.getDeEntityId();
-        EntityInterface categoryEntity = cache.getEntityById(deEntityId);
-        category.setCategoryEntity(categoryEntity);
-        processCategorialClass(categoryEntity, category.getRootClass(),cache, con);
+        category.setCategoryEntity(cache.getEntityById(deEntityId));
+        processCategorialClass(category.getRootClass(),cache, con);
         for (Category subCategory : category.getSubCategories()) {
             postRetrievalProcess(subCategory,cache, con);
         }
     }
 
-    private void processCategorialClass(EntityInterface categoryEntity, CategorialClass categorialClass,EntityCache cache, Connection con) {
+    private void processCategorialClass(CategorialClass categorialClass,EntityCache cache, Connection con) {
         Long pathId = categorialClass.getPathFromParentId();
         if (pathId != null && pathId.intValue() != -1) {
             // this is a NON - root class
@@ -161,8 +160,8 @@ public class CategoryOperations extends DefaultBizLogic {
         long deEntityId = categorialClass.getDeEntityId();
         EntityInterface entity = cache.getEntityById(deEntityId);
         categorialClass.setCategorialClassEntity(entity);
-        
-//        EntityInterface categoryEntity = categorialClass.getCategory().getCategoryEntity();
+        Category category = categorialClass.getCategory();
+        EntityInterface categoryEntity = category.getCategoryEntity();
         for(CategorialAttribute attribute : categorialClass.getCategorialAttributeCollection()) {
             long srcClassAttributeId = attribute.getDeSourceClassAttributeId();
             AttributeInterface attributeOfSrcClass = entity.getAttributeByIdentifier(srcClassAttributeId);
@@ -172,8 +171,10 @@ public class CategoryOperations extends DefaultBizLogic {
             AttributeInterface attributeOfCategoryEntity = categoryEntity.getAttributeByIdentifier(categoryEntityAttributeId);
             attribute.setCategoryAttribute(attributeOfCategoryEntity);
         }
+        
         for (CategorialClass child : categorialClass.getChildren()) {
-            processCategorialClass(categoryEntity, child,cache,con);
+            child.setCategory(category);
+            processCategorialClass(child,cache,con);
         }
     }
 
