@@ -95,7 +95,7 @@ public class CompareUtil {
 
             for (SemanticPropertyInterface patternSemanticProperty : patternProperties) {
                 for (SemanticPropertyInterface cachedSemanticProperty : cachedProperties) {
-                    matchStatus = matchStatus || compare(patternSemanticProperty, cachedSemanticProperty);
+                    matchStatus = matchStatus || compare(cachedSemanticProperty,patternSemanticProperty);
                 }
             }
         }
