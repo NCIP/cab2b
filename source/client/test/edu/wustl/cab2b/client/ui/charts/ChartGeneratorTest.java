@@ -3,8 +3,6 @@
  */
 package edu.wustl.cab2b.client.ui.charts;
 
-import javax.swing.JPanel;
-
 import junit.framework.TestCase;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 
