@@ -241,7 +241,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                                         srhButton.setVisible(true);
                                         gotoAddLimitPanel();
 
-                                    } else {
+                                    } else {                                        
                                         ViewSearchResultsPanel viewSearchResultsPanel = new ViewSearchResultsPanel(
                                                 queryResults, m_mainSearchPanel);
                                         if (null != m_mainSearchPanel.getCenterPanel().m_arrCards[3]) {
@@ -261,7 +261,15 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                             } else //if the results are categoryResult
                             {
                                 //displaying the tree node
-                                b2bTreeNode.showInDialog();
+                                //b2bTreeNode.showInDialog();
+                                Cab2bPanel categoryResultPanel = b2bTreeNode.getCategoryResultPanel();
+                                
+                                m_mainSearchPanel.getCenterPanel().m_arrCards[3] = categoryResultPanel;
+                                m_mainSearchPanel.getCenterPanel().add(categoryResultPanel, SearchCenterPanel.m_strViewSearchResultslbl);
+                                /*
+                                 *  Implies the next button was clicked. Call show card with boolean set to true.
+                                 */
+                                showCard(true);
                             }
                         } else {
                             srhButton.setVisible(true);
