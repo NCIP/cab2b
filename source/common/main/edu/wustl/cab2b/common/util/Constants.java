@@ -75,5 +75,21 @@ public class Constants
     /**
      * tagged key constant to identify cab2b entity group
      */
-    public static final String CAB2B_ENTITY_GROUP = "caB2BEntityGroup";  
+    public static final String CAB2B_ENTITY_GROUP = "caB2BEntityGroup"; 
+    
+    /**
+     * tagged key constant to identify Bar Chart
+     */
+    public static final String BAR_CHART = "Bar Chart";
+    
+    /**
+     * tagged key constant to identify Line Chart
+     */
+    public static final String LINE_CHART = "Line Chart";
+    
+    /**
+     * tagged key constant to identify Scatter Plot
+     */
+    public static final String SCATTER_PLOT = "Scatter Plot";
+    
 }
