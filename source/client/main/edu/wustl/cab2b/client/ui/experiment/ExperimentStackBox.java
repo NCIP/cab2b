@@ -3,14 +3,20 @@ package edu.wustl.cab2b.client.ui.experiment;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -22,7 +28,10 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
+import edu.wustl.cab2b.client.ui.charts.ChartGenerator;
+import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.StackedBox;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
@@ -31,6 +40,7 @@ import edu.wustl.cab2b.common.datalist.DataListHome;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
+import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.common.util.logger.Logger;
 
 /*
@@ -40,6 +50,11 @@ import edu.wustl.common.util.logger.Logger;
 public class ExperimentStackBox extends Cab2bPanel {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
      * @param args
      */
 
@@ -81,10 +96,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         initGUI();
     }
 
-    public ExperimentStackBox(
-            ExperimentBusinessInterface expBus,
-            Experiment selectedExperiment,
-            ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel) {
+    public ExperimentStackBox(ExperimentBusinessInterface expBus, Experiment selectedExperiment, ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel) {
         m_experimentBusinessInterface = expBus;
         m_selectedExperiment = selectedExperiment;
         m_experimentDataCategoryGridPanel = experimentDataCategoryGridPanel;
@@ -157,17 +169,33 @@ public class ExperimentStackBox extends Cab2bPanel {
         dataFilterPanel.setOpaque(false);
         stackedBox.addBox("Filter Data ", dataFilterPanel, "resources/images/mysearchqueries_icon.gif");
 
-        //Adding Analyse data  panel
+        /**
+    	 * TODO Uncomment the code lines of adding analysisDataPanel when implementing this feaature.
+    	 */
+       /* //Adding Analyse data  panel
         analyseDataPanel = new Cab2bPanel();
         analyseDataPanel.setPreferredSize(new Dimension(250, 150));
         analyseDataPanel.setOpaque(false);
-        stackedBox.addBox("Analyze Data ", analyseDataPanel, "resources/images/mysearchqueries_icon.gif");
+        stackedBox.addBox("Analyze Data ", analyseDataPanel, "resources/images/mysearchqueries_icon.gif");*/
+        
+        //Adding Visualize data panel
+        visualiseDataPanel = new Cab2bPanel();
+        visualiseDataPanel.setPreferredSize(new Dimension(250, 150));
+        visualiseDataPanel.setOpaque(false);
+        stackedBox.addBox("Visualize Data ", visualiseDataPanel, "resources/images/mysearchqueries_icon.gif");
+        
+        //Set the type of charts to be displayed.
+        Vector<String> chartTypes = new Vector<String>();
+        chartTypes.add(Constants.BAR_CHART);
+        chartTypes.add(Constants.LINE_CHART);
+        chartTypes.add(Constants.SCATTER_PLOT);
+        setChartTypesForVisualiseDataPanel(chartTypes);
 
         stackedBox.setPreferredSize(new Dimension(250, 500));
         stackedBox.setMinimumSize(new Dimension(250, 500));
         this.add(stackedBox);
     }
-
+    
     /**
      * Method to perform tree node selection action
      * for currently selected node 
@@ -258,4 +286,63 @@ public class ExperimentStackBox extends Cab2bPanel {
         }
 
     }
+    
+    /**
+     * This method displays the type of chart in the Visualize Data panel which is at the left bottom of the screen.
+     * @param chartTypes name of charts to be displayed.
+     */
+    private void setChartTypesForVisualiseDataPanel(Vector<String> chartTypes) {
+        Logger.out.info("setChartTypesForVisualiseDataPanel :: chartTypes " + chartTypes);
+        visualiseDataPanel.removeAll();
+        
+        for(String hyperlinkName : chartTypes) {
+            Cab2bHyperlink hyperlink = new Cab2bHyperlink();
+            hyperlink.setBounds(new Rectangle(5, 5, 5, 5));
+            hyperlink.setText(hyperlinkName);
+            hyperlink.setActionCommand(hyperlinkName);
+            
+            hyperlink.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent actionEvent) {
+                	String linkClicked = actionEvent.getActionCommand();
+                	Logger.out.info("Clicked on " + linkClicked + " link");
+                    showChartAction(linkClicked);
+                    updateUI();
+                }
+            });
+            visualiseDataPanel.add("br", hyperlink);
+        }
+        visualiseDataPanel.revalidate();
+    }
+    
+    /**
+     * This method displays the chart selected in the Chart tab.
+     * @param linkClicked the name of the chart to be displayed
+     */
+	private void showChartAction(String linkClicked) {
+		Cab2bTable cab2bTable = m_experimentDataCategoryGridPanel.getTable();
+    	
+		String entityName = null;
+		Object nodeInfo = ((DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent()).getUserObject();
+		if (nodeInfo instanceof ExperimentEntity) {
+			entityName = ((ExperimentEntity)nodeInfo).toString();
+		}
+    	
+		JPanel jPanel = null;
+        ChartGenerator chartGenerator = new ChartGenerator(cab2bTable);
+        if(linkClicked.equals(Constants.BAR_CHART)) {
+        	jPanel = chartGenerator.getBarChart(entityName);
+        } else if(linkClicked.equals(Constants.LINE_CHART)) {
+        	jPanel = chartGenerator.getLineChart();
+        } else if(linkClicked.equals(Constants.SCATTER_PLOT)) {
+        	jPanel = chartGenerator.getScatterPlot();
+        }
+        
+    	Cab2bPanel visualizeDataPanel = m_experimentDataCategoryGridPanel.getVisualizeDataPanel();
+    	visualizeDataPanel.removeAll();
+    	visualizeDataPanel.add(jPanel);
+    	
+    	JTabbedPane tabComponent = m_experimentDataCategoryGridPanel.getTabComponent();
+    	tabComponent.setSelectedComponent(visualizeDataPanel);
+    }
+    
 }

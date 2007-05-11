@@ -50,6 +50,11 @@ import edu.wustl.common.querysuite.queryobject.DataType;
  */
 public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private JTabbedPane tabComponent;
 
 	/**
@@ -63,6 +68,12 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	 * component
 	 */
 	private Cab2bPanel analysisDataPanel;
+	
+	/**
+	 * Panel to display analysis performed on experiment Second tab panel on tab
+	 * component
+	 */
+	private Cab2bPanel visualizeDataPanel;
 
 	/** Button to save data category */
 	private Cab2bButton saveDataCategoryButton;
@@ -114,6 +125,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		this.removeAll();
 		experimentDataPanel.removeAll();
 		table = new ExperimentTableModel(false, dataRecordVector, columnVector, attributeMap);
+		table.setColumnSelectionAllowed(true);
 		MouseListener mouseListener = new myMouseListener();
 		// add the listener specifically to the header
 		table.addMouseListener(mouseListener);
@@ -127,7 +139,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		this.add(northPanel, BorderLayout.NORTH);
 
 		tabComponent.add("Experiment Data", experimentDataPanel);
-		tabComponent.add("Analysis", analysisDataPanel);
+		//tabComponent.add("Analysis", analysisDataPanel);
+		tabComponent.add("Chart", visualizeDataPanel);
 		this.add(tabComponent, BorderLayout.CENTER);
 
 		Cab2bPanel bottomPanel = new Cab2bPanel();
@@ -146,8 +159,10 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		experimentDataPanel = new Cab2bPanel();
 		experimentDataPanel.setBorder(null);
 		analysisDataPanel = new Cab2bPanel();
+		visualizeDataPanel = new Cab2bPanel();
 
 		table = new ExperimentTableModel(false, tableDataRecordVector, tableColumnVector);
+		table.setColumnSelectionAllowed(true);
 		MouseListener mouseListener = new myMouseListener();
 		// add the listener specifically to the header
 		table.addMouseListener(mouseListener);
@@ -166,7 +181,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		this.add(northPanel, BorderLayout.NORTH);
 
 		tabComponent.add("Experiment Data", experimentDataPanel);
-		tabComponent.add("Analysis", analysisDataPanel);
+		//tabComponent.add("Analysis", analysisDataPanel);
+		tabComponent.add("Chart", visualizeDataPanel);
 		this.add(tabComponent, BorderLayout.CENTER);
 
 		prevButton = new Cab2bButton("Previous");
@@ -237,6 +253,48 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 			}
 			table.setFilters(new FilterPipeline(filters));
 		}
+	}
+
+	/**
+	 * @return the tabComponent
+	 */
+	public JTabbedPane getTabComponent() {
+		return tabComponent;
+	}
+
+	/**
+	 * @param tabComponent the tabComponent to set
+	 */
+	public void setTabComponent(JTabbedPane tabComponent) {
+		this.tabComponent = tabComponent;
+	}
+
+	/**
+	 * @return the table
+	 */
+	public ExperimentTableModel getTable() {
+		return table;
+	}
+
+	/**
+	 * @param table the table to set
+	 */
+	public void setTable(ExperimentTableModel table) {
+		this.table = table;
+	}
+
+	/**
+	 * @return the visualizeDataPanel
+	 */
+	public Cab2bPanel getVisualizeDataPanel() {
+		return visualizeDataPanel;
+	}
+
+	/**
+	 * @param visualizeDataPanel the visualizeDataPanel to set
+	 */
+	public void setVisualizeDataPanel(Cab2bPanel visualizeDataPanel) {
+		this.visualizeDataPanel = visualizeDataPanel;
 	}
 
 }
