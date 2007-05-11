@@ -1,5 +1,7 @@
 package edu.wustl.cab2b.client.ui.treetable;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Vector;
 
@@ -66,6 +68,21 @@ public class B2BTreeNode {
                                                              (int) (dimension.height * 0.60)), true, false);
         dialog.setVisible(true);
         return dialog;
+    }
+    
+    public Cab2bPanel getCategoryResultPanel()
+    {
+        //creating tree 
+        JTreeTable treeTable = new JTreeTable(new B2BNewModel(this));
+        
+        //adding to scrollpane
+        JScrollPane jScrollPane = new JScrollPane(treeTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        jScrollPane.setBackground(Color.WHITE);       
+        Cab2bPanel trePanel = new Cab2bPanel();
+        trePanel.setLayout(new BorderLayout());        
+        trePanel.add(jScrollPane);        
+        return trePanel;   
     }
 
     public static void main(String arr[]) {
