@@ -86,9 +86,20 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
         expTree = (JXTree) treeGenerator.createTree(dataVector,
                                                     edu.wustl.common.util.global.Constants.EXPERIMETN_TREE_ID,
                                                     true);
+        
+        
         expTree.setCellRenderer(new MyRenderer());
         expTree.setRolloverEnabled(true);
         expTree.setHighlighters(new HighlighterPipeline());
+        
+        
+        
+        //setting tree node name
+        expTree.setSelectionRow(0);
+        ExperimentTreeNode treeNodeUserObj = (ExperimentTreeNode)((DefaultMutableTreeNode) expTree.getSelectionPath().getPathComponent(0)).getUserObject();
+        treeNodeUserObj.setName("My Projects");  
+        expTree.setSelectionRow(-1);
+        expTree.updateUI();
 
     
         if (expTree.getRowCount() >= 2) {

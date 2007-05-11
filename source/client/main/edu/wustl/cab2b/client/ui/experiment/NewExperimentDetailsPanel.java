@@ -152,12 +152,22 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                                                          dataVector,
                                                          edu.wustl.common.util.global.Constants.EXPERIMETN_TREE_ID,
                                                          true);
+       
         projectsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         projectsTree.setEditable(true);
-        projectsTree.getModel().addTreeModelListener(new MyTreeModelListener());
+        projectsTree.getModel().addTreeModelListener(new MyTreeModelListener());       
 
         projectsTree.setCellRenderer(new MyRenderer());
-
+        
+        
+        
+        //setting tree node name
+        projectsTree.setSelectionRow(0);
+        ExperimentTreeNode treeNodeUserObj = (ExperimentTreeNode)((DefaultMutableTreeNode) projectsTree.getSelectionPath().getPathComponent(0)).getUserObject();
+        treeNodeUserObj.setName("My Projects");        
+        projectsTree.setSelectionRow(-1);
+        projectsTree.updateUI();
+        
         JLabel expDescLabel = new Cab2bLabel("Description : ");
         expDescTextArea = new JTextArea();
         expDescTextArea.setColumns(35);
@@ -283,7 +293,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
             public void actionPerformed(ActionEvent e) {
                 if (projectsTree.getSelectionCount() == 0) {
                     JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this,
-                                                  "Select an experiment group to add to");
+                                                  "Please associate experiment to a project under 'My Projects'.");
                     return;
                 }
 
@@ -291,6 +301,14 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                 DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) obj;
 
                 ExperimentTreeNode expTreeNode = (ExperimentTreeNode) treeNode.getUserObject();
+                Long expGrpId = expTreeNode.getIdentifier();
+                Logger.out.info("exp grp id " + expGrpId);
+                
+                if ( expGrpId == 0 )
+                {
+                    JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this, " Please associate experiment to a project under 'My Projects'.");
+                    return;
+                }
 
                 if (!expTreeNode.isExperimentGroup()) {
                     JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this, "Select experiment group");
@@ -299,8 +317,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
                 Logger.out.info("projectsTree.getSelectionCount() " + projectsTree.getSelectionCount());
 
-                Long expGrpId = expTreeNode.getIdentifier();
-                Logger.out.info("exp grp id " + expGrpId);
+               
 
                 String experimentName = expNameTextField.getText();
                 if (experimentName == null || experimentName.equals("")) {
