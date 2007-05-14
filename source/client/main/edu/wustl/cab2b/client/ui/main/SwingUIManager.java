@@ -36,7 +36,6 @@ public class SwingUIManager
 	/**
 	 * This method returns a panel object that shows attribute name, data-type 
 	 * conditions and components for entering/showing the values.
-	 * 
 	 * @param parseFile
 	 * @param entity
 	 * @return panel object
@@ -44,173 +43,58 @@ public class SwingUIManager
 	public static Object generateUIPanel(ParseXMLFile parseFile, AttributeInterface attributeEntity)
 			throws CheckedException
 	{
-		Object[] object = null;
-		Object uiObject = null;
-		Constructor[] cls = null;
-		AttributeTypeInformationInterface attributeTypeInformation = attributeEntity
-				.getAttributeTypeInformation();
+		Object[] object = new Object[2];
+		String className = null;
+		
+		AttributeTypeInformationInterface attributeTypeInformation = attributeEntity.getAttributeTypeInformation();
+		String dataTypeString = getDataType(attributeTypeInformation);
+		
 		// Check if attribute has value domain (i.e it is enum)
-		if (true == edu.wustl.cab2b.common.util.Utility.isEnumerated(attributeEntity))
-		{
-			if ((attributeTypeInformation instanceof StringAttributeTypeInformation)
-					|| (attributeTypeInformation instanceof ByteArrayAttributeTypeInformation))
-			{
-				final String dataTypeString = "string";
-				try
-				{
-					cls = Class.forName(parseFile.getEnumClassName(dataTypeString))
-							.getConstructors();
-					object = new Object[2];
-					object[0] = parseFile.getEnumConditionList(dataTypeString);
-					object[1] = attributeEntity;
-					uiObject = cls[0].newInstance(object);
-				}
-				catch (Exception e)
-				{
-					throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.RF_0001);
-				}
-			}
-			else if ((attributeTypeInformation instanceof IntegerAttributeTypeInformation)
-					|| (attributeTypeInformation instanceof LongAttributeTypeInformation)
-					|| (attributeTypeInformation instanceof FloatAttributeTypeInformation)
-					|| (attributeTypeInformation instanceof DoubleAttributeTypeInformation)
-					|| (attributeTypeInformation instanceof NumericAttributeTypeInformation)
-					|| (attributeTypeInformation instanceof ShortAttributeTypeInformation))
-
-			{
-				final String dataTypeString = "number";
-				try
-				{
-					cls = Class.forName(parseFile.getEnumClassName(dataTypeString))
-							.getConstructors();
-					object = new Object[2];
-					object[0] = parseFile.getEnumConditionList(dataTypeString);
-					object[1] = attributeEntity;
-					uiObject = cls[0].newInstance(object);
-
-				}
-				catch (Exception e)
-				{
-					throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.RF_0001);
-				}
-			}
-			else if (attributeTypeInformation instanceof BooleanAttributeTypeInformation)
-			{
-				final String dataTypeString = "boolean";
-				try
-				{
-					cls = Class.forName(parseFile.getEnumClassName(dataTypeString))
-							.getConstructors();
-					object = new Object[2];
-					object[0] = parseFile.getEnumConditionList(dataTypeString);
-					object[1] = attributeEntity;
-					uiObject = cls[0].newInstance(object);
-				}
-				catch (Exception e)
-				{
-					throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.RF_0001);
-				}
-			}
-			else if (attributeTypeInformation instanceof DateAttributeTypeInformation)
-			{
-				final String dataTypeString = "date";
-				try
-				{
-					cls = Class.forName(parseFile.getEnumClassName(dataTypeString))
-							.getConstructors();
-					object = new Object[2];
-					object[0] = parseFile.getEnumConditionList(dataTypeString);
-					object[1] = attributeEntity;
-					uiObject = cls[0].newInstance(object);
-				}
-				catch (Exception e)
-				{
-					throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.RF_0001);
-				}
-			}
-
+		if (true == edu.wustl.cab2b.common.util.Utility.isEnumerated(attributeEntity)) {
+			object[0] = parseFile.getEnumConditionList(dataTypeString);
+			className = parseFile.getEnumClassName(dataTypeString);
+		} else { // If an entity is of non-enumerated type
+			object[0] = parseFile.getNonEnumConditionList(dataTypeString);
+			className = parseFile.getNonEnumClassName(dataTypeString);
 		}
-		else
-		/* If an entity is of non-enumerated type. */
-		{
-			if ((attributeTypeInformation instanceof StringAttributeTypeInformation)
-					|| (attributeTypeInformation instanceof ByteArrayAttributeTypeInformation))
-			{
-				final String dataTypeString = "string";
-				try
-				{
-					cls = Class.forName(parseFile.getNonEnumClassName(dataTypeString))
-							.getConstructors();
-					object = new Object[2];
-					object[0] = parseFile.getNonEnumConditionList(dataTypeString);
-					object[1] = attributeEntity;
-					uiObject = cls[0].newInstance(object);
-					//System.out.println(uiObject.toString());
-				}
-				catch (Exception e)
-				{
-					throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.RF_0001);
-				}
-
-			}
-			else if ((attributeTypeInformation instanceof IntegerAttributeTypeInformation)
-					|| (attributeTypeInformation instanceof LongAttributeTypeInformation)
-					|| (attributeTypeInformation instanceof FloatAttributeTypeInformation)
-					|| (attributeTypeInformation instanceof DoubleAttributeTypeInformation)
-					|| (attributeTypeInformation instanceof NumericAttributeTypeInformation)
-					|| (attributeTypeInformation instanceof ShortAttributeTypeInformation))
-			{
-				final String dataTypeString = "number";
-				try
-				{
-					cls = Class.forName(parseFile.getNonEnumClassName(dataTypeString))
-							.getConstructors();
-					object = new Object[2];
-					object[0] = parseFile.getNonEnumConditionList(dataTypeString);
-					object[1] = attributeEntity;
-					uiObject = cls[0].newInstance(object);
-				}
-				catch (Exception e)
-				{
-					throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.RF_0001);
-				}
-			}
-			else if (attributeTypeInformation instanceof DateAttributeTypeInformation)
-			{
-				final String dataTypeString = "date";
-				try
-				{
-					cls = Class.forName(parseFile.getNonEnumClassName(dataTypeString))
-							.getConstructors();
-					//System.out.println(cls.length);
-					object = new Object[2];
-					object[0] = parseFile.getNonEnumConditionList(dataTypeString);
-					object[1] = attributeEntity;
-					uiObject = cls[0].newInstance(object);
-				}
-				catch (Exception e)
-				{
-					throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.RF_0001);
-				}
-			}
-			else if (attributeTypeInformation instanceof BooleanAttributeTypeInformation)
-			{
-				try
-				{
-					final String dataTypeString = "boolean";
-					cls = Class.forName(parseFile.getNonEnumClassName(dataTypeString))
-							.getConstructors();
-					object = new Object[2];
-					object[0] = parseFile.getNonEnumConditionList(dataTypeString);
-					object[1] = attributeEntity;
-					uiObject = cls[0].newInstance(object);
-				}
-				catch (Exception e)
-				{
-					throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.RF_0001);
-				}
-			}
+		object[1] = attributeEntity;
+		
+		Constructor[] cls = null;
+		Object uiObject = null;
+		try {
+			cls = Class.forName(className).getConstructors();
+			uiObject = cls[0].newInstance(object);
+		} catch (Exception e) {
+			throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.RF_0001);
 		}
+		
 		return uiObject;
+	}
+	
+	/**
+	 * This method returns the datatype of the given AttributeTypeInformation 
+	 * @param attributeTypeInformation
+	 * @return the datatype
+	 */
+	private static String getDataType(AttributeTypeInformationInterface attributeTypeInformation) {
+		String dataTypeString = null;
+		
+		if ((attributeTypeInformation instanceof StringAttributeTypeInformation)
+				|| (attributeTypeInformation instanceof ByteArrayAttributeTypeInformation)) {
+			dataTypeString = "string";
+		} else if ((attributeTypeInformation instanceof IntegerAttributeTypeInformation)
+				|| (attributeTypeInformation instanceof LongAttributeTypeInformation)
+				|| (attributeTypeInformation instanceof FloatAttributeTypeInformation)
+				|| (attributeTypeInformation instanceof DoubleAttributeTypeInformation)
+				|| (attributeTypeInformation instanceof NumericAttributeTypeInformation)
+				|| (attributeTypeInformation instanceof ShortAttributeTypeInformation)) {
+			dataTypeString = "number";
+		} else if (attributeTypeInformation instanceof BooleanAttributeTypeInformation) {
+			dataTypeString = "boolean";
+		} else if (attributeTypeInformation instanceof DateAttributeTypeInformation) {
+			dataTypeString = "date";
+		}
+		
+		return dataTypeString;
 	}
 }
