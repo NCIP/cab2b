@@ -47,7 +47,7 @@ public class BreadcrumbPanel extends Cab2bPanel {
             breadCrumbHyperlink.addActionListener(this.m_breadCrumbListener);
             this.add(breadCrumbHyperlink);
             if (i < size - 1)
-                this.add(new JLabel(" -> "));
+                this.add(new JLabel(" > "));
         }
     }
 
