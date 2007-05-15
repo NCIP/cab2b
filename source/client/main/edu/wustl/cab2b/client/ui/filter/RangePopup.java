@@ -18,11 +18,14 @@ public class RangePopup extends Cab2bFilterPopup {
 	private Cab2bLabel minLable, maxLable;
 
 	private Cab2bTextField minText, maxText;
+	
+	private String columnName;
 
 	public RangePopup(RangeFilter oldFilter, String colName, int colIndex)
 
-	{
+	{		
 		super(colName, colIndex);
+		this.columnName=colName;
 		minLable = new Cab2bLabel("Minimum :");
 		maxLable = new Cab2bLabel("Maximum :");
 
@@ -59,7 +62,8 @@ public class RangePopup extends Cab2bFilterPopup {
 	protected CaB2BFilterInterface okActionPerformed(ActionEvent e) {
 		int minimum = Integer.parseInt(minText.getText());
 		int maximum = Integer.parseInt(maxText.getText());
-		return new RangeFilter(minimum, maximum, columnIndex);
+		return null;
+	//	return new RangeFilter(minimum, maximum, columnIndex, columnName);
 	}
 
 }
