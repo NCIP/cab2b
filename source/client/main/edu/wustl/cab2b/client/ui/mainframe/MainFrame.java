@@ -149,13 +149,25 @@ public class MainFrame extends JXFrame {
         CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.mainPanel) {
             @Override
             protected void doNonUILogic() throws RuntimeException {
+                if(openExperimentWelcomePanel != null)
+                {
+                    openExperimentWelcomePanel.removeAll();
+                }
                 openExperimentWelcomePanel = new ExperimentPanel("My Experiments");
             }
 
             @Override
             protected void doUIUpdateLogic() throws RuntimeException {
-                mainPanel.removeAll();
-                MainFrame.this.remove(mainPanel);
+                if(mainPanel.isVisible())                 
+                {
+                    mainPanel.removeAll();
+                    MainFrame.this.remove(mainPanel);
+                }
+                
+                if(openExperimentWelcomePanel.isVisible())
+                {
+                    MainFrame.this.remove(openExperimentWelcomePanel);
+                }              
                 MainFrame.this.add(openExperimentWelcomePanel);
             }
         };
@@ -170,12 +182,15 @@ public class MainFrame extends JXFrame {
             protected void doNonUILogic() throws RuntimeException {
                 if (searchDataWelcomePanel == null) {
                     searchDataWelcomePanel = new SearchDataWelcomePanel(MainFrame.this);
-                }
-                homePanel = searchDataWelcomePanel;
+                }                
             }
 
             @Override
             protected void doUIUpdateLogic() throws RuntimeException {
+                mainPanel.removeAll(); 
+                MainFrame.this.remove(mainPanel);
+                homePanel = searchDataWelcomePanel;
+                
                 setWelcomePanel();
             }
         };
@@ -190,12 +205,16 @@ public class MainFrame extends JXFrame {
             protected void doNonUILogic() throws RuntimeException {
                 if (newWelcomePanel == null) {
                     newWelcomePanel = new NewWelcomePanel(MainFrame.this);
-                }
-                homePanel = newWelcomePanel;
+                }               
+                
             }
 
             @Override
             protected void doUIUpdateLogic() throws RuntimeException {
+                
+                mainPanel.removeAll(); 
+                MainFrame.this.remove(mainPanel);
+                homePanel = newWelcomePanel;                             
                 setWelcomePanel();
             }
         };
@@ -205,7 +224,11 @@ public class MainFrame extends JXFrame {
 
     /** Method to set Welcome panel */
     public void setWelcomePanel() {
-        mainPanel.removeAll();
+        
+     /*   mainPanel.removeAll(); 
+        this.remove(mainPanel);    
+        this.validate();*/       
+        
         homePanel.setBorder(new CustomizableBorder(new Insets(1, 1, 1, 1), true, true));
         splitPane.setRightComponent(homePanel);
         splitPane.setOneTouchExpandable(true);
@@ -220,7 +243,7 @@ public class MainFrame extends JXFrame {
             Logger.out.info("Removing openExperimentWelcomePanel");
             openExperimentWelcomePanel.removeAll();
             this.remove(openExperimentWelcomePanel);
-            this.validate();
+            this.validate();            
         }
         this.add(mainPanel);
     }
