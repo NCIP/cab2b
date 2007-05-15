@@ -81,9 +81,9 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	 */
 	private ExperimentTableModel table;
 
-	private Vector tableColumnVector = new Vector();
+	private Vector tableColumnVector;
 
-	private Vector tableDataRecordVector = new Vector();
+	private Vector tableDataRecordVector;
 
 	private JScrollPane theScrollPane = new JScrollPane();
 
@@ -92,7 +92,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	private static Map<String, CaB2BFilterInterface> filterMap = new HashMap<String, CaB2BFilterInterface>();
 
 	public ExperimentDataCategoryGridPanel() {
-		initGUI();
+        this(new Vector(),new Vector());
 	}
 
 	/**
@@ -117,6 +117,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	public ExperimentDataCategoryGridPanel(Vector columnVector, Vector dataRecordVector) {
 		tableColumnVector = columnVector;
 		tableDataRecordVector = dataRecordVector;
+        clearMap();
 		initGUI();
 	}
 
