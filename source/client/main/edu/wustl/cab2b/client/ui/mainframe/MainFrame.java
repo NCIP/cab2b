@@ -205,22 +205,23 @@ public class MainFrame extends JXFrame {
 
     /** Method to set Welcome panel */
     public void setWelcomePanel() {
+        mainPanel.removeAll();
         homePanel.setBorder(new CustomizableBorder(new Insets(1, 1, 1, 1), true, true));
         splitPane.setRightComponent(homePanel);
         splitPane.setOneTouchExpandable(true);
+
         Dimension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
         splitPane.setDividerLocation(dim.width);
-        mainPanel.removeAll();
+
         mainPanel.add("hfill vfill", splitPane);
         mainPanel.setBorder(new CustomizableBorder(new Insets(10, 0, 6, 10), true, true));
-        
+
         if (openExperimentWelcomePanel != null && openExperimentWelcomePanel.isVisible() == true) {
             Logger.out.info("Removing openExperimentWelcomePanel");
             openExperimentWelcomePanel.removeAll();
-            this.remove(openExperimentWelcomePanel);   
+            this.remove(openExperimentWelcomePanel);
             this.validate();
         }
-        
         this.add(mainPanel);
     }
 
@@ -297,20 +298,19 @@ public class MainFrame extends JXFrame {
         MainFrame mainFrame = new MainFrame(mainFrameTitle); // "ca Bench to Bedside (B2B)"
         Toolkit.getDefaultToolkit().setDynamicLayout(true);
 
-   /*     Vector<String> myRecentExperiments = new Vector<String>();
-        Vector exptVector = mainFrame.getExperiments();
-        Iterator iter = exptVector.iterator();
-        Logger.out.info("Vect Size :" + exptVector.size());
-        while (iter.hasNext()) {
-
-            ExperimentTreeNode exp = (ExperimentTreeNode) iter.next();
-            myRecentExperiments.add(exp.getName());
-        }*/
+        /*   Vector<String> myRecentExperiments = new Vector<String>();
+         Vector exptVector = mainFrame.getExperiments();
+         Iterator iter = exptVector.iterator();
+         Logger.out.info("Vect Size :" + exptVector.size());
+         while (iter.hasNext()) {
+         ExperimentTreeNode exp = (ExperimentTreeNode) iter.next();
+         myRecentExperiments.add(exp.getName());
+         }*/
 
         Vector<String> myRecentExperiments = new Vector<String>();
-         myRecentExperiments.add("Breast Cancer Microarrays (Hu133 Plus 2.0)");
-         myRecentExperiments.add("Breast Cancer Microarrays (MOE430 Plus 2.0)");
-         myRecentExperiments.add("Acute Myelogenous Leukemia Microarrays");
+        myRecentExperiments.add("Breast Cancer Microarrays (Hu133 Plus 2.0)");
+        myRecentExperiments.add("Breast Cancer Microarrays (MOE430 Plus 2.0)");
+        myRecentExperiments.add("Acute Myelogenous Leukemia Microarrays");
         mainFrame.setDataForMyExperimentsPanel(myRecentExperiments);
 
         Vector<String> mySearchQueries = new Vector<String>();
