@@ -28,11 +28,17 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
+import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
+import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
+import edu.wustl.cab2b.client.ui.charts.ChartGenerator;
+import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.charts.ChartGenerator;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.StackedBox;
+import edu.wustl.cab2b.client.ui.filter.CaB2BFilterInterface;
+import edu.wustl.cab2b.client.ui.filter.CaB2BPatternFilter;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
@@ -50,11 +56,6 @@ import edu.wustl.common.util.logger.Logger;
 public class ExperimentStackBox extends Cab2bPanel {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	/**
      * @param args
      */
 
@@ -62,7 +63,7 @@ public class ExperimentStackBox extends Cab2bPanel {
     Cab2bPanel dataCategoryPanel = null;
 
     /*panel to display filters on selected data-category*/
-    Cab2bPanel dataFilterPanel = null;
+    static Cab2bPanel dataFilterPanel = null;
 
     /*panel to display analysed data on selected data-category*/
     Cab2bPanel analyseDataPanel = null;
@@ -86,6 +87,8 @@ public class ExperimentStackBox extends Cab2bPanel {
     Experiment m_selectedExperiment = null;
 
     String columnName[] = null;
+    
+    static CaB2BFilterInterface obj=null;
 
     Object recordObject[][] = null;
     Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
@@ -96,13 +99,16 @@ public class ExperimentStackBox extends Cab2bPanel {
         initGUI();
     }
 
-    public ExperimentStackBox(ExperimentBusinessInterface expBus, Experiment selectedExperiment, ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel) {
+    public ExperimentStackBox(
+            ExperimentBusinessInterface expBus,
+            Experiment selectedExperiment,
+            ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel) {
         m_experimentBusinessInterface = expBus;
         m_selectedExperiment = selectedExperiment;
         m_experimentDataCategoryGridPanel = experimentDataCategoryGridPanel;
         initGUI();
     }
-
+    
     public void initGUI() {
         this.setLayout(new BorderLayout());
         stackedBox = new StackedBox();
@@ -167,6 +173,9 @@ public class ExperimentStackBox extends Cab2bPanel {
         dataFilterPanel = new Cab2bPanel();
         dataFilterPanel.setPreferredSize(new Dimension(250, 150));
         dataFilterPanel.setOpaque(false);
+        
+       
+       
         stackedBox.addBox("Filter Data ", dataFilterPanel, "resources/images/mysearchqueries_icon.gif");
 
         /**
@@ -195,7 +204,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         stackedBox.setMinimumSize(new Dimension(250, 500));
         this.add(stackedBox);
     }
-    
+
     /**
      * Method to perform tree node selection action
      * for currently selected node 
@@ -208,6 +217,9 @@ public class ExperimentStackBox extends Cab2bPanel {
             protected void doNonUILogic() throws RuntimeException {
                 Logger.out.info("Clicked on datalist");
                 ExperimentDataCategoryGridPanel.clearMap();
+                getDataForFilterPanel();
+                updateUI();
+               
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent();
                 if (node == null)
                     return;
@@ -286,6 +298,43 @@ public class ExperimentStackBox extends Cab2bPanel {
         }
 
     }
+    
+    public static void setDataForFilterPanel(Vector data) {
+
+        Logger.out.info("setDataForMyExperimentsPanel :: data " + data);
+        dataFilterPanel.removeAll();
+        dataFilterPanel.add(new Cab2bLabel());
+        Iterator iter = data.iterator();
+        while (iter.hasNext()) {
+        	obj = (CaB2BFilterInterface)iter.next();
+            String hyperlinkName = obj.toString();
+            Cab2bHyperlink hyperlink = new Cab2bHyperlink();
+            hyperlink.setBounds(new Rectangle(5, 5, 5, 5));
+            hyperlink.setText(hyperlinkName);
+            hyperlink.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    Logger.out.info("Clicked on expt link");
+                    System.out.println(obj.getClass());
+                    if(obj instanceof CaB2BPatternFilter){
+                    	CaB2BPatternFilter filter=(CaB2BPatternFilter)obj;
+                    	System.out.println(filter.getPattern().pattern());
+                    }
+                    	
+                }
+            });
+            dataFilterPanel.add("br", hyperlink);
+        }
+        dataFilterPanel.revalidate();
+    }
+    
+    public static void getDataForFilterPanel(){
+    	 Vector<CaB2BFilterInterface> vector=new Vector<CaB2BFilterInterface>();
+         vector=ExperimentDataCategoryGridPanel.getFilterMap();
+         if(vector!=null){
+         setDataForFilterPanel(vector);
+         }
+    }
+
     
     /**
      * This method displays the type of chart in the Visualize Data panel which is at the left bottom of the screen.

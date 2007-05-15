@@ -34,9 +34,9 @@ import edu.wustl.cab2b.client.ui.filter.CaB2BFilterInterface;
 import edu.wustl.cab2b.client.ui.filter.CaB2BPatternFilter;
 import edu.wustl.cab2b.client.ui.filter.Cab2bFilterPopup;
 import edu.wustl.cab2b.client.ui.filter.EnumeratedFilterPopUp;
+import edu.wustl.cab2b.client.ui.filter.FilterComponent;
 import edu.wustl.cab2b.client.ui.filter.PatternPopup;
 import edu.wustl.cab2b.client.ui.filter.RangeFilter;
-import edu.wustl.cab2b.client.ui.filter.RangePopup;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.DataType;
 
@@ -49,11 +49,6 @@ import edu.wustl.common.querysuite.queryobject.DataType;
  * 
  */
 public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
 	private JTabbedPane tabComponent;
 
@@ -109,6 +104,14 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
 	public static void clearMap() {
 		filterMap.clear();
+	}
+
+	public static Vector getFilterMap() {
+		Vector<CaB2BFilterInterface> vector = new Vector<CaB2BFilterInterface>();
+		for (CaB2BFilterInterface filter : filterMap.values()) {
+			vector.add(filter);
+		}
+		return vector;
 	}
 
 	public ExperimentDataCategoryGridPanel(Vector columnVector, Vector dataRecordVector) {
@@ -230,8 +233,21 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 						// If the clicked column is of type int/long
 					} else if (DataType.Long == dataType || DataType.Integer == dataType
 							|| DataType.Double == dataType || DataType.Float == dataType) {
-						filterPopup = new RangePopup((RangeFilter) oldFilter, columnName,
-								columnIndex);
+						int len = table.getRowCount();
+						float columnVal[] = null;
+						if (oldFilter == null) {
+							columnVal = new float[len];
+							for (int i = 0; i < len; i++) {
+								String val = (String) table.getValueAt(i, columnIndex);
+								if (val != null) {
+									float f = Float.parseFloat(val);
+									columnVal[i] = f;
+								}
+
+							}
+						}
+						filterPopup = new FilterComponent("Range Filter", columnVal, columnName,
+								columnIndex, (RangeFilter) oldFilter);
 					}
 
 				}
