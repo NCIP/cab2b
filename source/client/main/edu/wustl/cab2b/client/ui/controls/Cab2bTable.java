@@ -33,11 +33,15 @@ public class Cab2bTable extends JXTable
 			this.getColumn(0).setMaxWidth(25);
 		}
 		this.setSortable(false);
+        this.setHorizontalScrollEnabled(true);
+       
+        this.packAll();
 	}
 	
 	public Cab2bTable(boolean showCheckBox, Vector data, Vector headers)
 	{
 		super(new Cab2bDefaultTableModel(showCheckBox, data, headers));
+        
 		m_showCheckBox = showCheckBox;
 		initUI();
 		
