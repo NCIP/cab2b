@@ -235,13 +235,13 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 					} else if (DataType.Long == dataType || DataType.Integer == dataType
 							|| DataType.Double == dataType || DataType.Float == dataType) {
 						int len = table.getRowCount();
-						float columnVal[] = null;
+						double columnVal[] = null;
 						if (oldFilter == null) {
-							columnVal = new float[len];
+							columnVal = new double[len];
 							for (int i = 0; i < len; i++) {
 								String val = (String) table.getValueAt(i, columnIndex);
 								if (val != null) {
-									float f = Float.parseFloat(val);
+									double f = Double.parseDouble(val);
 									columnVal[i] = f;
 								}
 
