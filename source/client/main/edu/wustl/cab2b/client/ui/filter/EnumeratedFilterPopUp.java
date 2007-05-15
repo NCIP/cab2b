@@ -25,10 +25,13 @@ public class EnumeratedFilterPopUp extends Cab2bFilterPopup {
 	private Cab2bLabel myLable1;
 
 	private Cab2bListBox listBox;
+	
+	private String columnName;
 
 	public EnumeratedFilterPopUp(String colName, int colIndex,
 			Collection<PermissibleValueInterface> pVCollection, CaB2BPatternFilter oldFilter) {
 		super(colName, colIndex);
+		this.columnName=colName;
 
 		myLable1 = new Cab2bLabel("Select Values");
 
@@ -79,7 +82,7 @@ public class EnumeratedFilterPopUp extends Cab2bFilterPopup {
 
 		}
 		System.out.println(patternString);
-		return new CaB2BPatternFilter(patternString, 0, columnIndex);
+		return new CaB2BPatternFilter(patternString, 0, columnIndex, columnName);
 	}
 
 }

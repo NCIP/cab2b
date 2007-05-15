@@ -9,24 +9,43 @@ package edu.wustl.cab2b.client.ui.filter;
  * 
  */
 public class RangeFilter extends CaB2BFilter {
-	int minRange;
+	float minRange;
 
-	int maxRange;
+	float maxRange;
+	
+	float originalMin;
+	
+	float originalMax;
+	
+	String columnName;
 
-	public RangeFilter(int minRange, int maxRange, int col) {
+	public RangeFilter(float minRange, float maxRange, int col, String colName, float min, float max) {
 		super(col);
+		this.columnName=colName;
 		this.minRange = minRange;
 		this.maxRange = maxRange;
+		originalMin=min;
+		originalMax=max;
+	}
+
+	public void rangeValidation() {
+		if (minRange > maxRange) {
+			float temp = 0;
+			temp = minRange;
+			minRange = maxRange;
+			maxRange = temp;
+		}
 	}
 
 	public boolean isRowToBeAdded(int row) {
+		rangeValidation();
 		if (!adapter.isTestable(getColumnIndex()))
 			return false;
 		Object value = getInputValue(row, getColumnIndex());
 		if (value == null) {
 			return false;
 		} else {
-			int valueInt = Integer.parseInt(value.toString());
+			float valueInt = Float.parseFloat(value.toString());
 
 			if (valueInt >= minRange && valueInt <= maxRange)
 				return true;
@@ -42,7 +61,25 @@ public class RangeFilter extends CaB2BFilter {
 	}
 
 	public CaB2BFilterInterface copy() {
-		return new RangeFilter(this.minRange, this.maxRange, this
-				.getColumnIndex());
+		return new RangeFilter(this.minRange, this.maxRange, this.getColumnIndex(), this.columnName, this.originalMin,this.originalMax);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append(minRange);
+		stringBuffer.append(" < ");
+		stringBuffer.append("\"");
+		stringBuffer.append(columnName);
+		stringBuffer.append("\"");
+		stringBuffer.append(" < ");
+		stringBuffer.append(maxRange);
+		
+		return(stringBuffer.toString());
 	}
 }

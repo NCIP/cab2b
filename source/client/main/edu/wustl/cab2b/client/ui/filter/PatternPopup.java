@@ -21,11 +21,14 @@ public class PatternPopup extends Cab2bFilterPopup {
 	private Cab2bLabel myLable1;
 
 	private Cab2bTextField patternText;
+	
+	private String columnName;
 
 	public PatternPopup(CaB2BPatternFilter inputFilter, String colName, int colIndex)
 
 	{
 		super(colName, colIndex);
+		this.columnName=colName;
 		myLable1 = new Cab2bLabel("Enter Pattern");
 
 		patternText = new Cab2bTextField();
@@ -50,7 +53,7 @@ public class PatternPopup extends Cab2bFilterPopup {
 	@Override
 	protected CaB2BFilterInterface okActionPerformed(ActionEvent e) {
 		
-		return new CaB2BPatternFilter(patternText.getText(), 0, columnIndex);
+		return new CaB2BPatternFilter(patternText.getText(), 0, columnIndex, columnName);
 	}
 
 }

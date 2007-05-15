@@ -10,9 +10,12 @@ import org.jdesktop.swingx.decorator.PatternFilter;
  */
 public class CaB2BPatternFilter extends PatternFilter implements
 		CaB2BFilterInterface {
-
-	public CaB2BPatternFilter(String regularExpr, int matchFlags, int col) {
+	String pattern;
+	String columnName;
+	public CaB2BPatternFilter(String regularExpr, int matchFlags, int col, String colName) {
 		super(regularExpr, matchFlags, col);
+		this.columnName=colName;
+		pattern=regularExpr;
 	}
 
 	/**
@@ -21,7 +24,25 @@ public class CaB2BPatternFilter extends PatternFilter implements
 	 */
 	public CaB2BFilterInterface copy() {
 		return new CaB2BPatternFilter(this.getPattern().toString(), 0, this
-				.getColumnIndex());
+				.getColumnIndex(),this.columnName);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		
+		
+		StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append("\"");
+		stringBuffer.append(columnName);
+		stringBuffer.append("\"");
+		stringBuffer.append(" like ");
+		stringBuffer.append("*");
+		stringBuffer.append(pattern);
+		stringBuffer.append("*");
+		return (stringBuffer.toString());
 	}
 
 }
