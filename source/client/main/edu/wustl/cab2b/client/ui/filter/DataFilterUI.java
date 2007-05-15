@@ -27,7 +27,7 @@ public class DataFilterUI extends JPanel implements MouseListener, MouseMotionLi
 
 	public static float m_currentMaxValue;
 
-	private double m_scale = 0.1;
+	private double m_scale = 1.0;
 
 	/**
 	 * Main UI comonents are declared here
@@ -232,7 +232,7 @@ public class DataFilterUI extends JPanel implements MouseListener, MouseMotionLi
 			Point componentPosition = m_rightButton.getLocation();
 			float actualValue = (float) ((componentPosition.x + p.x - m_xStart) / m_scale)
 					+ m_minValue;
-			if ((actualValue >= this.m_currentMinValue) && (actualValue < this.m_maxValue)) {
+			if ((actualValue >= this.m_currentMinValue) && (actualValue <= this.m_maxValue)) {
 				setCurrentMaxValue(actualValue);
 				drawFilterUI();
 			}
