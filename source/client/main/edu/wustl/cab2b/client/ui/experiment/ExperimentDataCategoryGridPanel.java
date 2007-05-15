@@ -187,6 +187,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
 		prevButton = new Cab2bButton("Previous");
 		Cab2bPanel bottomPanel = new Cab2bPanel();
+        prevButton.setEnabled(false);
 		bottomPanel.add(prevButton);
 		this.add(bottomPanel, BorderLayout.SOUTH);
 	}
