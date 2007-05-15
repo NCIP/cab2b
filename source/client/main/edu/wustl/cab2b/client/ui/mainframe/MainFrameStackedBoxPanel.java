@@ -116,14 +116,14 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
             hyperlink.setBounds(new Rectangle(5, 5, 5, 5));
             hyperlink.setText(hyperlinkName);
             hyperlink.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
+                public void actionPerformed(ActionEvent e) {/*
                     Logger.out.info("Clicked on expt link");
 
                     mainFrame.setOpenExperimentWelcomePanel();
                     mainFrame.globalNavigationPanel.tabButtons[0].setBackground(mainFrame.globalNavigationPanel.navigationButtonBgColorUnSelected);
                     mainFrame.globalNavigationPanel.tabButtons[2].setBackground(mainFrame.globalNavigationPanel.navigationButtonBgColorSelected);
                     updateUI();
-                }
+                */}
             });
             myExperimentsPanel.add("br", hyperlink);
         }
