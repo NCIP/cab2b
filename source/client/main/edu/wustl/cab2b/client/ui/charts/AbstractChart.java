@@ -64,7 +64,7 @@ public abstract class AbstractChart {
 				value = (String) cab2bTable.getValueAt(selectedRowIndices[j],
 						selectedColumnsIndices[i]);
 
-				Double xValue = new Double(selectedRowIndices[j] + 1);
+				Double xValue = new Double(selectedRowIndices[j]);
 				Double yValue = null;
 
 				try {

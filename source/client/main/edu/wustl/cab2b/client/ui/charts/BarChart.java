@@ -7,8 +7,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.labels.ItemLabelAnchor;
-import org.jfree.chart.labels.ItemLabelPosition;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
@@ -16,7 +14,6 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.Dataset;
-import org.jfree.ui.TextAnchor;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 
@@ -97,7 +94,7 @@ public class BarChart extends AbstractChart {
 		
 		JFreeChart jFreeChart = ChartFactory.createBarChart("Bar Chart",
 				entityName, "Value", categoryDataSet, PlotOrientation.VERTICAL,
-				false, true, false);
+				true, true, false);
 		jFreeChart.setBackgroundPaint(Color.white);
 
 		CategoryPlot categoryPlot = (CategoryPlot) jFreeChart.getPlot();
@@ -111,19 +108,6 @@ public class BarChart extends AbstractChart {
 		BarRenderer barRenderer = (BarRenderer) categoryPlot.getRenderer();
 		barRenderer.setDrawBarOutline(false);
 		barRenderer.setItemMargin(0.1D);
-
-		barRenderer.setItemLabelGenerator(new LabelGenerator());
-		barRenderer.setItemLabelsVisible(true);
-
-		ItemLabelPosition itemLabelPosition = new ItemLabelPosition(
-				ItemLabelAnchor.INSIDE12, TextAnchor.CENTER_RIGHT,
-				TextAnchor.CENTER_RIGHT, -1.5707963267948966D);
-		barRenderer.setPositiveItemLabelPosition(itemLabelPosition);
-
-		ItemLabelPosition itemlabelposition1 = new ItemLabelPosition(
-				ItemLabelAnchor.OUTSIDE12, TextAnchor.CENTER_LEFT,
-				TextAnchor.CENTER_LEFT, -1.5707963267948966D);
-		barRenderer.setPositiveItemLabelPositionFallback(itemlabelposition1);
 
 		CategoryAxis categoryaxis = categoryPlot.getDomainAxis();
 		categoryaxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
