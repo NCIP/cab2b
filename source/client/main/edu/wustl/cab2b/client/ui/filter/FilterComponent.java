@@ -20,24 +20,24 @@ public class FilterComponent extends Cab2bFilterPopup implements MouseListener, 
 		FocusListener, KeyListener {
 	private String m_title;
 
-	private float[] m_values;
+	private double[] m_values;
 
-	private float m_minValue = Integer.MAX_VALUE;
+	private double m_minValue = Integer.MAX_VALUE;
 
-	private float m_maxValue = Integer.MIN_VALUE;
+	private double m_maxValue = Integer.MIN_VALUE;
 
 	private JTextField m_minValTextField;
 
 	private JTextField m_maxValTextField;
 
-	private float prevMinRange;
+	private double prevMinRange;
 
-	private float prevMaxRange;
+	private double prevMaxRange;
 
 	private DataFilterUI dataFilter;
 
 	// Constructor method for filter component
-	public FilterComponent(String title, float[] values, String colName, int colIndex,
+	public FilterComponent(String title, double[] values, String colName, int colIndex,
 			RangeFilter oldFilter) {
 		super(colName, colIndex);
 		m_title = title;
@@ -83,7 +83,7 @@ public class FilterComponent extends Cab2bFilterPopup implements MouseListener, 
 		titlePanel.add(titleLabel);
 
 		m_minValTextField = new JTextField();
-		m_minValTextField.setText(Float.toString(m_minValue));
+		m_minValTextField.setText(Double.toString(m_minValue));
 		m_minValTextField.setBorder(null);
 		m_minValTextField.setBackground(titlePanel.getBackground());
 		m_minValTextField.setBounds(30, 40, 55, 20);
@@ -94,7 +94,7 @@ public class FilterComponent extends Cab2bFilterPopup implements MouseListener, 
 		titlePanel.add(m_minValTextField);
 
 		m_maxValTextField = new JTextField();
-		m_maxValTextField.setText(Float.toString(m_maxValue));
+		m_maxValTextField.setText(Double.toString(m_maxValue));
 		m_maxValTextField.setBorder(null);
 		m_maxValTextField.setBackground(titlePanel.getBackground());
 		m_maxValTextField.setBounds(295, 40, 55, 20);
@@ -119,7 +119,7 @@ public class FilterComponent extends Cab2bFilterPopup implements MouseListener, 
 	}
 
 	// Fill textfield with appropriate values
-	public void setMinValue(float minValue) {
+	public void setMinValue(double minValue) {
 		java.text.DecimalFormat df2 = new java.text.DecimalFormat("###,##0.00");
 		m_minValTextField.setText(df2.format(minValue));
 	}
@@ -127,7 +127,7 @@ public class FilterComponent extends Cab2bFilterPopup implements MouseListener, 
 	// -------------------------------------------------------------
 	// Fill textfield with appropriate values
 	// -------------------------------------------------------------
-	public void setMaxValue(float maxValue) {
+	public void setMaxValue(double maxValue) {
 		java.text.DecimalFormat df2 = new java.text.DecimalFormat("###,##0.00");
 		m_maxValTextField.setText(df2.format(maxValue));
 	}
@@ -216,8 +216,8 @@ public class FilterComponent extends Cab2bFilterPopup implements MouseListener, 
 
 	@Override
 	protected CaB2BFilterInterface okActionPerformed(ActionEvent e) {
-		float minimum = DataFilterUI.m_currentMinValue;
-		float maximum = DataFilterUI.m_currentMaxValue;
+		double minimum = DataFilterUI.m_currentMinValue;
+		double maximum = DataFilterUI.m_currentMaxValue;
 		return new RangeFilter(minimum, maximum, columnIndex, columnName, m_minValue, m_maxValue);
 	}
 

@@ -19,13 +19,13 @@ public class DataFilterUI extends JPanel implements MouseListener, MouseMotionLi
 
 	// The minimum and maximum value for which filter
 	// will be drawn
-	private float m_minValue;
+	private double m_minValue;
 
-	private float m_maxValue;
+	private double m_maxValue;
 
-	public static float m_currentMinValue;
+	public static double m_currentMinValue;
 
-	public static float m_currentMaxValue;
+	public static double m_currentMaxValue;
 
 	private double m_scale = 1.0;
 
@@ -44,8 +44,8 @@ public class DataFilterUI extends JPanel implements MouseListener, MouseMotionLi
 
 	FilterComponent m_parentFilter;
 
-	public DataFilterUI(FilterComponent parentFilter, int width, int height, float minValue,
-			float maxValue, float prevMinValue, float prevMaxValue) {
+	public DataFilterUI(FilterComponent parentFilter, int width, int height, double minValue,
+			double maxValue, double prevMinValue, double prevMaxValue) {
 		m_width = width;
 		m_minValue = minValue;
 		m_maxValue = maxValue;
@@ -109,15 +109,15 @@ public class DataFilterUI extends JPanel implements MouseListener, MouseMotionLi
 
 	}
 
-	private void setCurrentMinValue(float currentMinValue) {
+	private void setCurrentMinValue(double currentMinValue) {
 		m_currentMinValue = currentMinValue;
 	}
 
-	private void setCurrentMaxValue(float currentMaxValue) {
+	private void setCurrentMaxValue(double currentMaxValue) {
 		m_currentMaxValue = currentMaxValue;
 	}
 
-	public void setFilterMinValue(float value) {
+	public void setFilterMinValue(double value) {
 		if (value < m_minValue) {
 			value = m_minValue;
 		} else if (m_currentMaxValue < value) {
@@ -127,7 +127,7 @@ public class DataFilterUI extends JPanel implements MouseListener, MouseMotionLi
 		drawFilterUI();
 	}
 
-	public void setFilterMaxValue(float value) {
+	public void setFilterMaxValue(double value) {
 		if (value > m_maxValue) {
 			value = m_maxValue;
 		} else if (m_currentMinValue > value) {
@@ -175,13 +175,13 @@ public class DataFilterUI extends JPanel implements MouseListener, MouseMotionLi
 			// This returns position of mouse point with respect to the
 			// component of interest
 			Point p = event.getPoint();
-			float actualValue = (int) (p.x / m_scale) + m_minValue;
+			double actualValue = (int) (p.x / m_scale) + m_minValue;
 			setCurrentMinValue(actualValue);
 
 		} else if (event.getComponent() == m_centerLabel) {
 			Point p = event.getPoint();
 			Point componentPosition = m_centerLabel.getLocation();
-			float actualValue = (int) ((componentPosition.x + p.x - m_xStart) / m_scale)
+			double actualValue = (int) ((componentPosition.x + p.x - m_xStart) / m_scale)
 					+ m_minValue;
 			if ((p.x + componentPosition.x) < m_width / 2) {
 				setCurrentMinValue(actualValue);
@@ -191,7 +191,7 @@ public class DataFilterUI extends JPanel implements MouseListener, MouseMotionLi
 		} else if (event.getComponent() == m_rightLabel) {
 			Point p = event.getPoint();
 			Point componentPosition = m_rightLabel.getLocation();
-			float actualValue = (int) ((componentPosition.x + p.x - m_xStart) / m_scale)
+			double actualValue = (int) ((componentPosition.x + p.x - m_xStart) / m_scale)
 					+ m_minValue;
 			setCurrentMaxValue(actualValue);
 		}
@@ -220,19 +220,19 @@ public class DataFilterUI extends JPanel implements MouseListener, MouseMotionLi
 		if (m_leftButton == arg0.getComponent()) {
 			Point p = arg0.getPoint();
 			Point componentPosition = m_leftButton.getLocation();
-			float actualValue = (float) ((componentPosition.x + p.x - m_xStart) / m_scale)
+			double actualValue = (float) ((componentPosition.x + p.x - m_xStart) / m_scale)
 					+ m_minValue;
 			// check if minimum value is within the specified range
-			if ((actualValue >= m_minValue) && (actualValue < this.m_currentMaxValue)) {
+			if ((actualValue >= m_minValue) && (actualValue < m_currentMaxValue)) {
 				setCurrentMinValue(actualValue);
 				drawFilterUI();
 			}
 		} else if (m_rightButton == arg0.getComponent()) {
 			Point p = arg0.getPoint();
 			Point componentPosition = m_rightButton.getLocation();
-			float actualValue = (float) ((componentPosition.x + p.x - m_xStart) / m_scale)
+			double actualValue = (float) ((componentPosition.x + p.x - m_xStart) / m_scale)
 					+ m_minValue;
-			if ((actualValue >= this.m_currentMinValue) && (actualValue <= this.m_maxValue)) {
+			if ((actualValue >= m_currentMinValue) && (actualValue <= this.m_maxValue)) {
 				setCurrentMaxValue(actualValue);
 				drawFilterUI();
 			}

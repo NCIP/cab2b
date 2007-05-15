@@ -9,17 +9,17 @@ package edu.wustl.cab2b.client.ui.filter;
  * 
  */
 public class RangeFilter extends CaB2BFilter {
-	float minRange;
+	double minRange;
 
-	float maxRange;
+	double maxRange;
 	
-	float originalMin;
+	double originalMin;
 	
-	float originalMax;
+	double originalMax;
 	
 	String columnName;
 
-	public RangeFilter(float minRange, float maxRange, int col, String colName, float min, float max) {
+	public RangeFilter(double minRange, double maxRange, int col, String colName, double min, double max) {
 		super(col);
 		this.columnName=colName;
 		this.minRange = minRange;
@@ -30,7 +30,7 @@ public class RangeFilter extends CaB2BFilter {
 
 	public void rangeValidation() {
 		if (minRange > maxRange) {
-			float temp = 0;
+			double temp = 0;
 			temp = minRange;
 			minRange = maxRange;
 			maxRange = temp;
