@@ -206,6 +206,14 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                         }
 
                     }
+                    
+                    private int getNumRecords(Map<String, String[][]> allRecords) {
+                        int n = 0;
+                        for (String[][] values : allRecords.values()) {
+                            n += values.length;
+                        }
+                        return n;
+                    }
 
                     @Override
                     protected void doUIUpdateLogic() {
@@ -235,7 +243,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                                     /* Set the url for each data row. */
                                     String urlKey = (String) ittr.next();
                                     Object[][] results = allRecords.get(urlKey);
-                                    if (results.length == 0 || classRecords.getAllRecords().size() == 0) {
+                                    if (getNumRecords(allRecords) == 0) {
                                         JOptionPane.showMessageDialog(null, "No result found.", "",
                                                                       JOptionPane.INFORMATION_MESSAGE);
                                         srhButton.setVisible(true);

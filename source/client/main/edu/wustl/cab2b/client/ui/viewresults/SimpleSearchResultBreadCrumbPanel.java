@@ -50,7 +50,6 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 
-
     private static final long serialVersionUID = 1L;
 
     HashMap<String, List<AttributeInterface>> mapResultLabel = new HashMap<String, List<AttributeInterface>>();
@@ -165,20 +164,23 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
          */
         IClassRecords classRecords = (IClassRecords) queryResult;
         Map<String, String[][]> allRecords = classRecords.getAllRecords();
+
+        int numRecords = getNumRecords(allRecords);
         Iterator ittr = allRecords.keySet().iterator();
-        if (ittr.hasNext()) {
+        while (ittr.hasNext()) {
             String urlKey = (String) ittr.next();
             Object[][] results = allRecords.get(urlKey);
             String className = edu.wustl.cab2b.common.util.Utility.getDisplayName(classRecords.getAttributes().get(
                                                                                                                    0).getEntity());
             Logger.out.info("Result Length :" + results.length);
 
-            if (results.length == 0) {
+            if (numRecords == 0) {
                 simpleSearchResultPanel = new Cab2bPanel();
                 Cab2bLabel noResultFoundErroLabel = new Cab2bLabel("No results found for Class " + className);
                 simpleSearchResultPanel.add(noResultFoundErroLabel);
-            } else if (results.length == 1) {
-                //create data row			
+                break;
+            } else if (numRecords == 1 && results.length == 1) {
+                //create data row           
                 /*if (className == null || className.length() == 0)
                  {
                  Get the class name from the attributes, if the above is not set on the server.
@@ -235,6 +237,14 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
             }
         }
         return simpleSearchResultPanel;
+    }
+
+    private int getNumRecords(Map<String, String[][]> allRecords) {
+        int n = 0;
+        for (String[][] values : allRecords.values()) {
+            n += values.length;
+        }
+        return n;
     }
 
     /** Initialize GUI. */
@@ -306,7 +316,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
         if (attributes != null && attributes.size() > 0) {
 
             AttributeInterface attribute = (AttributeInterface) attributes.get(0);
-            //strClassName = edu.wustl.common.util.Utility.parseClassName(attribute.getEntity().getName());	
+            //strClassName = edu.wustl.common.util.Utility.parseClassName(attribute.getEntity().getName()); 
             strClassName = edu.wustl.cab2b.common.util.Utility.getDisplayName(attribute.getEntity());
         }
         return strClassName;
