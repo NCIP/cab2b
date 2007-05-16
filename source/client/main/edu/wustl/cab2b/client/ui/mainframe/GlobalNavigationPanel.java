@@ -222,7 +222,7 @@ public class GlobalNavigationPanel extends Cab2bPanel implements ActionListener 
         topPanel.add(bannerLabel, gbc);
 
         Date date = new Date();
-        loggedInUserLabel = new Cab2bLabel("<html>Robert Lloyd <br>"
+        loggedInUserLabel = new Cab2bLabel("<html><b>Robert Lloyd</b><br>"
                 + DateFormat.getDateInstance(DateFormat.LONG).format(date).toString() + "<br><br></html>");
         Cab2bHyperlink logOutHyperLink = new Cab2bHyperlink(Color.GRAY, Color.WHITE);
         logOutHyperLink.setText("Logout");
