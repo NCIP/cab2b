@@ -1,4 +1,3 @@
-
 package edu.wustl.cab2b.client.ui.controls;
 
 import java.awt.Color;
@@ -6,8 +5,6 @@ import java.awt.Color;
 import javax.swing.Action;
 
 import org.jdesktop.swingx.JXHyperlink;
-
-import edu.wustl.cab2b.client.ui.WindowUtilities;
 
 /**
  * By Default Cab2bHyperlink is underlined, unlike JXHyperlink,
@@ -19,78 +16,100 @@ import edu.wustl.cab2b.client.ui.WindowUtilities;
  * @author chetan_bh
  *
  */
-public class Cab2bHyperlink extends JXHyperlink
-{
+public class Cab2bHyperlink extends JXHyperlink {
 
-	/**
-	 * User object associated with this hyperlink.
-	 */
-	private Object userObject = null;	 
-	private static Color m_clickedHyperlinkColor = new Color(0x006699);
-	private static Color m_unclickedHyperlinkColor = new Color(0x034E74);
-	private static boolean m_isHyperlinkUnderlined = true;
+    private static final long serialVersionUID = 8338180418321272388L;
 
-	public Cab2bHyperlink()
-	{
-		this(null,m_isHyperlinkUnderlined,m_clickedHyperlinkColor,m_unclickedHyperlinkColor);
-	}
+    /**
+     * User object associated with this hyperlink.
+     */
+    private Object userObject;
 
-	public Cab2bHyperlink(boolean isHyperlinkUnderlined)
-	{
-		
-		this(null,isHyperlinkUnderlined,m_clickedHyperlinkColor,m_unclickedHyperlinkColor);
-	}
-	
-	public Cab2bHyperlink( Color clickedColor,Color unclickedColor)
-	{	
-		this(null,m_isHyperlinkUnderlined,clickedColor,unclickedColor);
-	}
+    private static Color clickedHyperlinkColor = new Color(0x006699);
 
-	public Cab2bHyperlink(Action action)
-	{	
-		this(action,m_isHyperlinkUnderlined,m_clickedHyperlinkColor,m_unclickedHyperlinkColor);
-	}
+    private static Color unclickedHyperlinkColor = new Color(0x034E74);
 
-	public Cab2bHyperlink(Action action, boolean isHyperlinkUnderlined)
-	{
-	
-		this(action,isHyperlinkUnderlined,m_clickedHyperlinkColor,m_unclickedHyperlinkColor);		
-	}
-	
-	public Cab2bHyperlink(Action action, boolean isHyperlinkUnderlined, Color clickedColor,Color unclickedColor)
-	{
-		super(action);		
-		
-		m_isHyperlinkUnderlined = isHyperlinkUnderlined;	 
-		this.setClickedColor(clickedColor);
-		this.setUnclickedColor(unclickedColor);
-		if (m_isHyperlinkUnderlined)
-			this.setUI(new Cab2bHyperlinkUI());
-	}
+    private static boolean hyperlinkUnderlined = true;
 
-	/**
-	 * Returns user object associated with this hyperlink.
-	 */
-	public Object getUserObject()
-	{
-		return userObject;
-	}
+    /**
+     * default constructor
+     */
+    public Cab2bHyperlink() {
+        this(null, hyperlinkUnderlined, clickedHyperlinkColor, unclickedHyperlinkColor);
+    }
 
-	/**
-	 * Sets the user object.
-	 */
-	public void setUserObject(Object userObject)
-	{
-		this.userObject = userObject;
-	}
+    /**
+     * @param isHyperlinkUnderlined True if Hyperlink is Underlined else false
+     */
+    public Cab2bHyperlink(boolean isHyperlinkUnderlined) {
+        this(null, isHyperlinkUnderlined, clickedHyperlinkColor, unclickedHyperlinkColor);
+    }
 
-	public static void main(String[] args)
-	{
-		Cab2bHyperlink hyperlink = new Cab2bHyperlink( true);
-		
-		hyperlink.setText("hyperlink text");
-		
-		WindowUtilities.showInFrame(hyperlink, "Cab2b Hyperlink");
-	}
+    /**
+     * @param clickedColor colour to use when hyperlink is clicked
+     * @param unclickedColor colour to use when hyperlink is not clicked
+     */
+    public Cab2bHyperlink(Color clickedColor, Color unclickedColor) {
+        this(null, hyperlinkUnderlined, clickedColor, unclickedColor);
+    }
 
+    /**
+     * @param action Action
+     */
+    public Cab2bHyperlink(Action action) {
+        this(action, hyperlinkUnderlined, clickedHyperlinkColor, unclickedHyperlinkColor);
+    }
+
+    /**
+     * @param action Action 
+     * @param isHyperlinkUnderlined True if Hyperlink is Underlined else false
+     */
+    public Cab2bHyperlink(Action action, boolean isHyperlinkUnderlined) {
+
+        this(action, isHyperlinkUnderlined, clickedHyperlinkColor, unclickedHyperlinkColor);
+    }
+
+    /**
+     * @param action Action
+     * @param isHyperlinkUnderlined True if Hyperlink is Underlined else false
+     * @param clickedColor colour to use when hyperlink is clicked
+     * @param unclickedColor colour to use when hyperlink is not clicked
+     */
+    public Cab2bHyperlink(Action action, boolean isHyperlinkUnderlined, Color clickedColor, Color unclickedColor) {
+        super(action);
+
+        hyperlinkUnderlined = isHyperlinkUnderlined;
+        this.setClickedColor(clickedColor);
+        this.setUnclickedColor(unclickedColor);
+        if (hyperlinkUnderlined)
+            this.setUI(new Cab2bHyperlinkUI());
+    }
+
+    /**
+     * Returns user object associated with this hyperlink.
+     */
+    public Object getUserObject() {
+        return userObject;
+    }
+
+    /**
+     * Sets the user object.
+     */
+    public void setUserObject(Object userObject) {
+        this.userObject = userObject;
+    }
+
+    /**
+     * @return Returns the clickedHyperlinkColor.
+     */
+    public static Color getClickedHyperlinkColor() {
+        return clickedHyperlinkColor;
+    }
+
+    /**
+     * @return Returns the unclickedHyperlinkColor.
+     */
+    public static Color getUnclickedHyperlinkColor() {
+        return unclickedHyperlinkColor;
+    }
 }
