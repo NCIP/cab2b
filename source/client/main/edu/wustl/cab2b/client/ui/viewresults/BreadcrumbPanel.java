@@ -1,6 +1,5 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.util.Vector;
@@ -11,18 +10,28 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.common.util.logger.Logger;
 
+/**
+ * Panel for Bread crumb on show result screen
+ * @author Mahesh Iyer
+ * @author Chandrakant Talele
+ * @author Rahul Ner
+ */
 public class BreadcrumbPanel extends Cab2bPanel {
 
-    private ActionListener m_breadCrumbListener = null;
+    private static final long serialVersionUID = -684709343105422233L;
 
-    private Vector m_breadCrumbs = null;
+    private ActionListener breadCrumbListener;
+
+    private Vector<String> breadCrumbVector;
 
     /**
-     * Constructor
+     * default constructor
+     * @param breadCrumbListener bread Crumb Listener to add
+     * @param breadCrumbVector vector of breadCrumbs
      */
-    BreadcrumbPanel(ActionListener breadCrumbListener, Vector breadCrumbs) {
-        this.m_breadCrumbListener = breadCrumbListener;
-        this.m_breadCrumbs = breadCrumbs;
+    BreadcrumbPanel(ActionListener breadCrumbListener, Vector<String> breadCrumbVector) {
+        this.breadCrumbListener = breadCrumbListener;
+        this.breadCrumbVector = breadCrumbVector;
         initGUI();
     }
 
@@ -31,12 +40,12 @@ public class BreadcrumbPanel extends Cab2bPanel {
      */
     private void initGUI() {
         this.setLayout(new FlowLayout(5));
-        this.add(new JLabel("Path : ")); // Adding "Paths" JLabel.
-        int size = this.m_breadCrumbs.size();
-        Logger.out.info("SIZE : " + size);
+        this.add(new JLabel("Path : "));
+        int size = this.breadCrumbVector.size();
+        Logger.out.debug("SIZE : " + size);
         for (int i = 0; i < size; i++) {
             /* Get the text from the vector.*/
-            String strWholeText = (String) this.m_breadCrumbs.get(i);
+            String strWholeText = this.breadCrumbVector.get(i);
             Cab2bHyperlink breadCrumbHyperlink = new Cab2bHyperlink();
             /*Set the whole string as the user object for this link.*/
             breadCrumbHyperlink.setUserObject(strWholeText);
@@ -44,11 +53,13 @@ public class BreadcrumbPanel extends Cab2bPanel {
             String strJustText = strWholeText.substring(strWholeText.indexOf("#") + 1);
             /*Set the display name appropriatly*/
             breadCrumbHyperlink.setText(strJustText);
-            breadCrumbHyperlink.addActionListener(this.m_breadCrumbListener);
+            breadCrumbHyperlink.addActionListener(this.breadCrumbListener);
             this.add(breadCrumbHyperlink);
-            if (i < size - 1)
-                this.add(new JLabel(" > "));
+            if (i < size - 1) {
+                JLabel label = new JLabel(" >> ");
+                label.setForeground(Cab2bHyperlink.getUnclickedHyperlinkColor());
+                this.add(label);
+            }
         }
     }
-
 }
