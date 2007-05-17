@@ -1,4 +1,4 @@
-package edu.wustl.cab2b.server.queryengine;
+package edu.wustl.cab2b.server.queryengine.resulttransformers;
 
 import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.cagrid.common.Utils;
@@ -10,7 +10,7 @@ import java.util.Date;
 
 import javax.xml.namespace.QName;
 
-class DcqlLogger {
+public class DcqlLogger {
     private static final String LOG_BASE_DIR = System.getProperty("user.home")
             + "/dcqlLog";
 
@@ -27,7 +27,7 @@ class DcqlLogger {
         new File(LOG_BASE_DIR).mkdir();
     }
 
-    DcqlLogger() {
+    public DcqlLogger() {
         logFolderName = LOG_BASE_DIR + "/" + getCurrentTime();
         new File(logFolderName).mkdir();
     }
@@ -41,7 +41,7 @@ class DcqlLogger {
         return Logger.out.isInfoEnabled();
     }
 
-    void log(DCQLQuery dcqlQuery) {
+    public void log(DCQLQuery dcqlQuery) {
         if (!isLogEnabled()) {
             return;
         }

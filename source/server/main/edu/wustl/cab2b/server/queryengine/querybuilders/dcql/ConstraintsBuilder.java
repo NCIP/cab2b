@@ -361,10 +361,10 @@ public class ConstraintsBuilder {
     private AttributeConstraint createAttribute(String attributeName,
                                                 RelationalOperator operator,
                                                 DataType dataType) {
-        return createAttribute(attributeName, operator, null, dataType);
+        return createAttributeConstraint(attributeName, operator, null, dataType);
     }
 
-    public static AttributeConstraint createAttribute(
+    public static AttributeConstraint createAttributeConstraint(
                                                       String attributeName,
                                                       RelationalOperator operator,
                                                       String value,
@@ -407,11 +407,11 @@ public class ConstraintsBuilder {
                                                   String value1, String value2,
                                                   DataType dataType) {
         MyGroup group = new MyGroup(LogicalOperator.And);
-        group.addConstraint((createAttribute(
+        group.addConstraint((createAttributeConstraint(
                                              attributeName,
                                              RelationalOperator.GreaterThanOrEquals,
                                              value1, dataType)));
-        group.addConstraint((createAttribute(
+        group.addConstraint((createAttributeConstraint(
                                              attributeName,
                                              RelationalOperator.LessThanOrEquals,
                                              value2, dataType)));
@@ -423,7 +423,7 @@ public class ConstraintsBuilder {
                                              DataType dataType) {
         MyGroup group = new MyGroup(LogicalOperator.Or);
         for (String value : values) {
-            group.addConstraint((createAttribute(attributeName,
+            group.addConstraint((createAttributeConstraint(attributeName,
                                                  RelationalOperator.Equals,
                                                  value, dataType)));
         }
@@ -435,7 +435,7 @@ public class ConstraintsBuilder {
                                                 DataType dataType) {
         MyGroup group = new MyGroup(LogicalOperator.And);
         for (String value : values) {
-            group.addConstraint((createAttribute(attributeName,
+            group.addConstraint((createAttributeConstraint(attributeName,
                                                  RelationalOperator.NotEquals,
                                                  value, dataType)));
         }
@@ -455,7 +455,7 @@ public class ConstraintsBuilder {
         if (operator.numberOfValuesRequired() == 0)
             return createAttribute(attributeName, operator, dataType);
         if (operator.numberOfValuesRequired() == 1) {
-            return createAttribute(attributeName, operator,
+            return createAttributeConstraint(attributeName, operator,
                                    condition.getValue(), dataType);
         }
 

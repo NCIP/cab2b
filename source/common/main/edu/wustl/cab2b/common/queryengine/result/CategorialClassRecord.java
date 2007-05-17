@@ -4,22 +4,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 
-public class CategorialClassRecord implements ICategorialClassRecord {
+public class CategorialClassRecord extends Record implements
+        ICategorialClassRecord {
+    private static final long serialVersionUID = -7902568245257677861L;
+
     private Map<CategorialClass, List<ICategorialClassRecord>> childrenCategorialClassRecords;
-
-    private Map<CategorialAttribute, String> attributesValues;
-
-    private String id;
 
     private CategorialClass categorialClass;
 
-    public CategorialClassRecord() {
-        attributesValues = new HashMap<CategorialAttribute, String>();
+    protected CategorialClassRecord(
+            CategorialClass categorialClass,
+            Set<AttributeInterface> attributes, String id) {
+        super(attributes, id);
         childrenCategorialClassRecords = new HashMap<CategorialClass, List<ICategorialClassRecord>>();
+        this.categorialClass = categorialClass;
     }
 
     public CategorialClass getCategorialClass() {
@@ -28,19 +31,6 @@ public class CategorialClassRecord implements ICategorialClassRecord {
 
     public void setCategorialClass(CategorialClass categorialClass) {
         this.categorialClass = categorialClass;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setAttributesValues(
-                                    Map<CategorialAttribute, String> attributesValues) {
-        this.attributesValues = attributesValues;
     }
 
     public Map<CategorialClass, List<ICategorialClassRecord>> getChildrenCategorialClassRecords() {
@@ -52,13 +42,9 @@ public class CategorialClassRecord implements ICategorialClassRecord {
         this.childrenCategorialClassRecords = childrenCategorialClassRecords;
     }
 
-    public Map<CategorialAttribute, String> getAttributesValues() {
-        return attributesValues;
-    }
-
     public void addCategorialClassRecords(
                                           CategorialClass catClass,
-                                          List<? extends ICategorialClassRecord> catClassRecs) {
+                                          List<ICategorialClassRecord> catClassRecs) {
         List<ICategorialClassRecord> existingRecs = getChildrenCategorialClassRecords().get(
                                                                                             catClass);
         if (existingRecs == null) {

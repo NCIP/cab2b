@@ -2,21 +2,18 @@ package edu.wustl.cab2b.server.queryengine;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
-import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
-import edu.wustl.cab2b.common.queryengine.result.CategorialClassRecord;
-import edu.wustl.cab2b.common.queryengine.result.CategoryResult;
-import edu.wustl.cab2b.common.queryengine.result.IClassRecords;
+import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
+import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessor;
 import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessorResult;
@@ -29,10 +26,11 @@ import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.DcqlCon
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.ForeignAssociationConstraint;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.GroupConstraint;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.LocalAssociationConstraint;
+import edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer;
+import edu.wustl.cab2b.server.queryengine.resulttransformers.QueryResultTransformerFactory;
 import edu.wustl.cab2b.server.queryengine.utils.TreeNode;
 import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
-import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.queryobject.DataType;
@@ -43,17 +41,13 @@ import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.cagrid.dcql.DCQLQuery;
 import gov.nih.nci.cagrid.dcql.Object;
-import gov.nih.nci.cagrid.dcqlresult.DCQLQueryResultsCollection;
-import gov.nih.nci.cagrid.fqp.processor.FederatedQueryEngine;
-import gov.nih.nci.cagrid.fqp.processor.exceptions.FederatedQueryProcessingException;
 
 /**
  * This class is responsible for building a DCQL out of ICab2bQuery, and get
  * results by executing that DCQL.
- * @author Chandrakant Talele
+ * @author Srinath
  */
 
-// TODO move logging to separate class...
 public class QueryExecutor {
     private ICab2bQuery query;
 
@@ -61,11 +55,14 @@ public class QueryExecutor {
 
     private CategoryPreprocessorResult categoryPreprocessorResult;
 
-    private DcqlLogger dcqlLogger;
+    private IQueryResultTransformer<IRecord, ICategorialClassRecord> transformer;
 
     public QueryExecutor(ICab2bQuery query) {
         setQuery(query);
-        setDcqlLogger(new DcqlLogger());
+        this.transformer = QueryResultTransformerFactory.createTransformer(
+                                                                           query.getOutputEntity(),
+                                                                           IRecord.class,
+                                                                           ICategorialClassRecord.class);
     }
 
     private DCQLQuery createDCQLQuery(String outputName,
@@ -137,7 +134,7 @@ public class QueryExecutor {
      *            Query which needs to be executed.
      * @return Returns the IQueryResult
      */
-    public IQueryResult executeQuery() {
+    public IQueryResult<?> executeQuery() {
         Logger.out.info("Entered QueryExecutor...");
         this.categoryPreprocessorResult = preProcessCategories(query);
         ConstraintsBuilder constraintsBuilder = new ConstraintsBuilder(query,
@@ -150,7 +147,7 @@ public class QueryExecutor {
         if (isCategoryOutput()) {
             Set<TreeNode<IExpression>> rootOutputExprNodes = this.categoryPreprocessorResult.getExprsSourcedFromCategories().get(
                                                                                                                                  getOutputEntity());
-            List<CategoryResult> categoryResults = new ArrayList<CategoryResult>(
+            List<IQueryResult<ICategorialClassRecord>> categoryResults = new ArrayList<IQueryResult<ICategorialClassRecord>>(
                     rootOutputExprNodes.size());
             for (TreeNode<IExpression> rootOutputExprNode : rootOutputExprNodes) {
                 IExpression rootOutputExpr = rootOutputExprNode.getValue();
@@ -163,23 +160,13 @@ public class QueryExecutor {
                                                           rootExprDcqlConstraint);
                 CategorialClass catClassForRootExpr = this.categoryPreprocessorResult.getCatClassForExpr().get(
                                                                                                                rootOutputExpr);
-                IClassRecords rootExprClassRecs = executeDCQL(
-                                                              rootDCQLQuery,
-                                                              catClassForRootExpr.getCategorialClassEntity().getAttributeCollection());
+                IQueryResult<ICategorialClassRecord> allRootExprCatRecs = transformer.getCategoryResults(
+                                                                                                         rootDCQLQuery,
+                                                                                                         catClassForRootExpr);
 
-                Map<String, List<CategorialClassRecord>> allRootExprCatRecs = classRecsToCatRecs(
-                                                                                                 rootExprClassRecs,
-                                                                                                 catClassForRootExpr);
-
-                CategoryResult catResult = new CategoryResult();
-                categoryResults.add(catResult);
-
-                for (Map.Entry<String, List<CategorialClassRecord>> entry : allRootExprCatRecs.entrySet()) {
+                for (Map.Entry<String, List<ICategorialClassRecord>> entry : allRootExprCatRecs.getRecords().entrySet()) {
                     String url = entry.getKey();
-                    List<CategorialClassRecord> rootExprCatRecs = entry.getValue();
-                    catResult.putCategorialClassRecordsForUrl(url,
-                                                              rootExprCatRecs);
-                    for (CategorialClassRecord rootExprCatRec : rootExprCatRecs) {
+                    for (ICategorialClassRecord rootExprCatRec : entry.getValue()) {
                         getChildrenRecords(rootExprCatRec, rootOutputExprNode,
                                            url, rootExprCatRec.getId());
                     }
@@ -192,8 +179,7 @@ public class QueryExecutor {
                                                   getOutputEntity().getName(),
                                                   this.constraintsBuilderResult.getDcqlConstraintForClass(getOutputEntity()));
 
-            // log(dcqlQuery);
-            queryResult = executeDCQL(dcqlQuery);
+            queryResult = transformer.getResults(dcqlQuery, getOutputEntity());
         }
         Logger.out.info("Exiting QueryExecutor.");
         return queryResult;
@@ -202,7 +188,7 @@ public class QueryExecutor {
     // parentExpr need not correspond to parentCatClassRec.
     // parentCatClassRec will be updated for a recursive call only if the expr
     // causing the recursive call belongs to a catClass.
-    private void getChildrenRecords(CategorialClassRecord parentCatClassRec,
+    private void getChildrenRecords(ICategorialClassRecord parentCatClassRec,
                                     TreeNode<IExpression> parentExprNode,
                                     String url, String parentId) {
         IExpression parentExpr = parentExprNode.getValue();
@@ -229,29 +215,30 @@ public class QueryExecutor {
                                                           constraintForChildExpr,
                                                           url);
 
-            IClassRecords childExprClassRecs = executeDCQL(
-                                                           queryForChildExpr,
-                                                           catClassForChildExpr.getCategorialClassEntity().getAttributeCollection());
-
             if (catClassForChildExpr != null) {
                 // expr is for a catClass; add recs to parentCatClassRec
-                List<CategorialClassRecord> childExprCatRecs = classRecsToCatRecs(
-                                                                                  childExprClassRecs,
-                                                                                  catClassForChildExpr).get(
-                                                                                                            url);
+                IQueryResult<ICategorialClassRecord> childExprCatResult = transformer.getCategoryResults(
+                                                                                                         queryForChildExpr,
+                                                                                                         catClassForChildExpr);
+
+                List<ICategorialClassRecord> childExprCatRecs = childExprCatResult.getRecords().get(
+                                                                                                    url);
                 parentCatClassRec.addCategorialClassRecords(
                                                             catClassForChildExpr,
                                                             childExprCatRecs);
-                for (CategorialClassRecord childExprCatRec : childExprCatRecs) {
+                for (ICategorialClassRecord childExprCatRec : childExprCatRecs) {
                     getChildrenRecords(childExprCatRec, childExprNode, url,
                                        childExprCatRec.getId());
                 }
             } else {
                 // expr was formed for entity on path between catClasses...
-                int idAttributeIndex = getIdAttributeIndex(childExprClassRecs.getAttributes());
+                IQueryResult<IRecord> childExprClassRecs = transformer.getResults(
+                                                                                  queryForChildExpr,
+                                                                                  catClassForChildExpr.getCategorialClassEntity());
+
                 // only one url at a time; so directly do next();
-                for (String[] record : childExprClassRecs.getAllRecords().values().iterator().next()) {
-                    String childRecId = record[idAttributeIndex];
+                for (IRecord record : childExprClassRecs.getRecords().values().iterator().next()) {
+                    String childRecId = record.getId();
                     getChildrenRecords(parentCatClassRec, childExprNode, url,
                                        childRecId);
                 }
@@ -260,71 +247,18 @@ public class QueryExecutor {
         }
     }
 
-    private CategoryResult mergeCatResults(List<CategoryResult> categoryResults) {
-        CategoryResult res = new CategoryResult();
+    private IQueryResult<ICategorialClassRecord> mergeCatResults(
+                                                                 List<IQueryResult<ICategorialClassRecord>> categoryResults) {
         Category outputCategory = this.categoryPreprocessorResult.getCategoryForEntity().get(
                                                                                              getOutputEntity());
-        res.setCategory(outputCategory);
-
-        for (CategoryResult categoryResult : categoryResults) {
-            res.copyRecords(categoryResult);
+        ICategoryResult<ICategorialClassRecord> res = QueryResultFactory.createCategoryResult(outputCategory);
+        for (IQueryResult<ICategorialClassRecord> categoryResult : categoryResults) {
+            for (Map.Entry<String, List<ICategorialClassRecord>> entry : categoryResult.getRecords().entrySet()) {
+                categoryResult.addRecords(entry.getKey(), entry.getValue());
+            }
         }
         // TODO pivots the results around the original root and then merges
         // them...
-        return res;
-    }
-
-    private AttributeInterface getIdAttribute(CategorialClass catClass) {
-        return getIdAttribute(catClass.getCategorialClassEntity());
-    }
-
-    private AttributeInterface getIdAttribute(EntityInterface entity) {
-        return Utility.getIdAttribute(entity);
-    }
-
-    private int getIdAttributeIndex(List<AttributeInterface> attributes) {
-        AttributeInterface idAttribute = getIdAttribute(attributes.get(0).getEntity());
-        int idAttributeIndex = attributes.indexOf(idAttribute);
-        return idAttributeIndex;
-    }
-
-    private Map<String, List<CategorialClassRecord>> classRecsToCatRecs(
-                                                                        IClassRecords classRecords,
-                                                                        CategorialClass categorialClass) {
-        Map<String, List<CategorialClassRecord>> res = new HashMap<String, List<CategorialClassRecord>>();
-
-        List<AttributeInterface> classAttributes = classRecords.getAttributes();
-        int idAttributeIndex = getIdAttributeIndex(classAttributes);
-
-        Set<CategorialAttribute> catAttributes = categorialClass.getCategorialAttributeCollection();
-        for (Map.Entry<String, String[][]> entry : classRecords.getAllRecords().entrySet()) {
-            String url = entry.getKey();
-            String[][] values = entry.getValue();
-
-            List<CategorialClassRecord> catClassRecs = new ArrayList<CategorialClassRecord>();
-            res.put(url, catClassRecs);
-
-            Map<CategorialAttribute, Integer> catAttrToIndex = new HashMap<CategorialAttribute, Integer>(
-                    catAttributes.size());
-
-            for (CategorialAttribute catAttr : catAttributes) {
-                int index = classAttributes.indexOf(catAttr.getSourceClassAttribute());
-                catAttrToIndex.put(catAttr, index);
-            }
-
-            for (String[] rec : values) {
-                CategorialClassRecord catClassRec = new CategorialClassRecord();
-                catClassRecs.add(catClassRec);
-                catClassRec.setCategorialClass(categorialClass);
-                catClassRec.setId(rec[idAttributeIndex]);
-                for (CategorialAttribute catAttr : catAttributes) {
-                    catClassRec.getAttributesValues().put(
-                                                          catAttr,
-                                                          rec[catAttrToIndex.get(catAttr)]);
-                }
-            }
-        }
-
         return res;
     }
 
@@ -340,9 +274,18 @@ public class QueryExecutor {
     private AttributeConstraint createIdConstraint(
                                                    AttributeInterface attribute,
                                                    String id) {
-        return ConstraintsBuilder.createAttribute(attribute.getName(),
-                                                  RelationalOperator.Equals,
-                                                  id, DataType.String);
+        return ConstraintsBuilder.createAttributeConstraint(
+                                                            attribute.getName(),
+                                                            RelationalOperator.Equals,
+                                                            id, DataType.String);
+    }
+
+    private AttributeInterface getIdAttribute(CategorialClass catClass) {
+        return getIdAttribute(catClass.getCategorialClassEntity());
+    }
+
+    private AttributeInterface getIdAttribute(EntityInterface entity) {
+        return Utility.getIdAttribute(entity);
     }
 
     private AbstractAssociationConstraint createAssociationConstraint(
@@ -357,52 +300,4 @@ public class QueryExecutor {
     private boolean isCategoryOutput() {
         return Utility.isCategory(getOutputEntity());
     }
-
-    /**
-     * Gets DCQL and fires it and returns generated CQLQueryResults.
-     * @param query
-     *            Input query
-     * @return Returns the DCQLQueryResults
-     */
-    private IClassRecords executeDCQL(DCQLQuery dcqlQuery) {
-        return executeDCQL(dcqlQuery, new ArrayList<AttributeInterface>(
-                getOutputEntity().getAttributeCollection()));
-    }
-
-    private IClassRecords executeDCQL(
-                                      DCQLQuery dcqlQuery,
-                                      Collection<AttributeInterface> outputAttributes) {
-        FederatedQueryEngine federatedQueryEngine = new FederatedQueryEngine();
-        DCQLQueryResultsCollection queryResults = null;
-        try {
-            Logger.out.info("Executing DCQL... Target is : "
-                    + dcqlQuery.getTargetObject().getName());
-            log(dcqlQuery);
-            queryResults = federatedQueryEngine.execute(dcqlQuery);
-            Logger.out.info("Executed DCQL successfully.");
-        } catch (FederatedQueryProcessingException e) {
-            throw new RuntimeException("Exception while executing DCQL", e,
-                    ErrorCodeConstants.QUERY_EXECUTION_ERROR);
-        }
-
-        DCQLResultsTransformer resultsTransformer = new DCQLResultsTransformer();
-        IClassRecords classRecs = resultsTransformer.getClassRecords(
-                                                                     queryResults,
-                                                                     new ArrayList<AttributeInterface>(
-                                                                             outputAttributes));
-        return classRecs;
-    }
-
-    private void log(DCQLQuery dcqlQuery) {
-        getDcqlLogger().log(dcqlQuery);
-    }
-
-    public DcqlLogger getDcqlLogger() {
-        return dcqlLogger;
-    }
-
-    public void setDcqlLogger(DcqlLogger dcqlLogger) {
-        this.dcqlLogger = dcqlLogger;
-    }
-
 }
