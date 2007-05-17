@@ -5,10 +5,8 @@ import java.rmi.RemoteException;
 import javax.ejb.CreateException;
 import javax.ejb.EJBHome;
 
-import edu.wustl.cab2b.common.advancedSearch.AdvancedSearchRemoteInterface;
 
-
-public interface DataListHome extends EJBHome
+public interface DataListHomeInterface extends EJBHome
 {
 	/**
      * This method creates the EJB Object.

@@ -31,7 +31,7 @@ import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
-import edu.wustl.cab2b.common.datalist.DataListHome;
+import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.common.util.logger.Logger;
@@ -117,7 +117,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
                     protected void doNonUILogic() throws RuntimeException {
                         DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                             EjbNamesConstants.DATALIST_BEAN,
-                                                                                                                            DataListHome.class,
+                                                                                                                            DataListHomeInterface.class,
                                                                                                                             SaveDatalistPanel.this);
 
                         try {

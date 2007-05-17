@@ -48,7 +48,7 @@ import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
-import edu.wustl.cab2b.common.datalist.DataListHome;
+import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
@@ -527,7 +527,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
         DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                             EjbNamesConstants.DATALIST_BEAN,
-                                                                                                            DataListHome.class);
+                                                                                                            DataListHomeInterface.class);
 
         List<DataListMetadata> dataListMetadatas = dataListBI.retrieveAllDataListMetadata();
         System.out.println("dataListMetadatas " + dataListMetadatas);

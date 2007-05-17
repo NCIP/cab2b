@@ -42,7 +42,7 @@ import edu.wustl.cab2b.client.ui.filter.CaB2BPatternFilter;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
-import edu.wustl.cab2b.common.datalist.DataListHome;
+import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
@@ -258,7 +258,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         //getting datalist entity interface
         DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                             EjbNamesConstants.DATALIST_BEAN,
-                                                                                                            DataListHome.class);
+                                                                                                            DataListHomeInterface.class);
         try {
             //getting list of attributes
             EntityRecordResultInterface recordResultInterface = dataListBI.getEntityRecord(entityNode.getId());
