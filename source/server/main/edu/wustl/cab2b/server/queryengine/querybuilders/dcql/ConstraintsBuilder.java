@@ -173,7 +173,7 @@ public class ConstraintsBuilder {
         DcqlConstraint childConstraint = getResult().getConstraintForExpression(
                                                                                 childExpr);
 
-        MyGroup group = new MyGroup(LogicalOperator.And);
+        Cab2bGroup group = new Cab2bGroup(LogicalOperator.And);
         group.addConstraint(childConstraint);
 
         for (IExpressionId parentExprId : parentExprIds) {
@@ -349,7 +349,7 @@ public class ConstraintsBuilder {
         // return new AttributeConstraint(
         // createAttribute(rule.getCondition(0)));
         // }
-        MyGroup group = new MyGroup(LogicalOperator.And);
+        Cab2bGroup group = new Cab2bGroup(LogicalOperator.And);
 
         // List<Attribute> attributesList = new ArrayList<Attribute>();
         for (int i = 0; i < rule.size(); i++) {
@@ -406,7 +406,7 @@ public class ConstraintsBuilder {
     private DcqlConstraint createBetweenCondition(String attributeName,
                                                   String value1, String value2,
                                                   DataType dataType) {
-        MyGroup group = new MyGroup(LogicalOperator.And);
+        Cab2bGroup group = new Cab2bGroup(LogicalOperator.And);
         group.addConstraint((createAttributeConstraint(
                                              attributeName,
                                              RelationalOperator.GreaterThanOrEquals,
@@ -421,7 +421,7 @@ public class ConstraintsBuilder {
     private DcqlConstraint createInCondition(String attributeName,
                                              List<String> values,
                                              DataType dataType) {
-        MyGroup group = new MyGroup(LogicalOperator.Or);
+        Cab2bGroup group = new Cab2bGroup(LogicalOperator.Or);
         for (String value : values) {
             group.addConstraint((createAttributeConstraint(attributeName,
                                                  RelationalOperator.Equals,
@@ -433,7 +433,7 @@ public class ConstraintsBuilder {
     private DcqlConstraint createNotInCondition(String attributeName,
                                                 List<String> values,
                                                 DataType dataType) {
-        MyGroup group = new MyGroup(LogicalOperator.And);
+        Cab2bGroup group = new Cab2bGroup(LogicalOperator.And);
         for (String value : values) {
             group.addConstraint((createAttributeConstraint(attributeName,
                                                  RelationalOperator.NotEquals,

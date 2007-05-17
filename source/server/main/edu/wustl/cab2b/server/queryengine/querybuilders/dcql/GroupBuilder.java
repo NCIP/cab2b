@@ -68,9 +68,9 @@ class GroupBuilder {
     // than a GroupConstraint.
     DcqlConstraint buildGroup() {
         int currentNesting = -1;
-        TreeNode<MyGroup> sentinelRootNode = new TreeNode<MyGroup>(
-                new MyGroup());
-        TreeNode<MyGroup> currentNode = sentinelRootNode;
+        TreeNode<Cab2bGroup> sentinelRootNode = new TreeNode<Cab2bGroup>(
+                new Cab2bGroup());
+        TreeNode<Cab2bGroup> currentNode = sentinelRootNode;
 
         // a sentinel connector.
         this.connectors.add(QueryObjectFactory.createLogicalConnector(
@@ -83,7 +83,7 @@ class GroupBuilder {
             currentNesting = connector.getNestingNumber();
             if (nestingDiff > 0) {
                 for (int j = 0; j < nestingDiff; j++) {
-                    MyGroup childGroup = currentNode.getValue().addGroup();
+                    Cab2bGroup childGroup = currentNode.getValue().addGroup();
                     currentNode = currentNode.addChildValue(childGroup);
                 }
             }

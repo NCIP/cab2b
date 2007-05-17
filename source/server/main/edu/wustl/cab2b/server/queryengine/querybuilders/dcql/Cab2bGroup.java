@@ -15,10 +15,10 @@ import gov.nih.nci.cagrid.dcql.Association;
 import gov.nih.nci.cagrid.dcql.ForeignAssociation;
 import gov.nih.nci.cagrid.dcql.Group;
 
-class ImmutableGroup {
+class ImmutableCab2bGroup {
     private Group group;
 
-    ImmutableGroup(Group group) {
+    ImmutableCab2bGroup(Group group) {
         this.group = group;
     }
 
@@ -31,29 +31,29 @@ class ImmutableGroup {
     }
 }
 
-public class MyGroup extends ImmutableGroup {
+public class Cab2bGroup extends ImmutableCab2bGroup {
     private List<Association> associations;
 
     private List<Attribute> attributes;
 
-    private List<ImmutableGroup> myGroups;
+    private List<ImmutableCab2bGroup> myGroups;
 
     private List<ForeignAssociation> foreignAssociations;
 
     private int numElements;
 
-    public MyGroup() {
+    public Cab2bGroup() {
         super(new Group());
         // this.group = Group.Factory.newInstance();
         // this.mutable = true;
         associations = new ArrayList<Association>();
         attributes = new ArrayList<Attribute>();
-        myGroups = new ArrayList<ImmutableGroup>();
+        myGroups = new ArrayList<ImmutableCab2bGroup>();
         foreignAssociations = new ArrayList<ForeignAssociation>();
         numElements = 0;
     }
 
-    public MyGroup(LogicalOperator logicalOperator) {
+    public Cab2bGroup(LogicalOperator logicalOperator) {
         this();
         setLogicRelation(logicalOperator);
     }
@@ -82,13 +82,13 @@ public class MyGroup extends ImmutableGroup {
 
     void addGroup(Group group) {
         // aboutToMutate();
-        myGroups.add(new ImmutableGroup(group));
+        myGroups.add(new ImmutableCab2bGroup(group));
         incNumElems();
     }
 
-    MyGroup addGroup() {
+    Cab2bGroup addGroup() {
         // aboutToMutate();
-        MyGroup newGroup = new MyGroup();
+        Cab2bGroup newGroup = new Cab2bGroup();
         myGroups.add(newGroup);
         incNumElems();
         return newGroup;
@@ -135,7 +135,7 @@ public class MyGroup extends ImmutableGroup {
         group.setAttribute((attributes.toArray(new Attribute[0])));
         group.setForeignAssociation((foreignAssociations.toArray(new ForeignAssociation[0])));
         List<Group> groupList = new ArrayList<Group>(myGroups.size());
-        for (ImmutableGroup myGroup : myGroups) {
+        for (ImmutableCab2bGroup myGroup : myGroups) {
             groupList.add(myGroup.getGroup());
         }
         group.setGroup((groupList.toArray(new Group[0])));
