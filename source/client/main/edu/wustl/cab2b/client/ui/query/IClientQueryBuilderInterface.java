@@ -146,7 +146,7 @@ public interface IClientQueryBuilderInterface
      * @param secondValues The second values for the condition.
      */
     public IExpressionId addRule(List<AttributeInterface> attributes,
-            List<String> operators, ArrayList<ArrayList<String>> Values);
+            List<String> operators, List<List<String>> Values);
     
     /**
      * Adds parantheses around operands with ids child1Id and child2Id which are 

@@ -1,4 +1,3 @@
-
 package edu.wustl.cab2b.client.ui.viewresults;
 
 import java.awt.BorderLayout;
@@ -11,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -23,7 +21,6 @@ import java.util.concurrent.Future;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
@@ -55,8 +52,9 @@ import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
-import edu.wustl.cab2b.common.queryengine.result.IClassRecords;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.util.logger.Logger;
 
@@ -67,459 +65,373 @@ import edu.wustl.common.util.logger.Logger;
  *  
  * @author chetan_bh
  */
-public class ViewSearchResultsSimplePanel extends Cab2bPanel
-{
+public class ViewSearchResultsSimplePanel extends Cab2bPanel {
 
-	JXPanel breadCrumbPanel;
+    JXPanel breadCrumbPanel;
 
-	//JTextField searchTextField;
-	//JButton searchButton;
-	JButton addToDataListButton;
-	JButton m_applyAllButton;
+    //JTextField searchTextField;
+    //JButton searchButton;
+    JButton addToDataListButton;
 
-	JXPanel searchResultsPanel;
+    JButton m_applyAllButton;
 
-	/**
-	 * Query result object. 
-	 */
-	IQueryResult queryResult;
+    JXPanel searchResultsPanel;
 
-	/**
-	 * Query result in a format required by JPagination component.
-	 */
-	Vector<PageElement> elements = null;
+    /**
+     * Query result object. 
+     */
+    IQueryResult queryResult;
 
-	/**
-	 * myDataListPanel and myDataListTitledPanel  
-	 * caontains a summary of data items added to the data list
-	 */
-	static JXPanel myDataListPanel;
-	static JXTitledPanel myDataListTitledPanel;
+    /**
+     * Query result in a format required by JPagination component.
+     */
+    Vector<PageElement> elements = null;
 
-	ActionListener breadCrumbsAL;
-	JXPanel breadCrumbsPanel;
+    /**
+     * myDataListPanel and myDataListTitledPanel  
+     * caontains a summary of data items added to the data list
+     */
+    static JXPanel myDataListPanel;
 
-	ActionListener hyperlinkAL;
+    static JXTitledPanel myDataListTitledPanel;
 
-	DataRow parentDataRow;
+    ActionListener breadCrumbsAL;
 
-	ViewSearchResultsPanel viewPanel;
+    JXPanel breadCrumbsPanel;
 
-	EntityInterface presentEntityInterface = null;
-	IAssociation queryAssociation = null;
-	JXPanel m_addSummaryParentPanel;
+    ActionListener hyperlinkAL;
 
-	public ViewSearchResultsSimplePanel(IAssociation association, IQueryResult queryResult, ActionListener bCAL,
-			ActionListener hLAL, DataRow parentDataRow, ViewSearchResultsPanel viewPanel,
-			EntityInterface presentEntityInterface)
-	{
-		this.viewPanel = viewPanel;
-		this.queryResult = queryResult;
-		this.breadCrumbsAL = bCAL;
-		this.hyperlinkAL = hLAL;
-		queryAssociation = association;
+    DataRow parentDataRow;
 
-		// Parent data row will be null for the first query's results, but will be non-null for associated class query's results. 
-		this.parentDataRow = parentDataRow;
-		this.presentEntityInterface = presentEntityInterface;
-		initData();
-		initGUI();
-	}
-	/**
-	 * Method to add My data list summary panel to    
-	 *
-	 */
-	public void addDataSummaryPanel()
-	{
-		m_addSummaryParentPanel.add(myDataListTitledPanel, BorderLayout.EAST);
-	}
-	
-	/**
-	 * Initializes the data needed for <code>JPagination</code> component.
-	 */	
-	private void initData()
-	{
-		elements = new Vector<PageElement>();
-		/**
-		 * 18th Apr : Type cast the results to IClassRecords
-		 */
-		IClassRecords classRecords = (IClassRecords)queryResult;
-		
-		
-		Map<String, String[][]> allRecords = classRecords.getAllRecords();
-		Iterator ittr = allRecords.keySet().iterator();
-		while (ittr.hasNext())
-		{
+    ViewSearchResultsPanel viewPanel;
 
-			/* Set the url for each data row.*/
-			String urlKey = (String) ittr.next();
+    EntityInterface presentEntityInterface = null;
 
-			Object[][] results = allRecords.get(urlKey);
+    IAssociation queryAssociation = null;
 
-			//String className = queryResult.getAttributes().get(0).getEntity().getName();
-			//edu.wustl.cab2b.common.util.Utility.getDisplayName(queryResult.getAttributes().get(0).getEntity());
-			String className = edu.wustl.cab2b.common.util.Utility.getDisplayName(classRecords.getAttributes().get(0).getEntity());
-			Logger.out.info(className);
-			if (className == null || className.length() == 0)
-			{
-				/* Get the class name from the attributes, if the above is not set on the server.*/
-				className = this.getClassNameFromIattribute();
-			}
+    JXPanel m_addSummaryParentPanel;
 
-			/* Initialize the count for number of attributes to be shown in the */
-			int attributeSize = classRecords.getAttributes().size();
-			int attributeLimitInDescStr = (attributeSize < 5) ? attributeSize : 5;
-			for (int i = 0; i < results.length; i++)
-			{
-				//Logger.out.info("CLASS NAME : " + className);
-				Object[] row = results[i];
-				PageElement element = new PageElementImpl();
-				element.setDisplayName(className + "_" + (i + 1));
+    public ViewSearchResultsSimplePanel(
+            IAssociation association,
+            IQueryResult queryResult,
+            ActionListener bCAL,
+            ActionListener hLAL,
+            DataRow parentDataRow,
+            ViewSearchResultsPanel viewPanel,
+            EntityInterface presentEntityInterface) {
+        this.viewPanel = viewPanel;
+        this.queryResult = queryResult;
+        this.breadCrumbsAL = bCAL;
+        this.hyperlinkAL = hLAL;
+        queryAssociation = association;
 
-				String descStr = "";
-				for (int j = 0; j < attributeLimitInDescStr; j++)
-				{
-					if (row[j] != null)
-					{
-						if (j == attributeLimitInDescStr - 1)
-						{
-							descStr += row[j];
-						}
-						else
-						{
-							descStr += row[j] + ", ";
-						}
-					}
-				}
-				element.setDescription(descStr);
+        // Parent data row will be null for the first query's results, but will be non-null for associated class query's results. 
+        this.parentDataRow = parentDataRow;
+        this.presentEntityInterface = presentEntityInterface;
+        initData();
+        initGUI();
+    }
 
-				DataRow dataRow = new DataRow();
-				List<AttributeInterface> attributes = classRecords.getAttributes();
+    /**
+     * Method to add My data list summary panel to    
+     *
+     */
+    public void addDataSummaryPanel() {
+        m_addSummaryParentPanel.add(myDataListTitledPanel, BorderLayout.EAST);
+    }
 
-				AttributeInterface attrib = attributes.get(0);
+    /**
+     * Initializes the data needed for <code>JPagination</code> component.
+     */
+    private void initData() {
+        elements = new Vector<PageElement>();
 
-				/*
-				 * Get the EntityInterface from the map only if the last parameter is null. 
-				 * This should ideally happen only the first time
-				 */
+        String className = edu.wustl.cab2b.common.util.Utility.getDisplayName(queryResult.getOutputEntity());
+        List<AttributeInterface> attributes = Utility.getAttributeList(queryResult);
+        int attributeSize = attributes.size();
+        int attributeLimitInDescStr = (attributeSize < 5) ? attributeSize : 5;
 
-				if (presentEntityInterface == null)
-				{
-					presentEntityInterface = attrib.getEntity();
-				}
+        Map<String, List<IRecord>> allRecords = queryResult.getRecords();
+        for (String url : allRecords.keySet()) {
+            List<IRecord> recordList = allRecords.get(url);
 
-				//set proper class display name
-				String strclassName = edu.wustl.cab2b.common.util.Utility.getDisplayName(presentEntityInterface);
+            int j=1;
+            for (IRecord record : recordList) {
+                String descStr = "";
 
-				int identifierIndex = CommonUtils.getIdAttributeIndexFromAttributes(attributes);
+                Object[] valueArray = new Object[attributes.size()];
+                for (int i = 0; i < attributes.size(); i++) {
+                    valueArray[i] = record.getValueForAttribute(attributes.get(i));
+                    if (i < attributeLimitInDescStr &&  valueArray[i] != null ) {
+                        if (i != 0) {
+                            descStr += ",";
+                        }
+                        descStr += valueArray[i];
+                    }
+                }
 
-				Object id = row[identifierIndex];
-				dataRow.setRow(row);
-				dataRow.setAttributes(attributes);
-				dataRow.setClassName(strclassName);
-				dataRow.setParent(parentDataRow);
-				dataRow.setId(id);
-				dataRow.setAssociation(queryAssociation);
-				dataRow.setEntityInterface(presentEntityInterface);
-				dataRow.setURL(urlKey);				
-				element.setUserObject(dataRow);
-				elements.add(element);
-			}
-		}
-	}
+                PageElement element = new PageElementImpl();
+                element.setDisplayName(className + "_" + j);
+                element.setDescription(descStr);
 
-	private String getClassNameFromIattribute()
-	{
-		String strClassName = null;
-		/**
-		 * 18th Apr : Type cast the results to IClassRecords
-		 */
-		IClassRecords classRecords = (IClassRecords)queryResult;
-		List attributes = classRecords.getAttributes();
-		if (attributes != null && attributes.size() > 0)
-		{
+                AttributeInterface idAttribute = Utility.getIdAttribute(queryResult.getOutputEntity());
+                Object id = record.getValueForAttribute(idAttribute);
+                DataRow dataRow = new DataRow();
+                dataRow.setRow(valueArray);
+                dataRow.setAttributes(attributes);
+                dataRow.setClassName(className);
+                dataRow.setParent(parentDataRow);
+                dataRow.setId(id);
+                dataRow.setAssociation(queryAssociation);
+                dataRow.setEntityInterface(queryResult.getOutputEntity());
+                dataRow.setURL(url);
+                
+                Vector recordListUserObject = new Vector();
+                recordListUserObject.add(dataRow);
+                recordListUserObject.add(record);
+                
+                element.setUserObject(recordListUserObject);
+                
+                elements.add(element);
+                j++;
+            }
+        }
+    }
 
-			AttributeInterface attribute = (AttributeInterface) attributes.get(0);
-			//strClassName = edu.wustl.common.util.Utility.parseClassName(attribute.getEntity().getName());
-			strClassName = 	edu.wustl.cab2b.common.util.Utility.getDisplayName(attribute.getEntity());
+    /**
+     * Initializes the GUI for showing query results.
+     */
+    private void initGUI() {
+        this.setLayout(new RiverLayout());
 
-		}
-		return strClassName;
-	}
+        /**
+         * Add the following selectively
+         */
+        final JXTitledPanel titledSearchResultsPanel = new Cab2bTitledPanel("Search Results :- "
+                + "Total results ( " + elements.size() + " )");
+        GradientPaint gp = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
+                new Point2D.Double(.95d, 0), Color.WHITE);
+        titledSearchResultsPanel.setTitlePainter(new BasicGradientPainter(gp));
+        titledSearchResultsPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
+        titledSearchResultsPanel.setTitleFont(new Font("SansSerif", Font.BOLD, 11));
+        titledSearchResultsPanel.setTitleForeground(Color.BLACK);
 
-	/**
-	 * Initializes the GUI for showing query results.
-	 */
-	private void initGUI()
-	{
-		this.setLayout(new RiverLayout());
+        searchResultsPanel = new Cab2bPanel();
+        searchResultsPanel.setLayout(new RiverLayout());
 
-		/**
-		 * Add the following selectively
-		 */
-		final JXTitledPanel titledSearchResultsPanel = new Cab2bTitledPanel("Search Results :- "
-				+ "Total results ( " + elements.size() + " )");
-		GradientPaint gp = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
-				new Point2D.Double(.95d, 0), Color.WHITE);
-		titledSearchResultsPanel.setTitlePainter(new BasicGradientPainter(gp));
-		titledSearchResultsPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
-		titledSearchResultsPanel.setTitleFont(new Font("SansSerif", Font.BOLD, 11));
-		titledSearchResultsPanel.setTitleForeground(Color.BLACK);
-		
-		searchResultsPanel = new Cab2bPanel();
-		searchResultsPanel.setLayout(new RiverLayout());
-		
-		Pager pager = new NumericPager(elements);
-		final JPagination pagination = new JPagination(elements, pager, this, true);
+        Pager pager = new NumericPager(elements);
+        final JPagination pagination = new JPagination(elements, pager, this, true);
 
-		pagination.addPageElementActionListener(hyperlinkAL);
-		pagination.setPreferredSize(new Dimension(300,410));
-		searchResultsPanel.add("vfill hfill", pagination);
-		initDataListSummaryPanel();	
+        pagination.addPageElementActionListener(hyperlinkAL);
+        pagination.setPreferredSize(new Dimension(300, 410));
+        searchResultsPanel.add("vfill hfill", pagination);
+        initDataListSummaryPanel();
 
-		addToDataListButton = new Cab2bButton("Add To Data List");
-		addToDataListButton.setPreferredSize(new Dimension(140, 22));
-		addToDataListButton.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent event)
-			{
-				List selectedUserObjects = pagination.getSelectedPageElementsUserObjects();
-				MainSearchPanel.getDataList().addDataRows(selectedUserObjects);
-				updateMyDataListPanel();
-				SaveDatalistPanel.isDataListSaved =  false;
-				
-                 SearchNavigationPanel.messageLabel.setText(" *Added " + selectedUserObjects.size()                                                            
-                                                            + " elements to data list");
-                 updateUI();
-                 
-//				JOptionPane.showMessageDialog(titledSearchResultsPanel, "Added " + selectedUserObjects.size() + " elements to data list" , "Information",
-//						JOptionPane.INFORMATION_MESSAGE);
-			}	
-			
-		});
-		searchResultsPanel.add("br br", addToDataListButton);
-		
-		// Add Apply All button to apply currently added datalist options
-		// to the currently selected objects.
-		m_applyAllButton =  new Cab2bButton("Apply Data List");
-		m_applyAllButton.setPreferredSize(new Dimension(130, 22));
-		m_applyAllButton.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent event)
-			{
-				// Perform apply all action
-				List selectedUserObjects = pagination.getSelectedPageElementsUserObjects();
-				if((selectedUserObjects.size() > 0)&& (false == MainSearchPanel.getDataList().isTreeEmpty()))
-				{
-					performApplyAllAction(selectedUserObjects, (JComponent)titledSearchResultsPanel);
-					
-				}
-			}
-		});
-		searchResultsPanel.add("tab tab", m_applyAllButton);
-		m_addSummaryParentPanel = new Cab2bPanel();
-		m_addSummaryParentPanel.setLayout(new BorderLayout());
-		m_addSummaryParentPanel.add(searchResultsPanel, BorderLayout.CENTER);	
-		m_addSummaryParentPanel.add(myDataListTitledPanel, BorderLayout.EAST);
-		titledSearchResultsPanel.setContentContainer(m_addSummaryParentPanel);
-		this.add("p vfill hfill", titledSearchResultsPanel);	
-	}
-	
-	/**
-	 * Method to Initialize Data list summary panel 
-	 *
-	 */	
-	public static void initDataListSummaryPanel()
-	{
-			Logger.out.info("In initDataListSummaryPanel method");
-			if(myDataListTitledPanel==null)
-			{
-				Logger.out.info("In if myDataListTitledPanel==null");
-				// TODO externalize these titles.
-				myDataListTitledPanel = new Cab2bTitledPanel("My Data List Summary");
-				GradientPaint gp1 = new GradientPaint(new Point2D.Double(.05d, 0),
-				new Color(185, 211, 238), new Point2D.Double(.95d, 0), Color.WHITE);
-				myDataListTitledPanel.setTitlePainter(new BasicGradientPainter(gp1));
+        addToDataListButton = new Cab2bButton("Add To Data List");
+        addToDataListButton.setPreferredSize(new Dimension(140, 22));
+        addToDataListButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                List selectedUserObjects = pagination.getSelectedPageElementsUserObjects();
+                MainSearchPanel.getDataList().addDataRows(selectedUserObjects);
+                updateMyDataListPanel();
+                SaveDatalistPanel.isDataListSaved = false;
 
-				if(myDataListPanel ==  null)
-				{
-					myDataListPanel = new Cab2bPanel();
-					myDataListPanel.setBackground(Color.WHITE);
-					myDataListPanel.setLayout(new RiverLayout(5, 10));
-				}
-				else
-				{
-					myDataListPanel.removeAll();
-				}
-		
-				myDataListTitledPanel.setContentContainer(myDataListPanel);
-				myDataListTitledPanel.setTitleFont(new Font("SansSerif", Font.BOLD, 11));
-				myDataListTitledPanel.setTitleForeground(Color.BLACK);
-			
-				//setting the scroll bar
-				JScrollPane myDataListPane = new JScrollPane(myDataListPanel);
-				myDataListPane.getViewport().setBackground(Color.WHITE);
-				myDataListTitledPanel.add(myDataListPane);
-			}
-			else
-			{
-				if(myDataListPanel != null)
-				{
-					myDataListPanel.removeAll();
-				}
-			}
-			updateMyDataListPanel();
-	}
-	
-	
-	/**
+                SearchNavigationPanel.messageLabel.setText(" *Added " + selectedUserObjects.size()
+                        + " elements to data list");
+                updateUI();
+
+                //				JOptionPane.showMessageDialog(titledSearchResultsPanel, "Added " + selectedUserObjects.size() + " elements to data list" , "Information",
+                //						JOptionPane.INFORMATION_MESSAGE);
+            }
+
+        });
+        searchResultsPanel.add("br br", addToDataListButton);
+
+        // Add Apply All button to apply currently added datalist options
+        // to the currently selected objects.
+        m_applyAllButton = new Cab2bButton("Apply Data List");
+        m_applyAllButton.setPreferredSize(new Dimension(130, 22));
+        m_applyAllButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                // Perform apply all action
+                List selectedUserObjects = pagination.getSelectedPageElementsUserObjects();
+                if ((selectedUserObjects.size() > 0) && (false == MainSearchPanel.getDataList().isTreeEmpty())) {
+                    performApplyAllAction(selectedUserObjects, (JComponent) titledSearchResultsPanel);
+
+                }
+            }
+        });
+        searchResultsPanel.add("tab tab", m_applyAllButton);
+        m_addSummaryParentPanel = new Cab2bPanel();
+        m_addSummaryParentPanel.setLayout(new BorderLayout());
+        m_addSummaryParentPanel.add(searchResultsPanel, BorderLayout.CENTER);
+        m_addSummaryParentPanel.add(myDataListTitledPanel, BorderLayout.EAST);
+        titledSearchResultsPanel.setContentContainer(m_addSummaryParentPanel);
+        this.add("p vfill hfill", titledSearchResultsPanel);
+    }
+
+    /**
+     * Method to Initialize Data list summary panel 
+     *
+     */
+    public static void initDataListSummaryPanel() {
+        Logger.out.info("In initDataListSummaryPanel method");
+        if (myDataListTitledPanel == null) {
+            Logger.out.info("In if myDataListTitledPanel==null");
+            // TODO externalize these titles.
+            myDataListTitledPanel = new Cab2bTitledPanel("My Data List Summary");
+            GradientPaint gp1 = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
+                    new Point2D.Double(.95d, 0), Color.WHITE);
+            myDataListTitledPanel.setTitlePainter(new BasicGradientPainter(gp1));
+
+            if (myDataListPanel == null) {
+                myDataListPanel = new Cab2bPanel();
+                myDataListPanel.setBackground(Color.WHITE);
+                myDataListPanel.setLayout(new RiverLayout(5, 10));
+            } else {
+                myDataListPanel.removeAll();
+            }
+
+            myDataListTitledPanel.setContentContainer(myDataListPanel);
+            myDataListTitledPanel.setTitleFont(new Font("SansSerif", Font.BOLD, 11));
+            myDataListTitledPanel.setTitleForeground(Color.BLACK);
+
+            //setting the scroll bar
+            JScrollPane myDataListPane = new JScrollPane(myDataListPanel);
+            myDataListPane.getViewport().setBackground(Color.WHITE);
+            myDataListTitledPanel.add(myDataListPane);
+        } else {
+            if (myDataListPanel != null) {
+                myDataListPanel.removeAll();
+            }
+        }
+        updateMyDataListPanel();
+    }
+
+    /**
      * Method to perform apply all action
      * for currently selected objects 
      */
-	public static void performApplyAllAction(final List selectedUserObjects, final JComponent component)
-	{
-		/* Get result by executing the Query in a worker thread. */
-        CustomSwingWorker swingWorker = new CustomSwingWorker((JXPanel)component)
-        {
-			@Override
-			protected void doNonUILogic() throws RuntimeException
-			{
-				// Get the path of current entity
-				List<IDataRow> pathEnitites = new ArrayList<IDataRow>();
-				IDataRow dataRow = (IDataRow) selectedUserObjects.get(0);
-				while(dataRow != null)
-				{
-					pathEnitites.add(0, dataRow);
-					dataRow = dataRow.getParent();
-				}	
-				List<IDataRow> entityTreetoFetch = MainSearchPanel.getDataList().getTreeForApplyAll(pathEnitites);
-				if(entityTreetoFetch.size() == 0)
-					return;
-				// For every selected entity fetch corresponding data
-				// from data services and add it to data list
-				QueryEngineBusinessInterface queryEngineBus = (QueryEngineBusinessInterface)CommonUtils.getBusinessInterface(
-						EjbNamesConstants.QUERY_ENGINE_BEAN, 
-						QueryEngineHome.class, component);
-				List<IDataRow> parentRows = new ArrayList<IDataRow>();
-				for(int i=0; i<selectedUserObjects.size(); i++)
-				{
-					parentRows.add((IDataRow) selectedUserObjects.get(i));
-				}
-				Collection<Callable<QueryResultObject>> queryCallables = new ArrayList<Callable<QueryResultObject>>();
-				List<IDataRow> childRows = entityTreetoFetch.get(0).getChildren();
-				for(int i=0; i<parentRows.size(); i++)
-				{
-					MainSearchPanel.getDataList().addDataRow(parentRows.get(i));
-					for(int j=0; j<childRows.size(); j++)
-					{
-						queryCallables.add(new QueryExecutionCallable(parentRows.get(i), childRows.get(j), queryEngineBus, childRows.get(j).getChildren()));
-					}
-				}
-				fetchApplyAllResults(queryCallables, queryEngineBus);
-			}				
-			@Override
-			protected void doUIUpdateLogic() throws RuntimeException
-			{
-				// TODO Auto-generated method stub
-				updateMyDataListPanel();
-			/*	JOptionPane.showMessageDialog(component, "Apply All operation completed successfully", "Information",
-						JOptionPane.INFORMATION_MESSAGE);*/
-                 SearchNavigationPanel.messageLabel.setText("Apply All operation completed successfully");
-			}
+    public static void performApplyAllAction(final List selectedUserObjects, final JComponent component) {
+        /* Get result by executing the Query in a worker thread. */
+        CustomSwingWorker swingWorker = new CustomSwingWorker((JXPanel) component) {
+            @Override
+            protected void doNonUILogic() throws RuntimeException {
+                // Get the path of current entity
+                List<IDataRow> pathEnitites = new ArrayList<IDataRow>();
+                IDataRow dataRow = (IDataRow) selectedUserObjects.get(0);
+                while (dataRow != null) {
+                    pathEnitites.add(0, dataRow);
+                    dataRow = dataRow.getParent();
+                }
+                List<IDataRow> entityTreetoFetch = MainSearchPanel.getDataList().getTreeForApplyAll(pathEnitites);
+                if (entityTreetoFetch.size() == 0)
+                    return;
+                // For every selected entity fetch corresponding data
+                // from data services and add it to data list
+                QueryEngineBusinessInterface queryEngineBus = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                              EjbNamesConstants.QUERY_ENGINE_BEAN,
+                                                                                                                              QueryEngineHome.class,
+                                                                                                                              component);
+                List<IDataRow> parentRows = new ArrayList<IDataRow>();
+                for (int i = 0; i < selectedUserObjects.size(); i++) {
+                    parentRows.add((IDataRow) selectedUserObjects.get(i));
+                }
+                Collection<Callable<QueryResultObject>> queryCallables = new ArrayList<Callable<QueryResultObject>>();
+                List<IDataRow> childRows = entityTreetoFetch.get(0).getChildren();
+                for (int i = 0; i < parentRows.size(); i++) {
+                    MainSearchPanel.getDataList().addDataRow(parentRows.get(i));
+                    for (int j = 0; j < childRows.size(); j++) {
+                        queryCallables.add(new QueryExecutionCallable(parentRows.get(i), childRows.get(j),
+                                queryEngineBus, childRows.get(j).getChildren()));
+                    }
+                }
+                fetchApplyAllResults(queryCallables, queryEngineBus);
+            }
+
+            @Override
+            protected void doUIUpdateLogic() throws RuntimeException {
+                // TODO Auto-generated method stub
+                updateMyDataListPanel();
+                /*	JOptionPane.showMessageDialog(component, "Apply All operation completed successfully", "Information",
+                 JOptionPane.INFORMATION_MESSAGE);*/
+                SearchNavigationPanel.messageLabel.setText("Apply All operation completed successfully");
+            }
         };
         swingWorker.start();
-	}
-	
-	/**
-	 * Method to fetch results for apply. This method spawns threads to execute each query seperately
-	 */
-	public static void fetchApplyAllResults(Collection<Callable<QueryResultObject>> queryCallables, QueryEngineBusinessInterface queryEngineBus)
-	{
-		do
-		{
-			ExecutorService executorService = Executors.newFixedThreadPool(10);
-			try 
-			{
-				List<Future<QueryResultObject>> results = executorService.invokeAll(queryCallables);
-				queryCallables.clear();
-				for (Future<QueryResultObject> future : results) 
-				{
-					QueryResultObject queryResult = future.get();
-					if(queryResult != null)
-					{
-						List<IDataRow> parentRows = queryResult.getResults();
-						List<IDataRow> childRows =  queryResult.getChilds();
-						for(int i=0; i<parentRows.size(); i++)
-						{
-							MainSearchPanel.getDataList().addDataRow(parentRows.get(i));
-							for(int j=0; j<childRows.size(); j++)
-							{
-								queryCallables.add(new QueryExecutionCallable(parentRows.get(i), childRows.get(j), 
-										queryEngineBus, childRows.get(j).getChildren()));
-							}
-						}
-					}
-				}
-			} 
-			catch (InterruptedException e)
-			{
-				Logger.out.warn("Unable to get results : " + e.getMessage());
-				break;
-			}
-			catch (ExecutionException e) 
-			{
-				Logger.out.warn("Unable to get results : " + e.getMessage());
-				break;
-			}
-		}while(0 < queryCallables.size());
-	}
-	
-	/**
-	 * Updates My DataList Summary panel present on view Search result page 
-	 *
-	 */
-	public static void updateMyDataListPanel()
-	{
-		//removing all previously added hyperlinks
-		ViewSearchResultsSimplePanel.myDataListPanel.removeAll();		
-		IDataRow rootNode = MainSearchPanel.getDataList().getRootDataRow(); //datalistTree.get(0); // This node is hidden node in the tree view		
-		for(int i=0;i<rootNode.getChildren().size();i++)
-		{
-	   		final IDataRow currentNode = rootNode.getChildren().get(i);
-	   		if(currentNode.isData())
-	   		{
-	   			createHyperlink(currentNode);	   			
-	   		}
-	   		else
-	   		{
-	   			for(int k=0; k< currentNode.getChildren().size(); k++)	
-	    		{
-	   				createHyperlink(currentNode.getChildren().get(k));
-	    		}
-	   		}
-		}
-		ViewSearchResultsSimplePanel.myDataListPanel.add("br ", new Cab2bLabel("      "));	
-	}	
-	
-	/**
-	 * Add hyperlinks for the datalist result into My Data List Summary panel      
-	 * @param row
-	 */
-	private static void createHyperlink(final IDataRow row)
-	{
-		Cab2bHyperlink selectedRootClassName = new Cab2bHyperlink();
-		
-		DataRow dataRow = (DataRow)row;
-		//edu.wustl.cab2b.common.util.Utility.getDisplayName(dataRow.getEntityInterface())
-		String displayClassName =  dataRow.getClassName();	
-		selectedRootClassName.setText(displayClassName + "_" + dataRow.getId());		    				
-		selectedRootClassName.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent event)
-			{
-				GlobalNavigationPanel.mainSearchPanel.getNavigationPanel().gotoDataListPanel(row);		    						
-			}			
-		});			
-		ViewSearchResultsSimplePanel.myDataListPanel.add("br ", selectedRootClassName);
-	}
+    }
+
+    /**
+     * Method to fetch results for apply. This method spawns threads to execute each query seperately
+     */
+    public static void fetchApplyAllResults(Collection<Callable<QueryResultObject>> queryCallables,
+                                            QueryEngineBusinessInterface queryEngineBus) {
+        do {
+            ExecutorService executorService = Executors.newFixedThreadPool(10);
+            try {
+                List<Future<QueryResultObject>> results = executorService.invokeAll(queryCallables);
+                queryCallables.clear();
+                for (Future<QueryResultObject> future : results) {
+                    QueryResultObject queryResult = future.get();
+                    if (queryResult != null) {
+                        List<IDataRow> parentRows = queryResult.getResults();
+                        List<IDataRow> childRows = queryResult.getChilds();
+                        for (int i = 0; i < parentRows.size(); i++) {
+                            MainSearchPanel.getDataList().addDataRow(parentRows.get(i));
+                            for (int j = 0; j < childRows.size(); j++) {
+                                queryCallables.add(new QueryExecutionCallable(parentRows.get(i), childRows.get(j),
+                                        queryEngineBus, childRows.get(j).getChildren()));
+                            }
+                        }
+                    }
+                }
+            } catch (InterruptedException e) {
+                Logger.out.warn("Unable to get results : " + e.getMessage());
+                break;
+            } catch (ExecutionException e) {
+                Logger.out.warn("Unable to get results : " + e.getMessage());
+                break;
+            }
+        } while (0 < queryCallables.size());
+    }
+
+    /**
+     * Updates My DataList Summary panel present on view Search result page 
+     *
+     */
+    public static void updateMyDataListPanel() {
+        //removing all previously added hyperlinks
+        ViewSearchResultsSimplePanel.myDataListPanel.removeAll();
+        IDataRow rootNode = MainSearchPanel.getDataList().getRootDataRow(); //datalistTree.get(0); // This node is hidden node in the tree view		
+        for (int i = 0; i < rootNode.getChildren().size(); i++) {
+            final IDataRow currentNode = rootNode.getChildren().get(i);
+            if (currentNode.isData()) {
+                createHyperlink(currentNode);
+            } else {
+                for (int k = 0; k < currentNode.getChildren().size(); k++) {
+                    createHyperlink(currentNode.getChildren().get(k));
+                }
+            }
+        }
+        ViewSearchResultsSimplePanel.myDataListPanel.add("br ", new Cab2bLabel("      "));
+    }
+
+    /**
+     * Add hyperlinks for the datalist result into My Data List Summary panel      
+     * @param row
+     */
+    private static void createHyperlink(final IDataRow row) {
+        Cab2bHyperlink selectedRootClassName = new Cab2bHyperlink();
+
+        DataRow dataRow = (DataRow) row;
+        //edu.wustl.cab2b.common.util.Utility.getDisplayName(dataRow.getEntityInterface())
+        String displayClassName = dataRow.getClassName();
+        selectedRootClassName.setText(displayClassName + "_" + dataRow.getId());
+        selectedRootClassName.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                GlobalNavigationPanel.mainSearchPanel.getNavigationPanel().gotoDataListPanel(row);
+            }
+        });
+        ViewSearchResultsSimplePanel.myDataListPanel.add("br ", selectedRootClassName);
+    }
 }

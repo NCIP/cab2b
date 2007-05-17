@@ -258,7 +258,7 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
     	final int size = collection.size(); 
     	List<AttributeInterface> attributes = new ArrayList<AttributeInterface>(size);
         List<String> conditions = new ArrayList<String>(size);
-        ArrayList<ArrayList<String>> values = new ArrayList<ArrayList<String>>();
+        List<List<String>> values = new ArrayList<List<String>>();
         
         for (int j = 0; j < componentPanel.length - 1; j++)
         {

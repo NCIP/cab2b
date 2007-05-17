@@ -275,7 +275,7 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface
      * @param operators The operators in the condition.
      * @param Values The list of values for all the conditions. 
      */
-    public IExpressionId addRule(List<AttributeInterface> attributes, List<String> operators, ArrayList<ArrayList<String>> Values) 
+    public IExpressionId addRule(List<AttributeInterface> attributes, List<String> operators, List<List<String>> Values) 
     {
     	// Create the list of conditions submitted by user.
         List<ICondition> conditionList = getConditions(attributes,
@@ -296,7 +296,7 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface
      * @return the list of conditions given the attributes, operators and the values for the attributes.
      */
     public List<ICondition> getConditions(List<AttributeInterface> attributes,
-            List<String> operators,  ArrayList<ArrayList<String>> Values)
+            List<String> operators,  List<List<String>> Values)
     {
         List<ICondition> conditionList = new ArrayList<ICondition>();
         for (int i = 0; i < attributes.size(); i++)

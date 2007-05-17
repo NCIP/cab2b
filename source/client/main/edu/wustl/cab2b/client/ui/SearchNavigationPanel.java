@@ -6,7 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JOptionPane;
@@ -25,8 +25,9 @@ import edu.wustl.cab2b.client.ui.viewresults.ViewSearchResultsPanel;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.CategoryResult;
-import edu.wustl.cab2b.common.queryengine.result.IClassRecords;
+import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -199,20 +200,12 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                                                                 (ICab2bQuery) m_mainSearchPanel.getQueryObject().getQuery(),
                                                                 m_mainSearchPanel);
 
-                        if (queryResults.isCategoryResult()) {
+                        if (queryResults instanceof ICategoryResult) {
                             TransformCategoryResult transferCategoryResult = new TransformCategoryResult(
                                     (CategoryResult) queryResults);
                             b2bTreeNode = transferCategoryResult.getB2BRootTreeNode();
                         }
 
-                    }
-                    
-                    private int getNumRecords(Map<String, String[][]> allRecords) {
-                        int n = 0;
-                        for (String[][] values : allRecords.values()) {
-                            n += values.length;
-                        }
-                        return n;
                     }
 
                     @Override
@@ -233,43 +226,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                              * object returned will not be null.
                              */
 
-                            if (!queryResults.isCategoryResult()) {
-
-                                IClassRecords classRecords = (IClassRecords) queryResults;
-
-                                Map<String, String[][]> allRecords = classRecords.getAllRecords();
-                                Iterator ittr = allRecords.keySet().iterator();
-                                if (ittr.hasNext()) {
-                                    /* Set the url for each data row. */
-                                    String urlKey = (String) ittr.next();
-                                    Object[][] results = allRecords.get(urlKey);
-                                    if (getNumRecords(allRecords) == 0) {
-                                        JOptionPane.showMessageDialog(null, "No result found.", "",
-                                                                      JOptionPane.INFORMATION_MESSAGE);
-                                        srhButton.setVisible(true);
-                                        gotoAddLimitPanel();
-
-                                    } else {                                        
-                                        ViewSearchResultsPanel viewSearchResultsPanel = new ViewSearchResultsPanel(
-                                                queryResults, m_mainSearchPanel);
-                                        if (null != m_mainSearchPanel.getCenterPanel().m_arrCards[3]) {
-                                            m_mainSearchPanel.getCenterPanel().remove(
-                                                                                      m_mainSearchPanel.getCenterPanel().m_arrCards[3]);
-                                        }
-                                        m_mainSearchPanel.getCenterPanel().m_arrCards[3] = viewSearchResultsPanel;
-                                        m_mainSearchPanel.getCenterPanel().add(
-                                                                               viewSearchResultsPanel,
-                                                                               SearchCenterPanel.m_strViewSearchResultslbl);
-                                        /*
-                                         * 	Implies the next button was clicked. Call show card with boolean set to true.
-                                         */
-                                        showCard(true);
-                                    }
-                                }
-                            } else //if the results are categoryResult
-                            {
-                                //displaying the tree node
-                                //b2bTreeNode.showInDialog();
+                            if (queryResults instanceof ICategoryResult) {
                                 Cab2bPanel categoryResultPanel = b2bTreeNode.getCategoryResultPanel();
                                 
                                 m_mainSearchPanel.getCenterPanel().m_arrCards[3] = categoryResultPanel;
@@ -278,6 +235,32 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                                  *  Implies the next button was clicked. Call show card with boolean set to true.
                                  */
                                 showCard(true);
+                            } else {
+
+                                int recordNo = edu.wustl.cab2b.client.ui.query.Utility.getRecordNum(queryResults);
+                                if (recordNo == 0) {
+                                    JOptionPane.showMessageDialog(null, "No result found.", "",
+                                                                  JOptionPane.INFORMATION_MESSAGE);
+                                    srhButton.setVisible(true);
+                                    gotoAddLimitPanel();
+
+                                } else {
+                                    ViewSearchResultsPanel viewSearchResultsPanel = new ViewSearchResultsPanel(
+                                            queryResults, m_mainSearchPanel);
+                                    if (null != m_mainSearchPanel.getCenterPanel().m_arrCards[3]) {
+                                        m_mainSearchPanel.getCenterPanel().remove(
+                                                                                  m_mainSearchPanel.getCenterPanel().m_arrCards[3]);
+                                    }
+                                    m_mainSearchPanel.getCenterPanel().m_arrCards[3] = viewSearchResultsPanel;
+                                    m_mainSearchPanel.getCenterPanel().add(
+                                                                           viewSearchResultsPanel,
+                                                                           SearchCenterPanel.m_strViewSearchResultslbl);
+                                    /*
+                                     * 	Implies the next button was clicked. Call show card with boolean set to true.
+                                     */
+                                    showCard(true);
+                                }
+
                             }
                         } else {
                             srhButton.setVisible(true);

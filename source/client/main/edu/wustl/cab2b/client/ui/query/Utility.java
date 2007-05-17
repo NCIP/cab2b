@@ -1,5 +1,10 @@
 package edu.wustl.cab2b.client.ui.query;
 
+import java.util.List;
+import java.util.Map;
+
+import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
@@ -76,5 +81,19 @@ public class Utility {
                     + interModel.getTargetAttribute().getName();
         }
         return roleName;
+    }
+    
+    /**
+     * This method returens number of records present in a query result.
+     * @param queryResult
+     * @return
+     */
+    public static  int getRecordNum(IQueryResult queryResult) {
+        Map<String, List<IRecord>> allRecords = queryResult.getRecords();
+        int n = 0;
+        for (List<IRecord> values : allRecords.values()) {
+            n += values.size();
+        }
+        return n;
     }
 }
