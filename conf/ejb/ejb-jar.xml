@@ -9,7 +9,7 @@
             <ejb-class>edu.wustl.cab2b.server.ejb.AdvancedSearchSessionBean</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Bean</transaction-type>
-			<ejb-local-ref>
+			<ejb-local-ref> 
         		<ejb-ref-name>EntityCache</ejb-ref-name>
                 <ejb-ref-type>Session</ejb-ref-type>
                 <local-home>edu.wustl.cab2b.common.entityCache.EntityCacheHome</local-home>
@@ -83,11 +83,20 @@
        </session>
        <session>
             <ejb-name>edu.wustl.cab2b.server.ejb.datalist.DataListBean</ejb-name>
-            <home>edu.wustl.cab2b.common.datalist.DataListHome</home>
+            <home>edu.wustl.cab2b.common.datalist.DataListHomeInterface</home>
             <remote>edu.wustl.cab2b.common.datalist.DataListRemoteInterface</remote>
             <ejb-class>edu.wustl.cab2b.server.ejb.datalist.DataListBean</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Bean</transaction-type>
        </session>
+	   <session>
+            <ejb-name>edu.wustl.cab2b.server.ejb.analyticalservice.AnalyticalServiceOperationsBean</ejb-name>
+            <home>edu.wustl.cab2b.common.ejb.analyticalservice.AnalyticalServiceOperationsHomeInterface</home>
+            <remote>edu.wustl.cab2b.common.ejb.analyticalservice.AnalyticalServiceOperationsRemoteInterface</remote>
+            <ejb-class>edu.wustl.cab2b.server.ejb.analyticalservice.AnalyticalServiceOperationsBean</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Bean</transaction-type>
+       </session>
+       
 	</enterprise-beans>
 </ejb-jar>
