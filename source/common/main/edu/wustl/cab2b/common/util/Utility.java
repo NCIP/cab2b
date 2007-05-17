@@ -325,6 +325,9 @@ public class Utility {
         return isOutGoingAssociationSupported;
     }
 
+    public static String getApplicationName(EntityInterface entity) {
+        return getEntityGroup(entity).getName();
+    }
     public static boolean isIdentifierAttribute(AttributeInterface attribute) {
         String attribName = attribute.getName();        
         return attribName.equalsIgnoreCase("id") || attribName.equalsIgnoreCase("identifier"); 
