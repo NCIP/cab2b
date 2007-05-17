@@ -12,8 +12,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,6 +36,8 @@ import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.common.dynamicextensions.domaininterface.UserDefinedDEInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.queryobject.DataType;
@@ -332,67 +337,49 @@ public class Utility {
         String attribName = attribute.getName();        
         return attribName.equalsIgnoreCase("id") || attribName.equalsIgnoreCase("identifier"); 
     }
-    //    /**
-    //     * Checks whether passed attribute/association is inheriated.
-    //     * @param abstractAttribute Attribute/Association to check.
-    //     * @return TRUE if it is inherited else returns FALSE
-    //     */
-    //    public static boolean isInherited(AbstractAttributeInterface abstractAttribute) {
-    //        for (TaggedValueInterface tag : abstractAttribute.getTaggedValueCollection()) {
-    //            if (tag.getKey().equals(Constants.TYPE_DERIVED)) {
-    //                return true;
-    //            }
-    //        }
-    //        return false;
-    //    }
-    //
-    //    /**
-    //     * Returns actual attribute if passed attribute is a derieved one. Else returns the passed attribute
-    //     * @param attribute Attribute for which actual attribute is expected.
-    //     * @return The actual attribute
-    //     */
-    //    public static AttributeInterface getActualAttribute(AttributeInterface attribute) {
-    //        if (!isInherited(attribute)) {
-    //            return attribute;
-    //        }
-    //        EntityInterface parent = attribute.getEntity().getParentEntity();
-    //        String attributeName = attribute.getName();
-    //        while (true) {
-    //            for (AttributeInterface attributeFromParent : parent.getAttributeCollection()) {
-    //                if (attributeName.equals(attributeFromParent.getName())) {
-    //                    if (isInherited(attributeFromParent)) {
-    //                        parent = parent.getParentEntity();
-    //                        break;
-    //                    } else {
-    //                        return attributeFromParent;
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //
-    //    /**
-    //     * Returns actual association if passed association is a derieved one. Else returns the passed association
-    //     * @param association Attribute for which actual association is expected.
-    //     * @return The actual association
-    //     */
-    //    public AssociationInterface getActualAassociation(AssociationInterface association) {
-    //        if (!isInherited(association)) {
-    //            return association;
-    //        }
-    //        String key=""; 
-    //        for (TaggedValueInterface tag : association.getTaggedValueCollection()) {
-    //            if (tag.getKey().equals(Constants.ORIGINAL_ASSOCIATION_POINTER)) {
-    //                key = tag.getValue();
-    //                break;
-    //            }
-    //        }
-    //        EntityCache cache = EntityCache.getInstance();
-    //        AssociationInterface actualAssociation = cache.getAssociationBySrcEntityTargetRole(key);
-    //        return actualAssociation;
-    //    }
-    //
-    //    public static String generateUniqueId(AssociationInterface association) {
-    //        return association.getEntity().getName() + CONNECTOR + association.getTargetRole().getName();
-    //    }
+    
+    /**
+     * converts attribute set into a list and sorts it alphabatically
+     * @param inputAttributeSet
+     * @return
+     */
+    public static List<AttributeInterface> getAttributeList(Set<AttributeInterface> inputAttributeSet) {
+        List<AttributeInterface> attributes = new ArrayList<AttributeInterface>(inputAttributeSet);
+        Collections.sort(attributes, new AttributeInterfaceComparator());
+        return attributes;
+    }
+
+    /**
+     * returns total no of records present in query set (i.e for all services)
+     * @param queryResult
+     * @return
+     */
+    public static int getNoOfRecords(IQueryResult queryResult) {
+        int size = 0;
+        Map<String, List<IRecord>> allRecords = queryResult.getRecords();
+
+        for (List<IRecord> valueList : allRecords.values()) {
+            size += valueList.size();
+        }
+        return size;
+    }
+
+    /**
+     * returns a list of attributes from query result
+     * @param queryResult
+     * @return
+     */
+    public static List<AttributeInterface> getAttributeList(IQueryResult queryResult) {
+        Map<String, List<IRecord>> allRecords = queryResult.getRecords();
+        List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
+        if (!allRecords.isEmpty()) {
+            List<IRecord> recordList = allRecords.values().iterator().next();
+            if (!recordList.isEmpty()) {
+                IRecord record = recordList.get(0);
+                attributeList = getAttributeList(record.getAttributes());
+            }
+
+        }
+        return attributeList;
+    }
 }
