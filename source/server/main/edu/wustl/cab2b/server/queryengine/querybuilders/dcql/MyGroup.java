@@ -128,6 +128,7 @@ public class MyGroup extends ImmutableGroup {
      * Call if you're sure that the group will contain more than one element.
      * @return the Group.
      */
+    @Override
     Group getGroup() {
         Group group = super.getGroup();
         group.setAssociation(associations.toArray(new Association[0]));
