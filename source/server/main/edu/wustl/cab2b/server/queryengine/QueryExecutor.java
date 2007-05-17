@@ -17,9 +17,9 @@ import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessor;
 import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessorResult;
+import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.Cab2bGroup;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.ConstraintsBuilder;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.ConstraintsBuilderResult;
-import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.MyGroup;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.AbstractAssociationConstraint;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.AttributeConstraint;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.DcqlConstraint;
@@ -265,10 +265,10 @@ public class QueryExecutor {
     private DcqlConstraint addParentIdConstraint(
                                                  DcqlConstraint constraint,
                                                  DcqlConstraint parentIdConstraint) {
-        MyGroup myGroup = new MyGroup(LogicalOperator.And);
-        myGroup.addConstraint(constraint);
-        myGroup.addConstraint(parentIdConstraint);
-        return myGroup.getDcqlConstraint();
+        Cab2bGroup cab2bGroup = new Cab2bGroup(LogicalOperator.And);
+        cab2bGroup.addConstraint(constraint);
+        cab2bGroup.addConstraint(parentIdConstraint);
+        return cab2bGroup.getDcqlConstraint();
     }
 
     private AttributeConstraint createIdConstraint(
