@@ -5,12 +5,13 @@ import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
+import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.analyticalservice.ServiceDetailsInterface;
 
 /**
  * @author Chandrakant Talele
  */
-public interface AnalyticalServiceOperationsBusinessInterface {
+public interface AnalyticalServiceOperationsBusinessInterface extends BusinessInterface {
     /**
      * @param entity
      * @return
