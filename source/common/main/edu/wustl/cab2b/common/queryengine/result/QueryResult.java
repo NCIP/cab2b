@@ -17,6 +17,7 @@ public class QueryResult<R extends IRecord> implements IQueryResult<R> {
 
     protected QueryResult(EntityInterface outputEntity) {
         this.records = new HashMap<String, List<R>>();
+        this.outputEntity = outputEntity;
     }
 
     public Map<String, List<R>> getRecords() {
