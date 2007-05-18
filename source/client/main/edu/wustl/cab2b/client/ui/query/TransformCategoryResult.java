@@ -28,7 +28,7 @@ public class TransformCategoryResult {
      */
     public B2BTreeNode getB2BRootTreeNode() {
         //getting stringURL and corresponding categoryResultRecords 
-        Map<String, List<ICategorialClassRecord>> mapURLToRoot = m_categoryResult.getUrlToRootRecords();
+        Map<String, List<ICategorialClassRecord>> mapURLToRoot = null;//m_categoryResult.getUrlToRootRecords();
 
         B2BTreeNode rootB2BTreeNode = new B2BTreeNode();
         rootB2BTreeNode.setDisplayName("Root");
@@ -71,7 +71,7 @@ public class TransformCategoryResult {
             iCategorialClassRecordNode.setValue(null);
 
             //geting attribute list for the iCategorialClassRecord
-            Map<CategorialAttribute, String> categorialAttributeMap = iCategorialClassRecord.getAttributesValues();
+            Map<CategorialAttribute, String> categorialAttributeMap = null;//iCategorialClassRecord.getAttributesValues();
 
             if (categorialAttributeMap != null) {
                 setAttributeToB2BTreeNode(iCategorialClassRecordNode, categorialAttributeMap);            
