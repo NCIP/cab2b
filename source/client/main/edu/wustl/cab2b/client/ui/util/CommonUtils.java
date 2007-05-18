@@ -478,4 +478,22 @@ public class CommonUtils {
         }
         return identifierIndex;
     }
+    
+    
+    /**
+     * check the if the specified string is a valid name for an experiment, category etc.  
+     * @param name the name
+     * @return true if name is valid otherwise false
+     */
+    public static boolean isNameValid(String name)
+    {
+    	if(name==null || name.trim().equals(""))
+    	{
+    		return false;
+    	}
+    	
+    	    	
+    	
+    	return true;
+    }
 }

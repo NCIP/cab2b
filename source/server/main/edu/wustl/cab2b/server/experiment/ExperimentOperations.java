@@ -1,24 +1,34 @@
 package edu.wustl.cab2b.server.experiment;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import edu.common.dynamicextensions.domain.DomainObjectFactory;
+import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
+import edu.common.dynamicextensions.domaininterface.AssociationInterface;
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
+import edu.common.dynamicextensions.entitymanager.EntityManagerInterface;
+import edu.common.dynamicextensions.exception.BaseDynamicExtensionsException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
-import edu.common.dynamicextensions.domaininterface.AssociationInterface;
-import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.domain.AdditionalMetadata;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
+import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAO;
@@ -288,33 +298,133 @@ public class ExperimentOperations extends DefaultBizLogic {
         return exp;
     }
 
-    public Set<EntityInterface> getDataListEntityNames(Experiment exp) {
+    
+    /**
+     * get a set of root entities for an experiment where each root entity represents a datalist 
+     * @param exp the experiment
+     * @return set of root entities for an experiment where each root entity represents a datalist
+     */
+    public Set<EntityInterface> getDataListEntitySet(Experiment exp)
+    {
         Set<EntityInterface> entitySet = new HashSet<EntityInterface>();
-        for (DataListMetadata dataListMetadata : exp.getDataListMetadataCollection()) {
+        
+        //one datalistmetadata represents one datalist
+        for (DataListMetadata dataListMetadata : exp.getDataListMetadataCollection()) 
+        {
             Long rootDataListEntityId = dataListMetadata.getEntityId();
             EntityInterface rootDataListEntity = null;
-            try {
+            try 
+            {
                 rootDataListEntity = EntityManager.getInstance().getEntityByIdentifier(rootDataListEntityId);
-
-            } catch (DynamicExtensionsSystemException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (DynamicExtensionsApplicationException e) {
+                entitySet.add(rootDataListEntity);
+            }
+            catch (DynamicExtensionsSystemException e) 
+            {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            getAssociatedEntities(rootDataListEntity, entitySet);
+            catch (DynamicExtensionsApplicationException e) 
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+          
         }
+        
         return entitySet;
     }
 
-    private void getAssociatedEntities(EntityInterface entity, Set<EntityInterface> entitySet) {
-        for (AssociationInterface association : entity.getAssociationCollection()) {
-            EntityInterface targetEntity = association.getTargetEntity();
-            entitySet.add(targetEntity);
-            Logger.out.info("Entity Names :" + targetEntity);
-            getAssociatedEntities(targetEntity, entitySet);
-        }
+    
+    
+    /**
+	 * save the given data as a data category
+	 * @param title the title for the category
+	 * @param attributes list of attributes needed for the  new entity
+	 * @param data the data to be saved
+	 * @return the newly created entity
+	 */
+    public EntityInterface saveDataCategory(String title, List<AttributeInterface> attributes, Object[][] data)
+	{
+    	List<AttributeInterface> newAtttributes = new ArrayList<AttributeInterface>();
+    	
+    	EntityInterface parentEntity = attributes.get(0).getEntity();
+    	EntityGroupInterface entityGroup = Utility.getEntityGroup(parentEntity);
+    	//DE's domain object factory
+        DomainObjectFactory domainObjectFactory = DomainObjectFactory.getInstance();
+        // DE's Entity manager instance.		 
+    	EntityManagerInterface entityManager = EntityManager.getInstance();
+        
+        //create new entity
+    	EntityInterface newEntity = domainObjectFactory.createEntity();
+	    newEntity.setName(title);
+	    //addding tagged value for display name
+        DynamicExtensionUtility.addTaggedValue(newEntity, edu.wustl.cab2b.common.util.Constants.ENTITY_DISPLAY_NAME, title);
+        //adding tag value to indicate this is a filtered data category 
+        DynamicExtensionUtility.addTaggedValue(newEntity, edu.wustl.cab2b.common.util.Constants.FILTERED, "true");
+        newEntity.addEntityGroupInterface(entityGroup);
+	    entityGroup.addEntity(newEntity);
+	    
+	    //add association. this call changes parent and new entities
+	    AssociationInterface association = DynamicExtensionUtility.createNewOneToManyAsso(parentEntity, newEntity); 
+	    
+	    //add attributes
+	    for(AttributeInterface attribute : attributes)
+	    {
+	    	AttributeInterface newAttribute = DynamicExtensionUtility.getAttributeCopy(attribute);
+	    	newAttribute.setName(attribute.getName());
+	    	newEntity.addAbstractAttribute(newAttribute);
+	    	//needed for persistData()
+	    	newAtttributes.add(newAttribute);
+	    	
+	    }
+	       
+	    try
+	    {
+	    	//no need to persist new entity separately
+	    	entityManager.persistEntity(parentEntity, false);
+	    	persistData(newEntity, newAtttributes, data);
+	    		    	
+	    }
+	    catch(DynamicExtensionsApplicationException e)
+	    {
+	    	throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DATACATEGORY_SAVE_ERROR));
+	    }
+	    catch(DynamicExtensionsSystemException e)
+	    {
+	    	throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DATACATEGORY_SAVE_ERROR));
+	    }
+	    
+	    return newEntity;
+	    
+	}
+    
+    
+    /**
+     * persist the given data in the given entity
+     * @param attributes list of attributes of the entity
+     * @param data the data to be persisted
+     * @throws DynamicExtensionsSystemException 
+     * @throws DynamicExtensionsApplicationException 
+       
+     */
+    private void persistData(EntityInterface entity, List<AttributeInterface> attributes, Object[][] data) throws  DynamicExtensionsSystemException, DynamicExtensionsApplicationException
+    {
+    	//DE's Entity manager instance.		 
+    	EntityManagerInterface entityManager = EntityManager.getInstance();
+        
+    	for(int i=0; i<data.length; i++)
+    	{
+    		Map<AbstractAttributeInterface, Object> attributeMap = new HashMap<AbstractAttributeInterface, Object>();
+    		
+    		for(int j=0; j<data[i].length; j++)
+    		{
+    			attributeMap.put(attributes.get(j), data[i][j]);
+    		}
+    		
+    		entityManager.insertData(entity, attributeMap);
+    			
+    	}
+    	
     }
-
+    
 }

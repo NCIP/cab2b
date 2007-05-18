@@ -36,6 +36,8 @@ public class Constants
     
     public static final String ENTITY_DISPLAY_NAME = "original_entity_display_name";
     
+    public static final String FILTERED = "filtered";
+    
     /**
      * Constant which represents String that will be used as URL KEY in tagged value
      */

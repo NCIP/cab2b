@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JSplitPane;
 
 
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.domain.Experiment;
 
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
@@ -120,7 +121,7 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
 		experimentTitlePanel.add(addDataButton);	
 		
 		/*Adding Experiment grid panel*/
-		experimentDataCategoryGridPanel = new ExperimentDataCategoryGridPanel();		
+		experimentDataCategoryGridPanel = new ExperimentDataCategoryGridPanel(this);		
 		experimentDataCategoryGridPanel.setBorder(new CustomizableBorder(new Insets(1,1,1,1), true, true));
 		
 		/*Adding Experiment Stack box panel*/
@@ -136,6 +137,12 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
 		this.add(splitPane);		
 	}
 	
+	public void updateOpenPanel(EntityInterface newEntity)
+	{
+		experimentStackBox.updateStackBox(newEntity);
+		
+		
+	}
 	
 	public static void main(String str[])
 	{	

@@ -220,7 +220,7 @@ public class DataListOperations extends DefaultBizLogic {
 
         AssociationInterface newAssociation = mapOfNewAssociations.get(keyForNewAssociationsMap);
         if (newAssociation == null) {
-            newAssociation = createNewOneToManyAsso(entity, newEntity);
+            newAssociation = DynamicExtensionUtility.createNewOneToManyAsso(entity, newEntity);
             mapOfNewAssociations.put(keyForNewAssociationsMap, newAssociation);
             mapToConstruct.put(newAssociation, new ArrayList());
             entity.addAssociation(newAssociation);
@@ -238,45 +238,7 @@ public class DataListOperations extends DefaultBizLogic {
         listOfSubMaps.add(mapToAdd);
     }
 
-    /**
-     * Creates and returns a new one to many association between source target entities.
-     * @param srcEntity source entity of the new association
-     * @param tarEntity target enetiyt of the new association
-     * @return new association
-     */
-    private AssociationInterface createNewOneToManyAsso(EntityInterface srcEntity, EntityInterface tarEntity) {
-        AssociationInterface returner = domainObjectFactory.createAssociation();
-        String associationName = "AssociationName_" + (srcEntity.getAssociationCollection().size() + 1);
-        returner.setName(associationName);
-        returner.setAssociationDirection(AssociationDirection.SRC_DESTINATION);
-        returner.setEntity(srcEntity);
-        returner.setTargetEntity(tarEntity);
-        returner.setSourceRole(getNewRole(AssociationType.CONTAINTMENT, "source_role_" + associationName,
-                                          Cardinality.ONE, Cardinality.ONE));
-        returner.setTargetRole(getNewRole(AssociationType.CONTAINTMENT, "target_role_" + associationName,
-                                          Cardinality.ZERO, Cardinality.MANY));
-
-        return returner;
-    }
-
-    /**
-     * Creates and returns new Role for an association.
-     * @param associationType associationType
-     * @param name name
-     * @param minCard  minCard
-     * @param maxCard maxCard
-     * @return  RoleInterface
-     */
-    private RoleInterface getNewRole(AssociationType associationType, String name, Cardinality minCard,
-                                     Cardinality maxCard) {
-        RoleInterface role = domainObjectFactory.createRole();
-        role.setAssociationsType(associationType);
-        role.setName(name);
-        role.setMinimumCardinality(minCard);
-        role.setMaximumCardinality(maxCard);
-        return role;
-    }
-
+       
     /**
      * A recursive function to construct the recursive map of attribute->value 
      * and association->list(map).

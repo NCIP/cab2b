@@ -1,9 +1,11 @@
 package edu.wustl.cab2b.server.ejb.experiment;
 
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
@@ -45,8 +47,8 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
         return (new ExperimentOperations()).getExperiment(id);
     }
 
-    public Set<EntityInterface> getDataListEntityNames(Experiment exp) throws RemoteException {
-        return (new ExperimentOperations()).getDataListEntityNames(exp);
+    public Set<EntityInterface> getDataListEntitySet(Experiment exp) throws RemoteException {
+        return (new ExperimentOperations()).getDataListEntitySet(exp);
     }
 
     /**
@@ -55,6 +57,20 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
     public void addExperiment(Long experimentGroupId, Experiment experiment) throws RemoteException,BizLogicException,
             UserNotAuthorizedException, DAOException {
         (new ExperimentOperations()).addExperiment(experimentGroupId, experiment);
+    }
+
+
+    /**
+	 * save the given data as a data category
+	 * @param title the title for the category
+	 * @param attributes list of attributes needed for the  new entity
+	 * @param data the data to be saved
+	 * @return the newly created entity
+	 */
+    public EntityInterface saveDataCategory(String title, List<AttributeInterface> attributes, Object[][] data) throws RemoteException
+	{
+		return new ExperimentOperations().saveDataCategory(title, attributes, data);
+		
     }
 
 }

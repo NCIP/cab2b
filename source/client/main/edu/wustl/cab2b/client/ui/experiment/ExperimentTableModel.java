@@ -9,7 +9,8 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 
 public class ExperimentTableModel extends Cab2bTable{
 
-	Map<String,AttributeInterface> m_attributeMap;
+	private Map<String,AttributeInterface> m_attributeMap;
+	
 	public ExperimentTableModel(boolean showCheckBox, Object[][] data, Object[] header) {
 		super(showCheckBox, data, header);
 		// TODO Auto-generated constructor stub

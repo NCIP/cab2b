@@ -20,6 +20,7 @@ import edu.common.dynamicextensions.domaininterface.FloatValueInterface;
 import edu.common.dynamicextensions.domaininterface.IntegerValueInterface;
 import edu.common.dynamicextensions.domaininterface.LongValueInterface;
 import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
+import edu.common.dynamicextensions.domaininterface.RoleInterface;
 import edu.common.dynamicextensions.domaininterface.SemanticPropertyInterface;
 import edu.common.dynamicextensions.domaininterface.StringValueInterface;
 import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
@@ -28,6 +29,9 @@ import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.entitymanager.EntityManagerInterface;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
+import edu.common.dynamicextensions.util.global.Constants.AssociationDirection;
+import edu.common.dynamicextensions.util.global.Constants.AssociationType;
+import edu.common.dynamicextensions.util.global.Constants.Cardinality;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Utility;
@@ -40,7 +44,9 @@ import gov.nih.nci.cagrid.metadata.common.SemanticMetadata;
  * To create a table for entity set this to TRUE before calling this code else set it to false.
  * @author Chandrakant Talele
  */
-public class DynamicExtensionUtility {
+public class DynamicExtensionUtility
+{
+	private static DomainObjectFactory domainObjectFactory = DomainObjectFactory.getInstance();
 
     /**
      * Persist given entity using dynamic extension APIs.
@@ -161,9 +167,9 @@ public class DynamicExtensionUtility {
         if (semanticMetadataArr == null) {
             return;
         }
-        DomainObjectFactory deFactory = DomainObjectFactory.getInstance();
+        
         for (int i = 0; i < semanticMetadataArr.length; i++) {
-            SemanticPropertyInterface semanticProp = deFactory.createSemanticProperty();
+            SemanticPropertyInterface semanticProp = domainObjectFactory.createSemanticProperty();
             semanticProp.setSequenceNumber(i);
             semanticProp.setConceptCode(semanticMetadataArr[i].getConceptCode());
             semanticProp.setTerm(semanticMetadataArr[i].getConceptName());
@@ -178,8 +184,7 @@ public class DynamicExtensionUtility {
      * @param value Actual value of the tag.
      */
     public static void addTaggedValue(AbstractMetadataInterface owner, String key, String value) {
-        DomainObjectFactory deFactory = DomainObjectFactory.getInstance();
-        TaggedValueInterface taggedValue = deFactory.createTaggedValue();
+        TaggedValueInterface taggedValue = domainObjectFactory.createTaggedValue();
         taggedValue.setKey(key);
         taggedValue.setValue(value);
         owner.addTaggedValue(taggedValue);
@@ -240,9 +245,9 @@ public class DynamicExtensionUtility {
      * @param source Attribute to copy
      * @return The cloned attribute
      */
-    public static AttributeInterface getAttributeCopy(AttributeInterface source) {
-        DomainObjectFactory domainObjectFactory = DomainObjectFactory.getInstance();
-        AttributeInterface attribute = null;
+    public static AttributeInterface getAttributeCopy(AttributeInterface source) 
+    {
+    	AttributeInterface attribute = null;
         DataType type = Utility.getDataType(source.getAttributeTypeInformation());
         DataElementInterface dataEle = source.getAttributeTypeInformation().getDataElement();
         switch (type) {
@@ -358,14 +363,60 @@ public class DynamicExtensionUtility {
      *            Semantic Metadata array to set.
      */
     private static void copySemanticProperties(AbstractMetadataInterface copyFrom,
-                                AbstractMetadataInterface copyTo) {
-        DomainObjectFactory domainObjectFactory = DomainObjectFactory.getInstance();
-        for (SemanticPropertyInterface p : copyFrom.getSemanticPropertyCollection()) {
+                                AbstractMetadataInterface copyTo) 
+    {
+    	    for (SemanticPropertyInterface p : copyFrom.getSemanticPropertyCollection()) {
             SemanticPropertyInterface semanticProp = domainObjectFactory.createSemanticProperty();
             semanticProp.setTerm(p.getTerm());
             semanticProp.setConceptCode(p.getConceptCode());
             copyTo.addSemanticProperty(semanticProp);
         }
     }
+    
+    
+    /**
+     * Creates and returns a new one to many association between source target entities.
+     * @param srcEntity source entity of the new association
+     * @param tarEntity target enetiyt of the new association
+     * @return new association
+     */
+    public static AssociationInterface createNewOneToManyAsso(EntityInterface srcEntity, EntityInterface tarEntity) 
+    {
+    	AssociationInterface association = domainObjectFactory.createAssociation();
+        String associationName = "AssociationName_" + (srcEntity.getAssociationCollection().size() + 1);
+       association.setName(associationName);
+       association.setAssociationDirection(AssociationDirection.SRC_DESTINATION);
+       association.setEntity(srcEntity);
+       association.setTargetEntity(tarEntity);
+       association.setSourceRole(getNewRole(AssociationType.CONTAINTMENT, "source_role_" + associationName,
+                                          Cardinality.ONE, Cardinality.ONE));
+       association.setTargetRole(getNewRole(AssociationType.CONTAINTMENT, "target_role_" + associationName,
+                                          Cardinality.ZERO, Cardinality.MANY));
+       
+       srcEntity.addAssociation(association);
+     
+
+       return association;
+    }
+    
+    /**
+     * Creates and returns new Role for an association.
+     * @param associationType associationType
+     * @param name name
+     * @param minCard  minCard
+     * @param maxCard maxCard
+     * @return  RoleInterface
+     */
+    public static RoleInterface getNewRole(AssociationType associationType, String name, Cardinality minCard,
+                                     Cardinality maxCard) {
+        RoleInterface role = domainObjectFactory.createRole();
+        role.setAssociationsType(associationType);
+        role.setName(name);
+        role.setMinimumCardinality(minCard);
+        role.setMaximumCardinality(maxCard);
+        return role;
+    }
+
+
 
 }

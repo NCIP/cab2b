@@ -68,6 +68,8 @@ public interface ErrorCodeConstants {
     
     public static final String DATALIST_RETRIEVE_ERROR = "DL.0002";
     
+    public static final String DATACATEGORY_SAVE_ERROR = "DC.001";
+    
     
     public static final String QM_0003 = "QM.0003";
 }
