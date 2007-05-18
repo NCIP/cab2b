@@ -1,5 +1,7 @@
 package edu.wustl.cab2b.client.ui.controls;
 
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseListener;
@@ -8,6 +10,7 @@ import java.util.Vector;
 import javax.swing.AbstractButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import javax.swing.text.Highlighter;
 
 import org.jdesktop.swingx.JXTable;
 
@@ -34,7 +37,12 @@ public class Cab2bTable extends JXTable
 		}
 		this.setSortable(false);
         this.setHorizontalScrollEnabled(true);
+        this.getTableHeader().setPreferredSize(new Dimension(0,28)); 
+        this.getTableHeader().setFont(new Font("Arial",Font.BOLD,12));
+        this.setRowHeight(23);
        
+        
+        
         this.packAll();
 	}
 	
