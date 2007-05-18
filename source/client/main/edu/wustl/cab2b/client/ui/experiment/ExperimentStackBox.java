@@ -7,6 +7,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -24,16 +25,15 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.jdesktop.swingx.JXTree;
 
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
+import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
+import edu.wustl.cab2b.client.ui.charts.ChartGenerator;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
-import edu.wustl.cab2b.client.ui.charts.ChartGenerator;
-import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
-import edu.wustl.cab2b.client.ui.charts.ChartGenerator;
-import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.StackedBox;
@@ -47,13 +47,15 @@ import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.util.Constants;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.util.logger.Logger;
 
 /*
  *  Class used to display left hand side stack panel.
  * */
 
-public class ExperimentStackBox extends Cab2bPanel {
+public class ExperimentStackBox extends Cab2bPanel
+{
 
     /**
      * @param args
@@ -99,39 +101,54 @@ public class ExperimentStackBox extends Cab2bPanel {
         initGUI();
     }
 
-    public ExperimentStackBox(
-            ExperimentBusinessInterface expBus,
-            Experiment selectedExperiment,
-            ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel) {
+    public ExperimentStackBox(ExperimentBusinessInterface expBus, Experiment selectedExperiment, ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel) 
+    {
         m_experimentBusinessInterface = expBus;
         m_selectedExperiment = selectedExperiment;
         m_experimentDataCategoryGridPanel = experimentDataCategoryGridPanel;
         initGUI();
     }
-    
-    public void initGUI() {
+
+    public void initGUI() 
+    {
         this.setLayout(new BorderLayout());
         stackedBox = new StackedBox();
         stackedBox.setTitleBackgroundColor(new Color(200, 200, 220));
 
         Set<EntityInterface> entitySet = null;
-        try {
-            entitySet = m_experimentBusinessInterface.getDataListEntityNames(m_selectedExperiment);
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        DefaultMutableTreeNode rootNode = null;
+        try 
+        {
+            entitySet = m_experimentBusinessInterface.getDataListEntitySet(m_selectedExperiment);
+            
+            rootNode = new DefaultMutableTreeNode("Experiment Data Categories");
+            DefaultMutableTreeNode node = null;
+            
+            
+            //for each datalist            
+            for(EntityInterface dummyEntity : entitySet)
+            {
+            	EntityInterface entity=null;
+            	//get the only child of the dummy entity, which would be the real first level entity in the tree 
+            	for(AssociationInterface association : dummyEntity.getAssociationCollection())
+            	{
+            		entity = association.getTargetEntity();
+            	}
+            	           	 
+            	TreeEntityWrapper treeEnity = new TreeEntityWrapper();
+                treeEnity.setEntityInterface(entity);
+                node = new DefaultMutableTreeNode(treeEnity);
+                rootNode.add(node);
+                addChildren(rootNode, node);
+                      	
+            }
+            
         }
-        Iterator iter = entitySet.iterator();
-        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Experiment Data Categories");
-        DefaultMutableTreeNode node = null;
-
-        while (iter.hasNext()) {
-            EntityInterface entity = (EntityInterface) iter.next();
-            ExperimentEntity expEnity = new ExperimentEntity();
-            expEnity.setEntityInterface(entity);
-            node = new DefaultMutableTreeNode(expEnity);
-            rootNode.add(node);
+        catch (RemoteException e) 
+        {
+            CommonUtils.handleException(e, this, true, true, true, false);
         }
-
+               
         //creating datalist tree
         datalistTree = new JXTree(rootNode);
 
@@ -145,8 +162,8 @@ public class ExperimentStackBox extends Cab2bPanel {
                 protected void doNonUILogic() throws RuntimeException {
 
                     Object nodeInfo = ((DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent()).getUserObject();
-                    if (nodeInfo instanceof ExperimentEntity) {
-                        getDataCategoyRecords((ExperimentEntity) nodeInfo);
+                    if (nodeInfo instanceof TreeEntityWrapper) {
+                        getDataCategoyRecords((TreeEntityWrapper) nodeInfo);
                     }
                 }
 
@@ -173,9 +190,6 @@ public class ExperimentStackBox extends Cab2bPanel {
         dataFilterPanel = new Cab2bPanel();
         dataFilterPanel.setPreferredSize(new Dimension(250, 150));
         dataFilterPanel.setOpaque(false);
-        
-       
-       
         stackedBox.addBox("Filter Data ", dataFilterPanel, "resources/images/mysearchqueries_icon.gif");
 
         /**
@@ -204,7 +218,52 @@ public class ExperimentStackBox extends Cab2bPanel {
         stackedBox.setMinimumSize(new Dimension(250, 500));
         this.add(stackedBox);
     }
-
+    
+    /**
+     * find and add children of the given tree node
+     * child node is added to the current node if it is filtered, otherwise it is added to the root node
+     * @param node the tree node
+     */
+    private void addChildren(DefaultMutableTreeNode rootNode, DefaultMutableTreeNode node)
+    {
+    	EntityInterface entity = ((TreeEntityWrapper)node.getUserObject()).getEntityInterface();
+    	    	
+    	for(AssociationInterface association : entity.getAssociationCollection())
+    	{
+    		EntityInterface targetEntity = association.getTargetEntity();
+    		TreeEntityWrapper child = new TreeEntityWrapper();
+    		child.setEntityInterface(targetEntity);
+    		DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(child);
+    		
+    		Collection<TaggedValueInterface> taggedValues = targetEntity.getTaggedValueCollection();
+    		
+    		if(Utility.getTaggedValue(taggedValues, Constants.FILTERED)!=null)
+    		{
+    			node.add(childNode);
+    		}
+    		else
+    		{
+    			rootNode.add(childNode);
+    		}
+    		
+    		addChildren(rootNode, childNode);
+    	   		
+    	}
+    	
+    }
+    
+    /*
+    private void getAssociatedEntities(EntityInterface entity, Set<EntityInterface> entitySet) 
+    {
+        for (AssociationInterface association : entity.getAssociationCollection()) 
+        {
+            EntityInterface targetEntity = association.getTargetEntity();
+            entitySet.add(targetEntity);
+            Logger.out.info("Entity Names :" + targetEntity);
+            getAssociatedEntities(targetEntity, entitySet);
+        }
+    }*/
+    
     /**
      * Method to perform tree node selection action
      * for currently selected node 
@@ -231,8 +290,8 @@ public class ExperimentStackBox extends Cab2bPanel {
                 }
 
                 Object nodeInfo = node.getUserObject();
-                if (nodeInfo instanceof ExperimentEntity) {
-                    getDataCategoyRecords((ExperimentEntity) nodeInfo);
+                if (nodeInfo instanceof TreeEntityWrapper) {
+                    getDataCategoyRecords((TreeEntityWrapper) nodeInfo);
                 }
 
             }
@@ -249,11 +308,11 @@ public class ExperimentStackBox extends Cab2bPanel {
      * and covert it into table format
      * */
 
-    private void getDataCategoyRecords(ExperimentEntity nodeInfo) {
+    private void getDataCategoyRecords(TreeEntityWrapper nodeInfo) {
 
         EntityInterface entityNode = nodeInfo.getEntityInterface();
         entityNode.getAttributeCollection();
-        Logger.out.info("ID :: " + entityNode.getId());
+        //Logger.out.info("ID :: " + entityNode.getId());
 
         //getting datalist entity interface
         DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
@@ -288,7 +347,7 @@ public class ExperimentStackBox extends Cab2bPanel {
                 while (iterList.hasNext()) {
                     recordObject[i][j] = new Object();
                     recordObject[i][j] = iterList.next();
-                    Logger.out.info("Data [" + i + "]" + "[" + j + "]" + recordObject[i][j]);
+                    //Logger.out.info("Data [" + i + "]" + "[" + j + "]" + recordObject[i][j]);
                     j++;
                 }
                 i++;
@@ -372,8 +431,8 @@ public class ExperimentStackBox extends Cab2bPanel {
     	
 		String entityName = null;
 		Object nodeInfo = ((DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent()).getUserObject();
-		if (nodeInfo instanceof ExperimentEntity) {
-			entityName = ((ExperimentEntity)nodeInfo).toString();
+		if (nodeInfo instanceof TreeEntityWrapper) {
+			entityName = ((TreeEntityWrapper)nodeInfo).toString();
 		}
     	
 		JPanel jPanel = null;
@@ -393,5 +452,23 @@ public class ExperimentStackBox extends Cab2bPanel {
     	JTabbedPane tabComponent = m_experimentDataCategoryGridPanel.getTabComponent();
     	tabComponent.setSelectedComponent(visualizeDataPanel);
     }
+	
+	
+	/**
+	 * update the tree, add the newly created entity to the current selection
+	 * @param newEntity
+	 */
+	public void updateStackBox(EntityInterface newEntity)
+	{
+		//gets the currently selected node
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent();
+		
+		TreeEntityWrapper newNodeWrapper = new TreeEntityWrapper();
+		newNodeWrapper.setEntityInterface(newEntity);
+		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(newNodeWrapper);
+		node.add(newNode);
+		
+		datalistTree.updateUI();
+	}
     
 }

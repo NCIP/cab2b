@@ -10,23 +10,29 @@ package edu.wustl.cab2b.client.ui.experiment;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.table.TableColumn;
 
 import org.jdesktop.swingx.JXTableHeader;
 import org.jdesktop.swingx.decorator.Filter;
 import org.jdesktop.swingx.decorator.FilterPipeline;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -37,6 +43,10 @@ import edu.wustl.cab2b.client.ui.filter.EnumeratedFilterPopUp;
 import edu.wustl.cab2b.client.ui.filter.FilterComponent;
 import edu.wustl.cab2b.client.ui.filter.PatternPopup;
 import edu.wustl.cab2b.client.ui.filter.RangeFilter;
+import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
+import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
+import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.DataType;
 
@@ -49,6 +59,13 @@ import edu.wustl.common.querysuite.queryobject.DataType;
  * 
  */
 public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private ExperimentOpenPanel parent;
 
 	private JTabbedPane tabComponent;
 
@@ -91,8 +108,11 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
 	private static Map<String, CaB2BFilterInterface> filterMap = new HashMap<String, CaB2BFilterInterface>();
 
-	public ExperimentDataCategoryGridPanel() {
-        this(new Vector(),new Vector());
+	public ExperimentDataCategoryGridPanel(ExperimentOpenPanel parent)
+	{
+
+ 	   this(new Vector(),new Vector());
+       this.parent = parent;
 	}
 
 	/**
@@ -134,6 +154,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		// add the listener specifically to the header
 		table.addMouseListener(mouseListener);
 		table.getTableHeader().addMouseListener(mouseListener);
+
 		theScrollPane.getViewport().add(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		experimentDataPanel.add("hfill vfill", theScrollPane);
@@ -165,12 +186,14 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		analysisDataPanel = new Cab2bPanel();
 		visualizeDataPanel = new Cab2bPanel();
 
+		
 		table = new ExperimentTableModel(false, tableDataRecordVector, tableColumnVector);
 		table.setColumnSelectionAllowed(true);
 		MouseListener mouseListener = new myMouseListener();
 		// add the listener specifically to the header
 		table.addMouseListener(mouseListener);
 		table.getTableHeader().addMouseListener(mouseListener);
+		
 
 		/* Adding scrollpane */
 		theScrollPane.getViewport().add(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -179,6 +202,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
 		saveDataCategoryButton = new Cab2bButton("Save Data Category");
 		saveDataCategoryButton.setPreferredSize(new Dimension(160, 22));
+		saveDataCategoryButton.addActionListener(new SaveCategoryActionListener(this));
 
 		Cab2bPanel northPanel = new Cab2bPanel();
 		northPanel.add(saveDataCategoryButton);
@@ -308,11 +332,84 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		return visualizeDataPanel;
 	}
 
+	
 	/**
 	 * @param visualizeDataPanel the visualizeDataPanel to set
 	 */
 	public void setVisualizeDataPanel(Cab2bPanel visualizeDataPanel) {
 		this.visualizeDataPanel = visualizeDataPanel;
+	}
+	
+	
+	/**
+	 * make list of attributes of the parent entity as well as a 2D array of data and pass it to the server to make new entity
+	 * this method is called by the {@link SaveDataCategoryPanel} to save a subset of of a datalist as a category 
+	 * @param title the title for the category 
+	 */
+	public void saveDataCategory(String title)
+	{
+		//get the columns, including hidden columns. Not well documented
+		List<TableColumn> columnList = table.getColumns(true);
+		List<AttributeInterface> attributes = new ArrayList<AttributeInterface>();
+		
+		//skip filterd-out rows but include hidden columns 
+		int rows = table.getRowCount();
+		int cols = table.getColumnCount(true);
+		Object[][] data =new Object[rows][cols];
+		
+		//populate attribute list
+		for(TableColumn column : columnList)
+		{
+			String columnName = column.getIdentifier().toString();  
+			attributes.add(table.getColumnAttribute(columnName));
+		}
+		
+		for(int i=0; i<rows; i++)
+		{
+			for(int j=0; j<cols; j++)
+			{
+				//JXTable does not provide API to access hidden data
+				//JXTable.getValueAt() works only on visible columns
+				//using TableModel.getValueAt() requires converting row view index to row model index 
+				data[i][j] = table.getModel().getValueAt(table.convertRowIndexToModel(i), j);
+			}
+			
+			//Logger.out.info(table.getValueAt(i, 4).toString());
+		}
+		
+		//make a call to the server
+		ExperimentBusinessInterface bi = (ExperimentBusinessInterface)CommonUtils.getBusinessInterface(EjbNamesConstants.EXPERIMENT, ExperimentHome.class);
+		EntityInterface newEntity=null;
+		try
+		{
+			newEntity = bi.saveDataCategory(title, attributes, data);
+		}
+		catch(RemoteException e)
+		{
+			CommonUtils.handleException(e, this, true, true, true, false);			
+		}
+		
+		//update the tree in the stack box
+		parent.updateOpenPanel(newEntity);
+		
+	}
+	
+	
+	class SaveCategoryActionListener implements ActionListener
+	{
+		private ExperimentDataCategoryGridPanel gridPanel;
+		
+		public SaveCategoryActionListener(ExperimentDataCategoryGridPanel gridPanel)
+		{
+			this.gridPanel = gridPanel;
+			
+		}
+		
+		public void actionPerformed(ActionEvent event)
+		{
+			SaveDataCategoryPanel saveDialogPanel = new SaveDataCategoryPanel(gridPanel);
+		}
+		
 	}
 
 }
