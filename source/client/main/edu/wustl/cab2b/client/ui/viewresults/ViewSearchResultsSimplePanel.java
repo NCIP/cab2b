@@ -231,8 +231,10 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel {
         addToDataListButton.setPreferredSize(new Dimension(140, 22));
         addToDataListButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                List selectedUserObjects = pagination.getSelectedPageElementsUserObjects();
-                MainSearchPanel.getDataList().addDataRows(selectedUserObjects);
+                List<Vector> selectedUserObjects = pagination.getSelectedPageElementsUserObjects();
+                for(Vector recordListUserObject:selectedUserObjects) {
+                    MainSearchPanel.getDataList().addDataRow((IDataRow) recordListUserObject.get(0));
+                }
                 updateMyDataListPanel();
                 SaveDatalistPanel.isDataListSaved = false;
 
@@ -244,6 +246,7 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel {
                 //						JOptionPane.INFORMATION_MESSAGE);
             }
 
+
         });
         searchResultsPanel.add("br br", addToDataListButton);
 
@@ -254,9 +257,13 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel {
         m_applyAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 // Perform apply all action
-                List selectedUserObjects = pagination.getSelectedPageElementsUserObjects();
+                List<Vector> selectedUserObjects = pagination.getSelectedPageElementsUserObjects();
+                List<IDataRow> selectedDataRows = new ArrayList<IDataRow>();
+                for(Vector recordListUserObject:selectedUserObjects) {
+                    selectedDataRows.add((IDataRow) recordListUserObject.get(0));
+                }
                 if ((selectedUserObjects.size() > 0) && (false == MainSearchPanel.getDataList().isTreeEmpty())) {
-                    performApplyAllAction(selectedUserObjects, (JComponent) titledSearchResultsPanel);
+                    performApplyAllAction(selectedDataRows, (JComponent) titledSearchResultsPanel);
 
                 }
             }
@@ -312,7 +319,7 @@ public class ViewSearchResultsSimplePanel extends Cab2bPanel {
      * Method to perform apply all action
      * for currently selected objects 
      */
-    public static void performApplyAllAction(final List selectedUserObjects, final JComponent component) {
+    public static void performApplyAllAction(final List<IDataRow> selectedUserObjects, final JComponent component) {
         /* Get result by executing the Query in a worker thread. */
         CustomSwingWorker swingWorker = new CustomSwingWorker((JXPanel) component) {
             @Override

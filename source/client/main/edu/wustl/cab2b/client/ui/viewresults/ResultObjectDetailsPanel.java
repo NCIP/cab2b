@@ -9,6 +9,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
@@ -36,6 +37,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.controls.CustomizableBorder;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.datalist.DataRow;
+import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.IRecordWithAssociatedIds;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
@@ -154,14 +156,13 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
         addToDataListButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Logger.out.info("add to data list action");
-                Vector<Object> selectedUserObjects = new Vector<Object>();
-                selectedUserObjects.add(dataRow);
-                MainSearchPanel.getDataList().addDataRows(selectedUserObjects);
+               // Vector<Object> selectedUserObjects = new Vector<Object>();
+               // selectedUserObjects.add(dataRow);
+                MainSearchPanel.getDataList().addDataRow(dataRow);
 
                 ViewSearchResultsSimplePanel.updateMyDataListPanel();
                 SaveDatalistPanel.isDataListSaved = false;
-                SearchNavigationPanel.messageLabel.setText(" *Added " + selectedUserObjects.size()
-                        + " elements to data list");
+                SearchNavigationPanel.messageLabel.setText(" *Added 1 element to data list");
                 updateUI();
             }
         });
@@ -173,9 +174,9 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
         m_applyAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 // Perform apply all action
-                Vector<Object> selectedUserObjects = new Vector<Object>();
-                selectedUserObjects.add(dataRow);
-                ViewSearchResultsSimplePanel.performApplyAllAction(selectedUserObjects,
+                List<IDataRow> selectedDataRows = new ArrayList<IDataRow>();
+                selectedDataRows.add(dataRow);
+                ViewSearchResultsSimplePanel.performApplyAllAction(selectedDataRows,
                                                                    (JComponent) detailsTablePanel);
             }
         });
