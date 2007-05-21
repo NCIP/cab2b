@@ -163,6 +163,7 @@ public class QueryExecutor {
                 IQueryResult<ICategorialClassRecord> allRootExprCatRecs = transformer.getCategoryResults(
                                                                                                          rootDCQLQuery,
                                                                                                          catClassForRootExpr);
+                categoryResults.add(allRootExprCatRecs);
 
                 for (Map.Entry<String, List<ICategorialClassRecord>> entry : allRootExprCatRecs.getRecords().entrySet()) {
                     String url = entry.getKey();
@@ -171,7 +172,6 @@ public class QueryExecutor {
                                            url, rootExprCatRec.getId());
                     }
                 }
-
             }
             queryResult = mergeCatResults(categoryResults);
         } else {
