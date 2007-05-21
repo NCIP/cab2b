@@ -2,11 +2,9 @@ package edu.wustl.cab2b.client.ui.viewresults;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -14,8 +12,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
 import org.jdesktop.swingx.JXPanel;
@@ -23,14 +19,9 @@ import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
-import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.cab2b.client.ui.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.RiverLayout;
-import edu.wustl.cab2b.client.ui.SaveDatalistPanel;
-import edu.wustl.cab2b.client.ui.SearchNavigationPanel;
-import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
@@ -40,14 +31,12 @@ import edu.wustl.cab2b.common.datalist.DataRow;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.IRecordWithAssociatedIds;
-import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * A Panel to show any entity's details.
  * @author chetan_bh
  */
-public class ResultObjectDetailsPanel extends Cab2bPanel {
+public class ResultObjectDetailsPanel extends ResultPanel {
     Object[] objectDetails;
 
     List<AttributeInterface> attributes; // List<IAttribute> attributes;
@@ -62,8 +51,7 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
 
     JXPanel relatedDataPanel;
 
-    JButton addToDataListButton;
-
+   
     ActionListener associatedDataActionListener;
 
     ActionListener breadCrumbActionListener;
@@ -78,34 +66,30 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
 
     DataRow dataRow;
 
-    private Cab2bButton m_applyAllButton;
 
     private Cab2bPanel m_sidePanel;
-    
+
     /**
      * 
      */
     private IRecord record;
+
     
-    SimpleSearchResultBreadCrumbPanel searchPanel;
 
+    public ResultObjectDetailsPanel(SimpleSearchResultBreadCrumbPanel searchPanel, DataRow dataRow,
 
-
-    public ResultObjectDetailsPanel(SimpleSearchResultBreadCrumbPanel searchPanel,
-            DataRow dataRow,
-                      
-            IRecord record) {
+    IRecord record) {
         /* Set the parent entity interface. Note : This can never be null. */
+        super(searchPanel);
+        
         this.dataRow = dataRow;
         this.parentEntityInterface = dataRow.getEntityInterface();
         this.id = dataRow.getId();
         this.objectDetails = dataRow.getRow();
         this.attributes = searchPanel.getAttributes();
 
-        //this.interModelAssociationCollection = (Collection<IInterModelAssociation>) interIntraAssoClass.get(0);
-        //this.incomingIntraModelAssociationCollection = (Collection<AssociationInterface>) interIntraAssoClass.get(1);
         this.record = record;
-        this.searchPanel = searchPanel;
+        
 
         breadCrumbActionListener = searchPanel.getBreadCrumbsAL();
         associatedDataActionListener = searchPanel.getAssociatedDataAL();
@@ -117,7 +101,7 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
     }
 
     public void addDataSummaryPanel() {
-        m_sidePanel.add(ViewSearchResultsSimplePanel.myDataListTitledPanel, BorderLayout.CENTER);
+        m_sidePanel.add(myDataListTitledPanel, BorderLayout.CENTER);
     }
 
     private void initData() {
@@ -151,47 +135,19 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
 
         detailsTablePanel.add("br hfill vfill", tableSP);
 
-        addToDataListButton = new Cab2bButton("Add To Data List");
-        addToDataListButton.setPreferredSize(new Dimension(140, 22));
-        addToDataListButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Logger.out.info("add to data list action");
-               // Vector<Object> selectedUserObjects = new Vector<Object>();
-               // selectedUserObjects.add(dataRow);
-                MainSearchPanel.getDataList().addDataRow(dataRow);
+        initDataListButtons();
 
-                ViewSearchResultsSimplePanel.updateMyDataListPanel();
-                SaveDatalistPanel.isDataListSaved = false;
-                SearchNavigationPanel.messageLabel.setText(" *Added 1 element to data list");
-                updateUI();
-            }
-        });
-
-        // Add Apply All button to apply currently added datalist options
-        // to the currently selected objects.
-        m_applyAllButton = new Cab2bButton("Apply Data List");
-        m_applyAllButton.setPreferredSize(new Dimension(130, 22));
-        m_applyAllButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                // Perform apply all action
-                List<IDataRow> selectedDataRows = new ArrayList<IDataRow>();
-                selectedDataRows.add(dataRow);
-                ViewSearchResultsSimplePanel.performApplyAllAction(selectedDataRows,
-                                                                   (JComponent) detailsTablePanel);
-            }
-        });
         detailsTablePanel.add("br", addToDataListButton);
         detailsTablePanel.add("tab tab", m_applyAllButton);
-        // this.add("br", addToDataListButton);
 
         this.add(detailsTablePanel, BorderLayout.CENTER);
 
         m_sidePanel = new Cab2bPanel(new GridLayout(2, 1, 5, 5));
 
-        ViewSearchResultsSimplePanel.initDataListSummaryPanel();
+        initDataListSummaryPanel();
 
         m_sidePanel.add(relatedDataTitledPanel);
-        m_sidePanel.add(ViewSearchResultsSimplePanel.myDataListTitledPanel);
+        m_sidePanel.add(myDataListTitledPanel);
         this.add(m_sidePanel, BorderLayout.EAST);
     }
 
@@ -202,15 +158,14 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
         relatedDataTitledPanel.setTitlePainter(new BasicGradientPainter(gp1));
         relatedDataTitledPanel.setTitleForeground(Color.BLACK);
 
-        
         relatedDataPanel = new Cab2bPanel();
         relatedDataPanel.setBackground(Color.WHITE);
         relatedDataPanel.setLayout(new RiverLayout(5, 10));
         Collection incomingIntraModelAssociationCollection = searchPanel.getIncomingAssociationCollection();
-        
-        if ( incomingIntraModelAssociationCollection != null && !incomingIntraModelAssociationCollection.isEmpty()) {
+
+        if (incomingIntraModelAssociationCollection != null && !incomingIntraModelAssociationCollection.isEmpty()) {
             AbstractAssociatedDataPanel incomingPanel = new IncomingAssociationDataPanel(
-                    incomingIntraModelAssociationCollection, associatedDataActionListener, id, dataRow,record);
+                    incomingIntraModelAssociationCollection, associatedDataActionListener, id, dataRow, record);
             relatedDataPanel.add(incomingPanel);
         }
 
@@ -220,8 +175,8 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
         if (record instanceof IRecordWithAssociatedIds) {
             Collection outgoingIntraModelAssociationCollection = dataRow.getEntityInterface().getAssociationCollection();
             AbstractAssociatedDataPanel outgoingPanel = new OutgoingAssociationDataPanel(
-                    outgoingIntraModelAssociationCollection, associatedDataActionListener, id, dataRow,record);
-            relatedDataPanel.add("br",outgoingPanel);
+                    outgoingIntraModelAssociationCollection, associatedDataActionListener, id, dataRow, record);
+            relatedDataPanel.add("br", outgoingPanel);
         }
 
         /*
@@ -231,8 +186,8 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
         Collection interModelAssociationCollection = searchPanel.getIntraModelAssociationCollection();
         if (interModelAssociationCollection != null && !interModelAssociationCollection.isEmpty()) {
             AbstractAssociatedDataPanel interModelPanel = new InterModelAssociationDataPanel(
-                    interModelAssociationCollection, associatedDataActionListener, id, dataRow,record);
-            relatedDataPanel.add("br",interModelPanel);
+                    interModelAssociationCollection, associatedDataActionListener, id, dataRow, record);
+            relatedDataPanel.add("br", interModelPanel);
         }
 
         relatedDataPanel.add("br", new Cab2bLabel("       "));
@@ -241,5 +196,15 @@ public class ResultObjectDetailsPanel extends Cab2bPanel {
         relatedDataTitledPanel.add(relatedDataPane);
 
         relatedDataTitledPanel.setBorder(new CustomizableBorder(new Insets(1, 1, 1, 1), true, true));
+    }
+
+
+    /**
+     * @see edu.wustl.cab2b.client.ui.viewresults.ResultPanel#getSelectedDataRows()
+     */
+    List<IDataRow> getSelectedDataRows() {
+        List<IDataRow> selectedDataRows = new ArrayList<IDataRow>();
+        selectedDataRows.add(dataRow);
+        return selectedDataRows;
     }
 }

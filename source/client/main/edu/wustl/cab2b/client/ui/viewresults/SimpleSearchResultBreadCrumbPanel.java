@@ -234,8 +234,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
         simpleSearchResultPanel = updateGuiIfResultOneOrZero(null, null);
 
         if (simpleSearchResultPanel == null) {
-            simpleSearchResultPanel = new ViewSearchResultsSimplePanel(null, queryResult, breadCrumbsAL,
-                    hyperlinkAL, null, viewPanel, null);
+            simpleSearchResultPanel = new ViewSearchResultsSimplePanel(this,null, null, viewPanel, null);
         }
 
         /*
@@ -518,8 +517,8 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 
                     JXPanel simpleSearchResultPanelNew = updateGuiIfResultOneOrZero(association, dataRow);
                     if (simpleSearchResultPanelNew == null) {
-                        simpleSearchResultPanelNew = new ViewSearchResultsSimplePanel(association, queryResult,
-                                breadCrumbsAL, hyperlinkAL, dataRow, viewPanel, targetEntity);
+                        simpleSearchResultPanelNew = new ViewSearchResultsSimplePanel(breadCrumbPanel,association,
+                                 dataRow, viewPanel, targetEntity);
                     }
 
                     addToPanel(simpleSearchResultPanelNew);
