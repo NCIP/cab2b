@@ -254,7 +254,7 @@ public class QueryExecutor {
         ICategoryResult<ICategorialClassRecord> res = QueryResultFactory.createCategoryResult(outputCategory);
         for (IQueryResult<ICategorialClassRecord> categoryResult : categoryResults) {
             for (Map.Entry<String, List<ICategorialClassRecord>> entry : categoryResult.getRecords().entrySet()) {
-                categoryResult.addRecords(entry.getKey(), entry.getValue());
+                res.addRecords(entry.getKey(), entry.getValue());
             }
         }
         // TODO pivots the results around the original root and then merges
