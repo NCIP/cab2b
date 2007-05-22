@@ -234,7 +234,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
         simpleSearchResultPanel = updateGuiIfResultOneOrZero(null, null);
 
         if (simpleSearchResultPanel == null) {
-            simpleSearchResultPanel = new ViewSearchResultsSimplePanel(this,null, null, viewPanel, null);
+            simpleSearchResultPanel = new ViewSearchResultsSimplePanel(this, null, null, viewPanel, null);
         }
 
         /*
@@ -396,70 +396,41 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
      * @author chetan_bh
      */
     private class HyperlinlActionListener implements ActionListener {
-        SimpleSearchResultBreadCrumbPanel breadCrumbPanel;
+        SimpleSearchResultBreadCrumbPanel searchPanel;
 
-        //private boolean blnAddingFirstTime = true;
-
-        public HyperlinlActionListener(SimpleSearchResultBreadCrumbPanel panel) {
-            this.breadCrumbPanel = panel;
+        public HyperlinlActionListener(SimpleSearchResultBreadCrumbPanel searchPanel) {
+            this.searchPanel = searchPanel;
         }
 
         public void actionPerformed(ActionEvent evt) {
             Cab2bHyperlink hyperlink = (Cab2bHyperlink) evt.getSource();
-            Object userObj = hyperlink.getUserObject();
-            Logger.out.info("userObj " + userObj.getClass());
 
-            PageElement element = (PageElement) userObj;
+            String hyperlinkText = hyperlink.getText();
+            PageElement element = (PageElement) hyperlink.getUserObject();
 
             /*Get the data row corresponding to the clicked element.*/
-            final Vector recordListUserObject = (Vector) element.getUserObject();
-            final DataRow dataRow = (DataRow) recordListUserObject.get(0);
-            final IRecord record = (IRecord) recordListUserObject.get(1);
+            Vector recordListUserObject = (Vector) element.getUserObject();
 
-            /*Get the attributes for the last query fired.*/
-            final List<AttributeInterface> attrList = breadCrumbPanel.getAttributes();
-            Logger.out.info("attributes " + attrList);
-            String hyperlinkText = hyperlink.getText();
+            DataRow dataRow = (DataRow) recordListUserObject.get(0);
+            IRecord record = (IRecord) recordListUserObject.get(1);
 
             /*
              * Refresh the breadcrumb vector, and pass that instance onto a new
              * instance of the breadcrumb panel.
              */
-            //SimpleSearchResultBreadCrumbPanel.m_vBreadCrumbs.add(hyperlinkText);
-            (breadCrumbPanel.panelCount)++;
-            final int currentCount = breadCrumbPanel.panelCount;
+            (panelCount)++;
+            int currentCount = panelCount;
 
-            Logger.out.info("CURRENT COUNT : " + currentCount);
             m_vBreadCrumbs.add(currentCount + "#" + hyperlinkText);
-            Logger.out.info("VECT SIZE : " + m_vBreadCrumbs.size());
-            BreadcrumbPanel breadcrumbPanel1 = new BreadcrumbPanel(breadCrumbPanel.getBreadCrumbsAL(),
-                    m_vBreadCrumbs);
+            BreadcrumbPanel breadcrumbPanel1 = new BreadcrumbPanel(getBreadCrumbsAL(), m_vBreadCrumbs);
 
-            //breadcrumbPanel1.setPreferredSize(new Dimension(900,20));           
-            this.breadCrumbPanel.addBreadCrumbPanel(breadcrumbPanel1, "" + currentCount);
-            this.breadCrumbPanel.showBreadcrumbPanel("" + currentCount);
+            ResultObjectDetailsPanel detailsPanel = new ResultObjectDetailsPanel(searchPanel, dataRow, record);
 
-            // ----------- Swing worker thread ------------
-            CustomSwingWorker sw = new CustomSwingWorker(viewPanel) {
+            addBreadCrumbPanel(breadcrumbPanel1, "" + currentCount);
+            showBreadcrumbPanel("" + currentCount);
 
-                // Vector interIntraAcssoClassColl;
-
-                @Override
-                protected void doNonUILogic() throws RuntimeException {
-                    //interIntraAcssoClassColl = getInterIntraAssociatedObjectsCollection(dataRow);
-                }
-
-                @Override
-                protected void doUIUpdateLogic() throws RuntimeException {
-                    // TODO can also pass queryResult object instead of first two parameters.
-                    ResultObjectDetailsPanel detailsPanel = new ResultObjectDetailsPanel(breadCrumbPanel, dataRow,
-                            record);
-                    breadCrumbPanel.addPanel(detailsPanel, "" + currentCount);
-                    breadCrumbPanel.showPanel("" + currentCount);
-                }
-            };
-            sw.start();
-
+            addPanel(detailsPanel, "" + currentCount);
+            showPanel("" + currentCount);
         }
     }
 
@@ -477,8 +448,6 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
             this.breadCrumbPanel = panel;
         }
 
-        // TODO This action listener should take care of Creating QueryObject
-        // and firing the query using QueryExecutor.
         public void actionPerformed(ActionEvent ae) {
             /* Get the source for the event.*/
             Cab2bHyperlink hyperlink = (Cab2bHyperlink) ae.getSource();
@@ -517,8 +486,8 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 
                     JXPanel simpleSearchResultPanelNew = updateGuiIfResultOneOrZero(association, dataRow);
                     if (simpleSearchResultPanelNew == null) {
-                        simpleSearchResultPanelNew = new ViewSearchResultsSimplePanel(breadCrumbPanel,association,
-                                 dataRow, viewPanel, targetEntity);
+                        simpleSearchResultPanelNew = new ViewSearchResultsSimplePanel(breadCrumbPanel,
+                                association, dataRow, viewPanel, targetEntity);
                     }
 
                     addToPanel(simpleSearchResultPanelNew);
