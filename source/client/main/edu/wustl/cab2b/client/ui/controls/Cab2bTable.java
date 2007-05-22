@@ -40,9 +40,9 @@ public class Cab2bTable extends JXTable
         this.getTableHeader().setPreferredSize(new Dimension(0,28)); 
         this.getTableHeader().setFont(new Font("Arial",Font.BOLD,12));
         this.setRowHeight(23);
-       
         
         
+        this.getTableHeader().setReorderingAllowed(false);     
         this.packAll();
 	}
 	
