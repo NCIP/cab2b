@@ -61,7 +61,7 @@ public class TransformCategoryResult {
         for (ICategorialClassRecord iCategorialClassRecord :iCategorialClassRecordList) {
             //Logger.out.info("Set DisplayName :" + edu.wustl.cab2b.common.util.Utility.getDisplayName( iCategorialClassRecord.getCategorialClass().getCategorialClassEntity()));           
                       
-            String  displayName = edu.wustl.cab2b.common.util.Utility.getDisplayName( iCategorialClassRecord.getCategorialClass().getCategorialClassEntity()) + "_"+iCategorialClassRecord.getCategorialClass().getCategorialClassEntity().getId();
+            String  displayName = edu.wustl.cab2b.common.util.Utility.getDisplayName( iCategorialClassRecord.getCategorialClass().getCategorialClassEntity()) + "_"+iCategorialClassRecord.getId();
             Logger.out.debug("Set DisplayName :"+displayName);
             
 
