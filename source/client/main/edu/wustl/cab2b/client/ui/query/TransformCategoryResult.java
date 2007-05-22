@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.treetable.B2BTreeNode;
 import edu.wustl.cab2b.common.queryengine.result.CategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
@@ -20,7 +21,7 @@ public class TransformCategoryResult {
      * Constructor  
      */
     public TransformCategoryResult(CategoryResult categoryResult) {
-        m_categoryResult = categoryResult;
+        m_categoryResult = categoryResult;        
     }
 
     /**
@@ -28,8 +29,9 @@ public class TransformCategoryResult {
      */
     public B2BTreeNode getB2BRootTreeNode() {
         //getting stringURL and corresponding categoryResultRecords 
-        Map<String, List<ICategorialClassRecord>> mapURLToRoot = null;//m_categoryResult.getUrlToRootRecords();
-
+        Map<String, List<ICategorialClassRecord>> mapURLToRoot = m_categoryResult.getRecords();
+        
+        
         B2BTreeNode rootB2BTreeNode = new B2BTreeNode();
         rootB2BTreeNode.setDisplayName("Root");
 
@@ -43,7 +45,6 @@ public class TransformCategoryResult {
                 //getting list of records for url key
                 List<ICategorialClassRecord> iCategorialClassRecordList = mapURLToRoot.get(url);
                 setRecordsToB2BTreeNode(rootB2BTreeNode, iCategorialClassRecordList);
-
             }
         }
         return rootB2BTreeNode;
@@ -56,35 +57,39 @@ public class TransformCategoryResult {
 
     private void setRecordsToB2BTreeNode(B2BTreeNode parentTreeNode,
                                          List<ICategorialClassRecord> iCategorialClassRecordList) {
-        Iterator recordIter = iCategorialClassRecordList.iterator();
 
-        while (recordIter.hasNext()) {
-            ICategorialClassRecord iCategorialClassRecord = (ICategorialClassRecord) recordIter.next();
+        for (ICategorialClassRecord iCategorialClassRecord :iCategorialClassRecordList) {
             //Logger.out.info("Set DisplayName :" + edu.wustl.cab2b.common.util.Utility.getDisplayName( iCategorialClassRecord.getCategorialClass().getCategorialClassEntity()));           
                       
             String  displayName = edu.wustl.cab2b.common.util.Utility.getDisplayName( iCategorialClassRecord.getCategorialClass().getCategorialClassEntity()) + "_"+iCategorialClassRecord.getCategorialClass().getCategorialClassEntity().getId();
+            Logger.out.debug("Set DisplayName :"+displayName);
             
 
             //record node
             B2BTreeNode iCategorialClassRecordNode = new B2BTreeNode();
             iCategorialClassRecordNode.setDisplayName(displayName);
             iCategorialClassRecordNode.setValue(null);
+            
+        
 
             //geting attribute list for the iCategorialClassRecord
-            Map<CategorialAttribute, String> categorialAttributeMap = null;//iCategorialClassRecord.getAttributesValues();
-
-            if (categorialAttributeMap != null) {
-                setAttributeToB2BTreeNode(iCategorialClassRecordNode, categorialAttributeMap);            
+            Set<AttributeInterface> categorialAttributeSet = iCategorialClassRecord.getAttributes();
+            Logger.out.debug("Attribute Size :" + categorialAttributeSet.size());
+            
+            for(AttributeInterface attribute:categorialAttributeSet) {
+                Object value = iCategorialClassRecord.getValueForAttribute(attribute);                
+                B2BTreeNode attributeNode = new B2BTreeNode();
+                attributeNode.setDisplayName(attribute.getName());
+                attributeNode.setValue(value);
+                attributeNode.setChildren(null);
+                iCategorialClassRecordNode.addChild(attributeNode);
             }
 
             //getting categorial class node 
             Map<CategorialClass, List<ICategorialClassRecord>> categorialClassRecordMap = iCategorialClassRecord.getChildrenCategorialClassRecords();
-            Set categorialClassRecordMapKeys = categorialClassRecordMap.keySet();
-            Iterator iter = categorialClassRecordMapKeys.iterator();
           
-            while (iter.hasNext()) {
+            for (List<ICategorialClassRecord> newICategorialClassRecordList :categorialClassRecordMap.values()) {
                 //getting the ICategoryRecordList
-                List<ICategorialClassRecord> newICategorialClassRecordList = categorialClassRecordMap.get((CategorialClass) iter.next());
 
                 //creating subchild
                 B2BTreeNode child = new B2BTreeNode();
@@ -95,7 +100,7 @@ public class TransformCategoryResult {
                 //adding this child to parent 
                 iCategorialClassRecordNode.addChild(child);
 
-                //Logger.out.info("PARENT :" + iCategorialClassRecordNode + "   CHILD :" + child);
+               Logger.out.debug("PARENT :" + iCategorialClassRecordNode + "   CHILD :" + child);
             }
             
             //setting display name for group node by removing _ String   
@@ -110,9 +115,9 @@ public class TransformCategoryResult {
     /**
      * Method to set attributeList for the given treeNode  
      */
-    private B2BTreeNode setAttributeToB2BTreeNode(B2BTreeNode parentTreeNode,
-                                                  Map<CategorialAttribute, String> categorialAttributeMap) {
-        if (!categorialAttributeMap.isEmpty()) {
+   /* private B2BTreeNode setAttributeToB2BTreeNode(B2BTreeNode parentTreeNode,
+                                                  Set<AttributeInterface> categorialAttributeSet) {
+        if (!categorialAttributeSet.isEmpty()) {
             //getting all key set to iterate map 
             Set categorialAttributeMapKeys = categorialAttributeMap.keySet();
             Iterator categorialAttributeMapKeysIter = categorialAttributeMapKeys.iterator();
@@ -121,9 +126,9 @@ public class TransformCategoryResult {
                 CategorialAttribute categorialAttribute = (CategorialAttribute) categorialAttributeMapKeysIter.next();
                 B2BTreeNode attributeNode = new B2BTreeNode();
                 attributeNode.setDisplayName(categorialAttribute.getCategoryAttribute().getName());
-                /*Logger.out.info("Categorial Attribute Name :"
-                        + categorialAttribute.getCategoryAttribute().getName());*/
-/*                Logger.out.info("Categorial Attribute Value :" + categorialAttributeMap.get(categorialAttribute));*/
+                Logger.out.info("Categorial Attribute Name :"
+                        + categorialAttribute.getCategoryAttribute().getName());
+                Logger.out.info("Categorial Attribute Value :" + categorialAttributeMap.get(categorialAttribute));
 
                 attributeNode.setChildren(null);
                 attributeNode.setValue(categorialAttributeMap.get(categorialAttribute));
@@ -131,13 +136,13 @@ public class TransformCategoryResult {
                 //adding attribute as child to the main node
                 parentTreeNode.addChild(attributeNode);
                 
-                /*Logger.out.info(" PARENT :" + parentTreeNode + " Attribute  CHILD Node:" + attributeNode);*/
+                Logger.out.info(" PARENT :" + parentTreeNode + " Attribute  CHILD Node:" + attributeNode);
                 
             }
         }
         return parentTreeNode;
     }
-
+*/
     /**
      * @param args
      */
