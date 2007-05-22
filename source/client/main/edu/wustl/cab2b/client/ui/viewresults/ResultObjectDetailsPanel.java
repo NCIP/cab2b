@@ -24,6 +24,7 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.controls.CustomizableBorder;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
@@ -41,7 +42,7 @@ public class ResultObjectDetailsPanel extends ResultPanel {
 
     List<AttributeInterface> attributes; // List<IAttribute> attributes;
 
-    JXTable objDetailsTable;
+    Cab2bTable objDetailsTable;
 
     Vector<Vector<Object>> tableData;
 
@@ -127,7 +128,7 @@ public class ResultObjectDetailsPanel extends ResultPanel {
 
         final JXPanel detailsTablePanel = new Cab2bPanel(new RiverLayout());
 
-        objDetailsTable = new JXTable(tableData, tableHeader);
+        objDetailsTable = new Cab2bTable(false,tableData, tableHeader);
         objDetailsTable.setEditable(false);
 
         JScrollPane tableSP = new JScrollPane(objDetailsTable);
