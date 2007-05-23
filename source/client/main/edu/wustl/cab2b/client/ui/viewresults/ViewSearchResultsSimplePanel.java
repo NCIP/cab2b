@@ -90,7 +90,7 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
      *
      */
     public void addDataSummaryPanel() {
-        m_addSummaryParentPanel.add(myDataListTitledPanel, BorderLayout.EAST);
+        m_addSummaryParentPanel.add(myDataListParentPanel, BorderLayout.EAST);
     }
 
     /**
@@ -188,7 +188,7 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
         m_addSummaryParentPanel = new Cab2bPanel();
         m_addSummaryParentPanel.setLayout(new BorderLayout());
         m_addSummaryParentPanel.add(searchResultsPanel, BorderLayout.CENTER);
-        m_addSummaryParentPanel.add(myDataListTitledPanel, BorderLayout.EAST);
+        m_addSummaryParentPanel.add(myDataListParentPanel, BorderLayout.EAST);
         titledSearchResultsPanel.setContentContainer(m_addSummaryParentPanel);
         this.add("p vfill hfill", titledSearchResultsPanel);
     }

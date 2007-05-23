@@ -57,10 +57,13 @@ public abstract class ResultPanel extends Cab2bPanel {
     /**
      * myDataListPanel and myDataListTitledPanel  
      * caontains a summary of data items added to the data list
+     * parent panel is used to adjust location of titlied panel  
      */
     protected static JXPanel myDataListPanel;
 
     protected static JXTitledPanel myDataListTitledPanel;
+    
+    protected static Cab2bPanel myDataListParentPanel;
     
     protected SimpleSearchResultBreadCrumbPanel searchPanel;
     
@@ -206,16 +209,19 @@ public abstract class ResultPanel extends Cab2bPanel {
     public void initDataListSummaryPanel() {
         Logger.out.info("In initDataListSummaryPanel method");
         if (myDataListTitledPanel == null) {
+            
             // TODO externalize these titles.
             myDataListTitledPanel = new Cab2bTitledPanel("My Data List Summary");
             GradientPaint gp1 = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
                     new Point2D.Double(.95d, 0), Color.WHITE);
+            myDataListTitledPanel.setBorder(null);
             myDataListTitledPanel.setTitlePainter(new BasicGradientPainter(gp1));
             myDataListTitledPanel.setTitleFont(new Font("SansSerif", Font.BOLD, 11));
             myDataListTitledPanel.setTitleForeground(Color.BLACK);
 
             if (myDataListPanel == null) {
                 myDataListPanel = new Cab2bPanel();
+                myDataListPanel.setBorder(null);
                 myDataListPanel.setBackground(Color.WHITE);
                 myDataListPanel.setLayout(new RiverLayout(5, 10));
             } else {
@@ -227,6 +233,12 @@ public abstract class ResultPanel extends Cab2bPanel {
             JScrollPane myDataListPane = new JScrollPane(myDataListPanel);
             myDataListPane.getViewport().setBackground(Color.WHITE);
             myDataListTitledPanel.add(myDataListPane);
+            
+            // create the parent panel
+            myDataListParentPanel = new Cab2bPanel();
+            myDataListParentPanel.setBorder(null);
+            myDataListParentPanel.add("br vfill hfill", myDataListTitledPanel);
+            
         } else {
             if (myDataListPanel != null) {
                 myDataListPanel.removeAll();
@@ -272,7 +284,7 @@ public abstract class ResultPanel extends Cab2bPanel {
                 GlobalNavigationPanel.mainSearchPanel.getNavigationPanel().gotoDataListPanel(row);
             }
         });
-        ViewSearchResultsSimplePanel.myDataListPanel.add("br ", selectedRootClassName);
+        myDataListPanel.add("br ", selectedRootClassName);
     }
 
     /**
