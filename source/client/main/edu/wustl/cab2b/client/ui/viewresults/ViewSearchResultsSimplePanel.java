@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -17,6 +18,7 @@ import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
+import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.RiverLayout;
@@ -33,6 +35,7 @@ import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
+import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 
 /**
  * A Panel to show the results of the query operation. Provides 
@@ -55,9 +58,8 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
 
     JXPanel breadCrumbsPanel;
 
-    DataRow parentDataRow;
+    IDataRow parentDataRow;
 
-    ViewSearchResultsPanel viewPanel;
 
     EntityInterface presentEntityInterface = null;
 
@@ -68,16 +70,14 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
     private JPagination pagination;
 
     public ViewSearchResultsSimplePanel(SimpleSearchResultBreadCrumbPanel searchPanel,
-            IAssociation association,
-            DataRow parentDataRow,
-            ViewSearchResultsPanel viewPanel,
-            EntityInterface presentEntityInterface) {
+            IQueryResult queryResult, IAssociation association,
+            IDataRow parentDataRow,
+            EntityInterface presentEntityInterface,Collection<AssociationInterface> incomingAssociationCollection, List<IInterModelAssociation> intraModelAssociationCollection) {
         
-        super(searchPanel);
+        super(searchPanel,incomingAssociationCollection,intraModelAssociationCollection);
         
-        this.viewPanel = viewPanel;
         queryAssociation = association;
-
+        this.queryResult = queryResult;
         // Parent data row will be null for the first query's results, but will be non-null for associated class query's results. 
         this.parentDataRow = parentDataRow;
         this.presentEntityInterface = presentEntityInterface;
@@ -98,7 +98,6 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
      */
     private void initData() {
         elements = new Vector<PageElement>();        
-        IQueryResult queryResult = searchPanel.getQueryResult();
 
         String className = edu.wustl.cab2b.common.util.Utility.getDisplayName(queryResult.getOutputEntity());
         List<AttributeInterface> attributes = Utility.getAttributeList(queryResult);

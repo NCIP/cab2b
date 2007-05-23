@@ -19,6 +19,7 @@ import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
+import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.RiverLayout;
@@ -32,6 +33,7 @@ import edu.wustl.cab2b.common.datalist.DataRow;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.IRecordWithAssociatedIds;
+import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 
 /**
  * A Panel to show any entity's details.
@@ -79,9 +81,9 @@ public class ResultObjectDetailsPanel extends ResultPanel {
 
     public ResultObjectDetailsPanel(SimpleSearchResultBreadCrumbPanel searchPanel, DataRow dataRow,
 
-    IRecord record) {
+    IRecord record, Collection<AssociationInterface> incomingAssociationCollection, List<IInterModelAssociation> intraModelAssociationCollection) {
         /* Set the parent entity interface. Note : This can never be null. */
-        super(searchPanel);
+        super(searchPanel,incomingAssociationCollection,intraModelAssociationCollection);
         
         this.dataRow = dataRow;
         this.parentEntityInterface = dataRow.getEntityInterface();
@@ -162,11 +164,10 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         relatedDataPanel = new Cab2bPanel();
         relatedDataPanel.setBackground(Color.WHITE);
         relatedDataPanel.setLayout(new RiverLayout(5, 10));
-        Collection incomingIntraModelAssociationCollection = searchPanel.getIncomingAssociationCollection();
-
-        if (incomingIntraModelAssociationCollection != null && !incomingIntraModelAssociationCollection.isEmpty()) {
+        
+        if (incomingAssociationCollection != null && !incomingAssociationCollection.isEmpty()) {
             AbstractAssociatedDataPanel incomingPanel = new IncomingAssociationDataPanel(
-                    incomingIntraModelAssociationCollection, associatedDataActionListener, id, dataRow, record);
+                    incomingAssociationCollection, associatedDataActionListener, id, dataRow, record);
             relatedDataPanel.add(incomingPanel);
         }
 
@@ -184,10 +185,9 @@ public class ResultObjectDetailsPanel extends ResultPanel {
          * We also must be able to add Intermodel association. Call the Path
          * finder code to add the intermodel association.
          */
-        Collection interModelAssociationCollection = searchPanel.getIntraModelAssociationCollection();
-        if (interModelAssociationCollection != null && !interModelAssociationCollection.isEmpty()) {
+        if (intraModelAssociationCollection != null && !intraModelAssociationCollection.isEmpty()) {
             AbstractAssociatedDataPanel interModelPanel = new InterModelAssociationDataPanel(
-                    interModelAssociationCollection, associatedDataActionListener, id, dataRow, record);
+                    intraModelAssociationCollection, associatedDataActionListener, id, dataRow, record);
             relatedDataPanel.add("br", interModelPanel);
         }
 

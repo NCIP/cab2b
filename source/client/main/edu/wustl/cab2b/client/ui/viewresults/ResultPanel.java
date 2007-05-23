@@ -23,6 +23,7 @@ import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
+import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.wustl.cab2b.client.ui.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.SaveDatalistPanel;
@@ -40,9 +41,14 @@ import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
+import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
+import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.util.logger.Logger;
 
 public abstract class ResultPanel extends Cab2bPanel {
+    
+    
+    protected IQueryResult queryResult;
 
     protected JButton addToDataListButton;
 
@@ -57,7 +63,11 @@ public abstract class ResultPanel extends Cab2bPanel {
     protected static JXTitledPanel myDataListTitledPanel;
     
     protected SimpleSearchResultBreadCrumbPanel searchPanel;
-
+    
+    protected Collection<AssociationInterface> incomingAssociationCollection;
+    
+    protected List<IInterModelAssociation> intraModelAssociationCollection;
+    
     /**
      * @return list of selected objects to be added to the data list
      */
@@ -65,8 +75,10 @@ public abstract class ResultPanel extends Cab2bPanel {
 
     abstract public void addDataSummaryPanel();
     
-    public ResultPanel(SimpleSearchResultBreadCrumbPanel searchPanel) {
+    public ResultPanel(SimpleSearchResultBreadCrumbPanel searchPanel,Collection<AssociationInterface> incomingAssociationCollection, List<IInterModelAssociation> intraModelAssociationCollection) {
         this.searchPanel = searchPanel;
+        this.incomingAssociationCollection = incomingAssociationCollection;
+        this.intraModelAssociationCollection =intraModelAssociationCollection;
     }
 
     protected void initDataListButtons() {
@@ -261,6 +273,34 @@ public abstract class ResultPanel extends Cab2bPanel {
             }
         });
         ViewSearchResultsSimplePanel.myDataListPanel.add("br ", selectedRootClassName);
+    }
+
+    /**
+     * @return Returns the incomingAssociationCollection.
+     */
+    public Collection<AssociationInterface> getIncomingAssociationCollection() {
+        return incomingAssociationCollection;
+    }
+
+    /**
+     * @param incomingAssociationCollection The incomingAssociationCollection to set.
+     */
+    public void setIncomingAssociationCollection(Collection<AssociationInterface> incomingAssociationCollection) {
+        this.incomingAssociationCollection = incomingAssociationCollection;
+    }
+
+    /**
+     * @return Returns the intraModelAssociationCollection.
+     */
+    public List<IInterModelAssociation> getIntraModelAssociationCollection() {
+        return intraModelAssociationCollection;
+    }
+
+    /**
+     * @param intraModelAssociationCollection The intraModelAssociationCollection to set.
+     */
+    public void setIntraModelAssociationCollection(List<IInterModelAssociation> intraModelAssociationCollection) {
+        this.intraModelAssociationCollection = intraModelAssociationCollection;
     }
 
 }
