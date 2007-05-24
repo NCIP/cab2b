@@ -104,7 +104,7 @@ public class ResultObjectDetailsPanel extends ResultPanel {
     }
 
     public void addDataSummaryPanel() {
-        m_sidePanel.add(myDataListTitledPanel, BorderLayout.CENTER);
+        m_sidePanel.add(myDataListParentPanel, BorderLayout.CENTER);
     }
 
     private void initData() {
@@ -150,7 +150,7 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         initDataListSummaryPanel();
 
         m_sidePanel.add(relatedDataTitledPanel);
-        m_sidePanel.add(myDataListTitledPanel);
+        m_sidePanel.add(myDataListParentPanel);
         this.add(m_sidePanel, BorderLayout.EAST);
     }
 

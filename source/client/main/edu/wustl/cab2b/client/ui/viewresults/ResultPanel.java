@@ -46,8 +46,7 @@ import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.util.logger.Logger;
 
 public abstract class ResultPanel extends Cab2bPanel {
-    
-    
+
     protected IQueryResult queryResult;
 
     protected JButton addToDataListButton;
@@ -62,26 +61,29 @@ public abstract class ResultPanel extends Cab2bPanel {
     protected static JXPanel myDataListPanel;
 
     protected static JXTitledPanel myDataListTitledPanel;
-    
+
     protected static Cab2bPanel myDataListParentPanel;
-    
+
     protected SimpleSearchResultBreadCrumbPanel searchPanel;
-    
+
     protected Collection<AssociationInterface> incomingAssociationCollection;
-    
+
     protected List<IInterModelAssociation> intraModelAssociationCollection;
-    
+
     /**
      * @return list of selected objects to be added to the data list
      */
     abstract List<IDataRow> getSelectedDataRows();
 
     abstract public void addDataSummaryPanel();
-    
-    public ResultPanel(SimpleSearchResultBreadCrumbPanel searchPanel,Collection<AssociationInterface> incomingAssociationCollection, List<IInterModelAssociation> intraModelAssociationCollection) {
+
+    public ResultPanel(
+            SimpleSearchResultBreadCrumbPanel searchPanel,
+            Collection<AssociationInterface> incomingAssociationCollection,
+            List<IInterModelAssociation> intraModelAssociationCollection) {
         this.searchPanel = searchPanel;
         this.incomingAssociationCollection = incomingAssociationCollection;
-        this.intraModelAssociationCollection =intraModelAssociationCollection;
+        this.intraModelAssociationCollection = intraModelAssociationCollection;
     }
 
     protected void initDataListButtons() {
@@ -209,7 +211,7 @@ public abstract class ResultPanel extends Cab2bPanel {
     public void initDataListSummaryPanel() {
         Logger.out.info("In initDataListSummaryPanel method");
         if (myDataListTitledPanel == null) {
-            
+
             // TODO externalize these titles.
             myDataListTitledPanel = new Cab2bTitledPanel("My Data List Summary");
             GradientPaint gp1 = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
@@ -233,20 +235,26 @@ public abstract class ResultPanel extends Cab2bPanel {
             JScrollPane myDataListPane = new JScrollPane(myDataListPanel);
             myDataListPane.getViewport().setBackground(Color.WHITE);
             myDataListTitledPanel.add(myDataListPane);
-            
-            // create the parent panel
-            myDataListParentPanel = new Cab2bPanel();
-            myDataListParentPanel.setBorder(null);
-            myDataListParentPanel.add("br vfill hfill", myDataListTitledPanel);
+
             
         } else {
             if (myDataListPanel != null) {
                 myDataListPanel.removeAll();
             }
         }
+        
+        
+        //create the parent panel
+        if(myDataListParentPanel==null){
+            myDataListParentPanel = new Cab2bPanel();
+            myDataListParentPanel.setBorder(null);
+            myDataListParentPanel.add("br vfill hfill", myDataListTitledPanel);
+        }
+               
         updateMyDataListPanel();
     }
 
+    
     /**
      * Updates My DataList Summary panel present on view Search result page 
      *
