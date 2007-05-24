@@ -82,7 +82,7 @@ public class SaveDataCategoryPanel extends Cab2bPanel
 					//TO DO
 					//invalid title
 				}
-								
+                           				
 				gridPanel.saveDataCategory(title);
 				dialog.dispose();
 			}

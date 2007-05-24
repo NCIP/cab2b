@@ -43,7 +43,9 @@ import edu.wustl.cab2b.client.ui.filter.EnumeratedFilterPopUp;
 import edu.wustl.cab2b.client.ui.filter.FilterComponent;
 import edu.wustl.cab2b.client.ui.filter.PatternPopup;
 import edu.wustl.cab2b.client.ui.filter.RangeFilter;
+import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.experiment.ExperimentHome;
@@ -108,7 +110,12 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
 	private static Map<String, CaB2BFilterInterface> filterMap = new HashMap<String, CaB2BFilterInterface>();
 
-	public ExperimentDataCategoryGridPanel(ExperimentOpenPanel parent)
+	//fields used by Save Data Category functionality
+    private EntityInterface dataCategoryEntity;
+    private String dataCategoryTitle;
+    
+    
+    public ExperimentDataCategoryGridPanel(ExperimentOpenPanel parent)
 	{
 
  	   this(new Vector(),new Vector());
@@ -338,6 +345,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	 */
 	public void setVisualizeDataPanel(Cab2bPanel visualizeDataPanel) {
 		this.visualizeDataPanel = visualizeDataPanel;
+        
 	}
 	
 	
@@ -348,49 +356,73 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	 */
 	public void saveDataCategory(String title)
 	{
-		//get the columns, including hidden columns. Not well documented
-		List<TableColumn> columnList = table.getColumns(true);
-		List<AttributeInterface> attributes = new ArrayList<AttributeInterface>();
-		
-		//skip filterd-out rows but include hidden columns 
-		int rows = table.getRowCount();
-		int cols = table.getColumnCount(true);
-		Object[][] data =new Object[rows][cols];
-		
-		//populate attribute list
-		for(TableColumn column : columnList)
-		{
-			String columnName = column.getIdentifier().toString();  
-			attributes.add(table.getColumnAttribute(columnName));
-		}
-		
-		for(int i=0; i<rows; i++)
-		{
-			for(int j=0; j<cols; j++)
-			{
-				//JXTable does not provide API to access hidden data
-				//JXTable.getValueAt() works only on visible columns
-				//using TableModel.getValueAt() requires converting row view index to row model index 
-				data[i][j] = table.getModel().getValueAt(table.convertRowIndexToModel(i), j);
-			}
-			
-			//Logger.out.info(table.getValueAt(i, 4).toString());
-		}
-		
-		//make a call to the server
-		ExperimentBusinessInterface bi = (ExperimentBusinessInterface)CommonUtils.getBusinessInterface(EjbNamesConstants.EXPERIMENT, ExperimentHome.class);
-		EntityInterface newEntity=null;
-		try
-		{
-			newEntity = bi.saveDataCategory(title, attributes, data);
-		}
-		catch(RemoteException e)
-		{
-			CommonUtils.handleException(e, this, true, true, true, false);			
-		}
-		
-		//update the tree in the stack box
-		parent.updateOpenPanel(newEntity);
+        dataCategoryTitle = title;
+        
+        MainFrame.setStatus(MainFrame.Status.BUSY);
+        MainFrame.setStatusMessage("saving data category '"+title+"'");
+                        
+        CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.openExperimentWelcomePanel)
+        {
+            
+            @Override
+            protected void doNonUILogic() throws RuntimeException
+            {
+                //get the columns, including hidden columns. Not well documented
+                List<TableColumn> columnList = table.getColumns(true);
+                List<AttributeInterface> attributes = new ArrayList<AttributeInterface>();
+                
+                //skip filterd-out rows but include hidden columns 
+                int rows = table.getRowCount();
+                int cols = table.getColumnCount(true);
+                Object[][] data =new Object[rows][cols];
+                
+                //populate attribute list
+                for(TableColumn column : columnList)
+                {
+                    String columnName = column.getIdentifier().toString();  
+                    attributes.add(table.getColumnAttribute(columnName));
+                }
+                
+                for(int i=0; i<rows; i++)
+                {
+                    for(int j=0; j<cols; j++)
+                    {
+                        //JXTable does not provide API to access hidden data
+                        //JXTable.getValueAt() works only on visible columns
+                        //using TableModel.getValueAt() requires converting row view index to row model index 
+                        data[i][j] = table.getModel().getValueAt(table.convertRowIndexToModel(i), j);
+                    }
+                    
+                    //Logger.out.info(table.getValueAt(i, 4).toString());
+                }
+                
+                //make a call to the server
+                ExperimentBusinessInterface bi = (ExperimentBusinessInterface)CommonUtils.getBusinessInterface(EjbNamesConstants.EXPERIMENT, ExperimentHome.class);
+                
+                try
+                {
+                    dataCategoryEntity = bi.saveDataCategory(dataCategoryTitle, attributes, data);
+                }
+                catch(RemoteException e)
+                {
+                    CommonUtils.handleException(e, MainFrame.newWelcomePanel, true, true, true, false);          
+                }
+            }
+
+            @Override
+            protected void doUIUpdateLogic() throws RuntimeException 
+            {
+                //update the tree in the stack box
+                parent.updateOpenPanel(dataCategoryEntity);
+                MainFrame.setStatus(MainFrame.Status.READY);
+                MainFrame.setStatusMessage(dataCategoryTitle+" saved");
+                
+                
+                          
+            }
+        };
+        
+		swingWorker.start();
 		
 	}
 	

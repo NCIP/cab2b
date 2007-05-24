@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.rmi.RemoteException;
-import java.util.Iterator;
 import java.util.MissingResourceException;
 import java.util.Vector;
 
@@ -33,7 +32,6 @@ import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.cab2b.common.locator.Locator;
 import edu.wustl.cab2b.common.locator.LocatorException;
-import edu.wustl.common.tree.ExperimentTreeNode;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
@@ -45,7 +43,7 @@ import edu.wustl.common.util.logger.Logger;
 public class MainFrame extends JXFrame {
 
     private static final long serialVersionUID = 1234567890L;
-
+    
     /** Resource bundle name for getting error codes and its description. */
     public static String errorCodesFileName = "errorcodes";
 
@@ -63,12 +61,14 @@ public class MainFrame extends JXFrame {
     public static ExperimentPanel openExperimentWelcomePanel = null;
 
     public static NewWelcomePanel newWelcomePanel = null;
+    
+    //fields used by the status bar
+    public static enum Status{READY,BUSY};
+    private static JXStatusBar statusBar;
+    private static Cab2bLabel status;
+    private static Cab2bLabel statusMessage;
 
-    /**
-     * Status bar for the application.
-     */
-    JXStatusBar statusBar;
-
+   
     /**
      * Global navigation panel which is at the top of the MainFrame.
      */
@@ -131,18 +131,20 @@ public class MainFrame extends JXFrame {
         mainPanel.setBorder(new CustomizableBorder(new Insets(10, 0, 6, 10), true, true));
 
         this.add(mainPanel, BorderLayout.CENTER);
-
+        
+        //initialize the status bar
         statusBar = WindowUtilities.getStatusBar(this);
         JXStatusBar.Constraint c1 = new JXStatusBar.Constraint();
         c1.setFixedWidth(100);
-        JLabel statusLabel = new Cab2bLabel("Ready");
-        statusBar.add(statusLabel, c1); // Fixed width of 100 with no inserts
+        status = new Cab2bLabel("Ready");
+        statusMessage = new Cab2bLabel();
+        statusBar.add(status, c1); // Fixed width of 100 with no inserts
         statusBar.add(new JSeparator(JSeparator.VERTICAL));
-        statusBar.add(new Cab2bLabel("Status bar message"));
-        //WindowUtilities.addMessage(this, "Status bar message");
+        statusBar.add(statusMessage);
         this.add(statusBar, BorderLayout.SOUTH);
 
     }
+    
 
     /** Method to set experiment home panel */
     public void setOpenExperimentWelcomePanel() {
@@ -307,6 +309,35 @@ public class MainFrame extends JXFrame {
 
         return dataVector;
     }
+    
+    
+    /**
+     * set the status bar message
+     * @param message the message
+     */
+    public static void setStatusMessage(String message)
+    {
+        MainFrame.statusMessage.setText(message);
+    }
+    
+    /**
+     * set the status in the status bar
+     * @param status the status
+     */
+    public static void setStatus(Status status)
+    {
+        if(status==Status.BUSY)
+        {
+            MainFrame.status.setText("Busy");
+        }
+        else if(status==Status.READY)
+        {
+            MainFrame.status.setText("Ready");
+        }
+        
+        
+    }
+
 
     /**
      * @param args
@@ -349,4 +380,6 @@ public class MainFrame extends JXFrame {
         mainFrame.setDataForPopularSearchCategoriesPanel(popularSearchCategories);
         mainFrame.setVisible(true);
     }
-}
+
+    
+    }
