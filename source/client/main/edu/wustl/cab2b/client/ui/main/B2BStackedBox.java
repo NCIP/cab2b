@@ -22,28 +22,34 @@ public class B2BStackedBox extends Cab2bPanel {
 
 		//this.setBorder(new LineBorder(Color.BLACK));  
 	  	this.setLayout(new BorderLayout());
+	  	this.setBorder(null);
 	    StackedBox box = new StackedBox();
 	    box.setTitleBackgroundColor(new Color(224,224,224));
+	    box.setBorder(null);
 	    JScrollPane scrollPane = new JScrollPane(box);
-	    scrollPane.setBorder(new CustomizableBorder(new Insets(1,1,1,1), true, true));
+	    //scrollPane.setBorder(new CustomizableBorder(new Insets(1,1,1,1), true, true));
+	    
 	    this.add(scrollPane, BorderLayout.CENTER);
 	        	   
 	    // the status pane
 	    JPanel status = new JPanel();
-	    status.setPreferredSize(new Dimension(263,122));
+	    status.setPreferredSize(new Dimension(265,123));
 	    status.setOpaque(false);
+	    status.setBorder(null);
 	    box.addBox("My Categories", status,"");
 	    
 	    // the profiling results
 	    JPanel profilingResults = new JPanel();
 	    profilingResults.setOpaque(false);
-	    profilingResults.setPreferredSize(new Dimension(263,123));
+	    profilingResults.setPreferredSize(new Dimension(265,123));
+	    profilingResults.setBorder(null);
 	    box.addBox("My Search Queries", profilingResults,"");
 
 	    // the saved snapshots pane
 	    JPanel savedSnapshots = new JPanel();
-	    savedSnapshots.setPreferredSize(new Dimension(263,123));
+	    savedSnapshots.setPreferredSize(new Dimension(265,123));
 	    savedSnapshots.setOpaque(false);
+	    savedSnapshots.setBorder(null);
 	    box.addBox("Popular Categories", savedSnapshots,"");
 	        
 	 }

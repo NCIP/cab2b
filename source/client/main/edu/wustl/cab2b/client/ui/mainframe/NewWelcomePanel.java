@@ -72,7 +72,10 @@ public class NewWelcomePanel extends Cab2bPanel
 				}
 			}
 		});
-		this.add(new JScrollPane(welcomePageEditorPane));
+		
+		JScrollPane scrollPane = new JScrollPane(welcomePageEditorPane);
+		scrollPane.setBorder(null);
+		this.add(scrollPane);
 	}
 	
 	private JEditorPane createEditorPane()

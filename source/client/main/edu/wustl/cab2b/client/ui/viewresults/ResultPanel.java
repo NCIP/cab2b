@@ -248,7 +248,7 @@ public abstract class ResultPanel extends Cab2bPanel {
         if(myDataListParentPanel==null){
             myDataListParentPanel = new Cab2bPanel();
             myDataListParentPanel.setBorder(null);
-            myDataListParentPanel.add("br vfill hfill", myDataListTitledPanel);
+            myDataListParentPanel.add("br br br vfill hfill", myDataListTitledPanel);
         }
                
         updateMyDataListPanel();

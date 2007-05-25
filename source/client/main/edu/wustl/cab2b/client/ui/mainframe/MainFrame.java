@@ -1,13 +1,16 @@
 package edu.wustl.cab2b.client.ui.mainframe;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.rmi.RemoteException;
 import java.util.MissingResourceException;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
@@ -38,348 +41,326 @@ import edu.wustl.common.util.logger.Logger;
 
 /**
  * Main frame of the caB2B application.
+ * 
  * @author chetan_bh
  */
 public class MainFrame extends JXFrame {
 
-    private static final long serialVersionUID = 1234567890L;
-    
-    /** Resource bundle name for getting error codes and its description. */
-    public static String errorCodesFileName = "errorcodes";
+	private static final long serialVersionUID = 1234567890L;
 
-    /** Resource bundle name for getting externalized strings. */
-    public static String applicationResourcesFileName = "Cab2bApplicationResources";
+	/** Resource bundle name for getting error codes and its description. */
+	public static String errorCodesFileName = "errorcodes";
 
-    /** Resource bundle name for getting jndi properties. */
-    public static String jndiResourceFileName = "jndi";
+	/** Resource bundle name for getting externalized strings. */
+	public static String applicationResourcesFileName = "Cab2bApplicationResources";
 
-    /** Everything related GUI's containers and its components size is relative to this size. */
-    public static Dimension mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
+	/** Resource bundle name for getting jndi properties. */
+	public static String jndiResourceFileName = "jndi";
 
-    public static SearchDataWelcomePanel searchDataWelcomePanel = null;
+	/**
+	 * Everything related GUI's containers and its components size is relative
+	 * to this size.
+	 */
+	public static Dimension mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
 
-    public static ExperimentPanel openExperimentWelcomePanel = null;
+	public static SearchDataWelcomePanel searchDataWelcomePanel = null;
 
-    public static NewWelcomePanel newWelcomePanel = null;
-    
-    //fields used by the status bar
-    public static enum Status{READY,BUSY};
-    private static JXStatusBar statusBar;
-    private static Cab2bLabel status;
-    private static Cab2bLabel statusMessage;
+	public static ExperimentPanel openExperimentWelcomePanel = null;
 
-   
-    /**
-     * Global navigation panel which is at the top of the MainFrame.
-     */
-    GlobalNavigationPanel globalNavigationPanel;
+	public static NewWelcomePanel newWelcomePanel = null;
 
-    JXPanel leftHandSidePanel;
+	/**
+	 * Status bar for the application.
+	 */
 
-    JXPanel homePanel;
+	/**
+	 * Global navigation panel which is at the top of the MainFrame.
+	 */
+	GlobalNavigationPanel globalNavigationPanel;
 
-    JXPanel searchPanel;
+	JXPanel leftHandSidePanel;
 
-    JXPanel experimentPanel;
+	JXPanel homePanel;
 
-    MainFrameStackedBoxPanel myStackedBoxPanel;
+	JXPanel searchPanel;
 
-    JSplitPane splitPane;
+	JXPanel experimentPanel;
 
-    public static JXPanel mainPanel;
+	MainFrameStackedBoxPanel myStackedBoxPanel;
 
-    public MainFrame() {
-        this("");
-    }
+	JSplitPane splitPane;
 
-    public MainFrame(String title) {
-        this(title, true);
-    }
+	// fields used by the status bar
+	public static enum Status {
+		READY, BUSY
+	};
 
-    public MainFrame(String title, boolean exitOnClose) {
-        super(title, exitOnClose);
-        statusBar = WindowUtilities.getStatusBar(this);
-        initGUI();
-    }
+	private static Cab2bLabel status;
 
-    /**
-     * Initialize GUI for main frame.
-     */
-    private void initGUI() {
-        setExtendedState(JXFrame.MAXIMIZED_BOTH);
+	private static Cab2bLabel statusMessage;
 
-        this.setLayout(new BorderLayout());
+	JXStatusBar statusBar;
 
-        globalNavigationPanel = new GlobalNavigationPanel(this, this);
-        this.add(globalNavigationPanel, BorderLayout.NORTH);
+	public static JXPanel mainPanel;
 
-        //set new welcome panel 
-        newWelcomePanel = new NewWelcomePanel(this);
-        homePanel = newWelcomePanel;
-        homePanel.setBorder(new CustomizableBorder(new Insets(1, 1, 1, 1), true, true));
+	public MainFrame() {
+		this("");
+	}
 
-        myStackedBoxPanel = new MainFrameStackedBoxPanel(this);
-        myStackedBoxPanel.setBorder(new CustomizableBorder(new Insets(1, 1, 1, 1), true, true));
+	public MainFrame(String title) {
+		this(title, true);
+	}
 
-        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myStackedBoxPanel, homePanel);
-        splitPane.setOneTouchExpandable(true);
-        Dimension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
-        splitPane.setDividerLocation(dim.width);
+	public MainFrame(String title, boolean exitOnClose) {
+		super(title, exitOnClose);
+		statusBar = WindowUtilities.getStatusBar(this);
+		initGUI();
+	}
 
-        mainPanel = new Cab2bPanel(new RiverLayout());
-        mainPanel.add("hfill vfill", splitPane);
-        mainPanel.setBorder(new CustomizableBorder(new Insets(10, 0, 6, 10), true, true));
+	/**
+	 * Initialize GUI for main frame.
+	 */
+	private void initGUI() {
+		setExtendedState(JXFrame.MAXIMIZED_BOTH);
+		Image im = Toolkit.getDefaultToolkit().getImage("resources/images/b2b_logo_image.gif");
+		this.setIconImage(im);
+		this.setLayout(new BorderLayout());
 
-        this.add(mainPanel, BorderLayout.CENTER);
-        
-        //initialize the status bar
-        statusBar = WindowUtilities.getStatusBar(this);
-        JXStatusBar.Constraint c1 = new JXStatusBar.Constraint();
-        c1.setFixedWidth(100);
-        status = new Cab2bLabel("Ready");
-        statusMessage = new Cab2bLabel();
-        statusBar.add(status, c1); // Fixed width of 100 with no inserts
-        statusBar.add(new JSeparator(JSeparator.VERTICAL));
-        statusBar.add(statusMessage);
-        this.add(statusBar, BorderLayout.SOUTH);
+		globalNavigationPanel = new GlobalNavigationPanel(this, this);
+		this.add(globalNavigationPanel, BorderLayout.NORTH);
 
-    }
-    
+		// set new welcome panel
+		newWelcomePanel = new NewWelcomePanel(this);
+		homePanel = newWelcomePanel;
+		homePanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 
-    /** Method to set experiment home panel */
-    public void setOpenExperimentWelcomePanel() {
-        CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.mainPanel) {
-            @Override
-            protected void doNonUILogic() throws RuntimeException {
-                if(openExperimentWelcomePanel != null)
-                {
-                    openExperimentWelcomePanel.removeAll();
-                }
-                openExperimentWelcomePanel = new ExperimentPanel("My Experiments");
-            }
+		myStackedBoxPanel = new MainFrameStackedBoxPanel(this);
+		myStackedBoxPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 
-            @Override
-            protected void doUIUpdateLogic() throws RuntimeException {
-                if(mainPanel.isVisible())                 
-                {
-                    mainPanel.removeAll();
-                    MainFrame.this.remove(mainPanel);
-                }
-                
-                if(openExperimentWelcomePanel.isVisible())
-                {
-                    MainFrame.this.remove(openExperimentWelcomePanel);
-                }              
-                MainFrame.this.add(openExperimentWelcomePanel);
-            }
-        };
-        swingWorker.start();
-    }
+		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myStackedBoxPanel, homePanel);
+		splitPane.setBorder(null);
+		splitPane.setDividerSize(4);
+		Dimension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
+		splitPane.setDividerLocation(dim.width);
 
-    /** Method to set data search home panel */
-    public void setSearchDataWelcomePanel() {
+		mainPanel = new Cab2bPanel(new RiverLayout());
+		mainPanel.add("hfill vfill", splitPane);
+		mainPanel.setBorder(new CustomizableBorder(new Insets(10, 0, 6, 10), true, true));
+		mainPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 
-        CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
-            @Override
-            protected void doNonUILogic() throws RuntimeException {
-                if (searchDataWelcomePanel == null) {
-                    searchDataWelcomePanel = new SearchDataWelcomePanel(MainFrame.this);
-                }                
-            }
+		this.add(mainPanel, BorderLayout.CENTER);
 
-            @Override
-            protected void doUIUpdateLogic() throws RuntimeException {
-                mainPanel.removeAll(); 
-                MainFrame.this.remove(mainPanel);
-                homePanel = searchDataWelcomePanel;
-                
-                setWelcomePanel();
-            }
-        };
-        swingWorker.start();
-    }
+		statusBar = WindowUtilities.getStatusBar(this);
+		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint();
+		c1.setFixedWidth(100);
+		JLabel statusLabel = new Cab2bLabel("Ready");
+		statusBar.add(statusLabel, c1); // Fixed width of 100 with no inserts
+		statusBar.add(new JSeparator(JSeparator.VERTICAL));
+		statusBar.add(new Cab2bLabel("Status bar message"));
+		// WindowUtilities.addMessage(this, "Status bar message");
+		this.add(statusBar, BorderLayout.SOUTH);
 
-    /** Method to set home panel */
-    public void setHomeWelcomePanel() {
+	}
 
-        CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
-            @Override
-            protected void doNonUILogic() throws RuntimeException {
-                if (newWelcomePanel == null) {
-                    newWelcomePanel = new NewWelcomePanel(MainFrame.this);
-                }               
-                
-            }
+	/** Method to set experiment home panel */
+	public void setOpenExperimentWelcomePanel() {
+		CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.mainPanel) {
+			@Override
+			protected void doNonUILogic() throws RuntimeException {
+				openExperimentWelcomePanel = new ExperimentPanel("My Experiments");
+			}
 
-            @Override
-            protected void doUIUpdateLogic() throws RuntimeException {
-                
-                mainPanel.removeAll(); 
-                MainFrame.this.remove(mainPanel);
-                homePanel = newWelcomePanel;                             
-                setWelcomePanel();
-            }
-        };
-        swingWorker.start();
+			@Override
+			protected void doUIUpdateLogic() throws RuntimeException {
+				mainPanel.removeAll();
+				MainFrame.this.remove(mainPanel);
+				MainFrame.this.add(openExperimentWelcomePanel);
+			}
+		};
+		swingWorker.start();
+	}
 
-    }
+	/** Method to set data search home panel */
+	public void setSearchDataWelcomePanel() {
 
-    /** Method to set Welcome panel */
-    public void setWelcomePanel() {
-        
-     /*   mainPanel.removeAll(); 
-        this.remove(mainPanel);    
-        this.validate();*/       
-        
-        homePanel.setBorder(new CustomizableBorder(new Insets(1, 1, 1, 1), true, true));
-        splitPane.setRightComponent(homePanel);
-        splitPane.setOneTouchExpandable(true);
+		CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
+			@Override
+			protected void doNonUILogic() throws RuntimeException {
+				if (searchDataWelcomePanel == null) {
+					searchDataWelcomePanel = new SearchDataWelcomePanel(MainFrame.this);
+				}
+				homePanel = searchDataWelcomePanel;
+			}
 
-        Dimension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
-        splitPane.setDividerLocation(dim.width);
+			@Override
+			protected void doUIUpdateLogic() throws RuntimeException {
+				setWelcomePanel();
+			}
+		};
+		swingWorker.start();
+	}
 
-        mainPanel.add("hfill vfill", splitPane);
-        mainPanel.setBorder(new CustomizableBorder(new Insets(10, 0, 6, 10), true, true));
+	/** Method to set home panel */
+	public void setHomeWelcomePanel() {
 
-        if (openExperimentWelcomePanel != null && openExperimentWelcomePanel.isVisible() == true) {
-            Logger.out.info("Removing openExperimentWelcomePanel");
-            openExperimentWelcomePanel.removeAll();
-            this.remove(openExperimentWelcomePanel);
-            this.validate();            
-        }
-        this.add(mainPanel);
-    }
+		CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
+			@Override
+			protected void doNonUILogic() throws RuntimeException {
+				if (newWelcomePanel == null) {
+					newWelcomePanel = new NewWelcomePanel(MainFrame.this);
+				}
+				homePanel = newWelcomePanel;
+			}
 
-    public void setDataForMySearchQueriesPanel(Vector data) {
-        myStackedBoxPanel.setDataForMySearchQueriesPanel(data);
-    }
+			@Override
+			protected void doUIUpdateLogic() throws RuntimeException {
+				setWelcomePanel();
+			}
+		};
+		swingWorker.start();
 
-    public void setDataForPopularSearchCategoriesPanel(Vector data) {
-        myStackedBoxPanel.setDataForPopularSearchCategoriesPanel(data);
-    }
+	}
 
-    public void setDataForMyExperimentsPanel(Vector data) {
-        myStackedBoxPanel.setDataForMyExperimentsPanel(data);
-    }
+	/** Method to set Welcome panel */
+	public void setWelcomePanel() {
+		// homePanel.setBorder(new CustomizableBorder(new Insets(1, 1, 1, 1),
+		// true, true));
+		splitPane.setRightComponent(homePanel);
+		splitPane.setOneTouchExpandable(true);
+		Dimension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
+		splitPane.setDividerLocation(dim.width);
+		mainPanel.removeAll();
+		mainPanel.add("hfill vfill", splitPane);
+		// mainPanel.setBorder(new CustomizableBorder(new Insets(10, 0, 6, 10),
+		// true, true));
 
-    protected static void initializeResources() {
-        /* Initialze logger. */
-        Logger.configure("log4j.properties");
+		if (openExperimentWelcomePanel != null && openExperimentWelcomePanel.isVisible() == true) {
+			Logger.out.info("Removing openExperimentWelcomePanel");
+			openExperimentWelcomePanel.removeAll();
+			this.remove(openExperimentWelcomePanel);
+			this.validate();
+		}
 
-        /* Initialize error codes resource bundhe. */
-        try {
-            ErrorCodeHandler.initBundle(errorCodesFileName);
-        } catch (MissingResourceException mre) {
-            CheckedException checkedException = new CheckedException(mre.getMessage(), mre,
-                    ErrorCodeConstants.IO_0002);
-            CommonUtils.handleException(checkedException, null, true, true, false, true);
-        }
-        /* Initialize application resources bundle. */
-        try {
-            ApplicationProperties.initBundle(applicationResourcesFileName);
-        } catch (MissingResourceException mre) {
-            CheckedException checkedException = new CheckedException(mre.getMessage(), mre,
-                    ErrorCodeConstants.IO_0002);
-            CommonUtils.handleException(checkedException, null, true, true, false, true);
-        }
-    }
+		this.add(mainPanel);
+	}
 
-    public Vector getExperiments() {
-        Vector dataVector = new Vector();
+	public void setDataForMySearchQueriesPanel(Vector data) {
+		myStackedBoxPanel.setDataForMySearchQueriesPanel(data);
+	}
 
-        // EJB code start
-        BusinessInterface bus = null;
-        try {
-            bus = Locator.getInstance().locate(edu.wustl.cab2b.common.ejb.EjbNamesConstants.EXPERIMENT,
-                                               ExperimentHome.class);
-        } catch (LocatorException e1) {
-            CommonUtils.handleException(e1, this, true, true, false, false);
-        }
+	public void setDataForPopularSearchCategoriesPanel(Vector data) {
+		myStackedBoxPanel.setDataForPopularSearchCategoriesPanel(data);
+	}
 
-        ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) bus;
-        try {
-            dataVector = expBus.getExperimentHierarchy();
-        } catch (RemoteException e1) {
-            CommonUtils.handleException(e1, this, true, true, false, false);
-        } catch (ClassNotFoundException e1) {
-            CommonUtils.handleException(e1, this, true, true, false, false);
-        } catch (DAOException e1) {
-            CommonUtils.handleException(e1, this, true, true, false, false);
-        }
+	public void setDataForMyExperimentsPanel(Vector data) {
+		myStackedBoxPanel.setDataForMyExperimentsPanel(data);
+	}
 
-        return dataVector;
-    }
-    
-    
-    /**
-     * set the status bar message
-     * @param message the message
-     */
-    public static void setStatusMessage(String message)
-    {
-        MainFrame.statusMessage.setText(message);
-    }
-    
-    /**
-     * set the status in the status bar
-     * @param status the status
-     */
-    public static void setStatus(Status status)
-    {
-        if(status==Status.BUSY)
-        {
-            MainFrame.status.setText("Busy");
-        }
-        else if(status==Status.READY)
-        {
-            MainFrame.status.setText("Ready");
-        }
-        
-        
-    }
+	protected static void initializeResources() {
+		/* Initialze logger. */
+		Logger.configure("log4j.properties");
 
+		/* Initialize error codes resource bundhe. */
+		try {
+			ErrorCodeHandler.initBundle(errorCodesFileName);
+		} catch (MissingResourceException mre) {
+			CheckedException checkedException = new CheckedException(mre.getMessage(), mre,
+					ErrorCodeConstants.IO_0002);
+			CommonUtils.handleException(checkedException, null, true, true, false, true);
+		}
+		/* Initialize application resources bundle. */
+		try {
+			ApplicationProperties.initBundle(applicationResourcesFileName);
+		} catch (MissingResourceException mre) {
+			CheckedException checkedException = new CheckedException(mre.getMessage(), mre,
+					ErrorCodeConstants.IO_0002);
+			CommonUtils.handleException(checkedException, null, true, true, false, true);
+		}
+	}
 
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
+	public Vector getExperiments() {
+		Vector dataVector = new Vector();
 
-        /* Initialize all Resources. */
-        initializeResources();
+		// EJB code start
+		BusinessInterface bus = null;
+		try {
+			bus = Locator.getInstance().locate(
+					edu.wustl.cab2b.common.ejb.EjbNamesConstants.EXPERIMENT, ExperimentHome.class);
+		} catch (LocatorException e1) {
+			CommonUtils.handleException(e1, this, true, true, false, false);
+		}
 
-        String mainFrameTitle = ApplicationProperties.getValue("cab2b.main.frame.title");
+		ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) bus;
+		try {
+			dataVector = expBus.getExperimentHierarchy();
+		} catch (RemoteException e1) {
+			CommonUtils.handleException(e1, this, true, true, false, false);
+		} catch (ClassNotFoundException e1) {
+			CommonUtils.handleException(e1, this, true, true, false, false);
+		} catch (DAOException e1) {
+			CommonUtils.handleException(e1, this, true, true, false, false);
+		}
 
-        MainFrame mainFrame = new MainFrame(mainFrameTitle); // "ca Bench to Bedside (B2B)"
-        Toolkit.getDefaultToolkit().setDynamicLayout(true);
+		return dataVector;
+	}
 
-        /*   Vector<String> myRecentExperiments = new Vector<String>();
-         Vector exptVector = mainFrame.getExperiments();
-         Iterator iter = exptVector.iterator();
-         Logger.out.info("Vect Size :" + exptVector.size());
-         while (iter.hasNext()) {
-         ExperimentTreeNode exp = (ExperimentTreeNode) iter.next();
-         myRecentExperiments.add(exp.getName());
-         }*/
+	/**
+	 * set the status bar message
+	 * 
+	 * @param message
+	 *            the message
+	 */
+	public static void setStatusMessage(String message) {
+		MainFrame.statusMessage.setText(message);
+	}
 
-        Vector<String> myRecentExperiments = new Vector<String>();
-        myRecentExperiments.add("Breast Cancer Microarrays (Hu133 Plus 2.0)");
-        myRecentExperiments.add("Breast Cancer Microarrays (MOE430 Plus 2.0)");
-        myRecentExperiments.add("Acute Myelogenous Leukemia Microarrays");
-        mainFrame.setDataForMyExperimentsPanel(myRecentExperiments);
+	/**
+	 * set the status in the status bar
+	 * 
+	 * @param status
+	 *            the status
+	 */
+	public static void setStatus(Status status) {
+		if (status == Status.BUSY) {
+			MainFrame.status.setText("Busy");
+		} else if (status == Status.READY) {
+			MainFrame.status.setText("Ready");
+		}
 
-        Vector<String> mySearchQueries = new Vector<String>();
-        mySearchQueries.add("Prostate Cancer Microarray Data");
-        mySearchQueries.add("Glioblastoma Microarray Data");
-        mainFrame.setDataForMySearchQueriesPanel(mySearchQueries);
+	}
 
-        Vector<String> popularSearchCategories = new Vector<String>();
-        popularSearchCategories.add("Gene Annotation");
-        popularSearchCategories.add("Microarray Annotation");
-        popularSearchCategories.add("Tissue Biospecimens");
-        popularSearchCategories.add("Molecular Biospecimens");
-        mainFrame.setDataForPopularSearchCategoriesPanel(popularSearchCategories);
-        mainFrame.setVisible(true);
-    }
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
 
-    
-    }
+		/* Initialize all Resources. */
+		initializeResources();
+
+		String mainFrameTitle = ApplicationProperties.getValue("cab2b.main.frame.title");
+
+		MainFrame mainFrame = new MainFrame(mainFrameTitle); // "ca Bench to
+		// Bedside
+		// (B2B)"
+		Toolkit.getDefaultToolkit().setDynamicLayout(true);
+
+		Vector<String> myRecentExperiments = new Vector<String>();
+		myRecentExperiments.add("Breast Cancer Microarrays (Hu133 Plus 2.0)");
+		myRecentExperiments.add("Breast Cancer Microarrays (MOE430 Plus 2.0)");
+		myRecentExperiments.add("Acute Myelogenous Leukemia Microarrays");
+		mainFrame.setDataForMyExperimentsPanel(myRecentExperiments);
+
+		Vector<String> mySearchQueries = new Vector<String>();
+		mySearchQueries.add("Prostate Cancer Microarray Data");
+		mySearchQueries.add("Glioblastoma Microarray Data");
+		mainFrame.setDataForMySearchQueriesPanel(mySearchQueries);
+
+		Vector<String> popularSearchCategories = new Vector<String>();
+		popularSearchCategories.add("Gene Annotation");
+		popularSearchCategories.add("Microarray Annotation");
+		popularSearchCategories.add("Tissue Biospecimens");
+		popularSearchCategories.add("Molecular Biospecimens");
+		mainFrame.setDataForPopularSearchCategoriesPanel(popularSearchCategories);
+		mainFrame.setVisible(true);
+	}
+}

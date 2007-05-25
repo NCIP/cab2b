@@ -125,7 +125,7 @@ public class DataListPanel extends Cab2bPanel
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         //splitPane.setBorder(new CustomizableBorder(new Insets(1,1,1,1), true, true));
         splitPane.setDividerLocation(350);
-        
+        splitPane.setDividerSize(4);
         
         detailsPanel = new DataListDetailsPanel();
         splitPane.setRightComponent(detailsPanel);

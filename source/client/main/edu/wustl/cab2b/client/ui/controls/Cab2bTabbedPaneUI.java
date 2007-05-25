@@ -53,8 +53,8 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI
 		tabAreaInsets.left = (calculateTabHeight(0, 0, tabPane.getFont().getSize()) / 4) + 1;
 		selectedTabPadInsets = new Insets(0, 0, 0, 0);
 
-		selectedColor = Color.WHITE;
-		unselectedColor = tabPane.getBackground().darker();
+		selectedColor = Color.WHITE;       
+		unselectedColor = tabPane.getBackground();
 
 		boldFont = tabPane.getFont().deriveFont(Font.BOLD);
 		boldFontMetrics = tabPane.getFontMetrics(boldFont);

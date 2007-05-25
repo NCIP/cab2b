@@ -78,6 +78,7 @@ public class AmbiguityPathResolverPanel extends Cab2bPanel
 		splitPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		splitPanel.setOneTouchExpandable(true);
 		splitPanel.setDividerLocation(400);
+		splitPanel.setDividerSize(4);
 		availablePathsPanel = new AvailablePathsPanel(null, null);
 		diagrammaticPreviewPanel = new DiagrammaticPreviewPanel();
 		splitPanel.add(availablePathsPanel);

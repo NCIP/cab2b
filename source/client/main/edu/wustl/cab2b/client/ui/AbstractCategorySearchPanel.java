@@ -1,6 +1,9 @@
 package edu.wustl.cab2b.client.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+
+import javax.swing.BorderFactory;
 
 import org.jdesktop.swingx.JXPanel;
 
@@ -53,6 +56,7 @@ public abstract class AbstractCategorySearchPanel extends Cab2bPanel
 		 * space available
 		 */
 		this.m_searchPanel = getSearchPanel(addLimitPanel); 
+		this.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 		this.add((JXPanel)this.m_searchPanel, BorderLayout.CENTER);
 	}
 	

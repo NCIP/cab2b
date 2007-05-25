@@ -1,8 +1,11 @@
 package edu.wustl.cab2b.client.ui;
 
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Insets;
 import java.util.Vector;
+
+import javax.swing.BorderFactory;
 
 import org.jdesktop.swingx.JXPanel;
 
@@ -121,7 +124,7 @@ public class SearchCenterPanel extends Cab2bPanel
 		/* First card initialization.*/
 		ChooseCategoryPanel chooseCategPanel = new ChooseCategoryPanel();
 		this.add(chooseCategPanel,this.m_strIdentifierChooseCateglbl);
-		chooseCategPanel.setBorder(new CustomizableBorder(new Insets(1,1,1,1), true, true));
+		chooseCategPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 		
 		/*
 		 * Add the identifier to the vector, where from it would be refrenced by

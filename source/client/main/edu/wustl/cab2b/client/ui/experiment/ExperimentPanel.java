@@ -48,7 +48,7 @@ public class ExperimentPanel extends Cab2bTitledPanel
 		newExperiment.setEnabled(false);
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		splitPane.setDividerLocation(200);
-		
+		splitPane.setDividerSize(4);
 		expDetailsPanel = new ExperimentDetailsPanel();
 		splitPane.setRightComponent(expDetailsPanel);
 		

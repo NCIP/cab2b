@@ -182,17 +182,17 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
         gbc.insets = new Insets(5, 5, 5, 5);
 
-        gbc.weighty = 0.0;
-        gbc.weightx = 1.0;
+        gbc.weighty = 0;
+        gbc.weightx = 0;
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 4;
+        gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         centerPanel.add(mandatoryNodeLabel, gbc);
 
-        gbc.weighty = 0.0;
-        gbc.weightx = 0.0;
+        gbc.weighty = 0;
+        gbc.weightx = 0;
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
@@ -266,8 +266,8 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         gbc.gridy = 3;
         gbc.gridwidth = 3;
         gbc.gridheight = 4;
-        gbc.weightx = 1.0;
-        gbc.weighty = 0.6;
+        gbc.weightx = 0.0;
+        gbc.weighty = 0.3;
         gbc.fill = GridBagConstraints.BOTH;
         centerPanel.add(treeScrollPane, gbc);
 
@@ -282,7 +282,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         gbc.gridy = 7;
         gbc.gridwidth = 3;
         gbc.gridheight = 2;
-        gbc.weightx = 1.0;
+        gbc.weightx = 0.2;
         gbc.weighty = 0.4;
         gbc.fill = GridBagConstraints.BOTH;
         centerPanel.add(new JScrollPane(expDescTextArea), gbc);

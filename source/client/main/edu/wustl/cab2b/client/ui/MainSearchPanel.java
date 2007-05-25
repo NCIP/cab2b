@@ -2,7 +2,9 @@
 package edu.wustl.cab2b.client.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;

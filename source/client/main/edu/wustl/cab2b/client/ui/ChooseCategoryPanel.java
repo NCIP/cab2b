@@ -58,11 +58,10 @@ public class ChooseCategoryPanel extends ContentPanel
 		 */		
 		box.setMinimumSize(new Dimension(263,122));
 		ChooseCategoryCategorySearchPanel panel = new ChooseCategoryCategorySearchPanel(this);
-
 		JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,box,panel);
+		pane.setDividerSize(4);
 		pane.setOneTouchExpandable(true);
-		box.setBorder(new EmptyBorder(1,1,1,1));
-		panel.setBorder(new EmptyBorder(1,1,1,1));		
+		pane.setBorder(null);
 		this.add(BorderLayout.CENTER,pane);
 	}
 

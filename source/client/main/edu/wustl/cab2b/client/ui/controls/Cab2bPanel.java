@@ -58,7 +58,7 @@ public class Cab2bPanel extends JXPanel
 		bottomPanel.setBorder(new CustomizableBorder(new Insets(1,1,1,1), true, true));
 		
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, rightPanel);
-		
+		splitPane.setDividerSize(4);
 		
 		mainpanel.add(splitPane,BorderLayout.CENTER);
 		mainpanel.add(bottomPanel, BorderLayout.SOUTH);

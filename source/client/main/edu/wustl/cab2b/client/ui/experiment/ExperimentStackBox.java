@@ -184,11 +184,12 @@ public class ExperimentStackBox extends Cab2bPanel
 
         //Adding Select data category pane		
         treeViewScrollPane = new JScrollPane(datalistTree);
+        treeViewScrollPane.setPreferredSize(new Dimension(250, 200));
         stackedBox.addBox("Select Data Category", treeViewScrollPane, "resources/images/mysearchqueries_icon.gif");
 
         //Adding Filter data category panel
         dataFilterPanel = new Cab2bPanel();
-        dataFilterPanel.setPreferredSize(new Dimension(250, 150));
+        dataFilterPanel.setPreferredSize(new Dimension(250, 200));
         dataFilterPanel.setOpaque(false);
         stackedBox.addBox("Filter Data ", dataFilterPanel, "resources/images/mysearchqueries_icon.gif");
 
@@ -203,7 +204,7 @@ public class ExperimentStackBox extends Cab2bPanel
         
         //Adding Visualize data panel
         visualiseDataPanel = new Cab2bPanel();
-        visualiseDataPanel.setPreferredSize(new Dimension(250, 150));
+        visualiseDataPanel.setPreferredSize(new Dimension(250, 200));
         visualiseDataPanel.setOpaque(false);
         stackedBox.addBox("Visualize Data ", visualiseDataPanel, "resources/images/mysearchqueries_icon.gif");
         
