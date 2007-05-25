@@ -19,30 +19,24 @@ import edu.wustl.common.util.logger.Logger;
  * 
  * @author chetan_bh
  */
-public class DateTypePanel extends AbstractTypePanel
-{
-	
+public class DateTypePanel extends AbstractTypePanel {
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	static DateFormat[] dateFormats = new DateFormat[1];
 	static String[] strDateFormats = new String[] {"yyyy-MM-dd"};
 	
-	public DateTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity)
-	{
-		super(conditionList, attributeEntity);
+	public DateTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, Boolean showCondition) {
+		super(conditionList, attributeEntity, showCondition);
 		dateFormats[0] = sdf;
 	}
 
 	@Override
-	public JComponent getFirstComponent()
-	{
+	public JComponent getFirstComponent() {
 		DatePanel datePanel = new DatePanel();
-		
 		return datePanel;
 	}
 	
 	@Override
-	public JComponent getSecondComponent()
-	{
+	public JComponent getSecondComponent() {
 		DatePanel datePanel = new DatePanel();
 		Cab2bDatePicker secondDatePicker = datePanel.getDatePicker();
 		
@@ -57,181 +51,162 @@ public class DateTypePanel extends AbstractTypePanel
 		return datePanel;
 	}
 	
-	public ArrayList<String> getValues()
-	{
+	public ArrayList<String> getValues() {
 		ArrayList<String> values = new ArrayList<String>();
 		Date date = ((DatePanel)m_NameEdit).getDatePicker().getDate();
-		if(date != null)
-		{
+		if(date != null) {
 			values.add(sdf.format(date));
 			date = ((DatePanel)m_OtherEdit).getDatePicker().getDate();
-			if(date != null)
-			{
+			if(date != null) {
 				values.add(sdf.format(date));
 			}
 		}
 		return values;
 	}
 
-	public void setValues(ArrayList<String> values)
-	{
-		if(values.size()== 1)
-		{
+	public void setValues(ArrayList<String> values) {
+		if(values.size()== 1) {
 			Date date = null;
-			try
-			{
+			try {
 				date = sdf.parse(values.get(0));
-			}
-			catch (java.text.ParseException e)
-			{
+			} catch (java.text.ParseException e) {
 				Logger.out.warn("Problem while setting date : " + e.getMessage());
 			}
 			((DatePanel)m_NameEdit).getDatePicker().setDate(date);
-		}
-		else if (values.size() == 2)
-		{
+		} else if (values.size() == 2) {
 			Date date = null;
-			try
-			{
+			
+			try {
 				date = sdf.parse(values.get(0));
-			}
-			catch (java.text.ParseException e)
-			{
+			} catch (java.text.ParseException e) {
 				Logger.out.warn("Problem while setting date : " + e.getMessage());
 			}
 			((DatePanel)m_NameEdit).getDatePicker().setDate(date);
 			
-			try
-			{
+			try {
 				date = sdf.parse(values.get(1));
-			}
-			catch (java.text.ParseException e)
-			{
+			} catch (java.text.ParseException e) {
 				Logger.out.warn("Problem while setting date : " + e.getMessage());
 			}
 			((DatePanel)m_OtherEdit).getDatePicker().setDate(date);
-		}
-		else // This for In condition
-		{
-			
+		} else { 
+			// This for In condition
 		}
 	}
-	/**
-	 * A panel containing date picker component and a label component.
-	 * 
-	 * @author chetan_bh
-	 */
-	class DatePanel extends Cab2bPanel
-	{
-		/**
-		 * Date picker component.
-		 */
-		private Cab2bDatePicker datePicker;
-		
-		/**
-		 * Date format label component.
-		 */
-		private JLabel dateFormatLabel;
-		
-		public DatePanel()
-		{
-			initGUI();
-		}
-		
-		/**
-		 * Initialize GUI.
-		 */
-		private void initGUI()
-		{
-			datePicker = new Cab2bDatePicker();
-			/*datePicker.setFormats(strDateFormats);
-			datePicker.setDate(null);*/
-			
-			dateFormatLabel = new Cab2bLabel(" yyyy-mm-dd");
-			dateFormatLabel.setOpaque(false);
-			FlowLayout layout = new FlowLayout();
-			layout.setAlignment(FlowLayout.LEFT);
-			layout.setHgap(0);
-			this.setLayout(layout);
-			this.add(datePicker);
-			this.add(dateFormatLabel);
-		}
-		
-		/**
-		 * Returns date format label component.
-		 * @return label component.
-		 */
-		public JLabel getDateFormatLabel()
-		{
-			return dateFormatLabel;
-		}
-		
-		/**
-		 * Sets date format label.
-		 * @param dateFormatLabel
-		 */
-		public void setDateFormatLabel(JLabel dateFormatLabel)
-		{
-			this.dateFormatLabel = dateFormatLabel;
-		}
-		
-		/**
-		 * GReturns date picker component.
-		 * @return date picker component.
-		 */
-		public Cab2bDatePicker getDatePicker()
-		{
-			return datePicker;
-		}
-		
-		/**
-		 * Sets date picker component.
-		 * @param datePicker
-		 */
-		public void setDatePicker(Cab2bDatePicker datePicker)
-		{
-			this.datePicker = datePicker;
-		}
-		
-		/**
-		 * Sets visible all the components inside the DatePanel.
-		 */
-		@Override
-		public void setVisible(boolean aFlag)
-		{
-			if(datePicker != null)
-				datePicker.setVisible(aFlag);
-			if(dateFormatLabel != null)
-				dateFormatLabel.setVisible(aFlag);
-		}
-		
-		/**
-		 * Sets opaque all the components inside the DatePanel.
-		 */
-		@Override
-		public void setOpaque(boolean isOpaque)
-		{
-			if(datePicker != null)
-				datePicker.setOpaque(isOpaque);
-			if(dateFormatLabel != null)
-				dateFormatLabel.setOpaque(isOpaque);
-		}
-		
-		/**
-		 * Sets enabled all the component inside the DatePanel.
-		 */
-		@Override
-		public void setEnabled(boolean enabled)
-		{
-			if(datePicker != null)
-				datePicker.setEnabled(enabled);
-			if(dateFormatLabel != null)
-				dateFormatLabel.setEnabled(enabled);
-		}
-		
-	}
+
 	@Override
 	public void setComponentPreference(String condition) {
+	}
+}
+	
+/**
+ * A panel containing date picker component and a label component.
+ * 
+ * @author chetan_bh
+ */
+class DatePanel extends Cab2bPanel {
+	/**
+	 * Date picker component.
+	 */
+	private Cab2bDatePicker datePicker;
+	
+	/**
+	 * Date format label component.
+	 */
+	private JLabel dateFormatLabel;
+	
+	public DatePanel() {
+		initGUI();
+	}
+	
+	/**
+	 * Initialize GUI.
+	 */
+	private void initGUI() {
+		datePicker = new Cab2bDatePicker();
+	
+		dateFormatLabel = new Cab2bLabel(" yyyy-mm-dd");
+		dateFormatLabel.setOpaque(false);
+		FlowLayout layout = new FlowLayout();
+		layout.setAlignment(FlowLayout.LEFT);
+		layout.setHgap(0);
 		
+		this.setLayout(layout);
+		this.add(datePicker);
+		this.add(dateFormatLabel);
+	}
+	
+	/**
+	 * Returns date format label component.
+	 * @return label component.
+	 */
+	public JLabel getDateFormatLabel() {
+		return dateFormatLabel;
+	}
+	
+	/**
+	 * Sets date format label.
+	 * @param dateFormatLabel
+	 */
+	public void setDateFormatLabel(JLabel dateFormatLabel) {
+		this.dateFormatLabel = dateFormatLabel;
+	}
+	
+	/**
+	 * GReturns date picker component.
+	 * @return date picker component.
+	 */
+	public Cab2bDatePicker getDatePicker() {
+		return datePicker;
+	}
+	
+	/**
+	 * Sets date picker component.
+	 * @param datePicker
+	 */
+	public void setDatePicker(Cab2bDatePicker datePicker) {
+		this.datePicker = datePicker;
+	}
+	
+	/**
+	 * Sets visible all the components inside the DatePanel.
+	 */
+	@Override
+	public void setVisible(boolean aFlag) {
+		if(datePicker != null) {
+			datePicker.setVisible(aFlag);
+		}
+		
+		if(dateFormatLabel != null) {
+			dateFormatLabel.setVisible(aFlag);
+		}
+	}
+	
+	/**
+	 * Sets opaque all the components inside the DatePanel.
+	 */
+	@Override
+	public void setOpaque(boolean isOpaque) {
+		if(datePicker != null) {
+			datePicker.setOpaque(isOpaque);
+		}
+		
+		if(dateFormatLabel != null) {
+			dateFormatLabel.setOpaque(isOpaque);
+		}
+	}
+	
+	/**
+	 * Sets enabled all the component inside the DatePanel.
+	 */
+	@Override
+	public void setEnabled(boolean enabled) {
+		if(datePicker != null) {
+			datePicker.setEnabled(enabled);
+		}
+		
+		if(dateFormatLabel != null) {
+			dateFormatLabel.setEnabled(enabled);
+		}
 	}
 }

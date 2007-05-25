@@ -1,78 +1,90 @@
 package edu.wustl.cab2b.client.ui.main;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
+
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
+import edu.wustl.cab2b.client.ui.controls.Cab2bComboBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bListBox;
+import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.common.util.PermissibleValueComparator;
 
 public class EnumTypePanel extends AbstractTypePanel 
 {
-
-	public EnumTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity)
-	{
-		super(conditionList, attributeEntity);
+	public EnumTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, Boolean showCondition) {
+		super(conditionList, attributeEntity, showCondition);
 	}
 
 	@Override
-	public JComponent getFirstComponent() 
-	{
-		// TODO Auto-generated method stub
-		DefaultListModel model = new DefaultListModel();
-		Collection<PermissibleValueInterface> permissibleValues = edu.wustl.cab2b.common.util.Utility.getPermissibleValues(attributeEntity);
-		Object[] values = permissibleValues.toArray();
-		Arrays.sort(values, new PermissibleValueComparator());
-		for(int i=0; i<values.length; i++)
-		{
-			PermissibleValueInterface perValue = (PermissibleValueInterface)values[i];
-			String item = perValue.getValueAsObject().toString();
-			model.addElement(item);
-		}
-		Cab2bListBox listBox = new Cab2bListBox(model);
-		return listBox;
+	public JComponent getFirstComponent() {
+		return getComponent();
 	}
 
 	@Override
-	public JComponent getSecondComponent() 
-	{
-		DefaultListModel model = new DefaultListModel();
+	public JComponent getSecondComponent() {
+		return getComponent();
+	}
+	
+	private JComponent getComponent() {
 		Collection<PermissibleValueInterface> permissibleValues = edu.wustl.cab2b.common.util.Utility.getPermissibleValues(attributeEntity);
-		Object[] values = permissibleValues.toArray();
-		Arrays.sort(values, new PermissibleValueComparator());
-		for(int i=0; i<values.length; i++)
-		{
-			PermissibleValueInterface perValue = (PermissibleValueInterface)values[i];
-			String item = perValue.getValueAsObject().toString();
-			model.addElement(item);
+		List<PermissibleValueInterface> permissibleValueList = new ArrayList<PermissibleValueInterface>(permissibleValues);
+		Collections.sort(permissibleValueList, new PermissibleValueComparator());
+		
+		JComponent jComponent = null;
+		if(showCondition) {
+			DefaultListModel defaultListModel = new DefaultListModel();
+			defaultListModel.addElement(Constants.SELECT);
+			for(PermissibleValueInterface permissibleValue : permissibleValueList) {
+				String item = permissibleValue.getValueAsObject().toString();
+				defaultListModel.addElement(item);
+			}
+			jComponent = new Cab2bListBox(defaultListModel);
+		} else {
+			DefaultComboBoxModel defaultComboBoxModel = new DefaultComboBoxModel();
+			defaultComboBoxModel.addElement(Constants.SELECT);
+			for(PermissibleValueInterface permissibleValue : permissibleValueList) {
+				String item = permissibleValue.getValueAsObject().toString();
+				defaultComboBoxModel.addElement(item);
+			}
+			jComponent = new Cab2bComboBox(defaultComboBoxModel);
 		}
-		Cab2bListBox listBox = new Cab2bListBox(model);
-		return listBox;
+		return jComponent;
 	}
 
-	public ArrayList<String> getValues()
-	{
-		Object[] values = ((Cab2bListBox)m_NameEdit).getSelectedValues();
+	public ArrayList<String> getValues() {
 		ArrayList<String> selected = new ArrayList<String>();
-		for(int i=0; i<values.length; i++)
-		{
-			selected.add((String)values[i]);	
+		
+		if(showCondition) {
+			Object[] values = ((Cab2bListBox)m_NameEdit).getSelectedValues();
+			for(Object value : values) {
+				selected.add((String)value);	
+			}
+		} else {
+			selected.add((String)((Cab2bComboBox)m_NameEdit).getSelectedItem());
 		}
+		
 		return selected;
 	}
 
-	public void setValues(ArrayList<String> values)
-	{
-		((Cab2bListBox)m_NameEdit).setSelectedValues(values);
+	public void setValues(ArrayList<String> values) {
+		if(showCondition) {
+			((Cab2bListBox)m_NameEdit).setSelectedValues(values);
+		} else {
+			for(String value : values) {
+				((Cab2bComboBox)m_NameEdit).addItem(value);
+			}
+		}
 	}
 
 	@Override
-	public void setComponentPreference(String condition)
-	{
-		// TODO Auto-generated method stub
+	public void setComponentPreference(String condition) {
 	}
 
 }

@@ -30,9 +30,7 @@ import edu.wustl.cab2b.common.exception.CheckedException;
  * @author Kaushal Kumar
  * @version 1.0
  */
-public class SwingUIManager
-{
-
+public class SwingUIManager {
 	/**
 	 * This method returns a panel object that shows attribute name, data-type 
 	 * conditions and components for entering/showing the values.
@@ -40,10 +38,8 @@ public class SwingUIManager
 	 * @param entity
 	 * @return panel object
 	 */
-	public static Object generateUIPanel(ParseXMLFile parseFile, AttributeInterface attributeEntity)
-			throws CheckedException
-	{
-		Object[] object = new Object[2];
+	public static Object generateUIPanel(ParseXMLFile parseFile, AttributeInterface attributeEntity, boolean showConditions) throws CheckedException {
+		Object[] object = new Object[3];
 		String className = null;
 		
 		AttributeTypeInformationInterface attributeTypeInformation = attributeEntity.getAttributeTypeInformation();
@@ -58,6 +54,7 @@ public class SwingUIManager
 			className = parseFile.getNonEnumClassName(dataTypeString);
 		}
 		object[1] = attributeEntity;
+		object[2] = new Boolean(showConditions);
 		
 		Constructor[] cls = null;
 		Object uiObject = null;
@@ -69,6 +66,10 @@ public class SwingUIManager
 		}
 		
 		return uiObject;
+	}
+	
+	public static Object generateUIPanel(ParseXMLFile parseFile, AttributeInterface attributeEntity) throws CheckedException {
+		return generateUIPanel(parseFile, attributeEntity, true);
 	}
 	
 	/**
@@ -97,4 +98,5 @@ public class SwingUIManager
 		
 		return dataTypeString;
 	}
+	
 }

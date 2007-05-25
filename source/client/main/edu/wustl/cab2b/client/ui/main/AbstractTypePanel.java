@@ -27,8 +27,7 @@ import edu.wustl.cab2b.common.util.Utility;
  * 
  * @author chetan_bh
  */
-public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
-{
+public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent {
 	
 	public static final int CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE = 9;
 	
@@ -67,141 +66,75 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 	 */
 	protected String attributeName;
 	
+	/**
+	 * 
+	 */
+	protected Boolean showCondition;
 	
-	public AbstractTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity)
-	{
-		this(conditionList, attributeEntity, new RiverLayout());
+	public AbstractTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity) {
+		this(conditionList, attributeEntity, new RiverLayout(), true);
 	}
 	
-	public AbstractTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, LayoutManager layoutManager)
-	{
+	public AbstractTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, Boolean showCondition) {
+		this(conditionList, attributeEntity, new RiverLayout(), showCondition);
+	}
+	
+	public AbstractTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, LayoutManager layoutManager) {
+		this(conditionList, attributeEntity, layoutManager, true);
+	}
+	
+	public AbstractTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, LayoutManager layoutManager, Boolean showCondition) {
 		super(layoutManager);
 		
-		this.conditionList = conditionList;
 		this.attributeEntity = attributeEntity;
 		this.attributeName = attributeEntity.getName();
+		this.showCondition = showCondition;
 		
-		
-        String formattedString = attributeEntity.getName();
+		String formattedString = attributeEntity.getName();
         if(!Utility.isCategory(attributeEntity.getEntity())) {
             formattedString = CommonUtils.getFormattedString(formattedString);
         }
-		m_Name = new Cab2bLabel( formattedString+ " : ");		
-		
-		/* Initializing  conditions can't be abstracted, since it varies from string type to number to date */
-		m_Conditions = new Cab2bComboBox();
-		m_Conditions.setPreferredSize(new Dimension(125,20));
-		Collections.sort(conditionList);
-		DefaultComboBoxModel model = new DefaultComboBoxModel();
-		for(int i = 0;i < conditionList.size(); i++)
-		{
-			model.addElement(conditionList.get(i));
-		}
-		m_Conditions.setModel(model);
-		m_Conditions.setMaximumRowCount(conditionList.size());
-		m_NameEdit = getFirstComponent();
-		m_OtherEdit = getSecondComponent();
-		
+        
+		m_Name = new Cab2bLabel( formattedString+ " : ");
 		m_Name.setPreferredSize(new Dimension(235,20));
+		m_NameEdit = getFirstComponent();
+		
+		m_OtherEdit = getSecondComponent();
+		m_OtherEdit.setEnabled(false);
+		m_OtherEdit.setVisible(false);
+		m_OtherEdit.setOpaque(false);
+		
+		final Border border = m_OtherEdit.getBorder();
+		final EmptyBorder emptyBorder = new EmptyBorder(2,2,2,2);
+		m_OtherEdit.setBorder(emptyBorder);
+		
 		add("tab", m_Name);
 		add("tab", new Cab2bLabel());
 		add("tab", new Cab2bLabel());
 		
-		add("tab", m_Conditions);
+		if(showCondition) {
+			setCondtionControl(conditionList, border, emptyBorder);
+		}
+		
 		add("tab", new Cab2bLabel());
 		add("tab", m_NameEdit);
 		add("tab", m_OtherEdit);
-		m_OtherEdit.setEnabled(false);
-		m_OtherEdit.setVisible(false);
-		m_OtherEdit.setOpaque(false);
-		final Border border =m_OtherEdit.getBorder();
-		final EmptyBorder emptyBorder = new EmptyBorder(2,2,2,2);
-		m_OtherEdit.setBorder(emptyBorder);
 		
-		m_Conditions.addActionListener(new AbstractAction()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				
-				if(m_Conditions.getSelectedItem().equals("Between"))
-				{
-					m_NameEdit.setOpaque(true);
-					m_NameEdit.setEnabled(true);
-					m_NameEdit.setVisible(true);
-					m_NameEdit.setBorder(border);
-					m_OtherEdit.setOpaque(true);
-					m_OtherEdit.setVisible(true);
-					m_OtherEdit.setEnabled(true);
-					m_OtherEdit.setBorder(border);
-				}
-				else if ( (m_Conditions.getSelectedItem().equals("Is Null"))|| (m_Conditions.getSelectedItem().equals("Is Not Null")))
-				{
-					m_NameEdit.setOpaque(false);
-					m_NameEdit.setEnabled(false);
-					m_NameEdit.setVisible(false);
-					m_NameEdit.setBorder(emptyBorder);
-					m_OtherEdit.setOpaque(false);
-					m_OtherEdit.setEnabled(false);
-					m_OtherEdit.setVisible(false);
-					m_OtherEdit.setBorder(emptyBorder);
-					ArrayList<String> values = new ArrayList<String>();
-					values.add("");
-					values.add("");
-					setValues(values);
-				}
-				else
-				{
-					m_NameEdit.setOpaque(true);
-					m_NameEdit.setEnabled(true);
-					m_NameEdit.setVisible(true);
-					m_NameEdit.setBorder(border);
-					// If previously selected condition was 'Between' then
-					// Clear the second text box
-					ArrayList<String> oldValues = getValues();
-					if(true == m_OtherEdit.isEnabled())
-					{
-						
-						if(oldValues.size() == 2)
-						{
-							ArrayList<String> values = new ArrayList<String>();
-							values.add(oldValues.get(0));
-							values.add("");
-							setValues(values);
-						}
-					}
-					else
-					{
-						setValues(oldValues);
-					}
-					m_OtherEdit.setOpaque(false);
-					m_OtherEdit.setEnabled(false);
-					m_OtherEdit.setVisible(false);
-					m_OtherEdit.setBorder(emptyBorder);
-				}
-				setComponentPreference(getCondition());
-			}
-		});
-		m_Conditions.setSelectedIndex(0);
 		setSize(new Dimension(300,100));
 	}
 	
-	public String getCondition()
-	{
+	public String getCondition() {
 		return (String)m_Conditions.getSelectedItem();
 	}
-	
-	
+		
 	public abstract JComponent getFirstComponent();
 	
 	public abstract JComponent getSecondComponent();
 	
-	public  void setCondition(String str)
-	{
+	public  void setCondition(String str) {
 		int itemCount = m_Conditions.getItemCount();
-		for(int i=0; i<itemCount; i++)
-		{
-			if(m_Conditions.getItemAt(i).toString().compareToIgnoreCase(str) == 0)
-			{
+		for(int i = 0; i < itemCount; i++) {
+			if(m_Conditions.getItemAt(i).toString().compareToIgnoreCase(str) == 0) {
 				m_Conditions.setSelectedIndex(i);
 			}
 		}
@@ -209,9 +142,82 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     
 	public abstract void setComponentPreference(String condition);
     
-    public String getAttributeName()
-    {
+    public String getAttributeName() {
     	return attributeName;
     }
+    
+    private void setCondtionControl(ArrayList<String> conditionList, final Border border, final EmptyBorder emptyBorder) {
+    	this.conditionList = conditionList;
+    	
+    	/* Initializing  conditions can't be abstracted, since it varies from string type to number to date */
+		m_Conditions = new Cab2bComboBox();
+		m_Conditions.setPreferredSize(new Dimension(125,20));
+		
+		Collections.sort(conditionList);
+		DefaultComboBoxModel model = new DefaultComboBoxModel();
+		for(int i = 0;i < conditionList.size(); i++) {
+			model.addElement(conditionList.get(i));
+		}
+		
+		m_Conditions.setModel(model);
+		m_Conditions.setMaximumRowCount(conditionList.size());
+    	
+		m_Conditions.addActionListener(new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+			public void actionPerformed(ActionEvent e) {
+				conditionListenerAction(border, emptyBorder);
+			}
+		});
+		
+		m_Conditions.setSelectedIndex(0);
+		add("tab", m_Conditions);
+    }
+	
+    private void conditionListenerAction(final Border border, final EmptyBorder emptyBorder) {
+		if(m_Conditions.getSelectedItem().equals("Between")) {
+			m_NameEdit.setOpaque(true);
+			m_NameEdit.setEnabled(true);
+			m_NameEdit.setVisible(true);
+			m_NameEdit.setBorder(border);
+			m_OtherEdit.setOpaque(true);
+			m_OtherEdit.setVisible(true);
+			m_OtherEdit.setEnabled(true);
+			m_OtherEdit.setBorder(border);
+		} else if((m_Conditions.getSelectedItem().equals("Is Null")) || (m_Conditions.getSelectedItem().equals("Is Not Null"))) {
+			m_NameEdit.setOpaque(false);
+			m_NameEdit.setEnabled(false);
+			m_NameEdit.setVisible(false);
+			m_NameEdit.setBorder(emptyBorder);
+			m_OtherEdit.setOpaque(false);
+			m_OtherEdit.setEnabled(false);
+			m_OtherEdit.setVisible(false);
+			m_OtherEdit.setBorder(emptyBorder);
+			ArrayList<String> values = new ArrayList<String>();
+			values.add("");
+			values.add("");
+			setValues(values);
+		} else {
+			m_NameEdit.setOpaque(true);
+			m_NameEdit.setEnabled(true);
+			m_NameEdit.setVisible(true);
+			m_NameEdit.setBorder(border);
+			
+			// If previously selected condition was 'Between' then clear the second text box
+			ArrayList<String> oldValues = getValues();
+			if(m_OtherEdit.isEnabled() && oldValues.size() == 2) {
+				ArrayList<String> values = new ArrayList<String>();
+				values.add(oldValues.get(0));
+				values.add("");
+				setValues(values);
+			} else {
+				setValues(oldValues);
+			}
+			m_OtherEdit.setOpaque(false);
+			m_OtherEdit.setEnabled(false);
+			m_OtherEdit.setVisible(false);
+			m_OtherEdit.setBorder(emptyBorder);
+		}
+		setComponentPreference(getCondition());
+	}
 	
 }
