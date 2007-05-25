@@ -98,7 +98,8 @@ public class BarChart extends AbstractChart {
 		jFreeChart.setBackgroundPaint(Color.white);
 
 		CategoryPlot categoryPlot = (CategoryPlot) jFreeChart.getPlot();
-		categoryPlot.setBackgroundPaint(Color.lightGray);
+		categoryPlot.setBackgroundPaint(Color.white);
+		//categoryPlot.setBackgroundPaint(new Color(120, 120, 120));
 		categoryPlot.setDomainGridlinePaint(Color.white);
 		categoryPlot.setRangeGridlinePaint(Color.white);
 

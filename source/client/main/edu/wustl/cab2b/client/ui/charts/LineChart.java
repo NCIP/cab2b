@@ -39,11 +39,11 @@ public class LineChart extends AbstractChart {
 		JFreeChart jfreechart = ChartFactory.createXYLineChart("Line Chart",
 				"X", "Y", xyDataset, PlotOrientation.VERTICAL, true, true,
 				false);
-
 		jfreechart.setBackgroundPaint(Color.white);
 
 		XYPlot xyplot = (XYPlot) jfreechart.getPlot();
-		xyplot.setBackgroundPaint(Color.lightGray);
+		xyplot.setBackgroundPaint(Color.white);
+		//xyplot.setBackgroundPaint(new Color(120, 120, 120));
 		xyplot.setAxisOffset(new RectangleInsets(5D, 5D, 5D, 5D));
 		xyplot.setDomainGridlinePaint(Color.white);
 		xyplot.setRangeGridlinePaint(Color.white);

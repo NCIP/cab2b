@@ -3,6 +3,8 @@
  */
 package edu.wustl.cab2b.client.ui.charts;
 
+import java.awt.Color;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -35,9 +37,11 @@ public class ScatterPlot extends AbstractChart {
 	protected JFreeChart createChart(Dataset dataset) {
 		XYDataset xyDataset = (XYDataset)createDataset();
         JFreeChart jfreechart = ChartFactory.createScatterPlot("Scatter Plot", "X", "Y", xyDataset, PlotOrientation.VERTICAL, true, true, false);
+        jfreechart.setBackgroundPaint(Color.white);
         
         XYPlot xyplot = (XYPlot)jfreechart.getPlot();
-        
+        xyplot.setBackgroundPaint(Color.white);
+        //xyplot.setBackgroundPaint(new Color(120, 120, 120));
         XYDotRenderer xydotrenderer = new XYDotRenderer();
         xydotrenderer.setDotWidth(4);
         xydotrenderer.setDotHeight(4);
