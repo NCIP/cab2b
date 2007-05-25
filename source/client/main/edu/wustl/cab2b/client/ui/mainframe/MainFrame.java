@@ -3,9 +3,11 @@ package edu.wustl.cab2b.client.ui.mainframe;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GradientPaint;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.geom.Point2D;
 import java.rmi.RemoteException;
 import java.util.MissingResourceException;
 import java.util.Vector;
@@ -15,9 +17,12 @@ import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 
+import net.infonode.gui.BackgroundPainter;
+
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXStatusBar;
+import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
@@ -168,6 +173,10 @@ public class MainFrame extends JXFrame {
 			@Override
 			protected void doNonUILogic() throws RuntimeException {
 				openExperimentWelcomePanel = new ExperimentPanel("My Experiments");
+				GradientPaint gp = new GradientPaint(new Point2D.Double(.05d, 0), Color.WHITE,
+		                new Point2D.Double(.95d, 0), Color.WHITE);
+				openExperimentWelcomePanel.setTitlePainter(new BasicGradientPainter(gp));
+				openExperimentWelcomePanel.setTitleForeground(Color.BLUE);
 			}
 
 			@Override
