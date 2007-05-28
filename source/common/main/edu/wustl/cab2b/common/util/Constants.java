@@ -94,4 +94,5 @@ public class Constants
      */
     public static final String SCATTER_PLOT = "Scatter Plot";
     
+    public static final String SELECT = "-- Select --";
 }
