@@ -91,9 +91,7 @@ public class ConstraintsBuilder {
         this.rootExpr = rootExpr;
     }
 
-    public ConstraintsBuilder(
-            ICab2bQuery query,
-            CategoryPreprocessorResult categoryPreprocessorResult) {
+    public ConstraintsBuilder(ICab2bQuery query, CategoryPreprocessorResult categoryPreprocessorResult) {
         setQuery(query);
         setCategoryPreprocessorResult(categoryPreprocessorResult);
         setResult(new ConstraintsBuilderResult());
@@ -114,8 +112,7 @@ public class ConstraintsBuilder {
     private Set<IExpressionId> getCategoryOutputExpressionIds() {
         Set<TreeNode<IExpression>> outputExpressions = getCategoryPreprocessorResult().getExprsSourcedFromCategories().get(
                                                                                                                            getQuery().getOutputEntity());
-        Set<IExpressionId> outputExpressionIds = new HashSet<IExpressionId>(
-                outputExpressions.size());
+        Set<IExpressionId> outputExpressionIds = new HashSet<IExpressionId>(outputExpressions.size());
         for (TreeNode<IExpression> exprNode : outputExpressions) {
             outputExpressionIds.add(exprNode.getValue().getExpressionId());
         }
@@ -145,19 +142,16 @@ public class ConstraintsBuilder {
                 // continue;
                 // }
                 IExpression currExpr = getExpression(currExprId);
-                List<IExpressionId> parentExprIds = getJoinGraph().getParentList(
-                                                                                 currExprId);
+                List<IExpressionId> parentExprIds = getJoinGraph().getParentList(currExprId);
 
                 // assert processedExpressions.containsAll(parentExprIds);
                 constrainChildByParents(currExprId, parentExprIds);
 
                 // do "constrain by parents" only till the output expressions.
                 boolean isOutputExpr = (isCategoryOutput && outputExprIds.contains(currExprId))
-                        || currExpr.getConstraintEntity().equals(
-                                                                 getOutputEntity());
+                        || currExpr.getConstraintEntity().equals(getOutputEntity());
                 if (!isOutputExpr) {
-                    nextExprIds.addAll(getJoinGraph().getChildrenList(
-                                                                      currExprId));
+                    nextExprIds.addAll(getJoinGraph().getChildrenList(currExprId));
                 }
                 // processedExpressions.add(currExprId);
             }
@@ -167,33 +161,27 @@ public class ConstraintsBuilder {
         // processedExpressions.equals(getResult().getExpressionToConstraintMap().keySet());
     }
 
-    private void constrainChildByParents(IExpressionId childExprId,
-                                         List<IExpressionId> parentExprIds) {
+    private void constrainChildByParents(IExpressionId childExprId, List<IExpressionId> parentExprIds) {
         IExpression childExpr = getExpression(childExprId);
-        DcqlConstraint childConstraint = getResult().getConstraintForExpression(
-                                                                                childExpr);
+        DcqlConstraint childConstraint = getResult().getConstraintForExpression(childExpr);
 
         Cab2bGroup group = new Cab2bGroup(LogicalOperator.And);
         group.addConstraint(childConstraint);
 
         for (IExpressionId parentExprId : parentExprIds) {
             IExpression parentExpr = getExpression(parentExprId);
-            IAssociation association = getJoinGraph().getAssociation(
-                                                                     parentExprId,
-                                                                     childExprId);
+            IAssociation association = getJoinGraph().getAssociation(parentExprId, childExprId);
             if (!association.isBidirectional()) {
-                Logger.out.warn("Unidirectional association found "
-                        + association + ". Results could be incorrect.");
+                Logger.out.warn("Unidirectional association found " + association
+                        + ". Results could be incorrect.");
                 continue;
             }
-            DcqlConstraint parentConstraint = getResult().getConstraintForExpression(
-                                                                                     parentExpr);
+            DcqlConstraint parentConstraint = getResult().getConstraintForExpression(parentExpr);
             AbstractAssociationConstraint associationConstraint = createAssociation(association.reverse());
             associationConstraint.addChildConstraint(parentConstraint);
             group.addConstraint(associationConstraint);
         }
-        getResult().putConstraintForExpression(childExpr,
-                                               group.getDcqlConstraint(), true);
+        getResult().putConstraintForExpression(childExpr, group.getDcqlConstraint(), true);
     }
 
     // END CONSTRAINING EACH EXPR BY PARENTS
@@ -205,46 +193,37 @@ public class ConstraintsBuilder {
         } catch (MultipleRootsException e) {
             String msg = "Invalid query object submitted; it's got multiple roots...";
             Logger.out.error(msg);
-            throw new RuntimeException(msg, e,
-                    ErrorCodeConstants.QUERY_INVALID_INPUT);
+            throw new RuntimeException(msg, e, ErrorCodeConstants.QUERY_INVALID_INPUT);
         }
 
     }
 
     private boolean isExprRedundant(IExpressionId exprId) {
-        return getCategoryPreprocessorResult().getRedundantExprs().contains(
-                                                                            getExpression(exprId));
+        return getCategoryPreprocessorResult().getRedundantExprs().contains(getExpression(exprId));
     }
 
     private DcqlConstraint createDcqlConstraintForExpression(IExpression expr) {
-        List<DcqlConstraint> dcqlConstraintsList = new ArrayList<DcqlConstraint>(
-                expr.numberOfOperands());
+        List<DcqlConstraint> dcqlConstraintsList = new ArrayList<DcqlConstraint>(expr.numberOfOperands());
 
         for (int i = 0; i < expr.numberOfOperands(); i++) {
             IExpressionOperand operand = expr.getOperand(i);
             if (operand.isSubExpressionOperand()) {
                 IExpressionId exprId = (IExpressionId) operand;
                 // if (!isExprRedundant(exprId)) {
-                dcqlConstraintsList.add(createDcqlConstraintForChildExpression(
-                                                                               expr.getExpressionId(),
-                                                                               exprId));
+                dcqlConstraintsList.add(createDcqlConstraintForChildExpression(expr.getExpressionId(), exprId));
                 // }
             } else {
                 dcqlConstraintsList.add(createDcqlConstraintForRule((IRule) operand));
             }
         }
 
-        DcqlConstraint dcqlConstraint = mergeConstraints(expr,
-                                                         dcqlConstraintsList);
+        DcqlConstraint dcqlConstraint = mergeConstraints(expr, dcqlConstraintsList);
 
-        getResult().putConstraintForExpression(expr, dcqlConstraint,
-                                               !constrainByParentExpressions);
+        getResult().putConstraintForExpression(expr, dcqlConstraint, !constrainByParentExpressions);
         return dcqlConstraint;
     }
 
-    private DcqlConstraint mergeConstraints(
-                                            IExpression expr,
-                                            List<DcqlConstraint> dcqlConstraintsList) {
+    private DcqlConstraint mergeConstraints(IExpression expr, List<DcqlConstraint> dcqlConstraintsList) {
         if (dcqlConstraintsList.size() == 0) {
             return new DcqlConstraint();
         }
@@ -262,16 +241,13 @@ public class ConstraintsBuilder {
         return conns;
     }
 
-    private DcqlConstraint createDcqlConstraintForChildExpression(
-                                                                  IExpressionId parentExpressionId,
+    private DcqlConstraint createDcqlConstraintForChildExpression(IExpressionId parentExpressionId,
                                                                   IExpressionId childExpressionId) {
-        IExpression childExpr = getConstraints().getExpression(
-                                                               childExpressionId);
+        IExpression childExpr = getConstraints().getExpression(childExpressionId);
         DcqlConstraint childExprDcqlConstraint;
 
         if (getResult().containsExpression(childExpr)) {
-            childExprDcqlConstraint = getResult().getConstraintForExpression(
-                                                                             childExpr);
+            childExprDcqlConstraint = getResult().getConstraintForExpression(childExpr);
         } else {
             childExprDcqlConstraint = createDcqlConstraintForExpression(childExpr);
         }
@@ -280,9 +256,7 @@ public class ConstraintsBuilder {
         if (isExprRedundant(childExpressionId)) {
             dcqlConstraint = createAnyConstraint();
         } else {
-            IAssociation association = getJoinGraph().getAssociation(
-                                                                     parentExpressionId,
-                                                                     childExpressionId);
+            IAssociation association = getJoinGraph().getAssociation(parentExpressionId, childExpressionId);
 
             AbstractAssociationConstraint associationConstraint = createAssociation(association);
             associationConstraint.addChildConstraint(childExprDcqlConstraint);
@@ -296,8 +270,7 @@ public class ConstraintsBuilder {
         return new DcqlConstraint();
     }
 
-    public static AbstractAssociationConstraint createAssociation(
-                                                                  IAssociation association) {
+    public static AbstractAssociationConstraint createAssociation(IAssociation association) {
 
         AbstractAssociationConstraint dcqlConstraint;
 
@@ -309,8 +282,7 @@ public class ConstraintsBuilder {
         return dcqlConstraint;
     }
 
-    private static LocalAssociationConstraint createLocalAssociation(
-                                                                     IIntraModelAssociation intraModelAssociation) {
+    private static LocalAssociationConstraint createLocalAssociation(IIntraModelAssociation intraModelAssociation) {
         Association association = new Association();
 
         AssociationInterface deAssociation = intraModelAssociation.getDynamicExtensionsAssociation();
@@ -358,17 +330,13 @@ public class ConstraintsBuilder {
         return group.getDcqlConstraint();
     }
 
-    private AttributeConstraint createAttribute(String attributeName,
-                                                RelationalOperator operator,
+    private AttributeConstraint createAttribute(String attributeName, RelationalOperator operator,
                                                 DataType dataType) {
         return createAttributeConstraint(attributeName, operator, null, dataType);
     }
 
-    public static AttributeConstraint createAttributeConstraint(
-                                                      String attributeName,
-                                                      RelationalOperator operator,
-                                                      String value,
-                                                      DataType dataType) {
+    public static AttributeConstraint createAttributeConstraint(String attributeName, RelationalOperator operator,
+                                                                String value, DataType dataType) {
         Attribute attribute = new Attribute();
         attribute.setName(attributeName);
         attribute.setPredicate(TransformerUtil.getCqlPredicate(operator));
@@ -385,9 +353,7 @@ public class ConstraintsBuilder {
         return value;
     }
 
-    private static String modifyValue(String value,
-                                      RelationalOperator operator,
-                                      DataType dataType) {
+    private static String modifyValue(String value, RelationalOperator operator, DataType dataType) {
         if (dataType == DataType.Date) {
             return modifyDateValue(value);
         }
@@ -403,51 +369,35 @@ public class ConstraintsBuilder {
         return value;
     }
 
-    private DcqlConstraint createBetweenCondition(String attributeName,
-                                                  String value1, String value2,
+    private DcqlConstraint createBetweenCondition(String attributeName, String value1, String value2,
                                                   DataType dataType) {
         Cab2bGroup group = new Cab2bGroup(LogicalOperator.And);
-        group.addConstraint((createAttributeConstraint(
-                                             attributeName,
-                                             RelationalOperator.GreaterThanOrEquals,
-                                             value1, dataType)));
-        group.addConstraint((createAttributeConstraint(
-                                             attributeName,
-                                             RelationalOperator.LessThanOrEquals,
-                                             value2, dataType)));
+        group.addConstraint((createAttributeConstraint(attributeName, RelationalOperator.GreaterThanOrEquals,
+                                                       value1, dataType)));
+        group.addConstraint((createAttributeConstraint(attributeName, RelationalOperator.LessThanOrEquals, value2,
+                                                       dataType)));
         return group.getDcqlConstraint();
     }
 
-    private DcqlConstraint createInCondition(String attributeName,
-                                             List<String> values,
-                                             DataType dataType) {
+    private DcqlConstraint createInCondition(String attributeName, List<String> values, DataType dataType) {
         Cab2bGroup group = new Cab2bGroup(LogicalOperator.Or);
         for (String value : values) {
-            group.addConstraint((createAttributeConstraint(attributeName,
-                                                 RelationalOperator.Equals,
-                                                 value, dataType)));
+            group.addConstraint((createAttributeConstraint(attributeName, RelationalOperator.Equals, value,
+                                                           dataType)));
         }
         return group.getDcqlConstraint();
     }
 
-    private DcqlConstraint createNotInCondition(String attributeName,
-                                                List<String> values,
-                                                DataType dataType) {
+    private DcqlConstraint createNotInCondition(String attributeName, List<String> values, DataType dataType) {
         Cab2bGroup group = new Cab2bGroup(LogicalOperator.And);
         for (String value : values) {
-            group.addConstraint((createAttributeConstraint(attributeName,
-                                                 RelationalOperator.NotEquals,
-                                                 value, dataType)));
+            group.addConstraint((createAttributeConstraint(attributeName, RelationalOperator.NotEquals, value,
+                                                           dataType)));
         }
         return group.getDcqlConstraint();
     }
 
     private DcqlConstraint createConstraintForCondition(ICondition condition) {
-
-        // TODO IN operator etc...
-
-        // TODO func class etc...
-
         String attributeName = condition.getAttribute().getName();
         RelationalOperator operator = condition.getRelationalOperator();
         DataType dataType = Utility.getDataType(condition.getAttribute().getAttributeTypeInformation());
@@ -455,25 +405,20 @@ public class ConstraintsBuilder {
         if (operator.numberOfValuesRequired() == 0)
             return createAttribute(attributeName, operator, dataType);
         if (operator.numberOfValuesRequired() == 1) {
-            return createAttributeConstraint(attributeName, operator,
-                                   condition.getValue(), dataType);
+            return createAttributeConstraint(attributeName, operator, condition.getValue(), dataType);
         }
 
         if (condition.getRelationalOperator() == RelationalOperator.Between) {
-            return createBetweenCondition(attributeName,
-                                          condition.getValues().get(0),
-                                          condition.getValues().get(1),
-                                          dataType);
+            return createBetweenCondition(attributeName, condition.getValues().get(0),
+                                          condition.getValues().get(1), dataType);
         }
 
         if (condition.getRelationalOperator() == RelationalOperator.In) {
-            return createInCondition(attributeName, condition.getValues(),
-                                     dataType);
+            return createInCondition(attributeName, condition.getValues(), dataType);
 
         }
         if (condition.getRelationalOperator() == RelationalOperator.NotIn) {
-            return createNotInCondition(attributeName, condition.getValues(),
-                                        dataType);
+            return createNotInCondition(attributeName, condition.getValues(), dataType);
 
         }
         // will never occur.
@@ -511,8 +456,7 @@ public class ConstraintsBuilder {
         return categoryPreprocessorResult;
     }
 
-    public void setCategoryPreprocessorResult(
-                                              CategoryPreprocessorResult categoryPreprocessorResult) {
+    public void setCategoryPreprocessorResult(CategoryPreprocessorResult categoryPreprocessorResult) {
         this.categoryPreprocessorResult = categoryPreprocessorResult;
     }
 
