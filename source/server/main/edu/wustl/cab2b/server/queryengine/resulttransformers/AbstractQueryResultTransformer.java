@@ -64,15 +64,16 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * @see edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer#getResults(gov.nih.nci.cagrid.dcql.DCQLQuery,
      *      edu.common.dynamicextensions.domaininterface.EntityInterface)
      */
-    public IQueryResult<R> getResults(DCQLQuery query, EntityInterface targetEntity) {
-        log(query);
+    public IQueryResult<R> getResults(DCQLQuery query,
+                                      EntityInterface targetEntity) {
         Map<String, CQLQueryResults> queryResults = executeDcql(query);
         int numRecs = 0;
+        log(query);
         IQueryResult<R> result = createResult(targetEntity);
         for (Map.Entry<String, CQLQueryResults> entry : queryResults.entrySet()) {
             String url = entry.getKey();
             CQLQueryResults cqlQueryResult = entry.getValue();
-            List<R> recs = createRecords(url, cqlQueryResult, targetEntity);
+            List<R> recs = createRecords(cqlQueryResult, targetEntity);
             result.addRecords(url, recs);
             numRecs += recs.size();
         }
@@ -84,7 +85,8 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
         DCQLQueryResultsCollection queryResults = null;
         try {
             FederatedQueryEngine federatedQueryEngine = new FederatedQueryEngine();
-            Logger.out.info("Executing DCQL... Target is : " + query.getTargetObject().getName());
+            Logger.out.info("Executing DCQL... Target is : "
+                    + query.getTargetObject().getName());
             queryResults = federatedQueryEngine.execute(query);
             Logger.out.info("Executed DCQL successfully.");
         } catch (FederatedQueryProcessingException e) {
@@ -93,7 +95,8 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
         }
         Map<String, CQLQueryResults> res = new HashMap<String, CQLQueryResults>();
         for (DCQLResult dcqlQueryResult : queryResults.getDCQLResult()) {
-            res.put(dcqlQueryResult.getTargetServiceURL(), dcqlQueryResult.getCQLQueryResultCollection());
+            res.put(dcqlQueryResult.getTargetServiceURL(),
+                    dcqlQueryResult.getCQLQueryResultCollection());
         }
         return res;
     }
@@ -122,7 +125,8 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * @see edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer#getCategoryResults(gov.nih.nci.cagrid.dcql.DCQLQuery,
      *      edu.wustl.common.querysuite.metadata.category.CategorialClass)
      */
-    public IQueryResult<C> getCategoryResults(DCQLQuery query, CategorialClass categorialClass) {
+    public IQueryResult<C> getCategoryResults(DCQLQuery query,
+                                              CategorialClass categorialClass) {
         Set<AttributeInterface> categoryAttributes = new HashSet<AttributeInterface>();
 
         for (CategorialAttribute categorialAttr : categorialClass.getCategorialAttributeCollection()) {
@@ -130,15 +134,19 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             categoryAttributes.add(categoryAttribute);
         }
 
-        IQueryResult<R> classResults = getResults(query, categorialClass.getCategorialClassEntity());
+        IQueryResult<R> classResults = getResults(
+                                                  query,
+                                                  categorialClass.getCategorialClassEntity());
         IQueryResult<C> catResult = createCategoryResult(categorialClass.getCategory().getCategoryEntity());
 
         for (Map.Entry<String, List<R>> entry : classResults.getRecords().entrySet()) {
             String url = entry.getKey();
             for (R rec : entry.getValue()) {
-                C catRec = createCategoryRecord(categorialClass, categoryAttributes, rec.getId());
+                C catRec = createCategoryRecord(categorialClass,
+                                                categoryAttributes, rec.getId());
                 for (CategorialAttribute catAttr : categorialClass.getCategorialAttributeCollection()) {
-                    catRec.putValueForAttribute(catAttr.getCategoryAttribute(),
+                    catRec.putValueForAttribute(
+                                                catAttr.getCategoryAttribute(),
                                                 rec.getValueForAttribute(catAttr.getSourceClassAttribute()));
                     copyFromRecord(catRec, rec);
                 }
@@ -197,22 +205,21 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * @param classResults
      *            the class results.
      */
-    protected void copyFromResult(IQueryResult<C> catResult, IQueryResult<R> classResults) {
+    protected void copyFromResult(IQueryResult<C> catResult,
+                                  IQueryResult<R> classResults) {
 
     }
 
     /**
      * Returns a {@link List} of {@link IRecord}s that represent the given
      * {@link CQLQueryResults}.
-     * @param url
-     *            the service url from which the cqlResults were obtained.
      * @param cqlQueryResults
      *            the results obtained by executing DCQL.
      * @param targetEntity
      *            the target entity.
      * @return list of transformed records.
      */
-    protected abstract List<R> createRecords(String url, CQLQueryResults cqlQueryResults,
+    protected abstract List<R> createRecords(CQLQueryResults cqlQueryResults,
                                              EntityInterface targetEntity);
 
     /**
@@ -225,6 +232,8 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      *            the id of the record.
      * @return a {@link ICategorialClassRecord}.
      */
-    protected abstract C createCategoryRecord(CategorialClass categorialClass,
-                                              Set<AttributeInterface> categoryAttributes, String id);
+    protected abstract C createCategoryRecord(
+                                              CategorialClass categorialClass,
+                                              Set<AttributeInterface> categoryAttributes,
+                                              String id);
 }

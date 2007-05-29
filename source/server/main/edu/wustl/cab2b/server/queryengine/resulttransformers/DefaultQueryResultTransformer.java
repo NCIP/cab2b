@@ -35,8 +35,7 @@ final class DefaultQueryResultTransformer
      *      edu.common.dynamicextensions.domaininterface.EntityInterface)
      */
     @Override
-    protected List<IRecord> createRecords(String url,
-                                          CQLQueryResults cqlQueryResults,
+    protected List<IRecord> createRecords(CQLQueryResults cqlQueryResults,
                                           EntityInterface targetEntity) {
         List<IRecord> res = new ArrayList<IRecord>();
         CQLQueryResultsIterator itr = new CQLQueryResultsIterator(
