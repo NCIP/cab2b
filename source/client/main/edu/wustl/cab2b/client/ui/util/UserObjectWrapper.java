@@ -6,7 +6,7 @@ package edu.wustl.cab2b.client.ui.util;
  * @author Rahul Ner
  *
  */
-public class UserObjectWrapper {
+public class UserObjectWrapper<E extends Object> {
 
     /**
      * 
@@ -16,9 +16,9 @@ public class UserObjectWrapper {
     /**
      * 
      */
-    private Object userObject;
+    private E userObject;
 
-    public UserObjectWrapper(Object userObject, String displayName) {
+    public UserObjectWrapper(E userObject, String displayName) {
         this.displayName = displayName;
         this.userObject = userObject;
     }
@@ -47,14 +47,14 @@ public class UserObjectWrapper {
     /**
      * @return Returns the userObject.
      */
-    public Object getUserObject() {
+    public E getUserObject() {
         return userObject;
     }
 
     /**
      * @param userObject The userObject to set.
      */
-    public void setUserObject(Object userObject) {
+    public void setUserObject(E userObject) {
         this.userObject = userObject;
     }
 }
