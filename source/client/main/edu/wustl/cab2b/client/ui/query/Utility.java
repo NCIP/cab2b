@@ -3,6 +3,7 @@ package edu.wustl.cab2b.client.ui.query;
 import java.util.List;
 import java.util.Map;
 
+import edu.wustl.cab2b.client.ui.util.ClientConstants;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -43,7 +44,7 @@ public class Utility {
      */
     public static LogicalOperator getLogicalOperator(String operator) {
         LogicalOperator logicalOperator = LogicalOperator.And;
-        if (operator.equals("OR")) {
+        if (ClientConstants.OROPERATOR.equals(operator)) {
             logicalOperator = LogicalOperator.Or;
         }
 

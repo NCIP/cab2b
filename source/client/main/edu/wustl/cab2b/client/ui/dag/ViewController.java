@@ -20,8 +20,7 @@ import org.netbeans.graph.api.model.IGraphNode;
 import org.netbeans.graph.api.model.IGraphPort;
 import org.netbeans.graph.api.model.builtin.GraphPort;
 
-import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
-import edu.wustl.common.querysuite.queryobject.IExpression;
+import edu.wustl.cab2b.client.ui.util.ClientConstants;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 
 public class ViewController extends DefaultViewController implements ActionListener
@@ -38,8 +37,6 @@ public class ViewController extends DefaultViewController implements ActionListe
 	private JMenuItem m_orOperator;
 	
 	private IGraphNode m_currentNode;
-	private static final String ANDOPERATOR = "AND";
-	private static final String OROPERATOR = "OR";
 	
 	private MainDagPanel m_mainPanel;
 
@@ -337,13 +334,13 @@ public class ViewController extends DefaultViewController implements ActionListe
     		int index = nodeRenderer.getSelectedAssocitationIdx();
     		if(index == 0)// Operator between constraints and rule has been changed
     		{
-    			classNode.setOperatorBetAttrAndAss(ANDOPERATOR);
-    			m_mainPanel.updateLogicalOperatorForAttributes(classNode, ANDOPERATOR);
+    			classNode.setOperatorBetAttrAndAss(ClientConstants.ANDOPERATOR);
+    			m_mainPanel.updateLogicalOperatorForAttributes(classNode, ClientConstants.ANDOPERATOR);
     		}
     		else
     		{
-    			classNode.setLogicalOperator(index, ANDOPERATOR);
-    			m_mainPanel.updateLogicalOperatorForAssociation(classNode, classNode.getLinkForSourcePort(classNode.getSourcePortAt(index)),ANDOPERATOR );
+    			classNode.setLogicalOperator(index, ClientConstants.ANDOPERATOR);
+    			m_mainPanel.updateLogicalOperatorForAssociation(classNode, classNode.getLinkForSourcePort(classNode.getSourcePortAt(index)),ClientConstants.ANDOPERATOR );
     		}
     		getHelper().scheduleNodeToLayout(m_currentNode);
 			getHelper().recalculate();
@@ -355,13 +352,13 @@ public class ViewController extends DefaultViewController implements ActionListe
     		int index = nodeRenderer.getSelectedAssocitationIdx();
     		if(index == 0) // Operator between constraints and rule has been changed
     		{
-    			classNode.setOperatorBetAttrAndAss(OROPERATOR);
-    			m_mainPanel.updateLogicalOperatorForAttributes(classNode, OROPERATOR);
+    			classNode.setOperatorBetAttrAndAss(ClientConstants.OROPERATOR);
+    			m_mainPanel.updateLogicalOperatorForAttributes(classNode, ClientConstants.OROPERATOR);
     		}
     		else
     		{
-    			classNode.setLogicalOperator(index, OROPERATOR);
-    			m_mainPanel.updateLogicalOperatorForAssociation(classNode, classNode.getLinkForSourcePort(classNode.getSourcePortAt(index)),OROPERATOR );
+    			classNode.setLogicalOperator(index, ClientConstants.OROPERATOR);
+    			m_mainPanel.updateLogicalOperatorForAssociation(classNode, classNode.getLinkForSourcePort(classNode.getSourcePortAt(index)),ClientConstants.OROPERATOR );
     		}
     		getHelper().scheduleNodeToLayout(m_currentNode);
 			getHelper().recalculate();
