@@ -216,10 +216,10 @@ public abstract class ResultPanel extends Cab2bPanel {
             myDataListTitledPanel = new Cab2bTitledPanel("My Data List Summary");
             GradientPaint gp1 = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
                     new Point2D.Double(.95d, 0), Color.WHITE);
-            myDataListTitledPanel.setBorder(null);
             myDataListTitledPanel.setTitlePainter(new BasicGradientPainter(gp1));
             myDataListTitledPanel.setTitleFont(new Font("SansSerif", Font.BOLD, 11));
             myDataListTitledPanel.setTitleForeground(Color.BLACK);
+            myDataListTitledPanel.setBorder(null);
 
             if (myDataListPanel == null) {
                 myDataListPanel = new Cab2bPanel();

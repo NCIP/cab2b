@@ -2,6 +2,7 @@ package edu.wustl.cab2b.client.ui.viewresults;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.GridLayout;
 import java.awt.Insets;
@@ -132,8 +133,13 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         m_sidePanel = new Cab2bPanel(new GridLayout(2, 1, 5, 5));
 
         initDataListSummaryPanel();
+        
+        //fix for matching the sizes of "my data summrary" and "related data"
+        Cab2bPanel relatedDataParentPanel = new Cab2bPanel();
+        relatedDataParentPanel.setBorder(null);
+        relatedDataParentPanel.add("br hfill vfill", relatedDataTitledPanel);
 
-        m_sidePanel.add(relatedDataTitledPanel);
+        m_sidePanel.add(relatedDataParentPanel);
         m_sidePanel.add(myDataListParentPanel);
         this.add(m_sidePanel, BorderLayout.EAST);
     }
@@ -146,12 +152,15 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         relatedDataTitledPanel = new Cab2bTitledPanel("Related Data");
         GradientPaint gp1 = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
                 new Point2D.Double(.95d, 0), Color.WHITE);
+        relatedDataTitledPanel.setTitleFont(new Font("SansSerif", Font.BOLD, 11));
         relatedDataTitledPanel.setTitlePainter(new BasicGradientPainter(gp1));
         relatedDataTitledPanel.setTitleForeground(Color.BLACK);
+        relatedDataTitledPanel.setBorder(null);
 
         relatedDataPanel = new Cab2bPanel();
         relatedDataPanel.setBackground(Color.WHITE);
         relatedDataPanel.setLayout(new RiverLayout(5, 10));
+        relatedDataPanel.setBorder(null);
 
         if (incomingAssociationCollection != null && !incomingAssociationCollection.isEmpty()) {
             AbstractAssociatedDataPanel incomingPanel = new IncomingAssociationDataPanel(
@@ -185,7 +194,7 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         relatedDataPane.getViewport().setBackground(Color.WHITE);
         relatedDataTitledPanel.add(relatedDataPane);
 
-        relatedDataTitledPanel.setBorder(new CustomizableBorder(new Insets(1, 1, 1, 1), true, true));
+        //relatedDataTitledPanel.setBorder(new CustomizableBorder(new Insets(1, 1, 1, 1), true, true));
     }
 
     /**
