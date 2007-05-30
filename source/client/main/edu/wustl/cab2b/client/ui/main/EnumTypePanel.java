@@ -16,8 +16,9 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bListBox;
 import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.common.util.PermissibleValueComparator;
 
-public class EnumTypePanel extends AbstractTypePanel 
-{
+public class EnumTypePanel extends AbstractTypePanel {
+	private static final long serialVersionUID = 1L;
+
 	public EnumTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, Boolean showCondition) {
 		super(conditionList, attributeEntity, showCondition);
 	}
@@ -64,10 +65,16 @@ public class EnumTypePanel extends AbstractTypePanel
 		if(showCondition) {
 			Object[] values = ((Cab2bListBox)m_NameEdit).getSelectedValues();
 			for(Object value : values) {
-				selected.add((String)value);	
+				if(!value.equals(Constants.SELECT)) {
+					selected.add((String)value);
+				}
 			}
 		} else {
-			selected.add((String)((Cab2bComboBox)m_NameEdit).getSelectedItem());
+			String value = (String)((Cab2bComboBox)m_NameEdit).getSelectedItem();
+			if(value.equals(Constants.SELECT)) {
+				value = null;
+			}
+			selected.add(value);
 		}
 		
 		return selected;
@@ -78,7 +85,9 @@ public class EnumTypePanel extends AbstractTypePanel
 			((Cab2bListBox)m_NameEdit).setSelectedValues(values);
 		} else {
 			for(String value : values) {
-				((Cab2bComboBox)m_NameEdit).addItem(value);
+				if(!value.equals(Constants.SELECT)) {
+					((Cab2bComboBox)m_NameEdit).addItem(value);
+				}
 			}
 		}
 	}
