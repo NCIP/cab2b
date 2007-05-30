@@ -50,7 +50,6 @@ public class CategoryPreprocessor {
     /**
      * The query object is modified appropriately.
      */
-    // TODO output categories related stuff for common...
     public CategoryPreprocessorResult processCategories(IQuery query,
                                                         Connection connection) {
         clear();
