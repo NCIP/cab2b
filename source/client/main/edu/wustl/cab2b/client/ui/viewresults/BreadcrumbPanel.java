@@ -1,6 +1,5 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
-import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
@@ -12,6 +11,8 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.common.util.logger.Logger;
 
 public class BreadcrumbPanel extends Cab2bPanel {
+
+    private static final long serialVersionUID = 1L;
 
     private ActionListener m_breadCrumbListener = null;
 
@@ -57,7 +58,7 @@ public class BreadcrumbPanel extends Cab2bPanel {
             breadCrumbHyperlink.addActionListener(this.m_breadCrumbListener);
             this.add(breadCrumbHyperlink);
             if (i < size - 1) {
-                JLabel arrow = new JLabel(" >> ");
+                JLabel arrow = new JLabel(">>");
                 //arrow will match with other links due to this
                 arrow.setForeground(Cab2bHyperlink.getUnclickedHyperlinkColor());
                 this.add(arrow);
