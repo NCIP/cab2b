@@ -1,10 +1,12 @@
 
 package edu.wustl.cab2b.client.ui.viewresults;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JSplitPane;
 
 import org.jdesktop.swingx.JXPanel;
@@ -124,18 +126,23 @@ public class DataListPanel extends Cab2bPanel
         
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         //splitPane.setBorder(new CustomizableBorder(new Insets(1,1,1,1), true, true));
-        splitPane.setDividerLocation(350);
+        splitPane.setDividerLocation(242);
         splitPane.setDividerSize(4);
+        
+        splitPane.setBorder(null);
         
         detailsPanel = new DataListDetailsPanel();
         splitPane.setRightComponent(detailsPanel);
         
         treePanel = new TreePanel(dataList.getRootDataRow());
+        treePanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
         splitPane.setLeftComponent(treePanel);
         treePanel.setMinimumSize(new Dimension(242,this.getPreferredSize().height));
+        splitPane.setDividerLocation(242);
+        
         
         this.add("br hfill vfill", splitPane);
-        this.setBorder(new CustomizableBorder(new Insets(1,1,1,1), true, true));
+        this.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
     }
     
     public static void main(String[] args)

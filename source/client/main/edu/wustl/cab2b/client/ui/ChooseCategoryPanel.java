@@ -60,7 +60,7 @@ public class ChooseCategoryPanel extends ContentPanel
 		ChooseCategoryCategorySearchPanel panel = new ChooseCategoryCategorySearchPanel(this);
 		JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,box,panel);
 		pane.setDividerSize(4);
-		pane.setOneTouchExpandable(true);
+		pane.setOneTouchExpandable(false);
 		pane.setBorder(null);
 		this.add(BorderLayout.CENTER,pane);
 	}

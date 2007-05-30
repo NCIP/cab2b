@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
+import java.awt.Color;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,6 +9,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -55,7 +57,7 @@ public class DataListDetailsPanel extends Cab2bPanel implements ActionListener
         m_exportButton = new Cab2bButton("Export");
         this.add("br", this.m_exportButton);
         m_exportButton.addActionListener(this);
-        this.setBorder(new CustomizableBorder(new Insets(1,1,1,1), true, true));
+        this.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
         
     }
     /**

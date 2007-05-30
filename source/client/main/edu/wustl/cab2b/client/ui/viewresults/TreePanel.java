@@ -1,9 +1,11 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
+import java.awt.Color;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
@@ -60,7 +62,7 @@ public class TreePanel extends Cab2bPanel
     public void initGUI(IDataRow rootDataRow)
     {
         this.setLayout(new RiverLayout());
-        
+      //  this.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
         //Generate the tree.
         GenerateTree generateTree = new GenerateTree();
         tree = (JXTree)generateTree.createTree((TreeNodeImpl)rootDataRow, true);

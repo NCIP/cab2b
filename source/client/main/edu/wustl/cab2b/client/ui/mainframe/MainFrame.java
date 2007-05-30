@@ -146,7 +146,7 @@ public class MainFrame extends JXFrame {
 		splitPane.setBorder(null);
 		splitPane.setDividerSize(4);
 		Dimension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
-		splitPane.setDividerLocation(dim.width);
+		splitPane.setDividerLocation(242);
 
 		mainPanel = new Cab2bPanel(new RiverLayout());
 		mainPanel.add("hfill vfill", splitPane);

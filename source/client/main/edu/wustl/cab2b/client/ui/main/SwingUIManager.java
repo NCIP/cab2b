@@ -41,9 +41,9 @@ public class SwingUIManager {
 	public static Object generateUIPanel(ParseXMLFile parseFile, AttributeInterface attributeEntity, boolean showConditions) throws CheckedException {
 		Object[] object = new Object[3];
 		String className = null;
-		
 		AttributeTypeInformationInterface attributeTypeInformation = attributeEntity.getAttributeTypeInformation();
 		String dataTypeString = getDataType(attributeTypeInformation);
+		
 		
 		// Check if attribute has value domain (i.e it is enum)
 		if (true == edu.wustl.cab2b.common.util.Utility.isEnumerated(attributeEntity)) {
