@@ -90,7 +90,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 
     List<AttributeInterface> attributeList = null;
 
-    public SimpleSearchResultBreadCrumbPanel(IQueryResult queryResult, ViewSearchResultsPanel viewPanel) {
+    public SimpleSearchResultBreadCrumbPanel(IQueryResult<IRecord> queryResult, ViewSearchResultsPanel viewPanel) {
         this.viewPanel = viewPanel;
         initData();
         initGUI(viewPanel, queryResult);
@@ -145,7 +145,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
         return this.attributeList;
     }
 
-    private JXPanel getResultPanel(IQueryResult queryResult, EntityInterface targetEntity, IDataRow parentDataRow,
+    private JXPanel getResultPanel(IQueryResult<IRecord> queryResult, EntityInterface targetEntity, IDataRow parentDataRow,
                                    IAssociation association) {
 
         JXPanel resultPanel = null;
@@ -190,7 +190,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
      * @param incomingAssociationCollection 
      * @return
      */
-    private JXPanel getResultObjectDetailPanel(IQueryResult queryResult, IDataRow parentDataRow,
+    private JXPanel getResultObjectDetailPanel(IQueryResult<IRecord> queryResult, IDataRow parentDataRow,
                                                IAssociation association,
                                                Collection<AssociationInterface> incomingAssociationCollection,
                                                List<IInterModelAssociation> intraModelAssociationCollection) {
@@ -244,7 +244,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 
     /** Initialize GUI. 
      * @param queryResult */
-    private void initGUI(ViewSearchResultsPanel viewPanel, IQueryResult queryResult) {
+    private void initGUI(ViewSearchResultsPanel viewPanel, IQueryResult<IRecord> queryResult) {
         this.setLayout(new RiverLayout());
 
         breadCrumbsAL = new BreadCrumbActionListener(this);
@@ -454,7 +454,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
             /* Get result by executing the Query in a worker thread. */
             CustomSwingWorker swingWorker = new CustomSwingWorker((JXPanel) breadCrumbPanel) {
 
-                IQueryResult queryResult;
+                IQueryResult<IRecord> queryResult;
 
                 @Override
                 protected void doNonUILogic() throws RuntimeException {

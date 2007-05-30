@@ -42,12 +42,13 @@ import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.util.logger.Logger;
 
 public abstract class ResultPanel extends Cab2bPanel {
 
-    protected IQueryResult queryResult;
+    protected IQueryResult<IRecord> queryResult;
 
     protected JButton addToDataListButton;
 
@@ -160,7 +161,6 @@ public abstract class ResultPanel extends Cab2bPanel {
 
             @Override
             protected void doUIUpdateLogic() throws RuntimeException {
-                // TODO Auto-generated method stub
                 updateMyDataListPanel();
                 /*  JOptionPane.showMessageDialog(component, "Apply All operation completed successfully", "Information",
                  JOptionPane.INFORMATION_MESSAGE);*/
