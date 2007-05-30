@@ -19,12 +19,17 @@ import edu.wustl.common.querysuite.metadata.associations.impl.InterModelAssociat
 import edu.wustl.common.querysuite.metadata.associations.impl.IntraModelAssociation;
 import edu.wustl.common.querysuite.metadata.path.Path;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
+import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 
 /**
  * @author Chandrakant Talele
  */
 public class UtilityTest extends TestCase {
     DomainObjectFactory fact = DomainObjectFactory.getInstance();
+
+    RelationalOperator[] arr = { RelationalOperator.Equals, RelationalOperator.NotEquals, RelationalOperator.Between, RelationalOperator.IsNull, RelationalOperator.IsNotNull, RelationalOperator.LessThan, RelationalOperator.LessThanOrEquals, RelationalOperator.GreaterThan, RelationalOperator.GreaterThanOrEquals, RelationalOperator.In, RelationalOperator.Contains, RelationalOperator.StartsWith, RelationalOperator.EndsWith, RelationalOperator.NotIn };
+
+    String[] res = { "Equals", "Not Equals", "Between", "Is Null", "Is Not Null", "Less than", "Less than or Equal to", "Greater than", "Greater than or Equal to", "In", "Contains", "Starts With", "Ends With", "Not In" };
 
     public void testGetRoleNameForIntraModel() {
         String name = "someName";
@@ -124,5 +129,20 @@ public class UtilityTest extends TestCase {
 
     public void testGetLogicalOperatorAND() {
         assertEquals(LogicalOperator.And, Utility.getLogicalOperator(ClientConstants.OPERATOR_AND));
+    }
+
+    public void testDisplayStringForRelationalOperator() {
+        assertEquals(arr.length, res.length);
+        for (int i = 0; i < arr.length; i++) {
+            String str = Utility.displayStringForRelationalOperator(arr[i]);
+            assertEquals(res[i], str);
+        }
+    }
+
+    public void testGetRelationalOperator() {
+        for (int i = 0; i < arr.length; i++) {
+            RelationalOperator opr = Utility.getRelationalOperator(res[i]);
+            assertEquals(arr[i], opr);
+        }
     }
 }
