@@ -99,12 +99,9 @@ public class MainFrame extends JXFrame {
 	public static enum Status {
 		READY, BUSY
 	};
-
-	private static Cab2bLabel status;
-
-	private static Cab2bLabel statusMessage;
-
-	JXStatusBar statusBar;
+    private static Cab2bLabel status;
+    private static Cab2bLabel statusMessage;
+    private JXStatusBar statusBar;
 
 	public static JXPanel mainPanel;
 
@@ -158,11 +155,11 @@ public class MainFrame extends JXFrame {
 		statusBar = WindowUtilities.getStatusBar(this);
 		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint();
 		c1.setFixedWidth(100);
-		JLabel statusLabel = new Cab2bLabel("Ready");
-		statusBar.add(statusLabel, c1); // Fixed width of 100 with no inserts
-		statusBar.add(new JSeparator(JSeparator.VERTICAL));
-		statusBar.add(new Cab2bLabel("Status bar message"));
-		// WindowUtilities.addMessage(this, "Status bar message");
+        status = new Cab2bLabel("Ready");
+        statusMessage = new Cab2bLabel();
+        statusBar.add(status, c1); // Fixed width of 100 with no inserts
+        statusBar.add(new JSeparator(JSeparator.VERTICAL));
+        statusBar.add(statusMessage);
 		this.add(statusBar, BorderLayout.SOUTH);
 
 	}
