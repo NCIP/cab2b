@@ -46,10 +46,11 @@ import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
  */
 public class ViewSearchResultsSimplePanel extends ResultPanel {
 
+    private static final long serialVersionUID = 1L;
+
     JXPanel breadCrumbPanel;
 
     JXPanel searchResultsPanel;
-
 
     /**
      * Query result in a format required by JPagination component.
@@ -60,7 +61,6 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
 
     IDataRow parentDataRow;
 
-
     EntityInterface presentEntityInterface = null;
 
     IAssociation queryAssociation = null;
@@ -69,13 +69,17 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
 
     private JPagination pagination;
 
-    public ViewSearchResultsSimplePanel(SimpleSearchResultBreadCrumbPanel searchPanel,
-            IQueryResult queryResult, IAssociation association,
+    public ViewSearchResultsSimplePanel(
+            SimpleSearchResultBreadCrumbPanel searchPanel,
+            IQueryResult<IRecord> queryResult,
+            IAssociation association,
             IDataRow parentDataRow,
-            EntityInterface presentEntityInterface,Collection<AssociationInterface> incomingAssociationCollection, List<IInterModelAssociation> intraModelAssociationCollection) {
-        
-        super(searchPanel,incomingAssociationCollection,intraModelAssociationCollection);
-        
+            EntityInterface presentEntityInterface,
+            Collection<AssociationInterface> incomingAssociationCollection,
+            List<IInterModelAssociation> intraModelAssociationCollection) {
+
+        super(searchPanel, incomingAssociationCollection, intraModelAssociationCollection);
+
         queryAssociation = association;
         this.queryResult = queryResult;
         // Parent data row will be null for the first query's results, but will be non-null for associated class query's results. 
@@ -97,12 +101,12 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
      * Initializes the data needed for <code>JPagination</code> component.
      */
     private void initData() {
-        elements = new Vector<PageElement>();        
+        elements = new Vector<PageElement>();
 
-        String className = edu.wustl.cab2b.common.util.Utility.getDisplayName(queryResult.getOutputEntity());
+        String className = Utility.getDisplayName(queryResult.getOutputEntity());
         List<AttributeInterface> attributes = Utility.getAttributeList(queryResult);
         int attributeSize = attributes.size();
-        int attributeLimitInDescStr = (attributeSize < 5) ? attributeSize : 5;
+        //int attributeLimitInDescStr = (attributeSize < 10) ? attributeSize : 10;
 
         Map<String, List<IRecord>> allRecords = queryResult.getRecords();
         for (String url : allRecords.keySet()) {
@@ -110,22 +114,28 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
 
             int j = 1;
             for (IRecord record : recordList) {
-                String descStr = "";
-
+                StringBuffer descBuffer = new StringBuffer();
                 Object[] valueArray = new Object[attributes.size()];
-                for (int i = 0; i < attributes.size(); i++) {
+                for (int i = 0; i < attributeSize; i++) {
                     valueArray[i] = record.getValueForAttribute(attributes.get(i));
-                    if (i < attributeLimitInDescStr && valueArray[i] != null) {
+                    if (valueArray[i] != null && !(valueArray[i].equals(""))) {
                         if (i != 0) {
-                            descStr += ",";
+                            descBuffer.append(",");
                         }
-                        descStr += valueArray[i];
+                        descBuffer.append(valueArray[i]);
                     }
                 }
-
+                String description = descBuffer.toString();
+                if(description.length() > 150) {
+                    //150 is allowable chars at 1024 resolution
+                    description = description.substring(0, 150);
+                    //To avoid clipping of attribute value in-between
+                    int index = description.lastIndexOf(",");
+                    description = description.substring(0, index);
+                }
                 PageElement element = new PageElementImpl();
                 element.setDisplayName(className + "_" + j);
-                element.setDescription(descStr);
+                element.setDescription(description);
 
                 AttributeInterface idAttribute = Utility.getIdAttribute(queryResult.getOutputEntity());
                 Object id = record.getValueForAttribute(idAttribute);
