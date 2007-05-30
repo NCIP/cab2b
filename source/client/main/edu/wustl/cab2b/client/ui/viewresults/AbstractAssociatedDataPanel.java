@@ -68,7 +68,7 @@ public abstract class AbstractAssociatedDataPanel extends Cab2bPanel {
 
     protected void iniGUI() {
         JLabel label = new JLabel(getLabel());
-        label.setForeground(Color.red);
+        label.setForeground(Color.black);
         this.add("br", label);
 
         processAssociation();
@@ -90,7 +90,7 @@ public abstract class AbstractAssociatedDataPanel extends Cab2bPanel {
      * association itself are remembered by the link
      */
     protected Cab2bHyperlink getHyperlink(HyperLinkUserObject hyperLinkUserObject, String tooltip) {
-        Cab2bHyperlink hyperlink = new Cab2bHyperlink();
+        Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
         /* Set the hyperlink text */
         hyperlink.setText(Utility.getDisplayName(hyperLinkUserObject.getTargetEntity()));
         hyperlink.setToolTipText(tooltip);

@@ -67,7 +67,7 @@ public class DagControlPanel extends JPanel implements ActionListener
 		
 		JPanel rightPanel = new JPanel();
 		rightPanel.setOpaque(false);
-		m_clearAllPathsL = new Cab2bHyperlink(true);
+		m_clearAllPathsL = new Cab2bHyperlink();
 		m_clearAllPathsL.setText(CLEARALLPATHS);
 		m_autoConnectB = new JButton(AUTOCONNECTLABEL);
 		m_autoConnectB.setEnabled(true);

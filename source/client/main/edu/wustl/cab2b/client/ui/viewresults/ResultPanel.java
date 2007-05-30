@@ -281,7 +281,7 @@ public abstract class ResultPanel extends Cab2bPanel {
      * @param row
      */
     private static void createHyperlink(final IDataRow row) {
-        Cab2bHyperlink selectedRootClassName = new Cab2bHyperlink();
+        Cab2bHyperlink selectedRootClassName = new Cab2bHyperlink(true);
 
         DataRow dataRow = (DataRow) row;
         //edu.wustl.cab2b.common.util.Utility.getDisplayName(dataRow.getEntityInterface())

@@ -44,11 +44,11 @@ public class BreadcrumbPanel extends Cab2bPanel {
             if(i==size-1) {
                 //if last element, add lable instead of hyperlink
                 JLabel selectedObject = new JLabel(strJustText);
-                selectedObject.setForeground(Cab2bHyperlink.getUnclickedHyperlinkColor());
+                selectedObject.setForeground(new Cab2bHyperlink().getUnclickedHyperlinkColor());
                 this.add(selectedObject);
                 break;
             }
-            Cab2bHyperlink breadCrumbHyperlink = new Cab2bHyperlink();
+            Cab2bHyperlink breadCrumbHyperlink = new Cab2bHyperlink(true);
             //Set the whole string as the user object for this link
             breadCrumbHyperlink.setUserObject(strWholeText);
 
@@ -60,7 +60,7 @@ public class BreadcrumbPanel extends Cab2bPanel {
             if (i < size - 1) {
                 JLabel arrow = new JLabel(">>");
                 //arrow will match with other links due to this
-                arrow.setForeground(Cab2bHyperlink.getUnclickedHyperlinkColor());
+                arrow.setForeground(breadCrumbHyperlink.getUnclickedHyperlinkColor());
                 this.add(arrow);
             }
         }

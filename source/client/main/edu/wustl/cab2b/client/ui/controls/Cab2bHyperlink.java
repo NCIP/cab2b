@@ -14,75 +14,50 @@ import org.jdesktop.swingx.JXHyperlink;
  * with isHyperlinkUnderlined boolean set to false. 
  * 
  * @author chetan_bh
- *
+ * @author Chandrakant Talele
  */
 public class Cab2bHyperlink extends JXHyperlink {
 
     private static final long serialVersionUID = 8338180418321272388L;
+
+    private static final Color defaultClickedHyperlinkColor = new Color(0x006699);
+
+    private static final Color defaultUnclickedHyperlinkColor = new Color(0x034E74);
 
     /**
      * User object associated with this hyperlink.
      */
     private Object userObject;
 
-    private static Color clickedHyperlinkColor = new Color(0x006699);
+    private Color clickedHyperlinkColor;
 
-    private static Color unclickedHyperlinkColor = new Color(0x034E74);
-
-    private static boolean hyperlinkUnderlined = true;
+    private Color unclickedHyperlinkColor;
 
     /**
-     * default constructor
+     * Default constructor. Creates hypelink object which will be painted with <b>Bold</b> text.
      */
     public Cab2bHyperlink() {
-        this(null, hyperlinkUnderlined, clickedHyperlinkColor, unclickedHyperlinkColor);
+        this(false);
     }
 
     /**
-     * @param isHyperlinkUnderlined True if Hyperlink is Underlined else false
+     * @param usePlainFont TRUE if hyperlink is to be painted with plain text. 
+     *                     FALSEpa hyperlink is to be painted with <b>Bold</b> text
      */
-    public Cab2bHyperlink(boolean isHyperlinkUnderlined) {
-        this(null, isHyperlinkUnderlined, clickedHyperlinkColor, unclickedHyperlinkColor);
+    public Cab2bHyperlink(boolean usePlainFont) {
+        this(null, usePlainFont);
     }
 
     /**
-     * @param clickedColor colour to use when hyperlink is clicked
-     * @param unclickedColor colour to use when hyperlink is not clicked
+     * @param action Action to associate
+     * @param usePlainFont TRUE if hyperlink is to be painted with plain text. 
+     *                     FALSEpa hyperlink is to be painted with <b>Bold</b> text
      */
-    public Cab2bHyperlink(Color clickedColor, Color unclickedColor) {
-        this(null, hyperlinkUnderlined, clickedColor, unclickedColor);
-    }
-
-    /**
-     * @param action Action
-     */
-    public Cab2bHyperlink(Action action) {
-        this(action, hyperlinkUnderlined, clickedHyperlinkColor, unclickedHyperlinkColor);
-    }
-
-    /**
-     * @param action Action 
-     * @param isHyperlinkUnderlined True if Hyperlink is Underlined else false
-     */
-    public Cab2bHyperlink(Action action, boolean isHyperlinkUnderlined) {
-
-        this(action, isHyperlinkUnderlined, clickedHyperlinkColor, unclickedHyperlinkColor);
-    }
-
-    /**
-     * @param action Action
-     * @param isHyperlinkUnderlined True if Hyperlink is Underlined else false
-     * @param clickedColor colour to use when hyperlink is clicked
-     * @param unclickedColor colour to use when hyperlink is not clicked
-     */
-    public Cab2bHyperlink(Action action, boolean isHyperlinkUnderlined, Color clickedColor, Color unclickedColor) {
+    public Cab2bHyperlink(Action action, boolean usePlainFont) {
         super(action);
-
-        hyperlinkUnderlined = isHyperlinkUnderlined;
-        this.setClickedColor(clickedColor);
-        this.setUnclickedColor(unclickedColor);
-        if (hyperlinkUnderlined)
-            this.setUI(new Cab2bHyperlinkUI());
+        this.setClickedHyperlinkColor(defaultClickedHyperlinkColor);
+        this.setUnclickedHyperlinkColor(defaultUnclickedHyperlinkColor);
+        this.setUI(new Cab2bHyperlinkUI(usePlainFont));
     }
 
     /**
@@ -102,14 +77,31 @@ public class Cab2bHyperlink extends JXHyperlink {
     /**
      * @return Returns the clickedHyperlinkColor.
      */
-    public static Color getClickedHyperlinkColor() {
+    public Color getClickedHyperlinkColor() {
         return clickedHyperlinkColor;
     }
 
     /**
      * @return Returns the unclickedHyperlinkColor.
      */
-    public static Color getUnclickedHyperlinkColor() {
+    public Color getUnclickedHyperlinkColor() {
         return unclickedHyperlinkColor;
     }
+
+    /**
+     * @param clickedHyperlinkColor The clickedHyperlinkColor to set.
+     */
+    public void setClickedHyperlinkColor(Color clickedHyperlinkColor) {
+        this.clickedHyperlinkColor = clickedHyperlinkColor;
+        this.setClickedColor(clickedHyperlinkColor);
+    }
+
+    /**
+     * @param unclickedHyperlinkColor The unclickedHyperlinkColor to set.
+     */
+    public void setUnclickedHyperlinkColor(Color unclickedHyperlinkColor) {
+        this.unclickedHyperlinkColor = unclickedHyperlinkColor;
+        this.setUnclickedColor(unclickedHyperlinkColor);
+    }
+
 }
