@@ -5,6 +5,6 @@ package edu.wustl.cab2b.client.ui.util;
  * @author Chandrakant Talele
  */
 public class ClientConstants {
-    public static final String ANDOPERATOR = "AND";
-    public static final String OROPERATOR = "OR";
+    public static final String OPERATOR_AND = "AND";
+    public static final String OPERATOR_OR = "OR";
 }

@@ -44,7 +44,7 @@ public class Utility {
      */
     public static LogicalOperator getLogicalOperator(String operator) {
         LogicalOperator logicalOperator = LogicalOperator.And;
-        if (ClientConstants.OROPERATOR.equals(operator)) {
+        if (ClientConstants.OPERATOR_OR.equals(operator)) {
             logicalOperator = LogicalOperator.Or;
         }
 

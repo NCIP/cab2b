@@ -334,13 +334,13 @@ public class ViewController extends DefaultViewController implements ActionListe
     		int index = nodeRenderer.getSelectedAssocitationIdx();
     		if(index == 0)// Operator between constraints and rule has been changed
     		{
-    			classNode.setOperatorBetAttrAndAss(ClientConstants.ANDOPERATOR);
-    			m_mainPanel.updateLogicalOperatorForAttributes(classNode, ClientConstants.ANDOPERATOR);
+    			classNode.setOperatorBetAttrAndAss(ClientConstants.OPERATOR_AND);
+    			m_mainPanel.updateLogicalOperatorForAttributes(classNode, ClientConstants.OPERATOR_AND);
     		}
     		else
     		{
-    			classNode.setLogicalOperator(index, ClientConstants.ANDOPERATOR);
-    			m_mainPanel.updateLogicalOperatorForAssociation(classNode, classNode.getLinkForSourcePort(classNode.getSourcePortAt(index)),ClientConstants.ANDOPERATOR );
+    			classNode.setLogicalOperator(index, ClientConstants.OPERATOR_AND);
+    			m_mainPanel.updateLogicalOperatorForAssociation(classNode, classNode.getLinkForSourcePort(classNode.getSourcePortAt(index)),ClientConstants.OPERATOR_AND );
     		}
     		getHelper().scheduleNodeToLayout(m_currentNode);
 			getHelper().recalculate();
@@ -352,13 +352,13 @@ public class ViewController extends DefaultViewController implements ActionListe
     		int index = nodeRenderer.getSelectedAssocitationIdx();
     		if(index == 0) // Operator between constraints and rule has been changed
     		{
-    			classNode.setOperatorBetAttrAndAss(ClientConstants.OROPERATOR);
-    			m_mainPanel.updateLogicalOperatorForAttributes(classNode, ClientConstants.OROPERATOR);
+    			classNode.setOperatorBetAttrAndAss(ClientConstants.OPERATOR_OR);
+    			m_mainPanel.updateLogicalOperatorForAttributes(classNode, ClientConstants.OPERATOR_OR);
     		}
     		else
     		{
-    			classNode.setLogicalOperator(index, ClientConstants.OROPERATOR);
-    			m_mainPanel.updateLogicalOperatorForAssociation(classNode, classNode.getLinkForSourcePort(classNode.getSourcePortAt(index)),ClientConstants.OROPERATOR );
+    			classNode.setLogicalOperator(index, ClientConstants.OPERATOR_OR);
+    			m_mainPanel.updateLogicalOperatorForAssociation(classNode, classNode.getLinkForSourcePort(classNode.getSourcePortAt(index)),ClientConstants.OPERATOR_OR );
     		}
     		getHelper().scheduleNodeToLayout(m_currentNode);
 			getHelper().recalculate();
