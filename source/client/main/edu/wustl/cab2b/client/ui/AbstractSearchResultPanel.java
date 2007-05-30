@@ -3,8 +3,8 @@ package edu.wustl.cab2b.client.ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -49,7 +49,8 @@ import edu.wustl.common.util.logger.Logger;
  * 
  */
 
-public abstract class AbstractSearchResultPanel extends Cab2bPanel implements ActionListener {
+public abstract class AbstractSearchResultPanel extends Cab2bPanel implements
+		ActionListener {
 
 	/** The pagination component to paginate the results of the search */
 	private JPagination m_resultsPage = null;
@@ -70,7 +71,7 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
 	 *            The collectiond of entities.
 	 */
 
-	public AbstractSearchResultPanel(ContentPanel addLimitPanel, Set result) {
+	public AbstractSearchResultPanel(ContentPanel addLimitPanel, Set<EntityInterface> result) {
 		initGUI(addLimitPanel, result);
 	}
 
@@ -86,45 +87,38 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
 	 * 
 	 */
 
-	private void initGUI(final ContentPanel addLimitPanel, Set result) {
-
+	private void initGUI(final ContentPanel addLimitPanel,
+			Set<EntityInterface> resultSet) {
 		this.setLayout(new RiverLayout());
 		this.m_addLimitPanel = addLimitPanel;
 		if (m_addLimitPanel instanceof AddLimitPanel) {
 			((AddLimitPanel) m_addLimitPanel).setSearchResultPanel(this);
 		}
-		Vector pageElementCollection = new Vector();
-		Object[] resultArray = result.toArray();
-		Arrays.sort(resultArray, new EntityInterfaceComparator());
-		for (int i = 0; i < resultArray.length; i++) {
-			/* Extract individual elements from the collection. */
-			EntityInterface entity = (EntityInterface) resultArray[i];
-
-			// String className = entity.getName();
-
+		Vector<PageElement> pageElementCollection = new Vector<PageElement>();
+		List<EntityInterface> resultList = new ArrayList<EntityInterface>(
+				resultSet);
+		Collections.sort(resultList, new EntityInterfaceComparator());
+		for (EntityInterface entity : resultList) {
 			// set the proper class name
-			String className = edu.wustl.cab2b.common.util.Utility.getDisplayName(entity);
+			String className = edu.wustl.cab2b.common.util.Utility
+					.getDisplayName(entity);
 			Logger.out.info(className);
 			String strDescription = entity.getDescription();
 
-			/*
-			 * Create an instance of the PageElement. Initialize with the
-			 * appropriate data
-			 */
+			// Create an instance of the PageElement. Initialize with the
+			// appropriate data
 			PageElement pageElement = new PageElementImpl();
 			pageElement.setDisplayName(className);
 			pageElement.setDescription(strDescription);
 			pageElement.setUserObject(entity);
 			pageElementCollection.add(pageElement);
-
 		}
 
-		NumericPager numPager = new NumericPager(pageElementCollection, getPageSize());
-		/*
-		 * Initalize the pagination component.
-		 */
-
-		this.m_resultsPage = new JPagination(pageElementCollection, numPager, this, true);
+		NumericPager numPager = new NumericPager(pageElementCollection,
+				getPageSize());
+		/* Initalize the pagination component. */
+		this.m_resultsPage = new JPagination(pageElementCollection, numPager,
+				this, true);
 		this.m_resultsPage.setSelectableEnabled(false);
 		this.m_resultsPage.setGroupActionEnabled(false);
 		this.m_resultsPage.addPageElementActionListener(this);
@@ -144,7 +138,8 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
 		PageElement element = (PageElement) link.getUserObject();
 
 		/* This is the EntityInterface instance. */
-		final EntityInterface entity = (EntityInterface) element.getUserObject();
+		final EntityInterface entity = (EntityInterface) element
+				.getUserObject();
 		final JXPanel[] componentPanel = getAddLimitPanels(entity);
 		final JXPanel[] panelsToAdd = new Cab2bPanel[componentPanel.length + 1];
 		for (int i = 0; i < componentPanel.length; i++) {
@@ -162,7 +157,8 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
 
 		if (componentPanel != null) {
 			// pass the appropriate class name for display
-			performAction(panelsToAdd, edu.wustl.cab2b.common.util.Utility.getDisplayName(entity));
+			performAction(panelsToAdd, edu.wustl.cab2b.common.util.Utility
+					.getDisplayName(entity));
 		}
 	}
 
@@ -173,7 +169,8 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
 	 * @return
 	 */
 	public JXPanel[] getAddLimitPanels(final EntityInterface entity) {
-		final Collection collection = entity.getAttributeCollection();
+		final Collection<AttributeInterface> attributeCollection = entity
+				.getAttributeCollection();
 		ParseXMLFile parseFile = null;
 		try {
 			parseFile = ParseXMLFile.getInstance();
@@ -181,21 +178,22 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
 			CommonUtils.handleException(ce, this, true, true, false, false);
 		}
 
-		if (collection != null) {
-			Object[] attributes = collection.toArray();
-			Arrays.sort(attributes, new AttributeInterfaceComparator());
-			final int size = attributes.length;
-			final JXPanel[] componentPanels = new Cab2bPanel[size];
+		if (attributeCollection != null) {
+			List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>(
+					attributeCollection);
+			Collections.sort(attributeList, new AttributeInterfaceComparator());
+			final JXPanel[] componentPanels = new Cab2bPanel[attributeList
+					.size()];
 			try {
-				for (int i = 0; i < size; i++) {
-					componentPanels[i] = (JXPanel) SwingUIManager.generateUIPanel(parseFile,
-							(AttributeInterface) attributes[i]);
+				int i = 0;
+				for (AttributeInterface attribute : attributeList) {
+					componentPanels[i++] = (JXPanel) SwingUIManager
+							.generateUIPanel(parseFile, attribute);
 				}
 			} catch (CheckedException e) {
 				CommonUtils.handleException(e, this, true, true, false, false);
 				// JXErrorDialog.showDialog(this,
 				// ErrorCodeHandler.getErrorMessage(e.getErrorCode()), e);
-				// e.printStackTrace();
 			}
 			return componentPanels;
 		}
@@ -232,11 +230,12 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
 	/**
 	 * Method to handle 'Add Limit' button click event
 	 */
-	public void performAddLimitAction(JXPanel[] componentPanel, EntityInterface entity) {
-		// TODO Auto-generated method stub
+	public void performAddLimitAction(JXPanel[] componentPanel,
+			EntityInterface entity) {
 		final Collection collection = entity.getAttributeCollection();
 		final int size = collection.size();
-		List<AttributeInterface> attributes = new ArrayList<AttributeInterface>(size);
+		List<AttributeInterface> attributes = new ArrayList<AttributeInterface>(
+				size);
 		List<String> conditions = new ArrayList<String>(size);
 		List<List<String>> values = new ArrayList<List<String>>();
 
@@ -246,17 +245,19 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
 
 			// Check if condition is set for this panel
 
-			AttributeInterface attribute = getAttribute(collection, panel.getAttributeName());
+			AttributeInterface attribute = getAttribute(collection, panel
+					.getAttributeName());
 			ArrayList<String> conditionValues = panel.getValues();
 			if (0 == conditionString.compareToIgnoreCase("Between")
 					&& (conditionValues.size() == 1)) {
-				JOptionPane.showInternalMessageDialog((this.m_addLimitPanel).getParent()
-						.getParent().getParent(),
-						"Please enter both the values for between operator.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showInternalMessageDialog((this.m_addLimitPanel)
+						.getParent().getParent().getParent(),
+						"Please enter both the values for between operator.",
+						"Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			if ((conditionString.equals("Is Null")) || conditionString.equals("Is Not Null")
+			if ((conditionString.equals("Is Null"))
+					|| conditionString.equals("Is Not Null")
 					|| (conditionValues.size() != 0)) {
 				attributes.add(attribute);
 				conditions.add(conditionString);
@@ -264,8 +265,9 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
 			}
 		}
 		if (attributes.size() == 0) {
-			JOptionPane.showInternalMessageDialog((this.m_addLimitPanel).getParent().getParent()
-					.getParent(), "Please enter atleast one condition.", "Error",
+			JOptionPane.showInternalMessageDialog((this.m_addLimitPanel)
+					.getParent().getParent().getParent(),
+					"Please enter atleast one condition.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		} else {
 			MainSearchPanel mainSearchPanel = (MainSearchPanel) ((JXPanel) m_addLimitPanel)
@@ -276,20 +278,23 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
 				m_addLimitPanel.setQueryObject(query);
 			}
 
-			IExpressionId expressionId = mainSearchPanel.getQueryObject().addRule(attributes,
-					conditions, values);
+			IExpressionId expressionId = mainSearchPanel.getQueryObject()
+					.addRule(attributes, conditions, values);
 			if (expressionId != null) {
 				// Pratibha's code will take over from here
 				m_addLimitPanel.refreshBottomCenterPanel(expressionId);
 			} else {
-				JOptionPane.showInternalMessageDialog(mainSearchPanel.getParent(),
-						"This rule cannot be added as it is not associated with the added rules.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane
+						.showInternalMessageDialog(
+								mainSearchPanel.getParent(),
+								"This rule cannot be added as it is not associated with the added rules.",
+								"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
 
-	private AttributeInterface getAttribute(Collection collection, String attributeName) {
+	private AttributeInterface getAttribute(Collection collection,
+			String attributeName) {
 		AttributeInterface attribute = null;
 		Iterator iterator = collection.iterator();
 
@@ -306,31 +311,36 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
 	/**
 	 * Method to perform edit limit action
 	 */
-	public void performEditLimitAction(JXPanel[] componentPanel, IExpression expression) {
-		// TODO Auto-generated method stub
-		final Collection collection = expression.getConstraintEntity().getDynamicExtensionsEntity()
-				.getAttributeCollection();
+	public void performEditLimitAction(JXPanel[] componentPanel,
+			IExpression expression) {
+		final Collection collection = expression.getConstraintEntity()
+				.getDynamicExtensionsEntity().getAttributeCollection();
 		List<ICondition> conditionList = new ArrayList<ICondition>();
 		for (int j = 0; j < componentPanel.length - 1; j++) {
 			IComponent panel = (IComponent) componentPanel[j];
 			String conditionString = panel.getCondition();
 
-			AttributeInterface attribute = getAttribute(collection, panel.getAttributeName());
+			AttributeInterface attribute = getAttribute(collection, panel
+					.getAttributeName());
 			ArrayList<String> values = panel.getValues();
-			if (0 == conditionString.compareToIgnoreCase("Between") && (values.size() == 1)) {
-				JOptionPane.showInternalMessageDialog((this.m_addLimitPanel).getParent()
-						.getParent().getParent(),
-						"Please enter both the values for between operator.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+			if (0 == conditionString.compareToIgnoreCase("Between")
+					&& (values.size() == 1)) {
+				JOptionPane.showInternalMessageDialog((this.m_addLimitPanel)
+						.getParent().getParent().getParent(),
+						"Please enter both the values for between operator.",
+						"Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			if ((conditionString.equals("Is Null")) || conditionString.equals("Is Not Null")
+			if ((conditionString.equals("Is Null"))
+					|| conditionString.equals("Is Not Null")
 					|| (values.size() != 0)) {
 
-				ICondition condition = Cab2bQueryObjectFactory.createCondition();
+				ICondition condition = Cab2bQueryObjectFactory
+						.createCondition();
 				condition.setAttribute(attribute);
-				condition.setRelationalOperator(edu.wustl.cab2b.client.ui.query.Utility
-						.getRelationalOperator(conditionString));
+				condition
+						.setRelationalOperator(edu.wustl.cab2b.client.ui.query.Utility
+								.getRelationalOperator(conditionString));
 				for (int i = 0; i < values.size(); i++) {
 					condition.addValue(values.get(i));
 				}
@@ -346,9 +356,11 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
 		} else {
 			MainSearchPanel mainSearchPanel = (MainSearchPanel) ((JXPanel) m_addLimitPanel)
 					.getParent().getParent();
-			JOptionPane.showInternalMessageDialog(mainSearchPanel.getParent(),
-					"This rule cannot be added as it is not associated with the added rules.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane
+					.showInternalMessageDialog(
+							mainSearchPanel.getParent(),
+							"This rule cannot be added as it is not associated with the added rules.",
+							"Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -363,7 +375,8 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
 	 * @param strClassName
 	 *            The class/category name.
 	 */
-	public abstract void performAction(JXPanel[] arrComponentPanel, String strClassName);
+	public abstract void performAction(JXPanel[] arrComponentPanel,
+			String strClassName);
 
 	/**
 	 * The abstract method that is to return the number of elements to be
