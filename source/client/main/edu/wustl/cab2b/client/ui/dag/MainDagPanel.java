@@ -33,7 +33,7 @@ import edu.wustl.cab2b.client.ui.dag.ambiguityresolver.AutoConnectAmbiguityResol
 import edu.wustl.cab2b.client.ui.dag.ambiguityresolver.ResolveAmbiguity;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.query.IPathFinder;
-import edu.wustl.cab2b.client.ui.query.Utility;
+import edu.wustl.cab2b.client.ui.util.ClientConstants;
 import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImageConstants;
 import edu.wustl.cab2b.common.queryengine.Cab2bQueryObjectFactory;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
@@ -55,7 +55,8 @@ import edu.wustl.common.util.logger.Logger;
 
 public class MainDagPanel extends Cab2bPanel
 {
-	// view to be added to this panel
+    private static final long serialVersionUID = 1L;
+    // view to be added to this panel
 	private JComponent m_view;
 	private GraphDocument m_document;
 	private DagControlPanel m_controlPanel;
@@ -319,11 +320,11 @@ public class MainDagPanel extends Cab2bPanel
 	        	LogicalOperator logicalOperator = logicalConnector.getLogicalOperator();
 	        	if(logicalOperator.equals(LogicalOperator.And))
 	        	{
-	        		sourceNode.setLogicalOperator(sourcePort, ClassNode.ANDOPERATOR);
+	        		sourceNode.setLogicalOperator(sourcePort, ClientConstants.OPERATOR_AND);
 	        	}
 	        	else
 	        	{
-	        		sourceNode.setLogicalOperator(sourcePort, ClassNode.OROPERATOR);
+	        		sourceNode.setLogicalOperator(sourcePort, ClientConstants.OPERATOR_OR);
 	        	}
 	        	
 	        }
@@ -335,11 +336,11 @@ public class MainDagPanel extends Cab2bPanel
 		        	LogicalOperator logicalOperator = logicalConnector.getLogicalOperator();
 		        	if(logicalOperator.equals(LogicalOperator.And))
 		        	{
-		        		sourceNode.setOperatorBetAttrAndAss(ClassNode.ANDOPERATOR);
+		        		sourceNode.setOperatorBetAttrAndAss(ClientConstants.OPERATOR_AND);
 		        	}
 		        	else
 		        	{
-		        		sourceNode.setOperatorBetAttrAndAss(ClassNode.OROPERATOR);
+		        		sourceNode.setOperatorBetAttrAndAss(ClientConstants.OPERATOR_OR);
 		        	}
 				}
 			}
