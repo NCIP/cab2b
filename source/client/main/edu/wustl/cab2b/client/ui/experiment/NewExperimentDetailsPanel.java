@@ -133,20 +133,20 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 		exptPanel.setLayout(new BorderLayout(0, 0));
 		projPanel.setLayout(new BorderLayout(0, 0));
 
-		JLabel asterix1 = new Cab2bLabel("*");
+		JLabel asterix1 = new Cab2bLabel("* ");
 		asterix1.setForeground(Color.RED);
 
-		JLabel asterix2 = new Cab2bLabel("*");
+		JLabel asterix2 = new Cab2bLabel("* ");
 		asterix2.setForeground(Color.RED);
 
 		// JLabel mandatoryNodeLabel = new
 		// Cab2bLabel(ApplicationProperties.getValue("label.mandatorynote.text"));
 
-		JLabel expNameLabel = new Cab2bLabel("Experiment Name :        ");
+		JLabel expNameLabel = new Cab2bLabel("Experiment Name :     ");
 		expNameTextField = new Cab2bTextField();
 		// expNameTextField.setColumns(22);
 
-		JLabel projectsLabel = new Cab2bLabel("Project :                           ");
+		JLabel projectsLabel = new Cab2bLabel("Project :                         ");
 
 		exptPanel.add(asterix1, BorderLayout.WEST);
 		exptPanel.add(expNameLabel, BorderLayout.EAST);
@@ -187,7 +187,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
 		JLabel expDescLabel = new Cab2bLabel("Description : ");
 		expDescTextArea = new JTextArea();
-		expDescTextArea.setColumns(35);
+		//expDescTextArea.setColumns(35);
 		expDescTextArea.setRows(5);
 
 		this.setLayout(new BorderLayout());
@@ -230,6 +230,8 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 		gbc.gridheight = 1;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		centerPanel.add(projPanel, gbc);
+		
+		
 
 		treeScrollPane = new JScrollPane(projectsTree);
 		treeScrollPane.setPreferredSize(new Dimension(250, 300));
@@ -272,12 +274,20 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 			}
 		});
 
-		gbc.gridx = 1;
+	/*	gbc.gridx = 1;
 		gbc.gridy = 2;
 		gbc.gridwidth = 1;
 		gbc.gridheight = 1;
 		gbc.weightx = 0;
-		gbc.fill = GridBagConstraints.NONE;
+		gbc.fill = GridBagConstraints.NONE;*/
+		//centerPanel.add(addNewButton, gbc);
+		
+		gbc.gridx = 0;
+		gbc.gridy = 3;
+		gbc.gridwidth = 1;
+		gbc.gridheight = 1;
+		gbc.weighty = 0.0;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		centerPanel.add(addNewButton, gbc);
 
 		gbc.gridx = 1;
@@ -288,7 +298,8 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 		gbc.weighty = 0.3;
 		gbc.fill = GridBagConstraints.BOTH;
 		centerPanel.add(treeScrollPane, gbc);
-
+		
+		gbc.weighty = 0.0;
 		gbc.gridx = 0;
 		gbc.gridy = 7;
 		gbc.gridwidth = 1;
