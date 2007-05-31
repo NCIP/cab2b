@@ -133,8 +133,8 @@ public abstract class AbstractSearchPanel extends Cab2bPanel
 			}
 		});
 		
-		m_srhTextField.setBorder(BorderFactory.createLoweredBevelBorder());
-		
+		//m_srhTextField.setBorder(BorderFactory.createLoweredBevelBorder());
+		m_srhTextField.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 		/* Invoke the method based on concrete implementations from sub-class*/
 		addTextField();
 	
