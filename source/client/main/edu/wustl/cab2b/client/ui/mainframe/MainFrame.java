@@ -144,6 +144,7 @@ public class MainFrame extends JXFrame {
 		splitPane.setDividerSize(4);
 		Dimension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
 		splitPane.setDividerLocation(242);
+		splitPane.setOneTouchExpandable(false);
 
 		mainPanel = new Cab2bPanel(new RiverLayout());
 		mainPanel.add("hfill vfill", splitPane);
@@ -233,8 +234,9 @@ public class MainFrame extends JXFrame {
 		// true, true));
 		splitPane.setRightComponent(homePanel);
 		splitPane.setOneTouchExpandable(true);
-		Dimension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
-		splitPane.setDividerLocation(dim.width);
+		//mension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
+		splitPane.setDividerLocation(242);
+		splitPane.setOneTouchExpandable(false);
 		mainPanel.removeAll();
 		mainPanel.add("hfill vfill", splitPane);
 		// mainPanel.setBorder(new CustomizableBorder(new Insets(10, 0, 6, 10),
