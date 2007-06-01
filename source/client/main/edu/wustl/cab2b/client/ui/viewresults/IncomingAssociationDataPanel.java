@@ -1,11 +1,14 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
+import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.JLabel;
 
 import edu.common.dynamicextensions.domain.Association;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -37,6 +40,15 @@ public class IncomingAssociationDataPanel extends AbstractAssociatedDataPanel {
             IDataRow dataRow,
             IRecord record) {
         super(associations, associatedDataActionListener, dataRow, record);
+    }
+    
+    /**
+     * @see edu.wustl.cab2b.client.ui.viewresults.AbstractAssociatedDataPanel#addLabel()
+     */
+    protected void addLabel() {
+        JLabel label = new JLabel(" Intra Model Associations : ");
+        label.setForeground(Color.black);
+        this.add("br", label);
     }
 
     /**
