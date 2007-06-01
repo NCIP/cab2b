@@ -64,15 +64,13 @@ public class CategoryObjectDetailsPanel extends ResultObjectDetailsPanel {
         Map<CategorialClass, List<ICategorialClassRecord>> mapChildClasses = iCategorialClassRecord.getChildrenCategorialClassRecords();
         Logger.out.debug("Size of class Records :" + mapChildClasses.keySet().size());
 
-        Vector<UserObjectWrapper> categoryClassData = new Vector<UserObjectWrapper>();
         for (CategorialClass categorialClass : mapChildClasses.keySet()) {
 
-            categoryClassData.add(new UserObjectWrapper<CategorialClass>(categorialClass,
-                    edu.wustl.cab2b.common.util.Utility.getDisplayName(categorialClass.getCategorialClassEntity())));
-        }
-
-        if (categoryClassData.size() > 0) {
-
+            String displayName = edu.wustl.cab2b.common.util.Utility.getDisplayName(categorialClass.getCategorialClassEntity());
+            UserObjectWrapper userObjectWrapper = new UserObjectWrapper<CategorialClass>(categorialClass,
+                    displayName);
+            Vector<UserObjectWrapper> categoryClassData = new Vector<UserObjectWrapper>();
+            categoryClassData.add(userObjectWrapper);
             categoryTableData.add(categoryClassData);
         }
     }
@@ -83,7 +81,7 @@ public class CategoryObjectDetailsPanel extends ResultObjectDetailsPanel {
     protected void initTableGUI() {
         super.initTableGUI();
 
-        if (categoryTableData.size() > 0) {
+        if (!categoryTableData.isEmpty()) {
 
             categoryTable = new Cab2bTable(false, categoryTableData, categoryTableHeader);
             CategoryLinkAction myLinkAction = new CategoryLinkAction();
