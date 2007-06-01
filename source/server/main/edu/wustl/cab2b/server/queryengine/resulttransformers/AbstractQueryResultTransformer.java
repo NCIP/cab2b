@@ -30,6 +30,7 @@ import gov.nih.nci.cagrid.fqp.processor.exceptions.FederatedQueryProcessingExcep
  * <code>createCategoryRecords</code> methods. Additional hooks are provided
  * and can be used to customize the creation and population of the records in
  * the result.
+ * 
  * @author srinath_k
  * @see edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer
  */
@@ -43,8 +44,8 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
 
     /**
      * Subclasses can specify a custom dcql logger.
-     * @param dcqlLogger
-     *            custom logger.
+     * 
+     * @param dcqlLogger custom logger.
      */
     protected AbstractQueryResultTransformer(QueryLogger queryLogger) {
         this.queryLogger = queryLogger;
@@ -61,6 +62,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * For each {@link CQLQueryResults} obtained by executing the dcql, the
      * method <code>createRecords</code> is invoked. Concrete transformers are
      * required to implement the method <code>createRecords</code>.
+     * 
      * @see edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer#getResults(gov.nih.nci.cagrid.dcql.DCQLQuery,
      *      edu.common.dynamicextensions.domaininterface.EntityInterface)
      */
@@ -119,6 +121,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * </ol>
      * Finally <code>copyFromResult</code> is invoked. Subclasses can override
      * this method
+     * 
      * @see edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer#getCategoryResults(gov.nih.nci.cagrid.dcql.DCQLQuery,
      *      edu.wustl.common.querysuite.metadata.category.CategorialClass)
      */
@@ -135,6 +138,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
 
         for (Map.Entry<String, List<R>> entry : classResults.getRecords().entrySet()) {
             String url = entry.getKey();
+            catResult.addUrl(url);
             for (R rec : entry.getValue()) {
                 C catRec = createCategoryRecord(categorialClass, categoryAttributes, rec.getId());
                 for (CategorialAttribute catAttr : categorialClass.getCategorialAttributeCollection()) {
@@ -158,6 +162,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * Returns the default query result object. A subclass that overrides this
      * method would generally also override <code>createResult</code> and
      * <code>copyFromResult</code>.
+     * 
      * @return the query result object.
      * @see QueryResultFactory#createResult()
      */
@@ -169,6 +174,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * Returns the default query result object.A subclass that overrides this
      * method would generally also override <code>createCategoryResult</code>
      * and <code>copyFromResult</code>.
+     * 
      * @return the query result object.
      * @see QueryResultFactory#createResult()
      */
@@ -178,10 +184,9 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
 
     /**
      * Does nothing and is a hook for subclasses.
-     * @param catRec
-     *            the categorialClassRecord.
-     * @param rec
-     *            the record for the class obtained by executing DCQL.
+     * 
+     * @param catRec the categorialClassRecord.
+     * @param rec the record for the class obtained by executing DCQL.
      */
     protected void copyFromRecord(C catRec, R rec) {
 
@@ -192,10 +197,9 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * override this method if it has overriden either of the
      * <code>createResult</code> or <code>createCategoryResult</code>
      * methods.
-     * @param catResult
-     *            the category results.
-     * @param classResults
-     *            the class results.
+     * 
+     * @param catResult the category results.
+     * @param classResults the class results.
      */
     protected void copyFromResult(IQueryResult<C> catResult, IQueryResult<R> classResults) {
 
@@ -204,25 +208,20 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
     /**
      * Returns a {@link List} of {@link IRecord}s that represent the given
      * {@link CQLQueryResults}.
-     * @param url
-     *            the service url from which the cqlResults were obtained.
-     * @param cqlQueryResults
-     *            the results obtained by executing DCQL.
-     * @param targetEntity
-     *            the target entity.
+     * 
+     * @param url the service url from which the cqlResults were obtained.
+     * @param cqlQueryResults the results obtained by executing DCQL.
+     * @param targetEntity the target entity.
      * @return list of transformed records.
      */
     protected abstract List<R> createRecords(String url, CQLQueryResults cqlQueryResults,
                                              EntityInterface targetEntity);
 
     /**
-     * @param categorialClass
-     *            the categorial class.
-     * @param categoryAttributes
-     *            the attributes of the categorial class that are to be present
-     *            in the record.
-     * @param id
-     *            the id of the record.
+     * @param categorialClass the categorial class.
+     * @param categoryAttributes the attributes of the categorial class that are
+     *            to be present in the record.
+     * @param id the id of the record.
      * @return a {@link ICategorialClassRecord}.
      */
     protected abstract C createCategoryRecord(CategorialClass categorialClass,

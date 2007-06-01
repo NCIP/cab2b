@@ -24,10 +24,6 @@ public class QueryResult<R extends IRecord> implements IQueryResult<R> {
         return Collections.unmodifiableMap(records);
     }
 
-    public void addRecord(String url, R record) {
-        getRecordsForUrl(url).add(record);
-    }
-
     private List<R> getRecordsForUrl(String url) {
         List<R> val;
         if (records.containsKey(url)) {
@@ -39,9 +35,17 @@ public class QueryResult<R extends IRecord> implements IQueryResult<R> {
         return val;
     }
 
+    public void addRecord(String url, R record) {
+        getRecordsForUrl(url).add(record);
+    }
+
     public void addRecords(String url, List<R> records) {
         List<R> existingRecords = getRecordsForUrl(url);
         existingRecords.addAll(records);
+    }
+
+    public List<R> addUrl(String url) {
+        return getRecordsForUrl(url);
     }
 
     public EntityInterface getOutputEntity() {
