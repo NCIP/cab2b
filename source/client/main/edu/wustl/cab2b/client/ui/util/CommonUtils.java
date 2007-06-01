@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.client.ui.util;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.rmi.RemoteException;
@@ -491,9 +492,27 @@ public class CommonUtils {
     	{
     		return false;
     	}
-    	
-    	    	
-    	
+ 
     	return true;
     }
+    
+    /**
+	 * This method returns the Component form the parent Container given the name of the Component
+	 * @param parentContainer the parent Container
+	 * @param panelName name of the Component
+	 * @return the desired Component if present; null otherwise
+	 */
+	public static Component getComponentByName(final Container parentContainer, final String panelName) {
+		Component requiredComponent = null;
+		Component[] components = parentContainer.getComponents();
+		for(Component component : components) {
+			String componentName = component.getName();
+			if(componentName != null && componentName.equals(panelName)) {
+				requiredComponent = component;
+				break;
+			}
+		}
+		
+		return requiredComponent;
+	}
 }
