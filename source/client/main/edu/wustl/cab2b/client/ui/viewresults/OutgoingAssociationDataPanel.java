@@ -39,9 +39,9 @@ public class OutgoingAssociationDataPanel extends AbstractAssociatedDataPanel {
     public OutgoingAssociationDataPanel(
             Collection associations,
             ActionListener associatedDataActionListener,
-            Object id,
+            
             DataRow dataRow,IRecord record) {
-        super(associations, associatedDataActionListener, id, dataRow,record);
+        super(associations, associatedDataActionListener, dataRow,record);
     }
 
     /**

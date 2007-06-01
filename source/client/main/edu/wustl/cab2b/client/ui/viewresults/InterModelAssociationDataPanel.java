@@ -28,10 +28,9 @@ public class InterModelAssociationDataPanel extends AbstractAssociatedDataPanel 
     public InterModelAssociationDataPanel(
             Collection associations,
             ActionListener associatedDataActionListener,
-            Object id,
             DataRow dataRow,
             IRecord record) {
-        super(associations, associatedDataActionListener, id, dataRow, record);
+        super(associations, associatedDataActionListener,dataRow, record);
     }
 
     /**
@@ -74,7 +73,7 @@ public class InterModelAssociationDataPanel extends AbstractAssociatedDataPanel 
         List<AttributeInterface> attributes = Collections.singletonList(idAttribute);
         List<String> operators = Collections.singletonList("Equals");
         List<List<String>> values = new ArrayList<List<String>>();
-        values.add(Collections.singletonList(id.toString()));
+        values.add(Collections.singletonList(record.getId().toString()));
 
         IExpressionId targetExpressionID = queryObject.addRule(attributes, operators, values);
 

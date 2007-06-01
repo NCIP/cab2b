@@ -20,6 +20,7 @@ import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface;
 import edu.wustl.cab2b.common.ejb.path.PathFinderHomeInterface;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
+import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -159,7 +160,9 @@ public class ResultPanelFactory {
         if (record instanceof I3DDataRecord) {
             resultPanel = new ThreeDResultObjectDetailsPanel(searchPanel, dataRow, record,
                     incomingAssociationCollection, intraModelAssociationCollection);
-
+        } else if (queryResult instanceof ICategoryResult) {
+            resultPanel = new CategoryObjectDetailsPanel(searchPanel, dataRow, record,
+                    incomingAssociationCollection, intraModelAssociationCollection);
         } else {
             resultPanel = new ResultObjectDetailsPanel(searchPanel, dataRow, record,
                     incomingAssociationCollection, intraModelAssociationCollection);

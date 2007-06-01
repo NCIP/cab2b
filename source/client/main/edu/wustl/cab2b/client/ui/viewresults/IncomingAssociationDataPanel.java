@@ -38,9 +38,9 @@ public class IncomingAssociationDataPanel extends AbstractAssociatedDataPanel {
     public IncomingAssociationDataPanel(
             Collection associations,
             ActionListener associatedDataActionListener,
-            Object id,
+         
             DataRow dataRow,IRecord record) {
-        super(associations, associatedDataActionListener, id, dataRow,record);
+        super(associations, associatedDataActionListener, dataRow,record);
     }
 
     /**
@@ -82,7 +82,7 @@ public class IncomingAssociationDataPanel extends AbstractAssociatedDataPanel {
         List<AttributeInterface> attributes = Collections.singletonList(idAttribute);
         List<String> operators = Collections.singletonList("Equals");
         List<List<String>> values = new ArrayList<List<String>>();
-        values.add(Collections.singletonList(id.toString()));
+        values.add(Collections.singletonList(dataRow.getId().toString()));
 
         IExpressionId targetExpressionID = queryObject.addRule(attributes, operators, values);
 
