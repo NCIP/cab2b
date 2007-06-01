@@ -44,9 +44,8 @@ import gov.nih.nci.cagrid.metadata.common.SemanticMetadata;
  * To create a table for entity set this to TRUE before calling this code else set it to false.
  * @author Chandrakant Talele
  */
-public class DynamicExtensionUtility
-{
-	private static DomainObjectFactory domainObjectFactory = DomainObjectFactory.getInstance();
+public class DynamicExtensionUtility {
+    private static DomainObjectFactory domainObjectFactory = DomainObjectFactory.getInstance();
 
     /**
      * Persist given entity using dynamic extension APIs.
@@ -167,7 +166,7 @@ public class DynamicExtensionUtility
         if (semanticMetadataArr == null) {
             return;
         }
-        
+
         for (int i = 0; i < semanticMetadataArr.length; i++) {
             SemanticPropertyInterface semanticProp = domainObjectFactory.createSemanticProperty();
             semanticProp.setSequenceNumber(i);
@@ -228,6 +227,7 @@ public class DynamicExtensionUtility
         addTaggedValue(entityGroup, CAB2B_ENTITY_GROUP, CAB2B_ENTITY_GROUP);
         return entityGroup;
     }
+
     /**
      * Copies the attribute's description, semantic metadata and associated permissible values.
      * Sets the given name to copied attribute
@@ -240,14 +240,14 @@ public class DynamicExtensionUtility
         attribute.setName(name);
         return attribute;
     }
+
     /**
      * Copies the attribute's name,description, semantic metadata and associated permissible values
      * @param source Attribute to copy
      * @return The cloned attribute
      */
-    public static AttributeInterface getAttributeCopy(AttributeInterface source) 
-    {
-    	AttributeInterface attribute = null;
+    public static AttributeInterface getAttributeCopy(AttributeInterface source) {
+        AttributeInterface attribute = null;
         DataType type = Utility.getDataType(source.getAttributeTypeInformation());
         DataElementInterface dataEle = source.getAttributeTypeInformation().getDataElement();
         switch (type) {
@@ -260,8 +260,7 @@ public class DynamicExtensionUtility
                         value.setValue((String) val.getValueAsObject());
                         userDefinedDE.addPermissibleValue(value);
                     }
-                    attribute.getAttributeTypeInformation().setDataElement(
-                                                                           userDefinedDE);
+                    attribute.getAttributeTypeInformation().setDataElement(userDefinedDE);
                 }
                 break;
 
@@ -274,8 +273,7 @@ public class DynamicExtensionUtility
                         value.setValue((Double) val.getValueAsObject());
                         userDefinedDE.addPermissibleValue(value);
                     }
-                    attribute.getAttributeTypeInformation().setDataElement(
-                                                                           userDefinedDE);
+                    attribute.getAttributeTypeInformation().setDataElement(userDefinedDE);
                 }
                 break;
 
@@ -288,8 +286,7 @@ public class DynamicExtensionUtility
                         value.setValue((Integer) val.getValueAsObject());
                         userDefinedDE.addPermissibleValue(value);
                     }
-                    attribute.getAttributeTypeInformation().setDataElement(
-                                                                           userDefinedDE);
+                    attribute.getAttributeTypeInformation().setDataElement(userDefinedDE);
                 }
                 break;
 
@@ -302,8 +299,7 @@ public class DynamicExtensionUtility
                         value.setValue((Date) val.getValueAsObject());
                         userDefinedDE.addPermissibleValue(value);
                     }
-                    attribute.getAttributeTypeInformation().setDataElement(
-                                                                           userDefinedDE);
+                    attribute.getAttributeTypeInformation().setDataElement(userDefinedDE);
                 }
                 break;
 
@@ -316,8 +312,7 @@ public class DynamicExtensionUtility
                         value.setValue((Float) val.getValueAsObject());
                         userDefinedDE.addPermissibleValue(value);
                     }
-                    attribute.getAttributeTypeInformation().setDataElement(
-                                                                           userDefinedDE);
+                    attribute.getAttributeTypeInformation().setDataElement(userDefinedDE);
                 }
                 break;
 
@@ -330,8 +325,7 @@ public class DynamicExtensionUtility
                         value.setValue((Boolean) val.getValueAsObject());
                         userDefinedDE.addPermissibleValue(value);
                     }
-                    attribute.getAttributeTypeInformation().setDataElement(
-                                                                           userDefinedDE);
+                    attribute.getAttributeTypeInformation().setDataElement(userDefinedDE);
                 }
                 break;
 
@@ -344,17 +338,17 @@ public class DynamicExtensionUtility
                         value.setValue((Long) val.getValueAsObject());
                         userDefinedDE.addPermissibleValue(value);
                     }
-                    attribute.getAttributeTypeInformation().setDataElement(
-                                                                           userDefinedDE);
+                    attribute.getAttributeTypeInformation().setDataElement(userDefinedDE);
                 }
                 break;
 
         }
-        
+        attribute.setName(source.getName());
         attribute.setDescription(source.getDescription());
         copySemanticProperties(source, attribute);
         return attribute;
     }
+
     /**
      * Stores the SemanticMetadata to the owner which can be class or attribute
      * @param owner
@@ -362,43 +356,38 @@ public class DynamicExtensionUtility
      * @param semanticMetadataArr
      *            Semantic Metadata array to set.
      */
-    private static void copySemanticProperties(AbstractMetadataInterface copyFrom,
-                                AbstractMetadataInterface copyTo) 
-    {
-    	    for (SemanticPropertyInterface p : copyFrom.getSemanticPropertyCollection()) {
+    private static void copySemanticProperties(AbstractMetadataInterface copyFrom, AbstractMetadataInterface copyTo) {
+        for (SemanticPropertyInterface p : copyFrom.getSemanticPropertyCollection()) {
             SemanticPropertyInterface semanticProp = domainObjectFactory.createSemanticProperty();
             semanticProp.setTerm(p.getTerm());
             semanticProp.setConceptCode(p.getConceptCode());
             copyTo.addSemanticProperty(semanticProp);
         }
     }
-    
-    
+
     /**
      * Creates and returns a new one to many association between source target entities.
      * @param srcEntity source entity of the new association
      * @param tarEntity target enetiyt of the new association
      * @return new association
      */
-    public static AssociationInterface createNewOneToManyAsso(EntityInterface srcEntity, EntityInterface tarEntity) 
-    {
-    	AssociationInterface association = domainObjectFactory.createAssociation();
+    public static AssociationInterface createNewOneToManyAsso(EntityInterface srcEntity, EntityInterface tarEntity) {
+        AssociationInterface association = domainObjectFactory.createAssociation();
         String associationName = "AssociationName_" + (srcEntity.getAssociationCollection().size() + 1);
-       association.setName(associationName);
-       association.setAssociationDirection(AssociationDirection.SRC_DESTINATION);
-       association.setEntity(srcEntity);
-       association.setTargetEntity(tarEntity);
-       association.setSourceRole(getNewRole(AssociationType.CONTAINTMENT, "source_role_" + associationName,
-                                          Cardinality.ONE, Cardinality.ONE));
-       association.setTargetRole(getNewRole(AssociationType.CONTAINTMENT, "target_role_" + associationName,
-                                          Cardinality.ZERO, Cardinality.MANY));
-       
-       srcEntity.addAssociation(association);
-     
+        association.setName(associationName);
+        association.setAssociationDirection(AssociationDirection.SRC_DESTINATION);
+        association.setEntity(srcEntity);
+        association.setTargetEntity(tarEntity);
+        association.setSourceRole(getNewRole(AssociationType.CONTAINTMENT, "source_role_" + associationName,
+                                             Cardinality.ONE, Cardinality.ONE));
+        association.setTargetRole(getNewRole(AssociationType.CONTAINTMENT, "target_role_" + associationName,
+                                             Cardinality.ZERO, Cardinality.MANY));
 
-       return association;
+        srcEntity.addAssociation(association);
+
+        return association;
     }
-    
+
     /**
      * Creates and returns new Role for an association.
      * @param associationType associationType
@@ -408,7 +397,7 @@ public class DynamicExtensionUtility
      * @return  RoleInterface
      */
     public static RoleInterface getNewRole(AssociationType associationType, String name, Cardinality minCard,
-                                     Cardinality maxCard) {
+                                           Cardinality maxCard) {
         RoleInterface role = domainObjectFactory.createRole();
         role.setAssociationsType(associationType);
         role.setName(name);
@@ -416,7 +405,5 @@ public class DynamicExtensionUtility
         role.setMaximumCardinality(maxCard);
         return role;
     }
-
-
 
 }
