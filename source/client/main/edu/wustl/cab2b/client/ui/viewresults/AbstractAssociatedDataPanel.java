@@ -1,14 +1,11 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
-import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
-import javax.swing.JLabel;
-
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
-import edu.wustl.cab2b.common.datalist.DataRow;
+import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -31,12 +28,11 @@ public abstract class AbstractAssociatedDataPanel extends Cab2bPanel {
      */
     protected ActionListener associatedDataActionListener;
 
-
     /**
      * dataRow
      */
-    protected DataRow dataRow;
-    
+    protected IDataRow dataRow;
+
     /**
      * 
      */
@@ -48,35 +44,32 @@ public abstract class AbstractAssociatedDataPanel extends Cab2bPanel {
      * @param id
      * @param dataRow
      */
-    public AbstractAssociatedDataPanel(
-            Collection associations,
-            ActionListener associatedDataActionListener,
+    public AbstractAssociatedDataPanel(Collection associations, ActionListener associatedDataActionListener,
 
-            DataRow dataRow, IRecord record) {
+    IDataRow dataRow, IRecord record) {
 
         this.associations = associations;
         this.associatedDataActionListener = associatedDataActionListener;
-
         this.dataRow = dataRow;
         this.record = record;
         iniGUI();
     }
 
     protected void iniGUI() {
-        JLabel label = new JLabel(getLabel());
-        label.setForeground(Color.black);
-        this.add("br", label);
 
+        addLabel();
         processAssociation();
     }
 
-    abstract String getLabel();
+    protected void addLabel() {
+
+    }
 
     abstract void processAssociation();
 
     abstract IQuery getQuery(IAssociation association);
-    
-    public   IRecord  getAssociatedRecord() {
+
+    public IRecord getAssociatedRecord() {
         return record;
     }
 

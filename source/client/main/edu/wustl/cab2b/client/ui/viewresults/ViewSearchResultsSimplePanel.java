@@ -20,7 +20,6 @@ import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
@@ -46,29 +45,18 @@ import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
  */
 public class ViewSearchResultsSimplePanel extends ResultPanel {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-
-    JXPanel breadCrumbPanel;
-
-    JXPanel searchResultsPanel;
+    private JXPanel searchResultsPanel;
 
     /**
      * Query result in a format required by JPagination component.
      */
-    Vector<PageElement> elements = null;
+    private Vector<PageElement> elements = null;
 
-    JXPanel breadCrumbsPanel;
+    private IDataRow parentDataRow;
 
-    IDataRow parentDataRow;
+    private IAssociation queryAssociation = null;
 
-    EntityInterface presentEntityInterface = null;
-
-    IAssociation queryAssociation = null;
-
-    JXPanel m_addSummaryParentPanel;
+    private JXPanel m_addSummaryParentPanel;
 
     private JPagination pagination;
 
@@ -77,7 +65,7 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
             IQueryResult queryResult,
             IAssociation association,
             IDataRow parentDataRow,
-            Collection<AssociationInterface> incomingAssociationCollection,
+            /*EntityInterface presentEntityInterface,*/Collection<AssociationInterface> incomingAssociationCollection,
             List<IInterModelAssociation> intraModelAssociationCollection) {
 
         super(searchPanel, incomingAssociationCollection, intraModelAssociationCollection);
@@ -86,7 +74,12 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
         this.queryResult = queryResult;
         // Parent data row will be null for the first query's results, but will be non-null for associated class query's results. 
         this.parentDataRow = parentDataRow;
-        this.presentEntityInterface = presentEntityInterface;
+    }
+
+    /**
+     * @see edu.wustl.cab2b.client.ui.viewresults.ResultPanel#doInitialization()
+     */
+    public void doInitialization() {
         initData();
         initGUI();
     }

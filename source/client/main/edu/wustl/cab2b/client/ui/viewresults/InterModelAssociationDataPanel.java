@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
+import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,9 +8,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JLabel;
+
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.query.ClientQueryBuilder;
-import edu.wustl.cab2b.common.datalist.DataRow;
+import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
@@ -28,17 +31,19 @@ public class InterModelAssociationDataPanel extends AbstractAssociatedDataPanel 
     public InterModelAssociationDataPanel(
             Collection associations,
             ActionListener associatedDataActionListener,
-            DataRow dataRow,
+            IDataRow dataRow,
             IRecord record) {
-        super(associations, associatedDataActionListener,dataRow, record);
+        super(associations, associatedDataActionListener, dataRow, record);
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.viewresults.AbstractAssociatedDataPanel#getLabel()
+     * @see edu.wustl.cab2b.client.ui.viewresults.AbstractAssociatedDataPanel#addLabel()
      */
 
-    String getLabel() {
-        return " Inter Model Associations : ";
+    protected void addLabel() {
+        JLabel label = new JLabel(" Inter Model Associations : ");
+        label.setForeground(Color.black);
+        this.add("br", label);
     }
 
     /**

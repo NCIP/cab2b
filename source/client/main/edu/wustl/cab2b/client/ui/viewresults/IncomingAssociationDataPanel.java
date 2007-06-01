@@ -10,7 +10,7 @@ import java.util.List;
 import edu.common.dynamicextensions.domain.Association;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.query.ClientQueryBuilder;
-import edu.wustl.cab2b.common.datalist.DataRow;
+import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
@@ -20,10 +20,6 @@ import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 
-/**
- * @author rahul_ner
- *
- */
 /**
  * @author rahul_ner
  *
@@ -38,16 +34,9 @@ public class IncomingAssociationDataPanel extends AbstractAssociatedDataPanel {
     public IncomingAssociationDataPanel(
             Collection associations,
             ActionListener associatedDataActionListener,
-         
-            DataRow dataRow,IRecord record) {
-        super(associations, associatedDataActionListener, dataRow,record);
-    }
-
-    /**
-     * @see edu.wustl.cab2b.client.ui.viewresults.AbstractAssociatedDataPanel#getLabel()
-     */
-    String getLabel() {
-        return " Incoming Associations : ";
+            IDataRow dataRow,
+            IRecord record) {
+        super(associations, associatedDataActionListener, dataRow, record);
     }
 
     /**
@@ -60,12 +49,12 @@ public class IncomingAssociationDataPanel extends AbstractAssociatedDataPanel {
 
             IIntraModelAssociation intraModelAssociation = (IIntraModelAssociation) QueryObjectFactory.createIntraModelAssociation(deAssociation);
             String tooTipText = "Target role name : " + deAssociation.getSourceRole().getName();
-            
+
             HyperLinkUserObject hyperLinkUserObject = new HyperLinkUserObject();
             hyperLinkUserObject.setAssociation(intraModelAssociation);
             hyperLinkUserObject.setParentDataRow(dataRow);
             hyperLinkUserObject.setTargetEntity(deAssociation.getEntity());
-            
+
             this.add("br", getHyperlink(hyperLinkUserObject, tooTipText));
         }
 

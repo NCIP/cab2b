@@ -76,6 +76,8 @@ public abstract class ResultPanel extends Cab2bPanel {
      */
     abstract List<IDataRow> getSelectedDataRows();
 
+    abstract public void doInitialization();
+
     abstract public void addDataSummaryPanel();
 
     public ResultPanel(
@@ -161,6 +163,7 @@ public abstract class ResultPanel extends Cab2bPanel {
 
             @Override
             protected void doUIUpdateLogic() throws RuntimeException {
+                // TODO Auto-generated method stub
                 updateMyDataListPanel();
                 /*  JOptionPane.showMessageDialog(component, "Apply All operation completed successfully", "Information",
                  JOptionPane.INFORMATION_MESSAGE);*/
@@ -236,25 +239,22 @@ public abstract class ResultPanel extends Cab2bPanel {
             myDataListPane.getViewport().setBackground(Color.WHITE);
             myDataListTitledPanel.add(myDataListPane);
 
-            
         } else {
             if (myDataListPanel != null) {
                 myDataListPanel.removeAll();
             }
         }
-        
-        
+
         //create the parent panel
-        if(myDataListParentPanel==null){
+        if (myDataListParentPanel == null) {
             myDataListParentPanel = new Cab2bPanel();
             myDataListParentPanel.setBorder(null);
             myDataListParentPanel.add("br br br vfill hfill", myDataListTitledPanel);
         }
-               
+
         updateMyDataListPanel();
     }
 
-    
     /**
      * Updates My DataList Summary panel present on view Search result page 
      *

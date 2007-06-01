@@ -160,7 +160,7 @@ public class ResultPanelFactory {
         if (record instanceof I3DDataRecord) {
             resultPanel = new ThreeDResultObjectDetailsPanel(searchPanel, dataRow, record,
                     incomingAssociationCollection, intraModelAssociationCollection);
-        } else if (queryResult instanceof ICategoryResult) {
+        } else if (record instanceof ICategoryResult) {
             resultPanel = new CategoryObjectDetailsPanel(searchPanel, dataRow, record,
                     incomingAssociationCollection, intraModelAssociationCollection);
         } else {

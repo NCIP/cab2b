@@ -4,38 +4,28 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JComponent;
 
 import org.jdesktop.swingx.JXPanel;
 
-import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
-import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.pagination.PageElement;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.datalist.DataRow;
 import edu.wustl.cab2b.common.datalist.IDataRow;
-import edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface;
-import edu.wustl.cab2b.common.ejb.path.PathFinderHomeInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
-import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
-import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.util.logger.Logger;
 
@@ -49,58 +39,45 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 
     private static final long serialVersionUID = 1L;
 
-    HashMap<String, List<AttributeInterface>> mapResultLabel = new HashMap<String, List<AttributeInterface>>();
+    private HashMap<String, List<AttributeInterface>> mapResultLabel = new HashMap<String, List<AttributeInterface>>();
 
-    public int panelCount = 0;
+    private int panelCount = 0;
 
     /** A vector of display strings for bread crumbs hyperlink. */
-    Vector<String> m_vBreadCrumbs = new Vector<String>();
-
-    int m_iBreadCrumbCount = 0;
-
-    IQueryResult queryResult;
+    private Vector<String> m_vBreadCrumbs = new Vector<String>();
 
     /**
      * The breadcrumPanel common to all cards.
      */
-    JXPanel m_breadCrumbPanel = null;
+    private JXPanel m_breadCrumbPanel = null;
 
     /**
      * The panel will house cards, where each card is a panel depicting some details on the results.
      */
-    public Cab2bPanel m_resultsPanel = null;
+    private JXPanel m_resultsPanel = null;
 
     /** Query result object. */
-    //IQueryResult queryResult;
-    String currentBreadCrumb = "Patients";
 
     /**
      * Action listener for bread crumbs hyperlink.
      */
-    ActionListener breadCrumbsAL;    
-    
-
-
+    private ActionListener breadCrumbsAL;
 
     /**
      * Pagination components hyperlinks action listener.
      */
-    ActionListener hyperlinkAL;
+    private ActionListener hyperlinkAL;
 
     /**
      * Associated Data hyperlinks action listener;
      */
-    ActionListener associatedDataAL;
+    private ActionListener associatedDataAL;
 
-    ViewSearchResultsPanel viewPanel;
-
-    List<AttributeInterface> attributeList = null;
+    private List<AttributeInterface> attributeList = null;
 
     public SimpleSearchResultBreadCrumbPanel(IQueryResult queryResult, ViewSearchResultsPanel viewPanel) {
-        this.viewPanel = viewPanel;
-        this.queryResult = queryResult;
         initData();
-        initGUI(queryResult);
+        initGUI(viewPanel, queryResult);
     }
 
     /** Initialize data. */
@@ -152,119 +129,9 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
         return this.attributeList;
     }
 
-    public Cab2bPanel getResultPanel(IQueryResult queryResult, IDataRow parentDataRow,
-                                   IAssociation association) {
-
-        Cab2bPanel resultPanel = null;
-        int recordNo = edu.wustl.cab2b.client.ui.query.Utility.getRecordNum(queryResult);
-
-        if (recordNo == 0) {
-            String className = edu.wustl.cab2b.common.util.Utility.getDisplayName(queryResult.getOutputEntity());
-            return getNoResultFoundPopup(className);
-        }
-
-        PathFinderBusinessInterface busInt = (PathFinderBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                            "edu.wustl.cab2b.server.ejb.path.PathFinderBean",
-                                                                                                            PathFinderHomeInterface.class,
-                                                                                                            null);
-        Collection<AssociationInterface> incomingAssociationCollection = null;
-        List<IInterModelAssociation> intraModelAssociationCollection = null;
-        try {
-            incomingAssociationCollection = busInt.getIncomingIntramodelAssociations(queryResult.getOutputEntity().getId());
-
-            intraModelAssociationCollection = busInt.getInterModelAssociations(queryResult.getOutputEntity().getId());
-        } catch (RemoteException re) {
-            CommonUtils.handleException(re, viewPanel, true, true, false, false);
-        }
-        if (recordNo == 1) {
-            resultPanel = getResultObjectDetailPanel(queryResult, parentDataRow, association,
-                                                     incomingAssociationCollection,
-                                                     intraModelAssociationCollection);
-        } else {
-            resultPanel = new ViewSearchResultsSimplePanel(this, queryResult, association, parentDataRow,
-                    incomingAssociationCollection, intraModelAssociationCollection);
-        }
-
-        return resultPanel;
-    }
-
-    /**
-     * for details of one object
-     * @param queryResult
-     * @param parentDataRow
-     * @param association
-     * @param intraModelAssociationCollection 
-     * @param incomingAssociationCollection 
-     * @return
-     */
-    private Cab2bPanel getResultObjectDetailPanel(IQueryResult queryResult, IDataRow parentDataRow,
-                                               IAssociation association,
-                                               Collection<AssociationInterface> incomingAssociationCollection,
-                                               List<IInterModelAssociation> intraModelAssociationCollection) {
-        Map<String, List<IRecord>> allRecords = queryResult.getRecords();
-        List<IRecord> recordList = null;
-        String urlKey = null;
-
-        for (String key : allRecords.keySet()) {
-            recordList = allRecords.get(key);
-            if (recordList.size() == 1) {
-                urlKey = key;
-                break;
-            }
-        }
-        /* Initialize the count for number of attributes to be shown in the */
-        IRecord record = recordList.get(0);
-
-        Object[] valueArray = new Object[this.attributeList.size()];
-        for (int i = 0; i < this.attributeList.size(); i++) {
-            valueArray[i] = record.getValueForAttribute(this.attributeList.get(i));
-        }
-        DataRow dataRow = new DataRow();
-        AttributeInterface attrib = this.attributeList.get(0);
-        /*
-         * Get the EntityInterface from the map only if the last parameter is null. 
-         * This should ideally happen only the first time
-         */
-        EntityInterface presentEntityInterface = attrib.getEntity();
-        String strclassName = edu.wustl.cab2b.common.util.Utility.getDisplayName(presentEntityInterface);
-
-        
-       /* AttributeInterface idAttribute = Utility.getIdAttribute(presentEntityInterface);
-        Object id = record.getValueForAttribute(idAttribute);*/
-        
-        
-        dataRow.setRow(valueArray);
-        dataRow.setAttributes(this.attributeList);
-        dataRow.setClassName(strclassName);
-        dataRow.setParent(parentDataRow);
-        dataRow.setId(record.getId());
-        dataRow.setAssociation(association);
-        dataRow.setEntityInterface(presentEntityInterface);
-        dataRow.setURL(urlKey);
-
-        ResultObjectDetailsPanel resultObjectDetailsPanel;
-
-        if (queryResult instanceof ICategoryResult) {
-            resultObjectDetailsPanel = new CategoryObjectDetailsPanel(this, dataRow, record,
-                    incomingAssociationCollection, intraModelAssociationCollection);
-            resultObjectDetailsPanel.setTableData();
-        } else {
-            resultObjectDetailsPanel = new ResultObjectDetailsPanel(this, dataRow, record,
-                    incomingAssociationCollection, intraModelAssociationCollection);
-        }
-        return resultObjectDetailsPanel;
-    }
-
-    private Cab2bPanel getNoResultFoundPopup(String className) {
-        Cab2bPanel noResultFoundPopup = new Cab2bPanel();
-        Cab2bLabel noResultFoundErroLabel = new Cab2bLabel("No results found for Class " + className);
-        noResultFoundPopup.add(noResultFoundErroLabel);
-        return noResultFoundPopup;
-    }
-
     /** Initialize GUI. 
      * @param queryResult */
-    public void initGUI(IQueryResult queryResult) {
+    private void initGUI(ViewSearchResultsPanel viewPanel, IQueryResult queryResult) {
         this.setLayout(new RiverLayout());
 
         breadCrumbsAL = new BreadCrumbActionListener(this);
@@ -274,7 +141,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
         this.attributeList = Utility.getAttributeList(queryResult);
 
         //Check if you got only one record
-        JXPanel simpleSearchResultPanel = getResultPanel(queryResult, null, null);
+        JXPanel simpleSearchResultPanel = ResultPanelFactory.getResultPanel(this, queryResult, null, null);
 
         /*
          * The breadcrumb panel should be common to all cards, and hence should not be part of any card.
@@ -420,8 +287,8 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 
             DataRow dataRow = (DataRow) recordListUserObject.get(0);
             IRecord record = (IRecord) recordListUserObject.get(1);
-            
-            ResultPanel currentPanel = (ResultPanel)   m_resultsPanel.getComponent(panelCount);
+
+            ViewSearchResultsSimplePanel currentPanel = (ViewSearchResultsSimplePanel) m_resultsPanel.getComponent(panelCount);
 
             /*
              * Refresh the breadcrumb vector, and pass that instance onto a new
@@ -433,24 +300,18 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
             m_vBreadCrumbs.add(currentCount + "#" + hyperlinkText);
             BreadcrumbPanel breadcrumbPanel1 = new BreadcrumbPanel(getBreadCrumbsAL(), m_vBreadCrumbs);
 
-            ResultObjectDetailsPanel detailsPanel;
-            if (queryResult instanceof ICategoryResult) {
-                
-                Logger.out.info("Clicked on the link");                
-                detailsPanel = new CategoryObjectDetailsPanel(searchPanel, dataRow, record,
-                        currentPanel.getIncomingAssociationCollection(),
-                        currentPanel.getIntraModelAssociationCollection());               
-            } else {
-                detailsPanel = new ResultObjectDetailsPanel(searchPanel, dataRow, record,
-                        currentPanel.getIncomingAssociationCollection(),
-                        currentPanel.getIntraModelAssociationCollection());
-            }
+            JXPanel detailsPanel = ResultPanelFactory.getDetailedResultPanel(
+                                                                             searchPanel,
+                                                                             record,
+                                                                             dataRow,
+                                                                             currentPanel.getIncomingAssociationCollection(),
+                                                                             currentPanel.getIntraModelAssociationCollection());
+
             addBreadCrumbPanel(breadcrumbPanel1, "" + currentCount);
             showBreadcrumbPanel("" + currentCount);
 
             addPanel(detailsPanel, "" + currentCount);
             showPanel("" + currentCount);
-            
         }
     }
 
@@ -460,12 +321,11 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
      * @author chetan_bh
      */
     private class AssociatedDataActionListener implements ActionListener {
-        
-     
-        private String breadCrumbText;       
+
+        private String breadCrumbText;
+
         SimpleSearchResultBreadCrumbPanel breadCrumbPanel;
 
-        
         public AssociatedDataActionListener(SimpleSearchResultBreadCrumbPanel panel) {
             this.breadCrumbPanel = panel;
         }
@@ -499,23 +359,27 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
                     breadCrumbPanel.mapResultLabel.put(currentCount + "#" + breadCrumbText, attributeList);
 
                     IAssociation association = hyperLinkUserObject.getAssociation();
-                    DataRow dataRow = hyperLinkUserObject.getParentDataRow();
-                    EntityInterface targetEntity = hyperLinkUserObject.getTargetEntity();
+                    IDataRow parentDataRow = hyperLinkUserObject.getParentDataRow();
+                    // EntityInterface targetEntity = hyperLinkUserObject.getTargetEntity();
 
-                    JXPanel simpleSearchResultPanelNew = getResultPanel(queryResult, dataRow,
-                                                                        association);
-                    addToPanel(simpleSearchResultPanelNew,breadCrumbText);
+                    JXPanel resultPanel = ResultPanelFactory.getResultPanel(breadCrumbPanel, queryResult,
+                                                                            parentDataRow, association);
+                    addToPanel(resultPanel, breadCrumbText);
                 }
             };
             if (query != null) {
                 swingWorker.start();
             } else {
-                addToPanel(getNoResultFoundPopup(breadCrumbText),breadCrumbText);
+                addToPanel(ResultPanelFactory.getNoResultFoundPopup(breadCrumbText), breadCrumbText);
             }
         }
 
-        
     }
+
+    /**
+     * @param simpleSearchResultPanelNew
+     * @param breadCrumbText
+     */
     public void addToPanel(JXPanel simpleSearchResultPanelNew, String breadCrumbText) {
         int currentCount = ++panelCount;
 
@@ -525,7 +389,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
         /*
          * Also we need to refresh the breadcrumb panel,so do the same with the breadcrumb panel.
          */
-       
+
         m_vBreadCrumbs.add(currentCount + "#" + breadCrumbText);
         BreadcrumbPanel breadcrumbPanel = new BreadcrumbPanel(getBreadCrumbsAL(), m_vBreadCrumbs);
 

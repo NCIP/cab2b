@@ -12,7 +12,7 @@ import edu.common.dynamicextensions.domain.Association;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.query.ClientQueryBuilder;
-import edu.wustl.cab2b.common.datalist.DataRow;
+import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.IRecordWithAssociatedIds;
 import edu.wustl.cab2b.common.util.Utility;
@@ -39,16 +39,9 @@ public class OutgoingAssociationDataPanel extends AbstractAssociatedDataPanel {
     public OutgoingAssociationDataPanel(
             Collection associations,
             ActionListener associatedDataActionListener,
-            
-            DataRow dataRow,IRecord record) {
-        super(associations, associatedDataActionListener, dataRow,record);
-    }
-
-    /**
-     * @see edu.wustl.cab2b.client.ui.viewresults.AbstractAssociatedDataPanel#getLabel()
-     */
-    String getLabel() {
-        return " Outgoing Associations : ";
+            IDataRow dataRow,
+            IRecord record) {
+        super(associations, associatedDataActionListener, dataRow, record);
     }
 
     /**
@@ -76,12 +69,12 @@ public class OutgoingAssociationDataPanel extends AbstractAssociatedDataPanel {
      */
     IQuery getQuery(IAssociation association) {
         ClientQueryBuilder queryObject = new ClientQueryBuilder();
-        
+
         IRecordWithAssociatedIds record = getAssociatedRecord();
-        Map<AssociationInterface, List<String>>  associatedIdMap = record.getAssociatedClassesIdentifiers();
-        List<String> associatedIdList = associatedIdMap.get(((IIntraModelAssociation)association).getDynamicExtensionsAssociation());
-        
-        if(associatedIdList == null) {
+        Map<AssociationInterface, List<String>> associatedIdMap = record.getAssociatedClassesIdentifiers();
+        List<String> associatedIdList = associatedIdMap.get(((IIntraModelAssociation) association).getDynamicExtensionsAssociation());
+
+        if (associatedIdList == null) {
             return null;
         }
 
@@ -92,7 +85,7 @@ public class OutgoingAssociationDataPanel extends AbstractAssociatedDataPanel {
         List<List<String>> values = new ArrayList<List<String>>();
         values.add(new ArrayList<String>(associatedIdList));
 
-        IExpressionId targetExpressionID = queryObject.addRule(attributes, operators,values);
+        IExpressionId targetExpressionID = queryObject.addRule(attributes, operators, values);
 
         /* Get the source expression id. Needed to add the path.*/
         IExpressionId sourceExpressionID = queryObject.createDummyExpression(association.getSourceEntity());
@@ -105,11 +98,9 @@ public class OutgoingAssociationDataPanel extends AbstractAssociatedDataPanel {
         queryObject.setOutputForQueryForSpecifiedURL(association.getTargetEntity(), dataRow.getURL());
         return queryObject.getQuery();
     }
-    
-    
-    public  IRecordWithAssociatedIds  getAssociatedRecord() {
+
+    public IRecordWithAssociatedIds getAssociatedRecord() {
         return (IRecordWithAssociatedIds) record;
     }
-  
 
 }

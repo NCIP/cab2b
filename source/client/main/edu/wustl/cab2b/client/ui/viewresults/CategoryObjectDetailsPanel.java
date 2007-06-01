@@ -1,6 +1,5 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.List;
@@ -16,7 +15,7 @@ import org.jdesktop.swingx.action.LinkAction;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
-import edu.wustl.cab2b.common.datalist.DataRow;
+import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -37,21 +36,26 @@ public class CategoryObjectDetailsPanel extends ResultObjectDetailsPanel {
      */
     private Cab2bTable categoryTable;
 
+    private Vector<Vector<UserObjectWrapper>> categoryTableData = new Vector<Vector<UserObjectWrapper>>();
+
+    private Vector<String> categoryTableHeader = new Vector<String>();
+
     public CategoryObjectDetailsPanel(
             SimpleSearchResultBreadCrumbPanel searchPanel,
-            DataRow dataRow,
+            IDataRow dataRow,
             IRecord record,
             Collection<AssociationInterface> incomingAssociationCollection,
             List<IInterModelAssociation> intraModelAssociationCollection) {
         super(searchPanel, dataRow, record, incomingAssociationCollection, intraModelAssociationCollection);
-        setChildTableData();
     }
 
-    protected void setChildTableData() {
-        Logger.out.debug("Setting table data");
-        Vector<Vector<UserObjectWrapper>> categoryTableData = new Vector<Vector<UserObjectWrapper>>();
+    /**
+     * @see edu.wustl.cab2b.client.ui.viewresults.ResultObjectDetailsPanel#initData()
+     */
+    protected void initData() {
+        super.initData();
 
-        Vector<String> categoryTableHeader = new Vector<String>();
+        Logger.out.debug("Setting table data");
         categoryTableHeader.add("Children Classes");
 
         ICategorialClassRecord iCategorialClassRecord = (ICategorialClassRecord) record;
@@ -67,14 +71,23 @@ public class CategoryObjectDetailsPanel extends ResultObjectDetailsPanel {
         }
 
         categoryTableData.add(vect);
+    }
+
+    /**
+     * @see edu.wustl.cab2b.client.ui.viewresults.ResultObjectDetailsPanel#initTableGUI()
+     */
+    protected void initTableGUI() {
+        super.initTableGUI();
 
         categoryTable = new Cab2bTable(false, categoryTableData, categoryTableHeader);
         CategoryLinkAction myLinkAction = new CategoryLinkAction();
         categoryTable.getColumn(0).setCellRenderer(new LinkRenderer(myLinkAction));
         categoryTable.getColumn(0).setCellEditor(new LinkRenderer(myLinkAction));
         JScrollPane tableScrollPane = new JScrollPane(categoryTable);
-        objDetailsPanel.add(tableScrollPane, BorderLayout.SOUTH);
-        objDetailsPanel.updateUI();
+
+        //detailsTablePanel.add(tableScrollPane, BorderLayout.SOUTH);
+        detailsTablePanel.add("br hfill vfill", tableScrollPane);
+        //detailsTablePanel.updateUI();
     }
 
     /**
