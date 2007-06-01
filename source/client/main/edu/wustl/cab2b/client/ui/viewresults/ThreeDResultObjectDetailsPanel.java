@@ -7,10 +7,10 @@ import java.util.Vector;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import cab2b.common.caarray.I3DDataRecord;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.common.datalist.IDataRow;
+import edu.wustl.cab2b.common.queryengine.result.I3DDataRecord;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 
