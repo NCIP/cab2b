@@ -4,6 +4,7 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -336,8 +337,14 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
             AbstractAssociatedDataPanel linkContainer = (AbstractAssociatedDataPanel) hyperlink.getParent();
             /* Get the user object associated with that source.*/
             final HyperLinkUserObject hyperLinkUserObject = (HyperLinkUserObject) hyperlink.getUserObject();
-
-            final IQuery query = linkContainer.getQuery((hyperLinkUserObject.getAssociation()));
+            IQuery tempQuery=null;
+           
+            try {
+                tempQuery = linkContainer.getQuery((hyperLinkUserObject.getAssociation()));
+            } catch (RemoteException e) {
+                CommonUtils.handleException(e, breadCrumbPanel, true, true, true, false);
+            }
+            final IQuery query = tempQuery;
             breadCrumbText = Utility.getDisplayName(hyperLinkUserObject.getTargetEntity());
             //breadCrumbPanel.panelCount++;
             final int currentCount = breadCrumbPanel.panelCount;

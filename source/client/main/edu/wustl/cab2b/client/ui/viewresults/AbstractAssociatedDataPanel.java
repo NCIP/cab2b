@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import java.util.Collection;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
@@ -67,7 +68,7 @@ public abstract class AbstractAssociatedDataPanel extends Cab2bPanel {
 
     abstract void processAssociation();
 
-    abstract IQuery getQuery(IAssociation association);
+    abstract IQuery getQuery(IAssociation association) throws RemoteException;
 
     public IRecord getAssociatedRecord() {
         return record;

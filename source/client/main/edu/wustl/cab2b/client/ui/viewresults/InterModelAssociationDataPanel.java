@@ -2,6 +2,7 @@ package edu.wustl.cab2b.client.ui.viewresults;
 
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -68,9 +69,10 @@ public class InterModelAssociationDataPanel extends AbstractAssociatedDataPanel 
     }
 
     /**
+     * @throws RemoteException 
      * @see edu.wustl.cab2b.client.ui.viewresults.AbstractAssociatedDataPanel#getQuery(edu.wustl.common.querysuite.metadata.associations.IAssociation)
      */
-    IQuery getQuery(IAssociation association) {
+    IQuery getQuery(IAssociation association) throws RemoteException {
         ClientQueryBuilder queryObject = new ClientQueryBuilder();
 
         /*Create the objects needed for adding the rule based on the source.*/

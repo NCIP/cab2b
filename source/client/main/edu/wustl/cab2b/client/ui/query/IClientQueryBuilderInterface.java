@@ -10,6 +10,7 @@
 
 package edu.wustl.cab2b.client.ui.query;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -169,8 +170,9 @@ public interface IClientQueryBuilderInterface
     /**
      * Sets the output of the query to the specified entity.
      * @param entity The entity to be set as output.
+     * @throws RemoteException 
      */
-    public void setOutputForQuery(EntityInterface entity);
+    public void setOutputForQuery(EntityInterface entity) throws RemoteException;
     
     public void setOutputForQueryForSpecifiedURL(EntityInterface entity, String strURL);
     

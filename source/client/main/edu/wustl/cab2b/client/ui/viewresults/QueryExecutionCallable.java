@@ -104,10 +104,15 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
             try {
                 queryObject.addAssociation(targetExpressionID, sourceExpressionID,
                                            interaModelAssociation.reverse());
+                queryObject.setOutputForQuery(targetEntity);
             } catch (CyclicException exCyclic) {
                 exCyclic.printStackTrace();
+            } catch (RemoteException e) {
+                //TODO Handle it properly
+                Logger.out.error("Error in setting output URL :" + e.getMessage());
+                return null;
             }
-            queryObject.setOutputForQuery(targetEntity);
+           
         }
         IQueryResult relatedQueryResults = null;
         try {

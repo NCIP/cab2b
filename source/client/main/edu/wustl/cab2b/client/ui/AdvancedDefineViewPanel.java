@@ -202,7 +202,11 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 					 */
 					String userSelectionOfEntity = ie.getItem().toString();
 					EntityInterface entInt = findTargetEntityInterface(userSelectionOfEntity);
-					queryObject.setOutputForQuery(entInt);
+                    try{
+                        queryObject.setOutputForQuery(entInt);
+                    } catch (RemoteException e) {
+                        CommonUtils.handleException(e, m_searchCenterPanel, true, true, true, false);
+                    }
 
 				}
 			}
@@ -214,7 +218,11 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 		 */
 		String defaultSelectionOfEntity = (String) combo.getSelectedItem();
 		EntityInterface entInt = findTargetEntityInterface(defaultSelectionOfEntity);
-		queryObject.setOutputForQuery(entInt);
+        try{
+            queryObject.setOutputForQuery(entInt);
+        } catch (RemoteException e) {
+            CommonUtils.handleException(e, m_searchCenterPanel, true, true, true, false);
+        }
 
 		bottomPanel.add(combo);
 
