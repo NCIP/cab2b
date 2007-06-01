@@ -80,17 +80,16 @@ public class CategoryObjectDetailsPanel extends ResultObjectDetailsPanel {
      */
     protected void initTableGUI() {
         super.initTableGUI();
+        adjustRows();     
 
-        if (!categoryTableData.isEmpty()) {
+          if (!categoryTableData.isEmpty()) {
 
             categoryTable = new Cab2bTable(false, categoryTableData, categoryTableHeader);
             CategoryLinkAction myLinkAction = new CategoryLinkAction();
             categoryTable.getColumn(0).setCellRenderer(new LinkRenderer(myLinkAction));
             categoryTable.getColumn(0).setCellEditor(new LinkRenderer(myLinkAction));
-            JScrollPane tableScrollPane = new JScrollPane(categoryTable);
-
-            //detailsTablePanel.add(tableScrollPane, BorderLayout.SOUTH);
-            tablePanel.add(tableScrollPane, BorderLayout.SOUTH);
+            JScrollPane tableScrollPane = new JScrollPane(categoryTable);           
+            tablePanel.add("br hfill vfill", tableScrollPane);           
             detailsTablePanel.updateUI();
         }
     }

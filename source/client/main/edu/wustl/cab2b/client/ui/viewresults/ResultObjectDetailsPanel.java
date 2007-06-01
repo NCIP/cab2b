@@ -124,16 +124,18 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         m_sidePanel.add(relatedDataParentPanel);
         m_sidePanel.add(myDataListParentPanel);
         this.add(m_sidePanel, BorderLayout.EAST);
+        
     }
 
     protected void initTableGUI() {
         //detailsTablePanel = new Cab2bPanel(new BorderLayout());
         detailsTablePanel = new Cab2bPanel();
-        tablePanel = new Cab2bPanel(new BorderLayout());  
+        tablePanel = new Cab2bPanel();  
         objDetailsTable = new Cab2bTable(false, tableData, tableHeader);
         objDetailsTable.setEditable(false);
         JScrollPane tableSP = new JScrollPane(objDetailsTable);
-        tablePanel.add(tableSP,BorderLayout.CENTER);
+        tablePanel.add(" hfill ", tableSP);
+        adjustRows();
         detailsTablePanel.add("br hfill vfill",tablePanel);
     }
 
@@ -199,10 +201,10 @@ public class ResultObjectDetailsPanel extends ResultPanel {
      */
     protected void adjustRows() {
         int rowCount = objDetailsTable.getRowCount();
-        if (rowCount < 7) {
+        if (rowCount < 10) {
             objDetailsTable.setVisibleRowCount(rowCount);
         } else {
-            objDetailsTable.setVisibleRowCount(7);
+            objDetailsTable.setVisibleRowCount(10);
         }
     }
 }
