@@ -1,8 +1,10 @@
 package edu.wustl.cab2b.client.ui.experiment;
 
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JSplitPane;
@@ -47,17 +49,17 @@ public class ExperimentPanel extends Cab2bTitledPanel
 		newExperiment.setPreferredSize(new Dimension(180,22));
 		newExperiment.setEnabled(false);
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		splitPane.setDividerLocation(200);
+		splitPane.setDividerLocation(242);
 		splitPane.setDividerSize(4);
 		expDetailsPanel = new ExperimentDetailsPanel();
 		splitPane.setRightComponent(expDetailsPanel);
-		
+		splitPane.setBorder(null);
 		expHierarchyPanel = new ExperimentHierarchyPanel(expDetailsPanel);
 		splitPane.setLeftComponent(expHierarchyPanel);
-		
+		expHierarchyPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 		displayExperimentPanel.add("br",newExperiment);
 		displayExperimentPanel.add("br hfill vfill",splitPane);
-		
+		this.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 		this.add(displayExperimentPanel);
 	}
 	

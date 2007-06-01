@@ -1,11 +1,13 @@
 package edu.wustl.cab2b.client.ui.experiment;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
@@ -55,7 +57,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
 
     private void initGUI() {
         this.setLayout(new RiverLayout());
-
+        this.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
         expTable = new Cab2bTable(true, emptyTableData, tableHeader);
 
         MyLinkAction myLinkAction = new MyLinkAction();

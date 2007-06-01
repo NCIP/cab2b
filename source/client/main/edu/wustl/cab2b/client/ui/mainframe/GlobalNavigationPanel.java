@@ -77,20 +77,20 @@ public class GlobalNavigationPanel extends Cab2bPanel implements ActionListener 
 	/**
 	 * Button text to show in the navigation panel.
 	 */
-	String[] tabsImagesUnPressed = { "resources/images/home_tab.gif",
+	/*String[] tabsImagesUnPressed = { "resources/images/home_tab.gif",
 			"resources/images/searchdata_tab.gif", "resources/images/experiment_tab.gif" };
 
 	String[] tabsImagesPressed = { "resources/images/home_MO_tab.gif",
-			"resources/images/searchdata_MO_tab.gif", "resources/images/experiment_MO_tab.gif" };
+			"resources/images/searchdata_MO_tab.gif", "resources/images/experiment_MO_tab.gif" };*/
 
 	/**
 	 * Buttons to show in the navigation panel.
 	 */
 	JButton[] tabButtons = new Cab2bButton[tabs.length];
 
-	public Color navigationButtonBgColorSelected = new Color(221, 221, 221);
+	public Color navigationButtonBgColorSelected = Color.WHITE;
 
-	public Color navigationButtonBgColorUnSelected = new Color(168, 168, 168);
+	public Color navigationButtonBgColorUnSelected = new Color(200, 200, 220);
 
 	/**
 	 * Top level panel to hold all sub panels.
@@ -172,19 +172,22 @@ public class GlobalNavigationPanel extends Cab2bPanel implements ActionListener 
 		tabsPanel.setBackground(bgColor);
 		tabsPanel.setLayout(new HorizontalLayout(10));
 
-		for (int i = 0; i < tabs.length; i++) {
-			String tabText = tabs[i];
-			String tabImageFileLocation = tabsImagesUnPressed[i];
-			ImageIcon imageIcon = new ImageIcon(tabImageFileLocation);
-			// tabButtons[i] = new Cab2bButton(imageIcon);
-			// tabButtons[i].setActionCommand(tabText);
-			tabButtons[i] = new Cab2bButton(tabText, true, Cab2bStandardFonts.ARIAL_BOLD_12);
-			tabButtons[i].setIcon(imageIcon);
-			tabButtons[i].setBorder(null);
-			tabButtons[i].setBackground(Color.BLUE);
-			tabButtons[i].addActionListener(this);
-			tabsPanel.add(tabButtons[i]);
-		}
+		   for (int i = 0; i < tabs.length; i++) {
+	            String tabText = tabs[i];
+	           /* String tabImageFileLocation = tabsImages[i];
+	            ImageIcon imageIcon = new ImageIcon(tabImageFileLocation);*/
+	            //tabButtons[i] = new Cab2bButton(imageIcon);
+	            //tabButtons[i].setActionCommand(tabText);
+	            tabButtons[i] = new Cab2bButton(tabText, true, Cab2bStandardFonts.ARIAL_BOLD_12);
+	            tabButtons[i].setBorder(null);
+	            if (i != 0) {
+	                tabButtons[i].setBackground(navigationButtonBgColorUnSelected); //new Color(168, 168, 168)
+	            } else {
+	                tabButtons[i].setBackground(navigationButtonBgColorSelected); //new Color(220,220,240)
+	            }
+	            tabButtons[i].addActionListener(this);
+	            tabsPanel.add(tabButtons[i]);
+	        }
 
 		gbc.gridx = 3;
 		gbc.gridy = 0;
@@ -296,61 +299,48 @@ public class GlobalNavigationPanel extends Cab2bPanel implements ActionListener 
 	/**
 	 * Global navigation button's action listener.
 	 */
-	public void actionPerformed(ActionEvent e) {
-		Logger.out.info("Global Nagigation Panel Button");
-		JButton button = (JButton) e.getSource();
+	 public void actionPerformed(ActionEvent e) {
+	        Logger.out.info("Global Nagigation Panel Button");
+	        JButton button = (JButton) e.getSource();
+	        for (int i = 0; i < tabButtons.length; i++) {
+	            if (tabButtons[i].getActionCommand().equals(button.getActionCommand())) {
+	                tabButtons[i].setBackground(navigationButtonBgColorSelected);
+	                if (tabButtons[i].getActionCommand().equals("Home")) {
+	                    if (this.frame instanceof MainFrame) {
+	                        MainFrame mainframePanel = (MainFrame) this.frame;
+	                        mainframePanel.setHomeWelcomePanel();
+	                        Logger.out.info("Global Nagigation Panel Home Button");
+	                    }
+	                } else if (tabButtons[i].getActionCommand().equals("Search Data")) {
+	                    GlobalNavigationPanel.mainSearchPanel = new MainSearchPanel();
+	                    Dimension relDimension = CommonUtils.getRelativeDimension(MainFrame.mainframeScreenDimesion,
+	                                                                              0.90f, 0.85f);
+	                    GlobalNavigationPanel.mainSearchPanel.setPreferredSize(relDimension);
+	                    GlobalNavigationPanel.mainSearchPanel.setSize(relDimension);
 
-		for (int i = 0; i < tabButtons.length; i++) {
-			tabButtons[i].setIcon(new ImageIcon(tabsImagesPressed[i]));
-			if (tabButtons[i].getActionCommand().equals(button.getActionCommand())) {
-				tabButtons[i].setBackground(navigationButtonBgColorSelected);
-				if (tabButtons[i].getActionCommand().equals("Home")) {
-					if (this.frame instanceof MainFrame) {
-						MainFrame mainframePanel = (MainFrame) this.frame;
-						mainframePanel.setHomeWelcomePanel();
-						Logger.out.info("Global Nagigation Panel Home Button");
-						tabButtons[i].setBackground(Color.BLUE);
-					}
-				} else if (tabButtons[i].getActionCommand().equals("Search Data")) {
-					tabButtons[i].setBackground(Color.BLUE);
-					GlobalNavigationPanel.mainSearchPanel = new MainSearchPanel();
-					Dimension relDimension = CommonUtils.getRelativeDimension(
-							MainFrame.mainframeScreenDimesion, 0.90f, 0.85f);
-					GlobalNavigationPanel.mainSearchPanel.setPreferredSize(relDimension);
-					GlobalNavigationPanel.mainSearchPanel.setSize(relDimension);
+	                    edu.wustl.cab2b.client.ui.util.CommonUtils.FrameReference = mainFrame;
 
-					edu.wustl.cab2b.client.ui.util.CommonUtils.FrameReference = mainFrame;
+	                    // Update the variable for latest screen dimension from the toolkit, this is to handle the situations were
+	                    // Application is started and then screen resolution is changed, but the variable stiil holds old resolution size.
+	                    MainFrame.mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
+	                    Dimension dimension = MainFrame.mainframeScreenDimesion;
+	                    WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel, "Search Data", new Dimension((int)(dimension.width * 0.90), (int)(dimension.height * 0.85)), true, true);
 
-					// Update the variable for latest screen dimension from the
-					// toolkit, this is to handle the situations were
-					// Application is started and then screen resolution is
-					// changed, but the variable stiil holds old resolution
-					// size.
-					MainFrame.mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
-					Dimension dimension = MainFrame.mainframeScreenDimesion;
-					WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel,
-							"Search Data", new Dimension((int) (dimension.width * 0.90),
-									(int) (dimension.height * 0.85)), true, true);
+	                    GlobalNavigationPanel.mainSearchPanel.getDataList().clear();
+	                    GlobalNavigationPanel.mainSearchPanel = null;
+	                } else if (tabButtons[i].getActionCommand().equals("Experiment")) {
 
-					GlobalNavigationPanel.mainSearchPanel.getDataList().clear();
-					GlobalNavigationPanel.mainSearchPanel = null;
-
-				} else if (tabButtons[i].getActionCommand().equals("Experiment")) {
-
-					MainFrame mainframePanel = (MainFrame) this.frame;
-					mainframePanel.setOpenExperimentWelcomePanel();
-					tabButtons[i].setBackground(Color.BLUE);
-					return;
-				}
-			} else {
-				// tabButtons[i].setBackground(navigationButtonBgColorUnSelected);
-				tabButtons[i].setIcon(new ImageIcon(tabsImagesUnPressed[i]));
-				tabButtons[i].setBackground(Color.BLUE);
-			}
-		}
-		this.updateUI();
-		this.repaint();
-	}
+	                    MainFrame mainframePanel = (MainFrame) this.frame;
+	                    mainframePanel.setOpenExperimentWelcomePanel();
+	                    return;
+	                }
+	            } else {
+	                tabButtons[i].setBackground(navigationButtonBgColorUnSelected);
+	            }
+	        }
+	        this.updateUI();
+	        this.repaint();
+	    }
 
 	/**
 	 * @param args
