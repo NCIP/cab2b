@@ -87,7 +87,7 @@ public class ThreeDResultObjectDetailsPanel extends ResultObjectDetailsPanel {
         JScrollPane tableSP = new JScrollPane(threeDTable);
         addRowHeader(tableSP);
         
-        tablePanel.add(tableSP, BorderLayout.SOUTH);
+        tablePanel.add("br hfill vfill", tableSP);
         detailsTablePanel.updateUI();
 
     }
