@@ -279,6 +279,7 @@
 				<include name="demo.properties" />
 				<include name="*.cfg.xml" />
 				<include name="dbutil.properties" />
+				<include name="EntityToAnalyticalServiceMapping.xml" />
 			</fileset>
 		</copy>
 
