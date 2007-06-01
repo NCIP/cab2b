@@ -64,14 +64,17 @@ public class CategoryObjectDetailsPanel extends ResultObjectDetailsPanel {
         Map<CategorialClass, List<ICategorialClassRecord>> mapChildClasses = iCategorialClassRecord.getChildrenCategorialClassRecords();
         Logger.out.debug("Size of class Records :" + mapChildClasses.keySet().size());
 
-        Vector<UserObjectWrapper> vect = new Vector<UserObjectWrapper>();
+        Vector<UserObjectWrapper> categoryClassData = new Vector<UserObjectWrapper>();
         for (CategorialClass categorialClass : mapChildClasses.keySet()) {
-            String str = edu.wustl.cab2b.common.util.Utility.getDisplayName(categorialClass.getCategorialClassEntity())
-                    + "_" + categorialClass.getId();
-            vect.add(new UserObjectWrapper<CategorialClass>(categorialClass, str));
+
+            categoryClassData.add(new UserObjectWrapper<CategorialClass>(categorialClass,
+                    edu.wustl.cab2b.common.util.Utility.getDisplayName(categorialClass.getCategorialClassEntity())));
         }
 
-        categoryTableData.add(vect);
+        if (categoryClassData.size() > 0) {
+
+            categoryTableData.add(categoryClassData);
+        }
     }
 
     /**
@@ -80,15 +83,18 @@ public class CategoryObjectDetailsPanel extends ResultObjectDetailsPanel {
     protected void initTableGUI() {
         super.initTableGUI();
 
-        categoryTable = new Cab2bTable(false, categoryTableData, categoryTableHeader);
-        CategoryLinkAction myLinkAction = new CategoryLinkAction();
-        categoryTable.getColumn(0).setCellRenderer(new LinkRenderer(myLinkAction));
-        categoryTable.getColumn(0).setCellEditor(new LinkRenderer(myLinkAction));
-        JScrollPane tableScrollPane = new JScrollPane(categoryTable);
+        if (categoryTableData.size() > 0) {
 
-        //detailsTablePanel.add(tableScrollPane, BorderLayout.SOUTH);
-        tablePanel.add(tableScrollPane,BorderLayout.SOUTH);        
-        detailsTablePanel.updateUI();
+            categoryTable = new Cab2bTable(false, categoryTableData, categoryTableHeader);
+            CategoryLinkAction myLinkAction = new CategoryLinkAction();
+            categoryTable.getColumn(0).setCellRenderer(new LinkRenderer(myLinkAction));
+            categoryTable.getColumn(0).setCellEditor(new LinkRenderer(myLinkAction));
+            JScrollPane tableScrollPane = new JScrollPane(categoryTable);
+
+            //detailsTablePanel.add(tableScrollPane, BorderLayout.SOUTH);
+            tablePanel.add(tableScrollPane, BorderLayout.SOUTH);
+            detailsTablePanel.updateUI();
+        }
     }
 
     /**
@@ -123,10 +129,10 @@ public class CategoryObjectDetailsPanel extends ResultObjectDetailsPanel {
 
                 IQueryResult queryResult = QueryResultFactory.createResult(categorialClass.getCategorialClassEntity());
                 queryResult.addRecords(dataRow.getURL(), listICategorialClassRecord);
-                String breadCrumbText = edu.wustl.cab2b.common.util.Utility.getDisplayName(categorialClass.getCategorialClassEntity())
-                        + "_" + categorialClass.getId();
                 JXPanel resultPanel = ResultPanelFactory.getResultPanel(searchPanel, queryResult, dataRow, null);
-                searchPanel.addToPanel(resultPanel, breadCrumbText);
+                searchPanel.addToPanel(
+                                       resultPanel,
+                                       edu.wustl.cab2b.common.util.Utility.getDisplayName(categorialClass.getCategorialClassEntity()));
 
                 //searchPanel.addToPanel(searchPanel.getResultPanel(queryResult, dataRow, null), );
                 searchPanel.updateUI();
