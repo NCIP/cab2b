@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,19 +14,16 @@ import java.util.Vector;
 import javax.swing.JScrollPane;
 
 import org.jdesktop.swingx.JXPanel;
-import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
-import edu.wustl.cab2b.client.ui.controls.CustomizableBorder;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.datalist.DataRow;
 import edu.wustl.cab2b.common.datalist.IDataRow;
@@ -53,25 +48,21 @@ public class ResultObjectDetailsPanel extends ResultPanel {
 
     protected Cab2bTable objDetailsTable;
 
-    private Object[] objectDetails;
-
-    private List<AttributeInterface> attributes; // List<IAttribute> attributes;
-
+    protected Cab2bPanel objDetailsPanel;
 
     private JXTitledPanel relatedDataTitledPanel;
 
     private JXPanel relatedDataPanel;
 
-    private Object id = null;
+    protected JScrollPane tableScrollPane;
 
-    private DataRow dataRow;
+    protected DataRow dataRow;
 
     private Cab2bPanel m_sidePanel;
 
     public ResultObjectDetailsPanel(
             SimpleSearchResultBreadCrumbPanel searchPanel,
             DataRow dataRow,
-
             IRecord record,
             Collection<AssociationInterface> incomingAssociationCollection,
             List<IInterModelAssociation> intraModelAssociationCollection) {
@@ -79,9 +70,6 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         super(searchPanel, incomingAssociationCollection, intraModelAssociationCollection);
 
         this.dataRow = dataRow;
-        this.id = dataRow.getId();
-        this.objectDetails = dataRow.getRow();
-        this.attributes = searchPanel.getAttributes();
 
         this.record = record;
 
@@ -95,17 +83,27 @@ public class ResultObjectDetailsPanel extends ResultPanel {
     }
 
     protected void initData() {
-        for (int i = 0; i < objectDetails.length; i++) {
+        for (int i = 0; i < dataRow.getAttributes().size(); i++) {
             Vector<Object> row = new Vector<Object>();
-            AttributeInterface attribute = attributes.get(i);
+            AttributeInterface attribute = dataRow.getAttributes().get(i);
             String formattedString = CommonUtils.getFormattedString(attribute.getName());
             row.add(formattedString);
-            row.add(objectDetails[i]);
+            row.add(dataRow.getRow()[i]);
             tableData.add(row);
         }
-        // TODO remove this hard coding, or externalize this strings.
         tableHeader.add("Attribute");
         tableHeader.add("Value");
+    }
+
+    protected void setTableData() {
+        objDetailsTable = new Cab2bTable(false, tableData, tableHeader);
+
+        if (objDetailsPanel == null) {
+            objDetailsPanel = new Cab2bPanel();
+            objDetailsPanel.setLayout(new BorderLayout());
+        }
+        tableScrollPane = new JScrollPane(objDetailsTable);
+        objDetailsPanel.add(tableScrollPane, BorderLayout.CENTER);
     }
 
     protected void initGUI() {
@@ -113,15 +111,10 @@ public class ResultObjectDetailsPanel extends ResultPanel {
 
         final JXPanel detailsTablePanel = new Cab2bPanel(new RiverLayout());
 
-        objDetailsTable = new Cab2bTable(false, tableData, tableHeader);
+        setTableData();
         objDetailsTable.setEditable(false);
 
-        JScrollPane tableSP = new JScrollPane(objDetailsTable);
-        // tableSP.setPreferredSize(new Dimension(700,600));
-        
-        addRowHeader(tableSP);
-
-        detailsTablePanel.add("br hfill vfill", tableSP);
+        detailsTablePanel.add("br hfill vfill", objDetailsPanel);
 
         initDataListButtons();
 
@@ -144,10 +137,6 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         this.add(m_sidePanel, BorderLayout.EAST);
     }
 
-    protected void addRowHeader(JScrollPane tableSP) {
-        
-    }
-
     private void initRelatedDataPanel() {
         relatedDataTitledPanel = new Cab2bTitledPanel("Related Data");
         GradientPaint gp1 = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
@@ -164,7 +153,7 @@ public class ResultObjectDetailsPanel extends ResultPanel {
 
         if (incomingAssociationCollection != null && !incomingAssociationCollection.isEmpty()) {
             AbstractAssociatedDataPanel incomingPanel = new IncomingAssociationDataPanel(
-                    incomingAssociationCollection, searchPanel.getAssociatedDataAL(), id, dataRow, record);
+                    incomingAssociationCollection, searchPanel.getAssociatedDataAL(), dataRow, record);
             relatedDataPanel.add(incomingPanel);
         }
 
@@ -174,8 +163,7 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         if (record instanceof IRecordWithAssociatedIds) {
             Collection outgoingIntraModelAssociationCollection = dataRow.getEntityInterface().getAssociationCollection();
             AbstractAssociatedDataPanel outgoingPanel = new OutgoingAssociationDataPanel(
-                    outgoingIntraModelAssociationCollection, searchPanel.getAssociatedDataAL(), id, dataRow,
-                    record);
+                    outgoingIntraModelAssociationCollection, searchPanel.getAssociatedDataAL(), dataRow, record);
             relatedDataPanel.add(outgoingPanel);
         }
 
@@ -185,7 +173,7 @@ public class ResultObjectDetailsPanel extends ResultPanel {
          */
         if (intraModelAssociationCollection != null && !intraModelAssociationCollection.isEmpty()) {
             AbstractAssociatedDataPanel interModelPanel = new InterModelAssociationDataPanel(
-                    intraModelAssociationCollection, searchPanel.getAssociatedDataAL(), id, dataRow, record);
+                    intraModelAssociationCollection, searchPanel.getAssociatedDataAL(), dataRow, record);
             relatedDataPanel.add("br", interModelPanel);
         }
 

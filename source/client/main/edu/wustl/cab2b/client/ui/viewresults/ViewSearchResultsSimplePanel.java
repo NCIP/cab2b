@@ -46,6 +46,9 @@ import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
  */
 public class ViewSearchResultsSimplePanel extends ResultPanel {
 
+    /**
+     * 
+     */
     private static final long serialVersionUID = 1L;
 
     JXPanel breadCrumbPanel;
@@ -71,10 +74,9 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
 
     public ViewSearchResultsSimplePanel(
             SimpleSearchResultBreadCrumbPanel searchPanel,
-            IQueryResult<IRecord> queryResult,
+            IQueryResult queryResult,
             IAssociation association,
             IDataRow parentDataRow,
-            EntityInterface presentEntityInterface,
             Collection<AssociationInterface> incomingAssociationCollection,
             List<IInterModelAssociation> intraModelAssociationCollection) {
 
@@ -126,7 +128,7 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
                     }
                 }
                 String description = descBuffer.toString();
-                if(description.length() > 150) {
+                if (description.length() > 150) {
                     //150 is allowable chars at 1024 resolution
                     description = description.substring(0, 150);
                     //To avoid clipping of attribute value in-between
@@ -137,14 +139,14 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
                 element.setDisplayName(className + "_" + j);
                 element.setDescription(description);
 
-                AttributeInterface idAttribute = Utility.getIdAttribute(queryResult.getOutputEntity());
-                Object id = record.getValueForAttribute(idAttribute);
+                //AttributeInterface idAttribute = Utility.getIdAttribute(queryResult.getOutputEntity());
+                //Object id = record.getValueForAttribute(idAttribute);
                 DataRow dataRow = new DataRow();
                 dataRow.setRow(valueArray);
                 dataRow.setAttributes(attributes);
                 dataRow.setClassName(className);
                 dataRow.setParent(parentDataRow);
-                dataRow.setId(id);
+                dataRow.setId(record.getId());
                 dataRow.setAssociation(queryAssociation);
                 dataRow.setEntityInterface(queryResult.getOutputEntity());
                 dataRow.setURL(url);

@@ -6,8 +6,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
-import java.util.Map;
 
 import javax.swing.JOptionPane;
 
@@ -27,7 +25,6 @@ import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.CategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
-import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -147,6 +144,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             SearchNavigationPanel.messageLabel.setText("");
             srhButton.setVisible(false);
             prvButton.setVisible(true);
+            Logger.out.info("NExt Clickd");
             if (m_mainSearchPanel.getCenterPanel().getSelectedCardIndex() == 1) {
                 //Gautam:
                 //If the central panel is AddLimitPanel, update the query object with the 
@@ -220,48 +218,29 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
                             Logger.out.info("Inside doUIUpdateLogic");
 
-                            /*
-                             * Based on the output selected i.e. class or category, cast
-                             * the results class accordingly. Basic assumptions is
-                             * object returned will not be null.
-                             */
+                            int recordNo = edu.wustl.cab2b.client.ui.query.Utility.getRecordNum(queryResults);
+                            if (recordNo == 0) {
+                                JOptionPane.showMessageDialog(null, "No result found.", "",
+                                                              JOptionPane.INFORMATION_MESSAGE);
+                                srhButton.setVisible(true);
+                                gotoAddLimitPanel();
 
-                            if (queryResults instanceof ICategoryResult) {
-                                Cab2bPanel categoryResultPanel = b2bTreeNode.getCategoryResultPanel();
-                                
-                                m_mainSearchPanel.getCenterPanel().m_arrCards[3] = categoryResultPanel;
-                                m_mainSearchPanel.getCenterPanel().add(categoryResultPanel, SearchCenterPanel.m_strViewSearchResultslbl);
+                            } else {
+                                ViewSearchResultsPanel viewSearchResultsPanel = new ViewSearchResultsPanel(
+                                        queryResults, m_mainSearchPanel);
+                                if (null != m_mainSearchPanel.getCenterPanel().m_arrCards[3]) {
+                                    m_mainSearchPanel.getCenterPanel().remove(
+                                                                              m_mainSearchPanel.getCenterPanel().m_arrCards[3]);
+                                }
+                                m_mainSearchPanel.getCenterPanel().m_arrCards[3] = viewSearchResultsPanel;
+                                m_mainSearchPanel.getCenterPanel().add(viewSearchResultsPanel,
+                                                                       SearchCenterPanel.m_strViewSearchResultslbl);
                                 /*
-                                 *  Implies the next button was clicked. Call show card with boolean set to true.
+                                 * 	Implies the next button was clicked. Call show card with boolean set to true.
                                  */
                                 showCard(true);
-                            } else {
-
-                                int recordNo = edu.wustl.cab2b.client.ui.query.Utility.getRecordNum(queryResults);
-                                if (recordNo == 0) {
-                                    JOptionPane.showMessageDialog(null, "No result found.", "",
-                                                                  JOptionPane.INFORMATION_MESSAGE);
-                                    srhButton.setVisible(true);
-                                    gotoAddLimitPanel();
-
-                                } else {
-                                    ViewSearchResultsPanel viewSearchResultsPanel = new ViewSearchResultsPanel(
-                                            queryResults, m_mainSearchPanel);
-                                    if (null != m_mainSearchPanel.getCenterPanel().m_arrCards[3]) {
-                                        m_mainSearchPanel.getCenterPanel().remove(
-                                                                                  m_mainSearchPanel.getCenterPanel().m_arrCards[3]);
-                                    }
-                                    m_mainSearchPanel.getCenterPanel().m_arrCards[3] = viewSearchResultsPanel;
-                                    m_mainSearchPanel.getCenterPanel().add(
-                                                                           viewSearchResultsPanel,
-                                                                           SearchCenterPanel.m_strViewSearchResultslbl);
-                                    /*
-                                     * 	Implies the next button was clicked. Call show card with boolean set to true.
-                                     */
-                                    showCard(true);
-                                }
-
                             }
+
                         } else {
                             srhButton.setVisible(true);
                             gotoAddLimitPanel();

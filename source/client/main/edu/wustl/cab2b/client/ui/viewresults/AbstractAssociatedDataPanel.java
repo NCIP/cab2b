@@ -31,10 +31,6 @@ public abstract class AbstractAssociatedDataPanel extends Cab2bPanel {
      */
     protected ActionListener associatedDataActionListener;
 
-    /**
-     * current identifier value
-     */
-    protected Object id;
 
     /**
      * dataRow
@@ -55,12 +51,12 @@ public abstract class AbstractAssociatedDataPanel extends Cab2bPanel {
     public AbstractAssociatedDataPanel(
             Collection associations,
             ActionListener associatedDataActionListener,
-            Object id,
+
             DataRow dataRow, IRecord record) {
 
         this.associations = associations;
         this.associatedDataActionListener = associatedDataActionListener;
-        this.id = id;
+
         this.dataRow = dataRow;
         this.record = record;
         iniGUI();
