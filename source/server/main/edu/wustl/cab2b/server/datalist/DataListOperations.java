@@ -357,7 +357,6 @@ public class DataListOperations extends DefaultBizLogic {
         Collection<AttributeInterface> oldAttribs = oldEntity.getAttributeCollection();
         for (AttributeInterface oldAttrib : oldAttribs) {
             AttributeInterface newAttrib = getNewAttribute(oldAttrib);
-            newAttrib.setName(oldAttrib.getName()); // only for testing
             newEntity.addAttribute(newAttrib);
         }
 

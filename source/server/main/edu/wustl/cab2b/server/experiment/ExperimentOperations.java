@@ -371,7 +371,6 @@ public class ExperimentOperations extends DefaultBizLogic {
 	    for(AttributeInterface attribute : attributes)
 	    {
 	    	AttributeInterface newAttribute = DynamicExtensionUtility.getAttributeCopy(attribute);
-	    	newAttribute.setName(attribute.getName());
 	    	newEntity.addAbstractAttribute(newAttribute);
 	    	//needed for persistData()
 	    	newAtttributes.add(newAttribute);
