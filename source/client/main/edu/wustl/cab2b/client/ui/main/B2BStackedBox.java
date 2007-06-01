@@ -51,6 +51,8 @@ public class B2BStackedBox extends Cab2bPanel {
 	    savedSnapshots.setOpaque(false);
 	    savedSnapshots.setBorder(null);
 	    box.addBox("Popular Categories", savedSnapshots,"");
+	    
+	    this.setBorder(null);
 	        
 	 }
 	  

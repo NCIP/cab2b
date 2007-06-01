@@ -3,11 +3,12 @@ package edu.wustl.cab2b.client.ui;
 import java.awt.Dimension;
 import java.util.Set;
 
-import org.jdesktop.swingx.JXPanel;
+import org.apache.axis.types.Entities;
 
+import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 
 /**
- *
+ * 
  * The actual RHS panel from the choose category tab from the main search
  * dialog,comprising the advanced/category search panels as well as the
  * subsequent results panel.
@@ -16,8 +17,7 @@ import org.jdesktop.swingx.JXPanel;
  * 
  */
 
-public class ChooseCategorySearchPanel extends AbstractSearchPanel 
-{
+public class ChooseCategorySearchPanel extends AbstractSearchPanel {
 
 	/**
 	 * constructor
@@ -27,36 +27,31 @@ public class ChooseCategorySearchPanel extends AbstractSearchPanel
 	 *            that it can be made available to child components, which can
 	 *            then cause the parent to refresh for appropriate events.
 	 */
-	ChooseCategorySearchPanel(ContentPanel chooseCategoryPanel)
-	{
+	ChooseCategorySearchPanel(ContentPanel chooseCategoryPanel) {
 		super(chooseCategoryPanel);
 	}
-	
+
 	/**
-	 * The abstract method implementation from the base class that returns an instance of 
-	 * {@link ChooseCategoryAdvancedSearchPanel}
+	 * The abstract method implementation from the base class that returns an
+	 * instance of {@link ChooseCategoryAdvancedSearchPanel}
 	 * 
-	 */	
-	public AbstractAdvancedSearchPanel getAdvancedSearchPanel()
-	{			
-		return new ChooseCategoryAdvancedSearchPanel();	
+	 */
+	public AbstractAdvancedSearchPanel getAdvancedSearchPanel() {
+		return new ChooseCategoryAdvancedSearchPanel();
 	}
-	
-	
 
 	/**
 	 * The abstract method implementation from the base class that adds a text
 	 * field as is required by this specific implementation of the
 	 * {@link ChooseCategoryAdvancedSearchPanel}
 	 * 
-	 */	
-	public void addTextField()
-	{				
-		this.getTextField().setPreferredSize(new Dimension(350,25));
+	 */
+	public void addTextField() {
+		this.getTextField().setPreferredSize(new Dimension(350, 25));
+		this.add("tab ", new Cab2bLabel());
 		this.add(this.getTextField());
 	}
-	
-	
+
 	/**
 	 * The abstract method implementation from the base class returns an
 	 * instance of {@link ChooseCategorySearchResultPanel}
@@ -64,16 +59,15 @@ public class ChooseCategorySearchPanel extends AbstractSearchPanel
 	 * 
 	 * @param addLimitPanel
 	 *            The reference to the parent content panel required by the
-	 *            {@link ChooseCategorySearchResultPanel} to be refreshed for the
-	 *            appropritate events it can generate.
+	 *            {@link ChooseCategorySearchResultPanel} to be refreshed for
+	 *            the appropritate events it can generate.
 	 * 
 	 * @param searchResult
 	 *            The collection of {@link Entities}
 	 */
-	public AbstractSearchResultPanel getSearchResultPanel(ContentPanel addLimitPanel, Set searchResult)
-	{
-		return  new ChooseCategorySearchResultPanel(addLimitPanel,searchResult);
+	public AbstractSearchResultPanel getSearchResultPanel(ContentPanel addLimitPanel,
+			Set searchResult) {
+		return new ChooseCategorySearchResultPanel(addLimitPanel, searchResult);
 	}
-	
-	
+
 }

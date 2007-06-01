@@ -21,16 +21,19 @@ public class Cab2bPanel extends JXPanel
 	public Cab2bPanel()
 	{
 		this(new RiverLayout());
+		this.setBorder(null);
 	}
 
 	public Cab2bPanel(LayoutManager lm)
 	{
 		this(lm, false);
+		this.setBorder(null);
 	}
 
 	public Cab2bPanel(LayoutManager lm, boolean isDoubleBuffered)
 	{
 		this(lm, isDoubleBuffered, defaultBgColor);
+		this.setBorder(null);
 	}
 	
 	public Cab2bPanel(LayoutManager lm, boolean isDoubleBuffered, Color bgColor)
@@ -38,6 +41,7 @@ public class Cab2bPanel extends JXPanel
 		super(lm, isDoubleBuffered);
 		this.setBackground(bgColor);
 		//this.setBorder(new CustomizableBorder(new Insets(1,1,1,1), true, true));
+		this.setBorder(null);
 	}
 	
 	public static void main(String[] args)
