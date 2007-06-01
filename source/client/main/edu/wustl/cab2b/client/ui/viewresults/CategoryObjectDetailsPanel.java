@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.List;
@@ -86,8 +87,8 @@ public class CategoryObjectDetailsPanel extends ResultObjectDetailsPanel {
         JScrollPane tableScrollPane = new JScrollPane(categoryTable);
 
         //detailsTablePanel.add(tableScrollPane, BorderLayout.SOUTH);
-        detailsTablePanel.add("br hfill vfill", tableScrollPane);
-        //detailsTablePanel.updateUI();
+        tablePanel.add(tableScrollPane,BorderLayout.SOUTH);        
+        detailsTablePanel.updateUI();
     }
 
     /**

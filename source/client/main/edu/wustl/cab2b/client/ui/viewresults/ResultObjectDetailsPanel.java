@@ -42,6 +42,7 @@ public class ResultObjectDetailsPanel extends ResultPanel {
     protected IRecord record;
 
     protected JXPanel detailsTablePanel;
+    protected JXPanel tablePanel;
 
     private Vector<Vector> tableData = new Vector<Vector>();
 
@@ -94,20 +95,20 @@ public class ResultObjectDetailsPanel extends ResultPanel {
             row.add(dataRow.getRow()[i]);
             tableData.add(row);
         }
-        // TODO remove this hard coding, or externalize this strings.
         tableHeader.add("Attribute");
         tableHeader.add("Value");
     }
 
     protected void initGUI() {
         this.setLayout(new BorderLayout());
-
         initTableGUI();
-
-        initDataListButtons();
-
-        detailsTablePanel.add("br", addToDataListButton);
-        detailsTablePanel.add("tab tab", m_applyAllButton);
+        initDataListButtons();        
+        
+        Cab2bPanel buttonPanel = new Cab2bPanel();
+        buttonPanel.add("br", addToDataListButton);
+        buttonPanel.add("tab tab", m_applyAllButton);
+ 
+        detailsTablePanel.add("br hfill ",buttonPanel);       
 
         this.add(detailsTablePanel, BorderLayout.CENTER);
 
@@ -126,15 +127,14 @@ public class ResultObjectDetailsPanel extends ResultPanel {
     }
 
     protected void initTableGUI() {
-        detailsTablePanel = new Cab2bPanel(new RiverLayout());
-
+        //detailsTablePanel = new Cab2bPanel(new BorderLayout());
+        detailsTablePanel = new Cab2bPanel();
+        tablePanel = new Cab2bPanel(new BorderLayout());  
         objDetailsTable = new Cab2bTable(false, tableData, tableHeader);
-
         objDetailsTable.setEditable(false);
-
         JScrollPane tableSP = new JScrollPane(objDetailsTable);
-
-        detailsTablePanel.add("br hfill vfill", tableSP);
+        tablePanel.add(tableSP,BorderLayout.CENTER);
+        detailsTablePanel.add("br hfill vfill",tablePanel);
     }
 
     private void initRelatedDataPanel() {

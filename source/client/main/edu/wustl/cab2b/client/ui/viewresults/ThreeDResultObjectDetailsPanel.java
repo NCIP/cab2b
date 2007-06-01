@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
+import java.awt.BorderLayout;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
@@ -85,7 +86,9 @@ public class ThreeDResultObjectDetailsPanel extends ResultObjectDetailsPanel {
         threeDTable.setEditable(false);
         JScrollPane tableSP = new JScrollPane(threeDTable);
         addRowHeader(tableSP);
-        detailsTablePanel.add("br hfill", tableSP);
+        
+        tablePanel.add(tableSP, BorderLayout.SOUTH);
+        detailsTablePanel.updateUI();
 
     }
 
