@@ -7,6 +7,10 @@
 -->
 
 <entity_service_mapping>
+<service name="CMS" URL="http://node255.broad.mit.edu:6060/wsrf/services/cagrid/ComparativeMarkerSelMAGESvc">
+			<method name="invoke" serviceDetailClass="edu.wustl.cab2b.common.analyticalservice.CMSServiceDetails" serviceInvokerClass="edu.wustl.cab2b.server.analyticalservice.CMSServiceInvoker"/>
+	</service>
+	<entity name="gov.nih.nci.mageom.domain.BioAssay.BioAssay" serviceName="CMS"/>
 	<!-- service name="Service1" URL="">
 			<method name="method1" serviceDetailClass="TempDetail1" serviceInvokerClass="TempInvoker"/>
 			<method name="method2" serviceDetailClass="TempDetail2" serviceInvokerClass="TempInvoker"/>
