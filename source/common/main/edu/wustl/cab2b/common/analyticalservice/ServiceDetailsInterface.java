@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.common.analyticalservice;
 
+import java.io.Serializable;
 import java.util.List;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 
@@ -8,7 +9,7 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
  * For each method of analytical service, one implementation of this interface is needed.
  * @author Chandrakant Talele
  */
-public interface ServiceDetailsInterface {
+public interface ServiceDetailsInterface extends Serializable {
     /**
      * @return The display name to be shown on UI
      */
