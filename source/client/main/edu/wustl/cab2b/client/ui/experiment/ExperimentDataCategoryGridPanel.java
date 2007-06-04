@@ -162,6 +162,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	 */
 	public void setVisualizeDataPanel(Cab2bPanel visualizeDataPanel) {
 		this.visualizeDataPanel = visualizeDataPanel;
+		this.visualizeDataPanel.setBorder(null);
 	}
 	
 	/**
@@ -210,6 +211,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	public void refreshTable(Object columnVector[], Object[][] dataRecordVector, Map<String, AttributeInterface> attributeMap) {
 		this.removeAll();
 		experimentDataPanel.removeAll();
+		experimentDataPanel.setBorder(null);
 		table = new ExperimentTableModel(false, dataRecordVector, columnVector, attributeMap);
 		refreshUI();
 		updateUI();
@@ -227,7 +229,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		
 		analysisDataPanel = new Cab2bPanel();
 		analysisDataPanel.setName("analysisDataPanel");
-		analysisDataPanel.setBorder(null);
+		
 		
 		Experiment selectedExperiment = ((ExperimentOpenPanel)this.getParent().getParent()).getSelectedExperiment();
         Cab2bLabel experimentLabel = new Cab2bLabel("Analysis performed for '" + selectedExperiment.getName() + "'");
@@ -251,9 +253,10 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		jScrollPane.getViewport().add(analysisTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		analysisDataPanel.add("br center hfill vfill", jScrollPane);
-		
+		analysisDataPanel.setBorder(null);
 		tabComponent.add("Analysis", analysisDataPanel);
 		tabComponent.setSelectedComponent(analysisDataPanel);
+		
 		
 		TableLinkAction myLinkAction = new TableLinkAction();
 		analysisTable.getColumn(1).setCellRenderer(new LinkRenderer(myLinkAction));
@@ -282,7 +285,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
 		prevButton = new Cab2bButton("Previous");
 		prevButton.setEnabled(false);
-		
+		this.setBorder(null);
 		refreshUI();
 	}
 	
@@ -296,14 +299,18 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		
 		Cab2bPanel northPanel = new Cab2bPanel();
 		northPanel.add(saveDataCategoryButton);
+		northPanel.setBorder(null);
 		this.add(northPanel, BorderLayout.NORTH);
 		
 		tabComponent.add("Experiment Data", experimentDataPanel);
+		tabComponent.setBorder(null);
 		this.add(tabComponent, BorderLayout.CENTER);
 		
 		Cab2bPanel bottomPanel = new Cab2bPanel();
-        bottomPanel.add(prevButton);
+		bottomPanel.add(prevButton);
+		bottomPanel.setBorder(null);
 		this.add(bottomPanel, BorderLayout.SOUTH);
+		this.setBorder(null);
 	}
 	
 	/**
@@ -321,7 +328,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		JScrollPane jScrollPane = new JScrollPane();
 		jScrollPane.getViewport().add(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
+		jScrollPane.setBorder(null);
 		return jScrollPane;
 	}
 	
