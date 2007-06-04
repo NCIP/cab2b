@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -80,465 +81,537 @@ import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.util.logger.Logger;
 
-public class ExperimentStackBox extends Cab2bPanel
-{
-    /** Default Serial version ID */
+public class ExperimentStackBox extends Cab2bPanel {
+	/** Default Serial version ID */
 	private static final long serialVersionUID = 1L;
 
 	/** panel to display data-list (flat structure PPT slide no :44 ) */
-    protected Cab2bPanel dataCategoryPanel = null;
+	protected Cab2bPanel dataCategoryPanel = null;
 
-    /** panel to display filters on selected data-category */
-    protected static Cab2bPanel dataFilterPanel = null;
+	/** panel to display filters on selected data-category */
+	protected static Cab2bPanel dataFilterPanel = null;
 
-    /** panel to display analysed data on selected data-category */
-    protected Cab2bPanel analyseDataPanel = null;
+	/** panel to display analysed data on selected data-category */
+	protected Cab2bPanel analyseDataPanel = null;
 
-    /** panel to display visual form of data on selected data-category */
-    protected Cab2bPanel visualiseDataPanel = null;
+	/** panel to display visual form of data on selected data-category */
+	protected Cab2bPanel visualiseDataPanel = null;
 
-    protected Cab2bPanel dataViewPanel = null;
-    
-    /** stack box to add all this panels */
-    protected StackedBox stackedBox;
+	protected Cab2bPanel dataViewPanel = null;
 
-    /** ExperimentOpen Panel*/
-    protected ExperimentDataCategoryGridPanel m_experimentDataCategoryGridPanel = null;
+	/** stack box to add all this panels */
+	protected StackedBox stackedBox;
 
-    protected JXTree datalistTree;
+	/** ExperimentOpen Panel */
+	protected ExperimentDataCategoryGridPanel m_experimentDataCategoryGridPanel = null;
 
-    protected JScrollPane treeViewScrollPane;
+	protected JXTree datalistTree;
 
-    protected ExperimentBusinessInterface m_experimentBusinessInterface;
+	protected JScrollPane treeViewScrollPane;
 
-    protected Experiment m_selectedExperiment = null;
+	protected ExperimentBusinessInterface m_experimentBusinessInterface;
 
-    protected String columnName[] = null;
-    
-    protected static CaB2BFilterInterface obj = null;
+	protected Experiment m_selectedExperiment = null;
 
-    protected Object recordObject[][] = null;
-    
-    protected Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
+	protected String columnName[] = null;
 
-    public ExperimentStackBox(ExperimentBusinessInterface expBus, Experiment selectedExperiment) {
-        m_experimentBusinessInterface = expBus;
-        m_selectedExperiment = selectedExperiment;
-        initGUI();
-    }
+	protected static CaB2BFilterInterface obj = null;
 
-    public ExperimentStackBox(ExperimentBusinessInterface expBus, Experiment selectedExperiment, ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel) {
-        m_experimentBusinessInterface = expBus;
-        m_selectedExperiment = selectedExperiment;
-        m_experimentDataCategoryGridPanel = experimentDataCategoryGridPanel;
-        initGUI();
-    }
+	protected Object recordObject[][] = null;
 
-    public void initGUI() {
-        this.setLayout(new BorderLayout());
-        stackedBox = new StackedBox();
-        stackedBox.setTitleBackgroundColor(new Color(200, 200, 220));
+	protected Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
 
-        Set<EntityInterface> entitySet = null;
-        try {
-            entitySet = m_experimentBusinessInterface.getDataListEntitySet(m_selectedExperiment);
-        } catch (RemoteException remoteException) {
-        	CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true, false);
-        }
-               
-        DefaultMutableTreeNode rootNode = generateRootNode(entitySet);
-        initializeDataListTree(rootNode);
-        
-        initializePanels();
-    }
-    
-    /**
-     * This method generates a root node given the set of entities
-     * @param entitySet set of entities
-     * @return root node
-     */
-    private DefaultMutableTreeNode generateRootNode(Set<EntityInterface> entitySet) {
-    	DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Experiment Data Categories");
-        DefaultMutableTreeNode node = null;
-        
-        //for each datalist
-        for(EntityInterface dummyEntity : entitySet) {
-	        EntityInterface entity = null;
-            //get the only child of the dummy entity, which would be the real first level entity in the tree 
-            for(AssociationInterface association : dummyEntity.getAssociationCollection()) {
-           		entity = association.getTargetEntity();
-           	}
-           	
-            TreeEntityWrapper treeEntityWrapper = new TreeEntityWrapper();
-            treeEntityWrapper.setEntityInterface(entity);
-            node = new DefaultMutableTreeNode(treeEntityWrapper);
-            rootNode.add(node);
-            addChildren(rootNode, node);
-        }
-        
-        return rootNode;
-    }
-    
-    /**
-     * This method initalize the datalist tree given the root node
-     * @param rootNode the root node to be set.
-     */
-    private void initializeDataListTree(DefaultMutableTreeNode rootNode) {
-    	//creating datalist tree
-        datalistTree = new JXTree(rootNode);
+	public ExperimentStackBox(ExperimentBusinessInterface expBus,
+			Experiment selectedExperiment) {
+		m_experimentBusinessInterface = expBus;
+		m_selectedExperiment = selectedExperiment;
+		initGUI();
+	}
 
-        //setting the first node as selected and displaying the corresponding records in the table  
-        if (datalistTree.getRowCount() >= 2) {
-            datalistTree.setSelectionRow(1);
-            datalistTree.expandRow(1);
-            CustomSwingWorker swingWorker = new CustomSwingWorker(datalistTree) {
-                protected void doNonUILogic() throws RuntimeException {
-                    Object nodeInfo = ((DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent()).getUserObject();
-                    if (nodeInfo instanceof TreeEntityWrapper) {
-                    	TreeEntityWrapper experimentEntity = (TreeEntityWrapper) nodeInfo;
-                    	getDataCategoyRecords(experimentEntity);
-                        addAvailableAnalysisServices(experimentEntity);
-                        setChartLinkStatusOnRowSelect();
-                    }
-                }
+	public ExperimentStackBox(ExperimentBusinessInterface expBus,
+			Experiment selectedExperiment,
+			ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel) {
+		m_experimentBusinessInterface = expBus;
+		m_selectedExperiment = selectedExperiment;
+		m_experimentDataCategoryGridPanel = experimentDataCategoryGridPanel;
+		initGUI();
+	}
 
-                protected void doUIUpdateLogic() throws RuntimeException {
-                    m_experimentDataCategoryGridPanel.refreshTable(columnName, recordObject,attributeMap);
-                    setChartLinkStatusOnRowSelect();
-                }
-            };
-            swingWorker.start();
-        }
+	public void initGUI() {
+		this.setLayout(new BorderLayout());
+		stackedBox = new StackedBox();
+		stackedBox.setTitleBackgroundColor(new Color(200, 200, 220));
 
-        //action listener for selected data category 
-        datalistTree.addTreeSelectionListener(new TreeSelectionListener() {
-            public void valueChanged(TreeSelectionEvent e) {
-                treeSelectionListenerAction();
-            }
-        });
-    }
-    
-    /**
-     * This method initialzse the different UI panels and panes.
-     */
-    private void initializePanels() {
-    	//Adding Select data category pane		
-        treeViewScrollPane = new JScrollPane(datalistTree);
-        treeViewScrollPane.setPreferredSize(new Dimension(250, 200));
-        stackedBox.addBox("Select Data Category", treeViewScrollPane, "resources/images/mysearchqueries_icon.gif");
-
-        //Adding Filter data category panel
-        dataFilterPanel = new Cab2bPanel();
-        dataFilterPanel.setPreferredSize(new Dimension(250, 200));
-        dataFilterPanel.setOpaque(false);
-        stackedBox.addBox("Filter Data ", dataFilterPanel, "resources/images/mysearchqueries_icon.gif");
-
-        //Adding Analyse data panel
-        analyseDataPanel = new Cab2bPanel();
-        analyseDataPanel.setPreferredSize(new Dimension(250, 150));
-        analyseDataPanel.setOpaque(false);
-        stackedBox.addBox("Analyze Data ", analyseDataPanel, "resources/images/mysearchqueries_icon.gif");
-        
-        //Adding Visualize data panel
-        visualiseDataPanel = new Cab2bPanel();
-        visualiseDataPanel.setPreferredSize(new Dimension(250, 200));
-        visualiseDataPanel.setOpaque(false);
-        stackedBox.addBox("Visualize Data ", visualiseDataPanel, "resources/images/mysearchqueries_icon.gif");
-        
-        //Set the type of charts to be displayed.
-        Vector<String> chartTypes = new Vector<String>();
-        chartTypes.add(Constants.BAR_CHART);
-        chartTypes.add(Constants.LINE_CHART);
-        chartTypes.add(Constants.SCATTER_PLOT);
-        setChartTypesForVisualiseDataPanel(chartTypes);
-        setChartLinkStatusOnRowSelect();
-
-        stackedBox.setPreferredSize(new Dimension(250, 500));
-        stackedBox.setMinimumSize(new Dimension(250, 500));
-        this.add(stackedBox);
-    }
-    
-    /**
-     * find and add children of the given tree node
-     * child node is added to the current node if it is filtered, otherwise it is added to the root node
-     * @param node the tree node
-     */
-    private void addChildren(DefaultMutableTreeNode rootNode, DefaultMutableTreeNode node) {
-    	EntityInterface entity = ((TreeEntityWrapper)node.getUserObject()).getEntityInterface();
-    	    	
-    	for(AssociationInterface association : entity.getAssociationCollection()) {
-    		EntityInterface targetEntity = association.getTargetEntity();
-    		TreeEntityWrapper child = new TreeEntityWrapper();
-    		child.setEntityInterface(targetEntity);
-    		DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(child);
-    		
-    		Collection<TaggedValueInterface> taggedValues = targetEntity.getTaggedValueCollection();
-    		
-    		if(Utility.getTaggedValue(taggedValues, Constants.FILTERED)!=null) {
-    			node.add(childNode);
-    		} else {
-    			rootNode.add(childNode);
-    		}
-    		
-    		addChildren(rootNode, childNode);
-    	}
-    }
-    
-    /**
-     * Method to perform tree node selection action
-     * for currently selected node 
-     */
-    public void treeSelectionListenerAction() {
-        CustomSwingWorker swingWorker = new CustomSwingWorker(datalistTree) {
-            @Override
-            protected void doNonUILogic() throws RuntimeException {
-                Logger.out.info("Clicked on datalist");
-                ExperimentDataCategoryGridPanel.clearMap();
-                getDataForFilterPanel();
-                updateUI();
-               
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent();
-                if (node == null) {
-                    return;
-                }
-
-                //if rot node is selected, clear all table content 
-                if (node.isRoot() == true) {
-                    columnName = null;
-                    recordObject = null;
-                }
-                
-                Object nodeInfo = node.getUserObject();
-                if (nodeInfo instanceof TreeEntityWrapper) {
-                	TreeEntityWrapper experimentEntity = (TreeEntityWrapper) nodeInfo;
-                    getDataCategoyRecords(experimentEntity);
-                    addAvailableAnalysisServices(experimentEntity);
-                }
-            }
-
-            protected void doUIUpdateLogic() throws RuntimeException {
-                m_experimentDataCategoryGridPanel.refreshTable(columnName, recordObject,attributeMap);
-                setChartLinkStatusOnRowSelect();
-            }
-        };
-        swingWorker.start();
-    }
-    
-    /**
-     * Method used to get dataCategory records from database and covert it into table format
-     */
-    private void getDataCategoyRecords(TreeEntityWrapper nodeInfo) {
-        EntityInterface entityNode = nodeInfo.getEntityInterface();
-        entityNode.getAttributeCollection();
-        Logger.out.info("ID :: " + entityNode.getId());
-
-        //getting datalist entity interface
-        DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils
-        								.getBusinessInterface(EjbNamesConstants.DATALIST_BEAN, DataListHomeInterface.class);
-        EntityRecordResultInterface recordResultInterface = null;
+		Set<EntityInterface> entitySet = null;
 		try {
-			recordResultInterface = dataListBI.getEntityRecord(entityNode.getId());
-			
-			//getting list of attributes
-			List<AbstractAttributeInterface> headerList = recordResultInterface.getEntityRecordMetadata().getAttributeList();
-	        columnName = new String[headerList.size()];
-	        int i = 0;
-	        for(AbstractAttributeInterface abstractAttribute : headerList) {
-	            AttributeInterface attribute = (AttributeInterface) abstractAttribute;
-	            columnName[i++] = CommonUtils.getFormattedString(attribute.getName());
-	            attributeMap.put(columnName[i-1],attribute);
-	            Logger.out.info("Table Header :" + attribute.getName());
-	        }
-	        
-	        //getting actual records
-	        List<EntityRecordInterface> recordList = recordResultInterface.getEntityRecordList();
-	        recordObject = new Object[recordList.size()][headerList.size()];
-	        Logger.out.info("Record Size :: " + recordList.size());
-	        i = 0; int j = 0;
-	        for(EntityRecordInterface record : recordList) {
-	            List recordValueList = record.getRecordValueList();
-	            j = 0;
-	            for(Object object : recordValueList) {
-	                recordObject[i][j] = new Object();
-	                recordObject[i][j] = object;
-	                Logger.out.info("Data [" + i + "]" + "[" + j + "]" + recordObject[i][j]);
-	                j++;
-	            }
-	            i++;
-	        }
-		} catch (RemoteException remoteException) {				
-			CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true, false);
+			entitySet = m_experimentBusinessInterface
+					.getDataListEntitySet(m_selectedExperiment);
+		} catch (RemoteException remoteException) {
+			CommonUtils.handleException(remoteException,
+					MainFrame.newWelcomePanel, true, true, true, false);
 		}
-    }
-    
-    public static void setDataForFilterPanel(Vector<CaB2BFilterInterface> data) {
-        Logger.out.info("setDataForMyExperimentsPanel :: data " + data);
-        dataFilterPanel.removeAll();
-        dataFilterPanel.add(new Cab2bLabel());
-        for(CaB2BFilterInterface caB2BFilterInterface : data) {
-        	obj = caB2BFilterInterface;
-            String hyperlinkName = obj.toString();
-            Cab2bHyperlink hyperlink = new Cab2bHyperlink();
-            hyperlink.setBounds(new Rectangle(5, 5, 5, 5));
-            hyperlink.setText(hyperlinkName);
-            hyperlink.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    Logger.out.info("Clicked on expt link");
-                    System.out.println(obj.getClass());
-                    if(obj instanceof CaB2BPatternFilter){
-                    	CaB2BPatternFilter filter=(CaB2BPatternFilter)obj;
-                    	System.out.println(filter.getPattern().pattern());
-                    }
-                }
-            });
-            dataFilterPanel.add("br", hyperlink);
-        }
-        dataFilterPanel.revalidate();
-    }
-    
-    public static void getDataForFilterPanel(){
-    	 Vector<CaB2BFilterInterface> vector = new Vector<CaB2BFilterInterface>();
-         vector = ExperimentDataCategoryGridPanel.getFilterMap();
-         if(vector != null){
-        	 setDataForFilterPanel(vector);
-         }
-    }
 
-    /**
-     * This method displays the type of chart in the Visualize Data panel which is at the left bottom of the screen.
-     * @param chartTypes name of charts to be displayed.
-     */
-    private void setChartTypesForVisualiseDataPanel(Vector<String> chartTypes) {
-        Logger.out.info("setChartTypesForVisualiseDataPanel :: chartTypes " + chartTypes);
-        visualiseDataPanel.removeAll();
-        
-        for(String hyperlinkName : chartTypes) {
-            Cab2bHyperlink hyperlink = new Cab2bHyperlink();
-            hyperlink.setBounds(new Rectangle(5, 5, 5, 5));
-            hyperlink.setText(hyperlinkName);
-            hyperlink.setActionCommand(hyperlinkName);
-            
-            hyperlink.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent actionEvent) {
-                	String linkClicked = actionEvent.getActionCommand();
-                	Logger.out.info("Clicked on " + linkClicked + " link");
-                    showChartAction(linkClicked);
-                    updateUI();
-                }
-            });
-            hyperlink.setEnabled(false);
-            visualiseDataPanel.add("br", hyperlink);
-        }
-        visualiseDataPanel.revalidate();
-    }
-    
-    /**
-     * This method displays the chart selected in the Chart tab.
-     * @param linkClicked the name of the chart to be displayed
-     */
+		DefaultMutableTreeNode rootNode = generateRootNode(entitySet);
+		initializeDataListTree(rootNode);
+
+		initializePanels();
+	}
+
+	/**
+	 * This method generates a root node given the set of entities
+	 * 
+	 * @param entitySet
+	 *            set of entities
+	 * @return root node
+	 */
+	private DefaultMutableTreeNode generateRootNode(
+			Set<EntityInterface> entitySet) {
+		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(
+				"Experiment Data Categories");
+		DefaultMutableTreeNode node = null;
+
+		// for each datalist
+		for (EntityInterface dummyEntity : entitySet) {
+			EntityInterface entity = null;
+			// get the only child of the dummy entity, which would be the real
+			// first level entity in the tree
+			for (AssociationInterface association : dummyEntity
+					.getAssociationCollection()) {
+				entity = association.getTargetEntity();
+			}
+
+			TreeEntityWrapper treeEntityWrapper = new TreeEntityWrapper();
+			treeEntityWrapper.setEntityInterface(entity);
+			node = new DefaultMutableTreeNode(treeEntityWrapper);
+			rootNode.add(node);
+			addChildren(rootNode, node);
+		}
+
+		return rootNode;
+	}
+
+	/**
+	 * This method initalize the datalist tree given the root node
+	 * 
+	 * @param rootNode
+	 *            the root node to be set.
+	 */
+	private void initializeDataListTree(DefaultMutableTreeNode rootNode) {
+		// creating datalist tree
+		datalistTree = new JXTree(rootNode);
+
+		// setting the first node as selected and displaying the corresponding
+		// records in the table
+		if (datalistTree.getRowCount() >= 2) {
+			datalistTree.setSelectionRow(1);
+			datalistTree.expandRow(1);
+			CustomSwingWorker swingWorker = new CustomSwingWorker(datalistTree) {
+				protected void doNonUILogic() throws RuntimeException {
+					Object nodeInfo = ((DefaultMutableTreeNode) datalistTree
+							.getLastSelectedPathComponent()).getUserObject();
+					if (nodeInfo instanceof TreeEntityWrapper) {
+						TreeEntityWrapper experimentEntity = (TreeEntityWrapper) nodeInfo;
+						getDataCategoyRecords(experimentEntity);
+						addAvailableAnalysisServices(experimentEntity);
+						setChartLinkStatusOnRowSelect();
+					}
+				}
+
+				protected void doUIUpdateLogic() throws RuntimeException {
+					m_experimentDataCategoryGridPanel.refreshTable(columnName,
+							recordObject, attributeMap);
+					setChartLinkStatusOnRowSelect();
+				}
+			};
+			swingWorker.start();
+		}
+
+		// action listener for selected data category
+		datalistTree.addTreeSelectionListener(new TreeSelectionListener() {
+			public void valueChanged(TreeSelectionEvent e) {
+				treeSelectionListenerAction();
+			}
+		});
+	}
+
+	/**
+	 * This method initialzse the different UI panels and panes.
+	 */
+	private void initializePanels() {
+		// Adding Select data category pane
+		treeViewScrollPane = new JScrollPane(datalistTree);
+		treeViewScrollPane.setPreferredSize(new Dimension(250, 200));
+		stackedBox.addBox("Select Data Category", treeViewScrollPane,
+				"resources/images/mysearchqueries_icon.gif");
+
+		// Adding Filter data category panel
+		dataFilterPanel = new Cab2bPanel();
+		dataFilterPanel.setPreferredSize(new Dimension(250, 200));
+		dataFilterPanel.setOpaque(false);
+		stackedBox.addBox("Filter Data ", dataFilterPanel,
+				"resources/images/mysearchqueries_icon.gif");
+
+		// Adding Analyse data panel
+		analyseDataPanel = new Cab2bPanel();
+		analyseDataPanel.setPreferredSize(new Dimension(250, 150));
+		analyseDataPanel.setOpaque(false);
+		stackedBox.addBox("Analyze Data ", analyseDataPanel,
+				"resources/images/mysearchqueries_icon.gif");
+
+		// Adding Visualize data panel
+		visualiseDataPanel = new Cab2bPanel();
+		visualiseDataPanel.setPreferredSize(new Dimension(250, 200));
+		visualiseDataPanel.setOpaque(false);
+		stackedBox.addBox("Visualize Data ", visualiseDataPanel,
+				"resources/images/mysearchqueries_icon.gif");
+
+		// Set the type of charts to be displayed.
+		Vector<String> chartTypes = new Vector<String>();
+		chartTypes.add(Constants.BAR_CHART);
+		chartTypes.add(Constants.LINE_CHART);
+		chartTypes.add(Constants.SCATTER_PLOT);
+		setChartTypesForVisualiseDataPanel(chartTypes);
+		setChartLinkStatusOnRowSelect();
+
+		stackedBox.setPreferredSize(new Dimension(250, 500));
+		stackedBox.setMinimumSize(new Dimension(250, 500));
+		this.add(stackedBox);
+	}
+
+	/**
+	 * find and add children of the given tree node child node is added to the
+	 * current node if it is filtered, otherwise it is added to the root node
+	 * 
+	 * @param node
+	 *            the tree node
+	 */
+	private void addChildren(DefaultMutableTreeNode rootNode,
+			DefaultMutableTreeNode node) {
+		EntityInterface entity = ((TreeEntityWrapper) node.getUserObject())
+				.getEntityInterface();
+
+		for (AssociationInterface association : entity
+				.getAssociationCollection()) {
+			EntityInterface targetEntity = association.getTargetEntity();
+			TreeEntityWrapper child = new TreeEntityWrapper();
+			child.setEntityInterface(targetEntity);
+			DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(child);
+
+			Collection<TaggedValueInterface> taggedValues = targetEntity
+					.getTaggedValueCollection();
+
+			if (Utility.getTaggedValue(taggedValues, Constants.FILTERED) != null) {
+				node.add(childNode);
+			} else {
+				rootNode.add(childNode);
+			}
+
+			addChildren(rootNode, childNode);
+		}
+	}
+
+	/**
+	 * Method to perform tree node selection action for currently selected node
+	 */
+	public void treeSelectionListenerAction() {
+		CustomSwingWorker swingWorker = new CustomSwingWorker(datalistTree) {
+			@Override
+			protected void doNonUILogic() throws RuntimeException {
+				Logger.out.info("Clicked on datalist");
+				ExperimentDataCategoryGridPanel.clearMap();
+				getDataForFilterPanel();
+				updateUI();
+
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree
+						.getLastSelectedPathComponent();
+				if (node == null) {
+					return;
+				}
+
+				// if rot node is selected, clear all table content
+				if (node.isRoot() == true) {
+					columnName = null;
+					recordObject = null;
+				}
+
+				Object nodeInfo = node.getUserObject();
+				if (nodeInfo instanceof TreeEntityWrapper) {
+					TreeEntityWrapper experimentEntity = (TreeEntityWrapper) nodeInfo;
+					getDataCategoyRecords(experimentEntity);
+					addAvailableAnalysisServices(experimentEntity);
+				}
+			}
+
+			protected void doUIUpdateLogic() throws RuntimeException {
+				m_experimentDataCategoryGridPanel.refreshTable(columnName,
+						recordObject, attributeMap);
+				setChartLinkStatusOnRowSelect();
+			}
+		};
+		swingWorker.start();
+	}
+
+	/**
+	 * Method used to get dataCategory records from database and covert it into
+	 * table format
+	 */
+	private void getDataCategoyRecords(TreeEntityWrapper nodeInfo) {
+		EntityInterface entityNode = nodeInfo.getEntityInterface();
+		entityNode.getAttributeCollection();
+		Logger.out.info("ID :: " + entityNode.getId());
+
+		// getting datalist entity interface
+		DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils
+				.getBusinessInterface(EjbNamesConstants.DATALIST_BEAN,
+						DataListHomeInterface.class);
+		EntityRecordResultInterface recordResultInterface = null;
+		try {
+			recordResultInterface = dataListBI.getEntityRecord(entityNode
+					.getId());
+
+			// getting list of attributes
+			List<AbstractAttributeInterface> headerList = recordResultInterface
+					.getEntityRecordMetadata().getAttributeList();
+			columnName = new String[headerList.size()];
+			int i = 0;
+			for (AbstractAttributeInterface abstractAttribute : headerList) {
+				AttributeInterface attribute = (AttributeInterface) abstractAttribute;
+				columnName[i++] = CommonUtils.getFormattedString(attribute
+						.getName());
+				attributeMap.put(columnName[i - 1], attribute);
+				Logger.out.info("Table Header :" + attribute.getName());
+			}
+
+			// getting actual records
+			List<EntityRecordInterface> recordList = recordResultInterface
+					.getEntityRecordList();
+			recordObject = new Object[recordList.size()][headerList.size()];
+			Logger.out.info("Record Size :: " + recordList.size());
+			i = 0;
+			int j = 0;
+			for (EntityRecordInterface record : recordList) {
+				List recordValueList = record.getRecordValueList();
+				j = 0;
+				for (Object object : recordValueList) {
+					recordObject[i][j] = new Object();
+					recordObject[i][j] = object;
+					Logger.out.info("Data [" + i + "]" + "[" + j + "]"
+							+ recordObject[i][j]);
+					j++;
+				}
+				i++;
+			}
+		} catch (RemoteException remoteException) {
+			CommonUtils.handleException(remoteException,
+					MainFrame.newWelcomePanel, true, true, true, false);
+		}
+	}
+
+	public static void setDataForFilterPanel(Vector<CaB2BFilterInterface> data) {
+		Logger.out.info("setDataForMyExperimentsPanel :: data " + data);
+		dataFilterPanel.removeAll();
+		dataFilterPanel.add(new Cab2bLabel());
+		for (CaB2BFilterInterface caB2BFilterInterface : data) {
+			obj = caB2BFilterInterface;
+			String hyperlinkName = obj.toString();
+			Cab2bHyperlink hyperlink = new Cab2bHyperlink();
+			hyperlink.setBounds(new Rectangle(5, 5, 5, 5));
+			hyperlink.setText(hyperlinkName);
+			hyperlink.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Logger.out.info("Clicked on expt link");
+					System.out.println(obj.getClass());
+					if (obj instanceof CaB2BPatternFilter) {
+						CaB2BPatternFilter filter = (CaB2BPatternFilter) obj;
+						System.out.println(filter.getPattern().pattern());
+					}
+				}
+			});
+			dataFilterPanel.add("br", hyperlink);
+		}
+		dataFilterPanel.revalidate();
+	}
+
+	public static void getDataForFilterPanel() {
+		Vector<CaB2BFilterInterface> vector = new Vector<CaB2BFilterInterface>();
+		vector = ExperimentDataCategoryGridPanel.getFilterMap();
+		if (vector != null) {
+			setDataForFilterPanel(vector);
+		}
+	}
+
+	/**
+	 * This method displays the type of chart in the Visualize Data panel which
+	 * is at the left bottom of the screen.
+	 * 
+	 * @param chartTypes
+	 *            name of charts to be displayed.
+	 */
+	private void setChartTypesForVisualiseDataPanel(Vector<String> chartTypes) {
+		Logger.out.info("setChartTypesForVisualiseDataPanel :: chartTypes "
+				+ chartTypes);
+		visualiseDataPanel.removeAll();
+
+		for (String hyperlinkName : chartTypes) {
+			Cab2bHyperlink hyperlink = new Cab2bHyperlink();
+			hyperlink.setBounds(new Rectangle(5, 5, 5, 5));
+			hyperlink.setText(hyperlinkName);
+			hyperlink.setActionCommand(hyperlinkName);
+			
+			//String iconName = hyperlinkName.trim().replace(' ', '_') + "_icon.gif";
+			//hyperlink.setIcon(new ImageIcon("resources/images/" + iconName));
+			hyperlink.setIcon(new ImageIcon("resources/images/mysearchqueries_icon.gif"));
+			
+			hyperlink.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent actionEvent) {
+					String linkClicked = actionEvent.getActionCommand();
+					Logger.out.info("Clicked on " + linkClicked + " link");
+					showChartAction(linkClicked);
+					updateUI();
+				}
+			});
+			hyperlink.setEnabled(false);
+			visualiseDataPanel.add("br", hyperlink);
+		}
+		visualiseDataPanel.revalidate();
+	}
+
+	/**
+	 * This method displays the chart selected in the Chart tab.
+	 * 
+	 * @param linkClicked
+	 *            the name of the chart to be displayed
+	 */
 	private void showChartAction(String linkClicked) {
 		Cab2bTable cab2bTable = m_experimentDataCategoryGridPanel.getTable();
-    	
+
 		String entityName = null;
-		Object nodeInfo = ((DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent()).getUserObject();
+		Object nodeInfo = ((DefaultMutableTreeNode) datalistTree
+				.getLastSelectedPathComponent()).getUserObject();
 		if (nodeInfo instanceof TreeEntityWrapper) {
-			entityName = ((TreeEntityWrapper)nodeInfo).toString();
+			entityName = ((TreeEntityWrapper) nodeInfo).toString();
 		}
-    	
+
 		JPanel jPanel = null;
-        ChartGenerator chartGenerator = new ChartGenerator(cab2bTable);
-        if(linkClicked.equals(Constants.BAR_CHART)) {
-        	jPanel = chartGenerator.getBarChart(entityName);
-        } else if(linkClicked.equals(Constants.LINE_CHART)) {
-        	jPanel = chartGenerator.getLineChart();
-        } else if(linkClicked.equals(Constants.SCATTER_PLOT)) {
-        	jPanel = chartGenerator.getScatterPlot();
-        }
-        
-        JTabbedPane tabComponent = m_experimentDataCategoryGridPanel.getTabComponent();
-    	Cab2bPanel visualizeDataPanel = m_experimentDataCategoryGridPanel.getVisualizeDataPanel();
-    	tabComponent.remove(visualizeDataPanel);
-    	
-    	visualizeDataPanel = new Cab2bPanel();
-    	visualizeDataPanel.setName("visualizeDataPanel");
+		ChartGenerator chartGenerator = new ChartGenerator(cab2bTable);
+		if (linkClicked.equals(Constants.BAR_CHART)) {
+			jPanel = chartGenerator.getBarChart(entityName);
+		} else if (linkClicked.equals(Constants.LINE_CHART)) {
+			jPanel = chartGenerator.getLineChart();
+		} else if (linkClicked.equals(Constants.SCATTER_PLOT)) {
+			jPanel = chartGenerator.getScatterPlot();
+		}
+
+		JTabbedPane tabComponent = m_experimentDataCategoryGridPanel
+				.getTabComponent();
+		Cab2bPanel visualizeDataPanel = m_experimentDataCategoryGridPanel
+				.getVisualizeDataPanel();
+		tabComponent.remove(visualizeDataPanel);
+
+		visualizeDataPanel = new Cab2bPanel();
+		visualizeDataPanel.setName("visualizeDataPanel");
 		visualizeDataPanel.setBorder(null);
 		visualizeDataPanel.removeAll();
-    	visualizeDataPanel.add(jPanel);
-    	m_experimentDataCategoryGridPanel.setVisualizeDataPanel(visualizeDataPanel);
+		visualizeDataPanel.add(jPanel);
+		m_experimentDataCategoryGridPanel
+				.setVisualizeDataPanel(visualizeDataPanel);
 
-    	tabComponent.add("Chart", visualizeDataPanel);
-    	tabComponent.setSelectedComponent(visualizeDataPanel);
-    }
-	
+		tabComponent.add("Chart", visualizeDataPanel);
+		tabComponent.setSelectedComponent(visualizeDataPanel);
+	}
+
 	/**
 	 * update the tree, add the newly created entity to the current selection
+	 * 
 	 * @param newEntity
 	 */
 	public void updateStackBox(EntityInterface newEntity) {
-		//gets the currently selected node
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent();
-		
+		// gets the currently selected node
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree
+				.getLastSelectedPathComponent();
+
 		TreeEntityWrapper newNodeWrapper = new TreeEntityWrapper();
 		newNodeWrapper.setEntityInterface(newEntity);
-		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(newNodeWrapper);
+		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(
+				newNodeWrapper);
 		node.add(newNode);
-		
+
 		datalistTree.updateUI();
 	}
-	
+
 	/**
 	 * This method adds all the available services as link in analysis panel
+	 * 
 	 * @param experimentEntity
 	 */
-	private void addAvailableAnalysisServices(TreeEntityWrapper treeEntityWrapper) {
-		final EntityInterface dataEntity = treeEntityWrapper.getEntityInterface();
-		
-		//TODO This is a hack. To be deleted after testing.
-		EntityInterface entityInterface = DomainObjectFactory.getInstance().createEntity();
+	private void addAvailableAnalysisServices(
+			TreeEntityWrapper treeEntityWrapper) {
+		final EntityInterface dataEntity = treeEntityWrapper
+				.getEntityInterface();
+
+		// TODO This is a hack. To be deleted after testing.
+		EntityInterface entityInterface = DomainObjectFactory.getInstance()
+				.createEntity();
 		entityInterface.setName("gov.nih.nci.mageom.domain.BioAssay.BioAssay");
-		
+
 		AnalyticalServiceOperationsBusinessInterface analyticalServiceOperationsBusinessInterface = (AnalyticalServiceOperationsBusinessInterface) CommonUtils
-				.getBusinessInterface(EjbNamesConstants.ANALYTICAL_SERVICE_BEAN,
+				.getBusinessInterface(
+						EjbNamesConstants.ANALYTICAL_SERVICE_BEAN,
 						AnalyticalServiceOperationsHomeInterface.class, null);
 		List<ServiceDetailsInterface> serviceDetailInterfaceList = null;
 		try {
-			serviceDetailInterfaceList = analyticalServiceOperationsBusinessInterface.getApplicableAnalyticalServices(entityInterface);
-			
+			serviceDetailInterfaceList = analyticalServiceOperationsBusinessInterface
+					.getApplicableAnalyticalServices(entityInterface);
+
 			analyseDataPanel.removeAll();
 			for (ServiceDetailsInterface serviceDetails : serviceDetailInterfaceList) {
 				addHyperLinkToAnalyticalPane(serviceDetails, dataEntity);
 			}
 		} catch (RemoteException remoteException) {
-			CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true, false);
+			CommonUtils.handleException(remoteException,
+					MainFrame.newWelcomePanel, true, true, true, false);
 		}
 	}
-	
+
 	/**
-	 * This method adds a hyperlink to the Analytical Panel for the given service
+	 * This method adds a hyperlink to the Analytical Panel for the given
+	 * service
+	 * 
 	 * @param serviceDetails
 	 * @param dataEntity
 	 */
-	private void addHyperLinkToAnalyticalPane(ServiceDetailsInterface serviceDetails, final EntityInterface dataEntity) {
+	private void addHyperLinkToAnalyticalPane(
+			ServiceDetailsInterface serviceDetails,
+			final EntityInterface dataEntity) {
 		String serviceName = serviceDetails.getDisplayName();
-		
+
 		Cab2bHyperlink hyperlink = new Cab2bHyperlink();
 		hyperlink.setBounds(new Rectangle(5, 5, 5, 5));
 		hyperlink.setText(serviceName);
 		hyperlink.setActionCommand(serviceName);
 		hyperlink.setUserObject(serviceDetails);
-		
+
 		hyperlink.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				Logger.out.debug("Clicked on " + actionEvent.getActionCommand() + " link");
-				Cab2bHyperlink hyperlink = (Cab2bHyperlink) (actionEvent.getSource());
+				Logger.out.debug("Clicked on " + actionEvent.getActionCommand()
+						+ " link");
+				Cab2bHyperlink hyperlink = (Cab2bHyperlink) (actionEvent
+						.getSource());
 
-				ServiceDetailsInterface serviceDetails = (ServiceDetailsInterface) hyperlink.getUserObject();
-				List<EntityInterface> requiredEntityList = serviceDetails.getRequiredEntities();
-				for(EntityInterface requiredEntity : requiredEntityList) {
-					//TODO compare with entity id instead of name 
-					//if(entity.getId() != requiredEntity.getId() && !requiredEntity.getAbstractAttributeCollection().isEmpty()) {
-					if(!dataEntity.getName().equals(requiredEntity.getName()) && !requiredEntity.getAbstractAttributeCollection().isEmpty()) {
-						serviceSelectAction(serviceDetails, requiredEntity, dataEntity);
+				ServiceDetailsInterface serviceDetails = (ServiceDetailsInterface) hyperlink
+						.getUserObject();
+				List<EntityInterface> requiredEntityList = serviceDetails
+						.getRequiredEntities();
+				for (EntityInterface requiredEntity : requiredEntityList) {
+					// TODO compare with entity id instead of name
+					// if(entity.getId() != requiredEntity.getId() &&
+					// !requiredEntity.getAbstractAttributeCollection().isEmpty())
+					// {
+					if (!dataEntity.getName().equals(requiredEntity.getName())
+							&& !requiredEntity.getAbstractAttributeCollection()
+									.isEmpty()) {
+						serviceSelectAction(serviceDetails, requiredEntity,
+								dataEntity);
 					}
 				}
 			}
@@ -548,44 +621,58 @@ public class ExperimentStackBox extends Cab2bPanel
 
 	/**
 	 * The action listener for the individual service elements.
-	 * @param dataEntity 
-	 * @param entityId 
-	 * @param serviceDetailsInterface 
-	 * @param actionEvent The event that contains details of the click on the individual service.
+	 * 
+	 * @param dataEntity
+	 * @param entityId
+	 * @param serviceDetailsInterface
+	 * @param actionEvent
+	 *            The event that contains details of the click on the individual
+	 *            service.
 	 */
-	private void serviceSelectAction(ServiceDetailsInterface serviceDetails, final EntityInterface requiredEntity, final EntityInterface dataEntity) {
-		//Create panel for Analysis Title
+	private void serviceSelectAction(ServiceDetailsInterface serviceDetails,
+			final EntityInterface requiredEntity,
+			final EntityInterface dataEntity) {
+		// Create panel for Analysis Title
 		JComponent tilteLabel = new Cab2bLabel("Analysis Title" + " : ");
-		JComponent titleField = new Cab2bFormattedTextField(20, Cab2bFormattedTextField.PLAIN_FIELD);
+		JComponent titleField = new Cab2bFormattedTextField(20,
+				Cab2bFormattedTextField.PLAIN_FIELD);
 		Cab2bPanel titlePanel = new Cab2bPanel();
 		titlePanel.setName("titlePanel");
 		titlePanel.add("br", tilteLabel);
 		titlePanel.add("tab", titleField);
-		
-		//Create panels for service parameters
+
+		// Create panels for service parameters
 		Cab2bPanel parameterPanel = getParameterPanels(requiredEntity);
 		JScrollPane jScrollPane = new JScrollPane();
 		jScrollPane.setName("jScrollPane");
-		jScrollPane.setBorder(BorderFactory.createLineBorder (Color.black, 1));
-		jScrollPane.getViewport().add(parameterPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		jScrollPane.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+		jScrollPane.getViewport().add(parameterPanel,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		jScrollPane.getViewport().setBackground(Color.WHITE);
-		
-		//Create finish button
+
+		// Create finish button
 		Cab2bButton finishButton = new Cab2bButton("Finish");
-		finishButton.addActionListener(new FinishButtonActionListner(serviceDetails, dataEntity, m_experimentDataCategoryGridPanel));
-		
+		finishButton.addActionListener(new FinishButtonActionListner(
+				serviceDetails, dataEntity, m_experimentDataCategoryGridPanel));
+
 		Cab2bPanel servicePanel = new Cab2bPanel();
 		servicePanel.add("br", titlePanel);
 		servicePanel.add("br center hfill vfill", jScrollPane);
 		servicePanel.add("br right", finishButton);
-		
-		String displayName = CommonUtils.getFormattedString(requiredEntity.getName());
-		WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, servicePanel, displayName, new Dimension(752, 580), true, false);
+
+		String displayName = CommonUtils.getFormattedString(requiredEntity
+				.getName());
+		WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, servicePanel,
+				displayName, new Dimension(752, 580), true, false);
 	}
 
 	/**
-	 * This method returns the parameter panel that has the controls to accept the parameter values.
-	 * @param entity the entity for which the control panels are to be displayed
+	 * This method returns the parameter panel that has the controls to accept
+	 * the parameter values.
+	 * 
+	 * @param entity
+	 *            the entity for which the control panels are to be displayed
 	 * @return Array of control panel
 	 */
 	private Cab2bPanel getParameterPanels(final EntityInterface entity) {
@@ -593,23 +680,28 @@ public class ExperimentStackBox extends Cab2bPanel
 		try {
 			parseFile = ParseXMLFile.getInstance();
 		} catch (CheckedException checkedException) {
-			CommonUtils.handleException(checkedException, this, true, true, false, false);
+			CommonUtils.handleException(checkedException, this, true, true,
+					false, false);
 		}
 
-		final Collection<AttributeInterface> attributeCollection = entity.getAttributeCollection();
+		final Collection<AttributeInterface> attributeCollection = entity
+				.getAttributeCollection();
 		Cab2bPanel parameterPanel = new Cab2bPanel();
 		parameterPanel.setName("parameterPanel");
 		if (attributeCollection != null) {
-			List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>(attributeCollection);
+			List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>(
+					attributeCollection);
 			Collections.sort(attributeList, new AttributeInterfaceComparator());
 
 			try {
 				for (AttributeInterface attribute : attributeList) {
-					JXPanel jxPanel = (JXPanel) SwingUIManager.generateUIPanel(parseFile, attribute, false);
+					JXPanel jxPanel = (JXPanel) SwingUIManager.generateUIPanel(
+							parseFile, attribute, false);
 					parameterPanel.add("br", jxPanel);
 				}
 			} catch (CheckedException checkedException) {
-				CommonUtils.handleException(checkedException, this, true, true, false, false);
+				CommonUtils.handleException(checkedException, this, true, true,
+						false, false);
 			}
 		}
 
@@ -617,130 +709,153 @@ public class ExperimentStackBox extends Cab2bPanel
 	}
 
 	/**
-	 * This method enables or disables the chart links in Visualise Panel on selection of row in the data grid.
+	 * This method enables or disables the chart links in Visualise Panel on
+	 * selection of row in the data grid.
 	 */
 	private void setChartLinkStatusOnRowSelect() {
 		Cab2bTable cab2bTable = m_experimentDataCategoryGridPanel.getTable();
-        cab2bTable.addFocusListener(new FocusListener() {
-			
-        	public void focusGained(FocusEvent focusEvent) {
-				final Cab2bTable cab2bTable = (Cab2bTable)focusEvent.getComponent();
+		cab2bTable.addFocusListener(new FocusListener() {
+
+			public void focusGained(FocusEvent focusEvent) {
+				final Cab2bTable cab2bTable = (Cab2bTable) focusEvent
+						.getComponent();
 				focusAction(cab2bTable);
 			}
-        	
+
 			public void focusLost(FocusEvent focusEvent) {
-				final Cab2bTable cab2bTable = (Cab2bTable)focusEvent.getComponent();
+				final Cab2bTable cab2bTable = (Cab2bTable) focusEvent
+						.getComponent();
 				focusAction(cab2bTable);
 			}
-			
+
 			private void focusAction(final Cab2bTable cab2bTable) {
 				boolean setEnabled = false;
-				
-				if(cab2bTable.getSelectedRowCount() > 0) {
+
+				if (cab2bTable.getSelectedRowCount() > 0) {
 					setEnabled = true;
 				}
-				
+
 				Component[] components = visualiseDataPanel.getComponents();
-				for(Component component : components) {
-					if(component instanceof Cab2bHyperlink) {
-						Cab2bHyperlink hyperLink = (Cab2bHyperlink)component;
+				for (Component component : components) {
+					if (component instanceof Cab2bHyperlink) {
+						Cab2bHyperlink hyperLink = (Cab2bHyperlink) component;
 						hyperLink.setEnabled(setEnabled);
 						hyperLink.setVisible(true);
 					}
 				}
 				visualiseDataPanel.revalidate();
 			}
-        });
+		});
 	}
 }
 
 /**
- * This Listener class adds a row in the table on the Analysis tab.  
+ * This Listener class adds a row in the table on the Analysis tab.
+ * 
  * @author chetan_patil
  */
 class FinishButtonActionListner implements ActionListener {
 	private ServiceDetailsInterface serviceDetails;
-	
+
 	private EntityInterface dataEntity;
-	
+
 	private ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel;
-	
+
 	/**
 	 * Parameterized constructor
+	 * 
 	 * @param serviceDetails
 	 * @param dataEntity
 	 * @param experimentDataCategoryGridPanel
 	 */
-	public FinishButtonActionListner(ServiceDetailsInterface serviceDetails, EntityInterface dataEntity, 
+	public FinishButtonActionListner(ServiceDetailsInterface serviceDetails,
+			EntityInterface dataEntity,
 			ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel) {
 		super();
 		this.serviceDetails = serviceDetails;
 		this.dataEntity = dataEntity;
 		this.experimentDataCategoryGridPanel = experimentDataCategoryGridPanel;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent actionEvent) {
 		MainFrame.setStatus(MainFrame.Status.BUSY);
 		MainFrame.setStatusMessage("Analysing the data...");
-		
-		Cab2bButton finishButton = (Cab2bButton)actionEvent.getSource();
-		Cab2bPanel servicePanel = (Cab2bPanel)finishButton.getParent();
+
+		Cab2bButton finishButton = (Cab2bButton) actionEvent.getSource();
+		Cab2bPanel servicePanel = (Cab2bPanel) finishButton.getParent();
 		closeDialogWindow(servicePanel);
-		
-		//Obtain the analysis title
-		Cab2bPanel titlePanel = (Cab2bPanel)CommonUtils.getComponentByName(servicePanel, "titlePanel");
-		Cab2bFormattedTextField titleField = (Cab2bFormattedTextField)titlePanel.getComponents()[1];
+
+		// Obtain the analysis title
+		Cab2bPanel titlePanel = (Cab2bPanel) CommonUtils.getComponentByName(
+				servicePanel, "titlePanel");
+		Cab2bFormattedTextField titleField = (Cab2bFormattedTextField) titlePanel
+				.getComponents()[1];
 		String analysisTitle = titleField.getText();
-		
-		//Obtain values of service parameters
-		JScrollPane jScrollPane = (JScrollPane)CommonUtils.getComponentByName(servicePanel, "jScrollPane");
-		Cab2bPanel parameterPanel = (Cab2bPanel)CommonUtils.getComponentByName(jScrollPane.getViewport(), "parameterPanel");
-		List<EntityRecordResultInterface> serviceParameterValues = collectServiceParameterValues(parameterPanel.getComponents());
-		
-		//Obtain values from grid
+
+		// Obtain values of service parameters
+		JScrollPane jScrollPane = (JScrollPane) CommonUtils.getComponentByName(
+				servicePanel, "jScrollPane");
+		Cab2bPanel parameterPanel = (Cab2bPanel) CommonUtils
+				.getComponentByName(jScrollPane.getViewport(), "parameterPanel");
+		List<EntityRecordResultInterface> serviceParameterValues = collectServiceParameterValues(parameterPanel
+				.getComponents());
+
+		// Obtain values from grid
 		List<EntityRecordResultInterface> dataValues = getGridData();
-				
+
 		EntityRecordResultInterface entityRecordResult = null;
-		AnalyticalServiceOperationsBusinessInterface analyticalServiceOperationsBusinessInterface 
-				= (AnalyticalServiceOperationsBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.ANALYTICAL_SERVICE_BEAN, 
+		AnalyticalServiceOperationsBusinessInterface analyticalServiceOperationsBusinessInterface = (AnalyticalServiceOperationsBusinessInterface) CommonUtils
+				.getBusinessInterface(
+						EjbNamesConstants.ANALYTICAL_SERVICE_BEAN,
 						AnalyticalServiceOperationsHomeInterface.class, null);
 		try {
-			entityRecordResult = analyticalServiceOperationsBusinessInterface.invokeService(serviceDetails, dataValues, serviceParameterValues);
+			entityRecordResult = analyticalServiceOperationsBusinessInterface
+					.invokeService(serviceDetails, dataValues,
+							serviceParameterValues);
 			updateAnalysisTable(analysisTitle, entityRecordResult);
 		} catch (RemoteException remoteException) {
-			CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true, false);
+			CommonUtils.handleException(remoteException,
+					MainFrame.newWelcomePanel, true, true, true, false);
 		}
-		
+
 		MainFrame.setStatus(MainFrame.Status.READY);
 		MainFrame.setStatusMessage("Analysis finished");
-   	}
-	
+	}
+
 	/**
-	 * This method refreshes the table of analysis in the Analysis tab. It displays the values of entityRecordResult in the tablular form. 
-	 * @param analysisTitle the analysis title to display as link value in the table
-	 * @param entityRecordResult the EntityRecordResult whose values are to be displayed in a single row of table.
+	 * This method refreshes the table of analysis in the Analysis tab. It
+	 * displays the values of entityRecordResult in the tablular form.
+	 * 
+	 * @param analysisTitle
+	 *            the analysis title to display as link value in the table
+	 * @param entityRecordResult
+	 *            the EntityRecordResult whose values are to be displayed in a
+	 *            single row of table.
 	 */
-	private void updateAnalysisTable(final String analysisTitle, final EntityRecordResultInterface entityRecordResult) {
-		UserObjectWrapper<EntityRecordResultInterface> userObjectWrapper = 
-						new UserObjectWrapper<EntityRecordResultInterface>(entityRecordResult, analysisTitle);
-		String entityName = CommonUtils.getFormattedString(dataEntity.getName());
+	private void updateAnalysisTable(final String analysisTitle,
+			final EntityRecordResultInterface entityRecordResult) {
+		UserObjectWrapper<EntityRecordResultInterface> userObjectWrapper = new UserObjectWrapper<EntityRecordResultInterface>(
+				entityRecordResult, analysisTitle);
+		String entityName = CommonUtils
+				.getFormattedString(dataEntity.getName());
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
 		String currentDate = simpleDateFormat.format(new Date());
 		String progress = "Completed";
-        
-		Object[][] analysisTableData = new Object[][] {
-        	{entityName, userObjectWrapper, currentDate, progress} 
-        };
-        
-        experimentDataCategoryGridPanel.refreshAnalysisTable(analysisTableData);
+
+		Object[][] analysisTableData = new Object[][] { { entityName,
+				userObjectWrapper, currentDate, progress } };
+
+		experimentDataCategoryGridPanel.refreshAnalysisTable(analysisTableData);
 	}
-	
+
 	/**
 	 * This method closes the currnet dialog window
+	 * 
 	 * @param servicePanel
 	 */
 	private void closeDialogWindow(final Cab2bPanel servicePanel) {
@@ -748,78 +863,90 @@ class FinishButtonActionListner implements ActionListener {
 		container = container.getParent();
 		container = container.getParent();
 		container = container.getParent();
-		if(container instanceof JDialog) {
+		if (container instanceof JDialog) {
 			JDialog jDialog = (JDialog) container;
 			jDialog.dispose();
 		}
 	}
-	
+
 	/**
 	 * This method collects the values form the data grid.
-	 * @return List of EntityRecordResultInterface which has the data grid values
+	 * 
+	 * @return List of EntityRecordResultInterface which has the data grid
+	 *         values
 	 */
 	private List<EntityRecordResultInterface> getGridData() {
 		Cab2bTable cab2bTable = experimentDataCategoryGridPanel.getTable();
-		
+
 		List<EntityRecordInterface> entityRecordList = new ArrayList<EntityRecordInterface>();
-		for(int row = 0; row < cab2bTable.getRowCount(); row++) {
-			List<Object> valueList = new ArrayList<Object>(); 
-			for(int column = 0; column < cab2bTable.getColumnCount(); column++) {
+		for (int row = 0; row < cab2bTable.getRowCount(); row++) {
+			List<Object> valueList = new ArrayList<Object>();
+			for (int column = 0; column < cab2bTable.getColumnCount(); column++) {
 				Object value = cab2bTable.getValueAt(row, column);
 				valueList.add(value);
 			}
 			EntityRecordInterface entityRecord = new EntityRecord();
 			entityRecord.setRecordValueList(valueList);
-			
+
 			entityRecordList.add(entityRecord);
 		}
-		
+
 		return generateEntityRecordResultList(entityRecordList);
 	}
-	
+
 	/**
 	 * This method collects the values from the service popup window
-	 * @param controlPanels parameter paneles of the service pop window
-	 * @return List of EntityRecordResultInterface which has the parameter values
+	 * 
+	 * @param controlPanels
+	 *            parameter paneles of the service pop window
+	 * @return List of EntityRecordResultInterface which has the parameter
+	 *         values
 	 */
-	private List<EntityRecordResultInterface> collectServiceParameterValues(final Component[] controlPanels) {
-		List<String> valueList = new ArrayList<String>(); 
-		for(Component controlPanel : controlPanels) {
+	private List<EntityRecordResultInterface> collectServiceParameterValues(
+			final Component[] controlPanels) {
+		List<String> valueList = new ArrayList<String>();
+		for (Component controlPanel : controlPanels) {
 			String value = null;
-			ArrayList<String> parameterValues = ((IComponent)controlPanel).getValues();
-			if(parameterValues.size() > 0) {
+			ArrayList<String> parameterValues = ((IComponent) controlPanel)
+					.getValues();
+			if (parameterValues.size() > 0) {
 				value = parameterValues.get(0);
 			}
-			valueList.add(value);	
+			valueList.add(value);
 		}
-		
+
 		EntityRecordInterface entityRecord = new EntityRecord();
 		entityRecord.setRecordValueList(valueList);
-		
+
 		List<EntityRecordInterface> entityRecordList = new ArrayList<EntityRecordInterface>();
 		entityRecordList.add(entityRecord);
-		
+
 		return generateEntityRecordResultList(entityRecordList);
 	}
-	
+
 	/**
-	 * This method generates the List of EntityRecordResultInterface given a List of EntityRecordInterface
-	 * @param entityRecordList List of EntityRecordInterface
+	 * This method generates the List of EntityRecordResultInterface given a
+	 * List of EntityRecordInterface
+	 * 
+	 * @param entityRecordList
+	 *            List of EntityRecordInterface
 	 * @return List of EntityRecordResultInterface
 	 */
-	private List<EntityRecordResultInterface> generateEntityRecordResultList(final List<EntityRecordInterface> entityRecordList) {
+	private List<EntityRecordResultInterface> generateEntityRecordResultList(
+			final List<EntityRecordInterface> entityRecordList) {
 		EntityRecordMetadata entityRecordMetadata = new EntityRecordMetadata();
-		List<AbstractAttributeInterface> abstractAttributeList = new ArrayList<AbstractAttributeInterface>(dataEntity.getAbstractAttributeCollection());
+		List<AbstractAttributeInterface> abstractAttributeList = new ArrayList<AbstractAttributeInterface>(
+				dataEntity.getAbstractAttributeCollection());
 		entityRecordMetadata.setAttributeList(abstractAttributeList);
-		
+
 		EntityRecordResultInterface entityRecordResult = new EntityRecordResult();
 		entityRecordResult.setEntityRecordList(entityRecordList);
 		entityRecordResult.setEntityRecordMetadata(entityRecordMetadata);
-		
+
 		List<EntityRecordResultInterface> entityRecordResultList = new ArrayList<EntityRecordResultInterface>();
 		entityRecordResultList.add(entityRecordResult);
-		
+
 		return entityRecordResultList;
 	}
-	
+
 }
