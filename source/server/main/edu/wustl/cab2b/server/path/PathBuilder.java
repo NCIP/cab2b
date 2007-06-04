@@ -81,13 +81,13 @@ public class PathBuilder {
     public static void buildAndLoadAllModels(Connection connection) {
         new File(PATH_FILE_NAME).delete(); // Delete previously generated paths from file.
         Logger.out.info("Deleted the file : " + PATH_FILE_NAME);
-
-        for (String applicationName : PropertyLoader.getAllApplications()) {
+        String[] applicationNames = PropertyLoader.getAllApplications();
+        for (String applicationName : applicationNames) {
             String path = PropertyLoader.getModelPath(applicationName);
             storeModelAndGeneratePaths(path, applicationName, connection);
         }
         transformAndLoadPaths(connection);
-        String[] applicationNames = PropertyLoader.getAllApplications();
+       
         if (applicationNames.length < 2)
             return;
 
