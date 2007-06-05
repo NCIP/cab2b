@@ -10,20 +10,17 @@ import javax.swing.JFrame;
 import javax.swing.JSplitPane;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.cab2b.common.domain.Experiment;
-
-import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
-import edu.wustl.cab2b.common.exception.CheckedException;
-import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
-
-import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.controls.CustomizableBorder;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-
+import edu.wustl.cab2b.common.domain.Experiment;
+import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
+import edu.wustl.cab2b.common.exception.CheckedException;
+import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
+import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.common.tree.ExperimentTreeNode;
 import edu.wustl.common.util.dbManager.DAOException;
 
@@ -40,30 +37,30 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
 	 * Left hand side stack box used to display data category, Filter data,
 	 * Analysed data
 	 */
-	ExperimentStackBox experimentStackBox;
+	private ExperimentStackBox experimentStackBox;
 
 	/* Panel to display experiment details for selected data category node */
-	ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel = null;
+	private ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel = null;
 
 	/*
 	 * Panel to display experiment details like Experiment Name, Created Date,
 	 * Last Modified Date
 	 */
-	Cab2bPanel experimentTitlePanel;
+	private Cab2bPanel experimentTitlePanel;
 
-	Cab2bButton addDataButton;
+	private Cab2bButton addDataButton;
 
 	/* user selected experiment object */
-	Experiment selectedExperiment = null;
+	private Experiment selectedExperiment = null;
 
-	ExperimentTreeNode m_ExperimentTreeNodeObj;
+	private ExperimentTreeNode m_ExperimentTreeNodeObj;
 
-	ExperimentDetailsPanel m_parentPanel;
+	private ExperimentDetailsPanel m_parentPanel;
 
 	/* experiment BusinessInterface */
-	ExperimentBusinessInterface expBus;
+	private ExperimentBusinessInterface expBus;
 
-	JSplitPane splitPane;
+	private JSplitPane splitPane;
 
 	/**
 	 * @return the selectedExperiment
@@ -171,6 +168,21 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(expDetPanel);
 		frame.setVisible(true);
+	}
+
+	/**
+	 * @return the experimentStackBox
+	 */
+	public ExperimentStackBox getExperimentStackBox() {
+		return experimentStackBox;
+	}
+
+	/**
+	 * @param experimentStackBox
+	 *            the experimentStackBox to set
+	 */
+	public void setExperimentStackBox(ExperimentStackBox experimentStackBox) {
+		this.experimentStackBox = experimentStackBox;
 	}
 
 }

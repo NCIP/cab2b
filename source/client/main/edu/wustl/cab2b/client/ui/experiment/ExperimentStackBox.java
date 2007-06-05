@@ -8,8 +8,6 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,7 +46,7 @@ import edu.common.dynamicextensions.entitymanager.EntityRecordMetadata;
 import edu.common.dynamicextensions.entitymanager.EntityRecordResult;
 import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
-import edu.wustl.cab2b.client.ui.charts.ChartGenerator;
+import edu.wustl.cab2b.client.ui.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bFormattedTextField;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
@@ -120,6 +118,8 @@ public class ExperimentStackBox extends Cab2bPanel {
 	protected Object recordObject[][] = null;
 
 	protected Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
+	
+	private static int chartIndex = 0;
 
 	public ExperimentStackBox(ExperimentBusinessInterface expBus,
 			Experiment selectedExperiment) {
@@ -213,14 +213,12 @@ public class ExperimentStackBox extends Cab2bPanel {
 						TreeEntityWrapper experimentEntity = (TreeEntityWrapper) nodeInfo;
 						getDataCategoyRecords(experimentEntity);
 						addAvailableAnalysisServices(experimentEntity);
-						setChartLinkStatusOnRowSelect();
 					}
 				}
 
 				protected void doUIUpdateLogic() throws RuntimeException {
 					m_experimentDataCategoryGridPanel.refreshTable(columnName,
 							recordObject, attributeMap);
-					setChartLinkStatusOnRowSelect();
 				}
 			};
 			swingWorker.start();
@@ -271,7 +269,6 @@ public class ExperimentStackBox extends Cab2bPanel {
 		chartTypes.add(Constants.LINE_CHART);
 		chartTypes.add(Constants.SCATTER_PLOT);
 		setChartTypesForVisualiseDataPanel(chartTypes);
-		setChartLinkStatusOnRowSelect();
 
 		stackedBox.setPreferredSize(new Dimension(250, 500));
 		stackedBox.setMinimumSize(new Dimension(250, 500));
@@ -345,7 +342,6 @@ public class ExperimentStackBox extends Cab2bPanel {
 			protected void doUIUpdateLogic() throws RuntimeException {
 				m_experimentDataCategoryGridPanel.refreshTable(columnName,
 						recordObject, attributeMap);
-				setChartLinkStatusOnRowSelect();
 			}
 		};
 		swingWorker.start();
@@ -457,11 +453,13 @@ public class ExperimentStackBox extends Cab2bPanel {
 			hyperlink.setBounds(new Rectangle(5, 5, 5, 5));
 			hyperlink.setText(hyperlinkName);
 			hyperlink.setActionCommand(hyperlinkName);
-			
-			//String iconName = hyperlinkName.trim().replace(' ', '_') + "_icon.gif";
-			//hyperlink.setIcon(new ImageIcon("resources/images/" + iconName));
-			hyperlink.setIcon(new ImageIcon("resources/images/mysearchqueries_icon.gif"));
-			
+
+			// String iconName = hyperlinkName.trim().replace(' ', '_') +
+			// "_icon.gif";
+			// hyperlink.setIcon(new ImageIcon("resources/images/" + iconName));
+			hyperlink.setIcon(new ImageIcon(
+					"resources/images/mysearchqueries_icon.gif"));
+
 			hyperlink.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent actionEvent) {
 					String linkClicked = actionEvent.getActionCommand();
@@ -483,7 +481,8 @@ public class ExperimentStackBox extends Cab2bPanel {
 	 *            the name of the chart to be displayed
 	 */
 	private void showChartAction(String linkClicked) {
-		Cab2bTable cab2bTable = m_experimentDataCategoryGridPanel.getTable();
+		Cab2bTable cab2bTable = m_experimentDataCategoryGridPanel
+				.getCurrentTable();
 
 		String entityName = null;
 		Object nodeInfo = ((DefaultMutableTreeNode) datalistTree
@@ -491,33 +490,35 @@ public class ExperimentStackBox extends Cab2bPanel {
 		if (nodeInfo instanceof TreeEntityWrapper) {
 			entityName = ((TreeEntityWrapper) nodeInfo).toString();
 		}
-
-		JPanel jPanel = null;
-		ChartGenerator chartGenerator = new ChartGenerator(cab2bTable);
-		if (linkClicked.equals(Constants.BAR_CHART)) {
-			jPanel = chartGenerator.getBarChart(entityName);
-		} else if (linkClicked.equals(Constants.LINE_CHART)) {
-			jPanel = chartGenerator.getLineChart();
-		} else if (linkClicked.equals(Constants.SCATTER_PLOT)) {
-			jPanel = chartGenerator.getScatterPlot();
-		}
-
+		
+		Cab2bChartPanel cab2bChartPanel = null;
 		JTabbedPane tabComponent = m_experimentDataCategoryGridPanel
 				.getTabComponent();
 		Cab2bPanel visualizeDataPanel = m_experimentDataCategoryGridPanel
-				.getVisualizeDataPanel();
-		tabComponent.remove(visualizeDataPanel);
-
-		visualizeDataPanel = new Cab2bPanel();
-		visualizeDataPanel.setName("visualizeDataPanel");
-		visualizeDataPanel.setBorder(null);
-		visualizeDataPanel.removeAll();
-		visualizeDataPanel.add(jPanel);
-		m_experimentDataCategoryGridPanel
-				.setVisualizeDataPanel(visualizeDataPanel);
-
-		tabComponent.add("Chart", visualizeDataPanel);
-		tabComponent.setSelectedComponent(visualizeDataPanel);
+				.getCurrentChartPanel();
+		if(visualizeDataPanel == null) {
+			cab2bChartPanel = new Cab2bChartPanel(cab2bTable);
+			cab2bChartPanel.setChartType(linkClicked, entityName);
+			
+			Cab2bPanel newVisualizeDataPanel = new Cab2bPanel();
+			newVisualizeDataPanel.setName("visualizeDataPanel");
+			newVisualizeDataPanel.setBorder(null);
+			newVisualizeDataPanel.add(cab2bChartPanel);
+			
+			m_experimentDataCategoryGridPanel
+					.setCurrentChartPanel(newVisualizeDataPanel);
+			
+			tabComponent.add("Chart" + ++chartIndex, newVisualizeDataPanel);
+			tabComponent.setSelectedComponent(newVisualizeDataPanel);
+		} else {
+			Component component = visualizeDataPanel.getComponent(0);
+			if(component instanceof Cab2bChartPanel) {
+				cab2bChartPanel = (Cab2bChartPanel)component;
+				cab2bChartPanel.setChartType(linkClicked, entityName);
+				visualizeDataPanel.add(cab2bChartPanel);
+				tabComponent.setSelectedComponent(visualizeDataPanel);
+			}
+		}
 	}
 
 	/**
@@ -709,43 +710,18 @@ public class ExperimentStackBox extends Cab2bPanel {
 	}
 
 	/**
-	 * This method enables or disables the chart links in Visualise Panel on
-	 * selection of row in the data grid.
+	 * @return the visualiseDataPanel
 	 */
-	private void setChartLinkStatusOnRowSelect() {
-		Cab2bTable cab2bTable = m_experimentDataCategoryGridPanel.getTable();
-		cab2bTable.addFocusListener(new FocusListener() {
+	public Cab2bPanel getVisualiseDataPanel() {
+		return visualiseDataPanel;
+	}
 
-			public void focusGained(FocusEvent focusEvent) {
-				final Cab2bTable cab2bTable = (Cab2bTable) focusEvent
-						.getComponent();
-				focusAction(cab2bTable);
-			}
-
-			public void focusLost(FocusEvent focusEvent) {
-				final Cab2bTable cab2bTable = (Cab2bTable) focusEvent
-						.getComponent();
-				focusAction(cab2bTable);
-			}
-
-			private void focusAction(final Cab2bTable cab2bTable) {
-				boolean setEnabled = false;
-
-				if (cab2bTable.getSelectedRowCount() > 0) {
-					setEnabled = true;
-				}
-
-				Component[] components = visualiseDataPanel.getComponents();
-				for (Component component : components) {
-					if (component instanceof Cab2bHyperlink) {
-						Cab2bHyperlink hyperLink = (Cab2bHyperlink) component;
-						hyperLink.setEnabled(setEnabled);
-						hyperLink.setVisible(true);
-					}
-				}
-				visualiseDataPanel.revalidate();
-			}
-		});
+	/**
+	 * @param visualiseDataPanel
+	 *            the visualiseDataPanel to set
+	 */
+	public void setVisualiseDataPanel(Cab2bPanel visualiseDataPanel) {
+		this.visualiseDataPanel = visualiseDataPanel;
 	}
 }
 
