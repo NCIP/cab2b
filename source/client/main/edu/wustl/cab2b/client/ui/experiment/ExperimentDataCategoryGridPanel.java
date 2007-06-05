@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -693,9 +692,9 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 					experimentDataCategoryGridPanel
 							.setCurrentTable(currentTable);
 					experimentDataCategoryGridPanel.setCurrentChartPanel(null);
-				} else if (component instanceof JPanel) {
+				} else if (component instanceof Cab2bChartPanel) {
 					experimentDataCategoryGridPanel
-							.setCurrentChartPanel((Cab2bChartPanel)selectedTabPanel);
+							.setCurrentChartPanel(selectedTabPanel);
 				}
 			}
 			updateUI();

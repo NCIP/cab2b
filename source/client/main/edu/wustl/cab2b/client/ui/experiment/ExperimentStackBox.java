@@ -44,6 +44,7 @@ import edu.common.dynamicextensions.entitymanager.EntityRecordInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordMetadata;
 import edu.common.dynamicextensions.entitymanager.EntityRecordResult;
 import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
+import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
@@ -486,7 +487,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 		}
 		
 		//Cab2bChartPanel cab2bChartPanel = null;
-		JTabbedPane tabComponent = m_experimentDataCategoryGridPanel
+		final JTabbedPane tabComponent = m_experimentDataCategoryGridPanel
 				.getTabComponent();
 		Cab2bPanel currentChartPanel = m_experimentDataCategoryGridPanel
 				.getCurrentChartPanel();
@@ -494,21 +495,29 @@ public class ExperimentStackBox extends Cab2bPanel {
 			Cab2bChartPanel cab2bChartPanel = new Cab2bChartPanel(cab2bTable);
 			cab2bChartPanel.setChartType(linkClicked, entityName);
 			
-			/*Cab2bPanel newVisualizeDataPanel = new Cab2bPanel();
+			final Cab2bPanel newVisualizeDataPanel = new Cab2bPanel();
 			newVisualizeDataPanel.setLayout(new RiverLayout());
 			newVisualizeDataPanel.setName("visualizeDataPanel");
 			newVisualizeDataPanel.setBorder(null);
-			newVisualizeDataPanel.add("hfill vfill ", cab2bChartPanel);*/
+			newVisualizeDataPanel.add("hfill vfill ", cab2bChartPanel);
+			
+			Cab2bButton closeButton = new Cab2bButton("Close");
+			closeButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent actionEvent) {
+					tabComponent.remove(newVisualizeDataPanel);
+				}
+			});
+			newVisualizeDataPanel.add("br right", closeButton);
 			
 			m_experimentDataCategoryGridPanel
-					.setCurrentChartPanel(cab2bChartPanel);
+					.setCurrentChartPanel(newVisualizeDataPanel);
 			
-			tabComponent.add("Chart" + ++chartIndex, cab2bChartPanel);
-			tabComponent.setSelectedComponent(cab2bChartPanel);
+			tabComponent.add("Chart" + ++chartIndex, newVisualizeDataPanel);
+			tabComponent.setSelectedComponent(newVisualizeDataPanel);
 		} else {
-			Cab2bChartPanel cab2bChartPanel = (Cab2bChartPanel)currentChartPanel;
+			Cab2bChartPanel cab2bChartPanel = (Cab2bChartPanel)currentChartPanel.getComponent(0);
 			cab2bChartPanel.setChartType(linkClicked, entityName);
-			tabComponent.setSelectedComponent(cab2bChartPanel);
+			tabComponent.setSelectedComponent(currentChartPanel);
 		}
 	}
 
