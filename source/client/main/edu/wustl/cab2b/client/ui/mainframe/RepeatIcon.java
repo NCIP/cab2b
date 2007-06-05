@@ -7,16 +7,21 @@ import javax.swing.Icon;
 import javax.swing.SwingConstants;
 
 /**
+ * This class repeats the icon of 1 pixel width over the entire banner length
  * @author hrishikesh_rajpathak
- *
+ * 
+ */
+/**
+ * @author hrishikesh_rajpathak
+ * 
  */
 public class RepeatIcon implements Icon {
 
 	private Icon icon;
 
-	// static private MyGlassPane myGlassPane;
+	private int direction;
 
-	private int direction, size;
+	private int size;
 
 	public RepeatIcon(Icon icon, int direction, int size) {
 		this.icon = icon;
@@ -24,15 +29,36 @@ public class RepeatIcon implements Icon {
 		this.size = size;
 	}
 
+	/**
+	 * To get icon width
+	 */
 	public int getIconWidth() {
-		return (this.direction == SwingConstants.HORIZONTAL) ? this.size : this.icon.getIconWidth();
+
+		if (this.direction == SwingConstants.HORIZONTAL) {
+			return (this.size);
+		} else {
+			return (this.icon.getIconWidth());
+		}
 	}
 
+	/**
+	 * To get icon height
+	 */
 	public int getIconHeight() {
-		return (this.direction == SwingConstants.HORIZONTAL) ? this.icon.getIconHeight()
-				: this.size;
+		if (this.direction == SwingConstants.HORIZONTAL) {
+			return (this.icon.getIconHeight());
+		} else {
+			return (this.size);
+		}
 	}
 
+	/**
+	 * To paint icon over the entire specified area both verically and
+	 * horizontally
+	 * 
+	 * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics,
+	 *      int, int)
+	 */
 	public void paintIcon(Component c, Graphics g, int x, int y) {
 		g.translate(x, y);
 		if (this.direction == SwingConstants.HORIZONTAL) {
