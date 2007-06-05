@@ -24,7 +24,6 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.TreeSelectionEvent;
@@ -45,6 +44,7 @@ import edu.common.dynamicextensions.entitymanager.EntityRecordInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordMetadata;
 import edu.common.dynamicextensions.entitymanager.EntityRecordResult;
 import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
+import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
@@ -491,33 +491,30 @@ public class ExperimentStackBox extends Cab2bPanel {
 			entityName = ((TreeEntityWrapper) nodeInfo).toString();
 		}
 		
-		Cab2bChartPanel cab2bChartPanel = null;
+		//Cab2bChartPanel cab2bChartPanel = null;
 		JTabbedPane tabComponent = m_experimentDataCategoryGridPanel
 				.getTabComponent();
-		Cab2bPanel visualizeDataPanel = m_experimentDataCategoryGridPanel
+		Cab2bPanel currentChartPanel = m_experimentDataCategoryGridPanel
 				.getCurrentChartPanel();
-		if(visualizeDataPanel == null) {
-			cab2bChartPanel = new Cab2bChartPanel(cab2bTable);
+		if(currentChartPanel == null) {
+			Cab2bChartPanel cab2bChartPanel = new Cab2bChartPanel(cab2bTable);
 			cab2bChartPanel.setChartType(linkClicked, entityName);
 			
-			Cab2bPanel newVisualizeDataPanel = new Cab2bPanel();
+			/*Cab2bPanel newVisualizeDataPanel = new Cab2bPanel();
+			newVisualizeDataPanel.setLayout(new RiverLayout());
 			newVisualizeDataPanel.setName("visualizeDataPanel");
 			newVisualizeDataPanel.setBorder(null);
-			newVisualizeDataPanel.add(cab2bChartPanel);
+			newVisualizeDataPanel.add("hfill vfill ", cab2bChartPanel);*/
 			
 			m_experimentDataCategoryGridPanel
-					.setCurrentChartPanel(newVisualizeDataPanel);
+					.setCurrentChartPanel(cab2bChartPanel);
 			
-			tabComponent.add("Chart" + ++chartIndex, newVisualizeDataPanel);
-			tabComponent.setSelectedComponent(newVisualizeDataPanel);
+			tabComponent.add("Chart" + ++chartIndex, cab2bChartPanel);
+			tabComponent.setSelectedComponent(cab2bChartPanel);
 		} else {
-			Component component = visualizeDataPanel.getComponent(0);
-			if(component instanceof Cab2bChartPanel) {
-				cab2bChartPanel = (Cab2bChartPanel)component;
-				cab2bChartPanel.setChartType(linkClicked, entityName);
-				visualizeDataPanel.add(cab2bChartPanel);
-				tabComponent.setSelectedComponent(visualizeDataPanel);
-			}
+			Cab2bChartPanel cab2bChartPanel = (Cab2bChartPanel)currentChartPanel;
+			cab2bChartPanel.setChartType(linkClicked, entityName);
+			tabComponent.setSelectedComponent(cab2bChartPanel);
 		}
 	}
 

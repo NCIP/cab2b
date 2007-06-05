@@ -46,6 +46,7 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
+import edu.wustl.cab2b.client.ui.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -169,7 +170,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	 */
 	public void setCurrentChartPanel(Cab2bPanel currentChartPanel) {
 		this.currentChartPanel = currentChartPanel;
-		this.currentChartPanel.setBorder(null);
 	}
 
 	/**
@@ -695,7 +695,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 					experimentDataCategoryGridPanel.setCurrentChartPanel(null);
 				} else if (component instanceof JPanel) {
 					experimentDataCategoryGridPanel
-							.setCurrentChartPanel(selectedTabPanel);
+							.setCurrentChartPanel((Cab2bChartPanel)selectedTabPanel);
 				}
 			}
 			updateUI();
