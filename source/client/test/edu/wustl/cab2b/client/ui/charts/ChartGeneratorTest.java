@@ -30,22 +30,22 @@ public class ChartGeneratorTest extends TestCase {
 	
 	public void testBarChart() {
 		Cab2bTable cab2bTable = getDataTable();
-		ChartGenerator chartGenerator = new ChartGenerator(cab2bTable);
-		chartGenerator.getBarChart("Bar Chart");
+		Cab2bChartPanel chartPanel = new Cab2bChartPanel(cab2bTable);
+		chartPanel.setChartType("Bar Chart", "");
 		assertTrue(true);
 	}
 
 	public void testLineChart() {
 		Cab2bTable cab2bTable = getDataTable();
-		ChartGenerator chartGenerator = new ChartGenerator(cab2bTable);
-		chartGenerator.getLineChart();
+		Cab2bChartPanel chartPanel = new Cab2bChartPanel(cab2bTable);
+		chartPanel.setChartType("Line Chart", null);
 		assertTrue(true);
 	}
 	
 	public void testScatterPlot() {
 		Cab2bTable cab2bTable = getDataTable();
-		ChartGenerator chartGenerator = new ChartGenerator(cab2bTable);
-		chartGenerator.getScatterPlot();
+		Cab2bChartPanel chartPanel = new Cab2bChartPanel(cab2bTable);
+		chartPanel.setChartType("Scatter Plot", null);
 		assertTrue(true);
 	}
 }
