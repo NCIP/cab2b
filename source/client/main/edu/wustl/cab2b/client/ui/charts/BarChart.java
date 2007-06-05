@@ -34,11 +34,11 @@ public class BarChart extends AbstractChart {
 
 	/**
 	 * Parameterized constructor
-	 * @param cab2bTable
+	 * @param chartRawData
 	 * @param entityName
 	 */
-	public BarChart(Cab2bTable cab2bTable, String entityName) {
-		super(cab2bTable);
+	public BarChart(Cab2bChartRawData chartRawData, String entityName) {
+		super(chartRawData);
 		this.entityName = entityName;
 	}
 
@@ -47,9 +47,10 @@ public class BarChart extends AbstractChart {
 	 * @see edu.wustl.cab2b.client.ui.charts.AbstractChart#createDataset()
 	 */
 	protected CategoryDataset createDataset() {
-		int[] selectedRowIndices = cab2bTable.getSelectedRows();
-		int[] selectedColumnsIndices = cab2bTable.getSelectedColumns();
-
+		Cab2bTable cab2bTable = chartRawData.getCab2bTable();
+		int[] selectedRowIndices = chartRawData.getSelectedRowIndices();
+		int[] selectedColumnsIndices = chartRawData.getSelectedColumnsIndices();
+		
 		String[] series = new String[selectedColumnsIndices.length];
 		String[] categories = new String[selectedRowIndices.length];
 				
@@ -121,9 +122,6 @@ public class BarChart extends AbstractChart {
 	 * @author chetan_patil
 	 */
 	static class LabelGenerator extends StandardCategoryItemLabelGenerator {
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
 
 		LabelGenerator() {

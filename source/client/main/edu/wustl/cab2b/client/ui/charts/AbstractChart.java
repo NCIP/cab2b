@@ -21,23 +21,21 @@ public abstract class AbstractChart {
 	/**
 	 * Holds the cab2bTable which contains the data to be displayed as chart.
 	 */
-	protected Cab2bTable cab2bTable;
+	protected Cab2bChartRawData chartRawData;
 
 	/**
 	 * Parameterized constructor 
 	 * @param cab2bTable
 	 */
-	public AbstractChart(Cab2bTable cab2bTable) {
-		super();
-		this.cab2bTable = cab2bTable;
+	public AbstractChart(Cab2bChartRawData chartRawData) {
+		this.chartRawData = chartRawData;
 	}
 	
 	/**
 	 * This method creates create a chart and places it into a JPanel.
 	 * @return JPanel containing the generated chart.
 	 */
-	public JPanel createChartPanel()
-    {
+	public JPanel createChartPanel() {
 		Dataset dataset = createDataset();
     	JFreeChart jfreechart = createChart(dataset);
         return new ChartPanel(jfreechart);
@@ -48,13 +46,14 @@ public abstract class AbstractChart {
 	 * @return dataset required to create chart.
 	 */
 	protected Dataset createDataset() {
-		int[] selectedRowIndices = cab2bTable.getSelectedRows();
-		int[] selectedColumnsIndices = cab2bTable.getSelectedColumns();
-
 		int i, j;
 		String value = null;
 		String seriesName = null;
 
+		Cab2bTable cab2bTable = chartRawData.getCab2bTable();
+		int[] selectedRowIndices = chartRawData.getSelectedRowIndices();
+		int[] selectedColumnsIndices = chartRawData.getSelectedColumnsIndices();
+		
 		XYSeries xySeries = null;
 		XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
 		for (i = 0; i < selectedColumnsIndices.length; i++) {

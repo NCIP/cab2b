@@ -15,8 +15,6 @@ import org.jfree.data.general.Dataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
-import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
-
 /**
  * This class represents and generates the Line Chart
  * @author chetan_patil
@@ -24,10 +22,10 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 public class LineChart extends AbstractChart {
 	/**
 	 * Parameterized constructor
-	 * @param cab2bTable
+	 * @param chartRawData
 	 */
-	public LineChart(Cab2bTable cab2bTable) {
-		super(cab2bTable);
+	public LineChart(Cab2bChartRawData chartRawData) {
+		super(chartRawData);
 	}
 
 	/*

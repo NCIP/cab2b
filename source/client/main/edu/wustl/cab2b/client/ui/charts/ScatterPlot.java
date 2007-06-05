@@ -14,8 +14,6 @@ import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.xy.XYDataset;
 
-import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
-
 /**
  * @author chetan_patil
  *
@@ -24,10 +22,10 @@ public class ScatterPlot extends AbstractChart {
 
 	/**
 	 * Parameterized constructor
-	 * @param cab2bTable
+	 * @param chartRawData
 	 */
-	public ScatterPlot(Cab2bTable cab2bTable) {
-		super(cab2bTable);
+	public ScatterPlot(Cab2bChartRawData chartRawData) {
+		super(chartRawData);
 	}
 	
 	/*
