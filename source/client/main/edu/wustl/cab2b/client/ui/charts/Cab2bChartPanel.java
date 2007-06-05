@@ -3,8 +3,6 @@
  */
 package edu.wustl.cab2b.client.ui.charts;
 
-import java.awt.Component;
-
 import javax.swing.JPanel;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -12,7 +10,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.common.util.Constants;
 
 /**
- * This class is responsible of providing the methods to generate the different charts.
+ * This class is the panel of the chart and provides a method to set the type of chart in this panel
  * @author chetan_patil
  */
 public class Cab2bChartPanel extends Cab2bPanel {
