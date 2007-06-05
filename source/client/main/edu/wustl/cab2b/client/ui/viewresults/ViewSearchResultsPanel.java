@@ -22,13 +22,13 @@ import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 public class ViewSearchResultsPanel extends Cab2bPanel {
 	private static final long serialVersionUID = 1L;
 
-	protected JTabbedPane simpleAdvTabPane;
+	private JTabbedPane simpleAdvTabPane;
 
-	protected JXPanel searchResultBreadCrumbsPanel;
+	private JXPanel searchResultBreadCrumbsPanel;
 
-	protected JXPanel advSearchResultsPanel;
+	private JXPanel advSearchResultsPanel;
 
-	protected IQueryResult queryResult;
+	private IQueryResult queryResult;
 
 	public ViewSearchResultsPanel(IQueryResult queryResult,
 			MainSearchPanel panel) {
