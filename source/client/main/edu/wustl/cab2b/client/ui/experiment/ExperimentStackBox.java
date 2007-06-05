@@ -44,7 +44,6 @@ import edu.common.dynamicextensions.entitymanager.EntityRecordInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordMetadata;
 import edu.common.dynamicextensions.entitymanager.EntityRecordResult;
 import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
-import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
@@ -83,41 +82,36 @@ public class ExperimentStackBox extends Cab2bPanel {
 	/** Default Serial version ID */
 	private static final long serialVersionUID = 1L;
 
-	/** panel to display data-list (flat structure PPT slide no :44 ) */
-	protected Cab2bPanel dataCategoryPanel = null;
-
 	/** panel to display filters on selected data-category */
-	protected static Cab2bPanel dataFilterPanel = null;
+	private static Cab2bPanel dataFilterPanel = null;
 
 	/** panel to display analysed data on selected data-category */
-	protected Cab2bPanel analyseDataPanel = null;
+	private Cab2bPanel analyseDataPanel = null;
 
 	/** panel to display visual form of data on selected data-category */
-	protected Cab2bPanel visualiseDataPanel = null;
-
-	protected Cab2bPanel dataViewPanel = null;
+	private Cab2bPanel visualiseDataPanel = null;
 
 	/** stack box to add all this panels */
-	protected StackedBox stackedBox;
+	private StackedBox stackedBox;
 
 	/** ExperimentOpen Panel */
-	protected ExperimentDataCategoryGridPanel m_experimentDataCategoryGridPanel = null;
+	private ExperimentDataCategoryGridPanel m_experimentDataCategoryGridPanel = null;
 
-	protected JXTree datalistTree;
+	private JXTree datalistTree;
 
-	protected JScrollPane treeViewScrollPane;
+	private JScrollPane treeViewScrollPane;
 
-	protected ExperimentBusinessInterface m_experimentBusinessInterface;
+	private ExperimentBusinessInterface m_experimentBusinessInterface;
 
-	protected Experiment m_selectedExperiment = null;
+	private Experiment m_selectedExperiment = null;
 
-	protected String columnName[] = null;
+	private String columnName[] = null;
 
-	protected static CaB2BFilterInterface obj = null;
+	private static CaB2BFilterInterface obj = null;
 
-	protected Object recordObject[][] = null;
+	private Object recordObject[][] = null;
 
-	protected Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
+	private Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
 	
 	private static int chartIndex = 0;
 
