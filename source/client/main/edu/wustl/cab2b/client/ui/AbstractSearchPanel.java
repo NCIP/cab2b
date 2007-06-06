@@ -65,7 +65,7 @@ public abstract class AbstractSearchPanel extends Cab2bPanel
 	/** search button.*/
 	private JButton m_srhButton;
 	
-	/**Error message panel**/  //deepak
+	/**Error message panel**/  
 	Cab2bPanel errorMsgPanel;
 	
 	
@@ -137,6 +137,7 @@ public abstract class AbstractSearchPanel extends Cab2bPanel
 		m_srhTextField.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 		/* Invoke the method based on concrete implementations from sub-class*/
 		addTextField();
+       
 	
 		/* Add the components to the panel.*/
 		this.add(m_srhButton);
