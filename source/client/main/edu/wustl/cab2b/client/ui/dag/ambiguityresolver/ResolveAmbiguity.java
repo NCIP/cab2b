@@ -11,6 +11,7 @@ import java.util.Vector;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
+import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.query.IPathFinder;
 
 
@@ -93,11 +94,11 @@ public class ResolveAmbiguity
 			availablePathsPanel = new  AvailablePathsPanel(ambObj, list);
 		}
 		
-		if(edu.wustl.cab2b.client.ui.util.CommonUtils.FrameReference == null)
+		if(NewWelcomePanel.mainFrame == null)
 		{
 			Logger.out.info("Frame object null");
 		}
-		WindowUtilities.showInDialog(edu.wustl.cab2b.client.ui.util.CommonUtils.FrameReference, 
+		WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, 
 									 availablePathsPanel, "Ambiguity resolver", new Dimension(600, 350), true, false);
 		return availablePathsPanel.getUserSelectedpaths();
 	}

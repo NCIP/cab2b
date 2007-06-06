@@ -62,7 +62,7 @@ public class SearchDataWelcomePanel extends Cab2bPanel{
 					GlobalNavigationPanel.mainSearchPanel.setPreferredSize(relDimension);
 					GlobalNavigationPanel.mainSearchPanel.setSize(relDimension);
 					
-					edu.wustl.cab2b.client.ui.util.CommonUtils.FrameReference = mainFrame;
+					//edu.wustl.cab2b.client.ui.util.CommonUtils.FrameReference = mainFrame;
 					
 					// Update the variable for latest screen dimension from the toolkit, this is to handle the situations were
 					// Application is started and then screen resolution is changed, but the variable stiil holds old resolution size.

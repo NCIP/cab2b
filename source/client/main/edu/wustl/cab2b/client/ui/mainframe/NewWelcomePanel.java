@@ -56,7 +56,7 @@ public class NewWelcomePanel extends Cab2bPanel
 										
 						GlobalNavigationPanel.mainSearchPanel = new MainSearchPanel();
 						Dimension dimension = MainFrame.mainframeScreenDimesion;						
-						edu.wustl.cab2b.client.ui.util.CommonUtils.FrameReference = mainFrame;
+						//edu.wustl.cab2b.client.ui.util.CommonUtils.FrameReference = mainFrame;
 						
 						//reset DataList Save status
 						 SaveDatalistPanel.isDataListSaved = false;

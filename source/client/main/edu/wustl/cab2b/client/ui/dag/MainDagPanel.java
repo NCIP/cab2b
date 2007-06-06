@@ -31,6 +31,8 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.dag.ambiguityresolver.AmbiguityObject;
 import edu.wustl.cab2b.client.ui.dag.ambiguityresolver.AutoConnectAmbiguityResolver;
 import edu.wustl.cab2b.client.ui.dag.ambiguityresolver.ResolveAmbiguity;
+import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
+import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.query.IPathFinder;
 import edu.wustl.cab2b.client.ui.util.ClientConstants;
@@ -110,7 +112,11 @@ public class MainDagPanel extends Cab2bPanel
 		m_view = GraphFactory.createView(m_document, m_documentRenderer, m_viewController, m_eventHandler);
 		m_view.setBackground(Color.WHITE);
 		add(m_controlPanel, BorderLayout.NORTH);
-		add(new JScrollPane(m_view), BorderLayout.CENTER);
+        JScrollPane jScrollPane = new JScrollPane(m_view);    
+        
+        //jScrollPane.setAlignmentY(JScrollPane.BOTTOM_ALIGNMENT);
+        
+		add(jScrollPane, BorderLayout.CENTER);
 		m_expressionPanel = new ExpressionPanel("Current expression : ");
 		add(m_expressionPanel, BorderLayout.SOUTH);
 	}
@@ -648,7 +654,7 @@ public class MainDagPanel extends Cab2bPanel
 		{
 			// Show ambiguity resolver to get a curated path
 			AutoConnectAmbiguityResolver childPanel = new AutoConnectAmbiguityResolver(paths);
-			WindowUtilities.showInDialog(edu.wustl.cab2b.client.ui.util.CommonUtils.FrameReference, childPanel , 
+			WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, childPanel , 
 					"Available curated paths Panel", new Dimension(600, 370), true, false);
 			path = childPanel.getUserSelectedpaths();
 		}

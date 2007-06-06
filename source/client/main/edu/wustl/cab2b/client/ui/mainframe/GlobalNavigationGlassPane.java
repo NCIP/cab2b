@@ -199,7 +199,7 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
 					GlobalNavigationPanel.mainSearchPanel.setPreferredSize(relDimension);
 					GlobalNavigationPanel.mainSearchPanel.setSize(relDimension);
 
-					edu.wustl.cab2b.client.ui.util.CommonUtils.FrameReference = mainFrame;
+					
 
 					// Update the variable for latest screen dimension from the
 					// toolkit, this is to handle the situations where

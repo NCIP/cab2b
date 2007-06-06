@@ -7,6 +7,7 @@ import java.awt.Frame;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.jdesktop.swingx.JXErrorDialog;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
@@ -35,7 +37,7 @@ import edu.wustl.common.util.logger.Logger;
  * @author Mahesh Iyer
  */
 public class CommonUtils {
-    public static Frame FrameReference = null;
+
 
     // Constant storing enumerated values for DAG-Images
     public static enum DagImageConstants {
@@ -193,6 +195,10 @@ public class CommonUtils {
         }
         return count;
     }
+    
+    /** 
+     * Utility method to capitalise first character in the String 
+     **/
 
     static String capitalizeFirstCharacter(String str) {
         char[] chars = str.toCharArray();
@@ -200,6 +206,10 @@ public class CommonUtils {
         chars[0] = Character.toUpperCase(firstChar);
         return new String(chars);
     }
+    
+    /** 
+     *  
+     **/
 
     static String[] splitCamelCaseString(String str, int countOfUpperCaseLetter) {
         //System.out.println("str "+str+" count "+countOfUpperCaseLetter);
@@ -515,4 +525,33 @@ public class CommonUtils {
 		
 		return requiredComponent;
 	}
+    
+    /**
+     * This Method returns the maximum dimension required to generate the label for the given attributes.   
+     * @param attributeList
+     * @return
+     */
+    public static Dimension getMaximumLabelDimension(Collection< AttributeInterface> attributeList)
+    {
+        Dimension maxLabelDimension= new Dimension(0,0); 
+        
+        for (AttributeInterface attribute : attributeList) {
+               
+            
+            String formattedString = attribute.getName();
+            if(!Utility.isCategory(attribute.getEntity())) {
+                formattedString = CommonUtils.getFormattedString(formattedString);
+            }
+            
+            Cab2bLabel tempLabel = new Cab2bLabel( formattedString+ " : ");
+            if ( maxLabelDimension.width < tempLabel.getPreferredSize().width)
+            {
+                maxLabelDimension = tempLabel.getPreferredSize();
+            }
+            
+        }
+        return maxLabelDimension;
+    }
+    
+
 }
