@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.client.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import org.jdesktop.swingx.JXPanel;
@@ -77,7 +79,8 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 		Cab2bHyperlink showAllLink = new Cab2bHyperlink();
 		showAllLink.setText("Show All Search Results Views");
 		JXPanel topPanel = new Cab2bPanel(new RiverLayout());
-		topPanel.add(showAllLink);
+		topPanel.add(new Cab2bLabel(""));
+		topPanel.add("tab ",showAllLink);
 		/* Add the top panel to the North of the dialog. */
 		this.add(BorderLayout.NORTH, topPanel);
 
@@ -145,7 +148,10 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 
 		/* The bottom panel */
 		JXPanel bottomPanel = new Cab2bPanel(new RiverLayout());
-		bottomPanel.add("p", new Cab2bLabel("*Select Default View"));
+		JLabel asterix = new Cab2bLabel("*");
+		asterix.setForeground(Color.RED);
+		bottomPanel.add(asterix);
+		bottomPanel.add(new Cab2bLabel("Select Default View"));
 
 		/*
 		 * Get the class corresponding to the root expression and show that in
