@@ -151,7 +151,7 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				experimentStackBox, experimentDataCategoryGridPanel);
 		splitPane.setOneTouchExpandable(false);
-		splitPane.setDividerLocation(0.2D);
+		splitPane.setDividerLocation(242);
 		splitPane.setDividerSize(4);
 		this.add(splitPane);
 	}
