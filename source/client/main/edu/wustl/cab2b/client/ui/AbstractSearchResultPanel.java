@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
+import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.main.IComponent;
 import edu.wustl.cab2b.client.ui.main.ParseXMLFile;
@@ -33,6 +35,7 @@ import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.queryengine.Cab2bQueryObjectFactory;
 import edu.wustl.cab2b.common.util.AttributeInterfaceComparator;
 import edu.wustl.cab2b.common.util.EntityInterfaceComparator;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
@@ -186,9 +189,11 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements
 					.size()];
 			try {
 				int i = 0;
+                
+                Dimension maxLabelDimension= CommonUtils.getMaximumLabelDimension(attributeList);
 				for (AttributeInterface attribute : attributeList) {
 					componentPanels[i++] = (JXPanel) SwingUIManager
-							.generateUIPanel(parseFile, attribute);
+							.generateUIPanel(parseFile, attribute,maxLabelDimension);
 				}
 			} catch (CheckedException e) {
 				CommonUtils.handleException(e, this, true, true, false, false);
