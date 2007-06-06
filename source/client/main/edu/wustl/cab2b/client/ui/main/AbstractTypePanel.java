@@ -71,19 +71,19 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 	 */
 	protected Boolean showCondition;
 	
-	public AbstractTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity) {
-		this(conditionList, attributeEntity, new RiverLayout(), true);
+	public AbstractTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity,Dimension maxLabelDimension) {
+		this(conditionList, attributeEntity, new RiverLayout(), true, maxLabelDimension);
 	}
 	
-	public AbstractTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, Boolean showCondition) {
-		this(conditionList, attributeEntity, new RiverLayout(), showCondition);
+	public AbstractTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, Boolean showCondition,Dimension maxLabelDimension) {
+		this(conditionList, attributeEntity, new RiverLayout(), showCondition,maxLabelDimension);
 	}
 	
-	public AbstractTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, LayoutManager layoutManager) {
-		this(conditionList, attributeEntity, layoutManager, true);
+	public AbstractTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, LayoutManager layoutManager,Dimension maxLabelDimension) {
+		this(conditionList, attributeEntity, layoutManager, true, maxLabelDimension);
 	}
 	
-	public AbstractTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, LayoutManager layoutManager, Boolean showCondition) {
+	public AbstractTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, LayoutManager layoutManager, Boolean showCondition, Dimension maxLabelDimension) {
 		super(layoutManager);
 		
 		this.attributeEntity = attributeEntity;
@@ -96,7 +96,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         }
         
 		m_Name = new Cab2bLabel( formattedString+ " : ");
-		m_Name.setPreferredSize(new Dimension(235,20));
+		m_Name.setPreferredSize(maxLabelDimension);//new Dimension(235,20)
 		m_NameEdit = getFirstComponent();
 		
 		m_OtherEdit = getSecondComponent();
@@ -110,7 +110,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 		
 		add("tab", m_Name);
 		add("tab", new Cab2bLabel());
-		add("tab", new Cab2bLabel());
+		
 		
 		if(showCondition) {
 			setCondtionControl(conditionList, border, emptyBorder);
