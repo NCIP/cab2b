@@ -1,9 +1,3 @@
-/**
- * <p>Title: Utility Class>
- * <p>Description:  Utility Class contain general methods used through out the application. </p>
- * Copyright:    Copyright (c) year
- * Company: Washington University, School of Medicine, St. Louis.
- */
 package edu.wustl.cab2b.common.util;
 
 import static edu.wustl.cab2b.common.util.Constants.CONNECTOR;
@@ -54,12 +48,9 @@ import edu.wustl.common.util.logger.Logger;
 public class Utility {
     static Properties props;
 
-    /*
-     * This static block loads properties from file at class loading time.
-     * */
     static String propertyfile = "demo.properties";
     static {
-
+        //This static block loads properties from file at class loading time.
         InputStream is = Utility.class.getClassLoader().getResourceAsStream(propertyfile);
         if (is == null) {
             Logger.out.error("Unable fo find property file : " + propertyfile
@@ -80,42 +71,52 @@ public class Utility {
     public static Properties getProperties() {
         return props;
     }
-   /**
-    * Checks whether passed attribute/association is inheriated.
-    * @param abstractAttribute
-    *            Attribute/Association to check.
-    * @return TRUE if it is inherited else returns FALSE
-    */
-   public static boolean isInherited(
-                                     AbstractAttributeInterface abstractAttribute) {
-       for (TaggedValueInterface tag : abstractAttribute.getTaggedValueCollection()) {
-           if (tag.getKey().equals(Constants.TYPE_DERIVED)) {
-               return true;
-           }
-       }
-       return false;
-   }
-   public static String generateUniqueId(AssociationInterface association) {
-       return concatStrings(association.getEntity().getName(),
-                            association.getSourceRole().getName(),
-                            association.getTargetRole().getName(),
-                            association.getTargetEntity().getName());
-   }
 
-   public static String concatStrings(String srcEntityName,
-                                       String srcRoleName, String tgtRoleName,
-                                       String tgtEntityName) {
-       StringBuilder builder = new StringBuilder();
-       builder.append(srcEntityName);
-       builder.append(CONNECTOR);
-       builder.append(srcRoleName);
-       builder.append(CONNECTOR);
-       builder.append(tgtRoleName);
-       builder.append(CONNECTOR);
-       builder.append(tgtEntityName);
-       return builder.toString();
+    /**
+     * Checks whether passed attribute/association is inheriated.
+     * @param abstractAttribute
+     *            Attribute/Association to check.
+     * @return TRUE if it is inherited else returns FALSE
+     */
+    public static boolean isInherited(AbstractAttributeInterface abstractAttribute) {
+        for (TaggedValueInterface tag : abstractAttribute.getTaggedValueCollection()) {
+            if (tag.getKey().equals(Constants.TYPE_DERIVED)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-   }
+    /**
+     * @param association Association
+     * @return Unique string to represent given association
+     */
+    public static String generateUniqueId(AssociationInterface association) {
+        return concatStrings(association.getEntity().getName(), association.getSourceRole().getName(),
+                             association.getTargetRole().getName(), association.getTargetEntity().getName());
+    }
+
+    /**
+     * @param s1 String 
+     * @param s2 String
+     * @param s3 String
+     * @param s4 String
+     * @return Concatenated string made after connecting s1, s2, s3, s4 by {@link Constants#CONNECTOR}
+     */
+    public static String concatStrings(String s1, String s2, String s3,
+                                       String s4) {
+        StringBuffer buff = new StringBuffer();
+        buff.append(s1);
+        buff.append(CONNECTOR);
+        buff.append(s2);
+        buff.append(CONNECTOR);
+        buff.append(s3);
+        buff.append(CONNECTOR);
+        buff.append(s4);
+        return buff.toString();
+
+    }
+
     /**
      * Compares whether given searchPattern is present in passed searchString
      * @param searchPattern search Pattern to look for 
@@ -163,10 +164,9 @@ public class Utility {
     }
 
     /**
-     * return tagged value for given key in given tagged value collection.
-     * @param taggedValues
-     * @param key
-     * @return
+     * @param taggedValues collection of TaggedValueInterface
+     * @param key string
+     * @return The tagged value for given key in given tagged value collection.
      */
     public static TaggedValueInterface getTaggedValue(Collection<TaggedValueInterface> taggedValues, String key) {
         for (TaggedValueInterface taggedValue : taggedValues) {
@@ -189,29 +189,6 @@ public class Utility {
         }
         return isCategory;
     }
-
-    //    /**
-    //     * Returns all the categories which don't have any super category.
-    //     * @return List of root categories.
-    //     */
-    //    public static List<EntityInterface> getAllRootCategories() {
-    //        // TODO add implementation
-    //        throw new RuntimeException("this method is not implemented yet !!!");
-    //    }
-    //
-    //    /**
-    //     * Returns all the subcategories of a given super category
-    //     * @param superCategory The super category
-    //     * @return List of sub categories
-    //     */
-    //    public static List<EntityInterface> getAllSubCategories(
-    //                                                            EntityInterface superCategory) {
-    //        if (isCategory(superCategory)) {
-    //            // input category is not a category
-    //        }
-    //        // TODO add implementation
-    //        throw new RuntimeException("this method is not implemented yet !!!");
-    //    }
 
     /**
      * Converts DE datatype to queryObject dataType.
@@ -281,75 +258,81 @@ public class Utility {
                 break;
             }
         }
+        //As per Bug# 4577 <class name> (app_name v<version name) e.g. Participant (caTissue Core v1.1)
+        String projectName = eg.getLongName();
+        if (projectName.equals("caFE Server 1.1")) {
+            projectName = "caFE Server";
+        }
         StringBuffer buff = new StringBuffer();
-        buff.append(eg.getLongName());
-        buff.append(" :: ");
-        buff.append(version);
-        buff.append(" :: ");
         buff.append(name.substring(name.lastIndexOf(".") + 1, name.length()));
+        buff.append(" (");
+        buff.append(projectName);
+        buff.append(" v");
+        buff.append(version);
+        buff.append(")");
+        ;
         return buff.toString();
     }
-    
-    public static String getPathDisplayString(IPath path)
-	{
-    	String text="<HTML><B>Path</B>:";
-    	//text=text.concat("<HTML><B>Path</B>:");
-    	List<IAssociation> pathList = path.getIntermediateAssociations();
-    	text=text.concat(Utility.getDisplayName(path.getSourceEntity()));
-    	for(int i=0; i<pathList.size(); i++)
-		{
-    		text=text.concat("<B>----></B>");
-			text=text.concat(Utility.getDisplayName(pathList.get(i).getTargetEntity()));
-		}
-    	text=text.concat("</HTML>");
-    	Logger.out.info (text);
-    	StringBuffer sb = new StringBuffer();
-		int textLength=text.length();
-		Logger.out.info (textLength);
-		int currentStart=0;
-		String currentString=null;
-		int offset=100;
-		int strLen=0;
-		int len=0;
-		while(currentStart<textLength && textLength>offset)
-		{
-			currentString=text.substring(currentStart, (currentStart+offset));
-			strLen=strLen+currentString.length()+len;
-			sb.append(currentString);
-			int index = text.indexOf("<B>----></B>", (currentStart+offset));
-			if(index != -1)
-			{
-				len=index-strLen;
-				currentString=text.substring((currentStart+offset), (currentStart+offset+len));
-				sb.append(currentString);
-				sb.append("<P>");
-			}
-			else
-			{
-				sb.append(text.substring(currentStart));
-				return sb.toString();
-			}
-			
-			currentStart = currentStart+offset+len;
-			if((currentStart+offset+len)>textLength)
-			break;
-		}
-		sb.append(text.substring(currentStart));
-		return sb.toString();
-	}
 
+    /**
+     * @param path A IPath object
+     * @return Display string for given path
+     */
+    public static String getPathDisplayString(IPath path) {
+        String text = "<HTML><B>Path</B>:";
+        //text=text.concat("<HTML><B>Path</B>:");
+        List<IAssociation> pathList = path.getIntermediateAssociations();
+        text = text.concat(Utility.getDisplayName(path.getSourceEntity()));
+        for (int i = 0; i < pathList.size(); i++) {
+            text = text.concat("<B>----></B>");
+            text = text.concat(Utility.getDisplayName(pathList.get(i).getTargetEntity()));
+        }
+        text = text.concat("</HTML>");
+        Logger.out.info(text);
+        StringBuffer sb = new StringBuffer();
+        int textLength = text.length();
+        Logger.out.info(textLength);
+        int currentStart = 0;
+        String currentString = null;
+        int offset = 100;
+        int strLen = 0;
+        int len = 0;
+        while (currentStart < textLength && textLength > offset) {
+            currentString = text.substring(currentStart, (currentStart + offset));
+            strLen = strLen + currentString.length() + len;
+            sb.append(currentString);
+            int index = text.indexOf("<B>----></B>", (currentStart + offset));
+            if (index != -1) {
+                len = index - strLen;
+                currentString = text.substring((currentStart + offset), (currentStart + offset + len));
+                sb.append(currentString);
+                sb.append("<P>");
+            } else {
+                sb.append(text.substring(currentStart));
+                return sb.toString();
+            }
+
+            currentStart = currentStart + offset + len;
+            if ((currentStart + offset + len) > textLength)
+                break;
+        }
+        sb.append(text.substring(currentStart));
+        return sb.toString();
+    }
+
+    /**
+     * @param entity Entity to check
+     * @return Attribute whose name is "identifier" OR "id"
+     */
     public static AttributeInterface getIdAttribute(EntityInterface entity) {
-        for (AttributeInterface attribute : entity.getAttributeCollection())
-        {
-            String attribName = attribute.getName();
-            if (attribName.equalsIgnoreCase("id") || attribName.equalsIgnoreCase("identifier"))
-            {
+        for (AttributeInterface attribute : entity.getAttributeCollection()) {
+            if (isIdentifierAttribute(attribute)) {
                 return attribute;
             }
         }
         return null;
     }
-    
+
     /**
      * Returns true if an application returns associatied objects information in result of CQLs.  
      * @param entity Entity to check
@@ -368,18 +351,27 @@ public class Utility {
         return isOutGoingAssociationSupported;
     }
 
+    /**
+     * @param entity Entity to check
+     * @return Name of the application to which given entity belongs 
+     */
     public static String getApplicationName(EntityInterface entity) {
         return getEntityGroup(entity).getName();
     }
-    public static boolean isIdentifierAttribute(AttributeInterface attribute) {
-        String attribName = attribute.getName();        
-        return attribName.equalsIgnoreCase("id") || attribName.equalsIgnoreCase("identifier"); 
-    }
-    
+
     /**
-     * converts attribute set into a list and sorts it alphabatically
-     * @param inputAttributeSet
-     * @return
+     * @param attribute Attribute to check
+     * @return TRUE if attribute name is "identifier" OR "id"
+     */
+    public static boolean isIdentifierAttribute(AttributeInterface attribute) {
+        String attribName = attribute.getName();
+        return attribName.equalsIgnoreCase("id") || attribName.equalsIgnoreCase("identifier");
+    }
+
+    /**
+     * Converts attribute set into a alphabatically sorted list.
+     * @param inputAttributeSet Attribute set to sort 
+     * @return Sorted list of attributes
      */
     public static List<AttributeInterface> getAttributeList(Set<AttributeInterface> inputAttributeSet) {
         List<AttributeInterface> attributes = new ArrayList<AttributeInterface>(inputAttributeSet);
@@ -388,9 +380,8 @@ public class Utility {
     }
 
     /**
-     * returns total no of records present in query set (i.e for all services)
-     * @param queryResult
-     * @return
+     * @param queryResult Query result to process.
+     * @return Total no of records present in query set (i.e for all services)
      */
     public static int getNoOfRecords(IQueryResult queryResult) {
         int size = 0;
@@ -403,9 +394,8 @@ public class Utility {
     }
 
     /**
-     * returns a list of attributes from query result
-     * @param queryResult
-     * @return
+     * @param queryResult Query result to process.
+     * @return List of attributes from query result
      */
     public static List<AttributeInterface> getAttributeList(IQueryResult queryResult) {
         Map<String, List<IRecord>> allRecords = queryResult.getRecords();
