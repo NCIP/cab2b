@@ -12,32 +12,31 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
  * {@link edu.wustl.cab2b.common.queryengine.result.IQueryResult}, then the
  * attributes of the record should be a subset of the attributes of the
  * outputEntity of the result; but the API itself does not validate this.
+ * 
  * @see edu.wustl.cab2b.common.queryengine.result.QueryResultFactory#createRecord(Set,
  *      String)
  * @author srinath_k
  */
 public interface IRecord extends Serializable {
     /**
-     * Returns the "identifier" for this record. The "identifier" is the value
-     * for the id attribute as obtained from
-     * {@link edu.wustl.cab2b.common.util.Utility#getIdAttribute(EntityInterface)}.
+     * Returns the "identifier" for this record.
+     * 
      * @return the id of this record.
      */
-    String getId();
+    RecordId getRecordId();
 
     /**
      * Specify the value for an attribute.
-     * @param attribute
-     *            the attribute.
-     * @param value
-     *            value of the attribute.
+     * 
+     * @param attribute the attribute.
+     * @param value value of the attribute.
      */
     void putValueForAttribute(AttributeInterface attribute, String value);
 
     /**
      * Returns the value for the attribute.
-     * @param attribute
-     *            the attribute
+     * 
+     * @param attribute the attribute
      * @return the value for the attribute.
      */
     String getValueForAttribute(AttributeInterface attribute);

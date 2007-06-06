@@ -3,9 +3,9 @@ package cab2b.common.caarray;
 import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.cab2b.common.queryengine.result.RecordId;
 
-public class DerivedBioAssayRecord extends CaArrayRecord implements
-        IDerivedBioAssayRecord {
+public class DerivedBioAssayRecord extends CaArrayRecord implements IDerivedBioAssayRecord {
     private static final long serialVersionUID = -6479610453654712409L;
 
     private Object[][][] cube;
@@ -18,7 +18,7 @@ public class DerivedBioAssayRecord extends CaArrayRecord implements
 
     private String[] dim3Labels;
 
-    public DerivedBioAssayRecord(Set<AttributeInterface> attributes, String id) {
+    public DerivedBioAssayRecord(Set<AttributeInterface> attributes, RecordId id) {
         super(attributes, id);
     }
 

@@ -9,8 +9,7 @@ import java.util.Set;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 
-public class CategorialClassRecord extends Record implements
-        ICategorialClassRecord {
+public class CategorialClassRecord extends Record implements ICategorialClassRecord {
     private static final long serialVersionUID = -7902568245257677861L;
 
     private Map<CategorialClass, List<ICategorialClassRecord>> childrenCategorialClassRecords;
@@ -19,7 +18,8 @@ public class CategorialClassRecord extends Record implements
 
     protected CategorialClassRecord(
             CategorialClass categorialClass,
-            Set<AttributeInterface> attributes, String id) {
+            Set<AttributeInterface> attributes,
+            RecordId id) {
         super(attributes, id);
         childrenCategorialClassRecords = new HashMap<CategorialClass, List<ICategorialClassRecord>>();
         this.categorialClass = categorialClass;
@@ -42,16 +42,10 @@ public class CategorialClassRecord extends Record implements
         this.childrenCategorialClassRecords = childrenCategorialClassRecords;
     }
 
-    public void addCategorialClassRecords(
-                                          CategorialClass catClass,
-                                          List<ICategorialClassRecord> catClassRecs) {
-        List<ICategorialClassRecord> existingRecs = getChildrenCategorialClassRecords().get(
-                                                                                            catClass);
+    public void addCategorialClassRecords(CategorialClass catClass, List<ICategorialClassRecord> catClassRecs) {
+        List<ICategorialClassRecord> existingRecs = getChildrenCategorialClassRecords().get(catClass);
         if (existingRecs == null) {
-            getChildrenCategorialClassRecords().put(
-                                                    catClass,
-                                                    new ArrayList<ICategorialClassRecord>(
-                                                            catClassRecs));
+            getChildrenCategorialClassRecords().put(catClass, new ArrayList<ICategorialClassRecord>(catClassRecs));
         } else {
             existingRecs.addAll(catClassRecs);
         }

@@ -14,6 +14,7 @@ import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
+import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.util.logger.Logger;
@@ -140,7 +141,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             String url = entry.getKey();
             catResult.addUrl(url);
             for (R rec : entry.getValue()) {
-                C catRec = createCategoryRecord(categorialClass, categoryAttributes, rec.getId());
+                C catRec = createCategoryRecord(categorialClass, categoryAttributes, rec.getRecordId());
                 for (CategorialAttribute catAttr : categorialClass.getCategorialAttributeCollection()) {
                     catRec.putValueForAttribute(catAttr.getCategoryAttribute(),
                                                 rec.getValueForAttribute(catAttr.getSourceClassAttribute()));
@@ -225,5 +226,5 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * @return a {@link ICategorialClassRecord}.
      */
     protected abstract C createCategoryRecord(CategorialClass categorialClass,
-                                              Set<AttributeInterface> categoryAttributes, String id);
+                                              Set<AttributeInterface> categoryAttributes, RecordId id);
 }

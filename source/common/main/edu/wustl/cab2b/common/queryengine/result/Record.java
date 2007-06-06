@@ -12,9 +12,9 @@ public class Record implements IRecord {
 
     private Map<AttributeInterface, String> attributesValues;
 
-    private String id;
+    private RecordId id;
 
-    protected Record(Set<AttributeInterface> attributes, String id) {
+    protected Record(Set<AttributeInterface> attributes, RecordId id) {
         if (attributes == null || attributes.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -25,7 +25,7 @@ public class Record implements IRecord {
         this.id = id;
     }
 
-    public String getId() {
+    public RecordId getRecordId() {
         return id;
     }
 

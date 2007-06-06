@@ -14,6 +14,7 @@ import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
+import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessor;
 import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessorResult;
@@ -45,6 +46,7 @@ import gov.nih.nci.cagrid.dcql.Object;
 /**
  * This class is responsible for building a DCQL out of ICab2bQuery, and get
  * results by executing that DCQL.
+ * 
  * @author Srinath
  */
 
@@ -59,15 +61,11 @@ public class QueryExecutor {
 
     public QueryExecutor(ICab2bQuery query) {
         setQuery(query);
-        this.transformer = QueryResultTransformerFactory.createTransformer(
-                                                                           query.getOutputEntity(),
-                                                                           IRecord.class,
+        this.transformer = QueryResultTransformerFactory.createTransformer(query.getOutputEntity(), IRecord.class,
                                                                            ICategorialClassRecord.class);
     }
 
-    private DCQLQuery createDCQLQuery(String outputName,
-                                      DcqlConstraint constraint,
-                                      String... outputUrls) {
+    private DCQLQuery createDCQLQuery(String outputName, DcqlConstraint constraint, String... outputUrls) {
         Object targetObject = new Object();
         targetObject.setName(outputName);
 
@@ -84,15 +82,12 @@ public class QueryExecutor {
 
     private CategoryPreprocessorResult preProcessCategories(IQuery query) {
         Connection connection = ConnectionUtil.getConnection();
-        CategoryPreprocessorResult res = new CategoryPreprocessor().processCategories(
-                                                                                      query,
-                                                                                      connection);
+        CategoryPreprocessorResult res = new CategoryPreprocessor().processCategories(query, connection);
         ConnectionUtil.close(connection);
         return res;
     }
 
-    private void assignDcqlConstraintToTarget(Object targetObject,
-                                              DcqlConstraint constraint) {
+    private void assignDcqlConstraintToTarget(Object targetObject, DcqlConstraint constraint) {
         if (constraint == null) {
             return;
         }
@@ -130,15 +125,14 @@ public class QueryExecutor {
     /**
      * This methods generates DCQL out of input ICab2bQuery object and fires it,
      * and returns the results.
-     * @param query
-     *            Query which needs to be executed.
+     * 
+     * @param query Query which needs to be executed.
      * @return Returns the IQueryResult
      */
     public IQueryResult<?> executeQuery() {
         Logger.out.info("Entered QueryExecutor...");
         this.categoryPreprocessorResult = preProcessCategories(query);
-        ConstraintsBuilder constraintsBuilder = new ConstraintsBuilder(query,
-                categoryPreprocessorResult);
+        ConstraintsBuilder constraintsBuilder = new ConstraintsBuilder(query, categoryPreprocessorResult);
 
         this.constraintsBuilderResult = constraintsBuilder.buildConstraints();
 
@@ -155,9 +149,7 @@ public class QueryExecutor {
                                                                                                                          rootOutputExpr);
 
                 EntityInterface outputEntity = rootOutputExpr.getConstraintEntity().getDynamicExtensionsEntity();
-                DCQLQuery rootDCQLQuery = createDCQLQuery(
-                                                          outputEntity.getName(),
-                                                          rootExprDcqlConstraint);
+                DCQLQuery rootDCQLQuery = createDCQLQuery(outputEntity.getName(), rootExprDcqlConstraint);
                 CategorialClass catClassForRootExpr = this.categoryPreprocessorResult.getCatClassForExpr().get(
                                                                                                                rootOutputExpr);
                 IQueryResult<ICategorialClassRecord> allRootExprCatRecs = transformer.getCategoryResults(
@@ -166,10 +158,8 @@ public class QueryExecutor {
                 categoryResults.add(allRootExprCatRecs);
 
                 for (Map.Entry<String, List<ICategorialClassRecord>> entry : allRootExprCatRecs.getRecords().entrySet()) {
-                    String url = entry.getKey();
                     for (ICategorialClassRecord rootExprCatRec : entry.getValue()) {
-                        getChildrenRecords(rootExprCatRec, rootOutputExprNode,
-                                           url, rootExprCatRec.getId());
+                        getChildrenRecords(rootExprCatRec, rootOutputExprNode, rootExprCatRec.getRecordId());
                     }
                 }
             }
@@ -189,8 +179,7 @@ public class QueryExecutor {
     // parentCatClassRec will be updated for a recursive call only if the expr
     // causing the recursive call belongs to a catClass.
     private void getChildrenRecords(ICategorialClassRecord parentCatClassRec,
-                                    TreeNode<IExpression> parentExprNode,
-                                    String url, String parentId) {
+                                    TreeNode<IExpression> parentExprNode, RecordId parentId) {
         IExpression parentExpr = parentExprNode.getValue();
         for (TreeNode<IExpression> childExprNode : parentExprNode.getChildren()) {
             IExpression childExpr = childExprNode.getValue();
@@ -202,18 +191,14 @@ public class QueryExecutor {
                                                                                                             childExpr);
 
             AbstractAssociationConstraint parentIdConstraint = createAssociationConstraint(association.reverse());
-            parentIdConstraint.addChildConstraint(createIdConstraint(
-                                                                     getIdAttribute(catClassForChildExpr),
-                                                                     parentId));
+            parentIdConstraint.addChildConstraint(createIdConstraint(getIdAttribute(catClassForChildExpr),
+                                                                     parentId.getId()));
             DcqlConstraint constraintForChildExpr = addParentIdConstraint(
                                                                           this.constraintsBuilderResult.getExpressionToConstraintMap().get(
                                                                                                                                            childExpr),
                                                                           parentIdConstraint);
             String entityName = childExpr.getConstraintEntity().getDynamicExtensionsEntity().getName();
-            DCQLQuery queryForChildExpr = createDCQLQuery(
-                                                          entityName,
-                                                          constraintForChildExpr,
-                                                          url);
+            DCQLQuery queryForChildExpr = createDCQLQuery(entityName, constraintForChildExpr, parentId.getUrl());
 
             if (catClassForChildExpr != null) {
                 // expr is for a catClass; add recs to parentCatClassRec
@@ -222,13 +207,10 @@ public class QueryExecutor {
                                                                                                          catClassForChildExpr);
 
                 List<ICategorialClassRecord> childExprCatRecs = childExprCatResult.getRecords().get(
-                                                                                                    url);
-                parentCatClassRec.addCategorialClassRecords(
-                                                            catClassForChildExpr,
-                                                            childExprCatRecs);
+                                                                                                    parentId.getUrl());
+                parentCatClassRec.addCategorialClassRecords(catClassForChildExpr, childExprCatRecs);
                 for (ICategorialClassRecord childExprCatRec : childExprCatRecs) {
-                    getChildrenRecords(childExprCatRec, childExprNode, url,
-                                       childExprCatRec.getId());
+                    getChildrenRecords(childExprCatRec, childExprNode, childExprCatRec.getRecordId());
                 }
             } else {
                 // expr was formed for entity on path between catClasses...
@@ -238,9 +220,7 @@ public class QueryExecutor {
 
                 // only one url at a time; so directly do next();
                 for (IRecord record : childExprClassRecs.getRecords().values().iterator().next()) {
-                    String childRecId = record.getId();
-                    getChildrenRecords(parentCatClassRec, childExprNode, url,
-                                       childRecId);
+                    getChildrenRecords(parentCatClassRec, childExprNode, record.getRecordId());
                 }
             }
 
@@ -249,8 +229,7 @@ public class QueryExecutor {
 
     private IQueryResult<ICategorialClassRecord> mergeCatResults(
                                                                  List<IQueryResult<ICategorialClassRecord>> categoryResults) {
-        Category outputCategory = this.categoryPreprocessorResult.getCategoryForEntity().get(
-                                                                                             getOutputEntity());
+        Category outputCategory = this.categoryPreprocessorResult.getCategoryForEntity().get(getOutputEntity());
         ICategoryResult<ICategorialClassRecord> res = QueryResultFactory.createCategoryResult(outputCategory);
         for (IQueryResult<ICategorialClassRecord> categoryResult : categoryResults) {
             for (Map.Entry<String, List<ICategorialClassRecord>> entry : categoryResult.getRecords().entrySet()) {
@@ -262,22 +241,16 @@ public class QueryExecutor {
         return res;
     }
 
-    private DcqlConstraint addParentIdConstraint(
-                                                 DcqlConstraint constraint,
-                                                 DcqlConstraint parentIdConstraint) {
+    private DcqlConstraint addParentIdConstraint(DcqlConstraint constraint, DcqlConstraint parentIdConstraint) {
         Cab2bGroup cab2bGroup = new Cab2bGroup(LogicalOperator.And);
         cab2bGroup.addConstraint(constraint);
         cab2bGroup.addConstraint(parentIdConstraint);
         return cab2bGroup.getDcqlConstraint();
     }
 
-    private AttributeConstraint createIdConstraint(
-                                                   AttributeInterface attribute,
-                                                   String id) {
-        return ConstraintsBuilder.createAttributeConstraint(
-                                                            attribute.getName(),
-                                                            RelationalOperator.Equals,
-                                                            id, DataType.String);
+    private AttributeConstraint createIdConstraint(AttributeInterface attribute, String id) {
+        return ConstraintsBuilder.createAttributeConstraint(attribute.getName(), RelationalOperator.Equals, id,
+                                                            DataType.String);
     }
 
     private AttributeInterface getIdAttribute(CategorialClass catClass) {
@@ -288,8 +261,7 @@ public class QueryExecutor {
         return Utility.getIdAttribute(entity);
     }
 
-    private AbstractAssociationConstraint createAssociationConstraint(
-                                                                      IAssociation association) {
+    private AbstractAssociationConstraint createAssociationConstraint(IAssociation association) {
         return ConstraintsBuilder.createAssociation(association);
     }
 

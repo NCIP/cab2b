@@ -8,16 +8,13 @@ import java.util.Set;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 
-public class RecordWithAssociatedIds extends Record implements
-        IRecordWithAssociatedIds {
+public class RecordWithAssociatedIds extends Record implements IRecordWithAssociatedIds {
 
     private static final long serialVersionUID = 1941857218196149238L;
 
     private Map<AssociationInterface, List<String>> associatedClassesIdentifiers;
 
-    protected RecordWithAssociatedIds(
-            Set<AttributeInterface> attributes,
-            String id) {
+    protected RecordWithAssociatedIds(Set<AttributeInterface> attributes, RecordId id) {
         super(attributes, id);
         associatedClassesIdentifiers = new HashMap<AssociationInterface, List<String>>();
     }
