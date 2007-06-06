@@ -15,8 +15,10 @@ public class Record implements IRecord {
     private String id;
 
     protected Record(Set<AttributeInterface> attributes, String id) {
-        this.attributesValues = new HashMap<AttributeInterface, String>(
-                attributes.size());
+        if (attributes == null || attributes.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        this.attributesValues = new HashMap<AttributeInterface, String>(attributes.size());
         for (AttributeInterface attribute : attributes) {
             attributesValues.put(attribute, "");
         }
@@ -29,8 +31,7 @@ public class Record implements IRecord {
 
     public void putValueForAttribute(AttributeInterface attribute, String value) {
         if (!attributesValues.containsKey(attribute)) {
-            throw new IllegalArgumentException(
-                    "The attribute is invalid for this record.");
+            throw new IllegalArgumentException("The attribute is invalid for this record.");
         }
         this.attributesValues.put(attribute, value);
     }
