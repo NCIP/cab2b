@@ -695,9 +695,11 @@ public class ExperimentStackBox extends Cab2bPanel {
 			Collections.sort(attributeList, new AttributeInterfaceComparator());
 
 			try {
+                
+                Dimension maxLabelDimension= CommonUtils.getMaximumLabelDimension(attributeList);
 				for (AttributeInterface attribute : attributeList) {
 					JXPanel jxPanel = (JXPanel) SwingUIManager.generateUIPanel(
-							parseFile, attribute, false);
+							parseFile, attribute, false,maxLabelDimension);
 					parameterPanel.add("br", jxPanel);
 				}
 			} catch (CheckedException checkedException) {
