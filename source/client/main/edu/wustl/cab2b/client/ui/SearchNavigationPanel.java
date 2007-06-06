@@ -6,13 +6,9 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashSet;
 
 import javax.swing.JOptionPane;
 
-import cab2b.common.caarray.DerivedBioAssayRecord;
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -25,12 +21,10 @@ import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.viewresults.DataListPanel;
 import edu.wustl.cab2b.client.ui.viewresults.ViewSearchResultsPanel;
 import edu.wustl.cab2b.common.datalist.IDataRow;
-import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.CategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
-import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -215,7 +209,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
                     }
 
-                    private IQueryResult getQueryResult() {
+                   /* private IQueryResult getQueryResult() {
                         Cab2bQuery query = (Cab2bQuery) m_mainSearchPanel.getQueryObject().getQuery();
                         EntityInterface bioAssyData = query.getOutputEntity();
                         IQueryResult queryResults = QueryResultFactory.createResult(bioAssyData);
@@ -241,7 +235,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
                         queryResults.addRecord((String) query.getOutputUrls().get(0), record);
                         return queryResults;
-                    }
+                    }*/
 
                     @Override
                     protected void doUIUpdateLogic() {
