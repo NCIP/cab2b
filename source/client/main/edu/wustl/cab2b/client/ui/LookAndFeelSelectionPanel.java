@@ -71,7 +71,7 @@ public class LookAndFeelSelectionPanel extends Cab2bTitledPanel
 		{
 			String lAndFName = lAndF[i].getName();
 			String lAndFClassName = lAndF[i].getClassName();
-			//Logger.out.info(lAndFName+" fullClassName "+lAndF[i].getClassName());
+			//Logger.out.debug(lAndFName+" fullClassName "+lAndF[i].getClassName());
 			JRadioButton button = new JRadioButton(lAndFName);
 			if (className.equals(lAndFClassName))
 			{

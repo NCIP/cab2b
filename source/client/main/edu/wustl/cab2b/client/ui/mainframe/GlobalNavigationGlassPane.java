@@ -193,7 +193,7 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
 			if (this.frame instanceof MainFrame) {
 				MainFrame mainframePanel = (MainFrame) this.frame;
 				mainframePanel.setHomeWelcomePanel();
-				Logger.out.info("Global Nagigation Panel Home Button");
+				Logger.out.debug("Global Nagigation Panel Home Button");
 			}
 		} else	if (button.equals(tabButtons[1])) {
 			tabButtons[1].setIcon(new ImageIcon(tabsImagesPressed[1]));

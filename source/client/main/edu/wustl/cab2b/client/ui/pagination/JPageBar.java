@@ -220,7 +220,7 @@ public class JPageBar extends Cab2bPanel implements ActionListener{
 			Cab2bHyperlink hyperlink = (Cab2bHyperlink) obj;
 			//hyperlink.setClickedColor(Color.RED);
 			String index = hyperlink.getText();
-			//Logger.out.info("index selected "+index);
+			//Logger.out.debug("index selected "+index);
 			String currPageIndex = "";
 			if(index.equals(nextPageIndicesText))
 			{

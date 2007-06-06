@@ -349,7 +349,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 	private void getDataCategoyRecords(TreeEntityWrapper nodeInfo) {
 		EntityInterface entityNode = nodeInfo.getEntityInterface();
 		entityNode.getAttributeCollection();
-		Logger.out.info("ID :: " + entityNode.getId());
+		Logger.out.debug("ID :: " + entityNode.getId());
 
 		// getting datalist entity interface
 		DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils

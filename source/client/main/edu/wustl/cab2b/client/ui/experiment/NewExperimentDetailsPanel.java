@@ -345,7 +345,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 					return;
 				}
 
-				Logger.out.info("projectsTree.getSelectionCount() "
+				Logger.out.debug("projectsTree.getSelectionCount() "
 						+ projectsTree.getSelectionCount());
 
 				String experimentName = expNameTextField.getText();

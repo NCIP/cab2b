@@ -121,7 +121,7 @@ public class ResolveAmbiguity
 
 		//checking curated paths
 		allCuratedPaths = m_pathFinder.getCuratedPaths(sourceEntity, destinationEntity);		
-		Logger.out.info("  getCuratedPaths() executed : " + allCuratedPaths.size());
+		Logger.out.debug("  getCuratedPaths() executed : " + allCuratedPaths.size());
 		
 		Iterator<ICuratedPath> it = allCuratedPaths.iterator();		
 		while (it.hasNext()) 

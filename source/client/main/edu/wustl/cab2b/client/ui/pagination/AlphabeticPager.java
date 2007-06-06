@@ -94,7 +94,7 @@ public class AlphabeticPager extends AbstractPager {
 		}
 		AlphabeticPager alphaPager = new AlphabeticPager(elements);
 
-		Logger.out.info("pages "+alphaPager);
+		Logger.out.debug("pages "+alphaPager);
 	}
 
 }

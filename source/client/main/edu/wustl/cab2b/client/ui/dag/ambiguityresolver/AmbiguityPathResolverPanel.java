@@ -130,7 +130,7 @@ public class AmbiguityPathResolverPanel extends Cab2bPanel {
         for (int i = 0; i < searchTerms.length; i++) {
             String[] searchString = new String[1];
             searchString[0] = searchTerms[i];
-            Logger.out.info("searchTerms ==>> " + searchTerms[i]);
+            Logger.out.debug("searchTerms ==>> " + searchTerms[i]);
             MatchedClass matchedClass = null;
             try {
                 IEntityCache cache = ClientSideCache.getInstance();

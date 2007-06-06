@@ -620,7 +620,7 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
 			 */
 			
 			int difference = Math.round(Math.round(pagePanelSize.getHeight()-pagePanelPreferredSize.getHeight()));
-			//Logger.out.info("####### pagePanleSize # "+pagePanelSize+" |||||  pagePanelPreferredSize # "+pagePanelPreferredSize);
+			//Logger.out.debug("####### pagePanleSize # "+pagePanelSize+" |||||  pagePanelPreferredSize # "+pagePanelPreferredSize);
 			//Logger.out.info("differenr "+difference);
 			int currentElementsPerPage = getElementsPerPage();
 			

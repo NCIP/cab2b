@@ -111,7 +111,7 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
                 if (selectedExpTreeNode != null) {
                     expDetailsPanel.refreshDetails(selectedExpTreeNode);
                 }
-                Logger.out.info("ExperimentTreeNode id :" + selectedExpTreeNode.getIdentifier());
+                Logger.out.debug("ExperimentTreeNode id :" + selectedExpTreeNode.getIdentifier());
             }
         }
         expTree.addTreeSelectionListener(new TreeSelectionListener() {

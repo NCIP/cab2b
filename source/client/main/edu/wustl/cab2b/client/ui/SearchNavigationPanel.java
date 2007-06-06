@@ -133,7 +133,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
             SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(m_mainSearchPanel);
             saveDataListPanel.showInDialog();
-            Logger.out.info("After showInDialog");
+            Logger.out.debug("After showInDialog");
 
         } else if (strActionCommand.equals("Add to Experiment")) {
             Logger.out.info("Clicked on Add to Experiment button");

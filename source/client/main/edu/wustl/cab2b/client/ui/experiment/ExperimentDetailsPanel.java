@@ -108,7 +108,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
 
     private void updateTableData(ExperimentTreeNode treeNode, Vector tableData) {
         if (treeNode.getChildNodes().size() == 0) {
-            Logger.out.info("found child node zero");
+            Logger.out.debug("found child node zero");
             return;
         }
 

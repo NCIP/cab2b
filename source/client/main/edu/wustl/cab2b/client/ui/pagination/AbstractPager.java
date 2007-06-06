@@ -111,7 +111,7 @@ public abstract class AbstractPager implements Pager {
 		numberOfElements = data.size();
 		//Logger.out.debug("number of elements "+numberOfElements);
 		numberOfPages = (int)Math.ceil(numberOfElements / (double)elementsPerPage);
-		//Logger.out.info("number Of Pages needed ==>> "+numberOfPages);
+		//Logger.out.debug("number Of Pages needed ==>> "+numberOfPages);
 		pageIndices = new Vector<String>();
 		pageMap = page(data);
 		//Logger.out.info("pageMap.keySet() "+pageMap.keySet());

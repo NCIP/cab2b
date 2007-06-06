@@ -72,7 +72,7 @@ public class FilterPathsPanel extends Cab2bPanel
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				Logger.out.info("clear button action listener");
+				Logger.out.debug("clear button action listener");
 			}
 		});
 		filterPathsTaskPane.add("tab",clearButton);

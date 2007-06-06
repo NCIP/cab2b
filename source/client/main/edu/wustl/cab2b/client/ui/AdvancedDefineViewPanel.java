@@ -200,7 +200,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 		combo.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent ie) {
 				if (ie.getStateChange() == ItemEvent.SELECTED) {
-					Logger.out.info("item changed : selected object :"
+					Logger.out.debug("item changed : selected object :"
 							+ ie.getItem());
 					/*
 					 * Iterate over the where clause entities to pick the

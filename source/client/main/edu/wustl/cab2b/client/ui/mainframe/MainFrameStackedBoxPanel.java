@@ -88,7 +88,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
     }
 
     public void setDataForPopularSearchCategoriesPanel(Vector data) {
-        Logger.out.info("setDataForPopularSearchCategoriesPanel :: data " + data);
+        Logger.out.debug("setDataForPopularSearchCategoriesPanel :: data " + data);
         popularSearchCategoryPanel.removeAll();
         popularSearchCategoryPanel.add(new Cab2bLabel());
         Logger.out.info("data " + data);

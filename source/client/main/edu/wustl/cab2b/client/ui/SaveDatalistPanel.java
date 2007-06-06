@@ -125,7 +125,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
 
                             MainSearchPanel.savedDataListMetadata = dataListBI.retrieveDataListMetadata(id);
 
-                            Logger.out.info("data list saved successfully (in entity with id) : " + id);
+                            Logger.out.debug("data list saved successfully (in entity with id) : " + id);
 
                         } catch (RemoteException e) {
                             e.printStackTrace();

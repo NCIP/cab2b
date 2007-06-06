@@ -142,7 +142,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
 		descriptionLabel = new Cab2bLabel(pageElement.getDescription());
 		FontMetrics fontMetrics = descriptionLabel.getFontMetrics(descriptionLabel.getFont());
 		int stringWidth = fontMetrics.stringWidth(pageElement.getDescription());
-		Logger.out.info("Description : " + pageElement.getDescription());
+		Logger.out.debug("Description : " + pageElement.getDescription());
 		descriptionLabel.setToolTipText(getWrappedText(stringWidth, pageElement.getDescription()));
 		
 		if(isSelectable && pagination != null)

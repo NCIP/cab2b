@@ -173,7 +173,7 @@ class MyGlassPane extends JComponent implements ActionListener {
 					if (this.frame instanceof MainFrame) {
 						MainFrame mainframePanel = (MainFrame) this.frame;
 						mainframePanel.setHomeWelcomePanel();
-						Logger.out.info("Global Nagigation Panel Home Button");
+						Logger.out.debug("Global Nagigation Panel Home Button");
 						tabButtons[i].setBackground(Color.BLUE);
 					}
 				} else if (tabButtons[i].getActionCommand().equals("Search Data")) {

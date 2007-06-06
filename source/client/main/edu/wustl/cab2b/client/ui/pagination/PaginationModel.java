@@ -167,7 +167,7 @@ public class PaginationModel implements Pager {
 		}
 		PaginationModel pageModel = new PaginationModel(elements, new AlphabeticPager(elements));
 		Logger.out.debug("pagination mmodel . pager "+pageModel.pager);
-		Logger.out.info("pageModel "+pageModel.hasNextPage());
+		Logger.out.debug("pageModel "+pageModel.hasNextPage());
 		while(pageModel.hasNextPage())
 		{
 			Vector page = pageModel.nextPage();
