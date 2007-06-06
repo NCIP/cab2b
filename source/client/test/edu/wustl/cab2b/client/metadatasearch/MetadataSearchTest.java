@@ -1,4 +1,4 @@
-package edu.wustl.cab2b.server.advancedsearch;
+package edu.wustl.cab2b.client.metadatasearch;
 
 import java.util.Set;
 
@@ -11,17 +11,17 @@ import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.common.util.logger.Logger;
 
-public class AdvancedSearchTest extends ServletTestCase {
+public class MetadataSearchTest extends ServletTestCase {
     MatchedClass resultMatchedClass;
 
-	AdvancedSearch advaceSearch;
+	MetadataSearch metadataSearch;
 
 	@Override
 	protected void setUp() throws Exception {
         Logger.configure();
 		EntityCache entityCache = EntityCache.getInstance();
 		resultMatchedClass = new MatchedClass();
-		advaceSearch = new AdvancedSearch(entityCache);
+		metadataSearch = new MetadataSearch(entityCache);
 	}
 
 	public void testsearchPv() {
@@ -30,7 +30,7 @@ public class AdvancedSearchTest extends ServletTestCase {
 		String[] searchString = { "C25228", "C62637" };
 		int basedOn = Constants.BASED_ON_CONCEPT_CODE;
 		try {
-			resultMatchedClass = advaceSearch.search(searchTargetStatus,
+			resultMatchedClass = metadataSearch.search(searchTargetStatus,
 					searchString, basedOn);
 		} catch (CheckedException e) {
 			e.printStackTrace();
@@ -51,7 +51,7 @@ public class AdvancedSearchTest extends ServletTestCase {
 		int[] searchTargetStatus = { Constants.PV };
 		int basedOn = Constants.BASED_ON_CONCEPT_CODE;
 		try {
-			resultMatchedClass = advaceSearch.search(searchTargetStatus, null,
+			resultMatchedClass = metadataSearch.search(searchTargetStatus, null,
 					basedOn);
 			fail();
 		} catch (CheckedException e) {
@@ -64,7 +64,7 @@ public class AdvancedSearchTest extends ServletTestCase {
 		String[] searchString = { "C25228", "C62637" };
 		int basedOn = Constants.BASED_ON_CONCEPT_CODE;
 		try {
-			resultMatchedClass = advaceSearch.search(null, searchString,
+			resultMatchedClass = metadataSearch.search(null, searchString,
 					basedOn);
 			fail();
 		} catch (CheckedException e) {
@@ -77,7 +77,7 @@ public class AdvancedSearchTest extends ServletTestCase {
 		int[] searchTargetStatus = { Constants.PV };
 		String[] searchString = { "C25228", "C62637" };
 		try {
-			resultMatchedClass = advaceSearch.search(searchTargetStatus,
+			resultMatchedClass = metadataSearch.search(searchTargetStatus,
 					searchString, 3);
 			fail();
 		} catch (CheckedException e) {
@@ -90,7 +90,7 @@ public class AdvancedSearchTest extends ServletTestCase {
 		int[] searchTargetStatus = { Constants.CLASS };
 		String[] searchString = { "chromosome" };
 		try {
-			resultMatchedClass = advaceSearch.search(searchTargetStatus,
+			resultMatchedClass = metadataSearch.search(searchTargetStatus,
 					searchString, Constants.BASED_ON_TEXT);
 		} catch (CheckedException e) {
 			e.printStackTrace();
@@ -111,7 +111,7 @@ public class AdvancedSearchTest extends ServletTestCase {
 		int[] searchTargetStatus = { Constants.CLASS_WITH_DESCRIPTION };
 		String[] searchString = { "chromosome" };
 		try {
-			resultMatchedClass = advaceSearch.search(searchTargetStatus,
+			resultMatchedClass = metadataSearch.search(searchTargetStatus,
 					searchString, Constants.BASED_ON_TEXT);
 		} catch (CheckedException e) {
 			e.printStackTrace();
@@ -131,7 +131,7 @@ public class AdvancedSearchTest extends ServletTestCase {
 		int[] searchTargetStatus = { Constants.ATTRIBUTE };
 		String[] searchString = { "chromosome" };
 		try {
-			resultMatchedClass = advaceSearch.search(searchTargetStatus,
+			resultMatchedClass = metadataSearch.search(searchTargetStatus,
 					searchString, Constants.BASED_ON_TEXT);
 		} catch (CheckedException e) {
 			e.printStackTrace();
@@ -151,7 +151,7 @@ public class AdvancedSearchTest extends ServletTestCase {
 		int[] searchTargetStatus = { Constants.ATTRIBUTE_WITH_DESCRIPTION };
 		String[] searchString = { "chromosome" };
 		try {
-			resultMatchedClass = advaceSearch.search(searchTargetStatus,
+			resultMatchedClass = metadataSearch.search(searchTargetStatus,
 					searchString, Constants.BASED_ON_TEXT);
 		} catch (CheckedException e) {
 			e.printStackTrace();

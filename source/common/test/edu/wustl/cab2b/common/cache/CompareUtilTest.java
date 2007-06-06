@@ -1,4 +1,4 @@
-package edu.wustl.cab2b.server.cache;
+package edu.wustl.cab2b.common.cache;
 
 import junit.framework.TestCase;
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
