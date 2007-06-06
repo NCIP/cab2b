@@ -8,6 +8,8 @@
  */
 package edu.wustl.cab2b.common.util;
 
+import java.awt.Dimension;
+
 /**
  * Constants class for the server.
  * @author gautam_shetty
@@ -95,4 +97,12 @@ public class Constants
     public static final String SCATTER_PLOT = "Scatter Plot";
     
     public static final String SELECT = "-- Select --";
+    
+    public static final String SELECTED_PATH = "Selected Path";
+    
+    public static final String CURATED_PATH = "Curated Path";
+    
+    public static final String GENERAL_PATH = "General Path";
+    
+    public static final Dimension WIZARD_SIZE2_DIMENSION = new Dimension(752, 580);
 }
