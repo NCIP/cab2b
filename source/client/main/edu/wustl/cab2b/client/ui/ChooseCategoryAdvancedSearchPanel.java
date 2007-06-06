@@ -35,13 +35,14 @@ public class ChooseCategoryAdvancedSearchPanel extends AbstractAdvancedSearchPan
 	 */		
 	protected void addComponents()
 	{	
+		m_taskPane.setLayout(new RiverLayout());
 		m_taskPane.getContentPane().setBackground(Color.WHITE);
 		//Add all the componenets as required by this panel.
 		m_taskPane.add(m_chkClass);
-		m_taskPane.add("tab", m_chkClassDesc);
+		m_taskPane.add("tab tab ", m_chkClassDesc);
 		m_taskPane.add("br", m_chkAttribute);
 	//	m_taskPane.add("tab",m_chkClassDef);
-		m_taskPane.add("tab",m_chkPermissibleValues);
+		m_taskPane.add("tab tab ",m_chkPermissibleValues);
 		/**
 		 * Dummy labels to set place properly
 		 */
@@ -51,5 +52,6 @@ public class ChooseCategoryAdvancedSearchPanel extends AbstractAdvancedSearchPan
 		}
 		m_taskPane.add("br", m_radioText);
 		m_taskPane.add(m_radioConceptCode);
+		m_taskPane.setPreferredSize(new Dimension(450,150));
 	}	
 }

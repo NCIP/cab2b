@@ -172,7 +172,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
 		/* Add components to the conetent pane. */
 		this.m_innerPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, m_topCenterPanel,
 				m_bottomCenterPanel);
-		this.m_innerPane.setDividerLocation(0.5D);
+		//this.m_innerPane.setDividerLocation(0.5D);
 		this.m_innerPane.setOneTouchExpandable(false);
 		this.m_innerPane.setBorder(null);
 		this.m_innerPane.setDividerSize(4);
@@ -185,7 +185,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
 		this.m_outerPane.setOneTouchExpandable(false);
 		this.m_outerPane.setBorder(null);
 		this.m_outerPane.setDividerSize(4);
-		//this.m_outerPane.setDividerLocation(242);
+		this.m_outerPane.setDividerLocation(275);
 		this.add(BorderLayout.CENTER, this.m_outerPane);
 	}
 

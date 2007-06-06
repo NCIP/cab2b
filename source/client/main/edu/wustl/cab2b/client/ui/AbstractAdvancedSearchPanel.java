@@ -81,7 +81,7 @@ public abstract class AbstractAdvancedSearchPanel extends Cab2bPanel implements 
 		m_taskPane = new JXTaskPane();		
 		m_taskPane.setSpecial(false);
 		m_taskPane.setTitle("Advanced Search");
-		m_taskPane.setLayout(new RiverLayout());
+		m_taskPane.setLayout(new RiverLayout(0,5));
 		m_taskPane.getContentPane().setBackground(Color.WHITE);
 		//m_chkCategory = new Cab2bCheckBox("Category Name");
 		//m_chkCategory.addItemListener(this);

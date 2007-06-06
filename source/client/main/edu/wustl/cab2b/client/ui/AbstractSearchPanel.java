@@ -63,7 +63,7 @@ public abstract class AbstractSearchPanel extends Cab2bPanel
 	private JTextField m_srhTextField;
 	
 	/** search button.*/
-	private JButton m_srhButton;
+	protected JButton m_srhButton;
 	
 	/**Error message panel**/  
 	Cab2bPanel errorMsgPanel;

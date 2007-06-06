@@ -62,6 +62,7 @@ public class ChooseCategoryPanel extends ContentPanel
 		panel.setBorder(null);
 		JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,box,panel);
 		pane.setDividerSize(4);
+		pane.setDividerLocation(242);
 		pane.setOneTouchExpandable(false);
 		pane.setBorder(null);
 		this.setBorder(null);

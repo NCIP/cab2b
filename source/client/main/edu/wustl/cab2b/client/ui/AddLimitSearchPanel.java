@@ -1,6 +1,9 @@
 package edu.wustl.cab2b.client.ui;
 
+import java.awt.Dimension;
 import java.util.Set;
+
+import javax.swing.JTextField;
 
 /**
  * The actual LHS panel from the Add limit tab,comprising the advanced/category search
@@ -24,6 +27,7 @@ public class AddLimitSearchPanel extends AbstractSearchPanel
 	AddLimitSearchPanel(ContentPanel addLimitPanel)
 	{
 		super(addLimitPanel);
+		m_srhButton.setPreferredSize(new Dimension(80,23));
 	}
 	
 	
@@ -47,7 +51,9 @@ public class AddLimitSearchPanel extends AbstractSearchPanel
 	
 	public void addTextField()
 	{		
-		this.add("p hfill",this.getTextField());	
+		JTextField field=this.getTextField();
+		field.setPreferredSize(new Dimension(160,23));
+		this.add(field);	
 	}
 	
 	
