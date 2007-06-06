@@ -665,7 +665,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 		String displayName = CommonUtils.getFormattedString(requiredEntity
 				.getName());
 		WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, servicePanel,
-				displayName, new Dimension(752, 580), true, false);
+				displayName, Constants.WIZARD_SIZE2_DIMENSION, true, false);
 	}
 
 	/**
