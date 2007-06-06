@@ -2,6 +2,7 @@ package edu.wustl.cab2b.client.ui.mainframe;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
@@ -46,9 +47,7 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
 	private String[] tabsImagesPressed = { "resources/images/home_MO_tab.gif",
 			"resources/images/searchdata_MO_tab.gif", "resources/images/experiment_MO_tab.gif" };
 
-	private String[] tabs = { "Home", "Search Data", "Experiment" };
-
-	private JButton[] tabButtons = new Cab2bButton[tabs.length];
+	private JButton[] tabButtons = new Cab2bButton[3];
 
 	public Color navigationButtonBgColorSelected = Color.WHITE;
 
@@ -94,10 +93,10 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
 		tabsPanel.setOpaque(false);
 		tabsPanel.setLayout(new HorizontalLayout(10));
 
-		for (int i = 0; i < tabs.length; i++) {
-			String tabText = tabs[i];
+		for (int i = 0; i < 3; i++) {
 			ImageIcon icon = new ImageIcon(tabsImagesUnPressed[i]);
-			tabButtons[i] = new Cab2bButton(tabText, true, Cab2bStandardFonts.ARIAL_BOLD_12);
+			tabButtons[i] = new Cab2bButton();
+			tabButtons[i].setPreferredSize(new Dimension(85,22));
 			tabButtons[i].setIcon(icon);
 			tabButtons[i].setBorder(null);
 			tabButtons[i].addActionListener(this);
@@ -131,9 +130,11 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
 		rightLabel.add(new JLabel(""), gbc);
 
 		Date date = new Date();
-		loggedInUserLabel = new Cab2bLabel("<html><b>Robert Lloyd</b> <br>"
-				+ DateFormat.getDateInstance(DateFormat.LONG).format(date).toString()
-				+ "<br><br></html>");
+		loggedInUserLabel = new Cab2bLabel("Robert Lloyd");
+		loggedInUserLabel.setFont(new Font("Arial", Font.BOLD, 12));
+		Cab2bLabel dateLabel = new Cab2bLabel(DateFormat.getDateInstance(DateFormat.LONG).format(
+				date).toString());
+		dateLabel.setForeground(Color.WHITE);
 		Cab2bHyperlink logOutHyperLink = new Cab2bHyperlink();
 		logOutHyperLink.setClickedHyperlinkColor(Color.GRAY);
 		logOutHyperLink.setUnclickedHyperlinkColor(Color.WHITE);
@@ -157,19 +158,25 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
 		loggedInUserLabel.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
 		loggedInUserLabel.setForeground(Color.WHITE);
 
+		JLabel line = new JLabel("|");
+		line.setForeground(Color.WHITE);
 		Cab2bPanel linkPanel = new Cab2bPanel();
-		linkPanel.add(logOutHyperLink);
-		linkPanel.add(mySettingHyperlInk);
-		JLabel label = new JLabel("");
-		linkPanel.add("br ", label);
+
+		JLabel label = new JLabel(" ");
+		linkPanel.add("br", label);
 		linkPanel.add("tab ", loggedInUserLabel);
+		linkPanel.add("br ", label);
+		linkPanel.add("tab ", dateLabel);
+		linkPanel.add("br ", logOutHyperLink);
+		linkPanel.add(line);
+		linkPanel.add(mySettingHyperlInk);
 		linkPanel.setOpaque(false);
 
-		gbc.gridx = 4;
+		gbc.gridx = 2;
 		gbc.gridy = 0;
 		gbc.gridwidth = 2;
 		gbc.gridheight = 2;
-		gbc.weightx = 0.5;
+		gbc.weightx = 0.1;
 		gbc.fill = GridBagConstraints.VERTICAL;
 		rightLabel.add(linkPanel, gbc);
 
@@ -179,53 +186,46 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Logger.out.info("Global Nagigation Panel Button");
 		JButton button = (JButton) e.getSource();
-
-		for (int i = 0; i < tabButtons.length; i++) {
-			tabButtons[i].setIcon(new ImageIcon(tabsImagesPressed[i]));
-			if (tabButtons[i].getActionCommand().equals(button.getActionCommand())) {
-				tabButtons[i].setBackground(navigationButtonBgColorSelected);
-				if (tabButtons[i].getActionCommand().equals("Home")) {
-					if (this.frame instanceof MainFrame) {
-						MainFrame mainframePanel = (MainFrame) this.frame;
-						mainframePanel.setHomeWelcomePanel();
-						Logger.out.info("Global Nagigation Panel Home Button");
-						tabButtons[i].setBackground(Color.BLUE);
-					}
-				} else if (tabButtons[i].getActionCommand().equals("Search Data")) {
-					tabButtons[i].setBackground(Color.BLUE);
-					GlobalNavigationPanel.mainSearchPanel = new MainSearchPanel();
-					Dimension relDimension = CommonUtils.getRelativeDimension(
-							MainFrame.mainframeScreenDimesion, 0.90f, 0.85f);
-					GlobalNavigationPanel.mainSearchPanel.setPreferredSize(relDimension);
-					GlobalNavigationPanel.mainSearchPanel.setSize(relDimension);
-
-					
-
-					// Update the variable for latest screen dimension from the
-					// toolkit, this is to handle the situations where
-					// application is started and then screen resolution is
-					// changed, but the variable stiil holds old resolution
-					// size.
-					MainFrame.mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
-					Dimension dimension = MainFrame.mainframeScreenDimesion;
-					WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel,
-							"Search Data", new Dimension((int) (dimension.width * 0.90),
-									(int) (dimension.height * 0.85)), true, true);
-
-					MainSearchPanel.getDataList().clear();
-					GlobalNavigationPanel.mainSearchPanel = null;
-
-				} else if (tabButtons[i].getActionCommand().equals("Experiment")) {
-
-					MainFrame mainframePanel = (MainFrame) this.frame;
-					mainframePanel.setOpenExperimentWelcomePanel();
-					tabButtons[i].setBackground(Color.BLUE);
-					return;
-				}
-			} else {
-				tabButtons[i].setIcon(new ImageIcon(tabsImagesUnPressed[i]));
+		if (button.equals(tabButtons[0])) {
+			tabButtons[0].setIcon(new ImageIcon(tabsImagesPressed[0]));
+			tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
+			tabButtons[2].setIcon(new ImageIcon(tabsImagesUnPressed[2]));
+			if (this.frame instanceof MainFrame) {
+				MainFrame mainframePanel = (MainFrame) this.frame;
+				mainframePanel.setHomeWelcomePanel();
+				Logger.out.info("Global Nagigation Panel Home Button");
 			}
+		} else	if (button.equals(tabButtons[1])) {
+			tabButtons[1].setIcon(new ImageIcon(tabsImagesPressed[1]));
+			tabButtons[0].setIcon(new ImageIcon(tabsImagesUnPressed[0]));
+			tabButtons[2].setIcon(new ImageIcon(tabsImagesUnPressed[2]));
+			GlobalNavigationPanel.mainSearchPanel = new MainSearchPanel();
+			Dimension relDimension = CommonUtils.getRelativeDimension(
+					MainFrame.mainframeScreenDimesion, 0.90f, 0.85f);
+			GlobalNavigationPanel.mainSearchPanel.setPreferredSize(relDimension);
+			GlobalNavigationPanel.mainSearchPanel.setSize(relDimension);
+
+			// Update the variable for latest screen dimension from the
+			// toolkit, this is to handle the situations where
+			// application is started and then screen resolution is
+			// changed, but the variable stiil holds old resolution
+			// size.
+			MainFrame.mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
+			Dimension dimension = MainFrame.mainframeScreenDimesion;
+			WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel,
+					"Search Data", new Dimension((int) (dimension.width * 0.90),
+							(int) (dimension.height * 0.85)), true, true);
+
+			MainSearchPanel.getDataList().clear();
+			GlobalNavigationPanel.mainSearchPanel = null;
+		} else if (button.equals(tabButtons[2])) {
+			tabButtons[2].setIcon(new ImageIcon(tabsImagesPressed[2]));
+			tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
+			tabButtons[0].setIcon(new ImageIcon(tabsImagesUnPressed[0]));
+			MainFrame mainframePanel = (MainFrame) this.frame;
+			mainframePanel.setOpenExperimentWelcomePanel();
 		}
+
 		this.updateUI();
 		this.repaint();
 	}
