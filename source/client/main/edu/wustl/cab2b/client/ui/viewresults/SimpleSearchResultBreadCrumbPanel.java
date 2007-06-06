@@ -95,7 +95,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 
 	/** Shows a panel represented by a name, by bringing that panel to the top. */
 	public void showPanel(String panelName) {
-		Logger.out.info("panel name : " + panelName);
+		Logger.out.debug("panel name : " + panelName);
 		CardLayout layout = (CardLayout) this.m_resultsPanel.getLayout();
 		layout.show(this.m_resultsPanel, panelName);
 		int totalCardPanels = m_resultsPanel.getComponentCount();

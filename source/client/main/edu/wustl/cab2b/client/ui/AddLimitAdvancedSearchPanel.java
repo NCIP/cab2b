@@ -20,7 +20,7 @@ public class AddLimitAdvancedSearchPanel extends AbstractAdvancedSearchPanel {
 	AddLimitAdvancedSearchPanel() {
 		super();
 		this.setLayout(new VerticalLayout(0));
-		Logger.out.info("AddLimitAdvancedSearchPanel : VerticalLayout set.");
+		Logger.out.debug("AddLimitAdvancedSearchPanel : VerticalLayout set.");
 	}
 
 	/**

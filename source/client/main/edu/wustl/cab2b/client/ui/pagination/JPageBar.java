@@ -132,7 +132,7 @@ public class JPageBar extends Cab2bPanel implements ActionListener{
 		
 		//currentIndices = pageBarModel.nextIndices();
 		
-		//Logger.out.info("indices "+indices);
+		//Logger.out.debug("indices "+indices);
 		// TODO how to dynamically update this list of plugged in pagers.
 		paginationTypeCombo = new JComboBox(new Object[] {"Numeric","Alphabetic","Frequency","Keyword"});
 		elementsPerPageCombo = new JComboBox(new Object[] {"5","10","15","20"});

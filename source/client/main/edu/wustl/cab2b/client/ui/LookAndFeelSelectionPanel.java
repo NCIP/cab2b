@@ -64,7 +64,7 @@ public class LookAndFeelSelectionPanel extends Cab2bTitledPanel
 		this.add(parentPanel);
 
 		LookAndFeelInfo[] lAndF = UIManager.getInstalledLookAndFeels();
-		//Logger.out.info("Installed L&F ::");
+		//Logger.out.debug("Installed L&F ::");
 		ButtonGroup group = new ButtonGroup();
 
 		for (int i = 0; i < lAndF.length; i++)

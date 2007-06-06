@@ -109,7 +109,7 @@ public abstract class AbstractPager implements Pager {
 		                      // otherwise this method has no access to rawData;
 		this.elementsPerPage = elementsPerPage;
 		numberOfElements = data.size();
-		//Logger.out.info("number of elements "+numberOfElements);
+		//Logger.out.debug("number of elements "+numberOfElements);
 		numberOfPages = (int)Math.ceil(numberOfElements / (double)elementsPerPage);
 		//Logger.out.info("number Of Pages needed ==>> "+numberOfPages);
 		pageIndices = new Vector<String>();

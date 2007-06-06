@@ -331,7 +331,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
 				ExperimentTreeNode expTreeNode = (ExperimentTreeNode) treeNode.getUserObject();
 				Long expGrpId = expTreeNode.getIdentifier();
-				Logger.out.info("exp grp id " + expGrpId);
+				Logger.out.debug("exp grp id " + expGrpId);
 
 				if (expGrpId == 0) {
 					JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this,

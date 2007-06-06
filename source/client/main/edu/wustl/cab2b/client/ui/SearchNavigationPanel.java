@@ -6,9 +6,13 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
 
 import javax.swing.JOptionPane;
 
+import cab2b.common.caarray.DerivedBioAssayRecord;
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -21,10 +25,12 @@ import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.viewresults.DataListPanel;
 import edu.wustl.cab2b.client.ui.viewresults.ViewSearchResultsPanel;
 import edu.wustl.cab2b.common.datalist.IDataRow;
+import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.CategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
+import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -123,7 +129,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     public void actionPerformed(ActionEvent event) {
         String strActionCommand = ((Cab2bButton) event.getSource()).getActionCommand();
         if (strActionCommand.equals("Save Data List")) {
-            Logger.out.info("Clicked on save Data List button");
+            Logger.out.debug("Clicked on save Data List button");
 
             SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(m_mainSearchPanel);
             saveDataListPanel.showInDialog();
@@ -191,9 +197,12 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
                     @Override
                     protected void doNonUILogic() {
+
+                       // queryResults = getQueryResult();
                         /* Get the Functional class for root and update query object
                          * with it.
                          */
+
                         queryResults = CommonUtils.executeQuery(
                                                                 (ICab2bQuery) m_mainSearchPanel.getQueryObject().getQuery(),
                                                                 m_mainSearchPanel);
@@ -204,6 +213,34 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                             b2bTreeNode = transferCategoryResult.getB2BRootTreeNode();
                         }
 
+                    }
+
+                    private IQueryResult getQueryResult() {
+                        Cab2bQuery query = (Cab2bQuery) m_mainSearchPanel.getQueryObject().getQuery();
+                        EntityInterface bioAssyData = query.getOutputEntity();
+                        IQueryResult queryResults = QueryResultFactory.createResult(bioAssyData);
+
+                        DerivedBioAssayRecord record = new DerivedBioAssayRecord(new HashSet(
+                                bioAssyData.getAttributeCollection()),
+                                "gov.nih.nci.ncicb.caarray:DerivedBioAssayData:1015897589771984:1");
+                        String dim1Labels[] = { "1" };
+                        String dim2Labels[] = { "Pairs", "Pairs Used", "Signal", "Detection", "Detection P-value" };
+                        String dim3Labels[] = { "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at" };
+
+                        Object bioDataCube[][][] = new Object[][][] { { { "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0" }, { "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent" }, { "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513" }, { "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4" }, { "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848" } } };
+
+                        for (AttributeInterface attribute : bioAssyData.getAttributeCollection()) {
+                            record.putValueForAttribute(attribute, "1");
+                        }
+
+                        record.setDim1Labels(dim1Labels);
+                        record.setDim2Labels(dim2Labels);
+                        record.setDim3Labels(dim3Labels);
+                        record.setCube(bioDataCube);
+                        record.setOrder("BQD");
+
+                        queryResults.addRecord((String) query.getOutputUrls().get(0), record);
+                        return queryResults;
                     }
 
                     @Override

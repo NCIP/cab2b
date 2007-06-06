@@ -184,7 +184,7 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		Logger.out.info("Global Nagigation Panel Button");
+		Logger.out.debug("Global Nagigation Panel Button");
 		JButton button = (JButton) e.getSource();
 		if (button.equals(tabButtons[0])) {
 			tabButtons[0].setIcon(new ImageIcon(tabsImagesPressed[0]));

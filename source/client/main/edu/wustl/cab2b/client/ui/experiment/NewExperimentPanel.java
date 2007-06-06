@@ -152,7 +152,7 @@ public class NewExperimentPanel extends Cab2bPanel implements ActionListener
 			}
 		}else if (actionCommnad.equals("finish"))
 		{
-			Logger.out.info("finally do somthing");
+			Logger.out.debug("finally do somthing");
 		}
 		wizardButtonPanel.updateUI();
 		wizardButtonPanel.repaint();

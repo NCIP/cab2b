@@ -256,7 +256,7 @@ public class MainDagPanel extends Cab2bPanel
 	 */
 	private void LinkTwoNode(ClassNode sourceNode, ClassNode destNode, IPath path, List<IExpressionId> intermediateExpressions, boolean updateQueryRequired) 
 	{
-		Logger.out.info("Linking nodes: "+ sourceNode.getID() +" and "+ destNode.getID()+"; Intermediate exps: "+intermediateExpressions.toString());
+		Logger.out.debug("Linking nodes: "+ sourceNode.getID() +" and "+ destNode.getID()+"; Intermediate exps: "+intermediateExpressions.toString());
 		//   Update query object to have this association path set
 		if(updateQueryRequired)
 		{

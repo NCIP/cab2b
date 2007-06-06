@@ -68,7 +68,7 @@ public class NumericPager extends AbstractPager {
 		}
 
 		NumericPager numPager = new NumericPager(elements);
-		Logger.out.info("numPage  "+numPager);
+		Logger.out.debug("numPage  "+numPager);
 
 	}
 	

@@ -213,7 +213,7 @@ public abstract class CustomSwingWorker
 		catch (RuntimeException e)
 		{
 			// Do nothing, simply cleanup below
-			//Logger.out.info("SwingWorker error" + e);
+			//Logger.out.debug("SwingWorker error" + e);
 			e.printStackTrace();
 		}
 		finally

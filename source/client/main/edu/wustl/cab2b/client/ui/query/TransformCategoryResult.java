@@ -40,7 +40,7 @@ public class TransformCategoryResult {
             Iterator keyIterator = keys.iterator();
             while (keyIterator.hasNext()) {
                 String url = (String) keyIterator.next();
-                Logger.out.info("URL :" + url);
+                Logger.out.debug("URL :" + url);
 
                 //getting list of records for url key
                 List<ICategorialClassRecord> iCategorialClassRecordList = mapURLToRoot.get(url);

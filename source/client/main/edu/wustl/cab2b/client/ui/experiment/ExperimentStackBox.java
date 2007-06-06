@@ -309,7 +309,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 		CustomSwingWorker swingWorker = new CustomSwingWorker(datalistTree) {
 			@Override
 			protected void doNonUILogic() throws RuntimeException {
-				Logger.out.info("Clicked on datalist");
+				Logger.out.debug("Clicked on datalist");
 				ExperimentDataCategoryGridPanel.clearMap();
 				getDataForFilterPanel();
 				updateUI();

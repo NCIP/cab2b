@@ -1,12 +1,19 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+
+import org.jdesktop.swingx.decorator.AlternateRowHighlighter;
+import org.jdesktop.swingx.decorator.Highlighter;
+import org.jdesktop.swingx.decorator.HighlighterPipeline;
 
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
@@ -73,6 +80,8 @@ public class ThreeDResultObjectDetailsPanel extends ResultObjectDetailsPanel {
             }
         }
     }
+    
+    Cab2bTable threeDTable;
 
     /**
      * @see edu.wustl.cab2b.client.ui.viewresults.ResultObjectDetailsPanel#initTableGUI()
@@ -82,10 +91,11 @@ public class ThreeDResultObjectDetailsPanel extends ResultObjectDetailsPanel {
 
         adjustRows();
 
-        Cab2bTable threeDTable = new Cab2bTable(false, threeDTableData, threeDTableHeader);
+        threeDTable = new Cab2bTable(false, threeDTableData, threeDTableHeader);
         threeDTable.setEditable(false);
         JScrollPane tableSP = new JScrollPane(threeDTable);
         addRowHeader(tableSP);
+        
         
         tablePanel.add("br hfill vfill", tableSP);
         detailsTablePanel.updateUI();
@@ -102,7 +112,19 @@ public class ThreeDResultObjectDetailsPanel extends ResultObjectDetailsPanel {
         for (int i = 0; i < dim3RowHeaderList.length; i++) {
             dim2RowHeader[i][0] = dim3RowHeaderList[i];
         }
-        JTable rowHeaderTable = new Cab2bTable(false, dim2RowHeader, dim3RowHeaderHeader);
+        Cab2bTable rowHeaderTable = new Cab2bTable(false, dim2RowHeader, dim3RowHeaderHeader);
+        
+        rowHeaderTable.setSize(new Dimension(0, 28));
+        rowHeaderTable.setFont(new Font("Arial", Font.BOLD, 14));
+        rowHeaderTable.setHighlighters();
+        rowHeaderTable.setBackground(AlternateRowHighlighter.genericGrey.getForeground());
+
+        
+       // rowHeaderTable.getColumn(0).setCellRenderer(threeDTable.getColumn(0).getCellRenderer());
+        
+      //  JScrollPane rowHeaderTableSP = new JScrollPane(rowHeaderTable);
+        
+        
 
         tableSP.setRowHeaderView(rowHeaderTable);
     }

@@ -232,7 +232,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
 	 */
 
 	public void refresh(JXPanel[] arrPanel, String strClassNameAsTitle) {
-		Logger.out.info("Class name : " + strClassNameAsTitle);
+		Logger.out.debug("Class name : " + strClassNameAsTitle);
 		/* Set the title for the top titled panel. */
 		this.m_topCenterPanel.setTitle("Define Search Rules '" + strClassNameAsTitle + "'");
 		this.m_ContentForTopPanel.removeAll();

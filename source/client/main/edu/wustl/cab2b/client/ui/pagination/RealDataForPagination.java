@@ -90,7 +90,7 @@ public class RealDataForPagination {
 	
 	public static void main(String[] args)
 	{
-		Logger.out.info("realData size >> "+RealDataForPagination.getRealData(realData).size());
+		Logger.out.debug("realData size >> "+RealDataForPagination.getRealData(realData).size());
 		Logger.out.info("real data from pagination >>> "+RealDataForPagination.getRealData(realData));
 	}
 

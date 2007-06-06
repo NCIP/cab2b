@@ -72,7 +72,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
     }
 
     public void setDataForMySearchQueriesPanel(Vector data) {
-        Logger.out.info("setDataForMySearchQueriesPanel :: data " + data);
+        Logger.out.debug("setDataForMySearchQueriesPanel :: data " + data);
         mySearchQueriesPanel.removeAll();
         mySearchQueriesPanel.add(new Cab2bLabel());
         Iterator iter = data.iterator();

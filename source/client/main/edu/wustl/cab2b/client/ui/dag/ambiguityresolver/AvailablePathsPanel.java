@@ -148,7 +148,7 @@ public class AvailablePathsPanel extends Cab2bPanel implements IDialogInterface
 				int[] selectedPathsIndexes = tableModel.getCheckedRowIndexes();
 				for(int i =0; i < selectedPathsIndexes.length; i++)
 				{
-					Logger.out.info("selectedPathsIndexes["+i+"] "+selectedPathsIndexes[i]);
+					Logger.out.debug("selectedPathsIndexes["+i+"] "+selectedPathsIndexes[i]);
 					m_userSelectedPaths.add(m_AllPathlist.get(selectedPathsIndexes[i]));
 					
 				}

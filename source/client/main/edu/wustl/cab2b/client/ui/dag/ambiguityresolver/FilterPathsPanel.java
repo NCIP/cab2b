@@ -60,7 +60,7 @@ public class FilterPathsPanel extends Cab2bPanel
 		{
 			public void actionPerformed(ActionEvent arg0)
 			{
-				Logger.out.info("add to filter path");
+				Logger.out.debug("add to filter path");
 			}
 		});
 		filterPathsTaskPane.add(addToFilterPathButton);

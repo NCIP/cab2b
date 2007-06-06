@@ -203,7 +203,7 @@ public class ExperimentDataSelectionPanel extends Cab2bPanel {
 	{
 		for(int i = 0; i < array.length; i++)
 		{
-			Logger.out.info(array[i]+", ");
+			Logger.out.debug(array[i]+", ");
 		}
 	}
 	

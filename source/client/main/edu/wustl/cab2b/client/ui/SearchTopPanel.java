@@ -30,7 +30,7 @@ public class SearchTopPanel extends Cab2bPanel
 	SearchTopPanel()
 	{		
 		initGUI();
-		Logger.out.info("SearchTopPanel ::: initGUI :: size "+getSize()+" preferredSize "+getPreferredSize());
+		Logger.out.debug("SearchTopPanel ::: initGUI :: size "+getSize()+" preferredSize "+getPreferredSize());
 	}
 	
 	private void initGUI()

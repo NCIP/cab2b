@@ -105,7 +105,7 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements
 			// set the proper class name
 			String className = edu.wustl.cab2b.common.util.Utility
 					.getDisplayName(entity);
-			Logger.out.info(className);
+			Logger.out.debug(className);
 			String strDescription = entity.getDescription();
 
 			// Create an instance of the PageElement. Initialize with the

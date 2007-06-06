@@ -243,7 +243,7 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface
      */
     public IExpressionId createDummyExpression(EntityInterface entity)
     {
-        Logger.out.info("Inside createDummyExpression()");
+        Logger.out.debug("Inside createDummyExpression()");
         IConstraintEntity constraintEntity = Cab2bQueryObjectFactory.createConstrainedEntity(entity);
         IExpression expression = query.getConstraints().addExpression(constraintEntity);
         Logger.out.info("Exiting createDummyExpression()");

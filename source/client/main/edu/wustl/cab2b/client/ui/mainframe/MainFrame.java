@@ -245,7 +245,7 @@ public class MainFrame extends JXFrame {
 		// true, true));
 
 		if (openExperimentWelcomePanel != null && openExperimentWelcomePanel.isVisible() == true) {
-			Logger.out.info("Removing openExperimentWelcomePanel");
+			Logger.out.debug("Removing openExperimentWelcomePanel");
 			openExperimentWelcomePanel.removeAll();
 			this.remove(openExperimentWelcomePanel);
 			this.validate();

@@ -597,7 +597,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 						data[i][j] = table.getModel().getValueAt(
 								table.convertRowIndexToModel(i), j);
 					}
-					// Logger.out.info(table.getValueAt(i, 4).toString());
+					// Logger.out.debug(table.getValueAt(i, 4).toString());
 				}
 
 				// make a call to the server

@@ -270,7 +270,7 @@ public abstract class AbstractAdvancedSearchPanel extends Cab2bPanel implements 
             	    m_chkClassDesc.setSelected(false);
                     m_chkClassDesc.setEnabled(false);
               }                 
-              Logger.out.info("Clicked attribute or class");
+              Logger.out.debug("Clicked attribute or class");
             }
 		}
 		else if (obj instanceof Cab2bRadioButton)

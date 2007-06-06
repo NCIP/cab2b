@@ -57,7 +57,7 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
     }
 
     private void initGUI() {
-        Logger.out.info("Inside experiment hirarchy model");
+        Logger.out.debug("Inside experiment hirarchy model");
         this.setLayout(new RiverLayout());
         Vector dataVector = null;
 

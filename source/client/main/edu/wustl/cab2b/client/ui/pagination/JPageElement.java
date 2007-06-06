@@ -137,7 +137,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
 		//hyperlink = new JXHyperlink();
 		hyperlink = new Cab2bHyperlink();
 		hyperlink.setText(pageElement.getDisplayName());
-		Logger.out.info("Entity : " + pageElement.getDisplayName());
+		Logger.out.debug("Entity : " + pageElement.getDisplayName());
 		hyperlink.setUserObject(pageElement);            
 		descriptionLabel = new Cab2bLabel(pageElement.getDescription());
 		FontMetrics fontMetrics = descriptionLabel.getFontMetrics(descriptionLabel.getFont());

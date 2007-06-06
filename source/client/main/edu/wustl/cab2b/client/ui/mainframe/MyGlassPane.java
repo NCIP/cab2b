@@ -162,7 +162,7 @@ class MyGlassPane extends JComponent implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		Logger.out.info("Global Nagigation Panel Button");
+		Logger.out.debug("Global Nagigation Panel Button");
 		JButton button = (JButton) e.getSource();
 
 		for (int i = 0; i < tabButtons.length; i++) {

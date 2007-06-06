@@ -41,7 +41,7 @@ public class ExperimentPanel extends Cab2bTitledPanel
 	
 	private void initGUI()
 	{
-		Logger.out.info("Inside Constructor.");	
+		Logger.out.debug("Inside Constructor.");	
 		
 		displayExperimentPanel = new Cab2bPanel(new RiverLayout());
 		

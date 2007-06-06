@@ -212,7 +212,7 @@ public abstract class ResultPanel extends Cab2bPanel {
      *
      */
     public void initDataListSummaryPanel() {
-        Logger.out.info("In initDataListSummaryPanel method");
+        Logger.out.debug("In initDataListSummaryPanel method");
         if (myDataListTitledPanel == null) {
 
             // TODO externalize these titles.

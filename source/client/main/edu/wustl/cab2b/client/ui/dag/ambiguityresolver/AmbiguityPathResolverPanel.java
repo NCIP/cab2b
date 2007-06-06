@@ -121,7 +121,7 @@ public class AmbiguityPathResolverPanel extends Cab2bPanel {
     }
 
     public static Vector<EntityInterface> getEntityInterfaceFor(String[] searchTerms) {
-        Logger.out.info("searchTerms " + searchTerms);
+        Logger.out.debug("searchTerms " + searchTerms);
 
         Vector<EntityInterface> returner = new Vector<EntityInterface>();
         int[] searchTarget = new int[1];

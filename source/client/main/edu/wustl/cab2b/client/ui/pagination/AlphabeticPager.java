@@ -42,7 +42,7 @@ public class AlphabeticPager extends AbstractPager {
 			currentPage = Character.toString(firstChar);
 			// To take care of case insensitive categorization of data.
 			currentPage =  currentPage.toUpperCase();
-			//Logger.out.info("returner "+returner);
+			//Logger.out.debug("returner "+returner);
 			Vector<PageElement> page = returner.get(currentPage);
 			if(page == null)
 			{

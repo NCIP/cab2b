@@ -96,7 +96,7 @@ public class ResolveAmbiguity
 		
 		if(NewWelcomePanel.mainFrame == null)
 		{
-			Logger.out.info("Frame object null");
+			Logger.out.debug("Frame object null");
 		}
 		WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, 
 									 availablePathsPanel, "Ambiguity resolver", new Dimension(600, 350), true, false);

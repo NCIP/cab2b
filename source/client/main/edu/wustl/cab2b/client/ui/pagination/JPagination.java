@@ -442,7 +442,7 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
 	{
 		String propertyName = pcEvent.getPropertyName();
 		Object newValue = pcEvent.getNewValue();
-		//Logger.out.info("propertyChange "+propertyName);
+		//Logger.out.debug("propertyChange "+propertyName);
 
 		if (propertyName.equals("isGroupActionEnabled"))
 		{

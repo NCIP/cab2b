@@ -86,7 +86,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
         cancelButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent arg0) {
-                Logger.out.info("disposing save data list dialog... ");
+                Logger.out.debug("disposing save data list dialog... ");
                 dialog.dispose();
             }
         });

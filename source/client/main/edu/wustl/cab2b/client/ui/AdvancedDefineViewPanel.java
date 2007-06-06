@@ -158,7 +158,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 		 * the drop down. For this the IClass should be enough as we are
 		 * interested only in the name.
 		 */
-		Logger.out.info("queryObject.getQuery().getClass() "
+		Logger.out.debug("queryObject.getQuery().getClass() "
 				+ queryObject.getQuery().getClass());
 		// final ICab2bQuery b2bquery = (ICab2bQuery)queryObject.getQuery();
 

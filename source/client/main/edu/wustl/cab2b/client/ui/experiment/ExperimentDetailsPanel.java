@@ -100,7 +100,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
 
         Component comp = this.getComponent(0);
         this.removeAll();
-        //Logger.out.info("Component 0 "+comp.getClass());
+        //Logger.out.debug("Component 0 "+comp.getClass());
         this.add("br hfill vfill", new JScrollPane(expTable));
         this.add("br", deleteButton);
         this.updateUI();
