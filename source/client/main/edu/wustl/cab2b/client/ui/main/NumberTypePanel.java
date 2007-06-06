@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.main;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 
 import javax.swing.JComponent;
@@ -18,8 +19,8 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 
 public class NumberTypePanel extends AbstractTypePanel {
 
-	public NumberTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, Boolean showCondition) {
-		super(conditionList, attributeEntity, new RiverLayout(), showCondition);
+	public NumberTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, Boolean showCondition,Dimension  maxLabelDimension) {
+		super(conditionList, attributeEntity, new RiverLayout(), showCondition, maxLabelDimension);
 	}
 	
 	@Override

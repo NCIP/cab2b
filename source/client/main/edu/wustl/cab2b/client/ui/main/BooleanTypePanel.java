@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.main;
 
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,8 +18,8 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bRadioButton;
 
 public class BooleanTypePanel extends AbstractTypePanel
 {
-	public BooleanTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, Boolean showCondition) {
-		super(conditionList, attributeEntity, showCondition);
+	public BooleanTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, Boolean showCondition, Dimension maxLabelDimension) {
+		super(conditionList, attributeEntity, showCondition, maxLabelDimension);
 	}
 		
 	private JPanel getComboForBoolean(Collection<String> permissibleValueList) {

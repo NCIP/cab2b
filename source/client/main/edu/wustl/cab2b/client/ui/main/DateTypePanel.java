@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.main;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -24,8 +25,8 @@ public class DateTypePanel extends AbstractTypePanel {
 	static DateFormat[] dateFormats = new DateFormat[1];
 	static String[] strDateFormats = new String[] {"yyyy-MM-dd"};
 	
-	public DateTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, Boolean showCondition) {
-		super(conditionList, attributeEntity, showCondition);
+	public DateTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, Boolean showCondition,Dimension  maxLabelDimension) {
+		super(conditionList, attributeEntity, showCondition,maxLabelDimension);
 		dateFormats[0] = sdf;
 	}
 

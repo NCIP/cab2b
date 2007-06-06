@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.main;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,8 +20,8 @@ import edu.wustl.cab2b.common.util.PermissibleValueComparator;
 public class EnumTypePanel extends AbstractTypePanel {
 	private static final long serialVersionUID = 1L;
 
-	public EnumTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, Boolean showCondition) {
-		super(conditionList, attributeEntity, showCondition);
+	public EnumTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, Boolean showCondition, Dimension  maxLabelDimension) {
+		super(conditionList, attributeEntity, showCondition,maxLabelDimension);
 	}
 
 	@Override

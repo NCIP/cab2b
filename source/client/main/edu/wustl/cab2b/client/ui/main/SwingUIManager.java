@@ -6,6 +6,7 @@
 
 package edu.wustl.cab2b.client.ui.main;
 
+import java.awt.Dimension;
 import java.lang.reflect.Constructor;
 
 import edu.common.dynamicextensions.domain.BooleanAttributeTypeInformation;
@@ -38,8 +39,8 @@ public class SwingUIManager {
 	 * @param entity
 	 * @return panel object
 	 */
-	public static Object generateUIPanel(ParseXMLFile parseFile, AttributeInterface attributeEntity, boolean showConditions) throws CheckedException {
-		Object[] object = new Object[3];
+	public static Object generateUIPanel(ParseXMLFile parseFile, AttributeInterface attributeEntity, boolean showConditions, Dimension maxLabelDimension ) throws CheckedException {
+		Object[] object = new Object[4];
 		String className = null;
 		AttributeTypeInformationInterface attributeTypeInformation = attributeEntity.getAttributeTypeInformation();
 		String dataTypeString = getDataType(attributeTypeInformation);
@@ -55,6 +56,7 @@ public class SwingUIManager {
 		}
 		object[1] = attributeEntity;
 		object[2] = new Boolean(showConditions);
+        object[3] = maxLabelDimension;
 		
 		Constructor[] cls = null;
 		Object uiObject = null;
@@ -68,8 +70,8 @@ public class SwingUIManager {
 		return uiObject;
 	}
 	
-	public static Object generateUIPanel(ParseXMLFile parseFile, AttributeInterface attributeEntity) throws CheckedException {
-		return generateUIPanel(parseFile, attributeEntity, true);
+	public static Object generateUIPanel(ParseXMLFile parseFile, AttributeInterface attributeEntity, Dimension maxLabelDimension ) throws CheckedException {
+		return generateUIPanel(parseFile, attributeEntity, true, maxLabelDimension);
 	}
 	
 	/**
