@@ -1,11 +1,4 @@
-/**
- * <p>Title: IEntityCache Interface>
- * <p>Description:  Entity Cache interface.</p>
- * Copyright:    Copyright (c) year
- * Company: Washington University, School of Medicine, St. Louis.
- * @author hrishikesh_rajpathak
- */
-package edu.wustl.cab2b.common.entityCache;
+package edu.wustl.cab2b.common.cache;
 
 import java.util.Collection;
 
@@ -50,14 +43,14 @@ public interface IEntityCache {
      */
     public MatchedClass getEntityOnPermissibleValueParameters(Collection<PermissibleValueInterface> PVCollection);
 
-    /**
+        /**
      * Returns the Entity objects whose source classes fields match with the respective not null 
      * fields in the passed entity object.
      * @param entity The entity object.
      * @return the Entity objects whose source classes fields match with the respective not null 
      * fields in the passed entity object.
      */
-    public MatchedClass getCategories(Collection <EntityInterface> entityCollection);
+    public MatchedClass getCategories(Collection<EntityInterface> entityCollection);
 
     /**
      * Returns the Entity objects whose attributes's source classes fields match with the respective not null 

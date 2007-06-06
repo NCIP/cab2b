@@ -1,11 +1,4 @@
-/**
- * <p>Title: AdvancedSearch Class>
- * Copyright:    Copyright (c) year
- * Company: Washington University, School of Medicine, St. Louis.
- * @author Hrishikesh Rajpathak
- * @version 1.4
- */
-package edu.wustl.cab2b.server.advancedsearch;
+package edu.wustl.cab2b.client.metadatasearch;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
@@ -19,7 +12,7 @@ import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
 import edu.common.dynamicextensions.domaininterface.SemanticPropertyInterface;
 import edu.common.dynamicextensions.domaininterface.StringValueInterface;
 import edu.wustl.cab2b.common.beans.MatchedClass;
-import edu.wustl.cab2b.common.entityCache.IEntityCache;
+import edu.wustl.cab2b.common.cache.IEntityCache;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.util.Constants;
 
@@ -27,7 +20,7 @@ import edu.wustl.cab2b.common.util.Constants;
  * @author hrishikesh_rajpathak
  * @author gautam_shetty
  */
-public class AdvancedSearch implements IAdvancedSearch {
+public class MetadataSearch {
     /**
      * List of all Entity objects.
      */
@@ -37,7 +30,7 @@ public class AdvancedSearch implements IAdvancedSearch {
      * Default constructor.
      * 
      */
-    public AdvancedSearch() {
+    public MetadataSearch() {
     }
 
     /**
@@ -46,8 +39,8 @@ public class AdvancedSearch implements IAdvancedSearch {
      * @param entityCache
      *            The EntityCache object.
      */
-    public AdvancedSearch(IEntityCache entityCache) {
-        AdvancedSearch.entityCache = entityCache;
+    public MetadataSearch(IEntityCache entityCache) {
+        MetadataSearch.entityCache = entityCache;
     }
 
     /**

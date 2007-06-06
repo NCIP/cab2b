@@ -7,11 +7,6 @@ package edu.wustl.cab2b.common.ejb;
  * @author Chandrakant Talele
  */
 public interface EjbNamesConstants {
-	
-	final static String ADVANCED_SEARCH_BEAN = "AdvanceSearch";
-	
-	final static String ENTITY_CACHE = "EntityCache";
-	
 	final static String EXPERIMENT = "edu.wustl.cab2b.server.ejb.experiment.Experiment";
 	
 	final static String EXPERIMENT_GROUP = "edu.wustl.cab2b.server.ejb.experiment.ExperimentGroup";
@@ -29,4 +24,5 @@ public interface EjbNamesConstants {
     final static String DATALIST_BEAN = "edu.wustl.cab2b.server.ejb.datalist.DataListBean";
     
     final static String ANALYTICAL_SERVICE_BEAN = "edu.wustl.cab2b.server.ejb.analyticalservice.AnalyticalServiceOperationsBean";
+    final static String UTILITY_BEAN = "edu.wustl.cab2b.server.ejb.utility.UtilityBean";
 }

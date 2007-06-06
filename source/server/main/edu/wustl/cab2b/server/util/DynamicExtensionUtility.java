@@ -2,8 +2,13 @@ package edu.wustl.cab2b.server.util;
 
 import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DE_0003;
 import static edu.wustl.cab2b.common.util.Constants.CAB2B_ENTITY_GROUP;
+import static edu.wustl.cab2b.common.util.Constants.CATEGORY_ENTITY_GROUP_NAME;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domain.SemanticAnnotatableInterface;
@@ -36,6 +41,7 @@ import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.path.PathConstants;
+import edu.wustl.cab2b.server.path.PropertyLoader;
 import edu.wustl.common.querysuite.queryobject.DataType;
 import gov.nih.nci.cagrid.metadata.common.SemanticMetadata;
 
@@ -406,4 +412,29 @@ public class DynamicExtensionUtility {
         return role;
     }
 
+    public static Collection<EntityGroupInterface> getCab2bEntityGroups() {
+        String[] applicationNames = PropertyLoader.getAllApplications();
+        List<EntityGroupInterface> entityGroups = new ArrayList<EntityGroupInterface>(applicationNames.length);
+
+        EntityManagerInterface entityManager = EntityManager.getInstance();
+        List<String> list = new ArrayList<String>(Arrays.asList(applicationNames));
+        list.add(CATEGORY_ENTITY_GROUP_NAME);
+        for (String applicationName : list) {
+            EntityGroupInterface eg = null;
+            try {
+                eg = entityManager.getEntityGroupByShortName(applicationName);//TODO what if null
+            } catch (DynamicExtensionsSystemException dynSysExp) {
+                throw new RuntimeException(dynSysExp.getMessage(), dynSysExp);
+                //        } catch (DynamicExtensionsApplicationException dynSysExp) {
+                //            throw new RuntimeException(dynSysExp.getMessage(), dynSysExp);
+            }
+
+            if (eg != null) {
+                entityGroups.add(eg);
+            }
+            //return entityManager.getAllEntitiyGroups();
+        }
+        return entityGroups;
+
+    }
 }

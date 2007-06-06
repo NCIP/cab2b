@@ -2,10 +2,13 @@ package edu.wustl.cab2b.server.ejb.category;
 
 import java.rmi.RemoteException;
 import java.sql.Connection;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.common.beans.MatchedClass;
 import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
 import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
@@ -66,5 +69,13 @@ public class CategoryBean extends AbstractStatelessSessionBean implements Catego
      */
     public List<EntityInterface> getAllRootCategories() throws RemoteException {
         return  new CategoryOperations().getAllRootCategories();
+    }
+
+    public List<Category> getAllCategories() throws RemoteException {
+        return  new CategoryOperations().getAllCategories();
+    }
+
+    public Set<AttributeInterface> getAllSourceAttributes(Category category) throws RemoteException {
+        return  new CategoryOperations().getAllSourceAttributes(category);
     }
 }

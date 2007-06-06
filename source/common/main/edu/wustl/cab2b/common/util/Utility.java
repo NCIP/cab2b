@@ -6,6 +6,7 @@
  */
 package edu.wustl.cab2b.common.util;
 
+import static edu.wustl.cab2b.common.util.Constants.CONNECTOR;
 import static edu.wustl.cab2b.common.util.Constants.PROJECT_VERSION;
 
 import java.io.IOException;
@@ -27,6 +28,8 @@ import edu.common.dynamicextensions.domain.FloatAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.IntegerAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.LongAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.StringAttributeTypeInformation;
+import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
+import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
@@ -77,7 +80,42 @@ public class Utility {
     public static Properties getProperties() {
         return props;
     }
+   /**
+    * Checks whether passed attribute/association is inheriated.
+    * @param abstractAttribute
+    *            Attribute/Association to check.
+    * @return TRUE if it is inherited else returns FALSE
+    */
+   public static boolean isInherited(
+                                     AbstractAttributeInterface abstractAttribute) {
+       for (TaggedValueInterface tag : abstractAttribute.getTaggedValueCollection()) {
+           if (tag.getKey().equals(Constants.TYPE_DERIVED)) {
+               return true;
+           }
+       }
+       return false;
+   }
+   public static String generateUniqueId(AssociationInterface association) {
+       return concatStrings(association.getEntity().getName(),
+                            association.getSourceRole().getName(),
+                            association.getTargetRole().getName(),
+                            association.getTargetEntity().getName());
+   }
 
+   public static String concatStrings(String srcEntityName,
+                                       String srcRoleName, String tgtRoleName,
+                                       String tgtEntityName) {
+       StringBuilder builder = new StringBuilder();
+       builder.append(srcEntityName);
+       builder.append(CONNECTOR);
+       builder.append(srcRoleName);
+       builder.append(CONNECTOR);
+       builder.append(tgtRoleName);
+       builder.append(CONNECTOR);
+       builder.append(tgtEntityName);
+       return builder.toString();
+
+   }
     /**
      * Compares whether given searchPattern is present in passed searchString
      * @param searchPattern search Pattern to look for 

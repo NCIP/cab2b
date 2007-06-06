@@ -12,6 +12,7 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Constants;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.EntityCache;
 
 /**
@@ -26,12 +27,8 @@ public class InheritanceUtil {
      */
     public static boolean isInherited(
                                       AbstractAttributeInterface abstractAttribute) {
-        for (TaggedValueInterface tag : abstractAttribute.getTaggedValueCollection()) {
-            if (tag.getKey().equals(Constants.TYPE_DERIVED)) {
-                return true;
-            }
-        }
-        return false;
+        
+        return Utility.isInherited(abstractAttribute);
     }
 
     /**
@@ -96,28 +93,12 @@ public class InheritanceUtil {
 
     private static String reverse(String originalAssociationPointer) {
         String[] tokens = originalAssociationPointer.split(CONNECTOR);
-        return concatStrings(tokens[3], tokens[2], tokens[1], tokens[0]);
+        return Utility.concatStrings(tokens[3], tokens[2], tokens[1], tokens[0]);
     }
 
     public static String generateUniqueId(AssociationInterface association) {
-        return concatStrings(association.getEntity().getName(),
-                             association.getSourceRole().getName(),
-                             association.getTargetRole().getName(),
-                             association.getTargetEntity().getName());
+        return Utility.generateUniqueId(association);
     }
 
-    private static String concatStrings(String srcEntityName,
-                                        String srcRoleName, String tgtRoleName,
-                                        String tgtEntityName) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(srcEntityName);
-        builder.append(CONNECTOR);
-        builder.append(srcRoleName);
-        builder.append(CONNECTOR);
-        builder.append(tgtRoleName);
-        builder.append(CONNECTOR);
-        builder.append(tgtEntityName);
-        return builder.toString();
-
-    }
+  
 }

@@ -3,8 +3,6 @@ package edu.wustl.cab2b.client.ui;
 import java.awt.Dimension;
 import java.util.Set;
 
-import org.apache.axis.types.Entities;
-
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 
 /**
@@ -63,7 +61,7 @@ public class ChooseCategorySearchPanel extends AbstractSearchPanel {
 	 *            the appropritate events it can generate.
 	 * 
 	 * @param searchResult
-	 *            The collection of {@link Entities}
+	 *            The collection of Entities
 	 */
 	public AbstractSearchResultPanel getSearchResultPanel(ContentPanel addLimitPanel,
 			Set searchResult) {

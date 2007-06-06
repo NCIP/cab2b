@@ -13,17 +13,19 @@ import java.util.MissingResourceException;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
-
-import net.infonode.gui.BackgroundPainter;
 
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
+import edu.wustl.cab2b.client.cache.ClientSideCache;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -36,6 +38,7 @@ import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.cab2b.common.locator.Locator;
@@ -74,9 +77,8 @@ public class MainFrame extends JXFrame {
 
 	public static NewWelcomePanel newWelcomePanel = null;
 
-	/**
-	 * Status bar for the application.
-	 */
+    private static JProgressBar progressBar;
+    private static JLabel progressBarLabel;
 
 	/**
 	 * Global navigation panel which is at the top of the MainFrame.
@@ -266,7 +268,7 @@ public class MainFrame extends JXFrame {
 
 	protected static void initializeResources() {
 		/* Initialze logger. */
-		Logger.configure("log4j.properties");
+
 
 		/* Initialize error codes resource bundhe. */
 		try {
@@ -341,23 +343,52 @@ public class MainFrame extends JXFrame {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-
+        Logger.configure("log4j.properties");
+        JFrame progressBarFrame = new JFrame("Launching caB2B client....");
+        
+        int imageX = 442;
+        int imageY=251;
+        int progressbarY = 14;
+        int labelY = 20;
+        
+        ImageIcon imageIcon = new ImageIcon("resources/images/progress_bar.gif");
+        progressBarFrame.getContentPane().add(new JLabel(imageIcon),BorderLayout.NORTH);
+        progressBar = new JProgressBar();
+        progressBar.setPreferredSize(new Dimension(imageX, progressbarY));
+        progressBar.setMinimum(0);
+        progressBar.setMaximum(100);
+        progressBar.setValue(0);
+        progressBar.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        progressBarFrame.getContentPane().add(progressBar, BorderLayout.CENTER);
+        
+        progressBarLabel = new JLabel("Launching caB2B client....");
+        progressBarLabel.setPreferredSize(new Dimension(imageX, labelY));
+        progressBarFrame.getContentPane().add(progressBarLabel,BorderLayout.SOUTH);
+        
+        int height = imageY+progressbarY+labelY;
+        progressBarFrame.setSize(imageX,height);
+        progressBarFrame.setLocation((mainframeScreenDimesion.width-imageX)/2,(mainframeScreenDimesion.height-height)/2);
+        progressBarFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        progressBarFrame.setAlwaysOnTop(true);
+        progressBarFrame.setUndecorated(true);
+        progressBarFrame.setVisible(true);
+       
 		/* Initialize all Resources. */
 		initializeResources();
-
 		String mainFrameTitle = ApplicationProperties.getValue("cab2b.main.frame.title");
 
-		MainFrame mainFrame = new MainFrame(mainFrameTitle); // "ca Bench to
-		// Bedside
-		// (B2B)"
+		MainFrame mainFrame = new MainFrame(mainFrameTitle); 
 		Toolkit.getDefaultToolkit().setDynamicLayout(true);
-
+        ClientSideCache.getInstance(); // initializing the cache at startup
+         
 		Vector<String> myRecentExperiments = new Vector<String>();
 		myRecentExperiments.add("Breast Cancer Microarrays (Hu133 Plus 2.0)");
 		myRecentExperiments.add("Breast Cancer Microarrays (MOE430 Plus 2.0)");
 		myRecentExperiments.add("Acute Myelogenous Leukemia Microarrays");
 		mainFrame.setDataForMyExperimentsPanel(myRecentExperiments);
-
+        
+        progressBar.setValue(90);
+         
 		Vector<String> mySearchQueries = new Vector<String>();
 		mySearchQueries.add("Prostate Cancer Microarray Data");
 		mySearchQueries.add("Glioblastoma Microarray Data");
@@ -369,6 +400,25 @@ public class MainFrame extends JXFrame {
 		popularSearchCategories.add("Tissue Biospecimens");
 		popularSearchCategories.add("Molecular Biospecimens");
 		mainFrame.setDataForPopularSearchCategoriesPanel(popularSearchCategories);
-		mainFrame.setVisible(true);
+        
+        progressBar.setValue(100);
+        progressBarFrame.setVisible(false);
+        progressBarFrame.removeAll();
+        progressBarFrame = null;
+     	mainFrame.setVisible(true);
 	}
+    /**
+     * @return Returns the progressBarLabel.
+     */
+    public static JLabel getProgressBarLabel() {
+        return progressBarLabel;
+    }
+
+    /**
+     * @return Returns the progressBar.
+     */
+    public static JProgressBar getProgressBar() {
+        return progressBar;
+    }
+    
 }
