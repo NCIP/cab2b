@@ -56,7 +56,7 @@ public class ClientSideCache extends AbstractEntityCache {
     protected ClientSideCache() {
         super();
         CategoryBusinessInterface categoryOperations = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.CATEGORY_BEAN,CategoryHomeInterface.class);
-        showProgress("Getting all categories...", 60);
+        showProgress("Getting all categories....", 60);
         try {
             categories = categoryOperations.getAllCategories();
             for (Category category : categories) {
@@ -66,7 +66,7 @@ public class ClientSideCache extends AbstractEntityCache {
         } catch (RemoteException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-        showProgress("Loading cache completed...", 80);
+        showProgress("Loading cache completed....", 80);
     }
 
     /* (non-Javadoc)
@@ -78,9 +78,10 @@ public class ClientSideCache extends AbstractEntityCache {
             UtilityBusinessInterface util = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                         EjbNamesConstants.UTILITY_BEAN,
                                                                                                         UtilityHomeInterface.class);
-            showProgress("Getting all entities...", 10);
+            showProgress("Contacting caB2B Server....", 10);
             Collection<EntityGroupInterface> collection = util.getCab2bEntityGroups();
-            showProgress("Populating internal data structures...", 40);
+            MainFrame.getProgressBar().setIndeterminate(false);
+            showProgress("Populating internal data structures....", 40);
             return collection;
         } catch (RemoteException dynSysExp) {
             throw new RuntimeException(dynSysExp.getMessage(), dynSysExp);
@@ -94,14 +95,17 @@ public class ClientSideCache extends AbstractEntityCache {
     private void showProgress(String text, int completedvalue) {
 
         JLabel label = MainFrame.getProgressBarLabel();
+        JProgressBar progress = MainFrame.getProgressBar();
+        progress.setValue(completedvalue);
+        
         label.setText(text);
         Rectangle labelRect = label.getBounds();
         labelRect.x = 0;
         labelRect.y = 0;
         label.paintImmediately(labelRect);
 
-        JProgressBar progress = MainFrame.getProgressBar();
-        progress.setValue(completedvalue);
+        
+        
         Rectangle progressRect = progress.getBounds();
         progressRect.x = 0;
         progressRect.y = 0;

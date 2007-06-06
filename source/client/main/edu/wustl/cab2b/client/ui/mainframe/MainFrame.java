@@ -354,6 +354,7 @@ public class MainFrame extends JXFrame {
         ImageIcon imageIcon = new ImageIcon("resources/images/progress_bar.gif");
         progressBarFrame.getContentPane().add(new JLabel(imageIcon),BorderLayout.NORTH);
         progressBar = new JProgressBar();
+        progressBar.setIndeterminate(true);
         progressBar.setPreferredSize(new Dimension(imageX, progressbarY));
         progressBar.setMinimum(0);
         progressBar.setMaximum(100);
