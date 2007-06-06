@@ -185,7 +185,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
 		this.m_outerPane.setOneTouchExpandable(false);
 		this.m_outerPane.setBorder(null);
 		this.m_outerPane.setDividerSize(4);
-		this.m_outerPane.setDividerLocation(275);
+		this.m_outerPane.setDividerLocation(242);
 		this.add(BorderLayout.CENTER, this.m_outerPane);
 	}
 

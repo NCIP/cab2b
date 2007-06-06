@@ -60,7 +60,7 @@ public abstract class AbstractSearchPanel extends Cab2bPanel
 	private AbstractSearchResultPanel m_srhResultPanel;
 	
 	/** Text field to specify the search term. */
-	private JTextField m_srhTextField;
+	protected JTextField m_srhTextField;
 	
 	/** search button.*/
 	protected JButton m_srhButton;

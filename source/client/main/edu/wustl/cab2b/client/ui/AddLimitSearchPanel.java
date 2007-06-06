@@ -27,7 +27,8 @@ public class AddLimitSearchPanel extends AbstractSearchPanel
 	AddLimitSearchPanel(ContentPanel addLimitPanel)
 	{
 		super(addLimitPanel);
-		m_srhButton.setPreferredSize(new Dimension(80,23));
+		m_srhButton.setPreferredSize(new Dimension(74,23));
+		m_srhTextField.setPreferredSize(new Dimension(140,23));
 	}
 	
 	

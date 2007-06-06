@@ -96,7 +96,7 @@ public abstract class AbstractAdvancedSearchPanel extends Cab2bPanel implements 
 		//m_chkCategoryDef.setActionCommand("categorydef");
 		
 		
-		m_chkClass = new Cab2bCheckBox("Category Name");
+		m_chkClass = new Cab2bCheckBox("Category");
 		m_chkClass.setSelected(true);
 		m_chkClass.addItemListener(this);
 		m_chkClass.setActionCommand("class");
@@ -112,7 +112,7 @@ public abstract class AbstractAdvancedSearchPanel extends Cab2bPanel implements 
 		m_chkClassDef.setActionCommand("classdef");
 		
 		
-		m_chkAttribute = new Cab2bCheckBox("Attribute Name");	
+		m_chkAttribute = new Cab2bCheckBox("Attribute");	
 		m_chkAttribute.addItemListener(this);
 		m_chkAttribute.setActionCommand("attribute");
 		
