@@ -84,13 +84,13 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
      */
     private void init() throws RuntimeException {
 //        try {
-            Logger.out.info("Initialising cache, this may take few minutes...");
+            Logger.out.debug("Initialising cache, this may take few minutes...");
             //EntityManagerInterface entityManager = EntityManager.getInstance();
             Collection<EntityGroupInterface> entityGroups = getCab2bEntityGroups();
             createCache(entityGroups);
           
            
-            Logger.out.info("Initialising cache DONE");
+            Logger.out.debug("Initialising cache DONE");
 //        } catch (DynamicExtensionsSystemException dynSysExp) {
 //            throw new RuntimeException(dynSysExp.getMessage(), dynSysExp);
 ////        } catch (DynamicExtensionsApplicationException dynAppExp) {

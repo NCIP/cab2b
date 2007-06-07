@@ -288,10 +288,10 @@ public class Utility {
             text = text.concat(Utility.getDisplayName(pathList.get(i).getTargetEntity()));
         }
         text = text.concat("</HTML>");
-        Logger.out.info(text);
+        Logger.out.debug(text);
         StringBuffer sb = new StringBuffer();
         int textLength = text.length();
-        Logger.out.info(textLength);
+        Logger.out.debug(textLength);
         int currentStart = 0;
         String currentString = null;
         int offset = 100;
