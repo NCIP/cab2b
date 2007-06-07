@@ -64,7 +64,7 @@ public class MainFrame extends JXFrame {
 
 	/** Resource bundle name for getting jndi properties. */
 	public static String jndiResourceFileName = "jndi";
-
+	public static String cab2bLogoName = "resources/images/b2b_logo_image.gif";
 	/**
 	 * Everything related GUI's containers and its components size is relative
 	 * to this size.
@@ -126,7 +126,7 @@ public class MainFrame extends JXFrame {
 	 */
 	private void initGUI() {
 		setExtendedState(JXFrame.MAXIMIZED_BOTH);
-		Image im = Toolkit.getDefaultToolkit().getImage("resources/images/b2b_logo_image.gif");
+		Image im = Toolkit.getDefaultToolkit().getImage(cab2bLogoName);
 		this.setIconImage(im);
 		this.setLayout(new BorderLayout());
 
@@ -344,8 +344,9 @@ public class MainFrame extends JXFrame {
 	 */
 	public static void main(String[] args) {
         Logger.configure("log4j.properties");
-        JFrame progressBarFrame = new JFrame("Launching caB2B client....");
-        
+        JFrame progressBarFrame = new JFrame("caB2B client launcher....");
+        Image im = Toolkit.getDefaultToolkit().getImage(cab2bLogoName);
+        progressBarFrame.setIconImage(im);
         int imageX = 442;
         int imageY=251;
         int progressbarY = 14;
@@ -362,7 +363,7 @@ public class MainFrame extends JXFrame {
         progressBar.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         progressBarFrame.getContentPane().add(progressBar, BorderLayout.CENTER);
         
-        progressBarLabel = new JLabel("Launching caB2B client....");
+        progressBarLabel = new JLabel(" Launching caB2B client....");
         progressBarLabel.setPreferredSize(new Dimension(imageX, labelY));
         progressBarFrame.getContentPane().add(progressBarLabel,BorderLayout.SOUTH);
         
