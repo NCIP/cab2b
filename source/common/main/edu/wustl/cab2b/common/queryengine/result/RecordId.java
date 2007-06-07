@@ -1,6 +1,9 @@
 package edu.wustl.cab2b.common.queryengine.result;
 
-public class RecordId {
+import java.io.Serializable;
+
+
+public class RecordId implements Serializable {
     /**
      * The "identifier" is the value for the id attribute as obtained from
      * {@link edu.wustl.cab2b.common.util.Utility#getIdAttribute(EntityInterface)}.
