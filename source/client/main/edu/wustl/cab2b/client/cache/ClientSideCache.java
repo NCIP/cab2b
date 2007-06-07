@@ -56,17 +56,21 @@ public class ClientSideCache extends AbstractEntityCache {
     protected ClientSideCache() {
         super();
         CategoryBusinessInterface categoryOperations = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.CATEGORY_BEAN,CategoryHomeInterface.class);
-        showProgress("Getting all categories....", 60);
+        int length = 50;
+        showProgress(" Getting all categories....", length);
         try {
             categories = categoryOperations.getAllCategories();
+            int offset = 50/categories.size();
             for (Category category : categories) {
                 categoryVsClasseSet.put(category, categoryOperations.getAllSourceClasses(category));
                 categoryVsAttributeSet.put(category, categoryOperations.getAllSourceAttributes(category));
+                length =length + offset;
+                showProgress(" Getting all categories....", length);
             }
         } catch (RemoteException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-        showProgress("Loading cache completed....", 80);
+        showProgress(" Loading cache completed....", 80);
     }
 
     /* (non-Javadoc)
@@ -74,14 +78,16 @@ public class ClientSideCache extends AbstractEntityCache {
      */
     @Override
     protected Collection<EntityGroupInterface> getCab2bEntityGroups() {
+        showProgress(" Contacting caB2B Server....", 5);
         try {
             UtilityBusinessInterface util = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                         EjbNamesConstants.UTILITY_BEAN,
                                                                                                         UtilityHomeInterface.class);
-            showProgress("Contacting caB2B Server....", 10);
-            Collection<EntityGroupInterface> collection = util.getCab2bEntityGroups();
             MainFrame.getProgressBar().setIndeterminate(false);
-            showProgress("Populating internal data structures....", 40);
+            showProgress(" Fetching data from caB2B Server....", 20);
+            Collection<EntityGroupInterface> collection = util.getCab2bEntityGroups();
+            
+            showProgress(" Populating internal data structures....", 40);
             return collection;
         } catch (RemoteException dynSysExp) {
             throw new RuntimeException(dynSysExp.getMessage(), dynSysExp);
