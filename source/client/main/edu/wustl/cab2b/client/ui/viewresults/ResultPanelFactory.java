@@ -129,7 +129,7 @@ public class ResultPanelFactory {
         dataRow.setAttributes(attributeList);
         dataRow.setClassName(strclassName);
         dataRow.setParent(parentDataRow);
-        dataRow.setId(record.getId());
+        dataRow.setId(record.getRecordId().getId());
         dataRow.setURL(url);
         dataRow.setAssociation(association);
         dataRow.setEntityInterface(presentEntityInterface);

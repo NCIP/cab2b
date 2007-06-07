@@ -139,7 +139,7 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
                 dataRow.setAttributes(attributes);
                 dataRow.setClassName(className);
                 dataRow.setParent(parentDataRow);
-                dataRow.setId(record.getId());
+                dataRow.setId(record.getRecordId().getId());
                 dataRow.setAssociation(queryAssociation);
                 dataRow.setEntityInterface(queryResult.getOutputEntity());
                 dataRow.setURL(url);

@@ -80,7 +80,7 @@ public class InterModelAssociationDataPanel extends AbstractAssociatedDataPanel 
         List<AttributeInterface> attributes = Collections.singletonList(idAttribute);
         List<String> operators = Collections.singletonList("Equals");
         List<List<String>> values = new ArrayList<List<String>>();
-        values.add(Collections.singletonList(record.getId().toString()));
+        values.add(Collections.singletonList(record.getRecordId().getId().toString()));
 
         IExpressionId targetExpressionID = queryObject.addRule(attributes, operators, values);
 
