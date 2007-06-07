@@ -238,7 +238,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 
 	private EntityInterface findTargetEntityInterface(String targetEntityName) {
 		EntityInterface targetEntityInterface = null;
-		Logger.out.info("targetEntityName " + targetEntityName);
+		Logger.out.debug("targetEntityName " + targetEntityName);
 
 		Iterator<EntityInterface> entityInter = allEntities.iterator();
 		while (entityInter.hasNext()) {

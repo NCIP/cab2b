@@ -227,7 +227,7 @@ public class JPageBar extends Cab2bPanel implements ActionListener{
 				if(pageBarModel.hasNextIndices())
 				{
 					currentIndices = pageBarModel.nextIndices();
-					//Logger.out.info("indices actionPerformed >>>> "+indices);
+					//Logger.out.debug("indices actionPerformed >>>> "+indices);
 					JXPanel newIndicesPanel = getIndicesPanel(currentIndices);
 					changeIndicesPanel(newIndicesPanel);
 
@@ -242,7 +242,7 @@ public class JPageBar extends Cab2bPanel implements ActionListener{
 				if(pageBarModel.hasPreviousIndices())
 				{
 					currentIndices = pageBarModel.previousIndices();
-					//Logger.out.info("indices actionPerformed <<<< "+indices);
+					//Logger.out.debug("indices actionPerformed <<<< "+indices);
 					JXPanel newIndicesPanel = getIndicesPanel(currentIndices);
 					changeIndicesPanel(newIndicesPanel);
 
@@ -279,7 +279,7 @@ public class JPageBar extends Cab2bPanel implements ActionListener{
 				JXPanel newPagePanel = pagination.getPagePanel(nextPage);
 				pagination.changePagePanel(newPagePanel);
 				currPageIndex = paginationModel.getCurrentPageIndex();
-				//Logger.out.info("current page Index > "+currPageIndex);
+				//Logger.out.debug("current page Index > "+currPageIndex);
 				if(! currentIndices.contains(currPageIndex))
 				{
 					currentIndices = pageBarModel.nextIndices();
@@ -295,7 +295,7 @@ public class JPageBar extends Cab2bPanel implements ActionListener{
 				JXPanel newPagePanel = pagination.getPagePanel(previousPage);
 				pagination.changePagePanel(newPagePanel);
 				currPageIndex = paginationModel.getCurrentPageIndex();
-				//Logger.out.info("current page index < "+currPageIndex);
+				//Logger.out.debug("current page index < "+currPageIndex);
 				if(! currentIndices.contains(currPageIndex))
 				{
 					currentIndices = pageBarModel.previousIndices();
@@ -315,7 +315,7 @@ public class JPageBar extends Cab2bPanel implements ActionListener{
 	
 	protected void displayLinkColor(String currentPageIndex)
 	{
-		//Logger.out.info("JPAGEBAR ::: displayLinkColor :: currentPageIndex : "+currentPageIndex);
+		//Logger.out.debug("JPAGEBAR ::: displayLinkColor :: currentPageIndex : "+currentPageIndex);
 		/* If current page index is null or empty just return.
 		 * so that last time colored link remain the same. */
 		if(currentPageIndex == null || currentPageIndex.equals(""))
@@ -323,7 +323,7 @@ public class JPageBar extends Cab2bPanel implements ActionListener{
 		for(int i = 0; i< indicesPanel.getComponentCount(); i++)
 		{
 			Cab2bHyperlink hyperLink = (Cab2bHyperlink) indicesPanel.getComponent(i);
-			//Logger.out.info("Hyperlink["+i+"] -> "+hyperLink.getText());
+			//Logger.out.debug("Hyperlink["+i+"] -> "+hyperLink.getText());
 			if(hyperLink.getText().equalsIgnoreCase(currentPageIndex))
 			{
 				hyperLink.setClicked(true);
@@ -437,10 +437,10 @@ public class JPageBar extends Cab2bPanel implements ActionListener{
 //	
 //	public void mouseWheelMoved(MouseWheelEvent e)
 //	{
-//		//Logger.out.info("mouse wheel event Scroll_Type : "+e.getScrollType()+", Scroll_Mount : "+e.getScrollAmount()+", "+e.getSource().getClass());
-//		//Logger.out.info("MouseWheelEvent UnitScroll "+MouseWheelEvent.WHEEL_UNIT_SCROLL+", BlockScroll "+MouseWheelEvent.WHEEL_BLOCK_SCROLL);
-//		//Logger.out.info("e.getWheelRotation() "+e.getWheelRotation());
-//		//Logger.out.info("e.getUnitsToScroll() "+e.getUnitsToScroll());
+//		//Logger.out.debug("mouse wheel event Scroll_Type : "+e.getScrollType()+", Scroll_Mount : "+e.getScrollAmount()+", "+e.getSource().getClass());
+//		//Logger.out.debug("MouseWheelEvent UnitScroll "+MouseWheelEvent.WHEEL_UNIT_SCROLL+", BlockScroll "+MouseWheelEvent.WHEEL_BLOCK_SCROLL);
+//		//Logger.out.debug("e.getWheelRotation() "+e.getWheelRotation());
+//		//Logger.out.debug("e.getUnitsToScroll() "+e.getUnitsToScroll());
 //		
 //		/* Return without doing nothing, if the mouse wheel 
 //		 * support is not enabled for JPagination. */
@@ -460,7 +460,7 @@ public class JPageBar extends Cab2bPanel implements ActionListener{
 //			{
 //				currentPageIndex = sequentialNavigation(nextPageText);
 //			}
-//			Logger.out.info("JPAGEBAR :: currPageIndex : "+currentPageIndex);
+//			Logger.out.debug("JPAGEBAR :: currPageIndex : "+currentPageIndex);
 //			displayLinkColor(currentPageIndex);
 //			
 //		}

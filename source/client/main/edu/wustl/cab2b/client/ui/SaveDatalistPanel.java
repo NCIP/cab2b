@@ -145,9 +145,9 @@ public class SaveDatalistPanel extends Cab2bPanel {
                             updateUI();
                         } else
                             Logger.out.debug("data list not saved ! " + id);
-                        Logger.out.info("datalist id : "
+                        Logger.out.debug("datalist id : "
                                 + MainSearchPanel.getDataList().getDataListAnnotation().getId());
-                        Logger.out.info("entity id for dl : "
+                        Logger.out.debug("entity id for dl : "
                                 + MainSearchPanel.getDataList().getDataListAnnotation().getEntityId());
                     }
 
@@ -215,7 +215,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
         dialog = WindowUtilities.setInDialog(NewWelcomePanel.mainFrame, this, "Save Data List", new Dimension(
                 (int) (dimension.width * 0.35), (int) (dimension.height * 0.30)), true, false);
 
-        Logger.out.info("dialog initialized ########## " + dialog);
+        Logger.out.debug("dialog initialized ########## " + dialog);
         dialog.setVisible(true);
         return dialog;
     }

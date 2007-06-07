@@ -91,7 +91,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
         Logger.out.debug("setDataForPopularSearchCategoriesPanel :: data " + data);
         popularSearchCategoryPanel.removeAll();
         popularSearchCategoryPanel.add(new Cab2bLabel());
-        Logger.out.info("data " + data);
+        Logger.out.debug("data " + data);
         Iterator iter = data.iterator();
         while (iter.hasNext()) {
             Object obj = iter.next();
@@ -105,7 +105,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
 
     public void setDataForMyExperimentsPanel(Vector data) {
 
-        Logger.out.info("setDataForMyExperimentsPanel :: data " + data);
+        Logger.out.debug("setDataForMyExperimentsPanel :: data " + data);
         myExperimentsPanel.removeAll();
         myExperimentsPanel.add(new Cab2bLabel());
         Iterator iter = data.iterator();
@@ -117,7 +117,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
             hyperlink.setText(hyperlinkName);
             hyperlink.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {/*
-                    Logger.out.info("Clicked on expt link");
+                    Logger.out.debug("Clicked on expt link");
 
                     mainFrame.setOpenExperimentWelcomePanel();
                     mainFrame.globalNavigationPanel.tabButtons[0].setBackground(mainFrame.globalNavigationPanel.navigationButtonBgColorUnSelected);

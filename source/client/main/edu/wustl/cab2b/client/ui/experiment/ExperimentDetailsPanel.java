@@ -141,7 +141,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
 
         Component comp = this.getComponent(0);
         this.removeAll();
-        Logger.out.info("Component 0 " + comp.getClass());
+        Logger.out.debug("Component 0 " + comp.getClass());
         this.add("br hfill vfill", new JScrollPane(expTable));
         this.add("br", deleteButton);
         this.updateUI();
@@ -199,7 +199,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
         }
 
         public void actionPerformed(ActionEvent e) {
-            Logger.out.info("link is working");
+            Logger.out.debug("link is working");
             setVisited(true);
 
             //getting the selected hyperlink row
@@ -235,7 +235,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
                         if (expNodeObj.isExperimentGroup() == false) {
                             /*If user clicks on experiment name then Open experiment 
                              * in new ExperimentOpenPanel with details*/
-                            Logger.out.info("ExperimentTreeNode node :" + expNodeObj.getIdentifier()
+                            Logger.out.debug("ExperimentTreeNode node :" + expNodeObj.getIdentifier()
                                     + " is not a experimentGroup");
                             MainFrame.openExperimentWelcomePanel.removeAll();
                             MainFrame.openExperimentWelcomePanel.add(ExperimentDetailsPanel.this.expPanel);

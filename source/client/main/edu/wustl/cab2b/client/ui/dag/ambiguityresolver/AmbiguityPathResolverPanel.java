@@ -140,14 +140,14 @@ public class AmbiguityPathResolverPanel extends Cab2bPanel {
                 re.printStackTrace();
             }
 
-            Logger.out.info("matched Class entity collection size =>> "
+            Logger.out.debug("matched Class entity collection size =>> "
                     + matchedClass.getEntityCollection().size());
 
             Set entityCollection = matchedClass.getEntityCollection();
             EntityInterface entityInter;
             if (entityCollection.size() > 0) {
                 entityInter = (EntityInterface) entityCollection.iterator().next();
-                Logger.out.info(entityInter.getName() + ", " + entityInter.getDescription() + ", "
+                Logger.out.debug(entityInter.getName() + ", " + entityInter.getDescription() + ", "
                         + entityInter.getClass());
                 returner.add(entityInter);
             }
@@ -181,7 +181,7 @@ public class AmbiguityPathResolverPanel extends Cab2bPanel {
 
         AmbiguityPathResolverPanel ambiguityPathResolverPanel = new AmbiguityPathResolverPanel(srcTsrColl);
         JOptionPane.showMessageDialog(null, ambiguityPathResolverPanel);
-        Logger.out.info("user selected ambigious paths #####>>>>> "
+        Logger.out.debug("user selected ambigious paths #####>>>>> "
                 + ambiguityPathResolverPanel.getUserSelectedpaths());
 
     }

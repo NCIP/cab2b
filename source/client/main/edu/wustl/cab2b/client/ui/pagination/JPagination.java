@@ -621,7 +621,7 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
 			
 			int difference = Math.round(Math.round(pagePanelSize.getHeight()-pagePanelPreferredSize.getHeight()));
 			//Logger.out.debug("####### pagePanleSize # "+pagePanelSize+" |||||  pagePanelPreferredSize # "+pagePanelPreferredSize);
-			//Logger.out.info("differenr "+difference);
+			//Logger.out.debug("differenr "+difference);
 			int currentElementsPerPage = getElementsPerPage();
 			
 			//	For Condition 2.
@@ -634,14 +634,14 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
 				
 				int increment = difference / 50;
 				
-				//Logger.out.info("number of more page elements that can be accomodated  "+increment);
+				//Logger.out.debug("number of more page elements that can be accomodated  "+increment);
 				setElementsPerPage(currentElementsPerPage+increment);
 				
 			}else if(difference < -1)
 			{
 				int decrement = difference/50;
 				decrement -= 1;
-				//Logger.out.info("decrement "+decrement);
+				//Logger.out.debug("decrement "+decrement);
 				setElementsPerPage(currentElementsPerPage+decrement);
 			}
 		}
@@ -715,14 +715,14 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				//Logger.out.info("page element action performed " + e.getSource().getClass());
-				//Logger.out.info("mouse wheel listeners "+pagination.getMouseWheelListeners().length);
+				//Logger.out.debug("page element action performed " + e.getSource().getClass());
+				//Logger.out.debug("mouse wheel listeners "+pagination.getMouseWheelListeners().length);
 				
 				PageElement element = (PageElement)((Cab2bHyperlink)e.getSource()).getUserObject();
-				Logger.out.info("element.isSelected "+element.isSelected());
+				Logger.out.debug("element.isSelected "+element.isSelected());
 				
 				Vector<PageElementIndex> selectedElementIndices = pagination.getPageSelectionModel().getSelectedPageIndices();
-				Logger.out.info("%%%%% selectedElementIndices "+selectedElementIndices);
+				Logger.out.debug("%%%%% selectedElementIndices "+selectedElementIndices);
 				
 			}
 		});
@@ -786,7 +786,7 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
 //		}
 //
 //		Vector selectedPageElemntsUserObject = pagination.getSelectedPageElementsUserObjects();
-//		Logger.out.info("selectedPageelemtns user object lenght "
+//		Logger.out.debug("selectedPageelemtns user object lenght "
 //				+ selectedPageElemntsUserObject.size());
 
 		//pagination.setElementsPerPage(4); // default is 6;

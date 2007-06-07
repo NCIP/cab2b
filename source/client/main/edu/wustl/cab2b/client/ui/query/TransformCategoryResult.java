@@ -126,9 +126,9 @@ public class TransformCategoryResult {
                 CategorialAttribute categorialAttribute = (CategorialAttribute) categorialAttributeMapKeysIter.next();
                 B2BTreeNode attributeNode = new B2BTreeNode();
                 attributeNode.setDisplayName(categorialAttribute.getCategoryAttribute().getName());
-                Logger.out.info("Categorial Attribute Name :"
+                Logger.out.debug("Categorial Attribute Name :"
                         + categorialAttribute.getCategoryAttribute().getName());
-                Logger.out.info("Categorial Attribute Value :" + categorialAttributeMap.get(categorialAttribute));
+                Logger.out.debug("Categorial Attribute Value :" + categorialAttributeMap.get(categorialAttribute));
 
                 attributeNode.setChildren(null);
                 attributeNode.setValue(categorialAttributeMap.get(categorialAttribute));
@@ -136,7 +136,7 @@ public class TransformCategoryResult {
                 //adding attribute as child to the main node
                 parentTreeNode.addChild(attributeNode);
                 
-                Logger.out.info(" PARENT :" + parentTreeNode + " Attribute  CHILD Node:" + attributeNode);
+                Logger.out.debug(" PARENT :" + parentTreeNode + " Attribute  CHILD Node:" + attributeNode);
                 
             }
         }

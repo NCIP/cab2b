@@ -172,7 +172,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
 		StringBuffer sb = new StringBuffer();
 		sb.append("<HTML>");
 		int textLength=text.length();
-		//Logger.out.info (textLength);
+		//Logger.out.debug (textLength);
 		int currentStart=0;
 		String currentString=null;
 		int offset=75;
@@ -209,13 +209,13 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
 		if(textLength == 0)
 			return sb.toString();
 		
-		Logger.out.info("");
+		Logger.out.debug("");
 		int pixelPerChar = (int) (textSizeInPixel / textLength);
 		int charsPerLine = (int)(MAXCHARSONLINE /pixelPerChar); 
 		int numberoflines = textLength /charsPerLine;
-		Logger.out.info("Max CharonLine : " + MAXCHARSONLINE);
-		Logger.out.info("Text-Size in Pixel : " + textSizeInPixel);
-		Logger.out.info("textLength  : "+ textLength + " pixelPerChar : " + pixelPerChar + " charsPerLine   : " + charsPerLine + "  numberoflines :" + numberoflines );
+		Logger.out.debug("Max CharonLine : " + MAXCHARSONLINE);
+		Logger.out.debug("Text-Size in Pixel : " + textSizeInPixel);
+		Logger.out.debug("textLength  : "+ textLength + " pixelPerChar : " + pixelPerChar + " charsPerLine   : " + charsPerLine + "  numberoflines :" + numberoflines );
 		
 		if(textLength% charsPerLine != 0)
 			numberoflines = numberoflines + 1;
@@ -226,7 +226,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
 		{
 			sb.append("<P>").append(text.substring(currentStart, currentStart+charsPerLine));
 			currentStart += charsPerLine;
-			Logger.out.info ("Text Lines : " + text + "  currentStart :" + currentStart);
+			Logger.out.debug ("Text Lines : " + text + "  currentStart :" + currentStart);
 			
 			//	Check if text has borken, if broken take next word 
 			if(((text.charAt(currentStart-1) != ' '))&&(text.charAt(currentStart) != ' '))

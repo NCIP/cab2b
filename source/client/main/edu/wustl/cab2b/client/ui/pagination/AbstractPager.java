@@ -114,7 +114,7 @@ public abstract class AbstractPager implements Pager {
 		//Logger.out.debug("number Of Pages needed ==>> "+numberOfPages);
 		pageIndices = new Vector<String>();
 		pageMap = page(data);
-		//Logger.out.info("pageMap.keySet() "+pageMap.keySet());
+		//Logger.out.debug("pageMap.keySet() "+pageMap.keySet());
 	}
 	
 	//TODO page index starts from 1 unlike standard JAVA indexing which starts from 0.
@@ -147,7 +147,7 @@ public abstract class AbstractPager implements Pager {
 		pageIndices.add(currentPage);     // again page indices need to be broken by numeric pager.
 		returner.put(currentPage, page);  // TODO last page added to the pageMap.
 		
-		//Logger.out.info("pageIndices "+pageIndices);
+		//Logger.out.debug("pageIndices "+pageIndices);
 		
 		return returner;
 	}
@@ -226,7 +226,7 @@ public abstract class AbstractPager implements Pager {
 	 */
 	public Vector<PageElement> firstPage()
 	{
-		//Logger.out.info("firstPage requested");
+		//Logger.out.debug("firstPage requested");
 		currentPageIndex = 0;
 		currentPageIndexStr = pageIndices.get(currentPageIndex);
 		//currentPageIndexStr = "1"; // TODO A bug was threr related to this hardcoding.
@@ -239,9 +239,9 @@ public abstract class AbstractPager implements Pager {
 	 */
 	public Vector<PageElement> nextPage()
 	{
-		//Logger.out.info("nextPage :: currentPageIndex "+currentPageIndex);
+		//Logger.out.debug("nextPage :: currentPageIndex "+currentPageIndex);
 		currentPageIndex++;
-		//Logger.out.info("after "+currentPageIndex);
+		//Logger.out.debug("after "+currentPageIndex);
 		String index = pageIndices.get(currentPageIndex);
 		currentPageIndexStr = index;
 		Vector<PageElement> nextPage = pageMap.get(index);
@@ -254,9 +254,9 @@ public abstract class AbstractPager implements Pager {
 	 */
 	public Vector<PageElement> previousPage()
 	{
-		//Logger.out.info("previousPage :: currentPageIndex "+currentPageIndex);
+		//Logger.out.debug("previousPage :: currentPageIndex "+currentPageIndex);
 		currentPageIndex--;
-		//Logger.out.info("after "+currentPageIndex);
+		//Logger.out.debug("after "+currentPageIndex);
 		String index = pageIndices.get(currentPageIndex);
 		currentPageIndexStr = index;
 		Vector<PageElement> previousPage = pageMap.get(index);

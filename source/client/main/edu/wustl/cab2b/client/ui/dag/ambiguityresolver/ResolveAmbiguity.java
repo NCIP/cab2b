@@ -126,7 +126,7 @@ public class ResolveAmbiguity
 		Iterator<ICuratedPath> it = allCuratedPaths.iterator();		
 		while (it.hasNext()) 
 		{			       
-			Logger.out.info("Inside curated path While");
+			Logger.out.debug("Inside curated path While");
 		     ICuratedPath iCuratedPaths = it.next();		     	 
 		     if( iCuratedPaths.getPaths() != null )
 			 {
@@ -137,11 +137,11 @@ public class ResolveAmbiguity
 			   		if( iCuratedPaths.isSelected() )
 			  	    {
 			   			pathIdentity = SELECTEDPATH;
-			   			Logger.out.info("Got selected path");
+			   			Logger.out.debug("Got selected path");
 			   			selectedPaths.add(pathIterator.next());	
 			   	    }else
 					{
-			   	    	Logger.out.info("Got curated path");
+			   	    	Logger.out.debug("Got curated path");
 			   	    	pathIdentity = CURATEDPATH;
 			   	    	curatedPaths.add(pathIterator.next());			   	    
 					}

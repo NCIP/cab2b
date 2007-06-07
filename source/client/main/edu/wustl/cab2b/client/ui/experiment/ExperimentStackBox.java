@@ -370,14 +370,14 @@ public class ExperimentStackBox extends Cab2bPanel {
 				columnName[i++] = CommonUtils.getFormattedString(attribute
 						.getName());
 				attributeMap.put(columnName[i - 1], attribute);
-				Logger.out.info("Table Header :" + attribute.getName());
+				Logger.out.debug("Table Header :" + attribute.getName());
 			}
 
 			// getting actual records
 			List<EntityRecordInterface> recordList = recordResultInterface
 					.getEntityRecordList();
 			recordObject = new Object[recordList.size()][headerList.size()];
-			Logger.out.info("Record Size :: " + recordList.size());
+			Logger.out.debug("Record Size :: " + recordList.size());
 			i = 0;
 			int j = 0;
 			for (EntityRecordInterface record : recordList) {
@@ -386,7 +386,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 				for (Object object : recordValueList) {
 					recordObject[i][j] = new Object();
 					recordObject[i][j] = object;
-					Logger.out.info("Data [" + i + "]" + "[" + j + "]"
+					Logger.out.debug("Data [" + i + "]" + "[" + j + "]"
 							+ recordObject[i][j]);
 					j++;
 				}
@@ -399,7 +399,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 	}
 
 	public static void setDataForFilterPanel(Vector<CaB2BFilterInterface> data) {
-		Logger.out.info("setDataForMyExperimentsPanel :: data " + data);
+		Logger.out.debug("setDataForMyExperimentsPanel :: data " + data);
 		dataFilterPanel.removeAll();
 		dataFilterPanel.add(new Cab2bLabel());
 		for (CaB2BFilterInterface caB2BFilterInterface : data) {
@@ -410,7 +410,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 			hyperlink.setText(hyperlinkName);
 			hyperlink.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					Logger.out.info("Clicked on expt link");
+					Logger.out.debug("Clicked on expt link");
 					System.out.println(obj.getClass());
 					if (obj instanceof CaB2BPatternFilter) {
 						CaB2BPatternFilter filter = (CaB2BPatternFilter) obj;
@@ -439,7 +439,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 	 *            name of charts to be displayed.
 	 */
 	private void setChartTypesForVisualiseDataPanel(Vector<String> chartTypes) {
-		Logger.out.info("setChartTypesForVisualiseDataPanel :: chartTypes "
+		Logger.out.debug("setChartTypesForVisualiseDataPanel :: chartTypes "
 				+ chartTypes);
 		visualiseDataPanel.removeAll();
 
@@ -458,7 +458,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 			hyperlink.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent actionEvent) {
 					String linkClicked = actionEvent.getActionCommand();
-					Logger.out.info("Clicked on " + linkClicked + " link");
+					Logger.out.debug("Clicked on " + linkClicked + " link");
 					showChartAction(linkClicked);
 					updateUI();
 				}

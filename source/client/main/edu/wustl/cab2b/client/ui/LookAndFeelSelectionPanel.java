@@ -86,7 +86,7 @@ public class LookAndFeelSelectionPanel extends Cab2bTitledPanel
 					if (arg0.getStateChange() == 1)
 					{
 						String className = ((JRadioButton) arg0.getSource()).getActionCommand();
-						//Logger.out.info("className "+className);
+						//Logger.out.debug("className "+className);
 						try
 						{
 							UIManager.setLookAndFeel(className);

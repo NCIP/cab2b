@@ -120,19 +120,19 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
                 JXTree tree = (JXTree) tse.getSource();
 
                 Object userObject = ((DefaultMutableTreeNode) tree.getLastSelectedPathComponent()).getUserObject();
-                Logger.out.info("userObject ==>> " + userObject.getClass());
+                Logger.out.debug("userObject ==>> " + userObject.getClass());
                 if (userObject instanceof ExperimentTreeNode) {
                     ExperimentTreeNode selectedExpTreeNode = (ExperimentTreeNode) userObject;
                     if (selectedExpTreeNode != null) {
                         expDetailsPanel.refreshDetails(selectedExpTreeNode);
                     }
-                    Logger.out.info("ExperimentTreeNode id :" + selectedExpTreeNode.getIdentifier());
+                    Logger.out.debug("ExperimentTreeNode id :" + selectedExpTreeNode.getIdentifier());
                 } else if (userObject instanceof Experiment) {
-                    Logger.out.info("Experiment clicked, do some action");
+                    Logger.out.debug("Experiment clicked, do some action");
                     if (expDetailsPanel != null)
                         expDetailsPanel.refreshDetails((Experiment) userObject);
                 } else if (userObject instanceof ExperimentGroup) {
-                    Logger.out.info("ExperimentGroup clicked, do some action");
+                    Logger.out.debug("ExperimentGroup clicked, do some action");
                     if (expDetailsPanel != null)
                         expDetailsPanel.refreshDetails((ExperimentGroup) userObject);
                 }

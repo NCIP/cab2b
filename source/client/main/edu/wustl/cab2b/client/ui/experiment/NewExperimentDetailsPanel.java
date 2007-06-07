@@ -427,7 +427,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 				"Create New Experiment", new Dimension((int) (dimension.width * 0.43),
 						(int) (dimension.height * 0.60)), true, false);
 
-		Logger.out.info("dialog initialized ########## " + dialog);
+		Logger.out.debug("dialog initialized ########## " + dialog);
 		dialog.setVisible(true);
 		return dialog;
 	}
@@ -439,7 +439,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 		ExperimentGroupBusinessInterface expGrpBus = (ExperimentGroupBusinessInterface) CommonUtils
 				.getBusinessInterface(EjbNamesConstants.EXPERIMENT_GROUP, ExperimentGroupHome.class);
 		Long parentExpGrpID = selectedExperimentNode.getIdentifier();
-		Logger.out.info("addNewExperimentGroupNode :: parentExpGrpID : " + parentExpGrpID);
+		Logger.out.debug("addNewExperimentGroupNode :: parentExpGrpID : " + parentExpGrpID);
 
 		if (expGrpName != null && !expGrpName.equals("")) {
 			ExperimentGroup newExpGrp = new ExperimentGroup();
@@ -450,7 +450,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
 			try {
 				newExpGrp = expGrpBus.addExperimentGroup(parentExpGrpID, newExpGrp);
-				Logger.out.info("returner expGrp id " + newExpGrp.getId());
+				Logger.out.debug("returner expGrp id " + newExpGrp.getId());
 			} catch (RemoteException e1) {
 				CommonUtils.handleException(e1, this, true, true, false, false);
 			} catch (BizLogicException e1) {
@@ -466,7 +466,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 			// but this one is updating the whole panel, which is not correct.
 			// initGUI();
 
-			Logger.out.info("newExpGrp " + newExpGrp.getId());
+			Logger.out.debug("newExpGrp " + newExpGrp.getId());
 
 			ExperimentTreeNode newNodeExperimentTreeNode = new ExperimentTreeNode();
 			newNodeExperimentTreeNode.setIdentifier(newExpGrp.getId());
@@ -544,8 +544,8 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 				Logger.out.error(exc.getMessage());
 			}
 
-			Logger.out.info("The user has finished editing the node.");
-			Logger.out.info("New value: " + node.getUserObject());
+			Logger.out.debug("The user has finished editing the node.");
+			Logger.out.debug("New value: " + node.getUserObject());
 			addNewExperimentGroupNode(node.getUserObject().toString(), node);
 		}
 
