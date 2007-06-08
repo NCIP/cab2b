@@ -326,7 +326,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 					getBreadCrumbsAL(), m_vBreadCrumbs,
 					this.searchPanel.viewPanel);
 
-			JXPanel detailsPanel = ResultPanelFactory.getDetailedResultPanel(
+			JXPanel detailsPanel = ResultPanelFactory.getSearchResultPanel(
 					searchPanel, record, dataRow, currentPanel
 							.getIncomingAssociationCollection(), currentPanel
 							.getIntraModelAssociationCollection());

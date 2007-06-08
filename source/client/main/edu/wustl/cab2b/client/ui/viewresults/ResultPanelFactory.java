@@ -134,8 +134,8 @@ public class ResultPanelFactory {
         dataRow.setAssociation(association);
         dataRow.setEntityInterface(presentEntityInterface);
 
-        return getDetailedResultPanel(searchPanel, record, dataRow, incomingAssociationCollection,
-                                      intraModelAssociationCollection);
+        return getSearchResultPanel(searchPanel, record, dataRow, incomingAssociationCollection,
+                                    intraModelAssociationCollection);
     }
 
     /**
@@ -149,13 +149,28 @@ public class ResultPanelFactory {
      * @param intraModelAssociationCollection
      * @return
      */
-    public static ResultPanel getDetailedResultPanel(
-                                                     SimpleSearchResultBreadCrumbPanel searchPanel,
-                                                     IRecord record,
-                                                     IDataRow dataRow,
-                                                     Collection<AssociationInterface> incomingAssociationCollection,
-                                                     List<IInterModelAssociation> intraModelAssociationCollection) {
+    public static ResultPanel getSearchResultPanel(SimpleSearchResultBreadCrumbPanel searchPanel, IRecord record,
+                                                   IDataRow dataRow,
+                                                   Collection<AssociationInterface> incomingAssociationCollection,
+                                                   List<IInterModelAssociation> intraModelAssociationCollection) {
         ResultPanel resultPanel = null;
+
+        DefaultDetailedPanel defaultDetailedPanel = getResultDetailedPanel(record);
+
+        resultPanel = new ResultObjectDetailsPanel(searchPanel, dataRow, record, incomingAssociationCollection,
+                intraModelAssociationCollection, defaultDetailedPanel);
+
+        resultPanel.doInitialization();
+
+        return resultPanel;
+
+    }
+
+    /**
+     * @param record
+     * @return
+     */
+    public static DefaultDetailedPanel getResultDetailedPanel(IRecord record) {
         DefaultDetailedPanel defaultDetailedPanel = null;
 
         if (record instanceof I3DDataRecord) {
@@ -164,17 +179,10 @@ public class ResultPanelFactory {
             defaultDetailedPanel = new CategoryObjectDetailsPanel((ICategorialClassRecord) record);
         } else {
             defaultDetailedPanel = new DefaultDetailedPanel(record);
-            
+
         }
         defaultDetailedPanel.doInitialization();
-        
-        resultPanel =  new ResultObjectDetailsPanel(searchPanel, dataRow, record,
-                                            incomingAssociationCollection, intraModelAssociationCollection,defaultDetailedPanel);
-        
-        resultPanel.doInitialization();
-        
-        return resultPanel;
-
+        return defaultDetailedPanel;
     }
 
     /**
