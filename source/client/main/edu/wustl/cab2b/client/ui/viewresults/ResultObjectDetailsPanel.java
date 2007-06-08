@@ -25,7 +25,9 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.datalist.IDataRow;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.IRecordWithAssociatedIds;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
@@ -42,9 +44,10 @@ public class ResultObjectDetailsPanel extends ResultPanel {
     protected IRecord record;
 
     protected JXPanel detailsTablePanel;
+
     protected JXPanel tablePanel;
 
-    private Vector<Vector> tableData = new Vector<Vector>();
+    protected Vector<Vector> tableData = new Vector<Vector>();
 
     private Vector<String> tableHeader = new Vector<String>();
 
@@ -77,9 +80,20 @@ public class ResultObjectDetailsPanel extends ResultPanel {
      * @see edu.wustl.cab2b.client.ui.viewresults.ResultPanel#doInitialization()
      */
     public void doInitialization() {
-        initData();
-        initRelatedDataPanel();
-        initGUI();
+
+        CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
+            @Override
+            protected void doNonUILogic() throws RuntimeException {
+                initData();
+            }
+
+            @Override
+            protected void doUIUpdateLogic() throws RuntimeException {
+                initRelatedDataPanel();
+                initGUI();
+            }
+        };
+        swingWorker.start();     
     }
 
     public void addDataSummaryPanel() {
@@ -102,13 +116,13 @@ public class ResultObjectDetailsPanel extends ResultPanel {
     protected void initGUI() {
         this.setLayout(new BorderLayout());
         initTableGUI();
-        initDataListButtons();        
-        
+        initDataListButtons();
+
         Cab2bPanel buttonPanel = new Cab2bPanel();
         buttonPanel.add("br", addToDataListButton);
         buttonPanel.add("tab tab", m_applyAllButton);
- 
-        detailsTablePanel.add("br hfill ",buttonPanel);       
+
+        detailsTablePanel.add("br hfill ", buttonPanel);
 
         this.add(detailsTablePanel, BorderLayout.CENTER);
 
@@ -124,19 +138,19 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         m_sidePanel.add(relatedDataParentPanel);
         m_sidePanel.add(myDataListParentPanel);
         this.add(m_sidePanel, BorderLayout.EAST);
-        
+
     }
 
     protected void initTableGUI() {
         //detailsTablePanel = new Cab2bPanel(new BorderLayout());
         detailsTablePanel = new Cab2bPanel();
-        tablePanel = new Cab2bPanel();  
+        tablePanel = new Cab2bPanel();
         objDetailsTable = new Cab2bTable(false, tableData, tableHeader);
         objDetailsTable.setEditable(false);
         JScrollPane tableSP = new JScrollPane(objDetailsTable);
         tablePanel.add(" hfill ", tableSP);
         adjustRows();
-        detailsTablePanel.add("br hfill vfill",tablePanel);
+        detailsTablePanel.add("br hfill vfill", tablePanel);
     }
 
     private void initRelatedDataPanel() {
