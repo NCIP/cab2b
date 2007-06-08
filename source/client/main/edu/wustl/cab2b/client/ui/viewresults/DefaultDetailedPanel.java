@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JScrollPane;
@@ -9,15 +10,9 @@ import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 
 public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel {
-
-    /**
-     * 
-     */
-    protected IDataRow dataRow;
 
     protected R record;
 
@@ -26,11 +21,10 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel {
     private Vector<String> tableHeader = new Vector<String>();
 
     private Cab2bTable objDetailsTable;
-    
+
     protected boolean isVFill = true;
 
-    public DefaultDetailedPanel(IDataRow dataRow, R record) {
-        this.dataRow = dataRow;
+    public DefaultDetailedPanel(R record) {
         this.record = record;
     }
 
@@ -42,28 +36,29 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel {
     }
 
     protected void initData() {
-        for (int i = 0; i < dataRow.getAttributes().size(); i++) {
-            Vector<Object> row = new Vector<Object>();
-            AttributeInterface attribute = dataRow.getAttributes().get(i);
+        List<AttributeInterface> attributeList = edu.wustl.cab2b.common.util.Utility.getAttributeList(record.getAttributes());
+        for (AttributeInterface attribute : attributeList) {
             String formattedString = CommonUtils.getFormattedString(attribute.getName());
+            Vector<Object> row = new Vector<Object>();
             row.add(formattedString);
-            row.add(dataRow.getRow()[i]);
+            row.add(record.getValueForAttribute(attribute));
             tableData.add(row);
         }
+
         tableHeader.add("Attribute");
         tableHeader.add("Value");
     }
 
     protected void initGUI() {
         this.setLayout(new RiverLayout());
-        
+
         objDetailsTable = new Cab2bTable(false, tableData, tableHeader);
         objDetailsTable.setEditable(false);
         JScrollPane tableSP = new JScrollPane(objDetailsTable);
         if (isVFill) {
-            this.add("br hfill vfill",tableSP);
+            this.add("br hfill vfill", tableSP);
         } else {
-            this.add("br hfill",tableSP);
+            this.add("br hfill", tableSP);
         }
     }
 
@@ -79,10 +74,4 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel {
         }
     }
 
-    /**
-     * @return Returns the dataRow.
-     */
-    public IDataRow getDataRow() {
-        return dataRow;
-    }
 }

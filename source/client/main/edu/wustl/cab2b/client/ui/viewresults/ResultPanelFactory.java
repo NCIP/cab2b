@@ -159,11 +159,11 @@ public class ResultPanelFactory {
         DefaultDetailedPanel defaultDetailedPanel = null;
 
         if (record instanceof I3DDataRecord) {
-            defaultDetailedPanel = new ThreeDResultObjectDetailsPanel(dataRow,(I3DDataRecord) record);
+            defaultDetailedPanel = new ThreeDResultObjectDetailsPanel((I3DDataRecord) record);
         } else if (record instanceof ICategorialClassRecord) {
-            defaultDetailedPanel = new CategoryObjectDetailsPanel(dataRow,(ICategorialClassRecord) record);
+            defaultDetailedPanel = new CategoryObjectDetailsPanel((ICategorialClassRecord) record);
         } else {
-            defaultDetailedPanel = new DefaultDetailedPanel(dataRow,record);
+            defaultDetailedPanel = new DefaultDetailedPanel(record);
             
         }
         defaultDetailedPanel.doInitialization();

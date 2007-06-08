@@ -36,6 +36,11 @@ public class ResultObjectDetailsPanel extends ResultPanel {
      * 
      */
     protected IRecord record;
+    
+    /**
+     * 
+     */
+    protected IDataRow dataRow;
 
     
     protected JXPanel tablePanel;
@@ -64,6 +69,7 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         this.defaultDetailedPanel = defaultDetailedPanel;
 
         this.record = record;
+        this.dataRow = dataRow;
     }
 
     /**
@@ -109,17 +115,6 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         
     }
 
-//    protected void initTableGUI() {
-//        //detailsTablePanel = new Cab2bPanel(new BorderLayout());
-//        detailsTablePanel = new Cab2bPanel();
-//        tablePanel = new Cab2bPanel();  
-//        objDetailsTable = new Cab2bTable(false, tableData, tableHeader);
-//        objDetailsTable.setEditable(false);
-//        JScrollPane tableSP = new JScrollPane(objDetailsTable);
-//        tablePanel.add(" hfill ", tableSP);
-//        adjustRows();
-//        detailsTablePanel.add("br hfill vfill",tablePanel);
-//    }
 
     private void initRelatedDataPanel() {
         relatedDataTitledPanel = new Cab2bTitledPanel("Related Data");
@@ -135,7 +130,6 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         relatedDataPanel.setLayout(new RiverLayout(5, 10));
         relatedDataPanel.setBorder(null);
         
-        IDataRow dataRow = defaultDetailedPanel.getDataRow();
 
         if (incomingAssociationCollection != null && !incomingAssociationCollection.isEmpty()) {
             AbstractAssociatedDataPanel incomingPanel = new IncomingAssociationDataPanel(
@@ -176,7 +170,7 @@ public class ResultObjectDetailsPanel extends ResultPanel {
      */
     List<IDataRow> getSelectedDataRows() {
         List<IDataRow> selectedDataRows = new ArrayList<IDataRow>();
-        selectedDataRows.add(defaultDetailedPanel.getDataRow());
+        selectedDataRows.add(dataRow);
         return selectedDataRows;
     }
 

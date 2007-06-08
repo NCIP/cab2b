@@ -44,8 +44,8 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
      * @param incomingAssociationCollection
      * @param intraModelAssociationCollection
      */
-    public ThreeDResultObjectDetailsPanel(IDataRow dataRow, I3DDataRecord record) {
-        super(dataRow,record);
+    public ThreeDResultObjectDetailsPanel(I3DDataRecord record) {
+        super(record);
         isVFill = false;
     }
 
@@ -89,7 +89,7 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
         threeDTable.setEditable(false);
         JScrollPane tableSP = new JScrollPane(threeDTable);
         addRowHeader(tableSP);
-        
+
         this.add("br hfill vfill", tableSP);
     }
 
