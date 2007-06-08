@@ -4,6 +4,7 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -67,18 +68,22 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         this.m_mainSearchPanel = panel;
         initGUI();
         this.setPreferredSize(new Dimension(976, 36));
-        this.setBackground(Color.LIGHT_GRAY);
+        this.setBackground(new Color(240,240,240));
     }
 
     private void initGUI() {
         messageLabel = new Cab2bLabel("");
-        messageLabel.setForeground(Color.blue);
+        Font font = messageLabel.getFont();
+        messageLabel.setFont(new Font(font.getFamily(),Font.PLAIN,font.getSize()));
+        messageLabel.setForeground(new Color(0,128,0));
+        //essageLabel.setForeground(new Color(153,51,0));
+        
         messagePanel = new Cab2bPanel();
-        messagePanel.setBackground(Color.LIGHT_GRAY);
+        messagePanel.setBackground(null);
         messagePanel.add(messageLabel);
 
         buttonPanel = new Cab2bPanel();
-        buttonPanel.setBackground(Color.LIGHT_GRAY);
+        buttonPanel.setBackground(null);
         FlowLayout flowLayout = new FlowLayout();
         flowLayout.setAlignment(FlowLayout.RIGHT);
         flowLayout.setHgap(10);
