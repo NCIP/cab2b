@@ -9,7 +9,6 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.JScrollPane;
 
@@ -18,13 +17,10 @@ import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
-import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
-import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.IRecordWithAssociatedIds;
@@ -41,23 +37,16 @@ public class ResultObjectDetailsPanel extends ResultPanel {
      */
     protected IRecord record;
 
-   // protected JXPanel detailsTablePanel;
     
     protected JXPanel tablePanel;
     
     private DefaultDetailedPanel  defaultDetailedPanel;
 
-//    private Vector<Vector> tableData = new Vector<Vector>();
-//
-//    private Vector<String> tableHeader = new Vector<String>();
-//
-//    private Cab2bTable objDetailsTable;
 
     private JXTitledPanel relatedDataTitledPanel;
 
     private JXPanel relatedDataPanel;
 
-   // protected IDataRow dataRow;
 
     private Cab2bPanel m_sidePanel;
 

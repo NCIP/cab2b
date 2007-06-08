@@ -156,18 +156,23 @@ public class ResultPanelFactory {
                                                      Collection<AssociationInterface> incomingAssociationCollection,
                                                      List<IInterModelAssociation> intraModelAssociationCollection) {
         ResultPanel resultPanel = null;
+        DefaultDetailedPanel defaultDetailedPanel = null;
 
         if (record instanceof I3DDataRecord) {
-            resultPanel = new ThreeDResultObjectDetailsPanel(searchPanel, dataRow, record,
-                    incomingAssociationCollection, intraModelAssociationCollection);
+            defaultDetailedPanel = new ThreeDResultObjectDetailsPanel(dataRow,(I3DDataRecord) record);
         } else if (record instanceof ICategorialClassRecord) {
-            resultPanel = new CategoryObjectDetailsPanel(searchPanel, dataRow, record,
-                    incomingAssociationCollection, intraModelAssociationCollection);
+            defaultDetailedPanel = new CategoryObjectDetailsPanel(dataRow,(ICategorialClassRecord) record);
         } else {
-            resultPanel = new ResultObjectDetailsPanel(searchPanel, dataRow, record,
-                    incomingAssociationCollection, intraModelAssociationCollection);
+            defaultDetailedPanel = new DefaultDetailedPanel(dataRow,record);
+            
         }
+        defaultDetailedPanel.doInitialization();
+        
+        resultPanel =  new ResultObjectDetailsPanel(searchPanel, dataRow, record,
+                                            incomingAssociationCollection, intraModelAssociationCollection,defaultDetailedPanel);
+        
         resultPanel.doInitialization();
+        
         return resultPanel;
 
     }

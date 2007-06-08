@@ -26,7 +26,7 @@ import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
  * @author rahul_ner
  *
  */
-public class ThreeDResultObjectDetailsPanel extends ResultObjectDetailsPanel {
+public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DDataRecord> {
 
     private Vector<Vector> threeDTableData = new Vector<Vector>();
 
@@ -44,14 +44,9 @@ public class ThreeDResultObjectDetailsPanel extends ResultObjectDetailsPanel {
      * @param incomingAssociationCollection
      * @param intraModelAssociationCollection
      */
-    public ThreeDResultObjectDetailsPanel(
-            SimpleSearchResultBreadCrumbPanel searchPanel,
-            IDataRow dataRow,
-            IRecord record,
-            Collection<AssociationInterface> incomingAssociationCollection,
-            List<IInterModelAssociation> intraModelAssociationCollection) {
-        super(searchPanel, dataRow, record, incomingAssociationCollection, intraModelAssociationCollection);
-
+    public ThreeDResultObjectDetailsPanel(IDataRow dataRow, I3DDataRecord record) {
+        super(dataRow,record);
+        isVFill = false;
     }
 
     /**
@@ -60,12 +55,11 @@ public class ThreeDResultObjectDetailsPanel extends ResultObjectDetailsPanel {
     protected void initData() {
         super.initData();
 
-        I3DDataRecord threeDRecord = (I3DDataRecord) record;
-        Object[][][] inputData = threeDRecord.getCube();
+        Object[][][] inputData = record.getCube();
 
         for (int i = 0; i < inputData.length; i++) {
             for (int j = 0; j < inputData[i].length; j++) {
-                String columnHeader = threeDRecord.getDim2Labels()[j] + "_" + threeDRecord.getDim1Labels()[i];
+                String columnHeader = record.getDim2Labels()[j] + "_" + record.getDim1Labels()[i];
                 threeDTableHeader.add(columnHeader);
                 for (int k = 0; k < inputData[i][j].length; k++) {
                     Object value = inputData[i][j][k];
@@ -80,14 +74,14 @@ public class ThreeDResultObjectDetailsPanel extends ResultObjectDetailsPanel {
             }
         }
     }
-    
+
     Cab2bTable threeDTable;
 
     /**
      * @see edu.wustl.cab2b.client.ui.viewresults.ResultObjectDetailsPanel#initTableGUI()
      */
-    protected void initTableGUI() {
-        super.initTableGUI();
+    protected void initGUI() {
+        super.initGUI();
 
         adjustRows();
 
@@ -96,10 +90,7 @@ public class ThreeDResultObjectDetailsPanel extends ResultObjectDetailsPanel {
         JScrollPane tableSP = new JScrollPane(threeDTable);
         addRowHeader(tableSP);
         
-        
-        tablePanel.add("br hfill vfill", tableSP);
-        detailsTablePanel.updateUI();
-
+        this.add("br hfill vfill", tableSP);
     }
 
     private void addRowHeader(JScrollPane tableSP) {
@@ -113,18 +104,11 @@ public class ThreeDResultObjectDetailsPanel extends ResultObjectDetailsPanel {
             dim2RowHeader[i][0] = dim3RowHeaderList[i];
         }
         Cab2bTable rowHeaderTable = new Cab2bTable(false, dim2RowHeader, dim3RowHeaderHeader);
-        
+
         rowHeaderTable.setSize(new Dimension(0, 28));
         rowHeaderTable.setFont(new Font("Arial", Font.BOLD, 14));
         rowHeaderTable.setHighlighters();
         rowHeaderTable.setBackground(AlternateRowHighlighter.genericGrey.getForeground());
-
-        
-       // rowHeaderTable.getColumn(0).setCellRenderer(threeDTable.getColumn(0).getCellRenderer());
-        
-      //  JScrollPane rowHeaderTableSP = new JScrollPane(rowHeaderTable);
-        
-        
 
         tableSP.setRowHeaderView(rowHeaderTable);
     }
