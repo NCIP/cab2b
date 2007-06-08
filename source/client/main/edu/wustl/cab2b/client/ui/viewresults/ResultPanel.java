@@ -223,6 +223,7 @@ public abstract class ResultPanel extends Cab2bPanel {
             myDataListTitledPanel.setTitleFont(new Font("SansSerif", Font.BOLD, 11));
             myDataListTitledPanel.setTitleForeground(Color.BLACK);
             myDataListTitledPanel.setBorder(null);
+            myDataListTitledPanel.setPreferredSize(new Dimension(267,653));
 
             if (myDataListPanel == null) {
                 myDataListPanel = new Cab2bPanel();
