@@ -1,26 +1,17 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.swing.JScrollPane;
-
-import org.jdesktop.swingx.JXPanel;
-import org.jdesktop.swingx.LinkRenderer;
-import org.jdesktop.swingx.action.LinkAction;
-
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
-import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
-import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
+import edu.wustl.cab2b.client.ui.query.TransformCategoryResult;
+import edu.wustl.cab2b.client.ui.treetable.B2BTreeNode;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
-import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
-import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.util.logger.Logger;
@@ -34,12 +25,10 @@ public class CategoryObjectDetailsPanel extends ResultObjectDetailsPanel {
 
     /**
      * Table for displaying category result records.
-     */
-    private Cab2bTable categoryTable;
-
-    private Vector<Vector<UserObjectWrapper>> categoryTableData = new Vector<Vector<UserObjectWrapper>>();
-
+     */    
     private Vector<String> categoryTableHeader = new Vector<String>();
+
+    B2BTreeNode b2BTreeRootNode = new B2BTreeNode();
 
     public CategoryObjectDetailsPanel(
             SimpleSearchResultBreadCrumbPanel searchPanel,
@@ -64,14 +53,34 @@ public class CategoryObjectDetailsPanel extends ResultObjectDetailsPanel {
         Map<CategorialClass, List<ICategorialClassRecord>> mapChildClasses = iCategorialClassRecord.getChildrenCategorialClassRecords();
         Logger.out.debug("Size of class Records :" + mapChildClasses.keySet().size());
 
-        for (CategorialClass categorialClass : mapChildClasses.keySet()) {
+        TransformCategoryResult transformCategoryResult = new TransformCategoryResult();
+        b2BTreeRootNode.setDisplayName("Associated Classes");
 
-            String displayName = edu.wustl.cab2b.common.util.Utility.getDisplayName(categorialClass.getCategorialClassEntity());
-            UserObjectWrapper userObjectWrapper = new UserObjectWrapper<CategorialClass>(categorialClass,
-                    displayName);
-            Vector<UserObjectWrapper> categoryClassData = new Vector<UserObjectWrapper>();
-            categoryClassData.add(userObjectWrapper);
-            categoryTableData.add(categoryClassData);
+        for (List<ICategorialClassRecord> categorialClassList : mapChildClasses.values()) {
+            b2BTreeRootNode = transformCategoryResult.getB2BRootTreeNode(categorialClassList, b2BTreeRootNode);
+        }
+        Iterator<B2BTreeNode> b2BTreeNodeIterator1 = b2BTreeRootNode.getChildren().iterator();
+        while (b2BTreeNodeIterator1.hasNext()) {
+
+            B2BTreeNode treeNode = b2BTreeNodeIterator1.next();
+            boolean isAllAtributes = true;
+            for (B2BTreeNode childTreeNode : treeNode.getChildren()) {
+                if (childTreeNode.getChildren() != null) {
+                    isAllAtributes = false;
+                    break;
+                }
+            }
+
+            if (isAllAtributes) {
+                //put this node up trreNode
+                for (B2BTreeNode childTreeNode : treeNode.getChildren()) {
+                    Vector<String> row = new Vector<String>();
+                    row.add(childTreeNode.getDisplayName());
+                    row.add("" + childTreeNode.getValue());
+                    tableData.add(row);
+                }
+                b2BTreeNodeIterator1.remove();
+            }
         }
     }
 
@@ -80,68 +89,11 @@ public class CategoryObjectDetailsPanel extends ResultObjectDetailsPanel {
      */
     protected void initTableGUI() {
         super.initTableGUI();
-        adjustRows();     
+        adjustRows();
 
-          if (!categoryTableData.isEmpty()) {
-
-            categoryTable = new Cab2bTable(false, categoryTableData, categoryTableHeader);
-            CategoryLinkAction myLinkAction = new CategoryLinkAction();
-            categoryTable.getColumn(0).setCellRenderer(new LinkRenderer(myLinkAction));
-            categoryTable.getColumn(0).setCellEditor(new LinkRenderer(myLinkAction));
-            JScrollPane tableScrollPane = new JScrollPane(categoryTable);           
-            tablePanel.add("br hfill vfill", tableScrollPane);           
-            detailsTablePanel.updateUI();
-        }
+        tablePanel.add("br hfill vfill", b2BTreeRootNode.getCategoryResultPanel());
+        detailsTablePanel.updateUI();
     }
 
-    /**
-     * @author deepak_shingan
-     *
-     */
-    class CategoryLinkAction extends LinkAction {
-
-        public CategoryLinkAction() {
-
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            setVisited(true);
-
-            //getting the selected hyperlink row
-            int selectionIndex = categoryTable.getSelectionModel().getLeadSelectionIndex();
-
-            //Getting object associated with hyperlink
-            //column Number will be always 0 
-
-            ICategorialClassRecord iCategorialClassRecord = (ICategorialClassRecord) record;
-
-            Map<CategorialClass, List<ICategorialClassRecord>> mapChildClasses = iCategorialClassRecord.getChildrenCategorialClassRecords();
-
-            UserObjectWrapper<CategorialClass> userObjectWrapper = (UserObjectWrapper) categoryTable.getValueAt(
-                                                                                                                selectionIndex,
-                                                                                                                0);
-            if (userObjectWrapper != null) {
-                CategorialClass categorialClass = userObjectWrapper.getUserObject();
-                List<ICategorialClassRecord> listICategorialClassRecord = mapChildClasses.get(categorialClass);
-
-                IQueryResult queryResult = QueryResultFactory.createResult(categorialClass.getCategorialClassEntity());
-                queryResult.addRecords(dataRow.getURL(), listICategorialClassRecord);
-                JXPanel resultPanel = ResultPanelFactory.getResultPanel(searchPanel, queryResult, dataRow, null);
-                searchPanel.addToPanel(
-                                       resultPanel,
-                                       edu.wustl.cab2b.common.util.Utility.getDisplayName(categorialClass.getCategorialClassEntity()));
-
-                //searchPanel.addToPanel(searchPanel.getResultPanel(queryResult, dataRow, null), );
-                searchPanel.updateUI();
-
-            }
-
-        }
-    }
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
-
 }
