@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<applications>
+<application name="caArray" >
+		<entity name="bioDataCube">
+    	   <result-transformer>1</result-transformer>
+           <result-renderer>2</result-renderer>
+           <data-list-transformer>3</data-list-transformer>
+		 </entity>
+			
+		<default>
+			  <result-transformer>4</result-transformer>
+              <result-renderer>5</result-renderer>
+              <data-list-transformer>6</data-list-transformer>
+   		</default>
+</application>
+	<application name="category entity group" >		
+		<default>
+		   <result-renderer> 7 </result-renderer>
+		   <data-list-transformer> 8</data-list-transformer>		   	
+		</default>
+
+</application>
+</applications>
