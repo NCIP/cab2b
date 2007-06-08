@@ -25,9 +25,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.datalist.IDataRow;
-import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.IRecordWithAssociatedIds;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
@@ -43,21 +41,23 @@ public class ResultObjectDetailsPanel extends ResultPanel {
      */
     protected IRecord record;
 
-    protected JXPanel detailsTablePanel;
-
+   // protected JXPanel detailsTablePanel;
+    
     protected JXPanel tablePanel;
+    
+    private DefaultDetailedPanel  defaultDetailedPanel;
 
-    protected Vector<Vector> tableData = new Vector<Vector>();
-
-    private Vector<String> tableHeader = new Vector<String>();
-
-    private Cab2bTable objDetailsTable;
+//    private Vector<Vector> tableData = new Vector<Vector>();
+//
+//    private Vector<String> tableHeader = new Vector<String>();
+//
+//    private Cab2bTable objDetailsTable;
 
     private JXTitledPanel relatedDataTitledPanel;
 
     private JXPanel relatedDataPanel;
 
-    protected IDataRow dataRow;
+   // protected IDataRow dataRow;
 
     private Cab2bPanel m_sidePanel;
 
@@ -67,11 +67,12 @@ public class ResultObjectDetailsPanel extends ResultPanel {
 
             IRecord record,
             Collection<AssociationInterface> incomingAssociationCollection,
-            List<IInterModelAssociation> intraModelAssociationCollection) {
+            List<IInterModelAssociation> intraModelAssociationCollection,DefaultDetailedPanel defaultDetailedPanel) {
         /* Set the parent entity interface. Note : This can never be null. */
         super(searchPanel, incomingAssociationCollection, intraModelAssociationCollection);
+        
 
-        this.dataRow = dataRow;
+        this.defaultDetailedPanel = defaultDetailedPanel;
 
         this.record = record;
     }
@@ -80,20 +81,9 @@ public class ResultObjectDetailsPanel extends ResultPanel {
      * @see edu.wustl.cab2b.client.ui.viewresults.ResultPanel#doInitialization()
      */
     public void doInitialization() {
-
-        CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
-            @Override
-            protected void doNonUILogic() throws RuntimeException {
-                initData();
-            }
-
-            @Override
-            protected void doUIUpdateLogic() throws RuntimeException {
-                initRelatedDataPanel();
-                initGUI();
-            }
-        };
-        swingWorker.start();     
+        initData();
+        initRelatedDataPanel();
+        initGUI();
     }
 
     public void addDataSummaryPanel() {
@@ -101,35 +91,23 @@ public class ResultObjectDetailsPanel extends ResultPanel {
     }
 
     protected void initData() {
-        for (int i = 0; i < dataRow.getAttributes().size(); i++) {
-            Vector<Object> row = new Vector<Object>();
-            AttributeInterface attribute = dataRow.getAttributes().get(i);
-            String formattedString = CommonUtils.getFormattedString(attribute.getName());
-            row.add(formattedString);
-            row.add(dataRow.getRow()[i]);
-            tableData.add(row);
-        }
-        tableHeader.add("Attribute");
-        tableHeader.add("Value");
     }
 
     protected void initGUI() {
         this.setLayout(new BorderLayout());
-        initTableGUI();
-        initDataListButtons();
-
+        //initTableGUI();        
+        this.add(defaultDetailedPanel, BorderLayout.CENTER);
+       
+        initDataListButtons();      
         Cab2bPanel buttonPanel = new Cab2bPanel();
         buttonPanel.add("br", addToDataListButton);
-        buttonPanel.add("tab tab", m_applyAllButton);
+        buttonPanel.add("tab tab", m_applyAllButton); 
+        
+        this.add(buttonPanel,BorderLayout.SOUTH);       
 
-        detailsTablePanel.add("br hfill ", buttonPanel);
-
-        this.add(detailsTablePanel, BorderLayout.CENTER);
-
+ 
         m_sidePanel = new Cab2bPanel(new GridLayout(2, 1, 5, 5));
-
         initDataListSummaryPanel();
-
         //fix for matching the sizes of "my data summrary" and "related data"
         Cab2bPanel relatedDataParentPanel = new Cab2bPanel();
         relatedDataParentPanel.setBorder(null);
@@ -137,21 +115,22 @@ public class ResultObjectDetailsPanel extends ResultPanel {
 
         m_sidePanel.add(relatedDataParentPanel);
         m_sidePanel.add(myDataListParentPanel);
+        
         this.add(m_sidePanel, BorderLayout.EAST);
-
+        
     }
 
-    protected void initTableGUI() {
-        //detailsTablePanel = new Cab2bPanel(new BorderLayout());
-        detailsTablePanel = new Cab2bPanel();
-        tablePanel = new Cab2bPanel();
-        objDetailsTable = new Cab2bTable(false, tableData, tableHeader);
-        objDetailsTable.setEditable(false);
-        JScrollPane tableSP = new JScrollPane(objDetailsTable);
-        tablePanel.add(" hfill ", tableSP);
-        adjustRows();
-        detailsTablePanel.add("br hfill vfill", tablePanel);
-    }
+//    protected void initTableGUI() {
+//        //detailsTablePanel = new Cab2bPanel(new BorderLayout());
+//        detailsTablePanel = new Cab2bPanel();
+//        tablePanel = new Cab2bPanel();  
+//        objDetailsTable = new Cab2bTable(false, tableData, tableHeader);
+//        objDetailsTable.setEditable(false);
+//        JScrollPane tableSP = new JScrollPane(objDetailsTable);
+//        tablePanel.add(" hfill ", tableSP);
+//        adjustRows();
+//        detailsTablePanel.add("br hfill vfill",tablePanel);
+//    }
 
     private void initRelatedDataPanel() {
         relatedDataTitledPanel = new Cab2bTitledPanel("Related Data");
@@ -166,6 +145,8 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         relatedDataPanel.setBackground(Color.WHITE);
         relatedDataPanel.setLayout(new RiverLayout(5, 10));
         relatedDataPanel.setBorder(null);
+        
+        IDataRow dataRow = defaultDetailedPanel.getDataRow();
 
         if (incomingAssociationCollection != null && !incomingAssociationCollection.isEmpty()) {
             AbstractAssociatedDataPanel incomingPanel = new IncomingAssociationDataPanel(
@@ -206,19 +187,9 @@ public class ResultObjectDetailsPanel extends ResultPanel {
      */
     List<IDataRow> getSelectedDataRows() {
         List<IDataRow> selectedDataRows = new ArrayList<IDataRow>();
-        selectedDataRows.add(dataRow);
+        selectedDataRows.add(defaultDetailedPanel.getDataRow());
         return selectedDataRows;
     }
 
-    /**
-     * 
-     */
-    protected void adjustRows() {
-        int rowCount = objDetailsTable.getRowCount();
-        if (rowCount < 10) {
-            objDetailsTable.setVisibleRowCount(rowCount);
-        } else {
-            objDetailsTable.setVisibleRowCount(10);
-        }
-    }
+   
 }
