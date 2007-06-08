@@ -119,15 +119,14 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
      */
     public void actionPerformed(ActionEvent event) {
         String strActionCommand = ((Cab2bButton) event.getSource()).getActionCommand();
-        if (strActionCommand.equals("Save Data List")) {
-            Logger.out.debug("Clicked on save Data List button");
+        if (strActionCommand.equals("Save Data List")) {            
 
             SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(m_mainSearchPanel);
             saveDataListPanel.showInDialog();
             Logger.out.debug("After showInDialog");
 
         } else if (strActionCommand.equals("Add to Experiment")) {
-            Logger.out.info("Clicked on Add to Experiment button");
+            Logger.out.debug("Clicked on Add to Experiment button");
             //check if Data List is saved
             if (SaveDatalistPanel.isDataListSaved == false) {
                 SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(m_mainSearchPanel);
@@ -140,8 +139,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         } else if (strActionCommand.equals("Next")) {
             SearchNavigationPanel.messageLabel.setText("");
             srhButton.setVisible(false);
-            prvButton.setVisible(true);
-            Logger.out.info("NExt Clickd");
+            prvButton.setVisible(true);          
             if (m_mainSearchPanel.getCenterPanel().getSelectedCardIndex() == 1) {
                 //Gautam:
                 //If the central panel is AddLimitPanel, update the query object with the 
@@ -205,9 +203,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                         saveDataListButton.setVisible(false);
                         addToExperimentButton.setVisible(false);
 
-                        if (queryResults != null) {
-
-                            Logger.out.info("Inside doUIUpdateLogic");
+                        if (queryResults != null) {                        
 
                             int recordNo = edu.wustl.cab2b.client.ui.query.Utility.getRecordNum(queryResults);
                             if (recordNo == 0) {
@@ -334,7 +330,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
              * to show the card. Also increment the index to indicate the currently selected card.
              */
             if ((iSelectedCard + 1) < this.m_mainSearchPanel.getCenterPanel().getIdentifierCount()) {
-                Logger.out.info("inside if");
+                Logger.out.debug("inside if");
                 layout.show(centerPanel, centerPanel.getIdentifier(iSelectedCard + 1));
                 centerPanel.setSelectedCardIndex((iSelectedCard + 1));
                 topPanel.setFocus(iSelectedCard + 1, true);
@@ -358,7 +354,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
      */
 
     public void gotoAddLimitPanel() {
-        Logger.out.info("gotoAddLimitPanel");
+        Logger.out.debug("gotoAddLimitPanel");
         srhButton.setVisible(true);
         SearchCenterPanel centerPanel = this.m_mainSearchPanel.getCenterPanel();
         CardLayout layout = (CardLayout) centerPanel.getLayout();
