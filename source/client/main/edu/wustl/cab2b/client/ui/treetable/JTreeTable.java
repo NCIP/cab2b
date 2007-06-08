@@ -1,13 +1,16 @@
 package edu.wustl.cab2b.client.ui.treetable;
 
 
-import javax.swing.*;
-import javax.swing.tree.*;
-import javax.swing.table.*;
-
-import java.awt.Dimension;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
+
+import javax.swing.JTable;
+import javax.swing.JTree;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.tree.DefaultTreeSelectionModel;
+import javax.swing.tree.TreeModel;
 
 
 
@@ -35,14 +38,15 @@ public class JTreeTable extends JTable
     	} 
 	}); 
 	// Make the tree and table row heights the same. 
-	tree.setRowHeight(getRowHeight());
-
+	tree.setRowHeight(getRowHeight());    
+    
+    
 	// Install the tree editor renderer and editor. 
 	setDefaultRenderer(TreeTableModel.class, tree); 
 	setDefaultEditor(TreeTableModel.class, new TreeTableCellEditor());  
 
-	setShowGrid(false);
-	setIntercellSpacing(new Dimension(0, 0)); 	        
+	setShowGrid(true);
+	setIntercellSpacing(new Dimension(1, 1)); 	        
     }
 
     /* Workaround for BasicTableUI anomaly. Make sure the UI never tries to 
@@ -64,7 +68,7 @@ public class JTreeTable extends JTable
 	protected int visibleRow;
    
 	public TreeTableCellRenderer(TreeModel model) { 
-	    super(model); 
+	    super(model);        
 	}
 
 	public void setBounds(int x, int y, int w, int h) {
