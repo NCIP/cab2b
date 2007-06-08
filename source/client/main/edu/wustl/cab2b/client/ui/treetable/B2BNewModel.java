@@ -1,6 +1,6 @@
 package edu.wustl.cab2b.client.ui.treetable;
 
-import java.io.File;
+import java.util.Vector;
 
 
 
@@ -28,7 +28,7 @@ public class B2BNewModel extends AbstractTreeTableModel
     /*
      * Implement the method to return children for this instance of B2BTreeNode
      */
-    protected Object[] getChildren(Object node) 
+    protected Vector <B2BTreeNode> getChildren(Object node) 
     {
     		return ((B2BTreeNode)node).getChildren();
     }
@@ -36,12 +36,12 @@ public class B2BNewModel extends AbstractTreeTableModel
 
     public int getChildCount(Object node) 
     {     	   
-    	return ((B2BTreeNode)node).getChildren().length;
+    	return ((B2BTreeNode)node).getChildren().size();
     }
 
     public Object getChild(Object node, int i) 
     {    
-    	return getChildren(node)[i]; 
+    	return getChildren(node).toArray()[i]; 
     }
 
     // Check if this instance of ICategorialClassRecords has child  
