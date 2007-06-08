@@ -113,7 +113,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 	private Object recordObject[][] = null;
 
 	private Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
-	
+
 	private static int chartIndex = 0;
 
 	public ExperimentStackBox(ExperimentBusinessInterface expBus,
@@ -410,8 +410,6 @@ public class ExperimentStackBox extends Cab2bPanel {
 			hyperlink.setText(hyperlinkName);
 			hyperlink.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					Logger.out.debug("Clicked on expt link");
-					System.out.println(obj.getClass());
 					if (obj instanceof CaB2BPatternFilter) {
 						CaB2BPatternFilter filter = (CaB2BPatternFilter) obj;
 						System.out.println(filter.getPattern().pattern());
@@ -458,7 +456,6 @@ public class ExperimentStackBox extends Cab2bPanel {
 			hyperlink.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent actionEvent) {
 					String linkClicked = actionEvent.getActionCommand();
-					Logger.out.debug("Clicked on " + linkClicked + " link");
 					showChartAction(linkClicked);
 					updateUI();
 				}
@@ -485,22 +482,22 @@ public class ExperimentStackBox extends Cab2bPanel {
 		if (nodeInfo instanceof TreeEntityWrapper) {
 			entityName = ((TreeEntityWrapper) nodeInfo).toString();
 		}
-		
-		//Cab2bChartPanel cab2bChartPanel = null;
+
+		// Cab2bChartPanel cab2bChartPanel = null;
 		final JTabbedPane tabComponent = m_experimentDataCategoryGridPanel
 				.getTabComponent();
 		Cab2bPanel currentChartPanel = m_experimentDataCategoryGridPanel
 				.getCurrentChartPanel();
-		if(currentChartPanel == null) {
+		if (currentChartPanel == null) {
 			Cab2bChartPanel cab2bChartPanel = new Cab2bChartPanel(cab2bTable);
 			cab2bChartPanel.setChartType(linkClicked, entityName);
-			
+
 			final Cab2bPanel newVisualizeDataPanel = new Cab2bPanel();
 			newVisualizeDataPanel.setLayout(new RiverLayout());
 			newVisualizeDataPanel.setName("visualizeDataPanel");
 			newVisualizeDataPanel.setBorder(null);
 			newVisualizeDataPanel.add("hfill vfill ", cab2bChartPanel);
-			
+
 			Cab2bButton closeButton = new Cab2bButton("Close");
 			closeButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent actionEvent) {
@@ -508,14 +505,15 @@ public class ExperimentStackBox extends Cab2bPanel {
 				}
 			});
 			newVisualizeDataPanel.add("br right", closeButton);
-			
+
 			m_experimentDataCategoryGridPanel
 					.setCurrentChartPanel(newVisualizeDataPanel);
-			
+
 			tabComponent.add("Chart" + ++chartIndex, newVisualizeDataPanel);
 			tabComponent.setSelectedComponent(newVisualizeDataPanel);
 		} else {
-			Cab2bChartPanel cab2bChartPanel = (Cab2bChartPanel)currentChartPanel.getComponent(0);
+			Cab2bChartPanel cab2bChartPanel = (Cab2bChartPanel) currentChartPanel
+					.getComponent(0);
 			cab2bChartPanel.setChartType(linkClicked, entityName);
 			tabComponent.setSelectedComponent(currentChartPanel);
 		}
@@ -594,8 +592,6 @@ public class ExperimentStackBox extends Cab2bPanel {
 
 		hyperlink.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-				Logger.out.debug("Clicked on " + actionEvent.getActionCommand()
-						+ " link");
 				Cab2bHyperlink hyperlink = (Cab2bHyperlink) (actionEvent
 						.getSource());
 
@@ -658,9 +654,9 @@ public class ExperimentStackBox extends Cab2bPanel {
 				serviceDetails, dataEntity, m_experimentDataCategoryGridPanel));
 
 		Cab2bPanel servicePanel = new Cab2bPanel();
-		servicePanel.add("br", titlePanel);
-		servicePanel.add("br center hfill vfill", jScrollPane);
-		servicePanel.add("br right", finishButton);
+		servicePanel.add("br left ", titlePanel);
+		servicePanel.add("br center hfill vfill ", jScrollPane);
+		servicePanel.add("br right ", finishButton);
 
 		String displayName = CommonUtils.getFormattedString(requiredEntity
 				.getName());
@@ -695,11 +691,12 @@ public class ExperimentStackBox extends Cab2bPanel {
 			Collections.sort(attributeList, new AttributeInterfaceComparator());
 
 			try {
-                
-                Dimension maxLabelDimension= CommonUtils.getMaximumLabelDimension(attributeList);
+
+				Dimension maxLabelDimension = CommonUtils
+						.getMaximumLabelDimension(attributeList);
 				for (AttributeInterface attribute : attributeList) {
 					JXPanel jxPanel = (JXPanel) SwingUIManager.generateUIPanel(
-							parseFile, attribute, false,maxLabelDimension);
+							parseFile, attribute, false, maxLabelDimension);
 					parameterPanel.add("br", jxPanel);
 				}
 			} catch (CheckedException checkedException) {
