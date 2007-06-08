@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -35,13 +36,15 @@ import edu.wustl.common.util.logger.Logger;
  *
  */
 class MyGlassPane extends JComponent implements ActionListener {
-	Cab2bLabel loggedInUserLabel;
+	
+    ClassLoader loader  = this.getClass().getClassLoader();
+    Cab2bLabel loggedInUserLabel;
 
-	String[] tabsImagesUnPressed = { "resources/images/home_tab.gif",
-			"resources/images/searchdata_tab.gif", "resources/images/experiment_tab.gif" };
+	URL[] tabsImagesUnPressed = { loader.getResource("home_tab.gif"),
+			loader.getResource("searchdata_tab.gif"), loader.getResource("experiment_tab.gif") };
 
-	String[] tabsImagesPressed = { "resources/images/home_MO_tab.gif",
-			"resources/images/searchdata_MO_tab.gif", "resources/images/experiment_MO_tab.gif" };
+	URL[] tabsImagesPressed = { loader.getResource("home_MO_tab.gif"),
+			loader.getResource("searchdata_MO_tab.gif"), loader.getResource("experiment_MO_tab.gif") };
 
 	String[] tabs = { "Home", "Search Data", "Experiment" };
 

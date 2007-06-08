@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 
 import javax.swing.JSplitPane;
-import javax.swing.border.EmptyBorder;
 
 import org.jdesktop.swingx.JXPanel;
 
@@ -27,7 +26,9 @@ import edu.wustl.common.querysuite.queryobject.IExpressionId;
 
 public class ChooseCategoryPanel extends ContentPanel
 {
+    private AbstractCategorySearchPanel panel;
 	
+        
 	/**
 	 * Constructor
 	 *
@@ -55,10 +56,10 @@ public class ChooseCategoryPanel extends ContentPanel
 		 * WEST or for CENTER, else the other component takes the whole
 		 * place
 		 * 
-		 */		
-		box.setMinimumSize(new Dimension(263,122));
+		 */
+        box.setMinimumSize(new Dimension(263,122));
 		box.setBorder(null);
-		ChooseCategoryCategorySearchPanel panel = new ChooseCategoryCategorySearchPanel(this);
+		panel = new ChooseCategoryCategorySearchPanel(this);
 		panel.setBorder(null);
 		JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,box,panel);
 		pane.setDividerSize(4);
@@ -140,6 +141,17 @@ public class ChooseCategoryPanel extends ContentPanel
 	   panel.setQueryObject(query);
 	   
    }
+
+    @Override
+    public AbstractCategorySearchPanel getSearchPanel() {
+       return panel;
+    }
+    
+    @Override
+    public void setSearchPanel(AbstractCategorySearchPanel panel) {
+        this.panel = panel;
+               
+    }
 }
 
 

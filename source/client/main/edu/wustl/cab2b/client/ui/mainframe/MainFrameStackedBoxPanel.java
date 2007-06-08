@@ -50,7 +50,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
         mySearchQueriesPanel.setLayout(new RiverLayout(10, 5));
         mySearchQueriesPanel.setPreferredSize(new Dimension(250, 150));
         mySearchQueriesPanel.setOpaque(false);
-        stackedBox.addBox("My Search Queries", mySearchQueriesPanel, "resources/images/mysearchqueries_icon.gif");
+        stackedBox.addBox("My Search Queries", mySearchQueriesPanel, "mysearchqueries_icon.gif");
 
         // the profiling results
         popularSearchCategoryPanel = new Cab2bPanel();
@@ -58,14 +58,14 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
         popularSearchCategoryPanel.setOpaque(false);
         popularSearchCategoryPanel.setPreferredSize(new Dimension(250, 150));
         stackedBox.addBox("Popular Categories", popularSearchCategoryPanel,
-                          "resources/images/popularcategories_icon.gif");
+                          "popularcategories_icon.gif");
 
         // the saved snapshots pane
         myExperimentsPanel = new Cab2bPanel();
         myExperimentsPanel.setLayout(new RiverLayout(10, 5));
         myExperimentsPanel.setPreferredSize(new Dimension(250, 150));
         myExperimentsPanel.setOpaque(false);
-        stackedBox.addBox("My Experiments", myExperimentsPanel, "resources/images/arrow_icon_mo.gif");
+        stackedBox.addBox("My Experiments", myExperimentsPanel, "arrow_icon_mo.gif");
 
         stackedBox.setPreferredSize(new Dimension(250, 500));
         stackedBox.setMinimumSize(new Dimension(250, 500));

@@ -7,6 +7,7 @@ package edu.wustl.cab2b.client.ui.main;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class ParseXMLFile
 	/**
 	 * XML file (to be parsed) with complete path.
 	 */
-	private final String xmlFileName = "conf/dynamicUI.xml";
+	private final String xmlFileName = "dynamicUI.xml";
 	
 	/**
 	 * Variables declared by Pratibha
@@ -52,6 +53,7 @@ public class ParseXMLFile
 	 */
 	protected ParseXMLFile() throws CheckedException 
 	{
+        
 		Document doc = parseFile(xmlFileName);
 		Node root = doc.getDocumentElement();
 		readDynamicUIComponents(root);
@@ -197,10 +199,11 @@ public class ParseXMLFile
 		{
 			throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.UN_XXXX); // TODO put proper error code.
 		}
-		File sourceFile = new File(fileName);
+        		
 		try 
 		{
-			doc = docBuilder.parse(sourceFile);
+            InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+			doc = docBuilder.parse(in);
 		}
 		catch (SAXException e) 
 		{

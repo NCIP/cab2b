@@ -49,6 +49,8 @@ public class SearchCenterPanel extends Cab2bPanel
 	private int m_iCurrentlySelectedCard = 0;
 	
 	private AddLimitPanel addLimitPanel;
+    
+    private ChooseCategoryPanel chooseCategPanel; 
 	
 	/**
 	 * HashMap of identifiers. This would be used by the navigation panel to
@@ -122,7 +124,7 @@ public class SearchCenterPanel extends Cab2bPanel
 		this.setLayout(new CardLayout());
 		
 		/* First card initialization.*/
-		ChooseCategoryPanel chooseCategPanel = new ChooseCategoryPanel();
+		chooseCategPanel = new ChooseCategoryPanel();
 		this.add(chooseCategPanel,this.m_strIdentifierChooseCateglbl);
 		chooseCategPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 		
@@ -159,6 +161,26 @@ public class SearchCenterPanel extends Cab2bPanel
 	{
 		addLimitPanel.resetPanel();
 	}
+    
+    
+    /**
+     * get the choose category panel instance 
+     * @return the choose category panel instance
+     */
+    public ChooseCategoryPanel getChooseCategoryPanel()
+    {
+        return chooseCategPanel;
+    }
+
+    
+    /**
+     * get the add limit panel instance 
+     * @return the add limit panel instance
+     */
+    public AddLimitPanel getAddLimitPanel()
+    {
+        return addLimitPanel;
+    }
 	
 }
 	

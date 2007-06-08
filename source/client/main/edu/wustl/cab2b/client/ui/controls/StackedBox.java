@@ -34,6 +34,7 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.net.URL;
 
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -137,8 +138,8 @@ public class StackedBox extends Cab2bPanel implements Scrollable
 		toggleAction.putValue(JXCollapsiblePane.EXPAND_ICON, UIManager
 				.getIcon("Tree.collapsedIcon"));
 		
-		
-		ImageIcon imageIcon = new ImageIcon(iconFile);
+		URL url  = this.getClass().getClassLoader().getResource("mysearchqueries_icon.gif");
+		ImageIcon imageIcon = new ImageIcon(url);
 		
 		StackTitlePanel stackTitlePanel = new StackTitlePanel(title, imageIcon, toggleAction);
 		stackTitlePanel.setBorder(new CustomizableBorder(new Insets(0,0,1,0),new Color(125,146,147)));

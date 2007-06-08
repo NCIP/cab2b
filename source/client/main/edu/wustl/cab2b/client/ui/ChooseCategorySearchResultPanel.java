@@ -77,6 +77,18 @@ public class ChooseCategorySearchResultPanel extends AbstractSearchResultPanel
 			(mainSearchPanel.getNavigationPanel()).showCard(true);
 			/* Get the panel corresponding to the currently selcted card and refresh it.*/
 			AddLimitPanel addLimitPanel = (AddLimitPanel)(mainSearchPanel.getCenterPanel().getSelectedCard());
+            
+            //NOT WORKING !! : Juber
+			//set the search panel of add limit panel to choose category's search panel
+            if (container instanceof SearchCenterPanel) {
+                SearchCenterPanel searchCenterPanel = (SearchCenterPanel) container;
+                searchCenterPanel.getAddLimitPanel().setSearchPanel(
+                                                                    searchCenterPanel.getChooseCategoryPanel().getSearchPanel());
+                searchCenterPanel.getAddLimitPanel().getSearchPanel().setVisible(true);
+
+                int a = 1;
+            }
+
 			addLimitPanel.refresh(componentPanel,strClassName);	
 		}
 	}

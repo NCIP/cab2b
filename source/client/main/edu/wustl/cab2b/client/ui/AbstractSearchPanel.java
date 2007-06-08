@@ -274,5 +274,16 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
      * 
      */
     public abstract void addTextField();
+    
+    
+    /**
+     * @author Juber Patel
+     * get the result panel instance of this class
+     * @return the result panel instance of this class
+     */
+    public AbstractSearchResultPanel getSearchResultPanel() {
+        return m_srhResultPanel;
+    }
+
 
 }

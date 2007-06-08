@@ -48,7 +48,6 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
 
     JButton addNewButton;
 
-    //private Icon customLeafIcon = new ImageIcon("images/experiment.ico");
     ExperimentDetailsPanel expDetailsPanel;
 
     public ExperimentHierarchyPanel(ExperimentDetailsPanel newExpDetailsPanel) {
@@ -57,7 +56,7 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
     }
 
     private void initGUI() {
-        Logger.out.debug("Inside experiment hirarchy model");
+        //Logger.out.info("Inside experiment hirarchy model");
         this.setLayout(new RiverLayout());
         Vector dataVector = null;
 
@@ -86,22 +85,19 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
         expTree = (JXTree) treeGenerator.createTree(dataVector,
                                                     edu.wustl.common.util.global.Constants.EXPERIMETN_TREE_ID,
                                                     true);
-        
-        
+
         expTree.setCellRenderer(new MyRenderer());
         expTree.setRolloverEnabled(true);
         expTree.setHighlighters(new HighlighterPipeline());
-        
-        
-        
+
         //setting tree node name
         expTree.setSelectionRow(0);
-        ExperimentTreeNode treeNodeUserObj = (ExperimentTreeNode)((DefaultMutableTreeNode) expTree.getSelectionPath().getPathComponent(0)).getUserObject();
-        treeNodeUserObj.setName("My Projects");  
+        ExperimentTreeNode treeNodeUserObj = (ExperimentTreeNode) ((DefaultMutableTreeNode) expTree.getSelectionPath().getPathComponent(
+                                                                                                                                        0)).getUserObject();
+        treeNodeUserObj.setName("My Projects");
         expTree.setSelectionRow(-1);
         expTree.updateUI();
 
-    
         if (expTree.getRowCount() >= 2) {
             expTree.setSelectionRow(1);
             expTree.expandRow(1);
@@ -111,7 +107,7 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
                 if (selectedExpTreeNode != null) {
                     expDetailsPanel.refreshDetails(selectedExpTreeNode);
                 }
-                Logger.out.debug("ExperimentTreeNode id :" + selectedExpTreeNode.getIdentifier());
+                Logger.out.info("ExperimentTreeNode id :" + selectedExpTreeNode.getIdentifier());
             }
         }
         expTree.addTreeSelectionListener(new TreeSelectionListener() {
@@ -120,19 +116,19 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
                 JXTree tree = (JXTree) tse.getSource();
 
                 Object userObject = ((DefaultMutableTreeNode) tree.getLastSelectedPathComponent()).getUserObject();
-                Logger.out.debug("userObject ==>> " + userObject.getClass());
+                Logger.out.info("userObject ==>> " + userObject.getClass());
                 if (userObject instanceof ExperimentTreeNode) {
                     ExperimentTreeNode selectedExpTreeNode = (ExperimentTreeNode) userObject;
                     if (selectedExpTreeNode != null) {
                         expDetailsPanel.refreshDetails(selectedExpTreeNode);
                     }
-                    Logger.out.debug("ExperimentTreeNode id :" + selectedExpTreeNode.getIdentifier());
+                    Logger.out.info("ExperimentTreeNode id :" + selectedExpTreeNode.getIdentifier());
                 } else if (userObject instanceof Experiment) {
-                    Logger.out.debug("Experiment clicked, do some action");
+                    Logger.out.info("Experiment clicked, do some action");
                     if (expDetailsPanel != null)
                         expDetailsPanel.refreshDetails((Experiment) userObject);
                 } else if (userObject instanceof ExperimentGroup) {
-                    Logger.out.debug("ExperimentGroup clicked, do some action");
+                    Logger.out.info("ExperimentGroup clicked, do some action");
                     if (expDetailsPanel != null)
                         expDetailsPanel.refreshDetails((ExperimentGroup) userObject);
                 }
@@ -160,13 +156,15 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
 
         private static final long serialVersionUID = 8552472456633962811L;
 
-        Icon expIcon = new ImageIcon("resources/images/experiment_small.gif");
+        ClassLoader loader = this.getClass().getClassLoader();
 
-        Icon expEmpty = new ImageIcon("resources/images/empty_folder.ico");
+        Icon expIcon = new ImageIcon(loader.getResource("experiment_small.gif"));
 
-        Icon expGrpOpenIcon = new ImageIcon("resources/images/folder_open.ico");
+        Icon expEmpty = new ImageIcon(loader.getResource("empty_folder.ico"));
 
-        Icon expGrpClosedIcon = new ImageIcon("resources/images/folder_closed.ico");
+        Icon expGrpOpenIcon = new ImageIcon(loader.getResource("folder_opened.ico"));
+
+        Icon expGrpClosedIcon = new ImageIcon(loader.getResource("folder_closed.ico"));
 
         public MyRenderer() {
 

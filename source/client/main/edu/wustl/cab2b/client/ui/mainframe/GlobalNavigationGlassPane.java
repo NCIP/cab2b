@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -41,11 +42,13 @@ import edu.wustl.common.util.logger.Logger;
 class GlobalNavigationGlassPane extends JComponent implements ActionListener {
 	Cab2bLabel loggedInUserLabel;
 
-	private String[] tabsImagesUnPressed = { "resources/images/home_tab.gif",
-			"resources/images/searchdata_tab.gif", "resources/images/experiment_tab.gif" };
+    private ClassLoader loader = this.getClass().getClassLoader();
+    
+	private URL[] tabsImagesUnPressed = { loader.getResource("home_tab.gif"),
+			loader.getResource("searchdata_tab.gif"), loader.getResource("experiment_tab.gif") };
 
-	private String[] tabsImagesPressed = { "resources/images/home_MO_tab.gif",
-			"resources/images/searchdata_MO_tab.gif", "resources/images/experiment_MO_tab.gif" };
+	private URL[] tabsImagesPressed = { loader.getResource("home_MO_tab.gif"),
+			loader.getResource("searchdata_MO_tab.gif"), loader.getResource("experiment_MO_tab.gif") };
 
 	private JButton[] tabButtons = new Cab2bButton[3];
 

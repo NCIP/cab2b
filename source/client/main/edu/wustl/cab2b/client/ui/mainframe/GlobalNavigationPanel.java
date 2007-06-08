@@ -56,12 +56,14 @@ public class GlobalNavigationPanel extends Cab2bPanel {
 	 * Initialize UI with RepeatIcon and GlobalNavigationGlassPane
 	 */
 	private void initGUIWithGB() {
+        ClassLoader loader = this.getClass().getClassLoader();
+        
 		JPanel cab2bPanel = new JPanel(new BorderLayout());
-		Icon logoIcon = new ImageIcon("resources/images/r_1p.gif");
+		Icon logoIcon = new ImageIcon(loader.getResource("r_1p.gif"));
 		RepeatIcon repeatIcon = new RepeatIcon(logoIcon, 0, 648);
 		JLabel labelMiddle = new JLabel(repeatIcon);
-		Icon iconLeft = new ImageIcon("resources/images/banner_img1.gif");
-		Icon iconRight = new ImageIcon("resources/images/banner_img3.gif");
+		Icon iconLeft = new ImageIcon(loader.getResource("banner_img1.gif"));
+		Icon iconRight = new ImageIcon(loader.getResource("banner_img3.gif"));
 		JLabel labelLeft = new JLabel(iconLeft);
 		JLabel labelRight = new JLabel(iconRight);
 		cab2bPanel.add(labelLeft, BorderLayout.WEST);

@@ -27,5 +27,8 @@ public abstract class ContentPanel extends Cab2bPanel
 	
 	public abstract void setSearchResultPanel(AbstractSearchResultPanel searchResultPanel);
 	
+    
+    public abstract void setSearchPanel(AbstractCategorySearchPanel panel);
+    public abstract AbstractCategorySearchPanel getSearchPanel();
 
 }

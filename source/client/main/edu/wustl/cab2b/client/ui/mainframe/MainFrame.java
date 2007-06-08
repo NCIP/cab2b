@@ -5,11 +5,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GradientPaint;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.geom.Point2D;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.MissingResourceException;
 import java.util.Vector;
@@ -18,7 +18,6 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
@@ -68,7 +67,7 @@ public class MainFrame extends JXFrame {
     /** Resource bundle name for getting jndi properties. */
     public static String jndiResourceFileName = "jndi";
 
-    public static String cab2bLogoName = "resources/images/b2b_logo_image.gif";
+    public static String cab2bLogoName = "b2b_logo_image.gif";
 
     /**
      * Everything related GUI's containers and its components size is relative
@@ -135,7 +134,8 @@ public class MainFrame extends JXFrame {
      */
     private void initGUI() {
         setExtendedState(JXFrame.MAXIMIZED_BOTH);
-        Image im = Toolkit.getDefaultToolkit().getImage(cab2bLogoName);
+        URL url = this.getClass().getClassLoader().getResource("b2b_logo_image.gif");
+        Image im = Toolkit.getDefaultToolkit().getImage(url);
         this.setIconImage(im);
         this.setLayout(new BorderLayout());
 
@@ -364,13 +364,12 @@ public class MainFrame extends JXFrame {
         progressBar.setMaximum(100);
         progressBar.setValue(0);
         progressBar.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        
+
         progressBarLabel = new JLabel(" Launching caB2B client....");
         progressBarLabel.setForeground(Color.WHITE);
         progressBarLabel.setPreferredSize(new Dimension(imageX, labelY));
         String fontFamily = progressBarLabel.getFont().getFamily();
         progressBarLabel.setFont(new Font(fontFamily, Font.PLAIN, 14));
-        
 
         Image backgroundImage = new ImageIcon("resources/images/progress_bar.gif").getImage();
         BackgroundImagePanel imagePanel = new BackgroundImagePanel(backgroundImage);

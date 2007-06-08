@@ -59,6 +59,7 @@ public class AddLimitSearchPanel extends AbstractSearchPanel
 	
 	
 	/**
+     * 
 	 * The abstract method implementation from the base class returns an
 	 * instance of {@link AddLimitSearchResultPanel}
 	 * 
@@ -73,6 +74,10 @@ public class AddLimitSearchPanel extends AbstractSearchPanel
 	 */
 	public AbstractSearchResultPanel getSearchResultPanel(ContentPanel addLimitPanel, Set dummySrhResult)
 	{
+        //get the search result panel used by the choose category panel
+        
+        
+        
 		return  new AddLimitSearchResultPanel(addLimitPanel,dummySrhResult);
 	}
 	

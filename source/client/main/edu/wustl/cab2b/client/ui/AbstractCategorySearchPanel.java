@@ -71,6 +71,27 @@ public abstract class AbstractCategorySearchPanel extends Cab2bPanel
 	 *            refreshed for the appropritate event.
 	 */
 	public abstract AbstractSearchPanel getSearchPanel(ContentPanel addLimitPanel);
-	
-
+    
+    
+    
+    /**
+     * Juber Patel:
+     * return the instance of {@link AbstractSearchPanel} stored in this class
+     * @return the instance of {@link AbstractSearchPanel} stored in this class
+     */
+    public AbstractSearchPanel getSearchPanel()
+    {
+        return m_searchPanel;
+    }
+    
+    
+    /**
+     * set the search panel for this class
+     * @param searchPanel
+     */
+    public void setSearchPanel(AbstractSearchPanel searchPanel)
+    {
+        m_searchPanel = searchPanel;
+    }
+    
 }

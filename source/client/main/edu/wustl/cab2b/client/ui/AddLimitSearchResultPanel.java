@@ -47,6 +47,7 @@ public class AddLimitSearchResultPanel extends AbstractSearchResultPanel
 	 */
 	public void performAction(JXPanel[] componentPanel, String strClassName)
     {
+        
         this.m_addLimitPanel.refresh(componentPanel, strClassName);
     }
 	
