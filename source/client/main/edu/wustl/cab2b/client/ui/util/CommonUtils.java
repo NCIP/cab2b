@@ -294,6 +294,9 @@ public class CommonUtils {
 
 		return splitStrings;
 	}
+    /**
+     * Utility method to count upper case characters in the String
+     */
 
 	static int countUpperCaseLetters(String str) {
 		/*
@@ -360,7 +363,7 @@ public class CommonUtils {
 		return returner;
 	}
 
-	protected static String getFormattedString(String[] splitStrings) {
+	public static String getFormattedString(String[] splitStrings) {
 		String returner = "";
 		for (int i = 0; i < splitStrings.length; i++) {
 			String str = splitStrings[i];
