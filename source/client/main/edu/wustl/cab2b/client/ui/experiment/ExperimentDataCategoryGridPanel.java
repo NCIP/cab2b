@@ -16,9 +16,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,11 +30,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableColumn;
+import javax.swing.text.TableView;
 
 import org.jdesktop.swingx.JXTableHeader;
 import org.jdesktop.swingx.LinkRenderer;
@@ -47,6 +52,7 @@ import edu.common.dynamicextensions.entitymanager.EntityRecordInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
 import edu.wustl.cab2b.client.ui.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
+import edu.wustl.cab2b.client.ui.controls.Cab2bComboBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -69,6 +75,7 @@ import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.DataType;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * This class displays the experiment table. Also provides filtering tool for
@@ -115,9 +122,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	 */
 	private Cab2bTable analysisTable;
 
-	final public String[] ANALYSIS_TABLE_HEADERS = new String[] {
-			"Data Category", "Analysis Type", "Date", "Status" 
-	};
+	final public String[] ANALYSIS_TABLE_HEADERS = new String[] { "Data Category", "Analysis Type",
+			"Date", "Status" };
 
 	private Vector tableColumnVector;
 
@@ -137,6 +143,12 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	private EntityInterface dataCategoryEntity;
 
 	private String dataCategoryTitle;
+
+	private Cab2bLabel filterLabel;
+
+	private Cab2bComboBox combo;
+	
+	public static Map<String,Integer> indexToName = new HashMap<String,Integer>();
 
 	public ExperimentDataCategoryGridPanel(ExperimentOpenPanel parent) {
 		this(new Vector(), new Vector());
@@ -219,8 +231,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		return vector;
 	}
 
-	public ExperimentDataCategoryGridPanel(Vector columnVector,
-			Vector dataRecordVector) {
+	public ExperimentDataCategoryGridPanel(Vector columnVector, Vector dataRecordVector) {
 		tableColumnVector = columnVector;
 		tableDataRecordVector = dataRecordVector;
 		clearMap();
@@ -230,12 +241,10 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	/**
 	 * Building/refreshing the table
 	 */
-	public void refreshTable(Object columnVector[],
-			Object[][] dataRecordVector,
+	public void refreshTable(Object columnVector[], Object[][] dataRecordVector,
 			Map<String, AttributeInterface> attributeMap) {
 		this.removeAll();
-		table = new ExperimentTableModel(false, dataRecordVector, columnVector,
-				attributeMap);
+		table = new ExperimentTableModel(false, dataRecordVector, columnVector, attributeMap);
 		table.addFocusListener(new TableFocusListener(this.parent));
 		refreshUI();
 		updateUI();
@@ -250,19 +259,18 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	 *            array of record values
 	 */
 	public void refreshAnalysisTable(Object[][] dataRecords) {
-		Experiment selectedExperiment = ((ExperimentOpenPanel) this.getParent()
-				.getParent()).getSelectedExperiment();
+		Experiment selectedExperiment = ((ExperimentOpenPanel) this.getParent().getParent())
+				.getSelectedExperiment();
 		Cab2bLabel experimentLabel = new Cab2bLabel("Analysis performed for '"
 				+ selectedExperiment.getName() + "'");
-		Font textFont = new Font(experimentLabel.getFont().getName(),
-				Font.BOLD, experimentLabel.getFont().getSize() + 2);
+		Font textFont = new Font(experimentLabel.getFont().getName(), Font.BOLD, experimentLabel
+				.getFont().getSize() + 2);
 		experimentLabel.setFont(textFont);
 
 		analysisDataPanel.removeAll();
 		analysisDataPanel.add("br br", experimentLabel);
 
-		analysisTable = new Cab2bTable(false, dataRecords,
-				ANALYSIS_TABLE_HEADERS);
+		analysisTable = new Cab2bTable(false, dataRecords, ANALYSIS_TABLE_HEADERS);
 		analysisTable.setRowSelectionAllowed(false);
 		analysisTable.setColumnMargin(10);
 
@@ -276,8 +284,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		tableColumn.setMaxWidth(75);
 
 		JScrollPane jScrollPane = new JScrollPane();
-		jScrollPane.getViewport().add(analysisTable,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+		jScrollPane.getViewport().add(analysisTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		analysisDataPanel.add("br center hfill vfill", jScrollPane);
 
@@ -287,10 +294,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		tabComponent.setSelectedComponent(analysisDataPanel);
 
 		TableLinkAction myLinkAction = new TableLinkAction();
-		analysisTable.getColumn(1).setCellRenderer(
-				new LinkRenderer(myLinkAction));
-		analysisTable.getColumn(1)
-				.setCellEditor(new LinkRenderer(myLinkAction));
+		analysisTable.getColumn(1).setCellRenderer(new LinkRenderer(myLinkAction));
+		analysisTable.getColumn(1).setCellEditor(new LinkRenderer(myLinkAction));
 
 		updateUI();
 	}
@@ -304,12 +309,12 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		tabComponent = new JTabbedPane();
 		tabComponent.setBorder(null);
 		tabComponent.addChangeListener(new TabSelectListner(this));
-
+		filterLabel = new Cab2bLabel("Apply Filter:");
+		filterLabel.setFont(new Font("Arial", Font.BOLD, 13));
 		experimentDataPanel = new Cab2bPanel();
 		experimentDataPanel.setName("experimentDataPanel");
 		experimentDataPanel.setBorder(null);
-		table = new ExperimentTableModel(false, tableDataRecordVector,
-				tableColumnVector);
+		table = new ExperimentTableModel(false, tableDataRecordVector, tableColumnVector);
 		table.addFocusListener(new TableFocusListener(this.parent));
 
 		analysisDataPanel = new Cab2bPanel();
@@ -318,12 +323,13 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
 		saveDataCategoryButton = new Cab2bButton("Save Data Category");
 		saveDataCategoryButton.setPreferredSize(new Dimension(160, 22));
-		saveDataCategoryButton
-				.addActionListener(new SaveCategoryActionListener(this));
+		saveDataCategoryButton.addActionListener(new SaveCategoryActionListener(this));
 
 		prevButton = new Cab2bButton("Previous");
 		prevButton.setEnabled(false);
 		this.setBorder(null);
+
+		filterLabel.setPreferredSize(new Dimension(100, 25));
 
 		refreshUI();
 	}
@@ -332,9 +338,81 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	 * This method is common among the different UI initialization methods
 	 */
 	private void refreshUI() {
+		int columnCount = table.getModel().getColumnCount();
+		combo = new Cab2bComboBox();
+		for (int i = 0; i < columnCount; i++) {
+			String colName=table.getModel().getColumnName(i);
+			combo.addItem(colName);
+			indexToName.put(colName,i);
+		}
+		combo.setPreferredSize(null);
+		combo.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent ie) {
+				if (ie.getStateChange() == ItemEvent.SELECTED) {
+					String columnName = ie.getItem().toString();
+					int columnIndex=indexToName.get(columnName);
+					CaB2BFilterInterface oldFilter = null;
+					if (filterMap.containsKey(columnName)) {
+						oldFilter = filterMap.get(columnName);
+					}
+
+					Cab2bFilterPopup filterPopup = null;
+					AttributeInterface attribute = table.getColumnAttribute(columnName);
+					if (Utility.isEnumerated(attribute)) {
+						Collection<PermissibleValueInterface> permissibleValueCollection = Utility
+								.getPermissibleValues(attribute);
+						filterPopup = new EnumeratedFilterPopUp(columnName, columnIndex,
+								permissibleValueCollection, (CaB2BPatternFilter) oldFilter);
+					} else {
+						DataType dataType = Utility.getDataType(attribute
+								.getAttributeTypeInformation());
+						// If the clicked column is of type String.
+						if (DataType.String == dataType) {
+							filterPopup = new PatternPopup((CaB2BPatternFilter) oldFilter,
+									columnName, columnIndex);
+							// If the clicked column is of type int/long
+						} else if (DataType.Long == dataType || DataType.Integer == dataType
+								|| DataType.Double == dataType || DataType.Float == dataType) {
+							int len = table.getRowCount();
+							double columnVal[] = null;
+							if (oldFilter == null) {
+								columnVal = new double[len];
+								for (int i = 0; i < len; i++) {
+									String val = (String) table.getValueAt(i, columnIndex);
+									if (val != null) {
+										double f = Double.parseDouble(val);
+										columnVal[i] = f;
+									}
+								}
+							}
+
+							filterPopup = new FilterComponent("Range Filter", columnVal,
+									columnName, columnIndex, (RangeFilter) oldFilter);
+						}
+					}
+					filterPopup.showInDialog();
+					applyFilter();
+				}
+			}
+
+			public void applyFilter() {
+				int len = filterMap.size();
+				Filter[] filters = new Filter[len];
+				int i = 0;
+				for (CaB2BFilterInterface filter : filterMap.values()) {
+					filters[i] = (Filter) filter.copy();
+					i++;
+				}
+				table.setFilters(new FilterPipeline(filters));
+			}
+		});
 		JScrollPane jScrollPane = addTableToScrollPanel(table);
 		experimentDataPanel.removeAll();
 		experimentDataPanel.setBorder(null);
+		experimentDataPanel.add(new JLabel(""));
+		experimentDataPanel.add("tab ", filterLabel);
+		experimentDataPanel.add(combo);
+		experimentDataPanel.add("br", new JLabel(""));
 		experimentDataPanel.add("hfill vfill", jScrollPane);
 
 		Cab2bPanel northPanel = new Cab2bPanel();
@@ -344,7 +422,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
 		tabComponent.add("Experiment Data", experimentDataPanel);
 		this.add(tabComponent, BorderLayout.CENTER);
-
+		// this.add(filterbutton, BorderLayout.CENTER);
 		Cab2bPanel bottomPanel = new Cab2bPanel();
 		bottomPanel.add(prevButton);
 		bottomPanel.setBorder(null);
@@ -361,14 +439,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	 */
 	private JScrollPane addTableToScrollPanel(Cab2bTable table) {
 		table.setColumnSelectionAllowed(true);
-		MouseListener mouseListener = new myMouseListener();
-		// add the listener specifically to the header
-		table.addMouseListener(mouseListener);
-		table.getTableHeader().addMouseListener(mouseListener);
-
 		JScrollPane jScrollPane = new JScrollPane();
-		jScrollPane.getViewport().add(table,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+		jScrollPane.getViewport().add(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		jScrollPane.setBorder(null);
 		return jScrollPane;
@@ -382,30 +454,27 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	 */
 	final private void addAnalysisViewTabPanel(
 			UserObjectWrapper<EntityRecordResultInterface> userObjectWrapper) {
-		EntityRecordResultInterface entityRecordResult = userObjectWrapper
-				.getUserObject();
+		EntityRecordResultInterface entityRecordResult = userObjectWrapper.getUserObject();
 		String tabTitle = userObjectWrapper.getDisplayName();
 
-		Cab2bPanel analysisView = (Cab2bPanel) CommonUtils.getComponentByName(
-				tabComponent, tabTitle);
+		Cab2bPanel analysisView = (Cab2bPanel) CommonUtils.getComponentByName(tabComponent,
+				tabTitle);
 		if (analysisView == null) {
 			List<AbstractAttributeInterface> headerList = entityRecordResult
 					.getEntityRecordMetadata().getAttributeList();
 			String[] columnNames = generateColumnNames(headerList);
 
 			// getting actual records
-			List<EntityRecordInterface> recordList = entityRecordResult
-					.getEntityRecordList();
+			List<EntityRecordInterface> recordList = entityRecordResult.getEntityRecordList();
 			Object[][] dataRecordArray = generateGridData(recordList);
 
 			final Cab2bPanel analysisViewPanel = new Cab2bPanel();
 			analysisViewPanel.setName(tabTitle);
 			analysisViewPanel.setBorder(null);
 
-			ExperimentTableModel analysisDataTable = new ExperimentTableModel(
-					false, dataRecordArray, columnNames);
-			analysisDataTable.addFocusListener(new TableFocusListener(
-					this.parent));
+			ExperimentTableModel analysisDataTable = new ExperimentTableModel(false,
+					dataRecordArray, columnNames);
+			analysisDataTable.addFocusListener(new TableFocusListener(this.parent));
 			JScrollPane jScrollPane = addTableToScrollPanel(analysisDataTable);
 			analysisViewPanel.add("br br center hfill vfill", jScrollPane);
 
@@ -430,15 +499,13 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	 *            list of the attribute list
 	 * @return array of column names
 	 */
-	private String[] generateColumnNames(
-			List<AbstractAttributeInterface> headerList) {
+	private String[] generateColumnNames(List<AbstractAttributeInterface> headerList) {
 		String[] columnNames = new String[headerList.size()];
 		Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
 		int i = 0;
 		for (AbstractAttributeInterface abstractAttribute : headerList) {
 			AttributeInterface attribute = (AttributeInterface) abstractAttribute;
-			columnNames[i] = CommonUtils
-					.getFormattedString(attribute.getName());
+			columnNames[i] = CommonUtils.getFormattedString(attribute.getName());
 			attributeMap.put(columnNames[i++], attribute);
 		}
 
@@ -474,87 +541,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	}
 
 	/**
-	 * Action listener for the header click for filteration purpose.
-	 */
-	class myMouseListener extends MouseAdapter {
-		public void mouseReleased(MouseEvent e) {
-			showPopup(e);
-		}
-
-		private void showPopup(MouseEvent e) {
-			Object obj = e.getComponent();
-
-			if (obj instanceof JXTableHeader) {
-				int columnIndex = ((JXTableHeader) e.getComponent())
-						.columnAtPoint(e.getPoint());
-				String columnName = table.getColumnName(columnIndex);
-				CaB2BFilterInterface oldFilter = null;
-				if (filterMap.containsKey(columnName)) {
-					oldFilter = filterMap.get(columnName);
-				}
-
-				Cab2bFilterPopup filterPopup = null;
-				AttributeInterface attribute = table
-						.getColumnAttribute(columnName);
-				if (Utility.isEnumerated(attribute)) {
-					Collection<PermissibleValueInterface> permissibleValueCollection = Utility
-							.getPermissibleValues(attribute);
-					filterPopup = new EnumeratedFilterPopUp(columnName,
-							columnIndex, permissibleValueCollection,
-							(CaB2BPatternFilter) oldFilter);
-				} else {
-					DataType dataType = Utility.getDataType(attribute
-							.getAttributeTypeInformation());
-					// If the clicked column is of type String.
-					if (DataType.String == dataType) {
-						filterPopup = new PatternPopup(
-								(CaB2BPatternFilter) oldFilter, columnName,
-								columnIndex);
-						// If the clicked column is of type int/long
-					} else if (DataType.Long == dataType
-							|| DataType.Integer == dataType
-							|| DataType.Double == dataType
-							|| DataType.Float == dataType) {
-						int len = table.getRowCount();
-						double columnVal[] = null;
-						if (oldFilter == null) {
-							columnVal = new double[len];
-							for (int i = 0; i < len; i++) {
-								String val = (String) table.getValueAt(i,
-										columnIndex);
-								if (val != null) {
-									double f = Double.parseDouble(val);
-									columnVal[i] = f;
-								}
-							}
-						}
-
-						filterPopup = new FilterComponent("Range Filter",
-								columnVal, columnName, columnIndex,
-								(RangeFilter) oldFilter);
-					}
-				}
-				filterPopup.showInDialog();
-				applyFilter();
-			}
-		}
-
-		/**
-		 * Applying filter according to the the values in the map
-		 */
-		public void applyFilter() {
-			int len = filterMap.size();
-			Filter[] filters = new Filter[len];
-			int i = 0;
-			for (CaB2BFilterInterface filter : filterMap.values()) {
-				filters[i] = (Filter) filter.copy();
-				i++;
-			}
-			table.setFilters(new FilterPipeline(filters));
-		}
-	}
-
-	/**
 	 * Make list of attributes of the parent entity as well as a 2D array of
 	 * data and pass it to the server to make new entity this method is called
 	 * by the {@link SaveDataCategoryPanel} to save a subset of of a datalist as
@@ -569,8 +555,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		MainFrame.setStatus(MainFrame.Status.BUSY);
 		MainFrame.setStatusMessage("saving data category '" + title + "'");
 
-		CustomSwingWorker swingWorker = new CustomSwingWorker(
-				MainFrame.openExperimentWelcomePanel) {
+		CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.openExperimentWelcomePanel) {
 			protected void doNonUILogic() throws RuntimeException {
 				// get the columns, including hidden columns. Not well
 				// documented
@@ -594,23 +579,21 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 						// JXTable.getValueAt() works only on visible columns
 						// using TableModel.getValueAt() requires converting row
 						// view index to row model index
-						data[i][j] = table.getModel().getValueAt(
-								table.convertRowIndexToModel(i), j);
+						data[i][j] = table.getModel()
+								.getValueAt(table.convertRowIndexToModel(i), j);
 					}
 					// Logger.out.debug(table.getValueAt(i, 4).toString());
 				}
 
 				// make a call to the server
 				ExperimentBusinessInterface bi = (ExperimentBusinessInterface) CommonUtils
-						.getBusinessInterface(EjbNamesConstants.EXPERIMENT,
-								ExperimentHome.class);
+						.getBusinessInterface(EjbNamesConstants.EXPERIMENT, ExperimentHome.class);
 
 				try {
-					dataCategoryEntity = bi.saveDataCategory(dataCategoryTitle,
-							attributes, data);
+					dataCategoryEntity = bi.saveDataCategory(dataCategoryTitle, attributes, data);
 				} catch (RemoteException e) {
-					CommonUtils.handleException(e, MainFrame.newWelcomePanel,
-							true, true, true, false);
+					CommonUtils.handleException(e, MainFrame.newWelcomePanel, true, true, true,
+							false);
 				}
 			}
 
@@ -627,14 +610,12 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	class SaveCategoryActionListener implements ActionListener {
 		private ExperimentDataCategoryGridPanel gridPanel;
 
-		public SaveCategoryActionListener(
-				ExperimentDataCategoryGridPanel gridPanel) {
+		public SaveCategoryActionListener(ExperimentDataCategoryGridPanel gridPanel) {
 			this.gridPanel = gridPanel;
 		}
 
 		public void actionPerformed(ActionEvent event) {
-			SaveDataCategoryPanel saveDialogPanel = new SaveDataCategoryPanel(
-					gridPanel);
+			SaveDataCategoryPanel saveDialogPanel = new SaveDataCategoryPanel(gridPanel);
 		}
 	}
 
@@ -653,8 +634,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 			MainFrame.setStatusMessage("Displaying the analyzed data");
 
 			// getting the selected hyperlink row
-			int selectionIndex = analysisTable.getSelectionModel()
-					.getLeadSelectionIndex();
+			int selectionIndex = analysisTable.getSelectionModel().getLeadSelectionIndex();
 
 			// Get the EntityRecordResultInterface object associated with
 			// hyperlink at column 1
@@ -673,28 +653,23 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	class TabSelectListner implements ChangeListener {
 		ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel;
 
-		TabSelectListner(
-				ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel) {
+		TabSelectListner(ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel) {
 			this.experimentDataCategoryGridPanel = experimentDataCategoryGridPanel;
 		}
 
 		public void stateChanged(ChangeEvent changeEvent) {
 			JTabbedPane jTabbedPane = (JTabbedPane) changeEvent.getSource();
-			Cab2bPanel selectedTabPanel = (Cab2bPanel) jTabbedPane
-					.getSelectedComponent();
-			if (selectedTabPanel != null
-					&& selectedTabPanel.getComponentCount() > 0) {
+			Cab2bPanel selectedTabPanel = (Cab2bPanel) jTabbedPane.getSelectedComponent();
+			if (selectedTabPanel != null && selectedTabPanel.getComponentCount() > 0) {
 				Component component = selectedTabPanel.getComponent(0);
 				if (component instanceof JScrollPane) {
 					JScrollPane jScrollPane = (JScrollPane) component;
-					Cab2bTable currentTable = (Cab2bTable) jScrollPane
-							.getViewport().getComponent(0);
-					experimentDataCategoryGridPanel
-							.setCurrentTable(currentTable);
+					Cab2bTable currentTable = (Cab2bTable) jScrollPane.getViewport()
+							.getComponent(0);
+					experimentDataCategoryGridPanel.setCurrentTable(currentTable);
 					experimentDataCategoryGridPanel.setCurrentChartPanel(null);
 				} else if (component instanceof Cab2bChartPanel) {
-					experimentDataCategoryGridPanel
-							.setCurrentChartPanel(selectedTabPanel);
+					experimentDataCategoryGridPanel.setCurrentChartPanel(selectedTabPanel);
 				}
 			}
 			updateUI();
@@ -714,14 +689,12 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		}
 
 		public void focusGained(FocusEvent focusEvent) {
-			final Cab2bTable cab2bTable = (Cab2bTable) focusEvent
-					.getComponent();
+			final Cab2bTable cab2bTable = (Cab2bTable) focusEvent.getComponent();
 			focusAction(cab2bTable);
 		}
 
 		public void focusLost(FocusEvent focusEvent) {
-			final Cab2bTable cab2bTable = (Cab2bTable) focusEvent
-					.getComponent();
+			final Cab2bTable cab2bTable = (Cab2bTable) focusEvent.getComponent();
 			focusAction(cab2bTable);
 		}
 
@@ -732,10 +705,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 				setEnabled = true;
 			}
 
-			ExperimentStackBox experimentStackBox = experimentOpenPanel
-					.getExperimentStackBox();
-			Cab2bPanel visualiseDataPanel = experimentStackBox
-					.getVisualiseDataPanel();
+			ExperimentStackBox experimentStackBox = experimentOpenPanel.getExperimentStackBox();
+			Cab2bPanel visualiseDataPanel = experimentStackBox.getVisualiseDataPanel();
 			Component[] components = visualiseDataPanel.getComponents();
 			for (Component component : components) {
 				if (component instanceof Cab2bHyperlink) {
