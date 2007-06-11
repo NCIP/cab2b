@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
 
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import cab2b.common.caarray.DerivedBioAssayRecord;
@@ -187,9 +188,12 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                     saveDataListButton.setVisible(false);
                     addToExperimentButton.setVisible(false);
                     /*Pop-up a dialog asking the user to add alteast a rule.*/
-                    JOptionPane.showInternalMessageDialog(this.m_mainSearchPanel.getParent(),
-                                                          "Please add a rule,before proceeding.", "Information",
-                                                          JOptionPane.INFORMATION_MESSAGE);
+                    
+                    JOptionPane optionPane = new JOptionPane();
+                    optionPane.setMessage("Please add Limit(s) before proceeding");
+                    optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
+                    JDialog dialog = optionPane.createDialog(this.m_mainSearchPanel.getParent(), "Cannot Proceed");
+                    dialog.setVisible(true);
                     return;
                 }
 
