@@ -12,6 +12,7 @@ import java.awt.geom.Point2D;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.MissingResourceException;
+import java.util.Scanner;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -68,6 +69,8 @@ public class MainFrame extends JXFrame {
     public static String jndiResourceFileName = "jndi";
 
     public static String cab2bLogoName = "b2b_logo_image.gif";
+
+    public static URL progressBarURL;
 
     /**
      * Everything related GUI's containers and its components size is relative
@@ -352,6 +355,7 @@ public class MainFrame extends JXFrame {
      */
     public static void main(String[] args) {
         Logger.configure("log4j.properties");
+
         JFrame progressBarFrame = new JFrame("caB2B client launcher....");
         int imageX = 442;
         int imageY = 251;
@@ -371,7 +375,14 @@ public class MainFrame extends JXFrame {
         String fontFamily = progressBarLabel.getFont().getFamily();
         progressBarLabel.setFont(new Font(fontFamily, Font.PLAIN, 14));
 
-        Image backgroundImage = new ImageIcon("resources/images/progress_bar.gif").getImage();
+        /* Initialize all Resources. */
+        initializeResources();
+        String mainFrameTitle = ApplicationProperties.getValue("cab2b.main.frame.title");
+
+        MainFrame mainFrame = new MainFrame(mainFrameTitle);
+
+        ClassLoader loader = mainFrame.getClass().getClassLoader();
+        Image backgroundImage = new ImageIcon(loader.getResource("progress_bar.gif")).getImage();
         BackgroundImagePanel imagePanel = new BackgroundImagePanel(backgroundImage);
         imagePanel.setPreferredSize(new Dimension(imageX, imageY));
         imagePanel.add(progressBarLabel, BorderLayout.SOUTH);
@@ -387,12 +398,6 @@ public class MainFrame extends JXFrame {
         progressBarFrame.setAlwaysOnTop(true);
         progressBarFrame.setUndecorated(true);
         progressBarFrame.setVisible(true);
-
-        /* Initialize all Resources. */
-        initializeResources();
-        String mainFrameTitle = ApplicationProperties.getValue("cab2b.main.frame.title");
-
-        MainFrame mainFrame = new MainFrame(mainFrameTitle);
         Toolkit.getDefaultToolkit().setDynamicLayout(true);
         ClientSideCache.getInstance(); // initializing the cache at startup
 
