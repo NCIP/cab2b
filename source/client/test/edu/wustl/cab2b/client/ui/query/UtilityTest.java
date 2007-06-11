@@ -1,8 +1,9 @@
 package edu.wustl.cab2b.client.ui.query;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.TestCase;
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
@@ -14,6 +15,7 @@ import edu.wustl.cab2b.client.ui.util.ClientConstants;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
+import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.impl.InterModelAssociation;
 import edu.wustl.common.querysuite.metadata.associations.impl.IntraModelAssociation;
@@ -61,13 +63,15 @@ public class UtilityTest extends TestCase {
         assertEquals(0, Utility.getRecordNum(queryResult));
     }
 
+    @SuppressWarnings("unchecked")
     public void testGetRecordNum() {
         int size = 4;
         int urls = 3;
         IQueryResult queryResult = QueryResultFactory.createResult(fact.createEntity());
         List<IRecord> list = new ArrayList<IRecord>(size);
         for (int i = 0; i < size; i++) {
-            list.add(QueryResultFactory.createRecord(new HashSet<AttributeInterface>(), null));
+            Set<AttributeInterface> map = Collections.singleton(DomainObjectFactory.getInstance().createStringAttribute());
+            list.add(QueryResultFactory.createRecord(map, new RecordId("","")));
         }
         for (int i = 0; i < urls; i++) {
             queryResult.addRecords("URL" + i, list);
