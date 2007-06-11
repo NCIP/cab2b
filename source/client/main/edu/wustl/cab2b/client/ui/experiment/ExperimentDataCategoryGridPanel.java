@@ -40,12 +40,10 @@ import edu.common.dynamicextensions.entitymanager.EntityRecordInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
 import edu.wustl.cab2b.client.ui.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
-import edu.wustl.cab2b.client.ui.controls.Cab2bComboBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
-import edu.wustl.cab2b.client.ui.filter.CaB2BFilterInterface;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
@@ -116,7 +114,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
 	public static ArrayList<String> values = new ArrayList<String>();
 
-	private ApplyFilter filter=null;
+	private ApplyFilter filter = null;
 
 	// fields used by Save Data Category functionality
 	private EntityInterface dataCategoryEntity;
@@ -125,7 +123,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
 	private Cab2bLabel filterLabel;
 
-	private Cab2bComboBox combo;
+	private Cab2bPanel filterPanle;
 
 	public ExperimentDataCategoryGridPanel(ExperimentOpenPanel parent) {
 		this(new Vector(), new Vector());
@@ -189,12 +187,10 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		this.currentTable = currentTable;
 	}
 
-
-
 	public ExperimentDataCategoryGridPanel(Vector columnVector, Vector dataRecordVector) {
 		tableColumnVector = columnVector;
 		tableDataRecordVector = dataRecordVector;
-		
+
 		filter.clearMap();
 		initGUI();
 	}
@@ -299,14 +295,12 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	 * This method is common among the different UI initialization methods
 	 */
 	private void refreshUI() {
-		filter =new ApplyFilter(table);
-		combo=filter.applyingFilter();
+		filter = new ApplyFilter(table);
+		filterPanle = filter.applyingFilter();
 		JScrollPane jScrollPane = addTableToScrollPanel(table);
 		experimentDataPanel.removeAll();
 		experimentDataPanel.setBorder(null);
-		experimentDataPanel.add(new JLabel(""));
-		experimentDataPanel.add("tab ", filterLabel);
-		experimentDataPanel.add(combo);
+		experimentDataPanel.add(filterPanle);
 		experimentDataPanel.add("br", new JLabel(""));
 		experimentDataPanel.add("hfill vfill", jScrollPane);
 

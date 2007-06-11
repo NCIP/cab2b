@@ -9,12 +9,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.JLabel;
+
 import org.jdesktop.swingx.decorator.Filter;
 import org.jdesktop.swingx.decorator.FilterPipeline;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bComboBox;
+import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
+import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.filter.CaB2BFilterInterface;
 import edu.wustl.cab2b.client.ui.filter.CaB2BPatternFilter;
 import edu.wustl.cab2b.client.ui.filter.Cab2bFilterPopup;
@@ -28,13 +32,13 @@ import edu.wustl.common.querysuite.queryobject.DataType;
 public class ApplyFilter {
 	private ExperimentTableModel table;
 
-	private Cab2bComboBox combo = new Cab2bComboBox();;
-
 	private boolean filterNotToBeApplied;
 
 	private Map<String, Integer> indexToName = new HashMap<String, Integer>();
 
 	private List<String> elements = new ArrayList<String>();
+
+	private Cab2bPanel filterPanel = new Cab2bPanel();
 
 	private static Map<String, CaB2BFilterInterface> filterMap = new HashMap<String, CaB2BFilterInterface>();
 
@@ -44,7 +48,9 @@ public class ApplyFilter {
 
 	}
 
-	public Cab2bComboBox applyingFilter() {
+	public Cab2bPanel applyingFilter() {
+		Cab2bComboBox combo = new Cab2bComboBox();
+		;
 		int columnCount = table.getModel().getColumnCount();
 		for (int i = 0; i < columnCount; i++) {
 			String colName = table.getModel().getColumnName(i);
@@ -130,7 +136,11 @@ public class ApplyFilter {
 			}
 		});
 
-		return combo;
+		filterPanel.add(new JLabel(""));
+		filterPanel.add("tab ", new Cab2bLabel("Apply Filter"));
+		filterPanel.add(combo);
+
+		return filterPanel;
 	}
 
 	/**
