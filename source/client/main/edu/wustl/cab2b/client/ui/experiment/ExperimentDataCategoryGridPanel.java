@@ -654,8 +654,11 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                     Cab2bTable currentTable = (Cab2bTable) jScrollPane.getViewport().getComponent(0);
                     experimentDataCategoryGridPanel.setCurrentTable(currentTable);
                     experimentDataCategoryGridPanel.setCurrentChartPanel(null);
-                } else if (component instanceof Cab2bChartPanel) {
-                    experimentDataCategoryGridPanel.setCurrentChartPanel(selectedTabPanel);
+                } else {
+                    component = selectedTabPanel.getComponent(0);
+                    if (component instanceof Cab2bChartPanel) {
+                        experimentDataCategoryGridPanel.setCurrentChartPanel(selectedTabPanel);
+                    }
                 }
             }
             updateUI();
