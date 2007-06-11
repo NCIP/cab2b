@@ -18,119 +18,113 @@ import org.jfree.data.general.Dataset;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 
 /**
- * This class represents and generates the Bar Chart
+ * This class generates the Bar Chart
  * @author chetan_patil
  */
 public class BarChart extends AbstractChart {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * The name of the entity for which the chart is being generated
-	 */
-	private String entityName;
+    /**
+     * The name of the entity for which the chart is being generated
+     */
+    private String entityName;
 
-	/**
-	 * Parameterized constructor
-	 * @param chartRawData
-	 * @param entityName
-	 */
-	public BarChart(Cab2bChartRawData chartRawData, String entityName) {
-		super(chartRawData);
-		this.entityName = entityName;
-	}
+    /**
+     * Parameterized constructor
+     * @param chartRawData
+     * @param entityName
+     */
+    public BarChart(Cab2bChartRawData chartRawData, String entityName) {
+        super(chartRawData);
+        this.entityName = entityName;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see edu.wustl.cab2b.client.ui.charts.AbstractChart#createDataset()
-	 */
-	protected CategoryDataset createDataset() {
-		Cab2bTable cab2bTable = chartRawData.getCab2bTable();
-		int[] selectedRowIndices = chartRawData.getSelectedRowIndices();
-		int[] selectedColumnsIndices = chartRawData.getSelectedColumnsIndices();
-		
-		String[] series = new String[selectedColumnsIndices.length];
-		String[] categories = new String[selectedRowIndices.length];
-				
-		int i, j;
-		for (i = 0; i < selectedRowIndices.length; i++) {
-			categories[i] = "Row" + (selectedRowIndices[i] + 1);
-		}
+    /*
+     * (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.charts.AbstractChart#createDataset()
+     */
+    protected CategoryDataset createDataset() {
+        Cab2bTable cab2bTable = chartRawData.getCab2bTable();
+        int[] selectedRowIndices = chartRawData.getSelectedRowIndices();
+        int[] selectedColumnsIndices = chartRawData.getSelectedColumnsIndices();
 
-		for (j = 0; j < selectedColumnsIndices.length; j++) {
-			series[j] = cab2bTable.getColumnName(selectedColumnsIndices[j]);
-		}
+        String[] series = new String[selectedColumnsIndices.length];
+        String[] categories = new String[selectedRowIndices.length];
 
-		String value = null;
-		Double doubleValue;
-		DefaultCategoryDataset defaultcategorydataset = new DefaultCategoryDataset();
-		
-		for (i = 0; i < selectedRowIndices.length; i++) {
-			for (j = 0; j < selectedColumnsIndices.length; j++) {
-				value = (String) cab2bTable.getValueAt(selectedRowIndices[i],
-						selectedColumnsIndices[j]);
+        int i, j;
+        for (i = 0; i < selectedRowIndices.length; i++) {
+            categories[i] = "Row" + (selectedRowIndices[i] + 1);
+        }
 
-				try {
-					doubleValue = Double.valueOf(value);
-				} catch (Exception exception) {
-					doubleValue = 0D;
-				}
-				
-				defaultcategorydataset.addValue(doubleValue, series[j],
-						categories[i]);
-			}
-		}
+        for (j = 0; j < selectedColumnsIndices.length; j++) {
+            series[j] = cab2bTable.getColumnName(selectedColumnsIndices[j]);
+        }
 
-		return defaultcategorydataset;
-	}
+        DefaultCategoryDataset defaultcategorydataset = new DefaultCategoryDataset();
+        for (i = 0; i < selectedRowIndices.length; i++) {
+            for (j = 0; j < selectedColumnsIndices.length; j++) {
+                String value = (String) cab2bTable.getValueAt(selectedRowIndices[i], selectedColumnsIndices[j]);
 
-	/*
-	 * (non-Javadoc)
-	 * @see edu.wustl.cab2b.client.ui.charts.AbstractChart#createChart(org.jfree.data.general.Dataset)
-	 */
-	protected JFreeChart createChart(Dataset dataset) {
-		CategoryDataset categoryDataSet = (CategoryDataset)dataset;
-		
-		JFreeChart jFreeChart = ChartFactory.createBarChart("Bar Chart",
-				entityName, "Value", categoryDataSet, PlotOrientation.VERTICAL,
-				true, true, false);
-		jFreeChart.setBackgroundPaint(Color.white);
+                Double doubleValue = null;
+                try {
+                    doubleValue = Double.valueOf(value);
+                } catch (Exception exception) {
+                    doubleValue = 0D;
+                }
 
-		CategoryPlot categoryPlot = (CategoryPlot) jFreeChart.getPlot();
-		categoryPlot.setBackgroundPaint(Color.white);
-		//categoryPlot.setBackgroundPaint(new Color(120, 120, 120));
-		categoryPlot.setDomainGridlinePaint(Color.white);
-		categoryPlot.setRangeGridlinePaint(Color.white);
+                defaultcategorydataset.addValue(doubleValue, series[j], categories[i]);
+            }
+        }
 
-		NumberAxis numberAxis = (NumberAxis) categoryPlot.getRangeAxis();
-		numberAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        return defaultcategorydataset;
+    }
 
-		BarRenderer barRenderer = (BarRenderer) categoryPlot.getRenderer();
-		barRenderer.setDrawBarOutline(false);
-		barRenderer.setItemMargin(0.1D);
+    /*
+     * (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.charts.AbstractChart#createChart(org.jfree.data.general.Dataset)
+     */
+    protected JFreeChart createChart(Dataset dataset) {
+        CategoryDataset categoryDataSet = (CategoryDataset) dataset;
 
-		CategoryAxis categoryaxis = categoryPlot.getDomainAxis();
-		categoryaxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+        JFreeChart jFreeChart = ChartFactory.createBarChart(ChartType.BAR_CHART.getActionCommand(), entityName,
+                                                            "Value", categoryDataSet, PlotOrientation.VERTICAL,
+                                                            true, true, false);
+        jFreeChart.setBackgroundPaint(Color.white);
 
-		return jFreeChart;
-	}
+        CategoryPlot categoryPlot = (CategoryPlot) jFreeChart.getPlot();
+        categoryPlot.setBackgroundPaint(Color.white);
+        categoryPlot.setDomainGridlinePaint(Color.white);
+        categoryPlot.setRangeGridlinePaint(Color.white);
 
-	/**
-	 * This class is used for the generation of the labels to be displayed against each group on x-axis. 
-	 * @author chetan_patil
-	 */
-	static class LabelGenerator extends StandardCategoryItemLabelGenerator {
-		private static final long serialVersionUID = 1L;
+        NumberAxis numberAxis = (NumberAxis) categoryPlot.getRangeAxis();
+        numberAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
-		LabelGenerator() {
-		}
+        BarRenderer barRenderer = (BarRenderer) categoryPlot.getRenderer();
+        barRenderer.setDrawBarOutline(false);
+        barRenderer.setItemMargin(0.1D);
 
-		public String generateLabel(CategoryDataset categoryDataSet, int i,
-				int j) {
-			return categoryDataSet.getRowKey(i).toString();
-		}
-	}
+        CategoryAxis categoryaxis = categoryPlot.getDomainAxis();
+        categoryaxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+
+        return jFreeChart;
+    }
+
+    /**
+     * This class is used for the generation of the labels to be displayed against each group on x-axis. 
+     * @author chetan_patil
+     */
+    static class LabelGenerator extends StandardCategoryItemLabelGenerator {
+        private static final long serialVersionUID = 1L;
+
+        LabelGenerator() {
+        }
+
+        public String generateLabel(CategoryDataset categoryDataSet, int i, int j) {
+            return categoryDataSet.getRowKey(i).toString();
+        }
+    }
 
 }
