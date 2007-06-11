@@ -157,6 +157,22 @@ public class DynamicExtensionUtilityTest extends TestCase {
 
     }
 
+    public void testCloneRole() {
+        String name = "RoleName";
+        Cardinality one = Cardinality.ONE;
+        Cardinality many = Cardinality.MANY;
+        AssociationType type = AssociationType.CONTAINTMENT;
+
+        RoleInterface role = fact.createRole();
+        role.setAssociationsType(type);
+        role.setName(name);
+        role.setMaximumCardinality(many);
+        role.setMinimumCardinality(one);
+
+        RoleInterface res = DynamicExtensionUtility.cloneRole(role);
+        verifyRole(res, type, name, one, many);
+    }
+
     private void verifyRole(RoleInterface roleToVerify, AssociationType associationType, String name,
                             Cardinality minCard, Cardinality maxCard) {
         assertEquals(associationType, roleToVerify.getAssociationsType());
