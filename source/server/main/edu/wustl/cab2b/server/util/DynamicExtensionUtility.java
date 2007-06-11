@@ -437,4 +437,16 @@ public class DynamicExtensionUtility {
         return entityGroups;
 
     }
+    /**
+     * @param role Role to clone
+     * @return the clone of the Role
+     */
+    public static RoleInterface cloneRole(RoleInterface role) {
+        RoleInterface clone = domainObjectFactory.createRole();
+        clone.setAssociationsType(role.getAssociationsType());
+        clone.setName(role.getName());
+        clone.setMaximumCardinality(role.getMaximumCardinality());
+        clone.setMinimumCardinality(role.getMinimumCardinality());
+        return clone;
+    }
 }

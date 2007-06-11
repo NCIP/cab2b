@@ -190,9 +190,11 @@ public class DomainModelProcessor {
                     // already added
                 }
                 AssociationInterface replica = getAssociation(childrenOfSrc.get(i));
-                replica.setSourceRole(clone(association.getSourceRole()));
+                RoleInterface srcRole = DynamicExtensionUtility.cloneRole(association.getSourceRole());
+                RoleInterface tgtRole = DynamicExtensionUtility.cloneRole(association.getTargetRole());
+                replica.setSourceRole(srcRole);
                 replica.setTargetEntity(childrenOfTgt.get(j));
-                replica.setTargetRole(clone(association.getTargetRole()));
+                replica.setTargetRole(tgtRole);
                 replica.setAssociationDirection(association.getAssociationDirection());
                 markInherited(replica);
                 DynamicExtensionUtility.addTaggedValue(replica, ORIGINAL_ASSOCIATION_POINTER,
@@ -361,20 +363,6 @@ public class DomainModelProcessor {
         }
         return children;
     }
-
-    /**
-     * @param role Role to clone
-     * @return the clone of the Role
-     */
-    private RoleInterface clone(RoleInterface role) {
-        RoleInterface clone = deFactory.createRole();
-        clone.setAssociationsType(Constants.AssociationType.ASSOCIATION);
-        clone.setName(role.getName());
-        clone.setMaximumCardinality(role.getMaximumCardinality());
-        clone.setMinimumCardinality(role.getMinimumCardinality());
-        return clone;
-    }
-
     /**
      * @param sourceEntity Entity to which a association is to be attached
      * @return A assocition attached to given entity.
@@ -436,6 +424,14 @@ public class DomainModelProcessor {
     public EntityGroupInterface getEntityGroup() {
         return entityGroup;
     }
+    
+    /**
+     * @param entityVsIndex The entityVsIndex to set.
+     */
+    void setEntityVsIndex(Map<EntityInterface, Integer> entityVsIndex) {
+        this.entityVsIndex = entityVsIndex;
+    }
+
     /**
      * For testing purpose. Default scope constructor 
      */
