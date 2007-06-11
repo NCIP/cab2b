@@ -138,7 +138,7 @@ public class StackedBox extends Cab2bPanel implements Scrollable
 		toggleAction.putValue(JXCollapsiblePane.EXPAND_ICON, UIManager
 				.getIcon("Tree.collapsedIcon"));
 		
-		URL url  = this.getClass().getClassLoader().getResource("mysearchqueries_icon.gif");
+		URL url  = this.getClass().getClassLoader().getResource(iconFile);
 		ImageIcon imageIcon = new ImageIcon(url);
 		
 		StackTitlePanel stackTitlePanel = new StackTitlePanel(title, imageIcon, toggleAction);
