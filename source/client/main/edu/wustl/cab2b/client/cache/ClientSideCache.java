@@ -55,16 +55,18 @@ public class ClientSideCache extends AbstractEntityCache {
 
     protected ClientSideCache() {
         super();
-        CategoryBusinessInterface categoryOperations = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.CATEGORY_BEAN,CategoryHomeInterface.class);
+        CategoryBusinessInterface categoryOperations = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                    EjbNamesConstants.CATEGORY_BEAN,
+                                                                                                                    CategoryHomeInterface.class);
         int length = 50;
         showProgress(" Getting all categories....", length);
         try {
             categories = categoryOperations.getAllCategories();
-            int offset = 50/categories.size();
+            int offset = 50 / categories.size();
             for (Category category : categories) {
                 categoryVsClasseSet.put(category, categoryOperations.getAllSourceClasses(category));
                 categoryVsAttributeSet.put(category, categoryOperations.getAllSourceAttributes(category));
-                length =length + offset;
+                length = length + offset;
                 showProgress(" Getting all categories....", length);
             }
         } catch (RemoteException e) {
@@ -83,10 +85,13 @@ public class ClientSideCache extends AbstractEntityCache {
             UtilityBusinessInterface util = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                         EjbNamesConstants.UTILITY_BEAN,
                                                                                                         UtilityHomeInterface.class);
-            MainFrame.getProgressBar().setIndeterminate(false);
+            JProgressBar progress = MainFrame.getProgressBar();
+            if (progress != null) {
+                progress.setIndeterminate(false);
+            }
             showProgress(" Fetching data from caB2B Server....", 20);
             Collection<EntityGroupInterface> collection = util.getCab2bEntityGroups();
-            
+
             showProgress(" Populating internal data structures....", 40);
             return collection;
         } catch (RemoteException dynSysExp) {
@@ -102,20 +107,20 @@ public class ClientSideCache extends AbstractEntityCache {
 
         JLabel label = MainFrame.getProgressBarLabel();
         JProgressBar progress = MainFrame.getProgressBar();
-        progress.setValue(completedvalue);
-        
-        label.setText(text);
-        Rectangle labelRect = label.getBounds();
-        labelRect.x = 0;
-        labelRect.y = 0;
-        label.paintImmediately(labelRect);
+        if (progress != null && label != null) {
+            progress.setValue(completedvalue);
 
-        
-        
-        Rectangle progressRect = progress.getBounds();
-        progressRect.x = 0;
-        progressRect.y = 0;
-        progress.paintImmediately(progressRect);
+            label.setText(text);
+            Rectangle labelRect = label.getBounds();
+            labelRect.x = 0;
+            labelRect.y = 0;
+            label.paintImmediately(labelRect);
+
+            Rectangle progressRect = progress.getBounds();
+            progressRect.x = 0;
+            progressRect.y = 0;
+            progress.paintImmediately(progressRect);
+        }
     }
 
     /**
