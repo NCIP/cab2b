@@ -57,7 +57,7 @@
 	<property name="keystore" location="${webstart.dir}/cab2bKeyStore" />
 	<property name="webstart.client.version" value="1.0" />
 	<property name="webstart.server.version" value="1.0" />
-		
+	
 
 	<path id="common.classpath">
 		<fileset dir="lib/common">
@@ -133,12 +133,10 @@
 	    	</fileset>
     	</copy>		
 	</target>
-	
 	<!-- ================================================================================== -->
 	<target name="compile.all" depends="clean.all, compile.client,compile.server" />
 	<!-- ================================================================================== -->
-	
-	<target name="client.jar" depends="compile.client" description="Creates client jar file">
+	<target name="client.jar" depends="clean.all, compile.client" description="Creates client jar file">
 		<mkdir dir="${client.jar.dir}" />
 
 		<delete includeemptydirs="true">
@@ -192,38 +190,10 @@
 				<!-- attribute name="Built-By" value="${user.name}"/ -->
 				<!-- need to remove this hardcoding of MANIFEST's Class-Path settings -->
 				<attribute name="Main-Class" value="edu.wustl.cab2b.client.ui.mainframe.MainFrame" />
-				<attribute name="Class-Path" value="
-		                idw-gpl.jar
-		                jcalendar-1.3.2.jar
-		                jcommon-1.0.9.jar
-		                jfreechart-1.0.5.jar
-		                org-netbeans-graph.jar
-		                org-netbeans-graph-vmd.jar
-		                org-openide-util.jar
-		                swingx-2006_10_08.jar
-		                asm.jar 
-		                asm-attrs.jar
-		                c3p0-0.9.0.jar
-		                cglib-2.1.jar 
-		                commonpackage.jar 
-		                commons-collections-3.2.jar 
-		                commons-logging-1.0.4.jar
-		                dom4j-1.6.jar
-		                DynamicExtensions.jar
-		                ehcache-1.1.jar
-		                experiment-client.jar
-		                hibernate2.1.7c.jar
-		                j2ee.jar
-		                jbossall-client.jar
-		                log4j-1.2.9.jar
-		                lucene-core-2.0.0.jar
-		                mysql-connector-java-3.0.16-ga-bin.jar
-		                odmg.jar
-		                oracleDriver.jar
-		                struts.jar
-		                titli-washu-1.0.jar
-		                conf/ resources/images/
-        		" />
+				<attribute name="Class-Path" value="jbossall-client.jar jcalendar-1.3.2.jar jcommon-1.0.9.jar jfreechart-1.0.5.jar
+					org-netbeans-graph.jar org-netbeans-graph-vmd.jar org-openide-util.jar swingx-2006_10_08.jar odmg.jar
+					commonpackage.jar commons-collections-3.2.jar commons-logging-1.0.4.jar DynamicExtensions.jar idw-gpl.jar
+	                log4j-1.2.9.jar struts.jar hibernate2.1.7c.jar caarray-common-extensions.jar  conf/ resources/images/" />
 			</manifest>
 		</jar>
 
@@ -351,8 +321,8 @@
 		<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
 		<copy overwrite="true" file="${cab2bDS.file}" todir="${jboss.deploy.dir}" />
 		<copy overwrite="true" file="${jbossjca.service.xml}" todir="${jboss.deploy.dir}" />
-		<copy overwrite="true" file="lib/common/oracleDriver.jar" todir="${jboss.common.lib.dir}" />
-		<copy overwrite="true" file="lib/common/mysql-connector-java-3.0.16-ga-bin.jar" todir="${jboss.common.lib.dir}" />
+		<copy overwrite="true" file="lib/server/oracleDriver.jar" todir="${jboss.common.lib.dir}" />
+		<copy overwrite="true" file="lib/server/mysql-connector-java-3.0.16-ga-bin.jar" todir="${jboss.common.lib.dir}" />
 		<delete dir="${jboss.log.dir}"/>
 		<mkdir dir="${jboss.log.dir}"/>
 		<echo message="" file="${jboss.log.dir}/caB2B.log" append="false"/>
@@ -537,7 +507,6 @@
 		<java classname="edu.wustl.cab2b.client.ui.mainframe.MainFrame" classpathref="runClient.classpath" fork="no" />
 	</target>
 	
-	
 	<!-- create the client jar for Java Web Start deployment -->
 	<!-- this jar includes contents of conf/ and images/ and is signed --> 
 	<target name="build.client.webstart.jar" depends="compile.client" description="create the client jar for Java Web Start deployment">
@@ -668,13 +637,8 @@
 		<!-- delete file="${workArea.dir}/jar/dynamicUI.xml"></delete -->
 		
 	</target>
-	
-	<!-- sign all the jars used by the client -->
-	<target name="sign.client.jars" >
 		
-	
-	</target>
-	
+
 	<path id="runClient.classpath">
 		<path refid="client.classpath" />
 	 	<pathelement location="${workArea.dir}/common/classes" />
