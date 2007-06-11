@@ -214,40 +214,6 @@
               />
 
         </set>
-		
-	
-        <joined-subclass
-            name="edu.wustl.cab2b.common.domain.MicroarrayExperiment"
-            table="microarrayexperiment"
-            dynamic-update="false"
-            dynamic-insert="false"
-        >
-        <key
-            column="MEX_ID"
-        />
-
-        <set
-            name="microarrayChipCollection"
-            table="microexpchipmap"
-            lazy="false"
-            inverse="true"
-            cascade="save-update"
-            sort="unsorted"
-        >
-
-              <key
-                  column="MEX_ID"
-              />
-
-              <many-to-many
-                  class="edu.wustl.cab2b.common.domain.MicroarrayChip"
-                  column="MIC_ID"
-                  outer-join="auto"
-              />
-
-        </set>
-
-        </joined-subclass>
 
         </joined-subclass>
 
