@@ -132,6 +132,7 @@ public class ResultPanelFactory {
         dataRow.setId(record.getRecordId().getId());
         dataRow.setURL(url);
         dataRow.setAssociation(association);
+        dataRow.setRecord(record);
         dataRow.setEntityInterface(presentEntityInterface);
 
         return getSearchResultPanel(searchPanel, record, dataRow, incomingAssociationCollection,
@@ -183,6 +184,25 @@ public class ResultPanelFactory {
         }
         defaultDetailedPanel.doInitialization();
         return defaultDetailedPanel;
+    }
+
+    /**
+     * @param record
+     * @return
+     */
+    public static Cab2bPanel getDataListDetailedPanel(IRecord record) {
+        Cab2bPanel dataListDetailedPanel = null;
+
+        if (record instanceof I3DDataRecord) {
+            dataListDetailedPanel = new ThreeDResultObjectDetailsPanel((I3DDataRecord) record);
+        } else if (record instanceof ICategorialClassRecord) {
+            dataListDetailedPanel = new CategoryObjectDetailsPanel((ICategorialClassRecord) record);
+        } else {
+            dataListDetailedPanel = new DefaultDataListDetailedPanel(record);
+
+        }
+        dataListDetailedPanel.doInitialization();
+        return dataListDetailedPanel;
     }
 
     /**

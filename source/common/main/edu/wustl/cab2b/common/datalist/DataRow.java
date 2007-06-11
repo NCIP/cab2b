@@ -17,6 +17,7 @@ import java.util.Vector;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.tree.TreeNodeImpl;
 
@@ -25,146 +26,128 @@ import edu.wustl.common.tree.TreeNodeImpl;
  * data list. 
  * @author gautam_shetty
  */
-public class DataRow extends TreeNodeImpl implements IDataRow, Serializable
-{
-	
-	private Object id;
-	
+public class DataRow extends TreeNodeImpl implements IDataRow, Serializable {
+
+    private Object id;
+
     /**
      * Name of the class to which this data
      * belongs.
      */
     private String className;
-    
+
     /**
      * Attribute list.
      */
     private List<AttributeInterface> attributes;
-//    private String[] attributes;
-    
+
+    //    private String[] attributes;
+
     /**
      * Row of data/attribute names.
      */
     private Object[] row;
-    
+
     /**
      * parent of this node.
      */
     private IDataRow parent;
-    
+
     /**
      * Children data list rows. 
      */
     private List<IDataRow> children = new ArrayList<IDataRow>();
 
-    
     /**
      * url from where the data is got. 
      */
     private String strURL;
-    
-    
+
     private EntityInterface entityInterface = null;
-    
+
     private IAssociation parentAssociation = null;
-    
+
     /**
      * Is true if the dataRow contains data else it is false i.e. if 
      * the dataRow contains attribute names. 
      */
     boolean isData = true;
-    
-    public String getURL()
-	{
-		return this.strURL;
-	}
-    
-    public void setURL(String strURL)
-	{
-		 this.strURL = strURL;
-	}
 
-    
-    
-    
-	public Object getId()
-	{
-		return id;
-	}
+    private IRecord record;
 
-	
-	public void setEntityInterface(EntityInterface entityInterface)
-	{
-		this.entityInterface = entityInterface;
-	}
+    public String getURL() {
+        return this.strURL;
+    }
 
-	/**
+    public void setURL(String strURL) {
+        this.strURL = strURL;
+    }
+
+    public Object getId() {
+        return id;
+    }
+
+    public void setEntityInterface(EntityInterface entityInterface) {
+        this.entityInterface = entityInterface;
+    }
+
+    /**
      * @return Returns the attributes.
      */
-    public EntityInterface getEntityInterface()
-    {
+    public EntityInterface getEntityInterface() {
         return this.entityInterface;
     }
-	
-	
-	public void setId(Object id)
-	{
-		this.id = id;
-	}
 
-	/**
+    public void setId(Object id) {
+        this.id = id;
+    }
+
+    /**
      * @return Returns the attributes.
      */
-    public List<AttributeInterface> getAttributes()
-    {
+    public List<AttributeInterface> getAttributes() {
         return attributes;
     }
-    
+
     /**
      * @return Returns the childNodes.
      */
-    public Vector getChildNodes()
-    {
+    public Vector getChildNodes() {
         return new Vector(children);
     }
-    
+
     /**
      * @param attributes The attributes to set.
      */
-    public void setAttributes(List<AttributeInterface> attributes)
-    {
+    public void setAttributes(List<AttributeInterface> attributes) {
         this.attributes = attributes;
     }
 
     /**
      * @return Returns the parent.
      */
-    public IDataRow getParent()
-    {
+    public IDataRow getParent() {
         return parent;
     }
 
     /**
      * @param parent The parent to set.
      */
-    public void setParent(IDataRow parent)
-    {
+    public void setParent(IDataRow parent) {
         this.parent = parent;
     }
 
     /**
      * @return Returns the children.
      */
-    public List<IDataRow> getChildren()
-    {
+    public List<IDataRow> getChildren() {
         return children;
     }
 
     /**
      * @param children The children to set.
      */
-    public void setChildren(List<IDataRow> children)
-    {
+    public void setChildren(List<IDataRow> children) {
         this.children = children;
     }
 
@@ -172,8 +155,7 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable
      * Returns the class name.
      * @return Returns the className.
      */
-    public String getClassName()
-    {
+    public String getClassName() {
         return className;
     }
 
@@ -181,8 +163,7 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable
      * Sets the class name.
      * @param className The className to set.
      */
-    public void setClassName(String className)
-    {
+    public void setClassName(String className) {
         this.className = className;
     }
 
@@ -190,8 +171,7 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable
      * Returns the row of data/attribute names.
      * @return the row of data/attribute names.
      */
-    public Object[] getRow()
-    {
+    public Object[] getRow() {
         return row;
     }
 
@@ -199,8 +179,7 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable
      * Sets the row of data/attribute names.
      * @param row The row of data/attribute to set.
      */
-    public void setRow(Object[] row)
-    {
+    public void setRow(Object[] row) {
         this.row = row;
     }
 
@@ -209,8 +188,7 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable
      * row contains attribute names.
      * @return Returns the isData.
      */
-    public boolean isData()
-    {
+    public boolean isData() {
         return isData;
     }
 
@@ -218,79 +196,72 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable
      * Set true if the row contains data else set it as false. 
      * @param isData The isData to set.(true/false)
      */
-    public void setData(boolean isData)
-    {
+    public void setData(boolean isData) {
         this.isData = isData;
     }
-    
-    public boolean equals(Object obj)
-    {
+
+    public boolean equals(Object obj) {
         boolean flag = false;
-        if (obj instanceof IDataRow)
-        {
+        if (obj instanceof IDataRow) {
             IDataRow dataRow = (IDataRow) obj;
-            if ((getId() == null && dataRow.getId()== null) 
-            && 
-            this.getClassName().equals(dataRow.getClassName())
-            && 
-            (this.strURL.compareToIgnoreCase(dataRow.getURL()) == 0))
-            {
-            	flag = true;
-            }
-            else if((getId() == null && dataRow.getId()!=null)|| (getId() == null && dataRow.getId()!=null))
-            {
-            	flag = false;
-            }
-            else
+            if ((getId() == null && dataRow.getId() == null) && this.getClassName().equals(dataRow.getClassName())
+                    && (this.strURL.compareToIgnoreCase(dataRow.getURL()) == 0)) {
+                flag = true;
+            } else if ((getId() == null && dataRow.getId() != null)
+                    || (getId() == null && dataRow.getId() != null)) {
+                flag = false;
+            } else
             /**
              * Data rows are equal if their identifiers match and they belong to same
              * entity and same instance of the data service
              */
-            if (this.getId().equals(dataRow.getId()) 
-            && 
-            this.getClassName().equals(dataRow.getClassName())
-            && 
-            (this.strURL.compareToIgnoreCase(dataRow.getURL()) == 0))
-            {
+            if (this.getId().equals(dataRow.getId()) && this.getClassName().equals(dataRow.getClassName())
+                    && (this.strURL.compareToIgnoreCase(dataRow.getURL()) == 0)) {
                 flag = true;
             }
         }
-        
+
         return flag;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
-    public int hashCode()
-    {
+    public int hashCode() {
         int i = 0;
-        if(getId() != null)
+        if (getId() != null)
             i += getId().hashCode();
-        
+
         if (getClassName() != null)
-            i +=getClassName().hashCode();
+            i += getClassName().hashCode();
         return i;
     }
-    
+
     @Override
-    public String toString()
-    {
+    public String toString() {
         String label = this.className;
-        
+
         if (this.id != null)
             label = label + this.id;
         else
-            label +="s";
+            label += "s";
         return label;
     }
 
-	public IAssociation getAssociation() {
-		return parentAssociation;
-	}
+    public IAssociation getAssociation() {
+        return parentAssociation;
+    }
 
-	public void setAssociation(IAssociation association) {
-		this.parentAssociation = association;
-	}
-	
+    public void setAssociation(IAssociation association) {
+        this.parentAssociation = association;
+    }
+
+    public IRecord getRecord() {
+        return record;
+    }
+
+    public void setRecord(IRecord record) {
+        this.record = record;
+    }
+
 }

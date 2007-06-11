@@ -4,6 +4,7 @@ import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.tree.TreeNode;
 
@@ -93,5 +94,10 @@ public interface IDataRow extends TreeNode
     public EntityInterface getEntityInterface();
     
     public void setEntityInterface(EntityInterface entityInterface);
+    
+    IRecord getRecord();
+    
+    void setRecord(IRecord record);
+    
     
 }

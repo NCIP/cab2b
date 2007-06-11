@@ -43,6 +43,10 @@ public class Cab2bPanel extends JXPanel
 		//this.setBorder(new CustomizableBorder(new Insets(1,1,1,1), true, true));
 		this.setBorder(null);
 	}
+    
+    public void doInitialization() {
+        
+    }
 	
 	public static void main(String[] args)
 	{

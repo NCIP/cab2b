@@ -12,7 +12,12 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 
-public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel {
+public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implements DataListDetailedPanelInterface {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     protected R record;
 
@@ -74,4 +79,17 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel {
         }
     }
 
+    /**
+     * @see edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface#getCSVData()
+     */
+    public String getCSVData(){
+        return "";
+    }
+
+    /**
+     * @see edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface#getNoOfSelectedRows()
+     */
+    public final int getNoOfSelectedRows() {
+        return 1;
+    }
 }

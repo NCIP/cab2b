@@ -45,6 +45,11 @@ import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
  */
 public class ViewSearchResultsSimplePanel extends ResultPanel {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     private JXPanel searchResultsPanel;
 
     /**
@@ -143,6 +148,7 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
                 dataRow.setAssociation(queryAssociation);
                 dataRow.setEntityInterface(queryResult.getOutputEntity());
                 dataRow.setURL(url);
+                dataRow.setRecord(record);
 
                 Vector recordListUserObject = new Vector();
                 recordListUserObject.add(dataRow);

@@ -29,11 +29,6 @@ public class DataListPanel extends Cab2bPanel
     private JSplitPane splitPane;
     
     /**
-     * The parent panel.
-     */
-    private JXPanel parentPanel;
-    
-    /**
      * The tree panel.
      */
     private TreePanel treePanel;
@@ -41,7 +36,7 @@ public class DataListPanel extends Cab2bPanel
     /**
      * Details panel to show the details of the node clicked. 
      */
-    private DataListDetailsPanel detailsPanel = new DataListDetailsPanel();
+    private DataListDetailedPanelContainer detailsPanel;
     
     /**
      * The data list.
@@ -67,7 +62,7 @@ public class DataListPanel extends Cab2bPanel
     /**
      * @return Returns the detailsPanel.
      */
-    public DataListDetailsPanel getDetailsPanel()
+    public DataListDetailedPanelContainer getDetailsPanel()
     {
         return detailsPanel;
     }
@@ -75,7 +70,7 @@ public class DataListPanel extends Cab2bPanel
     /**
      * @param detailsPanel The detailsPanel to set.
      */
-    public void setDetailsPanel(DataListDetailsPanel detailsPanel)
+    public void setDetailsPanel(DataListDetailedPanelContainer detailsPanel)
     {
         this.detailsPanel = detailsPanel;
     }
@@ -131,7 +126,7 @@ public class DataListPanel extends Cab2bPanel
         
         splitPane.setBorder(null);
         
-        detailsPanel = new DataListDetailsPanel();
+        detailsPanel = new DataListDetailedPanelContainer();
         splitPane.setRightComponent(detailsPanel);
         
         treePanel = new TreePanel(dataList.getRootDataRow());
