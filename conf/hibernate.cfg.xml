@@ -31,8 +31,7 @@
 		<mapping resource="edu/wustl/common/hbm/Category.hbm.xml"/>
 		
 		<mapping resource="edu/wustl/cab2b/server/hbm/AbstractDomainObject.hbm.xml"/>
-		<mapping resource="edu/wustl/cab2b/server/hbm/ArrayDesign.hbm.xml"/>
-		<mapping resource="edu/wustl/cab2b/server/hbm/MicroarrayChip.hbm.xml"/>
+		
 		
 	</session-factory>
 </hibernate-configuration>
