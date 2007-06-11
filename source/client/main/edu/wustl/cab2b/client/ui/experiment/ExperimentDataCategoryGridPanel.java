@@ -116,7 +116,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
 	public static ArrayList<String> values = new ArrayList<String>();
 
-	private static Map<String, CaB2BFilterInterface> filterMap = new HashMap<String, CaB2BFilterInterface>();
+	private ApplyFilter filter=null;
 
 	// fields used by Save Data Category functionality
 	private EntityInterface dataCategoryEntity;
@@ -189,29 +189,13 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 		this.currentTable = currentTable;
 	}
 
-	/**
-	 * Adding a filter to the filter map
-	 */
-	public static void addFilter(String columnName, CaB2BFilterInterface filter) {
-		filterMap.put(columnName, filter);
-	}
 
-	public static void clearMap() {
-		filterMap.clear();
-	}
-
-	public static Vector<CaB2BFilterInterface> getFilterMap() {
-		Vector<CaB2BFilterInterface> vector = new Vector<CaB2BFilterInterface>();
-		for (CaB2BFilterInterface filter : filterMap.values()) {
-			vector.add(filter);
-		}
-		return vector;
-	}
 
 	public ExperimentDataCategoryGridPanel(Vector columnVector, Vector dataRecordVector) {
 		tableColumnVector = columnVector;
 		tableDataRecordVector = dataRecordVector;
-		clearMap();
+		
+		filter.clearMap();
 		initGUI();
 	}
 
@@ -315,7 +299,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 	 * This method is common among the different UI initialization methods
 	 */
 	private void refreshUI() {
-		ApplyFilter filter =new ApplyFilter(table,filterMap);
+		filter =new ApplyFilter(table);
 		combo=filter.applyingFilter();
 		JScrollPane jScrollPane = addTableToScrollPanel(table);
 		experimentDataPanel.removeAll();

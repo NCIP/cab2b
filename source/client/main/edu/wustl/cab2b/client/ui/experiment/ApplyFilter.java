@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import org.jdesktop.swingx.decorator.Filter;
 import org.jdesktop.swingx.decorator.FilterPipeline;
@@ -27,7 +28,7 @@ import edu.wustl.common.querysuite.queryobject.DataType;
 public class ApplyFilter {
 	private ExperimentTableModel table;
 
-	private Cab2bComboBox combo= new Cab2bComboBox();;
+	private Cab2bComboBox combo = new Cab2bComboBox();;
 
 	private boolean filterNotToBeApplied;
 
@@ -35,9 +36,9 @@ public class ApplyFilter {
 
 	private List<String> elements = new ArrayList<String>();
 
-	private Map<String, CaB2BFilterInterface> filterMap;
+	private static Map<String, CaB2BFilterInterface> filterMap = new HashMap<String, CaB2BFilterInterface>();
 
-	public ApplyFilter(ExperimentTableModel myTable, Map<String, CaB2BFilterInterface> filterMap) {
+	public ApplyFilter(ExperimentTableModel myTable) {
 		this.table = myTable;
 		this.filterMap = filterMap;
 
@@ -79,7 +80,8 @@ public class ApplyFilter {
 							filterPopup = new PatternPopup((CaB2BPatternFilter) oldFilter,
 									columnName, columnIndex);
 							// If the clicked column is of type int/long
-						} else if (DataType.Double == dataType || DataType.Float == dataType || DataType.Long == dataType || DataType.Integer == dataType) {
+						} else if (DataType.Double == dataType || DataType.Float == dataType
+								|| DataType.Long == dataType || DataType.Integer == dataType) {
 							int len = table.getRowCount();
 							double[] columnVal = null;
 							if (oldFilter == null) {
@@ -106,7 +108,7 @@ public class ApplyFilter {
 							filterPopup = new FilterComponent("Range Filter", columnVal,
 									columnName, columnIndex, (RangeFilter) oldFilter);
 						}
-		
+
 					}
 					if (filterNotToBeApplied == false) {
 						filterPopup.showInDialog();
@@ -129,5 +131,24 @@ public class ApplyFilter {
 		});
 
 		return combo;
+	}
+
+	/**
+	 * Adding a filter to the filter map
+	 */
+	public static void addFilter(String columnName, CaB2BFilterInterface filter) {
+		filterMap.put(columnName, filter);
+	}
+
+	public static void clearMap() {
+		filterMap.clear();
+	}
+
+	public static Vector<CaB2BFilterInterface> getFilterMap() {
+		Vector<CaB2BFilterInterface> vector = new Vector<CaB2BFilterInterface>();
+		for (CaB2BFilterInterface filter : filterMap.values()) {
+			vector.add(filter);
+		}
+		return vector;
 	}
 }

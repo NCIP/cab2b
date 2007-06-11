@@ -296,7 +296,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         CustomSwingWorker swingWorker = new CustomSwingWorker(datalistTree) {
             protected void doNonUILogic() throws RuntimeException {
                 Logger.out.debug("Clicked on datalist");
-                ExperimentDataCategoryGridPanel.clearMap();
+                ApplyFilter.clearMap();
                 getDataForFilterPanel();
                 updateUI();
 
@@ -401,7 +401,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 
     public static void getDataForFilterPanel() {
         Vector<CaB2BFilterInterface> vector = new Vector<CaB2BFilterInterface>();
-        vector = ExperimentDataCategoryGridPanel.getFilterMap();
+        vector = ApplyFilter.getFilterMap();
         if (vector != null) {
             setDataForFilterPanel(vector);
         }
