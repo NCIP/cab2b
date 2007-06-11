@@ -48,6 +48,7 @@ import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.charts.Cab2bChartPanel;
+import edu.wustl.cab2b.client.ui.charts.ChartType;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bFormattedTextField;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
@@ -249,10 +250,10 @@ public class ExperimentStackBox extends Cab2bPanel {
         stackedBox.addBox("Visualize Data ", visualiseDataPanel, "mysearchqueries_icon.gif");
 
         // Set the type of charts to be displayed.
-        Vector<String> chartTypes = new Vector<String>();
-        chartTypes.add(Constants.BAR_CHART);
-        chartTypes.add(Constants.LINE_CHART);
-        chartTypes.add(Constants.SCATTER_PLOT);
+        Vector<ChartType> chartTypes = new Vector<ChartType>();
+        chartTypes.add(ChartType.BAR_CHART);
+        chartTypes.add(ChartType.LINE_CHART);
+        chartTypes.add(ChartType.SCATTER_PLOT);
         setChartTypesForVisualiseDataPanel(chartTypes);
 
         stackedBox.setPreferredSize(new Dimension(250, 500));
@@ -293,7 +294,6 @@ public class ExperimentStackBox extends Cab2bPanel {
      */
     public void treeSelectionListenerAction() {
         CustomSwingWorker swingWorker = new CustomSwingWorker(datalistTree) {
-            @Override
             protected void doNonUILogic() throws RuntimeException {
                 Logger.out.debug("Clicked on datalist");
                 ExperimentDataCategoryGridPanel.clearMap();
@@ -414,15 +414,15 @@ public class ExperimentStackBox extends Cab2bPanel {
      * @param chartTypes
      *            name of charts to be displayed.
      */
-    private void setChartTypesForVisualiseDataPanel(Vector<String> chartTypes) {
+    private void setChartTypesForVisualiseDataPanel(Vector<ChartType> chartTypes) {
         Logger.out.debug("setChartTypesForVisualiseDataPanel :: chartTypes " + chartTypes);
         visualiseDataPanel.removeAll();
 
-        for (String hyperlinkName : chartTypes) {
+        for (ChartType chartType : chartTypes) {
             Cab2bHyperlink hyperlink = new Cab2bHyperlink();
             hyperlink.setBounds(new Rectangle(5, 5, 5, 5));
-            hyperlink.setText(hyperlinkName);
-            hyperlink.setActionCommand(hyperlinkName);
+            hyperlink.setText(chartType.getActionCommand());
+            hyperlink.setActionCommand(chartType.getActionCommand());
 
             // String iconName = hyperlinkName.trim().replace(' ', '_') +
             // "_icon.gif";
@@ -432,8 +432,9 @@ public class ExperimentStackBox extends Cab2bPanel {
 
             hyperlink.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent actionEvent) {
-                    String linkClicked = actionEvent.getActionCommand();
-                    showChartAction(linkClicked);
+                    String actionCommand = actionEvent.getActionCommand();
+                    ChartType chartType = ChartType.getChartType(actionCommand);
+                    showChartAction(chartType);
                     updateUI();
                 }
             });
@@ -449,7 +450,7 @@ public class ExperimentStackBox extends Cab2bPanel {
      * @param linkClicked
      *            the name of the chart to be displayed
      */
-    private void showChartAction(String linkClicked) {
+    private void showChartAction(ChartType chartType) {
         Cab2bTable cab2bTable = m_experimentDataCategoryGridPanel.getCurrentTable();
 
         String entityName = null;
@@ -463,7 +464,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         Cab2bPanel currentChartPanel = m_experimentDataCategoryGridPanel.getCurrentChartPanel();
         if (currentChartPanel == null) {
             Cab2bChartPanel cab2bChartPanel = new Cab2bChartPanel(cab2bTable);
-            cab2bChartPanel.setChartType(linkClicked, entityName);
+            cab2bChartPanel.setChartType(chartType, entityName);
 
             final Cab2bPanel newVisualizeDataPanel = new Cab2bPanel();
             newVisualizeDataPanel.setLayout(new RiverLayout());
@@ -485,7 +486,7 @@ public class ExperimentStackBox extends Cab2bPanel {
             tabComponent.setSelectedComponent(newVisualizeDataPanel);
         } else {
             Cab2bChartPanel cab2bChartPanel = (Cab2bChartPanel) currentChartPanel.getComponent(0);
-            cab2bChartPanel.setChartType(linkClicked, entityName);
+            cab2bChartPanel.setChartType(chartType, entityName);
             tabComponent.setSelectedComponent(currentChartPanel);
         }
     }
