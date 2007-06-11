@@ -45,7 +45,10 @@ public class CategorialClassRecord extends Record implements ICategorialClassRec
     public void addCategorialClassRecords(CategorialClass catClass, List<ICategorialClassRecord> catClassRecs) {
         List<ICategorialClassRecord> existingRecs = getChildrenCategorialClassRecords().get(catClass);
         if (existingRecs == null) {
-            getChildrenCategorialClassRecords().put(catClass, new ArrayList<ICategorialClassRecord>(catClassRecs));
+            synchronized (this) {
+                getChildrenCategorialClassRecords().put(catClass,
+                                                        new ArrayList<ICategorialClassRecord>(catClassRecs));
+            }
         } else {
             existingRecs.addAll(catClassRecs);
         }
