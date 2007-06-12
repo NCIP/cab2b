@@ -40,7 +40,7 @@ public class AddLimitAdvancedSearchPanel extends AbstractAdvancedSearchPanel {
 
 		m_taskPane.add("br", m_radioText);
 		m_taskPane.add(m_radioConceptCode);
-		m_taskPane.setPreferredSize(new Dimension(222, 125));
+		//m_taskPane.setPreferredSize(new Dimension(222, 125));
 
 	}
 }

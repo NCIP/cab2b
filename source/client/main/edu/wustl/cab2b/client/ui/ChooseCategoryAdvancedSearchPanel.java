@@ -46,12 +46,12 @@ public class ChooseCategoryAdvancedSearchPanel extends AbstractAdvancedSearchPan
 		/**
 		 * Dummy labels to set place properly
 		 */
-		for(int i = 0 ;i<30;i++)
+		for(int i = 0 ;i<18;i++)
 		{
 			m_taskPane.add("tab", new Cab2bLabel(""));
 		}
 		m_taskPane.add("br", m_radioText);
 		m_taskPane.add(m_radioConceptCode);
-		m_taskPane.setPreferredSize(new Dimension(450,150));
+		//m_taskPane.setPreferredSize(new Dimension(450,150));
 	}	
 }
