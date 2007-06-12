@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -222,10 +221,9 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
      * Method to handle 'Add Limit' button click event
      */
     public void performAddLimitAction(JXPanel[] componentPanel, EntityInterface entity) {
-        final Collection collection = entity.getAttributeCollection();
-        final int size = collection.size();
-        List<AttributeInterface> attributes = new ArrayList<AttributeInterface>(size);
-        List<String> conditions = new ArrayList<String>(size);
+        final Collection<AttributeInterface> attributeCollection = entity.getAttributeCollection();
+        List<AttributeInterface> attributes = new ArrayList<AttributeInterface>(attributeCollection.size());
+        List<String> conditions = new ArrayList<String>(attributeCollection.size());
         List<List<String>> values = new ArrayList<List<String>>();
 
         for (int j = 0; j < componentPanel.length - 1; j++) {
@@ -233,7 +231,7 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
             String conditionString = panel.getCondition();
 
             // Check if condition is set for this panel
-            AttributeInterface attribute = getAttribute(collection, panel.getAttributeName());
+            AttributeInterface attribute = getAttribute(attributeCollection, panel.getAttributeName());
             ArrayList<String> conditionValues = panel.getValues();
             if (0 == conditionString.compareToIgnoreCase("Between") && (conditionValues.size() == 1)) {
                 JOptionPane.showInternalMessageDialog((this.m_addLimitPanel).getParent().getParent().getParent(),
@@ -253,7 +251,7 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
         if (attributes.size() == 0) {
             JOptionPane.showMessageDialog((this.m_addLimitPanel).getParent().getParent().getParent(),
                                           "Please add condition(s) before proceeding", "Add Limit Warning",
-                                                  JOptionPane.WARNING_MESSAGE);
+                                          JOptionPane.WARNING_MESSAGE);
         } else {
             MainSearchPanel mainSearchPanel = (MainSearchPanel) ((JXPanel) m_addLimitPanel).getParent().getParent();
             if (mainSearchPanel.getQueryObject() == null) {
@@ -268,38 +266,37 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
                 m_addLimitPanel.refreshBottomCenterPanel(expressionId);
             } else {
                 JOptionPane.showMessageDialog(
-                                                      mainSearchPanel.getParent(),
-                                                      "This rule cannot be added as it is not associated with the added rules.",
-                                                      "Error", JOptionPane.ERROR_MESSAGE);
+                                              mainSearchPanel.getParent(),
+                                              "This rule cannot be added as it is not associated with the added rules.",
+                                              "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    private AttributeInterface getAttribute(Collection collection, String attributeName) {
-        AttributeInterface attribute = null;
-        Iterator iterator = collection.iterator();
-
-        while (iterator.hasNext()) {
-            attribute = (AttributeInterface) iterator.next();
+    private AttributeInterface getAttribute(Collection<AttributeInterface> attributeCollection,
+                                            String attributeName) {
+        AttributeInterface requiredAttribute = null;
+        for (AttributeInterface attribute : attributeCollection) {
             if (attributeName.trim().equals(attribute.getName().trim())) {
+                requiredAttribute = attribute;
                 break;
             }
         }
 
-        return attribute;
+        return requiredAttribute;
     }
 
     /**
      * Method to perform edit limit action
      */
     public void performEditLimitAction(JXPanel[] componentPanel, IExpression expression) {
-        final Collection collection = expression.getConstraintEntity().getDynamicExtensionsEntity().getAttributeCollection();
+        final Collection<AttributeInterface> attributeCollection = expression.getConstraintEntity().getDynamicExtensionsEntity().getAttributeCollection();
         List<ICondition> conditionList = new ArrayList<ICondition>();
         for (int j = 0; j < componentPanel.length - 1; j++) {
             IComponent panel = (IComponent) componentPanel[j];
             String conditionString = panel.getCondition();
 
-            AttributeInterface attribute = getAttribute(collection, panel.getAttributeName());
+            AttributeInterface attribute = getAttribute(attributeCollection, panel.getAttributeName());
             ArrayList<String> values = panel.getValues();
             if (0 == conditionString.compareToIgnoreCase("Between") && (values.size() == 1)) {
                 JOptionPane.showInternalMessageDialog((this.m_addLimitPanel).getParent().getParent().getParent(),
