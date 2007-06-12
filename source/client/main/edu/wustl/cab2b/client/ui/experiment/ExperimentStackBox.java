@@ -295,9 +295,13 @@ public class ExperimentStackBox extends Cab2bPanel {
 	public void treeSelectionListenerAction() {
 		CustomSwingWorker swingWorker = new CustomSwingWorker(datalistTree) {
 			protected void doNonUILogic() throws RuntimeException {
-				Logger.out.debug("Clicked on datalist");
-				ApplyFilterPanel.clearMap();
-				getDataForFilterPanel();
+				Cab2bPanel selectedPanel = (Cab2bPanel)m_experimentDataCategoryGridPanel.getTabComponent().getSelectedComponent();
+                Component applyFilterComponent = CommonUtils.getComponentByName(selectedPanel, Constants.APPLY_FILTER_PANEL_NAME); 
+                if(applyFilterComponent instanceof ApplyFilterPanel){
+                	ApplyFilterPanel applyFilterPanel = (ApplyFilterPanel)applyFilterComponent;
+                	applyFilterPanel.clearMap();
+                	getDataForFilterPanel(applyFilterPanel);
+                }
 				updateUI();
 
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent();
@@ -397,8 +401,8 @@ public class ExperimentStackBox extends Cab2bPanel {
 		dataFilterPanel.revalidate();
 	}
 
-	public static void getDataForFilterPanel() {
-		Vector<CaB2BFilterInterface> vector = ApplyFilterPanel.getFilterMap();
+	public static void getDataForFilterPanel(ApplyFilterPanel applyFilterPanel) {
+		Vector<CaB2BFilterInterface> vector = applyFilterPanel.getFilterMap();
 		if (vector != null) {
 			setDataForFilterPanel(vector);
 		}

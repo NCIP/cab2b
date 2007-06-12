@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
+import edu.wustl.cab2b.client.ui.experiment.ApplyFilterPanel;
 
 /**
  * This class generates a pop-up of Range filter type when clicked on a header
@@ -14,18 +15,17 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
  * 
  */
 public class RangePopup extends Cab2bFilterPopup {
+	private static final long serialVersionUID = 1L;
 
 	private Cab2bLabel minLable, maxLable;
 
 	private Cab2bTextField minText, maxText;
-	
+
 	private String columnName;
 
-	public RangePopup(RangeFilter oldFilter, String colName, int colIndex)
-
-	{		
-		super(colName, colIndex);
-		this.columnName=colName;
+	public RangePopup(ApplyFilterPanel applyFilterpanel, RangeFilter oldFilter, String colName, int colIndex) {
+		super(applyFilterpanel, colName, colIndex);
+		this.columnName = colName;
 		minLable = new Cab2bLabel("Minimum :");
 		maxLable = new Cab2bLabel("Maximum :");
 
@@ -58,12 +58,11 @@ public class RangePopup extends Cab2bFilterPopup {
 	/**
 	 * This method creates the filter taking its input from the text filed.
 	 */
-	@Override
 	protected CaB2BFilterInterface okActionPerformed(ActionEvent e) {
 		int minimum = Integer.parseInt(minText.getText());
 		int maximum = Integer.parseInt(maxText.getText());
 		return null;
-	//	return new RangeFilter(minimum, maximum, columnIndex, columnName);
+		//	return new RangeFilter(minimum, maximum, columnIndex, columnName);
 	}
 
 }

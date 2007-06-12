@@ -16,8 +16,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class FilterComponent extends Cab2bFilterPopup implements MouseListener, ActionListener,
-		FocusListener, KeyListener {
+import edu.wustl.cab2b.client.ui.experiment.ApplyFilterPanel;
+
+public class FilterComponent extends Cab2bFilterPopup implements MouseListener, ActionListener, FocusListener,
+		KeyListener {
+	private static final long serialVersionUID = 1L;
+
 	private String m_title;
 
 	private double[] m_values;
@@ -37,11 +41,16 @@ public class FilterComponent extends Cab2bFilterPopup implements MouseListener, 
 	private DataFilterUI dataFilter;
 
 	// Constructor method for filter component
-	public FilterComponent(String title, double[] values, String colName, int colIndex,
-			RangeFilter oldFilter) {
-		super(colName, colIndex);
+	public FilterComponent(
+			String title,
+			ApplyFilterPanel applyFilterpanel,
+			RangeFilter oldFilter,
+			double[] columnVal,
+			String columnName,
+			int columnIndex) {
+		super(applyFilterpanel, columnName, columnIndex);
 		m_title = title;
-		m_values = values;
+		m_values = columnVal;
 		if (oldFilter != null) {
 			m_minValue = oldFilter.originalMin;
 			m_maxValue = oldFilter.originalMax;
@@ -104,8 +113,7 @@ public class FilterComponent extends Cab2bFilterPopup implements MouseListener, 
 		m_maxValTextField.addKeyListener(this);
 		titlePanel.add(m_maxValTextField);
 
-		dataFilter = new DataFilterUI(this, 290, 20, m_minValue, m_maxValue, prevMinRange,
-				prevMaxRange);
+		dataFilter = new DataFilterUI(this, 290, 20, m_minValue, m_maxValue, prevMinRange, prevMaxRange);
 		dataFilter.setBounds(20, 60, 300, 30);
 		titlePanel.add(dataFilter);
 
@@ -214,7 +222,6 @@ public class FilterComponent extends Cab2bFilterPopup implements MouseListener, 
 
 	}
 
-	@Override
 	protected CaB2BFilterInterface okActionPerformed(ActionEvent e) {
 		double minimum = DataFilterUI.m_currentMinValue;
 		double maximum = DataFilterUI.m_currentMaxValue;

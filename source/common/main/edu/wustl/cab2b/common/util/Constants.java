@@ -95,4 +95,6 @@ public class Constants {
     public static final Dimension WIZARD_SIZE2_DIMENSION = new Dimension(752, 580);
 
     public static final Dimension WIZARD_NAVIGATION_PANEL_DIMENSION = new Dimension(752, 36);
+    
+    public static final String APPLY_FILTER_PANEL_NAME = "applyFilterPanel";
 }
