@@ -10,8 +10,6 @@ public class DerivedBioAssayDataRecord extends CaArrayRecord implements IDerived
 
     private Object[][][] cube;
 
-    private String order;
-
     private String[] dim1Labels;
 
     private String[] dim2Labels;
@@ -53,13 +51,4 @@ public class DerivedBioAssayDataRecord extends CaArrayRecord implements IDerived
     public void setDim3Labels(String[] dim3Labels) {
         this.dim3Labels = dim3Labels;
     }
-
-    public String getOrder() {
-        return order;
-    }
-
-    public void setOrder(String order) {
-        this.order = order;
-    }
-
 }
