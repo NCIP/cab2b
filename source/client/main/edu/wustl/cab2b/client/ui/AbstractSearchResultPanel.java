@@ -251,9 +251,9 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
         }
 
         if (attributes.size() == 0) {
-            JOptionPane.showInternalMessageDialog((this.m_addLimitPanel).getParent().getParent().getParent(),
-                                                  "Please enter atleast one condition.", "Error",
-                                                  JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog((this.m_addLimitPanel).getParent().getParent().getParent(),
+                                          "Please add condition(s) before proceeding", "Add Limit Warning",
+                                                  JOptionPane.WARNING_MESSAGE);
         } else {
             MainSearchPanel mainSearchPanel = (MainSearchPanel) ((JXPanel) m_addLimitPanel).getParent().getParent();
             if (mainSearchPanel.getQueryObject() == null) {
@@ -267,7 +267,7 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
                 // Pratibha's code will take over from here
                 m_addLimitPanel.refreshBottomCenterPanel(expressionId);
             } else {
-                JOptionPane.showInternalMessageDialog(
+                JOptionPane.showMessageDialog(
                                                       mainSearchPanel.getParent(),
                                                       "This rule cannot be added as it is not associated with the added rules.",
                                                       "Error", JOptionPane.ERROR_MESSAGE);
