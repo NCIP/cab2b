@@ -40,6 +40,8 @@ public class ApplyFilterPanel extends Cab2bPanel {
 	private List<String> elements;
 
 	private Map<String, CaB2BFilterInterface> filterMap;
+	
+	private Cab2bComboBox combo;
 
 	public ApplyFilterPanel(ExperimentTableModel myTable) {
 		this.table = myTable;
@@ -58,7 +60,7 @@ public class ApplyFilterPanel extends Cab2bPanel {
 	}
 
 	private Cab2bComboBox applyingFilter() {
-		Cab2bComboBox combo = new Cab2bComboBox();
+		combo = new Cab2bComboBox();
 		int columnCount = table.getModel().getColumnCount();
 		for (int i = 0; i < columnCount; i++) {
 			String colName = table.getModel().getColumnName(i);
@@ -66,6 +68,7 @@ public class ApplyFilterPanel extends Cab2bPanel {
 			indexToName.put(colName, i);
 		}
 		combo.setPreferredSize(null);
+		combo.setSelectedItem(null);
 		combo.addItemListener(new ComboItemListener(this));
 
 		return combo;
@@ -158,6 +161,7 @@ public class ApplyFilterPanel extends Cab2bPanel {
 					filterPopup.showInDialog();
 					applyFilter();
 				}
+				combo.setSelectedItem(null);
 			}
 		}
 
