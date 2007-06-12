@@ -42,7 +42,7 @@ public class RangeFilter extends CaB2BFilter {
 		if (!adapter.isTestable(getColumnIndex()))
 			return false;
 		Object value = getInputValue(row, getColumnIndex());
-		if (value == null) {
+		if (value == null||value.equals("")) {
 			return false;
 		} else {
 			float valueInt = Float.parseFloat(value.toString());
