@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.experiment;
 
+import java.awt.Font;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
@@ -8,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
-import javax.swing.JLabel;
 
 import org.jdesktop.swingx.decorator.Filter;
 import org.jdesktop.swingx.decorator.FilterPipeline;
@@ -29,7 +28,9 @@ import edu.wustl.cab2b.client.ui.filter.RangeFilter;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.DataType;
 
-public class ApplyFilter {
+public class ApplyFilterPanel extends Cab2bPanel {
+	private static final long serialVersionUID = 1L;
+
 	private ExperimentTableModel table;
 
 	private boolean filterNotToBeApplied;
@@ -38,19 +39,21 @@ public class ApplyFilter {
 
 	private List<String> elements = new ArrayList<String>();
 
-	private Cab2bPanel filterPanel = new Cab2bPanel();
-
 	private static Map<String, CaB2BFilterInterface> filterMap = new HashMap<String, CaB2BFilterInterface>();
 
-	public ApplyFilter(ExperimentTableModel myTable) {
+	public ApplyFilterPanel(ExperimentTableModel myTable) {
 		this.table = myTable;
-		this.filterMap = filterMap;
 
+		Cab2bLabel filterLabel = new Cab2bLabel("Apply Filter");
+		filterLabel.setFont(new Font("Arial", Font.BOLD, 13));
+		this.add("tab ", filterLabel);
+
+		Cab2bComboBox combo = applyingFilter();
+		this.add(combo);
 	}
 
-	public Cab2bPanel applyingFilter() {
+	private Cab2bComboBox applyingFilter() {
 		Cab2bComboBox combo = new Cab2bComboBox();
-		;
 		int columnCount = table.getModel().getColumnCount();
 		for (int i = 0; i < columnCount; i++) {
 			String colName = table.getModel().getColumnName(i);
@@ -73,18 +76,15 @@ public class ApplyFilter {
 					Cab2bFilterPopup filterPopup = null;
 					AttributeInterface attribute = table.getColumnAttribute(columnName);
 					if (Utility.isEnumerated(attribute)) {
-						Collection<PermissibleValueInterface> permissibleValueCollection = Utility
-								.getPermissibleValues(attribute);
+						Collection<PermissibleValueInterface> permissibleValueCollection = Utility.getPermissibleValues(attribute);
 						filterPopup = new EnumeratedFilterPopUp(columnName, columnIndex,
 								permissibleValueCollection, (CaB2BPatternFilter) oldFilter);
 					} else {
-						DataType dataType = Utility.getDataType(attribute
-								.getAttributeTypeInformation());
+						DataType dataType = Utility.getDataType(attribute.getAttributeTypeInformation());
 
 						// If the clicked column is of type String.
 						if (DataType.String == dataType || DataType.Boolean == dataType) {
-							filterPopup = new PatternPopup((CaB2BPatternFilter) oldFilter,
-									columnName, columnIndex);
+							filterPopup = new PatternPopup((CaB2BPatternFilter) oldFilter, columnName, columnIndex);
 							// If the clicked column is of type int/long
 						} else if (DataType.Double == dataType || DataType.Float == dataType
 								|| DataType.Long == dataType || DataType.Integer == dataType) {
@@ -111,8 +111,8 @@ public class ApplyFilter {
 								count++;
 							}
 
-							filterPopup = new FilterComponent("Range Filter", columnVal,
-									columnName, columnIndex, (RangeFilter) oldFilter);
+							filterPopup = new FilterComponent("Range Filter", columnVal, columnName, columnIndex,
+									(RangeFilter) oldFilter);
 						}
 
 					}
@@ -136,11 +136,7 @@ public class ApplyFilter {
 			}
 		});
 
-		filterPanel.add(new JLabel(""));
-		filterPanel.add("tab ", new Cab2bLabel("Apply Filter"));
-		filterPanel.add(combo);
-
-		return filterPanel;
+		return combo;
 	}
 
 	/**

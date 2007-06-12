@@ -9,10 +9,9 @@ import javax.swing.JDialog;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
-import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
-import edu.wustl.cab2b.client.ui.experiment.ApplyFilter;
-import edu.wustl.cab2b.client.ui.experiment.ExperimentDataCategoryGridPanel;
+import edu.wustl.cab2b.client.ui.experiment.ApplyFilterPanel;
 import edu.wustl.cab2b.client.ui.experiment.ExperimentStackBox;
+import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 
 /**
  * Class to implement the filter pop-up
@@ -53,7 +52,7 @@ public abstract class Cab2bFilterPopup extends Cab2bPanel {
 
                 CaB2BFilterInterface filter = okActionPerformed(e);
 
-                ApplyFilter.addFilter(columnName, filter);
+                ApplyFilterPanel.addFilter(columnName, filter);
                 ExperimentStackBox.getDataForFilterPanel();
                 updateUI();
                 dialog.dispose();
