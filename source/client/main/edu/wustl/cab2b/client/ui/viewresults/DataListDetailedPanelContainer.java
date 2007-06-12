@@ -81,9 +81,10 @@ public class DataListDetailedPanelContainer extends Cab2bPanel implements Action
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileFilter(new Cab2bFileFilter(new String[] { "csv" }));
             int status = fileChooser.showSaveDialog(this);
-            File selFile = fileChooser.getSelectedFile();
-            String fileName = selFile.getAbsolutePath();
             if (JFileChooser.APPROVE_OPTION == status) {
+                File selFile = fileChooser.getSelectedFile();
+                String fileName = selFile.getAbsolutePath();
+
                 if (true == selFile.exists()) {
                     // Prompt user to confirm if he wants to override the value 
                     int confirmationValue = JOptionPane.showConfirmDialog(fileChooser, "The file "
