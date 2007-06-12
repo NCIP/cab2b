@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
 
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import cab2b.common.caarray.DerivedBioAssayRecord;
@@ -75,16 +76,16 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         this.m_mainSearchPanel = panel;
         initGUI();
         this.setPreferredSize(new Dimension(976, 36));
-        this.setBackground(new Color(240,240,240));
+        this.setBackground(new Color(240, 240, 240));
     }
 
     private void initGUI() {
         messageLabel = new Cab2bLabel("");
         Font font = messageLabel.getFont();
-        messageLabel.setFont(new Font(font.getFamily(),Font.PLAIN,font.getSize()));
-        messageLabel.setForeground(new Color(0,128,0));
+        messageLabel.setFont(new Font(font.getFamily(), Font.PLAIN, font.getSize()));
+        messageLabel.setForeground(new Color(0, 128, 0));
         //essageLabel.setForeground(new Color(153,51,0));
-        
+
         messagePanel = new Cab2bPanel();
         messagePanel.setBackground(null);
         messagePanel.add(messageLabel);
@@ -157,7 +158,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 //If the central panel is AddLimitPanel, update the query object with the 
                 //logical operators between the rules.
                 //m_mainSearchPanel.updateQueryObject();
-                if (m_mainSearchPanel.getQueryObject() != null) {
+                if (m_mainSearchPanel.getQueryObject() != null
+                        && m_mainSearchPanel.getQueryObject().getVisibleExressionIds().size() > 0) {
                     /*
                      * Also cause for the next card in the dialog to be added
                      * dynamically to the dialog.
@@ -189,7 +191,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                     /*Pop-up a dialog asking the user to add alteast a rule.*/
                     JOptionPane.showMessageDialog(this.m_mainSearchPanel.getParent(),
                                                   "Please add Limit(s) before proceeding", "Cannot Proceed",
-                                                          JOptionPane.WARNING_MESSAGE);
+                                                  JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
@@ -205,8 +207,6 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                         queryResults = CommonUtils.executeQuery(
                                                                 (ICab2bQuery) m_mainSearchPanel.getQueryObject().getQuery(),
                                                                 m_mainSearchPanel);
-
-//                                                queryResults = getQueryResult();
                     }
 
                     @Override
