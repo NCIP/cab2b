@@ -21,9 +21,10 @@ import edu.wustl.common.util.logger.Logger;
  * @author chetan_bh
  */
 public class DateTypePanel extends AbstractTypePanel {
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private static final long serialVersionUID = 1L;
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 	static DateFormat[] dateFormats = new DateFormat[1];
-	static String[] strDateFormats = new String[] {"yyyy-MM-dd"};
+	static String[] strDateFormats = new String[] {"yyyy/MM/dd"};
 	
 	public DateTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, Boolean showCondition,Dimension  maxLabelDimension) {
 		super(conditionList, attributeEntity, showCondition,maxLabelDimension);
@@ -106,7 +107,9 @@ public class DateTypePanel extends AbstractTypePanel {
  * @author chetan_bh
  */
 class DatePanel extends Cab2bPanel {
-	/**
+    private static final long serialVersionUID = 1L;
+
+    /**
 	 * Date picker component.
 	 */
 	private Cab2bDatePicker datePicker;
@@ -126,7 +129,7 @@ class DatePanel extends Cab2bPanel {
 	private void initGUI() {
 		datePicker = new Cab2bDatePicker();
 	
-		dateFormatLabel = new Cab2bLabel(" yyyy-mm-dd");
+		dateFormatLabel = new Cab2bLabel(" yyyy/mm/dd");
 		dateFormatLabel.setOpaque(false);
 		FlowLayout layout = new FlowLayout();
 		layout.setAlignment(FlowLayout.LEFT);
