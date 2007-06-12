@@ -2,10 +2,8 @@ package edu.wustl.cab2b.client.ui.mainframe;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import javax.swing.BoxLayout;
 import javax.swing.JEditorPane;
@@ -87,8 +85,6 @@ public class NewWelcomePanel extends Cab2bPanel
 		java.net.URL helpURL = null;
 		
 		try{
-            
-            System.out.println("stream " + this.getClass().getClassLoader().getResource("resources/images/welcomepage.html"));
             helpURL = this.getClass().getClassLoader().getResource("welcomepage.html");
 			editorPane.setPage(helpURL);
 		}catch(MalformedURLException malExp)

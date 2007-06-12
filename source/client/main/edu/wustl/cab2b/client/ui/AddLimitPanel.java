@@ -241,7 +241,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
             int a = 1;
         }
 
-        Logger.out.info("Class name : " + strClassNameAsTitle);
+        Logger.out.debug("Class name : " + strClassNameAsTitle);
         /* Set the title for the top titled panel. */
         this.m_topCenterPanel.setTitle("Define Search Rules '" + strClassNameAsTitle + "'");
         this.m_ContentForTopPanel.removeAll();

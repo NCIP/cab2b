@@ -246,8 +246,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 			String entityName = entity.getName();
 			if (entityName.equals(targetEntityName)) {
 				targetEntityInterface = entity;
-				Logger.out
-						.info("found target entity interface to be set set as select entity in Query.");
+				Logger.out.debug("found target entity interface to be set set as select entity in Query.");
 				break;
 			}
 		}
