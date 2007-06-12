@@ -263,7 +263,6 @@ public class MainDagPanel extends Cab2bPanel
 	        try 
 			{
 				intermediateExpressions = m_queryObject.addPath(sourceNode.getExpressionId(), destNode.getExpressionId(), path);
-				System.out.println("");
 			}
 			catch (CyclicException e)
 			{
@@ -617,21 +616,20 @@ public class MainDagPanel extends Cab2bPanel
 	 */
 	public void performAutoConnect()
 	{
-		System.out.println("User clicked auto-connect functionality");
 		List<ClassNode> selectedNodes = m_viewController.getCurrentNodeSelection();
 		if(selectedNodes == null || selectedNodes.size() <=1)
 		{
 			// Cannot perform connect all functionality
-			JOptionPane.showMessageDialog(this, "Cannot perform connect all as minimum two nodes needs to be selected.", 
-												"Auto-Connect warning", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this.getParent().getParent().getParent(), "Please select atleast two nodes", 
+												"Auto Connect Warning", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		
 		if(false == isAutoConnectValid(selectedNodes))
 		{
 			// Cannot perform connect all functionality
-			JOptionPane.showMessageDialog(this, "Cannot perform connect all as some of the selected nodes are already connected.", 
-												"Auto-Connect warning", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this.getParent().getParent().getParent(), "Auto Connect failed. Some of the selected nodes are already connected.", 
+												"Auto Connect Warning", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		Set<EntityInterface> entitySet = new HashSet<EntityInterface>();
