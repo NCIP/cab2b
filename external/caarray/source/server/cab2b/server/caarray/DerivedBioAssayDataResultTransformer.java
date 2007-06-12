@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import cab2b.common.caarray.DerivedBioAssayRecord;
-import cab2b.common.caarray.IDerivedBioAssayRecord;
+import cab2b.common.caarray.DerivedBioAssayDataRecord;
+import cab2b.common.caarray.IDerivedBioAssayDataRecord;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
@@ -20,20 +20,20 @@ import gov.nih.nci.mageom.domain.BioAssayData.CompositeSequenceDimension;
 import gov.nih.nci.mageom.domain.BioAssayData.DerivedBioAssayData;
 import gov.nih.nci.mageom.domain.BioAssayData.QuantitationTypeDimension;
 
-public class DerivedBioAssayDataResultTransformer extends AbstractCaArrayResultTransfomer<IDerivedBioAssayRecord> {
+public class DerivedBioAssayDataResultTransformer extends AbstractCaArrayResultTransfomer<IDerivedBioAssayDataRecord> {
     private static final String HEADER_ATTRIBUTE_NAME = "name";
 
     @Override
-    protected IDerivedBioAssayRecord createCaArrayRecord(Set<AttributeInterface> attributes, RecordId id) {
-        return new DerivedBioAssayRecord(attributes, id);
+    protected IDerivedBioAssayDataRecord createCaArrayRecord(Set<AttributeInterface> attributes, RecordId id) {
+        return new DerivedBioAssayDataRecord(attributes, id);
     }
 
     @Override
-    protected IDerivedBioAssayRecord createRecordForObject(String url, Object objRec, EntityInterface outputEntity) {
+    protected IDerivedBioAssayDataRecord createRecordForObject(String url, Object objRec, EntityInterface outputEntity) {
         if (!(objRec instanceof DerivedBioAssayData)) {
             throw new IllegalArgumentException();
         }
-        DerivedBioAssayRecord rec = (DerivedBioAssayRecord) super.createRecordForObject(url, objRec, outputEntity);
+        DerivedBioAssayDataRecord rec = (DerivedBioAssayDataRecord) super.createRecordForObject(url, objRec, outputEntity);
         DerivedBioAssayData derivedBioAssayData = (DerivedBioAssayData) objRec;
         String[] bioAssayNames = getBioAssaysNames(derivedBioAssayData.getBioAssayDimension().getIdentifier(), url);
         String[] quantitationTypeNames = getQuantitationTypesNames(
