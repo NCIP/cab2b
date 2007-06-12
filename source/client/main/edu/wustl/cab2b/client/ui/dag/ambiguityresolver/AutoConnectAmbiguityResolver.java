@@ -1,234 +1,162 @@
 package edu.wustl.cab2b.client.ui.dag.ambiguityresolver;
 
-import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
-import org.jdesktop.swingx.JXPanel;
-
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
-import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
-import edu.wustl.cab2b.client.ui.controls.IDialogInterface;
-import edu.wustl.cab2b.client.ui.controls.RadioButtonRenderer;
 import edu.wustl.cab2b.client.ui.controls.RadioButtonEditor;
-import edu.wustl.cab2b.client.ui.controls.TextAreaEditor;
+import edu.wustl.cab2b.client.ui.controls.RadioButtonRenderer;
 import edu.wustl.cab2b.client.ui.controls.TextAreaRenderer;
-import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
-import edu.wustl.common.util.Utility;
 
-public class AutoConnectAmbiguityResolver extends Cab2bPanel implements IDialogInterface
-{
-	ICuratedPath[] m_paths;
-	
-	ButtonGroup radioGroup = new ButtonGroup();
+public class AutoConnectAmbiguityResolver extends AbstractAmibuityResolver {
+    private static final long serialVersionUID = 1L;
 
-	private FilterPathsPanel filterPathsPanel;
-	
-	private Cab2bButton addPathsButton;
-	
-	private JDialog m_parentWindow = null;
-	
-	/**
-	 * A table component to display paths, and their popularity, and to
-	 * allow users to select the desired paths.
-	 */
-	private JScrollPane pathsTableSP;
-	private JTable pathsTable;
-	private Dimension pathsTablePreferredSize = new Dimension(530, 150);
-	
-	private JXPanel parentPanel;
-	
-	private Object[][] tableData;
-	
-	private String[] tableHeader;
-	
-	/**
-	 * Key is a vector of source, target entity interface (which is the input
-	 * to ambiguity resolver).
-	 * Value is a List of user selected paths, a path is a PathInterfaces.
-	 */
-	private ICuratedPath m_userSelectedPath;
-	
-	public AutoConnectAmbiguityResolver(Set<ICuratedPath> paths)
-	{
-		Iterator<ICuratedPath> pathListIter = paths.iterator();
-		m_paths = new ICuratedPath[paths.size()];
-		int i=0;
-		while (pathListIter.hasNext())
-		{
-			m_paths[i] = pathListIter.next();
-			i++;
-		}
-		initGUI();
-	}
+    private ICuratedPath[] curratedPaths;
 
-	
+    private ButtonGroup radioGroup = new ButtonGroup();
 
-	/**
-	 * Initializes GUI.
-	 * TODO Identify the time consuming task in this initGUI method 
-	 * and put that in SwingWorker Thread. 
-	 */
-	private void initGUI()
-	{
-		parentPanel = new Cab2bPanel();
-		parentPanel.setLayout(new RiverLayout());
-		
-		JLabel label = new JLabel("There are multiple paths available for connecting selected categories. Select the appropriate paths.");
-		parentPanel.add("br", label);
-		parentPanel.add("br", new JLabel(""));
-		
-		tableHeader = new String[3];
-		tableHeader[0] = "Select";
-		tableHeader[1] ="Paths";
-		tableHeader[2] ="Path Popularity";
-		tableData = getPathsDetails();
-		DefaultTableModel dm = new DefaultTableModel();
-		dm.setDataVector(tableData, tableHeader);
-		pathsTable = new JTable(dm);
-		pathsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		pathsTable.setPreferredScrollableViewportSize(pathsTablePreferredSize);
-		pathsTable.getColumnModel().getColumn(0).setPreferredWidth(40);
-		pathsTable.getColumnModel().getColumn(1).setPreferredWidth(400);
-		pathsTable.getColumnModel().getColumn(2).setPreferredWidth(100);
-		pathsTable.setFont(new Font("arial", Font.PLAIN, 12));
-		RadioButtonRenderer radioRenderer = new RadioButtonRenderer();
-		RadioButtonEditor radioEditor = new RadioButtonEditor(new JCheckBox());
-		
-		pathsTable.getColumnModel().getColumn(0).setCellRenderer(radioRenderer);
-		pathsTable.getColumnModel().getColumn(0).setCellEditor(radioEditor);
-		
-		TextAreaRenderer textAreaRenderer = new TextAreaRenderer();
-		TextAreaEditor textEditor = new TextAreaEditor();
-		pathsTable.getColumnModel().getColumn(1).setCellRenderer(textAreaRenderer);
-		pathsTable.getColumnModel().getColumn(1).setCellEditor(textEditor);
-		pathsTableSP = new JScrollPane(pathsTable);
-		parentPanel.add("br", pathsTableSP);
-		
-		addPathsButton = new Cab2bButton("Ok");
-		addPathsButton.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-			   	
-				m_userSelectedPath = null;
-				DefaultTableModel dm =	(DefaultTableModel)pathsTable.getModel();
-				for(int i=0; i<dm.getRowCount(); i++)
-				{
-					JRadioButton button = (JRadioButton)dm.getValueAt(i, 0);
-					if(button.isSelected() == true)
-					{
-						// Set the selection properly
-						m_userSelectedPath = m_paths[i];
-						break;
-					}
-				}
-				if(m_parentWindow != null)
-				{
-					m_parentWindow.setVisible(false);
-				}
-			}
-		});
-		parentPanel.add("br", new JLabel(""));
-		for(int i=0; i<20; i++)
-			parentPanel.add("tab", new JLabel(""));
-		parentPanel.add("tab", addPathsButton);
-		this.add(parentPanel);
-		label.setFont(pathsTable.getFont());
-	}
-	
-	/**
-	 * Returns data for the table component.
-	 * @param listOfPaths list of paths.
-	 * @return 
-	 */
-	public Object[][] getPathsDetails()
-	{
-		int rowCnt=0;
-		int totalResults = m_paths.length;
-		Object[][] values = new Object[totalResults][];
-		int pathPopularity = (int)(1/(double)totalResults * 100.00);
-		for (int i =0; i<totalResults; i++)
-		{
-			values[rowCnt] = new Object[3];
-			values[rowCnt][0]= new JRadioButton();
-			radioGroup.add((JRadioButton)values[rowCnt][0]);
-			Set<IPath> internalPaths = m_paths[i].getPaths();
-			Iterator<IPath> iter = internalPaths.iterator();
-			StringBuffer sb = new StringBuffer();
-			while (iter.hasNext())
-			{
-				sb.append(getFullPathNames(iter.next())).append("\n");
-			}
-			values[rowCnt][1]= sb.toString();
-			values[rowCnt][2] = pathPopularity + " %"; // TODO to remove this hardcoding.
-			rowCnt++;
-		}
-		return values;
-	}
-	
-	private String getFullPathNames(IPath path)
-	{
-		StringBuffer returner = new StringBuffer(); 
-		String roleName;
-		List<IAssociation> assoList = path.getIntermediateAssociations();
-		Iterator<IAssociation> listIterator = assoList.listIterator();
-		
-		boolean firstAssoOver = false;
-		while(listIterator.hasNext())
-		{
-			IAssociation asso = listIterator.next();
-			roleName = edu.wustl.cab2b.client.ui.query.Utility.getRoleName(asso);
-			if(!firstAssoOver)
-			{
-				EntityInterface srcEntity = asso.getSourceEntity();
-				EntityInterface tarEntity = asso.getTargetEntity();
-				String srcEntityName = edu.wustl.cab2b.common.util.Utility.getDisplayName(srcEntity);
-				String tarEntityName = edu.wustl.cab2b.common.util.Utility.getDisplayName(tarEntity);
-				firstAssoOver = true;
-				returner.append(srcEntityName+" -> ( "+ roleName + " ) -> " +tarEntityName);
-			}
-			else
-			{
-				EntityInterface tarEntity = asso.getTargetEntity();
-				String tarEntityName = Utility.parseClassName(tarEntity.getName());
-				returner.append(" -> ( "+ roleName + " ) -> " + tarEntityName);
-			}
-		}
-		return returner.toString();
-	}
-	
-	
-	/**
-	 * Returns the users path selection in a map.
-	 * @return
-	 */
-	public ICuratedPath getUserSelectedpaths()
-	{
-		return m_userSelectedPath;
-	}
+    /**
+     * Key is a vector of source, target entity interface (which is the input to
+     * ambiguity resolver). Value is a List of user selected paths, a path is a
+     * PathInterfaces.
+     */
+    private ICuratedPath userSelectedPath;
 
-	public void setParentWindow(JDialog dialog)
-	{
-		// TODO Auto-generated method stub
-		m_parentWindow = dialog;
-	}
+    public AutoConnectAmbiguityResolver(Set<ICuratedPath> paths) {
+        curratedPaths = paths.toArray(curratedPaths);
+        initializeGUI();
+    }
+
+    /**
+     * Initializes GUI.
+     */
+    protected void initializeGUI() {
+        JLabel jLabel = new JLabel(
+                "There are multiple paths available for connecting selected categories. Select the appropriate paths.");
+        add(jLabel, BorderLayout.NORTH);
+        addTablePanel();
+        buttonPanel = getButtonPanel();
+        this.add(buttonPanel, BorderLayout.SOUTH);
+
+        revalidate();
+        updateUI();
+    }
+    
+    /**
+     * This method sets the renderers to the columns of the table and adds the table panel to this object
+     */
+    protected void addTablePanel() {
+        AbstractTableModel abstractTableModel = getAmbiguityTableModel();
+        ambiguityPathTable = createAmbiguityPathTable(abstractTableModel);
+        TableColumnModel tableColumnModel = ambiguityPathTable.getColumnModel();
+        tableColumnModel.getColumn(0).setCellRenderer(new RadioButtonRenderer());
+        tableColumnModel.getColumn(0).setCellEditor(new RadioButtonEditor(new JCheckBox()));
+        tableColumnModel.getColumn(1).setCellRenderer(new TextAreaRenderer());
+        Cab2bPanel tablePanel = createTablePanel(ambiguityPathTable);
+        this.add(tablePanel, BorderLayout.CENTER);
+    }
+
+    /**
+     * This method defines the action listnener for the buttons and returns the button panel 
+     * @return panel of button
+     */
+    private Cab2bPanel getButtonPanel() {
+        ActionListener submitButtonListener = new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                userSelectedPath = null;
+                DefaultTableModel defaultTableModel = (DefaultTableModel) ambiguityPathTable.getModel();
+                for (int i = 0; i < defaultTableModel.getRowCount(); i++) {
+                    JRadioButton button = (JRadioButton) defaultTableModel.getValueAt(i, 0);
+                    if (button.isSelected() == true) {
+                        userSelectedPath = curratedPaths[i];
+                        break;
+                    }
+                }
+
+                if (parentWindow != null) {
+                    parentWindow.setVisible(false);
+                }
+            }
+        };
+
+        ActionListener cancelButtonListener = new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                Cab2bButton closeButton = (Cab2bButton) actionEvent.getSource();
+                JPanel jPanel = (JPanel) closeButton.getParent().getParent().getParent();
+                JDialog jDialog = (JDialog) jPanel.getParent().getParent().getParent();
+                jDialog.dispose();
+            }
+        };
+
+        return createButtonPanel(submitButtonListener, cancelButtonListener);
+    }
+
+    /**
+     * Returns data for the table component.
+     * 
+     * @param listOfPaths
+     *            list of paths.
+     * @return
+     */
+    protected AbstractTableModel getAmbiguityTableModel() {
+        int rowIndex = 0;
+        Object[][] ambiguityTableData = new Object[curratedPaths.length][3];
+        int pathPopularity = (int) (1 / (float) curratedPaths.length * 100.00);
+        for (int i = 0; i < curratedPaths.length; i++) {
+            ambiguityTableData[rowIndex][0] = new JRadioButton();
+            radioGroup.add((JRadioButton) ambiguityTableData[rowIndex][0]);
+
+            Set<IPath> internalPaths = curratedPaths[i].getPaths();
+            StringBuffer fullPathName = new StringBuffer();
+            for (IPath internalPath : internalPaths) {
+                fullPathName.append(getFullPathNames(internalPath)).append("\n");
+            }
+            ambiguityTableData[rowIndex][1] = fullPathName.toString();
+            ambiguityTableData[rowIndex][2] = pathPopularity + " %";
+            rowIndex++;
+        }
+
+        DefaultTableModel defaultTableModel = new DefaultTableModel(ambiguityTableData,
+                AMBIGUITY_PATH_TABLE_HEADERS);
+        return defaultTableModel;
+    }
+
+    /**
+     * This method refreshes the table data
+     */
+    protected void refreshAmbiguityTable() {
+        this.removeAll();
+        JLabel jLabel = new JLabel(
+                "There are multiple paths available for connecting selected categories. Select the appropriate paths.");
+        add(jLabel, BorderLayout.NORTH);
+        addTablePanel();
+        this.add(buttonPanel, BorderLayout.SOUTH);
+
+        revalidate();
+        updateUI();
+    }
+
+    /**
+     * This method returns the user selected path
+     * @return the user selected path
+     */
+    public ICuratedPath getUserSelectedPath() {
+        return userSelectedPath;
+    }
+
 }

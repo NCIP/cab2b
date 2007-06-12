@@ -71,7 +71,7 @@ public class AmbiguityPathResolverPanel extends Cab2bPanel {
         splitPanel.setOneTouchExpandable(false);
         splitPanel.setDividerLocation(400);
         splitPanel.setDividerSize(4);
-        availablePathsPanel = new AvailablePathsPanel(null, null);
+        availablePathsPanel = new AvailablePathsPanel(null);
         diagrammaticPreviewPanel = new DiagrammaticPreviewPanel();
         splitPanel.add(availablePathsPanel);
         splitPanel.add(diagrammaticPreviewPanel);
@@ -81,7 +81,7 @@ public class AmbiguityPathResolverPanel extends Cab2bPanel {
         // TODO this buttons may not be needed becase a standard dialog in which this
         // panel is put will be having "Ok" and "Cancel" buttons.
         doneButton = new Cab2bButton("Done");
-        cancelButton = new Cab2bButton("Cencel");
+        cancelButton = new Cab2bButton("Cancel");
 
         JXPanel buttonsPanel = new Cab2bPanel(new RiverLayout(5, 5));
         buttonsPanel.add(doneButton);
@@ -102,19 +102,18 @@ public class AmbiguityPathResolverPanel extends Cab2bPanel {
             if (!firstAssoOver) {
                 EntityInterface srcEntity = asso.getSourceEntity();
                 EntityInterface tarEntity = asso.getTargetEntity();
-                //System.out.println("src " + srcEntity.getName());
-                //System.out.println(tarEntity.getName());
+
                 String srcEntityName = Utility.parseClassName(srcEntity.getName());
                 String tarEntityName = Utility.parseClassName(tarEntity.getName());
 
                 firstAssoOver = true;
 
-                returner += srcEntityName + "->" + tarEntityName;
+                returner += srcEntityName + ">>" + tarEntityName;
             } else {
                 EntityInterface tarEntity = asso.getTargetEntity();
                 String tarEntityName = Utility.parseClassName(tarEntity.getName());
 
-                returner += "->" + tarEntityName;
+                returner += ">>" + tarEntityName;
             }
         }
         return returner;

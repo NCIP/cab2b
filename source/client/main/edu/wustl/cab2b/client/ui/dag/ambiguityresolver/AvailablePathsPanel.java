@@ -1,285 +1,209 @@
-
 package edu.wustl.cab2b.client.ui.dag.ambiguityresolver;
 
-import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
+import java.util.Map;
 
 import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.JPanel;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumnModel;
 
-import org.jdesktop.swingx.JXPanel;
-import org.jdesktop.swingx.JXTitledPanel;
-
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.RiverLayout;
-import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
-import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
+import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
-import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.controls.CheckBoxTableModel;
-import edu.wustl.cab2b.client.ui.controls.IDialogInterface;
-import edu.wustl.cab2b.client.ui.controls.TextAreaEditor;
 import edu.wustl.cab2b.client.ui.controls.TextAreaRenderer;
-import edu.wustl.common.querysuite.metadata.associations.IAssociation;
+import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.common.querysuite.metadata.path.IPath;
-import edu.wustl.common.util.Utility;
-import edu.wustl.common.util.logger.Logger;
-;/**
- * A Panel which lists all the available paths between the source target entities, 
- * a filter is provided to filter the paths based on some criteria.
+
+/**
+ * A Panel which lists all the available paths between the source target
+ * entities, a filter is provided to filter the paths based on some criteria.
  * 
  * @author chetan_bh
  */
-public class AvailablePathsPanel extends Cab2bPanel implements IDialogInterface
-{
-	
-	/**
-	 * @see FilterPathsPanel
-	 */
-	private FilterPathsPanel filterPathsPanel;
-	
-	private Cab2bButton addPathsButton;
-	
-	private Cab2bLabel ambiguityDescLabel;
-	
-	private JDialog m_parentWindow = null;
-	/**
-	 * A table component to display paths, and their popularity, and to
-	 * allow users to select the desired paths.
-	 */
-	private JScrollPane pathsTableSP;
-	private JTable pathsTable;
-	private CheckBoxTableModel tableModel;
-	private Dimension pathsTablePreferredSize = new Dimension(530, 150);
-	
-	private JXPanel parentPanel;
-	
-	
-	/**
-	 * Index of the current ambiguity in the collection of ambiguities.
-	 */
-	private int currentSrcTar = 0;
-	
-	private Object[][] tableData;
-	
-	private String[] tableHeader;
-	
-	//-- > Variables added by pratibha
-	private  List<IPath> m_AllPathlist;
-	AmbiguityObject m_ambObj;
-	
-	/**
-	 * Key is a vector of source, target entity interface (which is the input
-	 * to ambiguity resolver).
-	 * Value is a List of user selected paths, a path is a PathInterfaces.
-	 */
-	private List<IPath> m_userSelectedPaths;
-	private boolean m_isCurated = false;
-	
-	public AvailablePathsPanel(AmbiguityObject ambObj, List<IPath> list)
-	{
-		m_AllPathlist = list;
-		m_ambObj = ambObj;
-		m_userSelectedPaths = new ArrayList<IPath>();
-		initGUI();
-	}
-	
-	public AvailablePathsPanel(AmbiguityObject ambObj, List<IPath> list, boolean isCurated)
-	{
-		m_AllPathlist = list;
-		m_ambObj = ambObj;
-		m_userSelectedPaths = new ArrayList<IPath>();
-		m_isCurated = isCurated;
-		initGUI();
-	}
-	
-	/**
-	 * Initializes GUI.
-	 * TODO Identify the time consuming task in this initGUI method 
-	 * and put that in SwingWorker Thread. 
-	 */
-	private void initGUI()
-	{
-		parentPanel = new Cab2bPanel();
-		parentPanel.setLayout(new RiverLayout());
-		ambiguityDescLabel = new Cab2bLabel("");
-		
-		parentPanel.add("br", ambiguityDescLabel);
+public class AvailablePathsPanel extends AbstractAmibuityResolver {
+    private static final long serialVersionUID = 1L;
 
-		tableHeader = new String[3];
-		tableHeader[0] = "Select";
-		tableHeader[1] ="Paths";
-		tableHeader[2] ="Path Popularity";
-		tableData = getPathsDetails();
-		tableModel = new CheckBoxTableModel(tableHeader, tableData );
-		pathsTable = new JTable(tableModel);
-		pathsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		pathsTable.setPreferredScrollableViewportSize(pathsTablePreferredSize);
-		pathsTable.getColumnModel().getColumn(0).setPreferredWidth(40);
-		pathsTable.getColumnModel().getColumn(1).setPreferredWidth(400);
-		pathsTable.getColumnModel().getColumn(2).setPreferredWidth(100);
-		pathsTable.setFont(new Font("arial", Font.PLAIN, 12));
-		TextAreaRenderer textAreaRenderer = new TextAreaRenderer();
-		TextAreaEditor textEditor = new TextAreaEditor();
-		
-		pathsTable.getColumnModel().getColumn(1).setCellRenderer(textAreaRenderer);
-		pathsTable.getColumnModel().getColumn(1).setCellEditor(textEditor);
-		pathsTableSP = new JScrollPane(pathsTable);
-		parentPanel.add("br tab tab", pathsTableSP);
-		
-		addPathsButton = new Cab2bButton("Ok");
-		addPathsButton.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-			   /*
-				* Here call the getCheckCounts and getCheckedColumns method on 'Cab2bTable' table component;
-				*/
-				m_userSelectedPaths.clear();
-				int[] selectedPathsIndexes = tableModel.getCheckedRowIndexes();
-				for(int i =0; i < selectedPathsIndexes.length; i++)
-				{
-					Logger.out.debug("selectedPathsIndexes["+i+"] "+selectedPathsIndexes[i]);
-					m_userSelectedPaths.add(m_AllPathlist.get(selectedPathsIndexes[i]));
-					
-				}
-				if(m_parentWindow != null)
-				{
-					m_parentWindow.setVisible(false);
-				}
-			}
-		});
-		
-		parentPanel.add("br", new JLabel(""));		
-		for(int i=0; i<20; i++)
-			parentPanel.add("tab", new JLabel(""));
-		
-		parentPanel.add(" tab", addPathsButton);	
-		
-		Cab2bLabel pathDescLabel = new Cab2bLabel();		
-		//if pathIdentity is 1 then ambiguty resolver displays GENERAL PATH
-		//if pathIdentity is 2 then ambiguty resolver displays CURATED PATH		
-		if(m_isCurated == false)
-		{
-			pathDescLabel.setText("* Displaying GENERAL PATHS");
-		}else
-		{
-			pathDescLabel.setText("* Displaying CURATED PATHS");
-		}		
-		parentPanel.add("br right",pathDescLabel);		
-		setAmbiguityLabel();
-		getPathsDetails();
-		this.add(parentPanel);
-	}
-	
-	/**
-	 * Returns data for the table component.
-	 * @param listOfPaths list of paths.
-	 * @return 
-	 */
-	public Object[][] getPathsDetails()
-	{
-		int rowCnt=0;
-		int totalResults = m_AllPathlist.size();
-		Object[][] values = new Object[totalResults][];
-		int pathPopularity = (int)(1/(double)totalResults * 100.00);
-		Iterator<IPath> pathListIter = m_AllPathlist.iterator();
-		while (pathListIter.hasNext())
-		{
-			values[rowCnt] = new Object[3];
-			values[rowCnt][0]= new Boolean(false);
-			IPath path = pathListIter.next();
-			values[rowCnt][1]= getFullPathNames(path);
-			values[rowCnt][2] = pathPopularity + " %"; // TODO to remove this hardcoding.
-			rowCnt++;
-		}
-		return values;
-	}
-	
-	private String getFullPathNames(IPath path)
-	{
-		StringBuffer returner = new StringBuffer(); 
-		String roleName;
-		List<IAssociation> assoList = path.getIntermediateAssociations();
-		Iterator<IAssociation> listIterator = assoList.listIterator();
-		
-		boolean firstAssoOver = false;
-		while(listIterator.hasNext())
-		{
-			IAssociation asso = listIterator.next();
-			roleName = edu.wustl.cab2b.client.ui.query.Utility.getRoleName(asso);
-			if(!firstAssoOver)
-			{
-				EntityInterface srcEntity = asso.getSourceEntity();
-				EntityInterface tarEntity = asso.getTargetEntity();
-				String srcEntityName = Utility.parseClassName(srcEntity.getName());
-				String tarEntityName = Utility.parseClassName(tarEntity.getName());
-				firstAssoOver = true;
-				returner.append(srcEntityName+" -> ( "+ roleName + " ) -> " +tarEntityName);
-			}
-			else
-			{
-				EntityInterface tarEntity = asso.getTargetEntity();
-				String tarEntityName = Utility.parseClassName(tarEntity.getName());
-				//System.out.println("tar " + tarEntity.getName());
-				returner.append(" -> ( "+ roleName + " ) -> " + tarEntityName);
-			}
-		}
-		return returner.toString();
-	}
-	
-	
-	/**
-	 * Returns the users path selection in a map.
-	 * @return
-	 */
-	public List<IPath>  getUserSelectedpaths()
-	{
-		return m_userSelectedPaths;
-	}
-	
-	/**
-	 * Updates the ambiguity descrption label for the current ambiguity.
-	 */
-	private void setAmbiguityLabel()
-	{
-		EntityInterface srcEntInter = m_ambObj.getSourceEntity();
-		EntityInterface tarEntInter = m_ambObj.getTargetEntity();
-		String srcShortName = Utility.parseClassName(srcEntInter.getName());
-		String tarShortName = Utility.parseClassName(tarEntInter.getName());
-		
-		ambiguityDescLabel.setText("<html><font color=\"RED\"><B>Ambiguity " + (currentSrcTar+1)
-				+ "</B></font><html>: " + srcShortName + " -> " + tarShortName);
-		parentPanel.updateUI();
-	}
-	
-	public static void main(String[] args)
-	{
-		Logger.configure("log4j.properties");
-		
-		String[] searchTerms = {"ProbeSet","MicroArray","OMIM","Gene"};
-		Vector<EntityInterface> entIntVector = AmbiguityPathResolverPanel.getEntityInterfaceFor(searchTerms);
-		
-		AmbiguityObject ambObj = new AmbiguityObject(entIntVector.get(1), entIntVector.get(3));
-		
-		List<IPath> pathsList = new ArrayList();
-		AvailablePathsPanel availablePathsPanel = new AvailablePathsPanel(ambObj, pathsList);
-		WindowUtilities.showInFrame(availablePathsPanel, "Available Paths Panel");
-	}
+    private Map<String, List<IPath>> allPathMap;
 
-	public void setParentWindow(JDialog dialog)
-	{
-		// TODO Auto-generated method stub
-		m_parentWindow = dialog;
-	}
+    private Cab2bPanel hyperlinkPanel;
+
+    private Cab2bHyperlink generalPathLink;
+
+    private Cab2bHyperlink curatedPathLink;
+
+    /**
+     * Parameterized constructor
+     * @param allPathMap Map of all paths
+     */
+    public AvailablePathsPanel(Map<String, List<IPath>> allPathMap) {
+        this.allPathMap = allPathMap;
+        this.userSelectedPaths = new ArrayList<IPath>();
+        initializeGUI();
+    }
+    
+    /**
+     * Initializes the GUI.
+     */
+    protected void initializeGUI() {
+        hyperlinkPanel = createHyperLinkPanel();
+        this.add(hyperlinkPanel, BorderLayout.NORTH);
+        addTablePanel();
+        buttonPanel = getButtonPanel();
+        this.add(buttonPanel, BorderLayout.SOUTH);
+
+        revalidate();
+        updateUI();
+    }
+    
+    protected void addTablePanel() {
+        AbstractTableModel abstractTableModel = getAmbiguityTableModel();
+        ambiguityPathTable = createAmbiguityPathTable(abstractTableModel);
+        TableColumnModel tableColumnModel = ambiguityPathTable.getColumnModel();
+        tableColumnModel.getColumn(1).setCellRenderer(new TextAreaRenderer());
+        Cab2bPanel tablePanel = createTablePanel(ambiguityPathTable);
+        this.add(tablePanel, BorderLayout.CENTER);
+    }
+    
+    private Cab2bPanel getButtonPanel() {
+        ActionListener submitButtonListener = new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                userSelectedPaths.clear();
+                CheckBoxTableModel checkBoxTableModel = (CheckBoxTableModel) ambiguityPathTable.getModel();
+                int[] selectedPathsIndexes = checkBoxTableModel.getCheckedRowIndexes();
+                for (int i = 0; i < selectedPathsIndexes.length; i++) {
+                    userSelectedPaths.add(selectedPathList.get(selectedPathsIndexes[i]));
+                }
+
+                if (parentWindow != null) {
+                    parentWindow.setVisible(false);
+                }
+            }
+        };
+        
+        ActionListener cancelButtonListener = new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                Cab2bButton closeButton = (Cab2bButton) actionEvent.getSource();
+                JPanel jPanel = (JPanel) closeButton.getParent().getParent().getParent();
+                JDialog jDialog = (JDialog) jPanel.getParent().getParent().getParent();
+                jDialog.dispose();
+            }
+        };
+        
+        return createButtonPanel(submitButtonListener, cancelButtonListener);
+    }
+    
+    /**
+     * Returns the data for the Ambiguity Resolver table
+     * @return Array of Object array containing the table data
+     */
+    protected AbstractTableModel getAmbiguityTableModel() {
+        int rowIndex = 0;
+        Object[][] ambiguityTableData = new Object[selectedPathList.size()][3];
+        int pathPopularity = (int) (1 / (double) selectedPathList.size() * 100.00);
+        for (IPath path : selectedPathList) {
+            ambiguityTableData[rowIndex][0] = new Boolean(false);
+            ambiguityTableData[rowIndex][1] = getFullPathNames(path);
+            ambiguityTableData[rowIndex][2] = pathPopularity + " %";
+            rowIndex++;
+        }
+        
+        CheckBoxTableModel checkBoxTableModel = new CheckBoxTableModel(AMBIGUITY_PATH_TABLE_HEADERS, ambiguityTableData);
+        return checkBoxTableModel;
+    }
+
+    /**
+     * This method returns the panel of hyperlinks containing link of General Path and Currated Path respectively.
+     * @return panel of hyperlinks
+     */
+    private Cab2bPanel createHyperLinkPanel() {
+        Cab2bPanel hyperlinkPanel = new Cab2bPanel(new RiverLayout());
+        hyperlinkPanel.setSize(Constants.WIZARD_NAVIGATION_PANEL_DIMENSION);
+
+        List<IPath> generalPathList = allPathMap.get(Constants.GENERAL_PATH);
+        generalPathLink = createPathHyperLink(Constants.GENERAL_PATH, generalPathList);
+        hyperlinkPanel.add("tab ", generalPathLink);
+
+        List<IPath> curatedPathList = allPathMap.get(Constants.CURATED_PATH);
+        if (!curatedPathList.isEmpty()) {
+            selectedPathList = curatedPathList;
+            curatedPathLink = createPathHyperLink(Constants.CURATED_PATH, curatedPathList);
+            hyperlinkPanel.add("tab ", curatedPathLink);
+            curatedPathLink.setClicked(true);
+            curatedPathLink.setClickedColor(Color.black);
+        } else {
+            selectedPathList = generalPathList;
+        }
+
+        return hyperlinkPanel;
+    }
+
+    /**
+     * This method creates a hyperlink given the name of the link and the object to be embedded
+     * @param linkName name of the link
+     * @param pathList object to be embedded
+     * @return a hyperlink
+     */
+    private Cab2bHyperlink createPathHyperLink(final String linkName, final List<IPath> pathList) {
+        Cab2bHyperlink pathHyperLink = new Cab2bHyperlink();
+        pathHyperLink.setBounds(new Rectangle(5, 5, 5, 5));
+        pathHyperLink.setText(linkName);
+        pathHyperLink.setActionCommand(linkName);
+        pathHyperLink.setUserObject(pathList);
+
+        pathHyperLink.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                Cab2bHyperlink pathHyperLink = (Cab2bHyperlink) actionEvent.getSource();
+                String linkClicked = actionEvent.getActionCommand();
+                if (linkClicked.equals(Constants.CURATED_PATH)) {
+                    //generalPathLink.setEnabled(true);
+                    generalPathLink.setClicked(false);
+                    generalPathLink.setClickedColor(Color.blue);
+                } else if (curatedPathLink != null) {
+                    //curatedPathLink.setEnabled(true);
+                    curatedPathLink.setClicked(false);
+                    curatedPathLink.setClickedColor(Color.blue);
+                }
+
+                //pathHyperLink.setEnabled(false);
+                pathHyperLink.setClicked(true);
+                pathHyperLink.setClickedColor(Color.black);
+                selectedPathList = (List<IPath>) pathHyperLink.getUserObject();
+                refreshAmbiguityTable();
+            }
+        });
+
+        return pathHyperLink;
+    }
+
+    /**
+     * This method refreshes the table data
+     */
+    protected void refreshAmbiguityTable() {
+        this.removeAll();
+        this.add(hyperlinkPanel, BorderLayout.NORTH);
+        addTablePanel();
+        this.add(buttonPanel, BorderLayout.SOUTH);
+
+        revalidate();
+        updateUI();
+    }
+    
+    /**
+     * Returns the users path selection in a map.
+     * 
+     * @return
+     */
+    public List<IPath> getUserSelectedPaths() {
+        return userSelectedPaths;
+    }
 
 }
