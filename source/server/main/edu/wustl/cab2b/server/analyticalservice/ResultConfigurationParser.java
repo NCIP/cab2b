@@ -50,11 +50,15 @@ public class ResultConfigurationParser {
      * Entity tag
      */
     private static final String ENTITY = "entity";
+    
+    /**
+     * Default tag
+     */
 
     private static final String DEFAULT = "default";
 
     /**
-     * Entity tag
+     * Name tag
      */
     private static final String NAME = "name";
 
@@ -72,6 +76,10 @@ public class ResultConfigurationParser {
      * Datalist Transformer tag
      */
     private static final String DATALIST_TRANSFORMER = "data-list-transformer";
+    
+    /**
+     * Constructor
+     */
 
     private ResultConfigurationParser() {
         parseResultConfigurationMapperXMLFile();
@@ -119,6 +127,10 @@ public class ResultConfigurationParser {
             throw new RuntimeException("Invalid XML file: Root element not found.");
         }
     }
+    
+    /**
+     * Method to parse Attribute values under entity tag and store them in map    
+     */
 
     private void setElementData(List<Element> elementList, String mapKey) {
         for (Element entityElement : elementList) {
@@ -172,6 +184,10 @@ public class ResultConfigurationParser {
     }
 
 
+    /**
+     * Method to get default DataListTransformer value for given application name
+     * @param String applicationName
+     */
 
     public String getDataListTransformer(String applicationName) {
         if (applicationEntityNameMap.get(applicationName) != null) {
@@ -179,20 +195,34 @@ public class ResultConfigurationParser {
         }
         return null;
     }
-
+    
+    /**
+     * Method to get default ResultRenderer value for given application name
+     * @param String applicationName
+     */
     public String getResultRenderer(String applicationName) {
         if (applicationEntityNameMap.get(applicationName) != null) {
             return applicationEntityNameMap.get(applicationName).getResultRenderer();
         }
         return null;
     }
-
+    
+    /**
+     * Method to get default ResultTransformer value for given application name
+     * @param String applicationName
+     */
     public String getResultTransformer(String applicationName) {
         if (applicationEntityNameMap.get(applicationName) != null) {
             return applicationEntityNameMap.get(applicationName).getResultTransformer();
         }
         return null;
     }
+    
+    /**
+     * Method to get ResultRenderer value for given application name and entityName
+     * @param String applicationName
+     * @param String entiyName
+     */
 
     public String getResultRenderer(String applicationName, String entiyName) {
 
@@ -203,6 +233,12 @@ public class ResultConfigurationParser {
 
     }
 
+    /** 
+     * Method to get ResultTransformer value for given application name and entityName
+     * @param applicationName
+     * @param entiyName
+     * 
+     */
     public String getResultTransformer(String applicationName, String entiyName) {
 
         if (applicationEntityNameMap.get(applicationName + "_" + entiyName) != null)
@@ -212,19 +248,31 @@ public class ResultConfigurationParser {
 
     }
     
+    /**
+     * Method to get DataListTransformer value for given application name and entityName
+     * @param applicationName
+     * @param entiyName
+     * 
+     */
     public String getDataListTransformer(String applicationName, String entiyName) {
         if (applicationEntityNameMap.get(applicationName + "_" + entiyName) != null)
             return applicationEntityNameMap.get(applicationName + "_" + entiyName).getDataListTransformer();
         else
             return getDataListTransformer(applicationName);
     }
+    
+    
+    
 
+    /**
+     * Class to store parsed resultTransformer, resultRenderer and dataListTransformer values 
+     * @author Deepak_Shingan
+     *
+     */
     private class EntityTransformerInfo {
 
         String resultTransformer;
-
         String resultRenderer;
-
         String dataListTransformer;
 
         EntityTransformerInfo(String resultTransformer, String resultRenderer, String dataListTransformer) {
@@ -233,21 +281,32 @@ public class ResultConfigurationParser {
             this.dataListTransformer = dataListTransformer;
         }
 
+        /** 
+         * Method to get datalistTransfarmer value
+         * @return String dataListTransformer
+         */
         public String getDataListTransformer() {
             return dataListTransformer;
         }
 
+        /**
+         * Method to get ResultRenderer value
+         * @return String resultRenderer
+         */
         public String getResultRenderer() {
             return resultRenderer;
         }
 
+        /**
+         * Method to get ResultTransformer value
+         * @return String ResultTransformer
+         */
         public String getResultTransformer() {
             return resultTransformer;
         }
     }
 
     public static void main(String[] args) {
-
         Logger.configure();
         ResultConfigurationParser entityServiceMapper = ResultConfigurationParser.getInstance();
         Logger.out.info(entityServiceMapper.getDataListTransformer("category group"));
