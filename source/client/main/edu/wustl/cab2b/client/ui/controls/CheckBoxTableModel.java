@@ -5,20 +5,22 @@ import java.util.Vector;
 import javax.swing.table.AbstractTableModel;
 
 public class CheckBoxTableModel extends AbstractTableModel {
-    private String[] m_columnNames ;
-    private Object[][] m_data ;
+    private static final long serialVersionUID = 1L;
 
-    public CheckBoxTableModel(String[] columnNames, Object[][] data)
-    {
-    	m_columnNames = columnNames;
-    	m_data = data;
+    private String[] m_columnNames;
+
+    private Object[][] m_data;
+
+    public CheckBoxTableModel(String[] columnNames, Object[][] data) {
+        m_columnNames = columnNames;
+        m_data = data;
     }
+
     public int getColumnCount() {
         return m_columnNames.length;
     }
 
-    public int getRowCount() 
-    {
+    public int getRowCount() {
         return m_data.length;
     }
 
@@ -26,8 +28,7 @@ public class CheckBoxTableModel extends AbstractTableModel {
         return m_columnNames[col];
     }
 
-    public Object getValueAt(int row, int col) 
-    {
+    public Object getValueAt(int row, int col) {
         return m_data[row][col];
     }
 
@@ -37,8 +38,7 @@ public class CheckBoxTableModel extends AbstractTableModel {
      * then the last column would contain text ("true"/"false"),
      * rather than a check box.
      */
-    public Class getColumnClass(int c)
-    {
+    public Class getColumnClass(int c) {
         return getValueAt(0, c).getClass();
     }
 
@@ -49,40 +49,33 @@ public class CheckBoxTableModel extends AbstractTableModel {
     public boolean isCellEditable(int row, int col) {
         //Note that the data/cell address is constant,
         //no matter where the cell appears onscreen.
-        if (col == 0) 
-        {
+        if (col == 0) {
             return true;
-        } 
-        else 
-        {
+        } else {
             return false;
         }
     }
 
-    public int[] getCheckedRowIndexes()
-    {
-    	Vector<Integer> selectIndex = new Vector<Integer>();
-    	for(int i=0; i<m_data.length; i++)
-    	{
-    		Boolean value = (Boolean) getValueAt(i, 0);
-    		if(value == true)
-    		{
-    			selectIndex.add(new Integer(i));
-    		}
-    	}
-    	int values[] = new int[selectIndex.size()];
-    	for(int i=0; i<selectIndex.size(); i++)
-    	{
-    		values[i] = selectIndex.get(i).intValue();
-    	}
-    	return values;
+    public int[] getCheckedRowIndexes() {
+        Vector<Integer> selectIndex = new Vector<Integer>();
+        for (int i = 0; i < m_data.length; i++) {
+            Boolean value = (Boolean) getValueAt(i, 0);
+            if (value == true) {
+                selectIndex.add(new Integer(i));
+            }
+        }
+        int values[] = new int[selectIndex.size()];
+        for (int i = 0; i < selectIndex.size(); i++) {
+            values[i] = selectIndex.get(i).intValue();
+        }
+        return values;
     }
+
     /*
      * Don't need to implement this method unless your table's
      * data can change.
      */
-    public void setValueAt(Object value, int row, int col) 
-    {
+    public void setValueAt(Object value, int row, int col) {
         m_data[row][col] = value;
         fireTableCellUpdated(row, col);
     }
@@ -91,9 +84,9 @@ public class CheckBoxTableModel extends AbstractTableModel {
         int numRows = getRowCount();
         int numCols = getColumnCount();
 
-        for (int i=0; i < numRows; i++) {
+        for (int i = 0; i < numRows; i++) {
             System.out.print("    row " + i + ":");
-            for (int j=0; j < numCols; j++) {
+            for (int j = 0; j < numCols; j++) {
                 System.out.print("  " + m_data[i][j]);
             }
             System.out.println();

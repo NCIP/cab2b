@@ -39,6 +39,7 @@ import edu.wustl.cab2b.client.ui.util.ClientConstants;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImageConstants;
 import edu.wustl.cab2b.common.queryengine.Cab2bQueryObjectFactory;
+import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -605,7 +606,7 @@ public class MainDagPanel extends Cab2bPanel {
             // Show ambiguity resolver to get a curated path
             AutoConnectAmbiguityResolver childPanel = new AutoConnectAmbiguityResolver(paths);
             WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, childPanel, "Available curated paths Panel",
-                                         new Dimension(600, 370), true, false);
+                                         Constants.WIZARD_SIZE2_DIMENSION, true, false);
             path = childPanel.getUserSelectedPath();
         }
         if (path != null) {

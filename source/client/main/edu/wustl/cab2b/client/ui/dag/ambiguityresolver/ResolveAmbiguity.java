@@ -56,13 +56,15 @@ public class ResolveAmbiguity {
                                                            ambiguityObject.getTargetEntity());
 
             List<IPath> selectedPathList = allPathMap.get(Constants.SELECTED_PATH);
+            List<IPath> curratedPathList =  allPathMap.get(Constants.CURATED_PATH);
             if (!selectedPathList.isEmpty()) {
                 m_ambiguityObjectToPathsMap.put(ambiguityObject, selectedPathList);
+            } else if(curratedPathList.size() == 1) {
+                m_ambiguityObjectToPathsMap.put(ambiguityObject, curratedPathList);
             } else {
-                List<IPath> curratedPathList =  allPathMap.get(Constants.CURATED_PATH);
                 List<IPath> generalPathList =  allPathMap.get(Constants.GENERAL_PATH);
                 List<IPath> selectedPaths = null;
-                if(!curratedPathList.isEmpty() && !generalPathList.isEmpty()) {
+                if(!curratedPathList.isEmpty() || !generalPathList.isEmpty()) {
                     selectedPaths = showAmbiguityResolverUI(allPathMap);
                 }
                 m_ambiguityObjectToPathsMap.put(ambiguityObject, selectedPaths);

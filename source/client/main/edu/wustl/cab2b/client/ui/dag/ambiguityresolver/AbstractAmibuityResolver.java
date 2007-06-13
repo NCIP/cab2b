@@ -111,7 +111,6 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
 
         tableColumnModel.getColumn(1).setMaxWidth(580);
         tableColumnModel.getColumn(1).setMinWidth(580);
-        tableColumnModel.getColumn(1).setPreferredWidth(580);
 
         DefaultTableCellRenderer defaultTableCellRenderer = new DefaultTableCellRenderer();
         defaultTableCellRenderer.setHorizontalAlignment(JTextField.CENTER);

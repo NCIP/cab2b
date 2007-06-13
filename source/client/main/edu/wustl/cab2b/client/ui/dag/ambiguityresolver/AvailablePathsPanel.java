@@ -164,16 +164,13 @@ public class AvailablePathsPanel extends AbstractAmibuityResolver {
                 Cab2bHyperlink pathHyperLink = (Cab2bHyperlink) actionEvent.getSource();
                 String linkClicked = actionEvent.getActionCommand();
                 if (linkClicked.equals(Constants.CURATED_PATH)) {
-                    //generalPathLink.setEnabled(true);
                     generalPathLink.setClicked(false);
                     generalPathLink.setClickedColor(Color.blue);
                 } else if (curatedPathLink != null) {
-                    //curatedPathLink.setEnabled(true);
                     curatedPathLink.setClicked(false);
                     curatedPathLink.setClickedColor(Color.blue);
                 }
 
-                //pathHyperLink.setEnabled(false);
                 pathHyperLink.setClicked(true);
                 pathHyperLink.setClickedColor(Color.black);
                 selectedPathList = (List<IPath>) pathHyperLink.getUserObject();

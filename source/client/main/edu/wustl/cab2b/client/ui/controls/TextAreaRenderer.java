@@ -67,18 +67,22 @@ public class TextAreaRenderer extends JTextPane implements TableCellRenderer {
                 "<html><body><table height='100%' width='100%'><tr><td style='vertical-align: middle; font-family: Arial'>");
         final String redArrow = "<font color=\"red\"> >> </font>";
 
-        String[] crumbs = cellValue.split(">>");
-        for (int i = 0; i < crumbs.length; i++) {
-            String crumbValue = crumbs[i].trim();
-            if (crumbValue.matches("\\(.*\\)")) {
-                displayValue.append("<i> " + crumbValue + " </i>");
-            } else {
-                displayValue.append(crumbValue);
-            }
+        String[] pathCrumbs = cellValue.split("\n");
+        for (int j = 0; j < pathCrumbs.length; j++) {
+            String[] crumbs = pathCrumbs[j].split(">>");
+            for (int i = 0; i < crumbs.length; i++) {
+                String crumbValue = crumbs[i].trim();
+                if (crumbValue.matches("\\(.*\\)")) {
+                    displayValue.append("<i> " + crumbValue + " </i>");
+                } else {
+                    displayValue.append(crumbValue);
+                }
 
-            if (i < crumbs.length - 1) {
-                displayValue.append(redArrow);
+                if (i < crumbs.length - 1) {
+                    displayValue.append(redArrow);
+                }
             }
+            displayValue.append("<br>");
         }
         displayValue.append("</td></tr></table></body></html>");
 
@@ -154,5 +158,5 @@ public class TextAreaRenderer extends JTextPane implements TableCellRenderer {
 
         return maximum_height;
     }
-    
+
 }
