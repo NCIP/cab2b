@@ -21,11 +21,11 @@ import edu.wustl.common.querysuite.metadata.category.Category;
  */
 public class EntityCache extends AbstractEntityCache {
     private static final long serialVersionUID = 1234567890L;
-    
-    /**
-     * The EntityCache object. Needed for singleton
-     */
-    protected static EntityCache entityCache = null;
+
+//    /**
+//     * The EntityCache object. Needed for singleton
+//     */
+//    protected static EntityCache entityCache = null;
 
     /**
      * @return the singleton instance of the EntityCache class.
@@ -34,7 +34,7 @@ public class EntityCache extends AbstractEntityCache {
         if (entityCache == null) {
             entityCache = new EntityCache();
         }
-        return entityCache;
+        return (EntityCache) entityCache;
     }
 
     /**

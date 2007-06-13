@@ -34,10 +34,10 @@ public class ClientSideCache extends AbstractEntityCache {
 
     private static final long serialVersionUID = 7145001746845163416L;
 
-    /**
-     * The EntityCache object. Needed for singleton
-     */
-    protected static ClientSideCache entityCache = null;
+//    /**
+//     * The EntityCache object. Needed for singleton
+//     */
+//    protected static ClientSideCache entityCache = null;
 
     private Map<Category, Set<EntityInterface>> categoryVsClasseSet = new HashMap<Category, Set<EntityInterface>>();
 
@@ -50,7 +50,7 @@ public class ClientSideCache extends AbstractEntityCache {
         if (entityCache == null) {
             entityCache = new ClientSideCache();
         }
-        return entityCache;
+        return (ClientSideCache) entityCache;
     }
 
     protected ClientSideCache() {
