@@ -236,7 +236,7 @@ public class MainDagPanel extends Cab2bPanel {
     private void linkNode(ClassNode sourceNode, ClassNode destNode) {
         // Get all the available paths between source and destination node
         List<IPath> paths = getPaths(sourceNode, destNode);
-        if (paths == null || paths.size() == 0) {
+        if (paths == null || paths.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                                           "No path available/selected between source and destination categories",
                                           "Connect Nodes warning", JOptionPane.WARNING_MESSAGE);

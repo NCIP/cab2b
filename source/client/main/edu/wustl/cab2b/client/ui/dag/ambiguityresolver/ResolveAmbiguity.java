@@ -59,8 +59,12 @@ public class ResolveAmbiguity {
             if (!selectedPathList.isEmpty()) {
                 m_ambiguityObjectToPathsMap.put(ambiguityObject, selectedPathList);
             } else {
-
-                List<IPath> selectedPaths = showAmbiguityResolverUI(allPathMap);
+                List<IPath> curratedPathList =  allPathMap.get(Constants.CURATED_PATH);
+                List<IPath> generalPathList =  allPathMap.get(Constants.GENERAL_PATH);
+                List<IPath> selectedPaths = null;
+                if(!curratedPathList.isEmpty() && !generalPathList.isEmpty()) {
+                    selectedPaths = showAmbiguityResolverUI(allPathMap);
+                }
                 m_ambiguityObjectToPathsMap.put(ambiguityObject, selectedPaths);
             }
         }
