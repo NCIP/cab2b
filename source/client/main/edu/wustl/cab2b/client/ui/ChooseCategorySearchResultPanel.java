@@ -85,8 +85,6 @@ public class ChooseCategorySearchResultPanel extends AbstractSearchResultPanel
                 searchCenterPanel.getAddLimitPanel().setSearchPanel(
                                                                     searchCenterPanel.getChooseCategoryPanel().getSearchPanel());
                 searchCenterPanel.getAddLimitPanel().getSearchPanel().setVisible(true);
-
-                int a = 1;
             }
 
 			addLimitPanel.refresh(componentPanel,strClassName);	
