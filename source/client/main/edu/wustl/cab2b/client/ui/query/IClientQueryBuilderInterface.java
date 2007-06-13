@@ -14,6 +14,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -181,7 +182,7 @@ public interface IClientQueryBuilderInterface
      * Method to get all the user added expression Ids in query object
      * @return List of visible expressionIds
      */
-    public List<IExpressionId> getVisibleExressionIds();
+    public Set<IExpressionId> getVisibleExressionIds();
     
     /**
      * Method to add the user added expression Id to visible list
