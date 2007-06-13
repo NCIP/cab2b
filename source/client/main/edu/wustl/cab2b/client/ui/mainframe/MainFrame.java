@@ -184,11 +184,17 @@ public class MainFrame extends JXFrame {
         CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.mainPanel) {
             @Override
             protected void doNonUILogic() throws RuntimeException {
+
+                if (openExperimentWelcomePanel != null) {
+                    openExperimentWelcomePanel.removeAll();
+                }
+
                 openExperimentWelcomePanel = new ExperimentPanel("My Experiments");
                 GradientPaint gp = new GradientPaint(new Point2D.Double(.05d, 0), Color.WHITE, new Point2D.Double(
                         .95d, 0), Color.WHITE);
                 openExperimentWelcomePanel.setTitlePainter(new BasicGradientPainter(gp));
                 openExperimentWelcomePanel.setTitleForeground(Color.BLUE);
+                openExperimentWelcomePanel.validate();
             }
 
             @Override
@@ -244,17 +250,6 @@ public class MainFrame extends JXFrame {
 
     /** Method to set Welcome panel */
     public void setWelcomePanel() {
-        // homePanel.setBorder(new CustomizableBorder(new Insets(1, 1, 1, 1),
-        // true, true));
-        splitPane.setRightComponent(homePanel);
-        splitPane.setOneTouchExpandable(true);
-        //mension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
-        splitPane.setDividerLocation(242);
-        splitPane.setOneTouchExpandable(false);
-        mainPanel.removeAll();
-        mainPanel.add("hfill vfill", splitPane);
-        // mainPanel.setBorder(new CustomizableBorder(new Insets(10, 0, 6, 10),
-        // true, true));
 
         if (openExperimentWelcomePanel != null && openExperimentWelcomePanel.isVisible() == true) {
             Logger.out.debug("Removing openExperimentWelcomePanel");
@@ -262,6 +257,18 @@ public class MainFrame extends JXFrame {
             this.remove(openExperimentWelcomePanel);
             this.validate();
         }
+
+        // homePanel.setBorder(new CustomizableBorder(new Insets(1, 1, 1, 1),
+        // true, true));        
+        mainPanel.removeAll();
+        splitPane.setRightComponent(homePanel);
+        splitPane.setOneTouchExpandable(true);
+        //mension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
+        splitPane.setDividerLocation(242);
+        splitPane.setOneTouchExpandable(false);
+        mainPanel.add("hfill vfill", splitPane);
+        // mainPanel.setBorder(new CustomizableBorder(new Insets(10, 0, 6, 10),
+        // true, true));
 
         this.add(mainPanel);
     }
