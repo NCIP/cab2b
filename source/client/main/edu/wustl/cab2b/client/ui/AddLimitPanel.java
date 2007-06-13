@@ -36,7 +36,6 @@ import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * This is the panel for the Add limit tab from the main search dialog. The
@@ -139,7 +138,6 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
          * following panel.
          */
         this.m_ContentForTopPanel = new Cab2bPanel();
-        //this.m_ContentForTopPanel.setLayout(new RiverLayout());
         this.m_ContentForTopPanel.setBorder(new EmptyBorder(1, 1, 1, 1));
         this.m_scrollPane = new JScrollPane(this.m_ContentForTopPanel);
         this.m_scrollPane.getViewport().setBackground(Color.WHITE);
@@ -236,12 +234,8 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
             searchCenterPanel.getAddLimitPanel().setSearchPanel(
                                                                 searchCenterPanel.getChooseCategoryPanel().getSearchPanel());
             searchCenterPanel.getAddLimitPanel().getSearchPanel().setVisible(true);
-
-            //just to pause the debugger
-            int a = 1;
         }
 
-        Logger.out.debug("Class name : " + strClassNameAsTitle);
         /* Set the title for the top titled panel. */
         this.m_topCenterPanel.setTitle("Define Search Rules '" + strClassNameAsTitle + "'");
         this.m_ContentForTopPanel.removeAll();
@@ -272,7 +266,6 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
     }
 
     public void editAddLimitUI(IExpression expression) {
-        // TODO Auto-generated method stub
         IConstraintEntity entity = expression.getConstraintEntity();
         JXPanel[] panels = m_searchResultPanel.getEditLimitPanels(expression);
 
@@ -290,7 +283,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
     }
 
     private void setValueForAttribute(JXPanel[] panels, ICondition condition) {
-        
+
         //Don't consider panel 1 and panel end for getting attribute values
         //because first and last panels are Edit Limit button panels     
         for (int i = 1; i < panels.length - 1; i++) {
@@ -311,9 +304,24 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
         m_searchResultPanel = searchResultPanel;
     }
 
+    /* 
+     * Method to clear (refresh) AddLimitUI when Node is in edit mode
+     * (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.IUpdateAddLimitUIInterface#clearAddLimitUI(edu.wustl.common.querysuite.queryobject.IExpression)
+     */
     public void clearAddLimitUI(IExpression expression) {
         if ((m_currentExpressionEdit != null) && (m_currentExpressionEdit == expression)) {
             this.m_ContentForTopPanel.removeAll();
+            JXPanel[] panelsToAdd = m_searchResultPanel.getAddLimitPanels(expression.getConstraintEntity().getDynamicExtensionsEntity());
+
+            /* Add the individual panels to the top content panel. */
+            for (int i = 0; i < panelsToAdd.length; i++) {
+                if (panelsToAdd[i] != null) {
+                    this.m_ContentForTopPanel.add("br", panelsToAdd[i]);
+                }
+            }
+
+            m_searchResultPanel.updateUI();
             validate();
         }
     }

@@ -120,6 +120,48 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
         this.m_resultsPage.addPageElementActionListener(this);
         this.add("p vfill", this.m_resultsPage);
     }
+    
+    
+    /**
+     * Method to create AddLimitUI
+     * @param entity
+     */
+    protected JXPanel[] getAddLimitPanels(final EntityInterface entity) {
+        final JXPanel[] componentPanel = getAddLimitComponentPanels(entity);
+        final JXPanel[] panelsToAdd = new Cab2bPanel[componentPanel.length + 2];     
+                
+        //Add the "Add Limit" button at the top 
+        Cab2bButton addLimitButtonTop = new Cab2bButton("Add Limit");
+        Cab2bPanel addLimitPanelTop = new Cab2bPanel();
+        addLimitPanelTop.setLayout(new BorderLayout());
+        addLimitPanelTop.setPreferredSize(new Dimension(550,22));
+        addLimitPanelTop.add(addLimitButtonTop, BorderLayout.EAST);
+        panelsToAdd[0] = new Cab2bPanel();
+        panelsToAdd[0].add("right ", addLimitPanelTop);
+      
+        addLimitButtonTop.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                performAddLimitAction(panelsToAdd, entity);
+            }
+        });   
+              
+        for (int i = 0; i < componentPanel.length; i++) {
+            panelsToAdd[i+1] = componentPanel[i];
+        }
+        // Add the "Add Limit" button.
+        Cab2bButton addLimitButton = new Cab2bButton("Add Limit");
+        addLimitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                performAddLimitAction(panelsToAdd, entity);
+            }
+        });
+        panelsToAdd[panelsToAdd.length - 1] = new Cab2bPanel();
+        panelsToAdd[panelsToAdd.length - 1].add(addLimitButton);
+        
+        return panelsToAdd;
+    }
+    
+    
 
     /**
      * The action listener for the individual page elements.
@@ -134,41 +176,10 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
         PageElement element = (PageElement) link.getUserObject();
 
         /* This is the EntityInterface instance. */
-        final EntityInterface entity = (EntityInterface) element.getUserObject();
-        final JXPanel[] componentPanel = getAddLimitPanels(entity);
-        final JXPanel[] panelsToAdd = new Cab2bPanel[componentPanel.length + 2];
-
-        //Add the "Add Limit" button at the top 
-        Cab2bButton addLimitButtonTop = new Cab2bButton("Add Limit");
-        Cab2bPanel addLimitPanelTop=new Cab2bPanel();
-        addLimitPanelTop.setLayout(new BorderLayout());
-        addLimitPanelTop.setPreferredSize(new Dimension(550,22));
-        addLimitPanelTop.add(addLimitButtonTop, BorderLayout.EAST);
-        panelsToAdd[0] = new Cab2bPanel();
-        panelsToAdd[0].add("right ", addLimitPanelTop);
-      
-        addLimitButtonTop.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                performAddLimitAction(panelsToAdd, entity);
-            }
-        });
+        final EntityInterface entity = (EntityInterface) element.getUserObject(); 
+        final JXPanel[] panelsToAdd = getAddLimitPanels(entity);
         
-        //panelsToAdd[0].setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-       
-        for (int i = 0; i < componentPanel.length; i++) {
-            panelsToAdd[i + 1] = componentPanel[i];
-        }
-        // Add the "Add Limit" button at bottom 
-        Cab2bButton addLimitButton = new Cab2bButton("Add Limit");
-        addLimitButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                performAddLimitAction(panelsToAdd, entity);
-            }
-        });
-        panelsToAdd[panelsToAdd.length - 1] = new Cab2bPanel();
-        panelsToAdd[panelsToAdd.length - 1].add(addLimitButton);
-
-        if (componentPanel != null) {
+        if (getAddLimitComponentPanels(entity) != null) {
             // pass the appropriate class name for display
             performAction(panelsToAdd, edu.wustl.cab2b.common.util.Utility.getDisplayName(entity));
         }
@@ -180,7 +191,7 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
      * @param entity
      * @return
      */
-    public JXPanel[] getAddLimitPanels(final EntityInterface entity) {
+    public JXPanel[] getAddLimitComponentPanels(final EntityInterface entity) {
         final Collection<AttributeInterface> attributeCollection = entity.getAttributeCollection();
         ParseXMLFile parseFile = null;
         try {
@@ -220,7 +231,7 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
     public JXPanel[] getEditLimitPanels(final IExpression expression) {
         /* This is the EntityInterface instance. */
         final EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
-        final JXPanel[] componentPanel = getAddLimitPanels(entity);
+        final JXPanel[] componentPanel = getAddLimitComponentPanels(entity);
         final JXPanel[] panelsToAdd = new Cab2bPanel[componentPanel.length + 2];
 
         // Add the "Edit Limit" button at top.
