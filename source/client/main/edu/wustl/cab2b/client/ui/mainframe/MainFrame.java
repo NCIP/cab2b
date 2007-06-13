@@ -12,7 +12,6 @@ import java.awt.geom.Point2D;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.MissingResourceException;
-import java.util.Scanner;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -29,7 +28,6 @@ import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
 import edu.wustl.cab2b.client.cache.ClientSideCache;
-import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -156,14 +154,13 @@ public class MainFrame extends JXFrame {
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myStackedBoxPanel, homePanel);
         splitPane.setBorder(null);
         splitPane.setDividerSize(4);
-        Dimension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
         splitPane.setDividerLocation(242);
         splitPane.setOneTouchExpandable(false);
 
-        mainPanel = new Cab2bPanel(new RiverLayout());
-        mainPanel.add("hfill vfill", splitPane);
+        mainPanel = new Cab2bPanel();
         mainPanel.setBorder(new CustomizableBorder(new Insets(10, 0, 6, 10), true, true));
         mainPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
+        mainPanel.add("hfill vfill", splitPane);
 
         this.add(mainPanel, BorderLayout.CENTER);
 
@@ -185,7 +182,7 @@ public class MainFrame extends JXFrame {
             @Override
             protected void doNonUILogic() throws RuntimeException {
 
-                if (openExperimentWelcomePanel != null) {
+                if (openExperimentWelcomePanel != null && openExperimentWelcomePanel.isVisible()) {
                     openExperimentWelcomePanel.removeAll();
                 }
 
@@ -201,7 +198,8 @@ public class MainFrame extends JXFrame {
             protected void doUIUpdateLogic() throws RuntimeException {
                 mainPanel.removeAll();
                 MainFrame.this.remove(mainPanel);
-                MainFrame.this.add(openExperimentWelcomePanel);
+                mainPanel.add(" hfill vfill ", openExperimentWelcomePanel);
+                MainFrame.this.add(mainPanel);
             }
         };
         swingWorker.start();
@@ -245,7 +243,6 @@ public class MainFrame extends JXFrame {
             }
         };
         swingWorker.start();
-
     }
 
     /** Method to set Welcome panel */
@@ -258,18 +255,12 @@ public class MainFrame extends JXFrame {
             this.validate();
         }
 
-        // homePanel.setBorder(new CustomizableBorder(new Insets(1, 1, 1, 1),
-        // true, true));        
         mainPanel.removeAll();
         splitPane.setRightComponent(homePanel);
         splitPane.setOneTouchExpandable(true);
-        //mension dim = CommonUtils.getRelativeDimension(mainframeScreenDimesion, 0.25f, 0.0f);
         splitPane.setDividerLocation(242);
         splitPane.setOneTouchExpandable(false);
         mainPanel.add("hfill vfill", splitPane);
-        // mainPanel.setBorder(new CustomizableBorder(new Insets(10, 0, 6, 10),
-        // true, true));
-
         this.add(mainPanel);
     }
 
