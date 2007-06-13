@@ -1,11 +1,13 @@
 package edu.wustl.cab2b.client.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -134,11 +136,29 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
         /* This is the EntityInterface instance. */
         final EntityInterface entity = (EntityInterface) element.getUserObject();
         final JXPanel[] componentPanel = getAddLimitPanels(entity);
-        final JXPanel[] panelsToAdd = new Cab2bPanel[componentPanel.length + 1];
+        final JXPanel[] panelsToAdd = new Cab2bPanel[componentPanel.length + 2];
+
+        //Add the "Add Limit" button at the top 
+        Cab2bButton addLimitButtonTop = new Cab2bButton("Add Limit");
+        Cab2bPanel addLimitPanelTop=new Cab2bPanel();
+        addLimitPanelTop.setLayout(new BorderLayout());
+        addLimitPanelTop.setPreferredSize(new Dimension(550,22));
+        addLimitPanelTop.add(addLimitButtonTop, BorderLayout.EAST);
+        panelsToAdd[0] = new Cab2bPanel();
+        panelsToAdd[0].add("right ", addLimitPanelTop);
+      
+        addLimitButtonTop.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                performAddLimitAction(panelsToAdd, entity);
+            }
+        });
+        
+        //panelsToAdd[0].setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+       
         for (int i = 0; i < componentPanel.length; i++) {
-            panelsToAdd[i] = componentPanel[i];
+            panelsToAdd[i + 1] = componentPanel[i];
         }
-        // Add the "Add Limit" button.
+        // Add the "Add Limit" button at bottom 
         Cab2bButton addLimitButton = new Cab2bButton("Add Limit");
         addLimitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
@@ -201,11 +221,28 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
         /* This is the EntityInterface instance. */
         final EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
         final JXPanel[] componentPanel = getAddLimitPanels(entity);
-        final JXPanel[] panelsToAdd = new Cab2bPanel[componentPanel.length + 1];
+        final JXPanel[] panelsToAdd = new Cab2bPanel[componentPanel.length + 2];
+
+        // Add the "Edit Limit" button at top.
+        Cab2bButton editLimitButtonTop = new Cab2bButton("Edit Limit");
+        editLimitButtonTop.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                performEditLimitAction(panelsToAdd, expression);
+            }
+        });
+        
+        Cab2bPanel editLimitPanelTop=new Cab2bPanel();
+        editLimitPanelTop.setLayout(new BorderLayout());
+        editLimitPanelTop.setPreferredSize(new Dimension(550,22));
+        editLimitPanelTop.add(editLimitButtonTop, BorderLayout.EAST);
+        panelsToAdd[0] = new Cab2bPanel();
+        panelsToAdd[0].add(editLimitPanelTop);
+
+        //adding condition panels
         for (int i = 0; i < componentPanel.length; i++) {
-            panelsToAdd[i] = componentPanel[i];
+            panelsToAdd[i + 1] = componentPanel[i];
         }
-        // Add the "Add Limit" button.
+        // Add the "Edit Limit" button at bottom.
         Cab2bButton addLimitButton = new Cab2bButton("Edit Limit");
         addLimitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
@@ -221,17 +258,20 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
      * Method to handle 'Add Limit' button click event
      */
     public void performAddLimitAction(JXPanel[] componentPanel, EntityInterface entity) {
-        final Collection<AttributeInterface> attributeCollection = entity.getAttributeCollection();
-        List<AttributeInterface> attributes = new ArrayList<AttributeInterface>(attributeCollection.size());
-        List<String> conditions = new ArrayList<String>(attributeCollection.size());
+        final Collection collection = entity.getAttributeCollection();
+        final int size = collection.size();
+        List<AttributeInterface> attributes = new ArrayList<AttributeInterface>(size);
+        List<String> conditions = new ArrayList<String>(size);
         List<List<String>> values = new ArrayList<List<String>>();
 
-        for (int j = 0; j < componentPanel.length - 1; j++) {
+        //Don't consider panel first and panel last for getting attribute values
+        //because first and last panels are Add Limit button panels
+        for (int j = 1; j < componentPanel.length - 1; j++) {
             IComponent panel = (IComponent) componentPanel[j];
             String conditionString = panel.getCondition();
 
             // Check if condition is set for this panel
-            AttributeInterface attribute = getAttribute(attributeCollection, panel.getAttributeName());
+            AttributeInterface attribute = getAttribute(collection, panel.getAttributeName());
             ArrayList<String> conditionValues = panel.getValues();
             if (0 == conditionString.compareToIgnoreCase("Between") && (conditionValues.size() == 1)) {
                 JOptionPane.showInternalMessageDialog((this.m_addLimitPanel).getParent().getParent().getParent(),
@@ -273,30 +313,31 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
         }
     }
 
-    private AttributeInterface getAttribute(Collection<AttributeInterface> attributeCollection,
-                                            String attributeName) {
-        AttributeInterface requiredAttribute = null;
-        for (AttributeInterface attribute : attributeCollection) {
+    private AttributeInterface getAttribute(Collection collection, String attributeName) {
+        AttributeInterface attribute = null;
+        Iterator iterator = collection.iterator();
+
+        while (iterator.hasNext()) {
+            attribute = (AttributeInterface) iterator.next();
             if (attributeName.trim().equals(attribute.getName().trim())) {
-                requiredAttribute = attribute;
                 break;
             }
         }
 
-        return requiredAttribute;
+        return attribute;
     }
 
     /**
      * Method to perform edit limit action
      */
     public void performEditLimitAction(JXPanel[] componentPanel, IExpression expression) {
-        final Collection<AttributeInterface> attributeCollection = expression.getConstraintEntity().getDynamicExtensionsEntity().getAttributeCollection();
+        final Collection collection = expression.getConstraintEntity().getDynamicExtensionsEntity().getAttributeCollection();
         List<ICondition> conditionList = new ArrayList<ICondition>();
-        for (int j = 0; j < componentPanel.length - 1; j++) {
+        for (int j = 1; j < componentPanel.length - 1; j++) {
             IComponent panel = (IComponent) componentPanel[j];
             String conditionString = panel.getCondition();
 
-            AttributeInterface attribute = getAttribute(attributeCollection, panel.getAttributeName());
+            AttributeInterface attribute = getAttribute(collection, panel.getAttributeName());
             ArrayList<String> values = panel.getValues();
             if (0 == conditionString.compareToIgnoreCase("Between") && (values.size() == 1)) {
                 JOptionPane.showInternalMessageDialog((this.m_addLimitPanel).getParent().getParent().getParent(),

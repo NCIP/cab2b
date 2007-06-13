@@ -139,7 +139,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
          * following panel.
          */
         this.m_ContentForTopPanel = new Cab2bPanel();
-        this.m_ContentForTopPanel.setLayout(new RiverLayout());
+        //this.m_ContentForTopPanel.setLayout(new RiverLayout());
         this.m_ContentForTopPanel.setBorder(new EmptyBorder(1, 1, 1, 1));
         this.m_scrollPane = new JScrollPane(this.m_ContentForTopPanel);
         this.m_scrollPane.getViewport().setBackground(Color.WHITE);
@@ -241,7 +241,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
             int a = 1;
         }
 
-        Logger.out.debug("Class name : " + strClassNameAsTitle);
+        Logger.out.info("Class name : " + strClassNameAsTitle);
         /* Set the title for the top titled panel. */
         this.m_topCenterPanel.setTitle("Define Search Rules '" + strClassNameAsTitle + "'");
         this.m_ContentForTopPanel.removeAll();
@@ -290,7 +290,10 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
     }
 
     private void setValueForAttribute(JXPanel[] panels, ICondition condition) {
-        for (int i = 0; i < panels.length - 1; i++) {
+        
+        //Don't consider panel 1 and panel end for getting attribute values
+        //because first and last panels are Edit Limit button panels     
+        for (int i = 1; i < panels.length - 1; i++) {
             IComponent panel = (IComponent) panels[i];
             String panelAttributeName = panel.getAttributeName();
             int compareVal = panelAttributeName.compareToIgnoreCase(condition.getAttribute().getName());
