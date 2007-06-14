@@ -57,302 +57,299 @@ import edu.wustl.cab2b.client.ui.RiverLayout;
 /**
  * Stacks components vertically in boxes. Each box is created with a title and a
  * component.<br>
- *
+ * 
  * <p>
  * The <code>StackedBox</code> can be added to a
  * {@link javax.swing.JScrollPane}.
- *
+ * 
  * <p>
  * Note: this class is not part of the SwingX core classes. It is just an
  * example of what can be achieved with the components.
- *
+ * 
  * @author <a href="mailto:fred@L2FProd.com">Frederic Lavigne</a>
  */
 public class StackedBox extends Cab2bPanel implements Scrollable {
 
-    private Color titleBackgroundColor;
+	private Color titleBackgroundColor;
 
-    private Color titleForegroundColor;
+	private Color titleForegroundColor;
 
-    private Color separatorColor;
+	private Color separatorColor;
 
-    private Border separatorBorder;
-    
-    private boolean toBeCollapsed;
-    
-    public StackedBox() {
-        setLayout(new VerticalLayout());
-        setOpaque(true);
-        setBackground(Color.WHITE);
-        toBeCollapsed=false;
-        separatorBorder = new SeparatorBorder();
-        setTitleForegroundColor(Color.BLACK);
-        setTitleBackgroundColor(new Color(248, 248, 248));
-        //setSeparatorColor(new Color(214, 223, 247));
-        setSeparatorColor(Color.BLACK);
-    }
+	private Border separatorBorder;
 
-    public StackedBox(boolean toBeCollapsed) {
-        setLayout(new VerticalLayout());
-        setOpaque(true);
-        setBackground(Color.WHITE);
-        this.toBeCollapsed=toBeCollapsed;
-        separatorBorder = new SeparatorBorder();
-        setTitleForegroundColor(Color.BLACK);
-        setTitleBackgroundColor(new Color(248, 248, 248));
-        //setSeparatorColor(new Color(214, 223, 247));
-        setSeparatorColor(Color.BLACK);
-    }
+	private boolean toBeCollapsed;
 
-    public Color getSeparatorColor() {
-        return separatorColor;
-    }
+	public StackedBox() {
+		setLayout(new VerticalLayout());
+		setOpaque(true);
+		setBackground(Color.WHITE);
+		toBeCollapsed = false;
+		separatorBorder = new SeparatorBorder();
+		setTitleForegroundColor(Color.BLACK);
+		setTitleBackgroundColor(new Color(248, 248, 248));
+		// setSeparatorColor(new Color(214, 223, 247));
+		setSeparatorColor(Color.BLACK);
+	}
 
-    public void setSeparatorColor(Color separatorColor) {
-        this.separatorColor = separatorColor;
-    }
+	public Color getSeparatorColor() {
+		return separatorColor;
+	}
 
-    public Color getTitleForegroundColor() {
-        return titleForegroundColor;
-    }
+	public void setSeparatorColor(Color separatorColor) {
+		this.separatorColor = separatorColor;
+	}
 
-    public void setTitleForegroundColor(Color titleForegroundColor) {
-        this.titleForegroundColor = titleForegroundColor;
-    }
+	public Color getTitleForegroundColor() {
+		return titleForegroundColor;
+	}
 
-    public Color getTitleBackgroundColor() {
-        return titleBackgroundColor;
-    }
+	public void setTitleForegroundColor(Color titleForegroundColor) {
+		this.titleForegroundColor = titleForegroundColor;
+	}
 
-    public void setTitleBackgroundColor(Color titleBackgroundColor) {
-        this.titleBackgroundColor = titleBackgroundColor;
-    }
+	public Color getTitleBackgroundColor() {
+		return titleBackgroundColor;
+	}
 
-    /**
-     * Adds a new component to this <code>StackedBox</code>
-     * 
-     * @param title
-     * @param component
-     */
-    public void addBox(String title, Component component, String iconFile) {
-        final JXCollapsiblePane collapsible = new JXCollapsiblePane();
-        collapsible.getContentPane().setBackground(Color.WHITE);
-        collapsible.add(component);
-        Action toggleAction = collapsible.getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION);
-        // use the collapse/expand icons from the JTree UI
-        toggleAction.putValue(JXCollapsiblePane.COLLAPSE_ICON, UIManager.getIcon("Tree.expandedIcon"));
-        toggleAction.putValue(JXCollapsiblePane.EXPAND_ICON, UIManager.getIcon("Tree.collapsedIcon"));
+	public void setTitleBackgroundColor(Color titleBackgroundColor) {
+		this.titleBackgroundColor = titleBackgroundColor;
+	}
 
-        URL url = this.getClass().getClassLoader().getResource(iconFile);
-        ImageIcon imageIcon = null;
-        if (url != null) {
-            imageIcon = new ImageIcon(url);
-        } else {
-            imageIcon = new ImageIcon();
-        }
+	/**
+	 * Adds a new component to this <code>StackedBox</code>
+	 * 
+	 * @param title
+	 * @param component
+	 */
+	public void addBox(String title, Component component, String iconFile, boolean toBeCollapsed) {
+		this.toBeCollapsed = toBeCollapsed;
+		final JXCollapsiblePane collapsible = new JXCollapsiblePane();
+		collapsible.getContentPane().setBackground(Color.WHITE);
+		collapsible.add(component);
+		Action toggleAction = collapsible.getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION);
+		// use the collapse/expand icons from the JTree UI
+		toggleAction.putValue(JXCollapsiblePane.COLLAPSE_ICON, UIManager
+				.getIcon("Tree.expandedIcon"));
+		toggleAction.putValue(JXCollapsiblePane.EXPAND_ICON, UIManager
+				.getIcon("Tree.collapsedIcon"));
 
-        StackTitlePanel stackTitlePanel = new StackTitlePanel(title, imageIcon, toggleAction);
-        
-        if(toBeCollapsed){
-        	  stackTitlePanel.collapse(false);
-        }
-      
-        stackTitlePanel.setBorder(new CustomizableBorder(new Insets(0, 0, 1, 0), new Color(125, 146, 147)));
+		URL url = this.getClass().getClassLoader().getResource(iconFile);
+		ImageIcon imageIcon = null;
+		if (url != null) {
+			imageIcon = new ImageIcon(url);
+		} else {
+			imageIcon = new ImageIcon();
+		}
 
-        add(stackTitlePanel);
-        add(collapsible);
-    }
+		StackTitlePanel stackTitlePanel = new StackTitlePanel(title, imageIcon, toggleAction);
 
-    /**
-     * @see Scrollable#getPreferredScrollableViewportSize()
-     */
-    public Dimension getPreferredScrollableViewportSize() {
-        return getPreferredSize();
-    }
+		if (toBeCollapsed) {
+		
+			stackTitlePanel.collapse(false);
 
-    /**
-     * @see Scrollable#getScrollableBlockIncrement(java.awt.Rectangle, int, int)
-     */
-    public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-        return 10;
-    }
+		}
 
-    /**
-     * @see Scrollable#getScrollableTracksViewportHeight()
-     */
-    public boolean getScrollableTracksViewportHeight() {
-        if (getParent() instanceof JViewport) {
-            return (((JViewport) getParent()).getHeight() > getPreferredSize().height);
-        }
-        return false;
-    }
+		stackTitlePanel.setBorder(new CustomizableBorder(new Insets(0, 0, 1, 0), new Color(125,
+				146, 147)));
 
-    /**
-     * @see Scrollable#getScrollableTracksViewportWidth()
-     */
-    public boolean getScrollableTracksViewportWidth() {
-        return true;
-    }
+		add(stackTitlePanel);
+		add(collapsible);
+	}
 
-    /**
-     * @see Scrollable#getScrollableUnitIncrement(java.awt.Rectangle, int, int)
-     */
-    public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-        return 10;
-    }
+	/**
+	 * @see Scrollable#getPreferredScrollableViewportSize()
+	 */
+	public Dimension getPreferredScrollableViewportSize() {
+		return getPreferredSize();
+	}
 
-    /**
-     * The border between the stack components. It separates each component with a
-     * fine line border.
-     */
-    class SeparatorBorder implements Border {
+	/**
+	 * @see Scrollable#getScrollableBlockIncrement(java.awt.Rectangle, int, int)
+	 */
+	public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+		return 10;
+	}
 
-        boolean isFirst(Component c) {
-            return c.getParent() == null || c.getParent().getComponent(0) == c;
-        }
+	/**
+	 * @see Scrollable#getScrollableTracksViewportHeight()
+	 */
+	public boolean getScrollableTracksViewportHeight() {
+		if (getParent() instanceof JViewport) {
+			return (((JViewport) getParent()).getHeight() > getPreferredSize().height);
+		}
+		return false;
+	}
 
-        public Insets getBorderInsets(Component c) {
-            // if the collapsible is collapsed, we do not want its border to be
-            // painted.
-            /*if (c instanceof JXCollapsiblePane) {
-             if (((JXCollapsiblePane)c).isCollapsed()) { return new Insets(0, 0, 0,
-             0); }
-             }*/
-            //return new Insets(isFirst(c)?4:1, 0, 1, 0);
-            return new Insets(0, 0, 0, 0);
-        }
+	/**
+	 * @see Scrollable#getScrollableTracksViewportWidth()
+	 */
+	public boolean getScrollableTracksViewportWidth() {
+		return true;
+	}
 
-        public boolean isBorderOpaque() {
-            return true;
-        }
+	/**
+	 * @see Scrollable#getScrollableUnitIncrement(java.awt.Rectangle, int, int)
+	 */
+	public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+		return 10;
+	}
 
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            g.setColor(getSeparatorColor());
-            if (isFirst(c)) {
-                g.drawLine(x, y + 2, x + width, y + 2);
-            }
-            g.drawLine(x, y + height - 1, x + width, y + height - 1);
-        }
-    }
+	/**
+	 * The border between the stack components. It separates each component with
+	 * a fine line border.
+	 */
+	class SeparatorBorder implements Border {
 
-    public class StackTitlePanel extends JXPanel implements MouseInputListener {
-        boolean toggleAction = true;
+		boolean isFirst(Component c) {
+			return c.getParent() == null || c.getParent().getComponent(0) == c;
+		}
 
-        String title = "";
+		public Insets getBorderInsets(Component c) {
+			// if the collapsible is collapsed, we do not want its border to be
+			// painted.
+			/*
+			 * if (c instanceof JXCollapsiblePane) { if
+			 * (((JXCollapsiblePane)c).isCollapsed()) { return new Insets(0, 0,
+			 * 0, 0); } }
+			 */
+			// return new Insets(isFirst(c)?4:1, 0, 1, 0);
+			return new Insets(0, 0, 0, 0);
+		}
 
-        GradientPaint gp = new GradientPaint(new Point2D.Double(0, 1.0d), new Color(205, 215, 216),
-                new Point2D.Double(0, 0.0d), new Color(255, 255, 255));
+		public boolean isBorderOpaque() {
+			return true;
+		}
 
-        Painter painter = new BasicGradientPainter(gp);
+		public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+			g.setColor(getSeparatorColor());
+			if (isFirst(c)) {
+				g.drawLine(x, y + 2, x + width, y + 2);
+			}
+			g.drawLine(x, y + height - 1, x + width, y + height - 1);
+		}
+	}
 
-        Action action;
+	public class StackTitlePanel extends JXPanel implements MouseInputListener {
+		boolean toggleAction = true;
 
-        public StackTitlePanel(String title, Icon imageIcon, Action action) {
-            this.title = title;
-            this.action = action;
-            this.setBackgroundPainter(painter);
+		String title = "";
 
-            this.addMouseListener(this);
-            this.setLayout(new RiverLayout(5, 5));
+		GradientPaint gp = new GradientPaint(new Point2D.Double(0, 1.0d), new Color(205, 215, 216),
+				new Point2D.Double(0, 0.0d), new Color(255, 255, 255));
 
-            JLabel imageLabel = new JLabel(imageIcon);
+		Painter painter = new BasicGradientPainter(gp);
 
-            JLabel titleLabel = new JLabel(title);
-            titleLabel.setBorder(new EmptyBorder(new Insets(1, 1, 8, 1)));
+		Action action;
 
-            this.add("", imageLabel);
-            this.add("", titleLabel);
-        }
+		public StackTitlePanel(String title, Icon imageIcon, Action action) {
+			this.title = title;
+			this.action = action;
+			this.setBackgroundPainter(painter);
 
-        @Override
-        public void paint(Graphics gp) {
-            super.paint(gp);
+			this.addMouseListener(this);
+			this.setLayout(new RiverLayout(5, 5));
 
-            Graphics2D g2d = (Graphics2D) gp;
-            Color oldColor = g2d.getColor();
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			JLabel imageLabel = new JLabel(imageIcon);
 
-            if (toggleAction) {
-                Polygon openPoly = getPolygon("open");
-                g2d.setColor(Color.GRAY);
-                g2d.fillPolygon(openPoly);
-            } else {
-                Polygon closedPoly = getPolygon("closed");
-                g2d.setColor(Color.GRAY);
-                g2d.fillPolygon(closedPoly);
-            }
-            g2d.setColor(oldColor);
-        }
+			JLabel titleLabel = new JLabel(title);
+			titleLabel.setBorder(new EmptyBorder(new Insets(1, 1, 8, 1)));
 
-        private Polygon getPolygon(String openOrClosed) {
-            Polygon polygon = new Polygon();
+			this.add("", imageLabel);
+			this.add("", titleLabel);
+		}
 
-            Dimension size = this.getSize();
+		@Override
+		public void paint(Graphics gp) {
+			super.paint(gp);
 
-            int x = size.width - 24;
-            int y = (size.height / 2);
-            if (openOrClosed.equalsIgnoreCase("open")) {
-                polygon.addPoint(x + 6, y + 6);
-                polygon.addPoint(x + 18, y + 6);
-                polygon.addPoint(x + 12, y - 6);
-            } else {
-                polygon.addPoint(x + 6, y - 6); // Arrow Down.
-                polygon.addPoint((x + 18), y - 6);
-                polygon.addPoint((x + 12), y + 6);
+			Graphics2D g2d = (Graphics2D) gp;
+			Color oldColor = g2d.getColor();
+			g2d
+					.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+							RenderingHints.VALUE_ANTIALIAS_ON);
 
-            }
+			if (toggleAction) {
+				Polygon openPoly = getPolygon("open");
+				g2d.setColor(Color.GRAY);
+				g2d.fillPolygon(openPoly);
+			} else {
+				Polygon closedPoly = getPolygon("closed");
+				g2d.setColor(Color.GRAY);
+				g2d.fillPolygon(closedPoly);
+			}
+			g2d.setColor(oldColor);
+		}
 
-            return polygon;
-        }
-        public void collapse(boolean e) {
-            if (e)
-                toggleAction = false;
-            else
-                toggleAction = true;
+		private Polygon getPolygon(String openOrClosed) {
+			Polygon polygon = new Polygon();
 
-            ActionEvent ae = new ActionEvent(this, 123, "stackedBox");
-            action.actionPerformed(ae);
-            this.repaint();
-        }
-        
-        
-        public void mouseClicked(MouseEvent e) {
-            if (toggleAction)
-                toggleAction = false;
-            else
-                toggleAction = true;
+			Dimension size = this.getSize();
 
-            ActionEvent ae = new ActionEvent(this, 123, "stackedBox");
-            action.actionPerformed(ae);
-            this.repaint();
-        }
+			int x = size.width - 24;
+			int y = (size.height / 2);
+			if (openOrClosed.equalsIgnoreCase("open")) {
+				polygon.addPoint(x + 6, y + 6);
+				polygon.addPoint(x + 18, y + 6);
+				polygon.addPoint(x + 12, y - 6);
+			} else {
+				polygon.addPoint(x + 6, y - 6); // Arrow Down.
+				polygon.addPoint((x + 18), y - 6);
+				polygon.addPoint((x + 12), y + 6);
 
-        public void mouseEntered(MouseEvent e) {
-            Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
-            this.setCursor(handCursor);
-        }
+			}
 
-        public void mouseExited(MouseEvent e) {
-            Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
-            this.setCursor(normalCursor);
-        }
+			return polygon;
+		}
 
-        public void mousePressed(MouseEvent e) {
+		public void collapse(boolean e) {
+			if (e)
+				toggleAction = false;
+			else
+				toggleAction = true;
 
-        }
+			ActionEvent ae = new ActionEvent(this, 123, "stackedBox");
+			action.actionPerformed(ae);
+			this.repaint();
+		}
 
-        public void mouseReleased(MouseEvent e) {
+		public void mouseClicked(MouseEvent e) {
+			if (toggleAction)
+				toggleAction = false;
+			else
+				toggleAction = true;
 
-        }
+			ActionEvent ae = new ActionEvent(this, 123, "stackedBox");
+			action.actionPerformed(ae);
+			this.repaint();
+		}
 
-        public void mouseDragged(MouseEvent e) {
+		public void mouseEntered(MouseEvent e) {
+			Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
+			this.setCursor(handCursor);
+		}
 
-        }
+		public void mouseExited(MouseEvent e) {
+			Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+			this.setCursor(normalCursor);
+		}
 
-        public void mouseMoved(MouseEvent e) {
+		public void mousePressed(MouseEvent e) {
 
-        }
+		}
 
-    }
+		public void mouseReleased(MouseEvent e) {
+
+		}
+
+		public void mouseDragged(MouseEvent e) {
+
+		}
+
+		public void mouseMoved(MouseEvent e) {
+
+		}
+
+	}
 
 }

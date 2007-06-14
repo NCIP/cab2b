@@ -124,9 +124,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 		initGUI();
 	}
 
-	public ExperimentStackBox(
-			ExperimentBusinessInterface expBus,
-			Experiment selectedExperiment,
+	public ExperimentStackBox(ExperimentBusinessInterface expBus, Experiment selectedExperiment,
 			ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel) {
 		m_experimentBusinessInterface = expBus;
 		m_selectedExperiment = selectedExperiment;
@@ -136,14 +134,15 @@ public class ExperimentStackBox extends Cab2bPanel {
 
 	public void initGUI() {
 		this.setLayout(new BorderLayout());
-		stackedBox = new StackedBox(true);
+		stackedBox = new StackedBox();
 		stackedBox.setTitleBackgroundColor(new Color(200, 200, 220));
 
 		Set<EntityInterface> entitySet = null;
 		try {
 			entitySet = m_experimentBusinessInterface.getDataListEntitySet(m_selectedExperiment);
 		} catch (RemoteException remoteException) {
-			CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true, false);
+			CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true,
+					true, false);
 		}
 
 		DefaultMutableTreeNode rootNode = generateRootNode(entitySet);
@@ -199,7 +198,8 @@ public class ExperimentStackBox extends Cab2bPanel {
 			datalistTree.expandRow(1);
 			CustomSwingWorker swingWorker = new CustomSwingWorker(datalistTree) {
 				protected void doNonUILogic() throws RuntimeException {
-					Object nodeInfo = ((DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent()).getUserObject();
+					Object nodeInfo = ((DefaultMutableTreeNode) datalistTree
+							.getLastSelectedPathComponent()).getUserObject();
 					if (nodeInfo instanceof TreeEntityWrapper) {
 						TreeEntityWrapper experimentEntity = (TreeEntityWrapper) nodeInfo;
 						getDataCategoyRecords(experimentEntity);
@@ -208,7 +208,8 @@ public class ExperimentStackBox extends Cab2bPanel {
 				}
 
 				protected void doUIUpdateLogic() throws RuntimeException {
-					m_experimentDataCategoryGridPanel.refreshTable(columnName, recordObject, attributeMap);
+					m_experimentDataCategoryGridPanel.refreshTable(columnName, recordObject,
+							attributeMap);
 				}
 			};
 			swingWorker.start();
@@ -229,25 +230,26 @@ public class ExperimentStackBox extends Cab2bPanel {
 		// Adding Select data category pane
 		treeViewScrollPane = new JScrollPane(datalistTree);
 		treeViewScrollPane.setPreferredSize(new Dimension(250, 200));
-		stackedBox.addBox("Select Data Category", treeViewScrollPane, "mysearchqueries_icon.gif");
+		stackedBox.addBox("Select Data Category", treeViewScrollPane, "mysearchqueries_icon.gif",
+				false);
 
 		// Adding Filter data category panel
 		dataFilterPanel = new Cab2bPanel();
 		dataFilterPanel.setPreferredSize(new Dimension(250, 200));
 		dataFilterPanel.setOpaque(false);
-		stackedBox.addBox("Filter Data ", dataFilterPanel, "mysearchqueries_icon.gif");
+		stackedBox.addBox("Filter Data ", dataFilterPanel, "mysearchqueries_icon.gif", true);
 
 		// Adding Analyse data panel
 		analyseDataPanel = new Cab2bPanel();
 		analyseDataPanel.setPreferredSize(new Dimension(250, 150));
 		analyseDataPanel.setOpaque(false);
-		stackedBox.addBox("Analyze Data ", analyseDataPanel, "mysearchqueries_icon.gif");
+		stackedBox.addBox("Analyze Data ", analyseDataPanel, "mysearchqueries_icon.gif", true);
 
 		// Adding Visualize data panel
 		visualiseDataPanel = new Cab2bPanel();
 		visualiseDataPanel.setPreferredSize(new Dimension(250, 200));
 		visualiseDataPanel.setOpaque(false);
-		stackedBox.addBox("Visualize Data ", visualiseDataPanel, "mysearchqueries_icon.gif");
+		stackedBox.addBox("Visualize Data ", visualiseDataPanel, "mysearchqueries_icon.gif", true);
 
 		// Set the type of charts to be displayed.
 		Vector<ChartType> chartTypes = new Vector<ChartType>();
@@ -295,16 +297,19 @@ public class ExperimentStackBox extends Cab2bPanel {
 	public void treeSelectionListenerAction() {
 		CustomSwingWorker swingWorker = new CustomSwingWorker(datalistTree) {
 			protected void doNonUILogic() throws RuntimeException {
-				Cab2bPanel selectedPanel = (Cab2bPanel)m_experimentDataCategoryGridPanel.getTabComponent().getSelectedComponent();
-                Component applyFilterComponent = CommonUtils.getComponentByName(selectedPanel, Constants.APPLY_FILTER_PANEL_NAME); 
-                if(applyFilterComponent instanceof ApplyFilterPanel){
-                	ApplyFilterPanel applyFilterPanel = (ApplyFilterPanel)applyFilterComponent;
-                	applyFilterPanel.clearMap();
-                	getDataForFilterPanel(applyFilterPanel);
-                }
+				Cab2bPanel selectedPanel = (Cab2bPanel) m_experimentDataCategoryGridPanel
+						.getTabComponent().getSelectedComponent();
+				Component applyFilterComponent = CommonUtils.getComponentByName(selectedPanel,
+						Constants.APPLY_FILTER_PANEL_NAME);
+				if (applyFilterComponent instanceof ApplyFilterPanel) {
+					ApplyFilterPanel applyFilterPanel = (ApplyFilterPanel) applyFilterComponent;
+					applyFilterPanel.clearMap();
+					getDataForFilterPanel(applyFilterPanel);
+				}
 				updateUI();
 
-				DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent();
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree
+						.getLastSelectedPathComponent();
 				if (node == null) {
 					return;
 				}
@@ -324,7 +329,8 @@ public class ExperimentStackBox extends Cab2bPanel {
 			}
 
 			protected void doUIUpdateLogic() throws RuntimeException {
-				m_experimentDataCategoryGridPanel.refreshTable(columnName, recordObject, attributeMap);
+				m_experimentDataCategoryGridPanel.refreshTable(columnName, recordObject,
+						attributeMap);
 			}
 		};
 		swingWorker.start();
@@ -338,15 +344,15 @@ public class ExperimentStackBox extends Cab2bPanel {
 		EntityInterface entityNode = nodeInfo.getEntityInterface();
 
 		// getting datalist entity interface
-		DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
-																											EjbNamesConstants.DATALIST_BEAN,
-																											DataListHomeInterface.class);
+		DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils
+				.getBusinessInterface(EjbNamesConstants.DATALIST_BEAN, DataListHomeInterface.class);
 		EntityRecordResultInterface recordResultInterface = null;
 		try {
 			recordResultInterface = dataListBI.getEntityRecord(entityNode.getId());
 
 			// getting list of attributes
-			List<AbstractAttributeInterface> headerList = recordResultInterface.getEntityRecordMetadata().getAttributeList();
+			List<AbstractAttributeInterface> headerList = recordResultInterface
+					.getEntityRecordMetadata().getAttributeList();
 			columnName = new String[headerList.size()];
 			int i = 0;
 			for (AbstractAttributeInterface abstractAttribute : headerList) {
@@ -374,7 +380,8 @@ public class ExperimentStackBox extends Cab2bPanel {
 				i++;
 			}
 		} catch (RemoteException remoteException) {
-			CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true, false);
+			CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true,
+					true, false);
 		}
 	}
 
@@ -455,7 +462,8 @@ public class ExperimentStackBox extends Cab2bPanel {
 		Cab2bTable cab2bTable = m_experimentDataCategoryGridPanel.getCurrentTable();
 
 		String entityName = null;
-		Object nodeInfo = ((DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent()).getUserObject();
+		Object nodeInfo = ((DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent())
+				.getUserObject();
 		if (nodeInfo instanceof TreeEntityWrapper) {
 			entityName = ((TreeEntityWrapper) nodeInfo).toString();
 		}
@@ -497,7 +505,8 @@ public class ExperimentStackBox extends Cab2bPanel {
 	 */
 	public void updateStackBox(EntityInterface newEntity) {
 		// gets the currently selected node
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent();
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree
+				.getLastSelectedPathComponent();
 
 		TreeEntityWrapper newNodeWrapper = new TreeEntityWrapper();
 		newNodeWrapper.setEntityInterface(newEntity);
@@ -519,20 +528,21 @@ public class ExperimentStackBox extends Cab2bPanel {
 		EntityInterface entityInterface = DomainObjectFactory.getInstance().createEntity();
 		entityInterface.setName("gov.nih.nci.mageom.domain.BioAssay.BioAssay");
 
-		AnalyticalServiceOperationsBusinessInterface analyticalServiceOperationsBusinessInterface = (AnalyticalServiceOperationsBusinessInterface) CommonUtils.getBusinessInterface(
-																																													EjbNamesConstants.ANALYTICAL_SERVICE_BEAN,
-																																													AnalyticalServiceOperationsHomeInterface.class,
-																																													null);
+		AnalyticalServiceOperationsBusinessInterface analyticalServiceOperationsBusinessInterface = (AnalyticalServiceOperationsBusinessInterface) CommonUtils
+				.getBusinessInterface(EjbNamesConstants.ANALYTICAL_SERVICE_BEAN,
+						AnalyticalServiceOperationsHomeInterface.class, null);
 		List<ServiceDetailsInterface> serviceDetailInterfaceList = null;
 		try {
-			serviceDetailInterfaceList = analyticalServiceOperationsBusinessInterface.getApplicableAnalyticalServices(entityInterface);
+			serviceDetailInterfaceList = analyticalServiceOperationsBusinessInterface
+					.getApplicableAnalyticalServices(entityInterface);
 
 			analyseDataPanel.removeAll();
 			for (ServiceDetailsInterface serviceDetails : serviceDetailInterfaceList) {
 				addHyperLinkToAnalyticalPane(serviceDetails, dataEntity);
 			}
 		} catch (RemoteException remoteException) {
-			CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true, false);
+			CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true,
+					true, false);
 		}
 	}
 
@@ -544,7 +554,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 	 * @param dataEntity
 	 */
 	private void addHyperLinkToAnalyticalPane(ServiceDetailsInterface serviceDetails,
-												final EntityInterface dataEntity) {
+			final EntityInterface dataEntity) {
 		String serviceName = serviceDetails.getDisplayName();
 
 		Cab2bHyperlink hyperlink = new Cab2bHyperlink();
@@ -557,7 +567,8 @@ public class ExperimentStackBox extends Cab2bPanel {
 			public void actionPerformed(ActionEvent actionEvent) {
 				Cab2bHyperlink hyperlink = (Cab2bHyperlink) (actionEvent.getSource());
 
-				ServiceDetailsInterface serviceDetails = (ServiceDetailsInterface) hyperlink.getUserObject();
+				ServiceDetailsInterface serviceDetails = (ServiceDetailsInterface) hyperlink
+						.getUserObject();
 				List<EntityInterface> requiredEntityList = serviceDetails.getRequiredEntities();
 				for (EntityInterface requiredEntity : requiredEntityList) {
 					// TODO compare with entity id instead of name
@@ -584,8 +595,8 @@ public class ExperimentStackBox extends Cab2bPanel {
 	 *            The event that contains details of the click on the individual
 	 *            service.
 	 */
-	private void serviceSelectAction(ServiceDetailsInterface serviceDetails, final EntityInterface requiredEntity,
-										final EntityInterface dataEntity) {
+	private void serviceSelectAction(ServiceDetailsInterface serviceDetails,
+			final EntityInterface requiredEntity, final EntityInterface dataEntity) {
 		// Create panel for Analysis Title
 		JComponent tilteLabel = new Cab2bLabel("Analysis Title" + " : ");
 		JComponent titleField = new Cab2bFormattedTextField(20, Cab2bFormattedTextField.PLAIN_FIELD);
@@ -600,7 +611,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 		jScrollPane.setName("jScrollPane");
 		jScrollPane.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 		jScrollPane.getViewport().add(parameterPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-										JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		jScrollPane.getViewport().setBackground(Color.WHITE);
 
 		// Create finish button
@@ -615,7 +626,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 
 		String displayName = CommonUtils.getFormattedString(requiredEntity.getName());
 		WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, servicePanel, displayName,
-										Constants.WIZARD_SIZE2_DIMENSION, true, false);
+				Constants.WIZARD_SIZE2_DIMENSION, true, false);
 	}
 
 	/**
@@ -638,15 +649,16 @@ public class ExperimentStackBox extends Cab2bPanel {
 		Cab2bPanel parameterPanel = new Cab2bPanel();
 		parameterPanel.setName("parameterPanel");
 		if (attributeCollection != null) {
-			List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>(attributeCollection);
+			List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>(
+					attributeCollection);
 			Collections.sort(attributeList, new AttributeInterfaceComparator());
 
 			try {
 
 				Dimension maxLabelDimension = CommonUtils.getMaximumLabelDimension(attributeList);
 				for (AttributeInterface attribute : attributeList) {
-					JXPanel jxPanel = (JXPanel) SwingUIManager.generateUIPanel(parseFile, attribute, false,
-																				maxLabelDimension);
+					JXPanel jxPanel = (JXPanel) SwingUIManager.generateUIPanel(parseFile,
+							attribute, false, maxLabelDimension);
 					parameterPanel.add("br", jxPanel);
 				}
 			} catch (CheckedException checkedException) {
@@ -692,8 +704,7 @@ class FinishButtonActionListner implements ActionListener {
 	 * @param dataEntity
 	 * @param experimentDataCategoryGridPanel
 	 */
-	public FinishButtonActionListner(
-			ServiceDetailsInterface serviceDetails,
+	public FinishButtonActionListner(ServiceDetailsInterface serviceDetails,
 			EntityInterface dataEntity,
 			ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel) {
 		super();
@@ -716,31 +727,33 @@ class FinishButtonActionListner implements ActionListener {
 		closeDialogWindow(servicePanel);
 
 		// Obtain the analysis title
-		Cab2bPanel titlePanel = (Cab2bPanel) CommonUtils.getComponentByName(servicePanel, "titlePanel");
+		Cab2bPanel titlePanel = (Cab2bPanel) CommonUtils.getComponentByName(servicePanel,
+				"titlePanel");
 		Cab2bFormattedTextField titleField = (Cab2bFormattedTextField) titlePanel.getComponents()[1];
 		String analysisTitle = titleField.getText();
 
 		// Obtain values of service parameters
-		JScrollPane jScrollPane = (JScrollPane) CommonUtils.getComponentByName(servicePanel, "jScrollPane");
-		Cab2bPanel parameterPanel = (Cab2bPanel) CommonUtils.getComponentByName(jScrollPane.getViewport(),
-																				"parameterPanel");
-		List<EntityRecordResultInterface> serviceParameterValues = collectServiceParameterValues(parameterPanel.getComponents());
+		JScrollPane jScrollPane = (JScrollPane) CommonUtils.getComponentByName(servicePanel,
+				"jScrollPane");
+		Cab2bPanel parameterPanel = (Cab2bPanel) CommonUtils.getComponentByName(jScrollPane
+				.getViewport(), "parameterPanel");
+		List<EntityRecordResultInterface> serviceParameterValues = collectServiceParameterValues(parameterPanel
+				.getComponents());
 
 		// Obtain values from grid
 		List<EntityRecordResultInterface> dataValues = getGridData();
 
 		EntityRecordResultInterface entityRecordResult = null;
-		AnalyticalServiceOperationsBusinessInterface analyticalServiceOperationsBusinessInterface = (AnalyticalServiceOperationsBusinessInterface) CommonUtils.getBusinessInterface(
-																																													EjbNamesConstants.ANALYTICAL_SERVICE_BEAN,
-																																													AnalyticalServiceOperationsHomeInterface.class,
-																																													null);
+		AnalyticalServiceOperationsBusinessInterface analyticalServiceOperationsBusinessInterface = (AnalyticalServiceOperationsBusinessInterface) CommonUtils
+				.getBusinessInterface(EjbNamesConstants.ANALYTICAL_SERVICE_BEAN,
+						AnalyticalServiceOperationsHomeInterface.class, null);
 		try {
-			entityRecordResult = analyticalServiceOperationsBusinessInterface.invokeService(serviceDetails,
-																							dataValues,
-																							serviceParameterValues);
+			entityRecordResult = analyticalServiceOperationsBusinessInterface.invokeService(
+					serviceDetails, dataValues, serviceParameterValues);
 			updateAnalysisTable(analysisTitle, entityRecordResult);
 		} catch (RemoteException remoteException) {
-			CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true, false);
+			CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true,
+					true, false);
 		}
 
 		MainFrame.setStatus(MainFrame.Status.READY);
@@ -758,7 +771,7 @@ class FinishButtonActionListner implements ActionListener {
 	 *            single row of table.
 	 */
 	private void updateAnalysisTable(final String analysisTitle,
-										final EntityRecordResultInterface entityRecordResult) {
+			final EntityRecordResultInterface entityRecordResult) {
 		UserObjectWrapper<EntityRecordResultInterface> userObjectWrapper = new UserObjectWrapper<EntityRecordResultInterface>(
 				entityRecordResult, analysisTitle);
 		String entityName = CommonUtils.getFormattedString(dataEntity.getName());
@@ -766,7 +779,8 @@ class FinishButtonActionListner implements ActionListener {
 		String currentDate = simpleDateFormat.format(new Date());
 		String progress = "Completed";
 
-		Object[][] analysisTableData = new Object[][] { { entityName, userObjectWrapper, currentDate, progress } };
+		Object[][] analysisTableData = new Object[][] { { entityName, userObjectWrapper,
+				currentDate, progress } };
 
 		experimentDataCategoryGridPanel.refreshAnalysisTable(analysisTableData);
 	}
@@ -820,7 +834,8 @@ class FinishButtonActionListner implements ActionListener {
 	 * @return List of EntityRecordResultInterface which has the parameter
 	 *         values
 	 */
-	private List<EntityRecordResultInterface> collectServiceParameterValues(final Component[] controlPanels) {
+	private List<EntityRecordResultInterface> collectServiceParameterValues(
+			final Component[] controlPanels) {
 		List<String> valueList = new ArrayList<String>();
 		for (Component controlPanel : controlPanels) {
 			String value = null;
@@ -849,13 +864,14 @@ class FinishButtonActionListner implements ActionListener {
 	 * @return List of EntityRecordResultInterface
 	 */
 	private List<EntityRecordResultInterface> generateEntityRecordResultList(
-																				final List<EntityRecordInterface> entityRecordList) {
+			final List<EntityRecordInterface> entityRecordList) {
 		EntityRecordMetadata entityRecordMetadata = new EntityRecordMetadata();
 
-		List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>(
-				dataEntity.getAttributeCollection());
+		List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>(dataEntity
+				.getAttributeCollection());
 		Collections.sort(attributeList, new AttributeInterfaceComparator());
-		entityRecordMetadata.setAttributeList(new ArrayList<AbstractAttributeInterface>(attributeList));
+		entityRecordMetadata.setAttributeList(new ArrayList<AbstractAttributeInterface>(
+				attributeList));
 
 		EntityRecordResultInterface entityRecordResult = new EntityRecordResult();
 		entityRecordResult.setEntityRecordList(entityRecordList);
