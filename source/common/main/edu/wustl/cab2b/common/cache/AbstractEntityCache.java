@@ -72,12 +72,12 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
     /**
      * Map with key as category id and value as category.
      */
-    protected Map<Long, Category> categoryIdToCategory;
+    protected Map<Long, Category> categoryIdToCategory = new HashMap<Long, Category>();
 
     /**
      * Map with key as category's entity id and value as category.
      */
-    protected Map<Long, Category> entityIdToCategory;
+    protected Map<Long, Category> entityIdToCategory = new HashMap<Long, Category>();
 
     /**
      * Private default constructor. To restrict the user from instantiating
@@ -125,9 +125,10 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
     }
 
     private void cacheCategories() {
+        categories = getAllCategories();
         for (Category category : categories) {
             categoryIdToCategory.put(category.getId(), category);
-            entityIdToCategory.put(category.getCategoryEntity().getId(), category);
+            entityIdToCategory.put(category.getDeEntityId(), category);
         }
     }
 
@@ -315,4 +316,6 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
     }
 
     protected abstract Collection<EntityGroupInterface> getCab2bEntityGroups();
+    
+    protected abstract List<Category> getAllCategories();
 }

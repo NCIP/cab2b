@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -34,10 +35,10 @@ public class ClientSideCache extends AbstractEntityCache {
 
     private static final long serialVersionUID = 7145001746845163416L;
 
-//    /**
-//     * The EntityCache object. Needed for singleton
-//     */
-//    protected static ClientSideCache entityCache = null;
+    //    /**
+    //     * The EntityCache object. Needed for singleton
+    //     */
+    //    protected static ClientSideCache entityCache = null;
 
     private Map<Category, Set<EntityInterface>> categoryVsClasseSet = new HashMap<Category, Set<EntityInterface>>();
 
@@ -55,9 +56,7 @@ public class ClientSideCache extends AbstractEntityCache {
 
     protected ClientSideCache() {
         super();
-        CategoryBusinessInterface categoryOperations = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                    EjbNamesConstants.CATEGORY_BEAN,
-                                                                                                                    CategoryHomeInterface.class);
+        CategoryBusinessInterface categoryOperations = getCategoryBusinessInterface();
         int length = 50;
         showProgress(" Getting all categories....", length);
         try {
@@ -173,5 +172,22 @@ public class ClientSideCache extends AbstractEntityCache {
             }
         }
         return matchedClass;
+    }
+
+    /* (non-Javadoc)
+     * @see edu.wustl.cab2b.common.cache.AbstractEntityCache#getAllCategories()
+     */
+    @Override
+    protected List<Category> getAllCategories() {
+        try {
+            return getCategoryBusinessInterface().getAllCategories();
+        } catch (RemoteException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    private CategoryBusinessInterface getCategoryBusinessInterface() {
+        return (CategoryBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.CATEGORY_BEAN,
+                                                                            CategoryHomeInterface.class);
     }
 }

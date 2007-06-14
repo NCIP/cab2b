@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.server.cache;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -20,7 +21,7 @@ import edu.wustl.common.querysuite.metadata.category.Category;
  * @author Rahul Ner
  */
 public class EntityCache extends AbstractEntityCache {
-    private static final long serialVersionUID = 1234567890L;
+     private static final long serialVersionUID = 1234567890L;
 
 //    /**
 //     * The EntityCache object. Needed for singleton
@@ -42,8 +43,6 @@ public class EntityCache extends AbstractEntityCache {
      */
     public EntityCache() {
         super();
-        CategoryOperations catOp = new CategoryOperations();
-        categories = catOp.getAllCategories();
     }
 
     protected Collection<EntityGroupInterface> getCab2bEntityGroups() {
@@ -100,5 +99,13 @@ public class EntityCache extends AbstractEntityCache {
             }
         }
         return matchedClass;
+    }
+    /* (non-Javadoc)
+     * @see edu.wustl.cab2b.common.cache.AbstractEntityCache#getAllCategories()
+     */
+    @Override
+    protected List<Category> getAllCategories() {
+        CategoryOperations catOp = new CategoryOperations();
+        return catOp.getAllCategories();
     }
 }
