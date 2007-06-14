@@ -256,9 +256,9 @@ public class ExperimentStackBox extends Cab2bPanel {
 		chartTypes.add(ChartType.SCATTER_PLOT);
 		setChartTypesForVisualiseDataPanel(chartTypes);
 
-		stackedBox.setPreferredSize(new Dimension(250, 500));
-		stackedBox.setMinimumSize(new Dimension(250, 500));
-		this.add(stackedBox);
+		JScrollPane pane=new JScrollPane(stackedBox);
+		pane.setBorder(null);
+		this.add(pane);
 	}
 
 	/**
