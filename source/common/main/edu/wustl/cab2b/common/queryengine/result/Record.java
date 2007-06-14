@@ -50,33 +50,43 @@ public class Record implements IRecord {
 
     private void writeObject(ObjectOutputStream s) throws IOException {
         s.defaultWriteObject();
-        s.writeObject(serializeValues());
+        AbstractEntityCache cache = AbstractEntityCache.getCache();
+
+        Map<String, String> idValueMap = new HashMap<String, String>();
+        boolean onlyIdsWritten = true;
+        for (Map.Entry<AttributeInterface, String> entry : attributesValues.entrySet()) {
+            AttributeInterface attribute = entry.getKey();
+            Long entityId = attribute.getEntity().getId();
+            if (!cache.isEntityPresent(entityId)) {
+                s.writeObject(attributesValues);
+                s.writeObject(false);
+                return;
+            }
+            Long attributeId = attribute.getId();
+            idValueMap.put(entityId + "_" + attributeId, entry.getValue());
+        }
+        s.writeObject(idValueMap);
+        s.writeBoolean(onlyIdsWritten);
     }
 
     private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
         s.defaultReadObject();
-        Map<String, String> values = (Map<String, String>) s.readObject();
-        deserializeValues(values);
-    }
+        Map<?, ?> values = (Map<?, ?>) s.readObject();
+        boolean onlyIdsWritten = s.readBoolean();
 
-    private Map<String, String> serializeValues() {
-        Map<String, String> res = new HashMap<String, String>();
-        for (Map.Entry<AttributeInterface, String> entry : attributesValues.entrySet()) {
-            AttributeInterface attribute = entry.getKey();
-            res.put(attribute.getEntity().getId() + "_" + attribute.getId(), entry.getValue());
+        if (!onlyIdsWritten) {
+            attributesValues = (Map<AttributeInterface, String>) values;
+            return;
         }
-        return res;
-    }
-
-    private void deserializeValues(Map<String, String> values) {
-        attributesValues = new HashMap<AttributeInterface, String>();
+        Map<String, String> idValues = (Map<String, String>) values;
         AbstractEntityCache cache = AbstractEntityCache.getCache();
-        for (Map.Entry<String, String> entry : values.entrySet()) {
+        attributesValues = new HashMap<AttributeInterface, String>();
+
+        for (Map.Entry<String, String> entry : idValues.entrySet()) {
             String[] key = entry.getKey().split("_");
             Long entityId = Long.parseLong(key[0]);
             Long attributeId = Long.parseLong(key[1]);
             AttributeInterface attribute = cache.getEntityById(entityId).getAttributeByIdentifier(attributeId);
-
             attributesValues.put(attribute, entry.getValue());
         }
     }
