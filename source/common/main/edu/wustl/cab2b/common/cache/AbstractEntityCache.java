@@ -70,10 +70,15 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
      */
     protected Map<PermissibleValueInterface, EntityInterface> permissibleValueVsEntity = new HashMap<PermissibleValueInterface, EntityInterface>();
 
-    // /**
-    // * The EntityCache object. Needed for singleton
-    // */
-    // protected static AbstractEntityCache entityCache = null;
+    /**
+     * Map with key as category id and value as category.
+     */
+    protected Map<Long, Category> categoryIdToCategory;
+
+    /**
+     * Map with key as category's entity id and value as category.
+     */
+    protected Map<Long, Category> entityIdToCategory;
 
     /**
      * Private default constructor. To restrict the user from instantiating
@@ -116,6 +121,15 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
         // // } catch (DynamicExtensionsApplicationException dynAppExp) {
         // // throw new RuntimeException(dynAppExp.getMessage(), dynAppExp);
         // }
+
+        cacheCategories();
+    }
+
+    private void cacheCategories() {
+        for (Category category : categories) {
+            categoryIdToCategory.put(category.getId(), category);
+            entityIdToCategory.put(category.getCategoryEntity().getId(), category);
+        }
     }
 
     /**
@@ -231,6 +245,17 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
     }
 
     /**
+     * Checks if entity with given id is present in cache.
+     * 
+     * @param id the entity id
+     * @return <code>true</code> - if entity with given id is present in
+     *         cache; <code>false</code> otherwise.
+     */
+    public boolean isEntityPresent(Long id) {
+        return idVsEntity.containsKey(id);
+    }
+
+    /**
      * Returns the Association for given Identifier
      * 
      * @param id Id of the Association
@@ -272,6 +297,22 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
         idVsEntity.put(entity.getId(), entity);
         createAssociationCache(entity);
         createPermissibleValueCache(entity);
+    }
+
+    public Category getCategoryById(Long id) {
+        Category category = categoryIdToCategory.get(id);
+        if (category == null) {
+            throw new RuntimeException("Category with given id not found.");
+        }
+        return category;
+    }
+
+    public Category getCategoryByEntityId(Long id) {
+        Category category = entityIdToCategory.get(id);
+        if (category == null) {
+            throw new RuntimeException("Category with given entity id not found.");
+        }
+        return category;
     }
 
     protected abstract Collection<EntityGroupInterface> getCab2bEntityGroups();

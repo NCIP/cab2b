@@ -1,6 +1,5 @@
 package edu.wustl.cab2b.server.queryengine.querybuilders;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -14,7 +13,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.cab2b.server.category.CategoryOperations;
+import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.queryengine.utils.TreeNode;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
@@ -41,8 +40,6 @@ public class CategoryPreprocessor {
 
     private IQuery query;
 
-    private Connection connection;
-
     private CategoryPreprocessorResult categoryPreprocessorResult;
 
     private List<IExpressionId> catExprIds = new ArrayList<IExpressionId>();
@@ -50,10 +47,9 @@ public class CategoryPreprocessor {
     /**
      * The query object is modified appropriately.
      */
-    public CategoryPreprocessorResult processCategories(IQuery query, Connection connection) {
+    public CategoryPreprocessorResult processCategories(IQuery query) {
         clear();
         this.query = query;
-        this.connection = connection;
         this.categoryPreprocessorResult = new CategoryPreprocessorResult();
         processCategories();
         return this.categoryPreprocessorResult;
@@ -132,7 +128,7 @@ public class CategoryPreprocessor {
     // protected for testing
     protected Category getCategoryFromEntity(EntityInterface catEntity) {
         Long entityId = catEntity.getId();
-        return new CategoryOperations().getCategoryByEntityId(entityId, connection);
+        return EntityCache.getInstance().getCategoryByEntityId(entityId);
     }
 
     private Category pivot(Category category, EntityInterface requiredRoot) {
