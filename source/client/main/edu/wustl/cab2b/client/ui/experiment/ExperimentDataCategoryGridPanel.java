@@ -11,6 +11,7 @@ package edu.wustl.cab2b.client.ui.experiment;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -345,24 +346,25 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 			final Cab2bPanel analysisViewPanel = new Cab2bPanel();
 			analysisViewPanel.setName(tabTitle);
 			analysisViewPanel.setBorder(null);
+            
+            // Add close button
+            Cab2bButton closeButton = new Cab2bButton("Close");
+            closeButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent actionEvent) {
+                    tabComponent.remove(analysisViewPanel);
+                }
+            });
+            analysisViewPanel.add("right ", closeButton);
 
+            // Add table that displays analysis list
 			ExperimentTableModel analysisDataTable = new ExperimentTableModel(false, dataRecordArray, columnNames,
 					attributeMap);
 			analysisDataTable.addFocusListener(new TableFocusListener(this.parent));
-
 			final Cab2bPanel filterPanel = new ApplyFilterPanel(analysisDataTable);
-			analysisViewPanel.add(filterPanel);
-
+			analysisViewPanel.add("br left ", filterPanel);
+            
 			JScrollPane jScrollPane = addTableToScrollPanel(analysisDataTable);
 			analysisViewPanel.add("br center hfill vfill", jScrollPane);
-
-			Cab2bButton closeButton = new Cab2bButton("Close");
-			closeButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent actionEvent) {
-					tabComponent.remove(analysisViewPanel);
-				}
-			});
-			analysisViewPanel.add("br right", closeButton);
 
 			analysisView = analysisViewPanel;
 			tabComponent.add(tabTitle, analysisViewPanel);
