@@ -77,12 +77,26 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
     private Color separatorColor;
 
     private Border separatorBorder;
-
+    
+    private boolean toBeCollapsed;
+    
     public StackedBox() {
         setLayout(new VerticalLayout());
         setOpaque(true);
         setBackground(Color.WHITE);
+        toBeCollapsed=false;
+        separatorBorder = new SeparatorBorder();
+        setTitleForegroundColor(Color.BLACK);
+        setTitleBackgroundColor(new Color(248, 248, 248));
+        //setSeparatorColor(new Color(214, 223, 247));
+        setSeparatorColor(Color.BLACK);
+    }
 
+    public StackedBox(boolean toBeCollapsed) {
+        setLayout(new VerticalLayout());
+        setOpaque(true);
+        setBackground(Color.WHITE);
+        this.toBeCollapsed=toBeCollapsed;
         separatorBorder = new SeparatorBorder();
         setTitleForegroundColor(Color.BLACK);
         setTitleBackgroundColor(new Color(248, 248, 248));
@@ -138,6 +152,11 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
         }
 
         StackTitlePanel stackTitlePanel = new StackTitlePanel(title, imageIcon, toggleAction);
+        
+        if(toBeCollapsed){
+        	  stackTitlePanel.collapse(false);
+        }
+      
         stackTitlePanel.setBorder(new CustomizableBorder(new Insets(0, 0, 1, 0), new Color(125, 146, 147)));
 
         add(stackTitlePanel);
@@ -285,7 +304,18 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
 
             return polygon;
         }
+        public void collapse(boolean e) {
+            if (e)
+                toggleAction = false;
+            else
+                toggleAction = true;
 
+            ActionEvent ae = new ActionEvent(this, 123, "stackedBox");
+            action.actionPerformed(ae);
+            this.repaint();
+        }
+        
+        
         public void mouseClicked(MouseEvent e) {
             if (toggleAction)
                 toggleAction = false;

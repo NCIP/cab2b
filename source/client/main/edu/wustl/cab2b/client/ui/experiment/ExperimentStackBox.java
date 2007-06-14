@@ -136,7 +136,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 
 	public void initGUI() {
 		this.setLayout(new BorderLayout());
-		stackedBox = new StackedBox();
+		stackedBox = new StackedBox(true);
 		stackedBox.setTitleBackgroundColor(new Color(200, 200, 220));
 
 		Set<EntityInterface> entitySet = null;
@@ -256,9 +256,9 @@ public class ExperimentStackBox extends Cab2bPanel {
 		chartTypes.add(ChartType.SCATTER_PLOT);
 		setChartTypesForVisualiseDataPanel(chartTypes);
 
-		JScrollPane pane=new JScrollPane(stackedBox);
-		pane.setBorder(null);
-		this.add(pane);
+		stackedBox.setPreferredSize(new Dimension(250, 500));
+		stackedBox.setMinimumSize(new Dimension(250, 500));
+		this.add(stackedBox);
 	}
 
 	/**
