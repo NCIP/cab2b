@@ -91,13 +91,13 @@ public class MainFrame extends JXFrame {
      */
     GlobalNavigationPanel globalNavigationPanel;
 
-    JXPanel leftHandSidePanel;
+    //JXPanel leftHandSidePanel;
 
     JXPanel homePanel;
 
-    JXPanel searchPanel;
+    //JXPanel searchPanel;
 
-    JXPanel experimentPanel;
+    //JXPanel experimentPanel;
 
     MainFrameStackedBoxPanel myStackedBoxPanel;
 
@@ -116,9 +116,9 @@ public class MainFrame extends JXFrame {
 
     public static JXPanel mainPanel;
 
-    public MainFrame() {
-        this("");
-    }
+//    public MainFrame() {
+//        this("");
+//    }
 
     public MainFrame(String title) {
         this(title, true);
@@ -135,7 +135,7 @@ public class MainFrame extends JXFrame {
      */
     private void initGUI() {
         setExtendedState(JXFrame.MAXIMIZED_BOTH);
-        URL url = this.getClass().getClassLoader().getResource("b2b_logo_image.gif");
+        URL url = this.getClass().getClassLoader().getResource(cab2bLogoName);
         Image im = Toolkit.getDefaultToolkit().getImage(url);
         this.setIconImage(im);
         this.setLayout(new BorderLayout());
@@ -391,12 +391,15 @@ public class MainFrame extends JXFrame {
         progressBarFrame.getContentPane().add(progressBar, BorderLayout.SOUTH);
         progressBarFrame.setLocation((mainframeScreenDimesion.width - imageX) / 2,
                                      (mainframeScreenDimesion.height - height) / 2);
-        progressBarFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(cab2bLogoName));
+        URL url = MainFrame.class.getClassLoader().getResource(cab2bLogoName);
+        progressBarFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(url));
         progressBarFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         progressBarFrame.setAlwaysOnTop(true);
         progressBarFrame.setUndecorated(true);
         progressBarFrame.setVisible(true);
         Toolkit.getDefaultToolkit().setDynamicLayout(true);
+        
+        /*   initializing the cache at startup  */
         ClientSideCache.getInstance(); // initializing the cache at startup
 
         Vector<String> myRecentExperiments = new Vector<String>();
