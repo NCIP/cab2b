@@ -1,6 +1,5 @@
 package edu.wustl.cab2b.server.queryengine;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,6 @@ import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.LocalAs
 import edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer;
 import edu.wustl.cab2b.server.queryengine.resulttransformers.QueryResultTransformerFactory;
 import edu.wustl.cab2b.server.queryengine.utils.TreeNode;
-import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
@@ -84,10 +82,7 @@ public class QueryExecutor {
     }
 
     private CategoryPreprocessorResult preProcessCategories(IQuery query) {
-        Connection connection = ConnectionUtil.getConnection();
-        CategoryPreprocessorResult res = new CategoryPreprocessor().processCategories(query, connection);
-        ConnectionUtil.close(connection);
-        return res;
+        return new CategoryPreprocessor().processCategories(query);
     }
 
     private void assignDcqlConstraintToTarget(Object targetObject, DcqlConstraint constraint) {
