@@ -102,14 +102,15 @@ public class BooleanTypePanel extends AbstractTypePanel {
             return;
         }
 
-        radioButton = (JRadioButton) panel.getComponent(2);
-        if (radioButton.getText().compareToIgnoreCase(values.get(0)) == 0) {
-            radioButton.setSelected(true);
-            return;
-        }
     }
 
     public void setComponentPreference(String condition) {
+    }
+    
+    public void resetPanel() {
+        JPanel panel = (JPanel) m_NameEdit;
+        JRadioButton radioButton = (JRadioButton) panel.getComponent(2);
+        radioButton.setSelected(true);
     }
 
 }

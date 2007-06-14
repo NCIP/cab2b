@@ -393,7 +393,7 @@ public class MainDagPanel extends Cab2bPanel {
      * @param expressionId
      */
     public void deleteExpression(IExpressionId expressionId) {
-        m_addLimitPanel.clearAddLimitUI(m_queryObject.getQuery().getConstraints().getExpression(expressionId));
+        m_addLimitPanel.clearAddLimitUI();
         m_queryObject.removeExpression(expressionId);
         m_queryObject.removeExressionIdFromVisibleList(expressionId);
         //Remove node with this expressionId from the list

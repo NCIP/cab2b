@@ -18,83 +18,95 @@ import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.common.util.PermissibleValueComparator;
 
 public class EnumTypePanel extends AbstractTypePanel {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public EnumTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity, Boolean showCondition, Dimension  maxLabelDimension) {
-		super(conditionList, attributeEntity, showCondition,maxLabelDimension);
-	}
+    public EnumTypePanel(
+            ArrayList<String> conditionList,
+            AttributeInterface attributeEntity,
+            Boolean showCondition,
+            Dimension maxLabelDimension) {
+        super(conditionList, attributeEntity, showCondition, maxLabelDimension);
+    }
 
-	@Override
-	public JComponent getFirstComponent() {
-		return getComponent();
-	}
+    public JComponent getFirstComponent() {
+        return getComponent();
+    }
 
-	@Override
-	public JComponent getSecondComponent() {
-		return getComponent();
-	}
-	
-	private JComponent getComponent() {
-		Collection<PermissibleValueInterface> permissibleValues = edu.wustl.cab2b.common.util.Utility.getPermissibleValues(attributeEntity);
-		List<PermissibleValueInterface> permissibleValueList = new ArrayList<PermissibleValueInterface>(permissibleValues);
-		Collections.sort(permissibleValueList, new PermissibleValueComparator());
-		
-		JComponent jComponent = null;
-		if(showCondition) {
-			DefaultListModel defaultListModel = new DefaultListModel();
-			defaultListModel.addElement(Constants.SELECT);
-			for(PermissibleValueInterface permissibleValue : permissibleValueList) {
-				String item = permissibleValue.getValueAsObject().toString();
-				defaultListModel.addElement(item);
-			}
-			jComponent = new Cab2bListBox(defaultListModel);
-		} else {
-			DefaultComboBoxModel defaultComboBoxModel = new DefaultComboBoxModel();
-			defaultComboBoxModel.addElement(Constants.SELECT);
-			for(PermissibleValueInterface permissibleValue : permissibleValueList) {
-				String item = permissibleValue.getValueAsObject().toString();
-				defaultComboBoxModel.addElement(item);
-			}
-			jComponent = new Cab2bComboBox(defaultComboBoxModel);
-		}
-		return jComponent;
-	}
+    public JComponent getSecondComponent() {
+        return getComponent();
+    }
 
-	public ArrayList<String> getValues() {
-		ArrayList<String> selected = new ArrayList<String>();
-		
-		if(showCondition) {
-			Object[] values = ((Cab2bListBox)m_NameEdit).getSelectedValues();
-			for(Object value : values) {
-				if(!value.equals(Constants.SELECT)) {
-					selected.add((String)value);
-				}
-			}
-		} else {
-			String value = (String)((Cab2bComboBox)m_NameEdit).getSelectedItem();
-			if(value.equals(Constants.SELECT)) {
-				value = null;
-			}
-			selected.add(value);
-		}
-		
-		return selected;
-	}
+    private JComponent getComponent() {
+        Collection<PermissibleValueInterface> permissibleValues = edu.wustl.cab2b.common.util.Utility.getPermissibleValues(attributeEntity);
+        List<PermissibleValueInterface> permissibleValueList = new ArrayList<PermissibleValueInterface>(
+                permissibleValues);
+        Collections.sort(permissibleValueList, new PermissibleValueComparator());
 
-	public void setValues(ArrayList<String> values) {
-		if(showCondition) {
-			((Cab2bListBox)m_NameEdit).setSelectedValues(values);
-		} else {
-			for(String value : values) {
-				if(!value.equals(Constants.SELECT)) {
-					((Cab2bComboBox)m_NameEdit).addItem(value);
-				}
-			}
-		}
-	}
+        JComponent jComponent = null;
+        if (showCondition) {
+            DefaultListModel defaultListModel = new DefaultListModel();
+            defaultListModel.addElement(Constants.SELECT);
+            for (PermissibleValueInterface permissibleValue : permissibleValueList) {
+                String item = permissibleValue.getValueAsObject().toString();
+                defaultListModel.addElement(item);
+            }
+            jComponent = new Cab2bListBox(defaultListModel);
+        } else {
+            DefaultComboBoxModel defaultComboBoxModel = new DefaultComboBoxModel();
+            defaultComboBoxModel.addElement(Constants.SELECT);
+            for (PermissibleValueInterface permissibleValue : permissibleValueList) {
+                String item = permissibleValue.getValueAsObject().toString();
+                defaultComboBoxModel.addElement(item);
+            }
+            jComponent = new Cab2bComboBox(defaultComboBoxModel);
+        }
+        return jComponent;
+    }
 
-	@Override
-	public void setComponentPreference(String condition) {
-	}
+    public ArrayList<String> getValues() {
+        ArrayList<String> selected = new ArrayList<String>();
+
+        if (showCondition) {
+            Object[] values = ((Cab2bListBox) m_NameEdit).getSelectedValues();
+            for (Object value : values) {
+                if (!value.equals(Constants.SELECT)) {
+                    selected.add((String) value);
+                }
+            }
+        } else {
+            String value = (String) ((Cab2bComboBox) m_NameEdit).getSelectedItem();
+            if (value.equals(Constants.SELECT)) {
+                value = null;
+            }
+            selected.add(value);
+        }
+
+        return selected;
+    }
+
+    public void setValues(ArrayList<String> values) {
+        if (showCondition) {
+            ((Cab2bListBox) m_NameEdit).setSelectedValues(values);
+        } else {
+            for (String value : values) {
+                if (!value.equals(Constants.SELECT)) {
+                    ((Cab2bComboBox) m_NameEdit).addItem(value);
+                }
+            }
+        }
+    }
+
+    public void setComponentPreference(String condition) {
+    }
+
+    public void resetPanel() {
+        if (showCondition) {
+            ArrayList<String> newValues = new ArrayList<String>();
+            newValues.add(Constants.SELECT);
+            ((Cab2bListBox) m_NameEdit).setSelectedValues(newValues);
+        } else {
+            ((Cab2bComboBox) m_NameEdit).setSelectedItem(Constants.SELECT);
+        }
+    }
 
 }

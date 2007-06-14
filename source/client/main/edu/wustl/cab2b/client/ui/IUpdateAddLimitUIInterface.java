@@ -6,5 +6,5 @@ public interface IUpdateAddLimitUIInterface
 {
 
 		public void editAddLimitUI(IExpression expression);
-		public void clearAddLimitUI(IExpression expression);
+		public void clearAddLimitUI();
 }

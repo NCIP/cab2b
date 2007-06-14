@@ -2,6 +2,7 @@ package edu.wustl.cab2b.client.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GradientPaint;
@@ -23,6 +24,7 @@ import org.openide.util.Utilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.dag.MainDagPanel;
+import edu.wustl.cab2b.client.ui.main.AbstractTypePanel;
 import edu.wustl.cab2b.client.ui.main.IComponent;
 import edu.wustl.cab2b.client.ui.query.ClientPathFinder;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
@@ -45,10 +47,6 @@ import edu.wustl.common.querysuite.queryobject.RelationalOperator;
  * @author mahesh_iyer
  */
 public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInterface {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     /** The titled panel for the top panel. */
@@ -83,9 +81,8 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
     private IExpression m_currentExpressionEdit = null;
 
     /**
-     * constructor
+     * Default Constructor
      */
-
     AddLimitPanel() {
         initGUI();
     }
@@ -95,25 +92,12 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * components.
      */
     private void initGUI() {
-        /*
-         * Set the layout.
-         */
         this.setLayout(new BorderLayout());
         /*
-         * Pass the reference , so that the child can cause the parent to
+         * Pass the reference, so that the child can cause the parent to
          * refresh for any events triggered in the child.
          */
         categSearchPanel = new AddLimitCategorySearchPanel(this);
-
-        /*
-         * Setting the minimum size for the left component. This is required for
-         * the JSplitPane to figure out resize behaviour. Minimum size set based
-         * on wireframes.
-         */
-        /*
-         * categSearchPanel.setMinimumSize(new Dimension(262,
-         * categSearchPanel.getPreferredSize().height));
-         */
 
         /* The top center titled panel */
         m_topCenterPanel = new Cab2bTitledPanel("Define Search Rules");
@@ -283,7 +267,6 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
     }
 
     private void setValueForAttribute(JXPanel[] panels, ICondition condition) {
-
         //Don't consider panel 1 and panel end for getting attribute values
         //because first and last panels are Edit Limit button panels     
         for (int i = 1; i < panels.length - 1; i++) {
@@ -309,50 +292,30 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * (non-Javadoc)
      * @see edu.wustl.cab2b.client.ui.IUpdateAddLimitUIInterface#clearAddLimitUI(edu.wustl.common.querysuite.queryobject.IExpression)
      */
-    public void clearAddLimitUI(IExpression expression) {
-        if ((m_currentExpressionEdit != null) && (m_currentExpressionEdit == expression)) {
-            this.m_ContentForTopPanel.removeAll();
-            JXPanel[] panelsToAdd = m_searchResultPanel.getAddLimitPanels(expression.getConstraintEntity().getDynamicExtensionsEntity());
+    public void clearAddLimitUI() {
+        Component[] components = m_ContentForTopPanel.getComponents();
 
-            /* Add the individual panels to the top content panel. */
-            for (int i = 0; i < panelsToAdd.length; i++) {
-                if (panelsToAdd[i] != null) {
-                    this.m_ContentForTopPanel.add("br", panelsToAdd[i]);
-                }
+        /* Add the individual panels to the top content panel. */
+        for (Component component : components) {
+            if (component instanceof AbstractTypePanel) {
+                ((AbstractTypePanel)component).resetPanel();
             }
-
-            m_searchResultPanel.updateUI();
-            validate();
         }
+        validate();
     }
-
-    public void resetPanel() {
+    
+     public void resetPanel() {
+        clearAddLimitUI();
         m_contentForBottomCenterPanel.clearDagPanel();
     }
 
-    @Override
     public AbstractCategorySearchPanel getSearchPanel() {
         return categSearchPanel;
     }
 
-    @Override
     public void setSearchPanel(AbstractCategorySearchPanel panel) {
-
         categSearchPanel = panel;
         m_searchResultPanel = panel.getSearchPanel().getSearchResultPanel();
-
     }
-
-    /**
-     * get the search result panel used by choose category panel
-     * @return the search result panel used by choose category panel
-     
-     public AddLimitSearchResultPanel getSearchResultPanel()
-     {
-     SearchCenterPanel searchCenterPanel = (SearchCenterPanel)this.getParent();     
-     ChooseCategoryPanel panel = (ChooseCategoryPanel)searchCenterPanel.getComponent(0);
-     
-     
-     
-     }*/
+    
 }
