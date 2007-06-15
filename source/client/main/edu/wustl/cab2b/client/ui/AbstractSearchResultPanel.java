@@ -132,12 +132,9 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
                 
         //Add the "Add Limit" button at the top 
         Cab2bButton addLimitButtonTop = new Cab2bButton("Add Limit");
-        Cab2bPanel addLimitPanelTop = new Cab2bPanel();
-        addLimitPanelTop.setLayout(new BorderLayout());
-        addLimitPanelTop.setPreferredSize(new Dimension(550,22));
-        addLimitPanelTop.add(addLimitButtonTop, BorderLayout.EAST);
+       
         panelsToAdd[0] = new Cab2bPanel();
-        panelsToAdd[0].add("right ", addLimitPanelTop);
+        panelsToAdd[0].add("right ", addLimitButtonTop);
       
         addLimitButtonTop.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
@@ -242,12 +239,9 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
             }
         });
         
-        Cab2bPanel editLimitPanelTop=new Cab2bPanel();
-        editLimitPanelTop.setLayout(new BorderLayout());
-        editLimitPanelTop.setPreferredSize(new Dimension(550,22));
-        editLimitPanelTop.add(editLimitButtonTop, BorderLayout.EAST);
+       
         panelsToAdd[0] = new Cab2bPanel();
-        panelsToAdd[0].add(editLimitPanelTop);
+        panelsToAdd[0].add(editLimitButtonTop);
 
         //adding condition panels
         for (int i = 0; i < componentPanel.length; i++) {
