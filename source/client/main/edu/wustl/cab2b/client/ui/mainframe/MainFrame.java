@@ -1,5 +1,8 @@
 package edu.wustl.cab2b.client.ui.mainframe;
 
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.ERROR_CODE_FILE_NAME;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.APPLICATION_RESOURCES_FILE_NAME;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.CAB2B_LOGO_IMAGE;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -10,7 +13,6 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.geom.Point2D;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.MissingResourceException;
 import java.util.Vector;
 
@@ -35,48 +37,30 @@ import edu.wustl.cab2b.client.ui.controls.CustomizableBorder;
 import edu.wustl.cab2b.client.ui.experiment.ExperimentPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
-import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
-import edu.wustl.cab2b.common.experiment.ExperimentHome;
-import edu.wustl.cab2b.common.locator.Locator;
-import edu.wustl.cab2b.common.locator.LocatorException;
-import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
 
 /**
- * Main frame of the caB2B application.
- * 
+ * Main frame of the caB2B application. It is the home page of application.
  * @author chetan_bh
+ * @author Chandrakant Talele
+ * @author Deepak
+ * @author Juber
  */
 public class MainFrame extends JXFrame {
 
     private static final long serialVersionUID = 1234567890L;
 
-    /** Resource bundle name for getting error codes and its description. */
-    public static String errorCodesFileName = "errorcodes";
+    //public static URL progressBarURL;
 
-    /** Resource bundle name for getting externalized strings. */
-    public static String applicationResourcesFileName = "Cab2bApplicationResources";
-
-    /** Resource bundle name for getting jndi properties. */
-    public static String jndiResourceFileName = "jndi";
-
-    public static String cab2bLogoName = "b2b_logo_image.gif";
-
-    public static URL progressBarURL;
-
-    /**
-     * Everything related GUI's containers and its components size is relative
-     * to this size.
-     */
+    /** Everything related GUI's containers and its components size is relative to this size. */
     public static Dimension mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
 
-    public static SearchDataWelcomePanel searchDataWelcomePanel = null;
+    private static SearchDataWelcomePanel searchDataWelcomePanel = null;
 
     public static ExperimentPanel openExperimentWelcomePanel = null;
 
@@ -86,26 +70,27 @@ public class MainFrame extends JXFrame {
 
     private static JLabel progressBarLabel;
 
-    /**
-     * Global navigation panel which is at the top of the MainFrame.
-     */
-    GlobalNavigationPanel globalNavigationPanel;
+    /** Global navigation panel which is at the top of the MainFrame */
+    private GlobalNavigationPanel globalNavigationPanel;
 
-    //JXPanel leftHandSidePanel;
+    private JXPanel homePanel;
 
-    JXPanel homePanel;
+    private MainFrameStackedBoxPanel lefthandStackedBox;
 
-    //JXPanel searchPanel;
-
-    //JXPanel experimentPanel;
-
-    MainFrameStackedBoxPanel myStackedBoxPanel;
-
-    JSplitPane splitPane;
+    private JSplitPane splitPane;
 
     // fields used by the status bar
     public static enum Status {
-        READY, BUSY
+        READY("Ready"), BUSY("Busy");
+        private String textToShow;
+
+        Status(String textToShow) {
+            this.textToShow = textToShow;
+        }
+
+        public String getTextToShow() {
+            return textToShow;
+        }
     };
 
     private static Cab2bLabel status;
@@ -114,20 +99,15 @@ public class MainFrame extends JXFrame {
 
     private JXStatusBar statusBar;
 
-    public static JXPanel mainPanel;
-
-    //    public MainFrame() {
-    //        this("");
-    //    }
-
-    public MainFrame(String title) {
-        this(title, true);
-    }
+    private static JXPanel mainPanel;
 
     public MainFrame(String title, boolean exitOnClose) {
         super(title, exitOnClose);
         statusBar = WindowUtilities.getStatusBar(this);
         initGUI();
+        lefthandStackedBox.setDataForMyExperimentsPanel(getExperiments());
+        lefthandStackedBox.setDataForMySearchQueriesPanel(getUserSearchQueries());
+        lefthandStackedBox.setDataForPopularSearchCategoriesPanel(getPopularSearchCategories());
     }
 
     /**
@@ -135,7 +115,7 @@ public class MainFrame extends JXFrame {
      */
     private void initGUI() {
         setExtendedState(JXFrame.MAXIMIZED_BOTH);
-        URL url = this.getClass().getClassLoader().getResource(cab2bLogoName);
+        URL url = this.getClass().getClassLoader().getResource(CAB2B_LOGO_IMAGE);
         Image im = Toolkit.getDefaultToolkit().getImage(url);
         this.setIconImage(im);
         this.setLayout(new BorderLayout());
@@ -148,10 +128,10 @@ public class MainFrame extends JXFrame {
         homePanel = newWelcomePanel;
         homePanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 
-        myStackedBoxPanel = new MainFrameStackedBoxPanel(this);
-        myStackedBoxPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
+        lefthandStackedBox = new MainFrameStackedBoxPanel(this);
+        lefthandStackedBox.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 
-        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myStackedBoxPanel, homePanel);
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, lefthandStackedBox, homePanel);
         splitPane.setBorder(null);
         splitPane.setDividerSize(4);
         splitPane.setDividerLocation(242);
@@ -167,13 +147,12 @@ public class MainFrame extends JXFrame {
         statusBar = WindowUtilities.getStatusBar(this);
         JXStatusBar.Constraint c1 = new JXStatusBar.Constraint();
         c1.setFixedWidth(100);
-        status = new Cab2bLabel("Ready");
+        status = new Cab2bLabel(Status.READY.getTextToShow());
         statusMessage = new Cab2bLabel();
         statusBar.add(status, c1); // Fixed width of 100 with no inserts
         statusBar.add(new JSeparator(JSeparator.VERTICAL));
         statusBar.add(statusMessage);
         this.add(statusBar, BorderLayout.SOUTH);
-
     }
 
     /** Method to set experiment home panel */
@@ -264,24 +243,13 @@ public class MainFrame extends JXFrame {
         this.add(mainPanel);
     }
 
-    public void setDataForMySearchQueriesPanel(Vector data) {
-        myStackedBoxPanel.setDataForMySearchQueriesPanel(data);
-    }
-
-    public void setDataForPopularSearchCategoriesPanel(Vector data) {
-        myStackedBoxPanel.setDataForPopularSearchCategoriesPanel(data);
-    }
-
-    public void setDataForMyExperimentsPanel(Vector data) {
-        myStackedBoxPanel.setDataForMyExperimentsPanel(data);
-    }
-
+    /**
+     * initializes resources like errorcode handler , Application Properties etc
+     */
     protected static void initializeResources() {
         try {
-            //Initialize error codes resource bundhe
-            ErrorCodeHandler.initBundle(errorCodesFileName);
-            //Initialize application resources bundle
-            ApplicationProperties.initBundle(applicationResourcesFileName);
+            ErrorCodeHandler.initBundle(ERROR_CODE_FILE_NAME);
+            ApplicationProperties.initBundle(APPLICATION_RESOURCES_FILE_NAME);
         } catch (MissingResourceException mre) {
             CheckedException checkedException = new CheckedException(mre.getMessage(), mre,
                     ErrorCodeConstants.IO_0002);
@@ -289,37 +257,45 @@ public class MainFrame extends JXFrame {
         }
     }
 
-    public Vector getExperiments() {
-        Vector dataVector = new Vector();
+    /**
+     * @return Popular categories at this point
+     */
+    private Vector getPopularSearchCategories() {
+        /* TODO These default Search Categories will be removed after its support*/
+        Vector<String> popularSearchCategories = new Vector<String>();
+        popularSearchCategories.add("Gene Annotation");
+        popularSearchCategories.add("Microarray Annotation");
+        popularSearchCategories.add("Tissue Biospecimens");
+        popularSearchCategories.add("Molecular Biospecimens");
+        return popularSearchCategories;
+    }
 
-        // EJB code start
-        BusinessInterface bus = null;
-        try {
-            bus = Locator.getInstance().locate(edu.wustl.cab2b.common.ejb.EjbNamesConstants.EXPERIMENT,
-                                               ExperimentHome.class);
-        } catch (LocatorException e1) {
-            CommonUtils.handleException(e1, this, true, true, false, false);
-        }
+    /**
+     * @return Recent search queries
+     */
+    private Vector getUserSearchQueries() {
+        /* TODO These default UserSearchQueries will be removed later after SAVE QUERY support*/
+        Vector<String> mySearchQueries = new Vector<String>();
+        mySearchQueries.add("Prostate Cancer Microarray Data");
+        mySearchQueries.add("Glioblastoma Microarray Data");
+        return mySearchQueries;
+    }
 
-        ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) bus;
-        try {
-            dataVector = expBus.getExperimentHierarchy();
-        } catch (RemoteException e1) {
-            CommonUtils.handleException(e1, this, true, true, false, false);
-        } catch (ClassNotFoundException e1) {
-            CommonUtils.handleException(e1, this, true, true, false, false);
-        } catch (DAOException e1) {
-            CommonUtils.handleException(e1, this, true, true, false, false);
-        }
-
-        return dataVector;
+    /**
+     * @return All the experiments performed by the user.
+     */
+    private Vector getExperiments() {
+        /* TODO These default experiments will be removed later on*/
+        Vector<String> myRecentExperiments = new Vector<String>();
+        myRecentExperiments.add("Breast Cancer Microarrays (Hu133 Plus 2.0)");
+        myRecentExperiments.add("Breast Cancer Microarrays (MOE430 Plus 2.0)");
+        myRecentExperiments.add("Acute Myelogenous Leukemia Microarrays");
+        return myRecentExperiments;
     }
 
     /**
      * set the status bar message
-     * 
-     * @param message
-     *            the message
+     * @param message the status message
      */
     public static void setStatusMessage(String message) {
         MainFrame.statusMessage.setText(message);
@@ -327,17 +303,10 @@ public class MainFrame extends JXFrame {
 
     /**
      * set the status in the status bar
-     * 
-     * @param status
-     *            the status
+     * @param status the status
      */
     public static void setStatus(Status status) {
-        if (status == Status.BUSY) {
-            MainFrame.status.setText("Busy");
-        } else if (status == Status.READY) {
-            MainFrame.status.setText("Ready");
-        }
-
+        MainFrame.status.setText(status.getTextToShow());
     }
 
     /**
@@ -390,21 +359,22 @@ public class MainFrame extends JXFrame {
      * @return JLabel with given text and of given dimensions
      */
     private static JLabel getProgressBarLabel(String text, int width, int height) {
-        JLabel progressBarLabel = new JLabel(text);
-        progressBarLabel.setForeground(Color.WHITE);
-        progressBarLabel.setPreferredSize(new Dimension(width, height));
-        String fontFamily = progressBarLabel.getFont().getFamily();
-        progressBarLabel.setFont(new Font(fontFamily, Font.PLAIN, 14));
-        return progressBarLabel;
+        JLabel label = new JLabel(text);
+        label.setForeground(Color.WHITE);
+        label.setPreferredSize(new Dimension(width, height));
+        String fontFamily = label.getFont().getFamily();
+        label.setFont(new Font(fontFamily, Font.PLAIN, 14));
+        return label;
     }
 
     /**
-     * @param args
+     * The main method to launch caB2B client application.
+     * @param args Command line arguments. They will not be used.
      */
     public static void main(String[] args) {
         Logger.configure("");
 
-        JFrame progressBarFrame = new JFrame("caB2B client launcher....");
+        JFrame launchFrame = new JFrame("caB2B client launcher....");
         int imageX = 442;
         int imageY = 251;
         int progressbarY = 14;
@@ -414,56 +384,33 @@ public class MainFrame extends JXFrame {
 
         /* Initialize all Resources. */
         initializeResources();
-        String mainFrameTitle = ApplicationProperties.getValue("cab2b.main.frame.title");
-
-        MainFrame mainFrame = new MainFrame(mainFrameTitle);
-
+        MainFrame mainFrame = new MainFrame(ApplicationProperties.getValue("cab2b.main.frame.title"), true);
         ClassLoader loader = mainFrame.getClass().getClassLoader();
-        Image backgroundImage = new ImageIcon(loader.getResource("progress_bar.gif")).getImage();
-        BackgroundImagePanel imagePanel = new BackgroundImagePanel(backgroundImage);
+
+        BackgroundImagePanel imagePanel = new BackgroundImagePanel(new ImageIcon(
+                loader.getResource("progress_bar.gif")).getImage());
         imagePanel.setPreferredSize(new Dimension(imageX, imageY));
         imagePanel.add(progressBarLabel, BorderLayout.SOUTH);
 
         int height = imageY + progressbarY;
-        progressBarFrame.setSize(imageX, height);
-        progressBarFrame.getContentPane().add(imagePanel, BorderLayout.CENTER);
-        progressBarFrame.getContentPane().add(progressBar, BorderLayout.SOUTH);
-        progressBarFrame.setLocation((mainframeScreenDimesion.width - imageX) / 2,
-                                     (mainframeScreenDimesion.height - height) / 2);
-        URL url = MainFrame.class.getClassLoader().getResource(cab2bLogoName);
-        progressBarFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(url));
-        progressBarFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        progressBarFrame.setAlwaysOnTop(true);
-        progressBarFrame.setUndecorated(true);
-        progressBarFrame.setVisible(true);
+        launchFrame.setSize(imageX, height);
+        launchFrame.getContentPane().add(imagePanel, BorderLayout.CENTER);
+        launchFrame.getContentPane().add(progressBar, BorderLayout.SOUTH);
+        launchFrame.setLocation((mainframeScreenDimesion.width - imageX) / 2,
+                                (mainframeScreenDimesion.height - height) / 2);
+        URL url = MainFrame.class.getClassLoader().getResource(CAB2B_LOGO_IMAGE);
+        launchFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(url));
+        launchFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        launchFrame.setAlwaysOnTop(true);
+        launchFrame.setUndecorated(true);
+        launchFrame.setVisible(true);
         Toolkit.getDefaultToolkit().setDynamicLayout(true);
 
         loadCache(); /*   initializing the cache at startup  */
-        Vector<String> myRecentExperiments = new Vector<String>();
-        myRecentExperiments.add("Breast Cancer Microarrays (Hu133 Plus 2.0)");
-        myRecentExperiments.add("Breast Cancer Microarrays (MOE430 Plus 2.0)");
-        myRecentExperiments.add("Acute Myelogenous Leukemia Microarrays");
-        mainFrame.setDataForMyExperimentsPanel(myRecentExperiments);
-
-        progressBar.setValue(90);
-
-        Vector<String> mySearchQueries = new Vector<String>();
-        mySearchQueries.add("Prostate Cancer Microarray Data");
-        mySearchQueries.add("Glioblastoma Microarray Data");
-        mainFrame.setDataForMySearchQueriesPanel(mySearchQueries);
-
-        Vector<String> popularSearchCategories = new Vector<String>();
-        popularSearchCategories.add("Gene Annotation");
-        popularSearchCategories.add("Microarray Annotation");
-        popularSearchCategories.add("Tissue Biospecimens");
-        popularSearchCategories.add("Molecular Biospecimens");
-        mainFrame.setDataForPopularSearchCategoriesPanel(popularSearchCategories);
-
         progressBar.setValue(100);
-        progressBarFrame.setVisible(false);
-        progressBarFrame.removeAll();
-        progressBarFrame = null;
+        launchFrame.setVisible(false);
+        launchFrame.removeAll();
+        launchFrame = null;
         mainFrame.setVisible(true);
     }
-
 }
