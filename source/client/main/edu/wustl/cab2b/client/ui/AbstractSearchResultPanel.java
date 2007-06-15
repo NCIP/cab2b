@@ -1,9 +1,12 @@
 package edu.wustl.cab2b.client.ui;
 
-import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GradientPaint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,14 +16,18 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
+import javax.swing.border.EmptyBorder;
 
 import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.JXTitledPanel;
+import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.main.IComponent;
 import edu.wustl.cab2b.client.ui.main.ParseXMLFile;
 import edu.wustl.cab2b.client.ui.main.SwingUIManager;
@@ -111,6 +118,9 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
             pageElement.setUserObject(entity);
             pageElementCollection.add(pageElement);
         }
+        
+        JXTitledPanel titledSearchResultsPanel = displaySearchSummary(resultList.size());
+        this.add("hfill", titledSearchResultsPanel);
 
         NumericPager numPager = new NumericPager(pageElementCollection, getPageSize());
         /* Initalize the pagination component. */
@@ -118,7 +128,7 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
         this.m_resultsPage.setSelectableEnabled(false);
         this.m_resultsPage.setGroupActionEnabled(false);
         this.m_resultsPage.addPageElementActionListener(this);
-        this.add("p vfill", this.m_resultsPage);
+        this.add("br vfill", this.m_resultsPage);
     }
     
     
@@ -375,6 +385,24 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
                                                   "This rule cannot be added as it is not associated with the added rules.",
                                                   "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+    
+    /**
+     * This method generates the search summary panel
+     * @param numberOfResults number of results obtained
+     * @return summary panel
+     */
+    public JXTitledPanel displaySearchSummary(int numberOfResults) {
+        String message = (numberOfResults == 0) ? "No result found." : "Search Results :- " + "Total results ( " + numberOfResults + " )";
+        JXTitledPanel titledSearchResultsPanel = new Cab2bTitledPanel(message);
+        GradientPaint gp = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
+                new Point2D.Double(.95d, 0), Color.WHITE);
+        titledSearchResultsPanel.setTitlePainter(new BasicGradientPainter(gp));
+        titledSearchResultsPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
+        titledSearchResultsPanel.setTitleFont(new Font("SansSerif", Font.BOLD, 11));
+        titledSearchResultsPanel.setTitleForeground(Color.BLACK);
+
+        return titledSearchResultsPanel;
     }
 
     /**
