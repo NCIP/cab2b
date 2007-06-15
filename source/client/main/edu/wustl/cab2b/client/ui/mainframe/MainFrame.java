@@ -116,9 +116,9 @@ public class MainFrame extends JXFrame {
 
     public static JXPanel mainPanel;
 
-//    public MainFrame() {
-//        this("");
-//    }
+    //    public MainFrame() {
+    //        this("");
+    //    }
 
     public MainFrame(String title) {
         this(title, true);
@@ -277,18 +277,10 @@ public class MainFrame extends JXFrame {
     }
 
     protected static void initializeResources() {
-        /* Initialze logger. */
-
-        /* Initialize error codes resource bundhe. */
         try {
+            //Initialize error codes resource bundhe
             ErrorCodeHandler.initBundle(errorCodesFileName);
-        } catch (MissingResourceException mre) {
-            CheckedException checkedException = new CheckedException(mre.getMessage(), mre,
-                    ErrorCodeConstants.IO_0002);
-            CommonUtils.handleException(checkedException, null, true, true, false, true);
-        }
-        /* Initialize application resources bundle. */
-        try {
+            //Initialize application resources bundle
             ApplicationProperties.initBundle(applicationResourcesFileName);
         } catch (MissingResourceException mre) {
             CheckedException checkedException = new CheckedException(mre.getMessage(), mre,
@@ -349,29 +341,76 @@ public class MainFrame extends JXFrame {
     }
 
     /**
+     * Loads the client side cache. If fails, logs error and quits
+     */
+    private static void loadCache() {
+        try {
+            ClientSideCache.getInstance();
+        } catch (Throwable t) {
+            Logger.out.error("Unable to get data from caB2B server. Please verify caB2B server address and port in conf/jndi.properties");
+            Logger.out.error(t.getMessage());
+            System.exit(1);
+        }
+    }
+
+    /**
+     * @return Returns the progressBarLabel.
+     */
+    public static JLabel getProgressBarLabel() {
+        return progressBarLabel;
+    }
+
+    /**
+     * @return Returns the progressBar.
+     */
+    public static JProgressBar getProgressBar() {
+        return progressBar;
+    }
+
+    /**
+     * @param width desired width of progressbar
+     * @param height desired height of progressbar
+     * @return Progress bar of given dimensions
+     */
+    private static JProgressBar getProgressbar(int width, int height) {
+        JProgressBar progressBar = new JProgressBar();
+        progressBar.setIndeterminate(true);
+        progressBar.setPreferredSize(new Dimension(width, height));
+        progressBar.setMinimum(0);
+        progressBar.setMaximum(100);
+        progressBar.setValue(0);
+        progressBar.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        return progressBar;
+    }
+
+    /**
+     * @param text The text to set as label
+     * @param width desired width of label
+     * @param height desired height of label
+     * @return JLabel with given text and of given dimensions
+     */
+    private static JLabel getProgressBarLabel(String text, int width, int height) {
+        JLabel progressBarLabel = new JLabel(text);
+        progressBarLabel.setForeground(Color.WHITE);
+        progressBarLabel.setPreferredSize(new Dimension(width, height));
+        String fontFamily = progressBarLabel.getFont().getFamily();
+        progressBarLabel.setFont(new Font(fontFamily, Font.PLAIN, 14));
+        return progressBarLabel;
+    }
+
+    /**
      * @param args
      */
     public static void main(String[] args) {
-        Logger.configure("log4j.properties");
+        Logger.configure("");
 
         JFrame progressBarFrame = new JFrame("caB2B client launcher....");
         int imageX = 442;
         int imageY = 251;
         int progressbarY = 14;
         int labelY = 20;
-        progressBar = new JProgressBar();
-        progressBar.setIndeterminate(true);
-        progressBar.setPreferredSize(new Dimension(imageX, progressbarY));
-        progressBar.setMinimum(0);
-        progressBar.setMaximum(100);
-        progressBar.setValue(0);
-        progressBar.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-
-        progressBarLabel = new JLabel(" Launching caB2B client....");
-        progressBarLabel.setForeground(Color.WHITE);
-        progressBarLabel.setPreferredSize(new Dimension(imageX, labelY));
-        String fontFamily = progressBarLabel.getFont().getFamily();
-        progressBarLabel.setFont(new Font(fontFamily, Font.PLAIN, 14));
+        progressBar = getProgressbar(imageX, progressbarY);
+        progressBarLabel = getProgressBarLabel(" Launching caB2B client....", imageX, labelY);
 
         /* Initialize all Resources. */
         initializeResources();
@@ -398,10 +437,8 @@ public class MainFrame extends JXFrame {
         progressBarFrame.setUndecorated(true);
         progressBarFrame.setVisible(true);
         Toolkit.getDefaultToolkit().setDynamicLayout(true);
-        
-        /*   initializing the cache at startup  */
-        ClientSideCache.getInstance(); // initializing the cache at startup
 
+        loadCache(); /*   initializing the cache at startup  */
         Vector<String> myRecentExperiments = new Vector<String>();
         myRecentExperiments.add("Breast Cancer Microarrays (Hu133 Plus 2.0)");
         myRecentExperiments.add("Breast Cancer Microarrays (MOE430 Plus 2.0)");
@@ -429,17 +466,4 @@ public class MainFrame extends JXFrame {
         mainFrame.setVisible(true);
     }
 
-    /**
-     * @return Returns the progressBarLabel.
-     */
-    public static JLabel getProgressBarLabel() {
-        return progressBarLabel;
-    }
-
-    /**
-     * @return Returns the progressBar.
-     */
-    public static JProgressBar getProgressBar() {
-        return progressBar;
-    }
 }

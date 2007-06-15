@@ -143,6 +143,9 @@
 			<fileset dir="${client.classes.dir}">
 				<include name="**/*.class" />
 			</fileset>
+			<fileset dir="conf">
+				<include name="log4j.properties" />
+			</fileset>
 		</copy>
 
 		<jar basedir="${client.jar.dir}" destfile="${client.jar.file}">
@@ -163,6 +166,7 @@
 	================================================================================== 	-->
 	<target name="client.Setup.zip" depends="client.jar" description="Creates client setup ZIP file">
 		<mkdir dir="${client.setup.dir}" />
+		<mkdir dir="${client.setup.dir}/log" />
 		<mkdir dir="${client.setup.dir}/conf" />
 		<mkdir dir="${client.setup.dir}/resources" />
 		<mkdir dir="${client.setup.dir}/resources/images" />
@@ -177,7 +181,8 @@
 				<include name="**/*.jar" />
 			</fileset>
 		</copy>
-
+		<echo message="java -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="false" />
+		<echo message="java -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="false" />
 		<copy todir="${client.setup.dir}/conf">
 			<fileset dir="conf">
 				<include name="Cab2bApplicationResources.properties" />
@@ -186,7 +191,6 @@
 				<include name="dynamicUI.xml" />
 				<include name="errorcodes.properties" />
 				<include name="jndi.properties" />
-				<include name="log4j.properties" />
 			</fileset>
 		</copy>
 
@@ -590,3 +594,21 @@
 	</target>
 	<!-- ================================================================================== -->
 </project>
+<!-- ==================================================================================
+DO NOT DELETE THIS COMMENT. 
+It is file to be shipped with client to provide launching client using ANT
+================================================================================== -->
+<!--
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="caB2B" basedir="." default="run.client">
+	<path id="run.classpath">
+	      <pathelement location="conf" />
+	      <fileset dir=".">
+			<include name="**/*.jar" />
+	      </fileset>
+	</path>
+	<target name="run.client" description="Installs and runs the caB2B client">
+        <java classname="edu.wustl.cab2b.client.ui.mainframe.MainFrame" classpathref="run.classpath" fork="yes" /> 
+	</target>
+</project>
+-->
