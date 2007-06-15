@@ -1,6 +1,5 @@
 package edu.wustl.cab2b.client.cache;
 
-import java.awt.Rectangle;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,13 +8,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
+import edu.wustl.cab2b.client.ui.mainframe.ClientLauncher;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.beans.MatchedClass;
 import edu.wustl.cab2b.common.cache.AbstractEntityCache;
@@ -35,11 +31,6 @@ public class ClientSideCache extends AbstractEntityCache {
 
     private static final long serialVersionUID = 7145001746845163416L;
 
-    //    /**
-    //     * The EntityCache object. Needed for singleton
-    //     */
-    //    protected static ClientSideCache entityCache = null;
-
     private Map<Category, Set<EntityInterface>> categoryVsClasseSet = new HashMap<Category, Set<EntityInterface>>();
 
     private Map<Category, Set<AttributeInterface>> categoryVsAttributeSet = new HashMap<Category, Set<AttributeInterface>>();
@@ -58,7 +49,8 @@ public class ClientSideCache extends AbstractEntityCache {
         super();
         CategoryBusinessInterface categoryOperations = getCategoryBusinessInterface();
         int length = 50;
-        showProgress(" Getting all categories....", length);
+        ClientLauncher clientLauncher = ClientLauncher.getInstance();
+        clientLauncher.showProgress(" Getting all categories....", length);
         try {
             categories = categoryOperations.getAllCategories();
             int offset = 50 / categories.size();
@@ -66,12 +58,12 @@ public class ClientSideCache extends AbstractEntityCache {
                 categoryVsClasseSet.put(category, categoryOperations.getAllSourceClasses(category));
                 categoryVsAttributeSet.put(category, categoryOperations.getAllSourceAttributes(category));
                 length = length + offset;
-                showProgress(" Getting all categories....", length);
+                clientLauncher.showProgress(" Getting all categories....", length);
             }
         } catch (RemoteException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-        showProgress(" Loading cache completed....", 80);
+        clientLauncher.showProgress(" Loading cache completed....", 80);
     }
 
     /* (non-Javadoc)
@@ -79,46 +71,20 @@ public class ClientSideCache extends AbstractEntityCache {
      */
     @Override
     protected Collection<EntityGroupInterface> getCab2bEntityGroups() {
-        showProgress(" Contacting caB2B Server....", 5);
+        ClientLauncher clientLauncher = ClientLauncher.getInstance();
+        clientLauncher.showProgress(" Contacting caB2B Server....", 1);
         try {
             UtilityBusinessInterface util = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                         EjbNamesConstants.UTILITY_BEAN,
                                                                                                         UtilityHomeInterface.class);
-            JProgressBar progress = MainFrame.getProgressBar();
-            if (progress != null) {
-                progress.setIndeterminate(false);
-            }
-            showProgress(" Fetching data from caB2B Server....", 20);
+            clientLauncher.setDeterminate();
+            clientLauncher.showProgress(" Fetching data from caB2B Server....", 20);
             Collection<EntityGroupInterface> collection = util.getCab2bEntityGroups();
 
-            showProgress(" Populating internal data structures....", 40);
+            clientLauncher.showProgress(" Populating internal data structures....", 40);
             return collection;
         } catch (RemoteException dynSysExp) {
             throw new RuntimeException(dynSysExp.getMessage(), dynSysExp);
-        }
-    }
-
-    /**
-     * @param text Text to show
-     * @param completedvalue Percentage completed
-     */
-    private void showProgress(String text, int completedvalue) {
-
-        JLabel label = MainFrame.getProgressBarLabel();
-        JProgressBar progress = MainFrame.getProgressBar();
-        if (progress != null && label != null) {
-            progress.setValue(completedvalue);
-
-            label.setText(text);
-            Rectangle labelRect = label.getBounds();
-            labelRect.x = 0;
-            labelRect.y = 0;
-            label.paintImmediately(labelRect);
-
-            Rectangle progressRect = progress.getBounds();
-            progressRect.x = 0;
-            progressRect.y = 0;
-            progress.paintImmediately(progressRect);
         }
     }
 

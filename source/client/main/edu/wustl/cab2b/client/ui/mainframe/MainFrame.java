@@ -1,12 +1,12 @@
 package edu.wustl.cab2b.client.ui.mainframe;
 
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.ERROR_CODE_FILE_NAME;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.APPLICATION_RESOURCES_FILE_NAME;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.CAB2B_LOGO_IMAGE;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.ERROR_CODE_FILE_NAME;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Image;
 import java.awt.Insets;
@@ -17,10 +17,6 @@ import java.util.MissingResourceException;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 
@@ -29,7 +25,6 @@ import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
-import edu.wustl.cab2b.client.cache.ClientSideCache;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -55,8 +50,6 @@ public class MainFrame extends JXFrame {
 
     private static final long serialVersionUID = 1234567890L;
 
-    //public static URL progressBarURL;
-
     /** Everything related GUI's containers and its components size is relative to this size. */
     public static Dimension mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -65,10 +58,6 @@ public class MainFrame extends JXFrame {
     public static ExperimentPanel openExperimentWelcomePanel = null;
 
     public static NewWelcomePanel newWelcomePanel = null;
-
-    private static JProgressBar progressBar;
-
-    private static JLabel progressBarLabel;
 
     /** Global navigation panel which is at the top of the MainFrame */
     private GlobalNavigationPanel globalNavigationPanel;
@@ -310,107 +299,23 @@ public class MainFrame extends JXFrame {
     }
 
     /**
-     * Loads the client side cache. If fails, logs error and quits
-     */
-    private static void loadCache() {
-        try {
-            ClientSideCache.getInstance();
-        } catch (Throwable t) {
-            Logger.out.error("Unable to get data from caB2B server. Please verify caB2B server address and port in conf/jndi.properties");
-            Logger.out.error(t.getMessage());
-            System.exit(1);
-        }
-    }
-
-    /**
-     * @return Returns the progressBarLabel.
-     */
-    public static JLabel getProgressBarLabel() {
-        return progressBarLabel;
-    }
-
-    /**
-     * @return Returns the progressBar.
-     */
-    public static JProgressBar getProgressBar() {
-        return progressBar;
-    }
-
-    /**
-     * @param width desired width of progressbar
-     * @param height desired height of progressbar
-     * @return Progress bar of given dimensions
-     */
-    private static JProgressBar getProgressbar(int width, int height) {
-        JProgressBar progressBar = new JProgressBar();
-        progressBar.setIndeterminate(true);
-        progressBar.setPreferredSize(new Dimension(width, height));
-        progressBar.setMinimum(0);
-        progressBar.setMaximum(100);
-        progressBar.setValue(0);
-        progressBar.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        return progressBar;
-    }
-
-    /**
-     * @param text The text to set as label
-     * @param width desired width of label
-     * @param height desired height of label
-     * @return JLabel with given text and of given dimensions
-     */
-    private static JLabel getProgressBarLabel(String text, int width, int height) {
-        JLabel label = new JLabel(text);
-        label.setForeground(Color.WHITE);
-        label.setPreferredSize(new Dimension(width, height));
-        String fontFamily = label.getFont().getFamily();
-        label.setFont(new Font(fontFamily, Font.PLAIN, 14));
-        return label;
-    }
-
-    /**
      * The main method to launch caB2B client application.
      * @param args Command line arguments. They will not be used.
      */
     public static void main(String[] args) {
         Logger.configure("");
-
-        JFrame launchFrame = new JFrame("caB2B client launcher....");
-        int imageX = 442;
-        int imageY = 251;
-        int progressbarY = 14;
-        int labelY = 20;
-        progressBar = getProgressbar(imageX, progressbarY);
-        progressBarLabel = getProgressBarLabel(" Launching caB2B client....", imageX, labelY);
-
+        ClientLauncher clientLauncher = ClientLauncher.getInstance();
+        clientLauncher.launchClient();
         /* Initialize all Resources. */
         initializeResources();
         MainFrame mainFrame = new MainFrame(ApplicationProperties.getValue("cab2b.main.frame.title"), true);
-        ClassLoader loader = mainFrame.getClass().getClassLoader();
-
-        BackgroundImagePanel imagePanel = new BackgroundImagePanel(new ImageIcon(
-                loader.getResource("progress_bar.gif")).getImage());
-        imagePanel.setPreferredSize(new Dimension(imageX, imageY));
-        imagePanel.add(progressBarLabel, BorderLayout.SOUTH);
-
-        int height = imageY + progressbarY;
-        launchFrame.setSize(imageX, height);
-        launchFrame.getContentPane().add(imagePanel, BorderLayout.CENTER);
-        launchFrame.getContentPane().add(progressBar, BorderLayout.SOUTH);
-        launchFrame.setLocation((mainframeScreenDimesion.width - imageX) / 2,
-                                (mainframeScreenDimesion.height - height) / 2);
-        URL url = MainFrame.class.getClassLoader().getResource(CAB2B_LOGO_IMAGE);
-        launchFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(url));
-        launchFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        launchFrame.setAlwaysOnTop(true);
-        launchFrame.setUndecorated(true);
-        launchFrame.setVisible(true);
-        Toolkit.getDefaultToolkit().setDynamicLayout(true);
-
-        loadCache(); /*   initializing the cache at startup  */
-        progressBar.setValue(100);
-        launchFrame.setVisible(false);
-        launchFrame.removeAll();
-        launchFrame = null;
         mainFrame.setVisible(true);
+    }
+
+    /**
+     * @return Returns the mainframeScreenDimesion.
+     */
+    public static Dimension getScreenDimesion() {
+        return mainframeScreenDimesion;
     }
 }
