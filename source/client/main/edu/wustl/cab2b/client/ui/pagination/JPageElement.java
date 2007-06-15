@@ -178,6 +178,9 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
                 sb.append(currentString);
                 sb.append("<P>");
             } else {
+            	if(currentStart==0){
+            		currentStart=offset;
+            	}
                 sb.append(text.substring(currentStart));
                 return sb.toString();
             }
