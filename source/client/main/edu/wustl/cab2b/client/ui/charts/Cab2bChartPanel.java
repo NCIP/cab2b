@@ -23,6 +23,7 @@ public class Cab2bChartPanel extends Cab2bPanel {
      */
     public Cab2bChartPanel(Cab2bTable cab2bTable) {
         this.chartRawData = new Cab2bChartRawData(cab2bTable);
+        this.setName("cab2bChartPanel");
         this.setBorder(null);
     }
 
