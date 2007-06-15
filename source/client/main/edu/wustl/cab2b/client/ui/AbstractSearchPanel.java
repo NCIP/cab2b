@@ -15,12 +15,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Keymap;
 
-import org.jdesktop.swingx.JXPanel;
-
 import edu.wustl.cab2b.client.cache.ClientSideCache;
 import edu.wustl.cab2b.client.metadatasearch.MetadataSearch;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
-import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
@@ -51,10 +48,8 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
      */
     private AbstractAdvancedSearchPanel m_advSearchPanel;
 
-    private boolean isErrorDispayed = false;
-
     /** A specific implementation of the results panel. */
-    private AbstractSearchResultPanel m_srhResultPanel;
+    public AbstractSearchResultPanel m_srhResultPanel;
 
     /** Text field to specify the search term. */
     protected JTextField m_srhTextField;
@@ -131,6 +126,22 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
     }
 
     /**
+     * Method to set search text in searchTextField 
+     * @param searchText
+     */
+    public void setSearchtext(String searchText) {
+        m_srhTextField.setText(searchText);
+    }
+
+    /**
+     * Method to get search text in searchTextField
+     *  
+     */
+    public String getSearchtext() {
+        return m_srhTextField.getText();
+    }
+
+    /**
      * Getter method for returning a reference to the text field.
      * 
      */
@@ -146,13 +157,11 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
      *            The results panel to be removed
      * 
      */
-    private void removeResultPanel(AbstractSearchResultPanel resultPanel) {
-        this.remove(this.m_srhResultPanel);
-        this.updateUI();
-    }
-
-    private void removeErrorPanel(Cab2bPanel errorPanel) {
-        this.remove(this.errorMsgPanel);
+    private void removeResultPanel() {
+        if (m_srhResultPanel != null) {
+            m_srhResultPanel.removeResultPanel();
+            this.remove(m_srhResultPanel);
+        }
         this.updateUI();
     }
 
@@ -162,9 +171,14 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
      * @param resultPanel
      *            The results panel to be added.
      */
-    private void addResultsPanel(JXPanel resultPanel) {
+    public void addResultsPanel(AbstractSearchResultPanel resultPanel) {
         this.add("p vfill", resultPanel);
+        m_srhResultPanel = resultPanel;
         this.updateUI();
+    }
+
+    public AbstractSearchResultPanel getSerachReultPanel() {
+        return m_srhResultPanel;
     }
 
     /**
@@ -191,7 +205,7 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
             final int searchOn = m_advSearchPanel.getSearchOnStatus();
 
             CustomSwingWorker swingWorker = new CustomSwingWorker(comp) {
-                Set dummySrhResult = null;
+                Set srhResult = null;
 
                 protected void doNonUILogic() throws RuntimeException {
 
@@ -200,9 +214,7 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
                         MetadataSearch metadataSearch = new MetadataSearch(cache);
                         MatchedClass matchedClass = metadataSearch.search(searchTargetStatus, values, searchOn);
                         /* The results that is the collection of entities. */
-                        dummySrhResult = matchedClass.getEntityCollection();
-
-                        //                      }
+                        srhResult = matchedClass.getEntityCollection();
                     } catch (CheckedException e1) {
                         CommonUtils.handleException(e1, comp, true, true, true, false);
                     }
@@ -210,33 +222,13 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
 
                 @Override
                 protected void doUIUpdateLogic() throws RuntimeException {
-                    if (m_srhResultPanel != null) {
-                        /* Remove any previously added results panel.*/
-                        removeResultPanel(m_srhResultPanel);
-                    }
+                    //replace previous panels 
+                    removeResultPanel();
 
-                    //replace previous panel only when we got some results 
-                    if (dummySrhResult.size() > 0 && dummySrhResult != null) {
-                        /* Add an appropriate instance of the search results panel to this panel */
-                        m_srhResultPanel = getSearchResultPanel(m_addLimitPanel, dummySrhResult);
-                        //System.out.println("CONTAINER : "+m_srhResultPanel);					
-                        m_addLimitPanel.setSearchResultPanel(m_srhResultPanel);
-
-                        addResultsPanel(m_srhResultPanel);
-                        if (isErrorDispayed) {
-                            removeErrorPanel(errorMsgPanel);
-                        }
-                        isErrorDispayed = false;
-                    } else {
-                        if (isErrorDispayed == false) {
-                            //show error msg
-                            Cab2bLabel errorMsg = new Cab2bLabel("No result found.");
-                            errorMsgPanel = new Cab2bPanel();
-                            errorMsgPanel.add(errorMsg);
-                            addResultsPanel(errorMsgPanel);
-                            isErrorDispayed = true;
-                        }
-                    }
+                    /* Add an appropriate instance of the search results panel to this panel */
+                    m_srhResultPanel = getSearchResultPanel(m_addLimitPanel, srhResult);
+                    m_addLimitPanel.setSearchResultPanel(m_srhResultPanel);
+                    addResultsPanel(m_srhResultPanel);
                 }
             };
             swingWorker.start();
@@ -274,16 +266,4 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
      * 
      */
     public abstract void addTextField();
-    
-    
-    /**
-     * @author Juber Patel
-     * get the result panel instance of this class
-     * @return the result panel instance of this class
-     */
-    public AbstractSearchResultPanel getSearchResultPanel() {
-        return m_srhResultPanel;
-    }
-
-
 }
