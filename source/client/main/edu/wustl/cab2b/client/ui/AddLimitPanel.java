@@ -3,7 +3,6 @@ package edu.wustl.cab2b.client.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Image;
@@ -46,7 +45,7 @@ import edu.wustl.common.querysuite.queryobject.RelationalOperator;
  * 
  * @author mahesh_iyer
  */
-public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInterface {
+public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInterface {   
     private static final long serialVersionUID = 1L;
 
     /** The titled panel for the top panel. */
@@ -77,11 +76,8 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
 
     /** Split pane between the LHS and RHS sections of the main panel. */
     private JSplitPane m_outerPane = null;
-
-    private IExpression m_currentExpressionEdit = null;
-
     /**
-     * Default Constructor
+     * Default constructor
      */
     AddLimitPanel() {
         initGUI();
@@ -91,14 +87,15 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * Method initializes the panel by appropriately laying out child
      * components.
      */
-    private void initGUI() {
+    private void initGUI() {    
         this.setLayout(new BorderLayout());
         /*
-         * Pass the reference, so that the child can cause the parent to
+         * Pass the reference , so that the child can cause the parent to
          * refresh for any events triggered in the child.
          */
-        categSearchPanel = new AddLimitCategorySearchPanel(this);
-
+        if (categSearchPanel == null)
+            categSearchPanel = new AddLimitCategorySearchPanel(this);
+       
         /* The top center titled panel */
         m_topCenterPanel = new Cab2bTitledPanel("Define Search Rules");
         m_topCenterPanel.setTitleForeground(Color.BLACK);
@@ -167,15 +164,11 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
     }
 
     /**
-     * The method is a custom implementation from {@link ContentPanel}
-     * interface. Custom implementation is to simply set the provided panel as
-     * the content panel for the bottom titled panel.
-     * 
-     * @param panelToBeRefreshed
-     *            The panel to be refreshed.
+     * Method to add search result panel 
+     * @param resultPanel
      */
-    public void refreshBottomCenterPanel(JXPanel panelToBeRefreshed) {
-
+    public void addResultsPanel(AbstractSearchResultPanel resultPanel) {
+        categSearchPanel.m_searchPanel.addResultsPanel(resultPanel);
     }
 
     /**
@@ -185,13 +178,11 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * @param expressionId
      */
     public void refreshBottomCenterPanel(IExpressionId expressionId) {
-        // System.out.println("Action performendhhhhhh :");
         // Here code to handle adding new limit will appear
         try {
             m_contentForBottomCenterPanel.updateGraph(expressionId);
         } catch (MultipleRootsException e) {
             CommonUtils.handleException(e, this, true, true, false, false);
-            // e.printStackTrace();
         }
         this.updateUI();
     }
@@ -209,17 +200,6 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      */
 
     public void refresh(JXPanel[] arrPanel, String strClassNameAsTitle) {
-
-        //NOT WORKING !! : Juber
-        //set the search panel of add limit panel to choose category's search panel
-        Container container = ((JXPanel) (this)).getParent();
-        if (container instanceof SearchCenterPanel) {
-            SearchCenterPanel searchCenterPanel = (SearchCenterPanel) container;
-            searchCenterPanel.getAddLimitPanel().setSearchPanel(
-                                                                searchCenterPanel.getChooseCategoryPanel().getSearchPanel());
-            searchCenterPanel.getAddLimitPanel().getSearchPanel().setVisible(true);
-        }
-
         /* Set the title for the top titled panel. */
         this.m_topCenterPanel.setTitle("Define Search Rules '" + strClassNameAsTitle + "'");
         this.m_ContentForTopPanel.removeAll();
@@ -230,7 +210,6 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
                 this.m_ContentForTopPanel.add("br", arrPanel[i]);
             }
         }
-        m_currentExpressionEdit = null;
         validate();
     }
 
@@ -262,7 +241,6 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
             ICondition condition = rule.getCondition(i);
             setValueForAttribute(panels, condition);
         }
-        m_currentExpressionEdit = expression;
         validate();
     }
 
@@ -287,6 +265,10 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
         m_searchResultPanel = searchResultPanel;
     }
 
+    public AbstractSearchResultPanel getSearchResultPanel() {
+        return m_searchResultPanel;
+    }
+
     /* 
      * Method to clear (refresh) AddLimitUI when Node is in edit mode
      * (non-Javadoc)
@@ -298,24 +280,39 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
         /* Add the individual panels to the top content panel. */
         for (Component component : components) {
             if (component instanceof AbstractTypePanel) {
-                ((AbstractTypePanel)component).resetPanel();
+                ((AbstractTypePanel) component).resetPanel();
             }
         }
         validate();
     }
-    
-     public void resetPanel() {
+
+    public void resetPanel() {
         clearAddLimitUI();
         m_contentForBottomCenterPanel.clearDagPanel();
     }
 
+    @Override
     public AbstractCategorySearchPanel getSearchPanel() {
         return categSearchPanel;
     }
 
+    public void setSearchText(String searchText) {
+        categSearchPanel.getSearchPanel().setSearchtext(searchText);
+    }
+
+    public String getSearchText() {
+        return categSearchPanel.getSearchPanel().getSearchtext();
+    }
+
+    @Override
     public void setSearchPanel(AbstractCategorySearchPanel panel) {
         categSearchPanel = panel;
-        m_searchResultPanel = panel.getSearchPanel().getSearchResultPanel();
+        m_searchResultPanel = panel.getSearchResultPanel();
     }
-    
+
+    @Override
+    public void refreshBottomCenterPanel(JXPanel panel) {
+        // TODO Auto-generated method stub
+
+    }
 }

@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -46,7 +47,6 @@ import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IRule;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * The abstract class that contains commonalities required for displaying
@@ -61,13 +61,13 @@ import edu.wustl.common.util.logger.Logger;
 public abstract class AbstractSearchResultPanel extends Cab2bPanel implements ActionListener {
 
     /** The pagination component to paginate the results of the search */
-    private JPagination m_resultsPage = null;
+    private Cab2bPanel resultPanel = new Cab2bPanel();
 
     /**
      * Saved reference to the content panel that needs to be refreshed for
      * appropriate events.
      */
-    protected ContentPanel m_addLimitPanel = null;
+    protected ContentPanel contentPanel = null;
 
     /**
      * Constructor
@@ -97,9 +97,9 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
 
     private void initGUI(final ContentPanel addLimitPanel, Set<EntityInterface> resultSet) {
         this.setLayout(new RiverLayout());
-        this.m_addLimitPanel = addLimitPanel;
-        if (m_addLimitPanel instanceof AddLimitPanel) {
-            ((AddLimitPanel) m_addLimitPanel).setSearchResultPanel(this);
+        this.contentPanel = addLimitPanel;
+        if (contentPanel instanceof AddLimitPanel) {
+            ((AddLimitPanel) contentPanel).setSearchResultPanel(this);
         }
         Vector<PageElement> pageElementCollection = new Vector<PageElement>();
         List<EntityInterface> resultList = new ArrayList<EntityInterface>(resultSet);
@@ -107,7 +107,6 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
         for (EntityInterface entity : resultList) {
             // set the proper class name
             String className = edu.wustl.cab2b.common.util.Utility.getDisplayName(entity);
-            Logger.out.debug(className);
             String strDescription = entity.getDescription();
 
             // Create an instance of the PageElement. Initialize with the
@@ -118,42 +117,55 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
             pageElement.setUserObject(entity);
             pageElementCollection.add(pageElement);
         }
-        
-        JXTitledPanel titledSearchResultsPanel = displaySearchSummary(resultList.size());
-        this.add("hfill", titledSearchResultsPanel);
 
+              
         NumericPager numPager = new NumericPager(pageElementCollection, getPageSize());
         /* Initalize the pagination component. */
-        this.m_resultsPage = new JPagination(pageElementCollection, numPager, this, true);
-        this.m_resultsPage.setSelectableEnabled(false);
-        this.m_resultsPage.setGroupActionEnabled(false);
-        this.m_resultsPage.addPageElementActionListener(this);
-        this.add("br vfill", this.m_resultsPage);
+        JPagination resultsPage = new JPagination(pageElementCollection, numPager, this, true);
+        resultsPage.setSelectableEnabled(false);
+        resultsPage.setGroupActionEnabled(false);
+        resultsPage.addPageElementActionListener(this);
+        resultPanel.add("hfill vfill ", resultsPage);
+        
+        JXTitledPanel titledSearchResultsPanel = displaySearchSummary(resultList.size());
+        titledSearchResultsPanel.setContentContainer(resultPanel);
+        this.add("hfill vfill", titledSearchResultsPanel);
     }
-    
-    
+
+    public void setResultPanel(Cab2bPanel resulPanel) {
+        resultPanel.removeAll();
+        resultPanel.add("hfill vfill ", resulPanel);
+    }
+
+    public void removeResultPanel() {
+        resultPanel.removeAll();
+    }
+
     /**
      * Method to create AddLimitUI
      * @param entity
      */
     protected JXPanel[] getAddLimitPanels(final EntityInterface entity) {
         final JXPanel[] componentPanel = getAddLimitComponentPanels(entity);
-        final JXPanel[] panelsToAdd = new Cab2bPanel[componentPanel.length + 2];     
-                
+        final JXPanel[] panelsToAdd = new Cab2bPanel[componentPanel.length + 2];
+
         //Add the "Add Limit" button at the top 
         Cab2bButton addLimitButtonTop = new Cab2bButton("Add Limit");
-       
+        Cab2bPanel addLimitPanelTop = new Cab2bPanel();
+        addLimitPanelTop.setLayout(new BorderLayout());
+        addLimitPanelTop.setPreferredSize(new Dimension(550, 22));
+        addLimitPanelTop.add(addLimitButtonTop, BorderLayout.EAST);
         panelsToAdd[0] = new Cab2bPanel();
-        panelsToAdd[0].add("right ", addLimitButtonTop);
-      
+        panelsToAdd[0].add("right ", addLimitPanelTop);
+
         addLimitButtonTop.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 performAddLimitAction(panelsToAdd, entity);
             }
-        });   
-              
+        });
+
         for (int i = 0; i < componentPanel.length; i++) {
-            panelsToAdd[i+1] = componentPanel[i];
+            panelsToAdd[i + 1] = componentPanel[i];
         }
         // Add the "Add Limit" button.
         Cab2bButton addLimitButton = new Cab2bButton("Add Limit");
@@ -164,11 +176,9 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
         });
         panelsToAdd[panelsToAdd.length - 1] = new Cab2bPanel();
         panelsToAdd[panelsToAdd.length - 1].add(addLimitButton);
-        
+
         return panelsToAdd;
     }
-    
-    
 
     /**
      * The action listener for the individual page elements.
@@ -183,9 +193,9 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
         PageElement element = (PageElement) link.getUserObject();
 
         /* This is the EntityInterface instance. */
-        final EntityInterface entity = (EntityInterface) element.getUserObject(); 
+        final EntityInterface entity = (EntityInterface) element.getUserObject();
         final JXPanel[] panelsToAdd = getAddLimitPanels(entity);
-        
+
         if (getAddLimitComponentPanels(entity) != null) {
             // pass the appropriate class name for display
             performAction(panelsToAdd, edu.wustl.cab2b.common.util.Utility.getDisplayName(entity));
@@ -249,7 +259,6 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
             }
         });
         
-       
         panelsToAdd[0] = new Cab2bPanel();
         panelsToAdd[0].add(editLimitButtonTop);
 
@@ -289,7 +298,7 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
             AttributeInterface attribute = getAttribute(collection, panel.getAttributeName());
             ArrayList<String> conditionValues = panel.getValues();
             if (0 == conditionString.compareToIgnoreCase("Between") && (conditionValues.size() == 1)) {
-                JOptionPane.showInternalMessageDialog((this.m_addLimitPanel).getParent().getParent().getParent(),
+                JOptionPane.showInternalMessageDialog((this.contentPanel).getParent().getParent().getParent(),
                                                       "Please enter both the values for between operator.",
                                                       "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -304,21 +313,21 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
         }
 
         if (attributes.size() == 0) {
-            JOptionPane.showMessageDialog((this.m_addLimitPanel).getParent().getParent().getParent(),
+            JOptionPane.showMessageDialog((this.contentPanel).getParent().getParent().getParent(),
                                           "Please add condition(s) before proceeding", "Add Limit Warning",
                                           JOptionPane.WARNING_MESSAGE);
         } else {
-            MainSearchPanel mainSearchPanel = (MainSearchPanel) ((JXPanel) m_addLimitPanel).getParent().getParent();
+            MainSearchPanel mainSearchPanel = (MainSearchPanel) ((JXPanel) contentPanel).getParent().getParent();
             if (mainSearchPanel.getQueryObject() == null) {
                 IClientQueryBuilderInterface query = new ClientQueryBuilder();
                 mainSearchPanel.setQueryObject(query);
-                m_addLimitPanel.setQueryObject(query);
+                contentPanel.setQueryObject(query);
             }
 
             IExpressionId expressionId = mainSearchPanel.getQueryObject().addRule(attributes, conditions, values);
             if (expressionId != null) {
                 // Pratibha's code will take over from here
-                m_addLimitPanel.refreshBottomCenterPanel(expressionId);
+                contentPanel.refreshBottomCenterPanel(expressionId);
             } else {
                 JOptionPane.showMessageDialog(
                                               mainSearchPanel.getParent(),
@@ -355,7 +364,7 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
             AttributeInterface attribute = getAttribute(collection, panel.getAttributeName());
             ArrayList<String> values = panel.getValues();
             if (0 == conditionString.compareToIgnoreCase("Between") && (values.size() == 1)) {
-                JOptionPane.showInternalMessageDialog((this.m_addLimitPanel).getParent().getParent().getParent(),
+                JOptionPane.showInternalMessageDialog((this.contentPanel).getParent().getParent().getParent(),
                                                       "Please enter both the values for between operator.",
                                                       "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -379,21 +388,22 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
                 rule.addCondition(conditionList.get(i));
             }
         } else {
-            MainSearchPanel mainSearchPanel = (MainSearchPanel) ((JXPanel) m_addLimitPanel).getParent().getParent();
+            MainSearchPanel mainSearchPanel = (MainSearchPanel) ((JXPanel) contentPanel).getParent().getParent();
             JOptionPane.showInternalMessageDialog(
                                                   mainSearchPanel.getParent(),
                                                   "This rule cannot be added as it is not associated with the added rules.",
                                                   "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     /**
      * This method generates the search summary panel
      * @param numberOfResults number of results obtained
      * @return summary panel
      */
     public JXTitledPanel displaySearchSummary(int numberOfResults) {
-        String message = (numberOfResults == 0) ? "No result found." : "Search Results :- " + "Total results ( " + numberOfResults + " )";
+        String message = (numberOfResults == 0) ? "No result found." : "Search Results :- " + "Total results ( "
+                + numberOfResults + " )";
         JXTitledPanel titledSearchResultsPanel = new Cab2bTitledPanel(message);
         GradientPaint gp = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
                 new Point2D.Double(.95d, 0), Color.WHITE);
