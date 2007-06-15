@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import edu.wustl.cab2b.client.ui.RiverLayout;
-import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -70,6 +69,8 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
 
 		stackedBox.setPreferredSize(new Dimension(250, 500));
 		stackedBox.setMinimumSize(new Dimension(250, 500));
+        
+        this.setMinimumSize(new Dimension(242,this.getMinimumSize().height)); //fix for bug#3745
 	}
 
 	public void setDataForMySearchQueriesPanel(Vector data) {
@@ -136,14 +137,5 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
 	static JLabel makeBold(JLabel label) {
 		label.setFont(label.getFont().deriveFont(Font.BOLD));
 		return label;
-	}
-
-	public static void main(String[] args) {
-		Logger.configure("");
-		MainFrameStackedBoxPanel myStackedBox = new MainFrameStackedBoxPanel(null);
-		WindowUtilities.showInFrame(myStackedBox, "MyStacked Box");
-		Vector data = new Vector();
-		data.add("SNP Experiment");
-		myStackedBox.setDataForPopularSearchCategoriesPanel(data);
 	}
 }
