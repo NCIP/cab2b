@@ -48,6 +48,7 @@ import java.util.Vector;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.ToolTipManager;
 
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bCheckBox;
@@ -135,7 +136,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         FontMetrics fontMetrics = descriptionLabel.getFontMetrics(descriptionLabel.getFont());
         int stringWidth = fontMetrics.stringWidth(pageElement.getDescription());
         descriptionLabel.setToolTipText(getWrappedText(stringWidth, pageElement.getDescription()));
-
+        ToolTipManager.sharedInstance().setDismissDelay(500000);
         if (isSelectable && pagination != null) {
             checkBox = new Cab2bCheckBox();
             checkBox.setOpaque(false);
