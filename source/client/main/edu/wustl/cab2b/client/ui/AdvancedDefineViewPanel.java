@@ -127,8 +127,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         centerPanel.add("br", new Cab2bLabel());
         centerPanel.add("br", new Cab2bLabel());
         // centerPanel.add("br",new Cab2bLabel("Search views available. Please
-        // not links are dummies, so please don't try to be dumb ass and try
-        // seleting them."));
+        // not links are dummies, so please don't try seleting them."));
         centerPanel.add("br", new Cab2bLabel());
         centerPanel.add("br", this.m_resultsPage);
         /* Add the center panel to the main panel */
@@ -151,8 +150,6 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 
         final IQuery b2bquery = queryObject.getQuery();
 
-        // IQuery query = queryObject.getQuery();
-
         /* Get the root expression ID. */
         IExpressionId rootExpressionID = null;
         try {
@@ -164,20 +161,6 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
             isMultipleGraphException = true;
         }
 
-        // ------- To be deleted -------
-        /* From the root expression get the actual root expression. */
-        // IExpression rootExpresssion =
-        // b2bquery.getConstraints().getExpression(rootExpressionID);
-        /* Get the actual class name and expression. */
-        // this.m_rootEntity =
-        // rootExpresssion.getConstraintEntity().getDynamicExtensionsEntity();
-        /* Get the class name. */
-        // String strRootClassName =
-        // this.m_rootEntity.getAttribute().get(0).getUMLClass().getFullyQualifiedName();
-        // String strRootClassName = m_rootEntity.getName();
-        // Vector comboModel = new Vector();
-        // comboModel.add(strRootClassName);
-        // ------------------------------
         Vector<String> comboModel = getAllEntityNamesInWhereClause(queryObject);
         Cab2bComboBox combo = new Cab2bComboBox(comboModel);
         // Updated since the Cab2bComboBox default preferredSize is to small.
@@ -238,13 +221,6 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         return targetEntityInterface;
     }
 
-    /*
-     * This map is maintained, otherwise to get the entities in the category we
-     * have make one more server trip.
-     */
-    // Map<EntityInterface, Category> entityToCategoryMap = new
-    // HashMap<EntityInterface, Category>();
-    // CategoryBusinessInterface catBusInter;
     Set<EntityInterface> allEntities = new HashSet<EntityInterface>();
 
     private Vector<String> getAllEntityNamesInWhereClause(IClientQueryBuilderInterface queryBuilder) {
@@ -261,55 +237,6 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 
             EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
 
-            /*
-             * If Entity is a Category iterate over that category's entities to
-             * get all the entity names
-             * 
-             * 19th Apr : With support for category in output, there is no need
-             * to break down category in constituent classes. Just add the
-             * EntityInterface
-             */
-
-            /*	if (Utility.isCategory(entity)) {
-             CategoryBusinessInterface catBusInter = null;
-             if (catBusInter == null) {
-             catBusInter = (CategoryBusinessInterface) CommonUtils
-             .getBusinessInterface(
-             EjbNamesConstants.CATEGORY_BEAN,
-             CategoryHomeInterface.class, this);
-             }
-
-             try {
-             Category category = catBusInter
-             .getCategoryByEntityId(entity.getId());
-
-             Add to this map for later use. 
-
-             Set<EntityInterface> entitiesInCategory = catBusInter
-             .getAllSourceClasses(category);
-
-             for (EntityInterface entityInCategory : entitiesInCategory) {
-             allEntities.add(entityInCategory);
-             String entityName = entityInCategory.getName();
-             
-             * Add an entity name if it doesn't exist, so that the
-             * drop down items are unique.
-             
-             Add entity for later use 
-             if (!returner.contains(entityName))
-             returner.add(entityName);
-             }
-
-             } catch (RemoteException re) {
-             CommonUtils.handleException(re, this, true, true, true,
-             false);
-             }
-             
-             * If it is an entity, just get its name and add to the
-             * collection
-             
-             } else {
-             *//* Add entity for later use */
             allEntities.add(entity);
 
             String entityName = entity.getName();
