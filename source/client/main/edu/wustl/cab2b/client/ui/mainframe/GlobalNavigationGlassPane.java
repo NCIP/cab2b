@@ -215,7 +215,7 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
             // size.
             MainFrame.mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
             Dimension dimension = MainFrame.mainframeScreenDimesion;
-            WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel, "Search Data",
+            WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel, "Search Data for Experiment",
                                          new Dimension((int) (dimension.width * 0.90),
                                                  (int) (dimension.height * 0.85)), true, true);
 
