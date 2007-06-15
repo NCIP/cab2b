@@ -130,7 +130,6 @@ public class MainDagPanel extends Cab2bPanel {
         m_view.setBackground(Color.WHITE);
         add(m_controlPanel, BorderLayout.NORTH);
         JScrollPane jScrollPane = new JScrollPane(m_view);
-
         add(jScrollPane, BorderLayout.CENTER);
         m_expressionPanel = new ExpressionPanel("Current expression : ");
         add(m_expressionPanel, BorderLayout.SOUTH);
