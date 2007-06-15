@@ -19,5 +19,6 @@
       <use-java-context>true</use-java-context>
       <min-pool-size>2</min-pool-size>
       <max-pool-size>25</max-pool-size>
+      <check-valid-connection-sql>select count(*) from ID_TABLE</check-valid-connection-sql>
   </local-tx-datasource>
 </datasources>
