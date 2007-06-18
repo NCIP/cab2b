@@ -2,7 +2,6 @@ package edu.wustl.cab2b.client.ui.experiment;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -16,7 +15,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -25,12 +23,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.UIManager;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -181,7 +176,10 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         projectsTree.setEditable(true);
         projectsTree.getModel().addTreeModelListener(new MyTreeModelListener());
 
-        projectsTree.setCellRenderer(new MyRenderer());
+        ClassLoader loader = this.getClass().getClassLoader();
+        projectsTree.setOpenIcon(new ImageIcon(loader.getResource("folder_opened.gif")));
+        projectsTree.setClosedIcon(new ImageIcon(loader.getResource("folder_closed.gif")));
+        projectsTree.setLeafIcon(new ImageIcon(loader.getResource("experiment_small.gif")));
 
         // setting tree node name
         projectsTree.setSelectionRow(0);
@@ -468,58 +466,6 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
             newNodeExperimentTreeNode.setName(expGrpName);
             newNodeExperimentTreeNode.setExperimentGroup(true);
             newNode.setUserObject(newNodeExperimentTreeNode);
-        }
-    }
-
-    class MyRenderer extends DefaultTreeCellRenderer {
-
-        private static final long serialVersionUID = 8552472456633962811L;
-
-        private ClassLoader loader = this.getClass().getClassLoader();
-
-        Icon expIcon = new ImageIcon(loader.getResource("experiment_small.gif"));
-
-        Icon expEmpty = new ImageIcon(loader.getResource("empty_folder.ico"));
-
-        Icon expGrpOpenIcon = new ImageIcon(loader.getResource("folder_opened.ico"));
-
-        Icon expGrpClosedIcon = new ImageIcon(loader.getResource("folder_closed.ico"));
-
-        public MyRenderer() {
-
-        }
-
-        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
-                                                      boolean leaf, int row, boolean hasFocus) {
-
-            super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-
-            if (value instanceof DefaultMutableTreeNode) {
-                DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
-                Object userObj = treeNode.getUserObject();
-
-                ExperimentTreeNode expTreeNode = null;
-                if (userObj instanceof ExperimentTreeNode)
-                    expTreeNode = (ExperimentTreeNode) userObj;
-
-                if (expTreeNode != null) {
-                    if (expTreeNode.isExperimentGroup()) {
-                        if (tree.isExpanded(row)) {
-                            setIcon(UIManager.getIcon("Tree.openIcon"));
-                        } else {
-                            setIcon(UIManager.getIcon("Tree.closedIcon"));
-                        }
-                    } else {
-                        setIcon(expIcon);
-                    }
-                } else
-                // this condition to take care of newly created experiment group
-                // node.
-                {
-                    setIcon(UIManager.getIcon("Tree.closedIcon"));
-                }
-            }
-            return this;
         }
     }
 

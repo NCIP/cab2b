@@ -191,6 +191,10 @@ public class ExperimentStackBox extends Cab2bPanel {
     private void initializeDataListTree(DefaultMutableTreeNode rootNode) {
         // creating datalist tree
         datalistTree = new JXTree(rootNode);
+        ClassLoader loader = this.getClass().getClassLoader();
+        datalistTree.setOpenIcon(new ImageIcon(loader.getResource("folder_opened.gif")));
+        datalistTree.setClosedIcon(new ImageIcon(loader.getResource("folder_closed.gif")));
+        datalistTree.setLeafIcon(new ImageIcon(loader.getResource("mydatalist_icon.gif")));
 
         // setting the first node as selected and displaying the corresponding
         // records in the table

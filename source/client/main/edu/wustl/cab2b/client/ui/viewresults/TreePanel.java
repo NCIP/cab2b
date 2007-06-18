@@ -4,6 +4,7 @@ import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
@@ -66,6 +67,11 @@ public class TreePanel extends Cab2bPanel {
         tree = (JXTree) generateTree.createTree((TreeNodeImpl) rootDataRow, true);
         tree.setRolloverEnabled(true);
         tree.setHighlighters(new HighlighterPipeline());
+
+        ClassLoader loader = this.getClass().getClassLoader();
+        tree.setOpenIcon(new ImageIcon(loader.getResource("folder_opened.gif")));
+        tree.setClosedIcon(new ImageIcon(loader.getResource("folder_closed.gif")));
+        tree.setLeafIcon(new ImageIcon(loader.getResource("mydatalist_icon.gif")));
 
         //Add the selection listener.
         //Show the details for that object in the right hand panel.
