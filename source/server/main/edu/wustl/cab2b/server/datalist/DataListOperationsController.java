@@ -123,19 +123,10 @@ public class DataListOperationsController {
      * @return a EntityRecordResultInterface obj
      */
     public static List<IRecord> getEntityRecords(Long entityId) {
+        EntityInterface entity = DatalistCache.getInstance().getEntityWithId(entityId);
+        DataListRetriever<IRecord> retriever = (DataListRetriever<IRecord>) DataListOperationsFactory.createDataListRetriever(entity);
+        return retriever.getEntityRecords(null);
 
-        // DE's Entity manager instance.
-        EntityManagerInterface entityManager = EntityManager.getInstance();
-
-        try {
-            EntityInterface entity = entityManager.getEntityByIdentifier(entityId);
-            DataListRetriever<IRecord> retriever = (DataListRetriever<IRecord>) DataListOperationsFactory.createDataListRetriever(entity);
-            return retriever.getEntityRecords(null);
-        } catch (DynamicExtensionsSystemException e) {
-            throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DE_0004));
-        } catch (DynamicExtensionsApplicationException e) {
-            throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DE_0004));
-        }
     }
 
     private static DomainObjectFactory getDomainObjectFactory() {
