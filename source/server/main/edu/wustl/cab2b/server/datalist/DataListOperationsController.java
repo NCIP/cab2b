@@ -58,12 +58,12 @@ public class DataListOperationsController {
 
         // init to first class level.
         List<IDataRow> currDataRows = new ArrayList<IDataRow>();
-        currDataRows.add(rootRecordDataRow);
+        currDataRows.addAll(rootRecordDataRow.getChildren());
 
         while (!currDataRows.isEmpty()) {
             List<IDataRow> nextDataRows = new ArrayList<IDataRow>();
             for (IDataRow classDataRow : currDataRows) {
-                EntityInterface oldEntity = classDataRow.getEntityInterface();
+                EntityInterface oldEntity = classDataRow.getEntity();
                 DataListSaver<IRecord> saver = oldEntityToSaver.get(oldEntity);
                 if (saver == null) {
                     saver = (DataListSaver<IRecord>) DataListOperationsFactory.createDataListSaver(oldEntity);
@@ -72,7 +72,7 @@ public class DataListOperationsController {
                 EntityInterface newEntity = saver.getNewEntity();
                 IDataRow parentRecordDataRow = classDataRow.getParent();
 
-                EntityInterface oldParentEntity = parentRecordDataRow.getEntityInterface();
+                EntityInterface oldParentEntity = parentRecordDataRow.getEntity();
                 EntityInterface newParentEntity = oldEntityToSaver.get(oldParentEntity).getNewEntity();
                 EntityPair entityPair = new EntityPair(newParentEntity, newEntity);
                 AssociationInterface association = associationForEntities.get(entityPair);

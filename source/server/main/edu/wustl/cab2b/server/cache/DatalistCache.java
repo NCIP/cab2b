@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.server.cache;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
@@ -25,6 +26,7 @@ public class DatalistCache {
     }
 
     private void init() {
+        entityForId = new HashMap<Long, EntityInterface>();
         EntityGroupInterface datalistEntityGroup = DataListUtil.getDatalistEntityGroup();
         for (EntityInterface entity : datalistEntityGroup.getEntityCollection()) {
             addEntity(entity);

@@ -23,7 +23,7 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
 
     protected AbstractDataListSaver(EntityInterface oldEntity) {
         this.newEntity = createNewEntity(oldEntity);
-        populateNewEntity(newEntity);
+        populateNewEntity(oldEntity);
     }
 
     // BEGIN SAVER METHODS
