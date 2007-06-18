@@ -3,7 +3,6 @@ package edu.wustl.cab2b.client.cache;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -66,7 +65,9 @@ public class ClientSideCache extends AbstractEntityCache {
         clientLauncher.showProgress(" Loading cache completed....", 80);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see edu.wustl.cab2b.common.cache.AbstractEntityCache#getCab2bEntityGroups()
      */
     @Override
@@ -89,11 +90,12 @@ public class ClientSideCache extends AbstractEntityCache {
     }
 
     /**
-     * Returns the Entity objects whose source classes fields match with the respective not null 
-     * fields in the passed entity object.
+     * Returns the Entity objects whose source classes fields match with the
+     * respective not null fields in the passed entity object.
+     * 
      * @param entity The entity object.
-     * @return the Entity objects whose source classes fields match with the respective not null 
-     * fields in the passed entity object.
+     * @return the Entity objects whose source classes fields match with the
+     *         respective not null fields in the passed entity object.
      */
     public MatchedClass getCategories(Collection<EntityInterface> patternEntityCollection) {
         MatchedClass matchedClass = new MatchedClass();
@@ -115,11 +117,12 @@ public class ClientSideCache extends AbstractEntityCache {
     }
 
     /**
-     * Returns the Entity objects whose attributes's source classes fields match with the respective not null 
-     * fields in the passed entity object.
+     * Returns the Entity objects whose attributes's source classes fields match
+     * with the respective not null fields in the passed entity object.
+     * 
      * @param entity The entity object.
-     * @return the Entity objects whose attributes's source classes fields match with the respective not null 
-     * fields in the passed entity object.
+     * @return the Entity objects whose attributes's source classes fields match
+     *         with the respective not null fields in the passed entity object.
      */
     public MatchedClass getCategoriesAttributes(Collection<AttributeInterface> patternAttributeCollection) {
         MatchedClass matchedClass = new MatchedClass();
@@ -138,18 +141,6 @@ public class ClientSideCache extends AbstractEntityCache {
             }
         }
         return matchedClass;
-    }
-
-    /* (non-Javadoc)
-     * @see edu.wustl.cab2b.common.cache.AbstractEntityCache#getAllCategories()
-     */
-    @Override
-    protected List<Category> getAllCategories() {
-        try {
-            return getCategoryBusinessInterface().getAllCategories();
-        } catch (RemoteException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
     }
 
     private CategoryBusinessInterface getCategoryBusinessInterface() {

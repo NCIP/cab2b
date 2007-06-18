@@ -13,7 +13,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.cab2b.server.cache.EntityCache;
+import edu.wustl.cab2b.server.cache.CategoryCache;
 import edu.wustl.cab2b.server.queryengine.utils.TreeNode;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
@@ -128,7 +128,7 @@ public class CategoryPreprocessor {
     // protected for testing
     protected Category getCategoryFromEntity(EntityInterface catEntity) {
         Long entityId = catEntity.getId();
-        return EntityCache.getInstance().getCategoryByEntityId(entityId);
+        return CategoryCache.getInstance().getCategoryByEntityId(entityId);
     }
 
     private Category pivot(Category category, EntityInterface requiredRoot) {

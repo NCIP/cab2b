@@ -25,7 +25,9 @@ import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
 
 /**
- * This class provides all operations needed for Category like save, retrive etc. 
+ * This class provides all operations needed for Category like save, retrive
+ * etc.
+ * 
  * @author Chandrakant Talele
  * @author Srinath K
  */
@@ -38,10 +40,9 @@ public class CategoryOperations extends DefaultBizLogic {
 
     /**
      * Saves the input category to database.
-     * @param category
-     *            Category to save.
-     * @throws RemoteException
-     *             EBJ specific Exception
+     * 
+     * @param category Category to save.
+     * @throws RemoteException EBJ specific Exception
      */
     public void saveCategory(Category category) {
         try {
@@ -54,11 +55,9 @@ public class CategoryOperations extends DefaultBizLogic {
     }
 
     /**
-     * @param entityId
-     *            Category Entity Id.
+     * @param entityId Category Entity Id.
      * @return Category for corresponding to given category entity id.
-     * @throws RemoteException
-     *             EBJ specific Exception
+     * @throws RemoteException EBJ specific Exception
      */
     public Category getCategoryByEntityId(Long entityId, Connection con) {
         List list = null;
@@ -68,16 +67,14 @@ public class CategoryOperations extends DefaultBizLogic {
             throw new RuntimeException(ErrorCodeConstants.CATEGORY_RETRIEVE_ERROR);
         }
         Category category = getCategoryFromList(list);
-        postRetrievalProcess(category, EntityCache.getInstance(),con);
+        postRetrievalProcess(category, EntityCache.getInstance(), con);
         return category;
     }
 
     /**
-     * @param categoryId
-     *            Id of the category
+     * @param categoryId Id of the category
      * @return The Category for given id.
-     * @throws RemoteException
-     *             EBJ specific Exception
+     * @throws RemoteException EBJ specific Exception
      */
     public Category getCategoryByCategoryId(Long categoryId, Connection con) {
         List list = null;
@@ -93,7 +90,7 @@ public class CategoryOperations extends DefaultBizLogic {
             throw new RuntimeException("Problem in code; probably db schema");
         }
         Category category = getCategoryFromList(list);
-        postRetrievalProcess(category, EntityCache.getInstance(),con);
+        postRetrievalProcess(category, EntityCache.getInstance(), con);
         return category;
     }
 
@@ -108,8 +105,8 @@ public class CategoryOperations extends DefaultBizLogic {
     }
 
     /**
-     * @param category
-     *            Input Category for which all source classes are to be found.
+     * @param category Input Category for which all source classes are to be
+     *            found.
      * @return Set of all entities present in given categoty.
      */
     public Set<EntityInterface> getAllSourceClasses(Category category) {
@@ -126,11 +123,9 @@ public class CategoryOperations extends DefaultBizLogic {
     }
 
     /**
-     * @param parentCategorialClass
-     *            Parent Categorial Class
-     * @param idSet
-     *            Set of all Source entity Ids present in the children of given
-     *            param.
+     * @param parentCategorialClass Parent Categorial Class
+     * @param idSet Set of all Source entity Ids present in the children of
+     *            given param.
      */
     private void getDeEntityIdsOfChildren(CategorialClass parentCategorialClass, Set<Long> idSet) {
 
@@ -141,16 +136,16 @@ public class CategoryOperations extends DefaultBizLogic {
 
     }
 
-    private void postRetrievalProcess(Category category, EntityCache cache,Connection con) {
+    private void postRetrievalProcess(Category category, EntityCache cache, Connection con) {
         long deEntityId = category.getDeEntityId();
         category.setCategoryEntity(cache.getEntityById(deEntityId));
-        processCategorialClass(category.getRootClass(),cache, con);
+        processCategorialClass(category.getRootClass(), cache, con);
         for (Category subCategory : category.getSubCategories()) {
-            postRetrievalProcess(subCategory,cache, con);
+            postRetrievalProcess(subCategory, cache, con);
         }
     }
 
-    private void processCategorialClass(CategorialClass categorialClass,EntityCache cache, Connection con) {
+    private void processCategorialClass(CategorialClass categorialClass, EntityCache cache, Connection con) {
         Long pathId = categorialClass.getPathFromParentId();
         if (pathId != null && pathId.intValue() != -1) {
             // this is a NON - root class
@@ -162,24 +157,25 @@ public class CategoryOperations extends DefaultBizLogic {
         categorialClass.setCategorialClassEntity(entity);
         Category category = categorialClass.getCategory();
         EntityInterface categoryEntity = category.getCategoryEntity();
-        for(CategorialAttribute attribute : categorialClass.getCategorialAttributeCollection()) {
+        for (CategorialAttribute attribute : categorialClass.getCategorialAttributeCollection()) {
             long srcClassAttributeId = attribute.getDeSourceClassAttributeId();
             AttributeInterface attributeOfSrcClass = entity.getAttributeByIdentifier(srcClassAttributeId);
             attribute.setSourceClassAttribute(attributeOfSrcClass);
-            
+
             long categoryEntityAttributeId = attribute.getDeCategoryAttributeId();
             AttributeInterface attributeOfCategoryEntity = categoryEntity.getAttributeByIdentifier(categoryEntityAttributeId);
             attribute.setCategoryAttribute(attributeOfCategoryEntity);
         }
-        
+
         for (CategorialClass child : categorialClass.getChildren()) {
             child.setCategory(category);
-            processCategorialClass(child,cache,con);
+            processCategorialClass(child, cache, con);
         }
     }
 
-    /**   
+    /**
      * Returns all the categories which don't have any super category.
+     * 
      * @return List of root categories.
      */
     public List<EntityInterface> getAllRootCategories() {
@@ -198,43 +194,54 @@ public class CategoryOperations extends DefaultBizLogic {
         }
         return categoryEntities;
     }
-    /**   
+
+    /**
      * Returns all the categories availble in the system.
+     * 
      * @return List of all categories.
      */
-    public List<Category> getAllCategories() {
+    public List<Category> getAllCategories(Connection connection) {
         List<Category> allCategories = null;
         try {
             allCategories = retrieve(Category.class.getName());
         } catch (DAOException e) {
             throw new RuntimeException("Error in fetching category", e, ErrorCodeConstants.CATEGORY_RETRIEVE_ERROR);
         }
+        for (Category category : allCategories) {
+            postRetrievalProcess(category, EntityCache.getInstance(), connection);
+        }
         return allCategories;
     }
+
     /**
-     * @param category Input Category for which all source attributes are to be found.
+     * @param category Input Category for which all source attributes are to be
+     *            found.
      * @return Set of all source(original) attributes present in given category.
      */
     public Set<AttributeInterface> getAllSourceAttributes(Category category) {
         Set<AttributeInterface> attributeSet = getAllChilrenCategorialClasses(category.getRootClass());
         return attributeSet;
-        
+
     }
+
     /**
-     * Recursive method to traverse the whole tree of CategorialClasses and collect attributes of each categorial class.
+     * Recursive method to traverse the whole tree of CategorialClasses and
+     * collect attributes of each categorial class.
+     * 
      * @param catClass Root of the categorial class tree
-     * @return Set of all source(original) attributes present in given CategorialClass tree.
+     * @return Set of all source(original) attributes present in given
+     *         CategorialClass tree.
      */
     private Set<AttributeInterface> getAllChilrenCategorialClasses(CategorialClass catClass) {
         EntityCache cache = EntityCache.getInstance();
         Set<AttributeInterface> attributeSet = new HashSet<AttributeInterface>();
         EntityInterface entity = cache.getEntityById(catClass.getDeEntityId());
-        for(CategorialAttribute catAttr : catClass.getCategorialAttributeCollection()){
+        for (CategorialAttribute catAttr : catClass.getCategorialAttributeCollection()) {
             long attrId = catAttr.getDeSourceClassAttributeId();
             attributeSet.add(entity.getAttributeByIdentifier(attrId));
         }
-        
-        for(CategorialClass child : catClass.getChildren()) {
+
+        for (CategorialClass child : catClass.getChildren()) {
             attributeSet.addAll(getAllChilrenCategorialClasses(child));
         }
         return attributeSet;

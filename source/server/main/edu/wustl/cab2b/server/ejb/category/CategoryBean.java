@@ -2,13 +2,11 @@ package edu.wustl.cab2b.server.ejb.category;
 
 import java.rmi.RemoteException;
 import java.sql.Connection;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.cab2b.common.beans.MatchedClass;
 import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
 import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
@@ -20,6 +18,7 @@ public class CategoryBean extends AbstractStatelessSessionBean implements Catego
 
     /**
      * Saves the input category to database.
+     * 
      * @param category Category to save.
      * @throws RemoteException EBJ specific Exception
      */
@@ -29,7 +28,7 @@ public class CategoryBean extends AbstractStatelessSessionBean implements Catego
 
     /**
      * @param entityId Category Entity Id.
-     * @return Category for corresponding to given category entity id. 
+     * @return Category for corresponding to given category entity id.
      * @throws RemoteException EBJ specific Exception
      */
     public Category getCategoryByEntityId(Long entityId) throws RemoteException {
@@ -56,26 +55,34 @@ public class CategoryBean extends AbstractStatelessSessionBean implements Catego
     }
 
     /**
-     * @param category Input Category for which all source classes are to be found.
+     * @param category Input Category for which all source classes are to be
+     *            found.
      * @return Set of all entities present in given categoty.
      */
     public Set<EntityInterface> getAllSourceClasses(Category category) throws RemoteException {
         return new CategoryOperations().getAllSourceClasses(category);
     }
-    /**   
+
+    /**
      * Returns all the categories which don't have any super category.
+     * 
      * @return List of root categories.
      * @throws RemoteException EBJ specific Exception
      */
     public List<EntityInterface> getAllRootCategories() throws RemoteException {
-        return  new CategoryOperations().getAllRootCategories();
+        return new CategoryOperations().getAllRootCategories();
     }
 
     public List<Category> getAllCategories() throws RemoteException {
-        return  new CategoryOperations().getAllCategories();
+        Connection con = ConnectionUtil.getConnection();
+        try {
+            return new CategoryOperations().getAllCategories(con);
+        } finally {
+            ConnectionUtil.close(con);
+        }
     }
 
     public Set<AttributeInterface> getAllSourceAttributes(Category category) throws RemoteException {
-        return  new CategoryOperations().getAllSourceAttributes(category);
+        return new CategoryOperations().getAllSourceAttributes(category);
     }
 }
