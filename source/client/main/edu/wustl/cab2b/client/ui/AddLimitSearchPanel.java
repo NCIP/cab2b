@@ -5,8 +5,6 @@ import java.util.Set;
 
 import javax.swing.JTextField;
 
-import org.apache.axis.types.Entities;
-
 /**
  * The actual LHS panel from the Add limit tab,comprising the advanced/category search
  * panels as well as the subsequent results panel.
@@ -66,7 +64,6 @@ public class AddLimitSearchPanel extends AbstractSearchPanel {
      *            appropritate events it can generate.
      * 
      * @param searchResult
-     *            The collection of {@link Entities}
      */
     public AbstractSearchResultPanel getSearchResultPanel(ContentPanel addLimitPanel, Set dummySrhResult) {
         //get the search result panel used by the choose category panel   
