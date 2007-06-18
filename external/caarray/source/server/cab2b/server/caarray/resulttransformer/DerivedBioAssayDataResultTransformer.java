@@ -1,6 +1,6 @@
-package cab2b.server.caarray;
+package cab2b.server.caarray.resulttransformer;
 
-import static cab2b.server.caarray.CaArrayResultTransformerUtil.IDENTIFIER_ATTRIBUTE_NAME;
+import static cab2b.server.caarray.resulttransformer.CaArrayResultTransformerUtil.IDENTIFIER_ATTRIBUTE_NAME;
 
 import java.util.HashMap;
 import java.util.List;

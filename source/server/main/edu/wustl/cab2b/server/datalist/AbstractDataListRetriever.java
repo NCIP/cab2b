@@ -19,7 +19,7 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
 
 public abstract class AbstractDataListRetriever<R extends IRecord> implements DataListRetriever<R> {
-    EntityInterface newEntity;
+    protected EntityInterface newEntity;
 
     protected AbstractDataListRetriever(EntityInterface newEntity) {
         this.newEntity = newEntity;

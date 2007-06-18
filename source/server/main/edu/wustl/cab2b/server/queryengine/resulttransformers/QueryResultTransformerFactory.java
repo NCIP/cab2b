@@ -7,18 +7,17 @@ import edu.wustl.cab2b.common.util.Utility;
 
 /**
  * Factory to create transformer.
+ * 
  * @author srinath_k
  */
 public final class QueryResultTransformerFactory {
-    public static IQueryResultTransformer<?, ?> createTransformer(
-                                                                  EntityInterface outputEntity) {
+    public static IQueryResultTransformer<?, ?> createTransformer(EntityInterface outputEntity) {
         try {
             String transformerName = "edu.wustl.cab2b.server.queryengine.resulttransformers.DefaultQueryResultTransformer";
             if (Utility.getApplicationName(outputEntity).equals("caArray")) {
-                transformerName = "cab2b.server.caarray.DefaultCaArrayResultTransformer";
-                if (outputEntity.getName().equals(
-                                                  "gov.nih.nci.mageom.domain.BioAssayData.DerivedBioAssayData")) {
-                    transformerName = "cab2b.server.caarray.DerivedBioAssayDataResultTransformer";
+                transformerName = "cab2b.server.caarray.resulttransformer.DefaultCaArrayResultTransformer";
+                if (outputEntity.getName().equals("gov.nih.nci.mageom.domain.BioAssayData.DerivedBioAssayData")) {
+                    transformerName = "cab2b.server.caarray.resulttransformer.DerivedBioAssayDataResultTransformer";
                 }
             }
 

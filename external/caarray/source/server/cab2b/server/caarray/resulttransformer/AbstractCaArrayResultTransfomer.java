@@ -1,4 +1,4 @@
-package cab2b.server.caarray;
+package cab2b.server.caarray.resulttransformer;
 
 import java.util.ArrayList;
 import java.util.HashSet;
