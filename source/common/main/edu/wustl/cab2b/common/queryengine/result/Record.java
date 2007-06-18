@@ -59,7 +59,7 @@ public class Record implements IRecord {
             Long entityId = attribute.getEntity().getId();
             if (!cache.isEntityPresent(entityId)) {
                 s.writeObject(attributesValues);
-                s.writeObject(false);
+                s.writeBoolean(false);
                 return;
             }
             Long attributeId = attribute.getId();
