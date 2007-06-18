@@ -22,6 +22,9 @@ public class Record implements IRecord {
         if (attributes == null || attributes.isEmpty()) {
             throw new IllegalArgumentException();
         }
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
         this.attributesValues = new HashMap<AttributeInterface, String>(attributes.size());
         for (AttributeInterface attribute : attributes) {
             attributesValues.put(attribute, "");
