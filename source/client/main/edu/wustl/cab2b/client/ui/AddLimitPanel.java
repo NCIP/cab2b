@@ -20,6 +20,7 @@ import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 import org.openide.util.Utilities;
 
+import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.dag.MainDagPanel;
@@ -276,6 +277,9 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      */
     public void clearAddLimitUI() {
         Component[] components = m_ContentForTopPanel.getComponents();
+        
+        resetButton((Cab2bPanel)components[0], m_searchResultPanel.getAddLimitButtonTop());
+        resetButton((Cab2bPanel)components[components.length - 1], m_searchResultPanel.getAddLimitButtonBottom());
 
         /* Add the individual panels to the top content panel. */
         for (Component component : components) {
@@ -285,13 +289,18 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
         }
         validate();
     }
+    
+    private void resetButton(Cab2bPanel cab2bPanel, Cab2bButton cab2bButton) {
+        cab2bPanel.removeAll();
+        cab2bPanel.add(cab2bButton);
+    }
 
     public void resetPanel() {
         clearAddLimitUI();
         m_contentForBottomCenterPanel.clearDagPanel();
+        updateUI();
     }
 
-    @Override
     public AbstractCategorySearchPanel getSearchPanel() {
         return categSearchPanel;
     }
@@ -304,15 +313,13 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
         return categSearchPanel.getSearchPanel().getSearchtext();
     }
 
-    @Override
     public void setSearchPanel(AbstractCategorySearchPanel panel) {
         categSearchPanel = panel;
         m_searchResultPanel = panel.getSearchResultPanel();
     }
 
-    @Override
     public void refreshBottomCenterPanel(JXPanel panel) {
         // TODO Auto-generated method stub
-
     }
+    
 }
