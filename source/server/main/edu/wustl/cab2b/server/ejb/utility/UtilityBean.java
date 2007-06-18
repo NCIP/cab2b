@@ -7,6 +7,7 @@ import javax.ejb.EJBException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 
+import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
 import edu.wustl.cab2b.server.cache.DatalistCache;
@@ -31,4 +32,15 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Session
         // TODO probably belongs in super;
         DatalistCache.getInstance();
     }
+    /** 
+     * @return associations with given entity as the target entity.
+     * @throws RemoteException EJB specific exception.
+     * @see edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface#getIncomingIntramodelAssociations(Long)
+     */
+    public Collection<AssociationInterface> getIncomingIntramodelAssociations(Long entityId)
+            throws RemoteException {
+        Collection<AssociationInterface> associations = DynamicExtensionUtility.getIncomingIntramodelAssociations(entityId);
+        return associations;
+    }
+
 }

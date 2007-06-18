@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.server.util;
 
 import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DE_0003;
+import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DE_0004;
 import static edu.wustl.cab2b.common.util.Constants.CAB2B_ENTITY_GROUP;
 import static edu.wustl.cab2b.common.util.Constants.CATEGORY_ENTITY_GROUP_NAME;
 
@@ -40,6 +41,7 @@ import edu.common.dynamicextensions.util.global.Constants.Cardinality;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.path.PathConstants;
 import edu.wustl.cab2b.server.path.PropertyLoader;
 import edu.wustl.common.querysuite.queryobject.DataType;
@@ -437,6 +439,17 @@ public class DynamicExtensionUtility {
         return entityGroups;
 
     }
+  /** 
+  * @return associations with given entity as the target entity.
+  */
+ public static Collection<AssociationInterface> getIncomingIntramodelAssociations(Long entityId) {
+     EntityInterface entity = EntityCache.getInstance().getEntityById(entityId);
+     try {
+         return EntityManager.getInstance().getIncomingAssociations(entity);
+     } catch (DynamicExtensionsSystemException e) {
+         throw new RuntimeException("Unable to get incoming associations from Dynamic Extension", e, DE_0004);
+     }
+ }
     /**
      * @param role Role to clone
      * @return the clone of the Role
