@@ -59,12 +59,11 @@ public class CommonUtilsTest extends TestCase {
     }
 
     public void testSplitStringWithTextQualifier() {
-        ArrayList<String> res = CommonUtils.splitStringWithTextQualifier("\"prat,ibha\", \"fdf\"vishaldhok\"",
+        ArrayList<String> res = CommonUtils.splitStringWithTextQualifier("\"chetan, patil\", is,  subordinate,of,\"rahul ner\"",
                                                                          '"', ',');
-        assertEquals(3, res.size());
-        assertEquals("prat,ibha", res.get(0));
-        assertEquals(" fdf", res.get(1));
-        assertEquals("\"vishaldhok", res.get(2));
+        assertEquals(5, res.size());
+        assertEquals("chetan, patil", res.get(0));
+        assertEquals("subordinate", res.get(2));        
     }
     public void testCountCharacterIn() {
         int count = CommonUtils.countCharacterIn("abcdefgha" + "n", 'a');

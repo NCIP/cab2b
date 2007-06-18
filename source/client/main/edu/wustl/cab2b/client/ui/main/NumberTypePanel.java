@@ -44,7 +44,7 @@ public class NumberTypePanel extends AbstractTypePanel {
                                                                                                             "Not IN") == 0)) {
                 ArrayList<String> strings = CommonUtils.splitStringWithTextQualifier(nameString, '"', ',');
                 for (int i = 0; i < strings.size(); i++) {
-                    values.add(strings.get(i).trim());
+                    values.add(strings.get(i));
                 }
             } else {
                 values.add(((Cab2bFormattedTextField) m_NameEdit).getText());

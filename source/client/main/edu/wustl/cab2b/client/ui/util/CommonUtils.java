@@ -412,46 +412,49 @@ public class CommonUtils {
 	 * @param seperator
 	 */
 	public static ArrayList<String> splitStringWithTextQualifier(String string,
-			char textQualifier, char seperator) {
+			char textQualifier, char delimeter) {
+		ArrayList<String> tokenList = new ArrayList<String>();
+		StringBuffer token = new StringBuffer();
+        boolean isTextQualifierStart = false;
 
-		ArrayList<String> list = new ArrayList<String>();
-		StringBuffer sb = new StringBuffer();
-		boolean isTextQualifierStart = false;
-		for (int i = 0; i < string.length(); i++) {
+        for (int i = 0; i < string.length(); i++) {
 			if (string.charAt(i) == textQualifier) {
 				if (isTextQualifierStart == true) {
-					if (sb.length() != 0) {
-						list.add(sb.toString());
+					if (token.length() != 0) {
+                        tokenList.add(token.toString().trim());
 					}
 					isTextQualifierStart = false;
-					sb.setLength(0);
+					token.setLength(0);
 				} else {
 					isTextQualifierStart = true;
 				}
-			} else if (string.charAt(i) != seperator) {
-				sb.append(string.charAt(i));
+			} else if (string.charAt(i) != delimeter) {
+				token.append(string.charAt(i));
 			} else {
 				if (isTextQualifierStart == true) {
-					sb.append(string.charAt(i));
+					token.append(string.charAt(i));
 				} else {
-					if (sb.length() != 0) {
-						list.add(sb.toString());
+					if (token.length() != 0) {
+                        tokenList.add(token.toString().trim());
 					}
-					sb.setLength(0);
+					token.setLength(0);
 				}
 			}
 		}
-		// append last string
+        
+        //append last string
+        String finalToken = token.toString().trim();
 		if (isTextQualifierStart == true) {
-			if (sb.length() != 0) {
-				list.add("\"" + sb.toString());
+            if (!finalToken.equals("")) {
+                tokenList.add("\"" + finalToken);
 			}
 		} else {
-			if (sb.length() != 0) {
-				list.add(sb.toString());
-			}
+            if (!finalToken.equals("")) {
+                tokenList.add(finalToken);
+            }
 		}
-		return list;
+        
+		return tokenList;
 	}
 
 	/**
