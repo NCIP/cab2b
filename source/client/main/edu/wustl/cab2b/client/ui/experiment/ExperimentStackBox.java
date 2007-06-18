@@ -763,7 +763,7 @@ class FinishButtonActionListner implements ActionListener {
                                      final EntityRecordResultInterface entityRecordResult) {
         UserObjectWrapper<EntityRecordResultInterface> userObjectWrapper = new UserObjectWrapper<EntityRecordResultInterface>(
                 entityRecordResult, analysisTitle);
-        String entityName = CommonUtils.getFormattedString(dataEntity.getName());
+        String entityName = Utility.getTaggedValue(dataEntity.getTaggedValueCollection(),Constants.ENTITY_DISPLAY_NAME).getValue();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
         String currentDate = simpleDateFormat.format(new Date());
         String progress = "Completed";
