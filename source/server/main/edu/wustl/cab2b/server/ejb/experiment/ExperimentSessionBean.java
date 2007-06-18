@@ -47,7 +47,7 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
         return (new ExperimentOperations()).getExperiment(id);
     }
 
-    public Set<EntityInterface> getDataListEntitySet(Experiment exp) throws RemoteException {
+    public Set<Set<EntityInterface>> getDataListEntitySet(Experiment exp) throws RemoteException {
         return (new ExperimentOperations()).getDataListEntitySet(exp);
     }
 

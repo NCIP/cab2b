@@ -18,7 +18,6 @@ import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.entitymanager.EntityManagerInterface;
-import edu.common.dynamicextensions.exception.BaseDynamicExtensionsException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.common.domain.AdditionalMetadata;
@@ -28,6 +27,7 @@ import edu.wustl.cab2b.common.domain.ExperimentGroup;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.cab2b.server.cache.DatalistCache;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.dao.AbstractDAO;
@@ -49,9 +49,10 @@ public class ExperimentOperations extends DefaultBizLogic {
 
     /**
      * A function to persist an experiment object.
+     * 
      * @param exp experiment ot persist.
      * @param daoType DAO Type to use.
-     * @throws UserNotAuthorizedException 
+     * @throws UserNotAuthorizedException
      * @throws BizLogicException
      */
     public void addExperiment(Object exp) throws BizLogicException, UserNotAuthorizedException {
@@ -60,12 +61,14 @@ public class ExperimentOperations extends DefaultBizLogic {
     }
 
     /**
-     * This method adds given experiment into goven experimentGroupId and persist it.
+     * This method adds given experiment into goven experimentGroupId and
+     * persist it.
+     * 
      * @param exp experiment ot persist.
      * @param daoType DAO Type to use.
-     * @throws UserNotAuthorizedException 
+     * @throws UserNotAuthorizedException
      * @throws BizLogicException
-     * @throws DAOException 
+     * @throws DAOException
      */
     public void addExperiment(Long experimentGroupId, Experiment experiment) throws BizLogicException,
             UserNotAuthorizedException, DAOException {
@@ -77,13 +80,14 @@ public class ExperimentOperations extends DefaultBizLogic {
 
     /**
      * A function to move an experiment from one experiment group to another.
+     * 
      * @param exp experiment to move.
      * @param srcExpGrp source experiment group
      * @param tarExpGrp target experiment group.
      * @param daoType DAO type to use.
-     * @throws UserNotAuthorizedException 
-     * @throws BizLogicException 
-     * @throws Exception 
+     * @throws UserNotAuthorizedException
+     * @throws BizLogicException
+     * @throws Exception
      */
     public void move(Object exp, Object srcExpGrp, Object tarExpGrp) throws BizLogicException,
             UserNotAuthorizedException {
@@ -95,7 +99,8 @@ public class ExperimentOperations extends DefaultBizLogic {
             throw (new BizLogicException("Experiment doesn't belong to Experiment Group."));
         }
 
-        //Logger.out.info("sourceExpGroup.getExperimentCollection() : after "+sourceExpGroup.getExperimentCollection().size());
+        // Logger.out.info("sourceExpGroup.getExperimentCollection() : after
+        // "+sourceExpGroup.getExperimentCollection().size());
 
         ExperimentGroup targetExpGroup = (ExperimentGroup) tarExpGrp;
         if (isExperimentContainedInGroup(experiment, targetExpGroup)) {
@@ -109,9 +114,10 @@ public class ExperimentOperations extends DefaultBizLogic {
         sourceExpGroup.getExperimentCollection().remove(experiment);
         targetExpGroup.getExperimentCollection().add(experiment);
 
-        //Logger.out.info("targetExpGroup.getExperimentCollection() "+targetExpGroup.getExperimentCollection().size());
+        // Logger.out.info("targetExpGroup.getExperimentCollection()
+        // "+targetExpGroup.getExperimentCollection().size());
 
-        //Logger.out.info("updating target source group collection");
+        // Logger.out.info("updating target source group collection");
 
         experiment.getExperimentGroupCollection().remove(sourceExpGroup);
         experiment.getExperimentGroupCollection().add(targetExpGroup);
@@ -123,15 +129,15 @@ public class ExperimentOperations extends DefaultBizLogic {
     }
 
     /**
-     * A function to copy an experiment from one group to another, 
-     * which is a shallow copy.
+     * A function to copy an experiment from one group to another, which is a
+     * shallow copy.
      * 
      * @param exp experiment to copy.
      * @param tarExpGrp target experiment group.
      * @param daoType DAO type to use.
-     * @throws BizLogicException 
-     * @throws UserNotAuthorizedException 
-     * @throws Exception 
+     * @throws BizLogicException
+     * @throws UserNotAuthorizedException
+     * @throws Exception
      */
     public void copy(Object exp, Object tarExpGrp) throws BizLogicException, UserNotAuthorizedException {
         Experiment experiment = (Experiment) exp;
@@ -163,15 +169,17 @@ public class ExperimentOperations extends DefaultBizLogic {
         ((AbstractDAO) dao).openSession(null);
 
         try {
-            //List myReturner = dao.executeQuery("from ExperimentGroup", null, false, null);
-            //Logger.out.info("returner expGrp ::::::: "+myReturner);
+            // List myReturner = dao.executeQuery("from ExperimentGroup", null,
+            // false, null);
+            // Logger.out.info("returner expGrp ::::::: "+myReturner);
             returner = dao.executeQuery(hql, null, false, null);
 
         } catch (Exception exp) {
             exp.printStackTrace();
         }
 
-        //TODO we have to use HQL here temporarily since DAO.retrieve doesn't suiport 
+        // TODO we have to use HQL here temporarily since DAO.retrieve doesn't
+        // suiport
         // where conditions on aggregate function like collection.size > 0, etc;
         String hql1 = "from Experiment as Exp where Exp.experimentGroupCollection.size = 0";
         try {
@@ -191,7 +199,8 @@ public class ExperimentOperations extends DefaultBizLogic {
     }
 
     public Vector getExperimentMetadataHierarchy(Collection firstLevelRootNodes) {
-        //System.out.println("In getExperimentMetadataHierarchy() "+firstLevelRootNodes);
+        // System.out.println("In getExperimentMetadataHierarchy()
+        // "+firstLevelRootNodes);
         Vector returner = new Vector();
         Iterator iter = firstLevelRootNodes.iterator();
         while (iter.hasNext()) {
@@ -199,20 +208,22 @@ public class ExperimentOperations extends DefaultBizLogic {
 
             if (metadata instanceof ExperimentGroup) {
                 ExperimentGroup expGrp = (ExperimentGroup) metadata;
-                //Logger.out.info("------expGrp------  "+expGrp+"  ----------");
+                // Logger.out.info("------expGrp------ "+expGrp+" ----------");
                 ExperimentTreeNode expTreeNode = new ExperimentTreeNode();
                 expTreeNode.setExperimentGroup(true);
 
                 Collection childrenExpNodes = expGrp.getExperimentCollection();
                 Collection childrenGrpNodes = expGrp.getChildrenGroupCollection();
 
-                updateMetadataHierarchy((AdditionalMetadata) expGrp, expTreeNode, childrenExpNodes); // exp    1
-                updateMetadataHierarchy((AdditionalMetadata) expGrp, expTreeNode, childrenGrpNodes); // expGrp 3 
-                //expTreeNode.setU
+                updateMetadataHierarchy((AdditionalMetadata) expGrp, expTreeNode, childrenExpNodes); // exp
+                // 1
+                updateMetadataHierarchy((AdditionalMetadata) expGrp, expTreeNode, childrenGrpNodes); // expGrp
+                // 3
+                // expTreeNode.setU
                 returner.add(expTreeNode);
 
             } else {
-                //Logger.out.info("------exp------  "+metadata+"  ----------");
+                // Logger.out.info("------exp------ "+metadata+" ----------");
                 Long nodeId = metadata.getId();
                 String nodeName = metadata.getName();
                 ExperimentTreeNode expTreeNode = new ExperimentTreeNode(nodeId, nodeName);
@@ -227,7 +238,7 @@ public class ExperimentOperations extends DefaultBizLogic {
     }
 
     /**
-     * To recursively update the TreeNode similar to expGroup 
+     * To recursively update the TreeNode similar to expGroup
      */
     private void updateMetadataHierarchy(AdditionalMetadata expGroup, ExperimentTreeNode treeNode,
                                          Collection children) {
@@ -261,10 +272,13 @@ public class ExperimentOperations extends DefaultBizLogic {
     }
 
     /**
-     * A validation function to check the containment of an experiment in a experiment group
+     * A validation function to check the containment of an experiment in a
+     * experiment group
+     * 
      * @param exp experiment to check.
-     * @param expGrp 
-     * @return true if the experiment object is present in the experiment group, else false.
+     * @param expGrp
+     * @return true if the experiment object is present in the experiment group,
+     *         else false.
      */
     private boolean isExperimentContainedInGroup(Experiment exp, ExperimentGroup expGrp) {
         if (expGrp.getExperimentCollection().contains(exp)) {
@@ -298,132 +312,111 @@ public class ExperimentOperations extends DefaultBizLogic {
         return exp;
     }
 
-    
     /**
-     * get a set of root entities for an experiment where each root entity represents a datalist 
+     * get a set of root entities for an experiment where each root entity
+     * represents a datalist
+     * 
      * @param exp the experiment
-     * @return set of root entities for an experiment where each root entity represents a datalist
+     * @return set of root entities for an experiment where each root entity
+     *         represents a datalist
      */
-    public Set<EntityInterface> getDataListEntitySet(Experiment exp)
-    {
-        Set<EntityInterface> entitySet = new HashSet<EntityInterface>();
-        
-        //one datalistmetadata represents one datalist
-        for (DataListMetadata dataListMetadata : exp.getDataListMetadataCollection()) 
-        {
-            Long rootDataListEntityId = dataListMetadata.getEntityId();
-            EntityInterface rootDataListEntity = null;
-            try 
-            {
-                rootDataListEntity = EntityManager.getInstance().getEntityByIdentifier(rootDataListEntityId);
-                entitySet.add(rootDataListEntity);
+    public Set<Set<EntityInterface>> getDataListEntitySet(Experiment exp) {
+        Set<Set<EntityInterface>> entitySet = new HashSet<Set<EntityInterface>>();
+
+        // one datalistmetadata represents one datalist
+        for (DataListMetadata dataListMetadata : exp.getDataListMetadataCollection()) {
+            Set<Long> entityIds = dataListMetadata.getEntityIds();
+            Set<EntityInterface> entities = new HashSet<EntityInterface>();
+            entitySet.add(entities);
+            for (Long id : entityIds) {
+                entities.add(DatalistCache.getInstance().getEntityWithId(id));
             }
-            catch (DynamicExtensionsSystemException e) 
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            catch (DynamicExtensionsApplicationException e) 
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-          
         }
-        
+
         return entitySet;
     }
 
-    
-    
     /**
-	 * save the given data as a data category
-	 * @param title the title for the category
-	 * @param attributes list of attributes needed for the  new entity
-	 * @param data the data to be saved
-	 * @return the newly created entity
-	 */
-    public EntityInterface saveDataCategory(String title, List<AttributeInterface> attributes, Object[][] data)
-	{
-    	List<AttributeInterface> newAtttributes = new ArrayList<AttributeInterface>();
-    	
-    	EntityInterface parentEntity = attributes.get(0).getEntity();
-    	EntityGroupInterface entityGroup = Utility.getEntityGroup(parentEntity);
-    	//DE's domain object factory
+     * save the given data as a data category
+     * 
+     * @param title the title for the category
+     * @param attributes list of attributes needed for the new entity
+     * @param data the data to be saved
+     * @return the newly created entity
+     */
+    public EntityInterface saveDataCategory(String title, List<AttributeInterface> attributes, Object[][] data) {
+        List<AttributeInterface> newAtttributes = new ArrayList<AttributeInterface>();
+
+        EntityInterface parentEntity = attributes.get(0).getEntity();
+        EntityGroupInterface entityGroup = Utility.getEntityGroup(parentEntity);
+        // DE's domain object factory
         DomainObjectFactory domainObjectFactory = DomainObjectFactory.getInstance();
-        // DE's Entity manager instance.		 
-    	EntityManagerInterface entityManager = EntityManager.getInstance();
-        
-        //create new entity
-    	EntityInterface newEntity = domainObjectFactory.createEntity();
-	    newEntity.setName(title);
-	    //addding tagged value for display name
-        DynamicExtensionUtility.addTaggedValue(newEntity, edu.wustl.cab2b.common.util.Constants.ENTITY_DISPLAY_NAME, title);
-        //adding tag value to indicate this is a filtered data category 
+        // DE's Entity manager instance.
+        EntityManagerInterface entityManager = EntityManager.getInstance();
+
+        // create new entity
+        EntityInterface newEntity = domainObjectFactory.createEntity();
+        newEntity.setName(title);
+        // addding tagged value for display name
+        DynamicExtensionUtility.addTaggedValue(newEntity,
+                                               edu.wustl.cab2b.common.util.Constants.ENTITY_DISPLAY_NAME, title);
+        // adding tag value to indicate this is a filtered data category
         DynamicExtensionUtility.addTaggedValue(newEntity, edu.wustl.cab2b.common.util.Constants.FILTERED, "true");
         newEntity.addEntityGroupInterface(entityGroup);
-	    entityGroup.addEntity(newEntity);
-	    
-	    //add association. this call changes parent and new entities
-	    AssociationInterface association = DynamicExtensionUtility.createNewOneToManyAsso(parentEntity, newEntity); 
-	    
-	    //add attributes
-	    for(AttributeInterface attribute : attributes)
-	    {
-	    	AttributeInterface newAttribute = DynamicExtensionUtility.getAttributeCopy(attribute);
-	    	newEntity.addAbstractAttribute(newAttribute);
-	    	//needed for persistData()
-	    	newAtttributes.add(newAttribute);
-	    	
-	    }
-	       
-	    try
-	    {
-	    	//no need to persist new entity separately
-	    	entityManager.persistEntity(parentEntity, false);
-	    	persistData(newEntity, newAtttributes, data);
-	    		    	
-	    }
-	    catch(DynamicExtensionsApplicationException e)
-	    {
-	    	throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DATACATEGORY_SAVE_ERROR));
-	    }
-	    catch(DynamicExtensionsSystemException e)
-	    {
-	    	throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DATACATEGORY_SAVE_ERROR));
-	    }
-	    
-	    return newEntity;
-	    
-	}
-    
-    
+        entityGroup.addEntity(newEntity);
+
+        // add association. this call changes parent and new entities
+        AssociationInterface association = DynamicExtensionUtility.createNewOneToManyAsso(parentEntity, newEntity);
+
+        // add attributes
+        for (AttributeInterface attribute : attributes) {
+            AttributeInterface newAttribute = DynamicExtensionUtility.getAttributeCopy(attribute);
+            newEntity.addAbstractAttribute(newAttribute);
+            // needed for persistData()
+            newAtttributes.add(newAttribute);
+
+        }
+
+        try {
+            // no need to persist new entity separately
+            entityManager.persistEntity(parentEntity, false);
+            persistData(newEntity, newAtttributes, data);
+
+        } catch (DynamicExtensionsApplicationException e) {
+            throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DATACATEGORY_SAVE_ERROR));
+        } catch (DynamicExtensionsSystemException e) {
+            throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DATACATEGORY_SAVE_ERROR));
+        }
+
+        return newEntity;
+
+    }
+
     /**
      * persist the given data in the given entity
+     * 
      * @param attributes list of attributes of the entity
      * @param data the data to be persisted
-     * @throws DynamicExtensionsSystemException 
-     * @throws DynamicExtensionsApplicationException 
-       
+     * @throws DynamicExtensionsSystemException
+     * @throws DynamicExtensionsApplicationException
+     * 
      */
-    private void persistData(EntityInterface entity, List<AttributeInterface> attributes, Object[][] data) throws  DynamicExtensionsSystemException, DynamicExtensionsApplicationException
-    {
-    	//DE's Entity manager instance.		 
-    	EntityManagerInterface entityManager = EntityManager.getInstance();
-        
-    	for(int i=0; i<data.length; i++)
-    	{
-    		Map<AbstractAttributeInterface, Object> attributeMap = new HashMap<AbstractAttributeInterface, Object>();
-    		
-    		for(int j=0; j<data[i].length; j++)
-    		{
-    			attributeMap.put(attributes.get(j), data[i][j]);
-    		}
-    		
-    		entityManager.insertData(entity, attributeMap);
-    			
-    	}
-    	
+    private void persistData(EntityInterface entity, List<AttributeInterface> attributes, Object[][] data)
+            throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException {
+        // DE's Entity manager instance.
+        EntityManagerInterface entityManager = EntityManager.getInstance();
+
+        for (int i = 0; i < data.length; i++) {
+            Map<AbstractAttributeInterface, Object> attributeMap = new HashMap<AbstractAttributeInterface, Object>();
+
+            for (int j = 0; j < data[i].length; j++) {
+                attributeMap.put(attributes.get(j), data[i][j]);
+            }
+
+            entityManager.insertData(entity, attributeMap);
+
+        }
+
     }
-    
+
 }

@@ -3,10 +3,9 @@ package edu.wustl.cab2b.common.datalist;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import edu.common.dynamicextensions.entitymanager.EntityRecord;
-import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 
 
 public interface DataListBusinessInterface extends BusinessInterface
@@ -44,6 +43,6 @@ public interface DataListBusinessInterface extends BusinessInterface
 	 */
 	public DataList retrieveDataList(Long dataListId) throws RemoteException;
 	
-	public EntityRecordResultInterface getEntityRecord(Long entityId) throws RemoteException;
+	public List<IRecord> getEntityRecord(Long entityId) throws RemoteException;
 	
 }
