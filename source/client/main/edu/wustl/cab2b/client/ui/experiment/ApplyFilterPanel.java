@@ -28,19 +28,24 @@ import edu.wustl.cab2b.client.ui.filter.RangeFilter;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.DataType;
 
+/**
+ * @author Hrishikesh Rajpathak
+ * 
+ * This class returns a panel whic consists of a lable and a combo-box. On click
+ * of an item in a combo-box, a filter pop-up appears and filter is applied to
+ * the table.
+ */
 public class ApplyFilterPanel extends Cab2bPanel {
 	private static final long serialVersionUID = 1L;
 
 	private ExperimentTableModel table;
-
-	private boolean filterNotToBeApplied;
 
 	private Map<String, Integer> indexToName;
 
 	private List<String> elements;
 
 	private Map<String, CaB2BFilterInterface> filterMap;
-	
+
 	private Cab2bComboBox combo;
 
 	public ApplyFilterPanel(ExperimentTableModel myTable) {
@@ -51,14 +56,20 @@ public class ApplyFilterPanel extends Cab2bPanel {
 		elements = new ArrayList<String>();
 		filterMap = new HashMap<String, CaB2BFilterInterface>();
 
-		Cab2bLabel filterLabel = new Cab2bLabel("Apply Filter");
+		Cab2bLabel filterLabel = new Cab2bLabel("Apply Filter:   ");
 		filterLabel.setFont(new Font("Arial", Font.BOLD, 13));
-		this.add("tab ", filterLabel);
+		this.add(filterLabel);
 
 		Cab2bComboBox combo = applyingFilter();
 		this.add(combo);
 	}
 
+	/**
+	 * This method creates a combo-box with elements as ass the headers of the
+	 * table.
+	 * 
+	 * @return Cab2bComboBox
+	 */
 	private Cab2bComboBox applyingFilter() {
 		combo = new Cab2bComboBox();
 		int columnCount = table.getModel().getColumnCount();
@@ -81,10 +92,18 @@ public class ApplyFilterPanel extends Cab2bPanel {
 		filterMap.put(columnName, filter);
 	}
 
+	/**
+	 * Clear all the filter in the filterMap.
+	 */
 	public void clearMap() {
 		filterMap.clear();
 	}
 
+	/**
+	 * Get the vector that contains all the filters applied currently.
+	 * 
+	 * @return Vector
+	 */
 	public Vector<CaB2BFilterInterface> getFilterMap() {
 		Vector<CaB2BFilterInterface> vector = new Vector<CaB2BFilterInterface>();
 		for (CaB2BFilterInterface filter : filterMap.values()) {
@@ -95,8 +114,8 @@ public class ApplyFilterPanel extends Cab2bPanel {
 	}
 
 	/**
-	 * This Listener class popups the corresponding filter dialogs on the selection of items in combo box.
-	 * @author chetan_patil
+	 * This Listener class popups the corresponding filter dialogs on the
+	 * selection of items in combo box.
 	 */
 	class ComboItemListener implements ItemListener {
 		private ApplyFilterPanel applyFilterpanel;
@@ -107,7 +126,7 @@ public class ApplyFilterPanel extends Cab2bPanel {
 
 		public void itemStateChanged(ItemEvent ie) {
 			if (ie.getStateChange() == ItemEvent.SELECTED) {
-				filterNotToBeApplied = false;
+				boolean filterNotToBeApplied = false;
 				elements.clear();
 				String columnName = ie.getItem().toString();
 				int columnIndex = indexToName.get(columnName);
@@ -119,17 +138,20 @@ public class ApplyFilterPanel extends Cab2bPanel {
 				Cab2bFilterPopup filterPopup = null;
 				AttributeInterface attribute = table.getColumnAttribute(columnName);
 				if (Utility.isEnumerated(attribute)) {
-					Collection<PermissibleValueInterface> permissibleValueCollection = Utility.getPermissibleValues(attribute);
-					filterPopup = new EnumeratedFilterPopUp(applyFilterpanel, permissibleValueCollection,
-							(CaB2BPatternFilter) oldFilter, columnName, columnIndex);
+					Collection<PermissibleValueInterface> permissibleValueCollection = Utility
+							.getPermissibleValues(attribute);
+					filterPopup = new EnumeratedFilterPopUp(applyFilterpanel,
+							permissibleValueCollection, (CaB2BPatternFilter) oldFilter, columnName,
+							columnIndex);
 				} else {
-					DataType dataType = Utility.getDataType(attribute.getAttributeTypeInformation());
+					DataType dataType = Utility
+							.getDataType(attribute.getAttributeTypeInformation());
 
 					// If the clicked column is of type String.
 					if (DataType.String == dataType || DataType.Boolean == dataType) {
-						filterPopup = new PatternPopup(applyFilterpanel, (CaB2BPatternFilter) oldFilter,
-								columnName, columnIndex);
-					// If the clicked column is of type int/long
+						filterPopup = new PatternPopup(applyFilterpanel,
+								(CaB2BPatternFilter) oldFilter, columnName, columnIndex);
+						// If the clicked column is of type int/long
 					} else if (DataType.Double == dataType || DataType.Float == dataType
 							|| DataType.Long == dataType || DataType.Integer == dataType) {
 						double[] columnVal = null;
@@ -140,12 +162,12 @@ public class ApplyFilterPanel extends Cab2bPanel {
 									elements.add(value);
 								}
 							}
-							
+
 							if (elements.isEmpty()) {
 								filterNotToBeApplied = true;
 							}
 						}
-						
+
 						columnVal = new double[elements.size()];
 						int count = 0;
 						for (Object obj : elements) {
@@ -156,7 +178,7 @@ public class ApplyFilterPanel extends Cab2bPanel {
 								(RangeFilter) oldFilter, columnVal, columnName, columnIndex);
 					}
 				}
-				
+
 				if (filterNotToBeApplied == false) {
 					filterPopup.showInDialog();
 					applyFilter();
@@ -165,6 +187,10 @@ public class ApplyFilterPanel extends Cab2bPanel {
 			}
 		}
 
+		/**
+		 * This method applies all the filters that are there in the filter map
+		 * to the table
+		 */
 		public void applyFilter() {
 			int len = filterMap.size();
 			Filter[] filters = new Filter[len];
