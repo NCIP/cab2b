@@ -1,12 +1,12 @@
 package edu.wustl.cab2b.server.path;
 
-import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DE_0004;
+
 import static edu.wustl.cab2b.server.path.PathConstants.INTER_MODEL_ASSOCIATION_TYPE;
 import static edu.wustl.cab2b.server.path.PathConstants.INTRA_MODEL_ASSOCIATION_TYPE;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Collection;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,8 +18,6 @@ import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.common.dynamicextensions.entitymanager.EntityManager;
-import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Utility;
@@ -453,18 +451,6 @@ public class PathFinder {
      */
     AttributeInterface getAttribute(Long entityId, Long attributeId) {
         return cache.getEntityById(entityId).getAttributeByIdentifier(attributeId);
-    }
-
-    /** 
-     * @return associations with given entity as the target entity.
-     */
-    public Collection<AssociationInterface> getIncomingIntramodelAssociations(Long entityId) {
-        EntityInterface entity = cache.getEntityById(entityId);
-        try {
-            return EntityManager.getInstance().getIncomingAssociations(entity);
-        } catch (DynamicExtensionsSystemException e) {
-            throw new RuntimeException("Unable to get incoming associations from Dynamic Extension", e, DE_0004);
-        }
     }
 
     /**

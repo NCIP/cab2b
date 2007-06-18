@@ -1,11 +1,9 @@
 package edu.wustl.cab2b.common.ejb.path;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
@@ -40,12 +38,6 @@ public interface PathFinderBusinessInterface extends BusinessInterface {
     public List<IInterModelAssociation> getInterModelAssociations(Long sourceEntityId)
             throws RemoteException;
     
-    /** 
-     * @return associations with given entity as the target entity.
-     * @throws RemoteException EJB specific exception.
-     */
-    public Collection<AssociationInterface> getIncomingIntramodelAssociations(Long entityId)
-            throws RemoteException;
     /**
      * Finds all curated paths defined for given source and desination entity.
      * If no curated path is present, a empty set will be returned.

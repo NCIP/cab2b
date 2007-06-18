@@ -2,11 +2,9 @@ package edu.wustl.cab2b.server.ejb.path;
 
 import java.rmi.RemoteException;
 import java.sql.Connection;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
@@ -64,18 +62,6 @@ public class PathFinderBean extends AbstractStatelessSessionBean implements Path
             ConnectionUtil.close(connection);
         }
         return interModelAssociations;
-    }
-
-    /** 
-     * @return associations with given entity as the target entity.
-     * @throws RemoteException EJB specific exception.
-     * @see edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface#getIncomingIntramodelAssociations(Long)
-     */
-    public Collection<AssociationInterface> getIncomingIntramodelAssociations(Long entityId)
-            throws RemoteException {
-        Collection<AssociationInterface> associations = PathFinder.getInstance().getIncomingIntramodelAssociations(
-                                                                                                                   entityId);
-        return associations;
     }
 
     /**

@@ -10,11 +10,9 @@
 
 package edu.wustl.cab2b.client.ui.query;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
@@ -45,10 +43,6 @@ public interface IPathFinder
      */
     public List<IInterModelAssociation> getInterModelAssociations(Long sourceEntityId);
     
-    /** 
-     * @return associations with given entity as the target entity.
-     */
-    public Collection<AssociationInterface> getIncomingIntramodelAssociations(Long entityId);
     /**
      * Finds all curated paths defined for given source and desination entity.
      * If no curated path is present, a empty set will be returned.

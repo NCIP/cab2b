@@ -11,11 +11,9 @@
 package edu.wustl.cab2b.client.ui.query;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface;
@@ -69,22 +67,6 @@ public class ClientPathFinder implements IPathFinder {
     public List<IInterModelAssociation> getInterModelAssociations(Long sourceEntityId) {
         try {
             return pathFinder.getInterModelAssociations(sourceEntityId);
-        } catch (LocatorException locExp) {
-            locExp.printStackTrace();
-        } catch (RemoteException remExp) {
-            remExp.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * @param  entityId ID of entity.
-     * @return associations with given entity as the target entity.
-     * 
-     */
-    public Collection<AssociationInterface> getIncomingIntramodelAssociations(Long entityId) {
-        try {
-            return pathFinder.getIncomingIntramodelAssociations(entityId);
         } catch (LocatorException locExp) {
             locExp.printStackTrace();
         } catch (RemoteException remExp) {
