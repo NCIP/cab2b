@@ -141,7 +141,7 @@ public class ResultObjectDetailsPanel extends ResultPanel {
          * 
          */
         if (record instanceof IRecordWithAssociatedIds) {
-            Collection outgoingIntraModelAssociationCollection = dataRow.getEntityInterface().getAssociationCollection();
+            Collection outgoingIntraModelAssociationCollection = dataRow.getEntity().getAssociationCollection();
             AbstractAssociatedDataPanel outgoingPanel = new OutgoingAssociationDataPanel(
                     outgoingIntraModelAssociationCollection, searchPanel.getAssociatedDataAL(), dataRow, record);
             relatedDataPanel.add("br", outgoingPanel);

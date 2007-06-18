@@ -11,7 +11,6 @@ package edu.wustl.cab2b.client.ui.experiment;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -48,11 +46,13 @@ import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
+import edu.wustl.cab2b.client.ui.viewresults.DefaultSpreadSheetViewPanel;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.experiment.ExperimentHome;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 
 /**
  * This class displays the experiment table. Also provides filtering tool for
@@ -92,8 +92,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
      * Table to display records on Experiment Data panels, when user selects any
      * data category node
      */
-    private ExperimentTableModel table;
-
+    //private ExperimentTableModel table;
     /**
      * Table to display records on Analysis Data panels
      */
@@ -101,9 +100,9 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
     final public String[] ANALYSIS_TABLE_HEADERS = new String[] { "Data Category", "Analysis Type", "Date", "Status" };
 
-    private Vector tableColumnVector;
+    //private Vector tableColumnVector;
 
-    private Vector tableDataRecordVector;
+    //private Vector tableDataRecordVector;
 
     /** Previous button */
     private Cab2bButton prevButton;
@@ -118,9 +117,11 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
     private String dataCategoryTitle;
 
+    private DefaultSpreadSheetViewPanel spreadSheetViewPanel;
+
     public ExperimentDataCategoryGridPanel(ExperimentOpenPanel parent) {
-        this(new Vector(), new Vector());
         this.parent = parent;
+        initGUI();
     }
 
     /**
@@ -130,12 +131,12 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         return tabComponent;
     }
 
-    /**
-     * @return the table
-     */
-    public ExperimentTableModel getTable() {
-        return table;
-    }
+    //    /**
+    //     * @return the table
+    //     */
+    //    public ExperimentTableModel getTable() {
+    //        return table;
+    //    }
 
     /**
      * @return the visualizeDataPanel
@@ -180,20 +181,16 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         this.currentTable = currentTable;
     }
 
-    public ExperimentDataCategoryGridPanel(Vector columnVector, Vector dataRecordVector) {
-        tableColumnVector = columnVector;
-        tableDataRecordVector = dataRecordVector;
-        initGUI();
-    }
-
     /**
      * Building/refreshing the table
      */
-    public void refreshTable(Object columnVector[], Object[][] dataRecordVector,
-                             Map<String, AttributeInterface> attributeMap) {
+    public void refreshTable(List<IRecord> recordList) {
         this.removeAll();
-        table = new ExperimentTableModel(false, dataRecordVector, columnVector, attributeMap);
-        table.addFocusListener(new TableFocusListener(this.parent));
+        this.spreadSheetViewPanel.refreshView(recordList);
+
+        //table = new ExperimentTableModel(false, dataRecordVector, columnVector, attributeMap);
+        this.spreadSheetViewPanel.getDataTable().addFocusListener(new TableFocusListener(this.parent));
+
         refreshUI();
         updateUI();
     }
@@ -260,8 +257,11 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         experimentDataPanel = new Cab2bPanel();
         experimentDataPanel.setName("experimentDataPanel");
         experimentDataPanel.setBorder(null);
-        table = new ExperimentTableModel(false, tableDataRecordVector, tableColumnVector);
-        table.addFocusListener(new TableFocusListener(this.parent));
+
+        spreadSheetViewPanel = new DefaultSpreadSheetViewPanel(new ArrayList<IRecord>());
+
+        //        table = new ExperimentTableModel(false, tableDataRecordVector, tableColumnVector);
+        //        table.addFocusListener(new TableFocusListener(this.parent));
 
         analysisDataPanel = new Cab2bPanel();
         analysisDataPanel.setName("analysisDataPanel");
@@ -284,11 +284,11 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         experimentDataPanel.removeAll();
         experimentDataPanel.setBorder(null);
 
-        Cab2bPanel filterPanel = new ApplyFilterPanel(table);
-        experimentDataPanel.add(filterPanel);
+        //        Cab2bPanel filterPanel = new ApplyFilterPanel(spreadSheetViewPanel);
+        //        experimentDataPanel.add(filterPanel);
 
-        JScrollPane jScrollPane = addTableToScrollPanel(table);
-        experimentDataPanel.add("br center hfill vfill", jScrollPane);
+        // JScrollPane jScrollPane = addTableToScrollPanel(table);
+        experimentDataPanel.add("br center hfill vfill", spreadSheetViewPanel);
 
         Cab2bPanel northPanel = new Cab2bPanel();
         northPanel.add(saveDataCategoryButton);
@@ -438,6 +438,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
         CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.openExperimentWelcomePanel) {
             protected void doNonUILogic() throws RuntimeException {
+                Cab2bTable table = spreadSheetViewPanel.getDataTable();
                 // get the columns, including hidden columns. Not well
                 // documented
                 List<TableColumn> columnList = table.getColumns(true);
@@ -451,7 +452,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                 // populate attribute list
                 for (TableColumn column : columnList) {
                     String columnName = column.getIdentifier().toString();
-                    attributes.add(table.getColumnAttribute(columnName));
+                    attributes.add(spreadSheetViewPanel.getColumnAttribute(columnName));
                 }
 
                 for (int i = 0; i < rows; i++) {

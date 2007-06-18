@@ -2,6 +2,7 @@ package edu.wustl.cab2b.client.ui.viewresults;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.queryengine.result.Record;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -67,25 +69,19 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
      * @return 
      */
     private List<IDataRow> executeRelatedQuery() {
-        System.out.println("Source Entity :" + m_sourceEntity.getClassName());
-        System.out.println("Source Entity :" + m_destinationEntity.getClassName());
         //	Fire query for every child element
         final ClientQueryBuilder queryObject = new ClientQueryBuilder();
         // construct expression object for source entity
-        int size = 1;
-        List<AttributeInterface> attributes = new ArrayList<AttributeInterface>(size);
-        List<String> operators = new ArrayList<String>(size);
-        List<List<String>> values = new ArrayList<List<String>>(size);
-        List<String> tempValues = new ArrayList<String>(size);
-        int idIndex = CommonUtils.getIdAttributeIndexFromAttributes(m_sourceEntity.getAttributes());
-        attributes.add(m_sourceEntity.getAttributes().get(idIndex));
-        operators.add("Equals");
-        tempValues.add((m_sourceEntity.getRow()[idIndex]).toString());
-        values.add(tempValues);
+        AttributeInterface idAttribute = Utility.getIdAttribute(m_sourceEntity.getEntity());
+        List<AttributeInterface> attributes = Collections.singletonList(idAttribute);
+        List<String> operators = Collections.singletonList("Equals");
+        List<List<String>> values = new ArrayList<List<String>>();
+        values.add(Collections.singletonList(m_sourceEntity.getId()));
+        
         IExpressionId sourceExpressionID = queryObject.addRule(attributes, operators, values);
 
         /* Get the source expression id. Needed to add the path.*/
-        final EntityInterface targetEntity = m_destinationEntity.getAttributes().get(0).getEntity();
+        final EntityInterface targetEntity = m_destinationEntity.getEntity();
         IExpressionId targetExpressionID = queryObject.createDummyExpression(targetEntity);
 
         final IAssociation association = m_destinationEntity.getAssociation();
@@ -114,7 +110,7 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
             }
            
         }
-        IQueryResult relatedQueryResults = null;
+        IQueryResult<IRecord> relatedQueryResults = null;
         try {
             relatedQueryResults = CommonUtils.executeQuery((ICab2bQuery) queryObject.getQuery(), m_queryEngineBus);
         } catch (RuntimeException e) {
@@ -126,36 +122,13 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
         }
 
         Map<String, List<IRecord>> allRecords = relatedQueryResults.getRecords();
-        attributes = Utility.getAttributeList(relatedQueryResults);
         List<IDataRow> dataRows = new ArrayList<IDataRow>();
         for (String url : allRecords.keySet()) {
-
             List<IRecord> results = allRecords.get(url);
-
             for (IRecord record : results) {
-
-                DataRow dataRow = new DataRow();
-                //attributes = relatedQueryResults.getAttributes();
-
-                Object[] valueArray = new Object[attributes.size()];
-                for (int i = 0; i < attributes.size(); i++) {
-                    valueArray[i] = record.getValueForAttribute(attributes.get(i));
-                }
-
-                AttributeInterface attrib = attributes.get(0);
-                EntityInterface presentEntityInterface = attrib.getEntity();
-                //set proper class name
-                String strclassName = edu.wustl.cab2b.common.util.Utility.getDisplayName(relatedQueryResults.getOutputEntity());
-                AttributeInterface idAttribute = Utility.getIdAttribute(relatedQueryResults.getOutputEntity());
-                Object id = record.getValueForAttribute(idAttribute);
-                dataRow.setRow(valueArray);
-                dataRow.setAttributes(attributes);
-                dataRow.setClassName(strclassName);
+                DataRow dataRow = new DataRow(record,relatedQueryResults.getOutputEntity());
                 dataRow.setParent(m_sourceEntity);
-                dataRow.setId(id);
                 dataRow.setAssociation(m_destinationEntity.getAssociation());
-                dataRow.setEntityInterface(relatedQueryResults.getOutputEntity());
-                dataRow.setURL(url);
                 dataRows.add(dataRow);
             }
         }

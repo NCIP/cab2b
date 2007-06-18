@@ -30,8 +30,10 @@ import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
+import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
+import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.common.util.logger.Logger;
@@ -102,11 +104,13 @@ public class SaveDatalistPanel extends Cab2bPanel {
                 }
                 String dataListDesc = txtDesc.getText();
 
-                DataListMetadata dataListAnnotation = new DataListMetadata();
+                final DataListMetadata dataListAnnotation = new DataListMetadata();
                 dataListAnnotation.setName(dataListName);
                 dataListAnnotation.setDescription(dataListDesc);
                 dataListAnnotation.setCreatedOn(new Date());
                 dataListAnnotation.setLastUpdatedOn(new Date());
+
+                final IDataRow newRootDataRow = processNode(MainSearchPanel.getDataList().getRootDataRow());
 
                 MainSearchPanel.getDataList().setDataListAnnotation(dataListAnnotation);
 
@@ -121,7 +125,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
                                                                                                                             SaveDatalistPanel.this);
 
                         try {
-                            id = dataListBI.saveDataList(MainSearchPanel.getDataList());
+                            id = dataListBI.saveDataList(new DataList(newRootDataRow, dataListAnnotation));
 
                             MainSearchPanel.savedDataListMetadata = dataListBI.retrieveDataListMetadata(id);
 
@@ -148,11 +152,47 @@ public class SaveDatalistPanel extends Cab2bPanel {
                         Logger.out.debug("datalist id : "
                                 + MainSearchPanel.getDataList().getDataListAnnotation().getId());
                         Logger.out.debug("entity id for dl : "
-                                + MainSearchPanel.getDataList().getDataListAnnotation().getEntityId());
+                                + MainSearchPanel.getDataList().getDataListAnnotation().getEntityIds());
                     }
 
                 };
                 sw.start();
+            }
+
+            /**
+             * This method takes a data row and makes copy of it.
+             * It then calls itself recursivley on each child. If both (data row) and (child node) is not a title node then 
+             * it adds a title node between itself and child.
+             *   
+             * so final  structure of data list is always such that each node has title node.
+             * @param dataRow
+             * @return
+             */
+            private IDataRow processNode(IDataRow dataRow) {
+
+                IDataRow newDataRow = dataRow.getCopy();
+
+                for (IDataRow childRow : dataRow.getChildren()) {
+                    IDataRow newChildRow = processNode(childRow);
+
+                    if ((newDataRow.getEntity() == null && newChildRow.isData())
+                            || (newDataRow.isData() && newChildRow.isData())) {
+
+                        IDataRow newTitleNode = newChildRow.getTitleNode();
+
+                        newChildRow.setParent(newTitleNode);
+                        newTitleNode.addChild(newChildRow);
+
+                        newTitleNode.setParent(newDataRow);
+                        newDataRow.addChild(newTitleNode);
+                    } else {
+                        newChildRow.setParent(newDataRow);
+                        newDataRow.addChild(newChildRow);
+                    }
+
+                }
+
+                return newDataRow;
             }
 
         });

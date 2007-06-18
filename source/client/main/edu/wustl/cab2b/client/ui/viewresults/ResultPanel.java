@@ -43,6 +43,7 @@ import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.util.logger.Logger;
 
@@ -179,7 +180,7 @@ public abstract class ResultPanel extends Cab2bPanel {
     public void fetchApplyAllResults(Collection<Callable<QueryResultObject>> queryCallables,
                                      QueryEngineBusinessInterface queryEngineBus) {
         do {
-            ExecutorService executorService = Executors.newFixedThreadPool(10);
+            ExecutorService executorService = Executors.newCachedThreadPool();
             try {
                 List<Future<QueryResultObject>> results = executorService.invokeAll(queryCallables);
                 queryCallables.clear();
@@ -285,8 +286,7 @@ public abstract class ResultPanel extends Cab2bPanel {
         Cab2bHyperlink selectedRootClassName = new Cab2bHyperlink(true);
 
         DataRow dataRow = (DataRow) row;
-        //edu.wustl.cab2b.common.util.Utility.getDisplayName(dataRow.getEntityInterface())
-        String displayClassName = dataRow.getClassName();
+        String displayClassName = Utility.getDisplayName(dataRow.getEntity());
         selectedRootClassName.setText(displayClassName + "_" + dataRow.getId());
         selectedRootClassName.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {

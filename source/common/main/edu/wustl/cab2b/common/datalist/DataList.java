@@ -36,10 +36,17 @@ public class DataList implements Serializable {
         createRootNode();
     }
 
+    /**
+     * @param rootDataRow
+     * @param dataListAnnotation
+     */
+    public DataList(IDataRow rootDataRow,DataListMetadata dataListAnnotation) {
+        this.dataListAnnotation = dataListAnnotation;
+        this.rootDataRow = rootDataRow;
+    }
+    
     private void createRootNode() {
-        rootDataRow = new DataRow();
-        rootDataRow.setClassName("My data list element");
-        rootDataRow.setAttributes(null);
+        rootDataRow = new DataRow(null,null);
         rootDataRow.setData(false);
     }
 
@@ -89,10 +96,10 @@ public class DataList implements Serializable {
         if (!dataRowList.isEmpty()) {
             for (int i = 0; i < dataRowList.size(); i++) {
                 IDataRow parentData = dataRowList.get(i);
-                if (parentData.getAttributes() != null) {
+                if (parentData.getEntity() != null) {
                     // If node type is same as the node to add
-                    if (true == parentData.getAttributes().get(0).getEntity().equals(
-                                                                                     dataRow.getAttributes().get(0).getEntity())) {
+                    if (true == parentData.getEntity().equals(
+                                                                                     dataRow.getEntity())) {
                         if (parentData.isData() == false) // means this node is not a data node
                         {
                             // If node is already added to datalist
@@ -153,10 +160,8 @@ public class DataList implements Serializable {
      * @return The group node for this dataRow
      */
     private IDataRow getTitleNode(IDataRow dataRow) {
-        IDataRow titleDataRow = new DataRow();
-        titleDataRow.setClassName(dataRow.getClassName());
+        IDataRow titleDataRow = new DataRow(null,dataRow.getEntity());
         titleDataRow.setData(false);
-        titleDataRow.setAttributes(dataRow.getAttributes());
         return titleDataRow;
     }
 
@@ -215,31 +220,7 @@ public class DataList implements Serializable {
         }
     }
 
-    /**
-     * Returns this DataRow object from the data list.
-     * @return this DataRow object from the data list.
-     */
-    private void getDataRowWithEntity(int pos, List<IDataRow> currentDataList, List<IDataRow> listWithEntity,
-                                      List<IDataRow> pathEnitites) {
-        for (int i = 0; i < currentDataList.size(); i++) {
-            IDataRow currentRow = currentDataList.get(i);
-            if (currentRow.isData() == true) {
-                if (true == currentRow.getAttributes().get(0).getEntity().equals(
-                                                                                 pathEnitites.get(pos).getAttributes().get(
-                                                                                                                           0).getEntity())) {
-                    // Found that path has been completely matched
-                    if (pos == pathEnitites.size() - 1) {
-                        listWithEntity.add(currentRow);
-                    } else if (pos < pathEnitites.size()) {
-                        List<IDataRow> childDataList = currentRow.getChildren();
-                        getDataRowWithEntity(pos + 1, childDataList, listWithEntity, pathEnitites);
-                    }
-                }
-            } else {
-                getDataRowWithEntity(pos, currentRow.getChildren(), listWithEntity, pathEnitites);
-            }
-        }
-    }
+
 
     /**
      * Method to get the tree containing the hirarchy for given entity
@@ -258,8 +239,33 @@ public class DataList implements Serializable {
         while (iter.hasNext()) {
             addPathToTree(treeList, iter.next());
         }
-        printTree(0, treeList);
+        //printTree(0, treeList);
         return treeList;
+    }
+    
+    /**
+     * Returns this DataRow object from the data list.
+     * @return this DataRow object from the data list.
+     */
+    private void getDataRowWithEntity(int pos, List<IDataRow> currentDataList, List<IDataRow> listWithEntity,
+                                      List<IDataRow> pathEnitites) {
+        for (int i = 0; i < currentDataList.size(); i++) {
+            IDataRow currentRow = currentDataList.get(i);
+            if (currentRow.isData() == true) {
+                if (true == currentRow.getEntity().equals(
+                                                                                 pathEnitites.get(pos).getEntity())) {
+                    // Found that path has been completely matched
+                    if (pos == pathEnitites.size() - 1) {
+                        listWithEntity.add(currentRow);
+                    } else if (pos < pathEnitites.size()) {
+                        List<IDataRow> childDataList = currentRow.getChildren();
+                        getDataRowWithEntity(pos + 1, childDataList, listWithEntity, pathEnitites);
+                    }
+                }
+            } else {
+                getDataRowWithEntity(pos, currentRow.getChildren(), listWithEntity, pathEnitites);
+            }
+        }
     }
 
     /**
@@ -271,17 +277,15 @@ public class DataList implements Serializable {
         int posInList = -1;
         // Check if tree already have this path starting with given root
         for (int i = 0; i < treeList.size(); i++) {
-            if (true == treeList.get(i).getAttributes().get(0).getEntity().equals(
-                                                                                  rootNode.getAttributes().get(0).getEntity())) {
+            if (true == treeList.get(i).getEntity().equals(
+                                                                                  rootNode.getEntity())) {
                 posInList = i;
                 break;
             }
         }
         IDataRow dataRow;
         if (posInList == -1) {
-            dataRow = new DataRow();
-            dataRow.setAttributes(rootNode.getAttributes());
-            dataRow.setClassName(rootNode.getClassName());
+            dataRow = new DataRow(null,rootNode.getEntity());
             dataRow.setAssociation(rootNode.getAssociation());
             treeList.add(dataRow);
         } else {
@@ -296,16 +300,16 @@ public class DataList implements Serializable {
      * @param level the level of the node to print
      * @param treeList List containing tree hierarchy
      */
-    private void printTree(int level, List<IDataRow> treeList) {
-        for (int i = 0; i < treeList.size(); i++) {
-            System.out.println("Level: " + level + " class:  " + treeList.get(i).getClassName());
-            if (treeList.get(i).getAssociation() != null) {
-                System.out.println("Level: " + level + " Association:  "
-                        + treeList.get(i).getAssociation().toString());
-            }
-            printTree(level + 1, treeList.get(i).getChildren());
-        }
-    }
+//    private void printTree(int level, List<IDataRow> treeList) {
+//        for (int i = 0; i < treeList.size(); i++) {
+//            System.out.println("Level: " + level + " class:  " + treeList.get(i).getClassName());
+//            if (treeList.get(i).getAssociation() != null) {
+//                System.out.println("Level: " + level + " Association:  "
+//                        + treeList.get(i).getAssociation().toString());
+//            }
+//            printTree(level + 1, treeList.get(i).getChildren());
+//        }
+//    }
 
     /**
      * Recurrsive method to find location of perticular node in tree and return path for same
@@ -324,18 +328,15 @@ public class DataList implements Serializable {
                     int pos = -1;
                     for (int j = 0; j < childNodes.size(); j++) {
                         // If this entity is already present
-                        if (true == childNodes.get(j).getAttributes().get(0).getEntity().equals(
+                        if (true == childNodes.get(j).getEntity().equals(
                                                                                                 rootChildNodes.get(
-                                                                                                                   i).getAttributes().get(
-                                                                                                                                          0).getEntity())) {
+                                                                                                                   i).getEntity())) {
                             pos = j;
                             break;
                         }
                     }
                     if (pos == -1) {
-                        node = new DataRow();
-                        node.setAttributes(rootChildNodes.get(i).getAttributes());
-                        node.setClassName(rootChildNodes.get(i).getClassName());
+                        node = new DataRow(null,rootChildNodes.get(i).getEntity());
                         node.setAssociation(rootChildNodes.get(i).getAssociation());
                         dataRow.getChildren().add(node);
                     } else {

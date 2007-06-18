@@ -105,5 +105,12 @@ public class Experiment extends AdditionalMetadata implements java.io.Serializab
     public void setDataListMetadataCollection(Collection<DataListMetadata> dataListMetadataCollection) {
         this.dataListMetadataCollection = dataListMetadataCollection;
     }
+    
+    /**
+     * @param dataListMetadata
+     */
+    public void addDataListMetadata(DataListMetadata dataListMetadata) {
+        dataListMetadataCollection.add(dataListMetadata);
+    }
 
 }

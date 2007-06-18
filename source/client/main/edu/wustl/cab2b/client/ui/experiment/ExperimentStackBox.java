@@ -76,6 +76,7 @@ import edu.wustl.cab2b.common.ejb.analyticalservice.AnalyticalServiceOperationsH
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.AttributeInterfaceComparator;
 import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.common.util.Utility;
@@ -108,13 +109,13 @@ public class ExperimentStackBox extends Cab2bPanel {
 
     private Experiment m_selectedExperiment = null;
 
-    private String columnName[] = null;
+    // private String columnName[] = null;
 
     private static CaB2BFilterInterface obj = null;
 
-    private Object recordObject[][] = null;
+    //    private Object recordObject[][] = null;
 
-    private Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
+    //private Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
 
     private static int chartIndex = 0;
 
@@ -139,7 +140,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         stackedBox = new StackedBox();
         stackedBox.setTitleBackgroundColor(new Color(200, 200, 220));
 
-        Set<EntityInterface> entitySet = null;
+        Set<Set<EntityInterface>> entitySet = null;
         try {
             entitySet = m_experimentBusinessInterface.getDataListEntitySet(m_selectedExperiment);
         } catch (RemoteException remoteException) {
@@ -159,24 +160,18 @@ public class ExperimentStackBox extends Cab2bPanel {
      *            set of entities
      * @return root node
      */
-    private DefaultMutableTreeNode generateRootNode(Set<EntityInterface> entitySet) {
+    private DefaultMutableTreeNode generateRootNode(Set<Set<EntityInterface>> entitySet) {
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Experiment Data Categories");
-        DefaultMutableTreeNode node = null;
 
         // for each datalist
-        for (EntityInterface dummyEntity : entitySet) {
-            EntityInterface entity = null;
-            // get the only child of the dummy entity, which would be the real
-            // first level entity in the tree
-            for (AssociationInterface association : dummyEntity.getAssociationCollection()) {
-                entity = association.getTargetEntity();
+        for (Set<EntityInterface> dataListEntitySet : entitySet) {
+            for (EntityInterface entity : dataListEntitySet) {
+                TreeEntityWrapper treeEntityWrapper = new TreeEntityWrapper();
+                treeEntityWrapper.setEntityInterface(entity);
+                DefaultMutableTreeNode node = new DefaultMutableTreeNode(treeEntityWrapper);
+                rootNode.add(node);
+                //addChildren(rootNode, node);
             }
-
-            TreeEntityWrapper treeEntityWrapper = new TreeEntityWrapper();
-            treeEntityWrapper.setEntityInterface(entity);
-            node = new DefaultMutableTreeNode(treeEntityWrapper);
-            rootNode.add(node);
-            addChildren(rootNode, node);
         }
 
         return rootNode;
@@ -201,21 +196,10 @@ public class ExperimentStackBox extends Cab2bPanel {
         if (datalistTree.getRowCount() >= 2) {
             datalistTree.setSelectionRow(1);
             datalistTree.expandRow(1);
-            CustomSwingWorker swingWorker = new CustomSwingWorker(datalistTree) {
-                protected void doNonUILogic() throws RuntimeException {
-                    Object nodeInfo = ((DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent()).getUserObject();
-                    if (nodeInfo instanceof TreeEntityWrapper) {
-                        TreeEntityWrapper experimentEntity = (TreeEntityWrapper) nodeInfo;
-                        getDataCategoyRecords(experimentEntity);
-                        addAvailableAnalysisServices(experimentEntity);
-                    }
-                }
-
-                protected void doUIUpdateLogic() throws RuntimeException {
-                    m_experimentDataCategoryGridPanel.refreshTable(columnName, recordObject, attributeMap);
-                }
-            };
-            swingWorker.start();
+            Object nodeInfo = ((DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent()).getUserObject();
+            if (nodeInfo instanceof TreeEntityWrapper) {
+                updateSpreadSheet((TreeEntityWrapper) nodeInfo);
+            }
         }
 
         // action listener for selected data category
@@ -297,39 +281,46 @@ public class ExperimentStackBox extends Cab2bPanel {
      * Method to perform tree node selection action for currently selected node
      */
     public void treeSelectionListenerAction() {
+
+        Cab2bPanel selectedPanel = (Cab2bPanel) m_experimentDataCategoryGridPanel.getTabComponent().getSelectedComponent();
+        Component applyFilterComponent = CommonUtils.getComponentByName(selectedPanel,
+                                                                        Constants.APPLY_FILTER_PANEL_NAME);
+        if (applyFilterComponent instanceof ApplyFilterPanel) {
+            ApplyFilterPanel applyFilterPanel = (ApplyFilterPanel) applyFilterComponent;
+            applyFilterPanel.clearMap();
+            getDataForFilterPanel(applyFilterPanel);
+        }
+        updateUI();
+
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent();
+        if (node == null) {
+            return;
+        }
+
+        // if rot node is selected, clear all table content
+        //      if (node.isRoot() == true) {
+        //          columnName = null;
+        //          recordObject = null;
+        //      }
+
+        Object nodeInfo = node.getUserObject();
+        if (nodeInfo instanceof TreeEntityWrapper) {
+            updateSpreadSheet((TreeEntityWrapper) nodeInfo);
+        }
+    }
+
+    private void updateSpreadSheet(final TreeEntityWrapper experimentEntity) {
+
         CustomSwingWorker swingWorker = new CustomSwingWorker(datalistTree) {
+            List<IRecord> recordList = null;
+
             protected void doNonUILogic() throws RuntimeException {
-                Cab2bPanel selectedPanel = (Cab2bPanel) m_experimentDataCategoryGridPanel.getTabComponent().getSelectedComponent();
-                Component applyFilterComponent = CommonUtils.getComponentByName(selectedPanel,
-                                                                                Constants.APPLY_FILTER_PANEL_NAME);
-                if (applyFilterComponent instanceof ApplyFilterPanel) {
-                    ApplyFilterPanel applyFilterPanel = (ApplyFilterPanel) applyFilterComponent;
-                    applyFilterPanel.clearMap();
-                    getDataForFilterPanel(applyFilterPanel);
-                }
-                updateUI();
-
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent();
-                if (node == null) {
-                    return;
-                }
-
-                // if rot node is selected, clear all table content
-                if (node.isRoot() == true) {
-                    columnName = null;
-                    recordObject = null;
-                }
-
-                Object nodeInfo = node.getUserObject();
-                if (nodeInfo instanceof TreeEntityWrapper) {
-                    TreeEntityWrapper experimentEntity = (TreeEntityWrapper) nodeInfo;
-                    getDataCategoyRecords(experimentEntity);
-                    addAvailableAnalysisServices(experimentEntity);
-                }
+                recordList = getDataCategoyRecords(experimentEntity);
+                addAvailableAnalysisServices(experimentEntity);
             }
 
             protected void doUIUpdateLogic() throws RuntimeException {
-                m_experimentDataCategoryGridPanel.refreshTable(columnName, recordObject, attributeMap);
+                m_experimentDataCategoryGridPanel.refreshTable(recordList);
             }
         };
         swingWorker.start();
@@ -339,48 +330,50 @@ public class ExperimentStackBox extends Cab2bPanel {
      * Method used to get dataCategory records from database and covert it into
      * table format
      */
-    private void getDataCategoyRecords(TreeEntityWrapper nodeInfo) {
+    private List<IRecord> getDataCategoyRecords(TreeEntityWrapper nodeInfo) {
+        List<IRecord> recordList = null;
         EntityInterface entityNode = nodeInfo.getEntityInterface();
 
         // getting datalist entity interface
         DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                             EjbNamesConstants.DATALIST_BEAN,
                                                                                                             DataListHomeInterface.class);
-        EntityRecordResultInterface recordResultInterface = null;
         try {
-            recordResultInterface = dataListBI.getEntityRecord(entityNode.getId());
+            recordList = dataListBI.getEntityRecord(entityNode.getId());
 
-            // getting list of attributes
-            List<AbstractAttributeInterface> headerList = recordResultInterface.getEntityRecordMetadata().getAttributeList();
-            columnName = new String[headerList.size()];
-            int i = 0;
-            for (AbstractAttributeInterface abstractAttribute : headerList) {
-                AttributeInterface attribute = (AttributeInterface) abstractAttribute;
-                columnName[i++] = CommonUtils.getFormattedString(attribute.getName());
-                attributeMap.put(columnName[i - 1], attribute);
-                Logger.out.debug("Table Header :" + attribute.getName());
-            }
-
-            // getting actual records
-            List<EntityRecordInterface> recordList = recordResultInterface.getEntityRecordList();
-            recordObject = new Object[recordList.size()][headerList.size()];
-            Logger.out.debug("Record Size :: " + recordList.size());
-            i = 0;
-            int j = 0;
-            for (EntityRecordInterface record : recordList) {
-                List recordValueList = record.getRecordValueList();
-                j = 0;
-                for (Object object : recordValueList) {
-                    recordObject[i][j] = new Object();
-                    recordObject[i][j] = object;
-                    Logger.out.debug("Data [" + i + "]" + "[" + j + "]" + recordObject[i][j]);
-                    j++;
-                }
-                i++;
-            }
+            //            // getting list of attributes
+            //            List<AbstractAttributeInterface> headerList = recordResultInterface.getEntityRecordMetadata().getAttributeList();
+            //            columnName = new String[headerList.size()];
+            //            int i = 0;
+            //            for (AbstractAttributeInterface abstractAttribute : headerList) {
+            //                AttributeInterface attribute = (AttributeInterface) abstractAttribute;
+            //                columnName[i++] = CommonUtils.getFormattedString(attribute.getName());
+            //                attributeMap.put(columnName[i - 1], attribute);
+            //                Logger.out.debug("Table Header :" + attribute.getName());
+            //            }
+            //
+            //            // getting actual records
+            //            List<EntityRecordInterface> recordList = recordResultInterface.getEntityRecordList();
+            //            recordObject = new Object[recordList.size()][headerList.size()];
+            //            Logger.out.debug("Record Size :: " + recordList.size());
+            //            i = 0;
+            //            int j = 0;
+            //            for (EntityRecordInterface record : recordList) {
+            //                List recordValueList = record.getRecordValueList();
+            //                j = 0;
+            //                for (Object object : recordValueList) {
+            //                    recordObject[i][j] = new Object();
+            //                    recordObject[i][j] = object;
+            //                    Logger.out.debug("Data [" + i + "]" + "[" + j + "]" + recordObject[i][j]);
+            //                    j++;
+            //                }
+            //                i++;
+            //            }
         } catch (RemoteException remoteException) {
             CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true, false);
         }
+
+        return recordList;
     }
 
     public static void setDataForFilterPanel(Vector<CaB2BFilterInterface> data) {
@@ -800,7 +793,7 @@ class FinishButtonActionListner implements ActionListener {
      *         values
      */
     private List<EntityRecordResultInterface> getGridData() {
-        Cab2bTable cab2bTable = experimentDataCategoryGridPanel.getTable();
+        Cab2bTable cab2bTable = null;//experimentDataCategoryGridPanel.getTable();
 
         List<EntityRecordInterface> entityRecordList = new ArrayList<EntityRecordInterface>();
         for (int row = 0; row < cab2bTable.getRowCount(); row++) {

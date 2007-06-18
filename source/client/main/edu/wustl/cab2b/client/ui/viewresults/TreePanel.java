@@ -96,11 +96,11 @@ public class TreePanel extends Cab2bPanel {
                                 records.add(childDataRow.getRecord());
                             }
 
-                            dataListDetailedPanel = new DefaultDataListDetailedPanel(records);
+                            dataListDetailedPanel = new DefaultSpreadSheetViewPanel(records);
                             dataListDetailedPanel.doInitialization();
                         } else {
                             //show details of the selected node only.
-                            dataListDetailedPanel = ResultPanelFactory.getDataListDetailedPanel(dataRow.getRecord());
+                            dataListDetailedPanel = ResultPanelFactory.getResultDetailedPanel(dataRow.getRecord());
                         }
 
                         JSplitPane splitPane = (JSplitPane) getParent();

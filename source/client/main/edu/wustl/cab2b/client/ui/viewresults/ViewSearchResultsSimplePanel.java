@@ -115,14 +115,13 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
             int j = 1;
             for (IRecord record : recordList) {
                 StringBuffer descBuffer = new StringBuffer();
-                Object[] valueArray = new Object[attributes.size()];
                 for (int i = 0; i < attributeSize; i++) {
-                    valueArray[i] = record.getValueForAttribute(attributes.get(i));
-                    if (valueArray[i] != null && !(valueArray[i].equals(""))) {
+                    String value = record.getValueForAttribute(attributes.get(i));
+                    if (value != null && !value.equals("")) {
                         if (i != 0) {
                             descBuffer.append(",");
                         }
-                        descBuffer.append(valueArray[i]);
+                        descBuffer.append(value);
                     }
                 }
                 String description = descBuffer.toString();
@@ -131,27 +130,17 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
 //                    description = description.substring(0, 150);
 //                    //To avoid clipping of attribute value in-between
 //                    int index = description.lastIndexOf(",");
-//                    if(index > 0) {
-//                        description = description.substring(0, index);
-//                    }
+//                   description = description.substring(0, index);
 //                }
                 PageElement element = new PageElementImpl();
                 element.setDisplayName(className + "_" + j);
                 element.setDescription(description);
 
-                //AttributeInterface idAttribute = Utility.getIdAttribute(queryResult.getOutputEntity());
-                //Object id = record.getValueForAttribute(idAttribute);
-                DataRow dataRow = new DataRow();
-                dataRow.setRow(valueArray);
-                dataRow.setAttributes(attributes);
-                dataRow.setClassName(className);
+                DataRow dataRow = new DataRow(record,queryResult.getOutputEntity());
                 dataRow.setParent(parentDataRow);
-                dataRow.setId(record.getRecordId().getId());
                 dataRow.setAssociation(queryAssociation);
-                dataRow.setEntityInterface(queryResult.getOutputEntity());
-                dataRow.setURL(url);
-                dataRow.setRecord(record);
 
+                
                 Vector recordListUserObject = new Vector();
                 recordListUserObject.add(dataRow);
                 recordListUserObject.add(record);

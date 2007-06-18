@@ -1,7 +1,9 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JScrollPane;
@@ -16,13 +18,11 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
 
 /**
- * This is the default panel to show in cases
- * 1. The title node is selected (displays IRecord of each childeren)
- * 2. The selected non-title node does not have any special viewer
+ * This is the default panel to show in multiple records of entity,
  * @author rahul_ner
  *
  */
-public class DefaultDataListDetailedPanel extends Cab2bPanel implements DataListDetailedPanelInterface {
+public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListDetailedPanelInterface {
 
     /**
      * 
@@ -36,15 +36,20 @@ public class DefaultDataListDetailedPanel extends Cab2bPanel implements DataList
      */
     private List<IRecord> records;
 
-    private Vector<Vector> tableData = new Vector<Vector>();
+    private Vector<Vector> tableData;
 
-    private Vector<String> tableHeader = new Vector<String>();
+    private Vector<String> tableHeader; 
+    
+    /**
+     * 
+     */
+    private Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
 
-    public DefaultDataListDetailedPanel(List<IRecord> records) {
+    public DefaultSpreadSheetViewPanel(List<IRecord> records) {
         this.records = records;
     }
 
-    public DefaultDataListDetailedPanel(IRecord record) {
+    public DefaultSpreadSheetViewPanel(IRecord record) {
         this.records = Collections.singletonList(record);
     }
 
@@ -55,11 +60,13 @@ public class DefaultDataListDetailedPanel extends Cab2bPanel implements DataList
         initData();
         initGUI();
     }
+    
 
     /**
      * Initailizes the UI components 
      */
     private void initGUI() {
+        this.removeAll();
         this.setLayout(new RiverLayout());
         table = new Cab2bTable(true, tableData, tableHeader);
         this.add("br hfill vfill", new JScrollPane(table));
@@ -69,11 +76,16 @@ public class DefaultDataListDetailedPanel extends Cab2bPanel implements DataList
      * Initailizes the data to be viewed. 
      */
     private void initData() {
+        tableData = new Vector<Vector>();
+        tableHeader = new Vector<String>();
+        attributeMap.clear();
+        
         List<AttributeInterface> attributeList = Utility.getAttributeList(records.get(0).getAttributes());
 
         //Add Headers
         for (AttributeInterface attribute : attributeList) {
             String formattedString = CommonUtils.getFormattedString(attribute.getName());
+            attributeMap.put(formattedString,attribute);
             tableHeader.add(formattedString);
         }
 
@@ -87,6 +99,32 @@ public class DefaultDataListDetailedPanel extends Cab2bPanel implements DataList
             tableData.add(row);
         }
     }
+    
+    /**
+     * @return
+     */
+    public Cab2bTable getDataTable() {
+        return table;
+    }
+    
+    /**
+     * @param columnName
+     * @return
+     */
+    public AttributeInterface getColumnAttribute(String columnName) {
+        return attributeMap.get(columnName);
+    }
+    
+    
+    /**
+     * @param records
+     */
+    public void refreshView(List<IRecord> records) {
+        this.records = records;
+        doInitialization();
+        updateUI();
+    }
+
 
     /**
      * @see edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface#getCSVData()

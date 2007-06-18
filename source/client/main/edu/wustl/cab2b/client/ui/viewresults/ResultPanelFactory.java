@@ -2,6 +2,7 @@ package edu.wustl.cab2b.client.ui.viewresults;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,6 @@ import edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface;
 import edu.wustl.cab2b.common.ejb.path.PathFinderHomeInterface;
 import edu.wustl.cab2b.common.queryengine.result.I3DDataRecord;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
-import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -39,8 +39,9 @@ public class ResultPanelFactory {
     /**
      * @param queryResult
      */
-    public static JXPanel getResultPanel(SimpleSearchResultBreadCrumbPanel searchPanel, IQueryResult queryResult,
-                                         IDataRow parentDataRow, IAssociation association) {
+    public static JXPanel getResultPanel(SimpleSearchResultBreadCrumbPanel searchPanel,
+                                         IQueryResult<IRecord> queryResult, IDataRow parentDataRow,
+                                         IAssociation association) {
         ResultPanel resultPanel = null;
         int recordNo = Utility.getRecordNum(queryResult);
 
@@ -110,30 +111,17 @@ public class ResultPanelFactory {
                                                       IAssociation association,
                                                       Collection<AssociationInterface> incomingAssociationCollection,
                                                       List<IInterModelAssociation> intraModelAssociationCollection) {
-        List<AttributeInterface> attributeList = edu.wustl.cab2b.common.util.Utility.getAttributeList(record.getAttributes());
 
-        Object[] valueArray = new Object[attributeList.size()];
-        for (int i = 0; i < attributeList.size(); i++) {
-            valueArray[i] = record.getValueForAttribute(attributeList.get(i));
+        EntityInterface entity = null;
+        Iterator<AttributeInterface> attributeIterator = record.getAttributes().iterator();
+
+        if (attributeIterator.hasNext()) {
+            entity = attributeIterator.next().getEntity();
         }
 
-        /*
-         * Get the EntityInterface from the map only if the last parameter is null. 
-         * This should ideally happen only the first time
-         */
-        EntityInterface presentEntityInterface = attributeList.get(0).getEntity();
-        String strclassName = edu.wustl.cab2b.common.util.Utility.getDisplayName(presentEntityInterface);
-
-        DataRow dataRow = new DataRow();
-        dataRow.setRow(valueArray);
-        dataRow.setAttributes(attributeList);
-        dataRow.setClassName(strclassName);
+        DataRow dataRow = new DataRow(record, entity);
         dataRow.setParent(parentDataRow);
-        dataRow.setId(record.getRecordId().getId());
-        dataRow.setURL(url);
         dataRow.setAssociation(association);
-        dataRow.setRecord(record);
-        dataRow.setEntityInterface(presentEntityInterface);
 
         return getSearchResultPanel(searchPanel, record, dataRow, incomingAssociationCollection,
                                     intraModelAssociationCollection);
@@ -179,32 +167,13 @@ public class ResultPanelFactory {
         } else if (record instanceof ICategorialClassRecord) {
             defaultDetailedPanel = new CategoryObjectDetailsPanel((ICategorialClassRecord) record);
         } else {
-            defaultDetailedPanel = new DefaultDetailedPanel(record);
+            defaultDetailedPanel = new DefaultDetailedPanel<IRecord>(record);
 
         }
         defaultDetailedPanel.doInitialization();
         return defaultDetailedPanel;
     }
-
-    /**
-     * @param record
-     * @return
-     */
-    public static Cab2bPanel getDataListDetailedPanel(IRecord record) {
-        Cab2bPanel dataListDetailedPanel = null;
-
-        if (record instanceof I3DDataRecord) {
-            dataListDetailedPanel = new ThreeDResultObjectDetailsPanel((I3DDataRecord) record);
-        } else if (record instanceof ICategorialClassRecord) {
-            dataListDetailedPanel = new CategoryObjectDetailsPanel((ICategorialClassRecord) record);
-        } else {
-            dataListDetailedPanel = new DefaultDataListDetailedPanel(record);
-
-        }
-        dataListDetailedPanel.doInitialization();
-        return dataListDetailedPanel;
-    }
-
+   
     /**
      * @param queryResult
      * @return

@@ -5,15 +5,12 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JComponent;
 
 import org.jdesktop.swingx.JXPanel;
 
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -40,7 +37,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private HashMap<String, List<AttributeInterface>> mapResultLabel = new HashMap<String, List<AttributeInterface>>();
+	//private HashMap<String, List<AttributeInterface>> mapResultLabel = new HashMap<String, List<AttributeInterface>>();
 
 	private int panelCount = 0;
 
@@ -73,7 +70,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 	 */
 	private ActionListener associatedDataAL;
 
-	private List<AttributeInterface> attributeList = null;
+	//private List<AttributeInterface> attributeList = null;
 
 	private ViewSearchResultsPanel viewPanel;
 
@@ -131,9 +128,9 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 		layout.show(this.m_breadCrumbPanel, panelName);
 	}
 
-	public List<AttributeInterface> getAttributes() {
-		return this.attributeList;
-	}
+//	public List<AttributeInterface> getAttributes() {
+//		return this.attributeList;
+//	}
 
 	/**
 	 * Initialize GUI.
@@ -147,7 +144,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 		hyperlinkAL = new HyperlinlActionListener(this);
 		associatedDataAL = new AssociatedDataActionListener(this);
 
-		this.attributeList = Utility.getAttributeList(queryResult);
+//		this.attributeList = Utility.getAttributeList(queryResult);
 
 		// Check if you got only one record
 		JXPanel simpleSearchResultPanel = ResultPanelFactory.getResultPanel(
@@ -169,7 +166,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 		 */
 		/**/
 
-		this.mapResultLabel.put(key, this.attributeList);
+//		this.mapResultLabel.put(key, this.attributeList);
 		/* Set also directly the attribute list */
 		// this.attributeList = classRecords.getAttributes();
 		this.m_breadCrumbPanel = new Cab2bPanel();
@@ -246,11 +243,12 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 			String hyperlinkText = (String) hyperlink.getUserObject();
 
 			/* Set the attribute list if user clicked on a class. */
-			List<AttributeInterface> attrList = breadCrumbPanel.mapResultLabel
-					.get(hyperlinkText);
-			if (attrList != null) {
-				breadCrumbPanel.attributeList = attrList;
-			}
+//			List<AttributeInterface> attrList = breadCrumbPanel.mapResultLabel
+//					.get(hyperlinkText);
+//			if (attrList != null) {
+//				breadCrumbPanel.attributeList = attrList;
+//			}
+            
 			int i;
 			for (i = 0; i < m_vBreadCrumbs.size(); i++) {
 				String strVectorValue = (String) m_vBreadCrumbs.get(i);
@@ -396,9 +394,9 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 					 * Get attributes and set in map, for later when the user is
 					 * navigating, and for now directly set it.
 					 */
-					attributeList = Utility.getAttributeList(queryResult);
-					breadCrumbPanel.mapResultLabel.put(currentCount + "#"
-							+ breadCrumbText, attributeList);
+//					attributeList = Utility.getAttributeList(queryResult);
+//					breadCrumbPanel.mapResultLabel.put(currentCount + "#"
+//							+ breadCrumbText, attributeList);
 
 					IAssociation association = hyperLinkUserObject
 							.getAssociation();

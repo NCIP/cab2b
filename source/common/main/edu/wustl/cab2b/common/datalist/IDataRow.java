@@ -2,7 +2,6 @@ package edu.wustl.cab2b.common.datalist;
 
 import java.util.List;
 
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -11,16 +10,6 @@ import edu.wustl.common.tree.TreeNode;
 
 public interface IDataRow extends TreeNode
 {
-    /**
-     * @return Returns the attributes.
-     */
-    public List<AttributeInterface> getAttributes();
-
-    /**
-     * @param attributes The attributes to set.
-     */
-    public void setAttributes(List<AttributeInterface> attributes);
-
     /**
      * @return Returns the parent.
      */
@@ -48,24 +37,6 @@ public interface IDataRow extends TreeNode
     public String getClassName();
 
     /**
-     * Sets the class name.
-     * @param className The className to set.
-     */
-    public void setClassName(String className);
-
-    /**
-     * Returns the row of data/attribute names.
-     * @return the row of data/attribute names.
-     */
-    public Object[] getRow();
-
-    /**
-     * Sets the row of data/attribute names.
-     * @param row The row of data/attribute to set.
-     */
-    public void setRow(Object[] row);
-
-    /**
      * Returns true if the row contains data else returns false i.e. if the 
      * row contains attribute names.
      * @return Returns the isData.
@@ -78,26 +49,47 @@ public interface IDataRow extends TreeNode
      */
     public void setData(boolean isData);
     
-    public Object getId();
-    
-    public void setId(Object id);
-    
-    
+    /**
+     * @return
+     */
     public String getURL();
     
-    public void setURL(String strURL);
     
+    /**
+     * @param association
+     */
     public void setAssociation(IAssociation association);
 
+    /**
+     * @return
+     */
     public IAssociation getAssociation();
     
-    public EntityInterface getEntityInterface();
+    /**
+     * @return
+     */
+    public EntityInterface getEntity();
     
-    public void setEntityInterface(EntityInterface entityInterface);
-    
+    /**
+     * @return
+     */
     IRecord getRecord();
     
-    void setRecord(IRecord record);
+    /**
+     * @return
+     */
+    String getId();
     
+    /**
+     * @return
+     */
+    IDataRow getTitleNode(); 
     
+    /**
+     * returns copy of this node, which does not have any parent or child set
+     * @return
+     */
+    IDataRow getCopy();
+    
+    void addChild(IDataRow childRow);
 }

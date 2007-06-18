@@ -2,17 +2,13 @@ package edu.wustl.cab2b.client.ui.viewresults;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JSplitPane;
 
 import edu.wustl.cab2b.client.ui.RiverLayout;
-import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
-import edu.wustl.cab2b.client.ui.pagination.JPagination;
 import edu.wustl.cab2b.common.datalist.DataList;
-import edu.wustl.cab2b.common.datalist.DataRow;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 
 public class DataListPanel extends Cab2bPanel {
@@ -122,29 +118,4 @@ public class DataListPanel extends Cab2bPanel {
         this.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
     }
 
-    public static void main(String[] args) {
-        JPagination pagination = new JPagination();
-        List selectedUserObjects = pagination.getSelectedPageElementsUserObjects();
-
-        IDataRow dataRow2 = (IDataRow) selectedUserObjects.get(1);
-
-        IDataRow dataRow3 = new DataRow();
-        dataRow3.setId(new Long(3));
-        dataRow3.setClassName("Biospecimen");
-        dataRow3.setParent(dataRow2);
-        selectedUserObjects.add(dataRow3);
-
-        IDataRow dataRow4 = new DataRow();
-        dataRow4.setId(new Long(4));
-        dataRow4.setClassName("Biospecimen");
-        dataRow4.setParent(dataRow3);
-        selectedUserObjects.add(dataRow4);
-
-        DataList dataList = new DataList();
-        dataList.addDataRows(selectedUserObjects);
-
-        //TODO - Temp remove this.
-        DataListPanel dataListPanel = new DataListPanel(dataList);
-        WindowUtilities.showInFrame(dataListPanel, "Data List");
-    }
 }

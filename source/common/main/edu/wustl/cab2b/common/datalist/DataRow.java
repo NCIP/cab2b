@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.tree.TreeNodeImpl;
 
@@ -28,25 +28,16 @@ import edu.wustl.common.tree.TreeNodeImpl;
  */
 public class DataRow extends TreeNodeImpl implements IDataRow, Serializable {
 
-    private Object id;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     /**
      * Name of the class to which this data
      * belongs.
      */
     private String className;
-
-    /**
-     * Attribute list.
-     */
-    private List<AttributeInterface> attributes;
-
-    //    private String[] attributes;
-
-    /**
-     * Row of data/attribute names.
-     */
-    private Object[] row;
 
     /**
      * parent of this node.
@@ -59,12 +50,13 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable {
     private List<IDataRow> children = new ArrayList<IDataRow>();
 
     /**
-     * url from where the data is got. 
+     * 
      */
-    private String strURL;
-
     private EntityInterface entityInterface = null;
 
+    /**
+     * 
+     */
     private IAssociation parentAssociation = null;
 
     /**
@@ -73,40 +65,47 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable {
      */
     boolean isData = true;
 
+    /**
+     * 
+     */
     private IRecord record;
-
-    public String getURL() {
-        return this.strURL;
+    
+    private DataRow() {
+        
+    }
+    
+    /**
+     * @param record
+     * @param entity
+     * @param displayName
+     */
+    private DataRow(IRecord record, EntityInterface entity,String displayName) {
+        this.record = record;
+        this.entityInterface = entity;
+        this.className = displayName;
     }
 
-    public void setURL(String strURL) {
-        this.strURL = strURL;
+    public DataRow(IRecord record, EntityInterface entity) {
+        this(record,entity,"");
+
+        if (entity != null) {
+            this.className = Utility.getDisplayName(entity);
+        }
     }
 
-    public Object getId() {
+    public String getId() {
+        String id = null;
+        if (this.record != null) {
+            id = this.record.getRecordId().getId();
+        }
         return id;
     }
 
-    public void setEntityInterface(EntityInterface entityInterface) {
-        this.entityInterface = entityInterface;
-    }
-
     /**
      * @return Returns the attributes.
      */
-    public EntityInterface getEntityInterface() {
+    public EntityInterface getEntity() {
         return this.entityInterface;
-    }
-
-    public void setId(Object id) {
-        this.id = id;
-    }
-
-    /**
-     * @return Returns the attributes.
-     */
-    public List<AttributeInterface> getAttributes() {
-        return attributes;
     }
 
     /**
@@ -114,13 +113,6 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable {
      */
     public Vector getChildNodes() {
         return new Vector(children);
-    }
-
-    /**
-     * @param attributes The attributes to set.
-     */
-    public void setAttributes(List<AttributeInterface> attributes) {
-        this.attributes = attributes;
     }
 
     /**
@@ -160,27 +152,14 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable {
     }
 
     /**
-     * Sets the class name.
-     * @param className The className to set.
+     * @see edu.wustl.cab2b.common.datalist.IDataRow#getURL()
      */
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
-    /**
-     * Returns the row of data/attribute names.
-     * @return the row of data/attribute names.
-     */
-    public Object[] getRow() {
-        return row;
-    }
-
-    /**
-     * Sets the row of data/attribute names.
-     * @param row The row of data/attribute to set.
-     */
-    public void setRow(Object[] row) {
-        this.row = row;
+    public String getURL() {
+        String url = null;
+        if (this.record != null) {
+            url = this.record.getRecordId().getUrl();
+        }
+        return url;
     }
 
     /**
@@ -205,19 +184,20 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable {
         if (obj instanceof IDataRow) {
             IDataRow dataRow = (IDataRow) obj;
             if ((getId() == null && dataRow.getId() == null) && this.getClassName().equals(dataRow.getClassName())
-                    && (this.strURL.compareToIgnoreCase(dataRow.getURL()) == 0)) {
+                    && (this.getURL().compareToIgnoreCase(dataRow.getURL()) == 0)) {
                 flag = true;
             } else if ((getId() == null && dataRow.getId() != null)
-                    || (getId() == null && dataRow.getId() != null)) {
+                    || (getId() != null && dataRow.getId() == null)) {
                 flag = false;
-            } else
-            /**
-             * Data rows are equal if their identifiers match and they belong to same
-             * entity and same instance of the data service
-             */
-            if (this.getId().equals(dataRow.getId()) && this.getClassName().equals(dataRow.getClassName())
-                    && (this.strURL.compareToIgnoreCase(dataRow.getURL()) == 0)) {
-                flag = true;
+            } else {
+                /**
+                 * Data rows are equal if their identifiers match and they belong to same
+                 * entity and same instance of the data service
+                 */
+                if (this.getId().equals(dataRow.getId()) && this.getClassName().equals(dataRow.getClassName())
+                        && (this.getURL().compareToIgnoreCase(dataRow.getURL()) == 0)) {
+                    flag = true;
+                }
             }
         }
 
@@ -241,8 +221,8 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable {
     public String toString() {
         String label = this.className;
 
-        if (this.id != null)
-            label = label + this.id;
+        if (getId() != null)
+            label = label + getId();
         else
             label += "s";
         return label;
@@ -259,9 +239,31 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable {
     public IRecord getRecord() {
         return record;
     }
+   
+    /**
+     * @see edu.wustl.cab2b.common.datalist.IDataRow#getTitleNode()
+     */
+    public IDataRow getTitleNode() {
+        IDataRow titleDataRow = new DataRow(null,this.entityInterface,this.className);
+        titleDataRow.setData(false);
+        return titleDataRow;
 
-    public void setRecord(IRecord record) {
-        this.record = record;
     }
-
+    
+    /**
+     * @see edu.wustl.cab2b.common.datalist.IDataRow#getCopy()
+     */
+    public IDataRow getCopy() {
+        IDataRow copiedDataRow = new DataRow(this.record,this.entityInterface,this.className);
+        copiedDataRow.setData(this.isData);
+        copiedDataRow.setAssociation(this.parentAssociation);
+        return copiedDataRow;
+    }
+    
+    /**
+     * @see edu.wustl.cab2b.common.datalist.IDataRow#addChild(edu.wustl.cab2b.common.datalist.IDataRow)
+     */
+    public void addChild(IDataRow childRow) {
+        this.children.add(childRow);
+    }
 }
