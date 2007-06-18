@@ -88,16 +88,17 @@
             dynamic-update="false"
             dynamic-insert="false"
         >
+
         <key
             column="DL_ID"
         />
-        <property
-            name="entityId"
-            type="long"
-            update="true"
-            insert="true"
-            column="ENT_ID"
-        />
+      
+        <set name="entityIds" table="DATALIST_ENTITY">
+		    <key column="DATALIST_METADATA_ID"/>
+		    <element column="ENTITY_ID" type="long"/>
+		</set>
+		
+
         
 		</joined-subclass>
 		
