@@ -15,6 +15,7 @@ import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.CategoryCache;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
+import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
 
@@ -39,6 +40,7 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
         CategorialClass rootCategorialClass = category.getRootClass();
         tagWithCategory(newEntity, category);
         tagWithCategorialClass(newEntity, rootCategorialClass);
+        copyAttributesFromCategorialClass(newEntity, rootCategorialClass);
 
         Map<CategorialClass, EntityInterface> catClassToEntity = new HashMap<CategorialClass, EntityInterface>();
         catClassToEntity.put(rootCategorialClass, newEntity);
@@ -52,7 +54,7 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
             for (CategorialClass categorialClass : currCatClasses) {
                 EntityInterface entity = createEntity(categorialClass);
                 catClassToEntity.put(categorialClass, entity);
-                
+
                 EntityInterface parentEntity = catClassToEntity.get(categorialClass.getParent());
                 DynamicExtensionUtility.createNewOneToManyAsso(parentEntity, entity);
 
@@ -64,7 +66,7 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
     }
 
     @Override
-    public Map<AbstractAttributeInterface, Object> getRecordAsMap(ICategorialClassRecord record) {
+    public Map<AbstractAttributeInterface, Object> transformToMap(ICategorialClassRecord record) {
         return getRecordAsMap(record, newEntity);
     }
 
@@ -75,13 +77,14 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
 
         for (Map.Entry<CategorialClass, List<ICategorialClassRecord>> entry : record.getChildrenCategorialClassRecords().entrySet()) {
             CategorialClass categorialClass = entry.getKey();
-            EntityInterface childEntity = parser.getEntitiesForCategorialClasses().get(categorialClass);
+            EntityInterface childEntity = parser.getCategorialClassIdToEntity().get(categorialClass.getId());
             for (ICategorialClassRecord childRecord : entry.getValue()) {
                 Map<AbstractAttributeInterface, Object> childRecordMap = getRecordAsMap(childRecord, childEntity);
                 AssociationInterface association = parser.getAssociation(entity, childEntity);
                 DataListUtil.getAssociatedRecordsList(res, association).add(childRecordMap);
             }
         }
+        putRecordIdInMap(record.getRecordId(), res, entity);
         return res;
     }
 
@@ -103,7 +106,16 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
         entity.setName(categorialClass.getCategorialClassEntity().getName());
         DynamicExtensionUtility.addTaggedValue(entity, CATEGORIAL_CLASS_ID_TAG_KEY,
                                                categorialClass.getId().toString());
+
+        copyAttributesFromCategorialClass(entity, categorialClass);
+        addVirtualAttributes(entity);
         return entity;
+    }
+
+    private void copyAttributesFromCategorialClass(EntityInterface entity, CategorialClass categorialClass) {
+        for (CategorialAttribute categorialAttribute : categorialClass.getCategorialAttributeCollection()) {
+            entity.addAttribute(DataListUtil.createNewAttribute(categorialAttribute.getCategoryAttribute()));
+        }
     }
 
     private Category getCategoryByEntityId(Long id) {

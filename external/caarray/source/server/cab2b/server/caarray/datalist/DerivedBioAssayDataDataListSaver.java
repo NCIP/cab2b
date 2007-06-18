@@ -35,7 +35,7 @@ public class DerivedBioAssayDataDataListSaver extends AbstractDataListSaver<IDer
     }
 
     @Override
-    public Map<AbstractAttributeInterface, Object> getRecordAsMap(IDerivedBioAssayDataRecord record) {
+    public Map<AbstractAttributeInterface, Object> transformToMap(IDerivedBioAssayDataRecord record) {
         Map<AbstractAttributeInterface, Object> recordsMap = super.getRecordAsMap(record);
         recordsMap.put(getAttributeByName(newEntity, CUBE_ATTRIBUTE_NAME), record.getCube());
         recordsMap.put(getAttributeByName(newEntity, DIM1LABELS_ATTRIBUTE_NAME), record.getDim1Labels());

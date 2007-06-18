@@ -13,6 +13,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.cab2b.common.util.AttributeInterfaceComparator;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 
@@ -30,7 +31,14 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
     // set of nonVirtual attributes in newEntity equals (by name) set of
     // attributes in
     // record (FOR THE DEFAULT CODE).
-    public Map<AbstractAttributeInterface, Object> getRecordAsMap(R record) {
+    public final Map<AbstractAttributeInterface, Object> getRecordAsMap(R record) {
+        Map<AbstractAttributeInterface, Object> recordsMap = transformToMap(record);
+        putRecordIdInMap(record.getRecordId(), recordsMap, newEntity);
+
+        return recordsMap;
+    }
+
+    protected Map<AbstractAttributeInterface, Object> transformToMap(R record) {
         List<AttributeInterface> recordAttributes = new ArrayList<AttributeInterface>(record.getAttributes());
 
         List<AttributeInterface> newEntityAttributes = new ArrayList<AttributeInterface>(
@@ -79,7 +87,7 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
 
     protected abstract void populateNewEntity(EntityInterface oldEntity);
 
-    private void addVirtualAttributes(EntityInterface entity) {
+    protected final void addVirtualAttributes(EntityInterface entity) {
         AttributeInterface idAttribute = getDomainObjectFactory().createStringAttribute();
         idAttribute.setName(DataListUtil.ID_ATTRIBUTE_NAME);
         DataListUtil.markVirtual(idAttribute);
@@ -92,7 +100,12 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
         entity.addAttribute(urlAttribute);
     }
 
-    // END SAVER METHODS
+    protected final void putRecordIdInMap(RecordId recordId, Map<AbstractAttributeInterface, Object> map,
+                                          EntityInterface entity) {
+        map.put(DataListUtil.getVirtualIdAttribute(entity), recordId.getId());
+        map.put(DataListUtil.getVirtualUrlAttribute(entity), recordId.getUrl());
+    }
+
     protected final DomainObjectFactory getDomainObjectFactory() {
         return DomainObjectFactory.getInstance();
     }

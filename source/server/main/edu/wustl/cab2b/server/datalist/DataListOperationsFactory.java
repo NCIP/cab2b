@@ -11,17 +11,18 @@ import edu.wustl.cab2b.server.cache.EntityCache;
 
 public class DataListOperationsFactory {
     public static DataListSaver<?> createDataListSaver(EntityInterface entity) {
-        try {
-            String transformerName = ResultConfigurationParser.getInstance().getDataListSaver(
-                                                                                              Utility.getApplicationName(entity),
-                                                                                              entity.getName());
-            Constructor<?> constructor = Class.forName(transformerName).getDeclaredConstructor(
-                                                                                               EntityInterface.class);
-            Object o = constructor.newInstance(entity);
-            return (DataListSaver<?>) o;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            String transformerName = ResultConfigurationParser.getInstance().getDataListSaver(
+//                                                                                              Utility.getApplicationName(entity),
+//                                                                                              entity.getName());
+//            Constructor<?> constructor = Class.forName(transformerName).getDeclaredConstructor(
+//                                                                                               EntityInterface.class);
+//            Object o = constructor.newInstance(entity);
+//            return (DataListSaver<?>) o;
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+        return new CategoryDataListSaver(entity);
     }
 
     public static DataListRetriever<?> createDataListRetriever(EntityInterface entity) {

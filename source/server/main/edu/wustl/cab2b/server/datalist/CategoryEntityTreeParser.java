@@ -18,7 +18,7 @@ import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
 
 class CategoryEntityTreeParser {
-    private Map<CategorialClass, EntityInterface> entitiesForCategorialClasses;
+    private Map<Long, EntityInterface> categorialClassIdToEntity;
 
     private Map<EntityPair, AssociationInterface> associationForEntityPair;
 
@@ -30,8 +30,8 @@ class CategoryEntityTreeParser {
         return associationForEntityPair;
     }
 
-    Map<CategorialClass, EntityInterface> getEntitiesForCategorialClasses() {
-        return entitiesForCategorialClasses;
+    Map<Long, EntityInterface> getCategorialClassIdToEntity() {
+        return categorialClassIdToEntity;
     }
 
     Category getCategory() {
@@ -43,16 +43,16 @@ class CategoryEntityTreeParser {
     }
 
     CategoryEntityTreeParser(EntityInterface rootEntity) {
-        entitiesForCategorialClasses = new HashMap<CategorialClass, EntityInterface>();
+        categorialClassIdToEntity = new HashMap<Long, EntityInterface>();
         associationForEntityPair = new HashMap<EntityPair, AssociationInterface>();
         associationsForEntity = new HashMap<EntityInterface, List<AssociationInterface>>();
 
         category = getCategoryForDataListEntity(rootEntity);
 
-        // CategorialClass rootClass = category.getRootClass();
+        CategorialClass rootClass = category.getRootClass();
 
         List<CategorialClass> currCategorialClasses = new ArrayList<CategorialClass>();
-        // currCategorialClasses.add(rootClass);
+        currCategorialClasses.add(rootClass);
 
         List<EntityInterface> currEntities = new ArrayList<EntityInterface>();
         currEntities.add(rootEntity);
@@ -66,7 +66,7 @@ class CategoryEntityTreeParser {
                 Long categorialClassId = getCategorialClassId(currEntity);
                 CategorialClass categorialClass = findCategorialClassWithId(currCategorialClasses,
                                                                             categorialClassId);
-                entitiesForCategorialClasses.put(categorialClass, currEntity);
+                categorialClassIdToEntity.put(categorialClass.getId(), currEntity);
                 Collection<AssociationInterface> associations = currEntity.getAssociationCollection();
                 for (AssociationInterface association : associations) {
                     EntityInterface targetEntity = association.getTargetEntity();
@@ -78,7 +78,8 @@ class CategoryEntityTreeParser {
                 }
                 nextCategorialClasses.addAll(categorialClass.getChildren());
             }
-            nextEntities = currEntities;
+            currEntities = nextEntities;
+            currCategorialClasses = nextCategorialClasses;
         }
     }
 
