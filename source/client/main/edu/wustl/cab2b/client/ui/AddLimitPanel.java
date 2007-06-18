@@ -287,7 +287,8 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
                 ((AbstractTypePanel) component).resetPanel();
             }
         }
-        validate();
+        revalidate();
+        updateUI();
     }
     
     private void resetButton(Cab2bPanel cab2bPanel, Cab2bButton cab2bButton) {
@@ -298,6 +299,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
     public void resetPanel() {
         clearAddLimitUI();
         m_contentForBottomCenterPanel.clearDagPanel();
+        revalidate();
         updateUI();
     }
 
