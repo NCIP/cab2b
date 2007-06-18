@@ -60,6 +60,8 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
     private JLabel middleLabel;
 
     private JLabel rightLabel;
+    
+    private JButton lastSelectedTab;
 
     private static final long serialVersionUID = 1L;
 
@@ -105,8 +107,8 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
             tabButtons[i].setBorder(null);
             tabButtons[i].addActionListener(this);
             tabsPanel.add(tabButtons[i]);
-
         }
+        
         ImageIcon icon = new ImageIcon(tabsImagesPressed[0]);
         tabButtons[0].setIcon(icon);
         gbc.gridx = 3;
@@ -183,6 +185,7 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
         gbc.fill = GridBagConstraints.VERTICAL;
         rightLabel.add(linkPanel, gbc);
 
+        lastSelectedTab = tabButtons[0];
         this.repaint();
     }
 
@@ -197,10 +200,10 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
                 MainFrame mainframePanel = (MainFrame) this.frame;
                 mainframePanel.setHomeWelcomePanel();
                 Logger.out.debug("Global Nagigation Panel Home Button");
-            }
+            }            
         } else if (button.equals(tabButtons[1])) {
-            tabButtons[1].setIcon(new ImageIcon(tabsImagesPressed[1]));
             tabButtons[0].setIcon(new ImageIcon(tabsImagesUnPressed[0]));
+            tabButtons[1].setIcon(new ImageIcon(tabsImagesPressed[1]));
             tabButtons[2].setIcon(new ImageIcon(tabsImagesUnPressed[2]));
             GlobalNavigationPanel.mainSearchPanel = new MainSearchPanel();
             Dimension relDimension = CommonUtils.getRelativeDimension(MainFrame.mainframeScreenDimesion, 0.90f,
@@ -223,15 +226,20 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
             GlobalNavigationPanel.mainSearchPanel = null;
 
             // Set the Home tab as pressed and Search tab as unpressed
-            tabButtons[0].setIcon(new ImageIcon(tabsImagesPressed[0]));
+            if(lastSelectedTab != null && lastSelectedTab.equals(tabButtons[0])) {
+                lastSelectedTab.setIcon(new ImageIcon(tabsImagesPressed[0]));
+            } else if(lastSelectedTab != null && lastSelectedTab.equals(tabButtons[2])) {
+                lastSelectedTab.setIcon(new ImageIcon(tabsImagesPressed[2]));
+            }
             tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
         } else if (button.equals(tabButtons[2])) {
-            tabButtons[2].setIcon(new ImageIcon(tabsImagesPressed[2]));
-            tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
             tabButtons[0].setIcon(new ImageIcon(tabsImagesUnPressed[0]));
+            tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
+            tabButtons[2].setIcon(new ImageIcon(tabsImagesPressed[2]));
             MainFrame mainframePanel = (MainFrame) this.frame;
             mainframePanel.setOpenExperimentWelcomePanel();
         }
+        lastSelectedTab = button;
 
         this.updateUI();
         this.repaint();
