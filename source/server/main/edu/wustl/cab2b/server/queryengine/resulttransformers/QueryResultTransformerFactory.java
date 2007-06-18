@@ -1,9 +1,11 @@
 package edu.wustl.cab2b.server.queryengine.resulttransformers;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.cab2b.server.analyticalservice.ResultConfigurationParser;
 
 /**
  * Factory to create transformer.
@@ -13,27 +15,18 @@ import edu.wustl.cab2b.common.util.Utility;
 public final class QueryResultTransformerFactory {
     public static IQueryResultTransformer<?, ?> createTransformer(EntityInterface outputEntity) {
         try {
-            String transformerName = "edu.wustl.cab2b.server.queryengine.resulttransformers.DefaultQueryResultTransformer";
-            if (Utility.getApplicationName(outputEntity).equals("caArray")) {
-                transformerName = "cab2b.server.caarray.resulttransformer.DefaultCaArrayResultTransformer";
-                if (outputEntity.getName().equals("gov.nih.nci.mageom.domain.BioAssayData.DerivedBioAssayData")) {
-                    transformerName = "cab2b.server.caarray.resulttransformer.DerivedBioAssayDataResultTransformer";
-                }
-            }
-
+            String transformerName = ResultConfigurationParser.getInstance().getResultTransformer(
+                                                                                                  Utility.getApplicationName(outputEntity),
+                                                                                                  outputEntity.getName());
             Object o = Class.forName(transformerName).newInstance();
             return (IQueryResultTransformer<?, ?>) o;
         } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     public static <R extends IRecord, C extends ICategorialClassRecord> IQueryResultTransformer<R, C> createTransformer(

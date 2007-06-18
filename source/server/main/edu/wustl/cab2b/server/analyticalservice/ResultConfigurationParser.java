@@ -84,6 +84,7 @@ public class ResultConfigurationParser {
 
     private static final String DEFAULT_ELEMENT_KEY = null;
 
+    private static final String KEY_DELIM = ":";
     /**
      * Constructor
      */
@@ -146,7 +147,7 @@ public class ResultConfigurationParser {
         for (Element entityElement : elementList) {
 
             if (entityElement.attributeValue(NAME) != null) {
-                mapKey = mapKey + "_" + entityElement.attributeValue(NAME);
+                mapKey = mapKey + KEY_DELIM + entityElement.attributeValue(NAME);
             }
 
             Element resultTransformer = entityElement.element(RESULT_TRANSFORMER);
@@ -253,8 +254,8 @@ public class ResultConfigurationParser {
 
     public String getResultRenderer(String applicationName, String entityName) {
 
-        if (applicationEntityNameMap.get(applicationName + "_" + entityName) != null)
-            return applicationEntityNameMap.get(applicationName + "_" + entityName).getResultRenderer();
+        if (applicationEntityNameMap.get(applicationName + KEY_DELIM + entityName) != null)
+            return applicationEntityNameMap.get(applicationName + KEY_DELIM + entityName).getResultRenderer();
 
         String res = getResultRenderer(applicationName);
         if (res == null) {
@@ -273,8 +274,8 @@ public class ResultConfigurationParser {
      */
     public String getResultTransformer(String applicationName, String entityName) {
 
-        if (applicationEntityNameMap.get(applicationName + "_" + entityName) != null)
-            return applicationEntityNameMap.get(applicationName + "_" + entityName).getResultTransformer();
+        if (applicationEntityNameMap.get(applicationName + KEY_DELIM + entityName) != null)
+            return applicationEntityNameMap.get(applicationName + KEY_DELIM + entityName).getResultTransformer();
         String res = getResultTransformer(applicationName);
         if (res == null) {
             res = getDefault().getResultTransformer();
@@ -292,8 +293,8 @@ public class ResultConfigurationParser {
      * 
      */
     private DataListTransformer getDataListTransformer(String applicationName, String entityName) {
-        if (applicationEntityNameMap.get(applicationName + "_" + entityName) != null)
-            return applicationEntityNameMap.get(applicationName + "_" + entityName).getDataListTransformer();
+        if (applicationEntityNameMap.get(applicationName + KEY_DELIM + entityName) != null)
+            return applicationEntityNameMap.get(applicationName + KEY_DELIM + entityName).getDataListTransformer();
         DataListTransformer res = getDataListTransformer(applicationName);
         if (res == null) {
             res = getDefault().getDataListTransformer();

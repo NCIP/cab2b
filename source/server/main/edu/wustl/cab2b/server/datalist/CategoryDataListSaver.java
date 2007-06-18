@@ -51,6 +51,8 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
 
             for (CategorialClass categorialClass : currCatClasses) {
                 EntityInterface entity = createEntity(categorialClass);
+                catClassToEntity.put(categorialClass, entity);
+                
                 EntityInterface parentEntity = catClassToEntity.get(categorialClass.getParent());
                 DynamicExtensionUtility.createNewOneToManyAsso(parentEntity, entity);
 
