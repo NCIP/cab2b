@@ -17,8 +17,11 @@ import edu.wustl.cab2b.client.ui.query.Utility;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.datalist.DataRow;
 import edu.wustl.cab2b.common.datalist.IDataRow;
+import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface;
 import edu.wustl.cab2b.common.ejb.path.PathFinderHomeInterface;
+import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
+import edu.wustl.cab2b.common.ejb.utility.UtilityHomeInterface;
 import edu.wustl.cab2b.common.queryengine.result.I3DDataRecord;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
@@ -62,14 +65,14 @@ public class ResultPanelFactory {
             }
         }
 
-        Collection<AssociationInterface> incomingAssociationCollection = null;
-        List<IInterModelAssociation> intraModelAssociationCollection = null;
-
-        PathFinderBusinessInterface busInt = (PathFinderBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                            "edu.wustl.cab2b.server.ejb.path.PathFinderBean",
+        PathFinderBusinessInterface pathFinder = (PathFinderBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.PATH_FINDER_BEAN,
                                                                                                             PathFinderHomeInterface.class,
                                                                                                             null);
-
+        UtilityBusinessInterface utilityBean = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.UTILITY_BEAN,
+                                                                                                          UtilityHomeInterface.class,
+                                                                                                            null);
+        Collection<AssociationInterface> incomingAssociationCollection = null;
+        List<IInterModelAssociation> intraModelAssociationCollection = null;
         EntityInterface entity = null;
         if (record instanceof ICategorialClassRecord) {
             entity = ((ICategorialClassRecord) record).getCategorialClass().getCategorialClassEntity();
@@ -78,9 +81,8 @@ public class ResultPanelFactory {
         }
 
         try {
-            incomingAssociationCollection = busInt.getIncomingIntramodelAssociations(entity.getId());
-
-            intraModelAssociationCollection = busInt.getInterModelAssociations(entity.getId());
+            incomingAssociationCollection = utilityBean.getIncomingIntramodelAssociations(entity.getId());
+            intraModelAssociationCollection = pathFinder.getInterModelAssociations(entity.getId());
         } catch (RemoteException re) {
             CommonUtils.handleException(re, searchPanel, true, true, false, false);
         }
