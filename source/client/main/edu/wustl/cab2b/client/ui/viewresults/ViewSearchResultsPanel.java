@@ -30,29 +30,27 @@ public class ViewSearchResultsPanel extends Cab2bPanel {
 
 	private IQueryResult queryResult;
 
-	public ViewSearchResultsPanel(IQueryResult queryResult,
-			MainSearchPanel panel) {
+	public ViewSearchResultsPanel(IQueryResult queryResult, MainSearchPanel panel) {
 		this.queryResult = queryResult;
 		initGUI(panel);
 	}
 
 	private void initGUI(MainSearchPanel panel) {
 		this.setLayout(new BorderLayout());
-		this.setPreferredSize(new Dimension(panel.getWidth() - 100, panel
-				.getHeight()));
-		this.setMaximumSize(new Dimension(panel.getWidth() - 100, panel
-				.getHeight()));
+		this.setPreferredSize(new Dimension(panel.getWidth() - 100, panel.getHeight()));
+		this.setMaximumSize(new Dimension(panel.getWidth() - 100, panel.getHeight()));
 
 		simpleAdvTabPane = new JTabbedPane();
 		simpleAdvTabPane.setUI(new Cab2bTabbedPaneUI());
 
-		searchResultBreadCrumbsPanel = new SimpleSearchResultBreadCrumbPanel(
-				queryResult, this);
+		searchResultBreadCrumbsPanel = new SimpleSearchResultBreadCrumbPanel(queryResult, this);
 		searchResultBreadCrumbsPanel.setBorder(new CustomBorder());
 		simpleAdvTabPane.add(" Simple ", searchResultBreadCrumbsPanel);
 
 		advSearchResultsPanel = new ViewSearchResultsAdvancedPanel(queryResult);
+
 		simpleAdvTabPane.add(" Advanced ", advSearchResultsPanel);
+		simpleAdvTabPane.setEnabledAt(1, false);
 
 		this.add(BorderLayout.CENTER, simpleAdvTabPane);
 	}
