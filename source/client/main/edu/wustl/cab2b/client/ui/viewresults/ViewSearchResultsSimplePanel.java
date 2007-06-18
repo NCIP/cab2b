@@ -126,13 +126,15 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
                     }
                 }
                 String description = descBuffer.toString();
-                if (description.length() > 150) {
-                    //150 is allowable chars at 1024 resolution
-                    description = description.substring(0, 150);
-                    //To avoid clipping of attribute value in-between
-                    int index = description.lastIndexOf(",");
-                    description = description.substring(0, index);
-                }
+//                if (description.length() > 150) {
+//                    //150 is allowable chars at 1024 resolution
+//                    description = description.substring(0, 150);
+//                    //To avoid clipping of attribute value in-between
+//                    int index = description.lastIndexOf(",");
+//                    if(index > 0) {
+//                        description = description.substring(0, index);
+//                    }
+//                }
                 PageElement element = new PageElementImpl();
                 element.setDisplayName(className + "_" + j);
                 element.setDescription(description);
