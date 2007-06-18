@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -134,9 +135,11 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         projPanel.setLayout(new BorderLayout(0, 0));
 
         JLabel asterix1 = new Cab2bLabel("* ");
+        asterix1.setFont(new Font("Arial", Font.BOLD, 16));
         asterix1.setForeground(Color.RED);
 
         JLabel asterix2 = new Cab2bLabel("* ");
+        asterix2.setFont(new Font("Arial", Font.BOLD, 16));
         asterix2.setForeground(Color.RED);
 
         // JLabel mandatoryNodeLabel = new

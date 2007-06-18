@@ -3,6 +3,7 @@ package edu.wustl.cab2b.client.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.rmi.RemoteException;
@@ -134,11 +135,12 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         this.add(BorderLayout.CENTER, centerPanel);
 
         /* The bottom panel */
-        JXPanel bottomPanel = new Cab2bPanel(new RiverLayout());
-        JLabel asterix = new Cab2bLabel("*");
+        JXPanel bottomPanel = new Cab2bPanel(new RiverLayout(0,0));
+        JLabel asterix = new Cab2bLabel("* ");
+        asterix.setFont(new Font("Arial", Font.BOLD, 16));
         asterix.setForeground(Color.RED);
         bottomPanel.add(asterix);
-        bottomPanel.add(new Cab2bLabel("Select Default View"));
+        bottomPanel.add(new Cab2bLabel("Select Default View   "));
 
         /*
          * Get the class corresponding to the root expression and show that in
@@ -196,7 +198,6 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         } catch (RemoteException e) {
             CommonUtils.handleException(e, m_searchCenterPanel, true, true, true, false);
         }
-
         bottomPanel.add(combo);
 
         this.add(BorderLayout.SOUTH, bottomPanel);
