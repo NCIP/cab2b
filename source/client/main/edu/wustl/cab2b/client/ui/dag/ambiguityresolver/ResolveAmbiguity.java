@@ -26,45 +26,37 @@ public class ResolveAmbiguity {
 
     private Vector<AmbiguityObject> m_ambiguityObjects;
 
-    int m_currentAmbigityIndex = 0;
-
-    int m_totalAmbiguityObjects;
-
-    Map<AmbiguityObject, List<IPath>> m_ambiguityObjectToPathsMap = new HashMap<AmbiguityObject, List<IPath>>();
+    private Map<AmbiguityObject, List<IPath>> m_ambiguityObjectToPathsMap = new HashMap<AmbiguityObject, List<IPath>>();
 
     private IPathFinder m_pathFinder;
 
-    public static int pathIdentity = 1;
-
     public ResolveAmbiguity(Vector<AmbiguityObject> ambiguityObjects, IPathFinder pathFinder) {
         m_ambiguityObjects = ambiguityObjects;
-        m_totalAmbiguityObjects = m_ambiguityObjects.size();
         m_pathFinder = pathFinder;
     }
 
     public ResolveAmbiguity(AmbiguityObject ambiguityObject, IPathFinder pathFinder) {
         m_ambiguityObjects = new Vector<AmbiguityObject>();
         m_ambiguityObjects.add(ambiguityObject);
-        m_totalAmbiguityObjects = m_ambiguityObjects.size();
         m_pathFinder = pathFinder;
     }
 
     public Map<AmbiguityObject, List<IPath>> getPathsForAllAmbiguities() {
-        for (int i = 0; i < m_totalAmbiguityObjects; i++) {
+        for (int i = 0; i < m_ambiguityObjects.size(); i++) {
             AmbiguityObject ambiguityObject = m_ambiguityObjects.get(i);
             Map<String, List<IPath>> allPathMap = getPaths(ambiguityObject.getSourceEntity(),
                                                            ambiguityObject.getTargetEntity());
 
             List<IPath> selectedPathList = allPathMap.get(Constants.SELECTED_PATH);
-            List<IPath> curratedPathList =  allPathMap.get(Constants.CURATED_PATH);
+            List<IPath> curratedPathList = allPathMap.get(Constants.CURATED_PATH);
             if (!selectedPathList.isEmpty()) {
                 m_ambiguityObjectToPathsMap.put(ambiguityObject, selectedPathList);
-            } else if(curratedPathList.size() == 1) {
+            } else if (curratedPathList.size() == 1) {
                 m_ambiguityObjectToPathsMap.put(ambiguityObject, curratedPathList);
             } else {
-                List<IPath> generalPathList =  allPathMap.get(Constants.GENERAL_PATH);
+                List<IPath> generalPathList = allPathMap.get(Constants.GENERAL_PATH);
                 List<IPath> selectedPaths = null;
-                if(!curratedPathList.isEmpty() || !generalPathList.isEmpty()) {
+                if (!curratedPathList.isEmpty() || !generalPathList.isEmpty()) {
                     selectedPaths = showAmbiguityResolverUI(allPathMap);
                 }
                 m_ambiguityObjectToPathsMap.put(ambiguityObject, selectedPaths);
