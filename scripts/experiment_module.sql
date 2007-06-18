@@ -28,9 +28,18 @@ create table experiment (
 );
 create table datalist (
    DL_ID bigint not null,
-   ENT_ID bigint,
    primary key (DL_ID)
 );
+
+
+create table DATALIST_ENTITY (
+   DATALIST_METADATA_ID bigint not null,
+   ENTITY_ID bigint not null,
+   primary key (DATALIST_METADATA_ID,ENTITY_ID)
+);
+
+
+
 create table dlexpmap (
    EXP_ID bigint not null,
    DL_ID bigint not null,
@@ -68,3 +77,6 @@ alter table experimentgroup add index FKD9A210A264FE787B (PARENT_EXG_ID), add co
 alter table experimentgroup add index FKD9A210A27AB82B46 (EXG_ID), add constraint FKD9A210A27AB82B46 foreign key (EXG_ID) references additionalmetadata (AMD_ID);
 alter table expgrpmapping add index FKCD7AF6267AB82B46 (EXG_ID), add constraint FKCD7AF6267AB82B46 foreign key (EXG_ID) references experimentgroup (EXG_ID);
 alter table expgrpmapping add index FKCD7AF6267ABC429D (EXP_ID), add constraint FKCD7AF6267ABC429D foreign key (EXP_ID) references experiment (EXP_ID);
+
+alter table DATALIST_ENTITY add index FKCD7AF6267ABC345D (DATALIST_METADATA_ID), add constraint FKCD7AF6267ABC345D foreign key (DATALIST_METADATA_ID) references datalist (DL_ID);
+
