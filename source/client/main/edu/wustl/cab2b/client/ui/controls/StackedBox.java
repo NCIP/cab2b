@@ -38,6 +38,9 @@ import edu.wustl.cab2b.client.ui.RiverLayout;
 /**
  * Stacks components vertically in boxes. Each box is created with a title and a component.<br>
  * The <code>StackedBox</code> can be added to a {@link javax.swing.JScrollPane}.
+ * @author Chetan B H
+ * @author Chandrakant Talele
+ * @author Mahesh Iyer
  */
 public class StackedBox extends Cab2bPanel implements Scrollable {
 
@@ -156,6 +159,9 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
     /**
      * The border between the stack components. It separates each component with
      * a fine line border.
+     * @author Chetan B H
+     * @author Chandrakant Talele
+     * @author Mahesh Iyer
      */
     class SeparatorBorder implements Border {
 
@@ -246,13 +252,13 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
             int x = size.width - 24;
             int y = (size.height / 2);
             if (openOrClosed.equalsIgnoreCase("open")) {
-                polygon.addPoint(x + 6, y + 6);
-                polygon.addPoint(x + 18, y + 6);
-                polygon.addPoint(x + 12, y - 6);
-            } else {
                 polygon.addPoint(x + 6, y - 6); // Arrow Down.
-                polygon.addPoint((x + 18), y - 6);
-                polygon.addPoint((x + 12), y + 6);
+                polygon.addPoint(x + 18, y - 6);
+                polygon.addPoint(x + 12, y + 6);
+            } else {
+                polygon.addPoint(x + 6, y - 6); // Arrow Vertical [->].
+                polygon.addPoint(x + 6, y + 6);
+                polygon.addPoint(x + 18, y);
             }
             return polygon;
         }
