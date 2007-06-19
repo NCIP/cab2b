@@ -1,5 +1,7 @@
 package edu.wustl.cab2b.client.ui.main;
-
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.POPULAR_CATEGORIES_IMAGE;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.MY_CATEGORIES_IMAGE;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.MY_SEARCH_QUERIES_IMAGE;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -33,21 +35,21 @@ public class B2BStackedBox extends Cab2bPanel {
 		status.setPreferredSize(new Dimension(265, 123));
 		status.setOpaque(false);
 		status.setBorder(null);
-		box.addBox("My Categories", status, "", false);
+		box.addBox("My Categories", status, MY_CATEGORIES_IMAGE, false);
 
 		// the profiling results
 		JPanel profilingResults = new JPanel();
 		profilingResults.setOpaque(false);
 		profilingResults.setPreferredSize(new Dimension(265, 123));
 		profilingResults.setBorder(null);
-		box.addBox("My Search Queries", profilingResults, "", false);
+		box.addBox("My Search Queries", profilingResults, MY_SEARCH_QUERIES_IMAGE, false);
 
 		// the saved snapshots pane
-		JPanel savedSnapshots = new JPanel();
-		savedSnapshots.setPreferredSize(new Dimension(265, 123));
-		savedSnapshots.setOpaque(false);
-		savedSnapshots.setBorder(null);
-		box.addBox("Popular Categories", savedSnapshots, "", false);
+		JPanel popularCategories = new JPanel();
+		popularCategories.setPreferredSize(new Dimension(265, 123));
+		popularCategories.setOpaque(false);
+		popularCategories.setBorder(null);
+		box.addBox("Popular Categories", popularCategories,POPULAR_CATEGORIES_IMAGE, false);
 
 		this.setBorder(null);
 
