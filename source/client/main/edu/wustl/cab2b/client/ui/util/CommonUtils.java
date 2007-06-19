@@ -9,6 +9,7 @@ import java.util.BitSet;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.JComponent;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -598,5 +599,51 @@ public class CommonUtils {
 		}
 		return maxLabelDimension;
 	}
+    /**
+     * @return Popular categories at this point
+     */
+    public static  Vector getPopularSearchCategories() {
+        /* TODO These default Search Categories will be removed after its support*/
+        Vector<String> popularSearchCategories = new Vector<String>();
+        popularSearchCategories.add("Gene Annotation");
+        popularSearchCategories.add("Microarray Annotation");
+        popularSearchCategories.add("Tissue Biospecimens");
+        popularSearchCategories.add("Molecular Biospecimens");
+        return popularSearchCategories;
+    }
 
+    /**
+     * @return Recent search queries
+     */
+    public static Vector getUserSearchQueries() {
+        /* TODO These default UserSearchQueries will be removed later after SAVE QUERY support*/
+        Vector<String> mySearchQueries = new Vector<String>();
+        mySearchQueries.add("Prostate Cancer Microarray Data");
+        mySearchQueries.add("Glioblastoma Microarray Data");
+        return mySearchQueries;
+    }
+
+    /**
+     * @return All the experiments performed by the user.
+     */
+    public static Vector getExperiments() {
+        /* TODO These default experiments will be removed later on*/
+        Vector<String> myRecentExperiments = new Vector<String>();
+        myRecentExperiments.add("Breast Cancer Microarrays (Hu133 Plus 2.0)");
+        myRecentExperiments.add("Breast Cancer Microarrays (MOE430 Plus 2.0)");
+        myRecentExperiments.add("Acute Myelogenous Leukemia Microarrays");
+        return myRecentExperiments;
+    }
+    /**
+     * @return Popular categories at this point
+     */
+    public static  Vector getUserSearchCategories() {
+        /* TODO These default Search Categories will be removed after its support*/
+        Vector<String> popularSearchCategories = new Vector<String>();
+        popularSearchCategories.add("Gene Annotation");
+        popularSearchCategories.add("Microarray Annotation");
+        popularSearchCategories.add("Tissue Biospecimens");
+        popularSearchCategories.add("Molecular Biospecimens");
+        return popularSearchCategories;
+    }
 }
