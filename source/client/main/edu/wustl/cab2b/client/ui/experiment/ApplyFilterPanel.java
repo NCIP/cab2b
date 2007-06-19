@@ -76,6 +76,7 @@ public class ApplyFilterPanel extends Cab2bPanel {
     private Cab2bComboBox applyingFilter() {
         combo = new Cab2bComboBox();
         Cab2bTable table = spreadSheetViewPanel.getDataTable();
+        combo.addItem("--Select Column--");
         int columnCount = table.getModel().getColumnCount();
         for (int i = 0; i < columnCount; i++) {
             String colName = table.getModel().getColumnName(i);
@@ -83,7 +84,7 @@ public class ApplyFilterPanel extends Cab2bPanel {
             indexToName.put(colName, i);
         }
         combo.setPreferredSize(null);
-        combo.setSelectedItem(null);
+        combo.setSelectedItem("--Select Column--");
         combo.addItemListener(new ComboItemListener(this));
 
         return combo;
@@ -133,6 +134,10 @@ public class ApplyFilterPanel extends Cab2bPanel {
                 boolean filterNotToBeApplied = false;
                 elements.clear();
                 String columnName = ie.getItem().toString();
+                if(columnName.equals("--Select Column--")){
+                	
+                }else
+                {
                 int columnIndex = indexToName.get(columnName);
                 CaB2BFilterInterface oldFilter = null;
                 if (filterMap.containsKey(columnName)) {
@@ -188,7 +193,8 @@ public class ApplyFilterPanel extends Cab2bPanel {
                     applyFilter();
                 }
                 Logger.out.debug("Records after filterting :" + spreadSheetViewPanel.getSelectedRecords().size());
-                combo.setSelectedItem(null);
+                combo.setSelectedItem("--Select Column--");
+            }
             }
         }
 
