@@ -231,6 +231,7 @@
 				<include name="*.cfg.xml" />
 				<include name="dbutil.properties" />
 				<include name="EntityToAnalyticalServiceMapping.xml" />
+				<include name="ResultConfiguration.xml" />
 			</fileset>
 		</copy>
 		<jar basedir="${server.jar.dir}" destfile="${server.jar.file}"/>
@@ -593,6 +594,15 @@
 		<!-- delete file="${workArea.dir}/jar/dynamicUI.xml"></delete -->
 	</target>
 	<!-- ================================================================================== -->
+	
+	<target name="query.jar" depends="compile.all">
+		<jar basedir="${workArea.dir}/common/classes" destfile="query-server.jar">
+			<include name="**/queryengine/result/*.*" />
+		</jar>
+		<jar basedir="${workArea.dir}/server/classes" destfile="query-common.jar">
+			<include name="**/queryengine/resulttransformers/*.*" />
+		</jar>
+	</target>
 </project>
 <!-- ==================================================================================
 DO NOT DELETE THIS COMMENT. 
