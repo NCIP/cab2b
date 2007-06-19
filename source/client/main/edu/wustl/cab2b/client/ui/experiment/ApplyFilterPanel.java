@@ -27,6 +27,7 @@ import edu.wustl.cab2b.client.ui.filter.FilterComponent;
 import edu.wustl.cab2b.client.ui.filter.PatternPopup;
 import edu.wustl.cab2b.client.ui.filter.RangeFilter;
 import edu.wustl.cab2b.client.ui.viewresults.DefaultSpreadSheetViewPanel;
+import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.DataType;
 import edu.wustl.common.util.logger.Logger;
@@ -41,7 +42,7 @@ import edu.wustl.common.util.logger.Logger;
 public class ApplyFilterPanel extends Cab2bPanel {
     private static final long serialVersionUID = 1L;
 
-    DefaultSpreadSheetViewPanel spreadSheetViewPanel;
+    private DefaultSpreadSheetViewPanel spreadSheetViewPanel;
 
     private Map<String, Integer> indexToName;
 
@@ -76,7 +77,7 @@ public class ApplyFilterPanel extends Cab2bPanel {
     private Cab2bComboBox applyingFilter() {
         combo = new Cab2bComboBox();
         Cab2bTable table = spreadSheetViewPanel.getDataTable();
-        combo.addItem("--Select Column--");
+        combo.addItem(Constants.SELECT_COLUMN);
         int columnCount = table.getModel().getColumnCount();
         for (int i = 0; i < columnCount; i++) {
             String colName = table.getModel().getColumnName(i);
@@ -84,7 +85,7 @@ public class ApplyFilterPanel extends Cab2bPanel {
             indexToName.put(colName, i);
         }
         combo.setPreferredSize(null);
-        combo.setSelectedItem("--Select Column--");
+        combo.setSelectedItem(Constants.SELECT_COLUMN);
         combo.addItemListener(new ComboItemListener(this));
 
         return combo;
@@ -134,67 +135,65 @@ public class ApplyFilterPanel extends Cab2bPanel {
                 boolean filterNotToBeApplied = false;
                 elements.clear();
                 String columnName = ie.getItem().toString();
-                if(columnName.equals("--Select Column--")){
-                	
-                }else
-                {
-                int columnIndex = indexToName.get(columnName);
-                CaB2BFilterInterface oldFilter = null;
-                if (filterMap.containsKey(columnName)) {
-                    oldFilter = filterMap.get(columnName);
-                }
+                if (!columnName.equals(Constants.SELECT_COLUMN)) {
+                    int columnIndex = indexToName.get(columnName);
+                    CaB2BFilterInterface oldFilter = null;
+                    if (filterMap.containsKey(columnName)) {
+                        oldFilter = filterMap.get(columnName);
+                    }
 
-                Cab2bFilterPopup filterPopup = null;
-                AttributeInterface attribute = spreadSheetViewPanel.getColumnAttribute(columnName);
-                if (Utility.isEnumerated(attribute)) {
-                    Collection<PermissibleValueInterface> permissibleValueCollection = Utility.getPermissibleValues(attribute);
-                    filterPopup = new EnumeratedFilterPopUp(applyFilterpanel, permissibleValueCollection,
-                            (CaB2BPatternFilter) oldFilter, columnName, columnIndex);
-                } else {
-                    DataType dataType = Utility.getDataType(attribute.getAttributeTypeInformation());
+                    Cab2bFilterPopup filterPopup = null;
+                    AttributeInterface attribute = spreadSheetViewPanel.getColumnAttribute(columnName);
+                    if (Utility.isEnumerated(attribute)) {
+                        Collection<PermissibleValueInterface> permissibleValueCollection = Utility.getPermissibleValues(attribute);
+                        filterPopup = new EnumeratedFilterPopUp(applyFilterpanel, permissibleValueCollection,
+                                (CaB2BPatternFilter) oldFilter, columnName, columnIndex);
+                    } else {
+                        DataType dataType = Utility.getDataType(attribute.getAttributeTypeInformation());
 
-                    // If the clicked column is of type String.
-                    if (DataType.String == dataType || DataType.Boolean == dataType) {
-                        filterPopup = new PatternPopup(applyFilterpanel, (CaB2BPatternFilter) oldFilter,
-                                columnName, columnIndex);
-                        // If the clicked column is of type int/long
-                    } else if (DataType.Double == dataType || DataType.Float == dataType
-                            || DataType.Long == dataType || DataType.Integer == dataType) {
+                        // If the clicked column is of type String.
+                        if (DataType.String == dataType || DataType.Boolean == dataType) {
+                            filterPopup = new PatternPopup(applyFilterpanel, (CaB2BPatternFilter) oldFilter,
+                                    columnName, columnIndex);
+                            // If the clicked column is of type int/long
+                        } else if (DataType.Double == dataType || DataType.Float == dataType
+                                || DataType.Long == dataType || DataType.Integer == dataType) {
 
-                        double[] columnVal = null;
-                        if (oldFilter == null) {
-                            Cab2bTable table = spreadSheetViewPanel.getDataTable();
+                            double[] columnVal = null;
+                            if (oldFilter == null) {
+                                Cab2bTable table = spreadSheetViewPanel.getDataTable();
 
-                            for (int i = 0; i < table.getRowCount(); i++) {
-                                String value = (String) table.getValueAt(i, columnIndex);
-                                if (value != null && !value.equals("")) {
-                                    elements.add(value);
+                                for (int i = 0; i < table.getRowCount(); i++) {
+                                    String value = (String) table.getValueAt(i, columnIndex);
+                                    if (value != null && !value.equals("")) {
+                                        elements.add(value);
+                                    }
+                                }
+
+                                if (elements.isEmpty()) {
+                                    filterNotToBeApplied = true;
                                 }
                             }
 
-                            if (elements.isEmpty()) {
-                                filterNotToBeApplied = true;
+                            columnVal = new double[elements.size()];
+                            int count = 0;
+                            for (Object obj : elements) {
+                                columnVal[count] = Double.parseDouble(obj.toString());
+                                count++;
                             }
+                            filterPopup = new FilterComponent("Range Filter", applyFilterpanel,
+                                    (RangeFilter) oldFilter, columnVal, columnName, columnIndex);
                         }
-
-                        columnVal = new double[elements.size()];
-                        int count = 0;
-                        for (Object obj : elements) {
-                            columnVal[count] = Double.parseDouble(obj.toString());
-                            count++;
-                        }
-                        filterPopup = new FilterComponent("Range Filter", applyFilterpanel,
-                                (RangeFilter) oldFilter, columnVal, columnName, columnIndex);
                     }
-                }
 
-                if (filterNotToBeApplied == false) {
-                    filterPopup.showInDialog();
-                    applyFilter();
+                    if (filterNotToBeApplied == false) {
+                        filterPopup.showInDialog();
+                        applyFilter();
+                    }
+                    Logger.out.debug("Records after filterting :"
+                            + spreadSheetViewPanel.getSelectedRecords().size());
+                    combo.setSelectedItem(Constants.SELECT_COLUMN);
                 }
-                Logger.out.debug("Records after filterting :" + spreadSheetViewPanel.getSelectedRecords().size());
-                combo.setSelectedItem("--Select Column--");
-            }
             }
         }
 
