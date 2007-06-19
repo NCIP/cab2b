@@ -2,7 +2,7 @@ package edu.wustl.cab2b.common.util;
 
 import static edu.wustl.cab2b.common.util.Constants.CONNECTOR;
 import static edu.wustl.cab2b.common.util.Constants.PROJECT_VERSION;
-
+import static edu.wustl.cab2b.common.util.Constants.TYPE_CATEGORY;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -183,11 +183,8 @@ public class Utility {
      * @return Returns TRUE if given entity is Category, else returns false.
      */
     public static boolean isCategory(EntityInterface entity) {
-        boolean isCategory = false;
-        if (getTaggedValue(entity.getTaggedValueCollection(), Constants.TYPE_CATEGORY) != null) {
-            isCategory = true;
-        }
-        return isCategory;
+        TaggedValueInterface tag = getTaggedValue(entity.getTaggedValueCollection(),TYPE_CATEGORY);
+        return tag != null;
     }
 
     /**
