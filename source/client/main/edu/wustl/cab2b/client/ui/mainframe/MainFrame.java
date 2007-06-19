@@ -303,7 +303,7 @@ public class MainFrame extends JXFrame {
      * @param args Command line arguments. They will not be used.
      */
     public static void main(String[] args) {
-        Logger.configure("");
+        Logger.configure(); //pick config from log4j.properties
         ClientLauncher clientLauncher = ClientLauncher.getInstance();
         clientLauncher.launchClient();
         /* Initialize all Resources. */

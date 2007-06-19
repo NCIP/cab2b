@@ -25,7 +25,7 @@ public class PathFinderBeanTest extends ServletTestCase {
      * Override setUp() method from ServletTestCase. 
      */
     protected void setUp() {
-        Logger.configure();
+        Logger.configure("caB2B.logger");
         try {
             pathFinder = (PathFinderBusinessInterface) Locator.getInstance().locate(EjbNamesConstants.PATH_FINDER_BEAN,PathFinderHomeInterface.class);
         } catch (LocatorException locExp) {

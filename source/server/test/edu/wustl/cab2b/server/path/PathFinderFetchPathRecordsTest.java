@@ -26,7 +26,7 @@ public class PathFinderFetchPathRecordsTest extends ServletTestCase {
      */
     @Override
     protected void setUp() throws Exception {
-        Logger.configure();
+        Logger.configure("caB2B.logger");
     }
 
     public void testFindPaths() {
