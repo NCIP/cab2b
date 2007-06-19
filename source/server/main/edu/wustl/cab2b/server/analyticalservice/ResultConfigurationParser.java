@@ -64,7 +64,7 @@ public class ResultConfigurationParser {
     private static final String NAME = "name";
 
     /**
-     * Result Transfarmer tag
+     * Result Transformer tag
      */
     private static final String RESULT_TRANSFORMER = "result-transformer";
 
@@ -82,9 +82,9 @@ public class ResultConfigurationParser {
 
     private static final String DATALIST_RETRIEVER = "retriever";
 
-    private static final String DEFAULT_ELEMENT_KEY = null;
+    private static final String DEFAULT_ELEMENT_KEY = new String("default");
 
-    private static final String KEY_DELIM = ":";
+    private static final String KEY_DELIM = ":_:_:";
     /**
      * Constructor
      */
