@@ -14,7 +14,6 @@ import java.awt.Toolkit;
 import java.awt.geom.Point2D;
 import java.net.URL;
 import java.util.MissingResourceException;
-import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JSeparator;
@@ -94,9 +93,9 @@ public class MainFrame extends JXFrame {
         super(title, exitOnClose);
         statusBar = WindowUtilities.getStatusBar(this);
         initGUI();
-        lefthandStackedBox.setDataForMyExperimentsPanel(getExperiments());
-        lefthandStackedBox.setDataForMySearchQueriesPanel(getUserSearchQueries());
-        lefthandStackedBox.setDataForPopularSearchCategoriesPanel(getPopularSearchCategories());
+        lefthandStackedBox.setDataForMyExperimentsPanel(CommonUtils.getExperiments());
+        lefthandStackedBox.setDataForMySearchQueriesPanel(CommonUtils.getUserSearchQueries());
+        lefthandStackedBox.setDataForPopularSearchCategoriesPanel(CommonUtils.getPopularSearchCategories());
     }
 
     /**
@@ -245,43 +244,6 @@ public class MainFrame extends JXFrame {
             CommonUtils.handleException(checkedException, null, true, true, false, true);
         }
     }
-
-    /**
-     * @return Popular categories at this point
-     */
-    private Vector getPopularSearchCategories() {
-        /* TODO These default Search Categories will be removed after its support*/
-        Vector<String> popularSearchCategories = new Vector<String>();
-        popularSearchCategories.add("Gene Annotation");
-        popularSearchCategories.add("Microarray Annotation");
-        popularSearchCategories.add("Tissue Biospecimens");
-        popularSearchCategories.add("Molecular Biospecimens");
-        return popularSearchCategories;
-    }
-
-    /**
-     * @return Recent search queries
-     */
-    private Vector getUserSearchQueries() {
-        /* TODO These default UserSearchQueries will be removed later after SAVE QUERY support*/
-        Vector<String> mySearchQueries = new Vector<String>();
-        mySearchQueries.add("Prostate Cancer Microarray Data");
-        mySearchQueries.add("Glioblastoma Microarray Data");
-        return mySearchQueries;
-    }
-
-    /**
-     * @return All the experiments performed by the user.
-     */
-    private Vector getExperiments() {
-        /* TODO These default experiments will be removed later on*/
-        Vector<String> myRecentExperiments = new Vector<String>();
-        myRecentExperiments.add("Breast Cancer Microarrays (Hu133 Plus 2.0)");
-        myRecentExperiments.add("Breast Cancer Microarrays (MOE430 Plus 2.0)");
-        myRecentExperiments.add("Acute Myelogenous Leukemia Microarrays");
-        return myRecentExperiments;
-    }
-
     /**
      * set the status bar message
      * @param message the status message
