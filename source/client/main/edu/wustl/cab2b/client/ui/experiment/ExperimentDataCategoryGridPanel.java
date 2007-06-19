@@ -47,6 +47,7 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
 import edu.wustl.cab2b.client.ui.viewresults.DefaultSpreadSheetViewPanel;
+import edu.wustl.cab2b.client.ui.viewresults.ResultPanelFactory;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
@@ -258,7 +259,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         experimentDataPanel.setName("experimentDataPanel");
         experimentDataPanel.setBorder(null);
 
-        spreadSheetViewPanel = new DefaultSpreadSheetViewPanel(new ArrayList<IRecord>());
+        spreadSheetViewPanel =  new DefaultSpreadSheetViewPanel(new ArrayList<IRecord>());
+        spreadSheetViewPanel.doInitialization();
 
         //        table = new ExperimentTableModel(false, tableDataRecordVector, tableColumnVector);
         //        table.addFocusListener(new TableFocusListener(this.parent));
@@ -284,8 +286,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         experimentDataPanel.removeAll();
         experimentDataPanel.setBorder(null);
 
-        //        Cab2bPanel filterPanel = new ApplyFilterPanel(spreadSheetViewPanel);
-        //        experimentDataPanel.add(filterPanel);
+        Cab2bPanel filterPanel = new ApplyFilterPanel(spreadSheetViewPanel);
+        experimentDataPanel.add(filterPanel);
 
         // JScrollPane jScrollPane = addTableToScrollPanel(table);
         experimentDataPanel.add("br center hfill vfill", spreadSheetViewPanel);
@@ -360,7 +362,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             ExperimentTableModel analysisDataTable = new ExperimentTableModel(false, dataRecordArray, columnNames,
                     attributeMap);
             analysisDataTable.addFocusListener(new TableFocusListener(this.parent));
-            final Cab2bPanel filterPanel = new ApplyFilterPanel(analysisDataTable);
+            final Cab2bPanel filterPanel = null;// new ApplyFilterPanel(analysisDataTable); ****************
             analysisViewPanel.add("br left ", filterPanel);
 
             JScrollPane jScrollPane = addTableToScrollPanel(analysisDataTable);

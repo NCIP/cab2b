@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -80,6 +81,10 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
         tableHeader = new Vector<String>();
         attributeMap.clear();
         
+        if (records.isEmpty()) {
+            return;
+        }
+        
         List<AttributeInterface> attributeList = Utility.getAttributeList(records.get(0).getAttributes());
 
         //Add Headers
@@ -125,6 +130,18 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
         updateUI();
     }
 
+    /**
+     * This method returns the current records present in the table after applying any filtering.
+     * @return
+     */
+    public List<IRecord> getSelectedRecords() {
+        List<IRecord> selectedRecords = new ArrayList<IRecord>(table.getRowCount());
+        for (int i = 0; i < table.getRowCount(); i++) {
+           int originalRowIndex = table.convertRowIndexToModel(i);
+           selectedRecords.add(records.get(originalRowIndex));
+        }
+        return selectedRecords;
+    }
 
     /**
      * @see edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface#getCSVData()
