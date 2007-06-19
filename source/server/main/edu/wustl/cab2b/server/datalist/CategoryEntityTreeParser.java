@@ -49,7 +49,7 @@ class CategoryEntityTreeParser {
     }
 
     CategoryEntityTreeParser(EntityInterface rootEntity) {
-        categorialClassIdToEntity = new BidirectionalHashMap<Long, EntityInterface>();
+        categorialClassIdToEntity = new HashMap<Long, EntityInterface>();
         entityToOriginCategorialClass = new HashMap<EntityInterface, CategorialClass>();
         associationForEntityPair = new HashMap<EntityPair, AssociationInterface>();
         associationsForEntity = new HashMap<EntityInterface, List<AssociationInterface>>();
