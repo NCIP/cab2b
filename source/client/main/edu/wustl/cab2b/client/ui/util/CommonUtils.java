@@ -606,9 +606,10 @@ public class CommonUtils {
         /* TODO These default Search Categories will be removed after its support*/
         Vector<String> popularSearchCategories = new Vector<String>();
         popularSearchCategories.add("Gene Annotation");
-        popularSearchCategories.add("Microarray Annotation");
-        popularSearchCategories.add("Tissue Biospecimens");
-        popularSearchCategories.add("Molecular Biospecimens");
+        popularSearchCategories.add("Genomic Identifiers");
+        popularSearchCategories.add("Literature-based Gene Association");
+        //popularSearchCategories.add("Microarray Annotation");
+        popularSearchCategories.add("Orthologus Gene");
         return popularSearchCategories;
     }
 
@@ -617,10 +618,15 @@ public class CommonUtils {
      */
     public static Vector getUserSearchQueries() {
         /* TODO These default UserSearchQueries will be removed later after SAVE QUERY support*/
-        Vector<String> mySearchQueries = new Vector<String>();
-        mySearchQueries.add("Prostate Cancer Microarray Data");
-        mySearchQueries.add("Glioblastoma Microarray Data");
-        return mySearchQueries;
+        Vector<String> userSearchQueries = new Vector<String>();
+        userSearchQueries.add("Prostate Cancer Microarray Data");
+        userSearchQueries.add("Glioblastoma Microarray Data");
+        userSearchQueries.add("High Quality RNA Biospecimens");
+        //userSearchQueries.add("Breast Cancer Microarrays (MOE430+2.0)");
+        
+        userSearchQueries.add("Adenocarcinoma Specimens");
+        userSearchQueries.add("Lung Primary Tumor");
+        return userSearchQueries;
     }
 
     /**
@@ -628,22 +634,24 @@ public class CommonUtils {
      */
     public static Vector getExperiments() {
         /* TODO These default experiments will be removed later on*/
-        Vector<String> myRecentExperiments = new Vector<String>();
-        myRecentExperiments.add("Breast Cancer Microarrays (Hu133 Plus 2.0)");
-        myRecentExperiments.add("Breast Cancer Microarrays (MOE430 Plus 2.0)");
-        myRecentExperiments.add("Acute Myelogenous Leukemia Microarrays");
-        return myRecentExperiments;
+        Vector<String> experiments = new Vector<String>();
+        experiments.add("Breast Cancer Microarrays (Hu133+2.0)");
+        experiments.add("Comparative study of specimens between pre and post therapy");
+        experiments.add("Acute Myelogenous Leukemia Microarrays");
+        experiments.add("Patients with newly diagnose Adenocarcinoma");
+        return experiments;
     }
     /**
      * @return Popular categories at this point
      */
     public static  Vector getUserSearchCategories() {
         /* TODO These default Search Categories will be removed after its support*/
-        Vector<String> popularSearchCategories = new Vector<String>();
-        popularSearchCategories.add("Gene Annotation");
-        popularSearchCategories.add("Microarray Annotation");
-        popularSearchCategories.add("Tissue Biospecimens");
-        popularSearchCategories.add("Molecular Biospecimens");
-        return popularSearchCategories;
+        Vector<String> userSearchCategories = new Vector<String>();
+        //userSearchCategories.add("Gene Annotation");
+        userSearchCategories.add("Microarray Annotation");
+        userSearchCategories.add("Tissue Biospecimens");
+        userSearchCategories.add("Molecular Biospecimens");
+        userSearchCategories.add("Participant Details");
+        return userSearchCategories;
     }
 }
