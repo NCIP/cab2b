@@ -96,6 +96,7 @@ public abstract class ResultPanel extends Cab2bPanel {
         addToDataListButton.setPreferredSize(new Dimension(140, 22));
         addToDataListButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
+            	m_applyAllButton.setEnabled(true);
                 List<IDataRow> dataRows = getSelectedDataRows();
                 MainSearchPanel.getDataList().addDataRows(dataRows);
 
@@ -110,6 +111,7 @@ public abstract class ResultPanel extends Cab2bPanel {
         // Add Apply All button to apply currently added datalist options
         // to the currently selected objects.
         m_applyAllButton = new Cab2bButton("Apply Data List");
+        m_applyAllButton.setEnabled(false);
         m_applyAllButton.setPreferredSize(new Dimension(130, 22));
         m_applyAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
