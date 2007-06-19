@@ -85,6 +85,8 @@ public class Constants {
     public static final String CAB2B_ENTITY_GROUP = "caB2BEntityGroup";
 
     public static final String SELECT = "-- Select --";
+    
+    public static final String SELECT_COLUMN = "-- Select Column --";
 
     public static final String SELECTED_PATH = "Selected Path";
 
