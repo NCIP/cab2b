@@ -1,82 +1,69 @@
-alter table experiment drop foreign key FKFAE9DBFD7ABC429D;
-alter table datalist drop foreign key FK6AADBB483E23832;
-
-alter table dlexpmap drop foreign key FK983F90A73E23832;
-alter table dlexpmap drop foreign key FK983F90A77ABC429D;
-alter table additionalmetadata drop foreign key FK74035C5673486922;
-
-alter table experimentgroup drop foreign key FKD9A210A264FE787B;
-alter table experimentgroup drop foreign key FKD9A210A27AB82B46;
-
-
-alter table expgrpmapping drop foreign key FKCD7AF6267AB82B46;
-alter table expgrpmapping drop foreign key FKCD7AF6267ABC429D;
-drop table if exists experiment;
-drop table if exists datalist;
-
-
-drop table if exists dlexpmap;
-drop table if exists additionalmetadata;
-
-drop table if exists abstractdomainobject;
-drop table if exists experimentgroup;
-
-drop table if exists expgrpmapping;
-create table experiment (
-   EXP_ID bigint not null,
-   primary key (EXP_ID)
-);
-create table datalist (
-   DL_ID bigint not null,
-   primary key (DL_ID)
-);
-
-
-create table DATALIST_ENTITY (
-   DATALIST_METADATA_ID bigint not null,
-   ENTITY_ID bigint not null,
-   primary key (DATALIST_METADATA_ID,ENTITY_ID)
-);
-
-
-
-create table dlexpmap (
-   EXP_ID bigint not null,
-   DL_ID bigint not null,
-   primary key (EXP_ID, DL_ID)
-);
-create table additionalmetadata (
+alter table CAB2B_ADDITIONAL_META_DATA drop foreign key FKC025F1F773486922;
+alter table CAB2B_DATA_LIST drop foreign key FK789CBE883E23832;
+alter table CAB2B_DATALIST_ENTITY drop foreign key FK96B3076FD1F8DDB4;
+alter table CAB2B_EXPERIMENT drop foreign key FKFF270C287ABC429D;
+alter table CAB2B_EXP_GRP_MAPPING drop foreign key FK1154C2A77AB82B46;
+alter table CAB2B_EXP_GRP_MAPPING drop foreign key FK1154C2A77ABC429D;
+alter table CAB2B_EXPERIMENT_GROUP drop foreign key FK7AD2AF8864FE787B;
+alter table CAB2B_EXPERIMENT_GROUP drop foreign key FK7AD2AF887AB82B46;
+alter table CAB2B_EXP_DLMETADATA_MAPPING drop foreign key FK223A61533E23832;
+alter table CAB2B_EXP_DLMETADATA_MAPPING drop foreign key FK223A61537ABC429D;
+drop table if exists CAB2B_ADDITIONAL_META_DATA;
+drop table if exists CAB2B_ABSTRACT_DOMAIN_OBJECT;
+drop table if exists CAB2B_DATA_LIST;
+drop table if exists CAB2B_DATALIST_ENTITY;
+drop table if exists CAB2B_EXPERIMENT;
+drop table if exists CAB2B_EXP_GRP_MAPPING;
+drop table if exists CAB2B_EXPERIMENT_GROUP;
+drop table if exists CAB2B_EXP_DLMETADATA_MAPPING;
+create table CAB2B_ADDITIONAL_META_DATA (
    AMD_ID bigint not null,
-   AMD_NAME varchar(50),
-   AMD_DESCRIPTION varchar(50),
-   AMD_CREATED_ON date,
-   AMD_LAST_UPDATED_ON date,
+   NAME varchar(50),
+   DESCRIPTION varchar(50),
+   CREATED_ON date,
+   LAST_UPDATED_ON date,
    primary key (AMD_ID)
 );
-create table abstractdomainobject (
+create table CAB2B_ABSTRACT_DOMAIN_OBJECT (
    ADO_ID bigint not null auto_increment,
    ADO_ACTIVITY_STATUS varchar(50),
    primary key (ADO_ID)
 );
-create table experimentgroup (
-   EXG_ID bigint not null,
-   PARENT_EXG_ID bigint,
-   primary key (EXG_ID)
+create table CAB2B_DATA_LIST (
+   DL_ID bigint not null,
+   primary key (DL_ID)
 );
-create table expgrpmapping (
+create table CAB2B_DATALIST_ENTITY (
+   DATALIST_METADATA_ID bigint not null,
+   ENTITY_ID bigint not null,
+   primary key (DATALIST_METADATA_ID, ENTITY_ID)
+);
+create table CAB2B_EXPERIMENT (
+   EXP_ID bigint not null,
+   primary key (EXP_ID)
+);
+create table CAB2B_EXP_GRP_MAPPING (
    EXG_ID bigint not null,
    EXP_ID bigint not null,
    primary key (EXP_ID, EXG_ID)
 );
-alter table experiment add index FKFAE9DBFD7ABC429D (EXP_ID), add constraint FKFAE9DBFD7ABC429D foreign key (EXP_ID) references additionalmetadata (AMD_ID);
-alter table datalist add index FK6AADBB483E23832 (DL_ID), add constraint FK6AADBB483E23832 foreign key (DL_ID) references additionalmetadata (AMD_ID);
-alter table dlexpmap add index FK983F90A73E23832 (DL_ID), add constraint FK983F90A73E23832 foreign key (DL_ID) references datalist (DL_ID);
-alter table dlexpmap add index FK983F90A77ABC429D (EXP_ID), add constraint FK983F90A77ABC429D foreign key (EXP_ID) references experiment (EXP_ID);
-alter table additionalmetadata add index FK74035C5673486922 (AMD_ID), add constraint FK74035C5673486922 foreign key (AMD_ID) references abstractdomainobject (ADO_ID);
-alter table experimentgroup add index FKD9A210A264FE787B (PARENT_EXG_ID), add constraint FKD9A210A264FE787B foreign key (PARENT_EXG_ID) references experimentgroup (EXG_ID);
-alter table experimentgroup add index FKD9A210A27AB82B46 (EXG_ID), add constraint FKD9A210A27AB82B46 foreign key (EXG_ID) references additionalmetadata (AMD_ID);
-alter table expgrpmapping add index FKCD7AF6267AB82B46 (EXG_ID), add constraint FKCD7AF6267AB82B46 foreign key (EXG_ID) references experimentgroup (EXG_ID);
-alter table expgrpmapping add index FKCD7AF6267ABC429D (EXP_ID), add constraint FKCD7AF6267ABC429D foreign key (EXP_ID) references experiment (EXP_ID);
-
-alter table DATALIST_ENTITY add index FKCD7AF6267ABC345D (DATALIST_METADATA_ID), add constraint FKCD7AF6267ABC345D foreign key (DATALIST_METADATA_ID) references datalist (DL_ID);
-
+create table CAB2B_EXPERIMENT_GROUP (
+   EXG_ID bigint not null,
+   PARENT_EXG_ID bigint,
+   primary key (EXG_ID)
+);
+create table CAB2B_EXP_DLMETADATA_MAPPING (
+   EXP_ID bigint not null,
+   DL_ID bigint not null,
+   primary key (EXP_ID, DL_ID)
+);
+alter table CAB2B_ADDITIONAL_META_DATA add index FKC025F1F773486922 (AMD_ID), add constraint FKC025F1F773486922 foreign key (AMD_ID) references CAB2B_ABSTRACT_DOMAIN_OBJECT (ADO_ID);
+alter table CAB2B_DATA_LIST add index FK789CBE883E23832 (DL_ID), add constraint FK789CBE883E23832 foreign key (DL_ID) references CAB2B_ADDITIONAL_META_DATA (AMD_ID);
+alter table CAB2B_DATALIST_ENTITY add index FK96B3076FD1F8DDB4 (DATALIST_METADATA_ID), add constraint FK96B3076FD1F8DDB4 foreign key (DATALIST_METADATA_ID) references CAB2B_DATA_LIST (DL_ID);
+alter table CAB2B_EXPERIMENT add index FKFF270C287ABC429D (EXP_ID), add constraint FKFF270C287ABC429D foreign key (EXP_ID) references CAB2B_ADDITIONAL_META_DATA (AMD_ID);
+alter table CAB2B_EXP_GRP_MAPPING add index FK1154C2A77AB82B46 (EXG_ID), add constraint FK1154C2A77AB82B46 foreign key (EXG_ID) references CAB2B_EXPERIMENT_GROUP (EXG_ID);
+alter table CAB2B_EXP_GRP_MAPPING add index FK1154C2A77ABC429D (EXP_ID), add constraint FK1154C2A77ABC429D foreign key (EXP_ID) references CAB2B_EXPERIMENT (EXP_ID);
+alter table CAB2B_EXPERIMENT_GROUP add index FK7AD2AF8864FE787B (PARENT_EXG_ID), add constraint FK7AD2AF8864FE787B foreign key (PARENT_EXG_ID) references CAB2B_EXPERIMENT_GROUP (EXG_ID);
+alter table CAB2B_EXPERIMENT_GROUP add index FK7AD2AF887AB82B46 (EXG_ID), add constraint FK7AD2AF887AB82B46 foreign key (EXG_ID) references CAB2B_ADDITIONAL_META_DATA (AMD_ID);
+alter table CAB2B_EXP_DLMETADATA_MAPPING add index FK223A61533E23832 (DL_ID), add constraint FK223A61533E23832 foreign key (DL_ID) references CAB2B_DATA_LIST (DL_ID);
+alter table CAB2B_EXP_DLMETADATA_MAPPING add index FK223A61537ABC429D (EXP_ID), add constraint FK223A61537ABC429D foreign key (EXP_ID) references CAB2B_EXPERIMENT (EXP_ID);
