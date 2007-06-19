@@ -1,62 +1,86 @@
 package edu.wustl.cab2b.client.ui.main;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.POPULAR_CATEGORIES_IMAGE;
+
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.MY_CATEGORIES_IMAGE;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.MY_SEARCH_QUERIES_IMAGE;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.POPULAR_CATEGORIES_IMAGE;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
+import java.util.Iterator;
+import java.util.Vector;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import edu.wustl.cab2b.client.ui.RiverLayout;
+import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
+import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.StackedBox;
+import edu.wustl.cab2b.client.ui.util.CommonUtils;
 
+/**
+ * This will be shown in the first step of search data for experiment wizard
+ * @author Chandrakant Talele
+ */
 public class B2BStackedBox extends Cab2bPanel {
+    private static final long serialVersionUID = 1L;
 
-	public B2BStackedBox() {
+    /**
+     * default constructor. Initializes the object with its UI parameters 
+     */
+    public B2BStackedBox() {
+        this.setLayout(new BorderLayout());
+        this.setBorder(null);
+        StackedBox box = new StackedBox();
+        box.setTitleBackgroundColor(new Color(224, 224, 224));
+        box.setBorder(null);
+        JScrollPane scrollPane = new JScrollPane(box);
+        // scrollPane.setBorder(new CustomizableBorder(new Insets(1,1,1,1), true, true));
 
-		// this.setBorder(new LineBorder(Color.BLACK));
-		this.setLayout(new BorderLayout());
-		this.setBorder(null);
-		StackedBox box = new StackedBox();
-		box.setTitleBackgroundColor(new Color(224, 224, 224));
-		box.setBorder(null);
-		JScrollPane scrollPane = new JScrollPane(box);
-		// scrollPane.setBorder(new CustomizableBorder(new Insets(1,1,1,1),
-		// true, true));
+        this.add(scrollPane, BorderLayout.CENTER);
 
-		this.add(scrollPane, BorderLayout.CENTER);
+        JPanel status = getPanel();
+        setDataForPanel(status, CommonUtils.getUserSearchCategories());
+        box.addBox("My Categories", status, MY_CATEGORIES_IMAGE, false);
 
-		// the status pane
-		JPanel status = new JPanel();
-		status.setPreferredSize(new Dimension(265, 123));
-		status.setOpaque(false);
-		status.setBorder(null);
-		box.addBox("My Categories", status, MY_CATEGORIES_IMAGE, false);
+        JPanel profilingResults = getPanel();
+        setDataForPanel(profilingResults, CommonUtils.getUserSearchQueries());
+        box.addBox("My Search Queries", profilingResults, MY_SEARCH_QUERIES_IMAGE, false);
 
-		// the profiling results
-		JPanel profilingResults = new JPanel();
-		profilingResults.setOpaque(false);
-		profilingResults.setPreferredSize(new Dimension(265, 123));
-		profilingResults.setBorder(null);
-		box.addBox("My Search Queries", profilingResults, MY_SEARCH_QUERIES_IMAGE, false);
+        JPanel popularCategories = getPanel();
+        setDataForPanel(popularCategories, CommonUtils.getPopularSearchCategories());
+        box.addBox("Popular Categories", popularCategories, POPULAR_CATEGORIES_IMAGE, false);
 
-		// the saved snapshots pane
-		JPanel popularCategories = new JPanel();
-		popularCategories.setPreferredSize(new Dimension(265, 123));
-		popularCategories.setOpaque(false);
-		popularCategories.setBorder(null);
-		box.addBox("Popular Categories", popularCategories,POPULAR_CATEGORIES_IMAGE, false);
-
-		this.setBorder(null);
-
-	}
-
-	static JLabel makeBold(JLabel label) {
-		label.setFont(label.getFont().deriveFont(Font.BOLD));
-		return label;
-	}
+        this.setBorder(null);
+    }
+    /**
+     * @param panel
+     * @param data
+     */
+    private void setDataForPanel(JPanel panel, Vector data) {
+        panel.removeAll();
+        panel.add(new Cab2bLabel());
+        Iterator iter = data.iterator();
+        while (iter.hasNext()) {
+            Object obj = iter.next();
+            String hyperlinkName = obj.toString();
+            Cab2bHyperlink hyperlink = new Cab2bHyperlink();
+            hyperlink.setText(hyperlinkName);
+            panel.add("br", hyperlink);
+        }
+        panel.revalidate();
+    }
+    /**
+     * @return The panel with common paramters set
+     */
+    private JPanel getPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new RiverLayout(10, 5));
+        panel.setPreferredSize(new Dimension(265, 123));
+        panel.setOpaque(false);
+        panel.setBorder(null);
+        return panel;
+    }
 }
