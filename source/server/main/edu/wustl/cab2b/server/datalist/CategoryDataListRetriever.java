@@ -34,7 +34,7 @@ public class CategoryDataListRetriever extends AbstractDataListRetriever<ICatego
     protected void copyOtherFields(ICategorialClassRecord record, EntityRecordInterface recordInterface,
                                    List<AbstractAttributeInterface> attributesList, EntityInterface entity) {
         for (CategorialClass categorialClass : record.getCategorialClass().getChildren()) {
-            EntityInterface childEntity = parser.getCategorialClassIdToEntity().get(categorialClass.getId());
+            EntityInterface childEntity = parser.getEntityForCategorialClassId(categorialClass.getId());
             AssociationInterface association = parser.getAssociation(entity, childEntity);
 
             EntityRecordResultInterface value = (EntityRecordResultInterface) recordInterface.getRecordValueList().get(
@@ -56,6 +56,7 @@ public class CategoryDataListRetriever extends AbstractDataListRetriever<ICatego
     @Override
     protected ICategorialClassRecord createRecord(EntityInterface entity, Set<AttributeInterface> attributes,
                                                   RecordId id) {
-        return QueryResultFactory.createCategorialClassRecord(parser.getCategory().getRootClass(), attributes, id);
+        return QueryResultFactory.createCategorialClassRecord(parser.getOriginCategorialClassForEntity(entity),
+                                                              attributes, id);
     }
 }

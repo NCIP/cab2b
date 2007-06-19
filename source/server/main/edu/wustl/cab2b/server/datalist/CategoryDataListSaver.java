@@ -77,7 +77,7 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
 
         for (Map.Entry<CategorialClass, List<ICategorialClassRecord>> entry : record.getChildrenCategorialClassRecords().entrySet()) {
             CategorialClass categorialClass = entry.getKey();
-            EntityInterface childEntity = parser.getCategorialClassIdToEntity().get(categorialClass.getId());
+            EntityInterface childEntity = parser.getEntityForCategorialClassId(categorialClass.getId());
             for (ICategorialClassRecord childRecord : entry.getValue()) {
                 Map<AbstractAttributeInterface, Object> childRecordMap = getRecordAsMap(childRecord, childEntity);
                 AssociationInterface association = parser.getAssociation(entity, childEntity);

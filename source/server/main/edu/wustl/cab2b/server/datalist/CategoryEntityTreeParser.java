@@ -20,6 +20,8 @@ import edu.wustl.common.querysuite.metadata.category.Category;
 class CategoryEntityTreeParser {
     private Map<Long, EntityInterface> categorialClassIdToEntity;
 
+    private Map<EntityInterface, CategorialClass> entityToOriginCategorialClass;
+
     private Map<EntityPair, AssociationInterface> associationForEntityPair;
 
     private Map<EntityInterface, List<AssociationInterface>> associationsForEntity;
@@ -30,8 +32,12 @@ class CategoryEntityTreeParser {
         return associationForEntityPair;
     }
 
-    Map<Long, EntityInterface> getCategorialClassIdToEntity() {
-        return categorialClassIdToEntity;
+    EntityInterface getEntityForCategorialClassId(Long categorialClassId) {
+        return categorialClassIdToEntity.get(categorialClassId);
+    }
+
+    CategorialClass getOriginCategorialClassForEntity(EntityInterface entity) {
+        return entityToOriginCategorialClass.get(entity);
     }
 
     Category getCategory() {
@@ -43,7 +49,8 @@ class CategoryEntityTreeParser {
     }
 
     CategoryEntityTreeParser(EntityInterface rootEntity) {
-        categorialClassIdToEntity = new HashMap<Long, EntityInterface>();
+        categorialClassIdToEntity = new BidirectionalHashMap<Long, EntityInterface>();
+        entityToOriginCategorialClass = new HashMap<EntityInterface, CategorialClass>();
         associationForEntityPair = new HashMap<EntityPair, AssociationInterface>();
         associationsForEntity = new HashMap<EntityInterface, List<AssociationInterface>>();
 
@@ -67,6 +74,7 @@ class CategoryEntityTreeParser {
                 CategorialClass categorialClass = findCategorialClassWithId(currCategorialClasses,
                                                                             categorialClassId);
                 categorialClassIdToEntity.put(categorialClass.getId(), currEntity);
+                entityToOriginCategorialClass.put(currEntity, categorialClass);
                 Collection<AssociationInterface> associations = currEntity.getAssociationCollection();
                 for (AssociationInterface association : associations) {
                     EntityInterface targetEntity = association.getTargetEntity();
