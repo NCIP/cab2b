@@ -4,9 +4,9 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.analyticalservice.ServiceDetailsInterface;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 
 /**
  * @author Chandrakant Talele
@@ -25,9 +25,7 @@ public interface AnalyticalServiceOperationsBusinessInterface extends BusinessIn
      * @return
      * @throws RemoteException
      */
-    EntityRecordResultInterface invokeService(ServiceDetailsInterface serviceDetails,
-                                                     List<EntityRecordResultInterface> data,
-                                                     List<EntityRecordResultInterface> serviceParamSet)
-            throws RemoteException;
+    List<IRecord> invokeService(ServiceDetailsInterface serviceDetails, List<IRecord> data,
+                                List<IRecord> serviceParamList) throws RemoteException;
 
 }

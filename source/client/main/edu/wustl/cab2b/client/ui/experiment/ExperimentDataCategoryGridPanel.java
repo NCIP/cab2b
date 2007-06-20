@@ -18,9 +18,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -31,11 +29,8 @@ import javax.swing.table.TableColumn;
 import org.jdesktop.swingx.LinkRenderer;
 import org.jdesktop.swingx.action.LinkAction;
 
-import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.common.dynamicextensions.entitymanager.EntityRecordInterface;
-import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
 import edu.wustl.cab2b.client.ui.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
@@ -47,7 +42,6 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
 import edu.wustl.cab2b.client.ui.viewresults.DefaultSpreadSheetViewPanel;
-import edu.wustl.cab2b.client.ui.viewresults.ResultPanelFactory;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
@@ -70,9 +64,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
     private JTabbedPane tabComponent;
 
-    /** Refers to the table in the current tab */
-    private Cab2bTable currentTable;
-
     /**
      * Panel to display experiment data when data category node is selected
      */
@@ -90,20 +81,11 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     private Cab2bPanel currentChartPanel;
 
     /**
-     * Table to display records on Experiment Data panels, when user selects any
-     * data category node
-     */
-    //private ExperimentTableModel table;
-    /**
      * Table to display records on Analysis Data panels
      */
     private Cab2bTable analysisTable;
 
     final public String[] ANALYSIS_TABLE_HEADERS = new String[] { "Data Category", "Analysis Type", "Date", "Status" };
-
-    //private Vector tableColumnVector;
-
-    //private Vector tableDataRecordVector;
 
     /** Previous button */
     private Cab2bButton prevButton;
@@ -120,6 +102,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
     private DefaultSpreadSheetViewPanel spreadSheetViewPanel;
 
+    private DefaultSpreadSheetViewPanel currentSpreadSheetViewPanel;
+
     public ExperimentDataCategoryGridPanel(ExperimentOpenPanel parent) {
         this.parent = parent;
         initGUI();
@@ -132,12 +116,19 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         return tabComponent;
     }
 
-    //    /**
-    //     * @return the table
-    //     */
-    //    public ExperimentTableModel getTable() {
-    //        return table;
-    //    }
+    /**
+     * @return the currentSpreadSheetViewPanel
+     */
+    public DefaultSpreadSheetViewPanel getCurrentSpreadSheetViewPanel() {
+        return currentSpreadSheetViewPanel;
+    }
+
+    /**
+     * @param currentSpreadSheetViewPanel the currentSpreadSheetViewPanel to set
+     */
+    public void setCurrentSpreadSheetViewPanel(DefaultSpreadSheetViewPanel currentSpreadSheetViewPanel) {
+        this.currentSpreadSheetViewPanel = currentSpreadSheetViewPanel;
+    }
 
     /**
      * @return the visualizeDataPanel
@@ -168,21 +159,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     }
 
     /**
-     * @return the currentTable
-     */
-    public Cab2bTable getCurrentTable() {
-        return currentTable;
-    }
-
-    /**
-     * @param currentTable
-     *            the currentTable to set
-     */
-    public void setCurrentTable(Cab2bTable currentTable) {
-        this.currentTable = currentTable;
-    }
-
-    /**
      * Building/refreshing the table
      */
     public void refreshTable(List<IRecord> recordList) {
@@ -198,13 +174,14 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
     /**
      * This method refreshes analysis table
+     * @param analysisTitle 
      * 
      * @param columns
      *            array of column names
      * @param dataRecords
      *            array of record values
      */
-    public void refreshAnalysisTable(Object[][] dataRecords) {
+    public void refreshAnalysisTable(final Object[][] dataRecords) {
         Experiment selectedExperiment = ((ExperimentOpenPanel) this.getParent().getParent()).getSelectedExperiment();
         Cab2bLabel experimentLabel = new Cab2bLabel("Analysis performed for '" + selectedExperiment.getName()
                 + "'");
@@ -213,7 +190,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         experimentLabel.setFont(textFont);
 
         analysisDataPanel.removeAll();
-        analysisDataPanel.add("br br", experimentLabel);
+        analysisDataPanel.add("br ", experimentLabel);
 
         analysisTable = new Cab2bTable(false, dataRecords, ANALYSIS_TABLE_HEADERS);
         analysisTable.setRowSelectionAllowed(false);
@@ -259,11 +236,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         experimentDataPanel.setName("experimentDataPanel");
         experimentDataPanel.setBorder(null);
 
-        spreadSheetViewPanel =  new DefaultSpreadSheetViewPanel(new ArrayList<IRecord>());
+        spreadSheetViewPanel = new DefaultSpreadSheetViewPanel(true, false, new ArrayList<IRecord>());
         spreadSheetViewPanel.doInitialization();
-
-        //        table = new ExperimentTableModel(false, tableDataRecordVector, tableColumnVector);
-        //        table.addFocusListener(new TableFocusListener(this.parent));
 
         analysisDataPanel = new Cab2bPanel();
         analysisDataPanel.setName("analysisDataPanel");
@@ -285,11 +259,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     private void refreshUI() {
         experimentDataPanel.removeAll();
         experimentDataPanel.setBorder(null);
-
-        Cab2bPanel filterPanel = new ApplyFilterPanel(spreadSheetViewPanel);
-        experimentDataPanel.add(filterPanel);
-
-        // JScrollPane jScrollPane = addTableToScrollPanel(table);
         experimentDataPanel.add("br center hfill vfill", spreadSheetViewPanel);
 
         Cab2bPanel northPanel = new Cab2bPanel();
@@ -307,43 +276,15 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     }
 
     /**
-     * This method configures the given table for the filters and adds it to the
-     * JScrollPane.
-     * 
-     * @param table
-     *            table to be configured
-     * @return JScrollPane having the given table
-     */
-    private JScrollPane addTableToScrollPanel(Cab2bTable table) {
-        table.setColumnSelectionAllowed(true);
-        JScrollPane jScrollPane = new JScrollPane();
-        jScrollPane.setName("jScrollPane");
-        jScrollPane.getViewport().add(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                                      JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        jScrollPane.setBorder(null);
-        return jScrollPane;
-    }
-
-    /**
      * This method adds a dynamic tab that displays the analyzed data.
      * 
      * @param userObjectWrapper
      *            the analyzed data
      */
-    final private void addAnalysisViewTabPanel(UserObjectWrapper<EntityRecordResultInterface> userObjectWrapper) {
-        EntityRecordResultInterface entityRecordResult = userObjectWrapper.getUserObject();
+    final private void addAnalysisViewTabPanel(UserObjectWrapper<List<IRecord>> userObjectWrapper) {
         String tabTitle = userObjectWrapper.getDisplayName();
-
         Cab2bPanel analysisView = (Cab2bPanel) CommonUtils.getComponentByName(tabComponent, tabTitle);
         if (analysisView == null) {
-            List<AbstractAttributeInterface> headerList = entityRecordResult.getEntityRecordMetadata().getAttributeList();
-            Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>(
-                    headerList.size());
-            String[] columnNames = generateColumnNames(headerList, attributeMap);
-
-            // getting actual records
-            List<EntityRecordInterface> recordList = entityRecordResult.getEntityRecordList();
-            Object[][] dataRecordArray = generateGridData(recordList);
 
             final Cab2bPanel analysisViewPanel = new Cab2bPanel();
             analysisViewPanel.setName(tabTitle);
@@ -358,69 +299,17 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             });
             analysisViewPanel.add("right ", closeButton);
 
-            // Add table that displays analysis list
-            ExperimentTableModel analysisDataTable = new ExperimentTableModel(false, dataRecordArray, columnNames,
-                    attributeMap);
-            analysisDataTable.addFocusListener(new TableFocusListener(this.parent));
-            final Cab2bPanel filterPanel = null;// new ApplyFilterPanel(analysisDataTable); ****************
-            analysisViewPanel.add("br left ", filterPanel);
-
-            JScrollPane jScrollPane = addTableToScrollPanel(analysisDataTable);
-            analysisViewPanel.add("br center hfill vfill", jScrollPane);
+            // Add SpreadsheetView
+            List<IRecord> recordList = userObjectWrapper.getUserObject();
+            DefaultSpreadSheetViewPanel defaultSpreadSheetViewPanel = new DefaultSpreadSheetViewPanel(true, false,
+                    recordList);
+            defaultSpreadSheetViewPanel.doInitialization();
+            analysisViewPanel.add(defaultSpreadSheetViewPanel);
 
             analysisView = analysisViewPanel;
             tabComponent.add(tabTitle, analysisViewPanel);
         }
         tabComponent.setSelectedComponent(analysisView);
-    }
-
-    /**
-     * This method returns the column names given the list of the attribute list
-     * 
-     * @param headerList
-     *            list of the attribute list
-     * @param attributeMap 
-     * @return array of column names
-     */
-    private String[] generateColumnNames(List<AbstractAttributeInterface> headerList,
-                                         Map<String, AttributeInterface> attributeMap) {
-        String[] columnNames = new String[headerList.size()];
-        int i = 0;
-        for (AbstractAttributeInterface abstractAttribute : headerList) {
-            AttributeInterface attribute = (AttributeInterface) abstractAttribute;
-            columnNames[i] = CommonUtils.getFormattedString(attribute.getName());
-            attributeMap.put(columnNames[i++], attribute);
-        }
-
-        return columnNames;
-    }
-
-    /**
-     * This method returns the array of data records given the List of
-     * EntityRecord
-     * 
-     * @param recordList
-     *            List of EntityRecord
-     * @param numOfColumns
-     *            number of columns in a
-     * @return
-     */
-    private Object[][] generateGridData(List<EntityRecordInterface> recordList) {
-        Object[][] dataRecordArray = new Object[recordList.size()][];
-        int i = 0, j = 0;
-        for (EntityRecordInterface record : recordList) {
-            List recordValueList = record.getRecordValueList();
-            dataRecordArray[i] = new Object[recordValueList.size()];
-            j = 0;
-            for (Object object : recordValueList) {
-                dataRecordArray[i][j] = new Object();
-                dataRecordArray[i][j] = object;
-                j++;
-            }
-            i++;
-        }
-
-        return dataRecordArray;
     }
 
     /**
@@ -521,10 +410,9 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
             // Get the EntityRecordResultInterface object associated with
             // hyperlink at column 1
-            final UserObjectWrapper<EntityRecordResultInterface> userObjectWrapper = (UserObjectWrapper<EntityRecordResultInterface>) analysisTable.getValueAt(
-                                                                                                                                                               selectionIndex,
-                                                                                                                                                               1);
-
+            final UserObjectWrapper<List<IRecord>> userObjectWrapper = (UserObjectWrapper<List<IRecord>>) analysisTable.getValueAt(
+                                                                                                                                   selectionIndex,
+                                                                                                                                   1);
             addAnalysisViewTabPanel(userObjectWrapper);
         }
     }
@@ -545,11 +433,10 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             JTabbedPane jTabbedPane = (JTabbedPane) changeEvent.getSource();
             Cab2bPanel selectedTabPanel = (Cab2bPanel) jTabbedPane.getSelectedComponent();
             if (selectedTabPanel != null && selectedTabPanel.getComponentCount() > 0) {
-                Component component = CommonUtils.getComponentByName(selectedTabPanel, "jScrollPane");
-                if (component instanceof JScrollPane) {
-                    JScrollPane jScrollPane = (JScrollPane) component;
-                    Cab2bTable currentTable = (Cab2bTable) jScrollPane.getViewport().getComponent(0);
-                    experimentDataCategoryGridPanel.setCurrentTable(currentTable);
+                Component component = CommonUtils.getComponentByName(selectedTabPanel,
+                                                                     "DefaultSpreadSheetViewPanel");
+                if (component instanceof DefaultSpreadSheetViewPanel) {
+                    experimentDataCategoryGridPanel.setCurrentSpreadSheetViewPanel((DefaultSpreadSheetViewPanel) component);
                     experimentDataCategoryGridPanel.setCurrentChartPanel(null);
                 } else {
                     component = CommonUtils.getComponentByName(selectedTabPanel, "cab2bChartPanel");

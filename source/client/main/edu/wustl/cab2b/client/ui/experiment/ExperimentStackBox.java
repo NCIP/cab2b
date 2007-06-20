@@ -15,9 +15,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -35,17 +34,10 @@ import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTree;
 
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
-import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
-import edu.common.dynamicextensions.entitymanager.EntityRecord;
-import edu.common.dynamicextensions.entitymanager.EntityRecordInterface;
-import edu.common.dynamicextensions.entitymanager.EntityRecordMetadata;
-import edu.common.dynamicextensions.entitymanager.EntityRecordResult;
-import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
-import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.client.ui.charts.ChartType;
@@ -54,7 +46,6 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bFormattedTextField;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
-import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.StackedBox;
 import edu.wustl.cab2b.client.ui.filter.CaB2BFilterInterface;
 import edu.wustl.cab2b.client.ui.filter.CaB2BPatternFilter;
@@ -66,6 +57,7 @@ import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
+import edu.wustl.cab2b.client.ui.viewresults.DefaultSpreadSheetViewPanel;
 import edu.wustl.cab2b.common.analyticalservice.ServiceDetailsInterface;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
@@ -77,6 +69,8 @@ import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
+import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.cab2b.common.util.AttributeInterfaceComparator;
 import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.common.util.Utility;
@@ -450,8 +444,6 @@ public class ExperimentStackBox extends Cab2bPanel {
      *            the name of the chart to be displayed
      */
     private void showChartAction(ChartType chartType) {
-        Cab2bTable cab2bTable = m_experimentDataCategoryGridPanel.getCurrentTable();
-
         String entityName = null;
         Object nodeInfo = ((DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent()).getUserObject();
         if (nodeInfo instanceof TreeEntityWrapper) {
@@ -463,7 +455,6 @@ public class ExperimentStackBox extends Cab2bPanel {
         Cab2bPanel currentChartPanel = m_experimentDataCategoryGridPanel.getCurrentChartPanel();
         if (currentChartPanel == null) {
             final Cab2bPanel newVisualizeDataPanel = new Cab2bPanel();
-            newVisualizeDataPanel.setLayout(new RiverLayout());
             newVisualizeDataPanel.setBorder(null);
 
             Cab2bButton closeButton = new Cab2bButton("Close");
@@ -474,7 +465,8 @@ public class ExperimentStackBox extends Cab2bPanel {
             });
             newVisualizeDataPanel.add("right ", closeButton);
 
-            Cab2bChartPanel cab2bChartPanel = new Cab2bChartPanel(cab2bTable);
+            DefaultSpreadSheetViewPanel defaultSpreadSheetViewPanel = m_experimentDataCategoryGridPanel.getCurrentSpreadSheetViewPanel();
+            Cab2bChartPanel cab2bChartPanel = new Cab2bChartPanel(defaultSpreadSheetViewPanel.getDataTable());
             cab2bChartPanel.setChartType(chartType, entityName);
             newVisualizeDataPanel.add("br hfill vfill ", cab2bChartPanel);
             m_experimentDataCategoryGridPanel.setCurrentChartPanel(newVisualizeDataPanel);
@@ -604,7 +596,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 
         // Create finish button
         Cab2bButton finishButton = new Cab2bButton("Finish");
-        finishButton.addActionListener(new FinishButtonActionListner(serviceDetails, dataEntity,
+        finishButton.addActionListener(new FinishButtonActionListner(serviceDetails, dataEntity, requiredEntity,
                 m_experimentDataCategoryGridPanel));
 
         Cab2bPanel servicePanel = new Cab2bPanel();
@@ -682,6 +674,8 @@ class FinishButtonActionListner implements ActionListener {
 
     private EntityInterface dataEntity;
 
+    private EntityInterface requiredEntity;
+
     private ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel;
 
     /**
@@ -694,10 +688,12 @@ class FinishButtonActionListner implements ActionListener {
     public FinishButtonActionListner(
             ServiceDetailsInterface serviceDetails,
             EntityInterface dataEntity,
+            EntityInterface requiredEntity,
             ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel) {
         super();
         this.serviceDetails = serviceDetails;
         this.dataEntity = dataEntity;
+        this.requiredEntity = requiredEntity;
         this.experimentDataCategoryGridPanel = experimentDataCategoryGridPanel;
     }
 
@@ -723,21 +719,22 @@ class FinishButtonActionListner implements ActionListener {
         JScrollPane jScrollPane = (JScrollPane) CommonUtils.getComponentByName(servicePanel, "jScrollPane");
         Cab2bPanel parameterPanel = (Cab2bPanel) CommonUtils.getComponentByName(jScrollPane.getViewport(),
                                                                                 "parameterPanel");
-        List<EntityRecordResultInterface> serviceParameterValues = collectServiceParameterValues(parameterPanel.getComponents());
+        List<IRecord> serviceParameterList = collectServiceParameterValues(parameterPanel.getComponents());
 
-        // Obtain values from grid
-        List<EntityRecordResultInterface> dataValues = getGridData();
+        // Obtain table data
+        DefaultSpreadSheetViewPanel defaultSpreadSheetViewPanel = experimentDataCategoryGridPanel.getCurrentSpreadSheetViewPanel();
+        List<IRecord> recordList = defaultSpreadSheetViewPanel.getSelectedRecords();
 
-        EntityRecordResultInterface entityRecordResult = null;
+        List<IRecord> entityRecordList = null;
         AnalyticalServiceOperationsBusinessInterface analyticalServiceOperationsBusinessInterface = (AnalyticalServiceOperationsBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                                                                                     EjbNamesConstants.ANALYTICAL_SERVICE_BEAN,
                                                                                                                                                                                     AnalyticalServiceOperationsHomeInterface.class,
                                                                                                                                                                                     null);
         try {
-            entityRecordResult = analyticalServiceOperationsBusinessInterface.invokeService(serviceDetails,
-                                                                                            dataValues,
-                                                                                            serviceParameterValues);
-            updateAnalysisTable(analysisTitle, entityRecordResult);
+            entityRecordList = analyticalServiceOperationsBusinessInterface.invokeService(serviceDetails,
+                                                                                          recordList,
+                                                                                          serviceParameterList);
+            updateAnalysisTable(analysisTitle, entityRecordList);
         } catch (RemoteException remoteException) {
             CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true, false);
         }
@@ -756,17 +753,16 @@ class FinishButtonActionListner implements ActionListener {
      *            the EntityRecordResult whose values are to be displayed in a
      *            single row of table.
      */
-    private void updateAnalysisTable(final String analysisTitle,
-                                     final EntityRecordResultInterface entityRecordResult) {
-        UserObjectWrapper<EntityRecordResultInterface> userObjectWrapper = new UserObjectWrapper<EntityRecordResultInterface>(
-                entityRecordResult, analysisTitle);
-        String entityName = Utility.getTaggedValue(dataEntity.getTaggedValueCollection(),Constants.ENTITY_DISPLAY_NAME).getValue();
+    private void updateAnalysisTable(final String analysisTitle, final List<IRecord> entityRecordList) {
+        UserObjectWrapper<List<IRecord>> userObjectWrapper = new UserObjectWrapper<List<IRecord>>(
+                entityRecordList, analysisTitle);
+        String entityName = Utility.getTaggedValue(dataEntity.getTaggedValueCollection(),
+                                                   Constants.ENTITY_DISPLAY_NAME).getValue();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
         String currentDate = simpleDateFormat.format(new Date());
         String progress = "Completed";
 
         Object[][] analysisTableData = new Object[][] { { entityName, userObjectWrapper, currentDate, progress } };
-
         experimentDataCategoryGridPanel.refreshAnalysisTable(analysisTableData);
     }
 
@@ -787,83 +783,34 @@ class FinishButtonActionListner implements ActionListener {
     }
 
     /**
-     * This method collects the values form the data grid.
-     * 
-     * @return List of EntityRecordResultInterface which has the data grid
-     *         values
-     */
-    private List<EntityRecordResultInterface> getGridData() {
-        Cab2bTable cab2bTable = null;//experimentDataCategoryGridPanel.getTable();
-
-        List<EntityRecordInterface> entityRecordList = new ArrayList<EntityRecordInterface>();
-        for (int row = 0; row < cab2bTable.getRowCount(); row++) {
-            List<Object> valueList = new ArrayList<Object>();
-            for (int column = 0; column < cab2bTable.getColumnCount(); column++) {
-                Object value = cab2bTable.getValueAt(row, column);
-                valueList.add(value);
-            }
-            EntityRecordInterface entityRecord = new EntityRecord();
-            entityRecord.setRecordValueList(valueList);
-
-            entityRecordList.add(entityRecord);
-        }
-
-        return generateEntityRecordResultList(entityRecordList);
-    }
-
-    /**
      * This method collects the values from the service popup window
      * 
      * @param controlPanels
      *            parameter paneles of the service pop window
-     * @return List of EntityRecordResultInterface which has the parameter
-     *         values
+     * @return Record which has the parameter values
      */
-    private List<EntityRecordResultInterface> collectServiceParameterValues(final Component[] controlPanels) {
-        List<String> valueList = new ArrayList<String>();
-        for (Component controlPanel : controlPanels) {
+    private List<IRecord> collectServiceParameterValues(final Component[] controlPanels) {
+        List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>(
+                requiredEntity.getAttributeCollection());
+        Collections.sort(attributeList, new AttributeInterfaceComparator());
+
+        IRecord record = QueryResultFactory.createRecord(new HashSet<AttributeInterface>(attributeList),
+                                                         new RecordId("-1", ""));
+
+        int index = 0;
+        for (AttributeInterface attribute : attributeList) {
             String value = null;
-            ArrayList<String> parameterValues = ((IComponent) controlPanel).getValues();
-            if (parameterValues.size() > 0) {
+            ArrayList<String> parameterValues = ((IComponent) controlPanels[index++]).getValues();
+            if (!parameterValues.isEmpty()) {
                 value = parameterValues.get(0);
             }
-            valueList.add(value);
+            record.putValueForAttribute(attribute, value);
         }
 
-        EntityRecordInterface entityRecord = new EntityRecord();
-        entityRecord.setRecordValueList(valueList);
+        List<IRecord> parameterList = new Vector<IRecord>();
+        parameterList.add(record);
 
-        List<EntityRecordInterface> entityRecordList = new ArrayList<EntityRecordInterface>();
-        entityRecordList.add(entityRecord);
-
-        return generateEntityRecordResultList(entityRecordList);
-    }
-
-    /**
-     * This method generates the List of EntityRecordResultInterface given a
-     * List of EntityRecordInterface
-     * 
-     * @param entityRecordList
-     *            List of EntityRecordInterface
-     * @return List of EntityRecordResultInterface
-     */
-    private List<EntityRecordResultInterface> generateEntityRecordResultList(
-                                                                             final List<EntityRecordInterface> entityRecordList) {
-        EntityRecordMetadata entityRecordMetadata = new EntityRecordMetadata();
-
-        List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>(
-                dataEntity.getAttributeCollection());
-        Collections.sort(attributeList, new AttributeInterfaceComparator());
-        entityRecordMetadata.setAttributeList(new ArrayList<AbstractAttributeInterface>(attributeList));
-
-        EntityRecordResultInterface entityRecordResult = new EntityRecordResult();
-        entityRecordResult.setEntityRecordList(entityRecordList);
-        entityRecordResult.setEntityRecordMetadata(entityRecordMetadata);
-
-        List<EntityRecordResultInterface> entityRecordResultList = new ArrayList<EntityRecordResultInterface>();
-        entityRecordResultList.add(entityRecordResult);
-
-        return entityRecordResultList;
+        return parameterList;
     }
 
 }

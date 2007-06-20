@@ -4,9 +4,9 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
 import edu.wustl.cab2b.common.analyticalservice.ServiceDetailsInterface;
 import edu.wustl.cab2b.common.ejb.analyticalservice.AnalyticalServiceOperationsBusinessInterface;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.server.analyticalservice.AnalyticalServiceOperations;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 
@@ -29,10 +29,8 @@ public class AnalyticalServiceOperationsBean extends AbstractStatelessSessionBea
     /**
      * @see edu.wustl.cab2b.common.ejb.analyticalservice.ServiceInvokerFactoryBusinessInterface#invokeService(ServiceDetailsInterface, List, List)
      */
-    public EntityRecordResultInterface invokeService(ServiceDetailsInterface serviceDetails,
-                                                     List<EntityRecordResultInterface> data,
-                                                     List<EntityRecordResultInterface> serviceParamSet)
-            throws RemoteException {
-        return new AnalyticalServiceOperations().invokeService(serviceDetails, data, serviceParamSet);
+    public List<IRecord> invokeService(ServiceDetailsInterface serviceDetails, List<IRecord> data,
+                                       List<IRecord> serviceParamList) throws RemoteException {
+        return new AnalyticalServiceOperations().invokeService(serviceDetails, data, serviceParamList);
     }
 }

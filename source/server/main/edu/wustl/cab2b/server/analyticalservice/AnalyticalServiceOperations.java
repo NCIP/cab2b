@@ -3,8 +3,8 @@ package edu.wustl.cab2b.server.analyticalservice;
 import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
 import edu.wustl.cab2b.common.analyticalservice.ServiceDetailsInterface;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 
 /**
  * @author Chandrakant Talele
@@ -26,12 +26,10 @@ public class AnalyticalServiceOperations {
      * @param serviceParamSet
      * @return
      */
-    public EntityRecordResultInterface invokeService(ServiceDetailsInterface serviceDetails,
-                                                     List<EntityRecordResultInterface> data,
-                                                     List<EntityRecordResultInterface> serviceParamSet) {
+    public List<IRecord> invokeService(ServiceDetailsInterface serviceDetails, List<IRecord> data,
+                                       List<IRecord> serviceParamList) {
         EntityToAnalyticalServiceMapper entityServiceMapper = EntityToAnalyticalServiceMapper.getInstance();
         ServiceInvokerInterface serviceInvoker = entityServiceMapper.getServiceInvoker(serviceDetails);
-        EntityRecordResultInterface res = serviceInvoker.invokeService(data, serviceParamSet);
-        return res;
+        return serviceInvoker.invokeService(data, serviceParamList);
     }
 }

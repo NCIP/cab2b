@@ -11,9 +11,9 @@ import javax.swing.JScrollPane;
 import javax.swing.table.TableModel;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
+import edu.wustl.cab2b.client.ui.experiment.ApplyFilterPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
@@ -24,10 +24,6 @@ import edu.wustl.cab2b.common.util.Utility;
  *
  */
 public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListDetailedPanelInterface {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     private Cab2bTable table;
@@ -37,81 +33,110 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
      */
     private List<IRecord> records;
 
-    private Vector<Vector> tableData;
+    private Vector<Vector<String>> tableData;
 
-    private Vector<String> tableHeader; 
-    
-    /**
-     * 
-     */
+    private Vector<String> tableHeader;
+
+    private Boolean showCheckBox;
+
+    private Boolean showFilterPanel;
+
     private Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
 
-    public DefaultSpreadSheetViewPanel(List<IRecord> records) {
+    public DefaultSpreadSheetViewPanel(Boolean showFilterPanel, Boolean showCheckBox, List<IRecord> records) {
+        this.showFilterPanel = showFilterPanel;
+        this.showCheckBox = showCheckBox;
+        this.setName("DefaultSpreadSheetViewPanel");
         this.records = records;
     }
 
-    public DefaultSpreadSheetViewPanel(IRecord record) {
+    public DefaultSpreadSheetViewPanel(Boolean showFilterPanel, Boolean showCheckBox, IRecord record) {
+        this.showFilterPanel = showFilterPanel;
+        this.showCheckBox = showCheckBox;
+        this.setName("DefaultSpreadSheetViewPanel");
         this.records = Collections.singletonList(record);
+    }
+
+    public DefaultSpreadSheetViewPanel(List<IRecord> records) {
+        this(false, true, records);
+    }
+
+    public DefaultSpreadSheetViewPanel(Boolean showCheckBox, List<IRecord> records) {
+        this(false, showCheckBox, records);
+    }
+
+    public DefaultSpreadSheetViewPanel(IRecord record) {
+        this(false, true, record);
+    }
+
+    public DefaultSpreadSheetViewPanel(Boolean showCheckBox, IRecord record) {
+        this(false, showCheckBox, record);
     }
 
     /**
      * @see edu.wustl.cab2b.client.ui.controls.Cab2bPanel#doInitialization()
      */
     public void doInitialization() {
-        initData();
-        initGUI();
+        initializeTableData();
+        initializeGUI();
     }
-    
 
     /**
      * Initailizes the UI components 
      */
-    private void initGUI() {
+    private void initializeGUI() {
+        this.setBorder(null);
         this.removeAll();
-        this.setLayout(new RiverLayout());
-        table = new Cab2bTable(true, tableData, tableHeader);
-        this.add("br hfill vfill", new JScrollPane(table));
+
+        table = new Cab2bTable(showCheckBox, tableData, tableHeader);
+        table.setColumnSelectionAllowed(true);
+
+        if (showFilterPanel) {
+            this.add(new ApplyFilterPanel(this));
+        }
+
+        JScrollPane jScrollPane = new JScrollPane();
+        jScrollPane.getViewport().add(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                      JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        this.add("br hfill vfill", jScrollPane);
     }
 
     /**
      * Initailizes the data to be viewed. 
      */
-    private void initData() {
-        tableData = new Vector<Vector>();
+    private void initializeTableData() {
+        tableData = new Vector<Vector<String>>();
         tableHeader = new Vector<String>();
         attributeMap.clear();
-        
-        if (records.isEmpty()) {
-            return;
-        }
-        
-        List<AttributeInterface> attributeList = Utility.getAttributeList(records.get(0).getAttributes());
 
-        //Add Headers
-        for (AttributeInterface attribute : attributeList) {
-            String formattedString = CommonUtils.getFormattedString(attribute.getName());
-            attributeMap.put(formattedString,attribute);
-            tableHeader.add(formattedString);
-        }
+        if (!records.isEmpty()) {
+            List<AttributeInterface> attributeList = Utility.getAttributeList(records.get(0).getAttributes());
 
-        //Add Data
-        for (IRecord record : records) {
-            Vector<Object> row = new Vector<Object>();
+            //Add Headers
             for (AttributeInterface attribute : attributeList) {
-                row.add(record.getValueForAttribute(attribute));
-
+                String formattedString = CommonUtils.getFormattedString(attribute.getName());
+                attributeMap.put(formattedString, attribute);
+                tableHeader.add(formattedString);
             }
-            tableData.add(row);
+
+            //Add Data
+            for (IRecord record : records) {
+                Vector<String> row = new Vector<String>();
+                for (AttributeInterface attribute : attributeList) {
+                    row.add(record.getValueForAttribute(attribute));
+                }
+                tableData.add(row);
+            }
         }
     }
-    
+
     /**
      * @return
      */
     public Cab2bTable getDataTable() {
         return table;
     }
-    
+
     /**
      * @param columnName
      * @return
@@ -119,8 +144,7 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
     public AttributeInterface getColumnAttribute(String columnName) {
         return attributeMap.get(columnName);
     }
-    
-    
+
     /**
      * @param records
      */
@@ -137,8 +161,8 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
     public List<IRecord> getSelectedRecords() {
         List<IRecord> selectedRecords = new ArrayList<IRecord>(table.getRowCount());
         for (int i = 0; i < table.getRowCount(); i++) {
-           int originalRowIndex = table.convertRowIndexToModel(i);
-           selectedRecords.add(records.get(originalRowIndex));
+            int originalRowIndex = table.convertRowIndexToModel(i);
+            selectedRecords.add(records.get(originalRowIndex));
         }
         return selectedRecords;
     }
@@ -163,6 +187,7 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
             sb.append(text);
         }
         sb.append("\n");
+
         /**
          * Write the actual column values to file
          */
@@ -184,7 +209,7 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
             }
             sb.append("\n");
         }
-        
+
         return sb.toString();
     }
 

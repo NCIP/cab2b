@@ -2,7 +2,7 @@ package edu.wustl.cab2b.server.analyticalservice;
 
 import java.util.List;
 
-import edu.common.dynamicextensions.entitymanager.EntityRecordResultInterface;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 
 /**
  * @author Chandrakant Talele
@@ -13,7 +13,6 @@ public interface ServiceInvokerInterface {
      * @param serviceParamSet
      * @return
      */
-    EntityRecordResultInterface invokeService(List<EntityRecordResultInterface> data,
-                                              List<EntityRecordResultInterface> serviceParamSet);
+    List<IRecord> invokeService(List<IRecord> data, List<IRecord> serviceParamSet);
 
 }
