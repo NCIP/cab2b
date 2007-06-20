@@ -29,6 +29,8 @@ public class BreadcrumbPanel extends Cab2bPanel {
 
     /** The parent container of this Panel */
     private Container parentContainer;
+    
+    private String currentBreadCrumbName;
 
     /**
      * Parameterized Constructor
@@ -58,9 +60,11 @@ public class BreadcrumbPanel extends Cab2bPanel {
 
             if (i == size - 1) {
                 // if last element, add lable instead of hyperlink
-                JLabel selectedObject = new JLabel(strJustText);
-                selectedObject.setForeground(new Cab2bHyperlink().getUnclickedColor());
-                addComponent(selectedObject);
+                JLabel jLabel = new JLabel(strJustText);
+                jLabel.setForeground(new Cab2bHyperlink().getUnclickedColor());
+                addComponent(jLabel);
+                
+                currentBreadCrumbName = strJustText;                
                 break;
             }
             Cab2bHyperlink<String> breadCrumbHyperlink = new Cab2bHyperlink<String>(true);
@@ -114,6 +118,13 @@ public class BreadcrumbPanel extends Cab2bPanel {
             this.add(newComponent);
             totalWidth += crumbWidth;
         }
+    }
+
+    /**
+     * @return the currentBreadCrumbName
+     */
+    public String getCurrentBreadCrumbName() {
+        return currentBreadCrumbName;
     }
 
 }

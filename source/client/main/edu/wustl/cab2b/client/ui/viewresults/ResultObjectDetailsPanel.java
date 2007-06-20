@@ -51,6 +51,8 @@ public class ResultObjectDetailsPanel extends ResultPanel {
     private JXTitledPanel relatedDataTitledPanel;
 
     private JXPanel relatedDataPanel;
+    
+    private String currentBreadCrumbName;
 
 
     private Cab2bPanel m_sidePanel;
@@ -65,7 +67,7 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         /* Set the parent entity interface. Note : This can never be null. */
         super(searchPanel, incomingAssociationCollection, intraModelAssociationCollection);
         
-
+        currentBreadCrumbName=searchPanel.getCurrentBreadCrumbName();
         this.defaultDetailedPanel = defaultDetailedPanel;
 
         this.record = record;
@@ -117,7 +119,7 @@ public class ResultObjectDetailsPanel extends ResultPanel {
 
 
     private void initRelatedDataPanel() {
-        relatedDataTitledPanel = new Cab2bTitledPanel("Related Data");
+        relatedDataTitledPanel = new Cab2bTitledPanel("Related Data: " +currentBreadCrumbName);
         GradientPaint gp1 = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
                 new Point2D.Double(.95d, 0), Color.WHITE);
         relatedDataTitledPanel.setTitleFont(new Font("SansSerif", Font.BOLD, 11));

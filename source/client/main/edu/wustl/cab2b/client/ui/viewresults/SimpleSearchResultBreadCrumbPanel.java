@@ -73,6 +73,8 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 	//private List<AttributeInterface> attributeList = null;
 
 	private ViewSearchResultsPanel viewPanel;
+    
+    private String currentBreadCrumbName;
 
 	public SimpleSearchResultBreadCrumbPanel(IQueryResult queryResult,
 			ViewSearchResultsPanel viewPanel) {
@@ -91,7 +93,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 	}
 
 	/** Shows a panel represented by a name, by bringing that panel to the top. */
-	public void showPanel(String panelName) {
+	private void showPanel(String panelName) {
 		Logger.out.debug("panel name : " + panelName);
 		CardLayout layout = (CardLayout) this.m_resultsPanel.getLayout();
 		layout.show(this.m_resultsPanel, panelName);
@@ -118,12 +120,12 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 	}
 
 	/** Addes a new panel to the top of the stack of existing breadcrumbs panels. */
-	public void addBreadCrumbPanel(JXPanel panel, String panelName) {
+	private void addBreadCrumbPanel(JXPanel panel, String panelName) {
 		this.m_breadCrumbPanel.add(panel, panelName);
 	}
 
 	/** @see showPanel(String panelName) */
-	public void showBreadcrumbPanel(String panelName) {
+	private void showBreadcrumbPanel(String panelName) {
 		CardLayout layout = (CardLayout) this.m_breadCrumbPanel.getLayout();
 		layout.show(this.m_breadCrumbPanel, panelName);
 	}
@@ -173,6 +175,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 		this.m_breadCrumbPanel.setLayout(new CardLayout());
 		BreadcrumbPanel breadCrumbPanel = new BreadcrumbPanel(breadCrumbsAL,
 				m_vBreadCrumbs, this.viewPanel);
+        currentBreadCrumbName = breadCrumbPanel.getCurrentBreadCrumbName();
 		this.m_breadCrumbPanel.add(breadCrumbPanel, "" + this.panelCount);
 		// this.m_breadCrumbPanel.setPreferredSize(new Dimension(1150, 20));
 
@@ -190,7 +193,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 	}
 
 	/** Gets bread-crumbs hyperlink action listener. */
-	public ActionListener getBreadCrumbsAL() {
+	private ActionListener getBreadCrumbsAL() {
 		return breadCrumbsAL;
 	}
 
@@ -278,6 +281,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 			BreadcrumbPanel breadcrumbPanel = new BreadcrumbPanel(
 					breadCrumbPanel.getBreadCrumbsAL(), m_vBreadCrumbs,
 					this.breadCrumbPanel.viewPanel);
+            currentBreadCrumbName = breadcrumbPanel.getCurrentBreadCrumbName();
 			this.breadCrumbPanel.addBreadCrumbPanel(breadcrumbPanel, strIndex);
 			this.breadCrumbPanel.showBreadcrumbPanel(strIndex);
 		}
@@ -320,16 +324,17 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 			int currentCount = panelCount;
 
 			m_vBreadCrumbs.add(currentCount + "#" + hyperlinkText);
-			BreadcrumbPanel breadcrumbPanel1 = new BreadcrumbPanel(
+			BreadcrumbPanel breadcrumbPanel = new BreadcrumbPanel(
 					getBreadCrumbsAL(), m_vBreadCrumbs,
 					this.searchPanel.viewPanel);
+            currentBreadCrumbName = breadcrumbPanel.getCurrentBreadCrumbName();
 
 			JXPanel detailsPanel = ResultPanelFactory.getSearchResultPanel(
 					searchPanel, record, dataRow, currentPanel
 							.getIncomingAssociationCollection(), currentPanel
 							.getIntraModelAssociationCollection());
 
-			addBreadCrumbPanel(breadcrumbPanel1, "" + currentCount);
+			addBreadCrumbPanel(breadcrumbPanel, "" + currentCount);
 			showBreadcrumbPanel("" + currentCount);
 
 			addPanel(detailsPanel, "" + currentCount);
@@ -425,7 +430,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 	 * @param simpleSearchResultPanelNew
 	 * @param breadCrumbText
 	 */
-	public void addToPanel(JXPanel simpleSearchResultPanelNew,
+	private void addToPanel(JXPanel simpleSearchResultPanelNew,
 			String breadCrumbText) {
 		int currentCount = ++panelCount;
 
@@ -443,5 +448,12 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 		addBreadCrumbPanel(breadcrumbPanel, "" + currentCount);
 		showBreadcrumbPanel("" + currentCount);
 	}
+
+    /**
+     * @return the currentBreadCrumbName
+     */
+    public String getCurrentBreadCrumbName() {
+        return currentBreadCrumbName;
+    }
 
 }
