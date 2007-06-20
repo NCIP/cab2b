@@ -23,6 +23,7 @@ import edu.common.dynamicextensions.domain.IntegerAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.LongAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.StringAttributeTypeInformation;
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
+import edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeTypeInformationInterface;
@@ -42,6 +43,7 @@ import edu.wustl.common.util.logger.Logger;
 
 /**
  * Utility Class contain general methods used through out the application.
+ * 
  * @author Chandrakant Talele
  * @author Gautam Shetty
  */
@@ -50,7 +52,7 @@ public class Utility {
 
     static String propertyfile = "demo.properties";
     static {
-        //This static block loads properties from file at class loading time.
+        // This static block loads properties from file at class loading time.
         InputStream is = Utility.class.getClassLoader().getResourceAsStream(propertyfile);
         if (is == null) {
             Logger.out.error("Unable fo find property file : " + propertyfile
@@ -66,7 +68,8 @@ public class Utility {
     }
 
     /**
-     * @return Returns all the properties present in {@link Utility#propertyfile}
+     * @return Returns all the properties present in
+     *         {@link Utility#propertyfile}
      */
     public static Properties getProperties() {
         return props;
@@ -74,8 +77,8 @@ public class Utility {
 
     /**
      * Checks whether passed attribute/association is inheriated.
-     * @param abstractAttribute
-     *            Attribute/Association to check.
+     * 
+     * @param abstractAttribute Attribute/Association to check.
      * @return TRUE if it is inherited else returns FALSE
      */
     public static boolean isInherited(AbstractAttributeInterface abstractAttribute) {
@@ -97,14 +100,14 @@ public class Utility {
     }
 
     /**
-     * @param s1 String 
+     * @param s1 String
      * @param s2 String
      * @param s3 String
      * @param s4 String
-     * @return Concatenated string made after connecting s1, s2, s3, s4 by {@link Constants#CONNECTOR}
+     * @return Concatenated string made after connecting s1, s2, s3, s4 by
+     *         {@link Constants#CONNECTOR}
      */
-    public static String concatStrings(String s1, String s2, String s3,
-                                       String s4) {
+    public static String concatStrings(String s1, String s2, String s3, String s4) {
         StringBuffer buff = new StringBuffer();
         buff.append(s1);
         buff.append(CONNECTOR);
@@ -119,9 +122,11 @@ public class Utility {
 
     /**
      * Compares whether given searchPattern is present in passed searchString
-     * @param searchPattern search Pattern to look for 
-     * @param searchString  String which is to be searched
-     * @return Returns TRUE if given searchPattern is present in searchString , else return returns false.
+     * 
+     * @param searchPattern search Pattern to look for
+     * @param searchString String which is to be searched
+     * @return Returns TRUE if given searchPattern is present in searchString ,
+     *         else return returns false.
      */
     public static boolean compareRegEx(String searchPattern, String searchString) {
         searchPattern = searchPattern.replace("*", ".*");
@@ -131,7 +136,9 @@ public class Utility {
     }
 
     /**
-     * Returns all the URLs of the deployed services which are exposing given entity
+     * Returns all the URLs of the deployed services which are exposing given
+     * entity
+     * 
      * @param entity Entity to check
      * @return Returns the List of URLs
      */
@@ -149,6 +156,7 @@ public class Utility {
 
     /**
      * Returns the entity group of given entity
+     * 
      * @param entity Entity to check
      * @return Returns parent Entity Group
      */
@@ -178,17 +186,28 @@ public class Utility {
     }
 
     /**
+     * @param taggable taggable object
+     * @param key string
+     * @return The tagged value for given key.
+     */
+    public static TaggedValueInterface getTaggedValue(AbstractMetadataInterface taggable, String key) {
+        return getTaggedValue(taggable.getTaggedValueCollection(), key);
+    }
+
+    /**
      * Checks whether passed Entity is a category or not.
+     * 
      * @param entity Entity to check
      * @return Returns TRUE if given entity is Category, else returns false.
      */
     public static boolean isCategory(EntityInterface entity) {
-        TaggedValueInterface tag = getTaggedValue(entity.getTaggedValueCollection(),TYPE_CATEGORY);
+        TaggedValueInterface tag = getTaggedValue(entity.getTaggedValueCollection(), TYPE_CATEGORY);
         return tag != null;
     }
 
     /**
      * Converts DE datatype to queryObject dataType.
+     * 
      * @param type the DE attribute type.
      * @return the DataType.
      */
@@ -215,7 +234,8 @@ public class Utility {
 
     /**
      * @param attribute Check will be done for this Attribute.
-     * @return TRUE if there are any permissible values associated with this attribute, otherwise returns false. 
+     * @return TRUE if there are any permissible values associated with this
+     *         attribute, otherwise returns false.
      */
     public static boolean isEnumerated(AttributeInterface attribute) {
         if (attribute.getAttributeTypeInformation().getDataElement() instanceof UserDefinedDEInterface) {
@@ -227,7 +247,8 @@ public class Utility {
 
     /**
      * @param attribute Attribute to process.
-     * @return Returns all the permissible values associated with this attribute.
+     * @return Returns all the permissible values associated with this
+     *         attribute.
      */
     public static Collection<PermissibleValueInterface> getPermissibleValues(AttributeInterface attribute) {
         if (isEnumerated(attribute)) {
@@ -238,7 +259,9 @@ public class Utility {
     }
 
     /**
-     * Returns the display name if present as tagged value. Else returns the actual name of the entity
+     * Returns the display name if present as tagged value. Else returns the
+     * actual name of the entity
+     * 
      * @param entity The entity to process
      * @return The display name.
      */
@@ -255,7 +278,8 @@ public class Utility {
                 break;
             }
         }
-        //As per Bug# 4577 <class name> (app_name v<version name) e.g. Participant (caTissue Core v1.1)
+        // As per Bug# 4577 <class name> (app_name v<version name) e.g.
+        // Participant (caTissue Core v1.1)
         String projectName = eg.getLongName();
         if (projectName.equals("caFE Server 1.1")) {
             projectName = "caFE Server";
@@ -277,7 +301,7 @@ public class Utility {
      */
     public static String getPathDisplayString(IPath path) {
         String text = "<HTML><B>Path</B>:";
-        //text=text.concat("<HTML><B>Path</B>:");
+        // text=text.concat("<HTML><B>Path</B>:");
         List<IAssociation> pathList = path.getIntermediateAssociations();
         text = text.concat(Utility.getDisplayName(path.getSourceEntity()));
         for (int i = 0; i < pathList.size(); i++) {
@@ -331,7 +355,9 @@ public class Utility {
     }
 
     /**
-     * Returns true if an application returns associatied objects information in result of CQLs.  
+     * Returns true if an application returns associatied objects information in
+     * result of CQLs.
+     * 
      * @param entity Entity to check
      * @return true/false
      */
@@ -350,7 +376,7 @@ public class Utility {
 
     /**
      * @param entity Entity to check
-     * @return Name of the application to which given entity belongs 
+     * @return Name of the application to which given entity belongs
      */
     public static String getApplicationName(EntityInterface entity) {
         return getEntityGroup(entity).getName();
@@ -367,7 +393,8 @@ public class Utility {
 
     /**
      * Converts attribute set into a alphabatically sorted list.
-     * @param inputAttributeSet Attribute set to sort 
+     * 
+     * @param inputAttributeSet Attribute set to sort
      * @return Sorted list of attributes
      */
     public static List<AttributeInterface> getAttributeList(Set<AttributeInterface> inputAttributeSet) {
