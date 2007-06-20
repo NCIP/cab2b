@@ -7,7 +7,7 @@
 <hibernate-mapping>
     <class
         name="edu.wustl.cab2b.common.domain.AbstractDomainObject"
-        table="abstractdomainobject"
+        table="CAB2B_ABSTRACT_DOMAIN_OBJECT"
         dynamic-update="false"
         dynamic-insert="false"
     >
@@ -33,15 +33,10 @@
             length="50"
         />
 
-        <!--
-            To add non XDoclet property mappings, create a file named
-                hibernate-properties-AbstractDomainObject.xml
-            containing the additional properties and place it in your merge dir.
-        -->
 
         <joined-subclass
             name="edu.wustl.cab2b.common.domain.AdditionalMetadata"
-            table="additionalmetadata"
+            table="CAB2B_ADDITIONAL_META_DATA"
             dynamic-update="false"
             dynamic-insert="false"
         >
@@ -53,7 +48,7 @@
             type="string"
             update="true"
             insert="true"
-            column="AMD_NAME"
+            column="NAME"
             length="50"
         />
 
@@ -62,7 +57,7 @@
             type="string"
             update="true"
             insert="true"
-            column="AMD_DESCRIPTION"
+            column="DESCRIPTION"
             length="50"
         />
 
@@ -71,7 +66,7 @@
             type="date"
             update="true"
             insert="true"
-            column="AMD_CREATED_ON"
+            column="CREATED_ON"
         />
 
         <property
@@ -79,12 +74,12 @@
             type="date"
             update="true"
             insert="true"
-            column="AMD_LAST_UPDATED_ON"
+            column="LAST_UPDATED_ON"
         />
 		
 		<joined-subclass
             name="edu.wustl.cab2b.common.domain.DataListMetadata"
-            table="datalist"
+            table="CAB2B_DATA_LIST"
             dynamic-update="false"
             dynamic-insert="false"
         >
@@ -93,9 +88,9 @@
             column="DL_ID"
         />
       
-        <set name="entityIds" table="DATALIST_ENTITY">
+        <set name="entityIds" table="CAB2B_DATALIST_ENTITY">
 		    <key column="DATALIST_METADATA_ID"/>
-		    <element column="ENTITY_ID" type="long"/>
+		    <element column="ENTITY_ID" type="long" not-null="true"/>
 		</set>
 		
 
@@ -104,7 +99,7 @@
 		
         <joined-subclass
             name="edu.wustl.cab2b.common.domain.ExperimentGroup"
-            table="experimentgroup"
+            table="CAB2B_EXPERIMENT_GROUP"
             dynamic-update="false"
             dynamic-insert="false"
         >
@@ -124,7 +119,7 @@
 
         <set
             name="experimentCollection"
-            table="expgrpmapping"
+            table="CAB2B_EXP_GRP_MAPPING"
             lazy="false"
             inverse="true"
             cascade="none"
@@ -145,7 +140,7 @@
 
         <set
             name="childrenGroupCollection"
-            table="experimentgroup"
+            table="CAB2B_EXPERIMENT_GROUP"
             lazy="false"
             inverse="true"
             cascade="save-update"
@@ -166,7 +161,7 @@
         
         <joined-subclass
             name="edu.wustl.cab2b.common.domain.Experiment"
-            table="experiment"
+            table="CAB2B_EXPERIMENT"
             dynamic-update="false"
             dynamic-insert="false"
         >
@@ -176,7 +171,7 @@
 
         <set
             name="experimentGroupCollection"
-            table="expgrpmapping"
+            table="CAB2B_EXP_GRP_MAPPING"
             lazy="false"
             inverse="false"
             cascade="save-update"
@@ -197,7 +192,7 @@
 	
 		<set
             name="dataListMetadataCollection"
-            table="dlexpmap"
+            table="CAB2B_EXP_DLMETADATA_MAPPING"
             lazy="false"
             inverse="false"
             cascade="save-update"
