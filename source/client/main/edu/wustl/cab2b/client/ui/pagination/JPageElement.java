@@ -138,7 +138,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         int stringWidth = fontMetrics.stringWidth(pageElement.getDescription());
         descriptionLabel.setToolTipText(getWrappedText(stringWidth, pageElement.getDescription()));
         ToolTipManager.sharedInstance().setDismissDelay(500000);
-        if(descriptionLabel.getText().length()>50){
+        if(descriptionLabel.getText().length()>80){
         String textDsc=descriptionLabel.getText().substring(0,80);
         textDsc+="....";
         descriptionLabel.setText(textDsc);
