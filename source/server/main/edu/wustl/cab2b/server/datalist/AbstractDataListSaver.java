@@ -26,11 +26,7 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
         this.newEntity = createNewEntity(oldEntity);
         populateNewEntity(oldEntity);
     }
-
-    // BEGIN SAVER METHODS
-    // set of nonVirtual attributes in newEntity equals (by name) set of
-    // attributes in
-    // record (FOR THE DEFAULT CODE).
+    
     public final Map<AbstractAttributeInterface, Object> getRecordAsMap(R record) {
         Map<AbstractAttributeInterface, Object> recordsMap = transformToMap(record);
         putRecordIdInMap(record.getRecordId(), recordsMap, newEntity);
@@ -49,6 +45,9 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
                 iter.remove();
             }
         }
+        // set of nonVirtual attributes in newEntity equals (by name) set of
+        // attributes in
+        // record (FOR THE DEFAULT CODE).
         if (!(recordAttributes.size() == newEntityAttributes.size())) {
             throw new IllegalArgumentException();
         }
@@ -76,7 +75,6 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
 
         DynamicExtensionUtility.addTaggedValue(newEntity, OLD_ENTITY_ID_TAG_NAME, oldEntity.getId().toString());
 
-        // TODO remove this ??? addding tagged value for display name
         DynamicExtensionUtility.addTaggedValue(newEntity,
                                                edu.wustl.cab2b.common.util.Constants.ENTITY_DISPLAY_NAME,
                                                edu.wustl.cab2b.common.util.Utility.getDisplayName(oldEntity));

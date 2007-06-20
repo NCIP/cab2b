@@ -32,7 +32,8 @@ public class CategoryDataListRetriever extends AbstractDataListRetriever<ICatego
 
     @Override
     protected void copyOtherFields(ICategorialClassRecord record, EntityRecordInterface recordInterface,
-                                   List<AbstractAttributeInterface> attributesList, EntityInterface entity) {
+                                   List<? extends AbstractAttributeInterface> attributesList,
+                                   EntityInterface entity) {
         for (CategorialClass categorialClass : record.getCategorialClass().getChildren()) {
             EntityInterface childEntity = parser.getEntityForCategorialClassId(categorialClass.getId());
             AssociationInterface association = parser.getAssociation(entity, childEntity);

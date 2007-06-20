@@ -27,7 +27,8 @@ public class DerivedBioAssayDataDataListRetriever extends AbstractDataListRetrie
 
     @Override
     protected void copyOtherFields(IDerivedBioAssayDataRecord record, EntityRecordInterface recordInterface,
-                                   List<AbstractAttributeInterface> attributesList, EntityInterface entity) {
+                                   List<? extends AbstractAttributeInterface> attributesList,
+                                   EntityInterface entity) {
         if (!entity.equals(newEntity)) {
             throw new IllegalArgumentException();
         }

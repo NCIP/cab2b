@@ -42,10 +42,9 @@ public abstract class AbstractDataListRetriever<R extends IRecord> implements Da
         }
     }
 
-    private List<R> transformToRecords(EntityRecordResultInterface recordResultInterface,
-                                               EntityInterface entity) {
+    private List<R> transformToRecords(EntityRecordResultInterface recordResultInterface, EntityInterface entity) {
         List<R> res = new ArrayList<R>();
-        List<AbstractAttributeInterface> attributesList = recordResultInterface.getEntityRecordMetadata().getAttributeList();
+        List<? extends AbstractAttributeInterface> attributesList = recordResultInterface.getEntityRecordMetadata().getAttributeList();
         int idIndex = attributesList.indexOf(DataListUtil.getVirtualIdAttribute(entity));
         int urlIndex = attributesList.indexOf(DataListUtil.getVirtualUrlAttribute(entity));
 
@@ -76,7 +75,8 @@ public abstract class AbstractDataListRetriever<R extends IRecord> implements Da
     }
 
     protected void copyOtherFields(R record, EntityRecordInterface recordInterface,
-                                   List<AbstractAttributeInterface> attributesList, EntityInterface entity) {
+                                   List<? extends AbstractAttributeInterface> attributesList,
+                                   EntityInterface entity) {
         // hook
     }
 

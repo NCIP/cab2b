@@ -6,6 +6,7 @@ import static edu.wustl.cab2b.server.datalist.DataListUtil.markVirtual;
 import java.util.Map;
 
 import cab2b.common.caarray.IDerivedBioAssayDataRecord;
+import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -45,8 +46,7 @@ public class DerivedBioAssayDataDataListSaver extends AbstractDataListSaver<IDer
     }
 
     private AttributeInterface createObjectAttribute(String name) {
-        // TODO DE
-        AttributeInterface attribute = null; // DomainObjectFactory.getInstance().createObjectAttribute();
+        AttributeInterface attribute = DomainObjectFactory.getInstance().createObjectAttribute();
         attribute.setName(name);
         markVirtual(attribute);
         return attribute;
