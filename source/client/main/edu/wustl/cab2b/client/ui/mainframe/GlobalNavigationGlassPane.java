@@ -142,8 +142,8 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
         Cab2bLabel dateLabel = new Cab2bLabel(DateFormat.getDateInstance(DateFormat.LONG).format(date).toString());
         dateLabel.setForeground(Color.WHITE);
         Cab2bHyperlink logOutHyperLink = new Cab2bHyperlink();
-        logOutHyperLink.setClickedHyperlinkColor(Color.WHITE);
-        logOutHyperLink.setUnclickedHyperlinkColor(Color.WHITE);
+        logOutHyperLink.setClickedColor(Color.WHITE);
+        logOutHyperLink.setUnclickedColor(Color.WHITE);
         logOutHyperLink.setText("Logout");
         logOutHyperLink.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -152,8 +152,8 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
         });
 
         Cab2bHyperlink mySettingHyperlInk = new Cab2bHyperlink();
-        mySettingHyperlInk.setClickedHyperlinkColor(Color.WHITE);
-        mySettingHyperlInk.setUnclickedHyperlinkColor(Color.WHITE);
+        mySettingHyperlInk.setClickedColor(Color.WHITE);
+        mySettingHyperlInk.setUnclickedColor(Color.WHITE);
         mySettingHyperlInk.setText("MySettings");
         mySettingHyperlInk.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

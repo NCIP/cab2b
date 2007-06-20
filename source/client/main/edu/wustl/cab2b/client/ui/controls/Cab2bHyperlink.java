@@ -16,22 +16,18 @@ import org.jdesktop.swingx.JXHyperlink;
  * @author chetan_bh
  * @author Chandrakant Talele
  */
-public class Cab2bHyperlink extends JXHyperlink {
+public class Cab2bHyperlink<T> extends JXHyperlink {
 
     private static final long serialVersionUID = 8338180418321272388L;
 
-    private static final Color defaultClickedHyperlinkColor = new Color(0x006699);
+    private static final Color DEFAULT_CLICKED_COLOR = new Color(0x006699);
 
-    private static final Color defaultUnclickedHyperlinkColor = new Color(0x034E74);
+    private static final Color DEFAULT_UNCLICKED_COLOR = new Color(0x034E74);
 
     /**
      * User object associated with this hyperlink.
      */
-    private Object userObject;
-
-    private Color clickedHyperlinkColor;
-
-    private Color unclickedHyperlinkColor;
+    private T userObject;
 
     /**
      * Default constructor. Creates hypelink object which will be painted with <b>Bold</b> text.
@@ -55,53 +51,23 @@ public class Cab2bHyperlink extends JXHyperlink {
      */
     public Cab2bHyperlink(Action action, boolean usePlainFont) {
         super(action);
-        this.setClickedHyperlinkColor(defaultClickedHyperlinkColor);
-        this.setUnclickedHyperlinkColor(defaultUnclickedHyperlinkColor);
+        this.setClickedColor(DEFAULT_CLICKED_COLOR);
+        this.setUnclickedColor(DEFAULT_UNCLICKED_COLOR);
         this.setUI(new Cab2bHyperlinkUI(usePlainFont));
     }
 
     /**
      * Returns user object associated with this hyperlink.
      */
-    public Object getUserObject() {
+    public T getUserObject() {
         return userObject;
     }
 
     /**
      * Sets the user object.
      */
-    public void setUserObject(Object userObject) {
+    public void setUserObject(T userObject) {
         this.userObject = userObject;
-    }
-
-    /**
-     * @return Returns the clickedHyperlinkColor.
-     */
-    public Color getClickedHyperlinkColor() {
-        return clickedHyperlinkColor;
-    }
-
-    /**
-     * @return Returns the unclickedHyperlinkColor.
-     */
-    public Color getUnclickedHyperlinkColor() {
-        return unclickedHyperlinkColor;
-    }
-
-    /**
-     * @param clickedHyperlinkColor The clickedHyperlinkColor to set.
-     */
-    public void setClickedHyperlinkColor(Color clickedHyperlinkColor) {
-        this.clickedHyperlinkColor = clickedHyperlinkColor;
-        this.setClickedColor(clickedHyperlinkColor);
-    }
-
-    /**
-     * @param unclickedHyperlinkColor The unclickedHyperlinkColor to set.
-     */
-    public void setUnclickedHyperlinkColor(Color unclickedHyperlinkColor) {
-        this.unclickedHyperlinkColor = unclickedHyperlinkColor;
-        this.setUnclickedColor(unclickedHyperlinkColor);
     }
 
 }
