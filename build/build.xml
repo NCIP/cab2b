@@ -7,7 +7,8 @@
 	================================================================	-->
 	<property file="build/build.properties" />
 	<property file="build/unittest.properties" />
-
+	<property file="conf/database.properties" />
+	
 	<property name="common.src" location="source/common/main" />
 	<property name="common.test" location="source/common/test" />
 
@@ -36,8 +37,11 @@
 
 	<property name="ear.dir" location="${workArea.dir}/ear" />
 	<property name="ear.file" location="${workArea.dir}/cab2bServer.ear" />
-	<property name="cab2bDS.file" location="conf/caB2B-ds.xml" />
-	<property name="jbossjca.service.xml" location="conf/jbossjca-service.xml" />
+	<property name="conf.dir" location="conf" />
+	<property name="cab2bDS.file.name" value="caB2B-ds.xml" />
+	<property name="cab2bDS.file" location="${conf.dir}/${cab2bDS.file.name}" />
+
+	<property name="jbossjca.service.xml" location="${conf.dir}/jbossjca-service.xml" />
 
 	<property name="server.jar.dir" location="${workArea.dir}/serverJar" />
 	<property name="server.jar.file" location="${workArea.dir}/cab2bServer.jar" />
@@ -49,7 +53,7 @@
 	<property name="client.setup.zip.file" location="${workArea.dir}/cab2bClientSetup.zip" />
 
 	<property name="standAlone.jar.dir" location="${workArea.dir}/cab2bStandAloneJar" />
-	
+
 	<!-- properties used for Java Web Start -->
 	<!-- change the version values for every new release,otherwise webstart will not deliver the latest changes !! -->
 	<property name="webstart.dir" location="webstart" />
@@ -143,7 +147,7 @@
 			<fileset dir="${client.classes.dir}">
 				<include name="**/*.class" />
 			</fileset>
-			<fileset dir="conf">
+			<fileset dir="${conf.dir}">
 				<include name="log4j.properties" />
 			</fileset>
 		</copy>
@@ -164,7 +168,7 @@
 			This target build the ZIP file for caB2B client. 
 			It has everything needed by caB2B client to launch
 	================================================================================== 	-->
-	<target name="client.Setup.zip" depends="client.jar" description="Creates client setup ZIP file">
+	<target name="build.client.setup.zip" depends="client.jar" description="Creates client setup ZIP file">
 		<mkdir dir="${client.setup.dir}" />
 		<mkdir dir="${client.setup.dir}/log" />
 		<mkdir dir="${client.setup.dir}/conf" />
@@ -184,7 +188,7 @@
 		<echo message="java -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="false" />
 		<echo message="java -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="false" />
 		<copy todir="${client.setup.dir}/conf">
-			<fileset dir="conf">
+			<fileset dir="${conf.dir}">
 				<include name="Cab2bApplicationResources.properties" />
 				<include name="client.properties" />
 				<include name="demo.properties" />
@@ -212,7 +216,7 @@
 
 		<mkdir dir="${server.jar.dir}/META-INF" />
 		<copy todir="${server.jar.dir}/META-INF">
-			<fileset dir="conf/ejb">
+			<fileset dir="${conf.dir}/ejb">
 				<include name="ejb-jar.xml" />
 				<include name="jboss.xml" />
 			</fileset>
@@ -225,7 +229,7 @@
 			</fileset>
 		</copy>
 		<copy todir="${server.jar.dir}">
-			<fileset dir="conf">
+			<fileset dir="${conf.dir}">
 				<include name="*.wsdd" />
 				<include name="demo.properties" />
 				<include name="*.cfg.xml" />
@@ -234,7 +238,7 @@
 				<include name="ResultConfiguration.xml" />
 			</fileset>
 		</copy>
-		<jar basedir="${server.jar.dir}" destfile="${server.jar.file}"/>
+		<jar basedir="${server.jar.dir}" destfile="${server.jar.file}" />
 	</target>
 
 	<!-- ==================================================================================
@@ -249,8 +253,9 @@
           |
           |__ META-INF
                 |_ejb-jar.xml
+   "Creates a deployable EAR file using server and common classes"
    =================================================================================-->
-	<target name="build.ear" depends="server.jar" description="Creates a deployable EAR file using server and common classes">
+	<target name="build.ear" depends="server.jar">
 		<mkdir dir="${ear.dir}" />
 		<delete includeemptydirs="true">
 			<fileset dir="${ear.dir}">
@@ -275,25 +280,35 @@
 				<exclude name="commons-logging.jar" />
 			</fileset>
 		</copy>
-		<ear basedir="${ear.dir}" destfile="${ear.file}" appxml="conf/application.xml" includes="**/*.*" />
+		<ear basedir="${ear.dir}" destfile="${ear.file}" appxml="${conf.dir}/application.xml" includes="**/*.*" />
 	</target>
 
 	<!-- ===========================================================================
 					Deploy
 	================================================================================ -->
-	<target name="deployToJboss" depends="clean.all,build.ear" description="Deploys EAR file to JBoss application server">
-		<delete dir="${jboss.home}/server/default/tmp/deploy" />
-		<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
-		<copy overwrite="true" file="${cab2bDS.file}" todir="${jboss.deploy.dir}" />
-		<copy overwrite="true" file="${jbossjca.service.xml}" todir="${jboss.deploy.dir}" />
-		<copy overwrite="true" file="lib/server/oracleDriver.jar" todir="${jboss.common.lib.dir}" />
-		<copy overwrite="true" file="lib/server/mysql-connector-java-3.0.16-ga-bin.jar" todir="${jboss.common.lib.dir}" />
-		<delete dir="${jboss.log.dir}" />
-		<mkdir dir="${jboss.log.dir}" />
-		<echo message="" file="${jboss.log.dir}/caB2B.log" append="false" />
+	<target name="deploy.jboss" depends="clean.all,build.ear,update.server,replace.datasource" description="Deploys EAR file to JBoss application server"/>
+	<!-- ================================================================================== -->
+	<target name="update.server"><!-- Copies files to server -->
+			<delete dir="${jboss.home}/server/default/tmp/deploy" />
+			<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
+			<copy overwrite="true" file="${cab2bDS.file}" todir="${jboss.deploy.dir}" />
+			<copy overwrite="true" file="${jbossjca.service.xml}" todir="${jboss.deploy.dir}" />
+			<copy overwrite="true" file="lib/server/oracleDriver.jar" todir="${jboss.common.lib.dir}" />
+			<copy overwrite="true" file="lib/server/mysql-connector-java-3.0.16-ga-bin.jar" todir="${jboss.common.lib.dir}" />
+			<delete dir="${jboss.log.dir}" />
+			<mkdir dir="${jboss.log.dir}" />
+			<echo message="" file="${jboss.log.dir}/caB2B.log" append="false" />
+		</target>
+
+	<!-- ================================================================================== -->
+	<target name="replace.datasource">
+		<property name="dsFile" value="${jboss.deploy.dir}/${cab2bDS.file.name}"/>
+		<replace file="${dsFile}" token="server-ip" value="${database.server.ip}" />
+		<replace file="${dsFile}" token="port" value="${database.server.port}" />
+		<replace file="${dsFile}" token="database-name" value="${database.name}" />
+		<replace file="${dsFile}" token="user_name" value="${database.username}" />
+		<replace file="${dsFile}" token="user_password" value="${database.password}" />
 	</target>
-
-
 	<!-- ============================================================================
 	 			Cactus TESTS
 	================================================================================= -->
@@ -317,10 +332,10 @@
 				<fileset dir="${common.classes.dir}" includes="${Test.Includes}" />
 			</batchtest>
 		</cactus>
-		<antcall target="Cactusreports" />
+		<antcall target="cactus.report" />
 	</target>
 
-	<target name="Cactusreports">
+	<target name="cactus.report">
 		<mkdir dir="${cactusReports.dir}/cactusReports/Reports" />
 		<junitreport todir="${cactusReports.dir}/cactusReports/Reports">
 			<fileset dir="${cactusReports.dir}/cactusReports">
@@ -332,10 +347,10 @@
 	</target>
 
 	<!-- Start JBoss, call the task & To be used during Devlopment -->
-	<target name="run.unittests" depends="compile.all,deployToJboss">
+	<target name="run.unittests" depends="compile.all,deploy.jboss">
 
 		<copy todir="${testcase.properties.folder}" overwrite="true">
-			<fileset dir="conf">
+			<fileset dir="${conf.dir}">
 				<include name="jndi.properties" />
 				<include name="demo.properties" />
 			</fileset>
@@ -436,7 +451,7 @@
 		</javadoc>
 	</target>
 	<!-- ================================================================================== -->
-	<target name="caB2B.standalone.jar" depends="compile.all" description="Generate the jar of client,common and server classes which will in standalone manner">
+	<target name="build.standalone.jar" depends="compile.all" description="Generate the jar of client,common and server classes which will in standalone manner">
 		<mkdir dir="${standAlone.jar.dir}" />
 		<copy todir="${standAlone.jar.dir}" overwrite="true">
 			<fileset dir="${workArea.dir}/common/classes">
@@ -449,7 +464,7 @@
 				<exclude name="**/ejb/**/*.*" />
 			</fileset>
 		</copy>
-		<jar basedir="${standAlone.jar.dir}" destfile="${caB2B.standalone.jar.file}"/>
+		<jar basedir="${standAlone.jar.dir}" destfile="${caB2B.standalone.jar.file}" />
 	</target>
 	<!-- ================================================================================== -->
 	<target name="runClient" depends="compile.client" description="Run the sample Client">
@@ -460,10 +475,11 @@
 		<path refid="client.classpath" />
 		<pathelement location="${workArea.dir}/common/classes" />
 		<pathelement location="${workArea.dir}/client/classes" />
-		<pathelement location="conf" />
+		<pathelement location="${conf.dir}" />
 		<pathelement location="resources/images" />
 	</path>
 	<!-- ================================================================================== -->
+
 	<!-- create the client jar for Java Web Start deployment -->
 	<!-- this jar includes contents of conf/ and images/ and is signed -->
 	<target name="build.client.webstart.jar" depends="compile.client" description="create the client jar for Java Web Start deployment">
@@ -510,7 +526,7 @@
 
 		<!--- copy the contents of conf and resources/imgaes at the top level of jar.dir -->
 		<copy todir="${client.jar.dir}">
-			<fileset dir="conf">
+			<fileset dir="${conf.dir}">
 				<include name="**/*.*" />
 			</fileset>
 			<fileset dir="resources/images">
@@ -594,7 +610,7 @@
 		<!-- delete file="${workArea.dir}/jar/dynamicUI.xml"></delete -->
 	</target>
 	<!-- ================================================================================== -->
-	
+
 	<target name="query.jar" depends="compile.all">
 		<jar basedir="${workArea.dir}/common/classes" destfile="query-server.jar">
 			<include name="**/queryengine/result/*.*" />
