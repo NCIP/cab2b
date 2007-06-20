@@ -133,8 +133,13 @@ public class DomainModelProcessor {
         EntityInterface entity = deFactory.createEntity();
         entity.setName(name);
         entity.setDescription(umlClass.getDescription());
-
-        for (UMLAttribute umlAttribute : umlClass.getUmlAttributeCollection().getUMLAttribute()) {
+        setSemanticMetadata(entity, umlClass.getSemanticMetadata());
+        UMLAttribute[] attributes = umlClass.getUmlAttributeCollection().getUMLAttribute();
+        
+        if(attributes==null) {
+            return entity;
+        }
+        for (UMLAttribute umlAttribute : attributes) {
             DataType dataType = DataType.get(umlAttribute.getDataTypeName());
             AttributeInterface attribute = dataType.createAttribute(umlAttribute);
             if (attribute != null) { // to bypass attributes of invalid datatypes
@@ -144,7 +149,6 @@ public class DomainModelProcessor {
                 entity.addAttribute(attribute);
             }
         }
-        setSemanticMetadata(entity, umlClass.getSemanticMetadata());
         return entity;
     }
 

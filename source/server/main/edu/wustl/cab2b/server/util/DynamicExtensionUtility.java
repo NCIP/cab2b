@@ -180,6 +180,7 @@ public class DynamicExtensionUtility {
             semanticProp.setSequenceNumber(i);
             semanticProp.setConceptCode(semanticMetadataArr[i].getConceptCode());
             semanticProp.setTerm(semanticMetadataArr[i].getConceptName());
+            semanticProp.setConceptDefinition(semanticMetadataArr[i].getConceptDefinition());
             owner.addSemanticProperty(semanticProp);
         }
     }

@@ -3,6 +3,7 @@ package edu.wustl.cab2b.server.path;
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.BooleanValueInterface;
+import edu.common.dynamicextensions.domaininterface.CaDSRValueDomainInfoInterface;
 import edu.common.dynamicextensions.domaininterface.DateValueInterface;
 import edu.common.dynamicextensions.domaininterface.DoubleValueInterface;
 import edu.common.dynamicextensions.domaininterface.FloatValueInterface;
@@ -10,6 +11,7 @@ import edu.common.dynamicextensions.domaininterface.IntegerValueInterface;
 import edu.common.dynamicextensions.domaininterface.LongValueInterface;
 import edu.common.dynamicextensions.domaininterface.StringValueInterface;
 import edu.common.dynamicextensions.domaininterface.UserDefinedDEInterface;
+import edu.common.dynamicextensions.util.global.Constants.ValueDomainType;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.cagrid.metadata.common.Enumeration;
@@ -28,7 +30,7 @@ enum DataType {
         /**
          * @see DataType#createAttribute(UMLAttribute)
          */
-        public AttributeInterface createAttribute(UMLAttribute umlAttribute) {
+        public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createStringAttribute();
             ValueDomain valueDomain = umlAttribute.getValueDomain();
 
@@ -50,7 +52,7 @@ enum DataType {
         /**
          * @see DataType#createAttribute(UMLAttribute)
          */
-        public AttributeInterface createAttribute(UMLAttribute umlAttribute) {
+        public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createStringAttribute();
             ValueDomain valueDomain = umlAttribute.getValueDomain();
 
@@ -72,7 +74,7 @@ enum DataType {
         /**
          * @see DataType#createAttribute(UMLAttribute)
          */
-        public AttributeInterface createAttribute(UMLAttribute umlAttribute) {
+        public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createStringAttribute();
             ValueDomain valueDomain = umlAttribute.getValueDomain();
 
@@ -95,7 +97,7 @@ enum DataType {
         /**
          * @see DataType#createAttribute(UMLAttribute)
          */
-        public AttributeInterface createAttribute(UMLAttribute umlAttribute) {
+        public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createIntegerAttribute();
             ValueDomain valueDomain = umlAttribute.getValueDomain();
 
@@ -118,7 +120,7 @@ enum DataType {
         /**
          * @see DataType#createAttribute(UMLAttribute)
          */
-        public AttributeInterface createAttribute(UMLAttribute umlAttribute) {
+        public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createDateAttribute();
             ValueDomain valueDomain = umlAttribute.getValueDomain();
 
@@ -143,7 +145,7 @@ enum DataType {
         /**
          * @see DataType#createAttribute(UMLAttribute)
          */
-        public AttributeInterface createAttribute(UMLAttribute umlAttribute) {
+        public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createFloatAttribute();
             ValueDomain valueDomain = umlAttribute.getValueDomain();
 
@@ -165,7 +167,7 @@ enum DataType {
         /**
          * @see DataType#createAttribute(UMLAttribute)
          */
-        public AttributeInterface createAttribute(UMLAttribute umlAttribute) {
+        public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createBooleanAttribute();
             ValueDomain valueDomain = umlAttribute.getValueDomain();
 
@@ -190,7 +192,7 @@ enum DataType {
         /**
          * @see DataType#createAttribute(UMLAttribute)
          */
-        public AttributeInterface createAttribute(UMLAttribute umlAttribute) {
+        public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createLongAttribute();
             ValueDomain valueDomain = umlAttribute.getValueDomain();
 
@@ -212,7 +214,7 @@ enum DataType {
         /**
          * @see DataType#createAttribute(UMLAttribute)
          */
-        public AttributeInterface createAttribute(UMLAttribute umlAttribute) {
+        public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createDoubleAttribute();
             ValueDomain valueDomain = umlAttribute.getValueDomain();
 
@@ -235,7 +237,7 @@ enum DataType {
         /**
          * @see DataType#createAttribute(UMLAttribute)
          */
-        public AttributeInterface createAttribute(UMLAttribute umlAttribute) {
+        public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createDoubleAttribute();
             ValueDomain valueDomain = umlAttribute.getValueDomain();
 
@@ -266,7 +268,15 @@ enum DataType {
      * @param umlAttribute source UML attribute 
      * @return the newly created dynamic extension attribute.
      */
-    public AttributeInterface createAttribute(UMLAttribute umlAttribute) {
+    public final AttributeInterface createAttribute(UMLAttribute umlAttribute) {
+        AttributeInterface attribute = createAndPopulateAttribute(umlAttribute);
+        if (attribute != null) {
+            postProcessing(attribute, umlAttribute);
+        }
+        return attribute;
+    }
+
+    AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
         // TODO bypassing attributes, need to decide how to handle it.
         Logger.out.error("found attribute with type" + value + ". Not storing it");
         return null;
@@ -278,6 +288,20 @@ enum DataType {
      */
     DataType(String value) {
         this.value = value;
+    }
+
+    private void postProcessing(AttributeInterface attribute, UMLAttribute umlAttribute) {
+        attribute.setPublicId(Long.toString(umlAttribute.getPublicID()));
+        ValueDomain valueDomain = umlAttribute.getValueDomain();
+        CaDSRValueDomainInfoInterface valueDomainInfo = domainObjectFactory.createCaDSRValueDomainInfo();
+        valueDomainInfo.setDatatype(umlAttribute.getDataTypeName());
+        valueDomainInfo.setName(valueDomain.getLongName());
+        valueDomainInfo.setValueDomainType(ValueDomainType.NON_ENUMERATED);
+        Enumeration[] arr = valueDomain.getEnumerationCollection().getEnumeration();
+        if (arr != null && arr.length != 0) {
+            valueDomainInfo.setValueDomainType(ValueDomainType.ENUMERATED);
+        }
+        attribute.setCaDSRValueDomainInfo(valueDomainInfo);
     }
 
     /**

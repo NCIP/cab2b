@@ -1,3 +1,4 @@
+alter table DYEXTN_OBJECT_TYPE_INFO drop foreign key FK74819FB0BC7298A9;
 alter table DYEXTN_COLUMN_PROPERTIES drop foreign key FK8FCE2B3FBC7298A9;
 alter table DYEXTN_COLUMN_PROPERTIES drop foreign key FK8FCE2B3FB4C15A36;
 alter table DYEXTN_USERDEFINED_DE drop foreign key FK630761FFBC7298A9;
@@ -22,7 +23,9 @@ alter table DYEXTN_ENTITY drop foreign key FK8B243640450711A2;
 alter table DYEXTN_ENTITY drop foreign key FK8B243640BC7298A9;
 alter table DYEXTN_INTEGER_TYPE_INFO drop foreign key FK5F9CB235BC7298A9;
 alter table DYEXTN_TAGGED_VALUE drop foreign key FKF79D055B7D7A9B8E;
+alter table DE_OBJECT_ATTR_RECORD_VALUES drop foreign key FK504EADC4E150DFC9;
 alter table DYEXTN_COMBOBOX drop foreign key FKABBC649ABC7298A9;
+alter table DYEXTN_CADSR_VALUE_DOMAIN_INFO drop foreign key FK1C9AA364B4C15A36;
 alter table DYEXTN_PRIMITIVE_ATTRIBUTE drop foreign key FKA9F765C7BC7298A9;
 alter table DYEXTN_ASSOCIATION drop foreign key FK104684243AC5160;
 alter table DYEXTN_ASSOCIATION drop foreign key FK10468424F60C84D6;
@@ -72,6 +75,7 @@ alter table DYEXTN_CONTAINER drop foreign key FK1EAB84E4992A67D7;
 alter table DYEXTN_CONTAINER drop foreign key FK1EAB84E445DEFCF5;
 alter table DYEXTN_RADIOBUTTON drop foreign key FK16F5BA90BC7298A9;
 alter table DYEXTN_DATEPICKER drop foreign key FKFEADD199BC7298A9;
+drop table if exists DYEXTN_OBJECT_TYPE_INFO;
 drop table if exists DYEXTN_COLUMN_PROPERTIES;
 drop table if exists DYEXTN_USERDEFINED_DE;
 drop table if exists DYEXTN_CONSTRAINT_PROPERTIES;
@@ -92,7 +96,9 @@ drop table if exists DYEXTN_BARR_CONCEPT_VALUE;
 drop table if exists DYEXTN_ENTITY;
 drop table if exists DYEXTN_INTEGER_TYPE_INFO;
 drop table if exists DYEXTN_TAGGED_VALUE;
+drop table if exists DE_OBJECT_ATTR_RECORD_VALUES;
 drop table if exists DYEXTN_COMBOBOX;
+drop table if exists DYEXTN_CADSR_VALUE_DOMAIN_INFO;
 drop table if exists DYEXTN_PRIMITIVE_ATTRIBUTE;
 drop table if exists DYEXTN_ASSOCIATION;
 drop table if exists DYEXTN_CADSRDE;
@@ -104,8 +110,8 @@ drop table if exists DYEXTN_FILE_TYPE_INFO;
 drop table if exists DYEXTN_FILE_EXTENSIONS;
 drop table if exists DYEXTN_LONG_TYPE_INFO;
 drop table if exists DYEXTN_FLOAT_CONCEPT_VALUE;
-drop table if exists DYEXTN_ROLE;
 drop table if exists DYEXTN_TEXTFIELD;
+drop table if exists DYEXTN_ROLE;
 drop table if exists DYEXTN_RULE;
 drop table if exists DYEXTN_DATE_TYPE_INFO;
 drop table if exists DYEXTN_ATTRIBUTE_TYPE_INFO;
@@ -132,6 +138,10 @@ drop table if exists DYEXTN_SHORT_TYPE_INFO;
 drop table if exists DYEXTN_CONTAINER;
 drop table if exists DYEXTN_RADIOBUTTON;
 drop table if exists DYEXTN_DATEPICKER;
+create table DYEXTN_OBJECT_TYPE_INFO (
+   IDENTIFIER bigint not null,
+   primary key (IDENTIFIER)
+);
 create table DYEXTN_COLUMN_PROPERTIES (
    IDENTIFIER bigint not null,
    PRIMITIVE_ATTRIBUTE_ID bigint,
@@ -197,6 +207,7 @@ create table DYEXTN_ABSTRACT_METADATA (
    DESCRIPTION text,
    LAST_UPDATED date,
    NAME text,
+   PUBLIC_ID varchar(255),
    primary key (IDENTIFIER)
 );
 create table DYEXTN_STRING_TYPE_INFO (
@@ -243,8 +254,23 @@ create table DYEXTN_TAGGED_VALUE (
    ABSTRACT_METADATA_ID bigint,
    primary key (IDENTIFIER)
 );
+create table DE_OBJECT_ATTR_RECORD_VALUES (
+   IDENTIFIER bigint not null auto_increment,
+   CLASS_NAME varchar(255),
+   OBJECT_CONTENT blob,
+   RECORD_ID bigint,
+   primary key (IDENTIFIER)
+);
 create table DYEXTN_COMBOBOX (
    IDENTIFIER bigint not null,
+   primary key (IDENTIFIER)
+);
+create table DYEXTN_CADSR_VALUE_DOMAIN_INFO (
+   IDENTIFIER bigint not null auto_increment,
+   DATATYPE varchar(255),
+   NAME varchar(255),
+   TYPE varchar(255),
+   PRIMITIVE_ATTRIBUTE_ID bigint,
    primary key (IDENTIFIER)
 );
 create table DYEXTN_PRIMITIVE_ATTRIBUTE (
@@ -308,19 +334,19 @@ create table DYEXTN_FLOAT_CONCEPT_VALUE (
    VALUE float,
    primary key (IDENTIFIER)
 );
+create table DYEXTN_TEXTFIELD (
+   IDENTIFIER bigint not null,
+   NO_OF_COLUMNS integer,
+   IS_PASSWORD bit,
+   IS_URL bit,
+   primary key (IDENTIFIER)
+);
 create table DYEXTN_ROLE (
    IDENTIFIER bigint not null auto_increment,
    ASSOCIATION_TYPE varchar(255),
    MAX_CARDINALITY integer,
    MIN_CARDINALITY integer,
    NAME varchar(255),
-   primary key (IDENTIFIER)
-);
-create table DYEXTN_TEXTFIELD (
-   IDENTIFIER bigint not null,
-   NO_OF_COLUMNS integer,
-   IS_PASSWORD bit,
-   IS_URL bit,
    primary key (IDENTIFIER)
 );
 create table DYEXTN_RULE (
@@ -430,6 +456,7 @@ create table DYEXTN_SEMANTIC_PROPERTY (
    TERM varchar(255),
    THESAURAS_NAME varchar(255),
    SEQUENCE_NUMBER integer,
+   CONCEPT_DEFINITION varchar(255),
    ABSTRACT_METADATA_ID bigint,
    ABSTRACT_VALUE_ID bigint,
    primary key (IDENTIFIER)
@@ -484,6 +511,7 @@ create table DYEXTN_DATEPICKER (
    IDENTIFIER bigint not null,
    primary key (IDENTIFIER)
 );
+alter table DYEXTN_OBJECT_TYPE_INFO add index FK74819FB0BC7298A9 (IDENTIFIER), add constraint FK74819FB0BC7298A9 foreign key (IDENTIFIER) references DYEXTN_ATTRIBUTE_TYPE_INFO (IDENTIFIER);
 alter table DYEXTN_COLUMN_PROPERTIES add index FK8FCE2B3FBC7298A9 (IDENTIFIER), add constraint FK8FCE2B3FBC7298A9 foreign key (IDENTIFIER) references DYEXTN_DATABASE_PROPERTIES (IDENTIFIER);
 alter table DYEXTN_COLUMN_PROPERTIES add index FK8FCE2B3FB4C15A36 (PRIMITIVE_ATTRIBUTE_ID), add constraint FK8FCE2B3FB4C15A36 foreign key (PRIMITIVE_ATTRIBUTE_ID) references DYEXTN_PRIMITIVE_ATTRIBUTE (IDENTIFIER);
 alter table DYEXTN_USERDEFINED_DE add index FK630761FFBC7298A9 (IDENTIFIER), add constraint FK630761FFBC7298A9 foreign key (IDENTIFIER) references DYEXTN_DATA_ELEMENT (IDENTIFIER);
@@ -508,7 +536,9 @@ alter table DYEXTN_ENTITY add index FK8B243640450711A2 (PARENT_ENTITY_ID), add c
 alter table DYEXTN_ENTITY add index FK8B243640BC7298A9 (IDENTIFIER), add constraint FK8B243640BC7298A9 foreign key (IDENTIFIER) references DYEXTN_ABSTRACT_METADATA (IDENTIFIER);
 alter table DYEXTN_INTEGER_TYPE_INFO add index FK5F9CB235BC7298A9 (IDENTIFIER), add constraint FK5F9CB235BC7298A9 foreign key (IDENTIFIER) references DYEXTN_NUMERIC_TYPE_INFO (IDENTIFIER);
 alter table DYEXTN_TAGGED_VALUE add index FKF79D055B7D7A9B8E (ABSTRACT_METADATA_ID), add constraint FKF79D055B7D7A9B8E foreign key (ABSTRACT_METADATA_ID) references DYEXTN_ABSTRACT_METADATA (IDENTIFIER);
+alter table DE_OBJECT_ATTR_RECORD_VALUES add index FK504EADC4E150DFC9 (RECORD_ID), add constraint FK504EADC4E150DFC9 foreign key (RECORD_ID) references DYEXTN_ATTRIBUTE_RECORD (IDENTIFIER);
 alter table DYEXTN_COMBOBOX add index FKABBC649ABC7298A9 (IDENTIFIER), add constraint FKABBC649ABC7298A9 foreign key (IDENTIFIER) references DYEXTN_SELECT_CONTROL (IDENTIFIER);
+alter table DYEXTN_CADSR_VALUE_DOMAIN_INFO add index FK1C9AA364B4C15A36 (PRIMITIVE_ATTRIBUTE_ID), add constraint FK1C9AA364B4C15A36 foreign key (PRIMITIVE_ATTRIBUTE_ID) references DYEXTN_PRIMITIVE_ATTRIBUTE (IDENTIFIER);
 alter table DYEXTN_PRIMITIVE_ATTRIBUTE add index FKA9F765C7BC7298A9 (IDENTIFIER), add constraint FKA9F765C7BC7298A9 foreign key (IDENTIFIER) references DYEXTN_ATTRIBUTE (IDENTIFIER);
 alter table DYEXTN_ASSOCIATION add index FK104684243AC5160 (SOURCE_ROLE_ID), add constraint FK104684243AC5160 foreign key (SOURCE_ROLE_ID) references DYEXTN_ROLE (IDENTIFIER);
 alter table DYEXTN_ASSOCIATION add index FK10468424F60C84D6 (TARGET_ROLE_ID), add constraint FK10468424F60C84D6 foreign key (TARGET_ROLE_ID) references DYEXTN_ROLE (IDENTIFIER);

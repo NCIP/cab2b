@@ -83,6 +83,7 @@ public class PathBuilder {
         Logger.out.info("Deleted the file : " + PATH_FILE_NAME);
         String[] applicationNames = PropertyLoader.getAllApplications();
         for (String applicationName : applicationNames) {
+            Logger.out.info("Processing : " + applicationName);
             String path = PropertyLoader.getModelPath(applicationName);
             storeModelAndGeneratePaths(path, applicationName, connection);
         }
@@ -603,7 +604,7 @@ public class PathBuilder {
         PathBuilder.buildAndLoadAllModels(con);
         con.close();
     }
-    private static long getNextPathId(Connection connection) {
+    public static long getNextPathId(Connection connection) {
         String[][] result = SQLQueryUtil.executeQuery("select MAX(PATH_ID) from PATH", connection);
         Long maxId;
         if (result[0][0] == null) {
