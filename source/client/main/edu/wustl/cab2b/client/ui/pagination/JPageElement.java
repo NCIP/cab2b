@@ -128,7 +128,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
 
         this.setLayout(new RiverLayout(0, 0));
 
-        hyperlink = new Cab2bHyperlink();
+        hyperlink = new Cab2bHyperlink(true);
         hyperlink.setText(pageElement.getDisplayName());
         Logger.out.debug("Entity : " + pageElement.getDisplayName());
         hyperlink.setUserObject(pageElement);

@@ -188,7 +188,7 @@ public class JPageBar extends Cab2bPanel implements ActionListener{
 		{
 			String index = (String) iter.next();
 			//JXHyperlink hyperlink = new JXHyperlink();
-			Cab2bHyperlink hyperlink = new Cab2bHyperlink();
+			Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
 			hyperlink.setText(index);
 			hyperlink.addActionListener(this);
 			indicesPanel.add(hyperlink);
