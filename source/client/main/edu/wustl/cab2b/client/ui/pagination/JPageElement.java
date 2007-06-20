@@ -133,10 +133,16 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         Logger.out.debug("Entity : " + pageElement.getDisplayName());
         hyperlink.setUserObject(pageElement);
         descriptionLabel = new Cab2bLabel(pageElement.getDescription());
+       
         FontMetrics fontMetrics = descriptionLabel.getFontMetrics(descriptionLabel.getFont());
         int stringWidth = fontMetrics.stringWidth(pageElement.getDescription());
         descriptionLabel.setToolTipText(getWrappedText(stringWidth, pageElement.getDescription()));
         ToolTipManager.sharedInstance().setDismissDelay(500000);
+        if(descriptionLabel.getText().length()>50){
+        String textDsc=descriptionLabel.getText().substring(0,80);
+        textDsc+="....";
+        descriptionLabel.setText(textDsc);
+        }
         if (isSelectable && pagination != null) {
             checkBox = new Cab2bCheckBox();
             checkBox.setOpaque(false);
