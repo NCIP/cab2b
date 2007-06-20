@@ -14,6 +14,7 @@ import cab2b.common.caarray.IDerivedBioAssayDataRecord;
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.common.dynamicextensions.domaininterface.ObjectAttributeRecordValueInterface;
 import edu.common.dynamicextensions.entitymanager.EntityRecordInterface;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.cab2b.server.datalist.AbstractDataListRetriever;
@@ -36,19 +37,20 @@ public class DerivedBioAssayDataDataListRetriever extends AbstractDataListRetrie
 
         int cubeAttributeIndex = attributesList.indexOf(DataListUtil.getAttributeByName(entity,
                                                                                         CUBE_ATTRIBUTE_NAME));
-        Object[][][] cube = (Object[][][]) recordInterface.getRecordValueList().get(cubeAttributeIndex);
+        Object[][][] cube = (Object[][][]) getObjectValue(recordInterface.getRecordValueList().get(
+                                                                                                   cubeAttributeIndex));
         derivedBioAssayDataRecord.setCube(cube);
 
         int dim1LabelsIndex = attributesList.indexOf(getAttributeByName(entity, DIM1LABELS_ATTRIBUTE_NAME));
-        String[] dim1Labels = (String[]) recordInterface.getRecordValueList().get(dim1LabelsIndex);
+        String[] dim1Labels = (String[]) getObjectValue(recordInterface.getRecordValueList().get(dim1LabelsIndex));
         derivedBioAssayDataRecord.setDim1Labels(dim1Labels);
 
         int dim2LabelsIndex = attributesList.indexOf(getAttributeByName(entity, DIM2LABELS_ATTRIBUTE_NAME));
-        String[] dim2Labels = (String[]) recordInterface.getRecordValueList().get(dim2LabelsIndex);
+        String[] dim2Labels = (String[]) getObjectValue(recordInterface.getRecordValueList().get(dim2LabelsIndex));
         derivedBioAssayDataRecord.setDim2Labels(dim2Labels);
 
         int dim3LabelsIndex = attributesList.indexOf(getAttributeByName(entity, DIM3LABELS_ATTRIBUTE_NAME));
-        String[] dim3Labels = (String[]) recordInterface.getRecordValueList().get(dim3LabelsIndex);
+        String[] dim3Labels = (String[]) getObjectValue(recordInterface.getRecordValueList().get(dim3LabelsIndex));
         derivedBioAssayDataRecord.setDim3Labels(dim3Labels);
     }
 
@@ -56,5 +58,10 @@ public class DerivedBioAssayDataDataListRetriever extends AbstractDataListRetrie
     protected IDerivedBioAssayDataRecord createRecord(EntityInterface entity, Set<AttributeInterface> attributes,
                                                       RecordId id) {
         return new DerivedBioAssayDataRecord(attributes, id);
+    }
+
+    private Object getObjectValue(Object value) {
+        ObjectAttributeRecordValueInterface recordValue = (ObjectAttributeRecordValueInterface) value;
+        return recordValue.getObject();
     }
 }

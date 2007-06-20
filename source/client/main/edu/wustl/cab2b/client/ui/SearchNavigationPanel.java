@@ -35,15 +35,15 @@ import edu.wustl.common.util.logger.Logger;
 public class SearchNavigationPanel extends Cab2bPanel implements ActionListener {
     private static final long serialVersionUID = 1234567890L;
 
-    /* The reference to the parent panel.*/
+    /* The reference to the parent panel. */
     private MainSearchPanel m_mainSearchPanel = null;
 
-    /* The navigation buttons.*/
+    /* The navigation buttons. */
     private Cab2bButton prvButton;
 
     private Cab2bButton nextButton;
 
-    /*Custom buttons for this dialog.*/
+    /* Custom buttons for this dialog. */
     private Cab2bButton srhButton;
 
     private Cab2bButton saveDataListButton;
@@ -76,7 +76,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         Font font = messageLabel.getFont();
         messageLabel.setFont(new Font(font.getFamily(), Font.PLAIN, font.getSize()));
         messageLabel.setForeground(new Color(0, 128, 0));
-        //essageLabel.setForeground(new Color(153,51,0));
+        // essageLabel.setForeground(new Color(153,51,0));
 
         messagePanel = new Cab2bPanel();
         messagePanel.setBackground(null);
@@ -131,7 +131,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             Logger.out.debug("After showInDialog");
 
         } else if (strActionCommand.equals("Add to Experiment")) {
-            //check if Data List is saved
+            // check if Data List is saved
             if (SaveDatalistPanel.isDataListSaved == false) {
                 SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(m_mainSearchPanel);
                 saveDataListPanel.showInDialog();
@@ -145,7 +145,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             srhButton.setVisible(false);
             prvButton.setVisible(true);
 
-            //checking for choose category panel
+            // checking for choose category panel
             if (m_mainSearchPanel.getCenterPanel().getSelectedCardIndex() == 0) {
                 AddLimitPanel addLimitPanel = m_mainSearchPanel.getCenterPanel().getAddLimitPanel();
                 AbstractSearchResultPanel searchResultPanel = m_mainSearchPanel.getCenterPanel().getChooseCategoryPanel().getSearchResultPanel();
@@ -157,9 +157,10 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 srhButton.setVisible(true);
                 showCard(true);
             } else if (m_mainSearchPanel.getCenterPanel().getSelectedCardIndex() == 1) {
-                //Gautam:
-                //If the central panel is AddLimitPanel, update the query object with the 
-                //logical operators between the rules.
+                // Gautam:
+                // If the central panel is AddLimitPanel, update the query
+                // object with the
+                // logical operators between the rules.
                 if (m_mainSearchPanel.getQueryObject() != null
                         && m_mainSearchPanel.getQueryObject().getVisibleExressionIds().size() > 0) {
                     /*
@@ -181,7 +182,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                         m_mainSearchPanel.getCenterPanel().add(defineViewPanel,
                                                                SearchCenterPanel.m_strDefineSearchResultslbl);
                         /*
-                         * 	Implies the next button was clicked. Call show card with boolean set to true.
+                         * Implies the next button was clicked. Call show card
+                         * with boolean set to true.
                          */
                         showCard(true);
                     }
@@ -189,7 +191,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                     srhButton.setVisible(true);
                     saveDataListButton.setVisible(false);
                     addToExperimentButton.setVisible(false);
-                    /*Pop-up a dialog asking the user to add alteast a rule.*/
+                    /* Pop-up a dialog asking the user to add alteast a rule. */
                     JOptionPane.showMessageDialog(this.m_mainSearchPanel.getParent(),
                                                   "Please add Limit(s) before proceeding", "Cannot Proceed",
                                                   JOptionPane.WARNING_MESSAGE);
@@ -201,8 +203,9 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
                     protected void doNonUILogic() {
 
-                        /* Get the Functional class for root and update query object
-                         * with it.
+                        /*
+                         * Get the Functional class for root and update query
+                         * object with it.
                          */
                         queryResults = CommonUtils.executeQuery(
                                                                 (ICab2bQuery) m_mainSearchPanel.getQueryObject().getQuery(),
@@ -237,7 +240,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                                 m_mainSearchPanel.getCenterPanel().add(viewSearchResultsPanel,
                                                                        SearchCenterPanel.m_strViewSearchResultslbl);
                                 /*
-                                 * 	Implies the next button was clicked. Call show card with boolean set to true.
+                                 * Implies the next button was clicked. Call
+                                 * show card with boolean set to true.
                                  */
                                 showCard(true);
                             }
@@ -248,33 +252,84 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                         }
                     }
 
-                    /*    private IQueryResult getQueryResult() {
-                     Cab2bQuery query = (Cab2bQuery) m_mainSearchPanel.getQueryObject().getQuery();
-                     EntityInterface bioAssyData = query.getOutputEntity();
-                     IQueryResult queryResults = QueryResultFactory.createResult(bioAssyData);
-
-                     DerivedBioAssayRecord record = new DerivedBioAssayRecord(new HashSet(
-                     bioAssyData.getAttributeCollection()), new RecordId(
-                     "gov.nih.nci.ncicb.caarray:DerivedBioAssayData:1015897589771984:1", "asdf"));
-                     String dim1Labels[] = { "1" };
-                     String dim2Labels[] = { "Pairs", "Pairs Used", "Signal", "Detection", "Detection P-value" };
-                     String dim3Labels[] = { "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at" };
-
-                     Object bioDataCube[][][] = new Object[][][] { { { "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0" }, { "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent" }, { "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513" }, { "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4" }, { "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848" } } };
-
-                     for (AttributeInterface attribute : bioAssyData.getAttributeCollection()) {
-                     record.putValueForAttribute(attribute, "1");
-                     }
-
-                     record.setDim1Labels(dim1Labels);
-                     record.setDim2Labels(dim2Labels);
-                     record.setDim3Labels(dim3Labels);
-                     record.setCube(bioDataCube);
-                     record.setOrder("BQD");
-
-                     queryResults.addRecord((String) query.getOutputUrls().get(0), record);
-                     return queryResults;
-                     }*/
+                    /*
+                     * private IQueryResult getQueryResult() { Cab2bQuery query =
+                     * (Cab2bQuery)
+                     * m_mainSearchPanel.getQueryObject().getQuery();
+                     * EntityInterface bioAssyData = query.getOutputEntity();
+                     * IQueryResult queryResults =
+                     * QueryResultFactory.createResult(bioAssyData);
+                     * 
+                     * DerivedBioAssayDataRecord record = new
+                     * DerivedBioAssayDataRecord(new HashSet(
+                     * bioAssyData.getAttributeCollection()), new RecordId(
+                     * "gov.nih.nci.ncicb.caarray:DerivedBioAssayData:1015897589771984:1",
+                     * "asdf")); String dim1Labels[] = { "1" }; String
+                     * dim2Labels[] = { "Pairs", "Pairs Used", "Signal",
+                     * "Detection", "Detection P-value" }; String dim3Labels[] = {
+                     * "92555_at", "92558_at", "92559_at", "92568_at",
+                     * "92574_at", "92555_at", "92558_at", "92559_at",
+                     * "92568_at", "92574_at", "92555_at", "92558_at",
+                     * "92559_at", "92568_at", "92574_at", "92555_at",
+                     * "92558_at", "92559_at", "92568_at", "92574_at",
+                     * "92555_at", "92558_at", "92559_at", "92568_at",
+                     * "92574_at", "92555_at", "92558_at", "92559_at",
+                     * "92568_at", "92574_at" };
+                     * 
+                     * Object bioDataCube[][][] = new Object[][][] { { { "20.0",
+                     * "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0",
+                     * "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0",
+                     * "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0",
+                     * "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0",
+                     * "20.0" }, { "Absent", "Present", "Present", "Marginal",
+                     * "Absent", "Absent", "Present", "Present", "Marginal",
+                     * "Absent", "Absent", "Present", "Present", "Marginal",
+                     * "Absent", "Absent", "Present", "Present", "Marginal",
+                     * "Absent", "Absent", "Present", "Present", "Marginal",
+                     * "Absent", "Absent", "Present", "Present", "Marginal",
+                     * "Absent" }, { "0.13876513", "0.3276513", "0.5645876513",
+                     * "0.464376513", "0.235876513", "0.13876513", "0.3276513",
+                     * "0.5645876513", "0.464376513", "0.235876513",
+                     * "0.13876513", "0.3276513", "0.5645876513", "0.464376513",
+                     * "0.235876513", "0.13876513", "0.3276513", "0.5645876513",
+                     * "0.464376513", "0.235876513", "0.13876513", "0.3276513",
+                     * "0.5645876513", "0.464376513", "0.235876513",
+                     * "0.13876513", "0.3276513", "0.5645876513", "0.464376513",
+                     * "0.235876513" }, { "2.188886E-4", "3.188886E-4",
+                     * "4.188886E-4", "5.188886E-4", "6.188886E-4",
+                     * "2.188886E-4", "3.188886E-4", "4.188886E-4",
+                     * "5.188886E-4", "6.188886E-4", "2.188886E-4",
+                     * "3.188886E-4", "4.188886E-4", "5.188886E-4",
+                     * "6.188886E-4", "2.188886E-4", "3.188886E-4",
+                     * "4.188886E-4", "5.188886E-4", "6.188886E-4",
+                     * "2.188886E-4", "3.188886E-4", "4.188886E-4",
+                     * "5.188886E-4", "6.188886E-4", "2.188886E-4",
+                     * "3.188886E-4", "4.188886E-4", "5.188886E-4",
+                     * "6.188886E-4" }, { "0.0030666848", "0.0030666848",
+                     * "0.0030666848", "0.0030666848", "0.0030666848",
+                     * "0.0030666848", "0.0030666848", "0.0030666848",
+                     * "0.0030666848", "0.0030666848", "0.0030666848",
+                     * "0.0030666848", "0.0030666848", "0.0030666848",
+                     * "0.0030666848", "0.0030666848", "0.0030666848",
+                     * "0.0030666848", "0.0030666848", "0.0030666848",
+                     * "0.0030666848", "0.0030666848", "0.0030666848",
+                     * "0.0030666848", "0.0030666848", "0.0030666848",
+                     * "0.0030666848", "0.0030666848", "0.0030666848",
+                     * "0.0030666848" } } };
+                     * 
+                     * for (AttributeInterface attribute :
+                     * bioAssyData.getAttributeCollection()) {
+                     * record.putValueForAttribute(attribute, "1"); }
+                     * 
+                     * record.setDim1Labels(dim1Labels);
+                     * record.setDim2Labels(dim2Labels);
+                     * record.setDim3Labels(dim3Labels);
+                     * record.setCube(bioDataCube);
+                     * 
+                     * queryResults.addRecord((String)
+                     * query.getOutputUrls().get(0), record); return
+                     * queryResults; }
+                     */
 
                 };
                 swingWorker.start();
@@ -299,7 +354,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             }
         } else if (strActionCommand.equals("Previous")) {
             /*
-             * Implies the previous button was clicked. Call show card with boolean set to false.
+             * Implies the previous button was clicked. Call show card with
+             * boolean set to false.
              * 
              */
             SearchNavigationPanel.messageLabel.setText("");
@@ -351,7 +407,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     }
 
     public void enableButtons() {
-        /* The navigation buttons.*/
+        /* The navigation buttons. */
         prvButton.setVisible(true);
         srhButton.setVisible(true);
         ;
@@ -359,23 +415,24 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
     /*
      * The method sets the focus appropriately for the top panel. Also, update
-     * the indexes. 
-     * corresponding updated can be abstracted into the top panel class itself
+     * the indexes. corresponding updated can be abstracted into the top panel
+     * class itself
      */
     public void showCard(boolean blnNext) {
-        /* Get the center Panel through the parent.*/
+        /* Get the center Panel through the parent. */
         SearchCenterPanel centerPanel = this.m_mainSearchPanel.getCenterPanel();
-        /* Get the layout associated with the center panel*/
+        /* Get the layout associated with the center panel */
         CardLayout layout = (CardLayout) centerPanel.getLayout();
-        /*Get the currently selected index.*/
+        /* Get the currently selected index. */
         int iSelectedCard = this.m_mainSearchPanel.getCenterPanel().getSelectedCardIndex();
-        /* Get the top Panel through the parent.*/
+        /* Get the top Panel through the parent. */
         SearchTopPanel topPanel = this.m_mainSearchPanel.getTopPanel();
 
         if (blnNext) {
             /*
-             * validate and increment index to get the corresponding identifier, and use that
-             * to show the card. Also increment the index to indicate the currently selected card.
+             * validate and increment index to get the corresponding identifier,
+             * and use that to show the card. Also increment the index to
+             * indicate the currently selected card.
              */
             if ((iSelectedCard + 1) < this.m_mainSearchPanel.getCenterPanel().getIdentifierCount()) {
                 Logger.out.debug("inside if");
@@ -385,8 +442,9 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             }
         } else {
             /*
-             * validate and increment index to get the corresponding identifier, and use that
-             * to show the card. Also increment the index to indicate the currently selected card.
+             * validate and increment index to get the corresponding identifier,
+             * and use that to show the card. Also increment the index to
+             * indicate the currently selected card.
              */
             if (iSelectedCard > 0) {
                 layout.show(centerPanel, centerPanel.getIdentifier(iSelectedCard - 1));
@@ -397,8 +455,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     }
 
     /**
-     *  If got error or zero result on query execution call this method 
-     * if we are calling this method don't call showCard Method	
+     * If got error or zero result on query execution call this method if we are
+     * calling this method don't call showCard Method
      */
 
     public void gotoAddLimitPanel() {
@@ -413,7 +471,9 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     }
 
     /**
-     * Method to switch from view search result panel to panel data list panel ... 
+     * Method to switch from view search result panel to panel data list panel
+     * ...
+     * 
      * @param datarow
      */
 
@@ -431,7 +491,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         m_mainSearchPanel.getCenterPanel().m_arrCards[4] = dataListPanel;
         m_mainSearchPanel.getCenterPanel().add(dataListPanel, SearchCenterPanel.m_strDataListlbl);
         /*
-         * Implies the next button was clicked. Call show card with boolean set to true.
+         * Implies the next button was clicked. Call show card with boolean set
+         * to true.
          */
         srhButton.setVisible(false);
         nextButton.setVisible(false);
