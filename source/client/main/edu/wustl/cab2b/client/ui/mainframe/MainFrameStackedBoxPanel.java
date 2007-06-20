@@ -101,7 +101,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
         while (iter.hasNext()) {
             Object obj = iter.next();
             String hyperlinkName = obj.toString();
-            Cab2bHyperlink hyperlink = new Cab2bHyperlink();
+            Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
             hyperlink.setText(hyperlinkName);
             panel.add("br", hyperlink);
         }

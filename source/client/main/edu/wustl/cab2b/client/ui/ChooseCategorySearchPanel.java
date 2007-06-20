@@ -45,7 +45,7 @@ public class ChooseCategorySearchPanel extends AbstractSearchPanel {
 	 * 
 	 */
 	public void addTextField() {
-		this.getTextField().setPreferredSize(new Dimension(350, 25));
+		this.getTextField().setPreferredSize(new Dimension(350, 22));
 		this.add("tab ", new Cab2bLabel());
 		this.add(this.getTextField());
 	}

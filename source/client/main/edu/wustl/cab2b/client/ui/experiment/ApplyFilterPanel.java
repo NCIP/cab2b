@@ -183,6 +183,8 @@ public class ApplyFilterPanel extends Cab2bPanel {
                             }
                             filterPopup = new FilterComponent("Range Filter", applyFilterpanel,
                                     (RangeFilter) oldFilter, columnVal, columnName, columnIndex);
+                        } else if(DataType.Date==dataType){
+                        	 filterNotToBeApplied = true;
                         }
                     }
 
