@@ -3,7 +3,9 @@ package edu.wustl.cab2b.client.ui.main;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.MY_CATEGORIES_IMAGE;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.MY_SEARCH_QUERIES_IMAGE;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.POPULAR_CATEGORIES_IMAGE;
-
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.CATEGORY_BOX_TEXT;
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.QUERY_BOX_TEXT;
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.POPULAR_CATEGORY_BOX_TEXT;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -19,6 +21,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.StackedBox;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
  * This will be shown in the first step of search data for experiment wizard
@@ -43,15 +46,18 @@ public class B2BStackedBox extends Cab2bPanel {
 
         JPanel status = getPanel();
         setDataForPanel(status, CommonUtils.getUserSearchCategories());
-        box.addBox("My Categories", status, MY_CATEGORIES_IMAGE, false);
+        final String titleMyCategories = ApplicationProperties.getValue(CATEGORY_BOX_TEXT);
+        box.addBox(titleMyCategories, status, MY_CATEGORIES_IMAGE, false);
 
         JPanel profilingResults = getPanel();
         setDataForPanel(profilingResults, CommonUtils.getUserSearchQueries());
-        box.addBox("My Search Queries", profilingResults, MY_SEARCH_QUERIES_IMAGE, false);
+        final String titleQuery = ApplicationProperties.getValue(QUERY_BOX_TEXT);
+        box.addBox(titleQuery, profilingResults, MY_SEARCH_QUERIES_IMAGE, false);
 
         JPanel popularCategories = getPanel();
         setDataForPanel(popularCategories, CommonUtils.getPopularSearchCategories());
-        box.addBox("Popular Categories", popularCategories, POPULAR_CATEGORIES_IMAGE, false);
+        final String titlePopularcategories = ApplicationProperties.getValue(POPULAR_CATEGORY_BOX_TEXT);
+        box.addBox(titlePopularcategories, popularCategories, POPULAR_CATEGORIES_IMAGE, false);
 
         this.setBorder(null);
     }

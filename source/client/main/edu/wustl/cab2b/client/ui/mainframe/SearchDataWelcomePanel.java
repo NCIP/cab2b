@@ -1,5 +1,5 @@
 package edu.wustl.cab2b.client.ui.mainframe;
-
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.SEARCH_FRAME_TITLE;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,6 +15,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -51,8 +52,8 @@ public class SearchDataWelcomePanel extends Cab2bPanel{
 			Font largeFont = labelFont.deriveFont(Font.BOLD,20.0f);
 			searchLabel.setFont(largeFont);
 			contentPanel.add(searchLabel);			
-							
-			Cab2bButton searchDataButton = new Cab2bButton("Search Data For Experiment");
+            final String title = ApplicationProperties.getValue(SEARCH_FRAME_TITLE);
+			Cab2bButton searchDataButton = new Cab2bButton(title);
 			searchDataButton.addActionListener(new ActionListener()
 			{
 				public void actionPerformed(ActionEvent e)
@@ -69,7 +70,7 @@ public class SearchDataWelcomePanel extends Cab2bPanel{
 					MainFrame.mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
 					Dimension dimension = MainFrame.mainframeScreenDimesion;			
 					
-					WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel, "Search Data", new Dimension((int)(dimension.width * 0.90), (int)(dimension.height * 0.85)), true, true);
+					WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel, title, new Dimension((int)(dimension.width * 0.90), (int)(dimension.height * 0.85)), true, true);
 					GlobalNavigationPanel.mainSearchPanel.getDataList().clear();
 					GlobalNavigationPanel.mainSearchPanel = null;			
 				}			
