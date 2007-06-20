@@ -94,9 +94,12 @@ public abstract class ResultPanel extends Cab2bPanel {
 
         addToDataListButton = new Cab2bButton("Add To Data List");
         addToDataListButton.setPreferredSize(new Dimension(140, 22));
+       
         addToDataListButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
+        
             	m_applyAllButton.setEnabled(true);
+            	
                 List<IDataRow> dataRows = getSelectedDataRows();
                 MainSearchPanel.getDataList().addDataRows(dataRows);
 
@@ -112,6 +115,9 @@ public abstract class ResultPanel extends Cab2bPanel {
         // to the currently selected objects.
         m_applyAllButton = new Cab2bButton("Apply Data List");
         m_applyAllButton.setEnabled(false);
+        if(myDataListPanel.getComponentCount()>1){
+          	m_applyAllButton.setEnabled(true);
+        }
         m_applyAllButton.setPreferredSize(new Dimension(130, 22));
         m_applyAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
@@ -296,6 +302,7 @@ public abstract class ResultPanel extends Cab2bPanel {
             }
         });
         myDataListPanel.add("br ", selectedRootClassName);
+        
     }
 
     /**
