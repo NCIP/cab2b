@@ -15,11 +15,11 @@ import edu.wustl.cab2b.client.ui.experiment.ApplyFilterPanel;
 import edu.wustl.cab2b.client.ui.experiment.ExperimentDataCategoryGridPanel;
 
 /**
- * This class generates a pop-up of Enumerated filter type when clicked on a header
- * of a table that displays selected Category records
+ * This class generates a pop-up of Enumerated filter type when clicked on a
+ * header of a table that displays selected Category records
  * 
  * @author hrishikesh_rajpathak
- *
+ * 
  */
 public class EnumeratedFilterPopUp extends Cab2bFilterPopup {
 	private static final long serialVersionUID = 1L;
@@ -30,12 +30,9 @@ public class EnumeratedFilterPopUp extends Cab2bFilterPopup {
 
 	private String columnName;
 
-	public EnumeratedFilterPopUp(
-			ApplyFilterPanel applyFilterpanel,
+	public EnumeratedFilterPopUp(ApplyFilterPanel applyFilterpanel,
 			Collection<PermissibleValueInterface> permissibleValueCollection,
-			CaB2BPatternFilter oldfilter,
-			String columnName,
-			int columnIndex) {
+			CaB2BPatternFilter oldfilter, String columnName, int columnIndex) {
 		super(applyFilterpanel, columnName, columnIndex);
 		this.columnName = columnName;
 
@@ -75,16 +72,17 @@ public class EnumeratedFilterPopUp extends Cab2bFilterPopup {
 	protected CaB2BFilterInterface okActionPerformed(ActionEvent e) {
 		ExperimentDataCategoryGridPanel.values.clear();
 		Object[] selectedValues = listBox.getSelectedValues();
-		String patternString;
-		// int size=selectedValues.length;
-		patternString = "(" + selectedValues[0].toString() + ")";
-		ExperimentDataCategoryGridPanel.values.add(selectedValues[0].toString());
-		for (int i = 1; i < selectedValues.length; i++) {
-			patternString = patternString.concat("|" + "(" + selectedValues[i].toString() + ")");
-			ExperimentDataCategoryGridPanel.values.add(selectedValues[i].toString());
+		String patternString = null;
+		if (selectedValues.length != 0) {
+			patternString = "(" + selectedValues[0].toString() + ")";
+			ExperimentDataCategoryGridPanel.values.add(selectedValues[0].toString());
+			for (int i = 1; i < selectedValues.length; i++) {
+				patternString = patternString
+						.concat("|" + "(" + selectedValues[i].toString() + ")");
+				ExperimentDataCategoryGridPanel.values.add(selectedValues[i].toString());
 
+			}
 		}
-		System.out.println(patternString);
 		return new CaB2BPatternFilter(patternString, 0, columnIndex, columnName);
 	}
 
