@@ -304,7 +304,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             DefaultSpreadSheetViewPanel defaultSpreadSheetViewPanel = new DefaultSpreadSheetViewPanel(true, false,
                     recordList);
             defaultSpreadSheetViewPanel.doInitialization();
-            analysisViewPanel.add(defaultSpreadSheetViewPanel);
+            analysisViewPanel.add("br center hfill vfill", defaultSpreadSheetViewPanel);
 
             analysisView = analysisViewPanel;
             tabComponent.add(tabTitle, analysisViewPanel);
