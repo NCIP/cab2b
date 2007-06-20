@@ -179,6 +179,12 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
             strLen = strLen + currentString.length() + len;
             sb.append(currentString);
             int index = text.indexOf(" ", (currentStart + offset));
+            if(index == -1){
+            	index = text.indexOf(".", (currentStart + offset));
+            }
+            if(index == -1){
+            	index = text.indexOf(",", (currentStart + offset));
+            }
             if (index != -1) {
                 len = index - strLen;
                 currentString = text.substring((currentStart + offset), (currentStart + offset + len));
