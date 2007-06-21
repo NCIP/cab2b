@@ -51,33 +51,6 @@ import edu.wustl.common.util.logger.Logger;
  * @author Gautam Shetty
  */
 public class Utility {
-    static Properties props;
-
-    static String propertyfile = "demo.properties";
-    static {
-        // This static block loads properties from file at class loading time.
-        InputStream is = Utility.class.getClassLoader().getResourceAsStream(propertyfile);
-        if (is == null) {
-            Logger.out.error("Unable fo find property file : " + propertyfile
-                    + "\n please put this file in classpath");
-        }
-        props = new Properties();
-        try {
-            props.load(is);
-        } catch (IOException e) {
-            Logger.out.error("Unable to load properties from : " + propertyfile);
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * @return Returns all the properties present in
-     *         {@link Utility#propertyfile}
-     */
-    public static Properties getProperties() {
-        return props;
-    }
-
     /**
      * Checks whether passed attribute/association is inheriated.
      * 
@@ -148,13 +121,7 @@ public class Utility {
     public static String[] getServiceURLS(EntityInterface entity) {
         EntityGroupInterface eg = getEntityGroup(entity);
         String shortName = eg.getShortName();
-
-        String[] urls = props.getProperty(shortName + ".ServiceURL").split(",");
-        if (urls == null || urls.length == 0) {
-            Logger.out.error("No URLs are configured for application : " + shortName + " in  : " + propertyfile);
-        }
-
-        return urls;
+        return PropertyLoader.getServiceUrls(shortName);
     }
 
     /**
@@ -357,25 +324,25 @@ public class Utility {
         return null;
     }
 
-    /**
-     * Returns true if an application returns associatied objects information in
-     * result of CQLs.
-     * 
-     * @param entity Entity to check
-     * @return true/false
-     */
-    public static boolean isOutGoingAssociationSupported(EntityInterface entity) {
-        EntityGroupInterface eg = getEntityGroup(entity);
-        String shortName = eg.getShortName();
-        boolean isOutGoingAssociationSupported = false;
-
-        String supportOutGoingAssociation = props.getProperty(shortName + ".supportOutGoingAssociation");
-        if (supportOutGoingAssociation != null && supportOutGoingAssociation.equalsIgnoreCase("true")) {
-            isOutGoingAssociationSupported = true;
-        }
-
-        return isOutGoingAssociationSupported;
-    }
+//    /**
+//     * Returns true if an application returns associatied objects information in
+//     * result of CQLs.
+//     * 
+//     * @param entity Entity to check
+//     * @return true/false
+//     */
+//    public static boolean isOutGoingAssociationSupported(EntityInterface entity) {
+//        EntityGroupInterface eg = getEntityGroup(entity);
+//        String shortName = eg.getShortName();
+//        boolean isOutGoingAssociationSupported = false;
+//
+//        String supportOutGoingAssociation = props.getProperty(shortName + ".supportOutGoingAssociation");
+//        if (supportOutGoingAssociation != null && supportOutGoingAssociation.equalsIgnoreCase("true")) {
+//            isOutGoingAssociationSupported = true;
+//        }
+//
+//        return isOutGoingAssociationSupported;
+//    }
 
     /**
      * @param entity Entity to check
