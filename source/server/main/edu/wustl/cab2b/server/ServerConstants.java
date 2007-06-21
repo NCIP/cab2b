@@ -12,4 +12,9 @@ public class ServerConstants {
      *  if <use-java-context> is FALSE then value should be "cab2bDS" 
      */
     public static String CAB2B_DS_NAME = "java:/cab2bDS";
+    
+    /**
+     * File name which hold server side properties.
+     */
+    public static String SERVER_PROPERTY_FILE = "server.properties";
 }
