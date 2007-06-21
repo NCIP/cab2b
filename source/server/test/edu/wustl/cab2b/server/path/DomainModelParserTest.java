@@ -12,6 +12,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
+import edu.wustl.cab2b.common.util.PropertyLoader;
 import edu.wustl.common.util.logger.Logger;
 
 /**
