@@ -8,6 +8,7 @@ import java.awt.GradientPaint;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -112,7 +113,6 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
         for (String url : allRecords.keySet()) {
             List<IRecord> recordList = allRecords.get(url);
 
-            int j = 1;
             for (IRecord record : recordList) {
                 StringBuffer descBuffer = new StringBuffer();
                 for (int i = 0; i < attributeSize; i++) {
@@ -125,22 +125,21 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
                     }
                 }
                 String description = descBuffer.toString();
-//                if (description.length() > 150) {
-//                    //150 is allowable chars at 1024 resolution
-//                    description = description.substring(0, 150);
-//                    //To avoid clipping of attribute value in-between
-//                    int index = description.lastIndexOf(",");
-//                   description = description.substring(0, index);
-//                }
+                //                if (description.length() > 150) {
+                //                    //150 is allowable chars at 1024 resolution
+                //                    description = description.substring(0, 150);
+                //                    //To avoid clipping of attribute value in-between
+                //                    int index = description.lastIndexOf(",");
+                //                   description = description.substring(0, index);
+                //                }
                 PageElement element = new PageElementImpl();
-                element.setDisplayName(className + "_" + j);
+                element.setDisplayName(className + "_" + record.getRecordId().getId());
                 element.setDescription(description);
 
-                DataRow dataRow = new DataRow(record,queryResult.getOutputEntity());
+                DataRow dataRow = new DataRow(record, queryResult.getOutputEntity());
                 dataRow.setParent(parentDataRow);
                 dataRow.setAssociation(queryAssociation);
 
-                
                 Vector recordListUserObject = new Vector();
                 recordListUserObject.add(dataRow);
                 recordListUserObject.add(record);
@@ -148,7 +147,6 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
                 element.setUserObject(recordListUserObject);
 
                 elements.add(element);
-                j++;
             }
         }
     }

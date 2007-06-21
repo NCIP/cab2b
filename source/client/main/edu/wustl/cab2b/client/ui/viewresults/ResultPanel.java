@@ -16,7 +16,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import javax.swing.JButton;
 import javax.swing.JScrollPane;
 
 import org.jdesktop.swingx.JXPanel;
@@ -51,7 +50,7 @@ public abstract class ResultPanel extends Cab2bPanel {
 
     protected IQueryResult<IRecord> queryResult;
 
-    protected JButton addToDataListButton;
+    protected Cab2bButton addToDataListButton;
 
     protected Cab2bButton m_applyAllButton;
 
@@ -94,12 +93,12 @@ public abstract class ResultPanel extends Cab2bPanel {
 
         addToDataListButton = new Cab2bButton("Add To Data List");
         addToDataListButton.setPreferredSize(new Dimension(140, 22));
-       
+
         addToDataListButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-        
-            	m_applyAllButton.setEnabled(true);
-            	
+
+                m_applyAllButton.setEnabled(true);
+
                 List<IDataRow> dataRows = getSelectedDataRows();
                 MainSearchPanel.getDataList().addDataRows(dataRows);
 
@@ -115,8 +114,8 @@ public abstract class ResultPanel extends Cab2bPanel {
         // to the currently selected objects.
         m_applyAllButton = new Cab2bButton("Apply Data List");
         m_applyAllButton.setEnabled(false);
-        if(myDataListPanel.getComponentCount()>1){
-          	m_applyAllButton.setEnabled(true);
+        if (myDataListPanel.getComponentCount() > 1) {
+            m_applyAllButton.setEnabled(true);
         }
         m_applyAllButton.setPreferredSize(new Dimension(130, 22));
         m_applyAllButton.addActionListener(new ActionListener() {
@@ -232,7 +231,7 @@ public abstract class ResultPanel extends Cab2bPanel {
             myDataListTitledPanel.setTitleFont(new Font("SansSerif", Font.BOLD, 11));
             myDataListTitledPanel.setTitleForeground(Color.BLACK);
             myDataListTitledPanel.setBorder(null);
-            myDataListTitledPanel.setPreferredSize(new Dimension(267,653));
+            myDataListTitledPanel.setPreferredSize(new Dimension(267, 653));
 
             if (myDataListPanel == null) {
                 myDataListPanel = new Cab2bPanel();
@@ -295,14 +294,14 @@ public abstract class ResultPanel extends Cab2bPanel {
 
         DataRow dataRow = (DataRow) row;
         String displayClassName = Utility.getDisplayName(dataRow.getEntity());
-        selectedRootClassName.setText(displayClassName + "_" + dataRow.getId());
+        selectedRootClassName.setText(displayClassName + "_" + dataRow.getRecord().getRecordId().getId());
         selectedRootClassName.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 GlobalNavigationPanel.mainSearchPanel.getNavigationPanel().gotoDataListPanel(row);
             }
         });
         myDataListPanel.add("br ", selectedRootClassName);
-        
+
     }
 
     /**
