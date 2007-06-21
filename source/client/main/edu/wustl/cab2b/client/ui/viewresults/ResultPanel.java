@@ -115,7 +115,7 @@ public abstract class ResultPanel extends Cab2bPanel {
         // to the currently selected objects.
         m_applyAllButton = new Cab2bButton("Apply Data List");
         m_applyAllButton.setEnabled(false);
-        if (myDataListPanel.getComponentCount() > 1) {
+        if (myDataListPanel != null && myDataListPanel.getComponentCount() > 1) {
             m_applyAllButton.setEnabled(true);
         }
         m_applyAllButton.setPreferredSize(new Dimension(130, 22));
