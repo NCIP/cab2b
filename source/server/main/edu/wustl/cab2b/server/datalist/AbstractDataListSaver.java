@@ -74,7 +74,8 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
 
         newEntity.setName(oldEntity.getName());
 
-        DynamicExtensionUtility.addTaggedValue(newEntity, ORIGIN_ENTITY_ID_KEY, oldEntity.getId().toString());
+        DynamicExtensionUtility.addTaggedValue(newEntity, ORIGIN_ENTITY_ID_KEY,
+                                               getOriginEntityId(oldEntity).toString());
         DynamicExtensionUtility.addTaggedValue(newEntity, SOURCE_ENTITY_ID_KEY, oldEntity.getId().toString());
 
         DynamicExtensionUtility.addTaggedValue(newEntity,
@@ -83,6 +84,10 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
         addVirtualAttributes(newEntity);
 
         return newEntity;
+    }
+
+    private Long getOriginEntityId(EntityInterface oldEntity) {
+        return edu.wustl.cab2b.common.util.DataListUtil.getOriginEntity(oldEntity).getId();
     }
 
     protected abstract void populateNewEntity(EntityInterface oldEntity);
