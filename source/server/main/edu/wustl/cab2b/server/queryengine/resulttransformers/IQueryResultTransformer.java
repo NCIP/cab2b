@@ -10,6 +10,7 @@ import gov.nih.nci.cagrid.dcql.DCQLQuery;
 /**
  * Specifies the operations to be supported by a results transformer.
  * @author srinath_k
+ * @see AbstractQueryResultTransformer
  * @param <R>
  *            the type of records created when executing a query for a class.
  * @param <C>
