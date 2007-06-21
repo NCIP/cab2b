@@ -21,11 +21,25 @@ import edu.wustl.cab2b.common.queryengine.result.RecordId;
 public abstract class AbstractDataListRetriever<R extends IRecord> implements DataListRetriever<R> {
     protected EntityInterface newEntity;
 
-    protected AbstractDataListRetriever(EntityInterface newEntity) {
-        this.newEntity = newEntity;
+    protected boolean initialized = false;
+
+    public void initialize(EntityInterface entity) {
+        this.newEntity = entity;
+        setInitialized(true);
+    }
+
+    protected final boolean isInitialized() {
+        return initialized;
+    }
+
+    protected final void setInitialized(boolean initialized) {
+        this.initialized = initialized;
     }
 
     public final List<R> getEntityRecords(List<Long> recordIds) {
+        if (!isInitialized()) {
+            throw new IllegalStateException();
+        }
         return getEntityRecords(newEntity, recordIds);
     }
 
@@ -48,7 +62,7 @@ public abstract class AbstractDataListRetriever<R extends IRecord> implements Da
         int idIndex = attributesList.indexOf(DataListUtil.getVirtualIdAttribute(entity));
         int urlIndex = attributesList.indexOf(DataListUtil.getVirtualUrlAttribute(entity));
 
-        Set<AttributeInterface> recordAttributes = getAttributes(attributesList);
+        Set<AttributeInterface> recordAttributes = getNonVirtualAttributes(attributesList);
 
         for (EntityRecordInterface recordInterface : recordResultInterface.getEntityRecordList()) {
             List values = recordInterface.getRecordValueList();
@@ -82,7 +96,8 @@ public abstract class AbstractDataListRetriever<R extends IRecord> implements Da
 
     protected abstract R createRecord(EntityInterface entity, Set<AttributeInterface> attributes, RecordId id);
 
-    private Set<AttributeInterface> getAttributes(List<? extends AbstractAttributeInterface> attributesList) {
+    private Set<AttributeInterface> getNonVirtualAttributes(
+                                                            List<? extends AbstractAttributeInterface> attributesList) {
         Set<AttributeInterface> attributesSet = new HashSet<AttributeInterface>();
         for (int i = 0; i < attributesList.size(); i++) {
             AbstractAttributeInterface abstractAttribute = attributesList.get(i);

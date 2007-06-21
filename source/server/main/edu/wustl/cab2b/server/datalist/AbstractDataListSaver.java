@@ -23,12 +23,26 @@ import static edu.wustl.cab2b.common.util.DataListUtil.SOURCE_ENTITY_ID_KEY;
 public abstract class AbstractDataListSaver<R extends IRecord> implements DataListSaver<R> {
     protected EntityInterface newEntity;
 
-    protected AbstractDataListSaver(EntityInterface oldEntity) {
+    protected boolean initialized = false;
+
+    public void initialize(EntityInterface oldEntity) {
         this.newEntity = createNewEntity(oldEntity);
         populateNewEntity(oldEntity);
+        setInitialized(true);
+    }
+
+    protected final boolean isInitialized() {
+        return initialized;
+    }
+
+    protected final void setInitialized(boolean initialized) {
+        this.initialized = initialized;
     }
 
     public final Map<AbstractAttributeInterface, Object> getRecordAsMap(R record) {
+        if (!isInitialized()) {
+            throw new IllegalStateException();
+        }
         Map<AbstractAttributeInterface, Object> recordsMap = transformToMap(record);
         putRecordIdInMap(record.getRecordId(), recordsMap, newEntity);
 
@@ -63,6 +77,9 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
     }
 
     public final EntityInterface getNewEntity() {
+        if (!isInitialized()) {
+            throw new IllegalStateException();
+        }
         return this.newEntity;
     }
 

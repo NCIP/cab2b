@@ -1,7 +1,5 @@
 package edu.wustl.cab2b.server.datalist;
 
-import java.lang.reflect.Constructor;
-
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.DataListUtil;
@@ -15,10 +13,10 @@ public class DataListOperationsFactory {
             String transformerName = ResultConfigurationParser.getInstance().getDataListSaver(
                                                                                               Utility.getApplicationName(originEntity),
                                                                                               originEntity.getName());
-            Constructor<?> constructor = Class.forName(transformerName).getDeclaredConstructor(
-                                                                                               EntityInterface.class);
-            Object o = constructor.newInstance(entity);
-            return (DataListSaver<?>) o;
+
+            DataListSaver<?> saver = (DataListSaver<?>) createObject(transformerName);
+            saver.initialize(entity);
+            return saver;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -30,10 +28,17 @@ public class DataListOperationsFactory {
             String transformerName = ResultConfigurationParser.getInstance().getDataListRetriever(
                                                                                                   Utility.getApplicationName(originEntity),
                                                                                                   originEntity.getName());
-            Constructor<?> constructor = Class.forName(transformerName).getDeclaredConstructor(
-                                                                                               EntityInterface.class);
-            Object o = constructor.newInstance(entity);
-            return (DataListRetriever<?>) o;
+            DataListRetriever retriever = (DataListRetriever<?>) createObject(transformerName);
+            retriever.initialize(entity);
+            return retriever;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Object createObject(String className) {
+        try {
+            return Class.forName(className).newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

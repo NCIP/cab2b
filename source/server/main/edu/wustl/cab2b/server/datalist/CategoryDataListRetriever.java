@@ -18,8 +18,9 @@ import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 public class CategoryDataListRetriever extends AbstractDataListRetriever<ICategorialClassRecord> {
     private CategoryEntityTreeParser parser;
 
-    public CategoryDataListRetriever(EntityInterface newEntity) {
-        super(newEntity);
+    @Override
+    public void initialize(EntityInterface entity) {
+        super.initialize(entity);
         parser = new CategoryEntityTreeParser(newEntity);
     }
 

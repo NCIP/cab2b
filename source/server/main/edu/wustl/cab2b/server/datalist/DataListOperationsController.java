@@ -51,6 +51,10 @@ public class DataListOperationsController {
                 return null;
             }
 
+            public void initialize(EntityInterface oldEntity) {
+
+            }
+
         });
         IDataRow rootRecordDataRow = dataListToSave.getRootDataRow();
         dataRowToRecordsMap.put(rootRecordDataRow, new HashMap<AbstractAttributeInterface, Object>());

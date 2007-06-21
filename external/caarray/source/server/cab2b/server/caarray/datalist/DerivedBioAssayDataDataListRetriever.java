@@ -22,10 +22,6 @@ import edu.wustl.cab2b.server.datalist.DataListUtil;
 
 public class DerivedBioAssayDataDataListRetriever extends AbstractDataListRetriever<IDerivedBioAssayDataRecord> {
 
-    public DerivedBioAssayDataDataListRetriever(EntityInterface newEntity) {
-        super(newEntity);
-    }
-
     @Override
     protected void copyOtherFields(IDerivedBioAssayDataRecord record, EntityRecordInterface recordInterface,
                                    List<? extends AbstractAttributeInterface> attributesList,

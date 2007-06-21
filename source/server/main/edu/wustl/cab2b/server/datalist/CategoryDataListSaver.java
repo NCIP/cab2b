@@ -26,8 +26,9 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
 
     private CategoryEntityTreeParser parser;
 
-    public CategoryDataListSaver(EntityInterface oldEntity) {
-        super(oldEntity);
+    @Override
+    public void initialize(EntityInterface oldEntity) {
+        super.initialize(oldEntity);
         parser = new CategoryEntityTreeParser(newEntity);
     }
 

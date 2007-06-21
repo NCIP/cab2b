@@ -24,10 +24,6 @@ public class DerivedBioAssayDataDataListSaver extends AbstractDataListSaver<IDer
 
     static final String DIM3LABELS_ATTRIBUTE_NAME = "dim3Labels";
 
-    public DerivedBioAssayDataDataListSaver(EntityInterface oldEntity) {
-        super(oldEntity);
-    }
-
     @Override
     protected void populateNewEntity(EntityInterface oldEntity) {
         DataListUtil.copyAttributes(newEntity, oldEntity);
