@@ -24,6 +24,7 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.IDialogInterface;
 import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -127,8 +128,8 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
         return pathTable;
     }
 
-    private void setTableHeaderBold(JTable pathTable) {
-        JTableHeader header = pathTable.getTableHeader();
+    public void setTableHeaderBold(JTable jTable) {
+        JTableHeader header = jTable.getTableHeader();
         final Font boldFont = header.getFont().deriveFont(Font.BOLD);
         final TableCellRenderer headerRenderer = header.getDefaultRenderer();
         header.setDefaultRenderer(new TableCellRenderer() {

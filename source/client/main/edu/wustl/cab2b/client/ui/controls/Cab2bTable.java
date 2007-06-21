@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.controls;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ItemEvent;
@@ -9,6 +10,10 @@ import java.util.Vector;
 import javax.swing.AbstractButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.AlternateRowHighlighter;
@@ -16,9 +21,6 @@ import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterPipeline;
 
 public class Cab2bTable extends JXTable {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     boolean m_showCheckBox;
@@ -27,6 +29,10 @@ public class Cab2bTable extends JXTable {
         super(new Cab2bDefaultTableModel(showCheckBox, data, headers));
         m_showCheckBox = showCheckBox;
         initUI();
+    }
+    
+    public Cab2bTable(TableModel tableModel) {
+        super(tableModel);
     }
 
     private void initUI() {
@@ -54,7 +60,6 @@ public class Cab2bTable extends JXTable {
 
         m_showCheckBox = showCheckBox;
         initUI();
-
     }
 
     public int[] getSelectedRows() {
@@ -67,6 +72,21 @@ public class Cab2bTable extends JXTable {
         } else {
             return super.getSelectedRows();
         }
+    }
+    
+    public void setTableHeaderBold() {
+        JTableHeader header = getTableHeader();
+        final Font boldFont = header.getFont().deriveFont(Font.BOLD);
+        final TableCellRenderer headerRenderer = header.getDefaultRenderer();
+        header.setDefaultRenderer(new TableCellRenderer() {
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                           boolean hasFocus, int row, int column) {
+                Component component = headerRenderer.getTableCellRendererComponent(table, value, isSelected,
+                                                                                   hasFocus, row, column);
+                component.setFont(boldFont);
+                return component;
+            }
+        });
     }
 
     /**
