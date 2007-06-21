@@ -1,5 +1,7 @@
 package edu.wustl.cab2b.client.ui;
 
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.MAIN_FRAME_SEARCH_HELP_TEXT;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -11,6 +13,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.ToolTipManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Keymap;
@@ -18,12 +21,14 @@ import javax.swing.text.Keymap;
 import edu.wustl.cab2b.client.cache.ClientSideCache;
 import edu.wustl.cab2b.client.metadatasearch.MetadataSearch;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
+import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.beans.MatchedClass;
 import edu.wustl.cab2b.common.cache.IEntityCache;
 import edu.wustl.cab2b.common.exception.CheckedException;
+import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
  * The abstract class that contains commonalities between the advanced/category
@@ -117,12 +122,21 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
 
         //m_srhTextField.setBorder(BorderFactory.createLoweredBevelBorder());
         m_srhTextField.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
+        final String helpText = ApplicationProperties.getValue(MAIN_FRAME_SEARCH_HELP_TEXT);
+        m_srhTextField.setToolTipText(helpText);
+        ToolTipManager.sharedInstance().setDismissDelay(500000);
         /* Invoke the method based on concrete implementations from sub-class*/
         addTextField();
 
         /* Add the components to the panel.*/
+    
         this.add(m_srhButton);
+      
+		Cab2bLabel cab2bLabel = new Cab2bLabel(helpText);
+		this.add("br", new Cab2bLabel(" "));
+		this.add(cab2bLabel);
         this.add("br", m_advSearchPanel);
+       
     }
 
     /**
@@ -172,8 +186,10 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
      *            The results panel to be added.
      */
     public void addResultsPanel(AbstractSearchResultPanel resultPanel) {
+    	if(resultPanel!=null){
         this.add("p vfill", resultPanel);
         m_srhResultPanel = resultPanel;
+    	}
         this.updateUI();
     }
 
