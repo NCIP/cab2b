@@ -17,16 +17,17 @@ import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.cab2b.common.util.AttributeInterfaceComparator;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 
-public abstract class AbstractDataListSaver<R extends IRecord> implements DataListSaver<R> {
-    public static final String OLD_ENTITY_ID_TAG_NAME = "original_entity_id";
+import static edu.wustl.cab2b.common.util.DataListUtil.ORIGIN_ENTITY_ID_KEY;
+import static edu.wustl.cab2b.common.util.DataListUtil.SOURCE_ENTITY_ID_KEY;
 
+public abstract class AbstractDataListSaver<R extends IRecord> implements DataListSaver<R> {
     protected EntityInterface newEntity;
 
     protected AbstractDataListSaver(EntityInterface oldEntity) {
         this.newEntity = createNewEntity(oldEntity);
         populateNewEntity(oldEntity);
     }
-    
+
     public final Map<AbstractAttributeInterface, Object> getRecordAsMap(R record) {
         Map<AbstractAttributeInterface, Object> recordsMap = transformToMap(record);
         putRecordIdInMap(record.getRecordId(), recordsMap, newEntity);
@@ -73,7 +74,8 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
 
         newEntity.setName(oldEntity.getName());
 
-        DynamicExtensionUtility.addTaggedValue(newEntity, OLD_ENTITY_ID_TAG_NAME, oldEntity.getId().toString());
+        DynamicExtensionUtility.addTaggedValue(newEntity, ORIGIN_ENTITY_ID_KEY, oldEntity.getId().toString());
+        DynamicExtensionUtility.addTaggedValue(newEntity, SOURCE_ENTITY_ID_KEY, oldEntity.getId().toString());
 
         DynamicExtensionUtility.addTaggedValue(newEntity,
                                                edu.wustl.cab2b.common.util.Constants.ENTITY_DISPLAY_NAME,
