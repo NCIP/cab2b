@@ -10,7 +10,6 @@ import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 
@@ -87,9 +86,12 @@ public class DataListUtil {
         return DynamicExtensionUtility.getAttributeCopy(oldAttribute);
     }
 
-    public static void copyAttributes(EntityInterface newEntity, EntityInterface oldEntity) {
+    public static void copyNonVirtualAttributes(EntityInterface newEntity, EntityInterface oldEntity) {
         Collection<AttributeInterface> oldAttribs = oldEntity.getAttributeCollection();
         for (AttributeInterface oldAttrib : oldAttribs) {
+            if (isVirtualAttribute(oldAttrib)) {
+                continue;
+            }
             AttributeInterface newAttrib = DataListUtil.createNewAttribute(oldAttrib);
             newEntity.addAttribute(newAttrib);
         }
