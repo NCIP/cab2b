@@ -59,7 +59,7 @@ public abstract class ResultPanel extends Cab2bPanel {
      * caontains a summary of data items added to the data list
      * parent panel is used to adjust location of titlied panel  
      */
-    protected static JXPanel myDataListPanel;
+    public static JXPanel myDataListPanel;
 
     protected static JXTitledPanel myDataListTitledPanel;
 
@@ -106,6 +106,7 @@ public abstract class ResultPanel extends Cab2bPanel {
                 SaveDatalistPanel.isDataListSaved = false;
 
                 SearchNavigationPanel.messageLabel.setText(" *Added " + dataRows.size() + " elements to data list");
+                GlobalNavigationPanel.mainSearchPanel.getNavigationPanel().nextButton.setEnabled(true);
                 updateUI();
             }
         });
@@ -171,7 +172,7 @@ public abstract class ResultPanel extends Cab2bPanel {
 
             @Override
             protected void doUIUpdateLogic() throws RuntimeException {
-                // TODO Auto-generated method stub
+
                 updateMyDataListPanel();
                 /*  JOptionPane.showMessageDialog(component, "Apply All operation completed successfully", "Information",
                  JOptionPane.INFORMATION_MESSAGE);*/
@@ -220,10 +221,8 @@ public abstract class ResultPanel extends Cab2bPanel {
      *
      */
     public void initDataListSummaryPanel() {
-        Logger.out.debug("In initDataListSummaryPanel method");
         if (myDataListTitledPanel == null) {
 
-            // TODO externalize these titles.
             myDataListTitledPanel = new Cab2bTitledPanel("My Data List Summary");
             GradientPaint gp1 = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
                     new Point2D.Double(.95d, 0), Color.WHITE);
@@ -269,10 +268,20 @@ public abstract class ResultPanel extends Cab2bPanel {
      *
      */
     protected void updateMyDataListPanel() {
+
         //removing all previously added hyperlinks
         myDataListPanel.removeAll();
-        IDataRow rootNode = MainSearchPanel.getDataList().getRootDataRow(); //datalistTree.get(0); // This node is hidden node in the tree view     
-        for (int i = 0; i < rootNode.getChildren().size(); i++) {
+        IDataRow rootNode = MainSearchPanel.getDataList().getRootDataRow(); //datalistTree.get(0); // This node is hidden node in the tree view
+        int rootNodeChildrenSize = rootNode.getChildren().size();
+
+        //enabling/disabling Next button according to available data in datalist
+        if (rootNodeChildrenSize > 0) {
+            GlobalNavigationPanel.mainSearchPanel.getNavigationPanel().nextButton.setEnabled(true);
+        } else {
+            GlobalNavigationPanel.mainSearchPanel.getNavigationPanel().nextButton.setEnabled(false);
+        }
+
+        for (int i = 0; i < rootNodeChildrenSize; i++) {
             final IDataRow currentNode = rootNode.getChildren().get(i);
             if (currentNode.isData()) {
                 createHyperlink(currentNode);

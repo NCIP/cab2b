@@ -41,7 +41,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     /* The navigation buttons. */
     private Cab2bButton prvButton;
 
-    private Cab2bButton nextButton;
+    public Cab2bButton nextButton;
 
     /* Custom buttons for this dialog. */
     private Cab2bButton srhButton;
@@ -202,7 +202,6 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 CustomSwingWorker swingWorker = new CustomSwingWorker(this.m_mainSearchPanel) {
 
                     protected void doNonUILogic() {
-
                         /*
                          * Get the Functional class for root and update query
                          * object with it.
@@ -215,8 +214,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                     @Override
                     protected void doUIUpdateLogic() {
                         prvButton.setVisible(true);
-                        nextButton.setVisible(true);
-
+                        nextButton.setVisible(true);                       
                         saveDataListButton.setVisible(false);
                         addToExperimentButton.setVisible(false);
 
@@ -361,7 +359,6 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             SearchNavigationPanel.messageLabel.setText("");
             int cardIndex = m_mainSearchPanel.getCenterPanel().getSelectedCardIndex();
             if (cardIndex == 1) {
-                nextButton.setVisible(true);
                 prvButton.setVisible(false);
                 srhButton.setVisible(false);
                 saveDataListButton.setVisible(false);
@@ -372,18 +369,18 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 chooseCategoryPanel.addResultPanel(searchResultPanel);
                 chooseCategoryPanel.setSearchText(m_mainSearchPanel.getCenterPanel().getAddLimitPanel().getSearchText());
             } else if (cardIndex == 2) {
-                nextButton.setVisible(true);
                 prvButton.setVisible(true);
                 srhButton.setVisible(true);
                 saveDataListButton.setVisible(false);
                 addToExperimentButton.setVisible(false);
             } else if (cardIndex == 3 || cardIndex == 4) {
-                nextButton.setVisible(true);
                 prvButton.setVisible(true);
                 srhButton.setVisible(false);
                 saveDataListButton.setVisible(false);
                 addToExperimentButton.setVisible(false);
             }
+            nextButton.setVisible(true);
+            nextButton.setEnabled(true);
             showCard(false);
         } else if (strActionCommand.equals("Reset")) {
             // -------- PERFORM FOLLOWING CLEAN-UP --------------------
