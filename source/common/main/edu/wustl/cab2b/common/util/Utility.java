@@ -5,6 +5,9 @@ import static edu.wustl.cab2b.common.util.Constants.PROJECT_VERSION;
 import static edu.wustl.cab2b.common.util.Constants.TYPE_CATEGORY;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -433,5 +436,18 @@ public class Utility {
 
         }
         return attributeList;
+    }
+    
+    /**
+     * This method converts stack trace to the string representation
+     * @param aThrowable   throwable object
+     * @return String representation  of the stack trace
+     */
+    public static String getStackTrace(Throwable throwable)
+    {
+        final Writer result = new StringWriter();
+        final PrintWriter printWriter = new PrintWriter(result);
+        throwable.printStackTrace(printWriter);
+        return result.toString();
     }
 }
