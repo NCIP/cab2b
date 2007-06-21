@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
 import edu.wustl.cab2b.client.cache.ClientSideCache;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -154,7 +155,7 @@ public class ClientLauncher {
             ClientSideCache.getInstance();
         } catch (Throwable t) {
             Logger.out.error("Unable to get data from caB2B server. Please verify caB2B server address and port in conf/jndi.properties");
-            Logger.out.error(t.getMessage());
+            Logger.out.error(Utility.getStackTrace(t));
             System.exit(1);
         }
     }
