@@ -5,10 +5,13 @@
 			Build file for caB2B project
 			Author : Chandrakant Talele
 	================================================================	-->
-	<property file="build/build.properties" />
+	<property file="conf/server.properties" />
 	<property file="build/unittest.properties" />
-	<property file="conf/database.properties" />
 
+	<property name="jboss.common.lib.dir" location="${jboss.home}/server/default/lib"/>
+	<property name="jboss.deploy.dir" location="${jboss.home}/server/default/deploy"/>
+	<property name="jboss.log.dir" location="${jboss.home}/server/default/log"/>
+	
 	<property name="common.src" location="source/common/main" />
 	<property name="common.test" location="source/common/test" />
 
@@ -24,7 +27,7 @@
 	<property name="cactusReports.dir" location="${Reports.dir}/cactus" />
 	<property name="buildReports.dir" location="${Reports.dir}/build" />
 	<property name="javadoc.dir" location="${Reports.dir}/javadoc" />
-<property name="install.hibernate.cfg" value="installHibernate.cfg.xml"/>
+	<property name="install.hibernate.cfg" value="installHibernate.cfg.xml"/>
 
 	<property name="XmlLogger.file" value="${buildReports.dir}\log.xml" />
 	<tstamp>
@@ -97,8 +100,9 @@
 		<pathelement location="${common.classes.dir}" />
 	</path>
 
-	<!-- =========================================================================== -->
-	<target name="clean.all" description="Cleans Everything in workarea folder">
+	<!-- =========================================================================== 
+			Cleans Everything in workarea folder	-->
+	<target name="clean.all">
 		<delete includeemptydirs="true">
 			<fileset dir="${workArea.dir}">
 				<include name="**/*" />
@@ -192,7 +196,7 @@
 			<fileset dir="${conf.dir}">
 				<include name="Cab2bApplicationResources.properties" />
 				<include name="client.properties" />
-				<include name="demo.properties" />
+				<include name="cab2b.properties" />
 				<include name="dynamicUI.xml" />
 				<include name="errorcodes.properties" />
 				<include name="jndi.properties" />
@@ -232,7 +236,7 @@
 		<copy todir="${server.jar.dir}">
 			<fileset dir="${conf.dir}">
 				<include name="*.wsdd" />
-				<include name="demo.properties" />
+				<include name="cab2b.properties" />
 				<include name="*.cfg.xml" />
 				<include name="dbutil.properties" />
 				<include name="EntityToAnalyticalServiceMapping.xml" />
@@ -311,15 +315,11 @@
 		<replace file="${dsFile}" token="user_name" value="${database.username}" />
 		<replace file="${dsFile}" token="user_password" value="${database.password}" />
 	</target>
-	<!--target name="modify.dbutil">
-		<echo message="hibernate.configuration.files = dehibernate.cfg.xml,installHibernate.cfg.xml" file="${dbutil.properties.file}" append="false" />
-	</target>
-	<target name="restore.dbutil">
-		<echo message="hibernate.configuration.files = dehibernate.cfg.xml,hibernate.cfg.xml" file="${dbutil.properties.file}" append="false" />
-	</target-->
+	<!-- ================================================================================== 
+			"Drops existing database and create new database with schema"
+	================================================================================== 	-->
 	
-	<!-- ================================================================================== -->
-	<target name="create.database" description="Drops existing database and create new database with schema">
+	<target name="create.database">
 		<echo>Creating cab2b database...</echo>
 		<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${database.server.ip}:${database.server.port}/" userid="${database.username}" password="${database.password}" onerror="continue" classpathref="server.classpath">			
 			DROP DATABASE ${database.name};
@@ -338,10 +338,11 @@
 		<copy todir="${server.classes.dir}">
 			<fileset dir="${conf.dir}">
 				<include name="*.wsdd" />
-				<include name="demo.properties" />
+				
 				<include name="*.cfg.xml" />
 				<include name="dbutil.properties" />
-				<include name="database.properties" />
+				<include name="cab2b.properties" />
+				<include name="server.properties" />
 				<include name="EntityToAnalyticalServiceMapping.xml" />
 				<include name="ResultConfiguration.xml" />
 			</fileset>
@@ -364,7 +365,7 @@
 		</path>
 	</target>
 	<!-- ================================================================================== -->
-	<target name="install.server" depends="build.paths,jboss.stop,jboss.start"/>
+	<target name="install.server" depends="build.paths,jboss.stop,jboss.start" description="Installs cab2b database. Loads paths and starts Jbosss"/>
 	
 	<!-- ============================================================================
 	 			Cactus TESTS
@@ -409,7 +410,7 @@
 		<copy todir="${testcase.properties.folder}" overwrite="true">
 			<fileset dir="${conf.dir}">
 				<include name="jndi.properties" />
-				<include name="demo.properties" />
+				<include name="cab2b.properties" />
 			</fileset>
 		</copy>
 
@@ -524,11 +525,11 @@
 		<jar basedir="${standAlone.jar.dir}" destfile="${caB2B.standalone.jar.file}" />
 	</target>
 	<!-- ================================================================================== -->
-	<target name="runClient" depends="compile.client" description="Run the sample Client">
+	<target name="run.cab2b.client" depends="compile.client" description="Run the sample Client">
 		<echo message="Running the java code" />
-		<java classname="edu.wustl.cab2b.client.ui.mainframe.MainFrame" classpathref="runClient.classpath" fork="yes" />
+		<java classname="edu.wustl.cab2b.client.ui.mainframe.MainFrame" classpathref="run.client.classpath" fork="yes" />
 	</target>
-	<path id="runClient.classpath">
+	<path id="run.client.classpath">
 		<path refid="client.classpath" />
 		<pathelement location="${workArea.dir}/common/classes" />
 		<pathelement location="${workArea.dir}/client/classes" />

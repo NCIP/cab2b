@@ -11,7 +11,7 @@ import static edu.wustl.cab2b.server.path.PathConstants.INTER_MODEL_ASSOCIATION_
 import static edu.wustl.cab2b.server.path.PathConstants.INTRA_MODEL_ASSOCIATION_FILE_NAME;
 import static edu.wustl.cab2b.server.path.PathConstants.INTRA_MODEL_ASSOCIATION_TYPE;
 import static edu.wustl.cab2b.server.path.PathConstants.PATH_FILE_NAME;
-
+import static edu.wustl.cab2b.server.ServerConstants.SERVER_PROPERTY_FILE;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -44,10 +44,12 @@ import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationExcept
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.IdGenerator;
+import edu.wustl.cab2b.common.util.PropertyLoader;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.path.pathgen.GraphPathFinder;
 import edu.wustl.cab2b.server.path.pathgen.Path;
 import edu.wustl.cab2b.server.path.pathgen.PathToFileWriter;
+import edu.wustl.cab2b.server.util.DataFileLoaderInterface;
 import edu.wustl.cab2b.server.util.SQLQueryUtil;
 import edu.wustl.common.util.logger.Logger;
 
@@ -66,14 +68,18 @@ public class PathBuilder {
      * This facilitates fast path building
      */
     private static HashMap<String, EntityGroupInterface> shortNameVsEntityGroup = new HashMap<String, EntityGroupInterface>();
+
     /**
      * This facilitates fast path transformation
      */
     private static HashMap<Long, AssociationInterface> idVsAssociation = new HashMap<Long, AssociationInterface>();
+
     /**
      * This facilitates fast path transformation
      */
     private static HashMap<String, List<AssociationInterface>> srcDesVsAssociations = new HashMap<String, List<AssociationInterface>>();
+
+    private static DataFileLoaderInterface dataFileLoader;
 
     /**
      * Builds all non-redundent paths for traversal between classes from a given domain model.
@@ -91,7 +97,7 @@ public class PathBuilder {
             storeModelAndGeneratePaths(path, applicationName, connection);
         }
         transformAndLoadPaths(connection);
-       
+
         if (applicationNames.length < 2)
             return;
 
@@ -125,6 +131,7 @@ public class PathBuilder {
             }
         }
     }
+
     /**
      * Reads model present at given location and appends the generated paths to {@link PathConstants#PATH_FILE_NAME}
      * <b>NOTE : </b> Paths are appended to existing file (if any).
@@ -162,6 +169,7 @@ public class PathBuilder {
             throw new RuntimeException("Exception while firing Parameterized query.", e, DB_0003);
         }
     }
+
     /**
      * @param leftEntityGroup One of the two entity groups
      * @param rightEntityGroup The other entity group.
@@ -171,7 +179,7 @@ public class PathBuilder {
      * @throws IOException If file operation fails.
      */
     static void storeInterModelConnections(EntityGroupInterface leftEntityGroup,
-                                                  EntityGroupInterface rightEntityGroup, Connection connection) {
+                                           EntityGroupInterface rightEntityGroup, Connection connection) {
         List<InterModelConnection> allInterModelConnections = new ArrayList<InterModelConnection>();
         Collection<EntityInterface> leftEntityCollection = leftEntityGroup.getEntityCollection();
         Collection<EntityInterface> rightEntityCollection = rightEntityGroup.getEntityCollection();
@@ -193,6 +201,7 @@ public class PathBuilder {
             throw new RuntimeException("Error in writing to output file", e, IO_0001);
         }
     }
+
     /**
      * This method registered all the associations present in dynamic extension.
      * It creates new data files at {@link PathConstants#ASSOCIATION_FILE_NAME} and 
@@ -202,8 +211,8 @@ public class PathBuilder {
      * @param associationIdSet Set of all association Ids which are to be registered.
      * @throws IOException If file opetaion fails.
      */
-    static synchronized void registerIntraModelAssociations(Connection connection,
-                                                                   Set<Long> associationIdSet) throws IOException {
+    static synchronized void registerIntraModelAssociations(Connection connection, Set<Long> associationIdSet)
+            throws IOException {
         Logger.out.debug("Registering all the associations present in DE as IntraModelAssociations");
         BufferedWriter associationFile = new BufferedWriter(new FileWriter(new File(ASSOCIATION_FILE_NAME)));
         BufferedWriter intraModelAssociationFile = new BufferedWriter(new FileWriter(new File(
@@ -225,10 +234,12 @@ public class PathBuilder {
             nextId++;
         }
         String columns = "(ASSOCIATION_ID,ASSOCIATION_TYPE)";
-        loadDataFromFile(connection, ASSOCIATION_FILE_NAME, columns, "ASSOCIATION",new Class[]{Long.class,Integer.class});
+        loadDataFromFile(connection, ASSOCIATION_FILE_NAME, columns, "ASSOCIATION",
+                         new Class[] { Long.class, Integer.class });
 
         columns = "(ASSOCIATION_ID,DE_ASSOCIATION_ID)";
-        loadDataFromFile(connection, INTRA_MODEL_ASSOCIATION_FILE_NAME, columns, "INTRA_MODEL_ASSOCIATION",new Class[]{Long.class,Long.class});
+        loadDataFromFile(connection, INTRA_MODEL_ASSOCIATION_FILE_NAME, columns, "INTRA_MODEL_ASSOCIATION",
+                         new Class[] { Long.class, Long.class });
         Logger.out.debug("All the associations are registered");
     }
 
@@ -270,7 +281,8 @@ public class PathBuilder {
         prepareStatement.close();
         String pathColumns = "(PATH_ID,FIRST_ENTITY_ID,INTERMEDIATE_PATH,LAST_ENTITY_ID)";
         Logger.out.info("Generated the paths to file : " + PATH_FILE_NAME);
-        loadDataFromFile(connection, PATH_FILE_NAME, pathColumns, "PATH",new Class[]{Long.class,Long.class,String.class,Long.class});
+        loadDataFromFile(connection, PATH_FILE_NAME, pathColumns, "PATH",
+                         new Class[] { Long.class, Long.class, String.class, Long.class });
     }
 
     /**
@@ -399,6 +411,7 @@ public class PathBuilder {
         SQLQueryUtil.executeUpdate(updateNextIdSql, connection);
         return nextId;
     }
+
     /**
      * Loads data from given file into given table.
      * <b> NOTE : </b> This method will not create table in database. It assumes that table is already present
@@ -406,69 +419,30 @@ public class PathBuilder {
      * @param fileName Full path of data file.
      * @param columns Data columns in table. They should be in format "(column1,column2,...)"
      * @param tableName Name of the table in which data to load.
-     */   /*
- static void loadDataFromFile(Connection connection, String fileName, String columns, String tableName) {
-        Logger.out.debug("Entering method loadDataFromFile()");
-
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(" LOAD DATA INFILE '");
-        buffer.append(fileName.replaceAll("\\\\", "/"));
-        buffer.append("' INTO TABLE ");
-        buffer.append(tableName);
-        buffer.append(" FIELDS TERMINATED BY '");
-        buffer.append(FIELD_SEPARATOR);
-        buffer.append("' LINES TERMINATED BY '\n' ");
-        buffer.append(columns);
-
-        Logger.out.info("Loading data to database from file : " + fileName);
-        SQLQueryUtil.executeUpdate(buffer.toString(), connection);
-        Logger.out.info("Loading data to database from file : " + fileName + " DONE");
-        Logger.out.debug("Leaving method loadDataFromFile()");
-    }
-*/
-    static void loadDataFromFile(Connection connection, String fileName, String columns, String tableName,Class<?>[] dataTypes) {
-        Logger.out.debug("Entering method loadDataFromFile()");
-
-        BufferedReader bufferedReader = null;
-        try {
-            bufferedReader = new BufferedReader(new FileReader(fileName));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("File not found :" + fileName, e, IO_0001);
-        }
-        int columnCount = columns.split(",").length;
-        StringBuffer sql = new StringBuffer();
-        sql.append("insert into ").append(tableName).append(" ").append(columns).append(" values(");
-        for (int i = 0; i < columnCount; i++) {
-            sql.append("?,");
-        }
-        sql.deleteCharAt(sql.length() - 1);
-        sql.append(")");
-        System.out.println(sql);
-        PreparedStatement ps = null;
-        try {
-            ps = connection.prepareStatement(sql.toString());
-            String oneRecord = "";
-            while ((oneRecord = bufferedReader.readLine()) != null) {
-                String[] values = oneRecord.split(FIELD_SEPARATOR);
-                for (int j = 0; j < columnCount; j++) {
-                    if (dataTypes[j].equals(String.class)) {
-                        ps.setString(j + 1, values[j]);
-                    } else if (dataTypes[j].equals(Long.class)) {
-                        ps.setLong(j + 1, Long.parseLong(values[j]));
-                    } else if (dataTypes[j].equals(Integer.class)) {
-                        ps.setInt(j + 1, Integer.parseInt(values[j]));
-                    }
-                }
-                ps.executeUpdate();
-                ps.clearParameters();
+     */
+    static void loadDataFromFile(Connection connection, String fileName, String columns, String tableName,
+                                 Class<?>[] dataTypes) {
+        String className = null;
+        if (dataFileLoader == null) {
+            try {
+                Properties props = PropertyLoader.getPropertiesFromFile(SERVER_PROPERTY_FILE);
+                className = props.getProperty("database.loader");
+                dataFileLoader = (DataFileLoaderInterface) Class.forName(className).newInstance();
+            } catch (InstantiationException e) {
+                Logger.out.error("Unable to instantiation " + className);
+                Logger.out.error(Utility.getStackTrace(e));
+            } catch (IllegalAccessException e) {
+                Logger.out.error("Unable to access public default constructor of " + className);
+                Logger.out.error(Utility.getStackTrace(e));
+            } catch (ClassNotFoundException e) {
+                Logger.out.error("Class " + className + " not found. Please put it in classpath");
+                Logger.out.error(Utility.getStackTrace(e));
+            } catch (ClassCastException e) {
+                Logger.out.error("Class " + className + " must implement DataFileLoaderInterface");
+                Logger.out.error(Utility.getStackTrace(e));
             }
-            bufferedReader.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        Logger.out.debug("Leaving method loadDataFromFile()");
+        dataFileLoader.loadDataFromFile(connection, fileName, columns, tableName, dataTypes);
     }
 
     /**
@@ -504,10 +478,12 @@ public class PathBuilder {
             nextId++;
         }
         String columns = "(ASSOCIATION_ID,ASSOCIATION_TYPE)";
-        loadDataFromFile(connection, ASSOCIATION_FILE_NAME, columns, "ASSOCIATION",new Class[] {Long.class,Integer.class});
+        loadDataFromFile(connection, ASSOCIATION_FILE_NAME, columns, "ASSOCIATION",
+                         new Class[] { Long.class, Integer.class });
 
         columns = "(ASSOCIATION_ID,LEFT_ENTITY_ID,LEFT_ATTRIBUTE_ID,RIGHT_ENTITY_ID,RIGHT_ATTRIBUTE_ID)";
-        loadDataFromFile(connection, INTER_MODEL_ASSOCIATION_FILE_NAME, columns, "INTER_MODEL_ASSOCIATION",new Class[] {Long.class,Long.class,Long.class,Long.class,Long.class});
+        loadDataFromFile(connection, INTER_MODEL_ASSOCIATION_FILE_NAME, columns, "INTER_MODEL_ASSOCIATION",
+                         new Class[] { Long.class, Long.class, Long.class, Long.class, Long.class });
     }
 
     /**
@@ -595,40 +571,7 @@ public class PathBuilder {
         }
         Logger.out.info("Total number of associations found in DE : " + idVsAssociation.size());
     }
-   
-    public static void main(String[] args) throws Exception {
-        Logger.configure();
-        String propertyfile = "database.properties";
-        
-            // This static block loads properties from file at class loading time.
-            InputStream is = Utility.class.getClassLoader().getResourceAsStream(propertyfile);
-            if (is == null) {
-                Logger.out.error("Unable fo find property file : " + propertyfile
-                        + "\n please put this file in classpath");
-            }
-            Properties props = new Properties();
-            try {
-                props.load(is);
-            } catch (IOException e) {
-                Logger.out.error("Unable to load properties from : " + propertyfile);
-                e.printStackTrace();
-            }
-        
-           String server = props.getProperty("database.server.ip");
-           String port = props.getProperty("database.server.port");
-           String dbName = props.getProperty("database.name");
-           
-          
-        String url = "jdbc:mysql://"+ server+":" +port+"/"+dbName;
-        //String url = "jdbc:mysql://localhost:3306/cab2b";
-        String driver = "com.mysql.jdbc.Driver";
-        String userName =  props.getProperty("database.username");
-        String password =   props.getProperty("database.password");
-        Class.forName(driver).newInstance();
-        Connection con = DriverManager.getConnection(url, userName, password);
-        PathBuilder.buildAndLoadAllModels(con);
-        con.close();
-    }
+
     public static long getNextPathId(Connection connection) {
         String[][] result = SQLQueryUtil.executeQuery("select MAX(PATH_ID) from PATH", connection);
         Long maxId;
@@ -639,4 +582,39 @@ public class PathBuilder {
         }
         return maxId + 1;
     }
+
+    /** 
+     * This will be called from installation process
+     * @param args
+     */
+    public static void main(String[] args) {
+        Logger.configure();
+        String driver = "com.mysql.jdbc.Driver";
+        Properties props = PropertyLoader.getPropertiesFromFile(SERVER_PROPERTY_FILE);
+
+        String server = props.getProperty("database.server.ip");
+        String port = props.getProperty("database.server.port");
+        String dbName = props.getProperty("database.name");
+        String userName = props.getProperty("database.username");
+        String password = props.getProperty("database.password");
+
+        String url = "jdbc:mysql://" + server + ":" + port + "/" + dbName; //String url = "jdbc:mysql://localhost:3306/cab2b";
+        Connection con = null;
+        try {
+            Class.forName(driver).newInstance();
+            con = DriverManager.getConnection(url, userName, password);
+            PathBuilder.buildAndLoadAllModels(con);
+        } catch (Throwable t) {
+            Logger.out.error(Utility.getStackTrace(t));
+        } finally {
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                    //Nothing to do
+                }
+            }
+        }
+    }
+
 }
