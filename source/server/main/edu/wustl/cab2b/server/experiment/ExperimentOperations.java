@@ -308,8 +308,20 @@ public class ExperimentOperations extends DefaultBizLogic {
         if (identifier != 0) {
             exp = (Experiment) expList.get(0);
         }
-
+        populateEntitiesNames(exp.getDataListMetadataCollection());
         return exp;
+    }
+
+    private void populateEntitiesNames(Collection<DataListMetadata> dataListMetadataCollection) {
+        for (DataListMetadata dataListMetadata : dataListMetadataCollection) {
+            for (Long id : dataListMetadata.getEntityIds()) {
+                dataListMetadata.putEntityName(id, getEntityName(id));
+            }
+        }
+    }
+
+    private String getEntityName(Long id) {
+        return DatalistCache.getInstance().getEntityWithId(id).getName();
     }
 
     /**

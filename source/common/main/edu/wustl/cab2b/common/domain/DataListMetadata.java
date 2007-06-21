@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import edu.wustl.cab2b.common.IdName;
+
 /**
  * This is a DataList domain object. This will be mapped to "datalist" table.
  * 
@@ -17,6 +19,8 @@ public class DataListMetadata extends AdditionalMetadata implements Serializable
 
     private Set<Long> entityIds;
 
+    private Set<IdName> entitiesNames;
+
     /**
      * Returns the entity id of this datalist.
      * 
@@ -24,7 +28,6 @@ public class DataListMetadata extends AdditionalMetadata implements Serializable
      * @return name of the domain object.
      */
     public Set<Long> getEntityIds() {
-        // TODO hbm and stuff...
         if (entityIds == null) {
             entityIds = new HashSet<Long>();
         }
@@ -37,5 +40,19 @@ public class DataListMetadata extends AdditionalMetadata implements Serializable
 
     public void addEntityId(Long entityId) {
         getEntityIds().add(entityId);
+    }
+
+    public void putEntityName(Long id, String name) {
+        if (!entityIds.contains(id)) {
+            throw new IllegalArgumentException("Specified id is invalid.");
+        }
+        getEntitiesNames().add(new IdName(id, name));
+    }
+
+    public Set<IdName> getEntitiesNames() {
+        if (entitiesNames == null) {
+            entitiesNames = new HashSet<IdName>();
+        }
+        return entitiesNames;
     }
 }

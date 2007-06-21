@@ -26,7 +26,7 @@ public class DerivedBioAssayDataDataListSaver extends AbstractDataListSaver<IDer
 
     @Override
     protected void populateNewEntity(EntityInterface oldEntity) {
-        DataListUtil.copyAttributes(newEntity, oldEntity);
+        DataListUtil.copyNonVirtualAttributes(newEntity, oldEntity);
         newEntity.addAttribute(createObjectAttribute(CUBE_ATTRIBUTE_NAME));
         newEntity.addAttribute(createObjectAttribute(DIM1LABELS_ATTRIBUTE_NAME));
         newEntity.addAttribute(createObjectAttribute(DIM2LABELS_ATTRIBUTE_NAME));
