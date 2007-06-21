@@ -34,7 +34,7 @@ public class DatalistCache {
     }
 
     public EntityInterface getEntityWithId(Long id) {
-        if (!entityForId.containsKey(id)) {
+        if (!isEntityPresent(id)) {
             throw new RuntimeException("Entity with given id not found.");
         }
         return entityForId.get(id);
@@ -42,5 +42,9 @@ public class DatalistCache {
 
     public void addEntity(EntityInterface entity) {
         entityForId.put(entity.getId(), entity);
+    }
+
+    public boolean isEntityPresent(Long id) {
+        return entityForId.containsKey(id);
     }
 }
