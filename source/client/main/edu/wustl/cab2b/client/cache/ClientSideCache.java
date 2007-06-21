@@ -52,7 +52,10 @@ public class ClientSideCache extends AbstractEntityCache {
         clientLauncher.showProgress(" Getting all categories....", length);
         try {
             categories = categoryOperations.getAllCategories();
-            int offset = 50 / categories.size();
+            int offset = 50;
+            if(!categories.isEmpty()) {
+                offset = offset / categories.size();
+            } 
             for (Category category : categories) {
                 categoryVsClasseSet.put(category, categoryOperations.getAllSourceClasses(category));
                 categoryVsAttributeSet.put(category, categoryOperations.getAllSourceAttributes(category));
