@@ -21,4 +21,5 @@ public class ClientConstants {
     public static String MY_SEARCH_QUERIES_IMAGE = "mysearchqueries_icon.gif";
     public static String MY_EXPERIMENT_IMAGE = "arrow_icon_mo.gif";
     public static String MY_CATEGORIES_IMAGE = "arrow_icon_mo.gif";
+    public static String DETAILS_COLUMN_IMAGE = "popularcategories_icon.gif";
 }
