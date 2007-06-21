@@ -8,7 +8,7 @@
 	<property file="build/build.properties" />
 	<property file="build/unittest.properties" />
 	<property file="conf/database.properties" />
-	
+
 	<property name="common.src" location="source/common/main" />
 	<property name="common.test" location="source/common/test" />
 
@@ -42,7 +42,7 @@
 	<property name="cab2bDS.file" location="${conf.dir}/${cab2bDS.file.name}" />
 
 	<property name="jbossjca.service.xml" location="${conf.dir}/jbossjca-service.xml" />
-
+	<property name="db.scripts.dir" location="scripts" />
 	<property name="server.jar.dir" location="${workArea.dir}/serverJar" />
 	<property name="server.jar.file" location="${workArea.dir}/cab2bServer.jar" />
 	<property name="caB2B.standalone.jar.file" location="${workArea.dir}/cab2bStandAlone.jar" />
@@ -286,29 +286,46 @@
 	<!-- ===========================================================================
 					Deploy
 	================================================================================ -->
-	<target name="deploy.jboss" depends="clean.all,build.ear,update.server,replace.datasource" description="Deploys EAR file to JBoss application server"/>
+	<target name="deploy.jboss" depends="clean.all,build.ear,update.server,replace.datasource" description="Deploys EAR file to JBoss application server" />
 	<!-- ================================================================================== -->
-	<target name="update.server"><!-- Copies files to server -->
-			<delete dir="${jboss.home}/server/default/tmp/deploy" />
-			<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
-			<copy overwrite="true" file="${cab2bDS.file}" todir="${jboss.deploy.dir}" />
-			<copy overwrite="true" file="${jbossjca.service.xml}" todir="${jboss.deploy.dir}" />
-			<copy overwrite="true" file="lib/server/oracleDriver.jar" todir="${jboss.common.lib.dir}" />
-			<copy overwrite="true" file="lib/server/mysql-connector-java-3.0.16-ga-bin.jar" todir="${jboss.common.lib.dir}" />
-			<delete dir="${jboss.log.dir}" />
-			<mkdir dir="${jboss.log.dir}" />
-			<echo message="" file="${jboss.log.dir}/caB2B.log" append="false" />
-		</target>
+	<target name="update.server">
+		<!-- Copies files to server -->
+		<delete dir="${jboss.home}/server/default/tmp/deploy" />
+		<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
+		<copy overwrite="true" file="${cab2bDS.file}" todir="${jboss.deploy.dir}" />
+		<copy overwrite="true" file="${jbossjca.service.xml}" todir="${jboss.deploy.dir}" />
+		<copy overwrite="true" file="lib/server/oracleDriver.jar" todir="${jboss.common.lib.dir}" />
+		<copy overwrite="true" file="lib/server/mysql-connector-java-3.0.16-ga-bin.jar" todir="${jboss.common.lib.dir}" />
+		<delete dir="${jboss.log.dir}" />
+		<mkdir dir="${jboss.log.dir}" />
+		<echo message="" file="${jboss.log.dir}/caB2B.log" append="false" />
+	</target>
 
 	<!-- ================================================================================== -->
 	<target name="replace.datasource">
-		<property name="dsFile" value="${jboss.deploy.dir}/${cab2bDS.file.name}"/>
+		<property name="dsFile" value="${jboss.deploy.dir}/${cab2bDS.file.name}" />
 		<replace file="${dsFile}" token="server-ip" value="${database.server.ip}" />
 		<replace file="${dsFile}" token="port" value="${database.server.port}" />
 		<replace file="${dsFile}" token="database-name" value="${database.name}" />
 		<replace file="${dsFile}" token="user_name" value="${database.username}" />
 		<replace file="${dsFile}" token="user_password" value="${database.password}" />
 	</target>
+	<!-- ================================================================================== -->
+	<target name="create.database" description="Drops existing database and create new database with schema">
+		<echo>Creating cab2b database...</echo>
+		<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${database.server.ip}:${database.server.port}/" userid="${database.username}" password="${database.password}" onerror="continue" classpathref="server.classpath">			
+			DROP DATABASE ${database.name};
+			CREATE DATABASE ${database.name};
+		</sql>
+
+		<echo>Creating schema in cab2b database...</echo>
+		<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${database.server.ip}:${database.server.port}/${database.name}" userid="${database.username}" password="${database.password}" onerror="continue" classpathref="server.classpath">
+			<fileset dir="${db.scripts.dir}">
+				<include name="*.sql" />
+			</fileset>
+		</sql>
+	</target>
+
 	<!-- ============================================================================
 	 			Cactus TESTS
 	================================================================================= -->
