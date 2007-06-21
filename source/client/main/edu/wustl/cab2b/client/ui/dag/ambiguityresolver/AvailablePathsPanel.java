@@ -1,7 +1,7 @@
 package edu.wustl.cab2b.client.ui.dag.ambiguityresolver;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,7 +17,9 @@ import javax.swing.table.TableColumnModel;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
+import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.controls.Cab2bStandardFonts;
 import edu.wustl.cab2b.client.ui.controls.CheckBoxTableModel;
 import edu.wustl.cab2b.client.ui.controls.TextAreaRenderer;
 import edu.wustl.cab2b.common.util.Constants;
@@ -136,14 +138,19 @@ public class AvailablePathsPanel extends AbstractAmibuityResolver {
         if (!curatedPathList.isEmpty()) {
             selectedPathList = curatedPathList;
             curatedPathLink = createPathHyperLink(Constants.CURATED_PATH, curatedPathList);
-            hyperlinkPanel.add("tab ", curatedPathLink);
-            curatedPathLink.setClicked(true);
-            curatedPathLink.setClickedColor(Color.black);
+            Cab2bLabel curatedPathLabel = new Cab2bLabel(Constants.CURATED_PATH, Cab2bStandardFonts.ARIAL_BOLD_12);
+            hyperlinkPanel.add("tab ", curatedPathLabel);
         } else {
             selectedPathList = generalPathList;
         }
-
+        
         return hyperlinkPanel;
+    }
+    
+    private void refreshHyperlinkPanel(Component component1, Component component2) {
+        hyperlinkPanel.removeAll();
+        hyperlinkPanel.add("tab ", component1);
+        hyperlinkPanel.add("tab ", component2);
     }
 
     /**
@@ -153,7 +160,7 @@ public class AvailablePathsPanel extends AbstractAmibuityResolver {
      * @return a hyperlink
      */
     private Cab2bHyperlink createPathHyperLink(final String linkName, final List<IPath> pathList) {
-        Cab2bHyperlink pathHyperLink = new Cab2bHyperlink();
+        Cab2bHyperlink<List<IPath>> pathHyperLink = new Cab2bHyperlink<List<IPath>>();
         pathHyperLink.setBounds(new Rectangle(5, 5, 5, 5));
         pathHyperLink.setText(linkName);
         pathHyperLink.setActionCommand(linkName);
@@ -161,19 +168,16 @@ public class AvailablePathsPanel extends AbstractAmibuityResolver {
 
         pathHyperLink.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                Cab2bHyperlink pathHyperLink = (Cab2bHyperlink) actionEvent.getSource();
+                Cab2bHyperlink<List<IPath>> pathHyperLink = (Cab2bHyperlink<List<IPath>>) actionEvent.getSource();
                 String linkClicked = actionEvent.getActionCommand();
                 if (linkClicked.equals(Constants.CURATED_PATH)) {
-                    generalPathLink.setClicked(false);
-                    generalPathLink.setClickedColor(Color.blue);
+                    Cab2bLabel curatedPathLabel = new Cab2bLabel(Constants.CURATED_PATH, Cab2bStandardFonts.ARIAL_BOLD_12);
+                    refreshHyperlinkPanel(generalPathLink, curatedPathLabel);
                 } else if (curatedPathLink != null) {
-                    curatedPathLink.setClicked(false);
-                    curatedPathLink.setClickedColor(Color.blue);
+                    Cab2bLabel generalPathLabel = new Cab2bLabel(Constants.GENERAL_PATH, Cab2bStandardFonts.ARIAL_BOLD_12);
+                    refreshHyperlinkPanel(generalPathLabel, curatedPathLink);
                 }
-
-                pathHyperLink.setClicked(true);
-                pathHyperLink.setClickedColor(Color.black);
-                selectedPathList = (List<IPath>) pathHyperLink.getUserObject();
+                selectedPathList = pathHyperLink.getUserObject();
                 refreshAmbiguityTable();
             }
         });

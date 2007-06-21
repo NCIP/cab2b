@@ -5,6 +5,7 @@ package edu.wustl.cab2b.client.ui.dag.ambiguityresolver;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -15,6 +16,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -100,6 +103,8 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
     protected JTable createAmbiguityPathTable(AbstractTableModel abstractTableModel) {
         JTable pathTable = new JTable(abstractTableModel);
         pathTable.getTableHeader().setReorderingAllowed(false);
+        setTableHeaderBold(pathTable);
+        
         pathTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         pathTable.setFont(new Font("Arial", Font.PLAIN, 12));
         pathTable.setRowSelectionAllowed(false);
@@ -120,6 +125,21 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
         tableColumnModel.getColumn(2).setCellRenderer(defaultTableCellRenderer);
 
         return pathTable;
+    }
+
+    private void setTableHeaderBold(JTable pathTable) {
+        JTableHeader header = pathTable.getTableHeader();
+        final Font boldFont = header.getFont().deriveFont(Font.BOLD);
+        final TableCellRenderer headerRenderer = header.getDefaultRenderer();
+        header.setDefaultRenderer(new TableCellRenderer() {
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                           boolean hasFocus, int row, int column) {
+                Component component = headerRenderer.getTableCellRendererComponent(table, value, isSelected,
+                                                                                   hasFocus, row, column);
+                component.setFont(boldFont);
+                return component;
+            }
+        });
     }
 
     /**
