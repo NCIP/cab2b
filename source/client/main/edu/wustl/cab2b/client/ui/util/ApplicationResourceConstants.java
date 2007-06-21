@@ -7,6 +7,7 @@ package edu.wustl.cab2b.client.ui.util;
  */
 public class ApplicationResourceConstants {
     public static final String MAIN_FRAME_TITLE = "cab2b.main.frame.title";//=caB2B -- cancer Bench to Bedside
+    public static final String MAIN_FRAME_SEARCH_HELP_TEXT = "cab2b.main.frame.searchhelptext";//=(E.g. Participant, Gene, Experiment, Protein, Specimen)
 
     //Experiment Module
     public static final String EXPERIMENT_FRAME_TITLE = "cab2b.experiment.frame.title";//";//=My Experiments
