@@ -81,26 +81,29 @@ public abstract class AbstractAdvancedSearchPanel extends Cab2bPanel implements 
 		
 		
 
-		m_chkClass = new Cab2bCheckBox("Category");
+		m_chkClass = new Cab2bCheckBox("Keyword");
 		m_chkClass.setSelected(true);
 		m_chkClass.addItemListener(this);
 		m_chkClass.setActionCommand("class");
 
 		// Added by deepak
 		m_chkClassDesc = new Cab2bCheckBox("Include Description");
-		m_chkClassDesc.setSelected(false);
+		m_chkClassDesc.setSelected(true);
 		m_chkClassDesc.addItemListener(this);
 		m_chkClassDesc.setActionCommand("classdesc");
 
 		m_chkClassDef = new Cab2bCheckBox("Include Classes");
+		m_chkClassDef.setSelected(true);
 		m_chkClassDef.addItemListener(this);
 		m_chkClassDef.setActionCommand("classdef");
 
 		m_chkAttribute = new Cab2bCheckBox("Attribute");
+		m_chkAttribute.setSelected(true);
 		m_chkAttribute.addItemListener(this);
 		m_chkAttribute.setActionCommand("attribute");
 
 		m_chkPermissibleValues = new Cab2bCheckBox("Permissible Values");
+		m_chkPermissibleValues.setSelected(true);
 		m_chkPermissibleValues.setEnabled(true);
 		m_chkPermissibleValues.addItemListener(this);
 		m_chkPermissibleValues.setActionCommand("permissibleValues");
