@@ -8,7 +8,9 @@ import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import gov.nih.nci.cagrid.dcql.DCQLQuery;
 
 /**
- * Specifies the operations to be supported by a results transformer.
+ * Specifies the operations to be supported by a results transformer. A query
+ * result transformer has to be registered in the file
+ * <code>ResultConfiguration.xml</xml>.
  * @author srinath_k
  * @see AbstractQueryResultTransformer
  * @param <R>
@@ -20,11 +22,10 @@ public interface IQueryResultTransformer<R extends IRecord, C extends ICategoria
     /**
      * Executes the DCQL and transforms the results obtained to an appropriate
      * {@link IQueryResult}.
-     * @param query
-     *            the DCQL.
-     * @param targetEntity
-     *            the target entity (corresponds to the target object of the
-     *            dcql).
+     * 
+     * @param query the DCQL.
+     * @param targetEntity the target entity (corresponds to the target object
+     *            of the dcql).
      * @return the results.
      */
     IQueryResult<R> getResults(DCQLQuery query, EntityInterface targetEntity);
@@ -32,13 +33,11 @@ public interface IQueryResultTransformer<R extends IRecord, C extends ICategoria
     /**
      * Executes the DCQL and transforms the results obtained to an appropriate
      * {@link IQueryResult}.
-     * @param query
-     *            the DCQL whose target object corresponds to the actual UML
+     * 
+     * @param query the DCQL whose target object corresponds to the actual UML
      *            class represented by the categorial class.
-     * @param categorialClass
-     *            the categorial class.
+     * @param categorialClass the categorial class.
      * @return the results.
      */
-    IQueryResult<C> getCategoryResults(DCQLQuery query,
-                                       CategorialClass categorialClass);
+    IQueryResult<C> getCategoryResults(DCQLQuery query, CategorialClass categorialClass);
 }
