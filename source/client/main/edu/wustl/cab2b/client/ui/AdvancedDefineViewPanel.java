@@ -30,6 +30,7 @@ import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.CheckedException;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
@@ -135,7 +136,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         this.add(BorderLayout.CENTER, centerPanel);
 
         /* The bottom panel */
-        JXPanel bottomPanel = new Cab2bPanel(new RiverLayout(0,0));
+        JXPanel bottomPanel = new Cab2bPanel(new RiverLayout(0, 0));
         JLabel asterix = new Cab2bLabel("* ");
         asterix.setFont(new Font("Arial", Font.BOLD, 16));
         asterix.setForeground(Color.RED);
@@ -211,8 +212,8 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         Iterator<EntityInterface> entityInter = allEntities.iterator();
         while (entityInter.hasNext()) {
             EntityInterface entity = entityInter.next();
-            String entityName = entity.getName();
-            if (entityName.equals(targetEntityName)) {
+            //            String entityName = entity.getName();
+            if (Utility.getDisplayName(entity).equals(targetEntityName)) {
                 targetEntityInterface = entity;
                 Logger.out.debug("found target entity interface to be set set as select entity in Query.");
                 break;
@@ -240,7 +241,8 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 
             allEntities.add(entity);
 
-            String entityName = entity.getName();
+            //String entityName = entity.getName();      
+            String entityName = Utility.getDisplayName(entity);
             /*
              * Add an entity name if it doesn't exist, so that the drop down
              * items are unique.
