@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
@@ -42,6 +44,7 @@ import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationExcept
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.IdGenerator;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.path.pathgen.GraphPathFinder;
 import edu.wustl.cab2b.server.path.pathgen.Path;
 import edu.wustl.cab2b.server.path.pathgen.PathToFileWriter;
@@ -595,10 +598,32 @@ public class PathBuilder {
    
     public static void main(String[] args) throws Exception {
         Logger.configure();
-        String url = "jdbc:mysql://localhost:3306/cab2b";
+        String propertyfile = "database.properties";
+        
+            // This static block loads properties from file at class loading time.
+            InputStream is = Utility.class.getClassLoader().getResourceAsStream(propertyfile);
+            if (is == null) {
+                Logger.out.error("Unable fo find property file : " + propertyfile
+                        + "\n please put this file in classpath");
+            }
+            Properties props = new Properties();
+            try {
+                props.load(is);
+            } catch (IOException e) {
+                Logger.out.error("Unable to load properties from : " + propertyfile);
+                e.printStackTrace();
+            }
+        
+           String server = props.getProperty("database.server.ip");
+           String port = props.getProperty("database.server.port");
+           String dbName = props.getProperty("database.name");
+           
+          
+        String url = "jdbc:mysql://"+ server+":" +port+"/"+dbName;
+        //String url = "jdbc:mysql://localhost:3306/cab2b";
         String driver = "com.mysql.jdbc.Driver";
-        String userName = "root";
-        String password = "";
+        String userName =  props.getProperty("database.username");
+        String password =   props.getProperty("database.password");
         Class.forName(driver).newInstance();
         Connection con = DriverManager.getConnection(url, userName, password);
         PathBuilder.buildAndLoadAllModels(con);

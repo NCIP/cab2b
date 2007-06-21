@@ -24,6 +24,7 @@
 	<property name="cactusReports.dir" location="${Reports.dir}/cactus" />
 	<property name="buildReports.dir" location="${Reports.dir}/build" />
 	<property name="javadoc.dir" location="${Reports.dir}/javadoc" />
+<property name="install.hibernate.cfg" value="installHibernate.cfg.xml"/>
 
 	<property name="XmlLogger.file" value="${buildReports.dir}\log.xml" />
 	<tstamp>
@@ -40,7 +41,7 @@
 	<property name="conf.dir" location="conf" />
 	<property name="cab2bDS.file.name" value="caB2B-ds.xml" />
 	<property name="cab2bDS.file" location="${conf.dir}/${cab2bDS.file.name}" />
-
+	<property name="dbutil.properties.file" location="${conf.dir}/dbutil.properties" />
 	<property name="jbossjca.service.xml" location="${conf.dir}/jbossjca-service.xml" />
 	<property name="db.scripts.dir" location="scripts" />
 	<property name="server.jar.dir" location="${workArea.dir}/serverJar" />
@@ -310,6 +311,13 @@
 		<replace file="${dsFile}" token="user_name" value="${database.username}" />
 		<replace file="${dsFile}" token="user_password" value="${database.password}" />
 	</target>
+	<!--target name="modify.dbutil">
+		<echo message="hibernate.configuration.files = dehibernate.cfg.xml,installHibernate.cfg.xml" file="${dbutil.properties.file}" append="false" />
+	</target>
+	<target name="restore.dbutil">
+		<echo message="hibernate.configuration.files = dehibernate.cfg.xml,hibernate.cfg.xml" file="${dbutil.properties.file}" append="false" />
+	</target-->
+	
 	<!-- ================================================================================== -->
 	<target name="create.database" description="Drops existing database and create new database with schema">
 		<echo>Creating cab2b database...</echo>
@@ -325,7 +333,39 @@
 			</fileset>
 		</sql>
 	</target>
-
+	<!-- ================================================================================== -->
+	<target name="build.paths" depends="create.database,clean.all,compile.server">
+		<copy todir="${server.classes.dir}">
+			<fileset dir="${conf.dir}">
+				<include name="*.wsdd" />
+				<include name="demo.properties" />
+				<include name="*.cfg.xml" />
+				<include name="dbutil.properties" />
+				<include name="database.properties" />
+				<include name="EntityToAnalyticalServiceMapping.xml" />
+				<include name="ResultConfiguration.xml" />
+			</fileset>
+		</copy>
+		
+		<property name="cfgFile" value="${server.classes.dir}/${install.hibernate.cfg}" />
+		<replace file="${cfgFile}" token="server-ip" value="${database.server.ip}" />
+		<replace file="${cfgFile}" token="port" value="${database.server.port}" />
+		<replace file="${cfgFile}" token="database-name" value="${database.name}" />
+		<replace file="${cfgFile}" token="user_name" value="${database.username}" />
+		<replace file="${cfgFile}" token="user_password" value="${database.password}" />
+		<echo message="hibernate.configuration.files = dehibernate.cfg.xml,installHibernate.cfg.xml" file="${server.classes.dir}/dbutil.properties" append="false" />
+			
+		<echo message="Loading models and paths to database..." />
+		<java classname="edu.wustl.cab2b.server.path.PathBuilder" classpathref="pathbuilder.classpath" fork="yes" />
+		<path id="pathbuilder.classpath">
+			<path refid="server.classpath" />
+			<pathelement location="${workArea.dir}/common/classes" />
+			<pathelement location="${workArea.dir}/server/classes" />
+		</path>
+	</target>
+	<!-- ================================================================================== -->
+	<target name="install.server" depends="build.paths,jboss.stop,jboss.start"/>
+	
 	<!-- ============================================================================
 	 			Cactus TESTS
 	================================================================================= -->
