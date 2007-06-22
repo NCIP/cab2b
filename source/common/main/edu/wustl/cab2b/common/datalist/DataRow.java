@@ -265,5 +265,6 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable {
      */
     public void addChild(IDataRow childRow) {
         this.children.add(childRow);
+        childRow.setParent(this);
     }
 }

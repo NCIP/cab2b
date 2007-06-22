@@ -18,6 +18,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JScrollPane;
@@ -31,6 +33,7 @@ import org.jdesktop.swingx.action.LinkAction;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.client.ui.SaveDatalistPanel;
 import edu.wustl.cab2b.client.ui.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
@@ -38,12 +41,21 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
+import edu.wustl.cab2b.client.ui.query.Utility;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
 import edu.wustl.cab2b.client.ui.viewresults.DefaultSpreadSheetViewPanel;
+import edu.wustl.cab2b.common.datalist.DataList;
+import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
+import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
+import edu.wustl.cab2b.common.datalist.DataRow;
+import edu.wustl.cab2b.common.datalist.IDataRow;
+import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
+import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
+import edu.wustl.cab2b.common.ejb.utility.UtilityHomeInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.experiment.ExperimentHome;
@@ -60,7 +72,7 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
 public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     private static final long serialVersionUID = 1L;
 
-    private ExperimentOpenPanel parent;
+    private ExperimentOpenPanel experimentPanel;
 
     private JTabbedPane tabComponent;
 
@@ -96,7 +108,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     public static ArrayList<String> values = new ArrayList<String>();
 
     // fields used by Save Data Category functionality
-    private EntityInterface dataCategoryEntity;
+    //private EntityInterface dataCategoryEntity;
 
     private String dataCategoryTitle;
 
@@ -105,7 +117,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     private DefaultSpreadSheetViewPanel currentSpreadSheetViewPanel;
 
     public ExperimentDataCategoryGridPanel(ExperimentOpenPanel parent) {
-        this.parent = parent;
+        this.experimentPanel = parent;
         initGUI();
     }
 
@@ -166,7 +178,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         this.spreadSheetViewPanel.refreshView(recordList);
 
         //table = new ExperimentTableModel(false, dataRecordVector, columnVector, attributeMap);
-        this.spreadSheetViewPanel.getDataTable().addFocusListener(new TableFocusListener(this.parent));
+        this.spreadSheetViewPanel.getDataTable().addFocusListener(new TableFocusListener(this.experimentPanel));
 
         refreshUI();
         updateUI();
@@ -236,7 +248,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         experimentDataPanel.setName("experimentDataPanel");
         experimentDataPanel.setBorder(null);
 
-        spreadSheetViewPanel = new DefaultSpreadSheetViewPanel(true, false, new ArrayList<IRecord>(),true);
+        spreadSheetViewPanel = new DefaultSpreadSheetViewPanel(true, false, new ArrayList<IRecord>(), true);
         spreadSheetViewPanel.doInitialization();
 
         analysisDataPanel = new Cab2bPanel();
@@ -302,7 +314,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             // Add SpreadsheetView
             List<IRecord> recordList = userObjectWrapper.getUserObject();
             DefaultSpreadSheetViewPanel defaultSpreadSheetViewPanel = new DefaultSpreadSheetViewPanel(true, false,
-                    recordList,true);
+                    recordList, true);
             defaultSpreadSheetViewPanel.doInitialization();
             analysisViewPanel.add("br center hfill vfill", defaultSpreadSheetViewPanel);
 
@@ -313,7 +325,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     }
 
     /**
-     * Make list of attributes of the parent entity as well as a 2D array of
+     * Make list of attributes of the experimentPanel entity as well as a 2D array of
      * data and pass it to the server to make new entity this method is called
      * by the {@link SaveDataCategoryPanel} to save a subset of of a datalist as
      * a category
@@ -321,57 +333,70 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
      * @param title
      *            the title for the category
      */
-    public void saveDataCategory(String title) {
+    public void saveDataCategory(final String title) {
         dataCategoryTitle = title;
 
         MainFrame.setStatus(MainFrame.Status.BUSY);
         MainFrame.setStatusMessage("saving data category '" + title + "'");
 
         CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.openExperimentWelcomePanel) {
+            DataListMetadata dataListMetadata = null;
+
             protected void doNonUILogic() throws RuntimeException {
-                Cab2bTable table = spreadSheetViewPanel.getDataTable();
-                // get the columns, including hidden columns. Not well
-                // documented
-                List<TableColumn> columnList = table.getColumns(true);
-                List<AttributeInterface> attributes = new ArrayList<AttributeInterface>();
 
-                // skip filterd-out rows but include hidden columns
-                int rows = table.getRowCount();
-                int cols = table.getColumnCount(true);
-                Object[][] data = new Object[rows][cols];
+                List<IRecord> selectedRecords = spreadSheetViewPanel.getSelectedRecords();
+                EntityInterface outputEntity = Utility.getEntity(selectedRecords);
 
-                // populate attribute list
-                for (TableColumn column : columnList) {
-                    String columnName = column.getIdentifier().toString();
-                    attributes.add(spreadSheetViewPanel.getColumnAttribute(columnName));
-                }
+                dataListMetadata = new DataListMetadata();
+                dataListMetadata.setName(title);
+                dataListMetadata.setCreatedOn(new Date());
+                dataListMetadata.setLastUpdatedOn(new Date());
+                dataListMetadata.setCustomDataCategory(true);
 
-                for (int i = 0; i < rows; i++) {
-                    for (int j = 0; j < cols; j++) {
-                        // JXTable does not provide API to access hidden data
-                        // JXTable.getValueAt() works only on visible columns
-                        // using TableModel.getValueAt() requires converting row
-                        // view index to row model index
-                        data[i][j] = table.getModel().getValueAt(table.convertRowIndexToModel(i), j);
+                DataList customCategoryDataList = new DataList();
+                customCategoryDataList.setDataListAnnotation(dataListMetadata);
+
+                IDataRow titleNode = null;
+                for (IRecord selectedRecord : selectedRecords) {
+                    IDataRow dataRow = new DataRow(selectedRecord, outputEntity);
+                    if (titleNode == null) {
+                        titleNode = dataRow.getTitleNode();
                     }
-                    // Logger.out.debug(table.getValueAt(i, 4).toString());
+                    titleNode.addChild(dataRow);
                 }
+                customCategoryDataList.getRootDataRow().addChild(titleNode);
+
 
                 // make a call to the server
-                ExperimentBusinessInterface bi = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                EjbNamesConstants.EXPERIMENT,
-                                                                                                                ExperimentHome.class);
+                ExperimentBusinessInterface ExperimentBI = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                          EjbNamesConstants.EXPERIMENT,
+                                                                                                                          ExperimentHome.class);
+
+                DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                    EjbNamesConstants.DATALIST_BEAN,
+                                                                                                                    DataListHomeInterface.class);
 
                 try {
-                    dataCategoryEntity = bi.saveDataCategory(dataCategoryTitle, attributes, data);
+                    dataListMetadata = dataListBI.saveDataList(customCategoryDataList.getRootDataRow(),
+                                                               dataListMetadata);
+
+                    experimentPanel.getSelectedExperiment().addDataListMetadata(dataListMetadata);
+
+                    ExperimentBI.addDataListToExperiment(experimentPanel.getSelectedExperiment().getId(),
+                                                         dataListMetadata.getId());
+
                 } catch (RemoteException e) {
-                    CommonUtils.handleException(e, MainFrame.newWelcomePanel, true, true, true, false);
+                    dataListMetadata = null;
+                    CommonUtils.handleException(e, experimentPanel, true, true, true, false);
                 }
             }
 
             protected void doUIUpdateLogic() throws RuntimeException {
-                // update the tree in the stack box
-                parent.updateOpenPanel(dataCategoryEntity);
+
+                if (dataListMetadata != null) {
+                    // update the tree in the stack box
+                    experimentPanel.addDataList(dataListMetadata);
+                }
                 MainFrame.setStatus(MainFrame.Status.READY);
                 MainFrame.setStatusMessage(dataCategoryTitle + " saved");
             }

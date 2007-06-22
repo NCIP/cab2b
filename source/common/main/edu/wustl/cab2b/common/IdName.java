@@ -1,13 +1,24 @@
 package edu.wustl.cab2b.common;
 
-public class IdName {
+import java.io.Serializable;
+
+public class IdName implements Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 9046059374207557535L;
+
     private Long id;
 
     private String name;
 
-    public IdName(Long id, String name) {
+    private Long originalEntityId;
+
+    public IdName(Long id, String name, Long originalEntityId) {
         this.id = id;
         this.name = name;
+        this.originalEntityId = originalEntityId;
     }
 
     public Long getId() {
@@ -24,6 +35,14 @@ public class IdName {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getOriginalEntityId() {
+        return originalEntityId;
+    }
+
+    public void setOriginalEntityId(Long originalEntityId) {
+        this.originalEntityId = originalEntityId;
     }
 
     @Override

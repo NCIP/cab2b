@@ -16,6 +16,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.controls.CustomizableBorder;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.exception.CheckedException;
@@ -156,8 +157,8 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
 		this.add(splitPane);
 	}
 
-	public void updateOpenPanel(EntityInterface newEntity) {
-		experimentStackBox.updateStackBox(newEntity);
+	public void addDataList(DataListMetadata dataListMetadata) {
+		experimentStackBox.updateStackBox(dataListMetadata);
 	}
 
 	public static void main(String str[]) {

@@ -1,8 +1,11 @@
 package edu.wustl.cab2b.client.ui.query;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.util.ClientConstants;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -83,18 +86,44 @@ public class Utility {
         }
         return roleName;
     }
-    
+
     /**
      * This method returens number of records present in a query result.
      * @param queryResult
      * @return
      */
-    public static  int getRecordNum(IQueryResult queryResult) {
+    public static int getRecordNum(IQueryResult queryResult) {
         Map<String, List<IRecord>> allRecords = queryResult.getRecords();
         int n = 0;
         for (List<IRecord> values : allRecords.values()) {
             n += values.size();
         }
         return n;
+    }
+
+    /**
+     * This method returns the entity for the given record.
+     * @param record
+     * @return
+     */
+    public static EntityInterface getEntity(IRecord record) {
+        EntityInterface outputEntity = null;
+        Iterator<AttributeInterface> attributeIterator = record.getAttributes().iterator();
+        if (attributeIterator.hasNext()) {
+            outputEntity = attributeIterator.next().getEntity();
+        }
+        return outputEntity;
+    }
+    
+    /**
+     * This method returns the entity for the given list of records.
+     * @param records
+     * @return
+     */
+    public static EntityInterface getEntity(List<IRecord> records) {
+        if (!records.isEmpty()) {
+            return getEntity(records.get(0));
+        }
+        return null;
     }
 }

@@ -34,10 +34,11 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
 
     @Override
     protected void populateNewEntity(EntityInterface oldEntity) {
-        if (!Utility.isCategory(oldEntity)) {
+        EntityInterface originEntity = edu.wustl.cab2b.common.util.DataListUtil.getOriginEntity(oldEntity);
+        if (!Utility.isCategory(originEntity)) {
             throw new IllegalArgumentException();
         }
-        Category category = getCategoryByEntityId(oldEntity.getId());
+        Category category = getCategoryByEntityId(originEntity.getId());
         CategorialClass rootCategorialClass = category.getRootClass();
         tagWithCategory(newEntity, category);
         tagWithCategorialClass(newEntity, rootCategorialClass);

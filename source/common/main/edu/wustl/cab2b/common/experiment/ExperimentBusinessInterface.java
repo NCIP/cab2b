@@ -93,4 +93,11 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
     public EntityInterface saveDataCategory(String title, List<AttributeInterface> attributes, Object[][] data)
             throws RemoteException;
 
+    /**
+     * @param experimentId
+     * @param dataListMetaDataId
+     * @throws RemoteException
+     */
+    void addDataListToExperiment(Long experimentId, Long dataListMetaDataId) throws RemoteException;
+
 }

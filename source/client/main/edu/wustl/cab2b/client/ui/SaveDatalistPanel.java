@@ -30,7 +30,6 @@ import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
-import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
 import edu.wustl.cab2b.common.datalist.IDataRow;
@@ -115,7 +114,8 @@ public class SaveDatalistPanel extends Cab2bPanel {
                 MainSearchPanel.getDataList().setDataListAnnotation(dataListAnnotation);
 
                 CustomSwingWorker sw = new CustomSwingWorker(SaveDatalistPanel.this) {
-                    Long id;
+
+                    boolean savedList = false;
 
                     @Override
                     protected void doNonUILogic() throws RuntimeException {
@@ -125,14 +125,14 @@ public class SaveDatalistPanel extends Cab2bPanel {
                                                                                                                             SaveDatalistPanel.this);
 
                         try {
-                            id = dataListBI.saveDataList(new DataList(newRootDataRow, dataListAnnotation));
+                            MainSearchPanel.savedDataListMetadata = dataListBI.saveDataList(newRootDataRow,
+                                                                                            dataListAnnotation);
 
-                            MainSearchPanel.savedDataListMetadata = dataListBI.retrieveDataListMetadata(id);
-
-                            Logger.out.debug("data list saved successfully (in entity with id) : " + id);
-
+                            Logger.out.debug("data list saved successfully (in entity with id) : "
+                                    + MainSearchPanel.savedDataListMetadata.getId());
+                            savedList = true;
                         } catch (RemoteException e) {
-                            e.printStackTrace();
+                            CommonUtils.handleException(e, MainFrame.newWelcomePanel, true, true, true, false);
                         } finally {
                             dialog.dispose();
                         }
@@ -140,21 +140,13 @@ public class SaveDatalistPanel extends Cab2bPanel {
 
                     @Override
                     protected void doUIUpdateLogic() throws RuntimeException {
-                        dialog.dispose();
-                        if (id > 0) {
-                            /*JOptionPane.showMessageDialog(mainSearchPanel, "Data List " + MainSearchPanel.getDataList().getDataListAnnotation().getName() + " saved successfully !");*/
+                        if (savedList) {
                             SearchNavigationPanel.messageLabel.setText("* Datalist '"
                                     + MainSearchPanel.getDataList().getDataListAnnotation().getName()
                                     + "' saved successfully .");
                             updateUI();
-                        } else
-                            Logger.out.debug("data list not saved ! " + id);
-                        Logger.out.debug("datalist id : "
-                                + MainSearchPanel.getDataList().getDataListAnnotation().getId());
-                        Logger.out.debug("entity id for dl : "
-                                + MainSearchPanel.getDataList().getDataListAnnotation().getEntityIds());
+                        }
                     }
-
                 };
                 sw.start();
             }
@@ -180,13 +172,13 @@ public class SaveDatalistPanel extends Cab2bPanel {
 
                         IDataRow newTitleNode = newChildRow.getTitleNode();
 
-                        newChildRow.setParent(newTitleNode);
+                        //newChildRow.setParent(newTitleNode);
                         newTitleNode.addChild(newChildRow);
 
-                        newTitleNode.setParent(newDataRow);
+                        //newTitleNode.setParent(newDataRow);
                         newDataRow.addChild(newTitleNode);
                     } else {
-                        newChildRow.setParent(newDataRow);
+                        //newChildRow.setParent(newDataRow);
                         newDataRow.addChild(newChildRow);
                     }
 

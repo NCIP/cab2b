@@ -14,7 +14,6 @@ import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.entitymanager.EntityManagerInterface;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
-import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
@@ -29,7 +28,7 @@ public class DataListOperationsController {
 
     }
 
-    public static Long save(DataList dataListToSave) {
+    public static DataListMetadata saveDataList(IDataRow rootRecordDataRow, DataListMetadata dataListMetadata) {
         Map<EntityPair, AssociationInterface> associationForEntities = new HashMap<EntityPair, AssociationInterface>();
         Map<EntityInterface, DataListSaver<IRecord>> oldEntityToSaver = new HashMap<EntityInterface, DataListSaver<IRecord>>();
         Map<IDataRow, Map<AbstractAttributeInterface, Object>> dataRowToRecordsMap = new HashMap<IDataRow, Map<AbstractAttributeInterface, Object>>();
@@ -56,7 +55,6 @@ public class DataListOperationsController {
             }
 
         });
-        IDataRow rootRecordDataRow = dataListToSave.getRootDataRow();
         dataRowToRecordsMap.put(rootRecordDataRow, new HashMap<AbstractAttributeInterface, Object>());
         // end root stuff.
 
@@ -105,14 +103,15 @@ public class DataListOperationsController {
         try {
             entityManager.persistEntity(rootEntity, false).getId();
             entityManager.insertData(rootEntity, dataRowToRecordsMap.get(rootRecordDataRow));
-            DataListMetadata dataListMetadata = dataListToSave.getDataListAnnotation();
+
             for (DataListSaver<IRecord> saver : oldEntityToSaver.values()) {
                 EntityInterface newEntity = saver.getNewEntity();
-                dataListMetadata.addEntityId(newEntity.getId());
+                Long originalEntityId = edu.wustl.cab2b.common.util.DataListUtil.getOriginEntity(newEntity).getId();
+                dataListMetadata.addEntityInfo(newEntity.getId(), newEntity.getName(), originalEntityId);
                 addToCache(newEntity);
             }
-            Long dataListId = saveDataListMetadata(dataListMetadata);
-            return dataListId;
+            saveDataListMetadata(dataListMetadata);
+            return dataListMetadata;
         } catch (DynamicExtensionsSystemException e) {
             throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DATALIST_SAVE_ERROR));
         } catch (DynamicExtensionsApplicationException e) {
@@ -142,8 +141,8 @@ public class DataListOperationsController {
      * 
      * @see DataListBusinessInterface#saveDataListMetadata(DataListMetadata)
      */
-    private static Long saveDataListMetadata(DataListMetadata datalistMetadata) {
-        return new DataListMetadataOperations().saveDataListMetadata(datalistMetadata);
+    private static void saveDataListMetadata(DataListMetadata datalistMetadata) {
+        new DataListMetadataOperations().saveDataListMetadata(datalistMetadata);
     }
 
     private static void addToCache(EntityInterface newEntity) {

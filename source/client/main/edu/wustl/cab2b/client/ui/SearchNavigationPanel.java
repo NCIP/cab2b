@@ -216,6 +216,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                         queryResults = CommonUtils.executeQuery(
                                                                 (ICab2bQuery) m_mainSearchPanel.getQueryObject().getQuery(),
                                                                 m_mainSearchPanel);
+                        
+                        //queryResults = getQueryResult();
                     }
 
                     @Override
@@ -256,7 +258,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                             gotoAddLimitPanel();
                         }
                     }
-                    /*
+                    
                     private IQueryResult getQueryResult() {
                         Cab2bQuery query = (Cab2bQuery) m_mainSearchPanel.getQueryObject().getQuery();
                         EntityInterface bioAssyData = query.getOutputEntity();
@@ -283,7 +285,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                         queryResults.addRecord((String) query.getOutputUrls().get(0), record);
                         return queryResults;
                     }
-                    */
+                    
                 };
                 swingWorker.start();
             } else if (m_mainSearchPanel.getCenterPanel().getSelectedCardIndex() == 3) {

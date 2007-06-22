@@ -5,6 +5,7 @@ import java.util.List;
 
 import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
+import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.server.datalist.DataListMetadataOperations;
@@ -45,8 +46,9 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
     /**
      * @see DataListBusinessInterface#saveDataList(DataList)
      */
-    public Long saveDataList(DataList dataList) throws RemoteException {
-        return DataListOperationsController.save(dataList);
+    public DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata)
+            throws RemoteException {
+        return DataListOperationsController.saveDataList(rootDataRow, datalistMetadata);
     }
 
     public List<IRecord> getEntityRecord(Long entityId) throws RemoteException {

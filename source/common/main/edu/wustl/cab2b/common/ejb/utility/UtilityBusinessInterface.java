@@ -21,6 +21,17 @@ public interface UtilityBusinessInterface extends BusinessInterface {
      * @return associations with given entity as the target entity.
      * @throws RemoteException EJB specific exception.
      */
-    public Collection<AssociationInterface> getIncomingIntramodelAssociations(Long entityId)
-            throws RemoteException;
+    Collection<AssociationInterface> getIncomingIntramodelAssociations(Long entityId) throws RemoteException;
+
+    /**
+     * @param cab2bObject
+     * @throws RemoteException
+     */
+    void insert(Object cab2bObject) throws RemoteException;
+
+    /**
+     * @param cab2bObject
+     * @throws RemoteException
+     */
+    void update(Object cab2bObject) throws RemoteException;
 }
