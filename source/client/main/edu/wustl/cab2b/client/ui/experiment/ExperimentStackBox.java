@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -38,6 +37,7 @@ import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
+import edu.wustl.cab2b.client.cache.ClientSideCache;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.client.ui.charts.ChartType;
@@ -58,9 +58,11 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
 import edu.wustl.cab2b.client.ui.viewresults.DefaultSpreadSheetViewPanel;
+import edu.wustl.cab2b.common.IdName;
 import edu.wustl.cab2b.common.analyticalservice.ServiceDetailsInterface;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
+import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.analyticalservice.AnalyticalServiceOperationsBusinessInterface;
@@ -96,6 +98,12 @@ public class ExperimentStackBox extends Cab2bPanel {
     private ExperimentDataCategoryGridPanel m_experimentDataCategoryGridPanel = null;
 
     private JXTree datalistTree;
+
+    DefaultMutableTreeNode rootNode;
+
+    final static int CATEGORY_NODE_NO = 0;
+
+    final static int CUSTOM_CATEGORY_NODE_NO = 1;
 
     private JScrollPane treeViewScrollPane;
 
@@ -134,14 +142,14 @@ public class ExperimentStackBox extends Cab2bPanel {
         stackedBox = new StackedBox();
         stackedBox.setTitleBackgroundColor(new Color(200, 200, 220));
 
-        Set<Set<EntityInterface>> entitySet = null;
-        try {
-            entitySet = m_experimentBusinessInterface.getDataListEntitySet(m_selectedExperiment);
-        } catch (RemoteException remoteException) {
-            CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true, false);
-        }
+        //        Set<Set<EntityInterface>> entitySet = null;
+        //        try {
+        //            entitySet = m_experimentBusinessInterface.getDataListEntitySet(m_selectedExperiment);
+        //        } catch (RemoteException remoteException) {
+        //            CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true, false);
+        //        }
 
-        DefaultMutableTreeNode rootNode = generateRootNode(entitySet);
+        DefaultMutableTreeNode rootNode = generateRootNode(m_selectedExperiment);
         initializeDataListTree(rootNode);
 
         initializePanels();
@@ -150,24 +158,45 @@ public class ExperimentStackBox extends Cab2bPanel {
     /**
      * This method generates a root node given the set of entities
      * 
-     * @param entitySet
+     * @param experiment
      *            set of entities
      * @return root node
      */
-    private DefaultMutableTreeNode generateRootNode(Set<Set<EntityInterface>> entitySet) {
-        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Experiment Data Categories");
+    private DefaultMutableTreeNode generateRootNode(Experiment experiment) {
+        rootNode = new DefaultMutableTreeNode("Make it invisible");
+        DefaultMutableTreeNode CategoriesRoot = new DefaultMutableTreeNode("Experiment Data Categories");
+        DefaultMutableTreeNode customCategoriesRoot = null;
 
         // for each datalist
-        for (Set<EntityInterface> dataListEntitySet : entitySet) {
-            for (EntityInterface entity : dataListEntitySet) {
-                TreeEntityWrapper treeEntityWrapper = new TreeEntityWrapper();
-                treeEntityWrapper.setEntityInterface(entity);
-                DefaultMutableTreeNode node = new DefaultMutableTreeNode(treeEntityWrapper);
-                rootNode.add(node);
-                //addChildren(rootNode, node);
+        for (DataListMetadata dataListMetadata : experiment.getDataListMetadataCollection()) {
+
+            if (dataListMetadata.isCustomDataCategory()) {
+                if (customCategoriesRoot == null) {
+                    customCategoriesRoot = new DefaultMutableTreeNode("Custom Data Categories");
+                }
+                DefaultMutableTreeNode customCategoryNode = getNodeForCustomCategory(dataListMetadata);
+                customCategoriesRoot.add(customCategoryNode);
+                continue;
+            }
+
+            ClientSideCache clientCache = ClientSideCache.getInstance();
+
+            for (IdName idName : dataListMetadata.getEntitiesNames()) {
+
+                EntityInterface originalEntity = clientCache.getEntityById(idName.getOriginalEntityId());
+
+                UserObjectWrapper<IdName> categoryUserObject = new UserObjectWrapper<IdName>(idName,
+                        Utility.getDisplayName(originalEntity));
+
+                DefaultMutableTreeNode categoryNode = new DefaultMutableTreeNode(categoryUserObject);
+                CategoriesRoot.add(categoryNode);
             }
         }
 
+        rootNode.add(CategoriesRoot);
+        if (customCategoriesRoot != null) {
+            rootNode.add(customCategoriesRoot);
+        }
         return rootNode;
     }
 
@@ -191,11 +220,10 @@ public class ExperimentStackBox extends Cab2bPanel {
             datalistTree.setSelectionRow(1);
             datalistTree.expandRow(1);
             Object nodeInfo = ((DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent()).getUserObject();
-            if (nodeInfo instanceof TreeEntityWrapper) {
-                updateSpreadSheet((TreeEntityWrapper) nodeInfo);
+            if (nodeInfo instanceof UserObjectWrapper) {
+                updateSpreadSheet((UserObjectWrapper<IdName>) nodeInfo);
             }
         }
-
         // action listener for selected data category
         datalistTree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
@@ -298,19 +326,31 @@ public class ExperimentStackBox extends Cab2bPanel {
         //      }
 
         Object nodeInfo = node.getUserObject();
-        if (nodeInfo instanceof TreeEntityWrapper) {
-            updateSpreadSheet((TreeEntityWrapper) nodeInfo);
+        if (nodeInfo instanceof UserObjectWrapper) {
+            updateSpreadSheet((UserObjectWrapper<IdName>) nodeInfo);
         }
     }
 
-    private void updateSpreadSheet(final TreeEntityWrapper experimentEntity) {
+    private void updateSpreadSheet(final UserObjectWrapper<IdName> idName) {
 
         CustomSwingWorker swingWorker = new CustomSwingWorker(datalistTree) {
             List<IRecord> recordList = null;
 
             protected void doNonUILogic() throws RuntimeException {
-                recordList = getDataCategoyRecords(experimentEntity);
-                addAvailableAnalysisServices(experimentEntity);
+                try {
+                    // getting datalist entity interface
+                    DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                        EjbNamesConstants.DATALIST_BEAN,
+                                                                                                                        DataListHomeInterface.class);
+
+                    recordList = dataListBI.getEntityRecord(idName.getUserObject().getId());
+
+                } catch (RemoteException remoteException) {
+                    CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true,
+                                                false);
+                }
+
+                //addAvailableAnalysisServices(experimentEntity);
             }
 
             protected void doUIUpdateLogic() throws RuntimeException {
@@ -318,56 +358,6 @@ public class ExperimentStackBox extends Cab2bPanel {
             }
         };
         swingWorker.start();
-    }
-
-    /**
-     * Method used to get dataCategory records from database and covert it into
-     * table format
-     */
-    private List<IRecord> getDataCategoyRecords(TreeEntityWrapper nodeInfo) {
-        List<IRecord> recordList = null;
-        EntityInterface entityNode = nodeInfo.getEntityInterface();
-
-        // getting datalist entity interface
-        DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                            EjbNamesConstants.DATALIST_BEAN,
-                                                                                                            DataListHomeInterface.class);
-        try {
-            recordList = dataListBI.getEntityRecord(entityNode.getId());
-
-            //            // getting list of attributes
-            //            List<AbstractAttributeInterface> headerList = recordResultInterface.getEntityRecordMetadata().getAttributeList();
-            //            columnName = new String[headerList.size()];
-            //            int i = 0;
-            //            for (AbstractAttributeInterface abstractAttribute : headerList) {
-            //                AttributeInterface attribute = (AttributeInterface) abstractAttribute;
-            //                columnName[i++] = CommonUtils.getFormattedString(attribute.getName());
-            //                attributeMap.put(columnName[i - 1], attribute);
-            //                Logger.out.debug("Table Header :" + attribute.getName());
-            //            }
-            //
-            //            // getting actual records
-            //            List<EntityRecordInterface> recordList = recordResultInterface.getEntityRecordList();
-            //            recordObject = new Object[recordList.size()][headerList.size()];
-            //            Logger.out.debug("Record Size :: " + recordList.size());
-            //            i = 0;
-            //            int j = 0;
-            //            for (EntityRecordInterface record : recordList) {
-            //                List recordValueList = record.getRecordValueList();
-            //                j = 0;
-            //                for (Object object : recordValueList) {
-            //                    recordObject[i][j] = new Object();
-            //                    recordObject[i][j] = object;
-            //                    Logger.out.debug("Data [" + i + "]" + "[" + j + "]" + recordObject[i][j]);
-            //                    j++;
-            //                }
-            //                i++;
-            //            }
-        } catch (RemoteException remoteException) {
-            CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true, false);
-        }
-
-        return recordList;
     }
 
     public static void setDataForFilterPanel(Vector<CaB2BFilterInterface> data) {
@@ -484,18 +474,30 @@ public class ExperimentStackBox extends Cab2bPanel {
     /**
      * update the tree, add the newly created entity to the current selection
      * 
-     * @param newEntity
+     * @param dataListMetadata
      */
-    public void updateStackBox(EntityInterface newEntity) {
-        // gets the currently selected node
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent();
+    public void updateStackBox(DataListMetadata dataListMetadata) {
+        DefaultMutableTreeNode customCategoriesRoot = null;
+        if (rootNode.getChildCount() == 1) {
+            customCategoriesRoot = new DefaultMutableTreeNode("Custom Data Categories");
+            rootNode.add(customCategoriesRoot);
+        } else {
+            customCategoriesRoot = (DefaultMutableTreeNode) rootNode.getChildAt(CUSTOM_CATEGORY_NODE_NO);
+        }
 
-        TreeEntityWrapper newNodeWrapper = new TreeEntityWrapper();
-        newNodeWrapper.setEntityInterface(newEntity);
-        DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(newNodeWrapper);
-        node.add(newNode);
-
+        DefaultMutableTreeNode customCategoryNode = getNodeForCustomCategory(dataListMetadata);
+        customCategoriesRoot.add(customCategoryNode);
         datalistTree.updateUI();
+    }
+
+    DefaultMutableTreeNode getNodeForCustomCategory(DataListMetadata dataListMetadata) {
+        //Currently since custom data catrgories will have one and only one entity, so hard coding
+        IdName idName = dataListMetadata.getEntitiesNames().iterator().next();
+
+        UserObjectWrapper<IdName> customCategoryUserObject = new UserObjectWrapper<IdName>(idName,
+                dataListMetadata.getName());
+        return new DefaultMutableTreeNode(customCategoryUserObject);
+
     }
 
     /**

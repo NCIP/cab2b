@@ -13,6 +13,7 @@ import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
 import edu.wustl.cab2b.server.cache.DatalistCache;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
+import edu.wustl.cab2b.server.util.UtilityOperations;
 
 public class UtilityBean extends AbstractStatelessSessionBean implements SessionBean, UtilityBusinessInterface {
 
@@ -32,6 +33,7 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Session
         // TODO probably belongs in super;
         DatalistCache.getInstance();
     }
+
     /** 
      * @return associations with given entity as the target entity.
      * @throws RemoteException EJB specific exception.
@@ -41,6 +43,20 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Session
             throws RemoteException {
         Collection<AssociationInterface> associations = DynamicExtensionUtility.getIncomingIntramodelAssociations(entityId);
         return associations;
+    }
+
+    /**
+     * @see edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface#insert(java.lang.Object)
+     */
+    public void insert(Object cab2bObject) throws RemoteException {
+        new UtilityOperations().insert(cab2bObject);
+    }
+
+    /**
+     * @see edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface#update(java.lang.Object)
+     */
+    public void update(Object cab2bObject) throws RemoteException {
+        new UtilityOperations().update(cab2bObject);
     }
 
 }

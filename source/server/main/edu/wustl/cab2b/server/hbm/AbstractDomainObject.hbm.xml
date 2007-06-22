@@ -93,7 +93,14 @@
 		    <element column="ENTITY_ID" type="long" not-null="true"/>
 		</set>
 		
-
+        <property
+            name="customDataCategory"
+            type="boolean"
+            update="true"
+            insert="true"
+            column="CUSTOM_DATA_CATEGORY"
+        />
+    
         
 		</joined-subclass>
 		

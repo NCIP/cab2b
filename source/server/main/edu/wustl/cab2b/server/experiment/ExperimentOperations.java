@@ -26,9 +26,11 @@ import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.util.DataListUtil;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.DatalistCache;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
+import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAO;
@@ -315,13 +317,35 @@ public class ExperimentOperations extends DefaultBizLogic {
     private void populateEntitiesNames(Collection<DataListMetadata> dataListMetadataCollection) {
         for (DataListMetadata dataListMetadata : dataListMetadataCollection) {
             for (Long id : dataListMetadata.getEntityIds()) {
-                dataListMetadata.putEntityName(id, getEntityName(id));
+                dataListMetadata.addEntityInfo(id, getEntityName(id), getOriginalEntityId(id));
             }
         }
     }
 
     private String getEntityName(Long id) {
         return DatalistCache.getInstance().getEntityWithId(id).getName();
+    }
+
+    private Long getOriginalEntityId(Long id) {
+        EntityInterface entity = DatalistCache.getInstance().getEntityWithId(id);
+        return DataListUtil.getOriginEntity(entity).getId();
+    }
+
+    public void addDataListToExperiment(Long experimentId, Long dataListMetaDataId) {
+        try {
+            List expList = retrieve("Experiment", "id", experimentId);
+            Experiment exp = (Experiment) expList.get(0);
+
+            List dataLists = retrieve("DataListMetadata", "id", dataListMetaDataId);
+            DataListMetadata dataList = (DataListMetadata) dataLists.get(0);
+
+            exp.addDataListMetadata(dataList);
+
+            new UtilityOperations().update(exp);
+
+        } catch (DAOException e) {
+            throw (new RuntimeException(e.getMessage(), e));
+        }
     }
 
     /**

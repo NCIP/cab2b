@@ -54,23 +54,26 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
     /**
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#addExperiment(java.lang.Long, edu.wustl.cab2b.common.domain.Experiment)
      */
-    public void addExperiment(Long experimentGroupId, Experiment experiment) throws RemoteException,BizLogicException,
-            UserNotAuthorizedException, DAOException {
+    public void addExperiment(Long experimentGroupId, Experiment experiment) throws RemoteException,
+            BizLogicException, UserNotAuthorizedException, DAOException {
         (new ExperimentOperations()).addExperiment(experimentGroupId, experiment);
     }
 
-
     /**
-	 * save the given data as a data category
-	 * @param title the title for the category
-	 * @param attributes list of attributes needed for the  new entity
-	 * @param data the data to be saved
-	 * @return the newly created entity
-	 */
-    public EntityInterface saveDataCategory(String title, List<AttributeInterface> attributes, Object[][] data) throws RemoteException
-	{
-		return new ExperimentOperations().saveDataCategory(title, attributes, data);
-		
+     * save the given data as a data category
+     * @param title the title for the category
+     * @param attributes list of attributes needed for the  new entity
+     * @param data the data to be saved
+     * @return the newly created entity
+     */
+    public EntityInterface saveDataCategory(String title, List<AttributeInterface> attributes, Object[][] data)
+            throws RemoteException {
+        return new ExperimentOperations().saveDataCategory(title, attributes, data);
+
+    }
+
+    public void addDataListToExperiment(Long experimentId, Long dataListMataDataId) throws RemoteException {
+        new ExperimentOperations().addDataListToExperiment(experimentId, dataListMataDataId);
     }
 
 }

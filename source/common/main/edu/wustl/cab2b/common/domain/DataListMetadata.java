@@ -22,6 +22,15 @@ public class DataListMetadata extends AdditionalMetadata implements Serializable
     private Set<IdName> entitiesNames;
 
     /**
+     * boolean to indicate this data list is for the custom data category.
+     */
+    private boolean customDataCategory;
+
+    public DataListMetadata() {
+        customDataCategory = false;
+    }
+
+    /**
      * Returns the entity id of this datalist.
      * 
      * @hibernate.property name="entityId" type="long" column="ENT_ID"
@@ -42,11 +51,9 @@ public class DataListMetadata extends AdditionalMetadata implements Serializable
         getEntityIds().add(entityId);
     }
 
-    public void putEntityName(Long id, String name) {
-        if (!entityIds.contains(id)) {
-            throw new IllegalArgumentException("Specified id is invalid.");
-        }
-        getEntitiesNames().add(new IdName(id, name));
+    public void addEntityInfo(Long id, String name, Long originalEntityId) {
+        getEntitiesNames().add(new IdName(id, name, originalEntityId));
+        addEntityId(id);
     }
 
     public Set<IdName> getEntitiesNames() {
@@ -55,4 +62,20 @@ public class DataListMetadata extends AdditionalMetadata implements Serializable
         }
         return entitiesNames;
     }
+
+    /**
+     *@hibernate.property name="isCustomDataCategory" type="boolean" column="IS_CUSTOM_DATA_CATEGORY"
+     *@return Returns the isCustomDataCategory.
+     */
+    public boolean isCustomDataCategory() {
+        return customDataCategory;
+    }
+
+    /**
+     * @param isCustomDataCategory The isCustomDataCategory to set.
+     */
+    public void setCustomDataCategory(boolean isCustomDataCategory) {
+        this.customDataCategory = isCustomDataCategory;
+    }
+
 }
