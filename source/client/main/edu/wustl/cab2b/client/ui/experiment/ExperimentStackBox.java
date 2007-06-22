@@ -209,16 +209,14 @@ public class ExperimentStackBox extends Cab2bPanel {
     private void initializeDataListTree(DefaultMutableTreeNode rootNode) {
         // creating datalist tree
         datalistTree = new JXTree(rootNode);
-        ClassLoader loader = this.getClass().getClassLoader();
-        datalistTree.setOpenIcon(new ImageIcon(loader.getResource("folder_opened.gif")));
-        datalistTree.setClosedIcon(new ImageIcon(loader.getResource("folder_closed.gif")));
-        datalistTree.setLeafIcon(new ImageIcon(loader.getResource("mydatalist_icon.gif")));
+        datalistTree.setRootVisible(false);
 
+        System.out.println("RowCount" + datalistTree.getRowCount());
         // setting the first node as selected and displaying the corresponding
         // records in the table
-        if (datalistTree.getRowCount() >= 2) {
+        if (datalistTree.getRowCount() >= 1) {
+            datalistTree.expandRow(0);
             datalistTree.setSelectionRow(1);
-            datalistTree.expandRow(1);
             Object nodeInfo = ((DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent()).getUserObject();
             if (nodeInfo instanceof UserObjectWrapper) {
                 updateSpreadSheet((UserObjectWrapper<IdName>) nodeInfo);
@@ -230,6 +228,10 @@ public class ExperimentStackBox extends Cab2bPanel {
                 treeSelectionListenerAction();
             }
         });
+        ClassLoader loader = this.getClass().getClassLoader();
+        datalistTree.setOpenIcon(new ImageIcon(loader.getResource("folder_opened.gif")));
+        datalistTree.setClosedIcon(new ImageIcon(loader.getResource("folder_closed.gif")));
+        datalistTree.setLeafIcon(new ImageIcon(loader.getResource("mydatalist_icon.gif")));
     }
 
     /**
