@@ -211,7 +211,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         datalistTree = new JXTree(rootNode);
         datalistTree.setRootVisible(false);
 
-        System.out.println("RowCount" + datalistTree.getRowCount());
+
         // setting the first node as selected and displaying the corresponding
         // records in the table
         if (datalistTree.getRowCount() >= 1) {
