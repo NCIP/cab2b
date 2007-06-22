@@ -86,9 +86,10 @@ public class InterModelAssociationDataPanel extends AbstractAssociatedDataPanel 
 
         /* Get the source expression id. Needed to add the path.*/
         IExpressionId sourceExpressionID = queryObject.createDummyExpression(association.getTargetEntity());
-
+        IInterModelAssociation interModelAssociation = (IInterModelAssociation) association.reverse();
         try {
-            queryObject.addAssociation(sourceExpressionID, targetExpressionID, association.reverse());
+            queryObject.addAssociation(sourceExpressionID, targetExpressionID, interModelAssociation);
+            interModelAssociation.setTargetServiceUrl(record.getRecordId().getUrl());
         } catch (CyclicException exCyclic) {
             exCyclic.printStackTrace();
         }
