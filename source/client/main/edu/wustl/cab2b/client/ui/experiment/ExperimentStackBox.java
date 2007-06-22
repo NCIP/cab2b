@@ -210,12 +210,11 @@ public class ExperimentStackBox extends Cab2bPanel {
         // creating datalist tree
         datalistTree = new JXTree(rootNode);
         datalistTree.setRootVisible(false);
-
+        datalistTree.expandAll();
 
         // setting the first node as selected and displaying the corresponding
         // records in the table
         if (datalistTree.getRowCount() >= 1) {
-            datalistTree.expandRow(0);
             datalistTree.setSelectionRow(1);
             Object nodeInfo = ((DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent()).getUserObject();
             if (nodeInfo instanceof UserObjectWrapper) {
