@@ -31,6 +31,7 @@ create table CAB2B_ABSTRACT_DOMAIN_OBJECT (
 );
 create table CAB2B_DATA_LIST (
    DL_ID bigint not null,
+   CUSTOM_DATA_CATEGORY bit,
    primary key (DL_ID)
 );
 create table CAB2B_DATALIST_ENTITY (
