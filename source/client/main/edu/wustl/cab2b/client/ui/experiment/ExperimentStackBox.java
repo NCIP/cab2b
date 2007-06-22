@@ -538,7 +538,7 @@ public class ExperimentStackBox extends Cab2bPanel {
                                               final EntityInterface dataEntity) {
         String serviceName = serviceDetails.getDisplayName();
 
-        Cab2bHyperlink hyperlink = new Cab2bHyperlink();
+        Cab2bHyperlink<ServiceDetailsInterface> hyperlink = new Cab2bHyperlink<ServiceDetailsInterface>();
         hyperlink.setBounds(new Rectangle(5, 5, 5, 5));
         hyperlink.setText(serviceName);
         hyperlink.setActionCommand(serviceName);
@@ -546,9 +546,9 @@ public class ExperimentStackBox extends Cab2bPanel {
 
         hyperlink.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                Cab2bHyperlink hyperlink = (Cab2bHyperlink) (actionEvent.getSource());
+                Cab2bHyperlink<ServiceDetailsInterface> hyperlink = (Cab2bHyperlink<ServiceDetailsInterface>) (actionEvent.getSource());
 
-                ServiceDetailsInterface serviceDetails = (ServiceDetailsInterface) hyperlink.getUserObject();
+                ServiceDetailsInterface serviceDetails = hyperlink.getUserObject();
                 List<EntityInterface> requiredEntityList = serviceDetails.getRequiredEntities();
                 for (EntityInterface requiredEntity : requiredEntityList) {
                     // TODO compare with entity id instead of name
