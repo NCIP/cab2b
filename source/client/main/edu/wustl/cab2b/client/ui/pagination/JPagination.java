@@ -112,6 +112,8 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
 
     boolean mouseWheelEnabled = true;
 
+    private JPageElement selectedJPageElement;
+
     public JPagination() {
         this(null);
     }
@@ -126,9 +128,7 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
 
     public JPagination(Vector<PageElement> data, Pager pager, Component parentComponent, boolean autoPageResize) {
         paginationModel = new PaginationModel(data, pager);
-
         pageSelectionModel = new DefaultPageSelectionModel(this);
-
         this.addPropertyChangeListener(this);
 
         if (parentComponent == null) {
@@ -136,19 +136,16 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
         } else {
             this.automaticPageResize = autoPageResize;
             this.parentComponent = parentComponent;
-
             parentComponent.addComponentListener(new PaginationComponentListener());
         }
 
         initGUI();
         addNewMouseWheelListener();
-
     }
 
     private void initGUI() {
         this.removeAll();
         pageBar = new JPageBar(paginationModel.pager.getAllPageIndices(), new Vector(), this);
-
         setLayout(new BorderLayout());
 
         if (isGroupActionEnabled) {
@@ -398,28 +395,22 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
     public void propertyChange(PropertyChangeEvent pcEvent) {
         String propertyName = pcEvent.getPropertyName();
         Object newValue = pcEvent.getNewValue();
-        //Logger.out.debug("propertyChange "+propertyName);
 
         if (propertyName.equals("isGroupActionEnabled")) {
             Boolean newBoolValue = (Boolean) newValue;
             if (newBoolValue) {
                 this.isGroupActionEnabled = newBoolValue;
-                //initGUI(); // if this function is called it will automatically set the first page, which is not desirable.
-
                 groupActionPanel = new JGroupActionPanel();
                 add(groupActionPanel, BorderLayout.NORTH);
-
-                this.revalidate();
             } else {
                 this.isGroupActionEnabled = newBoolValue;
                 this.remove(groupActionPanel);
-                this.revalidate();
             }
+            this.revalidate();
         } else if (propertyName.equals("elementsPerPage")) {
             int newElementsPerPage = ((Integer) newValue).intValue();
             if (getElementsPerPage() != newElementsPerPage) {
                 paginationModel.setElementsPerPage(newElementsPerPage);
-
                 initGUI();
                 this.revalidate();
                 this.updateUI();
@@ -443,6 +434,7 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
      * @author chetan_bh
      */
     private class JGroupActionPanel extends Cab2bPanel implements ActionListener {
+        private static final long serialVersionUID = 1L;
 
         private Cab2bHyperlink selectAllHyperlink;
 
@@ -478,9 +470,6 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
          * Initialize the GUI for Group Action panel.
          */
         private void initGUI() {
-            this.setLayout(new RiverLayout());
-
-            //selectAllHyperlink = new JXHyperlink();
             selectAllHyperlink = new Cab2bHyperlink();
             selectAllHyperlink.setText(selectAllText);
             selectAllHyperlink.addActionListener(this);
@@ -506,13 +495,10 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
             String currentPageIndex = paginationModel.getCurrentPageIndex();
 
             if (sourceText.equals(selectAllText)) {
-                //pageSelectionModel.selectPage(currentPageIndex);
                 pageSelectionModel.selectAll();
             } else if (sourceText.equals(clearAllText)) {
-                //pageSelectionModel.clearPage(currentPageIndex);
                 pageSelectionModel.clearAll();
             } else {
-                //pageSelectionModel.invertPageSelection(currentPageIndex);
                 pageSelectionModel.invertAll();
             }
             JXPanel currentPagePanel = getPagePanel(paginationModel.getPage(currentPageIndex));
@@ -528,7 +514,6 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
      */
     class PaginationComponentListener extends ComponentAdapter {
         public void componentResized(ComponentEvent e) {
-
             /**
              * There are many conditions that needs to be checked before starting rezise.
              * 1) automaticPageResize should be enabled.
@@ -543,22 +528,16 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
             if (!paginationModel.getPagerName().equals(PaginationConstants.NUMERIC_PAGER))
                 return;
 
-            //Component parentComponent = e.getComponent();
-
             Dimension pagePanelSize = pagePanel.getSize();
             Dimension pagePanelPreferredSize = pagePanel.getPreferredSize();
             if (pagePanelSize.height == 0 && pagePanelSize.width == 0)
                 return;
 
             /*
-             * On an approximate page elements need 47 pixels each; <<-- this is a kind of
-             * assumption which may not be correct all the time. TODO Need to find proper
-             * solution.
+             * On an approximate page elements need 47 pixels each; <<-- this is a kind of assumption which may not be correct all the time. 
+             * TODO Need to find proper solution.
              */
-
             int difference = Math.round(Math.round(pagePanelSize.getHeight() - pagePanelPreferredSize.getHeight()));
-            //Logger.out.debug("####### pagePanleSize # "+pagePanelSize+" |||||  pagePanelPreferredSize # "+pagePanelPreferredSize);
-            //Logger.out.debug("differenr "+difference);
             int currentElementsPerPage = getElementsPerPage();
 
             //	For Condition 2.
@@ -567,24 +546,19 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
 
             // TODO Need to remove these hardcoding like 50, -10.
             if (difference > 55) {
-
                 int increment = difference / 50;
-
-                //Logger.out.debug("number of more page elements that can be accomodated  "+increment);
                 setElementsPerPage(currentElementsPerPage + increment);
 
             } else if (difference < -1) {
                 int decrement = difference / 50;
                 decrement -= 1;
-                //Logger.out.debug("decrement "+decrement);
                 setElementsPerPage(currentElementsPerPage + decrement);
             }
         }
     }
 
     public void mouseWheelMoved(MouseWheelEvent e) {
-        /* Return without doing nothing, if the mouse wheel 
-         * support is not enabled for JPagination. */
+        /* Return without doing nothing, if the mouse wheel support is not enabled for JPagination. */
         if (!mouseWheelEnabled)
             return;
 
@@ -592,15 +566,28 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
             /* Wheel rotation is either 1 or -1. */
             int wheelRotation = e.getWheelRotation();
             String currentPageIndex = "";
-            if (wheelRotation == 1) /* If mouse wheel is rotated down/toward the user.  -> move behind, decrease the page index. */
-            {
+            if (wheelRotation == 1) {/* If mouse wheel is rotated down/toward the user.  -> move behind, decrease the page index. */
                 currentPageIndex = pageBar.sequentialNavigation(pageBar.getPreviousPageText());
-            } else if (wheelRotation == -1) /* If mouse wheel is rotated up/away from the user. -> move forward, increase the page index. */
-            {
+            } else if (wheelRotation == -1) {/* If mouse wheel is rotated up/away from the user. -> move forward, increase the page index. */
                 currentPageIndex = pageBar.sequentialNavigation(pageBar.getNextPageText());
             }
             pageBar.displayLinkColor(currentPageIndex);
 
         }
     }
+
+    /**
+     * @return the selectedJPageElement
+     */
+    public JPageElement getSelectedJPageElement() {
+        return selectedJPageElement;
+    }
+
+    /**
+     * @param selectedJPageElement the selectedJPageElement to set
+     */
+    public void setSelectedJPageElement(JPageElement selectedJPageElement) {
+        this.selectedJPageElement = selectedJPageElement;
+    }
+
 }

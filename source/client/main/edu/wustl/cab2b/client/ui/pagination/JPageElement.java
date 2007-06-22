@@ -39,6 +39,7 @@ package edu.wustl.cab2b.client.ui.pagination;
  */
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,14 +49,12 @@ import java.util.Vector;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.ToolTipManager;
 
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bCheckBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * Each JPageElement should know its pageIndex(String) and index in that page.
@@ -73,6 +72,8 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
      * An <code>Cab2bHyperlink</code> for this composite component. 
      */
     private Cab2bHyperlink hyperlink;
+
+    private Cab2bLabel label;
 
     /**
      * A <code>JCheckBox</code> for enabling selections on the page elements.
@@ -120,36 +121,46 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
             pagination.addPropertyChangeListener("isSelectable", this);
     }
 
+    public JPagination getPagination() {
+        return pagination;
+    }
+
+    public PageElement getPageElement() {
+        return pageElement;
+    }
+
     /**
      * Initialize GUI for page element.
      */
     private void initGUI() {
         this.removeAll();
-
         this.setLayout(new RiverLayout(0, 0));
 
-        hyperlink = new Cab2bHyperlink(true);
+        hyperlink = new Cab2bHyperlink<JPageElement>(true);
         hyperlink.setText(pageElement.getDisplayName());
-        Logger.out.debug("Entity : " + pageElement.getDisplayName());
-        hyperlink.setUserObject(pageElement);
+        hyperlink.setUserObject(this);
         descriptionLabel = new Cab2bLabel(pageElement.getDescription());
-       
+
+        label = new Cab2bLabel(pageElement.getDisplayName());
+        label.setFont(new Font("Arial", Font.BOLD, 12));
+
         FontMetrics fontMetrics = descriptionLabel.getFontMetrics(descriptionLabel.getFont());
         int stringWidth = fontMetrics.stringWidth(pageElement.getDescription());
         descriptionLabel.setToolTipText(getWrappedText(stringWidth, pageElement.getDescription()));
-       
-        if(descriptionLabel.getText().length()>100){
-        String textDsc=descriptionLabel.getText().substring(0,100);
-        textDsc+="....";
-        descriptionLabel.setText(textDsc);
+
+        if (descriptionLabel.getText().length() > 100) {
+            String textDsc = descriptionLabel.getText().substring(0, 100);
+            textDsc += "....";
+            descriptionLabel.setText(textDsc);
         }
         if (isSelectable && pagination != null) {
             checkBox = new Cab2bCheckBox();
             checkBox.setOpaque(false);
             checkBox.addActionListener(this);
-            boolean isSelected = pageElement.isSelected();
-            if (isSelected)
+
+            if (pageElement.isSelected())
                 checkBox.setSelected(true);
+
             this.add("br", checkBox);
         } else {
             this.add("br", new JLabel("     "));
@@ -157,7 +168,30 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         this.add("tab", hyperlink);
         this.add("br", new JLabel("     "));
         this.add("tab", descriptionLabel);
+    }
 
+    public void resetHyperLink() {
+        removeAll();
+        if (isSelectable && pagination != null) {
+            this.add("br", checkBox);
+        } else {
+            this.add("br", new JLabel("     "));
+        }
+        this.add("tab", hyperlink);
+        this.add("br", new JLabel("     "));
+        this.add("tab", descriptionLabel);
+    }
+
+    public void resetLabel() {
+        removeAll();
+        if (isSelectable && pagination != null) {
+            this.add("br", checkBox);
+        } else {
+            this.add("br", new JLabel("     "));
+        }
+        this.add("tab", label);
+        this.add("br", new JLabel("     "));
+        this.add("tab", descriptionLabel);
     }
 
     /**
@@ -165,46 +199,45 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
      * @return
      */
     private String getWrappedText(int textSizeInPixel, String text) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("<HTML>");
-        int textLength = text.length();
-        //Logger.out.debug (textLength);
-        int currentStart = 0;
+        StringBuffer wrappedText = new StringBuffer();
+        wrappedText.append("<HTML>");
         String currentString = null;
+        int currentStart = 0;
         int offset = 75;
         int strLen = 0;
         int len = 0;
-        while (currentStart < textLength && textLength > offset) {
+
+        while (currentStart < text.length() && text.length() > offset) {
             currentString = text.substring(currentStart, (currentStart + offset));
-            strLen = strLen + currentString.length() + len;
-            sb.append(currentString);
+            strLen += currentString.length() + len;
+            wrappedText.append(currentString);
             int index = text.indexOf(" ", (currentStart + offset));
-            if(index == -1){
-            	index = text.indexOf(".", (currentStart + offset));
+            if (index == -1) {
+                index = text.indexOf(".", (currentStart + offset));
             }
-            if(index == -1){
-            	index = text.indexOf(",", (currentStart + offset));
+            if (index == -1) {
+                index = text.indexOf(",", (currentStart + offset));
             }
             if (index != -1) {
                 len = index - strLen;
                 currentString = text.substring((currentStart + offset), (currentStart + offset + len));
-                sb.append(currentString);
-                sb.append("<P>");
+                wrappedText.append(currentString);
+                wrappedText.append("<P>");
             } else {
-            	if(currentStart==0){
-            		currentStart=offset;
-            	}
-                sb.append(text.substring(currentStart));
-                return sb.toString();
+                if (currentStart == 0) {
+                    currentStart = offset;
+                }
+                wrappedText.append(text.substring(currentStart));
+                return wrappedText.toString();
             }
 
-            currentStart = currentStart + offset + len;
-            if ((currentStart + offset + len) > textLength)
+            currentStart += offset + len;
+            if ((currentStart + offset + len) > text.length())
                 break;
         }
-        sb.append(text.substring(currentStart));
-        sb.append("</HTML>");
-        return sb.toString();
+        wrappedText.append(text.substring(currentStart));
+        wrappedText.append("</HTML>");
+        return wrappedText.toString();
     }
 
     /**
