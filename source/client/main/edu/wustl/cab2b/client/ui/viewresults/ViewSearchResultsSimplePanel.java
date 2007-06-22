@@ -168,20 +168,15 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
         titledSearchResultsPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
         titledSearchResultsPanel.setTitleFont(new Font("SansSerif", Font.BOLD, 11));
         titledSearchResultsPanel.setTitleForeground(Color.BLACK);
-
-        searchResultsPanel = new Cab2bPanel();
-        searchResultsPanel.setLayout(new RiverLayout());
-
+        
         Pager pager = new NumericPager(elements);
         pagination = new JPagination(elements, pager, this, true);
-
         pagination.addPageElementActionListener(searchPanel.getHyperlinkAL());
-        pagination.setPreferredSize(new Dimension(300, 410));
+       
+        searchResultsPanel = new Cab2bPanel();
         searchResultsPanel.add("vfill hfill", pagination);
         initDataListSummaryPanel();
-
         initDataListButtons();
-
         searchResultsPanel.add("br br", addToDataListButton);
         searchResultsPanel.add("tab tab", m_applyAllButton);
 
