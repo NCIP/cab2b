@@ -79,7 +79,7 @@ public class ApplyFilterPanel extends Cab2bPanel {
         Cab2bTable table = spreadSheetViewPanel.getDataTable();
         combo.addItem(Constants.SELECT_COLUMN);
         int columnCount = table.getModel().getColumnCount();
-        for (int i = 0; i < columnCount; i++) {
+        for (int i = 1; i < columnCount; i++) {
             String colName = table.getModel().getColumnName(i);
             combo.addItem(colName);
             indexToName.put(colName, i);
