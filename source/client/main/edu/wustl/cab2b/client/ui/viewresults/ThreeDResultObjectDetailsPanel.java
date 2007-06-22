@@ -1,30 +1,20 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.util.Collection;
-import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 
 import org.jdesktop.swingx.decorator.AlternateRowHighlighter;
-import org.jdesktop.swingx.decorator.Highlighter;
-import org.jdesktop.swingx.decorator.HighlighterPipeline;
 
-import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
-import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.result.I3DDataRecord;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
-import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 
 /**
  * @author rahul_ner
- *
+ * 
  */
 public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DDataRecord> {
 
@@ -43,9 +33,10 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
      * @param record
      * @param incomingAssociationCollection
      * @param intraModelAssociationCollection
+     * @throws ClassCastException if record is not of type {@link I3DDataRecord}.
      */
-    public ThreeDResultObjectDetailsPanel(I3DDataRecord record) {
-        super(record);
+    public ThreeDResultObjectDetailsPanel(IRecord record) {
+        super((I3DDataRecord) record);
         isVFill = false;
     }
 

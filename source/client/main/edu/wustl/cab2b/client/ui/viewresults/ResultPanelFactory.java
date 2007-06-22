@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
+import java.lang.reflect.Constructor;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -22,16 +23,18 @@ import edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface;
 import edu.wustl.cab2b.common.ejb.path.PathFinderHomeInterface;
 import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
 import edu.wustl.cab2b.common.ejb.utility.UtilityHomeInterface;
-import edu.wustl.cab2b.common.queryengine.result.I3DDataRecord;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.util.DataListUtil;
+import edu.wustl.cab2b.server.analyticalservice.ResultConfigurationParser;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 
 /**
  * @author rahul_ner
- *
+ * 
  */
 public class ResultPanelFactory {
 
@@ -65,12 +68,14 @@ public class ResultPanelFactory {
             }
         }
 
-        PathFinderBusinessInterface pathFinder = (PathFinderBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.PATH_FINDER_BEAN,
-                                                                                                            PathFinderHomeInterface.class,
-                                                                                                            null);
-        UtilityBusinessInterface utilityBean = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.UTILITY_BEAN,
-                                                                                                          UtilityHomeInterface.class,
-                                                                                                            null);
+        PathFinderBusinessInterface pathFinder = (PathFinderBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                EjbNamesConstants.PATH_FINDER_BEAN,
+                                                                                                                PathFinderHomeInterface.class,
+                                                                                                                null);
+        UtilityBusinessInterface utilityBean = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                           EjbNamesConstants.UTILITY_BEAN,
+                                                                                                           UtilityHomeInterface.class,
+                                                                                                           null);
         Collection<AssociationInterface> incomingAssociationCollection = null;
         List<IInterModelAssociation> intraModelAssociationCollection = null;
         EntityInterface entity = null;
@@ -101,8 +106,10 @@ public class ResultPanelFactory {
     }
 
     /**
-     * This method returns the detailed panel by first creating a data row for it
-     * @param searchPanel 
+     * This method returns the detailed panel by first creating a data row for
+     * it
+     * 
+     * @param searchPanel
      * @param queryResult
      */
     private static ResultPanel getDetailedResultPanel(
@@ -130,8 +137,8 @@ public class ResultPanelFactory {
     }
 
     /**
-     * This method returns the detailed panel without  creating a data row for it.
-     * Data row ia already created which is passed as parameter
+     * This method returns the detailed panel without creating a data row for
+     * it. Data row ia already created which is passed as parameter
      * 
      * @param searchPanel
      * @param record
@@ -162,20 +169,22 @@ public class ResultPanelFactory {
      * @return
      */
     public static DefaultDetailedPanel getResultDetailedPanel(IRecord record) {
-        DefaultDetailedPanel defaultDetailedPanel = null;
+        EntityInterface entity = Utility.getEntity(record);
+        EntityInterface originEntity = DataListUtil.getOriginEntity(entity);
 
-        if (record instanceof I3DDataRecord) {
-            defaultDetailedPanel = new ThreeDResultObjectDetailsPanel((I3DDataRecord) record);
-        } else if (record instanceof ICategorialClassRecord) {
-            defaultDetailedPanel = new CategoryObjectDetailsPanel((ICategorialClassRecord) record);
-        } else {
-            defaultDetailedPanel = new DefaultDetailedPanel<IRecord>(record);
-
+        try {
+            String rendererName = ResultConfigurationParser.getInstance().getResultRenderer(
+                                                                                            edu.wustl.cab2b.common.util.Utility.getApplicationName(originEntity),
+                                                                                            originEntity.getName());
+            Constructor<?> constructor = Class.forName(rendererName).getDeclaredConstructor(IRecord.class);
+            DefaultDetailedPanel defaultDetailedPanel = (DefaultDetailedPanel) constructor.newInstance(record);
+            defaultDetailedPanel.doInitialization();
+            return defaultDetailedPanel;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        defaultDetailedPanel.doInitialization();
-        return defaultDetailedPanel;
     }
-   
+
     /**
      * @param queryResult
      * @return

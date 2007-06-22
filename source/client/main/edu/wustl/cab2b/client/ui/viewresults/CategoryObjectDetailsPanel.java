@@ -8,6 +8,7 @@ import java.util.Vector;
 import edu.wustl.cab2b.client.ui.query.TransformCategoryResult;
 import edu.wustl.cab2b.client.ui.treetable.B2BTreeNode;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.util.logger.Logger;
 
@@ -25,8 +26,8 @@ public class CategoryObjectDetailsPanel extends DefaultDetailedPanel<ICategorial
 
     B2BTreeNode b2BTreeRootNode = new B2BTreeNode();
 
-    public CategoryObjectDetailsPanel(ICategorialClassRecord record) {
-        super(record);
+    public CategoryObjectDetailsPanel(IRecord record) {
+        super((ICategorialClassRecord) record);
         isVFill = false;
     }
 
