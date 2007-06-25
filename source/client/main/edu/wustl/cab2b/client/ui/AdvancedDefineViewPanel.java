@@ -72,6 +72,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 
         Cab2bHyperlink showAllLink = new Cab2bHyperlink();
         showAllLink.setText("Show All Search Results Views");
+        showAllLink.setEnabled(false);
         JXPanel topPanel = new Cab2bPanel(new RiverLayout());
         topPanel.add(new Cab2bLabel(""));
         topPanel.add("tab ", showAllLink);
