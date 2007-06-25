@@ -364,19 +364,10 @@ public class ExperimentStackBox extends Cab2bPanel {
         dataFilterPanel.add(new Cab2bLabel());
         for (CaB2BFilterInterface caB2BFilterInterface : data) {
             obj = caB2BFilterInterface;
-            String hyperlinkName = obj.toString();
-            Cab2bHyperlink hyperlink = new Cab2bHyperlink();
-            hyperlink.setBounds(new Rectangle(5, 5, 5, 5));
-            hyperlink.setText(hyperlinkName);
-            hyperlink.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    if (obj instanceof CaB2BPatternFilter) {
-                        CaB2BPatternFilter filter = (CaB2BPatternFilter) obj;
-                        System.out.println(filter.getPattern().pattern());
-                    }
-                }
-            });
-            dataFilterPanel.add("br", hyperlink);
+            String labelName = obj.toString();
+            Cab2bLabel cab2bLabel= new Cab2bLabel(labelName);
+    
+            dataFilterPanel.add("br", cab2bLabel);
         }
         dataFilterPanel.revalidate();
     }
