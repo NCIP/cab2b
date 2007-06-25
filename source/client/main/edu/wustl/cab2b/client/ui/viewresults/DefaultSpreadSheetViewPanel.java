@@ -123,12 +123,17 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
 
         if (showDefaultTable) {
             table.addMouseListener(new IconMouseListner());
-
+            
+            //setting first column width FIXED
+            if(table.getColumnCount() > 0)
+            {                
+                table.getColumn(0).setMaxWidth(50);
+            }
             table.addMouseMotionListener(new MouseMotionAdapter() {
-                //if mouse is moving under first column 
+                // if mouse is moving under first column 
                 // set hand courser
                 public void mouseMoved(MouseEvent evt) {
-                    Cab2bTable table = (Cab2bTable) evt.getSource();                    
+                    Cab2bTable table = (Cab2bTable) evt.getSource();
                     if (table.getColumnModel().getColumnIndexAtX(evt.getX()) == 0) {
                         table.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     } else {
