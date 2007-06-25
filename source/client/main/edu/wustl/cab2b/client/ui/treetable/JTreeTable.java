@@ -41,14 +41,7 @@ public class JTreeTable extends JTable {
 
         setShowGrid(true);
         setIntercellSpacing(new Dimension(1, 1));        
-        
-        
-    }
-    
-    public void setHeader(JTableHeader tableHeader)
-    {
-        super.setTableHeader(tableHeader);
-    }
+    }   
 
     /* Workaround for BasicTableUI anomaly. Make sure the UI never tries to 
      * paint the editor. The UI currently uses different techniques to 
