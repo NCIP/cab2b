@@ -2,9 +2,11 @@ package edu.wustl.cab2b.client.ui.viewresults;
 
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.DETAILS_COLUMN_IMAGE;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -122,6 +124,18 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
         if (showDefaultTable) {
             table.addMouseListener(new IconMouseListner());
 
+            table.addMouseMotionListener(new MouseMotionAdapter() {
+                //if mouse is moving under first column 
+                // set hand courser
+                public void mouseMoved(MouseEvent evt) {
+                    Cab2bTable table = (Cab2bTable) evt.getSource();                    
+                    if (table.getColumnModel().getColumnIndexAtX(evt.getX()) == 0) {
+                        table.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    } else {
+                        table.setCursor(Cursor.getDefaultCursor());
+                    }
+                }
+            });
         }
 
         JScrollPane jScrollPane = new JScrollPane();
@@ -262,6 +276,7 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
     }
 
     class IconMouseListner extends MouseAdapter {
+
         public void mouseClicked(MouseEvent evt) {
             Cab2bTable table = (Cab2bTable) evt.getSource();
             if (table.getColumnModel().getColumnIndexAtX(evt.getX()) == 0) {
@@ -269,9 +284,9 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
                 DefaultDetailedPanel defaultDetailedPanel = ResultPanelFactory.getResultDetailedPanel(records.get(table.convertRowIndexToModel(row)));
                 Dimension dimension = MainFrame.mainframeScreenDimesion;
                 WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, defaultDetailedPanel, "Details",
-                                             new Dimension((int) (dimension.width * 0.50),
-                                                     (int) (dimension.height * 0.70)), true, true);
+                                             new Dimension(750, 580), true, true);
             }
         }
+
     }
 }
