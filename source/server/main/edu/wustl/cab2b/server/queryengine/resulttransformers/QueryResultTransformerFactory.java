@@ -4,8 +4,8 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.util.ResultConfigurationParser;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.cab2b.server.analyticalservice.ResultConfigurationParser;
 
 /**
  * Factory to create transformer.

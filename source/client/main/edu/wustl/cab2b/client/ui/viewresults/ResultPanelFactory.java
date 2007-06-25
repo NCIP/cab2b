@@ -28,7 +28,7 @@ import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.DataListUtil;
-import edu.wustl.cab2b.server.analyticalservice.ResultConfigurationParser;
+import edu.wustl.cab2b.common.util.ResultConfigurationParser;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.wustl.cab2b.server.analyticalservice;
+package edu.wustl.cab2b.common.util;
 
 import java.io.InputStream;
 import java.util.HashMap;

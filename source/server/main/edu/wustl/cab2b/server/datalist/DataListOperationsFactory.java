@@ -3,8 +3,8 @@ package edu.wustl.cab2b.server.datalist;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.DataListUtil;
+import edu.wustl.cab2b.common.util.ResultConfigurationParser;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.cab2b.server.analyticalservice.ResultConfigurationParser;
 
 public class DataListOperationsFactory {
     public static DataListSaver<?> createDataListSaver(EntityInterface entity) {
