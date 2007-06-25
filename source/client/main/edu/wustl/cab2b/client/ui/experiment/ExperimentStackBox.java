@@ -273,7 +273,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 
         stackedBox.setPreferredSize(new Dimension(250, 500));
         stackedBox.setMinimumSize(new Dimension(250, 500));
-        stackedBox.setBorder(null);
+        stackedBox.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
         this.add(stackedBox);
         updateUI();
     }
