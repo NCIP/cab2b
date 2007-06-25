@@ -10,6 +10,7 @@ import javax.naming.NamingException;
 
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
+import edu.wustl.cab2b.common.util.PropertyLoader;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -55,6 +56,14 @@ public class Locator {
         Object obj = null;
         Logger.out.debug("Finding Bean : " + ejbName + "\n Home Interface is : " + homeClassForEJB.getName());
         try {
+            //set system properties for NJDI
+            System.setProperty("java.naming.factory.initial",
+                               PropertyLoader.getProperty("java.naming.factory.initial"));
+            System.setProperty("java.naming.factory.url.pkgs",
+                               PropertyLoader.getProperty("java.naming.factory.url.pkgs"));
+            System.setProperty("java.naming.provider.url", PropertyLoader.getProperty("java.naming.provider.url"));
+
+
             Context ctx = new InitialContext();
             obj = ctx.lookup(ejbName);
         } catch (NamingException e) {

@@ -13,6 +13,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.geom.Point2D;
+import java.io.File;
 import java.net.URL;
 import java.util.MissingResourceException;
 
@@ -245,6 +246,7 @@ public class MainFrame extends JXFrame {
             CommonUtils.handleException(checkedException, null, true, true, false, true);
         }
     }
+
     /**
      * set the status bar message
      * @param message the status message
@@ -266,6 +268,7 @@ public class MainFrame extends JXFrame {
      * @param args Command line arguments. They will not be used.
      */
     public static void main(String[] args) {
+        setHome();
         Logger.configure(); //pick config from log4j.properties
         ClientLauncher clientLauncher = ClientLauncher.getInstance();
         clientLauncher.launchClient();
@@ -281,4 +284,18 @@ public class MainFrame extends JXFrame {
     public static Dimension getScreenDimesion() {
         return mainframeScreenDimesion;
     }
+
+    /**
+     * set the caB2B Home used to keep editable configurations,
+     * appliaction logs etc.
+     *
+     */
+    public static void setHome() {
+        String userHome = System.getProperty("user.home");
+
+        File cab2bHome = new File(userHome, "cab2b");
+        System.setProperty("cab2b.home", cab2bHome.getAbsolutePath());
+        
+   }
+
 }

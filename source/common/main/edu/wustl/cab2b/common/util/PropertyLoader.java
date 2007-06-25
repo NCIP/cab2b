@@ -2,6 +2,7 @@ package edu.wustl.cab2b.common.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 
 import edu.wustl.common.util.logger.Logger;
@@ -23,18 +24,23 @@ public class PropertyLoader {
      * @return Properties loaded from given file.
      */
     public static Properties getPropertiesFromFile(String propertyfile) {
-        InputStream is = PropertyLoader.class.getClassLoader().getResourceAsStream(propertyfile);
-        if (is == null) {
-            Logger.out.error("Unable fo find property file : " + propertyfile
-                    + "\n please put this file in classpath");
-        }
-        Properties properties = new Properties();
+        Properties properties = null;
         try {
+            URL url = Utility.getResource(propertyfile);
+            InputStream is = url.openStream();
+            if (is == null) {
+                Logger.out.error("Unable fo find property file : " + propertyfile
+                        + "\n please put this file in classpath");
+            }
+
+            properties = new Properties();
             properties.load(is);
+
         } catch (IOException e) {
             Logger.out.error("Unable to load properties from : " + propertyfile);
             e.printStackTrace();
         }
+
         return properties;
     }
 

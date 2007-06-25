@@ -3,17 +3,18 @@ package edu.wustl.cab2b.common.util;
 import static edu.wustl.cab2b.common.util.Constants.CONNECTOR;
 import static edu.wustl.cab2b.common.util.Constants.PROJECT_VERSION;
 import static edu.wustl.cab2b.common.util.Constants.TYPE_CATEGORY;
-import java.io.IOException;
-import java.io.InputStream;
+
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -427,5 +428,34 @@ public class Utility {
         final PrintWriter printWriter = new PrintWriter(result);
         throwable.printStackTrace(printWriter);
         return result.toString();
+    }
+    
+    /**
+     * get the specified resource
+     * first look into the cab2b.home 
+     * otherwise look into the classpath  
+     * @param resource the name of the resource
+     * @return the URL for the resource
+     * @throws MalformedURLException 
+     */
+    public static URL getResource(String resource)  {
+        
+        String home = System.getProperty("cab2b.home");
+        
+        File file = new File(home+"/conf", resource);
+        if(file.exists()){
+            try{
+            
+                return file.toURL();
+            
+            }catch(MalformedURLException e){
+                Logger.out.error("File not found in cab2b_home, will use default file ",e);
+            }
+        }
+        
+        //is there a better way of getting a non-null class loader ?
+        ClassLoader loader =  Utility.class.getClassLoader();
+        return loader.getResource(resource);
+        
     }
 }

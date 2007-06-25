@@ -60,11 +60,7 @@
 
 	<!-- properties used for Java Web Start -->
 	<!-- change the version values for every new release,otherwise webstart will not deliver the latest changes !! -->
-	<property name="webstart.dir" location="webstart" />
-	<property name="webstart.client.dir" location="${webstart.dir}/client" />
-	<property name="webstart.server.dir" location="${webstart.dir}/server" />
-	<property name="webstart.client.jar" location="${webstart.client.dir}/cab2b_client_webstart.jar" />
-	<property name="keystore" location="${webstart.dir}/cab2bKeyStore" />
+	<property file="webstart/webstart.properties" />
 	<property name="webstart.client.version" value="1.0" />
 	<property name="webstart.server.version" value="1.0" />
 
@@ -541,22 +537,9 @@
 
 	<!-- create the client jar for Java Web Start deployment -->
 	<!-- this jar includes contents of conf/ and images/ and is signed -->
-	<target name="build.client.webstart.jar" depends="compile.client" description="create the client jar for Java Web Start deployment">
+	<target name="build.client.webstart.jar" depends="clean.all, compile.client" description="create the client jar for Java Web Start deployment">
 		<mkdir dir="${client.jar.dir}" />
-
-		<delete includeemptydirs="true">
-			<fileset dir="${client.jar.dir}">
-				<include name="**/*" />
-			</fileset>
-		</delete>
-
-		<!-- <mkdir dir="${client.jar.dir}/META-INF" /> -->
-
-		<!-- Need to move jndi.properties, ApplicationResources.properties, 
-			 dynamicUI.xml, and other files to either META-INF folder or to 
-			 root folder.
-		-->
-
+						
 		<copy todir="${client.jar.dir}">
 			<fileset dir="${client.classes.dir}">
 				<include name="**/*.class" />
@@ -574,74 +557,27 @@
 			</fileset >
 		</copy>
 
-		<copy todir="${client.jar.dir}">
-			<fileset dir="lib/common">
-				<include name="**/*.jar" />
-			</fileset>
-			<fileset dir="lib/client">
-				<include name="**/*.jar" />
-			</fileset>
-		</copy>
-
-		<!--- copy the contents of conf and resources/imgaes at the top level of jar.dir -->
-		<copy todir="${client.jar.dir}">
+		<mkdir dir="${webstart.client.dir}" />
+		<mkdir dir="${webstart.jnlp.dir}" />
+				
+		<!--- create the images.jar and conf.jar to include in the client jar folder -->
+		<jar basedir="${conf.dir}" destfile="${webstart.client.dir}/conf.jar" >
+			<include name="**/*.*" />
+		</jar>
+		<jar basedir="resources/images" destfile="${webstart.client.dir}/images.jar" >
+			<include name="**/*" />
+		</jar>
+				
+		<!-- <copy todir="${client.jar.dir}">
 			<fileset dir="${conf.dir}">
 				<include name="**/*.*" />
 			</fileset>
 			<fileset dir="resources/images">
 				<include name="**/*.*" />
 			</fileset>
-		</copy>
+		</copy> -->
 
-		<!-- This is to create a jar of all required libraries for client code -->
-		<!-- jar basedir="${client.jar.dir}" destfile="clientDependencies.jar">
-			<include name="**/*.jar"/>
-		</jar -->
-
-		<delete dir="${webstart.client.dir}" includeemptydirs="true" />
-		<mkdir dir="${webstart.client.dir}" />
-		<jar basedir="${client.jar.dir}" destfile="${webstart.client.jar}">
-			<include name="**/*" />
-			<exclude name="**/*.jar" />
-			<!-- <manifest>
-				 <attribute name="Built-By" value="${user.name}"/ >
-				 need to remove this hardcoding of MANIFEST's Class-Path settings 
-				<attribute name="Main-Class" value="edu.wustl.cab2b.client.ui.mainframe.MainFrame" />
-				<attribute name="Class-Path" value="
-		                idw-gpl.jar
-		                jcalendar-1.3.2.jar
-		                jcommon-1.0.9.jar
-		                jfreechart-1.0.5.jar
-		                org-netbeans-graph.jar
-		                org-netbeans-graph-vmd.jar
-		                org-openide-util.jar
-		                swingx-2006_10_08.jar
-		                asm.jar 
-		                asm-attrs.jar
-		                c3p0-0.9.0.jar
-		                cglib-2.1.jar 
-		                commonpackage.jar 
-		                commons-collections-3.2.jar 
-		                commons-logging-1.0.4.jar
-		                dom4j-1.6.jar
-		                DynamicExtensions.jar
-		                ehcache-1.1.jar
-		                experiment-client.jar
-		                hibernate2.1.7c.jar
-		                j2ee.jar
-		                jbossall-client.jar
-		                log4j-1.2.9.jar
-		                lucene-core-2.0.0.jar
-		                mysql-connector-java-3.0.16-ga-bin.jar
-		                odmg.jar
-		                oracleDriver.jar
-		                struts.jar
-		                titli-washu-1.0.jar
-		                conf/ resources/images/
-        		" />
-			</manifest> -->
-		</jar>
-
+		
 		<copy toDir="${webstart.client.dir}">
 			<fileset dir="lib/client">
 				<include name="**/*.jar" />
@@ -650,6 +586,29 @@
 				<include name="**/*.jar" />
 			</fileset>
 		</copy>
+		
+		<!-- create JNLP's for all the jars and modify the client jar's JNLP accordingly -->
+		<java classname="JNLPBuilder" >
+			<classpath >
+				<path refid="server.classpath" />
+				<pathelement location="webstart" />
+			</classpath >
+			<arg value="${webstart.jnlp.template}" />
+			<arg value="${webstart.jnlp.client}" />
+			<arg value="${webstart.client.dir}" />
+			<arg value="${webstart.jnlp.dir}" />
+		</java>
+		
+		
+		
+		<echo message="JNLPBuilder finished its task" />
+		
+		
+		<!-- make the client jar only after other jars have been copied and JNLP's have been created
+				in order to avoid creating a new JNLP for the client jar -->
+		<jar basedir="${client.jar.dir}" destfile="${webstart.client.jar}">
+					<include name="**/*" />
+		</jar>
 
 		<!-- sign all the jars -->
 		<signjar alias="cab2b" storepass="roughpage" keystore="${keystore}">
@@ -657,17 +616,10 @@
 				<include name="**/*.jar" />
 			</fileset>
 		</signjar>
-
-		<delete dir="${workArea.dir}/jar/edu">
-		</delete>
-		<delete dir="${workArea.dir}/jar/META-INF">
-		</delete>
-		<delete file="${workArea.dir}/jar/Cab2bApplicationResources.properties">
-		</delete>
-		<delete file="${workArea.dir}/jar/jndi.properties">
-		</delete>
-		<!-- delete file="${workArea.dir}/jar/dynamicUI.xml"></delete -->
+		
 	</target>
+	
+	
 	<!-- ================================================================================== -->
 
 	<target name="query.jar" depends="compile.all">
