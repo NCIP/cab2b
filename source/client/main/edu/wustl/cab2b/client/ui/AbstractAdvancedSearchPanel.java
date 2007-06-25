@@ -88,7 +88,7 @@ public abstract class AbstractAdvancedSearchPanel extends Cab2bPanel implements 
 
 		// Added by deepak
 		m_chkClassDesc = new Cab2bCheckBox("Include Description");
-		m_chkClassDesc.setSelected(true);
+		m_chkClassDesc.setSelected(false);
 		m_chkClassDesc.addItemListener(this);
 		m_chkClassDesc.setActionCommand("classdesc");
 
