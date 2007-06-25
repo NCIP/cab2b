@@ -38,7 +38,9 @@ public class TransformCategoryResult {
 
             B2BTreeNode iCategorialClassRecordNode = null;
 
-            String displayName = edu.wustl.cab2b.common.util.Utility.getDisplayName(iCategorialClassRecord.getCategorialClass().getCategorialClassEntity());
+            String displayName = edu.wustl.cab2b.common.util.Utility.getOnlyEntityName(iCategorialClassRecord.getCategorialClass().getCategorialClassEntity());
+
+            //String displayName = edu.wustl.cab2b.common.util.Utility.getDisplayName(iCategorialClassRecord.getCategorialClass().getCategorialClassEntity());
 
             if (iCategorialClassRecordList.size() == 1) {
                 iCategorialClassRecordNode = parentTreeNode;
@@ -80,17 +82,13 @@ public class TransformCategoryResult {
                 iCategorialClassRecordNode.addChild(child);
             }
             if (isOneRecord == false) {
+                parentTreeNode.addChild(iCategorialClassRecordNode);
                 //setting display name for group node by removing _ String   
                 parentTreeNode.setDisplayName(iCategorialClassRecordNode.toString().substring(
                                                                                               0,
                                                                                               iCategorialClassRecordNode.toString().lastIndexOf(
-                                                                                                                                                "_")));
-                Logger.out.debug(iCategorialClassRecordNode.toString().substring(
-                                                                                0,
-                                                                                iCategorialClassRecordNode.toString().lastIndexOf(
-                                                                                                                                  "_")));
-                //adding iCategorialClassRecordNode to parent
-                parentTreeNode.addChild(iCategorialClassRecordNode);
+                                                                                                                                                "_"))
+                        + " (" + parentTreeNode.getChildren().size() + ")"); //adding iCategorialClassRecordNode to parent
             } else {
                 parentTreeNode = iCategorialClassRecordNode;
             }
