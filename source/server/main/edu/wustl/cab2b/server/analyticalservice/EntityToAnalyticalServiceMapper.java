@@ -246,8 +246,9 @@ public class EntityToAnalyticalServiceMapper {
     public List<ServiceDetailsInterface> getServices(EntityInterface entity) {
         List<ServiceDetailsInterface> serviceDetailsInstanceList = new ArrayList<ServiceDetailsInterface>();
 
-        String entityName = entity.getName();
-        List<String> serviceDetailClassList = getServiceDetailClassNames(entityName);
+        //List<String> serviceDetailClassList = getServiceDetailClassNames(entity.getName());
+        //TODO This is a hack. To be deleted after testing.
+        List<String> serviceDetailClassList = getServiceDetailClassNames("gov.nih.nci.mageom.domain.BioAssay.BioAssay");
         for (String serviceDetailClassName : serviceDetailClassList) {
             ServiceDetailsInterface serviceDetails = getInstance(serviceDetailClassName,
                                                                  ServiceDetailsInterface.class);

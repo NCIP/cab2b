@@ -32,7 +32,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTree;
 
-import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -295,7 +294,6 @@ public class ExperimentStackBox extends Cab2bPanel {
             } else {
                 rootNode.add(childNode);
             }
-
             addChildren(rootNode, childNode);
         }
     }
@@ -350,8 +348,7 @@ public class ExperimentStackBox extends Cab2bPanel {
                     CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true,
                                                 false);
                 }
-
-                //addAvailableAnalysisServices(experimentEntity);
+                addAvailableAnalysisServices(idName.getUserObject());
             }
 
             protected void doUIUpdateLogic() throws RuntimeException {
@@ -452,6 +449,7 @@ public class ExperimentStackBox extends Cab2bPanel {
             closeButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent actionEvent) {
                     tabComponent.remove(newVisualizeDataPanel);
+                    chartIndex--;
                 }
             });
             newVisualizeDataPanel.add("right ", closeButton);
@@ -506,20 +504,17 @@ public class ExperimentStackBox extends Cab2bPanel {
      * 
      * @param experimentEntity
      */
-    private void addAvailableAnalysisServices(TreeEntityWrapper treeEntityWrapper) {
-        final EntityInterface dataEntity = treeEntityWrapper.getEntityInterface();
-
-        // TODO This is a hack. To be deleted after testing.
-        EntityInterface entityInterface = DomainObjectFactory.getInstance().createEntity();
-        entityInterface.setName("gov.nih.nci.mageom.domain.BioAssay.BioAssay");
-
+    private void addAvailableAnalysisServices(IdName idName) {
+        //final EntityInterface dataEntity = idName.getEntityInterface();
+        ClientSideCache clientSideCache = ClientSideCache.getInstance();
+        EntityInterface dataEntity = clientSideCache.getEntityById(idName.getOriginalEntityId());
         AnalyticalServiceOperationsBusinessInterface analyticalServiceOperationsBusinessInterface = (AnalyticalServiceOperationsBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                                                                                     EjbNamesConstants.ANALYTICAL_SERVICE_BEAN,
                                                                                                                                                                                     AnalyticalServiceOperationsHomeInterface.class,
                                                                                                                                                                                     null);
         List<ServiceDetailsInterface> serviceDetailInterfaceList = null;
         try {
-            serviceDetailInterfaceList = analyticalServiceOperationsBusinessInterface.getApplicableAnalyticalServices(entityInterface);
+            serviceDetailInterfaceList = analyticalServiceOperationsBusinessInterface.getApplicableAnalyticalServices(idName.getOriginalEntityId());
 
             analyseDataPanel.removeAll();
             for (ServiceDetailsInterface serviceDetails : serviceDetailInterfaceList) {
@@ -759,8 +754,7 @@ class FinishButtonActionListner implements ActionListener {
     private void updateAnalysisTable(final String analysisTitle, final List<IRecord> entityRecordList) {
         UserObjectWrapper<List<IRecord>> userObjectWrapper = new UserObjectWrapper<List<IRecord>>(
                 entityRecordList, analysisTitle);
-        String entityName = Utility.getTaggedValue(dataEntity.getTaggedValueCollection(),
-                                                   Constants.ENTITY_DISPLAY_NAME).getValue();
+        String entityName = Utility.getDisplayName(dataEntity);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
         String currentDate = simpleDateFormat.format(new Date());
         String progress = "Completed";

@@ -19,7 +19,6 @@ import java.awt.event.FocusListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JScrollPane;
@@ -31,9 +30,7 @@ import javax.swing.table.TableColumn;
 import org.jdesktop.swingx.LinkRenderer;
 import org.jdesktop.swingx.action.LinkAction;
 
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.cab2b.client.ui.SaveDatalistPanel;
 import edu.wustl.cab2b.client.ui.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
@@ -54,8 +51,6 @@ import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
-import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
-import edu.wustl.cab2b.common.ejb.utility.UtilityHomeInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.experiment.ExperimentHome;
@@ -176,8 +171,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     public void refreshTable(List<IRecord> recordList) {
         this.removeAll();
         this.spreadSheetViewPanel.refreshView(recordList);
-
-        //table = new ExperimentTableModel(false, dataRecordVector, columnVector, attributeMap);
         this.spreadSheetViewPanel.getDataTable().addFocusListener(new TableFocusListener(this.experimentPanel));
 
         refreshUI();
@@ -297,7 +290,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         String tabTitle = userObjectWrapper.getDisplayName();
         Cab2bPanel analysisView = (Cab2bPanel) CommonUtils.getComponentByName(tabComponent, tabTitle);
         if (analysisView == null) {
-
             final Cab2bPanel analysisViewPanel = new Cab2bPanel();
             analysisViewPanel.setName(tabTitle);
             analysisViewPanel.setBorder(null);
@@ -316,6 +308,9 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             DefaultSpreadSheetViewPanel defaultSpreadSheetViewPanel = new DefaultSpreadSheetViewPanel(true, false,
                     recordList, true);
             defaultSpreadSheetViewPanel.doInitialization();
+            defaultSpreadSheetViewPanel.getDataTable().addFocusListener(
+                                                                        new TableFocusListener(
+                                                                                this.experimentPanel));
             analysisViewPanel.add("br center hfill vfill", defaultSpreadSheetViewPanel);
 
             analysisView = analysisViewPanel;
@@ -365,7 +360,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                     titleNode.addChild(dataRow);
                 }
                 customCategoryDataList.getRootDataRow().addChild(titleNode);
-
 
                 // make a call to the server
                 ExperimentBusinessInterface ExperimentBI = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
@@ -499,7 +493,12 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         private void focusAction(final Cab2bTable cab2bTable) {
             boolean setEnabled = false;
 
-            if (cab2bTable.getSelectedRowCount() > 0) {
+            SKIP: if (cab2bTable.getSelectedRowCount() > 0) {
+                for (int columnIndex : cab2bTable.getSelectedColumns()) {
+                    if (columnIndex == 0) {
+                        break SKIP;
+                    }
+                }
                 setEnabled = true;
             }
 

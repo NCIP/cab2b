@@ -21,9 +21,9 @@ public class AnalyticalServiceOperationsBean extends AbstractStatelessSessionBea
     /**
      * @see edu.wustl.cab2b.common.ejb.analyticalservice.ServiceInvokerFactoryBusinessInterface#getApplicableAnalyticalServices(edu.common.dynamicextensions.domaininterface.EntityInterface)
      */
-    public List<ServiceDetailsInterface> getApplicableAnalyticalServices(EntityInterface entity)
+    public List<ServiceDetailsInterface> getApplicableAnalyticalServices(Long entityId)
             throws RemoteException {
-        return new AnalyticalServiceOperations().getApplicableAnalyticalServices(entity);
+        return new AnalyticalServiceOperations().getApplicableAnalyticalServices(entityId);
     }
 
     /**

@@ -3,7 +3,6 @@ package edu.wustl.cab2b.common.ejb.analyticalservice;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.analyticalservice.ServiceDetailsInterface;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -17,7 +16,7 @@ public interface AnalyticalServiceOperationsBusinessInterface extends BusinessIn
      * @return
      * @throws RemoteException
      */
-    List<ServiceDetailsInterface> getApplicableAnalyticalServices(EntityInterface entity) throws RemoteException;;
+    List<ServiceDetailsInterface> getApplicableAnalyticalServices(Long entityId) throws RemoteException;;
 
     /**
      * @param data
