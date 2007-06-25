@@ -77,6 +77,9 @@ public class B2BTreeNode {
         //creating tree 
         JTreeTable treeTable = new JTreeTable(new B2BNewModel(this));
 
+        //setting header null
+        treeTable.setTableHeader(null);
+
         //adding to scrollpane
         JScrollPane jScrollPane = new JScrollPane(treeTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
