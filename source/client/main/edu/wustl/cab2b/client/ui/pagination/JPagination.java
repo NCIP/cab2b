@@ -113,6 +113,12 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
     boolean mouseWheelEnabled = true;
 
     private JPageElement selectedJPageElement;
+    
+    private Cab2bHyperlink selectAllHyperlink;
+
+    private Cab2bHyperlink clearAllHyperlink;
+
+    private Cab2bHyperlink invertSelectionHyperlink;
 
     public JPagination() {
         this(null);
@@ -436,11 +442,7 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
     private class JGroupActionPanel extends Cab2bPanel implements ActionListener {
         private static final long serialVersionUID = 1L;
 
-        private Cab2bHyperlink selectAllHyperlink;
-
-        private Cab2bHyperlink clearAllHyperlink;
-
-        private Cab2bHyperlink invertSelectionHyperlink;
+        
 
         private String selectAllText = PaginationConstants.SELECT_ALL_TEXT;
 
@@ -588,6 +590,12 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
      */
     public void setSelectedJPageElement(JPageElement selectedJPageElement) {
         this.selectedJPageElement = selectedJPageElement;
+    }
+    
+    public void setPageLinksDisabled(){
+    	selectAllHyperlink.setEnabled(false);
+    	clearAllHyperlink.setEnabled(false);
+    	invertSelectionHyperlink.setEnabled(false);
     }
 
 }
