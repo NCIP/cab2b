@@ -577,11 +577,15 @@
 			</fileset>
 		</copy>
 		
+		<!-- compile JNLPBuilder -->
+		<javac srcdir="${basedir}/webstart"  includes="JNLPBuilder.java" failonerror="true" classpathref="server.classpath" />
+
+
 		<!-- create JNLP's for all the jars and modify the client jar's JNLP accordingly -->
-		<java classname="JNLPBuilder" >
+		<java classname="JNLPBuilder" failonerror="true">
 			<classpath >
 				<path refid="server.classpath" />
-				<pathelement location="webstart" />
+				<pathelement location="${basedir}/webstart" />
 			</classpath >
 			<arg value="${webstart.jnlp.template}" />
 			<arg value="${webstart.jnlp.client}" />
