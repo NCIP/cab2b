@@ -97,8 +97,8 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
         collapsible.add(component);
         Action toggleAction = collapsible.getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION);
         // use the collapse/expand icons from the JTree UI
-        toggleAction.putValue(JXCollapsiblePane.COLLAPSE_ICON, UIManager.getIcon("Tree.expandedIcon"));
-        toggleAction.putValue(JXCollapsiblePane.EXPAND_ICON, UIManager.getIcon("Tree.collapsedIcon"));
+        //toggleAction.putValue(JXCollapsiblePane.COLLAPSE_ICON, UIManager.getIcon("Tree.expandedIcon"));
+        //toggleAction.putValue(JXCollapsiblePane.EXPAND_ICON, UIManager.getIcon("Tree.collapsedIcon"));
 
         URL url = this.getClass().getClassLoader().getResource(iconFile);
         ImageIcon imageIcon = null;
@@ -264,7 +264,8 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
         }
 
         public void collapse(boolean e) {
-            toggleAction = !(e);
+            //toggleAction = !(e);
+            toggleAction = e;
             ActionEvent ae = new ActionEvent(this, 123, "stackedBox");
             action.actionPerformed(ae);
             this.repaint();
