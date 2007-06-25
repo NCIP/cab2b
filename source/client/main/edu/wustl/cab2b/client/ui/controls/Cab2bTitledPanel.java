@@ -16,15 +16,18 @@ public class Cab2bTitledPanel extends JXTitledPanel {
 
     public Cab2bTitledPanel() {
         this("");
+        this.setBorder(null);
     }
 
     public Cab2bTitledPanel(String title) {
         this(title, new Cab2bPanel());
+        this.setBorder(null);
     }
 
     public Cab2bTitledPanel(String title, Container container) {
         super(title, container);
         this.setBackground(Color.WHITE);
+        this.setBorder(null);
     }
 
     public static void main(String[] args) {
