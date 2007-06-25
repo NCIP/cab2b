@@ -127,7 +127,8 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
          }
          });
          this.add("tab",searchButton);*/
-
-        this.add("br hfill vfill", new JScrollPane(expTree));
+        JScrollPane js = new JScrollPane(expTree);
+        js.setBorder(null);
+        this.add("br hfill vfill", js);
     }
 }
