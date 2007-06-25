@@ -78,6 +78,7 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
 			ExperimentDetailsPanel parentPanel) {
 		m_ExperimentTreeNodeObj = Obj;
 		m_parentPanel = parentPanel;
+		m_parentPanel.setBorder(null);
 		initGUI();
 	}
 
@@ -135,22 +136,26 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
 		addDataButton = new Cab2bButton("Add Data");
 		addDataButton.setEnabled(false);
 		experimentTitlePanel.add(addDataButton);
+		experimentTitlePanel.setBorder(null);
 
 		/* Adding Experiment grid panel */
 		experimentDataCategoryGridPanel = new ExperimentDataCategoryGridPanel(
 				this);
-		experimentDataCategoryGridPanel.setBorder(new CustomizableBorder(
-				new Insets(1, 1, 1, 1), true, true));
+	/*	experimentDataCategoryGridPanel.setBorder(new CustomizableBorder(
+				new Insets(1, 1, 1, 1), true, true));*/
+		experimentDataCategoryGridPanel.setBorder(null);
 
 		/* Adding Experiment Stack box panel */
 		this.add(experimentTitlePanel, BorderLayout.NORTH);
 		experimentStackBox = new ExperimentStackBox(expBus, selectedExperiment,
 				experimentDataCategoryGridPanel);
-		experimentStackBox.setBorder(new CustomizableBorder(new Insets(1, 1, 1,
-				1), true, true));
+		/*experimentStackBox.setBorder(new CustomizableBorder(new Insets(1, 1, 1,
+				1), true, true));*/
+		experimentStackBox.setBorder(null);
 
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				experimentStackBox, experimentDataCategoryGridPanel);
+		
 		splitPane.setOneTouchExpandable(false);
 		splitPane.setDividerLocation(242);
 		splitPane.setDividerSize(4);
