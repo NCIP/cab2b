@@ -118,10 +118,10 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
 		Cab2bLabel experimentLabel = new Cab2bLabel(selectedExperiment
 				.getName());
 		experimentLabel.setForeground(Color.blue);
-		Font textFont = new Font(experimentLabel.getFont().getName(),
-				Font.BOLD, experimentLabel.getFont().getSize() + 4);
+        Font font = experimentLabel.getFont();
+        Font textFont = new Font(font.getName(),Font.BOLD, font.getSize() + 3);
 		experimentLabel.setFont(textFont);
-		experimentTitlePanel.add("br br hfill", experimentLabel);
+		experimentTitlePanel.add("hfill", experimentLabel);
 
 		/* Adding Experiment Creation Date */
 		Cab2bLabel experimentCreatedOn = new Cab2bLabel("Created On :"
