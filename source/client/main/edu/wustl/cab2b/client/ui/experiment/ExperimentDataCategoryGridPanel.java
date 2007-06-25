@@ -272,6 +272,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         this.add(northPanel, BorderLayout.NORTH);
 
         tabComponent.add("Experiment Data", experimentDataPanel);
+        tabComponent.setBorder(null);
         this.add(tabComponent, BorderLayout.CENTER);
 
         Cab2bPanel bottomPanel = new Cab2bPanel();

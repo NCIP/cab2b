@@ -230,6 +230,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         datalistTree.setOpenIcon(new ImageIcon(loader.getResource("folder_opened.gif")));
         datalistTree.setClosedIcon(new ImageIcon(loader.getResource("folder_closed.gif")));
         datalistTree.setLeafIcon(new ImageIcon(loader.getResource("mydatalist_icon.gif")));
+        datalistTree.setBorder(null);
     }
 
     /**
@@ -239,24 +240,28 @@ public class ExperimentStackBox extends Cab2bPanel {
         // Adding Select data category pane
         treeViewScrollPane = new JScrollPane(datalistTree);
         treeViewScrollPane.setPreferredSize(new Dimension(250, 200));
+        treeViewScrollPane.setBorder(null);
         stackedBox.addBox("Select Data Category", treeViewScrollPane, "mysearchqueries_icon.gif", false);
 
         // Adding Filter data category panel
         dataFilterPanel = new Cab2bPanel();
         dataFilterPanel.setPreferredSize(new Dimension(250, 200));
         dataFilterPanel.setOpaque(false);
+        dataFilterPanel.setBorder(null);
         stackedBox.addBox("Filter Data ", dataFilterPanel, "mysearchqueries_icon.gif", true);
 
         // Adding Analyse data panel
         analyseDataPanel = new Cab2bPanel();
         analyseDataPanel.setPreferredSize(new Dimension(250, 150));
         analyseDataPanel.setOpaque(false);
+        analyseDataPanel.setBorder(null);
         stackedBox.addBox("Analyze Data ", analyseDataPanel, "mysearchqueries_icon.gif", true);
 
         // Adding Visualize data panel
         visualiseDataPanel = new Cab2bPanel();
         visualiseDataPanel.setPreferredSize(new Dimension(250, 200));
         visualiseDataPanel.setOpaque(false);
+        visualiseDataPanel.setBorder(null);
         stackedBox.addBox("Visualize Data ", visualiseDataPanel, "mysearchqueries_icon.gif", true);
 
         // Set the type of charts to be displayed.
@@ -268,7 +273,9 @@ public class ExperimentStackBox extends Cab2bPanel {
 
         stackedBox.setPreferredSize(new Dimension(250, 500));
         stackedBox.setMinimumSize(new Dimension(250, 500));
+        stackedBox.setBorder(null);
         this.add(stackedBox);
+        updateUI();
     }
 
     /**
