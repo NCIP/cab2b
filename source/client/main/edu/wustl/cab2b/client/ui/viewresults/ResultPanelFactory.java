@@ -80,7 +80,7 @@ public class ResultPanelFactory {
         List<IInterModelAssociation> intraModelAssociationCollection = null;
         EntityInterface entity = null;
         if (record instanceof ICategorialClassRecord) {
-            entity = ((ICategorialClassRecord) record).getCategorialClass().getCategorialClassEntity();
+            entity = ((ICategorialClassRecord) record).getCategorialClass().getCategory().getCategoryEntity();
         } else {
             entity = queryResult.getOutputEntity();
         }

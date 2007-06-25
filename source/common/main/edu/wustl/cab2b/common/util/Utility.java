@@ -264,6 +264,17 @@ public class Utility {
         ;
         return buff.toString();
     }
+    
+    /**
+     * This method trims out packaceg name form the entity name
+     * @param entity
+     * @return
+     */
+    public static String getOnlyEntityName(EntityInterface entity) {
+        String name = entity.getName();
+        String displayName = name.substring(name.lastIndexOf(".") + 1, name.length());
+        return displayName;
+    }
 
     /**
      * @param path A IPath object
