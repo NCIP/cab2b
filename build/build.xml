@@ -200,6 +200,7 @@
 				<include name="dynamicUI.xml" />
 				<include name="errorcodes.properties" />
 				<include name="jndi.properties" />
+				<include name="ResultConfiguration.xml" />
 			</fileset>
 		</copy>
 
