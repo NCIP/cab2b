@@ -1,18 +1,20 @@
 package edu.wustl.cab2b.client.ui.treetable;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 
 import javax.swing.JTable;
 import javax.swing.JTree;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreeModel;
 
-public class JTreeTable extends JTable {
+import org.jdesktop.swingx.JXTable;
+
+public class JTreeTable extends JXTable {
 
     protected TreeTableCellRenderer tree;
 
@@ -40,8 +42,9 @@ public class JTreeTable extends JTable {
         setDefaultEditor(TreeTableModel.class, new TreeTableCellEditor());
 
         setShowGrid(true);
-        setIntercellSpacing(new Dimension(1, 1));        
-    }   
+        setIntercellSpacing(new Dimension(1, 1));
+        setBackground(Color.white);
+    }
 
     /* Workaround for BasicTableUI anomaly. Make sure the UI never tries to 
      * paint the editor. The UI currently uses different techniques to 
