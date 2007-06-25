@@ -1,7 +1,10 @@
 package edu.wustl.cab2b.client.ui.experiment;
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.EXPERIMENT_FRAME_TITLE;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -11,8 +14,10 @@ import org.jdesktop.swingx.JXPanel;
 
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
+import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
+import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -33,9 +38,16 @@ public class ExperimentPanel extends Cab2bTitledPanel {
     ExperimentDetailsPanel expDetailsPanel;
 
     ExperimentHierarchyPanel expHierarchyPanel;
-
-    public ExperimentPanel(String title) {
-        super(title);
+    final static String title = ApplicationProperties.getValue(EXPERIMENT_FRAME_TITLE);
+    public ExperimentPanel() {
+        super();
+        Cab2bLabel label = new Cab2bLabel(title);
+        label.setForeground(Color.blue);
+        Font font = label.getFont();
+        label.setFont(new Font(font.getName(),Font.BOLD, font.getSize() + 3));
+        Cab2bPanel panel = new Cab2bPanel();
+        panel.add("hfill", label);
+        this.add(panel, BorderLayout.NORTH);
         initGUI();
         setBorder(null);
     }
