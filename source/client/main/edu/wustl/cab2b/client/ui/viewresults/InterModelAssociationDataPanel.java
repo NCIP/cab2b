@@ -12,6 +12,7 @@ import java.util.List;
 import javax.swing.JLabel;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.query.ClientQueryBuilder;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -97,4 +98,10 @@ public class InterModelAssociationDataPanel extends AbstractAssociatedDataPanel 
         return queryObject.getQuery();
     }
 
+    /**
+     * @see edu.wustl.cab2b.client.ui.viewresults.AbstractAssociatedDataPanel#getLinkLabel(edu.common.dynamicextensions.domaininterface.EntityInterface)
+     */
+    protected String getLinkLabel(EntityInterface entity) {
+        return Utility.getDisplayName(entity);
+    }
 }

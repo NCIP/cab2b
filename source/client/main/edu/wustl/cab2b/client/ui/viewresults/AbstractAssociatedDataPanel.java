@@ -4,6 +4,7 @@ import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.common.datalist.IDataRow;
@@ -82,11 +83,20 @@ public abstract class AbstractAssociatedDataPanel extends Cab2bPanel {
     protected Cab2bHyperlink getHyperlink(HyperLinkUserObject hyperLinkUserObject, String tooltip) {
         Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
         /* Set the hyperlink text */
-        hyperlink.setText(Utility.getDisplayName(hyperLinkUserObject.getTargetEntity()));
+        hyperlink.setText(getLinkLabel(hyperLinkUserObject.getTargetEntity()));
         hyperlink.setToolTipText(tooltip);
         hyperlink.setUserObject(hyperLinkUserObject);
 
         hyperlink.addActionListener(associatedDataActionListener);
         return hyperlink;
+    }
+    
+    /**
+     * returns the label to be shown in the link for the related data
+     * @param entity
+     * @return
+     */
+    protected String getLinkLabel(EntityInterface entity) {
+        return Utility.getOnlyEntityName(entity);
     }
 }
