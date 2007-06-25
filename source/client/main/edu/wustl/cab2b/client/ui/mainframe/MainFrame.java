@@ -3,7 +3,6 @@ package edu.wustl.cab2b.client.ui.mainframe;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.APPLICATION_RESOURCES_FILE_NAME;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.CAB2B_LOGO_IMAGE;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.ERROR_CODE_FILE_NAME;
-import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.MAIN_FRAME_TITLE;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -154,8 +153,7 @@ public class MainFrame extends JXFrame {
                 if (openExperimentWelcomePanel != null && openExperimentWelcomePanel.isVisible()) {
                     openExperimentWelcomePanel.removeAll();
                 }
-                final String title = ApplicationProperties.getValue(MAIN_FRAME_TITLE);
-                openExperimentWelcomePanel = new ExperimentPanel(title);
+                openExperimentWelcomePanel = new ExperimentPanel();
                 GradientPaint gp = new GradientPaint(new Point2D.Double(.05d, 0), Color.WHITE, new Point2D.Double(
                         .95d, 0), Color.WHITE);
                 openExperimentWelcomePanel.setTitlePainter(new BasicGradientPainter(gp));
