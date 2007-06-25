@@ -1,17 +1,22 @@
 package edu.wustl.cab2b.client.ui.mainframe;
 
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.EXPERIMENT_BOX_TEXT;
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.POPULAR_CATEGORY_BOX_TEXT;
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.QUERY_BOX_TEXT;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.MY_EXPERIMENT_IMAGE;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.MY_SEARCH_QUERIES_IMAGE;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.POPULAR_CATEGORIES_IMAGE;
-import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.QUERY_BOX_TEXT;
-import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.POPULAR_CATEGORY_BOX_TEXT;
-import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.EXPERIMENT_BOX_TEXT;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -103,12 +108,23 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
     private void setDataForPanel(JPanel panel, Vector data) {
         panel.removeAll();
         panel.add(new Cab2bLabel());
+        ActionListener actionListener = new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                //TODO this will be removed in later releases.
+                Container comp = (Container) ae.getSource();
+                while (comp.getParent() != null) {
+                    comp = comp.getParent();
+                }
+                JOptionPane.showMessageDialog(comp,  "Yet to be implemented", "caB2B Information",JOptionPane.INFORMATION_MESSAGE);
+            }
+        };
         Iterator iter = data.iterator();
         while (iter.hasNext()) {
             Object obj = iter.next();
             String hyperlinkName = obj.toString();
             Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
             hyperlink.setText(hyperlinkName);
+            hyperlink.addActionListener(actionListener);
             panel.add("br", hyperlink);
         }
         panel.revalidate();
