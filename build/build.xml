@@ -568,16 +568,6 @@
 			<include name="**/*" />
 		</jar>
 				
-		<!-- <copy todir="${client.jar.dir}">
-			<fileset dir="${conf.dir}">
-				<include name="**/*.*" />
-			</fileset>
-			<fileset dir="resources/images">
-				<include name="**/*.*" />
-			</fileset>
-		</copy> -->
-
-		
 		<copy toDir="${webstart.client.dir}">
 			<fileset dir="lib/client">
 				<include name="**/*.jar" />
@@ -599,11 +589,8 @@
 			<arg value="${webstart.jnlp.dir}" />
 		</java>
 		
-		
-		
 		<echo message="JNLPBuilder finished its task" />
-		
-		
+				
 		<!-- make the client jar only after other jars have been copied and JNLP's have been created
 				in order to avoid creating a new JNLP for the client jar -->
 		<jar basedir="${client.jar.dir}" destfile="${webstart.client.jar}">
@@ -616,6 +603,9 @@
 				<include name="**/*.jar" />
 			</fileset>
 		</signjar>
+		
+		<!-- copy the images to be used by Web Start -->
+		<copy todir="${webstart.client.dir}"  file="resources/images/experiment.gif" />
 		
 	</target>
 	
