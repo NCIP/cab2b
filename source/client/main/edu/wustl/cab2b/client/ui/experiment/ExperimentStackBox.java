@@ -513,8 +513,9 @@ public class ExperimentStackBox extends Cab2bPanel {
         List<ServiceDetailsInterface> serviceDetailInterfaceList = null;
         try {
             serviceDetailInterfaceList = analyticalServiceOperationsBusinessInterface.getApplicableAnalyticalServices(idName.getOriginalEntityId());
-
+            if(analyseDataPanel!=null){
             analyseDataPanel.removeAll();
+            }
             for (ServiceDetailsInterface serviceDetails : serviceDetailInterfaceList) {
                 addHyperLinkToAnalyticalPane(serviceDetails, dataEntity);
             }
