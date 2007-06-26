@@ -47,7 +47,6 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.StackedBox;
 import edu.wustl.cab2b.client.ui.filter.CaB2BFilterInterface;
-import edu.wustl.cab2b.client.ui.filter.CaB2BPatternFilter;
 import edu.wustl.cab2b.client.ui.main.IComponent;
 import edu.wustl.cab2b.client.ui.main.ParseXMLFile;
 import edu.wustl.cab2b.client.ui.main.SwingUIManager;
@@ -68,7 +67,6 @@ import edu.wustl.cab2b.common.ejb.analyticalservice.AnalyticalServiceOperationsB
 import edu.wustl.cab2b.common.ejb.analyticalservice.AnalyticalServiceOperationsHomeInterface;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
@@ -106,31 +104,20 @@ public class ExperimentStackBox extends Cab2bPanel {
 
     private JScrollPane treeViewScrollPane;
 
-    private ExperimentBusinessInterface m_experimentBusinessInterface;
-
     private Experiment m_selectedExperiment = null;
-
-    // private String columnName[] = null;
 
     private static CaB2BFilterInterface obj = null;
 
-    //    private Object recordObject[][] = null;
-
-    //private Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
-
     private static int chartIndex = 0;
 
-    public ExperimentStackBox(ExperimentBusinessInterface expBus, Experiment selectedExperiment) {
-        m_experimentBusinessInterface = expBus;
+    public ExperimentStackBox(Experiment selectedExperiment) {
         m_selectedExperiment = selectedExperiment;
         initGUI();
     }
 
     public ExperimentStackBox(
-            ExperimentBusinessInterface expBus,
             Experiment selectedExperiment,
             ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel) {
-        m_experimentBusinessInterface = expBus;
         m_selectedExperiment = selectedExperiment;
         m_experimentDataCategoryGridPanel = experimentDataCategoryGridPanel;
         initGUI();
@@ -372,8 +359,8 @@ public class ExperimentStackBox extends Cab2bPanel {
         for (CaB2BFilterInterface caB2BFilterInterface : data) {
             obj = caB2BFilterInterface;
             String labelName = obj.toString();
-            Cab2bLabel cab2bLabel= new Cab2bLabel(labelName);
-    
+            Cab2bLabel cab2bLabel = new Cab2bLabel(labelName);
+
             dataFilterPanel.add("br", cab2bLabel);
         }
         dataFilterPanel.revalidate();
@@ -513,8 +500,8 @@ public class ExperimentStackBox extends Cab2bPanel {
         List<ServiceDetailsInterface> serviceDetailInterfaceList = null;
         try {
             serviceDetailInterfaceList = analyticalServiceOperationsBusinessInterface.getApplicableAnalyticalServices(idName.getOriginalEntityId());
-            if(analyseDataPanel!=null){
-            analyseDataPanel.removeAll();
+            if (analyseDataPanel != null) {
+                analyseDataPanel.removeAll();
             }
             for (ServiceDetailsInterface serviceDetails : serviceDetailInterfaceList) {
                 addHyperLinkToAnalyticalPane(serviceDetails, dataEntity);
