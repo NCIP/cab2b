@@ -1,7 +1,7 @@
 package edu.wustl.cab2b.client.ui.pagination;
 
 /*
- * > I have a JFrame Window and a JLabel on it with a long text. The problem
+ > I have a JFrame Window and a JLabel on it with a long text. The problem
  > is that the text of the JLabel does not fit the size of the window -
  > the value for the width of the window is to less. But I want not to
  > make the window wider. How can I make it that the text of the JLabel is
@@ -18,7 +18,7 @@ package edu.wustl.cab2b.client.ui.pagination;
  */
 
 /*
- * JLabel for output
+ JLabel for output
  Why using JLabel for output is usually bad
 
  It's possible to change the text of a JLabel, although this is not generally a good idea after
@@ -31,11 +31,10 @@ package edu.wustl.cab2b.client.ui.pagination;
  idea, so this restriction on JLabels is not serious. You can change the background of a
  JTextField, for better or worse.
  * Text length. This is where there are some serious issues. You can always see the entire text
- in a JTextField, altho you might have to scroll it it's long. There are several
+ in a JTextField, although you might have to scroll it it's long. There are several
  possibilities with a JLabel. You may either not see all of the long text in a JLabel,
  or putting long text into a JLabel may cause the layout to be recomputed, resulting
  in a truly weird user experience.
-
  */
 
 import java.awt.Dimension;
@@ -48,7 +47,6 @@ import java.beans.PropertyChangeListener;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bCheckBox;
@@ -71,7 +69,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
     /**
      * An <code>Cab2bHyperlink</code> for this composite component. 
      */
-    private Cab2bHyperlink hyperlink;
+    private Cab2bHyperlink<JPageElement> hyperlink;
 
     private Cab2bLabel label;
 
@@ -113,7 +111,8 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         this.elementIndex = pageElementIndex;
         initGUI();
         initListeners();
-        this.setPreferredSize(new Dimension(976, ((int) (this.getPreferredSize().getHeight() + 10))));
+        this.setMaximumSize(new Dimension(500, (int) this.getPreferredSize().getHeight() + 5));
+        this.setPreferredSize(new Dimension(500, (int) this.getPreferredSize().getHeight() + 5));
     }
 
     private void initListeners() {
@@ -139,59 +138,56 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         hyperlink = new Cab2bHyperlink<JPageElement>(true);
         hyperlink.setText(pageElement.getDisplayName());
         hyperlink.setUserObject(this);
-        descriptionLabel = new Cab2bLabel(pageElement.getDescription());
 
         label = new Cab2bLabel(pageElement.getDisplayName());
         label.setFont(new Font("Arial", Font.BOLD, 12));
 
+        String description = pageElement.getDescription();
+        descriptionLabel = new Cab2bLabel(description);
         FontMetrics fontMetrics = descriptionLabel.getFontMetrics(descriptionLabel.getFont());
-        int stringWidth = fontMetrics.stringWidth(pageElement.getDescription());
-        descriptionLabel.setToolTipText(getWrappedText(stringWidth, pageElement.getDescription()));
+        int stringWidth = fontMetrics.stringWidth(description);
+        descriptionLabel.setToolTipText(getWrappedText(stringWidth, description));
 
-        if (descriptionLabel.getText().length() > 100) {
-            String textDsc = descriptionLabel.getText().substring(0, 100);
-            textDsc += "....";
+        if (description.length() > 85) {
+            String textDsc = description.substring(0, 85) + "....";
             descriptionLabel.setText(textDsc);
         }
+
         if (isSelectable && pagination != null) {
             checkBox = new Cab2bCheckBox();
             checkBox.setOpaque(false);
             checkBox.addActionListener(this);
-
-            if (pageElement.isSelected())
-                checkBox.setSelected(true);
+            checkBox.setSelected(pageElement.isSelected());
 
             this.add("br", checkBox);
+            this.add("tab", hyperlink);
         } else {
-            this.add("br", new JLabel("     "));
+            this.add("br tab", hyperlink);
         }
-        this.add("tab", hyperlink);
-        this.add("br", new JLabel("     "));
-        this.add("tab", descriptionLabel);
+        this.add("br tab", descriptionLabel);
+
     }
 
     public void resetHyperLink() {
         removeAll();
         if (isSelectable && pagination != null) {
             this.add("br", checkBox);
+            this.add("tab", hyperlink);
         } else {
-            this.add("br", new JLabel("     "));
+            this.add("br tab", hyperlink);
         }
-        this.add("tab", hyperlink);
-        this.add("br", new JLabel("     "));
-        this.add("tab", descriptionLabel);
+        this.add("br tab", descriptionLabel);
     }
 
     public void resetLabel() {
         removeAll();
         if (isSelectable && pagination != null) {
             this.add("br", checkBox);
+            this.add("tab", label);
         } else {
-            this.add("br", new JLabel("     "));
+            this.add("br tab", label);
         }
-        this.add("tab", label);
-        this.add("br", new JLabel("     "));
-        this.add("tab", descriptionLabel);
+        this.add("br tab", descriptionLabel);
     }
 
     /**

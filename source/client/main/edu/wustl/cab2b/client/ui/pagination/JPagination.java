@@ -11,7 +11,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.event.EventListenerList;
@@ -55,55 +54,44 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
     /**
      * A model to hold user data.
      */
-    PaginationModel paginationModel;
+    private PaginationModel paginationModel;
 
     /**
      * A Panel to display some common action elements like "Select All", "Clear All", etc.
      */
-    JGroupActionPanel groupActionPanel;
+    private JGroupActionPanel groupActionPanel;
 
     /**
      * A Panel to display the page indexes, for user to navigate through the data using
      * these indices.
      */
-    JPageBar pageBar;
+    private JPageBar pageBar;
 
     /**
      * A Panel to display the page elements. 
      */
-    JXPanel pagePanel;
+    private JXPanel pagePanel;
 
     /**
      * S actionListenerList, so that many listener can register
      * to listen for page element actions.
      */
-    Vector<ActionListener> pageElementActionListenerList = new Vector<ActionListener>();
+    private Vector<ActionListener> pageElementActionListenerList = new Vector<ActionListener>();
 
     /**
      * A selection model for the entire <code>JPagination</code> component.
      */
-    PageSelectionModel pageSelectionModel;
+    private PageSelectionModel pageSelectionModel;
 
     /**
      * A selection listener for the page element selections.
      */
-    //PageSelectionListener pageSelectionListener;
-    Vector<PageSelectionListener> pageSelectionListenerList = new Vector<PageSelectionListener>();
-
-    // TODO Yet to implement.
-    private int pageLayoutOrientation = PaginationConstants.DEFAULT_PAGE_ORIENTATION;
-
-    /**
-     * How to layout the pageElements in the page panel, defaults to <code>VERTICAL</code>.
-     */
-    private Dimension pageDimension = new Dimension(-1, Integer.MAX_VALUE);
-
-    // -1 indicating invalid and MAX_VALUE indicating infinite.
+    private Vector<PageSelectionListener> pageSelectionListenerList = new Vector<PageSelectionListener>();
 
     @Deprecated
     protected EventListenerList listenerList = new EventListenerList();
 
-    Component parentComponent;
+    private Component parentComponent;
 
     /**
      * Auto-Resize will not work for Alphabetic Pager.
@@ -113,7 +101,7 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
     boolean mouseWheelEnabled = true;
 
     private JPageElement selectedJPageElement;
-    
+
     private Cab2bHyperlink selectAllHyperlink;
 
     private Cab2bHyperlink clearAllHyperlink;
@@ -174,7 +162,6 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
             this.removeMouseWheelListener(mouseWheelListener);
         }
 
-        //this.addMouseWheelListener(pageBar);
         addMouseWheelListener(this);
         this.validateTree();
     }
@@ -200,12 +187,9 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
         JXPanel pagePanel = new Cab2bPanel();
 
         String currentPageIndex = paginationModel.getCurrentPageIndex();
-        //pagePanel.setLayout(new VerticalLayout(8));
         pagePanel.setLayout(new RiverLayout(0, 8));
 
-        Iterator iter = pageElements.iterator();
-        while (iter.hasNext()) {
-            PageElement element = (PageElement) iter.next();
+        for (PageElement element : pageElements) {
             int indexInPage = pageElements.indexOf(element);
             PageElementIndex pageElementIndex = new PageElementIndex(currentPageIndex, indexInPage);
 
@@ -213,8 +197,10 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
             pageElementPanel.addHyperlinkActionListeners(this.pageElementActionListenerList);
             pagePanel.add("br", pageElementPanel);
         }
-        if (automaticPageResize)
+
+        if (automaticPageResize) {
             pagePanel.addComponentListener(new PaginationComponentListener());
+        }
 
         return pagePanel;
     }
@@ -222,7 +208,6 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
     public void addPageElementActionListener(ActionListener actionListener) {
         for (int i = 0; i < pagePanel.getComponentCount(); i++) {
             JPageElement pageElementComp = (JPageElement) pagePanel.getComponent(i);
-
             pageElementComp.addHyperlinkActionListener(actionListener);
         }
         pageElementActionListenerList.add(actionListener);
@@ -235,7 +220,6 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
         pageElementActionListenerList.remove(actionListener);
         for (int i = 0; i < pagePanel.getComponentCount(); i++) {
             JPageElement pageElementComp = (JPageElement) pagePanel.getComponent(i);
-
             pageElementComp.removeHyperlinkActionListener(actionListener);
         }
     }
@@ -442,8 +426,6 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
     private class JGroupActionPanel extends Cab2bPanel implements ActionListener {
         private static final long serialVersionUID = 1L;
 
-        
-
         private String selectAllText = PaginationConstants.SELECT_ALL_TEXT;
 
         private String clearAllText = PaginationConstants.CLEAR_ALL_TEXT;
@@ -591,11 +573,18 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
     public void setSelectedJPageElement(JPageElement selectedJPageElement) {
         this.selectedJPageElement = selectedJPageElement;
     }
-    
-    public void setPageLinksDisabled(){
-    	selectAllHyperlink.setEnabled(false);
-    	clearAllHyperlink.setEnabled(false);
-    	invertSelectionHyperlink.setEnabled(false);
+
+    public void setPageLinksDisabled() {
+        selectAllHyperlink.setEnabled(false);
+        clearAllHyperlink.setEnabled(false);
+        invertSelectionHyperlink.setEnabled(false);
+    }
+
+    /**
+     * @return the parentComponent
+     */
+    public Component getParentComponent() {
+        return parentComponent;
     }
 
 }
