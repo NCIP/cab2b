@@ -20,6 +20,30 @@ import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import static edu.wustl.cab2b.common.util.DataListUtil.ORIGIN_ENTITY_ID_KEY;
 import static edu.wustl.cab2b.common.util.DataListUtil.SOURCE_ENTITY_ID_KEY;
 
+/**
+ * Skeletal implementation of a {@link DataListSaver}. A concrete
+ * implementation need only implement the method
+ * <code>populateNewEntity()</code> to add attributes and/or associations to
+ * the newly created entity.
+ * <p>
+ * A new entity is created on a call to <code>initialize()</code>. The new
+ * entity has tags for
+ * {@link edu.wustl.cab2b.common.util.DataListUtil#ORIGIN_ENTITY_ID_KEY} and
+ * {@link edu.wustl.cab2b.common.util.DataListUtil#SOURCE_ENTITY_ID_KEY}. Two
+ * attributes (for id and url of the record) are added to this new entity. These
+ * are called "virtual attributes". A virtual attribute is one present in the
+ * new entity, but is not in the valuesMap of {@link IRecord}.
+ * <p>
+ * populateNewEntity()</code> is then called; subclasses are expected to
+ * populate the new entity with attributes/associations appropriately. e.g. the
+ * default saver merely copies non-virtual attributes from the old entity,
+ * whereas FooBarSaver would create an additional virtual attribute in the new
+ * entity called "foo".
+ * 
+ * @author srinath_k
+ * 
+ * @param <R>
+ */
 public abstract class AbstractDataListSaver<R extends IRecord> implements DataListSaver<R> {
     protected EntityInterface newEntity;
 
