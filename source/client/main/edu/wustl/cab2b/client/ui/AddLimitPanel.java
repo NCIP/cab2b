@@ -38,6 +38,8 @@ import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.LIMIT_CONNECT_SELECTED;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.LIMIT_CONNECT_DESELECTED;
 
 /**
  * This is the panel for the Add limit tab from the main search dialog. The
@@ -138,8 +140,8 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
         Map<DagImageConstants, Image> imageMap = new HashMap<DagImageConstants, Image>();
         imageMap.put(DagImageConstants.SelectIcon, Utilities.loadImage("select_icon.gif"));
         imageMap.put(DagImageConstants.selectMOIcon, Utilities.loadImage("select_icon_mo.gif"));
-        imageMap.put(DagImageConstants.ArrowSelectIcon, Utilities.loadImage("arrow_icon.gif"));
-        imageMap.put(DagImageConstants.ArrowSelectMOIcon, Utilities.loadImage("arrow_icon_mo.gif"));
+        imageMap.put(DagImageConstants.ArrowSelectIcon, Utilities.loadImage(LIMIT_CONNECT_DESELECTED));
+        imageMap.put(DagImageConstants.ArrowSelectMOIcon, Utilities.loadImage(LIMIT_CONNECT_SELECTED));
         imageMap.put(DagImageConstants.ParenthesisIcon, Utilities.loadImage("parenthesis_icon.gif"));
         imageMap.put(DagImageConstants.ParenthesisMOIcon, Utilities.loadImage("parenthesis_icon_mo.gif"));
         imageMap.put(DagImageConstants.DocumentPaperIcon, Utilities.loadImage("paper_grid.png"));
