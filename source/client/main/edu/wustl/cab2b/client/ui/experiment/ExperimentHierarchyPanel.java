@@ -26,6 +26,8 @@ import edu.wustl.common.tree.ExperimentTreeNode;
 import edu.wustl.common.tree.GenerateTree;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_OPEN_FOLDER;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_CLOSE_FOLDER;
 
 /**
  * A panel to display experiment and experiment group hierarchies 
@@ -70,8 +72,8 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
         expTree.setHighlighters(new HighlighterPipeline());
 
         ClassLoader loader = this.getClass().getClassLoader();
-        expTree.setOpenIcon(new ImageIcon(loader.getResource("folder_opened.gif")));
-        expTree.setClosedIcon(new ImageIcon(loader.getResource("folder_closed.gif")));
+        expTree.setOpenIcon(new ImageIcon(loader.getResource(TREE_OPEN_FOLDER)));
+        expTree.setClosedIcon(new ImageIcon(loader.getResource(TREE_CLOSE_FOLDER)));
         expTree.setLeafIcon(new ImageIcon(loader.getResource("experiment_small.gif")));
 
         //setting tree node name

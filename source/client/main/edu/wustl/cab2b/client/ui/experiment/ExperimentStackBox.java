@@ -74,6 +74,14 @@ import edu.wustl.cab2b.common.util.AttributeInterfaceComparator;
 import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.util.logger.Logger;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.FILTER_DATA;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.ANALYZE_DATA;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.VISUALIZE_DATA;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_OPEN_FOLDER;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_CLOSE_FOLDER;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.BAR_GRAPH;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.LINE_GRAPH;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.SCATTER_GRAPH;
 
 public class ExperimentStackBox extends Cab2bPanel {
     /** Default Serial version ID */
@@ -214,8 +222,8 @@ public class ExperimentStackBox extends Cab2bPanel {
             }
         });
         ClassLoader loader = this.getClass().getClassLoader();
-        datalistTree.setOpenIcon(new ImageIcon(loader.getResource("folder_opened.gif")));
-        datalistTree.setClosedIcon(new ImageIcon(loader.getResource("folder_closed.gif")));
+        datalistTree.setOpenIcon(new ImageIcon(loader.getResource(TREE_OPEN_FOLDER)));
+        datalistTree.setClosedIcon(new ImageIcon(loader.getResource(TREE_CLOSE_FOLDER)));
         datalistTree.setLeafIcon(new ImageIcon(loader.getResource("mydatalist_icon.gif")));
         datalistTree.setBorder(null);
     }
@@ -235,21 +243,21 @@ public class ExperimentStackBox extends Cab2bPanel {
         dataFilterPanel.setPreferredSize(new Dimension(250, 200));
         dataFilterPanel.setOpaque(false);
         dataFilterPanel.setBorder(null);
-        stackedBox.addBox("Filter Data ", dataFilterPanel, "mysearchqueries_icon.gif", true);
+        stackedBox.addBox("Filter Data ", dataFilterPanel, FILTER_DATA, true);
 
         // Adding Analyse data panel
         analyseDataPanel = new Cab2bPanel();
         analyseDataPanel.setPreferredSize(new Dimension(250, 150));
         analyseDataPanel.setOpaque(false);
         analyseDataPanel.setBorder(null);
-        stackedBox.addBox("Analyze Data ", analyseDataPanel, "mysearchqueries_icon.gif", true);
+        stackedBox.addBox("Analyze Data ", analyseDataPanel, ANALYZE_DATA, true);
 
         // Adding Visualize data panel
         visualiseDataPanel = new Cab2bPanel();
         visualiseDataPanel.setPreferredSize(new Dimension(250, 200));
         visualiseDataPanel.setOpaque(false);
         visualiseDataPanel.setBorder(null);
-        stackedBox.addBox("Visualize Data ", visualiseDataPanel, "mysearchqueries_icon.gif", true);
+        stackedBox.addBox("Visualize Data ", visualiseDataPanel, VISUALIZE_DATA, true);
 
         // Set the type of charts to be displayed.
         Vector<ChartType> chartTypes = new Vector<ChartType>();
@@ -390,11 +398,22 @@ public class ExperimentStackBox extends Cab2bPanel {
             hyperlink.setText(chartType.getActionCommand());
             hyperlink.setActionCommand(chartType.getActionCommand());
 
-            // String iconName = hyperlinkName.trim().replace(' ', '_') +
-            // "_icon.gif";
-            // hyperlink.setIcon(new ImageIcon("resources/images/" + iconName));
-            URL url = this.getClass().getClassLoader().getResource("mysearchqueries_icon.gif");
-            hyperlink.setIcon(new ImageIcon(url));
+            URL url = null;
+            switch (chartType) {
+                case BAR_CHART:
+                    url = this.getClass().getClassLoader().getResource(BAR_GRAPH);
+                    break;
+
+                case LINE_CHART:
+                    url = this.getClass().getClassLoader().getResource(LINE_GRAPH);
+                    break;
+
+                case SCATTER_PLOT:
+                    url = this.getClass().getClassLoader().getResource(SCATTER_GRAPH);
+            }
+            if (url != null) {
+                hyperlink.setIcon(new ImageIcon(url));
+            }
 
             hyperlink.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent actionEvent) {

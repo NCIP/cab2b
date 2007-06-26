@@ -24,6 +24,8 @@ import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.tree.GenerateTree;
 import edu.wustl.common.tree.TreeNodeImpl;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_OPEN_FOLDER;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_CLOSE_FOLDER;
 
 /**
  * Panel to show the tree.
@@ -69,8 +71,8 @@ public class TreePanel extends Cab2bPanel {
         tree.setHighlighters(new HighlighterPipeline());
 
         ClassLoader loader = this.getClass().getClassLoader();
-        tree.setOpenIcon(new ImageIcon(loader.getResource("folder_opened.gif")));
-        tree.setClosedIcon(new ImageIcon(loader.getResource("folder_closed.gif")));
+        tree.setOpenIcon(new ImageIcon(loader.getResource(TREE_OPEN_FOLDER)));
+        tree.setClosedIcon(new ImageIcon(loader.getResource(TREE_CLOSE_FOLDER)));
         tree.setLeafIcon(new ImageIcon(loader.getResource("mydatalist_icon.gif")));
 
         //Add the selection listener.

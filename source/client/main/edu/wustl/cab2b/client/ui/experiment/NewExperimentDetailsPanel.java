@@ -61,6 +61,8 @@ import edu.wustl.common.tree.GenerateTree;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_OPEN_FOLDER;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_CLOSE_FOLDER;
 
 /**
  * This class shows a panel to create new experiments with GUI controls for
@@ -177,8 +179,8 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         projectsTree.getModel().addTreeModelListener(new MyTreeModelListener());
 
         ClassLoader loader = this.getClass().getClassLoader();
-        projectsTree.setOpenIcon(new ImageIcon(loader.getResource("folder_opened.gif")));
-        projectsTree.setClosedIcon(new ImageIcon(loader.getResource("folder_closed.gif")));
+        projectsTree.setOpenIcon(new ImageIcon(loader.getResource(TREE_OPEN_FOLDER)));
+        projectsTree.setClosedIcon(new ImageIcon(loader.getResource(TREE_CLOSE_FOLDER)));
         projectsTree.setLeafIcon(new ImageIcon(loader.getResource("experiment_small.gif")));
 
         // setting tree node name

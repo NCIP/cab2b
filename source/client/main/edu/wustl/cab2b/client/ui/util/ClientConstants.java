@@ -20,7 +20,7 @@ public class ClientConstants {
 
 	public static String POPULAR_CATEGORIES_IMAGE = "popularcategories_icon.gif";
 
-	public static String MY_SEARCH_QUERIES_IMAGE = "mysearchqueries_icon.gif";
+	public static String MY_SEARCH_QUERIES_IMAGE = "my_search.gif";
 
 	public static String MY_EXPERIMENT_IMAGE = "my_experiments.gif";
 
@@ -32,9 +32,9 @@ public class ClientConstants {
 
 	public static String LIMIT_CONNECT_DESELECTED = "limit_set_disabled.gif";
 
-	public static String TREE_OPEN_FOLDER_ICON = "open_folder.gif";
+	public static String TREE_OPEN_FOLDER = "open_folder.gif";
 
-	public static String TREE_CLOSE_FOLDER_ICON = "close_folder.gif";
+	public static String TREE_CLOSE_FOLDER = "close_folder.gif";
 
 	public static String VISUALIZE_DATA = "visualize_data.gif";
 
