@@ -1,6 +1,5 @@
 package edu.wustl.cab2b.client.ui.dag.ambiguityresolver;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -91,32 +90,29 @@ public class AmbiguityPathResolverPanel extends Cab2bPanel {
     }
 
     public static String getFullPathNames(IPath path) {
-        String returner = "";
+        StringBuffer fullPathNames = new StringBuffer();
 
-        List<IAssociation> assoList = path.getIntermediateAssociations();
-        Iterator<IAssociation> listIterator = assoList.listIterator();
+        List<IAssociation> associationList = path.getIntermediateAssociations();
+        boolean isFirstAssociation = false;
+        for (IAssociation association : associationList) {
+            if (!isFirstAssociation) {
+                isFirstAssociation = true;
 
-        boolean firstAssoOver = false;
-        while (listIterator.hasNext()) {
-            IAssociation asso = listIterator.next();
-            if (!firstAssoOver) {
-                EntityInterface srcEntity = asso.getSourceEntity();
-                EntityInterface tarEntity = asso.getTargetEntity();
+                EntityInterface srourceEntity = association.getSourceEntity();
+                String srourceEntityName = Utility.parseClassName(srourceEntity.getName());
 
-                String srcEntityName = Utility.parseClassName(srcEntity.getName());
-                String tarEntityName = Utility.parseClassName(tarEntity.getName());
+                EntityInterface targetEntity = association.getTargetEntity();
+                String targetEntityName = Utility.parseClassName(targetEntity.getName());
 
-                firstAssoOver = true;
-
-                returner += srcEntityName + ">>" + tarEntityName;
+                fullPathNames.append(srourceEntityName + ">>" + targetEntityName);
             } else {
-                EntityInterface tarEntity = asso.getTargetEntity();
-                String tarEntityName = Utility.parseClassName(tarEntity.getName());
+                EntityInterface targetEntity = association.getTargetEntity();
+                String targetEntityName = Utility.parseClassName(targetEntity.getName());
 
-                returner += ">>" + tarEntityName;
+                fullPathNames.append(">>" + targetEntityName);
             }
         }
-        return returner;
+        return fullPathNames.toString();
     }
 
     public static Vector<EntityInterface> getEntityInterfaceFor(String[] searchTerms) {
