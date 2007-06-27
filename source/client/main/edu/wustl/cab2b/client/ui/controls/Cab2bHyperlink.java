@@ -20,7 +20,7 @@ public class Cab2bHyperlink<T> extends JXHyperlink {
 
     private static final long serialVersionUID = 8338180418321272388L;
 
-    private static final Color DEFAULT_CLICKED_COLOR = new Color(0x006699);
+    private static final Color DEFAULT_CLICKED_COLOR = new Color(76,41,157);
 
     private static final Color DEFAULT_UNCLICKED_COLOR = new Color(0x034E74);
 
