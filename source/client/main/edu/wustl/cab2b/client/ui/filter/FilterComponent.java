@@ -16,10 +16,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.experiment.ApplyFilterPanel;
 
-public class FilterComponent extends Cab2bFilterPopup implements MouseListener, ActionListener, FocusListener,
-		KeyListener {
+public class FilterComponent extends Cab2bFilterPopup implements MouseListener, ActionListener,
+		FocusListener, KeyListener {
 	private static final long serialVersionUID = 1L;
 
 	private String m_title;
@@ -30,9 +31,9 @@ public class FilterComponent extends Cab2bFilterPopup implements MouseListener, 
 
 	private double m_maxValue = Integer.MIN_VALUE;
 
-	private JTextField m_minValTextField;
+	private Cab2bLabel m_minValLabel;
 
-	private JTextField m_maxValTextField;
+	private Cab2bLabel m_maxValLabel;
 
 	private double prevMinRange;
 
@@ -41,13 +42,8 @@ public class FilterComponent extends Cab2bFilterPopup implements MouseListener, 
 	private DataFilterUI dataFilter;
 
 	// Constructor method for filter component
-	public FilterComponent(
-			String title,
-			ApplyFilterPanel applyFilterpanel,
-			RangeFilter oldFilter,
-			double[] columnVal,
-			String columnName,
-			int columnIndex) {
+	public FilterComponent(String title, ApplyFilterPanel applyFilterpanel, RangeFilter oldFilter,
+			double[] columnVal, String columnName, int columnIndex) {
 		super(applyFilterpanel, columnName, columnIndex);
 		m_title = title;
 		m_values = columnVal;
@@ -91,29 +87,16 @@ public class FilterComponent extends Cab2bFilterPopup implements MouseListener, 
 		titleLabel.setBounds(5, 10, 100, 20);
 		titlePanel.add(titleLabel);
 
-		m_minValTextField = new JTextField();
-		m_minValTextField.setText(Double.toString(m_minValue));
-		m_minValTextField.setBorder(null);
-		m_minValTextField.setBackground(titlePanel.getBackground());
-		m_minValTextField.setBounds(30, 40, 55, 20);
-		m_minValTextField.setEditable(false);
-		m_minValTextField.addMouseListener(this);
-		m_minValTextField.addFocusListener(this);
-		m_minValTextField.addKeyListener(this);
-		titlePanel.add(m_minValTextField);
+		m_minValLabel = new Cab2bLabel(Double.toString(m_minValue));
+		m_minValLabel.setBounds(30, 40, 65, 20);
+		titlePanel.add(m_minValLabel);
 
-		m_maxValTextField = new JTextField();
-		m_maxValTextField.setText(Double.toString(m_maxValue));
-		m_maxValTextField.setBorder(null);
-		m_maxValTextField.setBackground(titlePanel.getBackground());
-		m_maxValTextField.setBounds(295, 40, 55, 20);
-		m_maxValTextField.setEditable(false);
-		m_maxValTextField.addMouseListener(this);
-		m_maxValTextField.addFocusListener(this);
-		m_maxValTextField.addKeyListener(this);
-		titlePanel.add(m_maxValTextField);
+		m_maxValLabel = new Cab2bLabel(Double.toString(m_maxValue));
+		m_maxValLabel.setBounds(285, 40, 65, 20);
+		titlePanel.add(m_maxValLabel);
 
-		dataFilter = new DataFilterUI(this, 290, 20, m_minValue, m_maxValue, prevMinRange, prevMaxRange);
+		dataFilter = new DataFilterUI(this, 290, 20, m_minValue, m_maxValue, prevMinRange,
+				prevMaxRange);
 		dataFilter.setBounds(20, 60, 300, 30);
 		titlePanel.add(dataFilter);
 
@@ -129,7 +112,7 @@ public class FilterComponent extends Cab2bFilterPopup implements MouseListener, 
 	// Fill textfield with appropriate values
 	public void setMinValue(double minValue) {
 		java.text.DecimalFormat df2 = new java.text.DecimalFormat("###,##0.00");
-		m_minValTextField.setText(df2.format(minValue));
+		m_minValLabel.setText(df2.format(minValue));
 	}
 
 	// -------------------------------------------------------------
@@ -137,22 +120,11 @@ public class FilterComponent extends Cab2bFilterPopup implements MouseListener, 
 	// -------------------------------------------------------------
 	public void setMaxValue(double maxValue) {
 		java.text.DecimalFormat df2 = new java.text.DecimalFormat("###,##0.00");
-		m_maxValTextField.setText(df2.format(maxValue));
+		m_maxValLabel.setText(df2.format(maxValue));
 	}
 
 	public void mouseClicked(MouseEvent arg0) {
-		// If mouse double-click event occurs
-		if (2 == arg0.getClickCount()) {
-			if (arg0.getComponent() == m_minValTextField) {
-				m_minValTextField.setBackground(Color.WHITE);
-				m_minValTextField.setEditable(true);
-				m_minValTextField.setBorder(BorderFactory.createBevelBorder(1));
-			} else if (arg0.getComponent() == m_maxValTextField) {
-				m_maxValTextField.setBorder(BorderFactory.createBevelBorder(1));
-				m_maxValTextField.setBackground(Color.WHITE);
-				m_maxValTextField.setEditable(true);
-			}
-		}
+
 	}
 
 	public void mouseEntered(MouseEvent arg0) {
@@ -197,18 +169,10 @@ public class FilterComponent extends Cab2bFilterPopup implements MouseListener, 
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
-			if (arg0.getComponent() == this.m_minValTextField) {
-				m_minValTextField.transferFocusBackward();
-				m_minValTextField.setBackground(getBackground());
-				m_minValTextField.setEditable(false);
-				m_minValTextField.setBorder(BorderFactory.createEmptyBorder());
-				dataFilter.setFilterMinValue(Float.parseFloat(m_minValTextField.getText()));
-			} else if (arg0.getComponent() == this.m_maxValTextField) {
-				m_maxValTextField.transferFocusBackward();
-				m_maxValTextField.setBackground(getBackground());
-				m_maxValTextField.setEditable(false);
-				m_maxValTextField.setBorder(BorderFactory.createEmptyBorder());
-				dataFilter.setFilterMaxValue(Float.parseFloat(m_maxValTextField.getText()));
+			if (arg0.getComponent() == this.m_minValLabel) {
+				dataFilter.setFilterMinValue(Float.parseFloat(m_minValLabel.getText()));
+			} else if (arg0.getComponent() == this.m_maxValLabel) {
+				dataFilter.setFilterMaxValue(Float.parseFloat(m_maxValLabel.getText()));
 			}
 		}
 	}
