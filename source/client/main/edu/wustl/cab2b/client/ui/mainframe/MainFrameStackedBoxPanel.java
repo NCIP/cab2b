@@ -84,28 +84,28 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
      * @param data
      */
     public void setDataForMySearchQueriesPanel(Vector data) {
-        setDataForPanel(mySearchQueriesPanel, data);
+        setDataForPanel(mySearchQueriesPanel, data,"This link will open selected saved query.\nThis feature is not yet implemented.");
     }
 
     /**
      * @param data
      */
     public void setDataForPopularSearchCategoriesPanel(Vector data) {
-        setDataForPanel(popularSearchCategoryPanel, data);
+        setDataForPanel(popularSearchCategoryPanel, data,"This link will open selected popular category in add limit page.\nThis feature is not yet implemented.");
     }
 
     /**
      * @param data
      */
     public void setDataForMyExperimentsPanel(Vector data) {
-        setDataForPanel(myExperimentsPanel, data);
+        setDataForPanel(myExperimentsPanel, data,"This link will open selected user experiment.\nThis feature is not yet implemented.");
     }
 
     /**
      * @param panel
      * @param data
      */
-    private void setDataForPanel(JPanel panel, Vector data) {
+    private void setDataForPanel(JPanel panel, Vector data,final String msg) {
         panel.removeAll();
         panel.add(new Cab2bLabel());
         ActionListener actionListener = new ActionListener() {
@@ -115,7 +115,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
                 while (comp.getParent() != null) {
                     comp = comp.getParent();
                 }
-                JOptionPane.showMessageDialog(comp,  "Yet to be implemented", "caB2B Information",JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(comp, msg, "caB2B Information",JOptionPane.INFORMATION_MESSAGE);
             }
         };
         Iterator iter = data.iterator();

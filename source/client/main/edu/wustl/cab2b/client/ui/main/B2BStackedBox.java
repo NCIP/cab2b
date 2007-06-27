@@ -49,17 +49,17 @@ public class B2BStackedBox extends Cab2bPanel {
         this.add(scrollPane, BorderLayout.CENTER);
 
         JPanel status = getPanel();
-        setDataForPanel(status, CommonUtils.getUserSearchCategories());
+        setDataForPanel(status, CommonUtils.getUserSearchCategories(),"This link will open selected user category in add limit page.\nThis feature is not yet implemented.");
         final String titleMyCategories = ApplicationProperties.getValue(CATEGORY_BOX_TEXT);
         box.addBox(titleMyCategories, status, MY_CATEGORIES_IMAGE, false);
 
         JPanel profilingResults = getPanel();
-        setDataForPanel(profilingResults, CommonUtils.getUserSearchQueries());
+        setDataForPanel(profilingResults, CommonUtils.getUserSearchQueries(),"This link will open selected saved query.\nThis feature is not yet implemented.");
         final String titleQuery = ApplicationProperties.getValue(QUERY_BOX_TEXT);
         box.addBox(titleQuery, profilingResults, MY_SEARCH_QUERIES_IMAGE, false);
 
         JPanel popularCategories = getPanel();
-        setDataForPanel(popularCategories, CommonUtils.getPopularSearchCategories());
+        setDataForPanel(popularCategories, CommonUtils.getPopularSearchCategories(),"This link will open selected popular category in add limit page.\nThis feature is not yet implemented.");
         final String titlePopularcategories = ApplicationProperties.getValue(POPULAR_CATEGORY_BOX_TEXT);
         box.addBox(titlePopularcategories, popularCategories, POPULAR_CATEGORIES_IMAGE, false);
 
@@ -69,7 +69,7 @@ public class B2BStackedBox extends Cab2bPanel {
      * @param panel
      * @param data
      */
-    private void setDataForPanel(JPanel panel, Vector data) {
+    private void setDataForPanel(JPanel panel, Vector data,final String msg) {
         panel.removeAll();
         panel.add(new Cab2bLabel());
         Iterator iter = data.iterator();
@@ -80,7 +80,7 @@ public class B2BStackedBox extends Cab2bPanel {
                 while (comp.getParent() != null) {
                     comp = comp.getParent();
                 }
-                JOptionPane.showMessageDialog(comp, "Yet to be implemented", "caB2B Information",JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(comp, msg, "caB2B Information",JOptionPane.INFORMATION_MESSAGE);
             }
         };
 
