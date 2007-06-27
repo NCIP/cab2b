@@ -72,4 +72,5 @@ public interface ErrorCodeConstants {
     
     
     public static final String QM_0003 = "QM.0003";
+    public static final String QM_0004 = "QM.0004";
 }
