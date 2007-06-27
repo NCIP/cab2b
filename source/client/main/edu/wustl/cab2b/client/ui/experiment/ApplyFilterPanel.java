@@ -177,12 +177,12 @@ public class ApplyFilterPanel extends Cab2bPanel {
 
                             columnVal = new double[elements.size()];
                             int count = 0;
-                            for (Object obj : elements) {
+                            for (Object obj : elements) {                                
                                 columnVal[count] = Double.parseDouble(obj.toString());
                                 count++;
                             }
                             filterPopup = new FilterComponent("Range Filter", applyFilterpanel,
-                                    (RangeFilter) oldFilter, columnVal, columnName, columnIndex);
+                                    (RangeFilter) oldFilter, columnVal, columnName, columnIndex, dataType);
                         } else if(DataType.Date==dataType){
                         	 filterNotToBeApplied = true;
                         }
