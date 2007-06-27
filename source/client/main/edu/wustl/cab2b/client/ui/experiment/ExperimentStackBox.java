@@ -278,6 +278,10 @@ public class ExperimentStackBox extends Cab2bPanel {
 		updateUI();
 	}
 
+	public Cab2bPanel getDataFilterPanel() {
+		return dataFilterPanel;
+	}
+
 	/**
 	 * find and add children of the given tree node child node is added to the
 	 * current node if it is filtered, otherwise it is added to the root node

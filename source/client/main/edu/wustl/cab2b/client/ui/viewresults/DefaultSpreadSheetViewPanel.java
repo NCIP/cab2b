@@ -31,267 +31,273 @@ import edu.wustl.cab2b.common.util.Utility;
 
 /**
  * This is the default panel to show in multiple records of entity,
+ * 
  * @author rahul_ner
- *
+ * 
  */
-public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListDetailedPanelInterface {
-    private static final long serialVersionUID = 1L;
+public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements
+		DataListDetailedPanelInterface {
+	private static final long serialVersionUID = 1L;
 
-    private Cab2bTable table;
+	private Cab2bTable table;
 
-    private ImageIcon defaultCellImage = new ImageIcon(
-            this.getClass().getClassLoader().getResource(DETAILS_COLUMN_IMAGE));
+	private ImageIcon defaultCellImage = new ImageIcon(this.getClass().getClassLoader()
+			.getResource(DETAILS_COLUMN_IMAGE));
 
-    /**
-     * List of records to be displayed
-     */
-    private List<IRecord> records;
+	/**
+	 * List of records to be displayed
+	 */
+	private List<IRecord> records;
 
-    private Vector<Vector<Object>> tableData;
+	private Vector<Vector<Object>> tableData;
 
-    private Vector<String> tableHeader;
+	private Vector<String> tableHeader;
 
-    private Boolean showCheckBox;
+	private Boolean showCheckBox;
 
-    private Boolean showFilterPanel;
+	private Boolean showFilterPanel;
 
-    private Boolean showDefaultTable = false;
+	private Boolean showDefaultTable = false;
 
-    private Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
+	private ApplyFilterPanel applyFilterPanel;
 
-    public DefaultSpreadSheetViewPanel(
-            Boolean showFilterPanel,
-            Boolean showCheckBox,
-            List<IRecord> records,
-            Boolean showDefaultTable) {
-        this.showFilterPanel = showFilterPanel;
-        this.showCheckBox = showCheckBox;
-        this.showDefaultTable = showDefaultTable;
-        this.setName("DefaultSpreadSheetViewPanel");
-        this.records = records;
-    }
+	private Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
 
-    public DefaultSpreadSheetViewPanel(
-            Boolean showFilterPanel,
-            Boolean showCheckBox,
-            IRecord record,
-            Boolean showDefaultTable) {
-        this.showFilterPanel = showFilterPanel;
-        this.showCheckBox = showCheckBox;
-        this.showDefaultTable = showDefaultTable;
-        this.setName("DefaultSpreadSheetViewPanel");
-        this.records = Collections.singletonList(record);
-    }
+	public DefaultSpreadSheetViewPanel(Boolean showFilterPanel, Boolean showCheckBox,
+			List<IRecord> records, Boolean showDefaultTable) {
+		this.showFilterPanel = showFilterPanel;
+		this.showCheckBox = showCheckBox;
+		this.showDefaultTable = showDefaultTable;
+		this.setName("DefaultSpreadSheetViewPanel");
+		this.records = records;
+	}
 
-    public DefaultSpreadSheetViewPanel(List<IRecord> records) {
-        this(false, true, records, false);
-    }
+	public DefaultSpreadSheetViewPanel(Boolean showFilterPanel, Boolean showCheckBox,
+			IRecord record, Boolean showDefaultTable) {
+		this.showFilterPanel = showFilterPanel;
+		this.showCheckBox = showCheckBox;
+		this.showDefaultTable = showDefaultTable;
+		this.setName("DefaultSpreadSheetViewPanel");
+		this.records = Collections.singletonList(record);
+	}
 
-    public DefaultSpreadSheetViewPanel(Boolean showCheckBox, List<IRecord> records) {
-        this(false, showCheckBox, records, false);
-    }
+	public DefaultSpreadSheetViewPanel(List<IRecord> records) {
+		this(false, true, records, false);
+	}
 
-    public DefaultSpreadSheetViewPanel(IRecord record) {
-        this(false, true, record, false);
-    }
+	public DefaultSpreadSheetViewPanel(Boolean showCheckBox, List<IRecord> records) {
+		this(false, showCheckBox, records, false);
+	}
 
-    public DefaultSpreadSheetViewPanel(Boolean showCheckBox, IRecord record) {
-        this(false, showCheckBox, record, false);
-    }
+	public DefaultSpreadSheetViewPanel(IRecord record) {
+		this(false, true, record, false);
+	}
 
-    /**
-     * @see edu.wustl.cab2b.client.ui.controls.Cab2bPanel#doInitialization()
-     */
-    public void doInitialization() {
-        initializeTableData();
-        initializeGUI();
-    }
+	public DefaultSpreadSheetViewPanel(Boolean showCheckBox, IRecord record) {
+		this(false, showCheckBox, record, false);
+	}
 
-    /**
-     * Initailizes the UI components 
-     */
-    private void initializeGUI() {
-        this.setBorder(null);
-        this.removeAll();
+	/**
+	 * @see edu.wustl.cab2b.client.ui.controls.Cab2bPanel#doInitialization()
+	 */
+	public void doInitialization() {
+		initializeTableData();
+		initializeGUI();
+	}
 
-        table = new Cab2bTable(showCheckBox, tableData, tableHeader);
-        table.setColumnSelectionAllowed(true);
+	/**
+	 * Initailizes the UI components
+	 */
+	private void initializeGUI() {
+		this.setBorder(null);
+		this.removeAll();
 
-        if (showFilterPanel) {
-            this.add(new ApplyFilterPanel(this));
-        }
+		table = new Cab2bTable(showCheckBox, tableData, tableHeader);
+		table.setColumnSelectionAllowed(true);
 
-        if (showDefaultTable) {
-            table.addMouseListener(new IconMouseListner());
-            
-            //setting first column width FIXED
-            if(table.getColumnCount() > 0)
-            {                
-                table.getColumn(0).setMaxWidth(50);
-            }
-            table.addMouseMotionListener(new MouseMotionAdapter() {
-                // if mouse is moving under first column 
-                // set hand courser
-                public void mouseMoved(MouseEvent evt) {
-                    Cab2bTable table = (Cab2bTable) evt.getSource();
-                    if (table.getColumnModel().getColumnIndexAtX(evt.getX()) == 0) {
-                        table.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                    } else {
-                        table.setCursor(Cursor.getDefaultCursor());
-                    }
-                }
-            });
-        }
+		if (showFilterPanel) {
+			applyFilterPanel = new ApplyFilterPanel(this);
+			this.add(applyFilterPanel);
+		}
 
-        JScrollPane jScrollPane = new JScrollPane();
-        jScrollPane.getViewport().add(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                                      JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        this.add("br hfill vfill", jScrollPane);
+		if (showDefaultTable) {
+			table.addMouseListener(new IconMouseListner());
 
-    }
+			// setting first column width FIXED
+			if (table.getColumnCount() > 0) {
+				table.getColumn(0).setMaxWidth(50);
+			}
+			table.addMouseMotionListener(new MouseMotionAdapter() {
+				// if mouse is moving under first column
+				// set hand courser
+				public void mouseMoved(MouseEvent evt) {
+					Cab2bTable table = (Cab2bTable) evt.getSource();
+					if (table.getColumnModel().getColumnIndexAtX(evt.getX()) == 0) {
+						table.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+					} else {
+						table.setCursor(Cursor.getDefaultCursor());
+					}
+				}
+			});
+		}
 
-    /**
-     * Initailizes the data to be viewed. 
-     */
-    private void initializeTableData() {
-        tableData = new Vector<Vector<Object>>();
-        tableHeader = new Vector<String>();
-        attributeMap.clear();
+		JScrollPane jScrollPane = new JScrollPane();
+		jScrollPane.getViewport().add(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		this.add("br hfill vfill", jScrollPane);
 
-        if (!records.isEmpty()) {
-            List<AttributeInterface> attributeList = Utility.getAttributeList(records.get(0).getAttributes());
+	}
 
-            if (showDefaultTable) {
-                tableHeader.add("Details");
-            }
-            //Add Headers
-            for (AttributeInterface attribute : attributeList) {
-                String formattedString = CommonUtils.getFormattedString(attribute.getName());
-                attributeMap.put(formattedString, attribute);
-                tableHeader.add(formattedString);
-            }
+	/**
+	 * Initailizes the data to be viewed.
+	 */
+	private void initializeTableData() {
+		tableData = new Vector<Vector<Object>>();
+		tableHeader = new Vector<String>();
+		attributeMap.clear();
 
-            //Add Data
-            for (IRecord record : records) {
-                Vector<Object> row = new Vector<Object>();
+		if (!records.isEmpty()) {
+			List<AttributeInterface> attributeList = Utility.getAttributeList(records.get(0)
+					.getAttributes());
 
-                if (showDefaultTable)
-                    row.add(defaultCellImage);
+			if (showDefaultTable) {
+				tableHeader.add("Details");
+			}
+			// Add Headers
+			for (AttributeInterface attribute : attributeList) {
+				String formattedString = CommonUtils.getFormattedString(attribute.getName());
+				attributeMap.put(formattedString, attribute);
+				tableHeader.add(formattedString);
+			}
 
-                for (AttributeInterface attribute : attributeList) {
-                    row.add(record.getValueForAttribute(attribute));
-                }
-                tableData.add(row);
-            }
-        }
-    }
+			// Add Data
+			for (IRecord record : records) {
+				Vector<Object> row = new Vector<Object>();
 
-    /**
-     * @return
-     */
-    public Cab2bTable getDataTable() {
-        return table;
-    }
+				if (showDefaultTable)
+					row.add(defaultCellImage);
 
-    /**
-     * @param columnName
-     * @return
-     */
-    public AttributeInterface getColumnAttribute(String columnName) {
-        return attributeMap.get(columnName);
-    }
+				for (AttributeInterface attribute : attributeList) {
+					row.add(record.getValueForAttribute(attribute));
+				}
+				tableData.add(row);
+			}
+		}
+	}
 
-    /**
-     * @param records
-     */
-    public void refreshView(List<IRecord> records) {
-        this.records = records;
-        doInitialization();
-        updateUI();
-    }
+	/**
+	 * @return
+	 */
+	public Cab2bTable getDataTable() {
+		return table;
+	}
 
-    /**
-     * This method returns the current records present in the table after applying any filtering.
-     * @return
-     */
-    public List<IRecord> getSelectedRecords() {
-        List<IRecord> selectedRecords = new ArrayList<IRecord>(table.getRowCount());
-        for (int i = 0; i < table.getRowCount(); i++) {
-            int originalRowIndex = table.convertRowIndexToModel(i);
-            selectedRecords.add(records.get(originalRowIndex));
-        }
-        return selectedRecords;
-    }
+	/**
+	 * @param columnName
+	 * @return
+	 */
+	public AttributeInterface getColumnAttribute(String columnName) {
+		return attributeMap.get(columnName);
+	}
 
-    /**
-     * @see edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface#getCSVData()
-     */
-    public String getCSVData() {
-        StringBuffer sb = new StringBuffer();
+	/**
+	 * @param records
+	 */
+	public void refreshView(List<IRecord> records) {
+		this.records = records;
+		doInitialization();
+		updateUI();
+	}
 
-        // Save data to selected file
-        TableModel model = table.getModel();
-        int totalColumns = table.getColumnCount();
-        for (int j = 1; j < totalColumns; j++) {
-            if (j != 1) {
-                sb.append(",");
-            }
-            // If special character in the column name
-            // put it into double quotes
-            String text = model.getColumnName(j);
-            text = escapeString(text);
-            sb.append(text);
-        }
-        sb.append("\n");
+	/**
+	 * This method returns the current records present in the table after
+	 * applying any filtering.
+	 * 
+	 * @return
+	 */
+	public List<IRecord> getSelectedRecords() {
+		List<IRecord> selectedRecords = new ArrayList<IRecord>(table.getRowCount());
+		for (int i = 0; i < table.getRowCount(); i++) {
+			int originalRowIndex = table.convertRowIndexToModel(i);
+			selectedRecords.add(records.get(originalRowIndex));
+		}
+		return selectedRecords;
+	}
 
-        /**
-         * Write the actual column values to file
-         */
-        for (int i = 0; i < table.getSelectedRows().length; i++) {
-            for (int j = 1; j < totalColumns; j++) {
-                Object object = table.getValueAt(table.getSelectedRows()[i], j);
-                if (j != 1) {
-                    sb.append(",");
-                }
-                if (object == null) {
-                    sb.append("");
-                } else {
-                    // If special character in the column value
-                    // put it into double quotes
-                    String text = object.toString();
-                    text = escapeString(text);
-                    sb.append(text);
-                }
-            }
-            sb.append("\n");
-        }
+	/**
+	 * @see edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface#getCSVData()
+	 */
+	public String getCSVData() {
+		StringBuffer sb = new StringBuffer();
 
-        return sb.toString();
-    }
+		// Save data to selected file
+		TableModel model = table.getModel();
+		int totalColumns = table.getColumnCount();
+		for (int j = 1; j < totalColumns; j++) {
+			if (j != 1) {
+				sb.append(",");
+			}
+			// If special character in the column name
+			// put it into double quotes
+			String text = model.getColumnName(j);
+			text = escapeString(text);
+			sb.append(text);
+		}
+		sb.append("\n");
 
-    public int getNoOfSelectedRows() {
-        return table.getSelectedRows().length;
-    }
+		/**
+		 * Write the actual column values to file
+		 */
+		for (int i = 0; i < table.getSelectedRows().length; i++) {
+			for (int j = 1; j < totalColumns; j++) {
+				Object object = table.getValueAt(table.getSelectedRows()[i], j);
+				if (j != 1) {
+					sb.append(",");
+				}
+				if (object == null) {
+					sb.append("");
+				} else {
+					// If special character in the column value
+					// put it into double quotes
+					String text = object.toString();
+					text = escapeString(text);
+					sb.append(text);
+				}
+			}
+			sb.append("\n");
+		}
 
-    private String escapeString(String input) {
-        if (input.indexOf(",") != -1) {
-            input = "\"" + input + "\"";
-        }
-        return input;
-    }
+		return sb.toString();
+	}
 
-    class IconMouseListner extends MouseAdapter {
+	public int getNoOfSelectedRows() {
+		return table.getSelectedRows().length;
+	}
 
-        public void mouseClicked(MouseEvent evt) {
-            Cab2bTable table = (Cab2bTable) evt.getSource();
-            if (table.getColumnModel().getColumnIndexAtX(evt.getX()) == 0) {
-                int row = table.getSelectionModel().getLeadSelectionIndex();
-                DefaultDetailedPanel defaultDetailedPanel = ResultPanelFactory.getResultDetailedPanel(records.get(table.convertRowIndexToModel(row)));
-                Dimension dimension = MainFrame.mainframeScreenDimesion;
-                WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, defaultDetailedPanel, "Details",
-                                             new Dimension(750, 580), true, true);
-            }
-        }
+	public ApplyFilterPanel getFilterPanel() {
+		return applyFilterPanel;
+	}
 
-    }
+	private String escapeString(String input) {
+		if (input.indexOf(",") != -1) {
+			input = "\"" + input + "\"";
+		}
+		return input;
+	}
+
+	class IconMouseListner extends MouseAdapter {
+
+		public void mouseClicked(MouseEvent evt) {
+			Cab2bTable table = (Cab2bTable) evt.getSource();
+			if (table.getColumnModel().getColumnIndexAtX(evt.getX()) == 0) {
+				int row = table.getSelectionModel().getLeadSelectionIndex();
+				DefaultDetailedPanel defaultDetailedPanel = ResultPanelFactory
+						.getResultDetailedPanel(records.get(table.convertRowIndexToModel(row)));
+				Dimension dimension = MainFrame.mainframeScreenDimesion;
+				WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, defaultDetailedPanel,
+						"Details", new Dimension(750, 580), true, true);
+			}
+		}
+
+	}
 }
