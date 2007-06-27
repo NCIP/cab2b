@@ -30,7 +30,7 @@ import edu.wustl.cab2b.client.ui.query.ClientPathFinder;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.query.IPathFinder;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImageConstants;
+import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImages;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
@@ -142,15 +142,15 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
         /**
          * Generate ImageMap
          */
-        Map<DagImageConstants, Image> imageMap = new HashMap<DagImageConstants, Image>();
-        imageMap.put(DagImageConstants.SelectIcon, Utilities.loadImage(SELECT_ICON_ADD_LIMIT));
-        imageMap.put(DagImageConstants.selectMOIcon, Utilities.loadImage(SELECT_ICON_ADD_LIMIT_MOUSEOVER));
-        imageMap.put(DagImageConstants.ArrowSelectIcon, Utilities.loadImage(LIMIT_CONNECT_DESELECTED));
-        imageMap.put(DagImageConstants.ArrowSelectMOIcon, Utilities.loadImage(LIMIT_CONNECT_SELECTED));
-        imageMap.put(DagImageConstants.ParenthesisIcon, Utilities.loadImage(PARENTHISIS_ICON_ADD_LIMIT));
-        imageMap.put(DagImageConstants.ParenthesisMOIcon, Utilities.loadImage(PARENTHISIS_ICON_ADD_LIMIT_MOUSEOVER));
-        imageMap.put(DagImageConstants.DocumentPaperIcon, Utilities.loadImage(PAPER_GRID_ADD_LIMIT));
-        imageMap.put(DagImageConstants.PortImageIcon, Utilities.loadImage(PORT_IMAGE_ADD_LIMIT));
+        Map<DagImages, Image> imageMap = new HashMap<DagImages, Image>();
+        imageMap.put(DagImages.SelectIcon, Utilities.loadImage(SELECT_ICON_ADD_LIMIT));
+        imageMap.put(DagImages.selectMOIcon, Utilities.loadImage(SELECT_ICON_ADD_LIMIT_MOUSEOVER));
+        imageMap.put(DagImages.ArrowSelectIcon, Utilities.loadImage(LIMIT_CONNECT_DESELECTED));
+        imageMap.put(DagImages.ArrowSelectMOIcon, Utilities.loadImage(LIMIT_CONNECT_SELECTED));
+        imageMap.put(DagImages.ParenthesisIcon, Utilities.loadImage(PARENTHISIS_ICON_ADD_LIMIT));
+        imageMap.put(DagImages.ParenthesisMOIcon, Utilities.loadImage(PARENTHISIS_ICON_ADD_LIMIT_MOUSEOVER));
+        imageMap.put(DagImages.DocumentPaperIcon, Utilities.loadImage(PAPER_GRID_ADD_LIMIT));
+        imageMap.put(DagImages.PortImageIcon, Utilities.loadImage(PORT_IMAGE_ADD_LIMIT));
 
         IPathFinder pathFinder = new ClientPathFinder();
         m_contentForBottomCenterPanel = new MainDagPanel(this, imageMap, pathFinder, false);

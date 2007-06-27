@@ -40,7 +40,7 @@ import edu.wustl.common.util.logger.Logger;
 public class CommonUtils {
 
 	// Constant storing enumerated values for DAG-Images
-	public static enum DagImageConstants {
+	public static enum DagImages {
 		DocumentPaperIcon, PortImageIcon, ArrowSelectIcon, ArrowSelectMOIcon, SelectIcon, selectMOIcon, ParenthesisIcon, ParenthesisMOIcon
 	};
 

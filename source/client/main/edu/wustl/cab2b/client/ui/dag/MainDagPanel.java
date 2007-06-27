@@ -36,7 +36,7 @@ import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.query.IPathFinder;
 import edu.wustl.cab2b.client.ui.util.ClientConstants;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImageConstants;
+import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImages;
 import edu.wustl.cab2b.common.queryengine.Cab2bQueryObjectFactory;
 import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
@@ -76,7 +76,7 @@ public class MainDagPanel extends Cab2bPanel {
 
     private IUpdateAddLimitUIInterface m_addLimitPanel;
 
-    private Map<DagImageConstants, Image> m_dagImageMap;
+    private Map<DagImages, Image> m_dagImageMap;
 
     private List<ClassNode> m_currentNodeList;
 
@@ -94,15 +94,15 @@ public class MainDagPanel extends Cab2bPanel {
      */
     public MainDagPanel(
             IUpdateAddLimitUIInterface addLimitPanel,
-            Map<DagImageConstants, Image> dagImageMap,
+            Map<DagImages, Image> dagImageMap,
             IPathFinder pathFinder,
             boolean isDAGForView) {
         m_dagImageMap = dagImageMap;
         m_currentNodeList = new ArrayList<ClassNode>();
         m_document = new GraphDocument();
         m_isDAGForView = isDAGForView;
-        m_documentRenderer = new DocumentRenderer(m_dagImageMap.get(DagImageConstants.DocumentPaperIcon),
-                m_dagImageMap.get(DagImageConstants.PortImageIcon), m_isDAGForView);
+        m_documentRenderer = new DocumentRenderer(m_dagImageMap.get(DagImages.DocumentPaperIcon),
+                m_dagImageMap.get(DagImages.PortImageIcon), m_isDAGForView);
         m_viewController = new ViewController(this);
         m_eventHandler = new EventHandler(this);
         m_addLimitPanel = addLimitPanel;
