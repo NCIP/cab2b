@@ -38,13 +38,13 @@ public class CategoryObjectDetailsPanel extends DefaultDetailedPanel<ICategorial
         super.initData();
 
         Logger.out.debug("Setting table data");
-        categoryTableHeader.add("Children Classes");
+        categoryTableHeader.add("Category Details");
 
         Map<CategorialClass, List<ICategorialClassRecord>> mapChildClasses = record.getChildrenCategorialClassRecords();
         Logger.out.debug("Size of class Records :" + mapChildClasses.keySet().size());
 
         TransformCategoryResult transformCategoryResult = new TransformCategoryResult();
-        b2BTreeRootNode.setDisplayName("Associated Classes");
+        b2BTreeRootNode.setDisplayName("Associated Information");
 
         for (List<ICategorialClassRecord> categorialClassList : mapChildClasses.values()) {
             b2BTreeRootNode = transformCategoryResult.getB2BRootTreeNode(categorialClassList, b2BTreeRootNode);
