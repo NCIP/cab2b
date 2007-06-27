@@ -220,11 +220,15 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable {
     @Override
     public String toString() {
         String label = this.className;
-
+        String cnt = "";
+        int size = getChildren().size();
+        if(size!=0) {
+            cnt = "(" + size +")";
+        }
         if (getId() != null)
             label = label + getId();
         else
-            label += "s";
+            label += cnt;
         return label;
     }
 
