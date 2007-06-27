@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <jnlp spec="1.0+"
-	codebase="http://10.79.0.116:8080/cab2b/webstart/client" 
+	codebase="http://@server-address@/cab2b/client" 
 	href="">
  
 	<information>

@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><!-- Web Start Deployment Template --><jnlp codebase="http://10.79.0.116:8080/cab2b/webstart/client" href="../jnlp/cab2b_client_webstart.jnlp" spec="1.0+">
+<?xml version="1.0" encoding="UTF-8"?><!-- Web Start Deployment Template --><jnlp codebase="http://@server-address@/cab2b/client" href="../jnlp/cab2b_client_webstart.jnlp" spec="1.0+">
 
 	<information>
 		<title>caB2B Client</title>
 		<vendor>WashU-Persistent</vendor>
-		<homepage href="10.79.0.116:8080/cab2b"/> 
+		<homepage href="@server-address@"/> 
 		<description>The client for caGrid</description>
 		<description kind="short"> Web Start trial for caB2B Client </description>
 		<icon  href="experiment.gif" height="67" width="67"/>

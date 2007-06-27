@@ -539,6 +539,28 @@
 	<!-- this jar includes contents of conf/ and images/ and is signed -->
 	<target name="build.client.webstart.jar" depends="clean.all, compile.client" description="create the client jar for Java Web Start deployment">
 		<mkdir dir="${client.jar.dir}" />
+		<mkdir dir="${webstart.client.dir}" />
+		<mkdir dir="${webstart.jnlp.dir}" />
+		
+		<mkdir dir="${webstart.war.dir}/WEB-INF"/>
+		<mkdir dir="${webstart.war.dir}/conf"/>
+		
+		<!-- copy jnlp to workarea and then replace the server place holder-->
+		<copy todir="${webstart.dir}">
+			<fileset dir="${webstart.src}">
+				<include name="*.jnlp"/>
+			</fileset>
+		</copy>
+		
+	  	 <replaceregexp byline="true" flags="g" >
+	  	    <fileset dir="${webstart.dir}">
+	  	    	<include name="*.jnlp"/>
+	  	    </fileset>
+	  	    <regexp pattern="@server-address@"/>
+	  	    <substitution expression="${webstart.server.host}:${webstart.server.port}"/>
+	  	 </replaceregexp>
+      <!-- done replacing-->
+
 						
 		<copy todir="${client.jar.dir}">
 			<fileset dir="${client.classes.dir}">
@@ -557,8 +579,6 @@
 			</fileset >
 		</copy>
 
-		<mkdir dir="${webstart.client.dir}" />
-		<mkdir dir="${webstart.jnlp.dir}" />
 				
 		<!--- create the images.jar and conf.jar to include in the client jar folder -->
 		<jar basedir="${conf.dir}" destfile="${webstart.client.dir}/conf.jar" >
@@ -587,8 +607,8 @@
 				<path refid="server.classpath" />
 				<pathelement location="${basedir}/webstart" />
 			</classpath >
-			<arg value="${webstart.jnlp.template}" />
-			<arg value="${webstart.jnlp.client}" />
+			<arg value="${webstart.dir}/template.jnlp" />
+			<arg value="${webstart.dir}/client.jnlp" />
 			<arg value="${webstart.client.dir}" />
 			<arg value="${webstart.jnlp.dir}" />
 		</java>
@@ -610,7 +630,24 @@
 		
 		<!-- copy the images to be used by Web Start -->
 		<copy todir="${webstart.client.dir}"  file="resources/images/experiment.gif" />
+		<copy todir="${webstart.war.dir}/conf">
+					<fileset dir="${conf.dir}">
+						<include name="cab2b.properties"/>
+					</fileset>
+		</copy>
+		<copy todir="${webstart.war.dir}"  file="${basedir}/webstart/index.html" />
 		
+		<zip destfile="${workArea.dir}/cab2b.war">
+			<fileset dir="${webstart.war.dir}">
+		   </fileset>
+		</zip>
+	</target>
+	
+	<target name="temp">
+		<zip destfile="${workArea.dir}/cab2b.war">
+			<fileset dir="${webstart.war.dir}">
+		   </fileset>
+		</zip>
 	</target>
 	
 	

@@ -2,13 +2,13 @@
 
 <!-- Web Start Deployment Template -->
 <jnlp spec="1.0+"
-    codebase="http://10.79.0.116:8080/cab2b/webstart/client"
+    codebase="http://@server-address@/cab2b/webstart/client"
     href="../cab2b-client.jnlp" >
 
 	<information>
 		<title>caB2B Client</title>
 		<vendor>WashU-Persistent</vendor>
-		<homepage href="10.79.0.116:8080/cab2b" /> 
+		<homepage href="@server-address@/cab2b" /> 
 		<description>The client for caGrid</description>
 		<description kind="short">
 			Web Start trial for caB2B Client 
