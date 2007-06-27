@@ -31,6 +31,12 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.HOME_TAB_UNPRESSED;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.HOME_TAB_PRESSED;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.SEARCH_TAB_UNPRESSED;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.SEARCH_TAB_PRESSED;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.EXPT_TAB_UNPRESSED;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.EXPT_TAB_PRESSED;
 
 /**
  * This class creates a glassPane over the icons and adds tab-buttons to the
@@ -44,9 +50,9 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
 
     private ClassLoader loader = this.getClass().getClassLoader();
 
-    private URL[] tabsImagesUnPressed = { loader.getResource("home_tab.gif"), loader.getResource("searchdata_tab.gif"), loader.getResource("experiment_tab.gif") };
+    private URL[] tabsImagesUnPressed = { loader.getResource(HOME_TAB_UNPRESSED), loader.getResource(SEARCH_TAB_UNPRESSED), loader.getResource(EXPT_TAB_UNPRESSED) };
 
-    private URL[] tabsImagesPressed = { loader.getResource("home_MO_tab.gif"), loader.getResource("searchdata_MO_tab.gif"), loader.getResource("experiment_MO_tab.gif") };
+    private URL[] tabsImagesPressed = { loader.getResource(HOME_TAB_PRESSED), loader.getResource(SEARCH_TAB_PRESSED), loader.getResource(EXPT_TAB_PRESSED) };
 
     private JButton[] tabButtons = new Cab2bButton[3];
 
