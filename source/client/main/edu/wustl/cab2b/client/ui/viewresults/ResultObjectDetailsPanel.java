@@ -31,45 +31,36 @@ import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
  * @author chetan_bh
  */
 public class ResultObjectDetailsPanel extends ResultPanel {
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * 
-     */
     protected IRecord record;
-    
-    /**
-     * 
-     */
+
     protected IDataRow dataRow;
 
-    
     protected JXPanel tablePanel;
-    
-    private DefaultDetailedPanel  defaultDetailedPanel;
 
+    private DefaultDetailedPanel defaultDetailedPanel;
 
     private JXTitledPanel relatedDataTitledPanel;
 
     private JXPanel relatedDataPanel;
-    
-    private String currentBreadCrumbName;
 
+    private String currentBreadCrumbName;
 
     private Cab2bPanel m_sidePanel;
 
     public ResultObjectDetailsPanel(
             SimpleSearchResultBreadCrumbPanel searchPanel,
             IDataRow dataRow,
-
             IRecord record,
             Collection<AssociationInterface> incomingAssociationCollection,
-            List<IInterModelAssociation> intraModelAssociationCollection,DefaultDetailedPanel defaultDetailedPanel) {
+            List<IInterModelAssociation> intraModelAssociationCollection,
+            DefaultDetailedPanel defaultDetailedPanel) {
         /* Set the parent entity interface. Note : This can never be null. */
         super(searchPanel, incomingAssociationCollection, intraModelAssociationCollection);
-        
-        currentBreadCrumbName=searchPanel.getCurrentBreadCrumbName();
-        this.defaultDetailedPanel = defaultDetailedPanel;
 
+        currentBreadCrumbName = searchPanel.getCurrentBreadCrumbName();
+        this.defaultDetailedPanel = defaultDetailedPanel;
         this.record = record;
         this.dataRow = dataRow;
     }
@@ -94,15 +85,14 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         this.setLayout(new BorderLayout());
         //initTableGUI();        
         this.add(defaultDetailedPanel, BorderLayout.CENTER);
-       
-        initDataListButtons();      
+
+        initDataListButtons();
         Cab2bPanel buttonPanel = new Cab2bPanel();
         buttonPanel.add("br", addToDataListButton);
-        buttonPanel.add("tab tab", m_applyAllButton); 
-        
-        this.add(buttonPanel,BorderLayout.SOUTH);       
+        buttonPanel.add("tab tab", m_applyAllButton);
 
- 
+        this.add(buttonPanel, BorderLayout.SOUTH);
+
         m_sidePanel = new Cab2bPanel(new GridLayout(2, 1, 5, 5));
         initDataListSummaryPanel();
         //fix for matching the sizes of "my data summrary" and "related data"
@@ -112,14 +102,13 @@ public class ResultObjectDetailsPanel extends ResultPanel {
 
         m_sidePanel.add(relatedDataParentPanel);
         m_sidePanel.add(myDataListParentPanel);
-        
+
         this.add(m_sidePanel, BorderLayout.EAST);
-        
+
     }
 
-
     private void initRelatedDataPanel() {
-        relatedDataTitledPanel = new Cab2bTitledPanel("Related Data: " +currentBreadCrumbName);
+        relatedDataTitledPanel = new Cab2bTitledPanel("Related Data: " + currentBreadCrumbName);
         GradientPaint gp1 = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
                 new Point2D.Double(.95d, 0), Color.WHITE);
         relatedDataTitledPanel.setTitleFont(new Font("SansSerif", Font.BOLD, 11));
@@ -131,7 +120,6 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         relatedDataPanel.setBackground(Color.WHITE);
         relatedDataPanel.setLayout(new RiverLayout(5, 10));
         relatedDataPanel.setBorder(null);
-        
 
         if (incomingAssociationCollection != null && !incomingAssociationCollection.isEmpty()) {
             AbstractAssociatedDataPanel incomingPanel = new IncomingAssociationDataPanel(
@@ -176,5 +164,4 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         return selectedDataRows;
     }
 
-   
 }

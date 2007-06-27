@@ -144,11 +144,6 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
         hyperlinkAL = new HyperlinlActionListener(this);
         associatedDataAL = new AssociatedDataActionListener(this);
 
-        //		this.attributeList = Utility.getAttributeList(queryResult);
-
-        // Check if you got only one record
-        JXPanel simpleSearchResultPanel = ResultPanelFactory.getResultPanel(this, queryResult, null, null);
-
         /*
          * The breadcrumb panel should be common to all cards, and hence should
          * not be part of any card.
@@ -172,6 +167,9 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
         currentBreadCrumbName = breadCrumbPanel.getCurrentBreadCrumbName();
         this.m_breadCrumbPanel.add(breadCrumbPanel, "" + this.panelCount);
         // this.m_breadCrumbPanel.setPreferredSize(new Dimension(1150, 20));
+
+        //Check if you got only one record
+        JXPanel simpleSearchResultPanel = ResultPanelFactory.getResultPanel(this, queryResult, null, null);
 
         /*
          * Initialize the panel that will house all cards, and add the first
