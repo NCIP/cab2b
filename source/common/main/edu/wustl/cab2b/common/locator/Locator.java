@@ -56,14 +56,10 @@ public class Locator {
         Object obj = null;
         Logger.out.debug("Finding Bean : " + ejbName + "\n Home Interface is : " + homeClassForEJB.getName());
         try {
-            //set system properties for NJDI
-            System.setProperty("java.naming.factory.initial",
-                               PropertyLoader.getProperty("java.naming.factory.initial"));
-            System.setProperty("java.naming.factory.url.pkgs",
-                               PropertyLoader.getProperty("java.naming.factory.url.pkgs"));
-            System.setProperty("java.naming.provider.url", PropertyLoader.getProperty("java.naming.provider.url"));
-
-
+            System.setProperty("java.naming.provider.url", PropertyLoader.getJndiUrl());
+            System.setProperty("java.naming.factory.initial","org.jnp.interfaces.NamingContextFactory");
+            System.setProperty("java.naming.factory.url.pkgs","org.jboss.naming:org.jnp.interfaces");
+            
             Context ctx = new InitialContext();
             obj = ctx.lookup(ejbName);
         } catch (NamingException e) {

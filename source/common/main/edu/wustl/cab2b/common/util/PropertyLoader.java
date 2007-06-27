@@ -80,7 +80,9 @@ public class PropertyLoader {
         return allApplications;
     }
 
-    public static String getProperty(String key) {
-        return props.getProperty(key);
+    public static String getJndiUrl() {
+        String serverIP = props.getProperty("caB2B.server.ip");
+        String jndiPort = props.getProperty("caB2B.server.port");
+        return "jnp://"+serverIP+":"+jndiPort;
     }
 }
