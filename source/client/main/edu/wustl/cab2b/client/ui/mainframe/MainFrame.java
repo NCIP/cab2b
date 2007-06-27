@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.MissingResourceException;
 
 import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 
@@ -266,14 +267,19 @@ public class MainFrame extends JXFrame {
      * @param args Command line arguments. They will not be used.
      */
     public static void main(String[] args) {
-        setHome();
-        Logger.configure(); //pick config from log4j.properties
-        ClientLauncher clientLauncher = ClientLauncher.getInstance();
-        clientLauncher.launchClient();
-        /* Initialize all Resources. */
-        initializeResources();
-        MainFrame mainFrame = new MainFrame(ApplicationProperties.getValue("cab2b.main.frame.title"), true);
-        mainFrame.setVisible(true);
+        try {
+            setHome();
+            Logger.configure(); //pick config from log4j.properties
+            ClientLauncher clientLauncher = ClientLauncher.getInstance();
+            clientLauncher.launchClient();
+            /* Initialize all Resources. */
+            initializeResources();
+            MainFrame mainFrame = new MainFrame(ApplicationProperties.getValue("cab2b.main.frame.title"), true);
+            mainFrame.setVisible(true);
+        } catch (Throwable t) {
+            JOptionPane.showMessageDialog(null,"Fatal error orccured while launching caB2B client. Please contact administrator",
+                                          "caB2B Fatal Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -293,7 +299,7 @@ public class MainFrame extends JXFrame {
 
         File cab2bHome = new File(userHome, "cab2b");
         System.setProperty("cab2b.home", cab2bHome.getAbsolutePath());
-        
-   }
+
+    }
 
 }
