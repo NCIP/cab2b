@@ -13,6 +13,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -75,8 +76,9 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
      */
 
     public AbstractSearchPanel(ContentPanel addLimitPanel) {
-        this.m_addLimitPanel = addLimitPanel;
-        initGUI();
+        this.m_addLimitPanel = addLimitPanel;        
+        initGUI();        
+        SwingUtilities.invokeLater(new Runnable() { public void run() { m_srhTextField.requestFocus(); } } ); 
     }
 
     /**
