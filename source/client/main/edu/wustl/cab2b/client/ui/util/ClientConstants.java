@@ -16,7 +16,7 @@ public class ClientConstants {
 	/** Resource bundle name for getting externalized strings. */
 	public static String APPLICATION_RESOURCES_FILE_NAME = "Cab2bApplicationResources";
 
-	public static String CAB2B_LOGO_IMAGE = "caB2B_16_16.gif";
+	public static String CAB2B_LOGO_IMAGE = "16_logo.png";
 
 	public static String POPULAR_CATEGORIES_IMAGE = "popular_categories.gif";
 
@@ -28,9 +28,9 @@ public class ClientConstants {
 
 	public static String DETAILS_COLUMN_IMAGE = "popularcategories_icon.gif";
 
-	public static String LIMIT_CONNECT_SELECTED = "limit_set.gif";
+	public static String LIMIT_CONNECT_SELECTED = "limit_set_rollover.gif";
 
-	public static String LIMIT_CONNECT_DESELECTED = "limit_set_disabled.gif";
+	public static String LIMIT_CONNECT_DESELECTED = "limit_set.gif";
 	
 	public static String SELECT_ICON_ADD_LIMIT = "select_icon.gif";
 	

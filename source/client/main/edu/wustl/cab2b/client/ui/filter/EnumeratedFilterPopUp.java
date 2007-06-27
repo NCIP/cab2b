@@ -29,12 +29,15 @@ public class EnumeratedFilterPopUp extends Cab2bFilterPopup {
 	private Cab2bListBox listBox;
 
 	private String columnName;
+	
+	private CaB2BPatternFilter oldfilter;
 
 	public EnumeratedFilterPopUp(ApplyFilterPanel applyFilterpanel,
 			Collection<PermissibleValueInterface> permissibleValueCollection,
 			CaB2BPatternFilter oldfilter, String columnName, int columnIndex) {
 		super(applyFilterpanel, columnName, columnIndex);
 		this.columnName = columnName;
+		this.oldfilter=oldfilter;
 
 		myLable1 = new Cab2bLabel("Select Values");
 
@@ -43,6 +46,31 @@ public class EnumeratedFilterPopUp extends Cab2bFilterPopup {
 			model.addElement(pvInterface.getValueAsObject().toString());
 
 		}
+		
+		initUI(model);
+	
+	}
+	
+	public EnumeratedFilterPopUp(ApplyFilterPanel applyFilterpanel,
+			
+			CaB2BPatternFilter oldfilter, String columnName, int columnIndex) {
+		super(applyFilterpanel, columnName, columnIndex);
+		this.columnName = columnName;
+		this.oldfilter=oldfilter;
+
+		myLable1 = new Cab2bLabel("Select Values");
+
+		DefaultListModel model = new DefaultListModel();
+	
+		model.addElement("true");
+		model.addElement("false");
+	//	model.addElement("");
+		
+		initUI(model);
+	
+	}
+	
+	public void initUI(DefaultListModel model){
 		listBox = new Cab2bListBox(model);
 
 		ArrayList<String> val = new ArrayList<String>();

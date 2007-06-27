@@ -152,11 +152,16 @@ public class ApplyFilterPanel extends Cab2bPanel {
                         DataType dataType = Utility.getDataType(attribute.getAttributeTypeInformation());
 
                         // If the clicked column is of type String.
-                        if (DataType.String == dataType || DataType.Boolean == dataType) {
+                        if (DataType.String == dataType) {
                             filterPopup = new PatternPopup(applyFilterpanel, (CaB2BPatternFilter) oldFilter,
                                     columnName, columnIndex);
                             // If the clicked column is of type int/long
-                        } else if (DataType.Double == dataType || DataType.Float == dataType
+                        }
+                        else if(DataType.Boolean==dataType){
+                        	 filterPopup = new EnumeratedFilterPopUp(applyFilterpanel,
+                                     (CaB2BPatternFilter) oldFilter, columnName, columnIndex);
+                        }
+                        else if (DataType.Double == dataType || DataType.Float == dataType
                                 || DataType.Long == dataType || DataType.Integer == dataType) {
 
                             double[] columnVal = null;
