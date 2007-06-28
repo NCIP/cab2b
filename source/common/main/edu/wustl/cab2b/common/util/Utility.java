@@ -305,12 +305,24 @@ public class Utility {
             strLen = strLen + currentString.length() + len;
             sb.append(currentString);
             int index = text.indexOf("<B>----></B>", (currentStart + offset));
+            if (index == -1) {
+                index = text.indexOf(".", (currentStart + offset));
+            }
+            if (index == -1) {
+                index = text.indexOf(",", (currentStart + offset));
+            }
+            if (index == -1) {
+                index = text.indexOf(" ", (currentStart + offset));
+            }
             if (index != -1) {
                 len = index - strLen;
                 currentString = text.substring((currentStart + offset), (currentStart + offset + len));
                 sb.append(currentString);
                 sb.append("<P>");
             } else {
+            	if (currentStart == 0) {
+                    currentStart = offset;
+                }
                 sb.append(text.substring(currentStart));
                 return sb.toString();
             }
