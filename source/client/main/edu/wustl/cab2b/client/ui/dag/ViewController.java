@@ -227,14 +227,15 @@ public class ViewController extends DefaultViewController implements ActionListe
 		{
 			IGraphPort[] ports = nodes[nodeCnt].getPorts();
 			IGraphLink[] links = null;
-			for(int i=0; i< ports.length; i++)
-			{
-				links = ports[i].getLinks();
-				if((links != null)&& (links.length != 0))
-				{
-					deleteLink(links[0]);
-				}
-			}
+            if(ports!=null)
+            {
+                for (int i = 0; i < ports.length; i++) {
+                    links = ports[i].getLinks();
+                    if ((links != null) && (links.length != 0)) {
+                        deleteLink(links[0]);
+                    }
+                }
+            }
 		}
 	}
 	/**
@@ -401,7 +402,7 @@ public class ViewController extends DefaultViewController implements ActionListe
 	 */
 	public void deleteAllNodes()
 	{
-		//		 Get all the nodes
+		//Get all the nodes
 		IGraphNode[] nodes = getHelper().getNodes();
 		for(int nodeCnt=0; nodeCnt<nodes.length; nodeCnt++)
 		{
