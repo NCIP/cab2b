@@ -49,8 +49,11 @@ public class PatternPopup extends Cab2bFilterPopup {
 	/**
 	 * This method creates the filter taking its input from the text filed.
 	 */
-	protected CaB2BFilterInterface okActionPerformed(ActionEvent e) {
+	protected CaB2BFilterInterface okActionPerformed(ActionEvent e) {        
+        if (!patternText.getText().equals(""))            
 		return new CaB2BPatternFilter(patternText.getText(), 0, columnIndex, columnName);
+        
+        return null;
 	}
 
 }

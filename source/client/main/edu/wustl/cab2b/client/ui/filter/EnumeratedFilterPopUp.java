@@ -111,7 +111,10 @@ public class EnumeratedFilterPopUp extends Cab2bFilterPopup {
 
 			}
 		}
+        if(!patternString.equals(""))
 		return new CaB2BPatternFilter(patternString, 0, columnIndex, columnName);
+        
+        return null;
 	}
 
 }

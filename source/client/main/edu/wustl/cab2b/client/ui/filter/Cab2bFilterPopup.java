@@ -38,7 +38,7 @@ public abstract class Cab2bFilterPopup extends Cab2bPanel {
     public Cab2bFilterPopup(final ApplyFilterPanel applyFilterPanel, String colName, int colIndex) {
         this.columnName = colName;
         this.columnIndex = colIndex;
-        
+
         // Cancle button listener
         cancelButton = new Cab2bButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
@@ -46,20 +46,19 @@ public abstract class Cab2bFilterPopup extends Cab2bPanel {
                 dialog.dispose();
             }
         });
-        
+
         // Generic OK button listener
         okButton = new Cab2bButton("Ok");
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
                 CaB2BFilterInterface filter = okActionPerformed(e);
-
-                applyFilterPanel.addFilter(columnName, filter);
-                ExperimentStackBox.getDataForFilterPanel(applyFilterPanel);
-                updateUI();
+                if (filter != null) {
+                    applyFilterPanel.addFilter(columnName, filter);
+                    ExperimentStackBox.getDataForFilterPanel(applyFilterPanel);
+                    updateUI();
+                }
                 dialog.dispose();
             }
-
         });
     }
 

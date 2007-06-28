@@ -203,7 +203,9 @@ public class FilterComponent extends Cab2bFilterPopup implements MouseListener, 
     protected CaB2BFilterInterface okActionPerformed(ActionEvent e) {
         double minimum = DataFilterUI.m_currentMinValue;
         double maximum = DataFilterUI.m_currentMaxValue;
-        return new RangeFilter(minimum, maximum, columnIndex, columnName, m_minValue, m_maxValue);
+
+        return new RangeFilter(minimum, maximum, columnIndex, columnName, m_minValue, m_maxValue,dataType);
+                  
     }
 
 }
