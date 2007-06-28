@@ -1,7 +1,9 @@
 package edu.wustl.cab2b.client.ui.main;
 
 import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -19,20 +21,35 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bRadioButton;
 public class BooleanTypePanel extends AbstractTypePanel {
     private static final long serialVersionUID = 1L;
 
+    private JRadioButton noneButton;
+
+    private ButtonGroup group;
+
+    private static JRadioButton selectedButton;
+
     public BooleanTypePanel(
             ArrayList<String> conditionList,
             AttributeInterface attributeEntity,
             Boolean showCondition,
             Dimension maxLabelDimension) {
         super(conditionList, attributeEntity, showCondition, maxLabelDimension);
+
     }
 
     private JPanel getComboForBoolean(Collection<String> permissibleValueList) {
-        JPanel radioPanel = new Cab2bPanel(new GridLayout(1, 0));
-        ButtonGroup group = new ButtonGroup();
+        JPanel radioPanel = new Cab2bPanel(new FlowLayout());
+        group = new ButtonGroup();
+
+        RadioButtonListener radioButtonListener = new RadioButtonListener();
 
         for (String permissibleValue : permissibleValueList) {
             JRadioButton jRadioButton = new Cab2bRadioButton(permissibleValue);
+            if (permissibleValue.equals("None")) {
+                noneButton = jRadioButton;
+                noneButton.setVisible(false);
+            } else {
+                jRadioButton.addActionListener(radioButtonListener);
+            }
             group.add(jRadioButton);
             radioPanel.add(jRadioButton);
         }
@@ -61,7 +78,7 @@ public class BooleanTypePanel extends AbstractTypePanel {
      * hence returns an empty component.
      */
     public JComponent getSecondComponent() {
-        JPanel secondComponent = getComboForBoolean();
+        JPanel secondComponent = new JPanel();
         secondComponent.setVisible(false);
         secondComponent.setOpaque(false);
         return secondComponent;
@@ -95,7 +112,7 @@ public class BooleanTypePanel extends AbstractTypePanel {
             radioButton.setSelected(true);
             return;
         }
-        
+
         radioButton = (JRadioButton) panel.getComponent(1);
         if (radioButton.getText().compareToIgnoreCase(values.get(0)) == 0) {
             radioButton.setSelected(true);
@@ -106,11 +123,23 @@ public class BooleanTypePanel extends AbstractTypePanel {
 
     public void setComponentPreference(String condition) {
     }
-    
+
     public void resetPanel() {
         JPanel panel = (JPanel) m_NameEdit;
         JRadioButton radioButton = (JRadioButton) panel.getComponent(2);
         radioButton.setSelected(true);
     }
+
+    class RadioButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent actionEvent) {
+            JRadioButton jRadioButton = (JRadioButton) actionEvent.getSource();
+            if (selectedButton != null && selectedButton == jRadioButton) {
+                group.setSelected(noneButton.getModel(), true);
+                selectedButton = null;
+            } else {
+                selectedButton = jRadioButton;
+            }
+        }
+    };
 
 }
