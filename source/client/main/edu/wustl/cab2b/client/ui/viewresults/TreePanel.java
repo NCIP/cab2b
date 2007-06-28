@@ -113,8 +113,9 @@ public class TreePanel extends Cab2bPanel {
                 }
             }
         });
-
-        this.add("br hfill vfill", new JScrollPane(tree));
+        JScrollPane scrollPane = new JScrollPane(tree);
+        scrollPane.setBorder(null);
+        this.add("br hfill vfill",scrollPane);
         this.setBorder(new CustomizableBorder(new Insets(1, 1, 1, 1), true, true));
     }
 
