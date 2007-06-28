@@ -10,7 +10,7 @@ import java.util.List;
 
 import javax.swing.JLabel;
 
-import edu.common.dynamicextensions.domain.Association;
+import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.query.ClientQueryBuilder;
 import edu.wustl.cab2b.common.datalist.IDataRow;
@@ -57,7 +57,7 @@ public class IncomingAssociationDataPanel extends AbstractAssociatedDataPanel {
     void processAssociation() {
         Iterator assoIter = associations.iterator();
         while (assoIter.hasNext()) {
-            Association deAssociation = (Association) assoIter.next();
+            AssociationInterface deAssociation = (AssociationInterface) assoIter.next();
 
             IIntraModelAssociation intraModelAssociation = (IIntraModelAssociation) QueryObjectFactory.createIntraModelAssociation(deAssociation);
             String tooTipText = "Target role name : " + deAssociation.getSourceRole().getName();
