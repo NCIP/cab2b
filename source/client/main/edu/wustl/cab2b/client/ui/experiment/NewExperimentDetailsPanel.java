@@ -1,5 +1,8 @@
 package edu.wustl.cab2b.client.ui.experiment;
 
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_CLOSE_FOLDER;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_OPEN_FOLDER;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -61,8 +64,6 @@ import edu.wustl.common.tree.GenerateTree;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_OPEN_FOLDER;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_CLOSE_FOLDER;
 
 /**
  * This class shows a panel to create new experiments with GUI controls for
@@ -174,6 +175,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                                                          edu.wustl.common.util.global.Constants.EXPERIMETN_TREE_ID,
                                                          true);
 
+        projectsTree.setInvokesStopCellEditing(true);
         projectsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         projectsTree.setEditable(true);
         projectsTree.getModel().addTreeModelListener(new MyTreeModelListener());
@@ -254,9 +256,12 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                 if (selectedTreeNode == null) {
                     selectedTreeNode = (DefaultMutableTreeNode) projectsTree.getModel().getRoot();
                 } else {
-                    ExperimentTreeNode expTreeNode = (ExperimentTreeNode) selectedTreeNode.getUserObject();
-                    if (!expTreeNode.isExperimentGroup())
-                        return;
+                    Object nodeObject = selectedTreeNode.getUserObject();
+                    if (nodeObject instanceof ExperimentTreeNode) {
+                        ExperimentTreeNode expTreeNode = (ExperimentTreeNode) selectedTreeNode.getUserObject();
+                        if (!expTreeNode.isExperimentGroup())
+                            return;
+                    }
                 }
                 // ------- inline editing ----------
                 DefaultTreeModel m_model = (DefaultTreeModel) projectsTree.getModel();
