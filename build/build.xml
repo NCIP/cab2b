@@ -186,8 +186,8 @@
 				<include name="**/*.jar" />
 			</fileset>
 		</copy>
-		<echo message="java -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="false" />
-		<echo message="java -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="false" />
+		<echo message="java -Xmx256m -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="false" />
+		<echo message="java -Xmx256m -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="false" />
 		<copy todir="${client.setup.dir}/conf">
 			<fileset dir="${conf.dir}">
 				<include name="Cab2bApplicationResources.properties" />
