@@ -162,7 +162,8 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
         m_innerPane.setOneTouchExpandable(false);
         m_innerPane.setBorder(null);
         m_innerPane.setDividerSize(4);
-
+        
+        categSearchPanel.setMinimumSize(new Dimension(260,300));
         this.m_outerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, categSearchPanel, m_innerPane);
         this.m_outerPane.setDividerLocation(0.2D);
         this.m_outerPane.setOneTouchExpandable(false);
