@@ -26,6 +26,7 @@ import edu.wustl.common.tree.GenerateTree;
 import edu.wustl.common.tree.TreeNodeImpl;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_OPEN_FOLDER;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_CLOSE_FOLDER;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_LEAF_NODE;
 
 /**
  * Panel to show the tree.
@@ -74,7 +75,7 @@ public class TreePanel extends Cab2bPanel {
         ClassLoader loader = this.getClass().getClassLoader();
         tree.setOpenIcon(new ImageIcon(loader.getResource(TREE_OPEN_FOLDER)));
         tree.setClosedIcon(new ImageIcon(loader.getResource(TREE_CLOSE_FOLDER)));
-        tree.setLeafIcon(new ImageIcon(loader.getResource("mydatalist_icon.gif")));
+        tree.setLeafIcon(new ImageIcon(loader.getResource(TREE_LEAF_NODE)));
 
         //Add the selection listener.
         //Show the details for that object in the right hand panel.
