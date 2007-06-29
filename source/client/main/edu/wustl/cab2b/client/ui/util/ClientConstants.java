@@ -16,7 +16,7 @@ public class ClientConstants {
 	/** Resource bundle name for getting externalized strings. */
 	public static String APPLICATION_RESOURCES_FILE_NAME = "Cab2bApplicationResources";
 
-	public static String CAB2B_LOGO_IMAGE = "16_logo.png";
+	public static String CAB2B_LOGO_IMAGE = "CaB2B_16_16_bg.gif";
 
 	public static String POPULAR_CATEGORIES_IMAGE = "popular_categories.gif";
 
