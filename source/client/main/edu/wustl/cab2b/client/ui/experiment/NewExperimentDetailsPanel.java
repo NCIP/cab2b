@@ -2,6 +2,7 @@ package edu.wustl.cab2b.client.ui.experiment;
 
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_CLOSE_FOLDER;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_OPEN_FOLDER;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_LEAF_NODE;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -183,7 +184,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         ClassLoader loader = this.getClass().getClassLoader();
         projectsTree.setOpenIcon(new ImageIcon(loader.getResource(TREE_OPEN_FOLDER)));
         projectsTree.setClosedIcon(new ImageIcon(loader.getResource(TREE_CLOSE_FOLDER)));
-        projectsTree.setLeafIcon(new ImageIcon(loader.getResource("experiment_small.gif")));
+        projectsTree.setLeafIcon(new ImageIcon(loader.getResource(TREE_LEAF_NODE)));
 
         // setting tree node name
         projectsTree.setSelectionRow(0);

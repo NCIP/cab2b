@@ -1,5 +1,15 @@
 package edu.wustl.cab2b.client.ui.experiment;
 
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.ANALYZE_DATA;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.BAR_GRAPH;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.FILTER_DATA;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.LINE_GRAPH;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.SCATTER_GRAPH;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_CLOSE_FOLDER;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_OPEN_FOLDER;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.VISUALIZE_DATA;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_LEAF_NODE;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.SELECT_DATA_CATEGORY;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -74,14 +84,6 @@ import edu.wustl.cab2b.common.util.AttributeInterfaceComparator;
 import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.util.logger.Logger;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.FILTER_DATA;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.ANALYZE_DATA;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.VISUALIZE_DATA;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_OPEN_FOLDER;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_CLOSE_FOLDER;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.BAR_GRAPH;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.LINE_GRAPH;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.SCATTER_GRAPH;
 
 public class ExperimentStackBox extends Cab2bPanel {
 	/** Default Serial version ID */
@@ -228,7 +230,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 		ClassLoader loader = this.getClass().getClassLoader();
 		datalistTree.setOpenIcon(new ImageIcon(loader.getResource(TREE_OPEN_FOLDER)));
 		datalistTree.setClosedIcon(new ImageIcon(loader.getResource(TREE_CLOSE_FOLDER)));
-		datalistTree.setLeafIcon(new ImageIcon(loader.getResource("mydatalist_icon.gif")));
+		datalistTree.setLeafIcon(new ImageIcon(loader.getResource(TREE_LEAF_NODE)));
 		datalistTree.setBorder(null);
 	}
 
@@ -240,7 +242,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 		treeViewScrollPane = new JScrollPane(datalistTree);
 		treeViewScrollPane.setPreferredSize(new Dimension(250, 200));
 		treeViewScrollPane.setBorder(null);
-		stackedBox.addBox("Select Data Category", treeViewScrollPane, "mysearchqueries_icon.gif",
+		stackedBox.addBox("Select Data Category", treeViewScrollPane, SELECT_DATA_CATEGORY,
 				false);
 
 		// Adding Filter data category panel

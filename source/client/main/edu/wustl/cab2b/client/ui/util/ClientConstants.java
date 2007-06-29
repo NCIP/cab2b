@@ -75,5 +75,11 @@ public class ClientConstants {
 	public static String EXPT_TAB_UNPRESSED = "experiment_tab.gif";
 
 	public static String EXPT_TAB_PRESSED = "experiment_MO_tab.gif";
+	
+	public static String TREE_LEAF_NODE = "data_14_14.gif";
+	
+	public static String EXPT_LEAF_NODE = "experiment_small.gif";
+	
+	public static String SELECT_DATA_CATEGORY = "select_data_category.gif";
 
 }
