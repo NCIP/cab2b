@@ -128,10 +128,6 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
         layout.show(this.m_breadCrumbPanel, panelName);
     }
 
-    //	public List<AttributeInterface> getAttributes() {
-    //		return this.attributeList;
-    //	}
-
     /**
      * Initialize GUI.
      * 
@@ -151,22 +147,12 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
         String key = this.panelCount + "#"
                 + edu.wustl.cab2b.common.util.Utility.getDisplayName(queryResult.getOutputEntity());
         this.m_vBreadCrumbs.add(key);
-        /*
-         * Put the list of attributes into the map and associate a key with it.
-         * The key is the userObject that sits behind the hyperlinks in the
-         * bread-crumbs.
-         */
-        /**/
 
-        //		this.mapResultLabel.put(key, this.attributeList);
-        /* Set also directly the attribute list */
-        // this.attributeList = classRecords.getAttributes();
         this.m_breadCrumbPanel = new Cab2bPanel();
         this.m_breadCrumbPanel.setLayout(new CardLayout());
         BreadcrumbPanel breadCrumbPanel = new BreadcrumbPanel(breadCrumbsAL, m_vBreadCrumbs, this.viewPanel);
         currentBreadCrumbName = breadCrumbPanel.getCurrentBreadCrumbName();
         this.m_breadCrumbPanel.add(breadCrumbPanel, "" + this.panelCount);
-        // this.m_breadCrumbPanel.setPreferredSize(new Dimension(1150, 20));
 
         //Check if you got only one record
         JXPanel simpleSearchResultPanel = ResultPanelFactory.getResultPanel(this, queryResult, null, null);
@@ -236,26 +222,17 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
              */
             String hyperlinkText = (String) hyperlink.getUserObject();
 
-            /* Set the attribute list if user clicked on a class. */
-            //			List<AttributeInterface> attrList = breadCrumbPanel.mapResultLabel
-            //					.get(hyperlinkText);
-            //			if (attrList != null) {
-            //				breadCrumbPanel.attributeList = attrList;
-            //			}
             int i;
             for (i = 0; i < m_vBreadCrumbs.size(); i++) {
-                String strVectorValue = (String) m_vBreadCrumbs.get(i);
-                boolean blnEval = (strVectorValue.trim().equals(hyperlinkText.trim()));
-                if (blnEval) {
+                String breadCrumbValue = (String) m_vBreadCrumbs.get(i);
+                if (breadCrumbValue.trim().equals(hyperlinkText.trim())) {
                     break;
                 }
             }
-            panelCount = i;
-            i++;
+            panelCount = i++;
 
             for (int j = i; j < m_vBreadCrumbs.size(); j++) {
-                m_vBreadCrumbs.remove(j);
-                j = j - 1;
+                m_vBreadCrumbs.remove(j--);
                 m_resultsPanel.remove(i);
             }
 
@@ -264,11 +241,12 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
              * panel.
              */
             String strIndex = hyperlinkText.substring(0, hyperlinkText.indexOf("#"));
-
             breadCrumbPanel.showPanel(strIndex);
+
             BreadcrumbPanel breadcrumbPanel = new BreadcrumbPanel(breadCrumbPanel.getBreadCrumbsAL(),
                     m_vBreadCrumbs, this.breadCrumbPanel.viewPanel);
             currentBreadCrumbName = breadcrumbPanel.getCurrentBreadCrumbName();
+
             this.breadCrumbPanel.addBreadCrumbPanel(breadcrumbPanel, strIndex);
             this.breadCrumbPanel.showBreadcrumbPanel(strIndex);
         }
@@ -292,7 +270,6 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 
             String hyperlinkText = hyperlink.getText();
             JPageElement jPageElement = hyperlink.getUserObject();
-            //jPageElement.getPagination().setSelectedJPageElement(jPageElement);
             PageElement pageElement = jPageElement.getPageElement();
 
             /* Get the data row corresponding to the clicked element. */
@@ -307,8 +284,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
              * Refresh the breadcrumb vector, and pass that instance onto a new
              * instance of the breadcrumb panel.
              */
-            (panelCount)++;
-            int currentCount = panelCount;
+            int currentCount = ++panelCount;
 
             m_vBreadCrumbs.add(currentCount + "#" + hyperlinkText);
             BreadcrumbPanel breadcrumbPanel = new BreadcrumbPanel(getBreadCrumbsAL(), m_vBreadCrumbs,
@@ -345,14 +321,14 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
             this.breadCrumbPanel = panel;
         }
 
-        public void actionPerformed(ActionEvent ae) {
-            /* Get the source for the event. */
-            Cab2bHyperlink hyperlink = (Cab2bHyperlink) ae.getSource();
-            AbstractAssociatedDataPanel linkContainer = (AbstractAssociatedDataPanel) hyperlink.getParent();
+        public void actionPerformed(ActionEvent actionEvent) {
+            Cab2bHyperlink hyperlink = (Cab2bHyperlink) actionEvent.getSource();
+
             /* Get the user object associated with that source. */
             final HyperLinkUserObject hyperLinkUserObject = (HyperLinkUserObject) hyperlink.getUserObject();
             IQuery tempQuery = null;
 
+            AbstractAssociatedDataPanel linkContainer = (AbstractAssociatedDataPanel) hyperlink.getParent();
             try {
                 tempQuery = linkContainer.getQuery((hyperLinkUserObject.getAssociation()));
             } catch (RemoteException e) {
@@ -360,32 +336,22 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
             }
             final IQuery query = tempQuery;
             breadCrumbText = Utility.getDisplayName(hyperLinkUserObject.getTargetEntity());
-            // breadCrumbPanel.panelCount++;
-            final int currentCount = breadCrumbPanel.panelCount;
 
             /* Get result by executing the Query in a worker thread. */
             CustomSwingWorker swingWorker = new CustomSwingWorker((JXPanel) breadCrumbPanel) {
+                IQueryResult queryResult = null;
 
-                IQueryResult queryResult;
-
-                @Override
                 protected void doNonUILogic() throws RuntimeException {
                     queryResult = CommonUtils.executeQuery((ICab2bQuery) query, (JComponent) breadCrumbPanel);
                 }
 
-                @Override
                 protected void doUIUpdateLogic() throws RuntimeException {
                     /*
                      * Get attributes and set in map, for later when the user is
                      * navigating, and for now directly set it.
                      */
-                    //					attributeList = Utility.getAttributeList(queryResult);
-                    //					breadCrumbPanel.mapResultLabel.put(currentCount + "#"
-                    //							+ breadCrumbText, attributeList);
                     IAssociation association = hyperLinkUserObject.getAssociation();
                     IDataRow parentDataRow = hyperLinkUserObject.getParentDataRow();
-                    // EntityInterface targetEntity =
-                    // hyperLinkUserObject.getTargetEntity();
 
                     JXPanel resultPanel = ResultPanelFactory.getResultPanel(breadCrumbPanel, queryResult,
                                                                             parentDataRow, association);
@@ -417,6 +383,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
          */
         m_vBreadCrumbs.add(currentCount + "#" + breadCrumbText);
         BreadcrumbPanel breadcrumbPanel = new BreadcrumbPanel(getBreadCrumbsAL(), m_vBreadCrumbs, this.viewPanel);
+        currentBreadCrumbName = breadcrumbPanel.getCurrentBreadCrumbName();
 
         addBreadCrumbPanel(breadcrumbPanel, "" + currentCount);
         showBreadcrumbPanel("" + currentCount);
