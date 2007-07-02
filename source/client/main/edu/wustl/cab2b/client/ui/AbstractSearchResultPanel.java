@@ -139,18 +139,22 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
 
     private void initializeAddLimitButtons(final JXPanel[] panelsToAdd, final EntityInterface entity) {
         addLimitButtonTop = new Cab2bButton("Add Limit");
+        addLimitButtonTop.setPreferredSize(new Dimension(95,22));
         addLimitButtonTop.addActionListener(new AddLimitButtonListner(panelsToAdd, entity));
 
         addLimitButtonBottom = new Cab2bButton("Add Limit");
         addLimitButtonBottom.addActionListener(new AddLimitButtonListner(panelsToAdd, entity));
+        addLimitButtonBottom.setPreferredSize(new Dimension(95,22));
     }
 
     private void initializeEditLimitButtons(final JXPanel[] panelsToAdd, final IExpression expression) {
         editLimitButtonTop = new Cab2bButton("Edit Limit");
         editLimitButtonTop.addActionListener(new EditLimitButtonListner(panelsToAdd, expression));
+        editLimitButtonTop.setPreferredSize(new Dimension(95,22));
 
         editLimitButtonBottom = new Cab2bButton("Edit Limit");
         editLimitButtonBottom.addActionListener(new EditLimitButtonListner(panelsToAdd, expression));
+        editLimitButtonBottom.setPreferredSize(new Dimension(95,22));
     }
 
     public void setResultPanel(Cab2bPanel resulPanel) {
