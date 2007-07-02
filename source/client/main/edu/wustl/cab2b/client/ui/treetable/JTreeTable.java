@@ -43,7 +43,7 @@ public class JTreeTable extends JXTable {
 
         setShowGrid(true);
         setIntercellSpacing(new Dimension(1, 1));
-        setBackground(Color.white);
+        setBackground(Color.white);        
     }
 
     /* Workaround for BasicTableUI anomaly. Make sure the UI never tries to 
@@ -66,15 +66,18 @@ public class JTreeTable extends JXTable {
 
         public TreeTableCellRenderer(TreeModel model) {
             super(model);
+            updateUI();
         }
 
         public void setBounds(int x, int y, int w, int h) {
             super.setBounds(x, 0, w, JTreeTable.this.getHeight());
+            updateUI();
         }
 
         public void paint(Graphics g) {
             g.translate(0, -visibleRow * getRowHeight());
             super.paint(g);
+            updateUI();
         }
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
@@ -85,6 +88,7 @@ public class JTreeTable extends JXTable {
                 setBackground(table.getBackground());
 
             visibleRow = row;
+            updateUI();
             return this;
         }
     }
