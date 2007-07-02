@@ -8,6 +8,8 @@ import static edu.wustl.cab2b.client.ui.util.ClientConstants.SCATTER_GRAPH;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_CLOSE_FOLDER;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_OPEN_FOLDER;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.VISUALIZE_DATA;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.SELECT_DATA_CATEGORY;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_LEAF_NODE;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -227,7 +229,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         ClassLoader loader = this.getClass().getClassLoader();
         datalistTree.setOpenIcon(new ImageIcon(loader.getResource(TREE_OPEN_FOLDER)));
         datalistTree.setClosedIcon(new ImageIcon(loader.getResource(TREE_CLOSE_FOLDER)));
-        datalistTree.setLeafIcon(new ImageIcon(loader.getResource("mydatalist_icon.gif")));
+        datalistTree.setLeafIcon(new ImageIcon(loader.getResource(TREE_LEAF_NODE)));
         datalistTree.setBorder(null);
     }
 
@@ -239,7 +241,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         treeViewScrollPane = new JScrollPane(datalistTree);
         treeViewScrollPane.setPreferredSize(new Dimension(250, 200));
         treeViewScrollPane.setBorder(null);
-        stackedBox.addBox("Select Data Category", treeViewScrollPane, "mysearchqueries_icon.gif", false);
+        stackedBox.addBox("Select Data Category", treeViewScrollPane, SELECT_DATA_CATEGORY, false);
 
         // Adding Filter data category panel
         dataFilterPanel = new Cab2bPanel();
