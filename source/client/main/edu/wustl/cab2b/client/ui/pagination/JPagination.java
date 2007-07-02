@@ -155,6 +155,18 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
 
     }
 
+    /**
+     * This method is used to reset all the hyperlinks in JPagination into labels   
+     *
+     */
+    public void resetAllLabels() {
+        for (Component component : pagePanel.getComponents()) {
+            if (component instanceof JPageElement) {
+                ((JPageElement) component).resetLabel();
+            }
+        }
+    }
+
     private void addNewMouseWheelListener() {
         MouseWheelListener[] mouseWheelListeners = this.getMouseWheelListeners();
         for (int i = 0; i < mouseWheelListeners.length; i++) {
