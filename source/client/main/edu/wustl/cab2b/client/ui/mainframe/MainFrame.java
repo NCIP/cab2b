@@ -144,6 +144,7 @@ public class MainFrame extends JXFrame {
         statusBar.add(new JSeparator(JSeparator.VERTICAL));
         statusBar.add(statusMessage);
         this.add(statusBar, BorderLayout.SOUTH);
+        JFrame.setDefaultLookAndFeelDecorated(true);
     }
 
     /** Method to set experiment home panel */
@@ -276,8 +277,9 @@ public class MainFrame extends JXFrame {
             /* Initialize all Resources. */
             initializeResources();
             MainFrame mainFrame = new MainFrame(ApplicationProperties.getValue("cab2b.main.frame.title"), true);
-            mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            mainFrame.pack();
             mainFrame.setVisible(true);
+            mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         } catch (Throwable t) {
             JOptionPane.showMessageDialog(
                                           null,
