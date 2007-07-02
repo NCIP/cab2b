@@ -135,6 +135,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
      */
     private void initGUI(IQueryResult queryResult) {
         this.setLayout(new RiverLayout());
+        currentBreadCrumbName = null;
 
         breadCrumbsAL = new BreadCrumbActionListener(this);
         hyperlinkAL = new HyperlinlActionListener(this);
@@ -289,7 +290,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
             m_vBreadCrumbs.add(currentCount + "#" + hyperlinkText);
             BreadcrumbPanel breadcrumbPanel = new BreadcrumbPanel(getBreadCrumbsAL(), m_vBreadCrumbs,
                     this.searchPanel.viewPanel);
-            currentBreadCrumbName = breadcrumbPanel.getCurrentBreadCrumbName();
+            currentBreadCrumbName = hyperlinkText;
 
             JXPanel detailsPanel = ResultPanelFactory.getSearchResultPanel(
                                                                            searchPanel,
@@ -353,9 +354,11 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
                     IAssociation association = hyperLinkUserObject.getAssociation();
                     IDataRow parentDataRow = hyperLinkUserObject.getParentDataRow();
 
+                    currentBreadCrumbName = breadCrumbText;
                     JXPanel resultPanel = ResultPanelFactory.getResultPanel(breadCrumbPanel, queryResult,
                                                                             parentDataRow, association);
                     addToPanel(resultPanel, breadCrumbText);
+
                 }
             };
             if (query != null) {
@@ -383,7 +386,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
          */
         m_vBreadCrumbs.add(currentCount + "#" + breadCrumbText);
         BreadcrumbPanel breadcrumbPanel = new BreadcrumbPanel(getBreadCrumbsAL(), m_vBreadCrumbs, this.viewPanel);
-        currentBreadCrumbName = breadcrumbPanel.getCurrentBreadCrumbName();
+        currentBreadCrumbName = breadCrumbText;
 
         addBreadCrumbPanel(breadcrumbPanel, "" + currentCount);
         showBreadcrumbPanel("" + currentCount);
