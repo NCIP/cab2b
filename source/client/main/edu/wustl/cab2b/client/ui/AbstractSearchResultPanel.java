@@ -63,13 +63,13 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
     /** The pagination component to paginate the results of the search */
     private Cab2bPanel resultPanel = new Cab2bPanel();
 
-    private Cab2bButton addLimitButtonTop = new Cab2bButton();
+    private Cab2bButton addLimitButtonTop;
 
-    private Cab2bButton addLimitButtonBottom = new Cab2bButton();
+    private Cab2bButton addLimitButtonBottom;
 
-    private Cab2bButton editLimitButtonTop = new Cab2bButton();
+    private Cab2bButton editLimitButtonTop;
 
-    private Cab2bButton editLimitButtonBottom = new Cab2bButton();
+    private Cab2bButton editLimitButtonBottom;
 
     /**
      * Saved reference to the content panel that needs to be refreshed for

@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.MissingResourceException;
 
 import javax.swing.BorderFactory;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
@@ -275,9 +276,12 @@ public class MainFrame extends JXFrame {
             /* Initialize all Resources. */
             initializeResources();
             MainFrame mainFrame = new MainFrame(ApplicationProperties.getValue("cab2b.main.frame.title"), true);
+            mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             mainFrame.setVisible(true);
         } catch (Throwable t) {
-            JOptionPane.showMessageDialog(null,"Fatal error orccured while launching caB2B client. Please contact administrator",
+            JOptionPane.showMessageDialog(
+                                          null,
+                                          "Fatal error orccured while launching caB2B client. Please contact administrator",
                                           "caB2B Fatal Error", JOptionPane.ERROR_MESSAGE);
         }
     }
