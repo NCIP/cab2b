@@ -15,6 +15,7 @@ import org.jdesktop.swingx.JXPanel;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.controls.Cab2bStandardFonts;
 
 /**
  * A panel to display navigation hyperlinks like next page, prevoius page
@@ -153,14 +154,15 @@ public class JPageBar extends Cab2bPanel implements ActionListener {
         JXPanel indicesPanel = new Cab2bPanel(new FlowLayout());
         int firstPageIndex = 0;
         for (String index : indices) {
-            Cab2bHyperlink hyperLink = new Cab2bHyperlink();
+            Cab2bHyperlink hyperLink = new Cab2bHyperlink(true);
             hyperLink.setText(index);
             hyperLink.addActionListener(this);
             indicesPanel.add(hyperLink);
 
             if (firstPageIndex++ == 2) {
-                hyperLink.setClicked(true);
+                hyperLink.setFont(Cab2bStandardFonts.ARIAL_BOLD_12);
                 hyperLink.setClickedColor(Color.RED);
+                hyperLink.setClicked(true);
                 hyperLink.updateUI();
                 hyperLink.repaint();
             }
@@ -230,6 +232,7 @@ public class JPageBar extends Cab2bPanel implements ActionListener {
                 Vector<PageElement> nextPage = paginationModel.nextPage();
                 JXPanel newPagePanel = pagination.getPagePanel(nextPage);
                 pagination.changePagePanel(newPagePanel);
+
                 currPageIndex = paginationModel.getCurrentPageIndex();
                 if (!currentIndices.contains(currPageIndex)) {
                     currentIndices = pageBarModel.nextIndices();
@@ -267,11 +270,14 @@ public class JPageBar extends Cab2bPanel implements ActionListener {
             Cab2bHyperlink hyperLink = (Cab2bHyperlink) indicesPanel.getComponent(i);
             if (hyperLink.getText().equalsIgnoreCase(currentPageIndex)) {
                 hyperLink.setClicked(true);
+                hyperLink.setFont(Cab2bStandardFonts.ARIAL_BOLD_12);
                 hyperLink.setClickedColor(Color.RED);
                 hyperLink.updateUI();
                 hyperLink.repaint();
-            } else
+            } else {
+                hyperLink.setFont(Cab2bStandardFonts.ARIAL_PLAIN_12);
                 hyperLink.setClicked(false);
+            }
         }
         indicesPanel.revalidate();
         indicesPanel.updateUI();
