@@ -36,7 +36,7 @@ public class EntityCache extends AbstractEntityCache {
     /**
      * 
      */
-    public EntityCache() {
+    private EntityCache() {
         super();
     }
 

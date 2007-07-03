@@ -18,10 +18,10 @@ import java.util.MissingResourceException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 
+import org.jdesktop.swingx.JXErrorDialog;
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXStatusBar;
@@ -281,10 +281,7 @@ public class MainFrame extends JXFrame {
             mainFrame.setVisible(true);
             mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         } catch (Throwable t) {
-            JOptionPane.showMessageDialog(
-                                          null,
-                                          "Fatal error orccured while launching caB2B client. Please contact administrator",
-                                          "caB2B Fatal Error", JOptionPane.ERROR_MESSAGE);
+            JXErrorDialog.showDialog(null,"caB2B Fatal Error", "Fatal error orccured while launching caB2B client. Please contact administrator",t);
         }
     }
 
