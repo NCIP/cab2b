@@ -11,6 +11,7 @@ import javax.swing.AbstractButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
@@ -19,6 +20,7 @@ import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.AlternateRowHighlighter;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterPipeline;
+import org.jdesktop.swingx.table.ColumnHeaderRenderer;
 
 public class Cab2bTable extends JXTable {
     private static final long serialVersionUID = 1L;
@@ -52,6 +54,7 @@ public class Cab2bTable extends JXTable {
         this.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
         this.setRowHeight(23);
         this.getTableHeader().setReorderingAllowed(false);
+        ((ColumnHeaderRenderer)this.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.LEFT);
         this.packAll();
     }
 
