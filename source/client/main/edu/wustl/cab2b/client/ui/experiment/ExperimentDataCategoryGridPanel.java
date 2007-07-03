@@ -42,6 +42,8 @@ import edu.wustl.cab2b.client.ui.query.Utility;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
+import edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface;
+import edu.wustl.cab2b.client.ui.viewresults.DefaultDetailedPanel;
 import edu.wustl.cab2b.client.ui.viewresults.DefaultSpreadSheetViewPanel;
 import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
@@ -107,9 +109,9 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
     private String dataCategoryTitle;
 
-    public DefaultSpreadSheetViewPanel spreadSheetViewPanel;
+    private DefaultSpreadSheetViewPanel spreadSheetViewPanel;
 
-    public DefaultSpreadSheetViewPanel currentSpreadSheetViewPanel;
+    private DataListDetailedPanelInterface currentSpreadSheetViewPanel;
 
     public ExperimentDataCategoryGridPanel(ExperimentOpenPanel parent) {
         this.experimentPanel = parent;
@@ -126,7 +128,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     /**
      * @return the currentSpreadSheetViewPanel
      */
-    public DefaultSpreadSheetViewPanel getCurrentSpreadSheetViewPanel() {
+    public DataListDetailedPanelInterface getCurrentSpreadSheetViewPanel() {
         return currentSpreadSheetViewPanel;
     }
 
@@ -134,7 +136,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
      * @param currentSpreadSheetViewPanel
      *            the currentSpreadSheetViewPanel to set
      */
-    public void setCurrentSpreadSheetViewPanel(DefaultSpreadSheetViewPanel currentSpreadSheetViewPanel) {
+    public void setCurrentSpreadSheetViewPanel(DataListDetailedPanelInterface currentSpreadSheetViewPanel) {
         this.currentSpreadSheetViewPanel = currentSpreadSheetViewPanel;
     }
 
@@ -324,6 +326,32 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         tabComponent.setSelectedComponent(analysisView);
     }
 
+    public void addDetailTabPanel(String tabTitle, final DefaultDetailedPanel defaultDetailedPanel) {
+        Cab2bPanel detailPanel = (Cab2bPanel) CommonUtils.getComponentByName(tabComponent, tabTitle);
+        if (detailPanel == null) {
+            final Cab2bPanel detailViewPanel = new Cab2bPanel();
+            detailViewPanel.setName(tabTitle);
+            detailViewPanel.setBorder(null);
+
+            // Add close button
+            Cab2bButton closeButton = new Cab2bButton("Close");
+            closeButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent actionEvent) {
+                    tabComponent.remove(detailViewPanel);
+                }
+            });
+            detailViewPanel.add("right ", closeButton);
+
+            // Add SpreadsheetView
+            defaultDetailedPanel.getDataTable().addFocusListener(new TableFocusListener(this.experimentPanel, false));
+            detailViewPanel.add("br center hfill vfill", defaultDetailedPanel);
+
+            detailPanel = detailViewPanel;
+            tabComponent.add(tabTitle, detailViewPanel);
+        }
+        tabComponent.setSelectedComponent(detailPanel);
+    }
+
     /**
      * Make list of attributes of the experimentPanel entity as well as a 2D
      * array of data and pass it to the server to make new entity this method is
@@ -458,10 +486,9 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             JTabbedPane jTabbedPane = (JTabbedPane) changeEvent.getSource();
             Cab2bPanel selectedTabPanel = (Cab2bPanel) jTabbedPane.getSelectedComponent();
             if (selectedTabPanel != null && selectedTabPanel.getComponentCount() > 0) {
-                Component component = CommonUtils.getComponentByName(selectedTabPanel,
-                                                                     "DefaultSpreadSheetViewPanel");
-                if (component instanceof DefaultSpreadSheetViewPanel) {
-                    experimentDataCategoryGridPanel.setCurrentSpreadSheetViewPanel((DefaultSpreadSheetViewPanel) component);
+                Component component = CommonUtils.getComponentByName(selectedTabPanel, "DataListDetailedPanel");
+                if (component instanceof DataListDetailedPanelInterface) {
+                    experimentDataCategoryGridPanel.setCurrentSpreadSheetViewPanel((DataListDetailedPanelInterface) component);
                     experimentDataCategoryGridPanel.setCurrentChartPanel(null);
                 } else {
                     component = CommonUtils.getComponentByName(selectedTabPanel, "cab2bChartPanel");
@@ -481,9 +508,16 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
      */
     class TableFocusListener implements FocusListener {
         private ExperimentOpenPanel experimentOpenPanel;
+        
+        private boolean skipFirstColumn = false;
 
-        TableFocusListener(ExperimentOpenPanel experimentOpenPanel) {
+        TableFocusListener(ExperimentOpenPanel experimentOpenPanel, boolean skipFirstColumn) {
             this.experimentOpenPanel = experimentOpenPanel;
+            this.skipFirstColumn = skipFirstColumn;
+        }
+        
+        TableFocusListener(ExperimentOpenPanel experimentOpenPanel) {
+            this(experimentOpenPanel, true);
         }
 
         public void focusGained(FocusEvent focusEvent) {
@@ -501,7 +535,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
             SKIP: if (cab2bTable.getSelectedRowCount() > 0) {
                 for (int columnIndex : cab2bTable.getSelectedColumns()) {
-                    if (columnIndex == 0) {
+                    if (columnIndex == 0 && skipFirstColumn) {
                         break SKIP;
                     }
                 }

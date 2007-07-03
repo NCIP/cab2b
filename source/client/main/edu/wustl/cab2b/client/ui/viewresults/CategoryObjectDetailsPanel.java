@@ -18,13 +18,14 @@ import edu.wustl.common.util.logger.Logger;
  *
  */
 public class CategoryObjectDetailsPanel extends DefaultDetailedPanel<ICategorialClassRecord> {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Table for displaying category result records.
      */
     private Vector<String> categoryTableHeader = new Vector<String>();
 
-    B2BTreeNode b2BTreeRootNode = new B2BTreeNode();
+    private B2BTreeNode b2BTreeRootNode = new B2BTreeNode();
 
     public CategoryObjectDetailsPanel(IRecord record) {
         super((ICategorialClassRecord) record);
@@ -49,9 +50,9 @@ public class CategoryObjectDetailsPanel extends DefaultDetailedPanel<ICategorial
         for (List<ICategorialClassRecord> categorialClassList : mapChildClasses.values()) {
             b2BTreeRootNode = transformCategoryResult.getB2BRootTreeNode(categorialClassList, b2BTreeRootNode);
         }
+
         Iterator<B2BTreeNode> b2BTreeNodeIterator = b2BTreeRootNode.getChildren().iterator();
         while (b2BTreeNodeIterator.hasNext()) {
-
             B2BTreeNode treeNode = b2BTreeNodeIterator.next();
             boolean isAllAtributes = true;
             for (B2BTreeNode childTreeNode : treeNode.getChildren()) {
@@ -80,9 +81,7 @@ public class CategoryObjectDetailsPanel extends DefaultDetailedPanel<ICategorial
     protected void initGUI() {
         super.initGUI();
         adjustRows();
-
         this.add("br hfill vfill", b2BTreeRootNode.getCategoryResultPanel());
     }
 
-    private static final long serialVersionUID = 1L;
 }

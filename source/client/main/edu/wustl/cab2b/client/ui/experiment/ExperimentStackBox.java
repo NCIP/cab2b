@@ -5,11 +5,11 @@ import static edu.wustl.cab2b.client.ui.util.ClientConstants.BAR_GRAPH;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.FILTER_DATA;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.LINE_GRAPH;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.SCATTER_GRAPH;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.SELECT_DATA_CATEGORY;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_CLOSE_FOLDER;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_LEAF_NODE;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_OPEN_FOLDER;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.VISUALIZE_DATA;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.SELECT_DATA_CATEGORY;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_LEAF_NODE;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -66,6 +66,7 @@ import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
+import edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface;
 import edu.wustl.cab2b.client.ui.viewresults.DefaultSpreadSheetViewPanel;
 import edu.wustl.cab2b.common.IdName;
 import edu.wustl.cab2b.common.analyticalservice.ServiceDetailsInterface;
@@ -470,8 +471,8 @@ public class ExperimentStackBox extends Cab2bPanel {
             });
             newVisualizeDataPanel.add("right ", closeButton);
 
-            DefaultSpreadSheetViewPanel defaultSpreadSheetViewPanel = m_experimentDataCategoryGridPanel.getCurrentSpreadSheetViewPanel();
-            Cab2bChartPanel cab2bChartPanel = new Cab2bChartPanel(defaultSpreadSheetViewPanel.getDataTable());
+            DataListDetailedPanelInterface dataListDetailedPanel = m_experimentDataCategoryGridPanel.getCurrentSpreadSheetViewPanel();
+            Cab2bChartPanel cab2bChartPanel = new Cab2bChartPanel(dataListDetailedPanel.getDataTable());
             cab2bChartPanel.setChartType(chartType, entityName);
             newVisualizeDataPanel.add("br hfill vfill ", cab2bChartPanel);
             m_experimentDataCategoryGridPanel.setCurrentChartPanel(newVisualizeDataPanel);
@@ -738,25 +739,28 @@ class FinishButtonActionListner implements ActionListener {
         List<IRecord> serviceParameterList = collectServiceParameterValues(parameterPanel.getComponents());
 
         // Obtain table data
-        DefaultSpreadSheetViewPanel defaultSpreadSheetViewPanel = experimentDataCategoryGridPanel.getCurrentSpreadSheetViewPanel();
-        List<IRecord> recordList = defaultSpreadSheetViewPanel.getSelectedRecords();
+        DataListDetailedPanelInterface dataListDetailedPanelInterface = experimentDataCategoryGridPanel.getCurrentSpreadSheetViewPanel();
+        if (dataListDetailedPanelInterface instanceof DefaultSpreadSheetViewPanel) {
+            DefaultSpreadSheetViewPanel defaultSpreadSheetViewPanel = (DefaultSpreadSheetViewPanel) dataListDetailedPanelInterface;
+            List<IRecord> recordList = defaultSpreadSheetViewPanel.getSelectedRecords();
 
-        List<IRecord> entityRecordList = null;
-        AnalyticalServiceOperationsBusinessInterface analyticalServiceOperationsBusinessInterface = (AnalyticalServiceOperationsBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                                                                                    EjbNamesConstants.ANALYTICAL_SERVICE_BEAN,
-                                                                                                                                                                                    AnalyticalServiceOperationsHomeInterface.class,
-                                                                                                                                                                                    null);
-        try {
-            entityRecordList = analyticalServiceOperationsBusinessInterface.invokeService(serviceDetails,
-                                                                                          recordList,
-                                                                                          serviceParameterList);
-            updateAnalysisTable(analysisTitle, entityRecordList);
-        } catch (RemoteException remoteException) {
-            CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true, false);
+            List<IRecord> entityRecordList = null;
+            AnalyticalServiceOperationsBusinessInterface analyticalServiceOperationsBusinessInterface = (AnalyticalServiceOperationsBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                                                                                        EjbNamesConstants.ANALYTICAL_SERVICE_BEAN,
+                                                                                                                                                                                        AnalyticalServiceOperationsHomeInterface.class,
+                                                                                                                                                                                        null);
+            try {
+                entityRecordList = analyticalServiceOperationsBusinessInterface.invokeService(serviceDetails,
+                                                                                              recordList,
+                                                                                              serviceParameterList);
+                updateAnalysisTable(analysisTitle, entityRecordList);
+            } catch (RemoteException remoteException) {
+                CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true, false);
+            }
+
+            MainFrame.setStatus(MainFrame.Status.READY);
+            MainFrame.setStatusMessage("Analysis finished");
         }
-
-        MainFrame.setStatus(MainFrame.Status.READY);
-        MainFrame.setStatusMessage("Analysis finished");
     }
 
     /**

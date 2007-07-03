@@ -18,9 +18,11 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
  */
 public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DDataRecord> {
 
-    private Vector<Vector> threeDTableData = new Vector<Vector>();
+    private Vector<Vector<Object>> threeDTableData = new Vector<Vector<Object>>();
 
     private Vector<String> threeDTableHeader = new Vector<String>();
+    
+    private Cab2bTable threeDTable;
 
     /**
      * 
@@ -56,17 +58,15 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
                     Object value = inputData[i][j][k];
 
                     if (threeDTableData.size() == k || threeDTableData.get(k) == null) {
-                        threeDTableData.add(new Vector());
+                        threeDTableData.add(new Vector<Object>());
                     }
 
-                    Vector row = threeDTableData.get(k);
+                    Vector<Object> row = threeDTableData.get(k);
                     row.add(value);
                 }
             }
         }
     }
-
-    Cab2bTable threeDTable;
 
     /**
      * @see edu.wustl.cab2b.client.ui.viewresults.ResultObjectDetailsPanel#initTableGUI()
@@ -77,6 +77,7 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
         adjustRows();
 
         threeDTable = new Cab2bTable(false, threeDTableData, threeDTableHeader);
+        threeDTable.setColumnSelectionAllowed(true);
         threeDTable.setEditable(false);
         JScrollPane tableSP = new JScrollPane(threeDTable);
         addRowHeader(tableSP);
@@ -103,4 +104,9 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
 
         tableSP.setRowHeaderView(rowHeaderTable);
     }
+    
+    public Cab2bTable getDataTable() {
+        return threeDTable;
+    }
+    
 }
