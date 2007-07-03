@@ -362,7 +362,7 @@
 		</path>
 	</target>
 	<!-- ================================================================================== -->
-	<target name="install.server" depends="build.paths,jboss.stop,jboss.start" description="Installs cab2b database. Loads paths and starts Jbosss"/>
+	<target name="install.server" depends="build.paths" description="Installs cab2b database. Loads paths and starts Jbosss"/>
 	
 	<!-- ============================================================================
 	 			Cactus TESTS
