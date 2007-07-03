@@ -30,7 +30,7 @@ public class ScatterPlot extends AbstractChart {
      * @see edu.wustl.cab2b.client.ui.charts.AbstractChart#createChart(org.jfree.data.general.Dataset)
      */
     protected JFreeChart createChart(Dataset dataset) {
-        XYDataset xyDataset = (XYDataset) createDataset();
+        XYDataset xyDataset = (XYDataset) dataset;
         JFreeChart jfreechart = ChartFactory.createScatterPlot(ChartType.SCATTER_PLOT.getActionCommand(), "X",
                                                                "Y", xyDataset, PlotOrientation.VERTICAL, true,
                                                                true, false);
