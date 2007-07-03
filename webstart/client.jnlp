@@ -6,8 +6,8 @@
 		<homepage href="@server-address@"/> 
 		<description>The client for caGrid</description>
 		<description kind="short"> Web Start trial for caB2B Client </description>
-		<icon  href="experiment.gif" height="67" width="67"/>
-		<icon  href="experiment.gif" kind="shortcut" height="67" width="67"/>
+		<icon  href="CaB2B_48_48_bg.gif" />
+		<icon  href="CaB2B_32_32_bg.gif" kind="shortcut" />
 		<shortcut>
 			<desktop/>
 			<menu/>
