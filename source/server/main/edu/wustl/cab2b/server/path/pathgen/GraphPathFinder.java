@@ -83,6 +83,7 @@ public class GraphPathFinder {
         Node[] allNodes = this.inputGraph.allNodes().toArray(new Node[0]);
         int numPaths = 0;
         for (Node srcNode : allNodes) {
+            Logger.out.info("Processing " + srcNode);
             for (Node destNode : allNodes) {
                 if (srcNode.equals(destNode)) {
                     // don't process self-edges now...
@@ -90,7 +91,7 @@ public class GraphPathFinder {
                 }
                 SourceDestinationPair sdp = new SourceDestinationPair(srcNode,
                         destNode);
-                Logger.out.info("Processing " + srcNode + " to " + destNode);
+//                Logger.out.info("Processing " + srcNode + " to " + destNode);
 
                 Set<Path> srcDestPaths = getPaths(sdp, new HashSet<Node>());
                 numPaths += srcDestPaths.size();

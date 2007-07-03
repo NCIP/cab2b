@@ -257,9 +257,10 @@ public class PathBuilder {
         List<String> pathList = readFullFile();
         BufferedWriter pathFile = new BufferedWriter(new FileWriter(new File(PATH_FILE_NAME)));
         IdGenerator idGenerator = new IdGenerator(getNextPathId(connection));
-        for (int i = 0; i < pathList.size(); i++) {
-            Logger.out.info("Transforming Path : " + i);
-
+        int totalPaths=pathList.size();
+        Logger.out.info("Transforming " + totalPaths + " paths...");
+        for (int i = 0; i < totalPaths; i++) {
+            log(totalPaths,i);
             String[] columnValues = pathList.get(i).split(FIELD_SEPARATOR);
             long firstEntityId = Long.parseLong(columnValues[0]);
             long lastEntityId = Long.parseLong(columnValues[2]);
@@ -284,7 +285,17 @@ public class PathBuilder {
         loadDataFromFile(connection, PATH_FILE_NAME, pathColumns, "PATH",
                          new Class[] { Long.class, Long.class, String.class, Long.class });
     }
-
+    private static void log(int totalPaths,int transformedPaths){
+        if (transformedPaths % 200 == 0) {
+            Float percentage = (((float) transformedPaths) / totalPaths) * 100;
+            String s = percentage.toString();
+            int index = s.indexOf(((char) '.'));
+            if (s.length() >= index + 3) {
+                s = s.substring(0, index + 3);
+            }
+            Logger.out.info(s + " %");
+        }
+    }
     /**
      * Reads full file {@link PathConstants#PATH_FILE_NAME} and returns it as array of Strings 
      * @return Array of strings where one element is one line from file.
