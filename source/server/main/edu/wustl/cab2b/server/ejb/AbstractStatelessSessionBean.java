@@ -7,6 +7,8 @@ import javax.ejb.EJBException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 
+import edu.wustl.cab2b.server.cache.DatalistCache;
+import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -53,5 +55,7 @@ public abstract class AbstractStatelessSessionBean implements SessionBean {
     {
         this.sessionContext = sessionContext;
         Logger.configure("caB2B.logger");
+        EntityCache.getInstance();
+        DatalistCache.getInstance();
     }
 }
