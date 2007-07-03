@@ -3,7 +3,7 @@ package edu.wustl.cab2b.client.ui.mainframe;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.APPLICATION_RESOURCES_FILE_NAME;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.CAB2B_LOGO_IMAGE;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.ERROR_CODE_FILE_NAME;
-
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.MAIN_FRAME_TITLE;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -272,16 +272,20 @@ public class MainFrame extends JXFrame {
         try {
             setHome();
             Logger.configure(); //pick config from log4j.properties
+            initializeResources(); // Initialize all Resources
             ClientLauncher clientLauncher = ClientLauncher.getInstance();
             clientLauncher.launchClient();
-            /* Initialize all Resources. */
-            initializeResources();
-            MainFrame mainFrame = new MainFrame(ApplicationProperties.getValue("cab2b.main.frame.title"), true);
+
+            MainFrame mainFrame = new MainFrame(ApplicationProperties.getValue(MAIN_FRAME_TITLE), true);
             mainFrame.pack();
             mainFrame.setVisible(true);
-            mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+            mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         } catch (Throwable t) {
-            JXErrorDialog.showDialog(null,"caB2B Fatal Error", "Fatal error orccured while launching caB2B client. Please contact administrator",t);
+            JXErrorDialog.showDialog(
+                                     null,
+                                     "caB2B Fatal Error",
+                                     "Fatal error orccured while launching caB2B client.\nPlease contact administrator",
+                                     t);
         }
     }
 
