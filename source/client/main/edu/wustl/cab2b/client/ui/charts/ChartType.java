@@ -29,15 +29,20 @@ public enum ChartType {
      * @param actionCommand
      * @return the corresponding enumration for the given action Command
      */
-    public static ChartType getChartType(String actionCommand) {
-        ChartType[] allDataypes = ChartType.values();
+    public static ChartType getChartType(final String actionCommand) {
+        final ChartType[] allDataypes = ChartType.values();
 
+        ChartType requiredChartType = null;
         for (ChartType dataType : allDataypes) {
             if (dataType.actionCommand.equals(actionCommand)) {
-                return dataType;
+                requiredChartType = dataType;
             }
         }
-        throw new RuntimeException("Unknown charttype found : " + actionCommand);
+
+        if (requiredChartType == null) {
+            throw new RuntimeException("Unknown chart type found : " + actionCommand);
+        }
+        return requiredChartType;
     }
 
 }
