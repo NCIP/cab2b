@@ -99,4 +99,8 @@ public class Constants {
     public static final Dimension WIZARD_NAVIGATION_PANEL_DIMENSION = new Dimension(752, 36);
     
     public static final String APPLY_FILTER_PANEL_NAME = "applyFilterPanel";
+    
+    public enum ChartOrientation {
+        ROW_AS_CATEGORY, COLUMN_AS_CATEGORY
+    }
 }
