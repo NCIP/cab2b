@@ -17,6 +17,9 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
 import edu.wustl.cab2b.client.cache.ClientSideCache;
+import edu.wustl.cab2b.client.ui.dag.ClassNodeRenderer;
+import edu.wustl.cab2b.client.ui.dag.IconNodeRenderer;
+import edu.wustl.cab2b.client.ui.dag.SimpleDocumentRenderer;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.locator.LocatorException;
 
@@ -30,7 +33,11 @@ public class ClientLauncher {
 
     private static ClientLauncher clientLauncher;
 
-    private static Dimension launchImageDimension = new Dimension(442, 251); // dimension of image "progress_bar.gif"
+    private static Dimension launchImageDimension = new Dimension(442, 251); // dimension
+
+    // of
+    // image
+    // "progress_bar.gif"
 
     private static final int progressHeight = 14;
 
@@ -58,7 +65,8 @@ public class ClientLauncher {
      */
     private ClientLauncher() {
         progressBar = getProgressbar(launchImageDimension.width, progressHeight);
-        progressBarLabel = getProgressBarLabel(" Launching caB2B client....", launchImageDimension.width, labelWidth);
+        progressBarLabel = getProgressBarLabel(" Launching caB2B client....", launchImageDimension.width,
+                                               labelWidth);
     }
 
     /**
@@ -109,7 +117,10 @@ public class ClientLauncher {
         launchFrame.setVisible(true);
         Toolkit.getDefaultToolkit().setDynamicLayout(true);
 
-        loadCache(); /*   initializing the cache at startup  */
+        loadCache(); /* initializing the cache at startup */
+
+        // To speed-up the first add limit.
+        launchFrame.getGraphics().getFontMetrics(ClassNodeRenderer.font);
         progressBar.setValue(100);
         launchFrame.setVisible(false);
         launchFrame.removeAll();
@@ -153,8 +164,8 @@ public class ClientLauncher {
     private static void loadCache() {
         try {
             ClientSideCache.getInstance();
-        }catch(LocatorException le) {
-            CommonUtils.handleException(le, progressBar.getParent(), true, true, true,true);
+        } catch (LocatorException le) {
+            CommonUtils.handleException(le, progressBar.getParent(), true, true, true, true);
         }
     }
 }
