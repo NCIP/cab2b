@@ -12,13 +12,18 @@ public class RuntimeException extends java.lang.RuntimeException {
     public RuntimeException() {
 
     }
-    
+
     public RuntimeException(Throwable throwable) {
-    	super(throwable);
+        super(throwable);
     }
-    
+
     public RuntimeException(String message) {
         super(message);
+    }
+
+    public RuntimeException(String message, String errorCode) {
+        super(message);
+        this.errorCode = errorCode;
     }
 
     public RuntimeException(String message, Throwable throwable) {
@@ -29,7 +34,7 @@ public class RuntimeException extends java.lang.RuntimeException {
         super(message, throwable);
         this.errorCode = errorCode;
     }
-    
+
     /**
      * @return Returns the errorCode.
      */

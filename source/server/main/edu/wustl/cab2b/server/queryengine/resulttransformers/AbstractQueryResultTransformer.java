@@ -15,6 +15,7 @@ import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.util.logger.Logger;
@@ -91,8 +92,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             queryResults = federatedQueryEngine.execute(query);
             Logger.out.info("Executed DCQL successfully.");
         } catch (FederatedQueryProcessingException e) {
-            throw new RuntimeException("Exception while executing DCQL", e,
-                    ErrorCodeConstants.QUERY_EXECUTION_ERROR);
+            throw new RuntimeException(Utility.getStackTrace(e), ErrorCodeConstants.QUERY_EXECUTION_ERROR);
         }
         Map<String, CQLQueryResults> res = new HashMap<String, CQLQueryResults>();
         for (DCQLResult dcqlQueryResult : queryResults.getDCQLResult()) {
