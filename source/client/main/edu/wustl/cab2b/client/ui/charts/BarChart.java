@@ -16,6 +16,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.Dataset;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
+import edu.wustl.cab2b.common.util.Constants.ChartOrientation;
 
 /**
  * This class generates the Bar Chart
@@ -50,32 +51,62 @@ public class BarChart extends AbstractChart {
         Cab2bTable cab2bTable = chartRawData.getCab2bTable();
         int[] selectedRowIndices = chartRawData.getSelectedRowIndices();
         int[] selectedColumnsIndices = chartRawData.getSelectedColumnsIndices();
-
-        String[] series = new String[selectedColumnsIndices.length];
-        String[] categories = new String[selectedRowIndices.length];
-
-        int i, j;
-        for (i = 0; i < selectedRowIndices.length; i++) {
-            categories[i] = "Row" + (selectedRowIndices[i] + 1);
-        }
-
-        for (j = 0; j < selectedColumnsIndices.length; j++) {
-            series[j] = cab2bTable.getColumnName(selectedColumnsIndices[j]);
-        }
+        ChartOrientation chartOrientation = chartRawData.getChartOrientation();
 
         DefaultCategoryDataset defaultcategorydataset = new DefaultCategoryDataset();
-        for (i = 0; i < selectedRowIndices.length; i++) {
+        int i, j;
+
+        if (chartOrientation == ChartOrientation.COLUMN_AS_CATEGORY) {
+            String[] series = new String[selectedColumnsIndices.length];
+            String[] categories = new String[selectedRowIndices.length];
+
+            for (i = 0; i < selectedRowIndices.length; i++) {
+                categories[i] = "Row" + (selectedRowIndices[i] + 1);
+            }
+
             for (j = 0; j < selectedColumnsIndices.length; j++) {
-                String value = (String) cab2bTable.getValueAt(selectedRowIndices[i], selectedColumnsIndices[j]);
+                series[j] = cab2bTable.getColumnName(selectedColumnsIndices[j]);
+            }
 
-                Double doubleValue = null;
-                try {
-                    doubleValue = Double.valueOf(value);
-                } catch (Exception exception) {
-                    doubleValue = 0D;
+            for (i = 0; i < selectedRowIndices.length; i++) {
+                for (j = 0; j < selectedColumnsIndices.length; j++) {
+                    String value = (String) cab2bTable.getValueAt(selectedRowIndices[i], selectedColumnsIndices[j]);
+
+                    Double doubleValue = null;
+                    try {
+                        doubleValue = Double.valueOf(value);
+                    } catch (Exception exception) {
+                        doubleValue = 0D;
+                    }
+
+                    defaultcategorydataset.addValue(doubleValue, series[j], categories[i]);
                 }
+            }
+        } else {
+            String[] series = new String[selectedRowIndices.length];
+            String[] categories = new String[selectedColumnsIndices.length];
 
-                defaultcategorydataset.addValue(doubleValue, series[j], categories[i]);
+            for (i = 0; i < selectedColumnsIndices.length; i++) {
+                categories[i] = cab2bTable.getColumnName(selectedColumnsIndices[i]);
+            }
+
+            for (j = 0; j < selectedRowIndices.length; j++) {
+                series[j] = "Row" + (selectedRowIndices[j] + 1);
+            }
+
+            for (i = 0; i < selectedColumnsIndices.length; i++) {
+                for (j = 0; j < selectedRowIndices.length; j++) {
+                    String value = (String) cab2bTable.getValueAt(selectedRowIndices[j], selectedColumnsIndices[i]);
+
+                    Double doubleValue = null;
+                    try {
+                        doubleValue = Double.valueOf(value);
+                    } catch (Exception exception) {
+                        doubleValue = 0D;
+                    }
+
+                    defaultcategorydataset.addValue(doubleValue, series[j], categories[i]);
+                }
             }
         }
 

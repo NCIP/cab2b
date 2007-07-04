@@ -12,6 +12,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
+import edu.wustl.cab2b.common.util.Constants.ChartOrientation;
 
 /**
  * This abstract class represents the common chart and implements some of the common services.
@@ -49,26 +50,49 @@ public abstract class AbstractChart {
         Cab2bTable cab2bTable = chartRawData.getCab2bTable();
         int[] selectedRowIndices = chartRawData.getSelectedRowIndices();
         int[] selectedColumnsIndices = chartRawData.getSelectedColumnsIndices();
+        ChartOrientation chartOrientation = chartRawData.getChartOrientation();
 
         XYSeries xySeries = null;
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
-        for (int i = 0; i < selectedColumnsIndices.length; i++) {
-            String seriesName = cab2bTable.getColumnName(selectedColumnsIndices[i]);
-            xySeries = new XYSeries(seriesName);
-            for (int j = 0; j < selectedRowIndices.length; j++) {
-                String value = (String) cab2bTable.getValueAt(selectedRowIndices[j], selectedColumnsIndices[i]);
 
-                Double xValue = new Double(selectedRowIndices[j]);
-                Double yValue = null;
+        if (chartOrientation == ChartOrientation.COLUMN_AS_CATEGORY) {
+            for (int i = 0; i < selectedColumnsIndices.length; i++) {
+                String seriesName = cab2bTable.getColumnName(selectedColumnsIndices[i]);
+                xySeries = new XYSeries(seriesName);
+                for (int j = 0; j < selectedRowIndices.length; j++) {
+                    String value = (String) cab2bTable.getValueAt(selectedRowIndices[j], selectedColumnsIndices[i]);
 
-                try {
-                    yValue = Double.valueOf(value);
-                } catch (Exception exception) {
-                    yValue = 0D;
+                    Double xValue = new Double(selectedRowIndices[j]);
+                    Double yValue = null;
+
+                    try {
+                        yValue = Double.valueOf(value);
+                    } catch (Exception exception) {
+                        yValue = 0D;
+                    }
+                    xySeries.add(xValue, yValue);
                 }
-                xySeries.add(xValue, yValue);
+                xySeriesCollection.addSeries(xySeries);
             }
-            xySeriesCollection.addSeries(xySeries);
+        } else {
+            for (int i = 0; i < selectedRowIndices.length; i++) {
+                String seriesName = selectedRowIndices[i] + "";
+                xySeries = new XYSeries(seriesName);
+                for (int j = 0; j < selectedColumnsIndices.length; j++) {
+                    String value = (String) cab2bTable.getValueAt(selectedRowIndices[i], selectedColumnsIndices[j]);
+
+                    Double xValue = new Double(selectedColumnsIndices[j]);
+                    Double yValue = null;
+
+                    try {
+                        yValue = Double.valueOf(value);
+                    } catch (Exception exception) {
+                        yValue = 0D;
+                    }
+                    xySeries.add(xValue, yValue);
+                }
+                xySeriesCollection.addSeries(xySeries);
+            }
         }
 
         return xySeriesCollection;

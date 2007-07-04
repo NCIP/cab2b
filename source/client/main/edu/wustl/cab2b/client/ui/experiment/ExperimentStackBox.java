@@ -482,7 +482,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         } else {
             Cab2bChartPanel cab2bChartPanel = (Cab2bChartPanel) CommonUtils.getComponentByName(currentChartPanel,
                                                                                                "cab2bChartPanel");
-            cab2bChartPanel.setChartType(chartType, entityName);
+            cab2bChartPanel.setChartType(chartType);
             tabComponent.setSelectedComponent(currentChartPanel);
         }
     }
