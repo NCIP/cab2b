@@ -2,9 +2,12 @@ package edu.wustl.cab2b.common.cache;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -29,6 +32,8 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
     protected static List<Category> categories;
 
     private static final long serialVersionUID = 1234567890L;
+
+    private Set<EntityGroupInterface> cab2bEntityGroups;
 
     /**
      * The EntityCache object. Needed for singleton
@@ -116,14 +121,17 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
      * @param entityGroups
      */
     private void createCache(Collection<EntityGroupInterface> entityGroups) {
+        Set<EntityGroupInterface> entityGroupsSet = new HashSet<EntityGroupInterface>();
         for (EntityGroupInterface entityGroup : entityGroups) {
             if (entityGroup.getName().equals(Constants.DATALIST_ENTITY_GROUP_NAME)) {
                 continue; // Ignoring entity group of datalist for caching
             }
+            entityGroupsSet.add(entityGroup);
             for (EntityInterface entity : entityGroup.getEntityCollection()) {
                 addEntityToCache(entity);
             }
         }
+        cab2bEntityGroups = Collections.unmodifiableSet(entityGroupsSet);
     }
 
     /**
@@ -277,6 +285,10 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
         idVsEntity.put(entity.getId(), entity);
         createAssociationCache(entity);
         createPermissibleValueCache(entity);
+    }
+
+    public Collection<EntityGroupInterface> getEntityGroups() {
+        return cab2bEntityGroups;
     }
 
     protected abstract Collection<EntityGroupInterface> getCab2bEntityGroups();

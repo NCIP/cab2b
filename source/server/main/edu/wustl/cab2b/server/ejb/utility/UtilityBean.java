@@ -13,6 +13,7 @@ import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.common.dynamicextensionsstubs.AssociationWrapper;
 import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
 import edu.wustl.cab2b.server.cache.DatalistCache;
+import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.cab2b.server.util.UtilityOperations;
@@ -22,7 +23,7 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Session
     private static final long serialVersionUID = 1L;
 
     public Collection<EntityGroupInterface> getCab2bEntityGroups() throws RemoteException {
-        return DynamicExtensionUtility.getCab2bEntityGroups();
+        return EntityCache.getInstance().getEntityGroups();
     }
 
     /**
