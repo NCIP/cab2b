@@ -49,10 +49,10 @@ public class ClientSideCache extends AbstractEntityCache {
         CategoryBusinessInterface categoryOperations = getCategoryBusinessInterface();
         int length = 50;
         ClientLauncher clientLauncher = ClientLauncher.getInstance();
-        clientLauncher.showProgress(" Getting all categories....", length);
+        clientLauncher.showProgress(" Fetching data from caB2B Server....", length);
         try {
             categories = categoryOperations.getAllCategories();
-            int offset = 50;
+            int offset = 40;
             if(!categories.isEmpty()) {
                 offset = offset / categories.size();
             } 
@@ -60,12 +60,11 @@ public class ClientSideCache extends AbstractEntityCache {
                 categoryVsClasseSet.put(category, categoryOperations.getAllSourceClasses(category));
                 categoryVsAttributeSet.put(category, categoryOperations.getAllSourceAttributes(category));
                 length = length + offset;
-                clientLauncher.showProgress(" Getting all categories....", length);
+                clientLauncher.showProgress(" Populating internal data structures....", length);
             }
         } catch (RemoteException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-        clientLauncher.showProgress(" Loading cache completed....", 80);
     }
 
     /*
@@ -82,10 +81,10 @@ public class ClientSideCache extends AbstractEntityCache {
                                                                                                         EjbNamesConstants.UTILITY_BEAN,
                                                                                                         UtilityHomeInterface.class);
             clientLauncher.setDeterminate();
-            clientLauncher.showProgress(" Fetching data from caB2B Server....", 20);
+            clientLauncher.showProgress(" Fetching data from caB2B Server....", 10);
             Collection<EntityGroupInterface> collection = util.getCab2bEntityGroups();
 
-            clientLauncher.showProgress(" Populating internal data structures....", 40);
+            clientLauncher.showProgress(" Populating internal data structures....", 30);
             return collection;
         } catch (RemoteException dynSysExp) {
             throw new RuntimeException(dynSysExp.getMessage(), dynSysExp);

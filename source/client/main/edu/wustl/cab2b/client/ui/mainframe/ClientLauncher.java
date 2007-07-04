@@ -18,8 +18,6 @@ import javax.swing.JProgressBar;
 
 import edu.wustl.cab2b.client.cache.ClientSideCache;
 import edu.wustl.cab2b.client.ui.dag.ClassNodeRenderer;
-import edu.wustl.cab2b.client.ui.dag.IconNodeRenderer;
-import edu.wustl.cab2b.client.ui.dag.SimpleDocumentRenderer;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.locator.LocatorException;
 
@@ -33,13 +31,10 @@ public class ClientLauncher {
 
     private static ClientLauncher clientLauncher;
 
-    private static Dimension launchImageDimension = new Dimension(442, 251); // dimension
+    private static Dimension launchImageDimension = new Dimension(442, 251); 
+    // dimension of image "progress_bar.gif"
 
-    // of
-    // image
-    // "progress_bar.gif"
-
-    private static final int progressHeight = 14;
+    private static final int progressHeight = 11;
 
     private static final int labelWidth = 20;
 
@@ -102,9 +97,9 @@ public class ClientLauncher {
 
         imagePanel.setPreferredSize(new Dimension(launchImageDimension.width, launchImageDimension.height));
         imagePanel.add(progressBarLabel, BorderLayout.SOUTH);
-
+        //imagePanel.setBorder(BorderFactory.createLineBorder(new Color(0x034E74)));
         int height = launchImageDimension.height + progressHeight;
-        launchFrame.setSize(launchImageDimension.width, height);
+        launchFrame.setSize(launchImageDimension.width+1, height+1);
         launchFrame.getContentPane().add(imagePanel, BorderLayout.CENTER);
         launchFrame.getContentPane().add(progressBar, BorderLayout.SOUTH);
         launchFrame.setLocation((screenDimension.width - launchImageDimension.width) / 2,
@@ -114,14 +109,16 @@ public class ClientLauncher {
         launchFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         launchFrame.setAlwaysOnTop(true);
         launchFrame.setUndecorated(true);
+        
         launchFrame.setVisible(true);
         Toolkit.getDefaultToolkit().setDynamicLayout(true);
 
         loadCache(); /* initializing the cache at startup */
 
+        showProgress(" Initializing graphical user interface....", 94);
         // To speed-up the first add limit.
         launchFrame.getGraphics().getFontMetrics(ClassNodeRenderer.font);
-        progressBar.setValue(100);
+        showProgress(" Launching....", 100);
         launchFrame.setVisible(false);
         launchFrame.removeAll();
         launchFrame = null;
@@ -134,12 +131,14 @@ public class ClientLauncher {
      */
     private static JProgressBar getProgressbar(int width, int height) {
         JProgressBar progressBar = new JProgressBar();
+        progressBar.setForeground(new Color(0x034E74));
+        //progressBar.setBorderPainted(false);
         progressBar.setIndeterminate(true);
-        progressBar.setPreferredSize(new Dimension(width, height));
+        progressBar.setPreferredSize(new Dimension(width+1, height+1));
         progressBar.setMinimum(0);
         progressBar.setMaximum(100);
         progressBar.setValue(0);
-        progressBar.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        progressBar.setBorder(BorderFactory.createLineBorder(new Color(0x034E74)));
         return progressBar;
     }
 
