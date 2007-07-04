@@ -22,7 +22,6 @@ import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
-import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
@@ -168,8 +167,8 @@ public class CommonUtils {
 		} catch (RuntimeException re) {
 			handleException(re, comp, true, true, false, false);
 		} catch (RemoteException e1) {
-            CheckedException e = new CheckedException(e1.getMessage(), e1, ErrorCodeConstants.QM_0004);
-            handleException(e, comp, true, true, false, false);
+            //CheckedException e = new CheckedException(e1.getMessage(), e1, ErrorCodeConstants.QM_0004);
+            handleException(getCab2bException(e1), comp, true, true, false, false);
 		}
 		return iQueryResult;
 	}
@@ -655,5 +654,17 @@ public class CommonUtils {
         userSearchCategories.add("Molecular Biospecimens");
         userSearchCategories.add("Participant Details");
         return userSearchCategories;
+    }
+    public static Exception getCab2bException(Exception e) {
+        while(e.getCause()!=null){
+            if(e.getCause() instanceof Exception) {
+                Exception e1 = (Exception)e.getCause();
+                if(e1 instanceof CheckedException || e1 instanceof RuntimeException) {
+                    return e1;
+                }
+                e = e1;
+            }
+        }
+        return e;
     }
 }

@@ -92,7 +92,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             queryResults = federatedQueryEngine.execute(query);
             Logger.out.info("Executed DCQL successfully.");
         } catch (FederatedQueryProcessingException e) {
-            throw new RuntimeException(Utility.getStackTrace(e), ErrorCodeConstants.QUERY_EXECUTION_ERROR);
+            throw new RuntimeException(Utility.getStackTrace(e), ErrorCodeConstants.QM_0004);
         }
         Map<String, CQLQueryResults> res = new HashMap<String, CQLQueryResults>();
         for (DCQLResult dcqlQueryResult : queryResults.getDCQLResult()) {
