@@ -41,7 +41,6 @@ public class EntityCache extends AbstractEntityCache {
     }
 
     protected Collection<EntityGroupInterface> getCab2bEntityGroups() {
-
         return DynamicExtensionUtility.getCab2bEntityGroups();
     }
 
