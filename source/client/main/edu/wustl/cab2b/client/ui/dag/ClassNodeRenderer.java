@@ -25,7 +25,7 @@ import edu.wustl.common.querysuite.queryobject.IExpressionId;
 
 public class ClassNodeRenderer implements IGraphNodeRenderer 
 {
-	private static Font font = Font.decode("Times-bold").deriveFont(10.0f); // NOI18N
+	public static final Font font = Font.decode("Times-bold").deriveFont(10.0f); // NOI18N
 	private static Color colorFont = new Color(0, 0, 0); // 174, 100
 
 	protected static int PORT_SPACE = 20;  // sanjeev
