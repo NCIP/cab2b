@@ -107,7 +107,7 @@ public class ClientLauncher {
         URL url = MainFrame.class.getClassLoader().getResource(CAB2B_LOGO_IMAGE);
         launchFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(url));
         launchFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        launchFrame.setAlwaysOnTop(true);
+        launchFrame.setAlwaysOnTop(false);
         launchFrame.setUndecorated(true);
         
         launchFrame.setVisible(true);
