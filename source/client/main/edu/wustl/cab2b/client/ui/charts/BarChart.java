@@ -97,15 +97,14 @@ public class BarChart extends AbstractChart {
             for (i = 0; i < selectedColumnsIndices.length; i++) {
                 for (j = 0; j < selectedRowIndices.length; j++) {
                     String value = (String) cab2bTable.getValueAt(selectedRowIndices[j], selectedColumnsIndices[i]);
-
-                    Double doubleValue = null;
+                    Double yAxisValue = null;
                     try {
-                        doubleValue = Double.valueOf(value);
+                        yAxisValue = Double.valueOf(value);
                     } catch (Exception exception) {
-                        doubleValue = 0D;
+                        yAxisValue = 0D;
                     }
 
-                    defaultcategorydataset.addValue(doubleValue, series[j], categories[i]);
+                    defaultcategorydataset.addValue(yAxisValue, series[j], categories[i]);
                 }
             }
         }
