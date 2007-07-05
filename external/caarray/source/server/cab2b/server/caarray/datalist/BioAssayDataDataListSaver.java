@@ -6,7 +6,7 @@ import static edu.wustl.cab2b.server.datalist.DataListUtil.markVirtual;
 import java.io.IOException;
 import java.util.Map;
 
-import cab2b.common.caarray.IDerivedBioAssayDataRecord;
+import cab2b.common.caarray.IBioAssayDataRecord;
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -15,7 +15,7 @@ import edu.common.dynamicextensions.domaininterface.ObjectAttributeRecordValueIn
 import edu.wustl.cab2b.server.datalist.AbstractDataListSaver;
 import edu.wustl.cab2b.server.datalist.DataListUtil;
 
-public class DerivedBioAssayDataDataListSaver extends AbstractDataListSaver<IDerivedBioAssayDataRecord> {
+public class BioAssayDataDataListSaver extends AbstractDataListSaver<IBioAssayDataRecord> {
     static final String CUBE_ATTRIBUTE_NAME = "cube";
 
     static final String DIM1LABELS_ATTRIBUTE_NAME = "dim1Labels";
@@ -34,7 +34,7 @@ public class DerivedBioAssayDataDataListSaver extends AbstractDataListSaver<IDer
     }
 
     @Override
-    public Map<AbstractAttributeInterface, Object> transformToMap(IDerivedBioAssayDataRecord record) {
+    public Map<AbstractAttributeInterface, Object> transformToMap(IBioAssayDataRecord record) {
         Map<AbstractAttributeInterface, Object> recordsMap = super.transformToMap(record);
         recordsMap.put(getAttributeByName(newEntity, CUBE_ATTRIBUTE_NAME),
                        createObjectRecordValue(record.getCube()));

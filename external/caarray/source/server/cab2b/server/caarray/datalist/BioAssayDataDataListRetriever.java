@@ -1,16 +1,16 @@
 package cab2b.server.caarray.datalist;
 
 import static edu.wustl.cab2b.server.datalist.DataListUtil.getAttributeByName;
-import static cab2b.server.caarray.datalist.DerivedBioAssayDataDataListSaver.CUBE_ATTRIBUTE_NAME;
-import static cab2b.server.caarray.datalist.DerivedBioAssayDataDataListSaver.DIM1LABELS_ATTRIBUTE_NAME;
-import static cab2b.server.caarray.datalist.DerivedBioAssayDataDataListSaver.DIM2LABELS_ATTRIBUTE_NAME;
-import static cab2b.server.caarray.datalist.DerivedBioAssayDataDataListSaver.DIM3LABELS_ATTRIBUTE_NAME;
+import static cab2b.server.caarray.datalist.BioAssayDataDataListSaver.CUBE_ATTRIBUTE_NAME;
+import static cab2b.server.caarray.datalist.BioAssayDataDataListSaver.DIM1LABELS_ATTRIBUTE_NAME;
+import static cab2b.server.caarray.datalist.BioAssayDataDataListSaver.DIM2LABELS_ATTRIBUTE_NAME;
+import static cab2b.server.caarray.datalist.BioAssayDataDataListSaver.DIM3LABELS_ATTRIBUTE_NAME;
 
 import java.util.List;
 import java.util.Set;
 
-import cab2b.common.caarray.DerivedBioAssayDataRecord;
-import cab2b.common.caarray.IDerivedBioAssayDataRecord;
+import cab2b.common.caarray.BioAssayDataRecord;
+import cab2b.common.caarray.IBioAssayDataRecord;
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -20,16 +20,16 @@ import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.cab2b.server.datalist.AbstractDataListRetriever;
 import edu.wustl.cab2b.server.datalist.DataListUtil;
 
-public class DerivedBioAssayDataDataListRetriever extends AbstractDataListRetriever<IDerivedBioAssayDataRecord> {
+public class BioAssayDataDataListRetriever extends AbstractDataListRetriever<IBioAssayDataRecord> {
 
     @Override
-    protected void copyOtherFields(IDerivedBioAssayDataRecord record, EntityRecordInterface recordInterface,
+    protected void copyOtherFields(IBioAssayDataRecord record, EntityRecordInterface recordInterface,
                                    List<? extends AbstractAttributeInterface> attributesList,
                                    EntityInterface entity) {
         if (!entity.equals(newEntity)) {
             throw new IllegalArgumentException();
         }
-        DerivedBioAssayDataRecord derivedBioAssayDataRecord = (DerivedBioAssayDataRecord) record;
+        BioAssayDataRecord derivedBioAssayDataRecord = (BioAssayDataRecord) record;
 
         int cubeAttributeIndex = attributesList.indexOf(DataListUtil.getAttributeByName(entity,
                                                                                         CUBE_ATTRIBUTE_NAME));
@@ -51,9 +51,9 @@ public class DerivedBioAssayDataDataListRetriever extends AbstractDataListRetrie
     }
 
     @Override
-    protected IDerivedBioAssayDataRecord createRecord(EntityInterface entity, Set<AttributeInterface> attributes,
+    protected IBioAssayDataRecord createRecord(EntityInterface entity, Set<AttributeInterface> attributes,
                                                       RecordId id) {
-        return new DerivedBioAssayDataRecord(attributes, id);
+        return new BioAssayDataRecord(attributes, id);
     }
 
     private Object getObjectValue(Object value) {
