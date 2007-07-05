@@ -44,8 +44,8 @@ public class PathFinderFetchPathRecordsTest extends ServletTestCase {
             fail("Unbale to get entities Participant,ParticipantMedicalIdentifier");
         }
 
-        PathFinder pf = PathFinder.getInstance();
-        List<IPath> list = pf.getAllPossiblePaths(p, pmi, ConnectionUtil.getConnection());
+        PathFinder pf = PathFinder.getInstance(ConnectionUtil.getConnection());
+        List<IPath> list = pf.getAllPossiblePaths(p, pmi);
         assertEquals(2, list.size());
         int s0 = list.get(0).getIntermediateAssociations().size();
         boolean res = (s0 == 1 || s0 == 4);

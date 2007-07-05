@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.server.ejb;
 
 import java.rmi.RemoteException;
+import java.sql.Connection;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -9,6 +10,8 @@ import javax.ejb.SessionContext;
 
 import edu.wustl.cab2b.server.cache.DatalistCache;
 import edu.wustl.cab2b.server.cache.EntityCache;
+import edu.wustl.cab2b.server.path.PathFinder;
+import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -19,6 +22,7 @@ import edu.wustl.common.util.logger.Logger;
  */
 public abstract class AbstractStatelessSessionBean implements SessionBean {
     SessionContext sessionContext;
+
     /**
      * @throws CreateException
      */
@@ -50,12 +54,16 @@ public abstract class AbstractStatelessSessionBean implements SessionBean {
      * (non-Javadoc)
      * @see javax.ejb.SessionBean#setSessionContext(javax.ejb.SessionContext)
      */
-    public void setSessionContext(SessionContext sessionContext) throws EJBException,
-            RemoteException
-    {
+    public void setSessionContext(SessionContext sessionContext) throws EJBException, RemoteException {
         this.sessionContext = sessionContext;
         Logger.configure("caB2B.logger");
         EntityCache.getInstance();
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            PathFinder.getInstance(connection);
+        } finally {
+            ConnectionUtil.close(connection);
+        }
         DatalistCache.getInstance();
     }
 }

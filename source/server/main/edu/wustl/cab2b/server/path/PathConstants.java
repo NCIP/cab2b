@@ -43,9 +43,9 @@ public class PathConstants {
      */
     public static final String FIELD_SEPARATOR = "###";
 
-        /**
-         * Represents the String used as record separator while generating the file
-         */
+    /**
+     * Represents the String used as record separator while generating the file
+     */
     public static final String LINE_SEPERATOR = System.getProperty("line.separator");
 
     /**
@@ -61,14 +61,36 @@ public class PathConstants {
     public static final String CA_DSR_URL = "http://cagrid04.bmi.ohio-state.edu:7080/wsrf/services/cagrid/CaDSRService";
 
     /**
-     *Constant to represents association of type INTER_MODEL_ASSOCIATION.
-     *It is one of the possible value which column "ASSOCIATION.ASSOCIATION_TYPE" can take. 
+     * Enum to represents possible value which column "ASSOCIATION.ASSOCIATION_TYPE" can take.  
+     * @author Chandrakant Talele
      */
-    public static final Integer INTER_MODEL_ASSOCIATION_TYPE = 1;
+    public enum AssociationType {
+        INTER_MODEL_ASSOCIATION(1), INTRA_MODEL_ASSOCIATION(2);
+        private int value;
 
-    /**
-     *Constant to represents association of type INTRA_MODEL_ASSOCIATION.
-     *It is one of the possible value which column "ASSOCIATION.ASSOCIATION_TYPE" can take. 
-     */
-    public static final Integer INTRA_MODEL_ASSOCIATION_TYPE = 2;
+        AssociationType(int value) {
+            this.value = value;
+        }
+
+        /**
+         * @return int value associated with enum
+         */
+        public int getValue() {
+            return value;
+        }
+
+        /**
+         * @param value Get type based in int value
+         * @return
+         */
+        public static AssociationType getType(int value) {
+            if (value == 1) {
+                return AssociationType.INTER_MODEL_ASSOCIATION;
+            }
+            if (value == 2){
+                return AssociationType.INTRA_MODEL_ASSOCIATION;
+            }
+            throw new IllegalArgumentException();
+        }
+    }
 }

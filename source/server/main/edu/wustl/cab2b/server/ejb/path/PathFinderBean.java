@@ -1,7 +1,6 @@
 package edu.wustl.cab2b.server.ejb.path;
 
 import java.rmi.RemoteException;
-import java.sql.Connection;
 import java.util.List;
 import java.util.Set;
 
@@ -9,7 +8,6 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.path.PathFinder;
-import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
@@ -36,14 +34,7 @@ public class PathFinderBean extends AbstractStatelessSessionBean implements Path
      */
     public List<IPath> getAllPossiblePaths(EntityInterface source, EntityInterface destination)
             throws RemoteException {
-        List<IPath> pathList = null;
-        Connection connection = ConnectionUtil.getConnection();
-        try {
-            pathList = PathFinder.getInstance().getAllPossiblePaths(source, destination, connection);
-        } finally {
-            ConnectionUtil.close(connection);
-        }
-        return pathList;
+        return PathFinder.getInstance().getAllPossiblePaths(source, destination);
     }
 
     /**
@@ -54,14 +45,7 @@ public class PathFinderBean extends AbstractStatelessSessionBean implements Path
      * @see edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface#getInterModelAssociations(Long)
      */
     public List<IInterModelAssociation> getInterModelAssociations(Long sourceEntityId) throws RemoteException {
-        List<IInterModelAssociation> interModelAssociations = null;
-        Connection connection = ConnectionUtil.getConnection();
-        try {
-            interModelAssociations = PathFinder.getInstance().getInterModelAssociations(sourceEntityId, connection);
-        } finally {
-            ConnectionUtil.close(connection);
-        }
-        return interModelAssociations;
+        return PathFinder.getInstance().getInterModelAssociations(sourceEntityId);
     }
 
     /**
@@ -74,14 +58,7 @@ public class PathFinderBean extends AbstractStatelessSessionBean implements Path
      * @see edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface#findPath(edu.common.dynamicextensions.domaininterface.EntityInterface, edu.common.dynamicextensions.domaininterface.EntityInterface)
      */
     public Set<ICuratedPath> getCuratedPaths(EntityInterface source, EntityInterface destination) throws RemoteException {
-        Set<ICuratedPath> curatedPaths = null;
-        Connection connection = ConnectionUtil.getConnection();
-        try {
-            curatedPaths = PathFinder.getInstance().getCuratedPaths(source, destination, connection);
-        } finally {
-            ConnectionUtil.close(connection);
-        }
-        return curatedPaths;
+        return PathFinder.getInstance().getCuratedPaths(source, destination);
     }
 
     /**
@@ -92,13 +69,6 @@ public class PathFinderBean extends AbstractStatelessSessionBean implements Path
      * @see edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface#autoConnect(Set)
      */
     public Set<ICuratedPath> autoConnect(Set<EntityInterface> entitySet) throws RemoteException {
-        Set<ICuratedPath> curatedPaths = null;
-        Connection connection = ConnectionUtil.getConnection();
-        try {
-            curatedPaths = PathFinder.getInstance().autoConnect(entitySet, connection);
-        } finally {
-            ConnectionUtil.close(connection);
-        }
-        return curatedPaths;
+        return PathFinder.getInstance().autoConnect(entitySet);
     }
 }

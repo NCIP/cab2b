@@ -4,14 +4,13 @@ import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DB_0003;
 import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DE_0004;
 import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.IO_0001;
 import static edu.wustl.cab2b.common.util.Constants.CONNECTOR;
+import static edu.wustl.cab2b.server.ServerConstants.SERVER_PROPERTY_FILE;
 import static edu.wustl.cab2b.server.path.PathConstants.ASSOCIATION_FILE_NAME;
 import static edu.wustl.cab2b.server.path.PathConstants.FIELD_SEPARATOR;
 import static edu.wustl.cab2b.server.path.PathConstants.INTER_MODEL_ASSOCIATION_FILE_NAME;
-import static edu.wustl.cab2b.server.path.PathConstants.INTER_MODEL_ASSOCIATION_TYPE;
 import static edu.wustl.cab2b.server.path.PathConstants.INTRA_MODEL_ASSOCIATION_FILE_NAME;
-import static edu.wustl.cab2b.server.path.PathConstants.INTRA_MODEL_ASSOCIATION_TYPE;
 import static edu.wustl.cab2b.server.path.PathConstants.PATH_FILE_NAME;
-import static edu.wustl.cab2b.server.ServerConstants.SERVER_PROPERTY_FILE;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,7 +18,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -46,6 +44,7 @@ import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.IdGenerator;
 import edu.wustl.cab2b.common.util.PropertyLoader;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.cab2b.server.path.PathConstants.AssociationType;
 import edu.wustl.cab2b.server.path.pathgen.GraphPathFinder;
 import edu.wustl.cab2b.server.path.pathgen.Path;
 import edu.wustl.cab2b.server.path.pathgen.PathToFileWriter;
@@ -222,7 +221,7 @@ public class PathBuilder {
         for (Long associationId : associationIdSet) {
             associationFile.write(Long.toString(nextId));
             associationFile.write(FIELD_SEPARATOR);
-            associationFile.write(Integer.toString(INTRA_MODEL_ASSOCIATION_TYPE));
+            associationFile.write(Integer.toString(AssociationType.INTRA_MODEL_ASSOCIATION.getValue()));
             associationFile.write("\n");
             associationFile.flush();
 
@@ -471,7 +470,7 @@ public class PathBuilder {
         for (InterModelConnection interModelConnection : interModelConnections) {
             associationFile.write(Long.toString(nextId));
             associationFile.write(FIELD_SEPARATOR);
-            associationFile.write(Integer.toString(INTER_MODEL_ASSOCIATION_TYPE));
+            associationFile.write(Integer.toString(AssociationType.INTER_MODEL_ASSOCIATION.getValue()));
             associationFile.write("\n");
             associationFile.flush();
 

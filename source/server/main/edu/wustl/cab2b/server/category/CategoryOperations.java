@@ -149,7 +149,7 @@ public class CategoryOperations extends DefaultBizLogic {
         Long pathId = categorialClass.getPathFromParentId();
         if (pathId != null && pathId.intValue() != -1) {
             // this is a NON - root class
-            IPath path = PathFinder.getInstance().getPathById(pathId, con);
+            IPath path = PathFinder.getInstance(con).getPathById(pathId);
             categorialClass.setPathFromParent((Path) path);
         }
         long deEntityId = categorialClass.getDeEntityId();
