@@ -143,9 +143,9 @@ public class ResultConfigurationParser {
      * Method to parse Attribute values under entity tag and store them in map
      */
 
-    private void setElementData(List<Element> elementList, String mapKey) {
+    private void setElementData(List<Element> elementList, String parentMapKey) {
         for (Element entityElement : elementList) {
-
+            String mapKey = parentMapKey;
             if (entityElement.attributeValue(NAME) != null) {
                 mapKey = mapKey + KEY_DELIM + entityElement.attributeValue(NAME);
             }
