@@ -232,36 +232,38 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
      * @see edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface#getCSVData()
      */
     public String getCSVData() {
+
         StringBuffer sb = new StringBuffer();
 
         // Save data to selected file
         TableModel model = table.getModel();
         int totalColumns = table.getColumnCount();
         for (int j = 1; j < totalColumns; j++) {
-            if (j != 1) {
+
+            if (j != 1)
                 sb.append(",");
-            }
 
             //If special character in the column name put it into double quotes
             String text = model.getColumnName(j);
-            text = escapeString(text);
+            text = CommonUtils.escapeString(text);
             sb.append(text);
         }
         sb.append("\n");
 
         // Write the actual column values to file
-        for (int i = 0; i < table.getSelectedRows().length; i++) {
+        for (int i = 0; i < table.getRowCount(); i++) {
             for (int j = 1; j < totalColumns; j++) {
-                Object object = table.getValueAt(table.getSelectedRows()[i], j);
-                if (j != 1) {
+                Object object = table.getValueAt(i, j);
+
+                if (j != 1)
                     sb.append(",");
-                }
+
                 if (object == null) {
                     sb.append("");
                 } else {
                     //If special character in the column name put it into double quotes
                     String text = object.toString();
-                    text = escapeString(text);
+                    text = CommonUtils.escapeString(text);
                     sb.append(text);
                 }
             }
@@ -269,6 +271,7 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
         }
 
         return sb.toString();
+
     }
 
     public int getNoOfSelectedRows() {
@@ -277,13 +280,6 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
 
     public ApplyFilterPanel getFilterPanel() {
         return applyFilterPanel;
-    }
-
-    private String escapeString(String input) {
-        if (input.indexOf(",") != -1) {
-            input = "\"" + input + "\"";
-        }
-        return input;
     }
 
     class IconMouseListner extends MouseAdapter {
@@ -295,8 +291,8 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
                 DefaultDetailedPanel defaultDetailedPanel = ResultPanelFactory.getResultDetailedPanel(records.get(table.convertRowIndexToModel(row)));
                 //WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, defaultDetailedPanel, "Details", new Dimension(750, 580), true, true);
                 Container container = table.getParent().getParent().getParent().getParent().getParent().getParent();
-                if(container != null && container instanceof ExperimentDataCategoryGridPanel) {
-                    ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel = (ExperimentDataCategoryGridPanel)container;
+                if (container != null && container instanceof ExperimentDataCategoryGridPanel) {
+                    ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel = (ExperimentDataCategoryGridPanel) container;
                     experimentDataCategoryGridPanel.addDetailTabPanel("Details" + row + 1, defaultDetailedPanel);
                 }
             }

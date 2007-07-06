@@ -82,7 +82,29 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
      * @see edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface#getCSVData()
      */
     public String getCSVData() {
-        return "";
+        StringBuffer sb = new StringBuffer();
+
+        // Write the actual column values to file
+        for (int j = 0; j < 2; j++) {
+            for (int i = 0; i < objDetailsTable.getRowCount(); i++) {
+                Object object = objDetailsTable.getValueAt(i, j);
+
+                if (i != 0)
+                    sb.append(",");
+
+                if (object == null) {
+                    sb.append("");
+                } else {
+                    //If special character in the column name put it into double quotes
+                    String text = object.toString();
+                    text = CommonUtils.escapeString(text);
+                    sb.append(text);
+                }
+            }
+            sb.append("\n");
+        }
+
+        return sb.toString();
     }
 
     /**
