@@ -37,7 +37,7 @@ import edu.wustl.common.util.logger.Logger;
  * @author Chandrakant Talele
  */
 public class PathFinder {
-    static private PathFinder pathFinder;
+    private static PathFinder pathFinder;
 
     private List<InterModelConnection> interModelConnections;
 
@@ -49,24 +49,47 @@ public class PathFinder {
 
     private Map<String, Set<ICuratedPath>> entitySetVsCuratedPath;
 
-    private Map<Long, List<IInterModelAssociation>> leftEntityVsInterModelAssociation;// = new HashMap<Long, IInterModelAssociation>();
+    private Map<Long, List<IInterModelAssociation>> leftEntityVsInterModelAssociation;
 
     /**
+     * This gives the singleton instance of the pathFinder class. If not it creates it. 
+     * For one run, this should be called at least once. 
+     * The instance created can then be accessed by {@link PathFinder#getInstance()}
+     * @param con Database connection to use
      * @return Returns the singleton instance of the pathFinder class.
      */
     public static synchronized PathFinder getInstance(Connection con) {
         if (pathFinder == null) {
             Logger.out.info("PathFinder Called first Time.Loading cache...");
             pathFinder = new PathFinder();
-            pathFinder.cacheThings(con);
+            pathFinder.refreshCache(con);
         }
         return pathFinder;
     }
+    /**
+     * Drops all the static data structures and creates them with latest database state
+     * @param con Database connection to use 
+     */
+    public synchronized void refreshCache(Connection con) {
+        populateCache(con);
+    }
 
+    /**
+     * Populates all the data structures needed for path finding. 
+     * @param con Database connection to use
+     */
+    private void populateCache(Connection con) {
+        interModelConnections = cacheInterModelConnections(con);
+        pathRecordCache = cachePathRecords(con);
+        idVsAssociation = cacheAssociationTypes(con);
+        entitySetVsCuratedPath = cacheCuratedPaths(con);
+    }
+    /**
+     * @return Returns the singleton instance of the pathFinder class.
+     */
     public static synchronized PathFinder getInstance() {
         if (pathFinder == null) {
-            throw new IllegalStateException(
-                    "to get PathFinder with this method, it must be initialized using a connection before this call");
+            throw new IllegalStateException("to get PathFinder with this method, it must be initialized using a connection before this call");
         }
         return pathFinder;
     }
@@ -76,7 +99,6 @@ public class PathFinder {
      * If no curated path is present, a empty set will be returned.
      * @param source The source entity
      * @param destination The destination entity
-     * @param con Database connection to use
      * @return Set of curated paths
      */
     public Set<ICuratedPath> getCuratedPaths(EntityInterface source, EntityInterface destination) {
@@ -102,7 +124,6 @@ public class PathFinder {
     /**
      * Finds all curated paths defined for given set of entities.
      * @param entitySet Set of entities
-     * @param con Database connection to use
      * @return Set of curated paths
      */
     public Set<ICuratedPath> autoConnect(Set<EntityInterface> entitySet) {
@@ -126,7 +147,6 @@ public class PathFinder {
      * 
      * @param sourceList collection of classes each of which will be treated as source.
      * @param destination End of the path 
-     * @param con Database connection to be used.
      * @return Returns the Map<EntityInterface,List<IPath>>
      */
     public Map<EntityInterface, List<IPath>> getAllPossiblePaths(List<EntityInterface> sourceList,
@@ -144,6 +164,13 @@ public class PathFinder {
         return mapToReturn;
     }
 
+    /**
+     * Finds all possible paths present between given "source" to "destination". Returns list of all possible paths.<br>
+     * If no path found it returns a empty list. This method can be used when a new class is added in DAG view.
+     * @param source Start of the path.
+     * @param destination End of the path 
+     * @return Returns the List<IPath>
+     */
     public List<IPath> getAllPossiblePaths(EntityInterface source, EntityInterface destination) {
         Logger.out.debug("Entering in method getAllPossiblePaths()");
         Long desEntityId = destination.getId();
@@ -156,7 +183,7 @@ public class PathFinder {
         //Are they belong to same entity group ?? 
         if (desEntityGroup.equals(srcEntityGroup)) {
             Logger.out.info("Finding intramodel paths between : " + srcName + " and " + desName);
-            List<PathRecord> pathRecords = fetchPathRecords(srcEntityId, desEntityId);
+            List<PathRecord> pathRecords = getPathRecords(srcEntityId, desEntityId);
             List<IPath> pathList = new ArrayList<IPath>(getPathList(pathRecords));
             return pathList;
         } else {
@@ -165,18 +192,16 @@ public class PathFinder {
             for (InterModelConnection interModelConnection : interModelConnections) {
 
                 Long leftEntityId = interModelConnection.getLeftEntityId();
-                EntityGroupInterface leftEntityGroup = Utility.getEntityGroup(getCache().getEntityById(
-                                                                                                       leftEntityId));
+                EntityGroupInterface leftEntityGroup = Utility.getEntityGroup(getCache().getEntityById(leftEntityId));
                 if (srcEntityGroup.equals(leftEntityGroup)) {
 
                     Long rightEntityId = interModelConnection.getRightEntityId();
-                    EntityGroupInterface rightEntityGroup = Utility.getEntityGroup(getCache().getEntityById(
-                                                                                                            rightEntityId));
+                    EntityGroupInterface rightEntityGroup = Utility.getEntityGroup(getCache().getEntityById(rightEntityId));
 
                     if (rightEntityGroup.equals(desEntityGroup)) {
                         List<Path> pathsSrcToLeftEntity = new ArrayList<Path>();
                         if (!srcEntityId.equals(leftEntityId)) {
-                            List<PathRecord> pathRecordsSrcToLeftEntity = fetchPathRecords(srcEntityId,
+                            List<PathRecord> pathRecordsSrcToLeftEntity = getPathRecords(srcEntityId,
                                                                                            leftEntityId);
                             if (pathRecordsSrcToLeftEntity.size() == 0) {
                                 continue;
@@ -185,7 +210,7 @@ public class PathFinder {
                         }
                         List<Path> pathsRightEntityToDes = new ArrayList<Path>();
                         if (!rightEntityId.equals(desEntityId)) {
-                            List<PathRecord> pathRecordsRightEntityToDes = fetchPathRecords(rightEntityId,
+                            List<PathRecord> pathRecordsRightEntityToDes = getPathRecords(rightEntityId,
                                                                                             desEntityId);
                             if (pathRecordsRightEntityToDes.size() == 0) {
                                 continue;
@@ -193,13 +218,11 @@ public class PathFinder {
                             pathsRightEntityToDes = getPathList(pathRecordsRightEntityToDes);
                         }
                         InterModelAssociation association = getInterModelAssociation(interModelConnection);
-                        List<IPath> pathList = connectPaths(pathsSrcToLeftEntity, association,
-                                                            pathsRightEntityToDes);
+                        List<IPath> pathList = connectPaths(pathsSrcToLeftEntity, association,pathsRightEntityToDes);
                         return pathList;
                     }
                 }
             }
-
         }
         return new ArrayList<IPath>(0);
     }
@@ -272,33 +295,23 @@ public class PathFinder {
      * @param con Database connection to use for fetching the intermodel connections
      * @return List of all InterModelConnection.
      */
-    private List<InterModelConnection> getAllInterModelConnections(Connection con) {
+    private List<InterModelConnection> cacheInterModelConnections(Connection con) {
         String sql = "select LEFT_ENTITY_ID,LEFT_ATTRIBUTE_ID,RIGHT_ENTITY_ID,RIGHT_ATTRIBUTE_ID from INTER_MODEL_ASSOCIATION";
         String[][] result = executeQuery(sql, con);
-        List<InterModelConnection> interModelConnections = getInterModelAssociations(result);
+        List<InterModelConnection> interModelConnections = new ArrayList<InterModelConnection>(result.length);
+        for (int i = 0; i < result.length; i++) {
+            Long leftEntityId = Long.parseLong(result[i][0]);
+            Long leftAttrId = Long.parseLong(result[i][1]);
+            Long rightEntityId = Long.parseLong(result[i][2]);
+            Long rightAttrId = Long.parseLong(result[i][3]);
+
+            AttributeInterface leftAttr = getAttribute(leftEntityId, leftAttrId);
+            AttributeInterface rightAttr = getAttribute(rightEntityId, rightAttrId);
+
+            interModelConnections.add(new InterModelConnection(leftAttr, rightAttr));
+        }
+        
         return interModelConnections;
-    }
-
-    /**
-     * Generates a Path for each PathRecord and returns it.
-     * @param pathRecords Array of PathRecords to process
-     * @param con Database connection to use.
-     * @return Returns the List of Generated Paths.
-     */
-    List<Path> getPathList(InterModelConnection interModelConnection) {
-        InterModelAssociation association = getInterModelAssociation(interModelConnection);
-        EntityInterface src = association.getSourceEntity();
-        EntityInterface des = association.getTargetEntity();
-
-        List<IAssociation> list = new ArrayList<IAssociation>(1);
-        list.add(association);
-
-        Path path = new Path(src, des, list);
-
-        ArrayList<Path> returnList = new ArrayList<Path>(1);
-        returnList.add(path);
-
-        return returnList;
     }
 
     /**
@@ -345,15 +358,13 @@ public class PathFinder {
     }
 
     /**
-     * This method fetches all the paths from database from table PATH.
-     * It then popullates {@link PathRecord} object per row and returns the array.
-     * This is to encapsulate the database code from other.  
+     * This method returns all the paths present between given "srcId" and "desId".
      * @param srcId Source entity Id
      * @param desId Target Entity Id
-     * @return Returns the PathRecord[] all records 
+     * @return List of PathRecord 
      */
-    List<PathRecord> fetchPathRecords(long srcId, long desId) {
-        String key = srcId + "_" + desId;
+    private List<PathRecord> getPathRecords(long srcId, long desId) {
+        String key = srcId + PathConstants.ID_CONNECTOR + desId;
         if (pathRecordCache.containsKey(key)) {
             return pathRecordCache.get(key);
         }
@@ -361,13 +372,11 @@ public class PathFinder {
     }
 
     /**
-     * This method fetches all the paths from database from table PATH.
-     * It then popullates {@link PathRecord} object per row and returns the array.
-     * This is to encapsulate the database code from other.  
-     * @param srcId Source entity Id
-     * @param desId Target Entity Id
+     * This method caches all the paths table PATH in path records form.
+     * It also populates Map of path id V/s its PathRecord
      * @param connection Database connection to use to fire queries.
-     * @return Returns the PathRecord[] all records 
+     * @return Map with String as KEY and VALUE is List<PathRecord>
+     * KEY string will be formed using concatenating first entity id to last entity id by {@link PathConstants#ID_CONNECTOR}
      */
     private Map<String, List<PathRecord>> cachePathRecords(Connection connection) {
         Logger.out.debug("Entering in method cachePathRecords");
@@ -378,7 +387,7 @@ public class PathFinder {
         idVsPathRecord = new HashMap<Long, PathRecord>(resultSet.length);
         for (int i = 0; i < resultSet.length; i++) {
             PathRecord pathRecord = getPathRecord(resultSet[i]);
-            String key = pathRecord.getFirstEntityId() + "_" + pathRecord.getLastEntityId();
+            String key = pathRecord.getFirstEntityId() + PathConstants.ID_CONNECTOR + pathRecord.getLastEntityId();
             idVsPathRecord.put(pathRecord.getPathId(), pathRecord);
             if (pathRecordCache.containsKey(key)) {
                 pathRecordCache.get(key).add(pathRecord);
@@ -393,8 +402,8 @@ public class PathFinder {
     }
 
     /**
-     * @param record
-     * @return
+     * @param record String[] returned by SQL
+     * @return Path record for that record
      */
     private PathRecord getPathRecord(String[] record) {
         Long pathId = Long.parseLong(record[0]);
@@ -425,27 +434,6 @@ public class PathFinder {
         List<IInterModelAssociation> list = leftEntityVsInterModelAssociation.get(sourceEntityId);
         if (list == null) {
             list = new ArrayList<IInterModelAssociation>(0);
-        }
-        return list;
-    }
-
-    /**
-     * @param result Result array where each row represents a row in INTER_MODEL_ASSOCIATION.
-     * Order of column is LEFT_ENTITY_ID,LEFT_ATTRIBUTE_ID,RIGHT_ENTITY_ID,RIGHT_ATTRIBUTE_ID 
-     * @return List of InterModelConnection.
-     */
-    private List<InterModelConnection> getInterModelAssociations(String[][] result) {
-        List<InterModelConnection> list = new ArrayList<InterModelConnection>(result.length);
-        for (int i = 0; i < result.length; i++) {
-            Long leftEntityId = Long.parseLong(result[i][0]);
-            Long leftAttrId = Long.parseLong(result[i][1]);
-            Long rightEntityId = Long.parseLong(result[i][2]);
-            Long rightAttrId = Long.parseLong(result[i][3]);
-
-            AttributeInterface leftAttr = getAttribute(leftEntityId, leftAttrId);
-            AttributeInterface rightAttr = getAttribute(rightEntityId, rightAttrId);
-
-            list.add(new InterModelConnection(leftAttr, rightAttr));
         }
         return list;
     }
@@ -503,9 +491,10 @@ public class PathFinder {
     }
 
     /**
-     * @param con
+     * Caches all the curated paths present in the system.
+     * @param con Database connection to use
      */
-    private Map<String, Set<ICuratedPath>> getAllCuratedPaths(Connection con) {
+    private Map<String, Set<ICuratedPath>> cacheCuratedPaths(Connection con) {
         Map<String, Set<ICuratedPath>> entitySetVsCuratedPath = new HashMap<String, Set<ICuratedPath>>();
         HashMap<Long, CuratedPath> idVsCuratedPath = new HashMap<Long, CuratedPath>();
         String sql = "SELECT CURATED_PATH.curated_path_Id,entity_ids,selected,path_id from CURATED_PATH JOIN CURATED_PATH_TO_PATH ON CURATED_PATH.curated_path_Id = CURATED_PATH_TO_PATH.curated_path_Id";
@@ -535,22 +524,12 @@ public class PathFinder {
         return entitySetVsCuratedPath;
     }
 
+
+
     /**
-     * Drops all the static data structures and creates them with latest database state 
+     * @param con Database connection to be used
+     * @return Map with KEY as caB2B-Association ID v/s IAssociation 
      */
-    public void refreshCache() {
-        interModelConnections = null;
-        pathRecordCache = null;
-        entitySetVsCuratedPath = null;
-    }
-
-    private void cacheThings(Connection con) {
-        interModelConnections = getAllInterModelConnections(con);
-        pathRecordCache = cachePathRecords(con);
-        idVsAssociation = cacheAssociationTypes(con);
-        entitySetVsCuratedPath = getAllCuratedPaths(con);
-    }
-
     private Map<Long, IAssociation> cacheAssociationTypes(Connection con) {
         String[][] intraModelRecords = executeQuery("select ASSOCIATION_ID,DE_ASSOCIATION_ID from INTRA_MODEL_ASSOCIATION",con);
         String[][] interModelRecords = executeQuery("select LEFT_ENTITY_ID,LEFT_ATTRIBUTE_ID,RIGHT_ENTITY_ID,RIGHT_ATTRIBUTE_ID,ASSOCIATION_ID from INTER_MODEL_ASSOCIATION",con);
