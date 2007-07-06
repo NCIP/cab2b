@@ -20,7 +20,7 @@ public class ExpressionPanel extends JPanel
 		this.setLayout(flowLayout);
 		Border blackline = BorderFactory.createLineBorder(Color.black);
 		this.setBorder(blackline);
-		this.setBackground(new Color(0xFFFFAA));
+		this.setBackground(new Color(255,235,185));
 		label = new JLabel();
 		label.setFont(new Font("Arial", Font.PLAIN, 12));
 		label.setText(displayString);
