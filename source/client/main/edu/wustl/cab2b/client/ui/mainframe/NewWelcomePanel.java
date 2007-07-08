@@ -1,5 +1,7 @@
 package edu.wustl.cab2b.client.ui.mainframe;
 
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.MAIN_FRAME_TITLE;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.IOException;
@@ -17,7 +19,9 @@ import edu.wustl.cab2b.client.ui.SaveDatalistPanel;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bStandardFonts;
+import edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
  * Loads a html page from the local file system and shows it in the editor pane.
@@ -56,7 +60,7 @@ public class NewWelcomePanel extends Cab2bPanel {
                         SaveDatalistPanel.isDataListSaved = false;
 
                         WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel,
-                                                     "Search Data", new Dimension((int) (dimension.width * 0.90),
+                                                     ApplicationProperties.getValue(ApplicationResourceConstants.SEARCH_FRAME_TITLE), new Dimension((int) (dimension.width * 0.90),
                                                              (int) (dimension.height * 0.85)), true, true);
                     } else {
                         JOptionPane.showMessageDialog(mainFrame, "Yet to Implement");
