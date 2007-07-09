@@ -223,10 +223,10 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable {
         String cnt = "";
         int size = getChildren().size();
         if(size!=0) {
-            cnt = "(" + size +")";
+            cnt = " (" + size +")";
         }
         if (getId() != null)
-            label = label + getId();
+            label = label + "_" + getId();
         else
             label += cnt;
         return label;
