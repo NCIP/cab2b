@@ -537,7 +537,7 @@
 
 	<!-- create the client jar for Java Web Start deployment -->
 	<!-- this jar includes contents of conf/ and images/ and is signed -->
-	<target name="build.client.webstart.jar" depends="clean.all, compile.client" description="create the client jar for Java Web Start deployment">
+	<target name="build.client.webstart.war" depends="clean.all, compile.client" description="create the client jar for Java Web Start deployment">
 		<mkdir dir="${client.jar.dir}" />
 		<mkdir dir="${webstart.client.dir}" />
 		<mkdir dir="${webstart.jnlp.dir}" />
