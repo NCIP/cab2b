@@ -79,8 +79,9 @@ public class DataListDetailedPanelContainer extends Cab2bPanel implements Action
         boolean done = false;
         do {
             JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setFileFilter(new Cab2bFileFilter(new String[] { "csv" }));
-            int status = fileChooser.showSaveDialog(this);
+            fileChooser.setAcceptAllFileFilterUsed(false);
+            fileChooser.setFileFilter(new Cab2bFileFilter(new String[] { "csv" }));            
+            int status = fileChooser.showSaveDialog(this);                        
             if (JFileChooser.APPROVE_OPTION == status) {
                 File selFile = fileChooser.getSelectedFile();
                 String fileName = selFile.getAbsolutePath();
