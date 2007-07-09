@@ -1,5 +1,13 @@
 package edu.wustl.cab2b.client.ui.mainframe;
+
 import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.SEARCH_FRAME_TITLE;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.EXPT_TAB_PRESSED;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.EXPT_TAB_UNPRESSED;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.HOME_TAB_PRESSED;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.HOME_TAB_UNPRESSED;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.SEARCH_TAB_PRESSED;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.SEARCH_TAB_UNPRESSED;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -31,12 +39,6 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.HOME_TAB_UNPRESSED;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.HOME_TAB_PRESSED;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.SEARCH_TAB_UNPRESSED;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.SEARCH_TAB_PRESSED;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.EXPT_TAB_UNPRESSED;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.EXPT_TAB_PRESSED;
 
 /**
  * This class creates a glassPane over the icons and adds tab-buttons to the
@@ -67,7 +69,7 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
     private JLabel middleLabel;
 
     private JLabel rightLabel;
-    
+
     private JButton lastSelectedTab;
 
     private static final long serialVersionUID = 1L;
@@ -115,7 +117,7 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
             tabButtons[i].addActionListener(this);
             tabsPanel.add(tabButtons[i]);
         }
-        
+
         ImageIcon icon = new ImageIcon(tabsImagesPressed[0]);
         tabButtons[0].setIcon(icon);
         gbc.gridx = 3;
@@ -199,7 +201,7 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Logger.out.debug("Global Nagigation Panel Button");
         JButton button = (JButton) e.getSource();
-        if (button.equals(tabButtons[0])) {
+        if (button == tabButtons[0]) {
             tabButtons[0].setIcon(new ImageIcon(tabsImagesPressed[0]));
             tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
             tabButtons[2].setIcon(new ImageIcon(tabsImagesUnPressed[2]));
@@ -207,8 +209,9 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
                 MainFrame mainframePanel = (MainFrame) this.frame;
                 mainframePanel.setHomeWelcomePanel();
                 Logger.out.debug("Global Nagigation Panel Home Button");
-            }            
-        } else if (button.equals(tabButtons[1])) {
+            }
+            lastSelectedTab = button;
+        } else if (button == tabButtons[1]) {
             tabButtons[0].setIcon(new ImageIcon(tabsImagesUnPressed[0]));
             tabButtons[1].setIcon(new ImageIcon(tabsImagesPressed[1]));
             tabButtons[2].setIcon(new ImageIcon(tabsImagesUnPressed[2]));
@@ -226,28 +229,27 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
             MainFrame.mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
             Dimension dimension = MainFrame.mainframeScreenDimesion;
             final String title = ApplicationProperties.getValue(SEARCH_FRAME_TITLE);
-            WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel, title,
-                                         new Dimension((int) (dimension.width * 0.90),
-                                                 (int) (dimension.height * 0.85)), true, true);
+            WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel, title, new Dimension(
+                    (int) (dimension.width * 0.90), (int) (dimension.height * 0.85)), true, true);
 
             MainSearchPanel.getDataList().clear();
             GlobalNavigationPanel.mainSearchPanel = null;
 
             // Set the Home tab as pressed and Search tab as unpressed
-            if(lastSelectedTab != null && lastSelectedTab.equals(tabButtons[0])) {
+            if (lastSelectedTab != null && lastSelectedTab == tabButtons[0]) {
                 lastSelectedTab.setIcon(new ImageIcon(tabsImagesPressed[0]));
-            } else if(lastSelectedTab != null && lastSelectedTab.equals(tabButtons[2])) {
+            } else if (lastSelectedTab != null && lastSelectedTab == tabButtons[2]) {
                 lastSelectedTab.setIcon(new ImageIcon(tabsImagesPressed[2]));
             }
             tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
-        } else if (button.equals(tabButtons[2])) {
+        } else if (button == tabButtons[2]) {
             tabButtons[0].setIcon(new ImageIcon(tabsImagesUnPressed[0]));
             tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
             tabButtons[2].setIcon(new ImageIcon(tabsImagesPressed[2]));
             MainFrame mainframePanel = (MainFrame) this.frame;
             mainframePanel.setOpenExperimentWelcomePanel();
+            lastSelectedTab = button;
         }
-        lastSelectedTab = button;
 
         this.updateUI();
         this.repaint();
