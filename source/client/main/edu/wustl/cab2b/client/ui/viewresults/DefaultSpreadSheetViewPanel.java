@@ -249,11 +249,13 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
             sb.append(text);
         }
         sb.append("\n");
+        
+        int []selectedRows = table.getSelectedRows();
 
         // Write the actual column values to file
-        for (int i = 0; i < table.getRowCount(); i++) {
+        for (int i = 0; i < selectedRows.length; i++) {
             for (int j = 1; j < totalColumns; j++) {
-                Object object = table.getValueAt(i, j);
+                Object object = table.getValueAt(selectedRows[i], j);
 
                 if (j != 1)
                     sb.append(",");
