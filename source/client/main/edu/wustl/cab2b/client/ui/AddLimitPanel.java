@@ -84,7 +84,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
 
     /** Split pane between the LHS and RHS sections of the main panel. */
     private JSplitPane m_outerPane = null;
-
+private static final String ADD_LIMIT_TITLE = "Define Limit";
     /**
      * Default constructor
      */
@@ -106,7 +106,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
             categSearchPanel = new AddLimitCategorySearchPanel(this);
 
         /* The top center titled panel */
-        m_topCenterPanel = new Cab2bTitledPanel("Define Search Rules");
+        m_topCenterPanel = new Cab2bTitledPanel(ADD_LIMIT_TITLE);
         m_topCenterPanel.setTitleForeground(Color.BLACK);
         /* Set a gradient painter for the title panel */
         GradientPaint gp = new GradientPaint(new Point2D.Double(.3d, 0), new Color(185, 211, 238),
@@ -212,7 +212,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
 
     public void refresh(JXPanel[] arrPanel, String strClassNameAsTitle) {
         /* Set the title for the top titled panel. */
-        this.m_topCenterPanel.setTitle("Define Search Rules '" + strClassNameAsTitle + "'");
+        this.m_topCenterPanel.setTitle(ADD_LIMIT_TITLE + " on '" + strClassNameAsTitle + "'");
         this.m_ContentForTopPanel.removeAll();
         int length = arrPanel.length;
         /* Add the individual panels to the top content panel. */
