@@ -95,6 +95,9 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
      *
      */
     public void addDataSummaryPanel() {
+        if (myDataListPanel != null && myDataListPanel.getComponentCount() > 1) {
+            m_applyAllButton.setEnabled(true);
+        }
         m_addSummaryParentPanel.add(myDataListParentPanel, BorderLayout.EAST);
     }
 

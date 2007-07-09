@@ -75,6 +75,9 @@ public class ResultObjectDetailsPanel extends ResultPanel {
     }
 
     public void addDataSummaryPanel() {
+        if (myDataListPanel != null && myDataListPanel.getComponentCount() > 1) {
+            m_applyAllButton.setEnabled(true);
+        }
         m_sidePanel.add(myDataListParentPanel, BorderLayout.CENTER);
     }
 
