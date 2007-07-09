@@ -20,7 +20,7 @@ public class ClientConstants {
 
 	public static String POPULAR_CATEGORIES_IMAGE = "popular_categories.gif";
 
-	public static String MY_SEARCH_QUERIES_IMAGE = "data_14_14.gif";
+	public static String MY_SEARCH_QUERIES_IMAGE = "my_search.gif";
 
 	public static String MY_EXPERIMENT_IMAGE = "my_experiments.gif";
 
