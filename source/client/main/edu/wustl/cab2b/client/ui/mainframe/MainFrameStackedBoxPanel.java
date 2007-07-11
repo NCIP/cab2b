@@ -39,6 +39,10 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
     JPanel popularSearchCategoryPanel;
 
     JPanel myExperimentsPanel;
+    
+    private static Color clickedColor= new Color(76,41,157);
+    
+    private static Color unClickedColor= new Color(0x034E74);
 
     /**
      * @param mainFrame
@@ -123,6 +127,8 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
             Object obj = iter.next();
             String hyperlinkName = obj.toString();
             Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
+            hyperlink.setClickedColor(clickedColor);
+            hyperlink.setUnclickedColor(unClickedColor);
             hyperlink.setText(hyperlinkName);
             hyperlink.addActionListener(actionListener);
             panel.add("br", hyperlink);
