@@ -57,7 +57,7 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
     /**
      * Default constructor
      */
-    AbstractAmibuityResolver() {
+    public AbstractAmibuityResolver() {
         this.setSize(Constants.WIZARD_SIZE2_DIMENSION);
         this.setLayout(new BorderLayout());
     }
