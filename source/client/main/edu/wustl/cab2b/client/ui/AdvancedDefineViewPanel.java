@@ -120,7 +120,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 		/*
 		 * Initalize the pagination component.
 		 */
-		this.m_resultsPage = new JPagination(pageElementCollection, numPager, this, true);
+		this.m_resultsPage = new JPagination(pageElementCollection, numPager, this, true, false);
 		m_resultsPage.resetAllLabels();
 		this.m_resultsPage.setPageLinksDisabled();
 

@@ -136,6 +136,14 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
         initGUI();
         addNewMouseWheelListener();
     }
+    
+    public JPagination(Vector<PageElement> data, Pager pager, Component parentComponent, boolean autoPageResize, boolean selectable) {
+    	this(data, pager, parentComponent, autoPageResize);
+    
+        this.isSelectable=selectable;
+        initGUI();
+        addNewMouseWheelListener();
+    }
 
     private void initGUI() {
         this.removeAll();
