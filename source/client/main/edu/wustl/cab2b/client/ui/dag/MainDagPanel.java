@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +35,7 @@ import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.query.IPathFinder;
 import edu.wustl.cab2b.client.ui.util.ClientConstants;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImages;
 import edu.wustl.cab2b.common.queryengine.Cab2bQueryObjectFactory;
 import edu.wustl.cab2b.common.util.Constants;
@@ -66,7 +66,7 @@ public class MainDagPanel extends Cab2bPanel {
 
     private DagControlPanel m_controlPanel;
 
-    private IClientQueryBuilderInterface m_queryObject;
+    private IClientQueryBuilderInterface m_queryObject; //  @jve:decl-index=0:
 
     private EventHandler m_eventHandler;
 
@@ -232,25 +232,41 @@ public class MainDagPanel extends Cab2bPanel {
      * @param sourceNode Source node to connect
      * @param destNode Target node to connect
      */
-    private void linkNode(ClassNode sourceNode, ClassNode destNode) {
+    private void linkNode(final ClassNode sourceNode, final ClassNode destNode) {
         // Get all the available paths between source and destination node
-        List<IPath> paths = getPaths(sourceNode, destNode);
-        if (paths == null || paths.isEmpty()) {
-            JOptionPane.showMessageDialog(this,
-                                          "No path available/selected between source and destination categories",
-                                          "Connect Nodes warning", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        if (false == m_queryObject.isPathCreatesCyclicGraph(sourceNode.getExpressionId(),
-                                                            destNode.getExpressionId(), paths.get(0))) {
-            for (int i = 0; i < paths.size(); i++) {
-                LinkTwoNode(sourceNode, destNode, paths.get(i), new ArrayList<IExpressionId>(), true);
+        CustomSwingWorker customSwingWorker = new CustomSwingWorker(this) {
+            List<IPath> paths;
+
+            @Override
+            protected void doNonUILogic() throws RuntimeException {
+                paths = getPaths(sourceNode, destNode);
             }
-        } else {
-            JOptionPane.showMessageDialog(this,
-                                          "Cannot connect selected nodes as it creates cycle in the query graph",
-                                          "Connect Nodes warning", JOptionPane.WARNING_MESSAGE);
-        }
+
+            @Override
+            protected void doUIUpdateLogic() throws RuntimeException {
+                if (paths == null || paths.isEmpty()) {
+                    JOptionPane.showMessageDialog(
+                                                  MainDagPanel.this,
+                                                  "No path available/selected between source and destination categories",
+                                                  "Connect Nodes warning", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                if (false == m_queryObject.isPathCreatesCyclicGraph(sourceNode.getExpressionId(),
+                                                                    destNode.getExpressionId(), paths.get(0))) {
+                    for (int i = 0; i < paths.size(); i++) {
+                        LinkTwoNode(sourceNode, destNode, paths.get(i), new ArrayList<IExpressionId>(), true);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(
+                                                  MainDagPanel.this,
+                                                  "Cannot connect selected nodes as it creates cycle in the query graph",
+                                                  "Connect Nodes warning", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+
+        };
+        customSwingWorker.start();
     }
 
     /**
@@ -259,11 +275,12 @@ public class MainDagPanel extends Cab2bPanel {
      * @param destNode The destination  node to connect
      * @param path The path of connection
      */
-    private void LinkTwoNode(ClassNode sourceNode, ClassNode destNode, IPath path,
-                             List<IExpressionId> intermediateExpressions, boolean updateQueryRequired) {
+    private void LinkTwoNode(final ClassNode sourceNode, final ClassNode destNode, final IPath path,
+                             List<IExpressionId> intermediateExpressions, final boolean updateQueryRequired) {
         Logger.out.debug("Linking nodes: " + sourceNode.getID() + " and " + destNode.getID()
                 + "; Intermediate exps: " + intermediateExpressions.toString());
-        //   Update query object to have this association path set
+
+        // Update query object to have this association path set
         if (updateQueryRequired) {
             try {
                 intermediateExpressions = m_queryObject.addPath(sourceNode.getExpressionId(),
@@ -275,7 +292,7 @@ public class MainDagPanel extends Cab2bPanel {
             }
         }
 
-        //	From the query object get list of associations between these two node
+        // From the query object get list of associations between these two node
         GraphPort sourcePort = new GraphPort();
         sourceNode.addPort(sourcePort);
         GraphPort targetPort = new GraphPort();
@@ -283,7 +300,7 @@ public class MainDagPanel extends Cab2bPanel {
         int assPosition = sourceNode.addSourcePort(sourcePort); // The location where node is added now
         destNode.addTargetPort(targetPort);
 
-        //	now create the visual link..
+        //  now create the visual link..
         PathLink link = new PathLink();
         link.setSourcePort((GraphPort) sourcePort);
         link.setTargetPort((GraphPort) targetPort);
@@ -303,7 +320,7 @@ public class MainDagPanel extends Cab2bPanel {
                 updateQueryObject(link, sourceNode, destNode, sourcePort);
             }
         } else {
-            IConstraints constraints = this.m_queryObject.getQuery().getConstraints();
+            IConstraints constraints = MainDagPanel.this.m_queryObject.getQuery().getConstraints();
             IExpressionId sourceExpId = sourceNode.getExpressionId();
             IExpression sourceExp = constraints.getExpression(sourceExpId);
             IExpressionId nextExpId;
@@ -335,10 +352,8 @@ public class MainDagPanel extends Cab2bPanel {
                     }
                 }
             }
-
         }
 
-        //      ==================== IMPORTANT QUERY UPDATION ENDS HERE ===========
         // Update user interface
         m_viewController.getHelper().scheduleNodeToLayout(sourceNode);
         m_viewController.getHelper().scheduleNodeToLayout(destNode);
@@ -568,48 +583,82 @@ public class MainDagPanel extends Cab2bPanel {
      * Method to perform auto-connect functionality
      */
     public void performAutoConnect() {
-        List<ClassNode> selectedNodes = m_viewController.getCurrentNodeSelection();
-        if (selectedNodes == null || selectedNodes.size() <= 1) {
-            // Cannot perform connect all functionality
-            JOptionPane.showMessageDialog(this.getParent().getParent().getParent(),
-                                          "Please select atleast two nodes", "Auto Connect Warning",
-                                          JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+        CustomSwingWorker customSwingWorker = new CustomSwingWorker(this) {
+            List<ClassNode> selectedNodes;
 
-        if (false == isAutoConnectValid(selectedNodes)) {
-            // Cannot perform connect all functionality
-            JOptionPane.showMessageDialog(
-                                          this.getParent().getParent().getParent(),
-                                          "Auto Connect failed. Some of the selected nodes are already connected.",
-                                          "Auto Connect Warning", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        Set<EntityInterface> entitySet = new HashSet<EntityInterface>();
-        for (int i = 0; i < selectedNodes.size(); i++) {
-            IExpression expression = m_queryObject.getQuery().getConstraints().getExpression(
-                                                                                             selectedNodes.get(i).getExpressionId());
-            EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
-            entitySet.add(entity);
-        }
-        Set<ICuratedPath> paths = m_pathFinder.autoConnect(entitySet);
-        if (paths == null || paths.size() <= 0) {
-            // Cannot perform connect all functionality
-            JOptionPane.showMessageDialog(this, "No curated path available between selected nodes.",
-                                          "Auto-Connect warning", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        ICuratedPath path = getSelectedCuratedPath(paths);
-        if (path == null) {
-            // Show ambiguity resolver to get a curated path
-            AutoConnectAmbiguityResolver childPanel = new AutoConnectAmbiguityResolver(paths);
-            WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, childPanel, "Available curated paths Panel",
-                                         Constants.WIZARD_SIZE2_DIMENSION, true, false);
-            path = childPanel.getUserSelectedPath();
-        }
-        if (path != null) {
-            autoConnectNodes(selectedNodes, path);
-        }
+            Set<EntityInterface> entitySet;
+
+            Set<ICuratedPath> paths;
+
+            ICuratedPath path;
+
+            @Override
+            protected void doNonUILogic() throws RuntimeException {
+                selectedNodes = m_viewController.getCurrentNodeSelection();
+
+                if (selectedNodes != null) {
+                    entitySet = new HashSet<EntityInterface>();
+                    for (int i = 0; i < selectedNodes.size(); i++) {
+                        IExpression expression = m_queryObject.getQuery().getConstraints().getExpression(
+                                                                                                         selectedNodes.get(
+                                                                                                                           i).getExpressionId());
+                        EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
+                        entitySet.add(entity);
+                    }
+
+                    paths = m_pathFinder.autoConnect(entitySet);
+
+                    if (paths != null) {
+                        path = getSelectedCuratedPath(paths);
+                    }
+                }
+
+            }
+
+            @Override
+            protected void doUIUpdateLogic() throws RuntimeException {
+                if (selectedNodes == null || selectedNodes.size() <= 1) {
+                    // Cannot perform connect all functionality
+                    JOptionPane.showMessageDialog(MainDagPanel.this.getParent().getParent().getParent(),
+                                                  "Please select atleast two nodes", "Auto Connect Warning",
+                                                  JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                if (false == isAutoConnectValid(selectedNodes)) {
+                    // Cannot perform connect all functionality
+                    JOptionPane.showMessageDialog(
+                                                  MainDagPanel.this.getParent().getParent().getParent(),
+                                                  "Auto Connect failed. Some of the selected nodes are already connected.",
+                                                  "Auto Connect Warning", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                if (paths == null || paths.size() <= 0) {
+                    // Cannot perform connect all functionality
+                    JOptionPane.showMessageDialog(MainDagPanel.this,
+                                                  "No curated path available between selected nodes.",
+                                                  "Auto-Connect warning", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                if (path == null) {
+                    // Show ambiguity resolver to get a curated path
+                    AutoConnectAmbiguityResolver childPanel = new AutoConnectAmbiguityResolver(paths);
+                    WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, childPanel,
+                                                 "Available curated paths Panel",
+                                                 Constants.WIZARD_SIZE2_DIMENSION, true, false);
+                    path = childPanel.getUserSelectedPath();
+                }
+
+                if (path != null) {
+                    autoConnectNodes(selectedNodes, path);
+                }
+            }
+
+        };
+        customSwingWorker.start();
+
     }
 
     /**
@@ -619,9 +668,7 @@ public class MainDagPanel extends Cab2bPanel {
      */
     private void autoConnectNodes(List<ClassNode> selectedNodes, ICuratedPath curatedPath) {
         Set<IPath> paths = curatedPath.getPaths();
-        Iterator<IPath> iter = paths.iterator();
-        while (iter.hasNext()) {
-            IPath path = iter.next();
+        for (IPath path : paths) {
             List<ClassNode> sourceNodes = getNodesWithEntity(selectedNodes, path.getSourceEntity());
             List<ClassNode> destinationNodes = getNodesWithEntity(selectedNodes, path.getTargetEntity());
             for (int i = 0; i < sourceNodes.size(); i++) {
