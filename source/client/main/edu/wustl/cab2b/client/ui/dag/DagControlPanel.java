@@ -38,9 +38,9 @@ public class DagControlPanel extends JPanel implements ActionListener {
 
     private Cab2bHyperlink clearAllPathsLink;
 
-    private static final String AUTOCONNECTLABEL = "Auto Connect";
+    private final String AUTOCONNECTLABEL = "Auto Connect";
 
-    private static final String CLEARALLPATHS = "<HTML> <u>Clear All Paths</u>";
+    private final String CLEARALLPATHS = "<HTML> <u>Clear All Paths</u>";
 
     private MainDagPanel mainDagPanel;
 
