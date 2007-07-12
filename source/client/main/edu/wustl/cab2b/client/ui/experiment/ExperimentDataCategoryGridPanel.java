@@ -94,7 +94,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
      */
     private Cab2bTable analysisTable;
 
-    final public String[] ANALYSIS_TABLE_HEADERS = new String[] { "Data Category", "Analysis Type", "Date", "Status" };
+    final public String[] ANALYSIS_TABLE_HEADERS = new String[] { "Data Category", "Analysis Title", "Date", "Status" };
 
     /** Previous button */
     private Cab2bButton prevButton;
