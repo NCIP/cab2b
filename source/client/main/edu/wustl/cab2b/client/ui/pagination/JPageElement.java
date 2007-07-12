@@ -38,8 +38,6 @@ package edu.wustl.cab2b.client.ui.pagination;
  */
 
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -53,6 +51,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bCheckBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.controls.Cab2bStandardFonts;
 
 /**
  * Each JPageElement should know its pageIndex(String) and index in that page.
@@ -140,13 +139,11 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         hyperlink.setUserObject(this);
 
         label = new Cab2bLabel(pageElement.getDisplayName());
-        label.setFont(new Font("Arial", Font.BOLD, 12));
+        label.setFont(Cab2bStandardFonts.ARIAL_BOLD_12);
 
         String description = pageElement.getDescription();
         descriptionLabel = new Cab2bLabel(description);
-        FontMetrics fontMetrics = descriptionLabel.getFontMetrics(descriptionLabel.getFont());
-        int stringWidth = fontMetrics.stringWidth(description);
-        descriptionLabel.setToolTipText(getWrappedText(stringWidth, description));
+        descriptionLabel.setToolTipText(getWrappedText(description));
 
         if (description.length() > 85) {
             String textDsc = description.substring(0, 85) + "....";
@@ -165,7 +162,6 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
             this.add("br tab", hyperlink);
         }
         this.add("br tab", descriptionLabel);
-
     }
 
     public void resetHyperLink() {
@@ -194,9 +190,9 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
      * Method to wrap the text and send it accross
      * @return
      */
-    private String getWrappedText(int textSizeInPixel, String text) {
+    private String getWrappedText(String text) {
         StringBuffer wrappedText = new StringBuffer();
-        wrappedText.append("<HTML>");
+        wrappedText.append("<HTML><P>");
         String currentString = null;
         int currentStart = 0;
         int offset = 75;
@@ -207,6 +203,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
             currentString = text.substring(currentStart, (currentStart + offset));
             strLen += currentString.length() + len;
             wrappedText.append(currentString);
+
             int index = text.indexOf(" ", (currentStart + offset));
             if (index == -1) {
                 index = text.indexOf(".", (currentStart + offset));
@@ -218,7 +215,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
                 len = index - strLen;
                 currentString = text.substring((currentStart + offset), (currentStart + offset + len));
                 wrappedText.append(currentString);
-                wrappedText.append("<P>");
+                wrappedText.append("<BR>");
             } else {
                 if (currentStart == 0) {
                     currentStart = offset;
@@ -228,11 +225,12 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
             }
 
             currentStart += offset + len;
-            if ((currentStart + offset + len) > text.length())
+            if ((currentStart + offset + len) > text.length()) {
                 break;
+            }
         }
         wrappedText.append(text.substring(currentStart));
-        wrappedText.append("</HTML>");
+        wrappedText.append("</P></HTML>");
         return wrappedText.toString();
     }
 
