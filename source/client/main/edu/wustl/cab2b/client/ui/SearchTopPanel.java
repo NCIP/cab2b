@@ -22,11 +22,11 @@ import edu.wustl.common.util.logger.Logger;
 public class SearchTopPanel extends Cab2bPanel
 {	
 	
-	/*The panel of labels*/
+	/*The searchPanel of labels*/
 	private JXPanel[] m_arrSearchPanels = new Cab2bPanel[5];
 	
 	
-	/*Constructor to initialize the top panel for the search dialog.*/
+	/*Constructor to initialize the top searchPanel for the search dialog.*/
 	SearchTopPanel()
 	{		
 		initGUI();
@@ -39,7 +39,7 @@ public class SearchTopPanel extends Cab2bPanel
 		/*Construct the labels and set the preferred sice and border*/
 		JLabel lblCategorySearch = new Cab2bLabel("  1. Choose Search Category");
 		/*
-		 * The center panel corresponding to this one would be selected, and
+		 * The center searchPanel corresponding to this one would be selected, and
 		 * hence there are no borders or background colors
 		 */	
 		lblCategorySearch.setPreferredSize(new Dimension(197,39));		
@@ -54,7 +54,7 @@ public class SearchTopPanel extends Cab2bPanel
 		/*Construct the labels and set the preferred sice and border*/
 		JLabel lblAddLimits = new Cab2bLabel("  2. Add Limits");
 		lblAddLimits.setPreferredSize(new Dimension(197,39));		
-		/*Add the label to the corresponding sub-panel*/
+		/*Add the label to the corresponding sub-searchPanel*/
 		JXPanel subAddLimitPanel = new Cab2bPanel();
 		subAddLimitPanel.setBorder(new LineBorder(Color.BLACK));
 		//subAddLimitPanel.setBackground(new Color(13034239));
@@ -69,7 +69,7 @@ public class SearchTopPanel extends Cab2bPanel
 		/*Construct the labels and set the preferred sice and border*/
 		JLabel lblDefineView = new Cab2bLabel("  3. Define Search Results View");
 		lblDefineView.setPreferredSize(new Dimension(197,39));
-		/*Add the label to the corresponding sub-panel*/
+		/*Add the label to the corresponding sub-searchPanel*/
 		JXPanel subDefineViewPanel = new Cab2bPanel();
 		subDefineViewPanel.setBorder(new LineBorder(Color.BLACK));
 		subDefineViewPanel.setBackground( new Color(185, 211, 238));
@@ -83,7 +83,7 @@ public class SearchTopPanel extends Cab2bPanel
 		JLabel lblViewResults = new Cab2bLabel("  4. View Search Results");
 		lblViewResults.setPreferredSize(new Dimension(197,39));
 		
-		/*Add the label to the corresponding sub-panel*/
+		/*Add the label to the corresponding sub-searchPanel*/
 		JXPanel subViewResultsPanel = new Cab2bPanel();
 		subViewResultsPanel.setBorder(new LineBorder(Color.BLACK));
 		//subViewResultsPanel.setBackground( new Color(8900346));
@@ -98,7 +98,7 @@ public class SearchTopPanel extends Cab2bPanel
 		JLabel lblDataList = new Cab2bLabel("  5. Data List");
 		lblDataList.setPreferredSize(new Dimension(197,39));
 		
-		/*Add the label to the corresponding sub-panel*/
+		/*Add the label to the corresponding sub-searchPanel*/
 		JXPanel subDataListPanel = new Cab2bPanel();
 		subDataListPanel.setBorder(new LineBorder(Color.BLACK));
 		subDataListPanel.setBackground( new Color(185, 211, 238));
@@ -109,16 +109,16 @@ public class SearchTopPanel extends Cab2bPanel
 		
 		int iPanelCount = this.m_arrSearchPanels.length;
 		
-		/*Add all the elements of the panel array to the main panel.*/
+		/*Add all the elements of the searchPanel array to the main searchPanel.*/
 		for(int i =0;i<iPanelCount;i++){
 			this.add(this.m_arrSearchPanels[i]);
 		}		
 	}
 
 	/*
-	 * The method treats the panel/label indicated by index to be the one that
+	 * The method treats the searchPanel/label indicated by index to be the one that
 	 * is selected. The boolean indicates the direction of the traversal, so
-	 * that the adjacent panel/label can also be accordingly rendered to
+	 * that the adjacent searchPanel/label can also be accordingly rendered to
 	 * indicate that it is no more selected.
 	 */
 	public void setFocus(int index, boolean blnForward)

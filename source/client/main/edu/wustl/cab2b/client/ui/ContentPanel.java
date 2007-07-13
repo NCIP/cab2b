@@ -6,7 +6,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 
-//TODO : This needs to be replaced such that these methods got into a panel, rather than remain in an interface
+//TODO : This needs to be replaced such that these methods got into a searchPanel, rather than remain in an interface
 public abstract class ContentPanel extends Cab2bPanel 
 {
 	
@@ -18,16 +18,12 @@ public abstract class ContentPanel extends Cab2bPanel
 	 */
 	public abstract void setQueryObject(IClientQueryBuilderInterface query);
 	
-	public abstract void refresh(JXPanel[] arrPanel,String strClassName);
+	public abstract void refresh(JXPanel[] arrPanel,String strClassName);    
     
-    public abstract void refreshBottomCenterPanel(JXPanel panel);
+	public abstract void setSearchResultPanel(SearchResultPanel searchResultPanel);	
     
-	public abstract void refreshBottomCenterPanel(IExpressionId expressionId);
-	
-	public abstract void setSearchResultPanel(AbstractSearchResultPanel searchResultPanel);	
+    public abstract void setSearchPanel(SearchPanel panel);
     
-    public abstract void setSearchPanel(AbstractCategorySearchPanel panel);
-    
-    public abstract AbstractCategorySearchPanel getSearchPanel();
+    public abstract SearchPanel getSearchPanel();
 
 }

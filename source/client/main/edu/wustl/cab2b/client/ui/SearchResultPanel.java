@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.client.ui;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GradientPaint;
@@ -49,16 +50,15 @@ import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IRule;
 
 /**
- * The abstract class that contains commonalities required for displaying
+ * The class that contains commonalities required for displaying
  * results from the 'AddLimit' and 'choose category' section from the main
- * search dialog. Concrete classes must over ride methods to effect custom
- * layout.
- * 
- * @author mahesh_iyer/chetan_bh/gautam_shetty.
+ * search dialog. 
+ *  
+ * @author mahesh_iyer/chetan_bh/gautam_shetty/Deepak_Shingan
  * 
  */
 
-public abstract class AbstractSearchResultPanel extends Cab2bPanel implements ActionListener {
+public class SearchResultPanel extends Cab2bPanel implements ActionListener {
 
     /** The pagination component to paginate the results of the search */
     private Cab2bPanel resultPanel = new Cab2bPanel();
@@ -72,7 +72,7 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
     private Cab2bButton editLimitButtonBottom;
 
     /**
-     * Saved reference to the content panel that needs to be refreshed for
+     * Saved reference to the content searchPanel that needs to be refreshed for
      * appropriate events.
      */
     protected ContentPanel contentPanel = null;
@@ -81,21 +81,21 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
      * Constructor
      * 
      * @param addLimitPanel
-     *            Reference to the parent content panel that needs refreshing.
+     *            Reference to the parent content searchPanel that needs refreshing.
      * 
      * @param result
      *            The collectiond of entities.
      */
-    public AbstractSearchResultPanel(ContentPanel addLimitPanel, Set<EntityInterface> result) {
+    public SearchResultPanel(ContentPanel addLimitPanel, Set<EntityInterface> result) {
         initGUI(addLimitPanel, result);
     }
 
     /**
-     * Method initializes the panel by appropriately laying out child
+     * Method initializes the searchPanel by appropriately laying out child
      * components.
      * 
      * @param addLimitPanel
-     *            Reference to the parent content panel that needs refreshing.
+     *            Reference to the parent content searchPanel that needs refreshing.
      * 
      * @param result
      *            The collectiond of entities.
@@ -137,31 +137,48 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
         this.add("hfill vfill", titledSearchResultsPanel);
     }
 
+    /**
+     * Initiliasing/Adding Add Limit buttons
+     * @param panelsToAdd
+     * @param entity
+     */
     private void initializeAddLimitButtons(final JXPanel[] panelsToAdd, final EntityInterface entity) {
         addLimitButtonTop = new Cab2bButton("Add Limit");
-        addLimitButtonTop.setPreferredSize(new Dimension(95,22));
+        addLimitButtonTop.setPreferredSize(new Dimension(95, 22));
         addLimitButtonTop.addActionListener(new AddLimitButtonListner(panelsToAdd, entity));
 
         addLimitButtonBottom = new Cab2bButton("Add Limit");
         addLimitButtonBottom.addActionListener(new AddLimitButtonListner(panelsToAdd, entity));
-        addLimitButtonBottom.setPreferredSize(new Dimension(95,22));
+        addLimitButtonBottom.setPreferredSize(new Dimension(95, 22));
     }
 
+    /**
+     * Initiliasing/Adding EditLimit buttons 
+     * @param panelsToAdd
+     * @param expression
+     */
     private void initializeEditLimitButtons(final JXPanel[] panelsToAdd, final IExpression expression) {
         editLimitButtonTop = new Cab2bButton("Edit Limit");
         editLimitButtonTop.addActionListener(new EditLimitButtonListner(panelsToAdd, expression));
-        editLimitButtonTop.setPreferredSize(new Dimension(95,22));
+        editLimitButtonTop.setPreferredSize(new Dimension(95, 22));
 
         editLimitButtonBottom = new Cab2bButton("Edit Limit");
         editLimitButtonBottom.addActionListener(new EditLimitButtonListner(panelsToAdd, expression));
-        editLimitButtonBottom.setPreferredSize(new Dimension(95,22));
+        editLimitButtonBottom.setPreferredSize(new Dimension(95, 22));
     }
 
+    /**
+     * Sets result panel
+     * @param resulPanel
+     */
     public void setResultPanel(Cab2bPanel resulPanel) {
         resultPanel.removeAll();
         resultPanel.add("hfill vfill ", resulPanel);
     }
 
+    /**
+     * Removing result panel
+     */
     public void removeResultPanel() {
         resultPanel.removeAll();
     }
@@ -223,7 +240,7 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
     }
 
     /**
-     * Get panels array to be displayed in add limit panel
+     * Get panels array to be displayed in add limit searchPanel
      * 
      * @param entity
      * @return
@@ -260,7 +277,7 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
     }
 
     /**
-     * Get panels array to be displayed in add limit panel
+     * Get panels array to be displayed in add limit searchPanel
      * 
      * @param entity
      * @return
@@ -295,14 +312,14 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
         List<String> conditions = new ArrayList<String>(size);
         List<List<String>> values = new ArrayList<List<String>>();
 
-        // Don't consider panel first and panel last for getting attribute
+        // Don't consider searchPanel first and searchPanel last for getting attribute
         // values
         // because first and last panels are Add Limit button panels
         for (int j = 1; j < componentPanel.length - 1; j++) {
             IComponent panel = (IComponent) componentPanel[j];
             String conditionString = panel.getCondition();
 
-            // Check if condition is set for this panel
+            // Check if condition is set for this searchPanel
             AttributeInterface attribute = getAttribute(collection, panel.getAttributeName());
             ArrayList<String> conditionValues = panel.getValues();
             if (0 == conditionString.compareToIgnoreCase("Between") && (conditionValues.size() == 1)) {
@@ -333,10 +350,7 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
             }
 
             IExpressionId expressionId = mainSearchPanel.getQueryObject().addRule(attributes, conditions, values);
-            if (expressionId != null) {
-                // Pratibha's code will take over from here
-                contentPanel.refreshBottomCenterPanel(expressionId);
-            } else {
+            if (expressionId == null) {
                 JOptionPane.showMessageDialog(
                                               mainSearchPanel.getParent(),
                                               "This rule cannot be added as it is not associated with the added rules.",
@@ -345,6 +359,12 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
         }
     }
 
+    /**
+     * returns Attribute Interface for the name from the collection parameter   
+     * @param collection
+     * @param attributeName
+     * @return
+     */
     private AttributeInterface getAttribute(Collection collection, String attributeName) {
         AttributeInterface attribute = null;
         Iterator iterator = collection.iterator();
@@ -405,11 +425,11 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
     }
 
     /**
-     * This method generates the search summary panel
+     * This method generates the search summary searchPanel
      * 
      * @param numberOfResults
      *            number of results obtained
-     * @return summary panel
+     * @return summary searchPanel
      */
     public JXTitledPanel displaySearchSummary(int numberOfResults) {
         String message = (numberOfResults == 0) ? "No result found." : "Search Results :- " + "Total results ( "
@@ -430,13 +450,41 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
      * 
      * @param arrComponentPanel
      *            This is the array of panels that forms the dynamically
-     *            generated criterion pages. Each panel corresponds to one
+     *            generated criterion pages. Each searchPanel corresponds to one
      *            attribute from the class/category
-     * 
+     *            Method to select appropriate searchPanel and refresh the addLimit page    
+     
      * @param strClassName
      *            The class/category name.
      */
-    public abstract void performAction(JXPanel[] arrComponentPanel, String strClassName);
+    public void performAction(JXPanel[] arrComponentPanel, String strClassName) {
+        Container container = ((JXPanel) (contentPanel)).getParent();
+
+        if (container instanceof SearchCenterPanel) {
+            container = (SearchCenterPanel) container;
+            /*
+             * Use the parent reference to in turn get a reference to the
+             * navigation searchPanel, and cause it to move to the next card.
+             */
+            MainSearchPanel mainSearchPanel = (MainSearchPanel) (container.getParent());
+            (mainSearchPanel.getNavigationPanel()).enableButtons();
+
+            /* Get the searchPanel corresponding to the currently selcted card and refresh it.*/
+            AddLimitPanel addLimitPanel = (AddLimitPanel) (mainSearchPanel.getCenterPanel().getAddLimitPanel());
+
+            //set search-result searchPanel in AddLimit searchPanel and move to next tab 
+            if (mainSearchPanel.getCenterPanel().getSelectedCardIndex() == 0) {
+                SearchResultPanel searchResultPanel = mainSearchPanel.getCenterPanel().getChooseCategoryPanel().getSearchResultPanel();
+                if (searchResultPanel != null) {
+                    addLimitPanel.addResultsPanel(searchResultPanel);
+                    mainSearchPanel.getCenterPanel().setAddLimitPanel(addLimitPanel);
+                }
+                (mainSearchPanel.getNavigationPanel()).showCard(true);
+            }
+            addLimitPanel.addSearchPanel(mainSearchPanel.getCenterPanel().getChooseCategoryPanel().getSearchPanel());
+            addLimitPanel.refresh(arrComponentPanel, strClassName);
+        }
+    }
 
     /**
      * The abstract method that is to return the number of elements to be
@@ -444,7 +492,9 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
      * 
      * @return int Value represents the number of elements/page.
      */
-    public abstract int getPageSize();
+    public int getPageSize() {
+        return 3;
+    };
 
     /**
      * @return the addLimitButtonBottom
@@ -460,6 +510,11 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
         return addLimitButtonTop;
     }
 
+    /**
+     * Action Listener class for Add Limit buttons 
+     * @author Deepak_Shingan
+     *
+     */
     class AddLimitButtonListner implements ActionListener {
         private JXPanel[] panelsToAdd;
 
@@ -476,6 +531,11 @@ public abstract class AbstractSearchResultPanel extends Cab2bPanel implements Ac
         }
     }
 
+    /**
+     * Action Listener class for Edit Limit buttons 
+     * @author Deepak_Shingan
+     *
+     */
     class EditLimitButtonListner implements ActionListener {
         private JXPanel[] panelsToAdd;
 

@@ -1,8 +1,12 @@
 package edu.wustl.cab2b.client.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.ButtonGroup;
 
@@ -21,58 +25,65 @@ import edu.wustl.common.util.logger.Logger;
  * well as 'AddLimit' section from the main search dialog. Concrete classes must
  * over ride methods to effect custom layout.
  * 
- * @author mahesh_iyer/chetan_bh
+ * @author mahesh_iyer/chetan_bh/Deepak_Shingan
  * 
  */
-public abstract class AbstractAdvancedSearchPanel extends Cab2bPanel implements ItemListener {
+public class AdvancedSearchPanel extends Cab2bPanel implements ItemListener {
 
     /** The container for the collapsible pane. */
-    JXTaskPaneContainer m_taskPaneContainer = null;
+    private JXTaskPaneContainer m_taskPaneContainer = null;
+
+    static int ipropertyCnter = 0;
 
     /** The actual collapsible pane. */
-    JXTaskPane m_taskPane = null;
+    private JXTaskPane m_taskPane = null;
 
     /**
      * Check-box for specifying search target as class name as well as
      * decription.
      */
-    Cab2bCheckBox m_chkClass = null;
+    private Cab2bCheckBox m_chkClass = null;
 
-    Cab2bCheckBox m_chkClassDef = null;
+    private Cab2bCheckBox m_chkClassDef = null;
 
-    Cab2bCheckBox m_chkClassDesc = null;
+    private Cab2bCheckBox m_chkClassDesc = null;
 
     /** Check-box for specifying search target as attribute. */
-    Cab2bCheckBox m_chkAttribute = null;
+    private Cab2bCheckBox m_chkAttribute = null;
 
     /** Check-box for specifying search target as PV. */
-    Cab2bCheckBox m_chkPermissibleValues = null;
+    private Cab2bCheckBox m_chkPermissibleValues = null;
 
     /** Radio button for specifying mode of search as text based */
-    Cab2bRadioButton m_radioText = null;
+    private Cab2bRadioButton m_radioText = null;
 
     /** Radio button for specifying mode of search as concept-code based */
-    Cab2bRadioButton m_radioConceptCode = null;
+    private Cab2bRadioButton m_radioConceptCode = null;
 
     /**
      * Constructor
      */
-    public AbstractAdvancedSearchPanel() {
-
+    public AdvancedSearchPanel() {
         initGUI();
     }
 
     /**
-     * Method initializes the panel by appropriately laying out child
+     * Method initializes the searchPanel by appropriately laying out child
      * components.
      * 
      */
     private void initGUI() {
+        this.setLayout(new BorderLayout());
 
         /* intialize all the components. */
         m_taskPaneContainer = new JXTaskPaneContainer();
 
         m_taskPane = new JXTaskPane();
+
+        m_taskPane.addMouseListener(new TaskPaneMouseListener());
+        /*        m_taskPane.addPropertyChangeListener(new TaskPanePropertyChangeListener());*/
+
+        //m_taskPane.addm
         m_taskPane.setSpecial(false);
         m_taskPane.setTitle("Advanced Search");
         m_taskPane.setLayout(new RiverLayout(0, 5));
@@ -125,11 +136,18 @@ public abstract class AbstractAdvancedSearchPanel extends Cab2bPanel implements 
          */
         addComponents();
 
-        /* Add the initialized pane to the contaier */
+        //Add the initialized pane to the contaier 
         m_taskPaneContainer.add(m_taskPane);
-        m_taskPaneContainer.setBackground(Color.BLUE);
-        /* Finally add container to the main panel */
-        this.add(m_taskPane);
+
+        /* Finally add container to the main searchPanel */
+        this.add(m_taskPaneContainer);
+    }
+
+    /*
+     * Returns task pane 
+     */
+    public JXTaskPane getTaskPane() {
+        return m_taskPane;
     }
 
     /**
@@ -145,12 +163,6 @@ public abstract class AbstractAdvancedSearchPanel extends Cab2bPanel implements 
 
         int count = 0;
         int index = 0;
-
-        /* if(m_radioConceptCode.isSelected())
-         {
-         m_chkClassDesc.setSelected(false);
-         m_chkClassDesc.setEnabled(false);
-         }*/
 
         if (m_chkPermissibleValues.isSelected()) {
 
@@ -244,12 +256,56 @@ public abstract class AbstractAdvancedSearchPanel extends Cab2bPanel implements 
     }
 
     /**
-     * The abstract method implementation that allows specific instances of
-     * {@link AbstractAdvancedSearchPanel} to layout components as is required
-     * by them
-     * 
+     * The method implementation that allows specific instances of
+     * to layout components as is required by them
      * 
      */
-    protected abstract void addComponents();
+
+    private void addComponents() {
+        m_taskPane.setLayout(new RiverLayout(0, 5));
+        m_taskPane.getContentPane().setBackground(Color.WHITE);
+        // Add all the componenets as required by this searchPanel.
+        m_taskPane.add(m_chkClass);
+        m_taskPane.add("tab ", m_chkClassDesc);
+        m_taskPane.add("br ", m_chkAttribute);
+        m_taskPane.add("tab ", m_chkPermissibleValues);
+
+        m_taskPane.add("br ", m_radioText);
+        m_taskPane.add(m_radioConceptCode);
+    }
+
+    /*
+     * Propery Action listener class for task-pane 
+     
+     class TaskPanePropertyChangeListener implements  PropertyChangeListener  {      
+     public void propertyChange(PropertyChangeEvent e) {
+     System.out.println("Property :"+ipropertyCnter++ +"   "+ e.getPropertyName()+"  e.getSource() "+e.getSource());
+     JXTaskPane taskPane = (JXTaskPane)e.getSource();
+     System.out.println(""+taskPane.getPreferredSize());            
+     }        
+     }*/
+
+    /*
+     * Mouse Action listener class for task-pane 
+     */
+    class TaskPaneMouseListener extends MouseAdapter {
+        public void mouseClicked(MouseEvent e) {
+            Object parentPanelObject = AdvancedSearchPanel.this.getParent().getParent().getParent();
+            if (m_taskPane.isExpanded()) {
+                //in case of choose category panel set width of  AdvancedSearchPanel larger                
+                if (parentPanelObject instanceof ChooseCategoryPanel) {
+                    AdvancedSearchPanel.this.setPreferredSize(new Dimension(472, 140));
+                } else {
+                    AdvancedSearchPanel.this.setPreferredSize(new Dimension(265, 140));
+                }
+            } else {
+                if (parentPanelObject instanceof ChooseCategoryPanel) {
+                    AdvancedSearchPanel.this.setPreferredSize(new Dimension(472, 30));
+                } else {
+                    AdvancedSearchPanel.this.setPreferredSize(new Dimension(265, 30));
+                }
+            }
+        }
+    }
 
 }

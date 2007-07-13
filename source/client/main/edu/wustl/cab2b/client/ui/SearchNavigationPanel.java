@@ -28,14 +28,14 @@ import edu.wustl.common.util.logger.Logger;
 /**
  * @author mahesh_iyer
  * 
- * The class represents the navigation panel for the search dialog, and also
+ * The class represents the navigation searchPanel for the search dialog, and also
  * includes corresponding functionality.
  */
 
 public class SearchNavigationPanel extends Cab2bPanel implements ActionListener {
     private static final long serialVersionUID = 1234567890L;
 
-    /* The reference to the parent panel. */
+    /* The reference to the parent searchPanel. */
     private MainSearchPanel m_mainSearchPanel = null;
 
     /* The navigation buttons. */
@@ -145,22 +145,16 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             srhButton.setVisible(false);
             prvButton.setVisible(true);
 
-            // checking for choose category panel
+            // checking for choose category searchPanel
             if (m_mainSearchPanel.getCenterPanel().getSelectedCardIndex() == 0) {
+                
+                //setting the AddLimitSerachPanel 
                 AddLimitPanel addLimitPanel = m_mainSearchPanel.getCenterPanel().getAddLimitPanel();
-                AbstractSearchResultPanel searchResultPanel = m_mainSearchPanel.getCenterPanel().getChooseCategoryPanel().getSearchResultPanel();
-                if (searchResultPanel != null) {
-                    addLimitPanel.addResultsPanel(searchResultPanel);
-                    addLimitPanel.setSearchText(m_mainSearchPanel.getCenterPanel().getChooseCategoryPanel().getSearchText());
-                    m_mainSearchPanel.getCenterPanel().setAddLimitPanel(addLimitPanel);
-                }
+                addLimitPanel.addSearchPanel(m_mainSearchPanel.getCenterPanel().getChooseCategoryPanel().getSearchPanel());
+                m_mainSearchPanel.getCenterPanel().setAddLimitPanel(addLimitPanel);
                 srhButton.setVisible(true);
                 showCard(true);
             } else if (m_mainSearchPanel.getCenterPanel().getSelectedCardIndex() == 1) {
-                // Gautam:
-                // If the central panel is AddLimitPanel, update the query
-                // object with the
-                // logical operators between the rules.
                 if (m_mainSearchPanel.getQueryObject() != null
                         && m_mainSearchPanel.getQueryObject().getVisibleExressionIds().size() > 0) {
                     /*
@@ -209,8 +203,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                         queryResults = CommonUtils.executeQuery(
                                                                 (ICab2bQuery) m_mainSearchPanel.getQueryObject().getQuery(),
                                                                 m_mainSearchPanel);
-                        
-                        //queryResults = getQueryResult();
+
                     }
 
                     @Override
@@ -251,34 +244,34 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                             gotoAddLimitPanel();
                         }
                     }
-                    
-//                    private IQueryResult getQueryResult() {
-//                        Cab2bQuery query = (Cab2bQuery) m_mainSearchPanel.getQueryObject().getQuery();
-//                        EntityInterface bioAssyData = query.getOutputEntity();
-//                        IQueryResult queryResults = QueryResultFactory.createResult(bioAssyData);
-//
-//                        BioAssayDataRecord record = new BioAssayDataRecord(new HashSet(
-//                                bioAssyData.getAttributeCollection()), new RecordId(
-//                                "gov.nih.nci.ncicb.caarray:DerivedBioAssayData:1015897589771984:1", "asdf"));
-//                        String dim1Labels[] = { "1" };
-//                        String dim2Labels[] = { "Pairs", "Pairs Used", "Signal", "Detection", "Detection P-value" };
-//                        String dim3Labels[] = { "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at" };
-//
-//                        Object bioDataCube[][][] = new Object[][][] { { { "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0" }, { "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent" }, { "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513" }, { "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4" }, { "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848" } } };
-//
-//                        for (AttributeInterface attribute : bioAssyData.getAttributeCollection()) {
-//                            record.putValueForAttribute(attribute, "1");
-//                        }
-//
-//                        record.setDim1Labels(dim1Labels);
-//                        record.setDim2Labels(dim2Labels);
-//                        record.setDim3Labels(dim3Labels);
-//                        record.setCube(bioDataCube);
-//
-//                        queryResults.addRecord((String) query.getOutputUrls().get(0), record);
-//                        return queryResults;
-//                    }
-                    
+
+                    //                    private IQueryResult getQueryResult() {
+                    //                        Cab2bQuery query = (Cab2bQuery) m_mainSearchPanel.getQueryObject().getQuery();
+                    //                        EntityInterface bioAssyData = query.getOutputEntity();
+                    //                        IQueryResult queryResults = QueryResultFactory.createResult(bioAssyData);
+                    //
+                    //                        BioAssayDataRecord record = new BioAssayDataRecord(new HashSet(
+                    //                                bioAssyData.getAttributeCollection()), new RecordId(
+                    //                                "gov.nih.nci.ncicb.caarray:DerivedBioAssayData:1015897589771984:1", "asdf"));
+                    //                        String dim1Labels[] = { "1" };
+                    //                        String dim2Labels[] = { "Pairs", "Pairs Used", "Signal", "Detection", "Detection P-value" };
+                    //                        String dim3Labels[] = { "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at" };
+                    //
+                    //                        Object bioDataCube[][][] = new Object[][][] { { { "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0" }, { "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent" }, { "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513" }, { "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4" }, { "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848" } } };
+                    //
+                    //                        for (AttributeInterface attribute : bioAssyData.getAttributeCollection()) {
+                    //                            record.putValueForAttribute(attribute, "1");
+                    //                        }
+                    //
+                    //                        record.setDim1Labels(dim1Labels);
+                    //                        record.setDim2Labels(dim2Labels);
+                    //                        record.setDim3Labels(dim3Labels);
+                    //                        record.setCube(bioDataCube);
+                    //
+                    //                        queryResults.addRecord((String) query.getOutputUrls().get(0), record);
+                    //                        return queryResults;
+                    //                    }
+
                 };
                 swingWorker.start();
             } else if (m_mainSearchPanel.getCenterPanel().getSelectedCardIndex() == 3) {
@@ -314,10 +307,10 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 saveDataListButton.setVisible(false);
                 addToExperimentButton.setVisible(false);
 
-                AbstractSearchResultPanel searchResultPanel = m_mainSearchPanel.getCenterPanel().getAddLimitPanel().getSearchResultPanel();
+                //setting the search panel 
                 ChooseCategoryPanel chooseCategoryPanel = m_mainSearchPanel.getCenterPanel().getChooseCategoryPanel();
-                chooseCategoryPanel.addResultPanel(searchResultPanel);
-                chooseCategoryPanel.setSearchText(m_mainSearchPanel.getCenterPanel().getAddLimitPanel().getSearchText());
+                chooseCategoryPanel.addSearchPanel(m_mainSearchPanel.getCenterPanel().getAddLimitPanel().getSearchPanel());
+                m_mainSearchPanel.getCenterPanel().setChooseCategoryPanel(chooseCategoryPanel);
             } else if (cardIndex == 2) {
                 prvButton.setVisible(true);
                 srhButton.setVisible(true);
@@ -336,7 +329,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             // -------- PERFORM FOLLOWING CLEAN-UP --------------------
             // 1. Reset the query object
             // 2. Clear result panels
-            // 3. Clear breadcrumb on the panel
+            // 3. Clear breadcrumb on the searchPanel
             SearchNavigationPanel.messageLabel.setText("");
             m_mainSearchPanel.getCenterPanel().reset();
             m_mainSearchPanel.setQueryObject(null);
@@ -361,14 +354,14 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     }
 
     /*
-     * The method sets the focus appropriately for the top panel. Also, update
-     * the indexes. corresponding updated can be abstracted into the top panel
+     * The method sets the focus appropriately for the top searchPanel. Also, update
+     * the indexes. corresponding updated can be abstracted into the top searchPanel
      * class itself
      */
     public void showCard(boolean blnNext) {
         /* Get the center Panel through the parent. */
         SearchCenterPanel centerPanel = this.m_mainSearchPanel.getCenterPanel();
-        /* Get the layout associated with the center panel */
+        /* Get the layout associated with the center searchPanel */
         CardLayout layout = (CardLayout) centerPanel.getLayout();
         /* Get the currently selected index. */
         int iSelectedCard = this.m_mainSearchPanel.getCenterPanel().getSelectedCardIndex();
@@ -418,7 +411,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     }
 
     /**
-     * Method to switch from view search result panel to panel data list panel
+     * Method to switch from view search result searchPanel to searchPanel data list searchPanel
      * ...
      * 
      * @param datarow

@@ -26,8 +26,8 @@ import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.logger.Logger;
 
 /**
- * A panel which displays list of available paths for the current source, target entity, 
- * and a diagrammatic preview panel which displays the diagrammatic view of the query 
+ * A searchPanel which displays list of available paths for the current source, target entity, 
+ * and a diagrammatic preview searchPanel which displays the diagrammatic view of the query 
  * being constructed.
  * 
  * @author chetan_bh
@@ -78,7 +78,7 @@ public class AmbiguityPathResolverPanel extends Cab2bPanel {
         this.add("hfill vfill", splitPanel);
 
         // TODO this buttons may not be needed becase a standard dialog in which this
-        // panel is put will be having "Ok" and "Cancel" buttons.
+        // searchPanel is put will be having "Ok" and "Cancel" buttons.
         doneButton = new Cab2bButton("Done");
         cancelButton = new Cab2bButton("Cancel");
 

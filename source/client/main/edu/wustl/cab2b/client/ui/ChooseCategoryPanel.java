@@ -17,15 +17,21 @@ import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 
 /**
- * This is the panel for the choose category tab from the main search dialog. The
+ * This is the searchPanel for the choose category tab from the main search dialog. The
  * class is also an instance of the {@link ContentPanel},so that child
- * component can cause this panel to refresh in a way required by this panel.
+ * component can cause this searchPanel to refresh in a way required by this searchPanel.
  * 
  * @author mahesh_iyer
  */
 
 public class ChooseCategoryPanel extends ContentPanel {
-    public AbstractCategorySearchPanel panel;
+    public SearchPanel searchPanel = null;
+
+    private B2BStackedBox box;
+
+    private JSplitPane pane;
+
+    /** The advanced search searchPanel along with the results searchPanel. */
 
     /**
      * Constructor
@@ -37,54 +43,35 @@ public class ChooseCategoryPanel extends ContentPanel {
     }
 
     /**
-     * Method initializes the panel by appropriately laying out child components.
+     * Method initializes the searchPanel by appropriately laying out child components.
      */
 
     public void initGUI() {
-        /* The panel consists of 2 parts
+        /* The searchPanel consists of 2 parts
          * 1. StackedCollapsiblePanels.
          * 2. Panel for the Advanced search*/
 
         this.setLayout(new BorderLayout());
-        B2BStackedBox box = new B2BStackedBox();
+        box = new B2BStackedBox();
         /*
-         * Setting prefered size is required if there is an empty panel for
+         * Setting prefered size is required if there is an empty searchPanel for
          * WEST or for CENTER, else the other component takes the whole
          * place
          * 
          */
         box.setMinimumSize(new Dimension(263, 122));
         box.setBorder(null);
-        panel = new ChooseCategoryCategorySearchPanel(this);
-        panel.setBorder(null);
-        JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, box, panel);
-        pane.setDividerSize(4);
-        pane.setDividerLocation(242);
-        pane.setOneTouchExpandable(false);
-        pane.setBorder(null);
-        this.setBorder(null);
-        this.add(BorderLayout.CENTER, pane);
+        addSearchPanel(searchPanel);
     }
 
     /**
      * The method is a custom implementation from {@link ContentPanel}
      * interface. 
      * @param panelToBeRefreshed
-     *            The panel to be refreshed.
+     *            The searchPanel to be refreshed.
      */
 
     public void refresh(JXPanel[] arrPanel, String strClassName) {
-        //TODO implementation needs to be completed
-    }
-
-    /**
-     * The method is a custom implementation for the refresh method from the
-     * {@link ContentPanel} interface.
-     * 
-     * @param panel the panel to be added
-     */
-
-    public void refreshBottomCenterPanel(JXPanel panel) {
         //TODO implementation needs to be completed
     }
 
@@ -104,11 +91,8 @@ public class ChooseCategoryPanel extends ContentPanel {
         this.updateUI();
     }
 
-    public void setSearchResultPanel(AbstractSearchResultPanel searchResultPanel) {
-        SearchCenterPanel searchCenterPanel = (SearchCenterPanel) this.getParent();
-        AddLimitPanel panel = (AddLimitPanel) searchCenterPanel.getComponent(1);
-
-        panel.setSearchResultPanel(searchResultPanel);
+    public void setSearchResultPanel(SearchResultPanel searchResultPanel) {
+        searchPanel.setSerachResultPanel(searchResultPanel);
     }
 
     /*
@@ -121,37 +105,87 @@ public class ChooseCategoryPanel extends ContentPanel {
     public void setQueryObject(IClientQueryBuilderInterface query) {
         /* For this instance get a handle to the SerchCenterPanel.*/
 
-        //System.out.println(" Inside set query object : ");
         SearchCenterPanel searchCenterPanel = (SearchCenterPanel) this.getParent();
         AddLimitPanel panel = (AddLimitPanel) searchCenterPanel.getComponent(1);
         panel.setQueryObject(query);
 
     }
 
+    /* 
+     * Gets Search panel
+     * (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.ContentPanel#getSearchPanel()
+     */
     @Override
-    public AbstractCategorySearchPanel getSearchPanel() {
-        return panel;
+    public SearchPanel getSearchPanel() {
+        if (searchPanel == null)
+            return new SearchPanel(this);
+        else
+            return searchPanel;
     }
 
-    public AbstractSearchResultPanel getSearchResultPanel() {
-        return panel.getSearchResultPanel();
+    /**
+     * Returns Search panel 
+     * @return SearchResultPanel
+     */
+    public SearchResultPanel getSearchResultPanel() {
+        return searchPanel.getSerachResultPanel();
     }
 
-    @Override
-    public void setSearchPanel(AbstractCategorySearchPanel panel) {
-        this.panel = panel;
+    /**
+     * Adds search panel in choose category panel
+     * @param panel
+     */
+    public void addSearchPanel(SearchPanel panel) {
+        if (panel == null) {
+            panel = new SearchPanel(this);
+        }
+        if (pane != null) {
+            this.remove(pane);
+        }
+        setSearchPanel(panel);
+        searchPanel = panel;
+        searchPanel.setUIForChooseCategorySearchPanel();
+        pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, box, searchPanel);
+        pane.setDividerSize(4);
+        pane.setDividerLocation(242);
+        pane.setOneTouchExpandable(false);
+        pane.setBorder(null);
+        this.setBorder(null);
+        this.add(BorderLayout.CENTER, pane);
     }
 
-    public void addResultPanel(AbstractSearchResultPanel resultPanel) {
-        panel.m_searchPanel.addResultsPanel(resultPanel);
+    /* 
+     * Sets SearchPanel
+     * (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.ContentPanel#setSearchPanel(edu.wustl.cab2b.client.ui.SearchPanel)
+     */
+    public void setSearchPanel(SearchPanel panel) {
+        this.searchPanel = panel;
     }
 
+    /**
+     * Adds result panel
+     * @param resultPanel
+     */
+    public void addResultPanel(SearchResultPanel resultPanel) {
+        searchPanel.addResultsPanel(resultPanel);
+    }
+
+    /**
+     * Set's search text
+     * @param searchText
+     */
     public void setSearchText(String searchText) {
-        panel.getSearchPanel().setSearchtext(searchText);
+        searchPanel.setSearchtext(searchText);
     }
 
+    /**
+     * get search text
+     * @return String
+     */
     public String getSearchText() {
-        return panel.getSearchPanel().getSearchtext();
+        return searchPanel.getSearchtext();
     }
 
 }

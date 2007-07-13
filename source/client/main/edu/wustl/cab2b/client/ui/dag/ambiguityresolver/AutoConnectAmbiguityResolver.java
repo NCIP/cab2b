@@ -59,7 +59,7 @@ public class AutoConnectAmbiguityResolver extends AbstractAmibuityResolver {
     }
     
     /**
-     * This method sets the renderers to the columns of the table and adds the table panel to this object
+     * This method sets the renderers to the columns of the table and adds the table searchPanel to this object
      */
     protected void addTablePanel() {
         AbstractTableModel abstractTableModel = getAmbiguityTableModel();
@@ -76,8 +76,8 @@ public class AutoConnectAmbiguityResolver extends AbstractAmibuityResolver {
     }
 
     /**
-     * This method defines the action listnener for the buttons and returns the button panel 
-     * @return panel of button
+     * This method defines the action listnener for the buttons and returns the button searchPanel 
+     * @return searchPanel of button
      */
     private Cab2bPanel getButtonPanel() {
         ActionListener submitButtonListener = new ActionListener() {

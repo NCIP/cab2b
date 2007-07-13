@@ -22,13 +22,13 @@ import edu.wustl.common.util.logger.Logger;
 public class MainSearchPanel extends Cab2bPanel
 {
 
-	/**  The top panel consisting of the labels.*/
+	/**  The top searchPanel consisting of the labels.*/
 	private SearchTopPanel m_TopLabelPanel = new SearchTopPanel();
 
-	/** The center panel.*/
+	/** The center searchPanel.*/
 	private SearchCenterPanel m_CenterPanel = new SearchCenterPanel();
 
-	/** The bottom navigation panel.*/
+	/** The bottom navigation searchPanel.*/
 	private SearchNavigationPanel m_BottomPanel = new SearchNavigationPanel(this);
 
 	/** The query object generated when user submits the conditions in the add limit page.*/	
@@ -57,7 +57,7 @@ public class MainSearchPanel extends Cab2bPanel
 	}
 
 	/**
-	 * The getter method for the center panel.
+	 * The getter method for the center searchPanel.
 	 * @return
 	 */
 	public SearchCenterPanel getCenterPanel()
@@ -66,7 +66,7 @@ public class MainSearchPanel extends Cab2bPanel
 	}
 
 	/**
-	 * The getter method for the top panel.
+	 * The getter method for the top searchPanel.
 	 * @return
 	 */
 	public SearchTopPanel getTopPanel()
@@ -76,7 +76,7 @@ public class MainSearchPanel extends Cab2bPanel
 	}
 
 	/**
-	 * The getter method for the navigation panel.
+	 * The getter method for the navigation searchPanel.
 	 * @return
 	 */
 	public SearchNavigationPanel getNavigationPanel()
@@ -86,9 +86,9 @@ public class MainSearchPanel extends Cab2bPanel
 	}
 
 	/*
-	 * The dialog is made up of 3 panels;a top panel consisting of the label
-	 * panel, the main panel as well as the navigation panel. The center panel
-	 * has a card layout which is controlled by the navigation panel. The dialog
+	 * The dialog is made up of 3 panels;a top searchPanel consisting of the label
+	 * searchPanel, the main searchPanel as well as the navigation searchPanel. The center searchPanel
+	 * has a card layout which is controlled by the navigation searchPanel. The dialog
 	 * itself has a border layout.
 	 */
 	public MainSearchPanel()

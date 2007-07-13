@@ -40,7 +40,7 @@ import edu.wustl.common.util.logger.Logger;
 /**
  * @author mahesh_iyer
  * 
- * This is the panel for defining results view panel.
+ * This is the searchPanel for defining results view searchPanel.
  */
 
 public class AdvancedDefineViewPanel extends Cab2bPanel {
@@ -76,7 +76,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 		JXPanel topPanel = new Cab2bPanel(new RiverLayout());
 		topPanel.add(new Cab2bLabel(""));
 		topPanel.add("tab ", showAllLink);
-		/* Add the top panel to the North of the dialog. */
+		/* Add the top searchPanel to the North of the dialog. */
 		this.add(BorderLayout.NORTH, topPanel);
 
 		Vector<PageElement> pageElementCollection = new Vector<PageElement>();
@@ -120,12 +120,12 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 		/*
 		 * Initalize the pagination component.
 		 */
-		this.m_resultsPage = new JPagination(pageElementCollection, numPager, this, true, false);
+		this.m_resultsPage = new JPagination(pageElementCollection, numPager, this, true);
 		m_resultsPage.resetAllLabels();
 		this.m_resultsPage.setPageLinksDisabled();
 
 		/*
-		 * Create a Panel for the center panel, and add the pagination component
+		 * Create a Panel for the center searchPanel, and add the pagination component
 		 * to that.
 		 */
 		JXPanel centerPanel = new Cab2bPanel(new RiverLayout());
@@ -137,10 +137,10 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 		// not links are dummies, so please don't try seleting them."));
 		centerPanel.add("br", new Cab2bLabel());
 		centerPanel.add("br", this.m_resultsPage);
-		/* Add the center panel to the main panel */
+		/* Add the center searchPanel to the main searchPanel */
 		this.add(BorderLayout.CENTER, centerPanel);
 
-		/* The bottom panel */
+		/* The bottom searchPanel */
 		JXPanel bottomPanel = new Cab2bPanel(new RiverLayout(0, 0));
 		JLabel asterix = new Cab2bLabel("* ");
 		asterix.setFont(new Font("Arial", Font.BOLD, 16));

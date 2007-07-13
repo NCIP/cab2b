@@ -123,8 +123,8 @@ public class AvailablePathsPanel extends AbstractAmibuityResolver {
     }
 
     /**
-     * This method returns the panel of hyperlinks containing link of General Path and Currated Path respectively.
-     * @return panel of hyperlinks
+     * This method returns the searchPanel of hyperlinks containing link of General Path and Currated Path respectively.
+     * @return searchPanel of hyperlinks
      */
     private Cab2bPanel createHyperLinkPanel() {
         Cab2bPanel hyperlinkPanel = new Cab2bPanel(new RiverLayout());

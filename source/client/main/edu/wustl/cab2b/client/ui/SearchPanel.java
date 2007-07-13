@@ -4,6 +4,7 @@ import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.MAIN_F
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Set;
@@ -36,53 +37,57 @@ import edu.wustl.common.util.global.ApplicationProperties;
  * search panels for the main as well as 'AddLimit' section from the main search
  * dialog. Concrete classes must over ride methods to effect custom layout.
  * 
- * @author mahesh_iyer
+ * @author mahesh_iyer/Deepak_Shingan
  * 
  */
 
-public abstract class AbstractSearchPanel extends Cab2bPanel {
+public class SearchPanel extends Cab2bPanel {
 
     /**
-     * The reference to the parent content panel required to be refreshed for
+     * The reference to the parent content searchPanel required to be refreshed for
      * the appropritate event.
      */
-    private ContentPanel m_addLimitPanel;
+    private ContentPanel contentPanel;
 
     /**
      * A generic reference to the specific implementation of the advanced search
-     * panel.
+     * searchPanel.
      */
-    private AbstractAdvancedSearchPanel m_advSearchPanel;
+    public AdvancedSearchPanel advSearchPanel;
 
-    /** A specific implementation of the results panel. */
-    public AbstractSearchResultPanel m_srhResultPanel;
+    /** A specific implementation of the results searchPanel. */
+    public SearchResultPanel srhResultPanel;
 
     /** Text field to specify the search term. */
-    protected JTextField m_srhTextField;
+    public JTextField srhTextField;
 
     /** search button.*/
-    protected JButton m_srhButton;
+    protected JButton srhButton;
 
-    /**Error message panel**/
+    /**Error message searchPanel**/
     Cab2bPanel errorMsgPanel;
 
     /**
      * constructor
      * 
-     * @param addLimitPanel
-     *            The reference to the parent content panel that is saved, so
+     * @param contentPanel
+     *            The reference to the parent content searchPanel that is saved, so
      *            that it can be made available to child components, which can
      *            then cause the parent to refresh for appropriate events.
      */
 
-    public AbstractSearchPanel(ContentPanel addLimitPanel) {
-        this.m_addLimitPanel = addLimitPanel;        
-        initGUI();        
-        SwingUtilities.invokeLater(new Runnable() { public void run() { m_srhTextField.requestFocus(); } } ); 
+    public SearchPanel(ContentPanel addLimitPanel) {
+        this.contentPanel = addLimitPanel;
+        initGUI();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                srhTextField.requestFocus();
+            }
+        });
     }
 
     /**
-     * Method initializes the panel by appropriately laying out child components.
+     * Method initializes the searchPanel by appropriately laying out child components.
      * 
      */
 
@@ -90,30 +95,27 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
         /* Set the layout.*/
         this.setLayout(new RiverLayout());
 
-        /* Invoke the method to get the specific type of Advanced search panel to be added*/
-        m_advSearchPanel = this.getAdvancedSearchPanel();
-
         /* Intialize the Search button.*/
-        m_srhButton = new Cab2bButton("Search");
-        m_srhButton.setEnabled(false);
-        m_srhButton.addActionListener(new SearchActionListener(this.m_addLimitPanel));
+        srhButton = new Cab2bButton("Search");
+        srhButton.setEnabled(false);
+        srhButton.addActionListener(new SearchActionListener(this.contentPanel));
 
         /* Intializa the text field.*/
-        m_srhTextField = new JTextField();
-        Keymap keyMap = m_srhTextField.addKeymap("enter", m_srhTextField.getKeymap());
+        srhTextField = new JTextField();
+        Keymap keyMap = srhTextField.addKeymap("enter", srhTextField.getKeymap());
         KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-        keyMap.addActionForKeyStroke(key, new SearchActionListener(this.m_addLimitPanel));
-        m_srhTextField.setKeymap(keyMap);
+        keyMap.addActionForKeyStroke(key, new SearchActionListener(this.contentPanel));
+        srhTextField.setKeymap(keyMap);
 
         /* Add a listener to the text-field.*/
-        m_srhTextField.getDocument().addDocumentListener(new DocumentListener() {
+        srhTextField.getDocument().addDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent arg0) {
-                m_srhButton.setEnabled(true);
+                srhButton.setEnabled(true);
             }
 
             public void removeUpdate(DocumentEvent arg0) {
                 if (arg0.getDocument().getLength() == 0) {
-                    m_srhButton.setEnabled(false);
+                    srhButton.setEnabled(false);
                 }
             }
 
@@ -122,23 +124,42 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
             }
         });
 
-        //m_srhTextField.setBorder(BorderFactory.createLoweredBevelBorder());
-        m_srhTextField.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
+        srhTextField.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
         final String helpText = ApplicationProperties.getValue(MAIN_FRAME_SEARCH_HELP_TEXT);
-        m_srhTextField.setToolTipText(helpText);
+        srhTextField.setToolTipText(helpText);
         ToolTipManager.sharedInstance().setDismissDelay(500000);
         /* Invoke the method based on concrete implementations from sub-class*/
         addTextField();
 
-        /* Add the components to the panel.*/
-    
-        this.add(m_srhButton);
-      
-		Cab2bLabel cab2bLabel = new Cab2bLabel(helpText);
-		this.add("br", new Cab2bLabel(" "));
-		this.add(cab2bLabel);
-        this.add("br", m_advSearchPanel);
-       
+        /* Add the components to the searchPanel.*/
+
+        /* Invoke the method to get the specific type of Advanced search searchPanel to be added*/
+        advSearchPanel = this.getAdvancedSearchPanel();
+        this.add(srhButton);
+        Cab2bLabel cab2bLabel = new Cab2bLabel(helpText);
+        this.add("br ", new Cab2bLabel(" "));
+        this.add(cab2bLabel);
+        this.add("br tab", advSearchPanel);
+    }
+
+    public void setUIForChooseCategorySearchPanel() {
+        srhTextField.setPreferredSize(new Dimension(350, 22));
+        if (advSearchPanel.getTaskPane().isExpanded()) {
+            advSearchPanel.setPreferredSize(new Dimension(472, 140));
+        } else {
+            advSearchPanel.setPreferredSize(new Dimension(472, 30));
+        }
+        setBorder(null);
+    }
+
+    public void setUIForAddLimitSearchPanel() {
+        srhTextField.setPreferredSize(new Dimension(160, 23));
+        if (advSearchPanel.getTaskPane().isExpanded()) {
+            advSearchPanel.setPreferredSize(new Dimension(265, 140));
+        } else {
+            advSearchPanel.setPreferredSize(new Dimension(265, 30));
+        }
+        setBorder(null);
     }
 
     /**
@@ -146,7 +167,7 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
      * @param searchText
      */
     public void setSearchtext(String searchText) {
-        m_srhTextField.setText(searchText);
+        srhTextField.setText(searchText);
     }
 
     /**
@@ -154,7 +175,7 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
      *  
      */
     public String getSearchtext() {
-        return m_srhTextField.getText();
+        return srhTextField.getText();
     }
 
     /**
@@ -162,41 +183,45 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
      * 
      */
     JTextField getTextField() {
-        return m_srhTextField;
+        return srhTextField;
     }
 
     /**
      * The method clears any previously searched results, by removing the
-     * corresponding panel.
+     * corresponding searchPanel.
      * 
      * @param resultPanel
-     *            The results panel to be removed
+     *            The results searchPanel to be removed
      * 
      */
     private void removeResultPanel() {
-        if (m_srhResultPanel != null) {
-            m_srhResultPanel.removeResultPanel();
-            this.remove(m_srhResultPanel);
+        if (srhResultPanel != null) {
+            srhResultPanel.removeResultPanel();
+            this.remove(srhResultPanel);
         }
         this.updateUI();
     }
 
     /**
-     * The method adds the {@link AddLimitSearchResultPanel}dynamically to this panel. 
+     * The method adds the {@link AddLimitSearchResultPanel}dynamically to this searchPanel. 
      * 
      * @param resultPanel
-     *            The results panel to be added.
+     *            The results searchPanel to be added.
      */
-    public void addResultsPanel(AbstractSearchResultPanel resultPanel) {
-    	if(resultPanel!=null){
-        this.add("p vfill", resultPanel);
-        m_srhResultPanel = resultPanel;
-    	}
+    public void addResultsPanel(SearchResultPanel resultPanel) {
+        if (resultPanel != null) {
+            this.add("p vfill", resultPanel);
+            srhResultPanel = resultPanel;
+        }
         this.updateUI();
     }
 
-    public AbstractSearchResultPanel getSerachReultPanel() {
-        return m_srhResultPanel;
+    public SearchResultPanel getSerachResultPanel() {
+        return srhResultPanel;
+    }
+
+    public void setSerachResultPanel(SearchResultPanel searchResultPanel) {
+        srhResultPanel = searchResultPanel;
     }
 
     /**
@@ -214,13 +239,13 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
 
         public void actionPerformed(ActionEvent ae) {
             /* Read the value from the text field.*/
-            String value = m_srhTextField.getText();
+            String value = srhTextField.getText();
             value = CommonUtils.removeContinuousSpaceCharsAndTrim(value);
             final String[] values = value.split("\\s");
 
             /* Invoke the method to determing the combination of search.*/
-            final int[] searchTargetStatus = m_advSearchPanel.getSearchTargetStatus();
-            final int searchOn = m_advSearchPanel.getSearchOnStatus();
+            final int[] searchTargetStatus = advSearchPanel.getSearchTargetStatus();
+            final int searchOn = advSearchPanel.getSearchOnStatus();
 
             CustomSwingWorker swingWorker = new CustomSwingWorker(comp) {
                 Set srhResult = null;
@@ -243,10 +268,10 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
                     //replace previous panels 
                     removeResultPanel();
 
-                    /* Add an appropriate instance of the search results panel to this panel */
-                    m_srhResultPanel = getSearchResultPanel(m_addLimitPanel, srhResult);
-                    m_addLimitPanel.setSearchResultPanel(m_srhResultPanel);
-                    addResultsPanel(m_srhResultPanel);
+                    /* Add an appropriate instance of the search results searchPanel to this searchPanel */
+                    srhResultPanel = getSearchResultPanel(contentPanel, srhResult);
+                    contentPanel.setSearchResultPanel(srhResultPanel);
+                    addResultsPanel(srhResultPanel);
                 }
             };
             swingWorker.start();
@@ -255,33 +280,52 @@ public abstract class AbstractSearchPanel extends Cab2bPanel {
 
     /**
      * The abstract method returns the appropriate type of
-     * {@link AbstractSearchResultPanel} to be added to this panel. Sub-classes
+     * {@link SearchResultPanel} to be added to this searchPanel. Sub-classes
      * are required to over-ride this method.
      * 
-     * @param addLimitPanel
-     *            The reference to the parent content panel required by the a
-     *            specific instance of {@link AbstractSearchResultPanel} to be
+     * @param contentPanel
+     *            The reference to the parent content searchPanel required by the a
+     *            specific instance of {@link SearchResultPanel} to be
      *            refreshed for the appropritate events it can generate.
      * 
      * @param searchResult
      *            The collection of Entities
      */
-    public abstract AbstractSearchResultPanel getSearchResultPanel(ContentPanel addLimitPanel, Set searchResult);
+    public SearchResultPanel getSearchResultPanel(ContentPanel addLimitPanel, Set searchResult) {
+        return new SearchResultPanel(addLimitPanel, searchResult);
+    }
 
     /**
      * The abstract method returns the appropriate type of
-     * {@link AbstractAdvancedSearchPanel} to be added to this panel. Sub-classes
+     * {@link AdvancedSearchPanel} to be added to this searchPanel. Sub-classes
      * are required to over-ride this method.
      * 
-     * @return AbstractAdvancedSearchPanel 
+     * @return AdvancedSearchPanel 
      */
 
-    public abstract AbstractAdvancedSearchPanel getAdvancedSearchPanel();
+    public AdvancedSearchPanel getAdvancedSearchPanel() {
+        if (advSearchPanel == null)
+            return new AdvancedSearchPanel();
+        else
+            return advSearchPanel;
+    }
+
+    public void setAdvancedSearchPanel(AdvancedSearchPanel advancedSearchPanel) {
+        if (advancedSearchPanel != null) {
+            this.remove(advSearchPanel);
+        }
+        advSearchPanel = advancedSearchPanel;
+        this.add("br ", advSearchPanel);
+    }
 
     /**
      * The abstract method to add the text field in a manner required by the
-     * specific instance of {@link AbstractSearchPanel}
+     * specific instance of {@link SearchPanel}
      * 
      */
-    public abstract void addTextField();
+    public void addTextField() {
+        this.getTextField().setPreferredSize(new Dimension(350, 22));
+        this.add("tab ", new Cab2bLabel());
+        this.add(this.getTextField());
+    }
 }

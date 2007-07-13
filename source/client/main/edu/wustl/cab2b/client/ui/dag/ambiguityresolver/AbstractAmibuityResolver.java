@@ -70,7 +70,7 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
     abstract protected void refreshAmbiguityTable();
 
     /**
-     * This method sets the renderers to the columns of the table and adds the table panel to this object
+     * This method sets the renderers to the columns of the table and adds the table searchPanel to this object
      */
     abstract protected void addTablePanel();
 
@@ -81,8 +81,8 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
     abstract protected AbstractTableModel getAmbiguityTableModel();
 
     /**
-     * This method returns a panel containing table
-     * @return panel of table
+     * This method returns a searchPanel containing table
+     * @return searchPanel of table
      */
     protected Cab2bPanel createTablePanel(JTable jTable) {
         JScrollPane jScrollPane = new JScrollPane(jTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -171,8 +171,8 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
     }
 
     /**
-     * This method returns the panel of the buttons
-     * @return panel of buttons
+     * This method returns the searchPanel of the buttons
+     * @return searchPanel of buttons
      */
     protected Cab2bPanel createButtonPanel(ActionListener submitButtonListener, ActionListener cancelButtonListener) {
         Cab2bButton submitButton = new Cab2bButton("Submit");

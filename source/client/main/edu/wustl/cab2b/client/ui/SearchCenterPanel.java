@@ -11,8 +11,8 @@ import org.jdesktop.swingx.JXPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 
 /**
- * The center panel from the main search dialog. The panel uses a card layout to
- * manage all the cards. Each card is in turn a panel corresponding to each tab
+ * The center searchPanel from the main search dialog. The searchPanel uses a card layout to
+ * manage all the cards. Each card is in turn a searchPanel corresponding to each tab
  * in th main search dialog.
  * 
  * @author mahesh_iyer
@@ -20,22 +20,22 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
  */
 
 public class SearchCenterPanel extends Cab2bPanel {
-    /** An array of all the cards to be added to this panel.*/
+    /** An array of all the cards to be added to this searchPanel.*/
     public JXPanel[] m_arrCards = new Cab2bPanel[5];
 
-    /** Identifier to identify the card corresponding to the advanced search panel.*/
+    /** Identifier to identify the card corresponding to the advanced search searchPanel.*/
     public static final String m_strIdentifierChooseCateglbl = "Choose Search Category";
 
-    /** Identifier to identify the card corresponding to the Add Limit panel.*/
+    /** Identifier to identify the card corresponding to the Add Limit searchPanel.*/
     public static final String m_strIdentifierAddLimitlbl = "Add Limit";
 
-    /** Identifier to identify the card corresponding to the Define Search Results panel.*/
+    /** Identifier to identify the card corresponding to the Define Search Results searchPanel.*/
     public static final String m_strDefineSearchResultslbl = "Define Search Results View";
 
-    /** Identifier to identify the card corresponding to the View Search Results panel.*/
+    /** Identifier to identify the card corresponding to the View Search Results searchPanel.*/
     public static final String m_strViewSearchResultslbl = "View Search Results";
 
-    /** Identifier to identify the card corresponding to the Data List panel.*/
+    /** Identifier to identify the card corresponding to the Data List searchPanel.*/
     public static final String m_strDataListlbl = "Data List";
 
     /** Index to indicate the currently selected index. Initialized to default value of 0.*/
@@ -46,7 +46,7 @@ public class SearchCenterPanel extends Cab2bPanel {
     private ChooseCategoryPanel chooseCategPanel;
 
     /**
-     * HashMap of identifiers. This would be used by the navigation panel to
+     * HashMap of identifiers. This would be used by the navigation searchPanel to
      * bring up the appropriate card.
      */
     private Vector m_vIdentifiers = new Vector();
@@ -107,7 +107,7 @@ public class SearchCenterPanel extends Cab2bPanel {
      * The method initializes the tabbed pane.
      */
     private void initGUI() {
-        /*Set the card layout for the center panel.*/
+        /*Set the card layout for the center searchPanel.*/
         this.setLayout(new CardLayout());
 
         /* First card initialization.*/
@@ -117,7 +117,7 @@ public class SearchCenterPanel extends Cab2bPanel {
 
         /*
          * Add the identifier to the vector, where from it would be refrenced by
-         * the navigation panel.
+         * the navigation searchPanel.
          */
         this.m_vIdentifiers.add(this.m_strIdentifierChooseCateglbl);
         this.m_arrCards[0] = chooseCategPanel;
@@ -148,19 +148,26 @@ public class SearchCenterPanel extends Cab2bPanel {
     }
 
     /**
-     * get the choose category panel instance 
-     * @return the choose category panel instance
+     * get the choose category searchPanel instance 
+     * @return the choose category searchPanel instance
      */
     public ChooseCategoryPanel getChooseCategoryPanel() {
         return chooseCategPanel;
     }
 
     /**
-     * get the add limit panel instance 
-     * @return the add limit panel instance
+     * get the add limit searchPanel instance 
+     * @return the add limit searchPanel instance
      */
     public AddLimitPanel getAddLimitPanel() {
         return addLimitPanel;
+    }
+
+    public void setChooseCategoryPanel(ChooseCategoryPanel chooseCategoryPanel) {
+        this.chooseCategPanel = chooseCategoryPanel;
+        this.add(chooseCategPanel, this.m_strIdentifierChooseCateglbl);
+        this.m_vIdentifiers.add(this.m_strIdentifierChooseCateglbl);
+        this.m_arrCards[0] = chooseCategPanel;
     }
 
     public void setAddLimitPanel(AddLimitPanel addLimitPanel) {
