@@ -6,7 +6,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -53,9 +53,14 @@ public class InterModelAssociationDataPanel extends AbstractAssociatedDataPanel 
      */
 
     void processAssociation() {
-        Iterator assoIter = associations.iterator();
-        while (assoIter.hasNext()) {
-            IInterModelAssociation interModelAssociation = (IInterModelAssociation) assoIter.next();
+        List<IInterModelAssociation> list = new ArrayList<IInterModelAssociation>(associations);
+        Collections.sort(list,new Comparator<IInterModelAssociation>() {
+            public int compare(IInterModelAssociation association1, IInterModelAssociation association2) {
+                return association1.getTargetEntity().getName().compareTo(association2.getTargetEntity().getName());
+            }
+        });
+        for (IInterModelAssociation interModelAssociation:list) {
+            
             if (!interModelAssociation.isBidirectional()) {
                 continue;
             }

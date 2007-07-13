@@ -4,11 +4,10 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import edu.common.dynamicextensions.domain.Association;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.query.ClientQueryBuilder;
@@ -48,9 +47,13 @@ public class OutgoingAssociationDataPanel extends AbstractAssociatedDataPanel {
      * @see edu.wustl.cab2b.client.ui.viewresults.AbstractAssociatedDataPanel#processAssociation()
      */
     void processAssociation() {
-        Iterator assoIter = associations.iterator();
-        while (assoIter.hasNext()) {
-            Association deAssociation = (Association) assoIter.next();
+        List<AssociationInterface> list = new ArrayList<AssociationInterface>(associations);
+        Collections.sort(list,new Comparator<AssociationInterface>() {
+            public int compare(AssociationInterface association1, AssociationInterface association2) {
+                return association1.getTargetEntity().getName().compareTo(association2.getTargetEntity().getName());
+            }
+        });
+        for (AssociationInterface deAssociation:list) {
             IIntraModelAssociation intraModelAssociation = (IIntraModelAssociation) QueryObjectFactory.createIntraModelAssociation(deAssociation);
             String tooTipText = "Target role name : "
                     + intraModelAssociation.getDynamicExtensionsAssociation().getTargetRole().getName();

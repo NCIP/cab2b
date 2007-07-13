@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -55,9 +55,15 @@ public class IncomingAssociationDataPanel extends AbstractAssociatedDataPanel {
      * @see edu.wustl.cab2b.client.ui.viewresults.AbstractAssociatedDataPanel#processAssociation()
      */
     void processAssociation() {
-        Iterator assoIter = associations.iterator();
-        while (assoIter.hasNext()) {
-            AssociationInterface deAssociation = (AssociationInterface) assoIter.next();
+        
+        List<AssociationInterface> list = new ArrayList<AssociationInterface>(associations);
+        Collections.sort(list,new Comparator<AssociationInterface>() {
+            public int compare(AssociationInterface association1, AssociationInterface association2) {
+                return association1.getEntity().getName().compareTo(association2.getEntity().getName());
+            }
+        });
+        for (AssociationInterface deAssociation :list) {
+            
 
             IIntraModelAssociation intraModelAssociation = (IIntraModelAssociation) QueryObjectFactory.createIntraModelAssociation(deAssociation);
             String tooTipText = "Target role name : " + deAssociation.getSourceRole().getName();
