@@ -474,7 +474,8 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
 
             /* Get the searchPanel corresponding to the currently selcted card and refresh it.*/
             AddLimitPanel addLimitPanel = (AddLimitPanel) (mainSearchPanel.getCenterPanel().getAddLimitPanel());
-
+            addLimitPanel.addSearchPanel(mainSearchPanel.getCenterPanel().getChooseCategoryPanel().getSearchPanel());
+            addLimitPanel.refresh(arrComponentPanel, strClassName);
             //set search-result searchPanel in AddLimit searchPanel and move to next tab 
             if (mainSearchPanel.getCenterPanel().getSelectedCardIndex() == 0) {
                 SearchResultPanel searchResultPanel = mainSearchPanel.getCenterPanel().getChooseCategoryPanel().getSearchResultPanel();
@@ -484,8 +485,7 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
                 }
                 (mainSearchPanel.getNavigationPanel()).showCard(true);
             }
-            addLimitPanel.addSearchPanel(mainSearchPanel.getCenterPanel().getChooseCategoryPanel().getSearchPanel());
-            addLimitPanel.refresh(arrComponentPanel, strClassName);
+            
         }
     }
 

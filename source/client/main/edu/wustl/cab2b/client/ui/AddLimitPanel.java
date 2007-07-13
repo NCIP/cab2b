@@ -174,15 +174,17 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      */
 
     public void addSearchPanel(SearchPanel srcPanel) {
-        if (srcPanel == null) {
-            searchPanel = new SearchPanel(this);
-        } else {
-            setSearchPanel(srcPanel);
-        }
+      
 
         //removing the outerpane if available
         if (m_outerPane != null) {
             this.remove(m_outerPane);
+        }
+        
+        if (srcPanel == null) {
+            searchPanel = new SearchPanel(this);
+        } else {
+            setSearchPanel(srcPanel);
         }
 
         searchPanel.setMinimumSize(new Dimension(270, 300));
