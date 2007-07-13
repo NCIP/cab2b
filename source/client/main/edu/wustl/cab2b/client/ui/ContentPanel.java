@@ -20,7 +20,8 @@ public abstract class ContentPanel extends Cab2bPanel
 	
 	public abstract void refresh(JXPanel[] arrPanel,String strClassName);    
     
-	public abstract void setSearchResultPanel(SearchResultPanel searchResultPanel);	
+	public abstract void setSearchResultPanel(SearchResultPanel searchResultPanel);
+    public abstract void refreshBottomCenterPanel(IExpressionId expressionId);
     
     public abstract void setSearchPanel(SearchPanel panel);
     

@@ -355,6 +355,9 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
                                               mainSearchPanel.getParent(),
                                               "This rule cannot be added as it is not associated with the added rules.",
                                               "Error", JOptionPane.ERROR_MESSAGE);
+            }else
+            {
+                contentPanel.refreshBottomCenterPanel(expressionId);
             }
         }
     }
