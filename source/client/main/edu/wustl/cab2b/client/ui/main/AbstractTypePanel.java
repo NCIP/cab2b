@@ -13,6 +13,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.SemanticPropertyInterface;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bComboBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -113,6 +114,8 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 
         m_Name = new Cab2bLabel(formattedString + " : ");
         m_Name.setPreferredSize(maxLabelDimension);//new Dimension(235,20)
+        String toolTipText = getAttributeToolTip(attributeEntity);
+        m_Name.setToolTipText(toolTipText);
         m_NameEdit = getFirstComponent();
 
         m_OtherEdit = getSecondComponent();
@@ -156,11 +159,85 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     }
 
     public abstract void setComponentPreference(String condition);
-    
+
     public abstract void resetPanel();
 
     public String getAttributeName() {
         return attributeName;
+    }
+
+    private String getAttributeToolTip(AttributeInterface attribute) {
+        StringBuffer tooltip = new StringBuffer();
+        tooltip.append("<HTML><P>" + getWrappedDescription(attribute.getDescription()) + "</P>");
+
+        if (attribute.getPublicId() != null) {
+            tooltip.append("<P><B>Public Id : </B>" + attribute.getPublicId() + " ");
+        }
+
+        tooltip.append("<B>Concept Code : </B>");
+        boolean isFirst = true;
+        for (SemanticPropertyInterface semanticProperty : attribute.getSemanticPropertyCollection()) {
+            String conceptCode = semanticProperty.getConceptCode();
+
+            if (conceptCode != null) {
+                if (isFirst) {
+                    tooltip.append(conceptCode);
+                    isFirst = false;
+                } else {
+                    tooltip.append(", " + conceptCode);
+                }
+            }
+        }
+        tooltip.append("</P></HTML>");
+
+        return tooltip.toString();
+    }
+
+    /**
+     * Method to wrap the text and send it accross
+     * @return
+     */
+    private String getWrappedDescription(String text) {
+        StringBuffer wrappedText = new StringBuffer();
+        String currentString = null;
+        int currentStart = 0;
+        int offset = 75;
+        int strLen = 0;
+        int len = 0;
+
+        while (currentStart < text.length() && text.length() > offset) {
+            currentString = text.substring(currentStart, (currentStart + offset));
+            strLen += currentString.length() + len;
+            wrappedText.append(currentString);
+
+            int index = text.indexOf(" ", (currentStart + offset));
+            if (index == -1) {
+                index = text.indexOf(".", (currentStart + offset));
+            }
+            if (index == -1) {
+                index = text.indexOf(",", (currentStart + offset));
+            }
+            if (index != -1) {
+                len = index - strLen;
+                currentString = text.substring((currentStart + offset), (currentStart + offset + len));
+                wrappedText.append(currentString);
+                wrappedText.append("<BR>");
+            } else {
+                if (currentStart == 0) {
+                    currentStart = offset;
+                }
+                wrappedText.append(text.substring(currentStart));
+                return wrappedText.toString();
+            }
+
+            currentStart += offset + len;
+            if ((currentStart + offset + len) > text.length()) {
+                break;
+            }
+        }
+        wrappedText.append(text.substring(currentStart));
+        wrappedText.append("</P>");
+        return wrappedText.toString();
     }
 
     private void setCondtionControl(ArrayList<String> conditionList, final Border border,
