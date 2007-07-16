@@ -16,13 +16,11 @@ public abstract class ContentPanel extends Cab2bPanel
 	 * AddLimitPanel. Thus we need to be able to get a reference to that
 	 * instance and be able to set the query instance in the main DAG Panel.
 	 */
-	public abstract void setQueryObject(IClientQueryBuilderInterface query);
 	
 	public abstract void refresh(JXPanel[] arrPanel,String strClassName);    
     
-	public abstract void setSearchResultPanel(SearchResultPanel searchResultPanel);
-    public abstract void refreshBottomCenterPanel(IExpressionId expressionId);
-    
+	public abstract void setSearchResultPanel(SearchResultPanel searchResultPanel);    
+        
     public abstract void setSearchPanel(SearchPanel panel);
     
     public abstract SearchPanel getSearchPanel();

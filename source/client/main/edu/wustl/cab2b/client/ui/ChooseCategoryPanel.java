@@ -67,41 +67,25 @@ public class ChooseCategoryPanel extends ContentPanel {
      */
     public void refresh(JXPanel[] arrPanel, String strClassName) {
         //TODO implementation needs to be completed
-    }
-
-    /**
-     * This method takes the newly added expression and renders the node accordingly
-     * @param expressionId
-     */
-    public void refreshBottomCenterPanel(IExpressionId expressionId) {
-        SearchCenterPanel searchCenterPanel = (SearchCenterPanel) this.getParent();
-        AddLimitPanel panel = (AddLimitPanel) searchCenterPanel.getComponent(1);
-        try {
-            ((MainDagPanel) panel.getBottomCenterPanel()).updateGraph(expressionId);
-        } catch (MultipleRootsException e) {
-            CheckedException checkedException = new CheckedException(e.getMessage(), e, ErrorCodeConstants.QM_0003);
-            CommonUtils.handleException(checkedException, this, true, true, true, false);
-        }
-        this.updateUI();
-    }
-
+    }    
+  
     public void setSearchResultPanel(SearchResultPanel searchResultPanel) {
         searchPanel.setSerachResultPanel(searchResultPanel);
     }
 
-    /*
+/*    
      * Given the flow of events, the method will be called when the
      * dynamically generated UI is loaded into an instance of the
      * AddLimitPanel. Thus we need to be able to get a reference to that
      * instance and be able to set the query instance in the main DAG Panel.
-     */
+     
 
     public void setQueryObject(IClientQueryBuilderInterface query) {
-        /* For this instance get a handle to the SerchCenterPanel.*/
+         For this instance get a handle to the SerchCenterPanel.
         SearchCenterPanel searchCenterPanel = (SearchCenterPanel) this.getParent();
         AddLimitPanel panel = (AddLimitPanel) searchCenterPanel.getComponent(1);
         panel.setQueryObject(query);
-    }
+    }*/
 
     /* 
      * Gets Search panel
@@ -110,14 +94,8 @@ public class ChooseCategoryPanel extends ContentPanel {
      */
     @Override
     public SearchPanel getSearchPanel() {
-        SearchPanel searchPanel = null;
-
-        if (searchPanel == null) {
+        if (searchPanel == null)
             searchPanel = new SearchPanel(this);
-        } else {
-            searchPanel = this.searchPanel;
-        }
-
         return searchPanel;
     }
 
