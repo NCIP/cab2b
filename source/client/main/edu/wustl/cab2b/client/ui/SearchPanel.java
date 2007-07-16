@@ -20,6 +20,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Keymap;
 
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.cache.ClientSideCache;
 import edu.wustl.cab2b.client.metadatasearch.MetadataSearch;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
@@ -42,6 +43,7 @@ import edu.wustl.common.util.global.ApplicationProperties;
  */
 
 public class SearchPanel extends Cab2bPanel {
+    private static final long serialVersionUID = 1L;
 
     /**
      * The reference to the parent content searchPanel required to be refreshed for
@@ -102,7 +104,7 @@ public class SearchPanel extends Cab2bPanel {
 
         /* Intializa the text field.*/
         srhTextField = new JTextField();
-        Keymap keyMap = srhTextField.addKeymap("enter", srhTextField.getKeymap());
+        Keymap keyMap = JTextField.addKeymap("enter", srhTextField.getKeymap());
         KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         keyMap.addActionForKeyStroke(key, new SearchActionListener(this.contentPanel));
         srhTextField.setKeymap(keyMap);
@@ -230,8 +232,10 @@ public class SearchPanel extends Cab2bPanel {
      */
 
     private class SearchActionListener extends AbstractAction {
+        private static final long serialVersionUID = 1L;
+
         /** Component reference to pass to Error dialog boxes, for centering dialogs. */
-        Component comp;
+        private Component comp;
 
         public SearchActionListener(Component comp) {
             this.comp = comp;
@@ -248,7 +252,7 @@ public class SearchPanel extends Cab2bPanel {
             final int searchOn = advSearchPanel.getSearchOnStatus();
 
             CustomSwingWorker swingWorker = new CustomSwingWorker(comp) {
-                Set srhResult = null;
+                Set<EntityInterface> srhResult = null;
 
                 protected void doNonUILogic() throws RuntimeException {
 
@@ -291,7 +295,7 @@ public class SearchPanel extends Cab2bPanel {
      * @param searchResult
      *            The collection of Entities
      */
-    public SearchResultPanel getSearchResultPanel(ContentPanel addLimitPanel, Set searchResult) {
+    public SearchResultPanel getSearchResultPanel(ContentPanel addLimitPanel, Set<EntityInterface> searchResult) {
         return new SearchResultPanel(addLimitPanel, searchResult);
     }
 
