@@ -44,6 +44,7 @@ import edu.wustl.common.util.logger.Logger;
  */
 
 public class SaveDatalistPanel extends Cab2bPanel {
+    private static final long serialVersionUID = 1L;
 
     private Cab2bLabel titleLabel;
 

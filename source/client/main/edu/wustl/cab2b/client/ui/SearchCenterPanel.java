@@ -20,6 +20,8 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
  */
 
 public class SearchCenterPanel extends Cab2bPanel {
+    private static final long serialVersionUID = 1L;
+
     /** An array of all the cards to be added to this searchPanel.*/
     public JXPanel[] m_arrCards = new Cab2bPanel[5];
 
@@ -49,13 +51,12 @@ public class SearchCenterPanel extends Cab2bPanel {
      * HashMap of identifiers. This would be used by the navigation searchPanel to
      * bring up the appropriate card.
      */
-    private Vector m_vIdentifiers = new Vector();
+    private Vector<String> m_vIdentifiers = new Vector<String>();
 
     /**
      * The method returns the number of cards currently selected
      * 
      * @return int The current card count.
-     * 
      */
     public int getIdentifierCount() {
         return this.m_vIdentifiers.size();
@@ -65,7 +66,6 @@ public class SearchCenterPanel extends Cab2bPanel {
      * The method returns the index for the currently selected card.
      * 
      * @return int The index of the currently selected card.
-     * 
      */
     public int getSelectedCardIndex() {
         return this.m_iCurrentlySelectedCard;
@@ -75,9 +75,7 @@ public class SearchCenterPanel extends Cab2bPanel {
      * The method returns the currently selected card.
      * 
      * @return JXPanel The currently selected card.
-     * 
      */
-
     public JXPanel getSelectedCard() {
 
         return this.m_arrCards[this.getSelectedCardIndex()];
@@ -87,9 +85,7 @@ public class SearchCenterPanel extends Cab2bPanel {
      * The method sets the index of the currently selected card.
      * 
      * @param  iSelectedCard index of the card to be selected.
-     * 
      */
-
     public void setSelectedCardIndex(int iSelectedCard) {
         this.m_iCurrentlySelectedCard = iSelectedCard;
     }
@@ -97,7 +93,6 @@ public class SearchCenterPanel extends Cab2bPanel {
     /**
      * Constructor.
      */
-
     SearchCenterPanel() {
         initGUI();
         this.setBorder(new SearchDialogBorder());
@@ -112,25 +107,25 @@ public class SearchCenterPanel extends Cab2bPanel {
 
         /* First card initialization.*/
         chooseCategPanel = new ChooseCategoryPanel();
-        this.add(chooseCategPanel, this.m_strIdentifierChooseCateglbl);
+        this.add(chooseCategPanel, m_strIdentifierChooseCateglbl);
         chooseCategPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 
         /*
          * Add the identifier to the vector, where from it would be refrenced by
          * the navigation searchPanel.
          */
-        this.m_vIdentifiers.add(this.m_strIdentifierChooseCateglbl);
+        this.m_vIdentifiers.add(m_strIdentifierChooseCateglbl);
         this.m_arrCards[0] = chooseCategPanel;
 
         /* Second card initialization.*/
         addLimitPanel = new AddLimitPanel();
-        this.add(addLimitPanel, this.m_strIdentifierAddLimitlbl);
-        this.m_vIdentifiers.add(this.m_strIdentifierAddLimitlbl);
+        this.add(addLimitPanel, m_strIdentifierAddLimitlbl);
+        this.m_vIdentifiers.add(m_strIdentifierAddLimitlbl);
         this.m_arrCards[1] = addLimitPanel;
 
-        this.m_vIdentifiers.add(this.m_strDefineSearchResultslbl);
-        this.m_vIdentifiers.add(this.m_strViewSearchResultslbl);
-        this.m_vIdentifiers.add(this.m_strDataListlbl);
+        this.m_vIdentifiers.add(m_strDefineSearchResultslbl);
+        this.m_vIdentifiers.add(m_strViewSearchResultslbl);
+        this.m_vIdentifiers.add(m_strDataListlbl);
     }
 
     /**
@@ -165,15 +160,15 @@ public class SearchCenterPanel extends Cab2bPanel {
 
     public void setChooseCategoryPanel(ChooseCategoryPanel chooseCategoryPanel) {
         this.chooseCategPanel = chooseCategoryPanel;
-        this.add(chooseCategPanel, this.m_strIdentifierChooseCateglbl);
-        this.m_vIdentifiers.add(this.m_strIdentifierChooseCateglbl);
+        this.add(chooseCategPanel, m_strIdentifierChooseCateglbl);
+        this.m_vIdentifiers.add(m_strIdentifierChooseCateglbl);
         this.m_arrCards[0] = chooseCategPanel;
     }
 
     public void setAddLimitPanel(AddLimitPanel addLimitPanel) {
         this.addLimitPanel = addLimitPanel;
-        this.add(addLimitPanel, this.m_strIdentifierAddLimitlbl);
-        this.m_vIdentifiers.add(this.m_strIdentifierAddLimitlbl);
+        this.add(addLimitPanel, m_strIdentifierAddLimitlbl);
+        this.m_vIdentifiers.add(m_strIdentifierAddLimitlbl);
         this.m_arrCards[1] = addLimitPanel;
     }
 

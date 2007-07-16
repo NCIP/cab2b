@@ -25,6 +25,8 @@ import edu.wustl.common.querysuite.queryobject.IExpressionId;
  */
 
 public class ChooseCategoryPanel extends ContentPanel {
+    private static final long serialVersionUID = 1L;
+
     public SearchPanel searchPanel = null;
 
     private B2BStackedBox box;
@@ -35,9 +37,7 @@ public class ChooseCategoryPanel extends ContentPanel {
 
     /**
      * Constructor
-     *
      */
-
     ChooseCategoryPanel() {
         initGUI();
     }
@@ -45,7 +45,6 @@ public class ChooseCategoryPanel extends ContentPanel {
     /**
      * Method initializes the searchPanel by appropriately laying out child components.
      */
-
     public void initGUI() {
         /* The searchPanel consists of 2 parts
          * 1. StackedCollapsiblePanels.
@@ -55,9 +54,7 @@ public class ChooseCategoryPanel extends ContentPanel {
         box = new B2BStackedBox();
         /*
          * Setting prefered size is required if there is an empty searchPanel for
-         * WEST or for CENTER, else the other component takes the whole
-         * place
-         * 
+         * WEST or for CENTER, else the other component takes the whole place
          */
         box.setMinimumSize(new Dimension(263, 122));
         box.setBorder(null);
@@ -65,12 +62,9 @@ public class ChooseCategoryPanel extends ContentPanel {
     }
 
     /**
-     * The method is a custom implementation from {@link ContentPanel}
-     * interface. 
-     * @param panelToBeRefreshed
-     *            The searchPanel to be refreshed.
+     * The method is a custom implementation from {@link ContentPanel} interface. 
+     * @param panelToBeRefreshed The searchPanel to be refreshed.
      */
-
     public void refresh(JXPanel[] arrPanel, String strClassName) {
         //TODO implementation needs to be completed
     }
@@ -104,11 +98,9 @@ public class ChooseCategoryPanel extends ContentPanel {
 
     public void setQueryObject(IClientQueryBuilderInterface query) {
         /* For this instance get a handle to the SerchCenterPanel.*/
-
         SearchCenterPanel searchCenterPanel = (SearchCenterPanel) this.getParent();
         AddLimitPanel panel = (AddLimitPanel) searchCenterPanel.getComponent(1);
         panel.setQueryObject(query);
-
     }
 
     /* 
@@ -118,10 +110,15 @@ public class ChooseCategoryPanel extends ContentPanel {
      */
     @Override
     public SearchPanel getSearchPanel() {
-        if (searchPanel == null)
-            return new SearchPanel(this);
-        else
-            return searchPanel;
+        SearchPanel searchPanel = null;
+
+        if (searchPanel == null) {
+            searchPanel = new SearchPanel(this);
+        } else {
+            searchPanel = this.searchPanel;
+        }
+
+        return searchPanel;
     }
 
     /**

@@ -29,6 +29,7 @@ import edu.wustl.common.util.logger.Logger;
  * 
  */
 public class AdvancedSearchPanel extends Cab2bPanel implements ItemListener {
+    private static final long serialVersionUID = 1L;
 
     /** The container for the collapsible pane. */
     private JXTaskPaneContainer m_taskPaneContainer = null;
@@ -243,7 +244,6 @@ public class AdvancedSearchPanel extends Cab2bPanel implements ItemListener {
                 Logger.out.debug("Clicked attribute or class");
             }
         } else if (obj instanceof Cab2bRadioButton) {
-            Cab2bRadioButton control = (Cab2bRadioButton) obj;
             if (m_radioConceptCode.isSelected()) {
                 m_chkClassDesc.setSelected(false);
                 m_chkClassDesc.setEnabled(false);
