@@ -217,7 +217,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
                             int recordNo = edu.wustl.cab2b.client.ui.query.Utility.getRecordNum(queryResults);
                             if (recordNo == 0) {
-                                JOptionPane.showMessageDialog(null, "No result found.", "",
+                                JOptionPane.showMessageDialog(SearchNavigationPanel.this.m_mainSearchPanel.getParent(), "No result found.", "",
                                                               JOptionPane.INFORMATION_MESSAGE);
                                 srhButton.setVisible(true);
                                 gotoAddLimitPanel();
