@@ -55,10 +55,9 @@ import edu.wustl.common.querysuite.queryobject.IRule;
  * search dialog. 
  *  
  * @author mahesh_iyer/chetan_bh/gautam_shetty/Deepak_Shingan
- * 
  */
-
 public class SearchResultPanel extends Cab2bPanel implements ActionListener {
+    private static final long serialVersionUID = 1L;
 
     /** The pagination component to paginate the results of the search */
     private Cab2bPanel resultPanel = new Cab2bPanel();
@@ -214,7 +213,7 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
      *            page elements.
      * 
      */
-    public void actionPerformed(ActionEvent actionEvent) {
+     public void actionPerformed(ActionEvent actionEvent) {
         Cab2bHyperlink<JPageElement> link = (Cab2bHyperlink<JPageElement>) (actionEvent.getSource());
         JPageElement jPageElement = link.getUserObject();
         jPageElement.resetLabel();
