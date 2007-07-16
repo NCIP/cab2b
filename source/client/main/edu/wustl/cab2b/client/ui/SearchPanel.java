@@ -58,7 +58,7 @@ public class SearchPanel extends Cab2bPanel {
     public AdvancedSearchPanel advSearchPanel;
 
     /** A specific implementation of the results searchPanel. */
-    public SearchResultPanel srhResultPanel;
+    private SearchResultPanel srhResultPanel;
 
     /** Text field to specify the search term. */
     public JTextField srhTextField;
