@@ -61,8 +61,6 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
     /** The titled searchPanel for the top searchPanel. */
     private JXTitledPanel m_topCenterPanel = null;
 
-    private SearchResultPanel m_searchResultPanel;
-
     /** Scroll pane for the top searchPanel. */
     private JScrollPane m_scrollPane = null;
 
@@ -174,19 +172,17 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      */
 
     public void addSearchPanel(SearchPanel srcPanel) {
-      
 
         //removing the outerpane if available
         if (m_outerPane != null) {
             this.remove(m_outerPane);
         }
-        
+
         if (srcPanel == null) {
             searchPanel = new SearchPanel(this);
         } else {
             setSearchPanel(srcPanel);
         }
-
         searchPanel.setMinimumSize(new Dimension(270, 300));
         searchPanel.setUIForAddLimitSearchPanel();
         this.m_outerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, searchPanel, m_innerPane);
@@ -276,7 +272,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      */
     public void editAddLimitUI(IExpression expression) {
         IConstraintEntity entity = expression.getConstraintEntity();
-        JXPanel[] panels = m_searchResultPanel.getEditLimitPanels(expression);
+        JXPanel[] panels = getSearchResultPanel().getEditLimitPanels(expression);
 
         // passing appropriate class name
         refresh(panels, edu.wustl.cab2b.common.util.Utility.getDisplayName(entity.getDynamicExtensionsEntity()));
@@ -316,7 +312,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * @see edu.wustl.cab2b.client.ui.ContentPanel#setSearchResultPanel(edu.wustl.cab2b.client.ui.SearchResultPanel)
      */
     public void setSearchResultPanel(SearchResultPanel searchResultPanel) {
-        m_searchResultPanel = searchResultPanel;
+        searchPanel.setSerachResultPanel(searchResultPanel);
     }
 
     /**
@@ -324,7 +320,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * @return
      */
     public SearchResultPanel getSearchResultPanel() {
-        return m_searchResultPanel;
+        return searchPanel.getSerachResultPanel();
     }
 
     /*
@@ -336,8 +332,9 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
     public void clearAddLimitUI() {
         Component[] components = m_ContentForTopPanel.getComponents();
 
-        resetButton((Cab2bPanel) components[0], m_searchResultPanel.getAddLimitButtonTop());
-        resetButton((Cab2bPanel) components[components.length - 1], m_searchResultPanel.getAddLimitButtonBottom());
+        resetButton((Cab2bPanel) components[0], getSearchResultPanel().getAddLimitButtonTop());
+        resetButton((Cab2bPanel) components[components.length - 1],
+                    getSearchResultPanel().getAddLimitButtonBottom());
 
         /* Add the individual panels to the top content searchPanel. */
         for (Component component : components) {
