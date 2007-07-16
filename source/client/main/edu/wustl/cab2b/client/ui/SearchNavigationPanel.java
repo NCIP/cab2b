@@ -255,14 +255,15 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             SearchNavigationPanel.messageLabel.setText("");
             searchCenterPanel.reset();
             m_mainSearchPanel.setQueryObject(null);
-            int componentCount = searchCenterPanel.getComponentCount();
+            
+            /*int componentCount = searchCenterPanel.getComponentCount();
             if (componentCount > 2) {
                 int index = componentCount - 1;
                 while (index > 1) {
                     searchCenterPanel.remove(index);
-                    searchCenterPanel.m_arrCards[index--] = null;
+                    searchCenterPanel.m_arrCards[index--] = null;                                        
                 }
-            }
+            }*/
         }
         updateUI();
     }
