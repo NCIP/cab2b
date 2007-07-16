@@ -306,6 +306,7 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
      * Method to handle 'Add Limit' button click event
      */
     public void performAddLimitAction(JXPanel[] componentPanel, EntityInterface entity) {
+        MainSearchPanel mainSearchPanel = (MainSearchPanel) ((JXPanel) contentPanel).getParent().getParent();
         final Collection collection = entity.getAttributeCollection();
         final int size = collection.size();
         List<AttributeInterface> attributes = new ArrayList<AttributeInterface>(size);
@@ -341,12 +342,11 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
             JOptionPane.showMessageDialog((this.contentPanel).getParent().getParent().getParent(),
                                           "Please add condition(s) before proceeding", "Add Limit Warning",
                                           JOptionPane.WARNING_MESSAGE);
-        } else {
-            MainSearchPanel mainSearchPanel = (MainSearchPanel) ((JXPanel) contentPanel).getParent().getParent();
+        } else {            
             if (mainSearchPanel.getQueryObject() == null) {
                 IClientQueryBuilderInterface query = new ClientQueryBuilder();
                 mainSearchPanel.setQueryObject(query);
-                contentPanel.setQueryObject(query);
+                mainSearchPanel.getCenterPanel().getAddLimitPanel().setQueryObject(query);
             }
 
             IExpressionId expressionId = mainSearchPanel.getQueryObject().addRule(attributes, conditions, values);
@@ -355,9 +355,8 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
                                               mainSearchPanel.getParent(),
                                               "This rule cannot be added as it is not associated with the added rules.",
                                               "Error", JOptionPane.ERROR_MESSAGE);
-            }else
-            {
-                contentPanel.refreshBottomCenterPanel(expressionId);
+            } else {
+                mainSearchPanel.getCenterPanel().getAddLimitPanel().refreshBottomCenterPanel(expressionId);
             }
         }
     }
@@ -485,7 +484,7 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
                 }
                 (mainSearchPanel.getNavigationPanel()).showCard(true);
             }
-            
+
         }
     }
 
