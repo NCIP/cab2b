@@ -34,12 +34,8 @@ public class EntityCache extends AbstractEntityCache {
     }
 
     /**
-     * 
+     * @see edu.wustl.cab2b.common.cache.AbstractEntityCache#getCab2bEntityGroups()
      */
-    private EntityCache() {
-        super();
-    }
-
     protected Collection<EntityGroupInterface> getCab2bEntityGroups() {
         return DynamicExtensionUtility.getCab2bEntityGroups();
     }

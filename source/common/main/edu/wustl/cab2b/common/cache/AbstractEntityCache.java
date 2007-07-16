@@ -16,23 +16,29 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
 import edu.wustl.cab2b.common.beans.MatchedClass;
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.util.logger.Logger;
 
 /**
- * This class is used to cache the Entity and its Attribute objects.
+ * This is an abstract class for caching metadata. 
+ * It holds the data needed structures, methods to populate those and public methods to access cache.
  * 
  * @author Chandrakant Talele
  * @author gautam_shetty
  * @author Rahul Ner
  */
 public abstract class AbstractEntityCache implements IEntityCache, Serializable {
-    protected static List<Category> categories;
-
     private static final long serialVersionUID = 1234567890L;
+    
+    /**
+     * List of all the categories loaded in caB2B local database.  
+     */
+    protected List<Category> categories;
 
+    /**
+     * Set of all the entity groups loaded as metadata in caB2B.
+     */
     private Set<EntityGroupInterface> cab2bEntityGroups;
 
     /**
@@ -40,12 +46,6 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
      */
     protected static AbstractEntityCache entityCache = null;
 
-    public static AbstractEntityCache getCache() {
-        if (entityCache == null) {
-            throw new UnsupportedOperationException("Cache not present.");
-        }
-        return entityCache;
-    }
 
     /**
      * Map with KEY as dynamic extension Entity's identifier and Value as Entity
@@ -73,7 +73,16 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
      * needed because there is no back pointer from PV to Entity
      */
     protected Map<PermissibleValueInterface, EntityInterface> permissibleValueVsEntity = new HashMap<PermissibleValueInterface, EntityInterface>();
-
+    /**
+     * This method gives the singleton cache object. If cache is not present then it throws {@link UnsupportedOperationException}
+     * @return The singleton cache object.
+     */
+    public static AbstractEntityCache getCache() {
+        if (entityCache == null) {
+            throw new UnsupportedOperationException("Cache not present.");
+        }
+        return entityCache;
+    }
     /**
      * Private default constructor. To restrict the user from instantiating
      * explicitly.
@@ -86,46 +95,19 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
      * Refreshes the entity cache.
      */
     public final void refreshCache() {
-        init();
-    }
-
-    // /**
-    // * @return the singleton instance of the EntityCache class.
-    // */
-    // public static synchronized AbstractEntityCache getInstance() {
-    // if (entityCache == null) {
-    // entityCache = new AbstractEntityCache();
-    // }
-    // return entityCache;
-    // }
-
-    /**
-     * Initializes the entity cache.
-     */
-    private void init() throws RuntimeException {
-        // try {
         Logger.out.debug("Initialising cache, this may take few minutes...");
-        // EntityManagerInterface entityManager = EntityManager.getInstance();
         Collection<EntityGroupInterface> entityGroups = getCab2bEntityGroups();
         createCache(entityGroups);
-
         Logger.out.debug("Initialising cache DONE");
-        // } catch (DynamicExtensionsSystemException dynSysExp) {
-        // throw new RuntimeException(dynSysExp.getMessage(), dynSysExp);
-        // // } catch (DynamicExtensionsApplicationException dynAppExp) {
-        // // throw new RuntimeException(dynAppExp.getMessage(), dynAppExp);
-        // }
     }
 
     /**
-     * @param entityGroups
+     * Initializes the data structures by processing one entity group at a time.
+     * @param entityGroups Entitygroups to cache
      */
     private void createCache(Collection<EntityGroupInterface> entityGroups) {
         Set<EntityGroupInterface> entityGroupsSet = new HashSet<EntityGroupInterface>();
         for (EntityGroupInterface entityGroup : entityGroups) {
-            if (entityGroup.getName().equals(Constants.DATALIST_ENTITY_GROUP_NAME)) {
-                continue; // Ignoring entity group of datalist for caching
-            }
             entityGroupsSet.add(entityGroup);
             for (EntityInterface entity : entityGroup.getEntityCollection()) {
                 addEntityToCache(entity);
@@ -135,7 +117,8 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
     }
 
     /**
-     * @param entity
+     * Adds all associations of given entity into cache
+     * @param entity Entity to process
      */
     private void createAssociationCache(EntityInterface entity) {
         for (AssociationInterface association : entity.getAssociationCollection()) {
@@ -147,7 +130,8 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
     }
 
     /**
-     * @param entity
+     * Adds permissible values of all the attributes of given entity into cache
+     * @param entity Entity whose permissible values are to be processed
      */
     private void createPermissibleValueCache(EntityInterface entity) {
         for (AttributeInterface attribute : entity.getAttributeCollection()) {
@@ -258,13 +242,8 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
     }
 
     /**
-     * Returns the Association for given string. Passed string MUST be of format
-     * SourceEntityName +
-     * {@link edu.wustl.cab2b.common.util.Constants#CONNECTOR} + TargetRoleName +
-     * {@link edu.wustl.cab2b.common.util.Constants#CONNECTOR} +
-     * TargetEntityName It can be generated by
-     * {@link Utility#generateUniqueId(AssociationInterface)}
-     * 
+     * Returns the Association for given string. 
+     * Passed string MUST be of format specified in {@link Utility#generateUniqueId(AssociationInterface)}
      * @param uniqueStringIdentifier unique String Identifier
      * @return Actual Association for given string identifier.
      */
@@ -272,7 +251,7 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
         AssociationInterface association = originalAssociations.get(uniqueStringIdentifier);
         if (association == null) {
             throw new RuntimeException(
-                    "Association with given source entity name and target role name is not present in cache : "
+                    "Association with given uniqueStringIdentifier is not present in cache : "
                             + uniqueStringIdentifier);
         }
         return association;
@@ -287,9 +266,19 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
         createPermissibleValueCache(entity);
     }
 
+    /**
+     * Returns all the entity groups registered with the instance of cache.
+     * @return Returns all the registered entity groups
+     */
     public Collection<EntityGroupInterface> getEntityGroups() {
         return cab2bEntityGroups;
     }
 
+    /**
+     * This method returns all the entity groups which are to be cached. 
+     * These will typically be the metadata entitygroups present is local caB2B database. 
+     * It should not return entitygroups for datalist or experiment
+     * @return Returns the entity groups
+     */
     protected abstract Collection<EntityGroupInterface> getCab2bEntityGroups();
 }

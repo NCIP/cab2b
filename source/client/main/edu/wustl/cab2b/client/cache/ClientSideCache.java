@@ -30,8 +30,13 @@ public class ClientSideCache extends AbstractEntityCache {
 
     private static final long serialVersionUID = 7145001746845163416L;
 
+    /**
+     * This is Map with KEY: category and VALUE: set of classes used in forming the category 
+     */
     private Map<Category, Set<EntityInterface>> categoryVsClasseSet = new HashMap<Category, Set<EntityInterface>>();
-
+    /**
+     * This is Map with KEY: category and VALUE: set of attributes used in forming the category 
+     */
     private Map<Category, Set<AttributeInterface>> categoryVsAttributeSet = new HashMap<Category, Set<AttributeInterface>>();
 
     /**
@@ -44,9 +49,13 @@ public class ClientSideCache extends AbstractEntityCache {
         return (ClientSideCache) entityCache;
     }
 
+    /**
+     * Initializes the cache and also shows the progress information
+     */
     protected ClientSideCache() {
         super();
-        CategoryBusinessInterface categoryOperations = getCategoryBusinessInterface();
+        CategoryBusinessInterface categoryOperations = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.CATEGORY_BEAN,
+                                                                     CategoryHomeInterface.class);
         int length = 50;
         ClientLauncher clientLauncher = ClientLauncher.getInstance();
         clientLauncher.showProgress(" Fetching data from caB2B Server....", length);
@@ -67,9 +76,7 @@ public class ClientSideCache extends AbstractEntityCache {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see edu.wustl.cab2b.common.cache.AbstractEntityCache#getCab2bEntityGroups()
      */
     @Override
@@ -143,10 +150,5 @@ public class ClientSideCache extends AbstractEntityCache {
             }
         }
         return matchedClass;
-    }
-
-    private CategoryBusinessInterface getCategoryBusinessInterface() {
-        return (CategoryBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.CATEGORY_BEAN,
-                                                                            CategoryHomeInterface.class);
     }
 }
