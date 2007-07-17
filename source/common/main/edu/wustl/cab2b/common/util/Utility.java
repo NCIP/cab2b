@@ -272,7 +272,7 @@ public class Utility {
         ;
         return buff.toString();
     }
-    
+
     /**
      * This method trims out packaceg name form the entity name
      * @param entity
@@ -327,7 +327,7 @@ public class Utility {
                 sb.append(currentString);
                 sb.append("<P>");
             } else {
-            	if (currentStart == 0) {
+                if (currentStart == 0) {
                     currentStart = offset;
                 }
                 sb.append(text.substring(currentStart));
@@ -355,25 +355,25 @@ public class Utility {
         return null;
     }
 
-//    /**
-//     * Returns true if an application returns associatied objects information in
-//     * result of CQLs.
-//     * 
-//     * @param entity Entity to check
-//     * @return true/false
-//     */
-//    public static boolean isOutGoingAssociationSupported(EntityInterface entity) {
-//        EntityGroupInterface eg = getEntityGroup(entity);
-//        String shortName = eg.getShortName();
-//        boolean isOutGoingAssociationSupported = false;
-//
-//        String supportOutGoingAssociation = props.getProperty(shortName + ".supportOutGoingAssociation");
-//        if (supportOutGoingAssociation != null && supportOutGoingAssociation.equalsIgnoreCase("true")) {
-//            isOutGoingAssociationSupported = true;
-//        }
-//
-//        return isOutGoingAssociationSupported;
-//    }
+    //    /**
+    //     * Returns true if an application returns associatied objects information in
+    //     * result of CQLs.
+    //     * 
+    //     * @param entity Entity to check
+    //     * @return true/false
+    //     */
+    //    public static boolean isOutGoingAssociationSupported(EntityInterface entity) {
+    //        EntityGroupInterface eg = getEntityGroup(entity);
+    //        String shortName = eg.getShortName();
+    //        boolean isOutGoingAssociationSupported = false;
+    //
+    //        String supportOutGoingAssociation = props.getProperty(shortName + ".supportOutGoingAssociation");
+    //        if (supportOutGoingAssociation != null && supportOutGoingAssociation.equalsIgnoreCase("true")) {
+    //            isOutGoingAssociationSupported = true;
+    //        }
+    //
+    //        return isOutGoingAssociationSupported;
+    //    }
 
     /**
      * @param entity Entity to check
@@ -425,30 +425,28 @@ public class Utility {
     public static List<AttributeInterface> getAttributeList(IQueryResult queryResult) {
         Map<String, List<IRecord>> allRecords = queryResult.getRecords();
         List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
-        if (!allRecords.isEmpty()) {
-            List<IRecord> recordList = allRecords.values().iterator().next();
+        for (List<IRecord> recordList : allRecords.values()) {
             if (!recordList.isEmpty()) {
                 IRecord record = recordList.get(0);
                 attributeList = getAttributeList(record.getAttributes());
+                break;
             }
-
         }
         return attributeList;
     }
-    
+
     /**
      * This method converts stack trace to the string representation
      * @param aThrowable   throwable object
      * @return String representation  of the stack trace
      */
-    public static String getStackTrace(Throwable throwable)
-    {
+    public static String getStackTrace(Throwable throwable) {
         final Writer result = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(result);
         throwable.printStackTrace(printWriter);
         return result.toString();
     }
-    
+
     /**
      * get the specified resource
      * first look into the cab2b.home 
@@ -457,24 +455,24 @@ public class Utility {
      * @return the URL for the resource
      * @throws MalformedURLException 
      */
-    public static URL getResource(String resource)  {
-        
+    public static URL getResource(String resource) {
+
         String home = System.getProperty("cab2b.home");
-        
-        File file = new File(home+"/conf", resource);
-        if(file.exists()){
-            try{
-            
+
+        File file = new File(home + "/conf", resource);
+        if (file.exists()) {
+            try {
+
                 return file.toURL();
-            
-            }catch(MalformedURLException e){
-                Logger.out.error("File not found in cab2b_home, will use default file ",e);
+
+            } catch (MalformedURLException e) {
+                Logger.out.error("File not found in cab2b_home, will use default file ", e);
             }
         }
-        
+
         //is there a better way of getting a non-null class loader ?
-        ClassLoader loader =  Utility.class.getClassLoader();
+        ClassLoader loader = Utility.class.getClassLoader();
         return loader.getResource(resource);
-        
+
     }
 }
