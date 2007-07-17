@@ -1,11 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?><!-- Web Start Deployment Template --><jnlp codebase="http://@server-address@/cab2b/client" href="../jnlp/cab2b_client_webstart.jnlp" spec="1.0+">
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp codebase="http://@server-address@/cab2b" href="jnlp/cab2b_client_webstart.jnlp" spec="1.0+">
 
 	<information>
 		<title>caB2B Client</title>
 		<vendor>WashU-Persistent</vendor>
-		<homepage href="@server-address@"/> 
+		<homepage href=""/> 
 		<description>The client for caGrid</description>
-		<description kind="short"> Web Start trial for caB2B Client </description>
+		<description kind="short"> Web Start installer for caB2B Client </description>
 		<icon  href="CaB2B_48_48_bg.gif" />
 		<icon  href="CaB2B_32_32_bg.gif" kind="shortcut" />
 		<shortcut>
@@ -25,10 +26,10 @@
 	<!-- Resource description sits here -->
 	<resources>
 		
-		<j2se href="http://java.sun.com/products/autodl/j2se" version="1.5+"/>
+		<j2se href="http://java.sun.com/products/autodl/j2se" version="1.5+" max-heap-size="512M"/>
 		
 		<!-- Specify all the jar resources this application is going to use -->
-		<jar href="cab2b_client_webstart.jar"/>
+		<jar href="client/cab2b_client_webstart.jar"/>
 
 				
 	

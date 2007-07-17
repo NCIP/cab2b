@@ -622,9 +622,12 @@
 		</jar>
 
 		<!-- sign all the jars -->
-		<signjar alias="cab2b" storepass="roughpage" keystore="${keystore}">
+		<signjar alias="cab2b" storepass="cab2bv1.0" keystore="${keystore}">
 			<fileset dir="${webstart.client.dir}">
 				<include name="**/*.jar" />
+				<!-- exclude files which are already signed -->
+				<exclude name="**/org-netbeans-graph-vmd.jar"/>
+  			    <exclude name="**/org-openide-util.jar"/>
 			</fileset>
 		</signjar>
 		
