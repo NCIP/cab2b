@@ -75,8 +75,6 @@ public abstract class Cab2bFilterPopup extends Cab2bPanel {
         Dimension dimension = null;
         if (this instanceof PatternPopup) {
             dimension = new Dimension(250, 100);
-        } else if (this instanceof RangePopup) {
-            dimension = new Dimension(250, 100);
         } else if (this instanceof EnumeratedFilterPopUp) {
             dimension = new Dimension(250, 175);
         } else if (this instanceof FilterComponent) {
