@@ -175,16 +175,12 @@ public class MainDagPanel extends Cab2bPanel {
         return m_document;
     }
 
-    public boolean isLinkingValid() {
-        List<ClassNode> selectedNodes = m_viewController.getCurrentNodeSelection();
-        String errorMessage = "";
+    private boolean isLinkingValid(List<ClassNode> selectedNodes) {
         boolean status = true;
-        if (2 != selectedNodes.size()) {
-            errorMessage = "Please select two nodes for linking";
-            status = false;
-        }
-        if (false == status) {
+        if (selectedNodes.size() != 2) {
+            String errorMessage = "Please select two nodes for linking";
             JOptionPane.showMessageDialog(this, errorMessage, "Connect Nodes warning", JOptionPane.WARNING_MESSAGE);
+            status = false;
         }
         return status;
     }
@@ -196,7 +192,7 @@ public class MainDagPanel extends Cab2bPanel {
     public void linkNodes() {
         List<ClassNode> selectedNodes = m_viewController.getCurrentNodeSelection();
         // If number of nodes to connect is not 2, set warning user
-        if (true == isLinkingValid()) {
+        if (isLinkingValid(selectedNodes)) {
             ClassNode sourceNode = selectedNodes.get(0);
             ClassNode destinationNode = selectedNodes.get(1);
             linkNode(sourceNode, destinationNode);
