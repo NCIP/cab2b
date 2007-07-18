@@ -79,9 +79,14 @@ public class CategoryObjectDetailsPanel extends DefaultDetailedPanel<ICategorial
      * @see edu.wustl.cab2b.client.ui.viewresults.ResultObjectDetailsPanel#initTableGUI()
      */
     protected void initGUI() {
-        super.initGUI();
-        adjustRows();
-        this.add("br hfill vfill", b2BTreeRootNode.getCategoryResultPanel());
+        if (b2BTreeRootNode.getChildren().size() == 0) {
+            super.isVFill = true;
+            super.initGUI();
+        } else {
+            super.initGUI();
+            adjustRows();
+            this.add("br hfill vfill", b2BTreeRootNode.getCategoryResultPanel());
+        }
     }
 
 }
