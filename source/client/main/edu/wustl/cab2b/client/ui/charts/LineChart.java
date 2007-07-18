@@ -95,7 +95,7 @@ public class LineChart extends AbstractChart {
      */
     protected JFreeChart createChart(Dataset dataset) {
         XYDataset xyDataset = (XYDataset) dataset;
-        JFreeChart jfreechart = ChartFactory.createXYLineChart(ChartType.LINE_CHART.getActionCommand(), "X", "Y",
+        JFreeChart jfreechart = ChartFactory.createXYLineChart(ChartType.LINE_CHART.getType(), "X", "Y",
                                                                xyDataset, PlotOrientation.VERTICAL, true, true,
                                                                false);
         jfreechart.setBackgroundPaint(Color.white);

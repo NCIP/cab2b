@@ -119,7 +119,7 @@ public class BarChart extends AbstractChart {
     protected JFreeChart createChart(Dataset dataset) {
         CategoryDataset categoryDataSet = (CategoryDataset) dataset;
 
-        JFreeChart jFreeChart = ChartFactory.createBarChart(ChartType.BAR_CHART.getActionCommand(), entityName,
+        JFreeChart jFreeChart = ChartFactory.createBarChart(ChartType.BAR_CHART.getType(), entityName,
                                                             "Value", categoryDataSet, PlotOrientation.VERTICAL,
                                                             true, true, false);
         jFreeChart.setBackgroundPaint(Color.white);

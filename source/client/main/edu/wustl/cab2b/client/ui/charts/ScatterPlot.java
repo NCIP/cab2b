@@ -136,7 +136,7 @@ public class ScatterPlot extends AbstractChart {
      */
     protected JFreeChart createChart(Dataset dataset) {
         XYDataset xyDataset = (XYDataset) dataset;
-        JFreeChart jfreechart = ChartFactory.createScatterPlot(ChartType.SCATTER_PLOT.getActionCommand(), "X",
+        JFreeChart jfreechart = ChartFactory.createScatterPlot(ChartType.SCATTER_PLOT.getType(), "X",
                                                                "Y", xyDataset, PlotOrientation.VERTICAL, true,
                                                                true, false);
         jfreechart.setBackgroundPaint(Color.white);

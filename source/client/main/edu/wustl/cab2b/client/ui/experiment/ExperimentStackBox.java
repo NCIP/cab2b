@@ -408,8 +408,8 @@ public class ExperimentStackBox extends Cab2bPanel {
         for (ChartType chartType : chartTypes) {
             Cab2bHyperlink hyperlink = new Cab2bHyperlink();
             hyperlink.setBounds(new Rectangle(5, 5, 5, 5));
-            hyperlink.setText(chartType.getActionCommand());
-            hyperlink.setActionCommand(chartType.getActionCommand());
+            hyperlink.setText(chartType.getType());
+            hyperlink.setActionCommand(chartType.getType());
 
             URL url = null;
             switch (chartType) {
