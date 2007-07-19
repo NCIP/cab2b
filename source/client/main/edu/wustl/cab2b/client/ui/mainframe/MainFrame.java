@@ -51,7 +51,7 @@ import edu.wustl.common.util.logger.Logger;
 public class MainFrame extends JXFrame {
 
     private static final long serialVersionUID = 1234567890L;
-
+    private static String userName;
     /** Everything related GUI's containers and its components size is relative to this size. */
     public static Dimension mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -307,6 +307,20 @@ public class MainFrame extends JXFrame {
         File cab2bHome = new File(userHome, "cab2b");
         System.setProperty("cab2b.home", cab2bHome.getAbsolutePath());
 
+    }
+
+    /**
+     * @return Returns the userName.
+     */
+    public static String getUserName() {
+        return userName;
+    }
+
+    /**
+     * @param userName The userName to set.
+     */
+    public static void setUserName(String userName) {
+        MainFrame.userName = userName;
     }
 
 }
