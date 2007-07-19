@@ -93,4 +93,13 @@ public class Record implements IRecord {
             attributesValues.put(attribute, entry.getValue());
         }
     }
+
+    public void copyValuesFrom(IRecord record) {
+        if (!record.getAttributes().equals(getAttributes())) {
+            throw new IllegalArgumentException();
+        }
+        for (AttributeInterface attribute : record.getAttributes()) {
+            putValueForAttribute(attribute, record.getValueForAttribute(attribute));
+        }
+    }
 }

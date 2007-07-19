@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import cab2b.common.caarray.BioAssayDataRecord;
-import cab2b.common.caarray.IBioAssayDataRecord;
+import cab2b.common.caarray.IPartiallyInitializedBioAssayDataRecord;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
@@ -22,22 +22,22 @@ import gov.nih.nci.mageom.domain.BioAssayData.QuantitationTypeDimension;
 
 public class BioAssayDataResultTransformer
         extends
-        AbstractCaArrayResultTransfomer<IBioAssayDataRecord> {
+        AbstractCaArrayResultTransfomer<IPartiallyInitializedBioAssayDataRecord> {
     private static final String HEADER_ATTRIBUTE_NAME = "name";
 
     @Override
-    protected IBioAssayDataRecord createCaArrayRecord(Set<AttributeInterface> attributes, RecordId id) {
-        return new BioAssayDataRecord(attributes, id);
+    protected IPartiallyInitializedBioAssayDataRecord createCaArrayRecord(Set<AttributeInterface> attributes,
+                                                                          RecordId id) {
+        return BioAssayDataRecord.createFullyInitializedRecord(attributes, id);
     }
 
     @Override
-    protected IBioAssayDataRecord createRecordForObject(String url, Object objRec,
-                                                               EntityInterface outputEntity) {
+    protected IPartiallyInitializedBioAssayDataRecord createRecordForObject(String url, Object objRec,
+                                                                            EntityInterface outputEntity) {
         if (!(objRec instanceof BioAssayData)) {
             throw new IllegalArgumentException();
         }
-        BioAssayDataRecord rec = (BioAssayDataRecord) super.createRecordForObject(url, objRec,
-                                                                                                outputEntity);
+        BioAssayDataRecord rec = (BioAssayDataRecord) super.createRecordForObject(url, objRec, outputEntity);
         BioAssayData derivedBioAssayData = (BioAssayData) objRec;
         String[] bioAssayNames = getBioAssaysNames(derivedBioAssayData.getBioAssayDimension().getIdentifier(), url);
         String[] quantitationTypeNames = getQuantitationTypesNames(
@@ -53,7 +53,9 @@ public class BioAssayDataResultTransformer
 
         BioDataCube bioDataCube = (BioDataCube) derivedBioAssayData.getBioDataValues();
         rec.setCube(transformCubeToBQD(bioDataCube));
-        return rec;
+        rec.markFullyInitialized();
+
+        return BioAssayDataRecord.createLazyForm(rec);
     }
 
     private Object[][][] transformCubeToBQD(BioDataCube bioDataCube) {

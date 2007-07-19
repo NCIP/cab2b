@@ -6,6 +6,8 @@ import java.util.Collection;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.common.BusinessInterface;
+import edu.wustl.cab2b.common.queryengine.result.ILazyParams;
+import edu.wustl.cab2b.common.queryengine.result.IPartiallyInitializedRecord;
 
 /**
  * @author Chandrakant Talele
@@ -17,7 +19,7 @@ public interface UtilityBusinessInterface extends BusinessInterface {
      */
     Collection<EntityGroupInterface> getCab2bEntityGroups() throws RemoteException;
 
-    /** 
+    /**
      * @return associations with given entity as the target entity.
      * @throws RemoteException EJB specific exception.
      */
@@ -34,4 +36,8 @@ public interface UtilityBusinessInterface extends BusinessInterface {
      * @throws RemoteException
      */
     void update(Object cab2bObject) throws RemoteException;
+
+    void unregister(int handle);
+
+    IPartiallyInitializedRecord<?, ?> getView(int handle, ILazyParams params);
 }

@@ -45,4 +45,6 @@ public interface IRecord extends Serializable {
      * @return An unmodifiable set view of the attributes.
      */
     Set<AttributeInterface> getAttributes();
+
+    void copyValuesFrom(IRecord record);
 }

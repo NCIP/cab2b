@@ -10,8 +10,11 @@ import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.common.dynamicextensionsstubs.AssociationWrapper;
 import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
+import edu.wustl.cab2b.common.queryengine.result.ILazyParams;
+import edu.wustl.cab2b.common.queryengine.result.IPartiallyInitializedRecord;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
+import edu.wustl.cab2b.server.queryengine.LazyInitializer;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.cab2b.server.util.UtilityOperations;
 
@@ -55,6 +58,14 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Session
      */
     public void update(Object cab2bObject) throws RemoteException {
         new UtilityOperations().update(cab2bObject);
+    }
+
+    public IPartiallyInitializedRecord<?, ?> getView(int handle, ILazyParams params) {
+        return LazyInitializer.getView(handle, params);
+    }
+
+    public void unregister(int handle) {
+        LazyInitializer.unregister(handle);
     }
 
 }

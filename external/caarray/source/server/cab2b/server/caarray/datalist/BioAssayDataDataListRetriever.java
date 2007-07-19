@@ -1,16 +1,16 @@
 package cab2b.server.caarray.datalist;
 
-import static edu.wustl.cab2b.server.datalist.DataListUtil.getAttributeByName;
 import static cab2b.server.caarray.datalist.BioAssayDataDataListSaver.CUBE_ATTRIBUTE_NAME;
 import static cab2b.server.caarray.datalist.BioAssayDataDataListSaver.DIM1LABELS_ATTRIBUTE_NAME;
 import static cab2b.server.caarray.datalist.BioAssayDataDataListSaver.DIM2LABELS_ATTRIBUTE_NAME;
 import static cab2b.server.caarray.datalist.BioAssayDataDataListSaver.DIM3LABELS_ATTRIBUTE_NAME;
+import static edu.wustl.cab2b.server.datalist.DataListUtil.getAttributeByName;
 
 import java.util.List;
 import java.util.Set;
 
 import cab2b.common.caarray.BioAssayDataRecord;
-import cab2b.common.caarray.IBioAssayDataRecord;
+import cab2b.common.caarray.IPartiallyInitializedBioAssayDataRecord;
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -19,17 +19,21 @@ import edu.common.dynamicextensions.entitymanager.EntityRecordInterface;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.cab2b.server.datalist.AbstractDataListRetriever;
 import edu.wustl.cab2b.server.datalist.DataListUtil;
+import edu.wustl.cab2b.server.queryengine.LazyInitializer;
 
-public class BioAssayDataDataListRetriever extends AbstractDataListRetriever<IBioAssayDataRecord> {
+public class BioAssayDataDataListRetriever
+        extends
+        AbstractDataListRetriever<IPartiallyInitializedBioAssayDataRecord> {
 
     @Override
-    protected void copyOtherFields(IBioAssayDataRecord record, EntityRecordInterface recordInterface,
+    protected void copyOtherFields(IPartiallyInitializedBioAssayDataRecord record,
+                                   EntityRecordInterface recordInterface,
                                    List<? extends AbstractAttributeInterface> attributesList,
                                    EntityInterface entity) {
         if (!entity.equals(newEntity)) {
             throw new IllegalArgumentException();
         }
-        BioAssayDataRecord derivedBioAssayDataRecord = (BioAssayDataRecord) record;
+        BioAssayDataRecord derivedBioAssayDataRecord = (BioAssayDataRecord) LazyInitializer.getFullyInitialializedRecord(record.handle());
 
         int cubeAttributeIndex = attributesList.indexOf(DataListUtil.getAttributeByName(entity,
                                                                                         CUBE_ATTRIBUTE_NAME));
@@ -51,9 +55,12 @@ public class BioAssayDataDataListRetriever extends AbstractDataListRetriever<IBi
     }
 
     @Override
-    protected IBioAssayDataRecord createRecord(EntityInterface entity, Set<AttributeInterface> attributes,
-                                                      RecordId id) {
-        return new BioAssayDataRecord(attributes, id);
+    protected IPartiallyInitializedBioAssayDataRecord createRecord(EntityInterface entity,
+                                                                   Set<AttributeInterface> attributes, RecordId id) {
+
+        BioAssayDataRecord full = BioAssayDataRecord.createFullyInitializedRecord(attributes, id);
+
+        return BioAssayDataRecord.createLazyForm(full);
     }
 
     private Object getObjectValue(Object value) {
