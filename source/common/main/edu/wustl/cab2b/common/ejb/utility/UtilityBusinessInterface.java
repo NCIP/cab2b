@@ -37,7 +37,17 @@ public interface UtilityBusinessInterface extends BusinessInterface {
      */
     void update(Object cab2bObject) throws RemoteException;
 
-    void unregister(int handle);
+    /**
+     * @param handle
+     * @throws RemoteException
+     */
+    void unregister(int handle) throws RemoteException;
 
-    IPartiallyInitializedRecord<?, ?> getView(int handle, ILazyParams params);
+    /**
+     * @param handle
+     * @param params
+     * @return
+     * @throws RemoteException
+     */
+    IPartiallyInitializedRecord<?, ?> getView(int handle, ILazyParams params)throws RemoteException;
 }

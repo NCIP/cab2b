@@ -18,10 +18,17 @@ import edu.wustl.cab2b.server.queryengine.LazyInitializer;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.cab2b.server.util.UtilityOperations;
 
+/**
+ * EJB to provide utility methods which are needed by client side, but which needs to aceess server.
+ * @author Chandrakant Talele
+ */
 public class UtilityBean extends AbstractStatelessSessionBean implements SessionBean, UtilityBusinessInterface {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * @see edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface#getCab2bEntityGroups()
+     */
     public Collection<EntityGroupInterface> getCab2bEntityGroups() throws RemoteException {
         return EntityCache.getInstance().getEntityGroups();
     }
@@ -37,6 +44,10 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Session
         return postProcess(associations);
     }
 
+    /**
+     * @param associations Association to process
+     * @return Collection of Associations
+     */
     private Collection<AssociationInterface> postProcess(Collection<AssociationInterface> associations) {
         Collection<AssociationInterface> res = new ArrayList<AssociationInterface>();
 
@@ -60,11 +71,17 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Session
         new UtilityOperations().update(cab2bObject);
     }
 
-    public IPartiallyInitializedRecord<?, ?> getView(int handle, ILazyParams params) {
+    /**
+     * @see edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface#getView(int, edu.wustl.cab2b.common.queryengine.result.ILazyParams)
+     */
+    public IPartiallyInitializedRecord<?, ?> getView(int handle, ILazyParams params) throws RemoteException {
         return LazyInitializer.getView(handle, params);
     }
 
-    public void unregister(int handle) {
+    /**
+     * @see edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface#unregister(int)
+     */
+    public void unregister(int handle) throws RemoteException {
         LazyInitializer.unregister(handle);
     }
 
