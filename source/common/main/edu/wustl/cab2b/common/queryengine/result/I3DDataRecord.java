@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.common.queryengine.result;
 
+import java.io.Serializable;
 import java.util.List;
 
 public interface I3DDataRecord extends IRecord {
@@ -12,6 +13,9 @@ public interface I3DDataRecord extends IRecord {
     String[] getDim3Labels();
 
     public static class LazyParams implements ILazyParams {
+
+        private static final long serialVersionUID = 3914794104672938082L;
+
         private List<Range> ranges;
 
         public LazyParams(List<Range> ranges) {
@@ -22,7 +26,9 @@ public interface I3DDataRecord extends IRecord {
             return ranges;
         }
 
-        public static class Range {
+        public static class Range implements Serializable {
+            private static final long serialVersionUID = 6666813239974896969L;
+
             private int si, di, sj, dj, sk, dk;
 
             public Range(int si, int di, int sj, int dj, int sk, int dk) {

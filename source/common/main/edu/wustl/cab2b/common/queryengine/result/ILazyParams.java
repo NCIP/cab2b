@@ -1,5 +1,7 @@
 package edu.wustl.cab2b.common.queryengine.result;
 
-public interface ILazyParams {
+import java.io.Serializable;
+
+public interface ILazyParams extends Serializable {
 
 }
