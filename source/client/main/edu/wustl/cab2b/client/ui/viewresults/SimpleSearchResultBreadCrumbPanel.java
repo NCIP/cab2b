@@ -134,7 +134,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
      * @param queryResult
      */
     private void initGUI(IQueryResult queryResult) {
-        this.setLayout(new RiverLayout());
+        this.setLayout(new RiverLayout(5,5));
         currentBreadCrumbName = null;
 
         breadCrumbsAL = new BreadCrumbActionListener(this);

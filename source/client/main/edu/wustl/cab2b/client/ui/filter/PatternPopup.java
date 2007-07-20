@@ -3,6 +3,7 @@ package edu.wustl.cab2b.client.ui.filter;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
+import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.experiment.ApplyFilterPanel;
 import edu.wustl.cab2b.client.ui.filter.CaB2BPatternFilter;
 
@@ -38,6 +39,7 @@ public class PatternPopup extends Cab2bFilterPopup {
         if (inputFilter != null) {
             patternText.setText(inputFilter.getPattern().pattern());
         }
+        this.setLayout(new RiverLayout(0,5));
 
         this.add("hfill ", myLable1);
         this.add("tab", patternText);

@@ -46,7 +46,7 @@ public class BreadcrumbPanel extends Cab2bPanel {
      * This method initialize this panel based on the elements present in the breadcrumb vector.
      */
     private void initilizeGUI() {
-        RiverLayout breadCrumbLayout = new RiverLayout();
+        RiverLayout breadCrumbLayout = new RiverLayout(5,5);
         this.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         this.setLayout(breadCrumbLayout);
 

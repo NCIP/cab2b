@@ -172,7 +172,7 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
         titledSearchResultsPanel.setTitleFont(new Font("SansSerif", Font.BOLD, 11));
         titledSearchResultsPanel.setTitleForeground(Color.BLACK);
         
-        Pager pager = new NumericPager(elements);
+        Pager pager = new NumericPager(elements, 3);
         pagination = new JPagination(elements, pager, this, true);
         pagination.addPageElementActionListener(searchPanel.getHyperlinkAL());
        

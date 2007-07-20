@@ -73,9 +73,8 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         showAllLink.setText("Show All Search Results Views");
         showAllLink.setEnabled(false);
 
-        JXPanel topPanel = new Cab2bPanel();
-        topPanel.add(new Cab2bLabel());
-        topPanel.add("tab ", showAllLink);
+        JXPanel topPanel = new Cab2bPanel(new RiverLayout(5,5));
+        topPanel.add(showAllLink);
         this.add(BorderLayout.NORTH, topPanel);
 
         Vector<PageElement> pageElementCollection = new Vector<PageElement>();
@@ -103,13 +102,13 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         m_resultsPage.setPageLinksDisabled();
 
         // Create a Panel for the center searchPanel, and add the pagination component to that.
-        JXPanel centerPanel = new Cab2bPanel();
+        JXPanel centerPanel = new Cab2bPanel(new RiverLayout(5,5));
         centerPanel.add(new Cab2bLabel());
+       /* centerPanel.add("br", new Cab2bLabel());
         centerPanel.add("br", new Cab2bLabel());
         centerPanel.add("br", new Cab2bLabel());
-        centerPanel.add("br", new Cab2bLabel());
-        centerPanel.add("br", new Cab2bLabel());
-        centerPanel.add("br", this.m_resultsPage);
+        centerPanel.add("br", new Cab2bLabel());*/
+        centerPanel.add("br hfill vfill", this.m_resultsPage);
         this.add(BorderLayout.CENTER, centerPanel);
 
         // The bottom searchPanel

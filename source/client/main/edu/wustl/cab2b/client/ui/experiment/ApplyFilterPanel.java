@@ -15,6 +15,7 @@ import org.jdesktop.swingx.decorator.FilterPipeline;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
+import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bComboBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -55,6 +56,7 @@ public class ApplyFilterPanel extends Cab2bPanel {
     public ApplyFilterPanel(DefaultSpreadSheetViewPanel spreadSheetViewPanel) {
         this.spreadSheetViewPanel = spreadSheetViewPanel;
         this.setName("applyFilterPanel");
+        this.setLayout(new RiverLayout(5,5));
 
         indexToName = new HashMap<String, Integer>();
         elements = new ArrayList<String>();

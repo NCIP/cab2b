@@ -95,7 +95,7 @@ public class SearchPanel extends Cab2bPanel {
 
     private void initGUI() {
         /* Set the layout.*/
-        this.setLayout(new RiverLayout());
+        this.setLayout(new RiverLayout(5,5));
 
         /* Intialize the Search button.*/
         srhButton = new Cab2bButton("Search");
@@ -139,9 +139,9 @@ public class SearchPanel extends Cab2bPanel {
         advSearchPanel = this.getAdvancedSearchPanel();
         this.add(srhButton);
         Cab2bLabel cab2bLabel = new Cab2bLabel(helpText);
-        this.add("br ", new Cab2bLabel(" "));
-        this.add(cab2bLabel);
-        this.add("br tab", advSearchPanel);
+        //this.add("br ", new Cab2bLabel(" "));
+        this.add("br",cab2bLabel);
+        this.add("br", advSearchPanel);
     }
 
     public void setUIForChooseCategorySearchPanel() {
@@ -329,7 +329,7 @@ public class SearchPanel extends Cab2bPanel {
      */
     public void addTextField() {
         this.getTextField().setPreferredSize(new Dimension(350, 22));
-        this.add("tab ", new Cab2bLabel());
+     //   this.add("tab ", new Cab2bLabel());
         this.add(this.getTextField());
     }
 }

@@ -19,6 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.table.TableModel;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.experiment.ApplyFilterPanel;
@@ -121,6 +122,7 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
         if (showFilterPanel) {
             applyFilterPanel = new ApplyFilterPanel(this);
             this.add(applyFilterPanel);
+            this.add("br ", new Cab2bLabel(" "));
         }
 
         if (showDefaultTable) {

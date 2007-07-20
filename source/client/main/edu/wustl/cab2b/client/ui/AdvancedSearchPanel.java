@@ -78,7 +78,7 @@ public class AdvancedSearchPanel extends Cab2bPanel implements ItemListener {
 
         /* intialize all the components. */
         m_taskPaneContainer = new JXTaskPaneContainer();
-
+        
         m_taskPane = new JXTaskPane();
 
         m_taskPane.addMouseListener(new TaskPaneMouseListener());
@@ -262,7 +262,7 @@ public class AdvancedSearchPanel extends Cab2bPanel implements ItemListener {
      */
 
     private void addComponents() {
-        m_taskPane.setLayout(new RiverLayout(0, 5));
+        //m_taskPane.setLayout(new RiverLayout(0, 5));
         m_taskPane.getContentPane().setBackground(Color.WHITE);
         // Add all the componenets as required by this searchPanel.
         m_taskPane.add(m_chkClass);

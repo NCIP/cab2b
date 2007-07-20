@@ -45,7 +45,7 @@ public class ExperimentPanel extends Cab2bTitledPanel {
         label.setForeground(Color.blue);
         Font font = label.getFont();
         label.setFont(new Font(font.getName(),Font.BOLD, font.getSize() + 3));
-        Cab2bPanel panel = new Cab2bPanel();
+        Cab2bPanel panel = new Cab2bPanel(new RiverLayout(5,5));
         panel.add("hfill", label);
         this.add(panel, BorderLayout.NORTH);
         initGUI();
@@ -55,7 +55,7 @@ public class ExperimentPanel extends Cab2bTitledPanel {
     private void initGUI() {
         Logger.out.debug("Inside Constructor.");
 
-        displayExperimentPanel = new Cab2bPanel(new RiverLayout());
+        displayExperimentPanel = new Cab2bPanel(new RiverLayout(5,5));
 
         newExperiment = new Cab2bButton("Create New Experiment");
         newExperiment.setPreferredSize(new Dimension(180, 22));

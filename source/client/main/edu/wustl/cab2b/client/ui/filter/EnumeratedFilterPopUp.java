@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.client.ui.filter;
 
 import java.awt.Dimension;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,6 +10,7 @@ import java.util.StringTokenizer;
 import javax.swing.DefaultListModel;
 
 import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
+import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bListBox;
 import edu.wustl.cab2b.client.ui.experiment.ApplyFilterPanel;
@@ -86,7 +88,7 @@ public class EnumeratedFilterPopUp extends Cab2bFilterPopup {
 			}
 		}
 		listBox.setSelectedValues(val);
-
+		this.setLayout(new RiverLayout(0,5));
 		this.add("hfill ", myLable1);
 		this.add("br", listBox);
 		this.add("br", okButton);

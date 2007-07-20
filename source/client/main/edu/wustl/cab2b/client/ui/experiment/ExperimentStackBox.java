@@ -48,6 +48,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.wustl.cab2b.client.cache.ClientSideCache;
+import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.client.ui.charts.ChartType;
@@ -245,21 +246,21 @@ public class ExperimentStackBox extends Cab2bPanel {
         stackedBox.addBox("Select Data Category", treeViewScrollPane, SELECT_DATA_CATEGORY, false);
 
         // Adding Filter data category panel
-        dataFilterPanel = new Cab2bPanel();
+        dataFilterPanel = new Cab2bPanel(new RiverLayout(0,5));
         dataFilterPanel.setPreferredSize(new Dimension(250, 200));
         dataFilterPanel.setOpaque(false);
         dataFilterPanel.setBorder(null);
         stackedBox.addBox("Filter Data ", dataFilterPanel, FILTER_DATA, true);
 
         // Adding Analyse data panel
-        analyseDataPanel = new Cab2bPanel();
+        analyseDataPanel = new Cab2bPanel(new RiverLayout(0,5));
         analyseDataPanel.setPreferredSize(new Dimension(250, 150));
         analyseDataPanel.setOpaque(false);
         analyseDataPanel.setBorder(null);
         stackedBox.addBox("Analyze Data ", analyseDataPanel, ANALYZE_DATA, true);
 
         // Adding Visualize data panel
-        visualiseDataPanel = new Cab2bPanel();
+        visualiseDataPanel = new Cab2bPanel(new RiverLayout(0,5));
         visualiseDataPanel.setPreferredSize(new Dimension(250, 200));
         visualiseDataPanel.setOpaque(false);
         visualiseDataPanel.setBorder(null);

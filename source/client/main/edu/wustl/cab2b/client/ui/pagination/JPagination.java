@@ -20,6 +20,7 @@ import org.jdesktop.swingx.JXPanel;
 
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
+import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 
 /**
@@ -158,8 +159,8 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
         }
 
         pagePanel = getPagePanel(paginationModel.firstPage());
-        if (automaticPageResize)
-            pagePanel.addComponentListener(new PaginationComponentListener());
+        /*if (automaticPageResize)
+            pagePanel.addComponentListener(new PaginationComponentListener());*/
         add(pagePanel, BorderLayout.CENTER);
         add(pageBar, BorderLayout.SOUTH);
     }
@@ -478,7 +479,9 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
             selectAllHyperlink = new Cab2bHyperlink();
             selectAllHyperlink.setText(selectAllText);
             selectAllHyperlink.addActionListener(this);
-            this.add("br", selectAllHyperlink);
+            this.add("br", new Cab2bLabel(""));
+            this.add("br", new Cab2bLabel(""));
+            this.add("tab ", selectAllHyperlink);
 
             clearAllHyperlink = new Cab2bHyperlink();
             clearAllHyperlink.setText(clearAllText);

@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JSplitPane;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -105,7 +106,7 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
         }
         // ejb code end
 
-        experimentTitlePanel = new Cab2bPanel();
+        experimentTitlePanel = new Cab2bPanel(new RiverLayout(5,5));
 
         /* Adding Experiment name */
         Cab2bLabel experimentLabel = new Cab2bLabel(selectedExperiment.getName());

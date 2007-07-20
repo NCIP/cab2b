@@ -110,8 +110,8 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         this.elementIndex = pageElementIndex;
         initGUI();
         initListeners();
-        this.setMaximumSize(new Dimension(500, (int) this.getPreferredSize().getHeight() + 5));
-        this.setPreferredSize(new Dimension(500, (int) this.getPreferredSize().getHeight() + 5));
+        this.setMinimumSize(new Dimension(0, (int) this.getPreferredSize().getHeight() + 5));
+        //this.setPreferredSize(new Dimension(500, (int) this.getPreferredSize().getHeight() + 5));
     }
 
     private void initListeners() {
@@ -145,10 +145,10 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         descriptionLabel = new Cab2bLabel(description);
         descriptionLabel.setToolTipText(getWrappedText(description));
 
-        if (description.length() > 85) {
+       /* if (description.length() > 85) {
             String textDsc = description.substring(0, 85) + "....";
             descriptionLabel.setText(textDsc);
-        }
+        }*/
 
         if (isSelectable && pagination != null) {
             checkBox = new Cab2bCheckBox();
