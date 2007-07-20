@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JViewport;
 import javax.swing.border.EmptyBorder;
 
 import org.jdesktop.swingx.JXPanel;
@@ -127,11 +128,11 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
          * JXTitledPanels work better with only searchPanel as child, and hence the
          * following searchPanel.
          */
-        this.m_ContentForTopPanel = new Cab2bPanel();
+        this.m_ContentForTopPanel = new Cab2bPanel(new BorderLayout());
         this.m_ContentForTopPanel.setBorder(new EmptyBorder(1, 1, 1, 1));
-        this.m_scrollPane = new JScrollPane(this.m_ContentForTopPanel);
-        this.m_scrollPane.getViewport().setBackground(Color.WHITE);
-        this.m_topCenterPanel.add(this.m_scrollPane);
+       /* this.m_scrollPane = new JScrollPane(this.m_ContentForTopPanel);
+        this.m_scrollPane.getViewport().setBackground(Color.WHITE);*/
+        this.m_topCenterPanel.add(this.m_ContentForTopPanel);
 
         /* The bottom center titled searchPanel.Initialization on the same lines. */
         m_bottomCenterPanel = new Cab2bTitledPanel("Limit Set");
@@ -235,13 +236,16 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
         /* Set the title for the top titled searchPanel. */
         this.m_topCenterPanel.setTitle(ADD_LIMIT_TITLE + " on '" + strClassNameAsTitle + "'");
         this.m_ContentForTopPanel.removeAll();
-        int length = arrPanel.length;
+       // int length = arrPanel.length;
         /* Add the individual panels to the top content searchPanel. */
-        for (int i = 0; i < length; i++) {
+    /*    for (int i = 0; i < length; i++) {
             if (arrPanel[i] != null) {
                 this.m_ContentForTopPanel.add("br", arrPanel[i]);
             }
-        }
+        }*/
+        
+        this.m_ContentForTopPanel.add(arrPanel[0], BorderLayout.NORTH);
+        this.m_ContentForTopPanel.add(arrPanel[1], BorderLayout.CENTER);
         validate();
     }
 
@@ -273,6 +277,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
     public void editAddLimitUI(IExpression expression) {
         IConstraintEntity entity = expression.getConstraintEntity();
         JXPanel[] panels = getSearchResultPanel().getEditLimitPanels(expression);
+        Component[] components=((Cab2bPanel)((JScrollPane)panels[1].getComponent(0)).getViewport().getComponent(0)).getComponents();
 
         // passing appropriate class name
         refresh(panels, edu.wustl.cab2b.common.util.Utility.getDisplayName(entity.getDynamicExtensionsEntity()));
@@ -281,7 +286,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
         // Populate panels with corresponding value
         for (int i = 0; i < totalConditions; i++) {
             ICondition condition = rule.getCondition(i);
-            setValueForAttribute(panels, condition);
+            setValueForAttribute(components, condition);
         }
         validate();
     }
@@ -289,11 +294,11 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
     /*
      * Sets value for attributes/conditions on Add Limit Top Panel 
      */
-    private void setValueForAttribute(JXPanel[] panels, ICondition condition) {
+    private void setValueForAttribute(Component[] components, ICondition condition) {
         // Don't consider searchPanel 1 and searchPanel end for getting attribute values
         // because first and last panels are Edit Limit button panels
-        for (int i = 1; i < panels.length - 1; i++) {
-            IComponent panel = (IComponent) panels[i];
+        for (int i = 0; i < components.length; i++) {
+            IComponent panel = (IComponent) components[i];
             String panelAttributeName = panel.getAttributeName();
             int compareVal = panelAttributeName.compareToIgnoreCase(condition.getAttribute().getName());
             if (0 == compareVal) {
@@ -330,14 +335,15 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * @see edu.wustl.cab2b.client.ui.IUpdateAddLimitUIInterface#clearAddLimitUI(edu.wustl.common.querysuite.queryobject.IExpression)
      */
     public void clearAddLimitUI() {
-        Component[] components = m_ContentForTopPanel.getComponents();
+    	Cab2bPanel buttonPanel = (Cab2bPanel )m_ContentForTopPanel.getComponent(0);
+    	buttonPanel.removeAll();
+    	buttonPanel.add(getSearchResultPanel().getAddLimitButtonTop());
+    	
+    	Cab2bPanel panel=(Cab2bPanel) m_ContentForTopPanel.getComponent(1);
+        JScrollPane scrollPane=(JScrollPane) panel.getComponent(0);
+        Cab2bPanel cab2bPanel = (Cab2bPanel)((JViewport)scrollPane.getComponent(0)).getComponent(0);
 
-        resetButton((Cab2bPanel) components[0], getSearchResultPanel().getAddLimitButtonTop());
-        resetButton((Cab2bPanel) components[components.length - 1],
-                    getSearchResultPanel().getAddLimitButtonBottom());
-
-        /* Add the individual panels to the top content searchPanel. */
-        for (Component component : components) {
+        for (Component component : cab2bPanel.getComponents()) {
             if (component instanceof AbstractTypePanel) {
                 ((AbstractTypePanel) component).resetPanel();
             }
