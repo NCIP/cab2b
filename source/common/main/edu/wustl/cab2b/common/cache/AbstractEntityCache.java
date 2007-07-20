@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.common.cache;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,7 +35,7 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
     /**
      * List of all the categories loaded in caB2B local database.  
      */
-    protected List<Category> categories;
+    protected List<Category> categories= new ArrayList<Category>(0);
 
     /**
      * Set of all the entity groups loaded as metadata in caB2B.
