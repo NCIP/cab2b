@@ -23,7 +23,7 @@ public class LazyInitializer {
     }
 
     public static IPartiallyInitializedRecord<?, ?> getView(int handle, ILazyParams params) {
-        return getFullyInitialializedRecord(handle).view(params);
+        return getFullyInitialializedRecord(handle).view(params, handle);
     }
 
     public static IFullyInitialializedRecord<?, ?> getFullyInitialializedRecord(int handle) {

@@ -74,7 +74,7 @@ public class BioAssayDataRecord extends CaArrayRecord implements IFullyInitializ
         fullyInitialized = true;
     }
 
-    public BioAssayDataRecord view(ILazyParams params) {
+    public BioAssayDataRecord view(ILazyParams params, int handle) {
         if (!fullyInitialized) {
             throw new UnsupportedOperationException();
         }
@@ -83,8 +83,8 @@ public class BioAssayDataRecord extends CaArrayRecord implements IFullyInitializ
             throw new IllegalArgumentException();
         }
         LazyParams lazyParams = (LazyParams) params;
-        BioAssayDataRecord view = new BioAssayDataRecord(getAttributes(), getRecordId(), lazyParams);
-        view.setCube(new Object[getDim1Labels().length][getDim2Labels().length][getDim3Labels().length]);
+        BioAssayDataRecord view = createLazyForm(this, false, lazyParams);
+
         for (Range range : lazyParams.getRanges()) {
             for (int i = range.getSi(); i < range.getDi(); i++) {
                 for (int j = range.getSj(); j < range.getDj(); j++) {
@@ -117,10 +117,26 @@ public class BioAssayDataRecord extends CaArrayRecord implements IFullyInitializ
     }
 
     public static BioAssayDataRecord createLazyForm(BioAssayDataRecord fullRecord) {
+        return createLazyForm(fullRecord, true, new LazyParams(new ArrayList<Range>()));
+    }
+
+    private static BioAssayDataRecord createLazyForm(BioAssayDataRecord fullRecord, boolean register,
+                                                     LazyParams lazyParams) {
         BioAssayDataRecord lazy = new BioAssayDataRecord(fullRecord.getAttributes(), fullRecord.getRecordId(),
-                new LazyParams(new ArrayList<Range>()));
-        lazy.setHandle(LazyInitializer.register(fullRecord));
+                lazyParams);
+        if (register) {
+            lazy.setHandle(LazyInitializer.register(fullRecord));
+        }
         lazy.copyValuesFrom(fullRecord);
+
+        int dim1 = fullRecord.getDim1Labels().length;
+        int dim2 = fullRecord.getDim2Labels().length;
+        int dim3 = fullRecord.getDim3Labels().length;
+        lazy.setCube(new Object[dim1][dim2][dim3]);
+        lazy.setDim1Labels(new String[dim1]);
+        lazy.setDim2Labels(new String[dim2]);
+        lazy.setDim3Labels(new String[dim3]);
+
         return lazy;
     }
 
