@@ -27,13 +27,16 @@ import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.common.dynamicextensions.domaininterface.SemanticPropertyInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.main.IComponent;
 import edu.wustl.cab2b.client.ui.main.ParseXMLFile;
 import edu.wustl.cab2b.client.ui.main.SwingUIManager;
+import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.pagination.JPageElement;
 import edu.wustl.cab2b.client.ui.pagination.JPagination;
 import edu.wustl.cab2b.client.ui.pagination.NumericPager;
@@ -45,6 +48,7 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.queryengine.Cab2bQueryObjectFactory;
 import edu.wustl.cab2b.common.util.AttributeInterfaceComparator;
+import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.common.util.EntityInterfaceComparator;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
@@ -189,14 +193,61 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
 	protected JXPanel[] getAddLimitPanels(final EntityInterface entity) {
 		final JXPanel[] componentPanel = getAddLimitComponentPanels(entity);
 		Cab2bHyperlink detailsHyperlink = new Cab2bHyperlink();
-		detailsHyperlink.setText("Details");
+		detailsHyperlink.setText("CDE Details");
 		initializeAddLimitButtons(componentPanel, entity);
-		JXPanel[] finalPanelToadd=initializePanelsForAddConstraints(componentPanel);
+		detailsHyperlink.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+
+				Vector<String> headers = new Vector<String>();
+				headers.add("Attribute Name");
+				headers.add("Public ID");
+				headers.add("Concept Codes");
+				headers.add("Description");
+				Object[] header = headers.toArray();
+				Collection<AttributeInterface> attributeCollection = entity
+						.getAttributeCollection();
+				List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>(
+						attributeCollection);
+				Object[][] data = new Object[attributeCollection.size()][4];
+				Collections.sort(attributeList, new AttributeInterfaceComparator());
+
+				int i = 0;
+				for (AttributeInterface attrInterface : attributeList) {
+					data[i][0] = attrInterface.getName();
+					data[i][1] = attrInterface.getPublicId();
+					Collection<SemanticPropertyInterface> semanticPropColl = attrInterface
+							.getSemanticPropertyCollection();
+					String conceptCodeList = new String();
+					for (SemanticPropertyInterface semProp : semanticPropColl) {
+						if (conceptCodeList.equals("")) {
+							conceptCodeList = semProp.getConceptCode();
+						} else {
+							conceptCodeList = conceptCodeList + ", " + semProp.getConceptCode();
+						}
+					}
+
+					data[i][2] = conceptCodeList;
+					data[i][3] = attrInterface.getDescription();
+					i++;
+				}
+				Cab2bTable cab2bTable = new Cab2bTable(false, data, header);
+				cab2bTable.setBorder(null);
+				cab2bTable.setShowGrid(false);
+				JScrollPane pane = new JScrollPane(cab2bTable,
+						JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				pane.setBorder(null);
+				WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, pane, "CDE Details",
+						Constants.WIZARD_SIZE2_DIMENSION, true, false);
+
+			}
+		});
+		JXPanel[] finalPanelToadd = initializePanelsForAddConstraints(componentPanel);
 		finalPanelToadd[0].add(addLimitButtonTop, BorderLayout.WEST);
 		finalPanelToadd[0].add(detailsHyperlink, BorderLayout.EAST);
-		
+
 		return finalPanelToadd;
-		
+
 	}
 
 	/**
@@ -285,30 +336,30 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
 		detailsHyperlinkEditPanel.setText("Details");
 
 		initializeEditLimitButtons(componentPanel, expression);
-		JXPanel[] finalPanelToadd=initializePanelsForAddConstraints(componentPanel);
+		JXPanel[] finalPanelToadd = initializePanelsForAddConstraints(componentPanel);
 		finalPanelToadd[0].add(editLimitButtonTop, BorderLayout.WEST);
 		finalPanelToadd[0].add(detailsHyperlinkEditPanel, BorderLayout.WEST);
 		return finalPanelToadd;
 	}
-	
-	public JXPanel[] initializePanelsForAddConstraints(JXPanel[] componentPanel){
-		Cab2bPanel cab2bPanel = new Cab2bPanel(new RiverLayout(5,5));
+
+	public JXPanel[] initializePanelsForAddConstraints(JXPanel[] componentPanel) {
+		Cab2bPanel cab2bPanel = new Cab2bPanel(new RiverLayout(5, 5));
 		JXPanel[] finalPanelsToAdd = new Cab2bPanel[2];
 
 		for (int j = 0; j < componentPanel.length; j++) {
 			cab2bPanel.add("br", componentPanel[j]);
 		}
-		JScrollPane pane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane pane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		pane.getViewport().setBackground(Color.WHITE);
 		pane.getViewport().add(cab2bPanel);
 		pane.getViewport().setBorder(null);
 		pane.setBorder(null);
-		
-		
-		finalPanelsToAdd[0] = new Cab2bPanel(new RiverLayout(5,5));
+
+		finalPanelsToAdd[0] = new Cab2bPanel(new RiverLayout(5, 5));
 		finalPanelsToAdd[1] = new Cab2bPanel();
-		finalPanelsToAdd[1].add("hfill vfill ",pane);
-		
+		finalPanelsToAdd[1].add("hfill vfill ", pane);
+
 		return finalPanelsToAdd;
 	}
 
