@@ -11,18 +11,14 @@ import java.awt.Point;
 import java.awt.PrintJob;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
@@ -34,23 +30,15 @@ import org.jdesktop.swingx.JXStatusBar;
 import edu.wustl.cab2b.client.ui.controls.IDialogInterface;
 import edu.wustl.common.util.logger.Logger;
 
+/**
+ * It is a utility class which provide methods to customize and show different window components.
+ * @author Chandrakant Talele
+ */
 public class WindowUtilities {
-
-    /** A phantom Frame. */
-    public static final Frame phantomFrame = new Frame();
-
-    //	private static Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-    //
-    //	private static Cursor lastCursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-
-    protected static Point frameLocation = new Point(0, 0);
-
-    protected static Dimension defaultPreferredSizeForDialog = new Dimension(200, 100);
 
     /** Tell system to use native look and feel.
      * Metal (Java) LAF is the default otherwise.
      */
-
     public static void setNativeLookAndFeel() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -91,7 +79,6 @@ public class WindowUtilities {
     }
 
     /** Uses Color.white as the background color. */
-
     public static JFrame openInJFrame(Container content, int width, int height, String title) {
         return (openInJFrame(content, width, height, title, Color.white));
     }
@@ -104,7 +91,6 @@ public class WindowUtilities {
         return (openInJFrame(content, width, height, content.getClass().getName(), Color.white));
     }
 
-    //  ******************* JXFrame *********************
     /**
      * Creates and returns a JXFrame with the specified title, containing
      * the component wrapped into a JScrollPane.
@@ -148,7 +134,9 @@ public class WindowUtilities {
         JToolBar toolbar = new JToolBar();
         frame.getRootPaneExt().setToolBar(toolbar);
         frame.getContentPane().add(BorderLayout.CENTER, component);
-        //      frame.getContentPane().add(BorderLayout.NORTH, toolbar);
+
+        Point frameLocation = new Point(0, 0);
+
         frame.pack();
         frame.setLocation(frameLocation);
         if (frameLocation.x == 0) {
@@ -232,60 +220,15 @@ public class WindowUtilities {
         return statusBar;
     }
 
-    public static void centerFrame(JFrame frame) {
-        //	Center frame
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension size = frame.getSize();
-        screenSize.height = screenSize.height / 2;
-        screenSize.width = screenSize.width / 2;
-        size.height = size.height / 2;
-        size.width = size.width / 2;
-        int y = screenSize.height - size.height;
-        int x = screenSize.width - size.width;
-        frame.setLocation(x, y);
-    }
-
-    /**
-     * Since we want to control what happens when a user attempts to close
-     * out the frame, we need to override the
-     * javax.swing.JFrame.processWindowEvent() method.
-     * 
-     * TODO This is not working properly.
-     * 
-     * @param e WindowEvent being passed as a result of user actions at the
-     *          Window level.
-     */
-    public static void processWindowEvent(WindowEvent e, JFrame frame) {
-        //System.out.println("processWindowEvent " + e.getID() + "  WindowEvent.WINDOW_CLOSING "
-        //		+ WindowEvent.WINDOW_CLOSING);
-        if (e.getID() == WindowEvent.WINDOW_CLOSING) {
-
-            int exit = JOptionPane.showConfirmDialog(frame, "Are you sure?");
-            //System.out.println("exit option " + exit + " YES_OPTION " + JOptionPane.YES_OPTION);
-            if (exit == JOptionPane.YES_OPTION) {
-                //System.out.println("exiting ...");
-                System.exit(0);
-            } else
-                return;
-        }
-    }
-
-    /* ---------- Some more Utils -------------- */
-
     /** Center a window on the screen.
-     *
      * @param w The window to center.
      */
-
     public static final void centerWindow(Window w) {
-        Dimension s_size, w_size;
-        int x, y;
+        Dimension screenSize = w.getToolkit().getScreenSize();
+        Dimension windowSize = w.getSize();
 
-        s_size = w.getToolkit().getScreenSize();
-        w_size = w.getSize();
-
-        x = (s_size.width - w_size.width) / 2;
-        y = (s_size.height - w_size.height) / 2;
+        int x = (screenSize.width - windowSize.width) / 2;
+        int y = (screenSize.height - windowSize.height) / 2;
 
         w.setLocation(x, y);
     }
@@ -334,33 +277,6 @@ public class WindowUtilities {
             centerWindow(pw, w);
     }
 
-    //	/** Turn on a busy cursor.
-    //	 *
-    //	 * @param c The component whose cursor will be changed.
-    //	 */
-    //
-    //	public static final void busyOn(Component c)
-    //	{
-    //		//  synchronized(KiwiUtils.class)
-    //		{
-    //			lastCursor = c.getCursor();
-    //			c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-    //		}
-    //	}
-    //
-    //	/** Turn off the busy cursor. The last cursor saved will be restored.
-    //	 *
-    //	 * @param c The component whose cursor will be changed.
-    //	 */
-    //
-    //	public static final void busyOff(Component c)
-    //	{
-    //		//  synchronized(KiwiUtils.class)
-    //		{
-    //			c.setCursor(lastCursor);
-    //		}
-    //	}
-
     /** Get the Frame parent of a component. This method searches upward in the
      * component hierarchy, searching for an ancestor that is a Frame.
      */
@@ -383,6 +299,7 @@ public class WindowUtilities {
      */
 
     public static boolean printWindow(Window window, String title) {
+        final Frame phantomFrame = new Frame();
         PrintJob pj = Toolkit.getDefaultToolkit().getPrintJob(phantomFrame, title, null);
 
         if (pj == null)
@@ -402,39 +319,6 @@ public class WindowUtilities {
         pj.end();
         return (true);
     }
-
-    //	/** Copy text to the system clipboard.
-    //	 *
-    //	 * @param text The text to copy to the clipboard.
-    //	 */
-    //
-    //	public static synchronized final void setClipboardText(String text)
-    //	{
-    //		StringSelection sel = new StringSelection(text);
-    //		clipboard.setContents(sel, sel);
-    //	}
-    //
-    //	/** Copy text from the system clipboard.
-    //	 *
-    //	 * @return The text that is in the clipboard, or <b>null</b> if the
-    //	 * clipboard is empty or does not contain plain text.
-    //	 */
-    //
-    //	public static synchronized final String getClipboardText()
-    //	{
-    //		try
-    //		{
-    //			return ((String) (clipboard.getContents(Void.class)
-    //					.getTransferData(DataFlavor.stringFlavor)));
-    //		}
-    //		catch (UnsupportedFlavorException ex)
-    //		{
-    //			return (null);
-    //		}catch (IOException ex)
-    //		{
-    //			return (null);
-    //		}
-    //	}
 
     /**
      * Shows the component in the Dialog with specified settings.
@@ -505,21 +389,4 @@ public class WindowUtilities {
         //dialog.setVisible(true);
         return dialog;
     }
-
-    /* -------------------------------- */
-
-    public static void main(String[] args) {
-        /* Code to test showInDialog, centerWindow utility function */
-        JPanel panel = new JPanel();
-        panel.add(new JButton("Button"));
-
-        JFrame frame = new JFrame();
-        frame.setSize(new Dimension(800, 600));
-        frame.getContentPane().add(panel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-
-        showInDialog(frame, panel, "Dialog", new Dimension(300, 150), true, false);
-    }
-
 }

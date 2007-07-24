@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
 import edu.wustl.cab2b.client.cache.ClientSideCache;
+import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.dag.ClassNodeRenderer;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.locator.LocatorException;
@@ -31,7 +32,7 @@ public class ClientLauncher {
 
     private static ClientLauncher clientLauncher;
 
-    private static Dimension launchImageDimension = new Dimension(442, 251); 
+    private static final Dimension imageSize = new Dimension(442, 251); 
     // dimension of image "progress_bar.gif"
 
     private static final int progressHeight = 11;
@@ -59,8 +60,8 @@ public class ClientLauncher {
      * Private constructor
      */
     private ClientLauncher() {
-        progressBar = getProgressbar(launchImageDimension.width, progressHeight);
-        progressBarLabel = getProgressBarLabel(" Launching caB2B client....", launchImageDimension.width,
+        progressBar = getProgressbar(imageSize.width, progressHeight);
+        progressBarLabel = getProgressBarLabel(" Launching caB2B client....", imageSize.width,
                                                labelWidth);
     }
 
@@ -91,19 +92,20 @@ public class ClientLauncher {
     public void launchClient() {
         ClassLoader loader = this.getClass().getClassLoader();
         JFrame launchFrame = new JFrame("caB2B client launcher....");
-        Dimension screenDimension = MainFrame.getScreenDimesion();
+        //Dimension screenDimension = MainFrame.getScreenDimesion();
         BackgroundImagePanel imagePanel = new BackgroundImagePanel(new ImageIcon(
                 loader.getResource("progress_bar.gif")).getImage());
 
-        imagePanel.setPreferredSize(new Dimension(launchImageDimension.width, launchImageDimension.height));
+        imagePanel.setPreferredSize(new Dimension(imageSize.width, imageSize.height));
         imagePanel.add(progressBarLabel, BorderLayout.SOUTH);
         //imagePanel.setBorder(BorderFactory.createLineBorder(new Color(0x034E74)));
-        int height = launchImageDimension.height + progressHeight;
-        launchFrame.setSize(launchImageDimension.width+1, height+1);
+        int height = imageSize.height + progressHeight;
+        launchFrame.setSize(imageSize.width+1, height+1);
         launchFrame.getContentPane().add(imagePanel, BorderLayout.CENTER);
         launchFrame.getContentPane().add(progressBar, BorderLayout.SOUTH);
-        launchFrame.setLocation((screenDimension.width - launchImageDimension.width) / 2,
-                                (screenDimension.height - height) / 2);
+        WindowUtilities.centerWindow(launchFrame);
+//        launchFrame.setLocation((screenDimension.width - imageDimension.width) / 2,
+//                                (screenDimension.height - height) / 2);
         URL url = MainFrame.class.getClassLoader().getResource(CAB2B_LOGO_IMAGE);
         launchFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(url));
         launchFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
