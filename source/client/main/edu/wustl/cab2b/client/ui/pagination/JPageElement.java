@@ -52,6 +52,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bStandardFonts;
+import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 
 /**
  * Each JPageElement should know its pageIndex(String) and index in that page.
@@ -97,7 +98,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
      */
     private JPagination pagination;
 
-    //	private final int MAXCHARSONLINE = (int)(Toolkit.getDefaultToolkit().getScreenSize().width * 0.50d);
+    private static int descLength = (int) ((MainFrame.getScreenDimesion().getWidth()/1024f) *110f);
 
     public JPageElement(
             JPagination pagination,
@@ -144,11 +145,11 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         String description = pageElement.getDescription();
         descriptionLabel = new Cab2bLabel(description);
         descriptionLabel.setToolTipText(getWrappedText(description));
-
-       /* if (description.length() > 85) {
-            String textDsc = description.substring(0, 85) + "....";
+      
+        if (description.length() > descLength) {
+            String textDsc = description.substring(0, descLength) + "...";
             descriptionLabel.setText(textDsc);
-        }*/
+        }
 
         if (isSelectable && pagination != null) {
             checkBox = new Cab2bCheckBox();
