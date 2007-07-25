@@ -2,6 +2,7 @@ package cab2b.server.caarray.resulttransformer;
 
 import static cab2b.server.caarray.resulttransformer.CaArrayResultTransformerUtil.IDENTIFIER_ATTRIBUTE_NAME;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,9 @@ import cab2b.common.caarray.IPartiallyInitializedBioAssayDataRecord;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
+import edu.wustl.cab2b.common.queryengine.result.I3DDataRecord.LazyParams;
+import edu.wustl.cab2b.common.queryengine.result.I3DDataRecord.LazyParams.Range;
+import edu.wustl.cab2b.server.queryengine.LazyInitializer;
 import gov.nih.nci.mageom.domain.Identifiable;
 import gov.nih.nci.mageom.domain.BioAssay.BioAssay;
 import gov.nih.nci.mageom.domain.BioAssayData.BioAssayData;
@@ -54,8 +58,19 @@ public class BioAssayDataResultTransformer
         BioDataCube bioDataCube = (BioDataCube) derivedBioAssayData.getBioDataValues();
         rec.setCube(transformCubeToBQD(bioDataCube));
 
-//        return BioAssayDataRecord.createLazyForm(rec);
-        return rec;
+        // return BioAssayDataRecord.createLazyForm(rec);
+
+        return (IPartiallyInitializedBioAssayDataRecord) LazyInitializer.getView(
+                                                                                 BioAssayDataRecord.createLazyForm(
+                                                                                                                   rec).handle(),
+                                                                                 new LazyParams(
+                                                                                         Collections.singletonList(new Range(
+                                                                                                 0,
+                                                                                                 bioAssayNames.length,
+                                                                                                 0,
+                                                                                                 quantitationTypeNames.length,
+                                                                                                 0,
+                                                                                                 designElementNames.length))));
     }
 
     private Object[][][] transformCubeToBQD(BioDataCube bioDataCube) {
@@ -142,48 +157,90 @@ public class BioAssayDataResultTransformer
         return names;
     }
 
-//    @Override
-//    public IQueryResult<IPartiallyInitializedBioAssayDataRecord> getResults(DCQLQuery query,
-//                                                                            EntityInterface targetEntity) {
-//
-//        return getQueryResult(targetEntity);
-//    }
-//
-//    private IQueryResult<IPartiallyInitializedBioAssayDataRecord> getQueryResult(EntityInterface targetEntity) {
-//        IQueryResult<IPartiallyInitializedBioAssayDataRecord> queryResults = QueryResultFactory.createResult(targetEntity);
-//
-//        BioAssayDataRecord record = BioAssayDataRecord.createFullyInitializedRecord(new HashSet(
-//
-//        targetEntity.getAttributeCollection()), new RecordId(
-//
-//        "gov.nih.nci.ncicb.caarray:DerivedBioAssayData:1015897589771984:1", "asdf"));
-//
-//        String dim1Labels[] = { "1" };
-//
-//        String dim2Labels[] = { "Pairs", "Pairs Used", "Signal", "Detection", "Detection P-value" };
-//
-//        String dim3Labels[] = { "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at" };
-//
-//        Object bioDataCube[][][] = new Object[][][] { { { "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0" }, { "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent", "Absent", "Present", "Present", "Marginal", "Absent" }, { "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513", "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513" }, { "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4" }, { "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848" } } };
-//
-//        for (AttributeInterface attribute : targetEntity.getAttributeCollection()) {
-//
-//            record.putValueForAttribute(attribute, "1");
-//
-//        }
-//
-//        record.setDim1Labels(dim1Labels);
-//
-//        record.setDim2Labels(dim2Labels);
-//
-//        record.setDim3Labels(dim3Labels);
-//
-//        record.setCube(bioDataCube);
-//
-//        queryResults.addRecord("someUrl", BioAssayDataRecord.createLazyForm(record));
-//
-//        return queryResults;
-//
-//    }
+    // @Override
+    // public IQueryResult<IPartiallyInitializedBioAssayDataRecord>
+    // getResults(DCQLQuery query,
+    // EntityInterface targetEntity) {
+    //
+    // return getQueryResult(targetEntity);
+    // }
+    //
+    // private IQueryResult<IPartiallyInitializedBioAssayDataRecord>
+    // getQueryResult(EntityInterface targetEntity) {
+    // IQueryResult<IPartiallyInitializedBioAssayDataRecord> queryResults =
+    // QueryResultFactory.createResult(targetEntity);
+    //
+    // BioAssayDataRecord record =
+    // BioAssayDataRecord.createFullyInitializedRecord(new HashSet(
+    //
+    // targetEntity.getAttributeCollection()), new RecordId(
+    //
+    // "gov.nih.nci.ncicb.caarray:DerivedBioAssayData:1015897589771984:1",
+    // "asdf"));
+    //
+    // String dim1Labels[] = { "1" };
+    //
+    // String dim2Labels[] = { "Pairs", "Pairs Used", "Signal", "Detection",
+    // "Detection P-value" };
+    //
+    // String dim3Labels[] = { "92555_at", "92558_at", "92559_at", "92568_at",
+    // "92574_at", "92555_at", "92558_at", "92559_at", "92568_at", "92574_at",
+    // "92555_at", "92558_at", "92559_at", "92568_at", "92574_at", "92555_at",
+    // "92558_at", "92559_at", "92568_at", "92574_at", "92555_at", "92558_at",
+    // "92559_at", "92568_at", "92574_at", "92555_at", "92558_at", "92559_at",
+    // "92568_at", "92574_at" };
+    //
+    // Object bioDataCube[][][] = new Object[][][] { { { "20.0", "16.0", "20.0",
+    // "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0", "16.0",
+    // "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0", "20.0",
+    // "16.0", "20.0", "16.0", "20.0", "20.0", "16.0", "20.0", "16.0", "20.0" },
+    // { "Absent", "Present", "Present", "Marginal", "Absent", "Absent",
+    // "Present", "Present", "Marginal", "Absent", "Absent", "Present",
+    // "Present", "Marginal", "Absent", "Absent", "Present", "Present",
+    // "Marginal", "Absent", "Absent", "Present", "Present", "Marginal",
+    // "Absent", "Absent", "Present", "Present", "Marginal", "Absent" }, {
+    // "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513",
+    // "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513",
+    // "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513",
+    // "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513",
+    // "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513",
+    // "0.13876513", "0.3276513", "0.5645876513", "0.464376513", "0.235876513"
+    // }, { "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4",
+    // "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4",
+    // "5.188886E-4", "6.188886E-4", "2.188886E-4", "3.188886E-4",
+    // "4.188886E-4", "5.188886E-4", "6.188886E-4", "2.188886E-4",
+    // "3.188886E-4", "4.188886E-4", "5.188886E-4", "6.188886E-4",
+    // "2.188886E-4", "3.188886E-4", "4.188886E-4", "5.188886E-4",
+    // "6.188886E-4", "2.188886E-4", "3.188886E-4", "4.188886E-4",
+    // "5.188886E-4", "6.188886E-4" }, { "0.0030666848", "0.0030666848",
+    // "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848",
+    // "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848",
+    // "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848",
+    // "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848",
+    // "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848",
+    // "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848",
+    // "0.0030666848", "0.0030666848", "0.0030666848", "0.0030666848" } } };
+    //
+    // for (AttributeInterface attribute :
+    // targetEntity.getAttributeCollection()) {
+    //
+    // record.putValueForAttribute(attribute, "1");
+    //
+    // }
+    //
+    // record.setDim1Labels(dim1Labels);
+    //
+    // record.setDim2Labels(dim2Labels);
+    //
+    // record.setDim3Labels(dim3Labels);
+    //
+    // record.setCube(bioDataCube);
+    //
+    // queryResults.addRecord("someUrl",
+    // BioAssayDataRecord.createLazyForm(record));
+    //
+    // return queryResults;
+    //
+    // }
 
 }
