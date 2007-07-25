@@ -70,10 +70,6 @@ public class BioAssayDataRecord extends CaArrayRecord implements IFullyInitializ
         this.dim3Labels = dim3Labels;
     }
 
-    public void markFullyInitialized() {
-        fullyInitialized = true;
-    }
-
     public BioAssayDataRecord view(ILazyParams params, int handle) {
         if (!fullyInitialized) {
             throw new UnsupportedOperationException();
