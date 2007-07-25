@@ -54,8 +54,8 @@ public class BioAssayDataResultTransformer
         BioDataCube bioDataCube = (BioDataCube) derivedBioAssayData.getBioDataValues();
         rec.setCube(transformCubeToBQD(bioDataCube));
 
-        return BioAssayDataRecord.createLazyForm(rec);
-//        return rec;
+//        return BioAssayDataRecord.createLazyForm(rec);
+        return rec;
     }
 
     private Object[][][] transformCubeToBQD(BioDataCube bioDataCube) {

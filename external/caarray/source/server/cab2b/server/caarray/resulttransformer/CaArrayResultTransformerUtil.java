@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.axis.utils.ClassUtils;
 
-import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.server.queryengine.resulttransformers.QueryLogger;
 import edu.wustl.cab2b.server.queryengine.resulttransformers.QueryResultTransformerUtil;
 import gov.nih.nci.cagrid.cqlresultset.CQLQueryResults;
@@ -47,19 +46,19 @@ public class CaArrayResultTransformerUtil extends QueryResultTransformerUtil {
     }
 
     private String getTargetClassName(String outputClassName) {
-        try {
-            Class outputClass = Class.forName(outputClassName);
-
-            if (outputClass.isInterface()) {
-                int index = outputClassName.lastIndexOf(".");
-                String classNameOnly = outputClassName.substring(index);
-                String packageName = outputClass.getPackage().getName();
-                outputClassName = packageName + ".impl" + classNameOnly
-                        + "Impl";
-            }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            Class outputClass = Class.forName(outputClassName);
+//
+//            if (outputClass.isInterface()) {
+//                int index = outputClassName.lastIndexOf(".");
+//                String classNameOnly = outputClassName.substring(index);
+//                String packageName = outputClass.getPackage().getName();
+//                outputClassName = packageName + ".impl" + classNameOnly
+//                        + "Impl";
+//            }
+//        } catch (ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
         return outputClassName;
     }
 
