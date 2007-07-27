@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 
 import org.jdesktop.swingx.JXPanel;
@@ -176,15 +177,17 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
         pagination = new JPagination(elements, pager, this, true);
         pagination.addPageElementActionListener(searchPanel.getHyperlinkAL());
        
-        searchResultsPanel = new Cab2bPanel();
+        searchResultsPanel = new Cab2bPanel(new RiverLayout(0,5));
         searchResultsPanel.add("vfill hfill", pagination);
         initDataListSummaryPanel();
         initDataListButtons();
-        searchResultsPanel.add("br br", addToDataListButton);
-        searchResultsPanel.add("tab tab", m_applyAllButton);
+        
+        Cab2bPanel buttonPanel= new Cab2bPanel(new RiverLayout(8,0));
+        buttonPanel.add(addToDataListButton);
+        buttonPanel.add(m_applyAllButton);
+        searchResultsPanel.add("br", buttonPanel);
 
-        m_addSummaryParentPanel = new Cab2bPanel();
-        m_addSummaryParentPanel.setLayout(new BorderLayout());
+        m_addSummaryParentPanel = new Cab2bPanel(new BorderLayout());
         m_addSummaryParentPanel.add(searchResultsPanel, BorderLayout.CENTER);
         m_addSummaryParentPanel.add(myDataListParentPanel, BorderLayout.EAST);
         titledSearchResultsPanel.setContentContainer(m_addSummaryParentPanel);

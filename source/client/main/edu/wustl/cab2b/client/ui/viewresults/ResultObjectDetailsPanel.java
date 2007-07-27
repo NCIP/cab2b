@@ -99,7 +99,7 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         m_sidePanel = new Cab2bPanel(new GridLayout(2, 1, 5, 5));
         initDataListSummaryPanel();
         //fix for matching the sizes of "my data summrary" and "related data"
-        Cab2bPanel relatedDataParentPanel = new Cab2bPanel();
+        Cab2bPanel relatedDataParentPanel = new Cab2bPanel(new RiverLayout(0,5));
         relatedDataParentPanel.setBorder(null);
         relatedDataParentPanel.add("br hfill vfill", relatedDataTitledPanel);
 
