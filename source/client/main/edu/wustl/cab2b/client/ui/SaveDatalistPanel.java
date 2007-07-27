@@ -236,8 +236,8 @@ public class SaveDatalistPanel extends Cab2bPanel {
         flowLayout.setAlignment(FlowLayout.RIGHT);
         flowLayout.setHgap(10);
         bottomPanel.setLayout(flowLayout);
-        bottomPanel.add(cancelButton);
         bottomPanel.add(saveButton);
+        bottomPanel.add(cancelButton);
 
         this.add(centerPanel, BorderLayout.CENTER);
         this.add(bottomPanel, BorderLayout.SOUTH);

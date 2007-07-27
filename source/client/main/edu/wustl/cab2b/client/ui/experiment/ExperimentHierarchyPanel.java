@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -52,7 +53,7 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
     }
 
     private void initGUI() {
-        this.setLayout(new RiverLayout());
+        this.setLayout(new RiverLayout(5,5));
         Vector dataVector = null;
         try {
             ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) Locator.getInstance().locate(
@@ -119,7 +120,7 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
 
         addNewButton = new Cab2bButton("Add New");
         addNewButton.setEnabled(false);
-        this.add("br", addNewButton);
+        this.add("br",addNewButton);
 
         /*JButton searchButton = new Cab2bButton("Search");
          searchButton.addActionListener(new ActionListener()

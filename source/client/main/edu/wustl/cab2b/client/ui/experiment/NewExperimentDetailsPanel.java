@@ -406,8 +406,9 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         flowLayout.setAlignment(FlowLayout.RIGHT);
         flowLayout.setHgap(10);
         bottomPanel.setLayout(flowLayout);
-        bottomPanel.add(cancelButton);
+     
         bottomPanel.add(saveButton);
+        bottomPanel.add(cancelButton);
 
         gbc.gridx = 4;
         gbc.gridy = 11;

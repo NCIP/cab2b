@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -31,6 +32,7 @@ import org.jdesktop.swingx.LinkRenderer;
 import org.jdesktop.swingx.action.LinkAction;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
@@ -271,8 +273,9 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         experimentDataPanel.setBorder(null);
         experimentDataPanel.add("br center hfill vfill", spreadSheetViewPanel);
 
-        Cab2bPanel northPanel = new Cab2bPanel();
+        Cab2bPanel northPanel = new Cab2bPanel(new RiverLayout(5,5));
         northPanel.add(saveDataCategoryButton);
+        northPanel.add("br", new JLabel(""));
         northPanel.setBorder(null);
         this.add(northPanel, BorderLayout.NORTH);
 
@@ -281,8 +284,9 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         tabComponent.setBorder(null);
         this.add(tabComponent, BorderLayout.CENTER);
 
-        Cab2bPanel bottomPanel = new Cab2bPanel();
+        Cab2bPanel bottomPanel = new Cab2bPanel(new RiverLayout(5,5));
         bottomPanel.add(prevButton);
+        bottomPanel.add("br", new JLabel(""));
         bottomPanel.setBorder(null);
         this.add(bottomPanel, BorderLayout.SOUTH);
     }

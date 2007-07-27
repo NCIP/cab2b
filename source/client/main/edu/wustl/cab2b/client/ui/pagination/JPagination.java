@@ -457,6 +457,7 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
         public JGroupActionPanel() {
             this(PaginationConstants.SELECT_ALL_TEXT, PaginationConstants.CLEAR_ALL_TEXT,
                     PaginationConstants.INVERT_SELECTION_TEXT);
+           
         }
 
         public JGroupActionPanel(String selectAllText, String clearAllText, String invertSelectionText) {
@@ -468,7 +469,7 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
 
             if (invertSelectionText != null && !(invertSelectionText.trim().equals("")))
                 this.invertSelectionText = invertSelectionText;
-
+            this.setLayout(new RiverLayout(5,0));
             initGUI();
         }
 
@@ -479,8 +480,7 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
             selectAllHyperlink = new Cab2bHyperlink();
             selectAllHyperlink.setText(selectAllText);
             selectAllHyperlink.addActionListener(this);
-            this.add("br", new Cab2bLabel(""));
-            this.add("br", new Cab2bLabel(""));
+           
             this.add("tab ", selectAllHyperlink);
 
             clearAllHyperlink = new Cab2bHyperlink();

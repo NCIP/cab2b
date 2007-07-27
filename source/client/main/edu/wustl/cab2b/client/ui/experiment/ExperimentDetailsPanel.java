@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
 import org.jdesktop.swingx.LinkRenderer;
@@ -76,7 +77,11 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
             }
         });
         deleteButton.setEnabled(false);
-        this.add("br", deleteButton);
+        Cab2bPanel deleteButtonPanel= new Cab2bPanel(new RiverLayout(5,5));
+        deleteButtonPanel.add(deleteButton);
+        deleteButtonPanel.add("br",new JLabel(""));
+        
+        this.add("br", deleteButtonPanel);
         highlighters.updateUI();
     }
 
@@ -102,7 +107,11 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
         this.removeAll();
         //Logger.out.debug("Component 0 "+comp.getClass());
         this.add("br hfill vfill", new JScrollPane(expTable));
-        this.add("br", deleteButton);
+        Cab2bPanel deleteButtonPanel= new Cab2bPanel(new RiverLayout(5,5));
+        deleteButtonPanel.add(deleteButton);
+        deleteButtonPanel.add("br",new JLabel(""));
+        
+        this.add("br", deleteButtonPanel);
         this.updateUI();
     }
 
@@ -143,7 +152,11 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
         this.removeAll();
         Logger.out.debug("Component 0 " + comp.getClass());
         this.add("br hfill vfill", new JScrollPane(expTable));
-        this.add("br", deleteButton);
+        Cab2bPanel deleteButtonPanel= new Cab2bPanel(new RiverLayout(5,5));
+        deleteButtonPanel.add(deleteButton);
+        deleteButtonPanel.add("br",new JLabel(""));
+        
+        this.add("br", deleteButtonPanel);
         this.updateUI();
     }
 
@@ -174,7 +187,11 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
 
         this.removeAll();
         this.add("br hfill vfill", new JScrollPane(expTable));
-        this.add("br", deleteButton);
+        Cab2bPanel deleteButtonPanel= new Cab2bPanel(new RiverLayout(5,5));
+        deleteButtonPanel.add(deleteButton);
+        deleteButtonPanel.add("br",new JLabel(""));
+        
+        this.add("br", deleteButtonPanel);
         this.updateUI();
     }
 

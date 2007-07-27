@@ -343,7 +343,7 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
 	}
 
 	public JXPanel[] initializePanelsForAddConstraints(JXPanel[] componentPanel) {
-		Cab2bPanel cab2bPanel = new Cab2bPanel(new RiverLayout(5, 5));
+		Cab2bPanel cab2bPanel = new Cab2bPanel(new RiverLayout(5, 0));
 		JXPanel[] finalPanelsToAdd = new Cab2bPanel[2];
 
 		for (int j = 0; j < componentPanel.length; j++) {

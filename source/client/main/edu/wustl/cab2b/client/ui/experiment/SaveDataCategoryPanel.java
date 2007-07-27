@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
 
+import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -48,6 +49,7 @@ public class SaveDataCategoryPanel extends Cab2bPanel
 	
 	private void initGUI()
 	{
+		this.setLayout(new RiverLayout(5,5));
 		titleLabel = new Cab2bLabel("Title");
 		titleField = new Cab2bTextField();
 		cancelButton = new Cab2bButton("Cancel");
@@ -55,8 +57,8 @@ public class SaveDataCategoryPanel extends Cab2bPanel
 		
 		add(titleLabel);
 		add("tab hfill",titleField);
-		add("br right",cancelButton);
-		add(saveButton);
+		add("br right",saveButton);
+		add(cancelButton);
 		
 	}
 	

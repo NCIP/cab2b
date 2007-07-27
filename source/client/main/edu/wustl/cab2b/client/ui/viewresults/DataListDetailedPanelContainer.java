@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import edu.wustl.cab2b.client.ui.RiverLayout;
@@ -43,11 +44,14 @@ public class DataListDetailedPanelContainer extends Cab2bPanel implements Action
     }
 
     private void initGUI() {
-        this.setLayout(new RiverLayout());
-        this.add("br hfill vfill", dataListDetailedPanel);
-
+    	this.add("br hfill vfill", dataListDetailedPanel);
+    	
+    	Cab2bPanel exportButtonPanel= new Cab2bPanel(new RiverLayout(5,5));
+    	
         m_exportButton = new Cab2bButton("Export");
-        this.add("br", this.m_exportButton);
+        exportButtonPanel.add(m_exportButton);
+        exportButtonPanel.add("br",new JLabel(""));
+        this.add("br", exportButtonPanel);
         m_exportButton.addActionListener(this);
         this.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
     }

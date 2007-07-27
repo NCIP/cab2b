@@ -7,6 +7,7 @@ import java.awt.Insets;
 import java.rmi.RemoteException;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JSplitPane;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -128,7 +129,9 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
 
         addDataButton = new Cab2bButton("Add Data");
         addDataButton.setEnabled(false);
+    
         experimentTitlePanel.add(addDataButton);
+        experimentTitlePanel.add("br", new JLabel(""));
         experimentTitlePanel.setBorder(null);
 
         /* Adding Experiment grid panel */

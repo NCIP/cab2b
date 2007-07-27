@@ -39,7 +39,7 @@ public class PatternPopup extends Cab2bFilterPopup {
         if (inputFilter != null) {
             patternText.setText(inputFilter.getPattern().pattern());
         }
-        this.setLayout(new RiverLayout(0,5));
+        this.setLayout(new RiverLayout(5,5));
 
         this.add("hfill ", myLable1);
         this.add("tab", patternText);

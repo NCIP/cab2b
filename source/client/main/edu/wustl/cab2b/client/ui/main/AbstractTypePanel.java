@@ -79,8 +79,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 
 	public AbstractTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity,
 			Boolean showCondition, Dimension maxLabelDimension) {
-		super(new RiverLayout());
-
+		this.setLayout(new RiverLayout(10,0));
 		this.attributeEntity = attributeEntity;
 		this.attributeName = attributeEntity.getName();
 		this.showCondition = showCondition;
@@ -105,16 +104,17 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 		final EmptyBorder emptyBorder = new EmptyBorder(2, 2, 2, 2);
 		m_OtherEdit.setBorder(emptyBorder);
 
-		add("tab", m_Name);
-		// add("tab", new Cab2bLabel());
+		add(m_Name);
+		//add("tab", new Cab2bLabel());
 
 		if (showCondition) {
 			setCondtionControl(conditionList, border, emptyBorder);
 		}
 
-		// add("tab", new Cab2bLabel());
-		add("tab", m_NameEdit);
-		add("tab", m_OtherEdit);
+	//	add("tab", new Cab2bLabel());
+		add(m_NameEdit);
+	//	add("tab", new Cab2bLabel());
+		add(m_OtherEdit);
 
 		setSize(new Dimension(300, 100));
 	}
@@ -249,7 +249,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 		});
 
 		m_Conditions.setSelectedIndex(0);
-		add("tab", m_Conditions);
+		add(m_Conditions);
 	}
 
 	private void conditionListenerAction(final Border border, final EmptyBorder emptyBorder) {
