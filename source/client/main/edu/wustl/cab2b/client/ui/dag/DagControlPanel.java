@@ -62,12 +62,14 @@ public class DagControlPanel extends JPanel implements ActionListener {
 
         selectNodeButton = getButton(DagImages.SelectIcon, DagImages.selectMOIcon, "Select Node", false);
         leftPanel.add(selectNodeButton);
-        
-        connectNodeButton = getButton(DagImages.ArrowSelectIcon, DagImages.ArrowSelectMOIcon, "Connect Nodes",true);
+
+        connectNodeButton = getButton(DagImages.ArrowSelectIcon, DagImages.ArrowSelectMOIcon, "Connect Nodes",
+                                      true);
         connectNodeButton.addActionListener(this);
         leftPanel.add(connectNodeButton);
-        
-        parenthesislButton = getButton(DagImages.ParenthesisIcon, DagImages.ParenthesisMOIcon, "Add Parenthesis",false);
+
+        parenthesislButton = getButton(DagImages.ParenthesisIcon, DagImages.ParenthesisMOIcon, "Add Parenthesis",
+                                       false);
         leftPanel.add(parenthesislButton);
 
         JPanel rightPanel = new JPanel();
@@ -138,5 +140,7 @@ public class DagControlPanel extends JPanel implements ActionListener {
             // Perform auto-connect functionality on selected classes
             mainDagPanel.performAutoConnect();
         }
+        revalidate();
     }
+
 }
