@@ -139,10 +139,12 @@ public class ViewController extends DefaultViewController implements ActionListe
             deleteNodeFromView(node);
             //Delete node from query object
             m_mainPanel.deleteExpression(expressionId);
-        } 
-     }
+        }
+    }
 
     private void deleteNodeFromView(IGraphNode node) {
+        node = (IGraphNode) getHelper().getModelComponent(node);
+
         IGraphPort[] ports = node.getPorts();
         if (ports != null) {
             IGraphLink[] links = null;
@@ -152,12 +154,11 @@ public class ViewController extends DefaultViewController implements ActionListe
                     deleteLink(links[0]);
                 }
             }
-        }        
-       
+        }
 
         final IGraphNode[] _nodes = new IGraphNode[] { node };
-        final IGraphLink[] _links = new IGraphLink[] {};        
-        m_mainPanel.getDocument().removeComponents(GraphEvent.create(_nodes, _links));     
+        final IGraphLink[] _links = new IGraphLink[] {};
+        m_mainPanel.getDocument().removeComponents(GraphEvent.create(_nodes, _links));
     }
 
     /**
@@ -195,7 +196,7 @@ public class ViewController extends DefaultViewController implements ActionListe
         final IGraphLink[] _links = new IGraphLink[] { link };
         sourceNode.removePort((GraphPort) sourcePort.getLookup().lookup(GraphPort.class));
         destinationNode.removePort((GraphPort) targetPort.getLookup().lookup(GraphPort.class));
-        m_mainPanel.getDocument().removeComponents(GraphEvent.create(_nodes, _links));      
+        m_mainPanel.getDocument().removeComponents(GraphEvent.create(_nodes, _links));
     }
 
     /**

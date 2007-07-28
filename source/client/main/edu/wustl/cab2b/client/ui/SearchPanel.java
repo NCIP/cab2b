@@ -95,7 +95,7 @@ public class SearchPanel extends Cab2bPanel {
 
     private void initGUI() {
         /* Set the layout.*/
-        this.setLayout(new RiverLayout(5,5));
+        this.setLayout(new RiverLayout(5, 5));
 
         /* Intialize the Search button.*/
         srhButton = new Cab2bButton("Search");
@@ -133,14 +133,11 @@ public class SearchPanel extends Cab2bPanel {
         /* Invoke the method based on concrete implementations from sub-class*/
         addTextField();
 
-        /* Add the components to the searchPanel.*/
-
         /* Invoke the method to get the specific type of Advanced search searchPanel to be added*/
         advSearchPanel = this.getAdvancedSearchPanel();
         this.add(srhButton);
         Cab2bLabel cab2bLabel = new Cab2bLabel(helpText);
-        //this.add("br ", new Cab2bLabel(" "));
-        this.add("br",cab2bLabel);
+        this.add("br", cab2bLabel);
         this.add("br", advSearchPanel);
     }
 
@@ -194,7 +191,6 @@ public class SearchPanel extends Cab2bPanel {
      * 
      * @param resultPanel
      *            The results searchPanel to be removed
-     * 
      */
     private void removeResultPanel() {
         if (srhResultPanel != null) {
@@ -228,9 +224,7 @@ public class SearchPanel extends Cab2bPanel {
 
     /**
      * Action listener for the text field as well as the search button.
-     * 
      */
-
     private class SearchActionListener extends AbstractAction {
         private static final long serialVersionUID = 1L;
 
@@ -255,7 +249,6 @@ public class SearchPanel extends Cab2bPanel {
                 Set<EntityInterface> srhResult = null;
 
                 protected void doNonUILogic() throws RuntimeException {
-
                     try {
                         IEntityCache cache = ClientSideCache.getInstance();
                         MetadataSearch metadataSearch = new MetadataSearch(cache);
@@ -303,10 +296,8 @@ public class SearchPanel extends Cab2bPanel {
      * The abstract method returns the appropriate type of
      * {@link AdvancedSearchPanel} to be added to this searchPanel. Sub-classes
      * are required to over-ride this method.
-     * 
      * @return AdvancedSearchPanel 
      */
-
     public AdvancedSearchPanel getAdvancedSearchPanel() {
         if (advSearchPanel == null)
             return new AdvancedSearchPanel();
@@ -329,7 +320,6 @@ public class SearchPanel extends Cab2bPanel {
      */
     public void addTextField() {
         this.getTextField().setPreferredSize(new Dimension(350, 22));
-     //   this.add("tab ", new Cab2bLabel());
         this.add(this.getTextField());
     }
 }

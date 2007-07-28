@@ -3,8 +3,6 @@ package edu.wustl.cab2b.client.ui;
 import org.jdesktop.swingx.JXPanel;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
-import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 
 //TODO : This needs to be replaced such that these methods got into a searchPanel, rather than remain in an interface
 public abstract class ContentPanel extends Cab2bPanel 
