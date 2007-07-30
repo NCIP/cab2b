@@ -19,6 +19,7 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableColumn;
 
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTitledPanel;
@@ -607,10 +608,14 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
                 tableData[i++][3] = attribute.getDescription();
             }
 
-            String[] headers = new String[] { "Attribute Name", "Public ID", "Concept Codes", "Description" };
+            String[] headers = new String[] { " Attribute Name", " Public ID", " Concept Codes", " Description" };
             Cab2bTable cab2bTable = new Cab2bTable(false, tableData, headers);
             cab2bTable.setBorder(null);
             cab2bTable.setShowGrid(false);
+            cab2bTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+           
+            
+            
             JScrollPane jScrollPane = new JScrollPane(cab2bTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             jScrollPane.setBorder(null);
