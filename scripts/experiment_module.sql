@@ -19,7 +19,7 @@ drop table if exists CAB2B_EXP_DLMETADATA_MAPPING;
 create table CAB2B_ADDITIONAL_META_DATA (
    AMD_ID bigint not null,
    NAME varchar(50),
-   DESCRIPTION varchar(50),
+   DESCRIPTION varchar(255),
    CREATED_ON date,
    LAST_UPDATED_ON date,
    primary key (AMD_ID)
