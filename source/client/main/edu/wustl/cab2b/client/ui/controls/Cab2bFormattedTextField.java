@@ -12,6 +12,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
+import edu.wustl.cab2b.client.ui.util.ClientConstants;
+
 /**
  * @author chetan_bh
  */
@@ -66,6 +68,7 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
         setDocument(documentFactory.getDocument(fieldType));
         initializeFormatter();
         this.setColumns(columns);
+        setBorder(ClientConstants.border);
     }
 
     private void initializeFormatter() {
@@ -146,6 +149,7 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
             super.insertString(offs, new String(result, 0, j), a);
         }
     }
+
     /**
      * @author chetan_bh
      */
@@ -177,6 +181,7 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
             super.insertString(offs, new String(result, 0, j), a);
         }
     }
+
     /**
      * @author chetan_bh
      */
@@ -199,6 +204,7 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
             super.insertString(offs, new String(result, 0, j), a);
         }
     }
+
     /**
      * @author chetan_bh
      */
@@ -221,6 +227,7 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
             super.insertString(offs, new String(result, 0, j), a);
         }
     }
+
     /**
      * @author chetan_bh
      */
@@ -241,6 +248,7 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
             //			super.insertString(offs, str, a);
         }
     }
+
     /**
      * @author chetan_bh
      */

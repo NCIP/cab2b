@@ -1,5 +1,10 @@
 package edu.wustl.cab2b.client.ui.util;
 
+import java.awt.Color;
+
+import javax.swing.BorderFactory;
+import javax.swing.border.Border;
+
 /**
  * All the constants used at UI side
  * 
@@ -81,5 +86,7 @@ public class ClientConstants {
 	public static String EXPT_LEAF_NODE = "my_experiments_data.gif";
 	
 	public static String SELECT_DATA_CATEGORY = "select_data_category.gif";
+    
+    public static final Border border = BorderFactory.createLineBorder(new Color(100, 200, 220));
 
 }
