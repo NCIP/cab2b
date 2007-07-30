@@ -641,6 +641,7 @@ public class MainDagPanel extends Cab2bPanel {
                 }
             }
         }
+        m_expressionPanel.setText(getExprssionString());
     }
 
     /**
