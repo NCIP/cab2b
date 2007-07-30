@@ -233,10 +233,9 @@ public abstract class ResultPanel extends Cab2bPanel {
             myDataListTitledPanel.setPreferredSize(new Dimension(267, 653));
 
             if (myDataListPanel == null) {
-                myDataListPanel = new Cab2bPanel();
+                myDataListPanel = new Cab2bPanel(new RiverLayout(5, 5));
                 myDataListPanel.setBorder(null);
                 myDataListPanel.setBackground(Color.WHITE);
-                myDataListPanel.setLayout(new RiverLayout(5, 10));
             } else {
                 myDataListPanel.removeAll();
             }

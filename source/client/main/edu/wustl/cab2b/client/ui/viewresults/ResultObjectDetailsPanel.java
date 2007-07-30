@@ -90,16 +90,16 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         this.add(defaultDetailedPanel, BorderLayout.CENTER);
 
         initDataListButtons();
-        Cab2bPanel buttonPanel = new Cab2bPanel(new RiverLayout(8,0));
+        Cab2bPanel buttonPanel = new Cab2bPanel(new RiverLayout(8, 0));
         buttonPanel.add(addToDataListButton);
-        buttonPanel.add( m_applyAllButton);
+        buttonPanel.add(m_applyAllButton);
 
         this.add(buttonPanel, BorderLayout.SOUTH);
 
         m_sidePanel = new Cab2bPanel(new GridLayout(2, 1, 5, 5));
         initDataListSummaryPanel();
         //fix for matching the sizes of "my data summrary" and "related data"
-        Cab2bPanel relatedDataParentPanel = new Cab2bPanel(new RiverLayout(0,5));
+        Cab2bPanel relatedDataParentPanel = new Cab2bPanel(new RiverLayout(0, 5));
         relatedDataParentPanel.setBorder(null);
         relatedDataParentPanel.add("br hfill vfill", relatedDataTitledPanel);
 
@@ -119,9 +119,8 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         relatedDataTitledPanel.setTitleForeground(Color.BLACK);
         relatedDataTitledPanel.setBorder(null);
 
-        relatedDataPanel = new Cab2bPanel();
+        relatedDataPanel = new Cab2bPanel(new RiverLayout(0, 10));
         relatedDataPanel.setBackground(Color.WHITE);
-        relatedDataPanel.setLayout(new RiverLayout(5, 10));
         relatedDataPanel.setBorder(null);
 
         if (incomingAssociationCollection != null && !incomingAssociationCollection.isEmpty()) {
@@ -137,7 +136,7 @@ public class ResultObjectDetailsPanel extends ResultPanel {
             Collection outgoingIntraModelAssociationCollection = dataRow.getEntity().getAssociationCollection();
             AbstractAssociatedDataPanel outgoingPanel = new OutgoingAssociationDataPanel(
                     outgoingIntraModelAssociationCollection, searchPanel.getAssociatedDataAL(), dataRow, record);
-            relatedDataPanel.add("br", outgoingPanel);
+            relatedDataPanel.add("br ", outgoingPanel);
         }
 
         /*
@@ -147,15 +146,14 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         if (intraModelAssociationCollection != null && !intraModelAssociationCollection.isEmpty()) {
             AbstractAssociatedDataPanel interModelPanel = new InterModelAssociationDataPanel(
                     intraModelAssociationCollection, searchPanel.getAssociatedDataAL(), dataRow, record);
-            relatedDataPanel.add("br", interModelPanel);
+            relatedDataPanel.add("br ", interModelPanel);
         }
 
         relatedDataPanel.add("br", new Cab2bLabel("       "));
-        JScrollPane relatedDataPane = new JScrollPane(relatedDataPanel);
+        JScrollPane relatedDataPane = new JScrollPane();
         relatedDataPane.getViewport().setBackground(Color.WHITE);
+        relatedDataPane.getViewport().add(relatedDataPanel);
         relatedDataTitledPanel.add(relatedDataPane);
-
-        //relatedDataTitledPanel.setBorder(new CustomizableBorder(new Insets(1, 1, 1, 1), true, true));
     }
 
     /**

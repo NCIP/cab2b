@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.common.datalist.IDataRow;
@@ -46,10 +47,11 @@ public abstract class AbstractAssociatedDataPanel extends Cab2bPanel {
      * @param id
      * @param dataRow
      */
-    public AbstractAssociatedDataPanel(Collection associations, ActionListener associatedDataActionListener,
-
-    IDataRow dataRow, IRecord record) {
-
+    public AbstractAssociatedDataPanel(
+            Collection associations,
+            ActionListener associatedDataActionListener,
+            IDataRow dataRow,
+            IRecord record) {
         this.associations = associations;
         this.associatedDataActionListener = associatedDataActionListener;
         this.dataRow = dataRow;
@@ -58,14 +60,12 @@ public abstract class AbstractAssociatedDataPanel extends Cab2bPanel {
     }
 
     protected void iniGUI() {
-
+        setLayout(new RiverLayout(5, 5));
         addLabel();
         processAssociation();
     }
 
-    protected void addLabel() {
-
-    }
+    abstract void addLabel();
 
     abstract void processAssociation();
 
@@ -81,7 +81,7 @@ public abstract class AbstractAssociatedDataPanel extends Cab2bPanel {
      * association itself are remembered by the link
      */
     protected Cab2bHyperlink getHyperlink(HyperLinkUserObject hyperLinkUserObject, String tooltip) {
-        Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
+        Cab2bHyperlink<HyperLinkUserObject> hyperlink = new Cab2bHyperlink<HyperLinkUserObject>(true);
         /* Set the hyperlink text */
         hyperlink.setText(getLinkLabel(hyperLinkUserObject.getTargetEntity()));
         hyperlink.setToolTipText(tooltip);
@@ -90,7 +90,7 @@ public abstract class AbstractAssociatedDataPanel extends Cab2bPanel {
         hyperlink.addActionListener(associatedDataActionListener);
         return hyperlink;
     }
-    
+
     /**
      * returns the label to be shown in the link for the related data
      * @param entity

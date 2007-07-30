@@ -42,6 +42,10 @@ public class OutgoingAssociationDataPanel extends AbstractAssociatedDataPanel {
             IRecord record) {
         super(associations, associatedDataActionListener, dataRow, record);
     }
+    
+    protected void addLabel() {
+
+    }
 
     /**
      * @see edu.wustl.cab2b.client.ui.viewresults.AbstractAssociatedDataPanel#processAssociation()
@@ -63,7 +67,7 @@ public class OutgoingAssociationDataPanel extends AbstractAssociatedDataPanel {
             hyperLinkUserObject.setParentDataRow(dataRow);
             hyperLinkUserObject.setTargetEntity(deAssociation.getTargetEntity());
 
-            this.add("br", getHyperlink(hyperLinkUserObject, tooTipText));
+            this.add("br ", getHyperlink(hyperLinkUserObject, tooTipText));
         }
     }
 

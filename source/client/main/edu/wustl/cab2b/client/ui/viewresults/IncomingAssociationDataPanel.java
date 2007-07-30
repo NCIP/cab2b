@@ -41,30 +41,28 @@ public class IncomingAssociationDataPanel extends AbstractAssociatedDataPanel {
             IRecord record) {
         super(associations, associatedDataActionListener, dataRow, record);
     }
-    
+
     /**
      * @see edu.wustl.cab2b.client.ui.viewresults.AbstractAssociatedDataPanel#addLabel()
      */
     protected void addLabel() {
         JLabel label = new JLabel(" Intra Model Associations : ");
         label.setForeground(Color.black);
-        this.add("br", label);
+        this.add("br ", label);
     }
 
     /**
      * @see edu.wustl.cab2b.client.ui.viewresults.AbstractAssociatedDataPanel#processAssociation()
      */
     void processAssociation() {
-        
         List<AssociationInterface> list = new ArrayList<AssociationInterface>(associations);
-        Collections.sort(list,new Comparator<AssociationInterface>() {
+        Collections.sort(list, new Comparator<AssociationInterface>() {
             public int compare(AssociationInterface association1, AssociationInterface association2) {
                 return association1.getEntity().getName().compareTo(association2.getEntity().getName());
             }
         });
-        for (AssociationInterface deAssociation :list) {
-            
 
+        for (AssociationInterface deAssociation : list) {
             IIntraModelAssociation intraModelAssociation = (IIntraModelAssociation) QueryObjectFactory.createIntraModelAssociation(deAssociation);
             String tooTipText = "Target role name : " + deAssociation.getSourceRole().getName();
 
@@ -73,9 +71,8 @@ public class IncomingAssociationDataPanel extends AbstractAssociatedDataPanel {
             hyperLinkUserObject.setParentDataRow(dataRow);
             hyperLinkUserObject.setTargetEntity(deAssociation.getEntity());
 
-            this.add("br", getHyperlink(hyperLinkUserObject, tooTipText));
+            this.add("br ", getHyperlink(hyperLinkUserObject, tooTipText));
         }
-
     }
 
     /**

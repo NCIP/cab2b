@@ -45,7 +45,7 @@ public class InterModelAssociationDataPanel extends AbstractAssociatedDataPanel 
     protected void addLabel() {
         JLabel label = new JLabel(" Inter Model Associations : ");
         label.setForeground(Color.black);
-        this.add("br", label);
+        this.add("br ", label);
     }
 
     /**
@@ -70,7 +70,7 @@ public class InterModelAssociationDataPanel extends AbstractAssociatedDataPanel 
             hyperLinkUserObject.setParentDataRow(dataRow);
             hyperLinkUserObject.setTargetEntity(interModelAssociation.getTargetEntity());
 
-            this.add("br", getHyperlink(hyperLinkUserObject, tooTipText));
+            this.add("br ", getHyperlink(hyperLinkUserObject, tooTipText));
         }
     }
 
