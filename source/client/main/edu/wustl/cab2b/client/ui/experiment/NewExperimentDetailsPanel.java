@@ -1,8 +1,8 @@
 package edu.wustl.cab2b.client.ui.experiment;
 
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_CLOSE_FOLDER;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_OPEN_FOLDER;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_LEAF_NODE;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_OPEN_FOLDER;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -141,12 +141,8 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         asterix2.setFont(new Font("Arial", Font.BOLD, 16));
         asterix2.setForeground(Color.RED);
 
-        // JLabel mandatoryNodeLabel = new
-        // Cab2bLabel(ApplicationProperties.getValue("label.mandatorynote.text"));
-
         JLabel expNameLabel = new Cab2bLabel("Experiment Name :     ");
         expNameTextField = new Cab2bTextField();
-        // expNameTextField.setColumns(22);
 
         JLabel projectsLabel = new Cab2bLabel("Project :                         ");
 
@@ -196,7 +192,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
         JLabel expDescLabel = new Cab2bLabel("Description : ");
         expDescTextArea = new JTextArea();
-        //expDescTextArea.setColumns(35);
+        expDescTextArea.setWrapStyleWord(true);
         expDescTextArea.setRows(5);
 
         this.setLayout(new BorderLayout());
@@ -215,7 +211,6 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        // centerPanel.add(mandatoryNodeLabel, gbc);
 
         gbc.weighty = 0;
         gbc.weightx = 0;
@@ -283,13 +278,6 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
             }
         });
 
-        /*	gbc.gridx = 1;
-         gbc.gridy = 2;
-         gbc.gridwidth = 1;
-         gbc.gridheight = 1;
-         gbc.weightx = 0;
-         gbc.fill = GridBagConstraints.NONE;*/
-        //centerPanel.add(addNewButton, gbc);
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 1;
@@ -360,6 +348,11 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                     experimentName = currentDate.toString();
                 }
                 String experimentDescription = expDescTextArea.getText();
+                if (experimentDescription == null || experimentDescription.length() > 255) {
+                    JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this,
+                                                  "The description cannot exceed 255 characters.");
+                    return;
+                }
 
                 Experiment experiment = new Experiment();
                 experiment.setName(experimentName);
@@ -396,17 +389,11 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
             }
         });
 
-        /*
-         * this.add("br br right",saveButton); this.add("tab
-         * right",cancelButton);
-         */
-
         Cab2bPanel bottomPanel = new Cab2bPanel();
-        FlowLayout flowLayout = new FlowLayout();
-        flowLayout.setAlignment(FlowLayout.RIGHT);
+        FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
         flowLayout.setHgap(10);
         bottomPanel.setLayout(flowLayout);
-     
+
         bottomPanel.add(saveButton);
         bottomPanel.add(cancelButton);
 
@@ -428,8 +415,6 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         dialog = WindowUtilities.setInDialog(NewWelcomePanel.mainFrame, this, "Create New Experiment",
                                              new Dimension((int) (dimension.width * 0.43),
                                                      (int) (dimension.height * 0.60)), true, false);
-
-        Logger.out.debug("dialog initialized ########## " + dialog);
         dialog.setVisible(true);
         return dialog;
     }
@@ -441,8 +426,6 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                                                                                                                          EjbNamesConstants.EXPERIMENT_GROUP,
                                                                                                                          ExperimentGroupHome.class);
         Long parentExpGrpID = selectedExperimentNode.getIdentifier();
-        Logger.out.debug("addNewExperimentGroupNode :: parentExpGrpID : " + parentExpGrpID);
-
         if (expGrpName != null && !expGrpName.equals("")) {
             ExperimentGroup newExpGrp = new ExperimentGroup();
             newExpGrp.setName(expGrpName);
@@ -462,13 +445,6 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
             } catch (DAOException e1) {
                 CommonUtils.handleException(e1, this, true, true, false, false);
             }
-            // TODO refresh the tree.
-            // TODO this is a temporary hack, actually only tree should be
-            // refreshed.
-            // but this one is updating the whole panel, which is not correct.
-            // initGUI();
-
-            Logger.out.debug("newExpGrp " + newExpGrp.getId());
 
             ExperimentTreeNode newNodeExperimentTreeNode = new ExperimentTreeNode();
             newNodeExperimentTreeNode.setIdentifier(newExpGrp.getId());
@@ -513,14 +489,10 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
     public static List<DataListMetadata> getDataLlistMetadatas() throws RemoteException,
             DynamicExtensionsSystemException, DAOException, ClassNotFoundException {
-
         DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                             EjbNamesConstants.DATALIST_BEAN,
                                                                                                             DataListHomeInterface.class);
-
         List<DataListMetadata> dataListMetadatas = dataListBI.retrieveAllDataListMetadata();
-        System.out.println("dataListMetadatas " + dataListMetadatas);
-
         return dataListMetadatas;
     }
 
@@ -528,10 +500,8 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
      * @param args
      */
     public static void main(String[] args) {
-
         Logger.configure("");
         WindowUtilities.setNativeLookAndFeel();
-
         ApplicationProperties.initBundle("Cab2bApplicationResources");
 
         NewExperimentDetailsPanel expDetailsPanel = new NewExperimentDetailsPanel();
