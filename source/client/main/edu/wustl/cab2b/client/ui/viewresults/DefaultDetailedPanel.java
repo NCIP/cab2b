@@ -6,6 +6,7 @@ import java.util.Vector;
 import javax.swing.JScrollPane;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
@@ -41,6 +42,7 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
 
     protected void initData() {
         this.setName("DataListDetailedPanel");
+        this.setLayout(new RiverLayout(0,5));
         List<AttributeInterface> attributeList = edu.wustl.cab2b.common.util.Utility.getAttributeList(record.getAttributes());
         for (AttributeInterface attribute : attributeList) {
             String formattedString = CommonUtils.getFormattedString(attribute.getName());
