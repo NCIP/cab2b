@@ -35,6 +35,7 @@ public class Cab2bTable extends JXTable {
     
     public Cab2bTable(TableModel tableModel) {
         super(tableModel);
+        initUI();
     }
 
     private void initUI() {
