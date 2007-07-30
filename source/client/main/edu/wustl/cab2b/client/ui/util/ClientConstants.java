@@ -87,6 +87,6 @@ public class ClientConstants {
 	
 	public static String SELECT_DATA_CATEGORY = "select_data_category.gif";
     
-    public static final Border border = BorderFactory.createLineBorder(new Color(100, 200, 220));
+    public static final Border border = BorderFactory.createLineBorder(Color.BLACK);
 
 }
