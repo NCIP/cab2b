@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Toolkit;
 import java.text.Format;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFormattedTextField;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
@@ -68,7 +69,8 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
         setDocument(documentFactory.getDocument(fieldType));
         initializeFormatter();
         this.setColumns(columns);
-        setBorder(ClientConstants.border);
+       //setBorder(ClientConstants.border);
+        setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
     }
 
     private void initializeFormatter() {

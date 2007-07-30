@@ -234,7 +234,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
          * string type to number to date
          */
         m_Conditions = new Cab2bComboBox();
-        m_Conditions.setBorder(ClientConstants.border);
+        //m_Conditions.setBorder(ClientConstants.border);
         m_Conditions.setPreferredSize(new Dimension(125, 20));
 
         Collections.sort(conditionList);
