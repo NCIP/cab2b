@@ -597,7 +597,7 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
                 Collection<SemanticPropertyInterface> semanticPropertyCollection = attribute.getSemanticPropertyCollection();
                 StringBuffer conceptCodeList = new StringBuffer();
                 for (SemanticPropertyInterface semanticProperty : semanticPropertyCollection) {
-                    if (conceptCodeList.equals("")) {
+                    if (conceptCodeList.toString().equals("")) {
                         conceptCodeList.append(semanticProperty.getConceptCode());
                     } else {
                         conceptCodeList.append(", " + semanticProperty.getConceptCode());
