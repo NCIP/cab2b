@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.event.ActionEvent;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
@@ -69,13 +71,13 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
     /** The pagination component to paginate the results of the search */
     private Cab2bPanel resultPanel;
 
-    private Cab2bPanel constraintButtonPanel;
-
     private Cab2bButton addLimitButton;
-
+    
     private Cab2bButton editLimitButton;
 
     private Cab2bHyperlink attributeDetailsLink;
+    
+    private Cab2bPanel constraintButtonPanel;
 
     private EntityInterface entityForSelectedLink;
 
@@ -198,6 +200,21 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
         attributeDetailsLink.setText("CDE Details");
         attributeDetailsLink.addActionListener(new AttributeDetailsLinkListener(entity));
     }
+    
+    /**
+     * 
+     * @param cab2bButton
+     * @return
+     */
+    private Cab2bPanel getConstraintButtonPanel(Cab2bButton cab2bButton) {
+        constraintButtonPanel = new Cab2bPanel(new RiverLayout(5, 5));
+        
+        constraintButtonPanel.add(cab2bButton);
+        constraintButtonPanel.add("tab", new JLabel(" | "));
+        constraintButtonPanel.add("tab", attributeDetailsLink);
+        
+        return constraintButtonPanel;
+    }
 
     /**
      * Method to create AddLimitUI
@@ -209,8 +226,7 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
         final JXPanel[] finalPanelToadd = initializePanelsForAddConstraints(componentPanel);
 
         initializeAddLimitButton(componentPanel, entity);
-        finalPanelToadd[0].add(addLimitButton, BorderLayout.WEST);
-        finalPanelToadd[0].add(attributeDetailsLink, BorderLayout.EAST);
+        finalPanelToadd[0].add(getConstraintButtonPanel(addLimitButton));
 
         return finalPanelToadd;
     }
@@ -229,8 +245,7 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
         final JXPanel[] finalPanelToadd = initializePanelsForAddConstraints(componentPanel);
 
         initializeEditLimitButtons(componentPanel, expression);
-        finalPanelToadd[0].add(editLimitButton, BorderLayout.WEST);
-        finalPanelToadd[0].add(attributeDetailsLink, BorderLayout.WEST);
+        finalPanelToadd[0].add(getConstraintButtonPanel(editLimitButton));
 
         return finalPanelToadd;
     }
@@ -306,8 +321,6 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
      */
     public JXPanel[] initializePanelsForAddConstraints(JXPanel[] componentPanel) {
         Cab2bPanel cab2bPanel = new Cab2bPanel(new RiverLayout(5, 5));
-        JXPanel[] finalPanelsToAdd = new Cab2bPanel[2];
-
         for (int j = 0; j < componentPanel.length; j++) {
             cab2bPanel.add("br", componentPanel[j]);
         }
@@ -318,8 +331,9 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
         pane.getViewport().setBorder(null);
         pane.setBorder(null);
 
-        finalPanelsToAdd[0] = new Cab2bPanel(new RiverLayout(5, 5));
-        finalPanelsToAdd[1] = constraintButtonPanel = new Cab2bPanel();
+        JXPanel[] finalPanelsToAdd = new Cab2bPanel[2];
+        finalPanelsToAdd[0] = new Cab2bPanel(new FlowLayout(FlowLayout.RIGHT));
+        finalPanelsToAdd[1] = new Cab2bPanel();
         finalPanelsToAdd[1].add("hfill vfill ", pane);
 
         return finalPanelsToAdd;

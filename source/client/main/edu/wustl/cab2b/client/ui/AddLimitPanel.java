@@ -329,7 +329,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
             }
         }
 
-        Cab2bPanel constraintButtonPanel = (Cab2bPanel) m_ContentForTopPanel.getComponent(0);
+        Cab2bPanel constraintButtonPanel = (Cab2bPanel)((Cab2bPanel) m_ContentForTopPanel.getComponent(0)).getComponent(0);
         constraintButtonPanel.remove(0);
         SearchResultPanel searchResultPanel = getSearchResultPanel();
         searchResultPanel.initializeAddLimitButton(panelArray, searchResultPanel.getEntityForSelectedLink());
