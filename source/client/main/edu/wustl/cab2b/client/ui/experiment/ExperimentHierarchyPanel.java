@@ -1,11 +1,14 @@
 package edu.wustl.cab2b.client.ui.experiment;
 
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.EXPT_LEAF_NODE;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_CLOSE_FOLDER;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_OPEN_FOLDER;
+
 import java.rmi.RemoteException;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -27,9 +30,6 @@ import edu.wustl.common.tree.ExperimentTreeNode;
 import edu.wustl.common.tree.GenerateTree;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_OPEN_FOLDER;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.TREE_CLOSE_FOLDER;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.EXPT_LEAF_NODE;
 
 /**
  * A panel to display experiment and experiment group hierarchies 
@@ -53,7 +53,7 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
     }
 
     private void initGUI() {
-        this.setLayout(new RiverLayout(5,5));
+        this.setLayout(new RiverLayout(5, 5));
         Vector dataVector = null;
         try {
             ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) Locator.getInstance().locate(
@@ -120,17 +120,8 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
 
         addNewButton = new Cab2bButton("Add New");
         addNewButton.setEnabled(false);
-        this.add("br",addNewButton);
+        this.add("br", addNewButton);
 
-        /*JButton searchButton = new Cab2bButton("Search");
-         searchButton.addActionListener(new ActionListener()
-         {
-         public void actionPerformed(ActionEvent e)
-         {
-         expTree.getActionMap().get("find").actionPerformed(null);
-         }
-         });
-         this.add("tab",searchButton);*/
         JScrollPane js = new JScrollPane(expTree);
         js.setBorder(null);
         this.add("br hfill vfill", js);
