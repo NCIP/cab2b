@@ -11,6 +11,9 @@ import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.table.TableCellRenderer;
 
 import org.jdesktop.swingx.LinkRenderer;
 import org.jdesktop.swingx.action.LinkAction;
@@ -36,17 +39,17 @@ import edu.wustl.common.util.logger.Logger;
  * @author chetan_bh
  */
 public class ExperimentDetailsPanel extends Cab2bPanel {
-    Cab2bTable expTable;
+    private static final long serialVersionUID = 1L;
 
-    Object[] tableHeader = { "Title", "Date Created", "Last Updated", "Description" };
+    private Cab2bTable expTable;
 
-    Object[][] emptyTableData = {};
+    private Object[] tableHeader = { "Title", "Date Created", "Last Updated", "Description" };
 
-    Vector tHeader = new Vector();
+    private Vector<String> tHeader = new Vector<String>();
 
-    Cab2bButton deleteButton;
+    private Cab2bButton deleteButton;
 
-    ExperimentOpenPanel expPanel = null;
+    private ExperimentOpenPanel expPanel = null;
 
     public ExperimentDetailsPanel() {
         initGUI();
@@ -56,20 +59,71 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
         tHeader.add("Description");
     }
 
-    private void initGUI() {
-        this.setLayout(new RiverLayout());
-        this.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
-        expTable = new Cab2bTable(true, emptyTableData, tableHeader);
-
+    /**
+     * 
+     * @return
+     */
+    private JScrollPane initExperimentTableWithScrolls() {
         MyLinkAction myLinkAction = new MyLinkAction();
         expTable.getColumn(1).setCellRenderer(new LinkRenderer(myLinkAction));
         expTable.getColumn(1).setCellEditor(new LinkRenderer(myLinkAction));
 
-        HighlighterPipeline highlighters = new HighlighterPipeline();
-        highlighters.addHighlighter(new AlternateRowHighlighter());
-        expTable.setHighlighters(highlighters);
+        expTable.setBorder(null);
+        expTable.setShowGrid(false);
+        expTable.setRowHeightEnabled(true);
+        expTable.getColumnModel().getColumn(2).setPreferredWidth(35);
+        expTable.getColumnModel().getColumn(3).setPreferredWidth(35);
+        expTable.getColumnModel().getColumn(4).setPreferredWidth(325);
+        expTable.getColumnModel().getColumn(4).setCellRenderer(new CellWrapRenderer());
 
-        this.add("br hfill vfill", new JScrollPane(expTable));
+        JScrollPane jScrollPane = new JScrollPane();
+        jScrollPane.getViewport().add(expTable);
+        this.add("br hfill vfill", jScrollPane);
+
+        return jScrollPane;
+    }
+
+    /**
+     * 
+     * @param newTableData
+     */
+    private void refreshExperimentDetailPanel(Vector<Vector<Object>> newTableData) {
+        this.removeAll();
+
+        expTable = new Cab2bTable(true, newTableData, tHeader);
+        refreshExperimentDetailPanel();
+    }
+
+    /**
+     * 
+     * @param newTableData
+     */
+    private void refreshExperimentDetailPanel(Object[][] newTableData) {
+        this.removeAll();
+
+        expTable = new Cab2bTable(true, newTableData, tableHeader);
+        refreshExperimentDetailPanel();
+    }
+
+    /**
+     * 
+     *
+     */
+    private void refreshExperimentDetailPanel() {
+        JScrollPane jScrollPane = initExperimentTableWithScrolls();
+        this.add("br hfill vfill", jScrollPane);
+
+        Cab2bPanel deleteButtonPanel = new Cab2bPanel(new RiverLayout(5, 5));
+        deleteButtonPanel.add(deleteButton);
+        deleteButtonPanel.add("br", new JLabel(""));
+
+        this.add("br", deleteButtonPanel);
+        this.updateUI();
+    }
+
+    private void initGUI() {
+        this.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
+
         deleteButton = new Cab2bButton("Delete");
         deleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
@@ -77,87 +131,59 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
             }
         });
         deleteButton.setEnabled(false);
-        Cab2bPanel deleteButtonPanel= new Cab2bPanel(new RiverLayout(5,5));
-        deleteButtonPanel.add(deleteButton);
-        deleteButtonPanel.add("br",new JLabel(""));
         
-        this.add("br", deleteButtonPanel);
+        expTable = new Cab2bTable(true, new Object[][] {}, tableHeader);
+        HighlighterPipeline highlighters = new HighlighterPipeline();
+        highlighters.addHighlighter(new AlternateRowHighlighter());
+        expTable.setHighlighters(highlighters);
+
+        refreshExperimentDetailPanel();
         highlighters.updateUI();
     }
 
-    public void refreshDetails(ExperimentTreeNode expTreeNode) {
-        Vector newTableData = new Vector();
-        if (expTreeNode.getChildNodes().size() == 0) {
-            Vector firstRow = new Vector();
-            firstRow.add(expTreeNode);
-            firstRow.add(expTreeNode.getCreatedOn());
-            firstRow.add(expTreeNode.getLastUpdatedOn());
-            firstRow.add(expTreeNode.getDesc());
-            newTableData.add(firstRow);
-        } else {
-            updateTableData(expTreeNode, newTableData);
-        }
-
-        expTable = new Cab2bTable(true, newTableData, tHeader);
-        MyLinkAction myLinkAction = new MyLinkAction();
-        expTable.getColumn(1).setCellRenderer(new LinkRenderer(myLinkAction));
-        expTable.getColumn(1).setCellEditor(new LinkRenderer(myLinkAction));
-
-        Component comp = this.getComponent(0);
-        this.removeAll();
-        //Logger.out.debug("Component 0 "+comp.getClass());
-        this.add("br hfill vfill", new JScrollPane(expTable));
-        Cab2bPanel deleteButtonPanel= new Cab2bPanel(new RiverLayout(5,5));
-        deleteButtonPanel.add(deleteButton);
-        deleteButtonPanel.add("br",new JLabel(""));
-        
-        this.add("br", deleteButtonPanel);
-        this.updateUI();
-    }
-
-    private void updateTableData(ExperimentTreeNode treeNode, Vector tableData) {
+    private void updateTableData(ExperimentTreeNode treeNode, Vector<Vector<Object>> tableData) {
         if (treeNode.getChildNodes().size() == 0) {
             Logger.out.debug("found child node zero");
             return;
         }
 
         Iterator iter = treeNode.getChildNodes().iterator();
-        int i = 0;
-
         while (iter.hasNext()) {
             ExperimentTreeNode child = (ExperimentTreeNode) iter.next();
             if (child.isExperimentGroup() == false) {
-                Vector nextRow = new Vector();
+                Vector<Object> nextRow = new Vector<Object>();
                 nextRow.add(child);
                 nextRow.add(child.getCreatedOn());
                 nextRow.add(child.getLastUpdatedOn());
                 nextRow.add(child.getDesc());
+
                 tableData.add(nextRow);
                 updateTableData(child, tableData);
             }
         }
     }
 
+    public void refreshDetails(ExperimentTreeNode expTreeNode) {
+        Vector<Vector<Object>> newTableData = new Vector<Vector<Object>>();
+        if (expTreeNode.getChildNodes().size() == 0) {
+            Vector<Object> firstRow = new Vector<Object>();
+
+            firstRow.add(expTreeNode);
+            firstRow.add(expTreeNode.getCreatedOn());
+            firstRow.add(expTreeNode.getLastUpdatedOn());
+            firstRow.add(expTreeNode.getDesc());
+
+            newTableData.add(firstRow);
+        } else {
+            updateTableData(expTreeNode, newTableData);
+        }
+
+        refreshExperimentDetailPanel(newTableData);
+    }
+
     public void refreshDetails(Experiment exp) {
-        //Object[][] newTableData = {{exp.getName(),exp.getCreatedOn(),exp.getLastUpdatedOn(),exp.getDescription()}};
         Object[][] newTableData = { { exp, exp.getCreatedOn(), exp.getLastUpdatedOn(), exp.getDescription() } };
-
-        //expTable.setModel(new Cab2bTable(newTableData, tableHeader));
-        expTable = new Cab2bTable(true, newTableData, tableHeader);
-        MyLinkAction myLinkAction = new MyLinkAction();
-        expTable.getColumn(1).setCellRenderer(new LinkRenderer(myLinkAction));
-        expTable.getColumn(1).setCellEditor(new LinkRenderer(myLinkAction));
-
-        Component comp = this.getComponent(0);
-        this.removeAll();
-        Logger.out.debug("Component 0 " + comp.getClass());
-        this.add("br hfill vfill", new JScrollPane(expTable));
-        Cab2bPanel deleteButtonPanel= new Cab2bPanel(new RiverLayout(5,5));
-        deleteButtonPanel.add(deleteButton);
-        deleteButtonPanel.add("br",new JLabel(""));
-        
-        this.add("br", deleteButtonPanel);
-        this.updateUI();
+        refreshExperimentDetailPanel(newTableData);
     }
 
     public void refreshDetails(ExperimentGroup expGrp) {
@@ -165,34 +191,17 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
         Object[][] newTableData = new Object[expGrp.getExperimentCollection().size()][];
 
         int counter = 0;
-
         while (expIter.hasNext()) {
             Object obj = expIter.next();
             if (obj instanceof Experiment) {
                 Experiment exp = (Experiment) obj;
-                //newTableData[counter++] = new Object[] {exp.getName(),exp.getCreatedOn(),exp.getLastUpdatedOn(),exp.getDescription()};
                 newTableData[counter++] = new Object[] { exp, exp.getCreatedOn(), exp.getLastUpdatedOn(), exp.getDescription() };
-
             } else if (obj instanceof ExperimentGroup) {
 
             }
         }
 
-        expTable = new Cab2bTable(true, newTableData, tableHeader);
-
-        /*Adding Hyperlink to experiment Name*/
-        MyLinkAction myLinkAction = new MyLinkAction();
-        expTable.getColumn(1).setCellRenderer(new LinkRenderer(myLinkAction));
-        expTable.getColumn(1).setCellEditor(new LinkRenderer(myLinkAction));
-
-        this.removeAll();
-        this.add("br hfill vfill", new JScrollPane(expTable));
-        Cab2bPanel deleteButtonPanel= new Cab2bPanel(new RiverLayout(5,5));
-        deleteButtonPanel.add(deleteButton);
-        deleteButtonPanel.add("br",new JLabel(""));
-        
-        this.add("br", deleteButtonPanel);
-        this.updateUI();
+        refreshExperimentDetailPanel(newTableData);
     }
 
     public static void main(String[] args) {
@@ -207,9 +216,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
 
     /*Class used for adding hyperlinks in Jtable rows*/
     class MyLinkAction extends LinkAction {
-        public MyLinkAction(Object obj) {
-            super(obj);
-        }
+        private static final long serialVersionUID = 1L;
 
         public MyLinkAction() {
 
@@ -222,8 +229,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
             //getting the selected hyperlink row
             int selectionIndex = expTable.getSelectionModel().getLeadSelectionIndex();
 
-            //getting object associated with hyperlink
-            //column Number will be always 1
+            //getting object associated with hyperlink column Number will be always 1
             final Object expObj = (ExperimentTreeNode) expTable.getValueAt(selectionIndex, 1);
 
             CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.openExperimentWelcomePanel) {
@@ -262,6 +268,28 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
                 }
             };
             swingWorker.start();
+        }
+    }
+
+    class CellWrapRenderer extends JTextArea implements TableCellRenderer {
+        private static final long serialVersionUID = 1L;
+
+        public CellWrapRenderer() {
+            setLineWrap(true);
+            setWrapStyleWord(true);
+        }
+
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                       boolean hasFocus, int row, int column) {
+            if (value != null) {
+                setText(value.toString());
+            }
+            
+            setSize(table.getColumnModel().getColumn(column).getWidth(), getPreferredSize().height + 5);
+            if (table.getRowHeight(row) != getPreferredSize().height + 5) {
+                table.setRowHeight(row, getPreferredSize().height + 5);
+            }
+            return this;
         }
     }
 }
