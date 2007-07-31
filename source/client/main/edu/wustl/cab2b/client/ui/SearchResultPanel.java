@@ -7,6 +7,10 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -17,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -216,11 +221,12 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
 	 * @return
 	 */
 	private Cab2bPanel getConstraintButtonPanel(Cab2bButton cab2bButton) {
-		constraintButtonPanel = new Cab2bPanel(new RiverLayout(5, 5));
+		constraintButtonPanel = new Cab2bPanel(new RiverLayout(5, 0));
 
 		constraintButtonPanel.add(cab2bButton);
 		constraintButtonPanel.add("tab", new JLabel(" | "));
 		constraintButtonPanel.add("tab", attributeDetailsLink);
+		constraintButtonPanel.setOpaque(false);
 
 		return constraintButtonPanel;
 	}
@@ -236,7 +242,10 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
 
 		initializeAddLimitButton(componentPanel, entity);
 		finalPanelToadd[0].add(getConstraintButtonPanel(addLimitButton));
-
+		GradientPaint gp1 = new GradientPaint(new Point2D.Double(.09d, 0), Color.LIGHT_GRAY,
+                new Point2D.Double(.95d, 0), Color.WHITE);
+		finalPanelToadd[0].setBackgroundPainter(new BasicGradientPainter(gp1));
+		finalPanelToadd[0].setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		return finalPanelToadd;
 	}
 
@@ -343,7 +352,9 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
 		pane.setBorder(null);
 
 		JXPanel[] finalPanelsToAdd = new Cab2bPanel[2];
-		finalPanelsToAdd[0] = new Cab2bPanel(new FlowLayout(FlowLayout.RIGHT));
+		FlowLayout flowLayout= new FlowLayout(2,0,3);
+		finalPanelsToAdd[0] = new Cab2bPanel(flowLayout);
+		
 		finalPanelsToAdd[1] = new Cab2bPanel();
 		finalPanelsToAdd[1].add("hfill vfill ", pane);
 
@@ -665,6 +676,8 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			jScrollPane.setBorder(null);
 
+		/*	WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, jScrollPane, "CDE Details",
+					Constants.WIZARD_SIZE2_DIMENSION, true, false);*/
 			WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, jScrollPane, "CDE Details",
 					Constants.WIZARD_SIZE2_DIMENSION, true, false);
 		}
