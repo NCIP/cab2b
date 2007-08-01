@@ -90,7 +90,7 @@ public class ResultObjectDetailsPanel extends ResultPanel {
         this.add(defaultDetailedPanel, BorderLayout.CENTER);
 
         initDataListButtons();
-        Cab2bPanel buttonPanel = new Cab2bPanel(new RiverLayout(8, 0));
+        Cab2bPanel buttonPanel = new Cab2bPanel(new RiverLayout(5, 5));
         buttonPanel.add(addToDataListButton);
         buttonPanel.add(m_applyAllButton);
 
