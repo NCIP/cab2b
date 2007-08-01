@@ -157,7 +157,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                     resetButton.setVisible(true);
                     saveDataListButton.setVisible(false);
                     addToExperimentButton.setVisible(false);
-                    /* Pop-up a dialog asking the user to add alteast a rule. */
+                    // Pop-up a dialog asking the user to add alteast a rule. 
                     JOptionPane.showMessageDialog(m_mainSearchPanel.getParent(),
                                                   "Please add Limit(s) before proceeding", "Cannot Proceed",
                                                   JOptionPane.WARNING_MESSAGE);
@@ -165,7 +165,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 }
 
             } else if (searchCenterPanel.getSelectedCardIndex() == 2) {
-                CustomSwingWorker swingWorker = new CustomSwingWorker(m_mainSearchPanel) {
+                CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
 
                     protected void doNonUILogic() {
                         // Get the Functional class for root and update query object with it.
