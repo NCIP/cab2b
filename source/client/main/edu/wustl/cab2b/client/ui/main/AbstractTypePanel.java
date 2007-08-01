@@ -84,7 +84,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
             AttributeInterface attributeEntity,
             Boolean showCondition,
             Dimension maxLabelDimension) {
-        this.setLayout(new RiverLayout(10, 0));
+        this.setLayout(new RiverLayout(10, 8));
         this.attributeEntity = attributeEntity;
         this.attributeName = attributeEntity.getName();
         this.showCondition = showCondition;
@@ -110,15 +110,10 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         m_OtherEdit.setBorder(emptyBorder);
 
         add(m_Name);
-        //add("tab", new Cab2bLabel());
-
         if (showCondition) {
             setCondtionControl(conditionList, border, emptyBorder);
         }
-
-        //	add("tab", new Cab2bLabel());
         add(m_NameEdit);
-        //	add("tab", new Cab2bLabel());
         add(m_OtherEdit);
 
         setSize(new Dimension(300, 100));
@@ -151,29 +146,43 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 
     private String getAttributeToolTip(AttributeInterface attribute) {
         StringBuffer tooltip = new StringBuffer();
-        tooltip.append("<HTML><P>" + getWrappedDescription(attribute.getDescription()) + "</P>");
 
-        if (attribute.getPublicId() != null) {
-            tooltip.append("<P><B>Public Id : </B>" + attribute.getPublicId() + " ");
+        String attributeDescription = attribute.getDescription();
+        String wrappedDescription = "";
+        if (attributeDescription != null) {
+            wrappedDescription = getWrappedDescription(attributeDescription);
+            tooltip.append("<P>" + wrappedDescription + "</P>");
         }
 
-        tooltip.append("<B>Concept Code : </B>");
+        if (attribute.getPublicId() != null) {
+            tooltip.append("<B>Public Id : </B>" + attribute.getPublicId() + " ");
+        }
+
+        StringBuffer allConceptCode = new StringBuffer();
         boolean isFirst = true;
         for (SemanticPropertyInterface semanticProperty : attribute.getSemanticPropertyCollection()) {
             String conceptCode = semanticProperty.getConceptCode();
 
             if (conceptCode != null) {
                 if (isFirst) {
-                    tooltip.append(conceptCode);
+                    allConceptCode.append(conceptCode);
                     isFirst = false;
                 } else {
-                    tooltip.append(", " + conceptCode);
+                    allConceptCode.append(", " + conceptCode);
                 }
             }
         }
-        tooltip.append("</P></HTML>");
 
-        return tooltip.toString();
+        if (allConceptCode.length() > 0) {
+            tooltip.append("<B>Concept Code : </B>" + allConceptCode.toString());
+        }
+
+        String tooltipString = null;
+        if (tooltip.length() != 0) {
+            tooltipString = "<HTML>" + tooltip.toString() + "</HTML>";
+        }
+
+        return tooltipString;
     }
 
     /**
@@ -183,6 +192,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
      */
     private String getWrappedDescription(String text) {
         StringBuffer wrappedText = new StringBuffer();
+
         String currentString = null;
         int currentStart = 0;
         int offset = 75;
