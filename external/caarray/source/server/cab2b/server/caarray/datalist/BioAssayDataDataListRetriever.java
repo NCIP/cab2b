@@ -52,6 +52,8 @@ public class BioAssayDataDataListRetriever
         int dim3LabelsIndex = attributesList.indexOf(getAttributeByName(entity, DIM3LABELS_ATTRIBUTE_NAME));
         String[] dim3Labels = (String[]) getObjectValue(recordInterface.getRecordValueList().get(dim3LabelsIndex));
         derivedBioAssayDataRecord.setDim3Labels(dim3Labels);
+
+        record.copyValuesFrom(derivedBioAssayDataRecord);
     }
 
     @Override

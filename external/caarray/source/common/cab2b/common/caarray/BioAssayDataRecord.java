@@ -5,6 +5,7 @@ import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.result.ILazyParams;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.cab2b.common.queryengine.result.I3DDataRecord.LazyParams.Range;
 import edu.wustl.cab2b.server.queryengine.LazyInitializer;
@@ -39,6 +40,9 @@ public class BioAssayDataRecord extends CaArrayRecord implements IFullyInitializ
     }
 
     public Object[][][] getCube() {
+        if (cube == null) {
+            cube = new Object[0][0][0];
+        }
         return cube;
     }
 
@@ -47,6 +51,9 @@ public class BioAssayDataRecord extends CaArrayRecord implements IFullyInitializ
     }
 
     public String[] getDim1Labels() {
+        if (dim1Labels == null) {
+            dim1Labels = new String[0];
+        }
         return dim1Labels;
     }
 
@@ -55,6 +62,9 @@ public class BioAssayDataRecord extends CaArrayRecord implements IFullyInitializ
     }
 
     public String[] getDim2Labels() {
+        if (dim2Labels == null) {
+            dim2Labels = new String[0];
+        }
         return dim2Labels;
     }
 
@@ -63,6 +73,9 @@ public class BioAssayDataRecord extends CaArrayRecord implements IFullyInitializ
     }
 
     public String[] getDim3Labels() {
+        if (dim3Labels == null) {
+            dim3Labels = new String[0];
+        }
         return dim3Labels;
     }
 
@@ -125,15 +138,26 @@ public class BioAssayDataRecord extends CaArrayRecord implements IFullyInitializ
         }
         lazy.copyValuesFrom(fullRecord);
 
-        int dim1 = fullRecord.getDim1Labels().length;
-        int dim2 = fullRecord.getDim2Labels().length;
-        int dim3 = fullRecord.getDim3Labels().length;
-        lazy.setCube(new Object[dim1][dim2][dim3]);
-        lazy.setDim1Labels(new String[dim1]);
-        lazy.setDim2Labels(new String[dim2]);
-        lazy.setDim3Labels(new String[dim3]);
-
         return lazy;
+    }
+
+    @Override
+    public void copyValuesFrom(IRecord record) {
+        if (!(record instanceof BioAssayDataRecord)) {
+            throw new IllegalArgumentException();
+        }
+        super.copyValuesFrom(record);
+        BioAssayDataRecord sourceRecord = (BioAssayDataRecord) record;
+        if (!sourceRecord.fullyInitialized) {
+            throw new IllegalArgumentException();
+        }
+        int dim1 = sourceRecord.getDim1Labels().length;
+        int dim2 = sourceRecord.getDim2Labels().length;
+        int dim3 = sourceRecord.getDim3Labels().length;
+        setCube(new Object[dim1][dim2][dim3]);
+        setDim1Labels(new String[dim1]);
+        setDim2Labels(new String[dim2]);
+        setDim3Labels(new String[dim3]);
     }
 
     public static BioAssayDataRecord createFullyInitializedRecord(Set<AttributeInterface> attributes, RecordId id) {
