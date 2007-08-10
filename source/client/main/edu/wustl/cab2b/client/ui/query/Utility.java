@@ -6,6 +6,7 @@ import java.util.Map;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.common.dynamicextensions.domaininterface.SemanticPropertyInterface;
 import edu.wustl.cab2b.client.ui.util.ClientConstants;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -126,4 +127,98 @@ public class Utility {
         }
         return null;
     }
+    
+    public static String getAttributeCDEDetails(AttributeInterface attribute) {
+        return getAttributeCDEDetails(attribute,75);
+    }
+    
+    public static String getAttributeCDEDetails(AttributeInterface attribute,int offset) {
+        StringBuffer tooltip = new StringBuffer();
+
+        String attributeDescription = attribute.getDescription();
+        String wrappedDescription = "";
+        if (attributeDescription != null) {
+            wrappedDescription = getWrappedDescription(attributeDescription,offset);
+            tooltip.append("<P>" + wrappedDescription + "</P>");
+        }
+
+        if (attribute.getPublicId() != null) {
+            tooltip.append("<B>Public Id : </B>" + attribute.getPublicId() + " ");
+        }
+
+        StringBuffer allConceptCode = new StringBuffer();
+        boolean isFirst = true;
+        for (SemanticPropertyInterface semanticProperty : attribute.getSemanticPropertyCollection()) {
+            String conceptCode = semanticProperty.getConceptCode();
+
+            if (conceptCode != null) {
+                if (isFirst) {
+                    allConceptCode.append(conceptCode);
+                    isFirst = false;
+                } else {
+                    allConceptCode.append(", " + conceptCode);
+                }
+            }
+        }
+
+        if (allConceptCode.length() > 0) {
+            tooltip.append("<B>Concept Code : </B>" + allConceptCode.toString());
+        }
+
+        String tooltipString = null;
+        if (tooltip.length() != 0) {
+            tooltipString = "<HTML>" + tooltip.toString() + "</HTML>";
+        }
+
+        return tooltipString;
+    }
+    
+    /**
+     * Method to wrap the text and send it accross
+     * 
+     * @return
+     */
+    public static String getWrappedDescription(String text,int offset) {
+        StringBuffer wrappedText = new StringBuffer();
+
+        String currentString = null;
+        int currentStart = 0;
+        int strLen = 0;
+        int len = 0;
+
+        while (currentStart < text.length() && text.length() > offset) {
+            currentString = text.substring(currentStart, (currentStart + offset));
+            strLen += currentString.length() + len;
+            wrappedText.append(currentString);
+
+            int index = text.indexOf(" ", (currentStart + offset));
+            if (index == -1) {
+                index = text.indexOf(".", (currentStart + offset));
+            }
+            if (index == -1) {
+                index = text.indexOf(",", (currentStart + offset));
+            }
+            if (index != -1) {
+                len = index - strLen;
+                currentString = text.substring((currentStart + offset), (currentStart + offset + len));
+                wrappedText.append(currentString);
+                wrappedText.append("<BR>");
+            } else {
+                if (currentStart == 0) {
+                    currentStart = offset;
+                }
+                wrappedText.append(text.substring(currentStart));
+                return wrappedText.toString();
+            }
+
+            currentStart += offset + len;
+            if ((currentStart + offset + len) > text.length()) {
+                break;
+            }
+        }
+        wrappedText.append(text.substring(currentStart));
+        wrappedText.append("</P>");
+        return wrappedText.toString();
+    }
+
 }
