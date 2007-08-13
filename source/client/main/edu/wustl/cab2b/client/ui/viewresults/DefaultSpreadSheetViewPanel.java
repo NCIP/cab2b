@@ -297,7 +297,7 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
                 Container container = table.getParent().getParent().getParent().getParent().getParent().getParent();
                 if (container != null && container instanceof ExperimentDataCategoryGridPanel) {
                     ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel = (ExperimentDataCategoryGridPanel) container;
-                    experimentDataCategoryGridPanel.addDetailTabPanel("Details" + row + 1, defaultDetailedPanel);
+                    experimentDataCategoryGridPanel.addDetailTabPanel("Details_" + (row + 1), defaultDetailedPanel);
                 }
             }
         }
