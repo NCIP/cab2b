@@ -63,7 +63,6 @@ class PathReplicationUtil {
     }
 
     public static Set<Path> replicatePaths(Set<Path> inputPaths, Map<Integer, Set<Integer>> replicationNodes) {
-        System.out.println("fooooooo");
         Logger.out.info("Entered PathReplicationUtil...");
         Logger.out.info("No. of input paths : " + inputPaths.size());
 
