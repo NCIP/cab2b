@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,14 +33,16 @@ import gov.nih.nci.cagrid.metadata.dataservice.UMLAssociation;
 import gov.nih.nci.cagrid.metadata.dataservice.UMLAssociationEdge;
 
 /**
- * This class stores the UML model to database using dynamic extension APIs and 
+ * This class stores the UML model to database using dynamic extension APIs and
  * generates necessary information for all paths generation<br>
  * Using <b> {@link DomainModelParser}</b> to get the domain model of
  * application and transforms it to dynamic extension's objects.<br>
  * An instance of this class refers to one domain model and one entity group.
  * This class decides whether to create a storage table for entity or not based
  * on {@link edu.wustl.cab2b.server.path.PathConstants#CREATE_TABLE_FOR_ENTITY}
- * To create a table for entity set this to TRUE before calling this code else set it to false.
+ * To create a table for entity set this to TRUE before calling this code else
+ * set it to false.
+ * 
  * @author Chandrakant Talele
  * @version 1.0
  */
@@ -53,12 +54,14 @@ public class DomainModelProcessor {
     private Map<EntityInterface, Integer> entityVsIndex;
 
     /**
-     * Instance of Domain object factory, which will be used to create  dynamic extension's objects.
+     * Instance of Domain object factory, which will be used to create dynamic
+     * extension's objects.
      */
     private static DomainObjectFactory deFactory = DomainObjectFactory.getInstance();
 
     /**
-     * Map with KEY : UML id of a class(coming from domain model) VALUE : dynamic extension Entity created for this UML class.  
+     * Map with KEY : UML id of a class(coming from domain model) VALUE :
+     * dynamic extension Entity created for this UML class.
      */
     private Map<String, EntityInterface> umlClassIdVsEntity;
 
@@ -68,13 +71,15 @@ public class DomainModelProcessor {
     private EntityGroupInterface entityGroup;
 
     /**
-     * This constructor creates a entity group with the name as Project's Long name from domain model,
-     * and short name as given "applicationName". It stores classes and associations as part of a single entity group.
-     * Then creates adjacencyMatrix and other needed information for path building.
-     * @param parser
-     *            The DomainModelParser from which this class will get Classes,Associations etc
-     * @param applicationName
-     *            Name of the application. It will be the Short name of the newly created entity group.
+     * This constructor creates a entity group with the name as Project's Long
+     * name from domain model, and short name as given "applicationName". It
+     * stores classes and associations as part of a single entity group. Then
+     * creates adjacencyMatrix and other needed information for path building.
+     * 
+     * @param parser The DomainModelParser from which this class will get
+     *            Classes,Associations etc
+     * @param applicationName Name of the application. It will be the Short name
+     *            of the newly created entity group.
      */
     public DomainModelProcessor(DomainModelParser parser, String applicationName) {
         Logger.out.info("Creating entity group for application : " + applicationName);
@@ -86,8 +91,6 @@ public class DomainModelProcessor {
         entityGroup.setDescription(parser.getDomainModel().getProjectDescription());
         DynamicExtensionUtility.addTaggedValue(entityGroup, PROJECT_VERSION,
                                                parser.getDomainModel().getProjectVersion());
-
-        
 
         UMLClass[] umlClasses = parser.getUmlClasses();
         int noOfClasses = umlClasses.length;
@@ -124,8 +127,9 @@ public class DomainModelProcessor {
      * adds the Dynamic Extension's PrimitiveAttributes to the Collection.
      * Properties which are copied from UMLAttribute to DE Attribute are
      * name,description,semanticMetadata,permissible values
-     * @param umlClass
-     *            The UMLClass from which to form the Dynamic Extension Entity
+     * 
+     * @param umlClass The UMLClass from which to form the Dynamic Extension
+     *            Entity
      * @return the unsaved entity for given UML class
      */
     protected EntityInterface createEntity(UMLClass umlClass) {
@@ -135,14 +139,15 @@ public class DomainModelProcessor {
         entity.setDescription(umlClass.getDescription());
         setSemanticMetadata(entity, umlClass.getSemanticMetadata());
         UMLAttribute[] attributes = umlClass.getUmlAttributeCollection().getUMLAttribute();
-        
-        if(attributes==null) {
+
+        if (attributes == null) {
             return entity;
         }
         for (UMLAttribute umlAttribute : attributes) {
             DataType dataType = DataType.get(umlAttribute.getDataTypeName());
             AttributeInterface attribute = dataType.createAttribute(umlAttribute);
-            if (attribute != null) { // to bypass attributes of invalid datatypes
+            if (attribute != null) { // to bypass attributes of invalid
+                // datatypes
                 attribute.setName(umlAttribute.getName());
                 attribute.setDescription(umlAttribute.getDescription());
                 setSemanticMetadata(attribute, umlAttribute.getSemanticMetadata());
@@ -153,12 +158,15 @@ public class DomainModelProcessor {
     }
 
     /**
-     * Converts the UML association to dynamic Extension Association.Adds it to the entity group.
-     * It replicates this association in all children of source and all children of target class.
-     * It taggs replicated association to identify them later on and mark them inherited. 
-     * Also a back pointer is added to replicated association go get original association.
+     * Converts the UML association to dynamic Extension Association.Adds it to
+     * the entity group. It replicates this association in all children of
+     * source and all children of target class. It taggs replicated association
+     * to identify them later on and mark them inherited. Also a back pointer is
+     * added to replicated association go get original association.
+     * 
      * @param umlAssociation umlAssociation to process
-     * @param parentIdVsChildrenIds Map with key as UML-id of parent class and value as list of UML-id of all children classes.
+     * @param parentIdVsChildrenIds Map with key as UML-id of parent class and
+     *            value as list of UML-id of all children classes.
      */
     void addAssociation(UMLAssociation umlAssociation, Map<String, List<String>> parentIdVsChildrenIds) {
         UMLAssociationEdge srcEdge = umlAssociation.getSourceUMLAssociationEdge().getUMLAssociationEdge();
@@ -209,6 +217,7 @@ public class DomainModelProcessor {
 
     /**
      * Creates Role for the input UMLAssociationEdge
+     * 
      * @param edge UML Association Edge to process
      * @return the Role for given UML Association Edge
      */
@@ -225,6 +234,7 @@ public class DomainModelProcessor {
 
     /**
      * Gets dynamic extension's Cardinality enumration for passed integer value.
+     * 
      * @param cardinality intger value of cardinality.
      * @return Dynamic Extension's Cardinality enumration
      */
@@ -240,6 +250,7 @@ public class DomainModelProcessor {
 
     /**
      * Stores the SemanticMetadata to the owner which can be class or attribute
+     * 
      * @param owner any class extending AbstractMetadataInterface
      * @param semanticMetadataArr Semantic Metadata array to set.
      */
@@ -249,7 +260,9 @@ public class DomainModelProcessor {
 
     /**
      * Returns the List of entities Ids. This list is ordered in sync with
-     * Adjacency Matrix returned by {@link DomainModelProcessor#getAdjacencyMatrix()}
+     * Adjacency Matrix returned by
+     * {@link DomainModelProcessor#getAdjacencyMatrix()}
+     * 
      * @return the List of entities Ids
      */
     public List<Long> getEntityIds() {
@@ -264,10 +277,12 @@ public class DomainModelProcessor {
     }
 
     /**
-     * This matrix will be used to generate linear paths.
-     * AdjacencyMatrix[i][j] will be true only if there is a association present in iTH and jTH class
-     * otherwise it will be false. Entities referring to each index of adjacency matrix can be taken from
-     * iTH element of list taken from {@link DomainModelProcessor#getEntityIds()}
+     * This matrix will be used to generate linear paths. AdjacencyMatrix[i][j]
+     * will be true only if there is a association present in iTH and jTH class
+     * otherwise it will be false. Entities referring to each index of adjacency
+     * matrix can be taken from iTH element of list taken from
+     * {@link DomainModelProcessor#getEntityIds()}
+     * 
      * @return the adjacencyMatrix
      */
     public boolean[][] getAdjacencyMatrix() {
@@ -304,8 +319,10 @@ public class DomainModelProcessor {
     }
 
     /**
-     * Processes inheritance relation ship present in domain model 
-     * @param parentIdVsChildrenIds Map with key as UML-id of parent class and value as list of UML-id of all children classes.
+     * Processes inheritance relation ship present in domain model
+     * 
+     * @param parentIdVsChildrenIds Map with key as UML-id of parent class and
+     *            value as list of UML-id of all children classes.
      */
     void processInheritance(Map<String, List<String>> parentIdVsChildrenIds) {
         for (Entry<String, List<String>> entry : parentIdVsChildrenIds.entrySet()) {
@@ -319,8 +336,10 @@ public class DomainModelProcessor {
 
     // default scope for testing purpose
     /**
-     * Taggs inherited attributes present in given entity group. The processing is based on name.
-     * For a attribute, if attribute with same name present in parent hirarchy then it is considered as inherited. 
+     * Taggs inherited attributes present in given entity group. The processing
+     * is based on name. For a attribute, if attribute with same name present in
+     * parent hirarchy then it is considered as inherited.
+     * 
      * @param eg Entity Group top process
      */
     void markInheritedAttributes(EntityGroupInterface eg) {
@@ -344,15 +363,18 @@ public class DomainModelProcessor {
     }
 
     /**
-     * Marks given abstract attribute (attribute/association) as a derived one.  
+     * Marks given abstract attribute (attribute/association) as a derived one.
+     * 
      * @param abstractAttribute abstract attribute to tagg.
      */
     private void markInherited(AbstractAttributeInterface abstractAttribute) {
         DynamicExtensionUtility.addTaggedValue(abstractAttribute, TYPE_DERIVED, TYPE_DERIVED);
     }
+
     /**
      * @param umlIdOfParent Parent UML class
-     * @param parentIdVsChildrenIds Map with key as UML-id of parent class and value as list of UML-id of all children classes.
+     * @param parentIdVsChildrenIds Map with key as UML-id of parent class and
+     *            value as list of UML-id of all children classes.
      * @return All the childrens of given class
      */
     List<EntityInterface> getAllChildren(String umlIdOfParent, Map<String, List<String>> parentIdVsChildrenIds) {
@@ -367,45 +389,29 @@ public class DomainModelProcessor {
         }
         return children;
     }
+
     /**
      * @param sourceEntity Entity to which a association is to be attached
      * @return A assocition attached to given entity.
      */
     AssociationInterface getAssociation(EntityInterface sourceEntity) {
         AssociationInterface association = deFactory.createAssociation();
-        // TODO remove it after getting DE fix,association name should not be compulsory
+        // TODO remove it after getting DE fix,association name should not be
+        // compulsory
         association.setName("AssociationName_" + (sourceEntity.getAssociationCollection().size() + 1));
         association.setEntity(sourceEntity);
         sourceEntity.addAssociation(association);
         return association;
     }
+
     /**
-     * Gives information about replication nodes
-     * KEY : Any entity which has at least one non-replicated association.
-     * VALUE : All entities that are direct/indirect subclasses of the KEY entity  
+     * Gives information about replication nodes KEY : Any entity which has at
+     * least one non-replicated association. VALUE : All entities that are
+     * direct/indirect subclasses of the KEY entity
+     * 
      * @return All the replication nodes. Needed for path generation algorithm
      */
     public Map<Integer, Set<Integer>> getReplicationNodes() {
-        Map<Integer, Set<Integer>> parentVsAllChildren = loadParentVsChildrenMap();
-        for (EntityInterface entity : entityVsIndex.keySet()) {
-            boolean canNotBeKey = true;
-            Iterator<AssociationInterface> itr = entity.getAssociationCollection().iterator();
-            while (itr.hasNext() && canNotBeKey) {
-                canNotBeKey = InheritanceUtil.isInherited(itr.next());
-            }
-            if (canNotBeKey) {
-                // then it should not be part of the keySet...KILL IT !!!
-                Integer parent = entityVsIndex.get(entity);
-                parentVsAllChildren.remove(parent);
-            }
-        }
-        return parentVsAllChildren;
-    }
-
-    /**
-     * @return Populates Parent Vs children map for later use.
-     */
-    Map<Integer, Set<Integer>> loadParentVsChildrenMap() {
         Map<Integer, Set<Integer>> parentVsAllChildren = new HashMap<Integer, Set<Integer>>();
         for (EntityInterface child : entityVsIndex.keySet()) {
             EntityInterface parent = child.getParentEntity();
@@ -428,7 +434,7 @@ public class DomainModelProcessor {
     public EntityGroupInterface getEntityGroup() {
         return entityGroup;
     }
-    
+
     /**
      * @param entityVsIndex The entityVsIndex to set.
      */
@@ -437,10 +443,10 @@ public class DomainModelProcessor {
     }
 
     /**
-     * For testing purpose. Default scope constructor 
+     * For testing purpose. Default scope constructor
      */
     DomainModelProcessor() {
 
     }
-    
+
 }

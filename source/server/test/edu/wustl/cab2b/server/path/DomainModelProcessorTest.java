@@ -59,7 +59,7 @@ public class DomainModelProcessorTest extends TestCase {
         entityVsIndex.put(deFactory.createEntity(), 2);
 
         p.setEntityVsIndex(entityVsIndex);
-        Map<Integer, Set<Integer>> map = p.loadParentVsChildrenMap();
+        Map<Integer, Set<Integer>> map = p.getReplicationNodes();
         assertEquals(0, map.size());
     }
 
@@ -85,7 +85,7 @@ public class DomainModelProcessorTest extends TestCase {
         entityVsIndex.put(child11, 11);
 
         p.setEntityVsIndex(entityVsIndex);
-        Map<Integer, Set<Integer>> map = p.loadParentVsChildrenMap();
+        Map<Integer, Set<Integer>> map = p.getReplicationNodes();
         assertEquals(2, map.size());
         assertEquals(2, map.get(0).size());
 
