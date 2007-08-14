@@ -37,6 +37,11 @@ public class Cab2bTable extends JXTable {
         super(tableModel);
         initUI();
     }
+    
+    public Cab2bTable() {
+        super();
+        initUI();
+    }
 
     private void initUI() {
         if (true == m_showCheckBox) {
