@@ -257,7 +257,7 @@ create table DYEXTN_TAGGED_VALUE (
 create table DE_OBJECT_ATTR_RECORD_VALUES (
    IDENTIFIER bigint not null auto_increment,
    CLASS_NAME varchar(255),
-   OBJECT_CONTENT blob,
+   OBJECT_CONTENT longblob,
    RECORD_ID bigint,
    primary key (IDENTIFIER)
 );
