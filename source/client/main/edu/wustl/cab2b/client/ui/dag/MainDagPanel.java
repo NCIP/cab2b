@@ -79,6 +79,9 @@ public class MainDagPanel extends Cab2bPanel {
     private IPathFinder m_pathFinder;
 
     private boolean m_isDAGForView = false;
+    
+    private DisplayNameInterafce entityNameDisplayer;
+
 
     /**
      * Constructor method
@@ -90,8 +93,9 @@ public class MainDagPanel extends Cab2bPanel {
             IUpdateAddLimitUIInterface addLimitPanel,
             Map<DagImages, Image> dagImageMap,
             IPathFinder pathFinder,
-            boolean isDAGForView) {
+            boolean isDAGForView, DisplayNameInterafce entityNameDisplayer) {
         m_dagImageMap = dagImageMap;
+        this.entityNameDisplayer =entityNameDisplayer;
         m_currentNodeList = new ArrayList<ClassNode>();
         m_document = new GraphDocument();
         m_isDAGForView = isDAGForView;
@@ -102,6 +106,26 @@ public class MainDagPanel extends Cab2bPanel {
         m_addLimitPanel = addLimitPanel;
         m_pathFinder = pathFinder;
         initGUI();
+    }
+    
+    /**
+     * Constructor method
+     * @param addLimitPanel 
+     * @param dagImageMap
+     * @param pathFinder
+     */
+    public MainDagPanel(
+            IUpdateAddLimitUIInterface addLimitPanel,
+            Map<DagImages, Image> dagImageMap,
+            IPathFinder pathFinder,
+            boolean isDAGForView) {
+
+        // constructor with default entity name displayer.
+        this(addLimitPanel, dagImageMap, pathFinder, isDAGForView, new DisplayNameInterafce() {
+            public String getEntityDisplayName(EntityInterface entity) {
+                return edu.wustl.cab2b.common.util.Utility.getDisplayName(entity);
+            }
+        });
     }
 
     /**
@@ -137,7 +161,8 @@ public class MainDagPanel extends Cab2bPanel {
         IConstraintEntity constraintEntity = expression.getConstraintEntity();
 
         ClassNode node = new ClassNode();
-        node.setDisplayName(edu.wustl.cab2b.common.util.Utility.getDisplayName(constraintEntity.getDynamicExtensionsEntity()));
+        node.setDisplayName(entityNameDisplayer.getEntityDisplayName(constraintEntity.getDynamicExtensionsEntity()));
+        //node.setDisplayName(edu.wustl.cab2b.common.util.Utility.getDisplayName(constraintEntity.getDynamicExtensionsEntity()));
         node.setExpressionId(expression);
         node.setID(String.valueOf(expressionId.getInt()));
         node.setType(getNodeType(expressionId));
