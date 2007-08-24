@@ -1,71 +1,37 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
-import javax.swing.event.TableModelListener;
-
-import edu.wustl.cab2b.client.ui.controls.temp.BDQDataSource;
-import edu.wustl.cab2b.client.ui.controls.temp.LazyTableModel;
+import edu.wustl.cab2b.client.ui.controls.LazyTable.DefaultLazyTableModel;
+import edu.wustl.cab2b.common.queryengine.result.IPartiallyInitialized3DRecord;
 
 /**
+ * Table model for BDQ
  * @author rahul_ner
  *
  */
-public class BDQTableModel extends LazyTableModel<BDQDataSource> {
+public class BDQTableModel extends DefaultLazyTableModel<BDQDataSource> {
 
     public BDQTableModel(BDQDataSource dataSource) {
         super(dataSource);
     }
+    
+    public Object[][] getColumnValues( int[] selectedColumns ) {
+        
+        IPartiallyInitialized3DRecord columnRecord = dataSource.getColumnsData(selectedColumns);
 
-    public int getRowCount() {
-        return dataSource.getCurrentData().getDim3Labels().length;
-    }
+        int dim2Size = columnRecord.getDim2Labels().length;
+        int dim3Size = columnRecord.getDim3Labels().length;
 
-    public int getColumnCount() {
-        return dataSource.getCurrentData().getDim1Labels().length
-                * dataSource.getCurrentData().getDim2Labels().length;
+        Object[][] output = new Object[dim3Size][selectedColumns.length];
 
-    }
+        for (int i = 0; i < selectedColumns.length; i++) {
+            int dim1Index = selectedColumns[i] / dim2Size;
+            int dim2Index = selectedColumns[i] - dim1Index;
 
-    public String getColumnName(int columnIndex) {
+            for (int j = 0; j < dim3Size; j++) {
+                output[j][i] = columnRecord.getCube()[dim1Index][dim2Index][j];
+            }
+        }
 
-        int dim2Size = dataSource.getCurrentData().getDim2Labels().length;
-
-        int dim1Index = columnIndex / dim2Size;
-        int dim2Index = columnIndex - dim1Index;
-
-        return dataSource.getCurrentData().getDim2Labels()[dim2Index] + "_"
-                + dataSource.getCurrentData().getDim1Labels()[dim1Index];
-
-    }
-
-    public Class<?> getColumnClass(int arg0) {
-        return String.class;
-    }
-
-    public boolean isCellEditable(int arg0, int arg1) {
-        return false;
-    }
-
-    public Object getValueAt(int rowIndex, int columnIndex) {
-
-        int dim2Size = dataSource.getData(rowIndex,columnIndex).getDim2Labels().length;
-
-        int dim1Index = columnIndex / dim2Size;
-        int dim2Index = columnIndex - dim1Index;
-        int dim3Index = rowIndex;
-
-        return dataSource.getCurrentData().getCube()[dim1Index][dim2Index][dim3Index];
-
-    }
-
-    public void setValueAt(Object arg0, int arg1, int arg2) {
-
-    }
-
-    public void addTableModelListener(TableModelListener arg0) {
-
-    }
-
-    public void removeTableModelListener(TableModelListener arg0) {
-
+        return output;
     }
 }
