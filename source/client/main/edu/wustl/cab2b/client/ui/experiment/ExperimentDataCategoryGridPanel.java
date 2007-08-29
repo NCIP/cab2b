@@ -16,6 +16,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -176,7 +178,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     public void refreshTable(List<IRecord> recordList) {
         this.removeAll();
         this.spreadSheetViewPanel.refreshView(recordList);
-        this.spreadSheetViewPanel.getDataTable().addFocusListener(new TableFocusListener(this.experimentPanel));
+        this.spreadSheetViewPanel.getDataTable().addFocusListener(new TableFocusListener());
 
         refreshUI();
         updateUI();
@@ -319,9 +321,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             DefaultSpreadSheetViewPanel defaultSpreadSheetViewPanel = new DefaultSpreadSheetViewPanel(true, false,
                     recordList, true);
             defaultSpreadSheetViewPanel.doInitialization();
-            defaultSpreadSheetViewPanel.getDataTable().addFocusListener(
-                                                                        new TableFocusListener(
-                                                                                this.experimentPanel));
+            defaultSpreadSheetViewPanel.getDataTable().addFocusListener(new TableFocusListener());
             analysisViewPanel.add("br center hfill vfill", defaultSpreadSheetViewPanel);
 
             analysisView = analysisViewPanel;
@@ -347,7 +347,10 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             detailViewPanel.add("right ", closeButton);
 
             // Add SpreadsheetView
-            defaultDetailedPanel.getDataTable().addFocusListener(new TableFocusListener(this.experimentPanel, false));
+            defaultDetailedPanel.getDataTable().addFocusListener(new TableFocusListener(false)); 
+            defaultDetailedPanel.getDataTable().getTableHeader().addMouseListener(new HeaderMouseListener(defaultDetailedPanel.getDataTable()));
+            
+            
             detailViewPanel.add("br center hfill vfill", defaultDetailedPanel);
 
             detailPanel = detailViewPanel;
@@ -505,60 +508,69 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         }
 
     }
+    
+    
+    
+    class HeaderMouseListener extends MouseAdapter {
+        Cab2bTable table =  null;
+        
+        HeaderMouseListener(Cab2bTable table) {
+            this.table = table;
+        }
+        
+        public void mouseClicked(MouseEvent e) {
+            focusAction(table,false);
+        }  
+    }    
+    
+    private void focusAction(final Cab2bTable cab2bTable,boolean skipFirstColumn) {
+        boolean setEnabled = false;        
+        if (cab2bTable.getSelectedRowCount() > 0 && cab2bTable.getSelectedColumnCount() > 0) {
+            for (int columnIndex : cab2bTable.getSelectedColumns()) {
+                if (columnIndex == 0 && skipFirstColumn) {
+                    setEnabled = false;       
+                }else
+                setEnabled = true;
+            }                
+        }
+
+        ExperimentStackBox experimentStackBox = experimentPanel.getExperimentStackBox();
+        Cab2bPanel visualiseDataPanel = experimentStackBox.getVisualiseDataPanel();
+        Component[] components = visualiseDataPanel.getComponents();
+        for (Component component : components) {
+            if (component instanceof Cab2bHyperlink) {
+                Cab2bHyperlink hyperLink = (Cab2bHyperlink) component;
+                hyperLink.setEnabled(setEnabled);
+                hyperLink.setVisible(true);
+            }
+        }
+        visualiseDataPanel.revalidate();
+    }
+
 
     /**
      * This class enables or disables the chart links in Visualise Panel on
      * selection of row in the data grid.
      */
-    class TableFocusListener implements FocusListener {
-        private ExperimentOpenPanel experimentOpenPanel;
-        
+    class TableFocusListener implements FocusListener {           
         private boolean skipFirstColumn = false;
 
-        TableFocusListener(ExperimentOpenPanel experimentOpenPanel, boolean skipFirstColumn) {
-            this.experimentOpenPanel = experimentOpenPanel;
+        TableFocusListener(boolean skipFirstColumn) {            
             this.skipFirstColumn = skipFirstColumn;
         }
         
-        TableFocusListener(ExperimentOpenPanel experimentOpenPanel) {
-            this(experimentOpenPanel, true);
+        TableFocusListener() {
+            this(true);
         }
 
         public void focusGained(FocusEvent focusEvent) {
             final Cab2bTable cab2bTable = (Cab2bTable) focusEvent.getComponent();
-            focusAction(cab2bTable);
+            focusAction(cab2bTable,skipFirstColumn);
         }
 
         public void focusLost(FocusEvent focusEvent) {
             final Cab2bTable cab2bTable = (Cab2bTable) focusEvent.getComponent();
-            focusAction(cab2bTable);
-        }
-
-        private void focusAction(final Cab2bTable cab2bTable) {
-            boolean setEnabled = false;
-
-            SKIP: if (cab2bTable.getSelectedRowCount() > 0) {
-                for (int columnIndex : cab2bTable.getSelectedColumns()) {
-                    if (columnIndex == 0 && skipFirstColumn) {
-                        break SKIP;
-                    }
-                }
-                setEnabled = true;
-            }
-
-            ExperimentStackBox experimentStackBox = experimentOpenPanel.getExperimentStackBox();
-            Cab2bPanel visualiseDataPanel = experimentStackBox.getVisualiseDataPanel();
-            Component[] components = visualiseDataPanel.getComponents();
-            for (Component component : components) {
-                if (component instanceof Cab2bHyperlink) {
-                    Cab2bHyperlink hyperLink = (Cab2bHyperlink) component;
-                    hyperLink.setEnabled(setEnabled);
-                    hyperLink.setVisible(true);
-                }
-            }
-            visualiseDataPanel.revalidate();
-        }
-
+            focusAction(cab2bTable,skipFirstColumn);
+       }
     }
-
 }

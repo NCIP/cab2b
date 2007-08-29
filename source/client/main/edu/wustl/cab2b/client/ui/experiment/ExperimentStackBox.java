@@ -138,22 +138,24 @@ public class ExperimentStackBox extends Cab2bPanel {
 
     public void initGUI() {
         this.setLayout(new BorderLayout());
-        stackedBox = new StackedBox();
-        stackedBox.setTitleBackgroundColor(new Color(200, 200, 220));
+        CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
+            DefaultMutableTreeNode rootNode = null;
 
-        // Set<Set<EntityInterface>> entitySet = null;
-        // try {
-        // entitySet =
-        // m_experimentBusinessInterface.getDataListEntitySet(m_selectedExperiment);
-        // } catch (RemoteException remoteException) {
-        // CommonUtils.handleException(remoteException,
-        // MainFrame.newWelcomePanel, true, true, true, false);
-        // }
+            protected void doNonUILogic() throws RuntimeException {
+                rootNode = generateRootNode(m_selectedExperiment);
+            }
 
-        DefaultMutableTreeNode rootNode = generateRootNode(m_selectedExperiment);
-        initializeDataListTree(rootNode);
-
-        initializePanels();
+            protected void doUIUpdateLogic() throws RuntimeException {
+                stackedBox = new StackedBox();
+                stackedBox.setTitleBackgroundColor(new Color(200, 200, 220));
+                initializeDataListTree(rootNode);
+                initializePanels();
+                if (datalistTree.getRowCount() >= 1) {
+                    datalistTree.setSelectionRow(1);
+                }
+            }
+        };
+        swingWorker.start();
     }
 
     /**
@@ -181,14 +183,12 @@ public class ExperimentStackBox extends Cab2bPanel {
             }
 
             ClientSideCache clientCache = ClientSideCache.getInstance();
-
             for (IdName idName : dataListMetadata.getEntitiesNames()) {
 
                 EntityInterface originalEntity = clientCache.getEntityById(idName.getOriginalEntityId());
 
                 UserObjectWrapper<IdName> categoryUserObject = new UserObjectWrapper<IdName>(idName,
                         Utility.getDisplayName(originalEntity));
-
                 DefaultMutableTreeNode categoryNode = new DefaultMutableTreeNode(categoryUserObject);
                 CategoriesRoot.add(categoryNode);
             }
@@ -208,20 +208,11 @@ public class ExperimentStackBox extends Cab2bPanel {
      *            the root node to be set.
      */
     private void initializeDataListTree(DefaultMutableTreeNode rootNode) {
-        // creating datalist tree
         datalistTree = new JXTree(rootNode);
+        //creating datalist tree
         datalistTree.setRootVisible(false);
         datalistTree.expandAll();
 
-        // setting the first node as selected and displaying the corresponding
-        // records in the table
-        if (datalistTree.getRowCount() >= 1) {
-            datalistTree.setSelectionRow(1);
-            Object nodeInfo = ((DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent()).getUserObject();
-            if (nodeInfo instanceof UserObjectWrapper) {
-                updateSpreadSheet((UserObjectWrapper<IdName>) nodeInfo);
-            }
-        }
         // action listener for selected data category
         datalistTree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
@@ -233,6 +224,10 @@ public class ExperimentStackBox extends Cab2bPanel {
         datalistTree.setClosedIcon(new ImageIcon(loader.getResource(TREE_CLOSE_FOLDER)));
         datalistTree.setLeafIcon(new ImageIcon(loader.getResource(TREE_LEAF_NODE)));
         datalistTree.setBorder(null);
+
+        /* if (datalistTree.getRowCount() >= 1) {
+         datalistTree.setSelectionRow(1);
+         }*/
     }
 
     /**
@@ -246,21 +241,21 @@ public class ExperimentStackBox extends Cab2bPanel {
         stackedBox.addBox("Select Data Category", treeViewScrollPane, SELECT_DATA_CATEGORY, false);
 
         // Adding Filter data category panel
-        dataFilterPanel = new Cab2bPanel(new RiverLayout(0,5));
+        dataFilterPanel = new Cab2bPanel(new RiverLayout(0, 5));
         dataFilterPanel.setPreferredSize(new Dimension(250, 200));
         dataFilterPanel.setOpaque(false);
         dataFilterPanel.setBorder(null);
         stackedBox.addBox("Filter Data ", dataFilterPanel, FILTER_DATA, true);
 
         // Adding Analyse data panel
-        analyseDataPanel = new Cab2bPanel(new RiverLayout(0,5));
+        analyseDataPanel = new Cab2bPanel(new RiverLayout(0, 5));
         analyseDataPanel.setPreferredSize(new Dimension(250, 150));
         analyseDataPanel.setOpaque(false);
         analyseDataPanel.setBorder(null);
         stackedBox.addBox("Analyze Data ", analyseDataPanel, ANALYZE_DATA, true);
 
         // Adding Visualize data panel
-        visualiseDataPanel = new Cab2bPanel(new RiverLayout(0,5));
+        visualiseDataPanel = new Cab2bPanel(new RiverLayout(0, 5));
         visualiseDataPanel.setPreferredSize(new Dimension(250, 200));
         visualiseDataPanel.setOpaque(false);
         visualiseDataPanel.setBorder(null);
@@ -315,7 +310,6 @@ public class ExperimentStackBox extends Cab2bPanel {
      * Method to perform tree node selection action for currently selected node
      */
     public void treeSelectionListenerAction() {
-
         Cab2bPanel selectedPanel = (Cab2bPanel) m_experimentDataCategoryGridPanel.getTabComponent().getSelectedComponent();
         Component applyFilterComponent = CommonUtils.getComponentByName(selectedPanel,
                                                                         Constants.APPLY_FILTER_PANEL_NAME);
@@ -324,7 +318,6 @@ public class ExperimentStackBox extends Cab2bPanel {
             applyFilterPanel.clearMap();
             getDataForFilterPanel(applyFilterPanel);
         }
-        updateUI();
 
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent();
         if (node == null) {
@@ -341,11 +334,11 @@ public class ExperimentStackBox extends Cab2bPanel {
         if (nodeInfo instanceof UserObjectWrapper) {
             updateSpreadSheet((UserObjectWrapper<IdName>) nodeInfo);
         }
+        updateUI();
     }
 
     private void updateSpreadSheet(final UserObjectWrapper<IdName> idName) {
-
-        CustomSwingWorker swingWorker = new CustomSwingWorker(datalistTree) {
+        CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
             List<IRecord> recordList = null;
 
             protected void doNonUILogic() throws RuntimeException {
@@ -354,7 +347,6 @@ public class ExperimentStackBox extends Cab2bPanel {
                     DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                         EjbNamesConstants.DATALIST_BEAN,
                                                                                                                         DataListHomeInterface.class);
-
                     recordList = dataListBI.getEntityRecord(idName.getUserObject().getId());
 
                 } catch (RemoteException remoteException) {
@@ -429,18 +421,44 @@ public class ExperimentStackBox extends Cab2bPanel {
                 hyperlink.setIcon(new ImageIcon(url));
             }
 
-            hyperlink.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent actionEvent) {
-                    String actionCommand = actionEvent.getActionCommand();
-                    ChartType chartType = ChartType.getChartType(actionCommand);
-                    showChartAction(chartType);
-                    updateUI();
-                }
-            });
+            hyperlink.addActionListener(new HyperlinkActionListener());
             hyperlink.setEnabled(false);
             visualiseDataPanel.add("br", hyperlink);
         }
         visualiseDataPanel.revalidate();
+    }
+
+    class HyperlinkActionListener implements ActionListener {
+        ActionEvent actionEvent = null;
+
+        ChartType chartType = null;
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            this.actionEvent = actionEvent;
+
+            CustomSwingWorker sw = new CustomSwingWorker(ExperimentStackBox.this) {
+                @Override
+                protected void doNonUILogic() throws java.lang.RuntimeException {
+                    String actionCommand = HyperlinkActionListener.this.actionEvent.getActionCommand();
+                    chartType = ChartType.getChartType(actionCommand);
+                    showChartAction(chartType);
+
+                }
+
+                @Override
+                protected void doUIUpdateLogic() throws java.lang.RuntimeException {
+
+                }
+
+            };
+            sw.start();
+            /* this.actionEvent = actionEvent;
+             String actionCommand = actionEvent.getActionCommand();
+             ChartType chartType = ChartType.getChartType(actionCommand);
+             showChartAction(chartType);*/
+            updateUI();
+        };
+
     }
 
     /**
@@ -456,7 +474,6 @@ public class ExperimentStackBox extends Cab2bPanel {
             entityName = ((TreeEntityWrapper) nodeInfo).toString();
         }
 
-        // Cab2bChartPanel cab2bChartPanel = null;
         final JTabbedPane tabComponent = m_experimentDataCategoryGridPanel.getTabComponent();
         Cab2bPanel currentChartPanel = m_experimentDataCategoryGridPanel.getCurrentChartPanel();
         if (currentChartPanel == null) {
@@ -467,17 +484,18 @@ public class ExperimentStackBox extends Cab2bPanel {
             closeButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent actionEvent) {
                     tabComponent.remove(newVisualizeDataPanel);
+                    m_experimentDataCategoryGridPanel.setCurrentChartPanel(null);
                     chartIndex--;
                 }
             });
             newVisualizeDataPanel.add("right ", closeButton);
 
             DataListDetailedPanelInterface dataListDetailedPanel = m_experimentDataCategoryGridPanel.getCurrentSpreadSheetViewPanel();
-            Cab2bChartPanel cab2bChartPanel = new Cab2bChartPanel(dataListDetailedPanel.getDataTable());
+            Cab2bChartPanel cab2bChartPanel = null;
+            cab2bChartPanel = new Cab2bChartPanel(dataListDetailedPanel.getDataTable());
             cab2bChartPanel.setChartType(chartType, entityName);
             newVisualizeDataPanel.add("br hfill vfill ", cab2bChartPanel);
             m_experimentDataCategoryGridPanel.setCurrentChartPanel(newVisualizeDataPanel);
-
             tabComponent.add("Chart" + ++chartIndex, newVisualizeDataPanel);
             tabComponent.setSelectedComponent(newVisualizeDataPanel);
         } else {
@@ -649,9 +667,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         if (attributeCollection != null) {
             List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>(attributeCollection);
             Collections.sort(attributeList, new AttributeInterfaceComparator());
-
             try {
-
                 Dimension maxLabelDimension = CommonUtils.getMaximumLabelDimension(attributeList);
                 for (AttributeInterface attribute : attributeList) {
                     JXPanel jxPanel = (JXPanel) SwingUIManager.generateUIPanel(parseFile, attribute, false,
@@ -662,7 +678,6 @@ public class ExperimentStackBox extends Cab2bPanel {
                 CommonUtils.handleException(checkedException, this, true, true, false, false);
             }
         }
-
         return parameterPanel;
     }
 
@@ -832,5 +847,4 @@ class FinishButtonActionListner implements ActionListener {
 
         return parameterList;
     }
-
 }
