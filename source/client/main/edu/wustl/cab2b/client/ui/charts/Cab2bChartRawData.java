@@ -4,6 +4,9 @@
 package edu.wustl.cab2b.client.ui.charts;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
+import edu.wustl.cab2b.client.ui.controls.LazyTable.DefaultLazyTableModel;
+import edu.wustl.cab2b.client.ui.viewresults.BDQTableModel;
+import edu.wustl.cab2b.client.ui.viewresults.ThreeDResultObjectDetailsPanel;
 import edu.wustl.cab2b.common.util.Constants.ChartOrientation;
 
 /**
@@ -23,6 +26,9 @@ public class Cab2bChartRawData {
     /** Stores the orientation of the chart */
     private ChartOrientation chartOrientation;
 
+    /** Stores the table Data  */
+    private Object[][] tableData = null;
+
     /**
      * Parameterized constructor
      */
@@ -35,8 +41,29 @@ public class Cab2bChartRawData {
         }
         selectedRowIndices = this.cab2bTable.getSelectedRows();
         selectedColumnsIndices = this.cab2bTable.getSelectedColumns();
+
+        if (ThreeDResultObjectDetailsPanel.isWholeColumnSelected) {
+            if (cab2bTable.getModel() instanceof DefaultLazyTableModel) {
+                BDQTableModel datCubeTableModel = (BDQTableModel) cab2bTable.getModel();
+                tableData = datCubeTableModel.getColumnValues(cab2bTable.getSelectedColumns());
+                selectedRowIndices = new int[tableData.length];                
+                for (int i = 0; i < tableData.length; i++)
+                selectedRowIndices[i] = i;                
+                selectedColumnsIndices = this.cab2bTable.getSelectedColumns();
+            }
+        }
     }
 
+    
+    public Object[][] getCab2bTableData() {
+        return tableData;
+    }
+    
+    
+    public Object getCab2bTableValue(int row, int column) {
+        return tableData[row][column];
+    }
+    
     /**
      * @return the selectedColumnsIndices
      */

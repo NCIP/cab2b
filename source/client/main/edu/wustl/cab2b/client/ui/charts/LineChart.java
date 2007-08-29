@@ -18,6 +18,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
+import edu.wustl.cab2b.client.ui.viewresults.ThreeDResultObjectDetailsPanel;
 import edu.wustl.cab2b.common.util.Constants.ChartOrientation;
 
 /**
@@ -51,7 +52,11 @@ public class LineChart extends AbstractChart {
                 String seriesName = cab2bTable.getColumnName(selectedColumnsIndices[i]);
                 xySeries = new XYSeries(seriesName);
                 for (int j = 0; j < selectedRowIndices.length; j++) {
-                    String value = (String) cab2bTable.getValueAt(selectedRowIndices[j], selectedColumnsIndices[i]);
+                    String value;
+                    if (ThreeDResultObjectDetailsPanel.isWholeColumnSelected)
+                        value = (String) chartRawData.getCab2bTableData()[j][i];
+                    else
+                        value = (String) cab2bTable.getValueAt(selectedRowIndices[j], selectedColumnsIndices[i]);
 
                     Double xValue = new Double(selectedRowIndices[j]);
                     Double yValue = null;
@@ -70,7 +75,11 @@ public class LineChart extends AbstractChart {
                 String seriesName = selectedRowIndices[i] + "";
                 xySeries = new XYSeries(seriesName);
                 for (int j = 0; j < selectedColumnsIndices.length; j++) {
-                    String value = (String) cab2bTable.getValueAt(selectedRowIndices[i], selectedColumnsIndices[j]);
+                    String value;
+                    if (ThreeDResultObjectDetailsPanel.isWholeColumnSelected)
+                        value = (String) chartRawData.getCab2bTableData()[i][j];
+                    else
+                        value = (String) cab2bTable.getValueAt(selectedRowIndices[i], selectedColumnsIndices[j]);
 
                     Double xValue = new Double(selectedColumnsIndices[j]);
                     Double yValue = null;
@@ -99,7 +108,6 @@ public class LineChart extends AbstractChart {
                                                                xyDataset, PlotOrientation.VERTICAL, true, true,
                                                                false);
         jfreechart.setBackgroundPaint(Color.white);
-
         XYPlot xyplot = (XYPlot) jfreechart.getPlot();
 
         xyplot.setBackgroundPaint(Color.white);

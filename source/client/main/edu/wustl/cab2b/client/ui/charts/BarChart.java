@@ -15,7 +15,7 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.Dataset;
 
-import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
+import edu.wustl.cab2b.client.ui.viewresults.ThreeDResultObjectDetailsPanel;
 import edu.wustl.cab2b.common.util.Constants.ChartOrientation;
 
 /**
@@ -48,30 +48,101 @@ public class BarChart extends AbstractChart {
      * @see edu.wustl.cab2b.client.ui.charts.AbstractChart#createDataset()
      */
     protected CategoryDataset createDataset() {
-        Cab2bTable cab2bTable = chartRawData.getCab2bTable();
         int[] selectedRowIndices = chartRawData.getSelectedRowIndices();
         int[] selectedColumnsIndices = chartRawData.getSelectedColumnsIndices();
         ChartOrientation chartOrientation = chartRawData.getChartOrientation();
 
         DefaultCategoryDataset defaultcategorydataset = new DefaultCategoryDataset();
-        int i, j;
 
         if (chartOrientation == ChartOrientation.COLUMN_AS_CATEGORY) {
-            String[] series = new String[selectedColumnsIndices.length];
-            String[] categories = new String[selectedRowIndices.length];
+            String[] series = getColumnIndicesSeries(selectedColumnsIndices);
+            String[] categories = getRowIndicesSeries(selectedRowIndices);
 
-            for (i = 0; i < selectedRowIndices.length; i++) {
-                categories[i] = "Row" + (selectedRowIndices[i] + 1);
-            }
+            if (ThreeDResultObjectDetailsPanel.isWholeColumnSelected)
+                defaultcategorydataset = addColumnValueToDataSet(selectedRowIndices, selectedColumnsIndices,
+                                                                 series, categories);
+            else
+                defaultcategorydataset = addTableValueToDataSet(selectedRowIndices, selectedColumnsIndices,
+                                                                series, categories);
 
-            for (j = 0; j < selectedColumnsIndices.length; j++) {
-                series[j] = cab2bTable.getColumnName(selectedColumnsIndices[j]);
-            }
+        } else {
+            String[] series = getRowIndicesSeries(selectedRowIndices);
+            String[] categories = getColumnIndicesSeries(selectedColumnsIndices);
 
+            if (ThreeDResultObjectDetailsPanel.isWholeColumnSelected)
+                defaultcategorydataset = addColumnValueToDataSet(selectedRowIndices, selectedColumnsIndices,
+                                                                 series, categories);
+            else
+                defaultcategorydataset = addTableValueToDataSet(selectedRowIndices, selectedColumnsIndices,
+                                                                series, categories);
+
+        }
+        return defaultcategorydataset;
+    }
+
+    public String[] getColumnIndicesSeries(int[] selectedColumnsIndices) {
+        String[] series = new String[selectedColumnsIndices.length];
+        for (int i = 0; i < selectedColumnsIndices.length; i++) {
+            series[i] = chartRawData.getCab2bTable().getColumnName(selectedColumnsIndices[i]);
+        }
+        return series;
+    }
+
+    public String[] getRowIndicesSeries(int[] selectedRowIndices) {
+        String[] series = new String[selectedRowIndices.length];
+        for (int j = 0; j < selectedRowIndices.length; j++) {
+            series[j] = "Row" + (selectedRowIndices[j] + 1);
+        }
+        return series;
+    }
+
+    public DefaultCategoryDataset addColumnValueToDataSet(int[] selectedRowIndices, int[] selectedColumnsIndices,
+                                                          String[] series, String[] categories) {
+        DefaultCategoryDataset defaultcategorydataset = new DefaultCategoryDataset();
+        int i;
+        int j;
+        if (chartRawData.getChartOrientation() == ChartOrientation.COLUMN_AS_CATEGORY) {
             for (i = 0; i < selectedRowIndices.length; i++) {
                 for (j = 0; j < selectedColumnsIndices.length; j++) {
-                    String value = (String) cab2bTable.getValueAt(selectedRowIndices[i], selectedColumnsIndices[j]);
+                    String value = (String) chartRawData.getCab2bTableData()[i][j];
+                    //System.out.println("value[" + i + "][" + j + "]=" + value);
+                    Double doubleValue = null;
+                    try {
+                        doubleValue = Double.valueOf(value);
+                    } catch (Exception exception) {
+                        doubleValue = 0D;
+                    }
+                    defaultcategorydataset.addValue(doubleValue, series[j], categories[i]);
+                }
+            }
+        } else {
+            for (i = 0; i < selectedColumnsIndices.length; i++) {
+                for (j = 0; j < selectedRowIndices.length; j++) {
 
+                    String value = (String) chartRawData.getCab2bTableData()[j][i];
+                    Double yAxisValue = null;
+                    try {
+                        yAxisValue = Double.valueOf(value);
+                    } catch (Exception exception) {
+                        yAxisValue = 0D;
+                    }
+                    defaultcategorydataset.addValue(yAxisValue, series[j], categories[i]);
+                }
+            }
+        }
+        return defaultcategorydataset;
+    }
+
+    public DefaultCategoryDataset addTableValueToDataSet(int[] selectedRowIndices, int[] selectedColumnsIndices,
+                                                         String[] series, String[] categories) {
+        DefaultCategoryDataset defaultcategorydataset = new DefaultCategoryDataset();
+        int i;
+        int j;
+        if (chartRawData.getChartOrientation() == ChartOrientation.COLUMN_AS_CATEGORY) {
+            for (i = 0; i < selectedRowIndices.length; i++) {
+                for (j = 0; j < selectedColumnsIndices.length; j++) {
+                    String value = (String) chartRawData.getCab2bTable().getValueAt(selectedRowIndices[i],
+                                                                                    selectedColumnsIndices[j]);                    
                     Double doubleValue = null;
                     try {
                         doubleValue = Double.valueOf(value);
@@ -83,20 +154,11 @@ public class BarChart extends AbstractChart {
                 }
             }
         } else {
-            String[] series = new String[selectedRowIndices.length];
-            String[] categories = new String[selectedColumnsIndices.length];
-
-            for (i = 0; i < selectedColumnsIndices.length; i++) {
-                categories[i] = cab2bTable.getColumnName(selectedColumnsIndices[i]);
-            }
-
-            for (j = 0; j < selectedRowIndices.length; j++) {
-                series[j] = "Row" + (selectedRowIndices[j] + 1);
-            }
-
             for (i = 0; i < selectedColumnsIndices.length; i++) {
                 for (j = 0; j < selectedRowIndices.length; j++) {
-                    String value = (String) cab2bTable.getValueAt(selectedRowIndices[j], selectedColumnsIndices[i]);
+
+                    String value = (String) chartRawData.getCab2bTable().getValueAt(selectedRowIndices[j],
+                                                                                    selectedColumnsIndices[i]);
                     Double yAxisValue = null;
                     try {
                         yAxisValue = Double.valueOf(value);
@@ -108,7 +170,6 @@ public class BarChart extends AbstractChart {
                 }
             }
         }
-
         return defaultcategorydataset;
     }
 
@@ -119,9 +180,9 @@ public class BarChart extends AbstractChart {
     protected JFreeChart createChart(Dataset dataset) {
         CategoryDataset categoryDataSet = (CategoryDataset) dataset;
 
-        JFreeChart jFreeChart = ChartFactory.createBarChart(ChartType.BAR_CHART.getType(), entityName,
-                                                            "Value", categoryDataSet, PlotOrientation.VERTICAL,
-                                                            true, true, false);
+        JFreeChart jFreeChart = ChartFactory.createBarChart(ChartType.BAR_CHART.getType(), entityName, "Value",
+                                                            categoryDataSet, PlotOrientation.VERTICAL, true, true,
+                                                            false);
         jFreeChart.setBackgroundPaint(Color.white);
 
         CategoryPlot categoryPlot = (CategoryPlot) jFreeChart.getPlot();
@@ -131,9 +192,10 @@ public class BarChart extends AbstractChart {
 
         NumberAxis numberAxis = (NumberAxis) categoryPlot.getRangeAxis();
         numberAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
         BarRenderer barRenderer = (BarRenderer) categoryPlot.getRenderer();
         barRenderer.setDrawBarOutline(false);
+        barRenderer.setMinimumBarLength(0.7D);
+        barRenderer.setMaximumBarWidth(0.7D);
         barRenderer.setItemMargin(0.1D);
 
         CategoryAxis categoryaxis = categoryPlot.getDomainAxis();
