@@ -641,10 +641,22 @@
 		</copy>
 		<copy todir="${webstart.war.dir}"  file="${basedir}/webstart/index.html" />
 		
+		<war destfile="${workArea.dir}/cab2b.war" webxml="${basedir}/webstart/web.xml">
+			 <fileset dir="${basedir}/webstart">
+                       <include name="images/**/*"/>
+             </fileset>
+			<fileset dir="${webstart.war.dir}">
+ 		    </fileset>
+        </war>
+
+		
+		
+		<!-- 	
 		<zip destfile="${workArea.dir}/cab2b.war">
 			<fileset dir="${webstart.war.dir}">
 		   </fileset>
 		</zip>
+	-->
 	</target>
 	
 	<target name="temp">
