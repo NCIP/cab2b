@@ -492,7 +492,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 
             DataListDetailedPanelInterface dataListDetailedPanel = m_experimentDataCategoryGridPanel.getCurrentSpreadSheetViewPanel();
             Cab2bChartPanel cab2bChartPanel = null;
-            cab2bChartPanel = new Cab2bChartPanel(dataListDetailedPanel.getDataTable());
+            cab2bChartPanel = new Cab2bChartPanel(dataListDetailedPanel);
             cab2bChartPanel.setChartType(chartType, entityName);
             newVisualizeDataPanel.add("br hfill vfill ", cab2bChartPanel);
             m_experimentDataCategoryGridPanel.setCurrentChartPanel(newVisualizeDataPanel);

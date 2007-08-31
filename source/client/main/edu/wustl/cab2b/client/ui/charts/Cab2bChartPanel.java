@@ -14,7 +14,7 @@ import javax.swing.JRadioButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bRadioButton;
-import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
+import edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface;
 import edu.wustl.cab2b.common.util.Constants.ChartOrientation;
 
 /**
@@ -34,8 +34,8 @@ public class Cab2bChartPanel extends Cab2bPanel {
      * Parameterized contructor
      * @param cab2bTable
      */
-    public Cab2bChartPanel(Cab2bTable cab2bTable) {
-        this.chartRawData = new Cab2bChartRawData(cab2bTable, ChartOrientation.COLUMN_AS_CATEGORY);
+    public Cab2bChartPanel(DataListDetailedPanelInterface dataListDetailedPanel) {
+        this.chartRawData = new Cab2bChartRawData(dataListDetailedPanel, ChartOrientation.COLUMN_AS_CATEGORY);
         this.setName("cab2bChartPanel");
         this.setBorder(null);
     }
@@ -45,27 +45,27 @@ public class Cab2bChartPanel extends Cab2bPanel {
         this.entityName = entityName;
 
         JPanel jPanel = getChartPanel();
-        
+
         this.removeAll();
         this.add("left ", createRadioPanel());
         this.add("br vfill hfill ", jPanel);
     }
-    
+
     private void setChartType() {
         this.remove(1);
         this.add("br vfill hfill ", getChartPanel());
         updateUI();
     }
-    
+
     public void setChartType(final ChartType chartType) {
         this.remove(1);
         this.add("br vfill hfill ", getChartPanel(chartType));
         updateUI();
     }
-    
+
     private JPanel getChartPanel() {
         JPanel jPanel = null;
-        switch(chartType) {
+        switch (chartType) {
             case BAR_CHART:
                 jPanel = getBarChart(entityName);
                 break;
@@ -77,13 +77,11 @@ public class Cab2bChartPanel extends Cab2bPanel {
         }
         return jPanel;
     }
-    
+
     private JPanel getChartPanel(final ChartType chartType) {
         this.chartType = chartType;
         return getChartPanel();
     }
-
-    
 
     private Cab2bPanel createRadioPanel() {
         Cab2bPanel radioPanel = new Cab2bPanel(new FlowLayout());
@@ -159,7 +157,7 @@ public class Cab2bChartPanel extends Cab2bPanel {
             } else {
                 chartRawData.setChartOrientation(ChartOrientation.COLUMN_AS_CATEGORY);
             }
-            
+
             setChartType();
         }
 
