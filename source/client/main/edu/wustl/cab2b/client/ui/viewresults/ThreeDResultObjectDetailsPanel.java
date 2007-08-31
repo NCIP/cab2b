@@ -29,7 +29,7 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
 
     BDQDataSource tableSource;
 
-    public static boolean isWholeColumnSelected = false;
+    private boolean isWholeColumnSelected = false;
 
     /**
      * 
@@ -113,6 +113,10 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
 
     public Cab2bTable getDataTable() {
         return threeDTable;
+    }
+
+    public boolean getIsWholeColumnSelected() {
+        return isWholeColumnSelected;
     }
 
     class HeaderMouseListener extends MouseAdapter {
