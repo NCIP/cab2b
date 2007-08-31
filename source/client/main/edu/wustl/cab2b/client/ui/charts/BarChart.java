@@ -15,7 +15,6 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.Dataset;
 
-import edu.wustl.cab2b.client.ui.viewresults.ThreeDResultObjectDetailsPanel;
 import edu.wustl.cab2b.common.util.Constants.ChartOrientation;
 
 /**
@@ -58,7 +57,7 @@ public class BarChart extends AbstractChart {
             String[] series = getColumnIndicesSeries(selectedColumnsIndices);
             String[] categories = getRowIndicesSeries(selectedRowIndices);
 
-            if (ThreeDResultObjectDetailsPanel.isWholeColumnSelected)
+            if (chartRawData.isWholeColumnSelected())
                 defaultcategorydataset = addColumnValueToDataSet(selectedRowIndices, selectedColumnsIndices,
                                                                  series, categories);
             else
@@ -69,7 +68,7 @@ public class BarChart extends AbstractChart {
             String[] series = getRowIndicesSeries(selectedRowIndices);
             String[] categories = getColumnIndicesSeries(selectedColumnsIndices);
 
-            if (ThreeDResultObjectDetailsPanel.isWholeColumnSelected)
+            if (chartRawData.isWholeColumnSelected())
                 defaultcategorydataset = addColumnValueToDataSet(selectedRowIndices, selectedColumnsIndices,
                                                                  series, categories);
             else
@@ -142,7 +141,7 @@ public class BarChart extends AbstractChart {
             for (i = 0; i < selectedRowIndices.length; i++) {
                 for (j = 0; j < selectedColumnsIndices.length; j++) {
                     String value = (String) chartRawData.getCab2bTable().getValueAt(selectedRowIndices[i],
-                                                                                    selectedColumnsIndices[j]);                    
+                                                                                    selectedColumnsIndices[j]);
                     Double doubleValue = null;
                     try {
                         doubleValue = Double.valueOf(value);

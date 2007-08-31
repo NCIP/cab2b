@@ -14,7 +14,6 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
-import edu.wustl.cab2b.client.ui.viewresults.ThreeDResultObjectDetailsPanel;
 import edu.wustl.cab2b.common.util.Constants.ChartOrientation;
 
 /**
@@ -49,9 +48,8 @@ public class ScatterPlot extends AbstractChart {
                 String seriesName = cab2bTable.getColumnName(selectedColumnsIndices[0]);
                 xySeries = new XYSeries(seriesName);
                 for (int j = 0; j < selectedRowIndices.length; j++) {
-
-                    String value;
-                    if (ThreeDResultObjectDetailsPanel.isWholeColumnSelected)
+                    String value = null;
+                    if (chartRawData.isWholeColumnSelected())
                         value = (String) (chartRawData.getCab2bTableValue(j, 0));
                     else
                         value = (String) cab2bTable.getValueAt(selectedRowIndices[j], selectedColumnsIndices[0]);
@@ -73,24 +71,32 @@ public class ScatterPlot extends AbstractChart {
                     xySeries = new XYSeries(seriesName);
 
                     for (int j = 0; j < selectedRowIndices.length; j++) {
-                        String value;
-                        Double xValue;
-                        if (ThreeDResultObjectDetailsPanel.isWholeColumnSelected) {
-                            value = (String) chartRawData.getCab2bTableData()[j][0];
-                            xValue = new Double((String) chartRawData.getCab2bTableData()[j][i]);
+                        String yValueString = null;
+                        String xValueString = null;
+                        if (chartRawData.isWholeColumnSelected()) {
+                            xValueString = (String) chartRawData.getCab2bTableData()[j][0];
+                            yValueString = (String) chartRawData.getCab2bTableData()[j][i];
                         } else {
-                            value = (String) cab2bTable.getValueAt(selectedRowIndices[0],
-                                                                   selectedColumnsIndices[i]);
-
-                            xValue = new Double((String) cab2bTable.getValueAt(selectedRowIndices[j],
-                                                                               selectedColumnsIndices[i]));
+                            xValueString = (String) cab2bTable.getValueAt(selectedRowIndices[j],
+                                                                          selectedColumnsIndices[0]);
+                            yValueString = (String) cab2bTable.getValueAt(selectedRowIndices[j],
+                                                                          selectedColumnsIndices[i]);
                         }
+
+                        Double xValue = null;
                         Double yValue = null;
                         try {
-                            yValue = Double.valueOf(value);
+                            xValue = Double.valueOf(xValueString);
+                        } catch (Exception exception) {
+                            xValue = 0D;
+                        }
+
+                        try {
+                            yValue = Double.valueOf(yValueString);
                         } catch (Exception exception) {
                             yValue = 0D;
                         }
+
                         xySeries.add(xValue, yValue);
                     }
                     xySeriesCollection.addSeries(xySeries);
@@ -101,15 +107,14 @@ public class ScatterPlot extends AbstractChart {
                 String seriesName = selectedRowIndices[0] + "";
                 xySeries = new XYSeries(seriesName);
                 for (int j = 0; j < selectedColumnsIndices.length; j++) {
-                    String value;
-                    if (ThreeDResultObjectDetailsPanel.isWholeColumnSelected)
+                    String value = null;
+                    if (chartRawData.isWholeColumnSelected())
                         value = (String) chartRawData.getCab2bTableData()[0][j];
                     else
                         value = (String) cab2bTable.getValueAt(selectedRowIndices[0], selectedColumnsIndices[j]);
 
                     Double xValue = new Double(selectedColumnsIndices[j]);
                     Double yValue = null;
-
                     try {
                         yValue = Double.valueOf(value);
                     } catch (Exception exception) {
@@ -119,30 +124,37 @@ public class ScatterPlot extends AbstractChart {
                 }
                 xySeriesCollection.addSeries(xySeries);
             } else if (selectedRowIndices.length > 1) {
-                for (int i = 0; i < selectedRowIndices.length; i++) {
+                for (int i = 1; i < selectedRowIndices.length; i++) {
                     String seriesName = selectedRowIndices[i] + "";
                     xySeries = new XYSeries(seriesName);
 
                     for (int j = 0; j < selectedColumnsIndices.length; j++) {
-                        String value;
-                        Double xValue;
-                        if (ThreeDResultObjectDetailsPanel.isWholeColumnSelected) {
-                            value = (String) chartRawData.getCab2bTableData()[i][j];
-                            xValue = new Double((String) chartRawData.getCab2bTableData()[0][j]);
+                        String yValueString = null;
+                        String xValueString = null;
+                        if (chartRawData.isWholeColumnSelected()) {
+                            xValueString = (String) chartRawData.getCab2bTableData()[0][j];
+                            yValueString = (String) chartRawData.getCab2bTableData()[i][j];
                         } else {
-                            value = (String) cab2bTable.getValueAt(selectedRowIndices[i],
-                                                                   selectedColumnsIndices[j]);
-                            xValue = new Double((String) cab2bTable.getValueAt(selectedRowIndices[0],
-                                                                               selectedColumnsIndices[j]));
+                            xValueString = (String) cab2bTable.getValueAt(selectedRowIndices[0],
+                                                                          selectedColumnsIndices[j]);
+                            yValueString = (String) cab2bTable.getValueAt(selectedRowIndices[i],
+                                                                          selectedColumnsIndices[j]);
                         }
 
+                        Double xValue = null;
                         Double yValue = null;
+                        try {
+                            xValue = Double.valueOf(xValueString);
+                        } catch (Exception exception) {
+                            xValue = 0D;
+                        }
 
                         try {
-                            yValue = Double.valueOf(value);
+                            yValue = Double.valueOf(yValueString);
                         } catch (Exception exception) {
                             yValue = 0D;
                         }
+
                         xySeries.add(xValue, yValue);
                     }
                     xySeriesCollection.addSeries(xySeries);

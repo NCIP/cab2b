@@ -18,7 +18,6 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
-import edu.wustl.cab2b.client.ui.viewresults.ThreeDResultObjectDetailsPanel;
 import edu.wustl.cab2b.common.util.Constants.ChartOrientation;
 
 /**
@@ -53,7 +52,7 @@ public class LineChart extends AbstractChart {
                 xySeries = new XYSeries(seriesName);
                 for (int j = 0; j < selectedRowIndices.length; j++) {
                     String value;
-                    if (ThreeDResultObjectDetailsPanel.isWholeColumnSelected)
+                    if (chartRawData.isWholeColumnSelected())
                         value = (String) chartRawData.getCab2bTableData()[j][i];
                     else
                         value = (String) cab2bTable.getValueAt(selectedRowIndices[j], selectedColumnsIndices[i]);
@@ -76,7 +75,7 @@ public class LineChart extends AbstractChart {
                 xySeries = new XYSeries(seriesName);
                 for (int j = 0; j < selectedColumnsIndices.length; j++) {
                     String value;
-                    if (ThreeDResultObjectDetailsPanel.isWholeColumnSelected)
+                    if (chartRawData.isWholeColumnSelected())
                         value = (String) chartRawData.getCab2bTableData()[i][j];
                     else
                         value = (String) cab2bTable.getValueAt(selectedRowIndices[i], selectedColumnsIndices[j]);
