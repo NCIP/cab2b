@@ -31,11 +31,11 @@ import edu.wustl.common.util.logger.Logger;
  */
 public abstract class AbstractEntityCache implements IEntityCache, Serializable {
     private static final long serialVersionUID = 1234567890L;
-    
+
     /**
      * List of all the categories loaded in caB2B local database.  
      */
-    protected List<Category> categories= new ArrayList<Category>(0);
+    protected List<Category> categories = new ArrayList<Category>(0);
 
     /**
      * Set of all the entity groups loaded as metadata in caB2B.
@@ -46,7 +46,6 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
      * The EntityCache object. Needed for singleton
      */
     protected static AbstractEntityCache entityCache = null;
-
 
     /**
      * Map with KEY as dynamic extension Entity's identifier and Value as Entity
@@ -59,6 +58,8 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
      * Association object
      */
     protected Map<Long, AssociationInterface> idVsAssociation = new HashMap<Long, AssociationInterface>();
+
+    protected Map<Long, AttributeInterface> idVsAttribute = new HashMap<Long, AttributeInterface>();
 
     /**
      * This map holds all the original association. Associations which are
@@ -74,6 +75,7 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
      * needed because there is no back pointer from PV to Entity
      */
     protected Map<PermissibleValueInterface, EntityInterface> permissibleValueVsEntity = new HashMap<PermissibleValueInterface, EntityInterface>();
+
     /**
      * This method gives the singleton cache object. If cache is not present then it throws {@link UnsupportedOperationException}
      * @return The singleton cache object.
@@ -84,6 +86,7 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
         }
         return entityCache;
     }
+
     /**
      * Private default constructor. To restrict the user from instantiating
      * explicitly.
@@ -115,6 +118,16 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
             }
         }
         cab2bEntityGroups = Collections.unmodifiableSet(entityGroupsSet);
+    }
+
+    /**
+     * Adds all attribute of given entity into cache
+     * @param entity Entity to process
+     */
+    private void createAttributeCache(EntityInterface entity) {
+        for (AttributeInterface attribute : entity.getAttributeCollection()) {
+            idVsAttribute.put(attribute.getId(), attribute);
+        }
     }
 
     /**
@@ -229,6 +242,20 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
     }
 
     /**
+     * Returns the Attribute for given Identifier
+     * 
+     * @param id Id of the Attribute
+     * @return Actual Attribute for given id.
+     */
+    public AttributeInterface getAttributeById(Long id) {
+        AttributeInterface attribute = idVsAttribute.get(id);
+        if (attribute == null) {
+            throw new RuntimeException("Attribute with given id is not present in cache : " + id);
+        }
+        return attribute;
+    }
+
+    /**
      * Returns the Association for given Identifier
      * 
      * @param id Id of the Association
@@ -237,7 +264,7 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
     public AssociationInterface getAssociationById(Long id) {
         AssociationInterface association = idVsAssociation.get(id);
         if (association == null) {
-            throw new RuntimeException("Entity with given id is not present in cache : " + id);
+            throw new RuntimeException("Association with given id is not present in cache : " + id);
         }
         return association;
     }
@@ -251,9 +278,8 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
     public AssociationInterface getAssociationByUniqueStringIdentifier(String uniqueStringIdentifier) {
         AssociationInterface association = originalAssociations.get(uniqueStringIdentifier);
         if (association == null) {
-            throw new RuntimeException(
-                    "Association with given uniqueStringIdentifier is not present in cache : "
-                            + uniqueStringIdentifier);
+            throw new RuntimeException("Association with given uniqueStringIdentifier is not present in cache : "
+                    + uniqueStringIdentifier);
         }
         return association;
     }
@@ -263,6 +289,7 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
      */
     public void addEntityToCache(EntityInterface entity) {
         idVsEntity.put(entity.getId(), entity);
+        createAttributeCache(entity);
         createAssociationCache(entity);
         createPermissibleValueCache(entity);
     }

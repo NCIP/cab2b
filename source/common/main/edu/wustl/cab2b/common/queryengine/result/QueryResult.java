@@ -9,15 +9,23 @@ import java.util.Map;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 
 public class QueryResult<R extends IRecord> implements IQueryResult<R> {
+    private static final long serialVersionUID = -6100202491215936158L;
+
     private Map<String, List<R>> records;
 
     private EntityInterface outputEntity;
-
-    private static final long serialVersionUID = -6100202491215936158L;
-
+    
     protected QueryResult(EntityInterface outputEntity) {
         this.records = new HashMap<String, List<R>>();
         this.outputEntity = outputEntity;
+    }
+
+    final public Long getId() {
+        return null;
+    }
+    
+    final public void setId(Long id) {
+        
     }
 
     public Map<String, List<R>> getRecords() {

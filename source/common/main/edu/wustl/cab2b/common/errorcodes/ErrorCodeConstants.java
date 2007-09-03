@@ -68,6 +68,10 @@ public interface ErrorCodeConstants {
 
     public static final String QUERY_EXECUTION_ERROR = "QM.0002";
 
+    public static final String QUERY_SAVE_ERROR = "QM.0005";
+
+    public static final String QUERY_RETRIEVE_ERROR = "QM.0006";
+
     public static final String CATEGORY_SAVE_ERROR = "CT.0001";
 
     public static final String CATEGORY_RETRIEVE_ERROR = "CT.0002";
@@ -83,6 +87,6 @@ public interface ErrorCodeConstants {
     public static final String QM_0004 = "QM.0004";
 
     public static final String CA_0001 = "CA.0001";
-    
+
     public static final String CA_0007 = "CA.0007";
 }
