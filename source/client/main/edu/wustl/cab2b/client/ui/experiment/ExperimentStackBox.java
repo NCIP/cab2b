@@ -338,7 +338,7 @@ public class ExperimentStackBox extends Cab2bPanel {
     }
 
     private void updateSpreadSheet(final UserObjectWrapper<IdName> idName) {
-        CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
+		CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
             List<IRecord> recordList = null;
 
             protected void doNonUILogic() throws RuntimeException {
@@ -635,7 +635,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         finishButton.addActionListener(new FinishButtonActionListner(serviceDetails, dataEntity, requiredEntity,
                 m_experimentDataCategoryGridPanel));
 
-        Cab2bPanel servicePanel = new Cab2bPanel();
+        Cab2bPanel servicePanel = new Cab2bPanel(new RiverLayout(5, 5));
         servicePanel.add("br left ", titlePanel);
         servicePanel.add("br center hfill vfill ", jScrollPane);
         servicePanel.add("br right ", finishButton);
@@ -654,29 +654,25 @@ public class ExperimentStackBox extends Cab2bPanel {
      * @return Array of control panel
      */
     private Cab2bPanel getParameterPanels(final EntityInterface entity) {
-        ParseXMLFile parseFile = null;
-        try {
-            parseFile = ParseXMLFile.getInstance();
-        } catch (CheckedException checkedException) {
-            CommonUtils.handleException(checkedException, this, true, true, false, false);
-        }
-
         final Collection<AttributeInterface> attributeCollection = entity.getAttributeCollection();
-        Cab2bPanel parameterPanel = new Cab2bPanel();
+        Cab2bPanel parameterPanel = new Cab2bPanel(new RiverLayout(10, 8));
         parameterPanel.setName("parameterPanel");
-        if (attributeCollection != null) {
-            List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>(attributeCollection);
-            Collections.sort(attributeList, new AttributeInterfaceComparator());
-            try {
+
+        try {
+            ParseXMLFile parseFile = ParseXMLFile.getInstance();
+            if (attributeCollection != null) {
+                List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>(attributeCollection);
+                Collections.sort(attributeList, new AttributeInterfaceComparator());
+
                 Dimension maxLabelDimension = CommonUtils.getMaximumLabelDimension(attributeList);
                 for (AttributeInterface attribute : attributeList) {
                     JXPanel jxPanel = (JXPanel) SwingUIManager.generateUIPanel(parseFile, attribute, false,
                                                                                maxLabelDimension);
                     parameterPanel.add("br", jxPanel);
                 }
-            } catch (CheckedException checkedException) {
-                CommonUtils.handleException(checkedException, this, true, true, false, false);
             }
+        } catch (CheckedException checkedException) {
+            CommonUtils.handleException(checkedException, this, true, false, false, false);
         }
         return parameterPanel;
     }
@@ -847,4 +843,5 @@ class FinishButtonActionListner implements ActionListener {
 
         return parameterList;
     }
+
 }
