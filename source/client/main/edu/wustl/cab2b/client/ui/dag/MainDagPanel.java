@@ -45,13 +45,13 @@ import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.metadata.path.Path;
-import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IJoinGraph;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.IQuery;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.impl.Expression;
 import edu.wustl.common.util.logger.Logger;
@@ -66,7 +66,7 @@ public class MainDagPanel extends Cab2bPanel {
 
     private DagControlPanel m_controlPanel;
 
-    private IClientQueryBuilderInterface m_queryObject; //  @jve:decl-index=0:
+    private IClientQueryBuilderInterface m_queryObject;
 
     private EventHandler m_eventHandler;
 
@@ -85,9 +85,8 @@ public class MainDagPanel extends Cab2bPanel {
     private IPathFinder m_pathFinder;
 
     private boolean m_isDAGForView = false;
-    
-    private DisplayNameInterafce entityNameDisplayer;
 
+    private DisplayNameInterafce entityNameDisplayer;
 
     /**
      * Constructor method
@@ -99,9 +98,10 @@ public class MainDagPanel extends Cab2bPanel {
             IUpdateAddLimitUIInterface addLimitPanel,
             Map<DagImages, Image> dagImageMap,
             IPathFinder pathFinder,
-            boolean isDAGForView, DisplayNameInterafce entityNameDisplayer) {
+            boolean isDAGForView,
+            DisplayNameInterafce entityNameDisplayer) {
         m_dagImageMap = dagImageMap;
-        this.entityNameDisplayer =entityNameDisplayer;
+        this.entityNameDisplayer = entityNameDisplayer;
         m_currentNodeList = new ArrayList<ClassNode>();
         m_document = new GraphDocument();
         m_isDAGForView = isDAGForView;
@@ -113,7 +113,7 @@ public class MainDagPanel extends Cab2bPanel {
         m_pathFinder = pathFinder;
         initGUI();
     }
-    
+
     /**
      * Constructor method
      * @param addLimitPanel 
@@ -157,6 +157,105 @@ public class MainDagPanel extends Cab2bPanel {
         m_expressionPanel = new ExpressionPanel("Current expression : ");
         add(m_expressionPanel, BorderLayout.SOUTH);
     }
+    
+    /**
+     *  CaB2B does not use this method for use of any functionality. 
+     *  This method is used in querysuit model for updating the main dag graph panel.      
+     * 
+     */
+    public void updateGraph() {
+        try {
+            IQuery query = m_queryObject.getQuery();
+            IConstraints constraints = query.getConstraints();
+            Enumeration<IExpressionId> exprEnumeration = constraints.getExpressionIds();
+            IExpressionId expressionId;
+            for (; exprEnumeration.hasMoreElements();) {
+                expressionId = exprEnumeration.nextElement();
+                IExpression expression = constraints.getExpression(expressionId);
+                ClassNodeType nodeType = getNodeType(expressionId);
+                /**
+                 * An Expression should be added to DAG only when its visible.
+                 * If DAG is for view then all nodes should be shown in DAG 
+                 * else only the ones that have constraints should be shown
+                 */
+                if (expression.isVisible()) {
+                    if (m_isDAGForView) {
+                        this.updateGraph(expressionId);
+                    } else if (!nodeType.equals(ClassNodeType.ViewOnlyNode)) {
+                        this.updateGraph(expressionId);
+                    }
+
+                }
+            }
+            IJoinGraph joinGraph = constraints.getJoinGraph();
+            List<IExpressionId> roots = joinGraph.getAllRoots();
+            for (IExpressionId rootExpressionId : roots) {
+                if (rootExpressionId != null) {
+                    addAssociations(constraints, joinGraph, rootExpressionId);
+                }
+            }
+            m_expressionPanel.setText(getExprssionString());
+        } catch (MultipleRootsException exception) {
+            CommonUtils.handleException(exception, MainFrame.newWelcomePanel, true, true, true, false);
+        }
+    }
+    
+    /**
+     *  CaB2B does not use this method for use of any functionality. 
+     *  This method is used in querysuit model for updating the main dag graph panel.      
+     * 
+     */
+    private List<IAssociation> addAssociations(IConstraints constraints, IJoinGraph joinGraph,
+                                               IExpressionId parentExpressionId) {
+        List<IAssociation> associations = null;
+        IAssociation association = null;
+        List<IExpressionId> intermediateExpressions = new ArrayList<IExpressionId>();
+        List<IExpressionId> childList = joinGraph.getChildrenList(parentExpressionId);
+        if (childList.isEmpty()) {
+            return associations;
+        }
+        IPath path;
+        int childSize = childList.size();
+        for (int index = 0; index < childSize; index++) {
+            IExpressionId childId = childList.get(index);
+            IExpression childExpression = constraints.getExpression(childId);
+
+            associations = new ArrayList<IAssociation>();
+            intermediateExpressions = new ArrayList<IExpressionId>();
+            association = joinGraph.getAssociation(parentExpressionId, childId);
+            associations.add(association);
+            if (!childExpression.isVisible()) {
+
+                IExpressionId sourceId;
+                while (!childExpression.isVisible()) {
+                    intermediateExpressions.add(childId);
+                    sourceId = childId;
+                    childId = joinGraph.getChildrenList(childId).get(0);
+                    association = joinGraph.getAssociation(sourceId, childId);
+                    associations.add(association);
+                    childExpression = constraints.getExpression(childId);
+                }
+            }
+
+            EntityInterface source = constraints.getExpression(parentExpressionId).getQueryEntity().getDynamicExtensionsEntity();
+            EntityInterface target = childExpression.getQueryEntity().getDynamicExtensionsEntity();
+            path = new Path(source, target, associations);
+
+            /**
+             * A link should be added to DAG  when either DAG is for view 
+             * or when the target node has constarints
+             */
+            if (m_isDAGForView) {
+                LinkTwoNode(getNode(parentExpressionId), getNode(childId), path, intermediateExpressions, false);
+                addAssociations(constraints, joinGraph, childId);
+            } else if (!getNodeType(childExpression.getExpressionId()).equals(ClassNodeType.ViewOnlyNode)) {
+                LinkTwoNode(getNode(parentExpressionId), getNode(childId), path, intermediateExpressions, false);
+                addAssociations(constraints, joinGraph, childId);
+            }
+
+        }
+        return associations;
+    }
 
     /**
      * Method to add node to a graph
@@ -164,10 +263,10 @@ public class MainDagPanel extends Cab2bPanel {
      */
     public void updateGraph(IExpressionId expressionId) throws MultipleRootsException {
         IExpression expression = m_queryObject.getQuery().getConstraints().getExpression(expressionId);
-        IConstraintEntity constraintEntity = expression.getConstraintEntity();
+        IQueryEntity queryEntity = expression.getQueryEntity();
 
         ClassNode node = new ClassNode();
-        node.setDisplayName(entityNameDisplayer.getEntityDisplayName(constraintEntity.getDynamicExtensionsEntity()));
+        node.setDisplayName(entityNameDisplayer.getEntityDisplayName(queryEntity.getDynamicExtensionsEntity()));
         //node.setDisplayName(edu.wustl.cab2b.common.util.Utility.getDisplayName(constraintEntity.getDynamicExtensionsEntity()));
         node.setExpressionId(expression);
         node.setID(String.valueOf(expressionId.getInt()));
@@ -244,9 +343,9 @@ public class MainDagPanel extends Cab2bPanel {
          * Get IEntityInterface objects from source and destination nodes
          */
         IExpression expression = constraints.getExpression(sourceNode.getExpressionId());
-        IConstraintEntity sourceEntity = expression.getConstraintEntity();
+        IQueryEntity sourceEntity = expression.getQueryEntity();
         expression = constraints.getExpression(destNode.getExpressionId());
-        IConstraintEntity destinationEntity = expression.getConstraintEntity();
+        IQueryEntity destinationEntity = expression.getQueryEntity();
 
         AmbiguityObject ambiguityObject = new AmbiguityObject(sourceEntity.getDynamicExtensionsEntity(),
                 destinationEntity.getDynamicExtensionsEntity());
@@ -629,7 +728,7 @@ public class MainDagPanel extends Cab2bPanel {
         for (int i = 0; i < selectedNodes.size(); i++) {
             IExpression expression = m_queryObject.getQuery().getConstraints().getExpression(
                                                                                              selectedNodes.get(i).getExpressionId());
-            EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
+            EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
             entitySet.add(entity);
         }
 
@@ -709,7 +808,7 @@ public class MainDagPanel extends Cab2bPanel {
             ClassNode node = classNodes.get(i);
             IExpression expression = m_queryObject.getQuery().getConstraints().getExpression(
                                                                                              node.getExpressionId());
-            EntityInterface currentEntity = expression.getConstraintEntity().getDynamicExtensionsEntity();
+            EntityInterface currentEntity = expression.getQueryEntity().getDynamicExtensionsEntity();
             if (true == entity.equals(currentEntity)) {
                 entityNodes.add(node);
             }
@@ -775,106 +874,6 @@ public class MainDagPanel extends Cab2bPanel {
 
     public void setDAGForView(boolean forView) {
         m_isDAGForView = forView;
-    }
-    
-    
-    /**
-     *  CaB2B does not use this method for use of any functionality. 
-     *  This method is used in querysuit model for updating the main dag graph panel.      
-     * 
-     */
-    public void updateGraph() {
-        try {
-            IQuery query = m_queryObject.getQuery();
-            IConstraints constraints = query.getConstraints();
-            Enumeration<IExpressionId> exprEnumeration = constraints.getExpressionIds();
-            IExpressionId expressionId;
-            for (; exprEnumeration.hasMoreElements();) {
-                expressionId = exprEnumeration.nextElement();
-                IExpression expression = constraints.getExpression(expressionId);
-                ClassNodeType nodeType = getNodeType(expressionId);
-                /**
-                 * An Expression should be added to DAG only when its visible.
-                 * If DAG is for view then all nodes should be shown in DAG 
-                 * else only the ones that have constraints should be shown
-                 */
-                if (expression.isVisible()) {
-                    if (m_isDAGForView) {
-                        this.updateGraph(expressionId);
-                    } else if (!nodeType.equals(ClassNodeType.ViewOnlyNode)) {
-                        this.updateGraph(expressionId);
-                    }
-
-                }
-            }
-            IJoinGraph joinGraph = constraints.getJoinGraph();
-            List<IExpressionId> roots = joinGraph.getAllRoots();
-            for (IExpressionId rootExpressionId : roots) {
-                if (rootExpressionId != null) {
-                    addAssociations(constraints, joinGraph, rootExpressionId);
-                }
-            }
-            m_expressionPanel.setText(getExprssionString());
-        } catch (MultipleRootsException exception) {
-            CommonUtils.handleException(exception, MainFrame.newWelcomePanel, true, true, true, false);
-        }
-    }
-    
-    /**
-     *  CaB2B does not use this method for use of any functionality. 
-     *  This method is used in querysuit model for updating the main dag graph panel.      
-     * 
-     */
-    private List<IAssociation> addAssociations(IConstraints constraints, IJoinGraph joinGraph,
-                                               IExpressionId parentExpressionId) {
-        List<IAssociation> associations = null;
-        IAssociation association = null;
-        List<IExpressionId> intermediateExpressions = new ArrayList<IExpressionId>();
-        List<IExpressionId> childList = joinGraph.getChildrenList(parentExpressionId);
-        if (childList.isEmpty()) {
-            return associations;
-        }
-        IPath path;
-        int childSize = childList.size();
-        for (int index = 0; index < childSize; index++) {
-            IExpressionId childId = childList.get(index);
-            IExpression childExpression = constraints.getExpression(childId);
-
-            associations = new ArrayList<IAssociation>();
-            intermediateExpressions = new ArrayList<IExpressionId>();
-            association = joinGraph.getAssociation(parentExpressionId, childId);
-            associations.add(association);
-            if (!childExpression.isVisible()) {
-
-                IExpressionId sourceId;
-                while (!childExpression.isVisible()) {
-                    intermediateExpressions.add(childId);
-                    sourceId = childId;
-                    childId = joinGraph.getChildrenList(childId).get(0);
-                    association = joinGraph.getAssociation(sourceId, childId);
-                    associations.add(association);
-                    childExpression = constraints.getExpression(childId);
-                }
-            }
-
-            EntityInterface source = constraints.getExpression(parentExpressionId).getConstraintEntity().getDynamicExtensionsEntity();
-            EntityInterface target = childExpression.getConstraintEntity().getDynamicExtensionsEntity();
-            path = new Path(source, target, associations);
-
-            /**
-             * A link should be added to DAG  when either DAG is for view 
-             * or when the target node has constarints
-             */
-            if (m_isDAGForView) {
-                LinkTwoNode(getNode(parentExpressionId), getNode(childId), path, intermediateExpressions, false);
-                addAssociations(constraints, joinGraph, childId);
-            } else if (!getNodeType(childExpression.getExpressionId()).equals(ClassNodeType.ViewOnlyNode)) {
-                LinkTwoNode(getNode(parentExpressionId), getNode(childId), path, intermediateExpressions, false);
-                addAssociations(constraints, joinGraph, childId);
-            }
-
-        }
-        return associations;
     }
 
 }
