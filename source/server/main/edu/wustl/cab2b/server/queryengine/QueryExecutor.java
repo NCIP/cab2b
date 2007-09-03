@@ -146,7 +146,7 @@ public class QueryExecutor {
                 DcqlConstraint rootExprDcqlConstraint = this.constraintsBuilderResult.getExpressionToConstraintMap().get(
                                                                                                                          rootOutputExpr);
 
-                EntityInterface outputEntity = rootOutputExpr.getConstraintEntity().getDynamicExtensionsEntity();
+                EntityInterface outputEntity = rootOutputExpr.getQueryEntity().getDynamicExtensionsEntity();
                 DCQLQuery rootDCQLQuery = createDCQLQuery(outputEntity.getName(), rootExprDcqlConstraint);
                 CategorialClass catClassForRootExpr = this.categoryPreprocessorResult.getCatClassForExpr().get(
                                                                                                                rootOutputExpr);
@@ -272,7 +272,7 @@ public class QueryExecutor {
                                                                               QueryExecutor.this.constraintsBuilderResult.getExpressionToConstraintMap().get(
                                                                                                                                                              childExpr),
                                                                               parentIdConstraint);
-                String entityName = childExpr.getConstraintEntity().getDynamicExtensionsEntity().getName();
+                String entityName = childExpr.getQueryEntity().getDynamicExtensionsEntity().getName();
                 DCQLQuery queryForChildExpr = createDCQLQuery(entityName, constraintForChildExpr,
                                                               parentId.getUrl());
 
