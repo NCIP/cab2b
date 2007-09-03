@@ -186,7 +186,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         Set<String> returnerSet = new HashSet<String>();
         for (IExpressionId expressionId : expressionIdEnum) {
             IExpression expression = query.getConstraints().getExpression(expressionId);
-            EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
+            EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
             allEntities.add(entity);
 
             String entityName = Utility.getDisplayName(entity);
@@ -201,7 +201,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         }
 
         IExpression rootExpr = query.getConstraints().getExpression(rootExprId);
-        String rootEntityName = Utility.getDisplayName(rootExpr.getConstraintEntity().getDynamicExtensionsEntity());
+        String rootEntityName = Utility.getDisplayName(rootExpr.getQueryEntity().getDynamicExtensionsEntity());
         Vector<String> returner = new Vector<String>();
         returner.add(rootEntityName);
         returnerSet.remove(rootEntityName);

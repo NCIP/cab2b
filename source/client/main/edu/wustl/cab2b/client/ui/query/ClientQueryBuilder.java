@@ -36,13 +36,13 @@ import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IQuery;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
-import edu.wustl.common.querysuite.queryobject.impl.ConstraintEntity;
+import edu.wustl.common.querysuite.queryobject.impl.QueryEntity;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -84,8 +84,8 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface {
      * @return The expression id of the expression added.  
      */
     public IExpressionId addExpression(IRule rule) {
-        IConstraintEntity constraintEntity = Cab2bQueryObjectFactory.createConstrainedEntity(rule.getCondition(0).getAttribute().getEntity());
-        IExpression expression = query.getConstraints().addExpression(constraintEntity);
+        IQueryEntity queryEntity = Cab2bQueryObjectFactory.createConstrainedEntity(rule.getCondition(0).getAttribute().getEntity());
+        IExpression expression = query.getConstraints().addExpression(queryEntity);
         expression.setInView(true);
         expression.addOperand(rule);
 
@@ -205,7 +205,7 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface {
         while (expressionIds.hasMoreElements()) {
             IExpressionId expressionId = expressionIds.nextElement();
             IExpression expression = query.getConstraints().getExpression(expressionId);
-            entities.add((EntityInterface) expression.getConstraintEntity().getDynamicExtensionsEntity());
+            entities.add((EntityInterface) expression.getQueryEntity().getDynamicExtensionsEntity());
         }
 
         return entities;
@@ -218,8 +218,8 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface {
      */
     public IExpressionId createDummyExpression(EntityInterface entity) {
         Logger.out.debug("Inside createDummyExpression()");
-        IConstraintEntity constraintEntity = Cab2bQueryObjectFactory.createConstrainedEntity(entity);
-        IExpression expression = query.getConstraints().addExpression(constraintEntity);
+        IQueryEntity queryEntity = Cab2bQueryObjectFactory.createConstrainedEntity(entity);
+        IExpression expression = query.getConstraints().addExpression(queryEntity);
         Logger.out.debug("Exiting createDummyExpression()");
 
         return expression.getExpressionId();
@@ -458,8 +458,8 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface {
     }
 
     public IExpressionId addExpression(EntityInterface entity) {
-        IConstraintEntity constraintEntity = new ConstraintEntity(entity);
-        IExpression expression = query.getConstraints().addExpression(constraintEntity);
+        IQueryEntity queryEntity = new QueryEntity(entity);
+        IExpression expression = query.getConstraints().addExpression(queryEntity);
         expression.setInView(true);
         return expression.getExpressionId();
     }

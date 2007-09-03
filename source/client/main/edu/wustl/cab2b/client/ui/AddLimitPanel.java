@@ -43,9 +43,9 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImages;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 
@@ -255,7 +255,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * @see edu.wustl.cab2b.client.ui.IUpdateAddLimitUIInterface#editAddLimitUI(edu.wustl.common.querysuite.queryobject.IExpression)
      */
     public void editAddLimitUI(IExpression expression) {
-        IConstraintEntity entity = expression.getConstraintEntity();
+        IQueryEntity entity = expression.getQueryEntity();
         JXPanel[] panels = getSearchResultPanel().createEditLimitPanels(expression);
         Component[] components = ((Cab2bPanel) ((JScrollPane) panels[1].getComponent(0)).getViewport().getComponent(
                                                                                                                     0)).getComponents();
@@ -317,7 +317,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
     public void clearAddLimitUI() {
         Cab2bPanel panel = (Cab2bPanel) m_ContentForTopPanel.getComponent(1);
         Cab2bPanel cab2bPanel = (Cab2bPanel) ((JViewport) ((JScrollPane) panel.getComponent(0)).getComponent(0)).getComponent(0);
-        
+
         int i = 0;
         Component[] attributePanels = cab2bPanel.getComponents();
         final JXPanel[] panelArray = new JXPanel[attributePanels.length];
@@ -329,7 +329,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
             }
         }
 
-        Cab2bPanel constraintButtonPanel = (Cab2bPanel)((Cab2bPanel) m_ContentForTopPanel.getComponent(0)).getComponent(0);
+        Cab2bPanel constraintButtonPanel = (Cab2bPanel) ((Cab2bPanel) m_ContentForTopPanel.getComponent(0)).getComponent(0);
         constraintButtonPanel.remove(0);
         SearchResultPanel searchResultPanel = getSearchResultPanel();
         searchResultPanel.initializeAddLimitButton(panelArray, searchResultPanel.getEntityForSelectedLink());

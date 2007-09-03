@@ -58,9 +58,9 @@ import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.common.util.EntityInterfaceComparator;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 
 /**
@@ -253,7 +253,7 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
      */
     public JXPanel[] createEditLimitPanels(final IExpression expression) {
         /* This is the EntityInterface instance. */
-        final EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
+        final EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
 
         final JXPanel[] componentPanel = getAttributeComponentPanels(entity);
         final JXPanel[] finalPanelToadd = initializePanelsForAddConstraints(componentPanel);
@@ -454,8 +454,8 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
                     || (values.size() != 0)) {
                 ICondition condition = Cab2bQueryObjectFactory.createCondition();
 
-                final IConstraintEntity constraintEntity = expression.getConstraintEntity();
-                final EntityInterface entity = constraintEntity.getDynamicExtensionsEntity();
+                final IQueryEntity queryEntity = expression.getQueryEntity();
+                final EntityInterface entity = queryEntity.getDynamicExtensionsEntity();
                 final Collection<AttributeInterface> attributeCollection = entity.getAttributeCollection();
                 final AttributeInterface attribute = getAttribute(attributeCollection, panel.getAttributeName());
 
@@ -628,7 +628,7 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
             cab2bTable.getColumnModel().getColumn(2).setPreferredWidth(30);
             cab2bTable.getColumnModel().getColumn(3).setPreferredWidth(320);
             cab2bTable.setRowSelectionAllowed(false);
-            
+
             for (int j = 0; j < 4; j++) {
                 cab2bTable.getColumnModel().getColumn(j).setCellRenderer(new MyCellRenderer());
             }
@@ -691,9 +691,9 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
         public Object getValueAt(int row, int column) {
             return cdeDetails.getValueAt(row, column);
         }
-        
+
         public String getColumnName(int column) {
-            return cdeDetails.getColumnName(column); 
+            return cdeDetails.getColumnName(column);
         }
 
     }
