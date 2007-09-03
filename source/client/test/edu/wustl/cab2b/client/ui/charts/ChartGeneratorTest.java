@@ -22,7 +22,7 @@ public class ChartGeneratorTest extends TestCase {
         return cab2bTable;
     }
 
-    public void testBarChart() {
+/*    public void testBarChart() {
         Cab2bTable cab2bTable = getDataTable();
         Cab2bChartPanel chartPanel = new Cab2bChartPanel(cab2bTable);
         chartPanel.setChartType(ChartType.BAR_CHART, "");
@@ -41,6 +41,6 @@ public class ChartGeneratorTest extends TestCase {
         Cab2bChartPanel chartPanel = new Cab2bChartPanel(cab2bTable);
         chartPanel.setChartType(ChartType.SCATTER_PLOT, null);
         assertTrue(true);
-    }
+    }*/
 
 }
