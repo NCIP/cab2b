@@ -13,63 +13,52 @@ import edu.wustl.common.util.logger.Logger;
  * @author chetan_bh
  */
 public class NumericPager extends AbstractPager {
+    private String pagerName = PaginationConstants.NUMERIC_PAGER;
 
-	private String pagerName = PaginationConstants.NUMERIC_PAGER; 
-	
-	public NumericPager(Vector<PageElement> data) {
-		super(data);
-	}
+    public NumericPager(Vector<PageElement> data) {
+        super(data);
+    }
 
+    public NumericPager(Vector<PageElement> data, int elementsPerPage) {
+        super(data, elementsPerPage);
+    }
 
-	public NumericPager(Vector<PageElement> data, int elementsPerPage) {
-		super(data, elementsPerPage);
-	}
+    public NumericPager(PageElement[] elements) {
+        super(elements);
+    }
 
+    public int getElementsPerPage() {
+        return elementsPerPage;
+    }
 
-	public NumericPager(PageElement[] elements) {
-		super(elements);
-	}
-	
-	public int getElementsPerPage()
-	{
-		return elementsPerPage;
-	}
-	
-	public void setElementsPerPage(int newValue)
-	{
-		if(this.elementsPerPage != newValue && newValue > 0)
-		{
-			this.elementsPerPage = newValue;
-			pageIndices = new Vector<String>();
-			pageMap = this.page(rawData);
-			numberOfPages = pageIndices.size();
-		}
-	}
-	
-	/**
-	 * Returns the pager name.
-	 */
-	public String getPagerName()
-	{
-		return pagerName;
-	}
+    public void setElementsPerPage(int newValue) {
+        if (this.elementsPerPage != newValue && newValue > 0) {
+            this.elementsPerPage = newValue;
+            pageIndices = new Vector<String>();
+            pageMap = this.getPageMap(rawData);
+            numberOfPages = pageIndices.size();
+        }
+    }
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+    /**
+     * Returns the pager name.
+     */
+    public String getPagerName() {
+        return pagerName;
+    }
 
-		Vector<PageElement> elements = new Vector<PageElement>();
-		for(int i = 0; i < 12; i++)
-		{
-			PageElement element = new PageElementImpl();
-			element.setDisplayName("ABC-"+i);
-			elements.add(element);
-		}
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+        Vector<PageElement> elements = new Vector<PageElement>();
+        for (int i = 0; i < 12; i++) {
+            PageElement element = new PageElementImpl();
+            element.setDisplayName("ABC-" + i);
+            elements.add(element);
+        }
 
-		NumericPager numPager = new NumericPager(elements);
-		Logger.out.debug("numPage  "+numPager);
-
-	}
-	
+        NumericPager numPager = new NumericPager(elements);
+        Logger.out.debug("numPage  " + numPager);
+    }
 }
