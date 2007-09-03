@@ -148,9 +148,9 @@ public class BioAssayDataRecord extends CaArrayRecord implements IFullyInitializ
         }
         super.copyValuesFrom(record);
         BioAssayDataRecord sourceRecord = (BioAssayDataRecord) record;
-        if (!sourceRecord.fullyInitialized) {
-            throw new IllegalArgumentException();
-        }
+//        if (!sourceRecord.fullyInitialized) {
+//            throw new IllegalArgumentException();
+//        }
         int dim1 = sourceRecord.getDim1Labels().length;
         int dim2 = sourceRecord.getDim2Labels().length;
         int dim3 = sourceRecord.getDim3Labels().length;

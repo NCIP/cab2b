@@ -35,6 +35,8 @@ public class BioAssayDataDataListRetriever
         }
         BioAssayDataRecord derivedBioAssayDataRecord = (BioAssayDataRecord) LazyInitializer.getFullyInitialializedRecord(record.handle());
 
+        derivedBioAssayDataRecord.copyValuesFrom(record);
+
         int cubeAttributeIndex = attributesList.indexOf(DataListUtil.getAttributeByName(entity,
                                                                                         CUBE_ATTRIBUTE_NAME));
         Object[][][] cube = (Object[][][]) getObjectValue(recordInterface.getRecordValueList().get(
@@ -53,7 +55,11 @@ public class BioAssayDataDataListRetriever
         String[] dim3Labels = (String[]) getObjectValue(recordInterface.getRecordValueList().get(dim3LabelsIndex));
         derivedBioAssayDataRecord.setDim3Labels(dim3Labels);
 
-        record.copyValuesFrom(derivedBioAssayDataRecord);
+        BioAssayDataRecord lazy = (BioAssayDataRecord) record;
+        lazy.setCube(new Object[dim1Labels.length][dim2Labels.length][dim3Labels.length]);
+        lazy.setDim1Labels(new String[dim1Labels.length]);
+        lazy.setDim2Labels(new String[dim2Labels.length]);
+        lazy.setDim3Labels(new String[dim3Labels.length]);
     }
 
     @Override
