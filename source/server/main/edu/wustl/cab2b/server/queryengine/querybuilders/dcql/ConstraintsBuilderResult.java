@@ -32,7 +32,7 @@ public class ConstraintsBuilderResult {
         getExpressionToConstraintMap().put(expression, dcqlConstraint);
         if (addConstraintToClass) {
             addDcqlConstraintForEntity(
-                                       expression.getConstraintEntity().getDynamicExtensionsEntity(),
+                                       expression.getQueryEntity().getDynamicExtensionsEntity(),
                                        dcqlConstraint);
         }
     }

@@ -24,7 +24,6 @@ import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
@@ -32,6 +31,7 @@ import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IJoinGraph;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.IQuery;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.util.logger.Logger;
@@ -66,7 +66,7 @@ public class CategoryPreprocessor {
             IExpressionId exprId = exprIds.nextElement();
             IExpression expr = getConstraints().getExpression(exprId);
 
-            if (!Utility.isCategory(expr.getConstraintEntity().getDynamicExtensionsEntity())) {
+            if (!Utility.isCategory(expr.getQueryEntity().getDynamicExtensionsEntity())) {
                 continue;
             }
             processCategoryExpression(expr);
@@ -98,7 +98,7 @@ public class CategoryPreprocessor {
 
             // transformCategoryExpression(expr, this.masterEntryPoint);
 
-            EntityInterface catEntity = expr.getConstraintEntity().getDynamicExtensionsEntity();
+            EntityInterface catEntity = expr.getQueryEntity().getDynamicExtensionsEntity();
             Category category = getCategoryFromEntity(catEntity);
             transformCategoryExpression(expr, category.getRootClass().getCategorialClassEntity());
         } else {
@@ -267,7 +267,7 @@ public class CategoryPreprocessor {
     }
 
     private IExpression transformCategoryExpression(IExpression catExpr, EntityInterface entryPoint) {
-        EntityInterface catEntity = catExpr.getConstraintEntity().getDynamicExtensionsEntity();
+        EntityInterface catEntity = catExpr.getQueryEntity().getDynamicExtensionsEntity();
         Category originalCategory = getCategoryFromEntity(catEntity);
         getResult().getCategoryForEntity().put(catEntity, originalCategory);
 
@@ -522,8 +522,8 @@ public class CategoryPreprocessor {
     }
 
     private IExpression createExpression(EntityInterface entity, boolean inView) {
-        IConstraintEntity constraintEntity = QueryObjectFactory.createConstraintEntity(entity);
-        IExpression expr = getConstraints().addExpression(constraintEntity);
+        IQueryEntity queryEntity = QueryObjectFactory.createConstraintEntity(entity);
+        IExpression expr = getConstraints().addExpression(queryEntity);
         expr.setInView(inView);
         return expr;
     }

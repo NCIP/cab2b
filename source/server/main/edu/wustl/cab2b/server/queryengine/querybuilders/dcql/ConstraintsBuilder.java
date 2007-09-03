@@ -149,7 +149,7 @@ public class ConstraintsBuilder {
 
                 // do "constrain by parents" only till the output expressions.
                 boolean isOutputExpr = (isCategoryOutput && outputExprIds.contains(currExprId))
-                        || currExpr.getConstraintEntity().equals(getOutputEntity());
+                        || currExpr.getQueryEntity().equals(getOutputEntity());
                 if (!isOutputExpr) {
                     nextExprIds.addAll(getJoinGraph().getChildrenList(currExprId));
                 }
@@ -272,11 +272,11 @@ public class ConstraintsBuilder {
 
     public static AbstractAssociationConstraint createAssociation(IAssociation association) {
 
-        AbstractAssociationConstraint dcqlConstraint;
+        AbstractAssociationConstraint dcqlConstraint = null;
 
         if (association instanceof IIntraModelAssociation) {
             dcqlConstraint = createLocalAssociation((IIntraModelAssociation) association);
-        } else {
+        } else if (association instanceof IInterModelAssociation) {
             dcqlConstraint = createForeignAssociation((IInterModelAssociation) association);
         }
         return dcqlConstraint;
