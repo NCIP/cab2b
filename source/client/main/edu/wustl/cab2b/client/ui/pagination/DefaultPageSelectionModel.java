@@ -13,12 +13,9 @@ import java.util.Vector;
  * @author chetan_bh
  */
 public class DefaultPageSelectionModel implements PageSelectionModel {
-
     private int selectionMode = MULTIPLE_SELECTION;
 
-    //protected EventListenerList listenerList = new EventListenerList();
-
-    boolean selectAll = false;
+    //private boolean selectAll = false;
 
     /** Reference needed to keep the selections consistent with the 
      * property changes like elementsPerPage, etc. */
@@ -28,27 +25,11 @@ public class DefaultPageSelectionModel implements PageSelectionModel {
         pagination = newPagination;
     }
 
-    //	public void addPageSelectionListener(PageSelectionListener l) {
-    //		listenerList.add(PageSelectionListener.class, l);
-    //	}
-    //	
-    //	public void removePageSelectionListener(PageSelectionListener l) {
-    //		listenerList.remove(PageSelectionListener.class, l);
-    //	}
-
     public int getSelectionMode() {
         return selectionMode;
     }
 
     public boolean isSelectedIndex(String pageIndex, int index) {
-        //		if(selectionsMap != null)
-        //		{
-        //			CustomBitSet pageCustomBitSet = selectionsMap.get(pageIndex);
-        //			if(pageCustomBitSet == null)
-        //				return false;
-        //			if(pageCustomBitSet.get(index))
-        //				return true;
-        //		}
         return false;
     }
 
@@ -76,12 +57,14 @@ public class DefaultPageSelectionModel implements PageSelectionModel {
      */
     public int getSelectionCount() {
         int noOfSelections = 0;
-        Vector<String> currentAllPageIndices = pagination.getPaginationModel().getAllPageIndices();
-        for (String index : currentAllPageIndices) {
-            Vector<PageElement> elements = pagination.getPaginationModel().getPage(index);
+        final PaginationModel paginationModel = pagination.getPaginationModel();
+        final Vector<String> currentAllPageIndices = paginationModel.getAllPageIndices();
 
-            for (PageElement element : elements) {
-                if (element.isSelected())
+        for (String index : currentAllPageIndices) {
+            final Vector<PageElement> pageElementList = paginationModel.getPage(index);
+
+            for (PageElement pageElement : pageElementList) {
+                if (pageElement.isSelected())
                     noOfSelections++;
             }
         }
@@ -114,34 +97,33 @@ public class DefaultPageSelectionModel implements PageSelectionModel {
     }
 
     private void selectClearAll(boolean value) {
-        Vector<String> currentAllPageIndices = pagination.getPaginationModel().getAllPageIndices();
+        final PaginationModel paginationModel = pagination.getPaginationModel();
+        final Vector<String> currentAllPageIndices = paginationModel.getAllPageIndices();
 
         for (String index : currentAllPageIndices) {
-            Vector<PageElement> pageElements = pagination.getPaginationModel().getPage(index);
+            final Vector<PageElement> pageElementList = paginationModel.getPage(index);
 
-            if (pageElements != null) {
-                for (PageElement element : pageElements) {
-                    element.setSelected(value);
+            if (pageElementList != null) {
+                for (PageElement pageElement : pageElementList) {
+                    pageElement.setSelected(value);
                 }
             }
         }
     }
 
     private void invertAllSelections() {
-        Vector<String> currentAllPageIndices = pagination.getPaginationModel().getAllPageIndices();
+        final PaginationModel paginationModel = pagination.getPaginationModel();
+        final Vector<String> currentAllPageIndices = paginationModel.getAllPageIndices();
 
         for (String index : currentAllPageIndices) {
-            Vector<PageElement> pageElements = pagination.getPaginationModel().getPage(index);
+            Vector<PageElement> pageElementList = paginationModel.getPage(index);
 
-            if (pageElements != null) {
-                for (int i = 0; i < pageElements.size(); i++) {
-                    PageElement element = pageElements.get(i);
-                    //boolean value = pageCustomBitSet.get(i);
-                    boolean value = element.isSelected();
-                    if (value == true) {
-                        element.setSelected(false);
+            if (pageElementList != null) {
+                for (PageElement pageElement : pageElementList) {
+                    if (pageElement.isSelected()) {
+                        pageElement.setSelected(false);
                     } else {
-                        element.setSelected(true);
+                        pageElement.setSelected(true);
                     }
                 }
             }
@@ -152,22 +134,21 @@ public class DefaultPageSelectionModel implements PageSelectionModel {
      * Clears all the selections in the current displayed page.
      */
     public void clearPage(String pageIndex) {
-
-        Vector<PageElement> elements = pagination.getPaginationModel().getPage(pageIndex);
-        for (PageElement element : elements) {
-            element.setSelected(false);
+        final PaginationModel paginationModel = pagination.getPaginationModel();
+        final Vector<PageElement> pageEelementList = paginationModel.getPage(pageIndex);
+        for (PageElement pageElement : pageEelementList) {
+            pageElement.setSelected(false);
         }
-
     }
 
     /**
      * Selects all the selections in the current page displayed. 
      */
     public void selectPage(String pageIndex) {
-
-        Vector<PageElement> elements = pagination.getPaginationModel().getPage(pageIndex);
-        for (PageElement element : elements) {
-            element.setSelected(true);
+        final PaginationModel paginationModel = pagination.getPaginationModel();
+        Vector<PageElement> pageEelementList = paginationModel.getPage(pageIndex);
+        for (PageElement pageElement : pageEelementList) {
+            pageElement.setSelected(true);
         }
     }
 
@@ -175,13 +156,13 @@ public class DefaultPageSelectionModel implements PageSelectionModel {
      * Inverts the selections in the current page.
      */
     public void invertPageSelection(String pageIndex) {
-
-        Vector<PageElement> elements = pagination.getPaginationModel().getPage(pageIndex);
-        for (PageElement element : elements) {
-            if (element.isSelected()) {
-                element.setSelected(false);
+        final PaginationModel paginationModel = pagination.getPaginationModel();
+        final Vector<PageElement> pageEelementList = paginationModel.getPage(pageIndex);
+        for (PageElement pageElement : pageEelementList) {
+            if (pageElement.isSelected()) {
+                pageElement.setSelected(false);
             } else {
-                element.setSelected(true);
+                pageElement.setSelected(true);
             }
         }
     }
@@ -190,15 +171,14 @@ public class DefaultPageSelectionModel implements PageSelectionModel {
      * Returns a collection of selected page element's page indices.
      */
     public Vector<PageElementIndex> getSelectedPageIndices() {
+        final PaginationModel paginationModel = pagination.getPaginationModel();
+        final Vector<String> currentAllPageIndices = paginationModel.getAllPageIndices();
+
         Vector<PageElementIndex> selectedPageIndices = new Vector<PageElementIndex>();
-        String oldPageIndex = pagination.getPaginationModel().getCurrentPageIndex();
-
-        Vector<String> currentAllPageIndices = pagination.getPaginationModel().getAllPageIndices();
-
         for (String index : currentAllPageIndices) {
-            Vector<PageElement> elements = pagination.getPaginationModel().getPage(index);
-            for (int i = 0; i < elements.size(); i++) {
-                PageElement element = elements.get(i);
+            Vector<PageElement> pageElementList = paginationModel.getPage(index);
+            for (int i = 0; i < pageElementList.size(); i++) {
+                PageElement element = pageElementList.get(i);
                 if (element.isSelected()) {
                     selectedPageIndices.add(new PageElementIndex(index, i));
                 }
@@ -211,15 +191,16 @@ public class DefaultPageSelectionModel implements PageSelectionModel {
         // hence we should ensure that after the above opration be should some how (in a good way) bring bact 
         // the current page index in the AbstractPager to the the old value by iterating backwards .
         // This may not be the right way to do it, But its working fine now.
+        final String oldPageIndex = paginationModel.getCurrentPageIndex();
         for (int i = currentAllPageIndices.size() - 1; i >= 0; i--) {
             String index = currentAllPageIndices.get(i);
             if (index.equalsIgnoreCase(oldPageIndex)) {
-                pagination.getPaginationModel().getPage(index);
+                paginationModel.getPage(index);
                 break;
             }
             // This is just to ensure that we call getPage() which sets the index supplied which is actually
             // drementing as you can notice, and stops when old page index is found.
-            pagination.getPaginationModel().getPage(index);
+            paginationModel.getPage(index);
         }
 
         return selectedPageIndices;
