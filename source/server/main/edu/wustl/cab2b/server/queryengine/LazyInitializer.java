@@ -28,12 +28,15 @@ public class LazyInitializer {
 
     public static IFullyInitialializedRecord<?, ?> getFullyInitialializedRecord(int handle) {
         if (!map.containsKey(handle)) {
-            throw new IllegalArgumentException("Invalid handle");
+            throw new IllegalArgumentException("Invalid handle " + handle);
         }
         return map.get(handle);
     }
 
     public static synchronized void unregister(int handle) {
+        if (!map.containsKey(handle)) {
+            throw new IllegalArgumentException("Invalid handle " + handle);
+        }
         map.remove(handle);
     }
 }
