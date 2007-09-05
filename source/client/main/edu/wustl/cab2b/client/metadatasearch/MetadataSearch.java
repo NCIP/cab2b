@@ -62,16 +62,8 @@ public class MetadataSearch {
         if (searchString == null) {
             throw new CheckedException("Search string cannot be null");
         }
-        MatchedClass resultMatchedClass = null;
-        //MatchedClass matchedClass = null;
-        resultMatchedClass = searchSplit(searchTarget, searchString, basedOn);
-       /* if (matchedClass.getEntityCollection().isEmpty() == false) {
-            resultMatchedClass.getEntityCollection().addAll(matchedClass.getEntityCollection());
-        }
-        if (matchedClass.getAttributeCollection().isEmpty() == false) {
-            resultMatchedClass.getAttributeCollection().addAll(matchedClass.getAttributeCollection());
-        }*/
-        return resultMatchedClass;
+
+        return searchSplit(searchTarget, searchString, basedOn);
     }
 
     /**
@@ -118,7 +110,7 @@ public class MetadataSearch {
     private MatchedClass searchText(String[] searchString, int[] searchTarget) throws CheckedException {
 
         MatchedClass resultantMatchedClass = new MatchedClass();
-        
+
         for (int i = 0; i < searchTarget.length; i++) {
             MatchedClass matchedClass = null;
             Collection<EntityInterface> entityCollection = null;
