@@ -42,7 +42,7 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
 
     protected void initData() {
         this.setName("DataListDetailedPanel");
-        this.setLayout(new RiverLayout(0,5));
+        this.setLayout(new RiverLayout(0, 5));
         List<AttributeInterface> attributeList = edu.wustl.cab2b.common.util.Utility.getAttributeList(record.getAttributes());
         for (AttributeInterface attribute : attributeList) {
             String formattedString = CommonUtils.getFormattedString(attribute.getName());
@@ -107,6 +107,96 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Method to table data along with get column header and row header values 
+     * @param tableSP
+     * @return
+     */
+    protected String getCSVTableHeaderAndData(JScrollPane tableSP) {
+
+        //setting row header
+        Cab2bTable rowHeaderTable = (Cab2bTable) tableSP.getRowHeader().getView();
+        Cab2bTable table = (Cab2bTable) tableSP.getViewport().getView();
+        StringBuffer sb = new StringBuffer();
+
+        //setting column header
+        sb.append(getCSVTableHeader(rowHeaderTable));
+        sb.append(",");
+        sb.append(getCSVTableHeader(table));
+        sb.append("\n");
+
+        // Write the actual column values to file
+        for (int i = 0; i < table.getRowCount(); i++) {
+            for (int j = 0; j < table.getColumnCount(); j++) {
+                Object object = table.getValueAt(i, j);
+
+                //adding row header value 
+                if (j == 0)
+                    sb.append(CommonUtils.escapeString(rowHeaderTable.getValueAt(i, 0).toString()));
+
+                if (i != 0)
+                    sb.append(",");
+
+                if (object == null) {
+                    sb.append("");
+                } else {
+                    //If special character in the column name put it into double quotes
+                    String text = object.toString();
+                    text = CommonUtils.escapeString(text);
+                    sb.append(text);
+                }
+            }
+            sb.append("\n");
+        }
+
+        return sb.toString();
+
+    }
+
+    protected String getCSVTableHeader(Cab2bTable table) {
+
+        StringBuffer sb = new StringBuffer();
+
+        for (int j = 0; j < table.getColumnCount(); j++) {
+            if (j != 0)
+                sb.append(",");
+            //If special character in the column name put it into double quotes
+            String text = table.getModel().getColumnName(j);
+            text = CommonUtils.escapeString(text);
+            sb.append(text);
+        }
+
+        return sb.toString();
+
+    }
+
+    protected String getCSVData(Cab2bTable table) {
+        StringBuffer sb = new StringBuffer();
+
+        // Write the actual column values to file
+        for (int i = 0; i < table.getRowCount(); i++) {
+            for (int j = 0; j < table.getColumnCount(); j++) {
+                Object object = table.getValueAt(i, j);
+
+                if (i != 0)
+                    sb.append(",");
+
+                if (object == null) {
+                    sb.append("");
+                } else {
+                    //If special character in the column name put it into double quotes
+                    String text = object.toString();
+                    text = CommonUtils.escapeString(text);
+                    sb.append(text);
+                }
+            }
+            sb.append("\n");
+        }
+
+        return sb.toString();
+
     }
 
     /**

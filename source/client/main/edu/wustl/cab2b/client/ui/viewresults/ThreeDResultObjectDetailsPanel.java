@@ -2,9 +2,12 @@ package edu.wustl.cab2b.client.ui.viewresults;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
@@ -29,7 +32,10 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
 
     BDQDataSource tableSource;
 
-    private boolean isWholeColumnSelected = false;
+    private boolean isWholeColumnSelected = false;  
+    
+    private JScrollPane tableScrollPane;
+    
 
     /**
      * 
@@ -74,14 +80,14 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
         threeDTable.setColumnSelectionAllowed(true);
 
         threeDTable.setEditable(false);
-        final JScrollPane tableSP = new JScrollPane(threeDTable);
+        tableScrollPane = new JScrollPane(threeDTable);
 
-        addRowHeader(tableSP);
-
-        this.add("br hfill vfill", tableSP);
+        addRowHeader();       
+        
+        this.add("br hfill vfill", tableScrollPane);
     }
 
-    private void addRowHeader(JScrollPane tableSP) {
+    private void addRowHeader() {
         Cab2bTable rowHeaderTable = new Cab2bTable(new AbstractTableModel() {
 
             public int getRowCount() {
@@ -107,8 +113,7 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
         rowHeaderTable.setFont(new Font("Arial", Font.BOLD, 14));
         rowHeaderTable.setHighlighters();
         rowHeaderTable.setBackground(AlternateRowHighlighter.genericGrey.getForeground());
-
-        tableSP.setRowHeaderView(rowHeaderTable);
+        tableScrollPane.setRowHeaderView(rowHeaderTable);
     }
 
     public Cab2bTable getDataTable() {
@@ -173,5 +178,19 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
             isWholeColumnSelected = false;
         }
     }
+    
+    
+    
+    @Override
+    public String getCSVData() {
+        StringBuffer sb = new StringBuffer();
+        
+        sb.append(super.getCSVData());
+        sb.append("\n");
 
+        sb.append(getCSVTableHeaderAndData(tableScrollPane));
+        sb.append("\n");
+        
+        return sb.toString();
+    }
 }
