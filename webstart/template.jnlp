@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <jnlp spec="1.0+"
-	codebase="http://@server-address@/cab2b" 
+	codebase="http://@server-address@/" 
 	href="">
  
 	<information>
