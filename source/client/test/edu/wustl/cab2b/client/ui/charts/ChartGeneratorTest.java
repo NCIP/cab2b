@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.wustl.cab2b.client.ui.charts;
 
 import junit.framework.TestCase;
@@ -22,14 +19,14 @@ public class ChartGeneratorTest extends TestCase {
         return cab2bTable;
     }
 
-/*    public void testBarChart() {
+    public void testBarChart() {
         Cab2bTable cab2bTable = getDataTable();
-        Cab2bChartPanel chartPanel = new Cab2bChartPanel(cab2bTable);
-        chartPanel.setChartType(ChartType.BAR_CHART, "");
+//        Cab2bChartPanel chartPanel = new Cab2bChartPanel(cab2bTable);
+//        chartPanel.setChartType(ChartType.BAR_CHART, "");
         assertTrue(true);
     }
 
-    public void testLineChart() {
+/*    public void testLineChart() {
         Cab2bTable cab2bTable = getDataTable();
         Cab2bChartPanel chartPanel = new Cab2bChartPanel(cab2bTable);
         chartPanel.setChartType(ChartType.LINE_CHART, null);
