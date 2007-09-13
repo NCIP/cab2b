@@ -56,6 +56,7 @@ public class Locator {
         Object obj = null;
         Logger.out.debug("Finding Bean : " + ejbName + "\n Home Interface is : " + homeClassForEJB.getName());
         try {
+            Logger.out.debug("Contacting to :" + PropertyLoader.getJndiUrl());
             System.setProperty("java.naming.provider.url", PropertyLoader.getJndiUrl());
             System.setProperty("java.naming.factory.initial","org.jnp.interfaces.NamingContextFactory");
             System.setProperty("java.naming.factory.url.pkgs","org.jboss.naming:org.jnp.interfaces");

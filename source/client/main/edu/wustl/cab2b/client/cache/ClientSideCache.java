@@ -13,6 +13,7 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.mainframe.ClientLauncher;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.beans.MatchedClass;
+import edu.wustl.cab2b.common.beans.MatchedClassEntry;
 import edu.wustl.cab2b.common.cache.AbstractEntityCache;
 import edu.wustl.cab2b.common.cache.CompareUtil;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
@@ -114,10 +115,12 @@ public class ClientSideCache extends AbstractEntityCache {
 
             for (EntityInterface classInCategory : classesInCategory) {
                 for (EntityInterface patternEntity : patternEntityCollection) {
-                    if (CompareUtil.compare(classInCategory, patternEntity)) {
+                    MatchedClassEntry matchedClassEntry = CompareUtil.compare(classInCategory, patternEntity);
+                    if (matchedClassEntry != null) {
                         long deEntityID = category.getDeEntityId();
                         EntityInterface entityInterface = getEntityById(deEntityID);
                         matchedClass.getEntityCollection().add(entityInterface);
+                        matchedClass.addMatchedClassEntry(matchedClassEntry);
                     }
                 }
             }
@@ -141,10 +144,12 @@ public class ClientSideCache extends AbstractEntityCache {
 
             for (AttributeInterface attributeInCategory : attributesInCategory) {
                 for (AttributeInterface patternAttribute : patternAttributeCollection) {
-                    if (CompareUtil.compare(attributeInCategory, patternAttribute)) {
+                    MatchedClassEntry matchedClassEntry = CompareUtil.compare(attributeInCategory, patternAttribute);
+                    if (matchedClassEntry != null) {
                         long deEntityID = category.getDeEntityId();
                         EntityInterface entityInterface = getEntityById(deEntityID);
                         matchedClass.getEntityCollection().add(entityInterface);
+                        matchedClass.addMatchedClassEntry(matchedClassEntry);
                     }
                 }
             }

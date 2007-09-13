@@ -120,7 +120,7 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
 
         Vector<PageElement> pageElementCollection = new Vector<PageElement>();
         List<EntityInterface> resultList = new ArrayList<EntityInterface>(resultSet);
-        Collections.sort(resultList, new EntityInterfaceComparator());
+       // Collections.sort(resultList, new EntityInterfaceComparator());
         for (EntityInterface entity : resultList) {
             // Create an instance of the PageElement. Initialize with the
             // appropriate data

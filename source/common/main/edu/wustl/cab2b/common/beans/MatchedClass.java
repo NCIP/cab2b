@@ -11,11 +11,16 @@
 package edu.wustl.cab2b.common.beans;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * This Class encapsulates the searched Entity classes and 
@@ -29,6 +34,9 @@ public class MatchedClass implements Serializable {
      * Collection of matched entities.
      */
     Set<EntityInterface> entityCollection = new HashSet<EntityInterface>();
+    
+    
+    List<MatchedClassEntry> matchedClassEntries = new ArrayList<MatchedClassEntry>();
 
     /**
      * Collection of matched attributes.
@@ -40,6 +48,20 @@ public class MatchedClass implements Serializable {
      */
     public Set<EntityInterface> getEntityCollection() {
         return entityCollection;
+    }
+    
+    /**
+     * @return
+     */
+    public Set<EntityInterface> getSortedEntityCollection() {
+        Collections.sort(matchedClassEntries,new MatchedClassEntryCompator());
+        Set<EntityInterface> entities = new LinkedHashSet<EntityInterface>();
+        for(MatchedClassEntry entry : matchedClassEntries) {
+            Logger.out.debug(entry.getMatchedEntity().getName());
+            entities.add(entry.getMatchedEntity());
+        }
+        return entities;
+        
     }
 
     /**
@@ -76,4 +98,31 @@ public class MatchedClass implements Serializable {
     public void addAttribute(AttributeInterface attribute) {
         attributeCollection.add(attribute);
     }
+    
+    public void addMatchedClassEntry(MatchedClassEntry matchedClassEntry) {
+        int index = matchedClassEntries.indexOf(matchedClassEntry);
+        if (index  != -1 ) {
+            MatchedClassEntry existingMatchedClassEntry = matchedClassEntries.get(index);
+            existingMatchedClassEntry.merge(matchedClassEntry);
+        } else {
+            matchedClassEntries.add(matchedClassEntry);
+        }
+    }
+
+    /**
+     * @return Returns the matchedClassEntries.
+     */
+    public List<MatchedClassEntry> getMatchedClassEntries() {
+        return matchedClassEntries;
+    }
+
+    /**
+     * @param matchedClassEntries The matchedClassEntries to set.
+     */
+    public void setMatchedClassEntries(List<MatchedClassEntry> matchedClassEntries) {
+        this.matchedClassEntries = matchedClassEntries;
+    }
+    
+    
+    
 }

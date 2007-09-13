@@ -120,6 +120,26 @@ public class Utility {
     }
 
     /**
+     * Compares whether given searchPattern is present in passed searchString. If it is present 
+     * returns the postion where match found. Other wise it returns -1. 
+     * @param searchPattern
+     * @param searchString
+     * @return
+     */
+    public static int indexOfRegEx(String searchPattern, String searchString) {
+        //searchPattern = searchPattern.replace("*", ".*");
+        Pattern pat = Pattern.compile(searchPattern, Pattern.CASE_INSENSITIVE);
+        Matcher mat = pat.matcher(searchString);
+        int position = -1;
+
+        if (mat.find()) {
+            position = mat.start();
+           // Logger.out.debug("Pattern is:" + pat.pattern() + "  Search string is" + mat.toString() + "  position " + position );
+        }
+        return position;
+    }
+
+    /**
      * Returns all the URLs of the deployed services which are exposing given
      * entity
      * 

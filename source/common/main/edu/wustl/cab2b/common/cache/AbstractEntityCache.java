@@ -16,6 +16,7 @@ import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
 import edu.wustl.cab2b.common.beans.MatchedClass;
+import edu.wustl.cab2b.common.beans.MatchedClassEntry;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.category.Category;
@@ -162,8 +163,10 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
         MatchedClass matchedClass = new MatchedClass();
         for (EntityInterface cachedEntity : idVsEntity.values()) {
             for (EntityInterface patternEntity : patternEntityCollection) {
-                if (CompareUtil.compare(cachedEntity, patternEntity)) {
+                MatchedClassEntry matchedClassEntry = CompareUtil.compare(cachedEntity, patternEntity);
+                if (matchedClassEntry != null) {
                     matchedClass.addEntity(cachedEntity);
+                    matchedClass.addMatchedClassEntry(matchedClassEntry);
                 }
             }
         }
@@ -183,7 +186,9 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
         for (EntityInterface entity : idVsEntity.values()) {
             for (AttributeInterface cachedAttribute : entity.getAttributeCollection()) {
                 for (AttributeInterface patternAttribute : patternAttributeCollection) {
-                    if (CompareUtil.compare(cachedAttribute, patternAttribute)) {
+                    MatchedClassEntry matchedClassEntry = CompareUtil.compare(cachedAttribute, patternAttribute);
+                    if (matchedClassEntry != null) {
+                        matchedClass.addMatchedClassEntry(matchedClassEntry);
                         matchedClass.addAttribute(cachedAttribute);
                         matchedClass.addEntity(cachedAttribute.getEntity());
                     }
@@ -202,20 +207,22 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
      *         respective not null fields in the passed Permissible value
      *         object.
      */
-    public MatchedClass getEntityOnPermissibleValueParameters(
+public MatchedClass getEntityOnPermissibleValueParameters(
                                                               Collection<PermissibleValueInterface> patternPermissibleValueCollection) {
         MatchedClass matchedClass = new MatchedClass();
         for (PermissibleValueInterface cachedPermissibleValue : permissibleValueVsEntity.keySet()) {
             for (PermissibleValueInterface patternPermissibleValue : patternPermissibleValueCollection) {
-                if (CompareUtil.compare(cachedPermissibleValue, patternPermissibleValue)) {
-                    matchedClass.addEntity(permissibleValueVsEntity.get(cachedPermissibleValue));
+                EntityInterface cachedEntity = permissibleValueVsEntity.get(cachedPermissibleValue);
+                MatchedClassEntry matchedClassEntry = CompareUtil.compare(cachedPermissibleValue, patternPermissibleValue,cachedEntity);
+                if (matchedClassEntry != null) {
+                    matchedClass.addEntity(cachedEntity);
+                    matchedClass.addMatchedClassEntry(matchedClassEntry);
                 }
             }
         }
         return matchedClass;
 
     }
-
     /**
      * Returns the Entity for given Identifier
      * 

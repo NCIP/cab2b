@@ -12,14 +12,14 @@ import edu.common.dynamicextensions.domaininterface.StringValueInterface;
  */
 public class CompareUtilTest extends TestCase {
     private static DomainObjectFactory fact = DomainObjectFactory.getInstance();
-
+    
     public void testCompareEntityByName() {
         EntityInterface cacheEn = fact.createEntity();
         cacheEn.setName("edu.wustl.catissuecore.domain.Specimen");
 
         EntityInterface patternEn = fact.createEntity();
         patternEn.setName("Speci");
-        assertTrue(CompareUtil.compare(cacheEn, patternEn));
+        assertNotNull(CompareUtil.compare(cacheEn, patternEn));
     }
 
     public void testCompareEntityByDescription() {
@@ -28,7 +28,7 @@ public class CompareUtilTest extends TestCase {
 
         EntityInterface patternEn = fact.createEntity();
         patternEn.setDescription("macro");
-        assertTrue(CompareUtil.compare(cacheEn, patternEn));
+        assertNotNull(CompareUtil.compare(cacheEn, patternEn));
     }
 
     public void testCompareEntityBySemanticProperty() {
@@ -38,7 +38,7 @@ public class CompareUtilTest extends TestCase {
 
         EntityInterface patternEn = fact.createEntity();
         patternEn.addSemanticProperty(getSP("23"));
-        assertTrue(CompareUtil.compare(cacheEn, patternEn));
+        assertNotNull(CompareUtil.compare(cacheEn, patternEn));
     }
 
     public void testCompareEntityByNameNotMatching() {
@@ -47,13 +47,13 @@ public class CompareUtilTest extends TestCase {
 
         EntityInterface patternEn = fact.createEntity();
         patternEn.setName("domain");
-        assertFalse(CompareUtil.compare(cacheEn, patternEn));
+        assertNull(CompareUtil.compare(cacheEn, patternEn));
     }
 
     public void testCompareAttributeNameMatching() {
         AttributeInterface cachedAttribute = getStrAttr("GeneAttribute");
         AttributeInterface patternAttribute = getStrAttr("gene");
-        assertTrue(CompareUtil.compare(cachedAttribute, patternAttribute));
+        assertNotNull(CompareUtil.compare(cachedAttribute, patternAttribute));
     }
 
     public void testCompareAttributeDescriptionMatching() {
@@ -61,13 +61,13 @@ public class CompareUtilTest extends TestCase {
         cachedAttribute.setDescription("GeneAttribute");
         AttributeInterface patternAttribute = fact.createStringAttribute();
         patternAttribute.setDescription("gene");
-        assertTrue(CompareUtil.compare(cachedAttribute, patternAttribute));
+        assertNotNull(CompareUtil.compare(cachedAttribute, patternAttribute));
     }
 
     public void testCompareAttributeDifferentType() {
         AttributeInterface cachedAttribute = getStrAttr("GeneAttribute");
         AttributeInterface patternAttribute = getStrAttr("gene");
-        assertTrue(CompareUtil.compare(cachedAttribute, patternAttribute));
+        assertNotNull(CompareUtil.compare(cachedAttribute, patternAttribute));
     }
 
     public void testCompareAttributeSemanticPropertyMatched() {
@@ -79,19 +79,19 @@ public class CompareUtilTest extends TestCase {
 
         AttributeInterface patternAttribute = getStrAttr("foobar");
         patternAttribute.addSemanticProperty(patternSP);
-        assertTrue(CompareUtil.compare(cachedAttribute, patternAttribute));
+        assertNotNull(CompareUtil.compare(cachedAttribute, patternAttribute));
     }
 
     public void testComparePVsValueMatched() {
         StringValueInterface cachedPV = getStrVal("top");
-        StringValueInterface patternPV = getStrVal("*t*");
-        assertTrue(CompareUtil.compare(cachedPV, patternPV));
+        StringValueInterface patternPV = getStrVal("t");
+        assertNotNull(CompareUtil.compare(cachedPV, patternPV,null));
     }
 
     public void testComparePVsNothingMatched() {
         StringValueInterface cachedPV = getStrVal("top");
-        StringValueInterface patternPV = getStrVal("*r*");
-        assertFalse(CompareUtil.compare(cachedPV, patternPV));
+        StringValueInterface patternPV = getStrVal("r");
+        assertNull(CompareUtil.compare(cachedPV, patternPV,null));
     }
 
     public void testComparePVsSemanticPropertyMatched() {
@@ -100,31 +100,31 @@ public class CompareUtilTest extends TestCase {
 
         StringValueInterface patternPV = fact.createStringValue();
         patternPV.addSemanticProperty(getSP("45"));
-        assertTrue(CompareUtil.compare(cachedPV, patternPV));
+        assertNotNull(CompareUtil.compare(cachedPV, patternPV,null));
     }
 
     public void testCompareSemanticPropertyNullConceptCode() {
         SemanticPropertyInterface cachedSP = getSP(null);
         SemanticPropertyInterface patternSP = getSP(null);
-        assertFalse(CompareUtil.compare(cachedSP, patternSP));
+        assertEquals(-1,CompareUtil.compare(cachedSP, patternSP));
     }
 
     public void testCompareSemanticPropertyWithConceptCode() {
         SemanticPropertyInterface cachedSP = getSP("C23456");
         SemanticPropertyInterface patternSP = getSP("45");
-        assertTrue(CompareUtil.compare(cachedSP, patternSP));
+        assertEquals(3,CompareUtil.compare(cachedSP, patternSP));
     }
 
     public void testCompareSemanticPropertyWithConceptCodeNotMatch() {
         SemanticPropertyInterface cachedSP = getSP("C23456");
         SemanticPropertyInterface patternSP = getSP("88");
-        assertFalse(CompareUtil.compare(cachedSP, patternSP));
+        assertEquals(-1,CompareUtil.compare(cachedSP, patternSP));
     }
 
     public void testCompareSemanticPropertyNoConceptCodeForPattern() {
         SemanticPropertyInterface cachedSP = getSP("C23456");
         SemanticPropertyInterface patternSP = getSP(null);
-        assertFalse(CompareUtil.compare(cachedSP, patternSP));
+        assertEquals(-1,CompareUtil.compare(cachedSP, patternSP));
     }
 
     private static SemanticPropertyInterface getSP(String conceptCode) {

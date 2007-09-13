@@ -12,6 +12,7 @@ import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
 import edu.common.dynamicextensions.domaininterface.SemanticPropertyInterface;
 import edu.common.dynamicextensions.domaininterface.StringValueInterface;
 import edu.wustl.cab2b.common.beans.MatchedClass;
+import edu.wustl.cab2b.common.beans.MatchedClassEntry;
 import edu.wustl.cab2b.common.cache.IEntityCache;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.util.Constants;
@@ -93,6 +94,7 @@ public class MetadataSearch {
             default:
                 throw new CheckedException("Search target does not exist : " + searchTarget);
         }
+        matchedClass.setEntityCollection(matchedClass.getSortedEntityCollection());
         return matchedClass;
     }
 
@@ -110,7 +112,7 @@ public class MetadataSearch {
     private MatchedClass searchText(String[] searchString, int[] searchTarget) throws CheckedException {
 
         MatchedClass resultantMatchedClass = new MatchedClass();
-
+        
         for (int i = 0; i < searchTarget.length; i++) {
             MatchedClass matchedClass = null;
             Collection<EntityInterface> entityCollection = null;
@@ -167,11 +169,8 @@ public class MetadataSearch {
      * @return the MatchedClass instance containing the matched entities in the search.
      */
     private MatchedClass createResultClass(MatchedClass resultClass, MatchedClass matchClass) {
-        if (matchClass.getEntityCollection().isEmpty() == false) {
-            resultClass.getEntityCollection().addAll(matchClass.getEntityCollection());
-        }
-        if (matchClass.getAttributeCollection().isEmpty() == false) {
-            resultClass.getAttributeCollection().addAll(matchClass.getAttributeCollection());
+        for(MatchedClassEntry matchedClassEntry: matchClass.getMatchedClassEntries()) {
+            resultClass.addMatchedClassEntry(matchedClassEntry);
         }
         return resultClass;
     }
@@ -289,7 +288,7 @@ public class MetadataSearch {
         DomainObjectFactory deFactory = DomainObjectFactory.getInstance();
         for (int i = 0; i < searchString.length; i++) {
             StringValueInterface value = deFactory.createStringValue();
-            value.setValue("*" + searchString[i] + "*");
+            value.setValue(searchString[i]);
             permissibleValueCollection.add(value);
         }
         return permissibleValueCollection;

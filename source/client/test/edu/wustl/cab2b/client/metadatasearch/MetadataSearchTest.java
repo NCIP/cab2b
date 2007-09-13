@@ -17,6 +17,7 @@ public class MetadataSearchTest extends TestCase {
     static {
         Logger.configure();
     }
+    
 
     static MatchedClass resultMatchedClass = new MatchedClass();
 
@@ -24,7 +25,7 @@ public class MetadataSearchTest extends TestCase {
 
     static MetadataSearch metadataSearch = new MetadataSearch(entityCache);
 
-    public void testsearchPv() {
+   /* public void testsearchPv() {
 
         int[] searchTargetStatus = { Constants.PV };
         String[] searchString = { "C25228", "C62637" };
@@ -153,5 +154,74 @@ public class MetadataSearchTest extends TestCase {
         }
         assertTrue(b);
     }
+*/
+    public void testsearchCategoryPrecedance() {
 
+        int[] searchTargetStatus = { Constants.CLASS };
+        String[] searchString = { "specimen" };
+        try {
+            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, Constants.BASED_ON_TEXT);
+        } catch (CheckedException e) {
+            e.printStackTrace();
+            fail();
+        }
+        Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
+        boolean b = false;
+        int specimenIndex = 0;
+        for (EntityInterface eI : entities) {
+            if( eI.getName().equals("edu.wustl.catissuecore.domain.Specimen") ) {
+                break;
+            }
+            specimenIndex++;
+        }
+        
+        int tissueSpecimenIndex = 0;
+        for (EntityInterface eI : entities) {
+            if( eI.getName().equals("edu.wustl.catissuecore.domain.TissueSpecimen") ) {
+                break;
+            }
+            tissueSpecimenIndex++;
+        }
+        assertTrue(specimenIndex < tissueSpecimenIndex);
+    }
+    
+    public void testsearchCategoryPrecedance1() {
+
+        int[] searchTargetStatus = { Constants.CLASS };
+        String[] searchString = { "gene" };
+        try {
+            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, Constants.BASED_ON_TEXT);
+        } catch (CheckedException e) {
+            e.printStackTrace();
+            fail();
+        }
+        Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
+        boolean b = false;
+        int index1 = 0;
+        for (EntityInterface eI : entities) {
+            if( eI.getName().equals("Gene Annotation") ) {
+                break;
+            }
+            index1++;
+        }
+        
+        int index2 = 0;
+        for (EntityInterface eI : entities) {
+            if( eI.getName().equals("edu.wustl.fe.Gene") ) {
+                break;
+            }
+            index2++;
+        }
+
+        int index3 = 0;
+        for (EntityInterface eI : entities) {
+            if( eI.getName().equals("edu.wustl.fe.Unigene") ) {
+                break;
+            }
+            index3++;
+        }
+
+        assertTrue(index1 < index2);
+        assertTrue(index2 < index3);
+    }
 }

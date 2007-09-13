@@ -7,6 +7,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.beans.MatchedClass;
+import edu.wustl.cab2b.common.beans.MatchedClassEntry;
 import edu.wustl.cab2b.common.cache.AbstractEntityCache;
 import edu.wustl.cab2b.common.cache.CompareUtil;
 import edu.wustl.cab2b.server.category.CategoryOperations;
@@ -56,10 +57,12 @@ public class EntityCache extends AbstractEntityCache {
 
             for (EntityInterface classInCategory : classesInCategory) {
                 for (EntityInterface patternEntity : patternEntityCollection) {
-                    if (CompareUtil.compare(classInCategory, patternEntity)) {
+                    MatchedClassEntry matchedClassEntry = CompareUtil.compare(classInCategory, patternEntity);
+                    if (matchedClassEntry != null) {
                         long deEntityID = category.getDeEntityId();
                         EntityInterface entityInterface = getEntityById(deEntityID);
                         matchedClass.getEntityCollection().add(entityInterface);
+                        matchedClass.addMatchedClassEntry(matchedClassEntry);
                     }
                 }
             }
@@ -83,10 +86,14 @@ public class EntityCache extends AbstractEntityCache {
             Set<AttributeInterface> attributesInCategory = categoryOperations.getAllSourceAttributes(category);
             for (AttributeInterface attributeInCategory : attributesInCategory) {
                 for (AttributeInterface patternAttribute : patternAttributeCollection) {
-                    if (CompareUtil.compare(attributeInCategory, patternAttribute)) {
+                    MatchedClassEntry matchedClassEntry = CompareUtil.compare(attributeInCategory,
+                                                                              patternAttribute);
+                    if (matchedClassEntry != null) {
+
                         long deEntityID = category.getDeEntityId();
                         EntityInterface entityInterface = getEntityById(deEntityID);
                         matchedClass.getEntityCollection().add(entityInterface);
+                        matchedClass.addMatchedClassEntry(matchedClassEntry);
                     }
                 }
             }
