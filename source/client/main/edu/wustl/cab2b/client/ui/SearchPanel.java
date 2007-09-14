@@ -30,7 +30,6 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.beans.MatchedClass;
 import edu.wustl.cab2b.common.cache.IEntityCache;
-import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
@@ -248,20 +247,16 @@ public class SearchPanel extends Cab2bPanel {
             CustomSwingWorker swingWorker = new CustomSwingWorker(comp) {
                 Set<EntityInterface> srhResult = null;
 
-                protected void doNonUILogic() throws RuntimeException {
-                    try {
-                        IEntityCache cache = ClientSideCache.getInstance();
-                        MetadataSearch metadataSearch = new MetadataSearch(cache);
-                        MatchedClass matchedClass = metadataSearch.search(searchTargetStatus, values, searchOn);
-                        /* The results that is the collection of entities. */
-                        srhResult = matchedClass.getEntityCollection();
-                    } catch (CheckedException e1) {
-                        CommonUtils.handleException(e1, comp, true, true, true, false);
-                    }
+                protected void doNonUILogic() throws Exception {
+                    IEntityCache cache = ClientSideCache.getInstance();
+                    MetadataSearch metadataSearch = new MetadataSearch(cache);
+                    MatchedClass matchedClass = metadataSearch.search(searchTargetStatus, values, searchOn);
+                    /* The results that is the collection of entities. */
+                    srhResult = matchedClass.getEntityCollection();
                 }
 
                 @Override
-                protected void doUIUpdateLogic() throws RuntimeException {
+                protected void doUIUpdateLogic() throws Exception {
                     //replace previous panels 
                     removeResultPanel();
 
