@@ -49,17 +49,18 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
     protected static AbstractEntityCache entityCache = null;
 
     /**
-     * Map with KEY as dynamic extension Entity's identifier and Value as Entity
-     * object
+     * Map with KEY as dynamic extension Entity's identifier and Value as Entity object
      */
     protected Map<Long, EntityInterface> idVsEntity = new HashMap<Long, EntityInterface>();
 
     /**
-     * Map with KEY as dynamic extension Association's identifier and Value as
-     * Association object
+     * Map with KEY as dynamic extension Association's identifier and Value as Association object
      */
     protected Map<Long, AssociationInterface> idVsAssociation = new HashMap<Long, AssociationInterface>();
 
+    /**
+     * Map with KEY as dynamic extension Attribute's identifier and Value as Attribute object
+     */
     protected Map<Long, AttributeInterface> idVsAttribute = new HashMap<Long, AttributeInterface>();
 
     /**
