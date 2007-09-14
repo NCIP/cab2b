@@ -68,4 +68,11 @@ public class PathRecord {
         return lastEntityId;
     }
 
+    /**
+     * @return Returns the intermediateAssociations.
+     */
+    public String getIntermediateAssociations() {
+        return intermediateAssociations;
+    }
+
 }
