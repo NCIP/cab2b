@@ -15,6 +15,7 @@ import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
+import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 
@@ -57,4 +58,6 @@ public interface IPathFinder
      * @return Set of curated paths
      */
     public Set<ICuratedPath> autoConnect(Set<EntityInterface> entitySet);
+    
+    IPath getPathForAssociations(List<IIntraModelAssociation> associations);
 }

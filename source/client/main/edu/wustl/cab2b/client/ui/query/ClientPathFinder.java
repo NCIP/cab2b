@@ -21,6 +21,7 @@ import edu.wustl.cab2b.common.ejb.path.PathFinderHomeInterface;
 import edu.wustl.cab2b.common.locator.Locator;
 import edu.wustl.cab2b.common.locator.LocatorException;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
+import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 
@@ -106,6 +107,11 @@ public class ClientPathFinder implements IPathFinder {
         } catch (RemoteException remExp) {
             remExp.printStackTrace();
         }
+        return null;
+    }
+    
+    public IPath getPathForAssociations(List<IIntraModelAssociation> associations) {
+    	//TODO Needs to implement
         return null;
     }
 }
