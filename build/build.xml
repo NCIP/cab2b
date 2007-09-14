@@ -7,11 +7,16 @@
 	================================================================	-->
 	<property file="conf/server.properties" />
 	<property file="build/unittest.properties" />
-
-	<property name="jboss.common.lib.dir" location="${jboss.home}/server/default/lib"/>
-	<property name="jboss.deploy.dir" location="${jboss.home}/server/default/deploy"/>
-	<property name="jboss.log.dir" location="${jboss.home}/server/default/log"/>
 	
+	<property name="base.dir" value="." />
+	<property name="build.dir" value="${base.dir}/build" />
+	<property name="extra_lib.dir" value="${base.dir}/extra_lib" />
+	<property name="common.lib.dir" value="${base.dir}/lib/common" />
+	
+	<property name="jboss.common.lib.dir" location="${jboss.home}/server/default/lib" />
+	<property name="jboss.deploy.dir" location="${jboss.home}/server/default/deploy" />
+	<property name="jboss.log.dir" location="${jboss.home}/server/default/log" />
+
 	<property name="common.src" location="source/common/main" />
 	<property name="common.test" location="source/common/test" />
 
@@ -27,7 +32,7 @@
 	<property name="cactusReports.dir" location="${Reports.dir}/cactus" />
 	<property name="buildReports.dir" location="${Reports.dir}/build" />
 	<property name="javadoc.dir" location="${Reports.dir}/javadoc" />
-	<property name="install.hibernate.cfg" value="installHibernate.cfg.xml"/>
+	<property name="install.hibernate.cfg" value="installHibernate.cfg.xml" />
 
 	<property name="XmlLogger.file" value="${buildReports.dir}\log.xml" />
 	<tstamp>
@@ -58,11 +63,34 @@
 
 	<property name="standAlone.jar.dir" location="${workArea.dir}/cab2bStandAloneJar" />
 
+
+	<!--Properties set for checkstyle "PMD scans Java source code and looks for potential code problems"-->
+	<!--Read for more details http://pmd.sourceforge.net/cpd.html -->
+	<property name="pmd.dir" value="${base.dir}/pmd-3.8" />
+	<property name="pmd.report.dir" value="${pmd.dir}/reports" />
+	<property name="pmd.report.html" value="${pmd.report.dir}/caB2B_PMD_Report.html" />
+
+
+	<!--Properties set for checkstyle "Tools that generate report of code convention violations"-->
+	<property name="checkstyle.dir" value="${base.dir}/checkstyle" />
+	<property name="checkstyle.rules.file" value="${checkstyle.dir}/CheckStyleRules.xml" />
+	<property name="checkstyle.report.formatter" value="${checkstyle.dir}/report_formatter/checkstyle-simple.xsl" />
+	<property name="checkstyle.report.dir" value="${checkstyle.dir}/checkstyle_reports" />
+	<property name="checkstyle.unformatted.report" value="${checkstyle.report.dir}/checkstyle_report.xml" />
+	<property name="checkstyle.formatted.report" value="${checkstyle.report.dir}/caB2B_checkstyle_report.html" />
+
+
 	<!-- properties used for Java Web Start -->
 	<!-- change the version values for every new release,otherwise webstart will not deliver the latest changes !! -->
 	<property file="webstart/webstart.properties" />
 	<property name="webstart.client.version" value="1.0" />
 	<property name="webstart.server.version" value="1.0" />
+
+
+	<path id="checkstyle.classpath">
+		<pathelement location="${common.lib.dir}/commonpackage.jar" />
+		<pathelement location="${common.lib.dir}/DynamicExtensions.jar" />
+	</path>
 
 	<path id="common.classpath">
 		<fileset dir="lib/common">
@@ -95,6 +123,91 @@
 		<pathelement location="${server.classes.dir}" />
 		<pathelement location="${common.classes.dir}" />
 	</path>
+
+
+	<path id="common.classpath">
+		<fileset dir="lib/common">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="client.classpath">
+		<path refid="common.classpath" />
+		<fileset dir="lib/client">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="server.classpath">
+		<path refid="common.classpath" />
+		<fileset dir="lib/server">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="cactus.classpath">
+		<path refid="server.classpath" />
+		<path refid="client.classpath" />
+		<fileset dir="lib/junitTest/">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement location="${testcase.properties.folder}" />
+		<pathelement location="${client.classes.dir}" />
+		<pathelement location="${server.classes.dir}" />
+		<pathelement location="${common.classes.dir}" />
+	</path>
+
+	<!-- ================================================================================== -->
+
+	<target name="checkstyle" description="Generates a report of code convention violations.">
+		<taskdef resource="checkstyletask.properties" classpath="${extra_lib.dir}/checkstyle-all-4.2.jar" />
+		<delete dir="${checkstyle.report.dir}" />
+		<mkdir dir="${checkstyle.report.dir}" />
+		<checkstyle config="${checkstyle.rules.file}" failureProperty="checkstyle.failed" failOnViolation="false" classpathref="checkstyle.classpath">
+			<formatter type="xml" tofile="${checkstyle.unformatted.report}" />
+			<fileset dir="${common.src}" includes="**/*.java" />
+			<fileset dir="${server.src}" includes="**/*.java" />
+			<fileset dir="${client.src}" includes="**/*.java" />
+		</checkstyle>
+		<style in="${checkstyle.unformatted.report}" out="${checkstyle.formatted.report}" style="${checkstyle.report.formatter}" />
+	</target>
+
+	<target name="checkstyle_wrapper" depends="checkstyle" description="Breaks the build is checkstyle detected code conventions violations.">
+	</target>
+
+
+	<!-- =================================================================== -->
+
+	<!-- ================================================================================== -->
+	<target name="pmd" description="PMD scan Java source code and looks for potential code problems.">
+		<taskdef name="pmd" classpath="${pmd.dir}/lib/pmd-3.8.jar" classname="net.sourceforge.pmd.ant.PMDTask" />
+		<delete dir="${pmd.report.dir}" />
+		<mkdir dir="${pmd.report.dir}" />
+		<pmd shortFilenames="true">
+			<ruleset>basic</ruleset>
+			<ruleset>braces</ruleset>
+			<ruleset>clone</ruleset>
+			<ruleset>codesize</ruleset>
+			<ruleset>controversial</ruleset>
+			<ruleset>coupling</ruleset>
+			<ruleset>design</ruleset>
+			<ruleset>finalizers</ruleset>
+			<ruleset>imports</ruleset>
+			<ruleset>j2ee</ruleset>
+			<!--ruleset>javabeans</ruleset-->
+			<ruleset>migrating</ruleset>
+			<ruleset>naming</ruleset>
+			<ruleset>strings</ruleset>
+			<ruleset>unusedcode</ruleset>
+			<ruleset>sunsecure</ruleset>
+
+			<formatter type="html" toFile="${pmd.report.html}" />
+			<fileset dir="${common.src}" includes="**/*.java" />
+			<fileset dir="${server.src}" includes="**/*.java" />
+			<fileset dir="${client.src}" includes="**/*.java" />
+		</pmd>
+	</target>
+	<!-- ================================================================================== -->
 
 	<!-- =========================================================================== 
 			Cleans Everything in workarea folder	-->
@@ -315,7 +428,7 @@
 	<!-- ================================================================================== 
 			"Drops existing database and create new database with schema"
 	================================================================================== 	-->
-	
+
 	<target name="create.database">
 		<echo>Creating cab2b database...</echo>
 		<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${database.server.ip}:${database.server.port}/" userid="${database.username}" password="${database.password}" onerror="continue" classpathref="server.classpath">			
@@ -335,7 +448,7 @@
 		<copy todir="${server.classes.dir}">
 			<fileset dir="${conf.dir}">
 				<include name="*.wsdd" />
-				
+
 				<include name="*.cfg.xml" />
 				<include name="dbutil.properties" />
 				<include name="cab2b.properties" />
@@ -344,7 +457,7 @@
 				<include name="ResultConfiguration.xml" />
 			</fileset>
 		</copy>
-		
+
 		<property name="cfgFile" value="${server.classes.dir}/${install.hibernate.cfg}" />
 		<replace file="${cfgFile}" token="server-ip" value="${database.server.ip}" />
 		<replace file="${cfgFile}" token="port" value="${database.server.port}" />
@@ -352,7 +465,7 @@
 		<replace file="${cfgFile}" token="user_name" value="${database.username}" />
 		<replace file="${cfgFile}" token="user_password" value="${database.password}" />
 		<echo message="hibernate.configuration.files = dehibernate.cfg.xml,installHibernate.cfg.xml" file="${server.classes.dir}/dbutil.properties" append="false" />
-			
+
 		<echo message="Loading models and paths to database..." />
 		<java classname="edu.wustl.cab2b.server.path.PathBuilder" classpathref="pathbuilder.classpath" fork="yes" />
 		<path id="pathbuilder.classpath">
@@ -362,8 +475,8 @@
 		</path>
 	</target>
 	<!-- ================================================================================== -->
-	<target name="install.server" depends="build.paths,deploy.jboss" description="Installs cab2b database. Loads paths and starts Jbosss"/>
-	
+	<target name="install.server" depends="build.paths,deploy.jboss" description="Installs cab2b database. Loads paths and starts Jbosss" />
+
 	<!-- ============================================================================
 	 			Cactus TESTS
 	================================================================================= -->
@@ -541,27 +654,27 @@
 		<mkdir dir="${client.jar.dir}" />
 		<mkdir dir="${webstart.client.dir}" />
 		<mkdir dir="${webstart.jnlp.dir}" />
-		
-		<mkdir dir="${webstart.war.dir}/WEB-INF"/>
-		<mkdir dir="${webstart.war.dir}/conf"/>
-		
+
+		<mkdir dir="${webstart.war.dir}/WEB-INF" />
+		<mkdir dir="${webstart.war.dir}/conf" />
+
 		<!-- copy jnlp to workarea and then replace the server place holder-->
 		<copy todir="${webstart.dir}">
 			<fileset dir="${webstart.src}">
-				<include name="*.jnlp"/>
+				<include name="*.jnlp" />
 			</fileset>
 		</copy>
-		
-	  	 <replaceregexp byline="true" flags="g" >
-	  	    <fileset dir="${webstart.dir}">
-	  	    	<include name="*.jnlp"/>
-	  	    </fileset>
-	  	    <regexp pattern="@server-address@"/>
-	  	    <substitution expression="${webstart.server.host}:${webstart.server.port}"/>
-	  	 </replaceregexp>
-      <!-- done replacing-->
 
-						
+		<replaceregexp byline="true" flags="g">
+			<fileset dir="${webstart.dir}">
+				<include name="*.jnlp" />
+			</fileset>
+			<regexp pattern="@server-address@" />
+			<substitution expression="${webstart.server.host}:${webstart.server.port}" />
+		</replaceregexp>
+		<!-- done replacing-->
+
+
 		<copy todir="${client.jar.dir}">
 			<fileset dir="${client.classes.dir}">
 				<include name="**/*.class" />
@@ -579,15 +692,15 @@
 			</fileset >
 		</copy>
 
-				
+
 		<!--- create the images.jar and conf.jar to include in the client jar folder -->
-		<jar basedir="${conf.dir}" destfile="${webstart.client.dir}/conf.jar" >
+		<jar basedir="${conf.dir}" destfile="${webstart.client.dir}/conf.jar">
 			<include name="**/*.*" />
 		</jar>
-		<jar basedir="resources/images" destfile="${webstart.client.dir}/images.jar" >
+		<jar basedir="resources/images" destfile="${webstart.client.dir}/images.jar">
 			<include name="**/*" />
 		</jar>
-				
+
 		<copy toDir="${webstart.client.dir}">
 			<fileset dir="lib/client">
 				<include name="**/*.jar" />
@@ -596,14 +709,14 @@
 				<include name="**/*.jar" />
 			</fileset>
 		</copy>
-		
+
 		<!-- compile JNLPBuilder -->
-		<javac srcdir="${basedir}/webstart"  includes="JNLPBuilder.java" failonerror="true" classpathref="server.classpath" />
+		<javac srcdir="${basedir}/webstart" includes="JNLPBuilder.java" failonerror="true" classpathref="server.classpath" />
 
 
 		<!-- create JNLP's for all the jars and modify the client jar's JNLP accordingly -->
 		<java classname="JNLPBuilder" failonerror="true">
-			<classpath >
+			<classpath>
 				<path refid="server.classpath" />
 				<pathelement location="${basedir}/webstart" />
 			</classpath >
@@ -612,13 +725,13 @@
 			<arg value="${webstart.client.dir}" />
 			<arg value="${webstart.jnlp.dir}" />
 		</java>
-		
+
 		<echo message="JNLPBuilder finished its task" />
-				
+
 		<!-- make the client jar only after other jars have been copied and JNLP's have been created
 				in order to avoid creating a new JNLP for the client jar -->
 		<jar basedir="${client.jar.dir}" destfile="${webstart.client.jar}">
-					<include name="**/*" />
+			<include name="**/*" />
 		</jar>
 
 		<!-- sign all the jars -->
@@ -626,31 +739,31 @@
 			<fileset dir="${webstart.client.dir}">
 				<include name="**/*.jar" />
 				<!-- exclude files which are already signed -->
-				<exclude name="**/org-netbeans-graph-vmd.jar"/>
-  			    <exclude name="**/org-openide-util.jar"/>
+				<exclude name="**/org-netbeans-graph-vmd.jar" />
+				<exclude name="**/org-openide-util.jar" />
 			</fileset>
 		</signjar>
-		
-		<!-- copy the images to be used by Web Start -->
-		<copy todir="${webstart.client.dir}"  file="resources/images/CaB2B_48_48_bg.gif" />
-		<copy todir="${webstart.client.dir}"  file="resources/images/CaB2B_32_32_bg.gif" />
-		<copy todir="${webstart.war.dir}/conf">
-					<fileset dir="${conf.dir}">
-						<include name="cab2b.properties"/>
-					</fileset>
-		</copy>
-		<copy todir="${webstart.war.dir}"  file="${basedir}/webstart/index.html" />
-		
-		<war destfile="${workArea.dir}/cab2b.war" webxml="${basedir}/webstart/web.xml">
-			 <fileset dir="${basedir}/webstart">
-                       <include name="images/**/*"/>
-             </fileset>
-			<fileset dir="${webstart.war.dir}">
- 		    </fileset>
-        </war>
 
-		
-		
+		<!-- copy the images to be used by Web Start -->
+		<copy todir="${webstart.client.dir}" file="resources/images/CaB2B_48_48_bg.gif" />
+		<copy todir="${webstart.client.dir}" file="resources/images/CaB2B_32_32_bg.gif" />
+		<copy todir="${webstart.war.dir}/conf">
+			<fileset dir="${conf.dir}">
+				<include name="cab2b.properties" />
+			</fileset>
+		</copy>
+		<copy todir="${webstart.war.dir}" file="${basedir}/webstart/index.html" />
+
+		<war destfile="${workArea.dir}/cab2b.war" webxml="${basedir}/webstart/web.xml">
+			<fileset dir="${basedir}/webstart">
+				<include name="images/**/*" />
+			</fileset>
+			<fileset dir="${webstart.war.dir}">
+			</fileset>
+		</war>
+
+
+
 		<!-- 	
 		<zip destfile="${workArea.dir}/cab2b.war">
 			<fileset dir="${webstart.war.dir}">
@@ -658,15 +771,15 @@
 		</zip>
 	-->
 	</target>
-	
+
 	<target name="temp">
 		<zip destfile="${workArea.dir}/cab2b.war">
 			<fileset dir="${webstart.war.dir}">
-		   </fileset>
+			</fileset>
 		</zip>
 	</target>
-	
-	
+
+
 	<!-- ================================================================================== -->
 
 	<target name="query.jar" depends="compile.all">
