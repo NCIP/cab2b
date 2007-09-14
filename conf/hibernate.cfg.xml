@@ -8,18 +8,18 @@
 	   	<property name="show_sql">false</property>
 
 
-<!-- use data source    -->  
+<!-- use data source       --> 
     	  
     	<property name="connection.datasource">java:/cab2bDS</property>
 
-  	  
-<!-- use Local Database -->
-<!-- 
+  	
+<!-- use Local Database  
+
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
        	<property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password"></property>
         <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/cab2b</property>
- -->
+    --> 
 
     	<property name="hibernate.transaction.factory_class">net.sf.hibernate.transaction.JDBCTransactionFactory</property>
 	
@@ -28,7 +28,9 @@
        	<property name="hibernate.jdbc.batch_size">0</property>
        			
 		<mapping resource="edu/wustl/cab2b/server/hbm/AbstractDomainObject.hbm.xml"/>
+		<mapping resource="edu/wustl/cab2b/server/hbm/CaB2BHQL.hbm.xml"/>
 		<mapping resource="edu/wustl/cab2b/server/hbm/Cab2bQuery.hbm.xml"/>
+		
 		
 	</session-factory>
 </hibernate-configuration>
