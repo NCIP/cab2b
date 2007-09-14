@@ -11,7 +11,6 @@
 package edu.wustl.cab2b.client.ui.query;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
