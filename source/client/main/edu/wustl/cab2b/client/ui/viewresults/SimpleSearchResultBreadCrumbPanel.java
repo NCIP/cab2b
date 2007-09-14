@@ -134,7 +134,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
      * @param queryResult
      */
     private void initGUI(IQueryResult queryResult) {
-        this.setLayout(new RiverLayout(5,5));
+        this.setLayout(new RiverLayout(5, 5));
         currentBreadCrumbName = null;
 
         breadCrumbsAL = new BreadCrumbActionListener(this);
@@ -339,10 +339,12 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
             breadCrumbText = Utility.getDisplayName(hyperLinkUserObject.getTargetEntity());
 
             /* Get result by executing the Query in a worker thread. */
-            CustomSwingWorker swingWorker = new CustomSwingWorker((JXPanel) breadCrumbPanel) {
+            CustomSwingWorker swingWorker = new CustomSwingWorker((JXPanel) breadCrumbPanel,
+                    SimpleSearchResultBreadCrumbPanel.this) {
+
                 IQueryResult queryResult = null;
 
-                protected void doNonUILogic() throws RuntimeException {
+                protected void doNonUILogic() throws Exception {
                     queryResult = CommonUtils.executeQuery((ICab2bQuery) query, (JComponent) breadCrumbPanel);
                 }
 
@@ -358,7 +360,6 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
                     JXPanel resultPanel = ResultPanelFactory.getResultPanel(breadCrumbPanel, queryResult,
                                                                             parentDataRow, association);
                     addToPanel(resultPanel, breadCrumbText);
-
                 }
             };
             if (query != null) {
