@@ -1,4 +1,3 @@
-
 package edu.wustl.cab2b.client.ui.util;
 
 import java.awt.Component;
@@ -13,282 +12,263 @@ import javax.swing.SwingUtilities;
  * while one SwingWorker task is already executing
  *
  */
-public abstract class CustomSwingWorker
-{
-	
-	private ThreadVar threadVar;
+public abstract class CustomSwingWorker {
 
-	private GlassPane glassPane;
-	
-	private java.awt.Component aComponent;
-	
-	/** 
-	 * Class to maintain reference to current worker thread
-	 * under separate synchronization control.
-	 */
-	private static class ThreadVar
-	{
+    private ThreadVar threadVar;
 
-		private Thread thread;
+    private GlassPane glassPane;
 
-		ThreadVar(Thread t)
-		{
-			thread = t;
-		}
+    private Component aComponent;
 
-		synchronized Thread get()
-		{
-			return thread;
-		}
+    private Component parentCoponent;
 
-		synchronized void clear()
-		{
-			thread = null;
-		}
-	}
+    private boolean errorOccured;
 
+    /** 
+     * Class to maintain reference to current worker thread
+     * under separate synchronization control.
+     */
+    private static class ThreadVar {
 
-	/**
-	 * Start a thread that will call the <code>construct</code> method
-	 * and then exit.
-	 * @param aComponent a reference to the UI component that's directly using
-	 * SwingWorker
-	 */
-	public CustomSwingWorker(Component aComponent)
-	{
-		setAComponent(aComponent);
+        private Thread thread;
 
-		final Runnable doFinished = new Runnable()
-		{
+        ThreadVar(Thread t) {
+            thread = t;
+        }
 
-			public void run()
-			{
-				finished();
-			}
-		};
+        synchronized Thread get() {
+            return thread;
+        }
 
-		Runnable doConstruct = new Runnable()
-		{
+        synchronized void clear() {
+            thread = null;
+        }
+    }
 
-			public void run()
-			{
-				try
-				{
-					construct();
-				}
-				finally
-				{
-					threadVar.clear();
-				}
+    public CustomSwingWorker(Component aComponent) {
+        this(aComponent, aComponent);
+    }
 
-				// Execute the doFinished runnable on the Swing dispatcher thread
-				SwingUtilities.invokeLater(doFinished);
-			}
-		};
+    /**
+     * Start a thread that will call the <code>construct</code> method
+     * and then exit.
+     * @param aComponent a reference to the UI component that's directly using
+     * SwingWorker
+     */
+    public CustomSwingWorker(Component aComponent, Component parentCoponent) {
+        this.parentCoponent = parentCoponent;
+        setAComponent(aComponent);
 
-		// Group the new worker thread in the same group as the "spawner" thread
-		Thread t = new Thread(Thread.currentThread().getThreadGroup(), doConstruct);
-		threadVar = new ThreadVar(t);
-	}
-	
-	/**
-	 * Start a thread that will call the <code>construct</code> method
-	 * and then exit.
-	 * @param aComponent a reference to the UI component that's directly using
-	 * SwingWorker
-	 */
-	public CustomSwingWorker(Component aComponent, Object object)
-	{
-		setAComponent(aComponent);
+        final Runnable doFinished = new Runnable() {
 
-		final Runnable doFinished = new Runnable()
-		{
+            public void run() {
+                finished();
+            }
+        };
 
-			public void run()
-			{
-				finished();
-			}
-		};
+        Runnable doConstruct = new Runnable() {
 
-		Runnable doConstruct = new Runnable()
-		{
+            public void run() {
+                try {
+                    construct();
+                } finally {
+                    threadVar.clear();
+                }
 
-			public void run()
-			{
-				try
-				{
-					construct();
-				}
-				finally
-				{
-					threadVar.clear();
-				}
+                // Execute the doFinished runnable on the Swing dispatcher thread
+                SwingUtilities.invokeLater(doFinished);
+            }
+        };
 
-				// Execute the doFinished runnable on the Swing dispatcher thread
-				SwingUtilities.invokeLater(doFinished);
-			}
-		};
+        // Group the new worker thread in the same group as the "spawner" thread
+        Thread t = new Thread(Thread.currentThread().getThreadGroup(), doConstruct);
+        threadVar = new ThreadVar(t);
+    }
 
-		// Group the new worker thread in the same group as the "spawner" thread
-		Thread t = new Thread(Thread.currentThread().getThreadGroup(), doConstruct);
-		threadVar = new ThreadVar(t);
-	}
-	
-	/**
-	 * Activate the capabilities of glasspane
-	 * 
-	 */
-	private void activateGlassPane()
-	{
-		// Mount the glasspane on the component window
-		GlassPane aPane = GlassPane.mount(getAComponent(), true);
+    /**
+     * Start a thread that will call the <code>construct</code> method
+     * and then exit.
+     * @param aComponent a reference to the UI component that's directly using
+     * SwingWorker
+     */
+    public CustomSwingWorker(Component aComponent, Object object) {
+        setAComponent(aComponent);
 
-		// keep track of the glasspane as an instance variable
-		setGlassPane(aPane);
+        final Runnable doFinished = new Runnable() {
 
-		if (getGlassPane() != null)
-		{
-			// Start interception UI interactions
-			getGlassPane().setVisible(true);
-		}
-	}
+            public void run() {
+                finished();
+            }
+        };
 
-	/** 
-	 * Enable the glass pane (to disable unwanted UI manipulation), then spawn the non-UI logic on a separate thread.
-	 */
-	private void construct()
-	{
-		activateGlassPane();
-		try
-		{
-			doNonUILogic();
-		}
-		catch (RuntimeException e)
-		{
-			e.printStackTrace();
-		}
-	}
+        Runnable doConstruct = new Runnable() {
 
-	/**
-	 * Deactivate the glasspane
-	 * 
-	 */
-	private void deactivateGlassPane()
-	{
-		if (getGlassPane() != null)
-		{
-			// Stop UI interception
-			getGlassPane().setVisible(false);
-		}
-	}
+            public void run() {
+                try {
+                    construct();
+                } finally {
+                    threadVar.clear();
+                }
 
-	/**
-	 * This method will be implemented by the inner class of SwingWorker
-	 * It should only consist of the logic that's unrelated to UI
-	 *
-	 * @throws java.lang.RuntimeException thrown if there are any errors in the non-ui logic
-	 */
-	protected abstract void doNonUILogic() throws RuntimeException;
+                // Execute the doFinished runnable on the Swing dispatcher thread
+                SwingUtilities.invokeLater(doFinished);
+            }
+        };
 
-	/**
-	 * This method will be implemented by the inner class of SwingWorker
-	 * It should only consist of the logic that's related to UI updating, after
-	 * the doNonUILogic() method is done. 
-	 *
-	 * @throws java.lang.RuntimeException thrown if there are any problems executing the ui update logic
-	 */
-	protected abstract void doUIUpdateLogic() throws RuntimeException;
+        // Group the new worker thread in the same group as the "spawner" thread
+        Thread t = new Thread(Thread.currentThread().getThreadGroup(), doConstruct);
+        threadVar = new ThreadVar(t);
+    }
 
-	/**
-	 * Called on the event dispatching thread (not on the worker thread)
-	 * after the <code>construct</code> method has returned.
-	 */
-	protected void finished()
-	{
-		try
-		{
-			deactivateGlassPane();
-			doUIUpdateLogic();
-		}
-		catch (RuntimeException e)
-		{
-			// Do nothing, simply cleanup below
-			//Logger.out.debug("SwingWorker error" + e);
-			e.printStackTrace();
-		}
-		finally
-		{
-			// Allow original component to get the focus
-			if (getAComponent() != null)
-			{
-				getAComponent().requestFocus();
-			}
-		}
-	}
+    /**
+     * Activate the capabilities of glasspane
+     * 
+     */
+    private void activateGlassPane() {
+        // Mount the glasspane on the component window
+        GlassPane aPane = GlassPane.mount(getAComponent(), true);
 
-	/**
-	 * Getter method
-	 * 
-	 * @return java.awt.Component
-	 */
-	protected Component getAComponent()
-	{
-		return aComponent;
-	}
+        // keep track of the glasspane as an instance variable
+        setGlassPane(aPane);
 
-	/**
-	 * Getter method
-	 * 
-	 * @return GlassPane
-	 */
-	protected GlassPane getGlassPane()
-	{
-		return glassPane;
-	}
+        if (getGlassPane() != null) {
+            // Start interception UI interactions
+            getGlassPane().setVisible(true);
+        }
+    }
 
-	/**
-	 * A new method that interrupts the worker thread.  Call this method
-	 * to force the worker to stop what it's doing.
-	 */
-	public void interrupt()
-	{
-		Thread t = threadVar.get();
-		if (t != null)
-		{
-			t.interrupt();
-		}
-		threadVar.clear();
-	}
+    /** 
+     * Enable the glass pane (to disable unwanted UI manipulation), then spawn the non-UI logic on a separate thread.
+     */
+    private void construct() {
+        activateGlassPane();
+        try {
+            doNonUILogic();
+        } catch (Exception e) {
+            errorOccured = true;
+            CommonUtils.handleException(CommonUtils.getCab2bException(e), this.parentCoponent, true, false, false,
+                                        false);
+        }
+    }
 
-	/**
-	 * Setter method
-	 * 
-	 * @param newAComponent java.awt.Component
-	 */
-	protected void setAComponent(Component newAComponent)
-	{
-		aComponent = newAComponent;
-	}
+    /**
+     * Deactivate the glasspane
+     * 
+     */
+    private void deactivateGlassPane() {
+        if (getGlassPane() != null) {
+            // Stop UI interception
+            getGlassPane().setVisible(false);
+        }
+    }
 
-	/**
-	 * Setter method
-	 * 
-	 * @param newGlassPane GlassPane
-	 */
-	protected void setGlassPane(GlassPane newGlassPane)
-	{
-		glassPane = newGlassPane;
-	}
+    /**
+     * This method will be implemented by the inner class of SwingWorker
+     * It should only consist of the logic that's unrelated to UI
+     *
+     * @throws java.lang.RuntimeException thrown if there are any errors in the non-ui logic
+     */
+    protected abstract void doNonUILogic() throws Exception;
 
-	/**
-	 * Start the worker thread.
-	 */
-	public void start()
-	{
-		Thread t = threadVar.get();
-		if (t != null)
-		{
-			t.start();
-		}
-	}
+    /**
+     * This method will be implemented by the inner class of SwingWorker
+     * It should only consist of the logic that's related to UI updating, after
+     * the doNonUILogic() method is done. 
+     *
+     * @throws java.lang.RuntimeException thrown if there are any problems executing the ui update logic
+     */
+    protected abstract void doUIUpdateLogic() throws Exception;
+
+    /**
+     * Called on the event dispatching thread (not on the worker thread)
+     * after the <code>construct</code> method has returned.
+     */
+    protected void finished() {
+        try {
+            deactivateGlassPane();
+            if (!errorOccured) {
+                doUIUpdateLogic();
+            }
+        } catch (Exception e) {
+            CommonUtils.handleException(CommonUtils.getCab2bException(e), this.parentCoponent, true, false, false,
+                                        false);
+        } finally {
+            // Allow original component to get the focus
+            if (getAComponent() != null) {
+                getAComponent().requestFocus();
+            }
+        }
+    }
+
+    /**
+     * Getter method
+     * 
+     * @return java.awt.Component
+     */
+    protected Component getAComponent() {
+        return aComponent;
+    }
+
+    /**
+     * Getter method
+     * 
+     * @return GlassPane
+     */
+    protected GlassPane getGlassPane() {
+        return glassPane;
+    }
+
+    /**
+     * A new method that interrupts the worker thread.  Call this method
+     * to force the worker to stop what it's doing.
+     */
+    public void interrupt() {
+        Thread t = threadVar.get();
+        if (t != null) {
+            t.interrupt();
+        }
+        threadVar.clear();
+    }
+
+    /**
+     * Setter method
+     * 
+     * @param newAComponent java.awt.Component
+     */
+    protected void setAComponent(Component newAComponent) {
+        aComponent = newAComponent;
+    }
+
+    /**
+     * Setter method
+     * 
+     * @param newGlassPane GlassPane
+     */
+    protected void setGlassPane(GlassPane newGlassPane) {
+        glassPane = newGlassPane;
+    }
+
+    /**
+     * Start the worker thread.
+     */
+    public void start() {
+        Thread t = threadVar.get();
+        if (t != null) {
+            t.start();
+        }
+    }
+
+    /**
+     * @return the hasErrorOccured
+     */
+    public boolean getHasErrorOccured() {
+        return errorOccured;
+    }
+
+    /**
+     * @param hasErrorOccured the hasErrorOccured to set
+     */
+    public void setHasErrorOccured(boolean hasErrorOccured) {
+        this.errorOccured = hasErrorOccured;
+    }
 }
