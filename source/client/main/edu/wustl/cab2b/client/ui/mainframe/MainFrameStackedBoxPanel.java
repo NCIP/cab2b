@@ -64,8 +64,8 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
      */
     public MainFrameStackedBoxPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
-
         this.setLayout(new BorderLayout());
+        
         StackedBox stackedBox = new StackedBox();
         stackedBox.setTitleBackgroundColor(new Color(200, 200, 220));
         JScrollPane scrollPane = new JScrollPane(stackedBox);
@@ -75,7 +75,9 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
         mySearchQueriesPanel = getPanel();
         JScrollPane jScrollPane = new JScrollPane(mySearchQueriesPanel);
         jScrollPane.setPreferredSize(new Dimension(250, 150));
-        jScrollPane.setBackground(null);
+        jScrollPane.setBorder(null);
+        jScrollPane.getViewport().setBackground(Color.WHITE);
+        
         final String titleQuery = ApplicationProperties.getValue(QUERY_BOX_TEXT);
         stackedBox.addBox(titleQuery, jScrollPane, MY_SEARCH_QUERIES_IMAGE, false);
 
