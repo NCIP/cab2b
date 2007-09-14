@@ -142,5 +142,13 @@ public class DagControlPanel extends JPanel implements ActionListener {
         }
         revalidate();
     }
+    
+    /**
+     * This method enable or disables the AutoConnect button
+     * @param enable
+     */
+    public void enableAutoConnectButton(boolean enable) {
+        autoconnectButton.setEnabled(enable);
+    }
 
 }

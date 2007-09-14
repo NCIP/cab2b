@@ -875,5 +875,13 @@ public class MainDagPanel extends Cab2bPanel {
     public void setDAGForView(boolean forView) {
         m_isDAGForView = forView;
     }
+    
+    /**
+     * This method enables or disables the AutoConnect button of the DagControlPanel
+     * @param enable
+     */
+    public void enableAutoConnectButton(boolean enable) {
+        m_controlPanel.enableAutoConnectButton(enable);
+    }
 
 }
