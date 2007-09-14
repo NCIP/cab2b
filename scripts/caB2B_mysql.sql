@@ -56,3 +56,21 @@ create table CURATED_PATH_TO_PATH (
 	primary key (curated_path_Id,path_id)
 );
 insert into ID_TABLE(NEXT_ASSOCIATION_ID) value(1);
+
+alter table OUTPUT_CLASS_URLS drop foreign key FKE131CD69A638FEFD;
+alter table CAB2B_QUERY drop foreign key FKCC34AD9DBC7298A9;
+drop table if exists OUTPUT_CLASS_URLS;
+drop table if exists CAB2B_QUERY;
+create table OUTPUT_CLASS_URLS (
+   CAB2B_QUERY_ID bigint not null,
+   OUTPUT_CLASS_URL varchar(255),
+   POSITION integer not null,
+   primary key (CAB2B_QUERY_ID, POSITION)
+);
+create table CAB2B_QUERY (
+   IDENTIFIER bigint not null,
+   ENTITY_ID bigint not null,
+   primary key (IDENTIFIER)
+);
+alter table OUTPUT_CLASS_URLS add index FKE131CD69A638FEFD (CAB2B_QUERY_ID), add constraint FKE131CD69A638FEFD foreign key (CAB2B_QUERY_ID) references CAB2B_QUERY (IDENTIFIER);
+alter table CAB2B_QUERY add index FKCC34AD9DBC7298A9 (IDENTIFIER), add constraint FKCC34AD9DBC7298A9 foreign key (IDENTIFIER) references QUERY (IDENTIFIER);
