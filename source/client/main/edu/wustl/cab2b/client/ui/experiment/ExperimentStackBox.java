@@ -124,6 +124,8 @@ public class ExperimentStackBox extends Cab2bPanel {
     private static int chartIndex = 0;
     
     private Cab2bButton customCategoryButton;
+    
+    private Cab2bPanel dataCategoryPanel;
 
     public ExperimentStackBox(Experiment selectedExperiment) {
         m_selectedExperiment = selectedExperiment;
@@ -240,6 +242,10 @@ public class ExperimentStackBox extends Cab2bPanel {
 
 		});
 		cab2bPanel.add(customCategoryButton);
+		
+		dataCategoryPanel = new Cab2bPanel(new RiverLayout(5, 5));
+		dataCategoryPanel.add(cab2bPanel);
+		dataCategoryPanel.add("br", datalistTree);
 
         /* if (datalistTree.getRowCount() >= 1) {
          datalistTree.setSelectionRow(1);
@@ -251,7 +257,8 @@ public class ExperimentStackBox extends Cab2bPanel {
      */
     private void initializePanels() {
         // Adding Select data category pane
-        treeViewScrollPane = new JScrollPane(datalistTree);
+    	treeViewScrollPane = new JScrollPane(dataCategoryPanel);
+		treeViewScrollPane.getViewport().setBackground(Color.WHITE);
         treeViewScrollPane.setPreferredSize(new Dimension(250, 200));
         treeViewScrollPane.setBorder(null);
         stackedBox.addBox("Select Data Category", treeViewScrollPane, SELECT_DATA_CATEGORY, false);
