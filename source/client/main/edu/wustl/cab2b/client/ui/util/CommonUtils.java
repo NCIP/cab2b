@@ -22,6 +22,7 @@ import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
@@ -121,19 +122,30 @@ public class CommonUtils {
 
             errorMessageForDialog = customErrorMessage;
             errorMessageForLog = errorCode + ":" + customErrorMessage;
+        } else if (exception instanceof LocatorException) {
+            LocatorException locatorException = (LocatorException) exception;
+            errorCode = locatorException.getErrorCode();
+            customErrorMessage = ErrorCodeHandler.getErrorMessage(errorCode);
+
+            errorMessageForDialog = customErrorMessage;
+            errorMessageForLog = errorCode + ":" + customErrorMessage;
         } else {
             errorMessageForLog = exception.getMessage();
         }
+        
         if (shouldLogException) {
             Logger.out.error(errorMessageForLog, exception);
         }
+        
         if (shouldShowErrorDialog) {
             JXErrorDialog.showDialog(parentComponent, "caB2B - Application Error", errorMessageForDialog,
                                      exception);
         }
+        
         if (shouldPrintExceptionInConsole) {
             exception.printStackTrace();
         }
+        
         if (shouldKillApp) {
             System.exit(0);
         }
@@ -144,7 +156,7 @@ public class CommonUtils {
      * Locator service to locate an instance of the QueryEngineBusinessInterface
      * and uses the interace to remotely execute the query.
      */
-    public static IQueryResult executeQuery(ICab2bQuery query, JComponent comp) {
+    public static IQueryResult executeQuery(ICab2bQuery query, JComponent comp) throws RemoteException {
         QueryEngineBusinessInterface queryEngineBus = (QueryEngineBusinessInterface) getBusinessInterface(
                                                                                                           EjbNamesConstants.QUERY_ENGINE_BEAN,
                                                                                                           QueryEngineHome.class,
@@ -158,16 +170,16 @@ public class CommonUtils {
      * and uses the interace to remotely execute the query.
      */
     public static IQueryResult executeQuery(ICab2bQuery query, QueryEngineBusinessInterface queryEngineBus,
-                                            JComponent comp) {
+                                            JComponent comp) throws RemoteException {
         IQueryResult iQueryResult = null;
         try {
             iQueryResult = executeQuery(query, queryEngineBus);
         } catch (RuntimeException re) {
-            handleException(re, comp, true, true, false, false);
-        } catch (RemoteException e1) {
-            //CheckedException e = new CheckedException(e1.getMessage(), e1, ErrorCodeConstants.QM_0004);
-            handleException(getCab2bException(e1), comp, true, true, false, false);
-        }
+            handleException(re, comp, true, false, false, false);
+        } /*catch (RemoteException e1) {
+         //CheckedException e = new CheckedException(e1.getMessage(), e1, ErrorCodeConstants.QM_0004);
+         handleException(getCab2bException(e1), comp, true, false, false, false);
+         }*/
         return iQueryResult;
     }
 
