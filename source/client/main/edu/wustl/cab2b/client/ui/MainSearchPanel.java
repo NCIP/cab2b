@@ -42,6 +42,10 @@ public class MainSearchPanel extends Cab2bPanel {
     public IClientQueryBuilderInterface getQueryObject() {
         return queryObject;
     }
+    
+    public SearchNavigationPanel getBottomPanel() {
+        return m_BottomPanel;
+    }
 
     /**
      * @param queryObject The queryObject to set.

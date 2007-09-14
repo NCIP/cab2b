@@ -85,7 +85,10 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
         this.middleLabel = middleLabel;
         this.rightLabel = rightLabel;
         initUI();
+    }
 
+    public JButton getSearchButton() {
+        return tabButtons[1];
     }
 
     /**
@@ -215,22 +218,12 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
             tabButtons[0].setIcon(new ImageIcon(tabsImagesUnPressed[0]));
             tabButtons[1].setIcon(new ImageIcon(tabsImagesPressed[1]));
             tabButtons[2].setIcon(new ImageIcon(tabsImagesUnPressed[2]));
-            GlobalNavigationPanel.mainSearchPanel = new MainSearchPanel();
-            Dimension relDimension = CommonUtils.getRelativeDimension(MainFrame.mainframeScreenDimesion, 0.90f,
-                                                                      0.85f);
-            GlobalNavigationPanel.mainSearchPanel.setPreferredSize(relDimension);
-            GlobalNavigationPanel.mainSearchPanel.setSize(relDimension);
+            
+            initializeMainSearchPanel();
 
-            // Update the variable for latest screen dimension from the
-            // toolkit, this is to handle the situations where
-            // application is started and then screen resolution is
-            // changed, but the variable stiil holds old resolution
-            // size.
-            MainFrame.mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
-            Dimension dimension = MainFrame.mainframeScreenDimesion;
-            final String title = ApplicationProperties.getValue(SEARCH_FRAME_TITLE);
-            WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel, title, new Dimension(
-                    (int) (dimension.width * 0.90), (int) (dimension.height * 0.85)), true, true);
+            if (GlobalNavigationPanel.mainSearchPanel != null) {
+                showSearchDialog();
+            }
 
             MainSearchPanel.getDataList().clear();
             GlobalNavigationPanel.mainSearchPanel = null;
@@ -253,6 +246,28 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
 
         this.updateUI();
         this.repaint();
+    }
+    
+    public void initializeMainSearchPanel() {
+        GlobalNavigationPanel.mainSearchPanel = new MainSearchPanel();
+        Dimension relDimension = CommonUtils.getRelativeDimension(MainFrame.mainframeScreenDimesion, 0.90f,
+                                                                  0.85f);
+        GlobalNavigationPanel.mainSearchPanel.setPreferredSize(relDimension);
+        GlobalNavigationPanel.mainSearchPanel.setSize(relDimension);
+    }
+
+    public void showSearchDialog() {
+        // Update the variable for latest screen dimension from the
+        // toolkit, this is to handle the situations where
+        // application is started and then screen resolution is
+        // changed, but the variable stiil holds old resolution
+        // size.
+        MainFrame.mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension dimension = MainFrame.mainframeScreenDimesion;
+        final String title = ApplicationProperties.getValue(SEARCH_FRAME_TITLE);
+
+        WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel, title, new Dimension(
+                (int) (dimension.width * 0.90), (int) (dimension.height * 0.85)), true, true);
     }
 
 }

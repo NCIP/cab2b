@@ -24,6 +24,8 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
  */
 public class GlobalNavigationPanel extends Cab2bPanel {
 	private static final long serialVersionUID = 1L;
+    
+    GlobalNavigationGlassPane myGlassPane;
 
 	/**
 	 * Background color of the panel.
@@ -71,13 +73,17 @@ public class GlobalNavigationPanel extends Cab2bPanel {
 		cab2bPanel.add(labelLeft, BorderLayout.WEST);
 		cab2bPanel.add(labelMiddle, BorderLayout.CENTER);
 		cab2bPanel.add(labelRight, BorderLayout.EAST);
-		GlobalNavigationGlassPane myGlassPane = new GlobalNavigationGlassPane(labelLeft,
+		myGlassPane = new GlobalNavigationGlassPane(labelLeft,
 				labelMiddle, labelRight, mainFrame, frame);
 		cab2bPanel.setBackground(Color.WHITE);
 		this.frame.setGlassPane(myGlassPane);
 		this.add("hfill", cab2bPanel);
-
 	}
+    
+    public GlobalNavigationGlassPane getGlobalNavigationGlassPane() {
+        return this.myGlassPane;
+    }
+    
 	/*
 	 *//**
 		 * @param args

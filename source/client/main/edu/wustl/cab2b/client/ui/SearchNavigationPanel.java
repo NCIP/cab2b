@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
@@ -46,6 +47,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
     private Cab2bButton saveDataListButton;
 
+    private JButton saveQueryButton;
+
     private Cab2bButton addToExperimentButton;
 
     private Cab2bPanel buttonPanel;
@@ -61,6 +64,10 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         initGUI();
         this.setPreferredSize(new Dimension(976, 36));
         this.setBackground(new Color(240, 240, 240));
+    }
+    
+    public Cab2bButton getNextButton() {
+        return nextButton;
     }
 
     private void initGUI() {
@@ -80,6 +87,10 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         saveDataListButton = new Cab2bButton("Save Data List");
         saveDataListButton.setPreferredSize(new Dimension(160, 22));
         saveDataListButton.addActionListener(this);
+
+        saveQueryButton = new JButton("Save Query");
+        saveQueryButton.addActionListener(new SaveQueryButtonListener());
+
         addToExperimentButton = new Cab2bButton("Add to Experiment");
         addToExperimentButton.setPreferredSize(new Dimension(160, 22));
         addToExperimentButton.addActionListener(this);
@@ -89,6 +100,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         buttonPanel = new Cab2bPanel();
         buttonPanel.setBackground(null);
         buttonPanel.setLayout(flowLayout);
+        buttonPanel.add(saveQueryButton);
         buttonPanel.add(resetButton);
         buttonPanel.add(previousButton);
         buttonPanel.add(nextButton);
@@ -98,6 +110,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         this.add("hfill", messagePanel);
         this.add("hfill right", buttonPanel);
 
+        saveQueryButton.setVisible(true);
         resetButton.setVisible(false);
         previousButton.setVisible(false);
         saveDataListButton.setVisible(false);
@@ -127,7 +140,6 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             }
         } else if (strActionCommand.equals("Next")) {
             SearchNavigationPanel.messageLabel.setText("");
-            //resetButton.setVisible(false);
             previousButton.setVisible(true);
 
             if (searchCenterPanel.getSelectedCardIndex() == 0) {
@@ -167,7 +179,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             } else if (searchCenterPanel.getSelectedCardIndex() == 2) {
                 CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
 
-                    protected void doNonUILogic() {
+                    protected void doNonUILogic() throws Exception {
                         // Get the Functional class for root and update query object with it.
                         queryResults = CommonUtils.executeQuery((ICab2bQuery) clientQueryBuilder.getQuery(),
                                                                 m_mainSearchPanel);
@@ -358,5 +370,14 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         saveDataListButton.setVisible(true);
         addToExperimentButton.setVisible(true);
         showCard(true);
+    }
+
+    private class SaveQueryButtonListener implements ActionListener {
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            SaveQueryPanel saveQueryPanel = new SaveQueryPanel(m_mainSearchPanel);
+            saveQueryPanel.showInDialog();
+        }
+
     }
 }

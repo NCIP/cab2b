@@ -1,9 +1,10 @@
 package edu.wustl.cab2b.client.ui.mainframe;
 
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.MAIN_FRAME_TITLE;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.APPLICATION_RESOURCES_FILE_NAME;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.CAB2B_LOGO_IMAGE;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.ERROR_CODE_FILE_NAME;
-import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.MAIN_FRAME_TITLE;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -14,6 +15,7 @@ import java.awt.Toolkit;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.MissingResourceException;
 
 import javax.swing.BorderFactory;
@@ -34,10 +36,13 @@ import edu.wustl.cab2b.client.ui.controls.CustomizableBorder;
 import edu.wustl.cab2b.client.ui.experiment.ExperimentPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
+import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
+import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
+import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
-import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
 
@@ -51,7 +56,9 @@ import edu.wustl.common.util.logger.Logger;
 public class MainFrame extends JXFrame {
 
     private static final long serialVersionUID = 1234567890L;
+
     private static String userName;
+
     /** Everything related GUI's containers and its components size is relative to this size. */
     public static Dimension mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -66,7 +73,7 @@ public class MainFrame extends JXFrame {
 
     private JXPanel homePanel;
 
-    private MainFrameStackedBoxPanel lefthandStackedBox;
+    private static MainFrameStackedBoxPanel lefthandStackedBox;
 
     private JSplitPane splitPane;
 
@@ -97,7 +104,7 @@ public class MainFrame extends JXFrame {
         statusBar = WindowUtilities.getStatusBar(this);
         initGUI();
         lefthandStackedBox.setDataForMyExperimentsPanel(CommonUtils.getExperiments());
-        lefthandStackedBox.setDataForMySearchQueriesPanel(CommonUtils.getUserSearchQueries());
+        lefthandStackedBox.setDataForMySearchQueriesPanel();
         lefthandStackedBox.setDataForPopularSearchCategoriesPanel(CommonUtils.getPopularSearchCategories());
     }
 
@@ -119,7 +126,7 @@ public class MainFrame extends JXFrame {
         homePanel = newWelcomePanel;
         homePanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 
-        lefthandStackedBox = new MainFrameStackedBoxPanel();
+        lefthandStackedBox = new MainFrameStackedBoxPanel(this);
         lefthandStackedBox.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, lefthandStackedBox, homePanel);
@@ -147,12 +154,15 @@ public class MainFrame extends JXFrame {
         JFrame.setDefaultLookAndFeelDecorated(true);
     }
 
+    public GlobalNavigationPanel getGlobalNavigationPanel() {
+        return this.globalNavigationPanel;
+    }
+
     /** Method to set experiment home panel */
     public void setOpenExperimentWelcomePanel() {
         CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.mainPanel) {
             @Override
-            protected void doNonUILogic() throws RuntimeException {
-
+            protected void doNonUILogic() throws Exception {
                 if (openExperimentWelcomePanel != null && openExperimentWelcomePanel.isVisible()) {
                     openExperimentWelcomePanel.removeAll();
                 }
@@ -165,7 +175,7 @@ public class MainFrame extends JXFrame {
             }
 
             @Override
-            protected void doUIUpdateLogic() throws RuntimeException {
+            protected void doUIUpdateLogic() throws Exception {
                 mainPanel.removeAll();
                 MainFrame.this.remove(mainPanel);
                 mainPanel.add(" hfill vfill ", openExperimentWelcomePanel);
@@ -180,7 +190,7 @@ public class MainFrame extends JXFrame {
 
         CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
             @Override
-            protected void doNonUILogic() throws RuntimeException {
+            protected void doNonUILogic() throws Exception {
                 if (searchDataWelcomePanel == null) {
                     searchDataWelcomePanel = new SearchDataWelcomePanel(MainFrame.this);
                 }
@@ -188,7 +198,7 @@ public class MainFrame extends JXFrame {
             }
 
             @Override
-            protected void doUIUpdateLogic() throws RuntimeException {
+            protected void doUIUpdateLogic() throws Exception {
                 setWelcomePanel();
             }
         };
@@ -200,7 +210,7 @@ public class MainFrame extends JXFrame {
 
         CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
             @Override
-            protected void doNonUILogic() throws RuntimeException {
+            protected void doNonUILogic() throws Exception {
                 if (newWelcomePanel == null) {
                     newWelcomePanel = new NewWelcomePanel(MainFrame.this);
                 }
@@ -208,7 +218,7 @@ public class MainFrame extends JXFrame {
             }
 
             @Override
-            protected void doUIUpdateLogic() throws RuntimeException {
+            protected void doUIUpdateLogic() throws Exception {
                 setWelcomePanel();
             }
         };
@@ -270,6 +280,7 @@ public class MainFrame extends JXFrame {
      */
     public static void main(String[] args) {
         try {
+            
             setHome();
             Logger.configure(); //pick config from log4j.properties
             initializeResources(); // Initialize all Resources
@@ -286,6 +297,7 @@ public class MainFrame extends JXFrame {
                                      "caB2B Fatal Error",
                                      "Fatal error orccured while launching caB2B client.\nPlease contact administrator",
                                      t);
+            System.exit(1);
         }
     }
 
@@ -306,7 +318,6 @@ public class MainFrame extends JXFrame {
 
         File cab2bHome = new File(userHome, "cab2b");
         System.setProperty("cab2b.home", cab2bHome.getAbsolutePath());
-
     }
 
     /**
@@ -323,4 +334,20 @@ public class MainFrame extends JXFrame {
         MainFrame.userName = userName;
     }
 
+    public static void updateMySeachQueryBox() {
+        QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                                    EjbNamesConstants.QUERY_ENGINE_BEAN,
+                                                                                                                                    QueryEngineHome.class,
+                                                                                                                                    null);
+        List<ICab2bParameterizedQuery> cab2bQueryList = null;
+        try {
+            cab2bQueryList = queryEngineBusinessInterface.retrieveAllQueries();
+        } catch (Exception exception) {
+            CommonUtils.handleException(exception, MainFrame.newWelcomePanel, true, true, true, false);
+        }
+
+        if (cab2bQueryList != null && !cab2bQueryList.isEmpty()) {
+            lefthandStackedBox.updateMySearchQueryPanel(cab2bQueryList);
+        }
+    }
 }

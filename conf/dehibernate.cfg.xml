@@ -11,6 +11,7 @@
         
         
 <!-- My sql settings -->
+
        	<property name="dialect">net.sf.hibernate.dialect.MySQLDialect</property>	
        	<property name="hibernate.jdbc.batch_size">0</property>
         <property name="hibernate.c3p0.max_size">2</property>
@@ -20,11 +21,10 @@
 		<property name="hibernate.c3p0.idle_test_period">3000</property>
 		<property name="hibernate.c3p0.acquire_increment">2</property>
 		<property name="hibernate.c3p0.validate">false</property>
-                
+		
+<!-- My sql settings end -->
 
-<!-- My sql settings end -->   
-
-        <!-- List of all Mapping files -->
+<!-- List of all Mapping files -->
         
 		<mapping resource="edu/common/dynamicextensions/hbm/AbstractMetadata.hbm.xml"/>
         <mapping resource="edu/common/dynamicextensions/hbm/PermissibleValue.hbm.xml"/>
@@ -48,6 +48,8 @@
                         
         <mapping resource="edu/common/dynamicextensions/hbm/validationrules/Rule.hbm.xml"/>
         <mapping resource="edu/common/dynamicextensions/hbm/validationrules/RuleParameter.hbm.xml"/>
+        
+<!-- List of all Mapping files ends -->
 
     </session-factory>
     
