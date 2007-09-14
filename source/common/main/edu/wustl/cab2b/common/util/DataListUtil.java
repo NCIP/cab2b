@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.common.util;
 
+import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.wustl.cab2b.common.cache.AbstractEntityCache;
@@ -32,5 +33,11 @@ public class DataListUtil {
 
     private static EntityInterface getEntityWithId(String id) {
         return AbstractEntityCache.getCache().getEntityById(Long.parseLong(id));
+    }
+    
+ 
+    
+    protected final DomainObjectFactory getDomainObjectFactory() {
+        return DomainObjectFactory.getInstance();
     }
 }

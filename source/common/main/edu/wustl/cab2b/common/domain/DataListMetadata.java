@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.common.domain;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +19,8 @@ public class DataListMetadata extends AdditionalMetadata implements Serializable
     private static final long serialVersionUID = 1234567890L;
 
     private Set<Long> entityIds;
+    
+    private Long rootEntityId;
 
     private Set<IdName> entitiesNames;
 
@@ -77,5 +80,21 @@ public class DataListMetadata extends AdditionalMetadata implements Serializable
     public void setCustomDataCategory(boolean isCustomDataCategory) {
         this.customDataCategory = isCustomDataCategory;
     }
+
+	/**
+	 * @return Returns the rootEntityId.
+	 * @hibernate.property name="rootEntityId" type="long" column="ROOT_ENTITY_ID"
+	 */
+	public Long getRootEntityId() {
+		return rootEntityId;
+	}
+	
+
+	/**
+	 * @param rootEntityId The rootEntityId to set.
+	 */
+	public void setRootEntityId(Long rootEntityId) {
+		this.rootEntityId = rootEntityId;
+	}
 
 }

@@ -30,6 +30,7 @@ import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXPanel;
 
+import edu.wustl.cab2b.client.ui.AdminCDCPanel;
 import edu.wustl.cab2b.client.ui.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
@@ -236,6 +237,7 @@ class GlobalNavigationGlassPane extends JComponent implements ActionListener {
             }
             tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
         } else if (button == tabButtons[2]) {
+        	//AdminCDCPanel adminCDCPanel= new AdminCDCPanel();
             tabButtons[0].setIcon(new ImageIcon(tabsImagesUnPressed[0]));
             tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
             tabButtons[2].setIcon(new ImageIcon(tabsImagesPressed[2]));

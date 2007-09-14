@@ -100,7 +100,14 @@
             insert="true"
             column="CUSTOM_DATA_CATEGORY"
         />
-    
+        
+        <property
+            name="rootEntityId"
+            type="long"
+            update="true"
+            insert="true"
+            column="ROOT_ENTITY_ID"
+        />
         
 		</joined-subclass>
 		

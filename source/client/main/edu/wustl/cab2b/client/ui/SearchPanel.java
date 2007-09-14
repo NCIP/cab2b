@@ -26,6 +26,8 @@ import edu.wustl.cab2b.client.metadatasearch.MetadataSearch;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.dag.FreeDag;
+import edu.wustl.cab2b.client.ui.mainframe.TestContentPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.beans.MatchedClass;
@@ -67,6 +69,11 @@ public class SearchPanel extends Cab2bPanel {
 
     /**Error message searchPanel**/
     Cab2bPanel errorMsgPanel;
+    
+    private AttributeSelectCDCPanel attributeSelectCDCPanel;
+    
+    
+    private FreeDag testDAG;
 
     /**
      * constructor
@@ -87,7 +94,12 @@ public class SearchPanel extends Cab2bPanel {
         });
     }
 
-    /**
+    public SearchPanel(TestContentPanel panel, AttributeSelectCDCPanel cdcPanel) {
+    	this(panel);
+    	this.attributeSelectCDCPanel=cdcPanel;
+	}
+
+	/**
      * Method initializes the searchPanel by appropriately laying out child components.
      * 
      */
@@ -317,4 +329,32 @@ public class SearchPanel extends Cab2bPanel {
         this.getTextField().setPreferredSize(new Dimension(350, 22));
         this.add(this.getTextField());
     }
+
+	/**
+	 * @return Returns the adminCDCPanel.
+	 */
+	public AttributeSelectCDCPanel getAttributeSelectCDCPanel() {
+		return attributeSelectCDCPanel;
+	}
+
+	/**
+	 * @param adminCDCPanel The adminCDCPanel to set.
+	 */
+	public void setAttributeSelectCDCPanel(AttributeSelectCDCPanel attrSelectCDCPanel) {
+		this.attributeSelectCDCPanel = attrSelectCDCPanel;
+	}
+
+	/**
+	 * @return Returns the testDAG.
+	 */
+	public FreeDag getTestDAG() {
+		return testDAG;
+	}
+
+	/**
+	 * @param testDAG The testDAG to set.
+	 */
+	public void setTestDAG(FreeDag testDAG) {
+		this.testDAG = testDAG;
+	}
 }

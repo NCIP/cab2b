@@ -122,6 +122,8 @@ public class ExperimentStackBox extends Cab2bPanel {
     private static CaB2BFilterInterface obj = null;
 
     private static int chartIndex = 0;
+    
+    private Cab2bButton customCategoryButton;
 
     public ExperimentStackBox(Experiment selectedExperiment) {
         m_selectedExperiment = selectedExperiment;
@@ -224,6 +226,20 @@ public class ExperimentStackBox extends Cab2bPanel {
         datalistTree.setClosedIcon(new ImageIcon(loader.getResource(TREE_CLOSE_FOLDER)));
         datalistTree.setLeafIcon(new ImageIcon(loader.getResource(TREE_LEAF_NODE)));
         datalistTree.setBorder(null);
+        
+        
+
+		customCategoryButton = new Cab2bButton("Custom Data Category");
+		Cab2bPanel cab2bPanel = new Cab2bPanel();
+		customCategoryButton.setPreferredSize(new Dimension(170, 22));
+		customCategoryButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				CustomCategoryPanel categoryPanel = new CustomCategoryPanel();
+				updateStackBox(categoryPanel.getDataListMetadata());
+			}
+
+		});
+		cab2bPanel.add(customCategoryButton);
 
         /* if (datalistTree.getRowCount() >= 1) {
          datalistTree.setSelectionRow(1);

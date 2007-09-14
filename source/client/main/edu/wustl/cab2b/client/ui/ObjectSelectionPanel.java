@@ -1,5 +1,7 @@
 package edu.wustl.cab2b.client.ui;
 
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.SEARCH_FRAME_TITLE;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -7,86 +9,93 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
-import org.jboss.proxy.ejb.EntityInterceptor;
-
-import edu.common.dynamicextensions.domain.Entity;
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bListBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.mainframe.GlobalNavigationPanel;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
+import edu.wustl.common.util.global.ApplicationProperties;
 
-public class ObjectSelectionPanel extends Cab2bPanel{
-	
+/**
+ * Component to which allows to return selective objects from a list of objects.
+ * 
+ * @author Hrishikesh Rajpathak
+ *
+ */
+public class ObjectSelectionPanel extends Cab2bPanel {
+
 	private Cab2bListBox leftListBox;
-	
+
 	private Cab2bListBox rightListBox;
-	
+
 	private DefaultListModel leftHandListModel;
-	
+
 	private DefaultListModel rightHandListModel;
-	
+
 	private Cab2bButton add;
-	
+
 	private Cab2bButton addAll;
-	
+
 	private Cab2bButton remove;
-	
+
 	private Cab2bButton removeAll;
-	
+
 	private JLabel leftListTitle;
-	
+
 	private JLabel rightListTitle;
-	
+
 	private int listBoxWidth;
-	
+
 	private int listBoxHeight;
-	
+
 	private int heightBetweenButtons;
 
-	public ObjectSelectionPanel(Collection collection, int width, int height, String leftTitle, String rightTitle, int heightBetweenButtons) {
-		
-		this.listBoxWidth= width;
-		this.listBoxHeight= height;
-		this.heightBetweenButtons=heightBetweenButtons;
-		leftHandListModel= new DefaultListModel();
-		rightHandListModel= new DefaultListModel();
-		leftListBox= new Cab2bListBox(leftHandListModel);
-		rightListBox= new Cab2bListBox(rightHandListModel);
-		add= new Cab2bButton("Add");
-		addAll= new Cab2bButton("Add All");
-		remove= new Cab2bButton("Remove");
-		removeAll= new Cab2bButton("Remove All");
-		
-		leftListTitle= new JLabel(leftTitle);
-		rightListTitle= new JLabel(rightTitle);
-		
-		for(Object coll: collection){
-			leftHandListModel.addElement(new UserObjectWrapper(coll,coll.toString()));
-		}	
-		
+	public ObjectSelectionPanel(Collection<UserObjectWrapper> collection, int width, int height,
+			String leftTitle, String rightTitle, int heightBetweenButtons) {
+
+		this.listBoxWidth = width;
+		this.listBoxHeight = height;
+		this.heightBetweenButtons = heightBetweenButtons;
+		leftHandListModel = new DefaultListModel();
+		rightHandListModel = new DefaultListModel();
+		leftListBox = new Cab2bListBox(leftHandListModel);
+		rightListBox = new Cab2bListBox(rightHandListModel);
+		add = new Cab2bButton("Add");
+		addAll = new Cab2bButton("Add All");
+		remove = new Cab2bButton("Remove");
+		removeAll = new Cab2bButton("Remove All");
+
+		leftListTitle = new JLabel(leftTitle);
+		rightListTitle = new JLabel(rightTitle);
+
+		for (Object coll : collection) {
+			leftHandListModel.addElement(coll);
+		}
 		initGUI();
 	}
 
-	private void initGUI() {
-		Cab2bPanel middlePanel = new Cab2bPanel(new RiverLayout(5, 5));
-		JScrollPane jScrollPaneLeft = new JScrollPane(leftListBox,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+	public ObjectSelectionPanel(Collection<UserObjectWrapper> collection, String leftTitle, String rightTitle) {
+		this(collection, 300, 350, leftTitle, rightTitle, 10);
+	}
 
-		jScrollPaneLeft.setPreferredSize(new Dimension(listBoxWidth, listBoxHeight));
-		Cab2bPanel leftScrollPanel= new Cab2bPanel(new RiverLayout(5,5));
-		leftScrollPanel.add(leftListTitle);
-		leftScrollPanel.add("br",jScrollPaneLeft);
+	private void initGUI() {
+		this.setPreferredSize(new Dimension(130+listBoxWidth+listBoxWidth,listBoxHeight+30));
+		leftListBox.setPreferredSize(new Dimension(listBoxWidth, listBoxHeight));
+		Cab2bPanel leftPanel = new Cab2bPanel(new RiverLayout(5, 5));
+		leftPanel.add(leftListTitle);
+		leftPanel.add("br", leftListBox);
+		this.add(leftPanel);
+
 		
-		middlePanel.add(leftScrollPanel, BorderLayout.WEST);
+		
 		rightHandListModel = new DefaultListModel();
 		rightListBox = new Cab2bListBox(rightHandListModel);
 		add = new Cab2bButton("Add");
@@ -129,7 +138,7 @@ public class ObjectSelectionPanel extends Cab2bPanel{
 			}
 		});
 		Cab2bPanel buttonPanel = new Cab2bPanel(new RiverLayout(0, heightBetweenButtons));
-		buttonPanel.setPreferredSize(new Dimension(110, 400));
+		buttonPanel.setPreferredSize(new Dimension(110, listBoxHeight));
 		buttonPanel.add(new JLabel(" "));
 		buttonPanel.add("br", new JLabel(" "));
 		buttonPanel.add("br", add);
@@ -137,42 +146,25 @@ public class ObjectSelectionPanel extends Cab2bPanel{
 		buttonPanel.add("br", remove);
 		buttonPanel.add("br", removeAll);
 
-		rightListBox.setBorder(null);
-		JScrollPane jScrollPaneRight = new JScrollPane(rightListBox,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		jScrollPaneRight.setPreferredSize(new Dimension(listBoxWidth, listBoxHeight));
+		rightListBox.setPreferredSize(new Dimension(listBoxWidth, listBoxHeight));
+
+		Cab2bPanel rightPanel = new Cab2bPanel(new RiverLayout(5, 5));
+		rightPanel.add(rightListTitle);
+		rightPanel.add("br", rightListBox);
 		
-		Cab2bPanel rightScrollPanel= new Cab2bPanel(new RiverLayout(5,5));
-		rightScrollPanel.add(rightListTitle);
-		rightScrollPanel.add("br",jScrollPaneRight);
-		middlePanel.add(buttonPanel);
-		middlePanel.add(rightScrollPanel);
-		
-		this.add(middlePanel);
+		this.add(buttonPanel);
+		this.add(rightPanel);
 	}
 	
-	public static void main(String[] args) {
-		
-		Collection collection= new ArrayList();
-		collection.add("a");
-		collection.add("b");
-		collection.add("c");
-		collection.add("d");
-		ObjectSelectionPanel newPanel= new ObjectSelectionPanel(collection,300,350, "left title", "right title", 30);
-		MainFrame.mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension dimension = MainFrame.mainframeScreenDimesion;
-		 WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, newPanel, "hi", new Dimension(
-	                (int) (dimension.width * 0.90), (int) (dimension.height * 0.85)), true, true);
-	}
-	
-	
-	public Collection returnSet(){
-		List returnSet= new ArrayList();
-		int size=rightHandListModel.getSize();
-		for(int i=0; i<size;i++){
+	/**
+	 * @return Collection of selected objects
+	 */
+	public Collection getSelectedObjects() {
+		Collection returnSet = new ArrayList();
+		int size = rightHandListModel.getSize();
+		for (int i = 0; i < size; i++) {
 			returnSet.add(rightHandListModel.getElementAt(i));
 		}
 		return returnSet;
 	}
-
 }

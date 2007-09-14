@@ -1,10 +1,14 @@
 package edu.wustl.cab2b.common.datalist;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.List;
 
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.BusinessInterface;
+import edu.wustl.cab2b.common.IdName;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
+import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 
 public interface DataListBusinessInterface extends BusinessInterface {
@@ -42,5 +46,8 @@ public interface DataListBusinessInterface extends BusinessInterface {
     public DataList retrieveDataList(Long dataListId) throws RemoteException;
 
     public List<IRecord> getEntityRecord(Long entityId) throws RemoteException;
+    
+    public DataListMetadata saveDataCategory(IdName rootEntityId,
+			Collection<AttributeInterface> selectedAttributeList, Long id, String string) throws RemoteException, CheckedException;
 
 }

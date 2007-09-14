@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -181,8 +182,13 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
                     protected void doNonUILogic() throws Exception {
                         // Get the Functional class for root and update query object with it.
-                        queryResults = CommonUtils.executeQuery((ICab2bQuery) clientQueryBuilder.getQuery(),
-                                                                m_mainSearchPanel);
+                        try {
+							queryResults = CommonUtils.executeQuery((ICab2bQuery) clientQueryBuilder.getQuery(),
+							                                        m_mainSearchPanel);
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
                     }
 
                     protected void doUIUpdateLogic() {

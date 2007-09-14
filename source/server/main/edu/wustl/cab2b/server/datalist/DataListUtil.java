@@ -1,10 +1,14 @@
 package edu.wustl.cab2b.server.datalist;
 
+import static edu.wustl.cab2b.common.util.DataListUtil.ORIGIN_ENTITY_ID_KEY;
+import static edu.wustl.cab2b.common.util.DataListUtil.SOURCE_ENTITY_ID_KEY;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -96,4 +100,46 @@ public class DataListUtil {
             newEntity.addAttribute(newAttrib);
         }
     }
+    
+    public static void addVirtualAttributes(EntityInterface entity) {
+        AttributeInterface idAttribute = getDomainObjectFactory().createStringAttribute();
+        idAttribute.setName(DataListUtil.ID_ATTRIBUTE_NAME);
+        DataListUtil.markVirtual(idAttribute);
+
+        AttributeInterface urlAttribute = getDomainObjectFactory().createStringAttribute();
+        urlAttribute.setName(DataListUtil.URL_ATTRIBUTE_NAME);
+        DataListUtil.markVirtual(urlAttribute);
+
+        entity.addAttribute(idAttribute);
+        entity.addAttribute(urlAttribute);
+    }
+    
+    protected static  final DomainObjectFactory getDomainObjectFactory() {
+        return DomainObjectFactory.getInstance();
+    }
+    
+    public static  EntityInterface createNewEntity(EntityInterface oldEntity) {
+        EntityInterface newEntity = getDomainObjectFactory().createEntity();
+        EntityGroupInterface dataListEntityGroup = DataListUtil.getDatalistEntityGroup();
+        newEntity.addEntityGroupInterface(dataListEntityGroup);
+        dataListEntityGroup.addEntity(newEntity);
+
+        newEntity.setName(oldEntity.getName());
+
+        DynamicExtensionUtility.addTaggedValue(newEntity, ORIGIN_ENTITY_ID_KEY,
+                                               getOriginEntityId(oldEntity).toString());
+        DynamicExtensionUtility.addTaggedValue(newEntity, SOURCE_ENTITY_ID_KEY, oldEntity.getId().toString());
+
+        DynamicExtensionUtility.addTaggedValue(newEntity,
+                                               edu.wustl.cab2b.common.util.Constants.ENTITY_DISPLAY_NAME,
+                                               edu.wustl.cab2b.common.util.Utility.getDisplayName(oldEntity));
+        addVirtualAttributes(newEntity);
+
+        return newEntity;
+    }
+    
+    private static Long getOriginEntityId(EntityInterface oldEntity) {
+        return edu.wustl.cab2b.common.util.DataListUtil.getOriginEntity(oldEntity).getId();
+    }
+
 }

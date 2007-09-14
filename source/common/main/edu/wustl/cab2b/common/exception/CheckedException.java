@@ -19,6 +19,9 @@ public class CheckedException extends Exception
         super(message);
     }
     
+    public CheckedException(Exception exp) {
+    	super(exp);
+    }
     public CheckedException(String message, Exception exp, String errorCode)
     {
         super(message, exp);

@@ -20,6 +20,11 @@ public class IdName implements Serializable {
         this.name = name;
         this.originalEntityId = originalEntityId;
     }
+    
+    public IdName(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public Long getId() {
         return id;

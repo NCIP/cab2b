@@ -88,7 +88,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
     /**
      * Default constructor
      */
-    AddLimitPanel() {
+    public AddLimitPanel() {
         initGUI();
     }
 

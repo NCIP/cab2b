@@ -24,6 +24,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.StackedBox;
+import edu.wustl.cab2b.client.ui.experiment.CustomCategoryPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.common.util.global.ApplicationProperties;
 
@@ -76,6 +77,7 @@ public class B2BStackedBox extends Cab2bPanel {
         ActionListener actionListener = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 //TODO this will be removed in later releases.
+
                 Container comp = (Container) ae.getSource();
                 while (comp.getParent() != null) {
                     comp = comp.getParent();

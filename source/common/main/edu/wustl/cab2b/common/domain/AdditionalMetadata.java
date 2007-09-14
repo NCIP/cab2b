@@ -129,4 +129,8 @@ public class AdditionalMetadata extends AbstractDomainObject implements java.io.
         }        
         return h;
     }
+    
+    public long getID(){
+    	return super.getId();
+    }
 }

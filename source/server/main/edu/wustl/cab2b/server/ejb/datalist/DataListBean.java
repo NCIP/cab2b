@@ -1,12 +1,16 @@
 package edu.wustl.cab2b.server.ejb.datalist;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.List;
 
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.cab2b.common.IdName;
 import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
+import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.server.datalist.DataListMetadataOperations;
 import edu.wustl.cab2b.server.datalist.DataListOperationsController;
@@ -53,6 +57,11 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
 
     public List<IRecord> getEntityRecord(Long entityId) throws RemoteException {
         return DataListOperationsController.getEntityRecords(entityId);
+    }
+    
+    public DataListMetadata saveDataCategory(IdName rootEntityId,
+			Collection<AttributeInterface> selectedAttributeList,Long id, String name) throws RemoteException, CheckedException {
+        return DataListOperationsController.saveDataCategory(rootEntityId,selectedAttributeList, id, name);
     }
 
 }

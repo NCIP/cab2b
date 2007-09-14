@@ -1,14 +1,20 @@
 package edu.wustl.cab2b.common.experiment;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import net.sf.hibernate.HibernateException;
+
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.BusinessInterface;
+import edu.wustl.cab2b.common.CustomDataCategoryModel;
+import edu.wustl.cab2b.common.IdName;
 import edu.wustl.cab2b.common.domain.Experiment;
+import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
@@ -99,5 +105,10 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @throws RemoteException
      */
     void addDataListToExperiment(Long experimentId, Long dataListMetaDataId) throws RemoteException;
+    
+    
+    public CustomDataCategoryModel getDataCategoryModel() throws  RemoteException,CheckedException;
+    
+    public Collection<AttributeInterface> getAllAttributes(Long Id) throws RemoteException, CheckedException;
 
 }

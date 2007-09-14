@@ -83,7 +83,7 @@ public class ClassNode extends GenericNode {
 	 */
 	public int addSourcePort(IGraphPort port) {
 		sourcePorts.add(port);
-		associationToLogicalOperatorMap.put(port, ClientConstants.OPERATOR_AND);
+	//	associationToLogicalOperatorMap.put(port, ClientConstants.OPERATOR_AND);
 		return (sourcePorts.size() - 1);
 	}
 

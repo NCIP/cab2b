@@ -29,7 +29,7 @@ public class AbstractDomainObject implements java.io.Serializable {
      * @hibernate.generator-param name="sequence" value="ADO_SEQ"
      * @return a unique id assigned to the domain object.
      */
-    public java.lang.Long getId() {
+    public Long getId() {
         return id;
     }
     
