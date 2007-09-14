@@ -7,7 +7,7 @@
 <hibernate-mapping>
 	<joined-subclass
             name="edu.wustl.cab2b.common.queryengine.Cab2bQuery"
-            extends="edu.wustl.common.querysuite.queryobject.impl.Query"
+            extends="edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery"
             table="CAB2B_QUERY"
             dynamic-update="false"
             dynamic-insert="false"

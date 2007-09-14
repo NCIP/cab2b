@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 import edu.wustl.cab2b.common.BusinessInterface;
+import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 
@@ -19,9 +20,9 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * @return the saved query populated with the ids
      * @throws RemoteException
      */
-    void saveQuery(ICab2bQuery query) throws RemoteException;
+    void saveQuery(ICab2bParameterizedQuery query) throws RemoteException;
 
-    ICab2bQuery retrieveQueryById(Long query) throws RemoteException;
+    ICab2bParameterizedQuery retrieveQueryById(Long query) throws RemoteException;
 
-    List<ICab2bQuery> retrieveAllQueries() throws RemoteException;
+    List<ICab2bParameterizedQuery> retrieveAllQueries() throws RemoteException;
 }

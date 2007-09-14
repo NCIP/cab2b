@@ -3,16 +3,16 @@ package edu.wustl.cab2b.common.queryengine;
 import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.common.querysuite.queryobject.impl.Query;
+import edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery;
 
 /**
  * 
  * @author chetan_patil
  *
- * @hibernate.joined-subclass table="CAB2B_QUERY" extends="edu.wustl.common.querysuite.queryobject.impl.Query"
+ * @hibernate.joined-subclass table="CAB2B_QUERY" extends="edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery"
  * @hibernate.joined-subclass-key column="IDENTIFIER" 
  */
-public class Cab2bQuery extends Query implements ICab2bQuery {
+public class Cab2bQuery extends ParameterizedQuery implements ICab2bParameterizedQuery {
     private static final long serialVersionUID = -3676549385071170949L;
 
     private List<String> outputClassUrls;

@@ -4,11 +4,12 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
+import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.queryengine.QueryExecutor;
-import edu.wustl.cab2b.server.queryengine.Cab2bQueryProcessor;
+import edu.wustl.cab2b.server.queryengine.Cab2bQueryBizLogic;
 
 public class QueryEngineBean extends AbstractStatelessSessionBean implements QueryEngineBusinessInterface {
 
@@ -18,16 +19,16 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
         return new QueryExecutor(query).executeQuery();
     }
 
-    public void saveQuery(ICab2bQuery query) throws RemoteException {
-        new Cab2bQueryProcessor().saveQuery(query);
+    public void saveQuery(ICab2bParameterizedQuery query) throws RemoteException {
+        new Cab2bQueryBizLogic().saveQuery(query);
     }
 
-    public ICab2bQuery retrieveQueryById(Long queryId) throws RemoteException {
-        return (ICab2bQuery) new Cab2bQueryProcessor().getQueryById(queryId);
+    public ICab2bParameterizedQuery retrieveQueryById(Long queryId) throws RemoteException {
+        return (ICab2bParameterizedQuery) new Cab2bQueryBizLogic().getQueryById(queryId);
     }
 
-    public List<ICab2bQuery> retrieveAllQueries() throws RemoteException {
-        return new Cab2bQueryProcessor().getAllQueries();
+    public List<ICab2bParameterizedQuery> retrieveAllQueries() throws RemoteException {
+        return new Cab2bQueryBizLogic().getAllQueries();
     }
 
 }
