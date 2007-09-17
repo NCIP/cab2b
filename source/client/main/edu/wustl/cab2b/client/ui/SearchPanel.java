@@ -27,7 +27,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.dag.FreeDag;
-import edu.wustl.cab2b.client.ui.mainframe.TestContentPanel;
+import edu.wustl.cab2b.client.ui.mainframe.Cab2bContentPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.beans.MatchedClass;
@@ -94,7 +94,7 @@ public class SearchPanel extends Cab2bPanel {
         });
     }
 
-    public SearchPanel(TestContentPanel panel, AttributeSelectCDCPanel cdcPanel) {
+    public SearchPanel(Cab2bContentPanel panel, AttributeSelectCDCPanel cdcPanel) {
     	this(panel);
     	this.attributeSelectCDCPanel=cdcPanel;
 	}

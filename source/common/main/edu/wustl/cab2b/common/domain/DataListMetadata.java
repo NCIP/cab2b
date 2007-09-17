@@ -1,7 +1,6 @@
 package edu.wustl.cab2b.common.domain;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 

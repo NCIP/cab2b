@@ -6,11 +6,11 @@ import edu.wustl.cab2b.client.ui.ContentPanel;
 import edu.wustl.cab2b.client.ui.SearchPanel;
 import edu.wustl.cab2b.client.ui.SearchResultPanel;
 
-public class TestContentPanel extends ContentPanel {
+public class Cab2bContentPanel extends ContentPanel {
 
 	private SearchPanel searchPanel;
 
-	public TestContentPanel() {
+	public Cab2bContentPanel() {
 		super();
 		searchPanel = new SearchPanel(this);
 	}

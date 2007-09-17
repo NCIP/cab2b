@@ -333,6 +333,13 @@ public class ExperimentOperations extends DefaultBizLogic {
 		return exp;
 	}
 
+	/**
+	 * Returns root Id of given datalist
+	 * 
+	 * @param DataListMetadata
+	 * @return Long id
+	 * @throws HibernateException
+	 */
 	public long getRootId(DataListMetadata dl) throws HibernateException {
 		ArrayList al = new ArrayList();
 		al.add(dl.getId());
@@ -340,6 +347,12 @@ public class ExperimentOperations extends DefaultBizLogic {
 		return Long.parseLong(list.get(0).toString());
 	}
 
+	/**
+	 * Returns all the datalists in the system.
+	 * 
+	 * @return Collection of datalists
+	 * @throws HibernateException
+	 */
 	public Collection getAllDataLists() throws HibernateException {
 		return Utility.executeHQL("getAllDataLists");
 	}
@@ -352,6 +365,12 @@ public class ExperimentOperations extends DefaultBizLogic {
 		}
 	}
 
+	/**
+	 * Returns entity name on entity id.
+	 * 
+	 * @param id
+	 * @return
+	 */
 	private String getEntityName(Long id) {
 		return DatalistCache.getInstance().getEntityWithId(id).getName();
 	}
@@ -361,6 +380,12 @@ public class ExperimentOperations extends DefaultBizLogic {
 		return DataListUtil.getOriginEntity(entity).getId();
 	}
 
+	/**
+	 * Adds given datalist to the given experiment
+	 * 
+	 * @param experimentId
+	 * @param dataListMetaDataId
+	 */
 	public void addDataListToExperiment(Long experimentId, Long dataListMetaDataId) {
 		try {
 			List expList = retrieve("Experiment", "id", experimentId);
@@ -497,6 +522,12 @@ public class ExperimentOperations extends DefaultBizLogic {
 
 	}
 
+	/**
+	 * Returns a model created for custom data category
+	 * 
+	 * @return CustomDataCategoryModel
+	 * @throws CheckedException
+	 */
 	public CustomDataCategoryModel getDataCategoryModel() throws CheckedException {
 
 		List<IdName> dataListIdName;
@@ -504,7 +535,7 @@ public class ExperimentOperations extends DefaultBizLogic {
 
 		Collection<DataListMetadata> dataListCollection;
 		try {
-			dataListCollection = getDataListCollection();
+			dataListCollection = getAllDataLists();
 			dataListsToAssociatedDataListsIdName(rootDlToLeafDlIdName, dataListCollection);
 			dataListIdName = getAllDataListIdName(dataListCollection);
 			CustomDataCategoryModel model = new CustomDataCategoryModel(dataListIdName,
@@ -520,15 +551,27 @@ public class ExperimentOperations extends DefaultBizLogic {
 		}
 	}
 
+	/**
+	 * 
+	 * Returns a map of every datalist id mapped to all its assiciated
+	 * datalists's IdName.
+	 * 
+	 * @param rootDlToLeafDlIdName
+	 * @param dataListCollection
+	 * @return
+	 * @throws HibernateException
+	 * @throws DynamicExtensionsSystemException
+	 * @throws DynamicExtensionsApplicationException
+	 */
 	public Map dataListsToAssociatedDataListsIdName(Map<Long, List<IdName>> rootDlToLeafDlIdName,
 			Collection<DataListMetadata> dataListCollection) throws HibernateException,
 			DynamicExtensionsSystemException, DynamicExtensionsApplicationException {
 		for (DataListMetadata dl : dataListCollection) {
-			if(dl.isCustomDataCategory()) {
+			if (dl.isCustomDataCategory()) {
 				continue;
 			}
-				
-			long dlId = dl.getID();
+
+			long dlId = dl.getId();
 			EntityInterface entity = EntityManager.getInstance().getEntityByIdentifier(
 					dl.getRootEntityId());
 			Collection<AssociationInterface> associationCollection = entity
@@ -544,10 +587,12 @@ public class ExperimentOperations extends DefaultBizLogic {
 		return rootDlToLeafDlIdName;
 	}
 
-	public Collection<DataListMetadata> getDataListCollection() throws HibernateException {
-		return new ExperimentOperations().getAllDataLists();
-	}
-
+	/**
+	 * Returns IdNames of given datalists
+	 * 
+	 * @param dataLists
+	 * @return List<IdName>
+	 */
 	public List<IdName> getAllDataListIdName(Collection<DataListMetadata> dataLists) {
 
 		List dataListIdName = new ArrayList<IdName>();
@@ -558,6 +603,14 @@ public class ExperimentOperations extends DefaultBizLogic {
 		return dataListIdName;
 	}
 
+	/**
+	 * Returns entity by its Id
+	 * 
+	 * @param id
+	 * @return
+	 * @throws CheckedException
+	 * @throws RemoteException
+	 */
 	public EntityInterface getEnityById(Long id) throws CheckedException, RemoteException {
 		EntityInterface entity = null;
 		try {
@@ -570,20 +623,35 @@ public class ExperimentOperations extends DefaultBizLogic {
 		return entity;
 	}
 
+	/**
+	 * Returns collection of attributes of given entity Id.
+	 * 
+	 * @param id
+	 * @return
+	 * @throws RemoteException
+	 * @throws CheckedException
+	 */
 	public Collection<AttributeInterface> getAllAttributes(Long id) throws RemoteException,
 			CheckedException {
 		List<AttributeInterface> attributes = new ArrayList<AttributeInterface>();
 		List<AttributeInterface> finalAttributes = new ArrayList<AttributeInterface>();
 		EntityInterface entity = getEnityById(id);
 		processEntity(entity, attributes);
-		for(AttributeInterface attr:attributes){
-			if(! edu.wustl.cab2b.server.datalist.DataListUtil.isVirtualAttribute(attr)){
+		for (AttributeInterface attr : attributes) {
+			if (!edu.wustl.cab2b.server.datalist.DataListUtil.isVirtualAttribute(attr)) {
 				finalAttributes.add(attr);
 			}
 		}
 		return finalAttributes;
 	}
 
+	/**
+	 * Generates a tree which has enities and its attributes and all associated
+	 * entities structure.
+	 * 
+	 * @param entity
+	 * @param attributes
+	 */
 	private void processEntity(EntityInterface entity, List<AttributeInterface> attributes) {
 		attributes.addAll(entity.getAttributeCollection());
 		for (AssociationInterface association : entity.getAssociationCollection()) {
@@ -591,9 +659,16 @@ public class ExperimentOperations extends DefaultBizLogic {
 		}
 	}
 
+	/**
+	 * Returns all the experiments which have datalist id same as given.
+	 * 
+	 * @param id
+	 * @return
+	 * @throws HibernateException
+	 */
 	public Collection getExperimentsWithSimilarDataList(Long id) throws HibernateException {
-        List idList = new ArrayList();
-        idList.add(id);
+		List idList = new ArrayList();
+		idList.add(id);
 		return Utility.executeHQL("getExperimentSimilarDataList", idList);
 	}
 

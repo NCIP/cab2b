@@ -42,7 +42,7 @@ import edu.wustl.cab2b.client.ui.main.IComponent;
 import edu.wustl.cab2b.client.ui.main.ParseXMLFile;
 import edu.wustl.cab2b.client.ui.main.SwingUIManager;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
-import edu.wustl.cab2b.client.ui.mainframe.TestContentPanel;
+import edu.wustl.cab2b.client.ui.mainframe.Cab2bContentPanel;
 import edu.wustl.cab2b.client.ui.pagination.JPageElement;
 import edu.wustl.cab2b.client.ui.pagination.JPagination;
 import edu.wustl.cab2b.client.ui.pagination.NumericPager;
@@ -288,7 +288,7 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
 		PageElement pageElement = jPageElement.getPageElement();
 		entityForSelectedLink = (EntityInterface) pageElement.getUserObject();
 
-		if (contentPanel instanceof TestContentPanel) {
+		if (contentPanel instanceof Cab2bContentPanel) {
 			SearchPanel searchPanel = (SearchPanel) this.getParent();
 
 			(searchPanel.getAttributeSelectCDCPanel()).setEntityInterface(entityForSelectedLink);

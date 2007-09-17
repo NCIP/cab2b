@@ -10,7 +10,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.dag.FreeDag;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
-import edu.wustl.cab2b.client.ui.mainframe.TestContentPanel;
+import edu.wustl.cab2b.client.ui.mainframe.Cab2bContentPanel;
 
 /**
  * Panel for creating a custom category.
@@ -33,7 +33,7 @@ public class AdminCDCPanel extends Cab2bPanel{
     	
     	Cab2bPanel innerPanel= new Cab2bPanel(new BorderLayout());
     	AttributeSelectCDCPanel cdcPanel= new AttributeSelectCDCPanel();
-    	SearchPanel searchPanel= new SearchPanel(new TestContentPanel(),cdcPanel);
+    	SearchPanel searchPanel= new SearchPanel(new Cab2bContentPanel(),cdcPanel);
     	MainFrame.mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension dimension = MainFrame.mainframeScreenDimesion;
         searchPanel.setMinimumSize(new Dimension(270,dimension.height));

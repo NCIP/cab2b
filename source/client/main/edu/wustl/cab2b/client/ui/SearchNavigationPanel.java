@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.rmi.RemoteException;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -28,362 +27,370 @@ import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 /**
  * @author mahesh_iyer
  * 
- * The class represents the navigation searchPanel for the search dialog, and also
- * includes corresponding functionality.
+ * The class represents the navigation searchPanel for the search dialog, and
+ * also includes corresponding functionality.
  */
 
 public class SearchNavigationPanel extends Cab2bPanel implements ActionListener {
-    private static final long serialVersionUID = 1234567890L;
+	private static final long serialVersionUID = 1234567890L;
 
-    /* The reference to the parent searchPanel. */
-    private MainSearchPanel m_mainSearchPanel = null;
+	/* The reference to the parent searchPanel. */
+	private MainSearchPanel m_mainSearchPanel = null;
 
-    /* The navigation buttons. */
-    private Cab2bButton previousButton;
+	/* The navigation buttons. */
+	private Cab2bButton previousButton;
 
-    public Cab2bButton nextButton;
+	public Cab2bButton nextButton;
 
-    /* Custom buttons for this dialog. */
-    private Cab2bButton resetButton;
+	/* Custom buttons for this dialog. */
+	private Cab2bButton resetButton;
 
-    private Cab2bButton saveDataListButton;
+	private Cab2bButton saveDataListButton;
 
-    private JButton saveQueryButton;
+	private JButton saveQueryButton;
 
-    private Cab2bButton addToExperimentButton;
+	private Cab2bButton addToExperimentButton;
 
-    private Cab2bPanel buttonPanel;
+	private Cab2bPanel buttonPanel;
 
-    private Cab2bPanel messagePanel;
+	private Cab2bPanel messagePanel;
 
-    public static Cab2bLabel messageLabel;
+	public static Cab2bLabel messageLabel;
 
-    private IQueryResult queryResults;
+	private IQueryResult queryResults;
 
-    public SearchNavigationPanel(MainSearchPanel panel) {
-        this.m_mainSearchPanel = panel;
-        initGUI();
-        this.setPreferredSize(new Dimension(976, 36));
-        this.setBackground(new Color(240, 240, 240));
-    }
-    
-    public Cab2bButton getNextButton() {
-        return nextButton;
-    }
+	public SearchNavigationPanel(MainSearchPanel panel) {
+		this.m_mainSearchPanel = panel;
+		initGUI();
+		this.setPreferredSize(new Dimension(976, 36));
+		this.setBackground(new Color(240, 240, 240));
+	}
 
-    private void initGUI() {
-        messageLabel = new Cab2bLabel();
-        messageLabel.setForeground(new Color(0, 128, 0));
-        messagePanel = new Cab2bPanel();
-        messagePanel.setBackground(null);
-        messagePanel.add(messageLabel);
+	public Cab2bButton getNextButton() {
+		return nextButton;
+	}
 
-        resetButton = new Cab2bButton("Reset");
-        resetButton.addActionListener(this);
-        previousButton = new Cab2bButton("Previous");
-        previousButton.addActionListener(this);
-        nextButton = new Cab2bButton("Next");
-        nextButton.addActionListener(this);
+	private void initGUI() {
+		messageLabel = new Cab2bLabel();
+		messageLabel.setForeground(new Color(0, 128, 0));
+		messagePanel = new Cab2bPanel();
+		messagePanel.setBackground(null);
+		messagePanel.add(messageLabel);
 
-        saveDataListButton = new Cab2bButton("Save Data List");
-        saveDataListButton.setPreferredSize(new Dimension(160, 22));
-        saveDataListButton.addActionListener(this);
+		resetButton = new Cab2bButton("Reset");
+		resetButton.addActionListener(this);
+		previousButton = new Cab2bButton("Previous");
+		previousButton.addActionListener(this);
+		nextButton = new Cab2bButton("Next");
+		nextButton.addActionListener(this);
 
-        saveQueryButton = new JButton("Save Query");
-        saveQueryButton.addActionListener(new SaveQueryButtonListener());
+		saveDataListButton = new Cab2bButton("Save Data List");
+		saveDataListButton.setPreferredSize(new Dimension(160, 22));
+		saveDataListButton.addActionListener(this);
 
-        addToExperimentButton = new Cab2bButton("Add to Experiment");
-        addToExperimentButton.setPreferredSize(new Dimension(160, 22));
-        addToExperimentButton.addActionListener(this);
+		saveQueryButton = new JButton("Save Query");
+		saveQueryButton.addActionListener(new SaveQueryButtonListener());
 
-        FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
-        flowLayout.setHgap(10);
-        buttonPanel = new Cab2bPanel();
-        buttonPanel.setBackground(null);
-        buttonPanel.setLayout(flowLayout);
-        buttonPanel.add(saveQueryButton);
-        buttonPanel.add(resetButton);
-        buttonPanel.add(previousButton);
-        buttonPanel.add(nextButton);
-        buttonPanel.add(saveDataListButton);
-        buttonPanel.add(addToExperimentButton);
+		addToExperimentButton = new Cab2bButton("Add to Experiment");
+		addToExperimentButton.setPreferredSize(new Dimension(160, 22));
+		addToExperimentButton.addActionListener(this);
 
-        this.add("hfill", messagePanel);
-        this.add("hfill right", buttonPanel);
+		FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
+		flowLayout.setHgap(10);
+		buttonPanel = new Cab2bPanel();
+		buttonPanel.setBackground(null);
+		buttonPanel.setLayout(flowLayout);
+		buttonPanel.add(saveQueryButton);
+		buttonPanel.add(resetButton);
+		buttonPanel.add(previousButton);
+		buttonPanel.add(nextButton);
+		buttonPanel.add(saveDataListButton);
+		buttonPanel.add(addToExperimentButton);
 
-        saveQueryButton.setVisible(true);
-        resetButton.setVisible(false);
-        previousButton.setVisible(false);
-        saveDataListButton.setVisible(false);
-        addToExperimentButton.setVisible(false);
-    }
+		this.add("hfill", messagePanel);
+		this.add("hfill right", buttonPanel);
 
-    /**
-     * Action listener class for "Reset", "Previous" and "Next" Buttons.
-     */
-    public void actionPerformed(ActionEvent event) {
-        final SearchCenterPanel searchCenterPanel = m_mainSearchPanel.getCenterPanel();
-        final IClientQueryBuilderInterface clientQueryBuilder = m_mainSearchPanel.getQueryObject();
+		saveQueryButton.setVisible(true);
+		resetButton.setVisible(false);
+		previousButton.setVisible(false);
+		saveDataListButton.setVisible(false);
+		addToExperimentButton.setVisible(false);
+	}
 
-        Cab2bButton cab2bButton = (Cab2bButton) event.getSource();
-        String strActionCommand = cab2bButton.getActionCommand();
-        if (strActionCommand.equals("Save Data List")) {
-            SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(m_mainSearchPanel);
-            saveDataListPanel.showInDialog();
-        } else if (strActionCommand.equals("Add to Experiment")) {
-            if (SaveDatalistPanel.isDataListSaved == false) {
-                SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(m_mainSearchPanel);
-                saveDataListPanel.showInDialog();
-            }
-            if (SaveDatalistPanel.isDataListSaved) {
-                NewExperimentDetailsPanel newExperimentDetailsPanel = new NewExperimentDetailsPanel();
-                newExperimentDetailsPanel.showInDialog();
-            }
-        } else if (strActionCommand.equals("Next")) {
-            SearchNavigationPanel.messageLabel.setText("");
-            previousButton.setVisible(true);
+	/**
+	 * Action listener class for "Reset", "Previous" and "Next" Buttons.
+	 */
+	public void actionPerformed(ActionEvent event) {
+		final SearchCenterPanel searchCenterPanel = m_mainSearchPanel.getCenterPanel();
+		final IClientQueryBuilderInterface clientQueryBuilder = m_mainSearchPanel.getQueryObject();
 
-            if (searchCenterPanel.getSelectedCardIndex() == 0) {
-                AddLimitPanel addLimitPanel = searchCenterPanel.getAddLimitPanel();
-                addLimitPanel.addSearchPanel(searchCenterPanel.getChooseCategoryPanel().getSearchPanel());
-                searchCenterPanel.setAddLimitPanel(addLimitPanel);
-                resetButton.setVisible(true);
-                showCard(true);
-            } else if (searchCenterPanel.getSelectedCardIndex() == 1) {
-                if (clientQueryBuilder != null && clientQueryBuilder.getVisibleExressionIds().size() > 0) {
+		Cab2bButton cab2bButton = (Cab2bButton) event.getSource();
+		String strActionCommand = cab2bButton.getActionCommand();
+		if (strActionCommand.equals("Save Data List")) {
+			SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(m_mainSearchPanel);
+			saveDataListPanel.showInDialog();
+		} else if (strActionCommand.equals("Add to Experiment")) {
+			if (SaveDatalistPanel.isDataListSaved == false) {
+				SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(m_mainSearchPanel);
+				saveDataListPanel.showInDialog();
+			}
+			if (SaveDatalistPanel.isDataListSaved) {
+				NewExperimentDetailsPanel newExperimentDetailsPanel = new NewExperimentDetailsPanel();
+				newExperimentDetailsPanel.showInDialog();
+			}
+		} else if (strActionCommand.equals("Next")) {
+			SearchNavigationPanel.messageLabel.setText("");
+			previousButton.setVisible(true);
 
-                    // Also cause for the next card in the dialog to be added dynamically to the dialog.
-                    AdvancedDefineViewPanel defineViewPanel = new AdvancedDefineViewPanel(searchCenterPanel);
-                    if (AdvancedDefineViewPanel.isMultipleGraphException == true) {
-                        gotoAddLimitPanel();
-                    } else {
-                        if (null != searchCenterPanel.m_arrCards[2]) {
-                            searchCenterPanel.remove(searchCenterPanel.m_arrCards[2]);
-                        }
-                        searchCenterPanel.m_arrCards[2] = defineViewPanel;
-                        searchCenterPanel.add(defineViewPanel, SearchCenterPanel.m_strDefineSearchResultslbl);
-                        // Implies the next button was clicked. Call show card with boolean set to true.
-                        resetButton.setVisible(false);
-                        showCard(true);
-                    }
-                } else {
-                    resetButton.setVisible(true);
-                    saveDataListButton.setVisible(false);
-                    addToExperimentButton.setVisible(false);
-                    // Pop-up a dialog asking the user to add alteast a rule. 
-                    JOptionPane.showMessageDialog(m_mainSearchPanel.getParent(),
-                                                  "Please add Limit(s) before proceeding", "Cannot Proceed",
-                                                  JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
+			if (searchCenterPanel.getSelectedCardIndex() == 0) {
+				AddLimitPanel addLimitPanel = searchCenterPanel.getAddLimitPanel();
+				addLimitPanel.addSearchPanel(searchCenterPanel.getChooseCategoryPanel()
+						.getSearchPanel());
+				searchCenterPanel.setAddLimitPanel(addLimitPanel);
+				resetButton.setVisible(true);
+				showCard(true);
+			} else if (searchCenterPanel.getSelectedCardIndex() == 1) {
+				if (clientQueryBuilder != null
+						&& clientQueryBuilder.getVisibleExressionIds().size() > 0) {
 
-            } else if (searchCenterPanel.getSelectedCardIndex() == 2) {
-                CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
-
-                    protected void doNonUILogic() throws Exception {
-                        // Get the Functional class for root and update query object with it.
-                        try {
-							queryResults = CommonUtils.executeQuery((ICab2bQuery) clientQueryBuilder.getQuery(),
-							                                        m_mainSearchPanel);
-						} catch (RemoteException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+					// Also cause for the next card in the dialog to be added
+					// dynamically to the dialog.
+					AdvancedDefineViewPanel defineViewPanel = new AdvancedDefineViewPanel(
+							searchCenterPanel);
+					if (AdvancedDefineViewPanel.isMultipleGraphException == true) {
+						gotoAddLimitPanel();
+					} else {
+						if (null != searchCenterPanel.m_arrCards[2]) {
+							searchCenterPanel.remove(searchCenterPanel.m_arrCards[2]);
 						}
-                    }
+						searchCenterPanel.m_arrCards[2] = defineViewPanel;
+						searchCenterPanel.add(defineViewPanel,
+								SearchCenterPanel.m_strDefineSearchResultslbl);
+						// Implies the next button was clicked. Call show card
+						// with boolean set to true.
+						resetButton.setVisible(false);
+						showCard(true);
+					}
+				} else {
+					resetButton.setVisible(true);
+					saveDataListButton.setVisible(false);
+					addToExperimentButton.setVisible(false);
+					// Pop-up a dialog asking the user to add alteast a rule.
+					JOptionPane.showMessageDialog(m_mainSearchPanel.getParent(),
+							"Please add Limit(s) before proceeding", "Cannot Proceed",
+							JOptionPane.WARNING_MESSAGE);
+					return;
+				}
 
-                    protected void doUIUpdateLogic() {
-                        previousButton.setVisible(true);
-                        nextButton.setVisible(true);
-                        saveDataListButton.setVisible(false);
-                        addToExperimentButton.setVisible(false);
+			} else if (searchCenterPanel.getSelectedCardIndex() == 2) {
+				CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
 
-                        if (queryResults != null) {
-                            int recordNo = Utility.getRecordNum(queryResults);
-                            if (recordNo == 0) {
-                                JOptionPane.showMessageDialog(
-                                                              SearchNavigationPanel.this.m_mainSearchPanel.getParent(),
-                                                              "No result found.", "",
-                                                              JOptionPane.INFORMATION_MESSAGE);
-                                resetButton.setVisible(true);
-                                gotoAddLimitPanel();
-                            } else {
-                                ViewSearchResultsPanel viewSearchResultsPanel = new ViewSearchResultsPanel(
-                                        queryResults, m_mainSearchPanel);
-                                if (searchCenterPanel.m_arrCards[3] != null) {
-                                    searchCenterPanel.remove(searchCenterPanel.m_arrCards[3]);
-                                }
-                                searchCenterPanel.m_arrCards[3] = viewSearchResultsPanel;
-                                searchCenterPanel.add(viewSearchResultsPanel,
-                                                      SearchCenterPanel.m_strViewSearchResultslbl);
-                                // Implies the next button was clicked. Call show card with boolean set to true.
-                                showCard(true);
-                            }
-                        } else {
-                            resetButton.setVisible(true);
-                            gotoAddLimitPanel();
-                        }
-                    }
-                };
-                swingWorker.start();
-            } else if (searchCenterPanel.getSelectedCardIndex() == 3) {
-                gotoDataListPanel(null);
-                resetButton.setVisible(false);
-                nextButton.setVisible(false);
-                saveDataListButton.setVisible(true);
-                addToExperimentButton.setVisible(true);
-            } else {
-                resetButton.setVisible(true);
-                previousButton.setVisible(true);
-                nextButton.setVisible(true);
-                saveDataListButton.setVisible(false);
-                addToExperimentButton.setVisible(false);
-                showCard(true);
-            }
-        } else if (strActionCommand.equals("Previous")) {
-            // Implies the previous button was clicked. Call show card with boolean set to false.
-            SearchNavigationPanel.messageLabel.setText("");
-            int cardIndex = searchCenterPanel.getSelectedCardIndex();
-            if (cardIndex == 1) {
-                previousButton.setVisible(false);
-                resetButton.setVisible(false);
-                saveDataListButton.setVisible(false);
-                addToExperimentButton.setVisible(false);
+					protected void doNonUILogic() throws Exception {
+						// Get the Functional class for root and update query
+						// object with it.
 
-                //setting the search panel 
-                ChooseCategoryPanel chooseCategoryPanel = searchCenterPanel.getChooseCategoryPanel();
-                chooseCategoryPanel.addSearchPanel(searchCenterPanel.getAddLimitPanel().getSearchPanel());
-                searchCenterPanel.setChooseCategoryPanel(chooseCategoryPanel);
-            } else if (cardIndex == 2) {
-                previousButton.setVisible(true);
-                resetButton.setVisible(true);
-                saveDataListButton.setVisible(false);
-                addToExperimentButton.setVisible(false);
-            } else if (cardIndex == 3 || cardIndex == 4) {
-                previousButton.setVisible(true);
-                resetButton.setVisible(false);
-                saveDataListButton.setVisible(false);
-                addToExperimentButton.setVisible(false);
-            }
-            nextButton.setVisible(true);
-            nextButton.setEnabled(true);
-            showCard(false);
-        } else if (strActionCommand.equals("Reset")) {
-            // 1. Reset the query object
-            // 2. Clear result panels
-            // 3. Clear breadcrumb on the searchPanel
-            SearchNavigationPanel.messageLabel.setText("");
-            searchCenterPanel.reset();
-            m_mainSearchPanel.setQueryObject(null);
+						queryResults = CommonUtils.executeQuery((ICab2bQuery) clientQueryBuilder
+								.getQuery(), m_mainSearchPanel);
 
-            /*int componentCount = searchCenterPanel.getComponentCount();
-             if (componentCount > 2) {
-             int index = componentCount - 1;
-             while (index > 1) {
-             searchCenterPanel.remove(index);
-             searchCenterPanel.m_arrCards[index--] = null;                                        
-             }
-             }*/
-        }
-        updateUI();
-    }
+					}
 
-    public void enableButtons() {
-        previousButton.setVisible(true);
-        resetButton.setVisible(true);
-    }
+					protected void doUIUpdateLogic() {
+						previousButton.setVisible(true);
+						nextButton.setVisible(true);
+						saveDataListButton.setVisible(false);
+						addToExperimentButton.setVisible(false);
 
-    /*
-     * The method sets the focus appropriately for the top searchPanel. Also, update
-     * the indexes. corresponding updated can be abstracted into the top searchPanel
-     * class itself
-     */
-    public void showCard(boolean blnNext) {
-        /* Get the center Panel through the parent. */
-        SearchCenterPanel centerPanel = this.m_mainSearchPanel.getCenterPanel();
+						if (queryResults != null) {
+							int recordNo = Utility.getRecordNum(queryResults);
+							if (recordNo == 0) {
+								JOptionPane.showMessageDialog(
+										SearchNavigationPanel.this.m_mainSearchPanel.getParent(),
+										"No result found.", "", JOptionPane.INFORMATION_MESSAGE);
+								resetButton.setVisible(true);
+								gotoAddLimitPanel();
+							} else {
+								ViewSearchResultsPanel viewSearchResultsPanel = new ViewSearchResultsPanel(
+										queryResults, m_mainSearchPanel);
+								if (searchCenterPanel.m_arrCards[3] != null) {
+									searchCenterPanel.remove(searchCenterPanel.m_arrCards[3]);
+								}
+								searchCenterPanel.m_arrCards[3] = viewSearchResultsPanel;
+								searchCenterPanel.add(viewSearchResultsPanel,
+										SearchCenterPanel.m_strViewSearchResultslbl);
+								// Implies the next button was clicked. Call
+								// show card with boolean set to true.
+								showCard(true);
+							}
+						} else {
+							resetButton.setVisible(true);
+							gotoAddLimitPanel();
+						}
+					}
+				};
+				swingWorker.start();
+			} else if (searchCenterPanel.getSelectedCardIndex() == 3) {
+				gotoDataListPanel(null);
+				resetButton.setVisible(false);
+				nextButton.setVisible(false);
+				saveDataListButton.setVisible(true);
+				addToExperimentButton.setVisible(true);
+			} else {
+				resetButton.setVisible(true);
+				previousButton.setVisible(true);
+				nextButton.setVisible(true);
+				saveDataListButton.setVisible(false);
+				addToExperimentButton.setVisible(false);
+				showCard(true);
+			}
+		} else if (strActionCommand.equals("Previous")) {
+			// Implies the previous button was clicked. Call show card with
+			// boolean set to false.
+			SearchNavigationPanel.messageLabel.setText("");
+			int cardIndex = searchCenterPanel.getSelectedCardIndex();
+			if (cardIndex == 1) {
+				previousButton.setVisible(false);
+				resetButton.setVisible(false);
+				saveDataListButton.setVisible(false);
+				addToExperimentButton.setVisible(false);
 
-        /* Get the layout associated with the center searchPanel */
-        CardLayout layout = (CardLayout) centerPanel.getLayout();
+				// setting the search panel
+				ChooseCategoryPanel chooseCategoryPanel = searchCenterPanel
+						.getChooseCategoryPanel();
+				chooseCategoryPanel.addSearchPanel(searchCenterPanel.getAddLimitPanel()
+						.getSearchPanel());
+				searchCenterPanel.setChooseCategoryPanel(chooseCategoryPanel);
+			} else if (cardIndex == 2) {
+				previousButton.setVisible(true);
+				resetButton.setVisible(true);
+				saveDataListButton.setVisible(false);
+				addToExperimentButton.setVisible(false);
+			} else if (cardIndex == 3 || cardIndex == 4) {
+				previousButton.setVisible(true);
+				resetButton.setVisible(false);
+				saveDataListButton.setVisible(false);
+				addToExperimentButton.setVisible(false);
+			}
+			nextButton.setVisible(true);
+			nextButton.setEnabled(true);
+			showCard(false);
+		} else if (strActionCommand.equals("Reset")) {
+			// 1. Reset the query object
+			// 2. Clear result panels
+			// 3. Clear breadcrumb on the searchPanel
+			SearchNavigationPanel.messageLabel.setText("");
+			searchCenterPanel.reset();
+			m_mainSearchPanel.setQueryObject(null);
 
-        /* Get the currently selected index. */
-        int iSelectedCard = centerPanel.getSelectedCardIndex();
+			/*
+			 * int componentCount = searchCenterPanel.getComponentCount(); if
+			 * (componentCount > 2) { int index = componentCount - 1; while
+			 * (index > 1) { searchCenterPanel.remove(index);
+			 * searchCenterPanel.m_arrCards[index--] = null; } }
+			 */
+		}
+		updateUI();
+	}
 
-        /* Get the top Panel through the parent. */
-        SearchTopPanel topPanel = this.m_mainSearchPanel.getTopPanel();
+	public void enableButtons() {
+		previousButton.setVisible(true);
+		resetButton.setVisible(true);
+	}
 
-        if (blnNext && ((iSelectedCard + 1) < centerPanel.getIdentifierCount())) {
-            /*
-             * Validate and increment index to get the corresponding identifier, and use that to show the card. 
-             * Also increment the index to indicate the currently selected card.
-             */
-            layout.show(centerPanel, centerPanel.getIdentifier(iSelectedCard + 1));
-            centerPanel.setSelectedCardIndex((iSelectedCard + 1));
-            topPanel.setFocus(iSelectedCard + 1, true);
-        } else if (iSelectedCard > 0) {
-            /*
-             * Validate and decrement index to get the corresponding identifier, and use that to show the card. 
-             * Also decrement the index to indicate the currently selected card.
-             */
-            layout.show(centerPanel, centerPanel.getIdentifier(iSelectedCard - 1));
-            centerPanel.setSelectedCardIndex((iSelectedCard - 1));
-            topPanel.setFocus(iSelectedCard - 1, false);
-        }
-    }
+	/*
+	 * The method sets the focus appropriately for the top searchPanel. Also,
+	 * update the indexes. corresponding updated can be abstracted into the top
+	 * searchPanel class itself
+	 */
+	public void showCard(boolean blnNext) {
+		/* Get the center Panel through the parent. */
+		SearchCenterPanel centerPanel = this.m_mainSearchPanel.getCenterPanel();
 
-    /**
-     * If got error or zero result on query execution call this method if we are
-     * calling this method don't call showCard Method
-     */
-    public void gotoAddLimitPanel() {
-        resetButton.setVisible(true);
-        SearchCenterPanel centerPanel = m_mainSearchPanel.getCenterPanel();
-        CardLayout layout = (CardLayout) centerPanel.getLayout();
+		/* Get the layout associated with the center searchPanel */
+		CardLayout layout = (CardLayout) centerPanel.getLayout();
 
-        layout.show(centerPanel, centerPanel.getIdentifier(1));
-        centerPanel.setSelectedCardIndex(1);
-        SearchTopPanel topPanel = this.m_mainSearchPanel.getTopPanel();
-        topPanel.setFocus(1, false);
-    }
+		/* Get the currently selected index. */
+		int iSelectedCard = centerPanel.getSelectedCardIndex();
 
-    /**
-     * Method to switch from view search result searchPanel to searchPanel data list searchPanel
-     * ...
-     * 
-     * @param datarow
-     */
+		/* Get the top Panel through the parent. */
+		SearchTopPanel topPanel = this.m_mainSearchPanel.getTopPanel();
 
-    public void gotoDataListPanel(final IDataRow datarow) {
-        SearchCenterPanel searchCenterPanel = m_mainSearchPanel.getCenterPanel();
-        DataListPanel dataListPanel = (DataListPanel) searchCenterPanel.m_arrCards[searchCenterPanel.getSelectedCardIndex() + 1];
-        if (dataListPanel != null) {
-            searchCenterPanel.remove(dataListPanel);
-        }
-        if (datarow == null) {
-            dataListPanel = new DataListPanel(MainSearchPanel.getDataList());
-        } else {
-            dataListPanel = new DataListPanel(MainSearchPanel.getDataList(), datarow);
-        }
+		if (blnNext && ((iSelectedCard + 1) < centerPanel.getIdentifierCount())) {
+			/*
+			 * Validate and increment index to get the corresponding identifier,
+			 * and use that to show the card. Also increment the index to
+			 * indicate the currently selected card.
+			 */
+			layout.show(centerPanel, centerPanel.getIdentifier(iSelectedCard + 1));
+			centerPanel.setSelectedCardIndex((iSelectedCard + 1));
+			topPanel.setFocus(iSelectedCard + 1, true);
+		} else if (iSelectedCard > 0) {
+			/*
+			 * Validate and decrement index to get the corresponding identifier,
+			 * and use that to show the card. Also decrement the index to
+			 * indicate the currently selected card.
+			 */
+			layout.show(centerPanel, centerPanel.getIdentifier(iSelectedCard - 1));
+			centerPanel.setSelectedCardIndex((iSelectedCard - 1));
+			topPanel.setFocus(iSelectedCard - 1, false);
+		}
+	}
 
-        searchCenterPanel.m_arrCards[4] = dataListPanel;
-        searchCenterPanel.add(dataListPanel, SearchCenterPanel.m_strDataListlbl);
-        /*
-         * Implies the next button was clicked. Call show card with boolean set
-         * to true.
-         */
-        resetButton.setVisible(false);
-        nextButton.setVisible(false);
+	/**
+	 * If got error or zero result on query execution call this method if we are
+	 * calling this method don't call showCard Method
+	 */
+	public void gotoAddLimitPanel() {
+		resetButton.setVisible(true);
+		SearchCenterPanel centerPanel = m_mainSearchPanel.getCenterPanel();
+		CardLayout layout = (CardLayout) centerPanel.getLayout();
 
-        previousButton.setVisible(true);
-        saveDataListButton.setVisible(true);
-        addToExperimentButton.setVisible(true);
-        showCard(true);
-    }
+		layout.show(centerPanel, centerPanel.getIdentifier(1));
+		centerPanel.setSelectedCardIndex(1);
+		SearchTopPanel topPanel = this.m_mainSearchPanel.getTopPanel();
+		topPanel.setFocus(1, false);
+	}
 
-    private class SaveQueryButtonListener implements ActionListener {
+	/**
+	 * Method to switch from view search result searchPanel to searchPanel data
+	 * list searchPanel ...
+	 * 
+	 * @param datarow
+	 */
 
-        public void actionPerformed(ActionEvent actionEvent) {
-            SaveQueryPanel saveQueryPanel = new SaveQueryPanel(m_mainSearchPanel);
-            saveQueryPanel.showInDialog();
-        }
+	public void gotoDataListPanel(final IDataRow datarow) {
+		SearchCenterPanel searchCenterPanel = m_mainSearchPanel.getCenterPanel();
+		DataListPanel dataListPanel = (DataListPanel) searchCenterPanel.m_arrCards[searchCenterPanel
+				.getSelectedCardIndex() + 1];
+		if (dataListPanel != null) {
+			searchCenterPanel.remove(dataListPanel);
+		}
+		if (datarow == null) {
+			dataListPanel = new DataListPanel(MainSearchPanel.getDataList());
+		} else {
+			dataListPanel = new DataListPanel(MainSearchPanel.getDataList(), datarow);
+		}
 
-    }
+		searchCenterPanel.m_arrCards[4] = dataListPanel;
+		searchCenterPanel.add(dataListPanel, SearchCenterPanel.m_strDataListlbl);
+		/*
+		 * Implies the next button was clicked. Call show card with boolean set
+		 * to true.
+		 */
+		resetButton.setVisible(false);
+		nextButton.setVisible(false);
+
+		previousButton.setVisible(true);
+		saveDataListButton.setVisible(true);
+		addToExperimentButton.setVisible(true);
+		showCard(true);
+	}
+
+	private class SaveQueryButtonListener implements ActionListener {
+
+		public void actionPerformed(ActionEvent actionEvent) {
+			SaveQueryPanel saveQueryPanel = new SaveQueryPanel(m_mainSearchPanel);
+			saveQueryPanel.showInDialog();
+		}
+
+	}
 }
