@@ -21,9 +21,18 @@ public class CategoryDataListRetriever extends AbstractDataListRetriever<ICatego
     @Override
     public void initialize(EntityInterface entity) {
         super.initialize(entity);
-        parser = new CategoryEntityTreeParser(newEntity);
+        parser = new CategoryEntityTreeParser(getNewEntity());
     }
 
+    /**
+     * Returns all attributes and associations of the given entity. Attributes
+     * are obtained from
+     * {@link AbstractDataListRetriever#getAttributesList(EntityInterface)}.
+     * Associations are obtained from
+     * {@link CategoryEntityTreeParser#getAssociationsForEntity()}.
+     * 
+     * @see edu.wustl.cab2b.server.datalist.AbstractDataListRetriever#getAttributesList(edu.common.dynamicextensions.domaininterface.EntityInterface)
+     */
     @Override
     protected List<AbstractAttributeInterface> getAttributesList(EntityInterface entity) {
         List<AbstractAttributeInterface> allAttributes = super.getAttributesList(entity);
@@ -31,6 +40,27 @@ public class CategoryDataListRetriever extends AbstractDataListRetriever<ICatego
         return allAttributes;
     }
 
+    /**
+     * Overrriden to additionally copy the values of the associated children
+     * entities as children {@link ICategorialClassRecord}s. This is achieved
+     * by invoking
+     * {@link AbstractDataListRetriever#getEntityRecords(EntityInterface, List)}
+     * for the child entity. <br>
+     * Note: The record ids of the child entity are part of the given DE record,
+     * since we also fetched associations by overriding
+     * {@link #getAttributesList(EntityInterface)}.<br>
+     * This is essentially a depth first strategy, where for each record, all
+     * its children records are fetched. The methods
+     * {@link AbstractDataListRetriever#getEntityRecords(EntityInterface, List)},
+     * {@link #copyOtherFields(ICategorialClassRecord, EntityRecordInterface, List, EntityInterface)}
+     * form the recursive chain for this depth first fetch; the second calls the
+     * first.
+     * 
+     * @see edu.wustl.cab2b.server.datalist.AbstractDataListRetriever#copyOtherFields(edu.wustl.cab2b.common.queryengine.result.IRecord,
+     *      edu.common.dynamicextensions.entitymanager.EntityRecordInterface,
+     *      java.util.List,
+     *      edu.common.dynamicextensions.domaininterface.EntityInterface)
+     */
     @Override
     protected void copyOtherFields(ICategorialClassRecord record, EntityRecordInterface recordInterface,
                                    List<? extends AbstractAttributeInterface> attributesList,
@@ -47,6 +77,12 @@ public class CategoryDataListRetriever extends AbstractDataListRetriever<ICatego
         }
     }
 
+    /**
+     * Returns the record ids of all the records.
+     * 
+     * @param results
+     * @return
+     */
     private List<Long> getRecordIds(EntityRecordResultInterface results) {
         List<Long> recordIds = new ArrayList<Long>();
         for (EntityRecordInterface record : results.getEntityRecordList()) {
@@ -55,6 +91,13 @@ public class CategoryDataListRetriever extends AbstractDataListRetriever<ICatego
         return recordIds;
     }
 
+    /**
+     * Creates the basic {@link ICategorialClassRecord} using
+     * {@link QueryResultFactory#createCategorialClassRecord(CategorialClass, Set, RecordId).
+     * 
+     * @see edu.wustl.cab2b.server.datalist.AbstractDataListRetriever#createRecord(edu.common.dynamicextensions.domaininterface.EntityInterface,
+     *      java.util.Set, edu.wustl.cab2b.common.queryengine.result.RecordId)
+     */
     @Override
     protected ICategorialClassRecord createRecord(EntityInterface entity, Set<AttributeInterface> attributes,
                                                   RecordId id) {

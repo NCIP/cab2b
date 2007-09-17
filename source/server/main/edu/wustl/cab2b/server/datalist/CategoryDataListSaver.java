@@ -19,6 +19,12 @@ import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
 
+/**
+ * Saver for {@link ICategorialClassRecord}.
+ * 
+ * @author srinath_k
+ * 
+ */
 public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClassRecord> {
     static final String CATEGORY_ID_TAG_KEY = "categoryId";
 
@@ -26,12 +32,37 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
 
     private CategoryEntityTreeParser parser;
 
+    /**
+     * Calls {@link AbstractDataListSaver#initialize(EntityInterface)} and then
+     * creates a {@link CategoryEntityTreeParser} for the newly created root
+     * entity.
+     * 
+     * @see #populateNewEntity(EntityInterface)
+     * @see edu.wustl.cab2b.server.datalist.AbstractDataListSaver#initialize(edu.common.dynamicextensions.domaininterface.EntityInterface)
+     */
     @Override
     public void initialize(EntityInterface oldEntity) {
         super.initialize(oldEntity);
-        parser = new CategoryEntityTreeParser(newEntity);
+        parser = new CategoryEntityTreeParser(getNewEntity());
     }
 
+    /**
+     * Creates a new entity tree with
+     * {@link AbstractDataListSaver#getNewEntity()} as the root entity; the tree
+     * exactly matches with the tree of categorial classes in the category.
+     * <p>
+     * Each new entity is tagged with the id of categorial class that caused it
+     * using {@link #CATEGORIAL_CLASS_ID_TAG_KEY}. In addition, the root entity
+     * (i.e. the "new entity") is tagged with the id of the category using
+     * {@link #CATEGORY_ID_TAG_KEY}.
+     * <p>
+     * Associations among the newly created entities are "symbolic" and do not
+     * correspond to any "real" association.
+     * 
+     * @throws IllegalArgumentException if the old entity does not represent a
+     *             category.
+     * @see edu.wustl.cab2b.server.datalist.AbstractDataListSaver#populateNewEntity(edu.common.dynamicextensions.domaininterface.EntityInterface)
+     */
     @Override
     protected void populateNewEntity(EntityInterface oldEntity) {
         EntityInterface originEntity = edu.wustl.cab2b.common.util.DataListUtil.getOriginEntity(oldEntity);
@@ -40,16 +71,17 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
         }
         Category category = getCategoryByEntityId(originEntity.getId());
         CategorialClass rootCategorialClass = category.getRootClass();
-        tagWithCategory(newEntity, category);
-        tagWithCategorialClass(newEntity, rootCategorialClass);
-        copyAttributesFromCategorialClass(newEntity, rootCategorialClass);
+        tagWithCategory(getNewEntity(), category);
+        tagWithCategorialClass(getNewEntity(), rootCategorialClass);
+        copyAttributesFromCategorialClass(getNewEntity(), rootCategorialClass);
 
         Map<CategorialClass, EntityInterface> catClassToEntity = new HashMap<CategorialClass, EntityInterface>();
-        catClassToEntity.put(rootCategorialClass, newEntity);
+        catClassToEntity.put(rootCategorialClass, getNewEntity());
         // one level below root.
         List<CategorialClass> currCatClasses = new ArrayList<CategorialClass>();
         currCatClasses.addAll(rootCategorialClass.getChildren());
 
+        // BFS over the catClasses tree.
         while (!currCatClasses.isEmpty()) {
             List<CategorialClass> nextCatClasses = new ArrayList<CategorialClass>();
 
@@ -67,9 +99,17 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
         }
     }
 
+    /**
+     * Performs a DFS on the tree of {@link ICategorialClassRecord}s and puts
+     * the values in the result map. The {@link CategoryEntityTreeParser} is
+     * used in this process to obtain additional info (such as associations
+     * among the entities etc..).
+     * 
+     * @see edu.wustl.cab2b.server.datalist.AbstractDataListSaver#transformToMap(edu.wustl.cab2b.common.queryengine.result.IRecord)
+     */
     @Override
     public Map<AbstractAttributeInterface, Object> transformToMap(ICategorialClassRecord record) {
-        return getRecordAsMap(record, newEntity);
+        return getRecordAsMap(record, getNewEntity());
     }
 
     private Map<AbstractAttributeInterface, Object> getRecordAsMap(ICategorialClassRecord record,
@@ -103,11 +143,17 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
         return recordMap;
     }
 
+    /**
+     * Create a new entity, with name as the original entity's name, that
+     * contains attributes from the categorialClass.
+     * 
+     * @param categorialClass
+     * @return
+     */
     private EntityInterface createEntity(CategorialClass categorialClass) {
         EntityInterface entity = getDomainObjectFactory().createEntity();
         entity.setName(categorialClass.getCategorialClassEntity().getName());
-        DynamicExtensionUtility.addTaggedValue(entity, CATEGORIAL_CLASS_ID_TAG_KEY,
-                                               categorialClass.getId().toString());
+        tagWithCategorialClass(entity, categorialClass);
 
         copyAttributesFromCategorialClass(entity, categorialClass);
         addVirtualAttributes(entity);

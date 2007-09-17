@@ -11,7 +11,6 @@ import java.util.Set;
 
 import net.sf.hibernate.HibernateException;
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
-import edu.common.dynamicextensions.domain.Entity;
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -34,8 +33,6 @@ import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.server.cache.DatalistCache;
-import edu.wustl.cab2b.server.experiment.ExperimentOperations;
-import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.common.util.dbManager.DBUtil;
 
@@ -44,20 +41,42 @@ public class DataListOperationsController {
 	private DataListOperationsController() {
 
 	}
-
+    /**
+     * Persists the data list into the database. A new model is created using the
+     * dynamic extensions (DE) API corresponding to each data list.Then the
+     * records are saved as records of the respective entities of this model
+     * using DE.
+     * <p>
+     * In the process, appropriate {@link DataListSaver} is invoked to obtain
+     * the DE specific representation of the records and the new model to be
+     * created.
+     * 
+     * @param rootRecordDataRow the UI representation of the data list; this
+     *            points to the dummy root of the data list.
+     * @param dataListMetadata metadata about the data list.
+     * @return the populated datalist metadata.
+     * @see DataListSaver
+     * @see DataListOperationsFactory
+     */
 	public static DataListMetadata saveDataList(IDataRow rootRecordDataRow,
 			DataListMetadata dataListMetadata) {
-		Map<EntityPair, AssociationInterface> associationForEntities = new HashMap<EntityPair, AssociationInterface>();
-		Map<EntityInterface, DataListSaver<IRecord>> oldEntityToSaver = new HashMap<EntityInterface, DataListSaver<IRecord>>();
-		Map<IDataRow, Map<AbstractAttributeInterface, Object>> dataRowToRecordsMap = new HashMap<IDataRow, Map<AbstractAttributeInterface, Object>>();
+        Map<EntityPair, AssociationInterface> associationForEntities = new HashMap<EntityPair, AssociationInterface>();
 
-		EntityGroupInterface dataListEntityGroup = DataListUtil.getDatalistEntityGroup();
-		// root stuff
+        // a saver per entity; these savers are in maintained in this map.
+        Map<EntityInterface, DataListSaver<IRecord>> oldEntityToSaver = new HashMap<EntityInterface, DataListSaver<IRecord>>();
+
+        // each datarow is transformed to the map that DE expects.
+
+        Map<IDataRow, Map<AbstractAttributeInterface, Object>> dataRowToRecordsMap = new HashMap<IDataRow, Map<AbstractAttributeInterface, Object>>();
+
+        EntityGroupInterface dataListEntityGroup = DataListUtil.getDatalistEntityGroup();
+        // root stuff
 		final EntityInterface rootEntity = getDomainObjectFactory().createEntity();
 		rootEntity.setName("DataList_" + System.currentTimeMillis());
 		rootEntity.addEntityGroupInterface(dataListEntityGroup);
 		dataListEntityGroup.addEntity(rootEntity);
 
+        // dummy saver for the dummy root.
 		oldEntityToSaver.put(null, new DataListSaver<IRecord>() {
 
 			public EntityInterface getNewEntity() {
@@ -81,6 +100,7 @@ public class DataListOperationsController {
 		List<IDataRow> currDataRows = new ArrayList<IDataRow>();
 		currDataRows.addAll(rootRecordDataRow.getChildren());
 
+        // breadth-first traversal on the dataRows
 		while (!currDataRows.isEmpty()) {
 			List<IDataRow> nextDataRows = new ArrayList<IDataRow>();
 			for (IDataRow classDataRow : currDataRows) {
@@ -147,13 +167,15 @@ public class DataListOperationsController {
 		}
 	}
 
-	/**
-	 * Returns entity record object
-	 * 
-	 * @param Long
-	 *            entityId
-	 * @return a EntityRecordResultInterface obj
-	 */
+    /**
+     * Returns records of the given entity. Delegates the operation to
+     * appropriate {@link DataListRetriever}.
+     * 
+     * @param Long entityId
+     * @return a EntityRecordResultInterface obj
+     * @see DataListRetriever
+     * @see DataListOperationsFactory
+     */
 	public static List<IRecord> getEntityRecords(Long entityId) {
 		EntityInterface entity = DatalistCache.getInstance().getEntityWithId(entityId);
 		DataListRetriever<IRecord> retriever = (DataListRetriever<IRecord>) DataListOperationsFactory

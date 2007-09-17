@@ -18,6 +18,30 @@ import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import gov.nih.nci.cagrid.cqlresultset.CQLQueryResults;
 import gov.nih.nci.mageom.domain.Identifiable;
 
+/**
+ * Skeletal implementation for a query result transformer of caArray
+ * application. Concrete implementations need only implement the
+ * {@link #createCaArrayRecord(Set, RecordId)} method to create the appropriate
+ * caArray record.<br>
+ * caArray service has following features which are implemented in this class:
+ * <ul>
+ * <li>Custom deserializers are provided which are used to deserialize the CQL
+ * results.</li>
+ * <li>In most cases, identifiers of classes associated to the target are also
+ * returned.</li>
+ * </ul>
+ * Reflection is used to obtain the values of the attributes and associated
+ * identifiers; thus this implementation is generic and should suffice for most
+ * caArray classes.
+ * <p>
+ * Note : Currently this class can only process DCQLs whose target object is
+ * <code>instanceOf</code> {@link Identifiable}. Also, caArray categories are
+ * not supported.
+ * 
+ * @author srinath_k
+ * 
+ * @param <R> the type of caArray record that this transformer creates.
+ */
 public abstract class AbstractCaArrayResultTransfomer<R extends ICaArrayRecord>
         extends
         AbstractQueryResultTransformer<R, ICaArrayCategoryRecord> implements
@@ -27,6 +51,20 @@ public abstract class AbstractCaArrayResultTransfomer<R extends ICaArrayRecord>
 
     protected CaArrayResultTransformerUtil transformerUtil = new CaArrayResultTransformerUtil(super.queryLogger);
 
+    /**
+     * Transforms the cql results and returns a list of records. This method
+     * first calls
+     * {@link CaArrayResultTransformerUtil#getObjectsFromCQLResults(String, CQLQueryResults)}
+     * to get a list of objects. Then, for each object in this list, it calls
+     * {@link #createRecordForObject(String, Object, EntityInterface)} to get
+     * corresponding record. The list of records thus obtained is returned.
+     * 
+     * @throws IllegalArgumentException if the specified target is not an
+     *             <code>instanceOf</code> {@link Identifiable}.
+     * @see edu.wustl.cab2b.server.queryengine.resulttransformers.AbstractQueryResultTransformer#createRecords(java.lang.String,
+     *      gov.nih.nci.cagrid.cqlresultset.CQLQueryResults,
+     *      edu.common.dynamicextensions.domaininterface.EntityInterface)
+     */
     @Override
     protected List<R> createRecords(String url, CQLQueryResults cqlQueryResults, EntityInterface targetEntity) {
 
@@ -41,6 +79,24 @@ public abstract class AbstractCaArrayResultTransfomer<R extends ICaArrayRecord>
         return res;
     }
 
+    /**
+     * Transforms an object to appropriate record.<br>
+     * The abstract method {@link #createCaArrayRecord(Set, RecordId)} is called
+     * to create the new record. Then, using reflection, this new record is
+     * populated with
+     * <ol>
+     * <li>values of the attributes of the entity</li>
+     * <li>values of identifiers of entities associated to this output entity;
+     * note that this implies that only associated entities that are an
+     * <code>instanceOf</code> {@link Identifiable} are considered.</li>
+     * </ol>
+     * 
+     * @param url the url from which this object was obtained.
+     * @param objRec the object to be transformed to appropriate record.
+     * @param outputEntity the entity by querying for which, this object was
+     *            obtained.
+     * @return
+     */
     protected R createRecordForObject(String url, Object objRec, EntityInterface outputEntity) {
         String id = executeMethods(objRec, GET_ID_METHOD_NAME)[0].toString();
         List<AttributeInterface> attributes = new ArrayList<AttributeInterface>(
@@ -69,7 +125,9 @@ public abstract class AbstractCaArrayResultTransfomer<R extends ICaArrayRecord>
         List<String> associatedIds = new ArrayList<String>();
         Class<?> desiredType = getClassForEntity(association.getTargetEntity());
         for (Object associatedObj : getAssociatedObjects(desiredType, associationValue)) {
+            // only identifiable associations are considered.
             if (isIdentifiable(associatedObj.getClass())) {
+                // get the id from the object.
                 associatedIds.add(executeMethods(associatedObj, GET_ID_METHOD_NAME)[0].toString());
             }
         }
@@ -82,6 +140,21 @@ public abstract class AbstractCaArrayResultTransfomer<R extends ICaArrayRecord>
         Class<?> associatedClass = associationValue.getClass();
 
         List<Object> associatedObjects = new ArrayList<Object>();
+        // if there is only one associated object, it is associationValue. If
+        // there is more than one object, there is an array of these objects;
+        // associationValue is then this array.
+
+        // the isAssignableFrom() checks are done for cases such as this: if
+        // query was for Experiment, then there is an array of related
+        // BioAssayData. This array also contains objects of subtypes of
+        // BioAssayData such as MeasuredBioAssayData, DerivedBioAssayData. Thus,
+        // the same array has 3 types of objects, but caB2B has 3 different
+        // associations with Experiment for these classes. So, when association
+        // with BioAssayData is being processed, its result should contain all 3
+        // objects; but for association with MeasuredBioAssayData, only
+        // MeasuredBioAssayData objects should be returned.
+        // Generalizing, the result of this method should contain objects of
+        // only desiredType or its subclasses.
         if (associatedClass.isArray()) {
             Object[] associatedObjectsArr = (Object[]) associationValue;
             for (Object associatedObj : associatedObjectsArr) {
@@ -136,7 +209,6 @@ public abstract class AbstractCaArrayResultTransfomer<R extends ICaArrayRecord>
      * @return Returns the String[] Array of method names
      */
     private String[] getAttributeGettersNames(List<AttributeInterface> attributes) {
-
         String[] methodNames = new String[attributes.size()];
         int i = 0;
         for (AttributeInterface attribute : attributes) {
@@ -165,7 +237,7 @@ public abstract class AbstractCaArrayResultTransfomer<R extends ICaArrayRecord>
     protected ICaArrayCategoryRecord createCategoryRecord(CategorialClass categorialClass,
                                                           Set<AttributeInterface> categoryAttributes, RecordId id) {
         // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Yet to implement.");
     }
 
 }

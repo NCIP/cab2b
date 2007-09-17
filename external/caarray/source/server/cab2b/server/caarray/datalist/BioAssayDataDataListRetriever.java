@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import cab2b.common.caarray.BioAssayDataRecord;
+import cab2b.common.caarray.IFullyInitializedBioAssayDataRecord;
 import cab2b.common.caarray.IPartiallyInitializedBioAssayDataRecord;
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -21,6 +22,28 @@ import edu.wustl.cab2b.server.datalist.AbstractDataListRetriever;
 import edu.wustl.cab2b.server.datalist.DataListUtil;
 import edu.wustl.cab2b.server.queryengine.LazyInitializer;
 
+/**
+ * Retriever for IPartiallyInitializedBioAssayDataRecord's. Lazy initialization
+ * is achieved by:
+ * <ol>
+ * <li>In {@link #createRecord(EntityInterface, Set, RecordId)} create a blank
+ * {@link IFullyInitializedBioAssayDataRecord}. Register it, and return
+ * corresponding {@link IPartiallyInitializedBioAssayDataRecord}.</li>
+ * <li>In
+ * {@link #copyOtherFields(IPartiallyInitializedBioAssayDataRecord, EntityRecordInterface, List, EntityInterface)},
+ * <ul>
+ * <li> Obtain the full record using
+ * {@link LazyInitializer#getFullyInitialializedRecord(int)}. Copy the cube and
+ * dimension labels into this full record.</li>
+ * <li> Set the cube and dimension labels as empty arrays of appropriate sizes
+ * in the partial record.</li>
+ * </ul>
+ * </li>
+ * </ol>
+ * 
+ * @author srinath_k
+ * 
+ */
 public class BioAssayDataDataListRetriever
         extends
         AbstractDataListRetriever<IPartiallyInitializedBioAssayDataRecord> {
@@ -30,7 +53,7 @@ public class BioAssayDataDataListRetriever
                                    EntityRecordInterface recordInterface,
                                    List<? extends AbstractAttributeInterface> attributesList,
                                    EntityInterface entity) {
-        if (!entity.equals(newEntity)) {
+        if (!entity.equals(getNewEntity())) {
             throw new IllegalArgumentException();
         }
         BioAssayDataRecord derivedBioAssayDataRecord = (BioAssayDataRecord) LazyInitializer.getFullyInitialializedRecord(record.handle());

@@ -7,8 +7,19 @@ import edu.wustl.cab2b.common.cache.AbstractEntityCache;
 
 public class DataListUtil {
 
+    /**
+     * When a new entity is created for the datalist, this tag on it is used to
+     * point to the original entity (i.e. entity from UML model of the
+     * application).
+     */
     public static final String ORIGIN_ENTITY_ID_KEY = "originEntityId";
 
+    /**
+     * When a new entity is created for the datalist, this tag on it is used to
+     * point to the entity from which this new entity was created. <br>
+     * Note : In this case, both, the old and new entity, will have the same
+     * "origin entity".
+     */
     public static final String SOURCE_ENTITY_ID_KEY = "sourceEntityId";
 
     private DataListUtil() {

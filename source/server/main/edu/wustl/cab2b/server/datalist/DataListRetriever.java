@@ -27,9 +27,10 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
  * <p>
  * A dataListRetriever will typically be paired with a {@link DataListSaver}.
  * Such a pair is to be registered in the file
- * <code>ResultConfiguration.xml</xml>.
+ * <code>ResultConfiguration.xml</code>.
+ * 
  * @author srinath_k
- *
+ * 
  * @param <R> the type of records that will be retrieved.
  */
 public interface DataListRetriever<R extends IRecord> {
@@ -46,6 +47,8 @@ public interface DataListRetriever<R extends IRecord> {
      * 
      * @param recordIds the ids of the records that are to be fetched.
      * @return the list of appropriate specialization of {@link IRecord}.
+     * @throws IllegalStateException if {@link #initialize(EntityInterface)} has
+     *             not been called.
      */
     List<R> getEntityRecords(List<Long> recordIds);
 }

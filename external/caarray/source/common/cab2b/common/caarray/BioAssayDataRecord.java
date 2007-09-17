@@ -10,6 +10,18 @@ import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.cab2b.common.queryengine.result.I3DDataRecord.LazyParams.Range;
 import edu.wustl.cab2b.server.queryengine.LazyInitializer;
 
+/**
+ * Implementats both {@link IFullyInitializedBioAssayDataRecord} and
+ * {@link IPartiallyInitializedBioAssayDataRecord}. A boolean is used to
+ * identify which interface is being implemented by an object.
+ * <p>
+ * The constructor is private, and an object is created using either
+ * {@link #createFullyInitializedRecord(Set, RecordId)} or
+ * {@link #createLazyForm(BioAssayDataRecord)}.
+ * 
+ * @author srinath_k
+ * 
+ */
 public class BioAssayDataRecord extends CaArrayRecord implements IFullyInitializedBioAssayDataRecord,
         IPartiallyInitializedBioAssayDataRecord {
     private static final long serialVersionUID = -6479610453654712409L;
@@ -141,6 +153,12 @@ public class BioAssayDataRecord extends CaArrayRecord implements IFullyInitializ
         return lazy;
     }
 
+    /**
+     * Copies the attributes' values, and inits the arrays to appropriate size;
+     * note that the contents of the arrays are not copied.
+     * 
+     * @see edu.wustl.cab2b.common.queryengine.result.Record#copyValuesFrom(edu.wustl.cab2b.common.queryengine.result.IRecord)
+     */
     @Override
     public void copyValuesFrom(IRecord record) {
         if (!(record instanceof BioAssayDataRecord)) {
@@ -148,9 +166,9 @@ public class BioAssayDataRecord extends CaArrayRecord implements IFullyInitializ
         }
         super.copyValuesFrom(record);
         BioAssayDataRecord sourceRecord = (BioAssayDataRecord) record;
-//        if (!sourceRecord.fullyInitialized) {
-//            throw new IllegalArgumentException();
-//        }
+        // if (!sourceRecord.fullyInitialized) {
+        // throw new IllegalArgumentException();
+        // }
         int dim1 = sourceRecord.getDim1Labels().length;
         int dim2 = sourceRecord.getDim2Labels().length;
         int dim3 = sourceRecord.getDim3Labels().length;

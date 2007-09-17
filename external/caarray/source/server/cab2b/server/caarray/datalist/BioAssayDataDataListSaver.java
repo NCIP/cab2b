@@ -16,8 +16,19 @@ import edu.common.dynamicextensions.domaininterface.ObjectAttributeRecordValueIn
 import edu.wustl.cab2b.server.datalist.AbstractDataListSaver;
 import edu.wustl.cab2b.server.datalist.DataListUtil;
 import edu.wustl.cab2b.server.queryengine.LazyInitializer;
+import gov.nih.nci.mageom.domain.BioAssayData.BioAssayData;
 
+/**
+ * Saver for IPartiallyInitializedBioAssayDataRecord's.
+ * <p>
+ * Creates virtual attributes of DE type "object" for the cube and the labels of
+ * the three dimensions.
+ * 
+ * @author srinath_k
+ * 
+ */
 public class BioAssayDataDataListSaver extends AbstractDataListSaver<IPartiallyInitializedBioAssayDataRecord> {
+    // names of the virtual attributes.
     static final String CUBE_ATTRIBUTE_NAME = "cube";
 
     static final String DIM1LABELS_ATTRIBUTE_NAME = "dim1Labels";
@@ -26,26 +37,64 @@ public class BioAssayDataDataListSaver extends AbstractDataListSaver<IPartiallyI
 
     static final String DIM3LABELS_ATTRIBUTE_NAME = "dim3Labels";
 
+    /**
+     * Populates the new entity with attributes from original entity and the
+     * virtual attributes related to biodatacube.
+     * <p>
+     * Following are the virtual attributes (all of type object) added to the
+     * new entity:<br>
+     * <ul>
+     * <li>{@link #CUBE_ATTRIBUTE_NAME}</li>
+     * <li>{@link #DIM1LABELS_ATTRIBUTE_NAME}</li>
+     * <li>{@link #DIM2LABELS_ATTRIBUTE_NAME}</li>
+     * <li>{@link #DIM3LABELS_ATTRIBUTE_NAME}</li>
+     * </ul>
+     * 
+     * @throws IllegalArgumentException if the given entity is not a subtype of
+     *             {@link BioAssayData}.
+     * @see edu.wustl.cab2b.server.datalist.AbstractDataListSaver#populateNewEntity(edu.common.dynamicextensions.domaininterface.EntityInterface)
+     */
     @Override
     protected void populateNewEntity(EntityInterface oldEntity) {
-        DataListUtil.copyNonVirtualAttributes(newEntity, oldEntity);
-        newEntity.addAttribute(createObjectAttribute(CUBE_ATTRIBUTE_NAME));
-        newEntity.addAttribute(createObjectAttribute(DIM1LABELS_ATTRIBUTE_NAME));
-        newEntity.addAttribute(createObjectAttribute(DIM2LABELS_ATTRIBUTE_NAME));
-        newEntity.addAttribute(createObjectAttribute(DIM3LABELS_ATTRIBUTE_NAME));
+        try {
+            if (!BioAssayData.class.isAssignableFrom(Class.forName(oldEntity.getName()))) {
+                throw new IllegalArgumentException();
+            }
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException();
+        }
+        DataListUtil.copyNonVirtualAttributes(getNewEntity(), oldEntity);
+        getNewEntity().addAttribute(createObjectAttribute(CUBE_ATTRIBUTE_NAME));
+        getNewEntity().addAttribute(createObjectAttribute(DIM1LABELS_ATTRIBUTE_NAME));
+        getNewEntity().addAttribute(createObjectAttribute(DIM2LABELS_ATTRIBUTE_NAME));
+        getNewEntity().addAttribute(createObjectAttribute(DIM3LABELS_ATTRIBUTE_NAME));
     }
 
+    /**
+     * Returns the DE representation of the
+     * {@link IPartiallyInitializedBioAssayDataRecord}. This method first calls
+     * {@link AbstractDataListSaver#transformToMap} to copy the values of the
+     * attributes in {@link IRecord}.
+     * <p>
+     * Then it obtains the {@link IFullyInitializedBioAssayDataRecord} for the
+     * given {@link IPartiallyInitializedBioAssayDataRecord} using
+     * {@link LazyInitializer#getFullyInitialializedRecord(int)}. Then the
+     * values for the virtual attributes related to biodatacube are obtained
+     * from this full record and  put in the map.
+     * 
+     * @see edu.wustl.cab2b.server.datalist.AbstractDataListSaver#transformToMap(edu.wustl.cab2b.common.queryengine.result.IRecord)
+     */
     @Override
     public Map<AbstractAttributeInterface, Object> transformToMap(IPartiallyInitializedBioAssayDataRecord record) {
         Map<AbstractAttributeInterface, Object> recordsMap = super.transformToMap(record);
         IFullyInitializedBioAssayDataRecord fullRec = (IFullyInitializedBioAssayDataRecord) LazyInitializer.getFullyInitialializedRecord(record.handle());
-        recordsMap.put(getAttributeByName(newEntity, CUBE_ATTRIBUTE_NAME),
+        recordsMap.put(getAttributeByName(getNewEntity(), CUBE_ATTRIBUTE_NAME),
                        createObjectRecordValue(fullRec.getCube()));
-        recordsMap.put(getAttributeByName(newEntity, DIM1LABELS_ATTRIBUTE_NAME),
+        recordsMap.put(getAttributeByName(getNewEntity(), DIM1LABELS_ATTRIBUTE_NAME),
                        createObjectRecordValue(fullRec.getDim1Labels()));
-        recordsMap.put(getAttributeByName(newEntity, DIM2LABELS_ATTRIBUTE_NAME),
+        recordsMap.put(getAttributeByName(getNewEntity(), DIM2LABELS_ATTRIBUTE_NAME),
                        createObjectRecordValue(fullRec.getDim2Labels()));
-        recordsMap.put(getAttributeByName(newEntity, DIM3LABELS_ATTRIBUTE_NAME),
+        recordsMap.put(getAttributeByName(getNewEntity(), DIM3LABELS_ATTRIBUTE_NAME),
                        createObjectRecordValue(fullRec.getDim3Labels()));
         return recordsMap;
     }

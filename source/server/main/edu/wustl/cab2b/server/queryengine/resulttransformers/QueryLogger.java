@@ -11,6 +11,17 @@ import java.util.Date;
 
 import javax.xml.namespace.QName;
 
+/**
+ * Logs CQL and DCQL under {user.home}/cab2bQueries.<br>
+ * If the base log folder {user.home}/cab2bQueries doesn't exist, it is created
+ * in a static initializer. Each logger notes the time when it was instantiated
+ * (to the precision of a second), and creates a folder under the base log
+ * folder that contains this timestamp in its name. An example is <br>
+ * C:\Documents and Settings\srinath_k\cab2bQueries\4 Sep 2007 01_13_06 PM.
+ * 
+ * @author srinath_k
+ * 
+ */
 public class QueryLogger {
     private static final String LOG_BASE_DIR = System.getProperty("user.home") + "/cab2bQueries";
 
@@ -40,6 +51,12 @@ public class QueryLogger {
         return Logger.out.isInfoEnabled();
     }
 
+    /**
+     * Serializes the given query to a file under the log dir for this logger.
+     * 
+     * @param dcqlQuery the query to log
+     * @see Utils#serializeDocument(String, Object, QName)
+     */
     public void log(DCQLQuery dcqlQuery) {
         if (!isLogEnabled()) {
             return;
@@ -53,6 +70,12 @@ public class QueryLogger {
 
     }
 
+    /**
+     * Serializes the given query to a file under the log dir for this logger.
+     * 
+     * @param cqlQuery the query to log
+     * @see Utils#serializeDocument(String, Object, QName)
+     */
     public void log(CQLQuery cqlQuery) {
         if (!isLogEnabled()) {
             return;

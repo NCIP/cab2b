@@ -18,6 +18,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Util for the query result transformers.
+ * 
+ * @author srinath_k
+ * 
+ */
 public class QueryResultTransformerUtil {
 
     private QueryLogger logger;
@@ -26,6 +32,18 @@ public class QueryResultTransformerUtil {
         this.logger = logger;
     }
 
+    /**
+     * Creates and executes CQL to obtain desired attributes' values.
+     * 
+     * @param className the target class
+     * @param attributeNames the attributes whose values are to be fetched
+     * @param idAttrName the name of the id attribute
+     * @param ids identifies which objects of the target class are to be fetched
+     *            (translates to constraints in the CQL)
+     * @param url the service url
+     * @return the list of records obtained by executing the CQL; each record is
+     *         an attribute-value map.
+     */
     public List<Map<String, String>> getAttributeResult(String className, String[] attributeNames,
                                                         String idAttrName, String[] ids, String url) {
         List<Map<String, String>> records = new ArrayList<Map<String, String>>();
@@ -57,6 +75,15 @@ public class QueryResultTransformerUtil {
         return records;
     }
 
+    /**
+     * Creates and executes CQL to get object of given id.
+     * 
+     * @param className the target class
+     * @param idAttrName the name of the id attribute in the class
+     * @param id the id of the desired object
+     * @param url the service url
+     * @return the cql results.
+     */
     public CQLQueryResults getCQLResultsById(String className, String idAttrName, String id, String url) {
         Object target = createTarget(className, createIdConstraint(idAttrName, id));
         return executeCQL(createCQLQuery(target), url);

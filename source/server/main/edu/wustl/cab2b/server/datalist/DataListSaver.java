@@ -11,7 +11,7 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
  * saving a data list. The first method called on a saver must be
  * <code>initialize()</code>. All other methods are expected to throw an
  * {@link IllegalStateException} if <code>initialize()</code> has not been
- * called already.
+ * called previously.
  * <p>
  * A saver provides Dynamic-extensions (DE) specific representation of the
  * records of an entity that are to be saved in a datalist. For this, a new
@@ -36,7 +36,7 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
  * <p>
  * A datalistSaver will typically be paired with a {@link DataListRetriever}.
  * Such a pair is to be registered in the file
- * <code>ResultConfiguration.xml</xml>.
+ * <code>ResultConfiguration.xml</code>.
  * 
  * @author srinath_k
  * 
@@ -51,6 +51,8 @@ public interface DataListSaver<R extends IRecord> {
      * mandatory) that the new entity be created during this initialization
      * process.
      * 
+     * @throws IllegalArgumentException if the saver is incapable of saving the
+     *             specified entity.
      * @param oldEntity the entity whose records are to be saved.
      */
     void initialize(EntityInterface oldEntity);
@@ -62,7 +64,8 @@ public interface DataListSaver<R extends IRecord> {
      * <code>getNewEntity()</code>.
      * 
      * @param record the record to be transformed.
-     * @throws IllegalStateException if initialize() has not been called.
+     * @throws IllegalStateException if {@link #initialize(EntityInterface)} has
+     *             not been called.
      * @return DE specific representation of the record.
      */
     Map<AbstractAttributeInterface, Object> getRecordAsMap(R record);
@@ -73,7 +76,8 @@ public interface DataListSaver<R extends IRecord> {
      * (without an intervening call to <code>initialize()</code>) return the
      * <i>same</i> (by reference) entity.
      * 
-     * @throws IllegalStateException if initialize() has not been called.
+     * @throws IllegalStateException if {@link #initialize(EntityInterface)} has
+     *             not been called.
      * @return the new entity.
      */
     EntityInterface getNewEntity();

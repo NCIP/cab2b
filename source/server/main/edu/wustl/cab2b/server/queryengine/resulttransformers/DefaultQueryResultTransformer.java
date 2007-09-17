@@ -20,7 +20,7 @@ import gov.nih.nci.cagrid.data.utilities.CQLQueryResultsIterator;
  * The default query result transformer. It parses the
  * {@link gov.nih.nci.cagrid.cqlresultset.CQLQueryResults} xml and extracts the
  * values for the attributes of the target entity. The records in the results
- * are the of the basic types
+ * are of the basic types
  * {@link edu.wustl.cab2b.common.queryengine.result.IRecord} and
  * {@link edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord}.
  * 

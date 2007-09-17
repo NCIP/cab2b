@@ -20,6 +20,7 @@ import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.cab2b.server.queryengine.LazyInitializer;
+import edu.wustl.cab2b.server.queryengine.resulttransformers.QueryResultTransformerUtil;
 import gov.nih.nci.mageom.domain.Identifiable;
 import gov.nih.nci.mageom.domain.BioAssay.BioAssay;
 import gov.nih.nci.mageom.domain.BioAssayData.BioAssayData;
@@ -27,18 +28,63 @@ import gov.nih.nci.mageom.domain.BioAssayData.BioAssayDimension;
 import gov.nih.nci.mageom.domain.BioAssayData.BioDataCube;
 import gov.nih.nci.mageom.domain.BioAssayData.CompositeSequenceDimension;
 import gov.nih.nci.mageom.domain.BioAssayData.QuantitationTypeDimension;
+import gov.nih.nci.mageom.domain.DesignElement.DesignElement;
+import gov.nih.nci.mageom.domain.QuantitationType.QuantitationType;
 
+/**
+ * Transformer that creates {@link IPartiallyInitializedBioAssayDataRecord} for
+ * queries on {@link BioAssayData} and its subtypes. This transformer is needed
+ * to "understand" the {@link BioDataCube} returned by the caArray service along
+ * with a {@link BioAssayData}.
+ * <p>
+ * Currently, the biodatacube is always transformed to BQD. The names of the
+ * three dimensions are fetched by firing additional CQLs.
+ * 
+ * @author srinath_k
+ * 
+ */
 public class BioAssayDataResultTransformer
         extends
         AbstractCaArrayResultTransfomer<IPartiallyInitializedBioAssayDataRecord> {
     private static final String HEADER_ATTRIBUTE_NAME = "name";
 
+    /**
+     * Creates a {@link BioAssayDataRecord} of type "fully initialized".
+     * 
+     * @see cab2b.server.caarray.resulttransformer.AbstractCaArrayResultTransfomer#createCaArrayRecord(java.util.Set,
+     *      edu.wustl.cab2b.common.queryengine.result.RecordId)
+     * @see BioAssayDataRecord#createFullyInitializedRecord(Set, RecordId)
+     */
     @Override
     protected IPartiallyInitializedBioAssayDataRecord createCaArrayRecord(Set<AttributeInterface> attributes,
                                                                           RecordId id) {
         return BioAssayDataRecord.createFullyInitializedRecord(attributes, id);
     }
 
+    /**
+     * Creates the {@link IPartiallyInitializedBioAssayDataRecord} for given
+     * object.<br>
+     * Following is the sequence of steps:
+     * <ol>
+     * <li>Call <code>super.createRecordForObject()</code>. This creates a
+     * new record that contains the values of the attributes and associated ids.</li>
+     * <li>Obtain the names of the dimensions i.e. names of {@link BioAssay},
+     * {@link QuantitationType} and {@link DesignElement} by firing appropriate
+     * CQLs. These names are the names of the three dimensions of the
+     * {@link BioDataCube}. Populate these names as the dim1Labels, dim2Labels
+     * and dim3Labels respectively.</li>
+     * <li>Transform the three dimensional array of {@link BioDataCube} to the
+     * order BQD using {@link MatrixDimensionSwapper}.</li>
+     * <li>Return the lazy form of this record obtained by
+     * {@link BioAssayDataRecord#createLazyForm(BioAssayDataRecord)}.</li>
+     * </ol>
+     * 
+     * @throws IllegalArgumentException if the given object is not an
+     *             <code>instanceOf</code> {@link BioAssayData}.
+     * @see cab2b.server.caarray.resulttransformer.AbstractCaArrayResultTransfomer#createRecordForObject(java.lang.String,
+     *      java.lang.Object,
+     *      edu.common.dynamicextensions.domaininterface.EntityInterface)
+     */
     @Override
     protected IPartiallyInitializedBioAssayDataRecord createRecordForObject(String url, Object objRec,
                                                                             EntityInterface outputEntity) {
@@ -161,6 +207,8 @@ public class BioAssayDataResultTransformer
         }
         return names;
     }
+
+    // ////////////////// HACKS FOLLOW, BEWARE!! ////////////////////////
 
     // @Override
     // public IQueryResult<IPartiallyInitializedBioAssayDataRecord>

@@ -45,10 +45,23 @@ import gov.nih.nci.cagrid.dcql.DCQLQuery;
 import gov.nih.nci.cagrid.dcql.Object;
 
 /**
- * This class is responsible for building a DCQL out of ICab2bQuery, and get
- * results by executing that DCQL.
+ * Processes an input {@link ICab2bQuery} and returns the results for the query.<br>
+ * In this process, this class uses
+ * <ol>
+ * <li>The {@link CategoryPreprocessor} to pre-process categories in the query</li>
+ * <li>The {@link ConstraintsBuilder} to obtain DCQL-specific representation of
+ * the constraints</li>
+ * <li>Appropriate {@link IQueryResultTransformer} to transform the DCQL to
+ * results.</li>
+ * </ol>
+ * This class primarily handles the output related portion of the query
+ * <ol>
+ * <li>If output is a class, the DCQL target is simply the output class name.</li>
+ * <li>If output is a category, then multiple DCQLs are formed and executed to
+ * obtain results for the multiple classes within the category.</li>
+ * </ol>
  * 
- * @author Srinath
+ * @author srinath_k
  */
 
 public class QueryExecutor {
@@ -121,8 +134,10 @@ public class QueryExecutor {
     }
 
     /**
-     * This methods generates DCQL out of input ICab2bQuery object and fires it,
-     * and returns the results.
+     * This methods generates DCQL(s) for ICab2bQuery object and gets the
+     * results using appropriate {@link IQueryResultTransformer}. If output is
+     * a class, then just set the target as the class name, and appropriate
+     * constraints.
      * 
      * @param query Query which needs to be executed.
      * @return Returns the IQueryResult
@@ -137,6 +152,7 @@ public class QueryExecutor {
         IQueryResult queryResult;
 
         if (isCategoryOutput()) {
+            // in this
             Set<TreeNode<IExpression>> rootOutputExprNodes = this.categoryPreprocessorResult.getExprsSourcedFromCategories().get(
                                                                                                                                  getOutputEntity());
             List<IQueryResult<ICategorialClassRecord>> categoryResults = new ArrayList<IQueryResult<ICategorialClassRecord>>(
@@ -155,6 +171,7 @@ public class QueryExecutor {
                                                                                                          catClassForRootExpr);
                 categoryResults.add(allRootExprCatRecs);
 
+                // process children in parallel.
                 for (Map.Entry<String, List<ICategorialClassRecord>> entry : allRootExprCatRecs.getRecords().entrySet()) {
                     List<ChildQueryExecutor> childQueryExecList = new ArrayList<ChildQueryExecutor>();
                     for (ICategorialClassRecord rootExprCatRec : entry.getValue()) {
@@ -166,6 +183,8 @@ public class QueryExecutor {
             }
             queryResult = mergeCatResults(categoryResults);
         } else {
+            // if output is a class, then just set the target as the class name,
+            // and appropriate constraints.
             DCQLQuery dcqlQuery = createDCQLQuery(
                                                   getOutputEntity().getName(),
                                                   this.constraintsBuilderResult.getDcqlConstraintForClass(getOutputEntity()));

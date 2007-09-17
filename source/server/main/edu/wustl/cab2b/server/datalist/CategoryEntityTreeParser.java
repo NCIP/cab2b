@@ -17,13 +17,41 @@ import edu.wustl.cab2b.server.cache.CategoryCache;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
 
+/**
+ * A "structure" containing a bunch of info about the tree of entities and
+ * categorial classes within a category. All the info is populated in the
+ * constructor and used when saving/retrieving a category record from data list.
+ * <p>
+ * Note that there are two trees in the picture; one is the tree of categorial
+ * classes within the category and the other is the corresponding tree of
+ * entities created while saving a data list that contains this category. The
+ * tree of entities exactly matches the tree of categorial classes.
+ * 
+ * @author srinath_k
+ * 
+ */
 class CategoryEntityTreeParser {
+    /**
+     * key=id of the categorial class; value=entity corresponding to this
+     * categorial class.
+     */
     private Map<Long, EntityInterface> categorialClassIdToEntity;
 
+    /**
+     * key=entity; value=categorial class for which this entity was created.
+     */
     private Map<EntityInterface, CategorialClass> entityToOriginCategorialClass;
 
+    /**
+     * key = {@link EntityPair} with src as parent entity and dest as child
+     * entity, within the category entity tree; value = the association.
+     */
     private Map<EntityPair, AssociationInterface> associationForEntityPair;
 
+    /**
+     * key = entity; value = list of associations from that entity i.e.
+     * associations linking the entity to its children.
+     */
     private Map<EntityInterface, List<AssociationInterface>> associationsForEntity;
 
     private Category category;
@@ -48,6 +76,12 @@ class CategoryEntityTreeParser {
         return getAssociationForEntityPair().get(new EntityPair(srcEnt, tgtEnt));
     }
 
+    /**
+     * Does a simultaneous BFS on both entity and categorial class trees and
+     * populates all the member variables.
+     * 
+     * @param rootEntity
+     */
     CategoryEntityTreeParser(EntityInterface rootEntity) {
         categorialClassIdToEntity = new HashMap<Long, EntityInterface>();
         entityToOriginCategorialClass = new HashMap<EntityInterface, CategorialClass>();
@@ -78,7 +112,7 @@ class CategoryEntityTreeParser {
                 Collection<AssociationInterface> associations = currEntity.getAssociationCollection();
                 for (AssociationInterface association : associations) {
                     EntityInterface targetEntity = association.getTargetEntity();
-                    if (isCategorialClassEntity(targetEntity)) {
+                    if (isRelevantEntity(targetEntity)) {
                         associationForEntityPair.put(new EntityPair(currEntity, targetEntity), association);
                         associationsForEntity.get(currEntity).add(association);
                         nextEntities.add(targetEntity);
@@ -89,6 +123,20 @@ class CategoryEntityTreeParser {
             currEntities = nextEntities;
             currCategorialClasses = nextCategorialClasses;
         }
+    }
+
+    /**
+     * Checks if this entity is a part of this category's entity tree (except
+     * root). This if is needed bcos in context of data list, we may run out the
+     * entities for the category and move into the next associated
+     * class/category.
+     * 
+     * @param entity
+     * @return
+     */
+    private boolean isRelevantEntity(EntityInterface entity) {
+        return isCategorialClassEntity(entity)
+                && Utility.getTaggedValue(entity, CategoryDataListSaver.CATEGORY_ID_TAG_KEY) == null;
     }
 
     private CategorialClass findCategorialClassWithId(List<CategorialClass> currCategorialClasses,
