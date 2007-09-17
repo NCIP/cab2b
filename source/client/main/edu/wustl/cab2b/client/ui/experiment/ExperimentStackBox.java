@@ -243,7 +243,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 				ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
 						EjbNamesConstants.EXPERIMENT, ExperimentHome.class);
 				try {
-					customDataCategoryModel = expBus.getDataCategoryModel();
+					customDataCategoryModel = expBus.getDataCategoryModel(m_selectedExperiment);
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				} catch (CheckedException e) {

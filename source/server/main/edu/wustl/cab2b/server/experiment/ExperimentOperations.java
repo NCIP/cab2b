@@ -48,6 +48,10 @@ import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.logger.Logger;
 
+/**
+ * @author Hrishikesh Rajpathak
+ * @author chetan_bh
+ */
 public class ExperimentOperations extends DefaultBizLogic {
 	/**
 	 * Hibernate DAO Type to use.
@@ -528,7 +532,7 @@ public class ExperimentOperations extends DefaultBizLogic {
 	 * @return CustomDataCategoryModel
 	 * @throws CheckedException
 	 */
-	public CustomDataCategoryModel getDataCategoryModel() throws CheckedException {
+	public CustomDataCategoryModel getDataCategoryModel(Experiment experiment) throws CheckedException {
 
 		List<IdName> dataListIdName;
 		Map<Long, List<IdName>> rootDlToLeafDlIdName = new HashMap<Long, List<IdName>>();
@@ -536,7 +540,7 @@ public class ExperimentOperations extends DefaultBizLogic {
 		Collection<DataListMetadata> dataListCollection;
 		Collection<DataListMetadata> finalDataListCollection= new ArrayList<DataListMetadata>();
 		try {
-			dataListCollection = getAllDataLists();
+			dataListCollection = experiment.getDataListMetadataCollection();
 			dataListsToAssociatedDataListsIdName(rootDlToLeafDlIdName, dataListCollection,finalDataListCollection);
 			dataListIdName = getAllDataListIdName(finalDataListCollection);
 			CustomDataCategoryModel model = new CustomDataCategoryModel(dataListIdName,

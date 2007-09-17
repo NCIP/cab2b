@@ -107,7 +107,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
     void addDataListToExperiment(Long experimentId, Long dataListMetaDataId) throws RemoteException;
     
     
-    public CustomDataCategoryModel getDataCategoryModel() throws  RemoteException,CheckedException;
+    public CustomDataCategoryModel getDataCategoryModel(Experiment experiment) throws  RemoteException,CheckedException;
     
     public Collection<AttributeInterface> getAllAttributes(Long Id) throws RemoteException, CheckedException;
 

@@ -106,8 +106,8 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
 		return new ExperimentOperations().getRootId(dl);
 	}
 
-	public CustomDataCategoryModel getDataCategoryModel() throws CheckedException {
-		return new ExperimentOperations().getDataCategoryModel();
+	public CustomDataCategoryModel getDataCategoryModel(Experiment experiment) throws CheckedException {
+		return new ExperimentOperations().getDataCategoryModel(experiment);
 	}
 
 
@@ -119,4 +119,5 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
 			CheckedException {
 		return new ExperimentOperations().getAllAttributes(id);
 	}
+
 }
