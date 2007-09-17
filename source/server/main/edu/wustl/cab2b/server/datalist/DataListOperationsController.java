@@ -179,12 +179,24 @@ public class DataListOperationsController {
 		DatalistCache.getInstance().addEntity(newEntity);
 	}
 
+	/**
+	 * Saves data populated category.
+	 * 
+	 * @param rootEntityIdName
+	 * @param selectedAttributeList
+	 * @param dataListId
+	 * @param name
+	 * @return
+	 * @throws CheckedException
+	 * @throws RemoteException
+	 */
 	public static DataListMetadata saveDataCategory(IdName rootEntityIdName,
 			Collection<AttributeInterface> selectedAttributeList, Long dataListId, String name)
 			throws CheckedException, RemoteException {
 		EntityInterface rootEntity;
 		try {
-			rootEntity = EntityManager.getInstance().getEntityByIdentifier(rootEntityIdName.getId());
+			rootEntity = EntityManager.getInstance()
+					.getEntityByIdentifier(rootEntityIdName.getId());
 		} catch (DynamicExtensionsSystemException e) {
 			throw new CheckedException(e);
 		} catch (DynamicExtensionsApplicationException e) {
@@ -202,6 +214,7 @@ public class DataListOperationsController {
 		}
 		try {
 			EntityManager.getInstance().persistEntity(customEntity);
+			// metadata of custom entity is added to current cache.
 			addToCache(customEntity);
 		} catch (DynamicExtensionsSystemException e1) {
 			throw new CheckedException(e1);
@@ -220,7 +233,8 @@ public class DataListOperationsController {
 			}
 			dataCategoryPath.addAttribute(attribute);
 		}
-
+		// recursive mathod to create an entire tree structure of entity, it's
+		// attributes and associations.
 		joinTree(rootEntity, entityToDataCategoryPathMap);
 		CustomDataCategoryNode rooDataCategoryNode = entityToDataCategoryPathMap.get(rootEntity);
 
@@ -235,10 +249,12 @@ public class DataListOperationsController {
 
 		Map<AbstractAttributeInterface, Object> attributeValues = new HashMap<AbstractAttributeInterface, Object>();
 
+		//populate the attribute values in a newly created custom category tree. 
 		processResult(recordResult, rooDataCategoryNode, attributeValues, oldToNewAttribute,
 				customEntity);
 
-		DataListMetadata customDataListMetadata = saveCustomDataListMetaData(customEntity, name,rootEntityIdName.getId());
+		DataListMetadata customDataListMetadata = saveCustomDataListMetaData(customEntity, name,
+				rootEntityIdName.getId());
 		Collection experimentCollection;
 		try {
 			experimentCollection = new ExperimentOperations()
@@ -257,6 +273,12 @@ public class DataListOperationsController {
 		return customDataListMetadata;
 	}
 
+	/**
+	 * Saves given datalists to the collection of experiments passed.
+	 * 
+	 * @param experimentCollection
+	 * @param customDataListMetadata
+	 */
 	private static void saveDlMetaDataToAllExpts(Collection<Experiment> experimentCollection,
 			DataListMetadata customDataListMetadata) {
 		for (Experiment expt : experimentCollection) {
@@ -265,6 +287,18 @@ public class DataListOperationsController {
 		}
 	}
 
+	/**
+	 * Data from old attributes in a datalist is extracted and put in newly
+	 * formed category. This is a reursive method that covers enire tree
+	 * structure if a category to put values.
+	 * 
+	 * @param recordResult
+	 * @param dataCategoryNode
+	 * @param attributeValues
+	 * @param oldToNewAttribute
+	 * @param customEntity
+	 * @throws CheckedException
+	 */
 	private static void processResult(EntityRecordResultInterface recordResult,
 			CustomDataCategoryNode dataCategoryNode,
 			Map<AbstractAttributeInterface, Object> attributeValues,
@@ -307,6 +341,11 @@ public class DataListOperationsController {
 
 	}
 
+	/**
+	 * This method creates a tree structure of custom category.
+	 * @param entity
+	 * @param entityToDataCategoryPathMap
+	 */
 	private static void joinTree(EntityInterface entity,
 			Map<EntityInterface, CustomDataCategoryNode> entityToDataCategoryPathMap) {
 
@@ -334,16 +373,18 @@ public class DataListOperationsController {
 	/**
 	 * @param entity
 	 * @param name
-	 * @param originalEntityId id of origianl root entoity
-	 * @return 
+	 * @param originalEntityId
+	 *            id of origianl root entoity
+	 * @return
 	 */
-	private static DataListMetadata saveCustomDataListMetaData(EntityInterface entity, String name, Long originalEntityId) {
+	private static DataListMetadata saveCustomDataListMetaData(EntityInterface entity, String name,
+			Long originalEntityId) {
 		DataListMetadata dataList = new DataListMetadata();
 		dataList.setName(name);
 		dataList.setCreatedOn(new Date());
 		dataList.setLastUpdatedOn(new Date());
 		dataList.setCustomDataCategory(true);
-		dataList.addEntityInfo(entity.getId(),name, originalEntityId);
+		dataList.addEntityInfo(entity.getId(), name, originalEntityId);
 		new DataListMetadataOperations().saveDataListMetadata(dataList);
 
 		return dataList;
