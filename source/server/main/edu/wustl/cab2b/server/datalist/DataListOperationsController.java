@@ -213,7 +213,7 @@ public class DataListOperationsController {
 			oldToNewAttribute.put(attributeInterface, newAttribute);
 		}
 		try {
-			EntityManager.getInstance().persistEntity(customEntity);
+			EntityManager.getInstance().persistEntity(customEntity,false);
 			// metadata of custom entity is added to current cache.
 			addToCache(customEntity);
 		} catch (DynamicExtensionsSystemException e1) {
@@ -252,9 +252,11 @@ public class DataListOperationsController {
 		//populate the attribute values in a newly created custom category tree. 
 		processResult(recordResult, rooDataCategoryNode, attributeValues, oldToNewAttribute,
 				customEntity);
-
-		DataListMetadata customDataListMetadata = saveCustomDataListMetaData(customEntity, name,
-				rootEntityIdName.getId());
+		
+		Long originId =edu.wustl.cab2b.common.util.DataListUtil.getOriginEntity(rootEntity).getId();
+		DataListMetadata customDataListMetadata = saveCustomDataListMetaData(customEntity, name,originId);
+		
+		
 		Collection experimentCollection;
 		try {
 			experimentCollection = new ExperimentOperations()
