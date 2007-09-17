@@ -26,7 +26,7 @@ import edu.wustl.cab2b.client.metadatasearch.MetadataSearch;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
-import edu.wustl.cab2b.client.ui.dag.FreeDag;
+import edu.wustl.cab2b.client.ui.dag.Cab2bDag;
 import edu.wustl.cab2b.client.ui.mainframe.Cab2bContentPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
@@ -73,7 +73,7 @@ public class SearchPanel extends Cab2bPanel {
     private AttributeSelectCDCPanel attributeSelectCDCPanel;
     
     
-    private FreeDag testDAG;
+    private Cab2bDag testDAG;
 
     /**
      * constructor
@@ -347,14 +347,14 @@ public class SearchPanel extends Cab2bPanel {
 	/**
 	 * @return Returns the testDAG.
 	 */
-	public FreeDag getTestDAG() {
+	public Cab2bDag getTestDAG() {
 		return testDAG;
 	}
 
 	/**
 	 * @param testDAG The testDAG to set.
 	 */
-	public void setTestDAG(FreeDag testDAG) {
+	public void setTestDAG(Cab2bDag testDAG) {
 		this.testDAG = testDAG;
 	}
 }

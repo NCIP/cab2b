@@ -7,7 +7,7 @@ import java.awt.Toolkit;
 import javax.swing.JSplitPane;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
-import edu.wustl.cab2b.client.ui.dag.FreeDag;
+import edu.wustl.cab2b.client.ui.dag.Cab2bDag;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.mainframe.Cab2bContentPanel;
@@ -42,7 +42,7 @@ public class AdminCDCPanel extends Cab2bPanel{
         JSplitPane verticlePane= new JSplitPane();
         JSplitPane horizontalPane= new JSplitPane();
         
-        FreeDag testDAG= new FreeDag();
+        Cab2bDag testDAG= new Cab2bDag();
         
         searchPanel.setTestDAG(testDAG);
         cdcPanel.setMinimumSize(new Dimension(300,300));

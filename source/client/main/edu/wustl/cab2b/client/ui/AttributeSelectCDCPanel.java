@@ -12,7 +12,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
-import edu.wustl.cab2b.client.ui.dag.FreeDag;
+import edu.wustl.cab2b.client.ui.dag.Cab2bDag;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
 import edu.wustl.cab2b.common.util.Constants;
 
@@ -28,7 +28,7 @@ public class AttributeSelectCDCPanel extends Cab2bPanel {
 
 	private Cab2bButton addToDAGButton;
 
-	private FreeDag testDAG;
+	private Cab2bDag testDAG;
 
 	private Cab2bPanel finalPanel;
 
@@ -87,14 +87,14 @@ public class AttributeSelectCDCPanel extends Cab2bPanel {
 	/**
 	 * @return Returns the testDAG.
 	 */
-	public FreeDag getTestDAG() {
+	public Cab2bDag getTestDAG() {
 		return testDAG;
 	}
 
 	/**
 	 * @param testDAG The testDAG to set.
 	 */
-	public void setTestDAG(FreeDag testDAG) {
+	public void setTestDAG(Cab2bDag testDAG) {
 		this.testDAG = testDAG;
 	}
 }

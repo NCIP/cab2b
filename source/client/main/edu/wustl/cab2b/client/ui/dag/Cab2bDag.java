@@ -24,10 +24,10 @@ import edu.wustl.cab2b.client.ui.query.ClientPathFinder;
 import edu.wustl.cab2b.client.ui.query.IPathFinder;
 import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImages;
 
-public class FreeDag extends Cab2bPanel {
+public class Cab2bDag extends Cab2bPanel {
 	MainDagPanel dagPanel ;
 	
-	public FreeDag() {
+	public Cab2bDag() {
 
 		Map<DagImages, Image> imageMap = new HashMap<DagImages, Image>();
 		imageMap.put(DagImages.SelectIcon, Utilities.loadImage(SELECT_ICON_ADD_LIMIT));
