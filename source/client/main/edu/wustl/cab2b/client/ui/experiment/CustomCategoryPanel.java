@@ -22,7 +22,7 @@ import javax.swing.JScrollPane;
 import org.jdesktop.swingx.JXFrame;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.wustl.cab2b.client.ui.ObjectSelectionPanel;
+import edu.wustl.cab2b.client.ui.AccumulatorPanel;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
@@ -39,6 +39,7 @@ import edu.wustl.cab2b.common.IdName;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
+import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
@@ -68,42 +69,27 @@ public class CustomCategoryPanel extends JXFrame {
 
 	private Cab2bTextField customDataCategoryText;
 
-	private Cab2bListBox leftListBox;
-
-	private Cab2bButton add;
-
-	private Cab2bButton addAll;
-
-	private Cab2bButton remove;
-
-	private Cab2bButton removeAll;
-
 	private ExperimentBusinessInterface expBus;
-
-	private DefaultListModel leftHandListModel;
-
-	private Cab2bListBox rightListBox;
-
-	private DefaultListModel rightHandListModel;
 
 	CustomDataCategoryModel customDataCategoryModel;
 
 	private JDialog dialog;
 
 	private DataListMetadata dataListMetadata;
-	
-	private ObjectSelectionPanel objectSelectionPanel;
 
-	public CustomCategoryPanel() {
-		expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
-				EjbNamesConstants.EXPERIMENT, ExperimentHome.class);
-		try {
-			customDataCategoryModel = expBus.getDataCategoryModel();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		} catch (CheckedException e) {
-			e.printStackTrace();
-		}
+	private AccumulatorPanel accumulatorPanel;
+
+	private Collection<UserObjectWrapper> usrObejctCollection;
+
+	private Cab2bPanel middlePanel;
+	
+	private Experiment experiment;	
+
+	public CustomCategoryPanel(CustomDataCategoryModel customDataCategoryModel,
+			ExperimentBusinessInterface expBus, Experiment exp ) {
+		this.experiment= exp;
+		this.expBus = expBus;
+		this.customDataCategoryModel = customDataCategoryModel;
 		warningPanel = new Cab2bPanel(new RiverLayout(10, 0));
 		initGUI();
 	}
@@ -151,10 +137,8 @@ public class CustomCategoryPanel extends JXFrame {
 		dataListCombo.setSelectedIndex(0);
 		categoryCombo.setModel(categoryModel);
 		categoryCombo.setPreferredSize(new Dimension(250, 20));
+		middlePanel = new Cab2bPanel(new RiverLayout(5, 5));
 
-		leftHandListModel = new DefaultListModel();
-		leftListBox = new Cab2bListBox(leftHandListModel);
-		leftListBox.setBorder(null);
 		class CategoryComboListener implements ItemListener {
 
 			public CategoryComboListener() {
@@ -162,14 +146,13 @@ public class CustomCategoryPanel extends JXFrame {
 
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
-					leftHandListModel.removeAllElements();
-					rightHandListModel.removeAllElements();
+
 					IdName selectedIdName = (IdName) e.getItem();
 					try {
 						Collection<AttributeInterface> attributes = expBus
 								.getAllAttributes(selectedIdName.getId());
-						Collection<UserObjectWrapper> usrObejctCollection= new ArrayList<UserObjectWrapper>();
-						
+						usrObejctCollection = new ArrayList<UserObjectWrapper>();
+
 						for (AttributeInterface attributeInterface : attributes) {
 							String name = Utility.getDisplayName(attributeInterface.getEntity())
 									+ ": "
@@ -179,13 +162,14 @@ public class CustomCategoryPanel extends JXFrame {
 							StringBuffer buffer = new StringBuffer(name);
 							buffer.delete(left, ++right);
 							name = buffer.toString();
-							leftHandListModel.addElement(new UserObjectWrapper<AttributeInterface>(
-									attributeInterface, name));
+
 							usrObejctCollection.add(new UserObjectWrapper<AttributeInterface>(
 									attributeInterface, name));
-							
-							// leftHandListModel.addElement(attributeInterface);
+
 						}
+						accumulatorPanel = new AccumulatorPanel(usrObejctCollection, "left",
+								"right");
+						middlePanel.add(accumulatorPanel);
 					} catch (RemoteException e1) {
 						e1.printStackTrace();
 					} catch (CheckedException e1) {
@@ -217,68 +201,7 @@ public class CustomCategoryPanel extends JXFrame {
 		topPanel.setPreferredSize(new Dimension(Constants.WIZARD_SIZE2_DIMENSION.width, 80));
 		finalPanel = new Cab2bPanel(new BorderLayout());
 		finalPanel.add(topPanel, BorderLayout.NORTH);
-		Cab2bPanel middlePanel = new Cab2bPanel(new RiverLayout(5, 5));
-		JScrollPane jScrollPaneLeft = new JScrollPane(leftListBox,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-		jScrollPaneLeft.setPreferredSize(new Dimension(300, 400));
-		middlePanel.add(jScrollPaneLeft, BorderLayout.WEST);
-		rightHandListModel = new DefaultListModel();
-		rightListBox = new Cab2bListBox(rightHandListModel);
-		add = new Cab2bButton("Add");
-		add.setPreferredSize(new Dimension(100, 22));
-		add.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Object[] selectedValues = leftListBox.getSelectedValues();
-				for (int i = 0; i < selectedValues.length; i++) {
-					rightHandListModel.addElement(selectedValues[i]);
-				}
-
-			}
-		});
-
-		addAll = new Cab2bButton("Add All");
-		addAll.setPreferredSize(new Dimension(100, 22));
-		addAll.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				for (int i = 0; i < leftHandListModel.getSize(); i++) {
-					rightHandListModel.addElement(leftHandListModel.get(i));
-				}
-
-			}
-		});
-		remove = new Cab2bButton("Remove");
-		remove.setPreferredSize(new Dimension(100, 22));
-		remove.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Object[] selectedValues = rightListBox.getSelectedValues();
-				for (int i = 0; i < selectedValues.length; i++) {
-					rightHandListModel.removeElement(selectedValues[i]);
-				}
-			}
-		});
-		removeAll = new Cab2bButton("Remove All");
-		removeAll.setPreferredSize(new Dimension(100, 22));
-		removeAll.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				rightHandListModel.removeAllElements();
-			}
-		});
-		Cab2bPanel buttonPanel = new Cab2bPanel(new RiverLayout(0, 30));
-		buttonPanel.setPreferredSize(new Dimension(110, 400));
-		buttonPanel.add(new JLabel(" "));
-		buttonPanel.add("br", new JLabel(" "));
-		buttonPanel.add("br", add);
-		buttonPanel.add("br", addAll);
-		buttonPanel.add("br", remove);
-		buttonPanel.add("br", removeAll);
-
-		rightListBox.setBorder(null);
-		JScrollPane jScrollPaneRight = new JScrollPane(rightListBox,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		jScrollPaneRight.setPreferredSize(new Dimension(300, 400));
-		middlePanel.add(buttonPanel);
-		middlePanel.add(jScrollPaneRight);
 		finalPanel.add(middlePanel, BorderLayout.CENTER);
 		saveButton = new Cab2bButton("Save");
 		saveButton.addActionListener(new ActionListener() {
@@ -287,19 +210,16 @@ public class CustomCategoryPanel extends JXFrame {
 				if (!title.equals("")) {
 					IdName entityName = (IdName) categoryCombo.getSelectedItem();
 					IdName dataListIdName = (IdName) dataListCombo.getSelectedItem();
-					Collection<AttributeInterface> attributeInterface = new ArrayList<AttributeInterface>();
-					for (int i = 0; i < rightHandListModel.getSize(); i++) {
-						attributeInterface
-								.add((AttributeInterface) ((UserObjectWrapper) rightHandListModel
-										.getElementAt(i)).getUserObject());
-					}
-
+				
+					Collection<AttributeInterface> attributeInterface = accumulatorPanel.getSelectedObjects();
+					
+					
 					try {
 						DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils
 								.getBusinessInterface(EjbNamesConstants.DATALIST_BEAN,
 										DataListHomeInterface.class);
 						dataListMetadata = dataListBI.saveDataCategory(entityName,
-								attributeInterface, dataListIdName.getId(), title);
+								attributeInterface, dataListIdName.getId(), title, experiment);
 					} catch (RemoteException e1) {
 						e1.printStackTrace();
 					} catch (CheckedException e1) {

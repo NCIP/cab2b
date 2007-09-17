@@ -77,7 +77,7 @@ public class AttributeSelectCDCPanel extends Cab2bPanel {
 			userObj.add(obj);
 		}
 
-		ObjectSelectionPanel newPanel = new ObjectSelectionPanel(userObj,300,300, "left", "right",15);
+		AccumulatorPanel newPanel = new AccumulatorPanel(userObj,300,300, "left", "right",15);
 		finalPanel.add(addToDAGPanel, BorderLayout.NORTH);
 		finalPanel.add(newPanel, BorderLayout.SOUTH);
 		this.add(finalPanel);

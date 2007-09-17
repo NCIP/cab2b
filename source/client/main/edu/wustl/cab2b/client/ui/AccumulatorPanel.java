@@ -1,36 +1,26 @@
 package edu.wustl.cab2b.client.ui;
 
-import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.SEARCH_FRAME_TITLE;
-
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JScrollPane;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bListBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
-import edu.wustl.cab2b.client.ui.mainframe.GlobalNavigationPanel;
-import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
-import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
-import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
  * Component to which allows to return selective objects from a list of objects.
  * 
  * @author Hrishikesh Rajpathak
- *
+ * 
  */
-public class ObjectSelectionPanel extends Cab2bPanel {
+public class AccumulatorPanel extends Cab2bPanel {
 
 	private Cab2bListBox leftListBox;
 
@@ -58,7 +48,7 @@ public class ObjectSelectionPanel extends Cab2bPanel {
 
 	private int heightBetweenButtons;
 
-	public ObjectSelectionPanel(Collection<UserObjectWrapper> collection, int width, int height,
+	public AccumulatorPanel(Collection<UserObjectWrapper> collection, int width, int height,
 			String leftTitle, String rightTitle, int heightBetweenButtons) {
 
 		this.listBoxWidth = width;
@@ -82,20 +72,19 @@ public class ObjectSelectionPanel extends Cab2bPanel {
 		initGUI();
 	}
 
-	public ObjectSelectionPanel(Collection<UserObjectWrapper> collection, String leftTitle, String rightTitle) {
+	public AccumulatorPanel(Collection<UserObjectWrapper> collection, String leftTitle,
+			String rightTitle) {
 		this(collection, 300, 350, leftTitle, rightTitle, 10);
 	}
 
 	private void initGUI() {
-		this.setPreferredSize(new Dimension(130+listBoxWidth+listBoxWidth,listBoxHeight+30));
+		this.setPreferredSize(new Dimension(130 + listBoxWidth + listBoxWidth, listBoxHeight + 30));
 		leftListBox.setPreferredSize(new Dimension(listBoxWidth, listBoxHeight));
 		Cab2bPanel leftPanel = new Cab2bPanel(new RiverLayout(5, 5));
 		leftPanel.add(leftListTitle);
 		leftPanel.add("br", leftListBox);
 		this.add(leftPanel);
 
-		
-		
 		rightHandListModel = new DefaultListModel();
 		rightListBox = new Cab2bListBox(rightHandListModel);
 		add = new Cab2bButton("Add");
@@ -105,6 +94,7 @@ public class ObjectSelectionPanel extends Cab2bPanel {
 				Object[] selectedValues = leftListBox.getSelectedValues();
 				for (int i = 0; i < selectedValues.length; i++) {
 					rightHandListModel.addElement(selectedValues[i]);
+					leftHandListModel.removeElement(selectedValues[i]);
 				}
 
 			}
@@ -117,6 +107,7 @@ public class ObjectSelectionPanel extends Cab2bPanel {
 				for (int i = 0; i < leftHandListModel.getSize(); i++) {
 					rightHandListModel.addElement(leftHandListModel.get(i));
 				}
+				leftHandListModel.removeAllElements();
 
 			}
 		});
@@ -127,6 +118,7 @@ public class ObjectSelectionPanel extends Cab2bPanel {
 				Object[] selectedValues = rightListBox.getSelectedValues();
 				for (int i = 0; i < selectedValues.length; i++) {
 					rightHandListModel.removeElement(selectedValues[i]);
+					leftHandListModel.addElement(selectedValues[i]);
 				}
 			}
 		});
@@ -134,6 +126,9 @@ public class ObjectSelectionPanel extends Cab2bPanel {
 		removeAll.setPreferredSize(new Dimension(100, 22));
 		removeAll.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				for (int i = 0; i < rightHandListModel.getSize(); i++) {
+					leftHandListModel.addElement(rightHandListModel.get(i));
+				}
 				rightHandListModel.removeAllElements();
 			}
 		});
@@ -151,11 +146,11 @@ public class ObjectSelectionPanel extends Cab2bPanel {
 		Cab2bPanel rightPanel = new Cab2bPanel(new RiverLayout(5, 5));
 		rightPanel.add(rightListTitle);
 		rightPanel.add("br", rightListBox);
-		
+
 		this.add(buttonPanel);
 		this.add(rightPanel);
 	}
-	
+
 	/**
 	 * @return Collection of selected objects
 	 */
@@ -163,7 +158,8 @@ public class ObjectSelectionPanel extends Cab2bPanel {
 		Collection returnSet = new ArrayList();
 		int size = rightHandListModel.getSize();
 		for (int i = 0; i < size; i++) {
-			returnSet.add(rightHandListModel.getElementAt(i));
+			returnSet.add(((UserObjectWrapper)rightHandListModel.getElementAt(i)).getUserObject());
+		
 		}
 		return returnSet;
 	}

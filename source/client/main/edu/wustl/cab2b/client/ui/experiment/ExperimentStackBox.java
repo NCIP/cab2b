@@ -69,6 +69,7 @@ import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
 import edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface;
 import edu.wustl.cab2b.client.ui.viewresults.DefaultSpreadSheetViewPanel;
+import edu.wustl.cab2b.common.CustomDataCategoryModel;
 import edu.wustl.cab2b.common.IdName;
 import edu.wustl.cab2b.common.analyticalservice.ServiceDetailsInterface;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
@@ -80,6 +81,8 @@ import edu.wustl.cab2b.common.ejb.analyticalservice.AnalyticalServiceOperationsB
 import edu.wustl.cab2b.common.ejb.analyticalservice.AnalyticalServiceOperationsHomeInterface;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
+import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
@@ -236,7 +239,17 @@ public class ExperimentStackBox extends Cab2bPanel {
 		customCategoryButton.setPreferredSize(new Dimension(170, 22));
 		customCategoryButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				CustomCategoryPanel categoryPanel = new CustomCategoryPanel();
+				CustomDataCategoryModel customDataCategoryModel=null;
+				ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
+						EjbNamesConstants.EXPERIMENT, ExperimentHome.class);
+				try {
+					customDataCategoryModel = expBus.getDataCategoryModel();
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (CheckedException e) {
+					e.printStackTrace();
+				}
+				CustomCategoryPanel categoryPanel = new CustomCategoryPanel(customDataCategoryModel, expBus, m_selectedExperiment);
 				updateStackBox(categoryPanel.getDataListMetadata());
 			}
 
