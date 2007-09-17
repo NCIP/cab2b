@@ -534,10 +534,11 @@ public class ExperimentOperations extends DefaultBizLogic {
 		Map<Long, List<IdName>> rootDlToLeafDlIdName = new HashMap<Long, List<IdName>>();
 
 		Collection<DataListMetadata> dataListCollection;
+		Collection<DataListMetadata> finalDataListCollection= new ArrayList<DataListMetadata>();
 		try {
 			dataListCollection = getAllDataLists();
-			dataListsToAssociatedDataListsIdName(rootDlToLeafDlIdName, dataListCollection);
-			dataListIdName = getAllDataListIdName(dataListCollection);
+			dataListsToAssociatedDataListsIdName(rootDlToLeafDlIdName, dataListCollection,finalDataListCollection);
+			dataListIdName = getAllDataListIdName(finalDataListCollection);
 			CustomDataCategoryModel model = new CustomDataCategoryModel(dataListIdName,
 					rootDlToLeafDlIdName);
 			return model;
@@ -564,13 +565,13 @@ public class ExperimentOperations extends DefaultBizLogic {
 	 * @throws DynamicExtensionsApplicationException
 	 */
 	public Map dataListsToAssociatedDataListsIdName(Map<Long, List<IdName>> rootDlToLeafDlIdName,
-			Collection<DataListMetadata> dataListCollection) throws HibernateException,
+			Collection<DataListMetadata> dataListCollection,Collection<DataListMetadata> finalDataListCollection) throws HibernateException,
 			DynamicExtensionsSystemException, DynamicExtensionsApplicationException {
 		for (DataListMetadata dl : dataListCollection) {
 			if (dl.isCustomDataCategory()) {
 				continue;
 			}
-
+			finalDataListCollection.add(dl);
 			long dlId = dl.getId();
 			EntityInterface entity = EntityManager.getInstance().getEntityByIdentifier(
 					dl.getRootEntityId());

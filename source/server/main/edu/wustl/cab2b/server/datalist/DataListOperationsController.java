@@ -191,8 +191,8 @@ public class DataListOperationsController {
 	 * @throws RemoteException
 	 */
 	public static DataListMetadata saveDataCategory(IdName rootEntityIdName,
-			Collection<AttributeInterface> selectedAttributeList, Long dataListId, String name)
-			throws CheckedException, RemoteException {
+			Collection<AttributeInterface> selectedAttributeList, Long dataListId, String name,
+			Experiment experiment) throws CheckedException, RemoteException {
 		EntityInterface rootEntity;
 		try {
 			rootEntity = EntityManager.getInstance()
@@ -213,7 +213,7 @@ public class DataListOperationsController {
 			oldToNewAttribute.put(attributeInterface, newAttribute);
 		}
 		try {
-			EntityManager.getInstance().persistEntity(customEntity,false);
+			EntityManager.getInstance().persistEntity(customEntity, false);
 			// metadata of custom entity is added to current cache.
 			addToCache(customEntity);
 		} catch (DynamicExtensionsSystemException e1) {
@@ -249,23 +249,17 @@ public class DataListOperationsController {
 
 		Map<AbstractAttributeInterface, Object> attributeValues = new HashMap<AbstractAttributeInterface, Object>();
 
-		//populate the attribute values in a newly created custom category tree. 
+		// populate the attribute values in a newly created custom category
+		// tree.
 		processResult(recordResult, rooDataCategoryNode, attributeValues, oldToNewAttribute,
 				customEntity);
-		
-		Long originId =edu.wustl.cab2b.common.util.DataListUtil.getOriginEntity(rootEntity).getId();
-		DataListMetadata customDataListMetadata = saveCustomDataListMetaData(customEntity, name,originId);
-		
-		
-		Collection experimentCollection;
-		try {
-			experimentCollection = new ExperimentOperations()
-					.getExperimentsWithSimilarDataList(dataListId);
-		} catch (HibernateException e) {
-			throw new CheckedException(e);
-		}
 
-		saveDlMetaDataToAllExpts(experimentCollection, customDataListMetadata);
+		Long originId = edu.wustl.cab2b.common.util.DataListUtil.getOriginEntity(rootEntity)
+				.getId();
+		DataListMetadata customDataListMetadata = saveCustomDataListMetaData(customEntity, name,
+				originId);
+
+		saveDlMetaDataToExpt(experiment, customDataListMetadata);
 
 		try {
 			DBUtil.closeSession();
@@ -281,12 +275,10 @@ public class DataListOperationsController {
 	 * @param experimentCollection
 	 * @param customDataListMetadata
 	 */
-	private static void saveDlMetaDataToAllExpts(Collection<Experiment> experimentCollection,
+	private static void saveDlMetaDataToExpt(Experiment experiment,
 			DataListMetadata customDataListMetadata) {
-		for (Experiment expt : experimentCollection) {
-			expt.addDataListMetadata(customDataListMetadata);
-			new UtilityOperations().update(expt);
-		}
+		experiment.addDataListMetadata(customDataListMetadata);
+		new UtilityOperations().update(experiment);
 	}
 
 	/**
@@ -319,7 +311,6 @@ public class DataListOperationsController {
 			if (associationList.size() == 0) {
 				try {
 					EntityManager.getInstance().insertData(customEntity, attributeValues);
-					System.out.println("inserted");
 
 				} catch (DynamicExtensionsApplicationException e) {
 					throw new CheckedException(e);
@@ -345,6 +336,7 @@ public class DataListOperationsController {
 
 	/**
 	 * This method creates a tree structure of custom category.
+	 * 
 	 * @param entity
 	 * @param entityToDataCategoryPathMap
 	 */

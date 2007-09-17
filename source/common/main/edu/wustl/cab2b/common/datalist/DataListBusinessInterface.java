@@ -8,6 +8,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.IdName;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
+import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 
@@ -48,6 +49,6 @@ public interface DataListBusinessInterface extends BusinessInterface {
     public List<IRecord> getEntityRecord(Long entityId) throws RemoteException;
     
     public DataListMetadata saveDataCategory(IdName rootEntityId,
-			Collection<AttributeInterface> selectedAttributeList, Long id, String string) throws RemoteException, CheckedException;
+			Collection<AttributeInterface> selectedAttributeList, Long id, String string, Experiment experiment) throws RemoteException, CheckedException;
 
 }

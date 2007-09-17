@@ -10,6 +10,7 @@ import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
+import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.server.datalist.DataListMetadataOperations;
@@ -60,8 +61,8 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
     }
     
     public DataListMetadata saveDataCategory(IdName rootEntityId,
-			Collection<AttributeInterface> selectedAttributeList,Long id, String name) throws RemoteException, CheckedException {
-        return DataListOperationsController.saveDataCategory(rootEntityId,selectedAttributeList, id, name);
+			Collection<AttributeInterface> selectedAttributeList,Long id, String name, Experiment experiment) throws RemoteException, CheckedException {
+        return DataListOperationsController.saveDataCategory(rootEntityId,selectedAttributeList, id, name, experiment);
     }
 
 }
