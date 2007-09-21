@@ -146,7 +146,7 @@ public abstract class CustomSwingWorker {
             doNonUILogic();
         } catch (Exception e) {
             errorOccured = true;
-            CommonUtils.handleException(CommonUtils.getCab2bException(e), this.parentCoponent, true, true, false,
+            CommonUtils.handleException(CommonUtils.getCab2bException(e), this.parentCoponent, true, true, true,
                                         false);
         }
     }
