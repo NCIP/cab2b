@@ -49,4 +49,26 @@ public abstract class AbstractChart {
      * @return the chart generated
      */
     abstract protected JFreeChart createChart(Dataset dataset);
+
+    /**
+     * This method converts the value passed to the chart into a valid number. If value is not a valid number it return 0.
+     * @param value
+     * @return
+     */
+    protected Number convertValue(Object value) {
+        Number output = 0;
+        if (value == null) {
+            return output;
+        }
+        if (Number.class.isAssignableFrom(value.getClass())) {
+            output = (Number) value;
+        }
+        if (value instanceof String) {
+            try {
+                output = Double.valueOf((String) value);
+            } catch (Exception exception) {
+            }
+        }
+        return output;
+    }
 }

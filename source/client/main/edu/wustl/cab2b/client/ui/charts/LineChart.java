@@ -51,21 +51,13 @@ public class LineChart extends AbstractChart {
                 String seriesName = cab2bTable.getColumnName(selectedColumnsIndices[i]);
                 xySeries = new XYSeries(seriesName);
                 for (int j = 0; j < selectedRowIndices.length; j++) {
-                    String value;
+                    Object value;
                     if (chartRawData.isWholeColumnSelected())
-                        value = (String) chartRawData.getCab2bTableData()[j][i];
+                        value =  chartRawData.getCab2bTableData()[j][i];
                     else
-                        value = (String) cab2bTable.getValueAt(selectedRowIndices[j], selectedColumnsIndices[i]);
+                        value =  cab2bTable.getValueAt(selectedRowIndices[j], selectedColumnsIndices[i]);
 
-                    Double xValue = new Double(selectedRowIndices[j]);
-                    Double yValue = null;
-
-                    try {
-                        yValue = Double.valueOf(value);
-                    } catch (Exception exception) {
-                        yValue = 0D;
-                    }
-                    xySeries.add(xValue, yValue);
+                    xySeries.add(selectedRowIndices[j], convertValue(value));
                 }
                 xySeriesCollection.addSeries(xySeries);
             }
@@ -74,21 +66,13 @@ public class LineChart extends AbstractChart {
                 String seriesName = selectedRowIndices[i] + "";
                 xySeries = new XYSeries(seriesName);
                 for (int j = 0; j < selectedColumnsIndices.length; j++) {
-                    String value;
+                    Object value;
                     if (chartRawData.isWholeColumnSelected())
-                        value = (String) chartRawData.getCab2bTableData()[i][j];
+                        value =  chartRawData.getCab2bTableData()[i][j];
                     else
-                        value = (String) cab2bTable.getValueAt(selectedRowIndices[i], selectedColumnsIndices[j]);
+                        value =  cab2bTable.getValueAt(selectedRowIndices[i], selectedColumnsIndices[j]);
 
-                    Double xValue = new Double(selectedColumnsIndices[j]);
-                    Double yValue = null;
-
-                    try {
-                        yValue = Double.valueOf(value);
-                    } catch (Exception exception) {
-                        yValue = 0D;
-                    }
-                    xySeries.add(xValue, yValue);
+                    xySeries.add(selectedColumnsIndices[j], convertValue(value));
                 }
                 xySeriesCollection.addSeries(xySeries);
             }

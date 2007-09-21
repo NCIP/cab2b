@@ -103,29 +103,16 @@ public class BarChart extends AbstractChart {
         if (chartRawData.getChartOrientation() == ChartOrientation.COLUMN_AS_CATEGORY) {
             for (i = 0; i < selectedRowIndices.length; i++) {
                 for (j = 0; j < selectedColumnsIndices.length; j++) {
-                    String value = (String) chartRawData.getCab2bTableData()[i][j];
-                    //System.out.println("value[" + i + "][" + j + "]=" + value);
-                    Double doubleValue = null;
-                    try {
-                        doubleValue = Double.valueOf(value);
-                    } catch (Exception exception) {
-                        doubleValue = 0D;
-                    }
-                    defaultcategorydataset.addValue(doubleValue, series[j], categories[i]);
+                    Object value =  chartRawData.getCab2bTableData()[i][j];
+                    defaultcategorydataset.addValue(convertValue(value), series[j], categories[i]);
                 }
             }
         } else {
             for (i = 0; i < selectedColumnsIndices.length; i++) {
                 for (j = 0; j < selectedRowIndices.length; j++) {
 
-                    String value = (String) chartRawData.getCab2bTableData()[j][i];
-                    Double yAxisValue = null;
-                    try {
-                        yAxisValue = Double.valueOf(value);
-                    } catch (Exception exception) {
-                        yAxisValue = 0D;
-                    }
-                    defaultcategorydataset.addValue(yAxisValue, series[j], categories[i]);
+                    Object value =  chartRawData.getCab2bTableData()[j][i];
+                    defaultcategorydataset.addValue(convertValue(value), series[j], categories[i]);
                 }
             }
         }
@@ -140,32 +127,18 @@ public class BarChart extends AbstractChart {
         if (chartRawData.getChartOrientation() == ChartOrientation.COLUMN_AS_CATEGORY) {
             for (i = 0; i < selectedRowIndices.length; i++) {
                 for (j = 0; j < selectedColumnsIndices.length; j++) {
-                    String value = (String) chartRawData.getCab2bTable().getValueAt(selectedRowIndices[i],
+                    Object value =  chartRawData.getCab2bTable().getValueAt(selectedRowIndices[i],
                                                                                     selectedColumnsIndices[j]);
-                    Double doubleValue = null;
-                    try {
-                        doubleValue = Double.valueOf(value);
-                    } catch (Exception exception) {
-                        doubleValue = 0D;
-                    }
-
-                    defaultcategorydataset.addValue(doubleValue, series[j], categories[i]);
+                    defaultcategorydataset.addValue(convertValue(value), series[j], categories[i]);
                 }
             }
         } else {
             for (i = 0; i < selectedColumnsIndices.length; i++) {
                 for (j = 0; j < selectedRowIndices.length; j++) {
 
-                    String value = (String) chartRawData.getCab2bTable().getValueAt(selectedRowIndices[j],
+                    Object value =  chartRawData.getCab2bTable().getValueAt(selectedRowIndices[j],
                                                                                     selectedColumnsIndices[i]);
-                    Double yAxisValue = null;
-                    try {
-                        yAxisValue = Double.valueOf(value);
-                    } catch (Exception exception) {
-                        yAxisValue = 0D;
-                    }
-
-                    defaultcategorydataset.addValue(yAxisValue, series[j], categories[i]);
+                    defaultcategorydataset.addValue(convertValue(value), series[j], categories[i]);
                 }
             }
         }
