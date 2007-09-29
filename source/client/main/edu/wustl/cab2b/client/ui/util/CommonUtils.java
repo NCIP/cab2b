@@ -9,20 +9,24 @@ import java.util.BitSet;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.jdesktop.swingx.JXErrorDialog;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
+import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.main.AbstractTypePanel;
+import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryDataModel;
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
-import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
@@ -31,6 +35,11 @@ import edu.wustl.cab2b.common.locator.LocatorException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.IExpressionId;
+import edu.wustl.common.querysuite.queryobject.RelationalOperator;
+import edu.wustl.common.querysuite.queryobject.impl.Condition;
+import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -132,20 +141,20 @@ public class CommonUtils {
         } else {
             errorMessageForLog = exception.getMessage();
         }
-        
+
         if (shouldLogException) {
             Logger.out.error(errorMessageForLog, exception);
         }
-        
+
         if (shouldShowErrorDialog) {
             JXErrorDialog.showDialog(parentComponent, "caB2B - Application Error", errorMessageForDialog,
                                      exception);
         }
-        
+
         if (shouldPrintExceptionInConsole) {
             exception.printStackTrace();
         }
-        
+
         if (shouldKillApp) {
             System.exit(0);
         }
@@ -671,4 +680,58 @@ public class CommonUtils {
         }
         return input;
     }
+
+    /**
+     * Method to update Parameterized condtions in Querys
+     * @param queryDataModel
+     * @param conditionPanel
+     */
+    public static boolean updateQueryCondtions(ParameterizedQueryDataModel queryDataModel,
+                                               Cab2bPanel conditionPanel, Cab2bPanel parentDialog) {
+        Map<IExpressionId, Collection<ICondition>> conditionMap = queryDataModel.getConditions();
+
+        for (int index = 0; index < conditionPanel.getComponentCount(); index++) {
+            if (conditionPanel.getComponent(index) instanceof AbstractTypePanel) {
+                AbstractTypePanel panel = (AbstractTypePanel) conditionPanel.getComponent(index);
+
+                String conditionString = panel.getCondition();
+                AttributeInterface attribute = panel.getAttributeEntity();
+                ArrayList<String> conditionValues = panel.getValues();
+                RelationalOperator operator = RelationalOperator.getOperatorForStringRepresentation(conditionString);
+                String attributeDisplayName = panel.getAttributeDisplayName();
+                IExpressionId expressionId = panel.getExpressionId();
+
+                if (conditionString.compareToIgnoreCase("Between") == 0 && (conditionValues.size() == 1)) {
+                    JOptionPane.showMessageDialog(parentDialog,
+                                                  "Please enter both the values for between operator.", "Error",
+                                                  JOptionPane.ERROR_MESSAGE);
+
+                    return false;
+                }
+                Collection<ICondition> conditionCollection = conditionMap.get(expressionId);
+                if (((conditionString.equals("Is Null")) || conditionString.equals("Is Not Null") || (conditionValues.size() != 0))
+                        && (conditionCollection != null)) {
+                    for (ICondition condition : conditionCollection) {
+                        if (condition.getAttribute().getId() == attribute.getId()) {
+                            ICondition newCondition = null;
+
+                            if (panel.isAttributeCheckBoxSelected()) {
+                                //make it parameterized
+                                newCondition = new ParameterizedCondition(attribute, operator, conditionValues,
+                                        index, attributeDisplayName);
+                            } else {
+                                newCondition = new Condition(attribute, operator, conditionValues);
+                            }
+
+                            queryDataModel.addCondition(expressionId, newCondition);
+                            break;
+                        }
+                    }
+                }
+            }
+
+        }
+        return true;
+    }
+
 }
