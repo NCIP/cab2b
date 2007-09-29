@@ -20,6 +20,23 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bParameterize
     private EntityInterface outputEntity;
 
     private Long entityId;
+    
+    
+    public Cab2bQuery() {
+        super();
+    }
+    
+    public Cab2bQuery(ICab2bParameterizedQuery query) {
+        super(query);
+        outputEntity = query.getOutputEntity();
+        outputClassUrls = query.getOutputUrls();    
+    }
+    
+    public Cab2bQuery(ICab2bQuery query) {
+        super(query);
+        outputEntity = query.getOutputEntity();
+        outputClassUrls = query.getOutputUrls();  
+    }
 
     /**
      * @return the outputClassUrls.
@@ -64,6 +81,5 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bParameterize
      */
     public void setEntityId(Long entityId) {
         this.entityId = entityId;
-    }
-
+    }   
 }
