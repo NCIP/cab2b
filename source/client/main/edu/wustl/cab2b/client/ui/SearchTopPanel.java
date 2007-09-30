@@ -111,16 +111,20 @@ public class SearchTopPanel extends Cab2bPanel {
      * indicate that it is no more selected.
      */
     public void setFocus(int index, boolean blnForward) {
-        JXPanel selectedPanel = this.m_arrSearchPanels[index];
-        JXPanel adjacantPanel = blnForward ? this.m_arrSearchPanels[index - 1] : this.m_arrSearchPanels[index + 1];
 
-        selectedPanel.setBackground(Color.WHITE);
-        selectedPanel.setBorder(null);
+        for (int i = 0; i < m_arrSearchPanels.length; i++) {
+            if (i == index) {
+                JXPanel selectedPanel = this.m_arrSearchPanels[index];
 
-        adjacantPanel.setBackground(new Color(185, 211, 238));
-        adjacantPanel.setBorder(new LineBorder(Color.BLACK));
+                selectedPanel.setBackground(Color.WHITE);
+                selectedPanel.setBorder(null);
 
+            } else {
+                JXPanel adjacantPanel = this.m_arrSearchPanels[i];
+                adjacantPanel.setBackground(new Color(185, 211, 238));
+                adjacantPanel.setBorder(new LineBorder(Color.BLACK));
+            }
+        }
         this.updateUI();
     }
-
 }
