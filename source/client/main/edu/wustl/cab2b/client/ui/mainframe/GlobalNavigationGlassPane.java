@@ -48,7 +48,7 @@ import edu.wustl.common.util.logger.Logger;
  * @author hrishikesh_rajpathak
  * 
  */
-class GlobalNavigationGlassPane extends JComponent implements ActionListener {
+public class GlobalNavigationGlassPane extends JComponent implements ActionListener {
     Cab2bLabel loggedInUserLabel;
 
     private ClassLoader loader = this.getClass().getClassLoader();
