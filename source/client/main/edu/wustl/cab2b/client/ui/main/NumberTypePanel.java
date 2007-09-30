@@ -18,9 +18,17 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 public class NumberTypePanel extends AbstractTypePanel {
 	private static final long serialVersionUID = 1L;
 
-	public NumberTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity,
-			Boolean showCondition, Dimension maxLabelDimension) {
+	public NumberTypePanel(ArrayList<String> conditionList,
+			AttributeInterface attributeEntity, Boolean showCondition,
+			Dimension maxLabelDimension) {
 		super(conditionList, attributeEntity, showCondition, maxLabelDimension);
+	}
+
+	public NumberTypePanel(ArrayList<String> conditionList,
+			AttributeInterface attributeEntity, Boolean showCondition,
+			Dimension maxLabelDimension, Boolean isParameterized) {
+		super(conditionList, attributeEntity, showCondition, maxLabelDimension,
+				isParameterized);
 	}
 
 	public JComponent getFirstComponent() {
@@ -38,8 +46,8 @@ public class NumberTypePanel extends AbstractTypePanel {
 			if (showCondition
 					&& (getCondition().compareToIgnoreCase("IN") == 0 || getCondition()
 							.compareToIgnoreCase("Not IN") == 0)) {
-				ArrayList<String> strings = CommonUtils.splitStringWithTextQualifier(nameString,
-						'"', ',');
+				ArrayList<String> strings = CommonUtils
+						.splitStringWithTextQualifier(nameString, '"', ',');
 				for (int i = 0; i < strings.size(); i++) {
 					values.add(strings.get(i));
 				}

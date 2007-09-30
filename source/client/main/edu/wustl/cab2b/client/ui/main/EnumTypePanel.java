@@ -27,6 +27,14 @@ public class EnumTypePanel extends AbstractTypePanel {
             Dimension maxLabelDimension) {
         super(conditionList, attributeEntity, showCondition, maxLabelDimension);
     }
+    
+    public EnumTypePanel(
+            ArrayList<String> conditionList,
+            AttributeInterface attributeEntity,
+            Boolean showCondition,
+            Dimension maxLabelDimension,Boolean isParameterized) {
+        super(conditionList, attributeEntity, showCondition, maxLabelDimension,isParameterized);
+    }
 
     public JComponent getFirstComponent() {
         return getComponent();

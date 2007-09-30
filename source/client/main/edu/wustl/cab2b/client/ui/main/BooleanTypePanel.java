@@ -31,6 +31,12 @@ public class BooleanTypePanel extends AbstractTypePanel {
 		super(conditionList, attributeEntity, showCondition, maxLabelDimension);
 
 	}
+	
+	public BooleanTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity,
+			Boolean showCondition, Dimension maxLabelDimension,Boolean isParameterized) {
+		super(conditionList, attributeEntity, showCondition, maxLabelDimension,isParameterized);
+
+	}
 
 	private JPanel getComboForBoolean(Collection<String> permissibleValueList) {
 		JPanel radioPanel = new Cab2bPanel();
@@ -136,5 +142,4 @@ public class BooleanTypePanel extends AbstractTypePanel {
 			}
 		}
 	};
-
 }

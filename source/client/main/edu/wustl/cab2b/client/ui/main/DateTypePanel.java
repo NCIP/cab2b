@@ -31,6 +31,14 @@ public class DateTypePanel extends AbstractTypePanel {
             Dimension maxLabelDimension) {
         super(conditionList, attributeEntity, showCondition, maxLabelDimension);
     }
+    
+    public DateTypePanel(
+            ArrayList<String> conditionList,
+            AttributeInterface attributeEntity,
+            Boolean showCondition,
+            Dimension maxLabelDimension, Boolean isParameterized) {
+        super(conditionList, attributeEntity, showCondition, maxLabelDimension,isParameterized);
+    }
 
     public JComponent getFirstComponent() {
         DatePanel datePanel = new DatePanel();

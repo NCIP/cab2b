@@ -12,18 +12,28 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 public class StringTypePanel extends AbstractTypePanel {
 	private static final long serialVersionUID = 1L;
 
-	public StringTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity,
-			Boolean showCondition, Dimension maxLabelDimension) {
+	public StringTypePanel(ArrayList<String> conditionList,
+			AttributeInterface attributeEntity, Boolean showCondition,
+			Dimension maxLabelDimension) {
 		super(conditionList, attributeEntity, showCondition, maxLabelDimension);
 	}
 
+	public StringTypePanel(ArrayList<String> conditionList,
+			AttributeInterface attributeEntity, Boolean showCondition,
+			Dimension maxLabelDimension, Boolean isParameterized) {
+		super(conditionList, attributeEntity, showCondition, maxLabelDimension,
+				isParameterized);
+	}
+
 	public JComponent getFirstComponent() {
-		return new Cab2bFormattedTextField(CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE,
+		return new Cab2bFormattedTextField(
+				CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE,
 				Cab2bFormattedTextField.PLAIN_FIELD);
 	}
 
 	public JComponent getSecondComponent() {
-		return new Cab2bFormattedTextField(CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE,
+		return new Cab2bFormattedTextField(
+				CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE,
 				Cab2bFormattedTextField.PLAIN_FIELD);
 	}
 
@@ -37,8 +47,8 @@ public class StringTypePanel extends AbstractTypePanel {
 			if (showCondition
 					&& (getCondition().compareToIgnoreCase("IN") == 0 || getCondition()
 							.compareToIgnoreCase("Not IN") == 0)) {
-				ArrayList<String> strings = CommonUtils.splitStringWithTextQualifier(nameString,
-						'"', ',');
+				ArrayList<String> strings = CommonUtils
+						.splitStringWithTextQualifier(nameString, '"', ',');
 				for (int i = 0; i < strings.size(); i++) {
 					values.add(strings.get(i));
 				}
@@ -96,6 +106,7 @@ public class StringTypePanel extends AbstractTypePanel {
 	}
 
 	public void setComponentPreference(String condition) {
+
 	}
 
 	public void resetPanel() {
