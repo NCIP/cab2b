@@ -2,6 +2,7 @@ package edu.wustl.cab2b.client.ui.main;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -12,22 +13,34 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.common.dynamicextensions.domaininterface.SemanticPropertyInterface;
 import edu.wustl.cab2b.client.ui.RiverLayout;
+import edu.wustl.cab2b.client.ui.controls.Cab2bCheckBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bComboBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.common.querysuite.queryobject.IExpressionId;
 
 /**
  * An abstract class which provides the skeletal implementation of the
  * IComponent interface and defines some more abstract method like
  * getFirstComponent, getSecondComponent that needs to be implemented by the
- * subclasses like NumberTypePanel, StringTypePanel, etc.
+ * subclasses like NumberTypePanel, StringTypePanel, etc. 
  * 
- * @author chetan_bh
+ * @author chetan_bh 
+ * 
  */
+
+/**
+ * Added additional features/methods to make it generic for handaling Parameterized Query   
+ * UI panels.
+ * @author Deepak Shingan 
+ * 
+ */
+
+
 public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent {
 
     public static final int CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE = 9;
@@ -72,11 +85,36 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
      */
     protected Boolean showCondition;
 
+    /**
+     * Checkbox to select attribute in parameterized query
+     */
+    protected Cab2bCheckBox attributeCheckBox;
+
+    /**
+     * Text box to edit attribute name in parameterized query
+     */
+    protected Cab2bTextField attributeDisplayNameTextField;
+
+    /**
+     * flag to identify parameterized query
+     */
+    protected Boolean isParameterized;
+
+    protected IExpressionId expressionId;
+
     public AbstractTypePanel(
             ArrayList<String> conditionList,
             AttributeInterface attributeEntity,
             Dimension maxLabelDimension) {
-        this(conditionList, attributeEntity, true, maxLabelDimension);
+        this(conditionList, attributeEntity, true, maxLabelDimension, false);
+    }
+
+    public AbstractTypePanel(
+            ArrayList<String> conditionList,
+            AttributeInterface attributeEntity,
+            Dimension maxLabelDimension,
+            Boolean isParameterized) {
+        this(conditionList, attributeEntity, true, maxLabelDimension, isParameterized);
     }
 
     public AbstractTypePanel(
@@ -84,10 +122,26 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
             AttributeInterface attributeEntity,
             Boolean showCondition,
             Dimension maxLabelDimension) {
+        this(conditionList, attributeEntity, true, maxLabelDimension, false);
+    }
+
+    public AbstractTypePanel(
+            ArrayList<String> conditionList,
+            AttributeInterface attributeEntity,
+            Boolean showCondition,
+            Dimension maxLabelDimension,
+            Boolean isParameterized) {
         this.setLayout(new RiverLayout(10, 8));
         this.attributeEntity = attributeEntity;
         this.attributeName = attributeEntity.getName();
         this.showCondition = showCondition;
+        this.isParameterized = isParameterized;
+        this.conditionList = conditionList;
+        initGUI(maxLabelDimension);
+    }
+
+    private void initGUI(Dimension maxLabelDimension) {
+        this.setLayout(new RiverLayout(10, 8));
 
         String formattedString = attributeEntity.getName();
         if (!Utility.isCategory(attributeEntity.getEntity())) {
@@ -109,14 +163,43 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         final EmptyBorder emptyBorder = new EmptyBorder(2, 2, 2, 2);
         m_OtherEdit.setBorder(emptyBorder);
 
+        if (isParameterized) {
+            attributeCheckBox = new Cab2bCheckBox();
+
+            attributeDisplayNameTextField = new Cab2bTextField(formattedString, new Dimension(
+                    maxLabelDimension.width, maxLabelDimension.height + 5));
+            attributeDisplayNameTextField.setEnabled(false);
+            attributeCheckBox.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent arg0) {
+                    if (attributeCheckBox.isSelected())
+                        attributeDisplayNameTextField.setEnabled(true);
+                    else
+                        attributeDisplayNameTextField.setEnabled(false);
+                }
+            });
+
+            add(attributeCheckBox);
+            add(attributeDisplayNameTextField);
+        }
+
         add(m_Name);
         if (showCondition) {
             setCondtionControl(conditionList, border, emptyBorder);
         }
         add(m_NameEdit);
         add(m_OtherEdit);
-
         setSize(new Dimension(300, 100));
+    }
+
+    public boolean isAttributeCheckBoxSelected() {
+        return attributeCheckBox.isSelected();
+    }
+
+    /**
+     * @return AttributeInterface
+     */
+    public AttributeInterface getAttributeEntity() {
+        return attributeEntity;
     }
 
     public String getCondition() {
@@ -153,9 +236,8 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
          * string type to number to date
          */
         m_Conditions = new Cab2bComboBox();
-        //m_Conditions.setBorder(ClientConstants.border);
+        // m_Conditions.setBorder(ClientConstants.border);
         m_Conditions.setPreferredSize(new Dimension(125, 20));
-
         Collections.sort(conditionList);
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (int i = 0; i < conditionList.size(); i++) {
@@ -223,4 +305,28 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         m_OtherEdit.setBorder(border);
     }
 
+    /**
+     * @return the expressionId
+     */
+    public IExpressionId getExpressionId() {
+
+        if (isParameterized)
+            return expressionId;
+
+        return null;
+    }
+
+    /**
+     * @param expressionId the expressionId to set
+     */
+    public void setExpressionId(IExpressionId expressionId) {
+        this.expressionId = expressionId;
+    }
+
+    /**
+     * @return 
+     */
+    public String getAttributeDisplayName() {
+        return attributeDisplayNameTextField.getText().trim();
+    }
 }
