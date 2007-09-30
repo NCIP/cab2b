@@ -70,7 +70,7 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
     private class OrderViewButtonActionListener implements ActionListener {
 
         public void actionPerformed(ActionEvent arg0) {
-            ParameterizedQueryOrderPanel panel = new ParameterizedQueryOrderPanel(parameterizedQueryMainPanel);
+            ParameterizedQueryPreviewPanel panel = new ParameterizedQueryPreviewPanel(parameterizedQueryMainPanel);
             parameterizedQueryMainPanel.getDialog().dispose();
             panel.showInDialog();
         }
@@ -100,8 +100,7 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                 queryEngineBusinessInterface.saveQuery(parameterizedQueryMainPanel.getParameterizedQueryDataModel().getQuery());
                 SearchNavigationPanel.messageLabel.setText("Query "
                         + parameterizedQueryMainPanel.getParameterizedQueryDataModel().getQuery().getName()
-                        + " saved successfully.");
-                MainFrame.updateMySeachQueryBox();
+                        + " saved successfully.");                
                 StackBoxMySearchQueriesPanel.getInstance().updateMySearchQueryPanel();
                 updateUI();
             } catch (RemoteException exception) {
