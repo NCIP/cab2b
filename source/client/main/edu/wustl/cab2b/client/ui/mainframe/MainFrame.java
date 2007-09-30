@@ -15,7 +15,6 @@ import java.awt.Toolkit;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.net.URL;
-import java.util.List;
 import java.util.MissingResourceException;
 
 import javax.swing.BorderFactory;
@@ -34,15 +33,12 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.CustomizableBorder;
 import edu.wustl.cab2b.client.ui.experiment.ExperimentPanel;
+import edu.wustl.cab2b.client.ui.mainframe.stackbox.MainFrameStackedBoxPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
-import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
-import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
-import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
-import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
 
@@ -73,7 +69,7 @@ public class MainFrame extends JXFrame {
 
     private JXPanel homePanel;
 
-    private static MainFrameStackedBoxPanel lefthandStackedBox;
+    private MainFrameStackedBoxPanel lefthandStackedBox;
 
     private JSplitPane splitPane;
 
@@ -104,7 +100,6 @@ public class MainFrame extends JXFrame {
         statusBar = WindowUtilities.getStatusBar(this);
         initGUI();
         lefthandStackedBox.setDataForMyExperimentsPanel(CommonUtils.getExperiments());
-        lefthandStackedBox.setDataForMySearchQueriesPanel();
         lefthandStackedBox.setDataForPopularSearchCategoriesPanel(CommonUtils.getPopularSearchCategories());
     }
 
@@ -280,7 +275,7 @@ public class MainFrame extends JXFrame {
      */
     public static void main(String[] args) {
         try {
-            
+
             setHome();
             Logger.configure(); //pick config from log4j.properties
             initializeResources(); // Initialize all Resources
@@ -332,22 +327,5 @@ public class MainFrame extends JXFrame {
      */
     public static void setUserName(String userName) {
         MainFrame.userName = userName;
-    }
-
-    public static void updateMySeachQueryBox() {
-        QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                                    EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                                    QueryEngineHome.class,
-                                                                                                                                    null);
-        List<ICab2bParameterizedQuery> cab2bQueryList = null;
-        try {
-            cab2bQueryList = queryEngineBusinessInterface.retrieveAllQueries();
-        } catch (Exception exception) {
-            CommonUtils.handleException(exception, MainFrame.newWelcomePanel, true, true, true, false);
-        }
-
-        if (cab2bQueryList != null && !cab2bQueryList.isEmpty()) {
-            lefthandStackedBox.updateMySearchQueryPanel(cab2bQueryList);
-        }
     }
 }
