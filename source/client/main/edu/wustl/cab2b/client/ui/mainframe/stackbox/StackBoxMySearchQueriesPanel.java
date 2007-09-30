@@ -74,6 +74,10 @@ public class StackBoxMySearchQueriesPanel extends Cab2bPanel {
                         true);
                 queryLink.setUserObject(userObjectWrapper);
                 queryLink.setText(queryName);
+                if (cab2bQuery.getDescription() == null || cab2bQuery.getDescription().equals(""))
+                    queryLink.setToolTipText("* Description not available");
+                else
+                    queryLink.setToolTipText(cab2bQuery.getDescription());
                 queryLink.addActionListener(new MySeachQueiresLinkListener());
 
                 this.add("br ", queryLink);
