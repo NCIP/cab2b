@@ -179,8 +179,14 @@ public class ParameterizedQueryPreviewPanel extends Cab2bPanel {
 
     public void showInDialog() {
         Dimension dimension = MainFrame.mainframeScreenDimesion;
-        dialog = WindowUtilities.setInDialog(NewWelcomePanel.mainFrame, this, "Unsaved Condition", new Dimension(
+        String dialogTitle = "Unsaved Condition";
+
+        if (!isOrderPanel)
+            dialogTitle = queryDataModel.getQueryName();
+
+        dialog = WindowUtilities.setInDialog(NewWelcomePanel.mainFrame, this, dialogTitle, new Dimension(
                 (int) (dimension.width * 0.80), (int) (dimension.height * 0.75)), true, false);
+
         dialog.setVisible(true);
     }
 
