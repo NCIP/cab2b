@@ -40,7 +40,6 @@ import edu.wustl.common.querysuite.queryobject.IExpressionId;
  * 
  */
 
-
 public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent {
 
     public static final int CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE = 9;
@@ -102,11 +101,13 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 
     protected IExpressionId expressionId;
 
+    protected String displayName;
+
     public AbstractTypePanel(
             ArrayList<String> conditionList,
             AttributeInterface attributeEntity,
             Dimension maxLabelDimension) {
-        this(conditionList, attributeEntity, true, maxLabelDimension, false);
+        this(conditionList, attributeEntity, true, maxLabelDimension, false, "");
     }
 
     public AbstractTypePanel(
@@ -114,7 +115,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
             AttributeInterface attributeEntity,
             Dimension maxLabelDimension,
             Boolean isParameterized) {
-        this(conditionList, attributeEntity, true, maxLabelDimension, isParameterized);
+        this(conditionList, attributeEntity, true, maxLabelDimension, isParameterized, "");
     }
 
     public AbstractTypePanel(
@@ -122,7 +123,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
             AttributeInterface attributeEntity,
             Boolean showCondition,
             Dimension maxLabelDimension) {
-        this(conditionList, attributeEntity, true, maxLabelDimension, false);
+        this(conditionList, attributeEntity, true, maxLabelDimension, false, "");
     }
 
     public AbstractTypePanel(
@@ -130,25 +131,38 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
             AttributeInterface attributeEntity,
             Boolean showCondition,
             Dimension maxLabelDimension,
-            Boolean isParameterized) {
+            String displayName) {
+        this(conditionList, attributeEntity, true, maxLabelDimension, false, displayName);
+    }
+
+    public AbstractTypePanel(
+            ArrayList<String> conditionList,
+            AttributeInterface attributeEntity,
+            Boolean showCondition,
+            Dimension maxLabelDimension,
+            Boolean isParameterized,
+            String displayName) {
         this.setLayout(new RiverLayout(10, 8));
         this.attributeEntity = attributeEntity;
         this.attributeName = attributeEntity.getName();
         this.showCondition = showCondition;
         this.isParameterized = isParameterized;
         this.conditionList = conditionList;
+        this.displayName = displayName;
         initGUI(maxLabelDimension);
     }
 
     private void initGUI(Dimension maxLabelDimension) {
         this.setLayout(new RiverLayout(10, 8));
 
-        String formattedString = attributeEntity.getName();
-        if (!Utility.isCategory(attributeEntity.getEntity())) {
-            formattedString = CommonUtils.getFormattedString(formattedString);
+        if (displayName == null || displayName.equals("")) {
+            if (!Utility.isCategory(attributeEntity.getEntity()))
+                displayName = CommonUtils.getFormattedString(attributeEntity.getName());
+            else
+                displayName = attributeName;
         }
+        m_Name = new Cab2bLabel(displayName + " : ");
 
-        m_Name = new Cab2bLabel(formattedString + " : ");
         m_Name.setPreferredSize(maxLabelDimension);// new Dimension(235,20)
         String toolTipText = edu.wustl.cab2b.client.ui.query.Utility.getAttributeCDEDetails(attributeEntity);
         m_Name.setToolTipText(toolTipText);
@@ -164,10 +178,11 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         m_OtherEdit.setBorder(emptyBorder);
 
         if (isParameterized) {
+
             attributeCheckBox = new Cab2bCheckBox();
 
-            attributeDisplayNameTextField = new Cab2bTextField(formattedString, new Dimension(
-                    maxLabelDimension.width, maxLabelDimension.height + 5));
+            attributeDisplayNameTextField = new Cab2bTextField(displayName, new Dimension(maxLabelDimension.width,
+                    maxLabelDimension.height + 5));
             attributeDisplayNameTextField.setEnabled(false);
             attributeCheckBox.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent arg0) {
@@ -189,6 +204,10 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         add(m_NameEdit);
         add(m_OtherEdit);
         setSize(new Dimension(300, 100));
+    }
+
+    public void setAttributeCheckBox(boolean selectCheckBox) {
+        attributeCheckBox.setSelected(selectCheckBox);
     }
 
     public boolean isAttributeCheckBoxSelected() {
@@ -327,6 +346,21 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
      * @return 
      */
     public String getAttributeDisplayName() {
-        return attributeDisplayNameTextField.getText().trim();
+        return displayName;
+    }
+
+    /**
+     * @return the m_Name
+     */
+    public void setAttributeDisplayName(String displayName) {
+        this.displayName = displayName;
+        m_Name.setText(displayName + " : ");
+    }
+
+    /**
+     * @return the attributeDisplayNameTextField
+     */
+    public Cab2bTextField getAttributeDisplayNameTextField() {
+        return attributeDisplayNameTextField;
     }
 }
