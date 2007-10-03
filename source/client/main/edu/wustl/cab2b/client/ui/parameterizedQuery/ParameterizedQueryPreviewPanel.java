@@ -10,10 +10,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 
@@ -80,6 +82,10 @@ public class ParameterizedQueryPreviewPanel extends Cab2bPanel {
 
     private boolean isOrderPanel;
 
+    private Cab2bButton upArrowButton;
+
+    private Cab2bButton downArrowButton;
+
     public ParameterizedQueryPreviewPanel(ParameterizedQueryMainPanel parameterizedQueryMainPanel) {
         this.parameterizedQueryMainPanel = parameterizedQueryMainPanel;
         queryDataModel = parameterizedQueryMainPanel.getParameterizedQueryDataModel();
@@ -130,13 +136,29 @@ public class ParameterizedQueryPreviewPanel extends Cab2bPanel {
                 dialog.dispose();
             }
         });
-        createOrderPanel();
+        createPreviewPanel();
+
         if (topConditionPanel.getComponentCount() > 0) {
             JScrollPane topScrollPane = new JScrollPane(topConditionPanel);
             topScrollPane.getViewport().setBackground(Color.white);
             topScrollPane.setBorder(BorderFactory.createEmptyBorder());
             topConditionTitlePanel = new Cab2bTitledPanel("Parameterized Conditions");
-            topConditionTitlePanel.add(topScrollPane);
+            Cab2bPanel topPanelContainer = (Cab2bPanel) topConditionTitlePanel.getContentContainer();
+            topPanelContainer.add(topScrollPane);
+            if (isOrderPanel) {
+
+                ImageIcon icon = createImageIcon("upArrow.gif");
+                upArrowButton = new Cab2bButton(icon);
+                upArrowButton.addActionListener(new UpArrowActionListener());
+                icon = createImageIcon("downArrow.gif");
+                downArrowButton = new Cab2bButton(icon);
+                downArrowButton.addActionListener(new DownArrowActionListener());
+                Cab2bPanel orderLabelPanel = new Cab2bPanel();
+
+                orderLabelPanel.add(" br", upArrowButton);
+                orderLabelPanel.add(" br", downArrowButton);
+                topPanelContainer.add("tab ", orderLabelPanel);
+            }
             topConditionTitlePanel.setMaximumSize(new Dimension(
                     (int) (MainFrame.mainframeScreenDimesion.width * 0.40),
                     (int) (MainFrame.mainframeScreenDimesion.height * 0.35)));
@@ -144,17 +166,25 @@ public class ParameterizedQueryPreviewPanel extends Cab2bPanel {
         }
 
         if (bottomConditionPanel.getComponentCount() > 0) {
-            bottomConditionPanel.setEnabled(false);
+
             JScrollPane bottomScrollPane = new JScrollPane(bottomConditionPanel);
             bottomScrollPane.getViewport().setBackground(Color.white);
             bottomScrollPane.setBorder(BorderFactory.createEmptyBorder());
             bottomConditionTitlePanel = new Cab2bTitledPanel("Defined Conditions");
             bottomConditionTitlePanel.add(bottomScrollPane);
+
             this.add(bottomConditionTitlePanel, BorderLayout.CENTER);
         }
         this.add(getNavigationPanel(), BorderLayout.SOUTH);
         return;
+    }
 
+    /** 
+     * Returns an Icon, or null if the path was invalid. 
+     */
+    private ImageIcon createImageIcon(String name) {
+        ImageIcon newLeafIcon = new ImageIcon(getClass().getClassLoader().getResource(name));
+        return newLeafIcon;
     }
 
     private Cab2bPanel getNavigationPanel() {
@@ -206,70 +236,115 @@ public class ParameterizedQueryPreviewPanel extends Cab2bPanel {
     }
 
     /**
+     *  Method to create order preview panel
+     * @param conditionMap
+     */
+    private void creatOrderPreviewPanel(Map<IExpressionId, Collection<ICondition>> conditionMap) {
+        AbstractTypePanel componentPanel = null;
+        List<AbstractTypePanel> panelList;
+        ParseXMLFile parseFile = null;
+        try {
+            parseFile = ParseXMLFile.getInstance();
+        } catch (CheckedException checkedException) {
+            CommonUtils.handleException(checkedException, this, true, true, false, false);
+        }
+        panelList = parameterizedQueryMainPanel.getParameterConditionPanel().getCheckedAttributePanels();
+        for (int index = 0; index < panelList.size(); index++) {
+            AbstractTypePanel panel = panelList.get(index);
+            //uncheck all checkboxes 
+            panel.setAttributeCheckBox(false);
+
+            //set changed/unchanged label for each attribute field 
+            panel.setAttributeDisplayName(panel.getAttributeDisplayNameTextField().getText());
+
+            //hide the attributeDisplayText box                    
+            panel.remove(panel.getAttributeDisplayNameTextField());
+
+            //Now add to the condition panel
+            topConditionPanel.add("br ", panelList.get(index));
+        }
+
+        panelList = parameterizedQueryMainPanel.getParameterConditionPanel().getUnCheckedAttributePanels();
+        for (int index = 0; index < panelList.size(); index++) {
+            AbstractTypePanel oldComponentPanel = panelList.get(index);
+
+            try {
+                componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
+                                                                                    parseFile,
+                                                                                    oldComponentPanel.getAttributeEntity(),
+                                                                                    true, maxLabelDimension);
+            } catch (CheckedException checkedException) {
+                CommonUtils.handleException(checkedException, this, true, true, false, false);
+            }
+            setConditionValues(componentPanel);
+            CommonUtils.disableAllComponent(componentPanel);
+            bottomConditionPanel.add("br ", componentPanel);
+        }
+
+    }
+
+    /**
+     * Method to create show result preview panel
+     * @param conditionMap
+     */
+    private void createShowResultPreviewPanel(Map<IExpressionId, Collection<ICondition>> conditionMap) {
+        //The following code is executing for StackPanel QueryLink Click
+        AbstractTypePanel componentPanel = null;
+        ParseXMLFile parseFile = null;
+        try {
+            parseFile = ParseXMLFile.getInstance();
+        } catch (CheckedException checkedException) {
+            CommonUtils.handleException(checkedException, this, true, true, false, false);
+        }
+
+        try {
+            for (IExpressionId key : conditionMap.keySet()) {
+                for (ICondition condition : conditionMap.get(key)) {
+                    if (condition instanceof ParameterizedCondition) {
+                        componentPanel = (AbstractTypePanel) SwingUIManager.generateParameterizedUIPanel(
+                                                                                                         parseFile,
+                                                                                                         condition.getAttribute(),
+                                                                                                         true,
+                                                                                                         maxLabelDimension,
+                                                                                                         false,
+                                                                                                         ((ParameterizedCondition) condition).getName());
+                        setConditionValues(componentPanel);
+                        topConditionPanel.add("br ", componentPanel);
+                    } else {
+                        componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
+                                                                                            parseFile,
+                                                                                            condition.getAttribute(),
+                                                                                            true,
+                                                                                            maxLabelDimension);
+                        setConditionValues(componentPanel);
+                        CommonUtils.disableAllComponent(componentPanel);
+                        bottomConditionPanel.add("br ", componentPanel);
+                    }
+                }
+            }
+        } catch (CheckedException checkedException) {
+            CommonUtils.handleException(checkedException, this, true, true, false, false);
+        }
+    }
+
+    /**
      * Method to create preview panel
      *  
      */
-    private void createOrderPanel() {
+    private void createPreviewPanel() {
         this.setLayout(new BorderLayout());
-        AbstractTypePanel componentPanel = null;
-        ParseXMLFile parseFile;
         Map<IExpressionId, Collection<ICondition>> conditionMap;
-
         if (isOrderPanel == false)
             conditionMap = queryDataModel.getConditions();
         else
             conditionMap = parameterizedQueryMainPanel.getParameterizedQueryDataModel().getConditions();
 
         getMaxLabelDimension(conditionMap);
-        try {
-            parseFile = ParseXMLFile.getInstance();
-            if (parameterizedQueryMainPanel != null) {
-                List<AbstractTypePanel> panelList;
-                panelList = parameterizedQueryMainPanel.getParameterConditionPanel().getCheckedAttributePanels();
-                for (int index = 0; index < panelList.size(); index++)
-                    topConditionPanel.add("br ", panelList.get(index));
 
-                panelList = parameterizedQueryMainPanel.getParameterConditionPanel().getUnCheckedAttributePanels();
-                for (int index = 0; index < panelList.size(); index++) {
-                    AbstractTypePanel oldComponentPanel = panelList.get(index);
-
-                    componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
-                                                                                        parseFile,
-                                                                                        oldComponentPanel.getAttributeEntity(),
-                                                                                        true, maxLabelDimension);
-                    setConditionValues(componentPanel);
-                    bottomConditionPanel.add("br ", componentPanel);
-                }
-            } else {
-                //The following code is executing for StackPanel QueryLink Click           
-                try {
-                    for (IExpressionId key : conditionMap.keySet()) {
-                        for (ICondition condition : conditionMap.get(key)) {
-                            if (condition instanceof ParameterizedCondition) {
-                                componentPanel = (AbstractTypePanel) SwingUIManager.generateParameterizedUIPanel(
-                                                                                                                 parseFile,
-                                                                                                                 condition.getAttribute(),
-                                                                                                                 true,
-                                                                                                                 maxLabelDimension);
-                                setConditionValues(componentPanel);
-                                topConditionPanel.add("br ", componentPanel);
-                            } else {
-                                componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
-                                                                                                    parseFile,
-                                                                                                    condition.getAttribute(),
-                                                                                                    true,
-                                                                                                    maxLabelDimension);
-                                setConditionValues(componentPanel);
-                                bottomConditionPanel.add("br ", componentPanel);
-                            }
-                        }
-                    }
-                } catch (CheckedException checkedException) {
-                    CommonUtils.handleException(checkedException, this, true, true, false, false);
-                }
-            }
-        } catch (CheckedException checkedException) {
-            CommonUtils.handleException(checkedException, this, true, true, false, false);
+        if (parameterizedQueryMainPanel != null) {
+            creatOrderPreviewPanel(conditionMap);
+        } else {
+            createShowResultPreviewPanel(conditionMap);
         }
     }
 
@@ -299,13 +374,74 @@ public class ParameterizedQueryPreviewPanel extends Cab2bPanel {
         }
     }
 
+    /**
+     * Returns all selected attribute panels from the top-condition panels  
+     * @return
+     */
+    Map<Integer, AbstractTypePanel> getAllSelectedPanel() {
+        Map<Integer, AbstractTypePanel> panelMap = new HashMap<Integer, AbstractTypePanel>();
+        for (int index = 0; index < topConditionPanel.getComponentCount(); index++) {
+            if ((topConditionPanel.getComponent(index) instanceof AbstractTypePanel)) {
+                AbstractTypePanel panel = (AbstractTypePanel) topConditionPanel.getComponent(index);
+                if (panel.isAttributeCheckBoxSelected())
+                    panelMap.put(index, (AbstractTypePanel) topConditionPanel.getComponent(index));
+            }
+
+        }
+        return panelMap;
+    }
+
     private class OkButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
             dialog.dispose();
         }
-
     }
 
+    /*
+     * DownArrowButton Action listener 
+     * @author deepak_shingan
+     *
+     */
+    private class DownArrowActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent arg0) {
+            Map<Integer, AbstractTypePanel> panelMap = getAllSelectedPanel();
+            for (Integer index : panelMap.keySet()) {
+                AbstractTypePanel downPanel;
+                if (index + 1 != topConditionPanel.getComponentCount()) {
+                    downPanel = (AbstractTypePanel) topConditionPanel.getComponent(index);
+                    topConditionPanel.remove(downPanel);
+                    topConditionPanel.add(downPanel, "br ", index + 1);
+                    topConditionPanel.updateUI();
+                }
+            }
+        }
+    }
+
+    /**
+     * UpArrowButton ActionListener
+     * @author deepak_shingan
+     *
+     */
+    private class UpArrowActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent arg0) {
+            Map<Integer, AbstractTypePanel> panelMap = getAllSelectedPanel();
+            for (Integer index : panelMap.keySet()) {
+                AbstractTypePanel downPanel;
+                if (index != 0) {
+                    downPanel = (AbstractTypePanel) topConditionPanel.getComponent(index);
+                    topConditionPanel.remove(downPanel);
+                    topConditionPanel.add(downPanel, "br ", index - 1);
+                    topConditionPanel.updateUI();
+                }
+            }
+        }
+    }
+
+    /**
+     * ShowResultsButton ActionListener 
+     * @author deepak_shingan
+     *
+     */
     private class ShowResultsActionListener implements ActionListener {
         private void executeQuery(ICab2bParameterizedQuery cab2bQuery) {
             // This code is generic and can be used to directly display the 
