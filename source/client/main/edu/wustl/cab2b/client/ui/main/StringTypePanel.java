@@ -20,9 +20,9 @@ public class StringTypePanel extends AbstractTypePanel {
 
 	public StringTypePanel(ArrayList<String> conditionList,
 			AttributeInterface attributeEntity, Boolean showCondition,
-			Dimension maxLabelDimension, Boolean isParameterized) {
+			Dimension maxLabelDimension, Boolean isParameterized,String displayName) {
 		super(conditionList, attributeEntity, showCondition, maxLabelDimension,
-				isParameterized);
+				isParameterized,displayName);
 	}
 
 	public JComponent getFirstComponent() {

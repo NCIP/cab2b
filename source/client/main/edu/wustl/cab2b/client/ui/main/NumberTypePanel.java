@@ -26,9 +26,9 @@ public class NumberTypePanel extends AbstractTypePanel {
 
 	public NumberTypePanel(ArrayList<String> conditionList,
 			AttributeInterface attributeEntity, Boolean showCondition,
-			Dimension maxLabelDimension, Boolean isParameterized) {
+			Dimension maxLabelDimension, Boolean isParameterized,String displayName) {
 		super(conditionList, attributeEntity, showCondition, maxLabelDimension,
-				isParameterized);
+				isParameterized,displayName);
 	}
 
 	public JComponent getFirstComponent() {

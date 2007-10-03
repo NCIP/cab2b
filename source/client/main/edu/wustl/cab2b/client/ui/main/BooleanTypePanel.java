@@ -33,8 +33,8 @@ public class BooleanTypePanel extends AbstractTypePanel {
 	}
 	
 	public BooleanTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity,
-			Boolean showCondition, Dimension maxLabelDimension,Boolean isParameterized) {
-		super(conditionList, attributeEntity, showCondition, maxLabelDimension,isParameterized);
+			Boolean showCondition, Dimension maxLabelDimension,Boolean isParameterized,String displayName) {
+		super(conditionList, attributeEntity, showCondition, maxLabelDimension,isParameterized,displayName);
 
 	}
 

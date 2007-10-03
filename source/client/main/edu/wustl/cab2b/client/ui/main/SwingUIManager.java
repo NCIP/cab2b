@@ -77,9 +77,9 @@ public class SwingUIManager {
     }
 
     public static Object generateParameterizedUIPanel(ParseXMLFile parseFile, AttributeInterface attributeEntity,
-                                                      boolean showConditions, Dimension maxLabelDimension)
-            throws CheckedException {
-        Object[] object = new Object[5];
+                                                      boolean showConditions, Dimension maxLabelDimension,boolean isParameterized,
+                                                      String displayName) throws CheckedException {
+        Object[] object = new Object[6];
         String className = null;
         AttributeTypeInformationInterface attributeTypeInformation = attributeEntity.getAttributeTypeInformation();
         String dataTypeString = getDataType(attributeTypeInformation);
@@ -96,10 +96,11 @@ public class SwingUIManager {
         object[1] = attributeEntity;
         object[2] = new Boolean(showConditions);
         object[3] = maxLabelDimension;
-        object[4] = true;
+        object[4] = new Boolean(isParameterized);;
+        object[5] = displayName;
         Object uiObject = null;
         try {
-            Class[] arr = { ArrayList.class, AttributeInterface.class, Boolean.class, Dimension.class, Boolean.class };
+            Class[] arr = { ArrayList.class, AttributeInterface.class, Boolean.class, Dimension.class, Boolean.class, String.class };
             Class<?> clazz = Class.forName(className);
             Constructor<?> constructor = clazz.getDeclaredConstructor(arr);
             uiObject = constructor.newInstance(object);
