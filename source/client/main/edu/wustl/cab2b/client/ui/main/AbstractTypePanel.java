@@ -211,7 +211,9 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     }
 
     public boolean isAttributeCheckBoxSelected() {
-        return attributeCheckBox.isSelected();
+        if (attributeCheckBox != null)
+            return attributeCheckBox.isSelected();
+        return false;
     }
 
     /**
@@ -328,11 +330,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
      * @return the expressionId
      */
     public IExpressionId getExpressionId() {
-
-        if (isParameterized)
-            return expressionId;
-
-        return null;
+        return expressionId;
     }
 
     /**
