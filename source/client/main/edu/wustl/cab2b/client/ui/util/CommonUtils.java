@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -80,6 +82,18 @@ public class CommonUtils {
     }
 
     /**
+     * Method to disable all components from the specified container
+     * @param container
+     */
+    public static void disableAllComponent(Container container) {
+        for (int i = 0; i < container.getComponentCount(); i++) {
+            container.getComponent(i).setEnabled(false);
+            if (container.getComponent(i) instanceof Container)
+                disableAllComponent((Container) container.getComponent(i));
+        }
+    }
+
+    /**
      * Method to get BusinessInterface object for given bean name and home class
      * object
      * 
@@ -95,8 +109,9 @@ public class CommonUtils {
     public static BusinessInterface getBusinessInterface(String beanName, Class homeClassForBean)
             throws LocatorException {
         return Locator.getInstance().locate(beanName, homeClassForBean);
-    }
+    }  
 
+    
     /**
      * A Utility method to handle exception, logging and showing it in a dialog.
      */
