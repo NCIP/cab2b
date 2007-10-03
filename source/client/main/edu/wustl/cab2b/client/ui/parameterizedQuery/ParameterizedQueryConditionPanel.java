@@ -10,18 +10,14 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
-import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlinkUI;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.main.AbstractTypePanel;
@@ -32,7 +28,6 @@ import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.util.AttributeInterfaceComparator;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
-import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 
 /**
  * Class to generate Parameterized Query Condition GUI 
@@ -70,36 +65,47 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
         initGUI();
     }
 
-    private void showAllAttributePanel() {
-        for (IQueryEntity entityQ : queryDataModel.getQueryEntities()) {
-            EntityInterface entity = entityQ.getDynamicExtensionsEntity();
-            final Collection<AttributeInterface> attributeCollection = entity.getAttributeCollection();
-
-            if (attributeCollection != null) {
-                try {
-                    List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>(attributeCollection);
-                    Collections.sort(attributeList, new AttributeInterfaceComparator());
-                    ParseXMLFile parseFile = ParseXMLFile.getInstance();
-                    Dimension maxDimension = CommonUtils.getMaximumLabelDimension(attributeList);
-                    if (maxLabelDimension == null || maxLabelDimension.width < maxDimension.width) {
-                        maxLabelDimension = maxDimension;
-                    }
-                    AbstractTypePanel componentPanel = null;
-                    for (AttributeInterface attribute : attributeList) {
-                        componentPanel = (AbstractTypePanel) SwingUIManager.generateParameterizedUIPanel(
-                                                                                                         parseFile,
-                                                                                                         attribute,
-                                                                                                         true,
-                                                                                                         maxLabelDimension,
-                                                                                                         true, "");
-                        setConditionValues(componentPanel);
-                        contentPanel.add("br ", componentPanel);
-                    }
-                } catch (CheckedException checkedException) {
-                    CommonUtils.handleException(checkedException, this, true, true, false, false);
-                }
-            }
+    private Dimension getMaximumDimensionForAttribute(
+                                                      Map<IExpressionId, Collection<AttributeInterface>> allAttributes) {
+        List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
+        for (IExpressionId exprId : allAttributes.keySet()) {
+            Collection<AttributeInterface> attributeCollection = allAttributes.get(exprId);
+            attributeList.addAll(attributeCollection);
         }
+        Collections.sort(attributeList, new AttributeInterfaceComparator());
+        Dimension maxDimension = CommonUtils.getMaximumLabelDimension(attributeList);
+        if (maxLabelDimension == null || maxLabelDimension.width < maxDimension.width) {
+            maxLabelDimension = maxDimension;
+        }
+
+        return maxLabelDimension;
+    }
+
+    private void showAllAttributePanel() {
+        Map<IExpressionId, Collection<AttributeInterface>> allAttributes = queryDataModel.getAllAttributes();
+        maxLabelDimension = getMaximumDimensionForAttribute(allAttributes);
+        try {
+            ParseXMLFile parseFile = ParseXMLFile.getInstance();
+            AbstractTypePanel componentPanel = null;
+
+            for (IExpressionId exprId : allAttributes.keySet()) {
+                for (AttributeInterface attribute : allAttributes.get(exprId)) {
+                    componentPanel = (AbstractTypePanel) SwingUIManager.generateParameterizedUIPanel(
+                                                                                                     parseFile,
+                                                                                                     attribute,
+                                                                                                     true,
+                                                                                                     maxLabelDimension,
+                                                                                                     true, "");
+                    setConditionValues(componentPanel);
+                    componentPanel.setExpressionId(exprId);
+                    contentPanel.add("br ", componentPanel);
+                }
+
+            }
+        } catch (CheckedException checkedException) {
+            CommonUtils.handleException(checkedException, this, true, true, false, false);
+        }
+
     }
 
     /**
@@ -108,7 +114,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
      * @param attribute
      * @return
      */
-    private ICondition setConditionValues(AbstractTypePanel componentPanel) {
+    private void setConditionValues(AbstractTypePanel componentPanel) {
 
         AttributeInterface attribute = componentPanel.getAttributeEntity();
 
@@ -122,7 +128,6 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
                 }
             }
         }
-        return null;
     }
 
     public Cab2bPanel getConditionPanel() {
