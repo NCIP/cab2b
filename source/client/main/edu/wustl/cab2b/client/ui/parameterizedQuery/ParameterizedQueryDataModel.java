@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
@@ -73,10 +74,14 @@ public class ParameterizedQueryDataModel {
         return QueryUtility.getSelectedConditions(query);
     }
 
+    public Map<IExpressionId, Collection<AttributeInterface>> getAllAttributes() {
+        return QueryUtility.getAllAttributes(query);
+    }
+
     public void addCondition(IExpressionId expressionID, ICondition newCondition) {
         IExpression expression = query.getConstraints().getExpression(expressionID);
         int noOfOperand = expression.numberOfOperands();
-        
+
         ALL: for (int i = 0; i < noOfOperand; i++) {
             IExpressionOperand expressionOperand = expression.getOperand(i);
             if (!expressionOperand.isSubExpressionOperand()) {
@@ -91,9 +96,9 @@ public class ParameterizedQueryDataModel {
                         conditionList.add(index, newCondition);
                         isConditionAdded = true;
                         break ALL;
-                    } 
-                }                
-                if(!isConditionAdded) {
+                    }
+                }
+                if (!isConditionAdded) {
                     conditionList.add(newCondition);
                     break;
                 }
