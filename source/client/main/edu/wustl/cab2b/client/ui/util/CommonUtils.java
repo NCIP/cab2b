@@ -109,9 +109,8 @@ public class CommonUtils {
     public static BusinessInterface getBusinessInterface(String beanName, Class homeClassForBean)
             throws LocatorException {
         return Locator.getInstance().locate(beanName, homeClassForBean);
-    }  
+    }
 
-    
     /**
      * A Utility method to handle exception, logging and showing it in a dialog.
      */
@@ -730,7 +729,7 @@ public class CommonUtils {
                         if (condition.getAttribute().getId() == attribute.getId()) {
                             ICondition newCondition = null;
 
-                            if (panel.isAttributeCheckBoxSelected()) {
+                            if (panel.isAttributeCheckBoxSelected() || condition instanceof ParameterizedCondition) {
                                 //make it parameterized
                                 newCondition = new ParameterizedCondition(attribute, operator, conditionValues,
                                         index, attributeDisplayName);
