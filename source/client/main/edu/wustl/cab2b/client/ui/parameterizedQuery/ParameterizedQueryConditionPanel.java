@@ -90,7 +90,8 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
                                                                                                          parseFile,
                                                                                                          attribute,
                                                                                                          true,
-                                                                                                         maxLabelDimension);
+                                                                                                         maxLabelDimension,
+                                                                                                         true, "");
                         setConditionValues(componentPanel);
                         contentPanel.add("br ", componentPanel);
                     }
@@ -152,7 +153,8 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
                                                                                                      parseFile,
                                                                                                      condition.getAttribute(),
                                                                                                      true,
-                                                                                                     maxLabelDimension);
+                                                                                                     maxLabelDimension,
+                                                                                                     true, "");
                     setConditionValues(componentPanel);
                     contentPanel.add("br ", componentPanel);
                 }
@@ -210,7 +212,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
 
         return headerPanel;
     }
-    
+
     public List<AbstractTypePanel> getUnCheckedAttributePanels() {
         List<AbstractTypePanel> panelList = new ArrayList<AbstractTypePanel>();
 
@@ -221,7 +223,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
                     panelList.add(panel);
                 }
             }
-        }       
+        }
         return panelList;
     }
 
@@ -235,7 +237,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
                     panelList.add(panel);
                 }
             }
-        }       
+        }
         return panelList;
     }
 
