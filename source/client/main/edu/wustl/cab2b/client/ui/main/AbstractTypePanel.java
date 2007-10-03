@@ -344,6 +344,8 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
      * @return 
      */
     public String getAttributeDisplayName() {
+        if (attributeDisplayNameTextField != null)
+            displayName = attributeDisplayNameTextField.getText().trim();
         return displayName;
     }
 
