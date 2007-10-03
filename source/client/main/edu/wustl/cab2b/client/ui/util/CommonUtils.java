@@ -9,11 +9,8 @@ import java.util.BitSet;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -699,10 +696,11 @@ public class CommonUtils {
      * Method to update Parameterized condtions in Querys
      * @param queryDataModel
      * @param conditionPanel
+     * @param parentDialog
+     * @return
      */
     public static boolean updateQueryCondtions(ParameterizedQueryDataModel queryDataModel,
                                                Cab2bPanel conditionPanel, Cab2bPanel parentDialog) {
-        Map<IExpressionId, Collection<ICondition>> conditionMap = queryDataModel.getConditions();
 
         for (int index = 0; index < conditionPanel.getComponentCount(); index++) {
             if (conditionPanel.getComponent(index) instanceof AbstractTypePanel) {
@@ -722,28 +720,30 @@ public class CommonUtils {
 
                     return false;
                 }
-                Collection<ICondition> conditionCollection = conditionMap.get(expressionId);
-                if (((conditionString.equals("Is Null")) || conditionString.equals("Is Not Null") || (conditionValues.size() != 0))
-                        && (conditionCollection != null)) {
-                    for (ICondition condition : conditionCollection) {
-                        if (condition.getAttribute().getId() == attribute.getId()) {
-                            ICondition newCondition = null;
 
-                            if (panel.isAttributeCheckBoxSelected() || condition instanceof ParameterizedCondition) {
-                                //make it parameterized
-                                newCondition = new ParameterizedCondition(attribute, operator, conditionValues,
-                                        index, attributeDisplayName);
-                            } else {
-                                newCondition = new Condition(attribute, operator, conditionValues);
-                            }
+                if (panel.isAttributeCheckBoxSelected() && conditionValues.size() == 0
+                        && !(conditionString.equals("Is Null") || conditionString.equals("Is Not Null"))) {
+                    JOptionPane.showMessageDialog(parentDialog,
+                                                  "Please enter the values for selected field or remove the selection. \n Field name : "
+                                                          + panel.getAttributeDisplayName(), "Error",
+                                                  JOptionPane.ERROR_MESSAGE);
 
-                            queryDataModel.addCondition(expressionId, newCondition);
-                            break;
-                        }
+                    return false;
+                }
+
+                if (((conditionString.equals("Is Null")) || conditionString.equals("Is Not Null") || (conditionValues.size() != 0))) {
+                    ICondition newCondition = null;
+                    if (panel.isAttributeCheckBoxSelected()) {
+                        //make a new parameterized condition
+                        //and replace the old condition with new changes 
+                        newCondition = new ParameterizedCondition(attribute, operator, conditionValues, index,
+                                attributeDisplayName);
+                    } else {
+                        newCondition = new Condition(attribute, operator, conditionValues);
                     }
+                    queryDataModel.addCondition(expressionId, newCondition);
                 }
             }
-
         }
         return true;
     }
