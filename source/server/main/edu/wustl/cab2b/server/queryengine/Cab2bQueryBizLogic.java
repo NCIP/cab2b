@@ -8,7 +8,11 @@ import edu.wustl.cab2b.common.cache.AbstractEntityCache;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.cab2b.server.cache.EntityCache;
+import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.dao.DAO;
 import edu.wustl.common.querysuite.bizLogic.QueryBizLogic;
+import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
+import edu.wustl.common.util.dbManager.DAOException;
 
 /**
  * This class processes the Cab2bQuery object before persisting and after retreival.
@@ -16,12 +20,12 @@ import edu.wustl.common.querysuite.bizLogic.QueryBizLogic;
  */
 public class Cab2bQueryBizLogic extends QueryBizLogic<ICab2bParameterizedQuery> {
 
-    /**
-     * @see edu.wustl.common.querysuite.queryobject.util.QueryProcessor#preProcessQuery(edu.wustl.common.querysuite.queryobject.IQuery)
-     */
-    public void preProcessQuery(ICab2bParameterizedQuery caB2BQuery) {
-        super.preProcessQuery(caB2BQuery);
+    @Override
+    protected void preInsert(Object object, DAO dao, SessionDataBean sessionDataBean) throws DAOException,
+            UserNotAuthorizedException {
+        super.preInsert(object, dao, sessionDataBean);
 
+        ICab2bParameterizedQuery caB2BQuery = (ICab2bParameterizedQuery) object;
         EntityInterface entity = caB2BQuery.getOutputEntity();
         ((Cab2bQuery) caB2BQuery).setEntityId(entity.getId());
     }
