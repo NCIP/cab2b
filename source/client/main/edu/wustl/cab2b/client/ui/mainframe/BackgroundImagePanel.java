@@ -27,7 +27,7 @@ class BackgroundImagePanel extends JPanel {
      * It paints given image as background before painting any of the components. 
      * @param graphics graphics
      */
-    public void drawBackground(Graphics graphics) {
+    private void drawBackground(Graphics graphics) {
         int width = getWidth();
         int height = getHeight();
         int imageWidth = backgroundImage.getWidth(this);
