@@ -71,7 +71,7 @@ public class ParameterizedQueryDataModel {
     }
 
     public Map<IExpressionId, Collection<ICondition>> getConditions() {
-        return QueryUtility.getSelectedConditions(query);
+        return QueryUtility.getAllSelectedConditions(query);
     }
 
     public Map<IExpressionId, Collection<AttributeInterface>> getAllAttributes() {

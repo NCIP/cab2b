@@ -522,7 +522,7 @@ public class CategoryPreprocessor {
     }
 
     private IExpression createExpression(EntityInterface entity, boolean inView) {
-        IQueryEntity queryEntity = QueryObjectFactory.createConstraintEntity(entity);
+        IQueryEntity queryEntity = QueryObjectFactory.createQueryEntity(entity);
         IExpression expr = getConstraints().addExpression(queryEntity);
         expr.setInView(inView);
         return expr;

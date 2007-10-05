@@ -84,7 +84,7 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface {
      * @return The expression id of the expression added.  
      */
     public IExpressionId addExpression(IRule rule) {
-        IQueryEntity queryEntity = Cab2bQueryObjectFactory.createConstrainedEntity(rule.getCondition(0).getAttribute().getEntity());
+        IQueryEntity queryEntity = Cab2bQueryObjectFactory.createQueryEntity(rule.getCondition(0).getAttribute().getEntity());
         IExpression expression = query.getConstraints().addExpression(queryEntity);
         expression.setInView(true);
         expression.addOperand(rule);
@@ -218,7 +218,7 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface {
      */
     public IExpressionId createDummyExpression(EntityInterface entity) {
         Logger.out.debug("Inside createDummyExpression()");
-        IQueryEntity queryEntity = Cab2bQueryObjectFactory.createConstrainedEntity(entity);
+        IQueryEntity queryEntity = Cab2bQueryObjectFactory.createQueryEntity(entity);
         IExpression expression = query.getConstraints().addExpression(queryEntity);
         Logger.out.debug("Exiting createDummyExpression()");
 
