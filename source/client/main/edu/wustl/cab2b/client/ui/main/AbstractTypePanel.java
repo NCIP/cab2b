@@ -103,6 +103,8 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 
     protected String displayName;
 
+    protected Dimension maxLabelDimension;
+
     public AbstractTypePanel(
             ArrayList<String> conditionList,
             AttributeInterface attributeEntity,
@@ -149,10 +151,11 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         this.isParameterized = isParameterized;
         this.conditionList = conditionList;
         this.displayName = displayName;
-        initGUI(maxLabelDimension);
+        this.maxLabelDimension = maxLabelDimension;
+        initGUI();
     }
 
-    private void initGUI(Dimension maxLabelDimension) {
+    private void initGUI() {
         this.setLayout(new RiverLayout(10, 8));
 
         if (displayName == null || displayName.equals("")) {
@@ -185,12 +188,9 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
                     maxLabelDimension.height + 5));
             attributeDisplayNameTextField.setEnabled(false);
             attributeCheckBox.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent arg0) {
-                    if (attributeCheckBox.isSelected())
-                        attributeDisplayNameTextField.setEnabled(true);
-                    else
-                        attributeDisplayNameTextField.setEnabled(false);
-                }
+                public void actionPerformed(ActionEvent arg0) {                    
+                   setAttributeCheckBox(attributeCheckBox.isSelected());                 
+               }
             });
 
             add(attributeCheckBox);
@@ -208,6 +208,9 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 
     public void setAttributeCheckBox(boolean selectCheckBox) {
         attributeCheckBox.setSelected(selectCheckBox);
+        if (attributeDisplayNameTextField != null) {
+            attributeDisplayNameTextField.setEnabled(selectCheckBox);
+        }
     }
 
     public boolean isAttributeCheckBoxSelected() {
@@ -355,12 +358,19 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     public void setAttributeDisplayName(String displayName) {
         this.displayName = displayName;
         m_Name.setText(displayName + " : ");
+        if (attributeDisplayNameTextField != null) {
+            attributeDisplayNameTextField.setText(displayName);
+        }
     }
 
     /**
      * @return the attributeDisplayNameTextField
      */
     public Cab2bTextField getAttributeDisplayNameTextField() {
+        if (attributeDisplayNameTextField == null) {
+            attributeDisplayNameTextField = new Cab2bTextField(displayName, new Dimension(maxLabelDimension.width,
+                    maxLabelDimension.height + 5));
+        }
         return attributeDisplayNameTextField;
     }
 }
