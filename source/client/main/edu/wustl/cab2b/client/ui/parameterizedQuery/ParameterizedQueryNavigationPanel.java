@@ -99,7 +99,7 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                 queryEngineBusinessInterface.saveQuery(parameterizedQueryMainPanel.getParameterizedQueryDataModel().getQuery());
                 SearchNavigationPanel.messageLabel.setText("Query "
                         + parameterizedQueryMainPanel.getParameterizedQueryDataModel().getQuery().getName()
-                        + " saved successfully.");                
+                        + " saved successfully.");
                 StackBoxMySearchQueriesPanel.getInstance().updateMySearchQueryPanel();
                 updateUI();
             } catch (RemoteException exception) {

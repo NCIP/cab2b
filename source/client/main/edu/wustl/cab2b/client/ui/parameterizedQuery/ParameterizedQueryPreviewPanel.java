@@ -131,7 +131,6 @@ public class ParameterizedQueryPreviewPanel extends Cab2bPanel {
 
         cancelButton = new Cab2bButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent arg0) {
                 dialog.dispose();
             }
@@ -166,13 +165,11 @@ public class ParameterizedQueryPreviewPanel extends Cab2bPanel {
         }
 
         if (bottomConditionPanel.getComponentCount() > 0) {
-
             JScrollPane bottomScrollPane = new JScrollPane(bottomConditionPanel);
             bottomScrollPane.getViewport().setBackground(Color.white);
             bottomScrollPane.setBorder(BorderFactory.createEmptyBorder());
             bottomConditionTitlePanel = new Cab2bTitledPanel("Defined Conditions");
             bottomConditionTitlePanel.add(bottomScrollPane);
-
             this.add(bottomConditionTitlePanel, BorderLayout.CENTER);
         }
         this.add(getNavigationPanel(), BorderLayout.SOUTH);
@@ -232,6 +229,8 @@ public class ParameterizedQueryPreviewPanel extends Cab2bPanel {
         if (maxLabelDimension == null || maxLabelDimension.width < maxDimension.width) {
             maxLabelDimension = maxDimension;
         }
+        //increasing max label width to display expression ID with each label
+        maxLabelDimension.width = maxLabelDimension.width + 15;
         return maxLabelDimension;
     }
 
@@ -248,7 +247,8 @@ public class ParameterizedQueryPreviewPanel extends Cab2bPanel {
         } catch (CheckedException checkedException) {
             CommonUtils.handleException(checkedException, this, true, true, false, false);
         }
-        panelList = parameterizedQueryMainPanel.getParameterConditionPanel().getCheckedAttributePanels();
+        ParameterizedQueryConditionPanel conditionPanel = parameterizedQueryMainPanel.getParameterConditionPanel();
+        panelList = conditionPanel.getCheckedAttributePanels(conditionPanel.getConditionPanel());
         for (int index = 0; index < panelList.size(); index++) {
             AbstractTypePanel panel = panelList.get(index);
             //uncheck all checkboxes 
@@ -267,20 +267,23 @@ public class ParameterizedQueryPreviewPanel extends Cab2bPanel {
         panelList = parameterizedQueryMainPanel.getParameterConditionPanel().getUnCheckedAttributePanels();
         for (int index = 0; index < panelList.size(); index++) {
             AbstractTypePanel oldComponentPanel = panelList.get(index);
+            String conditionString = oldComponentPanel.getCondition();
+            if (((conditionString.equals("Is Null")) || conditionString.equals("Is Not Null") || (oldComponentPanel.getValues().size() != 0))) {
 
-            try {
-                componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
-                                                                                    parseFile,
-                                                                                    oldComponentPanel.getAttributeEntity(),
-                                                                                    true, maxLabelDimension);
-            } catch (CheckedException checkedException) {
-                CommonUtils.handleException(checkedException, this, true, true, false, false);
+                try {
+                    componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
+                                                                                        parseFile,
+                                                                                        oldComponentPanel.getAttributeEntity(),
+                                                                                        true, maxLabelDimension);
+                    componentPanel.setAttributeDisplayName(oldComponentPanel.getAttributeDisplayName());
+                } catch (CheckedException checkedException) {
+                    CommonUtils.handleException(checkedException, this, true, true, false, false);
+                }
+                setConditionValues(componentPanel);
+                CommonUtils.disableAllComponent(componentPanel);
+                bottomConditionPanel.add("br ", componentPanel);
             }
-            setConditionValues(componentPanel);
-            CommonUtils.disableAllComponent(componentPanel);
-            bottomConditionPanel.add("br ", componentPanel);
         }
-
     }
 
     /**
@@ -301,15 +304,21 @@ public class ParameterizedQueryPreviewPanel extends Cab2bPanel {
             for (IExpressionId key : conditionMap.keySet()) {
                 for (ICondition condition : conditionMap.get(key)) {
                     if (condition instanceof ParameterizedCondition) {
+
+                        ParameterizedCondition paraCondition = (ParameterizedCondition) condition;
                         componentPanel = (AbstractTypePanel) SwingUIManager.generateParameterizedUIPanel(
                                                                                                          parseFile,
-                                                                                                         condition.getAttribute(),
+                                                                                                         paraCondition.getAttribute(),
                                                                                                          true,
                                                                                                          maxLabelDimension,
                                                                                                          false,
-                                                                                                         ((ParameterizedCondition) condition).getName());
+                                                                                                         paraCondition.getName());
                         setConditionValues(componentPanel);
-                        topConditionPanel.add("br ", componentPanel);
+                        if (topConditionPanel.getComponentCount() < paraCondition.getIndex())
+                            topConditionPanel.add("br ", componentPanel);
+                        else
+                            topConditionPanel.add(componentPanel, "br ",
+                                                  ((ParameterizedCondition) condition).getIndex());
                     } else {
                         componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
                                                                                             parseFile,
@@ -317,6 +326,8 @@ public class ParameterizedQueryPreviewPanel extends Cab2bPanel {
                                                                                             true,
                                                                                             maxLabelDimension);
                         setConditionValues(componentPanel);
+                        componentPanel.setAttributeDisplayName(componentPanel.getAttributeDisplayName() + "_"
+                                + key.getInt());
                         CommonUtils.disableAllComponent(componentPanel);
                         bottomConditionPanel.add("br ", componentPanel);
                     }
@@ -386,14 +397,31 @@ public class ParameterizedQueryPreviewPanel extends Cab2bPanel {
                 if (panel.isAttributeCheckBoxSelected())
                     panelMap.put(index, (AbstractTypePanel) topConditionPanel.getComponent(index));
             }
-
         }
         return panelMap;
     }
 
     private class OkButtonActionListener implements ActionListener {
+
         public void actionPerformed(ActionEvent arg0) {
             dialog.dispose();
+
+            Cab2bPanel basePanel = parameterizedQueryMainPanel.getParameterConditionPanel().getConditionPanel();
+            int totalPanelCount = topConditionPanel.getComponentCount();
+            //Keep in mind whenever you will add panel from topConditionPanel to 
+            //base panel it will automatically get removed from topConditionPanel 
+            for (int index = 0; index < totalPanelCount; index++) {
+
+                if (topConditionPanel.getComponent(0) instanceof AbstractTypePanel) {
+                    AbstractTypePanel oldPanel = (AbstractTypePanel) topConditionPanel.getComponent(0);
+
+                    oldPanel.add(oldPanel.getAttributeDisplayNameTextField(), 1);
+                    oldPanel.setAttributeCheckBox(true);
+                    basePanel.add(oldPanel, "br ", index);
+                }
+            }
+            updateUI();
+            parameterizedQueryMainPanel.showInDialog();
         }
     }
 

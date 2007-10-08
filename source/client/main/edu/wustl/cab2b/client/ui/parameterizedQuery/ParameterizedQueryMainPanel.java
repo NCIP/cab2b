@@ -19,6 +19,11 @@ import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 public class ParameterizedQueryMainPanel extends Cab2bPanel {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * panel required to display Query info, Located at top in parameterizedQueryPanel  
      */
     private ParameterizedQueryInfoPanel informationQueryPanel;
@@ -119,7 +124,7 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
         dialog = WindowUtilities.setInDialog(NewWelcomePanel.mainFrame, this, "Unsaved Condition", new Dimension(
                 (int) (dimension.width * 0.80), (int) (dimension.height * 0.75)), true, true);
         dialog.setVisible(true);
-        
+
     }
 
     /**

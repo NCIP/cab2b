@@ -5,7 +5,6 @@ package edu.wustl.cab2b.client.ui.parameterizedQuery;
 
 import java.awt.Dimension;
 
-import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
