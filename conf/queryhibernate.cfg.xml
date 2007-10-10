@@ -36,7 +36,9 @@
 		<mapping resource="edu/wustl/common/hbm/JoinGraph.hbm.xml"/>
 		<mapping resource="edu/wustl/common/hbm/GraphEntry.hbm.xml"/>
 		<mapping resource="edu/wustl/common/hbm/ModelAssociation.hbm.xml"/>
+		<mapping resource="edu/wustl/common/hbm/OutputAttribute.hbm.xml"/>
 		<mapping resource="edu/wustl/common/hbm/Query.hbm.xml"/>
+		<mapping resource="edu/wustl/common/hbm/QueryHQL.hbm.xml"/>
 
     </session-factory>
     
