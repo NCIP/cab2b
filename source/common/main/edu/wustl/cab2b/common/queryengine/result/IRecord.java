@@ -31,7 +31,7 @@ public interface IRecord extends Serializable {
      * @param attribute the attribute.
      * @param value value of the attribute.
      */
-    void putValueForAttribute(AttributeInterface attribute, String value);
+    void putValueForAttribute(AttributeInterface attribute, Object value);
 
     /**
      * Returns the value for the attribute.
@@ -39,7 +39,7 @@ public interface IRecord extends Serializable {
      * @param attribute the attribute
      * @return the value for the attribute.
      */
-    String getValueForAttribute(AttributeInterface attribute);
+    Object getValueForAttribute(AttributeInterface attribute);
 
     /**
      * @return An unmodifiable set view of the attributes.

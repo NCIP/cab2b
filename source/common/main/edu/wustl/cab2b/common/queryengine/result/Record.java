@@ -10,11 +10,13 @@ import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.cache.AbstractEntityCache;
+import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.common.querysuite.queryobject.DataType;
 
 public class Record implements IRecord {
     private static final long serialVersionUID = 4657684475538003175L;
 
-    private transient Map<AttributeInterface, String> attributesValues;
+    private transient Map<AttributeInterface, Object> attributesValues;
 
     private RecordId id;
 
@@ -25,7 +27,7 @@ public class Record implements IRecord {
         if (id == null) {
             throw new IllegalArgumentException();
         }
-        this.attributesValues = new HashMap<AttributeInterface, String>(attributes.size());
+        this.attributesValues = new HashMap<AttributeInterface, Object>(attributes.size());
         for (AttributeInterface attribute : attributes) {
             attributesValues.put(attribute, "");
         }
@@ -36,14 +38,19 @@ public class Record implements IRecord {
         return id;
     }
 
-    public void putValueForAttribute(AttributeInterface attribute, String value) {
+    public void putValueForAttribute(AttributeInterface attribute, Object value) {
         if (!attributesValues.containsKey(attribute)) {
             throw new IllegalArgumentException("The attribute is invalid for this record.");
         }
-        this.attributesValues.put(attribute, value);
+        this.attributesValues.put(attribute, convertValueToSpecificType(attribute,(String)value));
+    }
+    
+    private Object convertValueToSpecificType(AttributeInterface attribute, String value) {
+        DataType dataType = Utility.getDataType(attribute.getAttributeTypeInformation());
+        return dataType.convertValue(value);
     }
 
-    public String getValueForAttribute(AttributeInterface attribute) {
+    public Object getValueForAttribute(AttributeInterface attribute) {
         return attributesValues.get(attribute);
     }
 
@@ -55,9 +62,9 @@ public class Record implements IRecord {
         s.defaultWriteObject();
         AbstractEntityCache cache = AbstractEntityCache.getCache();
 
-        Map<String, String> idValueMap = new HashMap<String, String>();
+        Map<String, Object> idValueMap = new HashMap<String, Object>();
         boolean onlyIdsWritten = true;
-        for (Map.Entry<AttributeInterface, String> entry : attributesValues.entrySet()) {
+        for (Map.Entry<AttributeInterface, Object> entry : attributesValues.entrySet()) {
             AttributeInterface attribute = entry.getKey();
             Long entityId = attribute.getEntity().getId();
             if (!cache.isEntityPresent(entityId)) {
@@ -78,12 +85,12 @@ public class Record implements IRecord {
         boolean onlyIdsWritten = s.readBoolean();
 
         if (!onlyIdsWritten) {
-            attributesValues = (Map<AttributeInterface, String>) values;
+            attributesValues = (Map<AttributeInterface, Object>) values;
             return;
         }
         Map<String, String> idValues = (Map<String, String>) values;
         AbstractEntityCache cache = AbstractEntityCache.getCache();
-        attributesValues = new HashMap<AttributeInterface, String>();
+        attributesValues = new HashMap<AttributeInterface, Object>();
 
         for (Map.Entry<String, String> entry : idValues.entrySet()) {
             String[] key = entry.getKey().split("_");
