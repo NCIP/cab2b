@@ -97,7 +97,7 @@ public class ChooseCategoryPanel extends ContentPanel {
      * @return SearchResultPanel
      */
     public SearchResultPanel getSearchResultPanel() {
-        return searchPanel.getSerachResultPanel();
+        return searchPanel.getSearchResultPanel();
     }
 
     /**
