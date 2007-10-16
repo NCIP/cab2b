@@ -443,7 +443,7 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
     public void performEditLimitAction(JXPanel[] componentPanel, IExpression expression) {
         List<ICondition> conditionList = new ArrayList<ICondition>();
         for (int j = 0; j < componentPanel.length; j++) {
-            IComponent panel = (IComponent) componentPanel[j];
+            AbstractTypePanel panel = (AbstractTypePanel) componentPanel[j];
             String conditionString = panel.getConditionItem();
             ArrayList<String> values = panel.getValues();
             if (0 == conditionString.compareToIgnoreCase("Between") && (values.size() == 1)) {
@@ -456,13 +456,7 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
             if ((conditionString.equals("Is Null")) || conditionString.equals("Is Not Null")
                     || (values.size() != 0)) {
                 ICondition condition = Cab2bQueryObjectFactory.createCondition();
-
-                final IQueryEntity constraintEntity = expression.getQueryEntity();
-                final EntityInterface entity = constraintEntity.getDynamicExtensionsEntity();
-                final Collection<AttributeInterface> attributeCollection = entity.getAttributeCollection();
-                final AttributeInterface attribute = getAttribute(attributeCollection,
-                                                                  panel.getAttributeDisplayName());
-
+                final AttributeInterface attribute = panel.getAttributeEntity();
                 condition.setAttribute(attribute);
                 condition.setRelationalOperator(edu.wustl.cab2b.client.ui.query.Utility.getRelationalOperator(conditionString));
                 for (int i = 0; i < values.size(); i++) {
