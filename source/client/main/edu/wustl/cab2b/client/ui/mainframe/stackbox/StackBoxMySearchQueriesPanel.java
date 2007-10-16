@@ -11,7 +11,7 @@ import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
-import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryPreviewPanel;
+import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryShowResultPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
@@ -87,15 +87,13 @@ public class StackBoxMySearchQueriesPanel extends Cab2bPanel {
     }
 
     private class MySeachQueiresLinkListener implements ActionListener {
-
         public void actionPerformed(ActionEvent actionEvent) {
             Cab2bHyperlink<UserObjectWrapper<ICab2bParameterizedQuery>> queryLink = (Cab2bHyperlink<UserObjectWrapper<ICab2bParameterizedQuery>>) actionEvent.getSource();
             UserObjectWrapper<ICab2bParameterizedQuery> userObjectWrapper = queryLink.getUserObject();
             ICab2bParameterizedQuery cab2bQuery = userObjectWrapper.getUserObject();
-            ParameterizedQueryPreviewPanel parameterizedQueryPreviewPanel = new ParameterizedQueryPreviewPanel(
+            ParameterizedQueryShowResultPanel parameterizedQueryPreviewPanel = new ParameterizedQueryShowResultPanel(
                     cab2bQuery);
             parameterizedQueryPreviewPanel.showInDialog();
         }
     }
-
 }
