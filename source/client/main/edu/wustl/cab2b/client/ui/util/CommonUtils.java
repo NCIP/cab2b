@@ -12,17 +12,15 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.jdesktop.swingx.JXErrorDialog;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.cab2b.client.ui.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
-import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
-import edu.wustl.cab2b.client.ui.main.AbstractTypePanel;
-import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryDataModel;
 import edu.wustl.cab2b.common.BusinessInterface;
+import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
@@ -34,11 +32,6 @@ import edu.wustl.cab2b.common.locator.LocatorException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
-import edu.wustl.common.querysuite.queryobject.RelationalOperator;
-import edu.wustl.common.querysuite.queryobject.impl.Condition;
-import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -475,7 +468,6 @@ public class CommonUtils {
                 tokenList.add(finalToken);
             }
         }
-
         return tokenList;
     }
 
@@ -564,7 +556,6 @@ public class CommonUtils {
         if (name == null || name.trim().equals("")) {
             return false;
         }
-
         return true;
     }
 
@@ -588,7 +579,6 @@ public class CommonUtils {
                 break;
             }
         }
-
         return requiredComponent;
     }
 
@@ -690,62 +680,16 @@ public class CommonUtils {
             input = "\"" + input + "\"";
         }
         return input;
-    }
+    }  
 
     /**
-     * Method to update Parameterized condtions in Querys
-     * @param queryDataModel
-     * @param conditionPanel
-     * @param parentDialog
+     * Method which will return number of elements in current datalist
      * @return
      */
-    public static boolean updateQueryCondtions(ParameterizedQueryDataModel queryDataModel,
-                                               Cab2bPanel conditionPanel, Cab2bPanel parentDialog) {
+    public static int getDataListSize() {
+        IDataRow rootNode = MainSearchPanel.getDataList().getRootDataRow();
+        // This node is hidden node in the tree view
+        return rootNode.getChildren().size();
 
-        for (int index = 0; index < conditionPanel.getComponentCount(); index++) {
-            if (conditionPanel.getComponent(index) instanceof AbstractTypePanel) {
-                AbstractTypePanel panel = (AbstractTypePanel) conditionPanel.getComponent(index);
-
-                String conditionString = panel.getCondition();
-                AttributeInterface attribute = panel.getAttributeEntity();
-                ArrayList<String> conditionValues = panel.getValues();
-                RelationalOperator operator = RelationalOperator.getOperatorForStringRepresentation(conditionString);
-                String attributeDisplayName = panel.getAttributeDisplayName();
-                IExpressionId expressionId = panel.getExpressionId();
-
-                if (conditionString.compareToIgnoreCase("Between") == 0 && (conditionValues.size() == 1)) {
-                    JOptionPane.showMessageDialog(parentDialog,
-                                                  "Please enter both the values for between operator.", "Error",
-                                                  JOptionPane.ERROR_MESSAGE);
-
-                    return false;
-                }
-
-                if (panel.isAttributeCheckBoxSelected() && conditionValues.size() == 0
-                        && !(conditionString.equals("Is Null") || conditionString.equals("Is Not Null"))) {
-                    JOptionPane.showMessageDialog(parentDialog,
-                                                  "Please enter the values for selected field or remove the selection. \n Field name : "
-                                                          + panel.getAttributeDisplayName(), "Error",
-                                                  JOptionPane.ERROR_MESSAGE);
-
-                    return false;
-                }
-
-                if (((conditionString.equals("Is Null")) || conditionString.equals("Is Not Null") || (conditionValues.size() != 0))) {
-                    ICondition newCondition = null;
-                    if (panel.isAttributeCheckBoxSelected()) {
-                        //make a new parameterized condition
-                        //and replace the old condition with new changes 
-                        newCondition = new ParameterizedCondition(attribute, operator, conditionValues, index,
-                                attributeDisplayName);
-                    } else {
-                        newCondition = new Condition(attribute, operator, conditionValues);
-                    }
-                    queryDataModel.addCondition(expressionId, newCondition);
-                }
-            }
-        }
-        return true;
     }
-
 }
