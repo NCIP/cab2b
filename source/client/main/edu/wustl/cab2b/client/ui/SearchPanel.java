@@ -69,10 +69,9 @@ public class SearchPanel extends Cab2bPanel {
 
     /**Error message searchPanel**/
     Cab2bPanel errorMsgPanel;
-    
+
     private AttributeSelectCDCPanel attributeSelectCDCPanel;
-    
-    
+
     private Cab2bDag testDAG;
 
     /**
@@ -95,11 +94,11 @@ public class SearchPanel extends Cab2bPanel {
     }
 
     public SearchPanel(Cab2bContentPanel panel, AttributeSelectCDCPanel cdcPanel) {
-    	this(panel);
-    	this.attributeSelectCDCPanel=cdcPanel;
-	}
+        this(panel);
+        this.attributeSelectCDCPanel = cdcPanel;
+    }
 
-	/**
+    /**
      * Method initializes the searchPanel by appropriately laying out child components.
      * 
      */
@@ -149,7 +148,7 @@ public class SearchPanel extends Cab2bPanel {
         this.add(srhButton);
         Cab2bLabel cab2bLabel = new Cab2bLabel(helpText);
         this.add("br", cab2bLabel);
-        this.add("br", advSearchPanel);
+        this.add("br", advSearchPanel);      
     }
 
     public void setUIForChooseCategorySearchPanel() {
@@ -225,11 +224,13 @@ public class SearchPanel extends Cab2bPanel {
         this.updateUI();
     }
 
-    public SearchResultPanel getSerachResultPanel() {
+    public SearchResultPanel getSearchResultPanel() {
+        if(srhResultPanel == null)
+            srhResultPanel = new SearchResultPanel(contentPanel, null);
         return srhResultPanel;
     }
 
-    public void setSerachResultPanel(SearchResultPanel searchResultPanel) {
+    public void setSerachResultPanel(SearchResultPanel searchResultPanel) {        
         srhResultPanel = searchResultPanel;
     }
 
@@ -296,7 +297,8 @@ public class SearchPanel extends Cab2bPanel {
      *            The collection of Entities
      */
     public SearchResultPanel getSearchResultPanel(ContentPanel addLimitPanel, Set<EntityInterface> searchResult) {
-        return new SearchResultPanel(addLimitPanel, searchResult);
+        srhResultPanel = new SearchResultPanel(addLimitPanel, searchResult);
+        return srhResultPanel;
     }
 
     /**
@@ -330,31 +332,31 @@ public class SearchPanel extends Cab2bPanel {
         this.add(this.getTextField());
     }
 
-	/**
-	 * @return Returns the adminCDCPanel.
-	 */
-	public AttributeSelectCDCPanel getAttributeSelectCDCPanel() {
-		return attributeSelectCDCPanel;
-	}
+    /**
+     * @return Returns the adminCDCPanel.
+     */
+    public AttributeSelectCDCPanel getAttributeSelectCDCPanel() {
+        return attributeSelectCDCPanel;
+    }
 
-	/**
-	 * @param adminCDCPanel The adminCDCPanel to set.
-	 */
-	public void setAttributeSelectCDCPanel(AttributeSelectCDCPanel attrSelectCDCPanel) {
-		this.attributeSelectCDCPanel = attrSelectCDCPanel;
-	}
+    /**
+     * @param adminCDCPanel The adminCDCPanel to set.
+     */
+    public void setAttributeSelectCDCPanel(AttributeSelectCDCPanel attrSelectCDCPanel) {
+        this.attributeSelectCDCPanel = attrSelectCDCPanel;
+    }
 
-	/**
-	 * @return Returns the testDAG.
-	 */
-	public Cab2bDag getTestDAG() {
-		return testDAG;
-	}
+    /**
+     * @return Returns the testDAG.
+     */
+    public Cab2bDag getTestDAG() {
+        return testDAG;
+    }
 
-	/**
-	 * @param testDAG The testDAG to set.
-	 */
-	public void setTestDAG(Cab2bDag testDAG) {
-		this.testDAG = testDAG;
-	}
+    /**
+     * @param testDAG The testDAG to set.
+     */
+    public void setTestDAG(Cab2bDag testDAG) {
+        this.testDAG = testDAG;
+    }
 }
