@@ -59,6 +59,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.StackedBox;
 import edu.wustl.cab2b.client.ui.filter.CaB2BFilterInterface;
+import edu.wustl.cab2b.client.ui.main.AbstractTypePanel;
 import edu.wustl.cab2b.client.ui.main.IComponent;
 import edu.wustl.cab2b.client.ui.main.ParseXMLFile;
 import edu.wustl.cab2b.client.ui.main.SwingUIManager;
@@ -702,8 +703,9 @@ public class ExperimentStackBox extends Cab2bPanel {
 
                 Dimension maxLabelDimension = CommonUtils.getMaximumLabelDimension(attributeList);
                 for (AttributeInterface attribute : attributeList) {
-                    JXPanel jxPanel = (JXPanel) SwingUIManager.generateUIPanel(parseFile, attribute, false,
+                    AbstractTypePanel jxPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(parseFile, attribute,                                                                                                   
                                                                                maxLabelDimension);
+                    jxPanel.createPanelWithOperator(attribute);
                     parameterPanel.add("br", jxPanel);
                 }
             }
