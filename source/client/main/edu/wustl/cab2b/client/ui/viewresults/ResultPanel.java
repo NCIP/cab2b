@@ -272,13 +272,7 @@ public abstract class ResultPanel extends Cab2bPanel {
         myDataListPanel.removeAll();
         IDataRow rootNode = MainSearchPanel.getDataList().getRootDataRow(); //datalistTree.get(0); // This node is hidden node in the tree view
         int rootNodeChildrenSize = rootNode.getChildren().size();
-
-        //enabling/disabling Next button according to available data in datalist
-        if (rootNodeChildrenSize > 0) {
-            GlobalNavigationPanel.mainSearchPanel.getNavigationPanel().nextButton.setEnabled(true);
-        } else {
-            GlobalNavigationPanel.mainSearchPanel.getNavigationPanel().nextButton.setEnabled(false);
-        }
+        
 
         for (int i = 0; i < rootNodeChildrenSize; i++) {
             final IDataRow currentNode = rootNode.getChildren().get(i);
