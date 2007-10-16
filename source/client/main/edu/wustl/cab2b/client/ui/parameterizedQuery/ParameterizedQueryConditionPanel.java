@@ -79,9 +79,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
      * @return Dimension maxLabelDimension
      */
     private Dimension getMaximumDimensionForAttribute() {
-
         Map<IExpressionId, Collection<AttributeInterface>> allAttributes = queryDataModel.getAllAttributes();
-
         List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
         for (IExpressionId exprId : allAttributes.keySet()) {
             Collection<AttributeInterface> attributeCollection = allAttributes.get(exprId);
@@ -104,7 +102,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
                             && conditionPanel.getExpressionId() == componentPanel.getExpressionId()) {
                         componentPanel.setAttributeCheckBox(conditionPanel.isAttributeCheckBoxSelected());
                         componentPanel.setAttributeDisplayName(conditionPanel.getAttributeDisplayName());
-                        componentPanel.setCondition(conditionPanel.getCondition());
+                        componentPanel.setCondition(conditionPanel.getConditionItem());
                         componentPanel.setValues(new ArrayList<String>(conditionPanel.getValues()));
                     }
                 }
@@ -144,22 +142,19 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
             ParseXMLFile parseFile = ParseXMLFile.getInstance();
             AbstractTypePanel componentPanel = null;
             List<AttributeInterface> allConditionAttributeList = getAllConditionAttribute(allAttributePanel);
-
+            
             for (IExpressionId exprId : allAttributes.keySet()) {
                 for (AttributeInterface attribute : allAttributes.get(exprId)) {
                     if (!allConditionAttributeList.contains(attribute)) {
-                        componentPanel = (AbstractTypePanel) SwingUIManager.generateParameterizedUIPanel(
-                                                                                                         parseFile,
-                                                                                                         attribute,
-                                                                                                         true,
-                                                                                                         maxLabelDimension,
-                                                                                                         true, "");
+                        componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(parseFile, attribute,
+                                                                                            maxLabelDimension);
+                        componentPanel.createParametrizedPanel(attribute);
                         //setConditionValues(componentPanel);
                         componentPanel.setExpressionId(exprId);
                         componentPanel.setAttributeDisplayName(componentPanel.getAttributeDisplayName() + "_"
                                 + exprId.getInt());
                         //check/update that attribute values with show  only condition panels
-                        updatePanelStatus(componentPanel);
+                        updatePanelStatus(componentPanel);                     
                         allAttributePanel.add("br ", componentPanel);
                     }
                 }
@@ -232,12 +227,11 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
             for (IExpressionId key : conditionMap.keySet()) {
                 for (ICondition condition : conditionMap.get(key)) {
                     if (!allConditionAttributeList.contains(condition.getAttribute())) {
-                        componentPanel = (AbstractTypePanel) SwingUIManager.generateParameterizedUIPanel(
-                                                                                                         parseFile,
-                                                                                                         condition.getAttribute(),
-                                                                                                         true,
-                                                                                                         maxLabelDimension,
-                                                                                                         true, "");
+                        componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
+                                                                                            parseFile,
+                                                                                            condition.getAttribute(),
+                                                                                            maxLabelDimension);
+                        componentPanel.createParametrizedPanel(condition);
                         setConditionValues(componentPanel);
                         componentPanel.setAttributeDisplayName(componentPanel.getAttributeDisplayName() + "_"
                                 + key.getInt());
@@ -363,7 +357,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
         for (int index = 0; index < basePanel.getComponentCount(); index++) {
             if (basePanel.getComponent(index) instanceof AbstractTypePanel) {
                 AbstractTypePanel panel = (AbstractTypePanel) basePanel.getComponent(index);
-                String conditionString = panel.getCondition();
+                String conditionString = panel.getConditionItem();
                 if (panel.isAttributeCheckBoxSelected() || conditionString.equals("Is Null")
                         || conditionString.equals("Is Not Null") || panel.getValues().size() > 0) {
                     panelMap.put(index, panel);

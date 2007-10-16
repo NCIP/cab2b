@@ -9,7 +9,6 @@ import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
-import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 
 /**
  * Class to create parameterized Query UI panel 
@@ -51,8 +50,8 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
         initGUI();
     }
 
-    public ParameterizedQueryMainPanel(ICab2bQuery query) {
-        parameterizedQueryDataModel = new ParameterizedQueryDataModel(query);
+    public ParameterizedQueryMainPanel(ParameterizedQueryDataModel queryModel) {
+        parameterizedQueryDataModel = queryModel;
         initGUI();
     }
 

@@ -86,11 +86,10 @@ public class ParameterizedQueryDataModel {
             if (!expressionOperand.isSubExpressionOperand()) {
                 IRule rule = (IRule) expressionOperand;
                 List<ICondition> conditionList = rule.getConditions();
-
                 boolean isConditionAdded = false;
                 for (int index = 0; index < conditionList.size(); index++) {
                     ICondition condition = conditionList.get(index);
-                    if (condition.getAttribute().getId() == newCondition.getAttribute().getId()) {
+                    if (condition.getAttribute() == newCondition.getAttribute()) {
                         conditionList.remove(condition);
                         conditionList.add(index, newCondition);
                         isConditionAdded = true;

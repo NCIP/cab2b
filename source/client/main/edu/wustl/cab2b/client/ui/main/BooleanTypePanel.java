@@ -13,133 +13,124 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bRadioButton;
 
 public class BooleanTypePanel extends AbstractTypePanel {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private JRadioButton noneButton;
+    private JRadioButton noneButton;
 
-	private ButtonGroup group;
+    private ButtonGroup group;
 
-	private static JRadioButton selectedButton;
+    private static JRadioButton selectedButton;
 
-	public BooleanTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity,
-			Boolean showCondition, Dimension maxLabelDimension) {
-		super(conditionList, attributeEntity, showCondition, maxLabelDimension);
+    public BooleanTypePanel(ArrayList<String> conditionList, Dimension maxLabelDimension) {
+        super(conditionList, maxLabelDimension);
+    }
 
-	}
-	
-	public BooleanTypePanel(ArrayList<String> conditionList, AttributeInterface attributeEntity,
-			Boolean showCondition, Dimension maxLabelDimension,Boolean isParameterized,String displayName) {
-		super(conditionList, attributeEntity, showCondition, maxLabelDimension,isParameterized,displayName);
+    private JPanel getComboForBoolean(Collection<String> permissibleValueList) {
+        JPanel radioPanel = new Cab2bPanel();
+        group = new ButtonGroup();
 
-	}
+        RadioButtonListener radioButtonListener = new RadioButtonListener();
 
-	private JPanel getComboForBoolean(Collection<String> permissibleValueList) {
-		JPanel radioPanel = new Cab2bPanel();
-		group = new ButtonGroup();
+        for (String permissibleValue : permissibleValueList) {
+            JRadioButton jRadioButton = new Cab2bRadioButton(permissibleValue);
+            if (permissibleValue.equals("None")) {
+                noneButton = jRadioButton;
+                noneButton.setVisible(false);
+            } else {
+                jRadioButton.addActionListener(radioButtonListener);
+            }
+            group.add(jRadioButton);
+            radioPanel.add(jRadioButton);
+        }
 
-		RadioButtonListener radioButtonListener = new RadioButtonListener();
+        return radioPanel;
+    }
 
-		for (String permissibleValue : permissibleValueList) {
-			JRadioButton jRadioButton = new Cab2bRadioButton(permissibleValue);
-			if (permissibleValue.equals("None")) {
-				noneButton = jRadioButton;
-				noneButton.setVisible(false);
-			} else {
-				jRadioButton.addActionListener(radioButtonListener);
-			}
-			group.add(jRadioButton);
-			radioPanel.add(jRadioButton);
-		}
+    private JPanel getComboForBoolean() {
+        Collection<String> permissibleValueList = new LinkedList<String>();
+        permissibleValueList.add("True");
+        permissibleValueList.add("False");
+        permissibleValueList.add("None");
+        return getComboForBoolean(permissibleValueList);
+    }
 
-		return radioPanel;
-	}
+    /**
+     * Returns the first component, with model set to true and false value.
+     */
+    public JComponent getFirstComponent() {
+        return getComboForBoolean();
+    }
 
-	private JPanel getComboForBoolean() {
-		Collection<String> permissibleValueList = new LinkedList<String>();
-		permissibleValueList.add("True");
-		permissibleValueList.add("False");
-		permissibleValueList.add("None");
-		return getComboForBoolean(permissibleValueList);
-	}
+    /**
+     * Returns the second component. There is no need of second component for
+     * Boolean type, hence returns an empty component.
+     */
+    public JComponent getSecondComponent() {
+        JPanel secondComponent = new JPanel();
+        secondComponent.setVisible(false);
+        secondComponent.setOpaque(false);
+        return secondComponent;
+    }
 
-	/**
-	 * Returns the first component, with model set to true and false value.
-	 */
-	public JComponent getFirstComponent() {
-		return getComboForBoolean();
-	}
+    public static boolean isSelected(JRadioButton jRadioButton) {
+        DefaultButtonModel model = (DefaultButtonModel) jRadioButton.getModel();
+        return model.getGroup().isSelected(model);
+    }
 
-	/**
-	 * Returns the second component. There is no need of second component for
-	 * Boolean type, hence returns an empty component.
-	 */
-	public JComponent getSecondComponent() {
-		JPanel secondComponent = new JPanel();
-		secondComponent.setVisible(false);
-		secondComponent.setOpaque(false);
-		return secondComponent;
-	}
+    public ArrayList<String> getValues() {
+        ArrayList<String> values = new ArrayList<String>();
 
-	public static boolean isSelected(JRadioButton jRadioButton) {
-		DefaultButtonModel model = (DefaultButtonModel) jRadioButton.getModel();
-		return model.getGroup().isSelected(model);
-	}
+        if (isSelected((JRadioButton) (((JPanel) firstComponent).getComponent(0)))) {
+            values.add("true");
+        } else if (isSelected((JRadioButton) (((JPanel) firstComponent).getComponent(1)))) {
+            values.add("false");
+        }
 
-	public ArrayList<String> getValues() {
-		ArrayList<String> values = new ArrayList<String>();
+        return values;
+    }
 
-		if (isSelected((JRadioButton) (((JPanel) m_NameEdit).getComponent(0)))) {
-			values.add("true");
-		} else if (isSelected((JRadioButton) (((JPanel) m_NameEdit).getComponent(1)))) {
-			values.add("false");
-		}
+    public void setValues(ArrayList<String> values) {
+        if (values.size() == 0) {
+            return;
+        }
 
-		return values;
-	}
+        JPanel panel = (JPanel) firstComponent;
+        JRadioButton radioButton = (JRadioButton) panel.getComponent(0);
+        if (radioButton.getText().compareToIgnoreCase(values.get(0)) == 0) {
+            radioButton.setSelected(true);
+            return;
+        }
 
-	public void setValues(ArrayList<String> values) {
-		if (values.size() == 0) {
-			return;
-		}
+        radioButton = (JRadioButton) panel.getComponent(1);
+        if (radioButton.getText().compareToIgnoreCase(values.get(0)) == 0) {
+            radioButton.setSelected(true);
+            return;
+        }
 
-		JPanel panel = (JPanel) m_NameEdit;
-		JRadioButton radioButton = (JRadioButton) panel.getComponent(0);
-		if (radioButton.getText().compareToIgnoreCase(values.get(0)) == 0) {
-			radioButton.setSelected(true);
-			return;
-		}
+    }
 
-		radioButton = (JRadioButton) panel.getComponent(1);
-		if (radioButton.getText().compareToIgnoreCase(values.get(0)) == 0) {
-			radioButton.setSelected(true);
-			return;
-		}
+    public void setComponentPreference(String condition) {
+    }
 
-	}
+    public void resetPanel() {
+        JPanel panel = (JPanel) firstComponent;
+        JRadioButton radioButton = (JRadioButton) panel.getComponent(2);
+        radioButton.setSelected(true);
+    }
 
-	public void setComponentPreference(String condition) {
-	}
-
-	public void resetPanel() {
-		JPanel panel = (JPanel) m_NameEdit;
-		JRadioButton radioButton = (JRadioButton) panel.getComponent(2);
-		radioButton.setSelected(true);
-	}
-
-	class RadioButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent actionEvent) {
-			JRadioButton jRadioButton = (JRadioButton) actionEvent.getSource();
-			if (selectedButton != null && selectedButton == jRadioButton) {
-				group.setSelected(noneButton.getModel(), true);
-				selectedButton = null;
-			} else {
-				selectedButton = jRadioButton;
-			}
-		}
-	};
+    class RadioButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent actionEvent) {
+            JRadioButton jRadioButton = (JRadioButton) actionEvent.getSource();
+            if (selectedButton != null && selectedButton == jRadioButton) {
+                group.setSelected(noneButton.getModel(), true);
+                selectedButton = null;
+            } else {
+                selectedButton = jRadioButton;
+            }
+        }
+    }
 }

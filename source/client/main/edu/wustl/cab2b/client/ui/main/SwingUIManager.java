@@ -42,78 +42,32 @@ public class SwingUIManager {
      * @return panel object
      */
     public static Object generateUIPanel(ParseXMLFile parseFile, AttributeInterface attributeEntity,
-                                         boolean showConditions, Dimension maxLabelDimension)
-            throws CheckedException {
-        Object[] object = new Object[4];
-        String className = null;
-        AttributeTypeInformationInterface attributeTypeInformation = attributeEntity.getAttributeTypeInformation();
-        String dataTypeString = getDataType(attributeTypeInformation);
-
-        // Check if attribute has value domain (i.e it is enum)
-        if (true == edu.wustl.cab2b.common.util.Utility.isEnumerated(attributeEntity)) {
-            object[0] = parseFile.getEnumConditionList(dataTypeString);
-            className = parseFile.getEnumClassName(dataTypeString);
-        } else { // If an entity is of non-enumerated type
-            object[0] = parseFile.getNonEnumConditionList(dataTypeString);
-            className = parseFile.getNonEnumClassName(dataTypeString);
-        }
-        object[1] = attributeEntity;
-        object[2] = new Boolean(showConditions);
-        object[3] = maxLabelDimension;
-
-        Object uiObject = null;
-
-        try {
-            Class[] arr = { ArrayList.class, AttributeInterface.class, Boolean.class, Dimension.class };
-            Class<?> clazz = Class.forName(className);
-            Constructor<?> constructor = clazz.getDeclaredConstructor(arr);
-
-            uiObject = constructor.newInstance(object);
-        } catch (Exception e) {
-            throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.RF_0001);
-        }
-
-        return uiObject;
-    }
-
-    public static Object generateParameterizedUIPanel(ParseXMLFile parseFile, AttributeInterface attributeEntity,
-                                                      boolean showConditions, Dimension maxLabelDimension,boolean isParameterized,
-                                                      String displayName) throws CheckedException {
-        Object[] object = new Object[6];
-        String className = null;
-        AttributeTypeInformationInterface attributeTypeInformation = attributeEntity.getAttributeTypeInformation();
-        String dataTypeString = getDataType(attributeTypeInformation);
-
-        // Check if attribute has value domain (i.e it is enum)
-        if (true == edu.wustl.cab2b.common.util.Utility.isEnumerated(attributeEntity)) {
-            object[0] = parseFile.getEnumConditionList(dataTypeString);
-            className = parseFile.getEnumClassName(dataTypeString);
-        } else { // If an entity is of non-enumerated type
-            object[0] = parseFile.getNonEnumConditionList(dataTypeString);
-            className = parseFile.getNonEnumClassName(dataTypeString);
-        }
-
-        object[1] = attributeEntity;
-        object[2] = new Boolean(showConditions);
-        object[3] = maxLabelDimension;
-        object[4] = new Boolean(isParameterized);;
-        object[5] = displayName;
-        Object uiObject = null;
-        try {
-            Class[] arr = { ArrayList.class, AttributeInterface.class, Boolean.class, Dimension.class, Boolean.class, String.class };
-            Class<?> clazz = Class.forName(className);
-            Constructor<?> constructor = clazz.getDeclaredConstructor(arr);
-            uiObject = constructor.newInstance(object);
-
-        } catch (Exception e) {
-            throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.RF_0001);
-        }
-        return uiObject;
-    }
-
-    public static Object generateUIPanel(ParseXMLFile parseFile, AttributeInterface attributeEntity,
                                          Dimension maxLabelDimension) throws CheckedException {
-        return generateUIPanel(parseFile, attributeEntity, true, maxLabelDimension);
+        Object[] object = new Object[2];
+        String className = null;
+        AttributeTypeInformationInterface attributeTypeInformation = attributeEntity.getAttributeTypeInformation();
+        String dataTypeString = getDataType(attributeTypeInformation);
+
+        // Check if attribute has value domain (i.e it is enum)
+        if (true == edu.wustl.cab2b.common.util.Utility.isEnumerated(attributeEntity)) {
+            object[0] = parseFile.getEnumConditionList(dataTypeString);
+            className = parseFile.getEnumClassName(dataTypeString);
+        } else { // If an entity is of non-enumerated type
+            object[0] = parseFile.getNonEnumConditionList(dataTypeString);
+            className = parseFile.getNonEnumClassName(dataTypeString);
+        }
+        object[1] = maxLabelDimension;
+
+        Object uiObject = null;
+        try {
+            Class[] arr = { ArrayList.class, Dimension.class };
+            Class<?> clazz = Class.forName(className);
+            Constructor<?> constructor = clazz.getDeclaredConstructor(arr);
+            uiObject = constructor.newInstance(object);
+        } catch (Exception e) {
+            throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.RF_0001);
+        }
+        return uiObject;
     }
 
     /**
@@ -122,7 +76,7 @@ public class SwingUIManager {
      * @param attributeTypeInformation
      * @return the datatype
      */
-    private static String getDataType(AttributeTypeInformationInterface attributeTypeInformation) {
+    public static String getDataType(AttributeTypeInformationInterface attributeTypeInformation) {
         String dataTypeString = null;
 
         if ((attributeTypeInformation instanceof StringAttributeTypeInformation)

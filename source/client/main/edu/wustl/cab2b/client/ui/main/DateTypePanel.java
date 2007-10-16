@@ -9,7 +9,6 @@ import java.util.Date;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bDatePicker;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -24,20 +23,8 @@ public class DateTypePanel extends AbstractTypePanel {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
-    public DateTypePanel(
-            ArrayList<String> conditionList,
-            AttributeInterface attributeEntity,
-            Boolean showCondition,
-            Dimension maxLabelDimension) {
-        super(conditionList, attributeEntity, showCondition, maxLabelDimension);
-    }
-    
-    public DateTypePanel(
-            ArrayList<String> conditionList,
-            AttributeInterface attributeEntity,
-            Boolean showCondition,
-            Dimension maxLabelDimension, Boolean isParameterized,String displayName) {
-        super(conditionList, attributeEntity, showCondition, maxLabelDimension,isParameterized,displayName);
+    public DateTypePanel(ArrayList<String> conditionList, Dimension maxLabelDimension) {
+        super(conditionList, maxLabelDimension);
     }
 
     public JComponent getFirstComponent() {
@@ -62,10 +49,10 @@ public class DateTypePanel extends AbstractTypePanel {
 
     public ArrayList<String> getValues() {
         ArrayList<String> values = new ArrayList<String>();
-        Date date = ((DatePanel) m_NameEdit).getDatePicker().getDate();
+        Date date = ((DatePanel) firstComponent).getDatePicker().getDate();
         if (date != null) {
             values.add(simpleDateFormat.format(date));
-            date = ((DatePanel) m_OtherEdit).getDatePicker().getDate();
+            date = ((DatePanel) secondComponent).getDatePicker().getDate();
             if (date != null) {
                 values.add(simpleDateFormat.format(date));
             }
@@ -81,7 +68,7 @@ public class DateTypePanel extends AbstractTypePanel {
             } catch (java.text.ParseException e) {
                 Logger.out.warn("Problem while setting date : " + e.getMessage());
             }
-            ((DatePanel) m_NameEdit).getDatePicker().setDate(date);
+            ((DatePanel) firstComponent).getDatePicker().setDate(date);
         } else if (values.size() == 2) {
             Date date = null;
 
@@ -90,14 +77,14 @@ public class DateTypePanel extends AbstractTypePanel {
             } catch (java.text.ParseException e) {
                 Logger.out.warn("Problem while setting date : " + e.getMessage());
             }
-            ((DatePanel) m_NameEdit).getDatePicker().setDate(date);
+            ((DatePanel) firstComponent).getDatePicker().setDate(date);
 
             try {
                 date = simpleDateFormat.parse(values.get(1));
             } catch (java.text.ParseException e) {
                 Logger.out.warn("Problem while setting date : " + e.getMessage());
             }
-            ((DatePanel) m_OtherEdit).getDatePicker().setDate(date);
+            ((DatePanel) secondComponent).getDatePicker().setDate(date);
         } else {
             // This for In condition
         }
@@ -107,8 +94,8 @@ public class DateTypePanel extends AbstractTypePanel {
     }
 
     public void resetPanel() {
-        ((DatePanel) m_NameEdit).getDatePicker().setDate(null);
-        ((DatePanel) m_OtherEdit).getDatePicker().setDate(null);
+        ((DatePanel) firstComponent).getDatePicker().setDate(null);
+        ((DatePanel) secondComponent).getDatePicker().setDate(null);
     }
 
 }

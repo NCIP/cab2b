@@ -6,15 +6,14 @@ import java.util.ArrayList;
 public interface IComponent
 {
     
-    public String getCondition();
+    public String getConditionItem();
     
     public ArrayList<String> getValues();
     
     public  void setCondition(String str);
     
-    public String getAttributeName();
+    public String getAttributeDisplayName();
     
-    public void setValues(ArrayList<String> values);
-    
+    public void setValues(ArrayList<String> values);   
     
 }

@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.main;
 
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +10,7 @@ import java.util.Collections;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
@@ -21,7 +23,12 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
+import edu.wustl.common.querysuite.queryobject.IParameterizedCondition;
+import edu.wustl.common.querysuite.queryobject.RelationalOperator;
+import edu.wustl.common.querysuite.queryobject.impl.Condition;
+import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
 
 /**
  * An abstract class which provides the skeletal implementation of the
@@ -47,22 +54,22 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     /**
      * Label for displaying the attribute name.
      */
-    protected Cab2bLabel m_Name;
+    protected Cab2bLabel nameLabel;
 
     /**
      * ComboBox for displaying the conditions based on the data-type
      */
-    protected Cab2bComboBox m_Conditions;
+    protected Cab2bComboBox conditionComboBox;
 
     /**
      * TextField for entering the alphanumeric text.
      */
-    protected JComponent m_NameEdit;
+    protected JComponent firstComponent;
 
     /**
      * Another TextField for entering the alphanumeric text.
      */
-    protected JComponent m_OtherEdit;
+    protected JComponent secondComponent;
 
     /**
      * Parsed xml file's data structure.
@@ -72,17 +79,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     /**
      * Entity representing attribute.
      */
-    protected AttributeInterface attributeEntity;
-
-    /**
-     * Attribute name represented by the panel.
-     */
-    protected String attributeName;
-
-    /**
-     * 
-     */
-    protected Boolean showCondition;
+    protected AttributeInterface attribute;
 
     /**
      * Checkbox to select attribute in parameterized query
@@ -94,116 +91,91 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
      */
     protected Cab2bTextField attributeDisplayNameTextField;
 
-    /**
-     * flag to identify parameterized query
-     */
-    protected Boolean isParameterized;
-
     protected IExpressionId expressionId;
 
-    protected String displayName;
+    protected String displayName = null;
 
     protected Dimension maxLabelDimension;
 
-    public AbstractTypePanel(
-            ArrayList<String> conditionList,
-            AttributeInterface attributeEntity,
-            Dimension maxLabelDimension) {
-        this(conditionList, attributeEntity, true, maxLabelDimension, false, "");
-    }
+    protected abstract JComponent getFirstComponent();
 
-    public AbstractTypePanel(
-            ArrayList<String> conditionList,
-            AttributeInterface attributeEntity,
-            Dimension maxLabelDimension,
-            Boolean isParameterized) {
-        this(conditionList, attributeEntity, true, maxLabelDimension, isParameterized, "");
-    }
+    protected abstract JComponent getSecondComponent();
 
-    public AbstractTypePanel(
-            ArrayList<String> conditionList,
-            AttributeInterface attributeEntity,
-            Boolean showCondition,
-            Dimension maxLabelDimension) {
-        this(conditionList, attributeEntity, true, maxLabelDimension, false, "");
-    }
+    protected abstract void setComponentPreference(String condition);
 
-    public AbstractTypePanel(
-            ArrayList<String> conditionList,
-            AttributeInterface attributeEntity,
-            Boolean showCondition,
-            Dimension maxLabelDimension,
-            String displayName) {
-        this(conditionList, attributeEntity, true, maxLabelDimension, false, displayName);
-    }
+    public abstract void resetPanel();
 
-    public AbstractTypePanel(
-            ArrayList<String> conditionList,
-            AttributeInterface attributeEntity,
-            Boolean showCondition,
-            Dimension maxLabelDimension,
-            Boolean isParameterized,
-            String displayName) {
+    public AbstractTypePanel(ArrayList<String> conditionList, Dimension maxLabelDimension) {
         this.setLayout(new RiverLayout(10, 8));
-        this.attributeEntity = attributeEntity;
-        this.attributeName = attributeEntity.getName();
-        this.showCondition = showCondition;
-        this.isParameterized = isParameterized;
         this.conditionList = conditionList;
-        this.displayName = displayName;
         this.maxLabelDimension = maxLabelDimension;
-        initGUI();
     }
 
-    private void initGUI() {
-        this.setLayout(new RiverLayout(10, 8));
-
-        if (displayName == null || displayName.equals("")) {
-            if (!Utility.isCategory(attributeEntity.getEntity()))
-                displayName = CommonUtils.getFormattedString(attributeEntity.getName());
+    public void createSimplePanel(AttributeInterface attribute) {
+        this.attribute = attribute;
+        if (displayName == null) {
+            if (!Utility.isCategory(attribute.getEntity()))
+                displayName = CommonUtils.getFormattedString(attribute.getName());
             else
-                displayName = attributeName;
+                displayName = attribute.getName();
         }
-        m_Name = new Cab2bLabel(displayName + " : ");
 
-        m_Name.setPreferredSize(maxLabelDimension);// new Dimension(235,20)
-        String toolTipText = edu.wustl.cab2b.client.ui.query.Utility.getAttributeCDEDetails(attributeEntity);
-        m_Name.setToolTipText(toolTipText);
-        m_NameEdit = getFirstComponent();
+        nameLabel = new Cab2bLabel(displayName + " : ");
+        nameLabel.setPreferredSize(maxLabelDimension);
+        String toolTipText = edu.wustl.cab2b.client.ui.query.Utility.getAttributeCDEDetails(attribute);
+        nameLabel.setToolTipText(toolTipText);
+        firstComponent = getFirstComponent();
 
-        m_OtherEdit = getSecondComponent();
-        m_OtherEdit.setEnabled(false);
-        m_OtherEdit.setVisible(false);
-        m_OtherEdit.setOpaque(false);
+        secondComponent = getSecondComponent();
+        secondComponent.setEnabled(false);
+        secondComponent.setVisible(false);
+        secondComponent.setOpaque(false);
 
-        final Border border = m_OtherEdit.getBorder();
         final EmptyBorder emptyBorder = new EmptyBorder(2, 2, 2, 2);
-        m_OtherEdit.setBorder(emptyBorder);
-
-        if (isParameterized) {
-
-            attributeCheckBox = new Cab2bCheckBox();
-
-            attributeDisplayNameTextField = new Cab2bTextField(displayName, new Dimension(maxLabelDimension.width,
-                    maxLabelDimension.height + 5));
-            attributeDisplayNameTextField.setEnabled(false);
-            attributeCheckBox.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent arg0) {                    
-                   setAttributeCheckBox(attributeCheckBox.isSelected());                 
-               }
-            });
-
-            add(attributeCheckBox);
-            add(attributeDisplayNameTextField);
-        }
-
-        add(m_Name);
-        if (showCondition) {
-            setCondtionControl(conditionList, border, emptyBorder);
-        }
-        add(m_NameEdit);
-        add(m_OtherEdit);
+        secondComponent.setBorder(emptyBorder);
+        add(nameLabel, 0);
+        add(firstComponent, 1);
+        add(secondComponent, 2);
         setSize(new Dimension(300, 100));
+    }
+
+    public void createPanelWithOperator(AttributeInterface attribute) {
+        createSimplePanel(attribute);
+        setCondtionControl(conditionList, getSecondComponent().getBorder(), new EmptyBorder(2, 2, 2, 2));
+        add(conditionComboBox, 1);
+    }
+
+    public void createPanelWithOperator(ICondition condition) {
+        if (condition instanceof IParameterizedCondition) {
+            displayName = ((IParameterizedCondition) condition).getName();
+        }
+        createPanelWithOperator(condition.getAttribute());
+        setValues(new ArrayList<String>(condition.getValues()));
+        setCondition(condition.getRelationalOperator().getStringRepresentation());
+    }
+
+    public void createParametrizedPanel(AttributeInterface attribute) {
+        createPanelWithOperator(attribute);
+        attributeCheckBox = new Cab2bCheckBox();
+        attributeDisplayNameTextField = new Cab2bTextField(displayName, new Dimension(maxLabelDimension.width,
+                maxLabelDimension.height + 5));
+        attributeDisplayNameTextField.setEnabled(false);
+        attributeCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                setAttributeCheckBox(attributeCheckBox.isSelected());
+            }
+        });
+        add(attributeCheckBox, 0);
+        add(attributeDisplayNameTextField, 1);
+    }
+
+    public void createParametrizedPanel(ICondition condition) {
+        if (condition instanceof IParameterizedCondition) {
+            displayName = ((IParameterizedCondition) condition).getName();
+        }
+        createParametrizedPanel(condition.getAttribute());
+        setValues(new ArrayList<String>(condition.getValues()));
+        setCondition(condition.getRelationalOperator().getStringRepresentation());
     }
 
     public void setAttributeCheckBox(boolean selectCheckBox) {
@@ -223,55 +195,41 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
      * @return AttributeInterface
      */
     public AttributeInterface getAttributeEntity() {
-        return attributeEntity;
+        return attribute;
     }
 
-    public String getCondition() {
-        return (String) m_Conditions.getSelectedItem();
+    public String getConditionItem() {
+        return (String) conditionComboBox.getSelectedItem();
     }
-
-    public abstract JComponent getFirstComponent();
-
-    public abstract JComponent getSecondComponent();
 
     public void setCondition(String str) {
-        int itemCount = m_Conditions.getItemCount();
+        int itemCount = conditionComboBox.getItemCount();
         for (int i = 0; i < itemCount; i++) {
-            if (m_Conditions.getItemAt(i).toString().compareToIgnoreCase(str) == 0) {
-                m_Conditions.setSelectedIndex(i);
+            if (conditionComboBox.getItemAt(i).toString().compareToIgnoreCase(str) == 0) {
+                conditionComboBox.setSelectedIndex(i);
             }
         }
-    }
-
-    public abstract void setComponentPreference(String condition);
-
-    public abstract void resetPanel();
-
-    public String getAttributeName() {
-        return attributeName;
     }
 
     private void setCondtionControl(ArrayList<String> conditionList, final Border border,
                                     final EmptyBorder emptyBorder) {
         this.conditionList = conditionList;
-
         /*
          * Initializing conditions can't be abstracted, since it varies from
          * string type to number to date
          */
-        m_Conditions = new Cab2bComboBox();
-        // m_Conditions.setBorder(ClientConstants.border);
-        m_Conditions.setPreferredSize(new Dimension(125, 20));
+        conditionComboBox = new Cab2bComboBox();
+        conditionComboBox.setPreferredSize(new Dimension(125, 20));
         Collections.sort(conditionList);
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (int i = 0; i < conditionList.size(); i++) {
             model.addElement(conditionList.get(i));
         }
 
-        m_Conditions.setModel(model);
-        m_Conditions.setMaximumRowCount(conditionList.size());
+        conditionComboBox.setModel(model);
+        conditionComboBox.setMaximumRowCount(conditionList.size());
 
-        m_Conditions.addActionListener(new AbstractAction() {
+        conditionComboBox.addActionListener(new AbstractAction() {
             private static final long serialVersionUID = 1L;
 
             public void actionPerformed(ActionEvent e) {
@@ -279,16 +237,15 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
             }
         });
 
-        m_Conditions.setSelectedIndex(0);
-        add(m_Conditions);
+        conditionComboBox.setSelectedIndex(0);
     }
 
     private void conditionListenerAction(final Border border, final EmptyBorder emptyBorder) {
-        if (m_Conditions.getSelectedItem().equals("Between")) {
+        if (conditionComboBox.getSelectedItem().equals("Between")) {
             setNameEdit(true, border);
             setOtherEdit(true, border);
-        } else if ((m_Conditions.getSelectedItem().equals("Is Null"))
-                || (m_Conditions.getSelectedItem().equals("Is Not Null"))) {
+        } else if ((conditionComboBox.getSelectedItem().equals("Is Null"))
+                || (conditionComboBox.getSelectedItem().equals("Is Not Null"))) {
             setNameEdit(false, emptyBorder);
             setOtherEdit(false, emptyBorder);
 
@@ -298,11 +255,10 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
             setValues(values);
         } else {
             setNameEdit(true, border);
-
             // If previously selected condition was 'Between' then clear the
             // second text box
             ArrayList<String> oldValues = getValues();
-            if (m_OtherEdit.isEnabled() && oldValues.size() == 2) {
+            if (secondComponent.isEnabled() && oldValues.size() == 2) {
                 ArrayList<String> values = new ArrayList<String>();
                 values.add(oldValues.get(0));
                 values.add("");
@@ -312,21 +268,21 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
             }
             setOtherEdit(false, emptyBorder);
         }
-        setComponentPreference(getCondition());
+        setComponentPreference(getConditionItem());
     }
 
     private void setNameEdit(boolean value, Border border) {
-        m_NameEdit.setOpaque(value);
-        m_NameEdit.setEnabled(value);
-        m_NameEdit.setVisible(value);
-        m_NameEdit.setBorder(border);
+        firstComponent.setOpaque(value);
+        firstComponent.setEnabled(value);
+        firstComponent.setVisible(value);
+        firstComponent.setBorder(border);
     }
 
     private void setOtherEdit(boolean value, Border border) {
-        m_OtherEdit.setOpaque(value);
-        m_OtherEdit.setEnabled(value);
-        m_OtherEdit.setVisible(value);
-        m_OtherEdit.setBorder(border);
+        secondComponent.setOpaque(value);
+        secondComponent.setEnabled(value);
+        secondComponent.setVisible(value);
+        secondComponent.setBorder(border);
     }
 
     /**
@@ -353,11 +309,11 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     }
 
     /**
-     * @return the m_Name
+     * @return the nameLabel
      */
     public void setAttributeDisplayName(String displayName) {
         this.displayName = displayName;
-        m_Name.setText(displayName + " : ");
+        nameLabel.setText(displayName + " : ");
         if (attributeDisplayNameTextField != null) {
             attributeDisplayNameTextField.setText(displayName);
         }
@@ -372,5 +328,59 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
                     maxLabelDimension.height + 5));
         }
         return attributeDisplayNameTextField;
+    }
+
+    /**
+     * returns valid condition from panel otherwise null
+     * @param index
+     * @return
+     */
+    public ICondition getCondition(int index) {
+        String conditionString = getConditionItem();
+        ArrayList<String> conditionValues = getValues();
+        RelationalOperator operator = RelationalOperator.getOperatorForStringRepresentation(conditionString);
+
+        int conditionStatus = isConditionValid(this);
+        if (conditionStatus == 0) {
+            if (isAttributeCheckBoxSelected()) {
+                //make a new parameterized condition 
+                return new ParameterizedCondition(attribute, operator, conditionValues, index,
+                        getAttributeDisplayName());
+            } else {
+                return new Condition(attribute, operator, conditionValues);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Method to check validity of condition 
+     * @param parentPanel
+     * @return
+     */
+    public int isConditionValid(Container parentPanel) {
+        String conditionString = getConditionItem();
+        ArrayList<String> conditionValues = getValues();
+
+        if (conditionString.compareToIgnoreCase("Between") == 0 && (conditionValues.size() == 1)) {
+            JOptionPane.showMessageDialog(parentPanel, "Please enter both the values for between operator.",
+                                          "Error", JOptionPane.ERROR_MESSAGE);
+
+            return -1;
+        }
+
+        if (isAttributeCheckBoxSelected() && conditionValues.size() == 0
+                && !(conditionString.equals("Is Null") || conditionString.equals("Is Not Null"))) {
+            JOptionPane.showMessageDialog(parentPanel,
+                                          "Please enter the values for selected field or remove the selection. \n Field name : "
+                                                  + getAttributeDisplayName(), "Error", JOptionPane.ERROR_MESSAGE);
+
+            return -1;
+        }
+
+        if (((conditionString.equals("Is Null")) || conditionString.equals("Is Not Null") || (conditionValues.size() != 0))) {
+            return 0;
+        }
+        return 1;
     }
 }

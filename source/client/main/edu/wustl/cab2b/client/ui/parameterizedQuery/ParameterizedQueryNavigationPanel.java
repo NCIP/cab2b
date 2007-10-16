@@ -5,12 +5,14 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
+import java.util.Date;
 
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.SearchNavigationPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.main.AbstractTypePanel;
 import edu.wustl.cab2b.client.ui.mainframe.stackbox.StackBoxMySearchQueriesPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
@@ -67,9 +69,8 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
     }
 
     private class OrderViewButtonActionListener implements ActionListener {
-
         public void actionPerformed(ActionEvent arg0) {
-            ParameterizedQueryPreviewPanel panel = new ParameterizedQueryPreviewPanel(parameterizedQueryMainPanel);
+            ParameterizedQueryOrderPanel panel = new ParameterizedQueryOrderPanel(parameterizedQueryMainPanel);
             parameterizedQueryMainPanel.getDialog().dispose();
             panel.showInDialog();
         }
@@ -81,13 +82,27 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
             Cab2bPanel condtionPanel = parameterizedQueryMainPanel.getParameterConditionPanel().getConditionPanel();
             ParameterizedQueryDataModel parameterizedQueryDataModel = parameterizedQueryMainPanel.getParameterizedQueryDataModel();
 
-            if (CommonUtils.updateQueryCondtions(parameterizedQueryDataModel, condtionPanel,
-                                                 parameterizedQueryMainPanel)) {
-                ParameterizedQueryInfoPanel parameterizedQueryInfoPanel = parameterizedQueryMainPanel.getInformationQueryPanel();
-                parameterizedQueryDataModel.setQueryDescription(parameterizedQueryInfoPanel.getQueryDecription());
-                parameterizedQueryDataModel.setQueryName(parameterizedQueryInfoPanel.getQueryName());
-                saveQuery();
+            for (int index = 0; index < condtionPanel.getComponentCount(); index++) {
+                if (condtionPanel.getComponent(index) instanceof AbstractTypePanel) {
+                    AbstractTypePanel panel = (AbstractTypePanel) condtionPanel.getComponent(index);
+                    int conditionStatus = panel.isConditionValid(parameterizedQueryMainPanel);
+                    if (conditionStatus == 0) {
+                        parameterizedQueryDataModel.addCondition(panel.getExpressionId(),
+                                                                 panel.getCondition(index));
+                    } else if (conditionStatus < 0) {
+                        return;
+                    }
+                }
             }
+            ParameterizedQueryInfoPanel parameterizedQueryInfoPanel = parameterizedQueryMainPanel.getInformationQueryPanel();
+            parameterizedQueryDataModel.setQueryDescription(parameterizedQueryInfoPanel.getQueryDecription());
+
+            if (!parameterizedQueryInfoPanel.getQueryName().equals(""))
+                parameterizedQueryDataModel.setQueryName(parameterizedQueryInfoPanel.getQueryName());
+            else {
+                parameterizedQueryDataModel.setQueryName((new Date().toString()));
+            }
+            saveQuery();
         }
 
         private void saveQuery() {
