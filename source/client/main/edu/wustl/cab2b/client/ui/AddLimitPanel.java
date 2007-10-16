@@ -18,6 +18,7 @@ import java.awt.Image;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JScrollPane;
@@ -30,11 +31,11 @@ import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 import org.openide.util.Utilities;
 
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.dag.MainDagPanel;
 import edu.wustl.cab2b.client.ui.main.AbstractTypePanel;
-import edu.wustl.cab2b.client.ui.main.IComponent;
 import edu.wustl.cab2b.client.ui.query.ClientPathFinder;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.query.IPathFinder;
@@ -75,7 +76,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
     private JXTitledPanel m_bottomCenterPanel = null;
 
     /** The simple view for the rules added. This is to be replaced by the DAG. */
-    private MainDagPanel m_contentForBottomCenterPanel = null;
+    private MainDagPanel mainDagPanel = null;
 
     /** Split pane between the top and center titled panels. */
     public static JSplitPane m_innerPane = null;
@@ -148,8 +149,8 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
         imageMap.put(DagImages.PortImageIcon, Utilities.loadImage(PORT_IMAGE_ADD_LIMIT));
 
         IPathFinder pathFinder = new ClientPathFinder();
-        m_contentForBottomCenterPanel = new MainDagPanel(this, imageMap, pathFinder, false);
-        m_bottomCenterPanel.add(m_contentForBottomCenterPanel);
+        mainDagPanel = new MainDagPanel(this, imageMap, pathFinder, false);
+        m_bottomCenterPanel.add(mainDagPanel);
 
         /* Add components to the conetent pane. */
         m_innerPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, m_topCenterPanel, m_bottomCenterPanel);
@@ -203,7 +204,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
     public void refreshBottomCenterPanel(IExpressionId expressionId) {
         // Here code to handle adding new limit will appear
         try {
-            m_contentForBottomCenterPanel.updateGraph(expressionId);
+            mainDagPanel.updateGraph(expressionId);
         } catch (MultipleRootsException e) {
             CommonUtils.handleException(e, this, true, true, false, false);
         }
@@ -237,7 +238,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * @return JXPanel The bottom content searchPanel.
      */
     public JXPanel getBottomCenterPanel() {
-        return this.m_contentForBottomCenterPanel;
+        return this.mainDagPanel;
     }
 
     /*
@@ -246,7 +247,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * @see edu.wustl.cab2b.client.ui.ContentPanel#setQueryObject(edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface)
      */
     public void setQueryObject(IClientQueryBuilderInterface query) {
-        m_contentForBottomCenterPanel.setQueryObject(query);
+        mainDagPanel.setQueryObject(query);
     }
 
     /*
@@ -255,20 +256,21 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * @see edu.wustl.cab2b.client.ui.IUpdateAddLimitUIInterface#editAddLimitUI(edu.wustl.common.querysuite.queryobject.IExpression)
      */
     public void editAddLimitUI(IExpression expression) {
-        IQueryEntity entity = expression.getQueryEntity();
-        JXPanel[] panels = getSearchResultPanel().createEditLimitPanels(expression);
-        Component[] components = ((Cab2bPanel) ((JScrollPane) panels[1].getComponent(0)).getViewport().getComponent(
-                                                                                                                    0)).getComponents();
-
-        // passing appropriate class name
-        refresh(panels, Utility.getDisplayName(entity.getDynamicExtensionsEntity()));
-        IRule rule = (IRule) expression.getOperand(0);
-        // Populate panels with corresponding value
-        for (int i = 0; i < rule.size(); i++) {
-            ICondition condition = rule.getCondition(i);
-            setValueForAttribute(components, condition);
+        if (expression != null) {
+            IQueryEntity entity = expression.getQueryEntity();
+            JXPanel[] panels = getSearchResultPanel().createEditLimitPanels(expression);
+            Component[] components = ((Cab2bPanel) ((JScrollPane) panels[1].getComponent(0)).getViewport().getComponent(
+                                                                                                                        0)).getComponents();
+            // passing appropriate class name
+            refresh(panels, Utility.getDisplayName(entity.getDynamicExtensionsEntity()));
+            IRule rule = (IRule) expression.getOperand(0);
+            // Populate panels with corresponding value
+            for (int i = 0; i < rule.size(); i++) {
+                ICondition condition = rule.getCondition(i);
+                setValueForAttribute(components, condition);
+            }
+            validate();
         }
-        validate();
     }
 
     /**
@@ -278,14 +280,13 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      */
     private void setValueForAttribute(Component[] components, ICondition condition) {
         for (int i = 0; i < components.length; i++) {
-            IComponent panel = (IComponent) components[i];
-            String panelAttributeName = panel.getAttributeName();
-            int compareVal = panelAttributeName.compareToIgnoreCase(condition.getAttribute().getName());
-            if (0 == compareVal) {
+            AbstractTypePanel panel = (AbstractTypePanel) components[i];
+            AttributeInterface attribute = panel.getAttributeEntity();
+            if (attribute == condition.getAttribute()) {
                 RelationalOperator operator = condition.getRelationalOperator();
                 panel.setCondition(edu.wustl.cab2b.client.ui.query.Utility.displayStringForRelationalOperator(operator));
-                ArrayList<String> values = (ArrayList<String>) condition.getValues();
-                panel.setValues(values);
+                List<String> values = condition.getValues();
+                panel.setValues(new ArrayList<String>(values));
                 break;
             }
         }
@@ -305,7 +306,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * @return
      */
     public SearchResultPanel getSearchResultPanel() {
-        return searchPanel.getSerachResultPanel();
+        return searchPanel.getSearchResultPanel();
     }
 
     /*
@@ -344,7 +345,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      */
     public void resetPanel() {
         clearAddLimitUI();
-        m_contentForBottomCenterPanel.clearDagPanel();
+        mainDagPanel.clearDagPanel();
         revalidate();
         updateUI();
     }
@@ -381,5 +382,19 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      */
     public void setSearchPanel(SearchPanel panel) {
         searchPanel = panel;
+    }
+
+    /**
+     * @return the mainDagPanel
+     */
+    public MainDagPanel getMainDagPanel() {
+        return mainDagPanel;
+    }
+
+    /**
+     * @param mainDagPanel the mainDagPanel to set
+     */
+    public void setMainDagPanel(MainDagPanel mainDagPanel) {
+        this.mainDagPanel = mainDagPanel;
     }
 }
