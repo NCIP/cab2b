@@ -63,11 +63,11 @@ public class BioAssayDataDataListSaver extends AbstractDataListSaver<IPartiallyI
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException();
         }
-        DataListUtil.copyNonVirtualAttributes(getNewEntity(), oldEntity);
-        getNewEntity().addAttribute(createObjectAttribute(CUBE_ATTRIBUTE_NAME));
-        getNewEntity().addAttribute(createObjectAttribute(DIM1LABELS_ATTRIBUTE_NAME));
-        getNewEntity().addAttribute(createObjectAttribute(DIM2LABELS_ATTRIBUTE_NAME));
-        getNewEntity().addAttribute(createObjectAttribute(DIM3LABELS_ATTRIBUTE_NAME));
+        DataListUtil.copyNonVirtualAttributes(newEntity, oldEntity);
+        newEntity.addAttribute(createObjectAttribute(CUBE_ATTRIBUTE_NAME));
+        newEntity.addAttribute(createObjectAttribute(DIM1LABELS_ATTRIBUTE_NAME));
+        newEntity.addAttribute(createObjectAttribute(DIM2LABELS_ATTRIBUTE_NAME));
+        newEntity.addAttribute(createObjectAttribute(DIM3LABELS_ATTRIBUTE_NAME));
     }
 
     /**
@@ -88,13 +88,13 @@ public class BioAssayDataDataListSaver extends AbstractDataListSaver<IPartiallyI
     public Map<AbstractAttributeInterface, Object> transformToMap(IPartiallyInitializedBioAssayDataRecord record) {
         Map<AbstractAttributeInterface, Object> recordsMap = super.transformToMap(record);
         IFullyInitializedBioAssayDataRecord fullRec = (IFullyInitializedBioAssayDataRecord) LazyInitializer.getFullyInitialializedRecord(record.handle());
-        recordsMap.put(getAttributeByName(getNewEntity(), CUBE_ATTRIBUTE_NAME),
+        recordsMap.put(getAttributeByName(newEntity, CUBE_ATTRIBUTE_NAME),
                        createObjectRecordValue(fullRec.getCube()));
-        recordsMap.put(getAttributeByName(getNewEntity(), DIM1LABELS_ATTRIBUTE_NAME),
+        recordsMap.put(getAttributeByName(newEntity, DIM1LABELS_ATTRIBUTE_NAME),
                        createObjectRecordValue(fullRec.getDim1Labels()));
-        recordsMap.put(getAttributeByName(getNewEntity(), DIM2LABELS_ATTRIBUTE_NAME),
+        recordsMap.put(getAttributeByName(newEntity, DIM2LABELS_ATTRIBUTE_NAME),
                        createObjectRecordValue(fullRec.getDim2Labels()));
-        recordsMap.put(getAttributeByName(getNewEntity(), DIM3LABELS_ATTRIBUTE_NAME),
+        recordsMap.put(getAttributeByName(newEntity, DIM3LABELS_ATTRIBUTE_NAME),
                        createObjectRecordValue(fullRec.getDim3Labels()));
         return recordsMap;
     }

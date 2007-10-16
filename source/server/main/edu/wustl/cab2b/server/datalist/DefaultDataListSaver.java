@@ -21,7 +21,7 @@ public class DefaultDataListSaver extends AbstractDataListSaver<IRecord> {
      */
     @Override
     protected void populateNewEntity(EntityInterface oldEntity) {
-        DataListUtil.copyNonVirtualAttributes(getNewEntity(), oldEntity);
+        DataListUtil.copyNonVirtualAttributes(newEntity, oldEntity);
     }
 
 }

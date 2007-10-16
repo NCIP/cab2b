@@ -43,12 +43,12 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
     @Override
     public void initialize(EntityInterface oldEntity) {
         super.initialize(oldEntity);
-        parser = new CategoryEntityTreeParser(getNewEntity());
+        parser = new CategoryEntityTreeParser(newEntity);
     }
 
     /**
      * Creates a new entity tree with
-     * {@link AbstractDataListSaver#getNewEntity()} as the root entity; the tree
+     * {@link AbstractDataListSaver#newEntity} as the root entity; the tree
      * exactly matches with the tree of categorial classes in the category.
      * <p>
      * Each new entity is tagged with the id of categorial class that caused it
@@ -71,12 +71,12 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
         }
         Category category = getCategoryByEntityId(originEntity.getId());
         CategorialClass rootCategorialClass = category.getRootClass();
-        tagWithCategory(getNewEntity(), category);
-        tagWithCategorialClass(getNewEntity(), rootCategorialClass);
-        copyAttributesFromCategorialClass(getNewEntity(), rootCategorialClass);
+        tagWithCategory(newEntity, category);
+        tagWithCategorialClass(newEntity, rootCategorialClass);
+        copyAttributesFromCategorialClass(newEntity, rootCategorialClass);
 
         Map<CategorialClass, EntityInterface> catClassToEntity = new HashMap<CategorialClass, EntityInterface>();
-        catClassToEntity.put(rootCategorialClass, getNewEntity());
+        catClassToEntity.put(rootCategorialClass, newEntity);
         // one level below root.
         List<CategorialClass> currCatClasses = new ArrayList<CategorialClass>();
         currCatClasses.addAll(rootCategorialClass.getChildren());
@@ -109,7 +109,7 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
      */
     @Override
     public Map<AbstractAttributeInterface, Object> transformToMap(ICategorialClassRecord record) {
-        return getRecordAsMap(record, getNewEntity());
+        return getRecordAsMap(record, newEntity);
     }
 
     private Map<AbstractAttributeInterface, Object> getRecordAsMap(ICategorialClassRecord record,

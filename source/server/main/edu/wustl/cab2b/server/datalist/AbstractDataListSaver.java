@@ -40,7 +40,7 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
     /**
      * The new entity created during {@link #initialize(EntityInterface)}.
      */
-    private EntityInterface newEntity;
+    protected EntityInterface newEntity;
 
     /**
      * Tracks if this saver has been initialized by calling
@@ -138,6 +138,8 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
      * Returns the new entity created during the initialization process.
      * 
      * @see edu.wustl.cab2b.server.datalist.DataListSaver#getNewEntity()
+     * @throws IllegalStateException if this saver is not yet completely
+     *             intialized.
      */
     public final EntityInterface getNewEntity() {
         if (!isInitialized()) {
@@ -171,8 +173,8 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
     }
 
     /**
-     * Subclasses can access the newly created entity using
-     * {@link #getNewEntity()}.
+     * Subclasses should access the newly created entity using
+     * {@link #newEntity}.
      * 
      * @param oldEntity
      */
