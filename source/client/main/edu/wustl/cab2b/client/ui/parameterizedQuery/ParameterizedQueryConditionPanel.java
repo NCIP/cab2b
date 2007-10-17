@@ -6,6 +6,7 @@ package edu.wustl.cab2b.client.ui.parameterizedQuery;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -56,7 +57,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
 
     private boolean isShowAllAttribute;
 
-    private Cab2bPanel headerPanel;
+    private Cab2bPanel filterPanel;
 
     private Cab2bComboBox filterComboBox;
 
@@ -121,6 +122,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
             allAttributePanel = new Cab2bPanel();
 
         allAttributePanel.removeAll();
+        //        allAttributePanel.add("br hfill", getLabelHeaderPanel());
         if (onlyConditionAttributePanel != null) {
             //Add checked/unchecked conditions from the show Only condition panel
             TreeMap<Integer, AbstractTypePanel> panelMap = getAllConditionAttributePanels(onlyConditionAttributePanel);
@@ -142,7 +144,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
             ParseXMLFile parseFile = ParseXMLFile.getInstance();
             AbstractTypePanel componentPanel = null;
             List<AttributeInterface> allConditionAttributeList = getAllConditionAttribute(allAttributePanel);
-            
+
             for (IExpressionId exprId : allAttributes.keySet()) {
                 for (AttributeInterface attribute : allAttributes.get(exprId)) {
                     if (!allConditionAttributeList.contains(attribute)) {
@@ -154,7 +156,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
                         componentPanel.setAttributeDisplayName(componentPanel.getAttributeDisplayName() + "_"
                                 + exprId.getInt());
                         //check/update that attribute values with show  only condition panels
-                        updatePanelStatus(componentPanel);                     
+                        updatePanelStatus(componentPanel);
                         allAttributePanel.add("br ", componentPanel);
                     }
                 }
@@ -205,6 +207,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
             onlyConditionAttributePanel = new Cab2bPanel();
 
         onlyConditionAttributePanel.removeAll();
+        //onlyConditionAttributePanel.add("br hfill", getLabelHeaderPanel());
         if (allAttributePanel != null) {
             //Add checked/unchecked conditions from the show all panel
             TreeMap<Integer, AbstractTypePanel> panelMap = getAllConditionAttributePanels(allAttributePanel);
@@ -254,12 +257,42 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
         return attributeList;
     }
 
+    private Cab2bPanel getLabelHeaderPanel() {
+        Cab2bPanel labelHeaderPanel = new Cab2bPanel();
+        labelHeaderPanel.setBackground(new Color(240, 240, 240));
+        Cab2bLabel userDefinedLabel = new Cab2bLabel("User defined");
+        Cab2bLabel displayLabel = new Cab2bLabel("Display label");
+        Cab2bLabel attributesLabel = new Cab2bLabel("Attributes");
+        Cab2bLabel conditionsLabel = new Cab2bLabel("Conditions");
+
+        Font newBoldFont = new Font(userDefinedLabel.getFont().getName(), Font.BOLD,
+                userDefinedLabel.getFont().getSize());
+        userDefinedLabel.setFont(newBoldFont);
+        displayLabel.setFont(newBoldFont);
+        attributesLabel.setFont(newBoldFont);
+        conditionsLabel.setFont(newBoldFont);
+
+        Dimension labelDimension = new Dimension(maxLabelDimension.width + 10, maxLabelDimension.height + 10);
+        userDefinedLabel.setPreferredSize(new Dimension(80, labelDimension.height));
+        displayLabel.setPreferredSize(labelDimension);
+        attributesLabel.setPreferredSize(labelDimension);
+        conditionsLabel.setPreferredSize(labelDimension);
+
+        labelHeaderPanel.add("br ", new Cab2bLabel());
+        labelHeaderPanel.add("tab ", new Cab2bLabel());
+        labelHeaderPanel.add("tab ", userDefinedLabel);
+        labelHeaderPanel.add("tab ", displayLabel);
+        labelHeaderPanel.add("tab ", attributesLabel);
+        labelHeaderPanel.add("tab ", conditionsLabel);
+        labelHeaderPanel.add("br ", new Cab2bLabel());
+        return labelHeaderPanel;
+    }
+
     /**
      * Method to create header panel
-     * @return Cab2b headerPanel
+     * @return Cab2b filterPanel
      */
-    public Cab2bPanel creatHeaderPanel() {
-        headerPanel = new Cab2bPanel();
+    public Cab2bPanel creatFilterPanel() {
         filterComboBox = new Cab2bComboBox();
         filterComboBox.addItem("Only defined");
         filterComboBox.addItem("Show All");
@@ -273,9 +306,13 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
                 }
             }
         });
-        headerPanel.add("right ", new Cab2bLabel(" Filter : "));
-        headerPanel.add(" right ", filterComboBox);
-        return headerPanel;
+
+        filterPanel = new Cab2bPanel();
+        filterPanel.add("right ", new Cab2bLabel(" Filter : "));
+        filterPanel.add("right ", filterComboBox);
+        filterPanel.add("tab", new Cab2bLabel());
+        filterPanel.add("br ", new Cab2bLabel());
+        return filterPanel;
     }
 
     /**
@@ -292,21 +329,24 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
         }
 
         this.setTitle("Set Condition Parameters");
-        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        //contentPanel
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.getViewport().add(contentPanel);
         scrollPane.getViewport().setBackground(Color.white);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        this.getContentContainer().add("hfill ", getHeaderPanel());
-        this.getContentContainer().add("br ", scrollPane);
+        this.getContentContainer().add("hfill ", getFilterPanel());
+        this.getContentContainer().add("br hfill", getLabelHeaderPanel());
+        this.getContentContainer().add("br hfill vfill", scrollPane);
     }
 
     /**
-     * @return the headerPanel
+     * @return the filterPanel
      */
-    private Cab2bPanel getHeaderPanel() {
-        if (headerPanel == null)
-            headerPanel = creatHeaderPanel();
+    private Cab2bPanel getFilterPanel() {
+        if (filterPanel == null)
+            filterPanel = creatFilterPanel();
 
-        return headerPanel;
+        return filterPanel;
     }
 
     /**
