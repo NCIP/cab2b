@@ -135,14 +135,14 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         secondComponent.setBorder(emptyBorder);
         add(nameLabel, 0);
         add(firstComponent, 1);
-        add(secondComponent, 2);
+        add(secondComponent,2);
         setSize(new Dimension(300, 100));
     }
 
     public void createPanelWithOperator(AttributeInterface attribute) {
         createSimplePanel(attribute);
         setCondtionControl(conditionList, getSecondComponent().getBorder(), new EmptyBorder(2, 2, 2, 2));
-        add(conditionComboBox, 1);
+        add(conditionComboBox, 1);        
     }
 
     public void createPanelWithOperator(ICondition condition) {
@@ -157,6 +157,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     public void createParametrizedPanel(AttributeInterface attribute) {
         createPanelWithOperator(attribute);
         attributeCheckBox = new Cab2bCheckBox();
+        attributeCheckBox.setPreferredSize(new Dimension(80,maxLabelDimension.height));
         attributeDisplayNameTextField = new Cab2bTextField(displayName, new Dimension(maxLabelDimension.width,
                 maxLabelDimension.height + 5));
         attributeDisplayNameTextField.setEnabled(false);
@@ -166,7 +167,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
             }
         });
         add(attributeCheckBox, 0);
-        add(attributeDisplayNameTextField, 1);
+        add(attributeDisplayNameTextField, 1);        
     }
 
     public void createParametrizedPanel(ICondition condition) {
