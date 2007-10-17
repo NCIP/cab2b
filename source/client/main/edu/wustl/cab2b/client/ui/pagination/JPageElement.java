@@ -98,7 +98,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
      */
     private JPagination pagination;
 
-    private static int descLength = (int) ((MainFrame.getScreenDimesion().getWidth()/1024f) *110f);
+    private static int descLength = (int) ((MainFrame.getScreenDimesion().getWidth() / 1024f) * 110f);
 
     public JPageElement(
             JPagination pagination,
@@ -143,9 +143,12 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         label.setFont(Cab2bStandardFonts.ARIAL_BOLD_12);
 
         String description = pageElement.getDescription();
+        if (description == null) {
+            description = "";
+        }
         descriptionLabel = new Cab2bLabel(description);
         descriptionLabel.setToolTipText(getWrappedText(description));
-      
+
         if (description.length() > descLength) {
             String textDsc = description.substring(0, descLength) + "...";
             descriptionLabel.setText(textDsc);
