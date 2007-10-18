@@ -120,8 +120,8 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
             for (IRecord record : recordList) {
                 StringBuffer descBuffer = new StringBuffer();
                 for (int i = 0; i < attributeSize; i++) {
-                    String value = record.getValueForAttribute(attributes.get(i));
-                    if (value != null && !value.equals("")) {
+                    Object value = record.getValueForAttribute(attributes.get(i));
+                    if (value != null ) {
                         if (i != 0) {
                             descBuffer.append(",");
                         }
