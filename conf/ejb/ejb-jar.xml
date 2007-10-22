@@ -59,6 +59,14 @@
             <transaction-type>Bean</transaction-type>
        </session>
        <session>
+            <ejb-name>edu.wustl.cab2b.server.ejb.datacategory.DataCategoryBean</ejb-name>
+            <home>edu.wustl.cab2b.common.ejb.datacategory.DataCategoryHomeInterface</home>
+            <remote>edu.wustl.cab2b.common.ejb.datacategory.DataCategoryRemoteInterface</remote>
+            <ejb-class>edu.wustl.cab2b.server.ejb.datacategory.DataCategoryBean</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Bean</transaction-type>
+       </session>
+       <session>
             <ejb-name>edu.wustl.cab2b.server.ejb.datalist.DataListBean</ejb-name>
             <home>edu.wustl.cab2b.common.datalist.DataListHomeInterface</home>
             <remote>edu.wustl.cab2b.common.datalist.DataListRemoteInterface</remote>
