@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.query;
 
+import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -8,11 +9,19 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.SemanticPropertyInterface;
 import edu.wustl.cab2b.client.ui.util.ClientConstants;
+import edu.wustl.cab2b.common.category.DataCategory;
+import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
+import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
+import edu.wustl.cab2b.common.ejb.category.CategoryHomeInterface;
+import edu.wustl.cab2b.common.ejb.datacategory.DataCategoryBusinessInterface;
+import edu.wustl.cab2b.common.ejb.datacategory.DataCategoryHomeInterface;
+import edu.wustl.cab2b.common.locator.Locator;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
+import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
@@ -219,6 +228,34 @@ public class Utility {
         wrappedText.append(text.substring(currentStart));
         wrappedText.append("</P>");
         return wrappedText.toString();
+    }
+    
+    public static boolean convertAllCategoryToDataCategory()
+    {
+        boolean result = true; 
+        CategoryBusinessInterface  categoryBusinessInterface = (CategoryBusinessInterface)Locator.getInstance().locate(EjbNamesConstants.CATEGORY_BEAN,CategoryHomeInterface.class);
+        DataCategoryBusinessInterface dataCategoryBusinessInterface = (DataCategoryBusinessInterface) Locator.getInstance().locate(EjbNamesConstants.DATACATEGORY_BEAN,DataCategoryHomeInterface.class);
+        DataCategory dataCategory = null;
+        try
+        {
+         List<Category> categoryList = categoryBusinessInterface.getAllCategories();
+        System.out.println(categoryList.size());
+         for(Category category:categoryList)
+         {
+             dataCategory = new DataCategory(category.copy());
+          //   System.out.println(category);
+             dataCategoryBusinessInterface.saveDataCategory(dataCategory);
+             
+             
+         }
+         
+        }catch(RemoteException exception)
+        {
+            exception.printStackTrace();
+            result = false;
+        }
+        
+        return result;
     }
 
 }
