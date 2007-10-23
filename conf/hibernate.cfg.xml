@@ -30,7 +30,6 @@
 		<mapping resource="edu/wustl/cab2b/server/hbm/AbstractDomainObject.hbm.xml"/>
 		<mapping resource="edu/wustl/cab2b/server/hbm/CaB2BHQL.hbm.xml"/>
 		<mapping resource="edu/wustl/cab2b/server/hbm/Cab2bQuery.hbm.xml"/>
-		
-		
+		<mapping resource="edu/wustl/cab2b/server/hbm/DataCategory.hbm.xml"/>
 	</session-factory>
 </hibernate-configuration>
