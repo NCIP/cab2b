@@ -117,6 +117,8 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
         this.removeAll();
 
         table = new Cab2bTable(showCheckBox, tableData, tableHeader);
+        table.setDefaultRenderer(Boolean.class, table.getDefaultRenderer(Object.class));
+
         table.setColumnSelectionAllowed(true);
 
         if (showFilterPanel) {

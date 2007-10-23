@@ -146,7 +146,7 @@ public abstract class AbstractDataListRetriever<R extends IRecord> implements Da
             for (int i = 0; i < attributesList.size(); i++) {
                 if (recordAttributes.contains(attributesList.get(i))) {
                     AttributeInterface attribute = (AttributeInterface) attributesList.get(i);
-                    record.putValueForAttribute(attribute, values.get(i).toString());
+                    record.putStringValueForAttribute(attribute, values.get(i).toString());
                 }
             }
             copyOtherFields(record, recordInterface, attributesList, entity);

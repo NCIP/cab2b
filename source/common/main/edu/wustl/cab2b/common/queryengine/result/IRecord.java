@@ -29,10 +29,18 @@ public interface IRecord extends Serializable {
      * Specify the value for an attribute.
      * 
      * @param attribute the attribute.
-     * @param value value of the attribute.
+     * @param value value of the attribute. This is of the proper data type
      */
     void putValueForAttribute(AttributeInterface attribute, Object value);
-
+    
+    /**
+     * Specify the value for an attribute.
+     * 
+     * @param attribute the attribute.
+     * @param value value of the attribute. This is of the proper data type
+     */
+    void putStringValueForAttribute(AttributeInterface attribute, String value);
+    
     /**
      * Returns the value for the attribute.
      * 

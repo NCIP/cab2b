@@ -1,11 +1,9 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JScrollPane;
-import javax.swing.table.AbstractTableModel;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.RiverLayout;
@@ -13,8 +11,6 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
-import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.common.querysuite.queryobject.DataType;
 
 public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implements DataListDetailedPanelInterface {
 
@@ -40,7 +36,7 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
     /**
      */
     public void doInitialization() {
-        //initData();
+        initData();
         initGUI();
     }
 
@@ -52,7 +48,7 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
             String formattedString = CommonUtils.getFormattedString(attribute.getName());
             Vector<Object> row = new Vector<Object>();
             row.add(formattedString);
-            row.add(record.getValueForAttribute(attribute));
+            row.add(record.getValueForAttribute(attribute).toString());
             tableData.add(row);
         }
 
@@ -61,10 +57,10 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
     }
 
     protected void initGUI() {
-        RecordTableModel recordTableModel = new RecordTableModel(record);
-        //objDetailsTable = new Cab2bTable(false, tableData, tableHeader);
-        objDetailsTable = new Cab2bTable(recordTableModel);
+        objDetailsTable = new Cab2bTable(false, tableData, tableHeader);
         objDetailsTable.setColumnSelectionAllowed(true);
+        objDetailsTable.setDefaultRenderer(Boolean.class, objDetailsTable.getDefaultRenderer(Object.class));
+
         objDetailsTable.setEditable(false);
         JScrollPane tableSP = new JScrollPane(objDetailsTable);
         if (isVFill) {
@@ -215,59 +211,4 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
     public Cab2bTable getDataTable() {
         return objDetailsTable;
     }
-
-    private class RecordTableModel extends AbstractTableModel {
-        private static final long serialVersionUID = 1L;
-
-        private IRecord inputRecord;
-
-        private List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
-
-        public RecordTableModel(IRecord inputRecord) {
-            if (inputRecord != null) {
-                this.inputRecord = inputRecord;
-                attributeList = Utility.getAttributeList(inputRecord.getAttributes());
-            }
-            fireTableDataChanged();
-        }
-
-        public int getColumnCount() {
-            return getListSize(attributeList);
-        }
-
-        public String getColumnName(int columnNo) {
-            return CommonUtils.getFormattedString(attributeList.get(columnNo).getName());
-        }
-
-        public Class<?> getColumnClass(int columnNo) {
-            AttributeInterface attribute = attributeList.get(columnNo);
-            DataType dataType = Utility.getDataType(attribute.getAttributeTypeInformation());
-
-            if (dataType.equals(DataType.Date)) {
-                return DataType.String.getJavaType();
-            }
-
-            return dataType.getJavaType();
-        }
-
-        public boolean isCellEditable(int rowNo, int columnNo) {
-            return false;
-        }
-
-        /**
-         * @see javax.swing.table.TableModel#getValueAt(int, int)
-         */
-        public Object getValueAt(int rowNo, int columnNo) {
-            return inputRecord.getValueForAttribute(attributeList.get(columnNo)).toString();
-        }
-
-        public int getRowCount() {
-            return attributeList.size();
-        }
-
-        private int getListSize(List<?> list) {
-            return (list == null) ? 0 : list.size();
-        }
-    }
-
 }

@@ -251,6 +251,16 @@ public class Utility {
 		}
 
 	}
+    
+    public static Class<?> getJavaType(AttributeInterface attribute) {
+        DataType dataType = Utility.getDataType(attribute.getAttributeTypeInformation());
+
+        if (dataType.equals(DataType.Date)) {
+            return DataType.String.getJavaType();
+        }
+
+        return dataType.getJavaType();
+    }
 
 	/**
 	 * @param attribute

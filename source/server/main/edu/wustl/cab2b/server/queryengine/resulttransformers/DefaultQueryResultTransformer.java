@@ -60,7 +60,7 @@ final class DefaultQueryResultTransformer extends AbstractQueryResultTransformer
     private void populateRecord(String singleRecordXml, IRecord record) {
         for (AttributeInterface attribute : record.getAttributes()) {
             String value = getValueForAttribute(singleRecordXml, attribute);
-            record.putValueForAttribute(attribute, value);
+            record.putStringValueForAttribute(attribute, value);
             // TODO anything for dates??
         }
     }

@@ -42,7 +42,15 @@ public class Record implements IRecord {
         if (!attributesValues.containsKey(attribute)) {
             throw new IllegalArgumentException("The attribute is invalid for this record.");
         }
-        this.attributesValues.put(attribute, convertValueToSpecificType(attribute,(String)value));
+        this.attributesValues.put(attribute, value);
+    }
+    
+    public void putStringValueForAttribute(AttributeInterface attribute, String value) {
+        if (!attributesValues.containsKey(attribute)) {
+            throw new IllegalArgumentException("The attribute is invalid for this record.");
+        }
+        this.attributesValues.put(attribute, convertValueToSpecificType(attribute,value));
+        
     }
     
     private Object convertValueToSpecificType(AttributeInterface attribute, String value) {
@@ -109,4 +117,6 @@ public class Record implements IRecord {
             putValueForAttribute(attribute, record.getValueForAttribute(attribute));
         }
     }
+
+
 }
