@@ -123,39 +123,7 @@
 		<pathelement location="${server.classes.dir}" />
 		<pathelement location="${common.classes.dir}" />
 	</path>
-
-
-	<path id="common.classpath">
-		<fileset dir="lib/common">
-			<include name="**/*.jar" />
-		</fileset>
-	</path>
-
-	<path id="client.classpath">
-		<path refid="common.classpath" />
-		<fileset dir="lib/client">
-			<include name="**/*.jar" />
-		</fileset>
-	</path>
-
-	<path id="server.classpath">
-		<path refid="common.classpath" />
-		<fileset dir="lib/server">
-			<include name="**/*.jar" />
-		</fileset>
-	</path>
-
-	<path id="cactus.classpath">
-		<path refid="server.classpath" />
-		<path refid="client.classpath" />
-		<fileset dir="lib/junitTest/">
-			<include name="**/*.jar" />
-		</fileset>
-		<pathelement location="${testcase.properties.folder}" />
-		<pathelement location="${client.classes.dir}" />
-		<pathelement location="${server.classes.dir}" />
-		<pathelement location="${common.classes.dir}" />
-	</path>
+	
 
 	<!-- ================================================================================== -->
 
