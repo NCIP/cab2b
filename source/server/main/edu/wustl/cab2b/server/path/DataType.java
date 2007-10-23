@@ -19,6 +19,8 @@ import gov.nih.nci.cagrid.metadata.common.UMLAttribute;
 import gov.nih.nci.cagrid.metadata.common.ValueDomain;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Enumration for DataType.
@@ -26,51 +28,8 @@ import java.util.Date;
  * @author Chandrakant Talele
  */
 enum DataType {
-    ALPHANUMERIC("ALPHANUMERIC") {
-        /**
-         * @see DataType#createAttribute(UMLAttribute)
-         */
-        public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
-            AttributeInterface attribute = domainObjectFactory.createStringAttribute();
-            ValueDomain valueDomain = umlAttribute.getValueDomain();
 
-            Enumeration[] arr = valueDomain.getEnumerationCollection().getEnumeration();
-            if (arr != null) {
-                UserDefinedDEInterface userDefinedDE = DomainObjectFactory.getInstance().createUserDefinedDE();
-                for (Enumeration e : arr) {
-                    StringValueInterface value = domainObjectFactory.createStringValue();
-                    value.setValue(e.getPermissibleValue());
-                    DynamicExtensionUtility.setSemanticMetadata(value, e.getSemanticMetadata());
-                    userDefinedDE.addPermissibleValue(value);
-                }
-                attribute.getAttributeTypeInformation().setDataElement(userDefinedDE);
-            }
-            return attribute;
-        }
-    },
-    STRING("java.lang.String") {
-        /**
-         * @see DataType#createAttribute(UMLAttribute)
-         */
-        public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
-            AttributeInterface attribute = domainObjectFactory.createStringAttribute();
-            ValueDomain valueDomain = umlAttribute.getValueDomain();
-
-            Enumeration[] arr = valueDomain.getEnumerationCollection().getEnumeration();
-            if (arr != null) {
-                UserDefinedDEInterface userDefinedDE = DomainObjectFactory.getInstance().createUserDefinedDE();
-                for (Enumeration e : arr) {
-                    StringValueInterface value = domainObjectFactory.createStringValue();
-                    value.setValue(e.getPermissibleValue());
-                    DynamicExtensionUtility.setSemanticMetadata(value, e.getSemanticMetadata());
-                    userDefinedDE.addPermissibleValue(value);
-                }
-                attribute.getAttributeTypeInformation().setDataElement(userDefinedDE);
-            }
-            return attribute;
-        }
-    },
-    CHARACTER("CHARACTER") {
+    STRING() {
         /**
          * @see DataType#createAttribute(UMLAttribute)
          */
@@ -93,7 +52,7 @@ enum DataType {
         }
     },
 
-    INTEGER("java.lang.Integer") {
+    INTEGER() {
         /**
          * @see DataType#createAttribute(UMLAttribute)
          */
@@ -116,7 +75,7 @@ enum DataType {
         }
     },
 
-    DATE("java.util.Date") {
+    DATE() {
         /**
          * @see DataType#createAttribute(UMLAttribute)
          */
@@ -141,7 +100,7 @@ enum DataType {
             return attribute;
         }
     },
-    FLOAT("java.lang.Float") {
+    FLOAT() {
         /**
          * @see DataType#createAttribute(UMLAttribute)
          */
@@ -163,7 +122,7 @@ enum DataType {
             return attribute;
         }
     },
-    BOOLEAN("java.lang.Boolean") {
+    BOOLEAN() {
         /**
          * @see DataType#createAttribute(UMLAttribute)
          */
@@ -188,7 +147,7 @@ enum DataType {
             return attribute;
         }
     },
-    LONG("java.lang.Long") {
+    LONG() {
         /**
          * @see DataType#createAttribute(UMLAttribute)
          */
@@ -210,7 +169,7 @@ enum DataType {
             return attribute;
         }
     },
-    DOUBLE("java.lang.Double") {
+    DOUBLE() {
         /**
          * @see DataType#createAttribute(UMLAttribute)
          */
@@ -233,34 +192,41 @@ enum DataType {
         }
 
     },
-    NUMBER("NUMBER") {
-        /**
-         * @see DataType#createAttribute(UMLAttribute)
-         */
-        public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
-            AttributeInterface attribute = domainObjectFactory.createDoubleAttribute();
-            ValueDomain valueDomain = umlAttribute.getValueDomain();
+    UNDEFINED();
 
-            Enumeration[] arr = valueDomain.getEnumerationCollection().getEnumeration();
-            if (arr != null) {
-                UserDefinedDEInterface userDefinedDE = DomainObjectFactory.getInstance().createUserDefinedDE();
-                for (Enumeration e : arr) {
-                    DoubleValueInterface value = domainObjectFactory.createDoubleValue();
-                    value.setValue(new Double(e.getPermissibleValue()));
-                    DynamicExtensionUtility.setSemanticMetadata(value, e.getSemanticMetadata());
-                    userDefinedDE.addPermissibleValue(value);
-                }
-                attribute.getAttributeTypeInformation().setDataElement(userDefinedDE);
-            }
-            return attribute;
-        }
-    },
-    OBJECT("java.lang.Object"), COLLECTION("java.util.Collection"), VECTOR("java.util.Vector"), ARRAY_LIST(
-            "java.util.ArrayList"), HASH_SET("java.util.HashSet");
+    /**
+     * Builds enumeration and assigns passed string as value
+     * @param value
+     */
+    DataType() {
+    }
 
-    String value;
+    private static Map<String, DataType> dataTypeMap = new HashMap<String, DataType>();
 
     private static DomainObjectFactory domainObjectFactory = DomainObjectFactory.getInstance();
+
+    static {
+        dataTypeMap.put("NUMBER", DataType.INTEGER);
+        dataTypeMap.put("java.lang.Integer", DataType.INTEGER);
+        dataTypeMap.put("int", DataType.INTEGER);
+        dataTypeMap.put("java.lang.String", DataType.STRING);
+        dataTypeMap.put("ALPHANUMERIC", DataType.STRING);
+        dataTypeMap.put("CHARACTER", DataType.STRING);
+        dataTypeMap.put("java.util.Date", DataType.DATE);
+        dataTypeMap.put("java.lang.Float", DataType.FLOAT);
+        dataTypeMap.put("float", DataType.FLOAT);
+        dataTypeMap.put("java.lang.Boolean", DataType.BOOLEAN);
+        dataTypeMap.put("boolean", DataType.BOOLEAN);
+        dataTypeMap.put("java.lang.Long", DataType.LONG);
+        dataTypeMap.put("long", DataType.LONG);
+        dataTypeMap.put("java.lang.Double", DataType.DOUBLE);
+        dataTypeMap.put("double", DataType.DOUBLE);
+        dataTypeMap.put("java.lang.Object", DataType.UNDEFINED);
+        dataTypeMap.put("java.util.Collection", DataType.UNDEFINED);
+        dataTypeMap.put("java.util.Vector", DataType.UNDEFINED);
+        dataTypeMap.put("java.util.ArrayList", DataType.UNDEFINED);
+        dataTypeMap.put("java.util.HashSet", DataType.UNDEFINED);
+    }
 
     /**
      * Method which creates dynamic extension attribute based on datatype. 
@@ -278,16 +244,8 @@ enum DataType {
 
     AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
         // TODO bypassing attributes, need to decide how to handle it.
-        Logger.out.error("found attribute with type" + value + ". Not storing it");
+        Logger.out.error("found attribute with type" + umlAttribute.getDataTypeName() + ". Not storing it");
         return null;
-    }
-
-    /**
-     * Builds enumeration and assigns passed string as value
-     * @param value
-     */
-    DataType(String value) {
-        this.value = value;
     }
 
     private void postProcessing(AttributeInterface attribute, UMLAttribute umlAttribute) {
@@ -310,14 +268,12 @@ enum DataType {
      * @return Returns the DataType
      */
     public static DataType get(String value) {
-        DataType[] allDataypes = DataType.values();
 
-        for (DataType dataType : allDataypes) {
-            if (dataType.value.equals(value)) {
-                return dataType;
-            }
+        DataType dataType = dataTypeMap.get(value);
+        if (dataType == null) {
+            throw new RuntimeException("unknown datatype found : " + value);
         }
-        throw new RuntimeException("unknown datatype found : " + value);
+        return dataType;
     }
 
 }
