@@ -8,7 +8,7 @@ package edu.wustl.cab2b.common.domain;
  /**
   * A top level base class for all different kinds of Experiments, and Categories.
   *  
-  * @hibernate.class table="abstractdomainobject"
+  * @hibernate.class table="CAB2B_ABSTRACT_DOMAIN_OBJECT"
   * @author 
   */
 public class AbstractDomainObject implements java.io.Serializable {
@@ -59,6 +59,10 @@ public class AbstractDomainObject implements java.io.Serializable {
     /**
      * Sets the activity status.
      * @param activityStatus
+     * 
+     * 
+     * 
+     * 
      */
     public void setActivityStatus(java.lang.String activityStatus) {
         this.activityStatus = activityStatus;

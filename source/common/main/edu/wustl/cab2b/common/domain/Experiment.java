@@ -13,7 +13,7 @@ import gov.nih.nci.system.applicationservice.ApplicationServiceProvider;
 
 /**
  * A class which represents a generic experiment.
- * @hibernate.joined-subclass table="experiment"
+ * @hibernate.joined-subclass table="CAB2B_EXPERIMENT"
  * @hibernate.joined-subclass-key column="EXP_ID"
  * @author 
  */
@@ -28,7 +28,7 @@ public class Experiment extends AdditionalMetadata implements java.io.Serializab
     /**
      * Returns a collection of experiment groups to which this experiment belongs to.
      * @return a collection of experiment groups to which this experiment belongs to.
-     * @hibernate.set name="experimentGroupCollection" table="expgrpmapping" cascade="save-update" inverse="false"
+     * @hibernate.set name="experimentGroupCollection" table="CAB2B_EXP_GRP_MAPPING" cascade="save-update" inverse="false"
      * @hibernate.collection-key column="EXP_ID"
      * @hibernate.collection-many-to-many class="edu.wustl.cab2b.common.domain.ExperimentGroup" column="EXG_ID"
      */
@@ -91,7 +91,7 @@ public class Experiment extends AdditionalMetadata implements java.io.Serializab
     /**
      * Returns a collection of experiment groups to which this experiment belongs to.
      * @return a collection of experiment groups to which this experiment belongs to.
-     * @hibernate.set name="dataListMetadataCollection" table="DLExpMap" cascade="save-update"
+     * @hibernate.set name="dataListMetadataCollection" table="CAB2B_EXP_DLMETADATA_MAPPING" cascade="save-update"
      * @hibernate.collection-key column="EXP_ID"
      * @hibernate.collection-many-to-many class="edu.wustl.cab2b.common.domain.DataListMetadata" column="DL_ID"
      */

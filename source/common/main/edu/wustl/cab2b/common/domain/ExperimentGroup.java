@@ -10,7 +10,7 @@ import gov.nih.nci.system.applicationservice.ApplicationServiceProvider;
 
  /**
   * A class to group experiments under it.
-  * @hibernate.joined-subclass table="experimentgroup"
+  * @hibernate.joined-subclass table="CAB2B_EXPERIMENT_GROUP"
   * @hibernate.joined-subclass-key column="EXG_ID"
   * @author 
   */
@@ -65,7 +65,7 @@ public class ExperimentGroup extends AdditionalMetadata implements java.io.Seria
     /**
      * Returns a collection of experiments grouped under this group.
      * @return collection of experiments grouped under this group.
-     * @hibernate.set name="experimentCollection" table="expgrpmapping" cascade="none" inverse="true" 
+     * @hibernate.set name="experimentCollection" table="CAB2B_EXP_GRP_MAPPING" cascade="none" inverse="true" 
      * @hibernate.collection-key column="EXG_ID"
      * @hibernate.collection-many-to-many class="edu.wustl.cab2b.common.domain.Experiment" column="EXP_ID"
      */
@@ -112,7 +112,7 @@ public class ExperimentGroup extends AdditionalMetadata implements java.io.Seria
     /**
      * Returns a collection of experiment groups under this experiment group.
      * @return collection of experiment groups under this experiment group.
-     * @hibernate.set name="childrenGroupCollection" table="experimentgroup"  cascade="save-update" inverse="true" lazy="false"
+     * @hibernate.set name="childrenGroupCollection" table="CAB2B_EXPERIMENT_GROUP"  cascade="save-update" inverse="true" lazy="false"
      * @hibernate.collection-key column="PARENT_EXG_ID"
      * @hibernate.collection-one-to-many class="edu.wustl.cab2b.common.domain.ExperimentGroup"
      */

@@ -9,7 +9,7 @@ import edu.wustl.cab2b.common.IdName;
 /**
  * This is a DataList domain object. This will be mapped to "datalist" table.
  * 
- * @hibernate.joined-subclass table="datalist"
+ * @hibernate.joined-subclass table="CAB2B_DATA_LIST"
  * @hibernate.joined-subclass-key column="DL_ID"
  * 
  * @author chetan_bh
@@ -35,9 +35,14 @@ public class DataListMetadata extends AdditionalMetadata implements Serializable
     /**
      * Returns the entity id of this datalist.
      * 
-     * @hibernate.property name="entityId" type="long" column="ENT_ID"
+     * @hibernate.set name="entityIds" table="CAB2B_DATALIST_ENTITY" cascade ="none" 
+     * @hibernate.collection-key column="DATALIST_METADATA_ID"
+     * @hibernate.collection-element column="ENTITY_ID" type="long" not-null="true"
      * @return name of the domain object.
      */
+    
+     
+    
     public Set<Long> getEntityIds() {
         if (entityIds == null) {
             entityIds = new HashSet<Long>();
@@ -66,7 +71,7 @@ public class DataListMetadata extends AdditionalMetadata implements Serializable
     }
 
     /**
-     *@hibernate.property name="isCustomDataCategory" type="boolean" column="IS_CUSTOM_DATA_CATEGORY"
+     *@hibernate.property name="isCustomDataCategory" type="boolean" column="CUSTOM_DATA_CATEGORY"
      *@return Returns the isCustomDataCategory.
      */
     public boolean isCustomDataCategory() {

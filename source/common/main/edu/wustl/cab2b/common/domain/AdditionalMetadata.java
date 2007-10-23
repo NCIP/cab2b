@@ -9,7 +9,7 @@ package edu.wustl.cab2b.common.domain;
  * A base class with a set of attributes that defines the metadata for the
  * derived experiments, and categories.
  * 
- * @hibernate.joined-subclass table="additionalmetadata"
+ * @hibernate.joined-subclass table="CAB2B_ADDITIONAL_META_DATA"
  * @hibernate.joined-subclass-key column="AMD_ID"
  * @author
  */
@@ -25,7 +25,7 @@ public class AdditionalMetadata extends AbstractDomainObject implements java.io.
 	/**
 	 * Returns the name of the domain object.
 	 * 
-	 * @hibernate.property name="name" type="string" column="AMD_NAME"
+	 * @hibernate.property name="name" type="string" column="NAME"
 	 *                     length="50"
 	 * @return name of the domain object.
 	 */
@@ -51,7 +51,7 @@ public class AdditionalMetadata extends AbstractDomainObject implements java.io.
 	 * Returns the description for the domain object.
 	 * 
 	 * @hibernate.property name="description" type="string"
-	 *                     column="AMD_DESCRIPTION" length="50"
+	 *                     column="DESCRIPTION" length="255"
 	 * @return description for the domain object.
 	 */
 	public java.lang.String getDescription() {
@@ -75,7 +75,7 @@ public class AdditionalMetadata extends AbstractDomainObject implements java.io.
 	/**
 	 * Returns the date the domain object was created.
 	 * 
-	 * @hibernate.property name="createdOn" type="date" column="AMD_CREATED_ON"
+	 * @hibernate.property name="createdOn" type="date" column="CREATED_ON"
 	 * @return date the domain object was created.
 	 */
 	public java.util.Date getCreatedOn() {
@@ -100,7 +100,7 @@ public class AdditionalMetadata extends AbstractDomainObject implements java.io.
 	 * Returns the last updated date of the domain object.
 	 * 
 	 * @hibernate.property name="lastModifiedOn" type="date"
-	 *                     column="AMD_LAST_UPDATED_ON"
+	 *                     column="LAST_UPDATED_ON"
 	 * @return last modification date of the domain object.
 	 */
 	public java.util.Date getLastUpdatedOn() {
