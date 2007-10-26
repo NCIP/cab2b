@@ -206,26 +206,29 @@ enum DataType {
     private static DomainObjectFactory domainObjectFactory = DomainObjectFactory.getInstance();
 
     static {
-        dataTypeMap.put("NUMBER", DataType.INTEGER);
-        dataTypeMap.put("java.lang.Integer", DataType.INTEGER);
+        //put data type strings in small case
+        dataTypeMap.put("number", DataType.INTEGER);
+        dataTypeMap.put("java.lang.integer", DataType.INTEGER);
         dataTypeMap.put("int", DataType.INTEGER);
-        dataTypeMap.put("java.lang.String", DataType.STRING);
-        dataTypeMap.put("ALPHANUMERIC", DataType.STRING);
-        dataTypeMap.put("CHARACTER", DataType.STRING);
-        dataTypeMap.put("java.util.Date", DataType.DATE);
-        dataTypeMap.put("java.lang.Float", DataType.FLOAT);
+        dataTypeMap.put("java.lang.string", DataType.STRING);
+        dataTypeMap.put("alphanumeric", DataType.STRING);
+        dataTypeMap.put("character", DataType.STRING);
+        dataTypeMap.put("java.util.date", DataType.DATE);
+        dataTypeMap.put("date", DataType.DATE);
+        dataTypeMap.put("java.lang.float", DataType.FLOAT);
         dataTypeMap.put("float", DataType.FLOAT);
-        dataTypeMap.put("java.lang.Boolean", DataType.BOOLEAN);
+        dataTypeMap.put("java.lang.boolean", DataType.BOOLEAN);
         dataTypeMap.put("boolean", DataType.BOOLEAN);
-        dataTypeMap.put("java.lang.Long", DataType.LONG);
+        dataTypeMap.put("java.lang.long", DataType.LONG);
         dataTypeMap.put("long", DataType.LONG);
-        dataTypeMap.put("java.lang.Double", DataType.DOUBLE);
+        dataTypeMap.put("java.lang.double", DataType.DOUBLE);
         dataTypeMap.put("double", DataType.DOUBLE);
-        dataTypeMap.put("java.lang.Object", DataType.UNDEFINED);
-        dataTypeMap.put("java.util.Collection", DataType.UNDEFINED);
-        dataTypeMap.put("java.util.Vector", DataType.UNDEFINED);
-        dataTypeMap.put("java.util.ArrayList", DataType.UNDEFINED);
-        dataTypeMap.put("java.util.HashSet", DataType.UNDEFINED);
+        dataTypeMap.put("java.lang.object", DataType.UNDEFINED);
+        dataTypeMap.put("java.util.collection", DataType.UNDEFINED);
+        dataTypeMap.put("java.util.vector", DataType.UNDEFINED);
+        dataTypeMap.put("java.util.arrayList", DataType.UNDEFINED);
+        dataTypeMap.put("java.util.hashSet", DataType.UNDEFINED);
+        
     }
 
     /**
@@ -269,7 +272,7 @@ enum DataType {
      */
     public static DataType get(String value) {
 
-        DataType dataType = dataTypeMap.get(value);
+        DataType dataType = dataTypeMap.get(value.toLowerCase());
         if (dataType == null) {
             throw new RuntimeException("unknown datatype found : " + value);
         }
