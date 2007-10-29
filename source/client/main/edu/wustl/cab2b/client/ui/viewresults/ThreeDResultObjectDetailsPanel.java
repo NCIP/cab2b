@@ -2,13 +2,11 @@ package edu.wustl.cab2b.client.ui.viewresults;
 
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JButton;
 import javax.swing.JScrollPane;
+import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
@@ -30,12 +28,11 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
 
     private Cab2bTable threeDTable;
 
-    BDQDataSource tableSource;
+    private BDQDataSource tableSource;
 
-    private boolean isWholeColumnSelected = false;  
-    
+    private boolean isWholeColumnSelected = false;
+
     private JScrollPane tableScrollPane;
-    
 
     /**
      * 
@@ -53,6 +50,7 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
     public ThreeDResultObjectDetailsPanel(IRecord record) {
         super((I3DDataRecord) record);
         isVFill = false;
+        this.setName("DataListDetailedPanel");
     }
 
     /**
@@ -82,9 +80,23 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
         threeDTable.setEditable(false);
         tableScrollPane = new JScrollPane(threeDTable);
 
-        addRowHeader();       
-        
+        addRowHeader();
+
         this.add("br hfill vfill", tableScrollPane);
+    }
+
+    public String getRowHeaderName(int rowNumber) {
+        JViewport rowViewport = tableScrollPane.getRowHeader();
+        Cab2bTable rowHeaderTable = (Cab2bTable) rowViewport.getComponent(0);
+        Object value = rowHeaderTable.getValueAt(rowNumber, 0);
+
+        String rowHeaderName = null;
+        if (value != null) {
+            rowHeaderName = value.toString() + "(" + rowNumber + ")";
+        } else {
+            rowHeaderName = "_(" + rowNumber + ")";
+        }
+        return rowHeaderName;
     }
 
     private void addRowHeader() {
@@ -178,19 +190,17 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
             isWholeColumnSelected = false;
         }
     }
-    
-    
-    
+
     @Override
     public String getCSVData() {
         StringBuffer sb = new StringBuffer();
-        
+
         sb.append(super.getCSVData());
         sb.append("\n");
 
         sb.append(getCSVTableHeaderAndData(tableScrollPane));
         sb.append("\n");
-        
+
         return sb.toString();
     }
 }
