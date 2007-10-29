@@ -477,7 +477,9 @@ public class ExperimentStackBox extends Cab2bPanel {
 				protected void doNonUILogic() {
 					String actionCommand = LinkActionListener.this.actionEvent
 							.getActionCommand();
-					if (toolType.equals(ClientConstants.CHART)) {
+					if (toolType.equals(ClientConstants.BAR_CHART)
+							|| toolType.equals(ClientConstants.LINE_CHART)
+							|| toolType.equals(ClientConstants.SCATTER_PLOT)) {
 						showChartAction(actionCommand);
 					} else if (toolType.equals(ClientConstants.HEATMAP)) {
 						showHeatmapAction();
