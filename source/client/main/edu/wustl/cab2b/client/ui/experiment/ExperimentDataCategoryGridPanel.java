@@ -35,7 +35,6 @@ import org.jdesktop.swingx.action.LinkAction;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.RiverLayout;
-import edu.wustl.cab2b.client.ui.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -49,6 +48,7 @@ import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
 import edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface;
 import edu.wustl.cab2b.client.ui.viewresults.DefaultDetailedPanel;
 import edu.wustl.cab2b.client.ui.viewresults.DefaultSpreadSheetViewPanel;
+import edu.wustl.cab2b.client.ui.visualization.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
@@ -92,6 +92,11 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
      * Reference to the current tab which is displaying the chart diagram.
      */
     private Cab2bPanel currentChartPanel;
+
+    /**
+     * Reference to the current tab that is displaying the heat map.
+     */
+    private Cab2bPanel currentHeatMapPanel;
 
     /**
      * Table to display records on Analysis Data panels
@@ -275,7 +280,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         experimentDataPanel.setBorder(null);
         experimentDataPanel.add("br center hfill vfill", spreadSheetViewPanel);
 
-        Cab2bPanel northPanel = new Cab2bPanel(new RiverLayout(5,5));
+        Cab2bPanel northPanel = new Cab2bPanel(new RiverLayout(5, 5));
         northPanel.add(saveDataCategoryButton);
         northPanel.add("br", new JLabel(""));
         northPanel.setBorder(null);
@@ -286,7 +291,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         tabComponent.setBorder(null);
         this.add(tabComponent, BorderLayout.CENTER);
 
-        Cab2bPanel bottomPanel = new Cab2bPanel(new RiverLayout(5,5));
+        Cab2bPanel bottomPanel = new Cab2bPanel(new RiverLayout(5, 5));
         bottomPanel.add(prevButton);
         bottomPanel.add("br", new JLabel(""));
         bottomPanel.setBorder(null);
@@ -347,10 +352,11 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             detailViewPanel.add("right ", closeButton);
 
             // Add SpreadsheetView
-            defaultDetailedPanel.getDataTable().addFocusListener(new TableFocusListener(false)); 
-            defaultDetailedPanel.getDataTable().getTableHeader().addMouseListener(new HeaderMouseListener(defaultDetailedPanel.getDataTable()));
-            
-            
+            defaultDetailedPanel.getDataTable().addFocusListener(new TableFocusListener(false));
+            defaultDetailedPanel.getDataTable().getTableHeader().addMouseListener(
+                                                                                  new HeaderMouseListener(
+                                                                                          defaultDetailedPanel.getDataTable()));
+
             detailViewPanel.add("br center hfill vfill", defaultDetailedPanel);
 
             detailPanel = detailViewPanel;
@@ -506,32 +512,29 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             }
             updateUI();
         }
-
     }
-    
-    
-    
+
     class HeaderMouseListener extends MouseAdapter {
-        Cab2bTable table =  null;
-        
+        Cab2bTable table = null;
+
         HeaderMouseListener(Cab2bTable table) {
             this.table = table;
         }
-        
+
         public void mouseClicked(MouseEvent e) {
-            focusAction(table,false);
-        }  
-    }    
-    
-    private void focusAction(final Cab2bTable cab2bTable,boolean skipFirstColumn) {
-        boolean setEnabled = false;        
+            focusAction(table, false);
+        }
+    }
+
+    private void focusAction(final Cab2bTable cab2bTable, boolean skipFirstColumn) {
+        boolean setEnabled = false;
         if (cab2bTable.getSelectedRowCount() > 0 && cab2bTable.getSelectedColumnCount() > 0) {
             for (int columnIndex : cab2bTable.getSelectedColumns()) {
                 if (columnIndex == 0 && skipFirstColumn) {
-                    setEnabled = false;       
-                }else
-                setEnabled = true;
-            }                
+                    setEnabled = false;
+                } else
+                    setEnabled = true;
+            }
         }
 
         ExperimentStackBox experimentStackBox = experimentPanel.getExperimentStackBox();
@@ -547,30 +550,43 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         visualiseDataPanel.revalidate();
     }
 
-
     /**
      * This class enables or disables the chart links in Visualise Panel on
      * selection of row in the data grid.
      */
-    class TableFocusListener implements FocusListener {           
+    class TableFocusListener implements FocusListener {
         private boolean skipFirstColumn = false;
 
-        TableFocusListener(boolean skipFirstColumn) {            
+        TableFocusListener(boolean skipFirstColumn) {
             this.skipFirstColumn = skipFirstColumn;
         }
-        
+
         TableFocusListener() {
             this(true);
         }
 
         public void focusGained(FocusEvent focusEvent) {
             final Cab2bTable cab2bTable = (Cab2bTable) focusEvent.getComponent();
-            focusAction(cab2bTable,skipFirstColumn);
+            focusAction(cab2bTable, skipFirstColumn);
         }
 
         public void focusLost(FocusEvent focusEvent) {
             final Cab2bTable cab2bTable = (Cab2bTable) focusEvent.getComponent();
-            focusAction(cab2bTable,skipFirstColumn);
-       }
+            focusAction(cab2bTable, skipFirstColumn);
+        }
+    }
+
+    /**
+     * @return the currentHeatMapPanel
+     */
+    public Cab2bPanel getCurrentHeatMapPanel() {
+        return currentHeatMapPanel;
+    }
+
+    /**
+     * @param currentHeatMapPanel the currentHeatMapPanel to set
+     */
+    public void setCurrentHeatMapPanel(Cab2bPanel currentHeatMapPanel) {
+        this.currentHeatMapPanel = currentHeatMapPanel;
     }
 }
