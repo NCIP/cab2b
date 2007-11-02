@@ -17,12 +17,19 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
 
     /**
      * This method saves the Cab2bQuery object.
-     * @return the saved query populated with the ids
      * @throws RemoteException
      */
     void saveQuery(ICab2bParameterizedQuery query) throws RemoteException;
+    
+    /**
+     * This method updates the Cab2bQuery object.
+     * @throws RemoteException
+     */
+    void updateQuery(ICab2bParameterizedQuery query) throws RemoteException;
 
     ICab2bParameterizedQuery retrieveQueryById(Long query) throws RemoteException;
 
     List<ICab2bParameterizedQuery> retrieveAllQueries() throws RemoteException;
+    
+    boolean isQueryNameDuplicate(String queryName) throws RemoteException;
 }
