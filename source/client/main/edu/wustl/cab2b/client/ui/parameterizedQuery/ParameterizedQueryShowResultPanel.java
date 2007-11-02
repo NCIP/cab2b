@@ -175,7 +175,9 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
                     AbstractTypePanel panel = (AbstractTypePanel) topConditionPanel.getComponent(index);
                     int conditionStatus = panel.isConditionValid(ParameterizedQueryShowResultPanel.this);
                     if (conditionStatus == 0) {
-                        queryDataModel.addCondition(panel.getExpressionId(), panel.getCondition(index));
+                        queryDataModel.addCondition(panel.getExpressionId(),
+                                                    panel.getCondition(index,
+                                                                       ParameterizedQueryShowResultPanel.this));
                     } else {
                         if (conditionStatus == 1) {
                             JOptionPane.showMessageDialog(ParameterizedQueryShowResultPanel.this,
