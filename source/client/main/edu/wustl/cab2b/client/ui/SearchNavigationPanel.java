@@ -387,6 +387,11 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
      */
     private class SaveConditionButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
+
+            if (m_mainSearchPanel.getQueryObject().getQuery().getId() != null) {
+                messageLabel.setText("Any changes made in current query will be saved in system.");
+            }
+
             ParameterizedQueryMainPanel parameterizedQueryMainPanel = new ParameterizedQueryMainPanel(
                     new ParameterizedQueryDataModel((ICab2bQuery) m_mainSearchPanel.getQueryObject().getQuery()));
             parameterizedQueryMainPanel.showInDialog();
