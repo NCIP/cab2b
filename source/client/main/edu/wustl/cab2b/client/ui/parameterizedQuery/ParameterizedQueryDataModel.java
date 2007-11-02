@@ -17,6 +17,8 @@ import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
+import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
+import edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.util.QueryUtility;
 
 /**
@@ -34,7 +36,11 @@ public class ParameterizedQueryDataModel {
 
     public ParameterizedQueryDataModel(ICab2bQuery iQuery) {
         //converting query to Parameterized query 
-        query = new Cab2bQuery(iQuery);
+        if (iQuery instanceof ParameterizedQuery)
+            query = (ICab2bParameterizedQuery) iQuery;
+        else
+            query = new Cab2bQuery(iQuery);
+
     }
 
     public ParameterizedQueryDataModel(ICab2bParameterizedQuery query) {
@@ -90,7 +96,7 @@ public class ParameterizedQueryDataModel {
                 for (int index = 0; index < conditionList.size(); index++) {
                     ICondition condition = conditionList.get(index);
                     if (condition.getAttribute() == newCondition.getAttribute()) {
-                        conditionList.remove(condition);
+                        conditionList.remove(condition);                      
                         conditionList.add(index, newCondition);
                         isConditionAdded = true;
                         break ALL;
