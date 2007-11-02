@@ -8,11 +8,7 @@ import edu.wustl.cab2b.common.cache.AbstractEntityCache;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.cab2b.server.cache.EntityCache;
-import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.dao.DAO;
 import edu.wustl.common.querysuite.bizLogic.QueryBizLogic;
-import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
-import edu.wustl.common.util.dbManager.DAOException;
 
 /**
  * This class processes the Cab2bQuery object before persisting and after retreival.
@@ -20,12 +16,9 @@ import edu.wustl.common.util.dbManager.DAOException;
  */
 public class Cab2bQueryBizLogic extends QueryBizLogic<ICab2bParameterizedQuery> {
 
-    @Override
-    protected void preInsert(Object object, DAO dao, SessionDataBean sessionDataBean) throws DAOException,
-            UserNotAuthorizedException {
-        super.preInsert(object, dao, sessionDataBean);
+    protected void preProcessQuery(ICab2bParameterizedQuery caB2BQuery) {
+        super.preProcessQuery(caB2BQuery);
 
-        ICab2bParameterizedQuery caB2BQuery = (ICab2bParameterizedQuery) object;
         EntityInterface entity = caB2BQuery.getOutputEntity();
         ((Cab2bQuery) caB2BQuery).setEntityId(entity.getId());
     }
@@ -33,13 +26,13 @@ public class Cab2bQueryBizLogic extends QueryBizLogic<ICab2bParameterizedQuery> 
     /**
      * @see edu.wustl.cab2b.server.queryengine.QueryProcessor#postProcessQuery(edu.wustl.common.querysuite.queryobject.IQuery)
      */
-    public void postProcessQuery(ICab2bParameterizedQuery caB2Bquery) {
-        super.postProcessQuery(caB2Bquery);
+    public void postProcessQuery(ICab2bParameterizedQuery caB2BQuery) {
+        super.postProcessQuery(caB2BQuery);
 
-        Long entityId = ((Cab2bQuery) caB2Bquery).getEntityId();
+        Long entityId = ((Cab2bQuery) caB2BQuery).getEntityId();
         AbstractEntityCache abstractEntityCache = EntityCache.getCache();
         EntityInterface entity = abstractEntityCache.getEntityById(entityId);
-        caB2Bquery.setOutputEntity(entity);
+        caB2BQuery.setOutputEntity(entity);
     }
 
     /** 
