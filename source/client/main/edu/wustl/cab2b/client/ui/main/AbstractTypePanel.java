@@ -21,6 +21,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bComboBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
+import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryShowResultPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.ICondition;
@@ -135,14 +136,14 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         secondComponent.setBorder(emptyBorder);
         add(nameLabel, 0);
         add(firstComponent, 1);
-        add(secondComponent,2);
+        add(secondComponent, 2);
         setSize(new Dimension(300, 100));
     }
 
     public void createPanelWithOperator(AttributeInterface attribute) {
         createSimplePanel(attribute);
         setCondtionControl(conditionList, getSecondComponent().getBorder(), new EmptyBorder(2, 2, 2, 2));
-        add(conditionComboBox, 1);        
+        add(conditionComboBox, 1);
     }
 
     public void createPanelWithOperator(ICondition condition) {
@@ -157,7 +158,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     public void createParametrizedPanel(AttributeInterface attribute) {
         createPanelWithOperator(attribute);
         attributeCheckBox = new Cab2bCheckBox();
-        attributeCheckBox.setPreferredSize(new Dimension(80,maxLabelDimension.height));
+        attributeCheckBox.setPreferredSize(new Dimension(80, maxLabelDimension.height));
         attributeDisplayNameTextField = new Cab2bTextField(displayName, new Dimension(maxLabelDimension.width,
                 maxLabelDimension.height + 5));
         attributeDisplayNameTextField.setEnabled(false);
@@ -167,7 +168,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
             }
         });
         add(attributeCheckBox, 0);
-        add(attributeDisplayNameTextField, 1);        
+        add(attributeDisplayNameTextField, 1);
     }
 
     public void createParametrizedPanel(ICondition condition) {
@@ -336,14 +337,14 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
      * @param index
      * @return
      */
-    public ICondition getCondition(int index) {
+    public ICondition getCondition(int index, Cab2bPanel parentPanel) {
         String conditionString = getConditionItem();
         ArrayList<String> conditionValues = getValues();
         RelationalOperator operator = RelationalOperator.getOperatorForStringRepresentation(conditionString);
 
         int conditionStatus = isConditionValid(this);
         if (conditionStatus == 0) {
-            if (isAttributeCheckBoxSelected()) {
+            if (isAttributeCheckBoxSelected() || (parentPanel instanceof ParameterizedQueryShowResultPanel)) {
                 //make a new parameterized condition 
                 return new ParameterizedCondition(attribute, operator, conditionValues, index,
                         getAttributeDisplayName());
