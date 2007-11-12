@@ -35,8 +35,8 @@ public class DataListUtil {
      * Cache the entity group that contains all data lists. This entity group is
      * identified by its name
      * {@link edu.wustl.cab2b.common.util.Constants.DATALIST_ENTITY_GROUP_NAME}.
-     */
-    private static EntityGroupInterface dataListEntityGroup = null;
+     */ //default scope for testing purpose 
+    static EntityGroupInterface dataListEntityGroup = null;
 
     /**
      * A virtual attribute is identified by tagging it with this key.
@@ -243,5 +243,8 @@ public class DataListUtil {
     private static Long getOriginEntityId(EntityInterface oldEntity) {
         return edu.wustl.cab2b.common.util.DataListUtil.getOriginEntity(oldEntity).getId();
     }
-
+    //for testing purpose
+    static void setDataListEntityGroup(EntityGroupInterface group) {
+        dataListEntityGroup = group;
+    }
 }

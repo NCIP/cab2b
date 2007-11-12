@@ -5,6 +5,7 @@ import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.RoleInterface;
 import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
@@ -38,7 +39,19 @@ public class TestUtil {
         e1.setName(entityName);
         return e1;
     }
-
+    public static EntityInterface getEntity(String entityName,long id) {
+        EntityInterface e1 = deFactory.createEntity();
+        e1.setId(id);
+        e1.setName(entityName);
+        return e1;
+    }
+    public static EntityGroupInterface getEntityGroup(String name,long id) {
+        EntityGroupInterface e1 = deFactory.createEntityGroup();
+        e1.setId(id);
+        e1.setName(name);
+        e1.setLongName(name);
+        return e1;
+    }
     public static void markInherited(AbstractMetadataInterface owner) {
         TaggedValueInterface taggedValue = deFactory.createTaggedValue();
         taggedValue.setKey(TYPE_DERIVED);
