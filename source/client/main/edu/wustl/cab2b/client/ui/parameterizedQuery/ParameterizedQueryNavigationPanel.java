@@ -73,9 +73,17 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
 
     private class OrderViewButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
-            ParameterizedQueryOrderPanel panel = new ParameterizedQueryOrderPanel(parameterizedQueryMainPanel);
-            parameterizedQueryMainPanel.getDialog().dispose();
-            panel.showInDialog();
+            if (parameterizedQueryMainPanel.getParameterConditionPanel().getCheckedAttributePanels(
+                                                                                                   parameterizedQueryMainPanel.getParameterConditionPanel()).size() > 0) {
+                ParameterizedQueryOrderPanel panel = new ParameterizedQueryOrderPanel(parameterizedQueryMainPanel);
+                parameterizedQueryMainPanel.getDialog().dispose();
+                panel.showInDialog();
+            } else {
+                JOptionPane.showMessageDialog(parameterizedQueryMainPanel,
+                                              "Please select condition checkbox before ordering.", "Warning",
+                                              JOptionPane.ERROR_MESSAGE);
+                return;
+            }
         }
     }
 
