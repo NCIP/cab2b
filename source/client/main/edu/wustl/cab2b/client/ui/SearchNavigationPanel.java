@@ -306,7 +306,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                     return;
                 }
             } else if (searchCenterPanel.getSelectedCardIndex() == 2) {
-                CustomSwingWorker swingWorker = new CustomSwingWorker(SearchNavigationPanel.this) {
+                CustomSwingWorker swingWorker = new CustomSwingWorker(SearchNavigationPanel.this,
+                        SearchNavigationPanel.this.m_mainSearchPanel) {
 
                     protected void doNonUILogic() throws Exception {
                         // Get the Functional class for root and update query
