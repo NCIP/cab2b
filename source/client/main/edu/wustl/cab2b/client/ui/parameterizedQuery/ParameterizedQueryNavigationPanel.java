@@ -74,7 +74,7 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
     private class OrderViewButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
             if (parameterizedQueryMainPanel.getParameterConditionPanel().getCheckedAttributePanels(
-                                                                                                   parameterizedQueryMainPanel.getParameterConditionPanel()).size() > 0) {
+                                                                                                   parameterizedQueryMainPanel.getParameterConditionPanel().getConditionPanel()).size() > 0) {
                 ParameterizedQueryOrderPanel panel = new ParameterizedQueryOrderPanel(parameterizedQueryMainPanel);
                 parameterizedQueryMainPanel.getDialog().dispose();
                 panel.showInDialog();
