@@ -23,9 +23,10 @@ import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 
 /**
- * Panel situated at bottom side of ParameterizedQueryMainPanel  
+ * Panel situated at bottom side of ParameterizedQueryMainPanel
+ * 
  * @author deepak_shingan
- *
+ * 
  */
 public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
 
@@ -48,7 +49,7 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
     }
 
     /**
-     * Method to generate UI 
+     * Method to generate UI
      */
     private void iniGUI() {
         this.setLayout(new RiverLayout(5, 10));
@@ -74,13 +75,13 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
     private class OrderViewButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
             if (parameterizedQueryMainPanel.getParameterConditionPanel().getCheckedAttributePanels(
-                                                                                                   parameterizedQueryMainPanel.getParameterConditionPanel().getConditionPanel()).size() > 0) {
+                                                                                                   parameterizedQueryMainPanel.getParameterConditionPanel().getConditionPanel()).size() > 1) {
                 ParameterizedQueryOrderPanel panel = new ParameterizedQueryOrderPanel(parameterizedQueryMainPanel);
                 parameterizedQueryMainPanel.getDialog().dispose();
                 panel.showInDialog();
             } else {
                 JOptionPane.showMessageDialog(parameterizedQueryMainPanel,
-                                              "Please select condition checkbox before ordering.", "Warning",
+                                              "Please select atleast two conditions for order view.", "Warning",
                                               JOptionPane.ERROR_MESSAGE);
                 return;
             }

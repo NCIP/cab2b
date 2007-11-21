@@ -2,6 +2,7 @@ package edu.wustl.cab2b.client.ui.parameterizedQuery;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -67,14 +68,19 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
     private void addArrowButtons() {
         ImageIcon icon = createImageIcon("upArrow.gif");
         upArrowButton = new Cab2bButton(icon);
+        upArrowButton.setPreferredSize(new Dimension(100, 34));
         upArrowButton.addActionListener(new UpArrowActionListener());
+
         icon = createImageIcon("downArrow.gif");
         downArrowButton = new Cab2bButton(icon);
+        downArrowButton.setPreferredSize(new Dimension(100, 34));
         downArrowButton.addActionListener(new DownArrowActionListener());
         Cab2bPanel orderLabelPanel = new Cab2bPanel();
 
-        orderLabelPanel.add(" br", upArrowButton);
-        orderLabelPanel.add(" br", downArrowButton);
+        orderLabelPanel.setLayout(new BorderLayout());
+        orderLabelPanel.add(upArrowButton, BorderLayout.NORTH);
+        orderLabelPanel.add(new Cab2bLabel(" "), BorderLayout.CENTER);
+        orderLabelPanel.add(downArrowButton, BorderLayout.SOUTH);
         Cab2bPanel topPanelContainer = (Cab2bPanel) topConditionTitlePanel.getContentContainer();
         topPanelContainer.add("tab ", orderLabelPanel);
     }
@@ -102,8 +108,9 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
 
     /**
      * UpArrowButton ActionListener
+     * 
      * @author deepak_shingan
-     *
+     * 
      */
     private class UpArrowActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
@@ -121,7 +128,8 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
     }
 
     /**
-     *  Method to create order preview panel
+     * Method to create order preview panel
+     * 
      * @param conditionMap
      */
     private void creatOrderPreviewPanel(Map<IExpressionId, Collection<ICondition>> conditionMap) {
@@ -138,16 +146,16 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
         panelList = conditionPanel.getCheckedAttributePanels(conditionPanel.getConditionPanel());
         for (int index = 0; index < panelList.size(); index++) {
             AbstractTypePanel panel = panelList.get(index);
-            //uncheck all checkboxes 
+            // uncheck all checkboxes
             panel.setAttributeCheckBox(false);
 
-            //set changed/unchanged label for each attribute field 
+            // set changed/unchanged label for each attribute field
             panel.setAttributeDisplayName(panel.getAttributeDisplayNameTextField().getText());
 
-            //hide the attributeDisplayText box                    
+            // hide the attributeDisplayText box
             panel.remove(panel.getAttributeDisplayNameTextField());
 
-            //Now add to the condition panel
+            // Now add to the condition panel
             topConditionPanel.add("br ", panelList.get(index));
         }
         panelList = parameterizedQueryMainPanel.getParameterConditionPanel().getUnCheckedAttributePanels();
@@ -175,9 +183,8 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
     }
 
     /*
-     * DownArrowButton Action listener 
-     * @author deepak_shingan
-     *
+     * DownArrowButton Action listener @author deepak_shingan
+     * 
      */
     private class DownArrowActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
@@ -199,8 +206,8 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
             dialog.dispose();
             Cab2bPanel basePanel = parameterizedQueryMainPanel.getParameterConditionPanel().getConditionPanel();
             int totalPanelCount = topConditionPanel.getComponentCount();
-            //Keep in mind whenever you will add panel from topConditionPanel to 
-            //base panel it will automatically get removed from topConditionPanel 
+            // Keep in mind whenever you will add panel from topConditionPanel to
+            // base panel it will automatically get removed from topConditionPanel
             for (int index = 0; index < totalPanelCount; index++) {
 
                 if (topConditionPanel.getComponent(0) instanceof AbstractTypePanel) {
