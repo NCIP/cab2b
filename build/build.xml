@@ -66,9 +66,9 @@
 
 	<!--Properties set for checkstyle "PMD scans Java source code and looks for potential code problems"-->
 	<!--Read for more details http://pmd.sourceforge.net/cpd.html -->
-	<property name="pmd.dir" value="${base.dir}/pmd-3.8" />
-	<property name="pmd.report.dir" value="${pmd.dir}/reports" />
-	<property name="pmd.report.html" value="${pmd.report.dir}/caB2B_PMD_Report.html" />
+	<property name="pmd.jar" value="${base.dir}/lib/extra/pmd-4.0.jar" />
+	<property name="pmd.report.dir" value="${Reports.dir}/pmd" />
+	<property name="pmd.report.html" value="${pmd.report.dir}/cab2bPmdReport.html" />
 
 
 	<!--Properties set for checkstyle "Tools that generate report of code convention violations"-->
@@ -148,7 +148,13 @@
 
 	<!-- ================================================================================== -->
 	<target name="pmd" description="PMD scan Java source code and looks for potential code problems.">
-		<taskdef name="pmd" classpath="${pmd.dir}/lib/pmd-3.8.jar" classname="net.sourceforge.pmd.ant.PMDTask" />
+		<path id="pmd.classpath">
+			<fileset dir="lib/extra">
+				<include name="pmd-4.0.jar" />
+				<include name="jaxen-1.1.jar" />
+			</fileset>
+		</path>
+		<taskdef name="pmd" classpathref="pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask" />
 		<delete dir="${pmd.report.dir}" />
 		<mkdir dir="${pmd.report.dir}" />
 		<pmd shortFilenames="true">
@@ -522,7 +528,7 @@
 		<!-- echo message="false" file="${MailLogger.junittest}" / -->
 	</target>
 	<!-- ================================================================================== -->
-	<target name="nightly.build" depends="clean.all,run.unittests,javadoc">
+	<target name="nightly.build" depends="clean.all,pmd,javadoc,run.unittests">
 		<property name="MailLogger.properties.file" value="build\Mail.properties" />
 	</target>
 	<!-- ================================================================================== -->
