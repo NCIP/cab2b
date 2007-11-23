@@ -2,6 +2,7 @@ package edu.wustl.cab2b.client.ui.parameterizedQuery;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -53,8 +54,8 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
         cancelButton = new Cab2bButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-            dialog.dispose();
-            parameterizedQueryMainPanel.showInDialog();
+                dialog.dispose();
+                parameterizedQueryMainPanel.showInDialog();
             }
         });
         creatOrderPreviewPanel(parameterizedQueryMainPanel.getParameterizedQueryDataModel().getConditions());
@@ -68,12 +69,14 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
         ImageIcon icon = createImageIcon("upArrow.gif");
         upArrowButton = new Cab2bButton(icon);
         upArrowButton.setBorder(null);
+        upArrowButton.setPreferredSize(new Dimension(75, 20));
         upArrowButton.setBackground(Color.white);
         upArrowButton.addActionListener(new UpArrowActionListener());
 
         icon = createImageIcon("downArrow.gif");
         downArrowButton = new Cab2bButton(icon);
         downArrowButton.setBorder(null);
+        downArrowButton.setPreferredSize(new Dimension(75, 20));
         downArrowButton.setBackground(Color.white);
         downArrowButton.addActionListener(new DownArrowActionListener());
         Cab2bPanel orderLabelPanel = new Cab2bPanel();
@@ -122,7 +125,8 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
                     downPanel = (AbstractTypePanel) topConditionPanel.getComponent(index);
                     topConditionPanel.remove(downPanel);
                     topConditionPanel.add(downPanel, "br ", index - 1);
-                    topConditionPanel.updateUI();
+                    topConditionPanel.revalidate();
+                    topConditionPanel.repaint();
                 }
             }
         }
@@ -199,7 +203,8 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
                 if (idxs[i] < count - 1) {
                     downPanel = (AbstractTypePanel) topConditionPanel.getComponent(idxs[i]);
                     topConditionPanel.setComponentZOrder(downPanel, idxs[i] + 1);
-                    topConditionPanel.updateUI();
+                    topConditionPanel.revalidate();
+                    topConditionPanel.repaint();
                 }
             }
         }
