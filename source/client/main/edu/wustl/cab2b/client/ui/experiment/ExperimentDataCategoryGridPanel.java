@@ -183,7 +183,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     public void refreshTable(List<IRecord> recordList) {
         this.removeAll();
         this.spreadSheetViewPanel.refreshView(recordList);
-        this.spreadSheetViewPanel.getDataTable().addFocusListener(new TableFocusListener());
+        //this.spreadSheetViewPanel.getDataTable().addFocusListener(new TableFocusListener());
 
         refreshUI();
         updateUI();

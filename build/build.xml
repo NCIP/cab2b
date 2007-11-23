@@ -8,6 +8,8 @@
 	<property file="conf/server.properties" />
 	<property file="build/unittest.properties" />
 	
+        <property name="build.compiler" value="javac1.5" />
+        <property name="ant.build.javac.target" value="1.5" /> 
 	<property name="base.dir" value="." />
 	<property name="build.dir" value="${base.dir}/build" />
 	<property name="extra_lib.dir" value="${base.dir}/extra_lib" />
@@ -196,7 +198,10 @@
 	<!-- ================================================================================== -->
 	<target name="compile.common" description="Compiles the common code without cleaning">
 		<mkdir dir="${common.classes.dir}" />
-		<javac srcdir="${common.src}" destdir="${common.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="common.classpath" failonerror="true" nowarn="on" />
+		<javac srcdir="${common.src}" destdir="${common.classes.dir}" 
+                fork="true" memoryMaximumSize="1024m" includes="**/*.java" 
+                debug="on" deprecation="true" classpathref="common.classpath" 
+                failonerror="true" nowarn="on" target="1.5"/>
 	</target>
 	<!-- ================================================================================== -->
 	<target name="compile.client" depends="compile.common" description="Compiles the client code without cleaning">
@@ -216,7 +221,7 @@
 				<include name="**/*.class" />
 			</fileset>
 		</copy>
-		<javac srcdir="${server.src}" destdir="${server.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="server.classpath" failonerror="true" nowarn="on" />
+		<javac srcdir="${server.src}" destdir="${server.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="server.classpath" failonerror="true" nowarn="on" target="1.5"/>
 
 		<copy todir="${server.classes.dir}">
 			<fileset dir="${server.src}">
@@ -762,6 +767,15 @@
 		</jar>
 		<jar basedir="${workArea.dir}/server/classes" destfile="query-common.jar">
 			<include name="**/queryengine/resulttransformers/*.*" />
+		</jar>
+	</target>
+        
+	<target name="build.project.jar" depends="compile.all">
+		<jar basedir="${workArea.dir}/common/classes" destfile="cab2b-common.jar">
+			<include name="**/*.*" />
+		</jar>
+		<jar basedir="${workArea.dir}/server/classes" destfile="cab2b-server.jar">
+			<include name="**/*.*" />
 		</jar>
 	</target>
 </project>

@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
+import edu.wustl.cab2b.client.ui.controls.sheet.JSheet;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.DETAILS_COLUMN_IMAGE;
 
 import java.awt.Container;
@@ -38,6 +39,9 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
     private static final long serialVersionUID = 1L;
 
     private Cab2bTable table;
+    
+    private JSheet spreadsheet = new JSheet();
+
 
     private ImageIcon defaultCellImage = new ImageIcon(
             this.getClass().getClassLoader().getResource(DETAILS_COLUMN_IMAGE));
@@ -105,7 +109,7 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
      * @see edu.wustl.cab2b.client.ui.controls.Cab2bPanel#doInitialization()
      */
     public void doInitialization() {
-        initializeTableData();
+        //initializeTableData();
         initializeGUI();
     }
 
@@ -113,6 +117,17 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
      * Initailizes the UI components
      */
     private void initializeGUI() {
+        this.setBorder(null);
+        this.removeAll();
+        
+        
+        
+        spreadsheet.setReadOnlytDataModel(new RecordsTableModel(records));
+        this.add("br hfill vfill", spreadsheet);
+    
+    }
+
+    private void initializeGUIOld() {
         this.setBorder(null);
         this.removeAll();
 
