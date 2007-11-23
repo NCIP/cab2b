@@ -2,7 +2,6 @@ package edu.wustl.cab2b.client.ui.parameterizedQuery;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -54,8 +53,8 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
         cancelButton = new Cab2bButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                dialog.dispose();
-                parameterizedQueryMainPanel.showInDialog();
+            dialog.dispose();
+            parameterizedQueryMainPanel.showInDialog();
             }
         });
         creatOrderPreviewPanel(parameterizedQueryMainPanel.getParameterizedQueryDataModel().getConditions());
@@ -68,12 +67,14 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
     private void addArrowButtons() {
         ImageIcon icon = createImageIcon("upArrow.gif");
         upArrowButton = new Cab2bButton(icon);
-        upArrowButton.setPreferredSize(new Dimension(100, 34));
+        upArrowButton.setBorder(null);
+        upArrowButton.setBackground(Color.white);
         upArrowButton.addActionListener(new UpArrowActionListener());
 
         icon = createImageIcon("downArrow.gif");
         downArrowButton = new Cab2bButton(icon);
-        downArrowButton.setPreferredSize(new Dimension(100, 34));
+        downArrowButton.setBorder(null);
+        downArrowButton.setBackground(Color.white);
         downArrowButton.addActionListener(new DownArrowActionListener());
         Cab2bPanel orderLabelPanel = new Cab2bPanel();
 
@@ -189,12 +190,15 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
     private class DownArrowActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
             Map<Integer, AbstractTypePanel> panelMap = getAllSelectedPanel();
-            for (Integer index : panelMap.keySet()) {
-                AbstractTypePanel downPanel;
-                if (index + 1 != topConditionPanel.getComponentCount()) {
-                    downPanel = (AbstractTypePanel) topConditionPanel.getComponent(index);
-                    topConditionPanel.remove(downPanel);
-                    topConditionPanel.add(downPanel, "br ", index + 1);
+            AbstractTypePanel downPanel = null;
+
+            Integer idxs[] = new Integer[panelMap.size()];
+            idxs = panelMap.keySet().toArray(idxs);
+            int count = topConditionPanel.getComponentCount();
+            for (int i = idxs.length - 1; i >= 0; i--) {
+                if (idxs[i] < count - 1) {
+                    downPanel = (AbstractTypePanel) topConditionPanel.getComponent(idxs[i]);
+                    topConditionPanel.setComponentZOrder(downPanel, idxs[i] + 1);
                     topConditionPanel.updateUI();
                 }
             }
