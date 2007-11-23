@@ -326,7 +326,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             DefaultSpreadSheetViewPanel defaultSpreadSheetViewPanel = new DefaultSpreadSheetViewPanel(true, false,
                     recordList, true);
             defaultSpreadSheetViewPanel.doInitialization();
-            defaultSpreadSheetViewPanel.getDataTable().addFocusListener(new TableFocusListener());
+            //defaultSpreadSheetViewPanel.getDataTable().addFocusListener(new TableFocusListener());
             analysisViewPanel.add("br center hfill vfill", defaultSpreadSheetViewPanel);
 
             analysisView = analysisViewPanel;
@@ -352,7 +352,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             detailViewPanel.add("right ", closeButton);
 
             // Add SpreadsheetView
-            defaultDetailedPanel.getDataTable().addFocusListener(new TableFocusListener(false));
+            //defaultDetailedPanel.getDataTable().addFocusListener(new TableFocusListener(false));
             defaultDetailedPanel.getDataTable().getTableHeader().addMouseListener(
                                                                                   new HeaderMouseListener(
                                                                                           defaultDetailedPanel.getDataTable()));
