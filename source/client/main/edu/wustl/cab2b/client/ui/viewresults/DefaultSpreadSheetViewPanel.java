@@ -1,6 +1,5 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
-import edu.wustl.cab2b.client.ui.controls.sheet.JSheet;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.DETAILS_COLUMN_IMAGE;
 
 import java.awt.Container;
@@ -8,6 +7,8 @@ import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
+import edu.wustl.cab2b.client.ui.controls.sheet.JSheet;
 import edu.wustl.cab2b.client.ui.experiment.ApplyFilterPanel;
 import edu.wustl.cab2b.client.ui.experiment.ExperimentDataCategoryGridPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
@@ -39,9 +41,8 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
     private static final long serialVersionUID = 1L;
 
     private Cab2bTable table;
-    
-    private JSheet spreadsheet = new JSheet();
 
+    private JSheet spreadsheet = new JSheet();
 
     private ImageIcon defaultCellImage = new ImageIcon(
             this.getClass().getClassLoader().getResource(DETAILS_COLUMN_IMAGE));
@@ -65,45 +66,49 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
 
     private Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
 
+    private ExperimentDataCategoryGridPanel expGridPanel = null;
+
     public DefaultSpreadSheetViewPanel(
             Boolean showFilterPanel,
             Boolean showCheckBox,
             List<IRecord> records,
-            Boolean showDefaultTable) {
+            Boolean showDefaultTable,
+            ExperimentDataCategoryGridPanel expGridPanel) {
         this.showFilterPanel = showFilterPanel;
         this.showCheckBox = showCheckBox;
         this.showDefaultTable = showDefaultTable;
         this.setName("DataListDetailedPanel");
         this.records = records;
+        this.expGridPanel = expGridPanel;
     }
 
-    public DefaultSpreadSheetViewPanel(
-            Boolean showFilterPanel,
-            Boolean showCheckBox,
-            IRecord record,
-            Boolean showDefaultTable) {
-        this.showFilterPanel = showFilterPanel;
-        this.showCheckBox = showCheckBox;
-        this.showDefaultTable = showDefaultTable;
-        this.setName("DefaultSpreadSheetViewPanel");
-        this.records = Collections.singletonList(record);
-    }
+    /* public DefaultSpreadSheetViewPanel(
+     Boolean showFilterPanel,
+     Boolean showCheckBox,
+     IRecord record,
+     Boolean showDefaultTable) {
+     this.showFilterPanel = showFilterPanel;
+     this.showCheckBox = showCheckBox;
+     this.showDefaultTable = showDefaultTable;
+     this.setName("DefaultSpreadSheetViewPanel");
+     this.records = Collections.singletonList(record);
+     }*/
 
     public DefaultSpreadSheetViewPanel(List<IRecord> records) {
-        this(false, true, records, false);
+        this(false, true, records, false, null);
     }
 
     public DefaultSpreadSheetViewPanel(Boolean showCheckBox, List<IRecord> records) {
-        this(false, showCheckBox, records, false);
+        this(false, showCheckBox, records, false, null);
     }
 
-    public DefaultSpreadSheetViewPanel(IRecord record) {
-        this(false, true, record, false);
-    }
+    /*    public DefaultSpreadSheetViewPanel(IRecord record) {
+     this(false, true, record, false);
+     }
 
-    public DefaultSpreadSheetViewPanel(Boolean showCheckBox, IRecord record) {
-        this(false, showCheckBox, record, false);
-    }
+     public DefaultSpreadSheetViewPanel(Boolean showCheckBox, IRecord record) {
+     this(false, showCheckBox, record, false);
+     }*/
 
     /**
      * @see edu.wustl.cab2b.client.ui.controls.Cab2bPanel#doInitialization()
@@ -119,12 +124,11 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
     private void initializeGUI() {
         this.setBorder(null);
         this.removeAll();
-        
-        
-        
+
         spreadsheet.setReadOnlytDataModel(new RecordsTableModel(records));
+        spreadsheet.addPropertyChangeListener(new MagnifierGlassListener());
         this.add("br hfill vfill", spreadsheet);
-    
+
     }
 
     private void initializeGUIOld() {
@@ -208,6 +212,13 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
         }
     }
 
+    public void setJSheetConsoleVisible(boolean value) {
+        spreadsheet.setConsoleVisible(value);
+    }
+
+    public void setJSheetMagnifyingGlassVisible(boolean value) {
+        spreadsheet.setMagnifyingGlassVisible(value);
+    }
     /**
      * @return
      */
@@ -268,8 +279,8 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
             sb.append(text);
         }
         sb.append("\n");
-        
-        int []selectedRows = table.getSelectedRows();
+
+        int[] selectedRows = table.getSelectedRows();
 
         // Write the actual column values to file
         for (int i = 0; i < selectedRows.length; i++) {
@@ -301,6 +312,18 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
 
     public ApplyFilterPanel getFilterPanel() {
         return applyFilterPanel;
+    }
+
+    class MagnifierGlassListener implements PropertyChangeListener {
+
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (evt.getPropertyName().equals(spreadsheet.EVENT_MAGNIFYING_GLASS_CLICKED)) {
+                Integer rowNumber = (Integer) evt.getNewValue();
+                DefaultDetailedPanel defaultDetailedPanel = ResultPanelFactory.getResultDetailedPanel(records.get(rowNumber.intValue()));
+                expGridPanel.addDetailTabPanel("Details_" + (rowNumber.intValue() + 1), defaultDetailedPanel);
+            }
+        }
+
     }
 
     class IconMouseListner extends MouseAdapter {
