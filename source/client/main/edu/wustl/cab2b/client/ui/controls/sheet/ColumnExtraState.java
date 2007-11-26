@@ -124,7 +124,10 @@ class ColumnExtraState<T extends Comparable> {
     public void setSampleSortedValues(TableModel tblModel, int colIndex) {
         this.sampleSortedValues.clear();
         for (int r = 0; r < tblModel.getRowCount(); r++) {
-            sampleSortedValues.add((T) tblModel.getValueAt(r, colIndex));
+            T sampleVal = (T) tblModel.getValueAt(r, colIndex);
+            if( null != sampleVal)
+                //  Nulls are NOT kept as sample values...
+                sampleSortedValues.add( sampleVal);
         }
     }
 
