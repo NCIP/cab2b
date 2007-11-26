@@ -102,6 +102,8 @@ public class TreePanel extends Cab2bPanel {
 
                             dataListDetailedPanel = new DefaultSpreadSheetViewPanel(records);
                             dataListDetailedPanel.doInitialization();
+                            ((DefaultSpreadSheetViewPanel) dataListDetailedPanel).setJSheetMagnifyingGlassVisible(false);
+                            ((DefaultSpreadSheetViewPanel) dataListDetailedPanel).setJSheetConsoleVisible(false);
                         } else {
                             //show details of the selected node only.
                             dataListDetailedPanel = ResultPanelFactory.getResultDetailedPanel(dataRow.getRecord());
@@ -115,7 +117,7 @@ public class TreePanel extends Cab2bPanel {
                 }
             }
         });
-		JScrollPane scrollPane = new JScrollPane(tree);
+        JScrollPane scrollPane = new JScrollPane(tree);
         scrollPane.setBorder(null);
         this.add("br hfill vfill", scrollPane);
         this.setBorder(new CustomizableBorder(new Insets(1, 1, 1, 1), true, true));
@@ -125,7 +127,7 @@ public class TreePanel extends Cab2bPanel {
      * Method to set the default selection for the my data list tree
      * view if the tree contains valid data
      */
-    public void selectTreeRoot() {        
+    public void selectTreeRoot() {
         // Finally set the appropriate values
         Object[] path = new Object[2];
         path[0] = tree.getModel().getRoot();
@@ -141,7 +143,7 @@ public class TreePanel extends Cab2bPanel {
      * Method to set the selection for the my data list tree
      * view if the tree contains valid data
      */
-    public void selectTreeRoot(final IDataRow row) {        
+    public void selectTreeRoot(final IDataRow row) {
         DefaultMutableTreeNode nodeFound = CommonUtils.searchNode(
                                                                   (DefaultMutableTreeNode) tree.getModel().getRoot(),
                                                                   row);

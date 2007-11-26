@@ -255,7 +255,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         experimentDataPanel.setName("experimentDataPanel");
         experimentDataPanel.setBorder(null);
 
-        spreadSheetViewPanel = new DefaultSpreadSheetViewPanel(true, false, new ArrayList<IRecord>(), true);
+        spreadSheetViewPanel = new DefaultSpreadSheetViewPanel(true, false, new ArrayList<IRecord>(), true, this);
         spreadSheetViewPanel.doInitialization();
 
         analysisDataPanel = new Cab2bPanel();
@@ -324,7 +324,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             // Add SpreadsheetView
             List<IRecord> recordList = userObjectWrapper.getUserObject();
             DefaultSpreadSheetViewPanel defaultSpreadSheetViewPanel = new DefaultSpreadSheetViewPanel(true, false,
-                    recordList, true);
+                    recordList, true, this);
             defaultSpreadSheetViewPanel.doInitialization();
             //defaultSpreadSheetViewPanel.getDataTable().addFocusListener(new TableFocusListener());
             analysisViewPanel.add("br center hfill vfill", defaultSpreadSheetViewPanel);
