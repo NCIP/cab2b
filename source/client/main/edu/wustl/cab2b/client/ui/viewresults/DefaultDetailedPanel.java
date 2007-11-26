@@ -48,7 +48,11 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
             String formattedString = CommonUtils.getFormattedString(attribute.getName());
             Vector<Object> row = new Vector<Object>();
             row.add(formattedString);
-            row.add(record.getValueForAttribute(attribute).toString());
+            Object value = record.getValueForAttribute(attribute);
+            if (value == null)
+                row.add("");
+            else
+                row.add(value.toString());            
             tableData.add(row);
         }
 
