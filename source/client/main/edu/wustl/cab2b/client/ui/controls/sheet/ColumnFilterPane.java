@@ -584,8 +584,8 @@ class ColumnFilterPane extends javax.swing.JPanel
 
     void reApplyFilter() {
         EventQueue.invokeLater(new Runnable() {
-
                 public void run() {
+                    System.out.println("Setting Filter: "+universalFilter);
                     ((TableRowSorter) tblData.getRowSorter()).setRowFilter(universalFilter);
                 }
                 });
@@ -761,6 +761,7 @@ class ColumnFilterPane extends javax.swing.JPanel
 
             //  For each ColumnChk if filter condition is passed...
             for (int colIdx = 0; colIdx < entry.getValueCount(); colIdx++) {
+                //  Chk if there are any visible columns...
                 if (tblModelIdx2CES.size() <= 0) {
                     //  unconditionally include everything...
                     return true;
@@ -768,7 +769,7 @@ class ColumnFilterPane extends javax.swing.JPanel
 
                 ColumnExtraState ces = tblModelIdx2CES.get(colIdx);
                 if (!ces.isFilterActive()) {
-                    //  Skip this column, assume filter condition passed.
+                    //  No Filter ser for this column: Skip this column, assume filter condition passed.
                     continue;
                 }
 
@@ -794,15 +795,21 @@ class ColumnFilterPane extends javax.swing.JPanel
             } else {
                 //  use some alternative comparision method, Right NOW include any how, with warning...
                 rangeFilterInclude = true;
-                System.out.println(getClass().getName() + ": [WARNING]: Range Filter Failed on value=" + value + ", because, it is NOT comparable." +
-                    "\nFilteration may NOT be correct.");
+                if( null != value){
+                    //  [WARNING]: A Non-Null value that cannot be compared...
+                    System.out.println(getClass().getName() + ": [WARNING]: Range Filter Failed on value=" + value + ", because, it is NOT comparable." +
+                        "\nFilteration may NOT be correct.");
+                }
             }
 
             //  Perform Pattern Filter...
             boolean patternFilterInclude = true;
             if (ces.isPatternFilterModelExists()) {
                 DefaultPatternFilter pf = ces.getPatternFilterModel();
-                patternFilterInclude = pf.include(value.toString());
+                String strVal = "";
+                if( null != value)
+                    strVal = value.toString();
+                patternFilterInclude = pf.include( strVal);
             }
 
             if (ces.joinFilterByAnd) {

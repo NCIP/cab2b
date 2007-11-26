@@ -45,7 +45,8 @@ public class DefaultPatternFilter implements PatternFilterModel {
         }
 
         //  String based search...
-        boolean found = userSpecifiedStr.indexOf(value) >= 0;
+        boolean found = value.indexOf( userSpecifiedStr) >= 0;
+//        boolean found = userSpecifiedStr.indexOf(value) >= 0;
         if (isStrIncludeTypeFilter) {
             return found;
         }
@@ -83,7 +84,8 @@ public class DefaultPatternFilter implements PatternFilterModel {
 
     public void setSearchStringFilter(String patternStr, boolean includeType) {
         isRegExp = false;
-        userSpecifiedStr = patternStr;
+        //  Keep lower case version, will perform case-insensitive search...
+        userSpecifiedStr = patternStr.toLowerCase();
         isStrIncludeTypeFilter = includeType;
 
         //  clear extra state...
