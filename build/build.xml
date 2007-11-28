@@ -70,8 +70,8 @@
 	<!--Read for more details http://pmd.sourceforge.net/cpd.html -->
 	<property name="pmd.jar" value="${base.dir}/lib/extra/pmd-4.0.jar" />
 	<property name="pmd.report.dir" value="${Reports.dir}/pmd" />
-	<property name="pmd.report.html" value="${pmd.report.dir}/cab2bPmdReport.html" />
-
+	<property name="pmd.report.file.full" value="${pmd.report.dir}/PmdFullReport.html" />
+	<property name="pmd.report.file.classwise" value="${pmd.report.dir}/PmdClasswiseReport.html" />
 
 	<!--Properties set for checkstyle "Tools that generate report of code convention violations"-->
 	<property name="checkstyle.dir" value="${base.dir}/checkstyle" />
@@ -177,7 +177,8 @@
 			<ruleset>unusedcode</ruleset>
 			<ruleset>sunsecure</ruleset>
 
-			<formatter type="html" toFile="${pmd.report.html}" />
+			<formatter type="summaryhtml" toFile="${pmd.report.file.full}" />
+			<formatter type="vbhtml" toFile="${pmd.report.file.classwise}" />
 			<fileset dir="${common.src}" includes="**/*.java" />
 			<fileset dir="${server.src}" includes="**/*.java" />
 			<fileset dir="${client.src}" includes="**/*.java" />
