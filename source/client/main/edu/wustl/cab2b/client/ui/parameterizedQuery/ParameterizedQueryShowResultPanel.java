@@ -158,6 +158,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
             mainSearchPanel.setQueryObject(clientQueryBuilder);
             mainSearchPanel.getCenterPanel().getAddLimitPanel().setQueryObject(clientQueryBuilder);
             mainSearchPanel.getCenterPanel().setSelectedCardIndex(2);
+            mainSearchPanel.setParaQueryShowResultButtonPressed(true);
 
             // Fire the query by clicking (simulating) Next button
             SearchNavigationPanel bottomPanel = mainSearchPanel.getBottomPanel();

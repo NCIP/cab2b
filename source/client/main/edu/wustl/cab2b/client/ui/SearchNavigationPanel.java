@@ -14,6 +14,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.dag.MainDagPanel;
 import edu.wustl.cab2b.client.ui.experiment.NewExperimentDetailsPanel;
+import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryDataModel;
 import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryMainPanel;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
@@ -324,7 +325,13 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                                                               SearchNavigationPanel.this.m_mainSearchPanel.getParent(),
                                                               "No result found.", "",
                                                               JOptionPane.INFORMATION_MESSAGE);
-                                gotoAddLimitPanel();
+                                if (SearchNavigationPanel.this.m_mainSearchPanel.isParaQueryShowResultButtonPressed()) {
+                                    //close the search wizard                                    
+                                    NewWelcomePanel.mainFrame.closeSearchWizardDialog();
+                                    return;
+                                } else {
+                                    gotoAddLimitPanel();
+                                }
                             } else {
                                 ViewSearchResultsPanel viewSearchResultsPanel = new ViewSearchResultsPanel(
                                         queryResults, m_mainSearchPanel);

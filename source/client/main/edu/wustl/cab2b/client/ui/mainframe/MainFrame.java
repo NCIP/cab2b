@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.MissingResourceException;
 
 import javax.swing.BorderFactory;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
@@ -72,6 +73,8 @@ public class MainFrame extends JXFrame {
     private MainFrameStackedBoxPanel lefthandStackedBox;
 
     private JSplitPane splitPane;
+
+    private JDialog searchWizardDialog;
 
     // fields used by the status bar
     public static enum Status {
@@ -328,4 +331,23 @@ public class MainFrame extends JXFrame {
     public static void setUserName(String userName) {
         MainFrame.userName = userName;
     }
+
+    /**
+     * @return the searchWizardDialog
+     */
+    public JDialog getSearchWizardDialog() {
+        return searchWizardDialog;
+    }
+
+    /**
+     * @param searchWizardDialog the searchWizardDialog to set
+     */
+    public void setSearchWizardDialog(JDialog searchWizardDialog) {
+        this.searchWizardDialog = searchWizardDialog;
+    }
+
+    public void closeSearchWizardDialog() {
+        searchWizardDialog.dispose();
+    }
+
 }

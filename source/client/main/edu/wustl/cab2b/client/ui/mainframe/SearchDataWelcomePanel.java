@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.mainframe;
 import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.SEARCH_FRAME_TITLE;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -7,8 +8,11 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.BoxLayout;
+import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+
 import edu.wustl.cab2b.client.ui.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
@@ -16,7 +20,6 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.common.util.global.ApplicationProperties;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * This is a Search data welcome panel, which should be visibal when
@@ -68,9 +71,10 @@ public class SearchDataWelcomePanel extends Cab2bPanel{
 					// Update the variable for latest screen dimension from the toolkit, this is to handle the situations were
 					// Application is started and then screen resolution is changed, but the variable stiil holds old resolution size.
 					MainFrame.mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
-					Dimension dimension = MainFrame.mainframeScreenDimesion;			
-					
-					WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel, title, new Dimension((int)(dimension.width * 0.90), (int)(dimension.height * 0.85)), true, true);
+					Dimension dimension = MainFrame.mainframeScreenDimesion;				
+                    JDialog searchWizard = WindowUtilities.setInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel, title, new Dimension((int)(dimension.width * 0.90), (int)(dimension.height * 0.85)), true, true);
+                    mainFrame.setSearchWizardDialog(searchWizard);
+                    searchWizard.setVisible(true);
 					GlobalNavigationPanel.mainSearchPanel.getDataList().clear();
 					GlobalNavigationPanel.mainSearchPanel = null;			
 				}			

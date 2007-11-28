@@ -23,6 +23,7 @@ import java.util.Date;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 
@@ -30,7 +31,6 @@ import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXPanel;
 
-import edu.wustl.cab2b.client.ui.AdminCDCPanel;
 import edu.wustl.cab2b.client.ui.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
@@ -219,7 +219,7 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
             tabButtons[0].setIcon(new ImageIcon(tabsImagesUnPressed[0]));
             tabButtons[1].setIcon(new ImageIcon(tabsImagesPressed[1]));
             tabButtons[2].setIcon(new ImageIcon(tabsImagesUnPressed[2]));
-            
+
             initializeMainSearchPanel();
 
             if (GlobalNavigationPanel.mainSearchPanel != null) {
@@ -237,7 +237,7 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
             }
             tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
         } else if (button == tabButtons[2]) {
-        	//AdminCDCPanel adminCDCPanel= new AdminCDCPanel();
+            //AdminCDCPanel adminCDCPanel= new AdminCDCPanel();
             tabButtons[0].setIcon(new ImageIcon(tabsImagesUnPressed[0]));
             tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
             tabButtons[2].setIcon(new ImageIcon(tabsImagesPressed[2]));
@@ -249,11 +249,10 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         this.updateUI();
         this.repaint();
     }
-    
+
     public void initializeMainSearchPanel() {
         GlobalNavigationPanel.mainSearchPanel = new MainSearchPanel();
-        Dimension relDimension = CommonUtils.getRelativeDimension(MainFrame.mainframeScreenDimesion, 0.90f,
-                                                                  0.85f);
+        Dimension relDimension = CommonUtils.getRelativeDimension(MainFrame.mainframeScreenDimesion, 0.90f, 0.85f);
         GlobalNavigationPanel.mainSearchPanel.setPreferredSize(relDimension);
         GlobalNavigationPanel.mainSearchPanel.setSize(relDimension);
     }
@@ -268,8 +267,11 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         Dimension dimension = MainFrame.mainframeScreenDimesion;
         final String title = ApplicationProperties.getValue(SEARCH_FRAME_TITLE);
 
-        WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel, title, new Dimension(
-                (int) (dimension.width * 0.90), (int) (dimension.height * 0.85)), true, true);
+        JDialog searchDialog = WindowUtilities.setInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel,
+                                                           title, new Dimension((int) (dimension.width * 0.90),
+                                                                   (int) (dimension.height * 0.85)), true, true);
+        mainFrame.setSearchWizardDialog(searchDialog);
+        searchDialog.setVisible(true);
     }
 
 }

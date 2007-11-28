@@ -36,13 +36,15 @@ public class MainSearchPanel extends Cab2bPanel {
     /** Reference to datalist metadata of the current datalist.  */
     public static DataListMetadata savedDataListMetadata = null;
 
+    private boolean isParaQueryShowResultButtonPressed = false;
+
     /**
      * @return Returns the queryObject.
      */
     public IClientQueryBuilderInterface getQueryObject() {
         return queryObject;
     }
-    
+
     public SearchNavigationPanel getBottomPanel() {
         return m_BottomPanel;
     }
@@ -114,6 +116,20 @@ public class MainSearchPanel extends Cab2bPanel {
         dialog.setTitle("Search Data");
         dialog.getContentPane().add(searchPanel);
         dialog.setVisible(true);
+    }
+
+    /**
+     * @return the isParaQueryShowResultButtonPressed
+     */
+    public boolean isParaQueryShowResultButtonPressed() {
+        return isParaQueryShowResultButtonPressed;
+    }
+
+    /**
+     * @param isParaQueryShowResultButtonPressed the isParaQueryShowResultButtonPressed to set
+     */
+    public void setParaQueryShowResultButtonPressed(boolean isParaQueryShowResultButtonPressed) {
+        this.isParaQueryShowResultButtonPressed = isParaQueryShowResultButtonPressed;
     }
 
 }
