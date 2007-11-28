@@ -40,6 +40,7 @@ public class DataServicesTest extends TestCase {
 
     public void testCaArray() {
         CQLQuery cql = getSimpleQuery();
+        cql.getTarget().setName("gov.nih.nci.mageom.domain.Experiment.Experiment");
         cql.getTarget().getAttribute().setName("name");
         cql.getTarget().getAttribute().setPredicate(Predicate.LIKE);
         cql.getTarget().getAttribute().setValue("%asbestos%");
