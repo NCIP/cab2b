@@ -10,7 +10,6 @@ import java.awt.event.MouseMotionAdapter;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -219,6 +218,7 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
     public void setJSheetMagnifyingGlassVisible(boolean value) {
         spreadsheet.setMagnifyingGlassVisible(value);
     }
+
     /**
      * @return
      */
