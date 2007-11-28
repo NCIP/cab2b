@@ -47,8 +47,6 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
 
     private Vector<String> tHeader = new Vector<String>();
 
-    private Cab2bButton deleteButton;
-
     private ExperimentOpenPanel expPanel = null;
 
     public ExperimentDetailsPanel() {
@@ -113,24 +111,11 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
         JScrollPane jScrollPane = initExperimentTableWithScrolls();
         this.add("br hfill vfill", jScrollPane);
 
-        Cab2bPanel deleteButtonPanel = new Cab2bPanel(new RiverLayout(5, 5));
-        deleteButtonPanel.add(deleteButton);
-        deleteButtonPanel.add("br", new JLabel(""));
-
-        this.add("br", deleteButtonPanel);
         this.updateUI();
     }
 
     private void initGUI() {
         this.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
-
-        deleteButton = new Cab2bButton("Delete");
-        deleteButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-
-            }
-        });
-        deleteButton.setEnabled(false);
         
         expTable = new Cab2bTable(true, new Object[][] {}, tableHeader);
         HighlighterPipeline highlighters = new HighlighterPipeline();
