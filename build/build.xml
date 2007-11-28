@@ -533,7 +533,7 @@
 		<!-- echo message="false" file="${MailLogger.junittest}" / -->
 	</target>
 	<!-- ================================================================================== -->
-	<target name="nightly.build" depends="clean.all,pmd,javadoc,run.unittests">
+	<target name="nightly.build" depends="clean.all,pmd,run.unittests,javadoc">
 		<property name="MailLogger.properties.file" value="build\Mail.properties" />
 	</target>
 	<!-- ================================================================================== -->
