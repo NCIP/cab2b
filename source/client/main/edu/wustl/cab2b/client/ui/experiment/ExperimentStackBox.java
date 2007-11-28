@@ -290,7 +290,7 @@ public class ExperimentStackBox extends Cab2bPanel {
 		dataFilterPanel.setPreferredSize(new Dimension(250, 200));
 		dataFilterPanel.setOpaque(false);
 		dataFilterPanel.setBorder(null);
-		stackedBox.addBox("Filter Data ", dataFilterPanel, FILTER_DATA, true);
+		stackedBox.addBox("Applied Filters", dataFilterPanel, FILTER_DATA, true);
 
 		// Adding Analyse data panel
 		analyseDataPanel = new Cab2bPanel(new RiverLayout(0, 5));
