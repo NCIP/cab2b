@@ -541,6 +541,12 @@
 		<mkdir dir="${buildReports.dir}" />
 		<copy file="build\log.xsl" tofile="${buildReports.dir}\log.xsl" />
 		<copy file="build\index.html" todir="${Reports.dir}" overwrite="true" />
+		<mkdir dir="${Reports.dir}/images" />
+		<copy overwrite="true" todir="${Reports.dir}/images">
+			<fileset dir="${build.dir}/images">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
 		<mkdir dir="${Reports.dir}/WEB-INF" />
 		<zip basedir="${workArea.dir}/reports" destfile="${workArea.dir}/${TODAY}.zip" />
 	</target>
@@ -548,9 +554,9 @@
 
 	<target name="jboss.start">
 		<java jar="${jboss.home}/bin/run.jar" fork="true">
-			<jvmarg value="-Xms256m" />
-			<jvmarg value="-Xmx1024m" />
-			<jvmarg value="-XX:MaxPermSize=256m" />
+			<jvmarg value="-Xms128m" />
+			<jvmarg value="-Xmx512m" />
+			<jvmarg value="-XX:MaxPermSize=128m" />
 			<jvmarg value="-Xss256k" />
 			<classpath>
 				<fileset dir="${jboss.home}/lib">
