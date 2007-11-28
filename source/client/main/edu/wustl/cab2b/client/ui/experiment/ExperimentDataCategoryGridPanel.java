@@ -105,8 +105,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
     final public String[] ANALYSIS_TABLE_HEADERS = new String[] { "Data Category", "Analysis Title", "Date", "Status" };
 
-    /** Previous button */
-    private Cab2bButton prevButton;
 
     /** Button to save data category */
     private Cab2bButton saveDataCategoryButton;
@@ -266,8 +264,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         saveDataCategoryButton.setPreferredSize(new Dimension(160, 22));
         saveDataCategoryButton.addActionListener(new SaveCategoryActionListener(this));
 
-        prevButton = new Cab2bButton("Previous");
-        prevButton.setEnabled(false);
         this.setBorder(null);
         refreshUI();
     }
@@ -292,7 +288,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         this.add(tabComponent, BorderLayout.CENTER);
 
         Cab2bPanel bottomPanel = new Cab2bPanel(new RiverLayout(5, 5));
-        bottomPanel.add(prevButton);
+       // bottomPanel.add(prevButton);
         bottomPanel.add("br", new JLabel(""));
         bottomPanel.setBorder(null);
         this.add(bottomPanel, BorderLayout.SOUTH);
