@@ -1,49 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="caB2B" basedir=".." default="compile.all">
-	<!-- 
-	================================================================
+	<!-- ===============================================================
 			Build file for caB2B project
-			Author : Chandrakant Talele
 	================================================================	-->
 	<property file="conf/server.properties" />
 	<property file="build/unittest.properties" />
-	
-        <property name="build.compiler" value="javac1.5" />
-        <property name="ant.build.javac.target" value="1.5" /> 
-	<property name="base.dir" value="." />
-	<property name="build.dir" value="${base.dir}/build" />
-	<property name="extra_lib.dir" value="${base.dir}/extra_lib" />
-	<property name="common.lib.dir" value="${base.dir}/lib/common" />
+
+	<property name="build.compiler" value="javac1.5" />
+	<property name="ant.build.javac.target" value="1.5" />
 	
 	<property name="jboss.common.lib.dir" location="${jboss.home}/server/default/lib" />
 	<property name="jboss.deploy.dir" location="${jboss.home}/server/default/deploy" />
 	<property name="jboss.log.dir" location="${jboss.home}/server/default/log" />
 
 	<property name="common.src" location="source/common/main" />
-	<property name="common.test" location="source/common/test" />
-
 	<property name="client.src" location="source/client/main" />
-	<property name="client.test" location="source/client/test" />
-
 	<property name="server.src" location="source/server/main" />
+	
+	<property name="common.test" location="source/common/test" />
+	<property name="client.test" location="source/client/test" />
 	<property name="server.test" location="source/server/test" />
 
 	<property name="workArea.dir" location="workarea" />
-
-	<property name="Reports.dir" location="${workArea.dir}/reports" />
-	<property name="cactusReports.dir" location="${Reports.dir}/cactus" />
-	<property name="buildReports.dir" location="${Reports.dir}/build" />
-	<property name="javadoc.dir" location="${Reports.dir}/javadoc" />
+	
+	<property name="client.classes.dir" location="${workArea.dir}/client/classes" />
+	<property name="server.classes.dir" location="${workArea.dir}/server/classes" />
+	<property name="common.classes.dir" location="${workArea.dir}/common/classes" />
+		
+	<property name="reports.dir" location="${workArea.dir}/reports" />
+	<property name="cactusReports.dir" location="${reports.dir}/cactus" />
+	<property name="build.log.dir" location="${reports.dir}/build" />
+	<property name="javadoc.dir" location="${reports.dir}/javadoc" />
 	<property name="install.hibernate.cfg" value="installHibernate.cfg.xml" />
 
-	<property name="XmlLogger.file" value="${buildReports.dir}\log.xml" />
+	<property name="XmlLogger.file" value="${build.log.dir}\log.xml" />
 	<tstamp>
 		<format property="TODAY" pattern="MMMM-dd-yyyy" locale="en" />
 	</tstamp>
 
-	<property name="client.classes.dir" location="${workArea.dir}/client/classes" />
-	<property name="server.classes.dir" location="${workArea.dir}/server/classes" />
-	<property name="common.classes.dir" location="${workArea.dir}/common/classes" />
 	<property name="testcase.properties.folder" location="${workArea.dir}/TestCaseProperties" />
 
 	<property name="ear.dir" location="${workArea.dir}/ear" />
@@ -65,34 +59,17 @@
 
 	<property name="standAlone.jar.dir" location="${workArea.dir}/cab2bStandAloneJar" />
 
-
 	<!--Properties set for checkstyle "PMD scans Java source code and looks for potential code problems"-->
 	<!--Read for more details http://pmd.sourceforge.net/cpd.html -->
-	<property name="pmd.jar" value="${base.dir}/lib/extra/pmd-4.0.jar" />
-	<property name="pmd.report.dir" value="${Reports.dir}/pmd" />
+	<property name="pmd.report.dir" value="${reports.dir}/pmd" />
 	<property name="pmd.report.file.full" value="${pmd.report.dir}/PmdFullReport.html" />
 	<property name="pmd.report.file.classwise" value="${pmd.report.dir}/PmdClasswiseReport.html" />
-
-	<!--Properties set for checkstyle "Tools that generate report of code convention violations"-->
-	<property name="checkstyle.dir" value="${base.dir}/checkstyle" />
-	<property name="checkstyle.rules.file" value="${checkstyle.dir}/CheckStyleRules.xml" />
-	<property name="checkstyle.report.formatter" value="${checkstyle.dir}/report_formatter/checkstyle-simple.xsl" />
-	<property name="checkstyle.report.dir" value="${checkstyle.dir}/checkstyle_reports" />
-	<property name="checkstyle.unformatted.report" value="${checkstyle.report.dir}/checkstyle_report.xml" />
-	<property name="checkstyle.formatted.report" value="${checkstyle.report.dir}/caB2B_checkstyle_report.html" />
-
 
 	<!-- properties used for Java Web Start -->
 	<!-- change the version values for every new release,otherwise webstart will not deliver the latest changes !! -->
 	<property file="webstart/webstart.properties" />
 	<property name="webstart.client.version" value="1.0" />
 	<property name="webstart.server.version" value="1.0" />
-
-
-	<path id="checkstyle.classpath">
-		<pathelement location="${common.lib.dir}/commonpackage.jar" />
-		<pathelement location="${common.lib.dir}/DynamicExtensions.jar" />
-	</path>
 
 	<path id="common.classpath">
 		<fileset dir="lib/common">
@@ -125,29 +102,6 @@
 		<pathelement location="${server.classes.dir}" />
 		<pathelement location="${common.classes.dir}" />
 	</path>
-	
-
-	<!-- ================================================================================== -->
-
-	<target name="checkstyle" description="Generates a report of code convention violations.">
-		<taskdef resource="checkstyletask.properties" classpath="${extra_lib.dir}/checkstyle-all-4.2.jar" />
-		<delete dir="${checkstyle.report.dir}" />
-		<mkdir dir="${checkstyle.report.dir}" />
-		<checkstyle config="${checkstyle.rules.file}" failureProperty="checkstyle.failed" failOnViolation="false" classpathref="checkstyle.classpath">
-			<formatter type="xml" tofile="${checkstyle.unformatted.report}" />
-			<fileset dir="${common.src}" includes="**/*.java" />
-			<fileset dir="${server.src}" includes="**/*.java" />
-			<fileset dir="${client.src}" includes="**/*.java" />
-		</checkstyle>
-		<style in="${checkstyle.unformatted.report}" out="${checkstyle.formatted.report}" style="${checkstyle.report.formatter}" />
-	</target>
-
-	<target name="checkstyle_wrapper" depends="checkstyle" description="Breaks the build is checkstyle detected code conventions violations.">
-	</target>
-
-
-	<!-- =================================================================== -->
-
 	<!-- ================================================================================== -->
 	<target name="pmd" description="PMD scan Java source code and looks for potential code problems.">
 		<path id="pmd.classpath">
@@ -199,10 +153,7 @@
 	<!-- ================================================================================== -->
 	<target name="compile.common" description="Compiles the common code without cleaning">
 		<mkdir dir="${common.classes.dir}" />
-		<javac srcdir="${common.src}" destdir="${common.classes.dir}" 
-                fork="true" memoryMaximumSize="1024m" includes="**/*.java" 
-                debug="on" deprecation="true" classpathref="common.classpath" 
-                failonerror="true" nowarn="on" target="1.5"/>
+		<javac srcdir="${common.src}" destdir="${common.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="common.classpath" failonerror="true" nowarn="on" target="1.5" />
 	</target>
 	<!-- ================================================================================== -->
 	<target name="compile.client" depends="compile.common" description="Compiles the client code without cleaning">
@@ -222,7 +173,7 @@
 				<include name="**/*.class" />
 			</fileset>
 		</copy>
-		<javac srcdir="${server.src}" destdir="${server.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="server.classpath" failonerror="true" nowarn="on" target="1.5"/>
+		<javac srcdir="${server.src}" destdir="${server.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="server.classpath" failonerror="true" nowarn="on" target="1.5" />
 
 		<copy todir="${server.classes.dir}">
 			<fileset dir="${server.src}">
@@ -384,7 +335,6 @@
 	<target name="deploy.jboss" depends="clean.all,build.ear,update.server,replace.datasource" description="Deploys EAR file to JBoss application server" />
 	<!-- ================================================================================== -->
 	<target name="update.server">
-		<!-- Copies files to server -->
 		<delete dir="${jboss.home}/server/default/tmp/deploy" />
 		<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
 		<copy overwrite="true" file="${cab2bDS.file}" todir="${jboss.deploy.dir}" />
@@ -491,10 +441,8 @@
 			</fileset>
 			<report format="frames" todir="${cactusReports.dir}/cactusReports/Reports" />
 		</junitreport>
-		<!-- zip basedir="${cactusReports.dir}/cactusReports/Reports" destfile="${cactusReports.dir}/cactusreport.zip" /-->
 	</target>
 
-	<!-- Start JBoss, call the task & To be used during Devlopment -->
 	<target name="run.unittests" depends="compile.all,deploy.jboss">
 
 		<copy todir="${testcase.properties.folder}" overwrite="true">
@@ -539,16 +487,16 @@
 	</target>
 	<!-- ================================================================================== -->
 	<target name="deploy.reports">
-		<mkdir dir="${buildReports.dir}" />
-		<copy file="build\log.xsl" tofile="${buildReports.dir}\log.xsl" />
-		<copy file="build\index.html" todir="${Reports.dir}" overwrite="true" />
-		<mkdir dir="${Reports.dir}/images" />
-		<copy overwrite="true" todir="${Reports.dir}/images">
-			<fileset dir="${build.dir}/images">
+		<mkdir dir="${build.log.dir}" />
+		<copy file="build\log.xsl" tofile="${build.log.dir}\log.xsl" />
+		<copy file="build\index.html" todir="${reports.dir}" overwrite="true" />
+		<mkdir dir="${reports.dir}/images" />
+		<copy overwrite="true" todir="${reports.dir}/images">
+			<fileset dir="build/images">
 				<include name="**/*.*" />
 			</fileset>
 		</copy>
-		<mkdir dir="${Reports.dir}/WEB-INF" />
+		<mkdir dir="${reports.dir}/WEB-INF" />
 		<zip basedir="${workArea.dir}/reports" destfile="${workArea.dir}/${TODAY}.zip" />
 	</target>
 	<!-- ================================================================================== -->
@@ -747,27 +695,8 @@
 			<fileset dir="${webstart.war.dir}">
 			</fileset>
 		</war>
-
-
-
-		<!-- 	
-		<zip destfile="${workArea.dir}/cab2b.war">
-			<fileset dir="${webstart.war.dir}">
-		   </fileset>
-		</zip>
-	-->
 	</target>
-
-	<target name="temp">
-		<zip destfile="${workArea.dir}/cab2b.war">
-			<fileset dir="${webstart.war.dir}">
-			</fileset>
-		</zip>
-	</target>
-
-
 	<!-- ================================================================================== -->
-
 	<target name="query.jar" depends="compile.all">
 		<jar basedir="${workArea.dir}/common/classes" destfile="query-server.jar">
 			<include name="**/queryengine/result/*.*" />
@@ -776,7 +705,7 @@
 			<include name="**/queryengine/resulttransformers/*.*" />
 		</jar>
 	</target>
-        
+
 	<target name="build.project.jar" depends="compile.all">
 		<jar basedir="${workArea.dir}/common/classes" destfile="cab2b-common.jar">
 			<include name="**/*.*" />
