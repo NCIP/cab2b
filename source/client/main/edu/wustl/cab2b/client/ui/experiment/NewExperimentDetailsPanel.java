@@ -181,14 +181,15 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         projectsTree.setOpenIcon(new ImageIcon(loader.getResource(TREE_OPEN_FOLDER)));
         projectsTree.setClosedIcon(new ImageIcon(loader.getResource(TREE_CLOSE_FOLDER)));
         projectsTree.setLeafIcon(new ImageIcon(loader.getResource(TREE_LEAF_NODE)));
-
+        
         // setting tree node name
         projectsTree.setSelectionRow(0);
         ExperimentTreeNode treeNodeUserObj = (ExperimentTreeNode) ((DefaultMutableTreeNode) projectsTree.getSelectionPath().getPathComponent(
-                                                                                                                                             0)).getUserObject();
+                                                                                                           0)).getUserObject();
         treeNodeUserObj.setName("My Projects");
         projectsTree.setSelectionRow(-1);
-        projectsTree.updateUI();
+        projectsTree.expandAll();
+       	projectsTree.updateUI();
 
         JLabel expDescLabel = new Cab2bLabel("Description : ");
         expDescTextArea = new JTextArea();
@@ -248,23 +249,27 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                     obj = projectsTree.getSelectionPath().getLastPathComponent();
                 DefaultMutableTreeNode selectedTreeNode = (DefaultMutableTreeNode) obj;
                 // There's no selection. Default to the root node.
-
+                
                 if (selectedTreeNode == null) {
                     selectedTreeNode = (DefaultMutableTreeNode) projectsTree.getModel().getRoot();
                 } else {
-                    Object nodeObject = selectedTreeNode.getUserObject();
+                	Object nodeObject= selectedTreeNode.getUserObject();
+                	
                     if (nodeObject instanceof ExperimentTreeNode) {
-                        ExperimentTreeNode expTreeNode = (ExperimentTreeNode) selectedTreeNode.getUserObject();
-                        if (!expTreeNode.isExperimentGroup())
+                    	ExperimentTreeNode expTreeNode  = (ExperimentTreeNode) selectedTreeNode.getUserObject();
+                    	if (!expTreeNode.isExperimentGroup()){
                             return;
+                    	}
                     }
                 }
+
                 // ------- inline editing ----------
                 DefaultTreeModel m_model = (DefaultTreeModel) projectsTree.getModel();
-
+                
                 DefaultMutableTreeNode newNode = new DefaultMutableTreeNode("New Node");
+                
                 m_model.insertNodeInto(newNode, selectedTreeNode, selectedTreeNode.getChildCount());
-
+                
                 // make the node visible by scroll to it
                 TreeNode[] nodes = m_model.getPathToRoot(newNode);
                 TreePath path = new TreePath(nodes);
