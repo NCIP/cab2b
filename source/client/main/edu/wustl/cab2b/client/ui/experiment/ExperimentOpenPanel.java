@@ -51,8 +51,6 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
      */
     private Cab2bPanel experimentTitlePanel;
 
-    private Cab2bButton addDataButton;
-
     /* user selected experiment object */
     private Experiment selectedExperiment = null;
 
@@ -127,10 +125,9 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
                 + selectedExperiment.getLastUpdatedOn().toString());
         experimentTitlePanel.add("tab tab tab tab hfill", experimentModifiedOn);
 
-        addDataButton = new Cab2bButton("Add Data");
-        addDataButton.setEnabled(false);
+
     
-        experimentTitlePanel.add(addDataButton);
+        
         experimentTitlePanel.add("br", new JLabel(""));
         experimentTitlePanel.setBorder(null);
 
