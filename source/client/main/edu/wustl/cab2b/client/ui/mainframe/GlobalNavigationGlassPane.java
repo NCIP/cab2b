@@ -266,12 +266,15 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         MainFrame.mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension dimension = MainFrame.mainframeScreenDimesion;
         final String title = ApplicationProperties.getValue(SEARCH_FRAME_TITLE);
-
+        
+        //clearing the datalist
+        GlobalNavigationPanel.mainSearchPanel.getDataList().clear();  
         JDialog searchDialog = WindowUtilities.setInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel,
                                                            title, new Dimension((int) (dimension.width * 0.90),
                                                                    (int) (dimension.height * 0.85)), true, true);
-        mainFrame.setSearchWizardDialog(searchDialog);
-        searchDialog.setVisible(true);
+        mainFrame.setSearchWizardDialog(searchDialog);             
+        searchDialog.setVisible(true);              
+        GlobalNavigationPanel.mainSearchPanel = null;
     }
 
 }
