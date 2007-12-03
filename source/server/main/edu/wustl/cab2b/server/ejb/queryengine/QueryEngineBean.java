@@ -5,14 +5,13 @@ import java.util.Collection;
 import java.util.List;
 
 import net.sf.hibernate.HibernateException;
-
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
-import edu.wustl.cab2b.server.queryengine.QueryExecutor;
 import edu.wustl.cab2b.server.queryengine.Cab2bQueryBizLogic;
+import edu.wustl.cab2b.server.queryengine.QueryExecutor;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.util.dbManager.HibernateUtility;
 
@@ -40,9 +39,16 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
         return new Cab2bQueryBizLogic().getAllQueries();
     }
 
+    public Collection<IParameterizedQuery> getAllQueryNameAndDescription() throws RemoteException {
+        try {
+            return HibernateUtility.executeHQL(HibernateUtility.GET_PARAMETERIZED_QUERIES_DETAILS);
+        } catch (HibernateException e) {
+            throw new RemoteException(e.getMessage());
+        }
+    }
+
     public boolean isQueryNameDuplicate(String queryName) throws RemoteException {
         boolean isDuplicate = false;
-
         try {
             Collection<IParameterizedQuery> queries = HibernateUtility.executeHQL(HibernateUtility.GET_PARAMETERIZED_QUERIES_DETAILS);
             for (IParameterizedQuery query : queries) {
