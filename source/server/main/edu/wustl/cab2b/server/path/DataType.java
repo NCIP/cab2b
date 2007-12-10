@@ -192,7 +192,22 @@ enum DataType {
         }
 
     },
-    UNDEFINED();
+    OBJECT() {
+        public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
+            AttributeInterface attribute = domainObjectFactory.createObjectAttribute();
+            ValueDomain valueDomain = umlAttribute.getValueDomain();
+            Enumeration[] arr = valueDomain.getEnumerationCollection().getEnumeration();
+            if (arr != null) {
+                for (Enumeration e : arr) {
+                    //for the time being setting this as error to get all such attributes
+                    Logger.out.error("For attribute of Object type found permissible value : " + e.getPermissibleValue());
+                }
+            }
+            return attribute;
+        }
+
+    }
+    ;
 
     /**
      * Builds enumeration and assigns passed string as value
@@ -223,11 +238,11 @@ enum DataType {
         dataTypeMap.put("long", DataType.LONG);
         dataTypeMap.put("java.lang.double", DataType.DOUBLE);
         dataTypeMap.put("double", DataType.DOUBLE);
-        dataTypeMap.put("java.lang.object", DataType.UNDEFINED);
-        dataTypeMap.put("java.util.collection", DataType.UNDEFINED);
-        dataTypeMap.put("java.util.vector", DataType.UNDEFINED);
-        dataTypeMap.put("java.util.arrayList", DataType.UNDEFINED);
-        dataTypeMap.put("java.util.hashSet", DataType.UNDEFINED);
+//        dataTypeMap.put("java.lang.object", DataType.UNDEFINED);
+//        dataTypeMap.put("java.util.collection", DataType.UNDEFINED);
+//        dataTypeMap.put("java.util.vector", DataType.UNDEFINED);
+//        dataTypeMap.put("java.util.arrayList", DataType.UNDEFINED);
+//        dataTypeMap.put("java.util.hashSet", DataType.UNDEFINED);
         
     }
 
@@ -274,7 +289,10 @@ enum DataType {
 
         DataType dataType = dataTypeMap.get(value.toLowerCase());
         if (dataType == null) {
-            throw new RuntimeException("unknown datatype found : " + value);
+            //throw new RuntimeException("unknown datatype found : " + value);
+            //for the time being setting this as error to get all such attributes
+            Logger.out.error("Found attribute with type : " + value + ". Creating Object type attribute for it.");
+            return  DataType.OBJECT;
         }
         return dataType;
     }
