@@ -347,13 +347,19 @@
 	</target>
 
 	<!-- ================================================================================== -->
+	<macrodef name="replace.db.properties.macro">
+		<attribute name="cfgfile" />
+		<sequential>
+			<echo message="Putting database information in file @{cfgfile}" />
+			<replace file="@{cfgfile}" token="server-ip" value="${database.server.ip}" />
+			<replace file="@{cfgfile}" token="port" value="${database.server.port}" />
+			<replace file="@{cfgfile}" token="database-name" value="${database.name}" />
+			<replace file="@{cfgfile}" token="user_name" value="${database.username}" />
+			<replace file="@{cfgfile}" token="user_password" value="${database.password}" />
+		</sequential>
+	</macrodef>
 	<target name="replace.datasource">
-		<property name="dsFile" value="${jboss.deploy.dir}/${cab2bDS.file.name}" />
-		<replace file="${dsFile}" token="server-ip" value="${database.server.ip}" />
-		<replace file="${dsFile}" token="port" value="${database.server.port}" />
-		<replace file="${dsFile}" token="database-name" value="${database.name}" />
-		<replace file="${dsFile}" token="user_name" value="${database.username}" />
-		<replace file="${dsFile}" token="user_password" value="${database.password}" />
+		<replace.db.properties.macro cfgfile="${jboss.deploy.dir}/${cab2bDS.file.name}"/>
 	</target>
 	<!-- ================================================================================== 
 			"Drops existing database and create new database with schema"
@@ -388,12 +394,7 @@
 			</fileset>
 		</copy>
 
-		<property name="cfgFile" value="${server.classes.dir}/${install.hibernate.cfg}" />
-		<replace file="${cfgFile}" token="server-ip" value="${database.server.ip}" />
-		<replace file="${cfgFile}" token="port" value="${database.server.port}" />
-		<replace file="${cfgFile}" token="database-name" value="${database.name}" />
-		<replace file="${cfgFile}" token="user_name" value="${database.username}" />
-		<replace file="${cfgFile}" token="user_password" value="${database.password}" />
+		<replace.db.properties.macro cfgfile="${server.classes.dir}/${install.hibernate.cfg}"/>
 		<echo message="hibernate.configuration.files = dehibernate.cfg.xml,installHibernate.cfg.xml" file="${server.classes.dir}/dbutil.properties" append="false" />
 
 		<echo message="Loading models and paths to database..." />
