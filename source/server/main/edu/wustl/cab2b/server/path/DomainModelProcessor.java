@@ -110,7 +110,7 @@ public class DomainModelProcessor {
         markInheritedAttributes(entityGroup);
 
         Logger.out.info("Storing entity group....");
-        entityGroup = DynamicExtensionUtility.persistEntityGroup(entityGroup);
+        entityGroup = saveEntityGroup(entityGroup);
 
         entityVsIndex = new HashMap<EntityInterface, Integer>(noOfClasses);
         int index = 0;
@@ -447,6 +447,9 @@ public class DomainModelProcessor {
      */
     DomainModelProcessor() {
 
+    }
+    EntityGroupInterface saveEntityGroup(EntityGroupInterface eg) {
+        return DynamicExtensionUtility.persistEntityGroup(eg);
     }
 
 }
