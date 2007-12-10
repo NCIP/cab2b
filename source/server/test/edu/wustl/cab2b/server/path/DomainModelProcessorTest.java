@@ -11,6 +11,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.util.IdGenerator;
+import edu.wustl.cab2b.common.util.PropertyLoader;
 import edu.wustl.cab2b.server.util.InheritanceUtil;
 import edu.wustl.cab2b.server.util.TestUtil;
 import edu.wustl.common.util.logger.Logger;
@@ -102,5 +103,32 @@ public class DomainModelProcessorTest extends TestCase {
         EntityInterface entity = deFactory.createEntity();
         entity.setId(idGenerator.getNextId());
         return entity;
+    }
+
+    public void testMockDomainModelProcessor() {
+        String name = PropertyLoader.getAllApplications()[0];
+        String path = PropertyLoader.getModelPath(name);
+        System.out.println(name);
+        System.out.println(path);
+        DomainModelParser parser = null;
+        try {
+            parser = new DomainModelParser(path);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("unable to initialise");
+        }
+        new MockDomainModelProcessor(parser, name);
+
+    }
+}
+
+class MockDomainModelProcessor extends DomainModelProcessor {
+    public MockDomainModelProcessor(DomainModelParser parser, String applicationName) {
+        super(parser, applicationName);
+    }
+
+    EntityGroupInterface saveEntityGroup(EntityGroupInterface eg) {
+        System.out.println("in Mock......................");
+        return eg;
     }
 }
