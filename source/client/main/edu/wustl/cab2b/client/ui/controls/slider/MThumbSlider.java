@@ -2,15 +2,12 @@ package edu.wustl.cab2b.client.ui.controls.slider;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
-import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.BoundedRangeModel;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.Icon;
 import javax.swing.JSlider;
-import javax.swing.plaf.SliderUI;
-
 
 /**
  * @author Hrishikesh Rajpathak
@@ -37,6 +34,10 @@ public class MThumbSlider extends JSlider {
 
     private BiSlider cab2bSliderUI;
 
+    public MThumbSlider() {
+
+    }
+
     public MThumbSlider(Vector objectInput, BiSlider cab2bSliderUI) {
         this.objectInput = objectInput;
         this.cab2bSliderUI = cab2bSliderUI;
@@ -49,15 +50,17 @@ public class MThumbSlider extends JSlider {
         this.objectInput = objectInput;
         this.cab2bSliderUI = slider;
 
-        initUI(initialMin,initialMax);
+        initUI(initialMin, initialMax);
         updateUI();
     }
+
     protected void initUI(Object initialMin, Object initialMax) {
         initUI();
         this.setValueAt(objectInput.indexOf(initialMin), 0);
         this.setValueAt(objectInput.indexOf(initialMax), 1);
-        
+
     }
+
     protected void initUI() {
 
         sliderModels = new BoundedRangeModel[2];
@@ -159,7 +162,7 @@ public class MThumbSlider extends JSlider {
 
     public void setFilterValues(Object min, Object max) {
         cab2bSliderUI.setFilterValues(min, max);
-//        System.out.println("seting min and max" + min + " " + max);
+        //        System.out.println("seting min and max" + min + " " + max);
     }
 
     public void displayMinValue(String min) {

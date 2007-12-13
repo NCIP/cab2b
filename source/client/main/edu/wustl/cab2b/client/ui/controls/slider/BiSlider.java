@@ -1,13 +1,13 @@
 package edu.wustl.cab2b.client.ui.controls.slider;
 
-import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import java.awt.BorderLayout;
 import java.text.DateFormat;
-import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 
 /**
  * @author Hrishikesh Rajpathak
@@ -18,26 +18,28 @@ import javax.swing.JPanel;
 public class BiSlider extends JPanel {
 
     public static final String EVENT_RANGE_CHANGED = "EVENT_RANGE_CHANGED";
-    
+
     public Cab2bLabel lowVal;
 
     public Cab2bLabel hiVal;
 
     MThumbSlider mSlider;
 
+    public BiSlider() {
+        mSlider = new MThumbSlider();
+    }
+
     public BiSlider(Vector data) {
         super();
-
         mSlider = new MThumbSlider(data, this);
         initUI(data);
 
     }
 
-    public BiSlider(Vector data,Object initialMin, Object initialMax) {
+    public BiSlider(Vector data, Object initialMin, Object initialMax) {
         super();
-        mSlider = new MThumbSlider(data, this,initialMin,initialMax);
+        mSlider = new MThumbSlider(data, this, initialMin, initialMax);
         initUI(data);
-
     }
 
     private void initUI() {
@@ -88,13 +90,20 @@ public class BiSlider extends JPanel {
 
         JFrame frame = new JFrame();
         frame.setSize(300, 400);
-        BiSlider cab2bSliderUI = new BiSlider(vetor,"a","b");
+        BiSlider cab2bSliderUI = new BiSlider(vetor, "a", "b");
         frame.add(cab2bSliderUI);
         frame.setVisible(true);
     }
 
     void setFilterValues(Object min, Object max) {
-        firePropertyChange( EVENT_RANGE_CHANGED, min, max);
+        firePropertyChange(EVENT_RANGE_CHANGED, min, max);
     }
 
+    public Comparable getMinBound() {
+        return (Comparable) mSlider.getMinimumBarValue();
+    }
+
+    public Comparable getMaxBound() {
+        return (Comparable) mSlider.getMaximumBarValue();
+    }
 }
