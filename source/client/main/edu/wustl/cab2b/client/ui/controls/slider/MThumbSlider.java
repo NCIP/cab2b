@@ -2,6 +2,8 @@ package edu.wustl.cab2b.client.ui.controls.slider;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.BoundedRangeModel;
@@ -28,7 +30,7 @@ public class MThumbSlider extends JSlider {
 
     private static final String uiClassID = "MThumbSliderUI";
 
-    Vector objectInput = new Vector();
+    Vector inputData = new Vector();
 
     public int currentInputValueIndex;
 
@@ -39,7 +41,7 @@ public class MThumbSlider extends JSlider {
     }
 
     public MThumbSlider(Vector objectInput, BiSlider cab2bSliderUI) {
-        this.objectInput = objectInput;
+        this.inputData = objectInput;
         this.cab2bSliderUI = cab2bSliderUI;
 
         initUI();
@@ -47,7 +49,7 @@ public class MThumbSlider extends JSlider {
     }
 
     public MThumbSlider(Vector objectInput, BiSlider slider, Object initialMin, Object initialMax) {
-        this.objectInput = objectInput;
+        this.inputData = objectInput;
         this.cab2bSliderUI = slider;
 
         initUI(initialMin, initialMax);
@@ -56,8 +58,8 @@ public class MThumbSlider extends JSlider {
 
     protected void initUI(Object initialMin, Object initialMax) {
         initUI();
-        this.setValueAt(objectInput.indexOf(initialMin), 0);
-        this.setValueAt(objectInput.indexOf(initialMax), 1);
+        this.setValueAt(inputData.indexOf(initialMin), 0);
+        this.setValueAt(inputData.indexOf(initialMax), 1);
 
     }
 
@@ -67,14 +69,14 @@ public class MThumbSlider extends JSlider {
         thumbRenderers = new Icon[2];
         fillColors = new Color[2];
         for (int i = 0; i < 2; i++) {
-            if (objectInput != null || objectInput.size() > 0)
-                sliderModels[i] = new DefaultBoundedRangeModel(0, 0, 0, objectInput.size() - 1);
+            if (inputData != null || inputData.size() > 0)
+                sliderModels[i] = new DefaultBoundedRangeModel(0, 0, 0, inputData.size() - 1);
             thumbRenderers[i] = null;
             fillColors[i] = null;
         }
 
         this.setValueAt(0, 0);
-        this.setValueAt(objectInput.size(), 1);
+        this.setValueAt(inputData.size(), 1);
         this.setFillColorAt(Color.gray, 0);
         this.setFillColorAt(Color.yellow, 1);
         this.setTrackFillColor(Color.gray);
@@ -86,7 +88,7 @@ public class MThumbSlider extends JSlider {
     }
 
     public void setObjectInput(Vector objectInput) {
-        this.objectInput = objectInput;
+        this.inputData = objectInput;
     }
 
     public void updateUI() {
@@ -111,11 +113,11 @@ public class MThumbSlider extends JSlider {
     }
 
     public Object getMinimumBarValue() {
-        return objectInput.get(getValueAt(0));
+        return inputData.get(getValueAt(0));
     }
 
     public Object getMaximumBarValue() {
-        return objectInput.get(getValueAt(1));
+        return inputData.get(getValueAt(1));
     }
 
     public int getMinimum() {
@@ -172,7 +174,24 @@ public class MThumbSlider extends JSlider {
 
     public void displayMaxValue(String max) {
         cab2bSliderUI.hiVal.setText(max);
-
     }
 
+    /**
+     * Method to set min and max bar values 
+     * 
+     * @param minBound
+     * @param maxBound
+     */
+    public void setRangeBounds(Comparable minBound, Comparable maxBound) {
+        setValueAt(inputData.indexOf(minBound), 0);
+        setValueAt(inputData.indexOf(maxBound), 1);
+        if (minBound instanceof Date) {
+            DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM);
+            displayMinValue(dateFormatter.format(minBound));
+            displayMaxValue(dateFormatter.format(maxBound));
+        } else {
+            displayMinValue((String) minBound);
+            displayMaxValue((String) maxBound);
+        }
+    }
 }

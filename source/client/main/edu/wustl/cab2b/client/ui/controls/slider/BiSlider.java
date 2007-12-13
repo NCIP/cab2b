@@ -95,10 +95,15 @@ public class BiSlider extends JPanel {
         vetor.add("a");
         vetor.add("b");
         vetor.add("c");
+        vetor.add("d");
+        vetor.add("e");
+        vetor.add("g");
+        vetor.add("f");
 
         JFrame frame = new JFrame();
         frame.setSize(300, 400);
         BiSlider cab2bSliderUI = new BiSlider(vetor, "a", "b");
+        cab2bSliderUI.setRangeBounds("c", "g");
         frame.add(cab2bSliderUI);
         frame.setVisible(true);
     }
@@ -106,12 +111,14 @@ public class BiSlider extends JPanel {
     void setFilterValues(Object min, Object max) {
         firePropertyChange(EVENT_RANGE_CHANGED, min, max);
     }
+   
 
-    public Comparable getMinBound() {
-        return (Comparable) mSlider.getMinimumBarValue();
-    }
-
-    public Comparable getMaxBound() {
-        return (Comparable) mSlider.getMaximumBarValue();
+    /**
+     * Method to set min and max bar values
+     * @param minBound
+     * @param maxBound
+     */
+    public void setRangeBounds(Comparable minBound, Comparable maxBound) {
+        mSlider.setRangeBounds(minBound, maxBound);
     }
 }
