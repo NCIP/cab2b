@@ -35,6 +35,14 @@ public class BiSlider extends JPanel {
         initUI(data);
 
     }
+    
+    public Comparable getMinBound(){
+        return (Comparable) mSlider.getMinimumBarValue();
+    }
+    
+    public Comparable getMaxBound(){
+        return (Comparable) mSlider.getMaximumBarValue();
+    }
 
     public BiSlider(Vector data, Object initialMin, Object initialMax) {
         super();
