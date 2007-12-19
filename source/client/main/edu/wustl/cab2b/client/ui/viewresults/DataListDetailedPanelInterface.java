@@ -1,5 +1,7 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
+import java.util.List;
+
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 
 /**
@@ -19,18 +21,23 @@ public interface DataListDetailedPanelInterface {
      * It also takes care of special characters and esacpes it with appropraite
      *  esacpe sequences.
      */
-    String getCSVData();
+    //String getCSVData();
 
     /**
      * return the number of rows selected for the export operation.
      * @return
      */
-    int getNoOfSelectedRows();
+    //int getNoOfSelectedRows();
 
     /**
      * This method returns the table containing the data
      * @return table of data
      */
-    Cab2bTable getDataTable();
+    //Cab2bTable getDataTable();
 
+    List<String> getSelectedRowNames();
+
+    List<String> getSelectedColumnNames();
+
+    Object[][] getSelectedData();
 }

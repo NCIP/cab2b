@@ -4,6 +4,7 @@
 package edu.wustl.cab2b.client.ui.visualization.charts;
 
 import java.awt.Color;
+import java.util.List;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -16,8 +17,6 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
-
-import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 
 /**
  * This class generates the Line Chart
@@ -59,56 +58,43 @@ public class LineChart extends AbstractChart {
 
     @Override
     protected Dataset createColumnWiseData() {
-        Cab2bTable cab2bTable = chartModel.getCab2bTable();
-        int[] selectedRowIndices = chartModel.getSelectedRowIndices();
-        int[] selectedColumnsIndices = chartModel.getSelectedColumnsIndices();
+
+        List<String> selectedColumnNames = chartModel.getSelectedColumnsNames();
+        List<String> selectedRowNames = chartModel.getSelectedRowNames();
 
         XYSeries xySeries = null;
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
 
-        for (int i = 0; i < selectedColumnsIndices.length; i++) {
-            String seriesName = cab2bTable.getColumnName(selectedColumnsIndices[i]);
+        for (int i = 0; i < selectedColumnNames.size(); i++) {
+            String seriesName = selectedColumnNames.get(i);
             xySeries = new XYSeries(seriesName);
-            for (int j = 0; j < selectedRowIndices.length; j++) {
-                Object value;
-                if (chartModel.isWholeColumnSelected())
-                    value = chartModel.getCab2bTableData()[j][i];
-                else
-                    value = cab2bTable.getValueAt(selectedRowIndices[j], selectedColumnsIndices[i]);
-
-                xySeries.add(selectedRowIndices[j], convertValue(value));
+            for (int j = 0; j < selectedRowNames.size(); j++) {
+                Object value = chartModel.getValueAt(j, i);
+                xySeries.add(convertValue(selectedRowNames.get(j)), convertValue(value));
             }
             xySeriesCollection.addSeries(xySeries);
         }
-
         return xySeriesCollection;
     }
 
     @Override
     protected Dataset createRowWiseData() {
-        Cab2bTable cab2bTable = chartModel.getCab2bTable();
-        int[] selectedRowIndices = chartModel.getSelectedRowIndices();
-        int[] selectedColumnsIndices = chartModel.getSelectedColumnsIndices();
+
+        List<String> selectedColumnNames = chartModel.getSelectedColumnsNames();
+        List<String> selectedRowNames = chartModel.getSelectedRowNames();
 
         XYSeries xySeries = null;
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
 
-        for (int i = 0; i < selectedRowIndices.length; i++) {
-            String seriesName = selectedRowIndices[i] + "";
+        for (int i = 0; i < selectedRowNames.size(); i++) {
+            String seriesName = selectedRowNames.get(i) + "";
             xySeries = new XYSeries(seriesName);
-            for (int j = 0; j < selectedColumnsIndices.length; j++) {
-                Object value;
-                if (chartModel.isWholeColumnSelected())
-                    value = chartModel.getCab2bTableData()[i][j];
-                else
-                    value = cab2bTable.getValueAt(selectedRowIndices[i], selectedColumnsIndices[j]);
-
-                xySeries.add(selectedColumnsIndices[j], convertValue(value));
+            for (int j = 0; j < selectedColumnNames.size(); j++) {
+                Object value = chartModel.getValueAt(i, j);
+                xySeries.add(convertValue(selectedColumnNames.get(j)), convertValue(value));
             }
             xySeriesCollection.addSeries(xySeries);
         }
-
         return xySeriesCollection;
     }
-
 }

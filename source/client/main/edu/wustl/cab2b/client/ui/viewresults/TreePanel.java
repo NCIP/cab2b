@@ -101,9 +101,8 @@ public class TreePanel extends Cab2bPanel {
                             }
 
                             dataListDetailedPanel = new DefaultSpreadSheetViewPanel(records);
-                            dataListDetailedPanel.doInitialization();
-                            ((DefaultSpreadSheetViewPanel) dataListDetailedPanel).setJSheetMagnifyingGlassVisible(false);
-                            ((DefaultSpreadSheetViewPanel) dataListDetailedPanel).setJSheetConsoleVisible(false);
+                            dataListDetailedPanel.doInitialization();                            
+                            //((DefaultSpreadSheetViewPanel) dataListDetailedPanel).setJSheetConsoleVisible(false);
                         } else {
                             //show details of the selected node only.
                             dataListDetailedPanel = ResultPanelFactory.getResultDetailedPanel(dataRow.getRecord());

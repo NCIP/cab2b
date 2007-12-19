@@ -490,13 +490,7 @@ public class ExperimentStackBox extends Cab2bPanel {
      * @param linkClicked
      *            the name of the chart to be displayed
      */
-    private void showChartAction(String chartType) {
-        String entityName = null;
-        Object nodeInfo = ((DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent()).getUserObject();
-        if (nodeInfo instanceof TreeEntityWrapper) {
-            entityName = ((TreeEntityWrapper) nodeInfo).toString();
-        }
-
+    private void showChartAction(String chartType) {      
         final JTabbedPane tabComponent = m_experimentDataCategoryGridPanel.getTabComponent();
         Cab2bPanel currentChartPanel = m_experimentDataCategoryGridPanel.getCurrentChartPanel();
         if (currentChartPanel == null) {

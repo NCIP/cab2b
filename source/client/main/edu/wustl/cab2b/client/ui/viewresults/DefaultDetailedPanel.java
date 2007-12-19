@@ -64,8 +64,8 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
         objDetailsTable = new Cab2bTable(false, tableData, tableHeader);
         objDetailsTable.setColumnSelectionAllowed(true);
         objDetailsTable.setDefaultRenderer(Boolean.class, objDetailsTable.getDefaultRenderer(Object.class));
-
         objDetailsTable.setEditable(false);
+        
         JScrollPane tableSP = new JScrollPane(objDetailsTable);
         if (isVFill) {
             this.add("br hfill vfill", tableSP);
@@ -214,5 +214,20 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
 
     public Cab2bTable getDataTable() {
         return objDetailsTable;
+    }
+
+    public List<String> getSelectedColumnNames() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public Object[][] getSelectedData() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<String> getSelectedRowNames() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

@@ -14,7 +14,6 @@ import javax.swing.JRadioButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bRadioButton;
-import edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface;
 import edu.wustl.cab2b.common.util.Constants.ChartOrientation;
 
 /**
@@ -24,32 +23,31 @@ import edu.wustl.cab2b.common.util.Constants.ChartOrientation;
 public class Cab2bChartPanel extends Cab2bPanel {
     private static final long serialVersionUID = 1L;
 
-    private ChartModel chartModel;
+    private ChartModel chartModel = null;
 
-    private AbstractChart barChart;
+    private AbstractChart barChart = null;
 
-    private AbstractChart lineChart;
+    private AbstractChart lineChart = null;
 
-    private AbstractChart scatterPlot;
+    private AbstractChart scatterPlot = null;
 
-    private String entityName;
+    private String entityName = null;
 
-    private JPanel chart;
+    private JPanel chart = null;
 
     /**
      * Parameterized constructor
      * @param cab2bTable
      */
-    public Cab2bChartPanel(
-            DataListDetailedPanelInterface dataListDetailedPanel,
-            final String entityName) {
-        chartModel = new ChartModel(dataListDetailedPanel);
-        this.entityName = entityName;
+    public Cab2bChartPanel() {
         setName("cab2bChartPanel");
         setBorder(null);
-
         removeAll();
         add("left ", createRadioPanel());
+    }
+
+    public void setModel(ChartModel chartModel) {
+        this.chartModel = chartModel;
     }
 
     public void drawChart(final String chartType) {
@@ -64,7 +62,7 @@ public class Cab2bChartPanel extends Cab2bPanel {
             scatterPlot = new ScatterPlot();
             chartModel.addObserver(scatterPlot);
         }
-        
+
         chartModel.setChartType(chartType);
         setChartPanel();
     }
@@ -73,7 +71,7 @@ public class Cab2bChartPanel extends Cab2bPanel {
         if (chart != null) {
             this.remove(chart);
         }
-        
+
         String chartType = chartModel.getChartType();
         if (chartType.equals("Bar Chart")) {
             chart = barChart.getChartPanel();
@@ -82,7 +80,7 @@ public class Cab2bChartPanel extends Cab2bPanel {
         } else if (chartType.equals("Scatter Plot")) {
             chart = scatterPlot.getChartPanel();
         }
-        
+
         this.add("br vfill hfill ", chart);
         updateUI();
     }
@@ -93,7 +91,6 @@ public class Cab2bChartPanel extends Cab2bPanel {
         ButtonGroup group = new ButtonGroup();
 
         RadioButtonListener radioButtonListener = new RadioButtonListener();
-
         JRadioButton columnButton = new Cab2bRadioButton("Column");
         columnButton.setActionCommand("Column");
         columnButton.addActionListener(radioButtonListener);
@@ -108,7 +105,6 @@ public class Cab2bChartPanel extends Cab2bPanel {
 
         columnButton.setSelected(true);
         group.setSelected(columnButton.getModel(), true);
-
         return radioPanel;
     }
 
@@ -132,7 +128,6 @@ public class Cab2bChartPanel extends Cab2bPanel {
             }
             setChartPanel();
         }
-
     };
 
 }

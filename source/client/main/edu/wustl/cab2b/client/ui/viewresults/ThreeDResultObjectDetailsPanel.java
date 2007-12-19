@@ -12,10 +12,12 @@ import javax.swing.table.AbstractTableModel;
 
 import org.jdesktop.swingx.decorator.AlternateRowHighlighter;
 
+import edu.wustl.cab2b.client.ui.SearchNavigationPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.LazyTable.LazyTableModelInterface;
 import edu.wustl.cab2b.client.ui.controls.LazyTable.MatrixCache;
 import edu.wustl.cab2b.client.ui.controls.LazyTable.PageDimension;
+import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.queryengine.result.I3DDataRecord;
 import edu.wustl.cab2b.common.queryengine.result.IPartiallyInitialized3DRecord;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -57,32 +59,52 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
      * @see edu.wustl.cab2b.client.ui.viewresults.ResultObjectDetailsPanel#initTableGUI()
      */
     protected void initGUI() {
-        super.initGUI();
+    
+        CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
+            @Override
+            protected void doNonUILogic() throws Exception {              
+                threeDTable = new Cab2bTable();
+                tableSource = new BDQDataSource((IPartiallyInitialized3DRecord) record,
+                        new PageDimension(100, 25), new MatrixCache(3));
+                LazyTableModelInterface model = new BDQTableModel(tableSource);
+                model.getValueAt(0, 0);
+                threeDTable.setModel(model);
+            }
 
-        adjustRows();
+            @Override
+            protected void doUIUpdateLogic() throws Exception {
+                ThreeDResultObjectDetailsPanel.super.initGUI();
+                adjustRows();
+                threeDTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+                threeDTable.addMouseListener(new CellMouseListener());
+                threeDTable.getTableHeader().addMouseListener(new HeaderMouseListener());
+                threeDTable.setColumnSelectionAllowed(true);
+                threeDTable.setEditable(false);
+                tableScrollPane = new JScrollPane(threeDTable);
+                addRowHeader();
+                ThreeDResultObjectDetailsPanel.this.add("br hfill vfill", tableScrollPane);
+            }
+        };
+        swingWorker.start();
+        
+        /* super.initGUI();
+         adjustRows();
+         
+         threeDTable = new Cab2bTable();
+         threeDTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+         threeDTable.addMouseListener(new CellMouseListener());
+         threeDTable.getTableHeader().addMouseListener(new HeaderMouseListener());
+         tableSource = new BDQDataSource((IPartiallyInitialized3DRecord) record, new PageDimension(100, 25),
+         new MatrixCache(3));
 
-        threeDTable = new Cab2bTable();
-        threeDTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
-        threeDTable.addMouseListener(new CellMouseListener());
-        threeDTable.getTableHeader().addMouseListener(new HeaderMouseListener());
-
-        tableSource = new BDQDataSource((IPartiallyInitialized3DRecord) record, new PageDimension(100, 25),
-                new MatrixCache(3));
-
-        LazyTableModelInterface model = new BDQTableModel(tableSource);
-        model.getValueAt(0, 0);
-
-        threeDTable.setModel(model);
-
-        threeDTable.setColumnSelectionAllowed(true);
-
-        threeDTable.setEditable(false);
-        tableScrollPane = new JScrollPane(threeDTable);
-
-        addRowHeader();
-
-        this.add("br hfill vfill", tableScrollPane);
+         LazyTableModelInterface model = new BDQTableModel(tableSource);
+         model.getValueAt(0, 0);
+         threeDTable.setModel(model);
+         threeDTable.setColumnSelectionAllowed(true);
+         threeDTable.setEditable(false);
+         tableScrollPane = new JScrollPane(threeDTable);
+         addRowHeader();
+         this.add("br hfill vfill", tableScrollPane);*/
     }
 
     public String getRowHeaderName(int rowNumber) {
@@ -116,11 +138,14 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
             }
 
             public Object getValueAt(int row, int column) {
-                return tableSource.getCurrentPage().getData().getDim3Labels()[row];
+                //Object value = threeDTable.getModel().getValueAt( row, 5);//tableSource.getCurrentPage().getData().getDim3Labels()[row];
+                Object value = tableSource.getCurrentPage().getData().getDim3Labels()[row];                
+                System.out.println("value at ("+row+","+column+") ="+value);
+                return value;//tableSource.getCurrentPage().getData().getDim3Labels()[row];
             }
-
         });
 
+        rowHeaderTable.setAutoscrolls( false);
         rowHeaderTable.setSize(new Dimension(0, 28));
         rowHeaderTable.setFont(new Font("Arial", Font.BOLD, 14));
         rowHeaderTable.setHighlighters();

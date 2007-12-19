@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.client.ui.visualization.charts;
 
 import java.awt.Color;
+import java.util.List;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -12,8 +13,6 @@ import org.jfree.data.general.Dataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-
-import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 
 /**
  * This class generates the Scatter Plot.
@@ -56,41 +55,31 @@ public class ScatterPlot extends AbstractChart {
 
     @Override
     protected Dataset createColumnWiseData() {
-        Cab2bTable cab2bTable = chartModel.getCab2bTable();
-        int[] selectedRowIndices = chartModel.getSelectedRowIndices();
-        int[] selectedColumnsIndices = chartModel.getSelectedColumnsIndices();
+
+        List<String> selectedRowNames = chartModel.getSelectedRowNames();
+        List<String> selectedColumnsNames = chartModel.getSelectedColumnsNames();
 
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
 
-        if (selectedColumnsIndices.length == 1) {
-            String seriesName = cab2bTable.getColumnName(selectedColumnsIndices[0]);
+        if (selectedColumnsNames.size() == 1) {
+            String seriesName = chartModel.getColumnName(0);
             XYSeries xySeries = new XYSeries(seriesName);
-            for (int j = 0; j < selectedRowIndices.length; j++) {
+            for (int j = 0; j < selectedRowNames.size(); j++) {
                 Object value = null;
-                if (chartModel.isWholeColumnSelected())
-                    value = (chartModel.getCab2bTableValue(j, 0));
-                else
-                    value = cab2bTable.getValueAt(selectedRowIndices[j], selectedColumnsIndices[0]);
-
-                xySeries.add(selectedRowIndices[j], convertValue(value));
+                value = chartModel.getValueAt(j, 0);
+                xySeries.add(convertValue(selectedRowNames.get(j)), convertValue(value));
             }
             xySeriesCollection.addSeries(xySeries);
-        } else if (selectedColumnsIndices.length > 1) {
-            for (int i = 1; i < selectedColumnsIndices.length; i++) {
-                String seriesName = cab2bTable.getColumnName(selectedColumnsIndices[i]);
+        } else {
+            for (int i = 1; i < selectedColumnsNames.size(); i++) {
+                String seriesName = chartModel.getColumnName(i);
                 XYSeries xySeries = new XYSeries(seriesName);
 
-                for (int j = 0; j < selectedRowIndices.length; j++) {
+                for (int j = 0; j < selectedRowNames.size(); j++) {
                     Object yValueString = null;
                     Object xValueString = null;
-                    if (chartModel.isWholeColumnSelected()) {
-                        xValueString = chartModel.getCab2bTableData()[j][0];
-                        yValueString = chartModel.getCab2bTableData()[j][i];
-                    } else {
-                        xValueString = cab2bTable.getValueAt(selectedRowIndices[j], selectedColumnsIndices[0]);
-                        yValueString = cab2bTable.getValueAt(selectedRowIndices[j], selectedColumnsIndices[i]);
-                    }
-
+                    xValueString = chartModel.getValueAt(j, 0);
+                    yValueString = chartModel.getValueAt(j, i);
                     xySeries.add(convertValue(xValueString), convertValue(yValueString));
                 }
                 xySeriesCollection.addSeries(xySeries);
@@ -101,41 +90,31 @@ public class ScatterPlot extends AbstractChart {
 
     @Override
     protected Dataset createRowWiseData() {
-        Cab2bTable cab2bTable = chartModel.getCab2bTable();
-        int[] selectedRowIndices = chartModel.getSelectedRowIndices();
-        int[] selectedColumnsIndices = chartModel.getSelectedColumnsIndices();
+
+        List<String> selectedRowNames = chartModel.getSelectedRowNames();
+        List<String> selectedColumnsNames = chartModel.getSelectedColumnsNames();
 
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
 
-        if (selectedRowIndices.length == 1) {
-            String seriesName = selectedRowIndices[0] + "";
+        if (selectedRowNames.size() == 1) {
+            String seriesName = selectedRowNames.get(0) + "";
             XYSeries xySeries = new XYSeries(seriesName);
-            for (int j = 0; j < selectedColumnsIndices.length; j++) {
+            for (int j = 0; j < selectedColumnsNames.size(); j++) {
                 Object value = null;
                 if (chartModel.isWholeColumnSelected())
-                    value = chartModel.getCab2bTableData()[0][j];
-                else
-                    value = cab2bTable.getValueAt(selectedRowIndices[0], selectedColumnsIndices[j]);
+                    value = chartModel.getValueAt(0, j);
 
-                xySeries.add(selectedColumnsIndices[j], convertValue(value));
+                xySeries.add(convertValue(selectedRowNames.get(j)), convertValue(value));
             }
             xySeriesCollection.addSeries(xySeries);
-        } else if (selectedRowIndices.length > 1) {
-            for (int i = 1; i < selectedRowIndices.length; i++) {
-                String seriesName = selectedRowIndices[i] + "";
+        } else {
+            for (int i = 1; i < selectedRowNames.size(); i++) {
+                String seriesName = selectedRowNames.get(i) + "";
                 XYSeries xySeries = new XYSeries(seriesName);
 
-                for (int j = 0; j < selectedColumnsIndices.length; j++) {
-                    Object yValueString = null;
-                    Object xValueString = null;
-                    if (chartModel.isWholeColumnSelected()) {
-                        xValueString = chartModel.getCab2bTableData()[0][j];
-                        yValueString = chartModel.getCab2bTableData()[i][j];
-                    } else {
-                        xValueString = cab2bTable.getValueAt(selectedRowIndices[0], selectedColumnsIndices[j]);
-                        yValueString = cab2bTable.getValueAt(selectedRowIndices[i], selectedColumnsIndices[j]);
-                    }
-
+                for (int j = 0; j < selectedColumnsNames.size(); j++) {
+                    Object xValueString = chartModel.getValueAt(0, j);
+                    Object yValueString = chartModel.getValueAt(i, j);
                     xySeries.add(convertValue(xValueString), convertValue(yValueString));
                 }
                 xySeriesCollection.addSeries(xySeries);

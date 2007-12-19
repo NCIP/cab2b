@@ -73,22 +73,22 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
      * @see edu.wustl.cab2b.client.ui.controls.LazyTable.AbstractLazyDataSource#fetchPageData(edu.wustl.cab2b.client.ui.controls.LazyTable.PageInfo)
      */
     public Page fetchPageData(PageInfo pageInfo) {
-//        List<LazyParams.Range> rangeList = getRanges(uninitailisedRecord.getCube(), pageInfo.getStartX(),
-//                                                     pageInfo.getStartY());
-//        LazyParams lazyParams = new I3DDataRecord.LazyParams(rangeList);
-//        UtilityBusinessInterface utilityBeanInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
-//                                                                                                                    EjbNamesConstants.UTILITY_BEAN,
-//                                                                                                                    UtilityHomeInterface.class,
-//                                                                                                                    MainFrame.newWelcomePanel);
-//        try {
-//            IPartiallyInitialized3DRecord newRecord = (IPartiallyInitialized3DRecord<?, ?>) utilityBeanInterface.getView(
-//                                                                                                                         uninitailisedRecord.handle(),
-//                                                                                                                         lazyParams);
-//
-//            return new Page<IPartiallyInitialized3DRecord<?, ?>>(pageInfo, newRecord);
-//        } catch (RemoteException e) {
-//            CommonUtils.handleException(e, MainFrame.newWelcomePanel, true, true, true, false);
-//        }
+        List<LazyParams.Range> rangeList = getRanges(uninitailisedRecord.getCube(), pageInfo.getStartX(),
+                                                     pageInfo.getStartY());
+        LazyParams lazyParams = new I3DDataRecord.LazyParams(rangeList);
+        UtilityBusinessInterface utilityBeanInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                    EjbNamesConstants.UTILITY_BEAN,
+                                                                                                                    UtilityHomeInterface.class,
+                                                                                                                    MainFrame.newWelcomePanel);
+        try {
+            IPartiallyInitialized3DRecord newRecord = (IPartiallyInitialized3DRecord<?, ?>) utilityBeanInterface.getView(
+                                                                                                                         uninitailisedRecord.handle(),
+                                                                                                                         lazyParams);
+
+            return new Page<IPartiallyInitialized3DRecord<?, ?>>(pageInfo, newRecord);
+        } catch (RemoteException e) {
+            CommonUtils.handleException(e, MainFrame.newWelcomePanel, true, true, true, false);
+        }
 
         return null;
     }
@@ -177,7 +177,6 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
         try {
             Logger.out.debug("Record Handle "+uninitailisedRecord.handle());
             return (IPartiallyInitialized3DRecord) utilityBeanInterface.getView(uninitailisedRecord.handle(), lazyParams);
-
         } catch (RemoteException e) {
             CommonUtils.handleException(e, MainFrame.newWelcomePanel, true, true, true, false);
         }

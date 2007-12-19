@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.client.ui.visualization.charts;
 
 import java.awt.Color;
+import java.util.List;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -37,53 +38,44 @@ public class BarChart extends AbstractChart {
     }
 
     protected Dataset createColumnWiseData() {
-        int[] selectedRowIndices = chartModel.getSelectedRowIndices();
-        int[] selectedColumnsIndices = chartModel.getSelectedColumnsIndices();
-        String[] series = getColumnIndicesSeries(selectedColumnsIndices);
+        List<String> selectedRowNames = chartModel.getSelectedRowNames();
+        List<String> selectedColumnNames = chartModel.getSelectedColumnsNames();
+        String[] series = getColumnIndicesSeries(selectedColumnNames);
 
         DefaultCategoryDataset defaultcategorydataset = new DefaultCategoryDataset();
 
-        for (int i = 0; i < selectedRowIndices.length; i++) {
-            for (int j = 0; j < selectedColumnsIndices.length; j++) {
-                Object value = null;
-                if (chartModel.isWholeColumnSelected()) {
-                    value = chartModel.getCab2bTableData()[i][j];
-                } else {
-                    value = chartModel.getCab2bTable().getValueAt(selectedRowIndices[i], selectedColumnsIndices[j]);
-                }
-                defaultcategorydataset.addValue(convertValue(value), series[j], (selectedRowIndices[i] + 1));
+        for (int i = 0; i < selectedRowNames.size(); i++) {
+            for (int j = 0; j < selectedColumnNames.size(); j++) {
+                Object value = chartModel.getValueAt(i, j);
+                defaultcategorydataset.addValue(convertValue(value), series[j], selectedRowNames.get(i));
             }
         }
 
         return defaultcategorydataset;
     }
-    
+
     protected Dataset createRowWiseData() {
-        int[] selectedRowIndices = chartModel.getSelectedRowIndices();
-        int[] selectedColumnsIndices = chartModel.getSelectedColumnsIndices();
-        String[] categories = getColumnIndicesSeries(selectedColumnsIndices);
+        List<String> selectedRowNames = chartModel.getSelectedRowNames();
+        List<String> selectedColumnNames = chartModel.getSelectedColumnsNames();
+        String[] categories = getColumnIndicesSeries(selectedColumnNames);
 
         DefaultCategoryDataset defaultcategorydataset = new DefaultCategoryDataset();
 
-        for (int i = 0; i < selectedColumnsIndices.length; i++) {
-            for (int j = 0; j < selectedRowIndices.length; j++) {
+        for (int i = 0; i < selectedColumnNames.size(); i++) {
+            for (int j = 0; j < selectedRowNames.size(); j++) {
                 Object value = null;
-                if (chartModel.isWholeColumnSelected()) {
-                    value = chartModel.getCab2bTableData()[j][i];
-                } else {
-                    value = chartModel.getCab2bTable().getValueAt(selectedRowIndices[j], selectedColumnsIndices[i]);
-                }
-                defaultcategorydataset.addValue(convertValue(value), (selectedRowIndices[j] + 1), categories[i]);
+                value = chartModel.getValueAt(j, i);
+                defaultcategorydataset.addValue(convertValue(value), selectedRowNames.get(j), categories[i]);
             }
         }
 
         return defaultcategorydataset;
     }
 
-    private String[] getColumnIndicesSeries(int[] selectedColumnsIndices) {
-        String[] series = new String[selectedColumnsIndices.length];
-        for (int i = 0; i < selectedColumnsIndices.length; i++) {
-            series[i] = chartModel.getCab2bTable().getColumnName(selectedColumnsIndices[i]);
+    private String[] getColumnIndicesSeries(List<String> selectedColumnNames) {
+        String[] series = new String[chartModel.getSelectedColumnsNames().size()];
+        for (int i = 0; i < chartModel.getSelectedColumnsNames().size(); i++) {
+            series[i] = chartModel.getSelectedColumnsNames().get(i);
         }
         return series;
     }
