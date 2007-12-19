@@ -18,6 +18,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +42,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
+import edu.wustl.cab2b.client.ui.controls.sheet.JSheet;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.query.Utility;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
@@ -104,7 +107,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     private Cab2bTable analysisTable;
 
     final public String[] ANALYSIS_TABLE_HEADERS = new String[] { "Data Category", "Analysis Title", "Date", "Status" };
-
 
     /** Button to save data category */
     private Cab2bButton saveDataCategoryButton;
@@ -182,7 +184,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         this.removeAll();
         this.spreadSheetViewPanel.refreshView(recordList);
         //this.spreadSheetViewPanel.getDataTable().addFocusListener(new TableFocusListener());
-
         refreshUI();
         updateUI();
     }
@@ -253,8 +254,13 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         experimentDataPanel.setName("experimentDataPanel");
         experimentDataPanel.setBorder(null);
 
-        spreadSheetViewPanel = new DefaultSpreadSheetViewPanel(true, false, new ArrayList<IRecord>(), true, this);
+        spreadSheetViewPanel = new DefaultSpreadSheetViewPanel(new ArrayList<IRecord>(), this);
         spreadSheetViewPanel.doInitialization();
+        spreadSheetViewPanel.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+            }
+        });
 
         analysisDataPanel = new Cab2bPanel();
         analysisDataPanel.setName("analysisDataPanel");
@@ -288,7 +294,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         this.add(tabComponent, BorderLayout.CENTER);
 
         Cab2bPanel bottomPanel = new Cab2bPanel(new RiverLayout(5, 5));
-       // bottomPanel.add(prevButton);
+        // bottomPanel.add(prevButton);
         bottomPanel.add("br", new JLabel(""));
         bottomPanel.setBorder(null);
         this.add(bottomPanel, BorderLayout.SOUTH);
@@ -319,8 +325,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
             // Add SpreadsheetView
             List<IRecord> recordList = userObjectWrapper.getUserObject();
-            DefaultSpreadSheetViewPanel defaultSpreadSheetViewPanel = new DefaultSpreadSheetViewPanel(true, false,
-                    recordList, true, this);
+            DefaultSpreadSheetViewPanel defaultSpreadSheetViewPanel = new DefaultSpreadSheetViewPanel(recordList,
+                    this);
             defaultSpreadSheetViewPanel.doInitialization();
             //defaultSpreadSheetViewPanel.getDataTable().addFocusListener(new TableFocusListener());
             analysisViewPanel.add("br center hfill vfill", defaultSpreadSheetViewPanel);
@@ -331,7 +337,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         tabComponent.setSelectedComponent(analysisView);
     }
 
-    public void addDetailTabPanel(String tabTitle, final DefaultDetailedPanel defaultDetailedPanel) {
+    public void addDetailTabPanel(String tabTitle, final Component component) {
         Cab2bPanel detailPanel = (Cab2bPanel) CommonUtils.getComponentByName(tabComponent, tabTitle);
         if (detailPanel == null) {
             final Cab2bPanel detailViewPanel = new Cab2bPanel();
@@ -349,12 +355,11 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
             // Add SpreadsheetView
             //defaultDetailedPanel.getDataTable().addFocusListener(new TableFocusListener(false));
-            defaultDetailedPanel.getDataTable().getTableHeader().addMouseListener(
-                                                                                  new HeaderMouseListener(
-                                                                                          defaultDetailedPanel.getDataTable()));
+            /*   defaultDetailedPanel.getDataTable().getTableHeader().addMouseListener(
+             new HeaderMouseListener(
+             defaultDetailedPanel.getDataTable()));*/
 
-            detailViewPanel.add("br center hfill vfill", defaultDetailedPanel);
-
+            detailViewPanel.add("br center hfill vfill", component);
             detailPanel = detailViewPanel;
             tabComponent.add(tabTitle, detailViewPanel);
         }
@@ -449,7 +454,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
         public void actionPerformed(ActionEvent event) {
             SaveDataCategoryPanel saveDialogPanel = new SaveDataCategoryPanel(gridPanel);
-            experimentPanel.getExperimentStackBox().getDataFilterPanel().removeAll();
+
         }
     }
 

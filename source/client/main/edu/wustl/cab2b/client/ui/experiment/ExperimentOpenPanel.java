@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
 
 import javax.swing.JFrame;
@@ -17,7 +19,9 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.controls.CustomizableBorder;
+import edu.wustl.cab2b.client.ui.controls.sheet.JSheet;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.client.ui.viewresults.DefaultSpreadSheetViewPanel;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
@@ -105,7 +109,7 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
         }
         // ejb code end
 
-        experimentTitlePanel = new Cab2bPanel(new RiverLayout(5,5));
+        experimentTitlePanel = new Cab2bPanel(new RiverLayout(5, 5));
 
         /* Adding Experiment name */
         Cab2bLabel experimentLabel = new Cab2bLabel(selectedExperiment.getName());
@@ -125,14 +129,29 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
                 + selectedExperiment.getLastUpdatedOn().toString());
         experimentTitlePanel.add("tab tab tab tab hfill", experimentModifiedOn);
 
-
-    
-        
         experimentTitlePanel.add("br", new JLabel(""));
         experimentTitlePanel.setBorder(null);
 
         /* Adding Experiment grid panel */
         experimentDataCategoryGridPanel = new ExperimentDataCategoryGridPanel(this);
+        experimentDataCategoryGridPanel.addPropertyChangeListener(new PropertyChangeListener() {
+
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.SPREADSHEET_MODEL_INSTALLED)) {
+                    Cab2bPanel filterPanel = new Cab2bPanel();
+                    //filterPanel.setLayout(new BorderLayout());
+                    filterPanel.add("hfill vfill", ((JSheet) evt.getNewValue()).getContextFilterConsole());
+                    //filterPanel.add(((JSheet) evt.getNewValue()).getFiltersViewConsole(), BorderLayout.SOUTH);
+                    experimentStackBox.setFilterPanel(filterPanel);
+                    experimentStackBox.setChartLinkEnable(false);
+                } else {
+                    if (evt.getPropertyName().equals(JSheet.EVENT_DATA_SINGLE_CLICKED)) {
+                        //filterPanel.add(((JSheet) evt.getNewValue()).getFiltersViewConsole(), BorderLayout.SOUTH);
+                        experimentStackBox.setChartLinkEnable(true);
+                    }
+                }
+            }
+        });
         /*	experimentDataCategoryGridPanel.setBorder(new CustomizableBorder(
          new Insets(1, 1, 1, 1), true, true));*/
         experimentDataCategoryGridPanel.setBorder(null);
