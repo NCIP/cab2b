@@ -3,16 +3,22 @@ package edu.wustl.cab2b.server.ejb.utility;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.ejb.SessionBean;
 
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.common.dynamicextensionsstubs.AssociationWrapper;
 import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
 import edu.wustl.cab2b.common.queryengine.result.ILazyParams;
 import edu.wustl.cab2b.common.queryengine.result.IPartiallyInitializedRecord;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.server.cache.EntityCache;
+import edu.wustl.cab2b.server.datalist.DataListOperationsController;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.queryengine.LazyInitializer;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
@@ -83,6 +89,35 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Session
      */
     public void unregister(int handle) throws RemoteException {
         LazyInitializer.unregister(handle);
+    }
+
+    /**
+     *
+     */
+    public List<TreeSet<Comparable<?>>> getUniqueRecordValues(Long entityId) throws RemoteException {
+        List<IRecord> entityRecordList = DataListOperationsController.getEntityRecords(entityId);
+        List<TreeSet<Comparable<?>>> entityRecordValues = new ArrayList<TreeSet<Comparable<?>>>();
+
+        int index = 0;
+        for (IRecord entityRecord : entityRecordList) {
+            Set<AttributeInterface> attributeSet = entityRecord.getAttributes();
+            for (AttributeInterface attribute : attributeSet) {
+                Comparable<?> attributeValue = (Comparable<?>) entityRecord.getValueForAttribute(attribute);
+
+                TreeSet<Comparable<?>> columnValues = null;
+                try {
+                    columnValues = entityRecordValues.get(index);
+                } catch (IndexOutOfBoundsException e) {
+                    columnValues = new TreeSet<Comparable<?>>();
+                    entityRecordValues.add(index, columnValues);
+                }
+                columnValues.add(attributeValue);
+                index++;
+            }
+            index = 0;
+        }
+
+        return entityRecordValues;
     }
 
 }
