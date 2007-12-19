@@ -60,7 +60,7 @@ public class SheetTestFrame extends javax.swing.JFrame {
         getContentPane().add( pmt);
         
         //  Set fixed data model...
-        pmt.setReadOnlytDataModel( new SampleTableDataModel());
+        pmt.setReadOnlyDataModel( new SampleTableDataModel());
 //        pmt.setConsoleVisible( false);
 //        pmt.setMagnifyingGlassVisible( false);
     }
@@ -104,6 +104,7 @@ public class SheetTestFrame extends javax.swing.JFrame {
             super( rows, columns);
         }
         
+        @Override
         public Class getColumnClass(int column) {
             Class returnValue;
             if ((column >= 0) && (column < getColumnCount())) {
@@ -114,6 +115,7 @@ public class SheetTestFrame extends javax.swing.JFrame {
             return returnValue;
         }
         
+        @Override
         public boolean isCellEditable(int arg0, int arg1) {
             // TODO Auto-generated method stub
             return false;

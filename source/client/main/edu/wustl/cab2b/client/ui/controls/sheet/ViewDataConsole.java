@@ -1,0 +1,1402 @@
+/*
+ * ViewDataConsole.java
+ *
+ * Created on October 4, 2007, 3:19 PM
+ */
+package edu.wustl.cab2b.client.ui.controls.sheet;
+
+import java.awt.*;
+import java.awt.datatransfer.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.*;
+import java.util.*;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.table.*;
+
+/**
+ *
+ * @author  jasbir_sachdeva
+ */
+class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListener, PropertiesNames {
+
+    /** The Tables data Model, that pickes data from both Read-Only and Extensible Data Models. */
+    private CompositeTableModel compositeDataModel;
+
+    //    /**  */
+    //    private Map<TableColumn, ColumnFilterModel> colExtraStateMap;
+    /** Collection of Hidden and Visible Table COlumns.
+     * Columns that are deleted are kept in removedTCols. */
+    private Set<TableColumn> activeTableCols = new HashSet<TableColumn>(200);
+
+    /** References to Removed Column are kept here (in sets), for undo.*/
+    private List<List<TableColumn>> removedTCols = new ArrayList<List<TableColumn>>();
+
+    /** Each new Column is given name as: "New Col-1", "New Col-2", and so on. */
+    private int columnAppendCount = 0;
+
+    /***/
+    public static final String EXT_COLUMNS_NAME_PREFIX = "N.Col-";
+
+    /** To be used by Table while laying out Columns...*/
+    int defaultColWidth = Toolkit.getDefaultToolkit().getScreenSize().width / 20;
+
+    /** Events name, fired when some button is pressed. */
+    public static final String BUTTON_SELECT_ALL = "BUTTON_SELECT_ALL";
+
+    public static final String BUTTON_SELECTION_RESET = "BUTTON_SELECTION_RESET";
+
+    TableRowSorter tblRowSorter = new TableRowSorter();
+
+    /**     Keeps references to Anyone who wishes to listens to column Selections. */
+    ArrayList<ListSelectionListener> colSelectionListeners = new ArrayList<ListSelectionListener>();
+
+    /***/
+    ArrayList<TableModelListener> tblModelListener = new ArrayList<TableModelListener>();
+
+    ArrayList<RowSorterListener> tblRowSorterListener = new ArrayList<RowSorterListener>();
+
+    /**     This action listener is informed if user wants to export selection  .*/
+    private ActionListener actLsnExportCells;
+
+    private ActionListener actLsnShowPropDialogs;
+
+    //    private JComponent tblFixedHeader;
+    //  Actions...
+    RemoveAllSelectedExtColumnsAction actRemoveCols = new RemoveAllSelectedExtColumnsAction();
+
+    UndeleteColumnsAction actUndoColDel = new UndeleteColumnsAction();
+
+    PasteFromClipAction actPaste = new PasteFromClipAction();
+
+    ExportSelectionAction actExportSelecion = new ExportSelectionAction();
+
+    ShowCustomizationConsoleAction actShowProps = new ShowCustomizationConsoleAction();
+
+    ClearSelectionAction actClearSelection = new ClearSelectionAction();
+
+    /** Table Filter instance associated to data-table   */
+    private RowFilter rfilterTbl;
+
+    private TableRowSorter rsortTable;
+
+    private boolean isCutInProgress = false;
+
+    private boolean isSelectionFromRowHeader = false;
+
+    //
+    //
+    //    TableModel tmROData;
+    /** Creates new form ViewDataConsole */
+    ViewDataConsole() {
+        initComponents();
+        addTableColSelectionListener(new ColSelectionsListener());
+        addTableRowSelectionListener(new RowSelectionsListener());
+
+        setupAcions();
+        setupRowHeader();
+    }
+
+    void setupRowHeader() {
+        RowHeaderTableModel tmRowHeader = new RowHeaderTableModel();
+        tblRowHeader.setModel(tmRowHeader);
+        tblRowHeader.getColumnModel().getColumn(0).setMaxWidth(20);
+        int totalWidth = tblRowHeader.getColumnModel().getColumnMargin() * tblRowHeader.getColumnCount()
+                + tblRowHeader.getColumnModel().getTotalColumnWidth();
+        tblRowHeader.setPreferredScrollableViewportSize(new Dimension(totalWidth, 0));
+        spaData.setRowHeaderView(tblRowHeader);
+
+        // Connect row selection models...
+        tblRowHeader.setSelectionModel(tblData.getSelectionModel());
+    }
+
+    void addUserColumn(SheetColumn sCol) {
+        //  Provide provision in underlying model to accomodate for new column...
+        compositeDataModel.addNewColumn(sCol);
+        //  actually inform table to render new column now...
+        tblData.addColumn(sCol);
+    }
+
+    void extendSelectionsToAllColumns() {
+        int endCol = tblData.getColumnModel().getColumnCount();
+        tblData.getColumnModel().getSelectionModel().setSelectionInterval(0, endCol - 1);
+    }
+
+    void setTableFilter(RowFilter tableFilter) {
+        rfilterTbl = tableFilter;
+    }
+
+    void reapplyFilter() {
+        //  Reapply row sorter, automatically filter will be reapplied...
+        System.out.println("[ViewDataConsole]: Reapplying Filter request received.");
+        rsortTable.allRowsChanged();
+    }
+
+    private void setupAcions() {
+        butRemoveCol.setAction(actRemoveCols);
+        miRemoveCols.setAction(actRemoveCols);
+
+        butUndoColDelete.setAction(actUndoColDel);
+        miUndoRemoveCol.setAction(actUndoColDel);
+
+        butPaste.setAction(actPaste);
+        miPaste.setAction(actPaste);
+
+        actExportSelecion.addAssociatedTable(tblData);
+        butExportSelection.setAction(actExportSelecion);
+        miExportCells.setAction(actExportSelecion);
+        miProperties.setAction(actShowProps);
+
+        butErazeContents.setAction(actClearSelection);
+        miClearSelection.setAction(actClearSelection);
+    }
+
+    /** Reset to defaults, as if these are being used for first time.
+     */
+    private void setupTblData() {
+        //  Clear table with all columns..
+        Enumeration<TableColumn> enTC = tblData.getColumnModel().getColumns();
+        while (enTC.hasMoreElements()) {
+            TableColumn tcRemoved = enTC.nextElement();
+            tblData.getColumnModel().removeColumn(tcRemoved);
+        }
+        //  Notify all mutables columns are removed...
+        //        firePropertyChange( COLUMNS_REMOVED_ALL, false, true);
+
+        //  Apply Selection Schema...
+        tblData.getSelectionModel().clearSelection();
+        tblData.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        ListSelectionModel lsm = new DefaultListSelectionModel();
+        lsm.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+
+        //  set up listeners...
+        for (ListSelectionListener colSL : colSelectionListeners) {
+            lsm.addListSelectionListener(colSL);
+        }
+        tblData.getColumnModel().setSelectionModel(lsm);
+
+        //  set default rederers: we do NOT want chk boxes for boolean type columns...
+        tblData.setDefaultRenderer(Boolean.class, null);
+
+        tblData.revalidate();
+    }
+
+    //    void applyTableSorter( RowFilter rf){
+    //        tblData.setRowSorter(tblRowSorter);
+    //    }
+
+    //
+    //    Listeners...
+    //
+    public void propertyChange(PropertyChangeEvent evt) {
+
+    }
+
+    //
+    //    Getters & Setters...
+    //
+    /**             Scenario C.2-B:  Model settings and Relay of Table Model Events.     */
+    public void setReadOnlyDataModel(TableModel tmROData, ArrayList<SheetColumn> colSheetAL) {
+        //  Chk Non-null Data Model
+        if (null == tmROData) {
+            throw new IllegalArgumentException(getClass().getName()
+                    + ".setReadOnlyDataModel(...) does NOT excepts null Data Model.");
+        }
+
+        //setup table column width preferences...
+        setupCompositeDataModel(tmROData, colSheetAL);
+
+        //        //  Set up lister for the sorter...
+        //        for (RowSorterListener rsl : tblRowSorterListener) {
+        //            tblData.getRowSorter().removeRowSorterListener(rsl);
+        //        }
+        //        for (RowSorterListener rsl : tblRowSorterListener) {
+        //            tblData.getRowSorter().addRowSorterListener(rsl);
+        //        }
+        tblData.invalidate();
+    }
+
+    public TableModel getReadOnlyDataModel() {
+        return compositeDataModel.getPrimaryModel();
+    }
+
+    public TableModel getCompositeDataModel() {
+        return compositeDataModel;
+    }
+
+    //    public TableColumnModel getTableColumnModel() {
+    //        return tblData.getColumnModel();
+    //    }
+    /** @returns refrence to Jtable that is used to show contents.  */
+    JTable getDataViewTable() {
+        return tblData;
+    }
+
+    JSheetViewDataModel getViewTableModel() {
+        return new JSheetViewDataModel(tblData, compositeDataModel);
+    }
+
+    ListSelectionModel getSelectionModel() {
+        return tblData.getSelectionModel();
+    }
+
+    int[] getSelectedColumns() {
+        return tblData.getSelectedColumns();
+    }
+
+    int getSelectedColumn() {
+        return tblData.getSelectedColumn();
+    }
+
+    int getSelectedRow() {
+        return tblData.getSelectedRow();
+    }
+
+    int[] getSelectedRows() {
+        return tblData.getSelectedRows();
+    }
+
+    //    /**
+    //     *  Setups the Fixed columns to shown on the left hand side of the Data Table.
+    //     *  Note they do not scroll with the selection...
+    //     */
+    //    public void setLeftColumns(JTable tblRowHeader, JComponent tblFixedHeader) {
+    //        this.tblRowHeader = tblRowHeader;
+    //        this.tblFixedHeader = tblFixedHeader;
+    //    }
+    /**     @return TRUE, if all the column in selection are extendable, i.e. editable and removable.
+     */
+    boolean isOnlyExtColumnInSelection() {
+        int sCols[] = tblData.getSelectedColumns();
+        if (sCols.length <= 0) {
+            return false;
+        }
+
+        for (int viewColIdx : sCols) {
+            int modelColIdx = tblData.convertColumnIndexToModel(viewColIdx);
+            if (modelColIdx < compositeDataModel.roDataModel.getColumnCount()) //  At least one column, from Read-Only model is selected...
+            {
+                return false;
+            }
+        }
+        //  no-read-only column found...
+        return true;
+    }
+
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        tblRowHeader = new javax.swing.JTable();
+        butRemoveExtendedCols = new javax.swing.JButton();
+        popTblContextMnu = new javax.swing.JPopupMenu();
+        miShowDetails = new javax.swing.JMenuItem();
+        miAddCol = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
+        miCut = new javax.swing.JMenuItem();
+        miCopy = new javax.swing.JMenuItem();
+        miPaste = new javax.swing.JMenuItem();
+        jSeparator3 = new javax.swing.JSeparator();
+        miClearSelection = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JSeparator();
+        miExportCells = new javax.swing.JMenuItem();
+        miProperties = new javax.swing.JMenuItem();
+        miExportRows = new javax.swing.JMenuItem();
+        jPanel3 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        butSelectAll = new javax.swing.JButton();
+        butCopy = new javax.swing.JButton();
+        butPaste = new javax.swing.JButton();
+        butExportSelection = new javax.swing.JButton();
+        butErazeContents = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        addCol = new javax.swing.JButton();
+        butRemoveCol = new javax.swing.JButton();
+        butUndoColDelete = new javax.swing.JButton();
+        popExtra = new javax.swing.JPopupMenu();
+        miRemoveCols = new javax.swing.JMenuItem();
+        miUndoRemoveCol = new javax.swing.JMenuItem();
+        jPanel1 = new javax.swing.JPanel();
+        spaData = new javax.swing.JScrollPane();
+        tblData = new javax.swing.JTable();
+
+        tblRowHeader.setModel(new javax.swing.table.DefaultTableModel(
+                new Object[][] { { null, null, null, null }, { null, null, null, null }, { null, null, null, null }, { null, null, null, null } },
+                new String[] { "Title 1", "Title 2", "Title 3", "Title 4" }));
+        tblRowHeader.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblRowHeaderMouseClicked(evt);
+            }
+
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tblRowHeaderMousePressed(evt);
+            }
+        });
+
+        butRemoveExtendedCols.setText("Remove All");
+        butRemoveExtendedCols.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butRemoveExtendedColsActionPerformed(evt);
+            }
+        });
+
+        miShowDetails.setText("Show Row Details"); // NOI18N
+        miShowDetails.setEnabled(false);
+        miShowDetails.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miShowDetailsActionPerformed(evt);
+            }
+        });
+        popTblContextMnu.add(miShowDetails);
+
+        miAddCol.setMnemonic('a');
+        miAddCol.setText("Add Column");
+        miAddCol.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miAddColActionPerformed(evt);
+            }
+        });
+        popTblContextMnu.add(miAddCol);
+        popTblContextMnu.add(jSeparator1);
+
+        miCut.setText("Cut"); // NOI18N
+        miCut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miCutActionPerformed(evt);
+            }
+        });
+        popTblContextMnu.add(miCut);
+
+        miCopy.setText("Copy");
+        miCopy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miCopyActionPerformed(evt);
+            }
+        });
+        popTblContextMnu.add(miCopy);
+
+        miPaste.setText("Paste");
+        popTblContextMnu.add(miPaste);
+        popTblContextMnu.add(jSeparator3);
+
+        miClearSelection.setText("Item");
+        popTblContextMnu.add(miClearSelection);
+        popTblContextMnu.add(jSeparator2);
+
+        miExportCells.setMnemonic('x');
+        miExportCells.setText("Export Selection");
+        miExportCells.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miExportCellsActionPerformed(evt);
+            }
+        });
+        popTblContextMnu.add(miExportCells);
+
+        miProperties.setMnemonic('p');
+        miProperties.setText("Item");
+        popTblContextMnu.add(miProperties);
+
+        miExportRows.setText("Export Rows ...");
+
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(
+                                                                       new javax.swing.border.LineBorder(
+                                                                               new java.awt.Color(51, 0, 51), 1,
+                                                                               true),
+                                                                       "Selection",
+                                                                       javax.swing.border.TitledBorder.CENTER,
+                                                                       javax.swing.border.TitledBorder.DEFAULT_POSITION,
+                                                                       new java.awt.Font("Tahoma", 1, 16)));
+
+        butSelectAll.setText("Select All");
+        butSelectAll.setVisible(false);
+        butSelectAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butSelectAllActionPerformed(evt);
+            }
+        });
+        jPanel4.add(butSelectAll);
+
+        butCopy.setText("Copy");
+        butCopy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butCopyActionPerformed(evt);
+            }
+        });
+        jPanel4.add(butCopy);
+
+        butPaste.setText("Paste");
+        jPanel4.add(butPaste);
+
+        butExportSelection.setText("Export");
+        jPanel4.add(butExportSelection);
+
+        butErazeContents.setText("Clear Selection");
+        butErazeContents.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butErazeContentsActionPerformed(evt);
+            }
+        });
+        jPanel4.add(butErazeContents);
+
+        jPanel3.add(jPanel4, new java.awt.GridBagConstraints());
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(
+                                                                       new javax.swing.border.LineBorder(
+                                                                               new java.awt.Color(51, 0, 51), 1,
+                                                                               true),
+                                                                       " For New Columns Only ",
+                                                                       javax.swing.border.TitledBorder.CENTER,
+                                                                       javax.swing.border.TitledBorder.DEFAULT_POSITION,
+                                                                       new java.awt.Font("Tahoma", 1, 16)));
+
+        addCol.setText("Add Col");
+        addCol.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addColActionPerformed(evt);
+            }
+        });
+        jPanel2.add(addCol);
+
+        butRemoveCol.setText("Remove Col");
+        butRemoveCol.setEnabled(false);
+        jPanel2.add(butRemoveCol);
+
+        butUndoColDelete.setText("Undo Remove-Col");
+        butUndoColDelete.setEnabled(false);
+        jPanel2.add(butUndoColDelete);
+
+        jPanel3.add(jPanel2, new java.awt.GridBagConstraints());
+
+        miRemoveCols.setText("Remove Columns");
+        miRemoveCols.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miRemoveColsActionPerformed(evt);
+            }
+        });
+        popExtra.add(miRemoveCols);
+
+        miUndoRemoveCol.setText("Undo Remove Column");
+        popExtra.add(miUndoRemoveCol);
+
+        setLayout(new java.awt.BorderLayout());
+
+        jPanel1.setLayout(new java.awt.BorderLayout());
+
+        spaData.setAutoscrolls(true);
+        spaData.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                spaDataAncestorAdded(evt);
+            }
+
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+
+        tblData.setAutoCreateColumnsFromModel(false);
+        tblData.setAutoCreateRowSorter(true);
+        tblData.setComponentPopupMenu(popTblContextMnu);
+        tblData.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        tblData.setCellSelectionEnabled(true);
+        tblData.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDataMouseClicked(evt);
+            }
+
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tblDataMousePressed(evt);
+            }
+        });
+        spaData.setViewportView(tblData);
+
+        jPanel1.add(spaData, java.awt.BorderLayout.CENTER);
+
+        add(jPanel1, java.awt.BorderLayout.CENTER);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void miCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miCopyActionPerformed
+        // TODO add your handling code here:
+        copySelectionIntoClipboard();
+    }//GEN-LAST:event_miCopyActionPerformed
+
+    private void miAddColActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddColActionPerformed
+        // TODO add your handling code here:
+        //        System.out.println("miAddColActionPerformed(): "+evt);
+        firePropertyChange(PropertiesNames.USER_COLUMN_ADDITION_REQUESTED, 0, 1);
+    }//GEN-LAST:event_miAddColActionPerformed
+
+    private void miRemoveColsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRemoveColsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_miRemoveColsActionPerformed
+
+    private void miExportCellsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miExportCellsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_miExportCellsActionPerformed
+
+    private void addColActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addColActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_addColActionPerformed
+
+    private void butCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butCopyActionPerformed
+        // TODO add your handling code here:
+        copySelectionIntoClipboard();
+    }//GEN-LAST:event_butCopyActionPerformed
+
+    private void butSelectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butSelectAllActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_butSelectAllActionPerformed
+
+    private void spaDataAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_spaDataAncestorAdded
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_spaDataAncestorAdded
+
+    private void butRemoveExtendedColsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butRemoveExtendedColsActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_butRemoveExtendedColsActionPerformed
+
+    private void butErazeContentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butErazeContentsActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_butErazeContentsActionPerformed
+
+    private void miCutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miCutActionPerformed
+        // TODO add your handling code here:
+        isCutInProgress = true;
+        copySelectionIntoClipboard();
+    }//GEN-LAST:event_miCutActionPerformed
+
+    private void tblRowHeaderMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblRowHeaderMousePressed
+        // TODO add your handling code here:
+        isSelectionFromRowHeader = true;
+        extendSelectionsToAllColumns();
+    }//GEN-LAST:event_tblRowHeaderMousePressed
+
+    private void tblDataMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDataMousePressed
+        // TODO add your handling code here:
+        isSelectionFromRowHeader = false;
+
+    }//GEN-LAST:event_tblDataMousePressed
+
+    private void miShowDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miShowDetailsActionPerformed
+        // TODO add your handling code here:
+        if (tblData.getSelectedRow() != -1) {
+            //  only if there is a valid selection...
+            int rowModel = tblData.convertRowIndexToModel(tblData.getSelectedRow());
+            firePropertyChange(PropertiesNames.REQUESTED_SHOW_ROW_DETAILS, -1, rowModel);
+        }
+    }//GEN-LAST:event_miShowDetailsActionPerformed
+
+    private void tblDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDataMouseClicked
+        int rowModel = tblData.convertRowIndexToModel(tblData.getSelectedRow());
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            firePropertyChange(PropertiesNames.EVENT_DATA_ROW_DOUBLE_CLICKED, -1, rowModel);
+        } else {
+            firePropertyChange(PropertiesNames.EVENT_DATA_SINGLE_CLICKED, -1, rowModel);
+        }
+
+    }//GEN-LAST:event_tblDataMouseClicked
+
+    private void tblRowHeaderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblRowHeaderMouseClicked
+        // TODO add your handling code here:
+
+        if (evt.getClickCount() == 2) {
+            int rowModel = tblData.convertRowIndexToModel(tblData.getSelectedRow());
+            firePropertyChange(PropertiesNames.EVENT_HEADER_ROW_DOUBLE_CLICKED, -1, rowModel);
+        }
+
+    }//GEN-LAST:event_tblRowHeaderMouseClicked
+
+    //
+    //  BEHAVIOUR
+    //
+    /**
+     *  Setups Table Model for the data-Table, from scratch.
+     */
+    void setupCompositeDataModel(TableModel tmROData, ArrayList<SheetColumn> colSheetAL) {
+        compositeDataModel = new CompositeTableModel(tmROData);
+
+        // Remove any current columns
+        TableColumnModel cm = tblData.getColumnModel();
+        while (cm.getColumnCount() > 0) {
+            cm.removeColumn(cm.getColumn(0));
+        }
+
+        tblData.setModel(compositeDataModel);
+        for (SheetColumn aColumn : colSheetAL) {
+            tblData.addColumn(aColumn);
+        }
+        rsortTable = new TableRowSorter(compositeDataModel);
+        rsortTable.setRowFilter(rfilterTbl);
+        tblData.setRowSorter(rsortTable);
+
+        //        tblData.setTableHeader(new JTableHeader(tblData.getColumnModel()));
+        //            tblData.getColumnModel().addColumn( aColumn);
+
+        //        //  Attach old listeners again to the Table...
+        //        for (TableModelListener tml : tblModelListener) {
+        //            tblData.getModel().addTableModelListener(tml);
+        //        }
+
+        //  reset Default Table Column Width...
+        for (int i = 0; i < tblData.getColumnCount(); i++) {
+            tblData.getColumnModel().getColumn(i).setMinWidth(defaultColWidth);
+        }
+    }
+
+    public void addTableRowSelectionListener(ListSelectionListener l) {
+        tblData.getSelectionModel().addListSelectionListener(l);
+    }
+
+    public void removeTableRowSelectionListener(ListSelectionListener l) {
+        tblData.getSelectionModel().removeListSelectionListener(l);
+    }
+
+    public void addTableColSelectionListener(ListSelectionListener l) {
+        tblData.getColumnModel().getSelectionModel().addListSelectionListener(l);
+        //        colSelectionListeners.add(l);
+    }
+
+    public void removeTableColSelectionListener(ListSelectionListener l) {
+        tblData.getColumnModel().getSelectionModel().removeListSelectionListener(l);
+    }
+
+    public void addTableModelListener(TableModelListener tml) {
+        //        tblModelListener .add( tml);
+        tblData.getModel().addTableModelListener(tml);
+    }
+
+    public void addTableRowsorterListener(RowSorterListener rsl) {
+        tblRowSorterListener.add(rsl);
+    }
+
+    void setColumnVisibility(SheetColumn colSheet) {
+        if (!(colSheet.isVisible() ^ isColumnExists(colSheet))) //  No change required...
+        {
+            return;
+        }
+        //  Apply change...
+        if (colSheet.isVisible()) {
+            tblData.getColumnModel().addColumn(colSheet);
+        } else {
+            tblData.getColumnModel().removeColumn(colSheet);
+        }
+    }
+
+    boolean isColumnExists(TableColumn colTable) {
+        Enumeration cols = tblData.getColumnModel().getColumns();
+        while (cols.hasMoreElements()) {
+            if (cols.nextElement() == colTable) {
+                return true;
+            }
+        }
+
+        //  Not found...
+        return false;
+    }
+
+    /**
+     *  Author: Unknown  (But NOT Jassi)
+     */
+    public void pasteFromClipboard() {
+        Clipboard clipBoard = Toolkit.getDefaultToolkit().getSystemClipboard();
+
+        String clipData;
+        try {
+            clipData = (String) clipBoard.getData(DataFlavor.stringFlavor);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return;
+        }
+
+        if (null == clipData || clipData.length() == 0) // nothing to use...
+        {
+            return;
+        }
+
+        int targetCol = tblData.getSelectedColumn();
+        int targetRow = tblData.getSelectedRow();
+
+        if (targetRow == -1 || targetCol == -1) // we do NOT know where to paste...
+        {
+            return;
+        }
+
+        String[] rowsData = clipData.split("\n");
+        if (rowsData == null || rowsData.length == 0) //  each row data should be terminated by <EOLN>
+        {
+            return;
+        }
+
+        //  Import each Row...
+        for (int vRow = 0; vRow < rowsData.length; vRow++) {
+            if (vRow + targetRow >= tblData.getRowCount()) //  ignore rest of the cells, as we have nowhere to paste these cells, as they pass table boundary...
+            {
+                break;
+            }
+
+            //  Import all the cells, separated by tab...
+            String[] cellsVal = rowsData[vRow].split("\t");
+            for (int vCol = 0; vCol < cellsVal.length; vCol++) {
+                if (vCol + targetCol >= tblData.getColumnCount()) //  ignore rest of the cells, as we have nowhere to paste these cells, as they pass table boundary...
+                {
+                    break;
+                }
+                int mRow = tblData.convertRowIndexToModel(vRow + targetRow);
+                int mCol = tblData.convertColumnIndexToModel(vCol + targetCol);
+                compositeDataModel.setValueAt(cellsVal[vCol], mRow, mCol);
+            }
+        }
+    }
+
+    /**     Clears Selected cells in the table.     */
+    void doClearSelection() {
+        doClearSelection(tblData.getSelectedRows(), tblData.getSelectedColumns());
+    }
+
+    /**     Clear contents of Cells, whose location is provided in parameters   */
+    void doClearSelection(int[] rowsIdx, int[] colsIdx) {
+        for (int rIdx = 0; rIdx < rowsIdx.length; rIdx++) {
+            for (int cIdx = 0; cIdx < colsIdx.length; cIdx++) {
+                tblData.setValueAt("", rowsIdx[rIdx], colsIdx[cIdx]);
+            }
+        }
+    }
+
+    /** Selected Contents of table are copied into Clipboard. */
+    public void copySelectionIntoClipboard() {
+        StringBuffer selText = getTblSelectionDataWithTabs();
+        if (null == selText || selText.length() == 0) //  Nothing to Select..
+        {
+            return;
+        }
+
+        StringSelection sSel = new StringSelection(selText.toString());
+        Clipboard clipBoard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipBoard.setContents(sSel, sSel);
+    }
+
+    /**     ALL Selected rows and columns data would be picked and returned.
+     * Columns will be separated with tabs.    */
+    public StringBuffer getTblSelectionDataWithTabs() {
+        return getTblSelectionData(false, false);
+    }
+
+    /**     ALL Selected rows and columns data would be picked and returned.
+     * Columns will be separated with comma.    */
+    public StringBuffer getTblSelectionDataWithCommas() {
+        return getTblSelectionData(true, true);
+    }
+
+    /**     ALL columns for rows "selRows" would be picked, irrespective of the visiblility.
+     *              Rows are in table viewcoordinated. */
+    public StringBuffer getTblRowDataWithTabs(int[] selRows) {
+        return getTblRowData(selRows, false, true);
+    }
+
+    /**     Returned data from those cells that are part of rows which are both Marked and Visible.
+     * Data from only will be returned. ALL columns for rows in ''rowMarkedInModel" would be picked, subjected
+     * to the condition that these are also visible.
+     * rowMarkedInModel are in Table's Model coordinated.
+     */
+    public StringBuffer getTblRowDataWithComma(ArrayList<Boolean> rowMarkedInModel) {
+        ArrayList<Integer> selIRows = new ArrayList<Integer>();
+
+        //  Scan overall visible rows, and pick rows that are marked for export...
+        for (int viewRowIdx = 0; viewRowIdx < tblData.getRowCount(); viewRowIdx++) {
+            int modelRowIndex = tblData.convertRowIndexToModel(viewRowIdx);
+            if (rowMarkedInModel.get(modelRowIndex)) // this row is marked for export...
+            {
+                selIRows.add(viewRowIdx);
+            }
+        }
+
+        //  Convert to array...
+        int[] selRows = new int[selIRows.size()];
+        for (int idx = 0; idx < selIRows.size(); idx++) {
+            selRows[idx] = selIRows.get(idx);
+        }
+
+        //  These are the actual rows (both Marked and Visible - data from only these should be returned...
+        return getTblRowData(selRows, true, true);
+    }
+
+    /**     ALL columns for rows "selRows" would be picked, irrespective of the visiblility.
+     *              Rows are in table viewcoordinated.
+     */
+    public StringBuffer getTblRowData(int[] selRows, boolean forceEscapeComma, boolean isCommaSepatrated) {
+
+        //  Make a selection that selects all the columns...
+        int colCount = tblData.getColumnCount();
+        int[] colsIdx = new int[colCount];
+        for (int i = 0; i < colCount; i++) {
+            colsIdx[i] = i;
+        }
+        return getTblSelectionData(selRows, colsIdx, forceEscapeComma, isCommaSepatrated);
+    }
+
+    /**     ALL Selected rows and columns data would be picked and returned.
+     * forceEscapeComma: true => Encapsulate all cell values within double quotes.
+     * false => Encapsulate those cell values within double quotes, that contains comma
+     *
+     * isCommaSepatrated: true => Separate all cell values with Comma
+     * false => Separate all cell values with Tabs         */
+    public StringBuffer getTblSelectionData(boolean forceEscapeComma, boolean isCommaSepatrated) {
+        StringBuffer sBuff = new StringBuffer();
+        int[] rowsIdx = tblData.getSelectedRows();
+        int[] colsIdx = tblData.getSelectedColumns();
+        return getTblSelectionData(rowsIdx, colsIdx, forceEscapeComma, isCommaSepatrated);
+    }
+
+    /**     ALL specified rows and columns data would be picked and returned.
+     * rows and columns are specified with rowsIdx[] and colsIdx[] arrays.
+     * Both values are in Table view coordinates.
+     *
+     * forceEscapeComma: true => Encapsulate all cell values within double quotes.
+     * false => Encapsulate those cell values within double quotes, that contains comma
+     *
+     * isCommaSepatrated: true => Separate all cell values with Comma
+     * false => Separate all cell values with Tabs         */
+    public StringBuffer getTblSelectionData(int[] rowsIdx, int[] colsIdx, boolean forceEscapeComma,
+                                            boolean isCommaSepatrated) {
+        StringBuffer sBuff = new StringBuffer();
+
+        if (rowsIdx.length > 0) {
+            for (int rIdx = 0; rIdx < rowsIdx.length; rIdx++) {
+                for (int cIdx = 0; cIdx < colsIdx.length; cIdx++) {
+                    Object cellValue = tblData.getValueAt(rowsIdx[rIdx], colsIdx[cIdx]);
+
+                    if (cIdx > 0 && cIdx < colsIdx.length) {
+                        if (isCommaSepatrated) {
+                            sBuff.append(',');
+                        } else {
+                            sBuff.append("\t");
+                        }
+                    }
+
+                    if (null == cellValue) {
+                        sBuff.append("");
+                    } else {
+                        // If special character in the column name put it into double quotes
+                        String strVal = cellValue.toString();
+                        sBuff.append(forceEscapeComma || (strVal.indexOf(',') >= 0) ? '"' + strVal + '"' : strVal);
+                    }
+                }
+                sBuff.append("\n");
+            }
+        }
+        return sBuff;
+    }
+
+    //
+    //    DEBUG Help...
+    //
+    void printSelection() {
+        int[] scols = tblData.getSelectedColumns();
+        int[] srows = tblData.getSelectedRows();
+
+        for (int idx : srows) {
+            System.out.println("Selected Rows:  View=" + idx + ",  Model=" + tblData.convertRowIndexToModel(idx));
+        }
+        for (int idx : scols) {
+            System.out.println("Selected Cols:  View=" + idx + ",  Model="
+                    + tblData.convertColumnIndexToModel(idx));
+        }
+        System.out.println("");
+    }
+
+    void printColList() {
+        int idx = 0;
+        TableColumnModel colModel = tblData.getColumnModel();
+        Enumeration<TableColumn> eTC = colModel.getColumns();
+        while (eTC.hasMoreElements()) {
+            TableColumn tc = eTC.nextElement();
+            System.out.println("[" + idx++ + "]: " + tc.getHeaderValue());
+        }
+    }
+
+    //
+    //      EVENT Mgmt
+    //
+    /**     Given a view-row-index of the data table, it returned the actual row number,
+     * the one that was in effect when there was no sort/filter.   */
+    int convertRowIndexToModel(int viewRowIndex) {
+        return tblData.convertRowIndexToModel(viewRowIndex);
+    }
+
+    /**     Given a view-column-index of the data table, it returned the actual column number,
+     * the one that was in effect when there was no shiting of columns.   */
+    int convertColumnIndexToModel(int viewColIndex) {
+        return tblData.convertColumnIndexToModel(viewColIndex);
+    }
+
+    /** Returned underlying table row count...  */
+    int getRowCount() {
+        return tblData.getRowCount();
+    }
+
+    void addExportCellsActionlistener(ActionListener exportCellsActionListener) {
+        this.actLsnExportCells = exportCellsActionListener;
+    }
+
+    void addShowPropertyDialogActionListener(ActionListener actLsnShowPropDialogs) {
+        this.actLsnShowPropDialogs = actLsnShowPropDialogs;
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addCol;
+
+    private javax.swing.JButton butCopy;
+
+    private javax.swing.JButton butErazeContents;
+
+    private javax.swing.JButton butExportSelection;
+
+    private javax.swing.JButton butPaste;
+
+    private javax.swing.JButton butRemoveCol;
+
+    private javax.swing.JButton butRemoveExtendedCols;
+
+    private javax.swing.JButton butSelectAll;
+
+    private javax.swing.JButton butUndoColDelete;
+
+    private javax.swing.JPanel jPanel1;
+
+    private javax.swing.JPanel jPanel2;
+
+    private javax.swing.JPanel jPanel3;
+
+    private javax.swing.JPanel jPanel4;
+
+    private javax.swing.JSeparator jSeparator1;
+
+    private javax.swing.JSeparator jSeparator2;
+
+    private javax.swing.JSeparator jSeparator3;
+
+    private javax.swing.JMenuItem miAddCol;
+
+    private javax.swing.JMenuItem miClearSelection;
+
+    private javax.swing.JMenuItem miCopy;
+
+    private javax.swing.JMenuItem miCut;
+
+    private javax.swing.JMenuItem miExportCells;
+
+    private javax.swing.JMenuItem miExportRows;
+
+    private javax.swing.JMenuItem miPaste;
+
+    private javax.swing.JMenuItem miProperties;
+
+    private javax.swing.JMenuItem miRemoveCols;
+
+    private javax.swing.JMenuItem miShowDetails;
+
+    private javax.swing.JMenuItem miUndoRemoveCol;
+
+    private javax.swing.JPopupMenu popExtra;
+
+    private javax.swing.JPopupMenu popTblContextMnu;
+
+    private javax.swing.JScrollPane spaData;
+
+    private javax.swing.JTable tblData;
+
+    private javax.swing.JTable tblRowHeader;
+
+    // End of variables declaration//GEN-END:variables
+    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                               HELPER  CLASS    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //    
+    /// Actions...
+    /** Remove all Selected Columns. */
+    class RemoveAllSelectedExtColumnsAction extends AbstractAction {
+
+        RemoveAllSelectedExtColumnsAction() {
+            super("Remove Columns");
+            setEnabled(false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+        }
+    }
+
+    /**     Undo deleted columns */
+    class UndeleteColumnsAction extends AbstractAction {
+
+        UndeleteColumnsAction() {
+            super("Undo Remove-Col");
+            setEnabled(false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+        }
+    }
+
+    /**     Paste from Clipboard.       */
+    class PasteFromClipAction extends AbstractAction {
+
+        PasteFromClipAction() {
+            super("Paste");
+            setEnabled(false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            isCutInProgress = false;
+            pasteFromClipboard();
+        }
+    }
+
+    /**     Paste from Clipboard.       */
+    class ClearSelectionAction extends AbstractAction {
+
+        ClearSelectionAction() {
+            super("Clear Selection");
+            setEnabled(false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            doClearSelection();
+        }
+    }
+
+    /**     Export Selection to File.       */
+    class ExportSelectionAction extends AbstractAction implements ListSelectionListener {
+
+        /**  Listen to following table for selection events, and keep enabled status synchronised to it.  */
+        JTable tblAssociated;
+
+        ExportSelectionAction() {
+            super("Export Selection");
+            setEnabled(false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            actLsnExportCells.actionPerformed(e);
+        }
+
+        /** This instance will attach itself to the Table, for listening table selections   */
+        private void addAssociatedTable(JTable tbl) {
+            tblAssociated = tbl;
+            tbl.getSelectionModel().addListSelectionListener(this);
+            tbl.getColumnModel().getSelectionModel().addListSelectionListener(this);
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            setEnabled(tblAssociated.getSelectedRowCount() + tblAssociated.getSelectedColumnCount() > 0);
+        }
+    }
+
+    /**     Listen to Ciolumnm Selections, so that dependent  button could be enabled/disabled.     */
+    class ColSelectionsListener implements ListSelectionListener {
+
+        public void valueChanged(ListSelectionEvent e) {
+            //            System.out.println("[ViewDataConsole]: Column Selection Changed: " + e);
+            if (!e.getValueIsAdjusting()) {
+                boolean onlyExtColumnSelected = isOnlyExtColumnInSelection();
+                actRemoveCols.setEnabled(onlyExtColumnSelected);
+                actPaste.setEnabled(onlyExtColumnSelected);
+                actClearSelection.setEnabled(onlyExtColumnSelected);
+            }
+        }
+    }
+
+    /**     Listen to Ciolumnm Selections, so that dependent  button could be enabled/disabled.     */
+    class RowSelectionsListener implements ListSelectionListener {
+
+        public void valueChanged(ListSelectionEvent e) {
+            System.out.println("[ViewDataConsole]: row Selection Changed: " + e);
+            if (!e.getValueIsAdjusting()) {
+                miShowDetails.setEnabled(tblData.getSelectedRow() >= 0);
+                firePropertyChange(JSheet.EVENT_DATA_SINGLE_CLICKED, -1, e.getLastIndex());
+            }
+        }
+    }
+
+    /**     Paste from Clipboard.       */
+    class ShowCustomizationConsoleAction extends AbstractAction {
+
+        ShowCustomizationConsoleAction() {
+            super("Properties");
+            setEnabled(true);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            actLsnShowPropDialogs.actionPerformed(e);
+            //            firePropertyChange(PropertiesNames.REQUEST_SHOW_CUSTOMIZATION_CONSOLE, 0, 1);
+        }
+    }
+
+    class CompositeTableModel extends AbstractTableModel implements TableModelListener {
+        //
+        //         Enclosed State and Workers......
+        //
+        /** The Read Only component of the Table Data is stored here. */
+        private TableModel roDataModel;
+
+        /** The New Columns of the Table Data are stored and maintained here. */
+        private DefaultTableModel extDataModel;
+
+        //  Fixed state, once read-only models is connected to this...
+        int roModelRowCount = -1;
+
+        int roModelColCount = -1;
+
+        //
+        //         Constructor...
+        //
+        /**
+         *  It is asumed that Read Only Model does NOT change.
+         *  Therefore,  changes performed in read-only model will not be automatically be shown in the JTable.
+         */
+        private CompositeTableModel(TableModel roDataModel) {
+            setPrimaryDataModel(roDataModel);
+
+            if (null == extDataModel) //  the extentions to the Table are written to this model,
+            //  so that the Read-Only Model remains intact...
+            {
+                extDataModel = new DefaultTableModel(roDataModel.getRowCount(), 0);
+            }
+
+            connectModels();
+        }
+
+        //
+        //         Property Accessors...
+        //
+        /** Getter method for underlying Read-Only Table Model */
+        TableModel getPrimaryModel() {
+            return roDataModel;
+        }
+
+        /** Setter method for underlying Read-Only Table Model */
+        private void setPrimaryDataModel(TableModel roDataModel) {
+            if (null == roDataModel) {
+                throw new IllegalStateException("Primary data Model NOT set. "
+                        + "setupCompositeDataModel() should be called after "
+                        + "setPrimaryDataModel(). NOTE: roDataModel=" + roDataModel);
+            }
+
+            this.roDataModel = roDataModel;
+            roModelColCount = roDataModel.getColumnCount();
+            roModelRowCount = roDataModel.getRowCount();
+        }
+
+        /** Getter for Underlying Extended table Model */
+        TableModel getExtendedTableModel() {
+            return extDataModel;
+        }
+
+        //
+        //         Behaviour management...
+        //
+        private void clearExtendedDataModel() {
+            extDataModel.getDataVector().clear();
+            extDataModel.setColumnCount(0);
+            extDataModel.setRowCount(0);
+        }
+
+        private void connectModels() {
+            extDataModel.addTableModelListener(CompositeTableModel.this);
+        }
+
+        private void disConnectModels() {
+            extDataModel.removeTableModelListener(CompositeTableModel.this);
+        }
+
+        //
+        //         Listeners management...
+        //
+        public void tableChanged(TableModelEvent oe) {
+            //  Performing Co-ordinates Transformation (Ext-Model space to Composite-Model space)...
+            int fr = oe.getFirstRow();
+            int lr = oe.getLastRow();
+            int col = oe.getColumn() + roDataModel.getColumnCount();
+            TableModelEvent ne = new TableModelEvent((TableModel) oe.getSource(), fr, lr, col, oe.getType());
+            // Relay to Parent...
+            fireTableChanged(ne);
+        }
+
+        //
+        //         Table Model's Abstract Method now Implemented...
+        //
+        public int getRowCount() {
+            assert roDataModel.getRowCount() == roModelRowCount;
+            return roDataModel.getRowCount();
+        }
+
+        public int getColumnCount() {
+            assert roDataModel.getColumnCount() == roModelColCount;
+            return roDataModel.getColumnCount() + extDataModel.getColumnCount();
+        }
+
+        @Override
+        public String getColumnName(int columnIndex) {
+            assert roDataModel.getColumnCount() == roModelColCount;
+            if (columnIndex < roDataModel.getColumnCount()) {
+                //  ReadOnly Model has this information...
+                return roDataModel.getColumnName(columnIndex);
+            }
+
+            //  column number index in Extensible model is required, to get Column Name...
+            int idxCol2 = columnIndex - roDataModel.getColumnCount();
+            return extDataModel.getColumnName(idxCol2);
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            if (columnIndex < roDataModel.getColumnCount()) {
+                //  ReadOnly Model has this information...
+                return roDataModel.getColumnClass(columnIndex);
+            }
+
+            //  Assume all to be strings...
+            return String.class;
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            if (columnIndex < roDataModel.getColumnCount()) //  ReadOnly Model has this information...
+            {
+                return false;
+            }
+
+            //  column number index in Extensible model is required, to get Column Name...
+            int idxCol2 = columnIndex - roDataModel.getColumnCount();
+            return extDataModel.isCellEditable(rowIndex, idxCol2);
+        }
+
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            assert roDataModel.getColumnCount() == roModelColCount;
+            if (columnIndex < roDataModel.getColumnCount()) //  ReadOnly Model has this information...
+            {
+                return roDataModel.getValueAt(rowIndex, columnIndex);
+            }
+
+            //  column number index in Extensible model is required, to get Column Name...
+            int idxCol2 = columnIndex - roDataModel.getColumnCount();
+            return extDataModel.getValueAt(rowIndex, idxCol2);
+        }
+
+        @Override
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            if (columnIndex < roDataModel.getColumnCount()) //  ReadOnly Model has this information...
+            {
+                throw new IllegalStateException("These table cells are read-Only.");
+            }
+
+            //  column number index in Extensible model is required, to get Column Name...
+            int idxCol2 = columnIndex - roDataModel.getColumnCount();
+            extDataModel.setValueAt(aValue, rowIndex, idxCol2);
+        }
+
+        /**
+         *  @returns: The newly created tableColumn. It NOT attached to the table yet.
+         */
+        private TableColumn createNewColumn() {
+            //  Create a new Column, set its header value and return the reference...
+            String colName = EXT_COLUMNS_NAME_PREFIX + (++columnAppendCount);
+            TableColumn newTC = new TableColumn(getColumnCount());
+            newTC.setHeaderValue(colName);
+            newTC.setPreferredWidth(defaultColWidth);
+            newTC.setMinWidth(defaultColWidth);
+            return newTC;
+        }
+
+        /**     Now add a new column to the underlying storage.
+         * it is still NOT safe to announce its presence, so momemtorarily disable listeners     */
+        private void addNewColumn(TableColumn tc) {
+            //  We do NOT intermediate changes to be sent to JTable...
+            disConnectModels();
+            //  Add column now...
+            tc.setModelIndex(getColumnCount());
+            extDataModel.addColumn(tc.getHeaderValue());
+            //  revert back...
+            connectModels();
+        }
+
+        /**
+         *  @returns Array of all the columns that belongs to Extended Column Model
+         */
+        private int[] getViewIdxForAllExtColumns() {
+            return new int[0];
+        }
+    }
+
+    /**     MOdel that is responsible for rendering Row header for the Data View Table  */
+    class RowHeaderTableModel extends AbstractTableModel {
+
+        public int getRowCount() {
+            return tblData.getRowCount();
+        }
+
+        public int getColumnCount() {
+            return 1;
+        }
+
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            return tblData.convertRowIndexToModel(rowIndex);
+        }
+    }
+
+    /** Row header cell renderer that shows selection of rows and row numbers   */
+    class FixedTblSelHangerRenderer extends DefaultTableCellRenderer {
+
+        FixedTblSelHangerRenderer() {
+            super();
+            //            int rh = tblRowHeader.getRowHeight();
+            //            //            int cw = tblRowHeader.get;
+            ////            mg.setSize( getWidth(), rh);
+            //            mg.setSize(14, rh - 1);
+            //            setLayout(new BorderLayout());
+            //            add(mg, BorderLayout.CENTER);
+            //            //            pnlFixedTblHangerRenderer.setSize( 10, rh);
+            //            revalidate();
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                       boolean hasFocus, int row, int column) {
+
+            //            setText(value.toString());
+
+            //            mg.setSelected(isSelected && selectionRowMode);
+            //            if (isSelected) {
+            //                setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+            //            } else {
+            //                setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+            //            }
+
+            invalidate();
+            //            return this;
+            return super.getTableCellRendererComponent(table, value, isSelected && isSelectionFromRowHeader,
+                                                       hasFocus, row, column);
+        }
+    }
+
+    //
+    //     Grave-Yard...
+    //
+}

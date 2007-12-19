@@ -47,7 +47,9 @@ public class SelectionHanger extends javax.swing.JPanel {
     }
             
 
-    /**     if true, draws this buton with RAISED border.   */
+    /**     if true, draws this buton with RAISED border.
+     * @param isSelected 
+     */
     public void setSelected(boolean isSelected) {
         if( isSelected && isPaintSelection)
             setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
