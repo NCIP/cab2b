@@ -94,9 +94,9 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Session
     /**
      *
      */
-    public List<TreeSet<Comparable<?>>> getUniqueRecordValues(Long entityId) throws RemoteException {
+    public ArrayList<TreeSet<Comparable>> getUniqueRecordValues(Long entityId) throws RemoteException {
         List<IRecord> entityRecordList = DataListOperationsController.getEntityRecords(entityId);
-        List<TreeSet<Comparable<?>>> entityRecordValues = new ArrayList<TreeSet<Comparable<?>>>();
+        ArrayList<TreeSet<Comparable>> entityRecordValues = new ArrayList<TreeSet<Comparable>>();
 
         int index = 0;
         for (IRecord entityRecord : entityRecordList) {
@@ -104,15 +104,15 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Session
             for (AttributeInterface attribute : attributeSet) {
                 Comparable<?> attributeValue = (Comparable<?>) entityRecord.getValueForAttribute(attribute);
 
-                TreeSet<Comparable<?>> columnValues = null;
+                TreeSet<Comparable> columnValues = null;
                 try {
                     columnValues = entityRecordValues.get(index);
                 } catch (IndexOutOfBoundsException e) {
-                    columnValues = new TreeSet<Comparable<?>>();
+                    columnValues = new TreeSet<Comparable>();
                     entityRecordValues.add(index, columnValues);
                 }
                 columnValues.add(attributeValue);
-                index++;
+                index++;             
             }
             index = 0;
         }

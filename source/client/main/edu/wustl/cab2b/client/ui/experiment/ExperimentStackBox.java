@@ -335,7 +335,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
             List<IRecord> recordList = null;
 
-            List<TreeSet<Comparable<?>>> recordValues = null;
+            ArrayList<TreeSet<Comparable>> recordValues = null;
 
             protected void doNonUILogic() throws RuntimeException {
                 try {

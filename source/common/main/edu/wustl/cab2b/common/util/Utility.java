@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 import net.sf.hibernate.HibernateException;
 import net.sf.hibernate.Query;
 import net.sf.hibernate.Session;
-
 import edu.common.dynamicextensions.domain.BooleanAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.DateAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.DoubleAttributeTypeInformation;
@@ -47,7 +46,9 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.queryobject.DataType;
+import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.util.dbManager.DBUtil;
+import edu.wustl.common.util.dbManager.HibernateUtility;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -550,6 +551,5 @@ public class Utility {
     public static Collection executeHQL(String queryName) throws HibernateException {
         List<Object> values = null;
         return executeHQL(queryName, values);
-    }
-
+    }   
 }

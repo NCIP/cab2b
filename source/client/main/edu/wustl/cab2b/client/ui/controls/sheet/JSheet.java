@@ -17,8 +17,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.util.*;
+
 import javax.swing.*;
-import javax.swing.JDialog;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
@@ -96,7 +96,7 @@ public class JSheet extends javax.swing.JPanel {
     private TableModel tmROData;
 
     /** refernce to oginal params setModel(...) , for RESET    */
-    private ArrayList<TreeSet<Object>> sampleValuesAL;
+    private ArrayList<TreeSet<Comparable>> sampleValuesAL;
 
     /**
      * Creates new form JSheet
@@ -299,7 +299,8 @@ public class JSheet extends javax.swing.JPanel {
      * Since there are more than 1 column, we have to supply more than 1 set. Club all those Sets in an 
      * ArrayList <code>sampleValues </code>. 
      */
-    public void setReadOnlyDataModel(TableModel tmROData, ArrayList<TreeSet<Object>> sampleValuesAL) {
+    public void setReadOnlyDataModel(TableModel tmROData, ArrayList<TreeSet<Comparable>> sampleValuesAL) {
+        
         this.sampleValuesAL = sampleValuesAL;
 
         //  A:  Property Event Propagation Chain setup...
@@ -350,7 +351,7 @@ public class JSheet extends javax.swing.JPanel {
 
     /**    Senario - C.2-C:  Setting up sample values in ColFilterModel (Used by Range & List Filters)   */
     @SuppressWarnings("empty-statement")
-    private void setupSampleValues(ArrayList<TreeSet<Object>> sampleValuesAL) {
+    private void setupSampleValues(ArrayList<TreeSet<Comparable>> sampleValuesAL) {
         if (null == sampleValuesAL) {
             sampleValuesAL = new ArrayList();
         }
@@ -377,7 +378,7 @@ public class JSheet extends javax.swing.JPanel {
         }
     }
 
-    static private TreeSet getSetForIdx(ArrayList<TreeSet<Object>> sampleValues, int idx) {
+    static private TreeSet getSetForIdx(ArrayList<TreeSet<Comparable>> sampleValues, int idx) {
         if (idx < sampleValues.size()) //  Value exists at given index...
         {
             return sampleValues.get(idx);

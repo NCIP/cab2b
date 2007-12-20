@@ -1,8 +1,8 @@
 package edu.wustl.cab2b.common.ejb.utility;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.TreeSet;
 
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
@@ -53,5 +53,5 @@ public interface UtilityBusinessInterface extends BusinessInterface {
      */
     IPartiallyInitializedRecord<?, ?> getView(int handle, ILazyParams params) throws RemoteException;
 
-    List<TreeSet<Comparable<?>>> getUniqueRecordValues(Long entityId) throws RemoteException;
+    ArrayList<TreeSet<Comparable>> getUniqueRecordValues(Long entityId) throws RemoteException;
 }
