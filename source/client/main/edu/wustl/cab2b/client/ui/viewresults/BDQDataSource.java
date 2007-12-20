@@ -3,7 +3,10 @@ package edu.wustl.cab2b.client.ui.viewresults;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.controls.LazyTable.AbstractLazyDataSource;
 import edu.wustl.cab2b.client.ui.controls.LazyTable.CacheInterface;
 import edu.wustl.cab2b.client.ui.controls.LazyTable.Page;
@@ -72,7 +75,7 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
     /**
      * @see edu.wustl.cab2b.client.ui.controls.LazyTable.AbstractLazyDataSource#fetchPageData(edu.wustl.cab2b.client.ui.controls.LazyTable.PageInfo)
      */
-    public Page fetchPageData(PageInfo pageInfo) {
+    public Page fetchPageData(PageInfo pageInfo) {/*
         List<LazyParams.Range> rangeList = getRanges(uninitailisedRecord.getCube(), pageInfo.getStartX(),
                                                      pageInfo.getStartY());
         LazyParams lazyParams = new I3DDataRecord.LazyParams(rangeList);
@@ -89,9 +92,9 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
         } catch (RemoteException e) {
             CommonUtils.handleException(e, MainFrame.newWelcomePanel, true, true, true, false);
         }
-
         return null;
-    }
+    */
+        return null;}
 
     /**
      * @param cube
@@ -147,7 +150,7 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
      * @return
      */
     private LazyParams.Range getCloumnRage(int columnNo) {
-        Object[][][] cube = uninitailisedRecord.getCube();        
+        Object[][][] cube = uninitailisedRecord.getCube();
         int dimj = cube[0].length;
         int dimk = cube[0][0].length;
         int starti = columnNo / dimj;
@@ -175,12 +178,32 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
                                                                                                                     UtilityHomeInterface.class,
                                                                                                                     MainFrame.newWelcomePanel);
         try {
-            Logger.out.debug("Record Handle "+uninitailisedRecord.handle());
-            return (IPartiallyInitialized3DRecord) utilityBeanInterface.getView(uninitailisedRecord.handle(), lazyParams);
+            Logger.out.debug("Record Handle " + uninitailisedRecord.handle());
+            return (IPartiallyInitialized3DRecord) utilityBeanInterface.getView(uninitailisedRecord.handle(),
+                                                                                lazyParams);
         } catch (RemoteException e) {
             CommonUtils.handleException(e, MainFrame.newWelcomePanel, true, true, true, false);
         }
-        
+
         return null;
     }
+
+    public ArrayList<TreeSet<Comparable>> getUniqueRecordValues() {
+
+        UtilityBusinessInterface utilityBeanInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                    EjbNamesConstants.UTILITY_BEAN,
+                                                                                                                    UtilityHomeInterface.class,
+                                                                                                                    MainFrame.newWelcomePanel);
+        Set<AttributeInterface> allAttributes = uninitailisedRecord.getAttributes();
+        if (!allAttributes.isEmpty()) {
+            Long entityId = allAttributes.iterator().next().getEntity().getId();
+            try {
+                return utilityBeanInterface.getUniqueRecordValues(entityId);
+            } catch (RemoteException e) {
+                CommonUtils.handleException(e, MainFrame.newWelcomePanel, true, true, true, false);
+            }
+        }
+        return null;
+    }
+
 }
