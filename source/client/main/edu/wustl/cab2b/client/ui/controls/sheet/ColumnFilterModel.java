@@ -101,6 +101,7 @@ public class ColumnFilterModel<T extends Comparable> {
         } else {
             bsRanger = new BiSlider(new Vector(sampleSortedValues), minBound, maxBound);
         }
+        Common.setBackgroundWhite(bsRanger);
 
         return bsRanger;
     }

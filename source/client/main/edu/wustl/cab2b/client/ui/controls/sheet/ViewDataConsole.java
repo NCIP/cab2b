@@ -5,6 +5,8 @@
  */
 package edu.wustl.cab2b.client.ui.controls.sheet;
 
+import static edu.wustl.cab2b.client.ui.controls.sheet.Common.*;
+
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
@@ -16,11 +18,12 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
+
 /**
  *
  * @author  jasbir_sachdeva
  */
-class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListener, PropertiesNames {
+class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListener {
 
     /** The Tables data Model, that pickes data from both Read-Only and Extensible Data Models. */
     private CompositeTableModel compositeDataModel;
@@ -99,6 +102,10 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         setupRowHeader();
     }
 
+    Object getValueAt(int row, int column) {
+        return tblData.getValueAt(row, column);
+    }
+
     void setupRowHeader() {
         RowHeaderTableModel tmRowHeader = new RowHeaderTableModel();
         tblRowHeader.setModel(tmRowHeader);
@@ -110,6 +117,8 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
 
         // Connect row selection models...
         tblRowHeader.setSelectionModel(tblData.getSelectionModel());
+        spaData.getRowHeader().addChangeListener( new HeaderAndDataScrolSync());
+//        tblRowHeader.
     }
 
     void addUserColumn(SheetColumn sCol) {
@@ -327,13 +336,20 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         tblData = new javax.swing.JTable();
 
         tblRowHeader.setModel(new javax.swing.table.DefaultTableModel(
-                new Object[][] { { null, null, null, null }, { null, null, null, null }, { null, null, null, null }, { null, null, null, null } },
-                new String[] { "Title 1", "Title 2", "Title 3", "Title 4" }));
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
         tblRowHeader.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblRowHeaderMouseClicked(evt);
             }
-
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 tblRowHeaderMousePressed(evt);
             }
@@ -406,17 +422,10 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
 
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(
-                                                                       new javax.swing.border.LineBorder(
-                                                                               new java.awt.Color(51, 0, 51), 1,
-                                                                               true),
-                                                                       "Selection",
-                                                                       javax.swing.border.TitledBorder.CENTER,
-                                                                       javax.swing.border.TitledBorder.DEFAULT_POSITION,
-                                                                       new java.awt.Font("Tahoma", 1, 16)));
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(51, 0, 51), 1, true), "Selection", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 16)));
 
         butSelectAll.setText("Select All");
-        butSelectAll.setVisible(false);
+        butSelectAll.setVisible( false);
         butSelectAll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 butSelectAllActionPerformed(evt);
@@ -448,14 +457,7 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
 
         jPanel3.add(jPanel4, new java.awt.GridBagConstraints());
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(
-                                                                       new javax.swing.border.LineBorder(
-                                                                               new java.awt.Color(51, 0, 51), 1,
-                                                                               true),
-                                                                       " For New Columns Only ",
-                                                                       javax.swing.border.TitledBorder.CENTER,
-                                                                       javax.swing.border.TitledBorder.DEFAULT_POSITION,
-                                                                       new java.awt.Font("Tahoma", 1, 16)));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(51, 0, 51), 1, true), " For New Columns Only ", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 16)));
 
         addCol.setText("Add Col");
         addCol.addActionListener(new java.awt.event.ActionListener() {
@@ -486,33 +488,33 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         miUndoRemoveCol.setText("Undo Remove Column");
         popExtra.add(miUndoRemoveCol);
 
+        setComponentPopupMenu(popTblContextMnu);
         setLayout(new java.awt.BorderLayout());
 
+        jPanel1.setInheritsPopupMenu(true);
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         spaData.setAutoscrolls(true);
+        spaData.setInheritsPopupMenu(true);
         spaData.addAncestorListener(new javax.swing.event.AncestorListener() {
             public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
-
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
                 spaDataAncestorAdded(evt);
             }
-
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
         });
 
         tblData.setAutoCreateColumnsFromModel(false);
         tblData.setAutoCreateRowSorter(true);
-        tblData.setComponentPopupMenu(popTblContextMnu);
         tblData.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         tblData.setCellSelectionEnabled(true);
+        tblData.setInheritsPopupMenu(true);
         tblData.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblDataMouseClicked(evt);
             }
-
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 tblDataMousePressed(evt);
             }
@@ -532,7 +534,7 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
     private void miAddColActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddColActionPerformed
         // TODO add your handling code here:
         //        System.out.println("miAddColActionPerformed(): "+evt);
-        firePropertyChange(PropertiesNames.USER_COLUMN_ADDITION_REQUESTED, 0, 1);
+        firePropertyChange(Common.USER_COLUMN_ADDITION_REQUESTED, 0, 1);
     }//GEN-LAST:event_miAddColActionPerformed
 
     private void miRemoveColsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRemoveColsActionPerformed
@@ -596,7 +598,7 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         if (tblData.getSelectedRow() != -1) {
             //  only if there is a valid selection...
             int rowModel = tblData.convertRowIndexToModel(tblData.getSelectedRow());
-            firePropertyChange(PropertiesNames.REQUESTED_SHOW_ROW_DETAILS, -1, rowModel);
+            firePropertyChange(Common.REQUESTED_SHOW_ROW_DETAILS, -1, rowModel);
         }
     }//GEN-LAST:event_miShowDetailsActionPerformed
 
@@ -604,9 +606,9 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         int rowModel = tblData.convertRowIndexToModel(tblData.getSelectedRow());
         // TODO add your handling code here:
         if (evt.getClickCount() == 2) {
-            firePropertyChange(PropertiesNames.EVENT_DATA_ROW_DOUBLE_CLICKED, -1, rowModel);
+            firePropertyChange(Common.EVENT_DATA_ROW_DOUBLE_CLICKED, -1, rowModel);
         } else {
-            firePropertyChange(PropertiesNames.EVENT_DATA_SINGLE_CLICKED, -1, rowModel);
+            firePropertyChange(Common.EVENT_DATA_SINGLE_CLICKED, -1, rowModel);
         }
 
     }//GEN-LAST:event_tblDataMouseClicked
@@ -616,7 +618,7 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
 
         if (evt.getClickCount() == 2) {
             int rowModel = tblData.convertRowIndexToModel(tblData.getSelectedRow());
-            firePropertyChange(PropertiesNames.EVENT_HEADER_ROW_DOUBLE_CLICKED, -1, rowModel);
+            firePropertyChange(Common.EVENT_HEADER_ROW_DOUBLE_CLICKED, -1, rowModel);
         }
 
     }//GEN-LAST:event_tblRowHeaderMouseClicked
@@ -630,6 +632,12 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
     void setupCompositeDataModel(TableModel tmROData, ArrayList<SheetColumn> colSheetAL) {
         compositeDataModel = new CompositeTableModel(tmROData);
 
+        //  Disable Row & Column Selection Listeners ...
+        for (ListSelectionListener colSL : colSelectionListeners) {
+            tblData.getColumnModel().getSelectionModel().removeListSelectionListener(colSL);
+        }
+
+        
         // Remove any current columns
         TableColumnModel cm = tblData.getColumnModel();
         while (cm.getColumnCount() > 0) {
@@ -644,13 +652,10 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         rsortTable.setRowFilter(rfilterTbl);
         tblData.setRowSorter(rsortTable);
 
-        //        tblData.setTableHeader(new JTableHeader(tblData.getColumnModel()));
-        //            tblData.getColumnModel().addColumn( aColumn);
-
-        //        //  Attach old listeners again to the Table...
-        //        for (TableModelListener tml : tblModelListener) {
-        //            tblData.getModel().addTableModelListener(tml);
-        //        }
+        //  Attach old Selection listeners again to the Table...
+        for (ListSelectionListener colSL : colSelectionListeners) {
+            tblData.getColumnModel().getSelectionModel().addListSelectionListener(colSL);
+        }
 
         //  reset Default Table Column Width...
         for (int i = 0; i < tblData.getColumnCount(); i++) {
@@ -667,12 +672,14 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
     }
 
     public void addTableColSelectionListener(ListSelectionListener l) {
+        tblData.getColumnModel().getSelectionModel().removeListSelectionListener(l);
         tblData.getColumnModel().getSelectionModel().addListSelectionListener(l);
-        //        colSelectionListeners.add(l);
+        colSelectionListeners.add(l);
     }
 
     public void removeTableColSelectionListener(ListSelectionListener l) {
         tblData.getColumnModel().getSelectionModel().removeListSelectionListener(l);
+        colSelectionListeners.remove(l);
     }
 
     public void addTableModelListener(TableModelListener tml) {
@@ -959,69 +966,37 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addCol;
-
     private javax.swing.JButton butCopy;
-
     private javax.swing.JButton butErazeContents;
-
     private javax.swing.JButton butExportSelection;
-
     private javax.swing.JButton butPaste;
-
     private javax.swing.JButton butRemoveCol;
-
     private javax.swing.JButton butRemoveExtendedCols;
-
     private javax.swing.JButton butSelectAll;
-
     private javax.swing.JButton butUndoColDelete;
-
     private javax.swing.JPanel jPanel1;
-
     private javax.swing.JPanel jPanel2;
-
     private javax.swing.JPanel jPanel3;
-
     private javax.swing.JPanel jPanel4;
-
     private javax.swing.JSeparator jSeparator1;
-
     private javax.swing.JSeparator jSeparator2;
-
     private javax.swing.JSeparator jSeparator3;
-
     private javax.swing.JMenuItem miAddCol;
-
     private javax.swing.JMenuItem miClearSelection;
-
     private javax.swing.JMenuItem miCopy;
-
     private javax.swing.JMenuItem miCut;
-
     private javax.swing.JMenuItem miExportCells;
-
     private javax.swing.JMenuItem miExportRows;
-
     private javax.swing.JMenuItem miPaste;
-
     private javax.swing.JMenuItem miProperties;
-
     private javax.swing.JMenuItem miRemoveCols;
-
     private javax.swing.JMenuItem miShowDetails;
-
     private javax.swing.JMenuItem miUndoRemoveCol;
-
     private javax.swing.JPopupMenu popExtra;
-
     private javax.swing.JPopupMenu popTblContextMnu;
-
     private javax.swing.JScrollPane spaData;
-
     private javax.swing.JTable tblData;
-
     private javax.swing.JTable tblRowHeader;
-
     // End of variables declaration//GEN-END:variables
     //
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1145,7 +1120,7 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
 
         public void actionPerformed(ActionEvent e) {
             actLsnShowPropDialogs.actionPerformed(e);
-            //            firePropertyChange(PropertiesNames.REQUEST_SHOW_CUSTOMIZATION_CONSOLE, 0, 1);
+            //            firePropertyChange(Common.REQUEST_SHOW_CUSTOMIZATION_CONSOLE, 0, 1);
         }
     }
 
@@ -1359,6 +1334,15 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         public Object getValueAt(int rowIndex, int columnIndex) {
             return tblData.convertRowIndexToModel(rowIndex);
         }
+    }
+    
+    class HeaderAndDataScrolSync implements ChangeListener{
+
+        public void stateChanged(ChangeEvent e) {
+            Point pViewPos = spaData.getRowHeader().getViewPosition();
+            spaData.getViewport().setViewPosition( pViewPos);
+        }
+        
     }
 
     /** Row header cell renderer that shows selection of rows and row numbers   */

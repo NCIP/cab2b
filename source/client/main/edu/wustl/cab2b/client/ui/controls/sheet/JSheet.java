@@ -5,6 +5,8 @@
  */
 package edu.wustl.cab2b.client.ui.controls.sheet;
 
+import static edu.wustl.cab2b.client.ui.controls.sheet.Common.setBackgroundWhite;
+
 import edu.wustl.cab2b.client.ui.controls.*;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -87,7 +89,7 @@ public class JSheet extends javax.swing.JPanel {
 
     private boolean mousePressed = false;
 
-    /** If true, magnifying glass is shown. Pressing on it will fire "PropertiesNames.EVENT_MAGNIFYING_GLASS_CLICKED" event. */
+    /** If true, magnifying glass is shown. Pressing on it will fire "Common.EVENT_MAGNIFYING_GLASS_CLICKED" event. */
     private boolean showMG;
 
     SheetColumn colMG;
@@ -113,8 +115,8 @@ public class JSheet extends javax.swing.JPanel {
         applySizeOn(diaConsSheetCust);
 
         //  Debug...
-        /* showColFilterConsoleInDialog();
-         showFIlterViewConsoleInDialog();*/
+//        showColFilterConsoleInDialog();
+//         showFIlterViewConsoleInDialog();
 
         //        pnlSheetCust.add(colVisibilityConsole);
         //        consData.addPropertyChangeListener(colVisibilityConsole);
@@ -183,17 +185,6 @@ public class JSheet extends javax.swing.JPanel {
         return (Window) comp;
     }
 
-    /** Recursively apply WHITE background to all child components...    */
-    void setBackgroundWhite(JComponent comp) {
-        comp.setBackground(java.awt.Color.WHITE);
-        java.awt.Component[] childComp = comp.getComponents();
-        for (int idx = 0; idx < childComp.length; idx++) {
-            if (childComp[idx] instanceof JComponent) {
-                setBackgroundWhite((JComponent) childComp[idx]);
-            }
-        }
-    }
-
     public int[] getSelectedRows() {
         return consData.getSelectedRows();
     }
@@ -208,6 +199,10 @@ public class JSheet extends javax.swing.JPanel {
 
     public int getSelectedColumn() {
         return consData.getSelectedColumn();
+    }
+    
+    public Object getValueAt( int row, int column){
+        return consData.getValueAt( row, column);
     }
 
     public JComponent getContextFilterConsole() {
@@ -316,6 +311,8 @@ public class JSheet extends javax.swing.JPanel {
 
         consData.revalidate();
         consData.repaint();
+        
+        
         //  Prepare for For next call...
         createSampleValuesFromModel = false;
     }
@@ -339,7 +336,7 @@ public class JSheet extends javax.swing.JPanel {
         //  Set Model to Sheet Customization Console...
         consSheetCust.setModel(scm);
         consFiltersView.setModel(scm);
-        //        conSheetCustomization.setModel(scm);
+        consColFilter.setModel( null);
     }
 
     private SheetColumn createNewColumnModel(int idx) {
@@ -402,7 +399,7 @@ public class JSheet extends javax.swing.JPanel {
         //  Create space to accomodate new values in data mode...
         consData.addUserColumn(sCol);
         //  Announce...
-        firePropertyChange(PropertiesNames.USER_COLUMN_ADDED, null, sCol);
+        firePropertyChange(Common.USER_COLUMN_ADDED, null, sCol);
     }
 
     void reapplyFilter() {
@@ -619,11 +616,11 @@ public class JSheet extends javax.swing.JPanel {
         public void propertyChange(PropertyChangeEvent evt) {
             System.out.println("[JSheet]: Received Evt=" + evt.getPropertyName() + ": " + evt);
 
-            if (evt.getPropertyName().equals(PropertiesNames.USER_COLUMN_ADDITION_REQUESTED)) {
+            if (evt.getPropertyName().equals(Common.USER_COLUMN_ADDITION_REQUESTED)) {
                 addUserColumn();
                 return;
             }
-            if (evt.getPropertyName().equals(PropertiesNames.COLUMN_VISIBLITY_CHANGE_REQUESTED)) {
+            if (evt.getPropertyName().equals(Common.COLUMN_VISIBLITY_CHANGE_REQUESTED)) {
                 reapplyColumnVisibility((SheetColumn) evt.getNewValue());
                 //  The column may have some associated active filter ...
                 reapplyFilter();
@@ -635,32 +632,32 @@ public class JSheet extends javax.swing.JPanel {
                 return;
             }
 
-            if (evt.getPropertyName().equals(PropertiesNames.REQUEST_RESET_ALL)) {
+            if (evt.getPropertyName().equals(Common.REQUEST_RESET_ALL)) {
                 //  Schedule call to reset...
                 resetAll();
                 return;
             }
 
-            if (evt.getPropertyName().equals(PropertiesNames.REQUESTED_SHOW_ROW_DETAILS)) {
+            if (evt.getPropertyName().equals(Common.REQUESTED_SHOW_ROW_DETAILS)) {
                 //  Schedule call to reset...
                 firePropertyChange(REQUESTED_SHOW_ROW_DETAILS, -1, evt.getNewValue());
                 return;
             }
 
-            if (evt.getPropertyName().equals(PropertiesNames.EVENT_DATA_ROW_DOUBLE_CLICKED)) {
+            if (evt.getPropertyName().equals(Common.EVENT_DATA_ROW_DOUBLE_CLICKED)) {
                 //  Schedule call to reset...
                 firePropertyChange(EVENT_DATA_ROW_DOUBLE_CLICKED, -1, evt.getNewValue());
                 return;
             }
 
-            if (evt.getPropertyName().equals(PropertiesNames.EVENT_DATA_SINGLE_CLICKED)) {
+            if (evt.getPropertyName().equals(Common.EVENT_DATA_SINGLE_CLICKED)) {
 
                 //  Schedule call to reset...
                 firePropertyChange(EVENT_DATA_SINGLE_CLICKED, -1, evt.getNewValue());
                 return;
             }
 
-            if (evt.getPropertyName().equals(PropertiesNames.EVENT_HEADER_ROW_DOUBLE_CLICKED)) {
+            if (evt.getPropertyName().equals(Common.EVENT_HEADER_ROW_DOUBLE_CLICKED)) {
                 //  Schedule call to reset...
                 firePropertyChange(EVENT_HEADER_ROW_DOUBLE_CLICKED, -1, evt.getNewValue());
                 return;

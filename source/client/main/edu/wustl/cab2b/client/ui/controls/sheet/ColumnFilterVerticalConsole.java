@@ -36,7 +36,6 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
     private ListItemSelectionListener listSelectionListener = new ListItemSelectionListener();
     private PatternPropertyChangeListener patternChangeListener = new PatternPropertyChangeListener();
     private RangeChangeListener rangePropertyChangeListener = new RangeChangeListener();
-    EnumeratedValuesListModel mdlValues = new EnumeratedValuesListModel();
     ColumnFilterModel emptyModel = new ColumnFilterModel();
 
     //    protected Comparable currMaxBounds;
@@ -46,13 +45,22 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
     public ColumnFilterVerticalConsole() {
         initComponents();
         model = emptyModel;
+        showNullModelNotification(true);
         uninstallFilter();
+        Common.setBackgroundWhite( pnlVerticalLayout);
+        Common.setBackgroundWhite( pnlPattern);
+        Common.setBackgroundWhite( scpList);
+        Common.setBackgroundWhite( lblNullModel);
+        Common.setBackgroundWhite( pnlFilterControlContainer);
     }
-    
-    public void changeOrientationToHorizontal(){
+
+    public void changeOrientationToHorizontal() {
         removeAll();
-        initComponentsHoriLayout( this);
+        initComponentsHoriLayout( pnlHorizontalLayout);
+        add( pnlHorizontalLayout, BorderLayout.CENTER);
+        Common.setBackgroundWhite( pnlHorizontalLayout);
         revalidate();
+        repaint();
     }
 
     public void uninstallControlListeners(ColumnFilterModel oldFilterModel) {
@@ -67,23 +75,27 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         model.getRangerComponent().addPropertyChangeListener(rangePropertyChangeListener);
     }
 
-    public void setModel(ColumnFilterModel filterModel) {
+    void showNullModelNotification(boolean showNullNotification) {
         removeAll();
+        if (showNullNotification) {
+            add(lblNullModel, BorderLayout.CENTER);
+        } else {
+            add(pnlVerticalLayout, BorderLayout.CENTER);
+        }
+    }
+
+    public void setModel(ColumnFilterModel filterModel) {
+        showNullModelNotification(null == filterModel);
         if (filterModel == null) {
             filterModel = emptyModel;
-            add( lblNullModel, BorderLayout.CENTER);
-        }else{
-            add( pnlVerticalLayout, BorderLayout.CENTER);
         }
-        
         uninstallControlListeners(filterModel);
 
         //Settings listeners...
         model.removePropertyChangeListener(modelListener);
         model = filterModel;
-
         model.addPropertyChangeListener(modelListener);
-        setHeader(filterModel.toString());
+//        setHeader(filterModel.toString());
 
         //  Set radio...
         if (model.getActiveFilterType().equals(ColumnFilterModel.FILTER_TYPE_NONE)) {
@@ -122,6 +134,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
     }
 
     private void syncListModel() {
+        EnumeratedValuesListModel mdlValues = new EnumeratedValuesListModel();
         mdlValues.setPossibleValues(model.getSampleSortedValues());
 //        System.out.println("model Size =" + mdlValues.getSize());
         lstValues.setModel(mdlValues);
@@ -129,7 +142,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         if (model.getFilterValues() != null) {
             lstValues.setSelectedIndices(model.getFilterValues());
         }
-        lstValues.revalidate();
+        lstValues.invalidate();
     }
 
     private void syncBiSlider() {
@@ -198,6 +211,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        lblNullModel = new javax.swing.JLabel();
         bgVV = new javax.swing.ButtonGroup();
         lblNoFilter = new javax.swing.JLabel();
         lblPleaseWait = new javax.swing.JLabel();
@@ -205,7 +219,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         lstValues = new javax.swing.JList();
         pnlPattern = new javax.swing.JPanel();
         tfPattern = new javax.swing.JTextField();
-        lblNullModel = new javax.swing.JLabel();
+        pnlHorizontalLayout = new javax.swing.JPanel();
         pnlVerticalLayout = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         pnlVVColumnName = new javax.swing.JPanel();
@@ -221,6 +235,11 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         rbNoFilter = new javax.swing.JRadioButton();
         jLabel3 = new javax.swing.JLabel();
         butApplyFilter = new javax.swing.JButton();
+
+        lblNullModel.setFont(new java.awt.Font("Tahoma", 0, 14));
+        lblNullModel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblNullModel.setText("<html>Filter<u> NOT</u> Available!"); // NOI18N
+        lblNullModel.setOpaque(true);
 
         lblNoFilter.setFont(new java.awt.Font("Tahoma", 1, 18));
         lblNoFilter.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -257,11 +276,6 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         });
         setLayout(new java.awt.BorderLayout());
 
-        lblNullModel.setFont(new java.awt.Font("Tahoma", 0, 14));
-        lblNullModel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblNullModel.setText("<html>Filter<u> NOT</u> Available!"); // NOI18N
-        add(lblNullModel, java.awt.BorderLayout.CENTER);
-
         pnlVerticalLayout.setLayout(new java.awt.BorderLayout());
 
         jPanel1.setLayout(new java.awt.BorderLayout());
@@ -275,6 +289,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         pnlVVColumnName.add(jLabel1, gridBagConstraints);
 
         lblColName.setFont(new java.awt.Font("Tahoma", 1, 16));
+        lblColName.setForeground(new java.awt.Color(0, 128, 0));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.8;
@@ -415,7 +430,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
             model.setPatternFilter(tfPattern.getText());
         } else if (rbRange.isSelected()) {
             BiSlider bsRanger = (BiSlider) model.getRangerComponent();
-            model.setRangeFilterBounds(bsRanger.getMinBound(), bsRanger.getMaxBound());
+            model.setRangeFilterBounds(bsRanger.getRangeMinBound(), bsRanger.getRangeMaxBound());
         } else if (rbList.isSelected()) {
             //  Converting array to collections...    
             model.setFilterValues(lstValues.getSelectedIndices());
@@ -428,47 +443,44 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
     private void initComponentsHoriLayout(JPanel pnlHoriLayout) {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        setFocusCycleRoot(true);
-        setLayout(new java.awt.BorderLayout());
-
+        pnlHoriLayout.setFocusCycleRoot(true);
+        pnlHoriLayout.removeAll();
         pnlHoriLayout.setLayout(new java.awt.BorderLayout());
 
-        pnlVVSelectFilter.setLayout(new java.awt.GridBagLayout());
+        JPanel pnlHHSelectFilter = new JPanel();
+        pnlHHSelectFilter.setLayout(new java.awt.GridBagLayout());
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        pnlVVSelectFilter.add(rbPattern, gridBagConstraints);
+        pnlHHSelectFilter.add(rbPattern, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        pnlVVSelectFilter.add(rbRange, gridBagConstraints);
+        pnlHHSelectFilter.add(rbRange, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        pnlVVSelectFilter.add(rbList, gridBagConstraints);
+        pnlHHSelectFilter.add(rbList, gridBagConstraints);
+        
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        pnlVVSelectFilter.add(jLabel2, gridBagConstraints);
+        pnlHHSelectFilter.add(jLabel2, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        pnlVVSelectFilter.add(rbNoFilter, gridBagConstraints);
+        pnlHHSelectFilter.add(rbNoFilter, gridBagConstraints);
 
-        pnlHoriLayout.add(pnlVVSelectFilter, java.awt.BorderLayout.WEST);
-
-        pnlFilterControlContainer.setLayout(new java.awt.BorderLayout());
+        pnlHoriLayout.add(pnlHHSelectFilter, java.awt.BorderLayout.WEST);
         pnlHoriLayout.add(pnlFilterControlContainer, java.awt.BorderLayout.CENTER);
-
-//        add(pnlHoriLayout, java.awt.BorderLayout.CENTER);
     }
 
     void installCentralComponent(JComponent comp) {
@@ -488,6 +500,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
     }
 
     void installList() {
+        lstValues.invalidate();
         installCentralComponent(scpList);
     }
 
@@ -520,6 +533,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
     private javax.swing.JList lstValues;
     private javax.swing.JPanel pnlApply;
     private javax.swing.JPanel pnlFilterControlContainer;
+    private javax.swing.JPanel pnlHorizontalLayout;
     private javax.swing.JPanel pnlPattern;
     private javax.swing.JPanel pnlVVColumnName;
     private javax.swing.JPanel pnlVVSelectFilter;

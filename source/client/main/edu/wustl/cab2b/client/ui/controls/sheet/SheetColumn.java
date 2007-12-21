@@ -85,7 +85,7 @@ public class SheetColumn extends TableColumn {
     public void setVisible(Boolean isVisible) {
         Boolean oldVal = this.isVisible;
         this.isVisible = isVisible;
-        pcs.firePropertyChange( PropertiesNames.COLUMN_VISIBLITY_CHANGE_REQUESTED, 
+        pcs.firePropertyChange( Common.COLUMN_VISIBLITY_CHANGE_REQUESTED, 
                 null, this);
     }
 

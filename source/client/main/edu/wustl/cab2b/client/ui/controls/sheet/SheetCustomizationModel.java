@@ -75,7 +75,7 @@ class SheetCustomizationModel extends AbstractTableModel {
     }
 
     void requestResetAll() {
-        pcs.firePropertyChange(PropertiesNames.REQUEST_RESET_ALL, 0, 1);
+        pcs.firePropertyChange(Common.REQUEST_RESET_ALL, 0, 1);
     }
 
     /** SheetCustomizationModel listerns to all the associated SheetColuns for any Changes.
@@ -170,7 +170,7 @@ class SheetCustomizationModel extends AbstractTableModel {
         SheetColumn sheetCol = scRowInfoAL.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return sheetCol.getModelIndex();
+                return sheetCol.getModelIndex()+1;
             case 1:
                 return sheetCol.getIdentifier();
             case 2:
@@ -195,7 +195,7 @@ class SheetCustomizationModel extends AbstractTableModel {
     }
 
     void requestAddUserColumn() {
-        pcs.firePropertyChange(PropertiesNames.USER_COLUMN_ADDITION_REQUESTED, 0, 1);
+        pcs.firePropertyChange(Common.USER_COLUMN_ADDITION_REQUESTED, 0, 1);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener pcl) {
@@ -234,9 +234,10 @@ class SheetCustomizationModel extends AbstractTableModel {
                 }
 
                 SheetColumn colSheet = scRowInfoAL.get(colIdx);
-                if (!colSheet.isVisible()) //  Ignore the filter on the columns that are invisible...
+                if (!colSheet.isVisible()) 
                 {
-                    return true;
+                    //  Ignore the filter on this column (invisible column's filter is assumed to be disabled)...
+                    continue;
                 }
 
                 ColumnFilterModel mdlColFilter = colSheet.getFilterCondition();

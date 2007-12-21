@@ -56,6 +56,7 @@ public class SheetCustomizationConsole extends javax.swing.JPanel {
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
+        tblSettings.setAutoCreateRowSorter(true);
         tblSettings.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -208,14 +209,14 @@ public class SheetCustomizationConsole extends javax.swing.JPanel {
         
         FilterColumnCellRenderer(){
             //  to show in Table move some components...
-            columnFilterVerticalConsole.changeOrientationToHorizontal();
+            columnFilterVerticalConsole.setHeader(null);
         }
 
         @Override
         public JComponent getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
             columnFilterVerticalConsole.setModel((ColumnFilterModel<Comparable>) value);
-            columnFilterVerticalConsole.setHeader(null);
+            columnFilterVerticalConsole.changeOrientationToHorizontal();
             return columnFilterVerticalConsole;
         }
     }
