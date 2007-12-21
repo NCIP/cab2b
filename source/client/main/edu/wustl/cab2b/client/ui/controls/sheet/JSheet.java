@@ -32,71 +32,54 @@ public class JSheet extends javax.swing.JPanel {
 
     /** Event name that notifies that User has pressed Magnifying-Glass button...      */
     public static final String EVENT_HEADER_ROW_DOUBLE_CLICKED = "EVENT_HEADER_ROW_DOUBLE_CLICKED";
-
     /** Event name that notifies that User has pressed Magnifying-Glass button...      */
     public static final String EVENT_DATA_ROW_DOUBLE_CLICKED = "EVENT_DATA_ROW_DOUBLE_CLICKED";
-
     /** Added  by Deepak : Event name that notifies that User has selected some data...      */
     public static final String EVENT_DATA_SINGLE_CLICKED = "EVENT_DATA_SINGLE_CLICKED";
-
     /** Event name that notifies that User is interested in details of some Row...      */
     public static final String REQUESTED_SHOW_ROW_DETAILS = "REQUESTED_SHOW_ROW_DETAILS";
-
     /**     Should I allow user to create new columns and allow cut/paste on them?      */
     boolean allowWrite = true;
-
     /** The Visual components that accepts User settings: which Columns to view: */
     SheetCustomizationConsole consSheetCust = new SheetCustomizationConsole();
 
     //    SheetCustomizationConsole conSheetCustomization = new SheetCustomizationConsole();
     /**   This panel presents context sensitive Filter Control - for single column. 
      *          The last selected Column in Data View is picked up.
-     This Visual component that shows applicable filter as GUI to user, providing chance for correction*/
+    This Visual component that shows applicable filter as GUI to user, providing chance for correction*/
     ColumnFilterVerticalConsole consColFilter = new ColumnFilterVerticalConsole();
-
     /***/
     FiltersViewConsole consFiltersView = new FiltersViewConsole();
-
     /***/
     JDialog colVisibilitySettingsDialog;
-
     /**     Sheet Customization (Visibility & Filters) are kept here...    */
     SheetCustomizationModel scm;
-
     /**     Sheet Configuration Monitoring   */
     InternalPCListener lsnSheetConf;
-
     /**    Data  View COnsole Montoring. */
     InternalPCListener lsnVeiwData = new InternalPCListener();
 
     //    ArrayList<Set<Object>> sampleValuesAL;
     /**     Indicator flag if sample values from filter should be creatred from Table Model, or 
-     filter should be diasbled if NOT explicitly provided.   **/
+    filter should be diasbled if NOT explicitly provided.   **/
     private boolean createSampleValuesFromModel = false;
-
     /**     Column Selection Listener */
     private ColSelectionListener lnsColSelection = new ColSelectionListener();
 
     ///////////////////////////////////////////////////////////
     /**  The actual Visual Component that renders table on the scren for the user.*/
     ViewDataConsole consData = new ViewDataConsole();
-
     /** Special Model to show a Button, and Row selection chk box on LHS.*/
     //    FixedLeftColsTblModel tmFixedLeft;
     /**     If this is true, SelectionHanger is allowed to paint itself as selected,
      * iff table cell selected is true as per model.  */
     private boolean selectionRowMode = false;
-
     private boolean mousePressed = false;
-
     /** If true, magnifying glass is shown. Pressing on it will fire "Common.EVENT_MAGNIFYING_GLASS_CLICKED" event. */
     private boolean showMG;
-
     SheetColumn colMG;
-
     /** refernce to oginal params setModel(...) , for RESET    */
     private TableModel tmROData;
-
     /** refernce to oginal params setModel(...) , for RESET    */
     private ArrayList<TreeSet<Comparable>> sampleValuesAL;
 
@@ -159,13 +142,12 @@ public class JSheet extends javax.swing.JPanel {
     //        }
     //        colVisibilitySettingsDialog.setVisible(true);
     //    }
-
     public TableModel getJSheetTableModel() {
-        
+
         return consData.getCompositeDataModel();
     }
 
-    public JSheetViewDataModel getViewTableModel() {        
+    public JSheetViewDataModel getViewTableModel() {
         return consData.getViewTableModel();
     }
 
@@ -200,9 +182,9 @@ public class JSheet extends javax.swing.JPanel {
     public int getSelectedColumn() {
         return consData.getSelectedColumn();
     }
-    
-    public Object getValueAt( int row, int column){
-        return consData.getValueAt( row, column);
+
+    public Object getValueAt(int row, int column) {
+        return consData.getValueAt(row, column);
     }
 
     public JComponent getContextFilterConsole() {
@@ -248,13 +230,13 @@ public class JSheet extends javax.swing.JPanel {
     class TableChangesSynchronizer implements TableModelListener, RowSorterListener, ListSelectionListener {
 
         public void tableChanged(TableModelEvent e) {
-            //            System.out.println("tableChanged =" + e);
+        //            System.out.println("tableChanged =" + e);
         }
 
         public void sorterChanged(RowSorterEvent e) {
-            //            System.out.println("sorterChanged: "+e+",  e.getPreviousRowCount()="+e.getPreviousRowCount());
-            //            System.out.println(""+ccc+"> e.getType(): "+e.getType());
-            //            tmFixedLeft.setRowCount(consData.getRowCount());
+        //            System.out.println("sorterChanged: "+e+",  e.getPreviousRowCount()="+e.getPreviousRowCount());
+        //            System.out.println(""+ccc+"> e.getType(): "+e.getType());
+        //            tmFixedLeft.setRowCount(consData.getRowCount());
         }
 
         /** Selection is Row-Selection_hanger should match full row selection is data-view.     */
@@ -279,9 +261,7 @@ public class JSheet extends javax.swing.JPanel {
      * @param tmROData -    The basic data to be shown in JSheet.
      */
     public void setReadOnlyDataModel(TableModel tmROData) {
-        createSampleValuesFromModel = true;
-        this.tmROData = tmROData;
-        setReadOnlyDataModel(tmROData, new ArrayList());
+        setReadOnlyDataModel(tmROData, null);
     }
 
     /**
@@ -295,8 +275,19 @@ public class JSheet extends javax.swing.JPanel {
      * ArrayList <code>sampleValues </code>. 
      */
     public void setReadOnlyDataModel(TableModel tmROData, ArrayList<TreeSet<Comparable>> sampleValuesAL) {
-        
-        this.sampleValuesAL = sampleValuesAL;
+
+        if (null == sampleValuesAL) {
+            sampleValuesAL = new ArrayList();
+            createSampleValuesFromModel = true;
+        } else {
+            this.sampleValuesAL = sampleValuesAL;
+            createSampleValuesFromModel = false;
+        }
+
+        this.tmROData = tmROData;
+        if (null == tmROData) {
+            throw new IllegalArgumentException("JSheet.setReadOnlyDataModel() does NOT accepts null model. ");
+        }
 
         //  A:  Property Event Propagation Chain setup...
         setupModels(tmROData.getColumnCount());
@@ -311,10 +302,6 @@ public class JSheet extends javax.swing.JPanel {
 
         consData.revalidate();
         consData.repaint();
-        
-        
-        //  Prepare for For next call...
-        createSampleValuesFromModel = false;
     }
 
     /**     Senario - C.2-A: Property Event Propagation Chain setup.    */
@@ -336,7 +323,7 @@ public class JSheet extends javax.swing.JPanel {
         //  Set Model to Sheet Customization Console...
         consSheetCust.setModel(scm);
         consFiltersView.setModel(scm);
-        consColFilter.setModel( null);
+        consColFilter.setModel(null);
     }
 
     private SheetColumn createNewColumnModel(int idx) {
@@ -415,7 +402,7 @@ public class JSheet extends javax.swing.JPanel {
         EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                if (null == sampleValuesAL) {
+                if (createSampleValuesFromModel) {
                     setReadOnlyDataModel(tmROData);
                 } else {
                     setReadOnlyDataModel(tmROData, sampleValuesAL);
@@ -443,7 +430,6 @@ public class JSheet extends javax.swing.JPanel {
     ////        System.out.println("MGGlass: Click detected aT Model IDX: row=" + row + ", viewRowIndex=" + viewRowIndex);
     //        firePropertyChange(REQUESTED_SHOW_ROW_DETAILS, -1, row);
     //    }
-
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -539,15 +525,14 @@ public class JSheet extends javax.swing.JPanel {
         add(pnlDataView, java.awt.BorderLayout.CENTER);
         add(jPanel9, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
-
     private void tblFixedMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblFixedMouseEntered
-        // TODO add your handling code here:
+    // TODO add your handling code here:
 
     }//GEN-LAST:event_tblFixedMouseEntered
 
     private void tblFixedMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblFixedMouseClicked
-        // TODO add your handling code here:
-        //        System.out.println("FxfTbl: Mouse CLick Detected At: "+tblFixed.getSelectedRow()+", "+tblFixed.getSelectedColumn());
+    // TODO add your handling code here:
+    //        System.out.println("FxfTbl: Mouse CLick Detected At: "+tblFixed.getSelectedRow()+", "+tblFixed.getSelectedColumn());
     }//GEN-LAST:event_tblFixedMouseClicked
 
     private void tblFixedMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblFixedMousePressed
@@ -702,10 +687,11 @@ public class JSheet extends javax.swing.JPanel {
             //  At last we can something useful...
             //  Set appropriate model on the Context dependent FilterConsole...
             consColFilter.setModel(sheetInfo.getFilterCondition());
-            if (null == sheetInfo.getHeaderValue())
+            if (null == sheetInfo.getHeaderValue()) {
                 consColFilter.setHeader("");
-            else
+            } else {
                 consColFilter.setHeader(sheetInfo.getHeaderValue().toString());
+            }
         }
     }
 
@@ -720,7 +706,7 @@ public class JSheet extends javax.swing.JPanel {
 
         public void actionPerformed(ActionEvent e) {
             diaConsSheetCust.setVisible(true);
-            //showColVisibilitySettingsDialog();
+        //showColVisibilitySettingsDialog();
         }
     }
 
@@ -746,7 +732,7 @@ public class JSheet extends javax.swing.JPanel {
         do {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setAcceptAllFileFilterUsed(false);
-            fileChooser.setFileFilter(new Cab2bFileFilter(new String[] { "csv" }));
+            fileChooser.setFileFilter(new Cab2bFileFilter(new String[]{"csv"}));
             int status = fileChooser.showSaveDialog(this);
             if (JFileChooser.APPROVE_OPTION == status) {
                 File selFile = fileChooser.getSelectedFile();
@@ -754,11 +740,10 @@ public class JSheet extends javax.swing.JPanel {
 
                 if (true == selFile.exists()) {
                     // Prompt user to confirm if he wants to override the value
-                    int confirmationValue = JOptionPane.showConfirmDialog(fileChooser, "The file "
-                            + selFile.getName() + " already exists.\nDo you want to replace existing file?",
-                                                                          "caB2B Confirmation",
-                                                                          JOptionPane.YES_NO_OPTION,
-                                                                          JOptionPane.WARNING_MESSAGE);
+                    int confirmationValue = JOptionPane.showConfirmDialog(fileChooser, "The file " + selFile.getName() + " already exists.\nDo you want to replace existing file?",
+                            "caB2B Confirmation",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE);
                     if (confirmationValue == JOptionPane.NO_OPTION) {
                         continue;
                     }
