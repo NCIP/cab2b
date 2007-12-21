@@ -14,6 +14,7 @@ import javax.swing.table.*;
 public class JSheetViewDataModel extends AbstractTableModel {
 
     JTable tblData;
+
     TableModel compositeDataModel;
 
     JSheetViewDataModel(JTable tblData, TableModel compositeDataModel) {
@@ -43,5 +44,9 @@ public class JSheetViewDataModel extends AbstractTableModel {
 
     public TableModel getJSheetDataModel() {
         return compositeDataModel;
+    }
+
+    public String getColumnName(int column) {
+        return tblData.getColumnName(column);
     }
 }
