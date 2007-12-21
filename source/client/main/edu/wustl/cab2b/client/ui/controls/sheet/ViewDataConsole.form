@@ -34,6 +34,7 @@
       <SubComponents>
         <MenuItem class="javax.swing.JMenuItem" name="miShowDetails">
           <Properties>
+            <Property name="mnemonic" type="int" value="68"/>
             <Property name="text" type="java.lang.String" value="Show Row Details" noResource="true"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
@@ -43,7 +44,7 @@
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="miAddCol">
           <Properties>
-            <Property name="mnemonic" type="int" value="97"/>
+            <Property name="mnemonic" type="int" value="65"/>
             <Property name="text" type="java.lang.String" value="Add Column"/>
           </Properties>
           <Events>
@@ -54,6 +55,7 @@
         </Component>
         <MenuItem class="javax.swing.JMenuItem" name="miCut">
           <Properties>
+            <Property name="mnemonic" type="int" value="117"/>
             <Property name="text" type="java.lang.String" value="Cut" noResource="true"/>
           </Properties>
           <Events>
@@ -62,6 +64,7 @@
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="miCopy">
           <Properties>
+            <Property name="mnemonic" type="int" value="67"/>
             <Property name="text" type="java.lang.String" value="Copy"/>
           </Properties>
           <Events>
@@ -70,6 +73,7 @@
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="miPaste">
           <Properties>
+            <Property name="mnemonic" type="int" value="80"/>
             <Property name="text" type="java.lang.String" value="Paste"/>
           </Properties>
         </MenuItem>
@@ -77,11 +81,24 @@
         </Component>
         <MenuItem class="javax.swing.JMenuItem" name="miClearSelection">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Item"/>
+            <Property name="mnemonic" type="int" value="101"/>
+            <Property name="text" type="java.lang.String" value="Clear Selection"/>
+          </Properties>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="miReset">
+          <Properties>
+            <Property name="mnemonic" type="int" value="82"/>
+            <Property name="text" type="java.lang.String" value="Reset"/>
           </Properties>
         </MenuItem>
         <Component class="javax.swing.JSeparator" name="jSeparator2">
         </Component>
+        <MenuItem class="javax.swing.JMenuItem" name="miSelectAll">
+          <Properties>
+            <Property name="mnemonic" type="int" value="108"/>
+            <Property name="text" type="java.lang.String" value="Select All"/>
+          </Properties>
+        </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="miExportCells">
           <Properties>
             <Property name="mnemonic" type="int" value="120"/>
@@ -94,7 +111,7 @@
         <MenuItem class="javax.swing.JMenuItem" name="miProperties">
           <Properties>
             <Property name="mnemonic" type="int" value="112"/>
-            <Property name="text" type="java.lang.String" value="Item"/>
+            <Property name="text" type="java.lang.String" value="Properties" noResource="true"/>
           </Properties>
         </MenuItem>
       </SubComponents>
@@ -238,6 +255,36 @@
         </MenuItem>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JLabel" name="lblReset">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Re" noResource="true"/>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+            <EtchetBorder bevelType="0"/>
+          </Border>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lblResetMouseClicked"/>
+      </Events>
+    </Component>
+    <Container class="javax.swing.JPanel" name="pnlEmpty">
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
+    </Container>
+    <Component class="javax.swing.JLabel" name="lblSelectAll">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="S" noResource="true"/>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+            <EtchetBorder bevelType="0"/>
+          </Border>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lblSelectAllMouseClicked"/>
+      </Events>
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="componentPopupMenu" type="javax.swing.JPopupMenu" editor="org.netbeans.modules.form.ComponentChooserEditor">
