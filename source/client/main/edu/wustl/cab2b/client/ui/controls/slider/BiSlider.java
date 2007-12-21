@@ -36,11 +36,11 @@ public class BiSlider extends JPanel {
 
     }
     
-    public Comparable getMinBound(){
+    public Comparable getRangeMinBound(){
         return (Comparable) mSlider.getMinimumBarValue();
     }
     
-    public Comparable getMaxBound(){
+    public Comparable getRangeMaxBound(){
         return (Comparable) mSlider.getMaximumBarValue();
     }
 
@@ -112,7 +112,6 @@ public class BiSlider extends JPanel {
         firePropertyChange(EVENT_RANGE_CHANGED, min, max);
     }
    
-
     /**
      * Method to set min and max bar values
      * @param minBound
