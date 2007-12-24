@@ -509,9 +509,10 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                         firePropertyChange(DefaultSpreadSheetViewPanel.ENABLE_CHART_LINK, -1, 0);
                         firePropertyChange(DefaultSpreadSheetViewPanel.DISABLE_HEATMAP_LINK, -1, 0);
 
-                        if (((ThreeDResultObjectDetailsPanel) tabPanel).getIsWholeColumnSelected())
-                            firePropertyChange(DefaultSpreadSheetViewPanel.ENABLE_HEATMAP_LINK, -1, 0);
-
+                        if (tabPanel instanceof ThreeDResultObjectDetailsPanel) {
+                            if (((ThreeDResultObjectDetailsPanel) tabPanel).getIsWholeColumnSelected())
+                                firePropertyChange(DefaultSpreadSheetViewPanel.ENABLE_HEATMAP_LINK, -1, 0);
+                        }
                     } else
                         firePropertyChange(DefaultSpreadSheetViewPanel.DISABLE_CHART_LINK, -1, 0);
                 } else {
