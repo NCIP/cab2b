@@ -42,7 +42,6 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
-import edu.wustl.cab2b.client.ui.controls.sheet.JSheet;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.query.Utility;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
@@ -51,6 +50,7 @@ import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
 import edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface;
 import edu.wustl.cab2b.client.ui.viewresults.DefaultDetailedPanel;
 import edu.wustl.cab2b.client.ui.viewresults.DefaultSpreadSheetViewPanel;
+import edu.wustl.cab2b.client.ui.viewresults.ThreeDResultObjectDetailsPanel;
 import edu.wustl.cab2b.client.ui.visualization.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
@@ -269,8 +269,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         saveDataCategoryButton = new Cab2bButton("Save Data Category");
         saveDataCategoryButton.setPreferredSize(new Dimension(160, 22));
         saveDataCategoryButton.addActionListener(new SaveCategoryActionListener(this));
-
         this.setBorder(null);
+
         refreshUI();
     }
 
@@ -337,7 +337,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         tabComponent.setSelectedComponent(analysisView);
     }
 
-    public void addDetailTabPanel(String tabTitle, final Component component) {
+    public void addDetailTabPanel(String tabTitle, final DefaultDetailedPanel component) {
         Cab2bPanel detailPanel = (Cab2bPanel) CommonUtils.getComponentByName(tabComponent, tabTitle);
         if (detailPanel == null) {
             final Cab2bPanel detailViewPanel = new Cab2bPanel();
@@ -502,12 +502,25 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             if (selectedTabPanel != null && selectedTabPanel.getComponentCount() > 0) {
                 Component component = CommonUtils.getComponentByName(selectedTabPanel, "DataListDetailedPanel");
                 if (component instanceof DataListDetailedPanelInterface) {
-                    experimentDataCategoryGridPanel.setCurrentSpreadSheetViewPanel((DataListDetailedPanelInterface) component);
+                    DataListDetailedPanelInterface tabPanel = (DataListDetailedPanelInterface) component;
+                    experimentDataCategoryGridPanel.setCurrentSpreadSheetViewPanel(tabPanel);
                     experimentDataCategoryGridPanel.setCurrentChartPanel(null);
+                    if (tabPanel.getSelectedColumnNames() != null && tabPanel.getSelectedColumnNames().size() > 0) {
+                        firePropertyChange(DefaultSpreadSheetViewPanel.ENABLE_CHART_LINK, -1, 0);
+
+                        if (!(tabPanel instanceof ThreeDResultObjectDetailsPanel))
+                            firePropertyChange(DefaultSpreadSheetViewPanel.DISABLE_HEATMAP_LINK, -1, 0);
+                        else if (((ThreeDResultObjectDetailsPanel) tabPanel).getIsWholeColumnSelected()) {
+                            firePropertyChange(DefaultSpreadSheetViewPanel.ENABLE_HEATMAP_LINK, -1, 0);
+                        }
+                    } else
+                        firePropertyChange(DefaultSpreadSheetViewPanel.DISABLE_CHART_LINK, -1, 0);
                 } else {
                     component = CommonUtils.getComponentByName(selectedTabPanel, "cab2bChartPanel");
                     if (component != null && component instanceof Cab2bChartPanel) {
                         experimentDataCategoryGridPanel.setCurrentChartPanel(selectedTabPanel);
+                        firePropertyChange(DefaultSpreadSheetViewPanel.ENABLE_CHART_LINK, -1, 0);
+                        firePropertyChange(DefaultSpreadSheetViewPanel.DISABLE_HEATMAP_LINK, -1, 0);
                     }
                 }
             }
