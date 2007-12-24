@@ -57,6 +57,11 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
 
     //    private JComponent tblFixedHeader;
     //  Actions...
+    ShowDetailsAction actShowDetails = new ShowDetailsAction();
+    AddUserColAction actAddCol = new AddUserColAction();
+    CutAction actCut = new CutAction();
+    CopyAction actCopy = new CopyAction();
+    SelectAllAction actSelectAll = new SelectAllAction();
     RemoveAllSelectedExtColumnsAction actRemoveCols = new RemoveAllSelectedExtColumnsAction();
     UndeleteColumnsAction actUndoColDel = new UndeleteColumnsAction();
     PasteFromClipAction actPaste = new PasteFromClipAction();
@@ -68,6 +73,8 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
     private TableRowSorter rsortTable;
     private boolean isCutInProgress = false;
     private boolean isSelectionFromRowHeader = false;
+    /*List of addtional Toolbar actions...*/
+    List<JButton> butToolbarAdditionalAL = new ArrayList<JButton>();
 
     //
     //
@@ -83,14 +90,27 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         setupToolBar();
     }
 
-    public void setupToolBar(){
-        tbarMain.add( actClearSelection);
-        tbarMain.add( actExportSelecion);
-        tbarMain.add( actPaste);
-        tbarMain.add( actRemoveCols);
-        tbarMain.add( actShowProps);
+    public void setupToolBar() {
+        //  Make Tool bar replica of context menu...
+        for (int idx = 0; idx < popTblContextMnu.getComponentCount(); idx++) {
+            Component comp = popTblContextMnu.getComponent(idx);
+            if (comp instanceof JSeparator) {
+                tbarMain.addSeparator( new Dimension( 5,5));
+            }else if (comp instanceof JMenuItem) {
+                JMenuItem mnuItem = (JMenuItem) comp;
+                Action act = mnuItem.getAction();
+                if (null != act) {
+                    tbarMain.add(act);
+                }
+            }
+        }
+//        tbarMain.add( actClearSelection);
+//        tbarMain.add( actExportSelecion);
+//        tbarMain.add( actPaste);
+//        tbarMain.add( actRemoveCols);
+//        tbarMain.add( actShowProps);
     }
-    
+
     Object getValueAt(int row, int column) {
         return tblData.getValueAt(row, column);
     }
@@ -139,12 +159,17 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
     }
 
     private void setupAcions() {
-        butRemoveCol.setAction(actRemoveCols);
-        miRemoveCols.setAction(actRemoveCols);
+//        butRemoveCol.setAction(actRemoveCols);
+//        miRemoveCols.setAction(actRemoveCols);
+//
+//        butUndoColDelete.setAction(actUndoColDel);
+//        miUndoRemoveCol.setAction(actUndoColDel);
 
-        butUndoColDelete.setAction(actUndoColDel);
-        miUndoRemoveCol.setAction(actUndoColDel);
-
+        miShowDetails.setAction(actShowDetails);
+        miAddCol.setAction(actAddCol);
+        miCut.setAction(actCut);
+        miCopy.setAction(actCopy);
+        miSelectAll.setAction(actSelectAll);
         butPaste.setAction(actPaste);
         miPaste.setAction(actPaste);
 
@@ -266,6 +291,28 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
     int[] getSelectedRows() {
         return tblData.getSelectedRows();
     }
+    
+    void setAdditionalToolbarActions( List<Action> actions){
+        //  remove all old actions...
+        for( JComponent comp:butToolbarAdditionalAL){
+            tbarMain.remove( comp);
+        }
+        
+        //  Append all new actions...
+        butToolbarAdditionalAL.clear();
+        for( Action act: actions){
+            JButton butInstalled = tbarMain.add( act);
+            butToolbarAdditionalAL.add( butInstalled);
+        }
+        
+        tbarMain.revalidate();
+        tbarMain.repaint();
+    }
+    
+    void setAdditionalContectMenuActions( List<Action> actions){
+        
+    }
+    
 
     //    /**
     //     *  Setups the Fixed columns to shown on the left hand side of the Data Table.
@@ -371,39 +418,19 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         miShowDetails.setMnemonic('D');
         miShowDetails.setText("Show Row Details"); // NOI18N
         miShowDetails.setEnabled(false);
-        miShowDetails.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miShowDetailsActionPerformed(evt);
-            }
-        });
         popTblContextMnu.add(miShowDetails);
 
         miAddCol.setMnemonic('A');
         miAddCol.setText("Add Column");
-        miAddCol.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miAddColActionPerformed(evt);
-            }
-        });
         popTblContextMnu.add(miAddCol);
         popTblContextMnu.add(jSeparator1);
 
         miCut.setMnemonic('u');
         miCut.setText("Cut"); // NOI18N
-        miCut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miCutActionPerformed(evt);
-            }
-        });
         popTblContextMnu.add(miCut);
 
         miCopy.setMnemonic('C');
         miCopy.setText("Copy");
-        miCopy.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miCopyActionPerformed(evt);
-            }
-        });
         popTblContextMnu.add(miCopy);
 
         miPaste.setMnemonic('P');
@@ -426,11 +453,6 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
 
         miExportCells.setMnemonic('x');
         miExportCells.setText("Export Selection");
-        miExportCells.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miExportCellsActionPerformed(evt);
-            }
-        });
         popTblContextMnu.add(miExportCells);
 
         miProperties.setMnemonic('p');
@@ -563,24 +585,9 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
 
         add(jPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
-    private void miCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miCopyActionPerformed
-        // TODO add your handling code here:
-        copySelectionIntoClipboard();
-    }//GEN-LAST:event_miCopyActionPerformed
-
-    private void miAddColActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddColActionPerformed
-        // TODO add your handling code here:
-        //        System.out.println("miAddColActionPerformed(): "+evt);
-        firePropertyChange(Common.USER_COLUMN_ADDITION_REQUESTED, 0, 1);
-    }//GEN-LAST:event_miAddColActionPerformed
-
     private void miRemoveColsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRemoveColsActionPerformed
     // TODO add your handling code here:
     }//GEN-LAST:event_miRemoveColsActionPerformed
-
-    private void miExportCellsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miExportCellsActionPerformed
-    // TODO add your handling code here:
-    }//GEN-LAST:event_miExportCellsActionPerformed
 
     private void addColActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addColActionPerformed
     // TODO add your handling code here:
@@ -612,12 +619,6 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
 
     }//GEN-LAST:event_butErazeContentsActionPerformed
 
-    private void miCutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miCutActionPerformed
-        // TODO add your handling code here:
-        isCutInProgress = true;
-        copySelectionIntoClipboard();
-    }//GEN-LAST:event_miCutActionPerformed
-
     private void tblRowHeaderMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblRowHeaderMousePressed
         // TODO add your handling code here:
         isSelectionFromRowHeader = true;
@@ -629,15 +630,6 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         isSelectionFromRowHeader = false;
 
     }//GEN-LAST:event_tblDataMousePressed
-
-    private void miShowDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miShowDetailsActionPerformed
-        // TODO add your handling code here:
-        if (tblData.getSelectedRow() != -1) {
-            //  only if there is a valid selection...
-            int rowModel = tblData.convertRowIndexToModel(tblData.getSelectedRow());
-            firePropertyChange(Common.REQUESTED_SHOW_ROW_DETAILS, -1, rowModel);
-        }
-    }//GEN-LAST:event_miShowDetailsActionPerformed
 
     private void tblDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDataMouseClicked
         int rowModel = tblData.convertRowIndexToModel(tblData.getSelectedRow());
@@ -821,6 +813,18 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
                 compositeDataModel.setValueAt(cellsVal[vCol], mRow, mCol);
             }
         }
+    }
+
+    void doFireShowDetailsRequest() {
+        if (tblData.getSelectedRow() != -1) {
+            //  only if there is a valid selection...
+            int rowModel = tblData.convertRowIndexToModel(tblData.getSelectedRow());
+            firePropertyChange(Common.REQUESTED_SHOW_ROW_DETAILS, -1, rowModel);
+        }
+    }
+    
+    void doFireAddUserColRequest() {
+        firePropertyChange(Common.USER_COLUMN_ADDITION_REQUESTED, 0, 1);        
     }
 
     /**     Clears Selected cells in the table.     */
@@ -1064,7 +1068,6 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //    
     /// Actions...
-    /** Remove all Selected Columns. */
     class RemoveAllSelectedExtColumnsAction extends AbstractAction {
 
         RemoveAllSelectedExtColumnsAction() {
@@ -1073,6 +1076,69 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         }
 
         public void actionPerformed(ActionEvent e) {
+        }
+    }
+
+    /** onClicking show details of the selected row. */
+    class ShowDetailsAction extends AbstractAction {
+
+        ShowDetailsAction() {
+            super("Show Details");
+            setEnabled(false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            doFireShowDetailsRequest();
+        }
+    }
+
+    /** Add user column, which are editable. */
+    class AddUserColAction extends AbstractAction {
+
+        AddUserColAction() {
+            super("Add User Column");
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            doFireAddUserColRequest();
+        }
+    }
+
+    /** Add user column, which are editable. */
+    class CutAction extends AbstractAction {
+
+        CutAction() {
+            super("Cut");
+            setEnabled(false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            isCutInProgress = true;
+            copySelectionIntoClipboard();
+        }
+    }
+
+    /** Add user column, which are editable. */
+    class CopyAction extends AbstractAction {
+
+        CopyAction() {
+            super("Copy");
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            copySelectionIntoClipboard();
+        }
+    }
+
+    /** Add user column, which are editable. */
+    class SelectAllAction extends AbstractAction {
+
+        SelectAllAction() {
+            super("Select All");
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            doSelectAll();
         }
     }
 
@@ -1162,7 +1228,7 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         public void valueChanged(ListSelectionEvent e) {
             System.out.println("[ViewDataConsole]: row Selection Changed: " + e);
             if (!e.getValueIsAdjusting()) {
-                miShowDetails.setEnabled(tblData.getSelectedRow() >= 0);
+                actShowDetails.setEnabled(tblData.getSelectedRow() >= 0);
                 firePropertyChange(JSheet.EVENT_DATA_SINGLE_CLICKED, -1, e.getLastIndex());
             }
         }

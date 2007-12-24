@@ -365,6 +365,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
 
         pnlVerticalLayout.add(jPanel1, java.awt.BorderLayout.NORTH);
 
+        pnlFilterControlContainer.setBorder(javax.swing.BorderFactory.createMatteBorder(3, 0, 3, 0, new java.awt.Color(255, 255, 255)));
         pnlFilterControlContainer.setLayout(new java.awt.BorderLayout());
         pnlVerticalLayout.add(pnlFilterControlContainer, java.awt.BorderLayout.CENTER);
 

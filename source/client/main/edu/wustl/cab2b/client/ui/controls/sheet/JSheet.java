@@ -126,11 +126,20 @@ public class JSheet extends javax.swing.JPanel {
         //        consData.addTableColSelectionListener(dvcsl);
         //        consData.addTableRowSelectionListener(dvcsl);
 
-        setupToolBar();
         setBackgroundWhite(this);
     }
     
-    public void setupToolBar(){
+    /**     Append new JButtons in the Toolbar, with the specified actions. 
+                    All the old specified Actions will be removed.  
+                    However, the JSheet default Actions cannot be changed.
+     
+     @param actions Arralist specifiing Actions of one or more JButton(s).
+     */
+    public void setAdditionalToolbarActions( List<Action> actions){
+        consData.setAdditionalToolbarActions(actions);
+    }
+    
+    public void setAdditionalContectMenuActions( List<Action> actions){
         
     }
 
