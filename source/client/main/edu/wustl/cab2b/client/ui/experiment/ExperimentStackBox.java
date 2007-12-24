@@ -272,7 +272,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         treeViewScrollPane.getViewport().setBackground(Color.WHITE);
         treeViewScrollPane.setPreferredSize(new Dimension(250, 200));
         treeViewScrollPane.setBorder(null);
-        stackedBox.addBox("Select Data Category", treeViewScrollPane, SELECT_DATA_CATEGORY, true);
+        stackedBox.addBox("Select Data Category", treeViewScrollPane, SELECT_DATA_CATEGORY, false);
 
         // Adding Filter data category panel
         dataFilterPanel = new Cab2bPanel(new RiverLayout(0, 5));
@@ -305,7 +305,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         visualiseDataPanel.revalidate();
 
        stackedBox.setPreferredSize(new Dimension(250, 500));
-       stackedBox.setMinimumSize(new Dimension(250, 300));       
+       stackedBox.setMinimumSize(new Dimension(250, 500));       
        stackedBox.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
        this.add(stackedBox);
        updateUI();
