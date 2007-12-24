@@ -36,6 +36,8 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
 
     public static final String ENABLE_CHART_LINK = "ENABLE_CHART_LINK";
 
+    public static final String ENABLE_HEATMAP_LINK = "ENABLE_HEATMAP_LINK";
+
     public static final String DISABLE_HEATMAP_LINK = "DISABLE_HEATMAP_LINK";
 
     private ImageIcon defaultCellImage = new ImageIcon(
