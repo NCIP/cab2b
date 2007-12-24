@@ -272,7 +272,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         treeViewScrollPane.getViewport().setBackground(Color.WHITE);
         treeViewScrollPane.setPreferredSize(new Dimension(250, 200));
         treeViewScrollPane.setBorder(null);
-        stackedBox.addBox("Select Data Category", treeViewScrollPane, SELECT_DATA_CATEGORY, false);
+        stackedBox.addBox("Select Data Category", treeViewScrollPane, SELECT_DATA_CATEGORY, true);
 
         // Adding Filter data category panel
         dataFilterPanel = new Cab2bPanel(new RiverLayout(0, 5));
@@ -280,7 +280,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         dataFilterPanel.setOpaque(false);
         dataFilterPanel.setBorder(null);
         dataFilterPanel.add(new ColumnFilterVerticalConsole());
-        stackedBox.addBox("Applied Filters", dataFilterPanel, FILTER_DATA, true);
+        stackedBox.addBox("Filters", dataFilterPanel, FILTER_DATA, true);
 
         // Adding Analyse data panel
         analyseDataPanel = new Cab2bPanel(new RiverLayout(0, 5));
@@ -304,11 +304,11 @@ public class ExperimentStackBox extends Cab2bPanel {
         setHeatmapLink();
         visualiseDataPanel.revalidate();
 
-        stackedBox.setPreferredSize(new Dimension(250, 500));
-        stackedBox.setMinimumSize(new Dimension(250, 500));
-        stackedBox.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
-        this.add(stackedBox);
-        updateUI();
+       stackedBox.setPreferredSize(new Dimension(250, 500));
+       stackedBox.setMinimumSize(new Dimension(250, 300));       
+       stackedBox.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
+       this.add(stackedBox);
+       updateUI();
     }
 
     /**
@@ -426,7 +426,17 @@ public class ExperimentStackBox extends Cab2bPanel {
             if (visualiseDataPanel.getComponent(i) instanceof Cab2bHyperlink) {
                 ((Cab2bHyperlink) visualiseDataPanel.getComponent(i)).setEnabled(active);
             }
-        }
+        }        
+    }
+    /**
+     * Method to set Heat map links enable/disable 
+     * @param active
+     */
+    public void setHeatMapLinkEnable(boolean active) {        
+            if (visualiseDataPanel.getComponent(visualiseDataPanel.getComponentCount()-1) instanceof Cab2bHyperlink) {
+                ((Cab2bHyperlink) visualiseDataPanel.getComponent(visualiseDataPanel.getComponentCount()-1)).setEnabled(active);
+            }
+                
     }
 
     /**

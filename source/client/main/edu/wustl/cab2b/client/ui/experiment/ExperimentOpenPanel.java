@@ -3,7 +3,6 @@ package edu.wustl.cab2b.client.ui.experiment;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
@@ -11,14 +10,12 @@ import java.rmi.RemoteException;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.RiverLayout;
-import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
-import edu.wustl.cab2b.client.ui.controls.CustomizableBorder;
 import edu.wustl.cab2b.client.ui.controls.sheet.JSheet;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.viewresults.DefaultSpreadSheetViewPanel;
@@ -135,20 +132,31 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
         /* Adding Experiment grid panel */
         experimentDataCategoryGridPanel = new ExperimentDataCategoryGridPanel(this);
         experimentDataCategoryGridPanel.addPropertyChangeListener(new PropertyChangeListener() {
-
             public void propertyChange(PropertyChangeEvent evt) {
                 if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.SPREADSHEET_MODEL_INSTALLED)) {
                     Cab2bPanel filterPanel = new Cab2bPanel();
-                    //filterPanel.setLayout(new BorderLayout());
-                    filterPanel.add("hfill vfill", ((JSheet) evt.getNewValue()).getContextFilterConsole());
-                    //filterPanel.add(((JSheet) evt.getNewValue()).getFiltersViewConsole(), BorderLayout.SOUTH);
-                    experimentStackBox.setFilterPanel(filterPanel);
+                    JSheet jSheet = (JSheet) evt.getNewValue();
+                    filterPanel.add("hfill vfill", jSheet.getContextFilterConsole());
+
+                    JTabbedPane tabComponent = new JTabbedPane();
+                    tabComponent.setTabLayoutPolicy(1);
+                    tabComponent.setBackground(Color.WHITE);
+                    tabComponent.add("Custom ", filterPanel);
+                    tabComponent.add("Applied ", jSheet.getFiltersViewConsole());
+                    tabComponent.add("Predefined ", new Cab2bLabel("No Predefined Filter"));
+
+                    experimentStackBox.setFilterPanel(tabComponent);
                     experimentStackBox.setChartLinkEnable(false);
-                } else {
-                    if (evt.getPropertyName().equals(JSheet.EVENT_DATA_SINGLE_CLICKED)) {
-                        //filterPanel.add(((JSheet) evt.getNewValue()).getFiltersViewConsole(), BorderLayout.SOUTH);
-                        experimentStackBox.setChartLinkEnable(true);
-                    }
+                }
+                if (evt.getPropertyName().equals(JSheet.EVENT_DATA_SINGLE_CLICKED)) {
+                    experimentStackBox.setChartLinkEnable(true);
+                } else if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.DISABLE_CHART_LINK)) {
+                    experimentStackBox.setChartLinkEnable(false);
+                } else if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.ENABLE_CHART_LINK)) {
+                    experimentStackBox.setChartLinkEnable(true);
+                }
+                if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.DISABLE_HEATMAP_LINK)) {
+                    experimentStackBox.setHeatMapLinkEnable(false);
                 }
             }
         });
