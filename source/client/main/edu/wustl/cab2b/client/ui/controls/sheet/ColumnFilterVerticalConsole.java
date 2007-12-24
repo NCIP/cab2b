@@ -229,10 +229,10 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         rbPattern = new javax.swing.JRadioButton();
         rbRange = new javax.swing.JRadioButton();
         rbList = new javax.swing.JRadioButton();
+        rbNoFilter = new javax.swing.JRadioButton();
         jLabel2 = new javax.swing.JLabel();
         pnlFilterControlContainer = new javax.swing.JPanel();
         pnlApply = new javax.swing.JPanel();
-        rbNoFilter = new javax.swing.JRadioButton();
         jLabel3 = new javax.swing.JLabel();
         butApplyFilter = new javax.swing.JButton();
 
@@ -243,7 +243,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
 
         lblNoFilter.setFont(new java.awt.Font("Tahoma", 1, 18));
         lblNoFilter.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblNoFilter.setText("No Filter"); // NOI18N
+        lblNoFilter.setText("No Filter on Column"); // NOI18N
 
         lblPleaseWait.setFont(new java.awt.Font("Arial", 0, 14));
         lblPleaseWait.setForeground(new java.awt.Color(0, 255, 204));
@@ -280,15 +280,16 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
+        pnlVVColumnName.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 5, 0, new java.awt.Color(255, 255, 255)));
         pnlVVColumnName.setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setText("Filter on Column:"); // NOI18N
+        jLabel1.setText("  Filter on Column:"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
         pnlVVColumnName.add(jLabel1, gridBagConstraints);
 
-        lblColName.setFont(new java.awt.Font("Tahoma", 1, 16));
+        lblColName.setFont(new java.awt.Font("Arial", 1, 14));
         lblColName.setForeground(new java.awt.Color(0, 128, 0));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
@@ -341,19 +342,6 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         pnlVVSelectFilter.add(rbList, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        pnlVVSelectFilter.add(jLabel2, gridBagConstraints);
-
-        jPanel1.add(pnlVVSelectFilter, java.awt.BorderLayout.SOUTH);
-
-        pnlVerticalLayout.add(jPanel1, java.awt.BorderLayout.NORTH);
-
-        pnlFilterControlContainer.setLayout(new java.awt.BorderLayout());
-        pnlVerticalLayout.add(pnlFilterControlContainer, java.awt.BorderLayout.CENTER);
-
-        pnlApply.setLayout(new java.awt.GridBagLayout());
 
         bgVV.add(rbNoFilter);
         rbNoFilter.setSelected(true);
@@ -367,7 +355,20 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
-        pnlApply.add(rbNoFilter, gridBagConstraints);
+        pnlVVSelectFilter.add(rbNoFilter, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        pnlVVSelectFilter.add(jLabel2, gridBagConstraints);
+
+        jPanel1.add(pnlVVSelectFilter, java.awt.BorderLayout.SOUTH);
+
+        pnlVerticalLayout.add(jPanel1, java.awt.BorderLayout.NORTH);
+
+        pnlFilterControlContainer.setLayout(new java.awt.BorderLayout());
+        pnlVerticalLayout.add(pnlFilterControlContainer, java.awt.BorderLayout.CENTER);
+
+        pnlApply.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.8;

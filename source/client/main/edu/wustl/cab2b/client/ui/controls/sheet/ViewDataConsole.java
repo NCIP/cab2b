@@ -80,8 +80,17 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
 
         setupAcions();
         setupRowHeader();
+        setupToolBar();
     }
 
+    public void setupToolBar(){
+        tbarMain.add( actClearSelection);
+        tbarMain.add( actExportSelecion);
+        tbarMain.add( actPaste);
+        tbarMain.add( actRemoveCols);
+        tbarMain.add( actShowProps);
+    }
+    
     Object getValueAt(int row, int column) {
         return tblData.getValueAt(row, column);
     }
@@ -327,6 +336,7 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         lblReset = new javax.swing.JLabel();
         pnlEmpty = new javax.swing.JPanel();
         lblSelectAll = new javax.swing.JLabel();
+        tbarMain = new javax.swing.JToolBar();
         jPanel1 = new javax.swing.JPanel();
         spaData = new javax.swing.JScrollPane();
         tblData = new javax.swing.JTable();
@@ -424,7 +434,7 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         popTblContextMnu.add(miExportCells);
 
         miProperties.setMnemonic('p');
-        miProperties.setText("Properties");
+        miProperties.setText("Properties"); // NOI18N
         popTblContextMnu.add(miProperties);
 
         miExportRows.setText("Export Rows ...");
@@ -515,6 +525,9 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
 
         setComponentPopupMenu(popTblContextMnu);
         setLayout(new java.awt.BorderLayout());
+
+        tbarMain.setRollover(true);
+        add(tbarMain, java.awt.BorderLayout.NORTH);
 
         jPanel1.setInheritsPopupMenu(true);
         jPanel1.setLayout(new java.awt.BorderLayout());
@@ -1039,6 +1052,7 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
     private javax.swing.JPopupMenu popExtra;
     private javax.swing.JPopupMenu popTblContextMnu;
     private javax.swing.JScrollPane spaData;
+    private javax.swing.JToolBar tbarMain;
     private javax.swing.JTable tblData;
     private javax.swing.JTable tblRowHeader;
     // End of variables declaration//GEN-END:variables
