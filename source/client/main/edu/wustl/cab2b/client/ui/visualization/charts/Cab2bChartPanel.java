@@ -31,8 +31,6 @@ public class Cab2bChartPanel extends Cab2bPanel {
 
     private AbstractChart scatterPlot = null;
 
-    private String entityName = null;
-
     private JPanel chart = null;
 
     /**
@@ -53,7 +51,7 @@ public class Cab2bChartPanel extends Cab2bPanel {
     public void drawChart(final String chartType) {
         chartModel.deleteObservers();
         if (chartType.equals("Bar Chart") && barChart == null) {
-            barChart = new BarChart(entityName);
+            barChart = new BarChart();
             chartModel.addObserver(barChart);
         } else if (chartType.equals("Line Chart") && lineChart == null) {
             lineChart = new LineChart();
@@ -68,11 +66,13 @@ public class Cab2bChartPanel extends Cab2bPanel {
     }
 
     private void setChartPanel() {
+
         if (chart != null) {
             this.remove(chart);
         }
 
         String chartType = chartModel.getChartType();
+        chartModel.notifyObservers();
         if (chartType.equals("Bar Chart")) {
             chart = barChart.getChartPanel();
         } else if (chartType.equals("Line Chart")) {
@@ -81,7 +81,12 @@ public class Cab2bChartPanel extends Cab2bPanel {
             chart = scatterPlot.getChartPanel();
         }
 
-        this.add("br vfill hfill ", chart);
+        if (chart != null)
+            this.add("br hfill vfill ", chart);
+        else
+            throw new IllegalStateException("Unable to create chart component for charttype =" + chartType
+                    + " Chart orientation =" + chartModel.getChartOrientation());
+
         updateUI();
     }
 
@@ -123,8 +128,10 @@ public class Cab2bChartPanel extends Cab2bPanel {
             String actionCommand = actionEvent.getActionCommand();
             if (actionCommand != null && actionCommand == "Row") {
                 chartModel.setChartOrientation(ChartOrientation.ROW_AS_CATEGORY);
+                System.out.println("Setting chart orientation :" + ChartOrientation.ROW_AS_CATEGORY);
             } else {
                 chartModel.setChartOrientation(ChartOrientation.COLUMN_AS_CATEGORY);
+                System.out.println("Setting chart orientation :" + ChartOrientation.COLUMN_AS_CATEGORY);
             }
             setChartPanel();
         }

@@ -4,15 +4,18 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
 
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 import org.jdesktop.swingx.decorator.AlternateRowHighlighter;
 
-import edu.wustl.cab2b.client.ui.SearchNavigationPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.LazyTable.LazyTableModelInterface;
 import edu.wustl.cab2b.client.ui.controls.LazyTable.MatrixCache;
@@ -59,16 +62,21 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
      * @see edu.wustl.cab2b.client.ui.viewresults.ResultObjectDetailsPanel#initTableGUI()
      */
     protected void initGUI() {
-    
+
         CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
             @Override
-            protected void doNonUILogic() throws Exception {              
+            protected void doNonUILogic() throws Exception {
                 threeDTable = new Cab2bTable();
                 tableSource = new BDQDataSource((IPartiallyInitialized3DRecord) record,
                         new PageDimension(100, 25), new MatrixCache(3));
                 LazyTableModelInterface model = new BDQTableModel(tableSource);
                 model.getValueAt(0, 0);
                 threeDTable.setModel(model);
+                threeDTable.addMouseListener(new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(java.awt.event.MouseEvent evt) {
+                        firePropertyChange(DefaultSpreadSheetViewPanel.DISABLE_HEATMAP_LINK, -1, 0);
+                    }
+                });
             }
 
             @Override
@@ -86,25 +94,6 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
             }
         };
         swingWorker.start();
-        
-        /* super.initGUI();
-         adjustRows();
-         
-         threeDTable = new Cab2bTable();
-         threeDTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-         threeDTable.addMouseListener(new CellMouseListener());
-         threeDTable.getTableHeader().addMouseListener(new HeaderMouseListener());
-         tableSource = new BDQDataSource((IPartiallyInitialized3DRecord) record, new PageDimension(100, 25),
-         new MatrixCache(3));
-
-         LazyTableModelInterface model = new BDQTableModel(tableSource);
-         model.getValueAt(0, 0);
-         threeDTable.setModel(model);
-         threeDTable.setColumnSelectionAllowed(true);
-         threeDTable.setEditable(false);
-         tableScrollPane = new JScrollPane(threeDTable);
-         addRowHeader();
-         this.add("br hfill vfill", tableScrollPane);*/
     }
 
     public String getRowHeaderName(int rowNumber) {
@@ -138,14 +127,12 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
             }
 
             public Object getValueAt(int row, int column) {
-                //Object value = threeDTable.getModel().getValueAt( row, 5);//tableSource.getCurrentPage().getData().getDim3Labels()[row];
-                Object value = tableSource.getCurrentPage().getData().getDim3Labels()[row];                
-                System.out.println("value at ("+row+","+column+") ="+value);
-                return value;//tableSource.getCurrentPage().getData().getDim3Labels()[row];
+                Object value = tableSource.getCurrentPage().getData().getDim3Labels()[row];
+                return value;
             }
         });
 
-        rowHeaderTable.setAutoscrolls( false);
+        rowHeaderTable.setAutoscrolls(false);
         rowHeaderTable.setSize(new Dimension(0, 28));
         rowHeaderTable.setFont(new Font("Arial", Font.BOLD, 14));
         rowHeaderTable.setHighlighters();
@@ -201,7 +188,7 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
             } else {
                 selection.setSelectionInterval(columnNumber, columnNumber);
                 isWholeColumnSelected = true;
-
+                firePropertyChange(DefaultSpreadSheetViewPanel.ENABLE_HEATMAP_LINK, -1, 0);
                 //this is needed to select the cell and activate the focus listener 
                 threeDTable.setRowSelectionInterval(1, 1);
             }
@@ -228,4 +215,47 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
 
         return sb.toString();
     }
+
+    /**
+     * Returns ThreeDResultTableModel
+     * @return
+     */
+    public TableModel getThreeDResultTableModel() {
+        return threeDTable.getModel();
+    }
+
+    public ArrayList<TreeSet<Comparable>> getUniqueRecordValues() {
+        return tableSource.getUniqueRecordValues();
+    }
+
+    public List<String> getSelectedColumnNames() {
+        List<String> selectedColumnsList = new ArrayList<String>(threeDTable.getSelectedColumns().length);
+        for (int i = 0; i < threeDTable.getSelectedColumns().length; i++) {
+            selectedColumnsList.add(threeDTable.getColumnName(threeDTable.getSelectedColumns()[i]));
+        }
+        return selectedColumnsList;
+    }
+
+    public Object[][] getSelectedData() {
+        Object data[][] = new Object[threeDTable.getSelectedRows().length][threeDTable.getSelectedColumns().length];
+        for (int rowIndex = 0; rowIndex < threeDTable.getSelectedRows().length; rowIndex++)
+            for (int columnIndex = 0; columnIndex < threeDTable.getSelectedColumns().length; columnIndex++) {
+                data[rowIndex][columnIndex] = threeDTable.getValueAt(threeDTable.getSelectedRows()[rowIndex],
+                                                                     threeDTable.getSelectedColumns()[columnIndex]);
+            }
+        return data;
+    }
+
+    public List<String> getSelectedRowNames() {
+        List<String> selectedRowList = new ArrayList<String>(threeDTable.getSelectedRows().length);
+        for (int i = 0; i < threeDTable.getSelectedRows().length; i++) {
+            selectedRowList.add(getRowHeaderName(threeDTable.getSelectedRows()[i]));
+        }
+        return selectedRowList;
+    }
+
+    public int[] getSelectedColumns() {
+        return threeDTable.getSelectedColumns();
+    }
+
 }

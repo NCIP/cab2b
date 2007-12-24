@@ -54,10 +54,7 @@ public abstract class AbstractChart extends AbstractViewer {
     public AbstractChart() {
     }
 
-    @Override
-    public void update(Observable observable, Object object) {
-        chartModel = (ChartModel) observable;
-
+    public void updateChart() {
         ChartOrientation chartOrientation = chartModel.getChartOrientation();
         if (chartOrientation == ChartOrientation.COLUMN_AS_CATEGORY && columnWiseChart == null) {
             Dataset dataset = createColumnWiseData();
@@ -66,6 +63,13 @@ public abstract class AbstractChart extends AbstractViewer {
             Dataset dataset = createRowWiseData();
             rowWiseChart = new ChartPanel(createChart(dataset));
         }
+
+    }
+
+    @Override
+    public void update(Observable observable, Object object) {
+        chartModel = (ChartModel) observable;
+        updateChart();
     }
 
     /**
@@ -74,14 +78,13 @@ public abstract class AbstractChart extends AbstractViewer {
      */
     public JPanel getChartPanel() {
         ChartPanel chartPanel = null;
-
+        updateChart();
         ChartOrientation chartOrientation = chartModel.getChartOrientation();
-        if (chartOrientation == ChartOrientation.COLUMN_AS_CATEGORY && columnWiseChart != null) {
+        if (chartOrientation == ChartOrientation.COLUMN_AS_CATEGORY) {
             chartPanel = columnWiseChart;
-        } else if (chartOrientation == ChartOrientation.ROW_AS_CATEGORY && rowWiseChart != null) {
+        } else if (chartOrientation == ChartOrientation.ROW_AS_CATEGORY) {
             chartPanel = rowWiseChart;
         }
-
         return chartPanel;
     }
 

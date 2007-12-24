@@ -6,9 +6,6 @@ package edu.wustl.cab2b.client.ui.visualization.charts;
 import java.util.List;
 
 import edu.wustl.cab2b.client.ui.AbstractModel;
-import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
-import edu.wustl.cab2b.client.ui.viewresults.DefaultSpreadSheetViewPanel;
-import edu.wustl.cab2b.client.ui.viewresults.ThreeDResultObjectDetailsPanel;
 import edu.wustl.cab2b.common.util.Constants.ChartOrientation;
 
 /**
@@ -34,6 +31,8 @@ public class ChartModel extends AbstractModel {
 
     private String chartType;
 
+    public static String UPDATE_CHART_PROPERTY = "UPDATE_CHART_PROPERTY";
+
     /**
      * Parameterized constructor
      */
@@ -41,31 +40,6 @@ public class ChartModel extends AbstractModel {
         this.tableData = tableData;
         this.selectedRowNames = selectedRowNames;
         this.selectedColumnNames = selectedColumnNames;
-
-        /*  if (dataListDetailedPanel instanceof DefaultSpreadSheetViewPanel) {
-
-         DefaultSpreadSheetViewPanel spreadSheetViewPanel;
-         spreadSheetViewPanel = (DefaultSpreadSheetViewPanel) dataListDetailedPanel;
-
-         selectedColumnsIndices = spreadSheetViewPanel.getSelectedColumns();
-         selectedRowIndices = spreadSheetViewPanel.getSelectedRows();
-         } else {
-         selectedColumnsIndices = tableData.getSelectedColumns();
-         if (dataListDetailedPanel instanceof ThreeDResultObjectDetailsPanel) {
-         ThreeDResultObjectDetailsPanel threeDResultObjectDetailsPanel = (ThreeDResultObjectDetailsPanel) dataListDetailedPanel;
-         isWholeColumnSelected = threeDResultObjectDetailsPanel.getIsWholeColumnSelected();
-         tableData = threeDResultObjectDetailsPanel.getDataTable();
-
-         if (isWholeColumnSelected) {
-         selectedRowIndices = new int[selectedColumnsIndices.length];
-         for (int i = 0; i < selectedColumnsIndices.length; i++) {
-         selectedRowIndices[i] = i;
-         }
-         }
-         } else {
-         selectedRowIndices = this.tableData.getSelectedRows();
-         }
-         }*/
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
@@ -80,23 +54,6 @@ public class ChartModel extends AbstractModel {
     public boolean isWholeColumnSelected() {
         return isWholeColumnSelected;
     }
-
-    /*    public Cab2bTable getCab2bTableData() {
-     return tableData;
-     }*/
-
-    /*public Object getCab2bTableValue(int row, int column) {
-     return tableData.getValueAt(row, column);
-     }*/
-
-    /* *//**
-     * @return the selectedColumnsIndices
-     */
-    /*
-     public Cab2bTable getCab2bTable() {
-     return cab2bTable;
-     }
-     */
 
     public List<String> getSelectedColumnsNames() {
         return selectedColumnNames;
@@ -135,7 +92,6 @@ public class ChartModel extends AbstractModel {
      */
     public void setChartType(String chartType) {
         this.chartType = chartType;
-
         setChanged();
         notifyObservers();
     }

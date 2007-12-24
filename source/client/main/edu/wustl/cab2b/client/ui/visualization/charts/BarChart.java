@@ -23,18 +23,8 @@ import org.jfree.data.general.Dataset;
 public class BarChart extends AbstractChart {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * The name of the entity for which the chart is being generated
-     */
-    private String entityName;
+    public BarChart() {
 
-    /**
-     * Parameterized constructor
-     * @param chartRawData
-     * @param entityName
-     */
-    public BarChart(String entityName) {
-        this.entityName = entityName;
     }
 
     protected Dataset createColumnWiseData() {
@@ -87,7 +77,7 @@ public class BarChart extends AbstractChart {
     protected JFreeChart createChart(Dataset dataset) {
         CategoryDataset categoryDataSet = (CategoryDataset) dataset;
 
-        JFreeChart jFreeChart = ChartFactory.createBarChart("Bar Chart", entityName, "Value", categoryDataSet,
+        JFreeChart jFreeChart = ChartFactory.createBarChart("Bar Chart", null, "Value", categoryDataSet,
                                                             PlotOrientation.VERTICAL, true, true, false);
         jFreeChart.setBackgroundPaint(Color.white);
 

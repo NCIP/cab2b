@@ -16,7 +16,6 @@ import org.genepattern.data.expr.IExpressionData;
 import org.genepattern.data.expr.MetaData;
 import org.genepattern.data.matrix.DoubleMatrix2D;
 
-import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.viewresults.BDQTableModel;
 import edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface;
 import edu.wustl.cab2b.client.ui.viewresults.ThreeDResultObjectDetailsPanel;
@@ -30,7 +29,7 @@ public class HeatMapModel extends Observable {
     private double[][] data;
 
     private String[] selectedColumnNames;
-    
+
     private String[] selectedRowNames;
 
     private IExpressionData expressionData;
@@ -50,34 +49,27 @@ public class HeatMapModel extends Observable {
         if (dataListDetailedPanel instanceof ThreeDResultObjectDetailsPanel) {
             ThreeDResultObjectDetailsPanel threeDResultObjectDetailsPanel = (ThreeDResultObjectDetailsPanel) dataListDetailedPanel;
             boolean isWholeColumnSelected = threeDResultObjectDetailsPanel.getIsWholeColumnSelected();
+            selectedColumnNames = dataListDetailedPanel.getSelectedColumnNames().toArray(
+                                                                                         new String[dataListDetailedPanel.getSelectedColumnNames().size()]);
+            Object[][] tableData = null;
             if (isWholeColumnSelected) {
-                Cab2bTable cab2bTable = dataListDetailedPanel.getDataTable();
 
-                int[] selectedColumnIndices = cab2bTable.getSelectedColumns();
-                selectedColumnNames = new String[cab2bTable.getSelectedColumnCount()];
-                for (int i = 0; i < cab2bTable.getSelectedColumnCount(); i++) {
-                    selectedColumnNames[i] = cab2bTable.getColumnName(selectedColumnIndices[i]);
-                }
-                
-                BDQTableModel datCubeTableModel = (BDQTableModel) cab2bTable.getModel();
-                Object[][] tableData = datCubeTableModel.getColumnValues(cab2bTable.getSelectedColumns());
-                
+                BDQTableModel datCubeTableModel = (BDQTableModel) threeDResultObjectDetailsPanel.getThreeDResultTableModel();
+                tableData = datCubeTableModel.getColumnValues(threeDResultObjectDetailsPanel.getSelectedColumns());
+
                 selectedRowNames = new String[tableData.length];
                 for (int i = 0; i < tableData.length; i++) {
                     selectedRowNames[i] = threeDResultObjectDetailsPanel.getRowHeaderName(i);
                 }
-                
-                data = new double[tableData.length][cab2bTable.getSelectedColumnCount()];
+
+                data = new double[tableData.length][selectedColumnNames.length];
+                expressionData = generateExpressionData();
+
                 for (int i = 0; i < tableData.length; i++) {
                     for (int j = 0; j < tableData[i].length; j++) {
                         data[i][j] = convertValue(tableData[i][j]);
                     }
                 }
-
-                //sampleTree = generateTreePanel(0);
-                //geneTreePanel = generateGeneTreePanel(0);
-                expressionData = generateExpressionData();
-
                 setChanged();
                 notifyObservers();
             }
@@ -184,8 +176,8 @@ public class HeatMapModel extends Observable {
 
         DoubleMatrix2D matrix = new DoubleMatrix2D(data, selectedRowNames, selectedColumnNames);
         HashMap name2Matrices = new HashMap();
-        ExpressionData expressionData = new ExpressionData(matrix, new MetaData(selectedRowNames.length), new MetaData(
-                selectedColumnNames.length), name2Matrices);
+        ExpressionData expressionData = new ExpressionData(matrix, new MetaData(selectedRowNames.length),
+                new MetaData(selectedColumnNames.length), name2Matrices);
         return expressionData;
     }
 
@@ -253,5 +245,4 @@ public class HeatMapModel extends Observable {
         }
         return output;
     }
-
 }
