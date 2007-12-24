@@ -32,6 +32,12 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
 
     public static final String SPREADSHEET_MODEL_INSTALLED = "SPREADSHEET_MODEL_INSTALLED";
 
+    public static final String DISABLE_CHART_LINK = "DISABLE_CHART_LINK";
+
+    public static final String ENABLE_CHART_LINK = "ENABLE_CHART_LINK";
+
+    public static final String DISABLE_HEATMAP_LINK = "DISABLE_HEATMAP_LINK";
+
     private ImageIcon defaultCellImage = new ImageIcon(
             this.getClass().getClassLoader().getResource(DETAILS_COLUMN_IMAGE));
 
@@ -43,6 +49,10 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
     private Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
 
     private ExperimentDataCategoryGridPanel expGridPanel = null;
+
+    DefaultSpreadSheetViewPanel() {
+        initializeGUI();
+    }
 
     public DefaultSpreadSheetViewPanel(List<IRecord> records, ExperimentDataCategoryGridPanel expGridPanel) {
         this.setName("DataListDetailedPanel");
@@ -75,7 +85,6 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
     }
 
     private AbstractTableModel getSpreadSheetDataModel() {
-
         return spreadsheet.getViewTableModel();
     }
 
@@ -129,10 +138,15 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
             if (evt.getPropertyName().equals(spreadsheet.REQUESTED_SHOW_ROW_DETAILS)) {
                 Integer rowNumber = (Integer) evt.getNewValue();
                 DefaultDetailedPanel defaultDetailedPanel = ResultPanelFactory.getResultDetailedPanel(records.get(rowNumber.intValue()));
+                defaultDetailedPanel.addPropertyChangeListener(new PropertyChangeListener() {
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+                    }
+                });
                 expGridPanel.addDetailTabPanel("Details_" + (rowNumber.intValue() + 1), defaultDetailedPanel);
-            } else if (evt.getPropertyName().equals(spreadsheet.EVENT_DATA_SINGLE_CLICKED)) {
-                firePropertyChange(spreadsheet.EVENT_DATA_SINGLE_CLICKED, evt.getOldValue(), evt.getNewValue());
+                firePropertyChange(DISABLE_CHART_LINK, evt.getOldValue(), evt.getNewValue());
             }
+            firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
         }
     }
 
