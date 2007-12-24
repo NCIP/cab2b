@@ -149,7 +149,8 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
                     experimentStackBox.setChartLinkEnable(false);
                 }
                 if (evt.getPropertyName().equals(JSheet.EVENT_DATA_SINGLE_CLICKED)) {
-                    experimentStackBox.setChartLinkEnable(true);
+                    experimentStackBox.setChartLinkEnable(true);  
+                    experimentStackBox.setHeatMapLinkEnable(false);
                 } else if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.DISABLE_CHART_LINK)) {
                     experimentStackBox.setChartLinkEnable(false);
                 } else if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.ENABLE_CHART_LINK)) {

@@ -507,12 +507,11 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                     experimentDataCategoryGridPanel.setCurrentChartPanel(null);
                     if (tabPanel.getSelectedColumnNames() != null && tabPanel.getSelectedColumnNames().size() > 0) {
                         firePropertyChange(DefaultSpreadSheetViewPanel.ENABLE_CHART_LINK, -1, 0);
+                        firePropertyChange(DefaultSpreadSheetViewPanel.DISABLE_HEATMAP_LINK, -1, 0);
 
-                        if (!(tabPanel instanceof ThreeDResultObjectDetailsPanel))
-                            firePropertyChange(DefaultSpreadSheetViewPanel.DISABLE_HEATMAP_LINK, -1, 0);
-                        else if (((ThreeDResultObjectDetailsPanel) tabPanel).getIsWholeColumnSelected()) {
+                        if (((ThreeDResultObjectDetailsPanel) tabPanel).getIsWholeColumnSelected())
                             firePropertyChange(DefaultSpreadSheetViewPanel.ENABLE_HEATMAP_LINK, -1, 0);
-                        }
+
                     } else
                         firePropertyChange(DefaultSpreadSheetViewPanel.DISABLE_CHART_LINK, -1, 0);
                 } else {
