@@ -154,21 +154,20 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
                     experimentStackBox.setChartLinkEnable(false);
                 } else if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.ENABLE_CHART_LINK)) {
                     experimentStackBox.setChartLinkEnable(true);
+                    experimentStackBox.setHeatMapLinkEnable(false);
                 }
                 if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.DISABLE_HEATMAP_LINK)) {
                     experimentStackBox.setHeatMapLinkEnable(false);
+                } else if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.ENABLE_HEATMAP_LINK)) {
+                    experimentStackBox.setHeatMapLinkEnable(true);
                 }
             }
         });
-        /*	experimentDataCategoryGridPanel.setBorder(new CustomizableBorder(
-         new Insets(1, 1, 1, 1), true, true));*/
         experimentDataCategoryGridPanel.setBorder(null);
 
         /* Adding Experiment Stack box panel */
         this.add(experimentTitlePanel, BorderLayout.NORTH);
         experimentStackBox = new ExperimentStackBox(selectedExperiment, experimentDataCategoryGridPanel);
-        /*experimentStackBox.setBorder(new CustomizableBorder(new Insets(1, 1, 1,
-         1), true, true));*/
         experimentStackBox.setBorder(null);
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, experimentStackBox,
@@ -182,16 +181,6 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
 
     public void addDataList(DataListMetadata dataListMetadata) {
         experimentStackBox.updateStackBox(dataListMetadata);
-    }
-
-    public static void main(String str[]) {
-        ExperimentOpenPanel expDetPanel = null;
-        expDetPanel = new ExperimentOpenPanel();
-        JFrame frame = new JFrame("Experiment");
-        frame.setSize(600, 600);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(expDetPanel);
-        frame.setVisible(true);
     }
 
     /**
