@@ -51,7 +51,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
 
     private Cab2bButton cancelButton;
 
-    public ParameterizedQueryShowResultPanel(ICab2bParameterizedQuery query) {
+    public ParameterizedQueryShowResultPanel(ICab2bParameterizedQuery query) {        
         queryDataModel = new ParameterizedQueryDataModel(query);
         initGUI();
     }

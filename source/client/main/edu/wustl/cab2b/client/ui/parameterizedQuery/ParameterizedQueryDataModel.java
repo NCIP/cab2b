@@ -19,6 +19,7 @@ import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
 import edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery;
+import edu.wustl.common.querysuite.queryobject.util.QueryObjectProcessor;
 import edu.wustl.common.querysuite.queryobject.util.QueryUtility;
 
 /**
@@ -32,19 +33,15 @@ public class ParameterizedQueryDataModel {
 
     public ParameterizedQueryDataModel() {
         query = new Cab2bQuery();
+        
     }
 
-    public ParameterizedQueryDataModel(ICab2bQuery iQuery) {
-        //converting query to Parameterized query 
-        if (iQuery instanceof ParameterizedQuery)
-            query = (ICab2bParameterizedQuery) iQuery;
-        else
-            query = new Cab2bQuery(iQuery);
-
+    public ParameterizedQueryDataModel(ICab2bQuery iQuery) {        
+        query = new Cab2bQuery(iQuery);
     }
 
     public ParameterizedQueryDataModel(ICab2bParameterizedQuery query) {
-        this.query = query;
+        this.query = new Cab2bQuery(query);
     }
 
     public void setQuery(ICab2bParameterizedQuery query) {
@@ -96,7 +93,7 @@ public class ParameterizedQueryDataModel {
                 for (int index = 0; index < conditionList.size(); index++) {
                     ICondition condition = conditionList.get(index);
                     if (condition.getAttribute() == newCondition.getAttribute()) {
-                        conditionList.remove(condition);                      
+                        conditionList.remove(condition);
                         conditionList.add(index, newCondition);
                         isConditionAdded = true;
                         break ALL;
