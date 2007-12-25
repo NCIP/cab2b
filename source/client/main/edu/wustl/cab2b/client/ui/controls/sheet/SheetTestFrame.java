@@ -9,6 +9,7 @@ package edu.wustl.cab2b.client.ui.controls.sheet;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.*;
+
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -17,6 +18,9 @@ import javax.swing.table.DefaultTableModel;
  */
 public class SheetTestFrame extends javax.swing.JFrame {
     
+    private static final long serialVersionUID = 1L;
+
+
     /**
      * Creates new form SheetTestFrame
      */
@@ -67,6 +71,13 @@ public class SheetTestFrame extends javax.swing.JFrame {
     
     
     static class SampleTableDataModel extends DefaultTableModel {
+        private static final long serialVersionUID = 1L;
+        static Date date = null;
+        static {
+            Calendar c = Calendar.getInstance();
+            c.set(10,10,10);
+            date = c.getTime();
+        }
         static Object rows[][] = {
             {"AMZN", "Amazon", 41.28,new Date(),"Pune"},
             {"EBAY", "eBay", 41.57,new Date(),"Mumbai"},
@@ -95,7 +106,7 @@ public class SheetTestFrame extends javax.swing.JFrame {
             {"SUNW", "Sun Microsystems", 3.86,new Date(),"Mumbai"},
             {"TWX",  "SunJava", 17.66,new Date(),"Pune"},
             {"VOD",  "Vodafone Group", 26.02,new Date(),"Bangalore"},
-            {"YHOO", "Yahoo!", 3700.69,new Date(10,10,10),"Bangalore"}
+            {"YHOO", "Yahoo!", 3700.69,date,"Bangalore"}
         };
         static Object columns[] = {"Symbol", "Name", "Price","Date","City"};
         
@@ -105,8 +116,8 @@ public class SheetTestFrame extends javax.swing.JFrame {
         }
         
         @Override
-        public Class getColumnClass(int column) {
-            Class returnValue;
+        public Class<?> getColumnClass(int column) {
+            Class<?> returnValue;
             if ((column >= 0) && (column < getColumnCount())) {
                 returnValue = getValueAt(0, column).getClass();
             } else {
