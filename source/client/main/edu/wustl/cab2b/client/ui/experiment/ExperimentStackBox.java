@@ -369,31 +369,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         dataFilterPanel.add(" hfill vfill", filterConsole);
         dataFilterPanel.revalidate();
         dataFilterPanel.updateUI();
-    }
-
-    /*public static void setDataForFilterPanel(Vector<CaB2BFilterInterface> data) {
-     Logger.out.debug("setDataForMyExperimentsPanel :: data " + data);
-     dataFilterPanel.removeAll();
-     dataFilterPanel.add(new Cab2bLabel());
-     for (CaB2BFilterInterface caB2BFilterInterface : data) {
-     obj = caB2BFilterInterface;
-     String labelName = obj.toString();
-
-     if ((labelName.indexOf("like **") < 0) && (labelName.indexOf("like *.*") < 0)) {
-     Cab2bLabel cab2bLabel = new Cab2bLabel(labelName);
-     dataFilterPanel.add("br", cab2bLabel);
-     }
-     }
-     dataFilterPanel.revalidate();
-     dataFilterPanel.updateUI();
-     }
-     */
-    /*public static void getDataForFilterPanel(ApplyFilterPanel applyFilterPanel) {
-     Vector<CaB2BFilterInterface> vector = applyFilterPanel.getFilterMap();
-     if (vector != null) {
-     setDataForFilterPanel(vector);
-     }
-     }*/
+    }   
 
     private void setBarChartLink() {
         URL url = this.getClass().getClassLoader().getResource(ClientConstants.BAR_GRAPH);
