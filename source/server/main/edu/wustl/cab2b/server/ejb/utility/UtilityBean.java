@@ -17,6 +17,7 @@ import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
 import edu.wustl.cab2b.common.queryengine.result.ILazyParams;
 import edu.wustl.cab2b.common.queryengine.result.IPartiallyInitializedRecord;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.datalist.DataListOperationsController;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
@@ -94,30 +95,33 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Session
     /**
      *
      */
-    public ArrayList<TreeSet<Comparable>> getUniqueRecordValues(Long entityId) throws RemoteException {
+    public List<TreeSet<Comparable<?>>> getUniqueRecordValues(Long entityId) throws RemoteException {
         List<IRecord> entityRecordList = DataListOperationsController.getEntityRecords(entityId);
-        ArrayList<TreeSet<Comparable>> entityRecordValues = new ArrayList<TreeSet<Comparable>>();
+        ArrayList<TreeSet<Comparable<?>>> entityRecordValues = new ArrayList<TreeSet<Comparable<?>>>();
 
         int index = 0;
         for (IRecord entityRecord : entityRecordList) {
             Set<AttributeInterface> attributeSet = entityRecord.getAttributes();
-            for (AttributeInterface attribute : attributeSet) {
-                Comparable<?> attributeValue = (Comparable<?>) entityRecord.getValueForAttribute(attribute);
-
-                TreeSet<Comparable> columnValues = null;
+            List<AttributeInterface> attributeList = Utility.getAttributeList(attributeSet);
+            for (AttributeInterface attribute : attributeList) {
+                TreeSet<Comparable<?>> columnValues = null;
                 try {
                     columnValues = entityRecordValues.get(index);
                 } catch (IndexOutOfBoundsException e) {
-                    columnValues = new TreeSet<Comparable>();
+                    columnValues = new TreeSet<Comparable<?>>();
                     entityRecordValues.add(index, columnValues);
                 }
-                columnValues.add(attributeValue);
-                index++;             
+                
+                Comparable<?> attributeValue = (Comparable<?>) entityRecord.getValueForAttribute(attribute);
+                if (attributeValue != null) {
+                    columnValues.add(attributeValue);
+                }
+                
+                index++;
             }
             index = 0;
         }
 
         return entityRecordValues;
     }
-
 }

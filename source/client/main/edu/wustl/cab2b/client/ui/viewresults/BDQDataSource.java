@@ -31,10 +31,10 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
     /**
      * this is required to find dimension of the cube
      */
-    private IPartiallyInitialized3DRecord<?,?> uninitailisedRecord;
+    private IPartiallyInitialized3DRecord<?, ?> uninitailisedRecord;
 
     public BDQDataSource(
-            IPartiallyInitialized3DRecord<?,?> uninitailisedRecord,
+            IPartiallyInitialized3DRecord<?, ?> uninitailisedRecord,
             PageDimension pageDimension,
             CacheInterface<?> cache) {
         super(pageDimension, cache);
@@ -85,20 +85,20 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
                                                                                                                     MainFrame.newWelcomePanel);
         try {
             /*TODO casting to Object is needed due to bug in java compiler
-            Refer to http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6548436 for details
-            If Object casting is removed it will throw error : inconvertible types
-            found   : edu.wustl.cab2b.common.queryengine.result.IPartiallyInitializedRecord<capture#580 of ?,capture#393 of ?>
-            required: edu.wustl.cab2b.common.queryengine.result.IPartiallyInitialized3DRecord<?,?> */
+             Refer to http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6548436 for details
+             If Object casting is removed it will throw error : inconvertible types
+             found   : edu.wustl.cab2b.common.queryengine.result.IPartiallyInitializedRecord<capture#580 of ?,capture#393 of ?>
+             required: edu.wustl.cab2b.common.queryengine.result.IPartiallyInitialized3DRecord<?,?> */
             IPartiallyInitialized3DRecord<?, ?> newRecord = (IPartiallyInitialized3DRecord<?, ?>) (Object) utilityBeanInterface.getView(
-                                                                                                                         uninitailisedRecord.handle(),
-                                                                                                                         lazyParams);
+                                                                                                                                        uninitailisedRecord.handle(),
+                                                                                                                                        lazyParams);
 
             return new Page<IPartiallyInitialized3DRecord<?, ?>>(pageInfo, newRecord);
         } catch (RemoteException e) {
             CommonUtils.handleException(e, MainFrame.newWelcomePanel, true, true, true, false);
         }
         return null;
-  }
+    }
 
     /**
      * @param cube
@@ -170,7 +170,7 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
      * @param selectedColumns
      * @return
      */
-    public IPartiallyInitialized3DRecord<?,?> getColumnsData(int[] selectedColumns) {
+    public IPartiallyInitialized3DRecord<?, ?> getColumnsData(int[] selectedColumns) {
 
         List<LazyParams.Range> rangeList = new ArrayList<LazyParams.Range>();
         for (int i = 0; i < selectedColumns.length; i++) {
@@ -184,12 +184,13 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
         try {
             Logger.out.debug("Record Handle " + uninitailisedRecord.handle());
             /*TODO casting to Object is needed due to bug in java compiler
-            Refer to http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6548436 for details
-            If Object casting is removed it will throw error : inconvertible types
-            found   : edu.wustl.cab2b.common.queryengine.result.IPartiallyInitializedRecord<capture#580 of ?,capture#393 of ?>
-            required: edu.wustl.cab2b.common.queryengine.result.IPartiallyInitialized3DRecord<?,?> */
-            return (IPartiallyInitialized3DRecord<?,?>) (Object)utilityBeanInterface.getView(uninitailisedRecord.handle(),
-                                                                                lazyParams);
+             Refer to http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6548436 for details
+             If Object casting is removed it will throw error : inconvertible types
+             found   : edu.wustl.cab2b.common.queryengine.result.IPartiallyInitializedRecord<capture#580 of ?,capture#393 of ?>
+             required: edu.wustl.cab2b.common.queryengine.result.IPartiallyInitialized3DRecord<?,?> */
+            return (IPartiallyInitialized3DRecord<?, ?>) (Object) utilityBeanInterface.getView(
+                                                                                               uninitailisedRecord.handle(),
+                                                                                               lazyParams);
         } catch (RemoteException e) {
             CommonUtils.handleException(e, MainFrame.newWelcomePanel, true, true, true, false);
         }
@@ -197,7 +198,7 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
         return null;
     }
 
-    public ArrayList<TreeSet<Comparable>> getUniqueRecordValues() {
+    public List<TreeSet<Comparable<?>>> getUniqueRecordValues() {
 
         UtilityBusinessInterface utilityBeanInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                     EjbNamesConstants.UTILITY_BEAN,

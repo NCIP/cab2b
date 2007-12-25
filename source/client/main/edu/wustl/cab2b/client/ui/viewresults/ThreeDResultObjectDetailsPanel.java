@@ -139,7 +139,7 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
         rowHeaderTable.setBackground(AlternateRowHighlighter.genericGrey.getForeground());
         tableScrollPane.setRowHeaderView(rowHeaderTable);
     }
-   
+
     public boolean getIsWholeColumnSelected() {
         return isWholeColumnSelected;
     }
@@ -220,7 +220,7 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
         return threeDTable.getModel();
     }
 
-    public ArrayList<TreeSet<Comparable>> getUniqueRecordValues() {
+    public List<TreeSet<Comparable<?>>> getUniqueRecordValues() {
         return tableSource.getUniqueRecordValues();
     }
 

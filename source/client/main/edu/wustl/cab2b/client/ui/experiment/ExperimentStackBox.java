@@ -304,11 +304,11 @@ public class ExperimentStackBox extends Cab2bPanel {
         setHeatmapLink();
         visualiseDataPanel.revalidate();
 
-       stackedBox.setPreferredSize(new Dimension(250, 500));
-       stackedBox.setMinimumSize(new Dimension(250, 500));       
-       stackedBox.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
-       this.add(stackedBox);
-       updateUI();
+        stackedBox.setPreferredSize(new Dimension(250, 500));
+        stackedBox.setMinimumSize(new Dimension(250, 500));
+        stackedBox.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
+        this.add(stackedBox);
+        updateUI();
     }
 
     /**
@@ -335,7 +335,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
             List<IRecord> recordList = null;
 
-            ArrayList<TreeSet<Comparable>> recordValues = null;
+            List<TreeSet<Comparable<?>>> recordValues = null;
 
             protected void doNonUILogic() throws RuntimeException {
                 try {
@@ -426,17 +426,18 @@ public class ExperimentStackBox extends Cab2bPanel {
             if (visualiseDataPanel.getComponent(i) instanceof Cab2bHyperlink) {
                 ((Cab2bHyperlink) visualiseDataPanel.getComponent(i)).setEnabled(active);
             }
-        }        
+        }
     }
+
     /**
      * Method to set Heat map links enable/disable 
      * @param active
      */
-    public void setHeatMapLinkEnable(boolean active) {        
-            if (visualiseDataPanel.getComponent(visualiseDataPanel.getComponentCount()-1) instanceof Cab2bHyperlink) {
-                ((Cab2bHyperlink) visualiseDataPanel.getComponent(visualiseDataPanel.getComponentCount()-1)).setEnabled(active);
-            }
-                
+    public void setHeatMapLinkEnable(boolean active) {
+        if (visualiseDataPanel.getComponent(visualiseDataPanel.getComponentCount() - 1) instanceof Cab2bHyperlink) {
+            ((Cab2bHyperlink) visualiseDataPanel.getComponent(visualiseDataPanel.getComponentCount() - 1)).setEnabled(active);
+        }
+
     }
 
     /**
@@ -500,7 +501,7 @@ public class ExperimentStackBox extends Cab2bPanel {
      * @param linkClicked
      *            the name of the chart to be displayed
      */
-    private void showChartAction(String chartType) {      
+    private void showChartAction(String chartType) {
         final JTabbedPane tabComponent = m_experimentDataCategoryGridPanel.getTabComponent();
         Cab2bPanel currentChartPanel = m_experimentDataCategoryGridPanel.getCurrentChartPanel();
         if (currentChartPanel == null) {
