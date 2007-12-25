@@ -91,7 +91,7 @@ enum DataType {
                     //TODO what is meaning of permissible values for Date ??? 
                     //Not clear about date format string
                     Logger.out.info("Date Attribute has permissible value : " + e.getPermissibleValue());
-                    value.setValue(new Date(e.getPermissibleValue()));
+                    //value.setValue(new Date(e.getPermissibleValue()));
                     DynamicExtensionUtility.setSemanticMetadata(value, e.getSemanticMetadata());
                     userDefinedDE.addPermissibleValue(value);
                 }
@@ -226,6 +226,7 @@ enum DataType {
         dataTypeMap.put("java.lang.integer", DataType.INTEGER);
         dataTypeMap.put("int", DataType.INTEGER);
         dataTypeMap.put("java.lang.string", DataType.STRING);
+        dataTypeMap.put("string", DataType.STRING);
         dataTypeMap.put("alphanumeric", DataType.STRING);
         dataTypeMap.put("character", DataType.STRING);
         dataTypeMap.put("java.util.date", DataType.DATE);
