@@ -269,6 +269,9 @@ public class ColumnFilterModel<T extends Comparable> {
         }
 
         if ( FILTER_TYPE_RANGE.equals( activeFilterType)) {
+            if( null == value)
+                return false;
+            
             //  null bounds means, infinity at that end...
             return (null == minBound || minBound.compareTo(value) <= 0) &&
                     (null == maxBound || maxBound.compareTo(value) >= 0);
