@@ -8,31 +8,34 @@ package edu.wustl.cab2b.client.ui.controls.sheet;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import javax.swing.table.*;
+
+import javax.swing.table.AbstractTableModel;
 
 /**
  
  @author  jasbir_sachdeva
  */
 public class FiltersViewConsole extends javax.swing.JPanel {
-    
+
     SheetCustomizationModel scm;
+
     ConsolidatedFilterViewTblModel viewTableModel = new ConsolidatedFilterViewTblModel();
+
     ChangesListener filterListener = new ChangesListener();
-    
+
     /** Creates new form FiltersViewConsole */
     public FiltersViewConsole() {
         initComponents();
     }
-    
-    void setModel( SheetCustomizationModel scm){
-        if( null != this.scm)
-            this.scm.removePropertyChangeListener( filterListener);
+
+    void setModel(SheetCustomizationModel scm) {
+        if (null != this.scm)
+            this.scm.removePropertyChangeListener(filterListener);
         this.scm = scm;
         tblFiltersView.setModel(viewTableModel);
-        scm.addPropertyChangeListener( filterListener);
+        scm.addPropertyChangeListener(filterListener);
     }
-    
+
     /** This method is called from within the constructor to
      initialize the form.
      WARNING: Do NOT modify this code. The content of this method is
@@ -61,18 +64,17 @@ public class FiltersViewConsole extends javax.swing.JPanel {
 
         add(jPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
-    
-    
-    
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblFiltersView;
-    // End of variables declaration//GEN-END:variables
-    
 
-    class ConsolidatedFilterViewTblModel extends AbstractTableModel{
+    private javax.swing.JScrollPane jScrollPane1;
+
+    private javax.swing.JTable tblFiltersView;
+
+    // End of variables declaration//GEN-END:variables
+
+    class ConsolidatedFilterViewTblModel extends AbstractTableModel {
 
         public int getRowCount() {
             return scm.getActiveFiltersCount();
@@ -95,18 +97,17 @@ public class FiltersViewConsole extends javax.swing.JPanel {
         public Object getValueAt(int rowIndex, int columnIndex) {
             SheetColumn colSheet = scm.getActiveSheetColumnAt(rowIndex);
             ColumnFilterModel cfm = colSheet.getFilterCondition();
-            return colSheet.getHeaderValue()+": "+cfm.getFilterDescription();
+            return colSheet.getHeaderValue() + ": " + cfm.getFilterDescription();
         }
 
     }
 
-    class ChangesListener implements PropertyChangeListener{
+    class ChangesListener implements PropertyChangeListener {
 
         public void propertyChange(PropertyChangeEvent evt) {
-            System.out.println("[FiltersViewConsole]: Repainting ON: "+evt.getPropertyName());
             viewTableModel.fireTableDataChanged();
         }
-        
+
     }
 
 }

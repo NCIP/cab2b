@@ -4,8 +4,9 @@
  */
 package edu.wustl.cab2b.client.ui.controls.sheet;
 
-import javax.swing.*;
-import javax.swing.table.*;
+import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 /**
  *

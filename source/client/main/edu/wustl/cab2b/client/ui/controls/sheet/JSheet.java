@@ -7,22 +7,38 @@ package edu.wustl.cab2b.client.ui.controls.sheet;
 
 import static edu.wustl.cab2b.client.ui.controls.sheet.Common.setBackgroundWhite;
 
-import edu.wustl.cab2b.client.ui.controls.*;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
+
+import edu.wustl.cab2b.client.ui.controls.Cab2bFileFilter;
 
 /**
  *
@@ -32,54 +48,71 @@ public class JSheet extends javax.swing.JPanel {
 
     /** Event name that notifies that User has pressed Magnifying-Glass button...      */
     public static final String EVENT_HEADER_ROW_DOUBLE_CLICKED = "EVENT_HEADER_ROW_DOUBLE_CLICKED";
+
     /** Event name that notifies that User has pressed Magnifying-Glass button...      */
     public static final String EVENT_DATA_ROW_DOUBLE_CLICKED = "EVENT_DATA_ROW_DOUBLE_CLICKED";
+
     /** Added  by Deepak : Event name that notifies that User has selected some data...      */
     public static final String EVENT_DATA_SINGLE_CLICKED = "EVENT_DATA_SINGLE_CLICKED";
+
     /** Event name that notifies that User is interested in details of some Row...      */
     public static final String REQUESTED_SHOW_ROW_DETAILS = "REQUESTED_SHOW_ROW_DETAILS";
+
     /**     Should I allow user to create new columns and allow cut/paste on them?      */
     boolean allowWrite = true;
+
     /** The Visual components that accepts User settings: which Columns to view: */
     SheetCustomizationConsole consSheetCust = new SheetCustomizationConsole();
 
     //    SheetCustomizationConsole conSheetCustomization = new SheetCustomizationConsole();
     /**   This panel presents context sensitive Filter Control - for single column. 
      *          The last selected Column in Data View is picked up.
-    This Visual component that shows applicable filter as GUI to user, providing chance for correction*/
+     This Visual component that shows applicable filter as GUI to user, providing chance for correction*/
     ColumnFilterVerticalConsole consColFilter = new ColumnFilterVerticalConsole();
+
     /***/
     FiltersViewConsole consFiltersView = new FiltersViewConsole();
+
     /***/
     JDialog colVisibilitySettingsDialog;
+
     /**     Sheet Customization (Visibility & Filters) are kept here...    */
     SheetCustomizationModel scm;
+
     /**     Sheet Configuration Monitoring   */
     InternalPCListener lsnSheetConf;
+
     /**    Data  View COnsole Montoring. */
     InternalPCListener lsnVeiwData = new InternalPCListener();
 
     //    ArrayList<Set<Object>> sampleValuesAL;
     /**     Indicator flag if sample values from filter should be creatred from Table Model, or 
-    filter should be diasbled if NOT explicitly provided.   **/
+     filter should be diasbled if NOT explicitly provided.   **/
     private boolean createSampleValuesFromModel = false;
+
     /**     Column Selection Listener */
     private ColSelectionListener lnsColSelection = new ColSelectionListener();
 
     ///////////////////////////////////////////////////////////
     /**  The actual Visual Component that renders table on the scren for the user.*/
     ViewDataConsole consData = new ViewDataConsole();
+
     /** Special Model to show a Button, and Row selection chk box on LHS.*/
     //    FixedLeftColsTblModel tmFixedLeft;
     /**     If this is true, SelectionHanger is allowed to paint itself as selected,
      * iff table cell selected is true as per model.  */
     private boolean selectionRowMode = false;
+
     private boolean mousePressed = false;
+
     /** If true, magnifying glass is shown. Pressing on it will fire "Common.EVENT_MAGNIFYING_GLASS_CLICKED" event. */
     private boolean showMG;
+
     SheetColumn colMG;
+
     /** refernce to oginal params setModel(...) , for RESET    */
     private TableModel tmROData;
+
     /** refernce to oginal params setModel(...) , for RESET    */
     private ArrayList<TreeSet<Comparable<?>>> sampleValuesAL;
 
@@ -98,8 +131,8 @@ public class JSheet extends javax.swing.JPanel {
         applySizeOn(diaConsSheetCust);
 
         //  Debug...
-//        showColFilterConsoleInDialog();
-//         showFIlterViewConsoleInDialog();
+        //        showColFilterConsoleInDialog();
+        //         showFIlterViewConsoleInDialog();
 
         //        pnlSheetCust.add(colVisibilityConsole);
         //        consData.addPropertyChangeListener(colVisibilityConsole);
@@ -124,23 +157,23 @@ public class JSheet extends javax.swing.JPanel {
         //        tblFixed.getSelectionModel().addListSelectionListener(tcs);
         //        DataViewCellsSelectionListener dvcsl = new DataViewCellsSelectionListener();
         //        consData.addTableColSelectionListener(dvcsl);
-        //        consData.addTableRowSelectionListener(dvcsl);
+        //        consData.addTableRowSelectionListener(dvcsl); 
 
         setBackgroundWhite(this);
     }
-    
+
     /**     Append new JButtons in the Toolbar, with the specified actions. 
-                    All the old specified Actions will be removed.  
-                    However, the JSheet default Actions cannot be changed.
+     All the old specified Actions will be removed.  
+     However, the JSheet default Actions cannot be changed.
      
      @param actions Arralist specifiing Actions of one or more JButton(s).
      */
-    public void setAdditionalToolbarActions( List<Action> actions){
+    public void setAdditionalToolbarActions(List<Action> actions) {
         consData.setAdditionalToolbarActions(actions);
     }
-    
-    public void setAdditionalContectMenuActions( List<Action> actions){
-        
+
+    public void setAdditionalContectMenuActions(List<Action> actions) {
+
     }
 
     //    public void showColVisibilitySettingsDialog() {
@@ -244,13 +277,12 @@ public class JSheet extends javax.swing.JPanel {
     class TableChangesSynchronizer implements TableModelListener, RowSorterListener, ListSelectionListener {
 
         public void tableChanged(TableModelEvent e) {
-        //            System.out.println("tableChanged =" + e);
         }
 
         public void sorterChanged(RowSorterEvent e) {
-        //            System.out.println("sorterChanged: "+e+",  e.getPreviousRowCount()="+e.getPreviousRowCount());
-        //            System.out.println(""+ccc+"> e.getType(): "+e.getType());
-        //            tmFixedLeft.setRowCount(consData.getRowCount());
+            //             
+            //             
+            //            tmFixedLeft.setRowCount(consData.getRowCount());
         }
 
         /** Selection is Row-Selection_hanger should match full row selection is data-view.     */
@@ -433,7 +465,7 @@ public class JSheet extends javax.swing.JPanel {
     //     * Model Row index, wher click was detected is passed as New-Value.    */
     //    void fireRowDoubleClicked(int viewRowIndex, int viewColumnIndex) {
     //        int row = consData.convertRowIndexToModel(viewRowIndex);
-    ////        System.out.println("MGGlass: Click detected aT Model IDX: row=" + row + ", viewRowIndex=" + viewRowIndex);
+    ////         
     //        firePropertyChange(EVENT_ROW_DOUBLE_CLICKED, -1, row);
     //    }
 
@@ -441,7 +473,7 @@ public class JSheet extends javax.swing.JPanel {
     //     * Model Row index, wher click was detected is passed as New-Value.    */
     //    void fireShowDetailsClicked(int viewRowIndex, int viewColumnIndex) {
     //        int row = consData.convertRowIndexToModel(viewRowIndex);
-    ////        System.out.println("MGGlass: Click detected aT Model IDX: row=" + row + ", viewRowIndex=" + viewRowIndex);
+    ////         
     //        firePropertyChange(REQUESTED_SHOW_ROW_DETAILS, -1, row);
     //    }
     /** This method is called from within the constructor to
@@ -471,26 +503,21 @@ public class JSheet extends javax.swing.JPanel {
         jPanel9 = new javax.swing.JPanel();
 
         tblFixed.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
+                new Object[][] { { null, null, null, null }, { null, null, null, null }, { null, null, null, null }, { null, null, null, null } },
+                new String[] { "Title 1", "Title 2", "Title 3", "Title 4" }));
         tblFixed.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblFixedMouseClicked(evt);
             }
+
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 tblFixedMouseEntered(evt);
             }
+
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 tblFixedMousePressed(evt);
             }
+
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 tblFixedMouseReleased(evt);
             }
@@ -549,14 +576,15 @@ public class JSheet extends javax.swing.JPanel {
 
         add(jPanel3, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
+
     private void tblFixedMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblFixedMouseEntered
-    // TODO add your handling code here:
+        // TODO add your handling code here:
 
     }//GEN-LAST:event_tblFixedMouseEntered
 
     private void tblFixedMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblFixedMouseClicked
-    // TODO add your handling code here:
-    //        System.out.println("FxfTbl: Mouse CLick Detected At: "+tblFixed.getSelectedRow()+", "+tblFixed.getSelectedColumn());
+        // TODO add your handling code here:
+        //         
     }//GEN-LAST:event_tblFixedMouseClicked
 
     private void tblFixedMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblFixedMousePressed
@@ -584,22 +612,39 @@ public class JSheet extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton butDiaFilterClose;
+
     private javax.swing.JButton butDiaSheetCustClose;
+
     private javax.swing.JDialog diaConsSheetCust;
+
     private javax.swing.JDialog diaFilterConsole;
+
     private javax.swing.JDialog diaFiltersViewConsole;
+
     private javax.swing.JPanel jPanel1;
+
     private javax.swing.JPanel jPanel2;
+
     private javax.swing.JPanel jPanel3;
+
     private javax.swing.JPanel jPanel9;
+
     private javax.swing.JPanel pnlConsole;
+
     private javax.swing.JPanel pnlDataView;
+
     private javax.swing.JPanel pnlFixedTblHangerRenderer;
+
     private javax.swing.JPanel pnlFixedTblHeader;
+
     private javax.swing.JPanel pnlFixedTblMGCellEditor;
+
     private javax.swing.JPanel pnlFixedTblMGCellRenderer;
+
     private javax.swing.JPanel pnlSheetCust;
+
     private javax.swing.JTable tblFixed;
+
     // End of variables declaration//GEN-END:variables
     public static void main(String[] args) {
         SheetTestFrame.main(args);
@@ -608,7 +653,6 @@ public class JSheet extends javax.swing.JPanel {
     class InternalPCListener implements PropertyChangeListener {
 
         public void propertyChange(PropertyChangeEvent evt) {
-            System.out.println("[JSheet]: Received Evt=" + evt.getPropertyName() + ": " + evt);
 
             if (evt.getPropertyName().equals(Common.USER_COLUMN_ADDITION_REQUESTED)) {
                 addUserColumn();
@@ -677,7 +721,6 @@ public class JSheet extends javax.swing.JPanel {
                 return;
             }
 
-            System.out.println("[JSheet]: ListSelectionEvent: " + e.toString());
             SheetColumn sheetInfo = null;
             int idxSelCol = consData.getSelectedColumn();
             if (idxSelCol < 0) //  There is a valid column selection, may be no column is selected...
@@ -715,7 +758,7 @@ public class JSheet extends javax.swing.JPanel {
 
         public void actionPerformed(ActionEvent e) {
             diaConsSheetCust.setVisible(true);
-        //showColVisibilitySettingsDialog();
+            //showColVisibilitySettingsDialog();
         }
     }
 
@@ -741,7 +784,7 @@ public class JSheet extends javax.swing.JPanel {
         do {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setAcceptAllFileFilterUsed(false);
-            fileChooser.setFileFilter(new Cab2bFileFilter(new String[]{"csv"}));
+            fileChooser.setFileFilter(new Cab2bFileFilter(new String[] { "csv" }));
             int status = fileChooser.showSaveDialog(this);
             if (JFileChooser.APPROVE_OPTION == status) {
                 File selFile = fileChooser.getSelectedFile();
@@ -749,10 +792,11 @@ public class JSheet extends javax.swing.JPanel {
 
                 if (true == selFile.exists()) {
                     // Prompt user to confirm if he wants to override the value
-                    int confirmationValue = JOptionPane.showConfirmDialog(fileChooser, "The file " + selFile.getName() + " already exists.\nDo you want to replace existing file?",
-                            "caB2B Confirmation",
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.WARNING_MESSAGE);
+                    int confirmationValue = JOptionPane.showConfirmDialog(fileChooser, "The file "
+                            + selFile.getName() + " already exists.\nDo you want to replace existing file?",
+                                                                          "caB2B Confirmation",
+                                                                          JOptionPane.YES_NO_OPTION,
+                                                                          JOptionPane.WARNING_MESSAGE);
                     if (confirmationValue == JOptionPane.NO_OPTION) {
                         continue;
                     }

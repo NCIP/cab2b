@@ -61,12 +61,11 @@ public class ColumnFilterConsoleTestFrame extends javax.swing.JFrame {
     public class FilterChangeListener implements PropertyChangeListener {
 
         public void propertyChange(PropertyChangeEvent evt) {
-            System.out.println("[MainFrame]: evt found: " + evt);
 
             if (evt.getPropertyName().equals(ColumnFilterModel.PROPERTY_ENUM_LIST_FILTER_CHANGED)) {
-                System.out.println(ColumnFilterModel.PROPERTY_ENUM_LIST_FILTER_CHANGED);
+
             } else if (evt.getPropertyName().equals(ColumnFilterModel.PROPERTY_RANGE_FILTER_CHANGED)) {
-                System.out.println(ColumnFilterModel.PROPERTY_RANGE_FILTER_CHANGED);
+
             }
         }
     }
@@ -126,19 +125,19 @@ public class ColumnFilterConsoleTestFrame extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         cfvc.setModel(cfm1);
-        System.out.println("cfm1: " + cfm1);
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         cfvc.setModel(cfm2);
-        System.out.println("cfm2: " + cfm2);
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         cfvc.setModel(cfm3);
-        System.out.println("cfm3: " + cfm3);
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**

@@ -32,10 +32,15 @@ import edu.wustl.cab2b.client.ui.controls.slider.BiSlider;
 public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
 
     ColumnFilterModel model;
+
     ModelListener modelListener = new ModelListener();
+
     private ListItemSelectionListener listSelectionListener = new ListItemSelectionListener();
+
     private PatternPropertyChangeListener patternChangeListener = new PatternPropertyChangeListener();
+
     private RangeChangeListener rangePropertyChangeListener = new RangeChangeListener();
+
     ColumnFilterModel emptyModel = new ColumnFilterModel();
 
     //    protected Comparable currMaxBounds;
@@ -47,18 +52,18 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         model = emptyModel;
         showNullModelNotification(true);
         uninstallFilter();
-        Common.setBackgroundWhite( pnlVerticalLayout);
-        Common.setBackgroundWhite( pnlPattern);
-        Common.setBackgroundWhite( scpList);
-        Common.setBackgroundWhite( lblNullModel);
-        Common.setBackgroundWhite( pnlFilterControlContainer);
+        Common.setBackgroundWhite(pnlVerticalLayout);
+        Common.setBackgroundWhite(pnlPattern);
+        Common.setBackgroundWhite(scpList);
+        Common.setBackgroundWhite(lblNullModel);
+        Common.setBackgroundWhite(pnlFilterControlContainer);
     }
 
     public void changeOrientationToHorizontal() {
         removeAll();
-        initComponentsHoriLayout( pnlHorizontalLayout);
-        add( pnlHorizontalLayout, BorderLayout.CENTER);
-        Common.setBackgroundWhite( pnlHorizontalLayout);
+        initComponentsHoriLayout(pnlHorizontalLayout);
+        add(pnlHorizontalLayout, BorderLayout.CENTER);
+        Common.setBackgroundWhite(pnlHorizontalLayout);
         revalidate();
         repaint();
     }
@@ -95,7 +100,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         model.removePropertyChangeListener(modelListener);
         model = filterModel;
         model.addPropertyChangeListener(modelListener);
-//        setHeader(filterModel.toString());
+        //        setHeader(filterModel.toString());
 
         //  Set radio...
         if (model.getActiveFilterType().equals(ColumnFilterModel.FILTER_TYPE_NONE)) {
@@ -136,7 +141,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
     private void syncListModel() {
         EnumeratedValuesListModel mdlValues = new EnumeratedValuesListModel();
         mdlValues.setPossibleValues(model.getSampleSortedValues());
-//        System.out.println("model Size =" + mdlValues.getSize());
+
         lstValues.setModel(mdlValues);
         // Select all usrSelected Items for Filter...
         if (model.getFilterValues() != null) {
@@ -183,8 +188,8 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
     }
 
     /** ColumnFilterModel keeps user selection in some collection or Set, I do NOT really care about that.
-    Because one setUserSelection(...) is specified on me, I can convert the collection in to List Model
-    to present a LIst to user...    */
+     Because one setUserSelection(...) is specified on me, I can convert the collection in to List Model
+     to present a LIst to user...    */
     class EnumeratedValuesListModel extends AbstractListModel {
 
         ArrayList alPossibleValues;
@@ -250,8 +255,14 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
 
         lstValues.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
+
+            public int getSize() {
+                return strings.length;
+            }
+
+            public Object getElementAt(int i) {
+                return strings[i];
+            }
         });
         scpList.setViewportView(lstValues);
 
@@ -280,7 +291,8 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        pnlVVColumnName.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 5, 0, new java.awt.Color(255, 255, 255)));
+        pnlVVColumnName.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 5, 0, new java.awt.Color(255,
+                255, 255)));
         pnlVVColumnName.setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setText("  Filter on Column:"); // NOI18N
@@ -365,7 +377,9 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
 
         pnlVerticalLayout.add(jPanel1, java.awt.BorderLayout.NORTH);
 
-        pnlFilterControlContainer.setBorder(javax.swing.BorderFactory.createMatteBorder(3, 0, 3, 0, new java.awt.Color(255, 255, 255)));
+        pnlFilterControlContainer.setBorder(javax.swing.BorderFactory.createMatteBorder(3, 0, 3, 0,
+                                                                                        new java.awt.Color(255,
+                                                                                                255, 255)));
         pnlFilterControlContainer.setLayout(new java.awt.BorderLayout());
         pnlVerticalLayout.add(pnlFilterControlContainer, java.awt.BorderLayout.CENTER);
 
@@ -389,6 +403,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
 
         add(pnlVerticalLayout, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
+
     private void rbRangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbRangeActionPerformed
         // TODO add your handling code here:
         installSlider();
@@ -410,13 +425,12 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
     }//GEN-LAST:event_rbNoFilterActionPerformed
 
     private void formFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusLost
-    // TODO add your handling c:
+        // TODO add your handling c:
 
     }//GEN-LAST:event_formFocusLost
 
     private void tfPatternFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfPatternFocusLost
-        // TODO add your handling code here:
-        System.out.println("evt=" + evt);
+        // TODO add your handling code here:        
 
     }//GEN-LAST:event_tfPatternFocusLost
 
@@ -469,7 +483,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         pnlHHSelectFilter.add(rbList, gridBagConstraints);
-        
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
@@ -523,35 +537,59 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup bgVV;
+
     private javax.swing.JButton butApplyFilter;
+
     private javax.swing.JLabel jLabel1;
+
     private javax.swing.JLabel jLabel2;
+
     private javax.swing.JLabel jLabel3;
+
     private javax.swing.JPanel jPanel1;
+
     private javax.swing.JLabel lblColName;
+
     private javax.swing.JLabel lblNoFilter;
+
     private javax.swing.JLabel lblNullModel;
+
     private javax.swing.JLabel lblPleaseWait;
+
     private javax.swing.JList lstValues;
+
     private javax.swing.JPanel pnlApply;
+
     private javax.swing.JPanel pnlFilterControlContainer;
+
     private javax.swing.JPanel pnlHorizontalLayout;
+
     private javax.swing.JPanel pnlPattern;
+
     private javax.swing.JPanel pnlVVColumnName;
+
     private javax.swing.JPanel pnlVVSelectFilter;
+
     private javax.swing.JPanel pnlVerticalLayout;
+
     private javax.swing.JRadioButton rbList;
+
     private javax.swing.JRadioButton rbNoFilter;
+
     private javax.swing.JRadioButton rbPattern;
+
     private javax.swing.JRadioButton rbRange;
+
     private javax.swing.JScrollPane scpList;
+
     private javax.swing.JTextField tfPattern;
+
     // End of variables declaration//GEN-END:variables
     class ModelListener implements PropertyChangeListener {
 
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(ColumnFilterModel.FILTER_TYPE_ENUMERATION)) {
-            //install proper filter
+                //install proper filter
             }
         }
     }

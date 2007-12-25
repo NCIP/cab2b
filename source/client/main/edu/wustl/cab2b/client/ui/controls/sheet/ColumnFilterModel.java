@@ -37,36 +37,55 @@ import edu.wustl.cab2b.client.ui.controls.slider.BiSlider;
 public class ColumnFilterModel<T extends Comparable> {
 
     public static final String PROPERTY_RANGE_FILTER_CHANGED = "PROPERTY_RANGE_FILTER_CHANGED";
+
     public static final String PROPERTY_ENUM_LIST_FILTER_CHANGED = "PROPERTY_ENUM_LIST_FILTER_CHANGED";
+
     public static final String PROPERTY_PATTERN_FILTER_CHANGED = "PROPERTY_PATTERN_FILTER_CHANGED";
+
     public static final String PROPERTY_NO_FILTER_APPLIED = "PROPERTY_NO_FILTER_APPLIED";
+
     /**     Active filter should be any of the following...*/
     public static final String FILTER_TYPE_NONE = "No";
+
     public static final String FILTER_TYPE_PATTERN = "Pattern";
+
     public static final String FILTER_TYPE_ENUMERATION = "List";
+
     public static final String FILTER_TYPE_RANGE = "Range";
+
     /**     Specifies which kind of filter is active.   */
     private String activeFilterType = FILTER_TYPE_NONE;
+
     private PropertyChangeSupport pcs;
+
     /**     Name of  the associated Column.   */
     /** Values that may be used by Range Selection Slider   */
     private TreeSet<T> sampleSortedValues = new TreeSet();
+
     /** Optional Sorter for sample values...*/
     private Comparator valuesSorter;
+
     /**     Values used by Range filter to determine, if any cell value for this column qualifies filter criteria. */
     private T minBound;
+
     private T maxBound;
+
     /**     Keeps refernce to active Pattern Filter, if any.    */
     public String pattern;
+
     private int[] userSelectedItems;
+
     private boolean isRangeFilterActive = false;
+
     /** Reference to actual BiSlider Visual Component. It reference is created whenever, possible allowed values are set.
-    NOTE: there is no provision o set min & max bounds, and set of possible values when instance of this compoenent is created.
-    Therefore, design of this class takes care of this limitation of one way communication. Because, it is only possible
-    to get min & max bounds.*/
+     NOTE: there is no provision o set min & max bounds, and set of possible values when instance of this compoenent is created.
+     Therefore, design of this class takes care of this limitation of one way communication. Because, it is only possible
+     to get min & max bounds.*/
     private BiSlider bsRanger;
+
     /** Samples values are also required in the form of LIst for use with components like JList */
     private ArrayList sampleSortedValuesAL;
+
     /** Keeps user selected Item in hash for fast filtering */
     private HashSet userEnumeratedValues;
 
@@ -93,7 +112,8 @@ public class ColumnFilterModel<T extends Comparable> {
 
     public JComponent getNewRangerComponent() {
         if (null == sampleSortedValues) {
-            throw new IllegalStateException("Technical Limitation: Cannot create an instance of " + "Range-Selector (BiSlider) if setPossibleValues(...) is NOT set. ");
+            throw new IllegalStateException("Technical Limitation: Cannot create an instance of "
+                    + "Range-Selector (BiSlider) if setPossibleValues(...) is NOT set. ");
         }
 
         if (minBound == null || maxBound == null) {
@@ -108,7 +128,8 @@ public class ColumnFilterModel<T extends Comparable> {
 
     public JComponent getRangerComponent() {
         if (null == sampleSortedValues) {
-            throw new IllegalStateException("Technical Limitation: Cannot create an instance of " + "Range-Selector (BiSlider) if setPossibleValues(...) is NOT set. ");
+            throw new IllegalStateException("Technical Limitation: Cannot create an instance of "
+                    + "Range-Selector (BiSlider) if setPossibleValues(...) is NOT set. ");
         }
 
         if (null == bsRanger) {
@@ -148,7 +169,7 @@ public class ColumnFilterModel<T extends Comparable> {
         pattern = newPattern.toLowerCase();
         activeFilterType = FILTER_TYPE_PATTERN;
         pcs.firePropertyChange(ColumnFilterModel.PROPERTY_PATTERN_FILTER_CHANGED, null, pattern);
-//        pcs.firePropertyChange(ColumnFilterModel.PROPERTY_PATTERN_FILTER_CHANGED, null, pattern);
+        //        pcs.firePropertyChange(ColumnFilterModel.PROPERTY_PATTERN_FILTER_CHANGED, null, pattern);
     }
 
     /** Returns an instance of PatternFilterModel, that is associated to this Column.   
@@ -254,30 +275,30 @@ public class ColumnFilterModel<T extends Comparable> {
      * method returns true, if value qulifies filter condition.
      */
     public boolean includeCell(Comparable value) {
-        if ( FILTER_TYPE_NONE.equals( activeFilterType)) {
+        if (FILTER_TYPE_NONE.equals(activeFilterType)) {
             //  No Filter ser for this column: Skip this column, assume filter condition passed...
             return true;
         }
-        
-        if ( FILTER_TYPE_PATTERN.equals( activeFilterType)) {
+
+        if (FILTER_TYPE_PATTERN.equals(activeFilterType)) {
             String strVal = "";
             if (null != value) {
                 strVal = value.toString().toLowerCase();
             }
             //  patrial include check...
-            return strVal.indexOf( pattern) >= 0;
+            return strVal.indexOf(pattern) >= 0;
         }
 
-        if ( FILTER_TYPE_RANGE.equals( activeFilterType)) {
-            if( null == value)
+        if (FILTER_TYPE_RANGE.equals(activeFilterType)) {
+            if (null == value)
                 return false;
-            
+
             //  null bounds means, infinity at that end...
-            return (null == minBound || minBound.compareTo(value) <= 0) &&
-                    (null == maxBound || maxBound.compareTo(value) >= 0);
+            return (null == minBound || minBound.compareTo(value) <= 0)
+                    && (null == maxBound || maxBound.compareTo(value) >= 0);
         }
 
-        if (FILTER_TYPE_ENUMERATION.equals( activeFilterType)) {
+        if (FILTER_TYPE_ENUMERATION.equals(activeFilterType)) {
             // enumeration check...
             return userEnumeratedValues.contains(value);
         }
@@ -298,7 +319,7 @@ public class ColumnFilterModel<T extends Comparable> {
     @Override
     public String toString() {
         return "ColumnFilterModel [ " + getFilterDescription() + " ] ";
-    //        return "ColumnExtraState [ No of Values in TreeSet =" + sampleSortedValues.size() + ",  maxBound=" + maxBound + ",  minBound=" + minBound + " ]; ";
+        //        return "ColumnExtraState [ No of Values in TreeSet =" + sampleSortedValues.size() + ",  maxBound=" + maxBound + ",  minBound=" + minBound + " ]; ";
     }
 
     /**     get Active min Bounds for the filter.
