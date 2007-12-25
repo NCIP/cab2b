@@ -12,9 +12,11 @@ import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.util.IdGenerator;
 import edu.wustl.cab2b.common.util.PropertyLoader;
+import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.cab2b.server.util.InheritanceUtil;
 import edu.wustl.cab2b.server.util.TestUtil;
 import edu.wustl.common.util.logger.Logger;
+import gov.nih.nci.cagrid.metadata.dataservice.DomainModel;
 
 public class DomainModelProcessorTest extends TestCase {
     static DomainObjectFactory deFactory = DomainObjectFactory.getInstance();
@@ -98,7 +100,19 @@ public class DomainModelProcessorTest extends TestCase {
         assertEquals(1, map.get(1).size());
         assertEquals(new Integer(11), map.get(1).iterator().next());
     }
-
+    public void testWithInheritance() {
+        String appName = "TestApplication";
+        String longName = "projectLongName";
+        DomainModel model = DomainModelParserTest.getModel();
+        model.setProjectLongName(longName);
+        DomainModelParser p = new DomainModelParser(model);
+        DomainModelProcessor processor = new MockDomainModelProcessor(p,appName);
+        EntityGroupInterface eg = processor.getEntityGroup();
+        assertEquals(appName,eg.getShortName());
+        assertEquals(longName,eg.getName());
+        assertEquals(longName,eg.getLongName());
+        assertEquals(5,eg.getEntityCollection().size());
+    }
     EntityInterface getEntity() {
         EntityInterface entity = deFactory.createEntity();
         entity.setId(idGenerator.getNextId());
