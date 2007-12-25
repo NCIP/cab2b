@@ -13,6 +13,7 @@ import gov.nih.nci.cagrid.metadata.dataservice.UMLAssociation;
 import gov.nih.nci.cagrid.metadata.dataservice.UMLGeneralization;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  * This class parses the domain model for an application.<br>
  * It uses caGrid metadata classes it convert the XML to java object (DomainModel).
@@ -31,20 +32,38 @@ public class DomainModelParser {
     protected DomainModel domainModel;
 
     /**
+     * This is map with key as ID of parent UML Class and value as list of IDs of all its children 
+     */
+    protected Map<String, List<String>> parentIdVsChildrenIds;
+
+    /**
+     * This constructor ties instance of this class to a single particular domain model.<br>
+     * It takes the domain model object as parameter<br>
+     * @param model The DomainModel Object.
+     * Throws the exception occurred during getting / parsing the domain model XML as RuntimeException. 
+     */
+    public DomainModelParser(DomainModel model) {
+        domainModel = model;
+        initializeParentChildMap();
+    }
+
+    /**
      * This constructor ties instance of this class to a single particular domain model.<br>
      * It takes the URL as parameter where the DomainModel.xml is available.<br>
      * @param xmlFilePath The URL from where to retrieve the DomainModel.xml
      *            and create a DomainModel Object.
-     * Throws the exception occured during getting / parsing the domain model XML as RuntimeException. 
+     * Throws the exception occurred during getting / parsing the domain model XML as RuntimeException. 
      */
     public DomainModelParser(String xmlFilePath) {
         Logger.out.info("Parsing model at location : " + xmlFilePath);
         try {
             domainModel = (DomainModel) Utils.deserializeDocument(xmlFilePath, DomainModel.class);
         } catch (Exception e) {
-            throw new RuntimeException("Unable to parse domain model XML file.",e,ErrorCodeConstants.GR_0001);
+            throw new RuntimeException("Unable to parse domain model XML file.", e, ErrorCodeConstants.GR_0001);
         }
+        initializeParentChildMap();
     }
+
     /**
      * Gets the DomainModel associated with this instance.
      * @return model - The entire domain model.
@@ -68,15 +87,23 @@ public class DomainModelParser {
     public UMLClass[] getUmlClasses() {
         return domainModel.getExposedUMLClassCollection().getUMLClass();
     }
+
     /**
      * Gives a map having parent child information.
      * @return Map with key as UML-id of parent class and value as list of UML-id of all children classes.
      */
-    public Map<String,List<String>> getParentVsChildrenMap() {
+    public Map<String, List<String>> getParentVsChildrenMap() {
+        return parentIdVsChildrenIds;
+    }
+
+    /**
+     * This method finds our parent child relationship and populates {@link DomainModelParser#parentIdVsChildrenIds}
+     */
+    private void initializeParentChildMap() {
         UMLGeneralization[] umlGeneralizations = domainModel.getUmlGeneralizationCollection().getUMLGeneralization();
         if (umlGeneralizations != null) {
-           
-            HashMap<String, List<String>> parentIdVsChildrenIds = new HashMap<String, List<String>>(umlGeneralizations.length);
+
+            parentIdVsChildrenIds = new HashMap<String, List<String>>(umlGeneralizations.length);
             for (UMLGeneralization umlGeneralization : umlGeneralizations) {
                 String childClass = umlGeneralization.getSubClassReference().getRefid();
                 String parentClass = umlGeneralization.getSuperClassReference().getRefid();
@@ -87,9 +114,9 @@ public class DomainModelParser {
                 }
                 children.add(childClass);
             }
-            return parentIdVsChildrenIds;
+
+        } else {
+            parentIdVsChildrenIds = new HashMap<String, List<String>>(0);
         }
-        
-        return new HashMap<String, List<String>>(0);
     }
 }
