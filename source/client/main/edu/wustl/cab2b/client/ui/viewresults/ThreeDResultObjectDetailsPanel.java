@@ -139,11 +139,7 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
         rowHeaderTable.setBackground(AlternateRowHighlighter.genericGrey.getForeground());
         tableScrollPane.setRowHeaderView(rowHeaderTable);
     }
-
-    public Cab2bTable getDataTable() {
-        return threeDTable;
-    }
-
+   
     public boolean getIsWholeColumnSelected() {
         return isWholeColumnSelected;
     }
