@@ -23,8 +23,80 @@ public class MetadataSearchTest extends TestCase {
     static ClientSideCache entityCache = ClientSideCache.getInstance();
 
     static MetadataSearch metadataSearch = new MetadataSearch(entityCache);
+    public void testSearchAttributeBasedOnConceptCode() {
+        
+        int[] searchTargetStatus = { Constants.ATTRIBUTE };
+        String[] searchString = { "C40975" };
+        int basedOn = Constants.BASED_ON_CONCEPT_CODE;
+        try {
+            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
+        } catch (CheckedException e) {
+            e.printStackTrace();
+            fail();
+        }
+        Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
+        boolean b = false;
+        for (EntityInterface eI : entities) {
+            String result = eI.getName();
+            b = b || result.contains("Participant");
+        }
+        assertTrue(b);
+    }
+  public void testSearchEntityBasedOnConceptCode() {
+    
+            int[] searchTargetStatus = { Constants.CLASS };
+            String[] searchString = { "C29867" };
+            int basedOn = Constants.BASED_ON_CONCEPT_CODE;
+            try {
+                resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
+            } catch (CheckedException e) {
+                e.printStackTrace();
+                fail();
+            }
+            Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
+            boolean b = false;
+            for (EntityInterface eI : entities) {
+                String result = eI.getName();
+                b = b || result.contains("Participant");
+            }
+            assertTrue(b);
+        }
+    
+    public void testSearchInvalidTarget() {
 
-    public void testsearchPv() {
+        int[] searchTargetStatus = { 1234 };
+        String[] searchString = { "Romania" };
+        boolean gotException = false;
+        int basedOn = Constants.BASED_ON_TEXT;
+        try {
+            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
+        } catch (CheckedException e) {
+            gotException = true;
+           
+        }
+        assertTrue(gotException);
+    }
+    public void testSearchPvBasedOnText() {
+
+        int[] searchTargetStatus = { Constants.PV };
+        String[] searchString = { "Romania" };
+        int basedOn = Constants.BASED_ON_TEXT;
+        try {
+            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
+        } catch (CheckedException e) {
+            e.printStackTrace();
+            fail();
+        }
+        Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
+        boolean b = false;
+        for (EntityInterface eI : entities) {
+            String result = eI.getName();
+            b = b || result.contains("Address");
+        }
+        assertTrue(b);
+    }
+    
+    public void testSearchPvOnConceptCode() {
 
         int[] searchTargetStatus = { Constants.PV };
         String[] searchString = { "C25228", "C62637" };
