@@ -28,13 +28,6 @@ public class MetadataSearch {
     private static IEntityCache entityCache;
 
     /**
-     * Default constructor.
-     * 
-     */
-    public MetadataSearch() {
-    }
-
-    /**
      * Constructor initializing the EntityCache.
      * 
      * @param entityCache
