@@ -13,9 +13,9 @@ public class BDQTableModel extends DefaultLazyTableModel<BDQDataSource> {
     public BDQTableModel(BDQDataSource dataSource) {
         super(dataSource);
     }
-    
-    public Object[][] getColumnValues( int[] selectedColumns ) {
-        
+
+    public Object[][] getColumnValues(int[] selectedColumns) {
+
         IPartiallyInitialized3DRecord columnRecord = dataSource.getColumnsData(selectedColumns);
 
         int dim2Size = columnRecord.getDim2Labels().length;

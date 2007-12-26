@@ -20,6 +20,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.LazyTable.LazyTableModelInterface;
 import edu.wustl.cab2b.client.ui.controls.LazyTable.MatrixCache;
 import edu.wustl.cab2b.client.ui.controls.LazyTable.PageDimension;
+import edu.wustl.cab2b.client.ui.controls.sheet.JSheet;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.queryengine.result.I3DDataRecord;
 import edu.wustl.cab2b.common.queryengine.result.IPartiallyInitialized3DRecord;
@@ -38,6 +39,8 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
     private boolean isWholeColumnSelected = false;
 
     private JScrollPane tableScrollPane;
+
+    private int totalRowCount = 0;
 
     /**
      * 
@@ -75,6 +78,7 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
                 threeDTable.addMouseListener(new java.awt.event.MouseAdapter() {
                     public void mouseClicked(java.awt.event.MouseEvent evt) {
                         firePropertyChange(DefaultSpreadSheetViewPanel.DISABLE_HEATMAP_LINK, -1, 0);
+                        firePropertyChange(JSheet.EVENT_DATA_SINGLE_CLICKED, -1, 0);
                     }
                 });
             }
@@ -184,6 +188,7 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
             } else {
                 selection.setSelectionInterval(columnNumber, columnNumber);
                 isWholeColumnSelected = true;
+                firePropertyChange(DefaultSpreadSheetViewPanel.ENABLE_CHART_LINK, -1, 0);
                 firePropertyChange(DefaultSpreadSheetViewPanel.ENABLE_HEATMAP_LINK, -1, 0);
                 //this is needed to select the cell and activate the focus listener 
                 threeDTable.setRowSelectionInterval(1, 1);
@@ -233,19 +238,43 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
     }
 
     public Object[][] getSelectedData() {
-        Object data[][] = new Object[threeDTable.getSelectedRows().length][threeDTable.getSelectedColumns().length];
-        for (int rowIndex = 0; rowIndex < threeDTable.getSelectedRows().length; rowIndex++)
-            for (int columnIndex = 0; columnIndex < threeDTable.getSelectedColumns().length; columnIndex++) {
-                data[rowIndex][columnIndex] = threeDTable.getValueAt(threeDTable.getSelectedRows()[rowIndex],
-                                                                     threeDTable.getSelectedColumns()[columnIndex]);
-            }
+        Object data[][] = null;
+        String selectedRowNames[] = null;
+        if (isWholeColumnSelected) {
+            BDQTableModel datCubeTableModel = (BDQTableModel) getThreeDResultTableModel();
+            data = datCubeTableModel.getColumnValues(getSelectedColumns());
+
+            //initilise this variable, which is used at the time of collecting row names 
+            totalRowCount = data.length;
+          } else {
+            data = new Object[threeDTable.getSelectedRows().length][threeDTable.getSelectedColumns().length];
+            for (int rowIndex = 0; rowIndex < threeDTable.getSelectedRows().length; rowIndex++)
+                for (int columnIndex = 0; columnIndex < threeDTable.getSelectedColumns().length; columnIndex++) {
+                    data[rowIndex][columnIndex] = threeDTable.getValueAt(
+                                                                         threeDTable.getSelectedRows()[rowIndex],
+                                                                         threeDTable.getSelectedColumns()[columnIndex]);
+                }
+        }
         return data;
     }
 
     public List<String> getSelectedRowNames() {
-        List<String> selectedRowList = new ArrayList<String>(threeDTable.getSelectedRows().length);
-        for (int i = 0; i < threeDTable.getSelectedRows().length; i++) {
-            selectedRowList.add(getRowHeaderName(threeDTable.getSelectedRows()[i]));
+
+        List<String> selectedRowList = null;
+        if (isWholeColumnSelected) {
+            if (totalRowCount == 0) {
+                BDQTableModel datCubeTableModel = (BDQTableModel) getThreeDResultTableModel();
+                totalRowCount = datCubeTableModel.getColumnValues(getSelectedColumns()).length;
+            }
+            selectedRowList = new ArrayList<String>(totalRowCount);
+            for (int i = 0; i < totalRowCount; i++) {
+                selectedRowList.add(getRowHeaderName(i));
+            }
+        } else {
+            selectedRowList = new ArrayList<String>(threeDTable.getSelectedRows().length);
+            for (int i = 0; i < threeDTable.getSelectedRows().length; i++) {
+                selectedRowList.add(getRowHeaderName(threeDTable.getSelectedRows()[i]));
+            }
         }
         return selectedRowList;
     }
