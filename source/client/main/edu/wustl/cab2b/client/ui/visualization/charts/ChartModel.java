@@ -75,7 +75,6 @@ public class ChartModel extends AbstractModel {
      */
     public void setChartOrientation(ChartOrientation chartOrientation) {
         this.chartOrientation = chartOrientation;
-
         setChanged();
         notifyObservers();
     }

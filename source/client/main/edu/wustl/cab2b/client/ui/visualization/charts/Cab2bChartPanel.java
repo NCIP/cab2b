@@ -128,10 +128,10 @@ public class Cab2bChartPanel extends Cab2bPanel {
             String actionCommand = actionEvent.getActionCommand();
             if (actionCommand != null && actionCommand == "Row") {
                 chartModel.setChartOrientation(ChartOrientation.ROW_AS_CATEGORY);
-                System.out.println("Setting chart orientation :" + ChartOrientation.ROW_AS_CATEGORY);
+                 
             } else {
                 chartModel.setChartOrientation(ChartOrientation.COLUMN_AS_CATEGORY);
-                System.out.println("Setting chart orientation :" + ChartOrientation.COLUMN_AS_CATEGORY);
+                 
             }
             setChartPanel();
         }
