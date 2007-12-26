@@ -22,11 +22,9 @@ import edu.wustl.cab2b.server.path.PathConstants;
  */
 public class PathToFileWriter {
 
-    public static void writePathsToFile(Set<Path> paths, Object[] nodeTags,
-                                        boolean append) {
+    public static void writePathsToFile(Set<Path> paths, Object[] nodeTags, boolean append) {
         try {
-            FileWriter writer = new FileWriter(new File(
-                    PathConstants.PATH_FILE_NAME), append);
+            FileWriter writer = new FileWriter(new File(PathConstants.PATH_FILE_NAME), append);
             String endNodesDelimiter = PathConstants.FIELD_SEPARATOR;
             String intermediateNodesDelimiter = Constants.CONNECTOR;
 
@@ -66,8 +64,7 @@ public class PathToFileWriter {
             }
             writer.close();
         } catch (IOException ioex) {
-            System.out.println("Failed to create output file in current directory"
-                    + ioex.getMessage());
+            ioex.printStackTrace();
         }
     }
 }
