@@ -93,7 +93,11 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Session
     }
 
     /**
-     *
+     * This method returns the list of tree set containing the unique record values for a given entity identifier.
+     * Tree set stores the values in sorted order. 
+     * @param entityId
+     * @return
+     * @throws RemoteException
      */
     public List<TreeSet<Comparable<?>>> getUniqueRecordValues(Long entityId) throws RemoteException {
         List<IRecord> entityRecordList = DataListOperationsController.getEntityRecords(entityId);

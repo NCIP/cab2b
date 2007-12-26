@@ -54,5 +54,12 @@ public interface UtilityBusinessInterface extends BusinessInterface {
      */
     IPartiallyInitializedRecord<?, ?> getView(int handle, ILazyParams params) throws RemoteException;
 
+    /**
+     * This method returns the list of tree set containing the unique record values for a given entity identifier.
+     * Tree set stores the values in sorted order. 
+     * @param entityId
+     * @return
+     * @throws RemoteException
+     */
     List<TreeSet<Comparable<?>>> getUniqueRecordValues(Long entityId) throws RemoteException;
 }
