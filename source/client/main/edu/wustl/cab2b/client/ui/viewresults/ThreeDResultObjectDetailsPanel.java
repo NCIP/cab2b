@@ -230,23 +230,23 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
     }
 
     public List<String> getSelectedColumnNames() {
-        List<String> selectedColumnsList = new ArrayList<String>(threeDTable.getSelectedColumns().length);
-        for (int i = 0; i < threeDTable.getSelectedColumns().length; i++) {
-            selectedColumnsList.add(threeDTable.getColumnName(threeDTable.getSelectedColumns()[i]));
-        }
+        List<String> selectedColumnsList = new ArrayList<String>();
+        if (threeDTable != null)
+            for (int i = 0; i < threeDTable.getSelectedColumns().length; i++) {
+                selectedColumnsList.add(threeDTable.getColumnName(threeDTable.getSelectedColumns()[i]));
+            }
         return selectedColumnsList;
     }
 
     public Object[][] getSelectedData() {
         Object data[][] = null;
-        String selectedRowNames[] = null;
         if (isWholeColumnSelected) {
             BDQTableModel datCubeTableModel = (BDQTableModel) getThreeDResultTableModel();
             data = datCubeTableModel.getColumnValues(getSelectedColumns());
 
             //initilise this variable, which is used at the time of collecting row names 
             totalRowCount = data.length;
-          } else {
+        } else {
             data = new Object[threeDTable.getSelectedRows().length][threeDTable.getSelectedColumns().length];
             for (int rowIndex = 0; rowIndex < threeDTable.getSelectedRows().length; rowIndex++)
                 for (int columnIndex = 0; columnIndex < threeDTable.getSelectedColumns().length; columnIndex++) {
