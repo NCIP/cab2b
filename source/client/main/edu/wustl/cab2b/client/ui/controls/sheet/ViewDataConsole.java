@@ -32,6 +32,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.ScrollPaneConstants;
@@ -109,6 +110,8 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
 
     CopyAction actCopy = new CopyAction();
 
+    ResetAllAction actResetAll = new ResetAllAction();
+    
     SelectAllAction actSelectAll = new SelectAllAction();
 
     RemoveAllSelectedExtColumnsAction actRemoveCols = new RemoveAllSelectedExtColumnsAction();
@@ -181,7 +184,16 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         int totalWidth = tblRowHeader.getColumnModel().getColumnMargin() * tblRowHeader.getColumnCount()
                 + tblRowHeader.getColumnModel().getTotalColumnWidth();
         tblRowHeader.setPreferredScrollableViewportSize(new Dimension(totalWidth, 0));
-        spaData.setRowHeaderView(tblRowHeader);
+        
+        //  explicity instaling viewport for JTable..
+        JViewport vpRowHeader = new JViewport();
+        vpRowHeader.setView(tblRowHeader);
+        spaData.setRowHeader(vpRowHeader);
+        
+        //Installing  Column Width Manager...
+        
+        
+        //  Setup scrollpane corners...
         JTableHeader headTable = tblRowHeader.getTableHeader();
         spaData.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, headTable);
         spaData.setCorner(ScrollPaneConstants.LOWER_LEFT_CORNER, lblReset);
@@ -229,6 +241,7 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         miAddCol.setAction(actAddCol);
         miCut.setAction(actCut);
         miCopy.setAction(actCopy);
+        miReset.setAction(actResetAll);
         miSelectAll.setAction(actSelectAll);
         butPaste.setAction(actPaste);
         miPaste.setAction(actPaste);
@@ -415,7 +428,6 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         miShowDetails = new javax.swing.JMenuItem();
         miAddCol = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
-        miCut = new javax.swing.JMenuItem();
         miCopy = new javax.swing.JMenuItem();
         miPaste = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JSeparator();
@@ -440,6 +452,7 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         popExtra = new javax.swing.JPopupMenu();
         miRemoveCols = new javax.swing.JMenuItem();
         miUndoRemoveCol = new javax.swing.JMenuItem();
+        miCut = new javax.swing.JMenuItem();
         lblReset = new javax.swing.JLabel();
         pnlEmpty = new javax.swing.JPanel();
         lblSelectAll = new javax.swing.JLabel();
@@ -449,13 +462,20 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         tblData = new javax.swing.JTable();
 
         tblRowHeader.setModel(new javax.swing.table.DefaultTableModel(
-                new Object[][] { { null, null, null, null }, { null, null, null, null }, { null, null, null, null }, { null, null, null, null } },
-                new String[] { "Title 1", "Title 2", "Title 3", "Title 4" }));
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
         tblRowHeader.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblRowHeaderMouseClicked(evt);
             }
-
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 tblRowHeaderMousePressed(evt);
             }
@@ -477,10 +497,6 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         miAddCol.setText("Add Column");
         popTblContextMnu.add(miAddCol);
         popTblContextMnu.add(jSeparator1);
-
-        miCut.setMnemonic('u');
-        miCut.setText("Cut"); // NOI18N
-        popTblContextMnu.add(miCut);
 
         miCopy.setMnemonic('C');
         miCopy.setText("Copy");
@@ -516,17 +532,10 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
 
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(
-                                                                       new javax.swing.border.LineBorder(
-                                                                               new java.awt.Color(51, 0, 51), 1,
-                                                                               true),
-                                                                       "Selection",
-                                                                       javax.swing.border.TitledBorder.CENTER,
-                                                                       javax.swing.border.TitledBorder.DEFAULT_POSITION,
-                                                                       new java.awt.Font("Tahoma", 1, 16)));
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(51, 0, 51), 1, true), "Selection", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 16)));
 
         butSelectAll.setText("Select All");
-        butSelectAll.setVisible(false);
+        butSelectAll.setVisible( false);
         butSelectAll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 butSelectAllActionPerformed(evt);
@@ -558,14 +567,7 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
 
         jPanel3.add(jPanel4, new java.awt.GridBagConstraints());
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(
-                                                                       new javax.swing.border.LineBorder(
-                                                                               new java.awt.Color(51, 0, 51), 1,
-                                                                               true),
-                                                                       " For New Columns Only ",
-                                                                       javax.swing.border.TitledBorder.CENTER,
-                                                                       javax.swing.border.TitledBorder.DEFAULT_POSITION,
-                                                                       new java.awt.Font("Tahoma", 1, 16)));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(51, 0, 51), 1, true), " For New Columns Only ", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 16)));
 
         addCol.setText("Add Col");
         addCol.addActionListener(new java.awt.event.ActionListener() {
@@ -595,6 +597,10 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
 
         miUndoRemoveCol.setText("Undo Remove Column");
         popExtra.add(miUndoRemoveCol);
+
+        miCut.setMnemonic('u');
+        miCut.setText("Cut"); // NOI18N
+        popExtra.add(miCut);
 
         lblReset.setText("Re"); // NOI18N
         lblReset.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
@@ -626,11 +632,9 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         spaData.addAncestorListener(new javax.swing.event.AncestorListener() {
             public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
-
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
                 spaDataAncestorAdded(evt);
             }
-
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
         });
@@ -644,7 +648,6 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblDataMouseClicked(evt);
             }
-
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 tblDataMousePressed(evt);
             }
@@ -736,6 +739,11 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
     //
     //  BEHAVIOUR
     //
+    
+    void requestResetAll(){
+        firePropertyChange(Common.REQUEST_RESET_ALL, 0, 1);
+    }
+    
     void doSelectAll() {
         //  Select All Rows in the view...
         extendSelectionsToAllColumns();
@@ -1092,81 +1100,43 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addCol;
-
     private javax.swing.JButton butCopy;
-
     private javax.swing.JButton butErazeContents;
-
     private javax.swing.JButton butExportSelection;
-
     private javax.swing.JButton butPaste;
-
     private javax.swing.JButton butRemoveCol;
-
     private javax.swing.JButton butRemoveExtendedCols;
-
     private javax.swing.JButton butSelectAll;
-
     private javax.swing.JButton butUndoColDelete;
-
     private javax.swing.JPanel jPanel1;
-
     private javax.swing.JPanel jPanel2;
-
     private javax.swing.JPanel jPanel3;
-
     private javax.swing.JPanel jPanel4;
-
     private javax.swing.JSeparator jSeparator1;
-
     private javax.swing.JSeparator jSeparator2;
-
     private javax.swing.JSeparator jSeparator3;
-
     private javax.swing.JLabel lblReset;
-
     private javax.swing.JLabel lblSelectAll;
-
     private javax.swing.JMenuItem miAddCol;
-
     private javax.swing.JMenuItem miClearSelection;
-
     private javax.swing.JMenuItem miCopy;
-
     private javax.swing.JMenuItem miCut;
-
     private javax.swing.JMenuItem miExportCells;
-
     private javax.swing.JMenuItem miExportRows;
-
     private javax.swing.JMenuItem miPaste;
-
     private javax.swing.JMenuItem miProperties;
-
     private javax.swing.JMenuItem miRemoveCols;
-
     private javax.swing.JMenuItem miReset;
-
     private javax.swing.JMenuItem miSelectAll;
-
     private javax.swing.JMenuItem miShowDetails;
-
     private javax.swing.JMenuItem miUndoRemoveCol;
-
     private javax.swing.JPanel pnlEmpty;
-
     private javax.swing.JPopupMenu popExtra;
-
     private javax.swing.JPopupMenu popTblContextMnu;
-
     private javax.swing.JScrollPane spaData;
-
     private javax.swing.JToolBar tbarMain;
-
     private javax.swing.JTable tblData;
-
     private javax.swing.JTable tblRowHeader;
-
     // End of variables declaration//GEN-END:variables
     //
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1238,7 +1208,20 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         }
     }
 
-    /** Add user column, which are editable. */
+    
+    /** Revert to original state, no FIlter, no sort, no column shifting, nothing... . */
+    class ResetAllAction extends AbstractAction {
+
+        ResetAllAction() {
+            super("Reset");
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            requestResetAll();
+        }
+    }
+    
+    /** Sellect all cells. */
     class SelectAllAction extends AbstractAction {
 
         SelectAllAction() {
@@ -1564,7 +1547,7 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         }
 
         public Object getValueAt(int rowIndex, int columnIndex) {
-            return tblData.convertRowIndexToModel(rowIndex);
+            return tblData.convertRowIndexToModel(rowIndex)+1;
         }
 
         @Override

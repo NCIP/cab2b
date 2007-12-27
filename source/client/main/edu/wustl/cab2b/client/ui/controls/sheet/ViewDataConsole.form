@@ -47,12 +47,6 @@
         </MenuItem>
         <Component class="javax.swing.JSeparator" name="jSeparator1">
         </Component>
-        <MenuItem class="javax.swing.JMenuItem" name="miCut">
-          <Properties>
-            <Property name="mnemonic" type="int" value="117"/>
-            <Property name="text" type="java.lang.String" value="Cut" noResource="true"/>
-          </Properties>
-        </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="miCopy">
           <Properties>
             <Property name="mnemonic" type="int" value="67"/>
@@ -236,6 +230,12 @@
         <MenuItem class="javax.swing.JMenuItem" name="miUndoRemoveCol">
           <Properties>
             <Property name="text" type="java.lang.String" value="Undo Remove Column"/>
+          </Properties>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="miCut">
+          <Properties>
+            <Property name="mnemonic" type="int" value="117"/>
+            <Property name="text" type="java.lang.String" value="Cut" noResource="true"/>
           </Properties>
         </MenuItem>
       </SubComponents>
