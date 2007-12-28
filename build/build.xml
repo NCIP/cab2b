@@ -202,7 +202,7 @@
 				<!-- attribute name="Built-By" value="${user.name}"/ -->
 				<!-- need to remove this hardcoding of MANIFEST's Class-Path settings -->
 				<attribute name="Main-Class" value="edu.wustl.cab2b.client.ui.mainframe.MainFrame" />
-				<attribute name="Class-Path" value="jbossall-client.jar jcalendar-1.3.2.jar jcommon-1.0.9.jar jfreechart-1.0.5.jar
+				<attribute name="Class-Path" value="forms-1.0.7.jar HeatMap.jar jai_codec.jar jai_core.jar jama.jar jibble.jar jbossall-client.jar jcalendar-1.3.2.jar jcommon-1.0.9.jar jfreechart-1.0.5.jar
 					org-netbeans-graph.jar org-netbeans-graph-vmd.jar org-openide-util.jar swingx-2006_10_08.jar odmg.jar dom4j-1.6.jar
 					commonpackage.jar commons-collections-3.2.jar commons-logging-1.0.4.jar DynamicExtensions.jar idw-gpl.jar
 	                log4j-1.2.9.jar struts.jar hibernate2.1.7c.jar caarray-common-extensions.jar  conf/ resources/images/" />
