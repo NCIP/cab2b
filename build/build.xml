@@ -450,6 +450,9 @@
 			<fileset dir="${conf.dir}">
 				<include name="jndi.properties" />
 				<include name="cab2b.properties" />
+				<include name="server.properties" />
+				<include name="dbutil.properties" />
+				
 			</fileset>
 		</copy>
 
