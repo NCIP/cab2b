@@ -139,29 +139,53 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
                     filterPanel.add("hfill vfill", jSheet.getContextFilterConsole());
 
                     JTabbedPane tabComponent = new JTabbedPane();
+                    tabComponent.setOpaque(false);
                     tabComponent.setTabLayoutPolicy(1);
                     tabComponent.setBackground(Color.WHITE);
                     tabComponent.add("Custom ", filterPanel);
                     tabComponent.add("Applied ", jSheet.getFiltersViewConsole());
-                    tabComponent.add("Predefined ", new Cab2bLabel("No Predefined Filter"));
+                    JLabel noFilterLabel = new Cab2bLabel("No Predefined Filter");
+                    noFilterLabel.setOpaque(false);
+                    tabComponent.add("Predefined ", noFilterLabel);
 
                     experimentStackBox.setFilterPanel(tabComponent);
-                    experimentStackBox.setChartLinkEnable(false);
-                }
-                if (evt.getPropertyName().equals(JSheet.EVENT_DATA_SINGLE_CLICKED)) {
-                    experimentStackBox.setChartLinkEnable(true);  
+                    if (jSheet.getSelectedColumns().length > 0) {
+                        experimentStackBox.setChartLinkEnable(true);
+                    } else
+                        experimentStackBox.setChartLinkEnable(false);
                     experimentStackBox.setHeatMapLinkEnable(false);
+                }
+
+                if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.SPREADSHEET_MODEL_UNINSTALLED)) {
+                    JLabel noFilterLabel = new Cab2bLabel("No Filter");
+                    noFilterLabel.setOpaque(false);
+                    Cab2bPanel panel = new Cab2bPanel();
+                    panel.setLayout(new BorderLayout());
+                    panel.add(noFilterLabel);
+                    experimentStackBox.setFilterPanel(panel);
+                }
+
+                if (evt.getPropertyName().equals(JSheet.EVENT_DATA_SINGLE_CLICKED)) {
+                    experimentStackBox.setChartLinkEnable(true);
+                    experimentStackBox.setHeatMapLinkEnable(false);
+                    experimentStackBox.setAnalysisLinkEnable(true);
                 } else if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.DISABLE_CHART_LINK)) {
                     experimentStackBox.setChartLinkEnable(false);
+                    experimentStackBox.setAnalysisLinkEnable(false);
                 } else if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.ENABLE_CHART_LINK)) {
                     experimentStackBox.setChartLinkEnable(true);
                     experimentStackBox.setHeatMapLinkEnable(false);
+                    experimentStackBox.setAnalysisLinkEnable(true);
                 }
                 if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.DISABLE_HEATMAP_LINK)) {
                     experimentStackBox.setHeatMapLinkEnable(false);
                 } else if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.ENABLE_HEATMAP_LINK)) {
                     experimentStackBox.setHeatMapLinkEnable(true);
                 }
+
+                if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.DISABLE_ANALYSIS_LINK))
+                    experimentStackBox.setAnalysisLinkEnable(false);
+
             }
         });
         experimentDataCategoryGridPanel.setBorder(null);

@@ -183,7 +183,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     public void refreshTable(List<IRecord> recordList) {
         this.removeAll();
         this.spreadSheetViewPanel.refreshView(recordList);
-        //this.spreadSheetViewPanel.getDataTable().addFocusListener(new TableFocusListener());
         refreshUI();
         updateUI();
     }
@@ -259,6 +258,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         spreadSheetViewPanel.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+                 
             }
         });
 
@@ -327,10 +327,13 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             List<IRecord> recordList = userObjectWrapper.getUserObject();
             DefaultSpreadSheetViewPanel defaultSpreadSheetViewPanel = new DefaultSpreadSheetViewPanel(recordList,
                     this);
+            defaultSpreadSheetViewPanel.addPropertyChangeListener(new PropertyChangeListener() {
+                public void propertyChange(PropertyChangeEvent evt) {
+                    firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+                }
+            });
             defaultSpreadSheetViewPanel.doInitialization();
-            //defaultSpreadSheetViewPanel.getDataTable().addFocusListener(new TableFocusListener());
             analysisViewPanel.add("br center hfill vfill", defaultSpreadSheetViewPanel);
-
             analysisView = analysisViewPanel;
             tabComponent.add(tabTitle, analysisViewPanel);
         }
@@ -351,14 +354,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                     tabComponent.remove(detailViewPanel);
                 }
             });
-            detailViewPanel.add("right ", closeButton);
-
-            // Add SpreadsheetView
-            //defaultDetailedPanel.getDataTable().addFocusListener(new TableFocusListener(false));
-            /*   defaultDetailedPanel.getDataTable().getTableHeader().addMouseListener(
-             new HeaderMouseListener(
-             defaultDetailedPanel.getDataTable()));*/
-
+            detailViewPanel.add("right ", closeButton);        
             detailViewPanel.add("br center hfill vfill", component);
             detailPanel = detailViewPanel;
             tabComponent.add(tabTitle, detailViewPanel);
@@ -420,9 +416,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                 try {
                     dataListMetadata = dataListBI.saveDataList(customCategoryDataList.getRootDataRow(),
                                                                dataListMetadata);
-
                     experimentPanel.getSelectedExperiment().addDataListMetadata(dataListMetadata);
-
                     ExperimentBI.addDataListToExperiment(experimentPanel.getSelectedExperiment().getId(),
                                                          dataListMetadata.getId());
 
@@ -503,9 +497,11 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                 Component component = CommonUtils.getComponentByName(selectedTabPanel, "DataListDetailedPanel");
                 if (component instanceof DataListDetailedPanelInterface) {
                     DataListDetailedPanelInterface tabPanel = (DataListDetailedPanelInterface) component;
+                    
                     experimentDataCategoryGridPanel.setCurrentSpreadSheetViewPanel(tabPanel);
                     experimentDataCategoryGridPanel.setCurrentChartPanel(null);
-                    if (tabPanel.getSelectedColumnNames() != null && tabPanel.getSelectedColumnNames().size() > 0) {
+                    List<String> columnNameList = tabPanel.getSelectedColumnNames();
+                    if (columnNameList != null && columnNameList.size() > 0) {
                         firePropertyChange(DefaultSpreadSheetViewPanel.ENABLE_CHART_LINK, -1, 0);
                         firePropertyChange(DefaultSpreadSheetViewPanel.DISABLE_HEATMAP_LINK, -1, 0);
 
@@ -521,74 +517,13 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                         experimentDataCategoryGridPanel.setCurrentChartPanel(selectedTabPanel);
                         firePropertyChange(DefaultSpreadSheetViewPanel.ENABLE_CHART_LINK, -1, 0);
                         firePropertyChange(DefaultSpreadSheetViewPanel.DISABLE_HEATMAP_LINK, -1, 0);
+                        firePropertyChange(DefaultSpreadSheetViewPanel.DISABLE_ANALYSIS_LINK, -1, 0);
                     }
                 }
             }
             updateUI();
         }
-    }
-
-    class HeaderMouseListener extends MouseAdapter {
-        Cab2bTable table = null;
-
-        HeaderMouseListener(Cab2bTable table) {
-            this.table = table;
-        }
-
-        public void mouseClicked(MouseEvent e) {
-            focusAction(table, false);
-        }
-    }
-
-    private void focusAction(final Cab2bTable cab2bTable, boolean skipFirstColumn) {
-        boolean setEnabled = false;
-        if (cab2bTable.getSelectedRowCount() > 0 && cab2bTable.getSelectedColumnCount() > 0) {
-            for (int columnIndex : cab2bTable.getSelectedColumns()) {
-                if (columnIndex == 0 && skipFirstColumn) {
-                    setEnabled = false;
-                } else
-                    setEnabled = true;
-            }
-        }
-
-        ExperimentStackBox experimentStackBox = experimentPanel.getExperimentStackBox();
-        Cab2bPanel visualiseDataPanel = experimentStackBox.getVisualiseDataPanel();
-        Component[] components = visualiseDataPanel.getComponents();
-        for (Component component : components) {
-            if (component instanceof Cab2bHyperlink) {
-                Cab2bHyperlink hyperLink = (Cab2bHyperlink) component;
-                hyperLink.setEnabled(setEnabled);
-                hyperLink.setVisible(true);
-            }
-        }
-        visualiseDataPanel.revalidate();
-    }
-
-    /**
-     * This class enables or disables the chart links in Visualise Panel on
-     * selection of row in the data grid.
-     */
-    class TableFocusListener implements FocusListener {
-        private boolean skipFirstColumn = false;
-
-        TableFocusListener(boolean skipFirstColumn) {
-            this.skipFirstColumn = skipFirstColumn;
-        }
-
-        TableFocusListener() {
-            this(true);
-        }
-
-        public void focusGained(FocusEvent focusEvent) {
-            final Cab2bTable cab2bTable = (Cab2bTable) focusEvent.getComponent();
-            focusAction(cab2bTable, skipFirstColumn);
-        }
-
-        public void focusLost(FocusEvent focusEvent) {
-            final Cab2bTable cab2bTable = (Cab2bTable) focusEvent.getComponent();
-            focusAction(cab2bTable, skipFirstColumn);
-        }
-    }
+    }  
 
     /**
      * @return the currentHeatMapPanel

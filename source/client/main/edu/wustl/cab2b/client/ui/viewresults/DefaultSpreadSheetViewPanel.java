@@ -2,6 +2,9 @@ package edu.wustl.cab2b.client.ui.viewresults;
 
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.DETAILS_COLUMN_IMAGE;
 
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -32,6 +35,8 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
 
     public static final String SPREADSHEET_MODEL_INSTALLED = "SPREADSHEET_MODEL_INSTALLED";
 
+    public static final String SPREADSHEET_MODEL_UNINSTALLED = "SPREADSHEET_MODEL_UNINSTALLED";
+
     public static final String DISABLE_CHART_LINK = "DISABLE_CHART_LINK";
 
     public static final String ENABLE_CHART_LINK = "ENABLE_CHART_LINK";
@@ -39,6 +44,8 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
     public static final String ENABLE_HEATMAP_LINK = "ENABLE_HEATMAP_LINK";
 
     public static final String DISABLE_HEATMAP_LINK = "DISABLE_HEATMAP_LINK";
+
+    public static final String DISABLE_ANALYSIS_LINK = "DISABLE_ANALYSIS_LINK";
 
     private ImageIcon defaultCellImage = new ImageIcon(
             this.getClass().getClassLoader().getResource(DETAILS_COLUMN_IMAGE));
@@ -83,7 +90,23 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
         spreadsheet.setReadOnlyDataModel(new RecordsTableModel(records));
         spreadsheet.addPropertyChangeListener(new ShowRecordDetailsListener());
         this.add("br hfill vfill", spreadsheet);
-        firePropertyChange(SPREADSHEET_MODEL_INSTALLED, null, spreadsheet);
+        spreadsheet.addAncestorListener(new javax.swing.event.AncestorListener() {
+
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+
+            }
+
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+
+                firePropertyChange(SPREADSHEET_MODEL_INSTALLED, null, spreadsheet);
+            }
+
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+
+                firePropertyChange(SPREADSHEET_MODEL_UNINSTALLED, null, spreadsheet);
+            }
+
+        });
     }
 
     private AbstractTableModel getSpreadSheetDataModel() {
@@ -124,8 +147,9 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
     public List<IRecord> getSelectedRecords() {
         int selectedRowCount = spreadsheet.getSelectedRows().length;
         List<IRecord> selectedRecords = new ArrayList<IRecord>(selectedRowCount);
-        for (int i = 0; i < selectedRowCount; i++) {
-            selectedRecords.add(records.get(spreadsheet.getSelectedRows()[i]));
+        for (int i = 0; i < selectedRowCount && i < records.size(); i++) {
+            int recordNumber = spreadsheet.getSelectedRows()[i];
+            selectedRecords.add(records.get(recordNumber));
         }
         return selectedRecords;
     }

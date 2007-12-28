@@ -365,11 +365,13 @@ public class ExperimentStackBox extends Cab2bPanel {
     }
 
     public void setFilterPanel(Component filterConsole) {
-        dataFilterPanel.removeAll();
-        dataFilterPanel.add(" hfill vfill", filterConsole);
-        dataFilterPanel.revalidate();
-        dataFilterPanel.updateUI();
-    }   
+        if (dataFilterPanel != null) {
+            dataFilterPanel.removeAll();
+            dataFilterPanel.add(" hfill vfill", filterConsole);
+            dataFilterPanel.revalidate();
+            dataFilterPanel.updateUI();
+        }
+    }
 
     private void setBarChartLink() {
         URL url = this.getClass().getClassLoader().getResource(ClientConstants.BAR_GRAPH);
@@ -398,6 +400,9 @@ public class ExperimentStackBox extends Cab2bPanel {
      * @param active
      */
     public void setChartLinkEnable(boolean active) {
+        if (visualiseDataPanel == null)
+            return;
+
         for (int i = 0; i < visualiseDataPanel.getComponentCount(); i++) {
             if (visualiseDataPanel.getComponent(i) instanceof Cab2bHyperlink) {
                 ((Cab2bHyperlink) visualiseDataPanel.getComponent(i)).setEnabled(active);
@@ -410,10 +415,25 @@ public class ExperimentStackBox extends Cab2bPanel {
      * @param active
      */
     public void setHeatMapLinkEnable(boolean active) {
+        if (visualiseDataPanel == null)
+            return;
         if (visualiseDataPanel.getComponent(visualiseDataPanel.getComponentCount() - 1) instanceof Cab2bHyperlink) {
             ((Cab2bHyperlink) visualiseDataPanel.getComponent(visualiseDataPanel.getComponentCount() - 1)).setEnabled(active);
         }
 
+    }
+
+    /**
+     * Method to set Heat map links enable/disable 
+     * @param active
+     */
+    public void setAnalysisLinkEnable(boolean active) {
+        if (analyseDataPanel == null)
+            return;
+        
+        if (analyseDataPanel.getComponent(analyseDataPanel.getComponentCount() - 1) instanceof Cab2bHyperlink) {
+            ((Cab2bHyperlink) analyseDataPanel.getComponent(analyseDataPanel.getComponentCount() - 1)).setEnabled(active);
+        }
     }
 
     /**
