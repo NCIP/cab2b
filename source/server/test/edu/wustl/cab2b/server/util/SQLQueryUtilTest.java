@@ -1,8 +1,11 @@
 package edu.wustl.cab2b.server.util;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import junit.framework.TestCase;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -50,6 +53,44 @@ public class SQLQueryUtilTest extends TestCase {
         }
 
         assertTrue(recordCount == 3);
+    }
+
+    /**
+     * This method tests functionality provided by {@link SQLQueryUtil}
+     */
+    public void testExecuteQuery() {
+        String selectSQL = "SELECT * from ID_TABLE WHERE NEXT_ASSOCIATION_ID > ?";
+        PreparedStatement pStmt = null;
+        try {
+            pStmt = con.prepareStatement(selectSQL);
+            pStmt.setLong(1,1);
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+            assertTrue("Got SQLException while creating a PreparedStatement", false);
+        }
+        SQLQueryUtil.executeQuery(pStmt);
+    }
+
+    /**
+     * This method tests functionality provided by {@link SQLQueryUtil}
+     */
+    public void testExecuteQueryForException() {
+        String selectSQL = "SELECT id from ID_TABLE1234 WHERE NEXT_ASSOCIATION_ID > ?";
+        PreparedStatement pStmt = null;
+        try {
+            pStmt = con.prepareStatement(selectSQL);
+            pStmt.setLong(1,1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            assertTrue("Got SQLException while creating a PreparedStatement", false);
+        }
+        try {
+            SQLQueryUtil.executeQuery(pStmt);
+            assertTrue("Expected SQLException wrapped in RuntimeException, but it was not thrown", false);
+        } catch (edu.wustl.cab2b.common.exception.RuntimeException e) {
+            assertEquals(ErrorCodeConstants.DB_0003,e.getErrorCode());
+        }
     }
 
     /**
