@@ -1,15 +1,10 @@
 package edu.wustl.cab2b.client.ui.pagination;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 import java.util.Vector;
-
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
 
 import org.jdesktop.swingx.JXPanel;
 
@@ -29,12 +24,6 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bStandardFonts;
  */
 public class JPageBar extends Cab2bPanel implements ActionListener {
     private static final long serialVersionUID = 1L;
-
-    @Deprecated
-    private JComboBox paginationTypeCombo;
-
-    @Deprecated
-    private JComboBox elementsPerPageCombo;
 
     /**
      * Panel to hold indices hyperlinks.
@@ -119,11 +108,7 @@ public class JPageBar extends Cab2bPanel implements ActionListener {
         pageBarModel = new PageBarModel(indices);
         subPageBaraModel = new PageBarModel(subIndices);
 
-        //currentIndices = pageBarModel.nextIndices();
-
-        // TODO how to dynamically update this list of plugged in pagers.
-        paginationTypeCombo = new JComboBox(new Object[] { "Numeric", "Alphabetic", "Frequency", "Keyword" });
-        elementsPerPageCombo = new JComboBox(new Object[] { "5", "10", "15", "20" });
+        // TODO how to dynamically update this list of plugged in pagers.        
         intiGUI();
     }
 
@@ -133,8 +118,6 @@ public class JPageBar extends Cab2bPanel implements ActionListener {
     private void intiGUI() {
         currentIndices = pageBarModel.nextIndices();
         indicesPanel = getIndicesPanel(currentIndices);
-        //this.add(paginationTypeCombo);  // TODO needed later
-        //this.add(elementsPerPage);      // TODO needed as and when required.
         this.add(indicesPanel);
 
     }
@@ -284,113 +267,31 @@ public class JPageBar extends Cab2bPanel implements ActionListener {
         indicesPanel.repaint();
     }
 
-    /**
-     * Model for page bar.
-     * 
-     * @author chetan_bh
-     */
-    private class PageBarModel {
-        /** Indices to display per view. */
-        int indicesPerView = PaginationConstants.DEFAULT_INDICES_PER_VIEW;
-
-        /** A collection of set of page indices.  */
-        Vector<Vector<String>> brokenPageIndices;
-
-        /** Current page index. */
-        int currentPageIndices = -1;
-
-        /** Count of broken page indices. */
-        int noOfBrokenPageIndices = 0;
-
-        public PageBarModel(Vector fullPageIndices) {
-            brokenPageIndices = breakFullIndices(fullPageIndices);
-        }
-
-        /** Returns true if there is next set of indices avalable, false otherwise. */
-        public boolean hasNextIndices() {
-            if (currentPageIndices == brokenPageIndices.size() - 1)
-                return false;
-            return true;
-        }
-
-        /** Returns true if there is previous set of indices available, false otherwise. */
-        public boolean hasPreviousIndices() {
-            if (currentPageIndices == 0)
-                return false;
-            return true;
-        }
-
-        /** Returns next set of page indices. */
-        public Vector<String> nextIndices() {
-            return brokenPageIndices.get(++currentPageIndices);
-        }
-
-        /** Returns previous set of page indices. */
-        public Vector<String> previousIndices() {
-            return brokenPageIndices.get(--currentPageIndices);
-        }
-
-        /** Returns current set of page indices. */
-        public Vector<String> currentIndices() {
-            return currentIndices;
-        }
-
-        public String toString() {
-            return brokenPageIndices.toString();
-        }
-
-        /**
-         * Returns a vector of vector of paghe indices.
-         * @param fullIndices full set of indices.
-         * @return 
-         */
-        private Vector<Vector<String>> breakFullIndices(Vector fullIndices) {
-            Vector<Vector<String>> returner = new Vector<Vector<String>>();
-            Iterator indexIter = fullIndices.iterator();
-
-            int counter = 0;
-            Vector<String> subIndices = new Vector<String>();
-
-            while (indexIter.hasNext()) {
-                String index = (String) indexIter.next();
-
-                if (counter == indicesPerView) {
-                    counter = 0;
-                    noOfBrokenPageIndices++;
-                    returner.add(subIndices);
-                    subIndices = new Vector<String>();
-                }
-                subIndices.add(index);
-                counter++;
-            }
-            returner.add(subIndices);
-            return returner;
-        }
-    }
+    
 
     /**
      * @param args
      */
-    public static void main(String[] args) {
-        Vector<PageElement> elements = new Vector<PageElement>();
-        for (int i = 0; i < 52; i++) {
-            PageElement element = new PageElementImpl();
-            element.setDisplayName("ABC-" + i);
-            elements.add(element);
-        }
+    /* public static void main(String[] args) {
+     Vector<PageElement> elements = new Vector<PageElement>();
+     for (int i = 0; i < 52; i++) {
+     PageElement element = new PageElementImpl();
+     element.setDisplayName("ABC-" + i);
+     elements.add(element);
+     }
 
-        Vector subIndices = new Vector();
-        NumericPager numPager = new NumericPager(elements);
-        Vector<String> allIndices = numPager.getAllPageIndices();
-        JPagination pagi = new JPagination(elements, numPager);
-        JPageBar pageBar = new JPageBar(allIndices, subIndices, pagi);
+     Vector subIndices = new Vector();
+     NumericPager numPager = new NumericPager(elements);
+     Vector<String> allIndices = numPager.getAllPageIndices();
+     JPagination pagi = new JPagination(elements, numPager);
+     JPageBar pageBar = new JPageBar(allIndices, subIndices, pagi);
 
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(new Dimension(400, 70));
-        frame.getContentPane().add(pageBar);
-        frame.setVisible(true);
-    }
+     JFrame frame = new JFrame();
+     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+     frame.setSize(new Dimension(400, 70));
+     frame.getContentPane().add(pageBar);
+     frame.setVisible(true);
+     }*/
 
     public String getNextPageText() {
         return PaginationConstants.DEFAULT_PAGE_NEXT_STRING;

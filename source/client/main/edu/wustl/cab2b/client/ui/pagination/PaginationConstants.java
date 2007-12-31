@@ -7,15 +7,7 @@ package edu.wustl.cab2b.client.ui.pagination;
  * 
  * @author chetan_bh
  */
-public final class PaginationConstants {
-	@Deprecated
-	public static int NUMERIC_PAGINATION = 1;
-	@Deprecated
-	public static int ALPHABETIC_PAGINATION = 2;
-	@Deprecated
-	public static int FREQUENCY_PAGINATION = 3;
-	@Deprecated
-	public static int DEFAULT_PAGINATION = NUMERIC_PAGINATION;
+public final class PaginationConstants {	
 	
 	public static final String NUMERIC_PAGER = "numericPager";
 	
