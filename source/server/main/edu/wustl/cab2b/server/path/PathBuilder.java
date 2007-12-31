@@ -452,7 +452,7 @@ public class PathBuilder {
                 Logger.out.error(Utility.getStackTrace(e));
             }
         }
-        dataFileLoader.loadDataFromFile(connection, fileName, columns, tableName, dataTypes);
+        dataFileLoader.loadDataFromFile(connection, fileName, columns, tableName, dataTypes,PathConstants.FIELD_SEPARATOR);
     }
 
     /**
