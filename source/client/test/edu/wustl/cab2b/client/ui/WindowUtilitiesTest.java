@@ -1,8 +1,4 @@
-/**
- * 
- */
-package edu.wustl.cab2b.client.metadatasearch;
-
+package edu.wustl.cab2b.client.ui;
 import java.awt.Color;
 import java.awt.Container;
 
