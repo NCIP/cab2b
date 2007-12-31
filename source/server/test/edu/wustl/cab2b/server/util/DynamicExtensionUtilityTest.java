@@ -6,10 +6,12 @@ import java.util.Collection;
 
 import junit.framework.TestCase;
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
+import edu.common.dynamicextensions.domain.UserDefinedDE;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
 import edu.common.dynamicextensions.domaininterface.RoleInterface;
 import edu.common.dynamicextensions.domaininterface.SemanticPropertyInterface;
 import edu.common.dynamicextensions.domaininterface.StringValueInterface;
@@ -104,9 +106,15 @@ public class DynamicExtensionUtilityTest extends TestCase {
 
     public void testGetAttributeCopy() {
         AttributeInterface[] arr = { fact.createStringAttribute(), fact.createIntegerAttribute(), fact.createLongAttribute(), fact.createDoubleAttribute(), fact.createFloatAttribute(), fact.createDateAttribute(), fact.createBooleanAttribute() };
+        PermissibleValueInterface[] values = { fact.createStringValue(), fact.createIntegerValue(), fact.createLongValue(), fact.createDoubleValue(), fact.createFloatValue(), fact.createDateValue(), fact.createBooleanValue() };
+
         for (int i = 0; i < arr.length; i++) {
             arr[i].setName("name" + i);
             arr[i].setDescription("Description" + i);
+            UserDefinedDE userDefinedDE = fact.createUserDefinedDE();
+            userDefinedDE.addPermissibleValue(values[i]);
+
+            arr[i].getAttributeTypeInformation().setDataElement(userDefinedDE);
             AttributeInterface attr = DynamicExtensionUtility.getAttributeCopy(arr[i]);
             assertEquals(arr[i].getClass(), attr.getClass());
             assertEquals(arr[i].getName(), attr.getName());
