@@ -1,7 +1,6 @@
 package edu.wustl.cab2b.server.util;
 
 import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.IO_0001;
-import static edu.wustl.cab2b.server.path.PathConstants.FIELD_SEPARATOR;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -20,11 +19,11 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class OracleLoader implements DataFileLoaderInterface {
 
-    /* (non-Javadoc)
-     * @see edu.wustl.cab2b.server.util.FileDataLoaderInterface#loadDataFromFile(java.sql.Connection, java.lang.String, java.lang.String, java.lang.String, java.lang.Class<?>[])
+    /**
+     * @see edu.wustl.cab2b.server.util.DataFileLoaderInterface#loadDataFromFile(java.sql.Connection, java.lang.String, java.lang.String, java.lang.String, java.lang.Class<?>[], java.lang.String)
      */
     public void loadDataFromFile(Connection connection, String fileName, String columns, String tableName,
-                                 Class<?>[] dataTypes) {
+                                 Class<?>[] dataTypes,String fieldSeperator) {
         Logger.out.debug("Entering method loadDataFromFile()");
 
         BufferedReader bufferedReader = null;
@@ -47,7 +46,7 @@ public class OracleLoader implements DataFileLoaderInterface {
             ps = connection.prepareStatement(sql.toString());
             String oneRecord = "";
             while ((oneRecord = bufferedReader.readLine()) != null) {
-                String[] values = oneRecord.split(FIELD_SEPARATOR);
+                String[] values = oneRecord.split(fieldSeperator);
                 for (int j = 0; j < columnCount; j++) {
                     if (dataTypes[j].equals(String.class)) {
                         ps.setString(j + 1, values[j]);

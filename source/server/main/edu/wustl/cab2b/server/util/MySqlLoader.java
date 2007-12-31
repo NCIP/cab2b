@@ -2,7 +2,6 @@ package edu.wustl.cab2b.server.util;
 
 import java.sql.Connection;
 
-import edu.wustl.cab2b.server.path.PathConstants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -11,11 +10,11 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class MySqlLoader implements DataFileLoaderInterface {
 
-    /* (non-Javadoc)
-     * @see edu.wustl.cab2b.server.util.FileDataLoaderInterface#loadDataFromFile(java.sql.Connection, java.lang.String, java.lang.String, java.lang.String, java.lang.Class<?>[])
+    /**
+     * @see edu.wustl.cab2b.server.util.DataFileLoaderInterface#loadDataFromFile(java.sql.Connection, java.lang.String, java.lang.String, java.lang.String, java.lang.Class<?>[], java.lang.String)
      */
     public void loadDataFromFile(Connection connection, String fileName, String columns, String tableName,
-                                 Class<?>[] dataTypes) {
+                                 Class<?>[] dataTypes,String fieldSeperator) {
         Logger.out.debug("Entering method loadDataFromFile()");
 
         StringBuffer buffer = new StringBuffer();
@@ -24,7 +23,7 @@ public class MySqlLoader implements DataFileLoaderInterface {
         buffer.append("' INTO TABLE ");
         buffer.append(tableName);
         buffer.append(" FIELDS TERMINATED BY '");
-        buffer.append(PathConstants.FIELD_SEPARATOR);
+        buffer.append(fieldSeperator);
         buffer.append("' LINES TERMINATED BY '\n' ");
         buffer.append(columns);
 
