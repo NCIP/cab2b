@@ -1,9 +1,6 @@
 package edu.wustl.cab2b.common.domain;
 
-/**
- * <!-- LICENSE_TEXT_START -->
- * <!-- LICENSE_TEXT_END -->
- */
+
 
  /**
   * A top level base class for all different kinds of Experiments, and Categories.

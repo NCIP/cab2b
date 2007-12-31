@@ -3,9 +3,6 @@ package edu.wustl.cab2b.common.domain;
 import java.util.Collection;
 import java.util.HashSet;
 
-import gov.nih.nci.system.applicationservice.ApplicationService;
-import gov.nih.nci.system.applicationservice.ApplicationServiceProvider;
-
 /**
  * <!-- LICENSE_TEXT_START -->
  * <!-- LICENSE_TEXT_END -->
@@ -28,31 +25,12 @@ public class Experiment extends AdditionalMetadata implements java.io.Serializab
     /**
      * Returns a collection of experiment groups to which this experiment belongs to.
      * @return a collection of experiment groups to which this experiment belongs to.
-     * @hibernate.set name="experimentGroupCollection" table="CAB2B_EXP_GRP_MAPPING" cascade="save-update" inverse="false"
+     * 
+     * @hibernate.set name="experimentGroupCollection" table="CAB2B_EXP_GRP_MAPPING" cascade="save-update" inverse="false" lazy="false"
      * @hibernate.collection-key column="EXP_ID"
      * @hibernate.collection-many-to-many class="edu.wustl.cab2b.common.domain.ExperimentGroup" column="EXG_ID"
      */
     public Collection<ExperimentGroup> getExperimentGroupCollection() {
-        try {
-            if (experimentGroupCollection.size() == 0) {
-            }
-        } catch (Exception e) {
-            ApplicationService applicationService = ApplicationServiceProvider.getApplicationService();
-            try {
-
-                edu.wustl.cab2b.common.domain.Experiment thisIdSet = new edu.wustl.cab2b.common.domain.Experiment();
-                thisIdSet.setId(this.getId());
-                Collection<ExperimentGroup> resultList = applicationService.search(
-                                                                                   "edu.wustl.cab2b.common.domain.ExperimentGroup",
-                                                                                   thisIdSet);
-                experimentGroupCollection = resultList;
-                return resultList;
-
-            } catch (Exception ex) {
-                System.out.println("Experiment:getExperimentGroupCollection throws exception ... ...");
-                ex.printStackTrace();
-            }
-        }
         return experimentGroupCollection;
     }
 
@@ -91,7 +69,7 @@ public class Experiment extends AdditionalMetadata implements java.io.Serializab
     /**
      * Returns a collection of experiment groups to which this experiment belongs to.
      * @return a collection of experiment groups to which this experiment belongs to.
-     * @hibernate.set name="dataListMetadataCollection" table="CAB2B_EXP_DLMETADATA_MAPPING" cascade="save-update"
+     * @hibernate.set name="dataListMetadataCollection" table="CAB2B_EXP_DLMETADATA_MAPPING" cascade="save-update" lazy="false"
      * @hibernate.collection-key column="EXP_ID"
      * @hibernate.collection-many-to-many class="edu.wustl.cab2b.common.domain.DataListMetadata" column="DL_ID"
      */

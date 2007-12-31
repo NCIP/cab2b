@@ -1,114 +1,58 @@
 package edu.wustl.cab2b.common.domain;
 
-import gov.nih.nci.system.applicationservice.ApplicationService;
-import gov.nih.nci.system.applicationservice.ApplicationServiceProvider;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
- * <!-- LICENSE_TEXT_START -->
- * <!-- LICENSE_TEXT_END -->
+ * A class to group experiments under it.
+ * @hibernate.joined-subclass table="CAB2B_EXPERIMENT_GROUP"
+ * @hibernate.joined-subclass-key column="EXG_ID"
+ * @author 
  */
-
- /**
-  * A class to group experiments under it.
-  * @hibernate.joined-subclass table="CAB2B_EXPERIMENT_GROUP"
-  * @hibernate.joined-subclass-key column="EXG_ID"
-  * @author 
-  */
 public class ExperimentGroup extends AdditionalMetadata implements java.io.Serializable {
-    
-	private static final long serialVersionUID = 1234567890L;
 
+    private static final long serialVersionUID = 1234567890L;
 
-    private edu.wustl.cab2b.common.domain.ExperimentGroup parentGroup;
-    
+    private ExperimentGroup parentGroup;
+
     /**
      * @return Returns the parent experiment group.
-     * @hibernate.many-to-one column="PARENT_EXG_ID" class="edu.wustl.cab2b.common.domain.ExperimentGroup" constrained="true"
+     * @hibernate.many-to-one column="PARENT_EXG_ID" class="edu.wustl.cab2b.common.domain.ExperimentGroup" constrained="true" lazy="false"
      */
-    public edu.wustl.cab2b.common.domain.ExperimentGroup getParentGroup() {
-    	if(parentGroup != null)
-    	{
-    		return parentGroup;
-    	}
-//        ApplicationService applicationService = 
-//            ApplicationServiceProvider.getApplicationService();
-//        edu.wustl.cab2b.common.domain.ExperimentGroup thisIdSet = 
-//            new edu.wustl.cab2b.common.domain.ExperimentGroup();
-//        thisIdSet.setId(this.getId());
-//        System.out.println("ExperimentGroup:: getParentGroup:: thisIdSet >> "+thisIdSet.getName());
-//        try {
-//            java.util.List resultList = 
-//                applicationService.search("edu.wustl.cab2b.common.domain.ExperimentGroup", 
-//                                          thisIdSet);
-//            if (resultList != null && resultList.size() > 0) {
-//                parentGroup = 
-//                        (edu.wustl.cab2b.common.domain.ExperimentGroup)resultList.get(0);
-//            }
-//
-//        } catch (Exception ex) {
-//            System.out.println("ExperimentGroup:getParentGroup throws exception ... ...");
-//            ex.printStackTrace();
-//        }
-        return null;
+    public ExperimentGroup getParentGroup() {
+        return parentGroup;
     }
 
-    public void setParentGroup(edu.wustl.cab2b.common.domain.ExperimentGroup parentGroup) {
+    public void setParentGroup(ExperimentGroup parentGroup) {
         this.parentGroup = parentGroup;
     }
 
     /**
      * Collection of Experiments belonging to this Group.
      */
-    private java.util.Collection experimentCollection = 
-        new java.util.HashSet();
-    
+    private Collection<Experiment> experimentCollection = new HashSet<Experiment>();
+
     /**
      * Returns a collection of experiments grouped under this group.
      * @return collection of experiments grouped under this group.
-     * @hibernate.set name="experimentCollection" table="CAB2B_EXP_GRP_MAPPING" cascade="none" inverse="true" 
+     * @hibernate.set name="experimentCollection" table="CAB2B_EXP_GRP_MAPPING" cascade="none" inverse="true" lazy="false"
      * @hibernate.collection-key column="EXG_ID"
      * @hibernate.collection-many-to-many class="edu.wustl.cab2b.common.domain.Experiment" column="EXP_ID"
      */
-    public java.util.Collection getExperimentCollection() {
-        
-            if (experimentCollection != null) {
-            	return experimentCollection;
-            }
-        
-//            ApplicationService applicationService = 
-//                ApplicationServiceProvider.getApplicationService();
-//            try {
-//
-//
-//                edu.wustl.cab2b.common.domain.ExperimentGroup thisIdSet = 
-//                    new edu.wustl.cab2b.common.domain.ExperimentGroup();
-//                thisIdSet.setId(this.getId());
-//                java.util.Collection resultList = 
-//                    applicationService.search("edu.wustl.cab2b.common.domain.Experiment", thisIdSet);
-//                experimentCollection = resultList;
-//                return resultList;
-//
-//
-//            } catch (Exception ex) {
-//                System.out.println("ExperimentGroup:getExperimentCollection throws exception ... ...");
-//                ex.printStackTrace();
-//            }
-        
-        return null;
+    public Collection<Experiment> getExperimentCollection() {
+        return experimentCollection;
     }
 
     /**
      * Sets the Experiment Collection.
      * @param experimentCollection
      */
-    public void setExperimentCollection(java.util.Collection experimentCollection) {
+    public void setExperimentCollection(Collection<Experiment> experimentCollection) {
         this.experimentCollection = experimentCollection;
     }
 
+    private Collection<ExperimentGroup> childrenGroupCollection = new HashSet<ExperimentGroup>();
 
-    private java.util.Collection childrenGroupCollection = 
-        new java.util.HashSet();
-    
     /**
      * Returns a collection of experiment groups under this experiment group.
      * @return collection of experiment groups under this experiment group.
@@ -116,43 +60,18 @@ public class ExperimentGroup extends AdditionalMetadata implements java.io.Seria
      * @hibernate.collection-key column="PARENT_EXG_ID"
      * @hibernate.collection-one-to-many class="edu.wustl.cab2b.common.domain.ExperimentGroup"
      */
-    public java.util.Collection getChildrenGroupCollection() {
-        
-            if (childrenGroupCollection != null) {
-            	return childrenGroupCollection;
-            }
-        
-//            ApplicationService applicationService = 
-//                ApplicationServiceProvider.getApplicationService();
-//            try {
-//
-//
-//                edu.wustl.cab2b.common.domain.ExperimentGroup thisIdSet = 
-//                    new edu.wustl.cab2b.common.domain.ExperimentGroup();
-//                thisIdSet.setId(this.getId());
-//                java.util.Collection resultList = 
-//                    applicationService.search("edu.wustl.cab2b.common.domain.ExperimentGroup", 
-//                                              thisIdSet);
-//                childrenGroupCollection = resultList;
-//                return resultList;
-//
-//
-//            } catch (Exception ex) {
-//                System.out.println("ExperimentGroup:getChildrenGroupCollection throws exception ... ...");
-//                ex.printStackTrace();
-//            }
-        return null;
+    public Collection<ExperimentGroup> getChildrenGroupCollection() {
+        return childrenGroupCollection;
     }
 
-    public void setChildrenGroupCollection(java.util.Collection childrenGroupCollection) {
+    public void setChildrenGroupCollection(Collection<ExperimentGroup> childrenGroupCollection) {
         this.childrenGroupCollection = childrenGroupCollection;
     }
-
 
     public boolean equals(Object obj) {
         boolean eq = false;
         if (obj instanceof ExperimentGroup) {
-            ExperimentGroup c = (ExperimentGroup)obj;
+            ExperimentGroup c = (ExperimentGroup) obj;
             Long thisId = getId();
 
             if (thisId != null && thisId.equals(c.getId())) {
@@ -172,6 +91,5 @@ public class ExperimentGroup extends AdditionalMetadata implements java.io.Seria
 
         return h;
     }
-
 
 }

@@ -40,9 +40,6 @@ public class DataListMetadata extends AdditionalMetadata implements Serializable
      * @hibernate.collection-element column="ENTITY_ID" type="long" not-null="true"
      * @return name of the domain object.
      */
-    
-     
-    
     public Set<Long> getEntityIds() {
         if (entityIds == null) {
             entityIds = new HashSet<Long>();
