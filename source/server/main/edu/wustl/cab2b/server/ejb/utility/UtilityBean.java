@@ -29,7 +29,7 @@ import edu.wustl.cab2b.server.util.UtilityOperations;
  * EJB to provide utility methods which are needed by client side, but which needs to aceess server.
  * @author Chandrakant Talele
  */
-public class UtilityBean extends AbstractStatelessSessionBean implements SessionBean, UtilityBusinessInterface {
+public class UtilityBean extends AbstractStatelessSessionBean implements UtilityBusinessInterface {
 
     private static final long serialVersionUID = 1L;
 
@@ -100,32 +100,6 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Session
      * @throws RemoteException
      */
     public List<TreeSet<Comparable<?>>> getUniqueRecordValues(Long entityId) throws RemoteException {
-        List<IRecord> entityRecordList = DataListOperationsController.getEntityRecords(entityId);
-        ArrayList<TreeSet<Comparable<?>>> entityRecordValues = new ArrayList<TreeSet<Comparable<?>>>();
-
-        int index = 0;
-        for (IRecord entityRecord : entityRecordList) {
-            Set<AttributeInterface> attributeSet = entityRecord.getAttributes();
-            List<AttributeInterface> attributeList = Utility.getAttributeList(attributeSet);
-            for (AttributeInterface attribute : attributeList) {
-                TreeSet<Comparable<?>> columnValues = null;
-                try {
-                    columnValues = entityRecordValues.get(index);
-                } catch (IndexOutOfBoundsException e) {
-                    columnValues = new TreeSet<Comparable<?>>();
-                    entityRecordValues.add(index, columnValues);
-                }
-                
-                Comparable<?> attributeValue = (Comparable<?>) entityRecord.getValueForAttribute(attribute);
-                if (attributeValue != null) {
-                    columnValues.add(attributeValue);
-                }
-                
-                index++;
-            }
-            index = 0;
-        }
-
-        return entityRecordValues;
+        return new UtilityOperations().getUniqueRecordValues(entityId);
     }
 }
