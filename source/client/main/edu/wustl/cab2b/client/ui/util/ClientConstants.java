@@ -10,7 +10,7 @@ import javax.swing.border.Border;
  * 
  * @author Chandrakant Talele
  */
-public class ClientConstants {
+public interface ClientConstants {
     public static final String OPERATOR_AND = "AND";
 
     public static final String OPERATOR_OR = "OR";

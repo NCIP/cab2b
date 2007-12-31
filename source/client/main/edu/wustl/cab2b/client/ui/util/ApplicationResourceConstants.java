@@ -5,7 +5,7 @@ package edu.wustl.cab2b.client.ui.util;
  * If value of any constant is changed here please update Cab2bApplicationResources.properties and vice versa.
  * @author Chandrakant Talele
  */
-public class ApplicationResourceConstants {
+public interface ApplicationResourceConstants {
     public static final String MAIN_FRAME_TITLE = "cab2b.main.frame.title";//=caB2B -- cancer Bench to Bedside
     public static final String MAIN_FRAME_SEARCH_HELP_TEXT = "cab2b.main.frame.searchhelptext";//=(E.g. Participant, Gene, Experiment, Protein, Specimen)
 

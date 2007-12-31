@@ -4,7 +4,7 @@ package edu.wustl.cab2b.server;
  * This class holds all the common constants needed by server side classes.
  * @author Chandrakant Talele
  */
-public class ServerConstants {
+public interface ServerConstants {
     /**
      *  JNDI name for looking up the datasource for local caB2B Database.
      *  Value of this must be always in sync with <jndi-name> in caB2B-ds.xml

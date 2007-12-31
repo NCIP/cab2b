@@ -6,7 +6,7 @@ import java.io.File;
  * These are the constants used by path building and path finding classes.
  * @author Chandrakant Talele
  */
-public class PathConstants {
+public interface PathConstants {
     /**
      * This represents whether a table is to be crteated in Dynamic extension when entity is persisted.
      * If TRUE then a storage table will be created.

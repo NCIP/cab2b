@@ -14,7 +14,7 @@ import java.awt.Dimension;
  * Constants class for the server.
  * @author gautam_shetty
  */
-public class Constants {
+public interface Constants {
     public static final int CLASS = 1;
 
     public static final int ATTRIBUTE = 2;
