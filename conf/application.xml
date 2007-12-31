@@ -23,8 +23,6 @@
 	<module><java>DynamicExtensions.jar</java></module>
 	<module><java>c3p0-0.9.0.jar</java></module>	
 
-	<module><java>experiment-client.jar</java></module>
-
 	<module><java>addressing-1.0.jar</java></module>
 	<module><java>axis.jar</java></module>
 	<module><java>castor-1.0.4-patched.jar</java></module>
