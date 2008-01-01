@@ -46,9 +46,7 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.queryobject.DataType;
-import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.util.dbManager.DBUtil;
-import edu.wustl.common.util.dbManager.HibernateUtility;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -59,7 +57,7 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class Utility {
     /**
-     * Checks whether passed attribute/association is inheriated.
+     * Checks whether passed attribute/association is inherited.
      * 
      * @param abstractAttribute Attribute/Association to check.
      * @return TRUE if it is inherited else returns FALSE
@@ -109,48 +107,42 @@ public class Utility {
 
     }
 
-    /**
-     * Compares whether given searchPattern is present in passed searchString
-     * 
-     * @param searchPattern search Pattern to look for
-     * @param searchString String which is to be searched
-     * @return Returns TRUE if given searchPattern is present in searchString ,
-     *         else return returns false.
-     */
-    public static boolean compareRegEx(String searchPattern, String searchString) {
-        searchPattern = searchPattern.replace("*", ".*");
-        Pattern pat = Pattern.compile(searchPattern, Pattern.CASE_INSENSITIVE);
-        Matcher mat = pat.matcher(searchString);
-        return mat.matches();
-    }
+//    /**
+//     * Compares whether given searchPattern is present in passed searchString
+//     * 
+//     * @param searchPattern search Pattern to look for
+//     * @param searchString String which is to be searched
+//     * @return Returns TRUE if given searchPattern is present in searchString ,
+//     *         else return returns false.
+//     */
+//    public static boolean compareRegEx(String searchPattern, String searchString) {
+//        searchPattern = searchPattern.replace("*", ".*");
+//        Pattern pat = Pattern.compile(searchPattern, Pattern.CASE_INSENSITIVE);
+//        Matcher mat = pat.matcher(searchString);
+//        return mat.matches();
+//    }
 
     /**
      * Compares whether given searchPattern is present in passed searchString.
-     * If it is present returns the postion where match found. Other wise it
-     * returns -1.
-     * 
+     * If it is present returns the position where match found. 
+     * Otherwise it returns -1.
      * @param searchPattern
      * @param searchString
-     * @return
+     * @return The position where match found, otherwise returns -1.
      */
     public static int indexOfRegEx(String searchPattern, String searchString) {
-        // searchPattern = searchPattern.replace("*", ".*");
         Pattern pat = Pattern.compile(searchPattern, Pattern.CASE_INSENSITIVE);
         Matcher mat = pat.matcher(searchString);
         int position = -1;
 
         if (mat.find()) {
             position = mat.start();
-            // Logger.out.debug("Pattern is:" + pat.pattern() + " Search string
-            // is" + mat.toString() + " position " + position );
         }
         return position;
     }
 
     /**
-     * Returns all the URLs of the deployed services which are exposing given
-     * entity
-     * 
+     * Returns all the URLs of the data services which are exposing given entity
      * @param entity Entity to check
      * @return Returns the List of URLs
      */
@@ -160,6 +152,11 @@ public class Utility {
         return getServiceURLs(shortName);
     }
 
+    /**
+     * Returns all the URLs of the data services which are confirming model of given application
+     * @param appName Aplication name
+     * @return Returns the List of URLs
+     */
     public static String[] getServiceURLs(String appName) {
         return PropertyLoader.getServiceUrls(appName);
     }
@@ -216,7 +213,7 @@ public class Utility {
     }
 
     /**
-     * Converts DE datatype to queryObject dataType.
+     * Converts DE data type to queryObject dataType.
      * 
      * @param type the DE attribute type.
      * @return the DataType.
@@ -241,16 +238,16 @@ public class Utility {
         }
 
     }
-
-    public static Class<?> getJavaType(AttributeInterface attribute) {
-        DataType dataType = Utility.getDataType(attribute.getAttributeTypeInformation());
-
-        if (dataType.equals(DataType.Date)) {
-            return DataType.String.getJavaType();
-        }
-
-        return dataType.getJavaType();
-    }
+//RecordsTableModel.getColumnClass() has similar implementation.
+//    public static Class<?> getJavaType(AttributeInterface attribute) {
+//        DataType dataType = Utility.getDataType(attribute.getAttributeTypeInformation());
+//
+//        if (dataType.equals(DataType.Date)) {
+//            return DataType.String.getJavaType();
+//        }
+//
+//        return dataType.getJavaType();
+//    }
 
     /**
      * @param attribute Check will be done for this Attribute.
@@ -451,25 +448,25 @@ public class Utility {
         return attributes;
     }
 
-    /**
-     * @param queryResult Query result to process.
-     * @return Total no of records present in query set (i.e for all services)
-     */
-    public static int getNoOfRecords(IQueryResult queryResult) {
-        int size = 0;
-        Map<String, List<IRecord>> allRecords = queryResult.getRecords();
-
-        for (List<IRecord> valueList : allRecords.values()) {
-            size += valueList.size();
-        }
-        return size;
-    }
+//    /**
+//     * @param queryResult Query result to process.
+//     * @return Total no of records present in query set (i.e for all services)
+//     */
+//    public static int getNoOfRecords(IQueryResult queryResult) {
+//        int size = 0;
+//        Map<String, List<IRecord>> allRecords = queryResult.getRecords();
+//
+//        for (List<IRecord> valueList : allRecords.values()) {
+//            size += valueList.size();
+//        }
+//        return size;
+//    }
 
     /**
      * @param queryResult Query result to process.
      * @return List of attributes from query result
      */
-    public static List<AttributeInterface> getAttributeList(IQueryResult queryResult) {
+    public static List<AttributeInterface> getAttributeList(IQueryResult<IRecord> queryResult) {
         Map<String, List<IRecord>> allRecords = queryResult.getRecords();
         List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
         for (List<IRecord> recordList : allRecords.values()) {
@@ -496,35 +493,33 @@ public class Utility {
     }
 
     /**
-     * get the specified resource first look into the cab2b.home otherwise look
-     * into the classpath
-     * 
+     * Get the specified resource first look into the cab2b.home otherwise look into the classpath
      * @param resource the name of the resource
      * @return the URL for the resource
      * @throws MalformedURLException
      */
     public static URL getResource(String resource) {
-
         String home = System.getProperty("cab2b.home");
-
         File file = new File(home + "/conf", resource);
         if (file.exists()) {
             try {
-
-                return file.toURL();
-
+                return file.toURI().toURL();
             } catch (MalformedURLException e) {
                 Logger.out.error("File not found in cab2b_home, will use default file ", e);
             }
         }
-
         // is there a better way of getting a non-null class loader ?
         ClassLoader loader = Utility.class.getClassLoader();
         return loader.getResource(resource);
-
     }
 
-    public static Collection executeHQL(String queryName, List<Object> values) throws HibernateException {
+    /**
+     * @param queryName
+     * @param values
+     * @return
+     * @throws HibernateException
+     */
+    public static Collection<?> executeHQL(String queryName, List<Object> values) throws HibernateException {
 
         Session session = DBUtil.currentSession();
         Query q = session.getNamedQuery(queryName);
@@ -548,8 +543,12 @@ public class Utility {
         return q.list();
     }
 
-    public static Collection executeHQL(String queryName) throws HibernateException {
-        List<Object> values = null;
-        return executeHQL(queryName, values);
+    /**
+     * @param queryName
+     * @return
+     * @throws HibernateException
+     */
+    public static Collection<?> executeHQL(String queryName) throws HibernateException {
+        return executeHQL(queryName, null);
     }   
 }
