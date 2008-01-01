@@ -53,6 +53,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bStandardFonts;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
+import edu.wustl.cab2b.client.ui.query.Utility;
 
 /**
  * Each JPageElement should know its pageIndex(String) and index in that page.
@@ -112,12 +113,12 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         initGUI();
         initListeners();
         this.setMinimumSize(new Dimension(0, (int) this.getPreferredSize().getHeight() + 5));
-        //this.setPreferredSize(new Dimension(500, (int) this.getPreferredSize().getHeight() + 5));
     }
 
     private void initListeners() {
-        if (pagination != null)
+        if (pagination != null) {
             pagination.addPropertyChangeListener("isSelectable", this);
+        }
     }
 
     public JPagination getPagination() {
@@ -147,7 +148,9 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
             description = "";
         }
         descriptionLabel = new Cab2bLabel(description);
-        descriptionLabel.setToolTipText(getWrappedText(description));
+        StringBuffer toolTipText = new StringBuffer();
+        toolTipText.append("<HTML><P>" + Utility.getWrappedText(description, 75) + "</P></HTML>");
+        descriptionLabel.setToolTipText(toolTipText.toString());
 
         if (description.length() > descLength) {
             String textDsc = description.substring(0, descLength) + "...";
@@ -191,54 +194,6 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
     }
 
     /**
-     * Method to wrap the text and send it accross
-     * @return
-     */
-    private String getWrappedText(String text) {
-        StringBuffer wrappedText = new StringBuffer();
-        wrappedText.append("<HTML><P>");
-        String currentString = null;
-        int currentStart = 0;
-        int offset = 75;
-        int strLen = 0;
-        int len = 0;
-
-        while (currentStart < text.length() && text.length() > offset) {
-            currentString = text.substring(currentStart, (currentStart + offset));
-            strLen += currentString.length() + len;
-            wrappedText.append(currentString);
-
-            int index = text.indexOf(" ", (currentStart + offset));
-            if (index == -1) {
-                index = text.indexOf(".", (currentStart + offset));
-            }
-            if (index == -1) {
-                index = text.indexOf(",", (currentStart + offset));
-            }
-            if (index != -1) {
-                len = index - strLen;
-                currentString = text.substring((currentStart + offset), (currentStart + offset + len));
-                wrappedText.append(currentString);
-                wrappedText.append("<BR>");
-            } else {
-                if (currentStart == 0) {
-                    currentStart = offset;
-                }
-                wrappedText.append(text.substring(currentStart));
-                return wrappedText.toString();
-            }
-
-            currentStart += offset + len;
-            if ((currentStart + offset + len) > text.length()) {
-                break;
-            }
-        }
-        wrappedText.append(text.substring(currentStart));
-        wrappedText.append("</P></HTML>");
-        return wrappedText.toString();
-    }
-
-    /**
      * Returns true if this is selected, else false.
      * @return true if selected
      */
@@ -251,14 +206,13 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
      * Create a PageSelectionEvent and fire an selectionChangedEvent to JPagination.
      */
     public void actionPerformed(ActionEvent e) {
-
-        if (pageElement.isSelected())
+        if (pageElement.isSelected()) {
             pageElement.setSelected(false);
-        else
+        } else {
             pageElement.setSelected(true);
+        }
 
         PageSelectionEvent selectionEvent = new PageSelectionEvent(this, elementIndex);
-
         pagination.fireSelectionValueChanged(selectionEvent);
     }
 

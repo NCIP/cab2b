@@ -98,7 +98,7 @@ public class Utility {
     }
 
     /**
-     * This method returens number of records present in a query result.
+     * This method returns number of records present in a query result.
      * @param queryResult
      * @return
      */
@@ -124,7 +124,7 @@ public class Utility {
         }
         return outputEntity;
     }
-    
+
     /**
      * This method returns the entity for the given list of records.
      * @param records
@@ -136,18 +136,18 @@ public class Utility {
         }
         return null;
     }
-    
+
     public static String getAttributeCDEDetails(AttributeInterface attribute) {
-        return getAttributeCDEDetails(attribute,75);
+        return getAttributeCDEDetails(attribute, 75);
     }
-    
-    public static String getAttributeCDEDetails(AttributeInterface attribute,int offset) {
+
+    public static String getAttributeCDEDetails(AttributeInterface attribute, int offset) {
         StringBuffer tooltip = new StringBuffer();
 
         String attributeDescription = attribute.getDescription();
         String wrappedDescription = "";
         if (attributeDescription != null) {
-            wrappedDescription = getWrappedDescription(attributeDescription,offset);
+            wrappedDescription = getWrappedText(attributeDescription, offset);
             tooltip.append("<P>" + wrappedDescription + "</P>");
         }
 
@@ -181,13 +181,12 @@ public class Utility {
 
         return tooltipString;
     }
-    
+
     /**
-     * Method to wrap the text and send it accross
-     * 
+     * Method to wrap the text and send it across
      * @return
      */
-    public static String getWrappedDescription(String text,int offset) {
+    public static String getWrappedText(String text, int offset) {
         StringBuffer wrappedText = new StringBuffer();
 
         String currentString = null;
@@ -226,35 +225,29 @@ public class Utility {
             }
         }
         wrappedText.append(text.substring(currentStart));
-        wrappedText.append("</P>");
         return wrappedText.toString();
     }
-    
-    public static boolean convertAllCategoryToDataCategory()
-    {
-        boolean result = true; 
-        CategoryBusinessInterface  categoryBusinessInterface = (CategoryBusinessInterface)Locator.getInstance().locate(EjbNamesConstants.CATEGORY_BEAN,CategoryHomeInterface.class);
-        DataCategoryBusinessInterface dataCategoryBusinessInterface = (DataCategoryBusinessInterface) Locator.getInstance().locate(EjbNamesConstants.DATACATEGORY_BEAN,DataCategoryHomeInterface.class);
+
+    public static boolean convertAllCategoryToDataCategory() {
+        boolean result = true;
+        CategoryBusinessInterface categoryBusinessInterface = (CategoryBusinessInterface) Locator.getInstance().locate(
+                                                                                                                       EjbNamesConstants.CATEGORY_BEAN,
+                                                                                                                       CategoryHomeInterface.class);
+        DataCategoryBusinessInterface dataCategoryBusinessInterface = (DataCategoryBusinessInterface) Locator.getInstance().locate(
+                                                                                                                                   EjbNamesConstants.DATACATEGORY_BEAN,
+                                                                                                                                   DataCategoryHomeInterface.class);
         DataCategory dataCategory = null;
-        try
-        {
-         List<Category> categoryList = categoryBusinessInterface.getAllCategories();
-        System.out.println(categoryList.size());
-         for(Category category:categoryList)
-         {
-             dataCategory = new DataCategory(category.copy());
-          //   System.out.println(category);
-             dataCategoryBusinessInterface.saveDataCategory(dataCategory);
-             
-             
-         }
-         
-        }catch(RemoteException exception)
-        {
+        try {
+            List<Category> categoryList = categoryBusinessInterface.getAllCategories();
+            for (Category category : categoryList) {
+                dataCategory = new DataCategory(category.copy());
+                dataCategoryBusinessInterface.saveDataCategory(dataCategory);
+            }
+        } catch (RemoteException exception) {
             exception.printStackTrace();
             result = false;
         }
-        
+
         return result;
     }
 
