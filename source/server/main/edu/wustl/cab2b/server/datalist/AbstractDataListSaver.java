@@ -1,8 +1,5 @@
 package edu.wustl.cab2b.server.datalist;
 
-import static edu.wustl.cab2b.common.util.DataListUtil.ORIGIN_ENTITY_ID_KEY;
-import static edu.wustl.cab2b.common.util.DataListUtil.SOURCE_ENTITY_ID_KEY;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,12 +10,10 @@ import java.util.Map;
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.cab2b.common.util.AttributeInterfaceComparator;
-import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 
 /**
  * Skeletal implementation of a {@link DataListSaver}. A concrete
@@ -65,7 +60,7 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
      * @see edu.wustl.cab2b.server.datalist.DataListSaver#initialize(edu.common.dynamicextensions.domaininterface.EntityInterface)
      */
     public void initialize(EntityInterface oldEntity) {
-        this.newEntity = createNewEntity(oldEntity);
+        this.newEntity = DataListUtil.createNewEntity(oldEntity);
         populateNewEntity(oldEntity);
         setInitialized(true);
     }
@@ -148,26 +143,7 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
         return this.newEntity;
     }
 
-    private EntityInterface createNewEntity(EntityInterface oldEntity) {
-        EntityInterface newEntity = getDomainObjectFactory().createEntity();
-        EntityGroupInterface dataListEntityGroup = DataListUtil.getDatalistEntityGroup();
-        newEntity.addEntityGroupInterface(dataListEntityGroup);
-        dataListEntityGroup.addEntity(newEntity);
-
-        newEntity.setName(oldEntity.getName());
-
-        DynamicExtensionUtility.addTaggedValue(newEntity, ORIGIN_ENTITY_ID_KEY,
-                                               getOriginEntityId(oldEntity).toString());
-        DynamicExtensionUtility.addTaggedValue(newEntity, SOURCE_ENTITY_ID_KEY, oldEntity.getId().toString());
-
-        DynamicExtensionUtility.addTaggedValue(newEntity,
-                                               edu.wustl.cab2b.common.util.Constants.ENTITY_DISPLAY_NAME,
-                                               edu.wustl.cab2b.common.util.Utility.getDisplayName(oldEntity));
-        addVirtualAttributes(newEntity);
-
-        return newEntity;
-    }
-
+  
     private Long getOriginEntityId(EntityInterface oldEntity) {
         return edu.wustl.cab2b.common.util.DataListUtil.getOriginEntity(oldEntity).getId();
     }
