@@ -16,8 +16,7 @@ public class TreeNode<T> {
 
     public TreeNode<T> addChildValue(T value) {
         TreeNode<T> child = new TreeNode<T>(value);
-        getChildren().add(child);
-        child.setParent(this);
+        addChild(child);
         return child;
     }
 
@@ -41,6 +40,7 @@ public class TreeNode<T> {
 
     public void addChild(TreeNode<T> child) {
         getChildren().add(child);
+        child.setParent(this);
     }
 
     /**
