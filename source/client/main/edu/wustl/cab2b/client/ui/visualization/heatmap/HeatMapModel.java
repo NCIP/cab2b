@@ -3,18 +3,16 @@
  */
 package edu.wustl.cab2b.client.ui.visualization.heatmap;
 
-import java.awt.Dimension;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Observable;
 
 import org.genepattern.clustering.hierarchical.ArrayTreePanel;
 import org.genepattern.clustering.hierarchical.GeneTreePanel;
-import org.genepattern.clustering.hierarchical.Node;
 import org.genepattern.data.expr.ExpressionData;
 import org.genepattern.data.expr.IExpressionData;
 import org.genepattern.data.expr.MetaData;
 import org.genepattern.data.matrix.DoubleMatrix2D;
+import org.genepattern.data.matrix.ObjectMatrix2D;
 
 import edu.wustl.cab2b.client.ui.viewresults.BDQTableModel;
 import edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface;
@@ -97,72 +95,6 @@ public class HeatMapModel extends Observable {
         return geneTreePanel;
     }
 
-    private ArrayTreePanel generateTreePanel(int noOfLeafNodes) {
-        Map<String, Node> idVsNodeMap = new HashMap<String, Node>();
-        Node[] leafNodeArray = new Node[noOfLeafNodes];
-        String[] leafNodeIds = new String[noOfLeafNodes];
-
-        for (int i = 0; i < noOfLeafNodes; i++) {
-            Node node = new Node(Integer.toString(i));
-            node.setIndex(i);
-            node.setMinIndex(i);
-            node.setMaxIndex(i);
-            idVsNodeMap.put(node.getId(), node);
-
-            leafNodeIds[i] = node.getId();
-            leafNodeArray[i] = node;
-        }
-        Node node = leafNodeArray[0];
-        for (int i = 1; i < noOfLeafNodes; i++) {
-            Node tempNode = new Node("_" + i, node, leafNodeArray[i], i + 1);
-            idVsNodeMap.put(tempNode.getId(), tempNode);
-            node = tempNode;
-        }
-
-        ArrayTreePanel sampleTree = new ArrayTreePanel(idVsNodeMap, node.getId(), leafNodeIds);
-        sampleTree.setYMax(node.getCorrelation());
-        sampleTree.setYMin(1);
-
-        Dimension dimension = sampleTree.getPreferredSize();
-        sampleTree.setPreferredSize(new Dimension(dimension.width, dimension.height + 10));
-        return sampleTree;
-    }
-
-    /**
-     * @param noOfLeafNodes
-     * @return
-     */
-    private GeneTreePanel generateGeneTreePanel(int noOfLeafNodes) {
-        Map<String, Node> idVsNodeMap = new HashMap<String, Node>();
-        Node[] leafNodeArray = new Node[noOfLeafNodes];
-        String[] leafNodeIds = new String[noOfLeafNodes];
-
-        for (int i = 0; i < noOfLeafNodes; i++) {
-            Node node = new Node(Integer.toString(i));
-            node.setIndex(i);
-            node.setMinIndex(i);
-            node.setMaxIndex(i);
-            idVsNodeMap.put(node.getId(), node);
-
-            leafNodeIds[i] = node.getId();
-            leafNodeArray[i] = node;
-        }
-        Node node = leafNodeArray[0];
-        for (int i = 1; i < noOfLeafNodes; i++) {
-            Node tempNode = new Node("_" + i, node, leafNodeArray[i], i + 1);
-            idVsNodeMap.put(tempNode.getId(), tempNode);
-            node = tempNode;
-        }
-        GeneTreePanel geneTree = new GeneTreePanel(idVsNodeMap, node.getId(), leafNodeIds);
-        geneTree.setXMin(node.getCorrelation());
-        geneTree.setXMax(1);
-
-        Dimension dimension = geneTree.getPreferredSize();
-        geneTree.setPreferredSize(new Dimension(dimension.width + 10, dimension.height));
-
-        return geneTree;
-    }
-
     /**
      * @param cols
      * @param rows
@@ -175,7 +107,7 @@ public class HeatMapModel extends Observable {
         }
 
         DoubleMatrix2D matrix = new DoubleMatrix2D(data, selectedRowNames, selectedColumnNames);
-        HashMap name2Matrices = new HashMap();
+        HashMap<String, ObjectMatrix2D> name2Matrices = new HashMap<String, ObjectMatrix2D>();
         ExpressionData expressionData = new ExpressionData(matrix, new MetaData(selectedRowNames.length),
                 new MetaData(selectedColumnNames.length), name2Matrices);
         return expressionData;
