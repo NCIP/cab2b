@@ -5,6 +5,7 @@ drop table if exists INTER_MODEL_ASSOCIATION;
 drop table if exists INTRA_MODEL_ASSOCIATION;
 drop table if exists ASSOCIATION;
 drop table if exists ID_TABLE;
+drop table if exists DATA_CATEGORY;
 
 /*INTERMEDIATE_PATH contains  ASSOCIATION(ASSOCIATION_ID) connected by underscore */
 create table PATH(
@@ -72,5 +73,11 @@ create table CAB2B_QUERY (
    ENTITY_ID bigint not null,
    primary key (IDENTIFIER)
 );
+create table DATA_CATEGORY (
+   ID bigint not null,
+   primary key (ID)
+);
+
 alter table OUTPUT_CLASS_URLS add index FKE131CD69A638FEFD (CAB2B_QUERY_ID), add constraint FKE131CD69A638FEFD foreign key (CAB2B_QUERY_ID) references CAB2B_QUERY (IDENTIFIER);
 alter table CAB2B_QUERY add index FKCC34AD9DBC7298A9 (IDENTIFIER), add constraint FKCC34AD9DBC7298A9 foreign key (IDENTIFIER) references QUERY (IDENTIFIER);
+alter table DATA_CATEGORY add index FK67A6F5F391B (ID), add constraint FK67A6F5F391B foreign key (ID) references CATEGORY (ID);
