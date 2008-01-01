@@ -4,16 +4,37 @@
     "-//Hibernate/Hibernate Mapping DTD 2.0//EN" 
     "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
 
-<hibernate-mapping>
-	<joined-subclass
-		name="edu.wustl.cab2b.common.category.DataCategory"
-		extends="edu.wustl.common.querysuite.metadata.category.Category"
-		table="data_category"
-		dynamic-update="false"
-		dynamic-insert="false"
-	>
-	<key
-		column="ID"
-	/>
-	 </joined-subclass>
+<hibernate-mapping auto-import="false">
+	 <joined-subclass
+            name="edu.wustl.cab2b.common.category.DataCategory"
+            extends="edu.wustl.common.querysuite.metadata.category.AbstractCategory"
+            table="DATA_CATEGORY"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="ID"
+        />
+
+	 <property
+            name="name"
+            type="string"
+            update="true"
+            insert="true"
+            column="name"
+            length="255"
+            unique="true"
+        />
+
+	 <property
+            name="description"
+            type="string"
+            update="true"
+            insert="true"
+            column="description"
+            length="255"
+        />
+
+       
+        </joined-subclass>
 </hibernate-mapping>

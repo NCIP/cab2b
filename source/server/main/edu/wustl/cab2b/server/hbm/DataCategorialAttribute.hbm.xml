@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 2.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping auto-import="false">
+
+  <joined-subclass
+            name="edu.wustl.cab2b.common.category.DataCategorialAttribute"
+            extends="edu.wustl.common.querysuite.metadata.category.AbstractCategorialAttribute"
+            table="DATA_CATEGORIAL_ATTRIBUTE"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="ID"
+        />
+
+        </joined-subclass>
+        
+</hibernate-mapping>        
