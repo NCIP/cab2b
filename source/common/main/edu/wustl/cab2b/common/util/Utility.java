@@ -551,4 +551,20 @@ public class Utility {
     public static Collection<?> executeHQL(String queryName) throws HibernateException {
         return executeHQL(queryName, null);
     }   
+    /**     
+     * This method replaces the occurrence of find string with replacement in original string. 
+     * @param original
+     * @param find
+     * @param replacement
+     * @return
+     */
+    public static String replaceAllWords(String original, String find, String replacement) {
+        for (int i = original.indexOf(find); i > -1;) {
+            String partBefore = original.substring(0, i);
+            String partAfter = original.substring(i + find.length());
+            original = partBefore + replacement + partAfter;
+            i = original.indexOf(find, i + 1);
+        }
+        return original;
+    }
 }

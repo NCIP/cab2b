@@ -49,7 +49,6 @@ final class DefaultQueryResultTransformer extends AbstractQueryResultTransformer
             populateRecord(singleRecordXml, record);
             res.add(record);
         }
-
         return res;
     }
 
@@ -75,7 +74,21 @@ final class DefaultQueryResultTransformer extends AbstractQueryResultTransformer
         int valStartIndex = attrStartIndex + searchStr.length();
         int endQuoteIndex = singleRecordXml.indexOf("\"", valStartIndex);
         String value = singleRecordXml.substring(valStartIndex, endQuoteIndex);
+        value = parseValueString(value);
         return value;
+    }
+
+    /**
+     * Replace special charactors found in string with appropriate values. 
+     * @param modify
+     * @return
+     */
+    public String parseValueString(String modify) {
+        modify = Utility.replaceAllWords(modify, "&amp", "&");
+        modify = Utility.replaceAllWords(modify, "&quot", "\"");
+        modify = Utility.replaceAllWords(modify, "&lt", "<");
+        modify = Utility.replaceAllWords(modify, "&gt", ">");
+        return modify;
     }
 
     /**
