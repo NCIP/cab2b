@@ -268,60 +268,6 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
 	}
 
 	/**
-	 * Returns the minimum dimensions needed to layout the <i>visible</i>
-	 * components contained in the specified target container.
-	 * 
-	 * @param target
-	 *            the component which needs to be laid out
-	 * @return the minimum dimensions to lay out the subcomponents of the
-	 *         specified container
-	 * @see #preferredLayoutSize
-	 * @see java.awt.Container
-	 * @see java.awt.Container#doLayout
-	 */
-	public Dimension minimumLayoutSize(Container target) {
-		synchronized (target.getTreeLock()) {
-			Dimension dim = new Dimension(0, 0);
-			Dimension rowDim = new Dimension(0, 0);
-			int nmembers = target.getComponentCount();
-			boolean firstVisibleComponent = true;
-			int tabIndex = 0;
-			Ruler ruler = calcTabs(target);
-
-			for (int i = 0; i < nmembers; i++) {
-				Component m = target.getComponent(i);
-				// if (m.isVisible()) {
-				if (isFirstInRow(m)) {
-					tabIndex = 0;
-					dim.width = Math.max(dim.width, rowDim.width);
-					dim.height += rowDim.height + vgap;
-					if (hasConstraint(m, PARAGRAPH_BREAK))
-						dim.height += 2 * vgap;
-					rowDim = new Dimension(0, 0);
-				}
-				if (hasConstraint(m, TAB_STOP))
-					rowDim.width = ruler.getTab(tabIndex++);
-				Dimension d = m.getMinimumSize();
-				rowDim.height = Math.max(rowDim.height, d.height);
-				if (firstVisibleComponent) {
-					firstVisibleComponent = false;
-				} else {
-					rowDim.width += hgap;
-				}
-				rowDim.width += d.width;
-				// }
-			}
-			dim.width = Math.max(dim.width, rowDim.width);
-			dim.height += rowDim.height;
-
-			Insets insets = getInsets(target);
-			dim.width += insets.left + insets.right;// + hgap * 2;
-			dim.height += insets.top + insets.bottom;// + vgap * 2;
-			return dim;
-		}
-	}
-
-	/**
 	 * Centers the elements in the specified row, if there is any slack.
 	 * 
 	 * @param target
