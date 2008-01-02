@@ -240,7 +240,7 @@ public class Utility {
         try {
             List<Category> categoryList = categoryBusinessInterface.getAllCategories();
             for (Category category : categoryList) {
-                dataCategory = new DataCategory(category.copy());
+                dataCategory = new DataCategory(category);
                 dataCategoryBusinessInterface.saveDataCategory(dataCategory);
             }
         } catch (RemoteException exception) {
