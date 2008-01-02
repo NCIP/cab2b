@@ -17,9 +17,6 @@ import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
-import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
-import edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery;
-import edu.wustl.common.querysuite.queryobject.util.QueryObjectProcessor;
 import edu.wustl.common.querysuite.queryobject.util.QueryUtility;
 
 /**
@@ -33,15 +30,21 @@ public class ParameterizedQueryDataModel {
 
     public ParameterizedQueryDataModel() {
         query = new Cab2bQuery();
-        
+
     }
 
-    public ParameterizedQueryDataModel(ICab2bQuery iQuery) {        
-        query = new Cab2bQuery(iQuery);
+    public ParameterizedQueryDataModel(ICab2bQuery iQuery) {
+        if (iQuery == null)
+            query = new Cab2bQuery();
+        else
+            query = new Cab2bQuery(iQuery);
     }
 
     public ParameterizedQueryDataModel(ICab2bParameterizedQuery query) {
-        this.query = new Cab2bQuery(query);
+        if (query == null)
+            this.query = new Cab2bQuery();
+        else
+            this.query = new Cab2bQuery(query);
     }
 
     public void setQuery(ICab2bParameterizedQuery query) {
@@ -53,22 +56,32 @@ public class ParameterizedQueryDataModel {
     }
 
     public String getQueryName() {
+        if (query == null)
+            return null;
         return query.getName();
     }
 
     public void setQueryName(String queryName) {
+        if (query == null)
+            return;
         query.setName(queryName);
     }
 
     public String getQueryDescription() {
+        if (query == null)
+            return null;
         return query.getDescription();
     }
 
     public void setQueryDescription(String description) {
+        if (query == null)
+            return;
         query.setDescription(description);
     }
 
     public Collection<IQueryEntity> getQueryEntities() {
+        if (query == null)
+            return null;
         return query.getConstraints().getQueryEntities();
     }
 
@@ -81,6 +94,9 @@ public class ParameterizedQueryDataModel {
     }
 
     public void addCondition(IExpressionId expressionID, ICondition newCondition) {
+        if (query == null || expressionID == null || newCondition == null)
+            return;
+
         IExpression expression = query.getConstraints().getExpression(expressionID);
         int noOfOperand = expression.numberOfOperands();
 
