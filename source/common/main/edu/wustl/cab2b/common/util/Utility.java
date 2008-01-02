@@ -107,20 +107,20 @@ public class Utility {
 
     }
 
-//    /**
-//     * Compares whether given searchPattern is present in passed searchString
-//     * 
-//     * @param searchPattern search Pattern to look for
-//     * @param searchString String which is to be searched
-//     * @return Returns TRUE if given searchPattern is present in searchString ,
-//     *         else return returns false.
-//     */
-//    public static boolean compareRegEx(String searchPattern, String searchString) {
-//        searchPattern = searchPattern.replace("*", ".*");
-//        Pattern pat = Pattern.compile(searchPattern, Pattern.CASE_INSENSITIVE);
-//        Matcher mat = pat.matcher(searchString);
-//        return mat.matches();
-//    }
+    //    /**
+    //     * Compares whether given searchPattern is present in passed searchString
+    //     * 
+    //     * @param searchPattern search Pattern to look for
+    //     * @param searchString String which is to be searched
+    //     * @return Returns TRUE if given searchPattern is present in searchString ,
+    //     *         else return returns false.
+    //     */
+    //    public static boolean compareRegEx(String searchPattern, String searchString) {
+    //        searchPattern = searchPattern.replace("*", ".*");
+    //        Pattern pat = Pattern.compile(searchPattern, Pattern.CASE_INSENSITIVE);
+    //        Matcher mat = pat.matcher(searchString);
+    //        return mat.matches();
+    //    }
 
     /**
      * Compares whether given searchPattern is present in passed searchString.
@@ -238,16 +238,17 @@ public class Utility {
         }
 
     }
-//RecordsTableModel.getColumnClass() has similar implementation.
-//    public static Class<?> getJavaType(AttributeInterface attribute) {
-//        DataType dataType = Utility.getDataType(attribute.getAttributeTypeInformation());
-//
-//        if (dataType.equals(DataType.Date)) {
-//            return DataType.String.getJavaType();
-//        }
-//
-//        return dataType.getJavaType();
-//    }
+
+    //RecordsTableModel.getColumnClass() has similar implementation.
+    //    public static Class<?> getJavaType(AttributeInterface attribute) {
+    //        DataType dataType = Utility.getDataType(attribute.getAttributeTypeInformation());
+    //
+    //        if (dataType.equals(DataType.Date)) {
+    //            return DataType.String.getJavaType();
+    //        }
+    //
+    //        return dataType.getJavaType();
+    //    }
 
     /**
      * @param attribute Check will be done for this Attribute.
@@ -448,19 +449,19 @@ public class Utility {
         return attributes;
     }
 
-//    /**
-//     * @param queryResult Query result to process.
-//     * @return Total no of records present in query set (i.e for all services)
-//     */
-//    public static int getNoOfRecords(IQueryResult queryResult) {
-//        int size = 0;
-//        Map<String, List<IRecord>> allRecords = queryResult.getRecords();
-//
-//        for (List<IRecord> valueList : allRecords.values()) {
-//            size += valueList.size();
-//        }
-//        return size;
-//    }
+    //    /**
+    //     * @param queryResult Query result to process.
+    //     * @return Total no of records present in query set (i.e for all services)
+    //     */
+    //    public static int getNoOfRecords(IQueryResult queryResult) {
+    //        int size = 0;
+    //        Map<String, List<IRecord>> allRecords = queryResult.getRecords();
+    //
+    //        for (List<IRecord> valueList : allRecords.values()) {
+    //            size += valueList.size();
+    //        }
+    //        return size;
+    //    }
 
     /**
      * @param queryResult Query result to process.
@@ -550,7 +551,8 @@ public class Utility {
      */
     public static Collection<?> executeHQL(String queryName) throws HibernateException {
         return executeHQL(queryName, null);
-    }   
+    }
+
     /**     
      * This method replaces the occurrence of find string with replacement in original string. 
      * @param original
@@ -559,6 +561,10 @@ public class Utility {
      * @return
      */
     public static String replaceAllWords(String original, String find, String replacement) {
+        if (original == null || find == null || replacement == null) {
+            return null;
+        }
+
         for (int i = original.indexOf(find); i > -1;) {
             String partBefore = original.substring(0, i);
             String partAfter = original.substring(i + find.length());
