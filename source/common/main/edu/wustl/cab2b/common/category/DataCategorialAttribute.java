@@ -11,6 +11,7 @@ import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
  * @hibernate.joined-subclass table="DATA_CATEGORIAL_ATTRIBUTE"
  * @hibernate.joined-subclass-key column="ID" 
  */
+
 public class DataCategorialAttribute extends AbstractCategorialAttribute implements Serializable {
 
     public DataCategorialAttribute() {
@@ -25,9 +26,9 @@ public class DataCategorialAttribute extends AbstractCategorialAttribute impleme
      * @param categorialAttribute
      */
     public DataCategorialAttribute(CategorialAttribute categorialAttribute) {
-        super();
-        this.setDeSourceClassAttributeId(categorialAttribute.getDeSourceClassAttributeId());
-        this.setSourceClassAttribute(categorialAttribute.getCategoryAttribute());
+        DataCategorialAttribute dataCategorialAttribute = new DataCategorialAttribute();
+        dataCategorialAttribute.setDeSourceClassAttributeId(categorialAttribute.getDeSourceClassAttributeId());
+        dataCategorialAttribute.setSourceClassAttribute(categorialAttribute.getCategoryAttribute());
     }
 
 }

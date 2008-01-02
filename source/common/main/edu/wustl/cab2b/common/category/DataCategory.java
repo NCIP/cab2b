@@ -1,27 +1,124 @@
+/**
+ * 
+ */
 package edu.wustl.cab2b.common.category;
 
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.common.querysuite.metadata.category.AbstractCategory;
 import edu.wustl.common.querysuite.metadata.category.Category;
 
-public class DataCategory extends Category {
-    private static final long serialVersionUID = 1L;
+/**
+ * @author 
+ *
+ * @hibernate.joined-subclass table="DATA_CATEGORY"
+ * @hibernate.joined-subclass-key column="ID" 
+ */
+public class DataCategory extends AbstractCategory<DataCategorialClass, DataCategory> implements Serializable {
 
-    /**
-     * Default Constructor
-     */
+    private String name;
+    
+    private String description;
+    
+    
     public DataCategory() {
 
     }
 
     /**
-     * DataCategory constructor  
+     * This constructor is used to create a DataCategory Object From Category Object.
+     * It copies all the values from category object to new datacategory object.
      * @param category
      */
     public DataCategory(Category category) {
-        this.setCategoryEntity(category.getCategoryEntity());
-        this.setDeEntityId(category.getDeEntityId());
-        this.setParentCategory(category.getParentCategory());
-        this.setRootClass(category.getRootClass());
-        this.setSubCategories(category.getSubCategories());
+
+        DataCategorialClass dataCategorialClass = new DataCategorialClass(category.getRootClass());
+        dataCategorialClass.setCategory(this);
+        this.setRootClass(dataCategorialClass);
+        Set<DataCategory> subDataCategorySet = new HashSet<DataCategory>();
+        Set<Category> subCategorySet = category.getSubCategories();
+        for (Category subCategory : subCategorySet) {
+            DataCategory newSubDataCategory = new DataCategory(subCategory);
+            newSubDataCategory.setParentCategory(this);
+            subDataCategorySet.add(newSubDataCategory);
+        }
+        this.setSubCategories(subDataCategorySet);
+
     }
 
+    /**
+     * This method returns the set of all the entityInterface object whose attributes are there in the
+     * CategorialAttribute collection of this datacategory. 
+     * @return 
+     */
+    public void getEntitySet(Set<EntityInterface> entitySet) {
+        DataCategorialClass dataCategorialClass = this.getRootClass();
+        EntityInterface entity = dataCategorialClass.getCategorialClassEntity();
+        entitySet.add(entity);
+        Set<DataCategorialClass> childrenCategorialCLass = dataCategorialClass.getChildren();
+        for (DataCategorialClass childCategorialClass : childrenCategorialCLass) {
+            entity = childCategorialClass.getCategorialClassEntity();
+            entitySet.add(entity);
+
+        }
+
+        return;
+    }
+    
+    
+    
+    
+    /**
+     * @return Returns the description.
+     * @hibernate.property name="description" column="description" type="string" length="255" unsaved-value="null"  
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description The description to set.
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * @return Returns the name.
+     * @hibernate.property name="name" column="name" type="string" length="255"  unique="true"
+     * 
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name The name to set.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * This method returns set of all the attributeInterface in the DataCategory.
+     */
+    public Set<DataCategorialAttribute> getDataCategorialAttributeCollection()
+    {
+        Set<DataCategorialAttribute> attributeCollection = new HashSet<DataCategorialAttribute>();
+        DataCategorialClass rootCategorialClass = this.getRootClass();
+        Set<DataCategorialAttribute> attributeSet =  rootCategorialClass.getCategorialAttributeCollection();
+        attributeCollection.addAll(attributeSet);
+        attributeSet.clear();
+        Set<DataCategorialClass> childrenCategorialCLass = rootCategorialClass.getChildren();
+        for (DataCategorialClass childCategorialClass : childrenCategorialCLass) {
+            attributeSet = childCategorialClass.getCategorialAttributeCollection();
+            attributeCollection.addAll(attributeSet);
+            attributeSet.clear();
+          }
+
+        return attributeCollection;
+    }
 }
