@@ -59,7 +59,7 @@ public class SQLQueryUtilTest extends TestCase {
      * This method tests functionality provided by {@link SQLQueryUtil}
      */
     public void testExecuteQuery() {
-        String selectSQL = "SELECT * from ID_TABLE WHERE NEXT_ASSOCIATION_ID > ?";
+        String selectSQL = "SELECT * from CAB2B_ID_TABLE WHERE NEXT_ASSOCIATION_ID > ?";
         PreparedStatement pStmt = null;
         try {
             pStmt = con.prepareStatement(selectSQL);

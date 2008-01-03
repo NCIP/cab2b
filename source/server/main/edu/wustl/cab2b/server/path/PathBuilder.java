@@ -429,19 +429,19 @@ public class PathBuilder {
     }
 
     /**
-     * Returns the next available ID from ID_TABLE which can be used to insert records in ASSOCIATION table.
-     * It also updates the ID_TABLE to mark next available ID as old id + no of associations.  
+     * Returns the next available ID from CAB2B_ID_TABLE which can be used to insert records in ASSOCIATION table.
+     * It also updates the CAB2B_ID_TABLE to mark next available ID as old id + no of associations.  
      * @param noOfAssociations No of associations you want to store.
      * @param connection database connection to use for firing SQLs.
      * @return Next available ID to insert records in ASSOCIATION table.
      */
     static synchronized Long getNextAssociationId(int noOfAssociations, Connection connection) {
-        String[][] result = SQLQueryUtil.executeQuery("select NEXT_ASSOCIATION_ID from ID_TABLE", connection);
+        String[][] result = SQLQueryUtil.executeQuery("select NEXT_ASSOCIATION_ID from CAB2B_ID_TABLE", connection);
         if (result.length != 1) {
-            throw new RuntimeException("Zero or more than one rows found in ID_TABLE");
+            throw new RuntimeException("Zero or more than one rows found in CAB2B_ID_TABLE");
         }
         Long nextId = Long.parseLong(result[0][0]);
-        String updateNextIdSql = "update ID_TABLE set NEXT_ASSOCIATION_ID = " + (nextId + noOfAssociations);
+        String updateNextIdSql = "update CAB2B_ID_TABLE set NEXT_ASSOCIATION_ID = " + (nextId + noOfAssociations);
 
         SQLQueryUtil.executeUpdate(updateNextIdSql, connection);
         return nextId;
