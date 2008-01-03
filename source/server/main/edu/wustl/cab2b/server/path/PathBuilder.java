@@ -93,7 +93,8 @@ public class PathBuilder {
         for (String applicationName : applicationNames) {
             Logger.out.info("Processing : " + applicationName);
             String path = PropertyLoader.getModelPath(applicationName);
-            storeModelAndGeneratePaths(path, applicationName, connection);
+            DomainModelParser parser = new DomainModelParser(path);
+            storeModelAndGeneratePaths(parser, applicationName, connection);
         }
         transformAndLoadPaths(connection);
 
@@ -121,7 +122,31 @@ public class PathBuilder {
     public static void loadSingleModel(Connection connection, String xmlFilePath, String applicationName) {
         new File(PATH_FILE_NAME).delete(); // Delete previously generated paths from file.
         Logger.out.info("Deleted the file : " + PATH_FILE_NAME);
-        storeModelAndGeneratePaths(xmlFilePath, applicationName, connection);
+        DomainModelParser parser = new DomainModelParser(xmlFilePath);
+        storeModelAndGeneratePaths(parser, applicationName, connection);
+        transformAndLoadPaths(connection);
+        EntityGroupInterface newGroup = shortNameVsEntityGroup.get(applicationName);
+        for (EntityGroupInterface group : shortNameVsEntityGroup.values()) {
+            if (!group.equals(newGroup)) {
+                storeInterModelConnections(newGroup, group, connection);
+            }
+        }
+    }
+    
+  
+    /**
+     * Builds all non-redundent paths for traversal between classes from a given domain model.
+     * This method is used to load models one at a time. 
+     * All inter model associations which current model has with already loaded models are also stored.
+     * It writes all paths to {@link PathConstants#PATH_FILE_NAME} and stores paths to database
+     * @param connection - Database connection to use to fire SQLs.
+     * @param parser DomainModelParser object
+     * @param applicationName Name of the application. The Entity Group will have this as its shoprt name.
+     */
+    public static void loadSingleModelFromParserObject(Connection connection, DomainModelParser parser, String applicationName) {
+        new File(PATH_FILE_NAME).delete(); // Delete previously generated paths from file.
+        Logger.out.info("Deleted the file : " + PATH_FILE_NAME);
+        storeModelAndGeneratePaths(parser, applicationName, connection);
         transformAndLoadPaths(connection);
         EntityGroupInterface newGroup = shortNameVsEntityGroup.get(applicationName);
         for (EntityGroupInterface group : shortNameVsEntityGroup.values()) {
@@ -131,15 +156,15 @@ public class PathBuilder {
         }
     }
 
+
     /**
      * Reads model present at given location and appends the generated paths to {@link PathConstants#PATH_FILE_NAME}
      * <b>NOTE : </b> Paths are appended to existing file (if any).
      * @param xmlFilePath The file system path from where the the domain model extract is present
      * @param applicationName Name of the application. The Entity Group will have this as its shoprt name.
      */
-    static void storeModelAndGeneratePaths(String xmlFilePath, String applicationName, Connection conn) {
+    static void storeModelAndGeneratePaths(DomainModelParser parser, String applicationName, Connection conn) {
         Logger.out.info("Processing application : " + applicationName);
-        DomainModelParser parser = new DomainModelParser(xmlFilePath);
         DomainModelProcessor processor = new DomainModelProcessor(parser, applicationName);
         Logger.out.info("Loaded the domain model of application : " + applicationName
                 + " to database. Generating paths...");
@@ -152,7 +177,7 @@ public class PathBuilder {
 
         PathToFileWriter.writePathsToFile(paths, entityIds.toArray(new Long[0]), true);
     }
-
+  
     /**
      * Transforms paths into list of associations.s
      * @param connection Database connection to use.
