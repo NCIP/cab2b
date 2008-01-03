@@ -11,7 +11,7 @@ public interface PathConstants {
      * This represents whether a table is to be crteated in Dynamic extension when entity is persisted.
      * If TRUE then a storage table will be created.
      * If FLASE then storage table will not be created.
-     * Set this constant extrenally. This is by default FALSE
+     * Set this constant externally. This is by default FALSE
      */
     public static boolean CREATE_TABLE_FOR_ENTITY = false;
 
