@@ -14,10 +14,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
@@ -26,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -38,7 +35,6 @@ import org.jdesktop.swingx.action.LinkAction;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
-import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
@@ -258,7 +254,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         spreadSheetViewPanel.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
-                 
+
             }
         });
 
@@ -354,7 +350,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                     tabComponent.remove(detailViewPanel);
                 }
             });
-            detailViewPanel.add("right ", closeButton);        
+            detailViewPanel.add("right ", closeButton);
             detailViewPanel.add("br center hfill vfill", component);
             detailPanel = detailViewPanel;
             tabComponent.add(tabTitle, detailViewPanel);
@@ -402,6 +398,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                     }
                     titleNode.addChild(dataRow);
                 }
+
                 customCategoryDataList.getRootDataRow().addChild(titleNode);
 
                 // make a call to the server
@@ -447,6 +444,14 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         }
 
         public void actionPerformed(ActionEvent event) {
+            if (spreadSheetViewPanel.getSelectedColumns().length == 0) {
+                JOptionPane.showMessageDialog(ExperimentDataCategoryGridPanel.this,
+                                              "Please select record from table.", "Error",
+                                              JOptionPane.ERROR_MESSAGE);
+
+                return;
+
+            }
             SaveDataCategoryPanel saveDialogPanel = new SaveDataCategoryPanel(gridPanel);
 
         }
@@ -497,7 +502,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                 Component component = CommonUtils.getComponentByName(selectedTabPanel, "DataListDetailedPanel");
                 if (component instanceof DataListDetailedPanelInterface) {
                     DataListDetailedPanelInterface tabPanel = (DataListDetailedPanelInterface) component;
-                    
+
                     experimentDataCategoryGridPanel.setCurrentSpreadSheetViewPanel(tabPanel);
                     experimentDataCategoryGridPanel.setCurrentChartPanel(null);
                     List<String> columnNameList = tabPanel.getSelectedColumnNames();
@@ -523,7 +528,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             }
             updateUI();
         }
-    }  
+    }
 
     /**
      * @return the currentHeatMapPanel
