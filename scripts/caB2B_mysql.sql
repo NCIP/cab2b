@@ -1,11 +1,22 @@
+alter table CAB2B_DATA_CATEGORY drop foreign key FKFA70BDE8A2330820;
+alter table CAB2B_DATA_CATEGORY drop foreign key FKFA70BDE8DF75106F;
+alter table DATA_CATEGORIAL_ATTRIBUTE drop foreign key FK782EFCCB34ED55B7;
+alter table DATA_CATEGORIAL_CLASS drop foreign key FK13067327F94A5493;
+alter table OUTPUT_CLASS_URLS drop foreign key FKE131CD69A638FEFD;
+alter table CAB2B_QUERY drop foreign key FKCC34AD9DBC7298A9;
+
 drop table if exists CURATED_PATH; 
 drop table if exists CURATED_PATH_TO_PATH;
 drop table if exists PATH;
 drop table if exists INTER_MODEL_ASSOCIATION;
 drop table if exists INTRA_MODEL_ASSOCIATION;
 drop table if exists ASSOCIATION;
-drop table if exists ID_TABLE;
-drop table if exists DATA_CATEGORY;
+drop table if exists CAB2B_ID_TABLE;
+drop table if exists CAB2B_DATA_CATEGORY;
+drop table if exists DATA_CATEGORIAL_ATTRIBUTE;
+drop table if exists DATA_CATEGORIAL_CLASS;
+drop table if exists OUTPUT_CLASS_URLS;
+drop table if exists CAB2B_QUERY;
 
 /*INTERMEDIATE_PATH contains  ASSOCIATION(ASSOCIATION_ID) connected by underscore */
 create table PATH(
@@ -39,7 +50,7 @@ create table INTRA_MODEL_ASSOCIATION(
     DE_ASSOCIATION_ID bigint    not null,
     primary key (ASSOCIATION_ID) 
 );
-create table ID_TABLE(
+create table CAB2B_ID_TABLE(
     NEXT_ASSOCIATION_ID    bigint    not null,
     primary key (NEXT_ASSOCIATION_ID)
 );
@@ -56,12 +67,8 @@ create table CURATED_PATH_TO_PATH (
 	path_id BIGINT  references PATH (path_id),
 	primary key (curated_path_Id,path_id)
 );
-insert into ID_TABLE(NEXT_ASSOCIATION_ID) value(1);
+insert into CAB2B_ID_TABLE(NEXT_ASSOCIATION_ID) value(1);
 
-alter table OUTPUT_CLASS_URLS drop foreign key FKE131CD69A638FEFD;
-alter table CAB2B_QUERY drop foreign key FKCC34AD9DBC7298A9;
-drop table if exists OUTPUT_CLASS_URLS;
-drop table if exists CAB2B_QUERY;
 create table OUTPUT_CLASS_URLS (
    CAB2B_QUERY_ID bigint not null,
    OUTPUT_CLASS_URL varchar(255),
@@ -73,11 +80,25 @@ create table CAB2B_QUERY (
    ENTITY_ID bigint not null,
    primary key (IDENTIFIER)
 );
-create table DATA_CATEGORY (
+create table CAB2B_DATA_CATEGORY (
+   ID bigint not null,
+   description varchar(255),
+   name varchar(255) unique,
+   ROOT_CLASS_ID bigint unique,
+   primary key (ID)
+);
+create table DATA_CATEGORIAL_ATTRIBUTE (
    ID bigint not null,
    primary key (ID)
 );
-
+create table DATA_CATEGORIAL_CLASS (
+   ID bigint not null,
+   primary key (ID)
+);
 alter table OUTPUT_CLASS_URLS add index FKE131CD69A638FEFD (CAB2B_QUERY_ID), add constraint FKE131CD69A638FEFD foreign key (CAB2B_QUERY_ID) references CAB2B_QUERY (IDENTIFIER);
 alter table CAB2B_QUERY add index FKCC34AD9DBC7298A9 (IDENTIFIER), add constraint FKCC34AD9DBC7298A9 foreign key (IDENTIFIER) references QUERY (IDENTIFIER);
-alter table DATA_CATEGORY add index FK67A6F5F391B (ID), add constraint FK67A6F5F391B foreign key (ID) references CATEGORY (ID);
+alter table CAB2B_DATA_CATEGORY add index FKFA70BDE8A2330820 (ID), add constraint FKFA70BDE8A2330820 foreign key (ID) references ABSTRACT_CATEGORY (ID);
+alter table CAB2B_DATA_CATEGORY add index FKFA70BDE8DF75106F (ROOT_CLASS_ID), add constraint FKFA70BDE8DF75106F foreign key (ROOT_CLASS_ID) references DATA_CATEGORIAL_CLASS (ID);
+alter table DATA_CATEGORIAL_ATTRIBUTE add index FK782EFCCB34ED55B7 (ID), add constraint FK782EFCCB34ED55B7 foreign key (ID) references ABSTRACT_CATEGORIAL_ATTRIBUTE (ID);
+alter table DATA_CATEGORIAL_CLASS add index FK13067327F94A5493 (ID), add constraint FK13067327F94A5493 foreign key (ID) references ABSTRACT_CATEGORIAL_CLASS (IDENTIFIER);
+
