@@ -121,4 +121,14 @@ public class DataCategory extends AbstractCategory<DataCategorialClass, DataCate
 
         return attributeCollection;
     }
+    
+    /**
+     * @return the rootClass
+     * 
+     * @hibernate.many-to-one column="ROOT_CLASS_ID" class="edu.wustl.cab2b.common.category.DataCategorialClass" unique="true" cascade="all" lazy="false"
+     */
+    public DataCategorialClass getRootClass()
+    {
+        return rootClass;
+    }
 }

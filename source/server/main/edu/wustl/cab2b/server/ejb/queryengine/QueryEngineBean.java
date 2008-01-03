@@ -4,7 +4,8 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
 
-import net.sf.hibernate.HibernateException;
+import org.hibernate.HibernateException;
+
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;

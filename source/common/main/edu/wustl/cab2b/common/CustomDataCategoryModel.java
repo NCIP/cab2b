@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.hibernate.HibernateException;
+import org.hibernate.HibernateException;
 
 public class CustomDataCategoryModel implements Serializable {
 

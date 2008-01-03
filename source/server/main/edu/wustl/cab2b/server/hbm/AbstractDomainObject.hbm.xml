@@ -2,9 +2,9 @@
 
 <!DOCTYPE hibernate-mapping PUBLIC
     "-//Hibernate/Hibernate Mapping DTD 2.0//EN" 
-    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping>
+<hibernate-mapping default-lazy="false">
     <class
         name="edu.wustl.cab2b.common.domain.AbstractDomainObject"
         table="CAB2B_ABSTRACT_DOMAIN_OBJECT"
@@ -33,6 +33,11 @@
             length="50"
         />
 
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-AbstractDomainObject.xml
+            containing the additional properties and place it in your merge dir.
+        -->
 
         <joined-subclass
             name="edu.wustl.cab2b.common.domain.AdditionalMetadata"
@@ -58,7 +63,7 @@
             update="true"
             insert="true"
             column="DESCRIPTION"
-            length="50"
+            length="255"
         />
 
         <property
@@ -76,41 +81,7 @@
             insert="true"
             column="LAST_UPDATED_ON"
         />
-		
-		<joined-subclass
-            name="edu.wustl.cab2b.common.domain.DataListMetadata"
-            table="CAB2B_DATA_LIST"
-            dynamic-update="false"
-            dynamic-insert="false"
-        >
 
-        <key
-            column="DL_ID"
-        />
-      
-        <set name="entityIds" table="CAB2B_DATALIST_ENTITY">
-		    <key column="DATALIST_METADATA_ID"/>
-		    <element column="ENTITY_ID" type="long" not-null="true"/>
-		</set>
-		
-        <property
-            name="customDataCategory"
-            type="boolean"
-            update="true"
-            insert="true"
-            column="CUSTOM_DATA_CATEGORY"
-        />
-        
-        <property
-            name="rootEntityId"
-            type="long"
-            update="true"
-            insert="true"
-            column="ROOT_ENTITY_ID"
-        />
-        
-		</joined-subclass>
-		
         <joined-subclass
             name="edu.wustl.cab2b.common.domain.ExperimentGroup"
             table="CAB2B_EXPERIMENT_GROUP"
@@ -171,8 +142,55 @@
         </set>
 
         </joined-subclass>
-        
-        
+        <joined-subclass
+            name="edu.wustl.cab2b.common.domain.DataListMetadata"
+            table="CAB2B_DATA_LIST"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="DL_ID"
+        />
+
+        <set
+            name="entityIds"
+            table="CAB2B_DATALIST_ENTITY"
+            lazy="false"
+            inverse="false"
+            cascade="none"
+            sort="unsorted"
+        >
+
+              <key
+                  column="DATALIST_METADATA_ID"
+              />
+
+              <element
+                  column="ENTITY_ID"
+                  type="long"
+                  not-null="true"
+                  unique="false"
+              />
+
+        </set>
+
+        <property
+            name="customDataCategory"
+            type="boolean"
+            update="true"
+            insert="true"
+            column="CUSTOM_DATA_CATEGORY"
+        />
+
+        <property
+            name="rootEntityId"
+            type="long"
+            update="true"
+            insert="true"
+            column="ROOT_ENTITY_ID"
+        />
+
+        </joined-subclass>
         <joined-subclass
             name="edu.wustl.cab2b.common.domain.Experiment"
             table="CAB2B_EXPERIMENT"
@@ -203,8 +221,8 @@
               />
 
         </set>
-	
-		<set
+
+        <set
             name="dataListMetadataCollection"
             table="CAB2B_EXP_DLMETADATA_MAPPING"
             lazy="false"

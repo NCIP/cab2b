@@ -1,14 +1,13 @@
 <?xml version="1.0"?>
-
 <!DOCTYPE hibernate-mapping PUBLIC
-    "-//Hibernate/Hibernate Mapping DTD 2.0//EN" 
-    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping auto-import="false">
+<hibernate-mapping auto-import="false" default-lazy="false">
 	 <joined-subclass
             name="edu.wustl.cab2b.common.category.DataCategory"
             extends="edu.wustl.common.querysuite.metadata.category.AbstractCategory"
-            table="DATA_CATEGORY"
+            table="CAB2B_DATA_CATEGORY"
             dynamic-update="false"
             dynamic-insert="false"
         >
@@ -16,7 +15,16 @@
             column="ID"
         />
 
-	 <property
+        <property
+            name="description"
+            type="string"
+            update="true"
+            insert="true"
+            column="description"
+            length="255"
+        />
+
+        <property
             name="name"
             type="string"
             update="true"
@@ -26,15 +34,17 @@
             unique="true"
         />
 
-	 <property
-            name="description"
-            type="string"
+        <many-to-one
+            name="rootClass"
+            class="edu.wustl.cab2b.common.category.DataCategorialClass"
+            cascade="all"
+            outer-join="auto"
             update="true"
             insert="true"
-            column="description"
-            length="255"
+            column="ROOT_CLASS_ID"
+            unique="true"
         />
 
-       
         </joined-subclass>
+
 </hibernate-mapping>

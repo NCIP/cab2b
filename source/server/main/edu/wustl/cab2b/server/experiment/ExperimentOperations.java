@@ -11,7 +11,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import net.sf.hibernate.HibernateException;
+import org.hibernate.HibernateException;
+
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
@@ -203,9 +204,8 @@ public class ExperimentOperations extends DefaultBizLogic {
 		}
 
 		// TODO we have to use HQL here temporarily since DAO.retrieve doesn't
-		// suiport
-		// where conditions on aggregate function like collection.size > 0, etc;
-		String hql1 = "from Experiment as Exp where Exp.experimentGroupCollection.size = 0";
+		// support where conditions on aggregate function like collection.size > 0, etc;
+/*		String hql1 = "from Experiment as Exp where Exp.experimentGroupCollection.size = 0";
 		try {
 			returner1 = dao.executeQuery(hql1, null, false, null);
 			System.out.println("returner1 exp :: " + returner1);
@@ -213,7 +213,7 @@ public class ExperimentOperations extends DefaultBizLogic {
 			exp.printStackTrace();
 		}
 
-		returner.addAll(returner1);
+		returner.addAll(returner1);*/
 
 		((AbstractDAO) dao).closeSession();
 

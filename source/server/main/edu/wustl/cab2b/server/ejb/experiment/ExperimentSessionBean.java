@@ -1,24 +1,16 @@
 package edu.wustl.cab2b.server.ejb.experiment;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import net.sf.hibernate.HibernateException;
-import edu.common.dynamicextensions.domaininterface.AssociationInterface;
+import org.hibernate.HibernateException;
+
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.common.dynamicextensions.entitymanager.EntityManager;
-import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
-import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.common.CustomDataCategoryModel;
-import edu.wustl.cab2b.common.IdName;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.exception.CheckedException;
@@ -26,8 +18,6 @@ import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.experiment.ExperimentOperations;
 import edu.wustl.common.exception.BizLogicException;
-import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
-import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
 

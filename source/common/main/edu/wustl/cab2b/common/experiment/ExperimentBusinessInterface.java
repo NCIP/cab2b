@@ -6,13 +6,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import net.sf.hibernate.HibernateException;
-
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.CustomDataCategoryModel;
-import edu.wustl.cab2b.common.IdName;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.common.exception.BizLogicException;

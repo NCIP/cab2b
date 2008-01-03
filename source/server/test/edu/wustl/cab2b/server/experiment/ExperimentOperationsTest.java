@@ -1,7 +1,9 @@
 package edu.wustl.cab2b.server.experiment;
 
 import junit.framework.TestCase;
-import net.sf.hibernate.HibernateException;
+
+import org.hibernate.HibernateException;
+
 import edu.wustl.common.util.dbManager.DAOException;
 
 public class ExperimentOperationsTest extends TestCase {

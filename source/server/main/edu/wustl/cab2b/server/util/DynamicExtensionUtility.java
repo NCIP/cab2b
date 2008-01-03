@@ -67,7 +67,7 @@ public class DynamicExtensionUtility {
             if (PathConstants.CREATE_TABLE_FOR_ENTITY) {
                 entity = entityManager.persistEntity(entity);
             } else {
-                entity = entityManager.persistEntityMetadata(entity, false);
+                entity = entityManager.persistEntityMetadata(entity, false, true);
             }
         } catch (DynamicExtensionsSystemException e) {
             throw new RuntimeException("Unable to persist Entity in Dynamic Extension", e,
@@ -440,17 +440,19 @@ public class DynamicExtensionUtility {
         return entityGroups;
 
     }
-  /** 
-  * @return associations with given entity as the target entity.
-  */
- public static Collection<AssociationInterface> getIncomingIntramodelAssociations(Long entityId) {
-     EntityInterface entity = EntityCache.getInstance().getEntityById(entityId);
-     try {
-         return EntityManager.getInstance().getIncomingAssociations(entity);
-     } catch (DynamicExtensionsSystemException e) {
-         throw new RuntimeException("Unable to get incoming associations from Dynamic Extension", e, DE_0004);
-     }
- }
+
+    /** 
+    * @return associations with given entity as the target entity.
+    */
+    public static Collection<AssociationInterface> getIncomingIntramodelAssociations(Long entityId) {
+        EntityInterface entity = EntityCache.getInstance().getEntityById(entityId);
+        try {
+            return EntityManager.getInstance().getIncomingAssociations(entity);
+        } catch (DynamicExtensionsSystemException e) {
+            throw new RuntimeException("Unable to get incoming associations from Dynamic Extension", e, DE_0004);
+        }
+    }
+
     /**
      * @param role Role to clone
      * @return the clone of the Role
