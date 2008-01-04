@@ -206,9 +206,16 @@
 		<mkdir dir="${client.jar.dir}" />
 		<mkdir dir="${client.jar.dir}/META-INF" />
 
+        <copy todir="${client.classes.dir}">
+			<fileset dir="${client.src}">
+				<include name="**/*.png" />
+			</fileset>
+        </copy>
+
 		<copy todir="${client.jar.dir}">
 			<fileset dir="${client.classes.dir}">
 				<include name="**/*.class" />
+				<include name="**/*.png" />
 			</fileset>
 			<fileset dir="${conf.dir}">
 				<include name="log4j.properties" />
