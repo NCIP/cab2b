@@ -120,17 +120,18 @@ public class PathBuilder {
      * @param applicationName Name of the application. The Entity Group will have this as its shoprt name.
      */
     public static void loadSingleModel(Connection connection, String xmlFilePath, String applicationName) {
-        new File(PATH_FILE_NAME).delete(); // Delete previously generated paths from file.
-        Logger.out.info("Deleted the file : " + PATH_FILE_NAME);
+       /* new File(PATH_FILE_NAME).delete(); // Delete previously generated paths from file.
+        Logger.out.info("Deleted the file : " + PATH_FILE_NAME);*/
         DomainModelParser parser = new DomainModelParser(xmlFilePath);
-        storeModelAndGeneratePaths(parser, applicationName, connection);
+        loadSingleModelFromParserObject(connection,parser,applicationName);
+      /*  storeModelAndGeneratePaths(parser, applicationName, connection);
         transformAndLoadPaths(connection);
         EntityGroupInterface newGroup = shortNameVsEntityGroup.get(applicationName);
         for (EntityGroupInterface group : shortNameVsEntityGroup.values()) {
             if (!group.equals(newGroup)) {
                 storeInterModelConnections(newGroup, group, connection);
             }
-        }
+        }*/
     }
     
   
