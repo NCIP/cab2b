@@ -241,12 +241,10 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         butApplyFilter = new javax.swing.JButton();
 
-        lblNullModel.setFont(new java.awt.Font("Tahoma", 0, 14));
         lblNullModel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblNullModel.setText("<html>Filter<u> NOT</u> Available!"); // NOI18N
+        lblNullModel.setText("Please Select a Column"); // NOI18N
         lblNullModel.setOpaque(true);
 
-        lblNoFilter.setFont(new java.awt.Font("Tahoma", 1, 18));
         lblNoFilter.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblNoFilter.setText("No Filter on Column"); // NOI18N
 
@@ -255,20 +253,19 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
 
         lstValues.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-
-            public int getSize() {
-                return strings.length;
-            }
-
-            public Object getElementAt(int i) {
-                return strings[i];
-            }
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
         });
         scpList.setViewportView(lstValues);
 
         pnlPattern.setLayout(new java.awt.GridBagLayout());
 
         tfPattern.setText(null);
+        tfPattern.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfPatternActionPerformed(evt);
+            }
+        });
         tfPattern.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 tfPatternFocusLost(evt);
@@ -277,6 +274,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 20);
         pnlPattern.add(tfPattern, gridBagConstraints);
 
         setFocusCycleRoot(true);
@@ -291,8 +289,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        pnlVVColumnName.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 5, 0, new java.awt.Color(255,
-                255, 255)));
+        pnlVVColumnName.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 5, 0, new java.awt.Color(255, 255, 255)));
         pnlVVColumnName.setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setText("  Filter on Column:"); // NOI18N
@@ -300,9 +297,6 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
         pnlVVColumnName.add(jLabel1, gridBagConstraints);
-
-        lblColName.setFont(new java.awt.Font("Arial", 1, 14));
-        lblColName.setForeground(new java.awt.Color(0, 128, 0));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.8;
@@ -377,9 +371,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
 
         pnlVerticalLayout.add(jPanel1, java.awt.BorderLayout.NORTH);
 
-        pnlFilterControlContainer.setBorder(javax.swing.BorderFactory.createMatteBorder(3, 0, 3, 0,
-                                                                                        new java.awt.Color(255,
-                                                                                                255, 255)));
+        pnlFilterControlContainer.setBorder(javax.swing.BorderFactory.createMatteBorder(3, 0, 3, 0, new java.awt.Color(255, 255, 255)));
         pnlFilterControlContainer.setLayout(new java.awt.BorderLayout());
         pnlVerticalLayout.add(pnlFilterControlContainer, java.awt.BorderLayout.CENTER);
 
@@ -396,7 +388,7 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 4, 13);
         pnlApply.add(butApplyFilter, gridBagConstraints);
 
         pnlVerticalLayout.add(pnlApply, java.awt.BorderLayout.SOUTH);
@@ -438,6 +430,10 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         applyFilter();
 
     }//GEN-LAST:event_butApplyFilterActionPerformed
+
+    private void tfPatternActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfPatternActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfPatternActionPerformed
 
     private void applyFilter() {
         //firePropertyChange(model.filterType, null, null);
@@ -537,53 +533,29 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup bgVV;
-
     private javax.swing.JButton butApplyFilter;
-
     private javax.swing.JLabel jLabel1;
-
     private javax.swing.JLabel jLabel2;
-
     private javax.swing.JLabel jLabel3;
-
     private javax.swing.JPanel jPanel1;
-
     private javax.swing.JLabel lblColName;
-
     private javax.swing.JLabel lblNoFilter;
-
     private javax.swing.JLabel lblNullModel;
-
     private javax.swing.JLabel lblPleaseWait;
-
     private javax.swing.JList lstValues;
-
     private javax.swing.JPanel pnlApply;
-
     private javax.swing.JPanel pnlFilterControlContainer;
-
     private javax.swing.JPanel pnlHorizontalLayout;
-
     private javax.swing.JPanel pnlPattern;
-
     private javax.swing.JPanel pnlVVColumnName;
-
     private javax.swing.JPanel pnlVVSelectFilter;
-
     private javax.swing.JPanel pnlVerticalLayout;
-
     private javax.swing.JRadioButton rbList;
-
     private javax.swing.JRadioButton rbNoFilter;
-
     private javax.swing.JRadioButton rbPattern;
-
     private javax.swing.JRadioButton rbRange;
-
     private javax.swing.JScrollPane scpList;
-
     private javax.swing.JTextField tfPattern;
-
     // End of variables declaration//GEN-END:variables
     class ModelListener implements PropertyChangeListener {
 

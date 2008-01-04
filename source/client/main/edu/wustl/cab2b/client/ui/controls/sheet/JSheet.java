@@ -646,6 +646,7 @@ public class JSheet extends javax.swing.JPanel {
     private javax.swing.JTable tblFixed;
 
     // End of variables declaration//GEN-END:variables
+
     public static void main(String[] args) {
         SheetTestFrame.main(args);
     }

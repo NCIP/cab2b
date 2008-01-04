@@ -308,7 +308,8 @@ public class ColumnFilterModel<T extends Comparable> {
     }
 
     private void setSampleValues$Post() {
-        setRangerBounds(sampleSortedValues.first(), sampleSortedValues.last());
+        if( sampleSortedValues.size() > 0)
+            setRangerBounds(sampleSortedValues.first(), sampleSortedValues.last());
         sampleSortedValuesAL = new ArrayList(sampleSortedValues);
     }
 
