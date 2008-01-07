@@ -2,9 +2,6 @@ package edu.wustl.cab2b.client.ui.viewresults;
 
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.DETAILS_COLUMN_IMAGE;
 
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -97,12 +94,10 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
             }
 
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-
                 firePropertyChange(SPREADSHEET_MODEL_INSTALLED, null, spreadsheet);
             }
 
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
-
                 firePropertyChange(SPREADSHEET_MODEL_UNINSTALLED, null, spreadsheet);
             }
 
@@ -139,6 +134,21 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
     }
 
     /**
+     * Method to get all records from spreadsheet table
+     * @return
+     */
+    public List<IRecord> getAllVisibleRecords() {
+        int rowCount = spreadsheet.getViewTableModel().getRowCount();
+        List<IRecord> selectedRecords = new ArrayList<IRecord>(rowCount);
+        for (int i = 0; i < rowCount && i < records.size(); i++) {
+            int recordNumber = spreadsheet.getViewTableModel().convertRowIndexToModel(i);
+
+            selectedRecords.add(records.get(recordNumber));
+        }
+        return selectedRecords;
+    }
+
+    /**
      * This method returns the current records present in the table after
      * applying any filtering.
      * 
@@ -148,7 +158,9 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
         int selectedRowCount = spreadsheet.getSelectedRows().length;
         List<IRecord> selectedRecords = new ArrayList<IRecord>(selectedRowCount);
         for (int i = 0; i < selectedRowCount && i < records.size(); i++) {
-            int recordNumber = spreadsheet.getSelectedRows()[i];
+
+            int recordNumber = spreadsheet.getViewTableModel().convertRowIndexToModel(
+                                                                                      spreadsheet.getSelectedRows()[i]);
             selectedRecords.add(records.get(recordNumber));
         }
         return selectedRecords;
