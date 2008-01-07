@@ -606,15 +606,8 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         miCut.setText("Cut"); // NOI18N
         popExtra.add(miCut);
 
-        lblReset.setText("Re"); // NOI18N
         lblReset.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-        lblReset.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lblResetMouseClicked(evt);
-            }
-        });
 
-        lblSelectAll.setText("S"); // NOI18N
         lblSelectAll.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
         lblSelectAll.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -776,11 +769,6 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
         }
 
     }//GEN-LAST:event_tblRowHeaderMouseClicked
-
-    private void lblResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblResetMouseClicked
-        // Do Select All..:
-        firePropertyChange(Common.REQUEST_RESET_ALL, 0, 1);
-    }//GEN-LAST:event_lblResetMouseClicked
 
     private void lblSelectAllMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblSelectAllMouseClicked
         // TODO add your handling code here:

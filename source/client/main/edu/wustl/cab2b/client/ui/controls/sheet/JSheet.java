@@ -229,7 +229,7 @@ public class JSheet extends javax.swing.JPanel {
     public int getSelectedColumn() {
         return consData.getSelectedColumn();
     }
-
+    
     public Object getValueAt(int row, int column) {
         return consData.getValueAt(row, column);
     }

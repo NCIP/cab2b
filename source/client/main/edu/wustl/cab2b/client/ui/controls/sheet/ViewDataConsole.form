@@ -242,16 +242,12 @@
     </Container>
     <Component class="javax.swing.JLabel" name="lblReset">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Re" noResource="true"/>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
             <EtchetBorder bevelType="0"/>
           </Border>
         </Property>
       </Properties>
-      <Events>
-        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lblResetMouseClicked"/>
-      </Events>
     </Component>
     <Container class="javax.swing.JPanel" name="pnlEmpty">
 
@@ -259,7 +255,6 @@
     </Container>
     <Component class="javax.swing.JLabel" name="lblSelectAll">
       <Properties>
-        <Property name="text" type="java.lang.String" value="S" noResource="true"/>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
             <EtchetBorder bevelType="0"/>
