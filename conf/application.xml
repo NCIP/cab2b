@@ -16,8 +16,8 @@
 	<module><java>commonpackage.jar</java></module>
 	<module><java>titli-washu-1.0.jar</java></module>
 	
-	<module><java>hibernate3.jar</java></module>
-	<module><java>ant-antlr-1.6.3.jar</java></module>
+	<!--module><java>hibernate3.jar</java></module>
+	<module><java>ant-antlr-1.6.3.jar</java></module-->
 	<module><java>antlr-2.7.5H3.jar</java></module>
 	
 	<module><java>dom4j-1.6.jar</java></module>
@@ -39,7 +39,7 @@
 	<module><java>xercesImpl.jar</java></module>
 	<module><java>xmlpublic.jar</java></module>
     <module><java>commons-collections-3.2.jar</java></module>
-
+    
 
 	<module><java>caGrid-1.0-fqp-client.jar</java></module>
 	<module><java>caGrid-1.0-fqp-common.jar</java></module>

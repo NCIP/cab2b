@@ -337,18 +337,20 @@
 		<copy todir="${ear.dir}" overwrite="true">
 			<fileset dir="lib/common">
 				<include name="**/*.jar" />
-				<exclude name="j2ee.jar" />
+				<exclude name="hibernate3.jar" />
+				<exclude name="ant-antlr-1.6.3.jar" />
 				<exclude name="jbossall-client.jar" />
 				<exclude name="commons-logging-1.0.4.jar" />
 				<exclude name="log4j-1.2.9.jar" />
-				<exclude name="jaxrpc.jar" />
-				<exclude name="oracleDriver.jar" />
-				<exclude name="mysql-connector-java-3.0.16-ga-bin.jar" />
-
 			</fileset>
 			<fileset dir="lib/server">
 				<include name="**/*.jar" />
 				<exclude name="commons-logging.jar" />
+				<exclude name="jaxrpc.jar" />
+				<!--exclude name="axis.jar" /--> 
+				<exclude name="jboss-j2ee.jar" />
+				<exclude name="oracleDriver.jar" />
+				<exclude name="mysql-connector-java-3.0.16-ga-bin.jar" />
 			</fileset>
 		</copy>
 		<ear basedir="${ear.dir}" destfile="${ear.file}" appxml="${conf.dir}/application.xml" includes="**/*.*" />
@@ -481,9 +483,9 @@
 			</fileset>
 		</copy>
 
-		<javac srcdir="${server.test}" destdir="${server.classes.dir}" fork="true" memoryMaximumSize="512m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
-		<javac srcdir="${common.test}" destdir="${common.classes.dir}" fork="true" memoryMaximumSize="512m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
-		<javac srcdir="${client.test}" destdir="${client.classes.dir}" fork="true" memoryMaximumSize="512m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
+		<javac srcdir="${server.test}" destdir="${server.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
+		<javac srcdir="${common.test}" destdir="${common.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
+		<javac srcdir="${client.test}" destdir="${client.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
 		<!-- for queryengine unit tests -->
 		<copy todir="${server.classes.dir}">
 			<fileset dir="${server.test}" includes="**/*.res" />
