@@ -194,6 +194,7 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
         this.add(experimentTitlePanel, BorderLayout.NORTH);
         experimentStackBox = new ExperimentStackBox(selectedExperiment, experimentDataCategoryGridPanel);
         experimentStackBox.setBorder(null);
+        experimentStackBox.revalidate();
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, experimentStackBox,
                 experimentDataCategoryGridPanel);
