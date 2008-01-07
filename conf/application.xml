@@ -14,7 +14,6 @@
 	<module><java>odmg.jar</java></module>
 	<module><java>struts.jar</java></module>
 	<module><java>commonpackage.jar</java></module>
-	<module><java>lucene-core-2.2.0.jar</java></module>
 	<module><java>titli-washu-1.0.jar</java></module>
 	
 	<module><java>hibernate3.jar</java></module>
