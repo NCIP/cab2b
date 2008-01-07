@@ -481,9 +481,9 @@
 			</fileset>
 		</copy>
 
-		<javac srcdir="${server.test}" destdir="${server.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
-		<javac srcdir="${common.test}" destdir="${common.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
-		<javac srcdir="${client.test}" destdir="${client.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
+		<javac srcdir="${server.test}" destdir="${server.classes.dir}" fork="true" memoryMaximumSize="512m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
+		<javac srcdir="${common.test}" destdir="${common.classes.dir}" fork="true" memoryMaximumSize="512m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
+		<javac srcdir="${client.test}" destdir="${client.classes.dir}" fork="true" memoryMaximumSize="512m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
 		<!-- for queryengine unit tests -->
 		<copy todir="${server.classes.dir}">
 			<fileset dir="${server.test}" includes="**/*.res" />
