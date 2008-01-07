@@ -145,7 +145,12 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
                     tabComponent.add("Custom ", filterPanel);
                     tabComponent.add("Applied ", jSheet.getFiltersViewConsole());
                     JLabel noFilterLabel = new Cab2bLabel("No Predefined Filter");
-                    noFilterLabel.setOpaque(false);
+                    noFilterLabel.setOpaque(true);
+                    noFilterLabel.setFocusable(false);
+                    noFilterLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+                    Font font = new Font(noFilterLabel.getFont().getFontName(), Font.BOLD,
+                            noFilterLabel.getFont().getSize());
+                    noFilterLabel.setFont(font);
                     tabComponent.add("Predefined ", noFilterLabel);
 
                     experimentStackBox.setFilterPanel(tabComponent);
@@ -158,7 +163,12 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
 
                 if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.SPREADSHEET_MODEL_UNINSTALLED)) {
                     JLabel noFilterLabel = new Cab2bLabel("No Filter");
-                    noFilterLabel.setOpaque(false);
+                    noFilterLabel.setOpaque(true);
+                    noFilterLabel.setFocusable(false);
+                    noFilterLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+                    Font font = new Font(noFilterLabel.getFont().getFontName(), Font.BOLD,
+                            noFilterLabel.getFont().getSize());
+                    noFilterLabel.setFont(font);
                     Cab2bPanel panel = new Cab2bPanel();
                     panel.setLayout(new BorderLayout());
                     panel.add(noFilterLabel);
