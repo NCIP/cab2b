@@ -6,8 +6,8 @@
 	<property file="conf/server.properties" />
 	<property file="build/unittest.properties" />
 
-	<property name="build.compiler" value="javac1.5" />
-	<property name="ant.build.javac.target" value="1.5" />
+	<!--property name="build.compiler" value="javac1.5" />
+	<property name="ant.build.javac.target" value="1.5" /-->
 	
 	<property name="jboss.common.lib.dir" location="${jboss.home}/server/default/lib" />
 	<property name="jboss.deploy.dir" location="${jboss.home}/server/default/deploy" />
@@ -171,7 +171,7 @@
 	<!-- ================================================================================== -->
 	<target name="compile.common" description="Compiles the common code without cleaning">
 		<mkdir dir="${common.classes.dir}" />
-		<javac srcdir="${common.src}" destdir="${common.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="common.classpath" failonerror="true" nowarn="on" target="1.5" />
+		<javac srcdir="${common.src}" destdir="${common.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="common.classpath" failonerror="true" nowarn="on"/>
 	</target>
 	<!-- ================================================================================== -->
 	<target name="compile.client" depends="compile.common" description="Compiles the client code without cleaning">
@@ -191,7 +191,7 @@
 				<include name="**/*.class" />
 			</fileset>
 		</copy>
-		<javac srcdir="${server.src}" destdir="${server.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="server.classpath" failonerror="true" nowarn="on" target="1.5" />
+		<javac srcdir="${server.src}" destdir="${server.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="server.classpath" failonerror="true" nowarn="on" />
 
 		<copy todir="${server.classes.dir}">
 			<fileset dir="${server.src}">
