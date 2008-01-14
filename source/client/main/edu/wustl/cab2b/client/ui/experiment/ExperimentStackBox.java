@@ -287,6 +287,8 @@ public class ExperimentStackBox extends Cab2bPanel {
         analyseDataPanel.setPreferredSize(new Dimension(250, 150));
         analyseDataPanel.setOpaque(false);
         analyseDataPanel.setBorder(null);
+        //added blank panel to do open/close action correctly 
+        analyseDataPanel.add(new Cab2bPanel());
         stackedBox.addBox("Analyze Data ", analyseDataPanel, ANALYZE_DATA, true);
 
         // Adding Visualize data panel
