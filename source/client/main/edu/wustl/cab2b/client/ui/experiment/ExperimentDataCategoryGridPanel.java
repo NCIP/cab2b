@@ -10,7 +10,6 @@ package edu.wustl.cab2b.client.ui.experiment;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -33,7 +30,6 @@ import org.jdesktop.swingx.LinkRenderer;
 import org.jdesktop.swingx.action.LinkAction;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -104,14 +100,10 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
     final public String[] ANALYSIS_TABLE_HEADERS = new String[] { "Data Category", "Analysis Title", "Date", "Status" };
 
-    /** Button to save data category */
-    private Cab2bButton saveDataCategoryButton;
-
     public static ArrayList<String> values = new ArrayList<String>();
 
     // fields used by Save Data Category functionality
     // private EntityInterface dataCategoryEntity;
-
     private String dataCategoryTitle;
 
     private DefaultSpreadSheetViewPanel spreadSheetViewPanel;
@@ -261,10 +253,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         analysisDataPanel = new Cab2bPanel();
         analysisDataPanel.setName("analysisDataPanel");
         analysisDataPanel.setBorder(null);
-
-        saveDataCategoryButton = new Cab2bButton("Save Data Category");
-        saveDataCategoryButton.setPreferredSize(new Dimension(160, 22));
-        saveDataCategoryButton.addActionListener(new SaveCategoryActionListener(this));
         this.setBorder(null);
 
         refreshUI();
@@ -278,22 +266,10 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         experimentDataPanel.setBorder(null);
         experimentDataPanel.add("br center hfill vfill", spreadSheetViewPanel);
 
-        Cab2bPanel northPanel = new Cab2bPanel(new RiverLayout(5, 5));
-        northPanel.add(saveDataCategoryButton);
-        northPanel.add("br", new JLabel(""));
-        northPanel.setBorder(null);
-        this.add(northPanel, BorderLayout.NORTH);
-
         //tabComponent.add("Experiment Data", experimentDataPanel);
         tabComponent.insertTab("Experiment Data", null, experimentDataPanel, null, 0);
         tabComponent.setBorder(null);
         this.add(tabComponent, BorderLayout.CENTER);
-
-        Cab2bPanel bottomPanel = new Cab2bPanel(new RiverLayout(5, 5));
-        // bottomPanel.add(prevButton);
-        bottomPanel.add("br", new JLabel(""));
-        bottomPanel.setBorder(null);
-        this.add(bottomPanel, BorderLayout.SOUTH);
     }
 
     /**
@@ -378,7 +354,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
             protected void doNonUILogic() throws RuntimeException {
 
-                List<IRecord> selectedRecords = spreadSheetViewPanel.getSelectedRecords();
+                List<IRecord> selectedRecords = spreadSheetViewPanel.getAllVisibleRecords();
                 EntityInterface outputEntity = Utility.getEntity(selectedRecords);
 
                 dataListMetadata = new DataListMetadata();
@@ -434,27 +410,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             }
         };
         swingWorker.start();
-    }
-
-    class SaveCategoryActionListener implements ActionListener {
-        private ExperimentDataCategoryGridPanel gridPanel;
-
-        public SaveCategoryActionListener(ExperimentDataCategoryGridPanel gridPanel) {
-            this.gridPanel = gridPanel;
-        }
-
-        public void actionPerformed(ActionEvent event) {
-            if (spreadSheetViewPanel.getSelectedColumns().length == 0) {
-                JOptionPane.showMessageDialog(ExperimentDataCategoryGridPanel.this,
-                                              "Please select record from table.", "Error",
-                                              JOptionPane.ERROR_MESSAGE);
-
-                return;
-
-            }
-            SaveDataCategoryPanel saveDialogPanel = new SaveDataCategoryPanel(gridPanel);
-
-        }
     }
 
     /**

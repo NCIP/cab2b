@@ -177,7 +177,7 @@ public class ExperimentStackBox extends Cab2bPanel {
      */
     private DefaultMutableTreeNode generateRootNode(Experiment experiment) {
         rootNode = new DefaultMutableTreeNode("Make it invisible");
-        DefaultMutableTreeNode CategoriesRoot = new DefaultMutableTreeNode("Experiment Data Categories");
+        DefaultMutableTreeNode CategoriesRoot = new DefaultMutableTreeNode("Data Categories");
         DefaultMutableTreeNode customCategoriesRoot = null;
 
         // for each datalist
@@ -235,9 +235,9 @@ public class ExperimentStackBox extends Cab2bPanel {
         datalistTree.setLeafIcon(new ImageIcon(loader.getResource(TREE_LEAF_NODE)));
         datalistTree.setBorder(null);
 
-        customCategoryButton = new Cab2bButton("Custom Data Category");
+        customCategoryButton = new Cab2bButton("Create Data Category");
         Cab2bPanel cab2bPanel = new Cab2bPanel();
-        customCategoryButton.setPreferredSize(new Dimension(170, 22));
+        customCategoryButton.setPreferredSize(new Dimension(160, 22));
         customCategoryButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 CustomDataCategoryModel customDataCategoryModel = null;
@@ -257,7 +257,6 @@ public class ExperimentStackBox extends Cab2bPanel {
             }
         });
         cab2bPanel.add(customCategoryButton);
-
         dataCategoryPanel = new Cab2bPanel(new RiverLayout(5, 5));
         dataCategoryPanel.add(cab2bPanel);
         dataCategoryPanel.add("br", datalistTree);
@@ -272,7 +271,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         treeViewScrollPane.getViewport().setBackground(Color.WHITE);
         treeViewScrollPane.setPreferredSize(new Dimension(250, 200));
         treeViewScrollPane.setBorder(null);
-        stackedBox.addBox("Select Data Category", treeViewScrollPane, SELECT_DATA_CATEGORY, false);
+        stackedBox.addBox("Experiment Data", treeViewScrollPane, SELECT_DATA_CATEGORY, false);
 
         // Adding Filter data category panel
         dataFilterPanel = new Cab2bPanel(new RiverLayout(0, 5));
@@ -282,33 +281,30 @@ public class ExperimentStackBox extends Cab2bPanel {
         dataFilterPanel.add(new ColumnFilterVerticalConsole());
         stackedBox.addBox("Filters", dataFilterPanel, FILTER_DATA, true);
 
-        // Adding Analyse data panel
-        analyseDataPanel = new Cab2bPanel(new RiverLayout(0, 5));
-        analyseDataPanel.setPreferredSize(new Dimension(250, 150));
-        analyseDataPanel.setOpaque(false);
-        analyseDataPanel.setBorder(null);
-        //added blank panel to do open/close action correctly 
-        analyseDataPanel.add(new Cab2bPanel());
-        stackedBox.addBox("Analyze Data ", analyseDataPanel, ANALYZE_DATA, true);
-
         // Adding Visualize data panel
         visualiseDataPanel = new Cab2bPanel(new RiverLayout(0, 5));
-        visualiseDataPanel.setPreferredSize(new Dimension(250, 200));
+        visualiseDataPanel.setPreferredSize(new Dimension(250, 100));
         visualiseDataPanel.setOpaque(false);
         visualiseDataPanel.setBorder(null);
-        stackedBox.addBox("Visualize Data ", visualiseDataPanel, VISUALIZE_DATA, true);
-
         visualiseDataPanel.removeAll();
         // Set the type of charts to be displayed.
         setBarChartLink();
         setLineChartLink();
         setScatterPlotLink();
         setHeatmapLink();
-        visualiseDataPanel.revalidate();
+        stackedBox.addBox("Visualize Data ", visualiseDataPanel, VISUALIZE_DATA, true);
+
+        // Adding Analyse data panel
+        analyseDataPanel = new Cab2bPanel(new RiverLayout(0, 5));
+        analyseDataPanel.setPreferredSize(new Dimension(250, 150));
+        analyseDataPanel.setOpaque(false);
+        analyseDataPanel.setBorder(null);
+        stackedBox.addBox("Analyze Data ", analyseDataPanel, ANALYZE_DATA, true);
 
         stackedBox.setPreferredSize(new Dimension(250, 500));
         stackedBox.setMinimumSize(new Dimension(250, 500));
         stackedBox.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
+        stackedBox.revalidate();
         this.add(stackedBox);
         updateUI();
     }
@@ -432,7 +428,7 @@ public class ExperimentStackBox extends Cab2bPanel {
     public void setAnalysisLinkEnable(boolean active) {
         if (analyseDataPanel == null)
             return;
-        
+
         if (analyseDataPanel.getComponent(analyseDataPanel.getComponentCount() - 1) instanceof Cab2bHyperlink) {
             ((Cab2bHyperlink) analyseDataPanel.getComponent(analyseDataPanel.getComponentCount() - 1)).setEnabled(active);
         }
@@ -447,14 +443,12 @@ public class ExperimentStackBox extends Cab2bPanel {
      */
     private void setVisulaizationToolLink(String toolType, URL iconUrl, ActionListener actionListener) {
         Cab2bHyperlink hyperlink = new Cab2bHyperlink();
-        hyperlink.setBounds(new Rectangle(5, 5, 5, 5));
         hyperlink.setText(toolType);
         hyperlink.setActionCommand(toolType);
 
         if (iconUrl != null) {
             hyperlink.setIcon(new ImageIcon(iconUrl));
         }
-
         hyperlink.addActionListener(actionListener);
         hyperlink.setEnabled(false);
         visualiseDataPanel.add("br", hyperlink);

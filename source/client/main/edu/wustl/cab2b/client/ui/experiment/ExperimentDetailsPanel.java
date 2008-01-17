@@ -3,13 +3,11 @@ package edu.wustl.cab2b.client.ui.experiment;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -20,8 +18,6 @@ import org.jdesktop.swingx.action.LinkAction;
 import org.jdesktop.swingx.decorator.AlternateRowHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterPipeline;
 
-import edu.wustl.cab2b.client.ui.RiverLayout;
-import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
@@ -116,7 +112,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
 
     private void initGUI() {
         this.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
-        
+
         expTable = new Cab2bTable(true, new Object[][] {}, tableHeader);
         HighlighterPipeline highlighters = new HighlighterPipeline();
         highlighters.addHighlighter(new AlternateRowHighlighter());
@@ -269,7 +265,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
             if (value != null) {
                 setText(value.toString());
             }
-            
+
             setSize(table.getColumnModel().getColumn(column).getWidth(), getPreferredSize().height + 5);
             if (table.getRowHeight(row) != getPreferredSize().height + 5) {
                 table.setRowHeight(row, getPreferredSize().height + 5);
