@@ -2,6 +2,7 @@ package edu.wustl.cab2b.client.ui.viewresults;
 
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.DETAILS_COLUMN_IMAGE;
 
+import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.table.AbstractTableModel;
@@ -17,6 +20,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.sheet.JSheet;
 import edu.wustl.cab2b.client.ui.experiment.ExperimentDataCategoryGridPanel;
+import edu.wustl.cab2b.client.ui.experiment.SaveDataCategoryPanel;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 
 /**
@@ -77,12 +81,39 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
         initializeGUI();
     }
 
+    /** onClicking show details of the selected row. */
+    class SaveCategoryActionListener extends AbstractAction {
+        ExperimentDataCategoryGridPanel gridPanel;
+
+        public SaveCategoryActionListener(ExperimentDataCategoryGridPanel expGridPanel) {
+            super("Save");
+            gridPanel = expGridPanel;
+        }
+
+        SaveCategoryActionListener() {
+            super("Save");
+        }
+
+        public void actionPerformed(ActionEvent event) {
+            SaveDataCategoryPanel saveDialogPanel = new SaveDataCategoryPanel(gridPanel);
+        }
+    }
+
     /**
      * Initailizes the UI components
      */
     private void initializeGUI() {
         this.setBorder(null);
         this.removeAll();
+
+        //show save category tool bar button only when this panel is opened in
+        //Experiment context
+        if (expGridPanel != null) {
+            Action saveCategoryAction = new SaveCategoryActionListener(expGridPanel);
+            List<Action> arrayList = new ArrayList<Action>();
+            arrayList.add(saveCategoryAction);
+            spreadsheet.setAdditionalToolbarActions(arrayList);
+        }
 
         spreadsheet.setReadOnlyDataModel(new RecordsTableModel(records));
         spreadsheet.addPropertyChangeListener(new ShowRecordDetailsListener());
