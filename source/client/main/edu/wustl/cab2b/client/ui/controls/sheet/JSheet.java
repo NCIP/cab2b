@@ -366,6 +366,10 @@ public class JSheet extends javax.swing.JPanel {
         scm.setRowInfos(alCols);
         scm.addPropertyChangeListener(lsnSheetConf);
 
+        //setting button looks on property sheet 
+        Common.setButtonsLooks(consSheetCust);
+        Common.setButtonsLooks(consColFilter);
+        
         //  Set Model to Sheet Customization Console...
         consSheetCust.setModel(scm);
         consFiltersView.setModel(scm);
@@ -500,24 +504,28 @@ public class JSheet extends javax.swing.JPanel {
         jPanel3 = new javax.swing.JPanel();
         pnlConsole = new javax.swing.JPanel();
         pnlDataView = new javax.swing.JPanel();
-        jPanel9 = new javax.swing.JPanel();
 
         tblFixed.setModel(new javax.swing.table.DefaultTableModel(
-                new Object[][] { { null, null, null, null }, { null, null, null, null }, { null, null, null, null }, { null, null, null, null } },
-                new String[] { "Title 1", "Title 2", "Title 3", "Title 4" }));
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
         tblFixed.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblFixedMouseClicked(evt);
             }
-
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 tblFixedMouseEntered(evt);
             }
-
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 tblFixedMousePressed(evt);
             }
-
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 tblFixedMouseReleased(evt);
             }
@@ -572,7 +580,6 @@ public class JSheet extends javax.swing.JPanel {
 
         pnlDataView.setLayout(new java.awt.BorderLayout());
         jPanel3.add(pnlDataView, java.awt.BorderLayout.CENTER);
-        jPanel3.add(jPanel9, java.awt.BorderLayout.SOUTH);
 
         add(jPanel3, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -612,39 +619,21 @@ public class JSheet extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton butDiaFilterClose;
-
     private javax.swing.JButton butDiaSheetCustClose;
-
     private javax.swing.JDialog diaConsSheetCust;
-
     private javax.swing.JDialog diaFilterConsole;
-
     private javax.swing.JDialog diaFiltersViewConsole;
-
     private javax.swing.JPanel jPanel1;
-
     private javax.swing.JPanel jPanel2;
-
     private javax.swing.JPanel jPanel3;
-
-    private javax.swing.JPanel jPanel9;
-
     private javax.swing.JPanel pnlConsole;
-
     private javax.swing.JPanel pnlDataView;
-
     private javax.swing.JPanel pnlFixedTblHangerRenderer;
-
     private javax.swing.JPanel pnlFixedTblHeader;
-
     private javax.swing.JPanel pnlFixedTblMGCellEditor;
-
     private javax.swing.JPanel pnlFixedTblMGCellRenderer;
-
     private javax.swing.JPanel pnlSheetCust;
-
     private javax.swing.JTable tblFixed;
-
     // End of variables declaration//GEN-END:variables
 
     public static void main(String[] args) {

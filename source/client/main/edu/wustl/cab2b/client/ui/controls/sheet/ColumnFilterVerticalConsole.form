@@ -291,6 +291,11 @@
             </Component>
             <Component class="javax.swing.JButton" name="butApplyFilter">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                  <FontInfo relative="true">
+                    <Font bold="false" component="butApplyFilter" property="font" relativeSize="true" size="0"/>
+                  </FontInfo>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Apply" noResource="true"/>
               </Properties>
               <Events>
