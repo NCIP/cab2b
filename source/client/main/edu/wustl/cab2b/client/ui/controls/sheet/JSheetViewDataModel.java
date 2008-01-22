@@ -47,6 +47,15 @@ public class JSheetViewDataModel extends AbstractTableModel {
         return compositeDataModel;
     }
 
+    @Override
+    public boolean isCellEditable(int viewRowIndex, int viewColumnIndex) {
+        int modelRowIdx = tblData.convertRowIndexToModel( viewRowIndex);
+        int modelColumnIdx = tblData.convertColumnIndexToModel( viewColumnIndex);
+        
+        return compositeDataModel.isCellEditable(viewRowIndex, viewColumnIndex);
+    }
+    
+    @Override
     public String getColumnName(int column) {
         return tblData.getColumnName(column);
     }

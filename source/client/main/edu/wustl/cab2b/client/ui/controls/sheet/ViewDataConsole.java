@@ -846,7 +846,7 @@ class ViewDataConsole extends javax.swing.JPanel implements PropertyChangeListen
     void doSelectAll() {
         //  Select All Rows in the view...
         extendSelectionsToAllColumns();
-        tblData.getSelectionModel().setSelectionInterval(0, tblData.getRowCount());
+        tblData.getSelectionModel().setSelectionInterval(0, tblData.getRowCount()-1);
     }
 
     /**
