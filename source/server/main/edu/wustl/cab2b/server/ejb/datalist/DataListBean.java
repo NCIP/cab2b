@@ -53,16 +53,27 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
      */
     public DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata)
             throws RemoteException {
-        return DataListOperationsController.saveDataList(rootDataRow, datalistMetadata);
+        return new DataListOperationsController().saveDataList(rootDataRow, datalistMetadata);
     }
 
     public List<IRecord> getEntityRecord(Long entityId) throws RemoteException {
-        return DataListOperationsController.getEntityRecords(entityId);
+        return new DataListOperationsController().getEntityRecords(entityId);
     }
-    
-    public DataListMetadata saveDataCategory(IdName rootEntityId,
-			Collection<AttributeInterface> selectedAttributeList,Long id, String name, Experiment experiment) throws RemoteException, CheckedException {
-        return DataListOperationsController.saveDataCategory(rootEntityId,selectedAttributeList, id, name, experiment);
+
+    public DataListMetadata saveCustomDataCategory(IdName rootEntityId,
+                                                   Collection<AttributeInterface> selectedAttributeList, Long id,
+                                                   String name, Experiment experiment) throws RemoteException,
+            CheckedException {
+        return new DataListOperationsController().saveCustomDataCategory(rootEntityId, selectedAttributeList, id,
+                                                                         name, experiment);
+    }
+
+    public DataListMetadata saveDataCategory(IDataRow rootRecordDataRow, DataListMetadata dataListMetadata,
+                                             List<AttributeInterface> oldAttribute,
+                                             List<AttributeInterface> newAttributes) throws RemoteException,
+                                             CheckedException {
+        return new DataListOperationsController().saveDataCategory(rootRecordDataRow, dataListMetadata,
+                                                                   oldAttribute, newAttributes);
     }
 
 }

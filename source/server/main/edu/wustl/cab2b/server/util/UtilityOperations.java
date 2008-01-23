@@ -51,6 +51,7 @@ public class UtilityOperations extends DefaultBizLogic {
             throw (new RuntimeException(e.getMessage(), e));
         }
     }
+
     /**
      * This method returns the list of tree set containing the unique record values for a given entity identifier.
      * Tree set stores the values in sorted order. 
@@ -60,17 +61,17 @@ public class UtilityOperations extends DefaultBizLogic {
      */
     public List<TreeSet<Comparable<?>>> getUniqueRecordValues(Long entityId) throws RemoteException {
         //getting record list
-        List<IRecord> entityRecordList = DataListOperationsController.getEntityRecords(entityId);
+        List<IRecord> entityRecordList = new DataListOperationsController().getEntityRecords(entityId);
         if (entityRecordList == null || entityRecordList.size() == 0) {
             return null;
         }
-        
+
         //initilising column value set
         ArrayList<TreeSet<Comparable<?>>> entityRecordValues = new ArrayList<TreeSet<Comparable<?>>>();
         for (int i = 0; i < entityRecordList.get(0).getAttributes().size(); i++) {
             entityRecordValues.add(i, new TreeSet<Comparable<?>>());
         }
-        
+
         int index = 0;
         for (IRecord entityRecord : entityRecordList) {
             List<AttributeInterface> attributeList = Utility.getAttributeList(entityRecord.getAttributes());

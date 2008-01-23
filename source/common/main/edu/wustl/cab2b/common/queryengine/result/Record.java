@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.cache.AbstractEntityCache;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.DataType;
@@ -44,15 +45,15 @@ public class Record implements IRecord {
         }
         this.attributesValues.put(attribute, value);
     }
-    
+
     public void putStringValueForAttribute(AttributeInterface attribute, String value) {
         if (!attributesValues.containsKey(attribute)) {
             throw new IllegalArgumentException("The attribute is invalid for this record.");
         }
-        this.attributesValues.put(attribute, convertValueToSpecificType(attribute,value));
-        
+        this.attributesValues.put(attribute, convertValueToSpecificType(attribute, value));
+
     }
-    
+
     private Object convertValueToSpecificType(AttributeInterface attribute, String value) {
         DataType dataType = Utility.getDataType(attribute.getAttributeTypeInformation());
         return dataType.convertValue(value);
@@ -70,42 +71,42 @@ public class Record implements IRecord {
         s.defaultWriteObject();
         AbstractEntityCache cache = AbstractEntityCache.getCache();
 
-        Map<String, Object> idValueMap = new HashMap<String, Object>();
-        boolean onlyIdsWritten = true;
+        Map<Object, Object> idValueMap = new HashMap<Object, Object>();
+
         for (Map.Entry<AttributeInterface, Object> entry : attributesValues.entrySet()) {
             AttributeInterface attribute = entry.getKey();
-            Long entityId = attribute.getEntity().getId();
-            if (!cache.isEntityPresent(entityId)) {
-                s.writeObject(attributesValues);
-                s.writeBoolean(false);
-                return;
+            EntityInterface entity = attribute.getEntity();
+
+            if (entity == null || !cache.isEntityPresent(entity.getId())) {
+                idValueMap.put(attribute, entry.getValue());
+            } else {
+                Long attributeId = attribute.getId();
+                idValueMap.put(entity.getId() + "_" + attributeId, entry.getValue());
             }
-            Long attributeId = attribute.getId();
-            idValueMap.put(entityId + "_" + attributeId, entry.getValue());
         }
         s.writeObject(idValueMap);
-        s.writeBoolean(onlyIdsWritten);
+        //        s.writeBoolean(true);
     }
 
     private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
         s.defaultReadObject();
         Map<?, ?> values = (Map<?, ?>) s.readObject();
-        boolean onlyIdsWritten = s.readBoolean();
 
-        if (!onlyIdsWritten) {
-            attributesValues = (Map<AttributeInterface, Object>) values;
-            return;
-        }
-        Map<String, String> idValues = (Map<String, String>) values;
+        //        Map<String, String> idValues = (Map<String, String>) values;
         AbstractEntityCache cache = AbstractEntityCache.getCache();
         attributesValues = new HashMap<AttributeInterface, Object>();
 
-        for (Map.Entry<String, String> entry : idValues.entrySet()) {
-            String[] key = entry.getKey().split("_");
-            Long entityId = Long.parseLong(key[0]);
-            Long attributeId = Long.parseLong(key[1]);
-            AttributeInterface attribute = cache.getEntityById(entityId).getAttributeByIdentifier(attributeId);
-            attributesValues.put(attribute, entry.getValue());
+        for (Map.Entry<?, ?> entry : values.entrySet()) {
+            Object keyObj = entry.getKey();
+            if (keyObj instanceof String) {
+                String[] key = ((String) keyObj).split("_");
+                Long entityId = Long.parseLong(key[0]);
+                Long attributeId = Long.parseLong(key[1]);
+                AttributeInterface attribute = cache.getEntityById(entityId).getAttributeByIdentifier(attributeId);
+                attributesValues.put(attribute, entry.getValue());
+            } else {
+                attributesValues.put((AttributeInterface) keyObj, entry.getValue());
+            }
         }
     }
 
@@ -117,6 +118,5 @@ public class Record implements IRecord {
             putValueForAttribute(attribute, record.getValueForAttribute(attribute));
         }
     }
-
 
 }
