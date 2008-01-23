@@ -85,12 +85,12 @@ public class CheckBoxTableModel extends AbstractTableModel {
         int numCols = getColumnCount();
 
         for (int i = 0; i < numRows; i++) {
-            System.out.print("    row " + i + ":");
+             
             for (int j = 0; j < numCols; j++) {
-                System.out.print("  " + m_data[i][j]);
+                 
             }
-            System.out.println();
+             
         }
-        System.out.println("--------------------------");
+         
     }
 }
