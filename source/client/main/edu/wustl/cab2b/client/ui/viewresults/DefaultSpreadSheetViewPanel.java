@@ -1,7 +1,5 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.DETAILS_COLUMN_IMAGE;
-
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -9,24 +7,31 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.table.AbstractTableModel;
 
+import edu.common.dynamicextensions.domain.Attribute;
+import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.sheet.JSheet;
+import edu.wustl.cab2b.client.ui.controls.sheet.JSheetViewDataModel;
 import edu.wustl.cab2b.client.ui.experiment.ExperimentDataCategoryGridPanel;
 import edu.wustl.cab2b.client.ui.experiment.SaveDataCategoryPanel;
+import edu.wustl.cab2b.client.ui.query.Utility;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
+import edu.wustl.cab2b.common.queryengine.result.RecordId;
 
 /**
  * This is the default panel to show in multiple records of entity,
  * 
- * @author rahul_ner
+ * @author rahul_ner/Deepak_Shingan
  * 
  */
 public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListDetailedPanelInterface {
@@ -48,8 +53,7 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
 
     public static final String DISABLE_ANALYSIS_LINK = "DISABLE_ANALYSIS_LINK";
 
-    private ImageIcon defaultCellImage = new ImageIcon(
-            this.getClass().getClassLoader().getResource(DETAILS_COLUMN_IMAGE));
+    private List<AttributeInterface> userDefinedAttributes = new ArrayList<AttributeInterface>();
 
     /**
      * List of records to be displayed
@@ -97,6 +101,10 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
         public void actionPerformed(ActionEvent event) {
             SaveDataCategoryPanel saveDialogPanel = new SaveDataCategoryPanel(gridPanel);
         }
+    }
+
+    public EntityInterface getOldRecordsEntity() {
+        return Utility.getEntity(records);
     }
 
     /**
@@ -165,18 +173,79 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
     }
 
     /**
-     * Method to get all records from spreadsheet table
-     * @return
+     * This method returns modified list of IRecords visible in Jsheet.
+     * All extra added columns also gets added in IRecords as a new 
+     * attributes along with all original record attributes. 
+     * @return 
      */
     public List<IRecord> getAllVisibleRecords() {
-        int rowCount = spreadsheet.getViewTableModel().getRowCount();
-        List<IRecord> selectedRecords = new ArrayList<IRecord>(rowCount);
-        for (int i = 0; i < rowCount && i < records.size(); i++) {
-            int recordNumber = spreadsheet.getViewTableModel().convertRowIndexToModel(i);
+        JSheetViewDataModel tableModel = spreadsheet.getViewTableModel();
+        int rowCount = tableModel.getRowCount();
+        if (rowCount <= 0) {
+            return null;
+        }
 
-            selectedRecords.add(records.get(recordNumber));
+        List<IRecord> selectedRecords = new ArrayList<IRecord>(rowCount);
+        //check if extra column added
+        if (isExtraColumnAdded()) {
+
+            //Add all attributes in a collection and pass it as an argument for new record           
+            Map<AttributeInterface, Object> mapAttributeValue = null;
+            new HashMap<AttributeInterface, Object>();
+
+            for (int rowIndex = 0; rowIndex < rowCount && rowIndex < records.size(); rowIndex++) {
+                int recordNumber = tableModel.convertRowIndexToModel(rowIndex);
+                IRecord record = records.get(recordNumber);
+                mapAttributeValue = new HashMap<AttributeInterface, Object>();
+                for (AttributeInterface attribute : record.getAttributes()) {
+                    AttributeInterface newAttribute = new Attribute();
+                    newAttribute.setName(attribute.getName());
+                    newAttribute.setAttributeTypeInformation(attribute.getAttributeTypeInformation());
+                    mapAttributeValue.put(newAttribute, record.getValueForAttribute(attribute));
+                }
+
+                //Now add user defined attributes
+                for (int columnIndex = 0; columnIndex < tableModel.getColumnCount(); columnIndex++) {
+                    if (isUserColumnDefined(tableModel.convertColumnIndexToModel(columnIndex))) {
+                        AttributeInterface newAttribute = DomainObjectFactory.getInstance().createStringAttribute();
+                        newAttribute.setName(tableModel.getColumnName(columnIndex));
+                        mapAttributeValue.put(newAttribute, tableModel.getValueAt(rowIndex, columnIndex));
+                    }
+                }
+
+                //Fill data in the records
+                IRecord newRecord = QueryResultFactory.createRecord(mapAttributeValue.keySet(), new RecordId("",
+                        ""));
+                Set<AttributeInterface> newAttributeSet = mapAttributeValue.keySet();
+                for (AttributeInterface newAttribute : newAttributeSet) {
+                    newRecord.putValueForAttribute(newAttribute, mapAttributeValue.get(newAttribute));
+                }
+                selectedRecords.add(newRecord);
+            }
+        } else {
+            for (int i = 0; i < rowCount && i < records.size(); i++) {
+                int recordNumber = tableModel.convertRowIndexToModel(i);
+                selectedRecords.add(records.get(recordNumber));
+            }
         }
         return selectedRecords;
+    }
+
+    private boolean isExtraColumnAdded() {
+        for (int i = 0; i < spreadsheet.getJSheetTableModel().getColumnCount(); i++) {
+            if (isUserColumnDefined(i))
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Method to check whether the column of selected index is userdefined or not 
+     * @param viewColumnIndex
+     * @return
+     */
+    private boolean isUserColumnDefined(int viewColumnIndex) {
+        return spreadsheet.getJSheetTableModel().isCellEditable(0, viewColumnIndex);
     }
 
     /**
@@ -189,7 +258,6 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
         int selectedRowCount = spreadsheet.getSelectedRows().length;
         List<IRecord> selectedRecords = new ArrayList<IRecord>(selectedRowCount);
         for (int i = 0; i < selectedRowCount && i < records.size(); i++) {
-
             int recordNumber = spreadsheet.getViewTableModel().convertRowIndexToModel(
                                                                                       spreadsheet.getSelectedRows()[i]);
             selectedRecords.add(records.get(recordNumber));
@@ -202,7 +270,6 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
     }
 
     class ShowRecordDetailsListener implements PropertyChangeListener {
-
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(spreadsheet.REQUESTED_SHOW_ROW_DETAILS)) {
                 Integer rowNumber = (Integer) evt.getNewValue();
@@ -244,5 +311,21 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
             selectedRowNames.add("" + getSelectedRows()[i]);
         }
         return selectedRowNames;
+    }
+
+    /**
+     * @return the userDefinedAttributes
+     */
+    public List<AttributeInterface> getUserDefinedAttributes() {
+        userDefinedAttributes.clear();
+
+        for (int i = 0; i < spreadsheet.getJSheetTableModel().getColumnCount(); i++) {
+            if (isUserColumnDefined(i)) {
+                AttributeInterface newAttribute = DomainObjectFactory.getInstance().createStringAttribute();
+                newAttribute.setName(spreadsheet.getJSheetTableModel().getColumnName(i));
+                userDefinedAttributes.add(newAttribute);
+            }
+        }
+        return userDefinedAttributes;
     }
 }
