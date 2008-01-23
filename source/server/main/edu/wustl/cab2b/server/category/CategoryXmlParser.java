@@ -36,7 +36,7 @@ public class CategoryXmlParser {
         try {
             fileInputStream = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            System.out.println("FileNotFoundException");
+             
             e.printStackTrace();
         }
         Document document = null;
@@ -130,6 +130,6 @@ public class CategoryXmlParser {
 //        String fullPath = "C:/Documents and Settings/chandrakant_talele/Desktop/category/sample/" + xmlFileName;
 //        CategoryXmlParser xmlParsing = new CategoryXmlParser();
 //        InputCategory cat = xmlParsing.getInputCategory(fullPath, ConnectionUtil.getConnection());
-//        System.out.println("foooo");
+//         
 //    }
 }

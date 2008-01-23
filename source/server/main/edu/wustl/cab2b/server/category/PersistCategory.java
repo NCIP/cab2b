@@ -193,7 +193,7 @@ public class PersistCategory {
 
         String[] arr = { "Gene Annotation.xml", "Genomic Identifiers.xml", "Literature-based Gene Association.xml", "Microarray Annotation.xml", "Orthologus Gene.xml" };
         // String[] arr = { "Srinath testCat.xml" };
-        System.out.println("=============================================================");
+         
         for (String xmlFileName : arr) {
             String filePath = folderPath + xmlFileName;
             InputCategory inputCategory = new CategoryXmlParser().getInputCategory(filePath);
@@ -201,8 +201,8 @@ public class PersistCategory {
                                                                       inputCategory,
                                                                       null);
             new CategoryOperations().saveCategory(category);
-            System.out.println("Stored Category : " + xmlFileName);
+             
         }
-        System.out.println("foooo");
+         
     }
 }
