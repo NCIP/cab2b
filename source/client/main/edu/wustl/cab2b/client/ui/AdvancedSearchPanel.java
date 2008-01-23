@@ -279,9 +279,9 @@ public class AdvancedSearchPanel extends Cab2bPanel implements ItemListener {
      
      class TaskPanePropertyChangeListener implements  PropertyChangeListener  {      
      public void propertyChange(PropertyChangeEvent e) {
-     System.out.println("Property :"+ipropertyCnter++ +"   "+ e.getPropertyName()+"  e.getSource() "+e.getSource());
+      
      JXTaskPane taskPane = (JXTaskPane)e.getSource();
-     System.out.println(""+taskPane.getPreferredSize());            
+      
      }        
      }*/
 

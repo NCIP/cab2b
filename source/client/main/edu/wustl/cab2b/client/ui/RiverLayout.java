@@ -472,9 +472,9 @@ class Ruler {
 		r.setTab(0, 10);
 		r.setTab(1, 20);
 		r.setTab(2, 30);
-		System.out.println(r);
+		 
 		r.setTab(1, 25);
-		System.out.println(r);
-		System.out.println(r.getTab(0));
+		 
+		 
 	}
 }

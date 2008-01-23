@@ -267,7 +267,7 @@ public class IconNodeRenderer implements IGraphNodeRenderer
     // my junk methods...
     private void drawAttributes(Graphics2D gr, String nodeName, int xx, int yy){
         // keep x same and y increment with every text string
-        //System.out.println("XXXX "+ yy);
+        // 
         Image imagePort = Utilities.loadImage ("org/netbeans/graph/examples/control/resources/port.gif"); 
         gr.drawImage (imagePort, xx-10, yy-8, null);
         

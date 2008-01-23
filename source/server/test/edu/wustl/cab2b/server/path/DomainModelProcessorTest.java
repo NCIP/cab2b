@@ -122,8 +122,8 @@ public class DomainModelProcessorTest extends TestCase {
     public void testMockDomainModelProcessor() {
         String name = PropertyLoader.getAllApplications()[0];
         String path = PropertyLoader.getModelPath(name);
-        System.out.println(name);
-        System.out.println(path);
+         
+         
         DomainModelParser parser = null;
         try {
             parser = new DomainModelParser(path);
@@ -142,7 +142,7 @@ class MockDomainModelProcessor extends DomainModelProcessor {
     }
 
     EntityGroupInterface saveEntityGroup(EntityGroupInterface eg) {
-        System.out.println("in Mock......................");
+         
         return eg;
     }
 }

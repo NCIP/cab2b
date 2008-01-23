@@ -35,7 +35,6 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
-import edu.wustl.cab2b.client.ui.query.Utility;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
@@ -52,6 +51,7 @@ import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
+import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.experiment.ExperimentHome;
@@ -246,7 +246,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         spreadSheetViewPanel.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
-
             }
         });
 
@@ -254,7 +253,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         analysisDataPanel.setName("analysisDataPanel");
         analysisDataPanel.setBorder(null);
         this.setBorder(null);
-
         refreshUI();
     }
 
@@ -353,9 +351,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             DataListMetadata dataListMetadata = null;
 
             protected void doNonUILogic() throws RuntimeException {
-
                 List<IRecord> selectedRecords = spreadSheetViewPanel.getAllVisibleRecords();
-                EntityInterface outputEntity = Utility.getEntity(selectedRecords);
+                EntityInterface outputEntity = spreadSheetViewPanel.getOldRecordsEntity();
 
                 dataListMetadata = new DataListMetadata();
                 dataListMetadata.setName(title);
@@ -387,20 +384,22 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                                                                                                                     DataListHomeInterface.class);
 
                 try {
-                    dataListMetadata = dataListBI.saveDataList(customCategoryDataList.getRootDataRow(),
-                                                               dataListMetadata);
+                    dataListMetadata = dataListBI.saveDataCategory(customCategoryDataList.getRootDataRow(),
+                                                                   dataListMetadata, null,
+                                                                   spreadSheetViewPanel.getUserDefinedAttributes());
                     experimentPanel.getSelectedExperiment().addDataListMetadata(dataListMetadata);
                     ExperimentBI.addDataListToExperiment(experimentPanel.getSelectedExperiment().getId(),
                                                          dataListMetadata.getId());
-
                 } catch (RemoteException e) {
+                    dataListMetadata = null;
+                    CommonUtils.handleException(e, experimentPanel, true, true, true, false);
+                } catch (CheckedException e) {
                     dataListMetadata = null;
                     CommonUtils.handleException(e, experimentPanel, true, true, true, false);
                 }
             }
 
             protected void doUIUpdateLogic() throws RuntimeException {
-
                 if (dataListMetadata != null) {
                     // update the tree in the stack box
                     experimentPanel.addDataList(dataListMetadata);

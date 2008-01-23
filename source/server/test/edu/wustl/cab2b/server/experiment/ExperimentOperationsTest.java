@@ -19,7 +19,7 @@ public class ExperimentOperationsTest extends TestCase {
 	//	Collection<DataListMetadata> dataListColl = expt.getDataListMetadataCollection();
 	//	for (DataListMetadata dl : dataListColl) {
 		
-		System.out.println(new ExperimentOperations().getAllDataLists());
+		 
 	//	}
 
 	}

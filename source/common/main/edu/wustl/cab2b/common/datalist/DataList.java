@@ -302,9 +302,9 @@ public class DataList implements Serializable {
      */
 //    private void printTree(int level, List<IDataRow> treeList) {
 //        for (int i = 0; i < treeList.size(); i++) {
-//            System.out.println("Level: " + level + " class:  " + treeList.get(i).getClassName());
+//             
 //            if (treeList.get(i).getAssociation() != null) {
-//                System.out.println("Level: " + level + " Association:  "
+//                 
 //                        + treeList.get(i).getAssociation().toString());
 //            }
 //            printTree(level + 1, treeList.get(i).getChildren());

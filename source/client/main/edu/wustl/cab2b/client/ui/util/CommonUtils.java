@@ -259,7 +259,7 @@ public class CommonUtils {
      */
 
     static String[] splitCamelCaseString(String str, int countOfUpperCaseLetter) {
-        // System.out.println("str "+str+" count "+countOfUpperCaseLetter);
+        //  
         String[] splitStrings = new String[countOfUpperCaseLetter + 1];
 
         char[] chars = str.toCharArray();

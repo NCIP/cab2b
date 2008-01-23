@@ -101,7 +101,7 @@ public class LoginFrame extends JXFrame {
         forgotPass.setText("Forgot Password?");
         forgotPass.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Clicked on forgot password");
+                 
             }
         });
 

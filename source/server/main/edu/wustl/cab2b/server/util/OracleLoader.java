@@ -40,7 +40,7 @@ public class OracleLoader implements DataFileLoaderInterface {
         }
         sql.deleteCharAt(sql.length() - 1);
         sql.append(")");
-        System.out.println(sql);
+         
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(sql.toString());

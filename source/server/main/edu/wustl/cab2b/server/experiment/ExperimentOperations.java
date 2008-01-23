@@ -208,7 +208,7 @@ public class ExperimentOperations extends DefaultBizLogic {
 /*		String hql1 = "from Experiment as Exp where Exp.experimentGroupCollection.size = 0";
 		try {
 			returner1 = dao.executeQuery(hql1, null, false, null);
-			System.out.println("returner1 exp :: " + returner1);
+			 
 		} catch (Exception exp) {
 			exp.printStackTrace();
 		}
@@ -223,7 +223,7 @@ public class ExperimentOperations extends DefaultBizLogic {
 	}
 
 	public Vector getExperimentMetadataHierarchy(Collection firstLevelRootNodes) {
-		// System.out.println("In getExperimentMetadataHierarchy()
+		//  
 		// "+firstLevelRootNodes);
 		Vector returner = new Vector();
 		Iterator iter = firstLevelRootNodes.iterator();

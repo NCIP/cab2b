@@ -74,11 +74,11 @@ public class ConnectionUtil {
 //            Class.forName(driver).newInstance();
 //            con = DriverManager.getConnection(url, userName, password);
 //        } catch (Exception e) {
-//            System.out.println("Exception in getting connection");
+//             
 //            e.printStackTrace();
 //        }
 //        if (con == null)
-//            System.out.println("Got null connection");
+//             
 //        return con;
 //    }
 }

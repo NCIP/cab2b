@@ -159,7 +159,7 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         logOutHyperLink.setText("Logout");
         logOutHyperLink.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Clicked on logOut Link");
+                 
             }
         });
 
@@ -169,7 +169,7 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         mySettingHyperlInk.setText("MySettings");
         mySettingHyperlInk.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Clicked on My-Settings Link");
+                 
             }
         });
 
