@@ -47,8 +47,14 @@ public interface DataListBusinessInterface extends BusinessInterface {
     public DataList retrieveDataList(Long dataListId) throws RemoteException;
 
     public List<IRecord> getEntityRecord(Long entityId) throws RemoteException;
-    
-    public DataListMetadata saveDataCategory(IdName rootEntityId,
-			Collection<AttributeInterface> selectedAttributeList, Long id, String string, Experiment experiment) throws RemoteException, CheckedException;
+
+    public DataListMetadata saveDataCategory(IDataRow rootRecordDataRow, DataListMetadata dataListMetadata,
+                                             List<AttributeInterface> oldAttribute,
+                                             List<AttributeInterface> newAttributes) throws RemoteException, CheckedException;
+
+    public DataListMetadata saveCustomDataCategory(IdName rootEntityId,
+                                                   Collection<AttributeInterface> selectedAttributeList, Long id,
+                                                   String string, Experiment experiment) throws RemoteException,
+            CheckedException;
 
 }
