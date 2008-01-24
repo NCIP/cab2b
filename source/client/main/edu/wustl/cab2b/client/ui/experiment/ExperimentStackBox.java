@@ -52,7 +52,6 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.StackedBox;
 import edu.wustl.cab2b.client.ui.controls.sheet.ColumnFilterVerticalConsole;
-import edu.wustl.cab2b.client.ui.filter.CaB2BFilterInterface;
 import edu.wustl.cab2b.client.ui.main.AbstractTypePanel;
 import edu.wustl.cab2b.client.ui.main.IComponent;
 import edu.wustl.cab2b.client.ui.main.ParseXMLFile;
@@ -69,7 +68,6 @@ import edu.wustl.cab2b.client.ui.visualization.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.client.ui.visualization.charts.ChartModel;
 import edu.wustl.cab2b.client.ui.visualization.heatmap.HeatMapModel;
 import edu.wustl.cab2b.client.ui.visualization.heatmap.HeatMapPanel;
-import edu.wustl.cab2b.common.CustomDataCategoryModel;
 import edu.wustl.cab2b.common.IdName;
 import edu.wustl.cab2b.common.analyticalservice.ServiceDetailsInterface;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
@@ -83,8 +81,6 @@ import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
 import edu.wustl.cab2b.common.ejb.utility.UtilityHomeInterface;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
-import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
@@ -122,8 +118,6 @@ public class ExperimentStackBox extends Cab2bPanel {
     private JScrollPane treeViewScrollPane;
 
     private Experiment m_selectedExperiment = null;
-
-    private static CaB2BFilterInterface obj = null;
 
     private static int chartIndex = 0;
 
@@ -235,25 +229,14 @@ public class ExperimentStackBox extends Cab2bPanel {
         datalistTree.setLeafIcon(new ImageIcon(loader.getResource(TREE_LEAF_NODE)));
         datalistTree.setBorder(null);
 
-        customCategoryButton = new Cab2bButton("Create Data Category");
+        customCategoryButton = new Cab2bButton("Custom Data Category");
         Cab2bPanel cab2bPanel = new Cab2bPanel();
         customCategoryButton.setPreferredSize(new Dimension(160, 22));
         customCategoryButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                CustomDataCategoryModel customDataCategoryModel = null;
-                ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                    EjbNamesConstants.EXPERIMENT,
-                                                                                                                    ExperimentHome.class);
-                try {
-                    customDataCategoryModel = expBus.getDataCategoryModel(m_selectedExperiment);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                } catch (CheckedException e) {
-                    e.printStackTrace();
-                }
-                CustomCategoryPanel categoryPanel = new CustomCategoryPanel(customDataCategoryModel, expBus,
-                        m_selectedExperiment);
-                updateStackBox(categoryPanel.getDataListMetadata());
+                CustomCategoryPanel categoryPanel = new CustomCategoryPanel(m_selectedExperiment);
+                if (categoryPanel.getDataListMetadata() != null)
+                    updateStackBox(categoryPanel.getDataListMetadata());
             }
         });
         cab2bPanel.add(customCategoryButton);

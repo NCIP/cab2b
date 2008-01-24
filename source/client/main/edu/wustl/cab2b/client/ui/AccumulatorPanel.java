@@ -22,145 +22,147 @@ import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
  */
 public class AccumulatorPanel extends Cab2bPanel {
 
-	private Cab2bListBox leftListBox;
+    private Cab2bListBox leftListBox;
 
-	private Cab2bListBox rightListBox;
+    private Cab2bListBox rightListBox;
 
-	private DefaultListModel leftHandListModel;
+    private DefaultListModel availableAttributeModel;
 
-	private DefaultListModel rightHandListModel;
+    private DefaultListModel selectedAttributeModel;
 
-	private Cab2bButton add;
+    private Cab2bButton add;
 
-	private Cab2bButton addAll;
+    private Cab2bButton addAll;
 
-	private Cab2bButton remove;
+    private Cab2bButton remove;
 
-	private Cab2bButton removeAll;
+    private Cab2bButton removeAll;
 
-	private JLabel leftListTitle;
+    private JLabel leftListTitle;
 
-	private JLabel rightListTitle;
+    private JLabel rightListTitle;
 
-	private int listBoxWidth;
+    private int listBoxWidth;
 
-	private int listBoxHeight;
+    private int listBoxHeight;
 
-	private int heightBetweenButtons;
+    private int heightBetweenButtons;
 
-	public AccumulatorPanel(Collection<UserObjectWrapper> collection, int width, int height,
-			String leftTitle, String rightTitle, int heightBetweenButtons) {
+    public AccumulatorPanel(int width, int height, String leftTitle, String rightTitle, int heightBetweenButtons) {
 
-		this.listBoxWidth = width;
-		this.listBoxHeight = height;
-		this.heightBetweenButtons = heightBetweenButtons;
-		leftHandListModel = new DefaultListModel();
-		rightHandListModel = new DefaultListModel();
-		leftListBox = new Cab2bListBox(leftHandListModel);
-		rightListBox = new Cab2bListBox(rightHandListModel);
-		add = new Cab2bButton("Add");
-		addAll = new Cab2bButton("Add All");
-		remove = new Cab2bButton("Remove");
-		removeAll = new Cab2bButton("Remove All");
+        this.listBoxWidth = width;
+        this.listBoxHeight = height;
+        this.heightBetweenButtons = heightBetweenButtons;
+        availableAttributeModel = new DefaultListModel();
+        selectedAttributeModel = new DefaultListModel();
+        leftListBox = new Cab2bListBox(availableAttributeModel);
+        rightListBox = new Cab2bListBox(selectedAttributeModel);
+        add = new Cab2bButton("Add");
+        addAll = new Cab2bButton("Add All");
+        remove = new Cab2bButton("Remove");
+        removeAll = new Cab2bButton("Remove All");
 
-		leftListTitle = new JLabel(leftTitle);
-		rightListTitle = new JLabel(rightTitle);
+        leftListTitle = new JLabel(leftTitle);
+        rightListTitle = new JLabel(rightTitle);
+        initGUI();
+    }
 
-		for (Object coll : collection) {
-			leftHandListModel.addElement(coll);
-		}
-		initGUI();
-	}
+    public void setModel(Collection<UserObjectWrapper> availableAttributes,
+                         Collection<UserObjectWrapper> selectedAttributes) {
+        availableAttributeModel.clear();
+        selectedAttributeModel.clear();
 
-	public AccumulatorPanel(Collection<UserObjectWrapper> collection, String leftTitle,
-			String rightTitle) {
-		this(collection, 300, 350, leftTitle, rightTitle, 10);
-	}
+        for (UserObjectWrapper availableObject : availableAttributes) {
+            availableAttributeModel.addElement(availableObject);
+        }
+        for (UserObjectWrapper selectedObject : selectedAttributes) {
+            selectedAttributeModel.addElement(selectedObject);
+        }
 
-	private void initGUI() {
-		this.setPreferredSize(new Dimension(130 + listBoxWidth + listBoxWidth, listBoxHeight + 30));
-		leftListBox.setPreferredSize(new Dimension(listBoxWidth, listBoxHeight));
-		Cab2bPanel leftPanel = new Cab2bPanel(new RiverLayout(5, 5));
-		leftPanel.add(leftListTitle);
-		leftPanel.add("br", leftListBox);
-		this.add(leftPanel);
+    }
 
-		rightHandListModel = new DefaultListModel();
-		rightListBox = new Cab2bListBox(rightHandListModel);
-		add = new Cab2bButton("Add");
-		add.setPreferredSize(new Dimension(100, 22));
-		add.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Object[] selectedValues = leftListBox.getSelectedValues();
-				for (int i = 0; i < selectedValues.length; i++) {
-					rightHandListModel.addElement(selectedValues[i]);
-					leftHandListModel.removeElement(selectedValues[i]);
-				}
+    public AccumulatorPanel(String leftTitle, String rightTitle) {
+        this(300, 350, leftTitle, rightTitle, 10);
+    }
 
-			}
-		});
+    private void initGUI() {
+        this.setPreferredSize(new Dimension(130 + listBoxWidth + listBoxWidth, listBoxHeight + 30));
+        leftListBox.setPreferredSize(new Dimension(listBoxWidth, listBoxHeight));
+        Cab2bPanel leftPanel = new Cab2bPanel(new RiverLayout(5, 5));
+        leftPanel.add(leftListTitle);
+        leftPanel.add("br", leftListBox);
+        this.add(leftPanel);
 
-		addAll = new Cab2bButton("Add All");
-		addAll.setPreferredSize(new Dimension(100, 22));
-		addAll.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				for (int i = 0; i < leftHandListModel.getSize(); i++) {
-					rightHandListModel.addElement(leftHandListModel.get(i));
-				}
-				leftHandListModel.removeAllElements();
+        rightListBox = new Cab2bListBox(selectedAttributeModel);
+        add = new Cab2bButton("Add");
+        add.setPreferredSize(new Dimension(100, 22));
+        add.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Object[] selectedValues = leftListBox.getSelectedValues();
+                for (int i = 0; i < selectedValues.length; i++) {
+                    selectedAttributeModel.addElement(selectedValues[i]);
+                    availableAttributeModel.removeElement(selectedValues[i]);
+                }
+            }
+        });
 
-			}
-		});
-		remove = new Cab2bButton("Remove");
-		remove.setPreferredSize(new Dimension(100, 22));
-		remove.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Object[] selectedValues = rightListBox.getSelectedValues();
-				for (int i = 0; i < selectedValues.length; i++) {
-					rightHandListModel.removeElement(selectedValues[i]);
-					leftHandListModel.addElement(selectedValues[i]);
-				}
-			}
-		});
-		removeAll = new Cab2bButton("Remove All");
-		removeAll.setPreferredSize(new Dimension(100, 22));
-		removeAll.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				for (int i = 0; i < rightHandListModel.getSize(); i++) {
-					leftHandListModel.addElement(rightHandListModel.get(i));
-				}
-				rightHandListModel.removeAllElements();
-			}
-		});
-		Cab2bPanel buttonPanel = new Cab2bPanel(new RiverLayout(0, heightBetweenButtons));
-		buttonPanel.setPreferredSize(new Dimension(110, listBoxHeight));
-		buttonPanel.add(new JLabel(" "));
-		buttonPanel.add("br", new JLabel(" "));
-		buttonPanel.add("br", add);
-		buttonPanel.add("br", addAll);
-		buttonPanel.add("br", remove);
-		buttonPanel.add("br", removeAll);
+        addAll = new Cab2bButton("Add All");
+        addAll.setPreferredSize(new Dimension(100, 22));
+        addAll.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for (int i = 0; i < availableAttributeModel.getSize(); i++) {
+                    selectedAttributeModel.addElement(availableAttributeModel.get(i));
+                }
+                availableAttributeModel.removeAllElements();
+            }
+        });
+        remove = new Cab2bButton("Remove");
+        remove.setPreferredSize(new Dimension(100, 22));
+        remove.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Object[] selectedValues = rightListBox.getSelectedValues();
+                for (int i = 0; i < selectedValues.length; i++) {
+                    selectedAttributeModel.removeElement(selectedValues[i]);
+                    availableAttributeModel.addElement(selectedValues[i]);
+                }
+            }
+        });
+        removeAll = new Cab2bButton("Remove All");
+        removeAll.setPreferredSize(new Dimension(100, 22));
+        removeAll.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for (int i = 0; i < selectedAttributeModel.getSize(); i++) {
+                    availableAttributeModel.addElement(selectedAttributeModel.get(i));
+                }
+                selectedAttributeModel.removeAllElements();
+            }
+        });
+        Cab2bPanel buttonPanel = new Cab2bPanel(new RiverLayout(0, heightBetweenButtons));
+        buttonPanel.setPreferredSize(new Dimension(110, listBoxHeight));
+        buttonPanel.add(new JLabel(" "));
+        buttonPanel.add("br", new JLabel(" "));
+        buttonPanel.add("br", add);
+        buttonPanel.add("br", addAll);
+        buttonPanel.add("br", remove);
+        buttonPanel.add("br", removeAll);
 
-		rightListBox.setPreferredSize(new Dimension(listBoxWidth, listBoxHeight));
+        rightListBox.setPreferredSize(new Dimension(listBoxWidth, listBoxHeight));
 
-		Cab2bPanel rightPanel = new Cab2bPanel(new RiverLayout(5, 5));
-		rightPanel.add(rightListTitle);
-		rightPanel.add("br", rightListBox);
+        Cab2bPanel rightPanel = new Cab2bPanel(new RiverLayout(5, 5));
+        rightPanel.add(rightListTitle);
+        rightPanel.add("br", rightListBox);
 
-		this.add(buttonPanel);
-		this.add(rightPanel);
-	}
+        this.add(buttonPanel);
+        this.add(rightPanel);
+    }
 
-	/**
-	 * @return Collection of selected objects
-	 */
-	public Collection getSelectedObjects() {
-		Collection returnSet = new ArrayList();
-		int size = rightHandListModel.getSize();
-		for (int i = 0; i < size; i++) {
-			returnSet.add(((UserObjectWrapper)rightHandListModel.getElementAt(i)).getUserObject());
-		
-		}
-		return returnSet;
-	}
+    /**
+     * @return Collection of selected objects
+     */
+    public Collection getSelectedObjects() {
+        Collection returnSet = new ArrayList();
+        for (int i = 0; i < selectedAttributeModel.size(); i++)
+            returnSet.add(selectedAttributeModel.get(i));
+        return returnSet;
+    }
 }
