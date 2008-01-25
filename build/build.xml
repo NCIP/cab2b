@@ -743,7 +743,7 @@
 		</jar>
 	</target>
 	
-	<target name="GenerateQueryHBM" description="Generates Hibernate class descriptor files.">
+	<target name="generate.query.hbm" description="Generates Hibernate class descriptor files.">
 		<!-- Define the hibernatedoclet task -->
 		<taskdef name="hibernatedoclet" classname="xdoclet.modules.hibernate.HibernateDocletTask">
 			<classpath refid="xdoclet.classpath" />
@@ -760,16 +760,6 @@
 			<hibernate version="2.0" />
 		</hibernatedoclet>
 
-		<!-- Upgrade grammar from Hibernate1 to Hibernate2 -->
-		<replace dir="${common.src}">
-			<include name="**/edu/wustl/cab2b/common/domain/*hbm.xml" />
-			<include name="**/edu/wustl/cab2b/common/queryengine/*hbm.xml" />
-
-			<replacefilter token="readonly=" value="inverse=" />
-			<replacefilter token="role=" value="name=" />
-			<replacefilter token="hibernate-mapping.dtd" value="hibernate-mapping-2.0.dtd" />
-		</replace>
-		
 		<!-- Upgrade grammar from Hibernate2 to Hibernate3 -->
         <replace dir="${common.src}">
         	<include name="**/edu/wustl/cab2b/common/domain/*hbm.xml" />
@@ -795,7 +785,7 @@
 		</delete>
 	</target>
 
-	<target name="GenerateQuerySchemaMySQL">
+	<target name="generate.query.schema.mysql">
 		<taskdef name="schemaexport" classname="org.hibernate.tool.hbm2ddl.SchemaExportTask">
 			<classpath>
 				<pathelement location="${common.classes.dir}" />
@@ -806,14 +796,14 @@
 			</classpath>
 		</taskdef>
 
-		<schemaexport properties="mysql_db.properties" quiet="yes" text="yes" delimiter=";" output="${base.dir}/query_mysql.sql" >
+		<schemaexport properties="conf/mysql_db.properties" quiet="yes" text="yes" delimiter=";" output="scripts/query_mysql.sql" >
 			<fileset dir="${hbm.dir}">
 				<include name="*.hbm.xml" />
 			</fileset>
 		</schemaexport>
 	</target>
 	
-	<target name="GenerateQuerySchemaOracle">
+	<target name="generate.query.schema.oracle">
 		<taskdef name="schemaexport" classname="org.hibernate.tool.hbm2ddl.SchemaExportTask">
 			<classpath>
 				<pathelement location="${common.classes.dir}" />
@@ -824,7 +814,7 @@
 			</classpath>
 		</taskdef>
 
-		<schemaexport properties="oracle_db.properties" quiet="yes" text="yes" delimiter=";" output="${base.dir}/query_oracle.sql" >
+		<schemaexport properties="conf/oracle_db.properties" quiet="yes" text="yes" delimiter=";" output="scripts/query_oracle.sql" >
 			<fileset dir="${hbm.dir}">
 				<include name="*.hbm.xml" />
 			</fileset>
