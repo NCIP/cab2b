@@ -60,20 +60,20 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
         return new DataListOperationsController().getEntityRecords(entityId);
     }
 
-    public DataListMetadata saveCustomDataCategory(IdName rootEntityId,
-                                                   Collection<AttributeInterface> selectedAttributeList, Long id,
-                                                   String name, Experiment experiment) throws RemoteException,
-            CheckedException {
-        return new DataListOperationsController().saveCustomDataCategory(rootEntityId, selectedAttributeList, id,
-                                                                         name, experiment);
-    }
-
     public DataListMetadata saveDataCategory(IDataRow rootRecordDataRow, DataListMetadata dataListMetadata,
                                              List<AttributeInterface> oldAttribute,
                                              List<AttributeInterface> newAttributes) throws RemoteException,
-                                             CheckedException {
+            CheckedException {
         return new DataListOperationsController().saveDataCategory(rootRecordDataRow, dataListMetadata,
                                                                    oldAttribute, newAttributes);
+    }
+
+    public DataListMetadata saveCustomDataCategory(IdName rootEntityId,
+                                                   Collection<AttributeInterface> selectedAttributeList,
+                                                   String string, Experiment experiment) throws RemoteException,
+            CheckedException {
+        return new DataListOperationsController().saveCustomDataCategory(rootEntityId, selectedAttributeList,
+                                                                         string, experiment);
     }
 
 }

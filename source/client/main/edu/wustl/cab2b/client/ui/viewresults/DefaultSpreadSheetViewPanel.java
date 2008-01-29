@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.table.AbstractTableModel;
 
@@ -27,6 +28,7 @@ import edu.wustl.cab2b.client.ui.query.Utility;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.SAVE_DATACATEGORY;
 
 /**
  * This is the default panel to show in multiple records of entity,
@@ -54,6 +56,8 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
     public static final String DISABLE_ANALYSIS_LINK = "DISABLE_ANALYSIS_LINK";
 
     private List<AttributeInterface> userDefinedAttributes = new ArrayList<AttributeInterface>();
+
+    //    ImageIcon icon = new ImageIcon(this.getClass().getClassLoader().getResource(SAVE_DATACATEGORY));
 
     /**
      * List of records to be displayed

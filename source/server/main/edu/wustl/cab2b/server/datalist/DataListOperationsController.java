@@ -242,20 +242,19 @@ public class DataListOperationsController {
     }
 
     /**
-     * Saves data populated category.
+     * Saves data for populated category.
      * 
      * @param rootEntityIdName
-     * @param selectedAttributeList
-     * @param dataListId
+     * @param selectedAttributeList    
      * @param name
-     * @return
+     * @return DataListMetadata
      * @throws CheckedException
      * @throws RemoteException
      */
     public DataListMetadata saveCustomDataCategory(IdName rootEntityIdName,
                                                    Collection<AttributeInterface> selectedAttributeList,
-                                                   Long dataListId, String name, Experiment experiment)
-            throws CheckedException, RemoteException {
+                                                   String name, Experiment experiment) throws CheckedException,
+            RemoteException {
         EntityInterface rootEntity;
         try {
             rootEntity = EntityManager.getInstance().getEntityByIdentifier(rootEntityIdName.getId());
@@ -285,7 +284,6 @@ public class DataListOperationsController {
         }
         // popaulate data
         Map<EntityInterface, CustomDataCategoryNode> entityToDataCategoryPathMap = new HashMap<EntityInterface, CustomDataCategoryNode>();
-
         for (AttributeInterface attribute : selectedAttributeList) {
             EntityInterface entity = attribute.getEntity();
             CustomDataCategoryNode dataCategoryPath = entityToDataCategoryPathMap.get(entity);
@@ -355,36 +353,81 @@ public class DataListOperationsController {
                                Map<AbstractAttributeInterface, Object> attributeValues,
                                Map<AttributeInterface, AttributeInterface> oldToNewAttribute,
                                EntityInterface customEntity) throws CheckedException {
-
-        for (EntityRecordInterface record : recordResult.getEntityRecordList()) {
+        // If Association between Entities exist but related records does not exist in table
+        // then null value for the corresponding attributes are set.
+        if (recordResult == null && dataCategoryNode != null) {
             for (AttributeInterface oldAttribute : dataCategoryNode.getAttributeList()) {
-                int index = recordResult.getEntityRecordMetadata().getAttributeList().indexOf(oldAttribute);
-                Object value = record.getRecordValueList().get(index);
-                attributeValues.put(oldToNewAttribute.get(oldAttribute), value);
-
+                attributeValues.put(oldToNewAttribute.get(oldAttribute), null);
             }
-            Set<AssociationInterface> associationList = dataCategoryNode.getAssociationList();
-            if (associationList.size() == 0) {
-                try {
-                    EntityManager.getInstance().insertData(customEntity, attributeValues);
-                } catch (DynamicExtensionsApplicationException e) {
-                    throw new CheckedException(e);
-                } catch (DynamicExtensionsSystemException e) {
-                    throw new CheckedException(e);
+            setAssociationData(dataCategoryNode, attributeValues, oldToNewAttribute, customEntity, recordResult,
+                               null);
+        } else {
+            List<EntityRecordInterface> recordList = recordResult.getEntityRecordList();
+            if (recordList == null) {
+                return;
+            }
+            for (EntityRecordInterface record : recordList) {
+                for (AttributeInterface oldAttribute : dataCategoryNode.getAttributeList()) {
+                    int index = recordResult.getEntityRecordMetadata().getAttributeList().indexOf(oldAttribute);
+                    Object value = record.getRecordValueList().get(index);
+                    attributeValues.put(oldToNewAttribute.get(oldAttribute), value);
                 }
-            } else {
-                for (AssociationInterface association : dataCategoryNode.getAssociationList()) {
-                    int index = recordResult.getEntityRecordMetadata().getAttributeList().indexOf(association);
-                    EntityRecordResultInterface associationResult = (EntityRecordResultInterface) record.getRecordValueList().get(
-                                                                                                                                  index);
-                    CustomDataCategoryNode associationDataCategoryNode = dataCategoryNode.getAssociationDetails(association);
-
-                    processResult(associationResult, associationDataCategoryNode, attributeValues,
-                                  oldToNewAttribute, customEntity);
-                }
+                setAssociationData(dataCategoryNode, attributeValues, oldToNewAttribute, customEntity,
+                                   recordResult, record);
             }
         }
 
+    }
+
+    /**
+     * This method find out all associated records for associations present in DataCategoryNode
+     * If no further association present in dataCategoryNode record is inserted in database 
+     * using insertdata method   
+     * @param dataCategoryNode
+     * @param attributeValues
+     * @param oldToNewAttribute
+     * @param customEntity
+     * @param recordResult
+     * @param record
+     * @throws CheckedException
+     */
+    private void setAssociationData(CustomDataCategoryNode dataCategoryNode,
+                                    Map<AbstractAttributeInterface, Object> attributeValues,
+                                    Map<AttributeInterface, AttributeInterface> oldToNewAttribute,
+                                    EntityInterface customEntity, EntityRecordResultInterface recordResult,
+                                    EntityRecordInterface record) throws CheckedException {
+        Set<AssociationInterface> associationList = dataCategoryNode.getAssociationList();
+        if (associationList.size() == 0) {
+            insertData(customEntity, attributeValues);
+        } else {
+            for (AssociationInterface association : dataCategoryNode.getAssociationList()) {
+                EntityRecordResultInterface associationResult = null;
+                if (recordResult != null) {
+                    int index = recordResult.getEntityRecordMetadata().getAttributeList().indexOf(association);
+                    associationResult = (EntityRecordResultInterface) record.getRecordValueList().get(index);
+                }
+                CustomDataCategoryNode associationDataCategoryNode = dataCategoryNode.getAssociationDetails(association);
+                processResult(associationResult, associationDataCategoryNode, attributeValues, oldToNewAttribute,
+                              customEntity);
+            }
+        }
+    }
+
+    /**
+     * Saves a single record for @param customEntity in database. 
+     * @param customEntity
+     * @param attributeValues
+     * @throws CheckedException
+     */
+    private void insertData(EntityInterface customEntity, Map<AbstractAttributeInterface, Object> attributeValues)
+            throws CheckedException {
+        try {
+            EntityManager.getInstance().insertData(customEntity, attributeValues);
+        } catch (DynamicExtensionsApplicationException e) {
+            throw new CheckedException(e);
+        } catch (DynamicExtensionsSystemException e) {
+            throw new CheckedException(e);
+        }
     }
 
     /**
@@ -402,17 +445,14 @@ public class DataListOperationsController {
             joinTree(targetEntity, entityToDataCategoryPathMap);
 
             if (entityToDataCategoryPathMap.containsKey(targetEntity)) {
-
                 CustomDataCategoryNode parentdataCategoryPath = entityToDataCategoryPathMap.get(entity);
                 if (parentdataCategoryPath == null) {
                     parentdataCategoryPath = new CustomDataCategoryNode();
                     entityToDataCategoryPathMap.put(entity, parentdataCategoryPath);
                 }
                 parentdataCategoryPath.addAssociation(association, entityToDataCategoryPathMap.get(targetEntity));
-
             }
         }
-
     }
 
     /**

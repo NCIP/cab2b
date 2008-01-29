@@ -197,8 +197,7 @@ public class CustomCategoryPanel extends JXFrame {
                             DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                                 EjbNamesConstants.DATALIST_BEAN,
                                                                                                                                 DataListHomeInterface.class);
-                            dataListMetadata = dataListBI.saveCustomDataCategory(entityName, attributeList,
-                                                                                 dataListIdName.getId(),
+                            dataListMetadata = dataListBI.saveCustomDataCategory(entityName, attributeList,                                                                              
                                                                                  customDataCategoryText.getText(),
                                                                                  experiment);
                         } catch (RemoteException e1) {

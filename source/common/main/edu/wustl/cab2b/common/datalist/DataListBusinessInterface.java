@@ -50,10 +50,11 @@ public interface DataListBusinessInterface extends BusinessInterface {
 
     public DataListMetadata saveDataCategory(IDataRow rootRecordDataRow, DataListMetadata dataListMetadata,
                                              List<AttributeInterface> oldAttribute,
-                                             List<AttributeInterface> newAttributes) throws RemoteException, CheckedException;
+                                             List<AttributeInterface> newAttributes) throws RemoteException,
+            CheckedException;
 
     public DataListMetadata saveCustomDataCategory(IdName rootEntityId,
-                                                   Collection<AttributeInterface> selectedAttributeList, Long id,
+                                                   Collection<AttributeInterface> selectedAttributeList,
                                                    String string, Experiment experiment) throws RemoteException,
             CheckedException;
 
