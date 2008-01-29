@@ -15,7 +15,6 @@ import edu.wustl.cab2b.common.category.DataCategory;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.server.cache.EntityCache;
-import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.cab2b.server.path.PathFinder;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;

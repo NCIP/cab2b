@@ -186,7 +186,6 @@ public class CustomCategoryPanel extends JXFrame {
                 protected void doNonUILogic() throws Exception {
                     if (!customDataCategoryText.getText().equals("")) {
                         IdName entityName = (IdName) categoryCombo.getSelectedItem();
-                        IdName dataListIdName = (IdName) dataListCombo.getSelectedItem();
 
                         Collection<UserObjectWrapper<AttributeInterface>> objectCollection = accumulatorPanel.getSelectedObjects();
                         List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
@@ -197,7 +196,7 @@ public class CustomCategoryPanel extends JXFrame {
                             DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                                 EjbNamesConstants.DATALIST_BEAN,
                                                                                                                                 DataListHomeInterface.class);
-                            dataListMetadata = dataListBI.saveCustomDataCategory(entityName, attributeList,                                                                              
+                            dataListMetadata = dataListBI.saveCustomDataCategory(entityName, attributeList,
                                                                                  customDataCategoryText.getText(),
                                                                                  experiment);
                         } catch (RemoteException e1) {
