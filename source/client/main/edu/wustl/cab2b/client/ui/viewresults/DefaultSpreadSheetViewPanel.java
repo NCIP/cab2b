@@ -57,7 +57,7 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
 
     private List<AttributeInterface> userDefinedAttributes = new ArrayList<AttributeInterface>();
 
-    //    ImageIcon icon = new ImageIcon(this.getClass().getClassLoader().getResource(SAVE_DATACATEGORY));
+    private ImageIcon icon = new ImageIcon(this.getClass().getClassLoader().getResource(SAVE_DATACATEGORY));
 
     /**
      * List of records to be displayed
@@ -94,12 +94,14 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
         ExperimentDataCategoryGridPanel gridPanel;
 
         public SaveCategoryActionListener(ExperimentDataCategoryGridPanel expGridPanel) {
-            super("Save");
+            super("Save", icon);
             gridPanel = expGridPanel;
+            setToolTipText("Save as data category ");
         }
 
         SaveCategoryActionListener() {
-            super("Save");
+            super("Save", icon);
+            setToolTipText("Save as data category ");
         }
 
         public void actionPerformed(ActionEvent event) {
