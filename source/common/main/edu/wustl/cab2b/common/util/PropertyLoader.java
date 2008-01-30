@@ -59,7 +59,9 @@ public class PropertyLoader {
     }
 
     public static String[] getServiceUrls(String applicationName) {
-        String[] urls = props.getProperty(applicationName + ".ServiceURL").split(",");
+      //  String[] urls = props.getProperty(applicationName + ".ServiceURL").split(",");
+    	System.out.println(applicationName);
+    	String[] urls={System.getProperty(applicationName)};
         if (urls == null || urls.length == 0) {
             Logger.out.error("No URLs are configured for application : " + applicationName + " in  : "
                     + propertyfile);
