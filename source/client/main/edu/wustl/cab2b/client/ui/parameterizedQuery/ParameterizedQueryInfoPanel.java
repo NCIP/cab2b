@@ -50,10 +50,8 @@ public class ParameterizedQueryInfoPanel extends Cab2bTitledPanel {
         titleTextField = new Cab2bTextField("", new Dimension(225, 22));
         queryTextArea = new JTextArea();
         queryTextArea.setWrapStyleWord(true);
-        queryTextArea.setPreferredSize(new Dimension(225, 60));
-        Cab2bPanel panel = new Cab2bPanel();
-        panel.add(queryTextArea);
-        JScrollPane scrollPane = new JScrollPane(panel);
+        JScrollPane scrollPane = new JScrollPane(queryTextArea);
+        scrollPane.setPreferredSize(new Dimension(225, 60));
 
         containerPanel.add(titleLabel);
         containerPanel.add("tab ", titleTextField);
