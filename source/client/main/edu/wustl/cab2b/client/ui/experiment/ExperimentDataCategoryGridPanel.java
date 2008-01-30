@@ -219,7 +219,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             tabComponent.insertTab("Analysis", null, analysisDataPanel, null, 1);
         }
         tabComponent.setSelectedComponent(analysisDataPanel);
-
         TableLinkAction myLinkAction = new TableLinkAction();
         analysisTable.getColumn(1).setCellRenderer(new LinkRenderer(myLinkAction));
         analysisTable.getColumn(1).setCellEditor(new LinkRenderer(myLinkAction));
@@ -266,6 +265,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
         //tabComponent.add("Experiment Data", experimentDataPanel);
         tabComponent.insertTab("Experiment Data", null, experimentDataPanel, null, 0);
+        tabComponent.setSelectedIndex(0);
         tabComponent.setBorder(null);
         this.add(tabComponent, BorderLayout.CENTER);
     }
