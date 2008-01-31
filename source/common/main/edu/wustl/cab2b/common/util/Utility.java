@@ -10,7 +10,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,9 +44,6 @@ import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
-import edu.wustl.cab2b.common.user.ServiceURLInterface;
-import edu.wustl.cab2b.common.user.User;
-import edu.wustl.cab2b.server.user.UserOperations;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.queryobject.DataType;
@@ -156,49 +152,90 @@ public class Utility {
 		return position;
 	}
 
-	/**
+/*	*//**
 	 * Returns all the URLs of the data services which are exposing given entity
 	 * 
 	 * @param entity
 	 *            Entity to check
 	 * @return Returns the List of URLs
-	 */
+	 *//*
 	public static String[] getServiceURLS(EntityInterface entity) {
 		EntityGroupInterface eg = getEntityGroup(entity);
-		String shortName = eg.getShortName();
-		return getServiceURLs(shortName);
+		String longName = eg.getLongName();
+		return getServiceURLs(longName);
 	}
 
-	/**
+	*//**
 	 * Returns all the URLs of the data services which are confirming model of
 	 * given application
 	 * 
 	 * @param appName
 	 *            Aplication name
 	 * @return Returns the List of URLs
-	 */
+	 *//*
 	public static String[] getServiceURLs(String appName) {
-		User user = null;
+		EntityGroupInterface inputEntityGroup = null;
+		Collection<String> returnUrls = new HashSet<String>();
 		try {
-			// TODO currently this is hardcoded. In real system, currently
-			// logged in user should be fetched here.
-			user = new UserOperations().getUserById(new Long(2L));
-		} catch (RemoteException e) {
+			inputEntityGroup = EntityManager.getInstance().getEntityGroupByName(appName);
+		} catch (DynamicExtensionsSystemException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
+		} catch (DynamicExtensionsApplicationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 
+		Long inputEntityGroupId = inputEntityGroup.getId();
+		// TODO currently hardcoded. Later this id is to be taken from session
+		User user = getUser(new Long(2L));
 		Collection<ServiceURLInterface> serviceCollection = user.getServiceURLCollection();
-		if(serviceCollection==null || serviceCollection.isEmpty()){
-			
+		if (serviceCollection != null && !serviceCollection.isEmpty()) {
+			for (ServiceURLInterface serviceURL : serviceCollection) {
+				if (serviceURL.getEntityGroupInterface().getId() == inputEntityGroupId) {
+					returnUrls.add(serviceURL.getUrlLocation());
+				}
+			}
 		}
-		
-		
-		
-		
-		
-		return PropertyLoader.getServiceUrls(appName);
+		else {
+			returnUrls = getAdminServiceUrls(inputEntityGroupId);
+		}
+		return returnUrls.toArray(new String[0]);
 	}
+
+	*//**
+	 * @param inputEntityGroupId
+	 * @return
+	 *//*
+	public static Collection<String> getAdminServiceUrls(Long inputEntityGroupId) {
+		Collection<String> adminReturnUrls = new HashSet<String>();
+		User user = getUser(new Long(1L));
+		Collection<ServiceURLInterface> serviceCollection = user.getServiceURLCollection();
+		for (ServiceURLInterface serviceURL : serviceCollection) {
+			if (serviceURL.getEntityGroupInterface().getId() == inputEntityGroupId) {
+				adminReturnUrls.add(serviceURL.getUrlLocation());
+			}
+		}
+		return adminReturnUrls;
+	}
+
+	*//**
+	 * @param id
+	 * @return
+	 *//*
+	public static User getUser(Long id) {
+		UserBusinessInterface userBusinessInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(
+                EjbNamesConstants.USER_BEAN,
+                UserHome.class,
+                null);
+		User user = null;
+		try {
+			user = userBusinessInterface.getUserById(id);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return user;
+	}*/
 
 	/**
 	 * Returns the entity group of given entity

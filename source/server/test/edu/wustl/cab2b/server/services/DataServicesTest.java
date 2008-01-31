@@ -3,6 +3,7 @@ import java.rmi.RemoteException;
 
 import org.apache.axis.types.URI.MalformedURIException;
 
+import edu.wustl.cab2b.client.ui.util.UserLoader;
 import edu.wustl.cab2b.common.util.Utility;
 import gov.nih.nci.cagrid.cqlquery.Attribute;
 import gov.nih.nci.cagrid.cqlquery.CQLQuery;
@@ -17,25 +18,25 @@ public class DataServicesTest extends TestCase {
     public void testCaFE() {
         CQLQuery cql = getSimpleQuery();
         cql.getTarget().setName("edu.wustl.fe.Gene");
-        execCQL(cql, Utility.getServiceURLs("caFE")[0]);
+       // execCQL(cql, UserLoader.getServiceURLS("caFE")[0]);
     }
 
     public void testGeneConnect() {
         CQLQuery cql = getSimpleQuery();
         cql.getTarget().setName("edu.wustl.geneconnect.domain.Gene");
-        execCQL(cql, Utility.getServiceURLs("geneConnect")[0]);
+    //    execCQL(cql, UserLoader.getServiceURLS("geneConnect")[0]);
     }
 
     public void testCaTissueCore1() {
         CQLQuery cql = getSimpleQuery();
         cql.getTarget().setName("edu.wustl.catissuecore.domain.Participant");
-        execCQL(cql, Utility.getServiceURLs("caTissueCore")[0]);
+      //  execCQL(cql, UserLoader.getServiceURLS("caTissueCore")[0]);
     }
 
     public void testCaTissueCore2() {
         CQLQuery cql = getSimpleQuery();
         cql.getTarget().setName("edu.wustl.catissuecore.domain.Participant");
-        execCQL(cql, Utility.getServiceURLs("caTissueCore")[1]);
+        //execCQL(cql, UserLoader.getServiceURLS("caTissueCore")[1]);
     }
 
     public void testCaArray() {
@@ -44,7 +45,7 @@ public class DataServicesTest extends TestCase {
         cql.getTarget().getAttribute().setName("name");
         cql.getTarget().getAttribute().setPredicate(Predicate.LIKE);
         cql.getTarget().getAttribute().setValue("%asbestos%");
-        execCQL(cql, Utility.getServiceURLs("caArray")[0]);
+        //execCQL(cql, UserLoader.getServiceURLS("caArray")[0]);
     }
 
     private CQLQuery getSimpleQuery() {

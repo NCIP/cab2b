@@ -5,7 +5,7 @@ drop table if exists USER;
 drop table if exists USER_URL_MAPPING;
 create table SERVICE_URL (
    URL_ID bigint not null auto_increment,
-   ENTITY_GROUP_ID bigint not null,
+   ENTITY_GROUP_NAME text not null,
    URL text not null,
    ADMIN_DEFINED bit not null,
    primary key (URL_ID)

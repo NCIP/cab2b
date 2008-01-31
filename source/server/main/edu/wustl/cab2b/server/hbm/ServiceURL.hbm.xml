@@ -26,12 +26,12 @@
         </id>
 
         <property
-            name="entityGroupId"
-            type="long"
+            name="entityGroupName"
+            type="string"
             update="true"
             insert="true"
-            column="ENTITY_GROUP_ID"
-            length="30"
+            column="ENTITY_GROUP_NAME"
+            length="1024"
             not-null="true"
         />
 

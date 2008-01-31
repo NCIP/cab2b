@@ -90,5 +90,13 @@
             <session-type>Stateless</session-type>
             <transaction-type>Bean</transaction-type>
        </session>
+       <session>
+            <ejb-name>edu.wustl.cab2b.server.ejb.user.UserBean</ejb-name>
+            <home>edu.wustl.cab2b.common.ejb.user.UserHomeInterface</home>
+            <remote>edu.wustl.cab2b.common.ejb.user.UserRemoteInterface</remote>
+            <ejb-class>edu.wustl.cab2b.server.ejb.user.UserBean</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Bean</transaction-type>
+       </session>
 	</enterprise-beans>
 </ejb-jar>

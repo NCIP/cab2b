@@ -16,7 +16,7 @@ public class ServiceURL implements ServiceURLInterface {
 
 	private String urlLocation;
 
-	private Long entityGroupId;
+	private String entityGroupName;
 
 	private EntityGroupInterface entityGroupInterface;
 
@@ -32,19 +32,19 @@ public class ServiceURL implements ServiceURLInterface {
 	/**
 	 * @return Returns the entityGroupId.
 	 * 
-	 * @hibernate.property column="ENTITY_GROUP_ID" type="long" length="30"
-	 *                     not-null="true"
+	 * @hibernate.property column="ENTITY_GROUP_NAME" type="string"
+	 *                     length="1024" not-null="true"
 	 */
-	public Long getEntityGroupId() {
-		return entityGroupId;
+	public String getEntityGroupName() {
+		return entityGroupName;
 	}
 
 	/**
 	 * @param entityGroupId
 	 *            The entityGroupId to set.
 	 */
-	public void setEntityGroupId(Long entityGroupId) {
-		this.entityGroupId = entityGroupId;
+	public void setEntityGroupName(String entityGroupName) {
+		this.entityGroupName = entityGroupName;
 	}
 
 	/**

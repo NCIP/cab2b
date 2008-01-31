@@ -23,6 +23,7 @@ import java.util.Set;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.client.ui.util.UserLoader;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
 import edu.wustl.cab2b.common.ejb.category.CategoryHomeInterface;
@@ -129,8 +130,9 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface {
         addAssociationToQuery(sourceExpressionId, destExpressionId, association);
         sourceExpression.addOperand(destExpression.getExpressionId());
         if (association instanceof IInterModelAssociation) {
-            ((IInterModelAssociation) association).setSourceServiceUrl(edu.wustl.cab2b.common.util.Utility.getServiceURLS(association.getSourceEntity())[0]);
-            ((IInterModelAssociation) association).setTargetServiceUrl(edu.wustl.cab2b.common.util.Utility.getServiceURLS(association.getTargetEntity())[0]);
+            ((IInterModelAssociation) association).setSourceServiceUrl(UserLoader
+					.getServiceURLS(association.getSourceEntity())[0]);
+            ((IInterModelAssociation) association).setTargetServiceUrl(UserLoader.getServiceURLS(association.getTargetEntity())[0]);
         }
     }
 
@@ -351,7 +353,6 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface {
      */
     public List<IExpressionId> addPath(IExpressionId sourceExpressionId, IExpressionId destExpressionId, IPath path)
             throws CyclicException {
-        // TODO Auto-generated method stub
         List<IExpressionId> intermediateExpressionIds = new ArrayList<IExpressionId>();
         List<IAssociation> associations = path.getIntermediateAssociations();
         // No intermediate path between source and target entity
@@ -392,7 +393,7 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface {
             Category cat = bus.getCategoryByEntityId(entity.getId());
             en = cat.getRootClass().getCategorialClassEntity();
         }
-        String[] outputServiceUrls = Utility.getServiceURLS(en);
+        String[] outputServiceUrls = UserLoader.getServiceURLS(en);
         setOutputForQuery(entity, Arrays.asList(outputServiceUrls));
     }
 
@@ -452,7 +453,6 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface {
             }
             return false;
         } catch (CyclicException e) {
-            // TODO Auto-generated catch block
             return true;
         }
     }

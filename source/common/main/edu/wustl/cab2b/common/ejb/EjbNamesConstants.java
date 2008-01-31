@@ -26,5 +26,8 @@ public interface EjbNamesConstants {
     final static String DATALIST_BEAN = "edu.wustl.cab2b.server.ejb.datalist.DataListBean";
     
     final static String ANALYTICAL_SERVICE_BEAN = "edu.wustl.cab2b.server.ejb.analyticalservice.AnalyticalServiceOperationsBean";
+    
     final static String UTILITY_BEAN = "edu.wustl.cab2b.server.ejb.utility.UtilityBean";
+    
+    final static String USER_BEAN = "edu.wustl.cab2b.server.ejb.user.UserBean";
 }
