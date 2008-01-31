@@ -757,6 +757,9 @@
 			<fileset dir="${common.src}">
 				<include name="**/edu/wustl/cab2b/common/queryengine/Cab2bQuery.java" />
 			</fileset>
+			<fileset dir="${common.src}">
+				<include name="**/edu/wustl/cab2b/common/user/*.java" />
+			</fileset>
 			<hibernate version="2.0" />
 		</hibernatedoclet>
 
@@ -764,6 +767,7 @@
         <replace dir="${common.src}">
         	<include name="**/edu/wustl/cab2b/common/domain/*hbm.xml" />
         	<include name="**/edu/wustl/cab2b/common/queryengine/*hbm.xml" />
+        	<include name="**/edu/wustl/cab2b/common/user/*hbm.xml" />
 
             <replacefilter token="readonly=" value="inverse="/>
             <replacefilter token="role=" value="name="/>
@@ -776,6 +780,9 @@
 				<include name="*.hbm.xml" />
 			</fileset>
 			<fileset dir="${common.src}/edu/wustl/cab2b/common/queryengine">
+				<include name="*.hbm.xml" />
+			</fileset>
+			<fileset dir="${common.src}/edu/wustl/cab2b/common/user">
 				<include name="*.hbm.xml" />
 			</fileset>
 		</copy>
