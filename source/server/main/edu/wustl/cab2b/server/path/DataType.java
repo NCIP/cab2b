@@ -292,7 +292,7 @@ enum DataType {
         if (dataType == null) {
             //throw new RuntimeException("unknown datatype found : " + value);
             //for the time being setting this as error to get all such attributes
-            Logger.out.error("Found attribute with type : " + value + ". Creating Object type attribute for it.");
+            Logger.out.warn("Found attribute with type : " + value + ". Creating Object type attribute for it.");
             return  DataType.OBJECT;
         }
         return dataType;
