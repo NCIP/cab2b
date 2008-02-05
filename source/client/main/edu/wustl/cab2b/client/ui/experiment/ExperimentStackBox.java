@@ -296,10 +296,7 @@ public class ExperimentStackBox extends Cab2bPanel {
      * Method to perform tree node selection action for currently selected node
      */
     public void treeSelectionListenerAction() {
-        Cab2bPanel selectedPanel = (Cab2bPanel) m_experimentDataCategoryGridPanel.getTabComponent().getSelectedComponent();
-        Component applyFilterComponent = CommonUtils.getComponentByName(selectedPanel,
-                                                                        Constants.APPLY_FILTER_PANEL_NAME);
-
+        Cab2bPanel selectedPanel = (Cab2bPanel) m_experimentDataCategoryGridPanel.getTabComponent().getSelectedComponent();        
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent();
         if (node == null) {
             return;
@@ -330,7 +327,6 @@ public class ExperimentStackBox extends Cab2bPanel {
                                                                                                                                     UtilityHomeInterface.class);
                     recordList = dataListBI.getEntityRecord(idName.getUserObject().getId());
                     recordValues = utilityBusinessInterface.getUniqueRecordValues(idName.getUserObject().getId());
-
                 } catch (RemoteException remoteException) {
                     CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true,
                                                 false);
