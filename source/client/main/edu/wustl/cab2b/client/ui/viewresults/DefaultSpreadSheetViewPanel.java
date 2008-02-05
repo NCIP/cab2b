@@ -28,7 +28,6 @@ import edu.wustl.cab2b.client.ui.query.Utility;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.SAVE_DATACATEGORY;
 
 /**
  * This is the default panel to show in multiple records of entity,
@@ -56,8 +55,7 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
     public static final String DISABLE_ANALYSIS_LINK = "DISABLE_ANALYSIS_LINK";
 
     private List<AttributeInterface> userDefinedAttributes = new ArrayList<AttributeInterface>();
-
-    private ImageIcon icon = new ImageIcon(this.getClass().getClassLoader().getResource(SAVE_DATACATEGORY));
+  
 
     /**
      * List of records to be displayed
@@ -94,18 +92,33 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
         ExperimentDataCategoryGridPanel gridPanel;
 
         public SaveCategoryActionListener(ExperimentDataCategoryGridPanel expGridPanel) {
-            super("Save", icon);
+
+            super("Save", createImageIcon("images/saveDataCategory.png"));
             gridPanel = expGridPanel;
             setToolTipText("Save as data category ");
         }
 
         SaveCategoryActionListener() {
-            super("Save", icon);
+            super("Save", createImageIcon("images/saveDataCategory.png"));
             setToolTipText("Save as data category ");
         }
 
         public void actionPerformed(ActionEvent event) {
             SaveDataCategoryPanel saveDialogPanel = new SaveDataCategoryPanel(gridPanel);
+        }
+    }
+
+    /** Returns an ImageIcon, or null if the path was invalid. */
+    protected ImageIcon createImageIcon(String pathImage) {
+
+        pathImage = "/" + this.getClass().getPackage().getName().replace('.', '/') + '/' + pathImage;
+        //        pathImage = '/'+this.getClass().getPackage().getName().replace('.', '/') + '/'+pathImage;
+        java.net.URL imgURL = getClass().getResource(pathImage);
+        if (imgURL != null) {
+            return new ImageIcon(imgURL);
+        } else {
+            System.err.println("[DefaultSpreadSheetViewPanel]: Unable to locate Toolbar icon images: " + pathImage);
+            return null;
         }
     }
 
