@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.common.cache;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -92,6 +93,7 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
     /**
      * Private default constructor. To restrict the user from instantiating
      * explicitly.
+     * @throws RemoteException 
      */
     protected AbstractEntityCache() {
         refreshCache();
@@ -99,10 +101,17 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
 
     /**
      * Refreshes the entity cache.
+     * @throws RemoteException 
      */
     public final void refreshCache() {
         Logger.out.debug("Initialising cache, this may take few minutes...");
-        Collection<EntityGroupInterface> entityGroups = getCab2bEntityGroups();
+        Collection<EntityGroupInterface> entityGroups = null;
+        try {
+            entityGroups = getCab2bEntityGroups();
+        } catch (RemoteException e) {
+            //TODO: Handle this execption properly.
+            Logger.out.error("Error while collecting caB2B entity groups. Error: " + e.getMessage());
+        }
         createCache(entityGroups);
         Logger.out.debug("Initialising cache DONE");
     }
@@ -315,6 +324,7 @@ public MatchedClass getEntityOnPermissibleValueParameters(
      * These will typically be the metadata entitygroups present is local caB2B database. 
      * It should not return entitygroups for datalist or experiment
      * @return Returns the entity groups
+     * @throws RemoteException 
      */
-    protected abstract Collection<EntityGroupInterface> getCab2bEntityGroups();
+    protected abstract Collection<EntityGroupInterface> getCab2bEntityGroups() throws RemoteException;
 }

@@ -3,12 +3,12 @@ package edu.wustl.cab2b.server.util;
 import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DE_0003;
 import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DE_0004;
 import static edu.wustl.cab2b.common.util.Constants.CAB2B_ENTITY_GROUP;
-import static edu.wustl.cab2b.common.util.Constants.CATEGORY_ENTITY_GROUP_NAME;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
@@ -40,10 +40,10 @@ import edu.common.dynamicextensions.util.global.Constants.AssociationType;
 import edu.common.dynamicextensions.util.global.Constants.Cardinality;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.cab2b.common.util.PropertyLoader;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.path.PathConstants;
+import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
 import edu.wustl.common.querysuite.queryobject.DataType;
 import gov.nih.nci.cagrid.metadata.common.SemanticMetadata;
 
@@ -415,30 +415,27 @@ public class DynamicExtensionUtility {
         return role;
     }
 
-    public static Collection<EntityGroupInterface> getCab2bEntityGroups() {
-        String[] applicationNames = PropertyLoader.getAllApplications();
-        List<EntityGroupInterface> entityGroups = new ArrayList<EntityGroupInterface>(applicationNames.length);
+    public static Collection<EntityGroupInterface> getCab2bEntityGroups() throws RemoteException{
+     
+        List<EntityGroupInterface> entityGroups = new ArrayList<EntityGroupInterface>();
 
-        EntityManagerInterface entityManager = EntityManager.getInstance();
-        List<String> list = new ArrayList<String>(Arrays.asList(applicationNames));
-        list.add(CATEGORY_ENTITY_GROUP_NAME);
-        for (String applicationName : list) {
-            EntityGroupInterface eg = null;
+        Collection<String> applicationNames= new HashSet<String>();
+        try {
+            applicationNames=new ServiceURLOperations().getAllApplicationNames();
+        } catch (RemoteException e) {
+            throw new RemoteException(e.getMessage());
+        }
+        
+        for(String application:applicationNames){
             try {
-                eg = entityManager.getEntityGroupByShortName(applicationName);//TODO what if null
-            } catch (DynamicExtensionsSystemException dynSysExp) {
-                throw new RuntimeException(dynSysExp.getMessage(), dynSysExp);
-                //        } catch (DynamicExtensionsApplicationException dynSysExp) {
-                //            throw new RuntimeException(dynSysExp.getMessage(), dynSysExp);
+                entityGroups.add(EntityManager.getInstance().getEntityGroupByName(application));
+            } catch (DynamicExtensionsSystemException e) {
+                throw new RemoteException(e.getMessage());
+            } catch (DynamicExtensionsApplicationException e) {
+                throw new RemoteException(e.getMessage());
             }
-
-            if (eg != null) {
-                entityGroups.add(eg);
-            }
-            //return entityManager.getAllEntitiyGroups();
         }
         return entityGroups;
-
     }
 
     /** 

@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.common.cache;
 
+import java.rmi.RemoteException;
 import java.util.Collection;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -13,6 +14,7 @@ import edu.wustl.cab2b.common.beans.MatchedClass;
 public interface IEntityCache {
     /**
      * Refreshes the entity cache.
+     * @throws RemoteException 
      */
     public void refreshCache();
 

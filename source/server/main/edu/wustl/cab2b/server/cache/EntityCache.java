@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.server.cache;
 
+import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Set;
 
@@ -35,9 +36,10 @@ public class EntityCache extends AbstractEntityCache {
     }
 
     /**
+     * @throws RemoteException 
      * @see edu.wustl.cab2b.common.cache.AbstractEntityCache#getCab2bEntityGroups()
      */
-    protected Collection<EntityGroupInterface> getCab2bEntityGroups() {
+    protected Collection<EntityGroupInterface> getCab2bEntityGroups() throws RemoteException {
         return DynamicExtensionUtility.getCab2bEntityGroups();
     }
 

@@ -30,4 +30,6 @@ public interface EjbNamesConstants {
     final static String UTILITY_BEAN = "edu.wustl.cab2b.server.ejb.utility.UtilityBean";
     
     final static String USER_BEAN = "edu.wustl.cab2b.server.ejb.user.UserBean";
+    
+    final static String SERVICE_URL_BEAN = "edu.wustl.cab2b.server.ejb.serviceurl.ServiceURLBean";
 }
