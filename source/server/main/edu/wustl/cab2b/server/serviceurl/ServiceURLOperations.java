@@ -8,6 +8,7 @@ import java.util.List;
 import edu.wustl.cab2b.common.user.ServiceURL;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.util.dbManager.DAOException;
+import static edu.wustl.cab2b.common.util.Constants.CATEGORY_ENTITY_GROUP_NAME;
 
 public class ServiceURLOperations extends DefaultBizLogic {
 
@@ -23,6 +24,9 @@ public class ServiceURLOperations extends DefaultBizLogic {
         for (ServiceURL serviceURL : serviceList) {
             applicationNames.add(serviceURL.getEntityGroupName());
         }
+        //TODO temporarily adding constant here. LAter thsi should be a change in database
+        applicationNames.add(CATEGORY_ENTITY_GROUP_NAME);
+        
         return applicationNames;
     }
 
