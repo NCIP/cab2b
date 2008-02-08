@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.common.user;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -9,7 +10,7 @@ import java.util.HashSet;
  * @hibernate.cache usage="read-write"
  * 
  */
-public class User implements UserInterface {
+public class User implements UserInterface, Serializable {
 
 	private Collection<ServiceURLInterface> serviceURLCollection = new HashSet<ServiceURLInterface>();
 

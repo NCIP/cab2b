@@ -17,10 +17,12 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
 import edu.wustl.cab2b.client.cache.ClientSideCache;
+import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.dag.ClassNodeRenderer;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.locator.LocatorException;
+import edu.wustl.cab2b.common.user.UserInterface;
 
 /**
  * @author Chandrakant Talele
@@ -37,14 +39,24 @@ public class ClientLauncher {
     private static final int progressHeight = 11;
 
     private static final int labelWidth = 20;
+    
+    private static UserInterface caB2BUser;
 
     /**
+     * @param user 
      * @return Returns the singleton instance of the ClientLauncher class.
      */
-    public static synchronized ClientLauncher getInstance() {
+    public static synchronized ClientLauncher getInstance(UserInterface user) {
         if (clientLauncher == null) {
-            clientLauncher = new ClientLauncher();
+            clientLauncher = new ClientLauncher(user);
         }
+        return clientLauncher;
+    }
+    
+    public static synchronized ClientLauncher getInstance() {
+      /*  if (clientLauncher == null) {
+            clientLauncher = new ClientLauncher(user);
+        }*/
         return clientLauncher;
     }
 
@@ -57,10 +69,12 @@ public class ClientLauncher {
 
     /**
      * Private constructor
+     * @param user 
      */
-    private ClientLauncher() {
+    private ClientLauncher(UserInterface user) {
         progressBar = getProgressbar(imageSize.width, progressHeight);
         progressBarLabel = getProgressBarLabel(" Launching caB2B client....", imageSize.width, labelWidth);
+        caB2BUser=user;
     }
 
     /**
@@ -114,7 +128,7 @@ public class ClientLauncher {
         launchFrame.setVisible(true);
         Toolkit.getDefaultToolkit().setDynamicLayout(true);
 
-        loadCache(); /* initializing the cache at startup */
+        loadCache(caB2BUser); /* initializing the cache at startup */
 
         showProgress(" Initializing graphical user interface....", 94);
         // To speed-up the first add limit.
@@ -159,8 +173,11 @@ public class ClientLauncher {
 
     /**
      * Loads the client side cache. If fails, logs error and quits
+     * @param caB2BUser2 
      */
-    private static void loadCache() {
+    private static void loadCache(UserInterface caB2BUser2) {
+    	
+    	UserCache.getInstance().init(caB2BUser2);
         try {
             ClientSideCache.getInstance();
         } catch (LocatorException le) {

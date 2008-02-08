@@ -1,16 +1,15 @@
 package edu.wustl.cab2b.server.services;
-import java.rmi.RemoteException;
-
-import org.apache.axis.types.URI.MalformedURIException;
-
-import edu.wustl.cab2b.client.ui.util.UserLoader;
-import edu.wustl.cab2b.common.util.Utility;
 import gov.nih.nci.cagrid.cqlquery.Attribute;
 import gov.nih.nci.cagrid.cqlquery.CQLQuery;
 import gov.nih.nci.cagrid.cqlquery.Object;
 import gov.nih.nci.cagrid.cqlquery.Predicate;
 import gov.nih.nci.cagrid.data.client.DataServiceClient;
+
+import java.rmi.RemoteException;
+
 import junit.framework.TestCase;
+
+import org.apache.axis.types.URI.MalformedURIException;
 
 public class DataServicesTest extends TestCase {
     // APP names

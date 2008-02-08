@@ -57,7 +57,7 @@ public class PropertyLoader {
         }
         return path;
     }
-
+/*
     public static String[] getServiceUrls(String applicationName) {
       //  String[] urls = props.getProperty(applicationName + ".ServiceURL").split(",");
     	System.out.println(applicationName);
@@ -67,7 +67,7 @@ public class PropertyLoader {
                     + propertyfile);
         }
         return urls;
-    }
+    }*/
 
     /**
      * Returns names of all application for which caB2B is configured

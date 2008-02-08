@@ -22,8 +22,8 @@ import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-import edu.wustl.cab2b.client.ui.util.UserLoader;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
 import edu.wustl.cab2b.common.ejb.category.CategoryHomeInterface;
@@ -130,9 +130,19 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface {
         addAssociationToQuery(sourceExpressionId, destExpressionId, association);
         sourceExpression.addOperand(destExpression.getExpressionId());
         if (association instanceof IInterModelAssociation) {
-            ((IInterModelAssociation) association).setSourceServiceUrl(UserLoader
-					.getServiceURLS(association.getSourceEntity())[0]);
-            ((IInterModelAssociation) association).setTargetServiceUrl(UserLoader.getServiceURLS(association.getTargetEntity())[0]);
+        	String sourceUrl=UserCache.getInstance().getServiceURLs(association.getSourceEntity())[0];
+        	if(sourceUrl==null){
+        		//TODO throw proper exception
+        	}else{
+        		((IInterModelAssociation) association).setSourceServiceUrl(sourceUrl);
+        	}
+        	
+        	String targetUrl=UserCache.getInstance().getServiceURLs(association.getTargetEntity())[0];
+        	if(targetUrl==null){
+        		//TODO throw proper exception
+        	}else{
+        		((IInterModelAssociation) association).setTargetServiceUrl(targetUrl);
+        	}
         }
     }
 
@@ -393,7 +403,7 @@ public class ClientQueryBuilder implements IClientQueryBuilderInterface {
             Category cat = bus.getCategoryByEntityId(entity.getId());
             en = cat.getRootClass().getCategorialClassEntity();
         }
-        String[] outputServiceUrls = UserLoader.getServiceURLS(en);
+        String[] outputServiceUrls = UserCache.getInstance().getServiceURLs(en);
         setOutputForQuery(entity, Arrays.asList(outputServiceUrls));
     }
 
