@@ -28,18 +28,18 @@ public class UserOperations extends DefaultBizLogic {
 	}
 
 	public User getAdmin() throws RemoteException {
-		//return getUser("isAdmin", null);
-		return getUser("userName","Admin");
+		// return getUser("isAdmin", null);
+		return getUser("userName", "Admin");
 	}
 
 	public User getUser(String column, String value) throws RemoteException {
 		List<User> userList = null;
 		try {
-			/*if (value == null) {
-				userList = (List<User>) retrieve(User.class.getName(), column, "true");
-			} else {
-				userList = (List<User>) retrieve(User.class.getName(), column, value);
-			}*/
+			/*
+			 * if (value == null) { userList = (List<User>)
+			 * retrieve(User.class.getName(), column, "true"); } else { userList =
+			 * (List<User>) retrieve(User.class.getName(), column, value); }
+			 */
 			userList = (List<User>) retrieve(User.class.getName(), column, value);
 		} catch (DAOException e) {
 			throw new RemoteException(e.getMessage());
@@ -73,12 +73,16 @@ public class UserOperations extends DefaultBizLogic {
 	}
 
 	public void insertUser(User user) throws RemoteException {
-		try {
-			insert(user, Constants.HIBERNATE_DAO);
-		} catch (UserNotAuthorizedException e) {
-			throw new RemoteException(e.getMessage());
-		} catch (BizLogicException e) {
-			throw new RemoteException(e.getMessage());
+		if (getUserByName(user.getUserName()) != null) {
+			throw new RemoteException("Duplicate user. Please enter different user name");
+		} else {
+			try {
+				insert(user, Constants.HIBERNATE_DAO);
+			} catch (UserNotAuthorizedException e) {
+				throw new RemoteException(e.getMessage());
+			} catch (BizLogicException e) {
+				throw new RemoteException(e.getMessage());
+			}
 		}
 	}
 
@@ -135,7 +139,7 @@ public class UserOperations extends DefaultBizLogic {
 
 		for (ServiceURLInterface url : adminServices) {
 			String egName = url.getEntityGroupInterface().getLongName();
-			if(absentEntityGroups.contains(egName)){
+			if (absentEntityGroups.contains(egName)) {
 				if (finalMap.containsKey(egName)) {
 					(finalMap.get(egName)).add(url.getUrlLocation());
 				} else {
@@ -143,10 +147,10 @@ public class UserOperations extends DefaultBizLogic {
 					list.add(url.getUrlLocation());
 					finalMap.put(egName, list);
 				}
-			}else{
+			} else {
 				continue;
 			}
-			
+
 		}
 		return finalMap;
 	}
