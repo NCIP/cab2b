@@ -5,6 +5,7 @@
  */
 package edu.wustl.cab2b.client.ui.controls.sheet;
 
+import java.util.logging.Logger;
 import static edu.wustl.cab2b.client.ui.controls.sheet.Common.setBackgroundWhite;
 
 import java.awt.BorderLayout;
@@ -45,6 +46,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bFileFilter;
  * @author  jasbir_sachdeva
  */
 public class JSheet extends javax.swing.JPanel {
+    Logger lgr = Logger.getLogger( getClass().getName());
 
     /** Event name that notifies that User has pressed Magnifying-Glass button...      */
     public static final String EVENT_HEADER_ROW_DOUBLE_CLICKED = "EVENT_HEADER_ROW_DOUBLE_CLICKED";
@@ -172,23 +174,6 @@ public class JSheet extends javax.swing.JPanel {
         consData.setAdditionalToolbarActions(actions);
     }
 
-    public void setAdditionalContectMenuActions(List<Action> actions) {
-
-    }
-
-    //    public void showColVisibilitySettingsDialog() {
-    //        if (null == colVisibilitySettingsDialog) {
-    //            colVisibilitySettingsDialog = new JDialog(getHWRoot(this),
-    //                    "Data View - Columns Visibility Settings");
-    //            setBackgroundWhite(pnlSheetCust);
-    //            colVisibilitySettingsDialog.getContentPane().add(pnlSheetCust);
-    //            Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
-    //            colVisibilitySettingsDialog.setBounds(ss.width * 2 / 8, ss.height / 7,
-    //                    ss.width * 4 / 8, ss.height * 5 / 7);
-    //            colVisibilitySettingsDialog.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-    //        }
-    //        colVisibilitySettingsDialog.setVisible(true);
-    //    }
     public TableModel getJSheetTableModel() {
 
         return consData.getCompositeDataModel();
@@ -799,19 +784,23 @@ public class JSheet extends javax.swing.JPanel {
                 try {
                     out = new BufferedWriter(new FileWriter(fileName));
 
-                    String csvString = consData.getTblSelectionDataWithCommas().toString();
+                    String csvString = consData.getTblSelectionDataWithCommas( true).toString();
                     //                    String csvString = cellSelectionEnabled ? 
                     //                        consData.getTblSelectionDataWithCommas().toString() 
                     //                        : consData.getTblRowDataWithComma(tmFixedLeft.getRowSelections()).toString();
                     out.write(csvString);
+                    out.close();
 
                 } catch (IOException e) {
-                    handleException(e, this, true, true, true, false);
+                    String message = String.format("Exception while exporting data in file: %s. \nReason=%s",fileName, e.getMessage());
+                    lgr.warning( message);
+                    JOptionPane.showMessageDialog( this, message);
                 } finally {
                     try {
-                        out.close();
-                    } catch (IOException e) {
-                        handleException(e, this, true, true, true, false);
+                        if( null != out)
+                            out.close();
+                    } catch (Exception e) {
+                        lgr.warning( String.format("Exception while closing file. Export may NOT have been successful.\nReason=%s",e.getMessage()));
                     }
                 }
             }
@@ -820,9 +809,6 @@ public class JSheet extends javax.swing.JPanel {
 
     }
 
-    private void handleException(IOException e, JSheet jSheet, boolean b, boolean b0, boolean b1, boolean b2) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.DefaultListSelectionModel;
@@ -60,6 +61,8 @@ import javax.swing.table.TableRowSorter;
  */
 class ViewDataConsole extends javax.swing.JPanel implements
 		PropertyChangeListener {
+    
+    Logger lgr = Logger.getLogger( getClass().getName());
 
 	/**
 	 * The Tables data Model, that pickes data from both Read-Only and
@@ -413,7 +416,27 @@ class ViewDataConsole extends javax.swing.JPanel implements
 		// Append all new actions...
 		butToolbarAdditionalAL.clear();
 		for (Action act : actions) {
-			JButton butInstalled = tbarMain.add(act);
+			Object location = act.getValue("LOCATION_INDEX");
+            JButton butInstalled;
+
+            if( null == location)
+                //  No location prefences, add at end...
+                butInstalled = tbarMain.add(act);
+            else{
+                int idxLocation = 0;
+                try {
+                    idxLocation = Integer.parseInt(location.toString());
+                    butInstalled = new JButton( act);
+                    //  Add action as a button, at specified location...
+                    tbarMain.add(butInstalled, idxLocation);
+                } catch (NumberFormatException numberFormatException) {
+                    String textBut = act.getValue(Action.NAME).toString();
+                    lgr.info( String.format("Bad Location value (%s), For Action: %s. Expecting non-negitive-integer.", location, textBut));
+                    //  Add to defaut location...
+                    butInstalled = tbarMain.add(act);
+                }
+            }
+                
 			Common.setButtonsLooks(butInstalled);
 			butToolbarAdditionalAL.add(butInstalled);
 			Object showText = act.getValue("SHOW_TEXT");
@@ -427,7 +450,7 @@ class ViewDataConsole extends javax.swing.JPanel implements
 		tbarMain.revalidate();
 		tbarMain.repaint();
 	}
-
+    
 	void setAdditionalContectMenuActions(List<Action> actions) {
 
 	}
@@ -1102,7 +1125,7 @@ class ViewDataConsole extends javax.swing.JPanel implements
 
 	/** Selected Contents of table are copied into Clipboard. */
 	public void copySelectionIntoClipboard() {
-		StringBuffer selText = getTblSelectionDataWithTabs();
+		StringBuffer selText = getTblSelectionDataWithTabs( false);
 		if (null == selText || selText.length() == 0) // Nothing to Select..
 		{
 			return;
@@ -1117,64 +1140,31 @@ class ViewDataConsole extends javax.swing.JPanel implements
 	 * ALL Selected rows and columns data would be picked and returned. Columns
 	 * will be separated with tabs.
 	 */
-	public StringBuffer getTblSelectionDataWithTabs() {
-		return getTblSelectionData(false, false);
+	public StringBuffer getTblSelectionDataWithTabs(boolean includeColHeaders) {
+		return getTblSelectionData(includeColHeaders, false);
 	}
 
 	/**
 	 * ALL Selected rows and columns data would be picked and returned. Columns
 	 * will be separated with comma.
 	 */
-	public StringBuffer getTblSelectionDataWithCommas() {
-		return getTblSelectionData(true, true);
+	public StringBuffer getTblSelectionDataWithCommas( boolean includeColHeaders) {
+		return getTblSelectionData(includeColHeaders, true);
 	}
 
 	/**
 	 * ALL columns for rows "selRows" would be picked, irrespective of the
 	 * visiblility. Rows are in table viewcoordinated.
 	 */
-	public StringBuffer getTblRowDataWithTabs(int[] selRows) {
-		return getTblRowData(selRows, false, true);
-	}
-
-	/**
-	 * Returned data from those cells that are part of rows which are both
-	 * Marked and Visible. Data from only will be returned. ALL columns for rows
-	 * in ''rowMarkedInModel" would be picked, subjected to the condition that
-	 * these are also visible. rowMarkedInModel are in Table's Model
-	 * coordinated.
-	 */
-	public StringBuffer getTblRowDataWithComma(
-			ArrayList<Boolean> rowMarkedInModel) {
-		ArrayList<Integer> selIRows = new ArrayList<Integer>();
-
-		// Scan overall visible rows, and pick rows that are marked for
-		// export...
-		for (int viewRowIdx = 0; viewRowIdx < tblData.getRowCount(); viewRowIdx++) {
-			int modelRowIndex = tblData.convertRowIndexToModel(viewRowIdx);
-			if (rowMarkedInModel.get(modelRowIndex)) // this row is marked
-			// for export...
-			{
-				selIRows.add(viewRowIdx);
-			}
-		}
-
-		// Convert to array...
-		int[] selRows = new int[selIRows.size()];
-		for (int idx = 0; idx < selIRows.size(); idx++) {
-			selRows[idx] = selIRows.get(idx);
-		}
-
-		// These are the actual rows (both Marked and Visible - data from only
-		// these should be returned...
-		return getTblRowData(selRows, true, true);
+	public StringBuffer getTblRowDataWithTabs(int[] selRows, boolean includeColHeaders) {
+		return getTblRowData(selRows, includeColHeaders, true);
 	}
 
 	/**
 	 * ALL columns for rows "selRows" would be picked, irrespective of the
 	 * visiblility. Rows are in table viewcoordinated.
 	 */
-	public StringBuffer getTblRowData(int[] selRows, boolean forceEscapeComma,
+	StringBuffer getTblRowData(int[] selRows, boolean includeColHeaders,
 			boolean isCommaSepatrated) {
 
 		// Make a selection that selects all the columns...
@@ -1183,7 +1173,7 @@ class ViewDataConsole extends javax.swing.JPanel implements
 		for (int i = 0; i < colCount; i++) {
 			colsIdx[i] = i;
 		}
-		return getTblSelectionData(selRows, colsIdx, forceEscapeComma,
+		return getTblSelectionData(selRows, colsIdx, includeColHeaders,
 				isCommaSepatrated);
 	}
 
@@ -1196,12 +1186,12 @@ class ViewDataConsole extends javax.swing.JPanel implements
 	 * isCommaSepatrated: true => Separate all cell values with Comma false =>
 	 * Separate all cell values with Tabs
 	 */
-	public StringBuffer getTblSelectionData(boolean forceEscapeComma,
+	public StringBuffer getTblSelectionData(boolean includeColHeaders,
 			boolean isCommaSepatrated) {
 		StringBuffer sBuff = new StringBuffer();
 		int[] rowsIdx = tblData.getSelectedRows();
 		int[] colsIdx = tblData.getSelectedColumns();
-		return getTblSelectionData(rowsIdx, colsIdx, forceEscapeComma,
+		return getTblSelectionData(rowsIdx, colsIdx, includeColHeaders,
 				isCommaSepatrated);
 	}
 
@@ -1218,14 +1208,25 @@ class ViewDataConsole extends javax.swing.JPanel implements
 	 * Separate all cell values with Tabs
 	 */
 	public StringBuffer getTblSelectionData(int[] rowsIdx, int[] colsIdx,
-			boolean forceEscapeComma, boolean isCommaSepatrated) {
+			boolean includeColHeaders, boolean isCommaSepatrated) {
 		StringBuffer sBuff = new StringBuffer();
+        boolean forceEscapeComma = isCommaSepatrated;
+        int startingRow = 0;
 
+        if( includeColHeaders)
+            startingRow = -1;
+        
 		if (rowsIdx.length > 0) {
-			for (int rIdx = 0; rIdx < rowsIdx.length; rIdx++) {
+			for (int rIdx = startingRow; rIdx < rowsIdx.length; rIdx++) {
 				for (int cIdx = 0; cIdx < colsIdx.length; cIdx++) {
-					Object cellValue = tblData.getValueAt(rowsIdx[rIdx],
+                    
+                    Object cellValue;
+                    if( rIdx < 0){
+                        cellValue = tblData.getColumnName( colsIdx[cIdx]);
+                    }else{
+                        cellValue = tblData.getValueAt(rowsIdx[rIdx],
 							colsIdx[cIdx]);
+                    }
 
 					if (cIdx > 0 && cIdx < colsIdx.length) {
 						if (isCommaSepatrated) {
@@ -1252,7 +1253,7 @@ class ViewDataConsole extends javax.swing.JPanel implements
 		}
 		return sBuff;
 	}
-
+    
 	//
 	// DEBUG Help...
 	//
