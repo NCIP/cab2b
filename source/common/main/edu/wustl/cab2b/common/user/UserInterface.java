@@ -6,6 +6,9 @@ public interface UserInterface {
 
 	Collection<ServiceURLInterface> getServiceURLCollection();
 
+	/**
+	 * @return Returns userId
+	 */
 	Long getUserId();
 
 	/**
