@@ -298,12 +298,11 @@ public class MainFrame extends JXFrame {
             mainFrame.setVisible(true);
             mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         } catch (Throwable t) {
-     /*       JXErrorDialog.showDialog(
+            JXErrorDialog.showDialog(
                                      null,
                                      "caB2B Fatal Error",
                                      "Fatal error orccured while launching caB2B client.\nPlease contact administrator",
-                                     t);*/
-        	t.printStackTrace();
+                                     t);
             System.exit(1);
         }
     }
