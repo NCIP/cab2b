@@ -9,6 +9,7 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.net.URL;
+import java.rmi.RemoteException;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -21,6 +22,9 @@ import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.dag.ClassNodeRenderer;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
+import edu.wustl.cab2b.common.ejb.user.UserBusinessInterface;
+import edu.wustl.cab2b.common.ejb.user.UserHomeInterface;
 import edu.wustl.cab2b.common.locator.LocatorException;
 import edu.wustl.cab2b.common.user.UserInterface;
 
@@ -39,24 +43,14 @@ public class ClientLauncher {
     private static final int progressHeight = 11;
 
     private static final int labelWidth = 20;
-    
-    private static UserInterface caB2BUser;
 
     /**
-     * @param user 
      * @return Returns the singleton instance of the ClientLauncher class.
      */
-    public static synchronized ClientLauncher getInstance(UserInterface user) {
-        if (clientLauncher == null) {
-            clientLauncher = new ClientLauncher(user);
-        }
-        return clientLauncher;
-    }
-    
     public static synchronized ClientLauncher getInstance() {
-      /*  if (clientLauncher == null) {
-            clientLauncher = new ClientLauncher(user);
-        }*/
+        if (clientLauncher == null) {
+            clientLauncher = new ClientLauncher();
+        }
         return clientLauncher;
     }
 
@@ -69,12 +63,10 @@ public class ClientLauncher {
 
     /**
      * Private constructor
-     * @param user 
      */
-    private ClientLauncher(UserInterface user) {
+    private ClientLauncher() {
         progressBar = getProgressbar(imageSize.width, progressHeight);
         progressBarLabel = getProgressBarLabel(" Launching caB2B client....", imageSize.width, labelWidth);
-        caB2BUser=user;
     }
 
     /**
@@ -101,7 +93,7 @@ public class ClientLauncher {
     /**
      * Launches the cab2b Client
      */
-    public void launchClient() {
+    public void launchClient(String userName) {
         ClassLoader loader = this.getClass().getClassLoader();
         JFrame launchFrame = new JFrame("caB2B client launcher....");
         
@@ -128,7 +120,7 @@ public class ClientLauncher {
         launchFrame.setVisible(true);
         Toolkit.getDefaultToolkit().setDynamicLayout(true);
 
-        loadCache(caB2BUser); /* initializing the cache at startup */
+        loadCache(userName); /* initializing the cache at startup */
 
         showProgress(" Initializing graphical user interface....", 94);
         // To speed-up the first add limit.
@@ -173,14 +165,16 @@ public class ClientLauncher {
 
     /**
      * Loads the client side cache. If fails, logs error and quits
-     * @param caB2BUser2 
      */
-    private static void loadCache(UserInterface caB2BUser2) {
-    	
-    	UserCache.getInstance().init(caB2BUser2);
-        try {
+    private static void loadCache(String userName) {
+        try {//ClientSideCache MUST be instanciated before anything else. Don't change order of below lines of code
             ClientSideCache.getInstance();
+            UserBusinessInterface userBusinessInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.USER_BEAN,UserHomeInterface.class);
+            UserInterface user=userBusinessInterface.getUserByName(userName);
+            UserCache.getInstance().init(user);
         } catch (LocatorException le) {
+            CommonUtils.handleException(le, progressBar.getParent(), true, true, true, true);
+        }catch (RemoteException le) {
             CommonUtils.handleException(le, progressBar.getParent(), true, true, true, true);
         }
     }

@@ -37,13 +37,9 @@ import edu.wustl.cab2b.client.ui.experiment.ExperimentPanel;
 import edu.wustl.cab2b.client.ui.mainframe.stackbox.MainFrameStackedBoxPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
-import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
-import edu.wustl.cab2b.common.ejb.user.UserBusinessInterface;
-import edu.wustl.cab2b.common.ejb.user.UserHomeInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
-import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
 
@@ -286,12 +282,9 @@ public class MainFrame extends JXFrame {
             setHome();
             Logger.configure(); //pick config from log4j.properties
             initializeResources(); // Initialize all Resources
-            UserBusinessInterface userBusinessInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(
-                    EjbNamesConstants.USER_BEAN,
-                    UserHomeInterface.class);
-            UserInterface user=userBusinessInterface.getUserByName("cab2bUser");
-            ClientLauncher clientLauncher = ClientLauncher.getInstance(user);
-            clientLauncher.launchClient();
+      
+            ClientLauncher clientLauncher = ClientLauncher.getInstance();
+            clientLauncher.launchClient("cab2bUser");
 
             MainFrame mainFrame = new MainFrame(ApplicationProperties.getValue(MAIN_FRAME_TITLE), true);
             mainFrame.pack();
