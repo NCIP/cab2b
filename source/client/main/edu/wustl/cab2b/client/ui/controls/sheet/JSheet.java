@@ -5,7 +5,6 @@
  */
 package edu.wustl.cab2b.client.ui.controls.sheet;
 
-import java.util.logging.Logger;
 import static edu.wustl.cab2b.client.ui.controls.sheet.Common.setBackgroundWhite;
 
 import java.awt.BorderLayout;
@@ -25,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -46,7 +46,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bFileFilter;
  * @author  jasbir_sachdeva
  */
 public class JSheet extends javax.swing.JPanel {
-    Logger lgr = Logger.getLogger( getClass().getName());
+    Logger lgr = Logger.getLogger(getClass().getName());
 
     /** Event name that notifies that User has pressed Magnifying-Glass button...      */
     public static final String EVENT_HEADER_ROW_DOUBLE_CLICKED = "EVENT_HEADER_ROW_DOUBLE_CLICKED";
@@ -187,6 +187,9 @@ public class JSheet extends javax.swing.JPanel {
         setBackgroundWhite((JComponent) dia.getContentPane());
         Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
         dia.setBounds(ss.width * 2 / 8, ss.height / 7, ss.width * 4 / 8, ss.height * 5 / 7);
+
+        //Added code to fix bug 6460 - Deepak 
+        dia.setModal(true);
     }
 
     /**     Returns the top most compoennt in the containment hierarchy that is heavy weight.   */
@@ -214,7 +217,7 @@ public class JSheet extends javax.swing.JPanel {
     public int getSelectedColumn() {
         return consData.getSelectedColumn();
     }
-    
+
     public Object getValueAt(int row, int column) {
         return consData.getValueAt(row, column);
     }
@@ -354,7 +357,7 @@ public class JSheet extends javax.swing.JPanel {
         //setting button looks on property sheet 
         Common.setButtonsLooks(consSheetCust);
         Common.setButtonsLooks(consColFilter);
-        
+
         //  Set Model to Sheet Customization Console...
         consSheetCust.setModel(scm);
         consFiltersView.setModel(scm);
@@ -491,26 +494,21 @@ public class JSheet extends javax.swing.JPanel {
         pnlDataView = new javax.swing.JPanel();
 
         tblFixed.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
+                new Object[][] { { null, null, null, null }, { null, null, null, null }, { null, null, null, null }, { null, null, null, null } },
+                new String[] { "Title 1", "Title 2", "Title 3", "Title 4" }));
         tblFixed.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblFixedMouseClicked(evt);
             }
+
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 tblFixedMouseEntered(evt);
             }
+
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 tblFixedMousePressed(evt);
             }
+
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 tblFixedMouseReleased(evt);
             }
@@ -604,21 +602,37 @@ public class JSheet extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton butDiaFilterClose;
+
     private javax.swing.JButton butDiaSheetCustClose;
+
     private javax.swing.JDialog diaConsSheetCust;
+
     private javax.swing.JDialog diaFilterConsole;
+
     private javax.swing.JDialog diaFiltersViewConsole;
+
     private javax.swing.JPanel jPanel1;
+
     private javax.swing.JPanel jPanel2;
+
     private javax.swing.JPanel jPanel3;
+
     private javax.swing.JPanel pnlConsole;
+
     private javax.swing.JPanel pnlDataView;
+
     private javax.swing.JPanel pnlFixedTblHangerRenderer;
+
     private javax.swing.JPanel pnlFixedTblHeader;
+
     private javax.swing.JPanel pnlFixedTblMGCellEditor;
+
     private javax.swing.JPanel pnlFixedTblMGCellRenderer;
+
     private javax.swing.JPanel pnlSheetCust;
+
     private javax.swing.JTable tblFixed;
+
     // End of variables declaration//GEN-END:variables
 
     public static void main(String[] args) {
@@ -784,7 +798,7 @@ public class JSheet extends javax.swing.JPanel {
                 try {
                     out = new BufferedWriter(new FileWriter(fileName));
 
-                    String csvString = consData.getTblSelectionDataWithCommas( true).toString();
+                    String csvString = consData.getTblSelectionDataWithCommas(true).toString();
                     //                    String csvString = cellSelectionEnabled ? 
                     //                        consData.getTblSelectionDataWithCommas().toString() 
                     //                        : consData.getTblRowDataWithComma(tmFixedLeft.getRowSelections()).toString();
@@ -792,15 +806,18 @@ public class JSheet extends javax.swing.JPanel {
                     out.close();
 
                 } catch (IOException e) {
-                    String message = String.format("Exception while exporting data in file: %s. \nReason=%s",fileName, e.getMessage());
-                    lgr.warning( message);
-                    JOptionPane.showMessageDialog( this, message);
+                    String message = String.format("Exception while exporting data in file: %s. \nReason=%s",
+                                                   fileName, e.getMessage());
+                    lgr.warning(message);
+                    JOptionPane.showMessageDialog(this, message);
                 } finally {
                     try {
-                        if( null != out)
+                        if (null != out)
                             out.close();
                     } catch (Exception e) {
-                        lgr.warning( String.format("Exception while closing file. Export may NOT have been successful.\nReason=%s",e.getMessage()));
+                        lgr.warning(String.format(
+                                                  "Exception while closing file. Export may NOT have been successful.\nReason=%s",
+                                                  e.getMessage()));
                     }
                 }
             }
@@ -808,7 +825,6 @@ public class JSheet extends javax.swing.JPanel {
         } while (!done);
 
     }
-
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
