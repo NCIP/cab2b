@@ -29,6 +29,7 @@ public class JSheetViewDataModel extends AbstractTableModel {
 
     public int getColumnCount() {
         return tblData.getColumnCount();
+
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
@@ -49,14 +50,22 @@ public class JSheetViewDataModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int viewRowIndex, int viewColumnIndex) {
-        int modelRowIdx = tblData.convertRowIndexToModel( viewRowIndex);
-        int modelColumnIdx = tblData.convertColumnIndexToModel( viewColumnIndex);
-        
         return compositeDataModel.isCellEditable(viewRowIndex, viewColumnIndex);
     }
-    
+
     @Override
     public String getColumnName(int column) {
         return tblData.getColumnName(column);
+    }
+
+    /**
+     * This method must be called before getting latest value
+     * from cell which is in editable state.           
+     * @param row
+     * @param col
+     */
+    public void stopCellEditing(int row, int col) {
+        // method added to fix bug 6924
+        tblData.getCellEditor(row, col).stopCellEditing();
     }
 }
