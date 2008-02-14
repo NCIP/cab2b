@@ -10,6 +10,7 @@ package edu.wustl.cab2b.client.ui.experiment;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,6 +35,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
+import edu.wustl.cab2b.client.ui.controls.sheet.JSheet;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
@@ -319,9 +321,16 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
             // Add close button
             Cab2bButton closeButton = new Cab2bButton("Close");
+            //            final Component compOldSel = tabComponent.getSelectedComponent();
             closeButton.addActionListener(new ActionListener() {
+                //                final Component compOldSelF = compOldSel;
                 public void actionPerformed(ActionEvent actionEvent) {
                     tabComponent.remove(detailViewPanel);
+                    Component compOldSel = tabComponent.getSelectedComponent();
+                    JSheet sheet = getJSheetChildIfExists((Container) compOldSel);
+                    if (sheet != null) {
+                        firePropertyChange(DefaultSpreadSheetViewPanel.SPREADSHEET_MODEL_INSTALLED, null, sheet);
+                    }
                 }
             });
             detailViewPanel.add("right ", closeButton);
@@ -330,6 +339,30 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             tabComponent.add(tabTitle, detailViewPanel);
         }
         tabComponent.setSelectedComponent(detailPanel);
+    }
+
+    /**
+     * Method to get instance of JSheet from the container      
+     * @param comp
+     * @return
+     */
+    JSheet getJSheetChildIfExists(Container comp) {
+        //method added
+        if (comp == null)
+            return null;
+        else if (comp instanceof JSheet)
+            return (JSheet) comp;
+
+        for (int idx = comp.getComponentCount() - 1; idx >= 0; idx--) {
+            Container childComp = (Container) comp.getComponent(idx);
+            if (childComp != null && childComp instanceof JSheet)
+                return (JSheet) childComp;
+            else
+                return getJSheetChildIfExists(childComp);
+        }
+
+        //  Not Found...
+        return null;
     }
 
     /**
@@ -454,6 +487,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
             Cab2bPanel selectedTabPanel = (Cab2bPanel) jTabbedPane.getSelectedComponent();
             if (selectedTabPanel != null && selectedTabPanel.getComponentCount() > 0) {
                 Component component = CommonUtils.getComponentByName(selectedTabPanel, "DataListDetailedPanel");
+
                 if (component instanceof DataListDetailedPanelInterface) {
                     DataListDetailedPanelInterface tabPanel = (DataListDetailedPanelInterface) component;
 
