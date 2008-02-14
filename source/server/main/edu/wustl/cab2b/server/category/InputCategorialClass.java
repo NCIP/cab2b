@@ -7,7 +7,7 @@ import java.util.List;
  * It is used to reprents the category XML's CategorialClass tag.
  * @author Chandrakant Talele
  */
-class InputCategorialClass {
+public class InputCategorialClass {
     /**
      * All attributes belonging to this the InputCategorialClass.
      */

@@ -4,10 +4,10 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 
 /**
  * This is private class to this package.
- * It is used to reprents the category XML's Attribute tag.
+ * It is used to represents the category XML's Attribute tag.
  * @author Chandrakant Talele
  */
-class InputCategorialAttribute {
+public class InputCategorialAttribute {
     /**
      * Display name to use in case of repetition of names
      */
