@@ -234,9 +234,23 @@ public class ExperimentStackBox extends Cab2bPanel {
         customCategoryButton.setPreferredSize(new Dimension(160, 22));
         customCategoryButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                CustomCategoryPanel categoryPanel = new CustomCategoryPanel(m_selectedExperiment);
-                if (categoryPanel.getDataListMetadata() != null)
-                    updateStackBox(categoryPanel.getDataListMetadata());
+                CustomSwingWorker swingWorker = new CustomSwingWorker(
+                        ExperimentStackBox.this.m_experimentDataCategoryGridPanel) {
+
+                    @Override
+                    protected void doNonUILogic() throws Exception {
+                        CustomCategoryPanel categoryPanel = new CustomCategoryPanel(m_selectedExperiment);
+                        if (categoryPanel.getDataListMetadata() != null)
+                            updateStackBox(categoryPanel.getDataListMetadata());
+
+                    }
+
+                    @Override
+                    protected void doUIUpdateLogic() throws Exception {
+                        dataCategoryPanel.revalidate();
+                    }
+                };
+                swingWorker.start();
             }
         });
         cab2bPanel.add(customCategoryButton);
@@ -296,7 +310,7 @@ public class ExperimentStackBox extends Cab2bPanel {
      * Method to perform tree node selection action for currently selected node
      */
     public void treeSelectionListenerAction() {
-        Cab2bPanel selectedPanel = (Cab2bPanel) m_experimentDataCategoryGridPanel.getTabComponent().getSelectedComponent();        
+        Cab2bPanel selectedPanel = (Cab2bPanel) m_experimentDataCategoryGridPanel.getTabComponent().getSelectedComponent();
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent();
         if (node == null) {
             return;
