@@ -114,33 +114,18 @@ public class CustomCategoryPanel extends JXFrame {
         dataListCombo.setModel(dataListModel);
 
         class DataListComboListener implements ItemListener {
-            ItemEvent event;
 
             public void itemStateChanged(ItemEvent e) {
-                event = e;
-                CustomSwingWorker swingWorker = new CustomSwingWorker(CustomCategoryPanel.this.finalPanel) {
-                    List<IdName> rooCategoeisList = null;
-
-                    @Override
-                    protected void doNonUILogic() throws Exception {
-                        if (DataListComboListener.this.event.getStateChange() == ItemEvent.SELECTED) {
-                            categoryComboboxModel.removeAllElements();
-                            IdName selectedIdName = (IdName) DataListComboListener.this.event.getItem();
-                            rooCategoeisList = customDataCategoryModel.getRooCategories(selectedIdName.getId());
-                            if (rooCategoeisList != null) {
-                                for (IdName idName : rooCategoeisList) {
-                                    categoryComboboxModel.addElement(idName);
-                                }
-                            }
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    categoryComboboxModel.removeAllElements();
+                    IdName selectedIdName = (IdName) e.getItem();
+                    List<IdName> rooCategoeisList = customDataCategoryModel.getRooCategories(selectedIdName.getId());
+                    if (rooCategoeisList != null) {
+                        for (IdName idName : rooCategoeisList) {
+                            categoryComboboxModel.addElement(idName);
                         }
                     }
-
-                    @Override
-                    protected void doUIUpdateLogic() throws Exception {
-                        dataListCombo.revalidate();
-                    }
-                };
-                swingWorker.start();               
+                }
             }
         }
         dataListCombo.addItemListener(new DataListComboListener());
