@@ -224,7 +224,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         TableLinkAction myLinkAction = new TableLinkAction();
         analysisTable.getColumn(1).setCellRenderer(new LinkRenderer(myLinkAction));
         analysisTable.getColumn(1).setCellEditor(new LinkRenderer(myLinkAction));
-
         updateUI();
     }
 
@@ -270,6 +269,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         tabComponent.setSelectedIndex(0);
         tabComponent.setBorder(null);
         this.add(tabComponent, BorderLayout.CENTER);
+        updateUI();
     }
 
     /**

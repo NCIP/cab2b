@@ -160,6 +160,7 @@ public class ExperimentStackBox extends Cab2bPanel {
             }
         };
         swingWorker.start();
+        updateUI();
     }
 
     /**
@@ -176,7 +177,6 @@ public class ExperimentStackBox extends Cab2bPanel {
 
         // for each datalist
         for (DataListMetadata dataListMetadata : experiment.getDataListMetadataCollection()) {
-
             if (dataListMetadata.isCustomDataCategory()) {
                 if (customCategoriesRoot == null) {
                     customCategoriesRoot = new DefaultMutableTreeNode("Custom Data Categories");
@@ -188,7 +188,6 @@ public class ExperimentStackBox extends Cab2bPanel {
 
             ClientSideCache clientCache = ClientSideCache.getInstance();
             for (IdName idName : dataListMetadata.getEntitiesNames()) {
-
                 EntityInterface originalEntity = clientCache.getEntityById(idName.getOriginalEntityId());
 
                 UserObjectWrapper<IdName> categoryUserObject = new UserObjectWrapper<IdName>(idName,
@@ -353,6 +352,7 @@ public class ExperimentStackBox extends Cab2bPanel {
             }
         };
         swingWorker.start();
+        updateUI();
     }
 
     public void setFilterPanel(Component filterConsole) {
