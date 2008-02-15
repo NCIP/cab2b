@@ -211,6 +211,10 @@ class ViewDataConsole extends javax.swing.JPanel implements
 		tblRowHeader.setSelectionModel(tblData.getSelectionModel());
 		spaData.getRowHeader().addChangeListener(new HeaderAndDataScrolSync());
 		// tblRowHeader.
+        
+        //  Setup Dynamic width of first column of Table Header...
+        TableColumnWidthSynchronizer cws = new TableColumnWidthSynchronizer();
+        cws.manageColumn( tblRowHeader.getColumnModel().getColumn(0), tblRowHeader, tblData);
 	}
 
 	void addUserColumn(SheetColumn sCol) {
