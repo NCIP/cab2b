@@ -330,7 +330,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 					@Override
 					protected void doUIUpdateLogic() throws Exception {
 						if (clientQueryBuilder == null
-								&& clientQueryBuilder.getVisibleExressionIds()
+								|| clientQueryBuilder.getVisibleExressionIds()
 										.size() == 0) {
 							// Pop-up a dialog asking the user to add alteast a
 							// rule.
