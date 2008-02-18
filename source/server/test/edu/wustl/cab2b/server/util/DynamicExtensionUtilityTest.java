@@ -17,6 +17,9 @@ import edu.common.dynamicextensions.domaininterface.SemanticPropertyInterface;
 import edu.common.dynamicextensions.domaininterface.StringValueInterface;
 import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.common.dynamicextensions.domaininterface.UserDefinedDEInterface;
+import edu.common.dynamicextensions.entitymanager.EntityManager;
+import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
+import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.common.dynamicextensions.util.global.Constants.AssociationDirection;
 import edu.common.dynamicextensions.util.global.Constants.AssociationType;
 import edu.common.dynamicextensions.util.global.Constants.Cardinality;
@@ -189,4 +192,20 @@ public class DynamicExtensionUtilityTest extends TestCase {
         assertEquals(name, roleToVerify.getName());
     }
 
+    public void testMarkMetadataEntityGroup() {
+        String[] names = new String[] { "caFE Server 1.1", "caTissue_Core", "GeneConnect", "caArray", "CategoryEntityGroup" };
+
+        for (String name : names) {
+            EntityGroupInterface entityGroup = null;
+            try {
+                entityGroup = EntityManager.getInstance().getEntityGroupByName(name);
+                DynamicExtensionUtility.markMetadataEntityGroup(entityGroup);
+                EntityManager.getInstance().persistEntityGroupMetadata(entityGroup);
+            } catch (DynamicExtensionsSystemException e) {
+                e.printStackTrace();
+            } catch (DynamicExtensionsApplicationException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
