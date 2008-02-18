@@ -81,7 +81,7 @@ public class UserOperations extends DefaultBizLogic {
 				throw new RemoteException(e.getMessage());
 			}
 		} else {
-			throw new RemoteException("Couldn't find Administrator ");
+			throw new RemoteException("Couldn't find user " + value);
 		}
 		return user;
 	}
