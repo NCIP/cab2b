@@ -43,7 +43,6 @@ import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.path.PathConstants;
-import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
 import edu.wustl.common.querysuite.queryobject.DataType;
 import gov.nih.nci.cagrid.metadata.common.SemanticMetadata;
 
@@ -196,6 +195,17 @@ public class DynamicExtensionUtility {
         taggedValue.setKey(key);
         taggedValue.setValue(value);
         owner.addTaggedValue(taggedValue);
+    }
+    
+    /**
+     * This method adds a tag to entity group to distinguish it as metadata entity group. 
+     * @param eg
+     */
+    public static void markMetadataEntityGroup(EntityGroupInterface eg) {
+        TaggedValueInterface taggedValue = DomainObjectFactory.getInstance().createTaggedValue();
+        taggedValue.setKey(PathConstants.METADATA_ENTITY_GROUP);
+        taggedValue.setValue(PathConstants.METADATA_ENTITY_GROUP);
+        eg.addTaggedValue(taggedValue);
     }
 
     /**
@@ -415,27 +425,46 @@ public class DynamicExtensionUtility {
         return role;
     }
 
-    public static Collection<EntityGroupInterface> getCab2bEntityGroups() throws RemoteException{
-     
+    public static Collection<EntityGroupInterface> getCab2bEntityGroups() throws RemoteException {
         List<EntityGroupInterface> entityGroups = new ArrayList<EntityGroupInterface>();
 
-        Collection<String> applicationNames= new HashSet<String>();
+        Collection<EntityGroupInterface> allEntityGroups = new HashSet<EntityGroupInterface>();
         try {
-            applicationNames=new ServiceURLOperations().getAllApplicationNames();
-        } catch (RemoteException e) {
+            allEntityGroups = EntityManager.getInstance().getAllEntitiyGroups();
+        } catch (DynamicExtensionsSystemException e) {
+            throw new RemoteException(e.getMessage());
+        } catch (DynamicExtensionsApplicationException e) {
             throw new RemoteException(e.getMessage());
         }
-        
-        for(String application:applicationNames){
-            try {
-                entityGroups.add(EntityManager.getInstance().getEntityGroupByName(application));
-            } catch (DynamicExtensionsSystemException e) {
-                throw new RemoteException(e.getMessage());
-            } catch (DynamicExtensionsApplicationException e) {
-                throw new RemoteException(e.getMessage());
+
+        for (EntityGroupInterface entityGroup : allEntityGroups) {
+            if(isEntityGroupMetadata(entityGroup)) {
+                entityGroups.add(entityGroup);
             }
         }
         return entityGroups;
+    }
+
+    /**
+     * This method checks if the given entity group is a metadata entity group or not.
+     * @param entityGroup
+     * @return
+     */
+    public static boolean isEntityGroupMetadata(EntityGroupInterface entityGroup) {
+        boolean isMetadata = false;
+
+        Collection<TaggedValueInterface> taggedValues = entityGroup.getTaggedValueCollection();
+        for (TaggedValueInterface taggedValue : taggedValues) {
+            String tagKey = taggedValue.getKey();
+            String tagValue = taggedValue.getValue();
+            if ((tagKey != null && tagValue != null)
+                    && (PathConstants.METADATA_ENTITY_GROUP.compareTo(tagKey) == 0 && PathConstants.METADATA_ENTITY_GROUP.compareTo(tagValue) == 0)) {
+                isMetadata = true;
+                break;
+            }
+        }
+
+        return isMetadata;
     }
 
     /** 

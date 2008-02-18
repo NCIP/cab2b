@@ -59,6 +59,11 @@ public interface PathConstants {
      * TODO It will be removed from here and it will be externally configurable.
      */
     public static final String CA_DSR_URL = "http://cagrid04.bmi.ohio-state.edu:7080/wsrf/services/cagrid/CaDSRService";
+    
+    /**
+     * 
+     */
+    public static final String METADATA_ENTITY_GROUP = "MetadataEntityGroup";
 
     /**
      * Enum to represents possible value which column "ASSOCIATION.ASSOCIATION_TYPE" can take.  
