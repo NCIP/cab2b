@@ -7,7 +7,7 @@
 <hibernate-mapping default-lazy="false">
     <class
         name="edu.wustl.cab2b.common.user.ServiceURL"
-        table="SERVICE_URL"
+        table="CAB2B_SERVICE_URL"
         dynamic-update="false"
         dynamic-insert="false"
     >
@@ -47,7 +47,7 @@
 
         <set
             name="userCollection"
-            table="USER_URL_MAPPING"
+            table="CAB2B_USER_URL_MAPPING"
             lazy="false"
             inverse="true"
             cascade="none"

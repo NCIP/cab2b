@@ -7,7 +7,7 @@
 <hibernate-mapping default-lazy="false">
     <class
         name="edu.wustl.cab2b.common.user.User"
-        table="USER"
+        table="CAB2B_USER"
         dynamic-update="false"
         dynamic-insert="false"
     >
@@ -37,7 +37,7 @@
 
         <set
             name="serviceURLCollection"
-            table="USER_URL_MAPPING"
+            table="CAB2B_USER_URL_MAPPING"
             lazy="false"
             inverse="false"
             cascade="all-delete-orphan"
@@ -64,7 +64,7 @@
             type="string"
             update="true"
             insert="true"
-            column="PASSWD"
+            column="PASSWORD"
             length="30"
             not-null="true"
         />
