@@ -128,4 +128,7 @@ create table USER_URL_MAPPING (
 );
 alter table USER_URL_MAPPING add index FKC64BBF4AAEC86F2D (USER_ID), add constraint FKC64BBF4AAEC86F2D foreign key (USER_ID) references USER (USER_ID);
 alter table USER_URL_MAPPING add index FKC64BBF4AB2004842 (SERVICE_URL_ID), add constraint FKC64BBF4AB2004842 foreign key (SERVICE_URL_ID) references SERVICE_URL (URL_ID);
+insert into user (USER_ID, NAME, PASSWD, IS_ADMIN) values (1,'Admin', 'admin123', 1); 
+insert into user (USER_ID, NAME, PASSWD, IS_ADMIN) values (2,'cab2bUser', 'cab2b123', 0); 
+
 
