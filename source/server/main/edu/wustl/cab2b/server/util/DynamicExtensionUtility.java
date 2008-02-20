@@ -220,10 +220,10 @@ public class DynamicExtensionUtility {
         try {
             entityGroup = EntityManager.getInstance().getEntityGroupByName(name);
         } catch (DynamicExtensionsSystemException e) {
-            throw new RuntimeException("Got System exception from Dynamic Extnsion while fetching entity group",
+            throw new RuntimeException("Got System exception from Dynamic Extension while fetching entity group",
                     e, ErrorCodeConstants.DB_0001);
         } catch (DynamicExtensionsApplicationException e) {
-            throw new RuntimeException("Got System exception from Dynamic Extnsion while fetching entity group",
+            throw new RuntimeException("Got System exception from Dynamic Extension while fetching entity group",
                     e, ErrorCodeConstants.DB_0001);
         }
         if (entityGroup == null) {
@@ -232,7 +232,7 @@ public class DynamicExtensionUtility {
             entityGroup.setName(name);
             entityGroup.setLongName(name);
             entityGroup.setDescription(name);
-            DynamicExtensionUtility.persistEntityGroup(entityGroup);
+            persistEntityGroup(entityGroup);
         }
         return entityGroup;
     }
