@@ -16,7 +16,12 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.RoleInterface;
+import edu.common.dynamicextensions.entitymanager.EntityManager;
+import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
+import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.common.dynamicextensions.util.global.Constants;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
@@ -146,7 +151,25 @@ public class PersistCategory {
      * @return The category entity group.
      */
     private EntityGroupInterface getCategoryEntityGroup() {
-        EntityGroupInterface entityGroup = DynamicExtensionUtility.getEntityGroupByName(CATEGORY_ENTITY_GROUP_NAME);
+        EntityGroupInterface entityGroup = null;
+        try {
+            entityGroup = EntityManager.getInstance().getEntityGroupByName(CATEGORY_ENTITY_GROUP_NAME);
+        } catch (DynamicExtensionsSystemException e) {
+            throw new RuntimeException("Got System exception from Dynamic Extension while fetching category entity group",
+                    e, ErrorCodeConstants.DB_0001);
+        } catch (DynamicExtensionsApplicationException e) {
+            throw new RuntimeException("Got System exception from Dynamic Extension while fetching category entity group",
+                    e, ErrorCodeConstants.DB_0001);
+        }
+        if (entityGroup == null) {
+            entityGroup = DynamicExtensionUtility.createEntityGroup();
+            entityGroup.setShortName(CATEGORY_ENTITY_GROUP_NAME);
+            entityGroup.setName(CATEGORY_ENTITY_GROUP_NAME);
+            entityGroup.setLongName(CATEGORY_ENTITY_GROUP_NAME);
+            entityGroup.setDescription(CATEGORY_ENTITY_GROUP_NAME);
+            DynamicExtensionUtility.markMetadataEntityGroup(entityGroup);          
+            entityGroup = DynamicExtensionUtility.persistEntityGroup(entityGroup);
+        }
         return entityGroup;
     }
 
