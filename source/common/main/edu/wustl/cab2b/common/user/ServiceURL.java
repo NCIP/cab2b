@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.common.user;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -10,7 +11,8 @@ import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
  * @hibernate.class table="CAB2B_SERVICE_URL"
  * @hibernate.cache usage="read-write"
  */
-public class ServiceURL implements ServiceURLInterface {
+public class ServiceURL implements ServiceURLInterface, Serializable {
+    private static final long serialVersionUID = 1L;
 
     private Long urlId;
 
@@ -26,7 +28,6 @@ public class ServiceURL implements ServiceURLInterface {
 
     public ServiceURL() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     /**
