@@ -217,13 +217,14 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
      *         respective not null fields in the passed Permissible value
      *         object.
      */
-public MatchedClass getEntityOnPermissibleValueParameters(
+    public MatchedClass getEntityOnPermissibleValueParameters(
                                                               Collection<PermissibleValueInterface> patternPermissibleValueCollection) {
         MatchedClass matchedClass = new MatchedClass();
         for (PermissibleValueInterface cachedPermissibleValue : permissibleValueVsEntity.keySet()) {
             for (PermissibleValueInterface patternPermissibleValue : patternPermissibleValueCollection) {
                 EntityInterface cachedEntity = permissibleValueVsEntity.get(cachedPermissibleValue);
-                MatchedClassEntry matchedClassEntry = CompareUtil.compare(cachedPermissibleValue, patternPermissibleValue,cachedEntity);
+                MatchedClassEntry matchedClassEntry = CompareUtil.compare(cachedPermissibleValue,
+                                                                          patternPermissibleValue, cachedEntity);
                 if (matchedClassEntry != null) {
                     matchedClass.addEntity(cachedEntity);
                     matchedClass.addMatchedClassEntry(matchedClassEntry);
@@ -233,6 +234,7 @@ public MatchedClass getEntityOnPermissibleValueParameters(
         return matchedClass;
 
     }
+
     /**
      * Returns the Entity for given Identifier
      * 
@@ -317,6 +319,20 @@ public MatchedClass getEntityOnPermissibleValueParameters(
      */
     public Collection<EntityGroupInterface> getEntityGroups() {
         return cab2bEntityGroups;
+    }
+
+    /**
+     * This method returns the entity group of given name from cache.
+     * @param name name of the entity group
+     * @return enttity group
+     */
+    public EntityGroupInterface getEntityGroupByName(String name) {
+        for (EntityGroupInterface group : cab2bEntityGroups) {
+            if (group.getName().equals(name)) {
+                return group;
+            }
+        }
+        return null;
     }
 
     /**
