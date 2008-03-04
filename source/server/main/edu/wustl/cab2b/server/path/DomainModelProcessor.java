@@ -21,6 +21,8 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.RoleInterface;
+import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
+import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.common.dynamicextensions.util.global.Constants;
 import edu.common.dynamicextensions.util.global.Constants.AssociationDirection;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
@@ -80,8 +82,10 @@ public class DomainModelProcessor {
      *            Classes,Associations etc
      * @param applicationName Name of the application. It will be the Short name
      *            of the newly created entity group.
+     * @throws DynamicExtensionsApplicationException 
+     * @throws DynamicExtensionsSystemException 
      */
-    public DomainModelProcessor(DomainModelParser parser, String applicationName) {
+    public DomainModelProcessor(DomainModelParser parser, String applicationName) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException {
         Logger.out.info("Creating entity group for application : " + applicationName);
 
         entityGroup = DynamicExtensionUtility.createEntityGroup();
@@ -449,9 +453,8 @@ public class DomainModelProcessor {
     DomainModelProcessor() {
 
     }
-
-    EntityGroupInterface saveEntityGroup(EntityGroupInterface eg) {
-        return DynamicExtensionUtility.persistEntityGroup(eg);
+    EntityGroupInterface saveEntityGroup(EntityGroupInterface eg) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException {
+        return DynamicExtensionUtility.persistEGroup(eg);
     }
 
 }
