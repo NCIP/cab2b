@@ -17,4 +17,8 @@ public interface ServerConstants {
      * File name which hold server side properties.
      */
     public static String SERVER_PROPERTY_FILE = "server.properties";
+    
+    public static final String LOAD_STATUS = "loadStatus";
+
+    public static final String LOAD_FAILED = "loadFailed";
 }

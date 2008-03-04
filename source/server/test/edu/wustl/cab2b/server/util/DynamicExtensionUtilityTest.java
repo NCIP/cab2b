@@ -1,6 +1,8 @@
 package edu.wustl.cab2b.server.util;
 
 import static edu.wustl.cab2b.common.util.Constants.CAB2B_ENTITY_GROUP;
+import static edu.wustl.cab2b.server.ServerConstants.LOAD_FAILED;
+import static edu.wustl.cab2b.server.ServerConstants.LOAD_STATUS;
 
 import java.util.Collection;
 
@@ -71,6 +73,15 @@ public class DynamicExtensionUtilityTest extends TestCase {
         TaggedValueInterface tag = eg.getTaggedValueCollection().iterator().next();
         assertEquals(CAB2B_ENTITY_GROUP, tag.getKey());
         assertEquals(CAB2B_ENTITY_GROUP, tag.getValue());
+    }
+    
+    public void testAddTaggedValueToEntityGroup() {
+        EntityGroupInterface eg = DynamicExtensionUtility.createEntityGroup();
+        eg.setName("temp1");
+        eg.setLongName("Temp1");
+        DynamicExtensionUtility.addTaggedValue(eg, LOAD_STATUS, LOAD_FAILED);
+        DynamicExtensionUtility.persistEntityGroup(eg);
+        assertNotNull(eg.getId());
     }
 
     public void testGetNewRole() {

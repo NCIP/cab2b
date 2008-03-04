@@ -102,6 +102,27 @@ public class DynamicExtensionUtility {
 
         return entityGroup;
     }
+    
+    
+    
+    /**
+     * Persist given entity Group using dynamic extension APIs.
+     * Whether to store only metadata for this entity Group is decided by {@link PathConstants.CREATE_TABLE_FOR_ENTITY} 
+     * @param entityGroup entity Group to persist.
+     * @return The saved entity Group
+     * @throws DynamicExtensionsApplicationException 
+     * @throws DynamicExtensionsSystemException 
+     */
+    public static EntityGroupInterface persistEGroup(EntityGroupInterface entityGroup) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException {
+        EntityManagerInterface entityManager = EntityManager.getInstance();
+      
+            if (PathConstants.CREATE_TABLE_FOR_ENTITY) {
+                entityGroup = entityManager.persistEntityGroup(entityGroup);
+            } else {
+                entityGroup = entityManager.persistEntityGroupMetadata(entityGroup);
+            }
+        return entityGroup;
+    }
 
     /**
      * Returns the Entity for given Identifier
@@ -242,6 +263,12 @@ public class DynamicExtensionUtility {
      * @return EntityGroupInterface newly created unsaved entity group.
      */
     public static EntityGroupInterface createEntityGroup() {
+        EntityGroupInterface entityGroup = DomainObjectFactory.getInstance().createEntityGroup();
+        addTaggedValue(entityGroup, CAB2B_ENTITY_GROUP, CAB2B_ENTITY_GROUP);
+        return entityGroup;
+    }
+    
+    public static EntityGroupInterface createEntityGroupTemp() {
         EntityGroupInterface entityGroup = DomainObjectFactory.getInstance().createEntityGroup();
         addTaggedValue(entityGroup, CAB2B_ENTITY_GROUP, CAB2B_ENTITY_GROUP);
         return entityGroup;

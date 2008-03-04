@@ -10,6 +10,8 @@ import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
+import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.common.util.IdGenerator;
 import edu.wustl.cab2b.common.util.PropertyLoader;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
@@ -106,7 +108,16 @@ public class DomainModelProcessorTest extends TestCase {
         DomainModel model = DomainModelParserTest.getModel();
         model.setProjectLongName(longName);
         DomainModelParser p = new DomainModelParser(model);
-        DomainModelProcessor processor = new MockDomainModelProcessor(p,appName);
+        DomainModelProcessor processor=null;
+		try {
+			processor = new MockDomainModelProcessor(p,appName);
+		} catch (DynamicExtensionsSystemException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DynamicExtensionsApplicationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         EntityGroupInterface eg = processor.getEntityGroup();
         assertEquals(appName,eg.getShortName());
         assertEquals(longName,eg.getName());
@@ -131,13 +142,21 @@ public class DomainModelProcessorTest extends TestCase {
             e.printStackTrace();
             fail("unable to initialise");
         }
-        new MockDomainModelProcessor(parser, name);
+        try {
+			new MockDomainModelProcessor(parser, name);
+		} catch (DynamicExtensionsSystemException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DynamicExtensionsApplicationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
     }
 }
 
 class MockDomainModelProcessor extends DomainModelProcessor {
-    public MockDomainModelProcessor(DomainModelParser parser, String applicationName) {
+    public MockDomainModelProcessor(DomainModelParser parser, String applicationName) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException {
         super(parser, applicationName);
     }
 
