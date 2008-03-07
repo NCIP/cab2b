@@ -1,5 +1,8 @@
 package edu.wustl.cab2b.server.path;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.BooleanValueInterface;
@@ -9,6 +12,7 @@ import edu.common.dynamicextensions.domaininterface.DoubleValueInterface;
 import edu.common.dynamicextensions.domaininterface.FloatValueInterface;
 import edu.common.dynamicextensions.domaininterface.IntegerValueInterface;
 import edu.common.dynamicextensions.domaininterface.LongValueInterface;
+import edu.common.dynamicextensions.domaininterface.ShortValueInterface;
 import edu.common.dynamicextensions.domaininterface.StringValueInterface;
 import edu.common.dynamicextensions.domaininterface.UserDefinedDEInterface;
 import edu.common.dynamicextensions.util.global.Constants.ValueDomainType;
@@ -17,10 +21,6 @@ import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.cagrid.metadata.common.Enumeration;
 import gov.nih.nci.cagrid.metadata.common.UMLAttribute;
 import gov.nih.nci.cagrid.metadata.common.ValueDomain;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Enumration for DataType.
@@ -192,6 +192,29 @@ enum DataType {
         }
 
     },
+    SHORT() {
+        /**
+         * @see DataType#createAttribute(UMLAttribute)
+         */
+        public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
+            AttributeInterface attribute = domainObjectFactory.createShortAttribute();
+            ValueDomain valueDomain = umlAttribute.getValueDomain();
+
+            Enumeration[] arr = valueDomain.getEnumerationCollection().getEnumeration();
+            if (arr != null) {
+                UserDefinedDEInterface userDefinedDE = DomainObjectFactory.getInstance().createUserDefinedDE();
+                for (Enumeration e : arr) {
+                    ShortValueInterface value = domainObjectFactory.createShortValue();
+                    value.setValue(new Short(e.getPermissibleValue()));
+                    DynamicExtensionUtility.setSemanticMetadata(value, e.getSemanticMetadata());
+                    userDefinedDE.addPermissibleValue(value);
+                }
+                attribute.getAttributeTypeInformation().setDataElement(userDefinedDE);
+            }
+            return attribute;
+        }
+
+    },
     OBJECT() {
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createObjectAttribute();
@@ -239,6 +262,8 @@ enum DataType {
         dataTypeMap.put("long", DataType.LONG);
         dataTypeMap.put("java.lang.double", DataType.DOUBLE);
         dataTypeMap.put("double", DataType.DOUBLE);
+        dataTypeMap.put("java.lang.Short", DataType.SHORT);
+        dataTypeMap.put("short", DataType.SHORT);
 //        dataTypeMap.put("java.lang.object", DataType.UNDEFINED);
 //        dataTypeMap.put("java.util.collection", DataType.UNDEFINED);
 //        dataTypeMap.put("java.util.vector", DataType.UNDEFINED);
