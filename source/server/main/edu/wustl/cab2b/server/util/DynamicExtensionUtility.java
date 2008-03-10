@@ -41,6 +41,7 @@ import edu.common.dynamicextensions.util.global.Constants.Cardinality;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.cab2b.server.ServerConstants;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.path.PathConstants;
 import edu.wustl.common.querysuite.queryobject.DataType;
@@ -102,9 +103,7 @@ public class DynamicExtensionUtility {
 
         return entityGroup;
     }
-    
-    
-    
+
     /**
      * Persist given entity Group using dynamic extension APIs.
      * Whether to store only metadata for this entity Group is decided by {@link PathConstants.CREATE_TABLE_FOR_ENTITY} 
@@ -113,14 +112,15 @@ public class DynamicExtensionUtility {
      * @throws DynamicExtensionsApplicationException 
      * @throws DynamicExtensionsSystemException 
      */
-    public static EntityGroupInterface persistEGroup(EntityGroupInterface entityGroup) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException {
+    public static EntityGroupInterface persistEGroup(EntityGroupInterface entityGroup)
+            throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException {
         EntityManagerInterface entityManager = EntityManager.getInstance();
-      
-            if (PathConstants.CREATE_TABLE_FOR_ENTITY) {
-                entityGroup = entityManager.persistEntityGroup(entityGroup);
-            } else {
-                entityGroup = entityManager.persistEntityGroupMetadata(entityGroup);
-            }
+
+        if (PathConstants.CREATE_TABLE_FOR_ENTITY) {
+            entityGroup = entityManager.persistEntityGroup(entityGroup);
+        } else {
+            entityGroup = entityManager.persistEntityGroupMetadata(entityGroup);
+        }
         return entityGroup;
     }
 
@@ -217,7 +217,7 @@ public class DynamicExtensionUtility {
         taggedValue.setValue(value);
         owner.addTaggedValue(taggedValue);
     }
-    
+
     /**
      * This method adds a tag to entity group to distinguish it as metadata entity group. 
      * @param eg
@@ -267,7 +267,7 @@ public class DynamicExtensionUtility {
         addTaggedValue(entityGroup, CAB2B_ENTITY_GROUP, CAB2B_ENTITY_GROUP);
         return entityGroup;
     }
-    
+
     public static EntityGroupInterface createEntityGroupTemp() {
         EntityGroupInterface entityGroup = DomainObjectFactory.getInstance().createEntityGroup();
         addTaggedValue(entityGroup, CAB2B_ENTITY_GROUP, CAB2B_ENTITY_GROUP);
@@ -465,7 +465,7 @@ public class DynamicExtensionUtility {
         }
 
         for (EntityGroupInterface entityGroup : allEntityGroups) {
-            if(isEntityGroupMetadata(entityGroup)) {
+            if (isEntityGroupMetadata(entityGroup)) {
                 entityGroups.add(entityGroup);
             }
         }
@@ -486,17 +486,29 @@ public class DynamicExtensionUtility {
             String tagValue = taggedValue.getValue();
             if ((tagKey != null && tagValue != null)
                     && (PathConstants.METADATA_ENTITY_GROUP.compareTo(tagKey) == 0 && PathConstants.METADATA_ENTITY_GROUP.compareTo(tagValue) == 0)) {
-                isMetadata = true;
-                break;
+                if (isSuccessfullyLoaded(taggedValues)) {
+                    isMetadata = true;
+                    break;
+                }
             }
         }
-
         return isMetadata;
     }
 
+    private static boolean isSuccessfullyLoaded(Collection<TaggedValueInterface> taggedValues) {
+        for (TaggedValueInterface taggedValue : taggedValues) {
+            String taggedKey = taggedValue.getKey();
+            String tagggedValue = taggedValue.getValue();
+            if ((taggedKey != null && tagggedValue != null)
+                    && (ServerConstants.LOAD_STATUS.compareTo(taggedKey) == 0 && ServerConstants.LOAD_FAILED.compareTo(tagggedValue) == 0))
+                return false;
+        }
+        return true;
+    }
+
     /** 
-    * @return associations with given entity as the target entity.
-    */
+     * @return associations with given entity as the target entity.
+     */
     public static Collection<AssociationInterface> getIncomingIntramodelAssociations(Long entityId) {
         EntityInterface entity = EntityCache.getInstance().getEntityById(entityId);
         try {
