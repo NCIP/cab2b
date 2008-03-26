@@ -111,6 +111,10 @@ public class Path {
         return sdp.getDestNode();
     }
 
+    public int numNodes() {
+        return intermediateNodes.size() + 2;
+    }
+
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;

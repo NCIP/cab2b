@@ -67,10 +67,20 @@ public class GraphPathFinder {
         return cache;
     }
 
-    public Set<Path> getAllPaths(boolean[][] adjacencyMatrix,
-                                 Map<Integer, Set<Integer>> replicationNodes,
+    public Set<Path> getAllPaths(boolean[][] adjacencyMatrix, Map<Integer, Set<Integer>> replicationNodes,
                                  Connection conn) {
+        return getAllPaths(adjacencyMatrix, replicationNodes, conn, Integer.MAX_VALUE);
+    }
+
+    /**
+     * @throws IllegalArgumentException if <tt>maxLength < 2</tt>
+     */
+    public Set<Path> getAllPaths(boolean[][] adjacencyMatrix, Map<Integer, Set<Integer>> replicationNodes,
+                                 Connection conn, int maxLength) {
         Logger.out.info("Entered GraphPathFinder...");
+        if (maxLength < 2) {
+            throw new IllegalArgumentException("maxLength should be atleast 2.");
+        }
         long startTime = System.currentTimeMillis();
         // init
         this.inputGraph = new Graph(adjacencyMatrix);
@@ -89,11 +99,10 @@ public class GraphPathFinder {
                     // don't process self-edges now...
                     continue;
                 }
-                SourceDestinationPair sdp = new SourceDestinationPair(srcNode,
-                        destNode);
-//                Logger.out.info("Processing " + srcNode + " to " + destNode);
+                SourceDestinationPair sdp = new SourceDestinationPair(srcNode, destNode);
+                //                Logger.out.info("Processing " + srcNode + " to " + destNode);
 
-                Set<Path> srcDestPaths = getPaths(sdp, new HashSet<Node>());
+                Set<Path> srcDestPaths = getPaths(sdp, new HashSet<Node>(), maxLength);
                 numPaths += srcDestPaths.size();
                 // if (KEEP_WRITING) {
                 // PathToFileWriter.APPEND = true;
@@ -119,14 +128,12 @@ public class GraphPathFinder {
         return result;
     }
 
-    private Set<Path> getPaths(SourceDestinationPair sdp,
-                               Set<Node> nodesToIgnore) {
+    private Set<Path> getPaths(SourceDestinationPair sdp, Set<Node> nodesToIgnore, final int maxLength) {
         Node srcNode = sdp.getSrcNode();
         Node destNode = sdp.getDestNode();
         Set<Path> res = new HashSet<Path>();
         // see if there are paths calculated already...
-        Set<Path> cachedPaths = getCache().getPathsOnIgnoringNodes(sdp,
-                                                                   nodesToIgnore);
+        Set<Path> cachedPaths = getCache().getPathsOnIgnoringNodes(sdp, nodesToIgnore);
         if (cachedPaths != null) {
             res.addAll(cachedPaths);
             return res;
@@ -137,26 +144,24 @@ public class GraphPathFinder {
         interNodes.removeAll(nodesToIgnore);
 
         if (isEdgePresent(srcNode, destNode)) {
-            // the edge isn't forbidden, or we wouldn't be here...
             res.add(new Path(srcNode, destNode));
         }
         Set<Node> nodesToIgnoreNext = new HashSet<Node>(nodesToIgnore);
         nodesToIgnoreNext.add(srcNode);
         for (Node interNode : interNodes) {
             if (isEdgePresent(srcNode, interNode)) {
-                Set<Path> pathsFromInterToDest = getPaths(
-                                                          new SourceDestinationPair(
-                                                                  interNode,
-                                                                  destNode),
-                                                          nodesToIgnoreNext);
+                Set<Path> pathsFromInterToDest = getPaths(new SourceDestinationPair(interNode, destNode),
+                                                          nodesToIgnoreNext, maxLength);
 
                 for (Path pathFromInterToDest : pathsFromInterToDest) {
+                    if (pathFromInterToDest.numNodes() == maxLength) {
+                        continue;
+                    }
                     List<Node> intermediateNodes = new ArrayList<Node>();
 
                     intermediateNodes.add(interNode);
                     intermediateNodes.addAll(pathFromInterToDest.getIntermediateNodes());
-                    Path resPath = new Path(srcNode, destNode,
-                            intermediateNodes);
+                    Path resPath = new Path(srcNode, destNode, intermediateNodes);
                     res.add(resPath);
                 }
 
@@ -167,8 +172,7 @@ public class GraphPathFinder {
         return res;
     }
 
-    private void addEntryToCache(SourceDestinationPair sdp,
-                                 Set<Node> nodesToIgnore, Set<Path> res) {
+    private void addEntryToCache(SourceDestinationPair sdp, Set<Node> nodesToIgnore, Set<Path> res) {
         getCache().addEntry(sdp, nodesToIgnore, res);
     }
 

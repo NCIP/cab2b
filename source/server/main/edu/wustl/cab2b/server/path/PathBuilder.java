@@ -71,6 +71,8 @@ import edu.wustl.common.util.logger.Logger;
  * @author Munesh
  */
 public class PathBuilder {
+    private static final int PATH_MAX_LENGTH = 6;
+
     /**
      * This facilitates fast path building
      */
@@ -97,7 +99,7 @@ public class PathBuilder {
      * @param connection -
      *            Database connection to use to fire SQLs.
      */
-    public static void buildAndLoadAllModels(Connection connection) {
+    private static void buildAndLoadAllModels(Connection connection) {
         new File(PATH_FILE_NAME).delete(); // Delete previously generated paths
         // from file.
         Logger.out.info("Deleted the file : " + PATH_FILE_NAME);
@@ -147,14 +149,17 @@ public class PathBuilder {
      * @param applicationName
      *            Name of the application. The Entity Group will have this as
      *            its shoprt name.
+     *            
+     * @param maxPathLength max length (no. of classes) in path.
      */
-    public static void loadSingleModel(Connection connection, String xmlFilePath, String applicationName) {
+    public static void loadSingleModel(Connection connection, String xmlFilePath, String applicationName,
+                                       int maxPathLength) {
         DomainModelParser parser = new DomainModelParser(xmlFilePath);
-        loadSingleModelFromParserObject(connection, parser, applicationName);
+        loadSingleModelFromParserObject(connection, parser, applicationName, maxPathLength);
     }
 
     /**
-     * Builds all non-redundent paths for traversal between classes from a given
+     * Builds all non-redundant paths, with a specified max length, for traversal between classes from a given
      * domain model. This method is used to load models one at a time. All inter
      * model associations which current model has with already loaded models are
      * also stored. It writes all paths to {@link PathConstants#PATH_FILE_NAME}
@@ -167,9 +172,10 @@ public class PathBuilder {
      * @param applicationName
      *            Name of the application. The Entity Group will have this as
      *            its shoprt name.
+     * @param maxPathLength max length (no. of classes) in path.
      */
     public static boolean loadSingleModelFromParserObject(Connection connection, DomainModelParser parser,
-                                                          String applicationName) {
+                                                          String applicationName, int maxPathLength) {
         new File(PATH_FILE_NAME).delete(); // Delete previously generated paths
         // from file.
         Logger.out.info("Deleted the file : " + PATH_FILE_NAME);
@@ -222,7 +228,7 @@ public class PathBuilder {
         Map<Integer, Set<Integer>> replicationNodes = processor.getReplicationNodes();
 
         GraphPathFinder graphPathfinder = new GraphPathFinder();
-        Set<Path> paths = graphPathfinder.getAllPaths(adjacencyMatrix, replicationNodes, conn);
+        Set<Path> paths = graphPathfinder.getAllPaths(adjacencyMatrix, replicationNodes, conn, PATH_MAX_LENGTH);
 
         PathToFileWriter.writePathsToFile(paths, entityIds.toArray(new Long[0]), true);
     }

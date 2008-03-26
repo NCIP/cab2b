@@ -76,6 +76,40 @@ public class GraphPathFinderTest extends TestCase {
         assertTrue(paths.contains(new Path(new Node(2), new Node(1), get(new Node(0)))));
     }
 
+    public void testSizeLimited() {
+        // input copied from testCircularPath()
+        // 0-->1 -->2-->0 (circular)
+        boolean[][] res = new boolean[size][size];
+        res[0][1] = res[1][2] = res[2][0] = true;
+        Set<Path> paths = getAllPaths(res, 2);
+        assertEquals(3, paths.size());
+        assertTrue(allPaths.containsAll(paths));
+        assertTrue(paths.contains(new Path(new Node(0), new Node(1))));
+        assertTrue(paths.contains(new Path(new Node(1), new Node(2))));
+        assertTrue(paths.contains(new Path(new Node(2), new Node(0))));
+
+        paths = getAllPaths(res, 3);
+        assertEquals(6, paths.size());
+        assertTrue(allPaths.containsAll(paths));
+        assertTrue(paths.contains(new Path(new Node(0), new Node(1))));
+        assertTrue(paths.contains(new Path(new Node(1), new Node(2))));
+        assertTrue(paths.contains(new Path(new Node(2), new Node(0))));
+
+        assertTrue(paths.contains(new Path(new Node(0), new Node(2), get(new Node(1)))));
+        assertTrue(paths.contains(new Path(new Node(1), new Node(0), get(new Node(2)))));
+        assertTrue(paths.contains(new Path(new Node(2), new Node(1), get(new Node(0)))));
+
+        Set<Path> paths2 = getAllPaths(res, 9);
+        assertEquals(paths, paths2);
+
+        try {
+            getAllPaths(res, 1);
+            fail();
+        } catch (IllegalArgumentException e) {
+
+        }
+    }
+
     public void testOneBidirectional() {
         // 0<-->1
         boolean[][] res = new boolean[size][size];
@@ -231,6 +265,10 @@ public class GraphPathFinderTest extends TestCase {
 
     private Set<Path> getAllPaths(boolean[][] matrix) {
         return gpf.getAllPaths(matrix, new HashMap<Integer, Set<Integer>>(), null);
+    }
+
+    private Set<Path> getAllPaths(boolean[][] matrix, int maxLength) {
+        return gpf.getAllPaths(matrix, new HashMap<Integer, Set<Integer>>(), null, maxLength);
     }
 
     private List<Node> get(Node... params) {
