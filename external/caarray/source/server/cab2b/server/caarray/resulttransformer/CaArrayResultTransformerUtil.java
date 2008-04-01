@@ -10,7 +10,6 @@ import edu.wustl.cab2b.server.queryengine.resulttransformers.QueryLogger;
 import edu.wustl.cab2b.server.queryengine.resulttransformers.QueryResultTransformerUtil;
 import gov.nih.nci.cagrid.cqlresultset.CQLQueryResults;
 import gov.nih.nci.cagrid.data.utilities.CQLQueryResultsIterator;
-import gov.nih.nci.mageom.domain.Identifiable;
 
 /**
  * Util for caArray transformers that provides methods related to
@@ -27,7 +26,7 @@ public class CaArrayResultTransformerUtil extends QueryResultTransformerUtil {
     /**
      * This is the name of the id attribute for all classes in caArray.
      */
-    public static final String IDENTIFIER_ATTRIBUTE_NAME = "identifier";
+    public static final String IDENTIFIER_ATTRIBUTE_NAME = "id";
 
     /**
      * Returns the object with given id.
@@ -40,7 +39,7 @@ public class CaArrayResultTransformerUtil extends QueryResultTransformerUtil {
      * @see QueryResultTransformerUtil#getCQLResultsById(String, String, String,
      *      String)
      */
-    public <T extends Identifiable> T getObjectById(Class<T> clazz, String id, String url) {
+    public <T> T getObjectById(Class<T> clazz, String id, String url) {
         String targetName = clazz.getName();
         CQLQueryResults cqlQueryResults = getCQLResultsById(targetName, IDENTIFIER_ATTRIBUTE_NAME, id, url);
         List<Object> objects = getObjectsFromCQLResults(targetName, cqlQueryResults);
@@ -62,7 +61,9 @@ public class CaArrayResultTransformerUtil extends QueryResultTransformerUtil {
 
         List<Object> res = new ArrayList<Object>();
         while (itr.hasNext()) {
-            res.add(itr.next());
+            Object obj = itr.next();
+            if (obj != null)
+                res.add(obj);
         }
         return res;
     }
@@ -77,7 +78,7 @@ public class CaArrayResultTransformerUtil extends QueryResultTransformerUtil {
         // Previously there was a mapping; the impl class name was obtained
         // using following logic. But latest caArray jars do not need this
         // conversion.
-        
+
         // try {
         // Class outputClass = Class.forName(outputClassName);
         //

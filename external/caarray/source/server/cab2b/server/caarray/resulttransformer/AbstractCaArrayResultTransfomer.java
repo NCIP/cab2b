@@ -16,7 +16,7 @@ import edu.wustl.cab2b.server.queryengine.resulttransformers.AbstractQueryResult
 import edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import gov.nih.nci.cagrid.cqlresultset.CQLQueryResults;
-import gov.nih.nci.mageom.domain.Identifiable;
+
 
 /**
  * Skeletal implementation for a query result transformer of caArray
@@ -26,7 +26,7 @@ import gov.nih.nci.mageom.domain.Identifiable;
  * caArray service has following features which are implemented in this class:
  * <ul>
  * <li>Custom deserializers are provided which are used to deserialize the CQL
- * results.</li>
+ * results.</li> 
  * <li>In most cases, identifiers of classes associated to the target are also
  * returned.</li>
  * </ul>
@@ -47,7 +47,7 @@ public abstract class AbstractCaArrayResultTransfomer<R extends ICaArrayRecord>
         AbstractQueryResultTransformer<R, ICaArrayCategoryRecord> implements
         IQueryResultTransformer<R, ICaArrayCategoryRecord> {
 
-    private static final String GET_ID_METHOD_NAME = "getIdentifier";
+    private static final String GET_ID_METHOD_NAME = "getId";
 
     protected CaArrayResultTransformerUtil transformerUtil = new CaArrayResultTransformerUtil(super.queryLogger);
 
@@ -162,13 +162,11 @@ public abstract class AbstractCaArrayResultTransfomer<R extends ICaArrayRecord>
                     associatedObjects.add(associatedObj);
                 }
             }
-
         } else {
             if (desiredType.isAssignableFrom(associatedClass)) {
                 associatedObjects.add(associationValue);
             }
         }
-
         return associatedObjects;
     }
 
@@ -185,11 +183,12 @@ public abstract class AbstractCaArrayResultTransfomer<R extends ICaArrayRecord>
     }
 
     private boolean isIdentifiable(Class<?> associatedClass) {
-        return associatedClass.isArray() ? isIdentifiable(associatedClass.getComponentType())
-                : Identifiable.class.isAssignableFrom(associatedClass);
+        return true;
+//        return associatedClass.isArray() ? isIdentifiable(associatedClass.getComponentType())
+//                : Identifiable.class.isAssignableFrom(associatedClass);
     }
 
-    private Object[] executeMethods(Object obj, String... methodNames) {
+    private Object[] executeMethods(Object obj, String... methodNames) {    
         Object[] result = new Object[methodNames.length];
         Class<?> clazz = obj.getClass();
         for (int i = 0; i < methodNames.length; i++) {
