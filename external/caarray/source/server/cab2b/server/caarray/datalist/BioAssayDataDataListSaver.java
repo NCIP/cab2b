@@ -13,10 +13,9 @@ import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.ObjectAttributeRecordValueInterface;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.server.datalist.AbstractDataListSaver;
-import edu.wustl.cab2b.server.datalist.DataListUtil;
 import edu.wustl.cab2b.server.queryengine.LazyInitializer;
-import gov.nih.nci.mageom.domain.BioAssayData.BioAssayData;
 
 /**
  * Saver for IPartiallyInitializedBioAssayDataRecord's.
@@ -56,18 +55,20 @@ public class BioAssayDataDataListSaver extends AbstractDataListSaver<IPartiallyI
      */
     @Override
     protected void populateNewEntity(EntityInterface oldEntity) {
-        try {
-            if (!BioAssayData.class.isAssignableFrom(Class.forName(oldEntity.getName()))) {
-                throw new IllegalArgumentException();
-            }
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException();
-        }
-        DataListUtil.copyNonVirtualAttributes(newEntity, oldEntity);
-        newEntity.addAttribute(createObjectAttribute(CUBE_ATTRIBUTE_NAME));
-        newEntity.addAttribute(createObjectAttribute(DIM1LABELS_ATTRIBUTE_NAME));
-        newEntity.addAttribute(createObjectAttribute(DIM2LABELS_ATTRIBUTE_NAME));
-        newEntity.addAttribute(createObjectAttribute(DIM3LABELS_ATTRIBUTE_NAME));
+        /* OLD CODE
+         try {
+         if (!BioAssayData.class.isAssignableFrom(Class.forName(oldEntity.getName()))) {
+         throw new IllegalArgumentException();
+         }
+         } catch (ClassNotFoundException e) {
+         throw new IllegalArgumentException();
+         }
+         DataListUtil.copyNonVirtualAttributes(newEntity, oldEntity);
+         newEntity.addAttribute(createObjectAttribute(CUBE_ATTRIBUTE_NAME));
+         newEntity.addAttribute(createObjectAttribute(DIM1LABELS_ATTRIBUTE_NAME));
+         newEntity.addAttribute(createObjectAttribute(DIM2LABELS_ATTRIBUTE_NAME));
+         newEntity.addAttribute(createObjectAttribute(DIM3LABELS_ATTRIBUTE_NAME));
+         */
     }
 
     /**
