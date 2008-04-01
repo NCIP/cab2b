@@ -2,38 +2,10 @@
 
 <applications>
 <application name="caArray" >
-		<entity name="gov.nih.nci.mageom.domain.BioAssayData.BioAssayData">
-    	   <result-transformer>cab2b.server.caarray.resulttransformer.BioAssayDataResultTransformer</result-transformer>
-           <result-renderer>edu.wustl.cab2b.client.ui.viewresults.ThreeDResultObjectDetailsPanel</result-renderer>
-              <data-list-transformers>
-              	<saver>cab2b.server.caarray.datalist.BioAssayDataDataListSaver</saver>
-              	<retriever>cab2b.server.caarray.datalist.BioAssayDataDataListRetriever</retriever>
-              </data-list-transformers>
-		 </entity>
-		 
-		<entity name="gov.nih.nci.mageom.domain.BioAssayData.DerivedBioAssayData">
-    	   <result-transformer>cab2b.server.caarray.resulttransformer.BioAssayDataResultTransformer</result-transformer>
-           <result-renderer>edu.wustl.cab2b.client.ui.viewresults.ThreeDResultObjectDetailsPanel</result-renderer>
-              <data-list-transformers>
-              	<saver>cab2b.server.caarray.datalist.BioAssayDataDataListSaver</saver>
-              	<retriever>cab2b.server.caarray.datalist.BioAssayDataDataListRetriever</retriever>
-              </data-list-transformers>
-		 </entity>
-		 
-		<entity name="gov.nih.nci.mageom.domain.BioAssayData.MeasuredBioAssayData">
-    	   <result-transformer>cab2b.server.caarray.resulttransformer.BioAssayDataResultTransformer</result-transformer>
-           <result-renderer>edu.wustl.cab2b.client.ui.viewresults.ThreeDResultObjectDetailsPanel</result-renderer>
-              <data-list-transformers>
-              	<saver>cab2b.server.caarray.datalist.BioAssayDataDataListSaver</saver>
-              	<retriever>cab2b.server.caarray.datalist.BioAssayDataDataListRetriever</retriever>
-              </data-list-transformers>
-		 </entity>		 		 
-			
 		<default>
 			  <result-transformer>cab2b.server.caarray.resulttransformer.DefaultCaArrayResultTransformer</result-transformer>
    		</default>
 </application>
-
 <application name="CategoryEntityGroup" >		
 		<default>
 		   <result-renderer>edu.wustl.cab2b.client.ui.viewresults.CategoryObjectDetailsPanel</result-renderer>
@@ -52,7 +24,6 @@
             	<saver>edu.wustl.cab2b.server.datalist.DefaultDataListSaver</saver>
               	<retriever>edu.wustl.cab2b.server.datalist.DefaultDataListRetriever</retriever>
         </data-list-transformers>
-</default>	
-
+</default>
 </applications>
 

@@ -40,7 +40,6 @@
 	<module><java>xmlpublic.jar</java></module>
     <module><java>commons-collections-3.2.jar</java></module>
     
-
 	<module><java>caGrid-1.0-fqp-client.jar</java></module>
 	<module><java>caGrid-1.0-fqp-common.jar</java></module>
 	<module><java>caGrid-1.0-fqp-stubs.jar</java></module>
@@ -69,8 +68,11 @@
     
    	<module><java>CaArraySvc-client.jar</java></module>
     <module><java>CaArraySvc-common.jar</java></module>
-    <module><java>CaArraySvc-encoding.jar</java></module>
-    <module><java>CaArraySvc-client-mageom.jar</java></module>
+    
+
+    <module><java>caarray-client.jar</java></module>
+    <module><java>CaArraySvc-service.jar</java></module>
+    <module><java>CaArraySvc-stubs.jar</java></module>
 
     <module><java>caarray-server-extensions.jar</java></module>    
     <module><java>caarray-common-extensions.jar</java></module>   
