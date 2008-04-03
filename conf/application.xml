@@ -40,21 +40,21 @@
 	<module><java>xmlpublic.jar</java></module>
     <module><java>commons-collections-3.2.jar</java></module>
     
-	<module><java>caGrid-1.0-fqp-client.jar</java></module>
-	<module><java>caGrid-1.0-fqp-common.jar</java></module>
-	<module><java>caGrid-1.0-fqp-stubs.jar</java></module>
+	<module><java>caGrid-1.1-fqp-client.jar</java></module>
+	<module><java>caGrid-1.1-fqp-common.jar</java></module>
+	<module><java>caGrid-1.1-fqp-stubs.jar</java></module>
 
-	<module><java>caGrid-1.0-data-common.jar</java></module>
-	<module><java>caGrid-1.0-data-stubs.jar</java></module>
-	<module><java>caGrid-1.0-data-utils.jar</java></module>
-	<module><java>caGrid-1.0-caDSR-client.jar</java></module>
-	<module><java>caGrid-1.0-caDSR-common.jar</java></module>
-	<module><java>caGrid-1.0-caDSR-stubs.jar</java></module>
-	<module><java>caGrid-1.0-core.jar</java></module>
-	<module><java>caGrid-1.0-metadata-common.jar</java></module>
-	<module><java>caGrid-1.0-metadata-security.jar</java></module>
-	<module><java>caGrid-1.0-ServiceSecurityProvider-client.jar</java></module>
-	<module><java>caGrid-1.0-ServiceSecurityProvider-common.jar</java></module>
+	<module><java>caGrid-1.1-data-common.jar</java></module>
+	<module><java>caGrid-1.1-data-stubs.jar</java></module>
+	<module><java>caGrid-1.1-data-utils.jar</java></module>
+	<module><java>caGrid-1.1-caDSR-client.jar</java></module>
+	<module><java>caGrid-1.1-caDSR-common.jar</java></module>
+	<module><java>caGrid-1.1-caDSR-stubs.jar</java></module>
+	<module><java>caGrid-1.1-core.jar</java></module>
+	<module><java>caGrid-1.1-metadata-common.jar</java></module>
+	<module><java>caGrid-1.1-metadata-security.jar</java></module>
+	<module><java>caGrid-1.1-ServiceSecurityProvider-client.jar</java></module>
+	<module><java>caGrid-1.1-ServiceSecurityProvider-common.jar</java></module>
     <module><java>cog-axis.jar</java></module>
 	<module><java>wss4j.jar</java></module>
     <module><java>wsdl4j.jar</java></module>	
@@ -64,8 +64,7 @@
     <module><java>jce-jdk13-125.jar</java></module>
 
     <module><java>caGrid-1.0-sdkQuery.jar</java></module>        
-    
-    
+        
    	<module><java>CaArraySvc-client.jar</java></module>
     <module><java>CaArraySvc-common.jar</java></module>
     
