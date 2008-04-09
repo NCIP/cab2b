@@ -98,7 +98,7 @@ public class MetadataSearchTest extends TestCase {
     public void testSearchPvOnConceptCode() {
 
         int[] searchTargetStatus = { Constants.PV };
-        String[] searchString = { "C19157", "C25447" };
+        String[] searchString = { "C25402" ,"C43818"};
         int basedOn = Constants.BASED_ON_CONCEPT_CODE;
         try {
             resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
@@ -110,7 +110,7 @@ public class MetadataSearchTest extends TestCase {
         boolean b = false;
         for (EntityInterface eI : entities) {
             String result = eI.getName();
-            b = b || result.contains("SpecimenCharacteristics");
+            b = b || result.contains("GenBankAccession");
         }
         assertTrue(b);
     }
