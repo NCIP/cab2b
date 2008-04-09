@@ -26,7 +26,7 @@ public class MetadataSearchTest extends TestCase {
     public void testSearchAttributeBasedOnConceptCode() {
         
         int[] searchTargetStatus = { Constants.ATTRIBUTE };
-        String[] searchString = { "C40975" };
+        String[] searchString = { "C45763" };
         int basedOn = Constants.BASED_ON_CONCEPT_CODE;
         try {
             resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
@@ -38,14 +38,14 @@ public class MetadataSearchTest extends TestCase {
         boolean b = false;
         for (EntityInterface eI : entities) {
             String result = eI.getName();
-            b = b || result.contains("Participant");
+            b = b || result.contains("Protein");
         }
         assertTrue(b);
     }
   public void testSearchEntityBasedOnConceptCode() {
     
             int[] searchTargetStatus = { Constants.CLASS };
-            String[] searchString = { "C29867" };
+            String[] searchString = { "C17021" };
             int basedOn = Constants.BASED_ON_CONCEPT_CODE;
             try {
                 resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
@@ -57,7 +57,7 @@ public class MetadataSearchTest extends TestCase {
             boolean b = false;
             for (EntityInterface eI : entities) {
                 String result = eI.getName();
-                b = b || result.contains("Participant");
+                b = b || result.contains("Protein");
             }
             assertTrue(b);
         }
@@ -72,7 +72,6 @@ public class MetadataSearchTest extends TestCase {
             resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
         } catch (CheckedException e) {
             gotException = true;
-           
         }
         assertTrue(gotException);
     }
@@ -99,7 +98,7 @@ public class MetadataSearchTest extends TestCase {
     public void testSearchPvOnConceptCode() {
 
         int[] searchTargetStatus = { Constants.PV };
-        String[] searchString = { "C25228", "C62637" };
+        String[] searchString = { "C19157", "C25447" };
         int basedOn = Constants.BASED_ON_CONCEPT_CODE;
         try {
             resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
@@ -111,7 +110,7 @@ public class MetadataSearchTest extends TestCase {
         boolean b = false;
         for (EntityInterface eI : entities) {
             String result = eI.getName();
-            b = b || result.contains("ArrayGroup");
+            b = b || result.contains("SpecimenCharacteristics");
         }
         assertTrue(b);
     }
@@ -174,7 +173,7 @@ public class MetadataSearchTest extends TestCase {
     public void testsearchCategoruWithDescription() {
 
         int[] searchTargetStatus = { Constants.CLASS_WITH_DESCRIPTION };
-        String[] searchString = { "chromosome" };
+        String[] searchString = { "The combined anatomic state" };
         try {
             resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, Constants.BASED_ON_TEXT);
         } catch (CheckedException e) {
@@ -185,7 +184,7 @@ public class MetadataSearchTest extends TestCase {
         boolean b = false;
         for (EntityInterface eI : entities) {
             String result = eI.getName();
-            b = b || result.contains("ReporterCompositeMap");
+            b = b || result.contains("SpecimenCharacteristics");
         }
         assertTrue(b);
     }
