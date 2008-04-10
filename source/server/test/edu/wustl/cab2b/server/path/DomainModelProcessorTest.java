@@ -13,8 +13,6 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.common.util.IdGenerator;
-import edu.wustl.cab2b.common.util.PropertyLoader;
-import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.cab2b.server.util.InheritanceUtil;
 import edu.wustl.cab2b.server.util.TestUtil;
 import edu.wustl.common.util.logger.Logger;
@@ -130,29 +128,29 @@ public class DomainModelProcessorTest extends TestCase {
         return entity;
     }
 
-    public void testMockDomainModelProcessor() {
-        String name = PropertyLoader.getAllApplications()[0];
-        String path = PropertyLoader.getModelPath(name);
-         
-         
-        DomainModelParser parser = null;
-        try {
-            parser = new DomainModelParser(path);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail("unable to initialise");
-        }
-        try {
-			new MockDomainModelProcessor(parser, name);
-		} catch (DynamicExtensionsSystemException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (DynamicExtensionsApplicationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-    }
+//    public void testMockDomainModelProcessor() {
+//        String name = PropertyLoader.getAllApplications()[0];
+//        String path = PropertyLoader.getModelPath(name);
+//         
+//         
+//        DomainModelParser parser = null;
+//        try {
+//            parser = new DomainModelParser(path);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            fail("unable to initialise");
+//        }
+//        try {
+//			new MockDomainModelProcessor(parser, name);
+//		} catch (DynamicExtensionsSystemException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (DynamicExtensionsApplicationException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//    }
 }
 
 class MockDomainModelProcessor extends DomainModelProcessor {
