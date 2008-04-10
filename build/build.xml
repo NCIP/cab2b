@@ -322,6 +322,7 @@
 		<copy todir="${server.jar.dir}">
 			<fileset dir="${conf.dir}">
 				<include name="*.wsdd" />
+				<include name="mapping.dtd" />
 				<include name="cab2b.properties" />
 				<include name="*.cfg.xml" />
 				<include name="dbutil.properties" />
