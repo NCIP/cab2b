@@ -117,7 +117,7 @@
 			<!-- exclude name="hibernate3.jar" /-->
 			<exclude name="ant-antlr-1.6.3.jar" />
 			<!-- exclude name="jbossall-client.jar" /-->
-			<exclude name="commons-logging-1.0.4.jar" />
+			<!--exclude name="commons-logging-1.0.4.jar" /-->
 			<!-- exclude name="log4j-1.2.9.jar" / -->
 		</fileset>
 
