@@ -60,6 +60,18 @@ public class JSheet extends javax.swing.JPanel {
     /** Event name that notifies that User is interested in details of some Row...      */
     public static final String REQUESTED_SHOW_ROW_DETAILS = "REQUESTED_SHOW_ROW_DETAILS";
 
+    public static final String MENU_BUTTON_COPY = "MENU_BUTTON_COPY";
+
+    public static final String MENU_BUTTON_PASTE = "MENU_BUTTON_PASTE";
+
+    public static final String MENU_BUTTON_ADD_COLUMN = "MENU_BUTTON_ADD_COLUMN";
+
+    public static final String MENU_BUTTON_PROPERTIES = "MENU_BUTTON_PROPERTIES";
+
+    public static final String MENU_BUTTON_RESET = "MENU_BUTTON_RESET";
+
+    public static final String MENU_BUTTON_CLEAR = "MENU_BUTTON_CLEAR";
+
     /**     Should I allow user to create new columns and allow cut/paste on them?      */
     boolean allowWrite = true;
 
@@ -174,8 +186,11 @@ public class JSheet extends javax.swing.JPanel {
         consData.setAdditionalToolbarActions(actions);
     }
 
-    public TableModel getJSheetTableModel() {
+    public void removeComponentFromToolBar(String menuName) {
+        consData.removeComponentFromToolBar(menuName);
+    }
 
+    public TableModel getJSheetTableModel() {
         return consData.getCompositeDataModel();
     }
 

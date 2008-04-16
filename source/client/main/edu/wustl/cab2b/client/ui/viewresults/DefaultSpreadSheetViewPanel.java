@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.viewresults;
 
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -91,7 +92,6 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
         ExperimentDataCategoryGridPanel gridPanel;
 
         public SaveCategoryActionListener(ExperimentDataCategoryGridPanel expGridPanel) {
-
             super("Save", createImageIcon("images/saveDataCategory.png"));
             gridPanel = expGridPanel;
             setToolTipText("Save as data category ");
@@ -145,6 +145,13 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
             List<Action> arrayList = new ArrayList<Action>();
             arrayList.add(saveCategoryAction);
             spreadsheet.setAdditionalToolbarActions(arrayList);
+        } else {
+            spreadsheet.removeComponentFromToolBar(JSheet.MENU_BUTTON_PROPERTIES);
+            spreadsheet.removeComponentFromToolBar(JSheet.MENU_BUTTON_COPY);
+            spreadsheet.removeComponentFromToolBar(JSheet.MENU_BUTTON_PASTE);
+            spreadsheet.removeComponentFromToolBar(JSheet.MENU_BUTTON_ADD_COLUMN);
+            spreadsheet.removeComponentFromToolBar(JSheet.MENU_BUTTON_RESET);
+            spreadsheet.removeComponentFromToolBar(JSheet.MENU_BUTTON_CLEAR);
         }
 
         spreadsheet.setReadOnlyDataModel(new RecordsTableModel(records));
@@ -313,8 +320,15 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
                         firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
                     }
                 });
-                expGridPanel.addDetailTabPanel("Details_" + (rowNumber.intValue() + 1), defaultDetailedPanel);
-                firePropertyChange(DISABLE_CHART_LINK, evt.getOldValue(), evt.getNewValue());
+                if (expGridPanel != null) {
+                    expGridPanel.addDetailTabPanel("Details_" + (rowNumber.intValue() + 1), defaultDetailedPanel);
+                    firePropertyChange(DISABLE_CHART_LINK, evt.getOldValue(), evt.getNewValue());
+                } else {
+                    Container container = spreadsheet.getParent();
+                    container.remove(spreadsheet);
+                    container.add("hfill vfill", defaultDetailedPanel);
+                    container.validate();
+                }
             }
             firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
         }
@@ -352,7 +366,6 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
      */
     public List<AttributeInterface> getUserDefinedAttributes() {
         userDefinedAttributes.clear();
-
         for (int i = 0; i < spreadsheet.getJSheetTableModel().getColumnCount(); i++) {
             if (isUserColumnDefined(i)) {
                 AttributeInterface newAttribute = DomainObjectFactory.getInstance().createStringAttribute();
