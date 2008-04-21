@@ -664,7 +664,7 @@ public class ExperimentStackBox extends Cab2bPanel {
     private void serviceSelectAction(ServiceDetailsInterface serviceDetails, final EntityInterface requiredEntity,
                                      final EntityInterface dataEntity) {
         // Create panel for Analysis Title
-        JComponent tilteLabel = new Cab2bLabel("Analysis Title" + " : ");
+        JComponent tilteLabel = new Cab2bLabel("Analysis Title : ");
         JComponent titleField = new Cab2bFormattedTextField(20, Cab2bFormattedTextField.PLAIN_FIELD);
         Cab2bPanel titlePanel = new Cab2bPanel();
         titlePanel.setName("titlePanel");

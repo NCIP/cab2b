@@ -489,7 +489,7 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
      * @return summary searchPanel
      */
     public JXTitledPanel displaySearchSummary(int numberOfResults) {
-        String message = (numberOfResults == 0) ? "No result found." : "Search Results :- " + "Total results ( "
+        String message = (numberOfResults == 0) ? "No result found." : "Search Results :- Total results ( "
                 + numberOfResults + " )";
         JXTitledPanel titledSearchResultsPanel = new Cab2bTitledPanel(message);
         GradientPaint gp = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
