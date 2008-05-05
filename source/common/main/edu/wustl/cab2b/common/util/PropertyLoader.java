@@ -57,17 +57,18 @@ public class PropertyLoader {
         }
         return path;
     }
-/*
-    public static String[] getServiceUrls(String applicationName) {
-      //  String[] urls = props.getProperty(applicationName + ".ServiceURL").split(",");
-    	System.out.println(applicationName);
-    	String[] urls={System.getProperty(applicationName)};
-        if (urls == null || urls.length == 0) {
-            Logger.out.error("No URLs are configured for application : " + applicationName + " in  : "
-                    + propertyfile);
-        }
-        return urls;
-    }*/
+
+    /*
+     public static String[] getServiceUrls(String applicationName) {
+     //  String[] urls = props.getProperty(applicationName + ".ServiceURL").split(",");
+     System.out.println(applicationName);
+     String[] urls={System.getProperty(applicationName)};
+     if (urls == null || urls.length == 0) {
+     Logger.out.error("No URLs are configured for application : " + applicationName + " in  : "
+     + propertyfile);
+     }
+     return urls;
+     }*/
 
     /**
      * Returns names of all application for which caB2B is configured
@@ -85,6 +86,14 @@ public class PropertyLoader {
     public static String getJndiUrl() {
         String serverIP = props.getProperty("caB2B.server.ip");
         String jndiPort = props.getProperty("caB2B.server.port");
-        return "jnp://"+serverIP+":"+jndiPort;
+        return "jnp://" + serverIP + ":" + jndiPort;
+    }
+
+    /**
+     * @param idP
+     * @return Dorian url for given idP
+     */
+    public static String getDorianUrl(String idP) {
+        return props.getProperty(idP + ".dorian.url");
     }
 }

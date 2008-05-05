@@ -4,6 +4,8 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
 
+import org.globus.gsi.GlobusCredential;
+
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
@@ -15,7 +17,7 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * @param query the query to execute
      * @return the query result
      */
-    IQueryResult executeQuery(ICab2bQuery query) throws RemoteException;
+    IQueryResult executeQuery(ICab2bQuery query, GlobusCredential cred) throws RemoteException;
 
     /**
      * This method saves the Cab2bQuery object.

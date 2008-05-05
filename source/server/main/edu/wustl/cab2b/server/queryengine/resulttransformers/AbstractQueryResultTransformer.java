@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.globus.gsi.GlobusCredential;
+
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
@@ -68,9 +70,9 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * @see edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer#getResults(gov.nih.nci.cagrid.dcql.DCQLQuery,
      *      edu.common.dynamicextensions.domaininterface.EntityInterface)
      */
-    public IQueryResult<R> getResults(DCQLQuery query, EntityInterface targetEntity) {
+    public IQueryResult<R> getResults(DCQLQuery query, EntityInterface targetEntity, GlobusCredential cred) {
         log(query);
-        Map<String, CQLQueryResults> queryResults = executeDcql(query);
+        Map<String, CQLQueryResults> queryResults = executeDcql(query, cred);
         int numRecs = 0;
         IQueryResult<R> result = createResult(targetEntity);
         for (Map.Entry<String, CQLQueryResults> entry : queryResults.entrySet()) {
@@ -84,10 +86,10 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
         return result;
     }
 
-    protected Map<String, CQLQueryResults> executeDcql(DCQLQuery query) {
+    protected Map<String, CQLQueryResults> executeDcql(DCQLQuery query, GlobusCredential cred) {
         DCQLQueryResultsCollection queryResults = null;
         try {
-            FederatedQueryEngine federatedQueryEngine = new FederatedQueryEngine();
+            FederatedQueryEngine federatedQueryEngine = new FederatedQueryEngine(cred);
             Logger.out.info("Executing DCQL... Target is : " + query.getTargetObject().getName());
             queryResults = federatedQueryEngine.execute(query);
             Logger.out.info("Executed DCQL successfully.");
@@ -126,7 +128,8 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * @see edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer#getCategoryResults(gov.nih.nci.cagrid.dcql.DCQLQuery,
      *      edu.wustl.common.querysuite.metadata.category.CategorialClass)
      */
-    public IQueryResult<C> getCategoryResults(DCQLQuery query, CategorialClass categorialClass) {
+    public IQueryResult<C> getCategoryResults(DCQLQuery query, CategorialClass categorialClass,
+                                              GlobusCredential cred) {
         Set<AttributeInterface> categoryAttributes = new HashSet<AttributeInterface>();
 
         for (CategorialAttribute categorialAttr : categorialClass.getCategorialAttributeCollection()) {
@@ -134,7 +137,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             categoryAttributes.add(categoryAttribute);
         }
 
-        IQueryResult<R> classResults = getResults(query, categorialClass.getCategorialClassEntity());
+        IQueryResult<R> classResults = getResults(query, categorialClass.getCategorialClassEntity(), cred);
         IQueryResult<C> catResult = createCategoryResult(categorialClass.getCategory().getCategoryEntity());
 
         for (Map.Entry<String, List<R>> entry : classResults.getRecords().entrySet()) {

@@ -1,5 +1,7 @@
 package edu.wustl.cab2b.server.queryengine.resulttransformers;
 
+import org.globus.gsi.GlobusCredential;
+
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
@@ -26,9 +28,10 @@ public interface IQueryResultTransformer<R extends IRecord, C extends ICategoria
      * @param query the DCQL.
      * @param targetEntity the target entity (corresponds to the target object
      *            of the dcql).
+     * @param cred security credentials
      * @return the results.
      */
-    IQueryResult<R> getResults(DCQLQuery query, EntityInterface targetEntity);
+    IQueryResult<R> getResults(DCQLQuery query, EntityInterface targetEntity, GlobusCredential cred);
 
     /**
      * Executes the DCQL and transforms the results obtained to an appropriate
@@ -37,7 +40,8 @@ public interface IQueryResultTransformer<R extends IRecord, C extends ICategoria
      * @param query the DCQL whose target object corresponds to the actual UML
      *            class represented by the categorial class.
      * @param categorialClass the categorial class.
+     * @param cred security credentials
      * @return the results.
      */
-    IQueryResult<C> getCategoryResults(DCQLQuery query, CategorialClass categorialClass);
+    IQueryResult<C> getCategoryResults(DCQLQuery query, CategorialClass categorialClass, GlobusCredential cred);
 }

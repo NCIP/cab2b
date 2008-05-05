@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
 
+import org.globus.gsi.GlobusCredential;
 import org.hibernate.HibernateException;
 
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
@@ -20,8 +21,8 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
 
     private static final long serialVersionUID = 8416841912609836063L;
 
-    public IQueryResult executeQuery(ICab2bQuery query) {
-        return new QueryExecutor(query).executeQuery();
+    public IQueryResult executeQuery(ICab2bQuery query, GlobusCredential cred) {
+        return new QueryExecutor(query, cred).executeQuery();
     }
 
     public void saveQuery(ICab2bParameterizedQuery query) throws RemoteException {

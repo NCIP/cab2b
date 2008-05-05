@@ -19,6 +19,7 @@ import org.jdesktop.swingx.JXErrorDialog;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
+import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
@@ -208,7 +209,7 @@ public class CommonUtils {
      */
     public static IQueryResult executeQuery(ICab2bQuery query, QueryEngineBusinessInterface queryEngineBus)
             throws RuntimeException, RemoteException {
-        return queryEngineBus.executeQuery(query);
+        return queryEngineBus.executeQuery(query, UserValidator.getProxy());
     }
 
     /**

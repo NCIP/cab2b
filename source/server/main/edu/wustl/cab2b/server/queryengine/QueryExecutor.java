@@ -8,6 +8,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.globus.gsi.GlobusCredential;
+
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
@@ -73,10 +75,13 @@ public class QueryExecutor {
 
     private IQueryResultTransformer<IRecord, ICategorialClassRecord> transformer;
 
-    public QueryExecutor(ICab2bQuery query) {
+    private GlobusCredential cred;
+
+    public QueryExecutor(ICab2bQuery query, GlobusCredential cred) {
         setQuery(query);
         this.transformer = QueryResultTransformerFactory.createTransformer(query.getOutputEntity(), IRecord.class,
                                                                            ICategorialClassRecord.class);
+        this.cred = cred;
     }
 
     private DCQLQuery createDCQLQuery(String outputName, DcqlConstraint constraint, String... outputUrls) {
@@ -168,7 +173,8 @@ public class QueryExecutor {
                                                                                                                rootOutputExpr);
                 IQueryResult<ICategorialClassRecord> allRootExprCatRecs = transformer.getCategoryResults(
                                                                                                          rootDCQLQuery,
-                                                                                                         catClassForRootExpr);
+                                                                                                         catClassForRootExpr,
+                                                                                                         cred);
                 categoryResults.add(allRootExprCatRecs);
 
                 // process children in parallel.
@@ -189,7 +195,7 @@ public class QueryExecutor {
                                                   getOutputEntity().getName(),
                                                   this.constraintsBuilderResult.getDcqlConstraintForClass(getOutputEntity()));
 
-            queryResult = transformer.getResults(dcqlQuery, getOutputEntity());
+            queryResult = transformer.getResults(dcqlQuery, getOutputEntity(), cred);
         }
         Logger.out.info("Exiting QueryExecutor.");
         return queryResult;
@@ -300,7 +306,8 @@ public class QueryExecutor {
                     // expr was formed for entity on path between catClasses...
                     IQueryResult<IRecord> childExprClassRecs = transformer.getResults(
                                                                                       queryForChildExpr,
-                                                                                      catClassForChildExpr.getCategorialClassEntity());
+                                                                                      catClassForChildExpr.getCategorialClassEntity(),
+                                                                                      cred);
 
                     // only one url at a time; so directly do next();
                     for (IRecord record : childExprClassRecs.getRecords().values().iterator().next()) {
@@ -313,7 +320,8 @@ public class QueryExecutor {
                     // expr is for a catClass; add recs to parentCatClassRec
                     IQueryResult<ICategorialClassRecord> childExprCatResult = transformer.getCategoryResults(
                                                                                                              queryForChildExpr,
-                                                                                                             catClassForChildExpr);
+                                                                                                             catClassForChildExpr,
+                                                                                                             cred);
 
                     List<ICategorialClassRecord> childExprCatRecs = childExprCatResult.getRecords().get(
                                                                                                         parentId.getUrl());

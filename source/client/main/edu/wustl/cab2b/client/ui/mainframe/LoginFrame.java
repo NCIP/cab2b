@@ -32,6 +32,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
@@ -101,7 +102,7 @@ public class LoginFrame extends JXFrame {
         forgotPass.setText("Forgot Password?");
         forgotPass.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                 
+
             }
         });
 
@@ -111,7 +112,8 @@ public class LoginFrame extends JXFrame {
 
         idProvider = new Cab2bComboBox();
         idProvider.setBorder(border);
-        idProvider.addItem("WashU");
+        idProvider.addItem("Training");
+        idProvider.addItem("Production");
 
         port = getTextField("1099");
 
@@ -202,42 +204,59 @@ public class LoginFrame extends JXFrame {
         }
     }
 
+    /**
+     * This method checks if the user trying to login is a valid grid user or not
+     * 
+     * @param userName
+     * @param password
+     * @param idProvider
+     * @return boolean stating is the user is a valid grid user or not
+     */
     final private boolean validateCredentials(String userName, String password, String idProvider) {
-        boolean isValid = true;
-
-        //TODO validate credentials and return true on valid else return false.
-
-        return isValid;
+        return UserValidator.validateUser(userName, password, idProvider);
     }
 
     private class LoginButtonListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            String serverIP = serverText.getText();
-            String jndiPort = port.getText();
-            String userName = usrNameText.getText();
-            String password = passText.getPassword().toString();
-            String IDProvider = idProvider.getSelectedItem().toString();
+            CustomSwingWorker swingWorker = new CustomSwingWorker(LoginFrame.this) {
 
-            String url = "jnp://" + serverIP + ":" + jndiPort;
-            System.setProperty("java.naming.provider.url", url);
-            System.setProperty("java.naming.factory.initial", "org.jnp.interfaces.NamingContextFactory");
-            System.setProperty("java.naming.factory.url.pkgs", "org.jboss.naming:org.jnp.interfaces");
-            
-            if (validateCredentials(userName, password, IDProvider)) {
-                MainFrame.setUserName(userName);
-                Thread mainThread = new Thread() {
-                    public void run() {
-                        MainFrame.main(new String[0]);
+                @Override
+                protected void doNonUILogic() throws Exception {
+                    String serverIP = serverText.getText();
+                    String jndiPort = port.getText();
+                    String userName = usrNameText.getText();
+                    //String password = passText.getPassword().toString();
+                    String password = "gup1Sh@bda";
+                    String IDProvider = idProvider.getSelectedItem().toString();
+
+                    String url = "jnp://" + serverIP + ":" + jndiPort;
+                    System.setProperty("java.naming.provider.url", url);
+                    System.setProperty("java.naming.factory.initial", "org.jnp.interfaces.NamingContextFactory");
+                    System.setProperty("java.naming.factory.url.pkgs", "org.jboss.naming:org.jnp.interfaces");
+
+                    if (validateCredentials(userName, password, IDProvider)) {
+                        MainFrame.setUserName(userName);
+                        Thread mainThread = new Thread() {
+                            public void run() {
+                                MainFrame.main(new String[0]);
+                            }
+                        };
+                        mainThread.setPriority(Thread.NORM_PRIORITY);
+                        mainThread.start();
+                    } else {
+                        //TODO Display error message
                     }
-                };
-                mainThread.setPriority(Thread.NORM_PRIORITY);
-                mainThread.start();
-            } else {
-                //TODO Display error message
-            }
 
-            selfReference.dispose();
+                   selfReference.dispose();
+                }
+
+                @Override
+                protected void doUIUpdateLogic() throws Exception {
+                }
+            };
+            swingWorker.start();
+
         }
 
     }
