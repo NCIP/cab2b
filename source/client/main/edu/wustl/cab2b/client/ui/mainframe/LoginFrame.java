@@ -226,8 +226,8 @@ public class LoginFrame extends JXFrame {
                     String serverIP = serverText.getText();
                     String jndiPort = port.getText();
                     String userName = usrNameText.getText();
-                    //String password = passText.getPassword().toString();
-                    String password = "gup1Sh@bda";
+                    char[] passwordArray = passText.getPassword();
+                    String password = new String(passwordArray);
                     String IDProvider = idProvider.getSelectedItem().toString();
 
                     String url = "jnp://" + serverIP + ":" + jndiPort;
@@ -248,7 +248,7 @@ public class LoginFrame extends JXFrame {
                         //TODO Display error message
                     }
 
-                   selfReference.dispose();
+                    selfReference.dispose();
                 }
 
                 @Override
@@ -256,9 +256,6 @@ public class LoginFrame extends JXFrame {
                 }
             };
             swingWorker.start();
-
         }
-
     }
-
 }
