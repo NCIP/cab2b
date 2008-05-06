@@ -90,7 +90,7 @@ public class CustomCategoryPanel extends JXFrame {
     public void initGUI() {
         dataListCombo = new Cab2bComboBox();
         categoryCombo = new Cab2bComboBox();
-        dataListCombo.setPreferredSize(new Dimension(150, 20));
+        dataListCombo.setPreferredSize(new Dimension(225, 20));
 
         ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                             EjbNamesConstants.EXPERIMENT,
@@ -114,7 +114,6 @@ public class CustomCategoryPanel extends JXFrame {
         dataListCombo.setModel(dataListModel);
 
         class DataListComboListener implements ItemListener {
-
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     categoryComboboxModel.removeAllElements();
@@ -131,7 +130,7 @@ public class CustomCategoryPanel extends JXFrame {
         dataListCombo.addItemListener(new DataListComboListener());
         dataListCombo.setSelectedIndex(0);
         categoryCombo.setModel(categoryComboboxModel);
-        categoryCombo.setPreferredSize(new Dimension(250, 20));
+        categoryCombo.setPreferredSize(new Dimension(225, 20));
         middlePanel = new Cab2bPanel(new RiverLayout(5, 5));
         accumulatorPanel = new AccumulatorPanel("Available Attributes", "Selected Attributes");
         middlePanel.add(accumulatorPanel);
