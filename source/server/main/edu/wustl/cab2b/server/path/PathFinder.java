@@ -42,7 +42,7 @@ import edu.wustl.common.util.logger.Logger;
 public class PathFinder {
     private static PathFinder pathFinder;
 
-    private List<InterModelConnection> interModelConnections;
+    private Set<InterModelConnection> interModelConnections;
 
     private Map<String, List<PathRecord>> pathRecordCache;
 
@@ -53,10 +53,13 @@ public class PathFinder {
     private Map<String, Set<ICuratedPath>> entitySetVsCuratedPath;
 
     private Map<Long, List<IInterModelAssociation>> leftEntityVsInterModelAssociation;
+
     //this is temp fix for query module for method IPath getPathForAssociations(List<IIntraModelAssociation> associations) 
     private Map<String, PathRecord> intermediatePathVsPathRecord;
-//  this is temp fix for query module for method IPath getPathForAssociations(List<IIntraModelAssociation> associations)
+
+    //  this is temp fix for query module for method IPath getPathForAssociations(List<IIntraModelAssociation> associations)
     private Map<Long, Long> deIdVsAssociationId;
+
     /**
      * This gives the singleton instance of the pathFinder class. If not it creates it. 
      * For one run, this should be called at least once. 
@@ -72,6 +75,7 @@ public class PathFinder {
         }
         return pathFinder;
     }
+
     /**
      * Drops all the static data structures and creates them with latest database state
      * @param con Database connection to use 
@@ -90,12 +94,14 @@ public class PathFinder {
         idVsAssociation = cacheAssociationTypes(con);
         entitySetVsCuratedPath = cacheCuratedPaths(con);
     }
+
     /**
      * @return Returns the singleton instance of the pathFinder class.
      */
     public static synchronized PathFinder getInstance() {
         if (pathFinder == null) {
-            throw new IllegalStateException("to get PathFinder with this method, it must be initialized using a connection before this call");
+            throw new IllegalStateException(
+                    "to get PathFinder with this method, it must be initialized using a connection before this call");
         }
         return pathFinder;
     }
@@ -198,17 +204,18 @@ public class PathFinder {
             for (InterModelConnection interModelConnection : interModelConnections) {
 
                 Long leftEntityId = interModelConnection.getLeftEntityId();
-                EntityGroupInterface leftEntityGroup = Utility.getEntityGroup(getCache().getEntityById(leftEntityId));
+                EntityGroupInterface leftEntityGroup = Utility.getEntityGroup(getCache().getEntityById(
+                                                                                                       leftEntityId));
                 if (srcEntityGroup.equals(leftEntityGroup)) {
 
                     Long rightEntityId = interModelConnection.getRightEntityId();
-                    EntityGroupInterface rightEntityGroup = Utility.getEntityGroup(getCache().getEntityById(rightEntityId));
+                    EntityGroupInterface rightEntityGroup = Utility.getEntityGroup(getCache().getEntityById(
+                                                                                                            rightEntityId));
 
                     if (rightEntityGroup.equals(desEntityGroup)) {
                         List<Path> pathsSrcToLeftEntity = new ArrayList<Path>();
                         if (!srcEntityId.equals(leftEntityId)) {
-                            List<PathRecord> pathRecordsSrcToLeftEntity = getPathRecords(srcEntityId,
-                                                                                           leftEntityId);
+                            List<PathRecord> pathRecordsSrcToLeftEntity = getPathRecords(srcEntityId, leftEntityId);
                             if (pathRecordsSrcToLeftEntity.size() == 0) {
                                 continue;
                             }
@@ -217,14 +224,15 @@ public class PathFinder {
                         List<Path> pathsRightEntityToDes = new ArrayList<Path>();
                         if (!rightEntityId.equals(desEntityId)) {
                             List<PathRecord> pathRecordsRightEntityToDes = getPathRecords(rightEntityId,
-                                                                                            desEntityId);
+                                                                                          desEntityId);
                             if (pathRecordsRightEntityToDes.size() == 0) {
                                 continue;
                             }
                             pathsRightEntityToDes = getPathList(pathRecordsRightEntityToDes);
                         }
                         InterModelAssociation association = getInterModelAssociation(interModelConnection);
-                        List<IPath> pathList = connectPaths(pathsSrcToLeftEntity, association,pathsRightEntityToDes);
+                        List<IPath> pathList = connectPaths(pathsSrcToLeftEntity, association,
+                                                            pathsRightEntityToDes);
                         return pathList;
                     }
                 }
@@ -301,10 +309,10 @@ public class PathFinder {
      * @param con Database connection to use for fetching the intermodel connections
      * @return List of all InterModelConnection.
      */
-    private List<InterModelConnection> cacheInterModelConnections(Connection con) {
+    private Set<InterModelConnection> cacheInterModelConnections(Connection con) {
         String sql = "select LEFT_ENTITY_ID,LEFT_ATTRIBUTE_ID,RIGHT_ENTITY_ID,RIGHT_ATTRIBUTE_ID from INTER_MODEL_ASSOCIATION";
         String[][] result = executeQuery(sql, con);
-        List<InterModelConnection> interModelConnections = new ArrayList<InterModelConnection>(result.length);
+        Set<InterModelConnection> interModelConnections = new HashSet<InterModelConnection>(result.length);
         for (int i = 0; i < result.length; i++) {
             Long leftEntityId = Long.parseLong(result[i][0]);
             Long leftAttrId = Long.parseLong(result[i][1]);
@@ -316,7 +324,7 @@ public class PathFinder {
 
             interModelConnections.add(new InterModelConnection(leftAttr, rightAttr));
         }
-        
+
         return interModelConnections;
     }
 
@@ -352,6 +360,7 @@ public class PathFinder {
         EntityInterface lastEntity = getCache().getEntityById(lastEntityId);
         return new Path(pathRecord.getPathId(), firstEntity, lastEntity, associations);
     }
+
     /**
      * @param id Path id for which a path is expected.
      * @param connection Database connection to use.
@@ -532,15 +541,17 @@ public class PathFinder {
         return entitySetVsCuratedPath;
     }
 
-
-
     /**
      * @param con Database connection to be used
      * @return Map with KEY as caB2B-Association ID v/s IAssociation 
      */
     private Map<Long, IAssociation> cacheAssociationTypes(Connection con) {
-        String[][] intraModelRecords = executeQuery("select ASSOCIATION_ID,DE_ASSOCIATION_ID from INTRA_MODEL_ASSOCIATION",con);
-        String[][] interModelRecords = executeQuery("select LEFT_ENTITY_ID,LEFT_ATTRIBUTE_ID,RIGHT_ENTITY_ID,RIGHT_ATTRIBUTE_ID,ASSOCIATION_ID from INTER_MODEL_ASSOCIATION",con);
+        String[][] intraModelRecords = executeQuery(
+                                                    "select ASSOCIATION_ID,DE_ASSOCIATION_ID from INTRA_MODEL_ASSOCIATION",
+                                                    con);
+        String[][] interModelRecords = executeQuery(
+                                                    "select LEFT_ENTITY_ID,LEFT_ATTRIBUTE_ID,RIGHT_ENTITY_ID,RIGHT_ATTRIBUTE_ID,ASSOCIATION_ID from INTER_MODEL_ASSOCIATION",
+                                                    con);
         Map<Long, IAssociation> idVsIassociation = new HashMap<Long, IAssociation>(intraModelRecords.length
                 + interModelRecords.length);
         deIdVsAssociationId = new HashMap<Long, Long>(intraModelRecords.length);
@@ -549,7 +560,7 @@ public class PathFinder {
             Long deAssociationId = Long.parseLong(intraModelRecord[1]);
             AssociationInterface association = getCache().getAssociationById(deAssociationId);
             idVsIassociation.put(id, new IntraModelAssociation(association));
-            deIdVsAssociationId.put(deAssociationId,id);
+            deIdVsAssociationId.put(deAssociationId, id);
         }
         leftEntityVsInterModelAssociation = new HashMap<Long, List<IInterModelAssociation>>(
                 interModelRecords.length);
@@ -589,50 +600,64 @@ public class PathFinder {
     void setInstance(PathFinder pathFinder) {
         PathFinder.pathFinder = pathFinder;
     }
+
     public IPath getPathForAssociations(List<IIntraModelAssociation> associations) {
         StringBuffer buff = new StringBuffer();
-        if(associations.size()<1) {
+        if (associations.size() < 1) {
             throw new RuntimeException("Association list is empty");
         }
         buff.append(getId(associations.get(0)));
-        for(int i=1;i<associations.size();i++) {
+        for (int i = 1; i < associations.size(); i++) {
             buff.append(Constants.CONNECTOR);
             buff.append(getId(associations.get(i)));
         }
         String intermediatePath = buff.toString();
         PathRecord pathRecord = intermediatePathVsPathRecord.get(intermediatePath);
-        if(pathRecord==null) {
+        if (pathRecord == null) {
             Logger.out.error("No Path found for associations : " + intermediatePath);
             throw new RuntimeException("No Path found for associations : " + intermediatePath);
         }
         return getPath(pathRecord);
     }
+
     private Long getId(IIntraModelAssociation association) {
         //IntraModelAssociation association = (IntraModelAssociation) intraModelAssociation;
         //This class knows the underline class so casting it.
         Long deAssociationId = association.getDynamicExtensionsAssociation().getId();
         Long id = deIdVsAssociationId.get(deAssociationId);
-        if(id==null) {
+        if (id == null) {
             Logger.out.error("No IAssociation found for DE association : " + deAssociationId);
             throw new RuntimeException("No IAssociation found for DE association : " + deAssociationId);
         }
         return id;
     }
-//    public IPath getPathForAssociations(Long[] associations) {
-//        StringBuffer buff = new StringBuffer();
-//        //IntraModelAssociation association = (IntraModelAssociation) associations.get(0);
-//        //This class knows the underline class so casting it.
-//        buff.append(associations[0]);
-//        for(int i=1;i<associations.length;i++) {
-//            buff.append(Constants.CONNECTOR);
-//            //association = (IntraModelAssociation) associations.get(i);
-//            buff.append(associations[i]);
-//        }
-//        String intermediatePath = buff.toString();
-//        PathRecord pathRecord = intermediatePathVsPathRecord.get(intermediatePath);
-//        if(pathRecord==null) {
-//            Logger.out.error("No Path found for associations : " + intermediatePath);
-//        }
-//        return getPath(pathRecord);
-//    }
+
+    void addInterModelConnection(InterModelConnection imc) {
+        interModelConnections.add(imc);
+    }
+
+    boolean doesInterModelConnectionExist(InterModelConnection imc) {
+        return interModelConnections.contains(imc);
+    }
+
+    public boolean doesInterModelConnectionExist(AttributeInterface attr1, AttributeInterface attr2) {
+        return doesInterModelConnectionExist(new InterModelConnection(attr1, attr2));
+    }
+    //    public IPath getPathForAssociations(Long[] associations) {
+    //        StringBuffer buff = new StringBuffer();
+    //        //IntraModelAssociation association = (IntraModelAssociation) associations.get(0);
+    //        //This class knows the underline class so casting it.
+    //        buff.append(associations[0]);
+    //        for(int i=1;i<associations.length;i++) {
+    //            buff.append(Constants.CONNECTOR);
+    //            //association = (IntraModelAssociation) associations.get(i);
+    //            buff.append(associations[i]);
+    //        }
+    //        String intermediatePath = buff.toString();
+    //        PathRecord pathRecord = intermediatePathVsPathRecord.get(intermediatePath);
+    //        if(pathRecord==null) {
+    //            Logger.out.error("No Path found for associations : " + intermediatePath);
+    //        }
+    //        return getPath(pathRecord);
+    //    }
 }
