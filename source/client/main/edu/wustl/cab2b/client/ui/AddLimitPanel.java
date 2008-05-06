@@ -16,6 +16,8 @@ import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Image;
 import java.awt.geom.Point2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +36,7 @@ import org.openide.util.Utilities;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
+import edu.wustl.cab2b.client.ui.dag.DagControlPanel;
 import edu.wustl.cab2b.client.ui.dag.MainDagPanel;
 import edu.wustl.cab2b.client.ui.main.AbstractTypePanel;
 import edu.wustl.cab2b.client.ui.query.ClientPathFinder;
@@ -150,6 +153,15 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
 
         IPathFinder pathFinder = new ClientPathFinder();
         mainDagPanel = new MainDagPanel(this, imageMap, pathFinder, false);
+        mainDagPanel.addPropertyChangeListener(new PropertyChangeListener() {
+
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getPropertyName().equals(DagControlPanel.EVENT_RESET_BUTTON_CLICKED)) {
+                    resetPanel();
+                    firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+                }
+            }
+        });
         m_bottomCenterPanel.add(mainDagPanel);
 
         /* Add components to the conetent pane. */
@@ -346,6 +358,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * Refresh/clear Add Limit Panel UI
      */
     public void resetPanel() {
+        SearchNavigationPanel.messageLabel.setText("");
         clearAddLimitUI();
         mainDagPanel.clearDagPanel();
         revalidate();
