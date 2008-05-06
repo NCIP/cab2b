@@ -11,14 +11,17 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.rmi.RemoteException;
 import java.util.MissingResourceException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.border.Border;
 
+import org.apache.axis.types.URI.MalformedURIException;
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.painter.MattePainter;
 
@@ -38,6 +41,9 @@ import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
+import gov.nih.nci.cagrid.authentication.stubs.types.AuthenticationProviderFault;
+import gov.nih.nci.cagrid.authentication.stubs.types.InsufficientAttributeFault;
+import gov.nih.nci.cagrid.authentication.stubs.types.InvalidCredentialFault;
 
 /**
  * @author Chandrakant Talele
@@ -211,8 +217,15 @@ public class LoginFrame extends JXFrame {
      * @param password
      * @param idProvider
      * @return boolean stating is the user is a valid grid user or not
+     * @throws MalformedURIException 
+     * @throws RemoteException 
+     * @throws AuthenticationProviderFault 
+     * @throws InsufficientAttributeFault 
+     * @throws InvalidCredentialFault 
      */
-    final private boolean validateCredentials(String userName, String password, String idProvider) {
+    final private boolean validateCredentials(String userName, String password, String idProvider)
+            throws InvalidCredentialFault, InsufficientAttributeFault, AuthenticationProviderFault,
+            RemoteException, MalformedURIException {
         return UserValidator.validateUser(userName, password, idProvider);
     }
 
@@ -222,7 +235,7 @@ public class LoginFrame extends JXFrame {
             CustomSwingWorker swingWorker = new CustomSwingWorker(LoginFrame.this) {
 
                 @Override
-                protected void doNonUILogic() throws Exception {
+                protected void doNonUILogic() {
                     String serverIP = serverText.getText();
                     String jndiPort = port.getText();
                     String userName = usrNameText.getText();
@@ -235,20 +248,36 @@ public class LoginFrame extends JXFrame {
                     System.setProperty("java.naming.factory.initial", "org.jnp.interfaces.NamingContextFactory");
                     System.setProperty("java.naming.factory.url.pkgs", "org.jboss.naming:org.jnp.interfaces");
 
-                    if (validateCredentials(userName, password, IDProvider)) {
-                        MainFrame.setUserName(userName);
-                        Thread mainThread = new Thread() {
-                            public void run() {
-                                MainFrame.main(new String[0]);
-                            }
-                        };
-                        mainThread.setPriority(Thread.NORM_PRIORITY);
-                        mainThread.start();
-                    } else {
-                        //TODO Display error message
+                    try {
+                        if (validateCredentials(userName, password, IDProvider)) {
+                            MainFrame.setUserName(userName);
+                            Thread mainThread = new Thread() {
+                                public void run() {
+                                    MainFrame.main(new String[0]);
+                                }
+                            };
+                            mainThread.setPriority(Thread.NORM_PRIORITY);
+                            mainThread.start();
+                        } else {
+                            //TODO Display error message
+                        }
+                    } catch (InvalidCredentialFault e) {
+                        showError();
+                    } catch (InsufficientAttributeFault e) {
+                        showError();
+                    } catch (AuthenticationProviderFault e) {
+                        showError();
+                    } catch (RemoteException e) {
+                        showError();
+                    } catch (MalformedURIException e) {
+                        showError();
                     }
 
                     selfReference.dispose();
+                }
+
+                protected void showError() {
+                    JOptionPane.showMessageDialog(LoginFrame.this, "Please check the credentials!");
                 }
 
                 @Override

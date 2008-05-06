@@ -41,8 +41,13 @@ public class UserValidator {
      * @param password
      * @param idP
      * @return
+     * @throws RemoteException 
+     * @throws AuthenticationProviderFault 
+     * @throws InsufficientAttributeFault 
+     * @throws InvalidCredentialFault 
+     * @throws MalformedURIException 
      */
-    public static boolean validateUser(String userName, String password, String idP) {
+    public static boolean validateUser(String userName, String password, String idP) throws InvalidCredentialFault, InsufficientAttributeFault, AuthenticationProviderFault, RemoteException, MalformedURIException {
         AuthenticationClient authClient = null;
         SAMLAssertion saml = null;
         
@@ -59,21 +64,8 @@ public class UserValidator {
             e.printStackTrace();
             return false;
         }
-        try {
-            saml = authClient.authenticate();
-        } catch (InvalidCredentialFault e) {
-            e.printStackTrace();
-            return false;
-        } catch (InsufficientAttributeFault e) {
-            e.printStackTrace();
-            return false;
-        } catch (AuthenticationProviderFault e) {
-            e.printStackTrace();
-            return false;
-        } catch (RemoteException e) {
-            e.printStackTrace();
-            return false;
-        }
+        saml = authClient.authenticate();
+        
         setProxy(idP, saml);
         return true;
     }
@@ -83,36 +75,19 @@ public class UserValidator {
      * 
      * @param idP
      * @param saml
+     * @throws RemoteException 
+     * @throws MalformedURIException 
      */
-    private static void setProxy(String idP, SAMLAssertion saml) {
+    private static void setProxy(String idP, SAMLAssertion saml) throws MalformedURIException, RemoteException {
         ProxyLifetime lifetime = new ProxyLifetime();
         lifetime.setHours(12);
         lifetime.setMinutes(0);
         lifetime.setSeconds(0);
         int delegationLifetime = 0;
-        IFSUserClient dorian = null;
-        try {
-            dorian = new IFSUserClient(dorianUrl);
-        } catch (MalformedURIException e) {
-            e.printStackTrace();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        try {
-            proxy = dorian.createProxy(saml, lifetime, delegationLifetime);
-        } catch (DorianFault e) {
-            e.printStackTrace();
-        } catch (DorianInternalFault e) {
-            e.printStackTrace();
-        } catch (InvalidAssertionFault e) {
-            e.printStackTrace();
-        } catch (InvalidProxyFault e) {
-            e.printStackTrace();
-        } catch (UserPolicyFault e) {
-            e.printStackTrace();
-        } catch (PermissionDeniedFault e) {
-            e.printStackTrace();
-        }
+        IFSUserClient dorian = new IFSUserClient(dorianUrl);
+       
+        proxy = dorian.createProxy(saml, lifetime, delegationLifetime);
+     
     }
 
     /**
