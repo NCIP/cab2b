@@ -3,6 +3,8 @@ package edu.wustl.cab2b.client.ui.dag;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Image;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -88,8 +90,6 @@ public class MainDagPanel extends Cab2bPanel {
     protected boolean m_isDAGForView = false;
 
     protected DisplayNameInterafce entityNameDisplayer;
-    
-    
 
     /**
      * Constructor method
@@ -150,6 +150,12 @@ public class MainDagPanel extends Cab2bPanel {
      */
     private void initGUI() {
         m_controlPanel = new DagControlPanel(this, m_dagImageMap);
+
+        m_controlPanel.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+            }
+        });
         m_controlPanel.setBorder(BorderFactory.createLineBorder(Color.black));
         setLayout(new BorderLayout());
         m_view = GraphFactory.createView(m_document, m_documentRenderer, m_viewController, m_eventHandler);
@@ -174,19 +180,18 @@ public class MainDagPanel extends Cab2bPanel {
         }
         return count;
     }
-    
+
     /**
      * Method to get first expression ID's in query 
      * @return
      */
-    public IExpression getFirstExpression() {        
+    public IExpression getFirstExpression() {
         Enumeration<IExpressionId> exprEnumeration = m_queryObject.getQuery().getConstraints().getExpressionIds();
-        if (exprEnumeration.hasMoreElements()) {            
-            return m_queryObject.getQuery().getConstraints().getExpression(exprEnumeration.nextElement());             
+        if (exprEnumeration.hasMoreElements()) {
+            return m_queryObject.getQuery().getConstraints().getExpression(exprEnumeration.nextElement());
         }
         return null;
     }
-    
 
     /**
      *  CaB2B does not use this method for use of any functionality. 
@@ -286,9 +291,8 @@ public class MainDagPanel extends Cab2bPanel {
         }
         return associations;
     }
-    
-    public void selectNode(ExpressionId exprId)
-    {
+
+    public void selectNode(ExpressionId exprId) {
         m_viewController.selectNode(exprId);
     }
 

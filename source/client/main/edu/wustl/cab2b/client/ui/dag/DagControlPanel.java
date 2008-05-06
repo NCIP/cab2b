@@ -17,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.IconButton;
 import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImages;
@@ -28,6 +29,9 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImages;
 public class DagControlPanel extends JPanel implements ActionListener {
     private static final long serialVersionUID = 1L;
 
+    /** Event name that notifies that User has pressed Magnifying-Glass button...      */
+    public static final String EVENT_RESET_BUTTON_CLICKED = "EVENT_RESET_BUTTON_CLICKED";
+
     private JButton selectNodeButton;
 
     private JButton connectNodeButton;
@@ -35,6 +39,8 @@ public class DagControlPanel extends JPanel implements ActionListener {
     private JButton parenthesislButton;
 
     private JButton autoconnectButton;
+
+    private Cab2bButton resetButton;
 
     private Cab2bHyperlink clearAllPathsLink;
 
@@ -78,15 +84,31 @@ public class DagControlPanel extends JPanel implements ActionListener {
         clearAllPathsLink.setText(CLEARALLPATHS);
         autoconnectButton = new JButton(AUTOCONNECTLABEL);
         autoconnectButton.addActionListener(this);
-        autoconnectButton.setEnabled(true);
+        autoconnectButton.setEnabled(true);       
 
         rightPanel.setLayout(getLayout(FlowLayout.RIGHT));
         rightPanel.add(autoconnectButton);
+        JLabel seperatorTwo = new JLabel("|");
+        rightPanel.add(seperatorTwo);
+
+        resetButton = new Cab2bButton("Reset");
+        rightPanel.add(resetButton);
+        resetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                firePropertyChange(EVENT_RESET_BUTTON_CLICKED, -1, 0);
+            }
+        });
 
         JLabel seperator = new JLabel("|");
         rightPanel.add(seperator);
         rightPanel.add(clearAllPathsLink);
         clearAllPathsLink.addActionListener(this);
+
+        /* //Adding Reset button 
+         JLabel seperatorTwo = new JLabel("|");
+         rightPanel.add(seperatorTwo);
+         resetButton = new Cab2bButton("Reset");*/
+        //  rightPanel.add(resetButton);
         setLayout(new BorderLayout());
         add(leftPanel, BorderLayout.WEST);
         add(rightPanel, BorderLayout.EAST);
@@ -142,7 +164,7 @@ public class DagControlPanel extends JPanel implements ActionListener {
         }
         revalidate();
     }
-    
+
     /**
      * This method enable or disables the AutoConnect button
      * @param enable
