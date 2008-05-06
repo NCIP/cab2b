@@ -36,18 +36,9 @@ import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
  * An abstract class which provides the skeletal implementation of the
  * IComponent interface and defines some more abstract method like
  * getFirstComponent, getSecondComponent that needs to be implemented by the
- * subclasses like NumberTypePanel, StringTypePanel, etc. 
- * 
- * @author chetan_bh 
- * 
- */
-
-/**
- * Added additional features/methods to make it generic for handaling
- * Parameterized Query UI panels.
- * 
+ * subclasses like NumberTypePanel, StringTypePanel, etc.
+ * It also has methods to make it generic for handling parameterized Query UI panels.
  * @author Deepak Shingan
- * 
  */
 
 public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent {

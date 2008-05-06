@@ -11,10 +11,6 @@ import javax.swing.SwingConstants;
  * @author hrishikesh_rajpathak
  * 
  */
-/**
- * @author hrishikesh_rajpathak
- * 
- */
 public class RepeatIcon implements Icon {
 
 	private Icon icon;
