@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.axis.utils.ClassUtils;
+import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.server.queryengine.resulttransformers.QueryLogger;
 import edu.wustl.cab2b.server.queryengine.resulttransformers.QueryResultTransformerUtil;
@@ -35,13 +36,14 @@ public class CaArrayResultTransformerUtil extends QueryResultTransformerUtil {
      * @param clazz the class of the object
      * @param id the id of the object to be fetched
      * @param url the service url
+     * @param cred security credentials
      * @return the object
      * @see QueryResultTransformerUtil#getCQLResultsById(String, String, String,
      *      String)
      */
-    public <T> T getObjectById(Class<T> clazz, String id, String url) {
+    public <T> T getObjectById(Class<T> clazz, String id, String url, GlobusCredential cred) {
         String targetName = clazz.getName();
-        CQLQueryResults cqlQueryResults = getCQLResultsById(targetName, IDENTIFIER_ATTRIBUTE_NAME, id, url);
+        CQLQueryResults cqlQueryResults = getCQLResultsById(targetName, IDENTIFIER_ATTRIBUTE_NAME, id, url, cred);
         List<Object> objects = getObjectsFromCQLResults(targetName, cqlQueryResults);
         return objects.isEmpty() ? null : (T) objects.get(0);
     }
@@ -52,6 +54,7 @@ public class CaArrayResultTransformerUtil extends QueryResultTransformerUtil {
      * 
      * @param targetName the name of the target class
      * @param cqlQueryResults the cql results
+     * @param cred security credentials
      * @return the list of objects obtained by deserializing the cql resultss.
      */
     public List<Object> getObjectsFromCQLResults(String targetName, CQLQueryResults cqlQueryResults) {

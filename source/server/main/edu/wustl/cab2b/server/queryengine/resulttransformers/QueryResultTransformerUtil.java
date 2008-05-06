@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.globus.gsi.GlobusCredential;
+
 /**
  * Util for the query result transformers.
  * 
@@ -41,11 +43,13 @@ public class QueryResultTransformerUtil {
      * @param ids identifies which objects of the target class are to be fetched
      *            (translates to constraints in the CQL)
      * @param url the service url
+     * @param cred security credentials
      * @return the list of records obtained by executing the CQL; each record is
      *         an attribute-value map.
      */
     public List<Map<String, String>> getAttributeResult(String className, String[] attributeNames,
-                                                        String idAttrName, String[] ids, String url) {
+                                                        String idAttrName, String[] ids, String url,
+                                                        GlobusCredential cred) {
         List<Map<String, String>> records = new ArrayList<Map<String, String>>();
         if (ids.length == 0) {
             return records;
@@ -62,7 +66,7 @@ public class QueryResultTransformerUtil {
         }
 
         CQLQuery cql = createCQLQuery(target, createQueryModifier(attributeNames));
-        CQLAttributeResult[] attributeResults = executeCQL(cql, url).getAttributeResult();
+        CQLAttributeResult[] attributeResults = executeCQL(cql, url, cred).getAttributeResult();
 
         for (CQLAttributeResult attributeResult : attributeResults) {
             Map<String, String> oneRow = new HashMap<String, String>();
@@ -82,11 +86,13 @@ public class QueryResultTransformerUtil {
      * @param idAttrName the name of the id attribute in the class
      * @param id the id of the desired object
      * @param url the service url
+     * @param cred security credentials
      * @return the cql results.
      */
-    public CQLQueryResults getCQLResultsById(String className, String idAttrName, String id, String url) {
+    public CQLQueryResults getCQLResultsById(String className, String idAttrName, String id, String url,
+                                             GlobusCredential cred) {
         Object target = createTarget(className, createIdConstraint(idAttrName, id));
-        return executeCQL(createCQLQuery(target), url);
+        return executeCQL(createCQLQuery(target), url, cred);
     }
 
     private Group createGroup(List<Attribute> constraints) {
@@ -103,11 +109,11 @@ public class QueryResultTransformerUtil {
         return attribute;
     }
 
-    private CQLQueryResults executeCQL(CQLQuery cql, String url) {
+    private CQLQueryResults executeCQL(CQLQuery cql, String url, GlobusCredential cred) {
         logger.log(cql);
         Logger.out.info("Executing CQL to fetch " + cql.getTarget().getName() + " from service " + url);
         try {
-            DataServiceClient dataServiceClient = new DataServiceClient(url);
+            DataServiceClient dataServiceClient = new DataServiceClient(url, cred);
             CQLQueryResults results = dataServiceClient.query(cql);
             Logger.out.info("Executed CQL successfully.");
             return results;
