@@ -643,6 +643,27 @@ public class PathFinder {
     public boolean doesInterModelConnectionExist(AttributeInterface attr1, AttributeInterface attr2) {
         return doesInterModelConnectionExist(new InterModelConnection(attr1, attr2));
     }
+    
+    /**
+     * This method adds a new curated path to the cache. This method is to be used immediately after saving a Curated path.
+     * @param curatedPath
+     * @return
+     */
+    public boolean addCuratedPath(CuratedPath curatedPath) {
+        boolean added = false;
+        String entitySetString = curatedPath.getEntityIds();
+        if (entitySetString != null && !"".equals(entitySetString)) {
+            Set<ICuratedPath> paths = entitySetVsCuratedPath.get(entitySetString);
+            if (paths == null) {
+                paths = new HashSet<ICuratedPath>();
+                entitySetVsCuratedPath.put(entitySetString, paths);
+            }
+            paths.add(curatedPath);
+
+            added = true;
+        }
+        return added;
+    }
     //    public IPath getPathForAssociations(Long[] associations) {
     //        StringBuffer buff = new StringBuffer();
     //        //IntraModelAssociation association = (IntraModelAssociation) associations.get(0);
