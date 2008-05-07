@@ -9,8 +9,11 @@ import junit.framework.TestCase;
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.impl.InterModelAssociation;
+import edu.wustl.common.querysuite.metadata.path.CuratedPath;
+import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.metadata.path.Path;
 import edu.wustl.common.util.logger.Logger;
@@ -208,6 +211,34 @@ public class PathFinderTest extends TestCase {
      */
     protected void setUp() throws Exception {
         Logger.configure();
+    }
+
+    public void testAddCuratedPath() {
+        PathFinder pathFinder = PathFinder.getInstance(ConnectionUtil.getConnection());
+
+        CuratedPath curatedPath = new CuratedPath();
+        curatedPath.setSelected(false);
+
+        IPath path = pathFinder.getPathById(1L);
+        curatedPath.addPath(path);
+
+        Set<EntityInterface> entitySet = new HashSet<EntityInterface>();
+        entitySet.add(path.getSourceEntity());
+        entitySet.add(path.getTargetEntity());
+        curatedPath.setEntitySet(entitySet);
+
+        pathFinder.addCuratedPath(curatedPath);
+
+        Set<ICuratedPath> curatedPaths = pathFinder.getCuratedPaths(path.getSourceEntity(), path.getTargetEntity());
+        
+        ICuratedPath actual = null;
+        for(ICuratedPath cp: curatedPaths) {
+            if(curatedPath.equals(cp)) {
+                actual = cp;
+            }
+        }
+        
+        assertEquals(curatedPath, (CuratedPath)actual);
     }
 
 }
