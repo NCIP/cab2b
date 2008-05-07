@@ -23,12 +23,12 @@ public class InterModelConnectionBizLogic {
         }
         Connection conn = ConnectionUtil.getConnection();
         long nextId = PathBuilder.getNextAssociationId(2, conn);
-        saveInterModelConnection2(imc, nextId, conn);
-        saveInterModelConnection2(imc.mirror(), nextId + 1, conn);
+        saveInterModelConnection(imc, nextId, conn);
+        saveInterModelConnection(imc.mirror(), nextId + 1, conn);
         ConnectionUtil.close(conn);
     }
 
-    private void saveInterModelConnection2(InterModelConnection imc, long id, Connection conn) {
+    private void saveInterModelConnection(InterModelConnection imc, long id, Connection conn) {
         String sql = "insert into inter_model_association(association_id, left_entity_id, left_attribute_id, right_entity_id, right_attribute_id) values (";
         sql = sql + id + "," + imc.getLeftEntityId() + "," + imc.getLeftAttributeId() + ","
                 + imc.getRightEntityId() + "," + imc.getRightAttributeId() + ");";
