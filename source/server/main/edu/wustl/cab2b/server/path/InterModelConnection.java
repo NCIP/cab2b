@@ -1,5 +1,7 @@
 package edu.wustl.cab2b.server.path;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 
 /**
@@ -93,5 +95,24 @@ class InterModelConnection {
         buff.append("\tRight Entity : " + rightEntityId);
         buff.append("\tRight Attribute : " + rightAttributeId);
         return buff.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof InterModelConnection)) {
+            return false;
+        }
+        InterModelConnection other = (InterModelConnection) o;
+        return leftEntityId.equals(other.leftEntityId) && leftAttributeId.equals(other.leftAttributeId)
+                && rightEntityId.equals(other.rightEntityId) && rightAttributeId.equals(other.rightAttributeId);
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(leftEntityId).append(leftAttributeId).append(rightEntityId).append(
+                                                                                                               rightAttributeId).toHashCode();
     }
 }
