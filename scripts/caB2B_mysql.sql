@@ -20,7 +20,7 @@ drop table if exists CAB2B_QUERY;
 
 /*INTERMEDIATE_PATH contains  ASSOCIATION(ASSOCIATION_ID) connected by underscore */
 create table PATH(
-     PATH_ID           bigint         not null,
+     PATH_ID           bigint         not null auto_increment,
      FIRST_ENTITY_ID   bigint         null,
      INTERMEDIATE_PATH varchar(1000)  null,
      LAST_ENTITY_ID    bigint         null,
@@ -55,7 +55,7 @@ create table CAB2B_ID_TABLE(
     primary key (NEXT_ASSOCIATION_ID)
 );
 create table CURATED_PATH (
-	curated_path_Id BIGINT,
+	curated_path_Id BIGINT not null auto_increment,
 	entity_ids VARCHAR(1000),
 	selected boolean,
 	primary key (curated_path_Id)
