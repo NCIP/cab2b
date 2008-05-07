@@ -21,7 +21,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.border.Border;
 
-import org.apache.axis.types.URI.MalformedURIException;
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.painter.MattePainter;
 
@@ -41,9 +40,6 @@ import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
-import gov.nih.nci.cagrid.authentication.stubs.types.AuthenticationProviderFault;
-import gov.nih.nci.cagrid.authentication.stubs.types.InsufficientAttributeFault;
-import gov.nih.nci.cagrid.authentication.stubs.types.InvalidCredentialFault;
 
 /**
  * @author Chandrakant Talele

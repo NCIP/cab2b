@@ -5,13 +5,9 @@ import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.user.UserBusinessInterface;
 import edu.wustl.cab2b.common.ejb.user.UserHomeInterface;
 import edu.wustl.cab2b.common.util.PropertyLoader;
-import gov.nih.nci.cagrid.authentication.stubs.types.AuthenticationProviderFault;
-import gov.nih.nci.cagrid.authentication.stubs.types.InsufficientAttributeFault;
-import gov.nih.nci.cagrid.authentication.stubs.types.InvalidCredentialFault;
 
 import java.rmi.RemoteException;
 
-import org.apache.axis.types.URI.MalformedURIException;
 import org.globus.gsi.GlobusCredential;
 
 /**
