@@ -4,6 +4,8 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
+import org.globus.gsi.GlobusCredential;
+
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.common.ejb.user.UserBusinessInterface;
@@ -34,5 +36,9 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
 	public UserInterface getUserByName(String user) throws RemoteException {
 		return new UserOperations().getUserByName(user);
 	}
+    
+    public GlobusCredential validateUser(String userName, String password, String dorianUrl) throws RemoteException{
+        return new UserOperations().validateUser(userName,password,dorianUrl);
+    }
 
 }

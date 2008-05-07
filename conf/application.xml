@@ -5,7 +5,6 @@
 	<module>
         <ejb>cab2bServer.jar</ejb>
 	</module>
-	
 	<module><java>asm.jar</java></module>
 	<module><java>asm-attrs.jar</java></module>
 	<module><java>cglib-2.1.jar</java></module>
@@ -25,6 +24,7 @@
 	<module><java>c3p0-0.9.0.jar</java></module>	
 
 	<module><java>addressing-1.0.jar</java></module>
+
 	<module><java>axis.jar</java></module>
 	<module><java>castor-1.0.4-patched.jar</java></module>
 
@@ -80,4 +80,27 @@
     <module><java>postgresql-8.1-405.jdbc3.jar</java></module>
     
     <module><java>csmapi.jar</java></module>
+    
+    <module><java>caGrid-1.1-authentication-service-client.jar</java></module>
+    <module><java>caGrid-1.1-authentication-service-common.jar</java></module>
+    <module><java>caGrid-1.1-authentication-service-stubs.jar</java></module>
+    <module><java>caGrid-1.1-dorian-stubs.jar</java></module>
+    <module><java>caGrid-1.1-dorian-ui.jar</java></module>
+    <module><java>caGrid-1.1-gridca.jar</java></module>
+    <module><java>caGrid-1.1-metadata-common.jar</java></module>
+    <module><java>caGrid-1.1-metadata-security.jar</java></module>
+    <module><java>caGrid-1.1-opensaml-1.1.jar</java></module>
+    <module><java>caGrid-1.1-ServiceSecurityProvider-client.jar</java></module>
+    <module><java>caGrid-1.1-ServiceSecurityProvider-common.jar</java></module>
+   
+    
+    <module><java>cog-jglobus.jar</java></module>
+    <module><java>commons-logging-1.1.jar</java></module>
+    <module><java>cryptix32.jar</java></module>
+    <module><java>cryptix-asn1.jar</java></module>
+    <module><java>log4j-1.2.14.jar</java></module>
+    <module><java>puretls.jar</java></module>
+    <module><java>xmlsec-1.4.0.jar</java></module>
+    
+    
 </application>

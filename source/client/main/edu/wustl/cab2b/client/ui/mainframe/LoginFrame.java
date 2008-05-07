@@ -223,9 +223,7 @@ public class LoginFrame extends JXFrame {
      * @throws InsufficientAttributeFault 
      * @throws InvalidCredentialFault 
      */
-    final private boolean validateCredentials(String userName, String password, String idProvider)
-            throws InvalidCredentialFault, InsufficientAttributeFault, AuthenticationProviderFault,
-            RemoteException, MalformedURIException {
+    final private boolean validateCredentials(String userName, String password, String idProvider) {
         return UserValidator.validateUser(userName, password, idProvider);
     }
 
@@ -248,28 +246,16 @@ public class LoginFrame extends JXFrame {
                     System.setProperty("java.naming.factory.initial", "org.jnp.interfaces.NamingContextFactory");
                     System.setProperty("java.naming.factory.url.pkgs", "org.jboss.naming:org.jnp.interfaces");
 
-                    try {
-                        if (validateCredentials(userName, password, IDProvider)) {
-                            MainFrame.setUserName(userName);
-                            Thread mainThread = new Thread() {
-                                public void run() {
-                                    MainFrame.main(new String[0]);
-                                }
-                            };
-                            mainThread.setPriority(Thread.NORM_PRIORITY);
-                            mainThread.start();
-                        } else {
-                            //TODO Display error message
-                        }
-                    } catch (InvalidCredentialFault e) {
-                        showError();
-                    } catch (InsufficientAttributeFault e) {
-                        showError();
-                    } catch (AuthenticationProviderFault e) {
-                        showError();
-                    } catch (RemoteException e) {
-                        showError();
-                    } catch (MalformedURIException e) {
+                    if (validateCredentials(userName, password, IDProvider)) {
+                        MainFrame.setUserName(userName);
+                        Thread mainThread = new Thread() {
+                            public void run() {
+                                MainFrame.main(new String[0]);
+                            }
+                        };
+                        mainThread.setPriority(Thread.NORM_PRIORITY);
+                        mainThread.start();
+                    } else {
                         showError();
                     }
 

@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.axis.types.URI.MalformedURIException;
+import org.globus.gsi.GlobusCredential;
+
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
@@ -21,6 +24,15 @@ import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
+import gov.nih.nci.cagrid.authentication.bean.BasicAuthenticationCredential;
+import gov.nih.nci.cagrid.authentication.bean.Credential;
+import gov.nih.nci.cagrid.authentication.client.AuthenticationClient;
+import gov.nih.nci.cagrid.authentication.stubs.types.AuthenticationProviderFault;
+import gov.nih.nci.cagrid.authentication.stubs.types.InsufficientAttributeFault;
+import gov.nih.nci.cagrid.authentication.stubs.types.InvalidCredentialFault;
+import gov.nih.nci.cagrid.dorian.client.IFSUserClient;
+import gov.nih.nci.cagrid.dorian.ifs.bean.ProxyLifetime;
+import gov.nih.nci.cagrid.opensaml.SAMLAssertion;
 
 /**
  * @author hrishikesh_rajpathak
@@ -219,5 +231,94 @@ public class UserOperations extends DefaultBizLogic {
 
         }
         return finalMap;
+    }
+
+    /**
+     * Validates user on the basis of username, password and the idP that it points to.
+     * 
+     * @param userName
+     * @param password
+     * @param idP
+     * @return
+     * @throws RemoteException 
+     * @throws AuthenticationProviderFault 
+     * @throws InsufficientAttributeFault 
+     * @throws InvalidCredentialFault 
+     * @throws MalformedURIException 
+     */
+    public GlobusCredential validateUser(String userName, String password, String dorianUrl) throws RemoteException{
+        AuthenticationClient authClient = null;
+        SAMLAssertion saml = null;
+        Credential cred = createCredentials(userName, password);
+        try {
+            authClient = new AuthenticationClient(dorianUrl, cred);
+        } catch (MalformedURIException e) {
+            e.printStackTrace();
+            return null;
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            return null;
+        }
+        try {
+            saml = authClient.authenticate();
+        } catch (InvalidCredentialFault e) {
+            e.printStackTrace();
+            return null;
+        } catch (InsufficientAttributeFault e) {
+            e.printStackTrace();
+            return null;
+        } catch (AuthenticationProviderFault e) {
+            e.printStackTrace();
+            return null;
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            return null;
+        }
+        GlobusCredential proxy = null;
+        try {
+            proxy = getGlobusCredentials(dorianUrl, saml);
+        } catch (MalformedURIException e) {
+            e.printStackTrace();
+            return null;
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return proxy;
+    }
+
+    /**
+     * Generates Credential object from given username and password.
+     * 
+     * @param userName
+     * @param password
+     * @return
+     */
+    private Credential createCredentials(String userName, String password) {
+        Credential credential = new Credential();
+        BasicAuthenticationCredential basicCredentials = new BasicAuthenticationCredential();
+        basicCredentials.setUserId(userName);
+        basicCredentials.setPassword(password);
+        credential.setBasicAuthenticationCredential(basicCredentials);
+        return credential;
+    }
+
+    /**
+     * Sets globus credentials with proxy certificate of 12 hours (maximum possible) lifetime
+     * 
+     * @param idP
+     * @param saml
+     * @throws RemoteException 
+     * @throws MalformedURIException 
+     */
+    private GlobusCredential getGlobusCredentials(String dorianUrl, SAMLAssertion saml)
+            throws MalformedURIException, RemoteException {
+        ProxyLifetime lifetime = new ProxyLifetime();
+        lifetime.setHours(12);
+        lifetime.setMinutes(0);
+        lifetime.setSeconds(0);
+        int delegationLifetime = 0;
+        IFSUserClient dorian = new IFSUserClient(dorianUrl);
+        return dorian.createProxy(saml, lifetime, delegationLifetime);
     }
 }
