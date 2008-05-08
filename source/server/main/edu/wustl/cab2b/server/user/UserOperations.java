@@ -246,7 +246,8 @@ public class UserOperations extends DefaultBizLogic {
      * @throws InvalidCredentialFault 
      * @throws MalformedURIException 
      */
-    public GlobusCredential validateUser(String userName, String password, String dorianUrl) throws RemoteException{
+    public GlobusCredential validateUser(String userName, String password, String dorianUrl)
+            throws RemoteException {
         AuthenticationClient authClient = null;
         SAMLAssertion saml = null;
         Credential cred = createCredentials(userName, password);
