@@ -11,6 +11,8 @@ import java.rmi.RemoteException;
 import org.globus.gsi.GlobusCredential;
 
 /**
+ * This class passes user info to serveer to get user validated and get proxy informaion
+ * 
  * @author hrishikesh_rajpathak
  *
  */
@@ -28,12 +30,7 @@ public class UserValidator {
      * @param userName
      * @param password
      * @param idP
-     * @return
-     * @throws RemoteException 
-     * @throws AuthenticationProviderFault 
-     * @throws InsufficientAttributeFault 
-     * @throws InvalidCredentialFault 
-     * @throws MalformedURIException 
+     * @return boolean stating is valid user or not
      */
     public static boolean validateUser(String userName, String password, String idP) {
         setUserName(userName);
