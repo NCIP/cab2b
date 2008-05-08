@@ -241,10 +241,6 @@ public class UserOperations extends DefaultBizLogic {
      * @param idP
      * @return
      * @throws RemoteException 
-     * @throws AuthenticationProviderFault 
-     * @throws InsufficientAttributeFault 
-     * @throws InvalidCredentialFault 
-     * @throws MalformedURIException 
      */
     public GlobusCredential validateUser(String userName, String password, String dorianUrl)
             throws RemoteException {

@@ -14,11 +14,14 @@ import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.user.UserOperations;
 
+/**
+ * This bean handles user based operations
+ * 
+ * @author hrishikesh_rajpathak
+ *
+ */
 public class UserBean extends AbstractStatelessSessionBean implements UserBusinessInterface {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public void insertUser(User user) throws RemoteException {

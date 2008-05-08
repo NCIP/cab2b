@@ -58,5 +58,14 @@ public interface UserBusinessInterface extends BusinessInterface {
      */
     UserInterface getUserByName(String user) throws RemoteException;
 
+    /**
+     * Validate user for given dorian url with given credentials
+     * 
+     * @param userName
+     * @param password
+     * @param dorianUrl
+     * @return
+     * @throws RemoteException
+     */
     GlobusCredential validateUser(String userName, String password, String dorianUrl) throws RemoteException;
 }
