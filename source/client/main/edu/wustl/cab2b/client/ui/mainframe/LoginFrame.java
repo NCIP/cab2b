@@ -108,6 +108,8 @@ public class LoginFrame extends JXFrame {
             }
         });
 
+        forgotPass.setEnabled(false);
+
         serverText = getTextField("localhost");
 
         remember = new Cab2bCheckBox();
