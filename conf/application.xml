@@ -67,7 +67,9 @@
         
    	<module><java>CaArraySvc-client.jar</java></module>
     <module><java>CaArraySvc-common.jar</java></module>
-    
+	<module><java>CaArraySvc-encoding.jar</java></module>    
+	<module><java>CaArraySvc-client-mageom.jar</java></module>
+	
 
     <module><java>caarray-client.jar</java></module>
     <module><java>CaArraySvc-service.jar</java></module>
