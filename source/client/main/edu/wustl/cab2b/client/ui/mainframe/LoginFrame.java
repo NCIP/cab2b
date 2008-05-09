@@ -253,7 +253,7 @@ public class LoginFrame extends JXFrame {
 				protected void doNonUILogic() {
 					String serverIP = serverText.getText();
 					String jndiPort = port.getText();
-					String userName = usrNameText.getText();
+					final String userName = usrNameText.getText();
 					char[] passwordArray = passText.getPassword();
 					String password = new String(passwordArray);
 					String IDProvider = idProvider.getSelectedItem().toString();
@@ -266,10 +266,9 @@ public class LoginFrame extends JXFrame {
 							"org.jboss.naming:org.jnp.interfaces");
 
 					if (validateCredentials(userName, password, IDProvider)) {
-						MainFrame.setUserName(userName);
 						Thread mainThread = new Thread() {
 							public void run() {
-								MainFrame.main(new String[0]);
+								MainFrame.main(new String[]{userName});
 							}
 						};
 						mainThread.setPriority(Thread.NORM_PRIORITY);

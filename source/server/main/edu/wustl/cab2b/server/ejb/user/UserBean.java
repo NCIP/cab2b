@@ -9,7 +9,6 @@ import org.globus.gsi.GlobusCredential;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.common.ejb.user.UserBusinessInterface;
-import edu.wustl.cab2b.common.user.User;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.user.UserOperations;
@@ -24,11 +23,11 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
 
 	private static final long serialVersionUID = 1L;
 
-	public void insertUser(User user) throws RemoteException {
+	public void insertUser(UserInterface user) throws RemoteException {
 		new UserOperations().insertUser(user);
 	}
 
-	public void updateUser(User user) throws RemoteException {
+	public void updateUser(UserInterface user) throws RemoteException {
 		new UserOperations().updateUser(user);
 	}
 
@@ -36,6 +35,10 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
 		return new UserOperations().getServiceURLsForUser(user);
 	}
 
+	/* (non-Javadoc)
+	 * @see edu.wustl.cab2b.common.ejb.user.UserBusinessInterface#getUserByName(java.lang.String)
+	 * If user not found, it returns null
+	 */
 	public UserInterface getUserByName(String user) throws RemoteException {
 		return new UserOperations().getUserByName(user);
 	}

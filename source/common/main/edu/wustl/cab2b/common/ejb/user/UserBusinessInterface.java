@@ -12,7 +12,6 @@ import org.globus.gsi.GlobusCredential;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.common.BusinessInterface;
-import edu.wustl.cab2b.common.user.User;
 import edu.wustl.cab2b.common.user.UserInterface;
 
 /**
@@ -27,7 +26,7 @@ public interface UserBusinessInterface extends BusinessInterface {
      * @param user
      * @throws RemoteException
      */
-    void insertUser(User user) throws RemoteException;
+    void insertUser(UserInterface user) throws RemoteException;
 
     /**
      * Update present user in database
@@ -35,7 +34,7 @@ public interface UserBusinessInterface extends BusinessInterface {
      * @param user
      * @throws RemoteException
      */
-    void updateUser(User user) throws RemoteException;
+    void updateUser(UserInterface user) throws RemoteException;
 
     /**
      * Get a map of entity group name vs related list of service urls for the given user
@@ -50,7 +49,7 @@ public interface UserBusinessInterface extends BusinessInterface {
             DynamicExtensionsApplicationException, RemoteException;
 
     /**
-     * Get user by user name
+     * Get user by user name. If user of that name not found in database, it returns null.
      * 
      * @param user
      * @return

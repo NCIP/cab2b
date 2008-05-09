@@ -63,7 +63,7 @@ public class UserOperations extends DefaultBizLogic {
     }
 
     /**
-     * Method to fetch user. Called by getUserByName and getAdmin
+     * Method to fetch user. Called by getUserByName and getAdmin. If user not found, it returns null
      * 
      * @param column
      * @param value
@@ -93,8 +93,6 @@ public class UserOperations extends DefaultBizLogic {
             } catch (DynamicExtensionsApplicationException e) {
                 throw new RemoteException(e.getMessage());
             }
-        } else {
-            throw new RemoteException("Couldn't find user " + value);
         }
         return user;
     }
@@ -128,7 +126,7 @@ public class UserOperations extends DefaultBizLogic {
      * @param user
      * @throws RemoteException
      */
-    public void insertUser(User user) throws RemoteException {
+    public void insertUser(UserInterface user) throws RemoteException {
         if (getUserByName(user.getUserName()) != null) {
             throw new RemoteException("Duplicate user. Please enter different user name");
         } else {
@@ -148,7 +146,7 @@ public class UserOperations extends DefaultBizLogic {
      * @param user
      * @throws RemoteException
      */
-    public void updateUser(User user) throws RemoteException {
+    public void updateUser(UserInterface user) throws RemoteException {
         try {
             update(user, Constants.HIBERNATE_DAO);
         } catch (UserNotAuthorizedException e) {

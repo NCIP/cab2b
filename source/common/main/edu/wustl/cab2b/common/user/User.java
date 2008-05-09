@@ -24,9 +24,15 @@ public class User implements UserInterface, Serializable {
 
 	public User() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
+	public User(String userName, String password, boolean isAdmin) {
+		this();
+		this.userName=userName;
+		this.password=password;
+		this.isAdmin=isAdmin;		
+	}
+	
 	/**
 	 * @hibernate.id name="userId" column="USER_ID" type="long" length="30"
 	 *               unsaved-value="null" generator-class="native"
