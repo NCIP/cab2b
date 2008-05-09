@@ -36,6 +36,6 @@
 	
 	</resources>
 
-	<application-desc main-class="edu.wustl.cab2b.client.ui.mainframe.MainFrame"/>
+	<application-desc main-class="edu.wustl.cab2b.client.ui.mainframe.LoginFrame"/>
 
 </jnlp>
