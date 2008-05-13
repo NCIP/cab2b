@@ -18,7 +18,7 @@ public class MySqlLoader implements DataFileLoaderInterface {
         Logger.out.debug("Entering method loadDataFromFile()");
 
         StringBuffer buffer = new StringBuffer();
-        buffer.append(" LOAD DATA INFILE '");
+        buffer.append(" LOAD DATA LOCAL INFILE '");
         buffer.append(fileName.replaceAll("\\\\", "/"));
         buffer.append("' INTO TABLE ");
         buffer.append(tableName);
