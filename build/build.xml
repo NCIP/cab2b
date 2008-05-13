@@ -326,10 +326,12 @@
 				<include name="cab2b.properties" />
 				<include name="*.cfg.xml" />
 				<include name="dbutil.properties" />
+				<include name="server.properties" />
 				<include name="EntityToAnalyticalServiceMapping.xml" />
 				<include name="ResultConfiguration.xml" />
 			</fileset>
 		</copy>
+		<replace file="${server.jar.dir}/hibernate.cfg.xml" token="DS-NAME" value="${datasource.name}" />
 		<jar basedir="${server.jar.dir}" destfile="${server.jar.file}" />
 	</target>
 
@@ -403,6 +405,7 @@
 			<replace file="@{cfgfile}" token="database-name" value="${database.name}" />
 			<replace file="@{cfgfile}" token="user_name" value="${database.username}" />
 			<replace file="@{cfgfile}" token="user_password" value="${database.password}" />
+			<replace file="@{cfgfile}" token="DS-NAME" value="${datasource.name}" />
 		</sequential>
 	</macrodef>
 	<target name="replace.datasource">

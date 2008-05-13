@@ -11,6 +11,7 @@ import java.util.Vector;
 
 import edu.wustl.cab2b.client.ui.util.ClientConstants;
 import edu.wustl.cab2b.common.util.PropertyLoader;
+import edu.wustl.cab2b.common.util.Utility;
 
 /**
  * @author chetan_patil
@@ -37,7 +38,7 @@ public final class ModelMap {
     }
 
     private final void loadRefreshModelMap() {
-        Properties properties = PropertyLoader.getPropertiesFromFile(ClientConstants.MODEL_MAP_PROPERTY_FILE);
+        Properties properties = Utility.getPropertiesFromFile(ClientConstants.MODEL_MAP_PROPERTY_FILE);
         Enumeration<?> propertyKeys = properties.propertyNames();
 
         while (propertyKeys.hasMoreElements()) {

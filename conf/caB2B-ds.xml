@@ -11,7 +11,7 @@
 <!-- ==================================================================== -->
 <datasources>
   <local-tx-datasource>
-      <jndi-name>cab2bDS</jndi-name>
+      <jndi-name>DS-NAME</jndi-name>
       <connection-url>jdbc:mysql://server-ip:port/database-name</connection-url>
       <driver-class>com.mysql.jdbc.Driver</driver-class>
       <user-name>user_name</user-name>

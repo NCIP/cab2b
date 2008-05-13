@@ -5,6 +5,8 @@ import static edu.wustl.cab2b.common.util.Constants.PROJECT_VERSION;
 import static edu.wustl.cab2b.common.util.Constants.TYPE_CATEGORY;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -15,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -680,4 +683,30 @@ public class Utility {
 		}
 		return original;
 	}
+    /**
+     * Loads properties from a file present in classpath to java objects.
+     * If any exception occurs, it is callers responsibility to handle it. 
+     * @param propertyfile Name of property file. It MUST be present in classpath
+     * @return Properties loaded from given file.
+     */
+    public static Properties getPropertiesFromFile(String propertyfile) {
+        Properties properties = null;
+        try {
+            URL url = getResource(propertyfile);
+            InputStream is = url.openStream();
+            if (is == null) {
+                Logger.out.error("Unable fo find property file : " + propertyfile
+                        + "\n please put this file in classpath");
+            }
+
+            properties = new Properties();
+            properties.load(is);
+
+        } catch (IOException e) {
+            Logger.out.error("Unable to load properties from : " + propertyfile);
+            e.printStackTrace();
+        }
+
+        return properties;
+    }
 }

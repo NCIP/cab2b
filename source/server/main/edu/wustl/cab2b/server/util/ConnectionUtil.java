@@ -10,7 +10,6 @@ import javax.sql.DataSource;
 
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.cab2b.server.ServerConstants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -19,16 +18,17 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class ConnectionUtil {
     /**
-     * Creates a connection from datasource and returns it.
+     * Creates a connection from data-source and returns it.
      * @return Returns the Connection object
      * @throws SQLException 
      */
     public static Connection getConnection() {
         DataSource dataSource = null;
-
+        String dsName = new StringBuilder().append("java:/").append(ServerProperties.getDatasourceName()).toString();
         try {
             Context ctx = new InitialContext();
-            dataSource = (DataSource) ctx.lookup(ServerConstants.CAB2B_DS_NAME);
+
+            dataSource = (DataSource) ctx.lookup(dsName);
         } catch (NamingException e) {
             throw new RuntimeException("Unable to look up Datasource from JNDI", e, ErrorCodeConstants.JN_0001);
         }
@@ -38,12 +38,10 @@ public class ConnectionUtil {
             try {
                 connection = dataSource.getConnection();
             } catch (SQLException e) {
-                throw new RuntimeException("Unable to create a connection from datasource.", e,
-                        ErrorCodeConstants.DB_0003);
+                throw new RuntimeException("Unable to create a connection from datasource.", e, ErrorCodeConstants.DB_0003);
             }
         } else {
-            throw new RuntimeException("Datasource lookup failed, got null datasource", new RuntimeException(),
-                    ErrorCodeConstants.JN_0001);
+            throw new RuntimeException("Datasource lookup failed, got null datasource", new RuntimeException(), ErrorCodeConstants.JN_0001);
         }
         return connection;
     }
@@ -63,22 +61,4 @@ public class ConnectionUtil {
             }
         }
     }
-//    public static Connection getConnection() {
-//        Logger.configure();
-//        String url = "jdbc:mysql://localhost:3306/cab2b";
-//        String driver = "com.mysql.jdbc.Driver";
-//        String userName = "root";
-//        String password = "";
-//        Connection con = null;
-//        try {
-//            Class.forName(driver).newInstance();
-//            con = DriverManager.getConnection(url, userName, password);
-//        } catch (Exception e) {
-//             
-//            e.printStackTrace();
-//        }
-//        if (con == null)
-//             
-//        return con;
-//    }
 }
