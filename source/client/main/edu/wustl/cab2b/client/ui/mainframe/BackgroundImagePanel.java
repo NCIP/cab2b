@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 class BackgroundImagePanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
-    private Image backgroundImage;
+    protected Image backgroundImage;
 
     /**
      * @param backgroundImage The background image
