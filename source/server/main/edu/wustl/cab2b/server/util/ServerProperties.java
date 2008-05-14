@@ -8,8 +8,8 @@ import edu.wustl.cab2b.common.util.Utility;
  * This class is wrapper around property file server.properties.
  * @author Chandrakant Talele
  */
-public final class ServerProperties {
-    private static Properties props = Utility.getPropertiesFromFile("server.properties");
+public class ServerProperties {
+    protected static Properties props = Utility.getPropertiesFromFile("server.properties");
 
     /**
      * @return The database IP
