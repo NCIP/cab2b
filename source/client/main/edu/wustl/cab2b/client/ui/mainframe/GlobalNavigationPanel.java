@@ -24,20 +24,20 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
  */
 public class GlobalNavigationPanel extends Cab2bPanel {
 	private static final long serialVersionUID = 1L;
-    
-    GlobalNavigationGlassPane myGlassPane;
+
+	private GlobalNavigationGlassPane myGlassPane;
 
 	/**
 	 * Background color of the panel.
 	 */
 	private Color bgColor = new Color(255, 255, 255);
 
-	public MainFrame mainFrame;
+	private MainFrame mainFrame;
 
 	/**
 	 * <code>MainFrame</code> reference.
 	 */
-	public JXFrame frame;
+	private JXFrame frame;
 
 	public static MainSearchPanel mainSearchPanel = null;
 
@@ -58,12 +58,12 @@ public class GlobalNavigationPanel extends Cab2bPanel {
 	 * Initialize UI with RepeatIcon and GlobalNavigationGlassPane
 	 */
 	private void initGUIWithGB() {
-        ClassLoader loader = this.getClass().getClassLoader();
-        
+		ClassLoader loader = this.getClass().getClassLoader();
+
 		JPanel cab2bPanel = new JPanel(new BorderLayout());
 		Icon logoIcon = new ImageIcon(loader.getResource("r_1p.gif"));
-		int width=MainFrame.getScreenDimesion().width;
-		width=width-600;
+		int width = MainFrame.getScreenDimesion().width;
+		width = width - 600;
 		RepeatIcon repeatIcon = new RepeatIcon(logoIcon, 0, width);
 		JLabel labelMiddle = new JLabel(repeatIcon);
 		Icon iconLeft = new ImageIcon(loader.getResource("banner_img1.gif"));
@@ -73,17 +73,17 @@ public class GlobalNavigationPanel extends Cab2bPanel {
 		cab2bPanel.add(labelLeft, BorderLayout.WEST);
 		cab2bPanel.add(labelMiddle, BorderLayout.CENTER);
 		cab2bPanel.add(labelRight, BorderLayout.EAST);
-		myGlassPane = new GlobalNavigationGlassPane(labelLeft,
-				labelMiddle, labelRight, mainFrame, frame);
+		myGlassPane = new GlobalNavigationGlassPane(labelLeft, labelMiddle, labelRight, mainFrame,
+				frame);
 		cab2bPanel.setBackground(Color.WHITE);
 		this.frame.setGlassPane(myGlassPane);
 		this.add("hfill", cab2bPanel);
 	}
-    
-    public GlobalNavigationGlassPane getGlobalNavigationGlassPane() {
-        return this.myGlassPane;
-    }
-    
+
+	public GlobalNavigationGlassPane getGlobalNavigationGlassPane() {
+		return this.myGlassPane;
+	}
+
 	/*
 	 *//**
 		 * @param args
