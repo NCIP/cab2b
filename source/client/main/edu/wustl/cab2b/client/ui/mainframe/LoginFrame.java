@@ -265,7 +265,7 @@ public class LoginFrame extends JXFrame {
                     if (validateCredentials(userName, password, IDProvider)) {
                         Thread mainThread = new Thread() {
                             public void run() {
-                                MainFrame.main(new String[] { userName });
+                                MainFrame.launchMainFrame(userName);
                             }
                         };
                         mainThread.setPriority(Thread.NORM_PRIORITY);

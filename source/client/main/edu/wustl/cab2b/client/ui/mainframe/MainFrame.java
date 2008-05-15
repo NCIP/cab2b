@@ -287,8 +287,8 @@ public class MainFrame extends JXFrame {
 	 * @param args
 	 *            Command line arguments. They will not be used.
 	 */
-	public static void main(String[] args) {
-		setUserName(args[0]);
+	public static void launchMainFrame(String userName) {
+		setUserName(userName);
 		try {
 			setHome();
 			Logger.configure(); // pick config from log4j.properties
