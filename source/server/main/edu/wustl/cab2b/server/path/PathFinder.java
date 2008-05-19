@@ -71,7 +71,7 @@ public class PathFinder {
         if (pathFinder == null) {
             Logger.out.info("PathFinder Called first Time.Loading cache...");
             pathFinder = new PathFinder();
-            pathFinder.refreshCache(con);
+            refreshCache(con,true);
         }
         return pathFinder;
     }
@@ -79,9 +79,23 @@ public class PathFinder {
     /**
      * Drops all the static data structures and creates them with latest database state
      * @param con Database connection to use 
+     * @param updateMetadataCache true if pathfinder is expected to update metadata cache. 
      */
-    public synchronized void refreshCache(Connection con) {
-        populateCache(con);
+    public static synchronized void refreshCache(Connection con,boolean updateMetadataCache) {
+        if(updateMetadataCache) {
+            EntityCache.getInstance().refreshCache();
+        }
+        pathFinder.populateCache(con);
+    }
+    /**
+     * Drops all the static data structures and creates them with latest database state.
+     * Note: This won't refresh the metadata cache
+     * @param con Database connection to use 
+     * @deprecated Use {@link PathFinder#refreshCache(Connection, boolean)}  
+     */
+    @Deprecated
+    public static synchronized void refreshCache(Connection con) {
+        refreshCache(con,false);
     }
 
     /**
