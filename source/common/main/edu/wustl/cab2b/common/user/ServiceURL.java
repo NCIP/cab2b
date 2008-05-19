@@ -51,7 +51,7 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
     /**
      * @return Returns the entityGroupInterface.
      */
-    public EntityGroupInterface getEntityGroupInterface() {
+    public EntityGroupInterface getEntityGroups() {
         return entityGroupInterface;
     }
 
@@ -107,7 +107,7 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
      *                                    column="USER_ID"
      * @hibernate.cache usage="read-write"
      */
-    public Collection<UserInterface> getUserCollection() {
+    public Collection<UserInterface> getUsers() {
         return userCollection;
     }
 

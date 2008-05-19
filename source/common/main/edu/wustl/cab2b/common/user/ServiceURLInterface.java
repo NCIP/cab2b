@@ -6,12 +6,12 @@ import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 
 public interface ServiceURLInterface {
 
-	Collection<UserInterface> getUserCollection();
+	Collection<UserInterface> getUsers();
 
 	/**
 	 * @return Returns the entityGroupInterface.
 	 */
-	EntityGroupInterface getEntityGroupInterface();
+	EntityGroupInterface getEntityGroups();
 
 	/**
 	 * @param entityGroupInterface
