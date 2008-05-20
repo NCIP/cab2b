@@ -288,7 +288,7 @@ public class LoginFrame extends JXFrame {
 				}
 
 				protected void showError(RemoteException e) {
-					JOptionPane.showMessageDialog(LoginFrame.this, e.getMessage());
+					JOptionPane.showMessageDialog(LoginFrame.this, "Please check the credentials!");
 				}
 
 				@Override
