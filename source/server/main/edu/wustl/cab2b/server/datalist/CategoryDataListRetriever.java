@@ -71,8 +71,13 @@ public class CategoryDataListRetriever extends AbstractDataListRetriever<ICatego
 
             EntityRecordResultInterface value = (EntityRecordResultInterface) recordInterface.getRecordValueList().get(
                                                                                                                        attributesList.indexOf(association));
-            List<Long> childRecordIds = getRecordIds(value);
-            List<ICategorialClassRecord> childRecords = super.getEntityRecords(childEntity, childRecordIds);
+            List<ICategorialClassRecord> childRecords;
+            if (value == null) {
+                childRecords = new ArrayList<ICategorialClassRecord>();
+            } else {
+                List<Long> childRecordIds = getRecordIds(value);
+                childRecords = super.getEntityRecords(childEntity, childRecordIds);
+            }
             record.addCategorialClassRecords(categorialClass, childRecords);
         }
     }
