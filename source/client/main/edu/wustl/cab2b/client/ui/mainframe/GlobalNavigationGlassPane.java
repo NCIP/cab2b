@@ -182,12 +182,12 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
 
         JLabel label = new JLabel(" ");
         linkPanel.add("br", label);
-        linkPanel.add("tab ", loggedInUserLabel);
-        linkPanel.add("br ", label);
-        linkPanel.add("tab ", dateLabel);
+        linkPanel.add(loggedInUserLabel);
+      //  linkPanel.add("br ", label);
+        linkPanel.add("br ", dateLabel);
         linkPanel.add("br ", logOutHyperLink);
-        linkPanel.add(line);
-        linkPanel.add(mySettingHyperlInk);
+        linkPanel.add("tab ",line);
+        linkPanel.add("tab ",mySettingHyperlInk);
         linkPanel.setOpaque(false);
 
         gbc.gridx = 2;
