@@ -147,4 +147,12 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
             userCollection.remove(user);
         }
     }
+
+	/**
+	 * @return Returns the userCollection.
+	 */
+    //TODO temporarily added. Naming to be revised again.
+	public Collection<UserInterface> getUserCollection() {
+		return userCollection;
+	}
 }
