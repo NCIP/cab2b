@@ -51,7 +51,8 @@ public class LoginFrame extends JXFrame {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Border border = BorderFactory.createLineBorder(new Color(100, 200, 220));
+	private static final Border border = BorderFactory
+			.createLineBorder(new Color(100, 200, 220));
 
 	private Cab2bComboBox idProvider;
 
@@ -89,9 +90,10 @@ public class LoginFrame extends JXFrame {
 			ErrorCodeHandler.initBundle(ERROR_CODE_FILE_NAME);
 			ApplicationProperties.initBundle(APPLICATION_RESOURCES_FILE_NAME);
 		} catch (MissingResourceException mre) {
-			CheckedException checkedException = new CheckedException(mre.getMessage(), mre,
-					ErrorCodeConstants.IO_0002);
-			CommonUtils.handleException(checkedException, null, true, true, false, true);
+			CheckedException checkedException = new CheckedException(mre
+					.getMessage(), mre, ErrorCodeConstants.IO_0002);
+			CommonUtils.handleException(checkedException, null, true, true,
+					false, true);
 		}
 	}
 
@@ -114,7 +116,8 @@ public class LoginFrame extends JXFrame {
 		int totalHeight = bgImage.getIconHeight() + bannerImage.getIconHeight();
 		Point start = getStartPosition(totalWidth, totalHeight);
 
-		BackgroundImagePanel centralPanel = new BackgroundImagePanel(bgImage.getImage());
+		BackgroundImagePanel centralPanel = new BackgroundImagePanel(bgImage
+				.getImage());
 		centralPanel.setLayout(new BorderLayout());
 		centralPanel.add(getLeftPanel(), BorderLayout.LINE_START);
 		centralPanel.add(getRightPanel(), BorderLayout.CENTER);
@@ -123,7 +126,8 @@ public class LoginFrame extends JXFrame {
 		mainpanel.setLayout(new BorderLayout());
 		mainpanel.add(topImage, BorderLayout.NORTH);
 		mainpanel.add(centralPanel, BorderLayout.CENTER);
-		mainpanel.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, new Color(145, 145, 145)));
+		mainpanel.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2,
+				new Color(145, 145, 145)));
 
 		getContentPane().add(mainpanel);
 		setIconImage(getImageIcon(CAB2B_LOGO_IMAGE).getImage());
@@ -143,8 +147,9 @@ public class LoginFrame extends JXFrame {
 	}
 
 	private Point getStartPosition(int width, int height) {
-		DisplayMode displayMode = GraphicsEnvironment.getLocalGraphicsEnvironment()
-				.getDefaultScreenDevice().getDisplayMode();
+		DisplayMode displayMode = GraphicsEnvironment
+				.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+				.getDisplayMode();
 		Float w = (displayMode.getWidth() - width) / 2F;
 		Float h = (displayMode.getHeight() - height) / 2F;
 		return new Point(w.intValue(), h.intValue());
@@ -190,24 +195,27 @@ public class LoginFrame extends JXFrame {
 
 		idProvider = new Cab2bComboBox();
 		idProvider.setPreferredSize(new Dimension(160, 23));
-		Font idProviderFont = new Font(idProvider.getFont().getName(), Font.PLAIN, idProvider
-				.getFont().getSize() + 1);
+		Font idProviderFont = new Font(idProvider.getFont().getName(),
+				Font.PLAIN, idProvider.getFont().getSize() + 1);
 		idProvider.setFont(idProviderFont);
 		idProvider.setOpaque(false);
 		idProvider.setBorder(border);
-		idProvider.addItem("Training");
-		idProvider.addItem("Production");
+		String[] idPNames = PropertyLoader.getIdPNames();
+		int len = idPNames.length;
+		for (int i = 0; i < len; i++) {
+			idProvider.addItem(idPNames[i]);
+		}
 
 		ImageIcon loginImage = getImageIcon("login_button.gif");
 		JButton loginButton = new JButton(loginImage);
 		loginButton.setBorder(null);
 		loginButton.addActionListener(new LoginButtonListener());
-		loginButton.setPreferredSize(new Dimension(loginImage.getIconWidth(), loginImage
-				.getIconHeight()));
+		loginButton.setPreferredSize(new Dimension(loginImage.getIconWidth(),
+				loginImage.getIconHeight()));
 
 		Cab2bHyperlink<String> cancelLink = new Cab2bHyperlink<String>(true);
-		cancelLink.setFont(new Font(cancelLink.getFont().getName(), Font.PLAIN, cancelLink
-				.getFont().getSize() + 1));
+		cancelLink.setFont(new Font(cancelLink.getFont().getName(), Font.PLAIN,
+				cancelLink.getFont().getSize() + 1));
 		cancelLink.setText("Cancel");
 
 		JPanel containerPanel = getTransparentPanel();
@@ -232,7 +240,8 @@ public class LoginFrame extends JXFrame {
 	}
 
 	public ImageIcon getImageIcon(String imageName) {
-		return new ImageIcon(this.getClass().getClassLoader().getResource(imageName));
+		return new ImageIcon(this.getClass().getClassLoader().getResource(
+				imageName));
 	}
 
 	/**
@@ -245,8 +254,8 @@ public class LoginFrame extends JXFrame {
 	 * @return boolean stating is the user is a valid grid user or not
 	 * @throws RemoteException
 	 */
-	final private void validateCredentials(String userName, String password, String idProvider)
-			throws RemoteException {
+	final private void validateCredentials(String userName, String password,
+			String idProvider) throws RemoteException {
 		UserValidator.validateUser(userName, password, idProvider);
 	}
 
@@ -256,7 +265,8 @@ public class LoginFrame extends JXFrame {
 	private class LoginButtonListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
-			CustomSwingWorker swingWorker = new CustomSwingWorker(LoginFrame.this) {
+			CustomSwingWorker swingWorker = new CustomSwingWorker(
+					LoginFrame.this) {
 
 				@Override
 				protected void doNonUILogic() {
@@ -288,7 +298,8 @@ public class LoginFrame extends JXFrame {
 				}
 
 				protected void showError(RemoteException e) {
-					JOptionPane.showMessageDialog(LoginFrame.this, "Please check the credentials!");
+					JOptionPane.showMessageDialog(LoginFrame.this,
+							"Please check the credentials!");
 				}
 
 				@Override
