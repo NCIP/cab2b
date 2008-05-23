@@ -4,8 +4,6 @@ import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DB_0003;
 import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DE_0004;
 import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.IO_0001;
 import static edu.wustl.cab2b.common.util.Constants.CONNECTOR;
-import static edu.wustl.cab2b.server.ServerConstants.LOAD_FAILED;
-import static edu.wustl.cab2b.server.ServerConstants.LOAD_STATUS;
 import static edu.wustl.cab2b.server.path.PathConstants.ASSOCIATION_FILE_NAME;
 import static edu.wustl.cab2b.server.path.PathConstants.FIELD_SEPARATOR;
 import static edu.wustl.cab2b.server.path.PathConstants.INTER_MODEL_ASSOCIATION_FILE_NAME;
@@ -49,7 +47,6 @@ import edu.wustl.cab2b.server.path.pathgen.GraphPathFinder;
 import edu.wustl.cab2b.server.path.pathgen.Path;
 import edu.wustl.cab2b.server.path.pathgen.PathToFileWriter;
 import edu.wustl.cab2b.server.util.DataFileLoaderInterface;
-import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.cab2b.server.util.SQLQueryUtil;
 import edu.wustl.cab2b.server.util.ServerProperties;
 import edu.wustl.common.util.logger.Logger;
@@ -98,8 +95,10 @@ public class PathBuilder {
      *            Database connection to use to fire SQLs.
      */
     private static void buildAndLoadAllModels(Connection connection) {
-        new File(PATH_FILE_NAME).delete(); // Delete previously generated paths
-        // from file.
+        File file = new File(PATH_FILE_NAME);
+        if (file.exists() && !file.delete()) {
+            throw new RuntimeException("Could not delete " + PATH_FILE_NAME);
+        }
         Logger.out.info("Deleted the file : " + PATH_FILE_NAME);
         String[] applicationNames = PropertyLoader.getAllApplications();
         for (String applicationName : applicationNames) {
@@ -109,13 +108,15 @@ public class PathBuilder {
             DomainModelProcessor processor = null;
             try {
                 processor = new DomainModelProcessor(parser, applicationName);
-                storeModelAndGeneratePaths(processor, applicationName, connection);
+                storeModelAndGeneratePaths(processor, applicationName, connection, true);
             } catch (DynamicExtensionsSystemException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+                throw new RuntimeException("got DynamicExtensionsSystemException in buildAndLoadAllModels",e);
             } catch (DynamicExtensionsApplicationException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+                throw new RuntimeException("got DynamicExtensionsApplicationException in buildAndLoadAllModels",e);
             }
         }
         transformAndLoadPaths(connection);
@@ -172,19 +173,18 @@ public class PathBuilder {
      * @param maxPathLength max length (no. of classes) in path.
      */
     public static boolean loadSingleModelFromParserObject(Connection connection, DomainModelParser parser, String applicationName, int maxPathLength) {
-        new File(PATH_FILE_NAME).delete(); // Delete previously generated paths
-        // from file.
-        Logger.out.info("Deleted the file : " + PATH_FILE_NAME);
         DomainModelProcessor processor = null;
         try {
             processor = new DomainModelProcessor(parser, applicationName);
         } catch (DynamicExtensionsSystemException e) {
+            Logger.out.error("Exception while loading model in DE", e);
             return false;
         } catch (DynamicExtensionsApplicationException e) {
+            Logger.out.error("Exception while loading model in DE", e);
             return false;
         }
         try {
-            storeModelAndGeneratePaths(processor, applicationName, connection);
+            storeModelAndGeneratePaths(processor, applicationName, connection, false);
             transformAndLoadPaths(connection);
             EntityGroupInterface newGroup = shortNameVsEntityGroup.get(applicationName);
             for (EntityGroupInterface group : shortNameVsEntityGroup.values()) {
@@ -193,10 +193,20 @@ public class PathBuilder {
                 }
             }
         } catch (Exception e) {
-            EntityGroupInterface eg = processor.getEntityGroup();
-            DynamicExtensionUtility.addTaggedValue(eg, LOAD_STATUS, LOAD_FAILED);
-            DynamicExtensionUtility.persistEntityGroup(eg);
-            return false;
+            Logger.out.error("Exception while generating paths", e);
+            throw new RuntimeException("Exception while generating paths", e);
+            /*---------------------------
+                      TODO 
+             ---------------------------
+             Following code is correct logically, 
+             but here we are updating entity group (adding tag to already saved group and save it). 
+             DE version we are using does not support UPDATE, so commenting it out
+             ---------------------------  
+             EntityGroupInterface eg = processor.getEntityGroup();
+             DynamicExtensionUtility.addTaggedValue(eg, LOAD_STATUS, LOAD_FAILED);
+             DynamicExtensionUtility.persistEntityGroup(eg);
+             return false;
+             */
         }
         return true;
     }
@@ -215,7 +225,7 @@ public class PathBuilder {
      * @throws DynamicExtensionsApplicationException
      * @throws DynamicExtensionsSystemException
      */
-    static void storeModelAndGeneratePaths(DomainModelProcessor processor, String applicationName, Connection conn) {
+    static void storeModelAndGeneratePaths(DomainModelProcessor processor, String applicationName, Connection conn, boolean append) {
         Logger.out.info("Processing application : " + applicationName);
         Logger.out.info("Loaded the domain model of application : " + applicationName + " to database. Generating paths...");
         List<Long> entityIds = processor.getEntityIds();
@@ -225,7 +235,7 @@ public class PathBuilder {
         GraphPathFinder graphPathfinder = new GraphPathFinder();
         Set<Path> paths = graphPathfinder.getAllPaths(adjacencyMatrix, replicationNodes, conn, PATH_MAX_LENGTH);
 
-        PathToFileWriter.writePathsToFile(paths, entityIds.toArray(new Long[0]), true);
+        PathToFileWriter.writePathsToFile(paths, entityIds.toArray(new Long[0]), append);
     }
 
     /**
@@ -365,6 +375,7 @@ public class PathBuilder {
                 pathFile.flush();
             }
         }
+        pathFile.close();
         prepareStatement.close();
         String pathColumns = "(PATH_ID,FIRST_ENTITY_ID,INTERMEDIATE_PATH,LAST_ENTITY_ID)";
         Logger.out.info("Generated the paths to file : " + PATH_FILE_NAME);
@@ -397,13 +408,8 @@ public class PathBuilder {
         } catch (FileNotFoundException e) {
             throw new RuntimeException("File not found :" + PATH_FILE_NAME, e, IO_0001);
         }
-        ArrayList<String> inputFile = new ArrayList<String>(1000); // trying to
-        // get max
-        // efficiency
-        // by
-        // declaring
-        // initial
-        // size
+        ArrayList<String> inputFile = new ArrayList<String>(1000); 
+        //trying to get max efficiency by declaring initial size
         String onePath = "";
         while ((onePath = bufferedReader.readLine()) != null) {
             inputFile.add(onePath);
@@ -468,7 +474,6 @@ public class PathBuilder {
         if (associations == null || associations.size() == 0) {
             throw new RuntimeException("No association present in entity : " + source + " and entity: " + target);
         }
-
         ArrayList<Long> list = new ArrayList<Long>(associations.size());
         for (AssociationInterface association : associations) {
             prepareStatement.setLong(1, association.getId());
