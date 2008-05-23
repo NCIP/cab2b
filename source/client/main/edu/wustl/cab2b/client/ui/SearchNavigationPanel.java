@@ -27,8 +27,12 @@ import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.viewresults.DataListPanel;
 import edu.wustl.cab2b.client.ui.viewresults.ViewSearchResultsPanel;
 import edu.wustl.cab2b.common.datalist.IDataRow;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
+import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
+import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
 
 /**
@@ -269,26 +273,36 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             } else if (searchCenterPanel.getSelectedCardIndex() == 1) {
 
                 CustomSwingWorker swingWorker = new CustomSwingWorker(SearchNavigationPanel.this) {
-
                     @Override
                     protected void doNonUILogic() throws Exception {
                         if (clientQueryBuilder != null && clientQueryBuilder.getVisibleExressionIds().size() > 0) {
-                            if (AdvancedDefineViewPanel.isMultipleGraphException == true) {
+
+                            final IQuery b2bquery = m_mainSearchPanel.queryObject.getQuery();
+
+                            /* Get the root expression ID. If exception occurs show Error*/
+                            try {
+                                b2bquery.getConstraints().getRootExpressionId();
+                            } catch (MultipleRootsException e) {
+                                JOptionPane.showMessageDialog(
+                                                              m_mainSearchPanel.getParent(),
+                                                              ErrorCodeHandler.getErrorMessage(ErrorCodeConstants.QM_0003),
+                                                              "Connect Nodes.", JOptionPane.WARNING_MESSAGE);
                                 gotoAddLimitPanel();
-                            } else {
-                                if (null != searchCenterPanel.m_arrCards[2]) {
-                                    searchCenterPanel.remove(searchCenterPanel.m_arrCards[2]);
-                                }
-                                AdvancedDefineViewPanel defineViewPanel = new AdvancedDefineViewPanel(
-                                        searchCenterPanel);
-                                searchCenterPanel.m_arrCards[2] = defineViewPanel;
-                                searchCenterPanel.add(defineViewPanel,
-                                                      SearchCenterPanel.m_strDefineSearchResultslbl);
-                                // Implies the next button was clicked. Call
-                                // show card
-                                // with boolean set to true.
-                                showCard(true);
+                                return;
                             }
+
+                            if (null != searchCenterPanel.m_arrCards[2]) {
+                                searchCenterPanel.remove(searchCenterPanel.m_arrCards[2]);
+                            }
+                            AdvancedDefineViewPanel defineViewPanel = new AdvancedDefineViewPanel(
+                                    searchCenterPanel);
+                            searchCenterPanel.m_arrCards[2] = defineViewPanel;
+                            searchCenterPanel.add(defineViewPanel, SearchCenterPanel.m_strDefineSearchResultslbl);
+                            // Implies the next button was clicked. Call
+                            // show card
+                            // with boolean set to true.
+                            showCard(true);
+
                         }
                     }
 

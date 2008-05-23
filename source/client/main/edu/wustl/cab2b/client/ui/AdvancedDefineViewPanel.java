@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 
 import org.jdesktop.swingx.JXPanel;
 
@@ -28,14 +27,11 @@ import edu.wustl.cab2b.client.ui.pagination.PageElement;
 import edu.wustl.cab2b.client.ui.pagination.PageElementImpl;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
-import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IQuery;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author mahesh_iyer
@@ -55,13 +51,10 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
     /** The functional class corresponding to root. */
     private EntityInterface m_rootEntity = null;
 
-    public static boolean isMultipleGraphException = false;
-
     private Set<EntityInterface> allEntities = new HashSet<EntityInterface>();
 
     public AdvancedDefineViewPanel(SearchCenterPanel searchCenterPanel) {
         this.m_searchCenterPanel = searchCenterPanel;
-        isMultipleGraphException = false;
         initGUI();
     }
 
@@ -73,7 +66,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         showAllLink.setText("Show all views");
         showAllLink.setEnabled(false);
 
-        JXPanel topPanel = new Cab2bPanel(new RiverLayout(10,5));
+        JXPanel topPanel = new Cab2bPanel(new RiverLayout(10, 5));
         topPanel.add(showAllLink);
         this.add(BorderLayout.NORTH, topPanel);
 
@@ -102,12 +95,12 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         m_resultsPage.setPageLinksDisabled();
 
         // Create a Panel for the center searchPanel, and add the pagination component to that.
-        JXPanel centerPanel = new Cab2bPanel(new RiverLayout(5,5));
+        JXPanel centerPanel = new Cab2bPanel(new RiverLayout(5, 5));
         centerPanel.add(new Cab2bLabel());
-       /* centerPanel.add("br", new Cab2bLabel());
-        centerPanel.add("br", new Cab2bLabel());
-        centerPanel.add("br", new Cab2bLabel());
-        centerPanel.add("br", new Cab2bLabel());*/
+        /* centerPanel.add("br", new Cab2bLabel());
+         centerPanel.add("br", new Cab2bLabel());
+         centerPanel.add("br", new Cab2bLabel());
+         centerPanel.add("br", new Cab2bLabel());*/
         centerPanel.add("br hfill vfill", this.m_resultsPage);
         this.add(BorderLayout.CENTER, centerPanel);
 
@@ -118,24 +111,6 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         asterix.setForeground(Color.RED);
         bottomPanel.add(asterix);
         bottomPanel.add(new Cab2bLabel("Select Default View   "));
-
-        /*
-         * Get the class corresponding to the root expression and show that in
-         * the drop down. For this the IClass should be enough as we are
-         * interested only in the name.
-         */
-        Logger.out.debug("queryObject.getQuery().getClass() " + queryObject.getQuery().getClass());
-        final IQuery b2bquery = queryObject.getQuery();
-
-        /* Get the root expression ID. */
-        try {
-            b2bquery.getConstraints().getRootExpressionId();
-        } catch (MultipleRootsException e) {
-            JOptionPane.showMessageDialog(null, ErrorCodeHandler.getErrorMessage(ErrorCodeConstants.QM_0003),
-                                          "No result found.", JOptionPane.WARNING_MESSAGE);
-            isMultipleGraphException = true;
-            return;
-        }
 
         Vector<String> comboModel = getAllEntityNamesInWhereClause(queryObject);
         Cab2bComboBox combo = new Cab2bComboBox(comboModel);
