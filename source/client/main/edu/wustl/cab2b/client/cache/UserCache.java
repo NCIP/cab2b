@@ -67,14 +67,15 @@ public class UserCache {
 	}
 
 	public String[] getServiceURLs(EntityInterface entity) {
+	    String[] urls = new String[0];
 		EntityGroupInterface eg = Utility.getEntityGroup(entity);
 		String name = eg.getLongName();
 		if (entityGroupToURLs.containsKey(name)) {
-			return entityGroupToURLs.get(name).toArray(new String[0]);
+		    urls = entityGroupToURLs.get(name).toArray(new String[0]);
 		} else {
 			Logger.out.warn("Service URLs for this entity neither configured by user nor administrator");
 		}
-		return null;
+		return urls;
 	}
 
 	/**
