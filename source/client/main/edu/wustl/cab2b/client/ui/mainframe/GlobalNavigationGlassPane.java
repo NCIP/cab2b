@@ -7,6 +7,7 @@ import static edu.wustl.cab2b.client.ui.util.ClientConstants.HOME_TAB_PRESSED;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.HOME_TAB_UNPRESSED;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.SEARCH_TAB_PRESSED;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.SEARCH_TAB_UNPRESSED;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.LOGOUT_ICON;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,16 +17,20 @@ import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.Date;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXFrame;
@@ -56,7 +61,7 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
     private URL[] tabsImagesUnPressed = { loader.getResource(HOME_TAB_UNPRESSED), loader.getResource(SEARCH_TAB_UNPRESSED), loader.getResource(EXPT_TAB_UNPRESSED) };
 
     private URL[] tabsImagesPressed = { loader.getResource(HOME_TAB_PRESSED), loader.getResource(SEARCH_TAB_PRESSED), loader.getResource(EXPT_TAB_PRESSED) };
-
+    
     private JButton[] tabButtons = new Cab2bButton[3];
 
     public Color navigationButtonBgColorSelected = Color.WHITE;
@@ -159,7 +164,7 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         logOutHyperLink.setText("Logout");
         logOutHyperLink.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                 
+            mainFrame.logout();
             }
         });
 
@@ -169,7 +174,6 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         mySettingHyperlInk.setText("MySettings");
         mySettingHyperlInk.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                 
             }
         });
 
@@ -201,6 +205,8 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         lastSelectedTab = tabButtons[0];
         this.repaint();
     }
+    
+
 
     public void actionPerformed(ActionEvent e) {
         Logger.out.debug("Global Nagigation Panel Button");

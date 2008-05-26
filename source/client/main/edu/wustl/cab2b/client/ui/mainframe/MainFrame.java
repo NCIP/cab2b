@@ -4,6 +4,7 @@ import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.MAIN_F
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.APPLICATION_RESOURCES_FILE_NAME;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.CAB2B_LOGO_IMAGE;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.ERROR_CODE_FILE_NAME;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.LOGOUT_ICON;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -12,16 +13,22 @@ import java.awt.GradientPaint;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.net.URL;
 import java.util.MissingResourceException;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
+import javax.swing.WindowConstants;
 
 import org.jdesktop.swingx.JXErrorDialog;
 import org.jdesktop.swingx.JXFrame;
@@ -115,6 +122,7 @@ public class MainFrame extends JXFrame {
 	 * Initialize GUI for main frame.
 	 */
 	private void initGUI() {
+		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		setExtendedState(JXFrame.MAXIMIZED_BOTH);
 		URL url = this.getClass().getClassLoader().getResource(CAB2B_LOGO_IMAGE);
 		Image im = Toolkit.getDefaultToolkit().getImage(url);
@@ -155,11 +163,25 @@ public class MainFrame extends JXFrame {
 		statusBar.add(statusMessage);
 		this.add(statusBar, BorderLayout.SOUTH);
 		JFrame.setDefaultLookAndFeelDecorated(true);
+		this.addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent we){
+            	logout();
+            }
+          });
 	}
 
 	public GlobalNavigationPanel getGlobalNavigationPanel() {
 		return this.globalNavigationPanel;
 	}
+	
+    public void logout(){
+    	final Icon logoutIcon= new ImageIcon(this.getClass().getClassLoader().getResource(LOGOUT_ICON));
+    	int option = JOptionPane.showConfirmDialog(this, "Are you sure you want to logout?",
+                "Confirm Logout", JOptionPane.YES_NO_OPTION,JOptionPane.YES_NO_OPTION,logoutIcon);
+    	if(option==JOptionPane.YES_OPTION){
+    		System.exit(-1);
+    	}
+    }
 
 	/** Method to set experiment home panel */
 	public void setOpenExperimentWelcomePanel() {

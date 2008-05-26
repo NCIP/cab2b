@@ -101,6 +101,8 @@ public interface ClientConstants {
     
     public static final String CHART = "Chart";
     
-    public static final String HEATMAP = "Heatmap";    
+    public static final String HEATMAP = "Heatmap";   
+    
+    public static final String LOGOUT_ICON= "logout_icon.gif";
  
 }
