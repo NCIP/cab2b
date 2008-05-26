@@ -162,8 +162,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
 
             // Fire the query by clicking (simulating) Next button
             SearchNavigationPanel bottomPanel = mainSearchPanel.getBottomPanel();
-            Cab2bButton nextButton = bottomPanel.getNextButton();
-            nextButton.doClick();
+            bottomPanel.getNextButton().doClick();            
 
             // Open the Searcg dialog box
             globalNavigationGlassPane.showSearchDialog();
