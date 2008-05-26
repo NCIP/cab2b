@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -148,7 +149,7 @@ public class SearchPanel extends Cab2bPanel {
         this.add(srhButton);
         Cab2bLabel cab2bLabel = new Cab2bLabel(helpText);
         this.add("br", cab2bLabel);
-        this.add("br", advSearchPanel);      
+        this.add("br", advSearchPanel);
     }
 
     public void setUIForChooseCategorySearchPanel() {
@@ -225,12 +226,12 @@ public class SearchPanel extends Cab2bPanel {
     }
 
     public SearchResultPanel getSearchResultPanel() {
-        if(srhResultPanel == null)
+        if (srhResultPanel == null)
             srhResultPanel = new SearchResultPanel(contentPanel, null);
         return srhResultPanel;
     }
 
-    public void setSerachResultPanel(SearchResultPanel searchResultPanel) {        
+    public void setSerachResultPanel(SearchResultPanel searchResultPanel) {
         srhResultPanel = searchResultPanel;
     }
 
@@ -261,11 +262,17 @@ public class SearchPanel extends Cab2bPanel {
                 Set<EntityInterface> srhResult = null;
 
                 protected void doNonUILogic() throws Exception {
-                    IEntityCache cache = ClientSideCache.getInstance();
-                    MetadataSearch metadataSearch = new MetadataSearch(cache);
-                    MatchedClass matchedClass = metadataSearch.search(searchTargetStatus, values, searchOn);
-                    /* The results that is the collection of entities. */
-                    srhResult = matchedClass.getEntityCollection();
+                    try {
+                        IEntityCache cache = ClientSideCache.getInstance();
+                        MetadataSearch metadataSearch = new MetadataSearch(cache);
+                        MatchedClass matchedClass = metadataSearch.search(searchTargetStatus, values, searchOn);
+                        /* The results that is the collection of entities. */
+                        srhResult = matchedClass.getEntityCollection();
+                    } catch (java.util.regex.PatternSyntaxException exception) {
+                        JOptionPane.showMessageDialog(SearchPanel.this.getParent(),
+                                                      "Please, Verify the regular expression you have entered!",
+                                                      "", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
 
                 @Override
