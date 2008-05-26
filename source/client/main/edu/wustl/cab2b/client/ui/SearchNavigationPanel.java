@@ -97,7 +97,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         saveDataListButton.setPreferredSize(new Dimension(160, 22));
         saveDataListButton.addActionListener(this);
 
-        saveConditionButton = new Cab2bButton("Save Condition");
+        saveConditionButton = new Cab2bButton("Save Query");
         saveConditionButton.setPreferredSize(new Dimension(160, 22));
         saveConditionButton.addActionListener(new SaveConditionButtonActionListener());
 
@@ -324,10 +324,19 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                         SearchNavigationPanel.this.m_mainSearchPanel) {
 
                     protected void doNonUILogic() throws Exception {
-                        // Get the Functional class for root and update query
-                        // object with it.
-                        queryResults = CommonUtils.executeQuery((ICab2bQuery) clientQueryBuilder.getQuery(),
-                                                                m_mainSearchPanel);
+                        try {
+                            // Get the Functional class for root and update query
+                            // object with it.
+                            queryResults = CommonUtils.executeQuery((ICab2bQuery) clientQueryBuilder.getQuery(),
+                                                                    m_mainSearchPanel);
+                        } catch (Exception e) {
+                            CommonUtils.handleException(e, SearchNavigationPanel.this.m_mainSearchPanel, true,
+                                                        false, false, false);
+                            if (SearchNavigationPanel.this.m_mainSearchPanel.isParaQueryShowResultButtonPressed()) {
+                                NewWelcomePanel.mainFrame.closeSearchWizardDialog();
+                                return;
+                            }
+                        }
                     }
 
                     protected void doUIUpdateLogic() {
