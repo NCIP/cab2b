@@ -36,7 +36,8 @@ import gov.nih.nci.cagrid.dorian.ifs.bean.ProxyLifetime;
 import gov.nih.nci.cagrid.opensaml.SAMLAssertion;
 
 /**
- * User operations like saving user, retrieveing user, validating user are handled by this class
+ * User operations like saving user, retrieveing user, validating user are
+ * handled by this class
  * 
  * @author hrishikesh_rajpathak
  * 
@@ -46,9 +47,11 @@ public class UserOperations extends DefaultBizLogic {
 	/**
 	 * This method returns user from database with given user name
 	 * 
-	 * @param name user name
+	 * @param name
+	 *            user name
 	 * @return
-	 * @throws RemoteException in case of database retrieval
+	 * @throws RemoteException
+	 *             in case of database retrieval
 	 */
 	public User getUserByName(String name) throws RemoteException {
 		return getUser("userName", name);
@@ -58,7 +61,8 @@ public class UserOperations extends DefaultBizLogic {
 	 * Thsi method returns the user with administrative rights
 	 * 
 	 * @return
-	 * @throws RemoteException in case of database retrieval
+	 * @throws RemoteException
+	 *             in case of database retrieval
 	 */
 	public User getAdmin() throws RemoteException {
 		// return getUser("isAdmin", null);
@@ -69,10 +73,13 @@ public class UserOperations extends DefaultBizLogic {
 	 * Method to fetch user. Called by getUserByName and getAdmin. If user not
 	 * found, it returns null
 	 * 
-	 * @param column- column name in database
-	 * @param value- value for the column
+	 * @param column-
+	 *            column name in database
+	 * @param value-
+	 *            value for the column
 	 * @return
-	 * @throws RemoteException- in case of database retrieval
+	 * @throws RemoteException-
+	 *             in case of database retrieval
 	 */
 	private User getUser(String column, String value) throws RemoteException {
 		List<User> userList = null;
@@ -82,7 +89,8 @@ public class UserOperations extends DefaultBizLogic {
 			 * retrieve(User.class.getName(), column, "true"); } else { userList =
 			 * (List<User>) retrieve(User.class.getName(), column, value); }
 			 */
-			userList = (List<User>) retrieve(User.class.getName(), column, value);
+			userList = (List<User>) retrieve(User.class.getName(), column,
+					value);
 		} catch (DAOException e) {
 			throw new RemoteException(e.getMessage());
 		}
@@ -90,6 +98,12 @@ public class UserOperations extends DefaultBizLogic {
 		User user = null;
 		if (userList != null && !userList.isEmpty()) {
 			user = userList.get(0);
+			//TODO This is a temporary check added to solve case insensitive hibernate query problem.
+			// This shoul be removedand and proper case sensitive query should be implemented
+			if (!user.getUserName().equals(value)) {
+				throw new RemoteException("Invalid user name");
+			}
+
 			try {
 				postProcessUser(user);
 			} catch (DynamicExtensionsSystemException e) {
@@ -109,13 +123,17 @@ public class UserOperations extends DefaultBizLogic {
 	 * @throws DynamicExtensionsSystemException
 	 * @throws DynamicExtensionsApplicationException
 	 */
-	private void postProcessUser(User user) throws DynamicExtensionsSystemException,
+	private void postProcessUser(User user)
+			throws DynamicExtensionsSystemException,
 			DynamicExtensionsApplicationException {
-		Collection<EntityGroupInterface> entityGroups = EntityCache.getInstance().getEntityGroups();
+		Collection<EntityGroupInterface> entityGroups = EntityCache
+				.getInstance().getEntityGroups();
 
-		Collection<ServiceURLInterface> serviceCollection = user.getServiceURLCollection();
+		Collection<ServiceURLInterface> serviceCollection = user
+				.getServiceURLCollection();
 		for (ServiceURLInterface serviceURL : serviceCollection) {
-			String entityGroupName = ((ServiceURL) serviceURL).getEntityGroupName();
+			String entityGroupName = ((ServiceURL) serviceURL)
+					.getEntityGroupName();
 			for (EntityGroupInterface entityGroup : entityGroups) {
 				if (entityGroupName.compareTo(entityGroup.getLongName()) == 0) {
 					serviceURL.setEntityGroupInterface(entityGroup);
@@ -130,11 +148,13 @@ public class UserOperations extends DefaultBizLogic {
 	 * for user with duplicate name
 	 * 
 	 * @param user
-	 * @throws RemoteException - in case of failed database operation
+	 * @throws RemoteException -
+	 *             in case of failed database operation
 	 */
 	public void insertUser(UserInterface user) throws RemoteException {
 		if (getUserByName(user.getUserName()) != null) {
-			throw new RemoteException("Duplicate user. Please enter different user name");
+			throw new RemoteException(
+					"Duplicate user. Please enter different user name");
 		} else {
 			try {
 				insert(user, Constants.HIBERNATE_DAO);
@@ -151,7 +171,8 @@ public class UserOperations extends DefaultBizLogic {
 	 * user.
 	 * 
 	 * @param user
-	 * @throws RemoteException - in case of failed database operation
+	 * @throws RemoteException -
+	 *             in case of failed database operation
 	 */
 	public void updateUser(UserInterface user) throws RemoteException {
 		try {
@@ -172,17 +193,19 @@ public class UserOperations extends DefaultBizLogic {
 	 * @return
 	 * @throws DynamicExtensionsSystemException
 	 * @throws DynamicExtensionsApplicationException
-	 * @throws RemoteException - for all exceptions other than ones thrown by DE
+	 * @throws RemoteException -
+	 *             for all exceptions other than ones thrown by DE
 	 */
 	public Map<String, List<String>> getServiceURLsForUser(UserInterface user)
-			throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException,
-			RemoteException {
+			throws DynamicExtensionsSystemException,
+			DynamicExtensionsApplicationException, RemoteException {
 
-		Collection<EntityGroupInterface> allEntityGroups = EntityManager.getInstance()
-				.getAllEntitiyGroups();
+		Collection<EntityGroupInterface> allEntityGroups = EntityManager
+				.getInstance().getAllEntitiyGroups();
 
 		Map<String, List<String>> entityGroupByUrls = new HashMap<String, List<String>>();
-		Collection<ServiceURLInterface> userServiceCollection = user.getServiceURLCollection();
+		Collection<ServiceURLInterface> userServiceCollection = user
+				.getServiceURLCollection();
 
 		for (ServiceURLInterface url : userServiceCollection) {
 			String longName = url.getEntityGroups().getLongName();
@@ -212,16 +235,20 @@ public class UserOperations extends DefaultBizLogic {
 	/**
 	 * Called when current user does not have urls for any entitygroup.
 	 * 
-	 * @param egGroupToUrlListMap is a map of entity group to its urls
+	 * @param egGroupToUrlListMap
+	 *            is a map of entity group to its urls
 	 * @param absentEntityGroups
 	 * @return
-	 * @throws RemoteException in case of failed database operation
+	 * @throws RemoteException
+	 *             in case of failed database operation
 	 */
-	private Map<String, List<String>> getAdminURLs(Map<String, List<String>> egGroupToUrlListMap,
+	private Map<String, List<String>> getAdminURLs(
+			Map<String, List<String>> egGroupToUrlListMap,
 			Collection<String> absentEntityGroups) throws RemoteException {
 
 		User admin = getAdmin();
-		Collection<ServiceURLInterface> adminServices = admin.getServiceURLCollection();
+		Collection<ServiceURLInterface> adminServices = admin
+				.getServiceURLCollection();
 
 		for (ServiceURLInterface url : adminServices) {
 			String egName = url.getEntityGroups().getLongName();
@@ -246,12 +273,14 @@ public class UserOperations extends DefaultBizLogic {
 	 * 
 	 * @param userName
 	 * @param password
-	 * @param idP - indentity provider
+	 * @param idP -
+	 *            indentity provider
 	 * @return
-	 * @throws RemoteException in case of any reason that leads to invalid authentication.
+	 * @throws RemoteException
+	 *             in case of any reason that leads to invalid authentication.
 	 */
-	public GlobusCredential validateUser(String userName, String password, String dorianUrl)
-			throws RemoteException {
+	public GlobusCredential validateUser(String userName, String password,
+			String dorianUrl) throws RemoteException {
 		AuthenticationClient authClient = null;
 		SAMLAssertion saml = null;
 		Credential cred = createCredentials(userName, password);
@@ -305,11 +334,14 @@ public class UserOperations extends DefaultBizLogic {
 	 * 
 	 * @param idP
 	 * @param saml
-	 * @throws RemoteException - any other eason for failing in fetching credentials from dorian
-	 * @throws MalformedURIException if dorian url not properly defined
+	 * @throws RemoteException -
+	 *             any other eason for failing in fetching credentials from
+	 *             dorian
+	 * @throws MalformedURIException
+	 *             if dorian url not properly defined
 	 */
-	private GlobusCredential getGlobusCredentials(String dorianUrl, SAMLAssertion saml)
-			throws MalformedURIException, RemoteException {
+	private GlobusCredential getGlobusCredentials(String dorianUrl,
+			SAMLAssertion saml) throws MalformedURIException, RemoteException {
 		ProxyLifetime lifetime = new ProxyLifetime();
 		lifetime.setHours(12);
 		lifetime.setMinutes(0);
