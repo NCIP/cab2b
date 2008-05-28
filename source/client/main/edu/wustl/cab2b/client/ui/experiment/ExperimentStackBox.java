@@ -32,6 +32,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.TreeSelectionEvent;
@@ -79,6 +80,7 @@ import edu.wustl.cab2b.common.ejb.analyticalservice.AnalyticalServiceOperationsB
 import edu.wustl.cab2b.common.ejb.analyticalservice.AnalyticalServiceOperationsHomeInterface;
 import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
 import edu.wustl.cab2b.common.ejb.utility.UtilityHomeInterface;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -110,6 +112,8 @@ public class ExperimentStackBox extends Cab2bPanel {
     private JXTree datalistTree;
 
     DefaultMutableTreeNode rootNode;
+
+    private boolean isDatalistContainsCategory = false;
 
     final static int CATEGORY_NODE_NO = 0;
 
@@ -186,9 +190,13 @@ public class ExperimentStackBox extends Cab2bPanel {
                 continue;
             }
 
-            ClientSideCache clientCache = ClientSideCache.getInstance();
             for (IdName idName : dataListMetadata.getEntitiesNames()) {
-                EntityInterface originalEntity = clientCache.getEntityById(idName.getOriginalEntityId());
+                EntityInterface originalEntity = ClientSideCache.getInstance().getEntityById(
+                                                                                             idName.getOriginalEntityId());
+
+                if (Utility.isCategory(originalEntity)) {
+                    isDatalistContainsCategory = true;
+                }
 
                 UserObjectWrapper<IdName> categoryUserObject = new UserObjectWrapper<IdName>(idName,
                         Utility.getDisplayName(originalEntity));
@@ -196,7 +204,6 @@ public class ExperimentStackBox extends Cab2bPanel {
                 CategoriesRoot.add(categoryNode);
             }
         }
-
         rootNode.add(CategoriesRoot);
         if (customCategoriesRoot != null) {
             rootNode.add(customCategoriesRoot);
@@ -238,6 +245,13 @@ public class ExperimentStackBox extends Cab2bPanel {
 
                     @Override
                     protected void doNonUILogic() throws Exception {
+                        if (isDatalistContainsCategory) {
+                            JOptionPane.showMessageDialog(
+                                                          ExperimentStackBox.this.m_experimentDataCategoryGridPanel,
+                                                          ErrorCodeHandler.getErrorMessage(edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.CUSTOM_CATEGORY_ERROR),
+                                                          "Custom data category", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
                         CustomCategoryPanel categoryPanel = new CustomCategoryPanel(m_selectedExperiment);
                         if (categoryPanel.getDataListMetadata() != null)
                             updateStackBox(categoryPanel.getDataListMetadata());
