@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.client.cache;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +12,9 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.mainframe.ClientLauncher;
+import edu.wustl.cab2b.client.ui.mainframe.GlobalNavigationGlassPane;
+import edu.wustl.cab2b.client.ui.mainframe.GlobalNavigationPanel;
+import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.beans.MatchedClass;
 import edu.wustl.cab2b.common.beans.MatchedClassEntry;
@@ -82,6 +86,7 @@ public class ClientSideCache extends AbstractEntityCache {
      */
     @Override
     protected Collection<EntityGroupInterface> getCab2bEntityGroups() {
+        Collection<EntityGroupInterface> collection = new ArrayList<EntityGroupInterface>(0);
         ClientLauncher clientLauncher = ClientLauncher.getInstance();
         clientLauncher.showProgress(" Contacting caB2B Server....", 1);
         try {
@@ -90,13 +95,13 @@ public class ClientSideCache extends AbstractEntityCache {
                                                                                                         UtilityHomeInterface.class);
             clientLauncher.setDeterminate();
             clientLauncher.showProgress(" Fetching data from caB2B Server....", 10);
-            Collection<EntityGroupInterface> collection = util.getCab2bEntityGroups();
+            collection = util.getCab2bEntityGroups();
 
             clientLauncher.showProgress(" Populating internal data structures....", 30);
-            return collection;
-        } catch (RemoteException dynSysExp) {
-            throw new RuntimeException(dynSysExp.getMessage(), dynSysExp);
+        } catch (Exception dynSysExp) {
+            CommonUtils.handleException(dynSysExp, null, true, true, false, true);
         }
+        return collection;
     }
 
     /**

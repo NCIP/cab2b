@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 import javax.ejb.EJBHome;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
@@ -63,7 +62,7 @@ public class Locator {
             
             Context ctx = new InitialContext();
             obj = ctx.lookup(ejbName);
-        } catch (NamingException e) {
+        } catch (Throwable e) {
             throw new LocatorException(e.getMessage(), e, ErrorCodeConstants.SR_0001);
         }
         
