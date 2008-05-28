@@ -110,6 +110,7 @@ public class CommonUtils {
                                        boolean shouldPrintExceptionInConsole, boolean shouldKillApp) {
         String errorMessageForLog = "";
         String errorMessageForDialog = "Error";
+        exception = getOriginalException(exception);
 
         /*
          * Cab2b application specific error code, available only with Cab2b's
@@ -163,6 +164,24 @@ public class CommonUtils {
         if (shouldKillApp) {
             System.exit(0);
         }
+    }
+
+    /**
+     * This method traverses the whole hierarchy of the given exception to check 
+     * whether there is any exception which is {@link CheckedException} OR {@link LocatorException} OR{@link RuntimeException}
+     * If yes it returns it otherwise it returns the original passed exception.
+     * @param cause exception to verify
+     * @return The root exception
+     */
+    private static Exception getOriginalException(Exception cause) {
+       if(cause!=null && cause instanceof Exception ) {
+           if(cause instanceof CheckedException || cause instanceof LocatorException || cause instanceof RuntimeException) {
+               return cause;
+           } else {
+               return getOriginalException((Exception) cause.getCause()); 
+           }
+       }
+       return cause;
     }
 
     /**
