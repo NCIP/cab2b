@@ -51,7 +51,7 @@ public class Locator {
      *             Any exception, occured during look up operation.
      *             The exception will be wrapped in LocatorException
      */
-    public BusinessInterface locate(String ejbName, Class homeClassForEJB) throws LocatorException {
+    public BusinessInterface locate(String ejbName, Class<? extends EJBHome> homeClassForEJB) throws LocatorException {
         Object obj = null;
         Logger.out.debug("Finding Bean : " + ejbName + "\n Home Interface is : " + homeClassForEJB.getName());
         try {
@@ -72,9 +72,9 @@ public class Locator {
         try {
             method = homeObject.getClass().getDeclaredMethod("create", new Class[0]);
         } catch (SecurityException e) {
-            throw new LocatorException(e);
+            throw new LocatorException(e.getMessage(), e, ErrorCodeConstants.SR_0001);
         } catch (NoSuchMethodException e) {
-            throw new LocatorException(e);
+            throw new LocatorException(e.getMessage(), e, ErrorCodeConstants.SR_0001);
         }
         // invoke the create method
         BusinessInterface businessInterface = null;
@@ -82,11 +82,11 @@ public class Locator {
             Object bean = method.invoke(homeObject, new Object[0]);
             businessInterface = (BusinessInterface) bean;
         } catch (IllegalArgumentException e) {
-            throw new LocatorException(e);
+            throw new LocatorException(e.getMessage(), e, ErrorCodeConstants.SR_0001);
         } catch (IllegalAccessException e) {
-            throw new LocatorException(e);
+            throw new LocatorException(e.getMessage(), e, ErrorCodeConstants.SR_0001);
         } catch (InvocationTargetException e) {
-            throw new LocatorException(e);
+            throw new LocatorException(e.getMessage(), e, ErrorCodeConstants.SR_0001);
         } catch (ClassCastException e) {
             throw new LocatorException("Required beans remote interface does not extends from business interface OR its businessinterface does not extend edu.wustl.cab2b.common.BusinessInterface", e, ErrorCodeConstants.UN_XXXX);
         }

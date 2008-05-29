@@ -146,7 +146,7 @@ public abstract class CustomSwingWorker {
             doNonUILogic();
         } catch (Exception e) {
             errorOccured = true;
-            CommonUtils.handleException(CommonUtils.getCab2bException(e), this.parentCoponent, true, true, true,
+            CommonUtils.handleException(e, this.parentCoponent, true, true, true,
                                         false);
         }
     }
@@ -190,7 +190,7 @@ public abstract class CustomSwingWorker {
                 doUIUpdateLogic();
             }
         } catch (Exception e) {
-            CommonUtils.handleException(CommonUtils.getCab2bException(e), this.parentCoponent, true, false, false,
+            CommonUtils.handleException(e, this.parentCoponent, true, false, false,
                                         false);
         } finally {
             // Allow original component to get the focus

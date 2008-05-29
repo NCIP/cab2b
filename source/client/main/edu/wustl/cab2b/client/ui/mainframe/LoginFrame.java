@@ -22,11 +22,11 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.border.Border;
 
+import org.jdesktop.swingx.JXErrorDialog;
 import org.jdesktop.swingx.JXFrame;
 
 import edu.wustl.cab2b.client.ui.RiverLayout;
@@ -67,13 +67,18 @@ public class LoginFrame extends JXFrame {
      * @param args
      */
     public static void main(String[] args) {
-        Logger.configure();
-        setHome();
-        Logger.configure(); // pick config from log4j.properties
-        initializeResources(); // Initialize all Resources
+        try {
+            Logger.configure();
+            setHome();
+            Logger.configure(); // pick config from log4j.properties
+            initializeResources(); // Initialize all Resources
 
-        LoginFrame loginFrame = new LoginFrame();
-        loginFrame.setVisible(true);
+            LoginFrame loginFrame = new LoginFrame();
+            loginFrame.setVisible(true);
+        } catch (Throwable t) {
+            JXErrorDialog.showDialog(null, "caB2B Fatal Error", "Fatal error orccured while launching caB2B client.\nPlease contact administrator", t);
+            System.exit(1);
+        }
     }
 
     /**
@@ -89,8 +94,7 @@ public class LoginFrame extends JXFrame {
             ErrorCodeHandler.initBundle(ERROR_CODE_FILE_NAME);
             ApplicationProperties.initBundle(APPLICATION_RESOURCES_FILE_NAME);
         } catch (MissingResourceException mre) {
-            CheckedException checkedException = new CheckedException(mre.getMessage(), mre,
-                    ErrorCodeConstants.IO_0002);
+            CheckedException checkedException = new CheckedException(mre.getMessage(), mre, ErrorCodeConstants.IO_0002);
             CommonUtils.handleException(checkedException, null, true, true, false, true);
         }
     }
@@ -189,8 +193,7 @@ public class LoginFrame extends JXFrame {
 
         idProvider = new Cab2bComboBox();
         idProvider.setPreferredSize(new Dimension(160, 23));
-        Font idProviderFont = new Font(idProvider.getFont().getName(), Font.PLAIN,
-                idProvider.getFont().getSize() + 1);
+        Font idProviderFont = new Font(idProvider.getFont().getName(), Font.PLAIN, idProvider.getFont().getSize() + 1);
         idProvider.setFont(idProviderFont);
         idProvider.setOpaque(false);
         idProvider.setBorder(border);
@@ -250,8 +253,7 @@ public class LoginFrame extends JXFrame {
      * @return boolean stating is the user is a valid grid user or not
      * @throws RemoteException
      */
-    final private void validateCredentials(String userName, String password, String idProvider)
-            throws RemoteException {
+    final private void validateCredentials(String userName, String password, String idProvider) throws RemoteException {
         UserValidator.validateUser(userName, password, idProvider);
     }
 
@@ -284,14 +286,10 @@ public class LoginFrame extends JXFrame {
                         };
                         mainThread.setPriority(Thread.NORM_PRIORITY);
                         mainThread.start();
-                    } catch (RemoteException e) {
-                        showError(e);
+                    } catch (Exception e) {
+                        CommonUtils.handleException(e, LoginFrame.this, true, true, true, true);
                     }
                     selfReference.dispose();
-                }
-
-                protected void showError(RemoteException e) {
-                    JOptionPane.showMessageDialog(LoginFrame.this, "Please check the credentials!");
                 }
 
                 @Override
