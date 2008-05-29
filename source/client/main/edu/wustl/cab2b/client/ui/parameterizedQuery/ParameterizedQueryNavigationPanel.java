@@ -148,7 +148,9 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                 updateUI();
                 parameterizedQueryMainPanel.getDialog().dispose();
             } catch (RemoteException exception) {
-                CommonUtils.handleException(exception, parameterizedQueryMainPanel, true, true, true, false);
+                CommonUtils.handleException(new edu.wustl.cab2b.common.exception.RuntimeException(
+                        exception.getMessage(), edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DB_0005),
+                                            parameterizedQueryMainPanel, true, true, true, false);
                 parameterizedQueryMainPanel.getDialog().dispose();
             }
         }

@@ -134,8 +134,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             if (SaveDatalistPanel.isDataListSaved == false) {
                 SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(m_mainSearchPanel);
                 saveDataListPanel.showInDialog();
-            }
-            if (SaveDatalistPanel.isDataListSaved) {
+            } else {
                 NewExperimentDetailsPanel newExperimentDetailsPanel = new NewExperimentDetailsPanel();
                 newExperimentDetailsPanel.showInDialog();
             }
@@ -431,6 +430,13 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
      */
     private class SaveConditionButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
+
+            if (SearchNavigationPanel.this.m_mainSearchPanel.isParaQueryShowResultButtonPressed()) {
+                JOptionPane.showMessageDialog(m_mainSearchPanel.getParent(),
+                                              ErrorCodeHandler.getErrorMessage(ErrorCodeConstants.DB_0005),
+                                              "Resave query.", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
             if (m_mainSearchPanel.getQueryObject().getQuery().getId() != null) {
                 messageLabel.setText("Any changes made in current query will be saved in system.");

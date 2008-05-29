@@ -38,6 +38,9 @@ public interface ErrorCodeConstants {
     /**Exception while firing Update query.**/
     public static final String DB_0004 = "DB.0004";
 
+    /**Exception while editing saved query.**/
+    public static final String DB_0005 = "DB.0005";
+
     //---------------------------------------------------------------------
     /**Cab2b server down.*/
     public static final String SR_0001 = "SR.0001";
