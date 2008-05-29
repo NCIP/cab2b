@@ -110,7 +110,10 @@ public class CommonUtils {
                                        boolean shouldPrintExceptionInConsole, boolean shouldKillApp) {
         String errorMessageForLog = "";
         String errorMessageForDialog = "Error";
-        exception = getOriginalException(exception);
+        Exception e = getOriginalException(exception);
+        if(e!=null) {
+            exception = e;
+        }
 
         /*
          * Cab2b application specific error code, available only with Cab2b's
