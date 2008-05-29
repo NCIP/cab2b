@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.server.queryengine.querybuilders.dcql;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -369,16 +370,43 @@ public class ConstraintsBuilder {
         return value;
     }
 
-    private DcqlConstraint createBetweenCondition(String attributeName, String value1, String value2,
-                                                  DataType dataType) {
+    private DcqlConstraint createBetweenCondition(String attributeName, String value1, String value2, DataType dataType) {
         Cab2bGroup group = new Cab2bGroup(LogicalOperator.And);
-        group.addConstraint((createAttributeConstraint(attributeName, RelationalOperator.GreaterThanOrEquals,
-                                                       value1, dataType)));
-        group.addConstraint((createAttributeConstraint(attributeName, RelationalOperator.LessThanOrEquals, value2,
-                                                       dataType)));
+        boolean swapVals;
+        switch (dataType) {
+            case Integer:
+            case Long: {
+                long long1 = Long.parseLong(value1);
+                long long2 = Long.parseLong(value2);
+                swapVals = long1 > long2;
+                break;
+            }
+            case Float:
+            case Double: {
+                double d1 = Double.parseDouble(value1);
+                double d2 = Double.parseDouble(value2);
+                swapVals = d1 > d2;
+                break;
+            }
+            case Date: {
+                Date d1 = Date.valueOf(value1);
+                Date d2 = Date.valueOf(value2);
+                swapVals = d1.compareTo(d2) > 0;
+                break;
+            }
+            default:
+                throw new RuntimeException("Invalid datatype for Between operator.");
+        }
+        if (swapVals) {
+            String temp = value1;
+            value1 = value2;
+            value2 = temp;
+        }
+        group.addConstraint((createAttributeConstraint(attributeName, RelationalOperator.GreaterThanOrEquals, value1, dataType)));
+        group.addConstraint((createAttributeConstraint(attributeName, RelationalOperator.LessThanOrEquals, value2, dataType)));
         return group.getDcqlConstraint();
     }
-
+   
     private DcqlConstraint createInCondition(String attributeName, List<String> values, DataType dataType) {
         Cab2bGroup group = new Cab2bGroup(LogicalOperator.Or);
         for (String value : values) {
