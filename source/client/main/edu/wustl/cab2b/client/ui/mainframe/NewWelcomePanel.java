@@ -63,7 +63,7 @@ public class NewWelcomePanel extends Cab2bPanel {
                                                      ApplicationProperties.getValue(ApplicationResourceConstants.SEARCH_FRAME_TITLE), new Dimension((int) (dimension.width * 0.90),
                                                              (int) (dimension.height * 0.85)), true, true);
                     } else {
-                        JOptionPane.showMessageDialog(mainFrame, "Yet to Implement");
+                        JOptionPane.showMessageDialog(mainFrame, "This link will take you to Analyze and Visualize Data screen.\nThis feature is not yet implemented.");
                     }
                 }
             }
