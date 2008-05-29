@@ -364,9 +364,11 @@ public class MainDagPanel extends Cab2bPanel {
             ClassNode sourceNode = selectedNodes.get(0);
             ClassNode destinationNode = selectedNodes.get(1);
             linkNode(sourceNode, destinationNode);
+            if (!(selectedNodes.get(0) instanceof IndependentClassNode)) {
+                m_expressionPanel.setText(getExprssionString());
+            }
         }
-        if (!(selectedNodes.get(0) instanceof IndependentClassNode))
-            m_expressionPanel.setText(getExprssionString());
+
     }
 
     /**
