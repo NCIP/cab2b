@@ -133,16 +133,16 @@ public class CommonUtils {
 
             errorMessageForDialog = customErrorMessage;
             errorMessageForLog = errorCode + ":" + customErrorMessage;
-        } else if (exception instanceof RuntimeException) {
-            RuntimeException runtimeException = (RuntimeException) exception;
-            errorCode = runtimeException.getErrorCode();
+        } else if (exception instanceof LocatorException) {
+            LocatorException locatorException = (LocatorException) exception;
+            errorCode = locatorException.getErrorCode();
             customErrorMessage = ErrorCodeHandler.getErrorMessage(errorCode);
 
             errorMessageForDialog = customErrorMessage;
             errorMessageForLog = errorCode + ":" + customErrorMessage;
-        } else if (exception instanceof LocatorException) {
-            LocatorException locatorException = (LocatorException) exception;
-            errorCode = locatorException.getErrorCode();
+        } else if (exception instanceof RuntimeException) {
+            RuntimeException runtimeException = (RuntimeException) exception;
+            errorCode = runtimeException.getErrorCode();
             customErrorMessage = ErrorCodeHandler.getErrorMessage(errorCode);
 
             errorMessageForDialog = customErrorMessage;
@@ -683,19 +683,6 @@ public class CommonUtils {
         userSearchCategories.add("Molecular Biospecimens");
         userSearchCategories.add("Participant Details");
         return userSearchCategories;
-    }
-
-    public static Exception getCab2bException(Exception e) {
-        while (e.getCause() != null) {
-            if (e.getCause() instanceof Exception) {
-                Exception e1 = (Exception) e.getCause();
-                if (e1 instanceof CheckedException || e1 instanceof RuntimeException) {
-                    return e1;
-                }
-                e = e1;
-            }
-        }
-        return e;
     }
 
     public static String escapeString(String input) {
