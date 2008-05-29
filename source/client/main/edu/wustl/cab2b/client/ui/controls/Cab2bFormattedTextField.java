@@ -13,8 +13,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
-import edu.wustl.cab2b.client.ui.util.ClientConstants;
-
 /**
  * @author chetan_bh
  */
@@ -177,7 +175,6 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
                     result[j++] = source[i];
                 } else {
                     toolkit.beep();
-                    System.err.println("insertString: " + source[i]);
                 }
             }
             super.insertString(offs, new String(result, 0, j), a);
