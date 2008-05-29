@@ -449,7 +449,7 @@ public class Utility {
 			sb.append(currentString);
 			int index = text.indexOf("<B>----></B>", (currentStart + offset));
 			if (index == -1) {
-				index = text.indexOf(".", (currentStart + offset));
+				index = text.indexOf(")", (currentStart + offset))+1;
 			}
 			if (index == -1) {
 				index = text.indexOf(",", (currentStart + offset));
