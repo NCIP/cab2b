@@ -134,7 +134,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             if (SaveDatalistPanel.isDataListSaved == false) {
                 SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(m_mainSearchPanel);
                 saveDataListPanel.showInDialog();
-            } else {
+            }
+            if (SaveDatalistPanel.isDataListSaved == true) {
                 NewExperimentDetailsPanel newExperimentDetailsPanel = new NewExperimentDetailsPanel();
                 newExperimentDetailsPanel.showInDialog();
             }
