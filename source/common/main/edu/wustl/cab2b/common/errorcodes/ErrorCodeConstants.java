@@ -8,6 +8,33 @@ package edu.wustl.cab2b.common.errorcodes;
  * @author gautam_shetty
  */
 public interface ErrorCodeConstants {
+    /** User fetched with incomplete data. */
+    public static final String UR_0001 = "UR.0001";
+    
+    /** User already exists */
+    public static final String UR_0002 = "UR.0002";
+    
+    /** Error while fetching user from database */
+    public static final String UR_0003 = "UR.0003";
+    
+    /** Error while inserting user in database */
+    public static final String UR_0004 = "UR.0004";
+    
+    /** Error while updating user information in database */
+    public static final String UR_0005 = "UR.0005";
+    
+    /** Please recheck identity provider url */
+    public static final String UR_0006 = "UR.0006";
+    
+    /** Unable to authenticate: Invalid credentials */
+    public static final String UR_0007 = "UR.0007";
+    
+    /** Please recheck dorian url */
+    public static final String UR_0008 = "UR.0008";
+    
+    /** Please check the credentials again (User name is case sensitive) */
+    public static final String UR_0009 = "UR.0009";
+    
     //---------------------------------------------------------------------
     /**Unable to parse domain model XML file.*/
     public static final String GR_0001 = "GR.0001";

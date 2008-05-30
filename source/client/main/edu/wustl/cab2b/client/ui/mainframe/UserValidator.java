@@ -19,55 +19,55 @@ import edu.wustl.cab2b.common.util.PropertyLoader;
  */
 public class UserValidator {
 
-	private static GlobusCredential proxy;
+    private static GlobusCredential proxy;
 
-	private static String userName;
+    private static String userName;
 
-	private static String dorianUrl;
+    private static String dorianUrl;
 
-	/**
-	 * Validates user on the basis of username, password and the idP that it
-	 * points to.
-	 * 
-	 * @param userName
-	 * @param password
-	 * @param idP
-	 * @return boolean stating is valid user or not
-	 */
-	public static void validateUser(String userName, String password, String idP)
-			throws RemoteException {
-		setUserName(userName);
-		dorianUrl = PropertyLoader.getDorianUrl(idP);
+    /**
+     * Validates user on the basis of username, password and the idP that it
+     * points to.
+     * 
+     * @param userName
+     * @param password
+     * @param idP
+     * @return boolean stating is valid user or not
+     */
+    public static void validateUser(String userName, String password, String idP) throws RemoteException {
+        setUserName(userName);
+        dorianUrl = PropertyLoader.getDorianUrl(idP);
 
-		UserBusinessInterface userBean = (UserBusinessInterface) CommonUtils.getBusinessInterface(
-				EjbNamesConstants.USER_BEAN, UserHomeInterface.class);
-		proxy = userBean.validateUser(userName, password, dorianUrl);
+        UserBusinessInterface userBean = (UserBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                  EjbNamesConstants.USER_BEAN,
+                                                                                                  UserHomeInterface.class);
+        proxy = userBean.validateUser(userName, password, dorianUrl);
 
-		if (proxy == null) {
-			throw new RemoteException("Proxy is null");
-		}
-	}
+        if (proxy == null) {
+            throw new RemoteException("Proxy is null");
+        }
+    }
 
-	/**
-	 * @return GlobusCredential
-	 */
-	public static GlobusCredential getProxy() {
-		return proxy;
-	}
+    /**
+     * @return GlobusCredential
+     */
+    public static GlobusCredential getProxy() {
+        return proxy;
+    }
 
-	/**
-	 * @return Returns the userName.
-	 */
-	public static String getUserName() {
-		return userName;
-	}
+    /**
+     * @return Returns the userName.
+     */
+    public static String getUserName() {
+        return userName;
+    }
 
-	/**
-	 * @param userName
-	 *            The userName to set.
-	 */
-	public static void setUserName(String userName) {
-		UserValidator.userName = userName;
-	}
+    /**
+     * @param userName
+     *            The userName to set.
+     */
+    public static void setUserName(String userName) {
+        UserValidator.userName = userName;
+    }
 
 }
