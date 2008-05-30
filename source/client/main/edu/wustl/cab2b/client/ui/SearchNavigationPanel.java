@@ -395,18 +395,26 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 chooseCategoryPanel.addSearchPanel(searchCenterPanel.getAddLimitPanel().getSearchPanel());
                 searchCenterPanel.setChooseCategoryPanel(chooseCategoryPanel);
             } else if (cardIndex == 2) {
-                addLimitPanel = (AddLimitPanel) m_mainSearchPanel.getCenterPanel().getAddLimitPanel();
-                addLimitPanel.addPropertyChangeListener(new AddLimitPanelPCL());
-                MainDagPanel mainDagPanel = addLimitPanel.getMainDagPanel();
-
-                if (mainDagPanel.getVisibleNodeCount() == 0 && mainDagPanel.getExpressionCount() > 0) {
-
-                    mainDagPanel.updateGraph();
-                    addLimitPanel.editAddLimitUI(mainDagPanel.getFirstExpression());
-                    mainDagPanel.selectNode((ExpressionId) mainDagPanel.getFirstExpression().getExpressionId());
-                }
+                updateMainDagPanel();
+            } else if (cardIndex == 3 && m_mainSearchPanel.isParaQueryShowResultButtonPressed()) {
+                showCard(false);
+                updateMainDagPanel();
             }
             showCard(false);
+        }
+    }
+
+    /**
+     * Method to update MainDagPanel
+     */
+    private void updateMainDagPanel() {
+        addLimitPanel = (AddLimitPanel) m_mainSearchPanel.getCenterPanel().getAddLimitPanel();
+        addLimitPanel.addPropertyChangeListener(new AddLimitPanelPCL());
+        MainDagPanel mainDagPanel = addLimitPanel.getMainDagPanel();
+        if (mainDagPanel.getVisibleNodeCount() == 0 && mainDagPanel.getExpressionCount() > 0) {
+            mainDagPanel.updateGraph();
+            addLimitPanel.editAddLimitUI(mainDagPanel.getFirstExpression());
+            mainDagPanel.selectNode((ExpressionId) mainDagPanel.getFirstExpression().getExpressionId());
         }
     }
 
