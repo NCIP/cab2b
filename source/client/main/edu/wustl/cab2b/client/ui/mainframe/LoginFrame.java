@@ -14,17 +14,22 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.MissingResourceException;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.border.Border;
+import javax.swing.text.Keymap;
 
 import org.jdesktop.swingx.JXErrorDialog;
 import org.jdesktop.swingx.JXFrame;
@@ -76,7 +81,11 @@ public class LoginFrame extends JXFrame {
             LoginFrame loginFrame = new LoginFrame();
             loginFrame.setVisible(true);
         } catch (Throwable t) {
-            JXErrorDialog.showDialog(null, "caB2B Fatal Error", "Fatal error orccured while launching caB2B client.\nPlease contact administrator", t);
+            JXErrorDialog.showDialog(
+                                     null,
+                                     "caB2B Fatal Error",
+                                     "Fatal error orccured while launching caB2B client.\nPlease contact administrator",
+                                     t);
             System.exit(1);
         }
     }
@@ -94,7 +103,8 @@ public class LoginFrame extends JXFrame {
             ErrorCodeHandler.initBundle(ERROR_CODE_FILE_NAME);
             ApplicationProperties.initBundle(APPLICATION_RESOURCES_FILE_NAME);
         } catch (MissingResourceException mre) {
-            CheckedException checkedException = new CheckedException(mre.getMessage(), mre, ErrorCodeConstants.IO_0002);
+            CheckedException checkedException = new CheckedException(mre.getMessage(), mre,
+                    ErrorCodeConstants.IO_0002);
             CommonUtils.handleException(checkedException, null, true, true, false, true);
         }
     }
@@ -128,7 +138,6 @@ public class LoginFrame extends JXFrame {
         mainpanel.add(topImage, BorderLayout.NORTH);
         mainpanel.add(centralPanel, BorderLayout.CENTER);
         mainpanel.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, new Color(145, 145, 145)));
-
         getContentPane().add(mainpanel);
         setIconImage(getImageIcon(CAB2B_LOGO_IMAGE).getImage());
         setLocation(start);
@@ -193,7 +202,8 @@ public class LoginFrame extends JXFrame {
 
         idProvider = new Cab2bComboBox();
         idProvider.setPreferredSize(new Dimension(160, 23));
-        Font idProviderFont = new Font(idProvider.getFont().getName(), Font.PLAIN, idProvider.getFont().getSize() + 1);
+        Font idProviderFont = new Font(idProvider.getFont().getName(), Font.PLAIN,
+                idProvider.getFont().getSize() + 1);
         idProvider.setFont(idProviderFont);
         idProvider.setOpaque(false);
         idProvider.setBorder(border);
@@ -208,6 +218,15 @@ public class LoginFrame extends JXFrame {
         loginButton.setBorder(null);
         loginButton.addActionListener(new LoginButtonListener());
         loginButton.setPreferredSize(new Dimension(loginImage.getIconWidth(), loginImage.getIconHeight()));
+        Keymap keyMap = JTextField.addKeymap("enter", passText.getKeymap());
+        KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+        keyMap.addActionForKeyStroke(key, new AbstractAction() {
+
+            public void actionPerformed(ActionEvent arg0) {
+                swingWorkerLogic();
+            }
+        });
+        passText.setKeymap(keyMap);
 
         Cab2bHyperlink<String> cancelLink = new Cab2bHyperlink<String>(true);
         cancelLink.setFont(new Font(cancelLink.getFont().getName(), Font.PLAIN, cancelLink.getFont().getSize() + 1));
@@ -253,7 +272,8 @@ public class LoginFrame extends JXFrame {
      * @return boolean stating is the user is a valid grid user or not
      * @throws RemoteException
      */
-    final private void validateCredentials(String userName, String password, String idProvider) throws RemoteException {
+    final private void validateCredentials(String userName, String password, String idProvider)
+            throws RemoteException {
         UserValidator.validateUser(userName, password, idProvider);
     }
 
@@ -263,40 +283,48 @@ public class LoginFrame extends JXFrame {
     private class LoginButtonListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            CustomSwingWorker swingWorker = new CustomSwingWorker(LoginFrame.this) {
+            swingWorkerLogic();
+        }
+    }
 
-                @Override
-                protected void doNonUILogic() {
-                    final String userName = usrNameText.getText();
-                    char[] passwordArray = passText.getPassword();
-                    String password = new String(passwordArray);
-                    String IDProvider = idProvider.getSelectedItem().toString();
+    private void swingWorkerLogic() {
+        CustomSwingWorker swingWorker = new CustomSwingWorker(LoginFrame.this) {
+            @Override
+            protected void doNonUILogic() {
+                nonUILogic();
+            }
 
-                    String url = PropertyLoader.getJndiUrl();
-                    System.setProperty("java.naming.provider.url", url);
-                    System.setProperty("java.naming.factory.initial", "org.jnp.interfaces.NamingContextFactory");
-                    System.setProperty("java.naming.factory.url.pkgs", "org.jboss.naming:org.jnp.interfaces");
+            @Override
+            protected void doUIUpdateLogic() throws Exception {
+            }
+        };
+        swingWorker.start();
+    }
 
-                    try {
-                        validateCredentials(userName, password, IDProvider);
-                        Thread mainThread = new Thread() {
-                            public void run() {
-                                MainFrame.launchMainFrame(userName);
-                            }
-                        };
-                        mainThread.setPriority(Thread.NORM_PRIORITY);
-                        mainThread.start();
-                    } catch (Exception e) {
-                        CommonUtils.handleException(e, LoginFrame.this, true, true, true, true);
-                    }
-                    selfReference.dispose();
-                }
+    private void nonUILogic() {
 
-                @Override
-                protected void doUIUpdateLogic() throws Exception {
+        final String userName = usrNameText.getText();
+        char[] passwordArray = passText.getPassword();
+        String password = new String(passwordArray);
+        String IDProvider = idProvider.getSelectedItem().toString();
+
+        String url = PropertyLoader.getJndiUrl();
+        System.setProperty("java.naming.provider.url", url);
+        System.setProperty("java.naming.factory.initial", "org.jnp.interfaces.NamingContextFactory");
+        System.setProperty("java.naming.factory.url.pkgs", "org.jboss.naming:org.jnp.interfaces");
+
+        try {
+            validateCredentials(userName, password, IDProvider);
+            Thread mainThread = new Thread() {
+                public void run() {
+                    MainFrame.launchMainFrame(userName);
                 }
             };
-            swingWorker.start();
+            mainThread.setPriority(Thread.NORM_PRIORITY);
+            mainThread.start();
+        } catch (Exception e) {
+            CommonUtils.handleException(e, LoginFrame.this, true, true, true, true);
         }
+        selfReference.dispose();
     }
 }
