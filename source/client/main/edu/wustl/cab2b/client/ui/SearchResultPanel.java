@@ -39,7 +39,6 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.main.AbstractTypePanel;
-import edu.wustl.cab2b.client.ui.main.IComponent;
 import edu.wustl.cab2b.client.ui.main.ParseXMLFile;
 import edu.wustl.cab2b.client.ui.main.SwingUIManager;
 import edu.wustl.cab2b.client.ui.mainframe.Cab2bContentPanel;
@@ -61,7 +60,6 @@ import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
-import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 
 /**
@@ -132,6 +130,8 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
                 pageElement.setDisplayName(className);
 
                 String description = entity.getDescription();
+                if (description == null || description.equals(""))
+                    description = "*No description available. ";
                 pageElement.setDescription(description);
 
                 pageElement.setUserObject(entity);
