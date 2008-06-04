@@ -112,11 +112,11 @@ public class PathBuilder {
             } catch (DynamicExtensionsSystemException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-                throw new RuntimeException("got DynamicExtensionsSystemException in buildAndLoadAllModels",e);
+                throw new RuntimeException("got DynamicExtensionsSystemException in buildAndLoadAllModels", e);
             } catch (DynamicExtensionsApplicationException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-                throw new RuntimeException("got DynamicExtensionsApplicationException in buildAndLoadAllModels",e);
+                throw new RuntimeException("got DynamicExtensionsApplicationException in buildAndLoadAllModels", e);
             }
         }
         transformAndLoadPaths(connection);
@@ -151,7 +151,8 @@ public class PathBuilder {
      *            
      * @param maxPathLength max length (no. of classes) in path.
      */
-    public static void loadSingleModel(Connection connection, String xmlFilePath, String applicationName, int maxPathLength) {
+    public static void loadSingleModel(Connection connection, String xmlFilePath, String applicationName,
+                                       int maxPathLength) {
         DomainModelParser parser = new DomainModelParser(xmlFilePath);
         loadSingleModelFromParserObject(connection, parser, applicationName, maxPathLength);
     }
@@ -172,16 +173,17 @@ public class PathBuilder {
      *            its shoprt name.
      * @param maxPathLength max length (no. of classes) in path.
      */
-    public static boolean loadSingleModelFromParserObject(Connection connection, DomainModelParser parser, String applicationName, int maxPathLength) {
+    public static void loadSingleModelFromParserObject(Connection connection, DomainModelParser parser,
+                                                       String applicationName, int maxPathLength) {
         DomainModelProcessor processor = null;
         try {
             processor = new DomainModelProcessor(parser, applicationName);
         } catch (DynamicExtensionsSystemException e) {
             Logger.out.error("Exception while loading model in DE", e);
-            return false;
+            throw new RuntimeException("Exception while loading model in DE", e);
         } catch (DynamicExtensionsApplicationException e) {
             Logger.out.error("Exception while loading model in DE", e);
-            return false;
+            throw new RuntimeException("Exception while loading model in DE", e);
         }
         try {
             storeModelAndGeneratePaths(processor, applicationName, connection, false);
@@ -208,7 +210,7 @@ public class PathBuilder {
              return false;
              */
         }
-        return true;
+
     }
 
     /**
@@ -225,9 +227,11 @@ public class PathBuilder {
      * @throws DynamicExtensionsApplicationException
      * @throws DynamicExtensionsSystemException
      */
-    static void storeModelAndGeneratePaths(DomainModelProcessor processor, String applicationName, Connection conn, boolean append) {
+    static void storeModelAndGeneratePaths(DomainModelProcessor processor, String applicationName,
+                                           Connection conn, boolean append) {
         Logger.out.info("Processing application : " + applicationName);
-        Logger.out.info("Loaded the domain model of application : " + applicationName + " to database. Generating paths...");
+        Logger.out.info("Loaded the domain model of application : " + applicationName
+                + " to database. Generating paths...");
         List<Long> entityIds = processor.getEntityIds();
         boolean[][] adjacencyMatrix = processor.getAdjacencyMatrix();
         Map<Integer, Set<Integer>> replicationNodes = processor.getReplicationNodes();
@@ -269,7 +273,8 @@ public class PathBuilder {
      * @throws IOException
      *             If file operation fails.
      */
-    static void storeInterModelConnections(EntityGroupInterface leftEntityGroup, EntityGroupInterface rightEntityGroup, Connection connection) {
+    static void storeInterModelConnections(EntityGroupInterface leftEntityGroup,
+                                           EntityGroupInterface rightEntityGroup, Connection connection) {
         List<InterModelConnection> allInterModelConnections = new ArrayList<InterModelConnection>();
         Collection<EntityInterface> leftEntityCollection = leftEntityGroup.getEntityCollection();
         Collection<EntityInterface> rightEntityCollection = rightEntityGroup.getEntityCollection();
@@ -306,10 +311,12 @@ public class PathBuilder {
      * @throws IOException
      *             If file opetaion fails.
      */
-    static synchronized void registerIntraModelAssociations(Connection connection, Set<Long> associationIdSet) throws IOException {
+    static synchronized void registerIntraModelAssociations(Connection connection, Set<Long> associationIdSet)
+            throws IOException {
         Logger.out.debug("Registering all the associations present in DE as IntraModelAssociations");
         BufferedWriter associationFile = new BufferedWriter(new FileWriter(new File(ASSOCIATION_FILE_NAME)));
-        BufferedWriter intraModelAssociationFile = new BufferedWriter(new FileWriter(new File(INTRA_MODEL_ASSOCIATION_FILE_NAME)));
+        BufferedWriter intraModelAssociationFile = new BufferedWriter(new FileWriter(new File(
+                INTRA_MODEL_ASSOCIATION_FILE_NAME)));
 
         long nextId = getNextAssociationId(associationIdSet.size(), connection).longValue();
         for (Long associationId : associationIdSet) {
@@ -327,10 +334,12 @@ public class PathBuilder {
             nextId++;
         }
         String columns = "(ASSOCIATION_ID,ASSOCIATION_TYPE)";
-        loadDataFromFile(connection, ASSOCIATION_FILE_NAME, columns, "ASSOCIATION", new Class[] { Long.class, Integer.class });
+        loadDataFromFile(connection, ASSOCIATION_FILE_NAME, columns, "ASSOCIATION",
+                         new Class[] { Long.class, Integer.class });
 
         columns = "(ASSOCIATION_ID,DE_ASSOCIATION_ID)";
-        loadDataFromFile(connection, INTRA_MODEL_ASSOCIATION_FILE_NAME, columns, "INTRA_MODEL_ASSOCIATION", new Class[] { Long.class, Long.class });
+        loadDataFromFile(connection, INTRA_MODEL_ASSOCIATION_FILE_NAME, columns, "INTRA_MODEL_ASSOCIATION",
+                         new Class[] { Long.class, Long.class });
         Logger.out.debug("All the associations are registered");
     }
 
@@ -379,7 +388,8 @@ public class PathBuilder {
         prepareStatement.close();
         String pathColumns = "(PATH_ID,FIRST_ENTITY_ID,INTERMEDIATE_PATH,LAST_ENTITY_ID)";
         Logger.out.info("Generated the paths to file : " + PATH_FILE_NAME);
-        loadDataFromFile(connection, PATH_FILE_NAME, pathColumns, "PATH", new Class[] { Long.class, Long.class, String.class, Long.class });
+        loadDataFromFile(connection, PATH_FILE_NAME, pathColumns, "PATH",
+                         new Class[] { Long.class, Long.class, String.class, Long.class });
     }
 
     private static void log(int totalPaths, int transformedPaths) {
@@ -408,7 +418,7 @@ public class PathBuilder {
         } catch (FileNotFoundException e) {
             throw new RuntimeException("File not found :" + PATH_FILE_NAME, e, IO_0001);
         }
-        ArrayList<String> inputFile = new ArrayList<String>(1000); 
+        ArrayList<String> inputFile = new ArrayList<String>(1000);
         //trying to get max efficiency by declaring initial size
         String onePath = "";
         while ((onePath = bufferedReader.readLine()) != null) {
@@ -429,11 +439,13 @@ public class PathBuilder {
      * @return the List of possible intra model paths.
      * @throws SQLException
      */
-    static List<String> getIntraModelPaths(Long[] entityIds, PreparedStatement prepareStatement) throws SQLException {
+    static List<String> getIntraModelPaths(Long[] entityIds, PreparedStatement prepareStatement)
+            throws SQLException {
         List<String> allPossiblePaths = new ArrayList<String>();
         allPossiblePaths.add("");
         for (int i = 0; i < entityIds.length - 1; i++) {
-            List<Long> associationIdList = getIntraModelAssociations(entityIds[i], entityIds[i + 1], prepareStatement);
+            List<Long> associationIdList = getIntraModelAssociations(entityIds[i], entityIds[i + 1],
+                                                                     prepareStatement);
 
             List<String> newPathList = new ArrayList<String>();
             for (Long associationId : associationIdList) {
@@ -469,7 +481,8 @@ public class PathBuilder {
      * @return List of association IDs from INTRA_MODEL_ASSOCIATION table
      * @throws SQLException
      */
-    static List<Long> getIntraModelAssociations(Long source, Long target, PreparedStatement prepareStatement) throws SQLException {
+    static List<Long> getIntraModelAssociations(Long source, Long target, PreparedStatement prepareStatement)
+            throws SQLException {
         List<AssociationInterface> associations = srcDesVsAssociations.get(source + CONNECTOR + target);
         if (associations == null || associations.size() == 0) {
             throw new RuntimeException("No association present in entity : " + source + " and entity: " + target);
@@ -479,7 +492,9 @@ public class PathBuilder {
             prepareStatement.setLong(1, association.getId());
             String[][] res = SQLQueryUtil.executeQuery(prepareStatement);
             if (res.length != 1 || res[0].length != 1) {
-                throw new RuntimeException("More than one OR Zero rows found in INTRA_MODEL_ASSOCIATION for DE_ASSOCIATION_ID : " + association.getId());
+                throw new RuntimeException(
+                        "More than one OR Zero rows found in INTRA_MODEL_ASSOCIATION for DE_ASSOCIATION_ID : "
+                                + association.getId());
             }
             list.add(Long.parseLong(res[0][0]));
         }
@@ -549,7 +564,8 @@ public class PathBuilder {
      * @param tableName
      *            Name of the table in which data to load.
      */
-    static void loadDataFromFile(Connection connection, String fileName, String columns, String tableName, Class<?>[] dataTypes) {
+    static void loadDataFromFile(Connection connection, String fileName, String columns, String tableName,
+                                 Class<?>[] dataTypes) {
         String className = null;
         if (dataFileLoader == null) {
             try {
@@ -569,7 +585,8 @@ public class PathBuilder {
                 Logger.out.error(Utility.getStackTrace(e));
             }
         }
-        dataFileLoader.loadDataFromFile(connection, fileName, columns, tableName, dataTypes, PathConstants.FIELD_SEPARATOR);
+        dataFileLoader.loadDataFromFile(connection, fileName, columns, tableName, dataTypes,
+                                        PathConstants.FIELD_SEPARATOR);
     }
 
     /**
@@ -578,9 +595,11 @@ public class PathBuilder {
      * @param interModelConnections
      * @throws IOException
      */
-    static synchronized void persistInterModelConnections(List<InterModelConnection> interModelConnections, Connection connection) throws IOException {
+    static synchronized void persistInterModelConnections(List<InterModelConnection> interModelConnections,
+                                                          Connection connection) throws IOException {
         BufferedWriter associationFile = new BufferedWriter(new FileWriter(new File(ASSOCIATION_FILE_NAME)));
-        BufferedWriter interModelAssociationFile = new BufferedWriter(new FileWriter(new File(INTER_MODEL_ASSOCIATION_FILE_NAME)));
+        BufferedWriter interModelAssociationFile = new BufferedWriter(new FileWriter(new File(
+                INTER_MODEL_ASSOCIATION_FILE_NAME)));
 
         long nextId = getNextAssociationId(interModelConnections.size(), connection).longValue();
         for (InterModelConnection interModelConnection : interModelConnections) {
@@ -604,10 +623,12 @@ public class PathBuilder {
             nextId++;
         }
         String columns = "(ASSOCIATION_ID,ASSOCIATION_TYPE)";
-        loadDataFromFile(connection, ASSOCIATION_FILE_NAME, columns, "ASSOCIATION", new Class[] { Long.class, Integer.class });
+        loadDataFromFile(connection, ASSOCIATION_FILE_NAME, columns, "ASSOCIATION",
+                         new Class[] { Long.class, Integer.class });
 
         columns = "(ASSOCIATION_ID,LEFT_ENTITY_ID,LEFT_ATTRIBUTE_ID,RIGHT_ENTITY_ID,RIGHT_ATTRIBUTE_ID)";
-        loadDataFromFile(connection, INTER_MODEL_ASSOCIATION_FILE_NAME, columns, "INTER_MODEL_ASSOCIATION", new Class[] { Long.class, Long.class, Long.class, Long.class, Long.class });
+        loadDataFromFile(connection, INTER_MODEL_ASSOCIATION_FILE_NAME, columns, "INTER_MODEL_ASSOCIATION",
+                         new Class[] { Long.class, Long.class, Long.class, Long.class, Long.class });
     }
 
     /**
@@ -623,14 +644,16 @@ public class PathBuilder {
      *            Destination Entity
      * @return the List of InterModelConnection
      */
-    private static List<InterModelConnection> getMatchingAttributePairs(EntityInterface leftEntity, EntityInterface rightEntity) {
+    private static List<InterModelConnection> getMatchingAttributePairs(EntityInterface leftEntity,
+                                                                        EntityInterface rightEntity) {
         List<InterModelConnection> list = new ArrayList<InterModelConnection>();
         Collection<AttributeInterface> leftAttributes = leftEntity.getAttributeCollection();
         Collection<AttributeInterface> rightAttributes = rightEntity.getAttributeCollection();
         for (AttributeInterface leftAttrib : leftAttributes) {
 
             for (AttributeInterface rightAttrib : rightAttributes) {
-                if (areAllConceptCodesMatch(leftAttrib.getOrderedSemanticPropertyCollection(), rightAttrib.getOrderedSemanticPropertyCollection())) {
+                if (areAllConceptCodesMatch(leftAttrib.getOrderedSemanticPropertyCollection(),
+                                            rightAttrib.getOrderedSemanticPropertyCollection())) {
                     list.add(new InterModelConnection(leftAttrib, rightAttrib));
                     // saving the mirrored connection also. This will simplify
                     // and speed up the retrieval
@@ -652,7 +675,8 @@ public class PathBuilder {
      *            Destination side SemanticProperty collection
      * @return TRUE if match is found.
      */
-    private static boolean areAllConceptCodesMatch(Collection<SemanticPropertyInterface> collectionSrc, Collection<SemanticPropertyInterface> collectionDes) {
+    private static boolean areAllConceptCodesMatch(Collection<SemanticPropertyInterface> collectionSrc,
+                                                   Collection<SemanticPropertyInterface> collectionDes) {
         Logger.out.debug("Entering in method areAllConceptCodesMatch");
         HashSet<String> srcConceptCodes = new HashSet<String>();
         for (SemanticPropertyInterface srcSemanticProp : collectionSrc) {
