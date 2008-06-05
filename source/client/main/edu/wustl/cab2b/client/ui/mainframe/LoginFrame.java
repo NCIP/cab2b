@@ -340,7 +340,7 @@ public class LoginFrame extends JXFrame {
         final String userName = usrNameText.getText();
         char[] passwordArray = passText.getPassword();
         if (userName == "" || passwordArray.length == 0) {
-            credentialError.setText("  * Username and password cannot be empty!");
+            credentialError.setText("  * Please enter username and password");
             credentialError.setForeground(Color.RED);
             return;
         }
