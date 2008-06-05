@@ -95,25 +95,25 @@ public class MetadataSearchTest extends TestCase {
         assertTrue(b);
     }
     
-    public void testSearchPvOnConceptCode() {
-
-        int[] searchTargetStatus = { Constants.PV };
-        String[] searchString = { "C25402" ,"C43818"};
-        int basedOn = Constants.BASED_ON_CONCEPT_CODE;
-        try {
-            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
-        } catch (CheckedException e) {
-            e.printStackTrace();
-            fail();
-        }
-        Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
-        boolean b = false;
-        for (EntityInterface eI : entities) {
-            String result = eI.getName();
-            b = b || result.contains("GenBankAccession");
-        }
-        assertTrue(b);
-    }
+//    public void testSearchPvOnConceptCode() {
+//
+//        int[] searchTargetStatus = { Constants.PV };
+//        String[] searchString = { "C25402" ,"C43818"};
+//        int basedOn = Constants.BASED_ON_CONCEPT_CODE;
+//        try {
+//            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
+//        } catch (CheckedException e) {
+//            e.printStackTrace();
+//            fail();
+//        }
+//        Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
+//        boolean b = false;
+//        for (EntityInterface eI : entities) {
+//            String result = eI.getName();
+//            b = b || result.contains("GenBankAccession");
+//        }
+//        assertTrue(b);
+//    }
 
     public void testsearchNullTargetString() {
 

@@ -213,32 +213,32 @@ public class PathFinderTest extends TestCase {
         Logger.configure();
     }
 
-    public void testAddCuratedPath() {
-        PathFinder pathFinder = PathFinder.getInstance(ConnectionUtil.getConnection());
-
-        CuratedPath curatedPath = new CuratedPath();
-        curatedPath.setSelected(false);
-
-        IPath path = pathFinder.getPathById(1L);
-        curatedPath.addPath(path);
-
-        Set<EntityInterface> entitySet = new HashSet<EntityInterface>();
-        entitySet.add(path.getSourceEntity());
-        entitySet.add(path.getTargetEntity());
-        curatedPath.setEntitySet(entitySet);
-
-        pathFinder.addCuratedPath(curatedPath);
-
-        Set<ICuratedPath> curatedPaths = pathFinder.getCuratedPaths(path.getSourceEntity(), path.getTargetEntity());
-        
-        ICuratedPath actual = null;
-        for(ICuratedPath cp: curatedPaths) {
-            if(curatedPath.equals(cp)) {
-                actual = cp;
-            }
-        }
-        
-        assertEquals(curatedPath, (CuratedPath)actual);
-    }
+//    public void testAddCuratedPath() {
+//        PathFinder pathFinder = PathFinder.getInstance(ConnectionUtil.getConnection());
+//
+//        CuratedPath curatedPath = new CuratedPath();
+//        curatedPath.setSelected(false);
+//
+//        IPath path = pathFinder.getPathById(1L);
+//        curatedPath.addPath(path);
+//
+//        Set<EntityInterface> entitySet = new HashSet<EntityInterface>();
+//        entitySet.add(path.getSourceEntity());
+//        entitySet.add(path.getTargetEntity());
+//        curatedPath.setEntitySet(entitySet);
+//
+//        pathFinder.addCuratedPath(curatedPath);
+//
+//        Set<ICuratedPath> curatedPaths = pathFinder.getCuratedPaths(path.getSourceEntity(), path.getTargetEntity());
+//        
+//        ICuratedPath actual = null;
+//        for(ICuratedPath cp: curatedPaths) {
+//            if(curatedPath.equals(cp)) {
+//                actual = cp;
+//            }
+//        }
+//        
+//        assertEquals(curatedPath, (CuratedPath)actual);
+//    }
 
 }
