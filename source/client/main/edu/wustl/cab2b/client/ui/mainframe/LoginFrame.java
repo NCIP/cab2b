@@ -15,6 +15,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.MissingResourceException;
@@ -187,6 +188,18 @@ public class LoginFrame extends JXFrame {
         return userNameLabel;
     }
 
+    private void setKeyMap(JTextField txtField) {
+
+        Keymap keyMap = JTextField.addKeymap("enter", txtField.getKeymap());
+        KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+        keyMap.addActionForKeyStroke(key, new AbstractAction() {
+            public void actionPerformed(ActionEvent arg0) {
+                swingWorkerLogic();
+            }
+        });
+        txtField.setKeymap(keyMap);
+    }
+
     private JPanel getRightPanel() {
         Cab2bLabel userNameLabel = getLabel("User Name :");
         Cab2bLabel passWordLabel = getLabel("Password :");
@@ -218,15 +231,22 @@ public class LoginFrame extends JXFrame {
         loginButton.setBorder(null);
         loginButton.addActionListener(new LoginButtonListener());
         loginButton.setPreferredSize(new Dimension(loginImage.getIconWidth(), loginImage.getIconHeight()));
-        Keymap keyMap = JTextField.addKeymap("enter", passText.getKeymap());
-        KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-        keyMap.addActionForKeyStroke(key, new AbstractAction() {
 
-            public void actionPerformed(ActionEvent arg0) {
-                swingWorkerLogic();
+        setKeyMap(usrNameText);
+        setKeyMap(passText);
+        idProvider.addKeyListener(new KeyListener() {
+            public void keyPressed(KeyEvent e) {
+            }
+
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    swingWorkerLogic();
+                }
+            }
+
+            public void keyTyped(KeyEvent e) {
             }
         });
-        passText.setKeymap(keyMap);
 
         Cab2bHyperlink<String> cancelLink = new Cab2bHyperlink<String>(true);
         cancelLink.setFont(new Font(cancelLink.getFont().getName(), Font.PLAIN, cancelLink.getFont().getSize() + 1));
