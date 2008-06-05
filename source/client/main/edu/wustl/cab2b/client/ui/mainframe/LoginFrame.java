@@ -25,6 +25,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -39,6 +40,7 @@ import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bComboBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
+import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
@@ -68,6 +70,8 @@ public class LoginFrame extends JXFrame {
     public LoginFrame selfReference = this;
 
     private static Font font = getTextFont();
+
+    private JLabel credentialError;
 
     /**
      * @param args
@@ -134,10 +138,20 @@ public class LoginFrame extends JXFrame {
         centralPanel.add(getLeftPanel(), BorderLayout.LINE_START);
         centralPanel.add(getRightPanel(), BorderLayout.CENTER);
 
+        credentialError = new JLabel("    ");
+        credentialError.setForeground(Color.RED);
+        JPanel errorPanel = new JPanel(new BorderLayout());
+        errorPanel.add(credentialError, BorderLayout.CENTER);
+        errorPanel.add(new JLabel("   "), BorderLayout.SOUTH);
+        errorPanel.setOpaque(false);
+
+        centralPanel.add(errorPanel, BorderLayout.SOUTH);
+
         JPanel mainpanel = new JPanel();
         mainpanel.setLayout(new BorderLayout());
         mainpanel.add(topImage, BorderLayout.NORTH);
         mainpanel.add(centralPanel, BorderLayout.CENTER);
+
         mainpanel.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, new Color(145, 145, 145)));
         getContentPane().add(mainpanel);
         setIconImage(getImageIcon(CAB2B_LOGO_IMAGE).getImage());
@@ -274,7 +288,6 @@ public class LoginFrame extends JXFrame {
         panel.setLayout(new BorderLayout(2, 60));
         panel.add(new Cab2bLabel(), BorderLayout.NORTH);
         panel.add(containerPanel, BorderLayout.CENTER);
-        panel.add(new Cab2bLabel(), BorderLayout.SOUTH);
         return panel;
     }
 
@@ -323,8 +336,14 @@ public class LoginFrame extends JXFrame {
 
     private void nonUILogic() {
 
+        credentialError.setText(" ");
         final String userName = usrNameText.getText();
         char[] passwordArray = passText.getPassword();
+        if (userName == "" || passwordArray.length == 0) {
+            credentialError.setText("  * Username and password cannot be empty!");
+            credentialError.setForeground(Color.RED);
+            return;
+        }
         String password = new String(passwordArray);
         String IDProvider = idProvider.getSelectedItem().toString();
 
@@ -343,8 +362,10 @@ public class LoginFrame extends JXFrame {
             mainThread.setPriority(Thread.NORM_PRIORITY);
             mainThread.start();
         } catch (Exception e) {
-            CommonUtils.handleException(e, LoginFrame.this, true, true, true, true);
+            credentialError.setText("  * Unable to authenticate: Invalid credentials");
+            credentialError.setForeground(Color.RED);
+            //CommonUtils.handleException(e, LoginFrame.this, true, true, true, true);
         }
-        selfReference.dispose();
+        // selfReference.dispose();
     }
 }
