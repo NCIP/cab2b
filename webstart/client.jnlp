@@ -4,14 +4,15 @@
 	<information>
 		<title>caB2B Client</title>
 		<vendor>WashU-Persistent</vendor>
-		<homepage href=""/> 
+		<homepage href="http://cab2b.wustl.edu/"/> 
 		<description>The client for caGrid</description>
 		<description kind="short"> Web Start installer for caB2B Client </description>
-		<icon  href="CaB2B_48_48_bg.gif" />
-		<icon  href="CaB2B_32_32_bg.gif" kind="shortcut" />
-		<shortcut>
+		<!-- icon  href="CaB2B_48_48_bg.gif" / -->
+		<icon href="progress_bar.gif" kind="splash"/> 
+		<icon  href="CaB2B_32_32_bg.gif"/>
+		<shortcut online="false">
 			<desktop/>
-			<menu/>
+			 <menu submenu="caBench to Bedside"/> 
 		</shortcut>
 
 		<offline-allowed/>
@@ -26,7 +27,7 @@
 	<!-- Resource description sits here -->
 	<resources>
 		
-		<j2se href="http://java.sun.com/products/autodl/j2se" version="1.6+" max-heap-size="512M"/>
+		<j2se href="http://java.sun.com/products/autodl/j2se" version="1.6.0_03" initial-heap-size="256m" max-heap-size="512m"/>
 		
 		<!-- Specify all the jar resources this application is going to use -->
 		<jar href="client/cab2b_client_webstart.jar"/>
