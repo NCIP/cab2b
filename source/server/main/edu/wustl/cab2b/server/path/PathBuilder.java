@@ -123,14 +123,17 @@ public class PathBuilder {
 
         if (applicationNames.length < 2)
             return;
+        /* ------------------------------------------------------------------------- 
+            TODO need to check whether we should remove this code or not
+        ---------------------------------------------------------------------------*/
 
-        for (int i = 0; i < applicationNames.length; i++) {
-            for (int j = i + 1; j < applicationNames.length; j++) {
-                EntityGroupInterface leftEntityGroup = shortNameVsEntityGroup.get(applicationNames[i]);
-                EntityGroupInterface rightEntityGroup = shortNameVsEntityGroup.get(applicationNames[j]);
-                storeInterModelConnections(leftEntityGroup, rightEntityGroup, connection);
-            }
-        }
+//        for (int i = 0; i < applicationNames.length; i++) {
+//            for (int j = i + 1; j < applicationNames.length; j++) {
+//                EntityGroupInterface leftEntityGroup = shortNameVsEntityGroup.get(applicationNames[i]);
+//                EntityGroupInterface rightEntityGroup = shortNameVsEntityGroup.get(applicationNames[j]);
+//                storeInterModelConnections(leftEntityGroup, rightEntityGroup, connection);
+//            }
+//        }
     }
 
     /**
@@ -188,12 +191,16 @@ public class PathBuilder {
         try {
             storeModelAndGeneratePaths(processor, applicationName, connection, false);
             transformAndLoadPaths(connection);
-            EntityGroupInterface newGroup = shortNameVsEntityGroup.get(applicationName);
-            for (EntityGroupInterface group : shortNameVsEntityGroup.values()) {
-                if (!group.equals(newGroup)) {
-                    storeInterModelConnections(newGroup, group, connection);
-                }
-            }
+            /* ------------------------------------------------------------------------- 
+                TODO need to check whether we should remove this code or not
+            ---------------------------------------------------------------------------*/
+
+//            EntityGroupInterface newGroup = shortNameVsEntityGroup.get(applicationName);
+//            for (EntityGroupInterface group : shortNameVsEntityGroup.values()) {
+//                if (!group.equals(newGroup)) {
+//                    storeInterModelConnections(newGroup, group, connection);
+//                }
+//            }
         } catch (Exception e) {
             Logger.out.error("Exception while generating paths", e);
             throw new RuntimeException("Exception while generating paths", e);
@@ -260,42 +267,44 @@ public class PathBuilder {
         }
     }
 
-    /**
-     * @param leftEntityGroup
-     *            One of the two entity groups
-     * @param rightEntityGroup
-     *            The other entity group.
-     * @param connection -
-     *            Database connection to use to fire SQLs.
-     * @return all the intermodel connections present in the passes entity
-     *         groups
-     * @throws DynamicExtensionsSystemException
-     * @throws IOException
-     *             If file operation fails.
-     */
-    static void storeInterModelConnections(EntityGroupInterface leftEntityGroup,
-                                           EntityGroupInterface rightEntityGroup, Connection connection) {
-        List<InterModelConnection> allInterModelConnections = new ArrayList<InterModelConnection>();
-        Collection<EntityInterface> leftEntityCollection = leftEntityGroup.getEntityCollection();
-        Collection<EntityInterface> rightEntityCollection = rightEntityGroup.getEntityCollection();
-
-        for (EntityInterface leftEntity : leftEntityCollection) {
-            for (EntityInterface rightEntity : rightEntityCollection) {
-                Collection<SemanticPropertyInterface> collectionSrc = leftEntity.getSemanticPropertyCollection();
-                Collection<SemanticPropertyInterface> collectionDes = rightEntity.getSemanticPropertyCollection();
-
-                if (areAllConceptCodesMatch(collectionSrc, collectionDes)) {
-                    List<InterModelConnection> matchedList = getMatchingAttributePairs(leftEntity, rightEntity);
-                    allInterModelConnections.addAll(matchedList);
-                }
-            }
-        }
-        try {
-            persistInterModelConnections(allInterModelConnections, connection);
-        } catch (IOException e) {
-            throw new RuntimeException("Error in writing to output file", e, IO_0001);
-        }
-    }
+    /* ------------------------------------------------------------------------- 
+            TODO need to check whether we should remove this code or not
+    ---------------------------------------------------------------------------*/
+//     * @param leftEntityGroup
+//     *            One of the two entity groups
+//     * @param rightEntityGroup
+//     *            The other entity group.
+//     * @param connection -
+//     *            Database connection to use to fire SQLs.
+//     * @return all the intermodel connections present in the passes entity
+//     *         groups
+//     * @throws DynamicExtensionsSystemException
+//     * @throws IOException
+//     *             If file operation fails.
+//     */
+//    static void storeInterModelConnections(EntityGroupInterface leftEntityGroup,
+//                                           EntityGroupInterface rightEntityGroup, Connection connection) {
+//        List<InterModelConnection> allInterModelConnections = new ArrayList<InterModelConnection>();
+//        Collection<EntityInterface> leftEntityCollection = leftEntityGroup.getEntityCollection();
+//        Collection<EntityInterface> rightEntityCollection = rightEntityGroup.getEntityCollection();
+//
+//        for (EntityInterface leftEntity : leftEntityCollection) {
+//            for (EntityInterface rightEntity : rightEntityCollection) {
+//                Collection<SemanticPropertyInterface> collectionSrc = leftEntity.getSemanticPropertyCollection();
+//                Collection<SemanticPropertyInterface> collectionDes = rightEntity.getSemanticPropertyCollection();
+//
+//                if (areAllConceptCodesMatch(collectionSrc, collectionDes)) {
+//                    List<InterModelConnection> matchedList = getMatchingAttributePairs(leftEntity, rightEntity);
+//                    allInterModelConnections.addAll(matchedList);
+//                }
+//            }
+//        }
+//        try {
+//            persistInterModelConnections(allInterModelConnections, connection);
+//        } catch (IOException e) {
+//            throw new RuntimeException("Error in writing to output file", e, IO_0001);
+//        }
+//    }
 
     /**
      * This method registered all the associations present in dynamic extension.
