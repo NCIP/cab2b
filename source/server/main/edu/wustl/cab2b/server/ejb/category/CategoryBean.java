@@ -8,6 +8,7 @@ import java.util.Set;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
+import edu.wustl.cab2b.server.category.CategoryCache;
 import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.util.ConnectionUtil;
@@ -60,7 +61,12 @@ public class CategoryBean extends AbstractStatelessSessionBean implements Catego
      * @return Set of all entities present in given categoty.
      */
     public Set<EntityInterface> getAllSourceClasses(Category category) throws RemoteException {
-        return new CategoryOperations().getAllSourceClasses(category);
+        Connection con = ConnectionUtil.getConnection();
+        try {
+            return CategoryCache.getInstance(con).getAllSourceClasses(category);
+        } finally {
+            ConnectionUtil.close(con);
+        }
     }
 
     /**
@@ -76,13 +82,19 @@ public class CategoryBean extends AbstractStatelessSessionBean implements Catego
     public List<Category> getAllCategories() throws RemoteException {
         Connection con = ConnectionUtil.getConnection();
         try {
-            return new CategoryOperations().getAllCategories(con);
+            return CategoryCache.getInstance(con).getCategories();
         } finally {
             ConnectionUtil.close(con);
         }
     }
 
     public Set<AttributeInterface> getAllSourceAttributes(Category category) throws RemoteException {
-        return new CategoryOperations().getAllSourceAttributes(category);
+        Connection con = ConnectionUtil.getConnection();
+        try {
+            return CategoryCache.getInstance(con).getAllSourceAttributes(category);
+        } finally {
+            ConnectionUtil.close(con);
+        }
+        
     }
 }
