@@ -360,7 +360,9 @@ public class LoginFrame extends JXFrame {
                 }
             };
             mainThread.setPriority(Thread.NORM_PRIORITY);
+            selfReference.dispose();
             mainThread.start();
+            
         } catch (Exception e) {
             credentialError.setText("  * Unable to authenticate: Invalid credentials");
             credentialError.setForeground(Color.RED);
