@@ -40,7 +40,6 @@ import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bComboBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
-import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
@@ -73,10 +72,18 @@ public class LoginFrame extends JXFrame {
 
     private JLabel credentialError;
 
+    private static String providedUserName;
+
+    private static String providedPassword;
+
     /**
      * @param args
      */
     public static void main(String[] args) {
+        if (args.length == 2) {
+            providedUserName = args[0];
+            providedPassword = args[1];
+        }
         try {
             Logger.configure();
             setHome();
@@ -167,7 +174,22 @@ public class LoginFrame extends JXFrame {
         Cab2bTextField textField = new Cab2bTextField();
         textField.setBorder(border);
         textField.setText(text);
+        if (providedUserName != null) {
+            textField.setText(providedUserName);
+        }
         return textField;
+    }
+
+    private JPasswordField getPasswordField() {
+        JPasswordField field = new JPasswordField();
+        field.setEchoChar('*');
+        field.setBorder(border);
+        field.setPreferredSize(new Dimension(160, 20));
+        if (providedPassword != null) {
+            field.setText(providedPassword);
+        }
+        return field;
+
     }
 
     private Point getStartPosition(int width, int height) {
@@ -222,10 +244,7 @@ public class LoginFrame extends JXFrame {
         usrNameText = getTextField("");
         usrNameText.setPreferredSize(new Dimension(160, 20));
 
-        passText = new JPasswordField();
-        passText.setEchoChar('*');
-        passText.setBorder(border);
-        passText.setPreferredSize(new Dimension(160, 20));
+        passText = getPasswordField();
 
         idProvider = new Cab2bComboBox();
         idProvider.setPreferredSize(new Dimension(160, 23));
@@ -362,7 +381,7 @@ public class LoginFrame extends JXFrame {
             mainThread.setPriority(Thread.NORM_PRIORITY);
             selfReference.dispose();
             mainThread.start();
-            
+
         } catch (Exception e) {
             credentialError.setText("  * Unable to authenticate: Invalid credentials");
             credentialError.setForeground(Color.RED);
