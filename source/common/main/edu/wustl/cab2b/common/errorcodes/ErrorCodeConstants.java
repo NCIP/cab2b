@@ -67,6 +67,9 @@ public interface ErrorCodeConstants {
 
     /**Exception while editing saved query.**/
     public static final String DB_0005 = "DB.0005";
+    
+    /**Error while loading path information into database.**/
+    public static final String DB_0006 = "DB.0006";
 
     //---------------------------------------------------------------------
     /**Cab2b server down.*/
