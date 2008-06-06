@@ -10,20 +10,20 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.common.util.logger.Logger;
 
 /**
- * Bulk data loader for Oracle database.
+ * Bulk data loader for any database.
  * @author Chandrakant Talele
  */
-public class OracleLoader implements DataFileLoaderInterface {
+public class DataFileLoader implements DataFileLoaderInterface {
 
     /**
      * @see edu.wustl.cab2b.server.util.DataFileLoaderInterface#loadDataFromFile(java.sql.Connection, java.lang.String, java.lang.String, java.lang.String, java.lang.Class<?>[], java.lang.String)
      */
-    public void loadDataFromFile(Connection connection, String fileName, String columns, String tableName,
-                                 Class<?>[] dataTypes,String fieldSeperator) {
+    public void loadDataFromFile(Connection connection, String fileName, String columns, String tableName, Class<?>[] dataTypes, String fieldSeperator) {
         Logger.out.debug("Entering method loadDataFromFile()");
 
         BufferedReader bufferedReader = null;
@@ -40,7 +40,7 @@ public class OracleLoader implements DataFileLoaderInterface {
         }
         sql.deleteCharAt(sql.length() - 1);
         sql.append(")");
-         
+
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(sql.toString());
@@ -60,10 +60,21 @@ public class OracleLoader implements DataFileLoaderInterface {
                 ps.clearParameters();
             }
             bufferedReader.close();
+            connection.commit();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.out.error(e.getMessage());
+            throw new RuntimeException("Error while loading path information into database",e, ErrorCodeConstants.DB_0006);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.out.error(e.getMessage());
+            throw new RuntimeException("Error while loading path information into database",e, ErrorCodeConstants.DB_0006);
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    Logger.out.error(e);
+                }
+            }
         }
         Logger.out.debug("Leaving method loadDataFromFile()");
     }
