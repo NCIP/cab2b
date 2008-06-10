@@ -268,12 +268,6 @@ public class DynamicExtensionUtility {
         return entityGroup;
     }
 
-    public static EntityGroupInterface createEntityGroupTemp() {
-        EntityGroupInterface entityGroup = DomainObjectFactory.getInstance().createEntityGroup();
-        addTaggedValue(entityGroup, CAB2B_ENTITY_GROUP, CAB2B_ENTITY_GROUP);
-        return entityGroup;
-    }
-
     /**
      * Copies the attribute's description, semantic metadata and associated permissible values.
      * Sets the given name to copied attribute
