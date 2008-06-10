@@ -9,22 +9,29 @@ import java.util.BitSet;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.jdesktop.swingx.JXErrorDialog;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
+import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
+import edu.wustl.cab2b.common.ejb.category.CategoryHomeInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
@@ -33,6 +40,8 @@ import edu.wustl.cab2b.common.locator.LocatorException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.common.querysuite.metadata.category.Category;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -111,7 +120,7 @@ public class CommonUtils {
         String errorMessageForLog = "";
         String errorMessageForDialog = "Error";
         Exception e = getOriginalException(exception);
-        if(e!=null) {
+        if (e != null) {
             exception = e;
         }
 
@@ -177,14 +186,15 @@ public class CommonUtils {
      * @return The root exception
      */
     private static Exception getOriginalException(Exception cause) {
-       if(cause!=null && cause instanceof Exception ) {
-           if(cause instanceof CheckedException || cause instanceof LocatorException || cause instanceof RuntimeException) {
-               return cause;
-           } else {
-               return getOriginalException((Exception) cause.getCause()); 
-           }
-       }
-       return cause;
+        if (cause != null && cause instanceof Exception) {
+            if (cause instanceof CheckedException || cause instanceof LocatorException
+                    || cause instanceof RuntimeException) {
+                return cause;
+            } else {
+                return getOriginalException((Exception) cause.getCause());
+            }
+        }
+        return cause;
     }
 
     /**
@@ -690,7 +700,7 @@ public class CommonUtils {
             input = "\"" + input + "\"";
         }
         return input;
-    }  
+    }
 
     /**
      * Method which will return number of elements in current datalist
@@ -701,5 +711,60 @@ public class CommonUtils {
         // This node is hidden node in the tree view
         return rootNode.getChildren().size();
 
+    }
+
+    /**
+     * This method verifies whether service URLs are available for give entity.
+     * @param entity
+     * @return String[]
+     */
+    private static String[] getServiceURLs(EntityInterface entity) {
+        EntityInterface en = entity;
+        if (edu.wustl.cab2b.common.util.Utility.isCategory(entity)) {
+            CategoryBusinessInterface bus = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                         EjbNamesConstants.CATEGORY_BEAN,
+                                                                                                         CategoryHomeInterface.class,
+                                                                                                         null);
+            Category cat = null;
+            try {
+                cat = bus.getCategoryByEntityId(entity.getId());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            en = cat.getRootClass().getCategorialClassEntity();
+        }
+        return UserCache.getInstance().getServiceURLs(en);
+    }
+
+    /**
+     *  This method checks whether service URL is configured for the given query. 
+     *  If service url is not available it shows an ERROR dialog and returns false,
+     *  otherwise returns true.
+     * @param query
+     * @param container
+     * @return boolean
+     */
+    public static boolean isServiceURLConfigured(ICab2bQuery query, Container container) {
+        boolean isServiceURLConfigured = true;
+
+        Set<IQueryEntity> entitySet = query.getConstraints().getQueryEntities();
+        for (IQueryEntity queryEntity : entitySet) {
+            EntityInterface entity = queryEntity.getDynamicExtensionsEntity();
+            String[] urls = getServiceURLs(entity);
+            if (urls == null || urls.length == 0) {
+                isServiceURLConfigured = false;
+            } else
+                for (String url : urls) {
+                    if (url.equals("")) {
+                        isServiceURLConfigured = false;
+                        break;
+                    }
+                }
+        }
+        if (!isServiceURLConfigured) {
+            JOptionPane.showMessageDialog(container, ErrorCodeHandler.getErrorMessage(ErrorCodeConstants.DB_0007),
+                                          "Query", JOptionPane.WARNING_MESSAGE);
+        }
+        return isServiceURLConfigured;
     }
 }
