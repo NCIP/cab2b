@@ -70,6 +70,9 @@ public interface ErrorCodeConstants {
     
     /**Error while loading path information into database.**/
     public static final String DB_0006 = "DB.0006";
+    
+    /**Error while no service url available into database.**/
+    public static final String DB_0007 = "DB.0007";
 
     //---------------------------------------------------------------------
     /**Cab2b server down.*/

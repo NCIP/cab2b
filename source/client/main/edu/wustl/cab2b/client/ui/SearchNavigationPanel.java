@@ -8,9 +8,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -27,12 +31,17 @@ import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.viewresults.DataListPanel;
 import edu.wustl.cab2b.client.ui.viewresults.ViewSearchResultsPanel;
 import edu.wustl.cab2b.common.datalist.IDataRow;
+import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
+import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
+import edu.wustl.cab2b.common.ejb.category.CategoryHomeInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
+import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.queryobject.IQuery;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
 
 /**
@@ -249,7 +258,6 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         } else {
             dataListPanel = new DataListPanel(MainSearchPanel.getDataList(), datarow);
         }
-
         searchCenterPanel.m_arrCards[4] = dataListPanel;
         searchCenterPanel.add(dataListPanel, SearchCenterPanel.m_strDataListlbl);
         showCard(true);
@@ -290,7 +298,6 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                                 gotoAddLimitPanel();
                                 return;
                             }
-
                             if (null != searchCenterPanel.m_arrCards[2]) {
                                 searchCenterPanel.remove(searchCenterPanel.m_arrCards[2]);
                             }
@@ -332,6 +339,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                         } catch (Exception e) {
                             CommonUtils.handleException(e, SearchNavigationPanel.this.m_mainSearchPanel, true,
                                                         false, false, false);
+
+                            queryResults = null;
                             if (SearchNavigationPanel.this.m_mainSearchPanel.isParaQueryShowResultButtonPressed()) {
                                 NewWelcomePanel.mainFrame.closeSearchWizardDialog();
                                 return;
@@ -432,6 +441,29 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     }
 
     /**
+     * 
+     * @param entity
+     * @return
+     */
+    private String[] getServiceURLs(EntityInterface entity) {
+        EntityInterface en = entity;
+        if (edu.wustl.cab2b.common.util.Utility.isCategory(entity)) {
+            CategoryBusinessInterface bus = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                         EjbNamesConstants.CATEGORY_BEAN,
+                                                                                                         CategoryHomeInterface.class,
+                                                                                                         null);
+            Category cat = null;
+            try {
+                cat = bus.getCategoryByEntityId(entity.getId());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            en = cat.getRootClass().getCategorialClassEntity();
+        }
+        return UserCache.getInstance().getServiceURLs(en);
+    }
+
+    /**
      * Save button action listener class
      * 
      * @author deepak_shingan
@@ -446,8 +478,30 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                                               "Resave query.", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+            ICab2bQuery query = (ICab2bQuery) m_mainSearchPanel.getQueryObject().getQuery();
+            Set<IQueryEntity> entitySet = query.getConstraints().getQueryEntities();
+            for (IQueryEntity queryEntity : entitySet) {
+                EntityInterface entity = queryEntity.getDynamicExtensionsEntity();
+                String[] urls = getServiceURLs(entity);
 
-            if (m_mainSearchPanel.getQueryObject().getQuery().getId() != null) {
+                if (urls == null || urls.length == 0) {
+                    JOptionPane.showMessageDialog(m_mainSearchPanel.getParent(),
+                                                  ErrorCodeHandler.getErrorMessage(ErrorCodeConstants.DB_0007),
+                                                  "Save query.", JOptionPane.WARNING_MESSAGE);
+                    return;
+                } else
+                    for (String url : urls) {
+                        if (url.equals("")) {
+                            JOptionPane.showMessageDialog(
+                                                          m_mainSearchPanel.getParent(),
+                                                          ErrorCodeHandler.getErrorMessage(ErrorCodeConstants.DB_0007),
+                                                          "Save query.", JOptionPane.WARNING_MESSAGE);
+                            return;
+                        }
+                    }
+            }
+
+            if (query.getId() != null) {
                 messageLabel.setText("Any changes made in current query will be saved in system.");
             }
 
