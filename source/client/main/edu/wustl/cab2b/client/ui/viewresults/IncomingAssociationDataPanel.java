@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.RoleInterface;
 import edu.wustl.cab2b.client.ui.query.ClientQueryBuilder;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -64,7 +65,16 @@ public class IncomingAssociationDataPanel extends AbstractAssociatedDataPanel {
 
         for (AssociationInterface deAssociation : list) {
             IIntraModelAssociation intraModelAssociation = (IIntraModelAssociation) QueryObjectFactory.createIntraModelAssociation(deAssociation);
-            String tooTipText = "Target role name : " + deAssociation.getSourceRole().getName();
+
+            AssociationInterface associationInterface = intraModelAssociation.getDynamicExtensionsAssociation();
+            RoleInterface role = associationInterface.getSourceRole();
+            String roleName = role.getName();
+            if (roleName == null || roleName.equals("")) {
+                if (associationInterface.getSourceRole() != null)
+                    roleName = associationInterface.getTargetRole().getName();
+            }
+
+            String tooTipText = "Target role name : " + roleName;
 
             HyperLinkUserObject hyperLinkUserObject = new HyperLinkUserObject();
             hyperLinkUserObject.setAssociation(intraModelAssociation);

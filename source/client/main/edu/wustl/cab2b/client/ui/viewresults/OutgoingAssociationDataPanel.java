@@ -10,6 +10,7 @@ import java.util.Map;
 
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.RoleInterface;
 import edu.wustl.cab2b.client.ui.query.ClientQueryBuilder;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -42,7 +43,7 @@ public class OutgoingAssociationDataPanel extends AbstractAssociatedDataPanel {
             IRecord record) {
         super(associations, associatedDataActionListener, dataRow, record);
     }
-    
+
     protected void addLabel() {
 
     }
@@ -52,15 +53,22 @@ public class OutgoingAssociationDataPanel extends AbstractAssociatedDataPanel {
      */
     void processAssociation() {
         List<AssociationInterface> list = new ArrayList<AssociationInterface>(associations);
-        Collections.sort(list,new Comparator<AssociationInterface>() {
+        Collections.sort(list, new Comparator<AssociationInterface>() {
             public int compare(AssociationInterface association1, AssociationInterface association2) {
                 return association1.getTargetEntity().getName().compareTo(association2.getTargetEntity().getName());
             }
         });
-        for (AssociationInterface deAssociation:list) {
+        for (AssociationInterface deAssociation : list) {
             IIntraModelAssociation intraModelAssociation = (IIntraModelAssociation) QueryObjectFactory.createIntraModelAssociation(deAssociation);
-            String tooTipText = "Target role name : "
-                    + intraModelAssociation.getDynamicExtensionsAssociation().getTargetRole().getName();
+
+            AssociationInterface associationInterface = intraModelAssociation.getDynamicExtensionsAssociation();
+            RoleInterface role = associationInterface.getTargetRole();
+            String roleName = role.getName();
+            if (roleName == null || roleName.equals("")) {
+                if (associationInterface.getSourceRole() != null)
+                    roleName = associationInterface.getSourceRole().getName();
+            }
+            String tooTipText = "Target role name : " + roleName;
 
             HyperLinkUserObject hyperLinkUserObject = new HyperLinkUserObject();
             hyperLinkUserObject.setAssociation(intraModelAssociation);
