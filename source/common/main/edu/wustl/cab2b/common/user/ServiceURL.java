@@ -148,11 +148,36 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
         }
     }
 
-	/**
-	 * @return Returns the userCollection.
-	 */
+    /**
+     * @return Returns the userCollection.
+     */
     //TODO temporarily added. Naming to be revised again.
-	public Collection<UserInterface> getUserCollection() {
-		return userCollection;
-	}
+    public Collection<UserInterface> getUserCollection() {
+        return userCollection;
+    }
+
+    @Override
+    public boolean equals(Object arg) {
+        boolean isEqual = false;
+        if (null != arg && arg instanceof ServiceURL) {
+            ServiceURL serviceURL = (ServiceURL) arg;
+
+            if (serviceURL.getUrlLocation().equals(urlLocation)
+                    && serviceURL.getEntityGroupName().equals(entityGroupName)
+                    && serviceURL.getEntityGroups().getId() == entityGroupInterface.getId()
+                    && serviceURL.getUserCollection().equals(userCollection)) {
+                isEqual = true;
+            }
+        }
+        return isEqual;
+    }
+
+    @Override
+    public int hashCode() {
+        int hashCode = urlLocation.hashCode() + entityGroupName.hashCode() + entityGroupInterface.hashCode();
+        for (UserInterface user : userCollection) {
+            hashCode += user.hashCode();
+        }
+        return hashCode;
+    }
 }
