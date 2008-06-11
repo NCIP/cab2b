@@ -135,11 +135,14 @@ public class User implements UserInterface, Serializable {
 
     @Override
     public boolean equals(Object arg) {
+        if (this == arg)
+            return true;
+
         boolean isEqual = false;
         if (null != arg && arg instanceof User) {
             User user = (User) arg;
 
-            if (user.getUserName().equals(userName)) {
+            if (userName != null && user.getUserName().equals(userName)) {
                 isEqual = true;
             }
         }
@@ -148,7 +151,10 @@ public class User implements UserInterface, Serializable {
 
     @Override
     public int hashCode() {
-        int hashCode = userName.hashCode() + password.hashCode();
+        int hashCode = 1;
+        if (userName != null) {
+            hashCode += 7 * userName.hashCode();
+        }
         return hashCode;
     }
 }

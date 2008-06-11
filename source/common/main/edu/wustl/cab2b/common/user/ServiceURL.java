@@ -158,11 +158,14 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
 
     @Override
     public boolean equals(Object arg) {
+        if (this == arg)
+            return true;
+
         boolean isEqual = false;
         if (null != arg && arg instanceof ServiceURL) {
             ServiceURL serviceURL = (ServiceURL) arg;
 
-            if (serviceURL.getUrlLocation().equals(urlLocation)
+            if (urlLocation != null && serviceURL.getUrlLocation().equals(urlLocation) && entityGroupName != null
                     && serviceURL.getEntityGroupName().equals(entityGroupName)) {
                 isEqual = true;
             }
@@ -172,7 +175,13 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
 
     @Override
     public int hashCode() {
-        int hashCode = urlLocation.hashCode() + entityGroupName.hashCode();
+        int hashCode = 1;
+        if (urlLocation != null) {
+            hashCode += 7 * urlLocation.hashCode();
+        }
+        if (entityGroupName != null) {
+            hashCode += 7 * entityGroupName.hashCode();
+        }
         return hashCode;
     }
 }
