@@ -60,7 +60,9 @@ public class DataFileLoader implements DataFileLoaderInterface {
                 ps.clearParameters();
             }
             bufferedReader.close();
-            connection.commit();
+            if(!connection.getAutoCommit()) {
+                connection.commit();
+            }
         } catch (SQLException e) {
             Logger.out.error(e.getMessage());
             throw new RuntimeException("Error while loading path information into database",e, ErrorCodeConstants.DB_0006);
