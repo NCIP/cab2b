@@ -163,9 +163,7 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
             ServiceURL serviceURL = (ServiceURL) arg;
 
             if (serviceURL.getUrlLocation().equals(urlLocation)
-                    && serviceURL.getEntityGroupName().equals(entityGroupName)
-                    && serviceURL.getEntityGroups().getId() == entityGroupInterface.getId()
-                    && serviceURL.getUserCollection().equals(userCollection)) {
+                    && serviceURL.getEntityGroupName().equals(entityGroupName)) {
                 isEqual = true;
             }
         }
@@ -174,10 +172,7 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
 
     @Override
     public int hashCode() {
-        int hashCode = urlLocation.hashCode() + entityGroupName.hashCode() + entityGroupInterface.hashCode();
-        for (UserInterface user : userCollection) {
-            hashCode += user.hashCode();
-        }
+        int hashCode = urlLocation.hashCode() + entityGroupName.hashCode();
         return hashCode;
     }
 }

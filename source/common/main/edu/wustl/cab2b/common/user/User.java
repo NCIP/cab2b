@@ -139,8 +139,7 @@ public class User implements UserInterface, Serializable {
         if (null != arg && arg instanceof User) {
             User user = (User) arg;
 
-            if (user.getUserName().equals(userName) && user.getPassword().equals(password)
-                    && user.isAdmin == isAdmin && user.getServiceURLCollection().equals(serviceURLCollection)) {
+            if (user.getUserName().equals(userName)) {
                 isEqual = true;
             }
         }
@@ -150,9 +149,6 @@ public class User implements UserInterface, Serializable {
     @Override
     public int hashCode() {
         int hashCode = userName.hashCode() + password.hashCode();
-        for (ServiceURLInterface serviceURL : serviceURLCollection) {
-            hashCode += serviceURL.hashCode();
-        }
         return hashCode;
     }
 }
