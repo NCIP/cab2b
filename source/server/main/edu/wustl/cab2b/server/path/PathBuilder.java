@@ -94,7 +94,7 @@ public class PathBuilder {
      * @param connection -
      *            Database connection to use to fire SQLs.
      */
-    private static void buildAndLoadAllModels(Connection connection) {
+    private static synchronized void buildAndLoadAllModels(Connection connection) {
         File file = new File(PATH_FILE_NAME);
         if (file.exists() && !file.delete()) {
             throw new RuntimeException("Could not delete " + PATH_FILE_NAME);
@@ -154,7 +154,7 @@ public class PathBuilder {
      *            
      * @param maxPathLength max length (no. of classes) in path.
      */
-    public static void loadSingleModel(Connection connection, String xmlFilePath, String applicationName,
+    public static synchronized void loadSingleModel(Connection connection, String xmlFilePath, String applicationName,
                                        int maxPathLength) {
         DomainModelParser parser = new DomainModelParser(xmlFilePath);
         loadSingleModelFromParserObject(connection, parser, applicationName, maxPathLength);
@@ -176,7 +176,7 @@ public class PathBuilder {
      *            its shoprt name.
      * @param maxPathLength max length (no. of classes) in path.
      */
-    public static void loadSingleModelFromParserObject(Connection connection, DomainModelParser parser,
+    public static synchronized void loadSingleModelFromParserObject(Connection connection, DomainModelParser parser,
                                                        String applicationName, int maxPathLength) {
         DomainModelProcessor processor = null;
         try {
