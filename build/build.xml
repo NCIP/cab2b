@@ -392,6 +392,7 @@
 		<copy overwrite="true" file="lib/server/oracleDriver.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/server/mysql-connector-java-3.0.16-ga-bin.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/common/hibernate3.jar" todir="${jboss.common.lib.dir}" />
+		<mkdir dir="${jboss.home}/server/default/log"/>
 		<echo message="" file="${jboss.log.dir}/caB2B.log" append="false" />
 	</target>
 
