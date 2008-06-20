@@ -94,7 +94,7 @@ public class UserOperations extends DefaultBizLogic {
             userList = (List<User>) retrieve(User.class.getName(), column, value);
         } catch (DAOException e) {
             Logger.out.error(e.getStackTrace());
-            throw new RuntimeException("Error while fetching user from database", ErrorCodeConstants.UR_0003);
+            return null;
         }
 
         User user = null;
@@ -105,14 +105,13 @@ public class UserOperations extends DefaultBizLogic {
             // This shoul be removedand and proper case sensitive query should
             // be implemented
             if (!user.getUserName().equals(value)) {
-                throw new RuntimeException("Please check the credentials again (User name is case sensitive)",
-                        ErrorCodeConstants.UR_0009);
+                return null;
             }
             try {
                 postProcessUser(user);
             } catch (Exception e) {
                 Logger.out.error(e.getStackTrace());
-                throw new RuntimeException("User fetched with incomplete data.", ErrorCodeConstants.UR_0001);
+                return null;
             }
         }
         return user;
