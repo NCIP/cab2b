@@ -29,6 +29,7 @@ import edu.wustl.cab2b.client.ui.query.ClientQueryBuilder;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.exception.CheckedException;
+import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
@@ -36,7 +37,7 @@ import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
 
 /**
  * @author deepak_shingan
- *
+ * 
  */
 public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreviewPanel {
 
@@ -51,7 +52,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
 
     private Cab2bButton cancelButton;
 
-    public ParameterizedQueryShowResultPanel(ICab2bParameterizedQuery query) {        
+    public ParameterizedQueryShowResultPanel(Cab2bQuery query) {
         queryDataModel = new ParameterizedQueryDataModel(query);
         initGUI();
     }
@@ -92,10 +93,11 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
 
     /**
      * Method to create show result preview panel
+     * 
      * @param conditionMap
      */
     private void createShowResultPreviewPanel(Map<IExpressionId, Collection<ICondition>> conditionMap) {
-        //The following code is executing for StackPanel QueryLink Click
+        // The following code is executing for StackPanel QueryLink Click
         AbstractTypePanel componentPanel = null;
         ParseXMLFile parseFile = null;
 
@@ -115,8 +117,8 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
                     componentPanel.createPanelWithOperator(condition);
 
                     if (condition instanceof ParameterizedCondition) {
-                        ParameterizedCondition paraCondition = (ParameterizedCondition) condition;
 
+                        ParameterizedCondition paraCondition = (ParameterizedCondition) condition;
                         if (topConditionPanel.getComponentCount() < paraCondition.getIndex())
                             topConditionPanel.add("br ", componentPanel);
                         else
@@ -135,13 +137,14 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
     }
 
     /**
-     * ShowResultsButton ActionListener 
+     * ShowResultsButton ActionListener
+     * 
      * @author deepak_shingan
-     *
+     * 
      */
     private class ShowResultsActionListener implements ActionListener {
         private void executeQuery(ICab2bParameterizedQuery cab2bQuery) {
-            // This code is generic and can be used to directly display the 
+            // This code is generic and can be used to directly display the
             // executed query results
 
             // Set Query object into ClientQueryBuilder
@@ -153,7 +156,8 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
             GlobalNavigationGlassPane globalNavigationGlassPane = globalNavigationPanel.getGlobalNavigationGlassPane();
             globalNavigationGlassPane.initializeMainSearchPanel();
 
-            // Set ClientQueryBuilder object into MainSearchPanel and set it to the 4rd card i.e. View Search Result  
+            // Set ClientQueryBuilder object into MainSearchPanel and set it to
+            // the 4rd card i.e. View Search Result
             MainSearchPanel mainSearchPanel = GlobalNavigationPanel.mainSearchPanel;
             mainSearchPanel.setQueryObject(clientQueryBuilder);
             mainSearchPanel.getCenterPanel().getAddLimitPanel().setQueryObject(clientQueryBuilder);
@@ -162,7 +166,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
 
             // Fire the query by clicking (simulating) Next button
             SearchNavigationPanel bottomPanel = mainSearchPanel.getBottomPanel();
-            bottomPanel.getNextButton().doClick();            
+            bottomPanel.getNextButton().doClick();
 
             // Open the Searcg dialog box
             globalNavigationGlassPane.showSearchDialog();
@@ -170,25 +174,30 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
         }
 
         public void actionPerformed(ActionEvent arg0) {
+            boolean validCondition = false;
             for (int index = 0; index < topConditionPanel.getComponentCount(); index++) {
                 if (topConditionPanel.getComponent(index) instanceof AbstractTypePanel) {
                     AbstractTypePanel panel = (AbstractTypePanel) topConditionPanel.getComponent(index);
-                    int conditionStatus = panel.isConditionValid(ParameterizedQueryShowResultPanel.this);
+                    int conditionStatus = panel.isConditionValidBeforeSaving(ParameterizedQueryShowResultPanel.this);
                     if (conditionStatus == 0) {
+                        validCondition = true;
                         queryDataModel.addCondition(panel.getExpressionId(),
                                                     panel.getCondition(index,
                                                                        ParameterizedQueryShowResultPanel.this));
-                    } else {
-                        if (conditionStatus == 1) {
-                            JOptionPane.showMessageDialog(ParameterizedQueryShowResultPanel.this,
-                                                          "Please enter the values for selected field or remove the selection. \n Field name : "
-                                                                  + panel.getAttributeDisplayName(), "Error",
-                                                          JOptionPane.ERROR_MESSAGE);
 
-                        }
-                        return;
+                    } else if (conditionStatus == 1) {
+                        queryDataModel.removeCondition(panel.getExpressionId(),
+                                                       panel.getCondition(index,
+                                                                          ParameterizedQueryShowResultPanel.this));
                     }
                 }
+            }
+            if (!validCondition && bottomConditionPanel.getComponentCount() == 0) {
+                JOptionPane.showMessageDialog(
+                                              ParameterizedQueryShowResultPanel.this,
+                                              "Please add values for atleast one condition before executing query.",
+                                              "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
             dialog.dispose();
             executeQuery(queryDataModel.getQuery());

@@ -17,15 +17,16 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
-import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
+import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 
 /**
  * 
- * The singleton class used to display saved Query links on left hand side of 
- * mainFrame panel   
+ * The singleton class used to display saved Query links on left hand side of
+ * mainFrame panel
+ * 
  * @author deepak_shingan
- *
+ * 
  */
 public class StackBoxMySearchQueriesPanel extends Cab2bPanel {
 
@@ -48,7 +49,7 @@ public class StackBoxMySearchQueriesPanel extends Cab2bPanel {
     }
 
     /**
-     * Method to update search query panel 
+     * Method to update search query panel
      */
     public void updateMySearchQueryPanel() {
         this.removeAll();
@@ -87,9 +88,9 @@ public class StackBoxMySearchQueriesPanel extends Cab2bPanel {
                                                                                                                                         EjbNamesConstants.QUERY_ENGINE_BEAN,
                                                                                                                                         QueryEngineHome.class,
                                                                                                                                         null);
-            ICab2bParameterizedQuery cab2bQuery = null;
+            Cab2bQuery cab2bQuery = null;
             try {
-                cab2bQuery = queryEngineBusinessInterface.retrieveQueryById(queryID);
+                cab2bQuery = (Cab2bQuery) queryEngineBusinessInterface.retrieveQueryById(queryID);
             } catch (RemoteException exception) {
                 CommonUtils.handleException(exception, MainFrame.newWelcomePanel, true, true, true, false);
             }

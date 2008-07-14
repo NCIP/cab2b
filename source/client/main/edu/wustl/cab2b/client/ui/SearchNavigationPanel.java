@@ -29,6 +29,7 @@ import edu.wustl.cab2b.client.ui.viewresults.ViewSearchResultsPanel;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
+import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
@@ -270,7 +271,6 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 searchCenterPanel.setAddLimitPanel(addLimitPanel);
                 showCard(true);
             } else if (searchCenterPanel.getSelectedCardIndex() == 1) {
-
                 CustomSwingWorker swingWorker = new CustomSwingWorker(SearchNavigationPanel.this) {
                     @Override
                     protected void doNonUILogic() throws Exception {
@@ -278,7 +278,10 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
                             final IQuery b2bquery = m_mainSearchPanel.queryObject.getQuery();
 
-                            /* Get the root expression ID. If exception occurs show Error*/
+                            /*
+                             * Get the root expression ID. If exception occurs
+                             * show Error
+                             */
                             try {
                                 b2bquery.getConstraints().getRootExpressionId();
                             } catch (MultipleRootsException e) {
@@ -328,7 +331,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                                 queryResults = null;
                             } else {
 
-                                // Get the Functional class for root and update query
+                                // Get the Functional class for root and update
+                                // query
                                 // object with it.
                                 queryResults = CommonUtils.executeQuery(
                                                                         (ICab2bQuery) clientQueryBuilder.getQuery(),
@@ -428,7 +432,9 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
     class AddLimitPanelPCL implements PropertyChangeListener {
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
          */
         public void propertyChange(PropertyChangeEvent evt) {
@@ -446,21 +452,12 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
      */
     private class SaveConditionButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
+            ParameterizedQueryMainPanel parameterizedQueryMainPanel = null;
 
-            if (SearchNavigationPanel.this.m_mainSearchPanel.isParaQueryShowResultButtonPressed()) {
-                JOptionPane.showMessageDialog(m_mainSearchPanel.getParent(),
-                                              ErrorCodeHandler.getErrorMessage(ErrorCodeConstants.DB_0005),
-                                              "Resave query", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            ICab2bQuery query = (ICab2bQuery) m_mainSearchPanel.getQueryObject().getQuery();
+            Cab2bQuery query = (Cab2bQuery) m_mainSearchPanel.getQueryObject().getQuery();
             if (CommonUtils.isServiceURLConfigured(query, m_mainSearchPanel.getParent())) {
-                if (query.getId() != null) {
-                    messageLabel.setText("Any changes made in current query will be saved in system.");
-                }
-                ParameterizedQueryMainPanel parameterizedQueryMainPanel = new ParameterizedQueryMainPanel(
-                        new ParameterizedQueryDataModel(
-                                (ICab2bQuery) m_mainSearchPanel.getQueryObject().getQuery()));
+                parameterizedQueryMainPanel = new ParameterizedQueryMainPanel(new ParameterizedQueryDataModel(
+                        query));
                 parameterizedQueryMainPanel.showInDialog();
             }
         }

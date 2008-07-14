@@ -36,382 +36,400 @@ import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
  * An abstract class which provides the skeletal implementation of the
  * IComponent interface and defines some more abstract method like
  * getFirstComponent, getSecondComponent that needs to be implemented by the
- * subclasses like NumberTypePanel, StringTypePanel, etc.
- * It also has methods to make it generic for handling parameterized Query UI panels.
+ * subclasses like NumberTypePanel, StringTypePanel, etc. It also has methods to
+ * make it generic for handling parameterized Query UI panels.
+ * 
  * @author Deepak Shingan
  */
 
 public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent {
 
-	public static final int CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE = 9;
+    public static final int CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE = 9;
 
-	/**
-	 * Label for displaying the attribute name.
-	 */
-	protected Cab2bLabel nameLabel;
+    /**
+     * Label for displaying the attribute name.
+     */
+    protected Cab2bLabel nameLabel;
 
-	/**
-	 * ComboBox for displaying the conditions based on the data-type
-	 */
-	protected Cab2bComboBox conditionComboBox;
+    /**
+     * ComboBox for displaying the conditions based on the data-type
+     */
+    protected Cab2bComboBox conditionComboBox;
 
-	/**
-	 * TextField for entering the alphanumeric text.
-	 */
-	protected JComponent firstComponent;
+    /**
+     * TextField for entering the alphanumeric text.
+     */
+    protected JComponent firstComponent;
 
-	/**
-	 * Another TextField for entering the alphanumeric text.
-	 */
-	protected JComponent secondComponent;
+    /**
+     * Another TextField for entering the alphanumeric text.
+     */
+    protected JComponent secondComponent;
 
-	/**
-	 * Parsed xml file's data structure.
-	 */
-	protected ArrayList<String> conditionList;
+    /**
+     * Parsed xml file's data structure.
+     */
+    protected ArrayList<String> conditionList;
 
-	/**
-	 * Entity representing attribute.
-	 */
-	protected AttributeInterface attribute;
+    /**
+     * Entity representing attribute.
+     */
+    protected AttributeInterface attribute;
 
-	/**
-	 * Checkbox to select attribute in parameterized query
-	 */
-	protected Cab2bCheckBox attributeCheckBox;
+    /**
+     * Checkbox to select attribute in parameterized query
+     */
+    protected Cab2bCheckBox attributeCheckBox;
 
-	/**
-	 * Text box to edit attribute name in parameterized query
-	 */
-	protected Cab2bTextField attributeDisplayNameTextField;
+    /**
+     * Text box to edit attribute name in parameterized query
+     */
+    protected Cab2bTextField attributeDisplayNameTextField;
 
-	protected IExpressionId expressionId;
+    protected IExpressionId expressionId;
 
-	protected String displayName = null;
+    protected String displayName = null;
 
-	protected Dimension maxLabelDimension;
+    protected Dimension maxLabelDimension;
 
-	protected abstract JComponent getFirstComponent();
+    protected abstract JComponent getFirstComponent();
 
-	protected abstract JComponent getSecondComponent();
+    protected abstract JComponent getSecondComponent();
 
-	protected abstract void setComponentPreference(String condition);
+    protected abstract void setComponentPreference(String condition);
 
-	public abstract void resetPanel();
+    public abstract void resetPanel();
 
-	public AbstractTypePanel(ArrayList<String> conditionList, Dimension maxLabelDimension) {
-		this.setLayout(new RiverLayout(10, 8));
-		this.conditionList = conditionList;
-		this.maxLabelDimension = maxLabelDimension;
-	}
+    public AbstractTypePanel(ArrayList<String> conditionList, Dimension maxLabelDimension) {
+        this.setLayout(new RiverLayout(10, 8));
+        this.conditionList = conditionList;
+        this.maxLabelDimension = maxLabelDimension;
+    }
 
-	public void createSimplePanel(AttributeInterface attribute) {
-		this.attribute = attribute;
-		if (displayName == null) {
-			if (!Utility.isCategory(attribute.getEntity()))
-				displayName = CommonUtils.getFormattedString(attribute.getName());
-			else
-				displayName = attribute.getName();
-		}
+    public void createSimplePanel(AttributeInterface attribute) {
+        this.attribute = attribute;
+        if (displayName == null) {
+            if (!Utility.isCategory(attribute.getEntity()))
+                displayName = CommonUtils.getFormattedString(attribute.getName());
+            else
+                displayName = attribute.getName();
+        }
 
-		nameLabel = new Cab2bLabel(displayName + " : ");
-		nameLabel.setPreferredSize(maxLabelDimension);
-		String toolTipText = edu.wustl.cab2b.client.ui.query.Utility
-				.getAttributeCDEDetails(attribute);
-		nameLabel.setToolTipText(toolTipText);
-		firstComponent = getFirstComponent();
+        nameLabel = new Cab2bLabel(displayName + " : ");
+        nameLabel.setPreferredSize(maxLabelDimension);
+        String toolTipText = edu.wustl.cab2b.client.ui.query.Utility.getAttributeCDEDetails(attribute);
+        nameLabel.setToolTipText(toolTipText);
+        firstComponent = getFirstComponent();
 
-		secondComponent = getSecondComponent();
-		secondComponent.setEnabled(false);
-		secondComponent.setVisible(false);
-		secondComponent.setOpaque(false);
+        secondComponent = getSecondComponent();
+        secondComponent.setEnabled(false);
+        secondComponent.setVisible(false);
+        secondComponent.setOpaque(false);
 
-		final EmptyBorder emptyBorder = new EmptyBorder(2, 2, 2, 2);
-		secondComponent.setBorder(emptyBorder);
-		add(nameLabel, 0);
-		add(firstComponent, 1);
-		add(secondComponent, 2);
-		setSize(new Dimension(300, 100));
-	}
+        final EmptyBorder emptyBorder = new EmptyBorder(2, 2, 2, 2);
+        secondComponent.setBorder(emptyBorder);
+        add(nameLabel, 0);
+        add(firstComponent, 1);
+        add(secondComponent, 2);
+        setSize(new Dimension(300, 100));
+    }
 
-	public void createPanelWithOperator(AttributeInterface attribute) {
-		createSimplePanel(attribute);
-		setCondtionControl(conditionList, getSecondComponent().getBorder(), new EmptyBorder(2, 2,
-				2, 2));
-		add(conditionComboBox, 1);
-	}
+    public void createPanelWithOperator(AttributeInterface attribute) {
+        createSimplePanel(attribute);
+        setCondtionControl(conditionList, getSecondComponent().getBorder(), new EmptyBorder(2, 2, 2, 2));
+        add(conditionComboBox, 1);
+    }
 
-	public void createPanelWithOperator(ICondition condition) {
-		if (condition instanceof IParameterizedCondition) {
-			displayName = ((IParameterizedCondition) condition).getName();
-		}
-		createPanelWithOperator(condition.getAttribute());
-		setValues(new ArrayList<String>(condition.getValues()));
-		setCondition(condition.getRelationalOperator().getStringRepresentation());
-	}
+    public void createPanelWithOperator(ICondition condition) {
+        if (condition instanceof IParameterizedCondition) {
+            displayName = ((IParameterizedCondition) condition).getName();
+        }
+        createPanelWithOperator(condition.getAttribute());
+        setValues(new ArrayList<String>(condition.getValues()));
+        setCondition(condition.getRelationalOperator().getStringRepresentation());
+    }
 
-	public void createParametrizedPanel(AttributeInterface attribute) {
-		createPanelWithOperator(attribute);
-		attributeCheckBox = new Cab2bCheckBox();
-		attributeCheckBox.setPreferredSize(new Dimension(80, maxLabelDimension.height));
-		attributeDisplayNameTextField = new Cab2bTextField(displayName, new Dimension(
-				maxLabelDimension.width, maxLabelDimension.height + 5));
-		attributeDisplayNameTextField.setEnabled(false);
-		attributeCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				setAttributeCheckBox(attributeCheckBox.isSelected());
-			}
-		});
-		add(attributeCheckBox, 0);
-		add(attributeDisplayNameTextField, 1);
-	}
+    public void createParametrizedPanel(AttributeInterface attribute) {
+        createPanelWithOperator(attribute);
+        attributeCheckBox = new Cab2bCheckBox();
+        attributeCheckBox.setPreferredSize(new Dimension(80, maxLabelDimension.height));
+        attributeDisplayNameTextField = new Cab2bTextField(displayName, new Dimension(maxLabelDimension.width,
+                maxLabelDimension.height + 5));
+        attributeDisplayNameTextField.setEnabled(false);
+        attributeCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                setAttributeCheckBox(attributeCheckBox.isSelected());
+            }
+        });
+        add(attributeCheckBox, 0);
+        add(attributeDisplayNameTextField, 1);
+    }
 
-	public void createParametrizedPanel(ICondition condition) {
-		if (condition instanceof IParameterizedCondition) {
-			displayName = ((IParameterizedCondition) condition).getName();
-		}
-		createParametrizedPanel(condition.getAttribute());
-		setValues(new ArrayList<String>(condition.getValues()));
-		setCondition(condition.getRelationalOperator().getStringRepresentation());
-	}
+    public void createParametrizedPanel(ICondition condition) {
+        if (condition instanceof IParameterizedCondition) {
+            displayName = ((IParameterizedCondition) condition).getName();
+        }
+        createParametrizedPanel(condition.getAttribute());
+        setValues(new ArrayList<String>(condition.getValues()));
+        setCondition(condition.getRelationalOperator().getStringRepresentation());
+    }
 
-	public void setAttributeCheckBox(boolean selectCheckBox) {
-		attributeCheckBox.setSelected(selectCheckBox);
-		if (attributeDisplayNameTextField != null) {
-			attributeDisplayNameTextField.setEnabled(selectCheckBox);
-		}
-	}
+    public void setAttributeCheckBox(boolean selectCheckBox) {
+        attributeCheckBox.setSelected(selectCheckBox);
+        if (attributeDisplayNameTextField != null) {
+            attributeDisplayNameTextField.setEnabled(selectCheckBox);
+        }
+    }
 
-	public boolean isAttributeCheckBoxSelected() {
-		if (attributeCheckBox != null)
-			return attributeCheckBox.isSelected();
-		return false;
-	}
+    public boolean isAttributeCheckBoxSelected() {
+        if (attributeCheckBox != null)
+            return attributeCheckBox.isSelected();
+        return false;
+    }
 
-	/**
-	 * @return AttributeInterface
-	 */
-	public AttributeInterface getAttributeEntity() {
-		return attribute;
-	}
+    /**
+     * @return AttributeInterface
+     */
+    public AttributeInterface getAttributeEntity() {
+        return attribute;
+    }
 
-	public String getConditionItem() {
-		return (String) conditionComboBox.getSelectedItem();
-	}
+    public String getConditionItem() {
+        return (String) conditionComboBox.getSelectedItem();
+    }
 
-	public void setCondition(String str) {
-		int itemCount = conditionComboBox.getItemCount();
-		for (int i = 0; i < itemCount; i++) {
-			if (conditionComboBox.getItemAt(i).toString().compareToIgnoreCase(str) == 0) {
-				conditionComboBox.setSelectedIndex(i);
-			}
-		}
-	}
+    public void setCondition(String str) {
+        int itemCount = conditionComboBox.getItemCount();
+        for (int i = 0; i < itemCount; i++) {
+            if (conditionComboBox.getItemAt(i).toString().compareToIgnoreCase(str) == 0) {
+                conditionComboBox.setSelectedIndex(i);
+            }
+        }
+    }
 
-	private void setCondtionControl(ArrayList<String> conditionList, final Border border,
-			final EmptyBorder emptyBorder) {
-		this.conditionList = conditionList;
-		/*
-		 * Initializing conditions can't be abstracted, since it varies from
-		 * string type to number to date
-		 */
-		conditionComboBox = new Cab2bComboBox();
-		conditionComboBox.setPreferredSize(new Dimension(125, 20));
-		Collections.sort(conditionList);
-		DefaultComboBoxModel model = new DefaultComboBoxModel();
-		for (int i = 0; i < conditionList.size(); i++) {
-			model.addElement(conditionList.get(i));
-		}
+    private void setCondtionControl(ArrayList<String> conditionList, final Border border,
+                                    final EmptyBorder emptyBorder) {
+        this.conditionList = conditionList;
+        /*
+         * Initializing conditions can't be abstracted, since it varies from
+         * string type to number to date
+         */
+        conditionComboBox = new Cab2bComboBox();
+        conditionComboBox.setPreferredSize(new Dimension(125, 20));
+        Collections.sort(conditionList);
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        for (int i = 0; i < conditionList.size(); i++) {
+            model.addElement(conditionList.get(i));
+        }
 
-		conditionComboBox.setModel(model);
-		conditionComboBox.setMaximumRowCount(conditionList.size());
+        conditionComboBox.setModel(model);
+        conditionComboBox.setMaximumRowCount(conditionList.size());
 
-		conditionComboBox.addActionListener(new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        conditionComboBox.addActionListener(new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(ActionEvent e) {
-				conditionListenerAction(border, emptyBorder);
-			}
-		});
+            public void actionPerformed(ActionEvent e) {
+                conditionListenerAction(border, emptyBorder);
+            }
+        });
 
-		conditionComboBox.setSelectedIndex(0);
-	}
+        conditionComboBox.setSelectedIndex(0);
+    }
 
-	private void conditionListenerAction(final Border border, final EmptyBorder emptyBorder) {
-		if (conditionComboBox.getSelectedItem().equals("Between")) {
-			setNameEdit(true, border);
-			setOtherEdit(true, border);
-		} else if ((conditionComboBox.getSelectedItem().equals("Is Null"))
-				|| (conditionComboBox.getSelectedItem().equals("Is Not Null"))) {
-			setNameEdit(false, emptyBorder);
-			setOtherEdit(false, emptyBorder);
+    private void conditionListenerAction(final Border border, final EmptyBorder emptyBorder) {
+        if (conditionComboBox.getSelectedItem().equals("Between")) {
+            setNameEdit(true, border);
+            setOtherEdit(true, border);
+        } else if ((conditionComboBox.getSelectedItem().equals("Is Null"))
+                || (conditionComboBox.getSelectedItem().equals("Is Not Null"))) {
+            setNameEdit(false, emptyBorder);
+            setOtherEdit(false, emptyBorder);
 
-			ArrayList<String> values = new ArrayList<String>();
-			values.add("");
-			values.add("");
-			setValues(values);
-		} else {
-			setNameEdit(true, border);
-			// If previously selected condition was 'Between' then clear the
-			// second text box
-			ArrayList<String> oldValues = getValues();
-			if (secondComponent.isEnabled() && oldValues.size() == 2) {
-				ArrayList<String> values = new ArrayList<String>();
-				values.add(oldValues.get(0));
-				values.add("");
-				setValues(values);
-			} else {
-				setValues(oldValues);
-			}
-			setOtherEdit(false, emptyBorder);
-		}
-		setComponentPreference(getConditionItem());
-	}
+            ArrayList<String> values = new ArrayList<String>();
+            values.add("");
+            values.add("");
+            setValues(values);
+        } else {
+            setNameEdit(true, border);
+            // If previously selected condition was 'Between' then clear the
+            // second text box
+            ArrayList<String> oldValues = getValues();
+            if (secondComponent.isEnabled() && oldValues.size() == 2) {
+                ArrayList<String> values = new ArrayList<String>();
+                values.add(oldValues.get(0));
+                values.add("");
+                setValues(values);
+            } else {
+                setValues(oldValues);
+            }
+            setOtherEdit(false, emptyBorder);
+        }
+        setComponentPreference(getConditionItem());
+    }
 
-	private void setNameEdit(boolean value, Border border) {
-		firstComponent.setOpaque(value);
-		firstComponent.setEnabled(value);
-		firstComponent.setVisible(value);
-		firstComponent.setBorder(border);
-	}
+    private void setNameEdit(boolean value, Border border) {
+        firstComponent.setOpaque(value);
+        firstComponent.setEnabled(value);
+        firstComponent.setVisible(value);
+        firstComponent.setBorder(border);
+    }
 
-	private void setOtherEdit(boolean value, Border border) {
-		secondComponent.setOpaque(value);
-		secondComponent.setEnabled(value);
-		secondComponent.setVisible(value);
-		secondComponent.setBorder(border);
-	}
+    private void setOtherEdit(boolean value, Border border) {
+        secondComponent.setOpaque(value);
+        secondComponent.setEnabled(value);
+        secondComponent.setVisible(value);
+        secondComponent.setBorder(border);
+    }
 
-	/**
-	 * @return the expressionId
-	 */
-	public IExpressionId getExpressionId() {
-		return expressionId;
-	}
+    /**
+     * @return the expressionId
+     */
+    public IExpressionId getExpressionId() {
+        return expressionId;
+    }
 
-	/**
-	 * @param expressionId
-	 *            the expressionId to set
-	 */
-	public void setExpressionId(IExpressionId expressionId) {
-		this.expressionId = expressionId;
-	}
+    /**
+     * @param expressionId
+     *            the expressionId to set
+     */
+    public void setExpressionId(IExpressionId expressionId) {
+        this.expressionId = expressionId;
+    }
 
-	/**
-	 * @return
-	 */
-	public String getAttributeDisplayName() {
-		if (attributeDisplayNameTextField != null)
-			displayName = attributeDisplayNameTextField.getText().trim();
-		return displayName;
-	}
+    /**
+     * @return
+     */
+    public String getAttributeDisplayName() {
+        if (attributeDisplayNameTextField != null)
+            displayName = attributeDisplayNameTextField.getText().trim();
+        return displayName;
+    }
 
-	/**
-	 * @return the nameLabel
-	 */
-	public void setAttributeDisplayName(String displayName) {
-		this.displayName = displayName;
-		nameLabel.setText(displayName + " : ");
-		if (attributeDisplayNameTextField != null) {
-			attributeDisplayNameTextField.setText(displayName);
-		}
-	}
+    /**
+     * @return the nameLabel
+     */
+    public void setAttributeDisplayName(String displayName) {
+        this.displayName = displayName;
+        nameLabel.setText(displayName + " : ");
+        if (attributeDisplayNameTextField != null) {
+            attributeDisplayNameTextField.setText(displayName);
+        }
+    }
 
-	/**
-	 * @return the attributeDisplayNameTextField
-	 */
-	public Cab2bTextField getAttributeDisplayNameTextField() {
-		if (attributeDisplayNameTextField == null) {
-			attributeDisplayNameTextField = new Cab2bTextField(displayName, new Dimension(
-					maxLabelDimension.width, maxLabelDimension.height + 5));
-		}
-		return attributeDisplayNameTextField;
-	}
+    /**
+     * @return the attributeDisplayNameTextField
+     */
+    public Cab2bTextField getAttributeDisplayNameTextField() {
+        if (attributeDisplayNameTextField == null) {
+            attributeDisplayNameTextField = new Cab2bTextField(displayName, new Dimension(maxLabelDimension.width,
+                    maxLabelDimension.height + 5));
+        }
+        return attributeDisplayNameTextField;
+    }
 
-	/**
-	 * returns valid condition from panel otherwise null
-	 * 
-	 * @param index
-	 * @return
-	 */
-	public ICondition getCondition(int index, Cab2bPanel parentPanel) {
-		String conditionString = getConditionItem();
-		ArrayList<String> conditionValues = getValues();
-		RelationalOperator operator = RelationalOperator
-				.getOperatorForStringRepresentation(conditionString);
+    /**
+     * returns valid condition from panel otherwise null
+     * 
+     * @param index
+     * @return
+     */
+    public ICondition getCondition(int index, Cab2bPanel parentPanel) {
 
-		int conditionStatus = isConditionValid(this);
-		if (conditionStatus == 0) {
-			if (isAttributeCheckBoxSelected()
-					|| (parentPanel instanceof ParameterizedQueryShowResultPanel)) {
-				// make a new parameterized condition
-				return new ParameterizedCondition(attribute, operator, conditionValues, index,
-						getAttributeDisplayName());
-			} else {
-				return new Condition(attribute, operator, conditionValues);
-			}
-		}
-		return null;
-	}
+        String conditionString = getConditionItem();
+        ArrayList<String> conditionValues = getValues();
+        RelationalOperator operator = RelationalOperator.getOperatorForStringRepresentation(conditionString);
 
-	/**
-	 * Method to check validity of condition
-	 * 
-	 * @param parentPanel
-	 * @return
-	 */
-	public int isConditionValid(Container parentPanel) {
-		String conditionString = getConditionItem();
-		ArrayList<String> conditionValues = getValues();
+        if (isAttributeCheckBoxSelected() || (parentPanel instanceof ParameterizedQueryShowResultPanel)) {
+            // make a new parameterized condition
+            return new ParameterizedCondition(attribute, operator, conditionValues, index,
+                    getAttributeDisplayName());
+        } else {
+            return new Condition(attribute, operator, conditionValues);
+        }
+    }
 
-		if (conditionString.compareToIgnoreCase("Between") == 0 && (conditionValues.size() == 1)) {
-			JOptionPane.showMessageDialog(parentPanel,
-					"Please enter both the values for between operator.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+    /**
+     * Method to check validity of condition before saving
+     * 
+     * @param parentPanel
+     * @return
+     */
+    public int isConditionValidBeforeSaving(Container parentPanel) {
+        String conditionString = getConditionItem();
+        ArrayList<String> conditionValues = getValues();
 
-			return -1;
-		}
+        if (!isAttributeCheckBoxSelected() && conditionString.compareToIgnoreCase("Between") == 0
+                && (conditionValues.size() == 1)) {
+            JOptionPane.showMessageDialog(parentPanel, "Please enter both the values for between operator.",
+                                          "Error", JOptionPane.ERROR_MESSAGE);
 
-		if (isAttributeCheckBoxSelected() && conditionValues.size() == 0
-				&& !(conditionString.equals("Is Null") || conditionString.equals("Is Not Null"))) {
-			JOptionPane.showMessageDialog(parentPanel,
-					"Please enter the values for selected field or remove the selection. \n Field name : "
-							+ getAttributeDisplayName(), "Error", JOptionPane.ERROR_MESSAGE);
+            return -1;
+        }
+        if (isAttributeCheckBoxSelected()
+                || ((conditionString.equals("Is Null")) || conditionString.equals("Is Not Null") || (conditionValues.size() != 0))) {
+            return 0;
+        } else {
+            //For scenarios like value is not specified for "contains" operator			
+            return 1;
+        }
 
-			return -1;
-		}
+    }
 
-		if (((conditionString.equals("Is Null")) || conditionString.equals("Is Not Null") || (conditionValues
-				.size() != 0))) {
-			return 0;
-		}
-		return 1;
-	}
+    /**
+     * Method to check validity of condition
+     * 
+     * @param parentPanel
+     * @return
+     */
+    public int isConditionValid(Container parentPanel) {
+        String conditionString = getConditionItem();
+        ArrayList<String> conditionValues = getValues();
 
-	public ArrayList<String> getValues() {
+        if (conditionString.compareToIgnoreCase("Between") == 0 && (conditionValues.size() == 1)) {
+            JOptionPane.showMessageDialog(parentPanel, "Please enter both the values for between operator.",
+                                          "Error", JOptionPane.ERROR_MESSAGE);
 
-		ArrayList<String> values = new ArrayList<String>();
-		String nameString = ((Cab2bFormattedTextField) firstComponent).getText();
-		if (nameString.length() != 0) {
-			if ((getConditionItem().compareToIgnoreCase("IN") == 0 || getConditionItem()
-					.compareToIgnoreCase("Not IN") == 0)) {
-				ArrayList<String> strings = CommonUtils.splitStringWithTextQualifier(nameString,
-						'"', ',');
-				for (int i = 0; i < strings.size(); i++) {
-					values.add(strings.get(i));
-				}
-			} else {
-				values.add(((Cab2bFormattedTextField) firstComponent).getText());
-			}
+            return -1;
+        }
 
-			if (((Cab2bFormattedTextField) secondComponent).getText().length() != 0) {
-				values.add(((Cab2bFormattedTextField) secondComponent).getText());
-			}
+        if (isAttributeCheckBoxSelected() && conditionValues.size() == 0
+                && !(conditionString.equals("Is Null") || conditionString.equals("Is Not Null"))) {
+            JOptionPane.showMessageDialog(parentPanel,
+                                          "Please enter the values for selected field or remove the selection. \n Field name : "
+                                                  + getAttributeDisplayName(), "Error", JOptionPane.ERROR_MESSAGE);
 
-		} else if (((Cab2bFormattedTextField) secondComponent).getText().length() != 0) {
-			values.add(((Cab2bFormattedTextField) secondComponent).getText());
-		}
-		return values;
+            return -1;
+        }
 
-	}
+        if (((conditionString.equals("Is Null")) || conditionString.equals("Is Not Null") || (conditionValues.size() != 0))) {
+            return 0;
+        }
+        return 1;
+    }
+
+    public ArrayList<String> getValues() {
+
+        ArrayList<String> values = new ArrayList<String>();
+        String nameString = ((Cab2bFormattedTextField) firstComponent).getText();
+        if (nameString.length() != 0) {
+            if ((getConditionItem().compareToIgnoreCase("IN") == 0 || getConditionItem().compareToIgnoreCase(
+                                                                                                             "Not IN") == 0)) {
+                ArrayList<String> strings = CommonUtils.splitStringWithTextQualifier(nameString, '"', ',');
+                for (int i = 0; i < strings.size(); i++) {
+                    values.add(strings.get(i));
+                }
+            } else {
+                values.add(((Cab2bFormattedTextField) firstComponent).getText());
+            }
+
+            if (((Cab2bFormattedTextField) secondComponent).getText().length() != 0) {
+                values.add(((Cab2bFormattedTextField) secondComponent).getText());
+            }
+
+        } else if (((Cab2bFormattedTextField) secondComponent).getText().length() != 0) {
+            values.add(((Cab2bFormattedTextField) secondComponent).getText());
+        }
+        return values;
+
+    }
 }

@@ -92,21 +92,34 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
         public void actionPerformed(ActionEvent arg0) {
             Cab2bPanel condtionPanel = parameterizedQueryMainPanel.getParameterConditionPanel().getConditionPanel();
             ParameterizedQueryDataModel parameterizedQueryDataModel = parameterizedQueryMainPanel.getParameterizedQueryDataModel();
-
+            boolean validCondition = false;
             for (int index = 0; index < condtionPanel.getComponentCount(); index++) {
                 if (condtionPanel.getComponent(index) instanceof AbstractTypePanel) {
                     AbstractTypePanel panel = (AbstractTypePanel) condtionPanel.getComponent(index);
-                    int conditionStatus = panel.isConditionValid(parameterizedQueryMainPanel);
+                    int conditionStatus = panel.isConditionValidBeforeSaving(parameterizedQueryMainPanel);
                     if (conditionStatus == 0) {
+                        validCondition = true;
                         parameterizedQueryDataModel.addCondition(
                                                                  panel.getExpressionId(),
                                                                  panel.getCondition(
                                                                                     index,
                                                                                     ParameterizedQueryNavigationPanel.this));
-                    } else if (conditionStatus < 0) {
+                    } else if (conditionStatus == 1) {
+                        parameterizedQueryDataModel.removeCondition(
+                                                                    panel.getExpressionId(),
+                                                                    panel.getCondition(
+                                                                                       index,
+                                                                                       ParameterizedQueryNavigationPanel.this));
+                    } else
                         return;
-                    }
                 }
+            }
+
+            if (!validCondition) {
+                JOptionPane.showMessageDialog(parameterizedQueryMainPanel,
+                                              "Please add atleast one condition before saving.", "Error",
+                                              JOptionPane.ERROR_MESSAGE);
+                return;
             }
             ParameterizedQueryInfoPanel parameterizedQueryInfoPanel = parameterizedQueryMainPanel.getInformationQueryPanel();
             parameterizedQueryDataModel.setQueryDescription(parameterizedQueryInfoPanel.getQueryDecription());

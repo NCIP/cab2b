@@ -82,11 +82,6 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
     public ParameterizedQueryInfoPanel getInformationQueryPanel() {
         if (informationQueryPanel == null)
             informationQueryPanel = new ParameterizedQueryInfoPanel();
-
-        if (parameterizedQueryDataModel.getQuery().getId() != null) {
-            informationQueryPanel.setQueryName(parameterizedQueryDataModel.getQueryName());
-            informationQueryPanel.setQueryDecription((parameterizedQueryDataModel.getQueryDescription()));
-        }
         return informationQueryPanel;
     }
 
