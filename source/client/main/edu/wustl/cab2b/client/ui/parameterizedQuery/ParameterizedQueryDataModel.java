@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
-import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
@@ -26,28 +26,21 @@ import edu.wustl.common.querysuite.queryobject.util.QueryUtility;
  */
 public class ParameterizedQueryDataModel {
 
-    private ICab2bParameterizedQuery query;
+    private Cab2bQuery query;
 
     public ParameterizedQueryDataModel() {
         query = new Cab2bQuery();
-
     }
 
-    public ParameterizedQueryDataModel(ICab2bQuery iQuery) {
+    public ParameterizedQueryDataModel(Cab2bQuery iQuery) {
         if (iQuery == null)
-            query = new Cab2bQuery();
-        else
-            query = new Cab2bQuery(iQuery);
-    }
-
-    public ParameterizedQueryDataModel(ICab2bParameterizedQuery query) {
-        if (query == null)
             this.query = new Cab2bQuery();
-        else
-            this.query = new Cab2bQuery(query);
+        else {
+            query = CommonUtils.copyQueryObject(iQuery);
+        }
     }
 
-    public void setQuery(ICab2bParameterizedQuery query) {
+    public void setQuery(Cab2bQuery query) {
         this.query = query;
     }
 
@@ -93,6 +86,41 @@ public class ParameterizedQueryDataModel {
         return QueryUtility.getAllAttributes(query);
     }
 
+    /**
+     * Method to remove conditions from query
+     * 
+     * @param expressionID
+     * @param newCondition
+     */
+    public void removeCondition(IExpressionId expressionID, ICondition newCondition) {
+        if (query == null || expressionID == null || newCondition == null)
+            return;
+
+        IExpression expression = query.getConstraints().getExpression(expressionID);
+        int noOfOperand = expression.numberOfOperands();
+
+        ALL: for (int i = 0; i < noOfOperand; i++) {
+            IExpressionOperand expressionOperand = expression.getOperand(i);
+            if (!expressionOperand.isSubExpressionOperand()) {
+                IRule rule = (IRule) expressionOperand;
+                List<ICondition> conditionList = rule.getConditions();
+                for (int index = 0; index < conditionList.size(); index++) {
+                    ICondition condition = conditionList.get(index);
+                    if (condition.getAttribute() == newCondition.getAttribute()) {
+                        conditionList.remove(condition);
+                        break ALL;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Method to add/replace/change conditions from query
+     * 
+     * @param expressionID
+     * @param newCondition
+     */
     public void addCondition(IExpressionId expressionID, ICondition newCondition) {
         if (query == null || expressionID == null || newCondition == null)
             return;
