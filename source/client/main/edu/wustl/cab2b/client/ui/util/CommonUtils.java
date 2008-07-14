@@ -37,11 +37,27 @@ import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.locator.Locator;
 import edu.wustl.cab2b.common.locator.LocatorException;
+import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.category.Category;
+import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.IConstraints;
+import edu.wustl.common.querysuite.queryobject.IExpression;
+import edu.wustl.common.querysuite.queryobject.IExpressionId;
+import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
+import edu.wustl.common.querysuite.queryobject.IParameterizedCondition;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
+import edu.wustl.common.querysuite.queryobject.IRule;
+import edu.wustl.common.querysuite.queryobject.impl.Condition;
+import edu.wustl.common.querysuite.queryobject.impl.Constraints;
+import edu.wustl.common.querysuite.queryobject.impl.Expression;
+import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
+import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
+import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
+import edu.wustl.common.querysuite.queryobject.impl.QueryEntity;
+import edu.wustl.common.querysuite.queryobject.impl.Rule;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -83,6 +99,7 @@ public class CommonUtils {
 
     /**
      * Method to disable all components from the specified container
+     * 
      * @param container
      */
     public static void disableAllComponent(Container container) {
@@ -91,6 +108,90 @@ public class CommonUtils {
             if (container.getComponent(i) instanceof Container)
                 disableAllComponent((Container) container.getComponent(i));
         }
+    }
+
+    public static Cab2bQuery copyQueryObject(ICab2bQuery query) {
+        //New Query
+        Cab2bQuery newCab2bQuery = new Cab2bQuery();
+        newCab2bQuery.setOutputEntity(query.getOutputEntity());
+        newCab2bQuery.setOutputUrls(new ArrayList<String>(query.getOutputUrls()));
+
+        //New Constraint
+        IConstraints newConstraints = new Constraints();
+        IConstraints constraints = query.getConstraints();
+
+        Enumeration<IExpressionId> expressionIds = constraints.getExpressionIds();
+        while (expressionIds.hasMoreElements()) {
+            Expression oldExpression = (Expression) constraints.getExpression(expressionIds.nextElement());
+
+            //New Expression
+            IQueryEntity newQueryEntity = new QueryEntity(
+                    oldExpression.getQueryEntity().getDynamicExtensionsEntity());
+            IExpression newExpression = newConstraints.addExpression(newQueryEntity);
+            newExpression.setInView(oldExpression.isInView());
+            newExpression.setVisible(oldExpression.isVisible());
+
+            IExpressionOperand newOperand = getNewExpressionOperand(oldExpression, 0);
+            newExpression.addOperand(newOperand);
+            for (int index = 1; index < oldExpression.numberOfOperands(); index++) {
+                newOperand = getNewExpressionOperand(oldExpression, index);
+
+                //New LogicalConnector
+                LogicalConnector oldLogicalConnector = (LogicalConnector) oldExpression.getLogicalConnector(
+                                                                                                            index - 1,
+                                                                                                            index);
+                LogicalConnector newLogicalConnector = new LogicalConnector();
+                newLogicalConnector.setLogicalOperator(oldLogicalConnector.getLogicalOperator());
+                newLogicalConnector.setNestingNumber(oldLogicalConnector.getNestingNumber());
+
+                newExpression.addOperand(newLogicalConnector, newOperand);
+            }
+        }
+        newCab2bQuery.setConstraints(newConstraints);
+
+        return newCab2bQuery;
+    }
+
+    private static IExpressionOperand getNewExpressionOperand(IExpression expression, int index) {
+        IExpressionOperand operand = expression.getOperand(index);
+        operand.setId(null);
+
+        IExpressionOperand newOperand = null;
+        if (operand instanceof IRule) {
+            Rule rule = (Rule) operand;
+
+            // New Rule
+            Rule newRule = new Rule();
+            for (ICondition condition : rule.getConditions()) {
+                // New Condition
+                ICondition newCondition = null;
+                if (condition instanceof IParameterizedCondition) {
+                    ParameterizedCondition oldParameterizedCondition = (ParameterizedCondition) condition;
+                    ParameterizedCondition newParameterizedCondition = new ParameterizedCondition(condition,
+                            oldParameterizedCondition.getIndex(), oldParameterizedCondition.getName());
+                    newCondition = newParameterizedCondition;
+                } else {
+                    newCondition = new Condition();
+                    newCondition.setAttribute(condition.getAttribute());
+                    //newCondition.setAttributeId(condition.getAttribute().getId());
+
+                    newCondition.setRelationalOperator(condition.getRelationalOperator());
+                    //newCondition.setRelationalOperatorString(condition.getRelationalOperator().getStringRepresentation());
+
+                    newCondition.setValues(new ArrayList<String>(condition.getValues()));
+                }
+                newRule.addCondition(newCondition);
+            }
+
+            newOperand = newRule;
+        } else if (operand instanceof IExpressionId) {
+            ExpressionId expressionId = (ExpressionId) operand;
+            ExpressionId newExpressionId = new ExpressionId(expressionId.getInt());
+
+            newOperand = newExpressionId;
+        }
+
+        return newOperand;
     }
 
     /**
@@ -179,10 +280,13 @@ public class CommonUtils {
     }
 
     /**
-     * This method traverses the whole hierarchy of the given exception to check 
-     * whether there is any exception which is {@link CheckedException} OR {@link LocatorException} OR{@link RuntimeException}
-     * If yes it returns it otherwise it returns the original passed exception.
-     * @param cause exception to verify
+     * This method traverses the whole hierarchy of the given exception to check
+     * whether there is any exception which is {@link CheckedException} OR
+     * {@link LocatorException} OR{@link RuntimeException} If yes it returns it
+     * otherwise it returns the original passed exception.
+     * 
+     * @param cause
+     *            exception to verify
      * @return The root exception
      */
     private static Exception getOriginalException(Exception cause) {
@@ -222,10 +326,13 @@ public class CommonUtils {
             iQueryResult = executeQuery(query, queryEngineBus);
         } catch (RuntimeException re) {
             handleException(re, comp, true, false, false, false);
-        } /*catch (RemoteException e1) {
-         //CheckedException e = new CheckedException(e1.getMessage(), e1, ErrorCodeConstants.QM_0004);
-         handleException(getCab2bException(e1), comp, true, false, false, false);
-         }*/
+        } /*
+                                                                                                                                                                                                                          		 * catch (RemoteException e1) { //CheckedException e = new
+                                                                                                                                                                                                                          		 * CheckedException(e1.getMessage(), e1,
+                                                                                                                                                                                                                          		 * ErrorCodeConstants.QM_0004);
+                                                                                                                                                                                                                          		 * handleException(getCab2bException(e1), comp, true, false, false,
+                                                                                                                                                                                                                          		 * false); }
+                                                                                                                                                                                                                          		 */
         return iQueryResult;
     }
 
@@ -490,7 +597,7 @@ public class CommonUtils {
             }
         }
 
-        //append last string
+        // append last string
         String finalToken = token.toString().trim();
         if (isTextQualifierStart == true) {
             if (!finalToken.equals("")) {
@@ -642,12 +749,15 @@ public class CommonUtils {
      * @return Popular categories at this point
      */
     public static Vector getPopularSearchCategories() {
-        /* TODO These default Search Categories will be removed after its support*/
+        /*
+         * TODO These default Search Categories will be removed after its
+         * support
+         */
         Vector<String> popularSearchCategories = new Vector<String>();
         popularSearchCategories.add("Gene Annotation");
         popularSearchCategories.add("Genomic Identifiers");
         popularSearchCategories.add("Literature-based Gene Association");
-        //popularSearchCategories.add("Microarray Annotation");
+        // popularSearchCategories.add("Microarray Annotation");
         popularSearchCategories.add("Orthologus Gene");
         return popularSearchCategories;
     }
@@ -656,12 +766,15 @@ public class CommonUtils {
      * @return Recent search queries
      */
     public static Vector getUserSearchQueries() {
-        /* TODO These default UserSearchQueries will be removed later after SAVE QUERY support*/
+        /*
+         * TODO These default UserSearchQueries will be removed later after SAVE
+         * QUERY support
+         */
         Vector<String> userSearchQueries = new Vector<String>();
         userSearchQueries.add("Prostate Cancer Microarray Data");
         userSearchQueries.add("Glioblastoma Microarray Data");
         userSearchQueries.add("High Quality RNA Biospecimens");
-        //userSearchQueries.add("Breast Cancer Microarrays (MOE430+2.0)");
+        // userSearchQueries.add("Breast Cancer Microarrays (MOE430+2.0)");
 
         userSearchQueries.add("Adenocarcinoma Specimens");
         userSearchQueries.add("Lung Primary Tumor");
@@ -672,7 +785,7 @@ public class CommonUtils {
      * @return All the experiments performed by the user.
      */
     public static Vector getExperiments() {
-        /* TODO These default experiments will be removed later on*/
+        /* TODO These default experiments will be removed later on */
         Vector<String> experiments = new Vector<String>();
         experiments.add("Breast Cancer Microarrays (Hu133+2.0)");
         experiments.add("Comparative study of specimens between pre and post therapy");
@@ -685,9 +798,12 @@ public class CommonUtils {
      * @return Popular categories at this point
      */
     public static Vector getUserSearchCategories() {
-        /* TODO These default Search Categories will be removed after its support*/
+        /*
+         * TODO These default Search Categories will be removed after its
+         * support
+         */
         Vector<String> userSearchCategories = new Vector<String>();
-        //userSearchCategories.add("Gene Annotation");
+        // userSearchCategories.add("Gene Annotation");
         userSearchCategories.add("Microarray Annotation");
         userSearchCategories.add("Tissue Biospecimens");
         userSearchCategories.add("Molecular Biospecimens");
@@ -704,6 +820,7 @@ public class CommonUtils {
 
     /**
      * Method which will return number of elements in current datalist
+     * 
      * @return
      */
     public static int getDataListSize() {
@@ -715,6 +832,7 @@ public class CommonUtils {
 
     /**
      * This method verifies whether service URLs are available for give entity.
+     * 
      * @param entity
      * @return String[]
      */
@@ -737,9 +855,10 @@ public class CommonUtils {
     }
 
     /**
-     *  This method checks whether service URL is configured for the given query. 
-     *  If service url is not available it shows an ERROR dialog and returns false,
-     *  otherwise returns true.
+     * This method checks whether service URL is configured for the given query.
+     * If service url is not available it shows an ERROR dialog and returns
+     * false, otherwise returns true.
+     * 
      * @param query
      * @param container
      * @return boolean
