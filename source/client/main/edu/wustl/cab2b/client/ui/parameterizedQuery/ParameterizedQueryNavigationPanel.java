@@ -149,7 +149,7 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                     if (queryEngineBusinessInterface.isQueryNameDuplicate(cab2bParameterizedQuery.getName())) {
                         JOptionPane.showMessageDialog(
                                                       parameterizedQueryMainPanel,
-                                                      "Query name duplicate. Please change the Query name to save query.",
+                                                      "Query with name '"+cab2bParameterizedQuery.getName()+"' already exist. Please try saving with different name." ,
                                                       "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
