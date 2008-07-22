@@ -6,7 +6,6 @@ import java.awt.Image;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +38,6 @@ import edu.wustl.cab2b.client.ui.query.Utility;
 import edu.wustl.cab2b.client.ui.util.ClientConstants;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImages;
-import edu.wustl.cab2b.common.queryengine.Cab2bQueryObjectFactory;
 import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
@@ -47,16 +45,14 @@ import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.metadata.path.Path;
+import edu.wustl.common.querysuite.queryobject.IConnector;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IJoinGraph;
-import edu.wustl.common.querysuite.queryobject.IConnector;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.impl.Expression;
-import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
 import edu.wustl.common.util.logger.Logger;
 
 public class MainDagPanel extends Cab2bPanel {
@@ -172,13 +168,7 @@ public class MainDagPanel extends Cab2bPanel {
      * @return
      */
     public int getExpressionCount() {
-        int count = 0;
-        Enumeration<IExpressionId> exprEnumeration = m_queryObject.getQuery().getConstraints().getExpressionIds();
-        for (; exprEnumeration.hasMoreElements();) {
-            exprEnumeration.nextElement();
-            count++;
-        }
-        return count;
+        return m_queryObject.getQuery().getConstraints().size();
     }
 
     /**
@@ -186,11 +176,12 @@ public class MainDagPanel extends Cab2bPanel {
      * @return
      */
     public IExpression getFirstExpression() {
-        Enumeration<IExpressionId> exprEnumeration = m_queryObject.getQuery().getConstraints().getExpressionIds();
-        if (exprEnumeration.hasMoreElements()) {
-            return m_queryObject.getQuery().getConstraints().getExpression(exprEnumeration.nextElement());
+        IConstraints v = m_queryObject.getQuery().getConstraints();
+         int size = v.size();
+        if(size ==0) {
+            return null;
         }
-        return null;
+       return v.iterator().next();
     }
 
     /**
@@ -202,12 +193,13 @@ public class MainDagPanel extends Cab2bPanel {
         try {
             IQuery query = m_queryObject.getQuery();
             IConstraints constraints = query.getConstraints();
-            Enumeration<IExpressionId> exprEnumeration = constraints.getExpressionIds();
-            IExpressionId expressionId;
-            for (; exprEnumeration.hasMoreElements();) {
-                expressionId = exprEnumeration.nextElement();
-                IExpression expression = constraints.getExpression(expressionId);
-                ClassNodeType nodeType = getNodeType(expressionId);
+            
+//            Enumeration<IExpressionId> exprEnumeration = constraints.getExpressionIds();
+//            IExpressionId expressionId;
+            for (IExpression expression: constraints) {
+                //expressionId = exprEnumeration.nextElement();
+                //IExpression expression = constraints.getExpression(expressionId);
+                ClassNodeType nodeType = getNodeType(expression.getExpressionId());
                 /**
                  * An Expression should be added to DAG only when its visible.
                  * If DAG is for view then all nodes should be shown in DAG 
@@ -215,16 +207,16 @@ public class MainDagPanel extends Cab2bPanel {
                  */
                 if (expression.isVisible()) {
                     if (m_isDAGForView) {
-                        this.updateGraph(expressionId);
+                        this.updateGraph(expression.getExpressionId());
                     } else if (!nodeType.equals(ClassNodeType.ViewOnlyNode)) {
-                        this.updateGraph(expressionId);
+                        this.updateGraph(expression.getExpressionId());
                     }
 
                 }
             }
             IJoinGraph joinGraph = constraints.getJoinGraph();
-            List<IExpressionId> roots = joinGraph.getAllRoots();
-            for (IExpressionId rootExpressionId : roots) {
+            List<IExpression> roots = joinGraph.getAllRoots();
+            for (IExpression rootExpressionId : roots) {
                 if (rootExpressionId != null) {
                     addAssociations(constraints, joinGraph, rootExpressionId);
                 }
@@ -241,58 +233,61 @@ public class MainDagPanel extends Cab2bPanel {
      * 
      */
     private List<IAssociation> addAssociations(IConstraints constraints, IJoinGraph joinGraph,
-                                               IExpressionId parentExpressionId) {
+                                               IExpression parentExpr) {
         List<IAssociation> associations = null;
         IAssociation association = null;
-        List<IExpressionId> intermediateExpressions = new ArrayList<IExpressionId>();
-        List<IExpressionId> childList = joinGraph.getChildrenList(parentExpressionId);
+        List<IExpression> intermediateExpressions = new ArrayList<IExpression>();
+        List<IExpression> childList = joinGraph.getChildrenList(parentExpr);
         if (childList.isEmpty()) {
             return associations;
         }
         IPath path;
         int childSize = childList.size();
         for (int index = 0; index < childSize; index++) {
-            IExpressionId childId = childList.get(index);
-            IExpression childExpression = constraints.getExpression(childId);
+            IExpression childExpression = childList.get(index);
 
             associations = new ArrayList<IAssociation>();
-            intermediateExpressions = new ArrayList<IExpressionId>();
-            association = joinGraph.getAssociation(parentExpressionId, childId);
+            association = joinGraph.getAssociation(parentExpr, childExpression);
             associations.add(association);
             if (!childExpression.isVisible()) {
 
-                IExpressionId sourceId;
+                IExpression sourceId;
                 while (!childExpression.isVisible()) {
-                    intermediateExpressions.add(childId);
-                    sourceId = childId;
-                    childId = joinGraph.getChildrenList(childId).get(0);
-                    association = joinGraph.getAssociation(sourceId, childId);
+                    intermediateExpressions.add(childExpression);
+                    sourceId = childExpression;
+                    childExpression = joinGraph.getChildrenList(childExpression).get(0);
+                    association = joinGraph.getAssociation(sourceId, childExpression);
                     associations.add(association);
-                    childExpression = constraints.getExpression(childId);
                 }
             }
 
-            EntityInterface source = constraints.getExpression(parentExpressionId).getQueryEntity().getDynamicExtensionsEntity();
+            EntityInterface source = parentExpr.getQueryEntity().getDynamicExtensionsEntity();
             EntityInterface target = childExpression.getQueryEntity().getDynamicExtensionsEntity();
             path = new Path(source, target, associations);
 
-            /**
+            /*
              * A link should be added to DAG  when either DAG is for view 
              * or when the target node has constarints
              */
+            List<Integer> intermediateExpressionsIds = new ArrayList<Integer>(intermediateExpressions.size());
+            for(IExpression exp : intermediateExpressions) {
+                intermediateExpressionsIds.add(exp.getExpressionId());
+            }
             if (m_isDAGForView) {
-                LinkTwoNode(getNode(parentExpressionId), getNode(childId), path, intermediateExpressions, false);
-                addAssociations(constraints, joinGraph, childId);
+                linkTwoNode(getNode(parentExpr.getExpressionId()), getNode(childExpression.getExpressionId()), path, intermediateExpressionsIds, false);
+                addAssociations(constraints, joinGraph, childExpression);
             } else if (!getNodeType(childExpression.getExpressionId()).equals(ClassNodeType.ViewOnlyNode)) {
-                LinkTwoNode(getNode(parentExpressionId), getNode(childId), path, intermediateExpressions, false);
-                addAssociations(constraints, joinGraph, childId);
+                int childId = childExpression.getExpressionId();
+                
+                linkTwoNode(getNode(parentExpr.getExpressionId()), getNode(childId), path, intermediateExpressionsIds, false);
+                addAssociations(constraints, joinGraph, childExpression);
             }
 
         }
         return associations;
     }
 
-    public void selectNode(ExpressionId exprId) {
+    public void selectNode(int exprId) {
         m_viewController.selectNode(exprId);
     }
 
@@ -300,18 +295,18 @@ public class MainDagPanel extends Cab2bPanel {
      * Method to add node to a graph
      * @throws MultipleRootsException 
      */
-    public void updateGraph(IExpressionId expressionId) throws MultipleRootsException {
-        IExpression expression = m_queryObject.getQuery().getConstraints().getExpression(expressionId);
+    public void updateGraph(int expressionId) throws MultipleRootsException {
+        IExpression expression =getExpression(expressionId);
         IQueryEntity constraintEntity = expression.getQueryEntity();
 
         ClassNode node = new ClassNode();
         node.setDisplayName(entityNameDisplayer.getEntityDisplayName(constraintEntity.getDynamicExtensionsEntity()));
         //node.setDisplayName(edu.wustl.cab2b.common.util.Utility.getDisplayName(constraintEntity.getDynamicExtensionsEntity()));
         node.setExpressionId(expression);
-        node.setID(String.valueOf(expressionId.getInt()));
-        node.setType(getNodeType(expressionId));
+        node.setID(Integer.toString(expression.getExpressionId()));
+        node.setType(getNodeType(expression.getExpressionId()));
         m_currentNodeList.add(node);
-        m_queryObject.addExressionIdToVisibleList(expressionId);
+        m_queryObject.addExressionIdToVisibleList(expression.getExpressionId());
         m_document.addComponents(GraphEvent.createSingle(node));
         m_expressionPanel.setText(getExprssionString());
     }
@@ -322,12 +317,10 @@ public class MainDagPanel extends Cab2bPanel {
      * @throws MultipleRootsException
      */
     public void updateGraph(String expressionIdString) throws MultipleRootsException {
-        int expressionIdInt = Integer.parseInt(expressionIdString);
-        IExpressionId expressionId = Cab2bQueryObjectFactory.createExpressionId(expressionIdInt);
-        updateGraph(expressionId);
+        updateGraph(Integer.parseInt(expressionIdString));
     }
 
-    public void updateGraphForViewExpression(IExpressionId expressionId) throws MultipleRootsException {
+    public void updateGraphForViewExpression(int expressionId) throws MultipleRootsException {
         updateGraph(expressionId);
     }
 
@@ -413,7 +406,7 @@ public class MainDagPanel extends Cab2bPanel {
         if (!m_queryObject.isPathCreatesCyclicGraph(sourceNode.getExpressionId(), destNode.getExpressionId(),
                                                     paths.get(0))) {
             for (int i = 0; i < paths.size(); i++) {
-                LinkTwoNode(sourceNode, destNode, paths.get(i), new ArrayList<IExpressionId>(), true);
+                linkTwoNode(sourceNode, destNode, paths.get(i), new ArrayList<Integer>(), true);
             }
         } else {
             JOptionPane.showMessageDialog(MainDagPanel.this,
@@ -428,15 +421,15 @@ public class MainDagPanel extends Cab2bPanel {
      * @param destNode The destination  node to connect
      * @param path The path of connection
      */
-    protected void LinkTwoNode(final ClassNode sourceNode, final ClassNode destNode, final IPath path,
-                               List<IExpressionId> intermediateExpressions, final boolean updateQueryRequired) {
+    protected void linkTwoNode(final ClassNode sourceNode, final ClassNode destNode, final IPath path,
+                               List<Integer> intermediateExpressionsIds, final boolean updateQueryRequired) {
         Logger.out.debug("Linking nodes: " + sourceNode.getID() + " and " + destNode.getID()
-                + "; Intermediate exps: " + intermediateExpressions.toString());
+                + "; Intermediate exps: " + intermediateExpressionsIds.toString());
 
         // Update query object to have this association path set
         if (updateQueryRequired) {
             try {
-                intermediateExpressions = m_queryObject.addPath(sourceNode.getExpressionId(),
+                intermediateExpressionsIds = m_queryObject.addPath(sourceNode.getExpressionId(),
                                                                 destNode.getExpressionId(), path);
             } catch (CyclicException e) {
                 JOptionPane.showMessageDialog(this, "Cannot  connect nodes as it creates cycle in graph",
@@ -457,7 +450,7 @@ public class MainDagPanel extends Cab2bPanel {
         PathLink link = new PathLink();
         link.setSourcePort((GraphPort) sourcePort);
         link.setTargetPort((GraphPort) targetPort);
-        link.setAssociationExpressions(intermediateExpressions);
+        link.setAssociationExpressions(intermediateExpressionsIds);
         link.setDestinationExpressionId(destNode.getExpressionId());
         link.setSourceExpressionId(sourceNode.getExpressionId());
         link.setPath(path);
@@ -474,19 +467,19 @@ public class MainDagPanel extends Cab2bPanel {
             }
         } else {
             IConstraints constraints = MainDagPanel.this.m_queryObject.getQuery().getConstraints();
-            IExpressionId sourceExpId = sourceNode.getExpressionId();
+            int sourceExpId = sourceNode.getExpressionId();
             IExpression sourceExp = constraints.getExpression(sourceExpId);
-            IExpressionId nextExpId;
-            if (intermediateExpressions.size() > 0) {
-                nextExpId = intermediateExpressions.get(0);
+            int nextExpId;
+            if (intermediateExpressionsIds.size() > 0) {
+                nextExpId = intermediateExpressionsIds.get(0);
             } else {
                 nextExpId = destNode.getExpressionId();
             }
             if (assPosition != 0) {
-
+                IExpression nextExp = constraints.getExpression(nextExpId);
                 IConnector<LogicalOperator> logicalConnector = sourceExp.getConnector(
-                                                                                   sourceExp.indexOfOperand(nextExpId) - 1,
-                                                                                   sourceExp.indexOfOperand(nextExpId));
+                                                                                   sourceExp.indexOfOperand(nextExp) - 1,
+                                                                                   sourceExp.indexOfOperand(nextExp));
                 LogicalOperator logicalOperator = logicalConnector.getOperator();
                 if (logicalOperator.equals(LogicalOperator.And)) {
                     sourceNode.setLogicalOperator(sourcePort, ClientConstants.OPERATOR_AND);
@@ -524,13 +517,13 @@ public class MainDagPanel extends Cab2bPanel {
         }
 
         // Get the expressionId between which to add logical operator
-        IExpressionId destId = link.getLogicalConnectorExpressionId();
+        int destId = link.getLogicalConnectorExpressionId();
         m_queryObject.setLogicalConnector(sourceNode.getExpressionId(), destId,
                                           Utility.getLogicalOperator(operator), false);
 
         // Put appropriate parenthesis
         if (sourcePort != null) {
-            IExpressionId previousExpId = sourceNode.getLinkForSourcePort(sourceNode.getSourcePortAt(0)).getLogicalConnectorExpressionId();
+            int previousExpId = sourceNode.getLinkForSourcePort(sourceNode.getSourcePortAt(0)).getLogicalConnectorExpressionId();
             m_queryObject.addParantheses(sourceNode.getExpressionId(), previousExpId, destId);
         }
     }
@@ -557,7 +550,7 @@ public class MainDagPanel extends Cab2bPanel {
      * Delete selected expression from query object
      * @param expressionId
      */
-    public void deleteExpression(IExpressionId expressionId) {
+    public void deleteExpression(int expressionId) {
         m_addLimitPanel.clearAddLimitUI();
         m_queryObject.removeExpression(expressionId);
         m_queryObject.removeExressionIdFromVisibleList(expressionId);
@@ -577,7 +570,7 @@ public class MainDagPanel extends Cab2bPanel {
      * @param destinationNode target entity of path
      */
     public void deletePath(PathLink link) {
-        List<IExpressionId> expressionIds = link.getAssociationExpressions();
+        List<Integer> expressionIds = link.getAssociationExpressions();
         // If the association is direct association, remove the respective association 
         if (0 == expressionIds.size()) {
             m_queryObject.removeAssociation(link.getSourceExpressionId(), link.getDestinationExpressionId());
@@ -593,7 +586,7 @@ public class MainDagPanel extends Cab2bPanel {
      * Method to change logical operator of association
      */
     public void updateLogicalOperatorForAssociation(ClassNode sourceNode, PathLink link, String operator) {
-        IExpressionId destinationId = link.getLogicalConnectorExpressionId();
+        Integer destinationId = link.getLogicalConnectorExpressionId();
         m_queryObject.setLogicalConnector(sourceNode.getExpressionId(), destinationId,
                                           Utility.getLogicalOperator(operator), true);
         m_expressionPanel.setText(getExprssionString());
@@ -604,7 +597,7 @@ public class MainDagPanel extends Cab2bPanel {
      */
     public void updateLogicalOperatorForAttributes(ClassNode sourceNode, String operator) {
         PathLink link = sourceNode.getLinkForSourcePort(sourceNode.getSourcePortAt(0));
-        IExpressionId destinationId = link.getLogicalConnectorExpressionId();
+        Integer destinationId = link.getLogicalConnectorExpressionId();
         m_queryObject.setLogicalConnector(sourceNode.getExpressionId(), destinationId,
                                           Utility.getLogicalOperator(operator), true);
         m_expressionPanel.setText(getExprssionString());
@@ -624,11 +617,11 @@ public class MainDagPanel extends Cab2bPanel {
      * Method to convert expression into string representation 
      */
     public String getExprssionString() {
-        HashMap<IExpressionId, String> expressionToStringMap = new HashMap<IExpressionId, String>();
-        HashSet<IExpressionId> expressionsCovered = new HashSet<IExpressionId>();
+        HashMap<Integer, String> expressionToStringMap = new HashMap<Integer, String>();
+        HashSet<Integer> expressionsCovered = new HashSet<Integer>();
         for (int i = 0; i < m_currentNodeList.size(); i++) {
             if (null == expressionToStringMap.get(m_currentNodeList.get(i).getExpressionId())) {
-                FormExpression(expressionToStringMap, expressionsCovered, m_currentNodeList.get(i));
+                formExpression(expressionToStringMap, expressionsCovered, m_currentNodeList.get(i));
             }
         }
 
@@ -637,10 +630,10 @@ public class MainDagPanel extends Cab2bPanel {
         String nonConnectedExpressions = "";
         int totalNonConnectedExpressions = 0;
         for (int i = 0; i < m_currentNodeList.size(); i++) {
-            IExpressionId expressionId = m_currentNodeList.get(i).getExpressionId();
+            int expressionId = m_currentNodeList.get(i).getExpressionId();
             if (expressionsCovered.contains(expressionId) == false) {
                 if (m_currentNodeList.get(i).getSourcePorts().size() == 0) {
-                    nonConnectedExpressions += expressionId.getInt();
+                    nonConnectedExpressions += expressionId;
                     nonConnectedExpressions += ", ";
                     totalNonConnectedExpressions++;
                 } else {
@@ -668,8 +661,8 @@ public class MainDagPanel extends Cab2bPanel {
      * @param sb
      * @param node
      */
-    private String FormExpression(HashMap<IExpressionId, String> expressionToStringMap,
-                                  HashSet<IExpressionId> expressionsCovered, ClassNode node) {
+    private String formExpression(HashMap<Integer, String> expressionToStringMap,
+                                  HashSet<Integer> expressionsCovered, ClassNode node) {
         StringBuffer expressionString = new StringBuffer();
 
         /**
@@ -681,7 +674,7 @@ public class MainDagPanel extends Cab2bPanel {
             return expressionString.toString();
         }
 
-        int expressionId = node.getExpressionId().getInt();
+        int expressionId = node.getExpressionId();
         List<IGraphPort> ports = node.getSourcePorts();
         if (ports.size() > 0) {
             expressionString.append("( [").append(expressionId).append("] ").append(
@@ -692,7 +685,7 @@ public class MainDagPanel extends Cab2bPanel {
             }
 
             for (int i = 0; i < ports.size(); i++) {
-                IExpressionId associationNode = node.getLinkForSourcePort(ports.get(i)).getDestinationExpressionId();
+                int associationNode = node.getLinkForSourcePort(ports.get(i)).getDestinationExpressionId();
                 if (i > 0 && !getNodeType(associationNode).equals(ClassNodeType.ViewOnlyNode)) {
                     expressionString.append(" ").append(node.getLogicalOperator(ports.get(i))).append(" ");
                 }
@@ -700,7 +693,7 @@ public class MainDagPanel extends Cab2bPanel {
                 if (expressionToStringMap.get(associationNode) != null) {
                     expressionString.append(expressionToStringMap.get(associationNode));
                 } else {
-                    expressionString.append(FormExpression(expressionToStringMap, expressionsCovered,
+                    expressionString.append(formExpression(expressionToStringMap, expressionsCovered,
                                                            getNode(associationNode)));
                 }
 
@@ -725,7 +718,7 @@ public class MainDagPanel extends Cab2bPanel {
      * @param expressionId The expression Id for which to get object
      * @return classNode object associated with this expression Id 
      */
-    private ClassNode getNode(IExpressionId expressionId) {
+    private ClassNode getNode(int expressionId) {
         ClassNode classNode = null;
         for (int i = 0; i < m_currentNodeList.size(); i++) {
             if (m_currentNodeList.get(i).getExpressionId() == expressionId) {
@@ -768,8 +761,7 @@ public class MainDagPanel extends Cab2bPanel {
 
         Set<EntityInterface> entitySet = new HashSet<EntityInterface>();
         for (int i = 0; i < selectedNodes.size(); i++) {
-            IExpression expression = m_queryObject.getQuery().getConstraints().getExpression(
-                                                                                             selectedNodes.get(i).getExpressionId());
+            IExpression expression =getExpression(selectedNodes.get(i).getExpressionId());
             EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
             entitySet.add(entity);
         }
@@ -808,7 +800,7 @@ public class MainDagPanel extends Cab2bPanel {
             List<ClassNode> destinationNodes = getNodesWithEntity(selectedNodes, path.getTargetEntity());
             for (int i = 0; i < sourceNodes.size(); i++) {
                 for (int j = 0; j < destinationNodes.size(); j++) {
-                    LinkTwoNode(sourceNodes.get(i), destinationNodes.get(j), path, new ArrayList<IExpressionId>(),
+                    linkTwoNode(sourceNodes.get(i), destinationNodes.get(j), path, new ArrayList<Integer>(),
                                 true);
                 }
             }
@@ -826,9 +818,9 @@ public class MainDagPanel extends Cab2bPanel {
             ClassNode sourceNode = selectedNodes.get(i);
             List<IGraphPort> ports = sourceNode.getSourcePorts();
             for (int j = 0; j < ports.size(); j++) {
-                IExpressionId id = sourceNode.getLinkForSourcePort(ports.get(j)).getDestinationExpressionId();
+                int id = sourceNode.getLinkForSourcePort(ports.get(j)).getDestinationExpressionId();
                 for (int k = 0; k < selectedNodes.size(); k++) {
-                    if (id.equals(selectedNodes.get(k).getExpressionId())) {
+                    if (id == selectedNodes.get(k).getExpressionId()) {
                         return false;
                     }
                 }
@@ -848,8 +840,7 @@ public class MainDagPanel extends Cab2bPanel {
 
         for (int i = 0; i < classNodes.size(); i++) {
             ClassNode node = classNodes.get(i);
-            IExpression expression = m_queryObject.getQuery().getConstraints().getExpression(
-                                                                                             node.getExpressionId());
+            IExpression expression =getExpression(node.getExpressionId());
             EntityInterface currentEntity = expression.getQueryEntity().getDynamicExtensionsEntity();
             if (true == entity.equals(currentEntity)) {
                 entityNodes.add(node);
@@ -883,8 +874,8 @@ public class MainDagPanel extends Cab2bPanel {
         return requiredCurratedPath;
     }
 
-    public ClassNodeType getNodeType(IExpressionId expressionId) {
-        Expression expression = (Expression) m_queryObject.getQuery().getConstraints().getExpression(expressionId);
+    public ClassNodeType getNodeType(int expressionId) {
+        IExpression expression = getExpression(expressionId);
         if (expression.containsRule()) {
             if (expression.isInView()) {
                 return ClassNodeType.ConstraintViewNode;
@@ -896,16 +887,16 @@ public class MainDagPanel extends Cab2bPanel {
         }
     }
 
-    public IExpression getExpression(IExpressionId expressionId) {
+    public IExpression getExpression(int expressionId) {
         return m_queryObject.getQuery().getConstraints().getExpression(expressionId);
     }
 
-    public void addExpressionToView(IExpressionId expressionId) {
+    public void addExpressionToView(int expressionId) {
         Expression expression = (Expression) m_queryObject.getQuery().getConstraints().getExpression(expressionId);
         expression.setInView(true);
     }
 
-    public void removeExpressionFromView(IExpressionId expressionId) {
+    public void removeExpressionFromView(int expressionId) {
         Expression expression = (Expression) m_queryObject.getQuery().getConstraints().getExpression(expressionId);
         expression.setInView(false);
     }

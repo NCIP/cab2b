@@ -14,7 +14,6 @@ import edu.wustl.cab2b.client.ui.util.ClientConstants;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 
@@ -171,7 +170,7 @@ public class ClassNode extends GenericNode {
     /**
      * @return The expression id associted with the instance.
      */
-    public IExpressionId getExpressionId() {
+    public int getExpressionId() {
         return expression.getExpressionId();
     }
 

@@ -2,7 +2,6 @@ package edu.wustl.cab2b.server.queryengine.querybuilders;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +26,6 @@ import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IConnector;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IJoinGraph;
 import edu.wustl.common.querysuite.queryobject.IQuery;
@@ -42,7 +40,7 @@ public class CategoryPreprocessor {
 
     private CategoryPreprocessorResult categoryPreprocessorResult;
 
-    private List<IExpressionId> catExprIds = new ArrayList<IExpressionId>();
+    private List<IExpression> catExprs = new ArrayList<IExpression>();
 
     /**
      * The query object is modified appropriately.
@@ -56,44 +54,39 @@ public class CategoryPreprocessor {
     }
 
     private void clear() {
-        this.catExprIds.clear();
+        this.catExprs.clear();
     }
 
     private void processCategories() {
-        Enumeration<IExpressionId> exprIds = getConstraints().getExpressionIds();
 
-        while (exprIds.hasMoreElements()) {
-            IExpressionId exprId = exprIds.nextElement();
-            IExpression expr = getConstraints().getExpression(exprId);
-
+        for (IExpression expr : getConstraints()) {
             if (!Utility.isCategory(expr.getQueryEntity().getDynamicExtensionsEntity())) {
                 continue;
             }
             processCategoryExpression(expr);
-            this.catExprIds.add(exprId);
+            this.catExprs.add(expr);
         }
         removeCategoryExpressions();
         // check there is a single root.
         try {
-            getConstraints().getRootExpressionId();
+            getConstraints().getRootExpression();
         } catch (MultipleRootsException e) {
             throw new RuntimeException("Problem in code...", e);
         }
     }
 
     private void removeCategoryExpressions() {
-        for (IExpressionId expressionId : this.catExprIds) {
+        for (IExpression expression : this.catExprs) {
             // by this time, none of the cat expressions should have any
             // parents...
             // assert getJoinGraph().getParentList(expressionId).isEmpty();
-            getConstraints().removeExpressionWithId(expressionId);
+            getConstraints().removeExpression(expression);
         }
     }
 
     private void processCategoryExpression(IExpression expr) {
-        IExpressionId exprId = expr.getExpressionId();
-        List<IExpressionId> parentExprIds = getJoinGraph().getParentList(exprId);
-        if (parentExprIds.isEmpty()) {
+        List<IExpression> parentExprs = getJoinGraph().getParentList(expr);
+        if (parentExprs.isEmpty()) {
             // implies that this is the root expr.
 
             // transformCategoryExpression(expr, this.masterEntryPoint);
@@ -102,25 +95,24 @@ public class CategoryPreprocessor {
             Category category = getCategoryFromEntity(catEntity);
             transformCategoryExpression(expr, category.getRootClass().getCategorialClassEntity());
         } else {
-            for (IExpressionId parentExprId : parentExprIds) {
-                if (this.catExprIds.contains(parentExprId)) {
+            for (IExpression parentExpr : parentExprs) {
+                if (this.catExprs.contains(parentExpr)) {
                     // this parent will be removed in the future; so don't heed
                     // it.
                     continue;
                 }
-                IExpression parentExpr = getConstraints().getExpression(parentExprId);
-                IAssociation association = getJoinGraph().getAssociation(parentExprId, exprId);
+                IAssociation association = getJoinGraph().getAssociation(parentExpr, expr);
                 IExpression transformedExpr = transformCategoryExpression(expr, association.getTargetEntity());
 
-                int index = parentExpr.indexOfOperand(exprId);
-                parentExpr.setOperand(index, transformedExpr.getExpressionId());
+                int index = parentExpr.indexOfOperand(expr);
+                parentExpr.setOperand(index, transformedExpr);
                 try {
-                    getJoinGraph().putAssociation(parentExprId, transformedExpr.getExpressionId(), association);
+                    getJoinGraph().putAssociation(parentExpr, transformedExpr, association);
                 } catch (CyclicException e) {
                     // this should not occur...
                     throw new RuntimeException("Problem in code... might be due to invalid input.", e);
                 }
-                getJoinGraph().removeAssociation(parentExprId, exprId);
+                getJoinGraph().removeAssociation(parentExpr, expr);
             }
         }
     }
@@ -292,13 +284,12 @@ public class CategoryPreprocessor {
             int initialRootExprSize = rootExpr.numberOfOperands();
             IExpressionOperand operand = catExpr.getOperand(i);
 
-            if (operand instanceof IExpressionId) {
+            if (operand instanceof IExpression) {
 
                 // find path to exit point
-                IExpressionId externalExprId = (IExpressionId) operand;
+                IExpression externalExpr = (IExpression) operand;
 
-                IAssociation exitAssociation = getJoinGraph().getAssociation(catExpr.getExpressionId(),
-                                                                             externalExprId);
+                IAssociation exitAssociation = getJoinGraph().getAssociation(catExpr, externalExpr);
                 EntityInterface exitPoint = exitAssociation.getSourceEntity();
 
                 List<CategorialClass> catClassesPath = findCategorialClassesPathFromRoot(rootCatClass, exitPoint);
@@ -311,7 +302,7 @@ public class CategoryPreprocessor {
                     TreeNode<IExpression> newExprNode = createExpressionsForAssociations(
                                                                                          lastExpr,
                                                                                          associations,
-                                                                                         new HashSet<IExpressionId>(),
+                                                                                         new HashSet<IExpression>(),
                                                                                          catExpr.isInView(),
                                                                                          lastExprNode);
                     IExpression newExpr = newExprNode.getValue();
@@ -321,7 +312,6 @@ public class CategoryPreprocessor {
                     lastExprNode = newExprNode;
                 }
                 // set external expr as subexpr for last expression...
-                IExpression externalExpr = getConstraints().getExpression(externalExprId);
                 addSubExpr(lastExpr, externalExpr, exitAssociation);
 
             } else {
@@ -341,7 +331,7 @@ public class CategoryPreprocessor {
                 Set<CategorialClass> currCatClasses = new HashSet<CategorialClass>();
                 currCatClasses.addAll(rootCatClass.getChildren());
 
-                Set<IExpressionId> possiblyRedundantExprIds = new HashSet<IExpressionId>();
+                Set<IExpression> possiblyRedundantExprs = new HashSet<IExpression>();
                 // BFS starts from one level below the root...
                 while (!currCatClasses.isEmpty()) {
                     Set<CategorialClass> nextCatClasses = new HashSet<CategorialClass>();
@@ -352,7 +342,7 @@ public class CategoryPreprocessor {
                         TreeNode<IExpression> newExprNode = createExpressionsForAssociations(
                                                                                              exprForCatClass.get(parentCatClass),
                                                                                              categorialClass.getPathFromParent().getIntermediateAssociations(),
-                                                                                             possiblyRedundantExprIds,
+                                                                                             possiblyRedundantExprs,
                                                                                              catExpr.isInView(),
                                                                                              treeNodeForCatClass.get(parentCatClass));
 
@@ -364,8 +354,8 @@ public class CategoryPreprocessor {
                     }
                     currCatClasses = nextCatClasses;
                 }
-                for (IExpressionId possiblyRedundantExprId : possiblyRedundantExprIds) {
-                    processRedundantExprs(possiblyRedundantExprId, possiblyRedundantExprIds);
+                for (IExpression possiblyRedundantExpr : possiblyRedundantExprs) {
+                    processRedundantExprs(possiblyRedundantExpr, possiblyRedundantExprs);
                 }
             }
             if (i < catExpr.numberOfOperands() - 1) {
@@ -399,25 +389,23 @@ public class CategoryPreprocessor {
         return rootExpr;
     }
 
-    private void processRedundantExprs(IExpressionId possiblyRedundantExprId,
-                                       Set<IExpressionId> possiblyRedundantExprIds) {
-        IExpression possiblyRedundantExpr = getConstraints().getExpression(possiblyRedundantExprId);
+    private void processRedundantExprs(IExpression possiblyRedundantExpr,
+                                       Set<IExpression> possiblyRedundantExprs) {
         if (isRedundant(possiblyRedundantExpr)) {
             // the expr was already found to be redundant.
             return;
         }
 
-        for (IExpressionId possiblyRedundantChildExprId : getJoinGraph().getChildrenList(possiblyRedundantExprId)) {
-            processRedundantExprs(possiblyRedundantChildExprId, possiblyRedundantExprIds);
+        for (IExpression possiblyRedundantChildExprId : getJoinGraph().getChildrenList(possiblyRedundantExpr)) {
+            processRedundantExprs(possiblyRedundantChildExprId, possiblyRedundantExprs);
         }
-        if (possiblyRedundantExprIds.contains(possiblyRedundantExprId)) {
-            List<IExpressionId> childExprIds = getJoinGraph().getChildrenList(
-                                                                              possiblyRedundantExpr.getExpressionId());
-            if (possiblyRedundantExpr.numberOfOperands() == childExprIds.size()) {
+        if (possiblyRedundantExprs.contains(possiblyRedundantExpr)) {
+            List<IExpression> childExprs = getJoinGraph().getChildrenList(
+                                                                              possiblyRedundantExpr);
+            if (possiblyRedundantExpr.numberOfOperands() == childExprs.size()) {
                 // this means that possiblyRedundantExpr has no rules
                 boolean redundant = true;
-                for (IExpressionId childExprId : childExprIds) {
-                    IExpression childExpr = getConstraints().getExpression(childExprId);
+                for (IExpression childExpr : childExprs) {
                     if (!isRedundant(childExpr)) {
                         redundant = false;
                         break;
@@ -453,7 +441,7 @@ public class CategoryPreprocessor {
      */
     private TreeNode<IExpression> createExpressionsForAssociations(IExpression parentExpr,
                                                                    List<IAssociation> associationsToLastChild,
-                                                                   Set<IExpressionId> expressionsAdded,
+                                                                   Set<IExpression> expressionsAdded,
                                                                    boolean inView,
                                                                    TreeNode<IExpression> parentExprNode) {
         IExpression lastChildExpr = parentExpr;
@@ -463,7 +451,7 @@ public class CategoryPreprocessor {
             parentExprNode = lastChildNode;
             lastChildExpr = createExpression(association.getTargetEntity(), inView);
             lastChildNode = new TreeNode<IExpression>(lastChildExpr);
-            expressionsAdded.add(lastChildExpr.getExpressionId());
+            expressionsAdded.add(lastChildExpr);
 
             addSubExpr(parentExpr, lastChildExpr, association);
             parentExprNode.addChild(lastChildNode);
@@ -504,9 +492,9 @@ public class CategoryPreprocessor {
     }
 
     private void addSubExpr(IExpression parentExpr, IExpression childExpr, IAssociation association) {
-        addOperandToExpr(parentExpr, childExpr.getExpressionId());
+        addOperandToExpr(parentExpr, childExpr);
         try {
-            getJoinGraph().putAssociation(parentExpr.getExpressionId(), childExpr.getExpressionId(), association);
+            getJoinGraph().putAssociation(parentExpr, childExpr, association);
         } catch (CyclicException e) {
             // this should not occur...
             throw new RuntimeException("Problem in code...", e);

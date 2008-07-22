@@ -1,11 +1,11 @@
-/**
- * 
- */
 package edu.wustl.cab2b.client.ui.parameterizedQuery;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
@@ -13,11 +13,10 @@ import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
-import edu.wustl.common.querysuite.queryobject.util.QueryUtility;
+import edu.wustl.common.querysuite.utils.QueryUtility;
 
 /**
  * 
@@ -78,12 +77,21 @@ public class ParameterizedQueryDataModel {
         return query.getConstraints().getQueryEntities();
     }
 
-    public Map<IExpressionId, Collection<ICondition>> getConditions() {
-        return QueryUtility.getAllSelectedConditions(query);
+    public Map<Integer, Collection<ICondition>> getConditions() {
+        return convert(QueryUtility.getAllSelectedConditions(query));
     }
 
-    public Map<IExpressionId, Collection<AttributeInterface>> getAllAttributes() {
-        return QueryUtility.getAllAttributes(query);
+    public Map<Integer, Collection<AttributeInterface>> getAllAttributes() {
+        return convert(QueryUtility.getAllAttributes(query));
+    }
+
+    private <T> Map<Integer, T> convert(Map<IExpression, T> map) {
+        Map<Integer, T> m = new HashMap<Integer, T>(map.size());
+        Set<Entry<IExpression, T>> entrySet = map.entrySet();
+        for (Entry<IExpression, T> entry : entrySet) {
+            m.put(entry.getKey().getExpressionId(), entry.getValue());
+        }
+        return m;
     }
 
     /**
@@ -92,7 +100,7 @@ public class ParameterizedQueryDataModel {
      * @param expressionID
      * @param newCondition
      */
-    public void removeCondition(IExpressionId expressionID, ICondition newCondition) {
+    public void removeCondition(Integer expressionID, ICondition newCondition) {
         if (query == null || expressionID == null || newCondition == null)
             return;
 
@@ -121,7 +129,7 @@ public class ParameterizedQueryDataModel {
      * @param expressionID
      * @param newCondition
      */
-    public void addCondition(IExpressionId expressionID, ICondition newCondition) {
+    public void addCondition(Integer expressionID, ICondition newCondition) {
         if (query == null || expressionID == null || newCondition == null)
             return;
 

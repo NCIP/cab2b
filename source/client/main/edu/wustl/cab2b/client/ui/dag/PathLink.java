@@ -3,15 +3,15 @@ package edu.wustl.cab2b.client.ui.dag;
 import java.util.List;
 
 import org.netbeans.graph.api.model.builtin.GraphLink;
+
 import edu.wustl.common.querysuite.metadata.path.IPath;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 
 public class PathLink extends GraphLink 
 {
 	private IPath m_path;
-	private List<IExpressionId> m_associationList;
-	private IExpressionId destExpressionId;
-	private IExpressionId sourceExpressionId;
+	private List<Integer> m_associationList;
+	private int destExpressionId;
+	private int sourceExpressionId;
 	public PathLink()
 	{
 		super();
@@ -27,36 +27,36 @@ public class PathLink extends GraphLink
 		return m_path;
 	}
 	
-	public List<IExpressionId> getAssociationExpressions()
+	public List<Integer> getAssociationExpressions()
 	{
 		return m_associationList;
 	}
 	
-	public void setAssociationExpressions(List<IExpressionId> expressions)
+	public void setAssociationExpressions(List<Integer> expressions)
 	{
 		m_associationList = expressions;
 	}
 	
-	public void setDestinationExpressionId(IExpressionId expressionId)
+	public void setDestinationExpressionId(int expressionId)
 	{
 		destExpressionId = expressionId;
 	}
 	
-	public IExpressionId getDestinationExpressionId()
+	public int getDestinationExpressionId()
 	{
 		return destExpressionId;
 	}
 	
-	public void setSourceExpressionId(IExpressionId expressionId)
+	public void setSourceExpressionId(int expressionId)
 	{
 		sourceExpressionId = expressionId;
 	}
 	
-	public IExpressionId getSourceExpressionId()
+	public int getSourceExpressionId()
 	{
 		return sourceExpressionId;
 	}
-	public IExpressionId getLogicalConnectorExpressionId()
+	public int getLogicalConnectorExpressionId()
 	{
 		if(m_associationList.size() > 0)
 		{

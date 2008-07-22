@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.wustl.cab2b.client.ui.parameterizedQuery;
 
 import java.awt.BorderLayout;
@@ -25,7 +22,6 @@ import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 
 /**
  * Panel to preview conditions in Parameterized query 
@@ -95,9 +91,9 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
         }
     }
 
-    protected Dimension getMaxLabelDimension(Map<IExpressionId, Collection<ICondition>> conditionMap) {
+    protected Dimension getMaxLabelDimension(Map<Integer, Collection<ICondition>> conditionMap) {
         List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
-        for (IExpressionId key : conditionMap.keySet()) {
+        for (Integer key : conditionMap.keySet()) {
             for (ICondition condition : conditionMap.get(key)) {
                 attributeList.add(condition.getAttribute());
             }
@@ -119,9 +115,9 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
      * @return
      */
     protected void setConditionValues(AbstractTypePanel componentPanel,
-                                      Map<IExpressionId, Collection<ICondition>> conditionMap) {
+                                      Map<Integer, Collection<ICondition>> conditionMap) {
         AttributeInterface attribute = componentPanel.getAttributeEntity();
-        for (IExpressionId key : conditionMap.keySet()) {
+        for (Integer key : conditionMap.keySet()) {
             for (ICondition condition : conditionMap.get(key)) {
                 if (condition.getAttribute() == attribute) {
                     componentPanel.setValues(new ArrayList<String>(condition.getValues()));

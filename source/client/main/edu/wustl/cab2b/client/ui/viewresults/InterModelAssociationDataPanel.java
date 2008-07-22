@@ -20,7 +20,6 @@ import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 
 public class InterModelAssociationDataPanel extends AbstractAssociatedDataPanel {
@@ -88,10 +87,10 @@ public class InterModelAssociationDataPanel extends AbstractAssociatedDataPanel 
         List<List<String>> values = new ArrayList<List<String>>();
         values.add(Collections.singletonList(record.getRecordId().getId().toString()));
 
-        IExpressionId targetExpressionID = queryObject.addRule(attributes, operators, values, idAttribute.getEntity());
+        int targetExpressionID = queryObject.addRule(attributes, operators, values, idAttribute.getEntity());
 
         /* Get the source expression id. Needed to add the path.*/
-        IExpressionId sourceExpressionID = queryObject.createDummyExpression(association.getTargetEntity());
+        int sourceExpressionID = queryObject.createDummyExpression(association.getTargetEntity());
         IInterModelAssociation interModelAssociation = (IInterModelAssociation) association.reverse();
         try {
             queryObject.addAssociation(sourceExpressionID, targetExpressionID, interModelAssociation);

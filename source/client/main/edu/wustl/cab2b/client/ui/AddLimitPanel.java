@@ -48,7 +48,6 @@ import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
@@ -213,7 +212,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * This method takes the newly added expression and renders the node accordingly
      * @param expressionId
      */
-    public void refreshBottomCenterPanel(IExpressionId expressionId) {
+    public void refreshBottomCenterPanel(int expressionId) {
         // Here code to handle adding new limit will appear
         try {
             mainDagPanel.updateGraph(expressionId);

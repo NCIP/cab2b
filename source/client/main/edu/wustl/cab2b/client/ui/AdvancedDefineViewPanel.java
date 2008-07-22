@@ -30,7 +30,6 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.IExpression;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 
 /**
@@ -155,11 +154,11 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
     }
 
     private Vector<String> getAllEntityNamesInWhereClause(IClientQueryBuilderInterface queryBuilder) {
-        Set<IExpressionId> expressionIdEnum = queryBuilder.getVisibleExressionIds();
+        Set<Integer> expressionIdEnum = queryBuilder.getVisibleExressionIds();
         IQuery query = queryBuilder.getQuery();
 
         Set<String> returnerSet = new HashSet<String>();
-        for (IExpressionId expressionId : expressionIdEnum) {
+        for (Integer expressionId : expressionIdEnum) {
             IExpression expression = query.getConstraints().getExpression(expressionId);
             EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
             allEntities.add(entity);
@@ -167,15 +166,15 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
             String entityName = Utility.getDisplayName(entity);
             returnerSet.add(entityName);
         }
-
-        IExpressionId rootExprId = null;
+        IExpression rootExpr = null;
+        
         try {
-            rootExprId = query.getConstraints().getRootExpressionId();
+            rootExpr = query.getConstraints().getRootExpression(); 
         } catch (MultipleRootsException e) {
             // can't occur
         }
 
-        IExpression rootExpr = query.getConstraints().getExpression(rootExprId);
+        
         String rootEntityName = Utility.getDisplayName(rootExpr.getQueryEntity().getDynamicExtensionsEntity());
         Vector<String> returner = new Vector<String>();
         returner.add(rootEntityName);

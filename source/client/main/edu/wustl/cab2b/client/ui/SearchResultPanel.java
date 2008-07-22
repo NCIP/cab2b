@@ -59,7 +59,6 @@ import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IRule;
 
 /**
@@ -406,15 +405,8 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
                 mainSearchPanel.getCenterPanel().getAddLimitPanel().setQueryObject(query);
             }
 
-            IExpressionId expressionId = mainSearchPanel.getQueryObject().addRule(attributes, conditions, values, attributes.get(0).getEntity());
-            if (expressionId == null) {
-                JOptionPane.showMessageDialog(
-                                              mainSearchPanel.getParent(),
-                                              "This rule cannot be added as it is not associated with the added rules.",
-                                              "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                mainSearchPanel.getCenterPanel().getAddLimitPanel().refreshBottomCenterPanel(expressionId);
-            }
+            int expressionId = mainSearchPanel.getQueryObject().addRule(attributes, conditions, values, attributes.get(0).getEntity());
+            mainSearchPanel.getCenterPanel().getAddLimitPanel().refreshBottomCenterPanel(expressionId);
         }
     }
 

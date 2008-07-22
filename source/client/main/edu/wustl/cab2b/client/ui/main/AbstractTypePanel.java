@@ -26,7 +26,6 @@ import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryShowResult
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IParameterizedCondition;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 import edu.wustl.common.querysuite.queryobject.impl.Condition;
@@ -86,7 +85,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
      */
     protected Cab2bTextField attributeDisplayNameTextField;
 
-    protected IExpressionId expressionId;
+    protected int expressionId;
 
     protected String displayName = null;
 
@@ -284,7 +283,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     /**
      * @return the expressionId
      */
-    public IExpressionId getExpressionId() {
+    public int getExpressionId() {
         return expressionId;
     }
 
@@ -292,7 +291,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
      * @param expressionId
      *            the expressionId to set
      */
-    public void setExpressionId(IExpressionId expressionId) {
+    public void setExpressionId(int expressionId) {
         this.expressionId = expressionId;
     }
 

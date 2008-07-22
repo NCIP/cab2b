@@ -21,7 +21,6 @@ import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 
 /**
@@ -98,10 +97,10 @@ public class IncomingAssociationDataPanel extends AbstractAssociatedDataPanel {
         List<List<String>> values = new ArrayList<List<String>>();
         values.add(Collections.singletonList(dataRow.getId().toString()));
 
-        IExpressionId targetExpressionID = queryObject.addRule(attributes, operators, values, idAttribute.getEntity());
+        int targetExpressionID = queryObject.addRule(attributes, operators, values, idAttribute.getEntity());
 
         /* Get the source expression id. Needed to add the path.*/
-        IExpressionId sourceExpressionID = queryObject.createDummyExpression(association.getSourceEntity());
+        int sourceExpressionID = queryObject.createDummyExpression(association.getSourceEntity());
 
         try {
             queryObject.addAssociation(sourceExpressionID, targetExpressionID, association);

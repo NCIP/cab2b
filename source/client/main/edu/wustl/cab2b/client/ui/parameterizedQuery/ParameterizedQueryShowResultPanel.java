@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.wustl.cab2b.client.ui.parameterizedQuery;
 
 import java.awt.BorderLayout;
@@ -32,7 +29,6 @@ import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
 
 /**
@@ -96,7 +92,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
      * 
      * @param conditionMap
      */
-    private void createShowResultPreviewPanel(Map<IExpressionId, Collection<ICondition>> conditionMap) {
+    private void createShowResultPreviewPanel(Map<Integer, Collection<ICondition>> conditionMap) {
         // The following code is executing for StackPanel QueryLink Click
         AbstractTypePanel componentPanel = null;
         ParseXMLFile parseFile = null;
@@ -109,7 +105,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
 
         try {
             getMaxLabelDimension(conditionMap);
-            for (IExpressionId key : conditionMap.keySet()) {
+            for (Integer key : conditionMap.keySet()) {
                 for (ICondition condition : conditionMap.get(key)) {
                     componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(parseFile,
                                                                                         condition.getAttribute(),

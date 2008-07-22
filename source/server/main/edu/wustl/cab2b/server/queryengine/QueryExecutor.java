@@ -283,9 +283,7 @@ public class QueryExecutor {
             IExpression parentExpr = parentExprNode.getValue();
             for (TreeNode<IExpression> childExprNode : parentExprNode.getChildren()) {
                 IExpression childExpr = childExprNode.getValue();
-                IAssociation association = getQuery().getConstraints().getJoinGraph().getAssociation(
-                                                                                                     parentExpr.getExpressionId(),
-                                                                                                     childExpr.getExpressionId());
+                IAssociation association = getQuery().getConstraints().getJoinGraph().getAssociation(parentExpr,childExpr);
 
                 CategorialClass catClassForChildExpr = QueryExecutor.this.categoryPreprocessorResult.getCatClassForExpr().get(
                                                                                                                               childExpr);

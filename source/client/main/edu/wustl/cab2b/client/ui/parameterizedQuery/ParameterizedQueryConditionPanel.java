@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.wustl.cab2b.client.ui.parameterizedQuery;
 
 import java.awt.Color;
@@ -33,7 +30,6 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.util.AttributeInterfaceComparator;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 
 /**
  * Class to generate Parameterized Query Condition GUI
@@ -82,9 +78,9 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
      * @return Dimension maxLabelDimension
      */
     private Dimension getMaximumDimensionForAttribute() {
-        Map<IExpressionId, Collection<AttributeInterface>> allAttributes = queryDataModel.getAllAttributes();
+        Map<Integer, Collection<AttributeInterface>> allAttributes = queryDataModel.getAllAttributes();
         List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
-        for (IExpressionId exprId : allAttributes.keySet()) {
+        for (Integer exprId : allAttributes.keySet()) {
             Collection<AttributeInterface> attributeCollection = allAttributes.get(exprId);
             attributeList.addAll(attributeCollection);
         }
@@ -141,13 +137,13 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
             }
         }
 
-        Map<IExpressionId, Collection<AttributeInterface>> allAttributes = queryDataModel.getAllAttributes();
+        Map<Integer, Collection<AttributeInterface>> allAttributes = queryDataModel.getAllAttributes();
 
         try {
             ParseXMLFile parseFile = ParseXMLFile.getInstance();
             AbstractTypePanel componentPanel = null;
             List<AttributeInterface> allConditionAttributeList = getAllConditionAttribute(allAttributePanel);
-            for (IExpressionId exprId : allAttributes.keySet()) {
+            for (Integer exprId : allAttributes.keySet()) {
                 for (AttributeInterface attribute : allAttributes.get(exprId)) {
                     if (!allConditionAttributeList.contains(attribute)) {
                         componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(parseFile, attribute,
@@ -155,7 +151,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
                         componentPanel.createParametrizedPanel(attribute);
                         // setConditionValues(componentPanel);
                         componentPanel.setExpressionId(exprId);
-                        componentPanel.setAttributeDisplayName(exprId.getInt() + "."
+                        componentPanel.setAttributeDisplayName(exprId.intValue() + "."
                                 + componentPanel.getAttributeDisplayName());
                         // check/update that attribute values with show only
                         // condition panels
@@ -180,8 +176,8 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
     private void setConditionValues(AbstractTypePanel componentPanel) {
 
         AttributeInterface attribute = componentPanel.getAttributeEntity();
-        Map<IExpressionId, Collection<ICondition>> conditionMap = queryDataModel.getConditions();
-        for (IExpressionId key : conditionMap.keySet()) {
+        Map<Integer, Collection<ICondition>> conditionMap = queryDataModel.getConditions();
+        for (Integer key : conditionMap.keySet()) {
             for (ICondition condition : conditionMap.get(key)) {
                 if (condition.getAttribute() == attribute) {
                     componentPanel.setValues(new ArrayList<String>(condition.getValues()));
@@ -221,9 +217,9 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
             }
         }
 
-        Map<IExpressionId, Collection<ICondition>> conditionMap = queryDataModel.getConditions();
+        Map<Integer, Collection<ICondition>> conditionMap = queryDataModel.getConditions();
         List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
-        for (IExpressionId key : conditionMap.keySet()) {
+        for (Integer key : conditionMap.keySet()) {
             for (ICondition condition : conditionMap.get(key)) {
                 attributeList.add(condition.getAttribute());
             }
@@ -232,7 +228,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
             ParseXMLFile parseFile = ParseXMLFile.getInstance();
             AbstractTypePanel componentPanel = null;
             List<AttributeInterface> allConditionAttributeList = getAllConditionAttribute(onlyConditionAttributePanel);
-            for (IExpressionId key : conditionMap.keySet()) {
+            for (Integer key : conditionMap.keySet()) {
                 for (ICondition condition : conditionMap.get(key)) {
                     if (!allConditionAttributeList.contains(condition.getAttribute())) {
                         componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
@@ -241,7 +237,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
                                                                                             maxLabelDimension);
                         componentPanel.createParametrizedPanel(condition);
                         setConditionValues(componentPanel);
-                        componentPanel.setAttributeDisplayName(key.getInt() + "."
+                        componentPanel.setAttributeDisplayName(key.intValue() + "."
                                 + componentPanel.getAttributeDisplayName());
                         onlyConditionAttributePanel.add("br ", componentPanel);
                     }

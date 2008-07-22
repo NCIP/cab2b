@@ -3,7 +3,6 @@ package edu.wustl.cab2b.client.ui.viewresults;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -19,13 +18,11 @@ import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
-import edu.wustl.cab2b.common.queryengine.result.Record;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.util.logger.Logger;
 
 public class QueryExecutionCallable implements Callable<QueryResultObject> {
@@ -78,11 +75,11 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
         List<List<String>> values = new ArrayList<List<String>>();
         values.add(Collections.singletonList(m_sourceEntity.getId()));
         
-        IExpressionId sourceExpressionID = queryObject.addRule(attributes, operators, values, idAttribute.getEntity());
+        int sourceExpressionID = queryObject.addRule(attributes, operators, values, idAttribute.getEntity());
 
         /* Get the source expression id. Needed to add the path.*/
         final EntityInterface targetEntity = m_destinationEntity.getEntity();
-        IExpressionId targetExpressionID = queryObject.createDummyExpression(targetEntity);
+        int targetExpressionID = queryObject.createDummyExpression(targetEntity);
 
         final IAssociation association = m_destinationEntity.getAssociation();
         if (association instanceof IIntraModelAssociation) {

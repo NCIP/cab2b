@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -47,7 +49,6 @@ import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IConnector;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IParameterizedCondition;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
@@ -55,8 +56,6 @@ import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.impl.Condition;
 import edu.wustl.common.querysuite.queryobject.impl.Constraints;
-import edu.wustl.common.querysuite.queryobject.impl.Expression;
-import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
 import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
 import edu.wustl.common.querysuite.queryobject.impl.QueryEntity;
 import edu.wustl.common.querysuite.queryobject.impl.Rule;
@@ -122,9 +121,10 @@ public class CommonUtils {
         IConstraints newConstraints = new Constraints();
         IConstraints constraints = query.getConstraints();
 
-        Enumeration<IExpressionId> expressionIds = constraints.getExpressionIds();
-        while (expressionIds.hasMoreElements()) {
-            Expression oldExpression = (Expression) constraints.getExpression(expressionIds.nextElement());
+        //Enumeration<IExpressionId> expressionIds = constraints.getExpressionIds();
+        Map<IExpression, IExpression> mapOldToNew = new HashMap<IExpression, IExpression>();
+        for (IExpression oldExpression : constraints) {
+            //IExpression oldExpression = (Expression) constraints.getExpression(expressionIds.nextElement());
 
             //New Expression
             IQueryEntity newQueryEntity = new QueryEntity(
@@ -132,11 +132,15 @@ public class CommonUtils {
             IExpression newExpression = newConstraints.addExpression(newQueryEntity);
             newExpression.setInView(oldExpression.isInView());
             newExpression.setVisible(oldExpression.isVisible());
-
-            IExpressionOperand newOperand = getNewExpressionOperand(oldExpression, 0);
+            mapOldToNew.put(oldExpression, newExpression);
+        }
+        
+        for (IExpression oldExpression : constraints) {
+            IExpressionOperand newOperand = getNewExpressionOperand(oldExpression, 0, mapOldToNew);
+            IExpression newExpression = mapOldToNew.get(oldExpression);
             newExpression.addOperand(newOperand);
             for (int index = 1; index < oldExpression.numberOfOperands(); index++) {
-                newOperand = getNewExpressionOperand(oldExpression, index);
+                newOperand = getNewExpressionOperand(oldExpression, index, mapOldToNew);
 
                 //New LogicalConnector
                 IConnector<LogicalOperator> oldLogicalConnector = (IConnector<LogicalOperator>) oldExpression.getConnector(
@@ -151,7 +155,7 @@ public class CommonUtils {
         return newCab2bQuery;
     }
 
-    private static IExpressionOperand getNewExpressionOperand(IExpression expression, int index) {
+    private static IExpressionOperand getNewExpressionOperand(IExpression expression, int index, Map<IExpression, IExpression> mapOldToNew) {
         IExpressionOperand operand = expression.getOperand(index);
         operand.setId(null);
 
@@ -183,11 +187,8 @@ public class CommonUtils {
             }
 
             newOperand = newRule;
-        } else if (operand instanceof IExpressionId) {
-            ExpressionId expressionId = (ExpressionId) operand;
-            ExpressionId newExpressionId = new ExpressionId(expressionId.getInt());
-
-            newOperand = newExpressionId;
+        } else if (operand instanceof IExpression) {
+            newOperand = mapOldToNew.get(operand);
         }
 
         return newOperand;

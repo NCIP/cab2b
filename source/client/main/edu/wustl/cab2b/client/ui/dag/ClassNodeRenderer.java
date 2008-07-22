@@ -21,8 +21,6 @@ import org.netbeans.graph.api.model.ability.IDisplayable;
 import org.netbeans.graph.api.model.ability.INameEditable;
 import org.openide.util.NbBundle;
 
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
-
 public class ClassNodeRenderer implements IGraphNodeRenderer {
     public static final Font font = Font.decode("Times-bold").deriveFont(10.0f); // NOI18N
 
@@ -654,8 +652,8 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
         for (int i = 1; i < m_assRectangles.length; i++) {
             currY += m_assRectangles[i - 1].height;
 
-            IExpressionId expId = classNode.getLinkForSourcePort(associationList.get(i - 1)).getDestinationExpressionId();
-            Rectangle assRect = fontMetrics.getStringBounds(String.valueOf(expId.getInt()), gr).getBounds();
+            int expId = classNode.getLinkForSourcePort(associationList.get(i - 1)).getDestinationExpressionId();
+            Rectangle assRect = fontMetrics.getStringBounds(String.valueOf(expId), gr).getBounds();
             assRect.width += 10;
             assRect.height += 4;
             assRect.translate(currX, currY);
@@ -664,7 +662,7 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
             gr.setColor(Color.BLACK);
             gr.drawRect(assRect.x, assRect.y, assRect.width, assRect.height);
             gr.setColor(colorFont);
-            gr.drawString(String.valueOf(expId.getInt()), assRect.x + 5, assRect.y + 3 + ascent);
+            gr.drawString(String.valueOf(expId), assRect.x + 5, assRect.y + 3 + ascent);
             if (i < m_assRectangles.length - 1) {
                 drawCustomCombo(classNode.getLogicalOperator(associationList.get(i)), currX, currY, gr);
             }

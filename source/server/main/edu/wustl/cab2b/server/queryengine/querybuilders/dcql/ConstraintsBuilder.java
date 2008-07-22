@@ -26,12 +26,11 @@ import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.DataType;
 import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.IConnector;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IJoinGraph;
-import edu.wustl.common.querysuite.queryobject.IConnector;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
@@ -110,10 +109,10 @@ public class ConstraintsBuilder {
     }
 
     // BEGIN CONSTRAINING EACH EXPR BY PARENTS
-    private Set<IExpressionId> getCategoryOutputExpressionIds() {
+    private Set<Integer> getCategoryOutputExpressionIds() {
         Set<TreeNode<IExpression>> outputExpressions = getCategoryPreprocessorResult().getExprsSourcedFromCategories().get(
                                                                                                                            getQuery().getOutputEntity());
-        Set<IExpressionId> outputExpressionIds = new HashSet<IExpressionId>(outputExpressions.size());
+        Set<Integer> outputExpressionIds = new HashSet<Integer>(outputExpressions.size());
         for (TreeNode<IExpression> exprNode : outputExpressions) {
             outputExpressionIds.add(exprNode.getValue().getExpressionId());
         }
@@ -124,26 +123,34 @@ public class ConstraintsBuilder {
         return getQuery().getOutputEntity();
     }
 
+    private List<Integer> exprIdList(List<IExpression> exprList) {
+        List<Integer> res = new ArrayList<Integer>();
+        for(IExpression expr : exprList) {
+            res.add(expr.getExpressionId());
+        }
+        return res;
+    }
+    
     private void constrainByParentExpressions() {
         boolean isCategoryOutput = Utility.isCategory(getOutputEntity());
-        Set<IExpressionId> outputExprIds = null;
+        Set<Integer> outputExprIds = null;
         if (isCategoryOutput) {
             outputExprIds = getCategoryOutputExpressionIds();
         }
         // Set<IExpressionId> processedExpressions = new
         // HashSet<IExpressionId>();
-        Set<IExpressionId> currExprIds = new HashSet<IExpressionId>();
+        Set<Integer> currExprIds = new HashSet<Integer>();
         currExprIds.add(getRootExpr().getExpressionId());
 
         while (!currExprIds.isEmpty()) {
-            Set<IExpressionId> nextExprIds = new HashSet<IExpressionId>();
-            for (IExpressionId currExprId : currExprIds) {
+            Set<Integer> nextExprIds = new HashSet<Integer>();
+            for (Integer currExprId : currExprIds) {
                 // TODO why is this needed??
                 // if (processedExpressions.contains(currExprId)) {
                 // continue;
                 // }
                 IExpression currExpr = getExpression(currExprId);
-                List<IExpressionId> parentExprIds = getJoinGraph().getParentList(currExprId);
+                List<Integer> parentExprIds = exprIdList(getJoinGraph().getParentList(currExpr));
 
                 // assert processedExpressions.containsAll(parentExprIds);
                 constrainChildByParents(currExprId, parentExprIds);
@@ -152,7 +159,7 @@ public class ConstraintsBuilder {
                 boolean isOutputExpr = (isCategoryOutput && outputExprIds.contains(currExprId))
                         || currExpr.getQueryEntity().equals(getOutputEntity());
                 if (!isOutputExpr) {
-                    nextExprIds.addAll(getJoinGraph().getChildrenList(currExprId));
+                    nextExprIds.addAll(exprIdList(getJoinGraph().getChildrenList(currExpr)));
                 }
                 // processedExpressions.add(currExprId);
             }
@@ -162,16 +169,16 @@ public class ConstraintsBuilder {
         // processedExpressions.equals(getResult().getExpressionToConstraintMap().keySet());
     }
 
-    private void constrainChildByParents(IExpressionId childExprId, List<IExpressionId> parentExprIds) {
+    private void constrainChildByParents(int childExprId, List<Integer> parentExprIds) {
         IExpression childExpr = getExpression(childExprId);
         DcqlConstraint childConstraint = getResult().getConstraintForExpression(childExpr);
 
         Cab2bGroup group = new Cab2bGroup(LogicalOperator.And);
         group.addConstraint(childConstraint);
 
-        for (IExpressionId parentExprId : parentExprIds) {
+        for (Integer parentExprId : parentExprIds) {
             IExpression parentExpr = getExpression(parentExprId);
-            IAssociation association = getJoinGraph().getAssociation(parentExprId, childExprId);
+            IAssociation association = getJoinGraph().getAssociation(parentExpr, childExpr);
             if (!association.isBidirectional()) {
                 Logger.out.warn("Unidirectional association found " + association
                         + ". Results could be incorrect.");
@@ -189,8 +196,7 @@ public class ConstraintsBuilder {
 
     private IExpression findRootExpression() {
         try {
-            IExpressionId rootExpressionId = getConstraints().getRootExpressionId();
-            return getConstraints().getExpression(rootExpressionId);
+            return getConstraints().getRootExpression();
         } catch (MultipleRootsException e) {
             String msg = "Invalid query object submitted; it's got multiple roots...";
             Logger.out.error(msg);
@@ -199,7 +205,7 @@ public class ConstraintsBuilder {
 
     }
 
-    private boolean isExprRedundant(IExpressionId exprId) {
+    private boolean isExprRedundant(int exprId) {
         return getCategoryPreprocessorResult().getRedundantExprs().contains(getExpression(exprId));
     }
 
@@ -208,10 +214,10 @@ public class ConstraintsBuilder {
 
         for (int i = 0; i < expr.numberOfOperands(); i++) {
             IExpressionOperand operand = expr.getOperand(i);
-            if (operand instanceof IExpressionId) {
-                IExpressionId exprId = (IExpressionId) operand;
+            if (operand instanceof IExpression) {
+                IExpression childExpr = (IExpression) operand;
                 // if (!isExprRedundant(exprId)) {
-                dcqlConstraintsList.add(createDcqlConstraintForChildExpression(expr.getExpressionId(), exprId));
+                dcqlConstraintsList.add(createDcqlConstraintForChildExpression(expr.getExpressionId(), childExpr.getExpressionId()));
                 // }
             } else if(operand instanceof IRule){
                 dcqlConstraintsList.add(createDcqlConstraintForRule((IRule) operand));
@@ -244,8 +250,8 @@ public class ConstraintsBuilder {
         return conns;
     }
 
-    private DcqlConstraint createDcqlConstraintForChildExpression(IExpressionId parentExpressionId,
-                                                                  IExpressionId childExpressionId) {
+    private DcqlConstraint createDcqlConstraintForChildExpression(int parentExpressionId,
+                                                                  int childExpressionId) {
         IExpression childExpr = getConstraints().getExpression(childExpressionId);
         DcqlConstraint childExprDcqlConstraint;
 
@@ -259,7 +265,7 @@ public class ConstraintsBuilder {
         if (isExprRedundant(childExpressionId)) {
             dcqlConstraint = createAnyConstraint();
         } else {
-            IAssociation association = getJoinGraph().getAssociation(parentExpressionId, childExpressionId);
+            IAssociation association = getJoinGraph().getAssociation(getExpression(parentExpressionId), childExpr);
 
             AbstractAssociationConstraint associationConstraint = createAssociation(association);
             associationConstraint.addChildConstraint(childExprDcqlConstraint);
@@ -478,7 +484,7 @@ public class ConstraintsBuilder {
         return getConstraints().getJoinGraph();
     }
 
-    private IExpression getExpression(IExpressionId expressionId) {
+    private IExpression getExpression(int expressionId) {
         return getConstraints().getExpression(expressionId);
     }
 

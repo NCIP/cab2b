@@ -22,8 +22,6 @@ import org.netbeans.graph.api.model.builtin.GraphDocument;
 import org.netbeans.graph.api.model.builtin.GraphPort;
 
 import edu.wustl.cab2b.client.ui.util.ClientConstants;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
-import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
 
 public class ViewController extends DefaultViewController implements ActionListener {
     private JPopupMenu singleNodePopup;
@@ -124,7 +122,7 @@ public class ViewController extends DefaultViewController implements ActionListe
      */
     protected void deleteNode(IGraphNode node) {
         try {
-            IExpressionId expressionId = ((ClassNode) node.getLookup().lookup(ClassNode.class)).getExpressionId();
+            int expressionId = ((ClassNode) node.getLookup().lookup(ClassNode.class)).getExpressionId();
             ClassNodeType nodeType = m_mainPanel.getNodeType(expressionId);
             if (m_mainPanel.isDAGForView()) {
                 if (nodeType.equals(ClassNodeType.ConstraintViewNode)) {
@@ -280,7 +278,7 @@ public class ViewController extends DefaultViewController implements ActionListe
      * Method to select node for expressionId in DAG  
      * @param exprId
      */
-    public void selectNode(ExpressionId exprId) {
+    public void selectNode(int exprId) {
         GraphDocument graphDocument = m_mainPanel.getDocument();
         if (graphDocument != null) {
             GraphEvent event = graphDocument.getComponents();

@@ -34,7 +34,6 @@ import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.IQuery;
-import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
 
 /**
  * @author mahesh_iyer
@@ -283,7 +282,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                              * show Error
                              */
                             try {
-                                b2bquery.getConstraints().getRootExpressionId();
+                                b2bquery.getConstraints().getRootExpression();
                             } catch (MultipleRootsException e) {
                                 JOptionPane.showMessageDialog(
                                                               m_mainSearchPanel.getParent(),
@@ -426,7 +425,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         if (mainDagPanel.getVisibleNodeCount() == 0 && mainDagPanel.getExpressionCount() > 0) {
             mainDagPanel.updateGraph();
             addLimitPanel.editAddLimitUI(mainDagPanel.getFirstExpression());
-            mainDagPanel.selectNode((ExpressionId) mainDagPanel.getFirstExpression().getExpressionId());
+            mainDagPanel.selectNode(mainDagPanel.getFirstExpression().getExpressionId());
         }
     }
 

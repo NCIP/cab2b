@@ -21,7 +21,6 @@ import edu.wustl.cab2b.client.ui.main.SwingUIManager;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 
 public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel {
 
@@ -137,7 +136,7 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
      * 
      * @param conditionMap
      */
-    private void creatOrderPreviewPanel(Map<IExpressionId, Collection<ICondition>> conditionMap) {
+    private void creatOrderPreviewPanel(Map<Integer, Collection<ICondition>> conditionMap) {
 
         AbstractTypePanel componentPanel = null;
         List<AbstractTypePanel> panelList;
