@@ -8,7 +8,7 @@ import edu.wustl.cab2b.common.cache.AbstractEntityCache;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.cab2b.server.cache.EntityCache;
-import edu.wustl.common.querysuite.bizLogic.QueryBizLogic;
+import edu.wustl.common.querysuite.bizlogic.QueryBizLogic;
 
 /**
  * This class processes the Cab2bQuery object before persisting and after retreival.
@@ -16,7 +16,7 @@ import edu.wustl.common.querysuite.bizLogic.QueryBizLogic;
  */
 public class Cab2bQueryBizLogic extends QueryBizLogic<ICab2bParameterizedQuery> {
 
-    protected void preProcessQuery(ICab2bParameterizedQuery caB2BQuery) {
+    public void preProcessQuery(ICab2bParameterizedQuery caB2BQuery) {
         super.preProcessQuery(caB2BQuery);
 
         EntityInterface entity = caB2BQuery.getOutputEntity();

@@ -56,7 +56,7 @@ public class SheetCustomizationConsole extends javax.swing.JPanel {
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        tblSettings.setAutoCreateRowSorter(true);
+       // tblSettings.setAutoCreateRowSorter(true);
         tblSettings.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

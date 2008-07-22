@@ -6,7 +6,7 @@
 package edu.wustl.cab2b.client.ui.controls.sheet;
 
 import java.awt.*;
-import java.awt.geom.Path2D;
+
 import javax.swing.*;
 
 /**
@@ -17,7 +17,7 @@ public class SelectionHanger extends javax.swing.JPanel {
 
     double cH;
     double cW;
-    Path2D hanger;
+//    Path2D hanger;
     Color hangerFillColor = new Color(100, 100, 175, 100);
     Color hangerBorderColor = Color.darkGray;
     Stroke hangerBorderStroke;
@@ -63,11 +63,11 @@ public class SelectionHanger extends javax.swing.JPanel {
         cH = getHeight() - getInsets().top - getInsets().bottom;
         cW = getWidth() - getInsets().left - getInsets().right;
 
-        hanger = new Path2D.Double();
-        hanger.moveTo(cW * 1 / 4, cH * 4 / 14);
-        hanger.lineTo(cW * 3 / 4, cH * 7 / 14);
-        hanger.lineTo(cW * 1 / 4, cH * 10 / 14);
-        hanger.lineTo(cW * 1 / 4, cH * 4 / 14);
+//        hanger = new Path2D.Double();
+//        hanger.moveTo(cW * 1 / 4, cH * 4 / 14);
+//        hanger.lineTo(cW * 3 / 4, cH * 7 / 14);
+//        hanger.lineTo(cW * 1 / 4, cH * 10 / 14);
+//        hanger.lineTo(cW * 1 / 4, cH * 4 / 14);
 
         hangerBorderStroke = new BasicStroke((float) (cH) / 100 + 1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
@@ -111,11 +111,11 @@ public class SelectionHanger extends javax.swing.JPanel {
 
         //  Drow Now...
         g2.setColor(hangerFillColor);
-        g2.fill(hanger);
+//        g2.fill(hanger);
         g2.setColor(hangerBorderColor);
         Stroke oldStroke = g2.getStroke();
         g2.setStroke(hangerBorderStroke);
-        g2.draw(hanger);
+//        g2.draw(hanger);
 
         //  Reset...
         g2.scale(1 / scaleFactor, 1 / scaleFactor);

@@ -32,7 +32,7 @@ public class ParameterizedQueryDataModel {
         query = new Cab2bQuery();
     }
 
-    public ParameterizedQueryDataModel(Cab2bQuery iQuery) {
+    public ParameterizedQueryDataModel(ICab2bParameterizedQuery iQuery) {
         if (iQuery == null)
             this.query = new Cab2bQuery();
         else {
@@ -101,7 +101,7 @@ public class ParameterizedQueryDataModel {
 
         ALL: for (int i = 0; i < noOfOperand; i++) {
             IExpressionOperand expressionOperand = expression.getOperand(i);
-            if (!expressionOperand.isSubExpressionOperand()) {
+            if (expressionOperand instanceof IRule) {
                 IRule rule = (IRule) expressionOperand;
                 List<ICondition> conditionList = rule.getConditions();
                 for (int index = 0; index < conditionList.size(); index++) {
@@ -130,7 +130,7 @@ public class ParameterizedQueryDataModel {
 
         ALL: for (int i = 0; i < noOfOperand; i++) {
             IExpressionOperand expressionOperand = expression.getOperand(i);
-            if (!expressionOperand.isSubExpressionOperand()) {
+            if (expressionOperand instanceof IRule) {
                 IRule rule = (IRule) expressionOperand;
                 List<ICondition> conditionList = rule.getConditions();
                 boolean isConditionAdded = false;

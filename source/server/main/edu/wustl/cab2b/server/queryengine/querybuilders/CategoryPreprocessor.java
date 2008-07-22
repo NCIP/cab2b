@@ -24,12 +24,12 @@ import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.IConnector;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IJoinGraph;
-import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
@@ -292,7 +292,7 @@ public class CategoryPreprocessor {
             int initialRootExprSize = rootExpr.numberOfOperands();
             IExpressionOperand operand = catExpr.getOperand(i);
 
-            if (operand.isSubExpressionOperand()) {
+            if (operand instanceof IExpressionId) {
 
                 // find path to exit point
                 IExpressionId externalExprId = (IExpressionId) operand;
@@ -377,8 +377,8 @@ public class CategoryPreprocessor {
                 // were created with default nesting (0). The no. of parantheses
                 // to be added thus equals the no. of parantheses around the
                 // original operand + 1.
-                int precedingConnNesting = catExpr.getLogicalConnector(i - 1, i).getNestingNumber();
-                int followingConnNesting = catExpr.getLogicalConnector(i, i + 1).getNestingNumber();
+                int precedingConnNesting = catExpr.getConnector(i - 1, i).getNestingNumber();
+                int followingConnNesting = catExpr.getConnector(i, i + 1).getNestingNumber();
                 // the nesting of operand equals the nesting of the adjacent
                 // connector with greater nesting.
                 int operandNesting = (precedingConnNesting > followingConnNesting) ? precedingConnNesting
@@ -393,8 +393,8 @@ public class CategoryPreprocessor {
         // place connectors in original expression in appropriate positions in
         // new expression.
         for (Map.Entry<Integer, Integer> entry : followingConnIndexOrigToNew.entrySet()) {
-            ILogicalConnector connector = catExpr.getLogicalConnector(entry.getKey(), entry.getKey() + 1);
-            rootExpr.setLogicalConnector(entry.getValue(), entry.getValue() + 1, connector);
+            IConnector<LogicalOperator> connector = catExpr.getConnector(entry.getKey(), entry.getKey() + 1);
+            rootExpr.setConnector(entry.getValue(), entry.getValue() + 1, connector);
         }
         return rootExpr;
     }

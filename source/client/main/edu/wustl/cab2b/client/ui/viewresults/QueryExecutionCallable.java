@@ -78,7 +78,7 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
         List<List<String>> values = new ArrayList<List<String>>();
         values.add(Collections.singletonList(m_sourceEntity.getId()));
         
-        IExpressionId sourceExpressionID = queryObject.addRule(attributes, operators, values);
+        IExpressionId sourceExpressionID = queryObject.addRule(attributes, operators, values, idAttribute.getEntity());
 
         /* Get the source expression id. Needed to add the path.*/
         final EntityInterface targetEntity = m_destinationEntity.getEntity();

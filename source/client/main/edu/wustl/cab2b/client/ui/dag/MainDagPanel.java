@@ -51,7 +51,7 @@ import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IJoinGraph;
-import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
+import edu.wustl.common.querysuite.queryobject.IConnector;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
@@ -484,10 +484,10 @@ public class MainDagPanel extends Cab2bPanel {
             }
             if (assPosition != 0) {
 
-                ILogicalConnector logicalConnector = sourceExp.getLogicalConnector(
+                IConnector<LogicalOperator> logicalConnector = sourceExp.getConnector(
                                                                                    sourceExp.indexOfOperand(nextExpId) - 1,
                                                                                    sourceExp.indexOfOperand(nextExpId));
-                LogicalOperator logicalOperator = logicalConnector.getLogicalOperator();
+                LogicalOperator logicalOperator = logicalConnector.getOperator();
                 if (logicalOperator.equals(LogicalOperator.And)) {
                     sourceNode.setLogicalOperator(sourcePort, ClientConstants.OPERATOR_AND);
                 } else {
@@ -496,8 +496,8 @@ public class MainDagPanel extends Cab2bPanel {
 
             } else {
                 if (((Expression) sourceExp).containsRule()) {
-                    ILogicalConnector logicalConnector = sourceExp.getLogicalConnector(0, 1);
-                    LogicalOperator logicalOperator = logicalConnector.getLogicalOperator();
+                    IConnector<LogicalOperator> logicalConnector = sourceExp.getConnector(0, 1);
+                    LogicalOperator logicalOperator = logicalConnector.getOperator();
                     if (logicalOperator.equals(LogicalOperator.And)) {
                         sourceNode.setOperatorBetAttrAndAss(ClientConstants.OPERATOR_AND);
                     } else {

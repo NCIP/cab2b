@@ -41,8 +41,10 @@ import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.IConnector;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
@@ -50,11 +52,11 @@ import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IParameterizedCondition;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
+import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.impl.Condition;
 import edu.wustl.common.querysuite.queryobject.impl.Constraints;
 import edu.wustl.common.querysuite.queryobject.impl.Expression;
 import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
-import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
 import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
 import edu.wustl.common.querysuite.queryobject.impl.QueryEntity;
 import edu.wustl.common.querysuite.queryobject.impl.Rule;
@@ -137,13 +139,10 @@ public class CommonUtils {
                 newOperand = getNewExpressionOperand(oldExpression, index);
 
                 //New LogicalConnector
-                LogicalConnector oldLogicalConnector = (LogicalConnector) oldExpression.getLogicalConnector(
+                IConnector<LogicalOperator> oldLogicalConnector = (IConnector<LogicalOperator>) oldExpression.getConnector(
                                                                                                             index - 1,
                                                                                                             index);
-                LogicalConnector newLogicalConnector = new LogicalConnector();
-                newLogicalConnector.setLogicalOperator(oldLogicalConnector.getLogicalOperator());
-                newLogicalConnector.setNestingNumber(oldLogicalConnector.getNestingNumber());
-
+                IConnector<LogicalOperator> newLogicalConnector = QueryObjectFactory.createLogicalConnector(oldLogicalConnector.getOperator(), oldLogicalConnector.getNestingNumber());
                 newExpression.addOperand(newLogicalConnector, newOperand);
             }
         }

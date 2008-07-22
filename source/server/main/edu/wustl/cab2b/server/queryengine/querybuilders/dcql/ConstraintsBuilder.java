@@ -31,7 +31,7 @@ import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IJoinGraph;
-import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
+import edu.wustl.common.querysuite.queryobject.IConnector;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
@@ -208,13 +208,15 @@ public class ConstraintsBuilder {
 
         for (int i = 0; i < expr.numberOfOperands(); i++) {
             IExpressionOperand operand = expr.getOperand(i);
-            if (operand.isSubExpressionOperand()) {
+            if (operand instanceof IExpressionId) {
                 IExpressionId exprId = (IExpressionId) operand;
                 // if (!isExprRedundant(exprId)) {
                 dcqlConstraintsList.add(createDcqlConstraintForChildExpression(expr.getExpressionId(), exprId));
                 // }
-            } else {
+            } else if(operand instanceof IRule){
                 dcqlConstraintsList.add(createDcqlConstraintForRule((IRule) operand));
+            } else {
+                throw new RuntimeException("uknown operand type.");
             }
         }
 
@@ -234,10 +236,10 @@ public class ConstraintsBuilder {
         return new GroupBuilder(getConnectors(expr), dcqlConstraintsList).buildGroup();
     }
 
-    private List<ILogicalConnector> getConnectors(IExpression expression) {
-        List<ILogicalConnector> conns = new ArrayList<ILogicalConnector>();
+    private List<IConnector<LogicalOperator>> getConnectors(IExpression expression) {
+        List<IConnector<LogicalOperator>> conns = new ArrayList<IConnector<LogicalOperator>>();
         for (int i = 0; i < expression.numberOfOperands() - 1; i++) {
-            conns.add(expression.getLogicalConnector(i, i + 1));
+            conns.add(expression.getConnector(i, i + 1));
         }
         return conns;
     }
@@ -406,7 +408,7 @@ public class ConstraintsBuilder {
         group.addConstraint((createAttributeConstraint(attributeName, RelationalOperator.LessThanOrEquals, value2, dataType)));
         return group.getDcqlConstraint();
     }
-   
+
     private DcqlConstraint createInCondition(String attributeName, List<String> values, DataType dataType) {
         Cab2bGroup group = new Cab2bGroup(LogicalOperator.Or);
         for (String value : values) {

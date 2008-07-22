@@ -406,7 +406,7 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
                 mainSearchPanel.getCenterPanel().getAddLimitPanel().setQueryObject(query);
             }
 
-            IExpressionId expressionId = mainSearchPanel.getQueryObject().addRule(attributes, conditions, values);
+            IExpressionId expressionId = mainSearchPanel.getQueryObject().addRule(attributes, conditions, values, attributes.get(0).getEntity());
             if (expressionId == null) {
                 JOptionPane.showMessageDialog(
                                               mainSearchPanel.getParent(),

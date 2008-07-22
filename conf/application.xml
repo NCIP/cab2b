@@ -103,6 +103,9 @@
     <module><java>log4j-1.2.14.jar</java></module>
     <module><java>puretls.jar</java></module>
     <module><java>xmlsec-1.4.0.jar</java></module>
-    
+
+    <module><java>metadata.jar</java></module>
+    <module><java>query.jar</java></module>
+    <module><java>washu-commons.jar</java></module>    
     
 </application>

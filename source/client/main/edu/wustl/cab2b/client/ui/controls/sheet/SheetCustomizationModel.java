@@ -70,10 +70,7 @@ class SheetCustomizationModel extends AbstractTableModel {
         return scRowInfoAL;
     }
 
-    RowFilter getTableFilter() {
-        return filterTable;
-    }
-
+//   
     void requestResetAll() {
         pcs.firePropertyChange(Common.REQUEST_RESET_ALL, 0, 1);
     }
@@ -217,40 +214,40 @@ class SheetCustomizationModel extends AbstractTableModel {
         }
     }
 
-    class UniversalFilter extends RowFilter<TableModel, Integer> {
+    class UniversalFilter  {
 
-        public boolean include(RowFilter.Entry<? extends TableModel, ? extends Integer> entry) {
-
-            //  Check if cells of this rows, pass thier recpective column-filters...
-            int rowIdx = entry.getIdentifier().intValue();
-            //            System.out.println("[UniversalFilter]: Include Check fot Row: "+rowIdx+". ");
-
-            //  For each ColumnChk if filter condition is passed...
-            for (int colIdx = 0; colIdx < entry.getValueCount(); colIdx++) {
-                //  Chk if there are any visible columns...
-                if (scRowInfoAL.size() <= 0) {
-                    //  unconditionally include everything...
-                    return true;
-                }
-
-                SheetColumn colSheet = scRowInfoAL.get(colIdx);
-                if (!colSheet.isVisible()) 
-                {
-                    //  Ignore the filter on this column (invisible column's filter is assumed to be disabled)...
-                    continue;
-                }
-
-                ColumnFilterModel mdlColFilter = colSheet.getFilterCondition();
-                Object value = entry.getValue(colIdx);
-
-                if (!mdlColFilter.includeCell((Comparable) value)) {
-                    //  Some cell in this row disqualified, so do NOT include this row...
-                    return false;
-                }
-            }
-
-            //  If reached Here: no cell value has violated the filter condition, so include this row...
-            return true;
-        }
+//        public boolean include(RowFilter.Entry<? extends TableModel, ? extends Integer> entry) {
+//
+//            //  Check if cells of this rows, pass thier recpective column-filters...
+//            int rowIdx = entry.getIdentifier().intValue();
+//            //            System.out.println("[UniversalFilter]: Include Check fot Row: "+rowIdx+". ");
+//
+//            //  For each ColumnChk if filter condition is passed...
+//            for (int colIdx = 0; colIdx < entry.getValueCount(); colIdx++) {
+//                //  Chk if there are any visible columns...
+//                if (scRowInfoAL.size() <= 0) {
+//                    //  unconditionally include everything...
+//                    return true;
+//                }
+//
+//                SheetColumn colSheet = scRowInfoAL.get(colIdx);
+//                if (!colSheet.isVisible()) 
+//                {
+//                    //  Ignore the filter on this column (invisible column's filter is assumed to be disabled)...
+//                    continue;
+//                }
+//
+//                ColumnFilterModel mdlColFilter = colSheet.getFilterCondition();
+//                Object value = entry.getValue(colIdx);
+//
+//                if (!mdlColFilter.includeCell((Comparable) value)) {
+//                    //  Some cell in this row disqualified, so do NOT include this row...
+//                    return false;
+//                }
+//            }
+//
+//            //  If reached Here: no cell value has violated the filter condition, so include this row...
+//            return true;
+//        }
     }
 }

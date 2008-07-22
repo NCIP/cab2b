@@ -37,7 +37,7 @@ public class JSheetViewDataModel extends AbstractTableModel {
 	}
 
 	public int convertRowIndexToModel(int viewRowIndex) {
-		return tblData.convertRowIndexToModel(viewRowIndex);
+		return 0;
 	}
 
 	public int convertColumnIndexToModel(int viewColumnIndex) {

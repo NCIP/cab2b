@@ -207,52 +207,10 @@ public class PathFinder {
         String srcName = source.getName();
         EntityGroupInterface srcEntityGroup = Utility.getEntityGroup(source);
         //Are they belong to same entity group ?? 
-        if (desEntityGroup.equals(srcEntityGroup)) {
-            Logger.out.info("Finding intramodel paths between : " + srcName + " and " + desName);
-            List<PathRecord> pathRecords = getPathRecords(srcEntityId, desEntityId);
-            List<IPath> pathList = new ArrayList<IPath>(getPathList(pathRecords));
-            return pathList;
-        } else {
-            //they are from different models
-            Logger.out.info("Finding intermodel paths between : " + srcName + " and " + desName);
-            for (InterModelConnection interModelConnection : interModelConnections) {
-
-                Long leftEntityId = interModelConnection.getLeftEntityId();
-                EntityGroupInterface leftEntityGroup = Utility.getEntityGroup(getCache().getEntityById(
-                                                                                                       leftEntityId));
-                if (srcEntityGroup.equals(leftEntityGroup)) {
-
-                    Long rightEntityId = interModelConnection.getRightEntityId();
-                    EntityGroupInterface rightEntityGroup = Utility.getEntityGroup(getCache().getEntityById(
-                                                                                                            rightEntityId));
-
-                    if (rightEntityGroup.equals(desEntityGroup)) {
-                        List<Path> pathsSrcToLeftEntity = new ArrayList<Path>();
-                        if (!srcEntityId.equals(leftEntityId)) {
-                            List<PathRecord> pathRecordsSrcToLeftEntity = getPathRecords(srcEntityId, leftEntityId);
-                            if (pathRecordsSrcToLeftEntity.size() == 0) {
-                                continue;
-                            }
-                            pathsSrcToLeftEntity = getPathList(pathRecordsSrcToLeftEntity);
-                        }
-                        List<Path> pathsRightEntityToDes = new ArrayList<Path>();
-                        if (!rightEntityId.equals(desEntityId)) {
-                            List<PathRecord> pathRecordsRightEntityToDes = getPathRecords(rightEntityId,
-                                                                                          desEntityId);
-                            if (pathRecordsRightEntityToDes.size() == 0) {
-                                continue;
-                            }
-                            pathsRightEntityToDes = getPathList(pathRecordsRightEntityToDes);
-                        }
-                        InterModelAssociation association = getInterModelAssociation(interModelConnection);
-                        List<IPath> pathList = connectPaths(pathsSrcToLeftEntity, association,
-                                                            pathsRightEntityToDes);
-                        return pathList;
-                    }
-                }
-            }
-        }
-        return new ArrayList<IPath>(0);
+        Logger.out.info("Finding intramodel paths between : " + srcName + " and " + desName);
+        List<PathRecord> pathRecords = getPathRecords(srcEntityId, desEntityId);
+        List<IPath> pathList = new ArrayList<IPath>(getPathList(pathRecords));
+        return pathList;
     }
 
     /**

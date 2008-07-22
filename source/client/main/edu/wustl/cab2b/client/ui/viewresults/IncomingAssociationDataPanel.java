@@ -98,7 +98,7 @@ public class IncomingAssociationDataPanel extends AbstractAssociatedDataPanel {
         List<List<String>> values = new ArrayList<List<String>>();
         values.add(Collections.singletonList(dataRow.getId().toString()));
 
-        IExpressionId targetExpressionID = queryObject.addRule(attributes, operators, values);
+        IExpressionId targetExpressionID = queryObject.addRule(attributes, operators, values, idAttribute.getEntity());
 
         /* Get the source expression id. Needed to add the path.*/
         IExpressionId sourceExpressionID = queryObject.createDummyExpression(association.getSourceEntity());
