@@ -13,7 +13,7 @@ import edu.wustl.cab2b.server.path.PathConstants;
 import edu.wustl.common.util.logger.Logger;
 
 public class MySqlLoaderTest extends TestCase {
-    private static Connection con = TestUtil.getConnection();
+    private static Connection con = TestConnectionUtil.getConnection();
 
     private File file = null;
 
@@ -80,6 +80,6 @@ public class MySqlLoaderTest extends TestCase {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        TestUtil.close(con);
+        TestConnectionUtil.close(con);
     }
 }

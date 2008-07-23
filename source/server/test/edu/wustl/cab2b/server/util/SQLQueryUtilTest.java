@@ -14,7 +14,7 @@ import edu.wustl.common.util.logger.Logger;
  * @author Chandrakant Talele
  */
 public class SQLQueryUtilTest extends TestCase {
-    private static Connection con = TestUtil.getConnection();
+    private static Connection con = TestConnectionUtil.getConnection();
 
     /**
      * @see junit.framework.TestCase#setUp()
@@ -104,6 +104,6 @@ public class SQLQueryUtilTest extends TestCase {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        TestUtil.close(con);
+        TestConnectionUtil.close(con);
     }
 }
