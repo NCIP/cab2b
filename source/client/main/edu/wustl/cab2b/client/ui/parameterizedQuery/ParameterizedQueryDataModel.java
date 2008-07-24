@@ -25,7 +25,7 @@ import edu.wustl.common.querysuite.utils.QueryUtility;
  */
 public class ParameterizedQueryDataModel {
 
-    private Cab2bQuery query;
+    private ICab2bParameterizedQuery query;
 
     public ParameterizedQueryDataModel() {
         query = new Cab2bQuery();
@@ -78,11 +78,16 @@ public class ParameterizedQueryDataModel {
     }
 
     public Map<Integer, Collection<ICondition>> getConditions() {
-        return convert(QueryUtility.getAllSelectedConditions(query));
+        if (query != null)
+            return convert(QueryUtility.getAllSelectedConditions(query));
+
+        return null;
     }
 
     public Map<Integer, Collection<AttributeInterface>> getAllAttributes() {
-        return convert(QueryUtility.getAllAttributes(query));
+        if (query != null)
+            return convert(QueryUtility.getAllAttributes(query));
+        return null;
     }
 
     private <T> Map<Integer, T> convert(Map<IExpression, T> map) {
