@@ -176,12 +176,12 @@ public class MainDagPanel extends Cab2bPanel {
      * @return
      */
     public IExpression getFirstExpression() {
-        IConstraints v = m_queryObject.getQuery().getConstraints();
-         int size = v.size();
-        if(size ==0) {
-            return null;
+        IExpression expression = null;
+        IConstraints constraints = m_queryObject.getQuery().getConstraints();
+        if(constraints.size() != 0) {
+            expression = constraints.iterator().next();
         }
-       return v.iterator().next();
+        return expression;
     }
 
     /**
@@ -237,53 +237,53 @@ public class MainDagPanel extends Cab2bPanel {
         List<IAssociation> associations = null;
         IAssociation association = null;
         List<IExpression> intermediateExpressions = new ArrayList<IExpression>();
+        
         List<IExpression> childList = joinGraph.getChildrenList(parentExpr);
-        if (childList.isEmpty()) {
-            return associations;
-        }
-        IPath path;
-        int childSize = childList.size();
-        for (int index = 0; index < childSize; index++) {
-            IExpression childExpression = childList.get(index);
+        if (!childList.isEmpty()) {
+            IPath path = null;
+            int childSize = childList.size();
+            for (int index = 0; index < childSize; index++) {
+                IExpression childExpression = childList.get(index);
 
-            associations = new ArrayList<IAssociation>();
-            association = joinGraph.getAssociation(parentExpr, childExpression);
-            associations.add(association);
-            if (!childExpression.isVisible()) {
+                associations = new ArrayList<IAssociation>();
+                association = joinGraph.getAssociation(parentExpr, childExpression);
+                associations.add(association);
+                
+                if (!childExpression.isVisible()) {
+                    IExpression sourceId = null;
+                    while (!childExpression.isVisible()) {
+                        intermediateExpressions.add(childExpression);
+                        
+                        sourceId = childExpression;
+                        childExpression = joinGraph.getChildrenList(childExpression).get(0);
+                        association = joinGraph.getAssociation(sourceId, childExpression);
 
-                IExpression sourceId;
-                while (!childExpression.isVisible()) {
-                    intermediateExpressions.add(childExpression);
-                    sourceId = childExpression;
-                    childExpression = joinGraph.getChildrenList(childExpression).get(0);
-                    association = joinGraph.getAssociation(sourceId, childExpression);
-                    associations.add(association);
+                        associations.add(association);
+                    }
+                }
+
+                EntityInterface source = parentExpr.getQueryEntity().getDynamicExtensionsEntity();
+                EntityInterface target = childExpression.getQueryEntity().getDynamicExtensionsEntity();
+                path = new Path(source, target, associations);
+
+                // A link should be added to DAG  when either DAG is for view or when the target node has constraints
+                List<Integer> intermediateExpressionsIds = new ArrayList<Integer>(intermediateExpressions.size());
+                for(IExpression exp : intermediateExpressions) {
+                    intermediateExpressionsIds.add(exp.getExpressionId());
+                }
+                
+                if (m_isDAGForView) {
+                    linkTwoNode(getNode(parentExpr.getExpressionId()), getNode(childExpression.getExpressionId()), path, intermediateExpressionsIds, false);
+                    addAssociations(constraints, joinGraph, childExpression);
+                } else if (!getNodeType(childExpression.getExpressionId()).equals(ClassNodeType.ViewOnlyNode)) {
+                    int childId = childExpression.getExpressionId();
+                    
+                    linkTwoNode(getNode(parentExpr.getExpressionId()), getNode(childId), path, intermediateExpressionsIds, false);
+                    addAssociations(constraints, joinGraph, childExpression);
                 }
             }
-
-            EntityInterface source = parentExpr.getQueryEntity().getDynamicExtensionsEntity();
-            EntityInterface target = childExpression.getQueryEntity().getDynamicExtensionsEntity();
-            path = new Path(source, target, associations);
-
-            /*
-             * A link should be added to DAG  when either DAG is for view 
-             * or when the target node has constarints
-             */
-            List<Integer> intermediateExpressionsIds = new ArrayList<Integer>(intermediateExpressions.size());
-            for(IExpression exp : intermediateExpressions) {
-                intermediateExpressionsIds.add(exp.getExpressionId());
-            }
-            if (m_isDAGForView) {
-                linkTwoNode(getNode(parentExpr.getExpressionId()), getNode(childExpression.getExpressionId()), path, intermediateExpressionsIds, false);
-                addAssociations(constraints, joinGraph, childExpression);
-            } else if (!getNodeType(childExpression.getExpressionId()).equals(ClassNodeType.ViewOnlyNode)) {
-                int childId = childExpression.getExpressionId();
-                
-                linkTwoNode(getNode(parentExpr.getExpressionId()), getNode(childId), path, intermediateExpressionsIds, false);
-                addAssociations(constraints, joinGraph, childExpression);
-            }
-
         }
+        
         return associations;
     }
 
@@ -486,7 +486,6 @@ public class MainDagPanel extends Cab2bPanel {
                 } else {
                     sourceNode.setLogicalOperator(sourcePort, ClientConstants.OPERATOR_OR);
                 }
-
             } else {
                 if (((Expression) sourceExp).containsRule()) {
                     IConnector<LogicalOperator> logicalConnector = sourceExp.getConnector(0, 1);
