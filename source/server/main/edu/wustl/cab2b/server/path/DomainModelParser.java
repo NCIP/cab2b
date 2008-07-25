@@ -1,18 +1,19 @@
 package edu.wustl.cab2b.server.path;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.cagrid.common.Utils;
 import gov.nih.nci.cagrid.metadata.common.UMLClass;
 import gov.nih.nci.cagrid.metadata.dataservice.DomainModel;
 import gov.nih.nci.cagrid.metadata.dataservice.UMLAssociation;
 import gov.nih.nci.cagrid.metadata.dataservice.UMLGeneralization;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class parses the domain model for an application.<br>
@@ -26,6 +27,8 @@ import java.util.List;
  * @version 1.0
  */
 public class DomainModelParser {
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(DomainModelParser.class);
+    
     /**
      * The DomainModel java object of given XML file.
      */
@@ -55,7 +58,7 @@ public class DomainModelParser {
      * Throws the exception occurred during getting / parsing the domain model XML as RuntimeException. 
      */
     public DomainModelParser(String xmlFilePath) {
-        Logger.out.info("Parsing model at location : " + xmlFilePath);
+        logger.info("Parsing model at location : " + xmlFilePath);
         try {
             domainModel = (DomainModel) Utils.deserializeDocument(xmlFilePath, DomainModel.class);
         } catch (Exception e) {

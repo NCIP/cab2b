@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
+
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface;
@@ -27,7 +29,6 @@ import edu.common.dynamicextensions.util.global.Constants;
 import edu.common.dynamicextensions.util.global.Constants.AssociationDirection;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.cab2b.server.util.InheritanceUtil;
-import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.cagrid.metadata.common.SemanticMetadata;
 import gov.nih.nci.cagrid.metadata.common.UMLAttribute;
 import gov.nih.nci.cagrid.metadata.common.UMLClass;
@@ -50,6 +51,7 @@ import gov.nih.nci.cagrid.metadata.dataservice.UMLAssociationEdge;
  */
 
 public class DomainModelProcessor {
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(DomainModelProcessor.class);
     /**
      * Map with KEY : EntityInterface VALUE: its index in adjacency matrix.
      */
@@ -86,7 +88,7 @@ public class DomainModelProcessor {
      * @throws DynamicExtensionsSystemException 
      */
     public DomainModelProcessor(DomainModelParser parser, String applicationName) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException {
-        Logger.out.info("Creating entity group for application : " + applicationName);
+        logger.info("Creating entity group for application : " + applicationName);
 
         entityGroup = DynamicExtensionUtility.createEntityGroup();
         entityGroup.setShortName(applicationName);
@@ -113,7 +115,7 @@ public class DomainModelProcessor {
         processInheritance(parentIdVsChildrenIds);
         markInheritedAttributes(entityGroup);
 
-        Logger.out.info("Storing entity group....");
+        logger.info("Storing entity group....");
         DynamicExtensionUtility.markMetadataEntityGroup(entityGroup);
         entityGroup = saveEntityGroup(entityGroup);
 
@@ -138,7 +140,8 @@ public class DomainModelProcessor {
      * @return the unsaved entity for given UML class
      */
     protected EntityInterface createEntity(UMLClass umlClass) {
-        String name = umlClass.getPackageName() + "." + umlClass.getClassName();
+        logger.debug("Creating entity for class : " + umlClass.getClassName());
+        String name = new StringBuilder().append(umlClass.getPackageName()).append(".").append(umlClass.getClassName()).toString();
         EntityInterface entity = deFactory.createEntity();
         entity.setName(name);
         entity.setDescription(umlClass.getDescription());
@@ -151,8 +154,7 @@ public class DomainModelProcessor {
         for (UMLAttribute umlAttribute : attributes) {
             DataType dataType = DataType.get(umlAttribute.getDataTypeName());
             AttributeInterface attribute = dataType.createAttribute(umlAttribute);
-            if (attribute != null) { // to bypass attributes of invalid
-                // datatypes
+            if (attribute != null) { // to bypass attributes of invalid data-types
                 attribute.setName(umlAttribute.getName());
                 attribute.setDescription(umlAttribute.getDescription());
                 setSemanticMetadata(attribute, umlAttribute.getSemanticMetadata());
@@ -240,8 +242,8 @@ public class DomainModelProcessor {
     /**
      * Gets dynamic extension's Cardinality enumration for passed integer value.
      * 
-     * @param cardinality intger value of cardinality.
-     * @return Dynamic Extension's Cardinality enumration
+     * @param cardinality integer value of cardinality.
+     * @return Dynamic Extension's Cardinality enumeration
      */
     private Constants.Cardinality getCardinality(int cardinality) {
         if (cardinality == 0) {
@@ -397,7 +399,7 @@ public class DomainModelProcessor {
 
     /**
      * @param sourceEntity Entity to which a association is to be attached
-     * @return A assocition attached to given entity.
+     * @return A association attached to given entity.
      */
     AssociationInterface getAssociation(EntityInterface sourceEntity) {
         AssociationInterface association = deFactory.createAssociation();
