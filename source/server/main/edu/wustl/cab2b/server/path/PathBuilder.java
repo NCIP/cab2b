@@ -18,29 +18,26 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.common.dynamicextensions.domaininterface.SemanticPropertyInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.entitymanager.EntityManagerInterface;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.IdGenerator;
-import edu.wustl.cab2b.common.util.PropertyLoader;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.path.PathConstants.AssociationType;
 import edu.wustl.cab2b.server.path.pathgen.GraphPathFinder;
@@ -49,12 +46,11 @@ import edu.wustl.cab2b.server.path.pathgen.PathToFileWriter;
 import edu.wustl.cab2b.server.util.DataFileLoaderInterface;
 import edu.wustl.cab2b.server.util.SQLQueryUtil;
 import edu.wustl.cab2b.server.util.ServerProperties;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * This class builds all paths for a Domain Model of an application.<br>
  * This class acts as a Controller that calls different utility classes to build
- * all possible non-redundent paths for a given model. It also loads the
+ * all possible non-redundant paths for a given model. It also loads the
  * generated paths to database.<br>
  * This class decides whether to create a storage table for entity or not based
  * on {@link edu.wustl.cab2b.server.path.PathConstants#CREATE_TABLE_FOR_ENTITY}
@@ -66,6 +62,7 @@ import edu.wustl.common.util.logger.Logger;
  * @author Munesh
  */
 public class PathBuilder {
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(PathBuilder.class);
     private static final int PATH_MAX_LENGTH = 6;
 
     /**
@@ -86,59 +83,8 @@ public class PathBuilder {
     private static DataFileLoaderInterface dataFileLoader;
 
     /**
-     * Builds all non-redundent paths for traversal between classes from a given
-     * domain model. This method is to be called at server startup. It writes
-     * all paths to {@link PathConstants#PATH_FILE_NAME} and stores paths to
-     * database
-     * 
-     * @param connection -
-     *            Database connection to use to fire SQLs.
-     */
-    private static synchronized void buildAndLoadAllModels(Connection connection) {
-        File file = new File(PATH_FILE_NAME);
-        if (file.exists() && !file.delete()) {
-            throw new RuntimeException("Could not delete " + PATH_FILE_NAME);
-        }
-        Logger.out.info("Deleted the file : " + PATH_FILE_NAME);
-        String[] applicationNames = PropertyLoader.getAllApplications();
-        for (String applicationName : applicationNames) {
-            Logger.out.info("Processing : " + applicationName);
-            String path = PropertyLoader.getModelPath(applicationName);
-            DomainModelParser parser = new DomainModelParser(path);
-            DomainModelProcessor processor = null;
-            try {
-                processor = new DomainModelProcessor(parser, applicationName);
-                storeModelAndGeneratePaths(processor, applicationName, connection, true);
-            } catch (DynamicExtensionsSystemException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                throw new RuntimeException("got DynamicExtensionsSystemException in buildAndLoadAllModels", e);
-            } catch (DynamicExtensionsApplicationException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                throw new RuntimeException("got DynamicExtensionsApplicationException in buildAndLoadAllModels", e);
-            }
-        }
-        transformAndLoadPaths(connection);
-
-        if (applicationNames.length < 2)
-            return;
-        /* ------------------------------------------------------------------------- 
-            TODO need to check whether we should remove this code or not
-        ---------------------------------------------------------------------------*/
-
-//        for (int i = 0; i < applicationNames.length; i++) {
-//            for (int j = i + 1; j < applicationNames.length; j++) {
-//                EntityGroupInterface leftEntityGroup = shortNameVsEntityGroup.get(applicationNames[i]);
-//                EntityGroupInterface rightEntityGroup = shortNameVsEntityGroup.get(applicationNames[j]);
-//                storeInterModelConnections(leftEntityGroup, rightEntityGroup, connection);
-//            }
-//        }
-    }
-
-    /**
-     * Builds all non-redundent paths for traversal between classes from a given
-     * domain model. This method is used to load models one at a time. All inter
+     * Builds all non-redundant paths for traversal between classes from a given
+     * domain model. This method is used to load models one at a time. All inter-
      * model associations which current model has with already loaded models are
      * also stored. It writes all paths to {@link PathConstants#PATH_FILE_NAME}
      * and stores paths to database
@@ -150,7 +96,7 @@ public class PathBuilder {
      *            is present
      * @param applicationName
      *            Name of the application. The Entity Group will have this as
-     *            its shoprt name.
+     *            its short name.
      *            
      * @param maxPathLength max length (no. of classes) in path.
      */
@@ -173,7 +119,7 @@ public class PathBuilder {
      *            DomainModelParser object
      * @param applicationName
      *            Name of the application. The Entity Group will have this as
-     *            its shoprt name.
+     *            its short name.
      * @param maxPathLength max length (no. of classes) in path.
      */
     public static synchronized void loadSingleModelFromParserObject(Connection connection, DomainModelParser parser,
@@ -182,27 +128,17 @@ public class PathBuilder {
         try {
             processor = new DomainModelProcessor(parser, applicationName);
         } catch (DynamicExtensionsSystemException e) {
-            Logger.out.error("Exception while loading model in DE", e);
+            logger.error("Exception while loading model in DE", e);
             throw new RuntimeException("Exception while loading model in DE", e);
         } catch (DynamicExtensionsApplicationException e) {
-            Logger.out.error("Exception while loading model in DE", e);
+            logger.error("Exception while loading model in DE", e);
             throw new RuntimeException("Exception while loading model in DE", e);
         }
         try {
             storeModelAndGeneratePaths(processor, applicationName, connection, false);
             transformAndLoadPaths(connection);
-            /* ------------------------------------------------------------------------- 
-                TODO need to check whether we should remove this code or not
-            ---------------------------------------------------------------------------*/
-
-//            EntityGroupInterface newGroup = shortNameVsEntityGroup.get(applicationName);
-//            for (EntityGroupInterface group : shortNameVsEntityGroup.values()) {
-//                if (!group.equals(newGroup)) {
-//                    storeInterModelConnections(newGroup, group, connection);
-//                }
-//            }
         } catch (Exception e) {
-            Logger.out.error("Exception while generating paths", e);
+            logger.error("Exception while generating paths", e);
             throw new RuntimeException("Exception while generating paths", e);
             /*---------------------------
                       TODO 
@@ -217,7 +153,6 @@ public class PathBuilder {
              return false;
              */
         }
-
     }
 
     /**
@@ -230,14 +165,14 @@ public class PathBuilder {
      *            is present
      * @param applicationName
      *            Name of the application. The Entity Group will have this as
-     *            its shoprt name.
+     *            its short name.
      * @throws DynamicExtensionsApplicationException
      * @throws DynamicExtensionsSystemException
      */
     static void storeModelAndGeneratePaths(DomainModelProcessor processor, String applicationName,
                                            Connection conn, boolean append) {
-        Logger.out.info("Processing application : " + applicationName);
-        Logger.out.info("Loaded the domain model of application : " + applicationName
+        logger.info("Processing application : " + applicationName);
+        logger.info("Loaded the domain model of application : " + applicationName
                 + " to database. Generating paths...");
         List<Long> entityIds = processor.getEntityIds();
         boolean[][] adjacencyMatrix = processor.getAdjacencyMatrix();
@@ -266,46 +201,6 @@ public class PathBuilder {
             throw new RuntimeException("Exception while firing Parameterized query.", e, DB_0003);
         }
     }
-
-    /* ------------------------------------------------------------------------- 
-            TODO need to check whether we should remove this code or not
-    ---------------------------------------------------------------------------*/
-//     * @param leftEntityGroup
-//     *            One of the two entity groups
-//     * @param rightEntityGroup
-//     *            The other entity group.
-//     * @param connection -
-//     *            Database connection to use to fire SQLs.
-//     * @return all the intermodel connections present in the passes entity
-//     *         groups
-//     * @throws DynamicExtensionsSystemException
-//     * @throws IOException
-//     *             If file operation fails.
-//     */
-//    static void storeInterModelConnections(EntityGroupInterface leftEntityGroup,
-//                                           EntityGroupInterface rightEntityGroup, Connection connection) {
-//        List<InterModelConnection> allInterModelConnections = new ArrayList<InterModelConnection>();
-//        Collection<EntityInterface> leftEntityCollection = leftEntityGroup.getEntityCollection();
-//        Collection<EntityInterface> rightEntityCollection = rightEntityGroup.getEntityCollection();
-//
-//        for (EntityInterface leftEntity : leftEntityCollection) {
-//            for (EntityInterface rightEntity : rightEntityCollection) {
-//                Collection<SemanticPropertyInterface> collectionSrc = leftEntity.getSemanticPropertyCollection();
-//                Collection<SemanticPropertyInterface> collectionDes = rightEntity.getSemanticPropertyCollection();
-//
-//                if (areAllConceptCodesMatch(collectionSrc, collectionDes)) {
-//                    List<InterModelConnection> matchedList = getMatchingAttributePairs(leftEntity, rightEntity);
-//                    allInterModelConnections.addAll(matchedList);
-//                }
-//            }
-//        }
-//        try {
-//            persistInterModelConnections(allInterModelConnections, connection);
-//        } catch (IOException e) {
-//            throw new RuntimeException("Error in writing to output file", e, IO_0001);
-//        }
-//    }
-
     /**
      * This method registered all the associations present in dynamic extension.
      * It creates new data files at {@link PathConstants#ASSOCIATION_FILE_NAME}
@@ -316,13 +211,13 @@ public class PathBuilder {
      * @param connection -
      *            Database connection to use to fire SQLs.
      * @param associationIdSet
-     *            Set of all association Ids which are to be registered.
+     *            Set of all association identifiers which are to be registered.
      * @throws IOException
-     *             If file opetaion fails.
+     *             If file operation fails.
      */
     static synchronized void registerIntraModelAssociations(Connection connection, Set<Long> associationIdSet)
             throws IOException {
-        Logger.out.debug("Registering all the associations present in DE as IntraModelAssociations");
+        logger.debug("Registering all the associations present in DE as IntraModelAssociations");
         BufferedWriter associationFile = new BufferedWriter(new FileWriter(new File(ASSOCIATION_FILE_NAME)));
         BufferedWriter intraModelAssociationFile = new BufferedWriter(new FileWriter(new File(
                 INTRA_MODEL_ASSOCIATION_FILE_NAME)));
@@ -349,12 +244,12 @@ public class PathBuilder {
         columns = "(ASSOCIATION_ID,DE_ASSOCIATION_ID)";
         loadDataFromFile(connection, INTRA_MODEL_ASSOCIATION_FILE_NAME, columns, "INTRA_MODEL_ASSOCIATION",
                          new Class[] { Long.class, Long.class });
-        Logger.out.debug("All the associations are registered");
+        logger.debug("All the associations are registered");
     }
 
     /**
      * Converts paths present in file {@link PathConstants#PATH_FILE_NAME} from
-     * list of entity ids to list of association ids. Then overwrites that file
+     * list of entity identifiers to list of association identifiers. Then overwrites that file
      * by converted paths.
      * 
      * @param connection -
@@ -365,14 +260,14 @@ public class PathBuilder {
      *             If database query fails.
      */
     static void transformGeneratedPaths(Connection connection) throws IOException, SQLException {
-        Logger.out.info("Path transformation is started");
+        logger.info("Path transformation is started");
         PreparedStatement prepareStatement = connection.prepareStatement("select ASSOCIATION_ID from intra_model_association where DE_ASSOCIATION_ID = ?");
 
         List<String> pathList = readFullFile();
         BufferedWriter pathFile = new BufferedWriter(new FileWriter(new File(PATH_FILE_NAME)));
         IdGenerator idGenerator = new IdGenerator(getNextPathId(connection));
         int totalPaths = pathList.size();
-        Logger.out.info("Transforming " + totalPaths + " paths...");
+        logger.info("Transforming " + totalPaths + " paths...");
         for (int i = 0; i < totalPaths; i++) {
             log(totalPaths, i);
             String[] columnValues = pathList.get(i).split(FIELD_SEPARATOR);
@@ -396,7 +291,7 @@ public class PathBuilder {
         pathFile.close();
         prepareStatement.close();
         String pathColumns = "(PATH_ID,FIRST_ENTITY_ID,INTERMEDIATE_PATH,LAST_ENTITY_ID)";
-        Logger.out.info("Generated the paths to file : " + PATH_FILE_NAME);
+        logger.info("Generated the paths to file : " + PATH_FILE_NAME);
         loadDataFromFile(connection, PATH_FILE_NAME, pathColumns, "PATH",
                          new Class[] { Long.class, Long.class, String.class, Long.class });
     }
@@ -409,7 +304,7 @@ public class PathBuilder {
             if (s.length() >= index + 3) {
                 s = s.substring(0, index + 3);
             }
-            Logger.out.info(s + " %");
+            logger.info(s + " %");
         }
     }
 
@@ -477,9 +372,9 @@ public class PathBuilder {
 
     /**
      * This method calls Dynamic extension's API to get all the Associations
-     * present between passed Spurce and Target Entities. Then it gets IDs of
+     * present between passed Source and Target Entities. Then it gets IDs of
      * those and finds corresponding mapping IDs from table
-     * INTRA_MODEL_ASSOCIATION. and returns list of all those mapping ids.
+     * INTRA_MODEL_ASSOCIATION. and returns list of all those mapping identifiers.
      * 
      * @param source
      *            Source end of the association.
@@ -511,14 +406,14 @@ public class PathBuilder {
     }
 
     /**
-     * This method parses the intermediate path and returns all Ids present in
+     * This method parses the intermediate path and returns all identifiers present in
      * it.<br>
      * It parses intermediate path string based on
-     * {@link PathConstants#CONNECTOR} and then converts it to entity ids. Then
+     * {@link PathConstants#CONNECTOR} and then converts it to entity identifiers. Then
      * adds first entity id at the start and last entity id to the end and
      * returns the list of Long.
      * 
-     * @return the Long[] Ids of all entites present in the path in sequential
+     * @return the Long[] identifiers of all entities present in the path in sequential
      *         order.
      */
     static Long[] getEntityIdSequence(Long firstEntityId, String intermediatePath, Long lastEntityId) {
@@ -581,17 +476,17 @@ public class PathBuilder {
                 className = ServerProperties.getDatabaseLoader();
                 dataFileLoader = (DataFileLoaderInterface) Class.forName(className).newInstance();
             } catch (InstantiationException e) {
-                Logger.out.error("Unable to instantiation " + className);
-                Logger.out.error(Utility.getStackTrace(e));
+                logger.error("Unable to instantiation " + className);
+                logger.error(Utility.getStackTrace(e));
             } catch (IllegalAccessException e) {
-                Logger.out.error("Unable to access public default constructor of " + className);
-                Logger.out.error(Utility.getStackTrace(e));
+                logger.error("Unable to access public default constructor of " + className);
+                logger.error(Utility.getStackTrace(e));
             } catch (ClassNotFoundException e) {
-                Logger.out.error("Class " + className + " not found. Please put it in classpath");
-                Logger.out.error(Utility.getStackTrace(e));
+                logger.error("Class " + className + " not found. Please put it in classpath");
+                logger.error(Utility.getStackTrace(e));
             } catch (ClassCastException e) {
-                Logger.out.error("Class " + className + " must implement DataFileLoaderInterface");
-                Logger.out.error(Utility.getStackTrace(e));
+                logger.error("Class " + className + " must implement DataFileLoaderInterface");
+                logger.error(Utility.getStackTrace(e));
             }
         }
         dataFileLoader.loadDataFromFile(connection, fileName, columns, tableName, dataTypes,
@@ -639,72 +534,8 @@ public class PathBuilder {
         loadDataFromFile(connection, INTER_MODEL_ASSOCIATION_FILE_NAME, columns, "INTER_MODEL_ASSOCIATION",
                          new Class[] { Long.class, Long.class, Long.class, Long.class, Long.class });
     }
-
     /**
-     * Finds all such attribute pairs where attributes within pair are
-     * semantically equivalent. First attribute in the pair is from source
-     * entity, second attribute is from destination entity. It assumes that
-     * passes entities are semantically equivalent.It also add the reverse
-     * intermodel connection to the list.
-     * 
-     * @param leftEntity
-     *            Source Entity
-     * @param rightEntity
-     *            Destination Entity
-     * @return the List of InterModelConnection
-     */
-    private static List<InterModelConnection> getMatchingAttributePairs(EntityInterface leftEntity,
-                                                                        EntityInterface rightEntity) {
-        List<InterModelConnection> list = new ArrayList<InterModelConnection>();
-        Collection<AttributeInterface> leftAttributes = leftEntity.getAttributeCollection();
-        Collection<AttributeInterface> rightAttributes = rightEntity.getAttributeCollection();
-        for (AttributeInterface leftAttrib : leftAttributes) {
-
-            for (AttributeInterface rightAttrib : rightAttributes) {
-                if (areAllConceptCodesMatch(leftAttrib.getOrderedSemanticPropertyCollection(),
-                                            rightAttrib.getOrderedSemanticPropertyCollection())) {
-                    list.add(new InterModelConnection(leftAttrib, rightAttrib));
-                    // saving the mirrored connection also. This will simplify
-                    // and speed up the retrieval
-                    list.add(new InterModelConnection(rightAttrib, leftAttrib));
-                }
-            }
-
-        }
-        return list;
-    }
-
-    /**
-     * Checks whether all the concept codes from source are matching to that of
-     * destination in order
-     * 
-     * @param collectionSrc
-     *            Source side SemanticProperty collection
-     * @param collectionDes
-     *            Destination side SemanticProperty collection
-     * @return TRUE if match is found.
-     */
-    private static boolean areAllConceptCodesMatch(Collection<SemanticPropertyInterface> collectionSrc,
-                                                   Collection<SemanticPropertyInterface> collectionDes) {
-        Logger.out.debug("Entering in method areAllConceptCodesMatch");
-        HashSet<String> srcConceptCodes = new HashSet<String>();
-        for (SemanticPropertyInterface srcSemanticProp : collectionSrc) {
-            srcConceptCodes.add(srcSemanticProp.getConceptCode());
-        }
-        HashSet<String> desConceptCodes = new HashSet<String>();
-        for (SemanticPropertyInterface desSemanticProp : collectionDes) {
-            desConceptCodes.add(desSemanticProp.getConceptCode());
-        }
-        boolean res = false;
-        if (srcConceptCodes.size() != 0 && desConceptCodes.size() != 0) {
-            res = srcConceptCodes.equals(desConceptCodes);
-        }
-        Logger.out.debug("Leaving method areAllConceptCodesMatch");
-        return res;
-    }
-
-    /**
-     * Initialises the cache for building paths.
+     * Initializes the cache for building paths.
      */
     private static void loadCache() {
         EntityManagerInterface entityMgr = EntityManager.getInstance();
@@ -733,7 +564,7 @@ public class PathBuilder {
                 }
             }
         }
-        Logger.out.info("Total number of associations found in DE : " + idVsAssociation.size());
+        logger.info("Total number of associations found in DE : " + idVsAssociation.size());
     }
 
     public static long getNextPathId(Connection connection) {
@@ -746,36 +577,72 @@ public class PathBuilder {
         }
         return maxId + 1;
     }
-
-    /**
-     * This will be called from installation process
-     * 
-     * @param args
-     */
-    public static void main(String[] args) {
-        Logger.configure();
-        String driver = "com.mysql.jdbc.Driver";
-        String server = ServerProperties.getDatabaseIp();
-        String port = ServerProperties.getDatabasePort();
-        String dbName = ServerProperties.getDatabaseName();
-        String userName = ServerProperties.getDatabaseUser();
-        String password = ServerProperties.getDatabasePassword();
-
-        String url = "jdbc:mysql://" + server + ":" + port + "/" + dbName;
-        Connection con = null;
-        try {
-            Class.forName(driver).newInstance();
-            con = DriverManager.getConnection(url, userName, password);
-            PathBuilder.buildAndLoadAllModels(con);
-        } catch (Throwable t) {
-            Logger.out.error(Utility.getStackTrace(t));
-        } finally {
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
+/* NOTE DO NOT REMOVE METHODS BELOW
+ It is needed for offline loading from backend */
+    
+//    /**
+//     * This will be called from installation process
+//     * 
+//     * @param args
+//     */
+//    public static void main(String[] args) {
+//        edu.wustl.common.util.logger.Logger.configure();
+//        String driver = "com.mysql.jdbc.Driver";
+//        String server = ServerProperties.getDatabaseIp();
+//        String port = ServerProperties.getDatabasePort();
+//        String dbName = ServerProperties.getDatabaseName();
+//        String userName = ServerProperties.getDatabaseUser();
+//        String password = ServerProperties.getDatabasePassword();
+//
+//        String url = "jdbc:mysql://" + server + ":" + port + "/" + dbName;
+//        Connection con = null;
+//        try {
+//            Class.forName(driver).newInstance();
+//            con = DriverManager.getConnection(url, userName, password);
+//            PathBuilder.buildAndLoadAllModels(con);
+//        } catch (Throwable t) {
+//            logger.error(Utility.getStackTrace(t));
+//        } finally {
+//            if (con != null) {
+//                try {
+//                    con.close();
+//                } catch (SQLException e) {
+//                }
+//            }
+//        }
+//    }
+//    /**
+//     * Builds all non-redundant paths for traversal between classes from a given
+//     * domain model. This method is to be called at server startup. It writes
+//     * all paths to {@link PathConstants#PATH_FILE_NAME} and stores paths to
+//     * database
+//     * 
+//     * @param connection -
+//     *            Database connection to use to fire SQLs.
+//     */
+//    private static synchronized void buildAndLoadAllModels(Connection connection) {
+//        File file = new File(PATH_FILE_NAME);
+//        if (file.exists() && !file.delete()) {
+//            throw new RuntimeException("Could not delete " + PATH_FILE_NAME);
+//        }
+//        logger.info("Deleted the file : " + PATH_FILE_NAME);
+//        String[] applicationNames = PropertyLoader.getAllApplications();
+//        for (String applicationName : applicationNames) {
+//            logger.info("Processing : " + applicationName);
+//            String path = PropertyLoader.getModelPath(applicationName);
+//            DomainModelParser parser = new DomainModelParser(path);
+//            DomainModelProcessor processor = null;
+//            try {
+//                processor = new DomainModelProcessor(parser, applicationName);
+//                storeModelAndGeneratePaths(processor, applicationName, connection, true);
+//            } catch (DynamicExtensionsSystemException e) {
+//                e.printStackTrace();
+//                throw new RuntimeException("got DynamicExtensionsSystemException in buildAndLoadAllModels", e);
+//            } catch (DynamicExtensionsApplicationException e) {
+//                e.printStackTrace();
+//                throw new RuntimeException("got DynamicExtensionsApplicationException in buildAndLoadAllModels", e);
+//            }
+//        }
+//        transformAndLoadPaths(connection);
+//    }
 }
