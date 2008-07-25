@@ -105,8 +105,8 @@ public class ParameterizedQueryDataModel {
      * @param expressionID
      * @param newCondition
      */
-    public void removeCondition(Integer expressionID, ICondition newCondition) {
-        if (query == null || expressionID == null || newCondition == null)
+    public void removeCondition(int expressionID, ICondition newCondition) {
+        if (query == null || expressionID < 0 || newCondition == null)
             return;
 
         IExpression expression = query.getConstraints().getExpression(expressionID);
