@@ -64,6 +64,7 @@ import edu.wustl.common.util.logger.Logger;
 /**
  * @author Chetan B H
  * @author Mahesh Iyer
+ * @author chetan_patil
  */
 public class CommonUtils {
 
@@ -111,6 +112,11 @@ public class CommonUtils {
         }
     }
 
+    /**
+     * This method creates a copy of the given query object.
+     * @param query query object whos copy is to be made
+     * @return copy of the given query object
+     */
     public static Cab2bQuery copyQueryObject(ICab2bQuery query) {
         //New Query
         Cab2bQuery newCab2bQuery = new Cab2bQuery();
