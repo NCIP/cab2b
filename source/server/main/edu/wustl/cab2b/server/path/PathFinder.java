@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
@@ -27,7 +29,6 @@ import edu.wustl.common.querysuite.metadata.path.CuratedPath;
 import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.metadata.path.Path;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * This class provides methods to find all possible paths in which 
@@ -40,6 +41,8 @@ import edu.wustl.common.util.logger.Logger;
  * @author Chandrakant Talele
  */
 public class PathFinder {
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(PathFinder.class);
+    
     private static PathFinder pathFinder;
 
     private Set<InterModelConnection> interModelConnections;
@@ -69,7 +72,7 @@ public class PathFinder {
      */
     public static synchronized PathFinder getInstance(Connection con) {
         if (pathFinder == null) {
-            Logger.out.info("PathFinder Called first Time.Loading cache...");
+            logger.info("PathFinder Called first Time.Loading cache...");
             pathFinder = new PathFinder();
             refreshCache(con,true);
         }
@@ -177,7 +180,7 @@ public class PathFinder {
      */
     public Map<EntityInterface, List<IPath>> getAllPossiblePaths(List<EntityInterface> sourceList,
                                                                  EntityInterface destination) {
-        Logger.out.debug("Entering in method getAllPossiblePaths()");
+        logger.debug("Entering in method getAllPossiblePaths()");
         Map<EntityInterface, List<IPath>> mapToReturn = new HashMap<EntityInterface, List<IPath>>(
                 sourceList.size());
 
@@ -198,7 +201,7 @@ public class PathFinder {
      * @return Returns the List<IPath>
      */
     public List<IPath> getAllPossiblePaths(EntityInterface source, EntityInterface destination) {
-        Logger.out.debug("Entering in method getAllPossiblePaths()");
+        logger.debug("Entering in method getAllPossiblePaths()");
         Long desEntityId = destination.getId();
         String desName = destination.getName();
         EntityGroupInterface desEntityGroup = Utility.getEntityGroup(destination);
@@ -207,10 +210,52 @@ public class PathFinder {
         String srcName = source.getName();
         EntityGroupInterface srcEntityGroup = Utility.getEntityGroup(source);
         //Are they belong to same entity group ?? 
-        Logger.out.info("Finding intramodel paths between : " + srcName + " and " + desName);
-        List<PathRecord> pathRecords = getPathRecords(srcEntityId, desEntityId);
-        List<IPath> pathList = new ArrayList<IPath>(getPathList(pathRecords));
-        return pathList;
+        if (desEntityGroup.equals(srcEntityGroup)) {
+            logger.info("Finding intramodel paths between : " + srcName + " and " + desName);
+            List<PathRecord> pathRecords = getPathRecords(srcEntityId, desEntityId);
+            List<IPath> pathList = new ArrayList<IPath>(getPathList(pathRecords));
+            return pathList;
+        } else {
+            //they are from different models
+            logger.info("Finding intermodel paths between : " + srcName + " and " + desName);
+            for (InterModelConnection interModelConnection : interModelConnections) {
+
+                Long leftEntityId = interModelConnection.getLeftEntityId();
+                EntityGroupInterface leftEntityGroup = Utility.getEntityGroup(getCache().getEntityById(
+                                                                                                       leftEntityId));
+                if (srcEntityGroup.equals(leftEntityGroup)) {
+
+                    Long rightEntityId = interModelConnection.getRightEntityId();
+                    EntityGroupInterface rightEntityGroup = Utility.getEntityGroup(getCache().getEntityById(
+                                                                                                            rightEntityId));
+
+                    if (rightEntityGroup.equals(desEntityGroup)) {
+                        List<Path> pathsSrcToLeftEntity = new ArrayList<Path>();
+                        if (!srcEntityId.equals(leftEntityId)) {
+                            List<PathRecord> pathRecordsSrcToLeftEntity = getPathRecords(srcEntityId, leftEntityId);
+                            if (pathRecordsSrcToLeftEntity.size() == 0) {
+                                continue;
+                            }
+                            pathsSrcToLeftEntity = getPathList(pathRecordsSrcToLeftEntity);
+                        }
+                        List<Path> pathsRightEntityToDes = new ArrayList<Path>();
+                        if (!rightEntityId.equals(desEntityId)) {
+                            List<PathRecord> pathRecordsRightEntityToDes = getPathRecords(rightEntityId,
+                                                                                          desEntityId);
+                            if (pathRecordsRightEntityToDes.size() == 0) {
+                                continue;
+                            }
+                            pathsRightEntityToDes = getPathList(pathRecordsRightEntityToDes);
+                        }
+                        InterModelAssociation association = getInterModelAssociation(interModelConnection);
+                        List<IPath> pathList = connectPaths(pathsSrcToLeftEntity, association,
+                                                            pathsRightEntityToDes);
+                        return pathList;
+                    }
+                }
+            }
+        }
+        return new ArrayList<IPath>(0);
     }
 
     /**
@@ -366,7 +411,7 @@ public class PathFinder {
      * KEY string will be formed using concatenating first entity id to last entity id by {@link PathConstants#ID_CONNECTOR}
      */
     private Map<String, List<PathRecord>> cachePathRecords(Connection connection) {
-        Logger.out.debug("Entering in method cachePathRecords");
+        logger.debug("Entering in method cachePathRecords");
         String sql = "select PATH_ID,FIRST_ENTITY_ID,INTERMEDIATE_PATH,LAST_ENTITY_ID from PATH";
 
         String[][] resultSet = executeQuery(sql, connection);
@@ -386,7 +431,7 @@ public class PathFinder {
                 pathRecordCache.put(key, list);
             }
         }
-        Logger.out.debug("Leaving method cachePathRecords");
+        logger.debug("Leaving method cachePathRecords");
         return pathRecordCache;
     }
 
@@ -394,14 +439,12 @@ public class PathFinder {
      * @param record String[] returned by SQL
      * @return Path record for that record
      */
-    private PathRecord getPathRecord(String[] record) {
+    PathRecord getPathRecord(String[] record) {
         Long pathId = Long.parseLong(record[0]);
         Long firstId = Long.parseLong(record[1]);
         String path = record[2];
         Long lastId = Long.parseLong(record[3]);
-        Logger.out.debug(pathId + "  " + firstId + " " + path + " " + lastId);
         return new PathRecord(pathId, firstId, path, lastId);
-
     }
 
     /**
@@ -586,7 +629,7 @@ public class PathFinder {
         String intermediatePath = buff.toString();
         PathRecord pathRecord = intermediatePathVsPathRecord.get(intermediatePath);
         if (pathRecord == null) {
-            Logger.out.error("No Path found for associations : " + intermediatePath);
+            logger.error("No Path found for associations : " + intermediatePath);
             throw new RuntimeException("No Path found for associations : " + intermediatePath);
         }
         return getPath(pathRecord);
@@ -598,7 +641,7 @@ public class PathFinder {
         Long deAssociationId = association.getDynamicExtensionsAssociation().getId();
         Long id = deIdVsAssociationId.get(deAssociationId);
         if (id == null) {
-            Logger.out.error("No IAssociation found for DE association : " + deAssociationId);
+            logger.error("No IAssociation found for DE association : " + deAssociationId);
             throw new RuntimeException("No IAssociation found for DE association : " + deAssociationId);
         }
         return id;
