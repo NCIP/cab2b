@@ -9,20 +9,38 @@ import junit.framework.TestCase;
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.impl.InterModelAssociation;
-import edu.wustl.common.querysuite.metadata.path.CuratedPath;
-import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.metadata.path.Path;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author Chandrakant Talele
  */
 public class PathFinderTest extends TestCase {
     private static long counter = 0;
+
+    public void testGetPathRecord() {
+        Long[] ids = { 11L, 22L, 33L };
+        long pathId = 11L;
+        long firstId = 123L;
+
+        StringBuilder builder = new StringBuilder().append(ids[0]).append("_").append(ids[1]).append("_").append(ids[2]);
+
+        long lastId = 33L;
+
+        String[] record = { Long.toString(pathId), Long.toString(firstId), builder.toString(), Long.toString(lastId) };
+        PathFinder p = new PathFinder();
+        PathRecord pathRec = p.getPathRecord(record);
+        assertEquals(pathId, pathRec.getPathId());
+        assertEquals(firstId, pathRec.getFirstEntityId());
+        assertEquals(builder.toString(), pathRec.getIntermediateAssociations());
+        assertEquals(lastId, pathRec.getLastEntityId());
+        Long[] seq = pathRec.getAssociationSequence();
+        for (int i = 0; i < ids.length; i++) {
+            assertEquals(ids[i], seq[i]);
+        }
+    }
 
     public void testGetStringRepresentationEmptySet() {
         Set<EntityInterface> set = new HashSet<EntityInterface>();
@@ -205,40 +223,4 @@ public class PathFinderTest extends TestCase {
         assertEquals(expected.getSourceAttribute(), res.getSourceAttribute());
         assertEquals(expected.getTargetAttribute(), res.getTargetAttribute());
     }
-
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        Logger.configure();
-    }
-
-//    public void testAddCuratedPath() {
-//        PathFinder pathFinder = PathFinder.getInstance(ConnectionUtil.getConnection());
-//
-//        CuratedPath curatedPath = new CuratedPath();
-//        curatedPath.setSelected(false);
-//
-//        IPath path = pathFinder.getPathById(1L);
-//        curatedPath.addPath(path);
-//
-//        Set<EntityInterface> entitySet = new HashSet<EntityInterface>();
-//        entitySet.add(path.getSourceEntity());
-//        entitySet.add(path.getTargetEntity());
-//        curatedPath.setEntitySet(entitySet);
-//
-//        pathFinder.addCuratedPath(curatedPath);
-//
-//        Set<ICuratedPath> curatedPaths = pathFinder.getCuratedPaths(path.getSourceEntity(), path.getTargetEntity());
-//        
-//        ICuratedPath actual = null;
-//        for(ICuratedPath cp: curatedPaths) {
-//            if(curatedPath.equals(cp)) {
-//                actual = cp;
-//            }
-//        }
-//        
-//        assertEquals(curatedPath, (CuratedPath)actual);
-//    }
-
 }
