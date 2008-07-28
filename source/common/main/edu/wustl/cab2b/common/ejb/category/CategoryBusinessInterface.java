@@ -1,14 +1,12 @@
 package edu.wustl.cab2b.common.ejb.category;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.BusinessInterface;
-import edu.wustl.cab2b.common.beans.MatchedClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
 
 /**
