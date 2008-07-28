@@ -67,6 +67,8 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      */
     public Vector getExperimentHierarchy() throws ClassNotFoundException, DAOException, RemoteException;
 
+    public List<Experiment> getExperimentsForUser(String userName) throws RemoteException;
+
     /**
      * @param id
      * @return
@@ -102,10 +104,10 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @throws RemoteException
      */
     void addDataListToExperiment(Long experimentId, Long dataListMetaDataId) throws RemoteException;
-    
-    
-    public CustomDataCategoryModel getDataCategoryModel(Experiment experiment) throws  RemoteException,CheckedException;
-    
+
+    public CustomDataCategoryModel getDataCategoryModel(Experiment experiment) throws RemoteException,
+            CheckedException;
+
     public Collection<AttributeInterface> getAllAttributes(Long Id) throws RemoteException, CheckedException;
 
 }
