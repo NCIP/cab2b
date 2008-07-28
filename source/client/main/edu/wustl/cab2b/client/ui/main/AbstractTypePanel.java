@@ -35,9 +35,8 @@ import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
  * An abstract class which provides the skeletal implementation of the
  * IComponent interface and defines some more abstract method like
  * getFirstComponent, getSecondComponent that needs to be implemented by the
- * subclasses like NumberTypePanel, StringTypePanel, etc. It also has methods to
- * make it generic for handling parameterized Query UI panels.
- * 
+ * subclasses like NumberTypePanel, StringTypePanel, etc.
+ * It also has methods to make it generic for handling parameterized Query UI panels.
  * @author Deepak Shingan
  */
 
@@ -231,7 +230,6 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
                 conditionListenerAction(border, emptyBorder);
             }
         });
-
         conditionComboBox.setSelectedIndex(0);
     }
 
@@ -280,7 +278,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         secondComponent.setBorder(border);
     }
 
-    /**
+    /**   
      * @return the expressionId
      */
     public int getExpressionId() {
@@ -403,9 +401,13 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         if (((conditionString.equals("Is Null")) || conditionString.equals("Is Not Null") || (conditionValues.size() != 0))) {
             return 0;
         }
+
         return 1;
     }
 
+    /* (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.main.IComponent#getValues()
+     */
     public ArrayList<String> getValues() {
 
         ArrayList<String> values = new ArrayList<String>();

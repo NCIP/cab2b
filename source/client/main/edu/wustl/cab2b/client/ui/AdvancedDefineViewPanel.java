@@ -42,18 +42,18 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
     private static final long serialVersionUID = 1L;
 
     /** Reference to the parent container. */
-    private SearchCenterPanel m_searchCenterPanel = null;
+    private SearchCenterPanel searchCenterPanel = null;
 
     /** Pagination component */
-    private JPagination m_resultsPage = null;
+    private JPagination resultsPage = null;
 
     /** The functional class corresponding to root. */
-    private EntityInterface m_rootEntity = null;
+    private EntityInterface rootEntity = null;
 
     private Set<EntityInterface> allEntities = new HashSet<EntityInterface>();
 
     public AdvancedDefineViewPanel(SearchCenterPanel searchCenterPanel) {
-        this.m_searchCenterPanel = searchCenterPanel;
+        this.searchCenterPanel = searchCenterPanel;
         initGUI();
     }
 
@@ -71,7 +71,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 
         Vector<PageElement> pageElementCollection = new Vector<PageElement>();
         // Get the classes in the where part from the query.
-        MainSearchPanel mainSearchPanel = (MainSearchPanel) (this.m_searchCenterPanel.getParent());
+        MainSearchPanel mainSearchPanel = (MainSearchPanel) (this.searchCenterPanel.getParent());
 
         /* Get the wrapper. */
         final IClientQueryBuilderInterface queryObject = mainSearchPanel.getQueryObject();
@@ -89,9 +89,9 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         NumericPager numericPager = new NumericPager(pageElementCollection);
 
         // Initalize the pagination component
-        m_resultsPage = new JPagination(pageElementCollection, numericPager, this, true, false);
-        m_resultsPage.resetAllLabels();
-        m_resultsPage.setPageLinksDisabled();
+        resultsPage = new JPagination(pageElementCollection, numericPager, this, true, false);
+        resultsPage.resetAllLabels();
+        resultsPage.setPageLinksDisabled();
 
         // Create a Panel for the center searchPanel, and add the pagination component to that.
         JXPanel centerPanel = new Cab2bPanel(new RiverLayout(5, 5));
@@ -100,7 +100,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
          centerPanel.add("br", new Cab2bLabel());
          centerPanel.add("br", new Cab2bLabel());
          centerPanel.add("br", new Cab2bLabel());*/
-        centerPanel.add("br hfill vfill", this.m_resultsPage);
+        centerPanel.add("br hfill vfill", this.resultsPage);
         this.add(BorderLayout.CENTER, centerPanel);
 
         // The bottom searchPanel
@@ -137,7 +137,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         try {
             queryObject.setOutputForQuery(entity);
         } catch (RemoteException e) {
-            CommonUtils.handleException(e, m_searchCenterPanel, true, true, true, false);
+            CommonUtils.handleException(e, searchCenterPanel, true, true, true, false);
         }
     }
 
@@ -167,14 +167,13 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
             returnerSet.add(entityName);
         }
         IExpression rootExpr = null;
-        
+
         try {
-            rootExpr = query.getConstraints().getRootExpression(); 
+            rootExpr = query.getConstraints().getRootExpression();
         } catch (MultipleRootsException e) {
             // can't occur
         }
 
-        
         String rootEntityName = Utility.getDisplayName(rootExpr.getQueryEntity().getDynamicExtensionsEntity());
         Vector<String> returner = new Vector<String>();
         returner.add(rootEntityName);
@@ -185,6 +184,6 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
     }
 
     public EntityInterface getRootEntity() {
-        return this.m_rootEntity;
+        return this.rootEntity;
     }
 }

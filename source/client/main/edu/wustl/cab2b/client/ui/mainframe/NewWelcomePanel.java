@@ -1,9 +1,6 @@
 package edu.wustl.cab2b.client.ui.mainframe;
 
-import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.MAIN_FRAME_TITLE;
-
 import java.awt.Color;
-import java.awt.Dimension;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
@@ -14,14 +11,9 @@ import javax.swing.JScrollPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import edu.wustl.cab2b.client.ui.MainSearchPanel;
-import edu.wustl.cab2b.client.ui.SaveDatalistPanel;
-import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bStandardFonts;
-import edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
  * Loads a html page from the local file system and shows it in the editor pane.
@@ -34,7 +26,7 @@ public class NewWelcomePanel extends Cab2bPanel {
 
     private JEditorPane welcomePageEditorPane;
 
-    public static MainFrame mainFrame;
+    private static MainFrame mainFrame;
 
     public NewWelcomePanel(MainFrame newMainFrame) {
         mainFrame = newMainFrame;
@@ -52,18 +44,10 @@ public class NewWelcomePanel extends Cab2bPanel {
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     String className = e.getDescription();
                     if (className.equalsIgnoreCase("MainSearchPanel")) {
-
-                        GlobalNavigationPanel.mainSearchPanel = new MainSearchPanel();
-                        Dimension dimension = MainFrame.mainframeScreenDimesion;
-
-                        //reset DataList Save status
-                        SaveDatalistPanel.isDataListSaved = false;
-
-                        WindowUtilities.showInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel,
-                                                     ApplicationProperties.getValue(ApplicationResourceConstants.SEARCH_FRAME_TITLE), new Dimension((int) (dimension.width * 0.90),
-                                                             (int) (dimension.height * 0.85)), true, true);
+                        CommonUtils.launchSearchDataWizard();
                     } else {
-                        JOptionPane.showMessageDialog(mainFrame, "This link will take you to Analyze and Visualize Data screen.\nThis feature is not yet implemented.");
+                        JOptionPane.showMessageDialog(mainFrame,
+                                                      "This link will take you to Analyze and Visualize Data screen.\nThis feature is not yet implemented.");
                     }
                 }
             }
@@ -86,5 +70,19 @@ public class NewWelcomePanel extends Cab2bPanel {
             CommonUtils.handleException(e, mainFrame, true, true, false, false);
         }
         return editorPane;
+    }
+
+    /**
+     * @return the mainFrame
+     */
+    public static MainFrame getMainFrame() {
+        return mainFrame;
+    }
+
+    /**
+     * @param mainFrame the mainFrame to set
+     */
+    public static void setMainFrame(MainFrame mainFrame) {
+        NewWelcomePanel.mainFrame = mainFrame;
     }
 }

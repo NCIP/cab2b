@@ -2,13 +2,10 @@ package edu.wustl.cab2b.client.ui;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JFrame;
-
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author mahesh_iyer
@@ -19,13 +16,13 @@ public class MainSearchPanel extends Cab2bPanel {
     private static final long serialVersionUID = 1L;
 
     /**  The top searchPanel consisting of the labels.*/
-    private SearchTopPanel m_TopLabelPanel = new SearchTopPanel();
+    private SearchTopPanel topLabelPanel = new SearchTopPanel();
 
     /** The center searchPanel.*/
-    private SearchCenterPanel m_CenterPanel = new SearchCenterPanel();
+    private SearchCenterPanel centerPanel = new SearchCenterPanel();
 
     /** The bottom navigation searchPanel.*/
-    private SearchNavigationPanel m_BottomPanel = new SearchNavigationPanel(this);
+    private SearchNavigationPanel bottomPanel = new SearchNavigationPanel(this);
 
     /** The query object generated when user submits the conditions in the add limit page.*/
     public IClientQueryBuilderInterface queryObject = null;
@@ -45,8 +42,8 @@ public class MainSearchPanel extends Cab2bPanel {
         return queryObject;
     }
 
-    public SearchNavigationPanel getBottomPanel() {
-        return m_BottomPanel;
+    public SearchNavigationPanel getSearchNavigationPanel() {
+        return bottomPanel;
     }
 
     /**
@@ -61,7 +58,7 @@ public class MainSearchPanel extends Cab2bPanel {
      * @return
      */
     public SearchCenterPanel getCenterPanel() {
-        return this.m_CenterPanel;
+        return this.centerPanel;
     }
 
     /**
@@ -69,7 +66,7 @@ public class MainSearchPanel extends Cab2bPanel {
      * @return
      */
     public SearchTopPanel getTopPanel() {
-        return this.m_TopLabelPanel;
+        return this.topLabelPanel;
 
     }
 
@@ -78,7 +75,7 @@ public class MainSearchPanel extends Cab2bPanel {
      * @return
      */
     public SearchNavigationPanel getNavigationPanel() {
-        return this.m_BottomPanel;
+        return this.bottomPanel;
 
     }
 
@@ -97,25 +94,13 @@ public class MainSearchPanel extends Cab2bPanel {
      */
     private void initGUI() {
         this.setLayout(new BorderLayout());
-        this.add(BorderLayout.NORTH, this.m_TopLabelPanel);
-        this.add(BorderLayout.CENTER, this.m_CenterPanel);
-        this.add(BorderLayout.SOUTH, this.m_BottomPanel);
+        this.add(BorderLayout.NORTH, this.topLabelPanel);
+        this.add(BorderLayout.CENTER, this.centerPanel);
+        this.add(BorderLayout.SOUTH, this.bottomPanel);
     }
 
     public static DataList getDataList() {
         return dataList;
-    }
-
-    public static void main(String[] args) {
-        Logger.configure();
-
-        MainSearchPanel searchPanel = new MainSearchPanel();
-
-        JFrame dialog = new JFrame();
-        dialog.setSize(976, 580);
-        dialog.setTitle("Search Data");
-        dialog.getContentPane().add(searchPanel);
-        dialog.setVisible(true);
     }
 
     /**

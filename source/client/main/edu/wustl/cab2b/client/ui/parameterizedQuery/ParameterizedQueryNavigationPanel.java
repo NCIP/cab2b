@@ -58,7 +58,7 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
         orderViewButton.addActionListener(new OrderViewButtonActionListener());
         orderViewButton.setPreferredSize(new Dimension(120, 22));
         saveButton = new Cab2bButton("Save");
-        saveButton.addActionListener(new saveButtonActionListener());
+        saveButton.addActionListener(new SaveButtonActionListener());
         cancelButton = new Cab2bButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
@@ -72,6 +72,11 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
         this.add("br ", new Cab2bLabel());
     }
 
+    /**
+     * Action class for order button
+     * @author deepak_shingan
+     *
+     */
     private class OrderViewButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
             if (parameterizedQueryMainPanel.getParameterConditionPanel().getCheckedAttributePanels(
@@ -88,7 +93,12 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
         }
     }
 
-    private class saveButtonActionListener implements ActionListener {
+    /**
+     * Action listener for save button
+     * @author deepak_shingan
+     *
+     */
+    private class SaveButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
             Cab2bPanel condtionPanel = parameterizedQueryMainPanel.getParameterConditionPanel().getConditionPanel();
             ParameterizedQueryDataModel parameterizedQueryDataModel = parameterizedQueryMainPanel.getParameterizedQueryDataModel();
@@ -132,6 +142,9 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
             saveQuery();
         }
 
+        /**
+         * Method to save parameterised query
+         */
         private void saveQuery() {
             QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                                         EjbNamesConstants.QUERY_ENGINE_BEAN,
@@ -147,16 +160,16 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                     message = "Query " + cab2bParameterizedQuery.getName() + " updated successfully.";
                 } else {
                     if (queryEngineBusinessInterface.isQueryNameDuplicate(cab2bParameterizedQuery.getName())) {
-                        JOptionPane.showMessageDialog(
-                                                      parameterizedQueryMainPanel,
-                                                      "Query with name '"+cab2bParameterizedQuery.getName()+"' already exist. Please try saving with different name." ,
-                                                      "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(parameterizedQueryMainPanel, "Query with name '"
+                                + cab2bParameterizedQuery.getName()
+                                + "' already exist. Please try saving with different name.", "Error",
+                                                      JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     queryEngineBusinessInterface.saveQuery(cab2bParameterizedQuery);
                     message = "Query " + cab2bParameterizedQuery.getName() + " saved successfully.";
                 }
-                SearchNavigationPanel.messageLabel.setText(message);
+                SearchNavigationPanel.getMessageLabel().setText(message);
                 StackBoxMySearchQueriesPanel.getInstance().updateMySearchQueryPanel();
                 updateUI();
                 parameterizedQueryMainPanel.getDialog().dispose();

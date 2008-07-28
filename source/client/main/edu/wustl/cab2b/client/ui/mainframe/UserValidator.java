@@ -69,5 +69,4 @@ public class UserValidator {
     public static void setUserName(String userName) {
         UserValidator.userName = userName;
     }
-
 }

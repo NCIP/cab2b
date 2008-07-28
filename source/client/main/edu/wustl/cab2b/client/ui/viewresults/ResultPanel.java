@@ -59,7 +59,7 @@ public abstract class ResultPanel extends Cab2bPanel {
      * caontains a summary of data items added to the data list
      * parent panel is used to adjust location of titlied panel  
      */
-    public static JXPanel myDataListPanel;
+    protected static JXPanel myDataListPanel;
 
     protected static JXTitledPanel myDataListTitledPanel;
 
@@ -103,10 +103,12 @@ public abstract class ResultPanel extends Cab2bPanel {
                 MainSearchPanel.getDataList().addDataRows(dataRows);
 
                 updateMyDataListPanel();
-                SaveDatalistPanel.isDataListSaved = false;
+                SaveDatalistPanel.setDataListSaved(false);
 
-                SearchNavigationPanel.messageLabel.setText(" *Added " + dataRows.size() + " elements to data list");
-                GlobalNavigationPanel.mainSearchPanel.getNavigationPanel().nextButton.setEnabled(true);
+                SearchNavigationPanel.getMessageLabel().setText(
+                                                                " *Added " + dataRows.size()
+                                                                        + " elements to data list");
+                GlobalNavigationPanel.getMainSearchPanel().getNavigationPanel().nextButton.setEnabled(true);
                 updateUI();
             }
         });
@@ -176,7 +178,7 @@ public abstract class ResultPanel extends Cab2bPanel {
                 updateMyDataListPanel();
                 /*  JOptionPane.showMessageDialog(component, "Apply All operation completed successfully", "Information",
                  JOptionPane.INFORMATION_MESSAGE);*/
-                SearchNavigationPanel.messageLabel.setText("Apply All operation completed successfully");
+                SearchNavigationPanel.getMessageLabel().setText("Apply All operation completed successfully");
             }
         };
         swingWorker.start();
@@ -272,7 +274,6 @@ public abstract class ResultPanel extends Cab2bPanel {
         myDataListPanel.removeAll();
         IDataRow rootNode = MainSearchPanel.getDataList().getRootDataRow(); //datalistTree.get(0); // This node is hidden node in the tree view
         int rootNodeChildrenSize = rootNode.getChildren().size();
-        
 
         for (int i = 0; i < rootNodeChildrenSize; i++) {
             final IDataRow currentNode = rootNode.getChildren().get(i);
@@ -299,7 +300,7 @@ public abstract class ResultPanel extends Cab2bPanel {
         selectedRootClassName.setText(displayClassName + "_" + dataRow.getRecord().getRecordId().getId());
         selectedRootClassName.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                GlobalNavigationPanel.mainSearchPanel.getNavigationPanel().gotoDataListPanel(row);
+                GlobalNavigationPanel.getMainSearchPanel().getNavigationPanel().gotoDataListPanel(row);
             }
         });
         myDataListPanel.add("br ", selectedRootClassName);
@@ -332,6 +333,20 @@ public abstract class ResultPanel extends Cab2bPanel {
      */
     public void setIntraModelAssociationCollection(List<IInterModelAssociation> intraModelAssociationCollection) {
         this.intraModelAssociationCollection = intraModelAssociationCollection;
+    }
+
+    /**
+     * @return the myDataListPanel
+     */
+    public static JXPanel getMyDataListPanel() {
+        return myDataListPanel;
+    }
+
+    /**
+     * @param myDataListPanel the myDataListPanel to set
+     */
+    public static void setMyDataListPanel(JXPanel myDataListPanel) {
+        ResultPanel.myDataListPanel = myDataListPanel;
     }
 
 }

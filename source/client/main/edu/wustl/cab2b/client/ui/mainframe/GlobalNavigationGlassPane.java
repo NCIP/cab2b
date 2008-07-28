@@ -1,49 +1,39 @@
 package edu.wustl.cab2b.client.ui.mainframe;
 
-import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.SEARCH_FRAME_TITLE;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.EXPT_TAB_PRESSED;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.EXPT_TAB_UNPRESSED;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.HOME_TAB_PRESSED;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.HOME_TAB_UNPRESSED;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.SEARCH_TAB_PRESSED;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.SEARCH_TAB_UNPRESSED;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.LOGOUT_ICON;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.Date;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXPanel;
 
 import edu.wustl.cab2b.client.ui.MainSearchPanel;
-import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -61,16 +51,14 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
     private URL[] tabsImagesUnPressed = { loader.getResource(HOME_TAB_UNPRESSED), loader.getResource(SEARCH_TAB_UNPRESSED), loader.getResource(EXPT_TAB_UNPRESSED) };
 
     private URL[] tabsImagesPressed = { loader.getResource(HOME_TAB_PRESSED), loader.getResource(SEARCH_TAB_PRESSED), loader.getResource(EXPT_TAB_PRESSED) };
-    
-    private JButton[] tabButtons = new Cab2bButton[3];
 
-    public Color navigationButtonBgColorSelected = Color.WHITE;
+    private JButton[] tabButtons = new Cab2bButton[3];
 
     private JXPanel tabsPanel;
 
-    public MainFrame mainFrame;
+    private MainFrame mainFrame;
 
-    public JXFrame frame;
+    private JXFrame frame;
 
     private JLabel middleLabel;
 
@@ -154,7 +142,7 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         rightLabel.add(new JLabel(""), gbc);
 
         Date date = new Date();
-        loggedInUserLabel = new Cab2bLabel(MainFrame.getUserName());
+        loggedInUserLabel = new Cab2bLabel(mainFrame.getUserName());
         loggedInUserLabel.setFont(new Font("Arial", Font.BOLD, 12));
         Cab2bLabel dateLabel = new Cab2bLabel(DateFormat.getDateInstance(DateFormat.LONG).format(date).toString());
         dateLabel.setForeground(Color.WHITE);
@@ -164,7 +152,7 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         logOutHyperLink.setText("Logout");
         logOutHyperLink.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            mainFrame.logout();
+                mainFrame.logout();
             }
         });
 
@@ -187,11 +175,11 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         JLabel label = new JLabel(" ");
         linkPanel.add("br", label);
         linkPanel.add(loggedInUserLabel);
-      //  linkPanel.add("br ", label);
+        //  linkPanel.add("br ", label);
         linkPanel.add("br ", dateLabel);
         linkPanel.add("br ", logOutHyperLink);
-        linkPanel.add("tab ",line);
-        linkPanel.add("tab ",mySettingHyperlInk);
+        linkPanel.add("tab ", line);
+        linkPanel.add("tab ", mySettingHyperlInk);
         linkPanel.setOpaque(false);
 
         gbc.gridx = 2;
@@ -205,8 +193,6 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         lastSelectedTab = tabButtons[0];
         this.repaint();
     }
-    
-
 
     public void actionPerformed(ActionEvent e) {
         Logger.out.debug("Global Nagigation Panel Button");
@@ -228,12 +214,12 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
 
             initializeMainSearchPanel();
 
-            if (GlobalNavigationPanel.mainSearchPanel != null) {
-                showSearchDialog();
+            if (GlobalNavigationPanel.getMainSearchPanel() != null) {
+                CommonUtils.launchSearchDataWizard();
             }
 
             MainSearchPanel.getDataList().clear();
-            GlobalNavigationPanel.mainSearchPanel = null;
+            GlobalNavigationPanel.setMainSearchPanel(null);
 
             // Set the Home tab as pressed and Search tab as unpressed
             if (lastSelectedTab != null && lastSelectedTab == tabButtons[0]) {
@@ -257,30 +243,9 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
     }
 
     public void initializeMainSearchPanel() {
-        GlobalNavigationPanel.mainSearchPanel = new MainSearchPanel();
-        Dimension relDimension = CommonUtils.getRelativeDimension(MainFrame.mainframeScreenDimesion, 0.90f, 0.85f);
-        GlobalNavigationPanel.mainSearchPanel.setPreferredSize(relDimension);
-        GlobalNavigationPanel.mainSearchPanel.setSize(relDimension);
+        GlobalNavigationPanel.setMainSearchPanel(new MainSearchPanel());
+        Dimension relDimension = CommonUtils.getRelativeDimension(MainFrame.getScreenDimesion(), 0.90f, 0.85f);
+        GlobalNavigationPanel.getMainSearchPanel().setPreferredSize(relDimension);
+        GlobalNavigationPanel.getMainSearchPanel().setSize(relDimension);
     }
-
-    public void showSearchDialog() {
-        // Update the variable for latest screen dimension from the
-        // toolkit, this is to handle the situations where
-        // application is started and then screen resolution is
-        // changed, but the variable stiil holds old resolution
-        // size.
-        MainFrame.mainframeScreenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension dimension = MainFrame.mainframeScreenDimesion;
-        final String title = ApplicationProperties.getValue(SEARCH_FRAME_TITLE);
-        
-        //clearing the datalist
-        GlobalNavigationPanel.mainSearchPanel.getDataList().clear();  
-        JDialog searchDialog = WindowUtilities.setInDialog(mainFrame, GlobalNavigationPanel.mainSearchPanel,
-                                                           title, new Dimension((int) (dimension.width * 0.90),
-                                                                   (int) (dimension.height * 0.85)), true, true);
-        mainFrame.setSearchWizardDialog(searchDialog);             
-        searchDialog.setVisible(true);              
-        GlobalNavigationPanel.mainSearchPanel = null;
-    }
-
 }

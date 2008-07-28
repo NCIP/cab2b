@@ -9,23 +9,26 @@ import static edu.wustl.cab2b.client.ui.util.ClientConstants.POPULAR_CATEGORIES_
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import edu.wustl.cab2b.client.ui.RiverLayout;
+import edu.wustl.cab2b.client.ui.AddLimitPanel;
+import edu.wustl.cab2b.client.ui.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.StackedBox;
+import edu.wustl.cab2b.client.ui.experiment.ExperimentOpenPanel;
+import edu.wustl.cab2b.client.ui.mainframe.GlobalNavigationPanel;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
+import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.common.domain.Experiment;
+import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
@@ -38,17 +41,20 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
 
     private JPanel popularSearchCategoryPanel;
 
+    private MainFrame mainFrame;
+
     private JPanel myExperimentsPanel;
 
-    private static Color CLICKED_COLOR = new Color(76, 41, 157);
+    public static Color CLICKED_COLOR = new Color(76, 41, 157);
 
-    private static Color UNCLICKED_COLOR = new Color(0x034E74);
+    public static Color UNCLICKED_COLOR = new Color(0x034E74);
 
     /**
      * @param frame 
      * @param mainFrame
      */
     public MainFrameStackedBoxPanel(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
         this.setLayout(new BorderLayout());
 
         StackedBox stackedBox = new StackedBox();
@@ -66,11 +72,15 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
         final String titleQuery = ApplicationProperties.getValue(QUERY_BOX_TEXT);
         stackedBox.addBox(titleQuery, jScrollPane, MY_SEARCH_QUERIES_IMAGE, false);
 
-        popularSearchCategoryPanel = getPanel();
+        popularSearchCategoryPanel = CommonUtils.getPopularSearchCategoriesPanel(
+                                                                                 CommonUtils.getPopularSearchCategories(),
+                                                                                 new CategoryHyperlinkActionListener());
         final String titlePopularcategories = ApplicationProperties.getValue(POPULAR_CATEGORY_BOX_TEXT);
         stackedBox.addBox(titlePopularcategories, popularSearchCategoryPanel, POPULAR_CATEGORIES_IMAGE, false);
 
-        myExperimentsPanel = getPanel();
+        myExperimentsPanel = CommonUtils.getMyLatestExperimentsPanel(CommonUtils.getExperiments(null, ""),
+                                                                     new ExperimentHyperlinkActionListener());
+
         final String titleExpr = ApplicationProperties.getValue(EXPERIMENT_BOX_TEXT);
         stackedBox.addBox(titleExpr, myExperimentsPanel, MY_EXPERIMENT_IMAGE, false);
 
@@ -81,59 +91,81 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
     }
 
     /**
-     * @return
-     */
-    private JPanel getPanel() {
-        JPanel panel = new Cab2bPanel();
-        panel.setLayout(new RiverLayout(10, 5));
-        panel.setOpaque(false);
-        return panel;
-    }
-
-    /**
      * @param data
      */
-    public void setDataForPopularSearchCategoriesPanel(Vector data) {
-        setDataForPanel(popularSearchCategoryPanel, data,
-                        "This link will open selected popular category in add limit page.\nThis feature is not yet implemented.");
-    }
-
-    /**
-     * @param data
-     */
-    public void setDataForMyExperimentsPanel(Vector data) {
-        setDataForPanel(myExperimentsPanel, data,
-                        "This link will open selected user experiment.\nThis feature is not yet implemented.");
-    }
-
-    /**
-     * @param panel
-     * @param data
-     */
-    private void setDataForPanel(JPanel panel, Vector data, final String msg) {
-        panel.removeAll();
-        panel.add(new Cab2bLabel());
-        ActionListener actionListener = new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                //TODO this will be removed in later releases.
-                Container comp = (Container) ae.getSource();
-                while (comp.getParent() != null) {
-                    comp = comp.getParent();
-                }
-                JOptionPane.showMessageDialog(comp, msg, "caB2B Information", JOptionPane.INFORMATION_MESSAGE);
-            }
-        };
-        Iterator iter = data.iterator();
-        while (iter.hasNext()) {
-            Object obj = iter.next();
-            String hyperlinkName = obj.toString();
+    public void setDataForPopularSearchCategoriesPanel(Vector<Category> data) {
+        popularSearchCategoryPanel.removeAll();
+        popularSearchCategoryPanel.add(new Cab2bLabel());
+        for (Category category : data) {
+            String hyperlinkName = category.getCategoryEntity().getName();
             Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
             hyperlink.setClickedColor(CLICKED_COLOR);
             hyperlink.setUnclickedColor(UNCLICKED_COLOR);
+            hyperlink.setUserObject(category);
             hyperlink.setText(hyperlinkName);
-            hyperlink.addActionListener(actionListener);
-            panel.add("br", hyperlink);
+            hyperlink.setToolTipText(category.getCategoryEntity().getDescription());
+            hyperlink.addActionListener(new CategoryHyperlinkActionListener());
+            popularSearchCategoryPanel.add("br", hyperlink);
         }
-        panel.revalidate();
+        popularSearchCategoryPanel.revalidate();
     }
+
+    /**
+     * @param data
+     */
+    public void setDataForMyExperimentsPanel(Vector<Experiment> data) {
+        myExperimentsPanel.removeAll();
+        myExperimentsPanel.add(new Cab2bLabel());
+        for (Experiment experiment : data) {
+            String hyperlinkName = experiment.getName();
+            Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
+            hyperlink.setClickedColor(CLICKED_COLOR);
+            hyperlink.setUnclickedColor(UNCLICKED_COLOR);
+            hyperlink.setUserObject(experiment);
+            hyperlink.setText(hyperlinkName);
+            hyperlink.setToolTipText(experiment.getDescription());
+            hyperlink.addActionListener(new ExperimentHyperlinkActionListener());
+            myExperimentsPanel.add("br", hyperlink);
+        }
+        myExperimentsPanel.revalidate();
+    }
+
+    /**
+     * Homepage Experiment Link action listener class
+     * @author deepak_shingan
+     *
+     */
+    class ExperimentHyperlinkActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            Cab2bHyperlink hyperLink = (Cab2bHyperlink) e.getSource();
+            Experiment exp = (Experiment) hyperLink.getUserObject();
+            ExperimentOpenPanel expPanel = new ExperimentOpenPanel(exp);
+            MainFrameStackedBoxPanel.this.mainFrame.openExperiment(expPanel);
+            updateUI();
+        }
+    }
+
+    /**
+     * Homepage Category Link action listener class
+     * @author deepak_shingan
+     *
+     */
+    class CategoryHyperlinkActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            Cab2bHyperlink hyperLink = (Cab2bHyperlink) e.getSource();
+            MainSearchPanel mainSearchPanel = null;
+            if (GlobalNavigationPanel.getMainSearchPanel() == null)
+                mainSearchPanel = new MainSearchPanel();
+            GlobalNavigationPanel.setMainSearchPanel(mainSearchPanel);
+            mainSearchPanel.getSearchNavigationPanel().setAddLimitPanelInWizard();
+            AddLimitPanel addLimitPanel = mainSearchPanel.getCenterPanel().getAddLimitPanel();
+            addLimitPanel.getSearchResultPanel().updateAddLimitPage(
+                                                                    addLimitPanel,
+                                                                    ((Category) hyperLink.getUserObject()).getCategoryEntity());
+
+            CommonUtils.launchSearchDataWizard();
+            updateUI();
+        }
+    }
+
 }

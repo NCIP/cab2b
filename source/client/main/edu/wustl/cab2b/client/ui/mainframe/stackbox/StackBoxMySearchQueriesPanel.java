@@ -11,22 +11,21 @@ import java.util.Collection;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
-import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
+import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryShowResultPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
-import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
+import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 
 /**
  * 
- * The singleton class used to display saved Query links on left hand side of
- * mainFrame panel
- * 
+ * The singleton class used to display saved Query links on left hand side of 
+ * mainFrame panel   
  * @author deepak_shingan
- * 
+ *
  */
 public class StackBoxMySearchQueriesPanel extends Cab2bPanel {
 
@@ -49,7 +48,7 @@ public class StackBoxMySearchQueriesPanel extends Cab2bPanel {
     }
 
     /**
-     * Method to update search query panel
+     * Method to update search query panel 
      */
     public void updateMySearchQueryPanel() {
         this.removeAll();
@@ -74,7 +73,7 @@ public class StackBoxMySearchQueriesPanel extends Cab2bPanel {
                 this.add("br ", queryLink);
             }
         } catch (Exception exception) {
-            CommonUtils.handleException(exception, MainFrame.newWelcomePanel, true, true, true, false);
+            CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);
         }
         updateUI();
     }
@@ -88,11 +87,12 @@ public class StackBoxMySearchQueriesPanel extends Cab2bPanel {
                                                                                                                                         EjbNamesConstants.QUERY_ENGINE_BEAN,
                                                                                                                                         QueryEngineHome.class,
                                                                                                                                         null);
-            Cab2bQuery cab2bQuery = null;
+            ICab2bParameterizedQuery cab2bQuery = null;
             try {
-                cab2bQuery = (Cab2bQuery) queryEngineBusinessInterface.retrieveQueryById(queryID);
+                cab2bQuery = queryEngineBusinessInterface.retrieveQueryById(queryID);
             } catch (RemoteException exception) {
-                CommonUtils.handleException(exception, MainFrame.newWelcomePanel, true, true, true, false);
+                CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);
+                return;
             }
             ParameterizedQueryShowResultPanel parameterizedQueryPreviewPanel = new ParameterizedQueryShowResultPanel(
                     cab2bQuery);

@@ -357,7 +357,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * Refresh/clear Add Limit Panel UI
      */
     public void resetPanel() {
-        SearchNavigationPanel.messageLabel.setText("");
+        SearchNavigationPanel.getMessageLabel().setText("");
         clearAddLimitUI();
         mainDagPanel.clearDagPanel();
         revalidate();

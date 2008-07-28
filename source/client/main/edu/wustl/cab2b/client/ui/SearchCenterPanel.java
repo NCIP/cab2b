@@ -23,25 +23,25 @@ public class SearchCenterPanel extends Cab2bPanel {
     private static final long serialVersionUID = 1L;
 
     /** An array of all the cards to be added to this searchPanel.*/
-    public JXPanel[] m_arrCards = new Cab2bPanel[5];
+    private JXPanel[] arrCards = new Cab2bPanel[5];
 
     /** Identifier to identify the card corresponding to the advanced search searchPanel.*/
-    public static final String m_strIdentifierChooseCateglbl = "Choose Search Category";
+    private static final String strIdentifierChooseCateglbl = "Choose Search Category";
 
     /** Identifier to identify the card corresponding to the Add Limit searchPanel.*/
-    public static final String m_strIdentifierAddLimitlbl = "Add Limit";
+    private static final String strIdentifierAddLimitlbl = "Add Limit";
 
     /** Identifier to identify the card corresponding to the Define Search Results searchPanel.*/
-    public static final String m_strDefineSearchResultslbl = "Define Search Results View";
+    private static final String strDefineSearchResultslbl = "Define Search Results View";
 
     /** Identifier to identify the card corresponding to the View Search Results searchPanel.*/
-    public static final String m_strViewSearchResultslbl = "View Search Results";
+    private static final String strViewSearchResultslbl = "View Search Results";
 
     /** Identifier to identify the card corresponding to the Data List searchPanel.*/
-    public static final String m_strDataListlbl = "Data List";
+    private static final String strDataListlbl = "Data List";
 
     /** Index to indicate the currently selected index. Initialized to default value of 0.*/
-    private int m_iCurrentlySelectedCard = 0;
+    private int iCurrentlySelectedCard = 0;
 
     private AddLimitPanel addLimitPanel;
 
@@ -51,7 +51,7 @@ public class SearchCenterPanel extends Cab2bPanel {
      * HashMap of identifiers. This would be used by the navigation searchPanel to
      * bring up the appropriate card.
      */
-    private Vector<String> m_vIdentifiers = new Vector<String>();
+    private Vector<String> vIdentifiers = new Vector<String>();
 
     /**
      * The method returns the number of cards currently selected
@@ -59,7 +59,7 @@ public class SearchCenterPanel extends Cab2bPanel {
      * @return int The current card count.
      */
     public int getIdentifierCount() {
-        return this.m_vIdentifiers.size();
+        return this.vIdentifiers.size();
     }
 
     /**
@@ -68,7 +68,7 @@ public class SearchCenterPanel extends Cab2bPanel {
      * @return int The index of the currently selected card.
      */
     public int getSelectedCardIndex() {
-        return this.m_iCurrentlySelectedCard;
+        return this.iCurrentlySelectedCard;
     }
 
     /**
@@ -78,7 +78,7 @@ public class SearchCenterPanel extends Cab2bPanel {
      */
     public JXPanel getSelectedCard() {
 
-        return this.m_arrCards[this.getSelectedCardIndex()];
+        return this.arrCards[this.getSelectedCardIndex()];
     }
 
     /**
@@ -87,7 +87,7 @@ public class SearchCenterPanel extends Cab2bPanel {
      * @param  iSelectedCard index of the card to be selected.
      */
     public void setSelectedCardIndex(int iSelectedCard) {
-        this.m_iCurrentlySelectedCard = iSelectedCard;
+        this.iCurrentlySelectedCard = iSelectedCard;
     }
 
     /**
@@ -107,25 +107,25 @@ public class SearchCenterPanel extends Cab2bPanel {
 
         /* First card initialization.*/
         chooseCategPanel = new ChooseCategoryPanel();
-        this.add(chooseCategPanel, m_strIdentifierChooseCateglbl);
+        this.add(chooseCategPanel, strIdentifierChooseCateglbl);
         chooseCategPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 
         /*
          * Add the identifier to the vector, where from it would be refrenced by
          * the navigation searchPanel.
          */
-        this.m_vIdentifiers.add(m_strIdentifierChooseCateglbl);
-        this.m_arrCards[0] = chooseCategPanel;
+        this.vIdentifiers.add(strIdentifierChooseCateglbl);
+        this.arrCards[0] = chooseCategPanel;
 
         /* Second card initialization.*/
         addLimitPanel = new AddLimitPanel();
-        this.add(addLimitPanel, m_strIdentifierAddLimitlbl);
-        this.m_vIdentifiers.add(m_strIdentifierAddLimitlbl);
-        this.m_arrCards[1] = addLimitPanel;
+        this.add(addLimitPanel, strIdentifierAddLimitlbl);
+        this.vIdentifiers.add(strIdentifierAddLimitlbl);
+        this.arrCards[1] = addLimitPanel;
 
-        this.m_vIdentifiers.add(m_strDefineSearchResultslbl);
-        this.m_vIdentifiers.add(m_strViewSearchResultslbl);
-        this.m_vIdentifiers.add(m_strDataListlbl);
+        this.vIdentifiers.add(strDefineSearchResultslbl);
+        this.vIdentifiers.add(strViewSearchResultslbl);
+        this.vIdentifiers.add(strDataListlbl);
     }
 
     /**
@@ -135,7 +135,7 @@ public class SearchCenterPanel extends Cab2bPanel {
      * @return
      */
     public String getIdentifier(int index) {
-        return (String) this.m_vIdentifiers.elementAt(index);
+        return (String) this.vIdentifiers.elementAt(index);
     }
 
     public void reset() {
@@ -160,16 +160,79 @@ public class SearchCenterPanel extends Cab2bPanel {
 
     public void setChooseCategoryPanel(ChooseCategoryPanel chooseCategoryPanel) {
         this.chooseCategPanel = chooseCategoryPanel;
-        this.add(chooseCategPanel, m_strIdentifierChooseCateglbl);
-        this.m_vIdentifiers.add(m_strIdentifierChooseCateglbl);
-        this.m_arrCards[0] = chooseCategPanel;
+        this.add(chooseCategPanel, strIdentifierChooseCateglbl);
+        this.vIdentifiers.add(strIdentifierChooseCateglbl);
+        this.arrCards[0] = chooseCategPanel;
     }
 
     public void setAddLimitPanel(AddLimitPanel addLimitPanel) {
         this.addLimitPanel = addLimitPanel;
-        this.add(addLimitPanel, m_strIdentifierAddLimitlbl);
-        this.m_vIdentifiers.add(m_strIdentifierAddLimitlbl);
-        this.m_arrCards[1] = addLimitPanel;
+        this.add(addLimitPanel, strIdentifierAddLimitlbl);
+        this.vIdentifiers.add(strIdentifierAddLimitlbl);
+        this.arrCards[1] = addLimitPanel;
+    }
+
+    /**
+     * @return the arrCards
+     */
+    public JXPanel[] getArrCards() {
+        return arrCards;
+    }
+
+    /**
+     * @return the arrCards
+     */
+    public JXPanel getArrCardElement(int index) {
+        return arrCards[index];
+    }
+
+    /**
+     * @return the arrCards
+     */
+    public void setArrCardElement(JXPanel panel, int index) {
+        arrCards[index] = panel;
+    }
+
+    /**
+     * @param arrCards the arrCards to set
+     */
+    public void setArrCards(JXPanel[] arrCards) {
+        this.arrCards = arrCards;
+    }
+
+    /**
+     * @return the strDataListlbl
+     */
+    public static String getStrDataListlbl() {
+        return strDataListlbl;
+    }
+
+    /**
+     * @return the strViewSearchResultslbl
+     */
+    public static String getStrViewSearchResultslbl() {
+        return strViewSearchResultslbl;
+    }
+
+    /**
+     * @return the strDefineSearchResultslbl
+     */
+    public static String getStrDefineSearchResultslbl() {
+        return strDefineSearchResultslbl;
+    }
+
+    /**
+     * @return the strIdentifierAddLimitlbl
+     */
+    public static String getStrIdentifierAddLimitlbl() {
+        return strIdentifierAddLimitlbl;
+    }
+
+    /**
+     * @return the strIdentifierChooseCateglbl
+     */
+    public static String getStrIdentifierChooseCateglbl() {
+        return strIdentifierChooseCateglbl;
     }
 
 }

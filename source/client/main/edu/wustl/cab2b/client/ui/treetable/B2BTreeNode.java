@@ -16,11 +16,11 @@ import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 
 public class B2BTreeNode {
 
-    Vector<B2BTreeNode> children = new Vector<B2BTreeNode>();
+    private Vector<B2BTreeNode> children = new Vector<B2BTreeNode>();
 
-    String strDisplayName;
+    private String strDisplayName;
 
-    Object value;
+    private Object value;
 
     public Vector<B2BTreeNode> getChildren() {
 
@@ -59,14 +59,14 @@ public class B2BTreeNode {
     }
 
     public JDialog showInDialog() {
-        Dimension dimension = MainFrame.mainframeScreenDimesion;
+        Dimension dimension = MainFrame.getScreenDimesion();
 
         B2BNewModel b2BNewModel = new B2BNewModel(this);
         JTreeTable treeTable = new JTreeTable(b2BNewModel);
         JScrollPane jScrollPane = new JScrollPane(treeTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-        JDialog dialog = WindowUtilities.setInDialog(NewWelcomePanel.mainFrame, jScrollPane, "Test Tree",
+        JDialog dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), jScrollPane, "Test Tree",
                                                      new Dimension((int) (dimension.width * 0.45),
                                                              (int) (dimension.height * 0.60)), true, false);
         dialog.setVisible(true);

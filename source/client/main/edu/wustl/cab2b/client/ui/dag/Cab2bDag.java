@@ -53,7 +53,7 @@ public class Cab2bDag extends Cab2bPanel {
 		node.setDisplayName(entity.getName());
 		node.setID("ID");		
 		node.setEntityId(entity.getId());
-		dagPanel.m_currentNodeList.add(node);
+		dagPanel.currentNodeList.add(node);
 		GraphDocument document = dagPanel.getDocument();
 		document.addComponents(GraphEvent.createSingle(node));
 		

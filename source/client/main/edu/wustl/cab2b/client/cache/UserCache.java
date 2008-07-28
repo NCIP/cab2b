@@ -20,87 +20,86 @@ import edu.wustl.common.util.logger.Logger;
  * @author Chandrakant Talele
  */
 public class UserCache {
-	UserInterface currentUser = null;
+    UserInterface currentUser = null;
 
-	Map<String, List<String>> entityGroupToURLs = null;
+    Map<String, List<String>> entityGroupToURLs = null;
 
-	/**
-	 * The UserCache object. Needed for singleton
-	 */
-	protected static UserCache userCache = null;
+    /**
+     * The UserCache object. Needed for singleton
+     */
+    protected static UserCache userCache = null;
 
-	/**
-	 * @return the singleton instance of the UserCache class.
-	 */
-	public static synchronized UserCache getInstance() {
-		if (userCache == null) {
-			userCache = new UserCache();
-		}
-		return userCache;
-	}
+    /**
+     * @return the singleton instance of the UserCache class.
+     */
+    public static synchronized UserCache getInstance() {
+        if (userCache == null) {
+            userCache = new UserCache();
+        }
+        return userCache;
+    }
 
-	/**
-	 * Private default constructor. To restrict the user from instantiating
-	 * explicitly.
-	 */
-	protected UserCache() {
+    /**
+     * Private default constructor. To restrict the user from instantiating
+     * explicitly.
+     */
+    protected UserCache() {
 
-	}
+    }
 
-	/**
-	 * Refreshes the entity cache.
-	 * 
-	 * @throws RemoteException
-	 */
-	public final void init(UserInterface loggedInUser) {
-		Logger.out.debug("Initialising UserCache...");
-		currentUser = loggedInUser;
-		entityGroupToURLs = populateServiceURLs(currentUser);
-		Logger.out.debug("Initialising UserCache DONE");
-	}
+    /**
+     * Refreshes the entity cache.
+     * 
+     * @throws RemoteException
+     */
+    public final void init(UserInterface loggedInUser) {
+        currentUser = loggedInUser;
+        entityGroupToURLs = populateServiceURLs(currentUser);
+    }
 
-	/**
-	 * @return the users
-	 */
-	public UserInterface getCurrentUser() {
-		return currentUser;
-	}
+    /**
+     * @return the users
+     */
+    public UserInterface getCurrentUser() {
+        return currentUser;
+    }
 
-	public String[] getServiceURLs(EntityInterface entity) {
-	    String[] urls = new String[0];
-		EntityGroupInterface eg = Utility.getEntityGroup(entity);
-		String name = eg.getLongName();
-		if (entityGroupToURLs.containsKey(name)) {
-		    urls = entityGroupToURLs.get(name).toArray(new String[0]);
-		} else {
-			Logger.out.warn("Service URLs for this entity neither configured by user nor administrator");
-		}
-		return urls;
-	}
+    public String[] getServiceURLs(EntityInterface entity) {
+        String[] urls = new String[0];
+        EntityGroupInterface eg = Utility.getEntityGroup(entity);
+        String name = eg.getLongName();
+        if (entityGroupToURLs.containsKey(name)) {
+            urls = entityGroupToURLs.get(name).toArray(new String[0]);
+        } else {
+            Logger.out.warn("Service URLs for this entity neither configured by user nor administrator");
+        }
+        return urls;
+    }
 
-	/**
-	 * Returns all the URLs of the data services which are exposing given entity
-	 * 
-	 * @param entity
-	 *            Entity to check
-	 * @return Returns the List of URLs
-	 */
-	private Map<String, List<String>> populateServiceURLs(UserInterface user) {
-		Map<String, List<String>> map = null;
-		UserBusinessInterface userBusinessInterface = (UserBusinessInterface) CommonUtils
-				.getBusinessInterface(EjbNamesConstants.USER_BEAN, UserHomeInterface.class);
-		try {
-			map = userBusinessInterface.getServiceUrlsForUser(user);
-		} catch (DynamicExtensionsSystemException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (DynamicExtensionsApplicationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return map;
-	}
+    /**
+     * Returns all the URLs of the data services which are exposing given entity
+     * 
+     * @param entity
+     *            Entity to check
+     * @return Returns the List of URLs
+     */
+    private Map<String, List<String>> populateServiceURLs(UserInterface user) {
+        Map<String, List<String>> map = null;
+        UserBusinessInterface userBusinessInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                               EjbNamesConstants.USER_BEAN,
+                                                                                                               UserHomeInterface.class);
+        try {
+            map = userBusinessInterface.getServiceUrlsForUser(user);
+        } catch (DynamicExtensionsSystemException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (DynamicExtensionsApplicationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return map;
+    }
 }

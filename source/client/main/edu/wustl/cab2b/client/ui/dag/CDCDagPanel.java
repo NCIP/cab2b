@@ -41,7 +41,7 @@ public class CDCDagPanel extends MainDagPanel {
 	 */
 	@Override
 	public void performAutoConnect() {
-		if (m_currentNodeList.size() < 2) {
+		if (currentNodeList.size() < 2) {
 			// Cannot perform connect all functionality
 			JOptionPane.showMessageDialog(this.getParent().getParent().getParent(),
 					"Please add atleast two nodes.", "Auto Connect Warning",
@@ -49,7 +49,7 @@ public class CDCDagPanel extends MainDagPanel {
 			return;
 		}
 
-		List<ClassNode> selectedNodes = m_viewController.getCurrentNodeSelection();
+		List<ClassNode> selectedNodes = viewController.getCurrentNodeSelection();
 		if (selectedNodes == null || selectedNodes.size() <= 1) {
 			// Cannot perform connect all functionality
 			JOptionPane.showMessageDialog(this.getParent().getParent().getParent(),
@@ -67,7 +67,7 @@ public class CDCDagPanel extends MainDagPanel {
 			entitySet.add(entity);
 		}
 
-		Set<ICuratedPath> paths = m_pathFinder.autoConnect(entitySet);
+		Set<ICuratedPath> paths = dagPathFinder.autoConnect(entitySet);
 		if (paths == null || paths.size() <= 0) {
 			// Cannot perform connect all functionality
 			JOptionPane.showMessageDialog(this,
@@ -80,7 +80,7 @@ public class CDCDagPanel extends MainDagPanel {
 		if (path == null) {
 			// Show ambiguity resolver to get a curated path
 			AutoConnectAmbiguityResolver childPanel = new AutoConnectAmbiguityResolver(paths);
-			WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, childPanel,
+			WindowUtilities.showInDialog(NewWelcomePanel.getMainFrame(), childPanel,
 					"Available curated paths Panel", Constants.WIZARD_SIZE2_DIMENSION, true, false);
 			path = childPanel.getUserSelectedPath();
 		}
@@ -114,7 +114,7 @@ public class CDCDagPanel extends MainDagPanel {
 				destinationId);
 
 		AmbiguityObject ambiguityObject = new AmbiguityObject(sourceEntity, destinationEntity);
-		ResolveAmbiguity resolveAmbigity = new ResolveAmbiguity(ambiguityObject, m_pathFinder);
+		ResolveAmbiguity resolveAmbigity = new ResolveAmbiguity(ambiguityObject, dagPathFinder);
 		Map<AmbiguityObject, List<IPath>> map = resolveAmbigity.getPathsForAllAmbiguities();
 		return map.get(ambiguityObject);
 	}
@@ -159,12 +159,12 @@ public class CDCDagPanel extends MainDagPanel {
 		link.setPath(path);
 		sourceNode.setLinkForSourcePort(sourcePort, link);
 		link.setTooltipText(edu.wustl.cab2b.common.util.Utility.getPathDisplayString(path));
-		m_document.addComponents(GraphEvent.createSingle(link));
+		graphDocument.addComponents(GraphEvent.createSingle(link));
 
-		m_viewController.getHelper().scheduleNodeToLayout(sourceNode);
-		m_viewController.getHelper().scheduleNodeToLayout(destNode);
-		m_viewController.getHelper().scheduleLinkToLayout(link);
-		m_viewController.getHelper().recalculate();
+		viewController.getHelper().scheduleNodeToLayout(sourceNode);
+		viewController.getHelper().scheduleNodeToLayout(destNode);
+		viewController.getHelper().scheduleLinkToLayout(link);
+		viewController.getHelper().recalculate();
 
 	}
 

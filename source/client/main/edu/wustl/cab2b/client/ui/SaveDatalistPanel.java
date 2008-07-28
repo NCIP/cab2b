@@ -69,7 +69,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
     MainSearchPanel mainSearchPanel;
 
     //flag used to indicate status of data list  
-    public static boolean isDataListSaved = false;
+    private static boolean isDataListSaved = false;
 
     SaveDatalistPanel(MainSearchPanel mainSearchpanel) {
         this.mainSearchPanel = mainSearchpanel;
@@ -133,7 +133,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
                                     + MainSearchPanel.savedDataListMetadata.getId());
                             savedList = true;
                         } catch (RemoteException e) {
-                            CommonUtils.handleException(e, MainFrame.newWelcomePanel, true, true, true, false);
+                            CommonUtils.handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
                         } finally {
                             dialog.dispose();
                         }
@@ -142,9 +142,10 @@ public class SaveDatalistPanel extends Cab2bPanel {
                     @Override
                     protected void doUIUpdateLogic() throws RuntimeException {
                         if (savedList) {
-                            SearchNavigationPanel.messageLabel.setText("* Data list '"
-                                    + MainSearchPanel.getDataList().getDataListAnnotation().getName()
-                                    + "' saved successfully .");
+                            SearchNavigationPanel.getMessageLabel().setText(
+                                                                            "* Data list '"
+                                                                                    + MainSearchPanel.getDataList().getDataListAnnotation().getName()
+                                                                                    + "' saved successfully .");
                             updateUI();
                         }
                     }
@@ -244,8 +245,8 @@ public class SaveDatalistPanel extends Cab2bPanel {
     }
 
     public JDialog showInDialog() {
-        Dimension dimension = MainFrame.mainframeScreenDimesion;
-        dialog = WindowUtilities.setInDialog(NewWelcomePanel.mainFrame, this, "Save Data List", new Dimension(
+        Dimension dimension = MainFrame.getScreenDimesion();
+        dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), this, "Save Data List", new Dimension(
                 (int) (dimension.width * 0.35), (int) (dimension.height * 0.30)), true, false);
 
         Logger.out.debug("dialog initialized ########## " + dialog);
@@ -261,5 +262,19 @@ public class SaveDatalistPanel extends Cab2bPanel {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add(obj);
         frame.setVisible(true);
+    }
+
+    /**
+     * @return the isDataListSaved
+     */
+    public static boolean isDataListSaved() {
+        return isDataListSaved;
+    }
+
+    /**
+     * @param isDataListSaved the isDataListSaved to set
+     */
+    public static void setDataListSaved(boolean isDataListSaved) {
+        SaveDatalistPanel.isDataListSaved = isDataListSaved;
     }
 }

@@ -2,16 +2,12 @@ package edu.wustl.cab2b.client.ui.treetable;
 
 
 
-import java.awt.Component;
-import java.awt.event.*;
-import java.awt.AWTEvent;
-//import com.sun.java.swing.*;
-
 import java.util.EventObject;
-import java.io.Serializable;
-import javax.swing.*;
-import javax.swing.tree.*;
-import javax.swing.event.*;
+
+import javax.swing.CellEditor;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.EventListenerList;
 
 
 public class AbstractCellEditor implements CellEditor {

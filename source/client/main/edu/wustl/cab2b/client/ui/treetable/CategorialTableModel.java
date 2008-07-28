@@ -13,16 +13,15 @@ import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 
 public class CategorialTableModel extends DefaultTableModel {
-    Vector<String> attributeNameColumnList = null;
+    private Vector<String> attributeNameColumnList = null;
 
-    Map<String, Object> columnValueMap = null;
+    private Map<String, Object> columnValueMap = null;
 
-    Vector<Vector> newDataVector = null;
+    private Vector<Vector> newDataVector = null;
 
     public CategorialTableModel(ICategorialClassRecord record) {
         super();
         initData(record);
-
     }
 
     /**

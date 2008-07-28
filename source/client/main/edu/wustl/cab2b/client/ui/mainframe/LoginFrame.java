@@ -1,8 +1,7 @@
 package edu.wustl.cab2b.client.ui.mainframe;
 
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.APPLICATION_RESOURCES_FILE_NAME;
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.MAIN_FRAME_TITLE;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.CAB2B_LOGO_IMAGE;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.ERROR_CODE_FILE_NAME;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -16,9 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
 import java.rmi.RemoteException;
-import java.util.MissingResourceException;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -43,9 +40,6 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
-import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
-import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
-import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.util.PropertyLoader;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
@@ -66,7 +60,7 @@ public class LoginFrame extends JXFrame {
 
     private JPasswordField passText;
 
-    public LoginFrame selfReference = this;
+    private LoginFrame selfReference = this;
 
     private static Font font = getTextFont();
 
@@ -75,6 +69,8 @@ public class LoginFrame extends JXFrame {
     private static String providedUserName;
 
     private static String providedPassword;
+
+    MainFrame mainFrame;
 
     /**
      * @param args
@@ -86,9 +82,8 @@ public class LoginFrame extends JXFrame {
         }
         try {
             Logger.configure();
-            setHome();
-            Logger.configure(); // pick config from log4j.properties
-            initializeResources(); // Initialize all Resources
+            CommonUtils.setHome();
+            CommonUtils.initializeResources(); // Initialize all Resources
 
             LoginFrame loginFrame = new LoginFrame();
             loginFrame.setVisible(true);
@@ -99,25 +94,6 @@ public class LoginFrame extends JXFrame {
                                      "Fatal error orccured while launching caB2B client.\nPlease contact administrator",
                                      t);
             System.exit(1);
-        }
-    }
-
-    /**
-     * Set the caB2B home
-     */
-    public static void setHome() {
-        File cab2bHome = new File(System.getProperty("user.home"), "cab2b");
-        System.setProperty("cab2b.home", cab2bHome.getAbsolutePath());
-    }
-
-    protected static void initializeResources() {
-        try {
-            ErrorCodeHandler.initBundle(ERROR_CODE_FILE_NAME);
-            ApplicationProperties.initBundle(APPLICATION_RESOURCES_FILE_NAME);
-        } catch (MissingResourceException mre) {
-            CheckedException checkedException = new CheckedException(mre.getMessage(), mre,
-                    ErrorCodeConstants.IO_0002);
-            CommonUtils.handleException(checkedException, null, true, true, false, true);
         }
     }
 
@@ -333,7 +309,6 @@ public class LoginFrame extends JXFrame {
      * @author Hrishikesh Rajpathak
      */
     private class LoginButtonListener implements ActionListener {
-
         public void actionPerformed(ActionEvent e) {
             swingWorkerLogic();
         }
@@ -375,7 +350,7 @@ public class LoginFrame extends JXFrame {
             validateCredentials(userName, password, IDProvider);
             Thread mainThread = new Thread() {
                 public void run() {
-                    MainFrame.launchMainFrame(userName);
+                    launchMainFrame(userName);
                 }
             };
             mainThread.setPriority(Thread.NORM_PRIORITY);
@@ -385,8 +360,36 @@ public class LoginFrame extends JXFrame {
         } catch (Exception e) {
             credentialError.setText("  * Unable to authenticate: Invalid credentials");
             credentialError.setForeground(Color.RED);
+            e.printStackTrace();
             //CommonUtils.handleException(e, LoginFrame.this, true, true, true, true);
         }
         // selfReference.dispose();
     }
+
+    /**
+     * Method to launch caB2B client application.
+     * 
+     * @param args
+     *            Command line arguments. They will not be used.
+     */
+    private void launchMainFrame(String userName) {
+        try {
+
+            ClientLauncher clientLauncher = ClientLauncher.getInstance();
+            clientLauncher.launchClient(userName);
+
+            MainFrame mainFrame = new MainFrame(ApplicationProperties.getValue(MAIN_FRAME_TITLE), true);
+            mainFrame.pack();
+            mainFrame.setVisible(true);
+            mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        } catch (Throwable t) {
+            JXErrorDialog.showDialog(
+                                     null,
+                                     "caB2B Fatal Error",
+                                     "Fatal error orccured while launching caB2B client.\nPlease contact administrator",
+                                     t);
+            System.exit(1);
+        }
+    }
+
 }

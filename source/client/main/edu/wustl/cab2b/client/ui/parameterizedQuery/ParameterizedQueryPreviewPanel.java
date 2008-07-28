@@ -57,10 +57,10 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
     protected abstract Cab2bPanel getNavigationPanel();
 
     public void showInDialog() {
-        Dimension dimension = MainFrame.mainframeScreenDimesion;
+        Dimension dimension = MainFrame.getScreenDimesion();
         String dialogTitle = "Unsaved Condition";
 
-        dialog = WindowUtilities.setInDialog(NewWelcomePanel.mainFrame, this, dialogTitle, new Dimension(
+        dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), this, dialogTitle, new Dimension(
                 (int) (dimension.width * 0.80), (int) (dimension.height * 0.75)), true, false);
         dialog.setVisible(true);
     }
@@ -74,8 +74,8 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
             Cab2bPanel topPanelContainer = (Cab2bPanel) topConditionTitlePanel.getContentContainer();
             topPanelContainer.add(topScrollPane);
             topConditionTitlePanel.setMaximumSize(new Dimension(
-                    (int) (MainFrame.mainframeScreenDimesion.width * 0.40),
-                    (int) (MainFrame.mainframeScreenDimesion.height * 0.35)));
+                    (int) (MainFrame.getScreenDimesion().width * 0.40),
+                    (int) (MainFrame.getScreenDimesion().height * 0.35)));
             this.add(topConditionTitlePanel, BorderLayout.NORTH);
         }
     }

@@ -12,7 +12,7 @@ import edu.wustl.cab2b.client.ui.controls.LazyTable.CacheInterface;
 import edu.wustl.cab2b.client.ui.controls.LazyTable.Page;
 import edu.wustl.cab2b.client.ui.controls.LazyTable.PageDimension;
 import edu.wustl.cab2b.client.ui.controls.LazyTable.PageInfo;
-import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
+import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
@@ -82,7 +82,7 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
         UtilityBusinessInterface utilityBeanInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                     EjbNamesConstants.UTILITY_BEAN,
                                                                                                                     UtilityHomeInterface.class,
-                                                                                                                    MainFrame.newWelcomePanel);
+                                                                                                                    NewWelcomePanel.getMainFrame());
         try {
             /*TODO casting to Object is needed due to bug in java compiler
              Refer to http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6548436 for details
@@ -95,7 +95,7 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
 
             return new Page<IPartiallyInitialized3DRecord<?, ?>>(pageInfo, newRecord);
         } catch (RemoteException e) {
-            CommonUtils.handleException(e, MainFrame.newWelcomePanel, true, true, true, false);
+            CommonUtils.handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
         }
         return null;
     }
@@ -180,7 +180,7 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
         UtilityBusinessInterface utilityBeanInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                     EjbNamesConstants.UTILITY_BEAN,
                                                                                                                     UtilityHomeInterface.class,
-                                                                                                                    MainFrame.newWelcomePanel);
+                                                                                                                    NewWelcomePanel.getMainFrame());
         try {
             Logger.out.debug("Record Handle " + uninitailisedRecord.handle());
             /*TODO casting to Object is needed due to bug in java compiler
@@ -192,7 +192,7 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
                                                                                                uninitailisedRecord.handle(),
                                                                                                lazyParams);
         } catch (RemoteException e) {
-            CommonUtils.handleException(e, MainFrame.newWelcomePanel, true, true, true, false);
+            CommonUtils.handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
         }
 
         return null;
@@ -203,14 +203,14 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
         UtilityBusinessInterface utilityBeanInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                     EjbNamesConstants.UTILITY_BEAN,
                                                                                                                     UtilityHomeInterface.class,
-                                                                                                                    MainFrame.newWelcomePanel);
+                                                                                                                    NewWelcomePanel.getMainFrame());
         Set<AttributeInterface> allAttributes = uninitailisedRecord.getAttributes();
         if (!allAttributes.isEmpty()) {
             Long entityId = allAttributes.iterator().next().getEntity().getId();
             try {
                 return utilityBeanInterface.getUniqueRecordValues(entityId);
             } catch (RemoteException e) {
-                CommonUtils.handleException(e, MainFrame.newWelcomePanel, true, true, true, false);
+                CommonUtils.handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
             }
         }
         return null;

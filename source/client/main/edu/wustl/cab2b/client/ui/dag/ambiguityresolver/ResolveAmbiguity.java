@@ -74,7 +74,7 @@ public class ResolveAmbiguity {
      */
     private List<IPath> showAmbiguityResolverUI(Map<String, List<IPath>> allPathMap) {
         AvailablePathsPanel availablePathsPanel = new AvailablePathsPanel(allPathMap);
-        WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, availablePathsPanel, "Path Ambiguity Resolver",
+        WindowUtilities.showInDialog(NewWelcomePanel.getMainFrame(), availablePathsPanel, "Path Ambiguity Resolver",
                                      Constants.WIZARD_SIZE2_DIMENSION, true, false);
 
         return availablePathsPanel.getUserSelectedPaths();

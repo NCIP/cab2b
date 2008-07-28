@@ -11,6 +11,8 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.JOptionPane;
 
+import org.jdesktop.swingx.JXPanel;
+
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -46,7 +48,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     private static final long serialVersionUID = 1234567890L;
 
     /* The reference to the parent searchPanel. */
-    private MainSearchPanel m_mainSearchPanel = null;
+    private MainSearchPanel mainSearchPanel = null;
 
     /* The navigation buttons. */
     private Cab2bButton previousButton;
@@ -63,14 +65,27 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
     private Cab2bPanel messagePanel;
 
-    public static Cab2bLabel messageLabel;
+    private static Cab2bLabel messageLabel;
 
     private IQueryResult queryResults;
 
     private AddLimitPanel addLimitPanel;
 
+    private SearchCenterPanel searchCenterPanel;
+
+    private final String previousButtonStr = "Previous";
+
+    private final String nextButtonStr = "Next";
+
+    private final String saveDataButtonStr = "Save Data List";
+
+    private final String saveQueryButtonStr = "Save Query";
+
+    private final String addToExperimentButtonStr = "Add to Experiment";
+
     public SearchNavigationPanel(MainSearchPanel panel) {
-        this.m_mainSearchPanel = panel;
+        this.mainSearchPanel = panel;
+        searchCenterPanel = mainSearchPanel.getCenterPanel();
         initGUI();
         this.setPreferredSize(new Dimension(976, 36));
         this.setBackground(new Color(240, 240, 240));
@@ -87,21 +102,21 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         messagePanel.setBackground(null);
         messagePanel.add(messageLabel);
 
-        previousButton = new Cab2bButton("Previous");
+        previousButton = new Cab2bButton(previousButtonStr);
         previousButton.addActionListener(new PreviousButtonActionListener());
 
-        nextButton = new Cab2bButton("Next");
+        nextButton = new Cab2bButton(nextButtonStr);
         nextButton.addActionListener(new NextButtonActionListener());
 
-        saveDataListButton = new Cab2bButton("Save Data List");
+        saveDataListButton = new Cab2bButton(saveDataButtonStr);
         saveDataListButton.setPreferredSize(new Dimension(160, 22));
         saveDataListButton.addActionListener(this);
 
-        saveConditionButton = new Cab2bButton("Save Query");
+        saveConditionButton = new Cab2bButton(saveQueryButtonStr);
         saveConditionButton.setPreferredSize(new Dimension(160, 22));
         saveConditionButton.addActionListener(new SaveConditionButtonActionListener());
 
-        addToExperimentButton = new Cab2bButton("Add to Experiment");
+        addToExperimentButton = new Cab2bButton(addToExperimentButtonStr);
         addToExperimentButton.setPreferredSize(new Dimension(160, 22));
         addToExperimentButton.addActionListener(this);
 
@@ -117,7 +132,6 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         buttonPanel.add(addToExperimentButton);
         this.add("hfill", messagePanel);
         this.add("hfill right", buttonPanel);
-
         setButtons();
     }
 
@@ -126,16 +140,16 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
      */
     public void actionPerformed(ActionEvent event) {
         Cab2bButton cab2bButton = (Cab2bButton) event.getSource();
-        String strActionCommand = cab2bButton.getActionCommand();
-        if (strActionCommand.equals("Save Data List")) {
-            SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(m_mainSearchPanel);
+        String actionCommand = cab2bButton.getActionCommand();
+        if (actionCommand.equals(saveDataButtonStr)) {
+            SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(mainSearchPanel);
             saveDataListPanel.showInDialog();
-        } else if (strActionCommand.equals("Add to Experiment")) {
-            if (SaveDatalistPanel.isDataListSaved == false) {
-                SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(m_mainSearchPanel);
+        } else if (actionCommand.equals(addToExperimentButtonStr)) {
+            if (SaveDatalistPanel.isDataListSaved() == false) {
+                SaveDatalistPanel saveDataListPanel = new SaveDatalistPanel(mainSearchPanel);
                 saveDataListPanel.showInDialog();
             }
-            if (SaveDatalistPanel.isDataListSaved == true) {
+            if (SaveDatalistPanel.isDataListSaved() == true) {
                 NewExperimentDetailsPanel newExperimentDetailsPanel = new NewExperimentDetailsPanel();
                 newExperimentDetailsPanel.showInDialog();
             }
@@ -154,25 +168,24 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
      */
     public void showCard(boolean blnNext) {
         /* Get the center Panel through the parent. */
-        SearchCenterPanel centerPanel = this.m_mainSearchPanel.getCenterPanel();
 
         /* Get the layout associated with the center searchPanel */
-        CardLayout layout = (CardLayout) centerPanel.getLayout();
+        CardLayout layout = (CardLayout) searchCenterPanel.getLayout();
 
         /* Get the currently selected index. */
-        int iSelectedCard = centerPanel.getSelectedCardIndex();
+        int iSelectedCard = searchCenterPanel.getSelectedCardIndex();
 
         /* Get the top Panel through the parent. */
-        SearchTopPanel topPanel = this.m_mainSearchPanel.getTopPanel();
+        SearchTopPanel topPanel = this.mainSearchPanel.getTopPanel();
 
-        if (blnNext && ((iSelectedCard + 1) < centerPanel.getIdentifierCount())) {
+        if (blnNext && ((iSelectedCard + 1) < searchCenterPanel.getIdentifierCount())) {
             /*
              * Validate and increment index to get the corresponding identifier,
              * and use that to show the card. Also increment the index to
              * indicate the currently selected card.
              */
-            layout.show(centerPanel, centerPanel.getIdentifier(iSelectedCard + 1));
-            centerPanel.setSelectedCardIndex((iSelectedCard + 1));
+            layout.show(searchCenterPanel, searchCenterPanel.getIdentifier(iSelectedCard + 1));
+            searchCenterPanel.setSelectedCardIndex((iSelectedCard + 1));
             topPanel.setFocus(iSelectedCard + 1, true);
         } else if (iSelectedCard > 0) {
             /*
@@ -180,15 +193,15 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
              * and use that to show the card. Also decrement the index to
              * indicate the currently selected card.
              */
-            layout.show(centerPanel, centerPanel.getIdentifier(iSelectedCard - 1));
-            centerPanel.setSelectedCardIndex((iSelectedCard - 1));
+            layout.show(searchCenterPanel, searchCenterPanel.getIdentifier(iSelectedCard - 1));
+            searchCenterPanel.setSelectedCardIndex((iSelectedCard - 1));
             topPanel.setFocus(iSelectedCard - 1, false);
         }
         setButtons();
     }
 
     private void setButtons() {
-        int cardindex = m_mainSearchPanel.getCenterPanel().getSelectedCardIndex();
+        int cardindex = mainSearchPanel.getCenterPanel().getSelectedCardIndex();
 
         if (cardindex == 0)
             previousButton.setVisible(false);
@@ -221,12 +234,11 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
      * calling this method don't call showCard Method
      */
     public void gotoAddLimitPanel() {
-        SearchCenterPanel centerPanel = m_mainSearchPanel.getCenterPanel();
-        CardLayout layout = (CardLayout) centerPanel.getLayout();
+        CardLayout layout = (CardLayout) searchCenterPanel.getLayout();
 
-        layout.show(centerPanel, centerPanel.getIdentifier(1));
-        centerPanel.setSelectedCardIndex(1);
-        SearchTopPanel topPanel = this.m_mainSearchPanel.getTopPanel();
+        layout.show(searchCenterPanel, searchCenterPanel.getIdentifier(1));
+        searchCenterPanel.setSelectedCardIndex(1);
+        SearchTopPanel topPanel = mainSearchPanel.getTopPanel();
         topPanel.setFocus(1, false);
         setButtons();
     }
@@ -239,8 +251,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
      */
 
     public void gotoDataListPanel(final IDataRow datarow) {
-        SearchCenterPanel searchCenterPanel = m_mainSearchPanel.getCenterPanel();
-        DataListPanel dataListPanel = (DataListPanel) searchCenterPanel.m_arrCards[searchCenterPanel.getSelectedCardIndex() + 1];
+        DataListPanel dataListPanel = (DataListPanel) searchCenterPanel.getArrCardElement(searchCenterPanel.getSelectedCardIndex() + 1);
         if (dataListPanel != null) {
             searchCenterPanel.remove(dataListPanel);
         }
@@ -249,8 +260,9 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         } else {
             dataListPanel = new DataListPanel(MainSearchPanel.getDataList(), datarow);
         }
-        searchCenterPanel.m_arrCards[4] = dataListPanel;
-        searchCenterPanel.add(dataListPanel, SearchCenterPanel.m_strDataListlbl);
+
+        searchCenterPanel.setArrCardElement(dataListPanel, 4);
+        searchCenterPanel.add(dataListPanel, SearchCenterPanel.getStrDataListlbl());
         showCard(true);
     }
 
@@ -260,50 +272,16 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
      */
     private class NextButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
-            final SearchCenterPanel searchCenterPanel = m_mainSearchPanel.getCenterPanel();
-            final IClientQueryBuilderInterface clientQueryBuilder = m_mainSearchPanel.getQueryObject();
+            final IClientQueryBuilderInterface clientQueryBuilder = mainSearchPanel.getQueryObject();
             SearchNavigationPanel.messageLabel.setText("");
 
             if (searchCenterPanel.getSelectedCardIndex() == 0) {
-                addLimitPanel = searchCenterPanel.getAddLimitPanel();
-                addLimitPanel.addSearchPanel(searchCenterPanel.getChooseCategoryPanel().getSearchPanel());
-                searchCenterPanel.setAddLimitPanel(addLimitPanel);
-                showCard(true);
+                setAddLimitPanelInWizard();
             } else if (searchCenterPanel.getSelectedCardIndex() == 1) {
                 CustomSwingWorker swingWorker = new CustomSwingWorker(SearchNavigationPanel.this) {
                     @Override
                     protected void doNonUILogic() throws Exception {
-                        if (clientQueryBuilder != null && clientQueryBuilder.getVisibleExressionIds().size() > 0) {
-
-                            final IQuery b2bquery = m_mainSearchPanel.queryObject.getQuery();
-
-                            /*
-                             * Get the root expression ID. If exception occurs
-                             * show Error
-                             */
-                            try {
-                                b2bquery.getConstraints().getRootExpression();
-                            } catch (MultipleRootsException e) {
-                                JOptionPane.showMessageDialog(
-                                                              m_mainSearchPanel.getParent(),
-                                                              ErrorCodeHandler.getErrorMessage(ErrorCodeConstants.QM_0003),
-                                                              "Connect Nodes.", JOptionPane.WARNING_MESSAGE);
-                                gotoAddLimitPanel();
-                                return;
-                            }
-                            if (null != searchCenterPanel.m_arrCards[2]) {
-                                searchCenterPanel.remove(searchCenterPanel.m_arrCards[2]);
-                            }
-                            AdvancedDefineViewPanel defineViewPanel = new AdvancedDefineViewPanel(
-                                    searchCenterPanel);
-                            searchCenterPanel.m_arrCards[2] = defineViewPanel;
-                            searchCenterPanel.add(defineViewPanel, SearchCenterPanel.m_strDefineSearchResultslbl);
-                            // Implies the next button was clicked. Call
-                            // show card
-                            // with boolean set to true.
-                            showCard(true);
-
-                        }
+                        validateQueryAndMoveToAddLimitPanel(clientQueryBuilder);
                     }
 
                     @Override
@@ -311,7 +289,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                         if (clientQueryBuilder == null || clientQueryBuilder.getVisibleExressionIds().size() == 0) {
                             // Pop-up a dialog asking the user to add alteast a
                             // rule.
-                            JOptionPane.showMessageDialog(m_mainSearchPanel.getParent(),
+                            JOptionPane.showMessageDialog(mainSearchPanel.getParent(),
                                                           "Please add Limit(s) before proceeding",
                                                           "Cannot Proceed", JOptionPane.WARNING_MESSAGE);
                             return;
@@ -321,63 +299,14 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 swingWorker.start();
             } else if (searchCenterPanel.getSelectedCardIndex() == 2) {
                 CustomSwingWorker swingWorker = new CustomSwingWorker(SearchNavigationPanel.this,
-                        SearchNavigationPanel.this.m_mainSearchPanel) {
+                        SearchNavigationPanel.this.mainSearchPanel) {
 
                     protected void doNonUILogic() throws Exception {
-                        try {
-                            ICab2bQuery cab2bQuery = (ICab2bQuery) clientQueryBuilder.getQuery();
-                            if (!CommonUtils.isServiceURLConfigured(cab2bQuery, m_mainSearchPanel)) {
-                                queryResults = null;
-                            } else {
-
-                                // Get the Functional class for root and update
-                                // query
-                                // object with it.
-                                queryResults = CommonUtils.executeQuery(
-                                                                        (ICab2bQuery) clientQueryBuilder.getQuery(),
-                                                                        m_mainSearchPanel);
-                            }
-                        } catch (Exception e) {
-                            CommonUtils.handleException(e, SearchNavigationPanel.this.m_mainSearchPanel, true,
-                                                        false, false, false);
-
-                            queryResults = null;
-                            if (SearchNavigationPanel.this.m_mainSearchPanel.isParaQueryShowResultButtonPressed()) {
-                                NewWelcomePanel.mainFrame.closeSearchWizardDialog();
-                                return;
-                            }
-                        }
+                        executeQuery(clientQueryBuilder);
                     }
 
                     protected void doUIUpdateLogic() {
-                        if (queryResults != null) {
-                            int recordNo = Utility.getRecordNum(queryResults);
-                            if (recordNo == 0) {
-                                JOptionPane.showMessageDialog(
-                                                              SearchNavigationPanel.this.m_mainSearchPanel.getParent(),
-                                                              "No result found.", "",
-                                                              JOptionPane.INFORMATION_MESSAGE);
-                                if (SearchNavigationPanel.this.m_mainSearchPanel.isParaQueryShowResultButtonPressed()) {
-                                    // close the search wizard
-                                    NewWelcomePanel.mainFrame.closeSearchWizardDialog();
-                                    return;
-                                } else {
-                                    gotoAddLimitPanel();
-                                }
-                            } else {
-                                ViewSearchResultsPanel viewSearchResultsPanel = new ViewSearchResultsPanel(
-                                        queryResults, m_mainSearchPanel);
-                                if (searchCenterPanel.m_arrCards[3] != null) {
-                                    searchCenterPanel.remove(searchCenterPanel.m_arrCards[3]);
-                                }
-                                searchCenterPanel.m_arrCards[3] = viewSearchResultsPanel;
-                                searchCenterPanel.add(viewSearchResultsPanel,
-                                                      SearchCenterPanel.m_strViewSearchResultslbl);
-                                showCard(true);
-                            }
-                        } else {
-                            gotoAddLimitPanel();
-                        }
+                        showResult();
                     }
                 };
                 swingWorker.start();
@@ -390,12 +319,110 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     }
 
     /**
+     * @param clientQueryBuilder
+     */
+    private void validateQueryAndMoveToAddLimitPanel(IClientQueryBuilderInterface clientQueryBuilder) {
+
+        if (clientQueryBuilder != null && clientQueryBuilder.getVisibleExressionIds().size() > 0) {
+
+            final IQuery b2bquery = mainSearchPanel.queryObject.getQuery();
+
+            /*
+             * Get the root expression ID. If exception occurs
+             * show Error
+             */
+            try {
+                b2bquery.getConstraints().getRootExpression();
+            } catch (MultipleRootsException e) {
+                JOptionPane.showMessageDialog(mainSearchPanel.getParent(),
+                                              ErrorCodeHandler.getErrorMessage(ErrorCodeConstants.QM_0003),
+                                              "Connect Nodes.", JOptionPane.WARNING_MESSAGE);
+                gotoAddLimitPanel();
+                return;
+            }
+            JXPanel secPanel = searchCenterPanel.getArrCardElement(2);
+            if (null != searchCenterPanel.getArrCardElement(2)) {
+                searchCenterPanel.remove(secPanel);
+            }
+            AdvancedDefineViewPanel defineViewPanel = new AdvancedDefineViewPanel(searchCenterPanel);
+            secPanel = defineViewPanel;
+            searchCenterPanel.add(defineViewPanel, SearchCenterPanel.getStrDefineSearchResultslbl());
+            // Implies the next button was clicked. Call
+            // show card
+            // with boolean set to true.
+            showCard(true);
+
+        }
+
+    }
+
+    /**
+     * 
+     */
+    private void showResult() {
+        if (queryResults != null) {
+            int recordNo = Utility.getRecordNum(queryResults);
+            if (recordNo == 0) {
+                JOptionPane.showMessageDialog(SearchNavigationPanel.this.mainSearchPanel.getParent(),
+                                              "No result found.", "", JOptionPane.INFORMATION_MESSAGE);
+                if (SearchNavigationPanel.this.mainSearchPanel.isParaQueryShowResultButtonPressed()) {
+                    // close the search wizard
+                    NewWelcomePanel.getMainFrame().closeSearchWizardDialog();
+                    return;
+                } else {
+                    gotoAddLimitPanel();
+                }
+            } else {
+                ViewSearchResultsPanel viewSearchResultsPanel = new ViewSearchResultsPanel(queryResults,
+                        mainSearchPanel);
+                JXPanel panelThree = searchCenterPanel.getArrCardElement(3);
+                if (searchCenterPanel.getArrCardElement(3) != null) {
+                    searchCenterPanel.remove(panelThree);
+                }
+                panelThree = viewSearchResultsPanel;
+                searchCenterPanel.add(viewSearchResultsPanel, SearchCenterPanel.getStrViewSearchResultslbl());
+                showCard(true);
+            }
+        } else {
+            gotoAddLimitPanel();
+        }
+    }
+
+    /**
+     * @param clientQueryBuilder
+     */
+    private void executeQuery(IClientQueryBuilderInterface clientQueryBuilder) {
+
+        try {
+            ICab2bQuery cab2bQuery = (ICab2bQuery) clientQueryBuilder.getQuery();
+            if (!CommonUtils.isServiceURLConfigured(cab2bQuery, mainSearchPanel)) {
+                queryResults = null;
+            } else {
+
+                // Get the Functional class for root and update
+                // query
+                // object with it.
+                queryResults = CommonUtils.executeQuery((ICab2bQuery) clientQueryBuilder.getQuery(),
+                                                        mainSearchPanel);
+            }
+        } catch (Exception e) {
+            CommonUtils.handleException(e, SearchNavigationPanel.this.mainSearchPanel, true, false, false, false);
+
+            queryResults = null;
+            if (SearchNavigationPanel.this.mainSearchPanel.isParaQueryShowResultButtonPressed()) {
+                NewWelcomePanel.getMainFrame().closeSearchWizardDialog();
+                return;
+            }
+        }
+
+    }
+
+    /**
      * Action listener for previous button
      * 
      */
     private class PreviousButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
-            final SearchCenterPanel searchCenterPanel = m_mainSearchPanel.getCenterPanel();
             // Implies the previous button was clicked. Call show card with
             // boolean set to false.
             SearchNavigationPanel.messageLabel.setText("");
@@ -407,7 +434,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 searchCenterPanel.setChooseCategoryPanel(chooseCategoryPanel);
             } else if (cardIndex == 2) {
                 updateMainDagPanel();
-            } else if (cardIndex == 3 && m_mainSearchPanel.isParaQueryShowResultButtonPressed()) {
+            } else if (cardIndex == 3 && mainSearchPanel.isParaQueryShowResultButtonPressed()) {
                 showCard(false);
                 updateMainDagPanel();
             }
@@ -416,10 +443,20 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     }
 
     /**
+     * Method to display add limit Page on Search Data Wizard 
+     */
+    public void setAddLimitPanelInWizard() {
+        addLimitPanel = searchCenterPanel.getAddLimitPanel();
+        addLimitPanel.addSearchPanel(searchCenterPanel.getChooseCategoryPanel().getSearchPanel());
+        searchCenterPanel.setAddLimitPanel(addLimitPanel);
+        showCard(true);
+    }
+
+    /**
      * Method to update MainDagPanel
      */
     private void updateMainDagPanel() {
-        addLimitPanel = (AddLimitPanel) m_mainSearchPanel.getCenterPanel().getAddLimitPanel();
+        addLimitPanel = (AddLimitPanel) mainSearchPanel.getCenterPanel().getAddLimitPanel();
         addLimitPanel.addPropertyChangeListener(new AddLimitPanelPCL());
         MainDagPanel mainDagPanel = addLimitPanel.getMainDagPanel();
         if (mainDagPanel.getVisibleNodeCount() == 0 && mainDagPanel.getExpressionCount() > 0) {
@@ -431,14 +468,12 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
     class AddLimitPanelPCL implements PropertyChangeListener {
 
-        /*
-         * (non-Javadoc)
-         * 
+        /* (non-Javadoc)
          * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
          */
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(DagControlPanel.EVENT_RESET_BUTTON_CLICKED)) {
-                m_mainSearchPanel.setQueryObject(null);
+                mainSearchPanel.setQueryObject(null);
             }
         }
     }
@@ -453,12 +488,26 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         public void actionPerformed(ActionEvent arg0) {
             ParameterizedQueryMainPanel parameterizedQueryMainPanel = null;
 
-            Cab2bQuery query = (Cab2bQuery) m_mainSearchPanel.getQueryObject().getQuery();
-            if (CommonUtils.isServiceURLConfigured(query, m_mainSearchPanel.getParent())) {
+            Cab2bQuery query = (Cab2bQuery) mainSearchPanel.getQueryObject().getQuery();
+            if (CommonUtils.isServiceURLConfigured(query, mainSearchPanel.getParent())) {
                 parameterizedQueryMainPanel = new ParameterizedQueryMainPanel(new ParameterizedQueryDataModel(
                         query));
                 parameterizedQueryMainPanel.showInDialog();
             }
         }
+    }
+
+    /**
+     * @return the messageLabel
+     */
+    public static Cab2bLabel getMessageLabel() {
+        return messageLabel;
+    }
+
+    /**
+     * @param messageLabel the messageLabel to set
+     */
+    public static void setMessageLabel(Cab2bLabel messageLabel) {
+        SearchNavigationPanel.messageLabel = messageLabel;
     }
 }

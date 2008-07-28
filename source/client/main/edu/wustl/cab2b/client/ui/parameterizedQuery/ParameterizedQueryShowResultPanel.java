@@ -26,7 +26,6 @@ import edu.wustl.cab2b.client.ui.query.ClientQueryBuilder;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.exception.CheckedException;
-import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
@@ -48,7 +47,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
 
     private Cab2bButton cancelButton;
 
-    public ParameterizedQueryShowResultPanel(Cab2bQuery query) {
+    public ParameterizedQueryShowResultPanel(ICab2bParameterizedQuery query) {
         queryDataModel = new ParameterizedQueryDataModel(query);
         initGUI();
     }
@@ -148,24 +147,24 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
             clientQueryBuilder.setQuery(cab2bQuery);
 
             // Initialize MainSearchPanel
-            GlobalNavigationPanel globalNavigationPanel = NewWelcomePanel.mainFrame.getGlobalNavigationPanel();
+            GlobalNavigationPanel globalNavigationPanel = NewWelcomePanel.getMainFrame().getGlobalNavigationPanel();
             GlobalNavigationGlassPane globalNavigationGlassPane = globalNavigationPanel.getGlobalNavigationGlassPane();
             globalNavigationGlassPane.initializeMainSearchPanel();
 
             // Set ClientQueryBuilder object into MainSearchPanel and set it to
             // the 4rd card i.e. View Search Result
-            MainSearchPanel mainSearchPanel = GlobalNavigationPanel.mainSearchPanel;
+            MainSearchPanel mainSearchPanel = GlobalNavigationPanel.getMainSearchPanel();
             mainSearchPanel.setQueryObject(clientQueryBuilder);
             mainSearchPanel.getCenterPanel().getAddLimitPanel().setQueryObject(clientQueryBuilder);
             mainSearchPanel.getCenterPanel().setSelectedCardIndex(2);
             mainSearchPanel.setParaQueryShowResultButtonPressed(true);
 
             // Fire the query by clicking (simulating) Next button
-            SearchNavigationPanel bottomPanel = mainSearchPanel.getBottomPanel();
+            SearchNavigationPanel bottomPanel = mainSearchPanel.getSearchNavigationPanel();
             bottomPanel.getNextButton().doClick();
 
             // Open the Searcg dialog box
-            globalNavigationGlassPane.showSearchDialog();
+            CommonUtils.launchSearchDataWizard();
             updateUI();
         }
 

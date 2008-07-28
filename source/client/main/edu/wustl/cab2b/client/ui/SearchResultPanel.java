@@ -291,24 +291,29 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
 
         PageElement pageElement = jPageElement.getPageElement();
         entityForSelectedLink = (EntityInterface) pageElement.getUserObject();
+        updateAddLimitPage(contentPanel, entityForSelectedLink);
+    }
 
+    /**
+     * Method to update Add limit page for selected entity 
+     * @param contentPanel
+     */
+    public void updateAddLimitPage(ContentPanel contentPanel, EntityInterface entity) {
         if (contentPanel instanceof Cab2bContentPanel) {
             SearchPanel searchPanel = (SearchPanel) this.getParent();
 
-            (searchPanel.getAttributeSelectCDCPanel()).setEntityInterface(entityForSelectedLink);
+            (searchPanel.getAttributeSelectCDCPanel()).setEntityInterface(entity);
             (searchPanel.getAttributeSelectCDCPanel()).generatePanel();
             (searchPanel.getAttributeSelectCDCPanel()).setTestDAG(searchPanel.getTestDAG());
         }
-
-        initializeAttributeDetailLink(entityForSelectedLink);
-        final JXPanel[] panelsToAdd = createAddLimitPanels(entityForSelectedLink);
-
-        if (getAttributeComponentPanels(entityForSelectedLink) != null) {
+        initializeAttributeDetailLink(entity);
+        final JXPanel[] panelsToAdd = createAddLimitPanels(entity);
+        if (getAttributeComponentPanels(entity) != null) {
             // pass the appropriate class name for display
-            performAction(panelsToAdd, Utility.getDisplayName(entityForSelectedLink));
+            performAction(panelsToAdd, Utility.getDisplayName(entity));
         }
-
         updateUI();
+
     }
 
     /**
@@ -405,8 +410,10 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
                 mainSearchPanel.getCenterPanel().getAddLimitPanel().setQueryObject(query);
             }
 
-            int expressionId = mainSearchPanel.getQueryObject().addRule(attributes, conditions, values, attributes.get(0).getEntity());
+            int expressionId = mainSearchPanel.getQueryObject().addRule(attributes, conditions, values,
+                                                                        attributes.get(0).getEntity());
             mainSearchPanel.getCenterPanel().getAddLimitPanel().refreshBottomCenterPanel(expressionId);
+
         }
     }
 
@@ -633,7 +640,7 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
              * jScrollPane, "CDE Details", Constants.WIZARD_SIZE2_DIMENSION,
              * true, false);
              */
-            WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, jScrollPane, "CDE Details",
+            WindowUtilities.showInDialog(NewWelcomePanel.getMainFrame(), jScrollPane, "CDE Details",
                                          Constants.WIZARD_SIZE2_DIMENSION, true, false);
         }
     }
