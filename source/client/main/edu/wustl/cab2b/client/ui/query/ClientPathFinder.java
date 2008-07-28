@@ -17,7 +17,6 @@ import java.util.Set;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface;
-import edu.wustl.cab2b.common.ejb.path.PathFinderHomeInterface;
 import edu.wustl.cab2b.common.locator.Locator;
 import edu.wustl.cab2b.common.locator.LocatorException;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
@@ -36,9 +35,7 @@ public class ClientPathFinder implements IPathFinder {
 
     public ClientPathFinder() {
         //	Locate the PathFinder bean.
-        pathFinder = (PathFinderBusinessInterface) Locator.getInstance().locate(
-                                                   EjbNamesConstants.PATH_FINDER_BEAN,
-                                                   PathFinderHomeInterface.class);
+        pathFinder = (PathFinderBusinessInterface) Locator.getInstance().locate(EjbNamesConstants.PATH_FINDER_BEAN);
     }
 
     /**
@@ -109,9 +106,9 @@ public class ClientPathFinder implements IPathFinder {
         }
         return null;
     }
-    
+
     public IPath getPathForAssociations(List<IIntraModelAssociation> associations) {
-    	//TODO Needs to implement
+        //TODO Needs to implement
         return null;
     }
 }

@@ -25,8 +25,8 @@ import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
+import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
-import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.cab2b.common.locator.Locator;
 import edu.wustl.common.tree.ExperimentTreeNode;
 import edu.wustl.common.tree.GenerateTree;
@@ -59,8 +59,7 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
         Vector dataVector = null;
         try {
             ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) Locator.getInstance().locate(
-                                                                                                            edu.wustl.cab2b.common.ejb.EjbNamesConstants.EXPERIMENT,
-                                                                                                            ExperimentHome.class);
+                                                                                                            EjbNamesConstants.EXPERIMENT);
             dataVector = expBus.getExperimentHierarchy();
         } catch (RemoteException e1) {
             CommonUtils.handleException(e1, this, true, true, false, false);

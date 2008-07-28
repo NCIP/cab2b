@@ -20,9 +20,7 @@ import edu.wustl.cab2b.common.cache.AbstractEntityCache;
 import edu.wustl.cab2b.common.cache.CompareUtil;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
-import edu.wustl.cab2b.common.ejb.category.CategoryHomeInterface;
 import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
-import edu.wustl.cab2b.common.ejb.utility.UtilityHomeInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.common.querysuite.metadata.category.Category;
 
@@ -66,9 +64,7 @@ public class ClientSideCache extends AbstractEntityCache {
      */
     protected ClientSideCache() {
         super();
-        CategoryBusinessInterface categoryOperations = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                    EjbNamesConstants.CATEGORY_BEAN,
-                                                                                                                    CategoryHomeInterface.class);
+        CategoryBusinessInterface categoryOperations = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.CATEGORY_BEAN);
         int length = 50;
         ClientLauncher clientLauncher = ClientLauncher.getInstance();
         clientLauncher.showProgress(" Fetching data from caB2B Server....", length);
@@ -98,9 +94,7 @@ public class ClientSideCache extends AbstractEntityCache {
         ClientLauncher clientLauncher = ClientLauncher.getInstance();
         clientLauncher.showProgress(" Contacting caB2B Server....", 1);
         try {
-            UtilityBusinessInterface util = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                        EjbNamesConstants.UTILITY_BEAN,
-                                                                                                        UtilityHomeInterface.class);
+            UtilityBusinessInterface util = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.UTILITY_BEAN);
             clientLauncher.setDeterminate();
             clientLauncher.showProgress(" Fetching data from caB2B Server....", 10);
             collection = util.getCab2bEntityGroups();

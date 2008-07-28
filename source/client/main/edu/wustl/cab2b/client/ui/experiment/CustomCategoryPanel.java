@@ -36,13 +36,11 @@ import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
 import edu.wustl.cab2b.common.CustomDataCategoryModel;
 import edu.wustl.cab2b.common.IdName;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
-import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
-import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.common.util.Utility;
 
@@ -92,9 +90,7 @@ public class CustomCategoryPanel extends JXFrame {
         categoryCombo = new Cab2bComboBox();
         dataListCombo.setPreferredSize(new Dimension(225, 20));
 
-        ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                            EjbNamesConstants.EXPERIMENT,
-                                                                                                            ExperimentHome.class);
+        ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.EXPERIMENT);
         try {
             customDataCategoryModel = expBus.getDataCategoryModel(experiment);
         } catch (RemoteException e) {
@@ -194,9 +190,7 @@ public class CustomCategoryPanel extends JXFrame {
                             attributeList.add(selectedObjects.getUserObject());
                         }
                         try {
-                            DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                                EjbNamesConstants.DATALIST_BEAN,
-                                                                                                                                DataListHomeInterface.class);
+                            DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.DATALIST_BEAN);
                             dataListMetadata = dataListBI.saveCustomDataCategory(entityName, attributeList,
                                                                                  customDataCategoryText.getText(),
                                                                                  experiment);

@@ -31,7 +31,6 @@ import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
-import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
@@ -122,7 +121,6 @@ public class SaveDatalistPanel extends Cab2bPanel {
                     protected void doNonUILogic() throws RuntimeException {
                         DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                             EjbNamesConstants.DATALIST_BEAN,
-                                                                                                                            DataListHomeInterface.class,
                                                                                                                             SaveDatalistPanel.this);
 
                         try {
@@ -246,8 +244,9 @@ public class SaveDatalistPanel extends Cab2bPanel {
 
     public JDialog showInDialog() {
         Dimension dimension = MainFrame.getScreenDimesion();
-        dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), this, "Save Data List", new Dimension(
-                (int) (dimension.width * 0.35), (int) (dimension.height * 0.30)), true, false);
+        dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), this, "Save Data List",
+                                             new Dimension((int) (dimension.width * 0.35),
+                                                     (int) (dimension.height * 0.30)), true, false);
 
         Logger.out.debug("dialog initialized ########## " + dialog);
         dialog.setVisible(true);

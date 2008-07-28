@@ -49,15 +49,12 @@ import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
-import edu.wustl.cab2b.common.ejb.category.CategoryHomeInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
-import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
-import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.cab2b.common.locator.Locator;
 import edu.wustl.cab2b.common.locator.LocatorException;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
@@ -108,11 +105,10 @@ public class CommonUtils {
      *            exception messages
      * @return the businessInterface object for given bean name
      */
-    public static BusinessInterface getBusinessInterface(String beanName, Class homeClassForBean,
-                                                         Component parentComponent) {
+    public static BusinessInterface getBusinessInterface(String beanName, Component parentComponent) {
         BusinessInterface businessInterface = null;
         try {
-            businessInterface = Locator.getInstance().locate(beanName, homeClassForBean);
+            businessInterface = Locator.getInstance().locate(beanName);
         } catch (LocatorException e1) {
             handleException(e1, parentComponent, true, true, false, false);
         }
@@ -231,9 +227,8 @@ public class CommonUtils {
      *             Throws exception if BusinessInterface is not located for
      *             given bean name
      */
-    public static BusinessInterface getBusinessInterface(String beanName, Class homeClassForBean)
-            throws LocatorException {
-        return Locator.getInstance().locate(beanName, homeClassForBean);
+    public static BusinessInterface getBusinessInterface(String beanName) throws LocatorException {
+        return Locator.getInstance().locate(beanName);
     }
 
     /**
@@ -333,7 +328,6 @@ public class CommonUtils {
     public static IQueryResult executeQuery(ICab2bQuery query, JComponent comp) throws RemoteException {
         QueryEngineBusinessInterface queryEngineBus = (QueryEngineBusinessInterface) getBusinessInterface(
                                                                                                           EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                          QueryEngineHome.class,
                                                                                                           comp);
         return executeQuery(query, queryEngineBus, comp);
     }
@@ -351,12 +345,12 @@ public class CommonUtils {
         } catch (RuntimeException re) {
             handleException(re, comp, true, false, false, false);
         } /*
-         * catch (RemoteException e1) { //CheckedException e = new
-         * CheckedException(e1.getMessage(), e1,
-         * ErrorCodeConstants.QM_0004);
-         * handleException(getCab2bException(e1), comp, true, false, false,
-         * false); }
-         */
+                       * catch (RemoteException e1) { //CheckedException e = new
+                       * CheckedException(e1.getMessage(), e1,
+                       * ErrorCodeConstants.QM_0004);
+                       * handleException(getCab2bException(e1), comp, true, false, false,
+                       * false); }
+                       */
         return iQueryResult;
     }
 
@@ -824,9 +818,7 @@ public class CommonUtils {
      */
     public static Vector<Experiment> getExperiments(Component comp, String userName) {
 
-        ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                            EjbNamesConstants.EXPERIMENT,
-                                                                                                            ExperimentHome.class);
+        ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.EXPERIMENT);
         List<Experiment> experiments = null;
         try {
             experiments = expBus.getExperimentsForUser("");
@@ -913,7 +905,6 @@ public class CommonUtils {
         if (edu.wustl.cab2b.common.util.Utility.isCategory(entity)) {
             CategoryBusinessInterface bus = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                          EjbNamesConstants.CATEGORY_BEAN,
-                                                                                                         CategoryHomeInterface.class,
                                                                                                          null);
             Category cat = null;
             try {

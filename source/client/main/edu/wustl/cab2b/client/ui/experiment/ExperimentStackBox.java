@@ -72,14 +72,11 @@ import edu.wustl.cab2b.client.ui.visualization.heatmap.HeatMapPanel;
 import edu.wustl.cab2b.common.IdName;
 import edu.wustl.cab2b.common.analyticalservice.ServiceDetailsInterface;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
-import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.analyticalservice.AnalyticalServiceOperationsBusinessInterface;
-import edu.wustl.cab2b.common.ejb.analyticalservice.AnalyticalServiceOperationsHomeInterface;
 import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
-import edu.wustl.cab2b.common.ejb.utility.UtilityHomeInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
@@ -170,8 +167,7 @@ public class ExperimentStackBox extends Cab2bPanel {
     /**
      * This method generates a root node given the set of entities
      * 
-     * @param experiment
-     *            set of entities
+     * @param experiment set of entities
      * @return root node
      */
     private DefaultMutableTreeNode generateRootNode(Experiment experiment) {
@@ -214,8 +210,7 @@ public class ExperimentStackBox extends Cab2bPanel {
     /**
      * This method initalize the datalist tree given the root node
      * 
-     * @param rootNode
-     *            the root node to be set.
+     * @param rootNode the root node to be set.
      */
     private void initializeDataListTree(DefaultMutableTreeNode rootNode) {
         datalistTree = new JXTree(rootNode);
@@ -345,13 +340,10 @@ public class ExperimentStackBox extends Cab2bPanel {
             protected void doNonUILogic() throws RuntimeException {
                 try {
                     // getting datalist entity interface
-                    DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                        EjbNamesConstants.DATALIST_BEAN,
-                                                                                                                        DataListHomeInterface.class);
+                    DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.DATALIST_BEAN);
 
-                    UtilityBusinessInterface utilityBusinessInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                                    EjbNamesConstants.UTILITY_BEAN,
-                                                                                                                                    UtilityHomeInterface.class);
+                    UtilityBusinessInterface utilityBusinessInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.UTILITY_BEAN);
+
                     recordList = dataListBI.getEntityRecord(idName.getUserObject().getId());
                     recordValues = utilityBusinessInterface.getUniqueRecordValues(idName.getUserObject().getId());
                 } catch (RemoteException remoteException) {
@@ -401,7 +393,8 @@ public class ExperimentStackBox extends Cab2bPanel {
     }
 
     /**
-     * Method to set chart links enable/disable 
+     * Method to set chart links enable/disable
+     * 
      * @param active
      */
     public void setChartLinkEnable(boolean active) {
@@ -416,7 +409,8 @@ public class ExperimentStackBox extends Cab2bPanel {
     }
 
     /**
-     * Method to set Heat map links enable/disable 
+     * Method to set Heat map links enable/disable
+     * 
      * @param active
      */
     public void setHeatMapLinkEnable(boolean active) {
@@ -429,7 +423,8 @@ public class ExperimentStackBox extends Cab2bPanel {
     }
 
     /**
-     * Method to set Heat map links enable/disable 
+     * Method to set Heat map links enable/disable
+     * 
      * @param active
      */
     public void setAnalysisLinkEnable(boolean active) {
@@ -445,8 +440,7 @@ public class ExperimentStackBox extends Cab2bPanel {
      * This method displays the type of chart in the Visualize Data panel which
      * is at the left bottom of the screen.
      * 
-     * @param chartTypes
-     *            name of charts to be displayed.
+     * @param chartTypes name of charts to be displayed.
      */
     private void setVisulaizationToolLink(String toolType, URL iconUrl, ActionListener actionListener) {
         Cab2bHyperlink hyperlink = new Cab2bHyperlink();
@@ -497,8 +491,7 @@ public class ExperimentStackBox extends Cab2bPanel {
     /**
      * This method displays the chart selected in the Chart tab.
      * 
-     * @param linkClicked
-     *            the name of the chart to be displayed
+     * @param linkClicked the name of the chart to be displayed
      */
     private void showChartAction(String chartType) {
         final JTabbedPane tabComponent = m_experimentDataCategoryGridPanel.getTabComponent();
@@ -545,8 +538,7 @@ public class ExperimentStackBox extends Cab2bPanel {
     /**
      * This method displays the chart selected in the Chart tab.
      * 
-     * @param linkClicked
-     *            the name of the chart to be displayed
+     * @param linkClicked the name of the chart to be displayed
      */
     private void showHeatmapAction() {
         final JTabbedPane tabComponent = m_experimentDataCategoryGridPanel.getTabComponent();
@@ -611,7 +603,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         EntityInterface dataEntity = clientSideCache.getEntityById(idName.getOriginalEntityId());
         AnalyticalServiceOperationsBusinessInterface analyticalServiceOperationsBusinessInterface = (AnalyticalServiceOperationsBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                                                                                     EjbNamesConstants.ANALYTICAL_SERVICE_BEAN,
-                                                                                                                                                                                    AnalyticalServiceOperationsHomeInterface.class,
+
                                                                                                                                                                                     null);
         List<ServiceDetailsInterface> serviceDetailInterfaceList = null;
         try {
@@ -671,9 +663,8 @@ public class ExperimentStackBox extends Cab2bPanel {
      * @param dataEntity
      * @param entityId
      * @param serviceDetailsInterface
-     * @param actionEvent
-     *            The event that contains details of the click on the individual
-     *            service.
+     * @param actionEvent The event that contains details of the click on the
+     *            individual service.
      */
     private void serviceSelectAction(ServiceDetailsInterface serviceDetails, final EntityInterface requiredEntity,
                                      final EntityInterface dataEntity) {
@@ -713,8 +704,7 @@ public class ExperimentStackBox extends Cab2bPanel {
      * This method returns the parameter panel that has the controls to accept
      * the parameter values.
      * 
-     * @param entity
-     *            the entity for which the control panels are to be displayed
+     * @param entity the entity for which the control panels are to be displayed
      * @return Array of control panel
      */
     private Cab2bPanel getParameterPanels(final EntityInterface entity) {
@@ -751,8 +741,7 @@ public class ExperimentStackBox extends Cab2bPanel {
     }
 
     /**
-     * @param visualiseDataPanel
-     *            the visualiseDataPanel to set
+     * @param visualiseDataPanel the visualiseDataPanel to set
      */
     public void setVisualiseDataPanel(Cab2bPanel visualiseDataPanel) {
         this.visualiseDataPanel = visualiseDataPanel;
@@ -825,7 +814,7 @@ class FinishButtonActionListner implements ActionListener {
             List<IRecord> entityRecordList = null;
             AnalyticalServiceOperationsBusinessInterface analyticalServiceOperationsBusinessInterface = (AnalyticalServiceOperationsBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                                                                                         EjbNamesConstants.ANALYTICAL_SERVICE_BEAN,
-                                                                                                                                                                                        AnalyticalServiceOperationsHomeInterface.class,
+
                                                                                                                                                                                         null);
             try {
                 entityRecordList = analyticalServiceOperationsBusinessInterface.invokeService(serviceDetails,
@@ -846,11 +835,10 @@ class FinishButtonActionListner implements ActionListener {
      * This method refreshes the table of analysis in the Analysis tab. It
      * displays the values of entityRecordResult in the tablular form.
      * 
-     * @param analysisTitle
-     *            the analysis title to display as link value in the table
-     * @param entityRecordResult
-     *            the EntityRecordResult whose values are to be displayed in a
-     *            single row of table.
+     * @param analysisTitle the analysis title to display as link value in the
+     *            table
+     * @param entityRecordResult the EntityRecordResult whose values are to be
+     *            displayed in a single row of table.
      */
     private void updateAnalysisTable(final String analysisTitle, final List<IRecord> entityRecordList) {
         UserObjectWrapper<List<IRecord>> userObjectWrapper = new UserObjectWrapper<List<IRecord>>(
@@ -883,8 +871,7 @@ class FinishButtonActionListner implements ActionListener {
     /**
      * This method collects the values from the service popup window
      * 
-     * @param controlPanels
-     *            parameter paneles of the service pop window
+     * @param controlPanels parameter paneles of the service pop window
      * @return Record which has the parameter values
      */
     private List<IRecord> collectServiceParameterValues(final Component[] controlPanels) {
