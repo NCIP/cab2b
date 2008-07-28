@@ -20,6 +20,8 @@ import org.jdesktop.swingx.decorator.HighlighterPipeline;
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
+import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
@@ -106,7 +108,8 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
                 if (userObject instanceof ExperimentTreeNode) {
                     ExperimentTreeNode selectedExpTreeNode = (ExperimentTreeNode) userObject;
                     if (selectedExpTreeNode != null) {
-                        expDetailsPanel.refreshDetails(selectedExpTreeNode);
+                        showExperimentPanel(selectedExpTreeNode);
+                        //expDetailsPanel.refreshDetails(selectedExpTreeNode);
                     }
                 } else if (userObject instanceof Experiment) {
                     if (expDetailsPanel != null)
@@ -126,4 +129,26 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
         js.setBorder(null);
         this.add("br hfill vfill", js);
     }
+
+    private void showExperimentPanel(ExperimentTreeNode expNodeObj) {
+
+        ExperimentOpenPanel expPanel = null;
+        if (expNodeObj.isExperimentGroup() == false) {
+            expPanel = new ExperimentOpenPanel(expNodeObj, ExperimentHierarchyPanel.this);
+        } else {
+            //TODO
+            /*If user clicks on experimentGroup name then Refresh the table  
+             * and display all child nodes for selected experimentGroup */
+        }
+
+        if (expNodeObj.isExperimentGroup() == false) {
+            /*If user clicks on experiment name then Open experiment 
+             * in new ExperimentOpenPanel with details*/
+            MainFrame mainframe = NewWelcomePanel.getMainFrame();
+            mainframe.getExperimentPanel().removeAll();
+            mainframe.getExperimentPanel().add(expPanel);
+            updateUI();
+        }
+    }
+
 }

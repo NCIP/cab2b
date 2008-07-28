@@ -82,40 +82,40 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
     /**
      * A text field component to accept experiment name from user.
      */
-    JTextField expNameTextField;
+    private JTextField expNameTextField;
 
     /**
      * A tree component to show experiment and experiment group hierarchy.
      */
-    JXTree projectsTree;
+    private JXTree projectsTree;
 
-    JScrollPane treeScrollPane;
+    private JScrollPane treeScrollPane;
 
     /**
      * A text area component to accept experiment description from the user.
      */
-    JTextArea expDescTextArea;
+    private JTextArea expDescTextArea;
 
     /**
      * A button component to listen for users "create new experiment group"
      * action.
      */
-    Cab2bButton addNewButton;
+    private Cab2bButton addNewButton;
 
     /**
      * A dialog component to show this panel in it.
      */
-    JDialog dialog;
+    private JDialog dialog;
 
     /**
      * A button component to listen for users "save experiment" action.
      */
-    Cab2bButton saveButton;
+    private Cab2bButton saveButton;
 
     /**
      * A button component to listen for users cancel "save experiment" action.
      */
-    Cab2bButton cancelButton;
+    private Cab2bButton cancelButton;
 
     public NewExperimentDetailsPanel() {
         initGUIGBL();
@@ -181,15 +181,15 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         projectsTree.setOpenIcon(new ImageIcon(loader.getResource(TREE_OPEN_FOLDER)));
         projectsTree.setClosedIcon(new ImageIcon(loader.getResource(TREE_CLOSE_FOLDER)));
         projectsTree.setLeafIcon(new ImageIcon(loader.getResource(TREE_LEAF_NODE)));
-        
+
         // setting tree node name
         projectsTree.setSelectionRow(0);
         ExperimentTreeNode treeNodeUserObj = (ExperimentTreeNode) ((DefaultMutableTreeNode) projectsTree.getSelectionPath().getPathComponent(
-                                                                                                           0)).getUserObject();
+                                                                                                                                             0)).getUserObject();
         treeNodeUserObj.setName("My Projects");
         projectsTree.setSelectionRow(-1);
         projectsTree.expandAll();
-       	projectsTree.updateUI();
+        projectsTree.updateUI();
 
         JLabel expDescLabel = new Cab2bLabel("Description : ");
         expDescTextArea = new JTextArea();
@@ -249,27 +249,27 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                     obj = projectsTree.getSelectionPath().getLastPathComponent();
                 DefaultMutableTreeNode selectedTreeNode = (DefaultMutableTreeNode) obj;
                 // There's no selection. Default to the root node.
-                
+
                 if (selectedTreeNode == null) {
                     selectedTreeNode = (DefaultMutableTreeNode) projectsTree.getModel().getRoot();
                 } else {
-                	Object nodeObject= selectedTreeNode.getUserObject();
-                	
+                    Object nodeObject = selectedTreeNode.getUserObject();
+
                     if (nodeObject instanceof ExperimentTreeNode) {
-                    	ExperimentTreeNode expTreeNode  = (ExperimentTreeNode) selectedTreeNode.getUserObject();
-                    	if (!expTreeNode.isExperimentGroup()){
+                        ExperimentTreeNode expTreeNode = (ExperimentTreeNode) selectedTreeNode.getUserObject();
+                        if (!expTreeNode.isExperimentGroup()) {
                             return;
-                    	}
+                        }
                     }
                 }
 
                 // ------- inline editing ----------
                 DefaultTreeModel m_model = (DefaultTreeModel) projectsTree.getModel();
-                
+
                 DefaultMutableTreeNode newNode = new DefaultMutableTreeNode("New Node");
-                
+
                 m_model.insertNodeInto(newNode, selectedTreeNode, selectedTreeNode.getChildCount());
-                
+
                 // make the node visible by scroll to it
                 TreeNode[] nodes = m_model.getPathToRoot(newNode);
                 TreePath path = new TreePath(nodes);
@@ -369,8 +369,9 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
                 try {
                     expBus.addExperiment(expGrpId, experiment);
-                    SearchNavigationPanel.messageLabel.setText("* Experiment '" + experiment.getName()
-                            + "' saved successfully .");
+                    SearchNavigationPanel.getMessageLabel().setText(
+                                                                    "* Experiment '" + experiment.getName()
+                                                                            + "' saved successfully .");
                     updateUI();
                 } catch (RemoteException e1) {
                     CommonUtils.handleException(e1, NewExperimentDetailsPanel.this, true, true, false, false);
@@ -416,8 +417,8 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
     }
 
     public JDialog showInDialog() {
-        Dimension dimension = MainFrame.mainframeScreenDimesion;
-        dialog = WindowUtilities.setInDialog(NewWelcomePanel.mainFrame, this, "Create New Experiment",
+        Dimension dimension = MainFrame.getScreenDimesion();
+        dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), this, "Create New Experiment",
                                              new Dimension((int) (dimension.width * 0.43),
                                                      (int) (dimension.height * 0.60)), true, false);
         dialog.setVisible(true);

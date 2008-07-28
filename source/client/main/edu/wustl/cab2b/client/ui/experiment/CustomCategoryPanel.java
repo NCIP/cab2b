@@ -173,7 +173,7 @@ public class CustomCategoryPanel extends JXFrame {
         bottomPanel.add(" right ", saveButton);
         bottomPanel.add(" right ", cancelButton);
         finalPanel.add(bottomPanel, BorderLayout.SOUTH);
-        dialog = WindowUtilities.setInDialog(NewWelcomePanel.mainFrame, finalPanel, "Custom Data Category",
+        dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), finalPanel, "Custom Data Category",
                                              Constants.WIZARD_SIZE2_DIMENSION, true, false);
         dialog.setVisible(true);
     }

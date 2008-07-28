@@ -26,17 +26,17 @@ import edu.wustl.common.util.logger.Logger;
 @SuppressWarnings("serial")
 public class NewExperimentPanel extends Cab2bPanel implements ActionListener
 {
-	JTabbedPane tabbedPane;
+    private JTabbedPane tabbedPane;
 	
-	JButton nextButton;
+    private	JButton nextButton;
 	
-	JButton prevButton;
+    private JButton prevButton;
 	
-	JButton finishButton;
+    private JButton finishButton;
 	
 	//JButton cancelButton;
 	
-	JXPanel wizardButtonPanel;
+    private JXPanel wizardButtonPanel;
 	
     public NewExperimentPanel()
     {

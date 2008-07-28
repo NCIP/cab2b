@@ -2,12 +2,12 @@ package edu.wustl.cab2b.client.ui.experiment;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
 
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -57,10 +57,7 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
 
     private ExperimentTreeNode m_ExperimentTreeNodeObj;
 
-    private ExperimentDetailsPanel m_parentPanel;
-
-    /* experiment BusinessInterface */
-    private ExperimentBusinessInterface expBus;
+    private Container m_parentPanel;
 
     private JSplitPane splitPane;
 
@@ -75,10 +72,15 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
         initGUI();
     }
 
-    public ExperimentOpenPanel(ExperimentTreeNode Obj, ExperimentDetailsPanel parentPanel) {
+    public ExperimentOpenPanel(Experiment exp) {
+        selectedExperiment = exp;
+        initGUI();
+    }
+
+    public ExperimentOpenPanel(ExperimentTreeNode Obj, Container parentPanel) {
         m_ExperimentTreeNodeObj = Obj;
         m_parentPanel = parentPanel;
-        m_parentPanel.setBorder(null);
+        //m_parentPanel.setBorder(null);
         initGUI();
     }
 
@@ -86,25 +88,7 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
         return this.experimentDataCategoryGridPanel;
     }
 
-    public void initGUI() {
-        this.setLayout(new BorderLayout());
-
-        /* ejb code : Getting experiment BusinessInterface */
-        expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.EXPERIMENT,
-                                                                                ExperimentHome.class);
-
-        try {
-            selectedExperiment = expBus.getExperiment(m_ExperimentTreeNodeObj.getIdentifier());
-        } catch (RemoteException e) {
-            CheckedException checkedException = new CheckedException(e.getMessage());
-            CommonUtils.handleException(checkedException, m_parentPanel, true, true, true, false);
-            e.printStackTrace();
-        } catch (DAOException e) {
-            CheckedException checkedException = new CheckedException(e.getMessage());
-            CommonUtils.handleException(checkedException, m_parentPanel, true, true, true, false);
-            e.printStackTrace();
-        }
-        // ejb code end
+    private void setExperimentPanel() {
 
         experimentTitlePanel = new Cab2bPanel(new RiverLayout(5, 5));
 
@@ -192,10 +176,8 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
                 } else if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.ENABLE_HEATMAP_LINK)) {
                     experimentStackBox.setHeatMapLinkEnable(true);
                 }
-
                 if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.DISABLE_ANALYSIS_LINK))
                     experimentStackBox.setAnalysisLinkEnable(false);
-
             }
         });
         experimentDataCategoryGridPanel.setBorder(null);
@@ -208,11 +190,45 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, experimentStackBox,
                 experimentDataCategoryGridPanel);
-
         splitPane.setOneTouchExpandable(false);
         splitPane.setDividerLocation(242);
         splitPane.setDividerSize(4);
         this.add(splitPane);
+
+    }
+
+    private Experiment invokeCompleteExperimentFromDatabase() {
+
+        /* ejb code : Getting experiment BusinessInterface */
+        ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                            EjbNamesConstants.EXPERIMENT,
+                                                                                                            ExperimentHome.class);
+        Long expId;
+
+        if (selectedExperiment != null)
+            expId = selectedExperiment.getId();
+        else
+            expId = m_ExperimentTreeNodeObj.getIdentifier();
+
+        try {
+            selectedExperiment = expBus.getExperiment(expId);
+        } catch (RemoteException e) {
+            CheckedException checkedException = new CheckedException(e.getMessage());
+            CommonUtils.handleException(checkedException, m_parentPanel, true, true, true, false);
+            e.printStackTrace();
+        } catch (DAOException e) {
+            CheckedException checkedException = new CheckedException(e.getMessage());
+            CommonUtils.handleException(checkedException, m_parentPanel, true, true, true, false);
+            e.printStackTrace();
+        }
+        return selectedExperiment;
+
+    }
+
+    public void initGUI() {
+        this.setLayout(new BorderLayout());
+        invokeCompleteExperimentFromDatabase();
+        setExperimentPanel();
     }
 
     public void addDataList(DataListMetadata dataListMetadata) {
@@ -233,5 +249,4 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
     public void setExperimentStackBox(ExperimentStackBox experimentStackBox) {
         this.experimentStackBox = experimentStackBox;
     }
-
 }

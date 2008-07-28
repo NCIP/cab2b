@@ -1,8 +1,14 @@
 package edu.wustl.cab2b.client.ui.util;
 
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.SEARCH_FRAME_TITLE;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.APPLICATION_RESOURCES_FILE_NAME;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.ERROR_CODE_FILE_NAME;
+
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -11,10 +17,12 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -22,12 +30,23 @@ import org.jdesktop.swingx.JXErrorDialog;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.client.cache.ClientSideCache;
 import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.MainSearchPanel;
+import edu.wustl.cab2b.client.ui.RiverLayout;
+import edu.wustl.cab2b.client.ui.SaveDatalistPanel;
+import edu.wustl.cab2b.client.ui.WindowUtilities;
+import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
+import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.mainframe.GlobalNavigationPanel;
+import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
+import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
+import edu.wustl.cab2b.client.ui.mainframe.stackbox.MainFrameStackedBoxPanel;
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.datalist.IDataRow;
+import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
 import edu.wustl.cab2b.common.ejb.category.CategoryHomeInterface;
@@ -37,9 +56,12 @@ import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
+import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.cab2b.common.locator.Locator;
 import edu.wustl.cab2b.common.locator.LocatorException;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
+import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.util.Utility;
@@ -59,12 +81,12 @@ import edu.wustl.common.querysuite.queryobject.impl.Constraints;
 import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
 import edu.wustl.common.querysuite.queryobject.impl.QueryEntity;
 import edu.wustl.common.querysuite.queryobject.impl.Rule;
+import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author Chetan B H
  * @author Mahesh Iyer
- * @author chetan_patil
  */
 public class CommonUtils {
 
@@ -89,13 +111,11 @@ public class CommonUtils {
     public static BusinessInterface getBusinessInterface(String beanName, Class homeClassForBean,
                                                          Component parentComponent) {
         BusinessInterface businessInterface = null;
-
         try {
             businessInterface = Locator.getInstance().locate(beanName, homeClassForBean);
         } catch (LocatorException e1) {
             handleException(e1, parentComponent, true, true, false, false);
         }
-
         return businessInterface;
     }
 
@@ -112,12 +132,7 @@ public class CommonUtils {
         }
     }
 
-    /**
-     * This method creates a copy of the given query object.
-     * @param query query object whos copy is to be made
-     * @return copy of the given query object
-     */
-    public static Cab2bQuery copyQueryObject(ICab2bQuery query) {
+    public static ICab2bParameterizedQuery copyQueryObject(ICab2bQuery query) {
         //New Query
         Cab2bQuery newCab2bQuery = new Cab2bQuery();
         newCab2bQuery.setOutputEntity(query.getOutputEntity());
@@ -140,7 +155,7 @@ public class CommonUtils {
             newExpression.setVisible(oldExpression.isVisible());
             mapOldToNew.put(oldExpression, newExpression);
         }
-        
+
         for (IExpression oldExpression : constraints) {
             IExpressionOperand newOperand = getNewExpressionOperand(oldExpression, 0, mapOldToNew);
             IExpression newExpression = mapOldToNew.get(oldExpression);
@@ -150,9 +165,11 @@ public class CommonUtils {
 
                 //New LogicalConnector
                 IConnector<LogicalOperator> oldLogicalConnector = (IConnector<LogicalOperator>) oldExpression.getConnector(
-                                                                                                            index - 1,
-                                                                                                            index);
-                IConnector<LogicalOperator> newLogicalConnector = QueryObjectFactory.createLogicalConnector(oldLogicalConnector.getOperator(), oldLogicalConnector.getNestingNumber());
+                                                                                                                           index - 1,
+                                                                                                                           index);
+                IConnector<LogicalOperator> newLogicalConnector = QueryObjectFactory.createLogicalConnector(
+                                                                                                            oldLogicalConnector.getOperator(),
+                                                                                                            oldLogicalConnector.getNestingNumber());
                 newExpression.addOperand(newLogicalConnector, newOperand);
             }
         }
@@ -161,7 +178,8 @@ public class CommonUtils {
         return newCab2bQuery;
     }
 
-    private static IExpressionOperand getNewExpressionOperand(IExpression expression, int index, Map<IExpression, IExpression> mapOldToNew) {
+    private static IExpressionOperand getNewExpressionOperand(IExpression expression, int index,
+                                                              Map<IExpression, IExpression> mapOldToNew) {
         IExpressionOperand operand = expression.getOperand(index);
         operand.setId(null);
 
@@ -333,12 +351,12 @@ public class CommonUtils {
         } catch (RuntimeException re) {
             handleException(re, comp, true, false, false, false);
         } /*
-                                                                                                                                                                                                                          		 * catch (RemoteException e1) { //CheckedException e = new
-                                                                                                                                                                                                                          		 * CheckedException(e1.getMessage(), e1,
-                                                                                                                                                                                                                          		 * ErrorCodeConstants.QM_0004);
-                                                                                                                                                                                                                          		 * handleException(getCab2bException(e1), comp, true, false, false,
-                                                                                                                                                                                                                          		 * false); }
-                                                                                                                                                                                                                          		 */
+         * catch (RemoteException e1) { //CheckedException e = new
+         * CheckedException(e1.getMessage(), e1,
+         * ErrorCodeConstants.QM_0004);
+         * handleException(getCab2bException(e1), comp, true, false, false,
+         * false); }
+         */
         return iQueryResult;
     }
 
@@ -603,7 +621,7 @@ public class CommonUtils {
             }
         }
 
-        // append last string
+        //append last string
         String finalToken = token.toString().trim();
         if (isTextQualifierStart == true) {
             if (!finalToken.equals("")) {
@@ -754,18 +772,32 @@ public class CommonUtils {
     /**
      * @return Popular categories at this point
      */
-    public static Vector getPopularSearchCategories() {
-        /*
-         * TODO These default Search Categories will be removed after its
-         * support
-         */
-        Vector<String> popularSearchCategories = new Vector<String>();
-        popularSearchCategories.add("Gene Annotation");
-        popularSearchCategories.add("Genomic Identifiers");
-        popularSearchCategories.add("Literature-based Gene Association");
-        // popularSearchCategories.add("Microarray Annotation");
-        popularSearchCategories.add("Orthologus Gene");
-        return popularSearchCategories;
+    public static Vector<Category> getPopularSearchCategories() {
+        Vector<Category> userSearchCategories = new Vector<Category>();
+
+        //TO-Do  Change it for Popular categories
+        List<Category> categoryList = ClientSideCache.getInstance().getAllCategories();
+        for (Category category : categoryList) {
+            userSearchCategories.add(category);
+        }
+        return userSearchCategories;
+
+    }
+
+    /**
+     * @param data
+     */
+    public static Cab2bPanel getPopularSearchCategoriesPanel(Vector<Category> data, ActionListener actionClass) {
+        Cab2bPanel panel = new Cab2bPanel();
+        panel.setLayout(new RiverLayout(10, 5));
+        panel.add(new Cab2bLabel());
+        for (Category category : data) {
+            Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
+            setHyperlinkProperties(hyperlink, category, category.getCategoryEntity().getName(),
+                                   category.getCategoryEntity().getDescription(), actionClass);
+            panel.add("br", hyperlink);
+        }
+        return panel;
     }
 
     /**
@@ -790,31 +822,65 @@ public class CommonUtils {
     /**
      * @return All the experiments performed by the user.
      */
-    public static Vector getExperiments() {
-        /* TODO These default experiments will be removed later on */
-        Vector<String> experiments = new Vector<String>();
-        experiments.add("Breast Cancer Microarrays (Hu133+2.0)");
-        experiments.add("Comparative study of specimens between pre and post therapy");
-        experiments.add("Acute Myelogenous Leukemia Microarrays");
-        experiments.add("Patients with newly diagnose Adenocarcinoma");
-        return experiments;
+    public static Vector<Experiment> getExperiments(Component comp, String userName) {
+
+        ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                            EjbNamesConstants.EXPERIMENT,
+                                                                                                            ExperimentHome.class);
+        List<Experiment> experiments = null;
+        try {
+            experiments = expBus.getExperimentsForUser("");
+        } catch (RemoteException e) {
+            handleException(e, comp, true, false, false, false);
+        }
+
+        Vector<Experiment> experimentName = new Vector<Experiment>();
+        for (Experiment experiment : experiments) {
+            experimentName.add(experiment);
+        }
+        return experimentName;
+    }
+
+    /**
+     * 
+     * @param data
+     */
+    public static Cab2bPanel getMyLatestExperimentsPanel(Vector<Experiment> data, ActionListener actionListener) {
+        Cab2bPanel panel = new Cab2bPanel();
+        panel.setLayout(new RiverLayout(10, 5));
+        panel.add(new Cab2bLabel());
+        for (Experiment experiment : data) {
+            Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
+            setHyperlinkProperties(hyperlink, experiment, experiment.getName(), experiment.getDescription(),
+                                   actionListener);
+            panel.add("br", hyperlink);
+        }
+        return panel;
+    }
+
+    /**
+     * Method to set hyperlink property values
+     * @param hyperlink
+     * @param obj
+     * @param hyperlinkText
+     * @param desc
+     * @param actionClass
+     */
+    private static void setHyperlinkProperties(Cab2bHyperlink hyperlink, Object obj, String hyperlinkText,
+                                               String desc, ActionListener actionClass) {
+        hyperlink.setClickedColor(MainFrameStackedBoxPanel.CLICKED_COLOR);
+        hyperlink.setUnclickedColor(MainFrameStackedBoxPanel.UNCLICKED_COLOR);
+        hyperlink.setUserObject(obj);
+        hyperlink.setText(hyperlinkText);
+        hyperlink.setToolTipText(desc);
+        hyperlink.addActionListener(actionClass);
     }
 
     /**
      * @return Popular categories at this point
      */
     public static Vector getUserSearchCategories() {
-        /*
-         * TODO These default Search Categories will be removed after its
-         * support
-         */
-        Vector<String> userSearchCategories = new Vector<String>();
-        // userSearchCategories.add("Gene Annotation");
-        userSearchCategories.add("Microarray Annotation");
-        userSearchCategories.add("Tissue Biospecimens");
-        userSearchCategories.add("Molecular Biospecimens");
-        userSearchCategories.add("Participant Details");
-        return userSearchCategories;
+        return getPopularSearchCategories();
     }
 
     public static String escapeString(String input) {
@@ -891,5 +957,63 @@ public class CommonUtils {
                                           "Query", JOptionPane.WARNING_MESSAGE);
         }
         return isServiceURLConfigured;
+    }
+
+    /**
+     * initializes resources like errorcode handler , Application Properties etc
+     */
+    public static void initializeResources() {
+        try {
+
+            ErrorCodeHandler.initBundle(ERROR_CODE_FILE_NAME);
+            ApplicationProperties.initBundle(APPLICATION_RESOURCES_FILE_NAME);
+        } catch (MissingResourceException mre) {
+            CheckedException checkedException = new CheckedException(mre.getMessage(), mre,
+                    ErrorCodeConstants.IO_0002);
+            CommonUtils.handleException(checkedException, null, true, true, false, true);
+        }
+    }
+
+    /**
+     * set the caB2B Home used to keep editable configurations, appliaction logs
+     * etc.
+     * 
+     */
+    public static void setHome() {
+
+        String userHome = System.getProperty("user.home");
+
+        File cab2bHome = new File(userHome, "cab2b");
+        System.setProperty("cab2b.home", cab2bHome.getAbsolutePath());
+    }
+
+    /**
+     * Method to launch caB2B Search data wizard.
+     */
+    public static void launchSearchDataWizard() {
+
+        // Update the variable for latest screen dimension from the
+        // toolkit, this is to handle the situations where
+        // application is started and then screen resolution is
+        // changed, but the variable stiil holds old resolution
+        // size.
+
+        Dimension dimension = MainFrame.getScreenDimesion();
+        final String title = ApplicationProperties.getValue(SEARCH_FRAME_TITLE);
+
+        //Clearing the datalist
+        SaveDatalistPanel.setDataListSaved(false);
+        MainSearchPanel mainSearchPanel = GlobalNavigationPanel.getMainSearchPanel();
+        if (mainSearchPanel == null)
+            mainSearchPanel = new MainSearchPanel();
+
+        GlobalNavigationPanel.setMainSearchPanel(mainSearchPanel);
+        mainSearchPanel.getDataList().clear();
+        MainFrame mainFrame = NewWelcomePanel.getMainFrame();
+        JDialog searchDialog = WindowUtilities.setInDialog(mainFrame, mainSearchPanel, title, new Dimension(
+                (int) (dimension.width * 0.90), (int) (dimension.height * 0.85)), true, true);
+        mainFrame.setSearchWizardDialog(searchDialog);
+        searchDialog.setVisible(true);
+        GlobalNavigationPanel.setMainSearchPanel(null);
     }
 }

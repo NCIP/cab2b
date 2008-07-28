@@ -355,7 +355,7 @@ public class ExperimentStackBox extends Cab2bPanel {
                     recordList = dataListBI.getEntityRecord(idName.getUserObject().getId());
                     recordValues = utilityBusinessInterface.getUniqueRecordValues(idName.getUserObject().getId());
                 } catch (RemoteException remoteException) {
-                    CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true,
+                    CommonUtils.handleException(remoteException, NewWelcomePanel.getMainFrame(), true, true, true,
                                                 false);
                 }
                 addAvailableAnalysisServices(idName.getUserObject());
@@ -623,7 +623,7 @@ public class ExperimentStackBox extends Cab2bPanel {
                 }
             }
         } catch (RemoteException remoteException) {
-            CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true, false);
+            CommonUtils.handleException(remoteException, NewWelcomePanel.getMainFrame(), true, true, true, false);
         }
     }
 
@@ -705,7 +705,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         servicePanel.add("br right ", finishButton);
 
         String displayName = CommonUtils.getFormattedString(requiredEntity.getName());
-        WindowUtilities.showInDialog(NewWelcomePanel.mainFrame, servicePanel, displayName,
+        WindowUtilities.showInDialog(NewWelcomePanel.getMainFrame(), servicePanel, displayName,
                                      Constants.WIZARD_SIZE2_DIMENSION, true, false);
     }
 
@@ -833,7 +833,8 @@ class FinishButtonActionListner implements ActionListener {
                                                                                               serviceParameterList);
                 updateAnalysisTable(analysisTitle, entityRecordList);
             } catch (RemoteException remoteException) {
-                CommonUtils.handleException(remoteException, MainFrame.newWelcomePanel, true, true, true, false);
+                CommonUtils.handleException(remoteException, NewWelcomePanel.getMainFrame(), true, true, true,
+                                            false);
             }
 
             MainFrame.setStatus(MainFrame.Status.READY);

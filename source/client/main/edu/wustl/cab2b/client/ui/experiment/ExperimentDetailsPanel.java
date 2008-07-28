@@ -21,6 +21,7 @@ import org.jdesktop.swingx.decorator.HighlighterPipeline;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
+import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
@@ -213,7 +214,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
             //getting object associated with hyperlink column Number will be always 1
             final Object expObj = (ExperimentTreeNode) expTable.getValueAt(selectionIndex, 1);
 
-            CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.openExperimentWelcomePanel) {
+            CustomSwingWorker swingWorker = new CustomSwingWorker(ExperimentDetailsPanel.this) {
                 @Override
                 protected void doNonUILogic() throws RuntimeException {
 
@@ -241,8 +242,10 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
                              * in new ExperimentOpenPanel with details*/
                             Logger.out.debug("ExperimentTreeNode node :" + expNodeObj.getIdentifier()
                                     + " is not a experimentGroup");
-                            MainFrame.openExperimentWelcomePanel.removeAll();
-                            MainFrame.openExperimentWelcomePanel.add(ExperimentDetailsPanel.this.expPanel);
+
+                            MainFrame mainframe = NewWelcomePanel.getMainFrame();
+                            mainframe.getExperimentPanel().removeAll();
+                            mainframe.getExperimentPanel().add(ExperimentDetailsPanel.this.expPanel);
                             updateUI();
                         }
                     }

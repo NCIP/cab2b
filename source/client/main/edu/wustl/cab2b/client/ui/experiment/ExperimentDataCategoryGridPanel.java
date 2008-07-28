@@ -70,7 +70,7 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
 public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     private static final long serialVersionUID = 1L;
 
-    public ExperimentOpenPanel experimentPanel;
+    private ExperimentOpenPanel experimentPanel;
 
     private JTabbedPane tabComponent;
 
@@ -380,7 +380,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         MainFrame.setStatus(MainFrame.Status.BUSY);
         MainFrame.setStatusMessage("saving data category '" + title + "'");
 
-        CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.openExperimentWelcomePanel) {
+        CustomSwingWorker swingWorker = new CustomSwingWorker(ExperimentDataCategoryGridPanel.this.experimentPanel) {
             DataListMetadata dataListMetadata = null;
 
             protected void doNonUILogic() throws RuntimeException {
