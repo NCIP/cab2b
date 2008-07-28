@@ -13,9 +13,9 @@ import edu.common.dynamicextensions.domaininterface.FloatValueInterface;
 import edu.common.dynamicextensions.domaininterface.IntegerValueInterface;
 import edu.common.dynamicextensions.domaininterface.LongValueInterface;
 import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
+import edu.common.dynamicextensions.domaininterface.ShortValueInterface;
 import edu.common.dynamicextensions.domaininterface.StringValueInterface;
 import edu.common.dynamicextensions.domaininterface.UserDefinedDEInterface;
-import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.cagrid.metadata.common.Enumeration;
 import gov.nih.nci.cagrid.metadata.common.UMLAttribute;
 import gov.nih.nci.cagrid.metadata.common.ValueDomain;
@@ -27,10 +27,6 @@ import gov.nih.nci.cagrid.metadata.common.ValueDomainEnumerationCollection;
  */
 public class DataTypeTest extends TestCase {
     private static String pkg = "edu.common.dynamicextensions.domain.";
-    static {
-        Logger.configure();
-    }
-
     public void testForAttributeType() {
         assertEquals(DataType.INTEGER, DataType.get("number"));
         assertEquals(DataType.INTEGER, DataType.get("java.lang.integer"));
@@ -50,6 +46,8 @@ public class DataTypeTest extends TestCase {
         assertEquals(DataType.DOUBLE, DataType.get("java.lang.double"));
         assertEquals(DataType.DOUBLE, DataType.get("double"));
         assertEquals(DataType.OBJECT, DataType.get("3d_array"));
+        assertEquals(DataType.SHORT, DataType.get("short"));
+        assertEquals(DataType.SHORT, DataType.get("java.lang.short"));
     }
 
     public void testForIntegerAttribute() {
@@ -58,7 +56,12 @@ public class DataTypeTest extends TestCase {
         assertTrue(pv instanceof IntegerValueInterface);
         assertEquals(integer.intValue(), ((IntegerValueInterface) pv).getValue().intValue());
     }
-
+    public void testForShortAttribute() {
+        Short num = 1;
+        PermissibleValueInterface pv = getAttribute("short", "ShortAttributeTypeInformation", num);
+        assertTrue(pv instanceof ShortValueInterface);
+        assertEquals(num.shortValue(), ((ShortValueInterface) pv).getValue().intValue());
+    }
     public void testForStringAttribute() {
         String str = "val";
         PermissibleValueInterface pv = getAttribute("string", "StringAttributeTypeInformation", str);

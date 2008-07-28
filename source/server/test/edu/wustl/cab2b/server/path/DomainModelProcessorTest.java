@@ -2,11 +2,13 @@ package edu.wustl.cab2b.server.path;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import junit.framework.TestCase;
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
+import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -15,18 +17,12 @@ import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.common.util.IdGenerator;
 import edu.wustl.cab2b.server.util.InheritanceUtil;
 import edu.wustl.cab2b.server.util.TestUtil;
-import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.cagrid.metadata.dataservice.DomainModel;
 
 public class DomainModelProcessorTest extends TestCase {
     static DomainObjectFactory deFactory = DomainObjectFactory.getInstance();
 
     static IdGenerator idGenerator = new IdGenerator(0L);
-
-    @Override
-    protected void setUp() throws Exception {
-        Logger.configure();
-    }
 
     public void testMarkInheritedAttributes() {
         DomainModelProcessor p = new DomainModelProcessor();
@@ -100,57 +96,65 @@ public class DomainModelProcessorTest extends TestCase {
         assertEquals(1, map.get(1).size());
         assertEquals(new Integer(11), map.get(1).iterator().next());
     }
+
     public void testWithInheritance() {
         String appName = "TestApplication";
         String longName = "projectLongName";
         DomainModel model = DomainModelParserTest.getModel();
         model.setProjectLongName(longName);
         DomainModelParser p = new DomainModelParser(model);
-        DomainModelProcessor processor=null;
-		try {
-			processor = new MockDomainModelProcessor(p,appName);
-		} catch (DynamicExtensionsSystemException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (DynamicExtensionsApplicationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        DomainModelProcessor processor = null;
+        try {
+            processor = new MockDomainModelProcessor(p, appName);
+        } catch (DynamicExtensionsSystemException e) {
+            e.printStackTrace();
+        } catch (DynamicExtensionsApplicationException e) {
+            e.printStackTrace();
+        }
         EntityGroupInterface eg = processor.getEntityGroup();
-        assertEquals(appName,eg.getShortName());
-        assertEquals(longName,eg.getName());
-        assertEquals(longName,eg.getLongName());
-        assertEquals(5,eg.getEntityCollection().size());
+        assertEquals(appName, eg.getShortName());
+        assertEquals(longName, eg.getName());
+        assertEquals(longName, eg.getLongName());
+        assertEquals(5, eg.getEntityCollection().size());
     }
+
     EntityInterface getEntity() {
         EntityInterface entity = deFactory.createEntity();
         entity.setId(idGenerator.getNextId());
         return entity;
     }
 
-//    public void testMockDomainModelProcessor() {
-//        String name = PropertyLoader.getAllApplications()[0];
-//        String path = PropertyLoader.getModelPath(name);
-//         
-//         
-//        DomainModelParser parser = null;
-//        try {
-//            parser = new DomainModelParser(path);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            fail("unable to initialise");
-//        }
-//        try {
-//			new MockDomainModelProcessor(parser, name);
-//		} catch (DynamicExtensionsSystemException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (DynamicExtensionsApplicationException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//
-//    }
+    public void testGetAdjacencyMatrix() {
+        String appName = "TestApplication";
+        String longName = "projectLongName";
+        DomainModel model = DomainModelParserTest.getModel();
+        model.setProjectLongName(longName);
+        DomainModelParser p = new DomainModelParser(model);
+        DomainModelProcessor processor = null;
+        try {
+            processor = new MockDomainModelProcessor(p, appName);
+        } catch (DynamicExtensionsSystemException e) {
+            e.printStackTrace();
+        } catch (DynamicExtensionsApplicationException e) {
+            e.printStackTrace();
+        }
+        boolean[][] matrix = processor.getAdjacencyMatrix();
+
+        List<Long> list = processor.getEntityIds();
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                long src = list.get(i);
+                long des = list.get(j);
+
+                if ((src == 5L && des == 11L) || (src == 11L && des == 5L)) {
+                    assertTrue(matrix[i][j]);
+                } else {
+                    assertFalse(matrix[i][j]);
+                }
+
+            }
+        }
+    }
 }
 
 class MockDomainModelProcessor extends DomainModelProcessor {
@@ -159,7 +163,13 @@ class MockDomainModelProcessor extends DomainModelProcessor {
     }
 
     EntityGroupInterface saveEntityGroup(EntityGroupInterface eg) {
-         
+        long id = 1;
+        for (EntityInterface e : eg.getEntityCollection()) {
+            e.setId(id++);
+            for (AbstractAttributeInterface a : e.getAbstractAttributeCollection()) {
+                a.setId(id++);
+            }
+        }
         return eg;
     }
 }
