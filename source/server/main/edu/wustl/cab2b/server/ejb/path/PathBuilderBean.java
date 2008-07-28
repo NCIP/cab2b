@@ -2,8 +2,12 @@ package edu.wustl.cab2b.server.ejb.path;
 
 import java.rmi.RemoteException;
 
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+
 import edu.wustl.cab2b.common.ejb.path.PathBuilderBusinessInterface;
-import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 
 /**
  * This class Builds all paths for a Domain Model of given application.<br>
@@ -14,7 +18,11 @@ import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
  * It assumes that the table is already been present in database 
  * @author Chandrakant Talele
  */
-public class PathBuilderBean extends AbstractStatelessSessionBean implements PathBuilderBusinessInterface {
+
+@Remote(PathBuilderBusinessInterface.class)
+@Stateless
+@TransactionManagement(TransactionManagementType.BEAN)
+public class PathBuilderBean  implements PathBuilderBusinessInterface {
     private static final long serialVersionUID = -8177912823613782951L;
 
     /**

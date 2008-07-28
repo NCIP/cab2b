@@ -4,6 +4,11 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
 
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.IdName;
 import edu.wustl.cab2b.common.datalist.DataList;
@@ -15,7 +20,6 @@ import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.server.datalist.DataListMetadataOperations;
 import edu.wustl.cab2b.server.datalist.DataListOperationsController;
-import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 
 /**
  * This class has methods to perform various oprations on data list, like save,
@@ -23,7 +27,11 @@ import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
  * 
  * @author chetan_bh
  */
-public class DataListBean extends AbstractStatelessSessionBean implements DataListBusinessInterface {
+
+@Remote(DataListBusinessInterface.class)
+@Stateless
+@TransactionManagement(TransactionManagementType.BEAN)
+public class DataListBean  implements DataListBusinessInterface {
     private static final long serialVersionUID = 1234567890L;
 
     /**
