@@ -3,6 +3,8 @@ package edu.wustl.cab2b.server.path;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.BooleanValueInterface;
@@ -17,14 +19,13 @@ import edu.common.dynamicextensions.domaininterface.StringValueInterface;
 import edu.common.dynamicextensions.domaininterface.UserDefinedDEInterface;
 import edu.common.dynamicextensions.util.global.Constants.ValueDomainType;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
-import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.cagrid.metadata.common.Enumeration;
 import gov.nih.nci.cagrid.metadata.common.UMLAttribute;
 import gov.nih.nci.cagrid.metadata.common.ValueDomain;
 
 /**
- * Enumration for DataType.
- * It also provides method to get this enumeration based on String Datatype
+ * Enumeration for DataType.
+ * It also provides method to get this enumeration based on String Data-type
  * @author Chandrakant Talele
  */
 enum DataType {
@@ -90,7 +91,7 @@ enum DataType {
                     DateValueInterface value = domainObjectFactory.createDateValue();
                     //TODO what is meaning of permissible values for Date ??? 
                     //Not clear about date format string
-                    Logger.out.info("Date Attribute has permissible value : " + e.getPermissibleValue());
+                    logger.info("Date Attribute has permissible value : " + e.getPermissibleValue());
                     //value.setValue(new Date(e.getPermissibleValue()));
                     DynamicExtensionUtility.setSemanticMetadata(value, e.getSemanticMetadata());
                     userDefinedDE.addPermissibleValue(value);
@@ -135,7 +136,7 @@ enum DataType {
                 UserDefinedDEInterface userDefinedDE = DomainObjectFactory.getInstance().createUserDefinedDE();
                 for (Enumeration e : arr) {
                     BooleanValueInterface value = domainObjectFactory.createBooleanValue();
-                    Logger.out.info("boolean Attribute has permissible value : " + e.getPermissibleValue());
+                    logger.info("boolean Attribute has permissible value : " + e.getPermissibleValue());
                     //TODO what is meaning of permissible values for boolean???
                     //is any string processing needed??
                     value.setValue(new Boolean(e.getPermissibleValue()));
@@ -223,7 +224,7 @@ enum DataType {
             if (arr != null) {
                 for (Enumeration e : arr) {
                     //for the time being setting this as error to get all such attributes
-                    Logger.out.error("For attribute of Object type found permissible value : " + e.getPermissibleValue());
+                    logger.error("For attribute of Object type found permissible value : " + e.getPermissibleValue());
                 }
             }
             return attribute;
@@ -233,8 +234,7 @@ enum DataType {
     ;
 
     /**
-     * Builds enumeration and assigns passed string as value
-     * @param value
+     * Builds enumeration
      */
     DataType() {
     }
@@ -242,7 +242,7 @@ enum DataType {
     private static Map<String, DataType> dataTypeMap = new HashMap<String, DataType>();
 
     private static DomainObjectFactory domainObjectFactory = DomainObjectFactory.getInstance();
-
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(DataType.class);
     static {
         //put data type strings in small case
         dataTypeMap.put("number", DataType.INTEGER);
@@ -262,7 +262,7 @@ enum DataType {
         dataTypeMap.put("long", DataType.LONG);
         dataTypeMap.put("java.lang.double", DataType.DOUBLE);
         dataTypeMap.put("double", DataType.DOUBLE);
-        dataTypeMap.put("java.lang.Short", DataType.SHORT);
+        dataTypeMap.put("java.lang.short", DataType.SHORT);
         dataTypeMap.put("short", DataType.SHORT);
 //        dataTypeMap.put("java.lang.object", DataType.UNDEFINED);
 //        dataTypeMap.put("java.util.collection", DataType.UNDEFINED);
@@ -273,8 +273,8 @@ enum DataType {
     }
 
     /**
-     * Method which creates dynamic extension attribute based on datatype. 
-     * Each enumration must provide implement of this method.    
+     * Method which creates dynamic extension attribute based on data-type. 
+     * Each enumeration must provide implement of this method.    
      * @param umlAttribute source UML attribute 
      * @return the newly created dynamic extension attribute.
      */
@@ -288,7 +288,7 @@ enum DataType {
 
     AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
         // TODO bypassing attributes, need to decide how to handle it.
-        Logger.out.error("found attribute with type" + umlAttribute.getDataTypeName() + ". Not storing it");
+        logger.error("found attribute with type" + umlAttribute.getDataTypeName() + ". Not storing it");
         return null;
     }
 
@@ -307,7 +307,7 @@ enum DataType {
     }
 
     /**
-     * Returns the enumration for input String.
+     * Returns the enumeration for input String.
      * @param value
      * @return Returns the DataType
      */
@@ -315,9 +315,9 @@ enum DataType {
 
         DataType dataType = dataTypeMap.get(value.toLowerCase());
         if (dataType == null) {
-            //throw new RuntimeException("unknown datatype found : " + value);
+            //throw new RuntimeException("unknown data-type found : " + value);
             //for the time being setting this as error to get all such attributes
-            Logger.out.warn("Found attribute with type : " + value + ". Creating Object type attribute for it.");
+            logger.warn("Found attribute with type : " + value + ". Creating Object type attribute for it.");
             return  DataType.OBJECT;
         }
         return dataType;
