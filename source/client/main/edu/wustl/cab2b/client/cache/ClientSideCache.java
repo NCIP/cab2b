@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -12,9 +13,6 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.mainframe.ClientLauncher;
-import edu.wustl.cab2b.client.ui.mainframe.GlobalNavigationGlassPane;
-import edu.wustl.cab2b.client.ui.mainframe.GlobalNavigationPanel;
-import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.beans.MatchedClass;
 import edu.wustl.cab2b.common.beans.MatchedClassEntry;
@@ -39,6 +37,7 @@ public class ClientSideCache extends AbstractEntityCache {
      * This is Map with KEY: category and VALUE: set of classes used in forming the category 
      */
     private Map<Category, Set<EntityInterface>> categoryVsClasseSet = new HashMap<Category, Set<EntityInterface>>();
+
     /**
      * This is Map with KEY: category and VALUE: set of attributes used in forming the category 
      */
@@ -55,21 +54,30 @@ public class ClientSideCache extends AbstractEntityCache {
     }
 
     /**
+     * Returns all the categories present in system
+     * @return List<Category> 
+     */
+    public List<Category> getAllCategories() {
+        return categories;
+    }
+
+    /**
      * Initializes the cache and also shows the progress information
      */
     protected ClientSideCache() {
         super();
-        CategoryBusinessInterface categoryOperations = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.CATEGORY_BEAN,
-                                                                     CategoryHomeInterface.class);
+        CategoryBusinessInterface categoryOperations = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                    EjbNamesConstants.CATEGORY_BEAN,
+                                                                                                                    CategoryHomeInterface.class);
         int length = 50;
         ClientLauncher clientLauncher = ClientLauncher.getInstance();
         clientLauncher.showProgress(" Fetching data from caB2B Server....", length);
         try {
             categories = categoryOperations.getAllCategories();
             int offset = 40;
-            if(!categories.isEmpty()) {
+            if (!categories.isEmpty()) {
                 offset = offset / categories.size();
-            } 
+            }
             for (Category category : categories) {
                 categoryVsClasseSet.put(category, categoryOperations.getAllSourceClasses(category));
                 categoryVsAttributeSet.put(category, categoryOperations.getAllSourceAttributes(category));
@@ -149,7 +157,8 @@ public class ClientSideCache extends AbstractEntityCache {
 
             for (AttributeInterface attributeInCategory : attributesInCategory) {
                 for (AttributeInterface patternAttribute : patternAttributeCollection) {
-                    MatchedClassEntry matchedClassEntry = CompareUtil.compare(attributeInCategory, patternAttribute);
+                    MatchedClassEntry matchedClassEntry = CompareUtil.compare(attributeInCategory,
+                                                                              patternAttribute);
                     if (matchedClassEntry != null) {
                         long deEntityID = category.getDeEntityId();
                         EntityInterface entityInterface = getEntityById(deEntityID);
