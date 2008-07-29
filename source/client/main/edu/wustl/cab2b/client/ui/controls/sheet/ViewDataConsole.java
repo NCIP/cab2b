@@ -36,11 +36,14 @@ import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
@@ -50,8 +53,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
-
-import com.sun.imageio.plugins.png.RowFilter;
+import javax.swing.table.TableRowSorter;
 
 /**
  * @author jasbir_sachdeva
@@ -91,7 +93,7 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
 
     public static final String BUTTON_SELECTION_RESET = "BUTTON_SELECTION_RESET";
 
-   // TableRowSorter tblRowSorter = new TableRowSorter();
+    TableRowSorter tblRowSorter = new TableRowSorter();
 
     /** Keeps references to Anyone who wishes to listens to column Selections. */
     ArrayList<ListSelectionListener> colSelectionListeners = new ArrayList<ListSelectionListener>();
@@ -99,7 +101,7 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
     /***/
     ArrayList<TableModelListener> tblModelListener = new ArrayList<TableModelListener>();
 
-    ArrayList tblRowSorterListener = new ArrayList();
+    ArrayList<RowSorterListener> tblRowSorterListener = new ArrayList<RowSorterListener>();
 
     /** This action listener is informed if user wants to export selection . */
     private ActionListener actLsnExportCells;
@@ -135,7 +137,7 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
     /** Table Filter instance associated to data-table */
     private RowFilter rfilterTbl;
 
-    //private TableRowSorter rsortTable;
+    private TableRowSorter rsortTable;
 
     private boolean isCutInProgress = false;
 
@@ -230,7 +232,7 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
     void reapplyFilter() {
         // Reapply row sorter, automatically filter will be reapplied...
 
-      //  rsortTable.allRowsChanged();
+        rsortTable.allRowsChanged();
         tblRowHeader.revalidate();
         tblRowHeader.repaint();
     }
@@ -362,7 +364,7 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
         // tblData.getRowSorter().addRowSorterListener(rsl);
         // }
 
-       // tblData.getRowSorter().addRowSorterListener(new RowHeaderRefresher());
+        tblData.getRowSorter().addRowSorterListener(new RowHeaderRefresher());
 
         // Boolean should NOT be rendered as check boxes...
         tblData.setDefaultRenderer(Boolean.class, null);
@@ -735,14 +737,14 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
         butCopyTB.setMnemonic('c');
         butCopyTB.setToolTipText("Copy Selection to Clipboard");
         butCopyTB.setFocusable(false);
-       // butCopyTB.setHideActionText(true);
+        butCopyTB.setHideActionText(true);
         butCopyTB.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         tbarMain.add(butCopyTB);
 
         butPasteTB.setAction(actPaste);
         butPasteTB.setFont(butPasteTB.getFont().deriveFont(butPasteTB.getFont().getStyle() & ~java.awt.Font.BOLD));
         butPasteTB.setToolTipText("Paste from clipboard");
-      //  butPasteTB.setHideActionText(true);
+        butPasteTB.setHideActionText(true);
         butPasteTB.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         tbarMain.add(butPasteTB);
         tbarMain.add(jSeparator6);
@@ -809,7 +811,7 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
         });
 
         tblData.setAutoCreateColumnsFromModel(false);
-       // tblData.setAutoCreateRowSorter(true);
+        tblData.setAutoCreateRowSorter(true);
         tblData.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         tblData.setCellSelectionEnabled(true);
         tblData.setInheritsPopupMenu(true);
@@ -876,7 +878,7 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
     }// GEN-LAST:event_tblDataMousePressed
 
     private void tblDataMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_tblDataMouseClicked
-        int rowModel = 0;//tblData.convertRowIndexToModel(tblData.getSelectedRow());
+        int rowModel = tblData.convertRowIndexToModel(tblData.getSelectedRow());
         // TODO add your handling code here:
         if (evt.getClickCount() == 2) {
             firePropertyChange(Common.EVENT_DATA_ROW_DOUBLE_CLICKED, -1, rowModel);
@@ -890,7 +892,7 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
         // TODO add your handling code here:
 
         if (evt.getClickCount() == 2) {
-            int rowModel = 0;//tblData.convertRowIndexToModel(tblData.getSelectedRow());
+            int rowModel = tblData.convertRowIndexToModel(tblData.getSelectedRow());
             firePropertyChange(Common.EVENT_HEADER_ROW_DOUBLE_CLICKED, -1, rowModel);
         }
 
@@ -935,9 +937,9 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
         for (SheetColumn aColumn : colSheetAL) {
             tblData.addColumn(aColumn);
         }
-//        rsortTable = new TableRowSorter(compositeDataModel);
-//        rsortTable.setRowFilter(rfilterTbl);
-//        tblData.setRowSorter(rsortTable);
+        rsortTable = new TableRowSorter(compositeDataModel);
+        rsortTable.setRowFilter(rfilterTbl);
+        tblData.setRowSorter(rsortTable);
 
         // Attach old Selection listeners again to the Table...
         for (ListSelectionListener colSL : colSelectionListeners) {
@@ -973,10 +975,10 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
         // tblModelListener .add( tml);
         tblData.getModel().addTableModelListener(tml);
     }
-//
-//    public void addTableRowsorterListener(RowSorterListener rsl) {
-//        tblRowSorterListener.add(rsl);
-//    }
+
+    public void addTableRowsorterListener(RowSorterListener rsl) {
+        tblRowSorterListener.add(rsl);
+    }
 
     void setColumnVisibility(SheetColumn colSheet) {
         if (!(colSheet.isVisible() ^ isColumnExists(colSheet))) // No change
@@ -1071,7 +1073,7 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
                 {
                     break;
                 }
-                int mRow = 0;//tblData.convertRowIndexToModel(vRow + targetRow);
+                int mRow = tblData.convertRowIndexToModel(vRow + targetRow);
                 int mCol = tblData.convertColumnIndexToModel(vCol + targetCol);
                 compositeDataModel.setValueAt(cellsVal[vCol], mRow, mCol);
             }
@@ -1081,7 +1083,7 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
     void doFireShowDetailsRequest() {
         if (tblData.getSelectedRow() != -1) {
             // only if there is a valid selection...
-            int rowModel = 0;//tblData.convertRowIndexToModel(tblData.getSelectedRow());
+            int rowModel = tblData.convertRowIndexToModel(tblData.getSelectedRow());
             firePropertyChange(Common.REQUESTED_SHOW_ROW_DETAILS, -1, rowModel);
         }
     }
@@ -1261,7 +1263,7 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
      * number, the one that was in effect when there was no sort/filter.
      */
     int convertRowIndexToModel(int viewRowIndex) {
-        return 0;//lData.convertRowIndexToModel(viewRowIndex);
+        return tblData.convertRowIndexToModel(viewRowIndex);
     }
 
     /**
@@ -1853,7 +1855,7 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
         }
 
         public Object getValueAt(int rowIndex, int columnIndex) {
-            return 0;//tblData.convertRowIndexToModel(rowIndex) + 1;
+            return tblData.convertRowIndexToModel(rowIndex) + 1;
         }
 
         @Override
@@ -1909,16 +1911,16 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            //stblData.getRowSorter().setSortKeys(null);
+            tblData.getRowSorter().setSortKeys(null);
         }
     }
 
-//    class RowHeaderRefresher implements RowSorterListener {
-//
-//        public void sorterChanged(RowSorterEvent e) {
-//            tblRowHeader.repaint();
-//        }
-//    }
+    class RowHeaderRefresher implements RowSorterListener {
+
+        public void sorterChanged(RowSorterEvent e) {
+            tblRowHeader.repaint();
+        }
+    }
 
     /** Test Run: Stand alone mode... */
     public static void main(String[] args) {

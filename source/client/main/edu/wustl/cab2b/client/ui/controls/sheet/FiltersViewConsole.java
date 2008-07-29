@@ -52,7 +52,7 @@ public class FiltersViewConsole extends javax.swing.JPanel {
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-       //s tblFiltersView.setFillsViewportHeight(true);
+        tblFiltersView.setFillsViewportHeight(true);
         tblFiltersView.setGridColor(new java.awt.Color(255, 255, 255));
         tblFiltersView.setShowHorizontalLines(false);
         tblFiltersView.setShowVerticalLines(false);

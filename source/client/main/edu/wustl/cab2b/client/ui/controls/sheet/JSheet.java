@@ -33,7 +33,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
@@ -276,16 +277,16 @@ public class JSheet extends javax.swing.JPanel {
         diaFiltersViewConsole.setVisible(true);
     }
 
-    class TableChangesSynchronizer implements TableModelListener,  ListSelectionListener {
+    class TableChangesSynchronizer implements TableModelListener, RowSorterListener, ListSelectionListener {
 
         public void tableChanged(TableModelEvent e) {
         }
 
-//        public void sorterChanged(RowSorterEvent e) {
-//            //             
-//            //             
-//            //            tmFixedLeft.setRowCount(consData.getRowCount());
-//        }
+        public void sorterChanged(RowSorterEvent e) {
+            //             
+            //             
+            //            tmFixedLeft.setRowCount(consData.getRowCount());
+        }
 
         /** Selection is Row-Selection_hanger should match full row selection is data-view.     */
         public void valueChanged(ListSelectionEvent e) {
@@ -342,7 +343,7 @@ public class JSheet extends javax.swing.JPanel {
 
         //  B:  Table & TableColumn Model settings and setup infra for Relay of Table Model Events...
         //  Table filter setting...
-      //s  consData.setTableFilter(scm.getTableFilter());
+        consData.setTableFilter(scm.getTableFilter());
         consData.setReadOnlyDataModel(tmROData, scm.getRowInfoAL());
 
         //  C:  Setting up sample values in ColFilterModel (Used by Range & List Filters)...

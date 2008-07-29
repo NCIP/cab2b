@@ -5,11 +5,13 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Point;
 import java.awt.Rectangle;
-
 import javax.swing.JTable;
 import javax.swing.JViewport;
+import javax.swing.RowSorter;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
@@ -71,24 +73,24 @@ public class TableColumnWidthSynchronizer {
 
         //  Other changes that may change contents of the column...
         tblColumnOwner.getModel().addTableModelListener(tvl);
-//        RowSorter rs = tblColumnOwner.getRowSorter();
-//        if (null != rs) {
-//            rs.addRowSorterListener(tvl);
-//        }
-//
-//        //  Other changes on Optional Observable Table that may change contents of the column...
-//        if (null != tblExtraObservable) {
-//            tblExtraObservable.getModel().addTableModelListener(tvl);
-//            rs = tblExtraObservable.getRowSorter();
-//            if (null != rs) {
-//                rs.addRowSorterListener(tvl);
-//            }
-//        }
+        RowSorter rs = tblColumnOwner.getRowSorter();
+        if (null != rs) {
+            rs.addRowSorterListener(tvl);
+        }
+
+        //  Other changes on Optional Observable Table that may change contents of the column...
+        if (null != tblExtraObservable) {
+            tblExtraObservable.getModel().addTableModelListener(tvl);
+            rs = tblExtraObservable.getRowSorter();
+            if (null != rs) {
+                rs.addRowSorterListener(tvl);
+            }
+        }
 
 
     }
 
-    protected class TableViewListener implements ChangeListener,  TableModelListener {
+    protected class TableViewListener implements ChangeListener, RowSorterListener, TableModelListener {
 
         protected void updateColumnWidth() {
             int maxWidth = 0;
@@ -170,9 +172,9 @@ public class TableColumnWidthSynchronizer {
             updateColumnWidth();
         }
 
-//        public void sorterChanged(RowSorterEvent e) {
-//            updateColumnWidth();
-//        }
+        public void sorterChanged(RowSorterEvent e) {
+            updateColumnWidth();
+        }
 
         public void tableChanged(TableModelEvent e) {
             updateColumnWidth();
