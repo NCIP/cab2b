@@ -8,7 +8,7 @@ import java.io.File;
  */
 public interface PathConstants {
     /**
-     * This represents whether a table is to be crteated in Dynamic extension when entity is persisted.
+     * This represents whether a table is to be created in Dynamic extension when entity is persisted.
      * If TRUE then a storage table will be created.
      * If FLASE then storage table will not be created.
      * Set this constant externally. This is by default FALSE
@@ -53,7 +53,6 @@ public interface PathConstants {
      */
     public static final String ID_CONNECTOR = "-";
 
-    //Local URL : "http://localhost:8443/wsrf/services/cagrid/CaDSRService"; 
     /**
      * Represents the URL of caDSR service. This is location from which models are retrieved.
      * TODO It will be removed from here and it will be externally configurable.
@@ -61,41 +60,7 @@ public interface PathConstants {
     public static final String CA_DSR_URL = "http://cagrid04.bmi.ohio-state.edu:7080/wsrf/services/cagrid/CaDSRService";
     
     /**
-     * 
+     * Name of metadata entity group
      */
     public static final String METADATA_ENTITY_GROUP = "MetadataEntityGroup";
-
-    /**
-     * Enum to represents possible value which column "ASSOCIATION.ASSOCIATION_TYPE" can take.  
-     * @author Chandrakant Talele
-     */
-    public enum AssociationType {
-        INTER_MODEL_ASSOCIATION(1), INTRA_MODEL_ASSOCIATION(2);
-        private int value;
-
-        AssociationType(int value) {
-            this.value = value;
-        }
-
-        /**
-         * @return int value associated with enum
-         */
-        public int getValue() {
-            return value;
-        }
-
-        /**
-         * @param value Get type based in int value
-         * @return
-         */
-        public static AssociationType getType(int value) {
-            if (value == 1) {
-                return AssociationType.INTER_MODEL_ASSOCIATION;
-            }
-            if (value == 2){
-                return AssociationType.INTRA_MODEL_ASSOCIATION;
-            }
-            throw new IllegalArgumentException();
-        }
-    }
 }

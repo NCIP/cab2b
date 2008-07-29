@@ -39,7 +39,6 @@ import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.IdGenerator;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.cab2b.server.path.PathConstants.AssociationType;
 import edu.wustl.cab2b.server.path.pathgen.GraphPathFinder;
 import edu.wustl.cab2b.server.path.pathgen.Path;
 import edu.wustl.cab2b.server.path.pathgen.PathToFileWriter;

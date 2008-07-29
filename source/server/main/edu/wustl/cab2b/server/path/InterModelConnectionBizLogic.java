@@ -3,14 +3,12 @@ package edu.wustl.cab2b.server.path;
 import java.sql.Connection;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.wustl.cab2b.server.path.PathConstants.AssociationType;
 import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.cab2b.server.util.SQLQueryUtil;
 
 /**
  * Collection of methods relation to database operations on the table INTER_MODEL_ASSOCIATION.
  * @author srinath_k
- *
  */
 public class InterModelConnectionBizLogic {
     public void saveInterModelConnection(AttributeInterface a1, AttributeInterface a2) {
@@ -41,13 +39,4 @@ public class InterModelConnectionBizLogic {
 
         PathFinder.getInstance().addInterModelConnection(imc);
     }
-
-    //    @Test
-    //    public void foo() throws Exception {
-    //        Logger.configure();
-    //        Class.forName("com.mysql.jdbc.Driver").newInstance();
-    //        String url = "jdbc:mysql://localhost:3306/cab2b";
-    //        Connection conn = DriverManager.getConnection(url, "root", "");
-    //        saveInterModelConnection2(new InterModelConnection(0l, 0l, 0l, 0l), -5l, conn);
-    //    }
 }
