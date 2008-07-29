@@ -35,7 +35,13 @@ public class TestUtil {
         a.setEntity(e1);
         return e1;
     }
-
+    public static AttributeInterface getAttribute(String entityName, long entityId, String attrName,long attrId) {
+        EntityInterface e = getEntity(entityName,attrName);
+        AttributeInterface a = e.getAttributeCollection().iterator().next();
+        e.setId(entityId);
+        a.setId(attrId);
+        return a;
+    }
     public static EntityInterface getEntity(String entityName) {
         EntityInterface e1 = deFactory.createEntity();
         e1.setName(entityName);
