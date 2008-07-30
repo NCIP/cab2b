@@ -13,7 +13,7 @@ public interface EjbNamesConstants {
 
     final static String EXPERIMENT = "cab2bServer/ExperimentSessionBean/remote";
 
-    final static String EXPERIMENT_GROUP = "cab2bServer/ExperimentGroup/remote";
+    final static String EXPERIMENT_GROUP = "cab2bServer/ExperimentGroupSessionBean/remote";
 
     final static String SQL_QUERY_BEAN = "cab2bServer/SQLQueryBean/remote";
 
