@@ -12,7 +12,9 @@ import edu.wustl.cab2b.client.ui.util.ClientConstants;
 import edu.wustl.cab2b.common.category.DataCategory;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
+import edu.wustl.cab2b.common.ejb.category.CategoryHomeInterface;
 import edu.wustl.cab2b.common.ejb.datacategory.DataCategoryBusinessInterface;
+import edu.wustl.cab2b.common.ejb.datacategory.DataCategoryHomeInterface;
 import edu.wustl.cab2b.common.locator.Locator;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -26,15 +28,13 @@ import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 
 /**
  * This class contains the utility methods required for building the UI.
- * 
  * @author Chandrakant Talele
  * @author Gautam Shetty
  */
 public class Utility {
 
     /**
-     * Returns the RelationalOperator, given the relational operator string.
-     * 
+     * Returns the RelationalOperator, given the relational operator string. 
      * @param operator The relational operator string.
      * @return the RelationalOperator, given the relational operator string.
      */
@@ -44,15 +44,14 @@ public class Utility {
 
     /**
      * @param relationalOperator Input Relational Operator
-     * @return Display string for given operator
+     * @return Display string for given operator 
      */
     public static String displayStringForRelationalOperator(RelationalOperator relationalOperator) {
         return relationalOperator.getStringRepresentation();
     }
 
     /**
-     * Returns the LogicalOperator, given the logical operator string.
-     * 
+     * Returns the LogicalOperator, given the logical operator string. 
      * @param operator The logical operator string.
      * @return the LogicalOperator, given the logical operator string.
      */
@@ -100,7 +99,6 @@ public class Utility {
 
     /**
      * This method returns number of records present in a query result.
-     * 
      * @param queryResult
      * @return
      */
@@ -115,7 +113,6 @@ public class Utility {
 
     /**
      * This method returns the entity for the given record.
-     * 
      * @param record
      * @return
      */
@@ -130,7 +127,6 @@ public class Utility {
 
     /**
      * This method returns the entity for the given list of records.
-     * 
      * @param records
      * @return
      */
@@ -188,7 +184,6 @@ public class Utility {
 
     /**
      * Method to wrap the text and send it across
-     * 
      * @return
      */
     public static String getWrappedText(String text, int offset) {
@@ -236,9 +231,11 @@ public class Utility {
     public static boolean convertAllCategoryToDataCategory() {
         boolean result = true;
         CategoryBusinessInterface categoryBusinessInterface = (CategoryBusinessInterface) Locator.getInstance().locate(
-                                                                                                                       EjbNamesConstants.CATEGORY_BEAN);
+                                                                                                                       EjbNamesConstants.CATEGORY_BEAN,
+                                                                                                                       CategoryHomeInterface.class);
         DataCategoryBusinessInterface dataCategoryBusinessInterface = (DataCategoryBusinessInterface) Locator.getInstance().locate(
-                                                                                                                                   EjbNamesConstants.DATACATEGORY_BEAN);
+                                                                                                                                   EjbNamesConstants.DATACATEGORY_BEAN,
+                                                                                                                                   DataCategoryHomeInterface.class);
         DataCategory dataCategory = null;
         try {
             List<Category> categoryList = categoryBusinessInterface.getAllCategories();

@@ -5,23 +5,16 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Set;
 
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
 import edu.wustl.cab2b.server.category.CategoryCache;
 import edu.wustl.cab2b.server.category.CategoryOperations;
+import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.common.querysuite.metadata.category.Category;
 
-@Remote(CategoryBusinessInterface.class)
-@Stateless
-@TransactionManagement(TransactionManagementType.BEAN)
-public class CategoryBean implements CategoryBusinessInterface {
+public class CategoryBean extends AbstractStatelessSessionBean implements CategoryBusinessInterface {
     private static final long serialVersionUID = -3272465753615056953L;
 
     /**
@@ -102,6 +95,6 @@ public class CategoryBean implements CategoryBusinessInterface {
         } finally {
             ConnectionUtil.close(con);
         }
-
+        
     }
 }

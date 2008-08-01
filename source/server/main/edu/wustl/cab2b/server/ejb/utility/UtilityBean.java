@@ -4,20 +4,23 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
+import javax.ejb.SessionBean;
 
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.common.dynamicextensionsstubs.AssociationWrapper;
 import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
 import edu.wustl.cab2b.common.queryengine.result.ILazyParams;
 import edu.wustl.cab2b.common.queryengine.result.IPartiallyInitializedRecord;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.EntityCache;
+import edu.wustl.cab2b.server.datalist.DataListOperationsController;
+import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.queryengine.LazyInitializer;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.cab2b.server.util.UtilityOperations;
@@ -26,11 +29,7 @@ import edu.wustl.cab2b.server.util.UtilityOperations;
  * EJB to provide utility methods which are needed by client side, but which needs to aceess server.
  * @author Chandrakant Talele
  */
-
-@Remote(UtilityBusinessInterface.class)
-@Stateless
-@TransactionManagement(TransactionManagementType.BEAN)
-public class UtilityBean  implements UtilityBusinessInterface {
+public class UtilityBean extends AbstractStatelessSessionBean implements UtilityBusinessInterface {
 
     private static final long serialVersionUID = 1L;
 

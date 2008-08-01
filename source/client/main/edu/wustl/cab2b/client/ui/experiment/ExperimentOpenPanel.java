@@ -24,6 +24,7 @@ import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
+import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.common.tree.ExperimentTreeNode;
 import edu.wustl.common.util.dbManager.DAOException;
 
@@ -199,7 +200,9 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
     private Experiment invokeCompleteExperimentFromDatabase() {
 
         /* ejb code : Getting experiment BusinessInterface */
-        ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.EXPERIMENT);
+        ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                            EjbNamesConstants.EXPERIMENT,
+                                                                                                            ExperimentHome.class);
         Long expId;
 
         if (selectedExperiment != null)

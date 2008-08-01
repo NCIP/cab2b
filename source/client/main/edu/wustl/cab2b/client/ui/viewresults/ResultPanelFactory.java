@@ -20,7 +20,9 @@ import edu.wustl.cab2b.common.datalist.DataRow;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface;
+import edu.wustl.cab2b.common.ejb.path.PathFinderHomeInterface;
 import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
+import edu.wustl.cab2b.common.ejb.utility.UtilityHomeInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
@@ -68,10 +70,11 @@ public class ResultPanelFactory {
 
         PathFinderBusinessInterface pathFinder = (PathFinderBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                 EjbNamesConstants.PATH_FINDER_BEAN,
+                                                                                                                PathFinderHomeInterface.class,
                                                                                                                 null);
         UtilityBusinessInterface utilityBean = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                            EjbNamesConstants.UTILITY_BEAN,
-
+                                                                                                           UtilityHomeInterface.class,
                                                                                                            null);
         Collection<AssociationInterface> incomingAssociationCollection = null;
         List<IInterModelAssociation> intraModelAssociationCollection = null;

@@ -4,13 +4,9 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Set;
 
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface;
+import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.path.PathFinder;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
@@ -23,11 +19,7 @@ import edu.wustl.common.querysuite.metadata.path.IPath;
  * 
  * @author Chandrakant Talele
  */
-
-@Remote(PathFinderBusinessInterface.class)
-@Stateless
-@TransactionManagement(TransactionManagementType.BEAN)
-public class PathFinderBean  implements PathFinderBusinessInterface {
+public class PathFinderBean extends AbstractStatelessSessionBean implements PathFinderBusinessInterface {
     private static final long serialVersionUID = 6029219492441048448L;
 
     /**

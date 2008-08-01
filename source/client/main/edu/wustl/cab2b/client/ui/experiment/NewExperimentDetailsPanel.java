@@ -49,12 +49,15 @@ import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
+import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.experiment.ExperimentGroupBusinessInterface;
+import edu.wustl.cab2b.common.experiment.ExperimentGroupHome;
+import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.tree.ExperimentTreeNode;
@@ -75,8 +78,6 @@ import edu.wustl.common.util.logger.Logger;
 public class NewExperimentDetailsPanel extends Cab2bPanel {
 
     private static final long serialVersionUID = 6029827434064457102L;
-
-    private static final org.apache.log4j.Logger logger = Logger.getLogger(NewExperimentDetailsPanel.class);
 
     /**
      * A text field component to accept experiment name from user.
@@ -152,7 +153,9 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         projPanel.add(projectsLabel, BorderLayout.EAST);
 
         Vector dataVector = null;
-        final ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.EXPERIMENT);
+        final ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                  EjbNamesConstants.EXPERIMENT,
+                                                                                                                  ExperimentHome.class);
         try {
             dataVector = expBus.getExperimentHierarchy();
         } catch (RemoteException e1) {
@@ -329,7 +332,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
                 ExperimentTreeNode expTreeNode = (ExperimentTreeNode) treeNode.getUserObject();
                 Long expGrpId = expTreeNode.getIdentifier();
-                logger.debug("exp grp id " + expGrpId);
+                Logger.out.debug("exp grp id " + expGrpId);
 
                 if (expGrpId == 0) {
                     JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this,
@@ -341,7 +344,9 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                     JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this, "Select experiment group");
                     return;
                 }
-                logger.debug("projectsTree.getSelectionCount() " + projectsTree.getSelectionCount());
+
+                Logger.out.debug("projectsTree.getSelectionCount() " + projectsTree.getSelectionCount());
+
                 String experimentName = expNameTextField.getText();
                 if (experimentName == null || experimentName.equals("")) {
                     Date currentDate = new Date(System.currentTimeMillis());
@@ -423,7 +428,9 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
     private void addNewExperimentGroupNode(String expGrpName, DefaultMutableTreeNode newNode) {
         ExperimentTreeNode selectedExperimentNode = (ExperimentTreeNode) ((DefaultMutableTreeNode) newNode.getParent()).getUserObject();
 
-        ExperimentGroupBusinessInterface expGrpBus = (ExperimentGroupBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.EXPERIMENT_GROUP);
+        ExperimentGroupBusinessInterface expGrpBus = (ExperimentGroupBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                         EjbNamesConstants.EXPERIMENT_GROUP,
+                                                                                                                         ExperimentGroupHome.class);
         Long parentExpGrpID = selectedExperimentNode.getIdentifier();
         if (expGrpName != null && !expGrpName.equals("")) {
             ExperimentGroup newExpGrp = new ExperimentGroup();
@@ -434,7 +441,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
             try {
                 newExpGrp = expGrpBus.addExperimentGroup(parentExpGrpID, newExpGrp);
-                logger.debug("returner expGrp id " + newExpGrp.getId());
+                Logger.out.debug("returner expGrp id " + newExpGrp.getId());
             } catch (RemoteException e1) {
                 CommonUtils.handleException(e1, this, true, true, false, false);
             } catch (BizLogicException e1) {
@@ -468,11 +475,11 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                 int index = e.getChildIndices()[0];
                 node = (DefaultMutableTreeNode) (node.getChildAt(index));
             } catch (NullPointerException exc) {
-
-                logger.error(exc.getMessage());
+                Logger.out.error(exc.getMessage());
             }
 
-            logger.debug("The user has finished editing the node." + "\n" + "New value: " + node.getUserObject());
+            Logger.out.debug("The user has finished editing the node.");
+            Logger.out.debug("New value: " + node.getUserObject());
             addNewExperimentGroupNode(node.getUserObject().toString(), node);
         }
 
@@ -488,7 +495,9 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
     public static List<DataListMetadata> getDataLlistMetadatas() throws RemoteException,
             DynamicExtensionsSystemException, DAOException, ClassNotFoundException {
-        DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.DATALIST_BEAN);
+        DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                            EjbNamesConstants.DATALIST_BEAN,
+                                                                                                            DataListHomeInterface.class);
         List<DataListMetadata> dataListMetadatas = dataListBI.retrieveAllDataListMetadata();
         return dataListMetadatas;
     }

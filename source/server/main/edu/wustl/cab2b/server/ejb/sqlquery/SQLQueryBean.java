@@ -4,28 +4,21 @@ import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
+import javax.ejb.EJBException;
+import javax.ejb.SessionContext;
 
 import edu.wustl.cab2b.common.ejb.sqlquery.SQLQueryBusinessInterface;
+import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.cab2b.server.util.SQLQueryUtil;
-
-
-
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * This provides utility methods to execute UPDATE and SELECT type of queries using Datasource.
  * The SELECT queries can be parameterized.
  * @author Chandrakant Talele
  */
-
-@Remote(SQLQueryBusinessInterface.class)
-@Stateless
-@TransactionManagement(TransactionManagementType.BEAN)
-public class SQLQueryBean  implements SQLQueryBusinessInterface {
+public class SQLQueryBean extends AbstractStatelessSessionBean implements SQLQueryBusinessInterface {
     private static final long serialVersionUID = -6568289691792853684L;
     
     /**

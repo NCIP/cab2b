@@ -2,38 +2,34 @@ package edu.wustl.cab2b.common.ejb;
 
 /**
  * Interface which has all the constants representing EJB names. 
- * Updated  for ejb 3.0
- * Format is : EAR_NAME /BEAN_NAME/TYPE_OF_BUSINESS_INTERFACE.
- * All the beans are accessed by remote business interface
+ * If anything is edited here, same change should be reflected in ejb-jar.xml <ejb-name> tag of that EJB.
  *  
  * @author Chandrakant Talele
- * @author lalit_chand 
  */
 public interface EjbNamesConstants {
+	final static String EXPERIMENT = "edu.wustl.cab2b.server.ejb.experiment.Experiment";
+	
+	final static String EXPERIMENT_GROUP = "edu.wustl.cab2b.server.ejb.experiment.ExperimentGroup";
+	
+    final static String SQL_QUERY_BEAN = "edu.wustl.cab2b.server.ejb.sqlquery.SQLQueryBean";
 
-    final static String EXPERIMENT = "cab2bServer/ExperimentSessionBean/remote";
+    final static String PATH_FINDER_BEAN = "edu.wustl.cab2b.server.ejb.path.PathFinderBean";
 
-    final static String EXPERIMENT_GROUP = "cab2bServer/ExperimentGroupSessionBean/remote";
+    final static String PATH_BUILDER_BEAN = "edu.wustl.cab2b.server.ejb.path.PathBuilderBean";
 
-    final static String SQL_QUERY_BEAN = "cab2bServer/SQLQueryBean/remote";
+    final static String QUERY_ENGINE_BEAN = "edu.wustl.cab2b.server.ejb.queryengine.QueryEngineBean";
 
-    final static String PATH_FINDER_BEAN = "cab2bServer/PathFinderBean/remote";
-
-    final static String PATH_BUILDER_BEAN = "cab2bServer/PathBuilderBean/remote";
-
-    final static String QUERY_ENGINE_BEAN = "cab2bServer/QueryEngineBean/remote";
-
-    final static String CATEGORY_BEAN = "cab2bServer/CategoryBean/remote";
-
-    final static String DATACATEGORY_BEAN = "cab2bServer/DataCategoryBean/remote";
-
-    final static String DATALIST_BEAN = "cab2bServer/DataListBean/remote";
-
-    final static String ANALYTICAL_SERVICE_BEAN = "cab2bServer/AnalyticalServiceOperationsBean/remote";
-
-    final static String UTILITY_BEAN = "cab2bServer/UtilityBean/remote";
-
-    final static String USER_BEAN = "cab2bServer/UserBean/remote";
-
-    final static String SERVICE_URL_BEAN = "cab2bServer/ServiceURLBean/remote";
+    final static String CATEGORY_BEAN = "edu.wustl.cab2b.server.ejb.category.CategoryBean";
+     
+    final static String DATACATEGORY_BEAN = "edu.wustl.cab2b.server.ejb.datacategory.DataCategoryBean";
+    
+    final static String DATALIST_BEAN = "edu.wustl.cab2b.server.ejb.datalist.DataListBean";
+    
+    final static String ANALYTICAL_SERVICE_BEAN = "edu.wustl.cab2b.server.ejb.analyticalservice.AnalyticalServiceOperationsBean";
+    
+    final static String UTILITY_BEAN = "edu.wustl.cab2b.server.ejb.utility.UtilityBean";
+    
+    final static String USER_BEAN = "edu.wustl.cab2b.server.ejb.user.UserBean";
+    
+    final static String SERVICE_URL_BEAN = "edu.wustl.cab2b.server.ejb.serviceurl.ServiceURLBean";
 }

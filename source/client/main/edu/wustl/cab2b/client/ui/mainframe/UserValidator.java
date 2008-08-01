@@ -7,6 +7,7 @@ import org.globus.gsi.GlobusCredential;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.user.UserBusinessInterface;
+import edu.wustl.cab2b.common.ejb.user.UserHomeInterface;
 import edu.wustl.cab2b.common.util.PropertyLoader;
 
 /**
@@ -37,7 +38,9 @@ public class UserValidator {
         setUserName(userName);
         dorianUrl = PropertyLoader.getDorianUrl(idP);
 
-        UserBusinessInterface userBean = (UserBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.USER_BEAN);
+        UserBusinessInterface userBean = (UserBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                  EjbNamesConstants.USER_BEAN,
+                                                                                                  UserHomeInterface.class);
         proxy = userBean.validateUser(userName, password, dorianUrl);
 
         if (proxy == null) {
@@ -60,7 +63,8 @@ public class UserValidator {
     }
 
     /**
-     * @param userName The userName to set.
+     * @param userName
+     *            The userName to set.
      */
     public static void setUserName(String userName) {
         UserValidator.userName = userName;

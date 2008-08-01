@@ -6,11 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-
 import org.hibernate.HibernateException;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -20,6 +15,7 @@ import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
+import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.experiment.ExperimentOperations;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
@@ -31,10 +27,7 @@ import edu.wustl.common.util.dbManager.DAOException;
  * @author chetan_bh
  * 
  */
-@Remote(ExperimentBusinessInterface.class)
-@Stateless
-@TransactionManagement(TransactionManagementType.BEAN)
-public class ExperimentSessionBean  implements ExperimentBusinessInterface {
+public class ExperimentSessionBean extends AbstractStatelessSessionBean implements ExperimentBusinessInterface {
 
     private static final long serialVersionUID = 782660710949035029L;
 

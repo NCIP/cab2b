@@ -11,6 +11,7 @@ import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.user.UserBusinessInterface;
+import edu.wustl.cab2b.common.ejb.user.UserHomeInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.util.logger.Logger;
@@ -84,7 +85,9 @@ public class UserCache {
      */
     private Map<String, List<String>> populateServiceURLs(UserInterface user) {
         Map<String, List<String>> map = null;
-        UserBusinessInterface userBusinessInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.USER_BEAN);
+        UserBusinessInterface userBusinessInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                               EjbNamesConstants.USER_BEAN,
+                                                                                                               UserHomeInterface.class);
         try {
             map = userBusinessInterface.getServiceUrlsForUser(user);
         } catch (DynamicExtensionsSystemException e) {

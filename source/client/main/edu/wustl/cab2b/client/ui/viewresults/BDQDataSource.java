@@ -16,6 +16,7 @@ import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
+import edu.wustl.cab2b.common.ejb.utility.UtilityHomeInterface;
 import edu.wustl.cab2b.common.queryengine.result.I3DDataRecord;
 import edu.wustl.cab2b.common.queryengine.result.IPartiallyInitialized3DRecord;
 import edu.wustl.cab2b.common.queryengine.result.I3DDataRecord.LazyParams;
@@ -80,7 +81,7 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
         LazyParams lazyParams = new I3DDataRecord.LazyParams(rangeList);
         UtilityBusinessInterface utilityBeanInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                     EjbNamesConstants.UTILITY_BEAN,
-
+                                                                                                                    UtilityHomeInterface.class,
                                                                                                                     NewWelcomePanel.getMainFrame());
         try {
             /*TODO casting to Object is needed due to bug in java compiler
@@ -178,7 +179,7 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
         LazyParams lazyParams = new I3DDataRecord.LazyParams(rangeList);
         UtilityBusinessInterface utilityBeanInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                     EjbNamesConstants.UTILITY_BEAN,
-
+                                                                                                                    UtilityHomeInterface.class,
                                                                                                                     NewWelcomePanel.getMainFrame());
         try {
             Logger.out.debug("Record Handle " + uninitailisedRecord.handle());
@@ -201,7 +202,7 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
 
         UtilityBusinessInterface utilityBeanInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                     EjbNamesConstants.UTILITY_BEAN,
-
+                                                                                                                    UtilityHomeInterface.class,
                                                                                                                     NewWelcomePanel.getMainFrame());
         Set<AttributeInterface> allAttributes = uninitailisedRecord.getAttributes();
         if (!allAttributes.isEmpty()) {

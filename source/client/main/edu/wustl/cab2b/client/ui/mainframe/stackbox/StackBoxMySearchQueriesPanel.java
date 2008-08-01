@@ -16,6 +16,7 @@ import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryShowResult
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
+import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 
@@ -54,7 +55,7 @@ public class StackBoxMySearchQueriesPanel extends Cab2bPanel {
         this.setLayout(new RiverLayout(10, 5));
         QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                                     EjbNamesConstants.QUERY_ENGINE_BEAN,
-
+                                                                                                                                    QueryEngineHome.class,
                                                                                                                                     null);
         Collection<IParameterizedQuery> cab2bQueryList = null;
         try {
@@ -84,7 +85,7 @@ public class StackBoxMySearchQueriesPanel extends Cab2bPanel {
 
             QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                                         EjbNamesConstants.QUERY_ENGINE_BEAN,
-
+                                                                                                                                        QueryEngineHome.class,
                                                                                                                                         null);
             ICab2bParameterizedQuery cab2bQuery = null;
             try {

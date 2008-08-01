@@ -4,11 +4,6 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
 
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-
 import org.globus.gsi.GlobusCredential;
 import org.hibernate.HibernateException;
 
@@ -16,16 +11,13 @@ import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
+import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.queryengine.Cab2bQueryBizLogic;
 import edu.wustl.cab2b.server.queryengine.QueryExecutor;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.util.dbManager.HibernateUtility;
 
-
-@Remote(QueryEngineBusinessInterface.class)
-@Stateless
-@TransactionManagement(TransactionManagementType.BEAN)
-public class QueryEngineBean  implements QueryEngineBusinessInterface {
+public class QueryEngineBean extends AbstractStatelessSessionBean implements QueryEngineBusinessInterface {
 
     private static final long serialVersionUID = 8416841912609836063L;
 

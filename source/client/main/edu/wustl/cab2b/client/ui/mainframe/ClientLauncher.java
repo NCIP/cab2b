@@ -24,6 +24,7 @@ import edu.wustl.cab2b.client.ui.dag.ClassNodeRenderer;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.user.UserBusinessInterface;
+import edu.wustl.cab2b.common.ejb.user.UserHomeInterface;
 import edu.wustl.cab2b.common.locator.LocatorException;
 import edu.wustl.cab2b.common.user.User;
 import edu.wustl.cab2b.common.user.UserInterface;
@@ -66,12 +67,15 @@ public class ClientLauncher {
      */
     private ClientLauncher() {
         progressBar = getProgressbar(imageSize.width, progressHeight);
-        progressBarLabel = getProgressBarLabel(" Launching caB2B client....", imageSize.width, labelWidth);
+        progressBarLabel = getProgressBarLabel(" Launching caB2B client....", imageSize.width,
+                labelWidth);
     }
 
     /**
-     * @param text Text to show
-     * @param completedvalue Percentage completed
+     * @param text
+     *            Text to show
+     * @param completedvalue
+     *            Percentage completed
      */
     public void showProgress(String text, int completedvalue) {
         if (progressBar != null && progressBar != null) {
@@ -97,8 +101,8 @@ public class ClientLauncher {
         ClassLoader loader = this.getClass().getClassLoader();
         JFrame launchFrame = new JFrame("caB2B client launcher....");
 
-        BackgroundImagePanel imagePanel = new BackgroundImagePanel(new ImageIcon(
-                loader.getResource("progress_bar.gif")).getImage());
+        BackgroundImagePanel imagePanel = new BackgroundImagePanel(new ImageIcon(loader
+                .getResource("progress_bar.gif")).getImage());
 
         imagePanel.setPreferredSize(new Dimension(imageSize.width, imageSize.height));
         imagePanel.add(progressBarLabel, BorderLayout.SOUTH);
@@ -132,8 +136,10 @@ public class ClientLauncher {
     }
 
     /**
-     * @param width desired width of progressbar
-     * @param height desired height of progressbar
+     * @param width
+     *            desired width of progressbar
+     * @param height
+     *            desired height of progressbar
      * @return Progress bar of given dimensions
      */
     private static JProgressBar getProgressbar(int width, int height) {
@@ -149,9 +155,12 @@ public class ClientLauncher {
     }
 
     /**
-     * @param text The text to set as label
-     * @param width desired width of label
-     * @param height desired height of label
+     * @param text
+     *            The text to set as label
+     * @param width
+     *            desired width of label
+     * @param height
+     *            desired height of label
      * @return JLabel with given text and of given dimensions
      */
     private static JLabel getProgressBarLabel(String text, int width, int height) {
@@ -168,9 +177,10 @@ public class ClientLauncher {
      */
     private static void loadCache(String userName) {
         try {// ClientSideCache MUST be instanciated before anything else.
-            // Don't change order of below lines of code
+                // Don't change order of below lines of code
             ClientSideCache.getInstance();
-            UserBusinessInterface userBusinessInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.USER_BEAN);
+            UserBusinessInterface userBusinessInterface = (UserBusinessInterface) CommonUtils
+                    .getBusinessInterface(EjbNamesConstants.USER_BEAN, UserHomeInterface.class);
             UserInterface user = userBusinessInterface.getUserByName(userName);
             if (user == null) {
                 user = new User(userName, userName, false);

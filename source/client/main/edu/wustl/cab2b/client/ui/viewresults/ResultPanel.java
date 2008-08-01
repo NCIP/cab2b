@@ -39,6 +39,7 @@ import edu.wustl.cab2b.common.datalist.DataRow;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
+import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
@@ -152,7 +153,9 @@ public abstract class ResultPanel extends Cab2bPanel {
                     return;
                 // For every selected entity fetch corresponding data
                 // from data services and add it to data list
-                QueryEngineBusinessInterface queryEngineBus = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.QUERY_ENGINE_BEAN);
+                QueryEngineBusinessInterface queryEngineBus = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                              EjbNamesConstants.QUERY_ENGINE_BEAN,
+                                                                                                                              QueryEngineHome.class);
                 List<IDataRow> parentRows = new ArrayList<IDataRow>();
                 for (int i = 0; i < selectedUserObjects.size(); i++) {
                     parentRows.add((IDataRow) selectedUserObjects.get(i));

@@ -47,6 +47,7 @@ import edu.wustl.cab2b.client.ui.viewresults.ThreeDResultObjectDetailsPanel;
 import edu.wustl.cab2b.client.ui.visualization.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
+import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
 import edu.wustl.cab2b.common.datalist.DataRow;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
@@ -55,6 +56,7 @@ import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
+import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 
 /**
@@ -130,7 +132,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     }
 
     /**
-     * @param currentSpreadSheetViewPanel the currentSpreadSheetViewPanel to set
+     * @param currentSpreadSheetViewPanel
+     *            the currentSpreadSheetViewPanel to set
      */
     public void setCurrentSpreadSheetViewPanel(DataListDetailedPanelInterface currentSpreadSheetViewPanel) {
         this.currentSpreadSheetViewPanel = currentSpreadSheetViewPanel;
@@ -179,8 +182,10 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
      * 
      * @param analysisTitle
      * 
-     * @param columns array of column names
-     * @param dataRecords array of record values
+     * @param columns
+     *            array of column names
+     * @param dataRecords
+     *            array of record values
      */
     public void refreshAnalysisTable(final Object[][] dataRecords) {
         Experiment selectedExperiment = ((ExperimentOpenPanel) this.getParent().getParent()).getSelectedExperiment();
@@ -212,7 +217,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         analysisDataPanel.add("br center hfill vfill", jScrollPane);
 
         if (CommonUtils.getComponentByName(tabComponent, "analysisDataPanel") == null) {
-            // tabComponent.add("Analysis", analysisDataPanel);
+            //tabComponent.add("Analysis", analysisDataPanel);
             tabComponent.insertTab("Analysis", null, analysisDataPanel, null, 1);
         }
         tabComponent.setSelectedComponent(analysisDataPanel);
@@ -259,7 +264,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         experimentDataPanel.setBorder(null);
         experimentDataPanel.add("br center hfill vfill", spreadSheetViewPanel);
 
-        // tabComponent.add("Experiment Data", experimentDataPanel);
+        //tabComponent.add("Experiment Data", experimentDataPanel);
         tabComponent.insertTab("Experiment Data", null, experimentDataPanel, null, 0);
         tabComponent.setSelectedIndex(0);
         tabComponent.setBorder(null);
@@ -270,7 +275,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     /**
      * This method adds a dynamic tab that displays the analyzed data.
      * 
-     * @param userObjectWrapper the analyzed data
+     * @param userObjectWrapper
+     *            the analyzed data
      */
     final private void addAnalysisViewTabPanel(UserObjectWrapper<List<IRecord>> userObjectWrapper) {
         String tabTitle = userObjectWrapper.getDisplayName();
@@ -315,9 +321,9 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
             // Add close button
             Cab2bButton closeButton = new Cab2bButton("Close");
-            // final Component compOldSel = tabComponent.getSelectedComponent();
+            //            final Component compOldSel = tabComponent.getSelectedComponent();
             closeButton.addActionListener(new ActionListener() {
-                // final Component compOldSelF = compOldSel;
+                //                final Component compOldSelF = compOldSel;
                 public void actionPerformed(ActionEvent actionEvent) {
                     tabComponent.remove(detailViewPanel);
                     Component compOldSel = tabComponent.getSelectedComponent();
@@ -336,13 +342,12 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     }
 
     /**
-     * Method to get instance of JSheet from the container
-     * 
+     * Method to get instance of JSheet from the container      
      * @param comp
      * @return
      */
     JSheet getJSheetChildIfExists(Container comp) {
-        // method added
+        //method added
         if (comp == null)
             return null;
         else if (comp instanceof JSheet)
@@ -356,7 +361,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                 return getJSheetChildIfExists(childComp);
         }
 
-        // Not Found...
+        //  Not Found...
         return null;
     }
 
@@ -366,7 +371,8 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
      * called by the {@link SaveDataCategoryPanel} to save a subset of of a
      * datalist as a category
      * 
-     * @param title the title for the category
+     * @param title
+     *            the title for the category
      */
     public void saveDataCategory(final String title) {
         dataCategoryTitle = title;
@@ -402,9 +408,13 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                 customCategoryDataList.getRootDataRow().addChild(titleNode);
 
                 // make a call to the server
-                ExperimentBusinessInterface ExperimentBI = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.EXPERIMENT);
+                ExperimentBusinessInterface ExperimentBI = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                          EjbNamesConstants.EXPERIMENT,
+                                                                                                                          ExperimentHome.class);
 
-                DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.DATALIST_BEAN);
+                DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                    EjbNamesConstants.DATALIST_BEAN,
+                                                                                                                    DataListHomeInterface.class);
 
                 try {
                     dataListMetadata = dataListBI.saveDataCategory(customCategoryDataList.getRootDataRow(),
