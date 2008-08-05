@@ -6,11 +6,10 @@ import java.lang.reflect.Method;
 import javax.ejb.EJBHome;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-
+import org.apache.log4j.Logger;
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.util.PropertyLoader;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * This class is responsible for all bean look ups. <br>
@@ -21,6 +20,8 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class Locator {
     private static Locator locator;
+
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(Locator.class);
 
     /**
      * This is to enforce that Locator is a singleton class
@@ -56,17 +57,16 @@ public class Locator {
             throws LocatorException {
         Object obj = null;
 
-        Logger.out.debug("Finding Bean : " + ejbName + "\n Home Interface is : " + homeClassForEJB.getName());
-
+        logger.debug("Finding Bean : " + ejbName + "\n Home Interface is : " + homeClassForEJB.getName());
         try {
-            Logger.out.debug("Contacting to :" + PropertyLoader.getJndiUrl());
+            logger.debug("Contacting to :" + PropertyLoader.getJndiUrl());
             System.setProperty("java.naming.provider.url", PropertyLoader.getJndiUrl());
             System.setProperty("java.naming.factory.initial", "org.jnp.interfaces.NamingContextFactory");
             System.setProperty("java.naming.factory.url.pkgs", "org.jboss.naming:org.jnp.interfaces");
 
             Context ctx = new InitialContext();
             obj = ctx.lookup(ejbName);
-            System.out.println("onj name" + obj);
+
         } catch (Throwable e) {
             throw new LocatorException(e.getMessage(), e, ErrorCodeConstants.SR_0001);
         }
