@@ -47,6 +47,7 @@ import edu.wustl.common.util.logger.Logger;
 /**
  * @author Chandrakant Talele
  * @author Hrishikesh Rajpathak
+ * @author Deepak
  */
 public class LoginFrame extends JXFrame {
 
@@ -54,6 +55,12 @@ public class LoginFrame extends JXFrame {
 
     private static final Border border = BorderFactory.createLineBorder(new Color(100, 200, 220));
 
+    private static Font font = getTextFont();
+
+    private static String providedUserName;
+
+    private static String providedPassword;
+    
     private Cab2bComboBox idProvider;
 
     private Cab2bTextField usrNameText;
@@ -62,18 +69,11 @@ public class LoginFrame extends JXFrame {
 
     private LoginFrame selfReference = this;
 
-    private static Font font = getTextFont();
-
     private JLabel credentialError;
 
-    private static String providedUserName;
-
-    private static String providedPassword;
-
-    MainFrame mainFrame;
-
     /**
-     * @param args
+     * Start of the application
+     * @param args command line arguments
      */
     public static void main(String[] args) {
         if (args.length == 2) {
@@ -88,11 +88,8 @@ public class LoginFrame extends JXFrame {
             LoginFrame loginFrame = new LoginFrame();
             loginFrame.setVisible(true);
         } catch (Throwable t) {
-            JXErrorDialog.showDialog(
-                                     null,
-                                     "caB2B Fatal Error",
-                                     "Fatal error orccured while launching caB2B client.\nPlease contact administrator",
-                                     t);
+            String msg = "Fatal error orccured while launching caB2B client.\nPlease contact administrator";
+            JXErrorDialog.showDialog(null,"caB2B Fatal Error",msg,t);
             System.exit(1);
         }
     }
@@ -102,12 +99,12 @@ public class LoginFrame extends JXFrame {
         return new Font("calibri", Font.BOLD, label.getFont().getSize() + 2);
     }
 
-    public LoginFrame() {
+    private LoginFrame() {
         super("Login - ca Bench To Bedside (B2B)");
         initUI();
     }
 
-    public void initUI() {
+    private void initUI() {
         ImageIcon bannerImage = getImageIcon("top_img.gif");
         Cab2bLabel topImage = new Cab2bLabel(bannerImage);
         ImageIcon bgImage = getImageIcon("body_bg.gif");
@@ -205,6 +202,11 @@ public class LoginFrame extends JXFrame {
         Keymap keyMap = JTextField.addKeymap("enter", txtField.getKeymap());
         KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         keyMap.addActionForKeyStroke(key, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            /**
+             * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+             */
             public void actionPerformed(ActionEvent arg0) {
                 swingWorkerLogic();
             }
@@ -244,15 +246,24 @@ public class LoginFrame extends JXFrame {
         setKeyMap(usrNameText);
         setKeyMap(passText);
         idProvider.addKeyListener(new KeyListener() {
+            /**
+             * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
+             */
             public void keyPressed(KeyEvent e) {
             }
 
+            /**
+             * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
+             */
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     swingWorkerLogic();
                 }
             }
 
+            /**
+             * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
+             */
             public void keyTyped(KeyEvent e) {
             }
         });
@@ -261,6 +272,9 @@ public class LoginFrame extends JXFrame {
         cancelLink.setFont(new Font(cancelLink.getFont().getName(), Font.PLAIN, cancelLink.getFont().getSize() + 1));
         cancelLink.setText("Cancel");
         cancelLink.addActionListener(new ActionListener() {
+            /**
+             * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+             */
             public void actionPerformed(ActionEvent e) {
                 System.exit(-1);
             }
@@ -286,7 +300,7 @@ public class LoginFrame extends JXFrame {
         return panel;
     }
 
-    public ImageIcon getImageIcon(String imageName) {
+    private ImageIcon getImageIcon(String imageName) {
         return new ImageIcon(this.getClass().getClassLoader().getResource(imageName));
     }
 
@@ -300,7 +314,7 @@ public class LoginFrame extends JXFrame {
      * @return boolean stating is the user is a valid grid user or not
      * @throws RemoteException
      */
-    final private void validateCredentials(String userName, String password, String idProvider)
+    private final void validateCredentials(String userName, String password, String idProvider)
             throws RemoteException {
         UserValidator.validateUser(userName, password, idProvider);
     }
@@ -339,15 +353,10 @@ public class LoginFrame extends JXFrame {
             return;
         }
         String password = new String(passwordArray);
-        String IDProvider = idProvider.getSelectedItem().toString();
-
-        String url = PropertyLoader.getJndiUrl();
-        System.setProperty("java.naming.provider.url", url);
-        System.setProperty("java.naming.factory.initial", "org.jnp.interfaces.NamingContextFactory");
-        System.setProperty("java.naming.factory.url.pkgs", "org.jboss.naming:org.jnp.interfaces");
-
+        String selectedIdentityProvider = idProvider.getSelectedItem().toString();
+        
         try {
-            validateCredentials(userName, password, IDProvider);
+            validateCredentials(userName, password, selectedIdentityProvider);
             Thread mainThread = new Thread() {
                 public void run() {
                     launchMainFrame(userName);
@@ -383,11 +392,8 @@ public class LoginFrame extends JXFrame {
             mainFrame.setVisible(true);
             mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         } catch (Throwable t) {
-            JXErrorDialog.showDialog(
-                                     null,
-                                     "caB2B Fatal Error",
-                                     "Fatal error orccured while launching caB2B client.\nPlease contact administrator",
-                                     t);
+            String msg = "Fatal error orccured while launching caB2B client.\nPlease contact administrator";
+            JXErrorDialog.showDialog(null,"caB2B Fatal Error",msg,t);
             System.exit(1);
         }
     }
