@@ -8,6 +8,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import junit.framework.TestCase;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.server.util.TestUtil;
 
 /**
@@ -103,5 +105,16 @@ public class CommonUtilsTest extends TestCase {
         DefaultMutableTreeNode res = CommonUtils.searchNode(rootNode, userObject);
         assertEquals(node1, res);
         assertEquals(userObject, res.getUserObject());
+    }
+    
+    public void testInitializeResources() {
+        try {
+        CommonUtils.initializeResources();
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Unable to initialize resources");
+        }
+        String msg = ErrorCodeHandler.getErrorMessage(ErrorCodeConstants.DB_0001);
+        assertTrue(msg.length() !=0);
     }
 }
