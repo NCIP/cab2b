@@ -1,5 +1,9 @@
 package edu.wustl.cab2b.client.ui.util;
 
+import static edu.wustl.cab2b.common.util.Constants.TYPE_CATEGORY;
+
+import java.awt.Dimension;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -10,6 +14,7 @@ import junit.framework.TestCase;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
+import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.cab2b.server.util.TestUtil;
 
 /**
@@ -109,12 +114,38 @@ public class CommonUtilsTest extends TestCase {
     
     public void testInitializeResources() {
         try {
-        CommonUtils.initializeResources();
+            CommonUtils.initializeResources();
         } catch (Exception e) {
             e.printStackTrace();
             fail("Unable to initialize resources");
         }
         String msg = ErrorCodeHandler.getErrorMessage(ErrorCodeConstants.DB_0001);
-        assertTrue(msg.length() !=0);
+        assertTrue(msg.length() != 0);
+    }
+    
+    public void testSetHome() {
+        CommonUtils.setHome();
+        File cab2bHome = new File(System.getProperty("user.home"), "cab2b");
+        assertEquals(cab2bHome.getAbsolutePath(),System.getProperty("cab2b.home"));
+    }
+    
+    public void testEscapeString() {
+        assertEquals("\"aaaaa,bbbbb,ccccc\"",CommonUtils.escapeString("aaaaa,bbbbb,ccccc"));
+    }
+    
+    public void testGetMaximumLabelDimension() {
+        AttributeInterface a1 = TestUtil.getAttribute("entity",1L,"id",2L);
+        AttributeInterface a2 = TestUtil.getAttribute("entity",3L,"geneSourceName",4L);
+        AttributeInterface a3 = TestUtil.getAttribute("entity",5L,"name",6L);
+        
+        DynamicExtensionUtility.addTaggedValue(a2.getEntity(), TYPE_CATEGORY, TYPE_CATEGORY); 
+        
+        List<AttributeInterface> list = new ArrayList<AttributeInterface>(2);
+        list.add(a1);
+        list.add(a2);
+        list.add(a3);
+        
+        Dimension d = CommonUtils.getMaximumLabelDimension(list);
+        assertEquals(new Dimension(110,15),d);
     }
 }
