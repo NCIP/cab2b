@@ -56,26 +56,6 @@ public class MetadataSearch {
         if (searchString == null) {
             throw new CheckedException("Search string cannot be null");
         }
-
-        return searchSplit(searchTarget, searchString, basedOn);
-    }
-
-    /**
-     * Searches the array of strings passed on the target based on the TEXT/CONCEPT CODE parameter. Returns the
-     * MatchedClass instance containing the matched entities in the search. Splits the search on the basis of
-     * "basedOn" parameter.
-     * 
-     * @param searchTarget
-     *            The target on which the search is to be performed.
-     * @param searchString
-     *            The string to be searched.
-     * @param basedOn
-     *            The search to be based on.
-     * @return the MatchedClass instance containing the matched entities in the search.
-     * @throws RemoteException
-     */
-    public MatchedClass searchSplit(int[] searchTarget, String[] searchString, int basedOn)
-            throws CheckedException {
         MatchedClass matchedClass = null;
         switch (basedOn) {
             case Constants.BASED_ON_TEXT:
@@ -91,6 +71,37 @@ public class MetadataSearch {
         return matchedClass;
     }
 
+    //    /**
+    //     * Searches the array of strings passed on the target based on the TEXT/CONCEPT CODE parameter. Returns the
+    //     * MatchedClass instance containing the matched entities in the search. Splits the search on the basis of
+    //     * "basedOn" parameter.
+    //     * 
+    //     * @param searchTarget
+    //     *            The target on which the search is to be performed.
+    //     * @param searchString
+    //     *            The string to be searched.
+    //     * @param basedOn
+    //     *            The search to be based on.
+    //     * @return the MatchedClass instance containing the matched entities in the search.
+    //     * @throws RemoteException
+    //     */
+    //    private MatchedClass searchSplit(int[] searchTarget, String[] searchString, int basedOn)
+    //            throws CheckedException {
+    //        MatchedClass matchedClass = null;
+    //        switch (basedOn) {
+    //            case Constants.BASED_ON_TEXT:
+    //                matchedClass = searchText(searchString, searchTarget);
+    //                break;
+    //            case Constants.BASED_ON_CONCEPT_CODE:
+    //                matchedClass = searchConceptCode(searchString, searchTarget);
+    //                break;
+    //            default:
+    //                throw new CheckedException("Search target does not exist : " + searchTarget);
+    //        }
+    //        matchedClass.setEntityCollection(matchedClass.getSortedEntityCollection());
+    //        return matchedClass;
+    //    }
+
     /**
      * Searches the TEXT for array of strings passed. Returns the MatchedClass instance containing the matched
      * entities in the search. Splits the search on the basis of "searchTarget" parameter.
@@ -105,7 +116,7 @@ public class MetadataSearch {
     private MatchedClass searchText(String[] searchString, int[] searchTarget) throws CheckedException {
 
         MatchedClass resultantMatchedClass = new MatchedClass();
-        
+
         for (int i = 0; i < searchTarget.length; i++) {
             MatchedClass matchedClass = null;
             Collection<EntityInterface> entityCollection = null;
@@ -140,8 +151,8 @@ public class MetadataSearch {
                     resultantMatchedClass = createResultClass(resultantMatchedClass, matchedClass);
                     break;
                 case Constants.PV:
-                    Collection<PermissibleValueInterface> PVCollection = createSearchPermissibleValue(searchString);
-                    matchedClass = entityCache.getEntityOnPermissibleValueParameters(PVCollection);
+                    Collection<PermissibleValueInterface> pvCollection = createSearchPermissibleValue(searchString);
+                    matchedClass = entityCache.getEntityOnPermissibleValueParameters(pvCollection);
                     resultantMatchedClass = createResultClass(resultantMatchedClass, matchedClass);
                     break;
                 default:
@@ -162,7 +173,7 @@ public class MetadataSearch {
      * @return the MatchedClass instance containing the matched entities in the search.
      */
     private MatchedClass createResultClass(MatchedClass resultClass, MatchedClass matchClass) {
-        for(MatchedClassEntry matchedClassEntry: matchClass.getMatchedClassEntries()) {
+        for (MatchedClassEntry matchedClassEntry : matchClass.getMatchedClassEntries()) {
             resultClass.addMatchedClassEntry(matchedClassEntry);
         }
         return resultClass;
@@ -241,8 +252,7 @@ public class MetadataSearch {
      *            the search string.
      * @return the Entity instance which is to be searched.
      */
-    private Collection<AttributeInterface> createSearchAttributeWithDesc(String[] searchString)
-            throws CheckedException {
+    private Collection<AttributeInterface> createSearchAttributeWithDesc(String[] searchString) throws CheckedException {
         Collection<AttributeInterface> attributeCollection = new HashSet<AttributeInterface>();
         for (int i = 0; i < searchString.length; i++) {
             AttributeInterface attribute = getAttribute(searchString[i], searchString[i]);
@@ -317,8 +327,8 @@ public class MetadataSearch {
                     resultantMatchedClass = createResultClass(resultantMatchedClass, matchedClass);
                     break;
                 case Constants.PV:
-                    Collection<PermissibleValueInterface> PVCollection = createSearchPermissibleValueConceptCode(searchString);
-                    matchedClass = entityCache.getEntityOnPermissibleValueParameters(PVCollection);
+                    Collection<PermissibleValueInterface> pvCollection = createSearchPermissibleValueConceptCode(searchString);
+                    matchedClass = entityCache.getEntityOnPermissibleValueParameters(pvCollection);
                     resultantMatchedClass = createResultClass(resultantMatchedClass, matchedClass);
                     break;
                 default:
@@ -336,8 +346,7 @@ public class MetadataSearch {
      *            the search string.
      * @return the Entity instance which is to be searched.
      */
-    private Collection<EntityInterface> createSearchEntityConceptCode(String[] searchString)
-            throws CheckedException {
+    private Collection<EntityInterface> createSearchEntityConceptCode(String[] searchString) throws CheckedException {
         Collection<EntityInterface> entityCollection = new HashSet<EntityInterface>();
         DomainObjectFactory deFactory = DomainObjectFactory.getInstance();
         for (int i = 0; i < searchString.length; i++) {
