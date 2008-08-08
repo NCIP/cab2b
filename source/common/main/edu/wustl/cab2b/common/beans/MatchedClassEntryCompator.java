@@ -3,11 +3,12 @@ package edu.wustl.cab2b.common.beans;
 import java.util.Comparator;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.common.beans.MatchedClassEntry.MatchCause;
 import edu.wustl.cab2b.common.util.Utility;
 
 /**
  * A comparator for the {@link MatchedClassEntry}.
- * It chks in following order
+ * It checks in following order
  * 
  * 1. User defined Category Name
  * 2. User defined Category 
@@ -23,14 +24,10 @@ import edu.wustl.cab2b.common.util.Utility;
  *    Name
  *    SemanticProperty
  * 
- * @author Rahul Ner
- *
+ * @author rahul_ner
  */
 public class MatchedClassEntryCompator implements Comparator<MatchedClassEntry> {
 
-    /**
-     * 
-     */
     private static final int NOT_A_CATEGORY = 2;
 
     /**
@@ -87,12 +84,12 @@ public class MatchedClassEntryCompator implements Comparator<MatchedClassEntry> 
      * @return
      */
     private int compareEntityName(MatchedClassEntry entry1, MatchedClassEntry entry2) {
-        int result = getResultForNull(entry1.getEntityNamePosition(), entry2.getEntityNamePosition());
+        int result = getResultForNull(entry1.positionOf(MatchCause.EntityName), entry2.positionOf(MatchCause.EntityName));
         if (result != 0) {
             return result;
         }
 
-        result = entry1.getEntityNamePosition().compareTo(entry2.getEntityNamePosition());
+        result = entry1.positionOf(MatchCause.EntityName).compareTo(entry2.positionOf(MatchCause.EntityName));
 
         return (result == 0) ? compareEntityDescription(entry1, entry2) : result;
     }
@@ -103,11 +100,11 @@ public class MatchedClassEntryCompator implements Comparator<MatchedClassEntry> 
      * @return
      */
     private int compareEntityDescription(MatchedClassEntry entry1, MatchedClassEntry entry2) {
-        int result = getResultForNull(entry1.getEntityDescriptionPosition(), entry2.getEntityDescriptionPosition());
+        int result = getResultForNull(entry1.positionOf(MatchCause.EntityDescription), entry2.positionOf(MatchCause.EntityDescription));
         if (result != 0) {
             return result;
         }
-        result = entry1.getEntityDescriptionPosition().compareTo(entry2.getEntityDescriptionPosition());
+        result = entry1.positionOf(MatchCause.EntityDescription).compareTo(entry2.positionOf(MatchCause.EntityDescription));
 
         return (result == 0) ? compareEntitySP(entry1, entry2) : result;
     }
@@ -118,12 +115,12 @@ public class MatchedClassEntryCompator implements Comparator<MatchedClassEntry> 
      * @return
      */
     private int compareEntitySP(MatchedClassEntry entry1, MatchedClassEntry entry2) {
-        int result = getResultForNull(entry1.getEntitySemanticPropertyPosition(),
-                                      entry2.getEntitySemanticPropertyPosition());
+        int result = getResultForNull(entry1.positionOf(MatchCause.EntitySemanticProperty),
+                                      entry2.positionOf(MatchCause.EntitySemanticProperty));
         if (result != 0) {
             return result;
         }
-        result = entry1.getEntitySemanticPropertyPosition().compareTo(entry2.getEntitySemanticPropertyPosition());
+        result = entry1.positionOf(MatchCause.EntitySemanticProperty).compareTo(entry2.positionOf(MatchCause.EntitySemanticProperty));
 
         return (result == 0) ? compareAttributeName(entry1, entry2) : result;
     }
@@ -134,11 +131,11 @@ public class MatchedClassEntryCompator implements Comparator<MatchedClassEntry> 
      * @return
      */
     private int compareAttributeName(MatchedClassEntry entry1, MatchedClassEntry entry2) {
-        int result = getResultForNull(entry1.getAttributeNamePosition(), entry2.getAttributeNamePosition());
+        int result = getResultForNull(entry1.positionOf(MatchCause.AttributeName), entry2.positionOf(MatchCause.AttributeName));
         if (result != 0) {
             return result;
         }
-        result = entry1.getAttributeNamePosition().compareTo(entry2.getAttributeNamePosition());
+        result = entry1.positionOf(MatchCause.AttributeName).compareTo(entry2.positionOf(MatchCause.AttributeName));
 
         return (result == 0) ? compareAttributeDescription(entry1, entry2) : result;
     }
@@ -149,12 +146,12 @@ public class MatchedClassEntryCompator implements Comparator<MatchedClassEntry> 
      * @return
      */
     private int compareAttributeDescription(MatchedClassEntry entry1, MatchedClassEntry entry2) {
-        int result = getResultForNull(entry1.getAttributeDescriptionPosition(),
-                                      entry2.getAttributeDescriptionPosition());
+        int result = getResultForNull(entry1.positionOf(MatchCause.AttributeDescription),
+                                      entry2.positionOf(MatchCause.AttributeDescription));
         if (result != 0) {
             return result;
         }
-        result = entry1.getAttributeDescriptionPosition().compareTo(entry2.getAttributeDescriptionPosition());
+        result = entry1.positionOf(MatchCause.AttributeDescription).compareTo(entry2.positionOf(MatchCause.AttributeDescription));
 
         return (result == 0) ? compareAttributeSP(entry1, entry2) : result;
     }
@@ -165,13 +162,13 @@ public class MatchedClassEntryCompator implements Comparator<MatchedClassEntry> 
      * @return
      */
     private int compareAttributeSP(MatchedClassEntry entry1, MatchedClassEntry entry2) {
-        int result = getResultForNull(entry1.getAttributeSemanticPropertyPosition(),
-                                      entry2.getAttributeSemanticPropertyPosition());
+        int result = getResultForNull(entry1.positionOf(MatchCause.AttributeSemanticProperty),
+                                      entry2.positionOf(MatchCause.AttributeSemanticProperty));
         if (result != 0) {
             return result;
         }
-        result = entry1.getAttributeSemanticPropertyPosition().compareTo(
-                                                                         entry2.getAttributeSemanticPropertyPosition());
+        result = entry1.positionOf(MatchCause.AttributeSemanticProperty).compareTo(
+                                                                         entry2.positionOf(MatchCause.AttributeSemanticProperty));
 
         return (result == 0) ? comparePVName(entry1, entry2) : result;
     }
@@ -182,11 +179,11 @@ public class MatchedClassEntryCompator implements Comparator<MatchedClassEntry> 
      * @return
      */
     private int comparePVName(MatchedClassEntry entry1, MatchedClassEntry entry2) {
-        int result = getResultForNull(entry1.getPvNamePosition(), entry2.getPvNamePosition());
+        int result = getResultForNull(entry1.positionOf(MatchCause.PermissibleValueName), entry2.positionOf(MatchCause.PermissibleValueName));
         if (result != 0) {
             return result;
         }
-        result = entry1.getPvNamePosition().compareTo(entry2.getPvNamePosition());
+        result = entry1.positionOf(MatchCause.PermissibleValueName).compareTo(entry2.positionOf(MatchCause.PermissibleValueName));
 
         return (result == 0) ? comparePVSP(entry1, entry2) : result;
     }
@@ -197,12 +194,12 @@ public class MatchedClassEntryCompator implements Comparator<MatchedClassEntry> 
      * @return
      */
     private int comparePVSP(MatchedClassEntry entry1, MatchedClassEntry entry2) {
-        int result = getResultForNull(entry1.getPvSemanticPropertyPosition(),
-                                      entry2.getPvSemanticPropertyPosition());
+        int result = getResultForNull(entry1.positionOf(MatchCause.PermissibleSemanticProperty),
+                                      entry2.positionOf(MatchCause.PermissibleSemanticProperty));
         if (result != 0) {
             return result;
         }
-        result = entry1.getPvSemanticPropertyPosition().compareTo(entry2.getPvSemanticPropertyPosition());
+        result = entry1.positionOf(MatchCause.PermissibleSemanticProperty).compareTo(entry2.positionOf(MatchCause.PermissibleSemanticProperty));
         return result;
     }
 

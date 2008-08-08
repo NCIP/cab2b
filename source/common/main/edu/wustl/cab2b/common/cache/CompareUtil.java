@@ -7,6 +7,7 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
 import edu.common.dynamicextensions.domaininterface.SemanticPropertyInterface;
 import edu.wustl.cab2b.common.beans.MatchedClassEntry;
+import edu.wustl.cab2b.common.beans.MatchedClassEntry.MatchCause;
 import edu.wustl.cab2b.common.util.Utility;
 
 /**
@@ -39,7 +40,7 @@ public class CompareUtil {
             index = Utility.indexOfRegEx(patternName, onlyClassName);
             if (index != -1) {
                 matchedClassEntry = new MatchedClassEntry(cachedEntity);
-                matchedClassEntry.setEntityNamePosition(index);
+                matchedClassEntry.setPositionOf(MatchCause.EntityName,index);
             }
         }
 
@@ -50,7 +51,7 @@ public class CompareUtil {
             index = Utility.indexOfRegEx(patternDescription, cachedEntity.getDescription());
             if (index != -1) {
                 matchedClassEntry = new MatchedClassEntry(cachedEntity);
-                matchedClassEntry.setEntityDescriptionPosition(index);
+                matchedClassEntry.setPositionOf(MatchCause.EntityDescription,index);
             }
         }
 
@@ -60,7 +61,7 @@ public class CompareUtil {
 
             if (index != -1) {
                 matchedClassEntry = new MatchedClassEntry(cachedEntity);
-                matchedClassEntry.setEntitySemanticPropertyPosition(index);
+                matchedClassEntry.setPositionOf(MatchCause.EntitySemanticProperty,index);
             }
 
         }
@@ -114,7 +115,7 @@ public class CompareUtil {
             index = Utility.indexOfRegEx(patternName, cachedAttribute.getName());
             if (index != -1) {
                 matchedClassEntry = new MatchedClassEntry(cachedAttribute.getEntity());
-                matchedClassEntry.setAttributeNamePosition(index);
+                matchedClassEntry.setPositionOf(MatchCause.AttributeName,index);
             }
 
         }
@@ -126,7 +127,7 @@ public class CompareUtil {
             index = Utility.indexOfRegEx(patternDescription, cachedAttribute.getDescription());
             if (index != -1) {
                 matchedClassEntry = new MatchedClassEntry(cachedAttribute.getEntity());
-                matchedClassEntry.setAttributeDescriptionPosition(index);
+                matchedClassEntry.setPositionOf(MatchCause.AttributeDescription,index);
             }
         }
 
@@ -136,7 +137,7 @@ public class CompareUtil {
 
             if (index != -1) {
                 matchedClassEntry = new MatchedClassEntry(cachedAttribute.getEntity());
-                matchedClassEntry.setAttributeSemanticPropertyPosition(index);
+                matchedClassEntry.setPositionOf(MatchCause.AttributeSemanticProperty,index);
             }
 
         }
@@ -145,7 +146,7 @@ public class CompareUtil {
 
     /**
      * Compares given pattern SemanticProperties with the cached SemanticProperties.
-     * returns the postion of first matched concept code. 
+     * returns the position of first matched concept code. 
      * @param cachedProperties
      * @param patternProperties
      * @return
@@ -193,7 +194,7 @@ public class CompareUtil {
             index = Utility.indexOfRegEx(patternPermissibleString, cachedPermissibleString);
             if (index != -1) {
                 matchedClassEntry = new MatchedClassEntry(cachedEntity);
-                matchedClassEntry.setPvNamePosition(index);
+                matchedClassEntry.setPositionOf(MatchCause.PermissibleValueName,index);
             }
 
         }
@@ -204,7 +205,7 @@ public class CompareUtil {
 
             if (index != -1) {
                 matchedClassEntry = new MatchedClassEntry(cachedEntity);
-                matchedClassEntry.setPvSemanticPropertyPosition(index);
+                matchedClassEntry.setPositionOf(MatchCause.PermissibleSemanticProperty,index);
             }
 
         }
