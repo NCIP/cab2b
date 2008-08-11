@@ -15,7 +15,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.main.AbstractTypePanel;
-import edu.wustl.cab2b.client.ui.mainframe.stackbox.StackBoxMySearchQueriesPanel;
+import edu.wustl.cab2b.client.ui.mainframe.stackbox.SavedQueryLinkPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
@@ -170,7 +170,7 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                     message = "Query " + cab2bParameterizedQuery.getName() + " saved successfully.";
                 }
                 SearchNavigationPanel.getMessageLabel().setText(message);
-                StackBoxMySearchQueriesPanel.getInstance().updateMySearchQueryPanel();
+                SavedQueryLinkPanel.getInstance().updateQueryLinkPanel();
                 updateUI();
                 parameterizedQueryMainPanel.getDialog().dispose();
             } catch (RemoteException exception) {
