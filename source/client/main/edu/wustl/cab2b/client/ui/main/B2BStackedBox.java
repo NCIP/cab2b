@@ -36,9 +36,17 @@ public class B2BStackedBox extends Cab2bPanel {
     private static final long serialVersionUID = 1L;
 
     /**
-     * default constructor. Initializes the object with its UI parameters 
+     * Default constructor. Initializes the object with its UI parameters 
      */
     public B2BStackedBox() {
+        initGUI();
+    }
+
+    /**
+     * GUI initialisation method
+     */
+    private void initGUI() {
+
         this.setLayout(new BorderLayout());
         this.setBorder(null);
         StackedBox box = new StackedBox();
@@ -49,10 +57,10 @@ public class B2BStackedBox extends Cab2bPanel {
 
         this.add(scrollPane, BorderLayout.CENTER);
 
-        JPanel status = CommonUtils.getPopularSearchCategoriesPanel(
-                                                                    CommonUtils.getPopularSearchCategories(),
-                                                                    new ShowMessageActionClass(
-                                                                            "This link will open selected user category in add limit page.\nThis feature is not yet implemented."));
+        JPanel status = new Cab2bPanel();/*CommonUtils.getPopularSearchCategoriesPanel(
+         CommonUtils.getPopularSearchCategories(),
+         new ShowMessageActionClass(
+         "This link will open selected user category in add limit page.\nThis feature is not yet implemented."));*/
 
         /*        setDataForPanel(status, CommonUtils.getUserSearchCategories(),
          "This link will open selected user category in add limit page.\nThis feature is not yet implemented.");*/
@@ -65,15 +73,16 @@ public class B2BStackedBox extends Cab2bPanel {
         final String titleQuery = ApplicationProperties.getValue(QUERY_BOX_TEXT);
         box.addBox(titleQuery, profilingResults, MY_SEARCH_QUERIES_IMAGE, false);
 
-        JPanel popularCategories = CommonUtils.getPopularSearchCategoriesPanel(
-                                                                               CommonUtils.getPopularSearchCategories(),
-                                                                               new ShowMessageActionClass(
-                                                                                       "This link will open selected popular category in add limit page.\nThis feature is not yet implemented."));
-
+        JPanel popularCategories = new Cab2bPanel();/*CommonUtils.getPopularSearchCategoriesPanel(
+         CommonUtils.getPopularSearchCategories(),
+         new ShowMessageActionClass(
+         "This link will open selected popular category in add limit page.\nThis feature is not yet implemented."));
+         */
         final String titlePopularcategories = ApplicationProperties.getValue(POPULAR_CATEGORY_BOX_TEXT);
         box.addBox(titlePopularcategories, popularCategories, POPULAR_CATEGORIES_IMAGE, false);
 
         this.setBorder(null);
+
     }
 
     /** 
@@ -98,6 +107,7 @@ public class B2BStackedBox extends Cab2bPanel {
     }
 
     /**
+     * Common method for setting data in panel
      * @param panel
      * @param data
      */

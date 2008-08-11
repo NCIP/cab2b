@@ -33,8 +33,8 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * This class creates a glassPane over the icons and adds tab-buttons to the
@@ -68,6 +68,14 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Constructor
+     * @param leftLabel
+     * @param middleLabel
+     * @param rightLabel
+     * @param mainFrame
+     * @param frame
+     */
     public GlobalNavigationGlassPane(
             JLabel leftLabel,
             JLabel middleLabel,
@@ -86,7 +94,7 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
     }
 
     /**
-     * Initialize the UI
+     * Initializing UI
      */
     private void initUI() {
         middleLabel.setLayout(new GridBagLayout());
@@ -175,7 +183,7 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         JLabel label = new JLabel(" ");
         linkPanel.add("br", label);
         linkPanel.add(loggedInUserLabel);
-        //  linkPanel.add("br ", label);
+        // linkPanel.add("br ", label);
         linkPanel.add("br ", dateLabel);
         linkPanel.add("br ", logOutHyperLink);
         linkPanel.add("tab ", line);
@@ -194,8 +202,10 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         this.repaint();
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
-        Logger.out.debug("Global Nagigation Panel Button");
         JButton button = (JButton) e.getSource();
         if (button == tabButtons[0]) {
             tabButtons[0].setIcon(new ImageIcon(tabsImagesPressed[0]));
@@ -204,7 +214,6 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
             if (this.frame instanceof MainFrame) {
                 MainFrame mainframePanel = (MainFrame) this.frame;
                 mainframePanel.setHomeWelcomePanel();
-                Logger.out.debug("Global Nagigation Panel Home Button");
             }
             lastSelectedTab = button;
         } else if (button == tabButtons[1]) {
@@ -229,19 +238,41 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
             }
             tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
         } else if (button == tabButtons[2]) {
-            //AdminCDCPanel adminCDCPanel= new AdminCDCPanel();
-            tabButtons[0].setIcon(new ImageIcon(tabsImagesUnPressed[0]));
-            tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
-            tabButtons[2].setIcon(new ImageIcon(tabsImagesPressed[2]));
-            MainFrame mainframePanel = (MainFrame) this.frame;
-            mainframePanel.setOpenExperimentWelcomePanel();
-            lastSelectedTab = button;
+            setExperimentHomePanel();
         }
-
         this.updateUI();
         this.repaint();
     }
 
+    /**
+     * Method to set experiment home panel 
+     * @param button
+     */
+    public void setExperimentHomePanel() {
+        tabButtons[0].setIcon(new ImageIcon(tabsImagesUnPressed[0]));
+        tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
+        tabButtons[2].setIcon(new ImageIcon(tabsImagesPressed[2]));
+        MainFrame mainframePanel = (MainFrame) this.frame;
+        mainframePanel.setExperimentHomePanel();
+        lastSelectedTab = tabButtons[2];
+    }
+
+    /**
+     * Method to set ShowAllPanel(like ShowAllCategoryPanel, ShowAllQueryLinkPanel) on righthand side of homepage 
+     */
+    public void setShowAllPanel(ShowAllPanel panel) {
+        tabButtons[0].setIcon(new ImageIcon(tabsImagesUnPressed[0]));
+        tabButtons[1].setIcon(new ImageIcon(tabsImagesPressed[1]));
+        tabButtons[2].setIcon(new ImageIcon(tabsImagesUnPressed[2]));
+        MainFrame mainframePanel = (MainFrame) this.frame;
+
+        mainframePanel.setRightHandPanel(panel);
+        lastSelectedTab = tabButtons[1];
+    }
+
+    /**
+     * Method to set Search Panel in Search Wizard
+     */
     public void initializeMainSearchPanel() {
         GlobalNavigationPanel.setMainSearchPanel(new MainSearchPanel());
         Dimension relDimension = CommonUtils.getRelativeDimension(MainFrame.getScreenDimesion(), 0.90f, 0.85f);
