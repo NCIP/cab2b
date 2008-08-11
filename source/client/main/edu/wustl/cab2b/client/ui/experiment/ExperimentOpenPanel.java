@@ -57,7 +57,7 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
 
     private ExperimentTreeNode m_ExperimentTreeNodeObj;
 
-    private Container m_parentPanel;
+    private Container parentPanel;
 
     private JSplitPane splitPane;
 
@@ -68,26 +68,42 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
         return selectedExperiment;
     }
 
+    /**
+     * 
+     */
     public ExperimentOpenPanel() {
         initGUI();
     }
 
+    /**
+     * @param exp
+     */
     public ExperimentOpenPanel(Experiment exp) {
         selectedExperiment = exp;
         initGUI();
     }
 
+    /**
+     * @param Obj
+     * @param parentPanel
+     */
     public ExperimentOpenPanel(ExperimentTreeNode Obj, Container parentPanel) {
         m_ExperimentTreeNodeObj = Obj;
-        m_parentPanel = parentPanel;
-        //m_parentPanel.setBorder(null);
+        this.parentPanel = parentPanel;
         initGUI();
     }
 
+    /**
+     * Returns ExperimentDataCategoryGridPanel
+     * @return ExperimentDataCategoryGridPanel
+     */
     public ExperimentDataCategoryGridPanel getExperimentDataCategoryGridPanel() {
         return this.experimentDataCategoryGridPanel;
     }
 
+    /**
+     * Method to set experiment panel
+     */
     private void setExperimentPanel() {
 
         experimentTitlePanel = new Cab2bPanel(new RiverLayout(5, 5));
@@ -197,6 +213,10 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
 
     }
 
+    /**
+     * Method for getting experiment details from database 
+     * @return
+     */
     private Experiment invokeCompleteExperimentFromDatabase() {
 
         /* ejb code : Getting experiment BusinessInterface */
@@ -214,28 +234,36 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
             selectedExperiment = expBus.getExperiment(expId);
         } catch (RemoteException e) {
             CheckedException checkedException = new CheckedException(e.getMessage());
-            CommonUtils.handleException(checkedException, m_parentPanel, true, true, true, false);
+            CommonUtils.handleException(checkedException, parentPanel, true, true, true, false);
             e.printStackTrace();
         } catch (DAOException e) {
             CheckedException checkedException = new CheckedException(e.getMessage());
-            CommonUtils.handleException(checkedException, m_parentPanel, true, true, true, false);
+            CommonUtils.handleException(checkedException, parentPanel, true, true, true, false);
             e.printStackTrace();
         }
         return selectedExperiment;
 
     }
 
+    /**
+     * GUI initilisation method
+     */
     public void initGUI() {
         this.setLayout(new BorderLayout());
         invokeCompleteExperimentFromDatabase();
         setExperimentPanel();
     }
 
+    /**
+     * Method to add datalist on experiment stack box panel 
+     * @param dataListMetadata
+     */
     public void addDataList(DataListMetadata dataListMetadata) {
         experimentStackBox.updateStackBox(dataListMetadata);
     }
 
     /**
+     * Returns  ExperimentStackBox panel
      * @return the experimentStackBox
      */
     public ExperimentStackBox getExperimentStackBox() {

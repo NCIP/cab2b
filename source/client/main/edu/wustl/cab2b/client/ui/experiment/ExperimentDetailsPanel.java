@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
-import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -30,8 +29,8 @@ import edu.wustl.common.tree.ExperimentTreeNode;
 import edu.wustl.common.util.logger.Logger;
 
 /**
- * A panel to display details of the selected experiment or experiment 
- * group in a spreadsheet.
+ * A panel to display details of the selected experiment or experiment group in
+ * a spreadsheet.
  * 
  * @author chetan_bh
  */
@@ -55,13 +54,13 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
     }
 
     /**
-     * 
+     * This method returns JScrollPane containing  experiment details
      * @return
      */
     private JScrollPane initExperimentTableWithScrolls() {
-        MyLinkAction myLinkAction = new MyLinkAction();
-        expTable.getColumn(1).setCellRenderer(new LinkRenderer(myLinkAction));
-        expTable.getColumn(1).setCellEditor(new LinkRenderer(myLinkAction));
+        ExperimentLinkAction experimentLinkAction = new ExperimentLinkAction();
+        expTable.getColumn(1).setCellRenderer(new LinkRenderer(experimentLinkAction));
+        expTable.getColumn(1).setCellEditor(new LinkRenderer(experimentLinkAction));
 
         expTable.setBorder(null);
         expTable.setShowGrid(false);
@@ -79,38 +78,37 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
     }
 
     /**
-     * 
+     * Method for updating  experiment details on experiment panel
      * @param newTableData
      */
     private void refreshExperimentDetailPanel(Vector<Vector<Object>> newTableData) {
         this.removeAll();
-
         expTable = new Cab2bTable(true, newTableData, tHeader);
         refreshExperimentDetailPanel();
     }
 
     /**
-     * 
+     *  Method for updating  experiment details on experiment panel
      * @param newTableData
      */
     private void refreshExperimentDetailPanel(Object[][] newTableData) {
         this.removeAll();
-
         expTable = new Cab2bTable(true, newTableData, tableHeader);
         refreshExperimentDetailPanel();
     }
 
     /**
-     * 
-     *
+     *  Method for updating  experiment details on experiment panel
      */
     private void refreshExperimentDetailPanel() {
         JScrollPane jScrollPane = initExperimentTableWithScrolls();
         this.add("br hfill vfill", jScrollPane);
-
         this.updateUI();
     }
 
+    /**
+     * GUI initilisation method
+     */
     private void initGUI() {
         this.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 
@@ -123,6 +121,11 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
         highlighters.updateUI();
     }
 
+    /**
+     * Method for updating table data
+     * @param treeNode
+     * @param tableData
+     */
     private void updateTableData(ExperimentTreeNode treeNode, Vector<Vector<Object>> tableData) {
         if (treeNode.getChildNodes().size() == 0) {
             Logger.out.debug("found child node zero");
@@ -145,6 +148,10 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
         }
     }
 
+    /**
+     * Method for updating table details mapped with ExperimentTreeNode 
+     * @param expTreeNode
+     */
     public void refreshDetails(ExperimentTreeNode expTreeNode) {
         Vector<Vector<Object>> newTableData = new Vector<Vector<Object>>();
         if (expTreeNode.getChildNodes().size() == 0) {
@@ -163,11 +170,19 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
         refreshExperimentDetailPanel(newTableData);
     }
 
+    /**
+     * Method for updating table details mapped with Experiment
+     * @param exp
+     */
     public void refreshDetails(Experiment exp) {
         Object[][] newTableData = { { exp, exp.getCreatedOn(), exp.getLastUpdatedOn(), exp.getDescription() } };
         refreshExperimentDetailPanel(newTableData);
     }
 
+    /**
+     * Method for updating table details mapped with ExperimentGroup
+     * @param expGrp
+     */
     public void refreshDetails(ExperimentGroup expGrp) {
         Iterator expIter = expGrp.getExperimentCollection().iterator();
         Object[][] newTableData = new Object[expGrp.getExperimentCollection().size()][];
@@ -186,32 +201,22 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
         refreshExperimentDetailPanel(newTableData);
     }
 
-    public static void main(String[] args) {
-        ExperimentDetailsPanel expDetPanel = new ExperimentDetailsPanel();
-
-        JFrame frame = new JFrame("Experiment");
-        frame.setSize(600, 600);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(expDetPanel);
-        frame.setVisible(true);
-    }
-
-    /*Class used for adding hyperlinks in Jtable rows*/
-    class MyLinkAction extends LinkAction {
+    /**
+     * Action class for adding hyperlinks in Jtable rows 
+     * @author deepak_shingan
+     *
+     */
+    class ExperimentLinkAction extends LinkAction {
         private static final long serialVersionUID = 1L;
 
-        public MyLinkAction() {
-
-        }
-
         public void actionPerformed(ActionEvent e) {
-            Logger.out.debug("link is working");
             setVisited(true);
 
-            //getting the selected hyperlink row
+            // getting the selected hyperlink row
             int selectionIndex = expTable.getSelectionModel().getLeadSelectionIndex();
 
-            //getting object associated with hyperlink column Number will be always 1
+            // getting object associated with hyperlink column Number will be
+            // always 1
             final Object expObj = (ExperimentTreeNode) expTable.getValueAt(selectionIndex, 1);
 
             CustomSwingWorker swingWorker = new CustomSwingWorker(ExperimentDetailsPanel.this) {
@@ -224,9 +229,12 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
                             ExperimentDetailsPanel.this.expPanel = new ExperimentOpenPanel(expNodeObj,
                                     ExperimentDetailsPanel.this);
                         } else {
-                            //TODO
-                            /*If user clicks on experimentGroup name then Refresh the table  
-                             * and display all child nodes for selected experimentGroup */
+                            // TODO
+                            /*
+                             * If user clicks on experimentGroup name then
+                             * Refresh the table and display all child nodes for
+                             * selected experimentGroup
+                             */
                         }
                     }
                 }
@@ -238,8 +246,11 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
                         ExperimentTreeNode expNodeObj = (ExperimentTreeNode) expObj;
 
                         if (expNodeObj.isExperimentGroup() == false) {
-                            /*If user clicks on experiment name then Open experiment 
-                             * in new ExperimentOpenPanel with details*/
+                            /*
+                             * If user clicks on experiment name then Open
+                             * experiment in new ExperimentOpenPanel with
+                             * details
+                             */
                             Logger.out.debug("ExperimentTreeNode node :" + expNodeObj.getIdentifier()
                                     + " is not a experimentGroup");
 
@@ -255,6 +266,10 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
         }
     }
 
+    /**
+     * @author deepak_shingan
+     *
+     */
     class CellWrapRenderer extends JTextArea implements TableCellRenderer {
         private static final long serialVersionUID = 1L;
 
