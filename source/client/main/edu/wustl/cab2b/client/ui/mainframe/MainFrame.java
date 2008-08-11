@@ -21,6 +21,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
@@ -64,7 +65,9 @@ public class MainFrame extends JXFrame {
 
     private NewWelcomePanel welcomePanel = null;
 
-    /** Global navigation panel which is at the top of the MainFrame */
+    /**
+     *  Global navigation panel which is at the top of the MainFrame 
+     */
     private GlobalNavigationPanel globalNavigationPanel;
 
     private JXPanel homePanel;
@@ -97,6 +100,11 @@ public class MainFrame extends JXFrame {
 
     private JXPanel mainPanel;
 
+    /**
+     * Constructor
+     * @param title
+     * @param exitOnClose
+     */
     public MainFrame(String title, boolean exitOnClose) {
         super(title, exitOnClose);
         statusBar = WindowUtilities.getStatusBar(this);
@@ -155,10 +163,16 @@ public class MainFrame extends JXFrame {
         });
     }
 
+    /**
+     * @return GlobalNavigationPanel
+     */
     public GlobalNavigationPanel getGlobalNavigationPanel() {
         return this.globalNavigationPanel;
     }
 
+    /**
+     * Generates logout dialog pop-up  
+     */
     public void logout() {
         final Icon logoutIcon = new ImageIcon(this.getClass().getClassLoader().getResource(LOGOUT_ICON));
         int option = JOptionPane.showConfirmDialog(this, "Are you sure you want to logout?", "Confirm Logout",
@@ -169,8 +183,10 @@ public class MainFrame extends JXFrame {
         }
     }
 
-    /** Method to set experiment home panel */
-    public void setOpenExperimentWelcomePanel() {
+    /**
+     * Method to set experiment home panel 
+     */
+    public void setExperimentHomePanel() {
         CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.this.mainPanel) {
             @Override
             protected void doNonUILogic() throws Exception {
@@ -196,7 +212,9 @@ public class MainFrame extends JXFrame {
         swingWorker.start();
     }
 
-    /** Method to set data search home panel */
+    /**
+     *  Method to set data search home panel
+     */
     public void setSearchDataWelcomePanel() {
 
         CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
@@ -216,7 +234,9 @@ public class MainFrame extends JXFrame {
         swingWorker.start();
     }
 
-    /** Method to set home panel */
+    /**
+     *  Method to set home panel 
+     */
     public void setHomeWelcomePanel() {
 
         CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
@@ -236,6 +256,29 @@ public class MainFrame extends JXFrame {
         swingWorker.start();
     }
 
+    /**
+     *  Method to set right hand side panel on home page 
+     * @param panel
+     */
+    public void setRightHandPanel(Cab2bPanel panel) {
+        homePanel = panel;
+        CustomSwingWorker swingWorker = new CustomSwingWorker(this, panel) {
+            @Override
+            protected void doNonUILogic() throws Exception {
+            }
+
+            @Override
+            protected void doUIUpdateLogic() throws Exception {
+                setWelcomePanel();
+            }
+        };
+        swingWorker.start();
+    }
+
+    /**
+     * Method to set ExperimentOpenPanel as home-panel
+     * @param panel
+     */
     public void openExperiment(ExperimentOpenPanel panel) {
         mainPanel.removeAll();
         this.remove(mainPanel);
@@ -243,7 +286,9 @@ public class MainFrame extends JXFrame {
         this.add(mainPanel);
     }
 
-    /** Method to set Welcome panel */
+    /**
+     * Method to set Welcome panel on homepage
+     */
     public void setWelcomePanel() {
 
         if (experimentPanel != null && experimentPanel.isVisible() == true) {
