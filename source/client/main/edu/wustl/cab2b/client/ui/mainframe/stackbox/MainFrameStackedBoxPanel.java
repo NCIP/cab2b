@@ -17,15 +17,15 @@ import java.util.Vector;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import edu.wustl.cab2b.client.ui.AddLimitPanel;
-import edu.wustl.cab2b.client.ui.MainSearchPanel;
+import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.StackedBox;
 import edu.wustl.cab2b.client.ui.experiment.ExperimentOpenPanel;
-import edu.wustl.cab2b.client.ui.mainframe.GlobalNavigationPanel;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
+import edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllCategoryPanel;
+import edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.common.querysuite.metadata.category.Category;
@@ -35,9 +35,10 @@ import edu.wustl.common.util.global.ApplicationProperties;
  * @author Chandrakant Talele/Deepak_Shingan
  */
 public class MainFrameStackedBoxPanel extends Cab2bPanel {
+
     private static final long serialVersionUID = 1L;
 
-    private StackBoxMySearchQueriesPanel mySearchQueriesPanel;
+    private SavedQueryLinkPanel mySearchQueriesPanel;
 
     private JPanel popularSearchCategoryPanel;
 
@@ -49,91 +50,140 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
 
     public static Color UNCLICKED_COLOR = new Color(0x034E74);
 
+    public static final String SHOW_ALL_LINK = "Show All";
+
     /**
-     * @param frame 
+     * Constructor
+     * @param frame
      * @param mainFrame
      */
     public MainFrameStackedBoxPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
-        this.setLayout(new BorderLayout());
+        initUI();
+    }
 
+    /**
+     * GUI initialising panel
+     */
+    private void initUI() {
+        this.setLayout(new BorderLayout());
         StackedBox stackedBox = new StackedBox();
         stackedBox.setTitleBackgroundColor(new Color(200, 200, 220));
         JScrollPane scrollPane = new JScrollPane(stackedBox);
         scrollPane.setBorder(null);
         this.add(scrollPane, BorderLayout.CENTER);
 
-        mySearchQueriesPanel = StackBoxMySearchQueriesPanel.getInstance();
-        JScrollPane jScrollPane = new JScrollPane(mySearchQueriesPanel);
-        jScrollPane.setPreferredSize(new Dimension(250, 150));
-        jScrollPane.setBorder(null);
-        jScrollPane.getViewport().setBackground(Color.WHITE);
+        mySearchQueriesPanel = SavedQueryLinkPanel.getInstance();
 
         final String titleQuery = ApplicationProperties.getValue(QUERY_BOX_TEXT);
-        stackedBox.addBox(titleQuery, jScrollPane, MY_SEARCH_QUERIES_IMAGE, false);
+        stackedBox.addBox(titleQuery, mySearchQueriesPanel, MY_SEARCH_QUERIES_IMAGE, false);
 
-        popularSearchCategoryPanel = CommonUtils.getPopularSearchCategoriesPanel(
-                                                                                 CommonUtils.getPopularSearchCategories(),
-                                                                                 new CategoryHyperlinkActionListener());
+        popularSearchCategoryPanel = getPopularSearchCategoriesPanel(CommonUtils.getPopularSearchCategories(),
+                                                                     new CategoryHyperlinkActionListener());
         final String titlePopularcategories = ApplicationProperties.getValue(POPULAR_CATEGORY_BOX_TEXT);
         stackedBox.addBox(titlePopularcategories, popularSearchCategoryPanel, POPULAR_CATEGORIES_IMAGE, false);
 
-        myExperimentsPanel = CommonUtils.getMyLatestExperimentsPanel(CommonUtils.getExperiments(null, ""),
-                                                                     new ExperimentHyperlinkActionListener());
+        myExperimentsPanel = getLatestExperimentsPanel(CommonUtils.getExperiments(null, ""),
+                                                       new ExperimentHyperlinkActionListener());
 
         final String titleExpr = ApplicationProperties.getValue(EXPERIMENT_BOX_TEXT);
         stackedBox.addBox(titleExpr, myExperimentsPanel, MY_EXPERIMENT_IMAGE, false);
 
         stackedBox.setPreferredSize(new Dimension(250, 500));
         stackedBox.setMinimumSize(new Dimension(250, 500));
-
-        this.setMinimumSize(new Dimension(242, this.getMinimumSize().height)); //fix for bug#3745
+        this.setMinimumSize(new Dimension(242, this.getMinimumSize().height)); // for bug#3745
     }
 
     /**
+     * This method returns panel with five most popular categories from database.
+     * TODO: Currently getting all categories from database
      * @param data
      */
-    public void setDataForPopularSearchCategoriesPanel(Vector<Category> data) {
-        popularSearchCategoryPanel.removeAll();
-        popularSearchCategoryPanel.add(new Cab2bLabel());
+    public Cab2bPanel getPopularSearchCategoriesPanel(Vector<Category> data, ActionListener actionClass) {
+        Cab2bPanel panel = new Cab2bPanel();
+        panel.setLayout(new RiverLayout(10, 5));
+        panel.add(new Cab2bLabel());
         for (Category category : data) {
-            String hyperlinkName = category.getCategoryEntity().getName();
             Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
-            hyperlink.setClickedColor(CLICKED_COLOR);
-            hyperlink.setUnclickedColor(UNCLICKED_COLOR);
-            hyperlink.setUserObject(category);
-            hyperlink.setText(hyperlinkName);
-            hyperlink.setToolTipText(category.getCategoryEntity().getDescription());
-            hyperlink.addActionListener(new CategoryHyperlinkActionListener());
-            popularSearchCategoryPanel.add("br", hyperlink);
+            CommonUtils.setHyperlinkProperties(hyperlink, category, category.getCategoryEntity().getName(),
+                                               category.getCategoryEntity().getDescription(), actionClass);
+            panel.add("br", hyperlink);
         }
-        popularSearchCategoryPanel.revalidate();
+
+        ActionListener showAllExpAction = new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                mainFrame.getGlobalNavigationPanel().getGlobalNavigationGlassPane().setShowAllPanel(
+                                                                                                    getAllCategoryPanel());
+            }
+        };
+        addShowAllLink(panel, showAllExpAction);
+        return panel;
     }
 
     /**
+     * This method returns panel with all popular categories from database 
+     * @return
+     */
+    private ShowAllPanel getAllCategoryPanel() {
+        Vector<Category> allPopularCategories = CommonUtils.getPopularSearchCategories();
+        final Object objData[][] = new Object[allPopularCategories.size()][6];
+        final String headers[] = { ShowAllCategoryPanel.CATEGORY_NAME_TITLE, ShowAllCategoryPanel.CATEGORY_DESCRIPTION_TITLE, ShowAllCategoryPanel.CATEGORY_POPULARITY_TITLE, ShowAllCategoryPanel.CATEGORY_DATE_TITLE, " Category ID-Hidden" };
+        int i = 0;
+        for (Category category : allPopularCategories) {
+            objData[i][0] = category.getCategoryEntity().getName();
+            objData[i][1] = category.getCategoryEntity().getDescription();
+            objData[i][2] = 0;
+            objData[i][3] = category.getCategoryEntity().getLastUpdated();
+            objData[i][4] = category;
+            i++;
+        }
+        return new ShowAllCategoryPanel(headers, objData);
+    }
+
+    /**
+     * Method to add show all link to panel
+     * @param panel
+     * @param actionClass
+     */
+    private void addShowAllLink(Cab2bPanel panel, ActionListener actionClass) {
+        Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
+        CommonUtils.setHyperlinkProperties(hyperlink, null, SHOW_ALL_LINK, "", actionClass);
+        panel.add("br right", hyperlink);
+    }
+
+    /**
+     * This method returns panel with recently saved five experiments from database.
+     * TODO: Currently getting all experiments from database also have to update code for 
+     * userbase fetaching of experiments 
      * @param data
      */
-    public void setDataForMyExperimentsPanel(Vector<Experiment> data) {
-        myExperimentsPanel.removeAll();
-        myExperimentsPanel.add(new Cab2bLabel());
+    private Cab2bPanel getLatestExperimentsPanel(Vector<Experiment> data, ActionListener actionListener) {
+        Cab2bPanel panel = new Cab2bPanel();
+        panel.setLayout(new RiverLayout(10, 5));
+        panel.add(new Cab2bLabel());
+        Cab2bHyperlink hyperlink = null;
         for (Experiment experiment : data) {
-            String hyperlinkName = experiment.getName();
-            Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
-            hyperlink.setClickedColor(CLICKED_COLOR);
-            hyperlink.setUnclickedColor(UNCLICKED_COLOR);
-            hyperlink.setUserObject(experiment);
-            hyperlink.setText(hyperlinkName);
-            hyperlink.setToolTipText(experiment.getDescription());
-            hyperlink.addActionListener(new ExperimentHyperlinkActionListener());
-            myExperimentsPanel.add("br", hyperlink);
+            hyperlink = new Cab2bHyperlink(true);
+            CommonUtils.setHyperlinkProperties(hyperlink, experiment, experiment.getName(),
+                                               experiment.getDescription(), actionListener);
+            panel.add("br", hyperlink);
         }
-        myExperimentsPanel.revalidate();
+
+        ActionListener showAllExpAction = new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                mainFrame.getGlobalNavigationPanel().getGlobalNavigationGlassPane().setExperimentHomePanel();
+            }
+        };
+
+        addShowAllLink(panel, showAllExpAction);
+        return panel;
     }
 
     /**
      * Homepage Experiment Link action listener class
+     * 
      * @author deepak_shingan
-     *
+     * 
      */
     class ExperimentHyperlinkActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
@@ -147,25 +197,13 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
 
     /**
      * Homepage Category Link action listener class
+     * 
      * @author deepak_shingan
-     *
+     * 
      */
     class CategoryHyperlinkActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            Cab2bHyperlink hyperLink = (Cab2bHyperlink) e.getSource();
-            MainSearchPanel mainSearchPanel = null;
-            if (GlobalNavigationPanel.getMainSearchPanel() == null)
-                mainSearchPanel = new MainSearchPanel();
-            GlobalNavigationPanel.setMainSearchPanel(mainSearchPanel);
-            mainSearchPanel.getSearchNavigationPanel().setAddLimitPanelInWizard();
-            AddLimitPanel addLimitPanel = mainSearchPanel.getCenterPanel().getAddLimitPanel();
-            addLimitPanel.getSearchResultPanel().updateAddLimitPage(
-                                                                    addLimitPanel,
-                                                                    ((Category) hyperLink.getUserObject()).getCategoryEntity());
-
-            CommonUtils.launchSearchDataWizard();
-            updateUI();
+            ShowAllCategoryPanel.categoryLinkAction((Category) ((Cab2bHyperlink) e.getSource()).getUserObject());
         }
     }
-
 }
