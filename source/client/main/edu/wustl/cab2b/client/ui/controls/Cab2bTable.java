@@ -25,26 +25,26 @@ import org.jdesktop.swingx.table.ColumnHeaderRenderer;
 public class Cab2bTable extends JXTable {
     private static final long serialVersionUID = 1L;
 
-    boolean m_showCheckBox;
+    boolean showCheckBox;
 
     public Cab2bTable(boolean showCheckBox, Object[][] data, Object[] headers) {
         super(new Cab2bDefaultTableModel(showCheckBox, data, headers));
-        m_showCheckBox = showCheckBox;
+        this.showCheckBox = showCheckBox;
         initUI();
     }
-    
+
     public Cab2bTable(TableModel tableModel) {
         super(tableModel);
         initUI();
     }
-    
+
     public Cab2bTable() {
         super();
         initUI();
-    }
+    }    
 
     private void initUI() {
-        if (true == m_showCheckBox) {
+        if (true == showCheckBox) {
             // Create an ItemListener
             HeaderItemListener itemListener = new HeaderItemListener((Cab2bDefaultTableModel) this.getModel());
             this.getColumnModel().getColumn(0).setHeaderRenderer(new Cab2bCheckBoxHeader(itemListener));
@@ -60,19 +60,19 @@ public class Cab2bTable extends JXTable {
         this.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
         this.setRowHeight(23);
         this.getTableHeader().setReorderingAllowed(false);
-        ((ColumnHeaderRenderer)this.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.LEFT);
+        ((ColumnHeaderRenderer) this.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.LEFT);
         this.packAll();
     }
 
     public Cab2bTable(boolean showCheckBox, Vector data, Vector headers) {
         super(new Cab2bDefaultTableModel(showCheckBox, data, headers));
 
-        m_showCheckBox = showCheckBox;
+        showCheckBox = showCheckBox;
         initUI();
     }
 
     public int[] getSelectedRows() {
-        if (m_showCheckBox) {
+        if (showCheckBox) {
             Vector<Integer> values = ((Cab2bDefaultTableModel) this.getModel()).getCheckedRowIndexes();
             int[] indexes = new int[values.size()];
             for (int i = 0; i < values.size(); i++)
@@ -82,7 +82,7 @@ public class Cab2bTable extends JXTable {
             return super.getSelectedRows();
         }
     }
-    
+
     public void setTableHeaderBold() {
         JTableHeader header = getTableHeader();
         final Font boldFont = header.getFont().deriveFont(Font.BOLD);
@@ -106,7 +106,7 @@ public class Cab2bTable extends JXTable {
         Object[][] data = { { "sddsdsgd gfgfd ", "dfdgf hgghfhg hghg" }, { "<a href=\"http://google.com\">fshjfsdjghdljkgh  fddddddddddddddddddddd dddd klfjhkldjhlkfdhigjhlfgjhlgfhjg", "22" }, { "111", "222" } };
         Object[] headers = { "first", "second" };
 
-        Cab2bTable cab2bTable = new Cab2bTable(true, data, headers);
+        Cab2bTable cab2bTable = new Cab2bTable(true, data,headers );
         cab2bTable.setEditable(true);
         // myTable.set
         JFrame frame = new JFrame("New Frame");
