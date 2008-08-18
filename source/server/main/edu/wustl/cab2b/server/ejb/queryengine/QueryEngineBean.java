@@ -10,6 +10,7 @@ import org.hibernate.HibernateException;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.queryengine.Cab2bQueryBizLogic;
 import edu.wustl.cab2b.server.queryengine.QueryExecutor;
@@ -22,14 +23,13 @@ import edu.wustl.common.util.dbManager.HibernateUtility;
  * @author chetan_patil
  */
 public class QueryEngineBean extends AbstractStatelessSessionBean implements QueryEngineBusinessInterface {
-
     private static final long serialVersionUID = 8416841912609836063L;
 
     /*
      * (non-Javadoc)
      * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#executeQuery(edu.wustl.cab2b.common.queryengine.ICab2bQuery, org.globus.gsi.GlobusCredential)
      */
-    public IQueryResult executeQuery(ICab2bQuery query, GlobusCredential cred) {
+    public IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, GlobusCredential cred) {
         return new QueryExecutor(query, cred).executeQuery();
     }
 
