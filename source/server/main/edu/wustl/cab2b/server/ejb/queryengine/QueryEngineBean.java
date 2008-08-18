@@ -8,7 +8,6 @@ import org.globus.gsi.GlobusCredential;
 import org.hibernate.HibernateException;
 
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
-import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
@@ -17,30 +16,59 @@ import edu.wustl.cab2b.server.queryengine.QueryExecutor;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.util.dbManager.HibernateUtility;
 
+/**
+ * This class implements all the query related operations like execution, and database related actions.  
+ * 
+ * @author chetan_patil
+ */
 public class QueryEngineBean extends AbstractStatelessSessionBean implements QueryEngineBusinessInterface {
 
     private static final long serialVersionUID = 8416841912609836063L;
 
+    /*
+     * (non-Javadoc)
+     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#executeQuery(edu.wustl.cab2b.common.queryengine.ICab2bQuery, org.globus.gsi.GlobusCredential)
+     */
     public IQueryResult executeQuery(ICab2bQuery query, GlobusCredential cred) {
         return new QueryExecutor(query, cred).executeQuery();
     }
 
-    public void saveQuery(ICab2bParameterizedQuery query) throws RemoteException {
+    /*
+     * (non-Javadoc)
+     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#saveQuery(edu.wustl.cab2b.common.queryengine.ICab2bQuery)
+     */
+    public void saveQuery(ICab2bQuery query) throws RemoteException {
         new Cab2bQueryBizLogic().saveQuery(query);
     }
 
-    public void updateQuery(ICab2bParameterizedQuery query) throws RemoteException {
+    /*
+     * (non-Javadoc)
+     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#updateQuery(edu.wustl.cab2b.common.queryengine.ICab2bQuery)
+     */
+    public void updateQuery(ICab2bQuery query) throws RemoteException {
         new Cab2bQueryBizLogic().updateQuery(query);
     }
 
-    public ICab2bParameterizedQuery retrieveQueryById(Long queryId) throws RemoteException {
-        return (ICab2bParameterizedQuery) new Cab2bQueryBizLogic().getQueryById(queryId);
+    /*
+     * (non-Javadoc)
+     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#retrieveQueryById(java.lang.Long)
+     */
+    public ICab2bQuery retrieveQueryById(Long queryId) throws RemoteException {
+        return (ICab2bQuery) new Cab2bQueryBizLogic().getQueryById(queryId);
     }
 
-    public List<ICab2bParameterizedQuery> retrieveAllQueries() throws RemoteException {
+    /*
+     * (non-Javadoc)
+     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#retrieveAllQueries()
+     */
+    public List<ICab2bQuery> retrieveAllQueries() throws RemoteException {
         return new Cab2bQueryBizLogic().getAllQueries();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#getAllQueryNameAndDescription()
+     */
     public Collection<IParameterizedQuery> getAllQueryNameAndDescription() throws RemoteException {
         try {
             return HibernateUtility.executeHQL(HibernateUtility.GET_PARAMETERIZED_QUERIES_DETAILS);
@@ -49,6 +77,10 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#isQueryNameDuplicate(java.lang.String)
+     */
     public boolean isQueryNameDuplicate(String queryName) throws RemoteException {
         boolean isDuplicate = false;
         try {
