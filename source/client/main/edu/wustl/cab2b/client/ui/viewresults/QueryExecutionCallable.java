@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.apache.log4j.Logger;
+
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.query.ClientQueryBuilder;
@@ -19,13 +21,14 @@ import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.cab2b.server.queryengine.QueryExecutor;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
-import edu.wustl.common.util.logger.Logger;
 
 public class QueryExecutionCallable implements Callable<QueryResultObject> {
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(QueryExecutor.class);
 
     private IDataRow m_sourceEntity;
 
@@ -74,7 +77,7 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
         List<String> operators = Collections.singletonList("Equals");
         List<List<String>> values = new ArrayList<List<String>>();
         values.add(Collections.singletonList(m_sourceEntity.getId()));
-        
+
         int sourceExpressionID = queryObject.addRule(attributes, operators, values, idAttribute.getEntity());
 
         /* Get the source expression id. Needed to add the path.*/
@@ -102,19 +105,19 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
                 exCyclic.printStackTrace();
             } catch (RemoteException e) {
                 //TODO Handle it properly
-                Logger.out.error("Error in setting output URL :" + e.getMessage());
+                logger.error("Error in setting output URL :" + e.getMessage());
                 return null;
             }
-           
+
         }
         IQueryResult<IRecord> relatedQueryResults = null;
         try {
             relatedQueryResults = CommonUtils.executeQuery((ICab2bQuery) queryObject.getQuery(), m_queryEngineBus);
         } catch (RuntimeException e) {
-            Logger.out.error("Error in exeuting query :" + e.getMessage());
+            logger.error("Error in exeuting query :" + e.getMessage());
             return null;
         } catch (RemoteException e) {
-            Logger.out.error("Error in exeuting query :" + e.getMessage());
+            logger.error("Error in exeuting query :" + e.getMessage());
             return null;
         }
 
@@ -123,7 +126,7 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
         for (String url : allRecords.keySet()) {
             List<IRecord> results = allRecords.get(url);
             for (IRecord record : results) {
-                DataRow dataRow = new DataRow(record,relatedQueryResults.getOutputEntity());
+                DataRow dataRow = new DataRow(record, relatedQueryResults.getOutputEntity());
                 dataRow.setParent(m_sourceEntity);
                 dataRow.setAssociation(m_destinationEntity.getAssociation());
                 dataRows.add(dataRow);
