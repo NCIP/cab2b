@@ -4,6 +4,7 @@ import java.util.Comparator;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.beans.MatchedClassEntry.MatchCause;
+import edu.wustl.cab2b.common.util.EntityInterfaceComparator;
 import edu.wustl.cab2b.common.util.Utility;
 
 /**
@@ -27,39 +28,18 @@ import edu.wustl.cab2b.common.util.Utility;
  * @author rahul_ner
  */
 public class MatchedClassEntryCompator implements Comparator<MatchedClassEntry> {
-
-    private static final int NOT_A_CATEGORY = 2;
-
     /**
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
     public int compare(MatchedClassEntry entry1, MatchedClassEntry entry2) {
-
-        int result = compareForCategory(entry1, entry2);
-        return result == NOT_A_CATEGORY ? compareEntityName(entry1, entry2) : result;
-    }
-
-    /**
-     * @param entry1
-     * @param entry2
-     * @return
-     */
-    private int compareForCategory(MatchedClassEntry entry1, MatchedClassEntry entry2) {
         EntityInterface entity1 = entry1.getMatchedEntity();
         EntityInterface entity2 = entry2.getMatchedEntity();
-        String className1 = edu.wustl.common.util.Utility.parseClassName(entity1.getName());
-        String className2 = edu.wustl.common.util.Utility.parseClassName(entity2.getName());
         // If both the entities are categories then compare their names and return values accordingly
-        if ((true == Utility.isCategory(entity1)) && (true == Utility.isCategory(entity2))) {
-            return (className1.compareToIgnoreCase(className2));
-        } else if (true == Utility.isCategory(entity1)) { // if first entity is category return it as smaller one
-            return -1;
-        } else if (true == Utility.isCategory(entity2)) { // else return as greater one
-            return 1;
+        if(Utility.isCategory(entity1) || Utility.isCategory(entity2)) {
+            return new EntityInterfaceComparator().compare(entity1, entity2);
         } else {
-            return NOT_A_CATEGORY;
+            return compareEntityName(entry1, entry2);
         }
-
     }
 
     /**
