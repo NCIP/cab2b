@@ -27,6 +27,11 @@ import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
 
+/**
+ *  
+ * @author atul_jawale
+ * 
+ */
 public class DataCategoryOperations extends DefaultBizLogic {
 
     /**
@@ -50,10 +55,6 @@ public class DataCategoryOperations extends DefaultBizLogic {
         }
     }
 
-    
-    
-    
-    
     /**
      * Returns all the datacategories availble in the system.
      * 
@@ -67,12 +68,10 @@ public class DataCategoryOperations extends DefaultBizLogic {
             throw new RuntimeException("Error in fetching category", e, ErrorCodeConstants.CATEGORY_RETRIEVE_ERROR);
         }
         for (DataCategory dataCategory : allCategories) {
-           postRetrievalProcess(dataCategory, EntityCache.getInstance(), connection);
+            postRetrievalProcess(dataCategory, EntityCache.getInstance(), connection);
         }
         return allCategories;
     }
-    
-   
 
     /**
      * @param categoryId Id of the category
@@ -107,38 +106,6 @@ public class DataCategoryOperations extends DefaultBizLogic {
         return (DataCategory) dataCategories.get(0);
     }
 
-    /**
-     * @param category Input Category for which all source classes are to be
-     *            found.
-     * @return Set of all entities present in given categoty.
-     */
-    public Set<EntityInterface> getAllSourceClasses(Category category) {
-        Set<Long> idSet = new HashSet<Long>();
-        CategorialClass rootCategorialClass = category.getRootClass();
-        idSet.add(rootCategorialClass.getDeEntityId());
-        getDeEntityIdsOfChildren(rootCategorialClass, idSet);
-        EntityCache cache = EntityCache.getInstance();
-        Set<EntityInterface> entities = new HashSet<EntityInterface>(idSet.size());
-        for (Long id : idSet) {
-            entities.add(cache.getEntityById(id));
-        }
-        return entities;
-    }
-
-    /**
-     * @param parentCategorialClass Parent Categorial Class
-     * @param idSet Set of all Source entity Ids present in the children of
-     *            given param.
-     */
-    private void getDeEntityIdsOfChildren(CategorialClass parentCategorialClass, Set<Long> idSet) {
-
-        for (CategorialClass categorialClass : parentCategorialClass.getChildren()) {
-            idSet.add(categorialClass.getDeEntityId());
-            getDeEntityIdsOfChildren(categorialClass, idSet);
-        }
-
-    }
-
     private void postRetrievalProcess(DataCategory category, EntityCache cache, Connection con) {
         processCategorialClass(category.getRootClass(), cache, con);
         for (DataCategory subCategory : category.getSubCategories()) {
@@ -157,15 +124,15 @@ public class DataCategoryOperations extends DefaultBizLogic {
         EntityInterface entity = cache.getEntityById(deEntityId);
         categorialClass.setCategorialClassEntity(entity);
         DataCategory category = categorialClass.getCategory();
-        Set<DataCategorialAttribute> dataCategorialAttributeSet =categorialClass.getCategorialAttributeCollection();
+        Set<DataCategorialAttribute> dataCategorialAttributeSet = categorialClass.getCategorialAttributeCollection();
         for (DataCategorialAttribute attribute : dataCategorialAttributeSet) {
             long srcClassAttributeId = attribute.getDeSourceClassAttributeId();
             AttributeInterface attributeOfSrcClass = entity.getAttributeByIdentifier(srcClassAttributeId);
             attribute.setSourceClassAttribute(attributeOfSrcClass);
 
-//            long categoryEntityAttributeId = attribute.getDeCategoryAttributeId();
-//            AttributeInterface attributeOfCategoryEntity = categoryEntity.getAttributeByIdentifier(categoryEntityAttributeId);
-//            attribute.setCategoryAttribute(attributeOfCategoryEntity);
+            //            long categoryEntityAttributeId = attribute.getDeCategoryAttributeId();
+            //            AttributeInterface attributeOfCategoryEntity = categoryEntity.getAttributeByIdentifier(categoryEntityAttributeId);
+            //            attribute.setCategoryAttribute(attributeOfCategoryEntity);
         }
 
         for (DataCategorialClass child : categorialClass.getChildren()) {
@@ -196,7 +163,6 @@ public class DataCategoryOperations extends DefaultBizLogic {
         return categoryEntities;
     }
 
-   
     /**
      * @param category Input Category for which all source attributes are to be
      *            found.
@@ -230,7 +196,5 @@ public class DataCategoryOperations extends DefaultBizLogic {
         }
         return attributeSet;
     }
-    
-    
-    
+
 }
