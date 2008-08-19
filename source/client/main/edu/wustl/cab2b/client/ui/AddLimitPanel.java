@@ -1,14 +1,5 @@
 package edu.wustl.cab2b.client.ui;
 
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.LIMIT_CONNECT_DESELECTED;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.LIMIT_CONNECT_SELECTED;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.PAPER_GRID_ADD_LIMIT;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.PARENTHISIS_ICON_ADD_LIMIT;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.PARENTHISIS_ICON_ADD_LIMIT_MOUSEOVER;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.PORT_IMAGE_ADD_LIMIT;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.SELECT_ICON_ADD_LIMIT;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.SELECT_ICON_ADD_LIMIT_MOUSEOVER;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -19,7 +10,6 @@ import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +21,6 @@ import javax.swing.border.EmptyBorder;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
-import org.openide.util.Utilities;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -57,7 +46,8 @@ import edu.wustl.common.querysuite.queryobject.RelationalOperator;
  * class is also an instance of the {@link ContentPanel},so that child
  * component can cause this searchPanel to refresh in a way required by this searchPanel.
  * 
- * @author mahesh_iyer / Deepak_Shingan 
+ * @author mahesh_iyer 
+ * @author Deepak_Shingan 
  */
 public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInterface {
     private static final long serialVersionUID = 1L;
@@ -140,15 +130,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
         m_bottomCenterPanel.setTitlePainter(new BasicGradientPainter(gp));
 
         // Generate ImageMap
-        Map<DagImages, Image> imageMap = new HashMap<DagImages, Image>();
-        imageMap.put(DagImages.SelectIcon, Utilities.loadImage(SELECT_ICON_ADD_LIMIT));
-        imageMap.put(DagImages.selectMOIcon, Utilities.loadImage(SELECT_ICON_ADD_LIMIT_MOUSEOVER));
-        imageMap.put(DagImages.ArrowSelectIcon, Utilities.loadImage(LIMIT_CONNECT_DESELECTED));
-        imageMap.put(DagImages.ArrowSelectMOIcon, Utilities.loadImage(LIMIT_CONNECT_SELECTED));
-        imageMap.put(DagImages.ParenthesisIcon, Utilities.loadImage(PARENTHISIS_ICON_ADD_LIMIT));
-        imageMap.put(DagImages.ParenthesisMOIcon, Utilities.loadImage(PARENTHISIS_ICON_ADD_LIMIT_MOUSEOVER));
-        imageMap.put(DagImages.DocumentPaperIcon, Utilities.loadImage(PAPER_GRID_ADD_LIMIT));
-        imageMap.put(DagImages.PortImageIcon, Utilities.loadImage(PORT_IMAGE_ADD_LIMIT));
+        Map<DagImages, Image> imageMap = CommonUtils.getDagImageMap();
 
         IPathFinder pathFinder = new ClientPathFinder();
         mainDagPanel = new MainDagPanel(this, imageMap, pathFinder, false);
