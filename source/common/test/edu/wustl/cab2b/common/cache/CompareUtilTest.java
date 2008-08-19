@@ -106,25 +106,25 @@ public class CompareUtilTest extends TestCase {
     public void testCompareSemanticPropertyNullConceptCode() {
         SemanticPropertyInterface cachedSP = getSP(null);
         SemanticPropertyInterface patternSP = getSP(null);
-        assertEquals(-1,CompareUtil.compare(cachedSP, patternSP));
+        assertEquals(-1,CompareUtil.SemanticPropertyCollectionComparator.compare(patternSP,cachedSP));
     }
 
     public void testCompareSemanticPropertyWithConceptCode() {
         SemanticPropertyInterface cachedSP = getSP("C23456");
         SemanticPropertyInterface patternSP = getSP("45");
-        assertEquals(3,CompareUtil.compare(cachedSP, patternSP));
+        assertEquals(3,CompareUtil.SemanticPropertyCollectionComparator.compare(patternSP,cachedSP));
     }
 
     public void testCompareSemanticPropertyWithConceptCodeNotMatch() {
         SemanticPropertyInterface cachedSP = getSP("C23456");
         SemanticPropertyInterface patternSP = getSP("88");
-        assertEquals(-1,CompareUtil.compare(cachedSP, patternSP));
+        assertEquals(-1,CompareUtil.SemanticPropertyCollectionComparator.compare(patternSP,cachedSP));
     }
 
     public void testCompareSemanticPropertyNoConceptCodeForPattern() {
         SemanticPropertyInterface cachedSP = getSP("C23456");
         SemanticPropertyInterface patternSP = getSP(null);
-        assertEquals(-1,CompareUtil.compare(cachedSP, patternSP));
+        assertEquals(-1,CompareUtil.SemanticPropertyCollectionComparator.compare(patternSP,cachedSP));
     }
 
     private static SemanticPropertyInterface getSP(String conceptCode) {
