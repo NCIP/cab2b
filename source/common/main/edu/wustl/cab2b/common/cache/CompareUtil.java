@@ -1,6 +1,9 @@
 package edu.wustl.cab2b.common.cache;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -15,7 +18,22 @@ import edu.wustl.cab2b.common.util.Utility;
  * @author Rahul Ner
  */
 public class CompareUtil {
-
+    private static final Map<MatchCause, MetadataSearchComparator> causeVsComparator;
+    
+    static {
+        StringComparator strComparator = new StringComparator();
+        SemanticPropertyCollectionComparator semPropCmp = new SemanticPropertyCollectionComparator();
+        
+        causeVsComparator = new HashMap<MatchCause, MetadataSearchComparator>();
+        causeVsComparator.put(MatchCause.EntityName, strComparator);
+        causeVsComparator.put(MatchCause.EntityDescription, strComparator);
+        causeVsComparator.put(MatchCause.EntitySemanticProperty, semPropCmp);
+        causeVsComparator.put(MatchCause.AttributeName, strComparator);
+        causeVsComparator.put(MatchCause.AttributeDescription, strComparator);
+        causeVsComparator.put(MatchCause.AttributeSemanticProperty, semPropCmp);
+        causeVsComparator.put(MatchCause.PermissibleValueName, strComparator);
+        causeVsComparator.put(MatchCause.PermissibleSemanticProperty, semPropCmp);
+    }
     /**
      * Compares given pattern entity with the cachedEntity in following order
      *   1. Name
@@ -26,74 +44,19 @@ public class CompareUtil {
      * sort the entire search result
      * @param cachedEntity
      * @param patternEntity
-     * @return
+     * @return The MatchedClassEntry
      */
     public static MatchedClassEntry compare(EntityInterface cachedEntity, EntityInterface patternEntity) {
-        MatchedClassEntry matchedClassEntry = null;
-        int index = -1;
-
-        if (patternEntity.getName() != null && cachedEntity.getName() != null) {
-            String patternName = patternEntity.getName();
-            String className = cachedEntity.getName();
-            String onlyClassName = className.substring(className.lastIndexOf(".") + 1, className.length());
-
-            index = Utility.indexOfRegEx(patternName, onlyClassName);
-            if (index != -1) {
-                matchedClassEntry = new MatchedClassEntry(cachedEntity);
-                matchedClassEntry.setPositionOf(MatchCause.EntityName,index);
-            }
-        }
-
-        if (matchedClassEntry == null && patternEntity.getDescription() != null
-                && cachedEntity.getDescription() != null) {
-            String patternDescription = patternEntity.getDescription();
-
-            index = Utility.indexOfRegEx(patternDescription, cachedEntity.getDescription());
-            if (index != -1) {
-                matchedClassEntry = new MatchedClassEntry(cachedEntity);
-                matchedClassEntry.setPositionOf(MatchCause.EntityDescription,index);
-            }
-        }
-
-        if (matchedClassEntry == null) {
-            index = compare(cachedEntity.getSemanticPropertyCollection(),
-                            patternEntity.getSemanticPropertyCollection());
-
-            if (index != -1) {
-                matchedClassEntry = new MatchedClassEntry(cachedEntity);
-                matchedClassEntry.setPositionOf(MatchCause.EntitySemanticProperty,index);
-            }
-
-        }
-
-        return matchedClassEntry;
+        LinkedHashMap<MatchCause, OrderedPair> map = new LinkedHashMap<MatchCause, OrderedPair>();
+        map.put(MatchCause.EntityName, new OrderedPair(patternEntity.getName(), getOnlyClassName(cachedEntity)));
+        map.put(MatchCause.EntityDescription, new OrderedPair(patternEntity.getDescription(),
+                cachedEntity.getDescription()));
+        map.put(MatchCause.EntitySemanticProperty, new OrderedPair(patternEntity.getSemanticPropertyCollection(),
+                cachedEntity.getSemanticPropertyCollection()));
+        return findMatch(map, cachedEntity);
     }
-
     /**
-     * Compares given pattern SemanticProperty with the Cached SemanticProperty for the concept code
-     * If it matched, return the position where the match was found.
-     * @param cachedSemanticProperty
-     * @param patternSemanticProperty
-     * @return
-     */
-    public static int compare(SemanticPropertyInterface cachedSemanticProperty,
-                              SemanticPropertyInterface patternSemanticProperty) {
-        int index = -1;
-        if (cachedSemanticProperty.getConceptCode() != null) {
-            // TODO this null check is bcoz caTissue
-            // has some permissible values without
-            // concept codes. This will never be the case with models from cDSR
-            if (patternSemanticProperty.getConceptCode() != null) {
-                String patternConceptCode = patternSemanticProperty.getConceptCode();
-
-                index = Utility.indexOfRegEx(patternConceptCode, cachedSemanticProperty.getConceptCode());
-            }
-        }
-        return index;
-    }
-
-    /**
-     * Comapares given pattern attribute with the cached attribute in following order
+     * Compares given pattern attribute with the cached attribute in following order
      *   1. Name
      *   2. Description
      *   3. SemanticProperty
@@ -101,115 +64,151 @@ public class CompareUtil {
      * The position where the match was found is set into the  {@link MatchedClassEntry}. It is used to 
      * sort the entire search result
      * 
-     * @param cachedAttribute
-     * @param patternAttribute
-     * @return
+     * @param cachedAttr cached Attribute
+     * @param patternAttr pattern Attribute
+     * @return  The MatchedClassEntry
      */
-    public static MatchedClassEntry compare(AttributeInterface cachedAttribute, AttributeInterface patternAttribute) {
-        MatchedClassEntry matchedClassEntry = null;
-        int index = -1;
-
-        if (patternAttribute.getName() != null && cachedAttribute.getName() != null) {
-            String patternName = patternAttribute.getName();
-
-            index = Utility.indexOfRegEx(patternName, cachedAttribute.getName());
-            if (index != -1) {
-                matchedClassEntry = new MatchedClassEntry(cachedAttribute.getEntity());
-                matchedClassEntry.setPositionOf(MatchCause.AttributeName,index);
-            }
-
-        }
-
-        if (matchedClassEntry == null && patternAttribute.getDescription() != null
-                && cachedAttribute.getDescription() != null) {
-            String patternDescription = patternAttribute.getDescription();
-
-            index = Utility.indexOfRegEx(patternDescription, cachedAttribute.getDescription());
-            if (index != -1) {
-                matchedClassEntry = new MatchedClassEntry(cachedAttribute.getEntity());
-                matchedClassEntry.setPositionOf(MatchCause.AttributeDescription,index);
-            }
-        }
-
-        if (matchedClassEntry == null) {
-            index = compare(cachedAttribute.getSemanticPropertyCollection(),
-                            patternAttribute.getSemanticPropertyCollection());
-
-            if (index != -1) {
-                matchedClassEntry = new MatchedClassEntry(cachedAttribute.getEntity());
-                matchedClassEntry.setPositionOf(MatchCause.AttributeSemanticProperty,index);
-            }
-
-        }
-        return matchedClassEntry;
+    public static MatchedClassEntry compare(AttributeInterface cachedAttr, AttributeInterface patternAttr) {
+        LinkedHashMap<MatchCause, OrderedPair> map = new LinkedHashMap<MatchCause, OrderedPair>();
+        map.put(MatchCause.AttributeName, new OrderedPair(patternAttr.getName(), cachedAttr.getName()));
+        map.put(MatchCause.AttributeDescription, new OrderedPair(patternAttr.getDescription(),
+                cachedAttr.getDescription()));
+        map.put(MatchCause.AttributeSemanticProperty, new OrderedPair(patternAttr.getSemanticPropertyCollection(),
+                cachedAttr.getSemanticPropertyCollection()));
+        return findMatch(map, cachedAttr.getEntity());
     }
 
     /**
-     * Compares given pattern SemanticProperties with the cached SemanticProperties.
-     * returns the position of first matched concept code. 
-     * @param cachedProperties
-     * @param patternProperties
-     * @return
-     */
-    private static int compare(Collection<SemanticPropertyInterface> cachedProperties,
-                               Collection<SemanticPropertyInterface> patternProperties) {
-        int index = -1;
-
-        if (patternProperties != null && cachedProperties != null) {
-
-            for (SemanticPropertyInterface patternSemanticProperty : patternProperties) {
-                for (SemanticPropertyInterface cachedSemanticProperty : cachedProperties) {
-                    index = compare(cachedSemanticProperty, patternSemanticProperty);
-                    if (index != -1) {
-                        break;
-                    }
-                }
-            }
-        }
-        return index;
-    }
-
-    /**
-     * Comapares given pattern PermissibleValue with the cached PermissibleValue in following order
+     * Compares given pattern PermissibleValue with the cached PermissibleValue in following order
      *   1. Name
      *   2. SemanticProperty
      * If any of the above field matches then, {@link MatchedClassEntry} is created for the entity of that PermissibleValue.
      * The position where the match was found is set into the  {@link MatchedClassEntry}. It is used to 
      * sort the entire search result     
-     * @param cachedPermissibleValue
-     * @param patternPermissibleValue
+     * @param cachedPv cachedPermissibleValue
+     * @param patternPv patternPermissibleValue
      * @param cachedEntity
-     * @return
+     * @return The MatchedClassEntry
      */
-    public static MatchedClassEntry compare(PermissibleValueInterface cachedPermissibleValue,
-                                            PermissibleValueInterface patternPermissibleValue,
+    public static MatchedClassEntry compare(PermissibleValueInterface cachedPv,
+                                            PermissibleValueInterface patternPv,
                                             EntityInterface cachedEntity) {
-        MatchedClassEntry matchedClassEntry = null;
-        int index = -1;
-
-        if (patternPermissibleValue.getValueAsObject() != null
-                && cachedPermissibleValue.getValueAsObject() != null) {
-            String patternPermissibleString = patternPermissibleValue.getValueAsObject().toString();
-            String cachedPermissibleString = cachedPermissibleValue.getValueAsObject().toString();
-            index = Utility.indexOfRegEx(patternPermissibleString, cachedPermissibleString);
-            if (index != -1) {
-                matchedClassEntry = new MatchedClassEntry(cachedEntity);
-                matchedClassEntry.setPositionOf(MatchCause.PermissibleValueName,index);
-            }
-
-        }
-
-        if (matchedClassEntry == null) {
-            index = compare(cachedPermissibleValue.getSemanticPropertyCollection(),
-                            patternPermissibleValue.getSemanticPropertyCollection());
-
-            if (index != -1) {
-                matchedClassEntry = new MatchedClassEntry(cachedEntity);
-                matchedClassEntry.setPositionOf(MatchCause.PermissibleSemanticProperty,index);
-            }
-
-        }
-        return matchedClassEntry;
+        LinkedHashMap<MatchCause, OrderedPair> map = new LinkedHashMap<MatchCause, OrderedPair>();
+        map.put(MatchCause.PermissibleValueName, new OrderedPair(getString(patternPv),
+                getString(cachedPv)));
+        map.put(MatchCause.PermissibleSemanticProperty, new OrderedPair(
+                patternPv.getSemanticPropertyCollection(),
+                cachedPv.getSemanticPropertyCollection()));
+        return findMatch(map, cachedEntity);
     }
 
+    private static MatchedClassEntry findMatch(LinkedHashMap<MatchCause, OrderedPair> map, EntityInterface cachedEntity) {
+        for (Map.Entry<MatchCause, OrderedPair> entry : map.entrySet()) {
+            MatchCause cause = entry.getKey();
+            OrderedPair pair = entry.getValue(); 
+            int index = causeVsComparator.get(cause).compare(pair.o1, pair.o2);
+            if (index != -1) {
+                MatchedClassEntry matchedClassEntry = new MatchedClassEntry(cachedEntity);
+                matchedClassEntry.setPositionOf(cause, index);
+                return matchedClassEntry;
+            }
+        }
+        return null;
+    }
+    private static String getOnlyClassName(EntityInterface entity) {
+        String className = entity.getName();
+        if (className == null) {
+            return null;
+        }
+        String onlyClassName = className.substring(className.lastIndexOf(".") + 1, className.length());
+        return onlyClassName;
+    }
+    private static String getString(PermissibleValueInterface permissibleValue) {
+        if (permissibleValue.getValueAsObject() == null) { 
+            return null;
+        }
+        return permissibleValue.getValueAsObject().toString();
+    }
+
+    private interface MetadataSearchComparator {
+        int compare(Object o1, Object o2);
+    }
+
+    private static class OrderedPair {
+        private Object o1;
+
+        private Object o2;
+
+        public OrderedPair(Object o1, Object o2) {
+            this.o1 = o1;
+            this.o2 = o2;
+        }
+
+    }
+    private static class StringComparator implements MetadataSearchComparator {
+        public int compare(Object o1, Object o2) {
+            if (o1 == null || o2 == null) {
+                return -1;
+            }
+            return Utility.indexOfRegEx((String) o1, (String) o2);
+        }
+    }
+
+    static class SemanticPropertyCollectionComparator implements MetadataSearchComparator {
+        @SuppressWarnings("unchecked")
+        public int compare(Object o1, Object o2) {
+            if (o1 == null || o2 == null) {
+                return -1;
+            }
+            return compare((Collection<SemanticPropertyInterface>) o1, (Collection<SemanticPropertyInterface>) o2);
+        }
+
+        /**
+         * Compares given pattern SemanticProperties with the cached SemanticProperties.
+         * returns the position of first matched concept code. 
+         * @param cachedProperties
+         * @param patternProperties
+         * @return
+         */
+        static int compare(Collection<SemanticPropertyInterface> patternProperties,
+                                   Collection<SemanticPropertyInterface> cachedProperties) {
+            int index = -1;
+
+            if (patternProperties != null && cachedProperties != null) {
+
+                for (SemanticPropertyInterface patternSemanticProperty : patternProperties) {
+                    for (SemanticPropertyInterface cachedSemanticProperty : cachedProperties) {
+                        index = compare(patternSemanticProperty, cachedSemanticProperty);
+                        if (index != -1) {
+                            break;
+                        }
+                    }
+                }
+            }
+            return index;
+        }
+
+        /**
+         * Compares given pattern SemanticProperty with the Cached SemanticProperty for the concept code
+         * If it matched, return the position where the match was found.
+         * @param cachedSemanticProperty
+         * @param patternSemanticProperty
+         * @return
+         */
+        static int compare(SemanticPropertyInterface patternSemanticProperty,
+                                   SemanticPropertyInterface cachedSemanticProperty) {
+            int index = -1;
+            if (cachedSemanticProperty.getConceptCode() != null) {
+                // TODO this null check is bcoz caTissue
+                // has some permissible values without
+                // concept codes. This will never be the case with models from cDSR
+                if (patternSemanticProperty.getConceptCode() != null) {
+                    String patternConceptCode = patternSemanticProperty.getConceptCode();
+
+                    index = Utility.indexOfRegEx(patternConceptCode, cachedSemanticProperty.getConceptCode());
+                }
+            }
+            return index;
+        }
+    }
 }
