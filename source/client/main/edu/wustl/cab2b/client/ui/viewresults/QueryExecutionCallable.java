@@ -21,14 +21,13 @@ import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.cab2b.server.queryengine.QueryExecutor;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 
 public class QueryExecutionCallable implements Callable<QueryResultObject> {
-    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(QueryExecutor.class);
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(QueryExecutionCallable.class);
 
     private IDataRow m_sourceEntity;
 
