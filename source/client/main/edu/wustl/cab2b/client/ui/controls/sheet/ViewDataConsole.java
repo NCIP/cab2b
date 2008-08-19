@@ -1922,10 +1922,10 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
         }
     }
 
-    /** Test Run: Stand alone mode... */
-    public static void main(String[] args) {
-        SheetTestFrame.main(args);
-    }
+//    /** Test Run: Stand alone mode... */
+//    public static void main(String[] args) {
+//        SheetTestFrame.main(args);
+//    }
 
     //
     // Grave-Yard...

@@ -650,9 +650,9 @@ public class JSheet extends javax.swing.JPanel {
 
     // End of variables declaration//GEN-END:variables
 
-    public static void main(String[] args) {
-        SheetTestFrame.main(args);
-    }
+//    public static void main(String[] args) {
+//        SheetTestFrame.main(args);
+//    }
 
     class InternalPCListener implements PropertyChangeListener {
 
