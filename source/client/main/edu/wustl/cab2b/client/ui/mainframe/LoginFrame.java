@@ -268,10 +268,11 @@ public class LoginFrame extends JXFrame {
             }
         });
 
-        Cab2bHyperlink<String> cancelLink = new Cab2bHyperlink<String>(true);
-        cancelLink.setFont(new Font(cancelLink.getFont().getName(), Font.PLAIN, cancelLink.getFont().getSize() + 1));
-        cancelLink.setText("Cancel");
-        cancelLink.addActionListener(new ActionListener() {
+        ImageIcon cancelImage = getImageIcon("cancel_button.gif");
+        JButton cancleButton = new JButton(cancelImage);
+        cancleButton.setBorder(null);
+        cancleButton.setPreferredSize(new Dimension(cancelImage.getIconWidth(), cancelImage.getIconHeight()));
+        cancleButton.addActionListener(new ActionListener() {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
@@ -291,7 +292,7 @@ public class LoginFrame extends JXFrame {
         containerPanel.add("br", new Cab2bLabel());
         containerPanel.add("br tab", loginButton);
         containerPanel.add("tab", new Cab2bLabel("|"));
-        containerPanel.add("tab", cancelLink);
+        containerPanel.add("tab", cancleButton);
 
         JPanel panel = getTransparentPanel();
         panel.setLayout(new BorderLayout(2, 60));
