@@ -6,7 +6,6 @@ import java.sql.SQLException;
 
 import junit.framework.TestCase;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * Test class to test {@link SQLQueryUtil}
@@ -14,15 +13,13 @@ import edu.wustl.common.util.logger.Logger;
  * @author Chandrakant Talele
  */
 public class SQLQueryUtilTest extends TestCase {
-    private static Connection con = TestConnectionUtil.getConnection();
-
     /**
      * @see junit.framework.TestCase#setUp()
      */
     @Override
     protected void setUp() throws Exception {
-        Logger.configure();
         String createTableSQL = "create table TEST_TABLE (ID BIGINT(38) NOT NULL, NAME VARCHAR(10) NULL,PRIMARY KEY (ID))";// insert into TEST_TABLE (ID,NAME) values (1,'ABC'),(2,'GAAL'),(3,'CLASS'),(4,'FOO')";
+        Connection con = TestConnectionUtil.getConnection();
         SQLQueryUtil.executeUpdate(createTableSQL, con);
     }
 
@@ -32,7 +29,7 @@ public class SQLQueryUtilTest extends TestCase {
     public void testSQLQueryUtil() {
         String insertDataSQL = "insert into TEST_TABLE (ID,NAME) values (1,'ABC'),(2,'GAAL'),(3,'CLASS'),(4,'FOO')";
         int res = -1;
-
+        Connection con = TestConnectionUtil.getConnection();
         res = SQLQueryUtil.executeUpdate(insertDataSQL, con);
 
         assertEquals(4, res);
@@ -62,6 +59,7 @@ public class SQLQueryUtilTest extends TestCase {
         String selectSQL = "SELECT * from CAB2B_ID_TABLE WHERE NEXT_ASSOCIATION_ID > ?";
         PreparedStatement pStmt = null;
         try {
+            Connection con = TestConnectionUtil.getConnection();
             pStmt = con.prepareStatement(selectSQL);
             pStmt.setLong(1,1);
         } catch (SQLException e) {
@@ -78,6 +76,7 @@ public class SQLQueryUtilTest extends TestCase {
     public void testExecuteQueryForException() {
         String selectSQL = "SELECT id from ID_TABLE1234 WHERE NEXT_ASSOCIATION_ID > ?";
         PreparedStatement pStmt = null;
+        Connection con = TestConnectionUtil.getConnection();
         try {
             pStmt = con.prepareStatement(selectSQL);
             pStmt.setLong(1,1);
@@ -98,12 +97,12 @@ public class SQLQueryUtilTest extends TestCase {
      */
     @Override
     protected void tearDown() throws Exception {
+        Connection con = TestConnectionUtil.getConnection();
         SQLQueryUtil.executeUpdate("DROP table TEST_TABLE", con);
     }
 
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        TestConnectionUtil.close(con);
     }
 }
