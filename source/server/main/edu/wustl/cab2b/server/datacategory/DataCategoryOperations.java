@@ -3,7 +3,6 @@ package edu.wustl.cab2b.server.datacategory;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -18,8 +17,6 @@ import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.path.PathFinder;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;
-import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
-import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.metadata.path.Path;
@@ -141,60 +138,6 @@ public class DataCategoryOperations extends DefaultBizLogic {
         }
     }
 
-    /**
-     * Returns all the categories which don't have any super category.
-     * 
-     * @return List of root categories.
-     */
-    public List<EntityInterface> getAllRootCategories() {
-        List<Category> allCategories = null;
-        try {
-            allCategories = retrieve(Category.class.getName(), null, new String[] { "parentCategory" },
-                                     new String[] { "is null" }, new Object[0], null);
-        } catch (DAOException e) {
-            throw new RuntimeException("Error in fetching category", e, ErrorCodeConstants.CATEGORY_RETRIEVE_ERROR);
-        }
-        List<EntityInterface> categoryEntities = new ArrayList<EntityInterface>(allCategories.size());
-        EntityCache cache = EntityCache.getInstance();
-        for (Category category : allCategories) {
-            Long categoryEntityId = category.getDeEntityId();
-            categoryEntities.add(cache.getEntityById(categoryEntityId));
-        }
-        return categoryEntities;
-    }
-
-    /**
-     * @param category Input Category for which all source attributes are to be
-     *            found.
-     * @return Set of all source(original) attributes present in given category.
-     */
-    public Set<AttributeInterface> getAllSourceAttributes(Category category) {
-        Set<AttributeInterface> attributeSet = getAllChilrenCategorialClasses(category.getRootClass());
-        return attributeSet;
-
-    }
-
-    /**
-     * Recursive method to traverse the whole tree of CategorialClasses and
-     * collect attributes of each categorial class.
-     * 
-     * @param catClass Root of the categorial class tree
-     * @return Set of all source(original) attributes present in given
-     *         CategorialClass tree.
-     */
-    private Set<AttributeInterface> getAllChilrenCategorialClasses(CategorialClass catClass) {
-        EntityCache cache = EntityCache.getInstance();
-        Set<AttributeInterface> attributeSet = new HashSet<AttributeInterface>();
-        EntityInterface entity = cache.getEntityById(catClass.getDeEntityId());
-        for (CategorialAttribute catAttr : catClass.getCategorialAttributeCollection()) {
-            long attrId = catAttr.getDeSourceClassAttributeId();
-            attributeSet.add(entity.getAttributeByIdentifier(attrId));
-        }
-
-        for (CategorialClass child : catClass.getChildren()) {
-            attributeSet.addAll(getAllChilrenCategorialClasses(child));
-        }
-        return attributeSet;
-    }
-
+    
+   
 }
