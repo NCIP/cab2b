@@ -1,7 +1,6 @@
 package edu.wustl.cab2b.server.util;
 
 import java.math.BigDecimal;
-import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,22 +9,24 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.common.util.logger.Logger;
+
 /**
- * This provides utility methods to execute UPDATE and SELECT type of queries using Datasource.
+ * This provides utility methods to execute UPDATE and SELECT type of queries using Data-source.
  * The SELECT queries can be parameterized.
  * @author Chandrakant Talele
  */
 public class SQLQueryUtil {
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(SQLQueryUtil.class);
     /**
-     * This menthod executes given update SQL and returns either the row count for <br>
+     * This method executes given update SQL and returns either the row count for <br>
      * INSERT, UPDATE or DELETE statements, or 0 for SQL statements that return nothing. 
      * @param sql SQL to execute
+     * @param connection database connection to be used
      * @return Returns the result of execution
-     * @throws RemoteException EJB specific exception.
-     * @throws SQLException If anything goes wrong while executing the SQL
      */
     public static int executeUpdate(String sql, Connection connection) {
         Statement statement = null;
@@ -33,7 +34,7 @@ public class SQLQueryUtil {
 
         try {
             statement = connection.createStatement();
-            Logger.out.debug("Executing the SQL :  " + sql);
+            logger.debug("Executing the SQL :  " + sql);
             result = statement.executeUpdate(sql);
 
         } catch (SQLException e) {
@@ -47,24 +48,23 @@ public class SQLQueryUtil {
      * This method executes the given SELECT SQL query using passes parameters.
      * It uses prepare statement and maintains a static map of those to reuse those if same query is fired again.
      * @param sql The SQL statement.
+     * @param connection database connection to be used
      * @param params All the parameter objects.
      * @return String[][] as result of the query with each row represents one record of result set and 
      * each column in array is a column present in SELECT clause. 
      * The order of columns is same as that present in the passes SQL.   
-     * @throws RemoteException EJB specific exception.
-     * @throws SQLException SQLException if some error occured while executing the SQL statement.
      */
     public static String[][] executeQuery(String sql, Connection connection, Object... params) {
         
         PreparedStatement prepareStatement = null;
         ResultSet rs = null;
-        Logger.out.debug("Executing the SQL :  " + sql);
+        logger.debug("Executing the SQL :  " + sql);
         try {
             prepareStatement = connection.prepareStatement(sql);    
             
             int index = 1;
             for (Object param : params) {
-                Logger.out.debug("Param " + index + " : " + param);
+                logger.debug("Param " + index + " : " + param);
                 if (param instanceof BigDecimal) {
                     prepareStatement.setBigDecimal(index++, (BigDecimal) param);
                 } else if (param instanceof String) {
@@ -76,7 +76,7 @@ public class SQLQueryUtil {
                 } else if (param instanceof Float) {
                     prepareStatement.setFloat(index++, (Float) param);
                 } else {
-                    Logger.out.error("Object Type not identfied for param " + param.toString());
+                    logger.error("Object Type not identfied for param " + param.toString());
                     prepareStatement.setObject(index++, param);
                 }
             }
@@ -88,9 +88,8 @@ public class SQLQueryUtil {
     }
 
     /**
-     * Closes the statement and the connection.
+     * Closes the statement
      * @param statement Statement to be closed.
-     * @param connection Connection to be closed. 
      */
     protected static void close(Statement statement) {
 
@@ -99,7 +98,7 @@ public class SQLQueryUtil {
                 statement.close();
             } catch (SQLException e) {
                 //DO Nothing
-                Logger.out.debug(e.toString());
+                logger.debug(e.toString());
             }
         }
     }
@@ -107,13 +106,10 @@ public class SQLQueryUtil {
     /**
      * This method executes the given SELECT SQL query using passes parameters.
      * It uses prepare statement and maintains a static map of those to reuse those if same query is fired again.
-     * @param sql The SQL statement.
-     * @param params All the parameter objects.
+     * @param prepareStatement prepared statement to execute
      * @return String[][] as result of the query with each row represents one record of result set and 
      * each column in array is a column present in SELECT clause. 
      * The order of columns is same as that present in the passes SQL.   
-     * @throws RemoteException EJB specific exception.
-     * @throws SQLException SQLException if some error occured while executing the SQL statement.
      */
     public static String[][] executeQuery(PreparedStatement prepareStatement) {
         try {
@@ -127,9 +123,9 @@ public class SQLQueryUtil {
     /**
      * @param rs Result set to process
      * @return String[][] created by getting all records of result set
-     * @throws SQLException if some error occured while processing result set
+     * @throws SQLException if some error occurred while processing result set
      */
-    public static String[][] getResult(ResultSet rs) throws SQLException {
+    private static String[][] getResult(ResultSet rs) throws SQLException {
         List<String[]> results = new ArrayList<String[]>();
         int noOfColumns = rs.getMetaData().getColumnCount();
 
