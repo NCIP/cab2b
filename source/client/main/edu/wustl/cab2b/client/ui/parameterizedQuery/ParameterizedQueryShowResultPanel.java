@@ -28,30 +28,55 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
+import edu.wustl.common.querysuite.utils.QueryUtility;
 
 /**
+ * Panel generated for showing parameterized/non-paramerterized conditions when clicked on 
+ * saved query link 
  * @author deepak_shingan
  * 
  */
 public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreviewPanel {
-
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Query data model
+     */
     private ParameterizedQueryDataModel queryDataModel;
 
+    /**
+     * Show result button
+     */
     private Cab2bButton showResultButton;
 
+    /**
+     * Cancel button
+     */
     private Cab2bButton cancelButton;
 
+    /**
+     * Constructor
+     * @param query
+     */
     public ParameterizedQueryShowResultPanel(ICab2bParameterizedQuery query) {
         queryDataModel = new ParameterizedQueryDataModel(query);
         initGUI();
     }
 
+    /**
+     * returns ParameterizedQueryDataModel
+     * @return
+     */
+    public ParameterizedQueryDataModel getQueryDataModel() {
+        return queryDataModel;
+    }
+
+    /* (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryPreviewPanel#getNavigationPanel()
+     */
     @Override
     protected Cab2bPanel getNavigationPanel() {
         if (navigationPanel == null)
@@ -66,6 +91,9 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
         return navigationPanel;
     }
 
+    /* (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryPreviewPanel#initGUI()
+     */
     protected void initGUI() {
         this.setLayout(new BorderLayout());
         bottomConditionPanel = new Cab2bPanel();
@@ -80,7 +108,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
                 dialog.dispose();
             }
         });
-        createShowResultPreviewPanel(queryDataModel.getConditions());
+        createShowResultPreviewPanel(queryDataModel.getConditions(), queryDataModel.getQuery());
         initTopConditionPanel();
         initBottomConditionPanel();
         this.add(getNavigationPanel(), BorderLayout.SOUTH);
@@ -91,44 +119,91 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
      * 
      * @param conditionMap
      */
-    private void createShowResultPreviewPanel(Map<Integer, Collection<ICondition>> conditionMap) {
+    private void createShowResultPreviewPanel(Map<Integer, Collection<ICondition>> conditionMap,
+                                              ICab2bParameterizedQuery cab2bParamQuery) {
         // The following code is executing for StackPanel QueryLink Click
-        AbstractTypePanel componentPanel = null;
         ParseXMLFile parseFile = null;
-
         try {
             parseFile = ParseXMLFile.getInstance();
         } catch (CheckedException checkedException) {
             CommonUtils.handleException(checkedException, this, true, true, false, false);
         }
 
+        Collection<ICondition> conditions = QueryUtility.getAllNonParameteriedConditions(cab2bParamQuery);
+        Collection<ICondition> paramConditions = QueryUtility.getAllParameterizedConditions(cab2bParamQuery);
+        getMaxLabelDimension(conditions, paramConditions);
+
+        addNonParameterizedConditions(conditionMap, conditions, cab2bParamQuery, parseFile);
+        addParameterizedConditions(conditionMap, paramConditions, cab2bParamQuery, parseFile);
+    }
+
+    /**
+     * Method to add non parameterized conditions in show result panel   
+     * @param conditionMap
+     * @param conditions
+     * @param cab2bParamQuery
+     * @param parseFile
+     */
+    private void addNonParameterizedConditions(Map<Integer, Collection<ICondition>> conditionMap,
+                                               Collection<ICondition> conditions,
+                                               ICab2bParameterizedQuery cab2bParamQuery, ParseXMLFile parseFile) {
         try {
-            getMaxLabelDimension(conditionMap);
-            for (Integer key : conditionMap.keySet()) {
-                for (ICondition condition : conditionMap.get(key)) {
-                    componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(parseFile,
-                                                                                        condition.getAttribute(),
-                                                                                        maxLabelDimension);
-                    componentPanel.createPanelWithOperator(condition);
-
-                    if (condition instanceof ParameterizedCondition) {
-
-                        ParameterizedCondition paraCondition = (ParameterizedCondition) condition;
-                        if (topConditionPanel.getComponentCount() < paraCondition.getIndex())
-                            topConditionPanel.add("br ", componentPanel);
-                        else
-                            topConditionPanel.add(componentPanel, "br ",
-                                                  ((ParameterizedCondition) condition).getIndex());
-                    } else {
-                        CommonUtils.disableAllComponent(componentPanel);
-                        bottomConditionPanel.add("br ", componentPanel);
-                    }
-                    componentPanel.setExpressionId(key);
-                }
+            for (ICondition condition : conditions) {
+                AbstractTypePanel componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
+                                                                                                      parseFile,
+                                                                                                      condition.getAttribute(),
+                                                                                                      maxLabelDimension);
+                componentPanel.createPanelWithOperator(condition);
+                componentPanel.setExpressionId(getExpressionIdForCondition(condition, conditionMap));
+                CommonUtils.disableAllComponent(componentPanel);
+                bottomConditionPanel.add("br ", componentPanel);
             }
         } catch (CheckedException checkedException) {
             CommonUtils.handleException(checkedException, this, true, true, false, false);
         }
+    }
+
+    /**
+     * Method to add  parameterized conditions in show result panel
+     * @param conditionMap
+     * @param paramConditions
+     * @param cab2bParamQuery
+     * @param parseFile
+     */
+    private void addParameterizedConditions(Map<Integer, Collection<ICondition>> conditionMap,
+                                            Collection<ICondition> paramConditions,
+                                            ICab2bParameterizedQuery cab2bParamQuery, ParseXMLFile parseFile) {
+        try {
+            for (ICondition condition : paramConditions) {
+                AbstractTypePanel componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
+                                                                                                      parseFile,
+                                                                                                      condition.getAttribute(),
+                                                                                                      maxLabelDimension);
+                componentPanel.createPanelWithOperator(condition);
+                componentPanel.setExpressionId(getExpressionIdForCondition(condition, conditionMap));
+                topConditionPanel.add("br ", componentPanel);
+            }
+        } catch (CheckedException checkedException) {
+            CommonUtils.handleException(checkedException, this, true, true, false, false);
+        }
+    }
+
+    /**
+     * Method to experssion ID for conditions
+     * @param condition
+     * @param conditionMap
+     * @return
+     */
+    private int getExpressionIdForCondition(ICondition condition, Map<Integer, Collection<ICondition>> conditionMap) {
+        int expressionId = 0;
+        for (Integer key : conditionMap.keySet()) {
+            Collection<ICondition> conditions = conditionMap.get(key);
+            if (conditions.contains(condition)) {
+                expressionId = key;
+                break;
+            }
+        }
+        return expressionId;
     }
 
     /**
@@ -164,10 +239,14 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
             bottomPanel.getNextButton().doClick();
 
             // Open the Searcg dialog box
+            // globalNavigationGlassPane.showSearchDialog();
             CommonUtils.launchSearchDataWizard();
             updateUI();
         }
 
+        /* (non-Javadoc)
+         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+         */
         public void actionPerformed(ActionEvent arg0) {
             boolean validCondition = false;
             for (int index = 0; index < topConditionPanel.getComponentCount(); index++) {

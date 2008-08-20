@@ -47,7 +47,6 @@ import edu.wustl.common.tree.ExperimentTreeNode;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author Hrishikesh Rajpathak
@@ -71,7 +70,6 @@ public class ExperimentOperations extends DefaultBizLogic {
      */
     public void addExperiment(Object exp) throws BizLogicException, UserNotAuthorizedException {
         insert(exp, daoType);
-        Logger.out.info("experiment saved Successfully " + ((Experiment) exp).getId());
     }
 
     /**
@@ -91,7 +89,6 @@ public class ExperimentOperations extends DefaultBizLogic {
         ExperimentGroup experimentGroup = new ExperimentGroupOperations().getExperimentGroup(experimentGroupId);
         experiment.getExperimentGroupCollection().add(experimentGroup);
         insert(experiment, daoType);
-        Logger.out.info("experiment saved Successfully " + (experiment).getId());
     }
 
     /**
@@ -180,8 +177,10 @@ public class ExperimentOperations extends DefaultBizLogic {
     }
 
     /**
+     * Returns latest saved user experiments, 
+     * TODO: Currently this method is returning all experiments from database
      * @param userName
-     * @return
+     * @return List<Experiment>
      */
     public List<Experiment> getLatestExperimentForUser(String userName) {
         String hql = "from Experiment as Exp order by Exp.lastUpdatedOn ";
@@ -202,13 +201,13 @@ public class ExperimentOperations extends DefaultBizLogic {
     }
 
     /**
-     * @return
+     * Returns vector of Experiments and experiment metadata objects [ like ExperimentTreeNode ] 
+     * @return Vector
      * @throws DAOException
      */
     public Vector getExperimentHierarchy() throws DAOException {
         Vector expHierarchyData = new Vector();
         List returner = new ArrayList();
-        List returner1 = new ArrayList();
 
         String hql = "from ExperimentGroup as ExpGrp where ExpGrp.parentGroup.id is null ";
 
@@ -226,16 +225,16 @@ public class ExperimentOperations extends DefaultBizLogic {
         }
 
         // TODO we have to use HQL here temporarily since DAO.retrieve doesn't
-        // support where conditions on aggregate function like collection.size > 0, etc;
-        /*		String hql1 = "from Experiment as Exp where Exp.experimentGroupCollection.size = 0";
-         try {
-         returner1 = dao.executeQuery(hql1, null, false, null);
-         
-         } catch (Exception exp) {
-         exp.printStackTrace();
-         }
-
-         returner.addAll(returner1);*/
+        // support where conditions on aggregate function like collection.size >
+        // 0, etc;
+        /*
+         * String hql1 = "from Experiment as Exp where
+         * Exp.experimentGroupCollection.size = 0"; try { returner1 =
+         * dao.executeQuery(hql1, null, false, null);
+         *  } catch (Exception exp) { exp.printStackTrace(); }
+         * 
+         * returner.addAll(returner1);
+         */
 
         ((AbstractDAO) dao).closeSession();
 
@@ -244,6 +243,11 @@ public class ExperimentOperations extends DefaultBizLogic {
         return expHierarchyData;
     }
 
+    /**
+     * Returns vector of Experiment's Metadata objects( like ExperimentTreeNode )
+     * @param firstLevelRootNodes
+     * @return Vector
+     */
     public Vector getExperimentMetadataHierarchy(Collection firstLevelRootNodes) {
         //  
         // "+firstLevelRootNodes);
@@ -334,8 +338,9 @@ public class ExperimentOperations extends DefaultBizLogic {
         return false;
     }
 
-    /**
-     * A callback validation function.
+    /* (non-Javadoc)
+     * @see edu.wustl.common.bizlogic.DefaultBizLogic#validate(java.lang.Object, edu.wustl.common.dao.DAO, java.lang.String)
+     *  A callback validation function.
      */
     protected boolean validate(Object obj, DAO dao, String operation) throws DAOException {
         Experiment exp = ((Experiment) obj);
@@ -349,6 +354,12 @@ public class ExperimentOperations extends DefaultBizLogic {
         return true;
     }
 
+    /**
+     * Returns experiment for given ID
+     * @param identifier
+     * @return Experiment
+     * @throws DAOException
+     */
     public Experiment getExperiment(Long identifier) throws DAOException {
         List expList = retrieve("Experiment", "id", identifier);
         Experiment exp = null;
@@ -383,6 +394,10 @@ public class ExperimentOperations extends DefaultBizLogic {
         return Utility.executeHQL("getAllDataLists");
     }
 
+    /**
+     * Sets Entity info in Collection<DataListMetadata> 
+     * @param dataListMetadataCollection
+     */
     private void populateEntitiesNames(Collection<DataListMetadata> dataListMetadataCollection) {
         for (DataListMetadata dataListMetadata : dataListMetadataCollection) {
             for (Long id : dataListMetadata.getEntityIds()) {
@@ -401,6 +416,11 @@ public class ExperimentOperations extends DefaultBizLogic {
         return DatalistCache.getInstance().getEntityWithId(id).getName();
     }
 
+    /**
+     * Returns DE entity ID
+     * @param id
+     * @return
+     */
     private Long getOriginalEntityId(Long id) {
         EntityInterface entity = DatalistCache.getInstance().getEntityWithId(id);
         return DataListUtil.getOriginEntity(entity).getId();

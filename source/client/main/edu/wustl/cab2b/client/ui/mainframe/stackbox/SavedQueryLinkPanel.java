@@ -21,8 +21,10 @@ import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 
 /**
- * The singleton class used to display saved Query links on left hand side of mainFrame panel   
- * @author deepak_shingan 
+ * The singleton class used to display saved Query links on left hand side of
+ * mainFrame panel
+ * 
+ * @author deepak_shingan
  */
 public class SavedQueryLinkPanel extends Cab2bPanel {
 
@@ -31,7 +33,10 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
      */
     private static final long serialVersionUID = 1L;
 
-    private static SavedQueryLinkPanel instance = null;
+    /**
+     * Only single private static instance of SavedQueryLinkPanel class  
+     */
+    private static SavedQueryLinkPanel instance = new SavedQueryLinkPanel();
 
     /**
      * Constructor
@@ -41,17 +46,15 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
     }
 
     /**
-     * @return
+     * Returns singleton instance of SavedQueryLinkPanel
+     * @return SavedQueryLinkPanel
      */
     public static SavedQueryLinkPanel getInstance() {
-        if (instance == null) {
-            instance = new SavedQueryLinkPanel();
-        }
         return instance;
     }
 
     /**
-     * Method to update search query panel 
+     * Method to update search query panel
      */
     public void updateQueryLinkPanel() {
         this.removeAll();
@@ -63,6 +66,7 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
         Collection<IParameterizedQuery> cab2bQueryList = null;
         try {
             cab2bQueryList = queryEngineBusinessInterface.getAllQueryNameAndDescription();
+            int queryCounter = 0;
             for (IParameterizedQuery query : cab2bQueryList) {
                 String queryName = query.getName();
                 Cab2bHyperlink<Long> queryLink = new Cab2bHyperlink<Long>(true);
@@ -80,6 +84,9 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
                     }
                 });
                 this.add("br ", queryLink);
+                queryCounter++;
+                if (queryCounter > 4)
+                    break;
             }
             Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
             CommonUtils.setHyperlinkProperties(hyperlink, null, MainFrameStackedBoxPanel.SHOW_ALL_LINK, "",
@@ -100,7 +107,8 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
     }
 
     /**
-     * Method returns panel containing all queries from database 
+     * Method returns panel containing all queries from database
+     * 
      * @return
      */
     private ShowAllPanel getAllQueryPanel() {

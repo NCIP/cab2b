@@ -130,7 +130,7 @@ public class UserOperations extends DefaultBizLogic {
         for (ServiceURLInterface serviceURL : serviceCollection) {
             String entityGroupName = ((ServiceURL) serviceURL).getEntityGroupName();
             for (EntityGroupInterface entityGroup : entityGroups) {
-                if (entityGroupName.compareTo(entityGroup.getLongName()) == 0) {
+                if (entityGroupName.equals(entityGroup.getLongName())) {
                     serviceURL.setEntityGroupInterface(entityGroup);
                     break;
                 }

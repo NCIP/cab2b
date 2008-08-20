@@ -35,18 +35,39 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
      */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Top panel showing on parameterized conditions 
+     */
     protected Cab2bPanel topConditionPanel;
 
+    /**
+     * Bottom panel showing on non-parameterized conditions
+     */
     protected Cab2bPanel bottomConditionPanel;
 
+    /**
+     * Container panel for topConditionPanel
+     */
     protected Cab2bTitledPanel topConditionTitlePanel;
 
+    /**
+     * Container panel for bottomConditionPanel
+     */
     protected Cab2bTitledPanel bottomConditionTitlePanel;
 
+    /**
+     * Navigation panel containg "Show Results" and "Cancel" buttons   
+     */
     protected Cab2bPanel navigationPanel;
 
+    /**
+     * Max dimension of the attribute names  
+     */
     protected Dimension maxLabelDimension;
 
+    /**
+     * Dialog box containing panel of Parameterized and non-parameterized saved contions for the query  
+     */
     protected JDialog dialog;
 
     /**
@@ -54,8 +75,14 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
      */
     protected abstract void initGUI();
 
+    /**
+     * @return Cab2bPanel ParameterizedQueryNavigationPanel
+     */
     protected abstract Cab2bPanel getNavigationPanel();
 
+    /**
+     * Method to display paramaterizedQueryPreviewPanel in dialog box. 
+     */
     public void showInDialog() {
         Dimension dimension = MainFrame.getScreenDimesion();
         String dialogTitle = "Unsaved Condition";
@@ -65,6 +92,9 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
         dialog.setVisible(true);
     }
 
+    /**
+     * Creating UI for parameterized contiontion panel, placed at TOP side of page
+     */
     protected void initTopConditionPanel() {
         if (topConditionPanel.getComponentCount() > 0) {
             JScrollPane topScrollPane = new JScrollPane(topConditionPanel);
@@ -80,6 +110,9 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
         }
     }
 
+    /**
+     * Creating UI for non-parameterized contiontion panel, placed at BOTTOM side of page
+     */
     protected void initBottomConditionPanel() {
         if (bottomConditionPanel.getComponentCount() > 0) {
             JScrollPane bottomScrollPane = new JScrollPane(bottomConditionPanel);
@@ -91,12 +124,41 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
         }
     }
 
+    /**
+     * Returns max label of the attribute from condition collection map
+     * @param conditionMap
+     * @return
+     */
     protected Dimension getMaxLabelDimension(Map<Integer, Collection<ICondition>> conditionMap) {
         List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
         for (Integer key : conditionMap.keySet()) {
             for (ICondition condition : conditionMap.get(key)) {
                 attributeList.add(condition.getAttribute());
             }
+        }
+
+        Dimension maxDimension = CommonUtils.getMaximumLabelDimension(attributeList);
+        if (maxLabelDimension == null || maxLabelDimension.width < maxDimension.width) {
+            maxLabelDimension = maxDimension;
+        }
+        //increasing max label width to display expression ID with each label
+        maxLabelDimension.width = maxLabelDimension.width + 15;
+        return maxLabelDimension;
+    }
+
+    /**
+     * Returns max label of the attribute from two condition collection maps
+     * @param conditions1
+     * @param conditions2
+     * @return
+     */
+    protected Dimension getMaxLabelDimension(Collection<ICondition> conditions1, Collection<ICondition> conditions2) {
+        List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
+        for (ICondition condition : conditions1) {
+            attributeList.add(condition.getAttribute());
+        }
+        for (ICondition condition : conditions2) {
+            attributeList.add(condition.getAttribute());
         }
 
         Dimension maxDimension = CommonUtils.getMaximumLabelDimension(attributeList);

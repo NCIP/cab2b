@@ -14,31 +14,48 @@ import edu.wustl.cab2b.client.ui.query.IPathFinder;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImages;
 
+/**
+ * Panel for generating DAG 
+ * @author deepak_shingan
+ *
+ */
 public class Cab2bDag extends Cab2bPanel {
     private static final long serialVersionUID = 1L;
-    private MainDagPanel dagPanel ;
-	
-	public Cab2bDag() {
 
-		Map<DagImages, Image> imageMap = CommonUtils.getDagImageMap();
+    /**
+     * Main dag panel referance 
+     */
+    private MainDagPanel dagPanel;
 
-		IPathFinder pathFinder = new ClientPathFinder();
-		dagPanel = new CDCDagPanel(null, imageMap, pathFinder, false);
-		//dagPanel.m_viewController= new CDCViewController(dagPanel);
-		this.setLayout(new BorderLayout());
-		this.add(dagPanel);
-	}
+    /**
+     *  Constructor
+     *  Sets ImageIcons and components in DAG panel
+     */
+    public Cab2bDag() {
 
-	public void addNode(EntityInterface entity) {
+        Map<DagImages, Image> imageMap = CommonUtils.getDagImageMap();
 
-		IndependentClassNode node = new IndependentClassNode();
-		node.setDisplayName(entity.getName());
-		node.setID("ID");		
-		node.setEntityId(entity.getId());
-		dagPanel.currentNodeList.add(node);
-		GraphDocument document = dagPanel.getDocument();
-		document.addComponents(GraphEvent.createSingle(node));
-		
-	}
+        IPathFinder pathFinder = new ClientPathFinder();
+        dagPanel = new CDCDagPanel(null, imageMap, pathFinder, false);
+        // dagPanel.m_viewController= new CDCViewController(dagPanel);
+        this.setLayout(new BorderLayout());
+        this.add(dagPanel);
+    }
+
+    /**
+     * Method to add nodes in dag panel for a given EntityInterface
+     * @param entity EntityInterface
+     */
+    public void addNode(EntityInterface entity) {
+
+        IndependentClassNode node = new IndependentClassNode();
+        node.setDisplayName(entity.getName());
+        node.setID("ID");
+        node.setEntityId(entity.getId());
+        dagPanel.currentNodeList.add(node);
+        GraphDocument document = dagPanel.getDocument();
+        document.addComponents(GraphEvent.createSingle(node));
+
+    }
 
 }

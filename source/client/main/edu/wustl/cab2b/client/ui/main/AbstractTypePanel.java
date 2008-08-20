@@ -22,21 +22,24 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bFormattedTextField;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
+import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryNavigationPanel;
 import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryShowResultPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IParameterizedCondition;
+import edu.wustl.common.querysuite.queryobject.IParameter;
+import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 import edu.wustl.common.querysuite.queryobject.impl.Condition;
-import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
 
 /**
  * An abstract class which provides the skeletal implementation of the
  * IComponent interface and defines some more abstract method like
  * getFirstComponent, getSecondComponent that needs to be implemented by the
- * subclasses like NumberTypePanel, StringTypePanel, etc.
- * It also has methods to make it generic for handling parameterized Query UI panels.
+ * subclasses like NumberTypePanel, StringTypePanel, etc. It also has methods to
+ * make it generic for handling parameterized Query UI panels.
+ * 
  * @author Deepak Shingan
  */
 
@@ -84,26 +87,58 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
      */
     protected Cab2bTextField attributeDisplayNameTextField;
 
+    /**
+     * ExpressionID
+     */
     protected int expressionId;
 
+    /**
+     * New edited attribute name for parameterized condition 
+     */
     protected String displayName = null;
 
+    /**
+     * Returns max label dimension 
+     */
     protected Dimension maxLabelDimension;
 
+    /**
+     * Returns component used to set first value for the condition
+     * @return JComponent
+     */
     protected abstract JComponent getFirstComponent();
 
+    /**
+     * Returns component used to set second value for the condition  
+     * @return JComponent 
+     */
     protected abstract JComponent getSecondComponent();
 
+    /**
+     * @param condition String
+     */
     protected abstract void setComponentPreference(String condition);
 
+    /**
+     * Method to reset values and conditions 
+     */
     public abstract void resetPanel();
 
+    /**
+     * Constructor
+     * @param conditionList
+     * @param maxLabelDimension
+     */
     public AbstractTypePanel(ArrayList<String> conditionList, Dimension maxLabelDimension) {
         this.setLayout(new RiverLayout(10, 8));
         this.conditionList = conditionList;
         this.maxLabelDimension = maxLabelDimension;
     }
 
+    /**
+     * Create panel with only Attribute name and component for values   
+     * @param attribute
+     */
     public void createSimplePanel(AttributeInterface attribute) {
         this.attribute = attribute;
         if (displayName == null) {
@@ -132,21 +167,30 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         setSize(new Dimension(300, 100));
     }
 
+    /** 
+     * This method creates Abstarct type panel with operator using AttributeInterface
+     * @param attribute
+     */
     public void createPanelWithOperator(AttributeInterface attribute) {
         createSimplePanel(attribute);
         setCondtionControl(conditionList, getSecondComponent().getBorder(), new EmptyBorder(2, 2, 2, 2));
         add(conditionComboBox, 1);
     }
 
+    /**
+     * This method creates Abstarct type panel with operator using ICondition
+     * @param condition
+     */
     public void createPanelWithOperator(ICondition condition) {
-        if (condition instanceof IParameterizedCondition) {
-            displayName = ((IParameterizedCondition) condition).getName();
-        }
         createPanelWithOperator(condition.getAttribute());
         setValues(new ArrayList<String>(condition.getValues()));
         setCondition(condition.getRelationalOperator().getStringRepresentation());
     }
 
+    /**
+     * Method to create parameterized panel having checkbox and other components
+     * @param attribute
+     */
     public void createParametrizedPanel(AttributeInterface attribute) {
         createPanelWithOperator(attribute);
         attributeCheckBox = new Cab2bCheckBox();
@@ -163,15 +207,21 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         add(attributeDisplayNameTextField, 1);
     }
 
+    /**
+     * Method to create parameterized condition panel using ICondition
+     * @param condition
+     */
     public void createParametrizedPanel(ICondition condition) {
-        if (condition instanceof IParameterizedCondition) {
-            displayName = ((IParameterizedCondition) condition).getName();
-        }
+
         createParametrizedPanel(condition.getAttribute());
         setValues(new ArrayList<String>(condition.getValues()));
         setCondition(condition.getRelationalOperator().getStringRepresentation());
     }
 
+    /**
+     * Sets checkbox in panel 
+     * @param selectCheckBox
+     */
     public void setAttributeCheckBox(boolean selectCheckBox) {
         attributeCheckBox.setSelected(selectCheckBox);
         if (attributeDisplayNameTextField != null) {
@@ -179,6 +229,10 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         }
     }
 
+    /**
+     * Returns true if checkbox is selected else false 
+     * @return
+     */
     public boolean isAttributeCheckBoxSelected() {
         if (attributeCheckBox != null)
             return attributeCheckBox.isSelected();
@@ -186,16 +240,23 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     }
 
     /**
+     * Returns attribute
      * @return AttributeInterface
      */
     public AttributeInterface getAttributeEntity() {
         return attribute;
     }
 
+    /* (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.main.IComponent#getConditionItem()
+     */
     public String getConditionItem() {
         return (String) conditionComboBox.getSelectedItem();
     }
 
+    /* (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.main.IComponent#setCondition(java.lang.String)
+     */
     public void setCondition(String str) {
         int itemCount = conditionComboBox.getItemCount();
         for (int i = 0; i < itemCount; i++) {
@@ -205,6 +266,11 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         }
     }
 
+    /**
+     * @param conditionList
+     * @param border
+     * @param emptyBorder
+     */
     private void setCondtionControl(ArrayList<String> conditionList, final Border border,
                                     final EmptyBorder emptyBorder) {
         this.conditionList = conditionList;
@@ -233,6 +299,10 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         conditionComboBox.setSelectedIndex(0);
     }
 
+    /**
+     * @param border
+     * @param emptyBorder
+     */
     private void conditionListenerAction(final Border border, final EmptyBorder emptyBorder) {
         if (conditionComboBox.getSelectedItem().equals("Between")) {
             setNameEdit(true, border);
@@ -264,6 +334,10 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         setComponentPreference(getConditionItem());
     }
 
+    /**
+     * @param value
+     * @param border
+     */
     private void setNameEdit(boolean value, Border border) {
         firstComponent.setOpaque(value);
         firstComponent.setEnabled(value);
@@ -271,6 +345,10 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         firstComponent.setBorder(border);
     }
 
+    /**
+     * @param value
+     * @param border
+     */
     private void setOtherEdit(boolean value, Border border) {
         secondComponent.setOpaque(value);
         secondComponent.setEnabled(value);
@@ -278,7 +356,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         secondComponent.setBorder(border);
     }
 
-    /**   
+    /**
      * @return the expressionId
      */
     public int getExpressionId() {
@@ -294,7 +372,8 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     }
 
     /**
-     * @return
+     * Returns attribute edited name
+     * @return Attribute edited name
      */
     public String getAttributeDisplayName() {
         if (attributeDisplayNameTextField != null)
@@ -325,28 +404,45 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     }
 
     /**
-     * returns valid condition from panel otherwise null
+     * Returns valid condition from panel otherwise null
      * 
      * @param index
      * @return
      */
     public ICondition getCondition(int index, Cab2bPanel parentPanel) {
-
         String conditionString = getConditionItem();
         ArrayList<String> conditionValues = getValues();
         RelationalOperator operator = RelationalOperator.getOperatorForStringRepresentation(conditionString);
 
-        if (isAttributeCheckBoxSelected() || (parentPanel instanceof ParameterizedQueryShowResultPanel)) {
-            // make a new parameterized condition
-            return new ParameterizedCondition(attribute, operator, conditionValues, index,
-                    getAttributeDisplayName());
-        } else {
-            return new Condition(attribute, operator, conditionValues);
+        ICondition condition = new Condition(attribute, operator, conditionValues);
+
+        IParameterizedQuery paramQuery = null;
+
+        boolean isValid = false;
+        if (parentPanel instanceof ParameterizedQueryShowResultPanel) {
+            ParameterizedQueryShowResultPanel paramQueryShowResultPanel = (ParameterizedQueryShowResultPanel) parentPanel;
+            paramQuery = paramQueryShowResultPanel.getQueryDataModel().getQuery();
+            isValid = true;
+        } else if (parentPanel instanceof ParameterizedQueryNavigationPanel) {
+            ParameterizedQueryNavigationPanel paramQueryNavigationPanel = (ParameterizedQueryNavigationPanel) parentPanel;
+            paramQuery = paramQueryNavigationPanel.getQuery();
+            if (isAttributeCheckBoxSelected()) {
+                isValid = true;
+            }
         }
+
+        if (isValid) {
+            // make a new parameterized condition
+            IParameter<?> parameter = QueryObjectFactory.createParameter(condition,
+                                                                         condition.getAttribute().getName());
+            paramQuery.getParameters().add(parameter);
+        }
+        return condition;
     }
 
     /**
-     * Method to check validity of condition before saving
+     * Method to check validity of condition before saving. -1: Error, 0: Valid,
+     * 1: Remove
      * 
      * @param parentPanel
      * @return
@@ -362,18 +458,24 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 
             return -1;
         }
-        if (isAttributeCheckBoxSelected()
-                || ((conditionString.equals("Is Null")) || conditionString.equals("Is Not Null") || (conditionValues.size() != 0))) {
+        if (isAttributeCheckBoxSelected()) {
+            return 0;
+        } else if ((conditionValues.size() != 0)
+                || ((conditionString.equals("Is Null")) || conditionString.equals("Is Not Null"))) {
             return 0;
         } else {
-            //For scenarios like value is not specified for "contains" operator			
+            /*
+             * If the attribute check box is not selected and there are also no
+             * values specified for that condition, then that condition is
+             * eligible for removal from the query. To identify such conditions,
+             * the code 1 is returned.
+             */
             return 1;
         }
-
     }
 
     /**
-     * Method to check validity of condition
+     * Method to check validity of conditions
      * 
      * @param parentPanel
      * @return
@@ -405,7 +507,9 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         return 1;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see edu.wustl.cab2b.client.ui.main.IComponent#getValues()
      */
     public ArrayList<String> getValues() {

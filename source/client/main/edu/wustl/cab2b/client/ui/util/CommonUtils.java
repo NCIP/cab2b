@@ -33,10 +33,10 @@ import java.util.Vector;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import org.openide.util.Utilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.jdesktop.swingx.JXErrorDialog;
+import org.openide.util.Utilities;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -68,27 +68,11 @@ import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.cab2b.common.locator.Locator;
 import edu.wustl.cab2b.common.locator.LocatorException;
-import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
-import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.metadata.category.Category;
-import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IConnector;
-import edu.wustl.common.querysuite.queryobject.IConstraints;
-import edu.wustl.common.querysuite.queryobject.IExpression;
-import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
-import edu.wustl.common.querysuite.queryobject.IParameterizedCondition;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
-import edu.wustl.common.querysuite.queryobject.IRule;
-import edu.wustl.common.querysuite.queryobject.LogicalOperator;
-import edu.wustl.common.querysuite.queryobject.impl.Condition;
-import edu.wustl.common.querysuite.queryobject.impl.Constraints;
-import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
-import edu.wustl.common.querysuite.queryobject.impl.QueryEntity;
-import edu.wustl.common.querysuite.queryobject.impl.Rule;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.logger.Logger;
 
@@ -139,112 +123,6 @@ public class CommonUtils {
 			if (container.getComponent(i) instanceof Container)
 				disableAllComponent((Container) container.getComponent(i));
 		}
-	}
-
-	/**
-	 * @param query
-	 * @return
-	 */
-	public static ICab2bParameterizedQuery copyQueryObject(ICab2bQuery query) {
-		// New Query
-		Cab2bQuery newCab2bQuery = new Cab2bQuery();
-		newCab2bQuery.setOutputEntity(query.getOutputEntity());
-		newCab2bQuery
-				.setOutputUrls(new ArrayList<String>(query.getOutputUrls()));
-
-		// New Constraint
-		IConstraints newConstraints = new Constraints();
-		IConstraints constraints = query.getConstraints();
-
-		// Enumeration<IExpressionId> expressionIds =
-		// constraints.getExpressionIds();
-		Map<IExpression, IExpression> mapOldToNew = new HashMap<IExpression, IExpression>();
-		for (IExpression oldExpression : constraints) {
-			// IExpression oldExpression = (Expression)
-			// constraints.getExpression(expressionIds.nextElement());
-
-			// New Expression
-			IQueryEntity newQueryEntity = new QueryEntity(oldExpression
-					.getQueryEntity().getDynamicExtensionsEntity());
-			IExpression newExpression = newConstraints
-					.addExpression(newQueryEntity);
-			newExpression.setInView(oldExpression.isInView());
-			newExpression.setVisible(oldExpression.isVisible());
-			mapOldToNew.put(oldExpression, newExpression);
-		}
-
-		for (IExpression oldExpression : constraints) {
-			IExpressionOperand newOperand = getNewExpressionOperand(
-					oldExpression, 0, mapOldToNew);
-			IExpression newExpression = mapOldToNew.get(oldExpression);
-			newExpression.addOperand(newOperand);
-			for (int index = 1; index < oldExpression.numberOfOperands(); index++) {
-				newOperand = getNewExpressionOperand(oldExpression, index,
-						mapOldToNew);
-
-				// New LogicalConnector
-				IConnector<LogicalOperator> oldLogicalConnector = (IConnector<LogicalOperator>) oldExpression
-						.getConnector(index - 1, index);
-				IConnector<LogicalOperator> newLogicalConnector = QueryObjectFactory
-						.createLogicalConnector(oldLogicalConnector
-								.getOperator(), oldLogicalConnector
-								.getNestingNumber());
-				newExpression.addOperand(newLogicalConnector, newOperand);
-			}
-		}
-		newCab2bQuery.setConstraints(newConstraints);
-
-		return newCab2bQuery;
-	}
-
-	/**
-	 * @param expression
-	 * @param index
-	 * @param mapOldToNew
-	 * @return
-	 */
-	private static IExpressionOperand getNewExpressionOperand(
-			IExpression expression, int index,
-			Map<IExpression, IExpression> mapOldToNew) {
-		IExpressionOperand operand = expression.getOperand(index);
-		operand.setId(null);
-
-		IExpressionOperand newOperand = null;
-		if (operand instanceof IRule) {
-			Rule rule = (Rule) operand;
-
-			// New Rule
-			Rule newRule = new Rule();
-			for (ICondition condition : rule.getConditions()) {
-				// New Condition
-				ICondition newCondition = null;
-				if (condition instanceof IParameterizedCondition) {
-					ParameterizedCondition oldParameterizedCondition = (ParameterizedCondition) condition;
-					ParameterizedCondition newParameterizedCondition = new ParameterizedCondition(
-							condition, oldParameterizedCondition.getIndex(),
-							oldParameterizedCondition.getName());
-					newCondition = newParameterizedCondition;
-				} else {
-					newCondition = new Condition();
-					newCondition.setAttribute(condition.getAttribute());
-					// newCondition.setAttributeId(condition.getAttribute().getId());
-
-					newCondition.setRelationalOperator(condition
-							.getRelationalOperator());
-					// newCondition.setRelationalOperatorString(condition.getRelationalOperator().getStringRepresentation());
-
-					newCondition.setValues(new ArrayList<String>(condition
-							.getValues()));
-				}
-				newRule.addCondition(newCondition);
-			}
-
-			newOperand = newRule;
-		} else if (operand instanceof IExpression) {
-			newOperand = mapOldToNew.get(operand);
-		}
-
-		return newOperand;
 	}
 
 	/**
@@ -586,6 +464,11 @@ public class CommonUtils {
 		return returner;
 	}
 
+	/**
+	 * Utility method to get a formated string
+	 * @param splitStrings
+	 * @return
+	 */
 	public static String getFormattedString(String[] splitStrings) {
 		String returner = "";
 		for (int i = 0; i < splitStrings.length; i++) {
@@ -835,8 +718,6 @@ public class CommonUtils {
 
 	}
 
-	
-
 	/**
 	 * @return Recent search queries
 	 */
@@ -878,8 +759,6 @@ public class CommonUtils {
 		}
 		return experimentName;
 	}
-
-	
 
 	/**
 	 * Method to set hyperlink property values

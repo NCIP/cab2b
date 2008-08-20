@@ -21,6 +21,7 @@ import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
+import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 
 /**
  * Panel situated at bottom side of ParameterizedQueryMainPanel
@@ -35,17 +36,40 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
      */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Button for ordering parameterized conditions 
+     */
     private Cab2bButton orderViewButton;
 
+    /**
+     * Button for saving conditions
+     */
     private Cab2bButton saveButton;
 
+    /**
+     * Button for Canceling 
+     */
     private Cab2bButton cancelButton;
 
+    /**
+     * ParameterizedQueryMainPanel referance used as parent component for exception handling
+     */
     private ParameterizedQueryMainPanel parameterizedQueryMainPanel;
 
+    /**
+     * Constructor
+     * @param ParameterizedQueryMainPanel panel
+     */
     public ParameterizedQueryNavigationPanel(ParameterizedQueryMainPanel panel) {
         parameterizedQueryMainPanel = panel;
         iniGUI();
+    }
+
+    /**
+     * @return IParameterizedQuery
+     */
+    public IParameterizedQuery getQuery() {
+        return parameterizedQueryMainPanel.getParameterizedQueryDataModel().getQuery();
     }
 
     /**
@@ -74,8 +98,9 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
 
     /**
      * Action class for order button
+     * 
      * @author deepak_shingan
-     *
+     * 
      */
     private class OrderViewButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {

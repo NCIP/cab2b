@@ -2,13 +2,12 @@ package edu.wustl.cab2b.client.ui.parameterizedQuery;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.ICondition;
@@ -17,66 +16,104 @@ import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.utils.QueryUtility;
+import edu.wustl.common.util.ObjectCloner;
 
 /**
- * 
+ * Datamodel class for Save query operations 
  * @author deepak_shingan
  * 
  */
 public class ParameterizedQueryDataModel {
 
+    /**
+     * Cab2b Parameterized Query 
+     */
     private ICab2bParameterizedQuery query;
 
+    /**
+     * Constructor
+     * Creates a new parameterized caB2B query
+     */
     public ParameterizedQueryDataModel() {
         query = new Cab2bQuery();
     }
 
+    /**
+     * @param iQuery
+     */
     public ParameterizedQueryDataModel(ICab2bParameterizedQuery iQuery) {
-        if (iQuery == null)
+        if (iQuery == null) {
             this.query = new Cab2bQuery();
-        else {
-            query = CommonUtils.copyQueryObject(iQuery);
+        } else {
+            query = ObjectCloner.clone(iQuery);
         }
     }
 
+    /**
+     * @param query
+     */
     public void setQuery(Cab2bQuery query) {
         this.query = query;
     }
 
+    /**
+     * @return ICab2bParameterizedQuery  query
+     */
     public ICab2bParameterizedQuery getQuery() {
         return query;
     }
 
+    /**
+     * Gets query name
+     * @return query name
+     */
     public String getQueryName() {
         if (query == null)
             return null;
         return query.getName();
     }
 
+    /**
+     * Sets query name
+     * @param queryName
+     */
     public void setQueryName(String queryName) {
         if (query == null)
             return;
         query.setName(queryName);
     }
 
+    /**
+     * @return String QueryDescription
+     */
     public String getQueryDescription() {
         if (query == null)
             return null;
         return query.getDescription();
     }
 
+    /**
+     * Sets query desription
+     * @param String description
+     */
     public void setQueryDescription(String description) {
         if (query == null)
             return;
         query.setDescription(description);
     }
 
+    /**
+     * @return Collection<IQueryEntity> of query entities
+     */
     public Collection<IQueryEntity> getQueryEntities() {
         if (query == null)
             return null;
         return query.getConstraints().getQueryEntities();
     }
 
+    /**
+     * @return Map<Integer, Collection<ICondition>> for All Selected Conditions
+     */
     public Map<Integer, Collection<ICondition>> getConditions() {
         if (query != null)
             return convert(QueryUtility.getAllSelectedConditions(query));
@@ -84,12 +121,21 @@ public class ParameterizedQueryDataModel {
         return null;
     }
 
+    /**
+     * Returns Map of expressionID and collection of AttributeInterface for the query      
+     * @return
+     */
     public Map<Integer, Collection<AttributeInterface>> getAllAttributes() {
         if (query != null)
             return convert(QueryUtility.getAllAttributes(query));
         return null;
     }
 
+    /**
+     * @param <T>
+     * @param map
+     * @return
+     */
     private <T> Map<Integer, T> convert(Map<IExpression, T> map) {
         Map<Integer, T> m = new HashMap<Integer, T>(map.size());
         Set<Entry<IExpression, T>> entrySet = map.entrySet();
@@ -116,11 +162,11 @@ public class ParameterizedQueryDataModel {
             IExpressionOperand expressionOperand = expression.getOperand(i);
             if (expressionOperand instanceof IRule) {
                 IRule rule = (IRule) expressionOperand;
-                List<ICondition> conditionList = rule.getConditions();
-                for (int index = 0; index < conditionList.size(); index++) {
-                    ICondition condition = conditionList.get(index);
+                Iterator<ICondition> iterator = rule.iterator();
+                while (iterator.hasNext()) {
+                    ICondition condition = iterator.next();
                     if (condition.getAttribute() == newCondition.getAttribute()) {
-                        conditionList.remove(condition);
+                        iterator.remove();
                         break ALL;
                     }
                 }
@@ -144,24 +190,24 @@ public class ParameterizedQueryDataModel {
         ALL: for (int i = 0; i < noOfOperand; i++) {
             IExpressionOperand expressionOperand = expression.getOperand(i);
             if (expressionOperand instanceof IRule) {
-                IRule rule = (IRule) expressionOperand;
-                List<ICondition> conditionList = rule.getConditions();
                 boolean isConditionAdded = false;
-                for (int index = 0; index < conditionList.size(); index++) {
-                    ICondition condition = conditionList.get(index);
+
+                IRule rule = (IRule) expressionOperand;
+                Iterator<ICondition> iterator = rule.iterator();
+                while (iterator.hasNext()) {
+                    ICondition condition = iterator.next();
                     if (condition.getAttribute() == newCondition.getAttribute()) {
-                        conditionList.remove(condition);
-                        conditionList.add(index, newCondition);
+                        iterator.remove();
+                        rule.addCondition(newCondition);
                         isConditionAdded = true;
                         break ALL;
                     }
                 }
                 if (!isConditionAdded) {
-                    conditionList.add(newCondition);
+                    rule.addCondition(newCondition);
                     break;
                 }
             }
         }
     }
-
 }

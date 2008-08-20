@@ -27,10 +27,19 @@ public class ShowAllSavedQueryPanel extends ShowAllPanel {
      */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Query name string
+     */
     public static final String QUERY_NAME_TITLE = "Query Name";
 
+    /**
+     * Query Description string
+     */
     public static final String QUERY_DESCRIPTION_TITLE = "Description";
 
+    /**
+     * Query Date string
+     */
     public static final String QUERY_DATE_TITLE = "Date Created";
 
     /**
