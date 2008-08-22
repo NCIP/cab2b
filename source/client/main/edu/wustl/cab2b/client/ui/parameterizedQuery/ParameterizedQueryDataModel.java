@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
-import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
+import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
@@ -28,7 +28,7 @@ public class ParameterizedQueryDataModel {
     /**
      * Cab2b Parameterized Query 
      */
-    private ICab2bParameterizedQuery query;
+    private ICab2bQuery query;
 
     /**
      * Constructor
@@ -41,7 +41,7 @@ public class ParameterizedQueryDataModel {
     /**
      * @param iQuery
      */
-    public ParameterizedQueryDataModel(ICab2bParameterizedQuery iQuery) {
+    public ParameterizedQueryDataModel(ICab2bQuery iQuery) {
         if (iQuery == null) {
             this.query = new Cab2bQuery();
         } else {
@@ -57,9 +57,9 @@ public class ParameterizedQueryDataModel {
     }
 
     /**
-     * @return ICab2bParameterizedQuery  query
+     * @return ICab2bQuery  query
      */
-    public ICab2bParameterizedQuery getQuery() {
+    public ICab2bQuery getQuery() {
         return query;
     }
 

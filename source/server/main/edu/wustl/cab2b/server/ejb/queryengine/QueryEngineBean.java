@@ -8,7 +8,6 @@ import org.globus.gsi.GlobusCredential;
 import org.hibernate.HibernateException;
 
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
-import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -42,9 +41,9 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#saveQuery(edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery)
+	 * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#saveQuery(edu.wustl.cab2b.common.queryengine.ICab2bQuery)
 	 */
-	public void saveQuery(ICab2bParameterizedQuery query)
+	public void saveQuery(ICab2bQuery query)
 			throws RemoteException {
 		new HibernateCleanser(query).clean();
 		new Cab2bQueryBizLogic().saveQuery(query);
@@ -53,9 +52,9 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#updateQuery(edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery)
+	 * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#updateQuery(edu.wustl.cab2b.common.queryengine.ICab2bQuery)
 	 */
-	public void updateQuery(ICab2bParameterizedQuery query)
+	public void updateQuery(ICab2bQuery query)
 			throws RemoteException {
 		new Cab2bQueryBizLogic().updateQuery(query);
 	}
@@ -65,9 +64,9 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements
 	 * 
 	 * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#retrieveQueryById(java.lang.Long)
 	 */
-	public ICab2bParameterizedQuery retrieveQueryById(Long queryId)
+	public ICab2bQuery retrieveQueryById(Long queryId)
 			throws RemoteException {
-		ICab2bParameterizedQuery query = (ICab2bParameterizedQuery) new Cab2bQueryBizLogic()
+		ICab2bQuery query = (ICab2bQuery) new Cab2bQueryBizLogic()
 				.getQueryById(queryId);
 		return query;
 
@@ -78,7 +77,7 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements
 	 * 
 	 * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#retrieveAllQueries()
 	 */
-	public List<ICab2bParameterizedQuery> retrieveAllQueries()
+	public List<ICab2bQuery> retrieveAllQueries()
 			throws RemoteException {
 		return new Cab2bQueryBizLogic().getAllQueries();
 	}

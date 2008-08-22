@@ -7,7 +7,6 @@ import java.util.List;
 import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.BusinessInterface;
-import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -24,7 +23,7 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * This method executes the given query if the given credential is authentic. 
      * 
      * @param query ICab2bQuery to be executed
-     * @param cred crendentials to be authenticated
+     * @param cred user crendential to be authenticated
      * @return query result
      * @throws RemoteException if authentication fails or query execution fails.
      */
@@ -35,14 +34,14 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * 
      * @throws RemoteException if save process fails
      */
-    void saveQuery(ICab2bParameterizedQuery query) throws RemoteException;
+    void saveQuery(ICab2bQuery query) throws RemoteException;
 
     /**
      * This method updates the given ICab2bQuery object.
      * 
      * @throws RemoteException if updating fails
      */
-    void updateQuery(ICab2bParameterizedQuery query) throws RemoteException;
+    void updateQuery(ICab2bQuery query) throws RemoteException;
 
     /**
      * This method retrieves the query which has the given identifier. 
@@ -51,7 +50,7 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * @return ICab2bQuery object
      * @throws RemoteException if retrieving fails
      */
-    ICab2bParameterizedQuery retrieveQueryById(Long queryId) throws RemoteException;
+    ICab2bQuery retrieveQueryById(Long queryId) throws RemoteException;
 
     /**
      * This method retrieves all the the queries. 
@@ -59,7 +58,7 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * @return list of ICab2bQuery objects
      * @throws RemoteException if retrieving fails
      */
-    List<ICab2bParameterizedQuery> retrieveAllQueries() throws RemoteException;
+    List<ICab2bQuery> retrieveAllQueries() throws RemoteException;
 
     /**
      * This method checks whether the given query name has already been used or not.

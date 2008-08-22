@@ -26,7 +26,7 @@ import edu.wustl.cab2b.client.ui.query.ClientQueryBuilder;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.exception.CheckedException;
-import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
+import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.utils.QueryUtility;
 
@@ -61,7 +61,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
      * Constructor
      * @param query
      */
-    public ParameterizedQueryShowResultPanel(ICab2bParameterizedQuery query) {
+    public ParameterizedQueryShowResultPanel(ICab2bQuery query) {
         queryDataModel = new ParameterizedQueryDataModel(query);
         initGUI();
     }
@@ -120,7 +120,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
      * @param conditionMap
      */
     private void createShowResultPreviewPanel(Map<Integer, Collection<ICondition>> conditionMap,
-                                              ICab2bParameterizedQuery cab2bParamQuery) {
+                                              ICab2bQuery cab2bParamQuery) {
         // The following code is executing for StackPanel QueryLink Click
         ParseXMLFile parseFile = null;
         try {
@@ -146,7 +146,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
      */
     private void addNonParameterizedConditions(Map<Integer, Collection<ICondition>> conditionMap,
                                                Collection<ICondition> conditions,
-                                               ICab2bParameterizedQuery cab2bParamQuery, ParseXMLFile parseFile) {
+                                               ICab2bQuery cab2bParamQuery, ParseXMLFile parseFile) {
         try {
             for (ICondition condition : conditions) {
                 AbstractTypePanel componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
@@ -172,7 +172,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
      */
     private void addParameterizedConditions(Map<Integer, Collection<ICondition>> conditionMap,
                                             Collection<ICondition> paramConditions,
-                                            ICab2bParameterizedQuery cab2bParamQuery, ParseXMLFile parseFile) {
+                                            ICab2bQuery cab2bParamQuery, ParseXMLFile parseFile) {
         try {
             for (ICondition condition : paramConditions) {
                 AbstractTypePanel componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
@@ -213,7 +213,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
      * 
      */
     private class ShowResultsActionListener implements ActionListener {
-        private void executeQuery(ICab2bParameterizedQuery cab2bQuery) {
+        private void executeQuery(ICab2bQuery cab2bQuery) {
             // This code is generic and can be used to directly display the
             // executed query results
 

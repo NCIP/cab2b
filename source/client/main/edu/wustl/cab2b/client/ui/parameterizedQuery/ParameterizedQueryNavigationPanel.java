@@ -20,7 +20,7 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
-import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
+import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 
 /**
@@ -175,7 +175,7 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                                                                                                                                         EjbNamesConstants.QUERY_ENGINE_BEAN,
                                                                                                                                         QueryEngineHome.class,
                                                                                                                                         parameterizedQueryMainPanel);
-            ICab2bParameterizedQuery cab2bParameterizedQuery = parameterizedQueryMainPanel.getParameterizedQueryDataModel().getQuery();
+            ICab2bQuery cab2bParameterizedQuery = parameterizedQueryMainPanel.getParameterizedQueryDataModel().getQuery();
             try {
                 String message = null;
 

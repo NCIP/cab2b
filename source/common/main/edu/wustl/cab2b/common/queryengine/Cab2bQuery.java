@@ -12,7 +12,7 @@ import edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery;
  * @hibernate.joined-subclass table="CAB2B_QUERY" extends="edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery"
  * @hibernate.joined-subclass-key column="IDENTIFIER" 
  */
-public class Cab2bQuery extends ParameterizedQuery implements ICab2bParameterizedQuery {
+public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
     private static final long serialVersionUID = -3676549385071170949L;
 
     private List<String> outputClassUrls;
@@ -26,18 +26,12 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bParameterize
         super();
     }
     
-    public Cab2bQuery(ICab2bParameterizedQuery query) {
+    public Cab2bQuery(ICab2bQuery query) {
         super(query);
         outputEntity = query.getOutputEntity();
         outputClassUrls = query.getOutputUrls();    
     }
     
-    public Cab2bQuery(ICab2bQuery query) {
-        super(query);
-        outputEntity = query.getOutputEntity();
-        outputClassUrls = query.getOutputUrls();  
-    }
-
     /**
      * @return the outputClassUrls.
      * 

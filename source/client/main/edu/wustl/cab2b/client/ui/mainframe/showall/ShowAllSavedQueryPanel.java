@@ -14,7 +14,7 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
-import edu.wustl.cab2b.common.queryengine.ICab2bParameterizedQuery;
+import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 
 /**
  * Panel class for showing all Categories from database in table format.
@@ -83,7 +83,7 @@ public class ShowAllSavedQueryPanel extends ShowAllPanel {
                                                                                                                                     EjbNamesConstants.QUERY_ENGINE_BEAN,
                                                                                                                                     QueryEngineHome.class,
                                                                                                                                     null);
-        ICab2bParameterizedQuery cab2bQuery = null;
+        ICab2bQuery cab2bQuery = null;
         try {
             cab2bQuery = queryEngineBusinessInterface.retrieveQueryById(queryID);
         } catch (RemoteException exception) {
