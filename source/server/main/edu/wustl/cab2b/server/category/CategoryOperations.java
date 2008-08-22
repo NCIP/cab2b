@@ -25,7 +25,7 @@ import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
 
 /**
- * This class provides all operations needed for Category like save, retrive
+ * This class provides all operations needed for Category like save, retrieve
  * etc.
  * 
  * @author Chandrakant Talele
