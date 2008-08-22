@@ -54,36 +54,81 @@ import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.impl.Expression;
 import edu.wustl.common.util.logger.Logger;
 
+/**
+ * Class for creating main dag panel 
+ * @author deepak_shingan
+ *
+ */
 public class MainDagPanel extends Cab2bPanel {
     private static final long serialVersionUID = 1L;
 
     // view to be added to this panel
     protected JComponent view;
 
+    /**
+     * Graph document required as base container for generated nodes
+     */
     protected GraphDocument graphDocument;
 
+    /**
+     * Dag panel having control buttons like Auto Connect, Manual connect, Reset  etc 
+     */
     protected DagControlPanel dagControlPanel;
 
+    /**
+     * IClientQueryBuilderInterface for dag query object
+     */
     protected IClientQueryBuilderInterface dagQueryObject; //  @jve:decl-index=0:
 
+    /**
+     * For handling reset button and other events
+     */
     protected EventHandler eventHandler;
 
+    /**
+     * Component having all NODE controls like connect, delete node etc.  
+     */
     protected ViewController viewController;
 
+    /**
+     * For rendering nodes on GraphDocument canvas
+     */
     protected DocumentRenderer documentRenderer;
 
+    /**
+     * Interface having dag controlling methods  
+     */
     protected IUpdateAddLimitUIInterface mainDagAddLimitPanel;
 
+    /**
+     * Map of images required on DAG panel
+     */
     protected Map<DagImages, Image> dagImages;
 
+    /**
+     * List of current nodes
+     */
     protected List<ClassNode> currentNodeList;
 
+    /**
+     * Panel for showing current expressions and linking of nodes in DAG query, 
+     * appears at the bottom of DAG panel 
+     */
     protected ExpressionPanel expressionPanel;
 
+    /**
+     * IPathFinder 
+     */
     protected IPathFinder dagPathFinder;
 
+    /**
+     * Flag indication for checking visibility of Nodes with ViewController
+     */
     protected boolean isDAGForView = false;
 
+    /**
+     * Entity name to be displayed on DAG node
+     */
     protected DisplayNameInterafce entityNameDisplayer;
 
     /**
@@ -288,6 +333,10 @@ public class MainDagPanel extends Cab2bPanel {
         return associations;
     }
 
+    /**
+     * Method for selecting nodes of given expression ID
+     * @param exprId
+     */
     public void selectNode(int exprId) {
         viewController.selectNode(exprId);
     }
@@ -321,6 +370,11 @@ public class MainDagPanel extends Cab2bPanel {
         updateGraph(Integer.parseInt(expressionIdString));
     }
 
+    /**
+     * Method to update the graph when new expression is added to the query
+     * @param expressionId
+     * @throws MultipleRootsException
+     */
     public void updateGraphForViewExpression(int expressionId) throws MultipleRootsException {
         updateGraph(expressionId);
     }
@@ -333,10 +387,19 @@ public class MainDagPanel extends Cab2bPanel {
         return graphDocument;
     }
 
+    /**
+     *  Set instance of GraphDocument 
+     * @param document
+     */
     public void setDocument(GraphDocument document) {
         graphDocument = document;
     }
 
+    /**
+     * Checks paths between two nodes and if available return true else false
+     * @param selectedNodes
+     * @return boolean
+     */
     private boolean isLinkingValid(List<ClassNode> selectedNodes) {
         boolean status = true;
         if (currentNodeList.size() < 2 || selectedNodes.size() != 2 || selectedNodes == null) {
@@ -508,6 +571,13 @@ public class MainDagPanel extends Cab2bPanel {
         viewController.getHelper().recalculate();
     }
 
+    /**
+     * Updates query object with passed parameters
+     * @param link
+     * @param sourceNode
+     * @param destNode
+     * @param sourcePort
+     */
     private void updateQueryObject(PathLink link, ClassNode sourceNode, ClassNode destNode, GraphPort sourcePort) {
         // If the first association is added, put operator between attribute condition and association
         String operator = null;
@@ -875,6 +945,11 @@ public class MainDagPanel extends Cab2bPanel {
         return requiredCurratedPath;
     }
 
+    /**
+     * Returns node type for given expressionID
+     * @param expressionId
+     * @return ClassNodeType
+     */
     public ClassNodeType getNodeType(int expressionId) {
         IExpression expression = getExpression(expressionId);
         if (expression.containsRule()) {
@@ -888,24 +963,45 @@ public class MainDagPanel extends Cab2bPanel {
         }
     }
 
+    /**
+     * Gets IExpression for given expressionId
+     * @param expressionId
+     * @return
+     */
     public IExpression getExpression(int expressionId) {
         return dagQueryObject.getQuery().getConstraints().getExpression(expressionId);
     }
 
+    /**
+     * Adds expression to view
+     * @param expressionId
+     */
     public void addExpressionToView(int expressionId) {
         Expression expression = (Expression) dagQueryObject.getQuery().getConstraints().getExpression(expressionId);
         expression.setInView(true);
     }
 
+    /**
+     * Remove expression to view
+     * @param expressionId
+     */
     public void removeExpressionFromView(int expressionId) {
         Expression expression = (Expression) dagQueryObject.getQuery().getConstraints().getExpression(expressionId);
         expression.setInView(false);
     }
 
+    /**
+     * Returns value of isDAGForView
+     * @return isDAGForView  
+     */
     public boolean isDAGForView() {
         return isDAGForView;
     }
 
+    /**
+     * Set value for isDAGForView
+     * @param forView
+     */
     public void setDAGForView(boolean forView) {
         isDAGForView = forView;
     }
@@ -918,6 +1014,10 @@ public class MainDagPanel extends Cab2bPanel {
         dagControlPanel.enableAutoConnectButton(enable);
     }
 
+    /**
+     * Returns number of visible nodes in DAG
+     * @return int
+     */
     public int getVisibleNodeCount() {
         return currentNodeList.size();
     }

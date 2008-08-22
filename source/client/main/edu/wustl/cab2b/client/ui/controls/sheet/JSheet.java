@@ -60,16 +60,34 @@ public class JSheet extends javax.swing.JPanel {
     /** Event name that notifies that User is interested in details of some Row...      */
     public static final String REQUESTED_SHOW_ROW_DETAILS = "REQUESTED_SHOW_ROW_DETAILS";
 
+    /**
+     * Copy menu button name
+     */
     public static final String MENU_BUTTON_COPY = "MENU_BUTTON_COPY";
 
+    /**
+     * Paste menu button name
+     */
     public static final String MENU_BUTTON_PASTE = "MENU_BUTTON_PASTE";
 
+    /**
+     * Add Column menu button name
+     */
     public static final String MENU_BUTTON_ADD_COLUMN = "MENU_BUTTON_ADD_COLUMN";
 
+    /**
+     * Properties menu button name
+     */
     public static final String MENU_BUTTON_PROPERTIES = "MENU_BUTTON_PROPERTIES";
 
+    /**
+     * Reset menu button name
+     */
     public static final String MENU_BUTTON_RESET = "MENU_BUTTON_RESET";
 
+    /**
+     * Clear menu button name
+     */
     public static final String MENU_BUTTON_CLEAR = "MENU_BUTTON_CLEAR";
 
     /**     Should I allow user to create new columns and allow cut/paste on them?      */
@@ -117,12 +135,13 @@ public class JSheet extends javax.swing.JPanel {
      * iff table cell selected is true as per model.  */
     private boolean selectionRowMode = false;
 
+    /**
+     * Indication of mouse pressed event
+     */
     private boolean mousePressed = false;
 
     /** If true, magnifying glass is shown. Pressing on it will fire "Common.EVENT_MAGNIFYING_GLASS_CLICKED" event. */
     private boolean showMG;
-
-    SheetColumn colMG;
 
     /** refernce to oginal params setModel(...) , for RESET    */
     private TableModel tmROData;
@@ -186,18 +205,34 @@ public class JSheet extends javax.swing.JPanel {
         consData.setAdditionalToolbarActions(actions);
     }
 
+    /**
+     * Remove component from toolbar 
+     * @param menuName
+     */
     public void removeComponentFromToolBar(String menuName) {
         consData.removeComponentFromToolBar(menuName);
     }
 
+    /**
+     * Gets JSheet TableModel 
+     * @return TableModel
+     */
     public TableModel getJSheetTableModel() {
         return consData.getCompositeDataModel();
     }
 
+    /**
+     * Gets View TableModel
+     * @return JSheetViewDataModel
+     */
     public JSheetViewDataModel getViewTableModel() {
         return consData.getViewTableModel();
     }
 
+    /**
+     * Method to resize JSheet component
+     * @param dia
+     */
     public void applySizeOn(JDialog dia) {
         setBackgroundWhite((JComponent) dia.getContentPane());
         Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
@@ -207,7 +242,11 @@ public class JSheet extends javax.swing.JPanel {
         dia.setModal(true);
     }
 
-    /**     Returns the top most compoennt in the containment hierarchy that is heavy weight.   */
+    /**
+     * Returns the top most compoennt in the containment hierarchy that is heavy weight. 
+     * @param comp
+     * @return Window
+     */
     static Window getHWRoot(Component comp) {
         while (null != comp && !(comp instanceof Window)) {
             comp = comp.getParent();
@@ -217,78 +256,145 @@ public class JSheet extends javax.swing.JPanel {
         return (Window) comp;
     }
 
+    /**
+     * Returns number of selected rows
+     * @return int[]
+     */
     public int[] getSelectedRows() {
         return consData.getSelectedRows();
     }
 
+    /**
+     * Returns the number of selected columns
+     * @return int[]
+     */
     public int[] getSelectedColumns() {
         return consData.getSelectedColumns();
     }
 
+    /**
+     * Returns the number of selected row count
+     * @return int
+     */
     public int getSelectedRow() {
         return consData.getSelectedRow();
     }
 
+    /**
+     * Returns the number of selected column count
+     * @return int
+     */
     public int getSelectedColumn() {
         return consData.getSelectedColumn();
     }
 
+    /**
+     * Returns the cell value at row and column
+     * @param row
+     * @param column
+     * @return Object
+     */
     public Object getValueAt(int row, int column) {
         return consData.getValueAt(row, column);
     }
 
+    /**
+     * Returns ContextFilterConsole
+     * @return JComponent
+     */
     public JComponent getContextFilterConsole() {
         diaFilterConsole.getContentPane().removeAll();
         diaFilterConsole.setVisible(false);
         return consColFilter;
     }
 
+    /*
+     * Returns FiltersViewConsole
+     * return JComponent
+     */
     public JComponent getFiltersViewConsole() {
         diaFiltersViewConsole.getContentPane().removeAll();
         diaFiltersViewConsole.setVisible(false);
         return consFiltersView;
     }
 
+    /**
+     * Adds RowSelectionListener to the table
+     * @param ListSelectionListener lsl
+     */
     public void addRowSelectionListener(ListSelectionListener lsl) {
         consData.addTableRowSelectionListener(lsl);
     }
 
+    /**
+     * Removes RowSelectionListener from Jsheet table
+     * @param ListSelectionListener lsl
+     */
     public void removeRowSelectionListener(ListSelectionListener lsl) {
         consData.removeTableRowSelectionListener(lsl);
     }
 
+    /**
+     * Adds ColumnSelectionListener to the table
+     * @param ListSelectionListener lsl
+     */
     public void addColumnSelectionListener(ListSelectionListener lsl) {
         consData.addTableColSelectionListener(lsl);
     }
 
+    /**
+     * Removes ColumnSelectionListener
+     * @param ListSelectionListener lsl
+     */
     public void removeColumnSelectionListener(ListSelectionListener lsl) {
         consData.removeTableColSelectionListener(lsl);
     }
 
+    /**
+     * Shows ColFilterConsole in a separate Dialog 
+     */
     private void showColFilterConsoleInDialog() {
         diaFilterConsole.getContentPane().removeAll();
         diaFilterConsole.getContentPane().add(consColFilter, BorderLayout.CENTER);
         diaFilterConsole.setVisible(true);
     }
 
+    /**
+     * Shows FIlterViewConsole in a separate Dialog
+     */
     private void showFIlterViewConsoleInDialog() {
         diaFiltersViewConsole.getContentPane().removeAll();
         diaFiltersViewConsole.getContentPane().add(consFiltersView, BorderLayout.CENTER);
         diaFiltersViewConsole.setVisible(true);
     }
 
+    /**
+     * An action class for handling table event having TableModelListener, RowSorterListener and ListSelectionListener 
+     * properties.
+     * @author jasbir_sachdeva
+     *
+     */
     class TableChangesSynchronizer implements TableModelListener, RowSorterListener, ListSelectionListener {
 
+        /* (non-Javadoc)
+         * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.TableModelEvent)
+         */
         public void tableChanged(TableModelEvent e) {
         }
 
+        /* (non-Javadoc)
+         * @see javax.swing.event.RowSorterListener#sorterChanged(javax.swing.event.RowSorterEvent)
+         */
         public void sorterChanged(RowSorterEvent e) {
             //             
             //             
             //            tmFixedLeft.setRowCount(consData.getRowCount());
         }
 
-        /** Selection is Row-Selection_hanger should match full row selection is data-view.     */
+        /* Selection is Row-Selection_hanger should match full row selection is data-view.     
+         * (non-Javadoc)
+         * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
+         */
         public void valueChanged(ListSelectionEvent e) {
             if (selectionRowMode) {
                 consData.extendSelectionsToAllColumns();
@@ -353,7 +459,10 @@ public class JSheet extends javax.swing.JPanel {
         consData.repaint();
     }
 
-    /**     Senario - C.2-A: Property Event Propagation Chain setup.    */
+    /**
+     * Senario - C.2-A: Property Event Propagation Chain setup.  
+     * @param colCount
+     */
     private void setupModels(int colCount) {
         //  reference to old network of objects maintained by SheetCustomizationModel is now lost - for garbage collection...
         scm = new SheetCustomizationModel();
@@ -379,6 +488,11 @@ public class JSheet extends javax.swing.JPanel {
         consColFilter.setModel(null);
     }
 
+    /**
+     * Creates new ColumnModel for JSheet
+     * @param int idx
+     * @return SheetColumn
+     */
     private SheetColumn createNewColumnModel(int idx) {
         SheetColumn col = new SheetColumn(idx);
         ColumnFilterModel cfm = new ColumnFilterModel();
@@ -386,7 +500,10 @@ public class JSheet extends javax.swing.JPanel {
         return col;
     }
 
-    /**    Senario - C.2-C:  Setting up sample values in ColFilterModel (Used by Range & List Filters)   */
+    /**
+     * Senario - C.2-C:  Setting up sample values in ColFilterModel (Used by Range & List Filters)  
+     * @param sampleValuesAL
+     */
     @SuppressWarnings("empty-statement")
     private void setupSampleValues(ArrayList<TreeSet<Comparable<?>>> sampleValuesAL) {
         if (null == sampleValuesAL) {
@@ -415,6 +532,12 @@ public class JSheet extends javax.swing.JPanel {
         }
     }
 
+    /**
+     * Get Id Set
+     * @param sampleValues
+     * @param idx
+     * @return TreeSet
+     */
     static private TreeSet getSetForIdx(ArrayList<TreeSet<Comparable<?>>> sampleValues, int idx) {
         if (idx < sampleValues.size()) //  Value exists at given index...
         {
@@ -442,6 +565,9 @@ public class JSheet extends javax.swing.JPanel {
         firePropertyChange(Common.USER_COLUMN_ADDED, null, sCol);
     }
 
+    /**
+     * Method to reapply filter
+     */
     void reapplyFilter() {
         EventQueue.invokeLater(new Runnable() {
 
@@ -451,6 +577,9 @@ public class JSheet extends javax.swing.JPanel {
         });
     }
 
+    /**
+     * Reseting all changes on Jsheet model
+     */
     void resetAll() {
         EventQueue.invokeLater(new Runnable() {
 
@@ -464,6 +593,10 @@ public class JSheet extends javax.swing.JPanel {
         });
     }
 
+    /**
+     * Rearranging column visibility according to SheetColumn model 
+     * @param colSheet
+     */
     void reapplyColumnVisibility(SheetColumn colSheet) {
         consData.setColumnVisibility(colSheet);
     }
@@ -650,9 +783,9 @@ public class JSheet extends javax.swing.JPanel {
 
     // End of variables declaration//GEN-END:variables
 
-//    public static void main(String[] args) {
-//        SheetTestFrame.main(args);
-//    }
+    //    public static void main(String[] args) {
+    //        SheetTestFrame.main(args);
+    //    }
 
     class InternalPCListener implements PropertyChangeListener {
 

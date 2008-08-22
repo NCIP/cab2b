@@ -20,10 +20,19 @@ import edu.wustl.cab2b.client.ui.main.B2BStackedBox;
 public class ChooseCategoryPanel extends ContentPanel {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Search panel object containing UI for metadata search
+     */
     public SearchPanel searchPanel = null;
 
+    /**
+     * Left hand side stack box
+     */
     private B2BStackedBox box;
 
+    /**
+     * Spit pane dividing stackbox and Metadata search page
+     */
     private JSplitPane pane;
 
     /** The advanced search searchPanel along with the results searchPanel. */
@@ -62,6 +71,9 @@ public class ChooseCategoryPanel extends ContentPanel {
         //TODO implementation needs to be completed
     }
 
+    /* (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.ContentPanel#setSearchResultPanel(edu.wustl.cab2b.client.ui.SearchResultPanel)
+     */
     public void setSearchResultPanel(SearchResultPanel searchResultPanel) {
         searchPanel.setSerachResultPanel(searchResultPanel);
     }

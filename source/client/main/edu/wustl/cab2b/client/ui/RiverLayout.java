@@ -45,436 +45,541 @@ import java.util.Vector;
  */
 public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public static final String LINE_BREAK = "br";
+    /**
+     * Line break property command name  
+     */
+    public static final String LINE_BREAK = "br";
 
-	public static final String PARAGRAPH_BREAK = "p";
+    /**
+     * Paragraph break property command name
+     */
+    public static final String PARAGRAPH_BREAK = "p";
 
-	public static final String TAB_STOP = "tab";
+    /**
+     * Tab stop property command name
+     */
+    public static final String TAB_STOP = "tab";
 
-	public static final String HFILL = "hfill";
+    /**
+     * Horizontal fill property command name
+     */
+    public static final String HFILL = "hfill";
 
-	public static final String VFILL = "vfill";
+    /**
+     * Verticle fill property command name
+     */
+    public static final String VFILL = "vfill";
 
-	public static final String LEFT = "left";
+    /**
+     * Left hand component alignment property command name
+     */
+    public static final String LEFT = "left";
 
-	public static final String RIGHT = "right";
+    /**
+     * Right hand component alignment property command name
+     */
+    public static final String RIGHT = "right";
 
-	public static final String CENTER = "center";
+    /**
+     * Center hand component alignment property command name
+     */
+    public static final String CENTER = "center";
 
-	public static final String VTOP = "vtop";
+    /**
+     * Verticle top insect value property command name
+     */
+    public static final String VTOP = "vtop";
 
-	public static final String VCENTER = "vcenter";
+    /**
+     * Verticle Center insect value property command name
+     */
+    public static final String VCENTER = "vcenter";
 
-	public final int tabSpace = 5;
+    /**
+     * Space value property command name
+     */
+    public final int tabSpace = 5;
 
-	private Map<Component, String> constraints = new HashMap<Component, String>();
+    /**
+     * Map of component and constraint 
+     */
+    private Map<Component, String> constraints = new HashMap<Component, String>();
 
-	private String valign = VCENTER;
+    /**
+     * Default verticle alignment
+     */
+    private String valign = VCENTER;
 
-	private int hgap;
+    /**
+     * Horizontal gap
+     */
+    private int hgap;
 
-	private int vgap;
+    /**
+     * Verticle gap
+     */
+    private int vgap;
 
-	private Insets extraInsets;
+    /**
+     * Extra insets
+     */
+    private Insets extraInsets;
 
-	private Insets totalInsets = new Insets(0, 0, 0, 0);// Dummy values. Set by
+    /**
+     * Dummy values for insets
+     */
+    private Insets totalInsets = new Insets(0, 0, 0, 0);// Dummy values. Set by
 
-	// getInsets()
+    // getInsets()
 
-	public RiverLayout() {
-		this(0, 0);
-	}
+    /**
+     * Constructor
+     */
+    public RiverLayout() {
+        this(0, 0);
+    }
 
-	public RiverLayout(int hgap, int vgap) {
-		this.hgap = hgap;
-		this.vgap = vgap;
-		setExtraInsets(new Insets(0, hgap, hgap, hgap));
-	}
+    /**
+     * Constructor
+     * @param hgap
+     * @param vgap
+     */
+    public RiverLayout(int hgap, int vgap) {
+        this.hgap = hgap;
+        this.vgap = vgap;
+        setExtraInsets(new Insets(0, hgap, hgap, hgap));
+    }
 
-	/**
-	 * Gets the horizontal gap between components.
-	 */
-	public int getHgap() {
-		return hgap;
-	}
+    /**
+     * Gets the horizontal gap between components.
+     */
+    public int getHgap() {
+        return hgap;
+    }
 
-	/**
-	 * Sets the horizontal gap between components.
-	 */
-	public void setHgap(int hgap) {
-		this.hgap = hgap;
-	}
+    /**
+     * Sets the horizontal gap between components.
+     */
+    public void setHgap(int hgap) {
+        this.hgap = hgap;
+    }
 
-	/**
-	 * Gets the vertical gap between components.
-	 */
-	public int getVgap() {
-		return vgap;
-	}
+    /**
+     * Gets the vertical gap between components.
+     */
+    public int getVgap() {
+        return vgap;
+    }
 
-	public Insets getExtraInsets() {
-		return extraInsets;
-	}
+    /**
+     * Gets the extra insets between components.
+     * @return
+     */
+    public Insets getExtraInsets() {
+        return extraInsets;
+    }
 
-	public void setExtraInsets(Insets newExtraInsets) {
-		extraInsets = newExtraInsets;
-	}
+    /**
+     * Sets the extra insets between components.
+     * @param newExtraInsets
+     */
+    public void setExtraInsets(Insets newExtraInsets) {
+        extraInsets = newExtraInsets;
+    }
 
-	protected Insets getInsets(Container target) {
-		Insets insets = target.getInsets();
-		totalInsets.top = insets.top + extraInsets.top;
-		totalInsets.left = insets.left + extraInsets.left;
-		totalInsets.bottom = insets.bottom + extraInsets.bottom;
-		totalInsets.right = insets.right + extraInsets.right;
-		return totalInsets;
-	}
+    /**
+     * Get insets for a given container
+     * @param target
+     * @return Insets
+     */
+    protected Insets getInsets(Container target) {
+        Insets insets = target.getInsets();
+        totalInsets.top = insets.top + extraInsets.top;
+        totalInsets.left = insets.left + extraInsets.left;
+        totalInsets.bottom = insets.bottom + extraInsets.bottom;
+        totalInsets.right = insets.right + extraInsets.right;
+        return totalInsets;
+    }
 
-	/**
-	 * Sets the vertical gap between components.
-	 */
-	public void setVgap(int vgap) {
-		this.vgap = vgap;
-	}
+    /**
+     * Sets the vertical gap between components.
+     */
+    public void setVgap(int vgap) {
+        this.vgap = vgap;
+    }
 
-	/**
-	 * @param name
-	 *            the name of the component
-	 * @param comp
-	 *            the component to be added
-	 */
-	public void addLayoutComponent(String name, Component comp) {
-		constraints.put(comp, name);
-	}
+    /**
+     * @param name
+     *            the name of the component
+     * @param comp
+     *            the component to be added
+     */
+    public void addLayoutComponent(String name, Component comp) {
+        constraints.put(comp, name);
+    }
 
-	/**
-	 * Removes the specified component from the layout. Not used by this class.
-	 * 
-	 * @param comp
-	 *            the component to remove
-	 * @see java.awt.Container#removeAll
-	 */
-	public void removeLayoutComponent(Component comp) {
-		constraints.remove(comp);
-	}
+    /**
+     * Removes the specified component from the layout. Not used by this class.
+     * 
+     * @param comp
+     *            the component to remove
+     * @see java.awt.Container#removeAll
+     */
+    public void removeLayoutComponent(Component comp) {
+        constraints.remove(comp);
+    }
 
-	boolean isFirstInRow(Component comp) {
-		String cons = (String) constraints.get(comp);
-		return cons != null
-				&& (cons.indexOf(RiverLayout.LINE_BREAK) != -1 || cons
-						.indexOf(RiverLayout.PARAGRAPH_BREAK) != -1);
-	}
+    /**
+     * Returns true if component is placed  in first in row
+     * @param comp
+     * @return boolean
+     */
+    boolean isFirstInRow(Component comp) {
+        String cons = (String) constraints.get(comp);
+        return cons != null
+                && (cons.indexOf(RiverLayout.LINE_BREAK) != -1 || cons.indexOf(RiverLayout.PARAGRAPH_BREAK) != -1);
+    }
 
-	boolean hasHfill(Component comp) {
-		return hasConstraint(comp, RiverLayout.HFILL);
-	}
+    /**
+     * Returns true if Hfill Constraints are set otherwise false
+     * @param comp
+     * @return boolean
+     */
+    boolean hasHfill(Component comp) {
+        return hasConstraint(comp, RiverLayout.HFILL);
+    }
 
-	boolean hasVfill(Component comp) {
-		return hasConstraint(comp, RiverLayout.VFILL);
-	}
+    /**
+     * Returns true if Vfill Constraints are set otherwise false
+     * @param comp
+     * @return boolean
+     */
+    boolean hasVfill(Component comp) {
+        return hasConstraint(comp, RiverLayout.VFILL);
+    }
 
-	boolean hasConstraint(Component comp, String test) {
-		String cons = (String) constraints.get(comp);
-		if (cons == null)
-			return false;
-		StringTokenizer tokens = new StringTokenizer(cons);
-		while (tokens.hasMoreTokens())
-			if (tokens.nextToken().equals(test))
-				return true;
-		return false;
-	}
+    /**
+     * Returns true if Constraints are set otherwise false
+     * @param comp
+     * @param test
+     * @return
+     */
+    boolean hasConstraint(Component comp, String test) {
+        String cons = (String) constraints.get(comp);
+        if (cons == null)
+            return false;
+        StringTokenizer tokens = new StringTokenizer(cons);
+        while (tokens.hasMoreTokens())
+            if (tokens.nextToken().equals(test))
+                return true;
+        return false;
+    }
 
-	/**
-	 * Figure out tab stop x-positions
-	 */
-	protected Ruler calcTabs(Container target) {
-		Ruler ruler = new Ruler();
-		int nmembers = target.getComponentCount();
+    /**
+     * Figure out tab stop x-positions
+     */
+    protected Ruler calcTabs(Container target) {
+        Ruler ruler = new Ruler();
+        int nmembers = target.getComponentCount();
 
-		int x = 0;
-		int tabIndex = 0; // First tab stop
-		for (int i = 0; i < nmembers; i++) {
-			Component m = target.getComponent(i);
-			// if (m.isVisible()) {
-			if (isFirstInRow(m) || i == 0) {
-				x = 0;
-				tabIndex = 0;
-			} else
-				x += tabSpace;
-			if (hasConstraint(m, TAB_STOP)) {
-				ruler.setTab(tabIndex, x); // Will only increase
-				x = ruler.getTab(tabIndex++); // Jump forward if neccesary
-			}
-			Dimension d = m.getPreferredSize();
-			x += d.width;
-		}
-		// }
-		return ruler;
-	}
+        int x = 0;
+        int tabIndex = 0; // First tab stop
+        for (int i = 0; i < nmembers; i++) {
+            Component m = target.getComponent(i);
+            // if (m.isVisible()) {
+            if (isFirstInRow(m) || i == 0) {
+                x = 0;
+                tabIndex = 0;
+            } else
+                x += tabSpace;
+            if (hasConstraint(m, TAB_STOP)) {
+                ruler.setTab(tabIndex, x); // Will only increase
+                x = ruler.getTab(tabIndex++); // Jump forward if neccesary
+            }
+            Dimension d = m.getPreferredSize();
+            x += d.width;
+        }
+        // }
+        return ruler;
+    }
 
-	/**
-	 * Returns the preferred dimensions for this layout given the <i>visible</i>
-	 * components in the specified target container.
-	 * 
-	 * @param target
-	 *            the component which needs to be laid out
-	 * @return the preferred dimensions to lay out the subcomponents of the
-	 *         specified container
-	 * @see Container
-	 * @see #minimumLayoutSize
-	 * @see java.awt.Container#getPreferredSize
-	 */
-	public Dimension preferredLayoutSize(Container target) {
-		synchronized (target.getTreeLock()) {
-			Dimension dim = new Dimension(0, 0);
-			Dimension rowDim = new Dimension(0, 0);
-			int nmembers = target.getComponentCount();
-			boolean firstVisibleComponent = true;
-			int tabIndex = 0;
-			Ruler ruler = calcTabs(target);
+    /**
+     * Returns the preferred dimensions for this layout given the <i>visible</i>
+     * components in the specified target container.
+     * 
+     * @param target
+     *            the component which needs to be laid out
+     * @return the preferred dimensions to lay out the subcomponents of the
+     *         specified container
+     * @see Container
+     * @see #minimumLayoutSize
+     * @see java.awt.Container#getPreferredSize
+     */
+    public Dimension preferredLayoutSize(Container target) {
+        synchronized (target.getTreeLock()) {
+            Dimension dim = new Dimension(0, 0);
+            Dimension rowDim = new Dimension(0, 0);
+            int nmembers = target.getComponentCount();
+            boolean firstVisibleComponent = true;
+            int tabIndex = 0;
+            Ruler ruler = calcTabs(target);
 
-			for (int i = 0; i < nmembers; i++) {
-				Component m = target.getComponent(i);
-				// if (m.isVisible()) {
-				if (isFirstInRow(m)) {
-					tabIndex = 0;
-					dim.width = Math.max(dim.width, rowDim.width);
-					dim.height += rowDim.height + vgap;
-					if (hasConstraint(m, PARAGRAPH_BREAK))
-						dim.height += 2 * vgap;
-					rowDim = new Dimension(0, 0);
-				}
-				if (hasConstraint(m, TAB_STOP))
-					rowDim.width = ruler.getTab(tabIndex++);
-				Dimension d = m.getPreferredSize();
-				rowDim.height = Math.max(rowDim.height, d.height);
-				if (firstVisibleComponent) {
-					firstVisibleComponent = false;
-				} else {
-					rowDim.width += hgap;
-				}
-				rowDim.width += d.width;
-				// }
-			}
-			dim.width = Math.max(dim.width, rowDim.width);
-			dim.height += rowDim.height;
+            for (int i = 0; i < nmembers; i++) {
+                Component m = target.getComponent(i);
+                // if (m.isVisible()) {
+                if (isFirstInRow(m)) {
+                    tabIndex = 0;
+                    dim.width = Math.max(dim.width, rowDim.width);
+                    dim.height += rowDim.height + vgap;
+                    if (hasConstraint(m, PARAGRAPH_BREAK))
+                        dim.height += 2 * vgap;
+                    rowDim = new Dimension(0, 0);
+                }
+                if (hasConstraint(m, TAB_STOP))
+                    rowDim.width = ruler.getTab(tabIndex++);
+                Dimension d = m.getPreferredSize();
+                rowDim.height = Math.max(rowDim.height, d.height);
+                if (firstVisibleComponent) {
+                    firstVisibleComponent = false;
+                } else {
+                    rowDim.width += hgap;
+                }
+                rowDim.width += d.width;
+                // }
+            }
+            dim.width = Math.max(dim.width, rowDim.width);
+            dim.height += rowDim.height;
 
-			Insets insets = getInsets(target);
-			dim.width += insets.left + insets.right;// + hgap * 2;
-			dim.height += insets.top + insets.bottom;// + vgap * 2;
-			return dim;
-		}
-	}
+            Insets insets = getInsets(target);
+            dim.width += insets.left + insets.right;// + hgap * 2;
+            dim.height += insets.top + insets.bottom;// + vgap * 2;
+            return dim;
+        }
+    }
 
-	/**
-	 * Centers the elements in the specified row, if there is any slack.
-	 * 
-	 * @param target
-	 *            the component which needs to be moved
-	 * @param x
-	 *            the x coordinate
-	 * @param y
-	 *            the y coordinate
-	 * @param width
-	 *            the width dimensions
-	 * @param height
-	 *            the height dimensions
-	 * @param rowStart
-	 *            the beginning of the row
-	 * @param rowEnd
-	 *            the the ending of the row
-	 */
-	protected void moveComponents(Container target, int x, int y, int width, int height,
-			int rowStart, int rowEnd, boolean ltr, Ruler ruler) {
-		synchronized (target.getTreeLock()) {
-			switch (getAlignment()) {
-			case FlowLayout.LEFT:
-				x += ltr ? 0 : width;
-				break;
-			case FlowLayout.CENTER:
-				x += width / 2;
-				break;
-			case FlowLayout.RIGHT:
-				x += ltr ? width : 0;
-				break;
-			case LEADING:
-				break;
-			case TRAILING:
-				x += width;
-				break;
-			}
-			int tabIndex = 0;
-			for (int i = rowStart; i < rowEnd; i++) {
-				Component m = target.getComponent(i);
-				if (hasConstraint(m, TAB_STOP))
-					x = getInsets(target).left + ruler.getTab(tabIndex++);
-				int dy = (valign == VTOP) ? 0 : (height - m.getHeight()) / 2;
-				if (ltr) {
-					m.setLocation(x, y + dy);
-				} else {
-					m.setLocation(target.getWidth() - x - m.getWidth(), y + dy);
-				}
-				x += m.getWidth() + hgap;
-			}
-		}
-	}
+    /**
+     * Centers the elements in the specified row, if there is any slack.
+     * 
+     * @param target
+     *            the component which needs to be moved
+     * @param x
+     *            the x coordinate
+     * @param y
+     *            the y coordinate
+     * @param width
+     *            the width dimensions
+     * @param height
+     *            the height dimensions
+     * @param rowStart
+     *            the beginning of the row
+     * @param rowEnd
+     *            the the ending of the row
+     */
+    protected void moveComponents(Container target, int x, int y, int width, int height, int rowStart, int rowEnd,
+                                  boolean ltr, Ruler ruler) {
+        synchronized (target.getTreeLock()) {
+            switch (getAlignment()) {
+                case FlowLayout.LEFT:
+                    x += ltr ? 0 : width;
+                    break;
+                case FlowLayout.CENTER:
+                    x += width / 2;
+                    break;
+                case FlowLayout.RIGHT:
+                    x += ltr ? width : 0;
+                    break;
+                case LEADING:
+                    break;
+                case TRAILING:
+                    x += width;
+                    break;
+            }
+            int tabIndex = 0;
+            for (int i = rowStart; i < rowEnd; i++) {
+                Component m = target.getComponent(i);
+                if (hasConstraint(m, TAB_STOP))
+                    x = getInsets(target).left + ruler.getTab(tabIndex++);
+                int dy = (valign == VTOP) ? 0 : (height - m.getHeight()) / 2;
+                if (ltr) {
+                    m.setLocation(x, y + dy);
+                } else {
+                    m.setLocation(target.getWidth() - x - m.getWidth(), y + dy);
+                }
+                x += m.getWidth() + hgap;
+            }
+        }
+    }
 
-	protected void relMove(Container target, int dx, int dy, int rowStart, int rowEnd) {
-		synchronized (target.getTreeLock()) {
-			for (int i = rowStart; i < rowEnd; i++) {
-				Component m = target.getComponent(i);
-				m.setLocation(m.getX() + dx, m.getY() + dy);
-			}
+    /**
+     * 
+     * @param target
+     * @param dx
+     * @param dy
+     * @param rowStart
+     * @param rowEnd
+     */
+    protected void relMove(Container target, int dx, int dy, int rowStart, int rowEnd) {
+        synchronized (target.getTreeLock()) {
+            for (int i = rowStart; i < rowEnd; i++) {
+                Component m = target.getComponent(i);
+                m.setLocation(m.getX() + dx, m.getY() + dy);
+            }
 
-		}
-	}
+        }
+    }
 
-	protected void adjustAlignment(Component m) {
-		if (hasConstraint(m, RiverLayout.LEFT))
-			setAlignment(FlowLayout.LEFT);
-		else if (hasConstraint(m, RiverLayout.RIGHT))
-			setAlignment(FlowLayout.RIGHT);
-		else if (hasConstraint(m, RiverLayout.CENTER))
-			setAlignment(FlowLayout.CENTER);
-		if (hasConstraint(m, RiverLayout.VTOP))
-			valign = VTOP;
-		else if (hasConstraint(m, RiverLayout.VCENTER))
-			valign = VCENTER;
+    /**
+     * @param m
+     */
+    protected void adjustAlignment(Component m) {
+        if (hasConstraint(m, RiverLayout.LEFT))
+            setAlignment(FlowLayout.LEFT);
+        else if (hasConstraint(m, RiverLayout.RIGHT))
+            setAlignment(FlowLayout.RIGHT);
+        else if (hasConstraint(m, RiverLayout.CENTER))
+            setAlignment(FlowLayout.CENTER);
+        if (hasConstraint(m, RiverLayout.VTOP))
+            valign = VTOP;
+        else if (hasConstraint(m, RiverLayout.VCENTER))
+            valign = VCENTER;
 
-	}
+    }
 
-	/**
-	 * Lays out the container. This method lets each component take its
-	 * preferred size by reshaping the components in the target container in
-	 * order to satisfy the constraints of this <code>FlowLayout</code>
-	 * object.
-	 * 
-	 * @param target
-	 *            the specified component being laid out
-	 * @see Container
-	 * @see java.awt.Container#doLayout
-	 */
-	public void layoutContainer(Container target) {
-		setAlignment(FlowLayout.LEFT);
-		synchronized (target.getTreeLock()) {
-			Insets insets = getInsets(target);
-			int maxwidth = target.getWidth() - (insets.left + insets.right);
-			int maxheight = target.getHeight() - (insets.top + insets.bottom);
+    /**
+     * Lays out the container. This method lets each component take its
+     * preferred size by reshaping the components in the target container in
+     * order to satisfy the constraints of this <code>FlowLayout</code>
+     * object.
+     * 
+     * @param target
+     *            the specified component being laid out
+     * @see Container
+     * @see java.awt.Container#doLayout
+     */
+    public void layoutContainer(Container target) {
+        setAlignment(FlowLayout.LEFT);
+        synchronized (target.getTreeLock()) {
+            Insets insets = getInsets(target);
+            int maxwidth = target.getWidth() - (insets.left + insets.right);
+            int maxheight = target.getHeight() - (insets.top + insets.bottom);
 
-			int nmembers = target.getComponentCount();
-			int x = 0, y = insets.top + vgap;
-			int rowh = 0, start = 0, moveDownStart = 0;
+            int nmembers = target.getComponentCount();
+            int x = 0, y = insets.top + vgap;
+            int rowh = 0, start = 0, moveDownStart = 0;
 
-			boolean ltr = target.getComponentOrientation().isLeftToRight();
-			Component toHfill = null;
-			Component toVfill = null;
-			Ruler ruler = calcTabs(target);
-			int tabIndex = 0;
+            boolean ltr = target.getComponentOrientation().isLeftToRight();
+            Component toHfill = null;
+            Component toVfill = null;
+            Ruler ruler = calcTabs(target);
+            int tabIndex = 0;
 
-			for (int i = 0; i < nmembers; i++) {
-				Component m = target.getComponent(i);
-				Dimension d = m.getPreferredSize();
-				m.setSize(d.width, d.height);
+            for (int i = 0; i < nmembers; i++) {
+                Component m = target.getComponent(i);
+                Dimension d = m.getPreferredSize();
+                m.setSize(d.width, d.height);
 
-				if (isFirstInRow(m))
-					tabIndex = 0;
-				if (hasConstraint(m, TAB_STOP))
-					x = ruler.getTab(tabIndex++);
-				if (!isFirstInRow(m)) {
-					if (i > 0 && !hasConstraint(m, TAB_STOP)) {
-						x += hgap;
-					}
-					x += d.width;
-					rowh = Math.max(rowh, d.height);
-				} else {
-					if (toVfill != null && moveDownStart == 0) {
-						moveDownStart = i;
-					}
-					if (toHfill != null) {
-						toHfill.setSize(toHfill.getWidth() + maxwidth - x, toHfill.getHeight());
-						x = maxwidth;
-					}
-					moveComponents(target, insets.left, y, maxwidth - x, rowh, start, i, ltr, ruler);
-					x = d.width;
-					y += vgap + rowh;
-					if (hasConstraint(m, PARAGRAPH_BREAK))
-						y += 2 * vgap;
-					rowh = d.height;
-					start = i;
-					toHfill = null;
-				}
+                if (isFirstInRow(m))
+                    tabIndex = 0;
+                if (hasConstraint(m, TAB_STOP))
+                    x = ruler.getTab(tabIndex++);
+                if (!isFirstInRow(m)) {
+                    if (i > 0 && !hasConstraint(m, TAB_STOP)) {
+                        x += hgap;
+                    }
+                    x += d.width;
+                    rowh = Math.max(rowh, d.height);
+                } else {
+                    if (toVfill != null && moveDownStart == 0) {
+                        moveDownStart = i;
+                    }
+                    if (toHfill != null) {
+                        toHfill.setSize(toHfill.getWidth() + maxwidth - x, toHfill.getHeight());
+                        x = maxwidth;
+                    }
+                    moveComponents(target, insets.left, y, maxwidth - x, rowh, start, i, ltr, ruler);
+                    x = d.width;
+                    y += vgap + rowh;
+                    if (hasConstraint(m, PARAGRAPH_BREAK))
+                        y += 2 * vgap;
+                    rowh = d.height;
+                    start = i;
+                    toHfill = null;
+                }
 
-				if (hasHfill(m)) {
-					toHfill = m;
-				}
-				if (hasVfill(m)) {
-					toVfill = m;
-				}
-				adjustAlignment(m);
-			}
+                if (hasHfill(m)) {
+                    toHfill = m;
+                }
+                if (hasVfill(m)) {
+                    toVfill = m;
+                }
+                adjustAlignment(m);
+            }
 
-			if (toVfill != null && moveDownStart == 0) { // Don't move
-				// anything if hfill
-				// component is last
-				// component
-				moveDownStart = nmembers;
-			}
-			if (toHfill != null) { // last component
-				toHfill.setSize(toHfill.getWidth() + maxwidth - x, toHfill.getHeight());
-				x = maxwidth;
-			}
-			moveComponents(target, insets.left, y, maxwidth - x, rowh, start, nmembers, ltr, ruler);
-			int yslack = maxheight - (y + rowh);
-			if (yslack != 0 && toVfill != null) {
-				toVfill.setSize(toVfill.getWidth(), yslack + toVfill.getHeight());
-				relMove(target, 0, yslack, moveDownStart, nmembers);
-			}
-		}
-	}
+            if (toVfill != null && moveDownStart == 0) { // Don't move
+                // anything if hfill
+                // component is last
+                // component
+                moveDownStart = nmembers;
+            }
+            if (toHfill != null) { // last component
+                toHfill.setSize(toHfill.getWidth() + maxwidth - x, toHfill.getHeight());
+                x = maxwidth;
+            }
+            moveComponents(target, insets.left, y, maxwidth - x, rowh, start, nmembers, ltr, ruler);
+            int yslack = maxheight - (y + rowh);
+            if (yslack != 0 && toVfill != null) {
+                toVfill.setSize(toVfill.getWidth(), yslack + toVfill.getHeight());
+                relMove(target, 0, yslack, moveDownStart, nmembers);
+            }
+        }
+    }
 
 }
 
+/**
+ * Rular class for cotainer
+ * @author Chetan_BH
+ *
+ */
 class Ruler {
-	private Vector<Integer> tabs = new Vector<Integer>();
+    private Vector<Integer> tabs = new Vector<Integer>();
 
-	public void setTab(int num, int xpos) {
-		if (num >= tabs.size())
-			tabs.add(num, new Integer(xpos));
-		else {
-			// Transpose all tabs from this tab stop and onwards
-			int delta = xpos - getTab(num);
-			if (delta > 0) {
-				for (int i = num; i < tabs.size(); i++) {
-					tabs.set(i, new Integer(getTab(i) + delta));
-				}
-			}
-		}
-	}
+    public void setTab(int num, int xpos) {
+        if (num >= tabs.size())
+            tabs.add(num, new Integer(xpos));
+        else {
+            // Transpose all tabs from this tab stop and onwards
+            int delta = xpos - getTab(num);
+            if (delta > 0) {
+                for (int i = num; i < tabs.size(); i++) {
+                    tabs.set(i, new Integer(getTab(i) + delta));
+                }
+            }
+        }
+    }
 
-	public int getTab(int num) {
-		return tabs.get(num).intValue();
-	}
+    /**
+     * Get tabs  
+     * @param num
+     * @return
+     */
+    public int getTab(int num) {
+        return tabs.get(num).intValue();
+    }
 
-	public String toString() {
-		StringBuffer ret = new StringBuffer(getClass().getName() + " {");
-		for (int i = 0; i < tabs.size(); i++) {
-			ret.append(tabs.get(i));
-			if (i < tabs.size() - 1)
-				ret.append(',');
-		}
-		ret.append('}');
-		return ret.toString();
-	}
-
-	public static void main(String[] args) {
-		Ruler r = new Ruler();
-		r.setTab(0, 10);
-		r.setTab(1, 20);
-		r.setTab(2, 30);
-		 
-		r.setTab(1, 25);
-		 
-		 
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        StringBuffer ret = new StringBuffer(getClass().getName() + " {");
+        for (int i = 0; i < tabs.size(); i++) {
+            ret.append(tabs.get(i));
+            if (i < tabs.size() - 1)
+                ret.append(',');
+        }
+        ret.append('}');
+        return ret.toString();
+    }   
 }
