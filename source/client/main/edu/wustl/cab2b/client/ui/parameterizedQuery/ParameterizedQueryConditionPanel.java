@@ -38,10 +38,6 @@ import edu.wustl.common.querysuite.queryobject.ICondition;
  * 
  */
 public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     private Cab2bPanel contentPanel;
@@ -174,7 +170,6 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
      * @return
      */
     private void setConditionValues(AbstractTypePanel componentPanel) {
-
         AttributeInterface attribute = componentPanel.getAttributeEntity();
         Map<Integer, Collection<ICondition>> conditionMap = queryDataModel.getConditions();
         for (Integer key : conditionMap.keySet()) {

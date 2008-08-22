@@ -43,7 +43,6 @@ import edu.wustl.common.querysuite.queryobject.IQuery;
  * The class represents the navigation searchPanel for the search dialog, and
  * also includes corresponding functionality.
  */
-
 public class SearchNavigationPanel extends Cab2bPanel implements ActionListener {
     private static final long serialVersionUID = 1234567890L;
 
