@@ -22,5 +22,6 @@
 		<mapping resource="edu/wustl/common/hbm/ArithmeticOperand.hbm.xml" />
 		<mapping resource="edu/wustl/common/hbm/CustomFormula.hbm.xml" />
 		<mapping resource="edu/wustl/common/hbm/OutputTerm.hbm.xml" />
+		<mapping resource="edu/wustl/common/hbm/Parameter.hbm.xml" />
     </session-factory>
 </hibernate-configuration>
