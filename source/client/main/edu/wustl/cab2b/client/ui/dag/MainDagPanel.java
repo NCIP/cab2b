@@ -62,7 +62,9 @@ import edu.wustl.common.util.logger.Logger;
 public class MainDagPanel extends Cab2bPanel {
     private static final long serialVersionUID = 1L;
 
-    // view to be added to this panel
+    /**
+     * view to be added to this panel
+     */
     protected JComponent view;
 
     /**
@@ -836,7 +838,14 @@ public class MainDagPanel extends Cab2bPanel {
             EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
             entitySet.add(entity);
         }
+        checkPathValidity(entitySet, selectedNodes);
+    }
 
+    /**
+     * Method for checking validity of paths between selected nodes and their entities
+     * @param entitySet
+     */
+    protected void checkPathValidity(Set<EntityInterface> entitySet, List<ClassNode> selectedNodes) {
         Set<ICuratedPath> paths = dagPathFinder.autoConnect(entitySet);
         if (paths == null || paths.size() <= 0) {
             // Cannot perform connect all functionality
@@ -849,15 +858,16 @@ public class MainDagPanel extends Cab2bPanel {
         if (path == null) {
             // Show ambiguity resolver to get a curated path
             AutoConnectAmbiguityResolver childPanel = new AutoConnectAmbiguityResolver(paths);
-            WindowUtilities.showInDialog(NewWelcomePanel.getMainFrame(), childPanel,
-                                         "Available curated paths Panel", Constants.WIZARD_SIZE2_DIMENSION, true,
-                                         false);
+            childPanel.setParentWindow(WindowUtilities.showInDialog(NewWelcomePanel.getMainFrame(), childPanel,
+                                                                    "Available curated paths Panel",
+                                                                    Constants.WIZARD_SIZE2_DIMENSION, true, false));
             path = childPanel.getUserSelectedPath();
         }
 
         if (path != null) {
             autoConnectNodes(selectedNodes, path);
         }
+
     }
 
     /**

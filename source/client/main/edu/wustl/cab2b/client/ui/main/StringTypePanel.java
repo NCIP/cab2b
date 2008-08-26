@@ -7,77 +7,70 @@ import javax.swing.JComponent;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bFormattedTextField;
 
+/**
+ * Condition panel if attribute type is of type String. Used in AddLimit and ParameterizedQuery pages.
+ * @author deepak_shingan 
+ */
 public class StringTypePanel extends AbstractTypePanel {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public StringTypePanel(ArrayList<String> conditionList, Dimension maxLabelDimension) {
-		super(conditionList, maxLabelDimension);
-	}
+    /**
+     * Constructor
+     * @param conditionList
+     * @param maxLabelDimension
+     */
+    public StringTypePanel(ArrayList<String> conditionList, Dimension maxLabelDimension) {
+        super(conditionList, maxLabelDimension);
+    }
 
-	public JComponent getFirstComponent() {
-		return new Cab2bFormattedTextField(CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE,
-				Cab2bFormattedTextField.PLAIN_FIELD);
-	}
+    /* (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getFirstComponent()
+     */
+    public JComponent getFirstComponent() {
+        return new Cab2bFormattedTextField(CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE,
+                Cab2bFormattedTextField.PLAIN_FIELD);
+    }
 
-	public JComponent getSecondComponent() {
-		return new Cab2bFormattedTextField(CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE,
-				Cab2bFormattedTextField.PLAIN_FIELD);
-	}
+    /* (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getSecondComponent()
+     */
+    public JComponent getSecondComponent() {
+        return new Cab2bFormattedTextField(CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE,
+                Cab2bFormattedTextField.PLAIN_FIELD);
+    }
 
-	/**
-	 * Method to return set values
-	 */
-	public ArrayList<String> getValues() {
-		return super.getValues();
-	}
+    /* Method to set values in the component
+     *  (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.main.IComponent#setValues(java.util.ArrayList)
+     */
+    public void setValues(ArrayList<String> values) {
+        if (values.size() == 0) {
+            return;
+        }
 
-	/**
-	 * Method to set values in the component
-	 */
-	public void setValues(ArrayList<String> values) {
-		if (values.size() == 0) {
-			return;
-		}
+        // If selected condition is "IN" or "Not IN"
+        if ((getConditionItem().compareToIgnoreCase("IN") == 0 || getConditionItem().compareToIgnoreCase("Not IN") == 0)) {
+            super.setMultipleValues(values);
+        } else if (values.size() == 1) {
+            ((Cab2bFormattedTextField) firstComponent).setText(values.get(0));
+        } else if (values.size() == 2) {
+            ((Cab2bFormattedTextField) firstComponent).setText(values.get(0));
+            ((Cab2bFormattedTextField) secondComponent).setText(values.get(1));
+        }
+    }
 
-		// If selected condition is "IN" or "Not IN"
-		if ((getConditionItem().compareToIgnoreCase("IN") == 0 || getConditionItem()
-				.compareToIgnoreCase("Not IN") == 0)) {
-			StringBuffer sb = new StringBuffer();
-			// For first element append text qualifier if required
-			if (values.get(0).indexOf(",") != -1) {
-				sb.append("\"");
-				sb.append(values.get(0));
-				sb.append("\"");
-			} else {
-				sb.append(values.get(0));
-			}
+    /* (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#setComponentPreference(java.lang.String)
+     */
+    public void setComponentPreference(String condition) {
 
-			for (int i = 1; i < values.size(); i++) {
-				sb.append(",");
-				if (values.get(i).indexOf(",") != -1) {
-					sb.append("\"");
-					sb.append(values.get(i));
-					sb.append("\"");
-				} else {
-					sb.append(values.get(i));
-				}
-			}
+    }
 
-			((Cab2bFormattedTextField) firstComponent).setText(sb.toString());
-		} else if (values.size() == 1) {
-			((Cab2bFormattedTextField) firstComponent).setText(values.get(0));
-		} else if (values.size() == 2) {
-			((Cab2bFormattedTextField) firstComponent).setText(values.get(0));
-			((Cab2bFormattedTextField) secondComponent).setText(values.get(1));
-		}
-	}
-
-	public void setComponentPreference(String condition) {
-
-	}
-
-	public void resetPanel() {
-		((Cab2bFormattedTextField) firstComponent).setText("");
-		((Cab2bFormattedTextField) secondComponent).setText("");
-	}
+    /* (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#resetPanel()
+     */
+    public void resetPanel() {
+        ((Cab2bFormattedTextField) firstComponent).setText("");
+        ((Cab2bFormattedTextField) secondComponent).setText("");
+    }
 }

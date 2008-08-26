@@ -14,6 +14,7 @@ import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
 /**
+ * Class for returning textfield with specific properties depending on parameters provided. 
  * @author chetan_bh
  */
 public class Cab2bFormattedTextField extends JFormattedTextField {
@@ -46,7 +47,7 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
     /* For alpha-numeric fields, with no special characters */
     public static final int ALPHA_NUMERIC_FIELD = 5;
 
-    private boolean m_commaAllowed = false;
+    private boolean isCommaAllowed = false;
 
     /**
      * Method to set if comma is allowed in the formmated string
@@ -55,7 +56,7 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
      * @param commaAllowed
      */
     public void setCommaAllowed(boolean commaAllowed) {
-        m_commaAllowed = commaAllowed;
+        isCommaAllowed = commaAllowed;
     }
 
     /**
@@ -67,22 +68,38 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
         setDocument(documentFactory.getDocument(fieldType));
         initializeFormatter();
         this.setColumns(columns);
-       //setBorder(ClientConstants.border);
+        //setBorder(ClientConstants.border);
         setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
     }
 
+    /**
+     * 
+     */
     private void initializeFormatter() {
         //dateFormatter = DateFormat.getInstance();
     }
 
+    /**
+     * Constructor
+     * @param value
+     */
     public Cab2bFormattedTextField(Object value) {
         super(value);
     }
 
+    /**
+     * Constructor
+     * @param format
+     */
     public Cab2bFormattedTextField(Format format) {
         super(format);
     }
 
+    /**
+     * Constructor
+     * @param formatter
+     * @param fieldType
+     */
     public Cab2bFormattedTextField(AbstractFormatter formatter, int fieldType) {
         super(formatter);
         this.fieldType = fieldType;
@@ -91,23 +108,40 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
         //this.setFormatter(formatter);
     }
 
+    /**
+     * Constructor
+     * @param factory
+     */
     public Cab2bFormattedTextField(AbstractFormatterFactory factory) {
         super(factory);
     }
 
+    /**
+     * Constructor
+     * @param factory
+     * @param currentValue
+     */
     public Cab2bFormattedTextField(AbstractFormatterFactory factory, Object currentValue) {
         super(factory, currentValue);
     }
 
     /* This method calls a factory method to get the correct doument 
-     * depending on the fieldType input parameter */
+     * depending on the fieldType input parameter
+     * (non-Javadoc)
+     * @see javax.swing.JTextField#createDefaultModel()
+     */
     protected Document createDefaultModel() {
         if (documentFactory == null)
             documentFactory = new DocumentFactory();
         return documentFactory.getDocument(fieldType);
     }
 
-    /* Utility method to find the number of occurrence of a particular character in the String */
+    /**
+     * Utility method to find the number of occurrence of a particular character in the String 
+     * @param str
+     * @param character
+     * @return
+     */
     private int countCharacterIn(String str, char character) {
         int count = 0;
 
@@ -120,6 +154,9 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
         return count;
     }
 
+    /**
+     * Changed focus view of textfield
+     */
     public void changeFocus() {
         Border newBorder = new BevelBorder(1, Color.RED, Color.RED);
         this.setBorder(newBorder);
@@ -128,7 +165,7 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
 
     /**
      * @author chetan_bh
-     */
+     */    
     protected class WholeNumberDocument extends PlainDocument {
         private static final long serialVersionUID = 1L;
 
@@ -140,7 +177,7 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
             for (int i = 0; i < result.length; i++) {
                 if (Character.isDigit(source[i])) {
                     result[j++] = source[i];
-                } else if ((m_commaAllowed == true) && (source[i] == ',')) {
+                } else if ((isCommaAllowed == true) && (source[i] == ',')) {
                     result[j++] = source[i];
                 } else {
                     toolkit.beep();
@@ -171,7 +208,7 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
                 if (Character.isDigit(source[i]) || (source[i] == '-' && this.getLength() == 0)
                         || (source[i] == '.') && !singleOccurenceOfDeciPoint)
                     result[j++] = source[i];
-                else if ((m_commaAllowed == true) && (source[i] == ',')) {
+                else if ((isCommaAllowed == true) && (source[i] == ',')) {
                     result[j++] = source[i];
                 } else {
                     toolkit.beep();
@@ -194,7 +231,7 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
             for (int i = 0; i < result.length; i++) {
                 if (Character.isDigit(source[i]) || (source[i] == '-') && this.getLength() == 0) {
                     result[j++] = source[i];
-                } else if ((m_commaAllowed == true) && (source[i] == ',')) {
+                } else if ((isCommaAllowed == true) && (source[i] == ',')) {
                     result[j++] = source[i];
                 } else {
                     toolkit.beep();

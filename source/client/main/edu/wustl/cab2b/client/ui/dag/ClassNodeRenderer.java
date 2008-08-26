@@ -1,7 +1,6 @@
 package edu.wustl.cab2b.client.ui.dag;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -9,106 +8,149 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.util.HashMap;
 
 import org.netbeans.graph.api.control.GraphHelper;
 import org.netbeans.graph.api.control.IGraphNodeRenderer;
 import org.netbeans.graph.api.control.editor.IGraphEditor;
-import org.netbeans.graph.api.control.editor.TextFieldEditor;
 import org.netbeans.graph.api.model.IGraphNode;
 import org.netbeans.graph.api.model.IGraphPort;
 import org.netbeans.graph.api.model.ability.IDisplayable;
 import org.netbeans.graph.api.model.ability.INameEditable;
-import org.openide.util.NbBundle;
 
 public class ClassNodeRenderer implements IGraphNodeRenderer {
+    /**
+     * Node font
+     */
     public static final Font font = Font.decode("Times-bold").deriveFont(10.0f); // NOI18N
 
+    /**
+     * Font color
+     */
     private static Color colorFont = new Color(0, 0, 0); // 174, 100
 
+    /**
+     * Space for port one
+     */
     protected static int PORT_SPACE = 20; // sanjeev
 
+    /**
+     * Space for port two
+     */
     protected static int PORT_SPACE_2 = 8;
 
+    /**
+     * Layer background
+     */
     private static final int LAYER_BACKGROUND = 100;
 
+    /**
+     * Layer node
+     */
     private static final int LAYER_NODE = 400;
 
+    /**
+     * Array of layers
+     */
     private int[] layers = new int[] { LAYER_BACKGROUND, LAYER_NODE };
 
+    /**
+     * Helper graph utility class
+     */
     private GraphHelper helper;
 
-    protected Rectangle m_textRect;
+    /**
+     * Text rectangle
+     */
+    protected Rectangle nodeTextRect;
 
-    private Rectangle m_option;
+    /**
+     * Option box rectangle on node
+     */
+    private Rectangle optionNodeRect;
 
-    private Rectangle m_maxMinRectangle;
+    /**
+     * Node min max rectangle
+     */
+    private Rectangle maxMinRectangle;
 
-    private Rectangle m_numRectangle;
+    /**
+     * Rectangle for showing node index number
+     */
+    private Rectangle numberRectangle;
 
-    private Rectangle[] m_assRectangles;
+    /**
+     * Rectangle for showing associations node number
+     */
+    private Rectangle[] assRectangles;
 
+    /**
+     * Tool tip text
+     */
     private String toolTipName;
 
-    // Set max-min width and height
-    private final int m_maxMinLength = 15;
+    /**
+     * Set max-min width and height
+     */
+    private final int maxMinLength = 15;
 
-    private boolean m_nodeMinimized = false;
+    /**
+     * Flag to check whether node is minimized or not
+     */
+    private boolean nodeMinimized = false;
 
-    private Polygon m_optionPolygon;
+    /**
+     * Option polygone
+     */
+    private Polygon optionPolygon;
 
-    // SET index of association clicked
-    private int m_associationIndx = -1;
+    /**
+     * SET index of association clicked
+     */
+    private int associationIndx = -1;
 
-    HashMap m_AssToOperatermap = new HashMap();
-
+    /**
+     * Flag to identify is node created for view
+     */
     private boolean isForView = false;
 
+    /**
+     * Constructor
+     * @param helper
+     * @param node
+     * @param isForView
+     */
     public ClassNodeRenderer(GraphHelper helper, IGraphNode node, boolean isForView) {
         this.helper = helper;
         this.isForView = isForView;
     }
 
+    /* (non-Javadoc)
+     * @see org.netbeans.graph.api.control.IGraphNodeRenderer#getEditor(org.netbeans.graph.api.model.IGraphNode, java.awt.Point)
+     */
     public IGraphEditor getEditor(IGraphNode node, Point position) {
-        if (m_textRect == null) {
+        if (nodeTextRect == null) {
             return null;
         }
-        final Rectangle rectangle = new Rectangle(m_textRect);
+        final Rectangle rectangle = new Rectangle(nodeTextRect);
         final Point location = helper.getNodeLocation(node);
         rectangle.translate(location.x, location.y);
         final INameEditable nameEditable = (INameEditable) node.getLookup().lookup(INameEditable.class);
         if (rectangle.contains(position) && nameEditable != null && nameEditable.canRename()) {
-            return new TextFieldEditor() {
-                public String getValue() {
-                    final String name = nameEditable.getName();
-                    return name != null ? name : NbBundle.getMessage(ClassNodeRenderer.class,
-                                                                     "TXT_IconNodeDriver_EnterName"); // NOI18N
-                }
-
-                public void setValue(String value) {
-                    nameEditable.setName(value);
-                }
-
-                public Rectangle getActiveArea() {
-                    return rectangle;
-                }
-
-                public void notifyAttached(IGraphEditor.EditorPresenter presenter) {
-                    super.notifyAttached(presenter);
-                    final int height = getComponent().getPreferredSize().height;
-                    getComponent().setMinimumSize(new Dimension(64, height));
-                    getComponent().setMaximumSize(new Dimension(256, height));
-                    getComponent().setPreferredSize(new Dimension(128, height));
-                }
-            };
+            return new DagTextFieldEditor(rectangle, nameEditable);
         }
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.netbeans.graph.api.control.IGraphNodeRenderer#getLayers(org.netbeans.graph.api.model.IGraphNode)
+     */
     public int[] getLayers(IGraphNode arg0) {
         return layers;
     }
 
+    /* (non-Javadoc)
+     * @see org.netbeans.graph.api.control.IGraphNodeRenderer#getToolTipText(org.netbeans.graph.api.model.IGraphNode, java.awt.Point)
+     */
     public String getToolTipText(IGraphNode node, Point arg1) {
         final IDisplayable displayable = (IDisplayable) node.getLookup().lookup(IDisplayable.class);
         return displayable != null ? displayable.getTooltipText() : null;
@@ -123,54 +165,49 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
      *            Graphics2D object associated with this node renderer
      */
     private void layoutMinimizedNode(IGraphNode node, Graphics2D gr) {
-        FontMetrics fontMetrics = gr.getFontMetrics(font);
-
-        // Node number rectangle setup
-        m_numRectangle = fontMetrics.getStringBounds(node.getID(), gr).getBounds();
-        m_numRectangle.width += 10;
-        m_numRectangle.height += 5;
-
-        // Class name area setup
-        String displayName = ((IDisplayable) node.getLookup().lookup(IDisplayable.class)).getDisplayName();
-        if (displayName.indexOf("(") != -1)
-            displayName = displayName.substring(0, displayName.indexOf("("));
-        m_textRect = fontMetrics.getStringBounds(displayName, gr).getBounds();
+        setRectangleFontMatrics(node, gr);
+        String displayName = getDisplayNameForFontMatrics(node);
         if (displayName.length() <= 5)
-            m_textRect.width += 20;
+            nodeTextRect.width += 20;
         else
-            m_textRect.width += 10;
-        m_textRect.height += 10;
-        m_textRect.x = m_numRectangle.x + m_numRectangle.width;
-        m_textRect.y = m_numRectangle.y;
+            nodeTextRect.width += 10;
+        nodeTextRect.height += 10;
+        nodeTextRect.x = numberRectangle.x + numberRectangle.width;
+        nodeTextRect.y = numberRectangle.y;
 
         // MaxMin rectangle details
-        m_maxMinRectangle = new Rectangle();
-        m_maxMinRectangle.width = m_maxMinRectangle.height = m_maxMinLength;
-        m_maxMinRectangle.x = m_textRect.x + m_textRect.width;
-        m_maxMinRectangle.y = m_textRect.y + 5;
+        maxMinRectangle = new Rectangle();
+        maxMinRectangle.width = maxMinRectangle.height = maxMinLength;
+        maxMinRectangle.x = nodeTextRect.x + nodeTextRect.width;
+        maxMinRectangle.y = nodeTextRect.y + 5;
 
         Rectangle bounds = new Rectangle();
-        Rectangle2D.union(m_numRectangle, m_textRect, bounds);
-        Rectangle2D.union(m_maxMinRectangle, bounds, bounds);
+        Rectangle2D.union(numberRectangle, nodeTextRect, bounds);
+        Rectangle2D.union(maxMinRectangle, bounds, bounds);
         layoutNodeCommonUpdate(node, bounds);
     }
 
+    /**
+     * Updates node layout
+     * @param node
+     * @param bounds
+     */
     private void layoutNodeCommonUpdate(IGraphNode node, Rectangle bounds) {
         ClassNode classNode = (ClassNode) (node.getLookup().lookup(ClassNode.class));
         java.util.List<IGraphPort> associationList = classNode.getSourcePorts();
         for (int i = 0; i < associationList.size(); i++) {
             IGraphPort port = associationList.get(i);
-            helper.setPortRelativeLocation(port, new Point(m_maxMinRectangle.x + m_maxMinRectangle.width + 5,
-                    m_maxMinRectangle.y + 5));
+            helper.setPortRelativeLocation(port, new Point(maxMinRectangle.x + maxMinRectangle.width + 5,
+                    maxMinRectangle.y + 5));
         }
         java.util.List<IGraphPort> targetPortList = classNode.getTargetPortList();
         for (int i = 0; i < targetPortList.size(); i++) {
-            helper.setPortRelativeLocation(targetPortList.get(i), new Point(m_numRectangle.x - 5,
-                    m_numRectangle.y + 5));
+            helper.setPortRelativeLocation(targetPortList.get(i), new Point(numberRectangle.x - 5,
+                    numberRectangle.y + 5));
         }
         helper.includeNodePortsToNodeRelativeBounds(node, bounds);
         bounds.grow(4, 4);
-        helper.setNodeRelativeActiveAreas(node, new Rectangle[] { bounds, m_textRect, m_maxMinRectangle });
+        helper.setNodeRelativeActiveAreas(node, new Rectangle[] { bounds, nodeTextRect, maxMinRectangle });
         helper.setNodeRelativeBounds(node, bounds);
 
     }
@@ -193,66 +230,52 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
         FontMetrics fontMetrics = gr.getFontMetrics(font);
 
         // Node number rectangle setup
-        m_numRectangle = fontMetrics.getStringBounds(node.getID(), gr).getBounds();
-        m_numRectangle.width += 10;
-        m_numRectangle.height += 5;
+        numberRectangle = fontMetrics.getStringBounds(node.getID(), gr).getBounds();
+        numberRectangle.width += 10;
+        numberRectangle.height += 5;
 
         // set Target ports
         ClassNode classNode = (ClassNode) (node.getLookup().lookup(ClassNode.class));
         java.util.List<IGraphPort> targetPortList = classNode.getTargetPortList();
         for (int i = 0; i < targetPortList.size(); i++) {
-            helper.setPortRelativeLocation(targetPortList.get(i), new Point(m_numRectangle.x - 5,
-                    m_numRectangle.y + 5));
+            helper.setPortRelativeLocation(targetPortList.get(i), new Point(numberRectangle.x - 5,
+                    numberRectangle.y + 5));
         }
 
         // Class name area setup
-        m_textRect = fontMetrics.getStringBounds(displayName, gr).getBounds();
+        nodeTextRect = fontMetrics.getStringBounds(displayName, gr).getBounds();
         if (displayName.length() <= 5)
-            m_textRect.width += 20;
+            nodeTextRect.width += 20;
         else
-            m_textRect.width += 10;
-        m_textRect.height += 10;
-        m_textRect.x = m_numRectangle.x + m_numRectangle.width;
-        m_textRect.y = m_numRectangle.y;
-
-        // MaxMin rectangle details
-        m_maxMinRectangle = new Rectangle();
-        m_maxMinRectangle.width = m_maxMinRectangle.height = m_maxMinLength;
-        m_maxMinRectangle.x = m_textRect.x + m_textRect.width;
-        m_maxMinRectangle.y = m_textRect.y + 5;
-
-        // Option area setup
-        m_option = fontMetrics.getStringBounds("Options", gr).getBounds();
-        m_option.width += 10;
-        m_option.height += 10;
-        m_option.translate(m_textRect.width / 2, m_textRect.height);
+            nodeTextRect.width += 10;
+        layoutNodeRect(fontMetrics, gr);
 
         // If node has associations to display
         // Render association part of the node
-        m_assRectangles = null;
+        assRectangles = null;
         layoutAssociations(node, gr);
 
         Rectangle bounds = new Rectangle();
-        Rectangle2D.union(m_textRect, m_option, bounds);
-        Rectangle2D.union(bounds, m_maxMinRectangle, bounds);
-        Rectangle2D.union(bounds, m_numRectangle, bounds);
+        Rectangle2D.union(nodeTextRect, optionNodeRect, bounds);
+        Rectangle2D.union(bounds, maxMinRectangle, bounds);
+        Rectangle2D.union(bounds, numberRectangle, bounds);
         Rectangle[] allActiveRectangles;
-        if (m_assRectangles != null) {
-            allActiveRectangles = new Rectangle[m_assRectangles.length + 3];
-            for (int i = 0; i < m_assRectangles.length; i++) {
-                Rectangle2D.union(bounds, m_assRectangles[i], bounds);
+        if (assRectangles != null) {
+            allActiveRectangles = new Rectangle[assRectangles.length + 3];
+            for (int i = 0; i < assRectangles.length; i++) {
+                Rectangle2D.union(bounds, assRectangles[i], bounds);
             }
         } else {
             allActiveRectangles = new Rectangle[3];
         }
         // Add common rectangles
         allActiveRectangles[0] = bounds;
-        allActiveRectangles[1] = m_option;
-        allActiveRectangles[2] = m_maxMinRectangle;
+        allActiveRectangles[1] = optionNodeRect;
+        allActiveRectangles[2] = maxMinRectangle;
 
-        if (m_assRectangles != null) {
-            for (int i = 0; i < m_assRectangles.length; i++) {
-                allActiveRectangles[i + 3] = m_assRectangles[i];
+        if (assRectangles != null) {
+            for (int i = 0; i < assRectangles.length; i++) {
+                allActiveRectangles[i + 3] = assRectangles[i];
             }
         }
         helper.includeNodePortsToNodeRelativeBounds(node, bounds);
@@ -275,24 +298,58 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
         if (associationList.size() == 0) {
             return;
         }
-        m_assRectangles = new Rectangle[associationList.size() + 1];
+        assRectangles = new Rectangle[associationList.size() + 1];
         // Common condtion portion where attribute conditions will be logically
         // ANDED / ORED will association
         // conditions
-        m_assRectangles[0] = new Rectangle();
-        m_assRectangles[0].width = m_textRect.width;
-        m_assRectangles[0].height = m_textRect.height;
-        m_assRectangles[0].translate(m_textRect.x, m_option.y + m_option.height);
+        assRectangles[0] = new Rectangle();
+        assRectangles[0].width = nodeTextRect.width;
+        assRectangles[0].height = nodeTextRect.height;
+        assRectangles[0].translate(nodeTextRect.x, optionNodeRect.y + optionNodeRect.height);
 
         for (int i = 1; i <= associationList.size(); i++) {
-            m_assRectangles[i] = new Rectangle();
-            m_assRectangles[i].width = m_textRect.width;
-            m_assRectangles[i].height = m_textRect.height;
-            m_assRectangles[i].translate(m_textRect.x, m_assRectangles[i - 1].height + m_assRectangles[i - 1].y);
+            assRectangles[i] = new Rectangle();
+            assRectangles[i].width = nodeTextRect.width;
+            assRectangles[i].height = nodeTextRect.height;
+            assRectangles[i].translate(nodeTextRect.x, assRectangles[i - 1].height + assRectangles[i - 1].y);
             IGraphPort port = associationList.get(i - 1);
-            helper.setPortRelativeLocation(port, new Point(m_assRectangles[i].x + m_assRectangles[i].width + 5,
-                    m_assRectangles[i].y + 5));
+            helper.setPortRelativeLocation(port, new Point(assRectangles[i].x + assRectangles[i].width + 5,
+                    assRectangles[i].y + 5));
         }
+    }
+
+    /**
+     * Sets Font metrics for rectangle
+     * @param node
+     * @param gr
+     * @return FontMetrics
+     */
+    private FontMetrics setRectangleFontMatrics(IGraphNode node, Graphics2D gr) {
+        FontMetrics fontMetrics = gr.getFontMetrics(font);
+
+        // Node number rectangle setup
+        numberRectangle = fontMetrics.getStringBounds(node.getID(), gr).getBounds();
+        numberRectangle.width += 10;
+        numberRectangle.height += 5;
+
+        // Class name area setup
+        String displayName = getDisplayNameForFontMatrics(node);
+        nodeTextRect = fontMetrics.getStringBounds(displayName, gr).getBounds();
+
+        return fontMetrics;
+    }
+
+    /**
+     * Returns displayname with FontMatrics 
+     * @param node
+     * @return
+     */
+    private String getDisplayNameForFontMatrics(IGraphNode node) {
+        //      Class name area setup
+        String displayName = ((IDisplayable) node.getLookup().lookup(IDisplayable.class)).getDisplayName();
+        if (displayName.indexOf("(") != -1)
+            displayName = displayName.substring(0, displayName.indexOf("("));
+        return displayName;
     }
 
     /**
@@ -304,40 +361,38 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
      *            Graphics2D object associated with this node renderer
      */
     private void layoutDefineViewNode(IGraphNode node, Graphics2D gr) {
-        FontMetrics fontMetrics = gr.getFontMetrics(font);
+        FontMetrics fontMetrics = setRectangleFontMatrics(node, gr);
+        nodeTextRect.width += 10;
+        layoutNodeRect(fontMetrics, gr);
+        Rectangle bounds = new Rectangle();
+        Rectangle2D.union(numberRectangle, nodeTextRect, bounds);
+        Rectangle2D.union(maxMinRectangle, bounds, bounds);
+        Rectangle2D.union(optionNodeRect, bounds, bounds);
+        layoutNodeCommonUpdate(node, bounds);
+    }
 
-        // Node number rectangle setup
-        m_numRectangle = fontMetrics.getStringBounds(node.getID(), gr).getBounds();
-        m_numRectangle.width += 10;
-        m_numRectangle.height += 5;
+    /**
+     * Called to set rectangle layout
+     * @param fontMetrics
+     * @param gr
+     */
+    private void layoutNodeRect(FontMetrics fontMetrics, Graphics2D gr) {
 
-        // Class name area setup
-        String displayName = ((IDisplayable) node.getLookup().lookup(IDisplayable.class)).getDisplayName();
-        if (displayName.indexOf("(") != -1)
-            displayName = displayName.substring(0, displayName.indexOf("("));
-        m_textRect = fontMetrics.getStringBounds(displayName, gr).getBounds();
-        m_textRect.width += 10;
-        m_textRect.height += 10;
-        m_textRect.x = m_numRectangle.x + m_numRectangle.width;
-        m_textRect.y = m_numRectangle.y;
+        nodeTextRect.height += 10;
+        nodeTextRect.x = numberRectangle.x + numberRectangle.width;
+        nodeTextRect.y = numberRectangle.y;
 
         // MaxMin rectangle details
-        m_maxMinRectangle = new Rectangle();
-        m_maxMinRectangle.width = m_maxMinRectangle.height = m_maxMinLength;
-        m_maxMinRectangle.x = m_textRect.x + m_textRect.width;
-        m_maxMinRectangle.y = m_textRect.y + 5;
+        maxMinRectangle = new Rectangle();
+        maxMinRectangle.width = maxMinRectangle.height = maxMinLength;
+        maxMinRectangle.x = nodeTextRect.x + nodeTextRect.width;
+        maxMinRectangle.y = nodeTextRect.y + 5;
 
         // Option area setup
-        m_option = fontMetrics.getStringBounds("Options", gr).getBounds();
-        m_option.width += 10;
-        m_option.height += 10;
-        m_option.translate(m_textRect.width / 2, m_textRect.height);
-
-        Rectangle bounds = new Rectangle();
-        Rectangle2D.union(m_numRectangle, m_textRect, bounds);
-        Rectangle2D.union(m_maxMinRectangle, bounds, bounds);
-        Rectangle2D.union(m_option, bounds, bounds);
-        layoutNodeCommonUpdate(node, bounds);
+        optionNodeRect = fontMetrics.getStringBounds("Options", gr).getBounds();
+        optionNodeRect.width += 10;
+        optionNodeRect.height += 10;
+        optionNodeRect.translate(nodeTextRect.width / 2, nodeTextRect.height);
     }
 
     /**
@@ -356,7 +411,7 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
      *            the graphics
      */
     public void layoutNode(IGraphNode node, Graphics2D gr) {
-        if (true == m_nodeMinimized) {
+        if (true == nodeMinimized) {
             layoutMinimizedNode(node, gr);
         } else {
             if (isForView) {
@@ -367,15 +422,27 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.netbeans.graph.api.control.IGraphNodeRenderer#locationSuggested(org.netbeans.graph.api.model.IGraphNode, java.awt.Point)
+     */
     public Point locationSuggested(IGraphNode arg0, Point arg1) {
         // TODO Auto-generated method stub
         return arg1;
     }
 
+    /* (non-Javadoc)
+     * @see org.netbeans.graph.api.control.IGraphNodeRenderer#portLocationSuggested(org.netbeans.graph.api.model.IGraphPort, java.awt.Point)
+     */
     public void portLocationSuggested(IGraphPort arg0, Point arg1) {
         // TODO Auto-generated method stub
     }
 
+    /**
+     * Repaint selected node
+     * @param node
+     * @param gr
+     * @param rect
+     */
     private void renderNodeSelection(IGraphNode node, Graphics2D gr, Rectangle rect) {
         Rectangle2D rect2D;
         final boolean selected = helper.isComponentSelected(node);
@@ -440,6 +507,12 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
         }
     }
 
+    /**
+     * Renders node background color and graphics
+     * @param classNode
+     * @param gr
+     * @param rect
+     */
     private void renderNodeBackGround(ClassNode classNode, Graphics2D gr, Rectangle rect) {
         if (classNode.getType().equals(ClassNodeType.ConstraintOnlyNode)) {
             gr.setColor(new Color(0xFFFFAA));
@@ -453,14 +526,14 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
 
         // 1. Draw border for class name rectangle
         gr.setColor(new Color(0x000000));
-        Rectangle2D rect2D = new Rectangle2D.Float(rect.x, rect.y, rect.width - 1, m_textRect.height);
+        Rectangle2D rect2D = new Rectangle2D.Float(rect.x, rect.y, rect.width - 1, nodeTextRect.height);
         gr.draw(rect2D);
 
         // 2. Fill Option rectangle and draw border for same
         gr.setColor(new Color(0xDBDBDB));
-        gr.fillRect(rect.x, rect.y + m_textRect.height, rect.width, m_option.height);
+        gr.fillRect(rect.x, rect.y + nodeTextRect.height, rect.width, optionNodeRect.height);
         gr.setColor(new Color(0x000000));
-        rect2D = new Rectangle2D.Float(rect.x, rect.y + m_textRect.height, rect.width - 1, m_option.height);
+        rect2D = new Rectangle2D.Float(rect.x, rect.y + nodeTextRect.height, rect.width - 1, optionNodeRect.height);
         gr.draw(rect2D);
     }
 
@@ -491,23 +564,23 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
             // If node has associations show them
             if (associationList.size() > 0) {
                 gr.setColor(new Color(0xF5F5F5));
-                gr.fillRect(rect.x, rect.y + m_textRect.height + m_option.height, rect.width,
-                            m_assRectangles[0].height);
+                gr.fillRect(rect.x, rect.y + nodeTextRect.height + optionNodeRect.height, rect.width,
+                            assRectangles[0].height);
                 gr.setColor(new Color(0x000000));
-                Rectangle2D rect2D = new Rectangle2D.Float(rect.x, rect.y + m_textRect.height + m_option.height,
-                        rect.width - 1, m_assRectangles[0].height);
+                Rectangle2D rect2D = new Rectangle2D.Float(rect.x, rect.y + nodeTextRect.height
+                        + optionNodeRect.height, rect.width - 1, assRectangles[0].height);
                 gr.draw(rect2D);
-                rect2D = new Rectangle2D.Float(rect.x + 1, rect.y + m_textRect.height + m_option.height + 1,
-                        rect.width - 2, m_assRectangles[0].height - 2);
+                rect2D = new Rectangle2D.Float(rect.x + 1, rect.y + nodeTextRect.height + optionNodeRect.height
+                        + 1, rect.width - 2, assRectangles[0].height - 2);
                 gr.draw(rect2D);
-                int currY = rect.y + m_textRect.height + m_option.height;
-                for (int i = 1; i < m_assRectangles.length; i++) {
+                int currY = rect.y + nodeTextRect.height + optionNodeRect.height;
+                for (int i = 1; i < assRectangles.length; i++) {
                     gr.setColor(new Color(0xF5F5F5));
-                    gr.fillRect(rect.x, currY + (i * m_assRectangles[i - 1].height), rect.width,
-                                m_assRectangles[i].height);
+                    gr.fillRect(rect.x, currY + (i * assRectangles[i - 1].height), rect.width,
+                                assRectangles[i].height);
                     gr.setColor(new Color(0x000000));
-                    rect2D = new Rectangle2D.Float(rect.x, currY + (i * m_assRectangles[i - 1].height),
-                            rect.width - 1, m_assRectangles[i].height);
+                    rect2D = new Rectangle2D.Float(rect.x, currY + (i * assRectangles[i - 1].height),
+                            rect.width - 1, assRectangles[i].height);
                     gr.draw(rect2D);
                 }
             }
@@ -529,11 +602,11 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
             }
             renderNodeUpdatePolygon(gr, node, displayName);
             // Render association related information
-            final Rectangle numRect = new Rectangle(m_numRectangle);
-            final Rectangle optionRect = new Rectangle(m_option);
+            final Rectangle numRect = new Rectangle(numberRectangle);
+            final Rectangle optionRect = new Rectangle(optionNodeRect);
             optionRect.translate(location.x, location.y);
             if (associationList.size() > 0) {
-                numRect.y = location.y + m_textRect.height + optionRect.height;
+                numRect.y = location.y + nodeTextRect.height + optionRect.height;
                 drawAssociation(classNode, gr, location.x, numRect.y, associationList);
             }
         }
@@ -576,10 +649,16 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
         }
     }
 
+    /**
+     * Renders node
+     * @param gr
+     * @param node
+     * @param displayName
+     */
     private void renderNodeSetRectangle(Graphics2D gr, IGraphNode node, String displayName) {
         final int ascent = gr.getFontMetrics(font).getAscent();
         Point location = helper.getNodeLocation(node);
-        final Rectangle numRect = new Rectangle(m_numRectangle);
+        final Rectangle numRect = new Rectangle(numberRectangle);
 
         numRect.translate(location.x, location.y);
         gr.fillRect(numRect.x, numRect.y, numRect.width, numRect.height - 3);
@@ -591,28 +670,34 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
         // show class name rectangle
         int currX = numRect.x + numRect.width;
         int currY = numRect.y;
-        final Rectangle textRect = new Rectangle(this.m_textRect);
+        final Rectangle textRect = new Rectangle(this.nodeTextRect);
         gr.setColor(colorFont);
         gr.drawString(displayName, currX + 3, currY + 3 + ascent);
 
         // Draw max-min window rectangle and inner portion of same
         gr.setColor(new Color(0x808080));
-        gr.fillRect(currX + textRect.width, currY + 3, m_maxMinLength, m_maxMinLength);
+        gr.fillRect(currX + textRect.width, currY + 3, maxMinLength, maxMinLength);
 
         // draw border for maxMin Window
         gr.setColor(new Color(0x000000)); // border color..
-        gr.draw(new Rectangle2D.Float(currX + textRect.width, currY + 3, m_maxMinLength, m_maxMinLength));
+        gr.draw(new Rectangle2D.Float(currX + textRect.width, currY + 3, maxMinLength, maxMinLength));
         gr.setColor(new Color(0xFFFFFF));
-        gr.fillRect(currX + textRect.width + m_maxMinLength / 4, currY + 3 + 3 * m_maxMinLength / 4,
-                    3 * m_maxMinLength / 4, m_maxMinLength / 4);
+        gr.fillRect(currX + textRect.width + maxMinLength / 4, currY + 3 + 3 * maxMinLength / 4,
+                    3 * maxMinLength / 4, maxMinLength / 4);
 
     }
 
+    /**
+     * Updates Option box from node
+     * @param gr
+     * @param node
+     * @param displayName
+     */
     private void renderNodeUpdatePolygon(Graphics2D gr, IGraphNode node, String displayName) {
         renderNodeSetRectangle(gr, node, displayName);
 
         // show option rectangle
-        final Rectangle optionRect = new Rectangle(m_option);
+        final Rectangle optionRect = new Rectangle(optionNodeRect);
         Rectangle rect = helper.getBounds(node);
         Point location = helper.getNodeLocation(node);
         final int ascent = gr.getFontMetrics(font).getAscent();
@@ -621,13 +706,13 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
         gr.drawString("Options", optionRect.x, optionRect.y + ascent);
 
         // show tringle in front of option string
-        m_optionPolygon = new Polygon();
-        m_optionPolygon.addPoint(0, 0);
-        m_optionPolygon.addPoint(0, 14);
-        m_optionPolygon.addPoint(7, 7);
+        optionPolygon = new Polygon();
+        optionPolygon.addPoint(0, 0);
+        optionPolygon.addPoint(0, 14);
+        optionPolygon.addPoint(7, 7);
         gr.setColor(Color.black);
-        m_optionPolygon.translate(rect.x + rect.width - 20, optionRect.y + 3);
-        gr.fillPolygon(m_optionPolygon);
+        optionPolygon.translate(rect.x + rect.width - 20, optionRect.y + 3);
+        gr.fillPolygon(optionPolygon);
     }
 
     /**
@@ -649,8 +734,8 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
 
         // Show And / OR string
         drawCustomCombo(classNode.getOperatorBetAttrAndAss(), currX, currY, gr);
-        for (int i = 1; i < m_assRectangles.length; i++) {
-            currY += m_assRectangles[i - 1].height;
+        for (int i = 1; i < assRectangles.length; i++) {
+            currY += assRectangles[i - 1].height;
 
             int expId = classNode.getLinkForSourcePort(associationList.get(i - 1)).getDestinationExpressionId();
             Rectangle assRect = fontMetrics.getStringBounds(String.valueOf(expId), gr).getBounds();
@@ -663,7 +748,7 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
             gr.drawRect(assRect.x, assRect.y, assRect.width, assRect.height);
             gr.setColor(colorFont);
             gr.drawString(String.valueOf(expId), assRect.x + 5, assRect.y + 3 + ascent);
-            if (i < m_assRectangles.length - 1) {
+            if (i < assRectangles.length - 1) {
                 drawCustomCombo(classNode.getLogicalOperator(associationList.get(i)), currX, currY, gr);
             }
         }
@@ -699,7 +784,7 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
 
         // Calculation for making comboboxes right aligned
         drawWidth = assRect.width + comboRect.width;
-        int traslateX = m_textRect.width - drawWidth;
+        int traslateX = nodeTextRect.width - drawWidth;
         assRect.translate(x + traslateX, y);
         gr.setColor(Color.WHITE);
         gr.fill(assRect);
@@ -725,7 +810,7 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
      * 
      */
     public void renderNode(IGraphNode node, Graphics2D gr, int layer) {
-        if (true == m_nodeMinimized) {
+        if (true == nodeMinimized) {
             renderMinimizedNode(node, gr, layer);
         } else {
             if (isForView) {
@@ -746,9 +831,9 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
      * @return true if option button is clicked else return's false
      */
     public boolean isOptionPopupShow(IGraphNode node, Point point) {
-        if (false == m_nodeMinimized) {
+        if (false == nodeMinimized) {
             // Check if user has clicked options button
-            if (true == m_optionPolygon.contains(point)) {
+            if (true == optionPolygon.contains(point)) {
                 return true;
             }
         }
@@ -771,8 +856,8 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
         Point tempPoint = new Point();
         tempPoint.x = point.x - nodePosition.x;
         tempPoint.y = point.y - nodePosition.y;
-        if (true == m_maxMinRectangle.contains(tempPoint)) {
-            m_nodeMinimized = !m_nodeMinimized;
+        if (true == maxMinRectangle.contains(tempPoint)) {
+            nodeMinimized = !nodeMinimized;
             return true;
         }
         return false;
@@ -792,18 +877,18 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
         Point tempPoint = new Point();
         tempPoint.x = point.x - nodePosition.x;
         tempPoint.y = point.y - nodePosition.y;
-        if (false == m_nodeMinimized) {
+        if (false == nodeMinimized) {
             // Check if use has clicked options button
-            if (m_assRectangles != null) {
-                for (int i = 0; i < m_assRectangles.length - 1; i++) {
-                    if (true == m_assRectangles[i].contains(tempPoint)) {
-                        m_associationIndx = i;
+            if (assRectangles != null) {
+                for (int i = 0; i < assRectangles.length - 1; i++) {
+                    if (true == assRectangles[i].contains(tempPoint)) {
+                        associationIndx = i;
                         return true;
                     }
                 }
             }
         }
-        m_associationIndx = -1;
+        associationIndx = -1;
         return false;
     }
 
@@ -813,14 +898,22 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
      * @return the index of selected association
      */
     public int getSelectedAssocitationIdx() {
-        return m_associationIndx;
+        return associationIndx;
     }
 
+    /**
+     * Gets tool tip text
+     * @return String 
+     */
     public String getNameForToolTip() {
 
         return toolTipName;
     }
 
+    /**
+     * Sets tool tip text
+     * @param name
+     */
     public void setNameForToolTip(String name) {
         toolTipName = name;
     }
@@ -834,10 +927,10 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
     public Point getLocationOfPopup(IGraphNode node) {
         Point nodePosition = helper.getNodeLocation(node);
         Point p = new Point();
-        p.x = nodePosition.x + m_textRect.width;
-        p.y = nodePosition.y + m_textRect.height + m_option.height;
-        for (int i = 0; i < m_associationIndx; i++) {
-            p.y += m_assRectangles[i].height;
+        p.x = nodePosition.x + nodeTextRect.width;
+        p.y = nodePosition.y + nodeTextRect.height + optionNodeRect.height;
+        for (int i = 0; i < associationIndx; i++) {
+            p.y += assRectangles[i].height;
         }
         p.y += 7;
         return p;

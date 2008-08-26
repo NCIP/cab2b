@@ -24,48 +24,71 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class ResolveAmbiguity {
 
-    private Vector<AmbiguityObject> m_ambiguityObjects;
+    /**
+     * Ambiguity objects available
+     */
+    private Vector<AmbiguityObject> ambiguityObjectsVector;
 
-    private Map<AmbiguityObject, List<IPath>> m_ambiguityObjectToPathsMap = new HashMap<AmbiguityObject, List<IPath>>();
+    /**
+     * Map of ambiguty objects to paths
+     */
+    private Map<AmbiguityObject, List<IPath>> ambiguityObjectToPathsMap = new HashMap<AmbiguityObject, List<IPath>>();
 
-    private IPathFinder m_pathFinder;
+    /**
+     * pathfinder object
+     */
+    private IPathFinder iPathFinder;
 
+    /**
+     * Constructor
+     * @param ambiguityObjects
+     * @param pathFinder
+     */
     public ResolveAmbiguity(Vector<AmbiguityObject> ambiguityObjects, IPathFinder pathFinder) {
-        m_ambiguityObjects = ambiguityObjects;
-        m_pathFinder = pathFinder;
+        ambiguityObjectsVector = ambiguityObjects;
+        iPathFinder = pathFinder;
     }
 
+    /**
+     * Constructor
+     * @param ambiguityObject
+     * @param pathFinder
+     */
     public ResolveAmbiguity(AmbiguityObject ambiguityObject, IPathFinder pathFinder) {
-        m_ambiguityObjects = new Vector<AmbiguityObject>();
-        m_ambiguityObjects.add(ambiguityObject);
-        m_pathFinder = pathFinder;
+        ambiguityObjectsVector = new Vector<AmbiguityObject>();
+        ambiguityObjectsVector.add(ambiguityObject);
+        iPathFinder = pathFinder;
     }
 
+    /**
+     * Returns map of of ambiguty objects to its available paths
+     * @return Map<AmbiguityObject, List<IPath>>
+     */
     public Map<AmbiguityObject, List<IPath>> getPathsForAllAmbiguities() {
-        for (int i = 0; i < m_ambiguityObjects.size(); i++) {
-            AmbiguityObject ambiguityObject = m_ambiguityObjects.get(i);
+        for (int i = 0; i < ambiguityObjectsVector.size(); i++) {
+            AmbiguityObject ambiguityObject = ambiguityObjectsVector.get(i);
             Map<String, List<IPath>> allPathMap = getPaths(ambiguityObject.getSourceEntity(),
                                                            ambiguityObject.getTargetEntity());
 
             List<IPath> selectedPathList = allPathMap.get(Constants.SELECTED_PATH);
             List<IPath> curratedPathList = allPathMap.get(Constants.CURATED_PATH);
             List<IPath> generalPathList = allPathMap.get(Constants.GENERAL_PATH);
-            
+
             if (!selectedPathList.isEmpty()) {
-                m_ambiguityObjectToPathsMap.put(ambiguityObject, selectedPathList);
+                ambiguityObjectToPathsMap.put(ambiguityObject, selectedPathList);
             } else if (curratedPathList.size() == 1) {
-                m_ambiguityObjectToPathsMap.put(ambiguityObject, curratedPathList);
+                ambiguityObjectToPathsMap.put(ambiguityObject, curratedPathList);
             } else if (generalPathList.size() == 1) {
-                m_ambiguityObjectToPathsMap.put(ambiguityObject, generalPathList);
+                ambiguityObjectToPathsMap.put(ambiguityObject, generalPathList);
             } else {
                 List<IPath> selectedPaths = null;
                 if (!curratedPathList.isEmpty() || !generalPathList.isEmpty()) {
                     selectedPaths = showAmbiguityResolverUI(allPathMap);
                 }
-                m_ambiguityObjectToPathsMap.put(ambiguityObject, selectedPaths);
+                ambiguityObjectToPathsMap.put(ambiguityObject, selectedPaths);
             }
         }
-        return m_ambiguityObjectToPathsMap;
+        return ambiguityObjectToPathsMap;
     }
 
     /**
@@ -74,8 +97,11 @@ public class ResolveAmbiguity {
      */
     private List<IPath> showAmbiguityResolverUI(Map<String, List<IPath>> allPathMap) {
         AvailablePathsPanel availablePathsPanel = new AvailablePathsPanel(allPathMap);
-        WindowUtilities.showInDialog(NewWelcomePanel.getMainFrame(), availablePathsPanel, "Path Ambiguity Resolver",
-                                     Constants.WIZARD_SIZE2_DIMENSION, true, false);
+        availablePathsPanel.parentWindow = WindowUtilities.showInDialog(NewWelcomePanel.getMainFrame(),
+                                                                        availablePathsPanel,
+                                                                        "Path Ambiguity Resolver",
+                                                                        Constants.WIZARD_SIZE2_DIMENSION, true,
+                                                                        false);
 
         return availablePathsPanel.getUserSelectedPaths();
     }
@@ -88,7 +114,7 @@ public class ResolveAmbiguity {
      * @return
      */
     private Map<String, List<IPath>> getPaths(EntityInterface sourceEntity, EntityInterface destinationEntity) {
-        Set<ICuratedPath> allCuratedPaths = m_pathFinder.getCuratedPaths(sourceEntity, destinationEntity);
+        Set<ICuratedPath> allCuratedPaths = iPathFinder.getCuratedPaths(sourceEntity, destinationEntity);
         Logger.out.debug("  getCuratedPaths() executed : " + allCuratedPaths.size());
 
         List<IPath> selectedPaths = new ArrayList<IPath>();
@@ -106,7 +132,7 @@ public class ResolveAmbiguity {
             }
         }
 
-        List<IPath> generalPaths = m_pathFinder.getAllPossiblePaths(sourceEntity, destinationEntity);
+        List<IPath> generalPaths = iPathFinder.getAllPossiblePaths(sourceEntity, destinationEntity);
 
         Map<String, List<IPath>> allPathMap = new HashMap<String, List<IPath>>(3);
         allPathMap.put(Constants.SELECTED_PATH, selectedPaths);
@@ -115,5 +141,4 @@ public class ResolveAmbiguity {
 
         return allPathMap;
     }
-
 }

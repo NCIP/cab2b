@@ -267,6 +267,38 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     }
 
     /**
+     * Set values only if selected condition is "IN" or "Not IN"
+     * @param values
+     */
+    protected void setMultipleValues(ArrayList<String> values) {
+        //If selected condition is "IN" or "Not IN"
+        if ((getConditionItem().compareToIgnoreCase("IN") == 0 || getConditionItem().compareToIgnoreCase("Not IN") == 0)) {
+            StringBuffer sb = new StringBuffer();
+
+            // For first element append text qualifier if required
+            if (values.get(0).indexOf(",") != -1) {
+                sb.append("\"");
+                sb.append(values.get(0));
+                sb.append("\"");
+            } else {
+                sb.append(values.get(0));
+            }
+
+            for (int i = 1; i < values.size(); i++) {
+                sb.append(",");
+                if (values.get(i).indexOf(",") != -1) {
+                    sb.append("\"");
+                    sb.append(values.get(i));
+                    sb.append("\"");
+                } else {
+                    sb.append(values.get(i));
+                }
+            }
+            ((Cab2bFormattedTextField) firstComponent).setText(sb.toString());
+        }
+    }
+
+    /**
      * @param conditionList
      * @param border
      * @param emptyBorder

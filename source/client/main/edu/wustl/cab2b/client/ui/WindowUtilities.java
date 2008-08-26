@@ -192,6 +192,11 @@ public class WindowUtilities {
         return frame;
     }
 
+    /**
+     * Adds action for frame
+     * @param frame
+     * @param action
+     */
     public static void addAction(JXFrame frame, Action action) {
         JToolBar toolbar = frame.getRootPaneExt().getToolBar();
         if (toolbar != null) {
@@ -200,6 +205,11 @@ public class WindowUtilities {
         }
     }
 
+    /**
+     * Adds message in Frame status bar
+     * @param frame
+     * @param message
+     */
     public static void addMessage(JXFrame frame, String message) {
         JXStatusBar statusBar = getStatusBar(frame);
         statusBar.add(new JLabel(message), JXStatusBar.Constraint.ResizeBehavior.FILL);
@@ -345,18 +355,7 @@ public class WindowUtilities {
      */
     public static JDialog showInDialog(Frame parentFrame, JComponent componentToShow, String title,
                                        Dimension size, boolean isModal, boolean isReSizable) {
-        JDialog dialog = new JDialog(parentFrame, title, isModal);
-        dialog.getContentPane().add(componentToShow);
-        if (componentToShow instanceof IDialogInterface) {
-            ((IDialogInterface) componentToShow).setParentWindow(dialog);
-        }
-        if (size == null)
-            dialog.setSize(new Dimension(300, 150));
-        else
-            dialog.setSize(size);
-        if (parentFrame != null && componentToShow != null)
-            centerWindow(parentFrame, dialog);
-        dialog.setResizable(isReSizable);
+        JDialog dialog = setInDialog(parentFrame, componentToShow, title, size, isModal, isReSizable);
         dialog.setVisible(true);
         return dialog;
     }
@@ -386,7 +385,6 @@ public class WindowUtilities {
         if (parentFrame != null && componentToShow != null)
             centerWindow(parentFrame, dialog);
         dialog.setResizable(isReSizable);
-        //dialog.setVisible(true);
         return dialog;
     }
 }

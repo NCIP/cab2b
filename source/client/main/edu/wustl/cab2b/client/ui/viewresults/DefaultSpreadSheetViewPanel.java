@@ -40,22 +40,49 @@ import edu.wustl.cab2b.common.queryengine.result.RecordId;
 public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListDetailedPanelInterface {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * JSheet component 
+     */
     private JSheet spreadsheet = new JSheet();
 
+    /**
+     * Property name for SPREADSHEET_MODEL_INSTALLED event 
+     */
     public static final String SPREADSHEET_MODEL_INSTALLED = "SPREADSHEET_MODEL_INSTALLED";
 
+    /**
+     * Property name for SPREADSHEET_MODEL_UNINSTALLED event
+     */
     public static final String SPREADSHEET_MODEL_UNINSTALLED = "SPREADSHEET_MODEL_UNINSTALLED";
 
+    /**
+     * Property name for DISABLE_CHART_LINK event
+     */
     public static final String DISABLE_CHART_LINK = "DISABLE_CHART_LINK";
 
+    /**
+     * Property name for ENABLE_CHART_LINK event
+     */
     public static final String ENABLE_CHART_LINK = "ENABLE_CHART_LINK";
 
+    /**
+     * Property name for ENABLE_HEATMAP_LINK event
+     */
     public static final String ENABLE_HEATMAP_LINK = "ENABLE_HEATMAP_LINK";
 
+    /**
+     * Property name for DISABLE_HEATMAP_LINK event
+     */
     public static final String DISABLE_HEATMAP_LINK = "DISABLE_HEATMAP_LINK";
 
+    /**
+     * Property name for DISABLE_ANALYSIS_LINK event
+     */
     public static final String DISABLE_ANALYSIS_LINK = "DISABLE_ANALYSIS_LINK";
 
+    /**
+     * List of user defined attributes
+     */
     private List<AttributeInterface> userDefinedAttributes = new ArrayList<AttributeInterface>();
 
     /**
@@ -63,20 +90,41 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
      */
     private List<IRecord> records;
 
+    /**
+     * Map of attribute name and AttributeInterface object
+     */
     private Map<String, AttributeInterface> attributeMap = new HashMap<String, AttributeInterface>();
 
+    /**
+     * ExperimentDataCategoryGridPanel reference
+     */
     private ExperimentDataCategoryGridPanel expGridPanel = null;
 
+    /**
+     * Constructor
+     * Initilizes basic UI components 
+     */
     DefaultSpreadSheetViewPanel() {
         initializeGUI();
     }
 
+    /**
+     * Constructor
+     * Initilizes basic UI components
+     * @param records
+     * @param expGridPanel
+     */
     public DefaultSpreadSheetViewPanel(List<IRecord> records, ExperimentDataCategoryGridPanel expGridPanel) {
         this.setName("DataListDetailedPanel");
         this.records = records;
         this.expGridPanel = expGridPanel;
     }
 
+    /**
+     * Constructor
+     * Initilizes basic UI components with g
+     * @param records
+     */
     public DefaultSpreadSheetViewPanel(List<IRecord> records) {
         this(records, null);
     }

@@ -7,15 +7,12 @@ import java.util.Set;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
-import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.RadioButtonEditor;
 import edu.wustl.cab2b.client.ui.controls.RadioButtonRenderer;
@@ -24,11 +21,22 @@ import edu.wustl.cab2b.client.ui.controls.TextAreaRenderer;
 import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 
+/**
+ * Class for autto connecting two nodes from dag
+ * @author deepak_shingan
+ *
+ */
 public class AutoConnectAmbiguityResolver extends AbstractAmibuityResolver {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Currated paths array 
+     */
     private ICuratedPath[] curatedPaths;
 
+    /**
+     * Radio buttons
+     */
     private ButtonGroup radioGroup = new ButtonGroup();
 
     /**
@@ -38,6 +46,10 @@ public class AutoConnectAmbiguityResolver extends AbstractAmibuityResolver {
      */
     private ICuratedPath userSelectedPath;
 
+    /**
+     * Constructor
+     * @param paths
+     */
     public AutoConnectAmbiguityResolver(Set<ICuratedPath> paths) {
         curatedPaths = paths.toArray(new ICuratedPath[0]);
         initializeGUI();
@@ -57,20 +69,20 @@ public class AutoConnectAmbiguityResolver extends AbstractAmibuityResolver {
         revalidate();
         updateUI();
     }
-    
+
     /**
      * This method sets the renderers to the columns of the table and adds the table searchPanel to this object
      */
     protected void addTablePanel() {
         AbstractTableModel abstractTableModel = getAmbiguityTableModel();
         ambiguityPathTable = createAmbiguityPathTable(abstractTableModel);
-      
+
         TableColumnModel tableColumnModel = ambiguityPathTable.getColumnModel();
         tableColumnModel.getColumn(0).setCellRenderer(new RadioButtonRenderer());
         tableColumnModel.getColumn(0).setCellEditor(new RadioButtonEditor(new JCheckBox()));
         tableColumnModel.getColumn(1).setCellRenderer(new TextAreaRenderer());
         tableColumnModel.getColumn(1).setCellEditor(null);
-        
+
         Cab2bPanel tablePanel = createTablePanel(ambiguityPathTable);
         this.add(tablePanel, BorderLayout.CENTER);
     }
@@ -91,23 +103,11 @@ public class AutoConnectAmbiguityResolver extends AbstractAmibuityResolver {
                         break;
                     }
                 }
-
-                if (parentWindow != null) {
-                    parentWindow.setVisible(false);
-                }
+                parentWindow.dispose();
             }
         };
 
-        ActionListener cancelButtonListener = new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                Cab2bButton closeButton = (Cab2bButton) actionEvent.getSource();
-                JPanel jPanel = (JPanel) closeButton.getParent().getParent().getParent();
-                JDialog jDialog = (JDialog) jPanel.getParent().getParent().getParent();
-                jDialog.dispose();
-            }
-        };
-
-        return createButtonPanel(submitButtonListener, cancelButtonListener);
+        return createButtonPanel(submitButtonListener);
     }
 
     /**

@@ -35,7 +35,6 @@ import org.jdesktop.swingx.JXFrame;
 
 import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bComboBox;
-import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
@@ -60,7 +59,7 @@ public class LoginFrame extends JXFrame {
     private static String providedUserName;
 
     private static String providedPassword;
-    
+
     private Cab2bComboBox idProvider;
 
     private Cab2bTextField usrNameText;
@@ -89,7 +88,7 @@ public class LoginFrame extends JXFrame {
             loginFrame.setVisible(true);
         } catch (Throwable t) {
             String msg = "Fatal error orccured while launching caB2B client.\nPlease contact administrator";
-            JXErrorDialog.showDialog(null,"caB2B Fatal Error",msg,t);
+            JXErrorDialog.showDialog(null, "caB2B Fatal Error", msg, t);
             System.exit(1);
         }
     }
@@ -355,7 +354,7 @@ public class LoginFrame extends JXFrame {
         }
         String password = new String(passwordArray);
         String selectedIdentityProvider = idProvider.getSelectedItem().toString();
-        
+
         try {
             validateCredentials(userName, password, selectedIdentityProvider);
             Thread mainThread = new Thread() {
@@ -394,7 +393,7 @@ public class LoginFrame extends JXFrame {
             mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         } catch (Throwable t) {
             String msg = "Fatal error orccured while launching caB2B client.\nPlease contact administrator";
-            JXErrorDialog.showDialog(null,"caB2B Fatal Error",msg,t);
+            JXErrorDialog.showDialog(null, "caB2B Fatal Error", msg, t);
             System.exit(1);
         }
     }

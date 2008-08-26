@@ -9,13 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JDialog;
-import javax.swing.JPanel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
 
 import edu.wustl.cab2b.client.ui.RiverLayout;
-import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -34,12 +31,24 @@ import edu.wustl.common.querysuite.metadata.path.IPath;
 public class AvailablePathsPanel extends AbstractAmibuityResolver {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Map of all paths
+     */
     private Map<String, List<IPath>> allPathMap;
 
+    /**
+     * Hyperlink panel
+     */
     private Cab2bPanel hyperlinkPanel;
 
+    /**
+     * Hyperlink for displaying general paths 
+     */
     private Cab2bHyperlink generalPathLink;
 
+    /**
+     * Hyperlink for displaying curated paths
+     */
     private Cab2bHyperlink curatedPathLink;
 
     /**
@@ -51,7 +60,7 @@ public class AvailablePathsPanel extends AbstractAmibuityResolver {
         this.userSelectedPaths = new ArrayList<IPath>();
         initializeGUI();
     }
-    
+
     /**
      * Initializes the GUI.
      */
@@ -65,7 +74,10 @@ public class AvailablePathsPanel extends AbstractAmibuityResolver {
         revalidate();
         updateUI();
     }
-    
+
+    /* (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.dag.ambiguityresolver.AbstractAmibuityResolver#addTablePanel()
+     */
     protected void addTablePanel() {
         AbstractTableModel abstractTableModel = getAmbiguityTableModel();
         ambiguityPathTable = createAmbiguityPathTable(abstractTableModel);
@@ -74,7 +86,11 @@ public class AvailablePathsPanel extends AbstractAmibuityResolver {
         Cab2bPanel tablePanel = createTablePanel(ambiguityPathTable);
         this.add(tablePanel, BorderLayout.CENTER);
     }
-    
+
+    /**
+     * Method returning panel with "Submit" and "Cancel" buttons 
+     * @return
+     */
     private Cab2bPanel getButtonPanel() {
         ActionListener submitButtonListener = new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
@@ -84,25 +100,12 @@ public class AvailablePathsPanel extends AbstractAmibuityResolver {
                 for (int i = 0; i < selectedPathsIndexes.length; i++) {
                     userSelectedPaths.add(selectedPathList.get(selectedPathsIndexes[i]));
                 }
-
-                if (parentWindow != null) {
-                    parentWindow.setVisible(false);
-                }
+                parentWindow.dispose();
             }
         };
-        
-        ActionListener cancelButtonListener = new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                Cab2bButton closeButton = (Cab2bButton) actionEvent.getSource();
-                JPanel jPanel = (JPanel) closeButton.getParent().getParent().getParent();
-                JDialog jDialog = (JDialog) jPanel.getParent().getParent().getParent();
-                jDialog.dispose();
-            }
-        };
-        
-        return createButtonPanel(submitButtonListener, cancelButtonListener);
+        return createButtonPanel(submitButtonListener);
     }
-    
+
     /**
      * Returns the data for the Ambiguity Resolver table
      * @return Array of Object array containing the table data
@@ -117,8 +120,9 @@ public class AvailablePathsPanel extends AbstractAmibuityResolver {
             ambiguityTableData[rowIndex][2] = pathPopularity + " %";
             rowIndex++;
         }
-        
-        CheckBoxTableModel checkBoxTableModel = new CheckBoxTableModel(AMBIGUITY_PATH_TABLE_HEADERS, ambiguityTableData);
+
+        CheckBoxTableModel checkBoxTableModel = new CheckBoxTableModel(AMBIGUITY_PATH_TABLE_HEADERS,
+                ambiguityTableData);
         return checkBoxTableModel;
     }
 
@@ -143,10 +147,15 @@ public class AvailablePathsPanel extends AbstractAmibuityResolver {
         } else {
             selectedPathList = generalPathList;
         }
-        
+
         return hyperlinkPanel;
     }
-    
+
+    /**
+     * Update hyperlink panel
+     * @param component1
+     * @param component2
+     */
     private void refreshHyperlinkPanel(Component component1, Component component2) {
         hyperlinkPanel.removeAll();
         hyperlinkPanel.add("tab ", component1);
@@ -171,10 +180,12 @@ public class AvailablePathsPanel extends AbstractAmibuityResolver {
                 Cab2bHyperlink<List<IPath>> pathHyperLink = (Cab2bHyperlink<List<IPath>>) actionEvent.getSource();
                 String linkClicked = actionEvent.getActionCommand();
                 if (linkClicked.equals(Constants.CURATED_PATH)) {
-                    Cab2bLabel curatedPathLabel = new Cab2bLabel(Constants.CURATED_PATH, Cab2bStandardFonts.ARIAL_BOLD_12);
+                    Cab2bLabel curatedPathLabel = new Cab2bLabel(Constants.CURATED_PATH,
+                            Cab2bStandardFonts.ARIAL_BOLD_12);
                     refreshHyperlinkPanel(generalPathLink, curatedPathLabel);
                 } else if (curatedPathLink != null) {
-                    Cab2bLabel generalPathLabel = new Cab2bLabel(Constants.GENERAL_PATH, Cab2bStandardFonts.ARIAL_BOLD_12);
+                    Cab2bLabel generalPathLabel = new Cab2bLabel(Constants.GENERAL_PATH,
+                            Cab2bStandardFonts.ARIAL_BOLD_12);
                     refreshHyperlinkPanel(generalPathLabel, curatedPathLink);
                 }
                 selectedPathList = pathHyperLink.getUserObject();
@@ -197,7 +208,7 @@ public class AvailablePathsPanel extends AbstractAmibuityResolver {
         revalidate();
         updateUI();
     }
-    
+
     /**
      * Returns the users path selection in a map.
      * 

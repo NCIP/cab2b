@@ -1,12 +1,10 @@
-/**
- * 
- */
 package edu.wustl.cab2b.client.ui.dag.ambiguityresolver;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
@@ -37,12 +35,24 @@ import edu.wustl.common.util.Utility;
 public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDialogInterface {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Parent Dialog window
+     */
     protected JDialog parentWindow = null;
 
+    /**
+     * Ambiguty path table headers
+     */
     protected final String[] AMBIGUITY_PATH_TABLE_HEADERS = new String[] { "Select", "Paths", "Path\nPopularity" };
 
+    /**
+     * Table for data display
+     */
     protected JTable ambiguityPathTable;
 
+    /**
+     * Panel containing "Submin" and "Cancel" button 
+     */
     protected Cab2bPanel buttonPanel;
 
     /**
@@ -52,6 +62,9 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
      */
     protected List<IPath> userSelectedPaths;
 
+    /**
+     * List of paths selected from Ambiguty resolver panel
+     */
     protected List<IPath> selectedPathList;
 
     /**
@@ -62,6 +75,9 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
         this.setLayout(new BorderLayout());
     }
 
+    /**
+     * Method for initilizing UI
+     */
     abstract protected void initializeGUI();
 
     /**
@@ -127,7 +143,11 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
         return pathTable;
     }
 
-    public void setTableHeaderBold(JTable jTable) {
+    /**
+     * Method to set table header bolds
+     * @param jTable
+     */
+    protected void setTableHeaderBold(JTable jTable) {
         JTableHeader header = jTable.getTableHeader();
         final Font boldFont = header.getFont().deriveFont(Font.BOLD);
         final TableCellRenderer headerRenderer = header.getDefaultRenderer();
@@ -174,12 +194,16 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
      * This method returns the searchPanel of the buttons
      * @return searchPanel of buttons
      */
-    protected Cab2bPanel createButtonPanel(ActionListener submitButtonListener, ActionListener cancelButtonListener) {
+    protected Cab2bPanel createButtonPanel(ActionListener submitButtonListener) {
         Cab2bButton submitButton = new Cab2bButton("Submit");
         submitButton.addActionListener(submitButtonListener);
 
         Cab2bButton cancelButton = new Cab2bButton("Cancel");
-        cancelButton.addActionListener(cancelButtonListener);
+        cancelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                parentWindow.dispose();
+            }
+        });
 
         Cab2bPanel buttonPanel = new Cab2bPanel();
         buttonPanel.add("right ", submitButton);
@@ -188,8 +212,10 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
         return buttonPanel;
     }
 
+    /* (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.controls.IDialogInterface#setParentWindow(javax.swing.JDialog)
+     */
     public void setParentWindow(JDialog dialog) {
         parentWindow = dialog;
     }
-
 }

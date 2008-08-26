@@ -25,8 +25,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.TreeSet;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -94,63 +94,117 @@ public class ExperimentStackBox extends Cab2bPanel {
     /** Default Serial version ID */
     private static final long serialVersionUID = 1L;
 
-    private static final int CUSTOM_CATEGORY_NODE_NO = 1;
-
-    private static int chartIndex = 0;
-
-    private static int heatMapIndex = 0;
-
-    /** panel to display filters on selected data-category */
+    /**
+     *  panel to display filters on selected data-category
+     */
     private Cab2bPanel dataFilterPanel = null;
 
-    /** panel to display analyzed data on selected data-category */
+    /**
+     *  panel to display analysed data on selected data-category 
+     */
     private Cab2bPanel analyseDataPanel = null;
 
     /** panel to display visual form of data on selected data-category */
     private Cab2bPanel visualiseDataPanel = null;
 
-    /** stack box to add all this panels */
+    /**
+     * stack box to add all this panels 
+     */
     private StackedBox stackedBox;
 
-    /** ExperimentOpen Panel */
-    private ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel = null;
+    /**
+     *  ExperimentOpen Panel 
+     */
+    private ExperimentDataCategoryGridPanel expCategoryGridPanel = null;
 
+    /**
+     * Data list tree 
+     */
     private JXTree datalistTree;
 
+    /**
+     * Root node, invisible on UI
+     */
     private DefaultMutableTreeNode rootNode;
 
+    /**
+     * Boolean flag to identify category object presents in current experiment datalist 
+     */
     private boolean isDatalistContainsCategory = false;
 
+    /**
+     * Index for category node  
+     */
+    final static int CATEGORY_NODE_NO = 0;
+
+    /**
+     * Index for custom category node
+     */
+    final static int CUSTOM_CATEGORY_NODE_NO = 1;
+
+    /**
+     * Scroll bar for DataList tree
+     */
     private JScrollPane treeViewScrollPane;
 
-    private Experiment selectedExperiment = null;
+    /**
+     * Selected experiment
+     */
+    private Experiment selectedExp = null;
 
+    /**
+     * Chart panel index 
+     */
+    private static int chartIndex = 0;
+
+    /**
+     * Heatmap panel index
+     */
+    private static int heatMapIndex = 0;
+
+    /**
+     * Button for custom category 
+     */
     private Cab2bButton customCategoryButton;
 
+    /**
+     * Datacategory panel
+     */
     private Cab2bPanel dataCategoryPanel;
 
-    public ExperimentStackBox(final Experiment selectedExperiment) {
-        super();
-        this.selectedExperiment = selectedExperiment;
+    /**
+     * Constructor
+     * Initilizes UI
+     * @param selectedExperiment
+     */
+    public ExperimentStackBox(Experiment selectedExperiment) {
+        selectedExp = selectedExperiment;
         initGUI();
     }
 
+    /**
+     * Initilizes UI
+     * @param selectedExperiment
+     * @param experimentDataCategoryGridPanel
+     */
     public ExperimentStackBox(
-            final Experiment selectedExperiment,
-            final ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel) {
-        super();
-        this.selectedExperiment = selectedExperiment;
-        this.experimentDataCategoryGridPanel = experimentDataCategoryGridPanel;
+            Experiment selectedExperiment,
+            ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel) {
+        selectedExp = selectedExperiment;
+        expCategoryGridPanel = experimentDataCategoryGridPanel;
         initGUI();
     }
 
+    /**
+     * Initilizing UI component layout management on panel
+     */
     public void initGUI() {
         this.setLayout(new BorderLayout());
-        final CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
+        CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
             DefaultMutableTreeNode rootNode = null;
 
             protected void doNonUILogic() throws RuntimeException {
-                rootNode = generateRootNode(selectedExperiment);
+                rootNode = generateRootNode(selectedExp);
             }
 
             protected void doUIUpdateLogic() throws RuntimeException {
@@ -174,39 +228,36 @@ public class ExperimentStackBox extends Cab2bPanel {
      *            set of entities
      * @return root node
      */
-    private DefaultMutableTreeNode generateRootNode(final Experiment experiment) {
+    private DefaultMutableTreeNode generateRootNode(Experiment experiment) {
         rootNode = new DefaultMutableTreeNode("Make it invisible");
         DefaultMutableTreeNode CategoriesRoot = new DefaultMutableTreeNode("Data Categories");
-
         DefaultMutableTreeNode customCategoriesRoot = null;
-        Collection<DataListMetadata> dataListMetadataCollection = experiment.getDataListMetadataCollection();
-        if (!dataListMetadataCollection.isEmpty()) {
-            customCategoriesRoot = new DefaultMutableTreeNode("Custom Data Categories");
-        }
 
-        final ClientSideCache clientSideCache = ClientSideCache.getInstance();
         // for each datalist
-        for (DataListMetadata dataListMetadata : dataListMetadataCollection) {
+        for (DataListMetadata dataListMetadata : experiment.getDataListMetadataCollection()) {
             if (dataListMetadata.isCustomDataCategory()) {
+                if (customCategoriesRoot == null) {
+                    customCategoriesRoot = new DefaultMutableTreeNode("Custom Data Categories");
+                }
                 DefaultMutableTreeNode customCategoryNode = getNodeForCustomCategory(dataListMetadata);
                 customCategoriesRoot.add(customCategoryNode);
                 continue;
             }
 
             for (IdName idName : dataListMetadata.getEntitiesNames()) {
-                EntityInterface originalEntity = clientSideCache.getEntityById(idName.getOriginalEntityId());
+                EntityInterface originalEntity = ClientSideCache.getInstance().getEntityById(
+                                                                                             idName.getOriginalEntityId());
+
                 if (Utility.isCategory(originalEntity)) {
                     isDatalistContainsCategory = true;
                 }
 
-                String displayName = Utility.getDisplayName(originalEntity);
                 UserObjectWrapper<IdName> categoryUserObject = new UserObjectWrapper<IdName>(idName,
-                        displayName);
+                        Utility.getDisplayName(originalEntity));
                 DefaultMutableTreeNode categoryNode = new DefaultMutableTreeNode(categoryUserObject);
                 CategoriesRoot.add(categoryNode);
             }
         }
-
         rootNode.add(CategoriesRoot);
         if (customCategoriesRoot != null) {
             rootNode.add(customCategoriesRoot);
@@ -220,67 +271,62 @@ public class ExperimentStackBox extends Cab2bPanel {
      * @param rootNode
      *            the root node to be set.
      */
-    private void initializeDataListTree(final DefaultMutableTreeNode rootNode) {
-        // creating datalist tree
+    private void initializeDataListTree(DefaultMutableTreeNode rootNode) {
         datalistTree = new JXTree(rootNode);
+        // creating datalist tree
         datalistTree.setRootVisible(false);
         datalistTree.expandAll();
 
         // action listener for selected data category
         datalistTree.addTreeSelectionListener(new TreeSelectionListener() {
-            @Override
-            public void valueChanged(final TreeSelectionEvent treeSelectionEvent) {
+            public void valueChanged(TreeSelectionEvent e) {
                 treeSelectionListenerAction();
             }
         });
-
-        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        ClassLoader loader = this.getClass().getClassLoader();
         datalistTree.setOpenIcon(new ImageIcon(loader.getResource(TREE_OPEN_FOLDER)));
         datalistTree.setClosedIcon(new ImageIcon(loader.getResource(TREE_CLOSE_FOLDER)));
         datalistTree.setLeafIcon(new ImageIcon(loader.getResource(TREE_LEAF_NODE)));
         datalistTree.setBorder(null);
 
         customCategoryButton = new Cab2bButton("Custom Data Category");
+        Cab2bPanel cab2bPanel = new Cab2bPanel();
         customCategoryButton.setPreferredSize(new Dimension(160, 22));
         customCategoryButton.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent actionEvent) {
-                final CustomSwingWorker swingWorker = new CustomSwingWorker(
-                        ExperimentStackBox.this.experimentDataCategoryGridPanel) {
+            public void actionPerformed(ActionEvent arg0) {
+                CustomSwingWorker swingWorker = new CustomSwingWorker(ExperimentStackBox.this.expCategoryGridPanel) {
 
                     @Override
-                    protected void doNonUILogic() {
+                    protected void doNonUILogic() throws Exception {
                         if (isDatalistContainsCategory) {
                             JOptionPane.showMessageDialog(
-                                                          ExperimentStackBox.this.experimentDataCategoryGridPanel,
+                                                          ExperimentStackBox.this.expCategoryGridPanel,
                                                           ErrorCodeHandler.getErrorMessage(edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.CUSTOM_CATEGORY_ERROR),
                                                           "Custom data category", JOptionPane.ERROR_MESSAGE);
                             return;
                         }
-                        CustomCategoryPanel categoryPanel = new CustomCategoryPanel(selectedExperiment);
-                        if (categoryPanel.getDataListMetadata() != null) {
+                        CustomCategoryPanel categoryPanel = new CustomCategoryPanel(selectedExp);
+                        if (categoryPanel.getDataListMetadata() != null)
                             updateStackBox(categoryPanel.getDataListMetadata());
-                        }
+
                     }
 
                     @Override
-                    protected void doUIUpdateLogic() {
+                    protected void doUIUpdateLogic() throws Exception {
                         dataCategoryPanel.revalidate();
                     }
                 };
                 swingWorker.start();
             }
         });
-
-        final Cab2bPanel cab2bPanel = new Cab2bPanel();
         cab2bPanel.add(customCategoryButton);
-
         dataCategoryPanel = new Cab2bPanel(new RiverLayout(5, 5));
         dataCategoryPanel.add(cab2bPanel);
         dataCategoryPanel.add("br", datalistTree);
     }
 
     /**
-     * This method initialize the different UI panels and panes.
+     * This method initialzse the different UI panels and panes.
      */
     private void initializePanels() {
         // Adding Select data category pane
@@ -330,26 +376,29 @@ public class ExperimentStackBox extends Cab2bPanel {
      * Method to perform tree node selection action for currently selected node
      */
     public void treeSelectionListenerAction() {
-        final Cab2bPanel selectedPanel = (Cab2bPanel) experimentDataCategoryGridPanel.getTabComponent().getSelectedComponent();
-        final DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent();
+        Cab2bPanel selectedPanel = (Cab2bPanel) expCategoryGridPanel.getTabComponent().getSelectedComponent();
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) datalistTree.getLastSelectedPathComponent();
         if (node == null) {
             return;
         }
 
-        final Object nodeInfo = node.getUserObject();
+        Object nodeInfo = node.getUserObject();
         if (nodeInfo instanceof UserObjectWrapper) {
             updateSpreadSheet((UserObjectWrapper<IdName>) nodeInfo);
         }
         updateUI();
     }
 
+    /**
+     * Method to update spredsheet component according to selected Category/Data List node
+     * @param idName
+     */
     private void updateSpreadSheet(final UserObjectWrapper<IdName> idName) {
-        final CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
+        CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
             List<IRecord> recordList = null;
 
             List<TreeSet<Comparable<?>>> recordValues = null;
 
-            @Override
             protected void doNonUILogic() throws RuntimeException {
                 try {
                     // getting datalist entity interface
@@ -369,16 +418,19 @@ public class ExperimentStackBox extends Cab2bPanel {
                 addAvailableAnalysisServices(idName.getUserObject());
             }
 
-            @Override
             protected void doUIUpdateLogic() throws RuntimeException {
-                experimentDataCategoryGridPanel.refreshTable(recordList);
+                expCategoryGridPanel.refreshTable(recordList);
             }
         };
         swingWorker.start();
         updateUI();
     }
 
-    public void setFilterPanel(final Component filterConsole) {
+    /**
+     * Setting filter panel
+     * @param filterConsole
+     */
+    public void setFilterPanel(Component filterConsole) {
         if (dataFilterPanel != null) {
             dataFilterPanel.removeAll();
             dataFilterPanel.add(" hfill vfill", filterConsole);
@@ -387,25 +439,37 @@ public class ExperimentStackBox extends Cab2bPanel {
         }
     }
 
+    /**
+     * sets bar chart link
+     */
     private void setBarChartLink() {
-        URL url = Thread.currentThread().getContextClassLoader().getResource(ClientConstants.BAR_GRAPH);
+        URL url = this.getClass().getClassLoader().getResource(ClientConstants.BAR_GRAPH);
         setVisulaizationToolLink(ClientConstants.BAR_CHART, url, new LinkActionListener(ClientConstants.BAR_CHART));
     }
 
+    /**
+     * sets line chart link
+     */
     private void setLineChartLink() {
-        URL url = Thread.currentThread().getContextClassLoader().getResource(ClientConstants.LINE_GRAPH);
+        URL url = this.getClass().getClassLoader().getResource(ClientConstants.LINE_GRAPH);
         setVisulaizationToolLink(ClientConstants.LINE_CHART, url, new LinkActionListener(
                 ClientConstants.LINE_CHART));
     }
 
+    /**
+     * sets scattered chart link
+     */
     private void setScatterPlotLink() {
-        URL url = Thread.currentThread().getContextClassLoader().getResource(ClientConstants.SCATTER_GRAPH);
+        URL url = this.getClass().getClassLoader().getResource(ClientConstants.SCATTER_GRAPH);
         setVisulaizationToolLink(ClientConstants.SCATTER_PLOT, url, new LinkActionListener(
                 ClientConstants.SCATTER_PLOT));
     }
 
+    /**
+     * sets heat map link
+     */
     private void setHeatmapLink() {
-        URL url = Thread.currentThread().getContextClassLoader().getResource(ClientConstants.HEAT_MAP);
+        URL url = this.getClass().getClassLoader().getResource(ClientConstants.HEAT_MAP);
         setVisulaizationToolLink(ClientConstants.HEATMAP, url, new LinkActionListener(ClientConstants.HEATMAP));
     }
 
@@ -413,10 +477,9 @@ public class ExperimentStackBox extends Cab2bPanel {
      * Method to set chart links enable/disable 
      * @param active
      */
-    public void setChartLinkEnable(final boolean active) {
-        if (visualiseDataPanel == null) {
+    public void setChartLinkEnable(boolean active) {
+        if (visualiseDataPanel == null)
             return;
-        }
 
         for (int i = 0; i < visualiseDataPanel.getComponentCount(); i++) {
             if (visualiseDataPanel.getComponent(i) instanceof Cab2bHyperlink) {
@@ -429,23 +492,22 @@ public class ExperimentStackBox extends Cab2bPanel {
      * Method to set Heat map links enable/disable 
      * @param active
      */
-    public void setHeatMapLinkEnable(final boolean active) {
-        if (visualiseDataPanel == null) {
+    public void setHeatMapLinkEnable(boolean active) {
+        if (visualiseDataPanel == null)
             return;
-        }
         if (visualiseDataPanel.getComponent(visualiseDataPanel.getComponentCount() - 1) instanceof Cab2bHyperlink) {
             ((Cab2bHyperlink) visualiseDataPanel.getComponent(visualiseDataPanel.getComponentCount() - 1)).setEnabled(active);
         }
+
     }
 
     /**
      * Method to set Heat map links enable/disable 
      * @param active
      */
-    public void setAnalysisLinkEnable(final boolean active) {
-        if (analyseDataPanel == null) {
+    public void setAnalysisLinkEnable(boolean active) {
+        if (analyseDataPanel == null)
             return;
-        }
 
         if (analyseDataPanel.getComponent(analyseDataPanel.getComponentCount() - 1) instanceof Cab2bHyperlink) {
             ((Cab2bHyperlink) analyseDataPanel.getComponent(analyseDataPanel.getComponentCount() - 1)).setEnabled(active);
@@ -459,8 +521,7 @@ public class ExperimentStackBox extends Cab2bPanel {
      * @param chartTypes
      *            name of charts to be displayed.
      */
-    private void setVisulaizationToolLink(final String toolType, final URL iconUrl,
-                                          final ActionListener actionListener) {
+    private void setVisulaizationToolLink(String toolType, URL iconUrl, ActionListener actionListener) {
         Cab2bHyperlink hyperlink = new Cab2bHyperlink();
         hyperlink.setText(toolType);
         hyperlink.setActionCommand(toolType);
@@ -473,15 +534,27 @@ public class ExperimentStackBox extends Cab2bPanel {
         visualiseDataPanel.add("br", hyperlink);
     }
 
+    /**
+     * Chart Link action listener class 
+     * @author deepak_shingan
+     *
+     */
     private class LinkActionListener implements ActionListener {
         private ActionEvent actionEvent = null;
 
-        final private String toolType;
+        private String toolType;
 
+        /**
+         * Constructor
+         * @param toolType
+         */
         LinkActionListener(String toolType) {
             this.toolType = toolType;
         }
 
+        /* (non-Javadoc)
+         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+         */
         public void actionPerformed(ActionEvent actionEvent) {
             this.actionEvent = actionEvent;
 
@@ -499,7 +572,6 @@ public class ExperimentStackBox extends Cab2bPanel {
 
                 @Override
                 protected void doUIUpdateLogic() {
-                    // Empty
                 }
             };
             customSwingWorker.start();
@@ -509,17 +581,15 @@ public class ExperimentStackBox extends Cab2bPanel {
 
     /**
      * This method displays the chart selected in the Chart tab.
-     * 
-     * @param linkClicked
-     *            the name of the chart to be displayed
+     * @param chartType
      */
     private void showChartAction(String chartType) {
-        final JTabbedPane tabComponent = experimentDataCategoryGridPanel.getTabComponent();
-        Cab2bPanel currentChartPanel = experimentDataCategoryGridPanel.getCurrentChartPanel();
+        final JTabbedPane tabComponent = expCategoryGridPanel.getTabComponent();
+        Cab2bPanel currentChartPanel = expCategoryGridPanel.getCurrentChartPanel();
         if (currentChartPanel == null) {
             final Cab2bPanel visualizationTabPanel = createVisualizationTabPanel(tabComponent);
 
-            DataListDetailedPanelInterface dataListDetailedPanel = experimentDataCategoryGridPanel.getCurrentSpreadSheetViewPanel();
+            DataListDetailedPanelInterface dataListDetailedPanel = expCategoryGridPanel.getCurrentSpreadSheetViewPanel();
             Cab2bChartPanel cab2bChartPanel = new Cab2bChartPanel();
 
             cab2bChartPanel.setModel(new ChartModel(dataListDetailedPanel.getSelectedData(),
@@ -527,7 +597,7 @@ public class ExperimentStackBox extends Cab2bPanel {
             cab2bChartPanel.drawChart(chartType);
 
             visualizationTabPanel.add("br hfill vfill ", cab2bChartPanel);
-            experimentDataCategoryGridPanel.setCurrentChartPanel(visualizationTabPanel);
+            expCategoryGridPanel.setCurrentChartPanel(visualizationTabPanel);
             tabComponent.add("Chart" + ++chartIndex, visualizationTabPanel);
             tabComponent.setSelectedComponent(visualizationTabPanel);
         } else {
@@ -538,6 +608,11 @@ public class ExperimentStackBox extends Cab2bPanel {
         }
     }
 
+    /**
+     * Sets tab pane for chart panel
+     * @param tabComponent
+     * @return
+     */
     private Cab2bPanel createVisualizationTabPanel(final JTabbedPane tabComponent) {
         final Cab2bPanel visualizationTabPanel = new Cab2bPanel();
         visualizationTabPanel.setBorder(null);
@@ -546,7 +621,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         closeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 tabComponent.remove(visualizationTabPanel);
-                experimentDataCategoryGridPanel.setCurrentChartPanel(null);
+                expCategoryGridPanel.setCurrentChartPanel(null);
                 chartIndex--;
             }
         });
@@ -562,8 +637,8 @@ public class ExperimentStackBox extends Cab2bPanel {
      *            the name of the chart to be displayed
      */
     private void showHeatmapAction() {
-        final JTabbedPane tabComponent = experimentDataCategoryGridPanel.getTabComponent();
-        Cab2bPanel currentHeatMapPanel = experimentDataCategoryGridPanel.getCurrentHeatMapPanel();
+        final JTabbedPane tabComponent = expCategoryGridPanel.getTabComponent();
+        Cab2bPanel currentHeatMapPanel = expCategoryGridPanel.getCurrentHeatMapPanel();
         if (currentHeatMapPanel == null) {
             final Cab2bPanel visualizationTabPanel = createVisualizationTabPanel(tabComponent);
 
@@ -571,11 +646,11 @@ public class ExperimentStackBox extends Cab2bPanel {
             HeatMapPanel heatMapPanel = new HeatMapPanel();
             heatMapModel.addObserver(heatMapPanel);
 
-            DataListDetailedPanelInterface dataListDetailedPanel = experimentDataCategoryGridPanel.getCurrentSpreadSheetViewPanel();
+            DataListDetailedPanelInterface dataListDetailedPanel = expCategoryGridPanel.getCurrentSpreadSheetViewPanel();
             heatMapModel.setData(dataListDetailedPanel);
 
             visualizationTabPanel.add("br hfill vfill ", heatMapPanel);
-            experimentDataCategoryGridPanel.setCurrentChartPanel(visualizationTabPanel);
+            expCategoryGridPanel.setCurrentChartPanel(visualizationTabPanel);
             tabComponent.add("HeatMap" + ++heatMapIndex, visualizationTabPanel);
             tabComponent.setSelectedComponent(visualizationTabPanel);
         } else {
@@ -602,7 +677,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         datalistTree.updateUI();
     }
 
-    private DefaultMutableTreeNode getNodeForCustomCategory(DataListMetadata dataListMetadata) {
+    DefaultMutableTreeNode getNodeForCustomCategory(DataListMetadata dataListMetadata) {
         // Currently since custom data catrgories will have one and only one
         // entity, so hard coding
         IdName idName = dataListMetadata.getEntitiesNames().iterator().next();
@@ -710,7 +785,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         // Create finish button
         Cab2bButton finishButton = new Cab2bButton("Finish");
         finishButton.addActionListener(new FinishButtonActionListner(serviceDetails, dataEntity, requiredEntity,
-                experimentDataCategoryGridPanel));
+                expCategoryGridPanel));
 
         Cab2bPanel servicePanel = new Cab2bPanel(new RiverLayout(5, 5));
         servicePanel.add("br left ", titlePanel);
@@ -778,13 +853,13 @@ public class ExperimentStackBox extends Cab2bPanel {
  * @author chetan_patil
  */
 class FinishButtonActionListner implements ActionListener {
-    final private ServiceDetailsInterface serviceDetails;
+    private ServiceDetailsInterface serviceDetails;
 
-    final private EntityInterface dataEntity;
+    private EntityInterface dataEntity;
 
-    final private EntityInterface requiredEntity;
+    private EntityInterface requiredEntity;
 
-    final private ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel;
+    private ExperimentDataCategoryGridPanel experimentDataCategoryGridPanel;
 
     /**
      * Parameterized constructor
@@ -869,10 +944,8 @@ class FinishButtonActionListner implements ActionListener {
         UserObjectWrapper<List<IRecord>> userObjectWrapper = new UserObjectWrapper<List<IRecord>>(
                 entityRecordList, analysisTitle);
         String entityName = Utility.getDisplayName(dataEntity);
-        
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
         String currentDate = simpleDateFormat.format(new Date());
-        
         String progress = "Completed";
 
         Object[][] analysisTableData = new Object[][] { { entityName, userObjectWrapper, currentDate, progress } };
@@ -881,7 +954,6 @@ class FinishButtonActionListner implements ActionListener {
 
     /**
      * This method closes the currnet dialog window
-     * 
      * @param servicePanel
      */
     private void closeDialogWindow(final Cab2bPanel servicePanel) {
@@ -912,15 +984,15 @@ class FinishButtonActionListner implements ActionListener {
 
         int index = 0;
         for (AttributeInterface attribute : attributeList) {
-            List<String> parameterValues = ((IComponent) controlPanels[index++]).getValues();
             String value = null;
+            ArrayList<String> parameterValues = ((IComponent) controlPanels[index++]).getValues();
             if (!parameterValues.isEmpty()) {
                 value = parameterValues.get(0);
             }
             record.putValueForAttribute(attribute, value);
         }
 
-        List<IRecord> parameterList = new ArrayList<IRecord>();
+        List<IRecord> parameterList = new Vector<IRecord>();
         parameterList.add(record);
 
         return parameterList;
