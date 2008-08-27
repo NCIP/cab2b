@@ -3,6 +3,7 @@ package edu.wustl.cab2b.common.queryengine;
 import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.common.cache.AbstractEntityCache;
 import edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery;
 
 /**
@@ -18,9 +19,6 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
     private List<String> outputClassUrls;
 
     private EntityInterface outputEntity;
-
-    private Long entityId;
-    
     
     public Cab2bQuery() {
         super();
@@ -61,19 +59,22 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
         this.outputEntity = outputEntity;
     }
 
+    // for hibernate
     /**
      * @return the entityId
      * 
      * @hibernate.property name="entityId" column="ENTITY_ID" type="long" length="30" not-null="true" 
      */
-    public Long getEntityId() {
-        return entityId;
+    @SuppressWarnings("unused")
+    private Long getEntityId() {
+        return outputEntity.getId();
     }
 
     /**
      * @param entityId the entityId to set
      */
-    public void setEntityId(Long entityId) {
-        this.entityId = entityId;
+    @SuppressWarnings("unused")
+    private void setEntityId(Long entityId) {
+        this.outputEntity = AbstractEntityCache.getCache().getEntityById(entityId);
     }   
 }
