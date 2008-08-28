@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 import junit.framework.TestCase;
-import edu.wustl.cab2b.client.ui.WindowUtilities;
+import edu.wustl.cab2b.client.ui.util.WindowUtilities;
 
 /**
  * @author chandrakant_talele
