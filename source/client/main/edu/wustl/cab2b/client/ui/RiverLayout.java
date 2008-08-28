@@ -1,5 +1,12 @@
 package edu.wustl.cab2b.client.ui;
-
+import static edu.wustl.cab2b.client.ui.LayoutConstants.HFILL;
+import static edu.wustl.cab2b.client.ui.LayoutConstants.VCENTER;
+import static edu.wustl.cab2b.client.ui.LayoutConstants.LINE_BREAK;
+import static edu.wustl.cab2b.client.ui.LayoutConstants.PARAGRAPH_BREAK;
+import static edu.wustl.cab2b.client.ui.LayoutConstants.VFILL;
+import static edu.wustl.cab2b.client.ui.LayoutConstants.TAB_STOP;
+import static edu.wustl.cab2b.client.ui.LayoutConstants.TAB_SPACE;
+import static edu.wustl.cab2b.client.ui.LayoutConstants.VTOP;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -39,68 +46,11 @@ import java.util.Vector;
  * <li>vcenter - Align following components vertically centered (default)
  * </ul>
  * </p>
- * 
- * 
- * 
+ * @author Mahesh
  */
 public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * Line break property command name  
-     */
-    public static final String LINE_BREAK = "br";
-
-    /**
-     * Paragraph break property command name
-     */
-    public static final String PARAGRAPH_BREAK = "p";
-
-    /**
-     * Tab stop property command name
-     */
-    public static final String TAB_STOP = "tab";
-
-    /**
-     * Horizontal fill property command name
-     */
-    public static final String HFILL = "hfill";
-
-    /**
-     * Verticle fill property command name
-     */
-    public static final String VFILL = "vfill";
-
-    /**
-     * Left hand component alignment property command name
-     */
-    public static final String LEFT = "left";
-
-    /**
-     * Right hand component alignment property command name
-     */
-    public static final String RIGHT = "right";
-
-    /**
-     * Center hand component alignment property command name
-     */
-    public static final String CENTER = "center";
-
-    /**
-     * Verticle top insect value property command name
-     */
-    public static final String VTOP = "vtop";
-
-    /**
-     * Verticle Center insect value property command name
-     */
-    public static final String VCENTER = "vcenter";
-
-    /**
-     * Space value property command name
-     */
-    public final int tabSpace = 5;
 
     /**
      * Map of component and constraint 
@@ -108,7 +58,7 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
     private Map<Component, String> constraints = new HashMap<Component, String>();
 
     /**
-     * Default verticle alignment
+     * Default vertical alignment
      */
     private String valign = VCENTER;
 
@@ -118,7 +68,7 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
     private int hgap;
 
     /**
-     * Verticle gap
+     * Vertical gap
      */
     private int vgap;
 
@@ -130,9 +80,8 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
     /**
      * Dummy values for insets
      */
-    private Insets totalInsets = new Insets(0, 0, 0, 0);// Dummy values. Set by
-
-    // getInsets()
+    private Insets totalInsets = new Insets(0, 0, 0, 0);
+    // Dummy values. Set by getInsets()
 
     /**
      * Constructor
@@ -143,8 +92,8 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
 
     /**
      * Constructor
-     * @param hgap
-     * @param vgap
+     * @param hgap Horizontal Gap
+     * @param vgap Vertical Gap
      */
     public RiverLayout(int hgap, int vgap) {
         this.hgap = hgap;
@@ -154,6 +103,7 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
 
     /**
      * Gets the horizontal gap between components.
+     * @return Horizontal Gap
      */
     public int getHgap() {
         return hgap;
@@ -161,6 +111,7 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
 
     /**
      * Sets the horizontal gap between components.
+     * @param Sets Horizontal Gap
      */
     public void setHgap(int hgap) {
         this.hgap = hgap;
@@ -168,6 +119,7 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
 
     /**
      * Gets the vertical gap between components.
+     * @return vertical gap
      */
     public int getVgap() {
         return vgap;
@@ -175,7 +127,7 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
 
     /**
      * Gets the extra insets between components.
-     * @return
+     * @return Insets
      */
     public Insets getExtraInsets() {
         return extraInsets;
@@ -191,8 +143,8 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
 
     /**
      * Get insets for a given container
-     * @param target
-     * @return Insets
+     * @param target target
+     * @return Insets Insets
      */
     protected Insets getInsets(Container target) {
         Insets insets = target.getInsets();
@@ -205,6 +157,7 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
 
     /**
      * Sets the vertical gap between components.
+     * @param vgap Vertical Gap
      */
     public void setVgap(int vgap) {
         this.vgap = vgap;
@@ -239,7 +192,7 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
     boolean isFirstInRow(Component comp) {
         String cons = (String) constraints.get(comp);
         return cons != null
-                && (cons.indexOf(RiverLayout.LINE_BREAK) != -1 || cons.indexOf(RiverLayout.PARAGRAPH_BREAK) != -1);
+                && (cons.indexOf(LINE_BREAK) != -1 || cons.indexOf(PARAGRAPH_BREAK) != -1);
     }
 
     /**
@@ -248,7 +201,7 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
      * @return boolean
      */
     boolean hasHfill(Component comp) {
-        return hasConstraint(comp, RiverLayout.HFILL);
+        return hasConstraint(comp, HFILL);
     }
 
     /**
@@ -257,7 +210,7 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
      * @return boolean
      */
     boolean hasVfill(Component comp) {
-        return hasConstraint(comp, RiverLayout.VFILL);
+        return hasConstraint(comp, VFILL);
     }
 
     /**
@@ -268,17 +221,21 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
      */
     boolean hasConstraint(Component comp, String test) {
         String cons = (String) constraints.get(comp);
-        if (cons == null)
+        if (cons == null) {
             return false;
+        }
         StringTokenizer tokens = new StringTokenizer(cons);
         while (tokens.hasMoreTokens())
-            if (tokens.nextToken().equals(test))
+            if (tokens.nextToken().equals(test)) {
                 return true;
+            }
         return false;
     }
 
     /**
      * Figure out tab stop x-positions
+     * @param target target
+     * @return Ruler
      */
     protected Ruler calcTabs(Container target) {
         Ruler ruler = new Ruler();
@@ -292,8 +249,9 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
             if (isFirstInRow(m) || i == 0) {
                 x = 0;
                 tabIndex = 0;
-            } else
-                x += tabSpace;
+            } else {
+                x += TAB_SPACE;
+            }    
             if (hasConstraint(m, TAB_STOP)) {
                 ruler.setTab(tabIndex, x); // Will only increase
                 x = ruler.getTab(tabIndex++); // Jump forward if neccesary
@@ -333,12 +291,14 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
                     tabIndex = 0;
                     dim.width = Math.max(dim.width, rowDim.width);
                     dim.height += rowDim.height + vgap;
-                    if (hasConstraint(m, PARAGRAPH_BREAK))
+                    if (hasConstraint(m, PARAGRAPH_BREAK)) {
                         dim.height += 2 * vgap;
+                    }
                     rowDim = new Dimension(0, 0);
                 }
-                if (hasConstraint(m, TAB_STOP))
+                if (hasConstraint(m, TAB_STOP)) {
                     rowDim.width = ruler.getTab(tabIndex++);
+                }
                 Dimension d = m.getPreferredSize();
                 rowDim.height = Math.max(rowDim.height, d.height);
                 if (firstVisibleComponent) {
@@ -362,20 +322,15 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
     /**
      * Centers the elements in the specified row, if there is any slack.
      * 
-     * @param target
-     *            the component which needs to be moved
-     * @param x
-     *            the x coordinate
-     * @param y
-     *            the y coordinate
-     * @param width
-     *            the width dimensions
-     * @param height
-     *            the height dimensions
-     * @param rowStart
-     *            the beginning of the row
-     * @param rowEnd
-     *            the the ending of the row
+     * @param target the component which needs to be moved
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param width the width dimensions
+     * @param height the height dimensions
+     * @param rowStart the beginning of the row
+     * @param rowEnd the the ending of the row
+     * @param ltr ltr
+     * @param ruler ruler
      */
     protected void moveComponents(Container target, int x, int y, int width, int height, int rowStart, int rowEnd,
                                   boolean ltr, Ruler ruler) {
@@ -395,12 +350,14 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
                 case TRAILING:
                     x += width;
                     break;
+                default: break;
             }
             int tabIndex = 0;
             for (int i = rowStart; i < rowEnd; i++) {
                 Component m = target.getComponent(i);
-                if (hasConstraint(m, TAB_STOP))
+                if (hasConstraint(m, TAB_STOP)) {
                     x = getInsets(target).left + ruler.getTab(tabIndex++);
+                }
                 int dy = (valign == VTOP) ? 0 : (height - m.getHeight()) / 2;
                 if (ltr) {
                     m.setLocation(x, y + dy);
@@ -413,12 +370,12 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
     }
 
     /**
-     * 
-     * @param target
-     * @param dx
-     * @param dy
-     * @param rowStart
-     * @param rowEnd
+     * Relative movement
+     * @param target Target
+     * @param dx X 
+     * @param dy Y
+     * @param rowStart Row Start
+     * @param rowEnd Row End 
      */
     protected void relMove(Container target, int dx, int dy, int rowStart, int rowEnd) {
         synchronized (target.getTreeLock()) {
@@ -431,20 +388,22 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
     }
 
     /**
-     * @param m
+     * Adjust Alignment
+     * @param m Component
      */
     protected void adjustAlignment(Component m) {
-        if (hasConstraint(m, RiverLayout.LEFT))
+        if (hasConstraint(m, LayoutConstants.LEFT)) {
             setAlignment(FlowLayout.LEFT);
-        else if (hasConstraint(m, RiverLayout.RIGHT))
+        } else if (hasConstraint(m, LayoutConstants.RIGHT)) {
             setAlignment(FlowLayout.RIGHT);
-        else if (hasConstraint(m, RiverLayout.CENTER))
+        } else if (hasConstraint(m, LayoutConstants.CENTER)) {
             setAlignment(FlowLayout.CENTER);
-        if (hasConstraint(m, RiverLayout.VTOP))
+        }
+        if (hasConstraint(m, LayoutConstants.VTOP)) {
             valign = VTOP;
-        else if (hasConstraint(m, RiverLayout.VCENTER))
+        } else if (hasConstraint(m, LayoutConstants.VCENTER)) {
             valign = VCENTER;
-
+        }
     }
 
     /**
@@ -452,11 +411,7 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
      * preferred size by reshaping the components in the target container in
      * order to satisfy the constraints of this <code>FlowLayout</code>
      * object.
-     * 
-     * @param target
-     *            the specified component being laid out
-     * @see Container
-     * @see java.awt.Container#doLayout
+     * @param target the specified component being laid out
      */
     public void layoutContainer(Container target) {
         setAlignment(FlowLayout.LEFT);
@@ -466,8 +421,11 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
             int maxheight = target.getHeight() - (insets.top + insets.bottom);
 
             int nmembers = target.getComponentCount();
-            int x = 0, y = insets.top + vgap;
-            int rowh = 0, start = 0, moveDownStart = 0;
+            int x = 0; 
+            int y = insets.top + vgap;
+            int rowh = 0;
+            int start = 0;
+            int moveDownStart = 0;
 
             boolean ltr = target.getComponentOrientation().isLeftToRight();
             Component toHfill = null;
@@ -480,10 +438,12 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
                 Dimension d = m.getPreferredSize();
                 m.setSize(d.width, d.height);
 
-                if (isFirstInRow(m))
+                if (isFirstInRow(m)) {
                     tabIndex = 0;
-                if (hasConstraint(m, TAB_STOP))
+                }
+                if (hasConstraint(m, TAB_STOP)) {
                     x = ruler.getTab(tabIndex++);
+                }
                 if (!isFirstInRow(m)) {
                     if (i > 0 && !hasConstraint(m, TAB_STOP)) {
                         x += hgap;
@@ -501,8 +461,9 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
                     moveComponents(target, insets.left, y, maxwidth - x, rowh, start, i, ltr, ruler);
                     x = d.width;
                     y += vgap + rowh;
-                    if (hasConstraint(m, PARAGRAPH_BREAK))
+                    if (hasConstraint(m, PARAGRAPH_BREAK)) {
                         y += 2 * vgap;
+                    }
                     rowh = d.height;
                     start = i;
                     toHfill = null;
@@ -517,10 +478,8 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
                 adjustAlignment(m);
             }
 
-            if (toVfill != null && moveDownStart == 0) { // Don't move
-                // anything if hfill
-                // component is last
-                // component
+            if (toVfill != null && moveDownStart == 0) { 
+                // Don't move anything if hfill component is last component
                 moveDownStart = nmembers;
             }
             if (toHfill != null) { // last component
@@ -535,21 +494,24 @@ public class RiverLayout extends FlowLayout implements LayoutManager, java.io.Se
             }
         }
     }
-
 }
 
 /**
- * Rular class for cotainer
+ * Ruler class for container
  * @author Chetan_BH
- *
  */
 class Ruler {
     private Vector<Integer> tabs = new Vector<Integer>();
 
+    /**
+     * Sets Tab
+     * @param num Number
+     * @param xpos x-position
+     */
     public void setTab(int num, int xpos) {
-        if (num >= tabs.size())
+        if (num >= tabs.size()) {
             tabs.add(num, new Integer(xpos));
-        else {
+        } else {
             // Transpose all tabs from this tab stop and onwards
             int delta = xpos - getTab(num);
             if (delta > 0) {
@@ -562,22 +524,23 @@ class Ruler {
 
     /**
      * Get tabs  
-     * @param num
-     * @return
+     * @param num number
+     * @return tabs
      */
     public int getTab(int num) {
         return tabs.get(num).intValue();
     }
 
-    /* (non-Javadoc)
+    /**
      * @see java.lang.Object#toString()
      */
     public String toString() {
         StringBuffer ret = new StringBuffer(getClass().getName() + " {");
         for (int i = 0; i < tabs.size(); i++) {
             ret.append(tabs.get(i));
-            if (i < tabs.size() - 1)
+            if (i < tabs.size() - 1) {
                 ret.append(',');
+            }
         }
         ret.append('}');
         return ret.toString();
