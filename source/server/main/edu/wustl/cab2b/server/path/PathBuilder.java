@@ -1,7 +1,6 @@
 package edu.wustl.cab2b.server.path;
 
 import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DB_0003;
-import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DE_0004;
 import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.IO_0001;
 import static edu.wustl.cab2b.common.util.Constants.CONNECTOR;
 import static edu.wustl.cab2b.server.path.PathConstants.ASSOCIATION_FILE_NAME;
@@ -23,6 +22,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,13 +32,12 @@ import org.apache.log4j.Logger;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.common.dynamicextensions.entitymanager.EntityManager;
-import edu.common.dynamicextensions.entitymanager.EntityManagerInterface;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.IdGenerator;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.path.pathgen.GraphPathFinder;
 import edu.wustl.cab2b.server.path.pathgen.Path;
 import edu.wustl.cab2b.server.path.pathgen.PathToFileWriter;
@@ -64,19 +63,8 @@ public class PathBuilder {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(PathBuilder.class);
     private static final int PATH_MAX_LENGTH = 6;
 
-    /**
-     * This facilitates fast path building
-     */
-    private static HashMap<String, EntityGroupInterface> shortNameVsEntityGroup = new HashMap<String, EntityGroupInterface>();
+    private static Set<Long> associationSet = new HashSet<Long>();
 
-    /**
-     * This facilitates fast path transformation
-     */
-    private static HashMap<Long, AssociationInterface> idVsAssociation = new HashMap<Long, AssociationInterface>();
-
-    /**
-     * This facilitates fast path transformation
-     */
     private static HashMap<String, List<AssociationInterface>> srcDesVsAssociations = new HashMap<String, List<AssociationInterface>>();
 
     private static DataFileLoaderInterface dataFileLoader;
@@ -135,7 +123,7 @@ public class PathBuilder {
         }
         try {
             storeModelAndGeneratePaths(processor, applicationName, connection, false);
-            transformAndLoadPaths(connection);
+            transformAndLoadPaths(connection, processor.getEntityGroup());
         } catch (Exception e) {
             logger.error("Exception while generating paths", e);
             throw new RuntimeException("Exception while generating paths", e);
@@ -189,10 +177,10 @@ public class PathBuilder {
      * @param connection
      *            Database connection to use.
      */
-    static void transformAndLoadPaths(Connection connection) {
-        loadCache();
+    static void transformAndLoadPaths(Connection connection, EntityGroupInterface eg) {
+        loadCache(eg);
         try {
-            registerIntraModelAssociations(connection, idVsAssociation.keySet());
+            registerIntraModelAssociations(connection, associationSet);
             transformGeneratedPaths(connection);
         } catch (IOException e1) {
             throw new RuntimeException("Error in writing to output file", e1, IO_0001);
@@ -533,26 +521,17 @@ public class PathBuilder {
         loadDataFromFile(connection, INTER_MODEL_ASSOCIATION_FILE_NAME, columns, "INTER_MODEL_ASSOCIATION",
                          new Class[] { Long.class, Long.class, Long.class, Long.class, Long.class });
     }
+
     /**
      * Initializes the cache for building paths.
      */
-    private static void loadCache() {
-        EntityManagerInterface entityMgr = EntityManager.getInstance();
-        Collection<EntityGroupInterface> allEntityGroups = null;
-        try {
-            allEntityGroups = entityMgr.getAllEntitiyGroups();
-        } catch (DynamicExtensionsApplicationException e) {
-            throw new RuntimeException("Unable to get Entities from Dynamic Extension", e, DE_0004);
-        } catch (DynamicExtensionsSystemException e) {
-            throw new RuntimeException("Unable to get Entities from Dynamic Extension", e, DE_0004);
-        }
-        for (EntityGroupInterface entityGroup : allEntityGroups) {
-            shortNameVsEntityGroup.put(entityGroup.getShortName(), entityGroup);
+    private static void loadCache(EntityGroupInterface eg) {
+        EntityCache.getInstance().refreshCache();
+        for (EntityGroupInterface entityGroup : EntityCache.getInstance().getEntityGroups()) {
             Collection<EntityInterface> allEntities = entityGroup.getEntityCollection();
 
             for (EntityInterface entity : allEntities) {
                 for (AssociationInterface association : entity.getAssociationCollection()) {
-                    idVsAssociation.put(association.getId(), association);
                     String key = entity.getId() + CONNECTOR + association.getTargetEntity().getId();
                     List<AssociationInterface> associations = srcDesVsAssociations.get(key);
                     if (associations == null) {
@@ -563,7 +542,11 @@ public class PathBuilder {
                 }
             }
         }
-        logger.info("Total number of associations found in DE : " + idVsAssociation.size());
+        for (EntityInterface entity : eg.getEntityCollection()) {
+            for (AssociationInterface association : entity.getAssociationCollection()) {
+                associationSet.add(association.getId());
+            }
+        }
     }
 
     public static long getNextPathId(Connection connection) {
