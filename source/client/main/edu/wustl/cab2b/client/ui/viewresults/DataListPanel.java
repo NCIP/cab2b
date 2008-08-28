@@ -6,8 +6,8 @@ import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.JSplitPane;
 
-import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 

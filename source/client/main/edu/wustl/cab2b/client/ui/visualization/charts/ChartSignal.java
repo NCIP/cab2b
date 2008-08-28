@@ -3,7 +3,7 @@
  */
 package edu.wustl.cab2b.client.ui.visualization.charts;
 
-import edu.wustl.cab2b.client.ui.Signal;
+import edu.wustl.cab2b.client.ui.searchDataWizard.Signal;
 
 /**
  * @author chetan_patil

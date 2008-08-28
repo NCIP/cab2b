@@ -5,7 +5,6 @@ package edu.wustl.cab2b.client.ui.visualization.charts;
 
 import java.util.List;
 
-import edu.wustl.cab2b.client.ui.AbstractModel;
 import edu.wustl.cab2b.common.util.Constants.ChartOrientation;
 
 /**

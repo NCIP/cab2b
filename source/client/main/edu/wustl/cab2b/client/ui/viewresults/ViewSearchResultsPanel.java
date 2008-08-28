@@ -7,10 +7,10 @@ import javax.swing.JTabbedPane;
 
 import org.jdesktop.swingx.JXPanel;
 
-import edu.wustl.cab2b.client.ui.CustomBorder;
-import edu.wustl.cab2b.client.ui.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTabbedPaneUI;
+import edu.wustl.cab2b.client.ui.controls.CustomBorder;
+import edu.wustl.cab2b.client.ui.searchDataWizard.MainSearchPanel;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 
 /**

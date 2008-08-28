@@ -16,9 +16,9 @@ import javax.swing.tree.TreePath;
 import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.decorator.HighlighterPipeline;
 
-import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.CustomizableBorder;
+import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;

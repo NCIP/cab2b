@@ -2,9 +2,9 @@ package edu.wustl.cab2b.client.ui.mainframe;
 
 import org.jdesktop.swingx.JXPanel;
 
-import edu.wustl.cab2b.client.ui.ContentPanel;
-import edu.wustl.cab2b.client.ui.SearchPanel;
-import edu.wustl.cab2b.client.ui.SearchResultPanel;
+import edu.wustl.cab2b.client.ui.searchDataWizard.ContentPanel;
+import edu.wustl.cab2b.client.ui.searchDataWizard.SearchPanel;
+import edu.wustl.cab2b.client.ui.searchDataWizard.SearchResultPanel;
 
 public class Cab2bContentPanel extends ContentPanel {
 

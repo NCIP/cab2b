@@ -13,9 +13,9 @@ import javax.swing.JPanel;
 
 import org.jdesktop.swingx.JXFrame;
 
-import edu.wustl.cab2b.client.ui.MainSearchPanel;
-import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.controls.RiverLayout;
+import edu.wustl.cab2b.client.ui.searchDataWizard.MainSearchPanel;
 
 /**
  * This is a top level navigation panel, which is placed at the top of the

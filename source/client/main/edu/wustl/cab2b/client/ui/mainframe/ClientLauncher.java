@@ -19,9 +19,9 @@ import javax.swing.JProgressBar;
 
 import edu.wustl.cab2b.client.cache.ClientSideCache;
 import edu.wustl.cab2b.client.cache.UserCache;
-import edu.wustl.cab2b.client.ui.WindowUtilities;
-import edu.wustl.cab2b.client.ui.dag.ClassNodeRenderer;
+import edu.wustl.cab2b.client.ui.searchDataWizard.dag.ClassNodeRenderer;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.client.ui.util.WindowUtilities;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.user.UserBusinessInterface;
 import edu.wustl.cab2b.common.ejb.user.UserHomeInterface;

@@ -17,10 +17,10 @@ import java.util.Vector;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.StackedBox;
 import edu.wustl.cab2b.client.ui.experiment.ExperimentOpenPanel;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
@@ -44,7 +44,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
 
     private MainFrame mainFrame;
 
-    private JPanel myExperimentsPanel;
+    private Cab2bPanel myExperimentsPanel;
 
     public static Color CLICKED_COLOR = new Color(76, 41, 157);
 
@@ -82,9 +82,8 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
                                                                      new CategoryHyperlinkActionListener());
         final String titlePopularcategories = ApplicationProperties.getValue(POPULAR_CATEGORY_BOX_TEXT);
         stackedBox.addBox(titlePopularcategories, popularSearchCategoryPanel, POPULAR_CATEGORIES_IMAGE, false);
-
-        myExperimentsPanel = getLatestExperimentsPanel(CommonUtils.getExperiments(null, ""),
-                                                       new ExperimentHyperlinkActionListener());
+        
+        myExperimentsPanel = MyExperimentLinkPanel.getInstance();
 
         final String titleExpr = ApplicationProperties.getValue(EXPERIMENT_BOX_TEXT);
         stackedBox.addBox(titleExpr, myExperimentsPanel, MY_EXPERIMENT_IMAGE, false);
@@ -149,50 +148,6 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
         Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
         CommonUtils.setHyperlinkProperties(hyperlink, null, SHOW_ALL_LINK, "", actionClass);
         panel.add("br right", hyperlink);
-    }
-
-    /**
-     * This method returns panel with recently saved five experiments from database.
-     * TODO: Currently getting all experiments from database also have to update code for 
-     * userbase fetaching of experiments 
-     * @param data
-     */
-    private Cab2bPanel getLatestExperimentsPanel(Vector<Experiment> data, ActionListener actionListener) {
-        Cab2bPanel panel = new Cab2bPanel();
-        panel.setLayout(new RiverLayout(10, 5));
-        panel.add(new Cab2bLabel());
-        Cab2bHyperlink hyperlink = null;
-        for (Experiment experiment : data) {
-            hyperlink = new Cab2bHyperlink(true);
-            CommonUtils.setHyperlinkProperties(hyperlink, experiment, experiment.getName(),
-                                               experiment.getDescription(), actionListener);
-            panel.add("br", hyperlink);
-        }
-
-        ActionListener showAllExpAction = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                mainFrame.getGlobalNavigationPanel().getGlobalNavigationGlassPane().setExperimentHomePanel();
-            }
-        };
-
-        addShowAllLink(panel, showAllExpAction);
-        return panel;
-    }
-
-    /**
-     * Homepage Experiment Link action listener class
-     * 
-     * @author deepak_shingan
-     * 
-     */
-    class ExperimentHyperlinkActionListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            Cab2bHyperlink hyperLink = (Cab2bHyperlink) e.getSource();
-            Experiment exp = (Experiment) hyperLink.getUserObject();
-            ExperimentOpenPanel expPanel = new ExperimentOpenPanel(exp);
-            MainFrameStackedBoxPanel.this.mainFrame.openExperiment(expPanel);
-            updateUI();
-        }
     }
 
     /**

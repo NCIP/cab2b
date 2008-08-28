@@ -11,7 +11,6 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.Dataset;
 
-import edu.wustl.cab2b.client.ui.AbstractViewer;
 import edu.wustl.cab2b.common.util.Constants.ChartOrientation;
 
 /**

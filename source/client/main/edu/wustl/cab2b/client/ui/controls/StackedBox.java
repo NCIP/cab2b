@@ -32,7 +32,6 @@ import org.jdesktop.swingx.VerticalLayout;
 import org.jdesktop.swingx.painter.Painter;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
-import edu.wustl.cab2b.client.ui.RiverLayout;
 
 /**
  * Stacks components vertically in boxes. Each box is created with a title and a component.<br>

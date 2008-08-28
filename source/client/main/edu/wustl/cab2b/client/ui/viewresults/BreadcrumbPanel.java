@@ -9,9 +9,9 @@ import java.util.Vector;
 
 import javax.swing.JLabel;
 
-import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 
 /**
  * BreadcrumbPanel treats its components as crumbs and displays them in a queue or in the next line if the 

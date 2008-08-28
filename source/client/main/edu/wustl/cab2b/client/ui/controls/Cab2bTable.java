@@ -101,7 +101,7 @@ public class Cab2bTable extends JXTable {
      */
     public Cab2bTable(boolean showCheckBox, Vector data, Vector headers) {
         super(new Cab2bDefaultTableModel(showCheckBox, data, headers));
-        showCheckBox = showCheckBox;
+        this.showCheckBox = showCheckBox;
         initUI();
     }
 

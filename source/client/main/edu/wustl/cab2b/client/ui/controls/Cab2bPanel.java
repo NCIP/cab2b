@@ -5,7 +5,6 @@ import java.awt.LayoutManager;
 
 import org.jdesktop.swingx.JXPanel;
 
-import edu.wustl.cab2b.client.ui.RiverLayout;
 
 /**
  * Cab2bPanel is a generic lightweight container extended from JXPanel. 

@@ -5,11 +5,11 @@ package edu.wustl.cab2b.client.ui.mainframe.showall;
 
 import javax.swing.table.TableColumnModel;
 
-import edu.wustl.cab2b.client.ui.AddLimitPanel;
-import edu.wustl.cab2b.client.ui.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.mainframe.GlobalNavigationPanel;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
+import edu.wustl.cab2b.client.ui.searchDataWizard.MainSearchPanel;
+import edu.wustl.cab2b.client.ui.searchDataWizard.addLimit.AddLimitPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.common.querysuite.metadata.category.Category;
 

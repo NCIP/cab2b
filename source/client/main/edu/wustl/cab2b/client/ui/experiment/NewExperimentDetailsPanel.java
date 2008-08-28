@@ -38,16 +38,17 @@ import javax.swing.tree.TreeSelectionModel;
 import org.jdesktop.swingx.JXTree;
 
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
-import edu.wustl.cab2b.client.ui.MainSearchPanel;
-import edu.wustl.cab2b.client.ui.SearchNavigationPanel;
-import edu.wustl.cab2b.client.ui.WindowUtilities;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
+import edu.wustl.cab2b.client.ui.mainframe.stackbox.MyExperimentLinkPanel;
+import edu.wustl.cab2b.client.ui.searchDataWizard.MainSearchPanel;
+import edu.wustl.cab2b.client.ui.searchDataWizard.SearchNavigationPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.client.ui.util.WindowUtilities;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
@@ -372,6 +373,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                     SearchNavigationPanel.getMessageLabel().setText(
                                                                     "* Experiment '" + experiment.getName()
                                                                             + "' saved successfully .");
+                    MyExperimentLinkPanel.getInstance().updateMyExperimentPanel();
                     updateUI();
                 } catch (RemoteException e1) {
                     CommonUtils.handleException(e1, NewExperimentDetailsPanel.this, true, true, false, false);

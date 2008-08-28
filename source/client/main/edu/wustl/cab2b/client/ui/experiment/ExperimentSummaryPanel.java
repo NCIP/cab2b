@@ -9,8 +9,8 @@ import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import edu.wustl.cab2b.client.ui.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 
 public class ExperimentSummaryPanel extends Cab2bPanel {
 	
