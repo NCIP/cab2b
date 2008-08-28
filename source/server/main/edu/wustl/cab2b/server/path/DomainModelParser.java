@@ -14,6 +14,9 @@ import gov.nih.nci.cagrid.metadata.common.UMLClass;
 import gov.nih.nci.cagrid.metadata.dataservice.DomainModel;
 import gov.nih.nci.cagrid.metadata.dataservice.UMLAssociation;
 import gov.nih.nci.cagrid.metadata.dataservice.UMLGeneralization;
+import gov.nih.nci.cagrid.metadata.dataservice.DomainModelExposedUMLAssociationCollection;
+import gov.nih.nci.cagrid.metadata.dataservice.DomainModelExposedUMLClassCollection;
+import gov.nih.nci.cagrid.metadata.dataservice.DomainModelUmlGeneralizationCollection;
 
 /**
  * This class parses the domain model for an application.<br>
@@ -46,8 +49,7 @@ public class DomainModelParser {
      * Throws the exception occurred during getting / parsing the domain model XML as RuntimeException. 
      */
     public DomainModelParser(DomainModel model) {
-        domainModel = model;
-        initializeParentChildMap();
+        init(model);
     }
 
     /**
@@ -64,7 +66,7 @@ public class DomainModelParser {
         } catch (Exception e) {
             throw new RuntimeException("Unable to parse domain model XML file.", e, ErrorCodeConstants.GR_0001);
         }
-        initializeParentChildMap();
+        init(domainModel);
     }
 
     /**
@@ -80,7 +82,11 @@ public class DomainModelParser {
      * @return UMLAssociation[] - Array of UMLAssociation.
      */
     public UMLAssociation[] getUmlAssociations() {
-        return domainModel.getExposedUMLAssociationCollection().getUMLAssociation();
+        DomainModelExposedUMLAssociationCollection collection = domainModel.getExposedUMLAssociationCollection();
+        if (collection != null && collection.getUMLAssociation() != null) {
+            return collection.getUMLAssociation();
+        }
+        return new UMLAssociation[0];
     }
 
     /**
@@ -88,7 +94,11 @@ public class DomainModelParser {
      * @return UMLClass[]- Array of UMLClass.
      */
     public UMLClass[] getUmlClasses() {
-        return domainModel.getExposedUMLClassCollection().getUMLClass();
+        DomainModelExposedUMLClassCollection collection = domainModel.getExposedUMLClassCollection();
+        if (collection != null && collection.getUMLClass() != null) {
+            return collection.getUMLClass();
+        }
+        return new UMLClass[0];
     }
 
     /**
@@ -102,24 +112,31 @@ public class DomainModelParser {
     /**
      * This method finds our parent child relationship and populates {@link DomainModelParser#parentIdVsChildrenIds}
      */
-    private void initializeParentChildMap() {
-        UMLGeneralization[] umlGeneralizations = domainModel.getUmlGeneralizationCollection().getUMLGeneralization();
-        if (umlGeneralizations != null) {
-
-            parentIdVsChildrenIds = new HashMap<String, List<String>>(umlGeneralizations.length);
-            for (UMLGeneralization umlGeneralization : umlGeneralizations) {
+    private Map<String, List<String>> initializeParentChildMap() {
+        DomainModelUmlGeneralizationCollection collection = domainModel.getUmlGeneralizationCollection();
+        if (collection != null && collection.getUMLGeneralization() != null) {
+            UMLGeneralization[] generalizations = collection.getUMLGeneralization();
+            Map<String, List<String>> map = new HashMap<String, List<String>>(generalizations.length);
+            for (UMLGeneralization umlGeneralization : generalizations) {
                 String childClass = umlGeneralization.getSubClassReference().getRefid();
                 String parentClass = umlGeneralization.getSuperClassReference().getRefid();
-                List<String> children = parentIdVsChildrenIds.get(parentClass);
+                List<String> children = map.get(parentClass);
                 if (children == null) {
                     children = new ArrayList<String>();
-                    parentIdVsChildrenIds.put(parentClass, children);
+                    map.put(parentClass, children);
                 }
                 children.add(childClass);
             }
-
-        } else {
-            parentIdVsChildrenIds = new HashMap<String, List<String>>(0);
+            return map;
         }
+        return new HashMap<String, List<String>>(0);
+    }
+
+    private void init(DomainModel model) {
+        if (model == null) {
+            throw new RuntimeException("Unable to parse domain model XML file.", ErrorCodeConstants.GR_0001);
+        }
+        domainModel = model;
+        parentIdVsChildrenIds = initializeParentChildMap();
     }
 }
