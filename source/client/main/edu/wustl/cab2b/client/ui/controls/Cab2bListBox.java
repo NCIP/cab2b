@@ -11,30 +11,51 @@ import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 
+/**
+ * A component that allows the user to select one or more objects from a list. 
+ * A separate model, ListModel, represents the contents of the list. It's easy to 
+ * display an array or vector of objects, using a Cab2bListBox constructor that 
+ * builds a ListModel instance for you: 
+ * @author Chetan_BH 
+ */
 public class Cab2bListBox extends JScrollPane {
-    private JList m_list;
+    /**
+     * List reference
+     */
+    private JList list;
 
+    /**
+     * Constructs a Cab2bListBox that displays the elements in the specified, non-null model.
+     * @param model
+     */
     public Cab2bListBox(ListModel model) {
         super(VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        m_list = new JList(model);
-        m_list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        m_list.setFont(new Font("Arial", Font.PLAIN, 12));
+        list = new JList(model);
+        list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        list.setFont(new Font("Arial", Font.PLAIN, 12));
         if (model.getSize() < 5) {
-            m_list.setVisibleRowCount(model.getSize());
+            list.setVisibleRowCount(model.getSize());
         } else {
-            m_list.setVisibleRowCount(5);
+            list.setVisibleRowCount(5);
         }
-        getViewport().setView(m_list);
+        getViewport().setView(list);
         setComponentSize();
     }
 
+    /**
+     * Returns selected values from list
+     * @return Object[]
+     */
     public Object[] getSelectedValues() {
-        return m_list.getSelectedValues();
+        return list.getSelectedValues();
     }
 
+    /**
+     * Sets  components size
+     */
     public void setComponentSize() {
-        ListModel model = m_list.getModel();
-        FontMetrics fontMetrics = m_list.getFontMetrics(m_list.getFont());
+        ListModel model = list.getModel();
+        FontMetrics fontMetrics = list.getFontMetrics(list.getFont());
         int width = 0;
         int stringWidth;
         for (int i = 0; i < model.getSize(); i++) {
@@ -59,8 +80,12 @@ public class Cab2bListBox extends JScrollPane {
 
     }
 
+    /**
+     * Set values as selected in list
+     * @param values
+     */
     public void setSelectedValues(ArrayList<String> values) {
-        DefaultListModel model = (DefaultListModel) m_list.getModel();
+        DefaultListModel model = (DefaultListModel) list.getModel();
         int[] indexes = new int[values.size()];
         for (int j = 0; j < values.size(); j++) {
             String str = values.get(j);
@@ -71,7 +96,7 @@ public class Cab2bListBox extends JScrollPane {
                 }
             }
         }
-        m_list.setSelectedIndices(indexes);
+        list.setSelectedIndices(indexes);
 
     }
 
@@ -80,6 +105,6 @@ public class Cab2bListBox extends JScrollPane {
      * @param model
      */
     public void setModel(ListModel model) {
-        m_list.setModel(model);
+        list.setModel(model);
     }
 }

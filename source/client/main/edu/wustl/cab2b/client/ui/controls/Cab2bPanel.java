@@ -1,50 +1,67 @@
 package edu.wustl.cab2b.client.ui.controls;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Insets;
 import java.awt.LayoutManager;
-
-import javax.swing.JSplitPane;
 
 import org.jdesktop.swingx.JXPanel;
 
 import edu.wustl.cab2b.client.ui.RiverLayout;
-import edu.wustl.cab2b.client.ui.WindowUtilities;
 
+/**
+ * Cab2bPanel is a generic lightweight container extended from JXPanel. 
+ * @author Chetan_BH
+ *
+ */
+public class Cab2bPanel extends JXPanel {
 
-public class Cab2bPanel extends JXPanel
-{
+    /**
+     * Default panel background color
+     */
+    static Color defaultBgColor = Color.WHITE;
 
-	static Color defaultBgColor = Color.WHITE;
-	
-	public Cab2bPanel()
-	{
-		this(new RiverLayout());
-		this.setBorder(null);
-	}
+    /**
+     * Creates a new Cab2bPanel with a double buffer and a RiverLayout
+     */
+    public Cab2bPanel() {
+        this(new RiverLayout());
+        this.setBorder(null);
+    }
 
-	public Cab2bPanel(LayoutManager lm)
-	{
-		this(lm, false);
-		this.setBorder(null);
-	}
+    /**
+     * Creates a new Cab2bPanel with  RiverLayout and the specified LayoutManager.
+     * @param lm
+     */
+    public Cab2bPanel(LayoutManager lm) {
+        this(lm, false);
+        this.setBorder(null);
+    }
 
-	public Cab2bPanel(LayoutManager lm, boolean isDoubleBuffered)
-	{
-		this(lm, isDoubleBuffered, defaultBgColor);
-		this.setBorder(null);
-	}
-	
-	public Cab2bPanel(LayoutManager lm, boolean isDoubleBuffered, Color bgColor)
-	{
-		super(lm, isDoubleBuffered);
-		this.setBackground(bgColor);
-		//this.setBorder(new CustomizableBorder(new Insets(1,1,1,1), true, true));
-		this.setBorder(null);
-	}
-    
+    /**
+     * Creates a new Cab2bPanel with specified LayoutManager and the specified buffering strategy.
+     * @param lm
+     * @param isDoubleBuffered
+     */
+    public Cab2bPanel(LayoutManager lm, boolean isDoubleBuffered) {
+        this(lm, isDoubleBuffered, defaultBgColor);
+        this.setBorder(null);
+    }
+
+    /**
+     * Creates a new Cab2bPanel with specified LayoutManager , the specified buffering strategy and specified color.
+     * @param lm
+     * @param isDoubleBuffered
+     * @param bgColor
+     */
+    public Cab2bPanel(LayoutManager lm, boolean isDoubleBuffered, Color bgColor) {
+        super(lm, isDoubleBuffered);
+        this.setBackground(bgColor);
+        this.setBorder(null);
+    }
+
+    /**
+     * Do initilization for panel
+     */
     public void doInitialization() {
-        
+
     }
 }

@@ -4,8 +4,16 @@ import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
+/**
+ * This is an extension of DefaultTableModel that uses a Vector of Vectors to store the cell value objects. 
+ * @author deepak_shingan
+ *
+ */
 public class Cab2bDefaultTableModel extends DefaultTableModel {
-    boolean m_showCheckBox;
+    /**
+     * Flag to show check boxes in first column
+     */
+    boolean tableShowCheckBox;
 
     /**
      * Constructor of table model
@@ -14,7 +22,7 @@ public class Cab2bDefaultTableModel extends DefaultTableModel {
      */
     public Cab2bDefaultTableModel(boolean showCheckBox, Object[][] data, Object[] header) {
         super(data, header);
-        m_showCheckBox = showCheckBox;
+        tableShowCheckBox = showCheckBox;
         setDataVector(getDataVector(), this.columnIdentifiers); // This method makes sure that the proper data is set in the table
     }
 
@@ -25,7 +33,7 @@ public class Cab2bDefaultTableModel extends DefaultTableModel {
      */
     public Cab2bDefaultTableModel(boolean showCheckBox, Vector data, Vector header) {
         super(data, header);
-        m_showCheckBox = showCheckBox;
+        tableShowCheckBox = showCheckBox;
         setDataVector(data, header); // This method makes sure that the proper data is set in the table
     }
 
@@ -36,7 +44,7 @@ public class Cab2bDefaultTableModel extends DefaultTableModel {
     public boolean isCellEditable(int row, int col) {
         // If first column is check-box then only 
         // make first column editable
-        if (true == m_showCheckBox) {
+        if (true == tableShowCheckBox) {
             if (col == 0) {
                 return true;
             } else {
@@ -92,7 +100,7 @@ public class Cab2bDefaultTableModel extends DefaultTableModel {
      */
     public void setDataVector(Vector data, Vector header) {
         // If check-box has to be shown
-        if (true == m_showCheckBox) {
+        if (true == tableShowCheckBox) {
             Vector tableData = new Vector();
             for (int i = 0; i < data.size(); i++) {
                 Vector rowData = (Vector) data.get(i);

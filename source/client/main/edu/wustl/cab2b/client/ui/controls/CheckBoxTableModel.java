@@ -4,32 +4,59 @@ import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
+/**
+ * TableModel defined for AvailablePathPanel extended from AbstractTableModel
+ * @author Chetan_BH
+ *
+ */
 public class CheckBoxTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
 
-    private String[] m_columnNames;
+    /**
+     * Column names array 
+     */
+    private String[] modelColumnNames;
 
-    private Object[][] m_data;
+    /**
+     * Table data double array
+     */
+    private Object[][] tableData;
 
+    /**
+     * @param columnNames
+     * @param data
+     */
     public CheckBoxTableModel(String[] columnNames, Object[][] data) {
-        m_columnNames = columnNames;
-        m_data = data;
+        modelColumnNames = columnNames;
+        tableData = data;
     }
 
+    /* (non-Javadoc)
+     * @see javax.swing.table.TableModel#getColumnCount()
+     */
     public int getColumnCount() {
-        return m_columnNames.length;
+        return modelColumnNames.length;
     }
 
+    /* (non-Javadoc)
+     * @see javax.swing.table.TableModel#getRowCount()
+     */
     public int getRowCount() {
-        return m_data.length;
+        return tableData.length;
     }
 
+    /* (non-Javadoc)
+     * @see javax.swing.table.AbstractTableModel#getColumnName(int)
+     */
     public String getColumnName(int col) {
-        return m_columnNames[col];
+        return modelColumnNames[col];
     }
 
+    /* (non-Javadoc)
+     * @see javax.swing.table.TableModel#getValueAt(int, int)
+     */
     public Object getValueAt(int row, int col) {
-        return m_data[row][col];
+        return tableData[row][col];
     }
 
     /*
@@ -56,9 +83,13 @@ public class CheckBoxTableModel extends AbstractTableModel {
         }
     }
 
+    /**
+     * Gets checked row indexes
+     * @return int[]
+     */
     public int[] getCheckedRowIndexes() {
         Vector<Integer> selectIndex = new Vector<Integer>();
-        for (int i = 0; i < m_data.length; i++) {
+        for (int i = 0; i < tableData.length; i++) {
             Boolean value = (Boolean) getValueAt(i, 0);
             if (value == true) {
                 selectIndex.add(new Integer(i));
@@ -76,21 +107,7 @@ public class CheckBoxTableModel extends AbstractTableModel {
      * data can change.
      */
     public void setValueAt(Object value, int row, int col) {
-        m_data[row][col] = value;
+        tableData[row][col] = value;
         fireTableCellUpdated(row, col);
-    }
-
-    private void printDebugData() {
-        int numRows = getRowCount();
-        int numCols = getColumnCount();
-
-        for (int i = 0; i < numRows; i++) {
-             
-            for (int j = 0; j < numCols; j++) {
-                 
-            }
-             
-        }
-         
     }
 }

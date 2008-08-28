@@ -13,6 +13,12 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+/**
+ * The implmentation of TableCellRenderer and extension of JTextPane, which defines the method required 
+ * by any object that would like to be a renderer for cells in a JTable.
+ * @author chetan_bh
+ *
+ */
 public class TextAreaRenderer extends JTextPane implements TableCellRenderer {
     private static final long serialVersionUID = 1L;
 

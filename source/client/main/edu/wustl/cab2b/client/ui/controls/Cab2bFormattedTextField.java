@@ -20,10 +20,14 @@ import javax.swing.text.PlainDocument;
 public class Cab2bFormattedTextField extends JFormattedTextField {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * For getting native method implimentation
+     */
     private static final Toolkit toolkit = Toolkit.getDefaultToolkit();
 
-    //private DateFormat dateFormatter;
-
+    /**
+     * Class for setting textfield documents 
+     */
     private DocumentFactory documentFactory = new DocumentFactory();
 
     /* Default fieldType is Float */
@@ -47,6 +51,9 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
     /* For alpha-numeric fields, with no special characters */
     public static final int ALPHA_NUMERIC_FIELD = 5;
 
+    /**
+     * Flag for setting command
+     */
     private boolean isCommaAllowed = false;
 
     /**
@@ -165,7 +172,7 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
 
     /**
      * @author chetan_bh
-     */    
+     */
     protected class WholeNumberDocument extends PlainDocument {
         private static final long serialVersionUID = 1L;
 
@@ -256,8 +263,7 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
                     result[j++] = source[i];
                 else {
                     toolkit.beep();
-                    //changeFocus();
-                    System.err.println("insertString: " + source[i]);
+                    //changeFocus();s                    
                 }
             }
             super.insertString(offs, new String(result, 0, j), a);

@@ -22,7 +22,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JViewport;
 import javax.swing.Scrollable;
-import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.MouseInputListener;
@@ -46,12 +45,24 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Stackbox background color
+     */
     private Color titleBackgroundColor;
 
+    /**
+     * Stackbox foreground color
+     */
     private Color titleForegroundColor;
 
+    /**
+     * Stackbox separator color
+     */
     private Color separatorColor;
 
+    /**
+     * Creates stackbox with default settings
+     */
     public StackedBox() {
         setLayout(new VerticalLayout());
         setOpaque(true);
@@ -61,26 +72,50 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
         setSeparatorColor(Color.BLACK);
     }
 
+    /**
+     * Returns separator color
+     * @return Color
+     */
     public Color getSeparatorColor() {
         return separatorColor;
     }
 
+    /**
+     * Sets separator color
+     * @param separatorColor
+     */
     public void setSeparatorColor(Color separatorColor) {
         this.separatorColor = separatorColor;
     }
 
+    /**
+     * Returns fore ground color
+     * @return
+     */
     public Color getTitleForegroundColor() {
         return titleForegroundColor;
     }
 
+    /**
+     * Sets title foreground color
+     * @param titleForegroundColor
+     */
     public void setTitleForegroundColor(Color titleForegroundColor) {
         this.titleForegroundColor = titleForegroundColor;
     }
 
+    /**
+     * Gets title background color 
+     * @return Color
+     */
     public Color getTitleBackgroundColor() {
         return titleBackgroundColor;
     }
 
+    /**
+     * Sets title background color
+     * @param titleBackgroundColor
+     */
     public void setTitleBackgroundColor(Color titleBackgroundColor) {
         this.titleBackgroundColor = titleBackgroundColor;
     }
@@ -165,10 +200,17 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
      */
     class SeparatorBorder implements Border {
 
+        /**
+         * @param c
+         * @return
+         */
         boolean isFirst(Component c) {
             return c.getParent() == null || c.getParent().getComponent(0) == c;
         }
 
+        /* (non-Javadoc)
+         * @see javax.swing.border.Border#getBorderInsets(java.awt.Component)
+         */
         public Insets getBorderInsets(Component c) {
             // if the collapsible is collapsed, we do not want its border to be
             // painted.
@@ -181,10 +223,16 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
             return new Insets(0, 0, 0, 0);
         }
 
+        /* (non-Javadoc)
+         * @see javax.swing.border.Border#isBorderOpaque()
+         */
         public boolean isBorderOpaque() {
             return true;
         }
 
+        /* (non-Javadoc)
+         * @see javax.swing.border.Border#paintBorder(java.awt.Component, java.awt.Graphics, int, int, int, int)
+         */
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             g.setColor(getSeparatorColor());
             if (isFirst(c)) {
@@ -194,20 +242,46 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
         }
     }
 
+    /**
+     * Class for setting title panel inside stackbox
+     * @author Chetan_BH
+     *
+     */
     public class StackTitlePanel extends JXPanel implements MouseInputListener {
         private static final long serialVersionUID = 1L;
 
+        /**
+         * Flag to set toggel action behaviour
+         */
         boolean toggleAction = true;
 
+        /**
+         * Title of panel
+         */
         String title = "";
 
+        /**
+         * Graph object for paintaing
+         */
         GradientPaint gp = new GradientPaint(new Point2D.Double(0, 1.0d), new Color(205, 215, 216),
                 new Point2D.Double(0, 0.0d), new Color(255, 255, 255));
 
+        /**
+         * Paint object for paintaing
+         */
         Painter painter = new BasicGradientPainter(gp);
 
+        /**
+         * Panel action class
+         */
         Action action;
 
+        /**
+         * Creates StackTitlePanel with specified title, imageIcon and panel MouseInput Action 
+         * @param title
+         * @param imageIcon
+         * @param action
+         */
         public StackTitlePanel(String title, Icon imageIcon, Action action) {
             this.title = title;
             this.action = action;
@@ -225,6 +299,9 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
             this.add("", titleLabel);
         }
 
+        /* (non-Javadoc)
+         * @see org.jdesktop.swingx.JXPanel#paint(java.awt.Graphics)
+         */
         @Override
         public void paint(Graphics gp) {
             super.paint(gp);
@@ -245,6 +322,10 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
             g2d.setColor(oldColor);
         }
 
+        /**
+         * @param openOrClosed
+         * @return
+         */
         private Polygon getPolygon(String openOrClosed) {
             Polygon polygon = new Polygon();
             Dimension size = this.getSize();
@@ -263,6 +344,9 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
             return polygon;
         }
 
+        /**
+         * @param e
+         */
         public void collapse(boolean e) {
             //toggleAction = !(e);
             toggleAction = e;
@@ -271,6 +355,9 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
             this.repaint();
         }
 
+        /* (non-Javadoc)
+         * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+         */
         public void mouseClicked(MouseEvent e) {
             toggleAction = !(toggleAction);
             ActionEvent ae = new ActionEvent(this, 123, "stackedBox");
@@ -278,25 +365,47 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
             this.repaint();
         }
 
+        /*
+         * Sets hand cursor
+         *  (non-Javadoc)
+         * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+         */
         public void mouseEntered(MouseEvent e) {
             Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
             this.setCursor(handCursor);
         }
 
+        /* 
+         * Sets normal cursor
+         * (non-Javadoc)
+         * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+         */
         public void mouseExited(MouseEvent e) {
             Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
             this.setCursor(normalCursor);
         }
 
+        /* (non-Javadoc)
+         * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+         */
         public void mousePressed(MouseEvent e) {
         }
 
+        /* (non-Javadoc)
+         * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+         */
         public void mouseReleased(MouseEvent e) {
         }
 
+        /* (non-Javadoc)
+         * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
+         */
         public void mouseDragged(MouseEvent e) {
         }
 
+        /* (non-Javadoc)
+         * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+         */
         public void mouseMoved(MouseEvent e) {
         }
     }

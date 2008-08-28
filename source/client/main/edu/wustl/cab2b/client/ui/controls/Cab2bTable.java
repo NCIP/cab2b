@@ -22,27 +22,55 @@ import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterPipeline;
 import org.jdesktop.swingx.table.ColumnHeaderRenderer;
 
+/**
+ * The Cab2bTable is extended from JXTable and used to display and edit regular 
+ * two-dimensional tables of cells.
+ * @author Chtan_BH
+ *
+ */
 public class Cab2bTable extends JXTable {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Flag to show checkbox in first column
+     */
     boolean showCheckBox;
 
+    /**
+     * Constructs a Cab2bTable to display the values in the two dimensional array,
+     * data, with column names, headers and checkbox flag.
+     * @param showCheckBox
+     * @param data
+     * @param headers
+     */
     public Cab2bTable(boolean showCheckBox, Object[][] data, Object[] headers) {
         super(new Cab2bDefaultTableModel(showCheckBox, data, headers));
         this.showCheckBox = showCheckBox;
         initUI();
     }
 
+    /**
+     * Constructs a Cab2bTable that is initialized with tableModel 
+     * as the data model, a default column model, and a default selection model.
+     * @param tableModel
+     */
     public Cab2bTable(TableModel tableModel) {
         super(tableModel);
         initUI();
     }
 
+    /**
+     * Constructs a default Cab2bTable that is initialized with a default data model, 
+     * a default column model, and a default selection model.
+     */
     public Cab2bTable() {
         super();
         initUI();
-    }    
+    }
 
+    /**
+     * Method for initilizing UI
+     */
     private void initUI() {
         if (true == showCheckBox) {
             // Create an ItemListener
@@ -64,13 +92,22 @@ public class Cab2bTable extends JXTable {
         this.packAll();
     }
 
+    /**
+     * Constructs a Cab2bTable to display the values in the Vector of Vectors,
+     * data, with column names, headers and specified showCheckbox flag.
+     * @param showCheckBox
+     * @param data
+     * @param headers
+     */
     public Cab2bTable(boolean showCheckBox, Vector data, Vector headers) {
         super(new Cab2bDefaultTableModel(showCheckBox, data, headers));
-
         showCheckBox = showCheckBox;
         initUI();
     }
 
+    /* (non-Javadoc)
+     * @see javax.swing.JTable#getSelectedRows()
+     */
     public int[] getSelectedRows() {
         if (showCheckBox) {
             Vector<Integer> values = ((Cab2bDefaultTableModel) this.getModel()).getCheckedRowIndexes();
@@ -83,6 +120,9 @@ public class Cab2bTable extends JXTable {
         }
     }
 
+    /**
+     * Sets table header bold
+     */
     public void setTableHeaderBold() {
         JTableHeader header = getTableHeader();
         final Font boldFont = header.getFont().deriveFont(Font.BOLD);
@@ -106,7 +146,7 @@ public class Cab2bTable extends JXTable {
         Object[][] data = { { "sddsdsgd gfgfd ", "dfdgf hgghfhg hghg" }, { "<a href=\"http://google.com\">fshjfsdjghdljkgh  fddddddddddddddddddddd dddd klfjhkldjhlkfdhigjhlfgjhlgfhjg", "22" }, { "111", "222" } };
         Object[] headers = { "first", "second" };
 
-        Cab2bTable cab2bTable = new Cab2bTable(true, data,headers );
+        Cab2bTable cab2bTable = new Cab2bTable(true, data, headers);
         cab2bTable.setEditable(true);
         // myTable.set
         JFrame frame = new JFrame("New Frame");
