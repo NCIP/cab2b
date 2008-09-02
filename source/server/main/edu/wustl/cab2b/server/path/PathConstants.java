@@ -49,11 +49,6 @@ public interface PathConstants {
     public static final String LINE_SEPERATOR = System.getProperty("line.separator");
 
     /**
-     * Represents the String used as field connector to connect intermediate path Ids, while generating the file.
-     */
-    public static final String ID_CONNECTOR = "-";
-
-    /**
      * Represents the URL of caDSR service. This is location from which models are retrieved.
      * TODO It will be removed from here and it will be externally configurable.
      */
