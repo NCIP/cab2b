@@ -88,17 +88,18 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
                 if (queryCounter > 4)
                     break;
             }
-            Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
-            CommonUtils.setHyperlinkProperties(hyperlink, null, MainFrameStackedBoxPanel.SHOW_ALL_LINK, "",
-                                               new ActionListener() {
-                                                   public void actionPerformed(ActionEvent e) {
-                                                       NewWelcomePanel.getMainFrame().getGlobalNavigationPanel().getGlobalNavigationGlassPane().setShowAllPanel(
-                                                                                                                                                                getAllQueryPanel());
+            if (queryCounter > 0) {
+                Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
+                CommonUtils.setHyperlinkProperties(hyperlink, null, MainFrameStackedBoxPanel.SHOW_ALL_LINK, "",
+                                                   new ActionListener() {
+                                                       public void actionPerformed(ActionEvent e) {
+                                                           NewWelcomePanel.getMainFrame().getGlobalNavigationPanel().getGlobalNavigationGlassPane().setShowAllPanel(
+                                                                                                                                                                    getAllQueryPanel());
+                                                       }
 
-                                                   }
-
-                                               });
-            this.add("right br", hyperlink);
+                                                   });
+                this.add("right br", hyperlink);
+            }
 
         } catch (Exception exception) {
             CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);

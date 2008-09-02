@@ -62,13 +62,13 @@ public class MyExperimentLinkPanel extends Cab2bPanel {
         this.setLayout(new RiverLayout(10, 5));
         this.add(new Cab2bLabel());
         Cab2bHyperlink hyperlink = null;
-        int i = 0;
+        int expCounter = 0;
         for (Experiment experiment : data) {
             hyperlink = new Cab2bHyperlink(true);
             CommonUtils.setHyperlinkProperties(hyperlink, experiment, experiment.getName(),
                                                experiment.getDescription(), actionListener);
             this.add("br", hyperlink);
-            if (++i > 4)
+            if (++expCounter > 4)
                 break;
         }
 
@@ -78,10 +78,12 @@ public class MyExperimentLinkPanel extends Cab2bPanel {
             }
         };
 
-        Cab2bHyperlink showAllHyperlink = new Cab2bHyperlink(true);
-        CommonUtils.setHyperlinkProperties(showAllHyperlink, null, MainFrameStackedBoxPanel.SHOW_ALL_LINK, "",
-                                           showAllExpAction);
-        this.add("br right", showAllHyperlink);
+        if (expCounter > 0) {
+            Cab2bHyperlink showAllHyperlink = new Cab2bHyperlink(true);
+            CommonUtils.setHyperlinkProperties(showAllHyperlink, null, MainFrameStackedBoxPanel.SHOW_ALL_LINK, "",
+                                               showAllExpAction);
+            this.add("br right", showAllHyperlink);
+        }
     }
 
     /**
