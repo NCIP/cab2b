@@ -261,8 +261,8 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
      * Method to set ShowAllPanel(like ShowAllCategoryPanel, ShowAllQueryLinkPanel) on righthand side of homepage 
      */
     public void setShowAllPanel(ShowAllPanel panel) {
-        tabButtons[0].setIcon(new ImageIcon(tabsImagesUnPressed[0]));
-        tabButtons[1].setIcon(new ImageIcon(tabsImagesPressed[1]));
+        tabButtons[0].setIcon(new ImageIcon(tabsImagesPressed[0]));
+        tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
         tabButtons[2].setIcon(new ImageIcon(tabsImagesUnPressed[2]));
         MainFrame mainframePanel = (MainFrame) this.frame;
 
