@@ -24,15 +24,29 @@ public class NewWelcomePanel extends Cab2bPanel {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Welcome page editor pane
+     */
     private JEditorPane welcomePageEditorPane;
 
+    /**
+     * Parent panel reference
+     */
     private static MainFrame mainFrame;
 
+    /**
+     * Constructor
+     * Creates NewWelcomePanel with MainFrame as parent panel
+     * @param newMainFrame
+     */
     public NewWelcomePanel(MainFrame newMainFrame) {
         mainFrame = newMainFrame;
         initGUI();
     }
 
+    /**
+     * Method for initilizing UI
+     */
     private void initGUI() {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setBackground(Color.WHITE);
@@ -58,6 +72,10 @@ public class NewWelcomePanel extends Cab2bPanel {
         this.add(scrollPane);
     }
 
+    /**
+     * Method for creating editor pane and setting welcomepage.html
+     * @return JEditorPane
+     */
     private JEditorPane createEditorPane() {
         JEditorPane editorPane = new JEditorPane();
         editorPane.setEditable(false);
