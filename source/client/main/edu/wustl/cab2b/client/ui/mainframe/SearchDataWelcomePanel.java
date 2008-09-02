@@ -12,7 +12,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
-import javax.swing.JEditorPane;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -29,17 +28,26 @@ import edu.wustl.common.util.global.ApplicationProperties;
  * @author Deepak Shingan
  */
 
-public class SearchDataWelcomePanel extends Cab2bPanel {
+public class SearchDataWelcomePanel extends Cab2bPanel { 
 
-    private JEditorPane searchDataWelcomePageEditorPane;
-
+    /**
+     * Parent frame reference
+     */
     private MainFrame mainFrame;
 
+    /**
+     * Constructor 
+     * Creates SearchDataWelcomePanel with mainframe as parent frame
+     * @param mainFrame
+     */
     public SearchDataWelcomePanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         initGUI();
     }
 
+    /**
+     * Method for intilizing UI
+     */
     private void initGUI() {
         this.setLayout(new BorderLayout());
         this.setBackground(Color.WHITE);
