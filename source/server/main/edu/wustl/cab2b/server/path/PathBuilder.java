@@ -61,7 +61,6 @@ import edu.wustl.cab2b.server.util.ServerProperties;
  */
 public class PathBuilder {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(PathBuilder.class);
-    private static final int PATH_MAX_LENGTH = 6;
 
     private static Set<Long> associationSet = new HashSet<Long>();
 
@@ -122,7 +121,7 @@ public class PathBuilder {
             throw new RuntimeException("Exception while loading model in DE", e);
         }
         try {
-            storeModelAndGeneratePaths(processor, applicationName, connection, false);
+            storeModelAndGeneratePaths(processor, applicationName, connection, false, maxPathLength);
             transformAndLoadPaths(connection, processor.getEntityGroup());
         } catch (Exception e) {
             logger.error("Exception while generating paths", e);
@@ -146,18 +145,15 @@ public class PathBuilder {
      * Reads model present at given location and appends the generated paths to
      * {@link PathConstants#PATH_FILE_NAME} <b>NOTE : </b> Paths are appended to
      * existing file (if any).
-     * 
-     * @param xmlFilePath
-     *            The file system path from where the the domain model extract
-     *            is present
-     * @param applicationName
-     *            Name of the application. The Entity Group will have this as
-     *            its short name.
-     * @throws DynamicExtensionsApplicationException
-     * @throws DynamicExtensionsSystemException
+     * @param processor Name of the application. The Entity Group will have this as its short name
+     * @param applicationName Name of the application. The Entity Group will have this as its short name.
+     * @param maxPathLength max length (no. of classes) in path.
+     * @param applicationName Application name
+     * @param conn Database connection to use
+     * @param append Append or not
      */
     static void storeModelAndGeneratePaths(DomainModelProcessor processor, String applicationName,
-                                           Connection conn, boolean append) {
+                                           Connection conn, boolean append, int maxPathLength) {
         logger.info("Processing application : " + applicationName);
         logger.info("Loaded the domain model of application : " + applicationName
                 + " to database. Generating paths...");
@@ -166,7 +162,7 @@ public class PathBuilder {
         Map<Integer, Set<Integer>> replicationNodes = processor.getReplicationNodes();
 
         GraphPathFinder graphPathfinder = new GraphPathFinder();
-        Set<Path> paths = graphPathfinder.getAllPaths(adjacencyMatrix, replicationNodes, conn, PATH_MAX_LENGTH);
+        Set<Path> paths = graphPathfinder.getAllPaths(adjacencyMatrix, replicationNodes, conn, maxPathLength);
 
         PathToFileWriter.writePathsToFile(paths, entityIds.toArray(new Long[0]), append);
     }
