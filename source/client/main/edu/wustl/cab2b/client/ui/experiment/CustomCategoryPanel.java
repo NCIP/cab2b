@@ -254,7 +254,7 @@ public class CustomCategoryPanel extends JXFrame {
 
                     for (AttributeInterface attributeInterface : attributes) {
                         String name = Utility.getDisplayName(attributeInterface.getEntity()) + ": "
-                                + CommonUtils.getFormattedString(attributeInterface.getName());
+                                + Utility.getFormattedString(attributeInterface.getName());
                         int left = name.indexOf("(DataList");
                         int right = name.indexOf(")");
                         StringBuffer buffer = new StringBuffer(name);

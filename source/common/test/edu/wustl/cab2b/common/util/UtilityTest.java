@@ -1,13 +1,9 @@
-/**
- * 
- */
 package edu.wustl.cab2b.common.util;
 
 import junit.framework.TestCase;
 
 /**
  * @author deepak_shingan
- *
  */
 public class UtilityTest extends TestCase {
 
@@ -28,4 +24,11 @@ public class UtilityTest extends TestCase {
         assertEquals("No replacement test", Utility.replaceAllWords("No replacement test", "Deepak", "Shingan"));
     }
 
+    public void testCapitalizeString() {
+        assertEquals("Gene", Utility.capitalizeFirstCharacter("gene"));
+    }
+
+    public void testCapitalizeStringAlreadyCapital() {
+        assertEquals("Gene", Utility.capitalizeFirstCharacter("Gene"));
+    }
 }

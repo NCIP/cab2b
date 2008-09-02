@@ -45,7 +45,7 @@ class RecordsTableModel extends AbstractTableModel {
 
 	public String getColumnName(int columnNo) {
 
-		return CommonUtils.getFormattedString(attributeList.get(columnNo)
+		return Utility.getFormattedString(attributeList.get(columnNo)
 				.getName());
 
 	}

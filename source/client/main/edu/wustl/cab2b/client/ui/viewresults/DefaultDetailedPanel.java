@@ -11,6 +11,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.util.Utility;
 
 public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implements DataListDetailedPanelInterface {
 
@@ -45,7 +46,7 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
         this.setLayout(new RiverLayout(0, 5));
         List<AttributeInterface> attributeList = edu.wustl.cab2b.common.util.Utility.getAttributeList(record.getAttributes());
         for (AttributeInterface attribute : attributeList) {
-            String formattedString = CommonUtils.getFormattedString(attribute.getName());
+            String formattedString = Utility.getFormattedString(attribute.getName());
             Vector<Object> row = new Vector<Object>();
             row.add(formattedString);
             Object value = record.getValueForAttribute(attribute);

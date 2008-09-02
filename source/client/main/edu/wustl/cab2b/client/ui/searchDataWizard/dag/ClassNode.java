@@ -12,6 +12,7 @@ import org.netbeans.graph.api.model.IGraphPort;
 
 import edu.wustl.cab2b.client.ui.util.ClientConstants;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IRule;
@@ -244,7 +245,7 @@ public class ClassNode extends GenericNode {
             ICondition condition = rule.getCondition(i);
             sb.append((i + 1)).append(") ");
 
-            String formattedAttributeName = CommonUtils.getFormattedString(condition.getAttribute().getName());
+            String formattedAttributeName = Utility.getFormattedString(condition.getAttribute().getName());
 
             sb.append("<B>").append(formattedAttributeName).append("</B>").append(" ");
             List<String> values = condition.getValues();

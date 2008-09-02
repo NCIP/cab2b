@@ -143,7 +143,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         this.attribute = attribute;
         if (displayName == null) {
             if (!Utility.isCategory(attribute.getEntity()))
-                displayName = CommonUtils.getFormattedString(attribute.getName());
+                displayName = Utility.getFormattedString(attribute.getName());
             else
                 displayName = attribute.getName();
         }

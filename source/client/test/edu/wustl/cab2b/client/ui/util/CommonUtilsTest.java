@@ -57,13 +57,6 @@ public class CommonUtilsTest extends TestCase {
         assertEquals(0, res);
     }
 
-    public void testCapitalizeString() {
-        assertEquals("Gene", CommonUtils.capitalizeFirstCharacter("gene"));
-    }
-
-    public void testCapitalizeStringAlreadyCapital() {
-        assertEquals("Gene", CommonUtils.capitalizeFirstCharacter("Gene"));
-    }
 
     public void testSplitStringWithTextQualifier() {
         ArrayList<String> res = CommonUtils.splitStringWithTextQualifier("\"chetan, patil\", is,  subordinate,of,\"rahul ner\"",

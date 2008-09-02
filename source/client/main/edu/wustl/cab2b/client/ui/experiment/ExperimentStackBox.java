@@ -792,7 +792,7 @@ public class ExperimentStackBox extends Cab2bPanel {
         servicePanel.add("br center hfill vfill ", jScrollPane);
         servicePanel.add("br right ", finishButton);
 
-        String displayName = CommonUtils.getFormattedString(requiredEntity.getName());
+        String displayName = Utility.getFormattedString(requiredEntity.getName());
         WindowUtilities.showInDialog(NewWelcomePanel.getMainFrame(), servicePanel, displayName,
                                      Constants.WIZARD_SIZE2_DIMENSION, true, false);
     }
