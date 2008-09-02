@@ -47,7 +47,7 @@ create table INTER_MODEL_ASSOCIATION(
 );
 create table INTRA_MODEL_ASSOCIATION(
     ASSOCIATION_ID    bigint    not null references ASSOCIATION(ASSOCIATION_ID),
-    DE_ASSOCIATION_ID bigint    not null,
+    DE_ASSOCIATION_ID bigint    not null UNIQUE ,
     primary key (ASSOCIATION_ID) 
 );
 create table CAB2B_ID_TABLE(
