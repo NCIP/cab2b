@@ -2,7 +2,6 @@ package edu.wustl.cab2b.server.path;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +14,7 @@ import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.common.cache.AbstractEntityCache;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.common.util.Utility;
@@ -109,7 +109,7 @@ public class PathFinder {
         interModelConnections = cacheInterModelConnections(con);
         pathRecordCache = cachePathRecords(con);
         idVsAssociation = cacheAssociationTypes(con);
-        entitySetVsCuratedPath = cacheCuratedPaths(con);
+        entitySetVsCuratedPath = cacheCuratedPaths();
     }
 
     /**
@@ -156,7 +156,7 @@ public class PathFinder {
      * @return Set of curated paths
      */
     public Set<ICuratedPath> autoConnect(Set<EntityInterface> entitySet) {
-        String entityIdSet = getStringRepresentation(entitySet);
+        String entityIdSet = CuratedPath.getStringRepresentation(entitySet);
         Set<ICuratedPath> curatedPathSet = entitySetVsCuratedPath.get(entityIdSet);
 
         if (curatedPathSet == null) {
@@ -396,7 +396,7 @@ public class PathFinder {
      * @return List of PathRecord 
      */
     private List<PathRecord> getPathRecords(long srcId, long desId) {
-        String key = srcId + PathConstants.ID_CONNECTOR + desId;
+        String key = srcId + Constants.CONNECTOR + desId;
         if (pathRecordCache.containsKey(key)) {
             return pathRecordCache.get(key);
         }
@@ -420,7 +420,7 @@ public class PathFinder {
         intermediatePathVsPathRecord = new HashMap<String, PathRecord>(resultSet.length);
         for (int i = 0; i < resultSet.length; i++) {
             PathRecord pathRecord = getPathRecord(resultSet[i]);
-            String key = pathRecord.getFirstEntityId() + PathConstants.ID_CONNECTOR + pathRecord.getLastEntityId();
+            String key = pathRecord.getFirstEntityId() + Constants.CONNECTOR + pathRecord.getLastEntityId();
             idVsPathRecord.put(pathRecord.getPathId(), pathRecord);
             intermediatePathVsPathRecord.put(pathRecord.getIntermediateAssociations(), pathRecord);
             if (pathRecordCache.containsKey(key)) {
@@ -489,72 +489,64 @@ public class PathFinder {
     Set<EntityInterface> getEntitySet(String stringRepresentationOfEntitySet) {
         EntityCache cache = EntityCache.getInstance();
         HashSet<EntityInterface> entitySet = new HashSet<EntityInterface>();
-        String[] ids = stringRepresentationOfEntitySet.split(PathConstants.ID_CONNECTOR);
+        String[] ids = stringRepresentationOfEntitySet.split(Constants.CONNECTOR);
         for (String str : ids) {
             Long entityId = Long.parseLong(str);
             entitySet.add(cache.getEntityById(entityId));
         }
         return entitySet;
     }
-
-    /**
-     * Generates string representation of given entity set after sorting it based on id.
-     * String representation is IDs of entities concatenated by {@link PathConstants#ID_CONNECTOR}
-     * @param entitySet Set of entities
-     * @return String representation of the given entity set. 
-     */
-    String getStringRepresentation(Set<EntityInterface> entitySet) {
-        if (entitySet.isEmpty()) {
-            return "";
-        }
-        ArrayList<Long> ids = new ArrayList<Long>(entitySet.size());
-        for (EntityInterface en : entitySet) {
-            ids.add(en.getId());
-
-        }
-        Collections.sort(ids);
-        StringBuilder strBuilder = new StringBuilder();
-        strBuilder.append(ids.get(0));
-        for (int i = 1; i < ids.size(); i++) {
-            strBuilder.append(PathConstants.ID_CONNECTOR);
-            strBuilder.append(ids.get(i));
-        }
-        return strBuilder.toString();
-    }
-
     /**
      * Caches all the curated paths present in the system.
      * @param con Database connection to use
      */
-    private Map<String, Set<ICuratedPath>> cacheCuratedPaths(Connection con) {
-        Map<String, Set<ICuratedPath>> entitySetVsCuratedPath = new HashMap<String, Set<ICuratedPath>>();
-        HashMap<Long, CuratedPath> idVsCuratedPath = new HashMap<Long, CuratedPath>();
-        String sql = "SELECT CURATED_PATH.curated_path_Id,entity_ids,selected,path_id from CURATED_PATH JOIN CURATED_PATH_TO_PATH ON CURATED_PATH.curated_path_Id = CURATED_PATH_TO_PATH.curated_path_Id";
-        String[][] resultSet = executeQuery(sql, con);
-        for (String[] oneRecord : resultSet) {
-            Long curatedPathId = Long.parseLong(oneRecord[0]);
-            CuratedPath curatedPath = null;
-            if (idVsCuratedPath.containsKey(curatedPathId)) {
-                curatedPath = idVsCuratedPath.get(curatedPathId);
-            } else {
-                String entitySetString = oneRecord[1];
-                Set<EntityInterface> entitySet = getEntitySet(entitySetString);
-                Boolean isSelected = Boolean.parseBoolean(oneRecord[2]);
-                curatedPath = new CuratedPath(curatedPathId, entitySet, isSelected);
-                idVsCuratedPath.put(curatedPathId, curatedPath);
-                Set<ICuratedPath> paths = entitySetVsCuratedPath.get(entitySetString);
-                if (paths == null) {
-                    paths = new HashSet<ICuratedPath>();
-                    entitySetVsCuratedPath.put(entitySetString, paths);
-                }
-                paths.add(curatedPath);
+    private Map<String, Set<ICuratedPath>> cacheCuratedPaths() {
+        List<ICuratedPath> list = new CuratedPathOperations().getAllCuratedPath();
+        Map<String, Set<ICuratedPath>> entitySetVsCuratedPath = new HashMap<String, Set<ICuratedPath>>(list.size());
+        for(ICuratedPath curatedPath : list) {
+            postProcessCuratedPath(curatedPath);
+            String entitySetStr = CuratedPath.getStringRepresentation(curatedPath.getEntitySet());
+            Set<ICuratedPath> paths = entitySetVsCuratedPath.get(entitySetStr);
+            if (paths == null) {
+                paths = new HashSet<ICuratedPath>();
+                entitySetVsCuratedPath.put(entitySetStr, paths);
             }
-            Long pathId = Long.parseLong(oneRecord[3]);
-            PathRecord pathRecord = idVsPathRecord.get(pathId);
-            curatedPath.addPath(getPath(pathRecord));
+            paths.add(curatedPath);
         }
         return entitySetVsCuratedPath;
     }
+//    private Map<String, Set<ICuratedPath>> cacheCuratedPaths(Connection con) {
+//        Map<String, Set<ICuratedPath>> entitySetVsCuratedPath = new HashMap<String, Set<ICuratedPath>>();
+//        HashMap<Long, CuratedPath> idVsCuratedPath = new HashMap<Long, CuratedPath>();
+//        String sql = "SELECT CURATED_PATH.curated_path_Id,entity_ids,selected,path_id from CURATED_PATH JOIN CURATED_PATH_TO_PATH ON CURATED_PATH.curated_path_Id = CURATED_PATH_TO_PATH.curated_path_Id";
+//        String[][] resultSet = executeQuery(sql, con);
+//        for (String[] oneRecord : resultSet) {
+//            Long curatedPathId = Long.parseLong(oneRecord[0]);
+//            CuratedPath curatedPath = null;
+//            if (idVsCuratedPath.containsKey(curatedPathId)) {
+//                curatedPath = idVsCuratedPath.get(curatedPathId);
+//            } else {
+//                String entitySetString = oneRecord[1];
+//                Set<EntityInterface> entitySet = getEntitySet(entitySetString);
+//                Boolean isSelected = Boolean.parseBoolean(oneRecord[2]);
+//                curatedPath = new CuratedPath();//curatedPathId, entitySet, isSelected
+//                curatedPath.setCuratedPathId(curatedPathId);
+//                curatedPath.setEntitySet(entitySet);
+//                curatedPath.setSelected(isSelected);
+//                idVsCuratedPath.put(curatedPathId, curatedPath);
+//                Set<ICuratedPath> paths = entitySetVsCuratedPath.get(entitySetString);
+//                if (paths == null) {
+//                    paths = new HashSet<ICuratedPath>();
+//                    entitySetVsCuratedPath.put(entitySetString, paths);
+//                }
+//                paths.add(curatedPath);
+//            }
+//            Long pathId = Long.parseLong(oneRecord[3]);
+//            PathRecord pathRecord = idVsPathRecord.get(pathId);
+//            curatedPath.addPath(getPath(pathRecord));
+//        }
+//        return entitySetVsCuratedPath;
+//    }
 
     /**
      * @param con Database connection to be used
@@ -607,15 +599,6 @@ public class PathFinder {
         return EntityCache.getInstance();
     }
 
-    //---------------------------------
-    //these methods are package scoped for testing purpose
-    PathFinder() {
-    }
-
-    void setInstance(PathFinder pathFinder) {
-        PathFinder.pathFinder = pathFinder;
-    }
-
     public IPath getPathForAssociations(List<IIntraModelAssociation> associations) {
         StringBuffer buff = new StringBuffer();
         if (associations.size() < 1) {
@@ -666,7 +649,7 @@ public class PathFinder {
      */
     public boolean addCuratedPath(CuratedPath curatedPath) {
         boolean added = false;
-        String entitySetString = curatedPath.getEntityIds();
+        String entitySetString = CuratedPath.getStringRepresentation(curatedPath.getEntitySet());
         if (entitySetString != null && !"".equals(entitySetString)) {
             Set<ICuratedPath> paths = entitySetVsCuratedPath.get(entitySetString);
             if (paths == null) {
@@ -679,6 +662,23 @@ public class PathFinder {
         }
         return added;
     }
+        /**
+         * This method process the given curated path object before saving it.
+         * @param curatedPath
+         */
+        private void postProcessCuratedPath(ICuratedPath cPath) {
+            CuratedPath curatedPath = (CuratedPath) cPath; 
+            //TODO this casting will be removed once we have hibernate layer for path
+            Set<IPath> paths = new HashSet<IPath>();
+            //TODO need to take care of this similar to Curated path, Path should also be populated
+            for (IPath path : curatedPath.getPaths()) {
+                Path p = (Path) path; 
+                //TODO this casting will be removed once we have hibernate layer for path
+                PathRecord pathRec = new PathRecord(p.getPathId(),p.getSourceEntityId(),p.getIntermediatePaths(),p.getTargetEntityId());
+                paths.add(getPath(pathRec));
+            }
+            curatedPath.setPaths(paths);
+        }
     //    public IPath getPathForAssociations(Long[] associations) {
     //        StringBuffer buff = new StringBuffer();
     //        //IntraModelAssociation association = (IntraModelAssociation) associations.get(0);
@@ -696,4 +696,15 @@ public class PathFinder {
     //        }
     //        return getPath(pathRecord);
     //    }
+    //---------------------------------
+    //these methods are package scoped for testing purpose
+    PathFinder() {
+    }
+
+    void setInstance(PathFinder pathFinder) {
+        PathFinder.pathFinder = pathFinder;
+    }
+    void setEntitySetVsCuratedPath(Map<String, Set<ICuratedPath>> entitySetVsCuratedPath) {
+        this.entitySetVsCuratedPath = entitySetVsCuratedPath; 
+    }
 }
