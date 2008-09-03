@@ -12,23 +12,24 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
+import java.util.Collection;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.StackedBox;
-import edu.wustl.cab2b.client.ui.experiment.ExperimentOpenPanel;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllCategoryPanel;
 import edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-import edu.wustl.cab2b.common.domain.Experiment;
-import edu.wustl.common.querysuite.metadata.category.Category;
+import edu.wustl.cab2b.common.category.CategoryPopularity;
+import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
@@ -78,7 +79,8 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
         final String titleQuery = ApplicationProperties.getValue(QUERY_BOX_TEXT);
         stackedBox.addBox(titleQuery, mySearchQueriesPanel, MY_SEARCH_QUERIES_IMAGE, false);
 
-        popularSearchCategoryPanel = getPopularSearchCategoriesPanel(CommonUtils.getPopularSearchCategories(),
+        popularSearchCategoryPanel = getPopularSearchCategoriesPanel(
+                                                                     CommonUtils.getPopularSearchCategoriesForMainFrame(),
                                                                      new CategoryHyperlinkActionListener());
         final String titlePopularcategories = ApplicationProperties.getValue(POPULAR_CATEGORY_BOX_TEXT);
         stackedBox.addBox(titlePopularcategories, popularSearchCategoryPanel, POPULAR_CATEGORIES_IMAGE, false);
@@ -98,14 +100,17 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
      * TODO: Currently getting all categories from database
      * @param data
      */
-    public Cab2bPanel getPopularSearchCategoriesPanel(Vector<Category> data, ActionListener actionClass) {
+    public Cab2bPanel getPopularSearchCategoriesPanel(Collection<CategoryPopularity> data,
+                                                      ActionListener actionClass) {
         Cab2bPanel panel = new Cab2bPanel();
         panel.setLayout(new RiverLayout(10, 5));
         panel.add(new Cab2bLabel());
-        for (Category category : data) {
+        for (CategoryPopularity category : data) {
             Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
-            CommonUtils.setHyperlinkProperties(hyperlink, category, category.getCategoryEntity().getName(),
-                                               category.getCategoryEntity().getDescription(), actionClass);
+            EntityInterface entityInterface = EntityCache.getCache().getEntityById(category.getEntityId());
+            CommonUtils.setHyperlinkProperties(hyperlink, entityInterface,
+                                               Utility.getDisplayName(entityInterface),
+                                               entityInterface.getDescription(), actionClass);
             panel.add("br", hyperlink);
         }
 
@@ -115,7 +120,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
                                                                                                     getAllCategoryPanel());
             }
         };
-        addShowAllLink(panel, showAllExpAction);
+        addShowAllLink(panel, showAllExpAction, data.size() > 0);
         return panel;
     }
 
@@ -124,16 +129,17 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
      * @return
      */
     private ShowAllPanel getAllCategoryPanel() {
-        Vector<Category> allPopularCategories = CommonUtils.getPopularSearchCategories();
+        Collection<CategoryPopularity> allPopularCategories = CommonUtils.getPopularCategoriesForShowAll();
         final Object objData[][] = new Object[allPopularCategories.size()][6];
-        final String headers[] = { ShowAllCategoryPanel.CATEGORY_NAME_TITLE, ShowAllCategoryPanel.CATEGORY_DESCRIPTION_TITLE, ShowAllCategoryPanel.CATEGORY_POPULARITY_TITLE, ShowAllCategoryPanel.CATEGORY_DATE_TITLE, " Category ID-Hidden" };
+        final String headers[] = { ShowAllCategoryPanel.CATEGORY_NAME_TITLE, ShowAllCategoryPanel.CATEGORY_POPULARITY_TITLE, ShowAllCategoryPanel.CATEGORY_DESCRIPTION_TITLE, ShowAllCategoryPanel.CATEGORY_DATE_TITLE, " Category ID-Hidden" };
         int i = 0;
-        for (Category category : allPopularCategories) {
-            objData[i][0] = category.getCategoryEntity().getName();
-            objData[i][1] = category.getCategoryEntity().getDescription();
-            objData[i][2] = 0;
-            objData[i][3] = category.getCategoryEntity().getLastUpdated();
-            objData[i][4] = category;
+        for (CategoryPopularity category : allPopularCategories) {
+            EntityInterface entityInterface = EntityCache.getCache().getEntityById(category.getEntityId());
+            objData[i][0] = Utility.getDisplayName(entityInterface);
+            objData[i][1] = Long.toString(category.getPopularity());
+            objData[i][2] = entityInterface.getDescription();
+            objData[i][3] = entityInterface.getLastUpdated();
+            objData[i][4] = entityInterface;
             i++;
         }
         return new ShowAllCategoryPanel(headers, objData);
@@ -144,11 +150,13 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
      * @param panel
      * @param actionClass
      */
-    private void addShowAllLink(Cab2bPanel panel, ActionListener actionClass) {
+    private void addShowAllLink(Cab2bPanel panel, ActionListener actionClass, boolean enableLink) {
         Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
+        hyperlink.setEnabled(enableLink);
         CommonUtils.setHyperlinkProperties(hyperlink, null, SHOW_ALL_LINK, "", actionClass);
         panel.add("br right", hyperlink);
     }
+
 
     /**
      * Homepage Category Link action listener class
@@ -158,7 +166,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
      */
     class CategoryHyperlinkActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            ShowAllCategoryPanel.categoryLinkAction((Category) ((Cab2bHyperlink) e.getSource()).getUserObject());
+            ShowAllCategoryPanel.categoryLinkAction((EntityInterface) ((Cab2bHyperlink) e.getSource()).getUserObject());
         }
     }
 }

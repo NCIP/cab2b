@@ -1,12 +1,14 @@
 package edu.wustl.cab2b.common.ejb.category;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.BusinessInterface;
+import edu.wustl.cab2b.common.category.CategoryPopularity;
 import edu.wustl.common.querysuite.metadata.category.Category;
 
 /**
@@ -42,14 +44,14 @@ public interface CategoryBusinessInterface extends BusinessInterface {
      * @throws RemoteException EBJ specific Exception
      */
     Set<EntityInterface> getAllSourceClasses(Category category) throws RemoteException;
-    
+
     /**   
      * Returns all the categories which don't have any super category.
      * @return List of root categories.
      * @throws RemoteException EBJ specific Exception
      */
     List<EntityInterface> getAllRootCategories() throws RemoteException;
-    
+
     /**   
      * Returns all the categories present in system.
      * @return List of categories.
@@ -57,5 +59,18 @@ public interface CategoryBusinessInterface extends BusinessInterface {
      */
     List<Category> getAllCategories() throws RemoteException;
 
+    /**
+     * Returns all the attributes present in category.
+     * @param category
+     * @return set of attributes
+     * @throws RemoteException
+     */
     Set<AttributeInterface> getAllSourceAttributes(Category category) throws RemoteException;
+
+    /**
+     * Returns all the categories with their popularity count
+     * @return collection of CategoryPopularity objects
+     * @throws RemoteException
+     */
+    Collection<CategoryPopularity> getPopularCategories() throws RemoteException;
 }

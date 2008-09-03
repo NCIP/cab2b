@@ -5,13 +5,13 @@ package edu.wustl.cab2b.client.ui.mainframe.showall;
 
 import javax.swing.table.TableColumnModel;
 
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.mainframe.GlobalNavigationPanel;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.addLimit.AddLimitPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-import edu.wustl.common.querysuite.metadata.category.Category;
 
 /**
  * Panel Class for Showing all categories from database  
@@ -52,8 +52,9 @@ public class ShowAllCategoryPanel extends ShowAllPanel {
 
         // Getting object associated with hyperlink 
         // column Number will be always last column
-        Category category = (Category) table.getModel().getValueAt(selectionIndex,
-                                                                   table.getModel().getColumnCount() - 1);
+        EntityInterface category = (EntityInterface) table.getModel().getValueAt(
+                                                                                 selectionIndex,
+                                                                                 table.getModel().getColumnCount() - 1);
         categoryLinkAction(category);
         updateUI();
     }
@@ -62,7 +63,7 @@ public class ShowAllCategoryPanel extends ShowAllPanel {
      * Action method for category link  
      * @param hyperLink
      */
-    public static final void categoryLinkAction(Category category) {
+    public static final void categoryLinkAction(EntityInterface category) {
         MainSearchPanel mainSearchPanel = null;
         try {
             if (GlobalNavigationPanel.getMainSearchPanel() == null)
@@ -70,7 +71,7 @@ public class ShowAllCategoryPanel extends ShowAllPanel {
             GlobalNavigationPanel.setMainSearchPanel(mainSearchPanel);
             mainSearchPanel.getSearchNavigationPanel().setAddLimitPanelInWizard();
             AddLimitPanel addLimitPanel = mainSearchPanel.getCenterPanel().getAddLimitPanel();
-            addLimitPanel.getSearchResultPanel().updateAddLimitPage(addLimitPanel, category.getCategoryEntity());
+            addLimitPanel.getSearchResultPanel().updateAddLimitPage(addLimitPanel, category);
             CommonUtils.launchSearchDataWizard();
         } catch (Exception exception) {
             CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);

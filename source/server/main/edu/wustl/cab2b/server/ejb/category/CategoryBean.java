@@ -2,14 +2,17 @@ package edu.wustl.cab2b.server.ejb.category;
 
 import java.rmi.RemoteException;
 import java.sql.Connection;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.common.category.CategoryPopularity;
 import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
 import edu.wustl.cab2b.server.category.CategoryCache;
 import edu.wustl.cab2b.server.category.CategoryOperations;
+import edu.wustl.cab2b.server.category.PopularCategoryOperations;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.common.querysuite.metadata.category.Category;
@@ -79,6 +82,12 @@ public class CategoryBean extends AbstractStatelessSessionBean implements Catego
         return new CategoryOperations().getAllRootCategories();
     }
 
+    /**
+     * Returns all the categories
+     * 
+     * @return List of categories.
+     * @throws RemoteException EBJ specific Exception
+     */
     public List<Category> getAllCategories() throws RemoteException {
         Connection con = ConnectionUtil.getConnection();
         try {
@@ -88,6 +97,12 @@ public class CategoryBean extends AbstractStatelessSessionBean implements Catego
         }
     }
 
+    /**
+     * Returns all the source attribues
+     * 
+     * @return Set of source attributes
+     * @throws RemoteException EBJ specific Exception
+     */
     public Set<AttributeInterface> getAllSourceAttributes(Category category) throws RemoteException {
         Connection con = ConnectionUtil.getConnection();
         try {
@@ -95,6 +110,16 @@ public class CategoryBean extends AbstractStatelessSessionBean implements Catego
         } finally {
             ConnectionUtil.close(con);
         }
-        
+
+    }
+
+    /**
+     * Returns all PopularCategory objects.
+     * 
+     * @return Collection of root PopularCategory.
+     * @throws RemoteException EBJ specific Exception
+     */
+    public Collection<CategoryPopularity> getPopularCategories() throws RemoteException {
+        return new PopularCategoryOperations().getPopularityForAllCategories();
     }
 }

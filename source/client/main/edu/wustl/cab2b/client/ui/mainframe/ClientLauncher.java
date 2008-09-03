@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
 import edu.wustl.cab2b.client.cache.ClientSideCache;
+import edu.wustl.cab2b.client.cache.PopularCategoryCache;
 import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.searchDataWizard.dag.ClassNodeRenderer;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
@@ -125,6 +126,7 @@ public class ClientLauncher {
         Toolkit.getDefaultToolkit().setDynamicLayout(true);
 
         loadCache(userName); /* initializing the cache at startup */
+        PopularCategoryCache.getInstance();
 
         showProgress(" Initializing graphical user interface....", 94);
         // To speed-up the first add limit.

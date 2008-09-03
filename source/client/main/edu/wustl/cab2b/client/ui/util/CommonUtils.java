@@ -22,6 +22,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +42,7 @@ import org.openide.util.Utilities;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.cab2b.client.cache.ClientSideCache;
+import edu.wustl.cab2b.client.cache.PopularCategoryCache;
 import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -53,6 +54,7 @@ import edu.wustl.cab2b.client.ui.mainframe.stackbox.MainFrameStackedBoxPanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.SaveDatalistPanel;
 import edu.wustl.cab2b.common.BusinessInterface;
+import edu.wustl.cab2b.common.category.CategoryPopularity;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
@@ -70,6 +72,7 @@ import edu.wustl.cab2b.common.locator.Locator;
 import edu.wustl.cab2b.common.locator.LocatorException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
+import edu.wustl.cab2b.common.util.CategoryPopularityComparator;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
@@ -525,22 +528,34 @@ public class CommonUtils {
     }
 
     /**
-     * @return Popular categories at this point
+     * Top four popular categories are returned by this method to display on main page
+     * 
+     * @return Top four popular categories.
      */
-    public static Vector<Category> getPopularSearchCategories() {
-        Vector<Category> userSearchCategories = new Vector<Category>();
-
-        // TO-Do Change it for Popular categories
-        List<Category> categoryList = ClientSideCache.getInstance().getAllCategories();
-        int counter = 0;
-        for (Category category : categoryList) {
-            userSearchCategories.add(category);
-            counter++;
-            if (counter > 4)
-                break;
+    public static Collection<CategoryPopularity> getPopularSearchCategoriesForMainFrame() {
+        List<CategoryPopularity> attributeList = (List<CategoryPopularity>) getPopularCategoriesForShowAll();
+       
+        Collection<CategoryPopularity> popularCategories = new ArrayList<CategoryPopularity>();
+        if (attributeList.size() >= 4) {
+            for (int i = 0; i < 4; i++) {
+                popularCategories.add(attributeList.get(i));
+            }
+            return popularCategories;
+        } else {
+            return attributeList;
         }
-        return userSearchCategories;
+    }
 
+    /**
+     * All popular categories are returned by this method to display on the click of show all link.
+     * 
+     * @return All popular categories.
+     */
+    public static Collection<CategoryPopularity> getPopularCategoriesForShowAll() {
+        Collection<CategoryPopularity> categoryList=PopularCategoryCache.getInstance().getPopularCategoriesCollection();
+        List<CategoryPopularity> attributeList = new ArrayList<CategoryPopularity>(categoryList);
+        Collections.sort(attributeList, new CategoryPopularityComparator());
+        return attributeList;
     }
 
     /**
@@ -606,8 +621,8 @@ public class CommonUtils {
     /**
      * @return Popular categories at this point
      */
-    public static Vector getUserSearchCategories() {
-        return getPopularSearchCategories();
+    public static Collection<CategoryPopularity> getUserSearchCategories() {
+        return getPopularCategoriesForShowAll();
     }
 
     public static String escapeString(String input) {

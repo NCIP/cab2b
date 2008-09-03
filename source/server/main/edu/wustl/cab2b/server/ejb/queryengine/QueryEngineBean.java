@@ -11,6 +11,7 @@ import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.server.category.PopularCategoryOperations;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.queryengine.QueryExecutor;
 import edu.wustl.common.hibernate.HibernateCleanser;
@@ -35,6 +36,7 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements
 	 */
 	public IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query,
 			GlobusCredential cred) {
+        new PopularCategoryOperations().setPopularity(query);
 		return new QueryExecutor(query, cred).executeQuery();
 	}
 
