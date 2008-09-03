@@ -99,5 +99,17 @@ public class TestUtil {
         a.setName(name);
         return a;
     }
-
+    public static EntityInterface getEntityWithGrp(String groupName, String entityName, String attrName) {
+        AttributeInterface a = getAttribute(attrName);
+        EntityInterface e1 = getEntity(entityName);
+        e1.addAttribute(a);
+        a.setEntity(e1);
+        
+        EntityGroupInterface eg = DomainObjectFactory.getInstance().createEntityGroup();
+        eg.setName(groupName);
+        eg.addEntity(e1);
+        
+        e1.addEntityGroupInterface(eg);
+        return e1;
+    }
 }
