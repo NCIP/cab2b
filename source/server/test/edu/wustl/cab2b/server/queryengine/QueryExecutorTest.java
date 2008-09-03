@@ -44,7 +44,7 @@ public class QueryExecutorTest extends TestCase {
         values.add("3");
         ICondition condition = QueryObjectFactory.createCondition(id, RelationalOperator.LessThan, values);
 
-        IRule rule = QueryObjectFactory.createRule(null);
+        IRule rule = QueryObjectFactory.createRule();
         rule.addCondition(condition);
 
         IQueryEntity queryEntity = QueryObjectFactory.createQueryEntity(gene);
@@ -64,6 +64,7 @@ public class QueryExecutorTest extends TestCase {
         QueryExecutor executor = new QueryExecutor(query, null);
         IQueryResult<? extends IRecord> res = executor.executeQuery();
         Map<String, ?> urlVsRecords = res.getRecords();
+        assertEquals(1, urlVsRecords.size());
         assertTrue(urlVsRecords.containsKey(urls.get(0)));
         List<IRecord> records = (List<IRecord>) urlVsRecords.get(urls.get(0));
         Set<String> set = new HashSet<String>();
@@ -71,8 +72,7 @@ public class QueryExecutorTest extends TestCase {
         set.add("alpha-1-B glycoprotein");
         for (IRecord record : records) {
             String str = (String) record.getValueForAttribute(name);
-            assertTrue(set.contains(str));
-            set.remove(str);
+            assertTrue(set.remove(str));
         }
         assertEquals(0, set.size());
     }
