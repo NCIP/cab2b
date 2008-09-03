@@ -1,9 +1,10 @@
 package edu.wustl.cab2b.server.util;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
+
+import org.apache.log4j.Logger;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
@@ -14,9 +15,14 @@ import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.logger.Logger;
 
+/**
+ * Operations class for utility bean
+ * @author chandrakant_talele
+ */
 public class UtilityOperations extends DefaultBizLogic {
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(UtilityOperations.class);
+
     /**
      * Hibernate DAO Type to use.
      */
@@ -28,7 +34,7 @@ public class UtilityOperations extends DefaultBizLogic {
     public void insert(Object cab2bObject) {
         try {
             insert(cab2bObject, daoType);
-            Logger.out.debug(cab2bObject.getClass().getName() + " inserted Successfully ");
+            logger.debug(cab2bObject.getClass().getName() + " inserted Successfully ");
         } catch (BizLogicException e) {
             throw (new RuntimeException(e.getMessage(), e));
         } catch (UserNotAuthorizedException e) {
@@ -42,12 +48,12 @@ public class UtilityOperations extends DefaultBizLogic {
     public void update(Object cab2bObject) {
         try {
             update(cab2bObject, daoType);
-            Logger.out.debug(cab2bObject.getClass().getName() + " inserted Successfully ");
+            logger.debug(cab2bObject.getClass().getName() + " inserted Successfully ");
         } catch (BizLogicException e) {
-            Logger.out.debug(Utility.getStackTrace(e));
+            logger.debug(Utility.getStackTrace(e));
             throw (new RuntimeException(e.getMessage(), e));
         } catch (UserNotAuthorizedException e) {
-            Logger.out.debug(Utility.getStackTrace(e));
+            logger.debug(Utility.getStackTrace(e));
             throw (new RuntimeException(e.getMessage(), e));
         }
     }
@@ -55,36 +61,38 @@ public class UtilityOperations extends DefaultBizLogic {
     /**
      * This method returns the list of tree set containing the unique record values for a given entity identifier.
      * Tree set stores the values in sorted order. 
-     * @param entityId
-     * @return
-     * @throws RemoteException
+     * @param entityId entityId
+     * @return List of TreeSet
      */
-    public List<TreeSet<Comparable<?>>> getUniqueRecordValues(Long entityId) throws RemoteException {
+    public List<TreeSet<Comparable<?>>> getUniqueRecordValues(Long entityId) {
         //getting record list
         List<IRecord> entityRecordList = new DataListOperationsController().getEntityRecords(entityId);
         if (entityRecordList == null || entityRecordList.size() == 0) {
             return null;
         }
 
-        //initilising column value set
+        //initializing column value set
         ArrayList<TreeSet<Comparable<?>>> entityRecordValues = new ArrayList<TreeSet<Comparable<?>>>();
         for (int i = 0; i < entityRecordList.get(0).getAttributes().size(); i++) {
             entityRecordValues.add(i, new TreeSet<Comparable<?>>());
         }
-
-        int index = 0;
+        
         for (IRecord entityRecord : entityRecordList) {
-            List<AttributeInterface> attributeList = Utility.getAttributeList(entityRecord.getAttributes());
-            for (AttributeInterface attribute : attributeList) {
-                TreeSet<Comparable<?>> columnValues = entityRecordValues.get(index);
-                Comparable<?> attributeValue = (Comparable<?>) entityRecord.getValueForAttribute(attribute);
-                if (attributeValue != null) {
-                    columnValues.add(attributeValue);
-                }
-                index++;
-            }
-            index = 0;
+            process(entityRecord, entityRecordValues);
         }
         return entityRecordValues;
+    }
+
+    private void process(IRecord record, List<TreeSet<Comparable<?>>> entityRecordValues) {
+        int index = 0;
+        List<AttributeInterface> attributeList = Utility.getAttributeList(record.getAttributes());
+        for (AttributeInterface attribute : attributeList) {
+            TreeSet<Comparable<?>> columnValues = entityRecordValues.get(index);
+            Comparable<?> attributeValue = (Comparable<?>) record.getValueForAttribute(attribute);
+            if (attributeValue != null) {
+                columnValues.add(attributeValue);
+            }
+            index++;
+        }
     }
 }
