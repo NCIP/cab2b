@@ -10,7 +10,6 @@ import java.sql.Connection;
 
 import junit.framework.TestCase;
 import edu.wustl.cab2b.server.path.PathConstants;
-import edu.wustl.common.util.logger.Logger;
 
 public class MySqlLoaderTest extends TestCase {
     private static Connection con = TestConnectionUtil.getConnection();
@@ -19,7 +18,6 @@ public class MySqlLoaderTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        Logger.configure();
         String createTableSQL = "create table TEST_TABLE1 (ID BIGINT(38) NOT NULL, NAME VARCHAR(10) NULL,PRIMARY KEY (ID))";
         SQLQueryUtil.executeUpdate(createTableSQL, con);
     }

@@ -5,16 +5,11 @@ import edu.wustl.cab2b.client.cache.ClientSideCache;
 import edu.wustl.cab2b.common.beans.MatchedClass;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.util.Constants;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author Chandrakant Talele
  */
 public class MetadataSearchTest extends TestCase {
-    static {
-        Logger.configure();
-    }
-
     static MatchedClass resultMatchedClass = new MatchedClass();
 
     static ClientSideCache entityCache = null;//ClientSideCache.getInstance();

@@ -7,7 +7,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author chandrakant_talele
@@ -17,23 +16,21 @@ public class TestConnectionUtil {
 
     private static Properties serverProperties;
     static {
-        Logger.configure();
         String propertyfile = "server.properties";
         InputStream is = TestUtil.class.getClassLoader().getResourceAsStream(propertyfile);
         if (is == null) {
-            Logger.out.error("Unable fo find property file : " + propertyfile
+            System.out.println("Unable fo find property file : " + propertyfile
                     + "\n please put this file in classpath");
         }
         serverProperties = new Properties();
         try {
             serverProperties.load(is);
         } catch (IOException e) {
-            Logger.out.error("Unable to load properties from : " + propertyfile);
+            System.out.println("Unable to load properties from : " + propertyfile);
             e.printStackTrace();
         }
     }
 
-    
     public static Connection getConnection() {
         String ip = serverProperties.getProperty("database.server.ip");
         String port = serverProperties.getProperty("database.server.port");
@@ -47,11 +44,10 @@ public class TestConnectionUtil {
             Class.forName(driver).newInstance();
             con = DriverManager.getConnection(url, userName, password);
         } catch (Exception e) {
-            Logger.out.error("Exception in getting connection");
             e.printStackTrace();
         }
         if (con == null)
-            Logger.out.error("Got null connection");
+            System.out.println("Got null connection");
         return con;
     }
 
@@ -65,8 +61,7 @@ public class TestConnectionUtil {
             try {
                 connection.close();
             } catch (SQLException e) {
-                //DO NOTHING
-                Logger.out.debug(e.toString());
+                e.printStackTrace();
             }
         }
     }

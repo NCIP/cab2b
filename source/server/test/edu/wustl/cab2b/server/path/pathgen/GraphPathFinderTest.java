@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import junit.framework.TestCase;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author Chandrakant Talele
@@ -25,7 +24,6 @@ public class GraphPathFinderTest extends TestCase {
      * @see junit.framework.TestCase#setUp()
      */
     protected void setUp() throws Exception {
-        Logger.configure();
         boolean[][] matrix = getMatrix();
         allPaths = getAllPaths(matrix);
         assertEquals(expectedPaths(size), allPaths.size());

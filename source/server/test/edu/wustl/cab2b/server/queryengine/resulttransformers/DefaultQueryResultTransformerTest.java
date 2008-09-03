@@ -13,7 +13,6 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.server.util.TestUtil;
-import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.cagrid.cqlquery.Attribute;
 import gov.nih.nci.cagrid.cqlquery.Predicate;
 import gov.nih.nci.cagrid.dcql.DCQLQuery;
@@ -24,8 +23,6 @@ import gov.nih.nci.cagrid.dcql.Object;
  */
 public class DefaultQueryResultTransformerTest extends TestCase {
     public void testGetResults() {
-        Logger.configure();
-
         String name = "edu.wustl.fe.Gene";
         String aName = "id";
         String url = "http://128.252.227.94:9094/wsrf/services/cagrid/CaFE";

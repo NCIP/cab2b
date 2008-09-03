@@ -5,14 +5,8 @@ import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.common.util.logger.Logger;
 
 public class InheritanceUtilTest extends TestCase {
-    @Override
-    protected void setUp() throws Exception {
-        Logger.configure();
-    }
-
     public void testGetActualAttributeForInheritance() {
         EntityInterface e1 = TestUtil.getEntity("GenomicIdentifier", "id", null);
         EntityInterface e2 = TestUtil.getEntity("mRNA", "id", e1);
