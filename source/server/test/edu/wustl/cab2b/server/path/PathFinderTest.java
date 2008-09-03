@@ -1,16 +1,14 @@
 package edu.wustl.cab2b.server.path;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import junit.framework.TestCase;
-import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.server.util.TestUtil;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.impl.InterModelAssociation;
+import edu.wustl.common.querysuite.metadata.path.CuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.metadata.path.Path;
 
@@ -20,6 +18,11 @@ import edu.wustl.common.querysuite.metadata.path.Path;
 public class PathFinderTest extends TestCase {
     private static long counter = 0;
 
+    public void testAddCuratedPathFalse() {
+        CuratedPath path = new CuratedPath();
+        PathFinder p = new PathFinder();
+        assertFalse(p.addCuratedPath(path));
+    }
     public void testGetPathRecord() {
         Long[] ids = { 11L, 22L, 33L };
         long pathId = 11L;
@@ -40,54 +43,6 @@ public class PathFinderTest extends TestCase {
         for (int i = 0; i < ids.length; i++) {
             assertEquals(ids[i], seq[i]);
         }
-    }
-
-    public void testGetStringRepresentationEmptySet() {
-        Set<EntityInterface> set = new HashSet<EntityInterface>();
-        String str = new PathFinder().getStringRepresentation(set);
-        assertEquals("", str);
-    }
-
-    public void testGetStringRepresentation() {
-        Set<EntityInterface> set = new HashSet<EntityInterface>();
-        DomainObjectFactory fact = DomainObjectFactory.getInstance();
-        for (long i = 0; i < 3; i++) {
-            EntityInterface e1 = fact.createEntity();
-            e1.setId(i);
-            set.add(e1);
-        }
-        StringBuilder strBuilder = new StringBuilder();
-        strBuilder.append(0);
-        strBuilder.append(PathConstants.ID_CONNECTOR);
-        strBuilder.append(1);
-        strBuilder.append(PathConstants.ID_CONNECTOR);
-        strBuilder.append(2);
-        String str = new PathFinder().getStringRepresentation(set);
-        assertEquals(strBuilder.toString(), str);
-    }
-
-    public void testGetStringRepresentationUnsorted() {
-        Set<EntityInterface> set = new HashSet<EntityInterface>();
-        DomainObjectFactory fact = DomainObjectFactory.getInstance();
-
-        EntityInterface e0 = fact.createEntity();
-        e0.setId(0L);
-        set.add(e0);
-        EntityInterface e2 = fact.createEntity();
-        e2.setId(2L);
-        set.add(e2);
-        EntityInterface e1 = fact.createEntity();
-        e1.setId(1L);
-        set.add(e1);
-
-        StringBuilder strBuilder = new StringBuilder();
-        strBuilder.append(0);
-        strBuilder.append(PathConstants.ID_CONNECTOR);
-        strBuilder.append(1);
-        strBuilder.append(PathConstants.ID_CONNECTOR);
-        strBuilder.append(2);
-        String str = new PathFinder().getStringRepresentation(set);
-        assertEquals(strBuilder.toString(), str);
     }
 
     public void testConnectPathsEmptyPreAndPostPaths() {
@@ -197,19 +152,9 @@ public class PathFinderTest extends TestCase {
         return new Path(association.getSourceEntity(), association.getTargetEntity(), allAssociation);
     }
 
-    private InterModelAssociation getAssociation() {
-        DomainObjectFactory fact = DomainObjectFactory.getInstance();
-        EntityInterface srcEn = fact.createEntity();
-        srcEn.setId(counter++);
-        EntityInterface tgtEn = fact.createEntity();
-        tgtEn.setId(counter++);
-        AttributeInterface srcAttr = fact.createStringAttribute();
-        srcAttr.setEntity(srcEn);
-        srcAttr.setId(counter++);
-        AttributeInterface tgtAttr = fact.createStringAttribute();
-        tgtAttr.setEntity(tgtEn);
-        tgtAttr.setId(counter++);
-
+    private synchronized InterModelAssociation getAssociation() {
+        AttributeInterface srcAttr = TestUtil.getAttribute("",counter++,"",counter++);
+        AttributeInterface tgtAttr = TestUtil.getAttribute("",counter++,"",counter++);
         return new InterModelAssociation(srcAttr, tgtAttr);
     }
 
