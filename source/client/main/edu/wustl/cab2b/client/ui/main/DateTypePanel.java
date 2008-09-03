@@ -9,18 +9,18 @@ import java.util.Date;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import org.apache.log4j.Logger;
+
 import edu.wustl.cab2b.client.ui.controls.Cab2bDatePicker;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
-import edu.wustl.common.util.logger.Logger;
-
 /**
  * 
  * @author chetan_bh
  */
 public class DateTypePanel extends AbstractTypePanel {
     private static final long serialVersionUID = 1L;
-
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(DateTypePanel.class);
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
     public DateTypePanel(ArrayList<String> conditionList, Dimension maxLabelDimension) {
@@ -66,7 +66,7 @@ public class DateTypePanel extends AbstractTypePanel {
             try {
                 date = simpleDateFormat.parse(values.get(0));
             } catch (java.text.ParseException e) {
-                Logger.out.warn("Problem while setting date : " + e.getMessage());
+                logger.warn("Problem while setting date : " + e.getMessage());
             }
             ((DatePanel) firstComponent).getDatePicker().setDate(date);
         } else if (values.size() == 2) {
@@ -75,14 +75,14 @@ public class DateTypePanel extends AbstractTypePanel {
             try {
                 date = simpleDateFormat.parse(values.get(0));
             } catch (java.text.ParseException e) {
-                Logger.out.warn("Problem while setting date : " + e.getMessage());
+                logger.warn("Problem while setting date : " + e.getMessage());
             }
             ((DatePanel) firstComponent).getDatePicker().setDate(date);
 
             try {
                 date = simpleDateFormat.parse(values.get(1));
             } catch (java.text.ParseException e) {
-                Logger.out.warn("Problem while setting date : " + e.getMessage());
+                logger.warn("Problem while setting date : " + e.getMessage());
             }
             ((DatePanel) secondComponent).getDatePicker().setDate(date);
         } else {

@@ -62,7 +62,6 @@ public class FilterPathsPanel extends Cab2bPanel {
         addToFilterPathButton = new Cab2bButton("Add To Filter Path");
         addToFilterPathButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                Logger.out.debug("add to filter path");
             }
         });
         filterPathsTaskPane.add(addToFilterPathButton);
@@ -72,7 +71,6 @@ public class FilterPathsPanel extends Cab2bPanel {
         clearButton = new Cab2bButton("Clear");
         clearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Logger.out.debug("clear button action listener");
             }
         });
         filterPathsTaskPane.add("tab", clearButton);

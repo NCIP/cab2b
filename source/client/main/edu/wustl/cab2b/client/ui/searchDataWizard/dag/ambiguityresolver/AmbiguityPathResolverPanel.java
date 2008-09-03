@@ -5,9 +5,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXPanel;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -23,7 +23,6 @@ import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.util.Utility;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * A searchPanel which displays list of available paths for the current source, target entity, 
@@ -33,7 +32,7 @@ import edu.wustl.common.util.logger.Logger;
  * @author chetan_bh
  */
 public class AmbiguityPathResolverPanel extends Cab2bPanel {
-
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(AmbiguityPathResolverPanel.class);
     private static final long serialVersionUID = 1L;
 
     /**
@@ -116,7 +115,7 @@ public class AmbiguityPathResolverPanel extends Cab2bPanel {
     }
 
     public static Vector<EntityInterface> getEntityInterfaceFor(String[] searchTerms) {
-        Logger.out.debug("searchTerms " + searchTerms);
+        logger.debug("searchTerms " + searchTerms);
 
         Vector<EntityInterface> returner = new Vector<EntityInterface>();
         int[] searchTarget = new int[1];
@@ -125,7 +124,7 @@ public class AmbiguityPathResolverPanel extends Cab2bPanel {
         for (int i = 0; i < searchTerms.length; i++) {
             String[] searchString = new String[1];
             searchString[0] = searchTerms[i];
-            Logger.out.debug("searchTerms ==>> " + searchTerms[i]);
+            logger.debug("searchTerms ==>> " + searchTerms[i]);
             MatchedClass matchedClass = null;
             try {
                 IEntityCache cache = ClientSideCache.getInstance();
@@ -135,50 +134,18 @@ public class AmbiguityPathResolverPanel extends Cab2bPanel {
                 re.printStackTrace();
             }
 
-            Logger.out.debug("matched Class entity collection size =>> "
+            logger.debug("matched Class entity collection size =>> "
                     + matchedClass.getEntityCollection().size());
 
             Set entityCollection = matchedClass.getEntityCollection();
             EntityInterface entityInter;
             if (entityCollection.size() > 0) {
                 entityInter = (EntityInterface) entityCollection.iterator().next();
-                Logger.out.debug(entityInter.getName() + ", " + entityInter.getDescription() + ", "
+                logger.debug(entityInter.getName() + ", " + entityInter.getDescription() + ", "
                         + entityInter.getClass());
                 returner.add(entityInter);
             }
         }
         return returner;
     }
-
-    public Map getUserSelectedpaths() {
-        //return availablePathsPanel.getUserSelectedpaths();
-        return null;
-    }
-
-    public static void main(String[] args) {
-        Logger.configure("log4j.properties");
-
-        String[] searchTerms = { "ProbeSet", "MicroArray", "OMIM", "Gene" };
-        Vector<EntityInterface> entIntVector = getEntityInterfaceFor(searchTerms);
-
-        Vector<Vector<EntityInterface>> srcTsrColl = new Vector<Vector<EntityInterface>>();
-
-        Vector<EntityInterface> srcTar1 = new Vector<EntityInterface>();
-        srcTar1.add(entIntVector.get(0));
-        srcTar1.add(entIntVector.get(2));
-
-        Vector<EntityInterface> srcTar2 = new Vector<EntityInterface>();
-        srcTar2.add(entIntVector.get(1));
-        srcTar2.add(entIntVector.get(3));
-
-        srcTsrColl.add(srcTar2);
-        srcTsrColl.add(srcTar1);
-
-        AmbiguityPathResolverPanel ambiguityPathResolverPanel = new AmbiguityPathResolverPanel(srcTsrColl);
-        JOptionPane.showMessageDialog(null, ambiguityPathResolverPanel);
-        Logger.out.debug("user selected ambigious paths #####>>>>> "
-                + ambiguityPathResolverPanel.getUserSelectedpaths());
-
-    }
-
 }

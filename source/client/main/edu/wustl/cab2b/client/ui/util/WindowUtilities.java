@@ -24,18 +24,18 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXStatusBar;
 
 import edu.wustl.cab2b.client.ui.controls.IDialogInterface;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * It is a utility class which provide methods to customize and show different window components.
  * @author Chandrakant Talele
  */
 public class WindowUtilities {
-
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(WindowUtilities.class);
     /** Tell system to use native look and feel.
      * Metal (Java) LAF is the default otherwise.
      */
@@ -43,7 +43,7 @@ public class WindowUtilities {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            Logger.out.error("Error setting native LAF: " + e);
+            logger.error("Error setting native LAF: " + e);
         }
     }
 
@@ -51,7 +51,7 @@ public class WindowUtilities {
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
-            Logger.out.error("Error setting Java LAF: " + e);
+            logger.error("Error setting Java LAF: " + e);
         }
     }
 
@@ -59,7 +59,7 @@ public class WindowUtilities {
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
         } catch (Exception e) {
-            Logger.out.error("Error setting Motif LAF: " + e);
+            logger.error("Error setting Motif LAF: " + e);
         }
     }
 

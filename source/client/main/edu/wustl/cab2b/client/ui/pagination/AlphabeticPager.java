@@ -66,21 +66,4 @@ public class AlphabeticPager extends AbstractPager {
     public String getPagerName() {
         return pagerName;
     }
-
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        Vector<PageElement> elements = new Vector<PageElement>();
-
-        String alphabets = "AbCDEfGHHJAsdGEWYVCBZXhSHhhasHqwHhHH";
-        for (int i = 0; i < alphabets.length(); i++) {
-            PageElement element = new PageElementImpl();
-            element.setDisplayName(alphabets.charAt(i) + "-123");
-            elements.add(element);
-        }
-        AlphabeticPager alphaPager = new AlphabeticPager(elements);
-
-        Logger.out.debug("pages " + alphaPager);
-    }
 }

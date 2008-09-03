@@ -41,7 +41,6 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.util.PropertyLoader;
 import edu.wustl.common.util.global.ApplicationProperties;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author Chandrakant Talele
@@ -80,7 +79,6 @@ public class LoginFrame extends JXFrame {
             providedPassword = args[1];
         }
         try {
-            Logger.configure();
             CommonUtils.setHome();
             CommonUtils.initializeResources(); // Initialize all Resources
 

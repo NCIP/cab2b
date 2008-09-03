@@ -1,23 +1,21 @@
 package edu.wustl.cab2b.client.ui.controls.LazyTable;
 
-import edu.wustl.common.util.logger.Logger;
+import org.apache.log4j.Logger;
+
+import edu.wustl.cab2b.client.cache.UserCache;
 
 /**
- * This cache implemenation is extension to BucketCache with 2 dimensional bucket.
+ * This cache implementation is extension to BucketCache with 2 dimensional bucket.
  * 
  * @author rahul_ner
  *
  */
-public class MatrixCache<D> implements CacheInterface {
+public class MatrixCache<D> implements CacheInterface<D> {
 
-    /**
-     * 
-     */
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(UserCache.class);
+    
     private Page<D>[][] pageCache;
 
-    /**
-     * 
-     */
     private int cacheSize;
 
     /**
@@ -52,7 +50,7 @@ public class MatrixCache<D> implements CacheInterface {
         int cacheXLocation = getCacheXLocation(page.getPageInfo());
         int cacheYLocation = getCacheYLocation(page.getPageInfo());
         pageCache[cacheXLocation][cacheYLocation] = page;
-        Logger.out.debug("Page Cached: " + page.getPageInfo());
+        logger.debug("Page Cached: " + page.getPageInfo());
 
     }
 
@@ -64,10 +62,10 @@ public class MatrixCache<D> implements CacheInterface {
         int cacheYLocation = getCacheYLocation(pageInfo);
         Page cachedPage = pageCache[cacheXLocation][cacheYLocation];
         if (cachedPage != null && pageInfo.equals(cachedPage.getPageInfo())) {
-            Logger.out.debug("Cache Hit: " + pageInfo);
+            logger.debug("Cache Hit: " + pageInfo);
             return cachedPage;
         } else {
-            Logger.out.debug("**Cache Miss: " + pageInfo);
+            logger.debug("**Cache Miss: " + pageInfo);
             return null;
         }
     }

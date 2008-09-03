@@ -5,21 +5,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import edu.wustl.cab2b.client.ui.query.TransformCategoryResult;
 import edu.wustl.cab2b.client.ui.treetable.B2BTreeNode;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
-import edu.wustl.common.util.logger.Logger;
 
 /**
- * Classs for displaying category result records
+ * Class for displaying category result records
  * @author deepak_shingan
  *
  */
 public class CategoryObjectDetailsPanel extends DefaultDetailedPanel<ICategorialClassRecord> {
     private static final long serialVersionUID = 1L;
-
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(CategoryObjectDetailsPanel.class);
     /**
      * Table for displaying category result records.
      */
@@ -38,11 +39,11 @@ public class CategoryObjectDetailsPanel extends DefaultDetailedPanel<ICategorial
     protected void initData() {
         super.initData();
 
-        Logger.out.debug("Setting table data");
+        logger.debug("Setting table data");
         categoryTableHeader.add("Category Details");
 
         Map<CategorialClass, List<ICategorialClassRecord>> mapChildClasses = record.getChildrenCategorialClassRecords();
-        Logger.out.debug("Size of class Records :" + mapChildClasses.keySet().size());
+        logger.debug("Size of class Records :" + mapChildClasses.keySet().size());
 
         TransformCategoryResult transformCategoryResult = new TransformCategoryResult();
         b2BTreeRootNode.setDisplayName("Associated Information");

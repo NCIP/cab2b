@@ -18,6 +18,7 @@ import java.util.concurrent.Future;
 
 import javax.swing.JScrollPane;
 
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
@@ -44,10 +45,9 @@ import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
-import edu.wustl.common.util.logger.Logger;
 
 public abstract class ResultPanel extends Cab2bPanel {
-
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ResultPanel.class);
     protected IQueryResult<IRecord> queryResult;
 
     protected Cab2bButton addToDataListButton;
@@ -209,10 +209,10 @@ public abstract class ResultPanel extends Cab2bPanel {
                     }
                 }
             } catch (InterruptedException e) {
-                Logger.out.warn("Unable to get results : " + e.getMessage());
+                logger.warn("Unable to get results : " + e.getMessage());
                 break;
             } catch (ExecutionException e) {
-                Logger.out.warn("Unable to get results : " + e.getMessage());
+                logger.warn("Unable to get results : " + e.getMessage());
                 break;
             }
         } while (0 < queryCallables.size());

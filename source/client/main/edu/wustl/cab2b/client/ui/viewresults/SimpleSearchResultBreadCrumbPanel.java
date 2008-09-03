@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import javax.swing.JComponent;
 
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXPanel;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
@@ -26,7 +27,6 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.queryobject.IQuery;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * This panel is a container panel for all different panel in simple view of
@@ -35,7 +35,7 @@ import edu.wustl.common.util.logger.Logger;
  * @author chetan_bh
  */
 public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
-
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(SimpleSearchResultBreadCrumbPanel.class);
     private static final long serialVersionUID = 1L;
 
     //private HashMap<String, List<AttributeInterface>> mapResultLabel = new HashMap<String, List<AttributeInterface>>();
@@ -94,7 +94,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
 
     /** Shows a panel represented by a name, by bringing that panel to the top. */
     private void showPanel(String panelName) {
-        Logger.out.debug("panel name : " + panelName);
+        logger.debug("panel name : " + panelName);
         CardLayout layout = (CardLayout) this.m_resultsPanel.getLayout();
         layout.show(this.m_resultsPanel, panelName);
         int totalCardPanels = m_resultsPanel.getComponentCount();
@@ -215,7 +215,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
         }
 
         public void actionPerformed(ActionEvent evt) {
-            Logger.out.debug("bread crumbs ActionListener : " + evt.getActionCommand());
+            logger.debug("bread crumbs ActionListener : " + evt.getActionCommand());
             Cab2bHyperlink hyperlink = (Cab2bHyperlink) evt.getSource();
             /*
              * Get the user object for the hyperlink. This contains the whole

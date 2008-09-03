@@ -12,6 +12,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.TableCellRenderer;
 
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.LinkRenderer;
 import org.jdesktop.swingx.action.LinkAction;
 import org.jdesktop.swingx.decorator.AlternateRowHighlighter;
@@ -26,7 +27,7 @@ import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.common.tree.ExperimentTreeNode;
-import edu.wustl.common.util.logger.Logger;
+
 
 /**
  * A panel to display details of the selected experiment or experiment group in
@@ -36,6 +37,7 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class ExperimentDetailsPanel extends Cab2bPanel {
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ExperimentDetailsPanel.class);
 
     private Cab2bTable expTable;
 
@@ -128,7 +130,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
      */
     private void updateTableData(ExperimentTreeNode treeNode, Vector<Vector<Object>> tableData) {
         if (treeNode.getChildNodes().size() == 0) {
-            Logger.out.debug("found child node zero");
+            logger.debug("found child node zero");
             return;
         }
 
@@ -251,7 +253,7 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
                              * experiment in new ExperimentOpenPanel with
                              * details
                              */
-                            Logger.out.debug("ExperimentTreeNode node :" + expNodeObj.getIdentifier()
+                            logger.debug("ExperimentTreeNode node :" + expNodeObj.getIdentifier()
                                     + " is not a experimentGroup");
 
                             MainFrame mainframe = NewWelcomePanel.getMainFrame();

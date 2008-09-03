@@ -1,9 +1,3 @@
-/**
-
- * 
-
- */
-
 package edu.wustl.cab2b.client.ui.searchDataWizard;
 
 import java.awt.BorderLayout;
@@ -21,6 +15,8 @@ import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import org.apache.log4j.Logger;
+
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -35,7 +31,6 @@ import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
 import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * Panel used to display Save Data list dialog
@@ -45,7 +40,7 @@ import edu.wustl.common.util.logger.Logger;
 
 public class SaveDatalistPanel extends Cab2bPanel {
     private static final long serialVersionUID = 1L;
-
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(SaveDatalistPanel.class);
     /**
      * Panel title label
      */
@@ -130,7 +125,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
         cancelButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent arg0) {
-                Logger.out.debug("disposing save data list dialog... ");
+                logger.debug("disposing save data list dialog... ");
                 dialog.dispose();
             }
         });
@@ -174,7 +169,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
                             MainSearchPanel.savedDataListMetadata = dataListBI.saveDataList(newRootDataRow,
                                                                                             dataListAnnotation);
 
-                            Logger.out.debug("data list saved successfully (in entity with id) : "
+                            logger.debug("data list saved successfully (in entity with id) : "
                                     + MainSearchPanel.savedDataListMetadata.getId());
                             savedList = true;
                         } catch (RemoteException e) {
@@ -302,7 +297,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
                                              new Dimension((int) (dimension.width * 0.35),
                                                      (int) (dimension.height * 0.30)), true, false);
 
-        Logger.out.debug("dialog initialized ########## " + dialog);
+        logger.debug("dialog initialized ########## " + dialog);
         dialog.setVisible(true);
         return dialog;
     }

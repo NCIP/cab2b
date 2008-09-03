@@ -4,6 +4,8 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
@@ -14,12 +16,13 @@ import edu.wustl.cab2b.common.ejb.user.UserBusinessInterface;
 import edu.wustl.cab2b.common.ejb.user.UserHomeInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.common.util.logger.Logger;
+
 
 /**
  * @author Chandrakant Talele
  */
 public class UserCache {
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(UserCache.class);
     UserInterface currentUser = null;
 
     Map<String, List<String>> entityGroupToURLs = null;
@@ -71,7 +74,7 @@ public class UserCache {
         if (entityGroupToURLs.containsKey(name)) {
             urls = entityGroupToURLs.get(name).toArray(new String[0]);
         } else {
-            Logger.out.warn("Service URLs for this entity neither configured by user nor administrator");
+            logger.warn("Service URLs for this entity neither configured by user nor administrator");
         }
         return urls;
     }

@@ -2,8 +2,6 @@ package edu.wustl.cab2b.client.ui.pagination;
 
 import java.util.Vector;
 
-import edu.wustl.common.util.logger.Logger;
-
 /**
  * Performs Numeric pagination of the page elements.
  * This functionality is implemented in AbstractPager class.
@@ -45,20 +43,5 @@ public class NumericPager extends AbstractPager {
      */
     public String getPagerName() {
         return pagerName;
-    }
-
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        Vector<PageElement> elements = new Vector<PageElement>();
-        for (int i = 0; i < 12; i++) {
-            PageElement element = new PageElementImpl();
-            element.setDisplayName("ABC-" + i);
-            elements.add(element);
-        }
-
-        NumericPager numPager = new NumericPager(elements);
-        Logger.out.debug("numPage  " + numPager);
     }
 }

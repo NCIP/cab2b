@@ -35,9 +35,11 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTree;
 
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
+import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -65,7 +67,6 @@ import edu.wustl.common.tree.ExperimentTreeNode;
 import edu.wustl.common.tree.GenerateTree;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.ApplicationProperties;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * This class shows a panel to create new experiments with GUI controls for
@@ -77,7 +78,7 @@ import edu.wustl.common.util.logger.Logger;
  * @author chetan_bh
  */
 public class NewExperimentDetailsPanel extends Cab2bPanel {
-
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(NewExperimentDetailsPanel.class);
     private static final long serialVersionUID = 6029827434064457102L;
 
     /**
@@ -333,7 +334,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
                 ExperimentTreeNode expTreeNode = (ExperimentTreeNode) treeNode.getUserObject();
                 Long expGrpId = expTreeNode.getIdentifier();
-                Logger.out.debug("exp grp id " + expGrpId);
+                logger.debug("exp grp id " + expGrpId);
 
                 if (expGrpId == 0) {
                     JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this,
@@ -346,7 +347,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                     return;
                 }
 
-                Logger.out.debug("projectsTree.getSelectionCount() " + projectsTree.getSelectionCount());
+                logger.debug("projectsTree.getSelectionCount() " + projectsTree.getSelectionCount());
 
                 String experimentName = expNameTextField.getText();
                 if (experimentName == null || experimentName.equals("")) {
@@ -443,7 +444,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
             try {
                 newExpGrp = expGrpBus.addExperimentGroup(parentExpGrpID, newExpGrp);
-                Logger.out.debug("returner expGrp id " + newExpGrp.getId());
+                logger.debug("returner expGrp id " + newExpGrp.getId());
             } catch (RemoteException e1) {
                 CommonUtils.handleException(e1, this, true, true, false, false);
             } catch (BizLogicException e1) {
@@ -477,11 +478,11 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                 int index = e.getChildIndices()[0];
                 node = (DefaultMutableTreeNode) (node.getChildAt(index));
             } catch (NullPointerException exc) {
-                Logger.out.error(exc.getMessage());
+                logger.error(exc.getMessage());
             }
 
-            Logger.out.debug("The user has finished editing the node.");
-            Logger.out.debug("New value: " + node.getUserObject());
+            logger.debug("The user has finished editing the node.");
+            logger.debug("New value: " + node.getUserObject());
             addNewExperimentGroupNode(node.getUserObject().toString(), node);
         }
 
@@ -502,22 +503,5 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                                                                                                             DataListHomeInterface.class);
         List<DataListMetadata> dataListMetadatas = dataListBI.retrieveAllDataListMetadata();
         return dataListMetadatas;
-    }
-
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        Logger.configure("");
-        WindowUtilities.setNativeLookAndFeel();
-        ApplicationProperties.initBundle("Cab2bApplicationResources");
-
-        NewExperimentDetailsPanel expDetailsPanel = new NewExperimentDetailsPanel();
-
-        JFrame frame = new JFrame("New Exp Details -- caB2B");
-        frame.setSize(new Dimension(800, 600));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(expDetailsPanel);
-        frame.setVisible(true);
     }
 }

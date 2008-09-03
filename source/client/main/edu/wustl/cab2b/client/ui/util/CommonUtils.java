@@ -35,6 +35,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXErrorDialog;
 import org.openide.util.Utilities;
 
@@ -73,14 +74,13 @@ import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.util.global.ApplicationProperties;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author Chetan B H
  * @author Mahesh Iyer
  */
 public class CommonUtils {
-
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(CommonUtils.class);
     // Constant storing enumerated values for DAG-Images
     public static enum DagImages {
         DocumentPaperIcon, PortImageIcon, ArrowSelectIcon, ArrowSelectMOIcon, SelectIcon, selectMOIcon, ParenthesisIcon, ParenthesisMOIcon
@@ -191,7 +191,7 @@ public class CommonUtils {
         }
 
         if (shouldLogException) {
-            Logger.out.error(errorMessageForLog, exception);
+            logger.error(errorMessageForLog, exception);
         }
 
         if (shouldShowErrorDialog) {

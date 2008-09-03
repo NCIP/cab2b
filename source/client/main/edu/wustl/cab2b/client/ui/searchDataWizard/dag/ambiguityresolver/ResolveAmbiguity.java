@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.query.IPathFinder;
@@ -14,16 +16,14 @@ import edu.wustl.cab2b.client.ui.util.WindowUtilities;
 import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
-import edu.wustl.common.util.logger.Logger;
 
 /**
- * Class to resolve mabiguity between two categories
+ * Class to resolve ambiguity between two categories
  * 
- * @author Administrator
- * 
+ * @author Deepak
  */
 public class ResolveAmbiguity {
-
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ResolveAmbiguity.class);
     /**
      * Ambiguity objects available
      */
@@ -115,7 +115,7 @@ public class ResolveAmbiguity {
      */
     private Map<String, List<IPath>> getPaths(EntityInterface sourceEntity, EntityInterface destinationEntity) {
         Set<ICuratedPath> allCuratedPaths = iPathFinder.getCuratedPaths(sourceEntity, destinationEntity);
-        Logger.out.debug("  getCuratedPaths() executed : " + allCuratedPaths.size());
+        logger.debug("  getCuratedPaths() executed : " + allCuratedPaths.size());
 
         List<IPath> selectedPaths = new ArrayList<IPath>();
         List<IPath> curatedPaths = new ArrayList<IPath>();

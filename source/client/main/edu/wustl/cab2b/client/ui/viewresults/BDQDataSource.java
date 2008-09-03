@@ -20,7 +20,6 @@ import edu.wustl.cab2b.common.ejb.utility.UtilityHomeInterface;
 import edu.wustl.cab2b.common.queryengine.result.I3DDataRecord;
 import edu.wustl.cab2b.common.queryengine.result.IPartiallyInitialized3DRecord;
 import edu.wustl.cab2b.common.queryengine.result.I3DDataRecord.LazyParams;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author rahul_ner
@@ -182,7 +181,7 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
                                                                                                                     UtilityHomeInterface.class,
                                                                                                                     NewWelcomePanel.getMainFrame());
         try {
-            Logger.out.debug("Record Handle " + uninitailisedRecord.handle());
+           
             /*TODO casting to Object is needed due to bug in java compiler
              Refer to http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6548436 for details
              If Object casting is removed it will throw error : inconvertible types

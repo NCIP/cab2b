@@ -17,6 +17,7 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
+import org.apache.log4j.Logger;
 import org.netbeans.graph.api.GraphFactory;
 import org.netbeans.graph.api.model.GraphEvent;
 import org.netbeans.graph.api.model.IGraphPort;
@@ -52,7 +53,6 @@ import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.impl.Expression;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * Class for creating main dag panel 
@@ -61,7 +61,7 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class MainDagPanel extends Cab2bPanel {
     private static final long serialVersionUID = 1L;
-
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(MainDagPanel.class);
     /**
      * view to be added to this panel
      */
@@ -489,7 +489,7 @@ public class MainDagPanel extends Cab2bPanel {
      */
     protected void linkTwoNode(final ClassNode sourceNode, final ClassNode destNode, final IPath path,
                                List<Integer> intermediateExpressionsIds, final boolean updateQueryRequired) {
-        Logger.out.debug("Linking nodes: " + sourceNode.getID() + " and " + destNode.getID()
+        logger.debug("Linking nodes: " + sourceNode.getID() + " and " + destNode.getID()
                 + "; Intermediate exps: " + intermediateExpressionsIds.toString());
 
         // Update query object to have this association path set

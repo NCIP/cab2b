@@ -242,7 +242,6 @@ public class AdvancedSearchPanel extends Cab2bPanel implements ItemListener {
                     m_chkClassDesc.setSelected(false);
                     m_chkClassDesc.setEnabled(false);
                 }
-                Logger.out.debug("Clicked attribute or class");
             }
         } else if (obj instanceof Cab2bRadioButton) {
             if (m_radioConceptCode.isSelected()) {

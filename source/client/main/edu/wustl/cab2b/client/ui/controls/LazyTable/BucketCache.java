@@ -1,24 +1,22 @@
 package edu.wustl.cab2b.client.ui.controls.LazyTable;
 
-import edu.wustl.common.util.logger.Logger;
+import org.apache.log4j.Logger;
+
+import edu.wustl.cab2b.client.cache.UserCache;
 
 /**
- * This cache implemenation based on backets.
+ * This cache implementation based on buckets.
  * A page can be cached into a fixed bucket. If it is not present in that bucket, the existing page at that location is replaced
  * by this page.
  * 
  * @author Rahul Ner
  */
-public class BucketCache<D> implements CacheInterface {
+public class BucketCache<D> implements CacheInterface<D> {
 
-    /**
-     * 
-     */
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(UserCache.class);
+
     private Page<D>[] pageCache;
 
-    /**
-     * 
-     */
     private int cacheSize;
 
     /**
@@ -52,7 +50,7 @@ public class BucketCache<D> implements CacheInterface {
     public void put(Page page) {
         int cacheLocation = getCacheLocation(page.getPageInfo());
         pageCache[cacheLocation] = page;
-        Logger.out.debug("Page Cached: " + page.getPageInfo());
+        logger.debug("Page Cached: " + page.getPageInfo());
     }
 
     /**
@@ -62,10 +60,10 @@ public class BucketCache<D> implements CacheInterface {
         int cacheLocation = getCacheLocation(pageInfo);
         Page cachedPage = pageCache[cacheLocation];
         if (cachedPage != null && pageInfo.equals(cachedPage.getPageInfo())) {
-            Logger.out.debug("Cache Hit: " + pageInfo);
+            logger.debug("Cache Hit: " + pageInfo);
             return cachedPage;
         } else {
-            Logger.out.debug("**Cache Miss: " + pageInfo);
+            logger.debug("**Cache Miss: " + pageInfo);
             return null;
         }
     }

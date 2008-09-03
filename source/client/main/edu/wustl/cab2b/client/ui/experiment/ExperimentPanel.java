@@ -10,6 +10,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JSplitPane;
 
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXPanel;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
@@ -18,7 +19,6 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.common.util.global.ApplicationProperties;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * Experiment panel to view experiment and experiment group hierarchies 
@@ -28,7 +28,7 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class ExperimentPanel extends Cab2bTitledPanel {
     private static final long serialVersionUID = 1L;
-
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ExperimentPanel.class);
     JSplitPane splitPane;
 
     JButton newExperiment;
@@ -53,7 +53,7 @@ public class ExperimentPanel extends Cab2bTitledPanel {
     }
 
     private void initGUI() {
-        Logger.out.debug("Inside Constructor.");
+        logger.debug("Inside Constructor.");
 
         displayExperimentPanel = new Cab2bPanel(new RiverLayout(5,5));
 
