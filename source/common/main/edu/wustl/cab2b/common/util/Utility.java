@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -51,7 +52,6 @@ import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.queryobject.DataType;
 import edu.wustl.common.util.dbManager.DBUtil;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * Utility Class contain general methods used through out the application.
@@ -60,6 +60,7 @@ import edu.wustl.common.util.logger.Logger;
  * @author Gautam Shetty
  */
 public class Utility {
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(Utility.class);
 	/**
 	 * Checks whether passed attribute/association is inherited.
 	 * 
@@ -434,10 +435,10 @@ public class Utility {
 			text = text.concat(Utility.getDisplayName(pathList.get(i).getTargetEntity()));
 		}
 		text = text.concat("</HTML>");
-		Logger.out.debug(text);
+		logger.debug(text);
 		StringBuffer sb = new StringBuffer();
 		int textLength = text.length();
-		Logger.out.debug(textLength);
+		logger.debug(textLength);
 		int currentStart = 0;
 		String currentString = null;
 		int offset = 100;
@@ -612,7 +613,7 @@ public class Utility {
 			try {
 				return file.toURI().toURL();
 			} catch (MalformedURLException e) {
-				Logger.out.error("File not found in cab2b_home, will use default file ", e);
+				logger.error("File not found in cab2b_home, will use default file ", e);
 			}
 		}
 		// is there a better way of getting a non-null class loader ?
@@ -695,7 +696,7 @@ public class Utility {
             URL url = getResource(propertyfile);
             InputStream is = url.openStream();
             if (is == null) {
-                Logger.out.error("Unable fo find property file : " + propertyfile
+                logger.error("Unable fo find property file : " + propertyfile
                         + "\n please put this file in classpath");
             }
 
@@ -703,7 +704,7 @@ public class Utility {
             properties.load(is);
 
         } catch (IOException e) {
-            Logger.out.error("Unable to load properties from : " + propertyfile);
+            logger.error("Unable to load properties from : " + propertyfile);
             e.printStackTrace();
         }
 

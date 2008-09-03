@@ -20,7 +20,6 @@ import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * This Class encapsulates the searched Entity classes and 
@@ -57,7 +56,6 @@ public class MatchedClass implements Serializable {
         Collections.sort(matchedClassEntries,new MatchedClassEntryCompator());
         Set<EntityInterface> entities = new LinkedHashSet<EntityInterface>();
         for(MatchedClassEntry entry : matchedClassEntries) {
-            Logger.out.debug(entry.getMatchedEntity().getName());
             entities.add(entry.getMatchedEntity());
         }
         return entities;

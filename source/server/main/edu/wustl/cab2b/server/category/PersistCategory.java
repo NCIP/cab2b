@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -26,12 +28,12 @@ import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author Chandrakant Talele
  */
 public class PersistCategory {
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(PersistCategory.class);
 
     /**
      * Category entity which will be saved by this class.
@@ -52,8 +54,7 @@ public class PersistCategory {
      *            for root category.
      * @return Returns the Category for given parameters.
      */
-    public Category persistCategory(InputCategory inputCategory,
-                                    Category parentCategry) {
+    public Category persistCategory(InputCategory inputCategory, Category parentCategry) {
         categoryEntity = DomainObjectFactory.getInstance().createEntity();
         List<EntityInterface> subCategoryEntities = new ArrayList<EntityInterface>();
         Category category = new Category();
@@ -67,11 +68,8 @@ public class PersistCategory {
         }
         category.setSubCategories(subCategories);
 
-        CategorialClass rootClass = getCategorialClass(
-                                                       inputCategory.getRootCategorialClass(),
-                                                       null, category);
+        CategorialClass rootClass = getCategorialClass(inputCategory.getRootCategorialClass(), null, category);
         category.setRootClass(rootClass);
-//TODO is display name is needed for category ?? 
         categoryEntity.setName(inputCategory.getName());
         categoryEntity.setDescription(inputCategory.getDescription());
         categoryEntity.addEntityGroupInterface(getCategoryEntityGroup());
@@ -91,8 +89,7 @@ public class PersistCategory {
 
         for (AttributeInterface attr : categoryEntity.getAttributeCollection()) {
             String attributeName = attr.getName();
-            nameVsCategorialAttr.get(attributeName).setDeCategoryAttributeId(
-                                                                             attr.getId());
+            nameVsCategorialAttr.get(attributeName).setDeCategoryAttributeId(attr.getId());
         }
         return category;
 
@@ -108,9 +105,7 @@ public class PersistCategory {
      *            The owner Category
      * @return CategorialClass for given parameters.
      */
-    private CategorialClass getCategorialClass(
-                                               InputCategorialClass inputCategorialClass,
-                                               CategorialClass parent,
+    private CategorialClass getCategorialClass(InputCategorialClass inputCategorialClass, CategorialClass parent,
                                                Category category) {
         CategorialClass categorialClass = new CategorialClass();
         categorialClass.setParent(parent);
@@ -137,10 +132,7 @@ public class PersistCategory {
 
         Set<CategorialClass> childrenCategorialClass = new HashSet<CategorialClass>();
         for (InputCategorialClass childInputCategorialClass : inputCategorialClass.getChildren()) {
-            childrenCategorialClass.add(getCategorialClass(
-                                                           childInputCategorialClass,
-                                                           categorialClass,
-                                                           category));
+            childrenCategorialClass.add(getCategorialClass(childInputCategorialClass, categorialClass, category));
         }
 
         categorialClass.setChildren(childrenCategorialClass);
@@ -155,11 +147,13 @@ public class PersistCategory {
         try {
             entityGroup = EntityManager.getInstance().getEntityGroupByName(CATEGORY_ENTITY_GROUP_NAME);
         } catch (DynamicExtensionsSystemException e) {
-            throw new RuntimeException("Got System exception from Dynamic Extension while fetching category entity group",
-                    e, ErrorCodeConstants.DB_0001);
+            throw new RuntimeException(
+                    "Got System exception from Dynamic Extension while fetching category entity group", e,
+                    ErrorCodeConstants.DB_0001);
         } catch (DynamicExtensionsApplicationException e) {
-            throw new RuntimeException("Got System exception from Dynamic Extension while fetching category entity group",
-                    e, ErrorCodeConstants.DB_0001);
+            throw new RuntimeException(
+                    "Got System exception from Dynamic Extension while fetching category entity group", e,
+                    ErrorCodeConstants.DB_0001);
         }
         if (entityGroup == null) {
             entityGroup = DynamicExtensionUtility.createEntityGroup();
@@ -167,14 +161,11 @@ public class PersistCategory {
             entityGroup.setName(CATEGORY_ENTITY_GROUP_NAME);
             entityGroup.setLongName(CATEGORY_ENTITY_GROUP_NAME);
             entityGroup.setDescription(CATEGORY_ENTITY_GROUP_NAME);
-            DynamicExtensionUtility.markMetadataEntityGroup(entityGroup);          
+            DynamicExtensionUtility.markMetadataEntityGroup(entityGroup);
             entityGroup = DynamicExtensionUtility.persistEntityGroup(entityGroup);
         }
         return entityGroup;
     }
-
-  
-   
 
     /**
      * @return Returns the categoryEntity.
@@ -201,31 +192,27 @@ public class PersistCategory {
     public static void persistCategories(String[] fileNames) {
         for (String fileName : fileNames) {
             InputCategory inputCategory = new CategoryXmlParser().getInputCategory(fileName);
-            Category category = new PersistCategory().persistCategory(
-                                                                      inputCategory,
-                                                                      null);
+            Category category = new PersistCategory().persistCategory(inputCategory, null);
             new CategoryOperations().saveCategory(category);
-            Logger.out.info("Stored Category : " + inputCategory.getName());
+            logger.info("Stored Category : " + inputCategory.getName());
         }
     }
-
-    public static void main(String[] args) {
-        Logger.configure();
-        // String folderPath = "E:/Carcinogenic/caB2B/Categories/from Chandu/";
-        String folderPath = "E:/Carcinogenic/caB2B/chandu KT/categories/";
-
-        String[] arr = { "Gene Annotation.xml", "Genomic Identifiers.xml", "Literature-based Gene Association.xml", "Microarray Annotation.xml", "Orthologus Gene.xml" };
-        // String[] arr = { "Srinath testCat.xml" };
-         
-        for (String xmlFileName : arr) {
-            String filePath = folderPath + xmlFileName;
-            InputCategory inputCategory = new CategoryXmlParser().getInputCategory(filePath);
-            Category category = new PersistCategory().persistCategory(
-                                                                      inputCategory,
-                                                                      null);
-            new CategoryOperations().saveCategory(category);
-             
-        }
-         
-    }
+    // DON'T delete this code. It is used to load categories from backend 
+    //    public static void main(String[] args) {
+    //        Logger.configure();
+    //        // String folderPath = "E:/Carcinogenic/caB2B/Categories/from Chandu/";
+    //        String folderPath = "E:/Carcinogenic/caB2B/chandu KT/categories/";
+    //
+    //        String[] arr = { "Gene Annotation.xml", "Genomic Identifiers.xml", "Literature-based Gene Association.xml", "Microarray Annotation.xml", "Orthologus Gene.xml" };
+    //        // String[] arr = { "Srinath testCat.xml" };
+    //         
+    //        for (String xmlFileName : arr) {
+    //            String filePath = folderPath + xmlFileName;
+    //            InputCategory inputCategory = new CategoryXmlParser().getInputCategory(filePath);
+    //            Category category = new PersistCategory().persistCategory(
+    //                                                                      inputCategory,
+    //                                                                      null);
+    //            new CategoryOperations().saveCategory(category);
+    //        }
+    //    }
 }

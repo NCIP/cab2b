@@ -4,8 +4,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import edu.wustl.common.util.logger.Logger;
-
+import org.apache.log4j.Logger;
 /**
  * Replicates paths through a node for a given set of equivalent nodes. <br>
  * e.g. if replicationNodes has an entry <code>[i, {n1, n2}]</code>, then
@@ -25,7 +24,7 @@ import edu.wustl.common.util.logger.Logger;
  * @author srinath_k
  */
 class PathReplicationUtil {
-
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(PathReplicationUtil.class);
     private static void replicateAndPropagate(Map<Integer, Set<Integer>> replicationNodes,
                                               Set<Path> replicatedPaths, Integer key) {
         if (!replicationNodes.containsKey(key)) {
@@ -33,7 +32,7 @@ class PathReplicationUtil {
         }
         Node origNode = createNode(key);
         Set<Integer> repNodes = replicationNodes.get(key);
-        Logger.out.info("Replicating paths for origNode " + origNode);
+        logger.info("Replicating paths for origNode " + origNode);
 
         Set<Path> relevantPaths = new HashSet<Path>();
         Set<Path> origPaths = new HashSet<Path>(replicatedPaths);
@@ -63,8 +62,8 @@ class PathReplicationUtil {
     }
 
     public static Set<Path> replicatePaths(Set<Path> inputPaths, Map<Integer, Set<Integer>> replicationNodes) {
-        Logger.out.info("Entered PathReplicationUtil...");
-        Logger.out.info("No. of input paths : " + inputPaths.size());
+        logger.info("Entered PathReplicationUtil...");
+        logger.info("No. of input paths : " + inputPaths.size());
 
         Set<Path> res = new HashSet<Path>(inputPaths);
         for (Integer key : replicationNodes.keySet()) {
@@ -72,8 +71,8 @@ class PathReplicationUtil {
             replicateAndPropagate(replicationNodes, replicatedPaths, key);
             res.addAll(replicatedPaths);
         }
-        Logger.out.info("No. of paths post-replication : " + res.size());
-        Logger.out.info("Exiting PathReplicationUtil.");
+        logger.info("No. of paths post-replication : " + res.size());
+        logger.info("Exiting PathReplicationUtil.");
         return res;
     }
 

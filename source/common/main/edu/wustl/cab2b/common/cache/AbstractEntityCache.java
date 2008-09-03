@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
@@ -21,7 +23,6 @@ import edu.wustl.cab2b.common.beans.MatchedClassEntry;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.category.Category;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * This is an abstract class for caching metadata. 
@@ -33,7 +34,7 @@ import edu.wustl.common.util.logger.Logger;
  */
 public abstract class AbstractEntityCache implements IEntityCache, Serializable {
     private static final long serialVersionUID = 1234567890L;
-
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(AbstractEntityCache.class);
     /**
      * List of all the categories loaded in caB2B local database.  
      */
@@ -104,16 +105,16 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
      * @throws RemoteException 
      */
     public final void refreshCache() {
-        Logger.out.debug("Initialising cache, this may take few minutes...");
+        logger.debug("Initialising cache, this may take few minutes...");
         Collection<EntityGroupInterface> entityGroups = null;
         try {
             entityGroups = getCab2bEntityGroups();
         } catch (RemoteException e) {
             //TODO: Handle this execption properly.
-            Logger.out.error("Error while collecting caB2B entity groups. Error: " + e.getMessage());
+            logger.error("Error while collecting caB2B entity groups. Error: " + e.getMessage());
         }
         createCache(entityGroups);
-        Logger.out.debug("Initialising cache DONE");
+        logger.debug("Initialising cache DONE");
     }
 
     /**

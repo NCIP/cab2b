@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.globus.gsi.GlobusCredential;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -20,7 +21,6 @@ import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
-import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.cagrid.cqlresultset.CQLQueryResults;
 import gov.nih.nci.cagrid.dcql.DCQLQuery;
 import gov.nih.nci.cagrid.dcqlresult.DCQLQueryResultsCollection;
@@ -40,6 +40,7 @@ import gov.nih.nci.cagrid.fqp.processor.exceptions.FederatedQueryProcessingExcep
  */
 public abstract class AbstractQueryResultTransformer<R extends IRecord, C extends ICategorialClassRecord>
         implements IQueryResultTransformer<R, C> {
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(AbstractQueryResultTransformer.class);
     protected QueryLogger queryLogger;
 
     public AbstractQueryResultTransformer() {
@@ -82,7 +83,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             result.addRecords(url, recs);
             numRecs += recs.size();
         }
-        Logger.out.info("No. of records found and transformed : " + numRecs);
+        logger.info("No. of records found and transformed : " + numRecs);
         return result;
     }
 
@@ -90,9 +91,9 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
         DCQLQueryResultsCollection queryResults = null;
         try {
             FederatedQueryEngine federatedQueryEngine = new FederatedQueryEngine(cred);
-            Logger.out.info("Executing DCQL... Target is : " + query.getTargetObject().getName());
+            logger.info("Executing DCQL... Target is : " + query.getTargetObject().getName());
             queryResults = federatedQueryEngine.execute(query);
-            Logger.out.info("Executed DCQL successfully.");
+            logger.info("Executed DCQL successfully.");
         } catch (FederatedQueryProcessingException e) {
             throw new RuntimeException(Utility.getStackTrace(e), ErrorCodeConstants.QM_0004);
         }

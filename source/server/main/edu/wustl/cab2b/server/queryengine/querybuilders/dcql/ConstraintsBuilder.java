@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
@@ -18,6 +20,7 @@ import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.Attribu
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.DcqlConstraint;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.ForeignAssociationConstraint;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.LocalAssociationConstraint;
+import edu.wustl.cab2b.server.queryengine.resulttransformers.AbstractQueryResultTransformer;
 import edu.wustl.cab2b.server.queryengine.utils.TransformerUtil;
 import edu.wustl.cab2b.server.queryengine.utils.TreeNode;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
@@ -34,7 +37,6 @@ import edu.wustl.common.querysuite.queryobject.IJoinGraph;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
-import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.cagrid.cqlquery.Attribute;
 import gov.nih.nci.cagrid.dcql.Association;
 import gov.nih.nci.cagrid.dcql.ForeignAssociation;
@@ -59,7 +61,7 @@ import gov.nih.nci.cagrid.dcql.Object;
  * @author srinath_k
  */
 public class ConstraintsBuilder {
-
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ConstraintsBuilder.class);
     private ConstraintsBuilderResult result;
 
     private ICab2bQuery query;
@@ -180,7 +182,7 @@ public class ConstraintsBuilder {
             IExpression parentExpr = getExpression(parentExprId);
             IAssociation association = getJoinGraph().getAssociation(parentExpr, childExpr);
             if (!association.isBidirectional()) {
-                Logger.out.warn("Unidirectional association found " + association
+                logger.warn("Unidirectional association found " + association
                         + ". Results could be incorrect.");
                 continue;
             }
@@ -199,7 +201,7 @@ public class ConstraintsBuilder {
             return getConstraints().getRootExpression();
         } catch (MultipleRootsException e) {
             String msg = "Invalid query object submitted; it's got multiple roots...";
-            Logger.out.error(msg);
+            logger.error(msg);
             throw new RuntimeException(msg, e, ErrorCodeConstants.QUERY_INVALID_INPUT);
         }
 

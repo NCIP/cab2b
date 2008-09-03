@@ -1,7 +1,14 @@
 package edu.wustl.cab2b.server.queryengine.resulttransformers;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.globus.gsi.GlobusCredential;
+
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.cagrid.cqlquery.Attribute;
 import gov.nih.nci.cagrid.cqlquery.CQLQuery;
 import gov.nih.nci.cagrid.cqlquery.Group;
@@ -13,13 +20,6 @@ import gov.nih.nci.cagrid.cqlresultset.CQLQueryResults;
 import gov.nih.nci.cagrid.cqlresultset.TargetAttribute;
 import gov.nih.nci.cagrid.data.client.DataServiceClient;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.globus.gsi.GlobusCredential;
-
 /**
  * Util for the query result transformers.
  * 
@@ -27,11 +27,11 @@ import org.globus.gsi.GlobusCredential;
  * 
  */
 public class QueryResultTransformerUtil {
-
-    private QueryLogger logger;
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(QueryResultTransformerUtil.class);
+    private QueryLogger queryLogger;
 
     public QueryResultTransformerUtil(QueryLogger logger) {
-        this.logger = logger;
+        this.queryLogger = logger;
     }
 
     /**
@@ -110,12 +110,12 @@ public class QueryResultTransformerUtil {
     }
 
     private CQLQueryResults executeCQL(CQLQuery cql, String url, GlobusCredential cred) {
-        logger.log(cql);
-        Logger.out.info("Executing CQL to fetch " + cql.getTarget().getName() + " from service " + url);
+        queryLogger.log(cql);
+        logger.info("Executing CQL to fetch " + cql.getTarget().getName() + " from service " + url);
         try {
             DataServiceClient dataServiceClient = new DataServiceClient(url, cred);
             CQLQueryResults results = dataServiceClient.query(cql);
-            Logger.out.info("Executed CQL successfully.");
+            logger.info("Executed CQL successfully.");
             return results;
         } catch (Exception e) {
             throw new RuntimeException(e);

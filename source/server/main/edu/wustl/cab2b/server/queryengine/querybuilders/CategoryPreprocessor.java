@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
@@ -32,10 +34,13 @@ import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
-import edu.wustl.common.util.logger.Logger;
 
+/**
+ * Category Preprocessor
+ * @author Srinath K
+ */
 public class CategoryPreprocessor {
-
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(CategoryPreprocessor.class);
     private IQuery query;
 
     private CategoryPreprocessorResult categoryPreprocessorResult;
@@ -146,7 +151,7 @@ public class CategoryPreprocessor {
             CategorialClass nextCatClass = catClassesPath.get(i + 1);
             IPath origPath = currCatClass.getPathFromParent();
             if (!origPath.isBidirectional()) {
-                Logger.out.warn("Unidirectional path found " + origPath + " in category " + category
+                logger.warn("Unidirectional path found " + origPath + " in category " + category
                         + ". Results could be incorrect.");
                 break;
             }

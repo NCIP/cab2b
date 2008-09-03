@@ -10,7 +10,6 @@ import javax.sql.DataSource;
 
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * Utility which generates and closes connection.
@@ -57,7 +56,6 @@ public class ConnectionUtil {
                 connection.close();
             } catch (SQLException e) {
                 //DO NOTHING
-                Logger.out.debug(e.toString());
             }
         }
     }

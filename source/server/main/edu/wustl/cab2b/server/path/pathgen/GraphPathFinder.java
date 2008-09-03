@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import edu.wustl.common.util.logger.Logger;
-
+import org.apache.log4j.Logger;
 /**
  * Computes all possible paths present in a directed graph. No path returned
  * should contain a cycle. Suppose the graph is (V, E) where V is the set of
@@ -49,7 +48,7 @@ import edu.wustl.common.util.logger.Logger;
  * @author srinath_k
  */
 public class GraphPathFinder {
-    // public static boolean KEEP_WRITING = false;
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(PathReplicationUtil.class);
 
     public static boolean MEM_CACHE = true;
 
@@ -77,7 +76,7 @@ public class GraphPathFinder {
      */
     public Set<Path> getAllPaths(boolean[][] adjacencyMatrix, Map<Integer, Set<Integer>> replicationNodes,
                                  Connection conn, int maxLength) {
-        Logger.out.info("Entered GraphPathFinder...");
+        logger.info("Entered GraphPathFinder...");
         if (maxLength < 2) {
             throw new IllegalArgumentException("maxLength should be atleast 2.");
         }
@@ -93,14 +92,14 @@ public class GraphPathFinder {
         Node[] allNodes = this.inputGraph.allNodes().toArray(new Node[0]);
         int numPaths = 0;
         for (Node srcNode : allNodes) {
-            Logger.out.info("Processing " + srcNode);
+            logger.info("Processing " + srcNode);
             for (Node destNode : allNodes) {
                 if (srcNode.equals(destNode)) {
                     // don't process self-edges now...
                     continue;
                 }
                 SourceDestinationPair sdp = new SourceDestinationPair(srcNode, destNode);
-                //                Logger.out.info("Processing " + srcNode + " to " + destNode);
+                //                logger.info("Processing " + srcNode + " to " + destNode);
 
                 Set<Path> srcDestPaths = getPaths(sdp, new HashSet<Node>(), maxLength);
                 numPaths += srcDestPaths.size();
@@ -123,8 +122,8 @@ public class GraphPathFinder {
         wrapup();
         result = PathReplicationUtil.replicatePaths(result, replicationNodes);
         long endTime = System.currentTimeMillis();
-        Logger.out.info("Time taken GraphPathFinder : " + (endTime - startTime));
-        Logger.out.info("Exiting GraphPathFinder.");
+        logger.info("Time taken GraphPathFinder : " + (endTime - startTime));
+        logger.info("Exiting GraphPathFinder.");
         return result;
     }
 

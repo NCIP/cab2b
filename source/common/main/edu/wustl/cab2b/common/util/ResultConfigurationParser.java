@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.wustl.cab2b.common.util;
 
 import java.io.InputStream;
@@ -14,14 +11,12 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * This is a singleton class which parses the ResultConfiguration.xml file and
  * stores the mapping information into an internal map.
  * 
  * @author Deepak Shingan
- * 
  */
 public class ResultConfigurationParser {
 
@@ -386,14 +381,14 @@ public class ResultConfigurationParser {
         }
     }
 
-    public static void main(String[] args) {
-        Logger.configure();
-        ResultConfigurationParser entityServiceMapper = ResultConfigurationParser.getInstance();
-        Logger.out.info(entityServiceMapper.getDataListSaver("CategoryEntityGroup", "foobar"));
-        Logger.out.info(entityServiceMapper.getResultRenderer("caArray","gov.nih.nci.mageom.domain.BioAssayData.DerivedBioAssayData"));
-        Logger.out.info(entityServiceMapper.getResultRenderer("caArray", "foobar"));
-        Logger.out.info(entityServiceMapper.getResultRenderer(null, null));
-        Logger.out.info(entityServiceMapper.getDataListRetriever("foo", "bar"));
-        Logger.out.info(entityServiceMapper.getDataListRetriever(null, null));
-    }
+//    public static void main(String[] args) {
+//        Logger.configure();
+//        ResultConfigurationParser entityServiceMapper = ResultConfigurationParser.getInstance();
+//        Logger.out.info(entityServiceMapper.getDataListSaver("CategoryEntityGroup", "foobar"));
+//        Logger.out.info(entityServiceMapper.getResultRenderer("caArray","gov.nih.nci.mageom.domain.BioAssayData.DerivedBioAssayData"));
+//        Logger.out.info(entityServiceMapper.getResultRenderer("caArray", "foobar"));
+//        Logger.out.info(entityServiceMapper.getResultRenderer(null, null));
+//        Logger.out.info(entityServiceMapper.getDataListRetriever("foo", "bar"));
+//        Logger.out.info(entityServiceMapper.getDataListRetriever(null, null));
+//    }
 }
