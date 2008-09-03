@@ -14,52 +14,51 @@ import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
 /**
- * Class for returning textfield with specific properties depending on parameters provided. 
+ * Class for returning text field with specific properties depending on parameters provided. 
  * @author chetan_bh
  */
 public class Cab2bFormattedTextField extends JFormattedTextField {
     private static final long serialVersionUID = 1L;
 
     /**
-     * For getting native method implimentation
+     * For getting native method implementation
      */
     private static final Toolkit toolkit = Toolkit.getDefaultToolkit();
 
-    /**
-     * Class for setting textfield documents 
-     */
-    private DocumentFactory documentFactory = new DocumentFactory();
-
-    /* Default fieldType is Float */
-    int fieldType = 2;
-
-    /**/
+    /** For plain fields*/
     public static final int PLAIN_FIELD = 0;
 
-    /* For positive integers */
+    /** For positive integers */
     public static final int WHOLE_NUMBER_FIELD = 1;
 
-    /* For positive and negative integers */
+    /** For positive and negative integers */
     public static final int INTEGER_NUMBER_FIELD = 2;
 
-    /* For decimals */
+    /** For decimals */
     public static final int FLOAT_NUMBER_FIELD = 3;
 
-    /* For dates */
+    /** For dates */
     public static final int DATE_FILED = 4;
 
-    /* For alpha-numeric fields, with no special characters */
+    /** For alpha-numeric fields, with no special characters */
     public static final int ALPHA_NUMERIC_FIELD = 5;
 
     /**
      * Flag for setting command
      */
     private boolean isCommaAllowed = false;
-
+    
     /**
-     * Method to set if comma is allowed in the formmated string
+     * Class for setting text field documents 
+     */
+    private DocumentFactory documentFactory = new DocumentFactory();
+
+    /** Default fieldType is Float */
+    private int fieldType = 2;
+    /**
+     * Method to set if comma is allowed in the formatted string
      * This is required when user specified condition is In
-     * and this text field is going to contain comma seperated values
+     * and this text field is going to contain comma separated values
      * @param commaAllowed
      */
     public void setCommaAllowed(boolean commaAllowed) {
@@ -132,14 +131,16 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
         super(factory, currentValue);
     }
 
-    /* This method calls a factory method to get the correct doument 
-     * depending on the fieldType input parameter
-     * (non-Javadoc)
+    /** 
+     * This method calls a factory method to get the correct document 
+     * depending on the fieldType input parameter 
+     * @return Document
      * @see javax.swing.JTextField#createDefaultModel()
      */
     protected Document createDefaultModel() {
-        if (documentFactory == null)
+        if (documentFactory == null) {
             documentFactory = new DocumentFactory();
+        }
         return documentFactory.getDocument(fieldType);
     }
 
@@ -155,8 +156,9 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
         char[] chars = str.toCharArray();
 
         for (char characterInStr : chars) {
-            if (characterInStr == character)
+            if (characterInStr == character) {
                 count++;
+            }
         }
         return count;
     }
@@ -212,10 +214,10 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
 
             boolean singleOccurenceOfDeciPoint = (charCount == 1) ? true : false;
             for (int i = 0; i < result.length; i++) {
-                if (Character.isDigit(source[i]) || (source[i] == '-' && this.getLength() == 0)
-                        || (source[i] == '.') && !singleOccurenceOfDeciPoint)
+                if (Character.isDigit(source[i]) || (source[i] == '-' && this.getLength() == 0) || (source[i] == '.')
+                        && !singleOccurenceOfDeciPoint) {
                     result[j++] = source[i];
-                else if ((isCommaAllowed == true) && (source[i] == ',')) {
+                } else if ((isCommaAllowed == true) && (source[i] == ',')) {
                     result[j++] = source[i];
                 } else {
                     toolkit.beep();
@@ -259,9 +261,9 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
             char[] result = new char[source.length];
             int j = 0;
             for (int i = 0; i < result.length; i++) {
-                if (Character.isDigit(source[i]) || Character.isLetter(source[i]))
+                if (Character.isDigit(source[i]) || Character.isLetter(source[i])) {
                     result[j++] = source[i];
-                else {
+                } else {
                     toolkit.beep();
                     //changeFocus();s                    
                 }
@@ -278,16 +280,6 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
         private static final long serialVersionUID = 1L;
 
         public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
-            //			String text = getText(0, this.getLength());
-            //			try
-            //			{
-            //				Date userEnteredDate = dateFormatter.parse(text);
-            //			}
-            //			catch (ParseException e)
-            //			{
-            //				System.err.println("date format not correct !");
-            //			}
-            //			super.insertString(offs, str, a);
         }
     }
 
@@ -299,18 +291,28 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
         public PlainDocument getDocument(int fieldType) {
             //TODO 	if(fieldType == DATE_FILED)	{		}
             PlainDocument document = null;
-            if (fieldType == WHOLE_NUMBER_FIELD)
-                document = new WholeNumberDocument();
-            else if (fieldType == INTEGER_NUMBER_FIELD)
-                document = new IntegerNumberDocument();
-            else if (fieldType == FLOAT_NUMBER_FIELD)
-                document = new DecimalNumberDocument();
-            else if (fieldType == DATE_FILED)
-                document = new DateDocument();
-            else if (fieldType == ALPHA_NUMERIC_FIELD)
-                document = new AlphaNumericDocument();
-            else if (fieldType == PLAIN_FIELD)
-                document = new PlainDocument();
+            switch (fieldType) {
+                case WHOLE_NUMBER_FIELD:
+                    document = new WholeNumberDocument();
+                    break;
+                case INTEGER_NUMBER_FIELD:
+                    document = new IntegerNumberDocument();
+                    break;
+                case FLOAT_NUMBER_FIELD:
+                    document = new DecimalNumberDocument();
+                    break;
+                case DATE_FILED:
+                    document = new DateDocument();
+                    break;
+                case ALPHA_NUMERIC_FIELD:
+                    document = new AlphaNumericDocument();
+                    break;
+                case PLAIN_FIELD:
+                    document = new PlainDocument();
+                    break;
+                default:
+                    throw new IllegalArgumentException("Field type is unknown");
+            }
             return document;
         }
     }
