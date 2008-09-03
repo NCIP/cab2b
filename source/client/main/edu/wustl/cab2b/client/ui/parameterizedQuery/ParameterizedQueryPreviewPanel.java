@@ -83,10 +83,8 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
     /**
      * Method to display paramaterizedQueryPreviewPanel in dialog box. 
      */
-    public void showInDialog() {
+    public void showInDialog(final String dialogTitle) {
         Dimension dimension = MainFrame.getScreenDimesion();
-        String dialogTitle = "Unsaved Condition";
-
         dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), this, dialogTitle, new Dimension(
                 (int) (dimension.width * 0.80), (int) (dimension.height * 0.75)), true, false);
         dialog.setVisible(true);

@@ -108,7 +108,7 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                                                                                                    parameterizedQueryMainPanel.getParameterConditionPanel().getConditionPanel()).size() > 1) {
                 ParameterizedQueryOrderPanel panel = new ParameterizedQueryOrderPanel(parameterizedQueryMainPanel);
                 parameterizedQueryMainPanel.getDialog().dispose();
-                panel.showInDialog();
+                panel.showInDialog("Unsaved Conditions");
             } else {
                 JOptionPane.showMessageDialog(parameterizedQueryMainPanel,
                                               "Please select atleast two conditions for order view.", "Warning",

@@ -78,7 +78,6 @@ public class ShowAllSavedQueryPanel extends ShowAllPanel {
      * @param queryID
      */
     final public static void queryLinkAction(Long queryID) {
-
         QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                                     EjbNamesConstants.QUERY_ENGINE_BEAN,
                                                                                                                                     QueryEngineHome.class,
@@ -92,6 +91,6 @@ public class ShowAllSavedQueryPanel extends ShowAllPanel {
         }
         ParameterizedQueryShowResultPanel parameterizedQueryPreviewPanel = new ParameterizedQueryShowResultPanel(
                 cab2bQuery);
-        parameterizedQueryPreviewPanel.showInDialog();
+        parameterizedQueryPreviewPanel.showInDialog("Saved Conditions");
     }
 }
