@@ -12,6 +12,7 @@ import edu.wustl.cab2b.common.exception.RuntimeException;
 import gov.nih.nci.cagrid.cqlquery.Attribute;
 import gov.nih.nci.cagrid.cqlquery.CQLQuery;
 import gov.nih.nci.cagrid.cqlquery.Group;
+import gov.nih.nci.cagrid.cqlquery.LogicalOperator;
 import gov.nih.nci.cagrid.cqlquery.Object;
 import gov.nih.nci.cagrid.cqlquery.Predicate;
 import gov.nih.nci.cagrid.cqlquery.QueryModifier;
@@ -98,6 +99,7 @@ public class QueryResultTransformerUtil {
     private Group createGroup(List<Attribute> constraints) {
         Group group = new Group();
         group.setAttribute(constraints.toArray(new Attribute[0]));
+        group.setLogicRelation(LogicalOperator.OR);
         return group;
     }
 
