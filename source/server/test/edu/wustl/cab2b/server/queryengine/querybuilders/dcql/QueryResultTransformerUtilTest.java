@@ -2,7 +2,6 @@ package edu.wustl.cab2b.server.queryengine.querybuilders.dcql;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import junit.framework.TestCase;
 import edu.wustl.cab2b.server.queryengine.resulttransformers.QueryLogger;
@@ -37,18 +36,20 @@ public class QueryResultTransformerUtilTest extends TestCase {
     public void testGetAttributeResult() {
         String className = "edu.wustl.fe.Gene";
         String idAttrName = "id";
-        String[] attributeNames = {"name", "symbol"};
-        String[] ids = {"1", "2"};
+        String[] attributeNames = { "name", "symbol" };
+        String[] ids = { "1", "2" };
         String url = "http://128.252.227.94:9094/wsrf/services/cagrid/CaFE";
 
         QueryLogger queryLogger = new QueryLogger();
         QueryResultTransformerUtil util = new QueryResultTransformerUtil(queryLogger);
         List<Map<String, String>> res = util.getAttributeResult(className, attributeNames, idAttrName, ids, url, null);
+
+        assertEquals(2, res.size());
+
         for (Map<String, String> map : res) {
-            for (Entry<String, String> entry : map.entrySet()) {
-                System.out.println("KEY : " + entry.getKey() + "VAL : " + entry.getValue());
+            for (String name : attributeNames) {
+                assertTrue(map.containsKey(name));
             }
         }
     }
-
 }
