@@ -56,6 +56,8 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
 
     private Dimension maxLabelDimension;
 
+    private final List<AbstractTypePanel> panelIndexList = new ArrayList<AbstractTypePanel>();
+
     public ParameterizedQueryConditionPanel() {
         this(null, true);
     }
@@ -284,6 +286,13 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
         return labelHeaderPanel;
     }
 
+    private void populatePanelIndexList(final Cab2bPanel cab2bPanel) {
+        panelIndexList.clear();
+        for (int index = 0; index < cab2bPanel.getComponentCount(); index++) {
+            panelIndexList.add((AbstractTypePanel) cab2bPanel.getComponent(index));
+        }
+    }
+
     /**
      * Method to create header panel
      * 
@@ -298,8 +307,10 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
             public void actionPerformed(ActionEvent arg0) {
                 if (isShowAllAttribute) {
                     showAllAttributePanel();
+                    populatePanelIndexList(allAttributePanel);
                 } else {
                     showOnlyConditionPanel();
+                    populatePanelIndexList(onlyConditionAttributePanel);
                 }
             }
         });
@@ -422,6 +433,21 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
                 isShowAllAttribute = true;
             }
             updateUI();
+        }
+    }
+
+    public void resetConditionIndices() {
+        Cab2bPanel cab2bPanel = null;
+        if (isShowAllAttribute) {
+            cab2bPanel = allAttributePanel;
+        } else {
+            cab2bPanel = onlyConditionAttributePanel;
+        }
+        cab2bPanel.removeAll();
+        for (AbstractTypePanel absPanel : panelIndexList) {
+            absPanel.add(absPanel.getAttributeDisplayNameTextField(), 1);
+            absPanel.setAttributeCheckBox(false);
+            cab2bPanel.add("br ", absPanel);
         }
     }
 }

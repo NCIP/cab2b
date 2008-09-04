@@ -23,10 +23,7 @@ import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 
 public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel {
-
-    private Cab2bButton upArrowButton;
-
-    private Cab2bButton downArrowButton;
+    private static final long serialVersionUID = 1L;
 
     private Cab2bButton okButton;
 
@@ -34,29 +31,32 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
 
     private ParameterizedQueryMainPanel parameterizedQueryMainPanel;
 
-    public ParameterizedQueryOrderPanel(ParameterizedQueryMainPanel parameterizedQueryMainPanel) {
+    public ParameterizedQueryOrderPanel(final ParameterizedQueryMainPanel parameterizedQueryMainPanel) {
+        super();
         this.parameterizedQueryMainPanel = parameterizedQueryMainPanel;
         initGUI();
     }
 
     /**
-     * 
+     * This method initializes the query order preview panel.
      */
-    private static final long serialVersionUID = 1L;
-
     protected void initGUI() {
         this.setLayout(new BorderLayout());
         bottomConditionPanel = new Cab2bPanel();
         topConditionPanel = new Cab2bPanel();
+
         okButton = new Cab2bButton("Ok");
         okButton.addActionListener(new OkButtonActionListener());
+
         cancelButton = new Cab2bButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 dialog.dispose();
+                parameterizedQueryMainPanel.getParameterConditionPanel().resetConditionIndices();
                 parameterizedQueryMainPanel.showInDialog();
             }
         });
+
         creatOrderPreviewPanel(parameterizedQueryMainPanel.getParameterizedQueryDataModel().getConditions());
         initTopConditionPanel();
         addArrowButtons();
@@ -64,39 +64,50 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
         this.add(getNavigationPanel(), BorderLayout.SOUTH);
     }
 
+    /**
+     * This method initialize the arrow buttons and sets them in topPanelContainer.
+     */
     private void addArrowButtons() {
         ImageIcon icon = createImageIcon("upArrow.gif");
-        upArrowButton = new Cab2bButton(icon);
+        Cab2bButton upArrowButton = new Cab2bButton(icon);
         upArrowButton.setBorder(null);
         upArrowButton.setPreferredSize(new Dimension(75, 20));
         upArrowButton.setBackground(Color.white);
         upArrowButton.addActionListener(new UpArrowActionListener());
 
         icon = createImageIcon("downArrow.gif");
-        downArrowButton = new Cab2bButton(icon);
+        Cab2bButton downArrowButton = new Cab2bButton(icon);
         downArrowButton.setBorder(null);
         downArrowButton.setPreferredSize(new Dimension(75, 20));
         downArrowButton.setBackground(Color.white);
         downArrowButton.addActionListener(new DownArrowActionListener());
-        Cab2bPanel orderLabelPanel = new Cab2bPanel();
 
+        Cab2bPanel orderLabelPanel = new Cab2bPanel();
         orderLabelPanel.setLayout(new BorderLayout());
         orderLabelPanel.add(upArrowButton, BorderLayout.NORTH);
         orderLabelPanel.add(new Cab2bLabel(" "), BorderLayout.CENTER);
         orderLabelPanel.add(downArrowButton, BorderLayout.SOUTH);
+
         Cab2bPanel topPanelContainer = (Cab2bPanel) topConditionTitlePanel.getContentContainer();
         topPanelContainer.add("tab ", orderLabelPanel);
     }
 
-    private ImageIcon createImageIcon(String name) {
-        ImageIcon newLeafIcon = new ImageIcon(getClass().getClassLoader().getResource(name));
-        return newLeafIcon;
+    /**
+     * This method creates and returns the ImageIcon from the given icon image name.
+     * @param name name of the image to be used to create icon
+     * @return
+     */
+    private ImageIcon createImageIcon(final String name) {
+        return new ImageIcon(getClass().getClassLoader().getResource(name));
     }
 
+    /**
+     * This method initializes and return the navigation panel
+     */
     protected Cab2bPanel getNavigationPanel() {
-        if (navigationPanel == null)
+        if (navigationPanel == null) {
             navigationPanel = new Cab2bPanel();
-
+        }
         navigationPanel.removeAll();
         navigationPanel.setLayout(new RiverLayout(5, 10));
         navigationPanel.setBackground(new Color(240, 240, 240));
@@ -106,22 +117,20 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
         }
         navigationPanel.add("right ", cancelButton);
         navigationPanel.add("br ", new Cab2bLabel());
+
         return navigationPanel;
     }
 
     /**
-     * UpArrowButton ActionListener
-     * 
+     * This method is UpArrowButton ActionListener
      * @author deepak_shingan
-     * 
      */
     private class UpArrowActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
             Map<Integer, AbstractTypePanel> panelMap = getAllSelectedPanel();
             for (Integer index : panelMap.keySet()) {
-                AbstractTypePanel downPanel;
                 if (index != 0) {
-                    downPanel = (AbstractTypePanel) topConditionPanel.getComponent(index);
+                    AbstractTypePanel downPanel = (AbstractTypePanel) topConditionPanel.getComponent(index);
                     topConditionPanel.remove(downPanel);
                     topConditionPanel.add(downPanel, "br ", index - 1);
                     topConditionPanel.revalidate();
@@ -132,25 +141,16 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
     }
 
     /**
-     * Method to create order preview panel
-     * 
-     * @param conditionMap
+     * This method create order preview panel from given conditions 
+     * @param conditionMap Map of expressionId -> List<IConditions>
      */
     private void creatOrderPreviewPanel(Map<Integer, Collection<ICondition>> conditionMap) {
-
         AbstractTypePanel componentPanel = null;
-        List<AbstractTypePanel> panelList;
-        ParseXMLFile parseFile = null;
-        try {
-            parseFile = ParseXMLFile.getInstance();
-        } catch (CheckedException checkedException) {
-            CommonUtils.handleException(checkedException, this, true, true, false, false);
-        }
+
         ParameterizedQueryConditionPanel conditionPanel = parameterizedQueryMainPanel.getParameterConditionPanel();
-        panelList = conditionPanel.getCheckedAttributePanels(conditionPanel.getConditionPanel());
+        List<AbstractTypePanel> panelList = conditionPanel.getCheckedAttributePanels(conditionPanel.getConditionPanel());
         for (int index = 0; index < panelList.size(); index++) {
             AbstractTypePanel panel = panelList.get(index);
-            // uncheck all checkboxes
             panel.setAttributeCheckBox(false);
 
             // set changed/unchanged label for each attribute field
@@ -162,45 +162,47 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
             // Now add to the condition panel
             topConditionPanel.add("br ", panelList.get(index));
         }
-        panelList = parameterizedQueryMainPanel.getParameterConditionPanel().getUnCheckedAttributePanels();
-        getMaxLabelDimension(conditionMap);
-        for (int index = 0; index < panelList.size(); index++) {
-            AbstractTypePanel oldComponentPanel = panelList.get(index);
-            String conditionString = oldComponentPanel.getConditionItem();
-            if (((conditionString.equals("Is Null")) || conditionString.equals("Is Not Null") || (oldComponentPanel.getValues().size() != 0))) {
 
-                try {
+        try {
+            ParseXMLFile parseFile = ParseXMLFile.getInstance();
+
+            panelList = parameterizedQueryMainPanel.getParameterConditionPanel().getUnCheckedAttributePanels();
+            findMaxLabelDimension(conditionMap);
+            for (int index = 0; index < panelList.size(); index++) {
+                AbstractTypePanel oldComponentPanel = panelList.get(index);
+                String conditionString = oldComponentPanel.getConditionItem();
+                if ("Is Null".equals(conditionString) || "Is Not Null".equals(conditionString)
+                        || !oldComponentPanel.getValues().isEmpty()) {
                     componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
                                                                                         parseFile,
                                                                                         oldComponentPanel.getAttributeEntity(),
                                                                                         maxLabelDimension);
                     componentPanel.createParametrizedPanel(oldComponentPanel.getAttributeEntity());
                     componentPanel.setAttributeDisplayName(oldComponentPanel.getAttributeDisplayName());
-                } catch (CheckedException checkedException) {
-                    CommonUtils.handleException(checkedException, this, true, true, false, false);
+
+                    setConditionValues(componentPanel, conditionMap);
+                    CommonUtils.disableAllComponent(componentPanel);
+                    bottomConditionPanel.add("br ", componentPanel);
                 }
-                setConditionValues(componentPanel, conditionMap);
-                CommonUtils.disableAllComponent(componentPanel);
-                bottomConditionPanel.add("br ", componentPanel);
             }
+        } catch (CheckedException checkedException) {
+            CommonUtils.handleException(checkedException, this, true, true, false, false);
         }
     }
 
-    /*
-     * DownArrowButton Action listener @author deepak_shingan
-     * 
+    /**
+     * DownArrowButton Action listener 
+     * @author deepak_shingan
      */
     private class DownArrowActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
             Map<Integer, AbstractTypePanel> panelMap = getAllSelectedPanel();
-            AbstractTypePanel downPanel = null;
 
-            Integer idxs[] = new Integer[panelMap.size()];
-            idxs = panelMap.keySet().toArray(idxs);
+            Integer idxs[] = panelMap.keySet().toArray(new Integer[0]);
             int count = topConditionPanel.getComponentCount();
             for (int i = idxs.length - 1; i >= 0; i--) {
                 if (idxs[i] < count - 1) {
-                    downPanel = (AbstractTypePanel) topConditionPanel.getComponent(idxs[i]);
+                    AbstractTypePanel downPanel = (AbstractTypePanel) topConditionPanel.getComponent(idxs[i]);
                     topConditionPanel.setComponentZOrder(downPanel, idxs[i] + 1);
                     topConditionPanel.revalidate();
                     topConditionPanel.repaint();
@@ -209,6 +211,10 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
         }
     }
 
+    /**
+     * This method is OK button action listener. It sets the sequence of the conditions arranged by the user.
+     * @author chetan_patil
+     */
     private class OkButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
             dialog.dispose();
@@ -217,7 +223,6 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
             // Keep in mind whenever you will add panel from topConditionPanel to
             // base panel it will automatically get removed from topConditionPanel
             for (int index = 0; index < totalPanelCount; index++) {
-
                 if (topConditionPanel.getComponent(0) instanceof AbstractTypePanel) {
                     AbstractTypePanel oldPanel = (AbstractTypePanel) topConditionPanel.getComponent(0);
                     oldPanel.add(oldPanel.getAttributeDisplayNameTextField(), 1);
