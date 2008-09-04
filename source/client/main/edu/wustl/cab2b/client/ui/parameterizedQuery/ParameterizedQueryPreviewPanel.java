@@ -56,7 +56,7 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
     protected Cab2bTitledPanel bottomConditionTitlePanel;
 
     /**
-     * Navigation panel containg "Show Results" and "Cancel" buttons   
+     * Navigation panel containing "Show Results" and "Cancel" buttons   
      */
     protected Cab2bPanel navigationPanel;
 
@@ -127,7 +127,7 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
      * @param conditionMap
      * @return
      */
-    protected Dimension getMaxLabelDimension(Map<Integer, Collection<ICondition>> conditionMap) {
+    protected Dimension findMaxLabelDimension(Map<Integer, Collection<ICondition>> conditionMap) {
         List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
         for (Integer key : conditionMap.keySet()) {
             for (ICondition condition : conditionMap.get(key)) {
