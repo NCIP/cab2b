@@ -99,13 +99,14 @@ public class TestUtil {
         a.setName(name);
         return a;
     }
-    public static EntityInterface getEntityWithGrp(String groupName, String entityName, String attrName) {
+    public static EntityInterface getEntityWithCaB2BGrp(String groupName, String entityName, String attrName) {
         AttributeInterface a = getAttribute(attrName);
         EntityInterface e1 = getEntity(entityName);
         e1.addAttribute(a);
         a.setEntity(e1);
         
         EntityGroupInterface eg = DomainObjectFactory.getInstance().createEntityGroup();
+        DynamicExtensionUtility.addTaggedValue(eg,edu.wustl.cab2b.common.util.Constants.CAB2B_ENTITY_GROUP, edu.wustl.cab2b.common.util.Constants.CAB2B_ENTITY_GROUP);
         eg.setName(groupName);
         eg.addEntity(e1);
         
