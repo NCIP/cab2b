@@ -175,13 +175,16 @@ public class CommonUtils {
 
             errorMessageForDialog = customErrorMessage;
             errorMessageForLog = errorCode + ":" + customErrorMessage;
-        } else if (exception instanceof LocatorException) {
-            LocatorException locatorException = (LocatorException) exception;
-            errorCode = locatorException.getErrorCode();
-            customErrorMessage = ErrorCodeHandler.getErrorMessage(errorCode);
-
-            errorMessageForDialog = customErrorMessage;
-            errorMessageForLog = errorCode + ":" + customErrorMessage;
+            //TODO Chandrakant : I think below code is not needed as 
+            //LocatorException extends caB2B RuntimeException (caught below)
+            //and code in the the two blocks is exact same.
+//        } else if (exception instanceof LocatorException) {
+//            LocatorException locatorException = (LocatorException) exception;
+//            errorCode = locatorException.getErrorCode();
+//            customErrorMessage = ErrorCodeHandler.getErrorMessage(errorCode);
+//
+//            errorMessageForDialog = customErrorMessage;
+//            errorMessageForLog = errorCode + ":" + customErrorMessage;
         } else if (exception instanceof RuntimeException) {
             RuntimeException runtimeException = (RuntimeException) exception;
             errorCode = runtimeException.getErrorCode();
