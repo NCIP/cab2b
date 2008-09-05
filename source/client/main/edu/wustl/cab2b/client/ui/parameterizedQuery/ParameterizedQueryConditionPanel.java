@@ -44,11 +44,11 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
 
     private Cab2bPanel allAttributePanel;
 
-    private Cab2bPanel onlyConditionAttributePanel;
+    private Cab2bPanel definedAttributePanel;
 
     private ParameterizedQueryDataModel queryDataModel;
 
-    private boolean isShowAllAttribute;
+    private boolean viewAllAttribute;
 
     private Cab2bPanel filterPanel;
 
@@ -56,15 +56,17 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
 
     private Dimension maxLabelDimension;
 
+    //Used as buffer to remember the sequence of the conditions on preview panel
     private final List<AbstractTypePanel> panelIndexList = new ArrayList<AbstractTypePanel>();
 
     public ParameterizedQueryConditionPanel() {
         this(null, true);
     }
 
-    public ParameterizedQueryConditionPanel(ParameterizedQueryDataModel queryDataModel, boolean isShowAllAttribute) {
+    public ParameterizedQueryConditionPanel(ParameterizedQueryDataModel queryDataModel, boolean viewAllAttribute) {
+        super();
         this.queryDataModel = queryDataModel;
-        this.isShowAllAttribute = isShowAllAttribute;
+        this.viewAllAttribute = viewAllAttribute;
         maxLabelDimension = getMaximumDimensionForAttribute();
         initGUI();
     }
@@ -90,11 +92,12 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
     }
 
     private void updatePanelStatus(AbstractTypePanel componentPanel) {
-        if (onlyConditionAttributePanel != null) {
-            int panelCount = onlyConditionAttributePanel.getComponentCount();
+        if (definedAttributePanel != null) {
+            int panelCount = definedAttributePanel.getComponentCount();
             for (int index = 0; index < panelCount; index++) {
-                if (onlyConditionAttributePanel.getComponent(index) instanceof AbstractTypePanel) {
-                    AbstractTypePanel conditionPanel = (AbstractTypePanel) onlyConditionAttributePanel.getComponent(index);
+                if (definedAttributePanel.getComponent(index) instanceof AbstractTypePanel) {
+                    AbstractTypePanel conditionPanel = (AbstractTypePanel) definedAttributePanel.getComponent(index);
+
                     if (conditionPanel.getAttributeEntity() == componentPanel.getAttributeEntity()
                             && conditionPanel.getExpressionId() == componentPanel.getExpressionId()) {
                         componentPanel.setAttributeCheckBox(conditionPanel.isAttributeCheckBoxSelected());
@@ -111,48 +114,49 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
      * Method to generate panels for all attributes avaialble in dag node
      */
     private void showAllAttributePanel() {
-        // Logic : Initially create separate panel for each attributes
+        // Initially create separate panel for each attributes
         // check/update that attribute values with show only condition panels
-
-        if (allAttributePanel == null)
+        if (allAttributePanel == null) {
             allAttributePanel = new Cab2bPanel();
-
+        }
         allAttributePanel.removeAll();
-        // allAttributePanel.add("br hfill", getLabelHeaderPanel());
-        if (onlyConditionAttributePanel != null) {
-            // Add checked/unchecked conditions from the show Only condition
-            // panel
-            TreeMap<Integer, AbstractTypePanel> panelMap = getAllConditionAttributePanels(onlyConditionAttributePanel);
+
+        if (definedAttributePanel != null) {
+            // Add checked/unchecked conditions from the show Only condition panel
+            TreeMap<Integer, AbstractTypePanel> panelMap = getAllConditionAttributePanels(definedAttributePanel);
+
             // first add only checked panels
             for (Integer index : panelMap.keySet()) {
-                if (panelMap.get(index).isAttributeCheckBoxSelected())
+                if (panelMap.get(index).isAttributeCheckBoxSelected()) {
                     allAttributePanel.add("br ", panelMap.get(index));
+                }
             }
+
             // now add unchecked condition panels
             for (Integer index : panelMap.keySet()) {
-                if (!panelMap.get(index).isAttributeCheckBoxSelected())
+                if (!panelMap.get(index).isAttributeCheckBoxSelected()) {
                     allAttributePanel.add("br ", panelMap.get(index));
+                }
             }
         }
 
         Map<Integer, Collection<AttributeInterface>> allAttributes = queryDataModel.getAllAttributes();
-
         try {
             ParseXMLFile parseFile = ParseXMLFile.getInstance();
-            AbstractTypePanel componentPanel = null;
             List<AttributeInterface> allConditionAttributeList = getAllConditionAttribute(allAttributePanel);
             for (Integer exprId : allAttributes.keySet()) {
                 for (AttributeInterface attribute : allAttributes.get(exprId)) {
                     if (!allConditionAttributeList.contains(attribute)) {
-                        componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(parseFile, attribute,
-                                                                                            maxLabelDimension);
+                        AbstractTypePanel componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
+                                                                                                              parseFile,
+                                                                                                              attribute,
+                                                                                                              maxLabelDimension);
                         componentPanel.createParametrizedPanel(attribute);
                         // setConditionValues(componentPanel);
                         componentPanel.setExpressionId(exprId);
                         componentPanel.setAttributeDisplayName(exprId.intValue() + "."
                                 + componentPanel.getAttributeDisplayName());
-                        // check/update that attribute values with show only
-                        // condition panels
+                        // check/update that attribute values with show only condition panels
                         updatePanelStatus(componentPanel);
                         allAttributePanel.add("br ", componentPanel);
                     }
@@ -191,26 +195,26 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
      * @return
      */
     public Cab2bPanel getConditionPanel() {
-        if (isShowAllAttribute)
+        if (viewAllAttribute)
             return allAttributePanel;
         else
-            return onlyConditionAttributePanel;
+            return definedAttributePanel;
     }
 
     /**
      * Method to generate panels for specified conditions defined in dag node
      */
     private void showOnlyConditionPanel() {
-        if (onlyConditionAttributePanel == null)
-            onlyConditionAttributePanel = new Cab2bPanel();
+        if (definedAttributePanel == null)
+            definedAttributePanel = new Cab2bPanel();
 
-        onlyConditionAttributePanel.removeAll();
+        definedAttributePanel.removeAll();
         // onlyConditionAttributePanel.add("br hfill", getLabelHeaderPanel());
         if (allAttributePanel != null) {
             // Add checked/unchecked conditions from the show all panel
             TreeMap<Integer, AbstractTypePanel> panelMap = getAllConditionAttributePanels(allAttributePanel);
             for (Integer index : panelMap.keySet()) {
-                onlyConditionAttributePanel.add("br ", panelMap.get(index));
+                definedAttributePanel.add("br ", panelMap.get(index));
             }
         }
 
@@ -224,7 +228,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
         try {
             ParseXMLFile parseFile = ParseXMLFile.getInstance();
             AbstractTypePanel componentPanel = null;
-            List<AttributeInterface> allConditionAttributeList = getAllConditionAttribute(onlyConditionAttributePanel);
+            List<AttributeInterface> allConditionAttributeList = getAllConditionAttribute(definedAttributePanel);
             for (Integer key : conditionMap.keySet()) {
                 for (ICondition condition : conditionMap.get(key)) {
                     if (!allConditionAttributeList.contains(condition.getAttribute())) {
@@ -236,14 +240,14 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
                         setConditionValues(componentPanel);
                         componentPanel.setAttributeDisplayName(key.intValue() + "."
                                 + componentPanel.getAttributeDisplayName());
-                        onlyConditionAttributePanel.add("br ", componentPanel);
+                        definedAttributePanel.add("br ", componentPanel);
                     }
                 }
             }
         } catch (CheckedException checkedException) {
             CommonUtils.handleException(checkedException, this, true, true, false, false);
         }
-        contentPanel.add("br ", onlyConditionAttributePanel);
+        contentPanel.add("br ", definedAttributePanel);
     }
 
     private List<AttributeInterface> getAllConditionAttribute(Container basePanel) {
@@ -305,12 +309,12 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
         filterComboBox.addItemListener(new FilterComboBoxItemListener());
         filterComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                if (isShowAllAttribute) {
+                if (viewAllAttribute) {
                     showAllAttributePanel();
                     populatePanelIndexList(allAttributePanel);
                 } else {
                     showOnlyConditionPanel();
-                    populatePanelIndexList(onlyConditionAttributePanel);
+                    populatePanelIndexList(definedAttributePanel);
                 }
             }
         });
@@ -329,7 +333,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
     private void initGUI() {
         contentPanel = new Cab2bPanel();
         if (queryDataModel != null) {
-            if (isShowAllAttribute) {
+            if (viewAllAttribute) {
                 showAllAttributePanel();
             } else {
                 showOnlyConditionPanel();
@@ -366,10 +370,10 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
         List<AbstractTypePanel> panelList = new ArrayList<AbstractTypePanel>();
         Cab2bPanel basePanel = null;
 
-        if (isShowAllAttribute)
+        if (viewAllAttribute)
             basePanel = allAttributePanel;
         else
-            basePanel = onlyConditionAttributePanel;
+            basePanel = definedAttributePanel;
 
         for (int index = 0; index < basePanel.getComponentCount(); index++) {
             if (basePanel.getComponent(index) instanceof AbstractTypePanel) {
@@ -428,9 +432,9 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
             contentPanel.removeAll();
 
             if (filterComboBox.getSelectedIndex() == 0) {
-                isShowAllAttribute = false;
+                viewAllAttribute = false;
             } else {
-                isShowAllAttribute = true;
+                viewAllAttribute = true;
             }
             updateUI();
         }
@@ -438,10 +442,10 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
 
     public void resetConditionIndices() {
         Cab2bPanel cab2bPanel = null;
-        if (isShowAllAttribute) {
+        if (viewAllAttribute) {
             cab2bPanel = allAttributePanel;
         } else {
-            cab2bPanel = onlyConditionAttributePanel;
+            cab2bPanel = definedAttributePanel;
         }
         cab2bPanel.removeAll();
         for (AbstractTypePanel absPanel : panelIndexList) {
