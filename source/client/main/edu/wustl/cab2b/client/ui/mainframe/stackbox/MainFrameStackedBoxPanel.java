@@ -27,9 +27,9 @@ import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllCategoryPanel;
 import edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.common.cache.AbstractEntityCache;
 import edu.wustl.cab2b.common.category.CategoryPopularity;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
@@ -84,7 +84,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
                                                                      new CategoryHyperlinkActionListener());
         final String titlePopularcategories = ApplicationProperties.getValue(POPULAR_CATEGORY_BOX_TEXT);
         stackedBox.addBox(titlePopularcategories, popularSearchCategoryPanel, POPULAR_CATEGORIES_IMAGE, false);
-        
+
         myExperimentsPanel = MyExperimentLinkPanel.getInstance();
 
         final String titleExpr = ApplicationProperties.getValue(EXPERIMENT_BOX_TEXT);
@@ -107,7 +107,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
         panel.add(new Cab2bLabel());
         for (CategoryPopularity category : data) {
             Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
-            EntityInterface entityInterface = EntityCache.getCache().getEntityById(category.getEntityId());
+            EntityInterface entityInterface = AbstractEntityCache.getCache().getEntityById(category.getEntityId());
             CommonUtils.setHyperlinkProperties(hyperlink, entityInterface,
                                                Utility.getDisplayName(entityInterface),
                                                entityInterface.getDescription(), actionClass);
@@ -134,7 +134,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
         final String headers[] = { ShowAllCategoryPanel.CATEGORY_NAME_TITLE, ShowAllCategoryPanel.CATEGORY_POPULARITY_TITLE, ShowAllCategoryPanel.CATEGORY_DESCRIPTION_TITLE, ShowAllCategoryPanel.CATEGORY_DATE_TITLE, " Category ID-Hidden" };
         int i = 0;
         for (CategoryPopularity category : allPopularCategories) {
-            EntityInterface entityInterface = EntityCache.getCache().getEntityById(category.getEntityId());
+            EntityInterface entityInterface = AbstractEntityCache.getCache().getEntityById(category.getEntityId());
             objData[i][0] = Utility.getDisplayName(entityInterface);
             objData[i][1] = Long.toString(category.getPopularity());
             objData[i][2] = entityInterface.getDescription();
@@ -152,11 +152,10 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
      */
     private void addShowAllLink(Cab2bPanel panel, ActionListener actionClass, boolean enableLink) {
         Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
-        hyperlink.setEnabled(enableLink);
+        hyperlink.setVisible(enableLink);
         CommonUtils.setHyperlinkProperties(hyperlink, null, SHOW_ALL_LINK, "", actionClass);
         panel.add("br right", hyperlink);
     }
-
 
     /**
      * Homepage Category Link action listener class
