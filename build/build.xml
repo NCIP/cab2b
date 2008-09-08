@@ -392,7 +392,7 @@
 		<copy overwrite="true" file="lib/server/oracleDriver.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/server/mysql-connector-java-3.0.16-ga-bin.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/common/hibernate3.jar" todir="${jboss.common.lib.dir}" />
-		<mkdir dir="${jboss.home}/server/default/log"/>
+		<mkdir dir="${jboss.home}/server/default/log" />
 		<echo message="" file="${jboss.log.dir}/caB2B.log" append="false" />
 	</target>
 
@@ -503,7 +503,7 @@
 				<include name="cab2b.properties" />
 				<include name="server.properties" />
 				<include name="dbutil.properties" />
-				<include name="*.xml"/>
+				<include name="*.xml" />
 			</fileset>
 		</copy>
 
@@ -791,6 +791,9 @@
 			<fileset dir="${common.src}">
 				<include name="**/edu/wustl/cab2b/common/user/*.java" />
 			</fileset>
+			<fileset dir="${common.src}">
+				<include name="**/edu/wustl/cab2b/common/category/*.java" />
+			</fileset>
 			<hibernate version="2.0" />
 		</hibernatedoclet>
 
@@ -799,6 +802,7 @@
 			<include name="**/edu/wustl/cab2b/common/domain/*hbm.xml" />
 			<include name="**/edu/wustl/cab2b/common/queryengine/*hbm.xml" />
 			<include name="**/edu/wustl/cab2b/common/user/*hbm.xml" />
+			<include name="**/edu/wustl/cab2b/common/category/*hbm.xml" />
 
 			<replacefilter token="readonly=" value="inverse=" />
 			<replacefilter token="role=" value="name=" />
@@ -814,6 +818,9 @@
 				<include name="*.hbm.xml" />
 			</fileset>
 			<fileset dir="${common.src}/edu/wustl/cab2b/common/user">
+				<include name="*.hbm.xml" />
+			</fileset>
+			<fileset dir="${common.src}/edu/wustl/cab2b/common/category">
 				<include name="*.hbm.xml" />
 			</fileset>
 		</copy>
