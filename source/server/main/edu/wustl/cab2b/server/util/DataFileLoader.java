@@ -56,12 +56,13 @@ public class DataFileLoader implements DataFileLoaderInterface {
                 process(dataTypes, values, columnCount, ps);
                 ps.executeUpdate();
                 ps.clearParameters();
+                oneRecord = reader.readLine();
             }
             reader.close();
             if (!con.getAutoCommit()) {
                 con.commit();
             }
-            oneRecord = reader.readLine();
+            
         } catch (SQLException e) {
             logger.error(e.getMessage());
             throw new RuntimeException("Error while loading path information into database", e,
