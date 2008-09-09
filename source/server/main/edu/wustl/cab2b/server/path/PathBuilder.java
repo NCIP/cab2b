@@ -111,6 +111,7 @@ public class PathBuilder {
     public static synchronized void loadSingleModelFromParserObject(Connection connection, DomainModelParser parser,
                                                        String applicationName, int maxPathLength) {
         DomainModelProcessor processor = null;
+        init();
         try {
             processor = new DomainModelProcessor(parser, applicationName);
         } catch (DynamicExtensionsSystemException e) {
@@ -554,5 +555,12 @@ public class PathBuilder {
             maxId = Long.parseLong(result[0][0]);
         }
         return maxId + 1;
+    }
+    /**
+     * As this class has static methods and uses class variables (static), before each call they should be initialized again.
+     */
+    private static void init() {
+        associationSet = new HashSet<Long>();
+        srcDesVsAssociations = new HashMap<String, List<AssociationInterface>>();
     }
 }
