@@ -131,4 +131,12 @@ alter table CAB2B_USER_URL_MAPPING add index FKC64BBF4AB2004842 (SERVICE_URL_ID)
 insert into CAB2B_user (USER_ID, NAME, PASSWORD, IS_ADMIN) values (1,'Admin', 'admin123', 1); 
 insert into CAB2B_user (USER_ID, NAME, PASSWORD, IS_ADMIN) values (2,'cab2bUser', 'cab2b123', 0); 
 
+DROP TABLE IF EXISTS cab2b_category_popularity;
+
+CREATE TABLE cab2b_category_popularity (
+  IDENTIFIER bigint(30) NOT NULL auto_increment,
+  ENTITY_ID bigint(30) default NULL,
+  POPULARITY bigint(30) NOT NULL default '0',
+  PRIMARY KEY  (IDENTIFIER)
+)
 
