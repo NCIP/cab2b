@@ -32,7 +32,7 @@ class PathReplicationUtil {
         }
         Node origNode = createNode(key);
         Set<Integer> repNodes = replicationNodes.get(key);
-        logger.info("Replicating paths for origNode " + origNode);
+        logger.debug("Replicating paths for origNode " + origNode);
 
         Set<Path> relevantPaths = new HashSet<Path>();
         Set<Path> origPaths = new HashSet<Path>(replicatedPaths);

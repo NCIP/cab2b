@@ -48,7 +48,7 @@ import org.apache.log4j.Logger;
  * @author srinath_k
  */
 public class GraphPathFinder {
-    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(PathReplicationUtil.class);
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(GraphPathFinder.class);
 
     public static boolean MEM_CACHE = true;
 
@@ -92,7 +92,7 @@ public class GraphPathFinder {
         Node[] allNodes = this.inputGraph.allNodes().toArray(new Node[0]);
         int numPaths = 0;
         for (Node srcNode : allNodes) {
-            logger.info("Processing " + srcNode);
+            logger.debug("Processing " + srcNode);
             for (Node destNode : allNodes) {
                 if (srcNode.equals(destNode)) {
                     // don't process self-edges now...
