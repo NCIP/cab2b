@@ -77,18 +77,18 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
         mySearchQueriesPanel = SavedQueryLinkPanel.getInstance();
 
         final String titleQuery = ApplicationProperties.getValue(QUERY_BOX_TEXT);
-        stackedBox.addBox(titleQuery, mySearchQueriesPanel, MY_SEARCH_QUERIES_IMAGE, false);
+        stackedBox.addBox(titleQuery, mySearchQueriesPanel, MY_SEARCH_QUERIES_IMAGE, true);
 
         popularSearchCategoryPanel = getPopularSearchCategoriesPanel(
                                                                      CommonUtils.getPopularSearchCategoriesForMainFrame(),
                                                                      new CategoryHyperlinkActionListener());
         final String titlePopularcategories = ApplicationProperties.getValue(POPULAR_CATEGORY_BOX_TEXT);
-        stackedBox.addBox(titlePopularcategories, popularSearchCategoryPanel, POPULAR_CATEGORIES_IMAGE, false);
+        stackedBox.addBox(titlePopularcategories, popularSearchCategoryPanel, POPULAR_CATEGORIES_IMAGE, true);
 
         myExperimentsPanel = MyExperimentLinkPanel.getInstance();
 
         final String titleExpr = ApplicationProperties.getValue(EXPERIMENT_BOX_TEXT);
-        stackedBox.addBox(titleExpr, myExperimentsPanel, MY_EXPERIMENT_IMAGE, false);
+        stackedBox.addBox(titleExpr, myExperimentsPanel, MY_EXPERIMENT_IMAGE, true);
 
         stackedBox.setPreferredSize(new Dimension(250, 500));
         stackedBox.setMinimumSize(new Dimension(250, 500));
@@ -103,8 +103,9 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
     public Cab2bPanel getPopularSearchCategoriesPanel(Collection<CategoryPopularity> data,
                                                       ActionListener actionClass) {
         Cab2bPanel panel = new Cab2bPanel();
-        panel.setLayout(new RiverLayout(10, 5));
+        panel.setLayout(new RiverLayout(5, 5));
         panel.add(new Cab2bLabel());
+        int categoryCounter = 0;
         for (CategoryPopularity category : data) {
             Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
             EntityInterface entityInterface = AbstractEntityCache.getCache().getEntityById(category.getEntityId());
@@ -112,6 +113,8 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
                                                Utility.getDisplayName(entityInterface),
                                                entityInterface.getDescription(), actionClass);
             panel.add("br", hyperlink);
+            if (++categoryCounter > 4)
+                break;
         }
 
         ActionListener showAllExpAction = new ActionListener() {
@@ -120,7 +123,13 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
                                                                                                     getAllCategoryPanel());
             }
         };
-        addShowAllLink(panel, showAllExpAction, data.size() > 0);
+        if (categoryCounter > 4)
+            addShowAllLink(panel, showAllExpAction, data.size() > 0);
+        else if (categoryCounter == 0) {
+            Cab2bLabel label = new Cab2bLabel("No saved categories.");
+            label.setBackground(Color.blue);
+            panel.add(label);
+        }
         return panel;
     }
 

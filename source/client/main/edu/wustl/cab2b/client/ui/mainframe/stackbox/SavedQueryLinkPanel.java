@@ -3,12 +3,17 @@
  */
 package edu.wustl.cab2b.client.ui.mainframe.stackbox;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
+import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
@@ -54,18 +59,40 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
     }
 
     /**
+     * Query comparator class used for desending ordering of queries based on Query.ID 
+     * @author deepak_shingan
+     *
+     */
+    class QueryComparator implements Comparator<IParameterizedQuery> {
+
+        public int compare(IParameterizedQuery arg0, IParameterizedQuery arg1) {
+            int result = 0;
+            long value = arg0.getId() - arg1.getId();
+            if (value > 0) {
+                result = -1;
+            } else if (value < 0) {
+                result = 1;
+            }
+            return result;
+        }
+
+    }
+
+    /**
      * Method to update search query panel
      */
     public void updateQueryLinkPanel() {
         this.removeAll();
-        this.setLayout(new RiverLayout(10, 5));
+        this.setLayout(new RiverLayout(5, 5));
         QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                                     EjbNamesConstants.QUERY_ENGINE_BEAN,
                                                                                                                                     QueryEngineHome.class,
                                                                                                                                     null);
-        Collection<IParameterizedQuery> cab2bQueryList = null;
         try {
-            cab2bQueryList = queryEngineBusinessInterface.getAllQueryNameAndDescription();
+            Collection<IParameterizedQuery> cab2bQueries = queryEngineBusinessInterface.getAllQueryNameAndDescription();
+            ArrayList<IParameterizedQuery> cab2bQueryList = new ArrayList<IParameterizedQuery>(cab2bQueries);
+            Collections.sort(cab2bQueryList, new QueryComparator());
+
             int queryCounter = 0;
             for (IParameterizedQuery query : cab2bQueryList) {
                 String queryName = query.getName();
@@ -88,7 +115,7 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
                 if (queryCounter > 4)
                     break;
             }
-            if (queryCounter > 0) {
+            if (queryCounter > 4) {
                 Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
                 CommonUtils.setHyperlinkProperties(hyperlink, null, MainFrameStackedBoxPanel.SHOW_ALL_LINK, "",
                                                    new ActionListener() {
@@ -99,6 +126,10 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
 
                                                    });
                 this.add("right br", hyperlink);
+            } else if (queryCounter == 4) {
+                Cab2bLabel label = new Cab2bLabel("No saved queries.");
+                label.setBackground(Color.blue);
+                this.add(label);
             }
 
         } catch (Exception exception) {

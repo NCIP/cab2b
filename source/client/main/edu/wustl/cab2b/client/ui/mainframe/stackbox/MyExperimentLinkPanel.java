@@ -3,8 +3,11 @@
  */
 package edu.wustl.cab2b.client.ui.mainframe.stackbox;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Vector;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
@@ -43,11 +46,31 @@ public class MyExperimentLinkPanel extends Cab2bPanel {
     }
 
     /**
+     * Comparator class for experiments, returns experiments of descending order based on Experiment.ID
+     * @author deepak_shingan
+     *
+     */
+    class ExperimentComparator implements Comparator<Experiment> {
+        public int compare(Experiment arg0, Experiment arg1) {
+            int result = 0;
+            long value = arg0.getId() - arg1.getId();
+            if (value > 0) {
+                result = -1;
+            } else if (value < 0) {
+                result = 1;
+            }
+            return result;
+        }
+    }
+
+    /**
      * Method for updating MyExperimentPanel
      */
     public void updateMyExperimentPanel() {
         this.removeAll();
-        getLatestExperimentsPanel(CommonUtils.getExperiments(null, ""), new ExperimentHyperlinkActionListener());
+        Vector<Experiment> exps = CommonUtils.getExperiments(null, "");
+        Collections.sort(exps, new ExperimentComparator());
+        getLatestExperimentsPanel(exps, new ExperimentHyperlinkActionListener());
         this.updateUI();
     }
 
@@ -59,7 +82,7 @@ public class MyExperimentLinkPanel extends Cab2bPanel {
      */
     private void getLatestExperimentsPanel(Vector<Experiment> data, ActionListener actionListener) {
 
-        this.setLayout(new RiverLayout(10, 5));
+        this.setLayout(new RiverLayout(5, 5));
         this.add(new Cab2bLabel());
         Cab2bHyperlink hyperlink = null;
         int expCounter = 0;
@@ -78,11 +101,15 @@ public class MyExperimentLinkPanel extends Cab2bPanel {
             }
         };
 
-        if (expCounter > 0) {
+        if (expCounter > 4) {
             Cab2bHyperlink showAllHyperlink = new Cab2bHyperlink(true);
             CommonUtils.setHyperlinkProperties(showAllHyperlink, null, MainFrameStackedBoxPanel.SHOW_ALL_LINK, "",
                                                showAllExpAction);
             this.add("br right", showAllHyperlink);
+        } else if (expCounter == 0) {
+            Cab2bLabel label = new Cab2bLabel("No saved experiments.");
+            label.setBackground(Color.blue);
+            this.add(label);
         }
     }
 
@@ -97,6 +124,7 @@ public class MyExperimentLinkPanel extends Cab2bPanel {
             Experiment exp = (Experiment) hyperLink.getUserObject();
             ExperimentOpenPanel expPanel = new ExperimentOpenPanel(exp);
             NewWelcomePanel.getMainFrame().openExperiment(expPanel);
+            NewWelcomePanel.getMainFrame().getGlobalNavigationPanel().getGlobalNavigationGlassPane().setExperimentTabSelected();
             updateUI();
         }
     }
