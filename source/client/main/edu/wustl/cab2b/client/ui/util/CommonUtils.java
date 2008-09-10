@@ -590,16 +590,16 @@ public class CommonUtils {
                                                                                                             ExperimentHome.class);
         List<Experiment> experiments = null;
         try {
-            experiments = expBus.getExperimentsForUser("");
+            experiments = expBus.getExperimentsForUser("");            
         } catch (RemoteException e) {
             handleException(e, comp, true, false, false, false);
         }
 
-        Vector<Experiment> experimentName = new Vector<Experiment>();
+        Vector<Experiment> experimentVector = new Vector<Experiment>();
         for (Experiment experiment : experiments) {
-            experimentName.add(experiment);
+            experimentVector.add(experiment);
         }
-        return experimentName;
+        return experimentVector;
     }
 
     /**
