@@ -50,18 +50,25 @@ import edu.wustl.cab2b.client.ui.util.WindowUtilities;
 public class MainFrame extends JXFrame {
     private static final long serialVersionUID = 1234567890L;
 
-    private String userName;
-
     /**
      * Everything related GUI's containers and its components size is relative
      * to this size.
      */
     private static Dimension screenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
 
+    /**
+     * SearchDataWelcomePanel panel containing search data wizard link on HTML page
+     */
     private SearchDataWelcomePanel htmlPanel = null;
 
+    /**
+     * Experiment home panel
+     */
     private ExperimentPanel experimentPanel = null;
 
+    /**
+     * Right hand side home panel 
+     */
     private NewWelcomePanel welcomePanel = null;
 
     /**
@@ -332,20 +339,6 @@ public class MainFrame extends JXFrame {
         return screenDimesion;
     }
 
-    /**
-     * @return Returns the userName.
-     */
-    public String getUserName() {
-        return userName;
-    }
-
-    /**
-     * @param userName
-     *            The userName to set.
-     */
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
 
     /**
      * @return the searchWizardDialog

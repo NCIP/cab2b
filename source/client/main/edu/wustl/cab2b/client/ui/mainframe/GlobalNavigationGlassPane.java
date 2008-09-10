@@ -28,6 +28,7 @@ import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXPanel;
 
+import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -150,7 +151,7 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         rightLabel.add(new JLabel(""), gbc);
 
         Date date = new Date();
-        loggedInUserLabel = new Cab2bLabel(mainFrame.getUserName());
+        loggedInUserLabel = new Cab2bLabel(UserCache.getInstance().getCurrentUser().getUserName());
         loggedInUserLabel.setFont(new Font("Arial", Font.BOLD, 12));
         Cab2bLabel dateLabel = new Cab2bLabel(DateFormat.getDateInstance(DateFormat.LONG).format(date).toString());
         dateLabel.setForeground(Color.WHITE);
@@ -249,12 +250,19 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
      * @param button
      */
     public void setExperimentHomePanel() {
-        tabButtons[0].setIcon(new ImageIcon(tabsImagesUnPressed[0]));
-        tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
-        tabButtons[2].setIcon(new ImageIcon(tabsImagesPressed[2]));
+        setExperimentTabSelected();
         MainFrame mainframePanel = (MainFrame) this.frame;
         mainframePanel.setExperimentHomePanel();
         lastSelectedTab = tabButtons[2];
+    }
+
+    /**
+     * Sets experiment tab as selected 
+     */
+    public void setExperimentTabSelected() {
+        tabButtons[0].setIcon(new ImageIcon(tabsImagesUnPressed[0]));
+        tabButtons[1].setIcon(new ImageIcon(tabsImagesUnPressed[1]));
+        tabButtons[2].setIcon(new ImageIcon(tabsImagesPressed[2]));
     }
 
     /**
