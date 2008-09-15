@@ -64,6 +64,7 @@ import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
+import edu.wustl.cab2b.common.exception.Cab2bExceptionInterface;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
@@ -146,70 +147,43 @@ public class CommonUtils {
 
     /**
      * A Utility method to handle exception, logging and showing it in a dialog.
+     * @param e Exception to handle
+     * @param parentComponent parent component
+     * @param showErrorDialog TRUE if you want to display a error dialog to user with exception details
+     * @param logException TRUE if you wish to log exception on client side
+     * @param logToConsole TRUE if you want exception trace to be printed on console.
+     * @param killApplication TRUE if you want to terminate application for given exception
      */
-    public static void handleException(Exception exception, Component parentComponent,
-                                       boolean shouldShowErrorDialog, boolean shouldLogException,
-                                       boolean shouldPrintExceptionInConsole, boolean shouldKillApp) {
-        String errorMessageForLog = "";
-        String errorMessageForDialog = "Error";
-        Exception e = getOriginalException(exception);
-        if (e != null) {
-            exception = e;
+    public static void handleException(Exception e, Component parentComponent, boolean showErrorDialog,
+                                       boolean logException, boolean logToConsole,
+                                       boolean killApplication) {
+        String msgForUser = "Error";
+        Exception exception = getOriginalException(e);
+        if (exception != null) {
+            e = exception;
+        }
+ 
+        String msgToLog = e.getMessage();
+        if (e instanceof Cab2bExceptionInterface) {
+            Cab2bExceptionInterface cab2bException = (Cab2bExceptionInterface) e;
+            String errorCode = cab2bException.getErrorCode();
+            if (errorCode != null) {
+                msgForUser = ErrorCodeHandler.getErrorMessage(errorCode);
+                msgToLog = errorCode + ":" + msgForUser;
+            }
+        }
+        if (logException) {
+            logger.error(msgToLog, e);
+        }
+        if (showErrorDialog) {
+            JXErrorDialog.showDialog(parentComponent, "caB2B - Application Error", msgForUser, e);
         }
 
-        /*
-         * Cab2b application specific error code, available only with Cab2b's
-         * CheckedException and RuntimeException
-         */
-        String errorCode = "";
-        /*
-         * Cab2b application specific error messages, corresponding to every
-         * error code.
-         */
-        String customErrorMessage = "";
-
-        if (exception instanceof CheckedException) {
-            CheckedException checkedException = (CheckedException) exception;
-            errorCode = checkedException.getErrorCode();
-            customErrorMessage = ErrorCodeHandler.getErrorMessage(errorCode);
-
-            errorMessageForDialog = customErrorMessage;
-            errorMessageForLog = errorCode + ":" + customErrorMessage;
-            //TODO Chandrakant : I think below code is not needed as 
-            //LocatorException extends caB2B RuntimeException (caught below)
-            //and code in the the two blocks is exact same.
-//        } else if (exception instanceof LocatorException) {
-//            LocatorException locatorException = (LocatorException) exception;
-//            errorCode = locatorException.getErrorCode();
-//            customErrorMessage = ErrorCodeHandler.getErrorMessage(errorCode);
-//
-//            errorMessageForDialog = customErrorMessage;
-//            errorMessageForLog = errorCode + ":" + customErrorMessage;
-        } else if (exception instanceof RuntimeException) {
-            RuntimeException runtimeException = (RuntimeException) exception;
-            errorCode = runtimeException.getErrorCode();
-            customErrorMessage = ErrorCodeHandler.getErrorMessage(errorCode);
-
-            errorMessageForDialog = customErrorMessage;
-            errorMessageForLog = errorCode + ":" + customErrorMessage;
-        } else {
-            errorMessageForLog = exception.getMessage();
+        if (logToConsole) {
+            e.printStackTrace();
         }
 
-        if (shouldLogException) {
-            logger.error(errorMessageForLog, exception);
-        }
-
-        if (shouldShowErrorDialog) {
-            JXErrorDialog.showDialog(parentComponent, "caB2B - Application Error", errorMessageForDialog,
-                                     exception);
-        }
-
-        if (shouldPrintExceptionInConsole) {
-            exception.printStackTrace();
-        }
-
-        if (shouldKillApp) {
+        if (killApplication) {
             System.exit(0);
         }
     }
