@@ -32,6 +32,7 @@ import edu.wustl.cab2b.common.domain.ExperimentGroup;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.DataListUtil;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.DatalistCache;
@@ -182,7 +183,9 @@ public class ExperimentOperations extends DefaultBizLogic {
      * @param userName
      * @return List<Experiment>
      */
-    public List<Experiment> getLatestExperimentForUser(String userName) {
+    public List<Experiment> getLatestExperimentForUser(UserInterface user) {
+        //TODO Update code specific to user, currently returning each and every
+        //experiments from database
         String hql = "from Experiment as Exp order by Exp.lastUpdatedOn ";
         DAO dao = DAOFactory.getInstance().getDAO(daoType);
         List<Experiment> returner = null;

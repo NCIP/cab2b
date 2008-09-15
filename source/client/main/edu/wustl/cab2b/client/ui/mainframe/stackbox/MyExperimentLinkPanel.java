@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
 
+import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -68,7 +69,8 @@ public class MyExperimentLinkPanel extends Cab2bPanel {
      */
     public void updateMyExperimentPanel() {
         this.removeAll();
-        Vector<Experiment> exps = CommonUtils.getExperiments(null, "");
+        Vector<Experiment> exps = CommonUtils.getExperiments(NewWelcomePanel.getMainFrame(),
+                                                             UserCache.getInstance().getCurrentUser());
         Collections.sort(exps, new ExperimentComparator());
         getLatestExperimentsPanel(exps, new ExperimentHyperlinkActionListener());
         this.updateUI();

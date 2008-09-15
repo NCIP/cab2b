@@ -12,6 +12,7 @@ import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.CustomDataCategoryModel;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.exception.CheckedException;
+import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
@@ -67,7 +68,13 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      */
     public Vector getExperimentHierarchy() throws ClassNotFoundException, DAOException, RemoteException;
 
-    public List<Experiment> getExperimentsForUser(String userName) throws RemoteException;
+    /**
+     * Returns list of all experiments associated with specified user 
+     * @param user
+     * @return
+     * @throws RemoteException
+     */
+    public List<Experiment> getExperimentsForUser(UserInterface user) throws RemoteException;
 
     /**
      * @param id
@@ -105,9 +112,24 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      */
     void addDataListToExperiment(Long experimentId, Long dataListMetaDataId) throws RemoteException;
 
+    /**
+     * Returns data category data model
+     * @param experiment
+     * @return CustomDataCategoryModel
+     * @throws RemoteException
+     * @throws CheckedException
+     */
     public CustomDataCategoryModel getDataCategoryModel(Experiment experiment) throws RemoteException,
             CheckedException;
 
-    public Collection<AttributeInterface> getAllAttributes(Long Id) throws RemoteException, CheckedException;
+    /**
+     * Returns collection of all attributes for specified Experiment ID
+     * @param Id
+     * @return
+     * @throws RemoteException
+     * @throws CheckedException
+     */
+    public Collection<AttributeInterface> getAllAttributes(Long experimentID) throws RemoteException,
+            CheckedException;
 
 }

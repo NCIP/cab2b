@@ -75,6 +75,7 @@ import edu.wustl.cab2b.common.locator.LocatorException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.CategoryPopularityComparator;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.category.Category;
@@ -107,7 +108,8 @@ public class CommonUtils {
      *            exception messages
      * @return the businessInterface object for given bean name
      */
-    public static BusinessInterface getBusinessInterface(String beanName, Class<? extends EJBHome> homeClassForBean,
+    public static BusinessInterface getBusinessInterface(String beanName,
+                                                         Class<? extends EJBHome> homeClassForBean,
                                                          Component parentComponent) {
         BusinessInterface businessInterface = null;
         try {
@@ -295,7 +297,8 @@ public class CommonUtils {
         if (referenceDimnesion.height <= 0 || referenceDimnesion.width <= 0) {
             throw new IllegalArgumentException("Reference dimension can't be (0,0) or less");
         }
-        if ((0.0f > percentageHeight || percentageHeight > 1.0f) || (0.0f > percentageWidth || percentageWidth > 1.0f)) {
+        if ((0.0f > percentageHeight || percentageHeight > 1.0f)
+                || (0.0f > percentageWidth || percentageWidth > 1.0f)) {
             throw new IllegalArgumentException(
                     "Percentage width and height should be less than 1.0 and greater than 1.0");
         }
@@ -481,7 +484,7 @@ public class CommonUtils {
      */
     public static Collection<CategoryPopularity> getPopularSearchCategoriesForMainFrame() {
         List<CategoryPopularity> attributeList = (List<CategoryPopularity>) getPopularCategoriesForShowAll();
-       
+
         Collection<CategoryPopularity> popularCategories = new ArrayList<CategoryPopularity>();
         if (attributeList.size() >= 4) {
             for (int i = 0; i < 4; i++) {
@@ -527,18 +530,17 @@ public class CommonUtils {
     /**
      * @return All the experiments performed by the user.
      */
-    public static Vector<Experiment> getExperiments(Component comp, String userName) {
+    public static Vector<Experiment> getExperiments(Component comp, UserInterface user) {
 
         ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                             EjbNamesConstants.EXPERIMENT,
                                                                                                             ExperimentHome.class);
         List<Experiment> experiments = null;
         try {
-            experiments = expBus.getExperimentsForUser("");
+            experiments = expBus.getExperimentsForUser(user);
         } catch (RemoteException e) {
             handleException(e, comp, true, false, false, false);
         }
-
         Vector<Experiment> experimentVector = new Vector<Experiment>();
         for (Experiment experiment : experiments) {
             experimentVector.add(experiment);
@@ -655,7 +657,8 @@ public class CommonUtils {
             ErrorCodeHandler.initBundle(ERROR_CODE_FILE_NAME);
             ApplicationProperties.initBundle(APPLICATION_RESOURCES_FILE_NAME);
         } catch (MissingResourceException mre) {
-            CheckedException checkedException = new CheckedException(mre.getMessage(), mre, ErrorCodeConstants.IO_0002);
+            CheckedException checkedException = new CheckedException(mre.getMessage(), mre,
+                    ErrorCodeConstants.IO_0002);
             CommonUtils.handleException(checkedException, null, true, true, false, true);
         }
     }
