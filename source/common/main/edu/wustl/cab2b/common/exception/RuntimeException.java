@@ -3,7 +3,7 @@ package edu.wustl.cab2b.common.exception;
 /**
  * @author gautam_shetty
  */
-public class RuntimeException extends java.lang.RuntimeException {
+public class RuntimeException extends java.lang.RuntimeException implements Cab2bExceptionInterface {
 
     private static final long serialVersionUID = 6463085010521715714L;
 
