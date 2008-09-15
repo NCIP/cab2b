@@ -621,7 +621,11 @@
 				<exclude name="**/ejb/**/*.*" />
 			</fileset>
 		</copy>
-		<jar basedir="${standAlone.jar.dir}" destfile="${caB2B.standalone.jar.file}" />
+		<jar basedir="${standAlone.jar.dir}" destfile="${caB2B.standalone.jar.file}">
+			<manifest>
+				<attribute name="Built-At-" value="${TODAY} ${TSTAMP}" />
+			</manifest>
+		</jar>
 	</target>
 	<!-- ================================================================================== -->
 	<target name="run.cab2b.client" depends="compile.client" description="Run the sample Client">
