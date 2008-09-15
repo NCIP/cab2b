@@ -31,6 +31,7 @@ import java.util.MissingResourceException;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.ejb.EJBHome;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -73,6 +74,7 @@ import edu.wustl.cab2b.common.locator.Locator;
 import edu.wustl.cab2b.common.locator.LocatorException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.CategoryPopularityComparator;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.category.Category;
@@ -80,12 +82,14 @@ import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
+ * Utility for UI side classes
  * @author Chetan B H
  * @author Mahesh Iyer
  */
 public class CommonUtils {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(CommonUtils.class);
-    // Constant storing enumerated values for DAG-Images
+
+    /** Constant storing enumerated values for DAG-Images */
     public static enum DagImages {
         DocumentPaperIcon, PortImageIcon, ArrowSelectIcon, ArrowSelectMOIcon, SelectIcon, selectMOIcon, ParenthesisIcon, ParenthesisMOIcon
     };
@@ -103,7 +107,7 @@ public class CommonUtils {
      *            exception messages
      * @return the businessInterface object for given bean name
      */
-    public static BusinessInterface getBusinessInterface(String beanName, Class homeClassForBean,
+    public static BusinessInterface getBusinessInterface(String beanName, Class<? extends EJBHome> homeClassForBean,
                                                          Component parentComponent) {
         BusinessInterface businessInterface = null;
         try {
@@ -128,19 +132,14 @@ public class CommonUtils {
     }
 
     /**
-     * Method to get BusinessInterface object for given bean name and home class
-     * object
+     * Method to get BusinessInterface object for given bean name and home class object
      * 
-     * @param beanName
-     *            Name of the bean class
-     * @param homeClassForBean
-     *            HomeClass object for this bean
+     * @param beanName Name of the bean class
+     * @param homeClassForBean HomeClass object for this bean
      * @return the businessInterface object for given bean name
-     * @throws LocatorException
-     *             Throws exception if BusinessInterface is not located for
-     *             given bean name
+     * @throws LocatorException Throws exception if BusinessInterface is not located for given bean name
      */
-    public static BusinessInterface getBusinessInterface(String beanName, Class homeClassForBean)
+    public static BusinessInterface getBusinessInterface(String beanName, Class<? extends EJBHome> homeClassForBean)
             throws LocatorException {
         return Locator.getInstance().locate(beanName, homeClassForBean);
     }
@@ -155,14 +154,13 @@ public class CommonUtils {
      * @param killApplication TRUE if you want to terminate application for given exception
      */
     public static void handleException(Exception e, Component parentComponent, boolean showErrorDialog,
-                                       boolean logException, boolean logToConsole,
-                                       boolean killApplication) {
+                                       boolean logException, boolean logToConsole, boolean killApplication) {
         String msgForUser = "Error";
         Exception exception = getOriginalException(e);
         if (exception != null) {
             e = exception;
         }
- 
+
         String msgToLog = e.getMessage();
         if (e instanceof Cab2bExceptionInterface) {
             Cab2bExceptionInterface cab2bException = (Cab2bExceptionInterface) e;
@@ -194,8 +192,7 @@ public class CommonUtils {
      * {@link LocatorException} OR{@link RuntimeException} If yes it returns it
      * otherwise it returns the original passed exception.
      * 
-     * @param cause
-     *            exception to verify
+     * @param cause exception to verify
      * @return The root exception
      */
     private static Exception getOriginalException(Exception cause) {
@@ -213,9 +210,10 @@ public class CommonUtils {
     /**
      * The method executes the encapsulated B2B query. For this it uses the
      * Locator service to locate an instance of the QueryEngineBusinessInterface
-     * and uses the interace to remotely execute the query.
+     * and uses the interface to remotely execute the query.
      */
-    public static IQueryResult executeQuery(ICab2bQuery query, JComponent comp) throws RemoteException {
+    public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, JComponent comp)
+            throws RemoteException {
         QueryEngineBusinessInterface queryEngineBus = (QueryEngineBusinessInterface) getBusinessInterface(
                                                                                                           EjbNamesConstants.QUERY_ENGINE_BEAN,
                                                                                                           QueryEngineHome.class,
@@ -226,45 +224,39 @@ public class CommonUtils {
     /**
      * The method executes the encapsulated B2B query. For this it uses the
      * Locator service to locate an instance of the QueryEngineBusinessInterface
-     * and uses the interace to remotely execute the query.
+     * and uses the interface to remotely execute the query.
      */
-    public static IQueryResult executeQuery(ICab2bQuery query, QueryEngineBusinessInterface queryEngineBus,
-                                            JComponent comp) throws RemoteException {
-        IQueryResult iQueryResult = null;
+    public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query,
+                                                               QueryEngineBusinessInterface queryEngineBus,
+                                                               JComponent comp) throws RemoteException {
+        IQueryResult<? extends IRecord> iQueryResult = null;
         try {
             iQueryResult = executeQuery(query, queryEngineBus);
         } catch (RuntimeException re) {
             handleException(re, comp, true, false, false, false);
-        } /*
-         * catch (RemoteException e1) { //CheckedException e = new
-         * CheckedException(e1.getMessage(), e1,
-         * ErrorCodeConstants.QM_0004);
-         * handleException(getCab2bException(e1), comp, true, false, false,
-         * false); }
-         */
+        }
         return iQueryResult;
     }
 
     /**
      * The method executes the encapsulated B2B query. For this it uses the
      * Locator service to locate an instance of the QueryEngineBusinessInterface
-     * and uses the interace to remotely execute the query.
+     * and uses the interface to remotely execute the query.
      * 
      * @param query
      * @param queryEngineBus
      * @throws RuntimeException
      * @throws RemoteException
      */
-    public static IQueryResult executeQuery(ICab2bQuery query, QueryEngineBusinessInterface queryEngineBus)
+    public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query,
+                                                               QueryEngineBusinessInterface queryEngineBus)
             throws RuntimeException, RemoteException {
         return queryEngineBus.executeQuery(query, UserValidator.getProxy());
     }
 
     /**
      * Method to get count of bit 1 set in given BitSet
-     * 
-     * @param bitSet
-     *            The BitSet object in which to find count
+     * @param bitSet The BitSet object in which to find count
      * @return The count of 1 bit in BitSet
      */
     public static int getCountofOnBits(BitSet bitSet) {
@@ -282,16 +274,13 @@ public class CommonUtils {
      */
     public static int countCharacterIn(String str, char character) {
         int count = 0;
-
-        char[] chars = str.toCharArray();
-
-        for (char characterInStr : chars) {
-            if (characterInStr == character)
+        for (char characterInStr : str.toCharArray()) {
+            if (characterInStr == character) {
                 count++;
+            }
         }
         return count;
     }
-
 
     /**
      * Utility method to get a Dimension relative to a reference Dimension.
@@ -306,8 +295,7 @@ public class CommonUtils {
         if (referenceDimnesion.height <= 0 || referenceDimnesion.width <= 0) {
             throw new IllegalArgumentException("Reference dimension can't be (0,0) or less");
         }
-        if ((0.0f > percentageHeight || percentageHeight > 1.0f)
-                || (0.0f > percentageWidth || percentageWidth > 1.0f)) {
+        if ((0.0f > percentageHeight || percentageHeight > 1.0f) || (0.0f > percentageWidth || percentageWidth > 1.0f)) {
             throw new IllegalArgumentException(
                     "Percentage width and height should be less than 1.0 and greater than 1.0");
         }
@@ -371,12 +359,11 @@ public class CommonUtils {
     }
 
     /**
-     * Removes any continuos space chatacters(2 or more) that may appear at the
-     * begining, end or in between to words.
+     * Removes any continuous space characters(2 or more) that may appear at the
+     * beginning, end or in between to words.
      * 
-     * @param str
-     *            string with continuos space characters.
-     * @return procssed string with no continuos space characters.
+     * @param str string with continuous space characters.
+     * @return processed string with no continuous space characters.
      */
     public static String removeContinuousSpaceCharsAndTrim(String str) {
         char[] charsWithoutContinousSpaceChars = new char[str.length()];
@@ -399,36 +386,24 @@ public class CommonUtils {
      * the node matching the string. If the match is found the node is returned
      * else null is returned
      * 
-     * @param nodeStr
-     *            node string to search for
+     * @param nodeStr node string to search for
      * @return tree node
      */
     public static DefaultMutableTreeNode searchNode(DefaultMutableTreeNode rootNode, Object userObject) {
-        DefaultMutableTreeNode node = null;
 
-        // Get the enumeration
-        Enumeration benum = rootNode.breadthFirstEnumeration();
-
-        // iterate through the enumeration
+        Enumeration<DefaultMutableTreeNode> benum = rootNode.breadthFirstEnumeration();
         while (benum.hasMoreElements()) {
-            // get the node
-            node = (DefaultMutableTreeNode) benum.nextElement();
-
-            // match the string with the user-object of the node
+            DefaultMutableTreeNode node = benum.nextElement();
             if (userObject.equals(node.getUserObject())) {
-                // tree node with string found
                 return node;
             }
         }
-        // tree node with string node found return null
         return null;
     }
 
     /**
-     * Method to get identifier attribute index for given list of attibutes
-     * 
-     * @param attributes
-     *            Ordered list of attributes
+     * Method to get identifier attribute index for given list of attributes
+     * @param attributes Ordered list of attributes
      * @return index of Id attribute
      */
     public static int getIdAttributeIndexFromAttributes(List<AttributeInterface> attributes) {
@@ -444,11 +419,8 @@ public class CommonUtils {
     }
 
     /**
-     * check the if the specified string is a valid name for an experiment,
-     * category etc.
-     * 
-     * @param name
-     *            the name
+     * check the if the specified string is a valid name for an experiment, category etc.
+     * @param name the name
      * @return true if name is valid otherwise false
      */
     public static boolean isNameValid(String name) {
@@ -462,10 +434,8 @@ public class CommonUtils {
      * This method returns the Component form the parent Container given the
      * name of the Component
      * 
-     * @param parentContainer
-     *            the parent Container
-     * @param panelName
-     *            name of the Component
+     * @param parentContainer  the parent Container
+     * @param panelName name of the Component
      * @return the desired Component if present; null otherwise
      */
     public static Component getComponentByName(final Container parentContainer, final String panelName) {
@@ -486,7 +456,7 @@ public class CommonUtils {
      * for the given attributes.
      * 
      * @param attributeList
-     * @return
+     * @return Dimension
      */
     public static Dimension getMaximumLabelDimension(Collection<AttributeInterface> attributeList) {
         Dimension maxLabelDimension = new Dimension(0, 0);
@@ -529,7 +499,7 @@ public class CommonUtils {
      * @return All popular categories.
      */
     public static Collection<CategoryPopularity> getPopularCategoriesForShowAll() {
-        Collection<CategoryPopularity> categoryList=PopularCategoryCache.getInstance().getPopularCategoriesCollection();
+        Collection<CategoryPopularity> categoryList = PopularCategoryCache.getInstance().getPopularCategoriesCollection();
         List<CategoryPopularity> attributeList = new ArrayList<CategoryPopularity>(categoryList);
         Collections.sort(attributeList, new CategoryPopularityComparator());
         return attributeList;
@@ -538,7 +508,7 @@ public class CommonUtils {
     /**
      * @return Recent search queries
      */
-    public static Vector getUserSearchQueries() {
+    public static Vector<?> getUserSearchQueries() {
         /*
          * TODO These default UserSearchQueries will be removed later after SAVE
          * QUERY support
@@ -564,7 +534,7 @@ public class CommonUtils {
                                                                                                             ExperimentHome.class);
         List<Experiment> experiments = null;
         try {
-            experiments = expBus.getExperimentsForUser("");            
+            experiments = expBus.getExperimentsForUser("");
         } catch (RemoteException e) {
             handleException(e, comp, true, false, false, false);
         }
@@ -577,7 +547,7 @@ public class CommonUtils {
     }
 
     /**
-     * Method to set hyperlink property values
+     * Method to set hyper-link property values
      * 
      * @param hyperlink
      * @param obj
@@ -585,8 +555,8 @@ public class CommonUtils {
      * @param desc
      * @param actionClass
      */
-    public static void setHyperlinkProperties(Cab2bHyperlink hyperlink, Object obj, String hyperlinkText,
-                                              String desc, ActionListener actionClass) {
+    public static <T> void setHyperlinkProperties(Cab2bHyperlink<T> hyperlink, T obj, String hyperlinkText,
+                                                  String desc, ActionListener actionClass) {
         hyperlink.setClickedColor(MainFrameStackedBoxPanel.CLICKED_COLOR);
         hyperlink.setUnclickedColor(MainFrameStackedBoxPanel.UNCLICKED_COLOR);
         hyperlink.setUserObject(obj);
@@ -610,9 +580,8 @@ public class CommonUtils {
     }
 
     /**
-     * Method which will return number of elements in current datalist
-     * 
-     * @return
+     * It will return number of elements in current data list
+     * @return return number of elements in current data list
      */
     public static int getDataListSize() {
         IDataRow rootNode = MainSearchPanel.getDataList().getRootDataRow();
@@ -679,24 +648,20 @@ public class CommonUtils {
     }
 
     /**
-     * initializes resources like errorcode handler , Application Properties etc
+     * initializes resources like error code handler , Application Properties etc
      */
     public static void initializeResources() {
         try {
-
             ErrorCodeHandler.initBundle(ERROR_CODE_FILE_NAME);
             ApplicationProperties.initBundle(APPLICATION_RESOURCES_FILE_NAME);
         } catch (MissingResourceException mre) {
-            CheckedException checkedException = new CheckedException(mre.getMessage(), mre,
-                    ErrorCodeConstants.IO_0002);
+            CheckedException checkedException = new CheckedException(mre.getMessage(), mre, ErrorCodeConstants.IO_0002);
             CommonUtils.handleException(checkedException, null, true, true, false, true);
         }
     }
 
     /**
-     * set the caB2B Home used to keep editable configurations, appliaction logs
-     * etc.
-     * 
+     * set the caB2B Home used to keep edit-able configurations, application logs etc.
      */
     public static void setHome() {
 
@@ -714,20 +679,20 @@ public class CommonUtils {
         // Update the variable for latest screen dimension from the
         // toolkit, this is to handle the situations where
         // application is started and then screen resolution is
-        // changed, but the variable stiil holds old resolution
+        // changed, but the variable still holds old resolution
         // size.
 
         Dimension dimension = MainFrame.getScreenDimesion();
         final String title = ApplicationProperties.getValue(SEARCH_FRAME_TITLE);
 
-        // Clearing the datalist
+        // Clearing the data list
         SaveDatalistPanel.setDataListSaved(false);
         MainSearchPanel mainSearchPanel = GlobalNavigationPanel.getMainSearchPanel();
         if (mainSearchPanel == null)
             mainSearchPanel = new MainSearchPanel();
 
         GlobalNavigationPanel.setMainSearchPanel(mainSearchPanel);
-        mainSearchPanel.getDataList().clear();
+        MainSearchPanel.getDataList().clear();
         MainFrame mainFrame = NewWelcomePanel.getMainFrame();
         JDialog searchDialog = WindowUtilities.setInDialog(mainFrame, mainSearchPanel, title, new Dimension(
                 (int) (dimension.width * 0.90), (int) (dimension.height * 0.85)), true, true);
