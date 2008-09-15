@@ -109,9 +109,14 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
             }
 
         }
+        return getRecords((ICab2bQuery) queryObject.getQuery());
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<IDataRow> getRecords(ICab2bQuery query) {
         IQueryResult<IRecord> relatedQueryResults = null;
         try {
-            relatedQueryResults = CommonUtils.executeQuery((ICab2bQuery) queryObject.getQuery(), m_queryEngineBus);
+            relatedQueryResults = (IQueryResult<IRecord>) CommonUtils.executeQuery(query, m_queryEngineBus);
         } catch (RuntimeException e) {
             logger.error("Error in exeuting query :" + e.getMessage());
             return null;
@@ -123,7 +128,7 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
         Map<String, List<IRecord>> allRecords = relatedQueryResults.getRecords();
         List<IDataRow> dataRows = new ArrayList<IDataRow>();
         for (String url : allRecords.keySet()) {
-            List<IRecord> results = allRecords.get(url);
+            List<? extends IRecord> results = allRecords.get(url);
             for (IRecord record : results) {
                 DataRow dataRow = new DataRow(record, relatedQueryResults.getOutputEntity());
                 dataRow.setParent(m_sourceEntity);
