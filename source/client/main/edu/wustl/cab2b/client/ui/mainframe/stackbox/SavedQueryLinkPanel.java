@@ -126,7 +126,7 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
 
                                                    });
                 this.add("right br", hyperlink);
-            } else if (queryCounter == 4) {
+            } else if (queryCounter == 0) {
                 Cab2bLabel label = new Cab2bLabel("No saved queries.");
                 label.setBackground(Color.blue);
                 this.add(label);
