@@ -122,7 +122,7 @@ public class PathBuilder {
             throw new RuntimeException("Exception while loading model in DE", e);
         }
         try {
-            storeModelAndGeneratePaths(processor, applicationName, connection, false, maxPathLength);
+            storeModelAndGeneratePaths(processor, applicationName, false, maxPathLength);
             transformAndLoadPaths(connection, processor.getEntityGroup());
         } catch (Exception e) {
             logger.error("Exception while generating paths", e);
@@ -150,11 +150,10 @@ public class PathBuilder {
      * @param applicationName Name of the application. The Entity Group will have this as its short name.
      * @param maxPathLength max length (no. of classes) in path.
      * @param applicationName Application name
-     * @param conn Database connection to use
      * @param append Append or not
      */
     static void storeModelAndGeneratePaths(DomainModelProcessor processor, String applicationName,
-                                           Connection conn, boolean append, int maxPathLength) {
+                                            boolean append, int maxPathLength) {
         logger.info("Processing application : " + applicationName);
         logger.info("Loaded the domain model of application : " + applicationName
                 + " to database. Generating paths...");
@@ -163,7 +162,8 @@ public class PathBuilder {
         Map<Integer, Set<Integer>> replicationNodes = processor.getReplicationNodes();
 
         GraphPathFinder graphPathfinder = new GraphPathFinder();
-        Set<Path> paths = graphPathfinder.getAllPaths(adjacencyMatrix, replicationNodes, conn, maxPathLength);
+        GraphPathFinder.MEM_CACHE = true;
+        Set<Path> paths = graphPathfinder.getAllPaths(adjacencyMatrix, replicationNodes, null, maxPathLength);
 
         PathToFileWriter.writePathsToFile(paths, entityIds.toArray(new Long[0]), append);
     }
