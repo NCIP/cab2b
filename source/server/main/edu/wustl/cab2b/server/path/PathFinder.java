@@ -14,7 +14,6 @@ import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.cab2b.common.cache.AbstractEntityCache;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.common.util.Utility;
@@ -106,10 +105,10 @@ public class PathFinder {
      * @param con Database connection to use
      */
     private void populateCache(Connection con) {
-        interModelConnections = cacheInterModelConnections(con);
+        setInterModelConnections(cacheInterModelConnections(con));
         pathRecordCache = cachePathRecords(con);
         idVsAssociation = cacheAssociationTypes(con);
-        entitySetVsCuratedPath = cacheCuratedPaths();
+        setEntitySetVsCuratedPath(cacheCuratedPaths());
     }
 
     /**
@@ -706,5 +705,8 @@ public class PathFinder {
     }
     void setEntitySetVsCuratedPath(Map<String, Set<ICuratedPath>> entitySetVsCuratedPath) {
         this.entitySetVsCuratedPath = entitySetVsCuratedPath; 
+    }
+    void setInterModelConnections(Set<InterModelConnection> set) {
+        interModelConnections = set; 
     }
 }
