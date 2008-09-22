@@ -1,14 +1,20 @@
 package edu.wustl.cab2b.server.path;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import junit.framework.TestCase;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.server.util.TestUtil;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.impl.InterModelAssociation;
 import edu.wustl.common.querysuite.metadata.path.CuratedPath;
+import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.metadata.path.Path;
 
@@ -17,6 +23,55 @@ import edu.wustl.common.querysuite.metadata.path.Path;
  */
 public class PathFinderTest extends TestCase {
     private static long counter = 0;
+    public void testAutoConnectSuccess() {
+        EntityInterface e1 = TestUtil.getEntity("e1", 1L);
+        EntityInterface e2 = TestUtil.getEntity("e1", 2L);
+        Set<EntityInterface> entitySet = new HashSet<EntityInterface>();
+        entitySet.add(e2);
+        entitySet.add(e1);
+
+        Path path = new Path();
+        path.setSourceEntityId(1L);
+        path.setTargetEntityId(2L);
+        CuratedPath curatedPath = new CuratedPath();
+        curatedPath.addPath(path);
+        curatedPath.setCuratedPathId(1234L);
+
+        Set<ICuratedPath> curatedPathSet = new HashSet<ICuratedPath>();
+        curatedPathSet.add(curatedPath);
+        Map<String, Set<ICuratedPath>> entitySetVsCuratedPath = new HashMap<String, Set<ICuratedPath>>();
+        entitySetVsCuratedPath.put("1_2", curatedPathSet);
+
+        PathFinder p = new PathFinder();
+        p.setEntitySetVsCuratedPath(entitySetVsCuratedPath);
+        Set<ICuratedPath> set = p.autoConnect(entitySet);
+
+        assertEquals(1, set.size());
+        assertEquals(curatedPath, set.iterator().next());
+    }
+
+    public void testAutoConnectFailure() {
+        EntityInterface e1 = TestUtil.getEntity("e1", 1L);
+        EntityInterface e2 = TestUtil.getEntity("e1", 2L);
+        Set<EntityInterface> entitySet = new HashSet<EntityInterface>();
+        entitySet.add(e2);
+        entitySet.add(e1);
+
+        Map<String, Set<ICuratedPath>> entitySetVsCuratedPath = new HashMap<String, Set<ICuratedPath>>();
+        PathFinder p = new PathFinder();
+        p.setEntitySetVsCuratedPath(entitySetVsCuratedPath);
+        Set<ICuratedPath> set = p.autoConnect(entitySet);
+        assertTrue(set.isEmpty());
+    }
+    public void testDoesInterModelConnectionExist() {
+        AttributeInterface a1 = TestUtil.getAttribute("en1", 1L, "a1", 2L);
+        AttributeInterface a2 = TestUtil.getAttribute("en2", 11L, "a2", 22L);
+        PathFinder p = new PathFinder();
+        p.setInterModelConnections(new HashSet<InterModelConnection>());
+        p.addInterModelConnection(new InterModelConnection(a1, a2));
+        boolean res = p.doesInterModelConnectionExist(a1, a2);
+        assertTrue(res);
+    }
 
     public void testAddCuratedPathFalse() {
         CuratedPath path = new CuratedPath();
