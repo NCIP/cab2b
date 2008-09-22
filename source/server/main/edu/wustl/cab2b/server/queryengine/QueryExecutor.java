@@ -310,7 +310,8 @@ public class QueryExecutor {
                                                                               QueryExecutor.this.constraintsBuilderResult.getExpressionToConstraintMap().get(
                                                                                                                                                              childExpr),
                                                                               parentIdConstraint);
-                String entityName = childExpr.getQueryEntity().getDynamicExtensionsEntity().getName();
+                EntityInterface childEntity = childExpr.getQueryEntity().getDynamicExtensionsEntity();
+                String entityName = childEntity.getName();
                 DCQLQuery queryForChildExpr = createDCQLQuery(entityName, constraintForChildExpr,
                                                               parentId.getUrl());
 
@@ -319,7 +320,7 @@ public class QueryExecutor {
                     // expr was formed for entity on path between catClasses...
                     IQueryResult<IRecord> childExprClassRecs = transformer.getResults(
                                                                                       queryForChildExpr,
-                                                                                      catClassForChildExpr.getCategorialClassEntity(),
+                                                                                      childEntity,
                                                                                       cred);
 
                     // only one url at a time; so directly do next();
