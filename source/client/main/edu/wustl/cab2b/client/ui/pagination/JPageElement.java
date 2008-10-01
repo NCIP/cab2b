@@ -168,6 +168,12 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         } else {
             this.add("br tab", hyperlink);
         }
+        String extraText = pageElement.getExtraDisplayText();
+        if (extraText != null) {
+            Cab2bLabel extraLabel = new Cab2bLabel(extraText);
+            extraLabel.setFont(Cab2bStandardFonts.ARIAL_BOLD_12);
+            this.add("tab", extraLabel);
+        }
         this.add("br tab", descriptionLabel);
     }
 
@@ -179,6 +185,12 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         } else {
             this.add("br tab", hyperlink);
         }
+        String extraText = pageElement.getExtraDisplayText();
+        if (extraText != null) {
+            Cab2bLabel extraLabel = new Cab2bLabel(extraText);
+            extraLabel.setFont(Cab2bStandardFonts.ARIAL_BOLD_12);
+            this.add("tab", extraLabel);
+        }
         this.add("br tab", descriptionLabel);
     }
 
@@ -189,6 +201,12 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
             this.add("tab", label);
         } else {
             this.add("br tab", label);
+        }
+        String extraText = pageElement.getExtraDisplayText();
+        if (extraText != null) {
+            Cab2bLabel extraLabel = new Cab2bLabel(extraText);
+            extraLabel.setFont(Cab2bStandardFonts.ARIAL_BOLD_12);
+            this.add("tab", extraLabel);
         }
         this.add("br tab", descriptionLabel);
     }
