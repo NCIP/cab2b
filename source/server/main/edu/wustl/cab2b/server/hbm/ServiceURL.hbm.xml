@@ -45,29 +45,7 @@
             not-null="true"
         />
 
-        <set
-            name="userCollection"
-            table="CAB2B_USER_URL_MAPPING"
-            lazy="false"
-            inverse="true"
-            cascade="none"
-            sort="unsorted"
-        >
-            <cache 
-                usage="read-write" 
-             />
-
-              <key
-                  column="SERVICE_URL_ID"
-              />
-
-              <many-to-many
-                  class="edu.wustl.cab2b.common.user.User"
-                  column="USER_ID"
-                  outer-join="auto"
-              />
-
-        </set>
+        
 
         <property
             name="adminDefined"

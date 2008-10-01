@@ -40,7 +40,7 @@
             table="CAB2B_USER_URL_MAPPING"
             lazy="false"
             inverse="false"
-            cascade="all-delete-orphan"
+            cascade="save-update"
             sort="unsorted"
         >
             <cache 
