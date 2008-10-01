@@ -15,7 +15,6 @@ import org.globus.gsi.GlobusCredential;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.cab2b.common.user.ServiceURL;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.User;
 import edu.wustl.cab2b.common.user.UserInterface;
@@ -111,15 +110,15 @@ public class UserOperations extends DefaultBizLogic {
         Collection<EntityGroupInterface> entityGroups = EntityCache.getInstance().getEntityGroups();
 
         Collection<ServiceURLInterface> serviceCollection = user.getServiceURLCollection();
-        for (ServiceURLInterface serviceURL : serviceCollection) {
-            String entityGroupName = ((ServiceURL) serviceURL).getEntityGroupName();
-            for (EntityGroupInterface entityGroup : entityGroups) {
-                if (entityGroupName.equals(entityGroup.getLongName())) {
-                    serviceURL.setEntityGroupInterface(entityGroup);
-                    break;
-                }
-            }
-        }
+//        for (ServiceURLInterface serviceURL : serviceCollection) {
+//            String entityGroupName = ((ServiceURL) serviceURL).getEntityGroupName();
+//            for (EntityGroupInterface entityGroup : entityGroups) {
+//               // if (entityGroupName.equals(entityGroup.getLongName())) {
+//               //     serviceURL.setEntityGroupInterface(entityGroup);
+//                    break;
+//                }
+//            }
+//        }
     }
 
     /**
@@ -177,7 +176,7 @@ public class UserOperations extends DefaultBizLogic {
         Collection<ServiceURLInterface> userServiceCollection = user.getServiceURLCollection();
 
         for (ServiceURLInterface url : userServiceCollection) {
-            String longName = url.getEntityGroups().getLongName();
+            String longName = url.getEntityGroupName();
             if (entityGroupByUrls.containsKey(longName)) {
                 (entityGroupByUrls.get(longName)).add(url.getUrlLocation());
             } else {
@@ -215,7 +214,7 @@ public class UserOperations extends DefaultBizLogic {
         Collection<ServiceURLInterface> adminServices = admin.getServiceURLCollection();
 
         for (ServiceURLInterface url : adminServices) {
-            String egName = url.getEntityGroups().getLongName();
+            String egName = url.getEntityGroupName();
             if (absentEntityGroups.contains(egName)) {
                 if (egGroupToUrlListMap.containsKey(egName)) {
                     (egGroupToUrlListMap.get(egName)).add(url.getUrlLocation());
