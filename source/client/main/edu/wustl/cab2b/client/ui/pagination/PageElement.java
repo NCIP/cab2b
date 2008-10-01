@@ -3,6 +3,7 @@ package edu.wustl.cab2b.client.ui.pagination;
 /**
  *
  * @author chetan_bh
+ * @author atul_jawale
  */
 public interface PageElement {
 
@@ -29,4 +30,8 @@ public interface PageElement {
 	public boolean isSelected();
 	
 	public void setSelected(boolean value);
+	
+	public void setExtraDisplayText(String extraDisplayText);
+	
+	public String getExtraDisplayText();
 }

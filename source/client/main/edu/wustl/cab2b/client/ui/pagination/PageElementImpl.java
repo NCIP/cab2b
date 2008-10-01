@@ -3,6 +3,7 @@ package edu.wustl.cab2b.client.ui.pagination;
 /**
  * Implmentation class for PageElement. 
  * @author chetan_bh
+ * @author atul_jawale
  */
 public class PageElementImpl implements PageElement{
 
@@ -10,6 +11,11 @@ public class PageElementImpl implements PageElement{
 	 * Display name for the hyperlink.
 	 */
 	private String displayName;
+	
+	/**
+	 * This text will be displayed next to display text but as a normal label & not as a hyperlink. 
+	 */
+	private String extraDisplayText;
 	
 	/**
 	 * URL associated with the hyperlink.
@@ -133,4 +139,20 @@ public class PageElementImpl implements PageElement{
 	{
 		this.selected = selected;
 	}
+
+    /**
+     * @return the extraDisplayText
+     */
+	public String getExtraDisplayText() {
+        return extraDisplayText;
+    }
+
+    /**
+     * @param extraDisplayText the extraDisplayText to set
+     */
+	public void setExtraDisplayText(String extraDisplayText) {
+        this.extraDisplayText = extraDisplayText;
+    }
+	
+	
 }
