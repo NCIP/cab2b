@@ -34,6 +34,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllPanel;
+import edu.wustl.cab2b.client.ui.mysettings.MySettingPanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 
@@ -171,6 +172,7 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         mySettingHyperlInk.setText("MySettings");
         mySettingHyperlInk.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                MySettingPanel panel = new MySettingPanel(mainFrame);
             }
         });
 
