@@ -70,4 +70,12 @@ public class PropertyLoader {
         String[] idPNames = allNames.split(",");
         return idPNames;
     }
+    /**
+     * @return all the index urls used to get the service information
+     */
+    public static String[] getIndexServiceUrls() {
+        String allUrls = props.getProperty("indexurls");
+        String[] urls = allUrls.split(",");
+        return urls;
+    }
 }
