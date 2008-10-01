@@ -231,4 +231,18 @@ public interface ClientConstants {
      */
     public static final String LOGOUT_ICON = "logout_icon.gif";
 
+    /**
+     * MySettings Page Service URL Link
+     */
+    public static final String MENU_CLICK_EVENT = "menuClicked";
+
+    public static final String SERVICE_URL = "Service URLs";
+
+    public static final String SEARCH_EVENT = "searchEvent";
+
+    public static final String BACK_EVENT = "backEvent";
+
+    public static final String UPDATE_EVENT = "updateEvent";
+
+    public static final String SERVICE_SELECT_EVENT = "serviceSelected";
 }
