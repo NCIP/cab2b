@@ -1,10 +1,6 @@
 package edu.wustl.cab2b.common.user;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-
-import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 
 /**
  * @author Hrishikesh Rajpathak
@@ -20,15 +16,7 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
 
     private String entityGroupName;
 
-    private EntityGroupInterface entityGroupInterface;
-
-    private Collection<UserInterface> userCollection = new HashSet<UserInterface>();
-
     private boolean isAdminDefined;
-
-    public ServiceURL() {
-        super();
-    }
 
     /**
      * @return Returns the entityGroupId.
@@ -46,21 +34,6 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
      */
     public void setEntityGroupName(String entityGroupName) {
         this.entityGroupName = entityGroupName;
-    }
-
-    /**
-     * @return Returns the entityGroupInterface.
-     */
-    public EntityGroupInterface getEntityGroups() {
-        return entityGroupInterface;
-    }
-
-    /**
-     * @param entityGroupInterface
-     *            The entityGroupInterface to set.
-     */
-    public void setEntityGroupInterface(EntityGroupInterface entityGroupInterface) {
-        this.entityGroupInterface = entityGroupInterface;
     }
 
     /**
@@ -99,27 +72,6 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
     }
 
     /**
-     * 
-     * @hibernate.set name="userCollection" cascade="none" lazy="false"
-     *                inverse="true" table="CAB2B_USER_URL_MAPPING"
-     * @hibernate.collection-key column="SERVICE_URL_ID"
-     * @hibernate.collection-many-to-many class="edu.wustl.cab2b.common.user.User"
-     *                                    column="USER_ID"
-     * @hibernate.cache usage="read-write"
-     */
-    public Collection<UserInterface> getUsers() {
-        return userCollection;
-    }
-
-    /**
-     * @param userCollection
-     *            The userCollection to set.
-     */
-    public void setUserCollection(Collection<UserInterface> userCollection) {
-        this.userCollection = userCollection;
-    }
-
-    /**
      * @return Returns the isAdminDefined.
      * 
      * @hibernate.property column="ADMIN_DEFINED" type="boolean" not-null="true"
@@ -136,26 +88,6 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
         this.isAdminDefined = isAdminDefined;
     }
 
-    public void addUser(User user) {
-        if (user != null) {
-            userCollection.add(user);
-        }
-    }
-
-    public void removeUser(User user) {
-        if (user != null) {
-            userCollection.remove(user);
-        }
-    }
-
-    /**
-     * @return Returns the userCollection.
-     */
-    //TODO temporarily added. Naming to be revised again.
-    public Collection<UserInterface> getUserCollection() {
-        return userCollection;
-    }
-
     @Override
     public boolean equals(Object arg) {
         if (this == arg)
@@ -164,9 +96,7 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
         boolean isEqual = false;
         if (null != arg && arg instanceof ServiceURL) {
             ServiceURL serviceURL = (ServiceURL) arg;
-
-            if (urlLocation != null && serviceURL.getUrlLocation().equals(urlLocation) && entityGroupName != null
-                    && serviceURL.getEntityGroupName().equals(entityGroupName)) {
+            if (urlLocation != null && serviceURL.getUrlLocation().equals(urlLocation)) {
                 isEqual = true;
             }
         }
@@ -178,9 +108,6 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
         int hashCode = 1;
         if (urlLocation != null) {
             hashCode += 7 * urlLocation.hashCode();
-        }
-        if (entityGroupName != null) {
-            hashCode += 7 * entityGroupName.hashCode();
         }
         return hashCode;
     }
