@@ -98,15 +98,14 @@
             <session-type>Stateless</session-type>
             <transaction-type>Bean</transaction-type>
        </session>
-       <!--
        <session>
-            <ejb-name>edu.wustl.cab2b.server.ejb.user.ServiceURLBean</ejb-name>
-            <home>edu.wustl.cab2b.common.ejb.user.ServiceURLHomeInterface</home>
-            <remote>edu.wustl.cab2b.common.ejb.user.ServiceURLRemoteInterface</remote>
-            <ejb-class>edu.wustl.cab2b.server.ejb.user.ServiceURLBean</ejb-class>
+            <ejb-name>edu.wustl.cab2b.server.ejb.serviceurl.ServiceURLBean</ejb-name>
+            <home>edu.wustl.cab2b.common.ejb.serviceurl.ServiceURLHomeInterface</home>
+            <remote>edu.wustl.cab2b.common.ejb.serviceurl.ServiceURLRemoteInterface</remote>
+            <ejb-class>edu.wustl.cab2b.server.ejb.serviceurl.ServiceURLBean</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Bean</transaction-type>
        </session>
-       -->
+
 	</enterprise-beans>
 </ejb-jar>
