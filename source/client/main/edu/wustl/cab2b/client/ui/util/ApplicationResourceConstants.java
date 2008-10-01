@@ -146,4 +146,8 @@ public interface ApplicationResourceConstants {
      * Text to be shown as show all link
      */
     public static final String HYPERLINK_SHOW_ALL = "hyperlink.showall.text";//=Show All
+    /**
+     *  Text to be shown as MySettings link 
+     */
+    public static final String MYSETTINGS_FRAME_TITLE = "cab2b.mysettings.frame.title";//=My Settings 
 }
