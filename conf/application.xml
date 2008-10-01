@@ -55,6 +55,8 @@
 	<module><java>caGrid-metadata-security-1.2.jar</java></module>
 	<module><java>caGrid-ServiceSecurityProvider-client-1.2.jar</java></module>
 	<module><java>caGrid-ServiceSecurityProvider-common-1.2.jar</java></module>
+	<module><java>caGrid-metadatautils-1.2.jar</java></module>
+	<module><java>caGrid-discovery-1.2.jar</java></module>
     <module><java>cog-axis.jar</java></module>
 	<module><java>wss4j.jar</java></module>
     <module><java>wsdl4j.jar</java></module>	
