@@ -51,6 +51,7 @@
 	<property name="server.jar.dir" location="${workArea.dir}/serverJar" />
 	<property name="server.jar.file" location="${workArea.dir}/cab2bServer.jar" />
 	<property name="caB2B.standalone.jar.file" location="${workArea.dir}/cab2bStandAlone.jar" />
+	<property name="caB2B.ejb.jar.file" location="${workArea.dir}/cab2bEjb.jar" />
 
 	<property name="client.jar.dir" location="${workArea.dir}/clientJar" />
 	<property name="client.jar.file" location="${workArea.dir}/cab2bClient.jar" />
@@ -58,6 +59,7 @@
 	<property name="client.setup.zip.file" location="${workArea.dir}/cab2bClientSetup.zip" />
 
 	<property name="standAlone.jar.dir" location="${workArea.dir}/cab2bStandAloneJar" />
+	<property name="cab2bEjb.jar.dir" location="${workArea.dir}/cab2bEjbJar" />
 
 	<!--Properties set for checkstyle "PMD scans Java source code and looks for potential code problems"-->
 	<!--Read for more details http://pmd.sourceforge.net/cpd.html -->
@@ -431,6 +433,22 @@
 		</sql>
 	</target>
 	<!-- ================================================================================== -->
+
+	<target name="create.metadata">
+		<echo>Creating cab2b database...</echo>
+		<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${database.server.ip}:${database.server.port}/" userid="${database.username}" password="${database.password}" onerror="continue" classpathref="server.classpath">			
+					DROP DATABASE IF EXISTS ${database.name};
+					CREATE DATABASE ${database.name};
+				</sql>
+
+		<echo>Creating schema in cab2b database...</echo>
+		<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${database.server.ip}:${database.server.port}/${database.name}" userid="${database.username}" password="${database.password}" onerror="continue" classpathref="server.classpath">
+			<fileset dir="${metadata.loader.dir}">
+				<include name="${metadata.loader.file}" />
+			</fileset>
+		</sql>
+	</target>
+	<!-- ================================================================================== -->
 	<target name="build.paths" depends="create.database,clean.all,compile.server">
 		<copy todir="${server.classes.dir}">
 			<fileset dir="${conf.dir}">
@@ -622,6 +640,22 @@
 			</fileset>
 		</copy>
 		<jar basedir="${standAlone.jar.dir}" destfile="${caB2B.standalone.jar.file}">
+			<manifest>
+				<attribute name="Built-At-" value="${TODAY} ${TSTAMP}" />
+			</manifest>
+		</jar>
+	</target>
+	<!-- ================================================================================== -->
+	<target name="build.admin.ejb.jar" depends="compile.all" description="Generate the jar of client,common and server classes which will in standalone manner">
+		<mkdir dir="${cab2bEjb.jar.dir}" />
+		<copy todir="${cab2bEjb.jar.dir}" overwrite="true">
+			<fileset dir="${workArea.dir}/common/classes">
+				<include name="**/ejb/utility/*.*" />
+				<include name="**/ejb/EjbNamesConstants.class" />
+			</fileset>
+		</copy>
+
+		<jar basedir="${cab2bEjb.jar.dir}" destfile="${caB2B.ejb.jar.file}">
 			<manifest>
 				<attribute name="Built-At-" value="${TODAY} ${TSTAMP}" />
 			</manifest>
