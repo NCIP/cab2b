@@ -13,6 +13,7 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.util.TreeNode;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessorResult;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.AbstractAssociationConstraint;
@@ -20,9 +21,7 @@ import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.Attribu
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.DcqlConstraint;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.ForeignAssociationConstraint;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.LocalAssociationConstraint;
-import edu.wustl.cab2b.server.queryengine.resulttransformers.AbstractQueryResultTransformer;
 import edu.wustl.cab2b.server.queryengine.utils.TransformerUtil;
-import edu.wustl.cab2b.server.queryengine.utils.TreeNode;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
@@ -62,6 +61,7 @@ import gov.nih.nci.cagrid.dcql.Object;
  */
 public class ConstraintsBuilder {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ConstraintsBuilder.class);
+
     private ConstraintsBuilderResult result;
 
     private ICab2bQuery query;
@@ -127,12 +127,12 @@ public class ConstraintsBuilder {
 
     private List<Integer> exprIdList(List<IExpression> exprList) {
         List<Integer> res = new ArrayList<Integer>();
-        for(IExpression expr : exprList) {
+        for (IExpression expr : exprList) {
             res.add(expr.getExpressionId());
         }
         return res;
     }
-    
+
     private void constrainByParentExpressions() {
         boolean isCategoryOutput = Utility.isCategory(getOutputEntity());
         Set<Integer> outputExprIds = null;
@@ -182,8 +182,7 @@ public class ConstraintsBuilder {
             IExpression parentExpr = getExpression(parentExprId);
             IAssociation association = getJoinGraph().getAssociation(parentExpr, childExpr);
             if (!association.isBidirectional()) {
-                logger.warn("Unidirectional association found " + association
-                        + ". Results could be incorrect.");
+                logger.warn("Unidirectional association found " + association + ". Results could be incorrect.");
                 continue;
             }
             DcqlConstraint parentConstraint = getResult().getConstraintForExpression(parentExpr);
@@ -219,9 +218,10 @@ public class ConstraintsBuilder {
             if (operand instanceof IExpression) {
                 IExpression childExpr = (IExpression) operand;
                 // if (!isExprRedundant(exprId)) {
-                dcqlConstraintsList.add(createDcqlConstraintForChildExpression(expr.getExpressionId(), childExpr.getExpressionId()));
+                dcqlConstraintsList.add(createDcqlConstraintForChildExpression(expr.getExpressionId(),
+                                                                               childExpr.getExpressionId()));
                 // }
-            } else if(operand instanceof IRule){
+            } else if (operand instanceof IRule) {
                 dcqlConstraintsList.add(createDcqlConstraintForRule((IRule) operand));
             } else {
                 throw new RuntimeException("uknown operand type.");
@@ -252,8 +252,7 @@ public class ConstraintsBuilder {
         return conns;
     }
 
-    private DcqlConstraint createDcqlConstraintForChildExpression(int parentExpressionId,
-                                                                  int childExpressionId) {
+    private DcqlConstraint createDcqlConstraintForChildExpression(int parentExpressionId, int childExpressionId) {
         IExpression childExpr = getConstraints().getExpression(childExpressionId);
         DcqlConstraint childExprDcqlConstraint;
 
@@ -380,7 +379,8 @@ public class ConstraintsBuilder {
         return value;
     }
 
-    private DcqlConstraint createBetweenCondition(String attributeName, String value1, String value2, DataType dataType) {
+    private DcqlConstraint createBetweenCondition(String attributeName, String value1, String value2,
+                                                  DataType dataType) {
         Cab2bGroup group = new Cab2bGroup(LogicalOperator.And);
         boolean swapVals;
         switch (dataType) {
@@ -412,8 +412,10 @@ public class ConstraintsBuilder {
             value1 = value2;
             value2 = temp;
         }
-        group.addConstraint((createAttributeConstraint(attributeName, RelationalOperator.GreaterThanOrEquals, value1, dataType)));
-        group.addConstraint((createAttributeConstraint(attributeName, RelationalOperator.LessThanOrEquals, value2, dataType)));
+        group.addConstraint((createAttributeConstraint(attributeName, RelationalOperator.GreaterThanOrEquals,
+                                                       value1, dataType)));
+        group.addConstraint((createAttributeConstraint(attributeName, RelationalOperator.LessThanOrEquals, value2,
+                                                       dataType)));
         return group.getDcqlConstraint();
     }
 

@@ -3,8 +3,8 @@ package edu.wustl.cab2b.server.queryengine.querybuilders.dcql;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.wustl.cab2b.common.util.TreeNode;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.DcqlConstraint;
-import edu.wustl.cab2b.server.queryengine.utils.TreeNode;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.IConnector;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;

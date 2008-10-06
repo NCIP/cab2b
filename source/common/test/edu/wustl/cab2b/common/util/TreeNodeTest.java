@@ -1,4 +1,4 @@
-package edu.wustl.cab2b.server.queryengine.utils;
+package edu.wustl.cab2b.common.util;
 
 import junit.framework.TestCase;
 

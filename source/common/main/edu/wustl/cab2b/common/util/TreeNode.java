@@ -1,9 +1,10 @@
-package edu.wustl.cab2b.server.queryengine.utils;
+package edu.wustl.cab2b.common.util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TreeNode<T> {
+public class TreeNode<T> implements Serializable, Cloneable {
     private T value;
 
     private List<TreeNode<T>> children;
@@ -60,5 +61,33 @@ public class TreeNode<T> {
 
     public boolean isRoot() {
         return getParent() == null;
+    }
+    
+    public String toString() {
+        return value.toString();
+    }
+
+    public boolean equals(Object obj) {
+        boolean flag = false;
+        if (!TreeNode.class.equals(obj.getClass())) {
+            TreeNode<T> treeNode = (TreeNode<T>) obj;
+            if (this.getValue().equals(treeNode.getValue()) && this.getParent().equals(treeNode.getParent())
+                    && this.getChildren().equals(treeNode.getChildren())) {
+                flag = true;
+            }
+        }
+
+        return flag;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        int hashCode = 0;
+        if (null != value && null != parent && null != children) {
+            hashCode = value.hashCode() + parent.hashCode() + children.hashCode();
+        }
+        return hashCode;
     }
 }
