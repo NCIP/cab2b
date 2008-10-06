@@ -18,7 +18,6 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bRadioButton;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.common.util.Constants;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * The abstract class that contains commonalities between the just the
