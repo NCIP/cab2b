@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.server.util;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
@@ -10,9 +11,13 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.cab2b.server.cache.EntityCache;
+import edu.wustl.cab2b.server.category.CategoryCache;
 import edu.wustl.cab2b.server.datalist.DataListOperationsController;
+import edu.wustl.cab2b.server.path.PathFinder;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.querysuite.metadata.path.CuratedPath;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.global.Constants;
 
@@ -76,7 +81,7 @@ public class UtilityOperations extends DefaultBizLogic {
         for (int i = 0; i < entityRecordList.get(0).getAttributes().size(); i++) {
             entityRecordValues.add(i, new TreeSet<Comparable<?>>());
         }
-        
+
         for (IRecord entityRecord : entityRecordList) {
             process(entityRecord, entityRecordValues);
         }
@@ -94,5 +99,34 @@ public class UtilityOperations extends DefaultBizLogic {
             }
             index++;
         }
+    }
+
+    /**
+     * Method to refresh Path and Entity cache. 
+     * 
+     * @param refreshEntityCache If true refreshes entity cache along with path. If false, only rereshes path cache.
+     */
+    public void refreshPathAndEntityCache(boolean refreshEntityCache) {
+        logger.info("Successful access on remote bean!!!!");
+        Connection connection = ConnectionUtil.getConnection();
+        PathFinder.refreshCache(connection, refreshEntityCache);
+    }
+
+    /**
+     * Method to refresh category cache.
+     */
+    public void refreshCategoryAndEntityCache() {
+        EntityCache.getInstance().refreshCache();
+        Connection connection = ConnectionUtil.getConnection();
+        CategoryCache.getInstance().refreshCategoryCache(connection);
+    }
+
+    /**
+     * Adds the curated path to cache
+     * @param curatedPath path to be added to cache.
+     */
+    public void addCuratedPathToCache(CuratedPath curatedPath) {
+        Connection connection = ConnectionUtil.getConnection();
+        PathFinder.getInstance(connection).addCuratedPath(curatedPath);
     }
 }

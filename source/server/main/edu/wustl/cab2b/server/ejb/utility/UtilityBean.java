@@ -4,26 +4,20 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
 
-import javax.ejb.SessionBean;
-
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.common.dynamicextensionsstubs.AssociationWrapper;
 import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
 import edu.wustl.cab2b.common.queryengine.result.ILazyParams;
 import edu.wustl.cab2b.common.queryengine.result.IPartiallyInitializedRecord;
-import edu.wustl.cab2b.common.queryengine.result.IRecord;
-import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.EntityCache;
-import edu.wustl.cab2b.server.datalist.DataListOperationsController;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.queryengine.LazyInitializer;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.cab2b.server.util.UtilityOperations;
+import edu.wustl.common.querysuite.metadata.path.CuratedPath;
 
 /**
  * EJB to provide utility methods which are needed by client side, but which needs to aceess server.
@@ -101,5 +95,31 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Utility
      */
     public List<TreeSet<Comparable<?>>> getUniqueRecordValues(Long entityId) throws RemoteException {
         return new UtilityOperations().getUniqueRecordValues(entityId);
+    }
+
+    /**
+     * Resreshes Path cache and EntityCache if boolean passed is true
+     * @param resheshEntityCache If to refresh entity cache
+     * @throws RemoteException
+     */
+    public void refreshPathAndEntityCache(boolean refreshEntityCache) throws RemoteException {
+        new UtilityOperations().refreshPathAndEntityCache(refreshEntityCache);
+    }
+
+    /**
+     * Resreshes Category cache and EntityCache.
+     * @throws RemoteException
+     */
+    public void refreshCategoryAndEntityCache() throws RemoteException {
+        new UtilityOperations().refreshCategoryAndEntityCache();
+    }
+
+    /**
+     * Adds curated path to cache.
+     * @param curatedPath path to be added to cache.
+     * @throws RemoteException
+     */
+    public void addCuretedPathToCache(CuratedPath curatedPath) throws RemoteException {
+        new UtilityOperations().addCuratedPathToCache(curatedPath);
     }
 }

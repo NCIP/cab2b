@@ -1,7 +1,6 @@
 package edu.wustl.cab2b.common.ejb.utility;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
@@ -11,6 +10,7 @@ import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.queryengine.result.ILazyParams;
 import edu.wustl.cab2b.common.queryengine.result.IPartiallyInitializedRecord;
+import edu.wustl.common.querysuite.metadata.path.CuratedPath;
 
 /**
  * @author Chandrakant Talele
@@ -62,4 +62,24 @@ public interface UtilityBusinessInterface extends BusinessInterface {
      * @throws RemoteException
      */
     List<TreeSet<Comparable<?>>> getUniqueRecordValues(Long entityId) throws RemoteException;
+
+    /**
+     * Resreshes Path cache and EntityCache if boolean passed is true
+     * @param resheshEntityCache If to refresh entity cache
+     * @throws RemoteException
+     */
+    void refreshPathAndEntityCache(boolean resheshEntityCache) throws RemoteException;
+
+    /**
+     * Resreshes Category cache and EntityCache.
+     * @throws RemoteException
+     */
+    void refreshCategoryAndEntityCache() throws RemoteException;
+
+    /**
+     * Adds curated path to cache.
+     * @param curatedPath path to be added to cache.
+     * @throws RemoteException
+     */
+    void addCuretedPathToCache(CuratedPath curatedPath) throws RemoteException;
 }
