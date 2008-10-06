@@ -7,6 +7,7 @@ import java.util.List;
 import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.BusinessInterface;
+import edu.wustl.cab2b.common.domain.DCQL;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -76,5 +77,14 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * @return list of IParameterizedQuery having only their name and description populated
      * @throws RemoteException if retrieving fails
      */
-    public Collection<IParameterizedQuery> getAllQueryNameAndDescription() throws RemoteException;
+    Collection<IParameterizedQuery> getAllQueryNameAndDescription() throws RemoteException;
+
+    /**
+     * This method returns the DCQL in tree format for the given query. Tree nodes consists of DCQL object
+     * that encapsulates Category/Entity name and its corresponding DCQL.
+     * 
+     * @param query query for which DCQl is to be generated
+     * @return TreeNode<DCQL>
+     */
+    DCQL getDCQL(ICab2bQuery query) throws RemoteException;
 }
