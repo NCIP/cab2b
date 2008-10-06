@@ -4,12 +4,14 @@
 package edu.wustl.cab2b.client.ui.searchDataWizard;
 
 import java.io.IOException;
+import java.io.StringReader;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -27,19 +29,19 @@ public class XmlParser extends DefaultHandler {
 
     }
 
-    public String parseXml(String dcqlQuery) {
+    public String parseXml(String dcqlQuery) throws RuntimeException {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
-            saxParser.parse(dcqlQuery, this);
+            saxParser.parse(new InputSource(new StringReader(dcqlQuery)), this);
 
             xmlText.append("</BODY></HTML>");
         } catch (SAXException saxException) {
-
+            throw new RuntimeException(saxException.getMessage());
         } catch (ParserConfigurationException pce) {
-
+            throw new RuntimeException(pce.getMessage());
         } catch (IOException ioException) {
-
+            throw new RuntimeException(ioException.getMessage());
         }
 
         return xmlText.toString();
@@ -112,8 +114,8 @@ public class XmlParser extends DefaultHandler {
 
         StringBuffer formattedText = new StringBuffer();
         String htmlEnd = "</span>";
-        int length = htmlStart.length();
 
+        int length = htmlStart.length();
         if ("BLACK".equals(color)) {
             htmlStart = htmlStart.append("black'>");
             formattedText = formattedText.append(htmlStart).append(tag).append(htmlEnd);

@@ -40,7 +40,7 @@ public class ShowDCQLPanel extends Cab2bPanel {
     private void initGUI(DCQL dcql) {
         String xmlText = new XmlParser().parseXml(dcql.getDcqlQuery());
 
-        xmlTextPane.setText(xmlText.toString());
+        xmlTextPane.setText(xmlText);
         xmlTextPane.setBackground(Color.WHITE);
 
         Cab2bPanel xmlPanel = new Cab2bPanel();
