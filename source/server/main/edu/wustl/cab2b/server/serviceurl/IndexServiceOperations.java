@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
+import org.apache.log4j.Logger;
 
 import edu.wustl.cab2b.common.util.PropertyLoader;
-import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.cagrid.discovery.client.DiscoveryClient;
 import gov.nih.nci.cagrid.metadata.exceptions.QueryInvalidException;
 import gov.nih.nci.cagrid.metadata.exceptions.RemoteResourcePropertyRetrievalException;
@@ -21,6 +21,7 @@ import gov.nih.nci.cagrid.metadata.exceptions.ResourcePropertyRetrievalException
  * 
  */
 public class IndexServiceOperations {
+    private final static Logger logger = Logger.getLogger(IndexServiceOperations.class);
 
     /**
      * @param names of entity group for which service instances are needed
@@ -38,13 +39,13 @@ public class IndexServiceOperations {
             try {
                 endpointReferenceType = client.discoverDataServicesByDomainModel(name);
             } catch (RemoteResourcePropertyRetrievalException e) {
-                Logger.out.error(e.getMessage(), e);
+                logger.error(e.getMessage(), e);
                 throw new RemoteException(e.getMessage());
             } catch (QueryInvalidException e) {
-                Logger.out.error(e.getMessage(), e);
+                logger.error(e.getMessage(), e);
                 throw new RemoteException(e.getMessage());
             } catch (ResourcePropertyRetrievalException e) {
-                Logger.out.error(e.getMessage(), e);
+                logger.error(e.getMessage(), e);
                 throw new RemoteException(e.getMessage());
             }
 
