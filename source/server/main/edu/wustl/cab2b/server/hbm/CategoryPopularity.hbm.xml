@@ -21,6 +21,7 @@
             unsaved-value="null"
         >
             <generator class="native">
+                <param name="sequence">CATEGORY_POPULARITY_ID_SEQ</param>
             </generator>
         </id>
 
