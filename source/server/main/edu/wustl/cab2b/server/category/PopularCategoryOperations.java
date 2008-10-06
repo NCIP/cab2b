@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.server.category;
 
+import java.sql.Connection;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,7 +13,7 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.category.CategoryPopularity;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.cab2b.server.cache.CategoryCache;
+import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.common.hibernate.HibernateDatabaseOperations;
 import edu.wustl.common.hibernate.HibernateUtil;
 import edu.wustl.common.querysuite.metadata.category.Category;
@@ -50,7 +51,8 @@ public class PopularCategoryOperations {
 
         for (EntityInterface entityInterface : entities) {
             if (Utility.isCategory(entityInterface)) {
-                Category category = CategoryCache.getInstance().getCategoryByEntityId(entityInterface.getId());
+                Connection connection = ConnectionUtil.getConnection();
+                Category category = CategoryCache.getInstance(connection).getCategoryByEntityId(entityInterface.getId());
                 CategoryOperations categoryOperations = new CategoryOperations();
                 Collection<EntityInterface> entityCollection = categoryOperations.getAllSourceClasses(category);
                 for (EntityInterface en : entityCollection) {

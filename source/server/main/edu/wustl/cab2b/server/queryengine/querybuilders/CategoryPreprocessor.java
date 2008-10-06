@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.server.queryengine.querybuilders;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,7 +16,8 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.TreeNode;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.cab2b.server.cache.CategoryCache;
+import edu.wustl.cab2b.server.category.CategoryCache;
+import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
@@ -41,6 +43,7 @@ import edu.wustl.common.querysuite.queryobject.LogicalOperator;
  */
 public class CategoryPreprocessor {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(CategoryPreprocessor.class);
+
     private IQuery query;
 
     private CategoryPreprocessorResult categoryPreprocessorResult;
@@ -125,7 +128,8 @@ public class CategoryPreprocessor {
     // protected for testing
     protected Category getCategoryFromEntity(EntityInterface catEntity) {
         Long entityId = catEntity.getId();
-        return CategoryCache.getInstance().getCategoryByEntityId(entityId);
+        Connection connection = ConnectionUtil.getConnection();
+        return CategoryCache.getInstance(connection).getCategoryByEntityId(entityId);
     }
 
     private Category pivot(Category category, EntityInterface requiredRoot) {
@@ -394,8 +398,7 @@ public class CategoryPreprocessor {
         return rootExpr;
     }
 
-    private void processRedundantExprs(IExpression possiblyRedundantExpr,
-                                       Set<IExpression> possiblyRedundantExprs) {
+    private void processRedundantExprs(IExpression possiblyRedundantExpr, Set<IExpression> possiblyRedundantExprs) {
         if (isRedundant(possiblyRedundantExpr)) {
             // the expr was already found to be redundant.
             return;
@@ -405,8 +408,7 @@ public class CategoryPreprocessor {
             processRedundantExprs(possiblyRedundantChildExprId, possiblyRedundantExprs);
         }
         if (possiblyRedundantExprs.contains(possiblyRedundantExpr)) {
-            List<IExpression> childExprs = getJoinGraph().getChildrenList(
-                                                                              possiblyRedundantExpr);
+            List<IExpression> childExprs = getJoinGraph().getChildrenList(possiblyRedundantExpr);
             if (possiblyRedundantExpr.numberOfOperands() == childExprs.size()) {
                 // this means that possiblyRedundantExpr has no rules
                 boolean redundant = true;

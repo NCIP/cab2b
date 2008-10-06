@@ -10,6 +10,7 @@ import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.common.querysuite.metadata.category.Category;
 
@@ -21,6 +22,10 @@ public class CategoryCache {
     private static CategoryCache cache;
 
     private List<Category> categories;
+
+    protected Map<Long, Category> entityIdToCategory = new HashMap<Long, Category>();
+
+    protected Map<Long, Category> categoryIdToCategory = new HashMap<Long, Category>();
 
     /**
      * This is Map with KEY: category and VALUE: set of classes used in forming the category 
@@ -41,6 +46,14 @@ public class CategoryCache {
         return cache;
     }
 
+    public static synchronized CategoryCache getInstance() {
+        if (cache == null) {
+            throw new IllegalStateException(
+                    "to get PathFinder with this method, it must be initialized using a connection before this call");
+        }
+        return cache;
+    }
+
     private CategoryCache() {
 
     }
@@ -52,8 +65,9 @@ public class CategoryCache {
         categoryVsAttributeSet = new HashMap<Long, Set<AttributeInterface>>(categories.size());
         for (Category category : categories) {
             addCategoryToCache(category);
+            categoryIdToCategory.put(category.getId(), category);
+            entityIdToCategory.put(category.getDeEntityId(), category);
         }
-
     }
 
     public List<Category> getCategories() {
@@ -79,4 +93,23 @@ public class CategoryCache {
         EntityCache.getInstance().refreshCache();
     }
 
+    public Category getCategoryById(Long id) {
+        Category category = categoryIdToCategory.get(id);
+        if (category == null) {
+            throw new RuntimeException("Category with given id not found.");
+        }
+        return category;
+    }
+
+    public Category getCategoryByEntityId(Long id) {
+        Category category = entityIdToCategory.get(id);
+        if (category == null) {
+            throw new RuntimeException("Category with given entity id not found.");
+        }
+        return category;
+    }
+
+    public void refreshCategoryCache(Connection connection) {
+        init(connection);
+    }
 }

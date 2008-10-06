@@ -11,7 +11,6 @@ import edu.wustl.cab2b.common.category.CategoryPopularity;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
 import edu.wustl.cab2b.common.ejb.category.CategoryHomeInterface;
-import edu.wustl.cab2b.common.exception.RuntimeException;
 
 public class PopularCategoryCache {
 
