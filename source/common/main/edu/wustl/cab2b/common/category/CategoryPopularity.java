@@ -61,6 +61,7 @@ public class CategoryPopularity implements CategoryPopularityInterface, Serializ
     /**
      * @hibernate.id name="id" column="IDENTIFIER" type="long" length="30"
      *                  unsaved-value="null" generator-class="native"
+     * @hibernate.generator-param name="sequence" value="CATEGORY_POPULARITY_ID_SEQ"
      */
     @SuppressWarnings("unused")
     private Long getId() {

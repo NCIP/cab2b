@@ -9,7 +9,7 @@ package edu.wustl.cab2b.common.category;
 public interface CategoryPopularityInterface {
 
     /**
-     * Mothod to get popularity
+     * Method to get popularity
      * 
      * @return popularity count
      */
@@ -37,7 +37,7 @@ public interface CategoryPopularityInterface {
     long getEntityId();
 
     /** 
-     * Incarement popularity count by one 
+     * Increment popularity count by one 
      */
     void incPopularity();
 
