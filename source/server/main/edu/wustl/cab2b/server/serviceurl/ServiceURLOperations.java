@@ -89,7 +89,7 @@ public class ServiceURLOperations extends DefaultBizLogic {
     private List<AdminServiceMetadata> getMetadataObjects(final EndpointReferenceType[] services,
                                                           String serviceName, UserInterface user) {
         final List<AdminServiceMetadata> metadataObjectService = new ArrayList<AdminServiceMetadata>();
-        final List<AdminServiceMetadata> tempMetadataObject = new ArrayList<AdminServiceMetadata>();
+       // final List<AdminServiceMetadata> tempMetadataObject = new ArrayList<AdminServiceMetadata>();
         Map<String, AdminServiceMetadata> existingServiceURLMap = getExistingServiceURLs(serviceName, user);
 
         AdminServiceMetadata metadataObject = null;
@@ -103,7 +103,13 @@ public class ServiceURLOperations extends DefaultBizLogic {
                 existingServiceURLMap.remove(serviceURL);
             } else {
                 metadataObject = new AdminServiceMetadata();
+                ServiceURL serviceURLObj = new ServiceURL();
+                serviceURLObj.setUrlLocation(serviceURL);
+                serviceURLObj.setEntityGroupName(serviceName);
+                serviceURLObj.setAdminDefined(user.isAdmin());
                 metadataObject.setServiceURL(attributeUri.toString());
+                metadataObject.setServiceURLObject(serviceURLObj);
+                
             }
 
             String description = null;
@@ -151,7 +157,7 @@ public class ServiceURLOperations extends DefaultBizLogic {
      */
     public Map<String, AdminServiceMetadata> getExistingServiceURLs(String serviceName, UserInterface user) {
         Map<String, AdminServiceMetadata> serviceURLMetadataMap = new HashMap<String, AdminServiceMetadata>();
-        Collection<ServiceURLInterface> existingServiceURLList = new ArrayList<ServiceURLInterface>();
+        Collection<ServiceURLInterface> existingServiceURLList = new HashSet<ServiceURLInterface>();
         Map<String, List<String>> entityGroupVsURLS = new UserOperations().getServiceURLsForUser(user);
         List<String> serviceURLS = entityGroupVsURLS.get(serviceName);
         //   Collection<ServiceURLInterface> userServiceURLS = user.getServiceURLCollection();
@@ -163,6 +169,7 @@ public class ServiceURLOperations extends DefaultBizLogic {
             metadataObject.setSeviceDescription("* No description available");
             metadataObject.setHostingResearchCenter(serviceURL);
             metadataObject.setSeviceName(service.getEntityGroupName());
+            metadataObject.setServiceURLObject(service);
             if (serviceURLS.contains(service.getUrlLocation())) {
                 metadataObject.setConfigured(true);
             }

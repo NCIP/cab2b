@@ -15,6 +15,22 @@ public class AdminServiceMetadata implements Serializable {
 
     private boolean isConfigured;
 
+    private ServiceURLInterface servicerURLObject;
+    
+    /**
+     * @return the servicerURL
+     */
+    public ServiceURLInterface getServiceURLObject() {
+        return servicerURLObject;
+    }
+
+    /**
+     * @param servicerURL the servicerURL to set
+     */
+    public void setServiceURLObject(ServiceURLInterface servicerURL) {
+        this.servicerURLObject = servicerURL;
+    }
+
     /**
      * @return Returns the isAlive.
      */
