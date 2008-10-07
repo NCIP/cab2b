@@ -150,7 +150,6 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         //Event Listener for Showing DCQL Query
         showDCQL.addActionListener(new ActionListener() {
 
-            @Override
             public void actionPerformed(ActionEvent e) {
                 Cab2bHyperlink<ICab2bQuery> dcqlLink = (Cab2bHyperlink<ICab2bQuery>) e.getSource();
 
