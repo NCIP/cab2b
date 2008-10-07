@@ -107,7 +107,7 @@ public class UserOperations extends DefaultBizLogic {
      * @param user User
      */
     private void postProcessUser(User user) {
-        Collection<EntityGroupInterface> entityGroups = EntityCache.getInstance().getEntityGroups();
+//        Collection<EntityGroupInterface> entityGroups = EntityCache.getInstance().getEntityGroups();
 
         Collection<ServiceURLInterface> serviceCollection = user.getServiceURLCollection();
 //        for (ServiceURLInterface serviceURL : serviceCollection) {
