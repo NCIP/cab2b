@@ -243,7 +243,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
             searchString = searchString.toLowerCase();
             for (AdminServiceMetadata metadata : allServiceInstances) {
                 String hostingResearchCenter = metadata.getHostingResearchCenter().toLowerCase();
-                if (searchString.contains(hostingResearchCenter)) {
+                if (hostingResearchCenter.contains(searchString)) {
                     filteredServiceInstances.add(metadata);
                 }
             }
