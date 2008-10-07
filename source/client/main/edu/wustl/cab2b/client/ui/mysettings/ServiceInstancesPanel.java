@@ -177,7 +177,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
     private void saveServiceInstances(List<AdminServiceMetadata> selectedInstances) {
         ServiceInstanceBizLogic bizLogic = new ServiceInstanceBizLogic();
         try {
-            bizLogic.saveServiceInstances(selectedInstances, UserCache.getInstance().getCurrentUser());
+            bizLogic.saveServiceInstances(serviceName,selectedInstances, UserCache.getInstance().getCurrentUser());
             firePropertyChange(UPDATE_EVENT, serviceName, "( Configured Successfully )");
 
         } catch (RemoteException exception) {
