@@ -28,7 +28,7 @@ import edu.wustl.cab2b.common.util.Constants;
  */
 public class ServiceInstanceBizLogic {
 
-    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ServiceInstanceBizLogic.class);
+    private static final Logger logger = Logger.getLogger(ServiceInstanceBizLogic.class);
 
     /**
      * This method fetches all the entity groups created as part of metadata
@@ -69,7 +69,7 @@ public class ServiceInstanceBizLogic {
             user.getServiceURLCollection().clear();
             saveUser(user);
             UserCache.getInstance().init(user);
-            return ;
+            return;
         }
 
         ServiceURLBusinessInterface serviceURLInterface = (ServiceURLBusinessInterface) CommonUtils.getBusinessInterface(
@@ -112,12 +112,14 @@ public class ServiceInstanceBizLogic {
                                                                                                                          ServiceURLHomeInterface.class,
                                                                                                                          null);
         Collection<AdminServiceMetadata> serviceInstanceList = new ArrayList<AdminServiceMetadata>();
+
         try {
             serviceInstanceList.addAll(serviceURLInterface.getInstancesByServiceName(serviceName, user));
         } catch (RemoteException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error(e.getStackTrace(), e);
+            throw new RuntimeException(e.getMessage());
         }
+
         return serviceInstanceList;
     }
 
