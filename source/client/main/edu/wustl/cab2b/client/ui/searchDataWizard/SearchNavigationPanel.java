@@ -1,23 +1,35 @@
 package edu.wustl.cab2b.client.ui.searchDataWizard;
 
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.MYSETTINGS_FRAME_TITLE;
+
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import org.jdesktop.swingx.JXPanel;
 
+import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.experiment.NewExperimentDetailsPanel;
+import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
+import edu.wustl.cab2b.client.ui.mysettings.RightPanel;
 import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryDataModel;
 import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryMainPanel;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
@@ -27,6 +39,7 @@ import edu.wustl.cab2b.client.ui.searchDataWizard.dag.DagControlPanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.dag.MainDagPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
+import edu.wustl.cab2b.client.ui.util.WindowUtilities;
 import edu.wustl.cab2b.client.ui.viewresults.DataListPanel;
 import edu.wustl.cab2b.client.ui.viewresults.ViewSearchResultsPanel;
 import edu.wustl.cab2b.common.datalist.IDataRow;
@@ -37,6 +50,8 @@ import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.IQuery;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
+import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
  * @author mahesh_iyer
@@ -61,6 +76,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
     private Cab2bButton addToExperimentButton;
 
+    private Cab2bButton serviceUrlButton;
+
     private Cab2bPanel buttonPanel;
 
     private Cab2bPanel messagePanel;
@@ -80,6 +97,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     private final String saveDataButtonStr = "Save Data List";
 
     private final String saveQueryButtonStr = "Save Query";
+
+    private final String serviceUrlButtonStr = "Service URL";
 
     private final String addToExperimentButtonStr = "Add to Experiment";
 
@@ -116,6 +135,10 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         saveConditionButton.setPreferredSize(new Dimension(160, 22));
         saveConditionButton.addActionListener(new SaveConditionButtonActionListener());
 
+        serviceUrlButton = new Cab2bButton(serviceUrlButtonStr);
+        serviceUrlButton.setPreferredSize(new Dimension(160, 22));
+        serviceUrlButton.addActionListener(new ServiceURLButtonActionListener());
+
         addToExperimentButton = new Cab2bButton(addToExperimentButtonStr);
         addToExperimentButton.setPreferredSize(new Dimension(160, 22));
         addToExperimentButton.addActionListener(this);
@@ -126,6 +149,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         buttonPanel.setBackground(null);
         buttonPanel.setLayout(flowLayout);
         buttonPanel.add(saveConditionButton);
+        buttonPanel.add(serviceUrlButton);
         buttonPanel.add(previousButton);
         buttonPanel.add(nextButton);
         buttonPanel.add(saveDataListButton);
@@ -207,6 +231,11 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             previousButton.setVisible(false);
         else
             previousButton.setVisible(true);
+
+        if (cardindex == 2)
+            serviceUrlButton.setVisible(true);
+        else
+            serviceUrlButton.setVisible(false);
 
         if (cardindex > 1 && cardindex < 4)
             saveConditionButton.setVisible(true);
@@ -476,6 +505,42 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 mainSearchPanel.setQueryObject(null);
             }
         }
+    }
+
+    /**
+     * This class is the serviceurl button action listener 
+     *  
+     * @author atul_jawale
+     *
+     */
+    private class ServiceURLButtonActionListener implements ActionListener {
+
+        public void actionPerformed(ActionEvent arg0) {
+            Collection<EntityGroupInterface> selectedEntityList = getAllEntityGroups();
+            Cab2bPanel mainPanel = new Cab2bPanel(new BorderLayout(10, 5));
+            RightPanel rightPanel = new RightPanel(selectedEntityList);
+            mainPanel.add(rightPanel, BorderLayout.CENTER);
+            MainFrame.setScreenDimesion(Toolkit.getDefaultToolkit().getScreenSize());
+            Dimension screenDimesion = MainFrame.getScreenDimesion();
+            final String title = ApplicationProperties.getValue(MYSETTINGS_FRAME_TITLE);
+            Dimension dimension = new Dimension((int) (screenDimesion.width * 0.90),
+                    (int) (screenDimesion.height * 0.85));
+            JDialog serviceInstanceDialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), mainPanel,
+                                                                        title, dimension, true, true);
+            serviceInstanceDialog.setVisible(true);
+        }
+
+        private Collection<EntityGroupInterface> getAllEntityGroups() {
+            Collection<EntityGroupInterface> selectedEntityList = new HashSet<EntityGroupInterface>();
+            final IQuery b2bquery = mainSearchPanel.queryObject.getQuery();
+            Set<IQueryEntity> iQuerySet = b2bquery.getConstraints().getQueryEntities();
+            for (IQueryEntity iqueryEntity : iQuerySet) {
+                selectedEntityList.addAll(iqueryEntity.getDynamicExtensionsEntity().getEntityGroupCollection());
+            }
+
+            return selectedEntityList;
+        }
+
     }
 
     /**

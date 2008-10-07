@@ -71,8 +71,17 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
     private EntityInterface rootEntity = null;
 
     private Set<EntityInterface> allEntities = new HashSet<EntityInterface>();
+    
+    
 
-    public AdvancedDefineViewPanel(SearchCenterPanel searchCenterPanel) {
+    /**
+     * @return the allEntities
+     */
+    public Set<EntityInterface> getAllEntities() {
+        return allEntities;
+    }
+
+   public AdvancedDefineViewPanel(SearchCenterPanel searchCenterPanel) {
         this.searchCenterPanel = searchCenterPanel;
         initGUI();
     }
@@ -153,14 +162,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         setOutputForQuery(queryObject, defaultSelectionOfEntity);
         bottomPanel.add(combo);
 
-        // Add serviceURL link  
-        Cab2bHyperlink<Collection<EntityGroupInterface>> serviceInstancelink = new Cab2bHyperlink<Collection<EntityGroupInterface>>();
-        serviceInstancelink.setText(" Service URLs");
-        serviceInstancelink.setToolTipText("Shows the configured service urls.");
-        //Adding the link listener
-        serviceInstancelink.addActionListener(new serviceURLListener());
-        bottomPanel.add("tab", serviceInstancelink);
-
+        
         //Adding the show DCQL link
         Cab2bHyperlink<ICab2bQuery> showDCQL = new Cab2bHyperlink<ICab2bQuery>();
         showDCQL.setUserObject((ICab2bQuery) queryObject.getQuery());
@@ -228,44 +230,13 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         return this.rootEntity;
     }
 
-    /**
-     * This class is the action listener class for the
-     * service url link on the page
-     * @author atul_jawale
-     *
-     */
-    class serviceURLListener implements ActionListener {
-
-        /**
-         * This method will take all the entityGroups present in the formed 
-         * query and add them to a collection. This collection will be passed to the 
-         * Mysettings rightpanel which will show the user all the service names.
-         *  
-         */
-        public void actionPerformed(ActionEvent event) {
-            Collection<EntityGroupInterface> selectedEntityList = new HashSet<EntityGroupInterface>();
-            for (EntityInterface entity : allEntities) {
-                selectedEntityList.addAll(entity.getEntityGroupCollection());
-            }
-            Cab2bPanel mainPanel = new Cab2bPanel(new BorderLayout(10, 5));
-            RightPanel rightPanel = new RightPanel(selectedEntityList);
-            mainPanel.add(rightPanel, BorderLayout.CENTER);
-            MainFrame.setScreenDimesion(Toolkit.getDefaultToolkit().getScreenSize());
-            Dimension screenDimesion = MainFrame.getScreenDimesion();
-            final String title = ApplicationProperties.getValue(MYSETTINGS_FRAME_TITLE);
-            Dimension dimension = new Dimension((int) (screenDimesion.width * 0.90),
-                    (int) (screenDimesion.height * 0.85));
-            JDialog serviceInstanceDialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), mainPanel,
-                                                                        title, dimension, true, true);
-            serviceInstanceDialog.setVisible(true);
-        }
-    }
+    
     /**
      * This is the 
      * @author atul_jawale
      *
      */
-    class DCQLListener implements ActionListener {
+  private class DCQLListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
             Cab2bHyperlink<ICab2bQuery> dcqlLink = (Cab2bHyperlink<ICab2bQuery>) e.getSource();
