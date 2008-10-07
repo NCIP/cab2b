@@ -27,6 +27,11 @@ public interface Cab2bStandardFonts {
      * Arial plain 16 Normal
      */
     public static Font ARIAL_PLAIN_16 = new Font("arial", Font.PLAIN, 16);
+    
+    /**
+     * Arial plain 10 Bold
+     */
+    public static Font ARIAL_BOLD_10 = new Font("arial", Font.BOLD, 10);
 
     /**
      * Default caB2B font
