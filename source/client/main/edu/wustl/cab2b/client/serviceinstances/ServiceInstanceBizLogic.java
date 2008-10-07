@@ -71,13 +71,7 @@ public class ServiceInstanceBizLogic {
         * service name is same as entityGroupName
         */
         if (serviceMetadataObjects.isEmpty()) {
-            Collection<ServiceURLInterface> allServiceURLLIst = user.getServiceURLCollection();
-            for(ServiceURLInterface serviceURL :allServiceURLLIst){
-                String serviceName = serviceURL.getEntityGroupName();
-                if(serviceName.equalsIgnoreCase(entityGroupName)){
-                    user.getServiceURLCollection().remove(serviceURL);   
-                }
-            }
+            user.getServiceURLCollection().clear();
             saveUser(user);
             UserCache.getInstance().init(user);
             return;
