@@ -3,6 +3,7 @@ package edu.wustl.cab2b.client.serviceinstances;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -62,44 +63,59 @@ public class ServiceInstanceBizLogic {
      * @param user
      * @throws RemoteException
      */
-    public void saveServiceInstances(String entityGroupName, Collection<AdminServiceMetadata> serviceMetadataObjects, UserInterface user)
+    public void saveServiceInstances(String entityGroupName,
+                                     Collection<AdminServiceMetadata> serviceMetadataObjects, UserInterface user)
             throws RemoteException {
 
-       /*
-        * If the user has clicked on admin configured urls,then collection will be empty
-        * so just removing all the service urls from user's service url collection whose
-        * service name is same as entityGroupName
-        */
+        /*
+         * If the user has clicked on admin configured urls,then collection will be empty
+         * so just removing all the service urls from user's service url collection whose
+         * service name is same as entityGroupName
+         */
         if (serviceMetadataObjects.isEmpty()) {
-            user.getServiceURLCollection().clear();
+            Collection<ServiceURLInterface> serviceURLsToRemove = new HashSet<ServiceURLInterface>();
+            Collection<ServiceURLInterface> allServiceURLLIst = user.getServiceURLCollection();
+            for (ServiceURLInterface serviceURL : allServiceURLLIst) {
+                String serviceName = serviceURL.getEntityGroupName();
+                if (serviceName.equalsIgnoreCase(entityGroupName)) {
+                    serviceURLsToRemove.add(serviceURL);
+                    
+                }
+            }
+            user.getServiceURLCollection().removeAll(serviceURLsToRemove);
             saveUser(user);
             UserCache.getInstance().init(user);
             return;
         }
 
-        ServiceURLBusinessInterface serviceURLInterface = (ServiceURLBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                         EjbNamesConstants.SERVICE_URL_BEAN,
-                                                                                                                         ServiceURLHomeInterface.class,
-                                                                                                                         null); 
-        Map<String, ServiceURL> allServices = (Map<String, ServiceURL>) serviceURLInterface.getAllInstancesForEntityGroup(entityGroupName);
         Collection<ServiceURLInterface> newServices = new ArrayList<ServiceURLInterface>();
         for (AdminServiceMetadata serviceMetadata : serviceMetadataObjects) {
-            String serviceURLLocation = serviceMetadata.getServiceURL();
-            ServiceURL serviceURL = allServices.get(serviceURLLocation);
-            if (serviceURL == null) {
-                serviceURL = new ServiceURL();
-                serviceURL.setUrlLocation(serviceURLLocation);
-                serviceURL.setEntityGroupName(serviceMetadata.getSeviceName());
-                serviceURL.setAdminDefined(user.isAdmin());
-            }
 
+            ServiceURLInterface serviceURL = serviceMetadata.getServiceURLObject();
             newServices.add(serviceURL);
         }
-        user.getServiceURLCollection().clear();
+
+        Collection<ServiceURLInterface> allServiceURLLIst = user.getServiceURLCollection();
+        Collection<ServiceURLInterface> serviceURLsToRemove = new HashSet<ServiceURLInterface>();
+        for (ServiceURLInterface serviceURL : allServiceURLLIst) {
+            String serviceName = serviceURL.getEntityGroupName();
+            if (serviceName.equalsIgnoreCase(entityGroupName)){
+                
+                if(newServices.contains(serviceURL)) 
+                {
+                    newServices.remove(serviceURL);
+                }
+                else
+                {
+                    serviceURLsToRemove.add(serviceURL);
+                }
+            }
+        }
+        user.getServiceURLCollection().removeAll(serviceURLsToRemove);
         user.getServiceURLCollection().addAll(newServices);
         saveUser(user);
         UserCache.getInstance().init(user);
-
+        return;
     }
 
     /**
