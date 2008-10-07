@@ -1,9 +1,12 @@
 package edu.wustl.cab2b.client.ui.searchDataWizard;
 
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.MYSETTINGS_FRAME_TITLE;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -14,16 +17,21 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 
 import org.jdesktop.swingx.JXPanel;
 
+import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bComboBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
+import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
+import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
+import edu.wustl.cab2b.client.ui.mysettings.RightPanel;
 import edu.wustl.cab2b.client.ui.pagination.JPagination;
 import edu.wustl.cab2b.client.ui.pagination.NumericPager;
 import edu.wustl.cab2b.client.ui.pagination.PageElement;
@@ -31,6 +39,7 @@ import edu.wustl.cab2b.client.ui.pagination.PageElementImpl;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
+import edu.wustl.cab2b.client.ui.util.WindowUtilities;
 import edu.wustl.cab2b.common.domain.DCQL;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
@@ -40,6 +49,7 @@ import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IQuery;
+import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
  * @author mahesh_iyer
@@ -141,43 +151,24 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         // default selected entity in the combo box as the output entity.
         String defaultSelectionOfEntity = (String) combo.getSelectedItem();
         setOutputForQuery(queryObject, defaultSelectionOfEntity);
+        bottomPanel.add(combo);
 
+        // Add serviceURL link  
+        Cab2bHyperlink<Collection<EntityGroupInterface>> serviceInstancelink = new Cab2bHyperlink<Collection<EntityGroupInterface>>();
+        serviceInstancelink.setText(" Service URLs");
+        serviceInstancelink.setToolTipText("Shows the configured service urls.");
+        //Adding the link listener
+        serviceInstancelink.addActionListener(new serviceURLListener());
+        bottomPanel.add("tab", serviceInstancelink);
+
+        //Adding the show DCQL link
         Cab2bHyperlink<ICab2bQuery> showDCQL = new Cab2bHyperlink<ICab2bQuery>();
         showDCQL.setUserObject((ICab2bQuery) queryObject.getQuery());
         showDCQL.setText("Show DCQL");
         showDCQL.setToolTipText("Shows The DCQL Query Generated");
 
         //Event Listener for Showing DCQL Query
-        showDCQL.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                Cab2bHyperlink<ICab2bQuery> dcqlLink = (Cab2bHyperlink<ICab2bQuery>) e.getSource();
-
-                CustomSwingWorker swingWorker = new CustomSwingWorker(dcqlLink, AdvancedDefineViewPanel.this) {
-                    private DCQL dcql;
-
-                    @Override
-                    protected void doNonUILogic() throws Exception {
-                        ICab2bQuery query = ((Cab2bHyperlink<ICab2bQuery>) getAComponent()).getUserObject();
-                        QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                                   EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                                   QueryEngineHome.class);
-                        dcql = queryEngine.getDCQL(query);
-                    }
-
-                    @Override
-                    protected void doUIUpdateLogic() throws Exception {
-                        ShowDCQLPanel showDCQLPanel = new ShowDCQLPanel(dcql);
-                        showDCQLPanel.showInDialog();
-                    }
-
-                };
-                swingWorker.start();
-            }
-
-        });
-
-        bottomPanel.add(combo);
+        showDCQL.addActionListener(new DCQLListener());
         bottomPanel.add("tab", showDCQL);
         this.add(BorderLayout.SOUTH, bottomPanel);
     }
@@ -235,5 +226,70 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 
     public EntityInterface getRootEntity() {
         return this.rootEntity;
+    }
+
+    /**
+     * This class is the action listener class for the
+     * service url link on the page
+     * @author atul_jawale
+     *
+     */
+    class serviceURLListener implements ActionListener {
+
+        /**
+         * This method will take all the entityGroups present in the formed 
+         * query and add them to a collection. This collection will be passed to the 
+         * Mysettings rightpanel which will show the user all the service names.
+         *  
+         */
+        public void actionPerformed(ActionEvent event) {
+            Collection<EntityGroupInterface> selectedEntityList = new HashSet<EntityGroupInterface>();
+            for (EntityInterface entity : allEntities) {
+                selectedEntityList.addAll(entity.getEntityGroupCollection());
+            }
+            Cab2bPanel mainPanel = new Cab2bPanel(new BorderLayout(10, 5));
+            RightPanel rightPanel = new RightPanel(selectedEntityList);
+            mainPanel.add(rightPanel, BorderLayout.CENTER);
+            MainFrame.setScreenDimesion(Toolkit.getDefaultToolkit().getScreenSize());
+            Dimension screenDimesion = MainFrame.getScreenDimesion();
+            final String title = ApplicationProperties.getValue(MYSETTINGS_FRAME_TITLE);
+            Dimension dimension = new Dimension((int) (screenDimesion.width * 0.90),
+                    (int) (screenDimesion.height * 0.85));
+            JDialog serviceInstanceDialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), mainPanel,
+                                                                        title, dimension, true, true);
+            serviceInstanceDialog.setVisible(true);
+        }
+    }
+    /**
+     * This is the 
+     * @author atul_jawale
+     *
+     */
+    class DCQLListener implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            Cab2bHyperlink<ICab2bQuery> dcqlLink = (Cab2bHyperlink<ICab2bQuery>) e.getSource();
+
+            CustomSwingWorker swingWorker = new CustomSwingWorker(dcqlLink, AdvancedDefineViewPanel.this) {
+                private DCQL dcql;
+
+                @Override
+                protected void doNonUILogic() throws Exception {
+                    ICab2bQuery query = ((Cab2bHyperlink<ICab2bQuery>) getAComponent()).getUserObject();
+                    QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                               EjbNamesConstants.QUERY_ENGINE_BEAN,
+                                                                                                                               QueryEngineHome.class);
+                    dcql = queryEngine.getDCQL(query);
+                }
+
+                @Override
+                protected void doUIUpdateLogic() throws Exception {
+                    ShowDCQLPanel showDCQLPanel = new ShowDCQLPanel(dcql);
+                    showDCQLPanel.showInDialog();
+                }
+
+            };
+            swingWorker.start();
+        }
     }
 }
