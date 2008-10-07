@@ -113,7 +113,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
                                                Utility.getDisplayName(entityInterface),
                                                entityInterface.getDescription(), actionClass);
             panel.add("br", hyperlink);
-            if (++categoryCounter >= 4)
+            if (++categoryCounter >= 5)
                 break;
         }
 
@@ -123,7 +123,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
                                                                                                     getAllCategoryPanel());
             }
         };
-        if (categoryCounter >= 4)
+        if (categoryCounter >= 5)
             addShowAllLink(panel, showAllExpAction, data.size() > 0);
         else if (categoryCounter == 0) {
             Cab2bLabel label = new Cab2bLabel("No saved categories.");
