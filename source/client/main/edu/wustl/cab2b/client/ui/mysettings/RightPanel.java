@@ -6,7 +6,9 @@ import static edu.wustl.cab2b.client.ui.util.ClientConstants.UPDATE_EVENT;
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Collection;
 
+import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 
@@ -26,15 +28,26 @@ public class RightPanel extends Cab2bPanel {
      */
     public RightPanel() {
         super(new BorderLayout());
+        allServices = new AllServicesPanel();
         initGUI();
     }
 
+    /**
+     * Default Constructor
+     */
+    public RightPanel(Collection<EntityGroupInterface> selectedServices) {
+        super(new BorderLayout());
+        allServices = new AllServicesPanel(selectedServices);
+        initGUI();
+    }
+    
+    
     /**
      * This method registers the service select event so that when user clicks on a service
      * it will fetch all the running instances and display them to user.
      */
     private void initGUI() {
-        allServices = new AllServicesPanel();
+       
         add(allServices);
         allServices.addPropertyChangeListener(SERVICE_SELECT_EVENT, new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {

@@ -58,16 +58,24 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
      */
     public AllServicesPanel() {
         super(new BorderLayout());
+        allServices.addAll(new ServiceInstanceBizLogic().getMetadataEntityGroups());
         initGUI();
     }
 
+    
+    public AllServicesPanel(Collection<EntityGroupInterface> selectedServices){
+        super(new BorderLayout());
+        this.allServices.addAll(selectedServices); 
+        initGUI();
+    }
+    
     /**
      * This method is used to initialize the UI.
      * Will fetch all the loaded models from the database and then create the panel to display services in 
      * Pagination.   
      */
     private void initGUI() {
-        allServices.addAll(new ServiceInstanceBizLogic().getMetadataEntityGroups());
+        
 
         final SearchPanel searchPanel = new SearchPanel();
         Cab2bPanel resultPanel = null;
@@ -176,7 +184,7 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
             searchString = searchString.toLowerCase();
             for (EntityGroupInterface metadata : allServices) {
                 String serviceName = metadata.getName().toLowerCase();
-                if (searchString.contains(serviceName)) {
+                if ( serviceName.contains(searchString)) {
                     filteredServices.add(metadata);
                 }
             }
