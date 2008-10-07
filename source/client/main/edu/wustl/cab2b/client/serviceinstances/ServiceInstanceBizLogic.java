@@ -62,11 +62,22 @@ public class ServiceInstanceBizLogic {
      * @param user
      * @throws RemoteException
      */
-    public void saveServiceInstances(Collection<AdminServiceMetadata> serviceMetadataObjects, UserInterface user)
+    public void saveServiceInstances(String entityGroupName, Collection<AdminServiceMetadata> serviceMetadataObjects, UserInterface user)
             throws RemoteException {
 
+       /*
+        * If the user has clicked on admin configured urls,then collection will be empty
+        * so just removing all the service urls from user's service url collection whose
+        * service name is same as entityGroupName
+        */
         if (serviceMetadataObjects.isEmpty()) {
-            user.getServiceURLCollection().clear();
+            Collection<ServiceURLInterface> allServiceURLLIst = user.getServiceURLCollection();
+            for(ServiceURLInterface serviceURL :allServiceURLLIst){
+                String serviceName = serviceURL.getEntityGroupName();
+                if(serviceName.equalsIgnoreCase(entityGroupName)){
+                    user.getServiceURLCollection().remove(serviceURL);   
+                }
+            }
             saveUser(user);
             UserCache.getInstance().init(user);
             return;
@@ -75,8 +86,7 @@ public class ServiceInstanceBizLogic {
         ServiceURLBusinessInterface serviceURLInterface = (ServiceURLBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                          EjbNamesConstants.SERVICE_URL_BEAN,
                                                                                                                          ServiceURLHomeInterface.class,
-                                                                                                                         null);
-        String entityGroupName = serviceMetadataObjects.iterator().next().getSeviceName();
+                                                                                                                         null); 
         Map<String, ServiceURL> allServices = (Map<String, ServiceURL>) serviceURLInterface.getAllInstancesForEntityGroup(entityGroupName);
         Collection<ServiceURLInterface> newServices = new ArrayList<ServiceURLInterface>();
         for (AdminServiceMetadata serviceMetadata : serviceMetadataObjects) {
