@@ -44,7 +44,7 @@ public class ServiceURLBean extends AbstractStatelessSessionBean implements Serv
     }
 
     /**
-     * This method returns a collection of all the serviceURLs present  in the database
+     * This method returns a map of service url string against the serviceURL object of all the serviceURLs present in the database only
      */
     public Map<String,? extends ServiceURLInterface> getAllInstancesForEntityGroup(String serviceName)
             throws RemoteException {
