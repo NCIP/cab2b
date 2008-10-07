@@ -37,6 +37,7 @@ package edu.wustl.cab2b.client.ui.pagination;
  in a truly weird user experience.
  */
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -172,6 +173,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         if (extraText != null) {
             Cab2bLabel extraLabel = new Cab2bLabel(extraText);
             extraLabel.setFont(Cab2bStandardFonts.ARIAL_BOLD_12);
+            extraLabel.setForeground(new Color(0,128,0));
             this.add("tab", extraLabel);
         }
         this.add("br tab", descriptionLabel);
@@ -189,6 +191,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         if (extraText != null) {
             Cab2bLabel extraLabel = new Cab2bLabel(extraText);
             extraLabel.setFont(Cab2bStandardFonts.ARIAL_BOLD_12);
+            extraLabel.setForeground(new Color(0,128,0));
             this.add("tab", extraLabel);
         }
         this.add("br tab", descriptionLabel);
@@ -206,6 +209,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         if (extraText != null) {
             Cab2bLabel extraLabel = new Cab2bLabel(extraText);
             extraLabel.setFont(Cab2bStandardFonts.ARIAL_BOLD_12);
+            extraLabel.setForeground(new Color(0,128,0));
             this.add("tab", extraLabel);
         }
         this.add("br tab", descriptionLabel);
