@@ -59,49 +59,50 @@ public class ServiceInstanceBizLogic {
      * This method saves the service instance into the database. 
      * It gets all the service instance selected by user and add to user serviceURL collection
      * and updates the user. 
-     * @param serviceMetadataObjects
+     * @param serviceURLObjects
      * @param user
      * @throws RemoteException
      */
     public void saveServiceInstances(String entityGroupName,
-                                     Collection<AdminServiceMetadata> serviceMetadataObjects, UserInterface user)
+                                     Collection<ServiceURL> serviceURLObjects, UserInterface user)
             throws RemoteException {
 
+        
         /*
          * If the user has clicked on admin configured urls,then collection will be empty
          * so just removing all the service urls from user's service url collection whose
          * service name is same as entityGroupName
          */
-        if (serviceMetadataObjects.isEmpty()) {
+        
+        UserInterface currentUser = getUser(user.getUserName());
+        
+        if (serviceURLObjects.isEmpty()) {
             Collection<ServiceURLInterface> serviceURLsToRemove = new HashSet<ServiceURLInterface>();
-            Collection<ServiceURLInterface> allServiceURLLIst = user.getServiceURLCollection();
+            Collection<ServiceURLInterface> allServiceURLLIst = currentUser.getServiceURLCollection();
             for (ServiceURLInterface serviceURL : allServiceURLLIst) {
                 String serviceName = serviceURL.getEntityGroupName();
                 if (serviceName.equalsIgnoreCase(entityGroupName)) {
                     serviceURLsToRemove.add(serviceURL);
-                    
-                }
+                   }
             }
-            user.getServiceURLCollection().removeAll(serviceURLsToRemove);
-            saveUser(user);
-            UserCache.getInstance().init(user);
+            currentUser.getServiceURLCollection().removeAll(serviceURLsToRemove);
+            saveUser(currentUser);
+            UserCache.getInstance().init(currentUser);
             return;
         }
 
-        Collection<ServiceURLInterface> newServices = new ArrayList<ServiceURLInterface>();
-        for (AdminServiceMetadata serviceMetadata : serviceMetadataObjects) {
+        Collection<ServiceURLInterface> newServices = new HashSet<ServiceURLInterface>();
+        newServices.addAll(serviceURLObjects);
+            
+        
 
-            ServiceURLInterface serviceURL = serviceMetadata.getServiceURLObject();
-            newServices.add(serviceURL);
-        }
-
-        Collection<ServiceURLInterface> allServiceURLLIst = user.getServiceURLCollection();
+        Collection<ServiceURLInterface> allServiceURLLIst = currentUser.getServiceURLCollection();
         Collection<ServiceURLInterface> serviceURLsToRemove = new HashSet<ServiceURLInterface>();
         for (ServiceURLInterface serviceURL : allServiceURLLIst) {
             String serviceName = serviceURL.getEntityGroupName();
-            if (serviceName.equalsIgnoreCase(entityGroupName)){
-                
-                if(newServices.contains(serviceURL)) 
+            if (serviceName.equalsIgnoreCase(entityGroupName))
+            {
+               if(newServices.contains(serviceURL)) 
                 {
                     newServices.remove(serviceURL);
                 }
@@ -110,11 +111,13 @@ public class ServiceInstanceBizLogic {
                     serviceURLsToRemove.add(serviceURL);
                 }
             }
+            
         }
-        user.getServiceURLCollection().removeAll(serviceURLsToRemove);
-        user.getServiceURLCollection().addAll(newServices);
-        saveUser(user);
-        UserCache.getInstance().init(user);
+        
+        currentUser.getServiceURLCollection().removeAll(serviceURLsToRemove);
+        currentUser.getServiceURLCollection().addAll(newServices);
+        UserCache.getInstance().init(currentUser);
+        saveUser(currentUser);
         return;
     }
 
@@ -160,4 +163,23 @@ public class ServiceInstanceBizLogic {
         }
     }
 
+    
+    /**
+     * This method updates the user- service url mapping 
+     * @param user
+     * @throws RemoteException
+     */
+    private UserInterface getUser(String userName) throws RemoteException {
+        
+
+            UserBusinessInterface userInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                           EjbNamesConstants.USER_BEAN,
+                                                                                                           UserHomeInterface.class,
+                                                                                                           null);
+
+            UserInterface user = userInterface.getUserByName(userName);
+        
+            return user; 
+    }
+    
 }
