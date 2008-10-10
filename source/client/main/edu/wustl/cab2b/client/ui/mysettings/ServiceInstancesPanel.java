@@ -28,7 +28,7 @@ import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
 import edu.wustl.cab2b.client.cache.UserCache;
-import edu.wustl.cab2b.client.serviceinstances.ServiceInstanceBizLogic;
+import edu.wustl.cab2b.client.serviceinstances.ServiceInstanceConfigurator;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -84,7 +84,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
     private void initGUI() {
         allServiceInstances = new ArrayList<AdminServiceMetadata>();
         UserInterface user = UserCache.getInstance().getCurrentUser();
-        Collection<AdminServiceMetadata> adminServiceMetadata = new ServiceInstanceBizLogic().getServiceMetadataObjects(
+        Collection<AdminServiceMetadata> adminServiceMetadata = new ServiceInstanceConfigurator().getServiceMetadataObjects(
                                                                                                                         serviceName,
                                                                                                                         user);
         allServiceInstances.addAll((adminServiceMetadata));
@@ -176,7 +176,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
     }
 
     private void saveServiceInstances(List<ServiceURL> selectedInstances) {
-        ServiceInstanceBizLogic bizLogic = new ServiceInstanceBizLogic();
+        ServiceInstanceConfigurator bizLogic = new ServiceInstanceConfigurator();
         try {
             bizLogic.saveServiceInstances(serviceName,selectedInstances, UserCache.getInstance().getCurrentUser());
             firePropertyChange(UPDATE_EVENT, serviceName, "( Configured Successfully )");

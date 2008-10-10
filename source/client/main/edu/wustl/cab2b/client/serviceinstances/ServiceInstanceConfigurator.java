@@ -4,7 +4,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -27,9 +26,9 @@ import edu.wustl.cab2b.common.util.Constants;
  * @author Hrishikesh Rajpathak
  * @author atul_jawale
  */
-public class ServiceInstanceBizLogic {
+public class ServiceInstanceConfigurator {
 
-    private static final Logger logger = Logger.getLogger(ServiceInstanceBizLogic.class);
+    private static final Logger logger = Logger.getLogger(ServiceInstanceConfigurator.class);
 
     /**
      * This method fetches all the entity groups created as part of metadata

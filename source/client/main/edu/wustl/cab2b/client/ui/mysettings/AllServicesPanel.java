@@ -26,7 +26,7 @@ import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
-import edu.wustl.cab2b.client.serviceinstances.ServiceInstanceBizLogic;
+import edu.wustl.cab2b.client.serviceinstances.ServiceInstanceConfigurator;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
@@ -58,7 +58,7 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
      */
     public AllServicesPanel() {
         super(new BorderLayout());
-        allServices.addAll(new ServiceInstanceBizLogic().getMetadataEntityGroups());
+        allServices.addAll(new ServiceInstanceConfigurator().getMetadataEntityGroups());
         initGUI();
     }
 
