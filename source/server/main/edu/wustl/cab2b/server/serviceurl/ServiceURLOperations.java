@@ -16,19 +16,20 @@ import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 
 import edu.wustl.cab2b.common.user.AdminServiceMetadata;
 import edu.wustl.cab2b.common.user.ServiceURL;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.user.UserOperations;
-import edu.wustl.common.bizlogic.DefaultBizLogic;
-import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.hibernate.HibernateDatabaseOperations;
+import edu.wustl.common.hibernate.HibernateUtil;
 import gov.nih.nci.cagrid.metadata.MetadataUtils;
 import gov.nih.nci.cagrid.metadata.ServiceMetadata;
 import gov.nih.nci.cagrid.metadata.exceptions.ResourcePropertyRetrievalException;
 
-public class ServiceURLOperations extends DefaultBizLogic {
+public class ServiceURLOperations {
 
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ServiceURLOperations.class);
 
@@ -46,11 +47,13 @@ public class ServiceURLOperations extends DefaultBizLogic {
 
     public Collection<ServiceURL> getAllServiceURLs() throws RemoteException {
         Collection<ServiceURL> serviceURLs = null;
-        try {
-            serviceURLs = (List<ServiceURL>) retrieve(ServiceURL.class.getName());
-        } catch (DAOException e) {
-            throw new RemoteException(e.getMessage());
-        }
+
+        Session session = HibernateUtil.newSession();
+        HibernateDatabaseOperations<ServiceURL> dbHandler = new HibernateDatabaseOperations<ServiceURL>(
+                session);
+
+        serviceURLs = dbHandler.retrieve(ServiceURL.class.getName());
+        // serviceURLs = (List<ServiceURL>) retrieve(ServiceURL.class.getName());
 
         return serviceURLs;
     }
@@ -89,7 +92,7 @@ public class ServiceURLOperations extends DefaultBizLogic {
     private List<AdminServiceMetadata> getMetadataObjects(final EndpointReferenceType[] services,
                                                           String serviceName, UserInterface user) {
         final List<AdminServiceMetadata> metadataObjectService = new ArrayList<AdminServiceMetadata>();
-       // final List<AdminServiceMetadata> tempMetadataObject = new ArrayList<AdminServiceMetadata>();
+        // final List<AdminServiceMetadata> tempMetadataObject = new ArrayList<AdminServiceMetadata>();
         Map<String, AdminServiceMetadata> existingServiceURLMap = getExistingServiceURLs(serviceName, user);
 
         AdminServiceMetadata metadataObject = null;
@@ -109,7 +112,7 @@ public class ServiceURLOperations extends DefaultBizLogic {
                 serviceURLObj.setAdminDefined(user.isAdmin());
                 metadataObject.setServiceURL(attributeUri.toString());
                 metadataObject.setServiceURLObject(serviceURLObj);
-                
+
             }
 
             String description = null;
@@ -188,19 +191,16 @@ public class ServiceURLOperations extends DefaultBizLogic {
     public Map<String, ServiceURL> getAllInstancesForEntityGroup(String entityGroupName) {
         Map<String, ServiceURL> serviceURLMap = new HashMap<String, ServiceURL>();
         Collection<ServiceURL> serviceURLList;
-        try {
 
-            serviceURLList = (List<ServiceURL>) retrieve(ServiceURL.class.getName(), "entityGroupName",
-                                                         entityGroupName);
-            for (ServiceURL serviceURL : serviceURLList) {
-                serviceURLMap.put(serviceURL.getUrlLocation(), serviceURL);
-            }
+        Session session = HibernateUtil.newSession();
+        HibernateDatabaseOperations<ServiceURL> dbHandler = new HibernateDatabaseOperations<ServiceURL>(session);
 
-        } catch (DAOException e) {
-            logger.error(e.getStackTrace());
-            return serviceURLMap;
+        serviceURLList = dbHandler.retrieve(ServiceURL.class.getName(), "entityGroupName", entityGroupName);
 
+        for (ServiceURL serviceURL : serviceURLList) {
+            serviceURLMap.put(serviceURL.getUrlLocation(), serviceURL);
         }
+
         return serviceURLMap;
     }
 
