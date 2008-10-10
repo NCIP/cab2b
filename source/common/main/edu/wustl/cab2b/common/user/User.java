@@ -7,7 +7,6 @@ import java.util.HashSet;
 /**
  * @author Hrishikesh Rajpathak
  * @hibernate.class table="CAB2B_USER"
- * @hibernate.cache usage="read-write"
  * 
  */
 public class User implements UserInterface, Serializable {
@@ -74,7 +73,6 @@ public class User implements UserInterface, Serializable {
      * @hibernate.set name="serviceURLCollection" cascade="all-delete-orphan" lazy="false" inverse="false" table="CAB2B_USER_URL_MAPPING"
      * @hibernate.collection-key column="USER_ID" 
      * @hibernate.collection-many-to-many class="edu.wustl.cab2b.common.user.ServiceURL" column="SERVICE_URL_ID"
-     * @hibernate.cache usage="read-write"
      */
     public Collection<ServiceURLInterface> getServiceURLCollection() {
         return serviceURLCollection;

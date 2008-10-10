@@ -78,6 +78,9 @@ public class LoginFrame extends JXFrame {
             providedUserName = args[0];
             providedPassword = args[1];
         }
+        
+        providedUserName = "PsplTest";
+        providedPassword = "gup1Sh@bda";
 
         try {
             CommonUtils.setHome();

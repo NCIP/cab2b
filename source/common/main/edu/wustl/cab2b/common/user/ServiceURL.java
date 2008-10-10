@@ -5,7 +5,6 @@ import java.io.Serializable;
 /**
  * @author Hrishikesh Rajpathak
  * @hibernate.class table="CAB2B_SERVICE_URL"
- * @hibernate.cache usage="read-write"
  */
 public class ServiceURL implements ServiceURLInterface, Serializable {
     private static final long serialVersionUID = 1L;

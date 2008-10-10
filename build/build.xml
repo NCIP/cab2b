@@ -820,7 +820,7 @@
 
 		<!-- Execute the hibernatedoclet task -->
 		<hibernatedoclet destdir="${common.src}" excludedtags="@version,@author,@todo" force="${generateforce}" mergedir="${common.src}" verbose="false">
-			<fileset dir="${common.src}">
+			<!--fileset dir="${common.src}">
 				<include name="**/edu/wustl/cab2b/common/domain/*.java" />
 			</fileset>
 			<fileset dir="${common.src}">
@@ -831,6 +831,9 @@
 			</fileset>
 			<fileset dir="${common.src}">
 				<include name="**/edu/wustl/cab2b/common/category/*.java" />
+			</fileset-->
+			<fileset dir="${common.src}">
+				<include name="**/edu/wustl/cab2b/common/user/*.java" />
 			</fileset>
 			<hibernate version="2.0" />
 		</hibernatedoclet>
