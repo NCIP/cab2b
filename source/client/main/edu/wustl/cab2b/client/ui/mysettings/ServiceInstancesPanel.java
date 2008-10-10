@@ -39,6 +39,7 @@ import edu.wustl.cab2b.client.ui.pagination.PageElement;
 import edu.wustl.cab2b.client.ui.pagination.PageElementImpl;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.user.AdminServiceMetadata;
+import edu.wustl.cab2b.common.user.ServiceURL;
 import edu.wustl.cab2b.common.user.UserInterface;
 
 /**
@@ -135,7 +136,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
         saveButton.setPreferredSize(new Dimension(120, 22));
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                List<AdminServiceMetadata> selectedInstances = resultsPage.getSelectedPageElementsUserObjects();
+                List<ServiceURL> selectedInstances = resultsPage.getSelectedPageElementsUserObjects();
                 saveButtonFunction(selectedInstances);
             }
         });
@@ -166,7 +167,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
         return adminSettings;
     }
 
-    private void saveButtonFunction(List<AdminServiceMetadata> selectedInstances) {
+    private void saveButtonFunction(List<ServiceURL> selectedInstances) {
         if (selectedInstances.size() == 0) {
             JOptionPane.showMessageDialog(this.getParent(), "Please select atleast 1 option");
         } else {
@@ -174,7 +175,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
         }
     }
 
-    private void saveServiceInstances(List<AdminServiceMetadata> selectedInstances) {
+    private void saveServiceInstances(List<ServiceURL> selectedInstances) {
         ServiceInstanceBizLogic bizLogic = new ServiceInstanceBizLogic();
         try {
             bizLogic.saveServiceInstances(serviceName,selectedInstances, UserCache.getInstance().getCurrentUser());
@@ -187,7 +188,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
     }
 
     private void adminDefaultSettings() {
-        List<AdminServiceMetadata> emptyList = new ArrayList<AdminServiceMetadata>();
+        List<ServiceURL> emptyList = new ArrayList<ServiceURL>();
         saveServiceInstances(emptyList);
         firePropertyChange(UPDATE_EVENT, serviceName, "( Admin Settings restored )");
     }
@@ -210,7 +211,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
             // a space.
             pageElement.setDisplayName(serviceInstance.getHostingResearchCenter() + " ");
             pageElement.setDescription(serviceInstance.getSeviceDescription());
-            pageElement.setUserObject(serviceInstance);
+            pageElement.setUserObject(serviceInstance.getServiceURLObject());
             pageElement.setSelected(serviceInstance.isConfigured());
             pageElementCollection.add(pageElement);
 
