@@ -70,7 +70,7 @@ public class User implements UserInterface, Serializable {
     /**
      * @return Returns the serviceURLCollection.
      * 
-     * @hibernate.set name="serviceURLCollection" cascade="all-delete-orphan" lazy="false" inverse="false" table="CAB2B_USER_URL_MAPPING"
+     * @hibernate.set name="serviceURLCollection" cascade="save-update" lazy="false" inverse="false" table="CAB2B_USER_URL_MAPPING"
      * @hibernate.collection-key column="USER_ID" 
      * @hibernate.collection-many-to-many class="edu.wustl.cab2b.common.user.ServiceURL" column="SERVICE_URL_ID"
      */
