@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.client.ui.mainframe.stackbox;
 
 import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.EXPERIMENT_BOX_TEXT;
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.HYPERLINK_SHOW_ALL;
 import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.POPULAR_CATEGORY_BOX_TEXT;
 import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.QUERY_BOX_TEXT;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.MY_EXPERIMENT_IMAGE;
@@ -50,8 +51,6 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
     public static Color CLICKED_COLOR = new Color(76, 41, 157);
 
     public static Color UNCLICKED_COLOR = new Color(0x034E74);
-
-    public static final String SHOW_ALL_LINK = "Show All";
 
     /**
      * Constructor
@@ -123,8 +122,8 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
                                                                                                     getAllCategoryPanel());
             }
         };
-        if (categoryCounter >= 4)
-            addShowAllLink(panel, showAllExpAction, data.size() > 0);
+        if (data.size() > 5)
+            addShowAllLink(panel, showAllExpAction, true);
         else if (categoryCounter == 0) {
             Cab2bLabel label = new Cab2bLabel("No saved categories.");
             label.setBackground(Color.blue);
@@ -162,7 +161,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
     private void addShowAllLink(Cab2bPanel panel, ActionListener actionClass, boolean enableLink) {
         Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
         hyperlink.setVisible(enableLink);
-        CommonUtils.setHyperlinkProperties(hyperlink, null, SHOW_ALL_LINK, "", actionClass);
+        CommonUtils.setHyperlinkProperties(hyperlink, null, ApplicationProperties.getValue(HYPERLINK_SHOW_ALL), "", actionClass);
         panel.add("br right", hyperlink);
     }
 

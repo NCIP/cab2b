@@ -3,6 +3,8 @@
  */
 package edu.wustl.cab2b.client.ui.mainframe.stackbox;
 
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.HYPERLINK_SHOW_ALL;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,6 +21,7 @@ import edu.wustl.cab2b.client.ui.experiment.ExperimentOpenPanel;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.domain.Experiment;
+import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
  * MyExperiment panel containg links for latest five experiment and Show All links 
@@ -103,9 +106,9 @@ public class MyExperimentLinkPanel extends Cab2bPanel {
             }
         };
 
-        if (expCounter > 4) {
+        if (data.size() > 5) {
             Cab2bHyperlink showAllHyperlink = new Cab2bHyperlink(true);
-            CommonUtils.setHyperlinkProperties(showAllHyperlink, null, MainFrameStackedBoxPanel.SHOW_ALL_LINK, "",
+            CommonUtils.setHyperlinkProperties(showAllHyperlink, null, ApplicationProperties.getValue(HYPERLINK_SHOW_ALL), "",
                                                showAllExpAction);
             this.add("br right", showAllHyperlink);
         } else if (expCounter == 0) {
