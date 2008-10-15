@@ -93,7 +93,7 @@ create table QUERY_OPERAND (IDENTIFIER bigint not null auto_increment, OPND_TYPE
 create table QUERY_OUTPUT_ATTRIBUTE (IDENTIFIER bigint not null auto_increment, EXPRESSION_ID bigint, ATTRIBUTE_ID bigint not null, PARAMETERIZED_QUERY_ID bigint, POSITION integer, primary key (IDENTIFIER));
 create table QUERY_OUTPUT_TERM (IDENTIFIER bigint not null auto_increment, NAME varchar(255), TIME_INTERVAL varchar(255), TERM_ID bigint, primary key (IDENTIFIER));
 create table QUERY_PARAMETER (IDENTIFIER bigint not null auto_increment, NAME varchar(255), OBJECT_CLASS varchar(255), OBJECT_ID bigint, primary key (IDENTIFIER));
-create table QUERY_PARAMETERIZED_QUERY (IDENTIFIER bigint not null, QUERY_NAME varchar(255) unique, DESCRIPTION text, primary key (IDENTIFIER));
+create table QUERY_PARAMETERIZED_QUERY (IDENTIFIER bigint not null, QUERY_NAME varchar(255) unique, DESCRIPTION text, CREATED_DATE timestamp not null, primary key (IDENTIFIER));
 create table QUERY_QUERY_ENTITY (IDENTIFIER bigint not null auto_increment, ENTITY_ID bigint not null, primary key (IDENTIFIER));
 create table QUERY_RULE_COND (RULE_ID bigint not null, CONDITION_ID bigint not null, POSITION integer not null, primary key (RULE_ID, POSITION));
 create table QUERY_SUBEXPR_OPERAND (IDENTIFIER bigint not null, EXPRESSION_ID bigint, primary key (IDENTIFIER));
@@ -104,10 +104,6 @@ alter table COMMONS_GRAPH_TO_EDGES add index FKA6B0D8BAFAEF80D (EDGE_ID), add co
 alter table COMMONS_GRAPH_TO_VERTICES add index FK2C4412F5A0494B1D (GRAPH_ID), add constraint FK2C4412F5A0494B1D foreign key (GRAPH_ID) references COMMONS_GRAPH (IDENTIFIER);
 alter table QUERY add index FK49D20A89E2FD9C7 (CONSTRAINTS_ID), add constraint FK49D20A89E2FD9C7 foreign key (CONSTRAINTS_ID) references QUERY_CONSTRAINTS (IDENTIFIER);
 alter table QUERY_ARITHMETIC_OPERAND add index FK262AEB0BD635BD31 (IDENTIFIER), add constraint FK262AEB0BD635BD31 foreign key (IDENTIFIER) references QUERY_OPERAND (IDENTIFIER);
-alter table QUERY_ARITHMETIC_OPERAND add index FK262AEB0B96C7CE5A (IDENTIFIER), add constraint FK262AEB0B96C7CE5A foreign key (IDENTIFIER) references QUERY_OPERAND (IDENTIFIER);
-alter table QUERY_ARITHMETIC_OPERAND add index FK262AEB0BD006BE44 (IDENTIFIER), add constraint FK262AEB0BD006BE44 foreign key (IDENTIFIER) references QUERY_OPERAND (IDENTIFIER);
-alter table QUERY_ARITHMETIC_OPERAND add index FK262AEB0B7223B197 (IDENTIFIER), add constraint FK262AEB0B7223B197 foreign key (IDENTIFIER) references QUERY_OPERAND (IDENTIFIER);
-alter table QUERY_ARITHMETIC_OPERAND add index FK262AEB0B687BE69E (IDENTIFIER), add constraint FK262AEB0B687BE69E foreign key (IDENTIFIER) references QUERY_OPERAND (IDENTIFIER);
 alter table QUERY_ARITHMETIC_OPERAND add index FK262AEB0BE92C814D (EXPRESSION_ID), add constraint FK262AEB0BE92C814D foreign key (EXPRESSION_ID) references QUERY_BASE_EXPRESSION (IDENTIFIER);
 alter table QUERY_BASEEXPR_TO_CONNECTORS add index FK3F0043482FCE1DA7 (CONNECTOR_ID), add constraint FK3F0043482FCE1DA7 foreign key (CONNECTOR_ID) references QUERY_CONNECTOR (IDENTIFIER);
 alter table QUERY_BASEEXPR_TO_CONNECTORS add index FK3F00434848BA6890 (BASE_EXPRESSION_ID), add constraint FK3F00434848BA6890 foreign key (BASE_EXPRESSION_ID) references QUERY_BASE_EXPRESSION (IDENTIFIER);
