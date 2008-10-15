@@ -12,9 +12,11 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -863,6 +865,22 @@ public class Utility {
         }
 
         return splitStrings;
+    }
+    
+    public static String getFormattedSystemDate() {
+        return getFormattedDate(new Date(),null);
+    }
+    
+    public static String getFormattedDate(Date date) {
+        return getFormattedDate(date,null);
+    }
+
+    public static String getFormattedDate(Date date,String dateFormat) {
+        if (null == dateFormat || dateFormat.length() == 0) {
+            dateFormat = "dd/MM/yyyy HH:mm";
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+        return simpleDateFormat.format(date);
     }
 
 
