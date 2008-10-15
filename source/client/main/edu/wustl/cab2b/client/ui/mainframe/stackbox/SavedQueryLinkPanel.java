@@ -3,6 +3,8 @@
  */
 package edu.wustl.cab2b.client.ui.mainframe.stackbox;
 
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.HYPERLINK_SHOW_ALL;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,6 +27,7 @@ import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
+import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
  * The singleton class used to display saved Query links on left hand side of
@@ -100,10 +103,11 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
                 Cab2bHyperlink<Long> queryLink = new Cab2bHyperlink<Long>(true);
                 queryLink.setUserObject(query.getId());
                 queryLink.setText(queryName);
-                if (query.getDescription() == null || query.getDescription().equals(""))
+                if (query.getDescription() == null || query.getDescription().equals("")) {
                     queryLink.setToolTipText("* Description not available");
-                else
+                } else {
                     queryLink.setToolTipText(query.getDescription());
+                }
                 queryLink.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent actionEvent) {
                         Cab2bHyperlink queryLink = (Cab2bHyperlink) actionEvent.getSource();
@@ -112,22 +116,22 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
                     }
                 });
                 this.add("br ", queryLink);
-                queryCounter++;
-                if (queryCounter > 4)
+                if (++queryCounter > 4)
                     break;
             }
-            if (queryCounter > 4) {
+
+            if (cab2bQueryList.size() > 5) {
                 Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
-                CommonUtils.setHyperlinkProperties(hyperlink, null, MainFrameStackedBoxPanel.SHOW_ALL_LINK, "",
-                                                   new ActionListener() {
+                CommonUtils.setHyperlinkProperties(hyperlink, null,
+                                                   ApplicationProperties.getValue(HYPERLINK_SHOW_ALL),
+                                                   "", new ActionListener() {
                                                        public void actionPerformed(ActionEvent e) {
                                                            NewWelcomePanel.getMainFrame().getGlobalNavigationPanel().getGlobalNavigationGlassPane().setShowAllPanel(
                                                                                                                                                                     getAllQueryPanel());
                                                        }
-
                                                    });
                 this.add("right br", hyperlink);
-            } else if (queryCounter == 0) {
+            } else if (cab2bQueryList.size() == 0) {
                 Cab2bLabel label = new Cab2bLabel("No saved queries.");
                 label.setBackground(Color.blue);
                 this.add(label);
