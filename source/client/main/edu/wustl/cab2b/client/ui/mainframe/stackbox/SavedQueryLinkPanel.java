@@ -23,6 +23,7 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 
 /**
@@ -160,7 +161,7 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
         for (IParameterizedQuery paraQuery : cab2bQueryCollection) {
             objData[i][0] = paraQuery.getName();
             objData[i][1] = paraQuery.getDescription();
-            objData[i][2] = "Date";
+            objData[i][2] = Utility.getFormattedDate(paraQuery.getCreatedDate());
             objData[i][3] = paraQuery.getId();
             i++;
         }
