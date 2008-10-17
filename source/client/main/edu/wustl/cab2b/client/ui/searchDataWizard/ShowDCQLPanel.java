@@ -49,6 +49,7 @@ public class ShowDCQLPanel extends Cab2bPanel {
 
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.getViewport().add(xmlPanel);
+        scrollPane.getViewport().setBackground(Color.WHITE);
 
         Cab2bPanel xmlNavigationPanel = new Cab2bPanel();
         Cab2bButton exportButton = new Cab2bButton("Export");
