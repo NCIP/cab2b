@@ -21,9 +21,9 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class XmlParser extends DefaultHandler {
 
-    private static StringBuffer xmlText = new StringBuffer("<HTML><BODY>\n");
+    private StringBuffer xmlText = new StringBuffer("<HTML><BODY>\n");
 
-    private static int count = 0, startTag = 0;
+    private int count = 0, startTag = 0;
 
     public XmlParser() {
 
