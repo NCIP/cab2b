@@ -71,8 +71,6 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
     private EntityInterface rootEntity = null;
 
     private Set<EntityInterface> allEntities = new HashSet<EntityInterface>();
-    
-    
 
     /**
      * @return the allEntities
@@ -81,7 +79,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         return allEntities;
     }
 
-   public AdvancedDefineViewPanel(SearchCenterPanel searchCenterPanel) {
+    public AdvancedDefineViewPanel(SearchCenterPanel searchCenterPanel) {
         this.searchCenterPanel = searchCenterPanel;
         initGUI();
     }
@@ -162,7 +160,6 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         setOutputForQuery(queryObject, defaultSelectionOfEntity);
         bottomPanel.add(combo);
 
-        
         //Adding the show DCQL link
         Cab2bHyperlink<ICab2bQuery> showDCQL = new Cab2bHyperlink<ICab2bQuery>();
         showDCQL.setUserObject((ICab2bQuery) queryObject.getQuery());
@@ -230,13 +227,12 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         return this.rootEntity;
     }
 
-    
     /**
      * This is the 
      * @author atul_jawale
      *
      */
-  private class DCQLListener implements ActionListener {
+    private class DCQLListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
             Cab2bHyperlink<ICab2bQuery> dcqlLink = (Cab2bHyperlink<ICab2bQuery>) e.getSource();
