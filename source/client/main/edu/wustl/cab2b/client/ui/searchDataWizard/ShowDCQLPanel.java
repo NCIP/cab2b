@@ -24,15 +24,25 @@ import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.WindowUtilities;
 import edu.wustl.cab2b.common.domain.DCQL;
 
+/**
+ * This class displays the DCQL Panel which shows the XML format of DCQL along with function of saving the XML file 
+ * 
+ * @author gaurav_mehta
+ */
 public class ShowDCQLPanel extends Cab2bPanel {
 
     /* JDialog in which the Panel is displayed */
     private JDialog dialog;
 
+    // Cab2bLabel in which the entire XML is 
     final private Cab2bLabel xmlTextPane = new Cab2bLabel();
 
+    // Cab2bPanel for showing Success and failure messages
     final Cab2bPanel messagePanel = new Cab2bPanel();
 
+    /**
+     * @param dcql 
+     */
     public ShowDCQLPanel(DCQL dcql) {
         initGUI(dcql);
     }
@@ -82,7 +92,11 @@ public class ShowDCQLPanel extends Cab2bPanel {
         add(xmlNavigationPanel, BorderLayout.SOUTH);
     }
 
-    //JDialog for showing DCQL XML Details Panel
+    /**
+     * JDialog for showing DCQL XML Details Panel
+     * 
+     * @return
+     */
     public JDialog showInDialog() {
         Dimension dimension = MainFrame.getScreenDimesion();
         dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), this, "DCQL Xml", new Dimension(
@@ -91,11 +105,7 @@ public class ShowDCQLPanel extends Cab2bPanel {
 
         return dialog;
     }
-
-    /*
-     * @param File name,String to write to file It writes the text to the file
-     * and saves it in given location
-     */
+    
     private boolean writeFile(File file, String dataString) {
         try {
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file)));
@@ -108,22 +118,30 @@ public class ShowDCQLPanel extends Cab2bPanel {
         return true;
     }
 
+    /**
+     * Action listener class for Export Button. It saves the XML file to user defined location in user defined format
+     */
     class ExportButtonListner implements ActionListener {
         public void actionPerformed(ActionEvent actionEvent) {
             JFileChooser fileChooser = new JFileChooser();
-            int returnValue;
+
             // A call to JFileChooser's ShowSaveDialog PopUp
-            returnValue = fileChooser.showSaveDialog(NewWelcomePanel.getMainFrame());
-            if (returnValue == JFileChooser.APPROVE_OPTION) {
-                File file = fileChooser.getSelectedFile();
-                // Function call for writing the File and saving it
-                boolean saveReturnValue = writeFile(file, xmlTextPane.getText());
-                if (saveReturnValue == true) {
-                    Cab2bLabel successResultLabel = new Cab2bLabel("File Saved Successfully");
-                    successResultLabel.setForeground(Color.GREEN);
-                    messagePanel.add(successResultLabel);
-                    messagePanel.repaint();
-                }
+            fileChooser.showSaveDialog(NewWelcomePanel.getMainFrame());
+
+            File file = fileChooser.getSelectedFile();
+            // Function call for writing the File and saving it
+            boolean saveReturnValue = writeFile(file, xmlTextPane.getText());
+            if (saveReturnValue == true) {
+                Cab2bLabel successResultLabel = new Cab2bLabel("File Saved Successfully");
+                successResultLabel.setForeground(Color.GREEN);
+                messagePanel.add(successResultLabel);
+                messagePanel.repaint();
+            } else {
+                Cab2bLabel failureResultLabel = new Cab2bLabel("File Could not be Saved");
+                failureResultLabel.setForeground(Color.RED);
+                messagePanel.add(failureResultLabel);
+                messagePanel.repaint();
+
             }
         }
     }

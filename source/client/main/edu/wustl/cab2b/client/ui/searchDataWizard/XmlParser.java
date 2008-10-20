@@ -21,14 +21,25 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class XmlParser extends DefaultHandler {
 
+    // StringBUffer in which entire formatted XML is stored and then returned to display it on GUI
     private StringBuffer xmlText = new StringBuffer("<HTML><BODY>\n");
 
-    private int count = 0, startTag = 0;
+    // Count is used for indenting the XML as to show the hierarchy in XML 
+    private int count = 0;
 
+    /**
+      * Default Constructor
+      */
     public XmlParser() {
 
     }
 
+    /**
+     * This function accepts the dcqlQuery as string and then parses it using SAX Parser to return the formatted XML
+     * @param dcqlQuery
+     * @return xmlText is a string of formatted DCQL in XML format
+     * @throws RuntimeException
+     */
     public String parseXml(String dcqlQuery) throws RuntimeException {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -53,7 +64,6 @@ public class XmlParser extends DefaultHandler {
         for (int i = 0; i < count; i++) {
             xmlText.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
         }
-        startTag++;
 
         xmlText.append(setColor("BLACK", "&lt"));
         xmlText.append(setColor("PURPLE", qName + " "));
@@ -108,7 +118,14 @@ public class XmlParser extends DefaultHandler {
         }
     }
 
-    private String setColor(String color, String tag) {
+    /**
+     * This function is used to represent different tags in different colors
+     * The tags colors is done HTML way.
+     * @param color 
+     * @param tag
+     * @return formatted XML Tag in string form
+     */
+    String setColor(String color, String tag) {
         StringBuffer htmlStart = new StringBuffer("<span style='font-size:14pt;"
                 + "font-family:Courier New;font-weight:normal;color:");
 
