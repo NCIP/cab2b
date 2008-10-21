@@ -15,7 +15,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-/**
+/**This Class as name Suggests is for parsing XML using SAX Parser. It is for converting System generated 
+ * DCQL XML into user friendly DCQL XML format
  * @author gaurav_mehta
  * 
  */
