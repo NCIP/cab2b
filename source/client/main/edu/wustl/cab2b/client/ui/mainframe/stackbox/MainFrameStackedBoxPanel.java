@@ -112,7 +112,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
                                                Utility.getDisplayName(entityInterface),
                                                entityInterface.getDescription(), actionClass);
             panel.add("br", hyperlink);
-            if (++categoryCounter >= 4)
+            if (++categoryCounter > 4)
                 break;
         }
 
