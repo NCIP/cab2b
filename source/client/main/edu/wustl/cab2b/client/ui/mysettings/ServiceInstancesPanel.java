@@ -1,8 +1,12 @@
 package edu.wustl.cab2b.client.ui.mysettings;
 
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.SERVICE_URLS_FAILURE;
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.SERVICE_URLS_SUCCESS;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.BACK_EVENT;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.SEARCH_EVENT;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.UPDATE_EVENT;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.UPDATE_QUERYURLS_EVENT;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.DIALOG_CLOSE_EVENT;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -41,6 +45,7 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.user.AdminServiceMetadata;
 import edu.wustl.cab2b.common.user.ServiceURL;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
  * This class is the service instance panel where user is shown all the running service 
@@ -66,13 +71,19 @@ public class ServiceInstancesPanel extends Cab2bPanel {
 
     private String serviceName;
 
+    private boolean isForQuery;
+
+    private List<String> URLList;
+
     /**
      * 
      * @param serviceName
      */
-    public ServiceInstancesPanel(String serviceName) {
+    public ServiceInstancesPanel(String serviceName, boolean isForQuery, List<String> URLList) {
         super(new BorderLayout());
         this.serviceName = serviceName;
+        this.isForQuery = isForQuery;
+        this.URLList = URLList;
         initGUI();
     }
 
@@ -84,19 +95,19 @@ public class ServiceInstancesPanel extends Cab2bPanel {
     private void initGUI() {
         allServiceInstances = new ArrayList<AdminServiceMetadata>();
         UserInterface user = UserCache.getInstance().getCurrentUser();
-        Collection<AdminServiceMetadata> adminServiceMetadata = new ServiceInstanceConfigurator().getServiceMetadataObjects(
-                                                                                                                        serviceName,
-                                                                                                                        user);
+        ServiceInstanceConfigurator configurator = new ServiceInstanceConfigurator();
+        Collection<AdminServiceMetadata> adminServiceMetadata = configurator.getServiceMetadataObjects(
+                                                                                                       serviceName,
+                                                                                                       user);
         allServiceInstances.addAll((adminServiceMetadata));
-
         filteredServiceInstances.addAll(allServiceInstances);
 
         String title = serviceName + " Service Instances (" + filteredServiceInstances.size() + ")";
         titledSearchResultsPanel.setTitle(title);
-
         Cab2bButton saveButton = initSaveButton();
         SearchPanel searchPanel = new SearchPanel();
         Cab2bPanel resultPanel = null;
+
         if (filteredServiceInstances.size() > 0) {
             resultPanel = generateContentPanel(filteredServiceInstances);
             GradientPaint gp = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
@@ -121,16 +132,34 @@ public class ServiceInstancesPanel extends Cab2bPanel {
         Cab2bButton backButton = initBackButton();
         Cab2bButton adminSettings = initAdminSettingsButton();
 
-        Cab2bPanel bottomButtonContainer = new Cab2bPanel(new FlowLayout(10, 5, 2));
+        FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
+        flowLayout.setHgap(10);
+        final Cab2bPanel bottomButtonContainer = new Cab2bPanel();
+        bottomButtonContainer.setBackground(null);
+        bottomButtonContainer.setLayout(flowLayout);
         bottomButtonContainer.add(backButton);
         bottomButtonContainer.add(saveButton);
         bottomButtonContainer.add(adminSettings);
 
+        Cab2bButton closeButton = new Cab2bButton("Close");
+        closeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                firePropertyChange(DIALOG_CLOSE_EVENT, true, false);
+            }
+        });
+        bottomButtonContainer.add(closeButton);
+
         add(searchPanel, BorderLayout.NORTH);
         add(titledSearchResultsPanel, BorderLayout.CENTER);
         add(bottomButtonContainer, BorderLayout.SOUTH);
+
     }
 
+    /**
+     * This method creates the save button add a action listener
+     * to it.
+     * @return the savebutton object
+     */
     private Cab2bButton initSaveButton() {
         Cab2bButton saveButton = new Cab2bButton("Save Settings");
         saveButton.setPreferredSize(new Dimension(120, 22));
@@ -144,6 +173,10 @@ public class ServiceInstancesPanel extends Cab2bPanel {
         return saveButton;
     }
 
+    /**
+     * This method initializes the back button 
+     * @return
+     */
     private Cab2bButton initBackButton() {
         Cab2bButton backButton = new Cab2bButton("Back");
         backButton.addActionListener(new ActionListener() {
@@ -155,6 +188,11 @@ public class ServiceInstancesPanel extends Cab2bPanel {
         return backButton;
     }
 
+    /**
+     * This method initializes the admin settings button
+     * adds the listener
+     * @return
+     */
     private Cab2bButton initAdminSettingsButton() {
         Cab2bButton adminSettings = new Cab2bButton("Admin Settings");
         adminSettings.setPreferredSize(new Dimension(120, 22));
@@ -167,6 +205,10 @@ public class ServiceInstancesPanel extends Cab2bPanel {
         return adminSettings;
     }
 
+    /**
+     * This 
+     * @param selectedInstances
+     */
     private void saveButtonFunction(List<ServiceURL> selectedInstances) {
         if (selectedInstances.size() == 0) {
             JOptionPane.showMessageDialog(this.getParent(), "Please select atleast 1 option");
@@ -175,18 +217,47 @@ public class ServiceInstancesPanel extends Cab2bPanel {
         }
     }
 
+    /**
+     * This method saves the selected service instances.
+     * if isForQuery is true that means these selected services will be
+     * updated in the present query only so this will pass the new urls
+     * as new value parameter to the fireproperty() method.  
+     * 
+     * Else it will update the database using the ServiceInstanceConfigurator's
+     *  saveServiceInstances() method and finally fires the Update event
+     * 
+     * @param selectedInstances
+     */
     private void saveServiceInstances(List<ServiceURL> selectedInstances) {
-        ServiceInstanceConfigurator bizLogic = new ServiceInstanceConfigurator();
+        String status = ApplicationProperties.getValue(SERVICE_URLS_SUCCESS);
+        // if it is for the search data wizard 3rd step 
+        // it will update the query object only 
+        if (isForQuery) {
+            List<String> urlList = new ArrayList<String>();
+            for (ServiceURL url : selectedInstances) {
+                urlList.add(url.getUrlLocation());
+            }
+            firePropertyChange(UPDATE_QUERYURLS_EVENT, serviceName, urlList);
+            firePropertyChange(UPDATE_EVENT, serviceName, status);
+            return;
+        }
         try {
-            bizLogic.saveServiceInstances(serviceName,selectedInstances, UserCache.getInstance().getCurrentUser());
-            firePropertyChange(UPDATE_EVENT, serviceName, "( Configured Successfully )");
+            ServiceInstanceConfigurator bizLogic = new ServiceInstanceConfigurator();
+            bizLogic.saveServiceInstances(serviceName, selectedInstances, UserCache.getInstance().getCurrentUser());
+            firePropertyChange(UPDATE_EVENT, serviceName, status);
 
         } catch (RemoteException exception) {
             CommonUtils.handleException(exception, titledSearchResultsPanel, true, true, false, false);
-            firePropertyChange(UPDATE_EVENT, serviceName, "(Unable to Configure )");
+            status = ApplicationProperties.getValue(SERVICE_URLS_FAILURE);
+            firePropertyChange(UPDATE_EVENT, serviceName, status);
         }
     }
 
+    /**
+     * This method is the admin default settings button functionality
+     * it will send a emptylist to the saveServiceInstances() method 
+     * so as to remove all the user configurated urls from the serviceURLCollection 
+     */
     private void adminDefaultSettings() {
         List<ServiceURL> emptyList = new ArrayList<ServiceURL>();
         saveServiceInstances(emptyList);
@@ -212,7 +283,12 @@ public class ServiceInstancesPanel extends Cab2bPanel {
             pageElement.setDisplayName(serviceInstance.getHostingResearchCenter() + " ");
             pageElement.setDescription(serviceInstance.getSeviceDescription());
             pageElement.setUserObject(serviceInstance.getServiceURLObject());
-            pageElement.setSelected(serviceInstance.isConfigured());
+            String serviceURL = serviceInstance.getServiceURL();
+            if (URLList != null && URLList.contains(serviceURL)) {
+                pageElement.setSelected(true);
+            } else {
+                pageElement.setSelected(serviceInstance.isConfigured());
+            }
             pageElementCollection.add(pageElement);
 
         }

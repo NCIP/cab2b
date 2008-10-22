@@ -1,16 +1,24 @@
 package edu.wustl.cab2b.client.ui.mysettings;
 
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.SERVICE_URLS_SUCCESS;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.BACK_EVENT;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.DIALOG_CLOSE_EVENT;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.SERVICE_SELECT_EVENT;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.UPDATE_EVENT;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.UPDATE_QUERYURLS_EVENT;
+
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
+import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
  * @author atul_jawale
@@ -22,6 +30,10 @@ import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 public class RightPanel extends Cab2bPanel {
 
     private AllServicesPanel allServices;
+
+    private boolean isForQuery;
+
+    private Map<String, List<String>> entityToURLMap = new HashMap<String, List<String>>();
 
     /**
      * Default Constructor
@@ -35,26 +47,38 @@ public class RightPanel extends Cab2bPanel {
     /**
      * Default Constructor
      */
-    public RightPanel(Collection<EntityGroupInterface> selectedServices) {
+    public RightPanel(Collection<EntityGroupInterface> selectedServices, Map<String, List<String>> entityURLMap) {
         super(new BorderLayout());
         allServices = new AllServicesPanel(selectedServices);
+        isForQuery = true;
+        this.entityToURLMap.putAll(entityURLMap);
         initGUI();
     }
-    
-    
+
     /**
      * This method registers the service select event so that when user clicks on a service
      * it will fetch all the running instances and display them to user.
      */
     private void initGUI() {
-       
+
         add(allServices);
+
+        //This is the handler when user clicks on the service name (e.g. CaNanoLab)  
         allServices.addPropertyChangeListener(SERVICE_SELECT_EVENT, new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
                 String serviceName = (String) event.getNewValue();
                 loadServiceInstances(serviceName);
             }
         });
+
+        //This is the handler when user clicks on the close button on the
+        // all available services page.
+        allServices.addPropertyChangeListener(DIALOG_CLOSE_EVENT, new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent event) {
+                firePropertyChange(DIALOG_CLOSE_EVENT, true, false);
+            }
+        });
+
         addPropertyChangeListener(UPDATE_EVENT, new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
                 String serviceName = (String) event.getNewValue();
@@ -77,7 +101,8 @@ public class RightPanel extends Cab2bPanel {
              * till this methods execution user will be shown a wait cursor
              */
             protected void doNonUILogic() {
-                serviceInstancePanel = new ServiceInstancesPanel(serviceName);
+                List<String> URLList = entityToURLMap.get(serviceName);
+                serviceInstancePanel = new ServiceInstancesPanel(serviceName, isForQuery, URLList);
                 serviceInstancePanel.addPropertyChangeListener(BACK_EVENT, new PropertyChangeListener() {
                     public void propertyChange(PropertyChangeEvent event) {
                         loadAllServices();
@@ -91,6 +116,26 @@ public class RightPanel extends Cab2bPanel {
                         loadAllServices();
                     }
                 });
+
+                serviceInstancePanel.addPropertyChangeListener(UPDATE_QUERYURLS_EVENT,
+                                                               new PropertyChangeListener() {
+                                                                   public void propertyChange(
+                                                                                              PropertyChangeEvent event) {
+                                                                       List<String> newURLList = (List<String>) event.getNewValue();
+                                                                       entityToURLMap.put(serviceName, newURLList);
+                                                                       String status = ApplicationProperties.getValue(SERVICE_URLS_SUCCESS);
+                                                                       allServices.refreshPanel(serviceName,
+                                                                                                status);
+                                                                       loadAllServices();
+                                                                   }
+                                                               });
+
+                serviceInstancePanel.addPropertyChangeListener(DIALOG_CLOSE_EVENT, new PropertyChangeListener() {
+                    public void propertyChange(PropertyChangeEvent event) {
+                        firePropertyChange(DIALOG_CLOSE_EVENT, true, false);
+                    }
+                });
+
             }
 
             /**
@@ -114,5 +159,12 @@ public class RightPanel extends Cab2bPanel {
         repaint();
         add(allServices);
         repaint();
+    }
+
+    /**
+     * @return the entityToURLMap
+     */
+    public Map<String, List<String>> getEntityToURLMap() {
+        return entityToURLMap;
     }
 }
