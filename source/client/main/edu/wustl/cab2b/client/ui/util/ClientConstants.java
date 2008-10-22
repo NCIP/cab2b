@@ -245,4 +245,8 @@ public interface ClientConstants {
     public static final String UPDATE_EVENT = "updateEvent";
 
     public static final String SERVICE_SELECT_EVENT = "serviceSelected";
+    
+    public static final String UPDATE_QUERYURLS_EVENT = "updateQueryURLS";
+    
+    public static final String DIALOG_CLOSE_EVENT = "dialogCloseEvent";
 }
