@@ -13,15 +13,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.swing.JLabel;
+import javax.swing.JComboBox;
 import javax.swing.border.EmptyBorder;
 
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.cab2b.client.ui.controls.Cab2bComboBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
@@ -57,7 +62,7 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
     /**
      * Query result in a format required by JPagination component.
      */
-    private Vector<PageElement> elements = null;
+    private Vector<PageElement> allElements = null;
 
     private IDataRow parentDataRow;
 
@@ -66,6 +71,12 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
     private JXPanel m_addSummaryParentPanel;
 
     private JPagination pagination;
+
+    private Vector<String> serviceURLComboContents = new Vector<String>();
+
+    private Map<String, Vector<PageElement>> URLSToResultRowMap = new HashMap<String, Vector<PageElement>>();
+
+    private JXTitledPanel titledSearchResultsPanel;
 
     public ViewSearchResultsSimplePanel(
             SimpleSearchResultBreadCrumbPanel searchPanel,
@@ -106,7 +117,7 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
      * Initializes the data needed for <code>JPagination</code> component.
      */
     private void initData() {
-        elements = new Vector<PageElement>();
+        allElements = new Vector<PageElement>();
 
         String className = Utility.getDisplayName(queryResult.getOutputEntity());
         List<AttributeInterface> attributes = Utility.getAttributeList(queryResult);
@@ -114,14 +125,18 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
         //int attributeLimitInDescStr = (attributeSize < 10) ? attributeSize : 10;
 
         Map<String, List<IRecord>> allRecords = queryResult.getRecords();
+        serviceURLComboContents.add("Results From All service URLs ");
         for (String url : allRecords.keySet()) {
-            List<IRecord> recordList = allRecords.get(url);
 
+            List<IRecord> recordList = allRecords.get(url);
+            String urlNameSize = url + " ( " + recordList.size() + " )";
+            serviceURLComboContents.add(urlNameSize);
+            Vector<PageElement> elements = new Vector<PageElement>();
             for (IRecord record : recordList) {
                 StringBuffer descBuffer = new StringBuffer();
                 for (int i = 0; i < attributeSize; i++) {
                     Object value = record.getValueForAttribute(attributes.get(i));
-                    if (value != null ) {
+                    if (value != null) {
                         if (i != 0) {
                             descBuffer.append(",");
                         }
@@ -150,8 +165,10 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
 
                 element.setUserObject(recordListUserObject);
 
+                allElements.add(element);
                 elements.add(element);
             }
+            URLSToResultRowMap.put(urlNameSize, elements);
         }
     }
 
@@ -164,34 +181,51 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
         /**
          * Add the following selectively
          */
-        final JXTitledPanel titledSearchResultsPanel = new Cab2bTitledPanel("Search Results :- "
-                + "Total results ( " + elements.size() + " )");
+        titledSearchResultsPanel = new Cab2bTitledPanel("Search Results :- " + "Total results ( "
+                + allElements.size() + " )");
         GradientPaint gp = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
                 new Point2D.Double(.95d, 0), Color.WHITE);
         titledSearchResultsPanel.setTitlePainter(new BasicGradientPainter(gp));
         titledSearchResultsPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
         titledSearchResultsPanel.setTitleFont(new Font("SansSerif", Font.BOLD, 11));
         titledSearchResultsPanel.setTitleForeground(Color.BLACK);
-        
-        Pager pager = new NumericPager(elements, 3);
-        pagination = new JPagination(elements, pager, this, true);
-        pagination.addPageElementActionListener(searchPanel.getHyperlinkAL());
-       
-        searchResultsPanel = new Cab2bPanel(new RiverLayout(0,5));
-        searchResultsPanel.add("vfill hfill", pagination);
+
+        pagination = initPagination(allElements);
+
+        searchResultsPanel = new Cab2bPanel(new BorderLayout(0, 5));
+
+        Cab2bComboBox serviceURLCombo = new Cab2bComboBox(serviceURLComboContents);
+        serviceURLCombo.setPreferredSize(new Dimension(450, 20));
+        serviceURLCombo.addActionListener(new ServiceURLSelectionListener());
+        Cab2bPanel comboContainer = new Cab2bPanel(new RiverLayout(5, 5));
+        comboContainer.add("right", serviceURLCombo);
+
+        searchResultsPanel.add(BorderLayout.NORTH, comboContainer);
+
+        searchResultsPanel.add(BorderLayout.CENTER, pagination);
         initDataListSummaryPanel();
         initDataListButtons();
-        
-        Cab2bPanel buttonPanel= new Cab2bPanel(new RiverLayout(8,0));
+
+        Cab2bPanel buttonPanel = new Cab2bPanel(new RiverLayout(8, 0));
         buttonPanel.add(addToDataListButton);
         buttonPanel.add(m_applyAllButton);
-        searchResultsPanel.add("br", buttonPanel);
+        searchResultsPanel.add(BorderLayout.SOUTH, buttonPanel);
 
         m_addSummaryParentPanel = new Cab2bPanel(new BorderLayout());
         m_addSummaryParentPanel.add(searchResultsPanel, BorderLayout.CENTER);
         m_addSummaryParentPanel.add(myDataListParentPanel, BorderLayout.EAST);
         titledSearchResultsPanel.setContentContainer(m_addSummaryParentPanel);
         this.add("p vfill hfill", titledSearchResultsPanel);
+    }
+
+    /**
+     * 
+     */
+    private JPagination initPagination(Vector<PageElement> elements) {
+        Pager pager = new NumericPager(elements, 3);
+        JPagination pagination = new JPagination(elements, pager, this, true);
+        pagination.addPageElementActionListener(searchPanel.getHyperlinkAL());
+        return pagination;
     }
 
     /**
@@ -204,5 +238,44 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
             selectedDataRows.add((IDataRow) recordListUserObject.get(0));
         }
         return selectedDataRows;
+    }
+/**
+ * This class is the item action listener for the combo box when user selects 
+ * particular url it will refresh the result panel and will show only the results 
+ * from the selected url.   
+ * @author atul_jawale
+ *
+ */
+    class ServiceURLSelectionListener implements ActionListener {
+
+        public void actionPerformed(ActionEvent event) {
+
+            JComboBox comboBox = (JComboBox) event.getSource();
+            Vector<PageElement> elements = null;
+            int index = comboBox.getSelectedIndex();
+            //check if the user selected to view all the results
+            if (index == 0) {
+                elements = allElements;
+            } else { 
+                String url = (String) comboBox.getSelectedItem();
+                elements = URLSToResultRowMap.get(url);
+            }
+            searchResultsPanel.remove(pagination);
+            pagination = initPagination(elements);
+
+            searchResultsPanel.revalidate();
+            searchResultsPanel.add(BorderLayout.CENTER, pagination);
+            searchResultsPanel.revalidate();
+
+            m_addSummaryParentPanel = new Cab2bPanel(new BorderLayout());
+            m_addSummaryParentPanel.add(searchResultsPanel, BorderLayout.CENTER);
+            m_addSummaryParentPanel.add(myDataListParentPanel, BorderLayout.EAST);
+            titledSearchResultsPanel.setContentContainer(m_addSummaryParentPanel);
+
+            titledSearchResultsPanel.revalidate();
+            validate();
+
+        }
+
     }
 }
