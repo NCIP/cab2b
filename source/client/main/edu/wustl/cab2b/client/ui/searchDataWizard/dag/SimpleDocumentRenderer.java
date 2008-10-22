@@ -28,6 +28,10 @@ import org.netbeans.graph.api.model.IGraphLink;
 import org.netbeans.graph.api.model.IGraphNode;
 import org.netbeans.graph.api.model.IGraphPort;
 
+/**
+ * SimpleDocumentRenderer
+ * @author Deepak Shingan
+ */
 public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
     /**
      * Set FONT for title 
@@ -70,7 +74,7 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
     protected static final Color selectionBackground = new Color(0xEEEEEE);
 
     /**
-     * Node Selction forground color
+     * Node Selection foreground color
      */
     protected static final Color selectionForeground = Color.BLUE;//new Color (0xCDCDCD); // sanjeev
 
@@ -145,14 +149,14 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
         simpleDocPortImage = portImage;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.netbeans.graph.api.control.IGraphDocumentRenderer#notifyAttached(org.netbeans.graph.api.control.GraphHelper)
      */
     public void notifyAttached(GraphHelper helper) {
         this.helper = helper;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.netbeans.graph.api.control.IGraphDocumentRenderer#notifyDettached(org.netbeans.graph.api.control.GraphHelper)
      */
     public void notifyDettached(GraphHelper helper) {
@@ -245,7 +249,7 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
         }
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.netbeans.graph.api.control.IGraphDocumentRenderer#renderPaper(java.awt.Graphics2D)
      */
     public void renderPaper(Graphics2D gr) {
@@ -272,7 +276,7 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
         renderPaperHeader(gr);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.netbeans.graph.api.control.IGraphDocumentRenderer#renderSelectionRectangle(java.awt.Graphics2D, java.awt.Rectangle)
      */
     public void renderSelectionRectangle(Graphics2D gr, Rectangle selectionRectangle) {
@@ -282,7 +286,7 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
         gr.setComposite(composite);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.netbeans.graph.api.control.IGraphDocumentRenderer#getRelinkingRectangle(org.netbeans.graph.api.model.IGraphLink, org.netbeans.graph.api.model.IGraphPort, org.netbeans.graph.api.model.IGraphPort, java.awt.Point, java.awt.Point)
      */
     public Rectangle getRelinkingRectangle(IGraphLink link, IGraphPort sourcePort, IGraphPort targetPort,
@@ -300,7 +304,7 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
         return sourceRect;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.netbeans.graph.api.control.IGraphDocumentRenderer#renderRelinking(java.awt.Graphics2D, org.netbeans.graph.api.model.IGraphLink, org.netbeans.graph.api.model.IGraphPort, org.netbeans.graph.api.model.IGraphPort, java.awt.Point, java.awt.Point)
      */
     public void renderRelinking(Graphics2D gr, IGraphLink link, IGraphPort sourcePort, IGraphPort targetPort,
@@ -313,14 +317,14 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
         SimpleLinkRenderer.paintLink(false, gr, xs, ys, 2);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.netbeans.graph.api.control.IGraphDocumentRenderer#isAcceptable(java.awt.datatransfer.DataFlavor[], org.netbeans.graph.api.model.IGraphNode, java.awt.Point)
      */
     public boolean isAcceptable(DataFlavor[] dataFlavors, IGraphNode node, Point location) {
         return helper.getEventHandler().isAcceptable((IGraphNode) helper.getModelComponent(node), dataFlavors);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.netbeans.graph.api.control.IGraphDocumentRenderer#accept(java.awt.datatransfer.Transferable, org.netbeans.graph.api.model.IGraphNode, java.awt.Point)
      */
     public void accept(Transferable transferable, IGraphNode node, Point location) {
@@ -329,49 +333,49 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
         helper.setNewNodePosition(null);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.netbeans.graph.api.control.IGraphDocumentRenderer#getEditor(java.awt.Point)
      */
     public IGraphEditor getEditor(Point position) {
         return null;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.netbeans.graph.api.control.IGraphDocumentRenderer#getToolTipText(java.awt.Point)
      */
     public String getToolTipText(Point position) {
         return null;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.netbeans.graph.api.control.IGraphDocumentRenderer#getNodesLayouter()
      */
     public IGraphNodesLayouter getNodesLayouter() {
         return nodesLayouter;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.netbeans.graph.api.control.IGraphDocumentRenderer#getNodeRenderer(org.netbeans.graph.api.model.IGraphNode)
      */
     public IGraphNodeRenderer getNodeRenderer(IGraphNode node) {
         return new IconNodeRenderer(helper, node);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.netbeans.graph.api.control.IGraphDocumentRenderer#getPortRenderer(org.netbeans.graph.api.model.IGraphPort)
      */
     public IGraphPortRenderer getPortRenderer(IGraphPort port) {
         return new IconPortRenderer(helper, port, simpleDocPortImage);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.netbeans.graph.api.control.IGraphDocumentRenderer#getLinkRenderer(org.netbeans.graph.api.model.IGraphLink)
      */
     public IGraphLinkRenderer getLinkRenderer(IGraphLink link) {
         return new OrthogonalLinkRouterLinkRenderer(helper, link, orthogonalLinkRouter);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.netbeans.graph.api.control.IGraphDocumentRenderer#getLinkRouter(org.netbeans.graph.api.model.IGraphLink)
      */
     public IGraphLinkRouter getLinkRouter(IGraphLink link) {
