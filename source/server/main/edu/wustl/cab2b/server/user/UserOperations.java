@@ -11,7 +11,6 @@ import java.util.Map;
 import org.apache.axis.types.URI.MalformedURIException;
 import org.apache.log4j.Logger;
 import org.globus.gsi.GlobusCredential;
-import org.hibernate.Session;
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
@@ -20,8 +19,11 @@ import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.User;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.cache.EntityCache;
-import edu.wustl.common.hibernate.HibernateDatabaseOperations;
-import edu.wustl.common.hibernate.HibernateUtil;
+import edu.wustl.common.bizlogic.DefaultBizLogic;
+import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
+import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.global.Constants;
 import gov.nih.nci.cagrid.authentication.bean.BasicAuthenticationCredential;
 import gov.nih.nci.cagrid.authentication.bean.Credential;
 import gov.nih.nci.cagrid.authentication.client.AuthenticationClient;
@@ -36,7 +38,7 @@ import gov.nih.nci.cagrid.opensaml.SAMLAssertion;
  * @author hrishikesh_rajpathak
  * 
  */
-public class UserOperations {
+public class UserOperations extends DefaultBizLogic {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(UserOperations.class);
 
     /**
@@ -67,18 +69,17 @@ public class UserOperations {
     @SuppressWarnings("unchecked")
     private User getUser(String column, String value) {
         List<User> userList = null;
-        
+        try {
             /*
              * if (value == null) { userList = (List<User>)
              * retrieve(User.class.getName(), column, "true"); } else { userList =
              * (List<User>) retrieve(User.class.getName(), column, value); }
              */
-            Session session = HibernateUtil.newSession();
-            HibernateDatabaseOperations<User> dbHandler = new HibernateDatabaseOperations<User>(
-                    session);
-            userList =  dbHandler.retrieve(User.class.getName(), column, value);
-            //userList = (List<User>) retrieve(User.class.getName(), column, value);
-       
+            userList = (List<User>) retrieve(User.class.getName(), column, value);
+        } catch (DAOException e) {
+            logger.error(e.getStackTrace());
+            return null;
+        }
 
         User user = null;
         if (userList != null && !userList.isEmpty()) {
@@ -106,18 +107,18 @@ public class UserOperations {
      * @param user User
      */
     private void postProcessUser(User user) {
-        //        Collection<EntityGroupInterface> entityGroups = EntityCache.getInstance().getEntityGroups();
+//        Collection<EntityGroupInterface> entityGroups = EntityCache.getInstance().getEntityGroups();
 
         Collection<ServiceURLInterface> serviceCollection = user.getServiceURLCollection();
-        //        for (ServiceURLInterface serviceURL : serviceCollection) {
-        //            String entityGroupName = ((ServiceURL) serviceURL).getEntityGroupName();
-        //            for (EntityGroupInterface entityGroup : entityGroups) {
-        //               // if (entityGroupName.equals(entityGroup.getLongName())) {
-        //               //     serviceURL.setEntityGroupInterface(entityGroup);
-        //                    break;
-        //                }
-        //            }
-        //        }
+//        for (ServiceURLInterface serviceURL : serviceCollection) {
+//            String entityGroupName = ((ServiceURL) serviceURL).getEntityGroupName();
+//            for (EntityGroupInterface entityGroup : entityGroups) {
+//               // if (entityGroupName.equals(entityGroup.getLongName())) {
+//               //     serviceURL.setEntityGroupInterface(entityGroup);
+//                    break;
+//                }
+//            }
+//        }
     }
 
     /**
@@ -130,10 +131,15 @@ public class UserOperations {
         if (getUserByName(user.getUserName()) != null) {
             throw new RuntimeException("User already exists", ErrorCodeConstants.UR_0002);
         } else {
-            Session session = HibernateUtil.newSession();
-            HibernateDatabaseOperations<UserInterface> dbHandler = new HibernateDatabaseOperations<UserInterface>(
-                    session);
-            dbHandler.insert(user);
+            try {
+                insert(user, Constants.HIBERNATE_DAO);
+            } catch (UserNotAuthorizedException e) {
+                logger.error(e.getStackTrace());
+                throw new RuntimeException("Error while inserting user in database", ErrorCodeConstants.UR_0004);
+            } catch (BizLogicException e) {
+                logger.error(e.getStackTrace());
+                throw new RuntimeException("Error while inserting user in database", ErrorCodeConstants.UR_0004);
+            }
         }
     }
 
@@ -143,13 +149,15 @@ public class UserOperations {
      * @param user User to update
      */
     public void updateUser(UserInterface user) {
-
-        //  update(user, Constants.HIBERNATE_DAO);
-        Session session = HibernateUtil.newSession();
-        HibernateDatabaseOperations<UserInterface> dbHandler = new HibernateDatabaseOperations<UserInterface>(
-                session);
-        dbHandler.insertOrUpdate(user);
-
+        try {
+            update(user, Constants.HIBERNATE_DAO);
+        } catch (UserNotAuthorizedException e) {
+            logger.error(e.getStackTrace());
+            throw new RuntimeException("Error while updating user information in database ", ErrorCodeConstants.UR_0005);
+        } catch (BizLogicException e) {
+            logger.error(e.getStackTrace());
+            throw new RuntimeException("Error while updating user information in database ", ErrorCodeConstants.UR_0005);
+        }
     }
 
     /**
@@ -284,8 +292,8 @@ public class UserOperations {
      * @throws MalformedURIException
      *             if dorian url not properly defined
      */
-    private GlobusCredential getGlobusCredentials(String dorianUrl, SAMLAssertion saml)
-            throws MalformedURIException, RemoteException {
+    private GlobusCredential getGlobusCredentials(String dorianUrl, SAMLAssertion saml) throws MalformedURIException,
+            RemoteException {
         ProxyLifetime lifetime = new ProxyLifetime();
         lifetime.setHours(12);
         lifetime.setMinutes(0);
