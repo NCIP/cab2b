@@ -105,4 +105,20 @@ public class UserCache {
         }
         return map;
     }
+
+    /**
+     * @return the entityGroupToURLs
+     */
+    public Map<String, List<String>> getEntityGroupToURLs() {
+        return entityGroupToURLs;
+    }
+
+    /**
+     * @param entityGroupToURLs the entityGroupToURLs to set
+     */
+    public void setEntityGroupToURLs(Map<String, List<String>> entityGroupToURLs) {
+        this.entityGroupToURLs = entityGroupToURLs;
+    }
+    
+    
 }
