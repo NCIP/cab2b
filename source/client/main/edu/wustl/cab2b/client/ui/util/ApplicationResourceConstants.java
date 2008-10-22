@@ -150,4 +150,8 @@ public interface ApplicationResourceConstants {
      *  Text to be shown as MySettings link 
      */
     public static final String MYSETTINGS_FRAME_TITLE = "cab2b.mysettings.frame.title";//=My Settings 
+    
+    public static final String SERVICE_URLS_SUCCESS = "cab2b.serviceURLs.status.success";//=(Configured Successfully)
+    
+    public static final String SERVICE_URLS_FAILURE = "cab2b.serviceURLs.status.failure";// = (Unable to Configure)
 }
