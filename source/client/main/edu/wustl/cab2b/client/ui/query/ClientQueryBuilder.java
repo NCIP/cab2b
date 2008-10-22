@@ -11,6 +11,7 @@
 package edu.wustl.cab2b.client.ui.query;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +56,11 @@ public class ClientQueryBuilder extends ConstraintsObjectBuilder implements ICli
         }
 
         String[] outputServiceUrls = getServiceUrls(en);
-        setOutputForQuery(entity, Arrays.asList(outputServiceUrls));
+        List<String> urlList = new ArrayList<String>();
+        for(String url:outputServiceUrls){
+            urlList.add(url);
+        }
+        setOutputForQuery(entity, urlList);
     }
 
     public void setOutputForQuery(EntityInterface entity, List<String> urls) {
