@@ -638,6 +638,9 @@
 			<fileset dir="${workArea.dir}/server/classes">
 				<exclude name="**/ejb/**/*.*" />
 			</fileset>
+			<fileset dir="${conf.dir}">
+				<include name="cab2b.properties" />
+			</fileset>
 		</copy>
 		<jar basedir="${standAlone.jar.dir}" destfile="${caB2B.standalone.jar.file}">
 			<manifest>
