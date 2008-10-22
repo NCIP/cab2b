@@ -13,8 +13,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Vector;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -25,7 +25,10 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.client.ui.controls.StackedBox;
+import edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllSavedQueryPanel;
+import edu.wustl.cab2b.client.ui.mainframe.stackbox.SavedQueryLinkPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
@@ -58,26 +61,30 @@ public class B2BStackedBox extends Cab2bPanel {
         this.add(scrollPane, BorderLayout.CENTER);
 
         JPanel status = new Cab2bPanel();/*CommonUtils.getPopularSearchCategoriesPanel(
-         CommonUtils.getPopularSearchCategories(),
-         new ShowMessageActionClass(
-         "This link will open selected user category in add limit page.\nThis feature is not yet implemented."));*/
+                         CommonUtils.getPopularSearchCategories(),
+                         new ShowMessageActionClass(
+                         "This link will open selected user category in add limit page.\nThis feature is not yet implemented."));*/
 
         /*        setDataForPanel(status, CommonUtils.getUserSearchCategories(),
          "This link will open selected user category in add limit page.\nThis feature is not yet implemented.");*/
         final String titleMyCategories = ApplicationProperties.getValue(CATEGORY_BOX_TEXT);
         box.addBox(titleMyCategories, status, MY_CATEGORIES_IMAGE, false);
 
-        JPanel profilingResults = getPanel();
-        setDataForPanel(profilingResults, CommonUtils.getUserSearchQueries(),
-                        "This link will open selected saved query.\nThis feature is not yet implemented.");
+        SavedQueryLinkPanel profilingResults= new SavedQueryLinkPanel();
+        profilingResults.setLayout(new RiverLayout(10, 5));
+        profilingResults.setPreferredSize(new Dimension(265, 123));
+        profilingResults.setOpaque(false);
+        profilingResults.setBorder(null);
+        profilingResults.updateQueryLinkPanel();
+    //  setDataForPanel(profilingResults, CommonUtils.getUserSearchQueries());
         final String titleQuery = ApplicationProperties.getValue(QUERY_BOX_TEXT);
         box.addBox(titleQuery, profilingResults, MY_SEARCH_QUERIES_IMAGE, false);
 
         JPanel popularCategories = new Cab2bPanel();/*CommonUtils.getPopularSearchCategoriesPanel(
-         CommonUtils.getPopularSearchCategories(),
-         new ShowMessageActionClass(
-         "This link will open selected popular category in add limit page.\nThis feature is not yet implemented."));
-         */
+                         CommonUtils.getPopularSearchCategories(),
+                         new ShowMessageActionClass(
+                         "This link will open selected popular category in add limit page.\nThis feature is not yet implemented."));
+                         */
         final String titlePopularcategories = ApplicationProperties.getValue(POPULAR_CATEGORY_BOX_TEXT);
         box.addBox(titlePopularcategories, popularCategories, POPULAR_CATEGORIES_IMAGE, false);
 
@@ -111,29 +118,34 @@ public class B2BStackedBox extends Cab2bPanel {
      * @param panel
      * @param data
      */
-    private void setDataForPanel(JPanel panel, Vector data, final String msg) {
+    private void setDataForPanel(JPanel panel, Collection<IParameterizedQuery> data) {
+
         panel.removeAll();
         panel.add(new Cab2bLabel());
-        Iterator iter = data.iterator();
+        Iterator<IParameterizedQuery> iter = data.iterator();
         ActionListener actionListener = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                Container comp = (Container) ae.getSource();
-                while (comp.getParent() != null) {
-                    comp = comp.getParent();
-                }
-                JOptionPane.showMessageDialog(comp, msg, "caB2B Information", JOptionPane.INFORMATION_MESSAGE);
+                Cab2bHyperlink queryLink = (Cab2bHyperlink) ae.getSource();
+                Long queryID = (Long) queryLink.getUserObject();
+                ShowAllSavedQueryPanel.queryLinkAction(queryID);
             }
         };
 
         while (iter.hasNext()) {
-            Object obj = iter.next();
-            String hyperlinkName = obj.toString();
-            Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
+            IParameterizedQuery query = iter.next();
+            String hyperlinkName = query.getName();
+            Cab2bHyperlink<Long> hyperlink = new Cab2bHyperlink<Long>(true);
+            hyperlink.setUserObject(query.getId());
             hyperlink.setText(hyperlinkName);
+            if (query.getDescription() == null || query.getDescription().equals(""))
+                hyperlink.setToolTipText("* Description not available");
+            else
+                hyperlink.setToolTipText(query.getDescription());
+
             hyperlink.addActionListener(actionListener);
             panel.add("br", hyperlink);
         }
-        panel.revalidate();
+        panel.updateUI();
     }
 
     /**

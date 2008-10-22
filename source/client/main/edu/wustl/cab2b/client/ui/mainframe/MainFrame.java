@@ -136,7 +136,8 @@ public class MainFrame extends JXFrame {
         homePanel = welcomePanel;
         homePanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 
-        mainFrameStackBox = new MainFrameStackedBoxPanel(this);
+        mainFrameStackBox =  MainFrameStackedBoxPanel.getInstance();
+        mainFrameStackBox.initialiseUI(this);
         mainFrameStackBox.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mainFrameStackBox, homePanel);

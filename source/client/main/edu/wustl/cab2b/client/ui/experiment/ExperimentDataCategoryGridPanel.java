@@ -37,6 +37,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.sheet.JSheet;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
+import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
@@ -417,9 +418,12 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                                                                                                                     DataListHomeInterface.class);
 
                 try {
-                    dataListMetadata = dataListBI.saveDataCategory(customCategoryDataList.getRootDataRow(),
-                                                                   dataListMetadata, null,
-                                                                   spreadSheetViewPanel.getUserDefinedAttributes());
+                    dataListMetadata = dataListBI.saveDataCategory(
+                                                                   customCategoryDataList.getRootDataRow(),
+                                                                   dataListMetadata,
+                                                                   null,
+                                                                   spreadSheetViewPanel.getUserDefinedAttributes(),
+                                                                   UserValidator.getSerializedDelegatedCredReference());
                     experimentPanel.getSelectedExperiment().addDataListMetadata(dataListMetadata);
                     ExperimentBI.addDataListToExperiment(experimentPanel.getSelectedExperiment().getId(),
                                                          dataListMetadata.getId());

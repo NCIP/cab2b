@@ -110,5 +110,10 @@
     <module><java>metadata.jar</java></module>
     <module><java>query.jar</java></module>
     <module><java>washu-commons.jar</java></module>    
-    
+    <module><java>caGrid-cds-common-1.2.jar</java></module> 
+    <module><java>caGrid-cds-stubs-1.2.jar</java></module>
+    <module><java>caGrid-cds-service-1.2.jar</java></module> 
+    <module><java>caGrid-cds-client-1.2.jar</java></module>
+    <module><java>caGrid-websso-client-1.2.jar</java></module>
+    <module><java>caGrid-ServiceSecurityProvider-stubs-1.2.jar</java></module>
 </application>

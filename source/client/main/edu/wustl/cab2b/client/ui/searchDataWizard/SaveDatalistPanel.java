@@ -23,6 +23,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
+import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.util.WindowUtilities;
@@ -167,7 +168,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
 
                         try {
                             MainSearchPanel.savedDataListMetadata = dataListBI.saveDataList(newRootDataRow,
-                                                                                            dataListAnnotation);
+                                                                                            dataListAnnotation,UserValidator.getSerializedDelegatedCredReference());
 
                             logger.debug("data list saved successfully (in entity with id) : "
                                     + MainSearchPanel.savedDataListMetadata.getId());

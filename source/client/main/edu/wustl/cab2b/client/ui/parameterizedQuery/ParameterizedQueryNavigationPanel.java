@@ -9,11 +9,13 @@ import java.util.Date;
 
 import javax.swing.JOptionPane;
 
+import edu.wustl.cab2b.client.cache.ClientSideCache;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.client.ui.main.AbstractTypePanel;
+import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.client.ui.mainframe.stackbox.SavedQueryLinkPanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.SearchNavigationPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
@@ -164,6 +166,7 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
             else {
                 parameterizedQueryDataModel.setQueryName((new Date().toString()));
             }
+            
             saveQuery();
         }
 
@@ -191,11 +194,11 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                                                       JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    queryEngineBusinessInterface.saveQuery(cab2bParameterizedQuery);
+                    queryEngineBusinessInterface.saveQuery(cab2bParameterizedQuery ,UserValidator.getSerializedDelegatedCredReference());
                     message = "Query " + cab2bParameterizedQuery.getName() + " saved successfully.";
                 }
                 SearchNavigationPanel.getMessageLabel().setText(message);
-                SavedQueryLinkPanel.getInstance().updateQueryLinkPanel();
+                new SavedQueryLinkPanel().updateQueryLinkPanel();
                 updateUI();
                 parameterizedQueryMainPanel.getDialog().dispose();
             } catch (RemoteException exception) {
@@ -203,6 +206,8 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                         exception.getMessage(), edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DB_0005),
                                             parameterizedQueryMainPanel, true, true, true, false);
                 parameterizedQueryMainPanel.getDialog().dispose();
+            }catch (Exception exception){
+                exception.getMessage();
             }
         }
     }

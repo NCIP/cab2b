@@ -17,10 +17,11 @@ public interface DataListBusinessInterface extends BusinessInterface {
     /**
      * Saves the data list.
      * @param dataList
+     * @param dref -Its serialized User Credential in String
      * @return data list id.
      * @throws RemoteException
      */
-    public DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata)
+    public DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata, String dref)
             throws RemoteException;
 
     /**
@@ -28,7 +29,7 @@ public interface DataListBusinessInterface extends BusinessInterface {
      * @return list of all available data list metadata.
      * @throws RemoteException
      */
-    public List<DataListMetadata> retrieveAllDataListMetadata() throws RemoteException;
+    public List<DataListMetadata> retrieveAllDataListMetadata(String dref) throws RemoteException;
 
     /**
      * Retrives annotation for given datalist id.
@@ -48,14 +49,25 @@ public interface DataListBusinessInterface extends BusinessInterface {
 
     public List<IRecord> getEntityRecord(Long entityId) throws RemoteException;
 
+    /**
+     * 
+     * @param rootRecordDataRow
+     * @param dataListMetadata
+     * @param oldAttribute
+     * @param newAttributes
+     * @param dref - it is serialized User Credential in String
+     * @return
+     * @throws RemoteException
+     * @throws CheckedException
+     */
     public DataListMetadata saveDataCategory(IDataRow rootRecordDataRow, DataListMetadata dataListMetadata,
                                              List<AttributeInterface> oldAttribute,
-                                             List<AttributeInterface> newAttributes) throws RemoteException,
-            CheckedException;
+                                             List<AttributeInterface> newAttributes, String dref)
+            throws RemoteException, CheckedException;
 
     public DataListMetadata saveCustomDataCategory(IdName rootEntityId,
                                                    Collection<AttributeInterface> selectedAttributeList,
-                                                   String string, Experiment experiment) throws RemoteException,
-            CheckedException;
+                                                   String string, Experiment experiment, String dref)
+            throws RemoteException, CheckedException;
 
 }

@@ -35,7 +35,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @throws DAOException
      * @throws RemoteException
      */
-    public void addExperiment(Long experimentGroupId, Experiment experiment) throws BizLogicException,
+    public void addExperiment(Long experimentGroupId, Experiment experiment,String dref) throws BizLogicException,
             UserNotAuthorizedException, DAOException, RemoteException;
 
     /**
@@ -66,7 +66,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @throws DAOException
      * @throws RemoteException
      */
-    public Vector getExperimentHierarchy() throws ClassNotFoundException, DAOException, RemoteException;
+    public Vector getExperimentHierarchy(String dref) throws ClassNotFoundException, DAOException, RemoteException;
 
     /**
      * Returns list of all experiments associated with specified user 
@@ -74,7 +74,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @return
      * @throws RemoteException
      */
-    public List<Experiment> getExperimentsForUser(UserInterface user) throws RemoteException;
+    public List<Experiment> getExperimentsForUser(UserInterface user , String dref) throws RemoteException;
 
     /**
      * @param id

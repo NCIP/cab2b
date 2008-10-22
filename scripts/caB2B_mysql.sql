@@ -82,6 +82,7 @@ create table OUTPUT_CLASS_URLS (
 create table CAB2B_QUERY (
    IDENTIFIER bigint not null,
    ENTITY_ID bigint not null,
+   USER_ID 	varchar(254) not null,
    primary key (IDENTIFIER)
 );
 create table CAB2B_DATA_CATEGORY (
@@ -108,8 +109,8 @@ create table CAB2B_SERVICE_URL (
 );
 create table CAB2B_USER (
    USER_ID bigint not null auto_increment,
-   NAME varchar(30) not null,
-   PASSWORD varchar(30) not null,
+   NAME varchar(254) not null,
+   PASSWORD varchar(30),
    IS_ADMIN bit not null,
    primary key (USER_ID)
 );

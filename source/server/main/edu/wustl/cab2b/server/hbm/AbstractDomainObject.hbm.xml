@@ -66,6 +66,14 @@
             length="255"
         />
 
+		<property
+            name="userId"
+            type="string"
+            update="true"
+            insert="true"
+            column="USER_ID"
+            
+        />
         <property
             name="createdOn"
             type="date"
@@ -201,6 +209,7 @@
             column="EXP_ID"
         />
 
+ 		
         <set
             name="experimentGroupCollection"
             table="CAB2B_EXP_GRP_MAPPING"

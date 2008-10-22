@@ -15,127 +15,144 @@ package edu.wustl.cab2b.common.domain;
  */
 public class AdditionalMetadata extends AbstractDomainObject implements java.io.Serializable {
 
-	private static final long serialVersionUID = 1234567890L;
+    private static final long serialVersionUID = 1234567890L;
 
-	/**
-	 * Name of the domain object.
-	 */
-	protected java.lang.String name;
+    /**
+     * Name of the domain object.
+     */
+    protected java.lang.String name;
 
-	/**
-	 * Returns the name of the domain object.
-	 * 
-	 * @hibernate.property name="name" type="string" column="NAME"
-	 *                     length="50"
-	 * @return name of the domain object.
-	 */
-	public java.lang.String getName() {
-		return name;
-	}
+    /**
+     * Returns the name of the domain object.
+     * 
+     * @hibernate.property name="name" type="string" column="NAME"
+     *                     length="50"
+     * @return name of the domain object.
+     */
 
-	/**
-	 * Sets the name of the domain object.
-	 * 
-	 * @param name
-	 */
-	public void setName(java.lang.String name) {
-		this.name = name;
-	}
+    protected String userId;
 
-	/**
-	 * Description for the domain object.
-	 */
-	protected java.lang.String description;
+    /**
+     * @return the userId
+     * 
+     * @hibernate.property name="userId" column="USER_ID" type="string" length="254"  not-null="true" 
+     */
 
-	/**
-	 * Returns the description for the domain object.
-	 * 
-	 * @hibernate.property name="description" type="string"
-	 *                     column="DESCRIPTION" length="255"
-	 * @return description for the domain object.
-	 */
-	public java.lang.String getDescription() {
-		return description;
-	}
+    public String getUserId() {
+        return userId;
+    }
 
-	/**
-	 * Sets the description for the domain object.
-	 * 
-	 * @param description
-	 */
-	public void setDescription(java.lang.String description) {
-		this.description = description;
-	}
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
-	/**
-	 * Date of creation of domain object.
-	 */
-	protected java.util.Date createdOn;
+    public java.lang.String getName() {
+        return name;
+    }
 
-	/**
-	 * Returns the date the domain object was created.
-	 * 
-	 * @hibernate.property name="createdOn" type="date" column="CREATED_ON"
-	 * @return date the domain object was created.
-	 */
-	public java.util.Date getCreatedOn() {
-		return createdOn;
-	}
+    /**
+     * Sets the name of the domain object.
+     * 
+     * @param name
+     */
+    public void setName(java.lang.String name) {
+        this.name = name;
+    }
 
-	/**
-	 * Sets the date of creation.
-	 * 
-	 * @param createdOn
-	 */
-	public void setCreatedOn(java.util.Date createdOn) {
-		this.createdOn = createdOn;
-	}
+    /**
+     * Description for the domain object.
+     */
+    protected java.lang.String description;
 
-	/**
-	 * Last updated date.
-	 */
-	protected java.util.Date lastUpdatedOn;
+    /**
+     * Returns the description for the domain object.
+     * 
+     * @hibernate.property name="description" type="string"
+     *                     column="DESCRIPTION" length="255"
+     * @return description for the domain object.
+     */
+    public java.lang.String getDescription() {
+        return description;
+    }
 
-	/**
-	 * Returns the last updated date of the domain object.
-	 * 
-	 * @hibernate.property name="lastModifiedOn" type="date"
-	 *                     column="LAST_UPDATED_ON"
-	 * @return last modification date of the domain object.
-	 */
-	public java.util.Date getLastUpdatedOn() {
-		return lastUpdatedOn;
-	}
+    /**
+     * Sets the description for the domain object.
+     * 
+     * @param description
+     */
+    public void setDescription(java.lang.String description) {
+        this.description = description;
+    }
 
-	/**
-	 * Sets the last updated date.
-	 * 
-	 * @param lastUpdatedOn
-	 */
-	public void setLastUpdatedOn(java.util.Date lastUpdatedOn) {
-		this.lastUpdatedOn = lastUpdatedOn;
-	}
+    /**
+     * Date of creation of domain object.
+     */
+    protected java.util.Date createdOn;
 
-	public boolean equals(Object obj) {
-		boolean eq = false;
-		if (obj instanceof AdditionalMetadata) {
-			AdditionalMetadata c = (AdditionalMetadata) obj;
-			Long thisId = getId();
+    /**
+     * Returns the date the domain object was created.
+     * 
+     * @hibernate.property name="createdOn" type="date" column="CREATED_ON"
+     * @return date the domain object was created.
+     */
+    public java.util.Date getCreatedOn() {
+        return createdOn;
+    }
 
-			if (thisId != null && thisId.equals(c.getId())) {
-				eq = true;
-			}
+    /**
+     * Sets the date of creation.
+     * 
+     * @param createdOn
+     */
+    public void setCreatedOn(java.util.Date createdOn) {
+        this.createdOn = createdOn;
+    }
 
-		}
-		return eq;
-	}
+    /**
+     * Last updated date.
+     */
+    protected java.util.Date lastUpdatedOn;
 
-	public int hashCode() {
-		int h = 0;
+    /**
+     * Returns the last updated date of the domain object.
+     * 
+     * @hibernate.property name="lastModifiedOn" type="date"
+     *                     column="LAST_UPDATED_ON"
+     * @return last modification date of the domain object.
+     */
+    public java.util.Date getLastUpdatedOn() {
+        return lastUpdatedOn;
+    }
 
-		if (getId() != null) {
-			h += getId().hashCode();
-		}
-		return h;
-	}
+    /**
+     * Sets the last updated date.
+     * 
+     * @param lastUpdatedOn
+     */
+    public void setLastUpdatedOn(java.util.Date lastUpdatedOn) {
+        this.lastUpdatedOn = lastUpdatedOn;
+    }
+
+    public boolean equals(Object obj) {
+        boolean eq = false;
+        if (obj instanceof AdditionalMetadata) {
+            AdditionalMetadata c = (AdditionalMetadata) obj;
+            Long thisId = getId();
+
+            if (thisId != null && thisId.equals(c.getId())) {
+                eq = true;
+            }
+
+        }
+        return eq;
+    }
+
+    public int hashCode() {
+        int h = 0;
+
+        if (getId() != null) {
+            h += getId().hashCode();
+        }
+        return h;
+    }
 }

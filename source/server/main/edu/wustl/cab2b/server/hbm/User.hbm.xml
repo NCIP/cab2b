@@ -30,7 +30,7 @@
             update="true"
             insert="true"
             column="NAME"
-            length="30"
+            length="254"
             not-null="true"
         />
 
@@ -62,7 +62,7 @@
             insert="true"
             column="PASSWORD"
             length="30"
-            not-null="true"
+            not-null="false"
         />
 
         <property

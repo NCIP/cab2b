@@ -12,7 +12,7 @@ public interface ExperimentGroupBusinessInterface extends BusinessInterface {
 	
 	public ExperimentGroup addExperimentGroup(Object expGrp) throws BizLogicException, UserNotAuthorizedException, RemoteException;
 
-    public ExperimentGroup addExperimentGroup(Long parentExperimentGroupId,ExperimentGroup experimentGroup) throws BizLogicException, UserNotAuthorizedException, RemoteException, DAOException;
+    public ExperimentGroup addExperimentGroup(Long parentExperimentGroupId,ExperimentGroup experimentGroup , String dref ) throws BizLogicException, UserNotAuthorizedException, RemoteException, DAOException;
 
 	public ExperimentGroup getExperimentGroup(Long identifier) throws DAOException, RemoteException;
 	

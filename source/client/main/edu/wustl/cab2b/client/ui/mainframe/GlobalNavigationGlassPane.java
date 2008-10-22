@@ -152,7 +152,8 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         rightLabel.add(new JLabel(""), gbc);
 
         Date date = new Date();
-        loggedInUserLabel = new Cab2bLabel(UserCache.getInstance().getCurrentUser().getUserName());
+        String userName = UserCache.getInstance().getCurrentUser().getUserName();
+        loggedInUserLabel = new Cab2bLabel(CommonUtils.getDisplayUserName(userName));
         loggedInUserLabel.setFont(new Font("Arial", Font.BOLD, 12));
         Cab2bLabel dateLabel = new Cab2bLabel(DateFormat.getDateInstance(DateFormat.LONG).format(date).toString());
         dateLabel.setForeground(Color.WHITE);

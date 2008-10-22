@@ -68,8 +68,7 @@ public class ClientLauncher {
      */
     private ClientLauncher() {
         progressBar = getProgressbar(imageSize.width, progressHeight);
-        progressBarLabel = getProgressBarLabel(" Launching caB2B client....", imageSize.width,
-                labelWidth);
+        progressBarLabel = getProgressBarLabel(" Launching caB2B client....", imageSize.width, labelWidth);
     }
 
     /**
@@ -98,12 +97,12 @@ public class ClientLauncher {
     /**
      * Launches the cab2b Client
      */
-    public void launchClient(String userName) {
+    public void launchClient(String dref) {
         ClassLoader loader = this.getClass().getClassLoader();
         JFrame launchFrame = new JFrame("caB2B client launcher....");
 
-        BackgroundImagePanel imagePanel = new BackgroundImagePanel(new ImageIcon(loader
-                .getResource("progress_bar.gif")).getImage());
+        BackgroundImagePanel imagePanel = new BackgroundImagePanel(new ImageIcon(
+                loader.getResource("progress_bar.gif")).getImage());
 
         imagePanel.setPreferredSize(new Dimension(imageSize.width, imageSize.height));
         imagePanel.add(progressBarLabel, BorderLayout.SOUTH);
@@ -125,7 +124,7 @@ public class ClientLauncher {
         launchFrame.setVisible(true);
         Toolkit.getDefaultToolkit().setDynamicLayout(true);
 
-        loadCache(userName); /* initializing the cache at startup */
+        loadCache(dref); /* initializing the cache at startup */
         PopularCategoryCache.getInstance();
 
         showProgress(" Initializing graphical user interface....", 94);
@@ -177,16 +176,16 @@ public class ClientLauncher {
     /**
      * Loads the client side cache. If fails, logs error and quits
      */
-    private static void loadCache(String userName) {
+    private static void loadCache(String dref) {
         try {// ClientSideCache MUST be instanciated before anything else.
-                // Don't change order of below lines of code
+            // Don't change order of below lines of code
             ClientSideCache.getInstance();
-            UserBusinessInterface userBusinessInterface = (UserBusinessInterface) CommonUtils
-                    .getBusinessInterface(EjbNamesConstants.USER_BEAN, UserHomeInterface.class);
-            UserInterface user = userBusinessInterface.getUserByName(userName);
+            UserBusinessInterface userBusinessInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                   EjbNamesConstants.USER_BEAN,
+                                                                                                                   UserHomeInterface.class);
+            UserInterface user = userBusinessInterface.getUserByName(dref);
             if (user == null) {
-                user = new User(userName, userName, false);
-                userBusinessInterface.insertUser(user);
+                user = userBusinessInterface.insertUser(dref);
             }
             UserCache.getInstance().init(user);
         } catch (LocatorException le) {

@@ -36,11 +36,11 @@ public class DataListMetadataOperations extends DefaultBizLogic {
      * 
      * @return list of data list metadata.
      */
-    public List<DataListMetadata> retrieveAllDataListMetadata() {
+    public List<DataListMetadata> retrieveAllDataListMetadata(String userId) {
         List<DataListMetadata> allDataList = null;
 
         try {
-            allDataList = (List<DataListMetadata>) retrieve(DataListMetadata.class.getName());
+            allDataList = (List<DataListMetadata>) retrieve(DataListMetadata.class.getName(),"USER_ID",userId);
         } catch (DAOException e) {
             throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DATALIST_RETRIEVE_ERROR));
         }

@@ -19,7 +19,25 @@
        select experiement
  			from Experiment experiement
 				join experiement.dataListMetadataCollection dataListMetadata
-						where dataListMetadata.id = ?
+						where dataListMetadata.id = ? and experiement.userId = ?
  	</query>
+ 	
+ 	<query name="getQueriesByUserId">
+ 		select cab2bQuery
+       		from edu.wustl.cab2b.common.queryengine.Cab2bQuery cab2bQuery 
+       			where cab2bQuery.userId = ?
+ 	</query>
+ 	
+ 	<query name="getLatestExperimentByUserId">
+ 		select Exp from edu.wustl.cab2b.common.domain.Experiment Exp where Exp.userId = ?   
+ 		order by Exp.lastUpdatedOn
+   </query>
+ 	
+ 	<query name="getExperimentHierarchy">
+ 		select ExpGrp from edu.wustl.cab2b.common.domain.ExperimentGroup as ExpGrp where ExpGrp.parentGroup.id is null and ExpGrp.userId = ?
+   </query>
+ 	
+ 	
+ 	
 </hibernate-mapping>
     

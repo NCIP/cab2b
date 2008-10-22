@@ -52,6 +52,7 @@ import edu.wustl.common.util.global.Validator;
 /**
  * @author Hrishikesh Rajpathak
  * @author chetan_bh
+ * @author lalit_chand
  */
 public class ExperimentOperations extends DefaultBizLogic {
     /**
@@ -89,6 +90,7 @@ public class ExperimentOperations extends DefaultBizLogic {
             UserNotAuthorizedException, DAOException {
         ExperimentGroup experimentGroup = new ExperimentGroupOperations().getExperimentGroup(experimentGroupId);
         experiment.getExperimentGroupCollection().add(experimentGroup);
+
         insert(experiment, daoType);
     }
 
@@ -183,24 +185,28 @@ public class ExperimentOperations extends DefaultBizLogic {
      * @param userName
      * @return List<Experiment>
      */
-    public List<Experiment> getLatestExperimentForUser(UserInterface user) {
+    public List<Experiment> getLatestExperimentForUser(UserInterface user, String userIdentity) {
         //TODO Update code specific to user, currently returning each and every
         //experiments from database
-        String hql = "from Experiment as Exp order by Exp.lastUpdatedOn ";
-        DAO dao = DAOFactory.getInstance().getDAO(daoType);
-        List<Experiment> returner = null;
-        try {
-            ((AbstractDAO) dao).openSession(null);
-            returner = dao.executeQuery(hql, null, false, null);
-            ((AbstractDAO) dao).closeSession();
-        } catch (DAOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return returner;
+        /*   String hql = "from Experiment as Exp order by Exp.lastUpdatedOn ";
+           DAO dao = DAOFactory.getInstance().getDAO(daoType);
+            List<Experiment> returner = null;
+            try {
+                ((AbstractDAO) dao).openSession(null);
+                returner = dao.executeQuery(hql, null, false, null);
+                ((AbstractDAO) dao).closeSession();
+            } catch (DAOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            return returner;
+        */
+        List idList = new ArrayList();
+        idList.add(userIdentity);
+        return (List<Experiment>) Utility.executeHQL("getLatestExperimentByUserId", idList);
     }
 
     /**
@@ -208,38 +214,14 @@ public class ExperimentOperations extends DefaultBizLogic {
      * @return Vector
      * @throws DAOException
      */
-    public Vector getExperimentHierarchy() throws DAOException {
-        Vector expHierarchyData = new Vector();
+    public Vector getExperimentHierarchy(String userId) throws DAOException {
+
+        List idList = new ArrayList(1);
+        idList.add(userId);
         List returner = new ArrayList();
+        returner = (List<Object>) Utility.executeHQL("getExperimentHierarchy", idList);
 
-        String hql = "from ExperimentGroup as ExpGrp where ExpGrp.parentGroup.id is null ";
-
-        DAO dao = DAOFactory.getInstance().getDAO(daoType);
-        ((AbstractDAO) dao).openSession(null);
-
-        try {
-            // List myReturner = dao.executeQuery("from ExperimentGroup", null,
-            // false, null);
-            // Logger.out.info("returner expGrp ::::::: "+myReturner);
-            returner = dao.executeQuery(hql, null, false, null);
-
-        } catch (Exception exp) {
-            exp.printStackTrace();
-        }
-
-        // TODO we have to use HQL here temporarily since DAO.retrieve doesn't
-        // support where conditions on aggregate function like collection.size >
-        // 0, etc;
-        /*
-         * String hql1 = "from Experiment as Exp where
-         * Exp.experimentGroupCollection.size = 0"; try { returner1 =
-         * dao.executeQuery(hql1, null, false, null);
-         *  } catch (Exception exp) { exp.printStackTrace(); }
-         * 
-         * returner.addAll(returner1);
-         */
-
-        ((AbstractDAO) dao).closeSession();
+        Vector expHierarchyData =null;
 
         expHierarchyData = getExperimentMetadataHierarchy(returner);
 
@@ -393,7 +375,8 @@ public class ExperimentOperations extends DefaultBizLogic {
      * @return Collection of datalists
      * @throws HibernateException
      */
-    public Collection getAllDataLists() throws HibernateException {
+    public Collection getAllDataLists(String userId) throws HibernateException {
+
         return Utility.executeHQL("getAllDataLists");
     }
 
@@ -707,9 +690,11 @@ public class ExperimentOperations extends DefaultBizLogic {
      * @return
      * @throws HibernateException
      */
-    public Collection getExperimentsWithSimilarDataList(Long id) throws HibernateException {
-        List idList = new ArrayList();
+    public Collection getExperimentsWithSimilarDataList(Long id, String userId) throws HibernateException {
+        List idList = new ArrayList(2);
         idList.add(id);
+        idList.add(userId);
+
         return Utility.executeHQL("getExperimentSimilarDataList", idList);
     }
 

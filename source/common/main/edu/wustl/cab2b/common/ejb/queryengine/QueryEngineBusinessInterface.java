@@ -1,10 +1,12 @@
 package edu.wustl.cab2b.common.ejb.queryengine;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
+import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.List;
 
-import org.globus.gsi.GlobusCredential;
+import org.cagrid.gaards.cds.delegated.stubs.types.DelegatedCredentialReference;
 
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.domain.DCQL;
@@ -28,14 +30,16 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * @return query result
      * @throws RemoteException if authentication fails or query execution fails.
      */
-    IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, GlobusCredential cred) throws RemoteException;
+    IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String dref) throws RemoteException,
+            GeneralSecurityException, IOException, Exception;
 
     /**
      * This method saves the given ICab2bQuery object.
      * 
      * @throws RemoteException if save process fails
      */
-    void saveQuery(ICab2bQuery query) throws RemoteException;
+    void saveQuery(ICab2bQuery query, String dref) throws RemoteException, GeneralSecurityException, IOException,
+            Exception;
 
     /**
      * This method updates the given ICab2bQuery object.
@@ -77,7 +81,8 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * @return list of IParameterizedQuery having only their name and description populated
      * @throws RemoteException if retrieving fails
      */
-    Collection<IParameterizedQuery> getAllQueryNameAndDescription() throws RemoteException;
+    Collection<IParameterizedQuery> getAllQueryNameAndDescription(String delegateCredRef) throws RemoteException,
+            GeneralSecurityException, IOException, Exception;
 
     /**
      * This method returns the DCQL in tree format for the given query. Tree nodes consists of DCQL object

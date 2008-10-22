@@ -22,6 +22,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
+import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
@@ -61,7 +62,7 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
             ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) Locator.getInstance().locate(
                                                                                                             edu.wustl.cab2b.common.ejb.EjbNamesConstants.EXPERIMENT,
                                                                                                             ExperimentHome.class);
-            dataVector = expBus.getExperimentHierarchy();
+            dataVector = expBus.getExperimentHierarchy(UserValidator.getSerializedDelegatedCredReference());
         } catch (RemoteException e1) {
             CommonUtils.handleException(e1, this, true, true, false, false);
         } catch (ClassNotFoundException e1) {

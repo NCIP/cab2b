@@ -20,6 +20,22 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
 
     private EntityInterface outputEntity;
     
+    private String userId;
+    
+    
+    /**
+     * @return the userId
+     * 
+     * @hibernate.property name="userId" column="USER_ID" type="string" length="254"  not-null="true" 
+     */
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     public Cab2bQuery() {
         super();
     }

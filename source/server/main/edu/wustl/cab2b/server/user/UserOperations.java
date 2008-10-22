@@ -1,15 +1,22 @@
 package edu.wustl.cab2b.server.user;
 
+import java.io.File;
 import java.io.IOException;
-import java.rmi.RemoteException;
+import java.io.StringReader;
+import java.security.GeneralSecurityException;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.axis.types.URI.MalformedURIException;
 import org.apache.log4j.Logger;
+import org.cagrid.gaards.cds.client.DelegatedCredentialUserClient;
+import org.cagrid.gaards.cds.delegated.stubs.types.DelegatedCredentialReference;
+import org.cagrid.gaards.websso.client.filter.CaGridWebSSODelegationLookupFilter;
+import org.globus.gsi.CertUtil;
 import org.globus.gsi.GlobusCredential;
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
@@ -18,18 +25,16 @@ import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.User;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.common.util.PropertyLoader;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
-import gov.nih.nci.cagrid.authentication.bean.BasicAuthenticationCredential;
-import gov.nih.nci.cagrid.authentication.bean.Credential;
-import gov.nih.nci.cagrid.authentication.client.AuthenticationClient;
-import gov.nih.nci.cagrid.dorian.client.IFSUserClient;
-import gov.nih.nci.cagrid.dorian.ifs.bean.ProxyLifetime;
-import gov.nih.nci.cagrid.opensaml.SAMLAssertion;
+import gov.nih.nci.cagrid.common.Utils;
+import gov.nih.nci.cagrid.common.security.ProxyUtil;
+import gov.nih.nci.cagrid.gridca.common.KeyUtil;
 
 /**
  * User operations like saving user, retrieving user, validating user are
@@ -46,8 +51,8 @@ public class UserOperations extends DefaultBizLogic {
      * @param name user name
      * @return User
      */
-    public User getUserByName(String name) {
-        return getUser("userName", name);
+    public User getUserByName(String value) {
+        return getUser("userName", value);
     }
 
     /**
@@ -91,34 +96,9 @@ public class UserOperations extends DefaultBizLogic {
             if (!user.getUserName().equals(value)) {
                 return null;
             }
-            try {
-                postProcessUser(user);
-            } catch (Exception e) {
-                logger.error(e.getStackTrace());
-                return null;
-            }
+
         }
         return user;
-    }
-
-    /**
-     * Post processing user to get real EntityGroup object from the names
-     * present in ServiceURL object
-     * @param user User
-     */
-    private void postProcessUser(User user) {
-//        Collection<EntityGroupInterface> entityGroups = EntityCache.getInstance().getEntityGroups();
-
-        Collection<ServiceURLInterface> serviceCollection = user.getServiceURLCollection();
-//        for (ServiceURLInterface serviceURL : serviceCollection) {
-//            String entityGroupName = ((ServiceURL) serviceURL).getEntityGroupName();
-//            for (EntityGroupInterface entityGroup : entityGroups) {
-//               // if (entityGroupName.equals(entityGroup.getLongName())) {
-//               //     serviceURL.setEntityGroupInterface(entityGroup);
-//                    break;
-//                }
-//            }
-//        }
     }
 
     /**
@@ -127,7 +107,7 @@ public class UserOperations extends DefaultBizLogic {
      * 
      * @param user user to insert
      */
-    public void insertUser(UserInterface user) {
+    public UserInterface insertUser(UserInterface user) {
         if (getUserByName(user.getUserName()) != null) {
             throw new RuntimeException("User already exists", ErrorCodeConstants.UR_0002);
         } else {
@@ -141,6 +121,7 @@ public class UserOperations extends DefaultBizLogic {
                 throw new RuntimeException("Error while inserting user in database", ErrorCodeConstants.UR_0004);
             }
         }
+        return user;
     }
 
     /**
@@ -153,10 +134,12 @@ public class UserOperations extends DefaultBizLogic {
             update(user, Constants.HIBERNATE_DAO);
         } catch (UserNotAuthorizedException e) {
             logger.error(e.getStackTrace());
-            throw new RuntimeException("Error while updating user information in database ", ErrorCodeConstants.UR_0005);
+            throw new RuntimeException("Error while updating user information in database ",
+                    ErrorCodeConstants.UR_0005);
         } catch (BizLogicException e) {
             logger.error(e.getStackTrace());
-            throw new RuntimeException("Error while updating user information in database ", ErrorCodeConstants.UR_0005);
+            throw new RuntimeException("Error while updating user information in database ",
+                    ErrorCodeConstants.UR_0005);
         }
     }
 
@@ -231,75 +214,66 @@ public class UserOperations extends DefaultBizLogic {
     }
 
     /**
-     * Validates user on the basis of user name, password and the idP that it
-     * points to.
+     * It retrieves the client GlobusCredential from the delegated reference 
      * 
-     * @param userName USer name
-     * @param password Password
-     * @param idP identity provider
+     * @param dref
+     * @return GlobusCredential 
+     * @throws GeneralSecurityException
+     * @throws IOException
+     * @throws Exception
      */
-    public GlobusCredential validateUser(String userName, String password, String dorianUrl) {
-        AuthenticationClient authClient = null;
-        SAMLAssertion saml = null;
-        Credential cred = createCredentials(userName, password);
-        try {
-            authClient = new AuthenticationClient(dorianUrl, cred);
-        } catch (IOException e) {
-            logger.error(e.getStackTrace());
-            throw new RuntimeException("Please recheck identity provider url", ErrorCodeConstants.UR_0006);
-        }
-        try {
-            saml = authClient.authenticate();
-        } catch (RemoteException e) {
-            logger.error(e.getStackTrace());
-            throw new RuntimeException("Invalid user name or password", ErrorCodeConstants.UR_0007);
-        }
-        GlobusCredential proxy = null;
-        try {
-            proxy = getGlobusCredentials(dorianUrl, saml);
-        } catch (IOException e) {
-            logger.error(e.getStackTrace());
-            throw new RuntimeException("Please recheck dorian url", ErrorCodeConstants.UR_0008);
-        }
-        return proxy;
+
+    public static GlobusCredential getGlobusCredential(String serializedCredRef) throws GeneralSecurityException,
+            IOException, Exception {
+
+        DelegatedCredentialReference dref = getDeleCredRef(serializedCredRef);
+        String userHome = System.getProperty("user.home");
+        String certFileName = userHome + PropertyLoader.getTrainingGridCert();
+        String keyFileName = userHome + PropertyLoader.getTrainingGridKey();
+        X509Certificate cert = CertUtil.loadCertificate(certFileName);
+        PrivateKey key = KeyUtil.loadPrivateKey(new File(keyFileName), null);
+        GlobusCredential credential = new GlobusCredential(key, new X509Certificate[] { cert });
+
+        //Create and Instance of the delegate credential client, specifying the 
+        //DelegatedCredentialReference and the credential of the delegatee.  The 
+        //DelegatedCredentialReference specifies which credential to obtain.  The 
+        //delegatee's credential is required to authenticate with the CDS such 
+        //that the CDS may determing if the the delegatee has been granted access 
+        //to the credential in which they wish to obtain.
+
+        DelegatedCredentialUserClient client = new DelegatedCredentialUserClient(dref, credential);
+
+        //The get credential method obtains a signed delegated credential from the CDS.
+
+        GlobusCredential delegatedCredential = client.getDelegatedCredential();
+
+        //Set the delegated credential as the default, the delegatee is now logged in as the delegator.
+
+        ProxyUtil.saveProxyAsDefault(delegatedCredential);
+
+        return delegatedCredential;
     }
 
     /**
-     * Generates credential object from given user name and password.
-     * 
-     * @param userName user name
-     * @param password password
-     * @return Credential
+     * It deserialized the client serialized credential back to DelegatedCredentialReference 
+     * @param serializedCredRef
+     * @return DelegatedCredentialReference
      */
-    private Credential createCredentials(String userName, String password) {
-        Credential credential = new Credential();
-        BasicAuthenticationCredential basicCredentials = new BasicAuthenticationCredential();
-        basicCredentials.setUserId(userName);
-        basicCredentials.setPassword(password);
-        credential.setBasicAuthenticationCredential(basicCredentials);
-        return credential;
+    private static DelegatedCredentialReference getDeleCredRef(String serializedCredRef) {
+
+        DelegatedCredentialReference delegatedCredentialReference = null;
+        try {
+            delegatedCredentialReference = (DelegatedCredentialReference) Utils.deserializeObject(
+                                                                                                  new StringReader(
+                                                                                                          serializedCredRef),
+                                                                                                  DelegatedCredentialReference.class,
+                                                                                                  CaGridWebSSODelegationLookupFilter.class.getClassLoader().getResourceAsStream(
+                                                                                                                                                                                "cdsclient-config.wsdd"));
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to deserialize the Delegation Reference", e);
+        }
+
+        return delegatedCredentialReference;
     }
 
-    /**
-     * Sets globus credentials with proxy certificate of 12 hours (maximum
-     * possible) lifetime
-     * 
-     * @param idP
-     * @param saml
-     * @throws RemoteException -
-     *             any other eason for failing in fetching credentials from
-     *             dorian
-     * @throws MalformedURIException
-     *             if dorian url not properly defined
-     */
-    private GlobusCredential getGlobusCredentials(String dorianUrl, SAMLAssertion saml) throws MalformedURIException,
-            RemoteException {
-        ProxyLifetime lifetime = new ProxyLifetime();
-        lifetime.setHours(12);
-        lifetime.setMinutes(0);
-        lifetime.setSeconds(0);
-        int delegationLifetime = 0;
-        IFSUserClient dorian = new IFSUserClient(dorianUrl);
-        return dorian.createProxy(saml, lifetime, delegationLifetime);
-    }
 }

@@ -10,31 +10,31 @@ package edu.wustl.cab2b.common.errorcodes;
 public interface ErrorCodeConstants {
     /** User fetched with incomplete data. */
     public static final String UR_0001 = "UR.0001";
-    
+
     /** User already exists */
     public static final String UR_0002 = "UR.0002";
-    
+
     /** Error while fetching user from database */
     public static final String UR_0003 = "UR.0003";
-    
+
     /** Error while inserting user in database */
     public static final String UR_0004 = "UR.0004";
-    
+
     /** Error while updating user information in database */
     public static final String UR_0005 = "UR.0005";
-    
+
     /** Please recheck identity provider url */
     public static final String UR_0006 = "UR.0006";
-    
+
     /** Unable to authenticate: Invalid credentials */
     public static final String UR_0007 = "UR.0007";
-    
+
     /** Please recheck dorian url */
     public static final String UR_0008 = "UR.0008";
-    
+
     /** Please check the credentials again (User name is case sensitive) */
     public static final String UR_0009 = "UR.0009";
-    
+
     //---------------------------------------------------------------------
     /**Unable to parse domain model XML file.*/
     public static final String GR_0001 = "GR.0001";
@@ -67,10 +67,10 @@ public interface ErrorCodeConstants {
 
     /**Exception while editing saved query.**/
     public static final String DB_0005 = "DB.0005";
-    
+
     /**Error while loading path information into database.**/
     public static final String DB_0006 = "DB.0006";
-    
+
     /**Error while no service url available into database.**/
     public static final String DB_0007 = "DB.0007";
 
@@ -127,4 +127,11 @@ public interface ErrorCodeConstants {
     public static final String CA_0001 = "CA.0001";
 
     public static final String CA_0007 = "CA.0007";
+
+    /**
+     * Error Regarding CDS service
+     */
+    public static final String CDS_001 = "CDS.001";
+    public static final String CDS_002 = "CDS.002";
+
 }

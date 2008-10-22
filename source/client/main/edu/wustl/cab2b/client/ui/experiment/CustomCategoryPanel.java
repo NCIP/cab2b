@@ -28,6 +28,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
+import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
@@ -198,7 +199,7 @@ public class CustomCategoryPanel extends JXFrame {
                                                                                                                                 DataListHomeInterface.class);
                             dataListMetadata = dataListBI.saveCustomDataCategory(entityName, attributeList,
                                                                                  customDataCategoryText.getText(),
-                                                                                 experiment);
+                                                                                 experiment,UserValidator.getSerializedDelegatedCredReference());
                         } catch (RemoteException e1) {
                             CommonUtils.handleException(e1, CustomCategoryPanel.this, true, true, true, false);
                         } catch (CheckedException e1) {

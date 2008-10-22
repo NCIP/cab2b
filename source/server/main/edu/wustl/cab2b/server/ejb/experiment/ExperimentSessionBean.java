@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import org.globus.gsi.GlobusCredential;
 import org.hibernate.HibernateException;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -14,10 +15,12 @@ import edu.wustl.cab2b.common.CustomDataCategoryModel;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.exception.CheckedException;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.experiment.ExperimentOperations;
+import edu.wustl.cab2b.server.user.UserOperations;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
@@ -50,8 +53,17 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#getExperimentHierarchy()
      */
-    public Vector getExperimentHierarchy() throws ClassNotFoundException, DAOException, RemoteException {
-        return (new ExperimentOperations()).getExperimentHierarchy();
+    public Vector getExperimentHierarchy(String dref) throws ClassNotFoundException, DAOException, RemoteException {
+
+        String userId = null;
+        try {
+            userId = UserOperations.getGlobusCredential(dref).getIdentity();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
+        }
+
+        return (new ExperimentOperations()).getExperimentHierarchy(userId);
     }
 
     /* (non-Javadoc)
@@ -80,8 +92,16 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#addExperiment(java.lang.Long,
      *      edu.wustl.cab2b.common.domain.Experiment)
      */
-    public void addExperiment(Long experimentGroupId, Experiment experiment) throws RemoteException,
-            BizLogicException, UserNotAuthorizedException, DAOException {
+    public void addExperiment(Long experimentGroupId, Experiment experiment, String serializedCredRef)
+            throws RemoteException, BizLogicException, UserNotAuthorizedException, DAOException {
+        try {
+            String userId = UserOperations.getGlobusCredential(serializedCredRef).getIdentity();
+            experiment.setUserId(userId);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
+
+        }
+
         (new ExperimentOperations()).addExperiment(experimentGroupId, experiment);
     }
 
@@ -147,7 +167,13 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#getExperimentsForUser(edu.wustl.cab2b.common.user.UserInterface)
      */
-    public List<Experiment> getExperimentsForUser(UserInterface user) throws RemoteException {
-        return new ExperimentOperations().getLatestExperimentForUser(user);
+    public List<Experiment> getExperimentsForUser(UserInterface user, String dref) throws RemoteException {
+        try {
+            GlobusCredential cred = UserOperations.getGlobusCredential(dref);
+
+            return new ExperimentOperations().getLatestExperimentForUser(user, cred.getIdentity());
+        } catch (Exception e) {
+            throw new RuntimeException("IO error occured ", e.getMessage());
+        }
     }
 }

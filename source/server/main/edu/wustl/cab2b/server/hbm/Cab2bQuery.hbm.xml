@@ -55,6 +55,18 @@
             not-null="true"
         />
 
+    <property
+            name="userId"
+            type="string"
+            update="true"
+            insert="true"
+            column="USER_ID"
+            length="254"
+            not-null="true"
+        />
+
+
+
         </joined-subclass>
 
 </hibernate-mapping>

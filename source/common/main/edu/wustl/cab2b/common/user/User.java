@@ -52,7 +52,7 @@ public class User implements UserInterface, Serializable {
     /**
      * @return Returns the userName.
      * 
-     * @hibernate.property column="NAME" type="string" length="30"
+     * @hibernate.property column="NAME" type="string" length="254"
      *                     not-null="true"
      */
     public String getUserName() {
@@ -88,7 +88,7 @@ public class User implements UserInterface, Serializable {
     /**
      * @return Returns the password.
      * 
-     * @hibernate.property column="PASSWORD" type="string" length="30" not-null="true"
+     * @hibernate.property column="PASSWORD" type="string" length="30" not-null="false"
      */
     public String getPassword() {
         return password;

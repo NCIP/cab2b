@@ -304,21 +304,6 @@ public class LoginFrame extends JXFrame {
     }
 
     /**
-     * This method checks if the user trying to login is a valid grid user or
-     * not
-     * 
-     * @param userName
-     * @param password
-     * @param idProvider
-     * @return boolean stating is the user is a valid grid user or not
-     * @throws RemoteException
-     */
-    private final void validateCredentials(String userName, String password, String idProvider)
-            throws RemoteException {
-        UserValidator.validateUser(userName, password, idProvider);
-    }
-
-    /**
      * @author Hrishikesh Rajpathak
      */
     private class LoginButtonListener implements ActionListener {
@@ -355,10 +340,10 @@ public class LoginFrame extends JXFrame {
         String selectedIdentityProvider = idProvider.getSelectedItem().toString();
 
         try {
-            validateCredentials(userName, password, selectedIdentityProvider);
+            UserValidator.validateUser(userName, password, selectedIdentityProvider);
             Thread mainThread = new Thread() {
                 public void run() {
-                    launchMainFrame(userName);
+                    launchMainFrame(UserValidator.getSerializedDelegatedCredReference());
                 }
             };
             mainThread.setPriority(Thread.NORM_PRIORITY);
@@ -380,11 +365,11 @@ public class LoginFrame extends JXFrame {
      * @param args
      *            Command line arguments. They will not be used.
      */
-    private void launchMainFrame(String userName) {
+    private void launchMainFrame(String dref) {
         try {
 
             ClientLauncher clientLauncher = ClientLauncher.getInstance();
-            clientLauncher.launchClient(userName);
+            clientLauncher.launchClient(dref);
 
             MainFrame mainFrame = new MainFrame(ApplicationProperties.getValue(MAIN_FRAME_TITLE), true);
             mainFrame.pack();

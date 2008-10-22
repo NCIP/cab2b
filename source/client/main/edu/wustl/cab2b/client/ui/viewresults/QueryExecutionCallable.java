@@ -123,6 +123,9 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
         } catch (RemoteException e) {
             logger.error("Error in exeuting query :" + e.getMessage());
             return null;
+        }catch(Exception e){
+            logger.error("Error in exeuting query :" + e.getMessage());
+            return null;
         }
 
         Map<String, List<IRecord>> allRecords = relatedQueryResults.getRecords();

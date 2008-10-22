@@ -1,7 +1,7 @@
 package edu.wustl.cab2b.client.ui.mainframe.stackbox;
 
-import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.EXPERIMENT_BOX_TEXT;
 import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.HYPERLINK_SHOW_ALL;
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.EXPERIMENT_BOX_TEXT;
 import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.POPULAR_CATEGORY_BOX_TEXT;
 import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.QUERY_BOX_TEXT;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.MY_EXPERIMENT_IMAGE;
@@ -42,6 +42,8 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
 
     private SavedQueryLinkPanel mySearchQueriesPanel;
 
+    private static MainFrameStackedBoxPanel mainFrameStackedBoxPanel = new MainFrameStackedBoxPanel();
+
     private JPanel popularSearchCategoryPanel;
 
     private MainFrame mainFrame;
@@ -52,16 +54,34 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
 
     public static Color UNCLICKED_COLOR = new Color(0x034E74);
 
+        private MainFrameStackedBoxPanel() {
+
+    }
+
+    public static MainFrameStackedBoxPanel getInstance() {
+        return mainFrameStackedBoxPanel;
+    }
+
+    public SavedQueryLinkPanel getSavedQueryLinkPanel() {
+        return this.mySearchQueriesPanel;
+
+    }
+
+    public void initialiseUI(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
+        initUI();
+    }
+
     /**
      * Constructor
      * @param frame
      * @param mainFrame
      */
-    public MainFrameStackedBoxPanel(MainFrame mainFrame) {
+    /*public MainFrameStackedBoxPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         initUI();
     }
-
+    */
     /**
      * GUI initialising panel
      */
@@ -73,7 +93,8 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
         scrollPane.setBorder(null);
         this.add(scrollPane, BorderLayout.CENTER);
 
-        mySearchQueriesPanel = SavedQueryLinkPanel.getInstance();
+        mySearchQueriesPanel = new SavedQueryLinkPanel();
+        mySearchQueriesPanel.updateQueryLinkPanel();
 
         final String titleQuery = ApplicationProperties.getValue(QUERY_BOX_TEXT);
         stackedBox.addBox(titleQuery, mySearchQueriesPanel, MY_SEARCH_QUERIES_IMAGE, true);

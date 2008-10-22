@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.wustl.cab2b.client.ui.mainframe.stackbox;
 
 import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.HYPERLINK_SHOW_ALL;
@@ -19,6 +16,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
+import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllPanel;
 import edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllSavedQueryPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
@@ -30,10 +28,13 @@ import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
- * The singleton class used to display saved Query links on left hand side of
+ * The class used to display saved Query links on left hand side of
  * mainFrame panel
  * 
  * @author deepak_shingan
+ * @author lalit_chand
+ * 
+ * 
  */
 public class SavedQueryLinkPanel extends Cab2bPanel {
 
@@ -43,30 +44,10 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Only single private static instance of SavedQueryLinkPanel class  
-     */
-    private static SavedQueryLinkPanel instance = new SavedQueryLinkPanel();
-
-    /**
-     * Constructor
-     */
-    private SavedQueryLinkPanel() {
-        updateQueryLinkPanel();
-    }
-
-    /**
-     * Returns singleton instance of SavedQueryLinkPanel
-     * @return SavedQueryLinkPanel
-     */
-    public static SavedQueryLinkPanel getInstance() {
-        return instance;
-    }
-
-    /**
-     * Query comparator class used for desending ordering of queries based on Query.ID 
-     * @author deepak_shingan
-     *
-     */
+    * Query comparator class used for descending ordering of queries based on Query.ID 
+    * @author deepak_shingan
+    *
+    */
     class QueryComparator implements Comparator<IParameterizedQuery> {
 
         public int compare(IParameterizedQuery arg0, IParameterizedQuery arg1) {
@@ -86,14 +67,17 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
      * Method to update search query panel
      */
     public void updateQueryLinkPanel() {
+
         this.removeAll();
         this.setLayout(new RiverLayout(5, 5));
-        QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                                    EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                                    QueryEngineHome.class,
-                                                                                                                                    null);
+        QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                   EjbNamesConstants.QUERY_ENGINE_BEAN,
+                                                                                                                   QueryEngineHome.class,
+                                                                                                                   null);
+
         try {
-            Collection<IParameterizedQuery> cab2bQueries = queryEngineBusinessInterface.getAllQueryNameAndDescription();
+
+            Collection<IParameterizedQuery> cab2bQueries = queryEngine.getAllQueryNameAndDescription(UserValidator.getSerializedDelegatedCredReference());
             ArrayList<IParameterizedQuery> cab2bQueryList = new ArrayList<IParameterizedQuery>(cab2bQueries);
             Collections.sort(cab2bQueryList, new QueryComparator());
 
@@ -123,8 +107,8 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
             if (cab2bQueryList.size() > 5) {
                 Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
                 CommonUtils.setHyperlinkProperties(hyperlink, null,
-                                                   ApplicationProperties.getValue(HYPERLINK_SHOW_ALL),
-                                                   "", new ActionListener() {
+                                                   ApplicationProperties.getValue(HYPERLINK_SHOW_ALL), "",
+                                                   new ActionListener() {
                                                        public void actionPerformed(ActionEvent e) {
                                                            NewWelcomePanel.getMainFrame().getGlobalNavigationPanel().getGlobalNavigationGlassPane().setShowAllPanel(
                                                                                                                                                                     getAllQueryPanel());
@@ -149,15 +133,19 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
      * @return
      */
     private ShowAllPanel getAllQueryPanel() {
-        QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                                    EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                                    QueryEngineHome.class,
-                                                                                                                                    null);
+        QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                   EjbNamesConstants.QUERY_ENGINE_BEAN,
+                                                                                                                   QueryEngineHome.class,
+                                                                                                                   null);
         Collection<IParameterizedQuery> cab2bQueryCollection = null;
         try {
-            cab2bQueryCollection = queryEngineBusinessInterface.getAllQueryNameAndDescription();
+
+            cab2bQueryCollection = queryEngine.getAllQueryNameAndDescription(UserValidator.getSerializedDelegatedCredReference());
         } catch (RemoteException exception) {
             CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);
+        } catch (Exception exception) {
+            CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);
+
         }
         final Object objData[][] = new Object[cab2bQueryCollection.size()][5];
         final String headers[] = { ShowAllSavedQueryPanel.QUERY_NAME_TITLE, ShowAllSavedQueryPanel.QUERY_DESCRIPTION_TITLE, ShowAllSavedQueryPanel.QUERY_DATE_TITLE, "Query ID-Hidden" };

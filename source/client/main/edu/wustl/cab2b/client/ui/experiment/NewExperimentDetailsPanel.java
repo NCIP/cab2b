@@ -46,6 +46,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
+import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.client.ui.mainframe.stackbox.MyExperimentLinkPanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.SearchNavigationPanel;
@@ -79,6 +80,7 @@ import edu.wustl.common.util.global.ApplicationProperties;
  */
 public class NewExperimentDetailsPanel extends Cab2bPanel {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(NewExperimentDetailsPanel.class);
+
     private static final long serialVersionUID = 6029827434064457102L;
 
     /**
@@ -159,7 +161,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                                                                                                                   EjbNamesConstants.EXPERIMENT,
                                                                                                                   ExperimentHome.class);
         try {
-            dataVector = expBus.getExperimentHierarchy();
+            dataVector = expBus.getExperimentHierarchy(UserValidator.getSerializedDelegatedCredReference());
         } catch (RemoteException e1) {
             CommonUtils.handleException(e1, this, true, true, false, false);
         } catch (ClassNotFoundException e1) {
@@ -370,7 +372,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                 experiment.getDataListMetadataCollection().add(MainSearchPanel.savedDataListMetadata);
 
                 try {
-                    expBus.addExperiment(expGrpId, experiment);
+                    expBus.addExperiment(expGrpId, experiment, UserValidator.getSerializedDelegatedCredReference());
                     SearchNavigationPanel.getMessageLabel().setText(
                                                                     "* Experiment '" + experiment.getName()
                                                                             + "' saved successfully .");
@@ -443,7 +445,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
             newExpGrp.setLastUpdatedOn(new Date());
 
             try {
-                newExpGrp = expGrpBus.addExperimentGroup(parentExpGrpID, newExpGrp);
+                newExpGrp = expGrpBus.addExperimentGroup(parentExpGrpID, newExpGrp,UserValidator.getSerializedDelegatedCredReference());
                 logger.debug("returner expGrp id " + newExpGrp.getId());
             } catch (RemoteException e1) {
                 CommonUtils.handleException(e1, this, true, true, false, false);
@@ -501,7 +503,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                             EjbNamesConstants.DATALIST_BEAN,
                                                                                                             DataListHomeInterface.class);
-        List<DataListMetadata> dataListMetadatas = dataListBI.retrieveAllDataListMetadata();
+        List<DataListMetadata> dataListMetadatas = dataListBI.retrieveAllDataListMetadata(UserValidator.getSerializedDelegatedCredReference());
         return dataListMetadatas;
     }
 }

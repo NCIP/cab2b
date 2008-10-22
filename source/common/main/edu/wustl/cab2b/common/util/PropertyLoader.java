@@ -7,7 +7,8 @@ import org.apache.log4j.Logger;
 /**
  * This class handles fetching properties from cab2b.properties file
  * 
- * @author Chandrakant Talele
+ * @author Chandrakant_Talele
+ * @author lalit_chand
  */
 public class PropertyLoader {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(PropertyLoader.class);
@@ -26,7 +27,8 @@ public class PropertyLoader {
     public static String getModelPath(String applicationName) {
         String path = props.getProperty(applicationName + ".ModelPath");
         if (path == null || path.length() == 0) {
-            logger.error("Model path for application : " + applicationName + " is not configured in " + propertyfile);
+            logger.error("Model path for application : " + applicationName + " is not configured in "
+                    + propertyfile);
         }
         return path;
     }
@@ -70,6 +72,7 @@ public class PropertyLoader {
         String[] idPNames = allNames.split(",");
         return idPNames;
     }
+
     /**
      * @return all the index urls used to get the service information
      */
@@ -78,4 +81,64 @@ public class PropertyLoader {
         String[] urls = allUrls.split(",");
         return urls;
     }
+
+    /**
+     * 
+     * @return the cdsdelegated url
+     */
+    public static String getCDSDelegatedUrl() {
+        String cdsUrl = props.getProperty("cdsdelegatedurl");
+        return cdsUrl;
+    }
+
+    /**
+     * 
+     * @return the cdstraining url
+     */
+    public static String getCDSTrainingUrl() {
+        String cdsTrainingUrl = props.getProperty("cdstrainingurl");
+        return cdsTrainingUrl;
+    }
+
+    /**
+     * 
+     * @return the training grid cert location
+     */
+    public static String getTrainingGridCert() {
+        String trainingCert = props.getProperty("training_grid_cert_location");
+        return trainingCert;
+    }
+
+    
+    
+    /**
+     * 
+     * @return the training grid key location
+     */
+    public static String getTrainingGridKey() {
+        String trainingKey = props.getProperty("training_grid_key_location");
+        return trainingKey;
+    }
+    
+    /**
+     * 
+     * @return the production grid cert location
+     */
+    public static String getProductionGridCert() {
+        String getProdCert = props.getProperty("production_grid_cert_location");
+        return getProdCert;
+    }
+
+    
+    
+    /**
+     * 
+     * @return the production grid key location
+     */
+    public static String getProductionGridKey() {
+        String getProdKey = props.getProperty("production_grid_key_location");
+        return getProdKey;
+    }
+    
+    
 }

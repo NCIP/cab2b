@@ -79,6 +79,7 @@ import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.CategoryPopularityComparator;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.category.Category;
+import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.util.global.ApplicationProperties;
 
@@ -236,7 +237,10 @@ public class CommonUtils {
             iQueryResult = executeQuery(query, queryEngineBus);
         } catch (RuntimeException re) {
             handleException(re, comp, true, false, false, false);
+        } catch (Exception e) {
+            handleException(e, comp, true, false, false, false);
         }
+
         return iQueryResult;
     }
 
@@ -252,8 +256,8 @@ public class CommonUtils {
      */
     public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query,
                                                                QueryEngineBusinessInterface queryEngineBus)
-            throws RuntimeException, RemoteException {
-        return queryEngineBus.executeQuery(query, UserValidator.getProxy());
+            throws RuntimeException, RemoteException, Exception {
+        return queryEngineBus.executeQuery(query, UserValidator.getSerializedDelegatedCredReference());
     }
 
     /**
@@ -511,20 +515,37 @@ public class CommonUtils {
     /**
      * @return Recent search queries
      */
-    public static Vector<?> getUserSearchQueries() {
+    public static Collection<IParameterizedQuery> getUserSearchQueries() {
         /*
          * TODO These default UserSearchQueries will be removed later after SAVE
          * QUERY support
          */
-        Vector<String> userSearchQueries = new Vector<String>();
-        userSearchQueries.add("Prostate Cancer Microarray Data");
-        userSearchQueries.add("Glioblastoma Microarray Data");
-        userSearchQueries.add("High Quality RNA Biospecimens");
-        // userSearchQueries.add("Breast Cancer Microarrays (MOE430+2.0)");
 
-        userSearchQueries.add("Adenocarcinoma Specimens");
-        userSearchQueries.add("Lung Primary Tumor");
-        return userSearchQueries;
+        QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                                    EjbNamesConstants.QUERY_ENGINE_BEAN,
+                                                                                                                                    QueryEngineHome.class,
+                                                                                                                                    null);
+        Collection<IParameterizedQuery> cab2bQueryCollection = null;
+        try {
+
+            cab2bQueryCollection = queryEngineBusinessInterface.getAllQueryNameAndDescription(UserValidator.getSerializedDelegatedCredReference());
+        } catch (RemoteException exception) {
+            CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);
+        } catch (Exception exception) {
+            CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);
+        }
+
+        return cab2bQueryCollection;
+
+        /*  Vector<String> userSearchQueries = new Vector<String>();
+          userSearchQueries.add("Prostate Cancer Microarray Data");
+          userSearchQueries.add("Glioblastoma Microarray Data");
+          userSearchQueries.add("High Quality RNA Biospecimens");
+          // userSearchQueries.add("Breast Cancer Microarrays (MOE430+2.0)");
+
+          userSearchQueries.add("Adenocarcinoma Specimens");
+          userSearchQueries.add("Lung Primary Tumor");
+          return userSearchQueries;*/
     }
 
     /**
@@ -537,7 +558,7 @@ public class CommonUtils {
                                                                                                             ExperimentHome.class);
         List<Experiment> experiments = null;
         try {
-            experiments = expBus.getExperimentsForUser(user);
+            experiments = expBus.getExperimentsForUser(user, UserValidator.getSerializedDelegatedCredReference());
         } catch (RemoteException e) {
             handleException(e, comp, true, false, false, false);
         }
@@ -718,5 +739,9 @@ public class CommonUtils {
         imageMap.put(DagImages.DocumentPaperIcon, Utilities.loadImage(PAPER_GRID_ADD_LIMIT));
         imageMap.put(DagImages.PortImageIcon, Utilities.loadImage(PORT_IMAGE_ADD_LIMIT));
         return imageMap;
+    }
+    
+    public static String getDisplayUserName(String userIdentifier) {
+        return userIdentifier.substring(userIdentifier.lastIndexOf("=")+1);
     }
 }

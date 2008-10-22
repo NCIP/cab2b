@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
@@ -38,6 +39,7 @@ import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.common.util.dbManager.DBUtil;
 
 public class DataListOperationsController {
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(DataListOperationsController.class);
 
     public DataListOperationsController() {
 
@@ -156,8 +158,10 @@ public class DataListOperationsController {
             saveDataListMetadata(dataListMetadata);
             return dataListMetadata;
         } catch (DynamicExtensionsSystemException e) {
+            logger.error(e.getMessage(), e);
             throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DATALIST_SAVE_ERROR));
         } catch (DynamicExtensionsApplicationException e) {
+            logger.error(e.getMessage(), e);
             throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DATALIST_SAVE_ERROR));
         }
     }
@@ -253,8 +257,8 @@ public class DataListOperationsController {
      */
     public DataListMetadata saveCustomDataCategory(IdName rootEntityIdName,
                                                    Collection<AttributeInterface> selectedAttributeList,
-                                                   String name, Experiment experiment) throws CheckedException,
-            RemoteException {
+                                                   String name, Experiment experiment, String userId)
+            throws CheckedException, RemoteException {
         EntityInterface rootEntity;
         try {
             rootEntity = EntityManager.getInstance().getEntityByIdentifier(rootEntityIdName.getId());
@@ -314,7 +318,7 @@ public class DataListOperationsController {
         processResult(recordResult, rooDataCategoryNode, attributeValues, oldToNewAttribute, customEntity);
 
         Long originId = edu.wustl.cab2b.common.util.DataListUtil.getOriginEntity(rootEntity).getId();
-        DataListMetadata customDataListMetadata = saveCustomDataListMetaData(customEntity, name, originId);
+        DataListMetadata customDataListMetadata = saveCustomDataListMetaData(customEntity, name, originId, userId);
 
         saveDlMetaDataToExpt(experiment, customDataListMetadata);
 
@@ -462,12 +466,14 @@ public class DataListOperationsController {
      *            id of origianl root entoity
      * @return
      */
-    private DataListMetadata saveCustomDataListMetaData(EntityInterface entity, String name, Long originalEntityId) {
+    private DataListMetadata saveCustomDataListMetaData(EntityInterface entity, String name,
+                                                        Long originalEntityId, String userId) {
         DataListMetadata dataList = new DataListMetadata();
         dataList.setName(name);
         dataList.setCreatedOn(new Date());
         dataList.setLastUpdatedOn(new Date());
         dataList.setCustomDataCategory(true);
+        dataList.setUserId(userId);
         dataList.addEntityInfo(entity.getId(), name, originalEntityId);
         new DataListMetadataOperations().saveDataListMetadata(dataList);
 
