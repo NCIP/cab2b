@@ -29,14 +29,6 @@ import gov.nih.nci.cagrid.fqp.common.SerializationUtils;
  *
  */
 public class DCQLGenerator {
-
-    /**
-     * Default constructor
-     */
-    public DCQLGenerator() {
-        super();
-    }
-
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(QueryExecutor.class);
 
     private ICab2bQuery query;
@@ -65,11 +57,13 @@ public class DCQLGenerator {
         EntityInterface outputEntity = query.getOutputEntity();
         DCQL dcql = null;
         if (!Utility.isCategory(query.getOutputEntity())) {
-            DCQLQuery dcqlQuery = createDCQLQuery(outputEntity.getName(),
+            DCQLQuery dcqlQuery = createDCQLQuery(query, outputEntity.getName(),
                                                   constraintsBuilderResult.getDcqlConstraintForClass(outputEntity));
 
             String dcqlString = serializeDCQLQuery(dcqlQuery);
             dcql = new DCQL(outputEntity.getName(), dcqlString);
+        } else {
+            throw new IllegalArgumentException("Cannot process Queries involving Category");
         }
         return dcql;
     }
@@ -86,7 +80,7 @@ public class DCQLGenerator {
         return writer.toString();
     }
 
-    private DCQLQuery createDCQLQuery(String outputName, DcqlConstraint constraint, String... outputUrls) {
+    public static DCQLQuery createDCQLQuery(ICab2bQuery query, String outputName, DcqlConstraint constraint, String... outputUrls) {
         Object targetObject = new Object();
         targetObject.setName(outputName);
 
@@ -101,7 +95,7 @@ public class DCQLGenerator {
         return dcqlQuery;
     }
 
-    private void assignDcqlConstraintToTarget(Object targetObject, DcqlConstraint constraint) {
+    private static void assignDcqlConstraintToTarget(Object targetObject, DcqlConstraint constraint) {
         if (constraint == null) {
             return;
         }
