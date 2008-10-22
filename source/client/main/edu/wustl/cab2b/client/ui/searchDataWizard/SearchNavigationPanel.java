@@ -1,7 +1,7 @@
 package edu.wustl.cab2b.client.ui.searchDataWizard;
 
 import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.MYSETTINGS_FRAME_TITLE;
-
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.DIALOG_CLOSE_EVENT;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -10,10 +10,16 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JDialog;
@@ -22,7 +28,7 @@ import javax.swing.JOptionPane;
 import org.jdesktop.swingx.JXPanel;
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -102,12 +108,15 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
     private final String addToExperimentButtonStr = "Add to Experiment";
 
+    private Map<String, List<String>> entityURLMap = new HashMap<String, List<String>>();
+
     public SearchNavigationPanel(MainSearchPanel panel) {
         this.mainSearchPanel = panel;
         searchCenterPanel = mainSearchPanel.getCenterPanel();
         initGUI();
         this.setPreferredSize(new Dimension(976, 36));
         this.setBackground(new Color(240, 240, 240));
+
     }
 
     public Cab2bButton getNextButton() {
@@ -495,6 +504,17 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         }
     }
 
+    private Collection<EntityGroupInterface> getAllEntityGroups() {
+        Collection<EntityGroupInterface> selectedEntityList = new HashSet<EntityGroupInterface>();
+        final IQuery b2bquery = mainSearchPanel.queryObject.getQuery();
+        Set<IQueryEntity> iQuerySet = b2bquery.getConstraints().getQueryEntities();
+        for (IQueryEntity iqueryEntity : iQuerySet) {
+            selectedEntityList.addAll(iqueryEntity.getDynamicExtensionsEntity().getEntityGroupCollection());
+        }
+
+        return selectedEntityList;
+    }
+
     class AddLimitPanelPCL implements PropertyChangeListener {
 
         /* (non-Javadoc)
@@ -515,30 +535,74 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
      */
     private class ServiceURLButtonActionListener implements ActionListener {
 
+        /**
+         * This method initialises the entityURLMapi.e. entityName against the url list which is by 
+         * default set to the service urls present already for user in the repository.This map is 
+         * used only for the present query and all the url configuration will be made to this map only.
+         */
+        private void initialiseMap(Collection<EntityGroupInterface> entityGruopCollection) {
+
+            Map<String, List<String>> entityNameToURL = UserCache.getInstance().getEntityGroupToURLs();
+            for (EntityGroupInterface entityGroup : entityGruopCollection) {
+                String entityName = entityGroup.getLongName();
+                List<String> urlList = entityNameToURL.get(entityName);
+                entityURLMap.put(entityName, urlList);
+            }
+        }
+
+        /**
+         * This is the action listener for the service URL button which gets all the entities
+         * present in the query and sends it to the Right Panel constructor and shows the user
+         * service url screen  
+         */
         public void actionPerformed(ActionEvent arg0) {
             Collection<EntityGroupInterface> selectedEntityList = getAllEntityGroups();
             Cab2bPanel mainPanel = new Cab2bPanel(new BorderLayout(10, 5));
-            RightPanel rightPanel = new RightPanel(selectedEntityList);
-            mainPanel.add(rightPanel, BorderLayout.CENTER);
+            if (entityURLMap.size() == 0) {
+                initialiseMap(selectedEntityList);
+            }
+
             MainFrame.setScreenDimesion(Toolkit.getDefaultToolkit().getScreenSize());
             Dimension screenDimesion = MainFrame.getScreenDimesion();
             final String title = ApplicationProperties.getValue(MYSETTINGS_FRAME_TITLE);
             Dimension dimension = new Dimension((int) (screenDimesion.width * 0.90),
                     (int) (screenDimesion.height * 0.85));
-            JDialog serviceInstanceDialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), mainPanel,
-                                                                        title, dimension, true, true);
+            final JDialog serviceInstanceDialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(),
+                                                                              mainPanel, title, dimension, true,
+                                                                              true);
+            final RightPanel rightPanel = new RightPanel(selectedEntityList, entityURLMap);
+            mainPanel.add(rightPanel, BorderLayout.CENTER);
+            serviceInstanceDialog.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent arg0) {
+
+                    entityURLMap.putAll(rightPanel.getEntityToURLMap());
+                    updateQueryForURLS();
+                }
+            });
+            rightPanel.addPropertyChangeListener(DIALOG_CLOSE_EVENT, new PropertyChangeListener() {
+                public void propertyChange(PropertyChangeEvent arg0) {
+                    entityURLMap.putAll(rightPanel.getEntityToURLMap());
+                    updateQueryForURLS();
+                    serviceInstanceDialog.dispose();
+                }
+            });
             serviceInstanceDialog.setVisible(true);
         }
 
-        private Collection<EntityGroupInterface> getAllEntityGroups() {
-            Collection<EntityGroupInterface> selectedEntityList = new HashSet<EntityGroupInterface>();
-            final IQuery b2bquery = mainSearchPanel.queryObject.getQuery();
-            Set<IQueryEntity> iQuerySet = b2bquery.getConstraints().getQueryEntities();
-            for (IQueryEntity iqueryEntity : iQuerySet) {
-                selectedEntityList.addAll(iqueryEntity.getDynamicExtensionsEntity().getEntityGroupCollection());
-            }
+        /**
+         * This method updates the query urls when user selects the service urls 
+         * by clicking on the service URL button. This method actually update only
+         * the root entity urls.   
+         */
+        private void updateQueryForURLS() {
+            List<String> queryURLList = new ArrayList<String>();
+            final ICab2bQuery b2bquery = (ICab2bQuery) mainSearchPanel.queryObject.getQuery();
+            EntityGroupInterface entityGroup = b2bquery.getOutputEntity().getEntityGroupCollection().iterator().next();
+            String groupName = entityGroup.getLongName();
+            queryURLList.addAll(entityURLMap.get(groupName));
+            b2bquery.getOutputUrls().clear();
+            b2bquery.getOutputUrls().addAll(queryURLList);
 
-            return selectedEntityList;
         }
 
     }
