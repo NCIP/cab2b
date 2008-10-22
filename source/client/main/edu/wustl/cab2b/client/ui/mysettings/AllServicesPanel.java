@@ -62,20 +62,18 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
         initGUI();
     }
 
-    
-    public AllServicesPanel(Collection<EntityGroupInterface> selectedServices){
+    public AllServicesPanel(Collection<EntityGroupInterface> selectedServices) {
         super(new BorderLayout());
-        this.allServices.addAll(selectedServices); 
+        this.allServices.addAll(selectedServices);
         initGUI();
     }
-    
+
     /**
      * This method is used to initialize the UI.
      * Will fetch all the loaded models from the database and then create the panel to display services in 
      * Pagination.   
      */
     private void initGUI() {
-        
 
         final SearchPanel searchPanel = new SearchPanel();
         Cab2bPanel resultPanel = null;
@@ -142,21 +140,7 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
      */
     private Cab2bPanel generateContentPanel(Collection<EntityGroupInterface> filteredServices) {
         final Cab2bPanel resultPanel = new Cab2bPanel();
-        final Vector<PageElement> pageElementCollection = new Vector<PageElement>();
-        for (EntityGroupInterface entityGroup : filteredServices) {
-            // Create an instance of the PageElement. Initialize with the appropriate data
-            final StringBuilder displayString = new StringBuilder(entityGroup.getName());
-            final String version = entityGroup.getVersion();
-            if (null != version && !version.isEmpty()) {
-                displayString.append(" V" + version);
-            }
-            final PageElement pageElement = new PageElementImpl();
-            pageElement.setDisplayName(displayString.toString());
-            pageElement.setDescription(entityGroup.getDescription());
-            pageElement.setUserObject(entityGroup);
-
-            pageElementCollection.add(pageElement);
-        }
+        final Vector<PageElement> pageElementCollection = populatePageElements(filteredServices, null, null);
 
         /* Initialize the pagination component. */
         final NumericPager numericPager = new NumericPager(pageElementCollection, 10);
@@ -184,17 +168,15 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
             searchString = searchString.toLowerCase();
             for (EntityGroupInterface metadata : allServices) {
                 String serviceName = metadata.getName().toLowerCase();
-                if ( serviceName.contains(searchString)) {
+                if (serviceName.contains(searchString)) {
                     filteredServices.add(metadata);
                 }
             }
         }
     }
 
-    public void refreshPanel(String serviceName, String status) {
-        Cab2bPanel resultPanel = new Cab2bPanel();
-        Collection<EntityGroupInterface> filteredServices = new ArrayList<EntityGroupInterface>();
-        filteredServices.addAll(allServices);
+    private Vector<PageElement> populatePageElements(Collection<EntityGroupInterface> filteredServices,
+                                                     String serviceName, String status) {
         final Vector<PageElement> pageElementCollection = new Vector<PageElement>();
         for (EntityGroupInterface entityGroup : filteredServices) {
             // Create an instance of the PageElement. Initialize with the appropriate data
@@ -207,12 +189,22 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
             pageElement.setDisplayName(displayString.toString());
             pageElement.setDescription(entityGroup.getDescription());
             pageElement.setUserObject(entityGroup);
-            
-            if (displayString.toString().equals(serviceName)) {
+
+            if (null != status && displayString.toString().equals(serviceName)) {
                 pageElement.setExtraDisplayText(status);
             }
             pageElementCollection.add(pageElement);
         }
+        return pageElementCollection;
+    }
+
+    public void refreshPanel(String serviceName, String status) {
+        Cab2bPanel resultPanel = new Cab2bPanel();
+        Collection<EntityGroupInterface> filteredServices = new ArrayList<EntityGroupInterface>();
+        filteredServices.addAll(allServices);
+
+        final Vector<PageElement> pageElementCollection = populatePageElements(filteredServices, serviceName,
+                                                                               status);
 
         /* Initialize the pagination component. */
         final NumericPager numericPager = new NumericPager(pageElementCollection, 10);
