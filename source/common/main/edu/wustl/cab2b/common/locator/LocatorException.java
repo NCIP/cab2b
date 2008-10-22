@@ -13,8 +13,7 @@ public class LocatorException extends RuntimeException {
      * @param message Message to set
      * @param cause Cause for exception
      */
-    public LocatorException(String message, Throwable cause, String errorCode) {
-        super(message, (Exception) cause, errorCode);
-        cause.printStackTrace();
+    public LocatorException(String message, Exception cause, String errorCode) {
+        super(message, cause, errorCode);
     }
 }

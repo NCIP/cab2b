@@ -9,6 +9,7 @@ import javax.naming.InitialContext;
 import org.apache.log4j.Logger;
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.PropertyLoader;
 
 /**
@@ -27,6 +28,9 @@ public class Locator {
      * This is to enforce that Locator is a singleton class
      */
     protected Locator() {
+        System.setProperty("java.naming.provider.url", PropertyLoader.getJndiUrl());
+        System.setProperty("java.naming.factory.initial", "org.jnp.interfaces.NamingContextFactory");
+        System.setProperty("java.naming.factory.url.pkgs", "org.jboss.naming:org.jnp.interfaces");
     }
 
     /**
@@ -59,16 +63,16 @@ public class Locator {
 
         logger.debug("Finding Bean : " + ejbName + "\n Home Interface is : " + homeClassForEJB.getName());
         try {
-            logger.debug("Contacting to :" + PropertyLoader.getJndiUrl());
-            System.setProperty("java.naming.provider.url", PropertyLoader.getJndiUrl());
-            System.setProperty("java.naming.factory.initial", "org.jnp.interfaces.NamingContextFactory");
-            System.setProperty("java.naming.factory.url.pkgs", "org.jboss.naming:org.jnp.interfaces");
-
+            logger.debug("Contacting to :" + System.getProperty("java.naming.provider.url"));
             Context ctx = new InitialContext();
             obj = ctx.lookup(ejbName);
 
         } catch (Throwable e) {
-            throw new LocatorException(e.getMessage(), e, ErrorCodeConstants.SR_0001);
+            if(e instanceof Exception) {
+                throw new LocatorException(e.getMessage(),(Exception) e, ErrorCodeConstants.SR_0001);
+            } else {
+                throw new RuntimeException(e.getMessage(),e, ErrorCodeConstants.SR_0001);
+            }
         }
 
         EJBHome homeObject = (EJBHome) javax.rmi.PortableRemoteObject.narrow(obj, homeClassForEJB);
