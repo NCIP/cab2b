@@ -3,11 +3,13 @@
  */
 package edu.wustl.cab2b.client.ui.mysettings;
 
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.DIALOG_CLOSE_EVENT;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.SEARCH_EVENT;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.SERVICE_SELECT_EVENT;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.event.ActionEvent;
@@ -27,6 +29,7 @@ import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.client.serviceinstances.ServiceInstanceConfigurator;
+import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
@@ -41,12 +44,16 @@ import edu.wustl.cab2b.client.ui.pagination.PageElementImpl;
  */
 
 public class AllServicesPanel extends Cab2bPanel implements ActionListener {
+
+    private static final long serialVersionUID = -1709041822051570137L;
+
     final private Collection<EntityGroupInterface> allServices = new ArrayList<EntityGroupInterface>();
 
     private JXTitledPanel titledSearchResultsPanel;
 
-    /* (non-Javadoc)
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+    /**
+     * This is the action listener will fire the property change event on allservicepanel 
+     * object and is handled in the rightpanel.
      */
     public void actionPerformed(ActionEvent event) {
         final String serviceName = event.getActionCommand();
@@ -62,6 +69,11 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
         initGUI();
     }
 
+    /**
+     * This constructor is used in the third step of the search data wizard
+     * and passed the collection of the involved entities in the query. 
+     * @param selectedServices
+     */
     public AllServicesPanel(Collection<EntityGroupInterface> selectedServices) {
         super(new BorderLayout());
         this.allServices.addAll(selectedServices);
@@ -127,10 +139,23 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
         topPanel.add(serviceURL, BorderLayout.NORTH);
         topPanel.add(searchPanel, BorderLayout.CENTER);
         topPanel.setBackground(Color.white);
+        FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
+        flowLayout.setHgap(10);
+        Cab2bPanel buttonPanel = new Cab2bPanel();
+        buttonPanel.setBackground(null);
+        buttonPanel.setLayout(flowLayout);
+        Cab2bButton closeButton = new Cab2bButton("Close");
+        closeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                firePropertyChange(DIALOG_CLOSE_EVENT, true, false);
+            }
+        });
+        buttonPanel.add(closeButton);
 
         /* Now adding all the components to this panel*/
         add(topPanel, BorderLayout.NORTH);
         add(titledSearchResultsPanel, BorderLayout.CENTER);
+        this.add(buttonPanel, BorderLayout.SOUTH);
     }
 
     /**
@@ -202,7 +227,6 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
         Cab2bPanel resultPanel = new Cab2bPanel();
         Collection<EntityGroupInterface> filteredServices = new ArrayList<EntityGroupInterface>();
         filteredServices.addAll(allServices);
-
         final Vector<PageElement> pageElementCollection = populatePageElements(filteredServices, serviceName,
                                                                                status);
 

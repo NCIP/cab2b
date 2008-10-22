@@ -6,7 +6,7 @@ package edu.wustl.cab2b.client.ui.mysettings;
 import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.MYSETTINGS_FRAME_TITLE;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.MENU_CLICK_EVENT;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.SERVICE_URL;
-
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.DIALOG_CLOSE_EVENT;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -31,6 +31,8 @@ import edu.wustl.common.util.global.ApplicationProperties;
 public class MySettingPanel extends Cab2bPanel {
 
     private static final long serialVersionUID = 9175665938340239421L;
+    
+    private  JDialog mySettingDialog ;
 
     /**
      * used to make a reference of the main Cab2bPanel.
@@ -73,6 +75,12 @@ public class MySettingPanel extends Cab2bPanel {
             }
         });
 
+        rightContainer.addPropertyChangeListener(DIALOG_CLOSE_EVENT, new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent arg0) {
+                mySettingDialog.dispose();
+            }
+        });
+        
         leftMenuPanel = new LeftPanel();
         leftMenuPanel.addPropertyChangeListener(MENU_CLICK_EVENT, new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
@@ -85,13 +93,13 @@ public class MySettingPanel extends Cab2bPanel {
 
         add(leftMenuPanel, BorderLayout.WEST);
         add(rightPanel, BorderLayout.CENTER);
+       
 
         MainFrame.setScreenDimesion(Toolkit.getDefaultToolkit().getScreenSize());
         Dimension screenDimesion = MainFrame.getScreenDimesion();
         final String title = ApplicationProperties.getValue(MYSETTINGS_FRAME_TITLE);
         Dimension dimension =  new Dimension((int) (screenDimesion.width * 0.90), (int) (screenDimesion.height * 0.85));
-        JDialog mySettingDialog = WindowUtilities.setInDialog(parent, this, title, dimension, true, true);
-//        mainFrame.setSearchWizardDialog(searchWizard);
+        mySettingDialog = WindowUtilities.setInDialog(parent, this, title, dimension, true, true);
         mySettingDialog.setVisible(true);
     }
 
