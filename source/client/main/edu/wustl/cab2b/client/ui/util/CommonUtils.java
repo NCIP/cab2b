@@ -478,16 +478,16 @@ public class CommonUtils {
     }
 
     /**
-     * Top four popular categories are returned by this method to display on main page
+     * Top five popular categories are returned by this method to display on main page
      * 
-     * @return Top four popular categories.
+     * @return Top five popular categories.
      */
     public static Collection<CategoryPopularity> getPopularSearchCategoriesForMainFrame() {
         List<CategoryPopularity> attributeList = (List<CategoryPopularity>) getPopularCategoriesForShowAll();
 
         Collection<CategoryPopularity> popularCategories = new ArrayList<CategoryPopularity>();
-        if (attributeList.size() >= 4) {
-            for (int i = 0; i < 4; i++) {
+        if (attributeList.size() > 4) {
+            for (int i = 0; i < attributeList.size(); i++) {
                 popularCategories.add(attributeList.get(i));
             }
             return popularCategories;
