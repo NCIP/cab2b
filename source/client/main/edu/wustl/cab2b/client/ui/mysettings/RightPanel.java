@@ -87,7 +87,6 @@ public class RightPanel extends Cab2bPanel {
                 serviceInstancePanel.addPropertyChangeListener(UPDATE_EVENT, new PropertyChangeListener() {
                     public void propertyChange(PropertyChangeEvent event) {
                         String status = (String) event.getNewValue();
-                      //  firePropertyChange(UPDATE_EVENT, serviceName, status);
                         allServices.refreshPanel(serviceName, status);
                         loadAllServices();
                     }
