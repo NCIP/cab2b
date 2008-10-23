@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.client.cache.ClientSideCache;
 import edu.wustl.cab2b.client.cache.UserCache;
+import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.serviceurl.ServiceURLBusinessInterface;
@@ -62,19 +63,15 @@ public class ServiceInstanceConfigurator {
      * @param user
      * @throws RemoteException
      */
-    public void saveServiceInstances(String entityGroupName,
-                                     Collection<ServiceURL> serviceURLObjects, UserInterface user)
+    public void saveServiceInstances(String entityGroupName, Collection<ServiceURL> serviceURLObjects)
             throws RemoteException {
-
-        
         /*
          * If the user has clicked on admin configured urls,then collection will be empty
          * so just removing all the service urls from user's service url collection whose
          * service name is same as entityGroupName
          */
-        
-        UserInterface currentUser = getUser(user.getUserName());
-        
+        UserInterface currentUser = getCurrentUser();
+
         if (serviceURLObjects.isEmpty()) {
             Collection<ServiceURLInterface> serviceURLsToRemove = new HashSet<ServiceURLInterface>();
             Collection<ServiceURLInterface> allServiceURLLIst = currentUser.getServiceURLCollection();
@@ -82,7 +79,7 @@ public class ServiceInstanceConfigurator {
                 String serviceName = serviceURL.getEntityGroupName();
                 if (serviceName.equalsIgnoreCase(entityGroupName)) {
                     serviceURLsToRemove.add(serviceURL);
-                   }
+                }
             }
             currentUser.getServiceURLCollection().removeAll(serviceURLsToRemove);
             saveUser(currentUser);
@@ -92,27 +89,21 @@ public class ServiceInstanceConfigurator {
 
         Collection<ServiceURLInterface> newServices = new HashSet<ServiceURLInterface>();
         newServices.addAll(serviceURLObjects);
-            
-        
 
         Collection<ServiceURLInterface> allServiceURLLIst = currentUser.getServiceURLCollection();
         Collection<ServiceURLInterface> serviceURLsToRemove = new HashSet<ServiceURLInterface>();
         for (ServiceURLInterface serviceURL : allServiceURLLIst) {
             String serviceName = serviceURL.getEntityGroupName();
-            if (serviceName.equalsIgnoreCase(entityGroupName))
-            {
-               if(newServices.contains(serviceURL)) 
-                {
+            if (serviceName.equalsIgnoreCase(entityGroupName)) {
+                if (newServices.contains(serviceURL)) {
                     newServices.remove(serviceURL);
-                }
-                else
-                {
+                } else {
                     serviceURLsToRemove.add(serviceURL);
                 }
             }
-            
+
         }
-        
+
         currentUser.getServiceURLCollection().removeAll(serviceURLsToRemove);
         currentUser.getServiceURLCollection().addAll(newServices);
         UserCache.getInstance().init(currentUser);
@@ -152,33 +143,25 @@ public class ServiceInstanceConfigurator {
      */
     private void saveUser(UserInterface user) throws RemoteException {
         if (user.getUserId() != null) {
-
             UserBusinessInterface userInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                            EjbNamesConstants.USER_BEAN,
                                                                                                            UserHomeInterface.class,
                                                                                                            null);
-
             userInterface.updateUser(user);
         }
     }
 
-    
     /**
      * This method updates the user- service url mapping 
      * @param user
      * @throws RemoteException
      */
-    private UserInterface getUser(String userName) throws RemoteException {
-        
-
-            UserBusinessInterface userInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                           EjbNamesConstants.USER_BEAN,
-                                                                                                           UserHomeInterface.class,
-                                                                                                           null);
-
-            UserInterface user = userInterface.getUserByName(userName);
-        
-            return user; 
+    private UserInterface getCurrentUser() throws RemoteException {
+        UserBusinessInterface userInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                       EjbNamesConstants.USER_BEAN,
+                                                                                                       UserHomeInterface.class,
+                                                                                                       null);
+        return userInterface.getUserByName(UserValidator.getSerializedDelegatedCredReference());
     }
-    
+
 }

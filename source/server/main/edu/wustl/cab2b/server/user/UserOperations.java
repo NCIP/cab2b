@@ -23,7 +23,6 @@ import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
-import edu.wustl.cab2b.common.user.User;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.PropertyLoader;
 import edu.wustl.cab2b.server.cache.EntityCache;
@@ -51,7 +50,7 @@ public class UserOperations extends DefaultBizLogic {
      * @param name user name
      * @return User
      */
-    public User getUserByName(String value) {
+    public UserInterface getUserByName(String value) {
         return getUser("userName", value);
     }
 
@@ -59,7 +58,7 @@ public class UserOperations extends DefaultBizLogic {
      * This method returns the user with administrative rights
      * @return Administrator 
      */
-    public User getAdmin() {
+    public UserInterface getAdmin() {
         return getUser("userName", "Admin");
     }
 
@@ -72,21 +71,21 @@ public class UserOperations extends DefaultBizLogic {
      * @return User 
      */
     @SuppressWarnings("unchecked")
-    private User getUser(String column, String value) {
-        List<User> userList = null;
+    private UserInterface getUser(String column, String value) {
+        List<UserInterface> userList = null;
         try {
             /*
              * if (value == null) { userList = (List<User>)
              * retrieve(User.class.getName(), column, "true"); } else { userList =
              * (List<User>) retrieve(User.class.getName(), column, value); }
              */
-            userList = (List<User>) retrieve(User.class.getName(), column, value);
+            userList = (List<UserInterface>) retrieve(UserInterface.class.getName(), column, value);
         } catch (DAOException e) {
             logger.error(e.getStackTrace());
             return null;
         }
 
-        User user = null;
+        UserInterface user = null;
         if (userList != null && !userList.isEmpty()) {
             user = userList.get(0);
             // TODO This is a temporary check added to solve case insensitive hibernate query problem.
@@ -188,7 +187,7 @@ public class UserOperations extends DefaultBizLogic {
      */
     private Map<String, List<String>> getAdminURLs(Map<String, List<String>> egGroupToUrlListMap,
                                                    Collection<String> absentEntityGroups) {
-        User admin = getAdmin();
+        UserInterface admin = getAdmin();
         Collection<ServiceURLInterface> adminServices = admin.getServiceURLCollection();
 
         for (ServiceURLInterface url : adminServices) {
@@ -219,7 +218,6 @@ public class UserOperations extends DefaultBizLogic {
      */
     public static GlobusCredential getGlobusCredential(String serializedCredRef) throws GeneralSecurityException,
             IOException, Exception {
-
         String userHome = System.getProperty("user.home");
         String certFileName = userHome + PropertyLoader.getTrainingGridCert();
         String keyFileName = userHome + PropertyLoader.getTrainingGridKey();

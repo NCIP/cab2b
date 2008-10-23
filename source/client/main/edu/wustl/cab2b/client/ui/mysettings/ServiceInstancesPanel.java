@@ -243,7 +243,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
         }
         try {
             ServiceInstanceConfigurator bizLogic = new ServiceInstanceConfigurator();
-            bizLogic.saveServiceInstances(serviceName, selectedInstances, UserCache.getInstance().getCurrentUser());
+            bizLogic.saveServiceInstances(serviceName, selectedInstances);
             firePropertyChange(UPDATE_EVENT, serviceName, status);
 
         } catch (RemoteException exception) {
