@@ -35,6 +35,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.experiment.NewExperimentDetailsPanel;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
+import edu.wustl.cab2b.client.ui.mainframe.stackbox.MainFrameStackedBoxPanel;
 import edu.wustl.cab2b.client.ui.mysettings.RightPanel;
 import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryDataModel;
 import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryMainPanel;
@@ -622,7 +623,10 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 parameterizedQueryMainPanel = new ParameterizedQueryMainPanel(new ParameterizedQueryDataModel(
                         query));
                 parameterizedQueryMainPanel.showInDialog();
+                
             }
+            // for updating queries on main frame
+            MainFrameStackedBoxPanel.getInstance().getSavedQueryLinkPanel().updateQueryLinkPanel(); 
         }
     }
 
