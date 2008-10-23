@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.globus.gsi.GlobusCredential;
 
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
@@ -22,6 +23,8 @@ import edu.wustl.cab2b.server.user.UserOperations;
  */
 public class UserBean extends AbstractStatelessSessionBean implements UserBusinessInterface {
     private static final long serialVersionUID = -9088505042791608055L;
+    
+    Logger logger = edu.wustl.common.util.logger.Logger.getLogger(UserBean.class);
 
     public UserInterface insertUser(String dref) throws RemoteException {
         String userId = getUserIdentifier(dref);
@@ -51,6 +54,7 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
         try {
             return UserOperations.getGlobusCredential(dref);
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new RemoteException(e.getMessage(), e);
         }
     }
@@ -60,6 +64,7 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
         try {
             userId = UserOperations.getGlobusCredential(dref).getIdentity();
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new RemoteException(e.getMessage(), e);
         }
         return userId;
