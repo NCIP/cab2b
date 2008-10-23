@@ -38,10 +38,11 @@ import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
  * @author deepak_shingan
  *
  */
-
 public class SaveDatalistPanel extends Cab2bPanel {
     private static final long serialVersionUID = 1L;
+
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(SaveDatalistPanel.class);
+
     /**
      * Panel title label
      */
@@ -132,108 +133,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
         });
 
         saveButton = new Cab2bButton("Save");
-        saveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                isDataListSaved = true;
-
-                String dataListName = txtTitle.getText();
-                if (dataListName == null || dataListName.equals("")) {
-                    dataListName = "" + new Date();
-                }
-                String dataListDesc = txtDesc.getText();
-
-                final DataListMetadata dataListAnnotation = new DataListMetadata();
-                dataListAnnotation.setName(dataListName);
-                dataListAnnotation.setDescription(dataListDesc);
-                dataListAnnotation.setCreatedOn(new Date());
-                dataListAnnotation.setLastUpdatedOn(new Date());
-
-                final IDataRow newRootDataRow = processNode(MainSearchPanel.getDataList().getRootDataRow());
-
-                MainSearchPanel.getDataList().setDataListAnnotation(dataListAnnotation);
-
-                CustomSwingWorker sw = new CustomSwingWorker(SaveDatalistPanel.this) {
-
-                    boolean savedList = false;
-
-                    /* (non-Javadoc)
-                     * @see edu.wustl.cab2b.client.ui.util.CustomSwingWorker#doNonUILogic()
-                     */
-                    @Override
-                    protected void doNonUILogic() throws RuntimeException {
-                        DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                            EjbNamesConstants.DATALIST_BEAN,
-                                                                                                                            DataListHomeInterface.class,
-                                                                                                                            SaveDatalistPanel.this);
-
-                        try {
-                            MainSearchPanel.savedDataListMetadata = dataListBI.saveDataList(newRootDataRow,
-                                                                                            dataListAnnotation,UserValidator.getSerializedDelegatedCredReference());
-
-                            logger.debug("data list saved successfully (in entity with id) : "
-                                    + MainSearchPanel.savedDataListMetadata.getId());
-                            savedList = true;
-                        } catch (RemoteException e) {
-                            CommonUtils.handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
-                        } finally {
-                            dialog.dispose();
-                        }
-                    }
-
-                    /* (non-Javadoc)
-                     * @see edu.wustl.cab2b.client.ui.util.CustomSwingWorker#doUIUpdateLogic()
-                     */
-                    @Override
-                    protected void doUIUpdateLogic() throws RuntimeException {
-                        if (savedList) {
-                            SearchNavigationPanel.getMessageLabel().setText(
-                                                                            "* Data list '"
-                                                                                    + MainSearchPanel.getDataList().getDataListAnnotation().getName()
-                                                                                    + "' saved successfully .");
-                            updateUI();
-                        }
-                    }
-                };
-                sw.start();
-            }
-
-            /**
-             * This method takes a data row and makes copy of it.
-             * It then calls itself recursivley on each child. If both (data row) and (child node) is not a title node then 
-             * it adds a title node between itself and child.
-             *   
-             * so final  structure of data list is always such that each node has title node.
-             * @param dataRow
-             * @return
-             */
-            private IDataRow processNode(IDataRow dataRow) {
-
-                IDataRow newDataRow = dataRow.getCopy();
-
-                for (IDataRow childRow : dataRow.getChildren()) {
-                    IDataRow newChildRow = processNode(childRow);
-
-                    if ((newDataRow.getEntity() == null && newChildRow.isData())
-                            || (newDataRow.isData() && newChildRow.isData())) {
-
-                        IDataRow newTitleNode = newChildRow.getTitleNode();
-
-                        //newChildRow.setParent(newTitleNode);
-                        newTitleNode.addChild(newChildRow);
-
-                        //newTitleNode.setParent(newDataRow);
-                        newDataRow.addChild(newTitleNode);
-                    } else {
-                        //newChildRow.setParent(newDataRow);
-                        newDataRow.addChild(newChildRow);
-                    }
-
-                }
-
-                return newDataRow;
-            }
-
-        });
+        saveButton.addActionListener(new SaveDataListActionListener());
 
         GridBagLayout gbl = new GridBagLayout();
         centerPanel = new Cab2bPanel();
@@ -315,5 +215,88 @@ public class SaveDatalistPanel extends Cab2bPanel {
      */
     public static void setDataListSaved(boolean isDataListSaved) {
         SaveDatalistPanel.isDataListSaved = isDataListSaved;
+    }
+
+    class SaveDataListActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent arg0) {
+            String dataListName = txtTitle.getText();
+            if (dataListName == null || dataListName.equals("")) {
+                dataListName = "" + new Date();
+            }
+            String dataListDesc = txtDesc.getText();
+
+            final DataListMetadata dataListAnnotation = new DataListMetadata();
+            dataListAnnotation.setName(dataListName);
+            dataListAnnotation.setDescription(dataListDesc);
+            dataListAnnotation.setCreatedOn(new Date());
+            dataListAnnotation.setLastUpdatedOn(new Date());
+
+            final IDataRow newRootDataRow = processNode(MainSearchPanel.getDataList().getRootDataRow());
+            MainSearchPanel.getDataList().setDataListAnnotation(dataListAnnotation);
+
+            isDataListSaved = false;
+            CustomSwingWorker sw = new CustomSwingWorker(SaveDatalistPanel.this) {
+                @Override
+                protected void doNonUILogic() throws RuntimeException {
+                    DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                        EjbNamesConstants.DATALIST_BEAN,
+                                                                                                                        DataListHomeInterface.class,
+                                                                                                                        SaveDatalistPanel.this);
+                    try {
+                        MainSearchPanel.savedDataListMetadata = dataListBI.saveDataList(
+                                                                                        newRootDataRow,
+                                                                                        dataListAnnotation,
+                                                                                        UserValidator.getSerializedDelegatedCredReference());
+                        logger.debug("data list saved successfully (in entity with id) : "
+                                + MainSearchPanel.savedDataListMetadata.getId());
+
+                        isDataListSaved = true;
+                    } catch (RemoteException e) {
+                        CommonUtils.handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
+                    } finally {
+                        dialog.dispose();
+                    }
+                }
+
+                @Override
+                protected void doUIUpdateLogic() throws RuntimeException {
+                    if (isDataListSaved) {
+                        SearchNavigationPanel.getMessageLabel().setText(
+                                                                        "* Data list '"
+                                                                                + MainSearchPanel.getDataList().getDataListAnnotation().getName()
+                                                                                + "' saved successfully .");
+                        updateUI();
+                    }
+                }
+            };
+            sw.start();
+        }
+
+        /**
+         * This method takes a data row and makes copy of it.
+         * It then calls itself recursively on each child. If both (data row) and (child node) is not a title node then 
+         * it adds a title node between itself and child.
+         *   
+         * so final  structure of data list is always such that each node has title node.
+         * @param dataRow
+         * @return
+         */
+        private IDataRow processNode(IDataRow dataRow) {
+            IDataRow newDataRow = dataRow.getCopy();
+
+            for (IDataRow childRow : dataRow.getChildren()) {
+                IDataRow newChildRow = processNode(childRow);
+                if ((newDataRow.getEntity() == null && newChildRow.isData())
+                        || (newDataRow.isData() && newChildRow.isData())) {
+                    IDataRow newTitleNode = newChildRow.getTitleNode();
+                    newTitleNode.addChild(newChildRow);
+                    newDataRow.addChild(newTitleNode);
+                } else {
+                    newDataRow.addChild(newChildRow);
+                }
+            }
+
+            return newDataRow;
+        }
     }
 }
