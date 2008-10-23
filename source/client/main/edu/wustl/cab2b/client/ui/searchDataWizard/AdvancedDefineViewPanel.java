@@ -1,12 +1,9 @@
 package edu.wustl.cab2b.client.ui.searchDataWizard;
 
-import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.MYSETTINGS_FRAME_TITLE;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -17,21 +14,17 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import org.jdesktop.swingx.JXPanel;
 
-import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bComboBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
-import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
-import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
-import edu.wustl.cab2b.client.ui.mysettings.RightPanel;
 import edu.wustl.cab2b.client.ui.pagination.JPagination;
 import edu.wustl.cab2b.client.ui.pagination.NumericPager;
 import edu.wustl.cab2b.client.ui.pagination.PageElement;
@@ -39,7 +32,6 @@ import edu.wustl.cab2b.client.ui.pagination.PageElementImpl;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
-import edu.wustl.cab2b.client.ui.util.WindowUtilities;
 import edu.wustl.cab2b.common.domain.DCQL;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
@@ -49,7 +41,6 @@ import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IQuery;
-import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
  * @author mahesh_iyer
@@ -233,7 +224,6 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
      *
      */
     private class DCQLListener implements ActionListener {
-
         public void actionPerformed(ActionEvent e) {
             Cab2bHyperlink<ICab2bQuery> dcqlLink = (Cab2bHyperlink<ICab2bQuery>) e.getSource();
 
@@ -243,10 +233,16 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
                 @Override
                 protected void doNonUILogic() throws Exception {
                     ICab2bQuery query = ((Cab2bHyperlink<ICab2bQuery>) getAComponent()).getUserObject();
-                    QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                               EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                               QueryEngineHome.class);
-                    dcql = queryEngine.getDCQL(query);
+                    if (Utility.isCategory(query.getOutputEntity())) {
+                        JOptionPane.showMessageDialog(null, "Cannot process Queries involving Category",
+                                                      "Message", JOptionPane.INFORMATION_MESSAGE);
+
+                    } else {
+                        QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                                   EjbNamesConstants.QUERY_ENGINE_BEAN,
+                                                                                                                                   QueryEngineHome.class);
+                        dcql = queryEngine.getDCQL(query);
+                    }
                 }
 
                 @Override
