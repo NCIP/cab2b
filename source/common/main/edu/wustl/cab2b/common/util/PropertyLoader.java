@@ -140,5 +140,9 @@ public class PropertyLoader {
         return getProdKey;
     }
     
+    public static String getDelegetee() {
+        return props.getProperty("delegetee_identifier");
+    }
+    
     
 }
