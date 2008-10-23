@@ -1,8 +1,6 @@
 package edu.wustl.cab2b.server.ejb.user;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
-import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +21,7 @@ import edu.wustl.cab2b.server.user.UserOperations;
  *
  */
 public class UserBean extends AbstractStatelessSessionBean implements UserBusinessInterface {
-
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -9088505042791608055L;
 
     public UserInterface insertUser(String dref) throws RemoteException {
         String userId = getUserIdentifier(dref);
@@ -50,21 +47,20 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
         return new UserOperations().getUserByName(userId);
     }
 
-    public GlobusCredential getGlobusCredential(String dref) throws GeneralSecurityException, RemoteException,
-            Exception {
-        return UserOperations.getGlobusCredential(dref);
+    public GlobusCredential getGlobusCredential(String dref) throws RemoteException {
+        try {
+            return UserOperations.getGlobusCredential(dref);
+        } catch (Exception e) {
+            throw new RemoteException(e.getMessage(), e);
+        }
     }
 
-    private String getUserIdentifier(String dref) {
+    private String getUserIdentifier(String dref) throws RemoteException {
         String userId = null;
         try {
             userId = UserOperations.getGlobusCredential(dref).getIdentity();
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RemoteException(e.getMessage(), e);
         }
         return userId;
     }

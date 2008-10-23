@@ -89,10 +89,8 @@ public class UserOperations extends DefaultBizLogic {
         User user = null;
         if (userList != null && !userList.isEmpty()) {
             user = userList.get(0);
-            // TODO This is a temporary check added to solve case insensitive
-            // hibernate query problem.
-            // This should be removed and and proper case sensitive query should
-            // be implemented
+            // TODO This is a temporary check added to solve case insensitive hibernate query problem.
+            // This should be removed and and proper case sensitive query should be implemented
             if (!user.getUserName().equals(value)) {
                 return null;
             }
@@ -152,9 +150,6 @@ public class UserOperations extends DefaultBizLogic {
      * @return Returns a map of EntityGroup name versus set of links
      */
     public Map<String, List<String>> getServiceURLsForUser(UserInterface user) {
-
-        Collection<EntityGroupInterface> allEntityGroups = EntityCache.getInstance().getEntityGroups();
-
         Map<String, List<String>> entityGroupByUrls = new HashMap<String, List<String>>();
         Collection<ServiceURLInterface> userServiceCollection = user.getServiceURLCollection();
 
@@ -169,6 +164,7 @@ public class UserOperations extends DefaultBizLogic {
             }
         }
 
+        Collection<EntityGroupInterface> allEntityGroups = EntityCache.getInstance().getEntityGroups();
         Collection<String> absentEntityGroups = new ArrayList<String>();
         for (EntityGroupInterface entityGroupInterface : allEntityGroups) {
             String name = entityGroupInterface.getLongName();
@@ -192,7 +188,6 @@ public class UserOperations extends DefaultBizLogic {
      */
     private Map<String, List<String>> getAdminURLs(Map<String, List<String>> egGroupToUrlListMap,
                                                    Collection<String> absentEntityGroups) {
-
         User admin = getAdmin();
         Collection<ServiceURLInterface> adminServices = admin.getServiceURLCollection();
 
@@ -222,33 +217,27 @@ public class UserOperations extends DefaultBizLogic {
      * @throws IOException
      * @throws Exception
      */
-
     public static GlobusCredential getGlobusCredential(String serializedCredRef) throws GeneralSecurityException,
             IOException, Exception {
 
-        DelegatedCredentialReference dref = getDeleCredRef(serializedCredRef);
         String userHome = System.getProperty("user.home");
         String certFileName = userHome + PropertyLoader.getTrainingGridCert();
         String keyFileName = userHome + PropertyLoader.getTrainingGridKey();
+
         X509Certificate cert = CertUtil.loadCertificate(certFileName);
         PrivateKey key = KeyUtil.loadPrivateKey(new File(keyFileName), null);
         GlobusCredential credential = new GlobusCredential(key, new X509Certificate[] { cert });
 
-        //Create and Instance of the delegate credential client, specifying the 
-        //DelegatedCredentialReference and the credential of the delegatee.  The 
-        //DelegatedCredentialReference specifies which credential to obtain.  The 
-        //delegatee's credential is required to authenticate with the CDS such 
-        //that the CDS may determing if the the delegatee has been granted access 
-        //to the credential in which they wish to obtain.
-
+        /*Create and Instance of the delegate credential client, specifying the DelegatedCredentialReference and the credential of the delegatee.
+          The DelegatedCredentialReference specifies which credential to obtain. The delegatee's credential is required to authenticate with the CDS 
+          such that the CDS may determing if the the delegatee has been granted access to the credential in which they wish to obtain.*/
+        DelegatedCredentialReference dref = getDeleCredRef(serializedCredRef);
         DelegatedCredentialUserClient client = new DelegatedCredentialUserClient(dref, credential);
 
         //The get credential method obtains a signed delegated credential from the CDS.
-
         GlobusCredential delegatedCredential = client.getDelegatedCredential();
 
         //Set the delegated credential as the default, the delegatee is now logged in as the delegator.
-
         ProxyUtil.saveProxyAsDefault(delegatedCredential);
 
         return delegatedCredential;
@@ -260,7 +249,6 @@ public class UserOperations extends DefaultBizLogic {
      * @return DelegatedCredentialReference
      */
     private static DelegatedCredentialReference getDeleCredRef(String serializedCredRef) {
-
         DelegatedCredentialReference delegatedCredentialReference = null;
         try {
             delegatedCredentialReference = (DelegatedCredentialReference) Utils.deserializeObject(

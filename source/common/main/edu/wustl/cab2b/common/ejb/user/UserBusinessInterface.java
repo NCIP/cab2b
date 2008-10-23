@@ -59,7 +59,6 @@ public interface UserBusinessInterface extends BusinessInterface {
      */
     UserInterface getUserByName(String user) throws RemoteException;
 
-    GlobusCredential getGlobusCredential(String dref) throws GeneralSecurityException, IOException,
-            RemoteException, Exception;
+    GlobusCredential getGlobusCredential(String dref) throws RemoteException;
 
 }
