@@ -52,7 +52,7 @@ public class UserValidator {
      * @param idP
      * @return boolean stating is valid user or not
      */
-    public  static void validateUser(String userName, String password, String idP) throws RemoteException {
+    public static void validateUser(String userName, String password, String idP) throws RemoteException {
         setUserName(userName);
         String dorianUrl = PropertyLoader.getDorianUrl(idP);
 
@@ -119,7 +119,7 @@ public class UserValidator {
      * @param password password
      * @return Credential
      */
-    public static  Credential createCredentials(String userName, String password) {
+    public static Credential createCredentials(String userName, String password) {
         Credential credential = new Credential();
         BasicAuthenticationCredential basicCredentials = new BasicAuthenticationCredential();
         basicCredentials.setUserId(userName);
@@ -191,7 +191,7 @@ public class UserValidator {
 
         List<String> parties = new ArrayList<String>(1);
 
-        String delegateeName = "/O=caBIG/OU=caGrid/OU=Training/OU=Services/CN=host/ps4266";
+        String delegateeName = PropertyLoader.getDelegetee();
         parties.add(delegateeName);
         DelegationPolicy policy = Utils.createIdentityDelegationPolicy(parties);
 
