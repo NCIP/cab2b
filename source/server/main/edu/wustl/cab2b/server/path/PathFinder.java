@@ -72,8 +72,9 @@ public class PathFinder {
     public static synchronized PathFinder getInstance(Connection con) {
         if (pathFinder == null) {
             logger.info("PathFinder Called first Time.Loading cache...");
+            EntityCache.getInstance();
             pathFinder = new PathFinder();
-            refreshCache(con,true);
+            refreshCache(con,false);
         }
         return pathFinder;
     }
