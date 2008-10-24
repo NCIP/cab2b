@@ -37,48 +37,48 @@ public class AssociationWrapper implements AssociationInterface {
     }
 
     /**
-     * @see edu.common.dynamicextensions.domaininterface.AssociationInterface#getAssociationDirection()
      * @return AssociationDirection AssociationDirection
+     * @see edu.common.dynamicextensions.domaininterface.AssociationInterface#getAssociationDirection()
      */
     public AssociationDirection getAssociationDirection() {
         return association.getAssociationDirection();
     }
 
     /**
-     * @see edu.common.dynamicextensions.domaininterface.AssociationInterface#getConstraintProperties()
      * @return ConstraintPropertiesInterface
+     * @see edu.common.dynamicextensions.domaininterface.AssociationInterface#getConstraintProperties()
      */
     public ConstraintPropertiesInterface getConstraintProperties() {
         return association.getConstraintProperties();
     }
 
     /**
-     * @see edu.common.dynamicextensions.domaininterface.AssociationInterface#getIsSystemGenerated()
      * @return whether it is system generated or not
+     * @see edu.common.dynamicextensions.domaininterface.AssociationInterface#getIsSystemGenerated()
      */
     public Boolean getIsSystemGenerated() {
         return association.getIsSystemGenerated();
     }
 
     /**
-     * @see edu.common.dynamicextensions.domaininterface.AssociationInterface#getSourceRole()
      * @return source role
+     * @see edu.common.dynamicextensions.domaininterface.AssociationInterface#getSourceRole()
      */
     public RoleInterface getSourceRole() {
         return association.getSourceRole();
     }
 
     /**
-     * @see edu.common.dynamicextensions.domaininterface.AssociationInterface#getTargetEntity()
      * @return target
+     * @see edu.common.dynamicextensions.domaininterface.AssociationInterface#getTargetEntity()
      */
     public EntityInterface getTargetEntity() {
         return association.getTargetEntity();
     }
 
     /**
-     * @see edu.common.dynamicextensions.domaininterface.AssociationInterface#getTargetRole()
      * @return target role
+     * @see edu.common.dynamicextensions.domaininterface.AssociationInterface#getTargetRole()
      */
     public RoleInterface getTargetRole() {
         return association.getTargetRole();
@@ -134,16 +134,16 @@ public class AssociationWrapper implements AssociationInterface {
     }
 
     /**
-     * @see edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface#getEntity()
      * @return Entity
+     * @see edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface#getEntity()
      */
     public EntityInterface getEntity() {
         return association.getEntity();
     }
 
     /**
-     * @see edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface#getRuleCollection()
      * @return All the rules
+     * @see edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface#getRuleCollection()
      */
     public Collection<RuleInterface> getRuleCollection() {
         return association.getRuleCollection();
@@ -178,56 +178,56 @@ public class AssociationWrapper implements AssociationInterface {
     }
 
     /**
-     * @see edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface#getCreatedDate()
      * @return created date
+     * @see edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface#getCreatedDate()
      */
     public Date getCreatedDate() {
         return association.getCreatedDate();
     }
 
     /**
-     * @see edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface#getDescription()
      * @return description
+     * @see edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface#getDescription()
      */
     public String getDescription() {
         return association.getDescription();
     }
 
     /**
-     * @see edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface#getId()
      * @return identifier
+     * @see edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface#getId()
      */
     public Long getId() {
         return association.getId();
     }
 
     /**
-     * @see edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface#getLastUpdated()
      * @return last update date
+     * @see edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface#getLastUpdated()
      */
     public Date getLastUpdated() {
         return association.getLastUpdated();
     }
 
     /**
-     * @see edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface#getName()
      * @return name
+     * @see edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface#getName()
      */
     public String getName() {
         return association.getName();
     }
 
     /**
-     * @see edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface#getPublicId()
      * @return public id
+     * @see edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface#getPublicId()
      */
     public String getPublicId() {
         return association.getPublicId();
     }
 
     /**
-     * @see edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface#getTaggedValueCollection()
      * @return all tagged values
+     * @see edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface#getTaggedValueCollection()
      */
     public Collection<TaggedValueInterface> getTaggedValueCollection() {
         return association.getTaggedValueCollection();
@@ -290,8 +290,8 @@ public class AssociationWrapper implements AssociationInterface {
     }
 
     /**
+     * @return list of SemanticProperties
      * @see edu.common.dynamicextensions.domain.SemanticAnnotatableInterface#getOrderedSemanticPropertyCollection()
-     * @return list of SemanticProperties 
      */
     public List<SemanticPropertyInterface> getOrderedSemanticPropertyCollection() {
         return association.getOrderedSemanticPropertyCollection();
