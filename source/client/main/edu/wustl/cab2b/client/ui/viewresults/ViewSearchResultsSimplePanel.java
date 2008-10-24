@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GradientPaint;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,20 +16,20 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bComboBox;
+import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
+import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.controls.Cab2bStandardFonts;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.client.ui.pagination.JPagination;
@@ -125,12 +127,16 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
         //int attributeLimitInDescStr = (attributeSize < 10) ? attributeSize : 10;
 
         Map<String, List<IRecord>> allRecords = queryResult.getRecords();
-        serviceURLComboContents.add("Results From All service URLs ");
+        serviceURLComboContents.add(" All service URLs ");
         for (String url : allRecords.keySet()) {
 
             List<IRecord> recordList = allRecords.get(url);
-            String urlNameSize = url + " ( " + recordList.size() + " )";
-            serviceURLComboContents.add(urlNameSize);
+            
+            StringBuilder urlNameSize = new StringBuilder( url );
+            urlNameSize = new StringBuilder( urlNameSize.substring(urlNameSize.indexOf("//")+2));
+            urlNameSize = new StringBuilder(urlNameSize.substring(0,urlNameSize.indexOf("/")));
+            urlNameSize.append(" ( " + recordList.size() + " )");
+            serviceURLComboContents.add(urlNameSize.toString());
             Vector<PageElement> elements = new Vector<PageElement>();
             for (IRecord record : recordList) {
                 StringBuffer descBuffer = new StringBuffer();
@@ -168,7 +174,7 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
                 allElements.add(element);
                 elements.add(element);
             }
-            URLSToResultRowMap.put(urlNameSize, elements);
+            URLSToResultRowMap.put(urlNameSize.toString(), elements);
         }
     }
 
@@ -195,10 +201,16 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
         searchResultsPanel = new Cab2bPanel(new BorderLayout(0, 5));
 
         Cab2bComboBox serviceURLCombo = new Cab2bComboBox(serviceURLComboContents);
-        serviceURLCombo.setPreferredSize(new Dimension(450, 20));
+        serviceURLCombo.setPreferredSize(new Dimension(250, 20));
         serviceURLCombo.addActionListener(new ServiceURLSelectionListener());
         Cab2bPanel comboContainer = new Cab2bPanel(new RiverLayout(5, 5));
-        comboContainer.add("right", serviceURLCombo);
+        
+        JLabel jLabel = new JLabel("Results From");
+        jLabel.setForeground(new Cab2bHyperlink().getUnclickedColor());
+        
+        
+        comboContainer.add("left", jLabel);
+        comboContainer.add("tab", serviceURLCombo);
 
         searchResultsPanel.add(BorderLayout.NORTH, comboContainer);
 
