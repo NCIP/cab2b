@@ -234,7 +234,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
                 protected void doNonUILogic() throws Exception {
                     ICab2bQuery query = ((Cab2bHyperlink<ICab2bQuery>) getAComponent()).getUserObject();
                     if (Utility.isCategory(query.getOutputEntity())) {
-                        JOptionPane.showMessageDialog(null, "Cannot process Queries involving Category",
+                        JOptionPane.showMessageDialog(null, "Sorry, DCQL generation for Queries involving Category is not supported.",
                                                       "Message", JOptionPane.INFORMATION_MESSAGE);
 
                     } else {
@@ -247,8 +247,10 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
 
                 @Override
                 protected void doUIUpdateLogic() throws Exception {
-                    ShowDCQLPanel showDCQLPanel = new ShowDCQLPanel(dcql);
-                    showDCQLPanel.showInDialog();
+                    if (null != dcql) {
+                        ShowDCQLPanel showDCQLPanel = new ShowDCQLPanel(dcql);
+                        showDCQLPanel.showInDialog();
+                    }
                 }
 
             };
