@@ -170,14 +170,16 @@ public class CommonUtils {
             String errorCode = cab2bException.getErrorCode();
             if (errorCode != null) {
                 msgForUser = ErrorCodeHandler.getErrorMessage(errorCode);
+                msgForUser += msgToLog.substring(msgToLog.indexOf("http"), (msgToLog.indexOf("\n") - 1));
                 msgToLog = errorCode + ":" + msgForUser;
             }
         }
+
         if (logException) {
             logger.error(msgToLog, e);
         }
         if (showErrorDialog) {
-            JXErrorDialog.showDialog(parentComponent, "caB2B - Application Error", msgForUser, e);
+            JXErrorDialog.showDialog(parentComponent, "caB2B - Application Error", msgForUser);
         }
 
         if (logToConsole) {
