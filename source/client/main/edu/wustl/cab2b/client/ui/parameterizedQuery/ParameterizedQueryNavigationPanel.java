@@ -9,7 +9,6 @@ import java.util.Date;
 
 import javax.swing.JOptionPane;
 
-import edu.wustl.cab2b.client.cache.ClientSideCache;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -166,12 +165,12 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
             else {
                 parameterizedQueryDataModel.setQueryName((new Date().toString()));
             }
-            
+
             saveQuery();
         }
 
         /**
-         * Method to save parameterised query
+         * Method to save parameterized query
          */
         private void saveQuery() {
             QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
@@ -194,7 +193,9 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                                                       JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    queryEngineBusinessInterface.saveQuery(cab2bParameterizedQuery ,UserValidator.getSerializedDelegatedCredReference());
+                    queryEngineBusinessInterface.saveQuery(cab2bParameterizedQuery,
+                                                           UserValidator.getSerializedDelegatedCredReference(),
+                                                           UserValidator.getIdP());
                     message = "Query " + cab2bParameterizedQuery.getName() + " saved successfully.";
                 }
                 SearchNavigationPanel.getMessageLabel().setText(message);
@@ -206,7 +207,7 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                         exception.getMessage(), edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DB_0005),
                                             parameterizedQueryMainPanel, true, true, true, false);
                 parameterizedQueryMainPanel.getDialog().dispose();
-            }catch (Exception exception){
+            } catch (Exception exception) {
                 exception.getMessage();
             }
         }

@@ -28,7 +28,7 @@ public interface UserBusinessInterface extends BusinessInterface {
      * @param user
      * @throws RemoteException
      */
-    UserInterface insertUser(String dref) throws RemoteException;
+    UserInterface insertUser(String dref, String idP) throws RemoteException;
 
     /**
      * Update present user in database
@@ -57,8 +57,8 @@ public interface UserBusinessInterface extends BusinessInterface {
      * @return
      * @throws RemoteException
      */
-    UserInterface getUserByName(String user) throws RemoteException;
+    UserInterface getUserByName(String user, String idP) throws RemoteException;
 
-    GlobusCredential getGlobusCredential(String dref) throws RemoteException;
+    GlobusCredential getGlobusCredential(String dref, String idP) throws RemoteException;
 
 }

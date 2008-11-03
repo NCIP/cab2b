@@ -38,6 +38,8 @@ import gov.nih.nci.cagrid.opensaml.SAMLAssertion;
 public class UserValidator {
 
     private static String userName;
+    
+    private static String idP;
 
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(UserValidator.class);
 
@@ -83,8 +85,8 @@ public class UserValidator {
         }
         try {
             // When the user gets authenticated successfully Then only its credential is delegated 
-            UserValidator.delegatedCredentialReference = getDelegatedCredential(proxy);
-
+            UserValidator.delegatedCredentialReference = getDelegatedCredential(proxy, idP);
+            UserValidator.setIdP(idP);
         } catch (Exception e) {
             logger.error(e.getStackTrace());
             throw new RuntimeException("Could Not Delegate Client Credtial to CDS", ErrorCodeConstants.CDS_001);
@@ -159,12 +161,12 @@ public class UserValidator {
      * @throws RemoteException
      * @throws Exception
      */
-    public static DelegatedCredentialReference getDelegatedCredential(GlobusCredential credential)
+    private static DelegatedCredentialReference getDelegatedCredential(GlobusCredential credential, String idP)
             throws RemoteException, Exception {
-        String cdsURL = PropertyLoader.getCDSTrainingUrl();
+        String cdsURL = PropertyLoader.getCDSUrl(idP);
         //  String cdsURL = "https://localhost:8443/wsrf/services/cagrid/CredentialDelegationService";
         //Specifies the path length of the credential being delegate the minumum is 1.
-
+        //"https://cagrid-cds.nci.nih.gov:8443/wsrf/services/cagrid/CredentialDelegationService";
         int delegationPathLength = 1;
 
         org.cagrid.gaards.cds.common.ProxyLifetime delegationLifetime = new org.cagrid.gaards.cds.common.ProxyLifetime();
@@ -191,7 +193,7 @@ public class UserValidator {
 
         List<String> parties = new ArrayList<String>(1);
 
-        String delegateeName = PropertyLoader.getDelegetee();
+        String delegateeName = PropertyLoader.getDelegetee(idP);
         parties.add(delegateeName);
         DelegationPolicy policy = Utils.createIdentityDelegationPolicy(parties);
 
@@ -245,4 +247,13 @@ public class UserValidator {
         UserValidator.delegatedCredentialReference = delegatedCredentialReference;
     }
 
+    public static String getIdP() {
+        return idP;
+    }
+
+    public static void setIdP(String idP) {
+        UserValidator.idP = idP;
+    }
+
+    
 }

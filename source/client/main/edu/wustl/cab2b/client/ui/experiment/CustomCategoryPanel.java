@@ -48,6 +48,8 @@ import edu.wustl.cab2b.common.util.Utility;
 
 public class CustomCategoryPanel extends JXFrame {
 
+    private static final long serialVersionUID = 1L;
+
     private Cab2bComboBox dataListCombo;
 
     private Cab2bComboBox categoryCombo;
@@ -197,9 +199,13 @@ public class CustomCategoryPanel extends JXFrame {
                             DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                                 EjbNamesConstants.DATALIST_BEAN,
                                                                                                                                 DataListHomeInterface.class);
-                            dataListMetadata = dataListBI.saveCustomDataCategory(entityName, attributeList,
+                            dataListMetadata = dataListBI.saveCustomDataCategory(
+                                                                                 entityName,
+                                                                                 attributeList,
                                                                                  customDataCategoryText.getText(),
-                                                                                 experiment,UserValidator.getSerializedDelegatedCredReference());
+                                                                                 experiment,
+                                                                                 UserValidator.getSerializedDelegatedCredReference(),
+                                                                                 UserValidator.getIdP());
                         } catch (RemoteException e1) {
                             CommonUtils.handleException(e1, CustomCategoryPanel.this, true, true, true, false);
                         } catch (CheckedException e1) {

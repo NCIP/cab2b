@@ -161,7 +161,8 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                                                                                                                   EjbNamesConstants.EXPERIMENT,
                                                                                                                   ExperimentHome.class);
         try {
-            dataVector = expBus.getExperimentHierarchy(UserValidator.getSerializedDelegatedCredReference());
+            dataVector = expBus.getExperimentHierarchy(UserValidator.getSerializedDelegatedCredReference(),
+                                                       UserValidator.getIdP());
         } catch (RemoteException e1) {
             CommonUtils.handleException(e1, this, true, true, false, false);
         } catch (ClassNotFoundException e1) {
@@ -372,7 +373,9 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                 experiment.getDataListMetadataCollection().add(MainSearchPanel.savedDataListMetadata);
 
                 try {
-                    expBus.addExperiment(expGrpId, experiment, UserValidator.getSerializedDelegatedCredReference());
+                    expBus.addExperiment(expGrpId, experiment,
+                                         UserValidator.getSerializedDelegatedCredReference(),
+                                         UserValidator.getIdP());
                     SearchNavigationPanel.getMessageLabel().setText(
                                                                     "* Experiment '" + experiment.getName()
                                                                             + "' saved successfully .");
@@ -445,7 +448,8 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
             newExpGrp.setLastUpdatedOn(new Date());
 
             try {
-                newExpGrp = expGrpBus.addExperimentGroup(parentExpGrpID, newExpGrp,UserValidator.getSerializedDelegatedCredReference());
+                newExpGrp = expGrpBus.addExperimentGroup(parentExpGrpID, newExpGrp,
+                                                         UserValidator.getSerializedDelegatedCredReference(), UserValidator.getIdP());
                 logger.debug("returner expGrp id " + newExpGrp.getId());
             } catch (RemoteException e1) {
                 CommonUtils.handleException(e1, this, true, true, false, false);
@@ -498,12 +502,14 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         }
     }
 
-    public static List<DataListMetadata> getDataLlistMetadatas() throws RemoteException,
-            DynamicExtensionsSystemException, DAOException, ClassNotFoundException {
+    public static List<DataListMetadata> getDataLlistMetadatas(String selectedIdentityProvider)
+            throws RemoteException, DynamicExtensionsSystemException, DAOException, ClassNotFoundException {
         DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                             EjbNamesConstants.DATALIST_BEAN,
                                                                                                             DataListHomeInterface.class);
-        List<DataListMetadata> dataListMetadatas = dataListBI.retrieveAllDataListMetadata(UserValidator.getSerializedDelegatedCredReference());
+        List<DataListMetadata> dataListMetadatas = dataListBI.retrieveAllDataListMetadata(
+                                                                                          UserValidator.getSerializedDelegatedCredReference(),
+                                                                                          selectedIdentityProvider);
         return dataListMetadatas;
     }
 }

@@ -27,7 +27,6 @@ import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.user.UserBusinessInterface;
 import edu.wustl.cab2b.common.ejb.user.UserHomeInterface;
 import edu.wustl.cab2b.common.locator.LocatorException;
-import edu.wustl.cab2b.common.user.User;
 import edu.wustl.cab2b.common.user.UserInterface;
 
 /**
@@ -97,7 +96,7 @@ public class ClientLauncher {
     /**
      * Launches the cab2b Client
      */
-    public void launchClient(String dref) {
+    public void launchClient() {
         ClassLoader loader = this.getClass().getClassLoader();
         JFrame launchFrame = new JFrame("caB2B client launcher....");
 
@@ -124,7 +123,7 @@ public class ClientLauncher {
         launchFrame.setVisible(true);
         Toolkit.getDefaultToolkit().setDynamicLayout(true);
 
-        loadCache(dref); /* initializing the cache at startup */
+        loadCache(); /* initializing the cache at startup */
         PopularCategoryCache.getInstance();
 
         showProgress(" Initializing graphical user interface....", 94);
@@ -176,16 +175,19 @@ public class ClientLauncher {
     /**
      * Loads the client side cache. If fails, logs error and quits
      */
-    private static void loadCache(String dref) {
+    private static void loadCache() {
         try {// ClientSideCache MUST be instanciated before anything else.
             // Don't change order of below lines of code
             ClientSideCache.getInstance();
             UserBusinessInterface userBusinessInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                    EjbNamesConstants.USER_BEAN,
                                                                                                                    UserHomeInterface.class);
-            UserInterface user = userBusinessInterface.getUserByName(dref);
+            UserInterface user = userBusinessInterface.getUserByName(
+                                                                     UserValidator.getSerializedDelegatedCredReference(),
+                                                                     UserValidator.getIdP());
             if (user == null) {
-                user = userBusinessInterface.insertUser(dref);
+                user = userBusinessInterface.insertUser(UserValidator.getSerializedDelegatedCredReference(),
+                                                        UserValidator.getIdP());
             }
             UserCache.getInstance().init(user);
         } catch (LocatorException le) {

@@ -53,11 +53,12 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#getExperimentHierarchy()
      */
-    public Vector getExperimentHierarchy(String dref) throws ClassNotFoundException, DAOException, RemoteException {
+    public Vector getExperimentHierarchy(String dref, String idP) throws ClassNotFoundException, DAOException,
+            RemoteException {
 
         String userId = null;
         try {
-            userId = UserOperations.getGlobusCredential(dref).getIdentity();
+            userId = UserOperations.getGlobusCredential(dref, idP).getIdentity();
 
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
@@ -92,10 +93,10 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#addExperiment(java.lang.Long,
      *      edu.wustl.cab2b.common.domain.Experiment)
      */
-    public void addExperiment(Long experimentGroupId, Experiment experiment, String serializedCredRef)
+    public void addExperiment(Long experimentGroupId, Experiment experiment, String serializedCredRef, String idP)
             throws RemoteException, BizLogicException, UserNotAuthorizedException, DAOException {
         try {
-            String userId = UserOperations.getGlobusCredential(serializedCredRef).getIdentity();
+            String userId = UserOperations.getGlobusCredential(serializedCredRef, idP).getIdentity();
             experiment.setUserId(userId);
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
@@ -167,9 +168,10 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#getExperimentsForUser(edu.wustl.cab2b.common.user.UserInterface)
      */
-    public List<Experiment> getExperimentsForUser(UserInterface user, String dref) throws RemoteException {
+    public List<Experiment> getExperimentsForUser(UserInterface user, String dref, String idP)
+            throws RemoteException {
         try {
-            GlobusCredential cred = UserOperations.getGlobusCredential(dref);
+            GlobusCredential cred = UserOperations.getGlobusCredential(dref, idP);
 
             return new ExperimentOperations().getLatestExperimentForUser(user, cred.getIdentity());
         } catch (Exception e) {

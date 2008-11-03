@@ -93,56 +93,33 @@ public class PropertyLoader {
 
     /**
      * 
-     * @return the cdstraining url
+     * @return the CDS url for production grid and training grid
      */
-    public static String getCDSTrainingUrl() {
-        String cdsTrainingUrl = props.getProperty("cdstrainingurl");
-        return cdsTrainingUrl;
+    public static String getCDSUrl(String idP) {
+        return props.getProperty(idP + "_cds_url");
+
     }
 
     /**
      * 
      * @return the training grid cert location
      */
-    public static String getTrainingGridCert() {
-        String trainingCert = props.getProperty("training_grid_cert_location");
-        return trainingCert;
+    public static String getGridCert(String idP) {
+        return props.getProperty(idP + "_grid_cert_location");
+
     }
 
-    
-    
     /**
      * 
      * @return the training grid key location
      */
-    public static String getTrainingGridKey() {
-        String trainingKey = props.getProperty("training_grid_key_location");
-        return trainingKey;
-    }
-    
-    /**
-     * 
-     * @return the production grid cert location
-     */
-    public static String getProductionGridCert() {
-        String getProdCert = props.getProperty("production_grid_cert_location");
-        return getProdCert;
+    public static String getGridKey(String idP) {
+        return props.getProperty(idP + "_grid_key_location");
+
     }
 
-    
-    
-    /**
-     * 
-     * @return the production grid key location
-     */
-    public static String getProductionGridKey() {
-        String getProdKey = props.getProperty("production_grid_key_location");
-        return getProdKey;
+    public static String getDelegetee(String idP) {
+        return props.getProperty(idP+"_delegetee_identifier");
     }
-    
-    public static String getDelegetee() {
-        return props.getProperty("delegetee_identifier");
-    }
-    
-    
+
 }

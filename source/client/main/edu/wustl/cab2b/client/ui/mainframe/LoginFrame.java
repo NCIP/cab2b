@@ -15,7 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.rmi.RemoteException;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -337,13 +336,13 @@ public class LoginFrame extends JXFrame {
             return;
         }
         String password = new String(passwordArray);
-        String selectedIdentityProvider = idProvider.getSelectedItem().toString();
+        final String selectedIdentityProvider = idProvider.getSelectedItem().toString();
 
         try {
             UserValidator.validateUser(userName, password, selectedIdentityProvider);
             Thread mainThread = new Thread() {
                 public void run() {
-                    launchMainFrame(UserValidator.getSerializedDelegatedCredReference());
+                    launchMainFrame();
                 }
             };
             mainThread.setPriority(Thread.NORM_PRIORITY);
@@ -365,11 +364,11 @@ public class LoginFrame extends JXFrame {
      * @param args
      *            Command line arguments. They will not be used.
      */
-    private void launchMainFrame(String dref) {
+    private void launchMainFrame() {
         try {
 
             ClientLauncher clientLauncher = ClientLauncher.getInstance();
-            clientLauncher.launchClient(dref);
+            clientLauncher.launchClient();
 
             MainFrame mainFrame = new MainFrame(ApplicationProperties.getValue(MAIN_FRAME_TITLE), true);
             mainFrame.pack();

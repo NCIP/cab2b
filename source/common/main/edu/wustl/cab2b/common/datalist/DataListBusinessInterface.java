@@ -21,15 +21,16 @@ public interface DataListBusinessInterface extends BusinessInterface {
      * @return data list id.
      * @throws RemoteException
      */
-    public DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata, String dref)
-            throws RemoteException;
+    public DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata, String dref,
+                                         String selectedIdentityProvider) throws RemoteException;
 
     /**
      * Retrieves annotation information for all the data lists stored.
      * @return list of all available data list metadata.
      * @throws RemoteException
      */
-    public List<DataListMetadata> retrieveAllDataListMetadata(String dref) throws RemoteException;
+    public List<DataListMetadata> retrieveAllDataListMetadata(String dref, String selectedIdentityProvider)
+            throws RemoteException;
 
     /**
      * Retrives annotation for given datalist id.
@@ -62,12 +63,14 @@ public interface DataListBusinessInterface extends BusinessInterface {
      */
     public DataListMetadata saveDataCategory(IDataRow rootRecordDataRow, DataListMetadata dataListMetadata,
                                              List<AttributeInterface> oldAttribute,
-                                             List<AttributeInterface> newAttributes, String dref)
-            throws RemoteException, CheckedException;
+                                             List<AttributeInterface> newAttributes, String dref,
+                                             String selectedIdentityProvider) throws RemoteException,
+            CheckedException;
 
     public DataListMetadata saveCustomDataCategory(IdName rootEntityId,
                                                    Collection<AttributeInterface> selectedAttributeList,
-                                                   String string, Experiment experiment, String dref)
-            throws RemoteException, CheckedException;
+                                                   String string, Experiment experiment, String dref,
+                                                   String selectedIdentityProvider) throws RemoteException,
+            CheckedException;
 
 }

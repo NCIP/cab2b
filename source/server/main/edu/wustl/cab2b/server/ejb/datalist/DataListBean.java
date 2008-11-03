@@ -31,11 +31,12 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
     /**
      * @see DataListBusinessInterface#retrieveAllDataListMetadata()
      */
-    public List<DataListMetadata> retrieveAllDataListMetadata(String dref) throws RemoteException {
+    public List<DataListMetadata> retrieveAllDataListMetadata(String dref, String selectedIdentityProvider)
+            throws RemoteException {
 
         String userId = null;
         try {
-            userId = UserOperations.getGlobusCredential(dref).getIdentity();
+            userId = UserOperations.getGlobusCredential(dref, selectedIdentityProvider).getIdentity();
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
         }
@@ -60,11 +61,11 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
     /**
      * @see DataListBusinessInterface#saveDataList(DataList)
      */
-    public DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata, String dref)
-            throws RemoteException {
+    public DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata, String dref,
+                                         String selectedIdentityProvider) throws RemoteException {
         String userId = null;
         try {
-            userId = UserOperations.getGlobusCredential(dref).getIdentity();
+            userId = UserOperations.getGlobusCredential(dref, selectedIdentityProvider).getIdentity();
 
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
@@ -81,11 +82,12 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
 
     public DataListMetadata saveDataCategory(IDataRow rootRecordDataRow, DataListMetadata dataListMetadata,
                                              List<AttributeInterface> oldAttribute,
-                                             List<AttributeInterface> newAttributes, String serializedRef)
-            throws RemoteException, CheckedException {
+                                             List<AttributeInterface> newAttributes, String serializedRef,
+                                             String selectedIdentityProvider) throws RemoteException,
+            CheckedException {
         String userId = null;
         try {
-            userId = UserOperations.getGlobusCredential(serializedRef).getIdentity();
+            userId = UserOperations.getGlobusCredential(serializedRef, selectedIdentityProvider).getIdentity();
 
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
@@ -98,12 +100,13 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
 
     public DataListMetadata saveCustomDataCategory(IdName rootEntityId,
                                                    Collection<AttributeInterface> selectedAttributeList,
-                                                   String string, Experiment experiment, String dref)
-            throws RemoteException, CheckedException {
+                                                   String string, Experiment experiment, String dref,
+                                                   String selectedIdentityProvider) throws RemoteException,
+            CheckedException {
 
         String userId = null;
         try {
-            userId = UserOperations.getGlobusCredential(dref).getIdentity();
+            userId = UserOperations.getGlobusCredential(dref, selectedIdentityProvider).getIdentity();
 
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());

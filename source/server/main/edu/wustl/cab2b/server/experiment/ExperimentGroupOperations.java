@@ -59,13 +59,13 @@ public class ExperimentGroupOperations extends DefaultBizLogic {
      * @throws UserNotAuthorizedException
      */
     public ExperimentGroup addExperimentGroup(Long parentExperimentGroupId, ExperimentGroup experimentGroup,
-                                              String dref) throws DAOException, BizLogicException,
+                                              String dref, String idP) throws DAOException, BizLogicException,
             UserNotAuthorizedException {
         ExperimentGroup parentExperimentGroup = getExperimentGroup(parentExperimentGroupId);
         experimentGroup.setParentGroup(parentExperimentGroup);
 
         try {
-            experimentGroup.setUserId(UserOperations.getGlobusCredential(dref).getIdentity());
+            experimentGroup.setUserId(UserOperations.getGlobusCredential(dref, idP).getIdentity());
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
         }

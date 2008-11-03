@@ -257,7 +257,8 @@ public class CommonUtils {
     public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query,
                                                                QueryEngineBusinessInterface queryEngineBus)
             throws RuntimeException, RemoteException, Exception {
-        return queryEngineBus.executeQuery(query, UserValidator.getSerializedDelegatedCredReference());
+        return queryEngineBus.executeQuery(query, UserValidator.getSerializedDelegatedCredReference(),
+                                           UserValidator.getIdP());
     }
 
     /**
@@ -528,7 +529,9 @@ public class CommonUtils {
         Collection<IParameterizedQuery> cab2bQueryCollection = null;
         try {
 
-            cab2bQueryCollection = queryEngineBusinessInterface.getAllQueryNameAndDescription(UserValidator.getSerializedDelegatedCredReference());
+            cab2bQueryCollection = queryEngineBusinessInterface.getAllQueryNameAndDescription(
+                                                                                              UserValidator.getSerializedDelegatedCredReference(),
+                                                                                              UserValidator.getIdP());
         } catch (RemoteException exception) {
             CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);
         } catch (Exception exception) {
@@ -558,7 +561,8 @@ public class CommonUtils {
                                                                                                             ExperimentHome.class);
         List<Experiment> experiments = null;
         try {
-            experiments = expBus.getExperimentsForUser(user, UserValidator.getSerializedDelegatedCredReference());
+            experiments = expBus.getExperimentsForUser(user, UserValidator.getSerializedDelegatedCredReference(),
+                                                       UserValidator.getIdP());
         } catch (RemoteException e) {
             handleException(e, comp, true, false, false, false);
         }
@@ -740,8 +744,8 @@ public class CommonUtils {
         imageMap.put(DagImages.PortImageIcon, Utilities.loadImage(PORT_IMAGE_ADD_LIMIT));
         return imageMap;
     }
-    
+
     public static String getDisplayUserName(String userIdentifier) {
-        return userIdentifier.substring(userIdentifier.lastIndexOf("=")+1);
+        return userIdentifier.substring(userIdentifier.lastIndexOf("=") + 1);
     }
 }

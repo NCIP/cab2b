@@ -34,9 +34,10 @@ public class ExperimentGroupSessionBean extends AbstractStatelessSessionBean imp
      * @see edu.wustl.cab2b.common.experiment.ExperimentGroupBusinessInterface#addExperimentGroup(java.lang.Long, edu.wustl.cab2b.common.domain.ExperimentGroup)
      */
     public ExperimentGroup addExperimentGroup(Long parentExperimentGroupId, ExperimentGroup experimentGroup,
-                                              String dref) throws BizLogicException, UserNotAuthorizedException,
-            RemoteException, DAOException {
-        return (new ExperimentGroupOperations()).addExperimentGroup(parentExperimentGroupId, experimentGroup,dref);
+                                              String dref, String idP) throws BizLogicException,
+            UserNotAuthorizedException, RemoteException, DAOException {
+        return (new ExperimentGroupOperations()).addExperimentGroup(parentExperimentGroupId, experimentGroup,
+                                                                    dref, idP);
     }
 
 }

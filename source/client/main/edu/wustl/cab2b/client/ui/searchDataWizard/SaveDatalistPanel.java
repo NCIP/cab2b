@@ -246,7 +246,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
                         MainSearchPanel.savedDataListMetadata = dataListBI.saveDataList(
                                                                                         newRootDataRow,
                                                                                         dataListAnnotation,
-                                                                                        UserValidator.getSerializedDelegatedCredReference());
+                                                                                        UserValidator.getSerializedDelegatedCredReference(),UserValidator.getIdP());
                         logger.debug("data list saved successfully (in entity with id) : "
                                 + MainSearchPanel.savedDataListMetadata.getId());
 

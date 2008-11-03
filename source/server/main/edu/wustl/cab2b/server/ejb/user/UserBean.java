@@ -26,8 +26,8 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
     
     Logger logger = edu.wustl.common.util.logger.Logger.getLogger(UserBean.class);
 
-    public UserInterface insertUser(String dref) throws RemoteException {
-        String userId = getUserIdentifier(dref);
+    public UserInterface insertUser(String dref, String idP) throws RemoteException {
+        String userId = getUserIdentifier(dref,idP);
         User user = new User(userId, null, false);
         return new UserOperations().insertUser(user);
     }
@@ -45,24 +45,24 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
      * @see edu.wustl.cab2b.common.ejb.user.UserBusinessInterface#getUserByName(java.lang.String)
      * If user not found, it returns null
      */
-    public UserInterface getUserByName(String dref) throws RemoteException {
-        String userId = getUserIdentifier(dref);
+    public UserInterface getUserByName(String dref, String idP) throws RemoteException {
+        String userId = getUserIdentifier(dref,idP);
         return new UserOperations().getUserByName(userId);
     }
 
-    public GlobusCredential getGlobusCredential(String dref) throws RemoteException {
+    public GlobusCredential getGlobusCredential(String dref , String idP) throws RemoteException {
         try {
-            return UserOperations.getGlobusCredential(dref);
+            return UserOperations.getGlobusCredential(dref,idP);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RemoteException(e.getMessage(), e);
         }
     }
 
-    private String getUserIdentifier(String dref) throws RemoteException {
+    private String getUserIdentifier(String dref, String idP) throws RemoteException {
         String userId = null;
         try {
-            userId = UserOperations.getGlobusCredential(dref).getIdentity();
+            userId = UserOperations.getGlobusCredential(dref,idP).getIdentity();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RemoteException(e.getMessage(), e);

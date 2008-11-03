@@ -216,11 +216,11 @@ public class UserOperations extends DefaultBizLogic {
      * @throws IOException
      * @throws Exception
      */
-    public static GlobusCredential getGlobusCredential(String serializedCredRef) throws GeneralSecurityException,
-            IOException, Exception {
+    public static GlobusCredential getGlobusCredential(String serializedCredRef, String idP)
+            throws GeneralSecurityException, IOException, Exception {
         String userHome = System.getProperty("user.home");
-        String certFileName = userHome + PropertyLoader.getTrainingGridCert();
-        String keyFileName = userHome + PropertyLoader.getTrainingGridKey();
+        String certFileName = userHome + PropertyLoader.getGridCert(idP);
+        String keyFileName = userHome + PropertyLoader.getGridKey(idP);
 
         X509Certificate cert = CertUtil.loadCertificate(certFileName);
         PrivateKey key = KeyUtil.loadPrivateKey(new File(keyFileName), null);
