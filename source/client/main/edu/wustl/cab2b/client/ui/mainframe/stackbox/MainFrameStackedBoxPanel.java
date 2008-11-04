@@ -160,14 +160,14 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
     private ShowAllPanel getAllCategoryPanel() {
         Collection<CategoryPopularity> allPopularCategories = CommonUtils.getPopularCategoriesForShowAll();
         final Object objData[][] = new Object[allPopularCategories.size()][6];
-        final String headers[] = { ShowAllCategoryPanel.CATEGORY_NAME_TITLE, ShowAllCategoryPanel.CATEGORY_POPULARITY_TITLE, ShowAllCategoryPanel.CATEGORY_DESCRIPTION_TITLE, ShowAllCategoryPanel.CATEGORY_DATE_TITLE, " Category ID-Hidden" };
+        final String headers[] = { ShowAllCategoryPanel.CATEGORY_NAME_TITLE, ShowAllCategoryPanel.CATEGORY_POPULARITY_TITLE, ShowAllCategoryPanel.CATEGORY_DATE_TITLE, ShowAllCategoryPanel.CATEGORY_DESCRIPTION_TITLE, " Category ID-Hidden" };
         int i = 0;
         for (CategoryPopularity category : allPopularCategories) {
             EntityInterface entityInterface = AbstractEntityCache.getCache().getEntityById(category.getEntityId());
             objData[i][0] = Utility.getDisplayName(entityInterface);
             objData[i][1] = Long.toString(category.getPopularity());
-            objData[i][2] = entityInterface.getDescription();
-            objData[i][3] = entityInterface.getLastUpdated();
+            objData[i][2] = entityInterface.getLastUpdated();
+            objData[i][3] = entityInterface.getDescription();
             objData[i][4] = entityInterface;
             i++;
         }

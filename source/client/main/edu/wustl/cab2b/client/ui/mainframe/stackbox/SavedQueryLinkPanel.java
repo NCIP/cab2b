@@ -152,12 +152,12 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
 
         }
         final Object objData[][] = new Object[cab2bQueryCollection.size()][5];
-        final String headers[] = { ShowAllSavedQueryPanel.QUERY_NAME_TITLE, ShowAllSavedQueryPanel.QUERY_DESCRIPTION_TITLE, ShowAllSavedQueryPanel.QUERY_DATE_TITLE, "Query ID-Hidden" };
+        final String headers[] = { ShowAllSavedQueryPanel.QUERY_NAME_TITLE, ShowAllSavedQueryPanel.QUERY_DATE_TITLE, ShowAllSavedQueryPanel.QUERY_DESCRIPTION_TITLE,  "Query ID-Hidden" };
         int i = 0;
         for (IParameterizedQuery paraQuery : cab2bQueryCollection) {
             objData[i][0] = paraQuery.getName();
-            objData[i][1] = paraQuery.getDescription();
-            objData[i][2] = Utility.getFormattedDate(paraQuery.getCreatedDate());
+            objData[i][1] = Utility.getFormattedDate(paraQuery.getCreatedDate());
+            objData[i][2] = paraQuery.getDescription();
             objData[i][3] = paraQuery.getId();
             i++;
         }

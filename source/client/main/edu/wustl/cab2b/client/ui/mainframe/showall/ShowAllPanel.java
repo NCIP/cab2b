@@ -47,7 +47,7 @@ abstract public class ShowAllPanel extends Cab2bPanel {
     private void initGUI() {
         setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
         if (data != null && tableHeader != null) {
-            table = new Cab2bTable(true, data, tableHeader);
+            table = new Cab2bTable(false, data, tableHeader);
             table.getColumn(1).setCellRenderer(new LinkRenderer(linkAction));
             table.getColumn(1).setCellEditor(new LinkRenderer(linkAction));
         } else
