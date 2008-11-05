@@ -17,12 +17,13 @@ import edu.wustl.cab2b.common.ejb.user.UserHomeInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.Utility;
 
-
 /**
  * @author Chandrakant Talele
  */
+
 public class UserCache {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(UserCache.class);
+
     UserInterface currentUser = null;
 
     Map<String, List<String>> entityGroupToURLs = null;
@@ -52,9 +53,10 @@ public class UserCache {
 
     /**
      * Refreshes the entity cache.
-     * 
+     * @param loggedInUser 
      * @throws RemoteException
      */
+
     public final void init(UserInterface loggedInUser) {
         currentUser = loggedInUser;
         entityGroupToURLs = populateServiceURLs(currentUser);
@@ -66,7 +68,13 @@ public class UserCache {
     public UserInterface getCurrentUser() {
         return currentUser;
     }
-
+    
+    
+    /**
+     * Function returns all the serviceUrls for given entity
+     * @param entity
+     * @return Array of String of ServiceUrls
+     */
     public String[] getServiceURLs(EntityInterface entity) {
         String[] urls = new String[0];
         EntityGroupInterface eg = Utility.getEntityGroup(entity);
@@ -119,6 +127,5 @@ public class UserCache {
     public void setEntityGroupToURLs(Map<String, List<String>> entityGroupToURLs) {
         this.entityGroupToURLs = entityGroupToURLs;
     }
-    
-    
+
 }

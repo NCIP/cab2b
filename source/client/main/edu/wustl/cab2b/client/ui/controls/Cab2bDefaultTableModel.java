@@ -15,8 +15,9 @@ public class Cab2bDefaultTableModel extends DefaultTableModel {
      */
     boolean tableShowCheckBox;
 
-    /**
+    /** 
      * Constructor of table model
+     * @param showCheckBox
      * @param data contents of table
      * @param header header details of the table
      */
@@ -28,6 +29,7 @@ public class Cab2bDefaultTableModel extends DefaultTableModel {
 
     /**
      * Constructor of table model
+     * @param showCheckBox
      * @param data contents of table
      * @param header header details of the table
      */
@@ -40,6 +42,12 @@ public class Cab2bDefaultTableModel extends DefaultTableModel {
     /*
      * Don't need to implement this method unless your table's
      * editable.
+     */
+    /** Check whether Cell is Editable or not
+     * @see javax.swing.table.DefaultTableModel#isCellEditable(int, int)
+     * @param row
+     * @param col
+     * @return boolean value
      */
     public boolean isCellEditable(int row, int col) {
         // If first column is check-box then only 
@@ -57,7 +65,7 @@ public class Cab2bDefaultTableModel extends DefaultTableModel {
 
     /**
      * Method to return selected rows in the table
-     * @return
+     * @return selected rows index
      */
     public Vector<Integer> getCheckedRowIndexes() {
         Vector<Integer> selectIndex = new Vector<Integer>();
@@ -97,6 +105,8 @@ public class Cab2bDefaultTableModel extends DefaultTableModel {
      * Set the data actual contents of the table 
      * depending upon whether to show check-box
      * as first row or not
+     * @param data 
+     * @param header
      */
     public void setDataVector(Vector data, Vector header) {
         // If check-box has to be shown
@@ -127,6 +137,11 @@ public class Cab2bDefaultTableModel extends DefaultTableModel {
      * editor for each cell.  If we didn't implement this method,
      * then the last column would contain text ("true"/"false"),
      * rather than a check box.
+     */
+    /** Gets the class for corresponding Column
+     * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+     * @param c
+     * @return class
      */
     public Class getColumnClass(int c) {
         if (getValueAt(0, c) == null) {

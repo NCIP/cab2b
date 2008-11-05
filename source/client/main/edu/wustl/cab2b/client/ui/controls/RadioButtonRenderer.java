@@ -10,8 +10,16 @@ import javax.swing.table.TableCellRenderer;
  * @author Chetan_BH 
  */
 public class RadioButtonRenderer implements TableCellRenderer {
-    /* (non-Javadoc)
-     * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
+    
+    /** Gets CellRendererComponent for Table
+     * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int) 
+     * @param table
+     * @param value
+     * @param isSelected
+     * @param row
+     * @param column
+     * @param hasFocus
+     * @return Component
      */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                                                    boolean hasFocus, int row, int column) {

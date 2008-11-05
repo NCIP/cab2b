@@ -105,8 +105,9 @@ public class Cab2bTable extends JXTable {
         initUI();
     }
 
-    /* (non-Javadoc)
+    /** Returns the indices of selected rows
      * @see javax.swing.JTable#getSelectedRows()
+     * @return indexes
      */
     public int[] getSelectedRows() {
         if (showCheckBox) {
@@ -166,12 +167,16 @@ public class Cab2bTable extends JXTable {
 class HeaderItemListener implements ItemListener {
     Cab2bDefaultTableModel m_tableModel;
 
+    /**
+     * @param tableModel
+     */
     public HeaderItemListener(Cab2bDefaultTableModel tableModel) {
         m_tableModel = tableModel;
     }
 
     /**
      * Called when a CheckBox is checked/unchecked
+     * @param e
      */
     public void itemStateChanged(ItemEvent e) {
         Object source = e.getSource();

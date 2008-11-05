@@ -31,29 +31,35 @@ public class CheckBoxTableModel extends AbstractTableModel {
         tableData = data;
     }
 
-    /* (non-Javadoc)
+    /** Retunrs the column count of the given table
      * @see javax.swing.table.TableModel#getColumnCount()
+     * @return modelColumnNames.length
      */
     public int getColumnCount() {
         return modelColumnNames.length;
     }
 
-    /* (non-Javadoc)
+    /** Returns the row count of the given Table
      * @see javax.swing.table.TableModel#getRowCount()
+     * @return tableData.length
      */
     public int getRowCount() {
         return tableData.length;
     }
 
-    /* (non-Javadoc)
+    /** Returns the ColumnName for given ColumnIndex
      * @see javax.swing.table.AbstractTableModel#getColumnName(int)
+     * @param col
+     * @return ColumnName
      */
     public String getColumnName(int col) {
         return modelColumnNames[col];
     }
 
-    /* (non-Javadoc)
+    /** Returns the value for a particular cell in the table
      * @see javax.swing.table.TableModel#getValueAt(int, int)
+     * @param row
+     * @param col
      */
     public Object getValueAt(int row, int col) {
         return tableData[row][col];
@@ -65,6 +71,11 @@ public class CheckBoxTableModel extends AbstractTableModel {
      * then the last column would contain text ("true"/"false"),
      * rather than a check box.
      */
+    /** Returns the Class for given Column
+     * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+     * @param c
+     * @return Class
+     */
     public Class getColumnClass(int c) {
         return getValueAt(0, c).getClass();
     }
@@ -72,6 +83,12 @@ public class CheckBoxTableModel extends AbstractTableModel {
     /*
      * Don't need to implement this method unless your table's
      * editable.
+     */
+    /** 
+     * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
+     * @param row
+     * @param col
+     * @return boolean value for CellEditable
      */
     public boolean isCellEditable(int row, int col) {
         //Note that the data/cell address is constant,
@@ -105,6 +122,13 @@ public class CheckBoxTableModel extends AbstractTableModel {
     /*
      * Don't need to implement this method unless your table's
      * data can change.
+     */
+    /**
+     * Sets the value for corresponding Cell
+     * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
+     * @param value
+     * @param row
+     * @param col
      */
     public void setValueAt(Object value, int row, int col) {
         tableData[row][col] = value;

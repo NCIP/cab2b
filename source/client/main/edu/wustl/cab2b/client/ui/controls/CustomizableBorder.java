@@ -49,22 +49,31 @@ public class CustomizableBorder extends AbstractBorder {
         outlineColor = borderLineColor;
     }
 
-    /* (non-Javadoc)
+    /** Checks for Opaque Border
      * @see javax.swing.border.AbstractBorder#isBorderOpaque()
+     * @return boolean value
      */
     public boolean isBorderOpaque() {
         return isBorderOpaque;
     }
 
-    /* (non-Javadoc)
+    /** returns border insets
      * @see javax.swing.border.AbstractBorder#getBorderInsets(java.awt.Component)
+     * @param c
+     * @return insets
      */
     public Insets getBorderInsets(Component c) {
         return insets;
     }
 
-    /* (non-Javadoc)
+    /** paints the border of given component
      * @see javax.swing.border.AbstractBorder#paintBorder(java.awt.Component, java.awt.Graphics, int, int, int, int)
+     * @param c
+     * @param g
+     * @param x
+     * @param y
+     * @param widht
+     * @param height
      */
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
 

@@ -27,6 +27,10 @@ public class Cab2bFileFilter extends FileFilter {
     /* (non-Javadoc)
      * @see javax.swing.filechooser.FileFilter#accept(java.io.File)
      */
+    /**
+     * Function checks whether the file is a directory or if that file type is allowed or not
+     * @param file which needs to be checked 
+     */
     @Override
     public boolean accept(File file) {
         if (file.isDirectory()) {
@@ -43,8 +47,9 @@ public class Cab2bFileFilter extends FileFilter {
         return false;
     }
 
-    /* (non-Javadoc)
+    /** gets the Description a file
      * @see javax.swing.filechooser.FileFilter#getDescription()
+     * @return String
      */
     @Override
     public String getDescription() {

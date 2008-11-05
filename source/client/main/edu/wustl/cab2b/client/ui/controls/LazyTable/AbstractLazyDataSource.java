@@ -29,18 +29,38 @@ public abstract class AbstractLazyDataSource<D> implements LazyDataSourceInterfa
         
     }
 
+    /**  Gets RowCount
+     * @see edu.wustl.cab2b.client.ui.controls.LazyTable.LazyDataSourceInterface#getRowCount()
+     * @return 0
+     */
     public int getRowCount() {
         return 0;
     }
 
+    /** Returns ColumnCount
+     * @see edu.wustl.cab2b.client.ui.controls.LazyTable.LazyDataSourceInterface#getColumnCount()
+     * @return 0
+     */
     public int getColumnCount() {
         return 0;
     }
 
+    /** Gets the Column name for given Column Index
+     * @see edu.wustl.cab2b.client.ui.controls.LazyTable.LazyDataSourceInterface#getColumnName(int)
+     * @param columnNo
+     * @return ColumnName
+     */
     public String getColumnName(int columnNo) {
         return "column_" + columnNo;
     }
 
+    /**
+     * Gets the value for a particular Cell in Object form
+     * @see edu.wustl.cab2b.client.ui.controls.LazyTable.LazyDataSourceInterface#getData(int, int)
+     * @param rowNo
+     * @param columnNo
+     * @return value
+     */
     public Object getData(int rowNo, int columnNo) {
         PageInfo pageInfo = getPageInfo(rowNo, columnNo);
         
@@ -56,20 +76,25 @@ public abstract class AbstractLazyDataSource<D> implements LazyDataSourceInterfa
         return extractDataFromPage(rowNo,columnNo);
     }
 
-    public abstract Object extractDataFromPage(int rowNo, int columnNo);
-
-    /** 
-     * fetches data for a given page info from the server.
-     */
-    public abstract Page<D> fetchPageData(PageInfo pageInfo);
-    
-    
-    
-
     /**
      * @param rowNo
      * @param columnNo
      * @return
+     */
+    public abstract Object extractDataFromPage(int rowNo, int columnNo);
+
+    
+    /**
+     * fetches data for a given page info from the server.
+     * @param pageInfo
+     * @return
+     */
+    public abstract Page<D> fetchPageData(PageInfo pageInfo);
+    
+    /**
+     * @param rowNo
+     * @param columnNo
+     * @return Page Info
      */
     protected PageInfo getPageInfo(int rowNo, int columnNo) {
         int pageStartX = pageDimension.getNoOfRows()* (rowNo / pageDimension.getNoOfRows());
@@ -79,21 +104,27 @@ public abstract class AbstractLazyDataSource<D> implements LazyDataSourceInterfa
 
 
     
-    /**
+    /** Getter Method for Cache
      * @see edu.wustl.cab2b.client.ui.controls.LazyTable.LazyDataSourceInterface#getCache()
+     * @return Cache
      */
     public CacheInterface getCache() {
         return cache;
     };
     
     
-    /**
+    /** Setter Method for Cache
      * @see edu.wustl.cab2b.client.ui.controls.LazyTable.LazyDataSourceInterface#setCache(edu.wustl.cab2b.client.ui.controls.LazyTable.CacheInterface)
+     * @param cache
      */
     public void setCache(CacheInterface cache) {
         this.cache = cache;
     }
 
+    /** Gets the CurrentPage
+     * @see edu.wustl.cab2b.client.ui.controls.LazyTable.LazyDataSourceInterface#getCurrentPage()
+     * @return 
+     */
     public Page<D> getCurrentPage() {
         return currentPage;
     }

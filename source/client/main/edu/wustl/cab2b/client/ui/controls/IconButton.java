@@ -46,36 +46,41 @@ public class IconButton extends JButton implements MouseListener {
         return new ImageIcon(image);
     }
 
-    /* (non-Javadoc)
+    /** Function to handle MouseClicked event
      * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+     * @param arg0
      */
     public void mouseClicked(MouseEvent arg0) {
 
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+    /**Function to handle MouseEntered event
+     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+     * @param arg0
      */
     public void mouseEntered(MouseEvent arg0) {
         setIcon(moButtonIcon);
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+    /**Function to handle MouseExited event
+     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+     * @param e
      */
     public void mouseExited(MouseEvent arg0) {
         this.setIcon(normalButtonIcon);
     }
 
-    /* (non-Javadoc)
+    /** Function to handle MousePressed event
      * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+     * @param arg0
      */
     public void mousePressed(MouseEvent arg0) {
 
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+    /**Function to handle MouseReleased event
+     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+     * @param arg0
      */
     public void mouseReleased(MouseEvent arg0) {
 

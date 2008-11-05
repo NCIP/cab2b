@@ -13,15 +13,25 @@ public  class PageDimension {
 
     private int noOfColumns;
 
+    /**
+     * @param noOfRows
+     * @param noOfColumns
+     */
     public PageDimension(int noOfRows, int noOfColumns) {
         this.noOfRows = noOfRows;
         this.noOfColumns = noOfColumns;
     }
     
+    /**
+     * @return
+     */
     public int getNoOfColumns() {
         return noOfColumns;
     }
     
+    /**
+     * @return
+     */
     public int getNoOfRows() {
         return noOfRows;
     }

@@ -31,8 +31,9 @@ import edu.wustl.cab2b.client.ui.controls.slider.BiSlider;
  *      set range values.
  * 
  *T refers to the column type which is associated to this column.
- * @param T This Model only works on values that are natrually comparable.
  * @author jasbir_sachdeva
+ * @param T This Model only works on values that are natrually comparable.
+ * 
  */
 public class ColumnFilterModel<T extends Comparable> {
 

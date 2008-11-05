@@ -33,9 +33,17 @@ public class TextAreaRenderer extends JTextPane implements TableCellRenderer {
         setContentType("text/html");
     }
 
-    /*
-     * (non-Javadoc)
-     * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
+    /**
+     * Gets CellRendererComponent for Table
+     * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int) 
+     * @param table
+     * @param value
+     * @param isSelected
+     * @param row
+     * @param column
+     * @param hasFocus
+     * @return Component
+     * 
      */
     public Component getTableCellRendererComponent(JTable table, Object obj, boolean isSelected, boolean hasFocus,
                                                    int row, int column) {
