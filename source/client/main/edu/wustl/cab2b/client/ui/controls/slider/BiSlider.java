@@ -17,18 +17,23 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
  */
 public class BiSlider extends JPanel {
 
+    /** Name of Event Signifying Range Changed */
     public static final String EVENT_RANGE_CHANGED = "EVENT_RANGE_CHANGED";
 
+    /** Reference for Cab2bLabel */ 
     public Cab2bLabel lowVal;
 
+    /** Reference for Cab2bLabel */
     public Cab2bLabel hiVal;
 
     MThumbSlider mSlider;
 
+    /** Default Constructor */
     public BiSlider() {
         mSlider = new MThumbSlider();
     }
 
+    /** parameterized Constructor */
     public BiSlider(Vector data) {
         super();
         mSlider = new MThumbSlider(data, this);
@@ -36,14 +41,28 @@ public class BiSlider extends JPanel {
 
     }
     
+    /**
+     * Gets minimum Range Bound
+     * @return
+     */
     public Comparable getRangeMinBound(){
         return (Comparable) mSlider.getMinimumBarValue();
     }
     
+    /**
+     * Gets maximum Range Bound
+     * @return
+     */
     public Comparable getRangeMaxBound(){
         return (Comparable) mSlider.getMaximumBarValue();
     }
 
+    /**
+     * 
+     * @param data
+     * @param initialMin
+     * @param initialMax
+     */
     public BiSlider(Vector data, Object initialMin, Object initialMax) {
         super();
         mSlider = new MThumbSlider(data, this, initialMin, initialMax);
@@ -90,6 +109,9 @@ public class BiSlider extends JPanel {
         this.setVisible(true);
     }
 
+    /**
+     * @param args
+     */
     public static void main(String[] args) {
         Vector vetor = new Vector();
         vetor.add("a");

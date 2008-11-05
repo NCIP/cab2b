@@ -37,21 +37,29 @@ import edu.wustl.cab2b.client.ui.controls.slider.BiSlider;
  */
 public class ColumnFilterModel<T extends Comparable> {
 
+    
+    /** Name of Event signifying Range Filter Changed  */
     public static final String PROPERTY_RANGE_FILTER_CHANGED = "PROPERTY_RANGE_FILTER_CHANGED";
 
+    /** Name of Event signifying Enum List Filter Changed  */
     public static final String PROPERTY_ENUM_LIST_FILTER_CHANGED = "PROPERTY_ENUM_LIST_FILTER_CHANGED";
 
+    /** Name of Event signifying PATTERN FILTER CHANGED */
     public static final String PROPERTY_PATTERN_FILTER_CHANGED = "PROPERTY_PATTERN_FILTER_CHANGED";
 
+    /** Name of Event signifying NO FILTER APPLIED */
     public static final String PROPERTY_NO_FILTER_APPLIED = "PROPERTY_NO_FILTER_APPLIED";
 
     /**     Active filter should be any of the following...*/
     public static final String FILTER_TYPE_NONE = "No";
 
+    /** Filter of Type Pattern */
     public static final String FILTER_TYPE_PATTERN = "Pattern";
 
+    /** Filter of Type List */
     public static final String FILTER_TYPE_ENUMERATION = "List";
 
+    /** Filter of Type Range */
     public static final String FILTER_TYPE_RANGE = "Range";
 
     /**     Specifies which kind of filter is active.   */
@@ -95,22 +103,39 @@ public class ColumnFilterModel<T extends Comparable> {
         pcs = new PropertyChangeSupport(this);
     }
 
+    /**
+     * Gets active Filter Type
+     * @return Active Filter Type
+     */
     public String getActiveFilterType() {
         return activeFilterType;
     }
 
+    /**
+     * Set range bound
+     * @param minBound
+     * @param maxBound
+     */
     protected void setRangerBounds(T minBound, T maxBound) {
         this.minBound = minBound;
         this.maxBound = maxBound;
         isRangeFilterActive = (null != minBound || null != maxBound);
     }
 
+    /**
+     * Set Range Filter Bound
+     * @param minBound
+     * @param maxBound
+     */
     public void setRangeFilterBounds(T minBound, T maxBound) {
         setRangerBounds(minBound, maxBound);
         activeFilterType = FILTER_TYPE_RANGE;
         pcs.firePropertyChange(ColumnFilterModel.PROPERTY_RANGE_FILTER_CHANGED, 0, 1);
     }
 
+    /**
+     * @return new Ranger Component
+     */
     public JComponent getNewRangerComponent() {
         if (null == sampleSortedValues) {
             throw new IllegalStateException("Technical Limitation: Cannot create an instance of "
@@ -127,6 +152,9 @@ public class ColumnFilterModel<T extends Comparable> {
         return bsRanger;
     }
 
+    /**
+     * @return Ranger Component
+     */
     public JComponent getRangerComponent() {
         if (null == sampleSortedValues) {
             throw new IllegalStateException("Technical Limitation: Cannot create an instance of "
@@ -139,6 +167,10 @@ public class ColumnFilterModel<T extends Comparable> {
         return bsRanger;
     }
 
+    /**
+     * Sets the Filter Values
+     * @param selectedItemsIndex
+     */
     public void setFilterValues(int[] selectedItemsIndex) {
         userSelectedItems = selectedItemsIndex;
         activeFilterType = FILTER_TYPE_ENUMERATION;
@@ -166,6 +198,10 @@ public class ColumnFilterModel<T extends Comparable> {
         return userEnumeratedValues.contains(value);
     }
 
+    /**
+     * Sets new Pattern Filter
+     * @param newPattern
+     */
     public void setPatternFilter(String newPattern) {
         pattern = newPattern.toLowerCase();
         activeFilterType = FILTER_TYPE_PATTERN;
@@ -181,6 +217,9 @@ public class ColumnFilterModel<T extends Comparable> {
         return pattern;
     }
 
+    /**
+     * By default sets no filter
+     */
     public void setNoFilter() {
         activeFilterType = FILTER_TYPE_NONE;
         pcs.firePropertyChange(ColumnFilterModel.PROPERTY_NO_FILTER_APPLIED, 0, 1);
@@ -314,10 +353,18 @@ public class ColumnFilterModel<T extends Comparable> {
         sampleSortedValuesAL = new ArrayList(sampleSortedValues);
     }
 
+    /**
+     * Checks Whether any filter is active or not
+     * @return boolean value
+     */
     public boolean isFilterActive() {
         return !activeFilterType.equals(FILTER_TYPE_NONE);
     }
 
+    /** 
+     * Overrides toString() Method
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return "ColumnFilterModel [ " + getFilterDescription() + " ] ";
@@ -384,10 +431,18 @@ public class ColumnFilterModel<T extends Comparable> {
         return "less/eq than " + minBound;
     }
 
+    /**
+     * PropertyChangeListener for adding property
+     * @param pcl
+     */
     public void addPropertyChangeListener(PropertyChangeListener pcl) {
         pcs.addPropertyChangeListener(pcl);
     }
 
+    /**
+     * PropertyChangeListener for removing property
+     * @param pcl
+     */
     public void removePropertyChangeListener(PropertyChangeListener pcl) {
         pcs.removePropertyChangeListener(pcl);
     }

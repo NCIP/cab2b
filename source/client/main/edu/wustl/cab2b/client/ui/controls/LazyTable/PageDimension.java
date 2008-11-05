@@ -23,14 +23,14 @@ public  class PageDimension {
     }
     
     /**
-     * @return
+     * @return no of Columns
      */
     public int getNoOfColumns() {
         return noOfColumns;
     }
     
     /**
-     * @return
+     * @return no of Rows
      */
     public int getNoOfRows() {
         return noOfRows;

@@ -49,46 +49,46 @@ public class JSheet extends javax.swing.JPanel {
     Logger lgr = Logger.getLogger(getClass().getName());
 
     /** Event name that notifies that User has pressed Magnifying-Glass button...      */
-    public static final String EVENT_HEADER_ROW_DOUBLE_CLICKED = "EVENT_HEADER_ROW_DOUBLE_CLICKED";
+    public final static String EVENT_HEADER_ROW_DOUBLE_CLICKED = "EVENT_HEADER_ROW_DOUBLE_CLICKED";
 
     /** Event name that notifies that User has pressed Magnifying-Glass button...      */
-    public static final String EVENT_DATA_ROW_DOUBLE_CLICKED = "EVENT_DATA_ROW_DOUBLE_CLICKED";
+    public final static String EVENT_DATA_ROW_DOUBLE_CLICKED = "EVENT_DATA_ROW_DOUBLE_CLICKED";
 
     /** Added  by Deepak : Event name that notifies that User has selected some data...      */
-    public static final String EVENT_DATA_SINGLE_CLICKED = "EVENT_DATA_SINGLE_CLICKED";
+    public final static String EVENT_DATA_SINGLE_CLICKED = "EVENT_DATA_SINGLE_CLICKED";
 
     /** Event name that notifies that User is interested in details of some Row...      */
-    public static final String REQUESTED_SHOW_ROW_DETAILS = "REQUESTED_SHOW_ROW_DETAILS";
+    public final static String REQUESTED_SHOW_ROW_DETAILS = "REQUESTED_SHOW_ROW_DETAILS";
 
     /**
      * Copy menu button name
      */
-    public static final String MENU_BUTTON_COPY = "MENU_BUTTON_COPY";
+    public final static String MENU_BUTTON_COPY = "MENU_BUTTON_COPY";
 
     /**
      * Paste menu button name
      */
-    public static final String MENU_BUTTON_PASTE = "MENU_BUTTON_PASTE";
+    public final static String MENU_BUTTON_PASTE = "MENU_BUTTON_PASTE";
 
     /**
      * Add Column menu button name
      */
-    public static final String MENU_BUTTON_ADD_COLUMN = "MENU_BUTTON_ADD_COLUMN";
+    public final static String MENU_BUTTON_ADD_COLUMN = "MENU_BUTTON_ADD_COLUMN";
 
     /**
      * Properties menu button name
      */
-    public static final String MENU_BUTTON_PROPERTIES = "MENU_BUTTON_PROPERTIES";
+    public final static String MENU_BUTTON_PROPERTIES = "MENU_BUTTON_PROPERTIES";
 
     /**
      * Reset menu button name
      */
-    public static final String MENU_BUTTON_RESET = "MENU_BUTTON_RESET";
+    public final static String MENU_BUTTON_RESET = "MENU_BUTTON_RESET";
 
     /**
      * Clear menu button name
      */
-    public static final String MENU_BUTTON_CLEAR = "MENU_BUTTON_CLEAR";
+    public final static String MENU_BUTTON_CLEAR = "MENU_BUTTON_CLEAR";
 
     /**     Should I allow user to create new columns and allow cut/paste on them?      */
     boolean allowWrite = true;
@@ -311,6 +311,10 @@ public class JSheet extends javax.swing.JPanel {
     /*
      * Returns FiltersViewConsole
      * return JComponent
+     */
+    /**
+     * Gives the Console View of all Filters
+     * @return Component
      */
     public JComponent getFiltersViewConsole() {
         diaFiltersViewConsole.getContentPane().removeAll();
@@ -552,6 +556,9 @@ public class JSheet extends javax.swing.JPanel {
     ///////////                                                                             BEHAVIOUR SPECIFIC    
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     *Adds User Column 
+     */
     public void addUserColumn() {
         //  model index is -1, for unknown.
         //  Create a Column...

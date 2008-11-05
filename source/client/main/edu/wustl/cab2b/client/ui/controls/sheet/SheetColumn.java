@@ -50,10 +50,17 @@ public class SheetColumn extends TableColumn {
     }
     
 
+    /**
+     * @return Column Filter Condition
+     */
     public ColumnFilterModel getFilterCondition() {
         return cfmFilterCondition;
     }
 
+    /**
+     * Set Column Filter Condition
+     * @param cfmFilterCondition
+     */
     public void setFilterCondition(ColumnFilterModel cfmFilterCondition) {
         if( this.cfmFilterCondition != null)
             this.cfmFilterCondition.removePropertyChangeListener( lsnColFilterModel);
@@ -74,14 +81,24 @@ public class SheetColumn extends TableColumn {
         pcs.firePropertyChange( FILTER_CHANGED, null, evt);
     }
 
+    /**
+     * @return Boolean Value
+     */
     public boolean isVisible() {
         return isVisible.booleanValue();
     }
     
+    /**
+     * @return Boolean Value
+     */
     public Boolean getVisible() {
         return isVisible;
     }
 
+    /**
+     * Sets Visibility
+     * @param isVisible
+     */
     public void setVisible(Boolean isVisible) {
         Boolean oldVal = this.isVisible;
         this.isVisible = isVisible;
@@ -89,10 +106,18 @@ public class SheetColumn extends TableColumn {
                 null, this);
     }
 
+    /**
+     * Checks for User Column
+     * @return Boolean Value
+     */
     public boolean isUserColumn() {
         return isUserColumn;
     }
 
+    /**
+     * Sets User Column
+     * @param isUserColumn
+     */
     public void setUserColumn(boolean isUserColumn) {
         this.isUserColumn = isUserColumn;
     }
@@ -105,18 +130,29 @@ public class SheetColumn extends TableColumn {
         }
     }
     
+    /** Property Change Listener for Adding Property
+     * @see javax.swing.table.TableColumn#addPropertyChangeListener(java.beans.PropertyChangeListener)
+     * @param pcl
+     */
     @Override
     public void addPropertyChangeListener(PropertyChangeListener pcl) {
         super.addPropertyChangeListener(pcl);
         pcs.addPropertyChangeListener(pcl);
     }
 
+    /** Property Change Listener for remove Property
+     * @see javax.swing.table.TableColumn#removePropertyChangeListener(java.beans.PropertyChangeListener)
+     * @param pcl
+     */
     @Override
     public void removePropertyChangeListener(PropertyChangeListener pcl) {
         super.removePropertyChangeListener(pcl);
         pcs.removePropertyChangeListener(pcl);
     }
 
+    /** override method toString 
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString(){
         StringBuffer vapus = new StringBuffer();

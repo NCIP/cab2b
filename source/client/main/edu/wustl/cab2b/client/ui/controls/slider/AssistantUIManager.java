@@ -14,6 +14,11 @@ import javax.swing.plaf.ComponentUI;
  */
 public class AssistantUIManager {
 
+    /**
+     * Creates UI with Look and Feel defined in UIManager
+     * @param c
+     * @return Component
+     */
     public static ComponentUI createUI(JComponent c) {
         String componentName = c.getClass().getName();
 
@@ -55,6 +60,10 @@ public class AssistantUIManager {
         return null;
     }
 
+    /**
+     * Sets the name of UI for the Component passed 
+     * @param c
+     */
     public static void setUIName(JComponent c) {
         String key = c.getUIClassID();
         String uiClassName = (String) UIManager.get(key);
@@ -74,6 +83,9 @@ public class AssistantUIManager {
         }
     }
 
+    /**
+     * 
+     */
     public AssistantUIManager() {
     }
 

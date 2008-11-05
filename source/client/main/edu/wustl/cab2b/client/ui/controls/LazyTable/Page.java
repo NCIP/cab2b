@@ -24,10 +24,17 @@ public class Page<D> {
         this.data = data;
     }
     
+    /**
+     * @return PageInfo
+     */
     public PageInfo getPageInfo() {
         return pageInfo;
     }
 
+    /**
+     * @return Data
+     * 
+     */
     public D getData() {
         return data;
     }

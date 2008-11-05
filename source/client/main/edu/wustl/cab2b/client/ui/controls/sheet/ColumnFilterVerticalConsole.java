@@ -59,6 +59,9 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         Common.setBackgroundWhite(pnlFilterControlContainer);
     }
 
+    /**
+     * Changes the Orientation to Horizontal
+     */
     public void changeOrientationToHorizontal() {
         removeAll();
         initComponentsHoriLayout(pnlHorizontalLayout);
@@ -68,18 +71,29 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         repaint();
     }
 
+    /**
+     * Removes old installed Control Listeners
+     * @param oldFilterModel
+     */
     public void uninstallControlListeners(ColumnFilterModel oldFilterModel) {
         lstValues.removeListSelectionListener(listSelectionListener);
         tfPattern.getDocument().removeDocumentListener(patternChangeListener);
         oldFilterModel.getRangerComponent().removePropertyChangeListener(rangePropertyChangeListener);
     }
 
+    /**
+     * installs Control Listeners
+     */
     public void installControlListeners() {
         lstValues.addListSelectionListener(listSelectionListener);
         tfPattern.getDocument().addDocumentListener(patternChangeListener);
         model.getRangerComponent().addPropertyChangeListener(rangePropertyChangeListener);
     }
 
+    /**
+     * Shows Null Model Notification
+     * @param showNullNotification
+     */
     void showNullModelNotification(boolean showNullNotification) {
         removeAll();
         if (showNullNotification) {
@@ -89,6 +103,10 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         }
     }
 
+    /**
+     * Sets model depending on Filter Type
+     * @param filterModel
+     */
     public void setModel(ColumnFilterModel filterModel) {
         showNullModelNotification(null == filterModel);
         if (filterModel == null) {
@@ -533,6 +551,10 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
         butApplyFilter.setEnabled(true);
     }
 
+    /**
+     * Sets the Header of a Column
+     * @param strColumnName
+     */
     public void setHeader(String strColumnName) {
         if (null == strColumnName || strColumnName.length() == 0) {
             pnlVVColumnName.setVisible(false);

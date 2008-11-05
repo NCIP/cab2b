@@ -83,15 +83,16 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
     private int columnAppendCount = 0;
 
     /***/
-    public static final String EXT_COLUMNS_NAME_PREFIX = "N.Col-";
+    public final static String EXT_COLUMNS_NAME_PREFIX = "N.Col-";
 
     /** To be used by Table while laying out Columns... */
     int defaultColWidth = Toolkit.getDefaultToolkit().getScreenSize().width / 20;
 
     /** Events name, fired when some button is pressed. */
-    public static final String BUTTON_SELECT_ALL = "BUTTON_SELECT_ALL";
+    public final static String BUTTON_SELECT_ALL = "BUTTON_SELECT_ALL";
 
-    public static final String BUTTON_SELECTION_RESET = "BUTTON_SELECTION_RESET";
+    /** Events name, fired when some button is reset. */
+    public final static String BUTTON_SELECTION_RESET = "BUTTON_SELECTION_RESET";
 
     TableRowSorter tblRowSorter = new TableRowSorter();
 
@@ -161,6 +162,9 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
         Common.setButtonsLooks(this);
     }
 
+    /**
+     * Forms new ToolBar same as existing Context Menu
+     */
     public void setupToolBarFromContextMenu() {
         // Make Tool bar replica of context menu...
         for (int idx = 0; idx < popTblContextMnu.getComponentCount(); idx++) {
@@ -262,6 +266,9 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
         miClearSelection.setAction(actClearSelection);
     }
 
+    /**
+     * Make Tool bar replica of context menu...
+     */
     public void setupToolBar() {
         // Make Tool bar replica of context menu...
         tbarMain.addSeparator(new Dimension(11, 0));
@@ -284,6 +291,10 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
         tbarMain.add(actResetAll);
     }
 
+    /**
+     * Removes the given Component from Tool Bar
+     * @param menuName
+     */
     public void removeComponentFromToolBar(String menuName) {
         if (menuName.equals(JSheet.MENU_BUTTON_PROPERTIES)) {
             tbarMain.remove(butPropertiesTB);
@@ -338,6 +349,10 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
     //
     // Listeners...
     //
+    /** Property Change Listener
+     * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+     * @param evt
+     */
     public void propertyChange(PropertyChangeEvent evt) {
 
     }
@@ -345,7 +360,10 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
     //
     // Getters & Setters...
     //
-    /** Scenario C.2-B: Model settings and Relay of Table Model Events. */
+    /** Scenario C.2-B: Model settings and Relay of Table Model Events. 
+     * @param tmROData
+     * @param colSheetAL
+     * */
     public void setReadOnlyDataModel(TableModel tmROData, ArrayList<SheetColumn> colSheetAL) {
         // Chk Non-null Data Model
         if (null == tmROData) {
@@ -372,10 +390,18 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
         tblRowHeader.invalidate();
     }
 
+    /**
+     * Gets Read Only Data Model
+     * @return table modal
+     */
     public TableModel getReadOnlyDataModel() {
         return compositeDataModel.getPrimaryModel();
     }
 
+    /**
+     * Gets Composite Data Model
+     * @return table model
+     */
     public TableModel getCompositeDataModel() {
         return compositeDataModel;
     }
@@ -952,30 +978,54 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
         }
     }
 
+    /**
+     * Property Change Listener for addTableRowSelectionListener
+     * @param l
+     */
     public void addTableRowSelectionListener(ListSelectionListener l) {
         tblData.getSelectionModel().addListSelectionListener(l);
     }
 
+    /**
+     * Property Change Listener for removeTableRowSelectionListener
+     * @param l
+     */
     public void removeTableRowSelectionListener(ListSelectionListener l) {
         tblData.getSelectionModel().removeListSelectionListener(l);
     }
 
+    /**
+     * Property Change Listener for addTableColSelectionListener
+     * @param l
+     */
     public void addTableColSelectionListener(ListSelectionListener l) {
         tblData.getColumnModel().getSelectionModel().removeListSelectionListener(l);
         tblData.getColumnModel().getSelectionModel().addListSelectionListener(l);
         colSelectionListeners.add(l);
     }
 
+    /**
+     * Property Change Listener for removeTableColSelectionListener
+     * @param l
+     */
     public void removeTableColSelectionListener(ListSelectionListener l) {
         tblData.getColumnModel().getSelectionModel().removeListSelectionListener(l);
         colSelectionListeners.remove(l);
     }
 
+    /**
+     * Property Change Listener for addTableModelListener
+     * @param tml
+     */
     public void addTableModelListener(TableModelListener tml) {
         // tblModelListener .add( tml);
         tblData.getModel().addTableModelListener(tml);
     }
 
+    /**
+     * Property Change Listener for addTableRowsorterListener
+     * @param rsl
+     */
     public void addTableRowsorterListener(RowSorterListener rsl) {
         tblRowSorterListener.add(rsl);
     }
@@ -1122,6 +1172,8 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
     /**
      * ALL Selected rows and columns data would be picked and returned. Columns
      * will be separated with tabs.
+     * @param includeColHeaders
+     * @return Selected Rows and Columns with Tabs
      */
     public StringBuffer getTblSelectionDataWithTabs(boolean includeColHeaders) {
         return getTblSelectionData(includeColHeaders, false);
@@ -1130,6 +1182,8 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
     /**
      * ALL Selected rows and columns data would be picked and returned. Columns
      * will be separated with comma.
+     * @param includeColHeaders
+     * @return Selected Rows and Columns with Commas
      */
     public StringBuffer getTblSelectionDataWithCommas(boolean includeColHeaders) {
         return getTblSelectionData(includeColHeaders, true);
@@ -1138,6 +1192,9 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
     /**
      * ALL columns for rows "selRows" would be picked, irrespective of the
      * visiblility. Rows are in table viewcoordinated.
+     * @param selRows
+     * @param includeColHeaders
+     * @return
      */
     public StringBuffer getTblRowDataWithTabs(int[] selRows, boolean includeColHeaders) {
         return getTblRowData(selRows, includeColHeaders, true);
@@ -1166,6 +1223,9 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
      * 
      * isCommaSepatrated: true => Separate all cell values with Comma false =>
      * Separate all cell values with Tabs
+     * @param includeColHeaders
+     * @param isCommaSepatrated
+     * @return
      */
     public StringBuffer getTblSelectionData(boolean includeColHeaders, boolean isCommaSepatrated) {
         StringBuffer sBuff = new StringBuffer();
@@ -1185,6 +1245,11 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
      * 
      * isCommaSepatrated: true => Separate all cell values with Comma false =>
      * Separate all cell values with Tabs
+     * @param rowsIdx
+     * @param colsIdx
+     * @param includeColHeaders
+     * @param isCommaSepatrated
+     * @return
      */
     public StringBuffer getTblSelectionData(int[] rowsIdx, int[] colsIdx, boolean includeColHeaders,
                                             boolean isCommaSepatrated) {

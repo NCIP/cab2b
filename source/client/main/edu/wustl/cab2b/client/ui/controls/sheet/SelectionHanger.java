@@ -38,10 +38,18 @@ public class SelectionHanger extends javax.swing.JPanel {
         reset();
     }
     
+    /**
+     * Sets Paint Selection
+     * @param paintSelection
+     */
     public void setPaintSelection( boolean paintSelection){
         isPaintSelection = paintSelection;
     }
     
+    /**
+     * Checks for Paint Selection
+     * @return Boolean Value
+     */
     public boolean isPaintSelection(){
         return isPaintSelection;
     }
@@ -98,8 +106,11 @@ public class SelectionHanger extends javax.swing.JPanel {
         repaint();
     }//GEN-LAST:event_formComponentResized
 
+    /** Draws Magnifying glass inside the Component as per precomputed specifications...
+     * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
+     * @param g
+     */
     @Override
-    /**     Draws Magnifying glass inside the Component as per precomputed specifications...    */
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -125,6 +136,9 @@ public class SelectionHanger extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * @param args
+     */
     public static void main(String[] args) {
         JFrame mf = new JFrame("Testing " + SelectionHanger.class.getName());
 

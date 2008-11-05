@@ -30,6 +30,7 @@ class SheetCustomizationModel extends AbstractTableModel {
 
     private PropertyChangeSupport pcs;
 
+    /** Reference Definition for SheetColumnListener */
     protected SheetColumnListener lsnSheetColumns = new SheetColumnListener();
 
     private int activeFiltersCount = 0;
@@ -116,14 +117,27 @@ class SheetCustomizationModel extends AbstractTableModel {
         col.addPropertyChangeListener(lsnSheetColumns);
     }
 
+    /** Gets Row Count
+     * @see javax.swing.table.TableModel#getRowCount()
+     * @return row count
+     */
     public int getRowCount() {
         return scRowInfoAL.size();
     }
 
+    /** Gets Column Count
+     * @see javax.swing.table.TableModel#getColumnCount()
+     * @return 4
+     */
     public int getColumnCount() {
         return 4;
     }
 
+    /** Gets Column Name
+     * @see javax.swing.table.AbstractTableModel#getColumnName(int)
+     * @param columnIndex
+     * @return Column Name
+     */
     @Override
     public String getColumnName(int columnIndex) {
         switch (columnIndex) {
@@ -139,6 +153,11 @@ class SheetCustomizationModel extends AbstractTableModel {
         return null;
     }
 
+    /** Gets Column Class
+     * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+     * @param columnIndex
+     * @return Column Class
+     */
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {
@@ -154,6 +173,13 @@ class SheetCustomizationModel extends AbstractTableModel {
         return Object.class;
     }
 
+    /**
+     * Checks whether cell is editable or not
+     * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
+     * @param rowIndex
+     * @param columnIndex
+     * @return Boolean Value
+     */
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         switch (columnIndex) {
@@ -169,6 +195,13 @@ class SheetCustomizationModel extends AbstractTableModel {
         return false;
     }
 
+    /** 
+     * Gets the cell value of particular cell
+     * @see javax.swing.table.TableModel#getValueAt(int, int)
+     * @param rowIndex
+     * @param columnIndex
+     * @return cell value
+     */
     public Object getValueAt(int rowIndex, int columnIndex) {
         SheetColumn sheetCol = scRowInfoAL.get(rowIndex);
         switch (columnIndex) {
@@ -184,6 +217,12 @@ class SheetCustomizationModel extends AbstractTableModel {
         return null;
     }
 
+    /** Sets the value of particular cell 
+     * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
+     * @param aValue
+     * @param rowIndex
+     * @param columnIndex
+     */
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         SheetColumn sheetCol = scRowInfoAL.get(rowIndex);
@@ -201,10 +240,18 @@ class SheetCustomizationModel extends AbstractTableModel {
         pcs.firePropertyChange(Common.USER_COLUMN_ADDITION_REQUESTED, 0, 1);
     }
 
+    /**
+     * PropertyChangeListener for Add PropertyChange
+     * @param pcl
+     */
     public void addPropertyChangeListener(PropertyChangeListener pcl) {
         pcs.addPropertyChangeListener(pcl);
     }
 
+    /**
+     * PropertyChangeListener for Remove PropertyChange
+     * @param pcl
+     */
     public void removePropertyChangeListener(PropertyChangeListener pcl) {
         pcs.removePropertyChangeListener(pcl);
     }

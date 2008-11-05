@@ -46,7 +46,7 @@ public class MThumbSlider extends JSlider {
     /**
      * Class ID
      */
-    private static final String uiClassID = "MThumbSliderUI";
+    private final static String uiClassID = "MThumbSliderUI";
 
     /**
      * Input data vector for slider
@@ -145,7 +145,8 @@ public class MThumbSlider extends JSlider {
         this.inputData = objectInput;
     }
 
-    /* (non-Javadoc)
+    /**
+     * Updates UI
      * @see javax.swing.JSlider#updateUI()
      */
     public void updateUI() {
@@ -153,8 +154,10 @@ public class MThumbSlider extends JSlider {
         super.updateUI();
     }
 
-    /* (non-Javadoc)
+    /**
+     * Gets the UI Class
      * @see javax.swing.JSlider#getUIClassID()
+     * @return returns UI Class
      */
     public String getUIClassID() {
         return uiClassID;
@@ -202,15 +205,17 @@ public class MThumbSlider extends JSlider {
         return inputData.get(getValueAt(1));
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.swing.JSlider#getMinimum()
+     * @return minimum
      */
     public int getMinimum() {
         return getModelAt(0).getMinimum();
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.swing.JSlider#getMaximum()
+     * @return maximum
      */
     public int getMaximum() {
         return getModelAt(0).getMaximum();
@@ -279,8 +284,11 @@ public class MThumbSlider extends JSlider {
         trackFillColor = color;
     }
 
-    /* (non-Javadoc)
+    /** Gets the ToolTipText
      * @see javax.swing.JComponent#getToolTipText(java.awt.event.MouseEvent)
+     * @param e MouseEvent
+     * @return String which is null
+     * 
      */
     public String getToolTipText(MouseEvent e) {
         return null;

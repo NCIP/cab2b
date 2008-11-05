@@ -42,10 +42,17 @@ public class MThumbSliderAdditionalUI {
 
     TrackListener trackListener;
 
+    /** Constructor
+     * @param ui
+     */
     public MThumbSliderAdditionalUI(BasicSliderUI ui) {
         this.ui = ui;
     }
 
+    /** 
+     * Sets UI for given Component
+     * @param c
+     */
     public void installUI(JComponent c) {
         mSlider = (MThumbSlider) c;
         JToolTip toolTip = mSlider.createToolTip();
@@ -61,12 +68,19 @@ public class MThumbSliderAdditionalUI {
         changeHandler = new ChangeHandler();
     }
 
+    /**
+     * Removes UI for given Component
+     * @param c
+     */
     public void uninstallUI(JComponent c) {
         thumbRects = null;
         trackListener = null;
         changeHandler = null;
     }
 
+    /**
+     * Calculates Thumb Size
+     */
     protected void calculateThumbsSize() {
         Dimension size = ((MThumbSliderAdditional) ui).getThumbSize();
         for (int i = 0; i < thumbNum; i++) {
@@ -74,6 +88,9 @@ public class MThumbSliderAdditionalUI {
         }
     }
 
+    /**
+     * calculates Thumb Location
+     */
     protected void calculateThumbsLocation() {
         for (int i = 0; i < thumbNum; i++) {
             if (mSlider.getSnapToTicks()) {
@@ -114,16 +131,28 @@ public class MThumbSliderAdditionalUI {
         }
     }
 
+    /**
+     * @return Thumb Number
+     */
     public int getThumbNum() {
         return thumbNum;
     }
 
+    /**
+     * @return Thumb Rectangles
+     */
     public Rectangle[] getThumbRects() {
         return thumbRects;
     }
 
     private static Rectangle unionRect = new Rectangle();
 
+    /**
+     * Sets Thumb Location for given location
+     * @param x
+     * @param y
+     * @param index
+     */
     public void setThumbLocationAt(int x, int y, int index) {
 
         Rectangle rect = thumbRects[index];
@@ -138,6 +167,9 @@ public class MThumbSliderAdditionalUI {
         mSlider.repaint(unionRect.x, unionRect.y, unionRect.width, unionRect.height);
     }
 
+    /**
+     * @return
+     */
     public Rectangle getTrackRect() {
         return ((MThumbSliderAdditional) ui).getTrackRect();
     }
@@ -154,7 +186,9 @@ public class MThumbSliderAdditionalUI {
     public class TrackListener extends MouseInputAdapter {
         protected transient int offset;
 
-        protected transient int currentMouseX, currentMouseY;
+        protected transient int currentMouseX;
+        
+        protected transient int currentMouseY;
 
         protected Rectangle adjustingThumbRect = null;
 

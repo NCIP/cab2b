@@ -11,12 +11,26 @@ import java.awt.Rectangle;
  */
 public interface MThumbSliderAdditional {
 
+    /**
+     * @return Rectangle
+     */
     public Rectangle getTrackRect();
 
+    /**
+     * @return Dimension
+     */
     public Dimension getThumbSize();
 
+    /**
+     * @param value
+     * @return integer
+     */
     public int xPositionForValue(int value);
 
+    /**
+     * @param value
+     * @return integer 
+     */
     public int yPositionForValue(int value);
 
 }
