@@ -22,4 +22,8 @@ public interface ICab2bQuery extends IParameterizedQuery {
     EntityInterface getOutputEntity();
 
     void setOutputEntity(EntityInterface outputEntity);
+
+    void setUserId(Long userId);
+
+    Long getUserId();
 }

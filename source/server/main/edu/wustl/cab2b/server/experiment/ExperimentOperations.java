@@ -39,9 +39,7 @@ import edu.wustl.cab2b.server.cache.DatalistCache;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
-import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAO;
-import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.tree.ExperimentTreeNode;
@@ -64,7 +62,7 @@ public class ExperimentOperations extends DefaultBizLogic {
      * A function to persist an experiment object.
      * 
      * @param exp
-     *            experiment ot persist.
+     *            experiment to persist.
      * @param daoType
      *            DAO Type to use.
      * @throws UserNotAuthorizedException
@@ -206,7 +204,7 @@ public class ExperimentOperations extends DefaultBizLogic {
         */
         List idList = new ArrayList();
         idList.add(userIdentity);
-        return (List<Experiment>) Utility.executeHQL("getLatestExperimentByUserId", idList);
+        return (List<Experiment>) Utility.executeHQL("getLatestExperimentByUserName", idList);
     }
 
     /**

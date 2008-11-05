@@ -68,7 +68,7 @@
 
 		<property
             name="userId"
-            type="string"
+            type="long"
             update="true"
             insert="true"
             column="USER_ID"

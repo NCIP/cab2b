@@ -30,19 +30,19 @@ public class AdditionalMetadata extends AbstractDomainObject implements java.io.
      * @return name of the domain object.
      */
 
-    protected String userId;
+    protected Long userId;
 
     /**
      * @return the userId
      * 
-     * @hibernate.property name="userId" column="USER_ID" type="string" length="254"  not-null="true" 
+     * @hibernate.property name="userId" column="USER_ID" type="long" length="30"  not-null="true" 
      */
 
-    public String getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

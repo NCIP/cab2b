@@ -22,19 +22,21 @@
 						where dataListMetadata.id = ? and experiement.userId = ?
  	</query>
  	
- 	<query name="getQueriesByUserId">
- 		select cab2bQuery
-       		from edu.wustl.cab2b.common.queryengine.Cab2bQuery cab2bQuery 
-       			where cab2bQuery.userId = ?
+ 	<query name="getQueriesByUserName">
+ 		from edu.wustl.cab2b.common.queryengine.Cab2bQuery cab2bQuery 
+       		where cab2bQuery.userId = (Select user.userId from edu.wustl.cab2b.common.user.User user where user.userName = ?)
  	</query>
  	
- 	<query name="getLatestExperimentByUserId">
- 		select Exp from edu.wustl.cab2b.common.domain.Experiment Exp where Exp.userId = ?   
- 		order by Exp.lastUpdatedOn
+ 	<query name="getLatestExperimentByUserName">
+ 		from edu.wustl.cab2b.common.domain.Experiment Exp 
+ 			where Exp.userId = (Select user.userId from edu.wustl.cab2b.common.user.User user where user.userName = ?)   
+ 			order by Exp.lastUpdatedOn
    </query>
  	
  	<query name="getExperimentHierarchy">
- 		select ExpGrp from edu.wustl.cab2b.common.domain.ExperimentGroup as ExpGrp where ExpGrp.parentGroup.id is null and ExpGrp.userId = ?
+ 		from edu.wustl.cab2b.common.domain.ExperimentGroup as ExpGrp
+ 		where ExpGrp.parentGroup.id is null 
+ 		and ExpGrp.userId = (Select user.userId from edu.wustl.cab2b.common.user.User user where user.userName = ?)
    </query>
  	
  	

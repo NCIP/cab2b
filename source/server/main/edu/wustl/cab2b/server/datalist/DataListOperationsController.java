@@ -257,8 +257,8 @@ public class DataListOperationsController {
      */
     public DataListMetadata saveCustomDataCategory(IdName rootEntityIdName,
                                                    Collection<AttributeInterface> selectedAttributeList,
-                                                   String name, Experiment experiment, String userId)
-            throws CheckedException, RemoteException {
+                                                   String name, Experiment experiment) throws CheckedException,
+            RemoteException {
         EntityInterface rootEntity;
         try {
             rootEntity = EntityManager.getInstance().getEntityByIdentifier(rootEntityIdName.getId());
@@ -318,7 +318,7 @@ public class DataListOperationsController {
         processResult(recordResult, rooDataCategoryNode, attributeValues, oldToNewAttribute, customEntity);
 
         Long originId = edu.wustl.cab2b.common.util.DataListUtil.getOriginEntity(rootEntity).getId();
-        DataListMetadata customDataListMetadata = saveCustomDataListMetaData(customEntity, name, originId, userId);
+        DataListMetadata customDataListMetadata = saveCustomDataListMetaData(customEntity, name, originId);
 
         saveDlMetaDataToExpt(experiment, customDataListMetadata);
 
@@ -466,14 +466,12 @@ public class DataListOperationsController {
      *            id of origianl root entoity
      * @return
      */
-    private DataListMetadata saveCustomDataListMetaData(EntityInterface entity, String name,
-                                                        Long originalEntityId, String userId) {
+    private DataListMetadata saveCustomDataListMetaData(EntityInterface entity, String name, Long originalEntityId) {
         DataListMetadata dataList = new DataListMetadata();
         dataList.setName(name);
         dataList.setCreatedOn(new Date());
         dataList.setLastUpdatedOn(new Date());
         dataList.setCustomDataCategory(true);
-        dataList.setUserId(userId);
         dataList.addEntityInfo(entity.getId(), name, originalEntityId);
         new DataListMetadataOperations().saveDataListMetadata(dataList);
 

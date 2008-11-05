@@ -53,6 +53,15 @@ public class UserOperations extends DefaultBizLogic {
     public UserInterface getUserByName(String value) {
         return getUser("userName", value);
     }
+    
+    /**
+     * This method returns user from database with given user name
+     * @param name user name
+     * @return User
+     */
+    public UserInterface getUserById(String value) {
+        return getUser("userId", value);
+    }
 
     /**
      * This method returns the user with administrative rights

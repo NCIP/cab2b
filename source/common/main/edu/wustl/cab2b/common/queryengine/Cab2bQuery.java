@@ -4,6 +4,7 @@ import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.cache.AbstractEntityCache;
+import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery;
 
 /**
@@ -19,33 +20,19 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
     private List<String> outputClassUrls;
 
     private EntityInterface outputEntity;
-    
-    private String userId;
-    
-    
-    /**
-     * @return the userId
-     * 
-     * @hibernate.property name="userId" column="USER_ID" type="string" length="254"  not-null="true" 
-     */
-    public String getUserId() {
-        return userId;
-    }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+    private Long userId;
 
     public Cab2bQuery() {
         super();
     }
-    
+
     public Cab2bQuery(ICab2bQuery query) {
         super(query);
         outputEntity = query.getOutputEntity();
-        outputClassUrls = query.getOutputUrls();    
+        outputClassUrls = query.getOutputUrls();
     }
-    
+
     /**
      * @return the outputClassUrls.
      * 
@@ -75,7 +62,6 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
         this.outputEntity = outputEntity;
     }
 
-    // for hibernate
     /**
      * @return the entityId
      * 
@@ -92,5 +78,21 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
     @SuppressWarnings("unused")
     private void setEntityId(Long entityId) {
         this.outputEntity = AbstractEntityCache.getCache().getEntityById(entityId);
-    }   
+    }
+
+    /**
+     * @hibernate.property name="userId" column="USER_ID" type="long" length="30" not-null="true" 
+     * @return
+     */
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public void setUserId(UserInterface user) {
+        userId = user.getUserId();
+    }
 }

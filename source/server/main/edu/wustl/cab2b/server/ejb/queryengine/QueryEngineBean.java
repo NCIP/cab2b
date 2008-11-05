@@ -12,7 +12,6 @@ import org.hibernate.HibernateException;
 
 import edu.wustl.cab2b.common.domain.DCQL;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
-import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -41,9 +40,9 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#executeQuery(edu.wustl.cab2b.common.queryengine.ICab2bQuery,
      *      org.globus.gsi.GlobusCredential)
      */
-    public IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String dref , String idP)
+    public IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String dref, String idP)
             throws GeneralSecurityException, IOException, Exception {
-        GlobusCredential cred = UserOperations.getGlobusCredential(dref,idP);
+        GlobusCredential cred = UserOperations.getGlobusCredential(dref, idP);
         new PopularCategoryOperations().setPopularity(query);
         return new QueryExecutor(query, cred).executeQuery();
     }
@@ -53,11 +52,10 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * 
      * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#saveQuery(edu.wustl.cab2b.common.queryengine.ICab2bQuery)
      */
-    public void saveQuery(ICab2bQuery query, String dref , String idP) throws RemoteException, GeneralSecurityException,
-            IOException, Exception {
-        GlobusCredential cred = UserOperations.getGlobusCredential(dref, idP);
+    public void saveQuery(ICab2bQuery query, String dref, String idP) throws RemoteException,
+            GeneralSecurityException, IOException, Exception {
+        UserOperations.getGlobusCredential(dref, idP);
         new HibernateCleanser(query).clean();
-        ((Cab2bQuery) query).setUserId(cred.getIdentity());
         new QueryBizLogic<ICab2bQuery>().saveQuery(query);
     }
 
@@ -95,16 +93,13 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * 
      * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#getAllQueryNameAndDescription()
      */
-    public Collection<IParameterizedQuery> getAllQueryNameAndDescription(String dref,String idP) throws RemoteException,
-            IOException, GeneralSecurityException, Exception {
+    public Collection<IParameterizedQuery> getAllQueryNameAndDescription(String dref, String idP)
+            throws RemoteException, IOException, GeneralSecurityException, Exception {
         try {
-
-            GlobusCredential cred = UserOperations.getGlobusCredential(dref,idP);
+            GlobusCredential cred = UserOperations.getGlobusCredential(dref, idP);
             List idList = new ArrayList(1);
             idList.add(cred.getIdentity());
-            return (List<IParameterizedQuery>) Utility.executeHQL("getQueriesByUserId", idList);
-            //return HibernateUtility.executeHQL(HibernateUtility.GET_PARAMETERIZED_QUERIES_DETAILS);
-
+            return (List<IParameterizedQuery>) Utility.executeHQL("getQueriesByUserName", idList);
         } catch (HibernateException e) {
             throw new RemoteException(e.getMessage());
         }

@@ -4,7 +4,6 @@ import java.util.List;
 
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.cab2b.server.user.UserOperations;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.exception.BizLogicException;
@@ -58,17 +57,11 @@ public class ExperimentGroupOperations extends DefaultBizLogic {
      * @throws BizLogicException
      * @throws UserNotAuthorizedException
      */
-    public ExperimentGroup addExperimentGroup(Long parentExperimentGroupId, ExperimentGroup experimentGroup,
-                                              String dref, String idP) throws DAOException, BizLogicException,
-            UserNotAuthorizedException {
+    public ExperimentGroup addExperimentGroup(Long parentExperimentGroupId, ExperimentGroup experimentGroup)
+            throws DAOException, BizLogicException, UserNotAuthorizedException {
         ExperimentGroup parentExperimentGroup = getExperimentGroup(parentExperimentGroupId);
         experimentGroup.setParentGroup(parentExperimentGroup);
 
-        try {
-            experimentGroup.setUserId(UserOperations.getGlobusCredential(dref, idP).getIdentity());
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
-        }
         return addExperimentGroup(experimentGroup);
     }
 }

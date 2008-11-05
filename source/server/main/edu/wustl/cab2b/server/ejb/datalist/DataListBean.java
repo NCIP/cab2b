@@ -63,15 +63,14 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
      */
     public DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata, String dref,
                                          String selectedIdentityProvider) throws RemoteException {
-        String userId = null;
+
         try {
-            userId = UserOperations.getGlobusCredential(dref, selectedIdentityProvider).getIdentity();
+            UserOperations.getGlobusCredential(dref, selectedIdentityProvider).getIdentity();
 
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
         }
 
-        datalistMetadata.setUserId(userId);
         return new DataListOperationsController().saveDataList(rootDataRow, datalistMetadata);
 
     }
@@ -85,15 +84,13 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
                                              List<AttributeInterface> newAttributes, String serializedRef,
                                              String selectedIdentityProvider) throws RemoteException,
             CheckedException {
-        String userId = null;
+
         try {
-            userId = UserOperations.getGlobusCredential(serializedRef, selectedIdentityProvider).getIdentity();
+            UserOperations.getGlobusCredential(serializedRef, selectedIdentityProvider).getIdentity();
 
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
         }
-
-        dataListMetadata.setUserId(userId);
         return new DataListOperationsController().saveDataCategory(rootRecordDataRow, dataListMetadata,
                                                                    oldAttribute, newAttributes);
     }
@@ -113,6 +110,6 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
         }
 
         return new DataListOperationsController().saveCustomDataCategory(rootEntityId, selectedAttributeList,
-                                                                         string, experiment, userId);
+                                                                         string, experiment);
     }
 }

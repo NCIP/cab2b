@@ -96,8 +96,8 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
     public void addExperiment(Long experimentGroupId, Experiment experiment, String serializedCredRef, String idP)
             throws RemoteException, BizLogicException, UserNotAuthorizedException, DAOException {
         try {
-            String userId = UserOperations.getGlobusCredential(serializedCredRef, idP).getIdentity();
-            experiment.setUserId(userId);
+            UserOperations.getGlobusCredential(serializedCredRef, idP).getIdentity();
+
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
 
