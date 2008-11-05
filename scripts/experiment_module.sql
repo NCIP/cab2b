@@ -22,7 +22,7 @@ create table CAB2B_ADDITIONAL_META_DATA (
    DESCRIPTION varchar(255),
    CREATED_ON date,
    LAST_UPDATED_ON date,
-   USER_ID varchar(254) not null,
+   USER_ID bigint not null,
    primary key (AMD_ID)
 );
 create table CAB2B_ABSTRACT_DOMAIN_OBJECT (
