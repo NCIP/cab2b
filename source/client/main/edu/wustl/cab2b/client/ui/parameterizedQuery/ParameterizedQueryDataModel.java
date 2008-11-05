@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.common.querysuite.queryobject.ICondition;
@@ -36,6 +37,7 @@ public class ParameterizedQueryDataModel {
      */
     public ParameterizedQueryDataModel() {
         query = new Cab2bQuery();
+        query.setUserId(UserCache.getInstance().getCurrentUser().getUserId());
     }
 
     /**
@@ -47,6 +49,7 @@ public class ParameterizedQueryDataModel {
         } else {
             query = ObjectCloner.clone(iQuery);
         }
+        query.setUserId(UserCache.getInstance().getCurrentUser().getUserId());
     }
 
     /**

@@ -31,6 +31,7 @@ import org.jdesktop.swingx.LinkRenderer;
 import org.jdesktop.swingx.action.LinkAction;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -393,6 +394,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                 dataListMetadata.setCreatedOn(new Date());
                 dataListMetadata.setLastUpdatedOn(new Date());
                 dataListMetadata.setCustomDataCategory(true);
+                dataListMetadata.setUserId(UserCache.getInstance().getCurrentUser().getUserId());
 
                 DataList customCategoryDataList = new DataList();
                 customCategoryDataList.setDataListAnnotation(dataListMetadata);

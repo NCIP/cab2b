@@ -17,6 +17,7 @@ import javax.swing.JTextArea;
 
 import org.apache.log4j.Logger;
 
+import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -230,6 +231,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
             dataListAnnotation.setDescription(dataListDesc);
             dataListAnnotation.setCreatedOn(new Date());
             dataListAnnotation.setLastUpdatedOn(new Date());
+            dataListAnnotation.setUserId(UserCache.getInstance().getCurrentUser().getUserId());
 
             final IDataRow newRootDataRow = processNode(MainSearchPanel.getDataList().getRootDataRow());
             MainSearchPanel.getDataList().setDataListAnnotation(dataListAnnotation);
@@ -246,7 +248,8 @@ public class SaveDatalistPanel extends Cab2bPanel {
                         MainSearchPanel.savedDataListMetadata = dataListBI.saveDataList(
                                                                                         newRootDataRow,
                                                                                         dataListAnnotation,
-                                                                                        UserValidator.getSerializedDelegatedCredReference(),UserValidator.getIdP());
+                                                                                        UserValidator.getSerializedDelegatedCredReference(),
+                                                                                        UserValidator.getIdP());
                         logger.debug("data list saved successfully (in entity with id) : "
                                 + MainSearchPanel.savedDataListMetadata.getId());
 
