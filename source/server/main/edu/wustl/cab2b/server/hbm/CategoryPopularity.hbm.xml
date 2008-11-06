@@ -44,6 +44,16 @@
             length="30"
             not-null="true"
         />
+        
+        <property
+            name="date"
+            type="date"
+            update="true"
+            insert="true"
+            column="DATE"
+            length="30"
+            not-null="false"
+        />
 
         <!--
             To add non XDoclet property mappings, create a file named

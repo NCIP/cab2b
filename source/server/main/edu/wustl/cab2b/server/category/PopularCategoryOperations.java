@@ -2,6 +2,7 @@ package edu.wustl.cab2b.server.category;
 
 import java.sql.Connection;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -52,7 +53,8 @@ public class PopularCategoryOperations {
         for (EntityInterface entityInterface : entities) {
             if (Utility.isCategory(entityInterface)) {
                 Connection connection = ConnectionUtil.getConnection();
-                Category category = CategoryCache.getInstance(connection).getCategoryByEntityId(entityInterface.getId());
+                Category category = CategoryCache.getInstance(connection).getCategoryByEntityId(
+                                                                                                entityInterface.getId());
                 CategoryOperations categoryOperations = new CategoryOperations();
                 Collection<EntityInterface> entityCollection = categoryOperations.getAllSourceClasses(category);
                 for (EntityInterface en : entityCollection) {
@@ -73,6 +75,7 @@ public class PopularCategoryOperations {
                                                 HibernateDatabaseOperations<CategoryPopularity> hiberOp) {
         long entityid = entitiy.getId();
         CategoryPopularity categoryPopularity = getPopularity(entityid, hiberOp);
+        categoryPopularity.setDate(new Date());
         hiberOp.insertOrUpdate(categoryPopularity);
     }
 

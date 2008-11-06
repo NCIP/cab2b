@@ -1,6 +1,8 @@
 package edu.wustl.cab2b.common.category;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * @author Hrishikesh Rajpathak
@@ -20,6 +22,22 @@ public class CategoryPopularity implements CategoryPopularityInterface, Serializ
     private Long popularity;
 
     private Long id;
+
+    private Date date;
+    
+    /**
+     * @return Returns the date created.
+     * 
+     * @hibernate.property column="DATE" type="date" length="30"
+     *                     not-null="false"
+     */
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
     /**
      * @return Returns the popularity.
@@ -75,4 +93,5 @@ public class CategoryPopularity implements CategoryPopularityInterface, Serializ
     private void setId(Long id) {
         this.id = id;
     }
+
 }
