@@ -55,7 +55,7 @@ public class ShowAllSavedQueryPanel extends ShowAllPanel {
             getTable().getColumnModel().removeColumn(colModel.getColumn(colModel.getColumnCount() - 1));
     }
 
-    /* (non-Javadoc)
+    /** Link Action Perfomred Event
      * @see edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllPanel#linkActionPerformed()
      */
     @Override
@@ -77,7 +77,7 @@ public class ShowAllSavedQueryPanel extends ShowAllPanel {
      * Action method for home-page query link
      * @param queryID
      */
-    final public static void queryLinkAction(Long queryID) {
+    public static final void queryLinkAction(Long queryID) {
         QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                                     EjbNamesConstants.QUERY_ENGINE_BEAN,
                                                                                                                                     QueryEngineHome.class,

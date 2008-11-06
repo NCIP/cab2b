@@ -23,10 +23,19 @@ public class DateTypePanel extends AbstractTypePanel {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(DateTypePanel.class);
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
+    /**
+     * @param conditionList
+     * @param maxLabelDimension
+     */
     public DateTypePanel(ArrayList<String> conditionList, Dimension maxLabelDimension) {
         super(conditionList, maxLabelDimension);
     }
 
+    /**
+     * Gives first component in Panel
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getFirstComponent()
+     * @return
+     */
     public JComponent getFirstComponent() {
         DatePanel datePanel = new DatePanel();
         return datePanel;
@@ -47,6 +56,10 @@ public class DateTypePanel extends AbstractTypePanel {
         return datePanel;
     }
 
+    /**
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getValues()
+     * @return ArrayList
+     */
     public ArrayList<String> getValues() {
         ArrayList<String> values = new ArrayList<String>();
         Date date = ((DatePanel) firstComponent).getDatePicker().getDate();
@@ -60,6 +73,10 @@ public class DateTypePanel extends AbstractTypePanel {
         return values;
     }
 
+    /** 
+     * @see edu.wustl.cab2b.client.ui.main.IComponent#setValues(java.util.ArrayList)
+     * @param values  
+     */
     public void setValues(ArrayList<String> values) {
         if (values.size() == 1) {
             Date date = null;
@@ -172,6 +189,7 @@ class DatePanel extends Cab2bPanel {
 
     /**
      * Sets visible all the components inside the DatePanel.
+     * @param aFlag
      */
     public void setVisible(boolean aFlag) {
         if (datePicker != null) {
@@ -185,6 +203,7 @@ class DatePanel extends Cab2bPanel {
 
     /**
      * Sets opaque all the components inside the DatePanel.
+     * @param isOpaque
      */
     public void setOpaque(boolean isOpaque) {
         if (datePicker != null) {
@@ -198,6 +217,7 @@ class DatePanel extends Cab2bPanel {
 
     /**
      * Sets enabled all the component inside the DatePanel.
+     * @param enabled
      */
     public void setEnabled(boolean enabled) {
         if (datePicker != null) {

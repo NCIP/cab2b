@@ -84,11 +84,17 @@ public class CustomCategoryPanel extends JXFrame {
 
     private DefaultComboBoxModel categoryComboboxModel = new DefaultComboBoxModel();
 
+    /**
+     * @param exp
+     */
     public CustomCategoryPanel(Experiment exp) {
         this.experiment = exp;
         initGUI();
     }
 
+    /**
+     *  Initializes all the GUI Component
+     */
     public void initGUI() {
         dataListCombo = new Cab2bComboBox();
         categoryCombo = new Cab2bComboBox();

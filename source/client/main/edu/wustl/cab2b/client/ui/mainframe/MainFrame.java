@@ -93,14 +93,17 @@ public class MainFrame extends JXFrame {
             this.textToShow = textToShow;
         }
 
+        /**
+         * @return Text String
+         */
         public String getTextToShow() {
             return textToShow;
         }
     };
 
-    private static Cab2bLabel status;
+    static private Cab2bLabel status;
 
-    private static Cab2bLabel statusMessage;
+    static private Cab2bLabel statusMessage;
 
     private JXStatusBar statusBar;
 
@@ -356,6 +359,9 @@ public class MainFrame extends JXFrame {
         this.searchWizardDialog = searchWizardDialog;
     }
 
+    /**
+     * Closes Search Wizard Dialog
+     */
     public void closeSearchWizardDialog() {
         searchWizardDialog.dispose();
     }

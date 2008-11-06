@@ -52,7 +52,7 @@ public class UserValidator {
      * @param userName
      * @param password
      * @param idP
-     * @return boolean stating is valid user or not
+     * @throws RemoteException
      */
     public static void validateUser(String userName, String password, String idP) throws RemoteException {
         setUserName(userName);
@@ -247,10 +247,16 @@ public class UserValidator {
         UserValidator.delegatedCredentialReference = delegatedCredentialReference;
     }
 
+    /**
+     * @return
+     */
     public static String getIdP() {
         return idP;
     }
 
+    /**
+     * @param idP
+     */
     public static void setIdP(String idP) {
         UserValidator.idP = idP;
     }

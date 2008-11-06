@@ -29,7 +29,8 @@ public class GlobalNavigationPanel extends Cab2bPanel {
 
 	private GlobalNavigationGlassPane myGlassPane;
 
-	public static final String EXPERIMENT_HOMEBUTTON_CLICK = "EXPERIMENT_HOMEBUTTON_CLICK";
+	/** Experiment Home Button*/
+	static final public String EXPERIMENT_HOMEBUTTON_CLICK = "EXPERIMENT_HOMEBUTTON_CLICK";
 
 	/**
 	 * Background color of the panel.
@@ -45,6 +46,10 @@ public class GlobalNavigationPanel extends Cab2bPanel {
 
 	private static MainSearchPanel mainSearchPanel = null;
 
+	/**
+	 * @param frame
+	 * @param mainFrame
+	 */
 	public GlobalNavigationPanel(JXFrame frame, MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
 		this.frame = frame;
@@ -85,6 +90,9 @@ public class GlobalNavigationPanel extends Cab2bPanel {
 		this.addPropertyChangeListener(new PropertyListener());
 	}
 
+	/**
+	 * @return
+	 */
 	public GlobalNavigationGlassPane getGlobalNavigationGlassPane() {
 		return this.myGlassPane;
 	}

@@ -23,25 +23,28 @@ public class StringTypePanel extends AbstractTypePanel {
         super(conditionList, maxLabelDimension);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getFirstComponent()
+     * @return JComponent first component of String Panel
      */
     public JComponent getFirstComponent() {
         return new Cab2bFormattedTextField(CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE,
                 Cab2bFormattedTextField.PLAIN_FIELD);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getSecondComponent()
+     * @return JComponent second component of String Panel
      */
     public JComponent getSecondComponent() {
         return new Cab2bFormattedTextField(CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE,
                 Cab2bFormattedTextField.PLAIN_FIELD);
     }
 
-    /* Method to set values in the component
-     *  (non-Javadoc)
+    /** Method to set values in the component
+     * 
      * @see edu.wustl.cab2b.client.ui.main.IComponent#setValues(java.util.ArrayList)
+     * @param values
      */
     public void setValues(ArrayList<String> values) {
         if (values.size() == 0) {
@@ -59,14 +62,16 @@ public class StringTypePanel extends AbstractTypePanel {
         }
     }
 
-    /* (non-Javadoc)
+    /**
      * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#setComponentPreference(java.lang.String)
+     * @param condition
      */
     public void setComponentPreference(String condition) {
 
     }
 
-    /* (non-Javadoc)
+    /**
+     * Resets all the values in String Panel 
      * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#resetPanel()
      */
     public void resetPanel() {

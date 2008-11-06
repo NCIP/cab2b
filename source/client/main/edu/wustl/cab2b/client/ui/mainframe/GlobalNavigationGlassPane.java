@@ -91,6 +91,9 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         initUI();
     }
 
+    /**
+     * @return Search Button
+     */
     public JButton getSearchButton() {
         return tabButtons[1];
     }
@@ -206,8 +209,9 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
         this.repaint();
     }
 
-    /* (non-Javadoc)
+    /**
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @param e ActionEvent
      */
     public void actionPerformed(ActionEvent e) {
         JButton button = (JButton) e.getSource();
@@ -250,7 +254,6 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
 
     /**
      * Method to set experiment home panel 
-     * @param button
      */
     public void setExperimentHomePanel() {
         setExperimentTabSelected();
@@ -269,7 +272,8 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
     }
 
     /**
-     * Method to set ShowAllPanel(like ShowAllCategoryPanel, ShowAllQueryLinkPanel) on righthand side of homepage 
+     * Method to set ShowAllPanel(like ShowAllCategoryPanel, ShowAllQueryLinkPanel) on righthand side of homepage
+     * @param panel 
      */
     public void setShowAllPanel(ShowAllPanel panel) {
         tabButtons[0].setIcon(new ImageIcon(tabsImagesPressed[0]));

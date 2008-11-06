@@ -78,26 +78,27 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
     /**
      * Method for initilizing UI
      */
-    abstract protected void initializeGUI();
+    protected abstract void initializeGUI();
 
     /**
      * This method refreshes the table data
      */
-    abstract protected void refreshAmbiguityTable();
+    protected abstract void refreshAmbiguityTable();
 
     /**
      * This method sets the renderers to the columns of the table and adds the table searchPanel to this object
      */
-    abstract protected void addTablePanel();
+    protected abstract void addTablePanel();
 
     /**
      * Returns the data for the Ambiguity Resolver table
      * @return Array of Object array containing the table data
      */
-    abstract protected AbstractTableModel getAmbiguityTableModel();
+    protected abstract AbstractTableModel getAmbiguityTableModel();
 
     /**
      * This method returns a searchPanel containing table
+     * @param jTable
      * @return searchPanel of table
      */
     protected Cab2bPanel createTablePanel(JTable jTable) {
@@ -114,6 +115,7 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
 
     /**
      * This method returns the table of path list
+     * @param abstractTableModel
      * @return table of path list
      */
     protected JTable createAmbiguityPathTable(AbstractTableModel abstractTableModel) {
@@ -192,6 +194,7 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
 
     /**
      * This method returns the searchPanel of the buttons
+     * @param submitButtonListener
      * @return searchPanel of buttons
      */
     protected Cab2bPanel createButtonPanel(ActionListener submitButtonListener) {
@@ -212,8 +215,9 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
         return buttonPanel;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see edu.wustl.cab2b.client.ui.controls.IDialogInterface#setParentWindow(javax.swing.JDialog)
+     * @param dialog
      */
     public void setParentWindow(JDialog dialog) {
         parentWindow = dialog;

@@ -19,19 +19,25 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
  *
  */
 public class ShowAllCategoryPanel extends ShowAllPanel {
-    /**
-     * 
-     */
+    
     private static final long serialVersionUID = 1L;
 
+    /** Category Name of Category*/
     public static final String CATEGORY_NAME_TITLE = "Category Name";
 
+    /** Description of Category*/
     public static final String CATEGORY_DESCRIPTION_TITLE = "Description";
 
+    /** Popularity Category*/
     public static final String CATEGORY_POPULARITY_TITLE = "Popularity";
 
+    /** Date Last updated of Category*/
     public static final String CATEGORY_DATE_TITLE = "Date Last updated";
 
+    /**
+     * @param tableHeader
+     * @param data
+     */
     public ShowAllCategoryPanel(Object[] tableHeader, Object[][] data) {
         super(tableHeader, data);
         //hiding last column from table which contains category object
@@ -40,7 +46,7 @@ public class ShowAllCategoryPanel extends ShowAllPanel {
             getTable().getColumnModel().removeColumn(colModel.getColumn(colModel.getColumnCount() - 1));
     }
 
-    /* (non-Javadoc)
+    /** Action Performed Event
      * @see edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllPanel#linkActionPerformed()
      */
     @Override

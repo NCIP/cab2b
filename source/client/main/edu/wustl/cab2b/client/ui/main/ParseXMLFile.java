@@ -50,7 +50,7 @@ public class ParseXMLFile {
 
     /**
      * Constructor for parsing the XML file. 
-     *
+     * @throws CheckedException
      */
     protected ParseXMLFile() throws CheckedException {
 
@@ -59,6 +59,10 @@ public class ParseXMLFile {
         readDynamicUIComponents(root);
     }
 
+    /**
+     * @return Object Reference of ParseXMLFile
+     * @throws CheckedException
+     */
     public static ParseXMLFile getInstance() throws CheckedException {
         if (instance == null) {
             instance = new ParseXMLFile();
@@ -189,18 +193,34 @@ public class ParseXMLFile {
         return doc;
     }
 
+    /**
+     * @param dataTypeString
+     * @return
+     */
     public String getNonEnumClassName(String dataTypeString) {
         return nonEnumDataTypeToComponentMap.get(dataTypeString);
     }
 
+    /**
+     * @param dataTypeString
+     * @return
+     */
     public String getEnumClassName(String dataTypeString) {
         return enumDataTypeToComponentMap.get(dataTypeString);
     }
 
+    /**
+     * @param dataTypeString
+     * @return
+     */
     public ArrayList<String> getEnumConditionList(String dataTypeString) {
         return enumDataTypeToConditionMap.get(dataTypeString);
     }
 
+    /**
+     * @param dataTypeString
+     * @return
+     */
     public ArrayList<String> getNonEnumConditionList(String dataTypeString) {
         return nonEnumDataTypeToConditionMap.get(dataTypeString);
     }

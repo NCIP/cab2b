@@ -47,13 +47,14 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
 
     private static final long serialVersionUID = -1709041822051570137L;
 
-    final private Collection<EntityGroupInterface> allServices = new ArrayList<EntityGroupInterface>();
+    private final Collection<EntityGroupInterface> allServices = new ArrayList<EntityGroupInterface>();
 
     private JXTitledPanel titledSearchResultsPanel;
 
     /**
      * This is the action listener will fire the property change event on allservicepanel 
      * object and is handled in the rightpanel.
+     * @param event
      */
     public void actionPerformed(ActionEvent event) {
         final String serviceName = event.getActionCommand();
@@ -223,6 +224,10 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
         return pageElementCollection;
     }
 
+    /**
+     * @param serviceName
+     * @param status
+     */
     public void refreshPanel(String serviceName, String status) {
         Cab2bPanel resultPanel = new Cab2bPanel();
         Collection<EntityGroupInterface> filteredServices = new ArrayList<EntityGroupInterface>();

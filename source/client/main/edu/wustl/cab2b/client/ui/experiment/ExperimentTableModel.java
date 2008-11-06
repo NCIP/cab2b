@@ -12,19 +12,40 @@ public class ExperimentTableModel extends Cab2bTable{
 	
 	private Map<String,AttributeInterface> m_attributeMap;
 	
+	/**
+	 * @param showCheckBox
+	 * @param data
+	 * @param header
+	 */
 	public ExperimentTableModel(boolean showCheckBox, Object[][] data, Object[] header) {
 		super(showCheckBox, data, header);
 	}
 	
+	/**
+	 * @param showCheckBox
+	 * @param data
+	 * @param header
+	 * @param attributeMap
+	 */
 	public ExperimentTableModel(boolean showCheckBox, Object[][] data, Object[] header,Map <String,AttributeInterface> attributeMap ) {
 		super(showCheckBox, data, header);
 		this.m_attributeMap=attributeMap;
 	}
 	
+	/**
+	 * @param showCheckBox
+	 * @param data
+	 * @param headers
+	 */
 	public ExperimentTableModel(boolean showCheckBox, Vector data, Vector headers) {
 		super(showCheckBox, data, headers);
 	}
 	
+	/**
+	 * Gets Column Attributes Interface for a given Column
+	 * @param columnName
+	 * @return Attribute Interface
+	 */
 	public AttributeInterface getColumnAttribute(String columnName) {
 		return m_attributeMap.get(columnName);
 	}

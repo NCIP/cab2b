@@ -23,8 +23,12 @@ public class BooleanTypePanel extends AbstractTypePanel {
 
     private ButtonGroup group;
 
-    private static JRadioButton selectedButton;
+    static private JRadioButton selectedButton;
 
+    /**
+     * @param conditionList
+     * @param maxLabelDimension
+     */
     public BooleanTypePanel(ArrayList<String> conditionList, Dimension maxLabelDimension) {
         super(conditionList, maxLabelDimension);
     }
@@ -60,6 +64,7 @@ public class BooleanTypePanel extends AbstractTypePanel {
 
     /**
      * Returns the first component, with model set to true and false value.
+     * @return JComponent
      */
     public JComponent getFirstComponent() {
         return getComboForBoolean();
@@ -68,6 +73,7 @@ public class BooleanTypePanel extends AbstractTypePanel {
     /**
      * Returns the second component. There is no need of second component for
      * Boolean type, hence returns an empty component.
+     * @return JComponent
      */
     public JComponent getSecondComponent() {
         JPanel secondComponent = new JPanel();
@@ -76,11 +82,20 @@ public class BooleanTypePanel extends AbstractTypePanel {
         return secondComponent;
     }
 
+    /**
+     * Checks whether the radio Button is Selected or not
+     * @param jRadioButton
+     * @return Boolean Value
+     */
     public static boolean isSelected(JRadioButton jRadioButton) {
         DefaultButtonModel model = (DefaultButtonModel) jRadioButton.getModel();
         return model.getGroup().isSelected(model);
     }
 
+    /**
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getValues()
+     * @return ArrayList 
+     */
     public ArrayList<String> getValues() {
         ArrayList<String> values = new ArrayList<String>();
 
@@ -93,6 +108,10 @@ public class BooleanTypePanel extends AbstractTypePanel {
         return values;
     }
 
+    /**
+     * @see edu.wustl.cab2b.client.ui.main.IComponent#setValues(java.util.ArrayList)
+     * @param values
+     */
     public void setValues(ArrayList<String> values) {
         if (values.size() == 0) {
             return;
@@ -113,9 +132,17 @@ public class BooleanTypePanel extends AbstractTypePanel {
 
     }
 
+    /**
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#setComponentPreference(java.lang.String)
+     * @param condition
+     */
     public void setComponentPreference(String condition) {
     }
 
+    /**
+     * Resets the Panel
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#resetPanel()
+     */
     public void resetPanel() {
         JPanel panel = (JPanel) firstComponent;
         JRadioButton radioButton = (JRadioButton) panel.getComponent(2);

@@ -95,6 +95,11 @@ public class NewExperimentPanel extends Cab2bPanel implements ActionListener {
         this.add(wizardButtonPanel, BorderLayout.SOUTH);
 
     }
+    /** ActionListener for actionPerformed
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @param e ActionEvent
+     */
+    
     public void actionPerformed(ActionEvent e) {
         JButton wizardButton = (JButton) e.getSource();
         String actionCommnad = wizardButton.getActionCommand();

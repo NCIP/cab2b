@@ -45,6 +45,7 @@ import edu.wustl.common.querysuite.queryobject.impl.Condition;
 
 public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent {
 
+    /** Text Field Column Size */
     public static final int CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE = 9;
 
     /**
@@ -247,15 +248,17 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         return attribute;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see edu.wustl.cab2b.client.ui.main.IComponent#getConditionItem()
+     * @return String 
      */
     public String getConditionItem() {
         return (String) conditionComboBox.getSelectedItem();
     }
 
-    /* (non-Javadoc)
+    /**
      * @see edu.wustl.cab2b.client.ui.main.IComponent#setCondition(java.lang.String)
+     * @param str
      */
     public void setCondition(String str) {
         int itemCount = conditionComboBox.getItemCount();
@@ -414,7 +417,8 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     }
 
     /**
-     * @return the nameLabel
+     * Sets the Display Name for corresponding Attribute
+     * @param displayName
      */
     public void setAttributeDisplayName(String displayName) {
         this.displayName = displayName;
@@ -437,7 +441,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 
     /**
      * Returns valid condition from panel otherwise null
-     * 
+     * @param parentPanel
      * @param index
      * @return
      */
@@ -539,10 +543,9 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         return 1;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see edu.wustl.cab2b.client.ui.main.IComponent#getValues()
+     * @return ArrayList
      */
     public ArrayList<String> getValues() {
 

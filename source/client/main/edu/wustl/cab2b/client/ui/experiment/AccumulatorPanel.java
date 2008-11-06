@@ -49,6 +49,13 @@ public class AccumulatorPanel extends Cab2bPanel {
 
     private int heightBetweenButtons;
 
+    /**
+     * @param width
+     * @param height
+     * @param leftTitle
+     * @param rightTitle
+     * @param heightBetweenButtons
+     */
     public AccumulatorPanel(int width, int height, String leftTitle, String rightTitle, int heightBetweenButtons) {
 
         this.listBoxWidth = width;
@@ -68,6 +75,10 @@ public class AccumulatorPanel extends Cab2bPanel {
         initGUI();
     }
 
+    /**
+     * @param availableAttributes
+     * @param selectedAttributes
+     */
     public void setModel(Collection<UserObjectWrapper> availableAttributes,
                          Collection<UserObjectWrapper> selectedAttributes) {
         availableAttributeModel.clear();
@@ -82,6 +93,10 @@ public class AccumulatorPanel extends Cab2bPanel {
 
     }
 
+    /**
+     * @param leftTitle
+     * @param rightTitle
+     */
     public AccumulatorPanel(String leftTitle, String rightTitle) {
         this(300, 350, leftTitle, rightTitle, 10);
     }

@@ -31,22 +31,26 @@ public class NumberTypePanel extends AbstractTypePanel {
         super(conditionList, maxLabelDimension);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getFirstComponent()
+     * @return JComponent the first component in Number Panel
      */
     public JComponent getFirstComponent() {
         return getProperFormattedTextField();
     }
 
-    /* (non-Javadoc)
+    /**
      * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getSecondComponent()
+     * @return JComponent the second component in Number Panel
      */
     public JComponent getSecondComponent() {
         return getProperFormattedTextField();
     }
 
-    /* (non-Javadoc)
+    /**
+     * Sets the values for Number Panel
      * @see edu.wustl.cab2b.client.ui.main.IComponent#setValues(java.util.ArrayList)
+     * @param values
      */
     public void setValues(ArrayList<String> values) {
         if (values.size() == 0) {
@@ -103,8 +107,9 @@ public class NumberTypePanel extends AbstractTypePanel {
         return formattedTextField;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#setComponentPreference(java.lang.String)
+     * @param condition
      */
     public void setComponentPreference(String condition) {
         if ((getConditionItem().compareToIgnoreCase("IN") == 0 || getConditionItem().compareToIgnoreCase("Not IN") == 0)) {
@@ -114,7 +119,8 @@ public class NumberTypePanel extends AbstractTypePanel {
         }
     }
 
-    /* (non-Javadoc)
+    /**
+     * Resets all the values in the Number panel
      * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#resetPanel()
      */
     public void resetPanel() {

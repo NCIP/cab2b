@@ -17,14 +17,26 @@ import edu.wustl.cab2b.common.util.PermissibleValueComparator;
 public class EnumTypePanel extends AbstractTypePanel {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * @param conditionList
+     * @param maxLabelDimension
+     */
     public EnumTypePanel(ArrayList<String> conditionList, Dimension maxLabelDimension) {
         super(conditionList, maxLabelDimension);
     }
 
+    /**
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getFirstComponent()
+     * @return JComponent the first component in Enum Panel
+     */
     public JComponent getFirstComponent() {
         return getComponent();
     }
 
+    /**
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getSecondComponent()
+     * @return JComponent the second component in Enum Panel
+     */
     public JComponent getSecondComponent() {
         return getComponent();
     }
@@ -46,6 +58,11 @@ public class EnumTypePanel extends AbstractTypePanel {
         return jComponent;
     }
 
+    /**
+     * Gets the values for Enum Panel
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getValues()
+     * @return values
+     */
     public ArrayList<String> getValues() {
         ArrayList<String> selected = new ArrayList<String>();
         Object[] values = ((Cab2bListBox) firstComponent).getSelectedValues();
@@ -57,13 +74,26 @@ public class EnumTypePanel extends AbstractTypePanel {
         return selected;
     }
 
+    /**
+     * Sets the values for Enum Panel
+     * @see edu.wustl.cab2b.client.ui.main.IComponent#setValues(java.util.ArrayList)
+     * @param values
+     */
     public void setValues(ArrayList<String> values) {
         ((Cab2bListBox) firstComponent).setSelectedValues(values);
     }
 
+    /**
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#setComponentPreference(java.lang.String)
+     * @param condition
+     */
     public void setComponentPreference(String condition) {
     }
 
+    /**
+     * Resets all the values in the Enum panel
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#resetPanel()
+     */
     public void resetPanel() {
         ArrayList<String> newValues = new ArrayList<String>();
         newValues.add(Constants.SELECT);
