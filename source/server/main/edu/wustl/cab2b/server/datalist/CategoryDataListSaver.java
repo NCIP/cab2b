@@ -39,6 +39,7 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
      * creates a {@link CategoryEntityTreeParser} for the newly created root
      * entity.
      * 
+     * @param oldEntity
      * @see #populateNewEntity(EntityInterface)
      * @see edu.wustl.cab2b.server.datalist.AbstractDataListSaver#initialize(edu.common.dynamicextensions.domaininterface.EntityInterface)
      */
@@ -60,6 +61,8 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
      * <p>
      * Associations among the newly created entities are "symbolic" and do not
      * correspond to any "real" association.
+     * 
+     * @param oldEntity
      * 
      * @throws IllegalArgumentException if the old entity does not represent a
      *             category.
@@ -107,6 +110,9 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
      * used in this process to obtain additional info (such as associations
      * among the entities etc..).
      * 
+     * 
+     * @param record
+     * @return The map of records
      * @see edu.wustl.cab2b.server.datalist.AbstractDataListSaver#transformToMap(edu.wustl.cab2b.common.queryengine.result.IRecord)
      */
     @Override

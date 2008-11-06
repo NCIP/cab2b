@@ -17,6 +17,10 @@ public class DatalistCache {
 
     }
 
+    /**
+     * Returns reference to DatalistCache
+     * @return DatalistCache
+     */
     public static synchronized DatalistCache getInstance() {
         if (datalistCache == null) {
             datalistCache = new DatalistCache();
@@ -33,6 +37,11 @@ public class DatalistCache {
         }
     }
 
+    /**
+     * Returns reference to EntityInterface
+     * @param id
+     * @return Reference to EntityInterface
+     */
     public EntityInterface getEntityWithId(Long id) {
         if (!isEntityPresent(id)) {
             throw new RuntimeException("Entity with given id not found.");
@@ -40,10 +49,19 @@ public class DatalistCache {
         return entityForId.get(id);
     }
 
+    /**
+     * Adds entity.
+     * @param entity
+     */
     public void addEntity(EntityInterface entity) {
         entityForId.put(entity.getId(), entity);
     }
 
+    /**
+     * Checks whether entity corresponding to given id present or not. 
+     * @param id
+     * @return
+     */
     public boolean isEntityPresent(Long id) {
         return entityForId.containsKey(id);
     }

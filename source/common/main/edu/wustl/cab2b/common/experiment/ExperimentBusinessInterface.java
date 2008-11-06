@@ -20,6 +20,7 @@ import edu.wustl.common.util.dbManager.DAOException;
 public interface ExperimentBusinessInterface extends BusinessInterface {
 
     /**
+     * Adds Experiment for expression.
      * @param exp
      * @throws BizLogicException
      * @throws UserNotAuthorizedException
@@ -28,6 +29,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
     public void addExperiment(Object exp) throws BizLogicException, UserNotAuthorizedException, RemoteException;
 
     /**
+     * Adds a given experiment to specific Experiment Group.
      * @param experimentGroupId
      * @param experiment
      * @throws BizLogicException
@@ -39,6 +41,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
             throws BizLogicException, UserNotAuthorizedException, DAOException, RemoteException;
 
     /**
+     * Moves a experiment from given Experiment group to a target Experiment group
      * @param exp
      * @param srcExpGrp
      * @param tarExpGrp
@@ -51,6 +54,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
             UserNotAuthorizedException, RemoteException;
 
     /**
+     * Copy given Experiment to target Experiment group.
      * @param exp
      * @param tarExpGrp
      * @throws BizLogicException
@@ -61,6 +65,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
             RemoteException;
 
     /**
+     * Returns list of experiment hierarchy.
      * @return
      * @throws ClassNotFoundException
      * @throws DAOException
@@ -79,8 +84,9 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
             throws RemoteException;
 
     /**
-     * @param id
-     * @return
+     * Returns experiment belongs to given id.
+     * @param id experiment id
+     * @return Experiment belongs to given id.
      * @throws RemoteException
      * @throws DAOException
      */
@@ -108,7 +114,8 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
             throws RemoteException;
 
     /**
-     * @param experimentId
+     * Adds a data list to given experiment.
+     * @param experimentId data list to be added in this experiment
      * @param dataListMetaDataId
      * @throws RemoteException
      */

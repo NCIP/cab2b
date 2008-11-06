@@ -48,7 +48,7 @@ public abstract class AbstractDataListRetriever<R extends IRecord> implements Da
      * Merely saves the provided entity in a member variable and marks this
      * retriever as initialized. The entity is the one whose records are to be
      * fetched.
-     * 
+     * @param entity the entity whose records are to be retrieved.
      * @see edu.wustl.cab2b.server.datalist.DataListRetriever#initialize(edu.common.dynamicextensions.domaininterface.EntityInterface)
      */
     public void initialize(EntityInterface entity) {
@@ -56,10 +56,18 @@ public abstract class AbstractDataListRetriever<R extends IRecord> implements Da
         setInitialized(true);
     }
 
+    /**
+     * Returns initialize status
+     * @return
+     */
     protected final boolean isInitialized() {
         return initialized;
     }
 
+    /**
+     * Set initialized status
+     * @param initialized
+     */
     protected final void setInitialized(boolean initialized) {
         this.initialized = initialized;
     }
@@ -154,6 +162,11 @@ public abstract class AbstractDataListRetriever<R extends IRecord> implements Da
         return res;
     }
 
+    /**
+     * Returns Attributes List
+     * @param entity
+     * @return List of Attributes
+     */
     protected List<AbstractAttributeInterface> getAttributesList(EntityInterface entity) {
         List<AbstractAttributeInterface> res = new ArrayList<AbstractAttributeInterface>();
         res.addAll(entity.getAttributeCollection());
@@ -175,6 +188,13 @@ public abstract class AbstractDataListRetriever<R extends IRecord> implements Da
         // hook
     }
 
+    /**
+     * Abstract method to Creates record
+     * @param entity
+     * @param attributes
+     * @param id
+     * @return
+     */
     protected abstract R createRecord(EntityInterface entity, Set<AttributeInterface> attributes, RecordId id);
 
     /**
@@ -198,6 +218,10 @@ public abstract class AbstractDataListRetriever<R extends IRecord> implements Da
         return attributesSet;
     }
 
+    /**
+     * Returns reference to DomainObjectFactory
+     * @return Reference to DomainObjectFactory
+     */
     protected final DomainObjectFactory getDomainObjectFactory() {
         return DomainObjectFactory.getInstance();
     }

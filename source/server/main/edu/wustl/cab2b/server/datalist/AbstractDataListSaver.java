@@ -57,6 +57,7 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
      * Finally, this saver is marked intialized by setting {@link #initialized}
      * to <code>true</code>.
      * 
+     * @param oldEntity 
      * @see edu.wustl.cab2b.server.datalist.DataListSaver#initialize(edu.common.dynamicextensions.domaininterface.EntityInterface)
      */
     public void initialize(EntityInterface oldEntity) {
@@ -65,10 +66,18 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
         setInitialized(true);
     }
 
+    /**
+     * Status of initialized
+     * @return
+     */
     protected final boolean isInitialized() {
         return initialized;
     }
 
+    /**
+     * Set initialized status
+     * @param initialized
+     */
     protected final void setInitialized(boolean initialized) {
         this.initialized = initialized;
     }
@@ -79,6 +88,7 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
      * for the record's id and url are added to this map by calling
      * {@link #putRecordIdInMap(RecordId, Map, EntityInterface)}.
      * 
+     * @param record 
      * @return the DE representation of the given record.
      * @throws IllegalStateException if {@link #initialize(EntityInterface)} has
      *             not been called.
@@ -190,6 +200,10 @@ public abstract class AbstractDataListSaver<R extends IRecord> implements DataLi
         map.put(DataListUtil.getVirtualUrlAttribute(entity), recordId.getUrl());
     }
 
+    /**
+     * Returns reference to DomainObjectFactory
+     * @return Reference to DomainObjectFactory
+     */
     protected final DomainObjectFactory getDomainObjectFactory() {
         return DomainObjectFactory.getInstance();
     }

@@ -18,6 +18,10 @@ import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 public class CategoryDataListRetriever extends AbstractDataListRetriever<ICategorialClassRecord> {
     private CategoryEntityTreeParser parser;
 
+    /**
+     * Initializes field CategoryEntityTreeParser
+     * @param entity 
+     */
     @Override
     public void initialize(EntityInterface entity) {
         super.initialize(entity);
@@ -31,6 +35,7 @@ public class CategoryDataListRetriever extends AbstractDataListRetriever<ICatego
      * Associations are obtained from
      * {@link CategoryEntityTreeParser#getAssociationsForEntity()}.
      * 
+     * @param entity 
      * @see edu.wustl.cab2b.server.datalist.AbstractDataListRetriever#getAttributesList(edu.common.dynamicextensions.domaininterface.EntityInterface)
      */
     @Override
@@ -55,6 +60,11 @@ public class CategoryDataListRetriever extends AbstractDataListRetriever<ICatego
      * {@link #copyOtherFields(ICategorialClassRecord, EntityRecordInterface, List, EntityInterface)}
      * form the recursive chain for this depth first fetch; the second calls the
      * first.
+     * 
+     * @param record
+     * @param recordInterface
+     * @param attributesList
+     * @param entity
      * 
      * @see edu.wustl.cab2b.server.datalist.AbstractDataListRetriever#copyOtherFields(edu.wustl.cab2b.common.queryengine.result.IRecord,
      *      edu.common.dynamicextensions.entitymanager.EntityRecordInterface,
@@ -100,6 +110,9 @@ public class CategoryDataListRetriever extends AbstractDataListRetriever<ICatego
      * Creates the basic {@link ICategorialClassRecord} using
      * {@link QueryResultFactory#createCategorialClassRecord(CategorialClass, Set, RecordId).
      * 
+     * @param entity 
+     * @param id 
+     * @param attributes
      * @see edu.wustl.cab2b.server.datalist.AbstractDataListRetriever#createRecord(edu.common.dynamicextensions.domaininterface.EntityInterface,
      *      java.util.Set, edu.wustl.cab2b.common.queryengine.result.RecordId)
      */

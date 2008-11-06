@@ -5,7 +5,10 @@ package edu.wustl.cab2b.server;
  * @author Chandrakant Talele
  */
 public interface ServerConstants {
+	
+	/** Constant for Load status */
     public static final String LOAD_STATUS = "loadStatus";
 
+    /** Constant for Load failed */
     public static final String LOAD_FAILED = "loadFailed";
 }

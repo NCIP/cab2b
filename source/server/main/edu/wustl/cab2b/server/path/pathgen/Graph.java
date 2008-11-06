@@ -14,6 +14,9 @@ import java.util.Set;
 public class Graph {
     private Map<Node, Set<Node>> graph;
 
+    /**
+     * Default constructor for Graph 
+     */
     public Graph() {
         graph = new HashMap<Node, Set<Node>>();
     }
@@ -56,6 +59,11 @@ public class Graph {
         }
     }
 
+    /**
+     * Adds adjacent nodes 
+     * @param fromNode
+     * @param toNode
+     */
     public void addAdjacentNode(Node fromNode, Node toNode) {
         if (!containsNode(fromNode)) {
             addNode(fromNode);
@@ -63,10 +71,19 @@ public class Graph {
         getAdjacentNodes(fromNode).add(toNode);
     }
 
+    /**
+     * Adds new Node
+     * @param node
+     */
     public void addNode(Node node) {
         graph.put(node, new HashSet<Node>());
     }
 
+    /**
+     * Removes a Node from Graph
+     * @param node
+     * @return
+     */
     public boolean removeNode(Node node) {
         if (!containsNode(node)) {
             return false;
@@ -78,6 +95,12 @@ public class Graph {
         return true;
     }
 
+    /**
+     * Removes edge from Graph
+     * @param fromNode
+     * @param toNode
+     * @return
+     */
     public boolean removeEdge(Node fromNode, Node toNode) {
         if (!containsNode(fromNode)) {
             return false;
@@ -93,10 +116,19 @@ public class Graph {
         return graph.get(node);
     }
 
+    /**
+     * Check whether Node is in Graph or not
+     * @param node
+     * @return
+     */
     public boolean containsNode(Node node) {
         return graph.containsKey(node);
     }
 
+    /**
+     * Overrides Object clone method. 
+     * @see java.lang.Object#clone()
+     */
     public Graph clone() {
         Graph clone = new Graph();
 
@@ -110,18 +142,35 @@ public class Graph {
         return clone;
     }
 
+    /**
+     * Returns no. of node in Graph
+     * @return
+     */
     public int numberOfNodes() {
         return graph.size();
     }
 
+    /**
+     * Returns all nodes
+     * @return
+     */
     public Set<Node> allNodes() {
         return graph.keySet();
     }
 
+    /**
+     * Clears Graph
+     */
     public void clear() {
         graph.clear();
     }
 
+    /**
+     * Checks whether edge present in Graph or not.
+     * @param fromNode
+     * @param toNode
+     * @return 
+     */
     public boolean isEdgePresent(Node fromNode, Node toNode) {
         if (!containsNode(fromNode)) {
             return false;
@@ -129,6 +178,10 @@ public class Graph {
         return getAdjacentNodes(fromNode).contains(toNode);
     }
 
+    /**
+     * Overrides Object equals 
+     * @see java.lang.Object#equals(Object)
+     */
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -140,6 +193,9 @@ public class Graph {
         return graph.equals(otherGraph.graph);
     }
 
+    /**
+     * @see java.lang.Object#hashCode()
+     */
     public int hashCode() {
         return graph.hashCode();
     }

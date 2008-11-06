@@ -33,7 +33,7 @@ public interface DataListBusinessInterface extends BusinessInterface {
             throws RemoteException;
 
     /**
-     * Retrives annotation for given datalist id.
+     * Retrieves annotation for given datalist id.
      * @param id
      * @return data list metadata
      * @throws RemoteException
@@ -48,16 +48,22 @@ public interface DataListBusinessInterface extends BusinessInterface {
      */
     public DataList retrieveDataList(Long dataListId) throws RemoteException;
 
+    /**
+     * Returns entity list.
+     * @param entityId
+     * @return
+     * @throws RemoteException
+     */
     public List<IRecord> getEntityRecord(Long entityId) throws RemoteException;
 
     /**
-     * 
+     * Returns saved data category.
      * @param rootRecordDataRow
      * @param dataListMetadata
      * @param oldAttribute
      * @param newAttributes
      * @param dref - it is serialized User Credential in String
-     * @return
+     * @return Saved data category
      * @throws RemoteException
      * @throws CheckedException
      */
@@ -67,6 +73,18 @@ public interface DataListBusinessInterface extends BusinessInterface {
                                              String selectedIdentityProvider) throws RemoteException,
             CheckedException;
 
+    /**
+     * Returns saved custom data category
+     * @param rootEntityId
+     * @param selectedAttributeList
+     * @param string
+     * @param experiment
+     * @param dref
+     * @param selectedIdentityProvider
+     * @return Saved custom data category
+     * @throws RemoteException
+     * @throws CheckedException
+     */
     public DataListMetadata saveCustomDataCategory(IdName rootEntityId,
                                                    Collection<AttributeInterface> selectedAttributeList,
                                                    String string, Experiment experiment, String dref,

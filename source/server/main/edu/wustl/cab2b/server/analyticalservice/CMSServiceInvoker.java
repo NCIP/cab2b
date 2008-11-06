@@ -12,6 +12,12 @@ public class CMSServiceInvoker implements ServiceInvokerInterface {
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.server.analyticalservice.ServiceInvokerInterface#invokeService(java.util.List, java.util.List)
      */
+    /**
+     * Invokes service
+     * @param data
+     * @param serviceParamSet
+     * @return
+     */
     public List<IRecord> invokeService(List<IRecord> data, List<IRecord> serviceParamSet) {
         //TODO Real code to call service will go here 
         return data;
