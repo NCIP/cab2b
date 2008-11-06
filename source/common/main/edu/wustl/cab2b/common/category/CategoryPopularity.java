@@ -1,7 +1,6 @@
 package edu.wustl.cab2b.common.category;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -24,11 +23,11 @@ public class CategoryPopularity implements CategoryPopularityInterface, Serializ
     private Long id;
 
     private Date date;
-    
+
     /**
      * @return Returns the date created.
      * 
-     * @hibernate.property column="DATE" type="date" length="30"
+     * @hibernate.property column="UPDATED_DATE" type="timestamp" 
      *                     not-null="false"
      */
     public Date getDate() {

@@ -47,11 +47,10 @@
         
         <property
             name="date"
-            type="date"
+            type="timestamp"
             update="true"
             insert="true"
-            column="DATE"
-            length="30"
+            column="UPDATED_DATE"
             not-null="false"
         />
 
