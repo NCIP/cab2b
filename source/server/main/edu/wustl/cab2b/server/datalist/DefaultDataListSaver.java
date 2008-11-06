@@ -17,6 +17,8 @@ public class DefaultDataListSaver extends AbstractDataListSaver<IRecord> {
      * Copies the attributes from the old entity to the new entity by calling
      * {@link DataListUtil#copyNonVirtualAttributes(EntityInterface, EntityInterface)}.
      * 
+     * @param oldEntity Used for information, copied to a new Entity.
+     * 
      * @see edu.wustl.cab2b.server.datalist.AbstractDataListSaver#populateNewEntity(edu.common.dynamicextensions.domaininterface.EntityInterface)
      */
     @Override

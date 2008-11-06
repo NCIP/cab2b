@@ -11,10 +11,20 @@ import edu.wustl.cab2b.server.util.SQLQueryUtil;
  * @author srinath_k
  */
 public class InterModelConnectionBizLogic {
+	
+	/**
+	 * Saves intermodel connection
+	 * @param a1
+	 * @param a2
+	 */
     public void saveInterModelConnection(AttributeInterface a1, AttributeInterface a2) {
         saveInterModelConnection(new InterModelConnection(a1, a2));
     }
 
+    /**
+     * Utility method. Saves intermodel connection
+     * @param imc
+     */
     public void saveInterModelConnection(InterModelConnection imc) {
         if (PathFinder.getInstance().doesInterModelConnectionExist(imc)) {
             return;

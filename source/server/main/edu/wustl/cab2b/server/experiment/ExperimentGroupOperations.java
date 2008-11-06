@@ -12,17 +12,36 @@ import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
 
+/**
+ * 
+ * @author lalit_chand, rahul_ner
+ *
+ */
 public class ExperimentGroupOperations extends DefaultBizLogic {
+	
     /**
      * Hibernate DAO Type to use.
      */
     int daoType = Constants.HIBERNATE_DAO;
 
+    /**
+     * Adds experiment group
+     * @param expGrp
+     * @return
+     * @throws BizLogicException
+     * @throws UserNotAuthorizedException
+     */
     public ExperimentGroup addExperimentGroup(Object expGrp) throws BizLogicException, UserNotAuthorizedException {
         insert(expGrp, daoType);
         return (ExperimentGroup) expGrp;
     }
 
+    /**
+     * Returns experiment group
+     * @param identifier
+     * @return
+     * @throws DAOException
+     */
     public ExperimentGroup getExperimentGroup(Long identifier) throws DAOException {
         List expGrpList = retrieve("ExperimentGroup", "id", identifier);
         ExperimentGroup expGrp = null;
@@ -35,6 +54,11 @@ public class ExperimentGroupOperations extends DefaultBizLogic {
 
     /**
      * A callback validation function.
+     * @param obj
+     * @param dao
+     * @param operation
+     * @return
+     * @throws DAOException
      */
     protected boolean validate(Object obj, DAO dao, String operation) throws DAOException {
         ExperimentGroup exp = ((ExperimentGroup) obj);
@@ -50,6 +74,7 @@ public class ExperimentGroupOperations extends DefaultBizLogic {
     }
 
     /**
+     * Adds experiment group
      * @param parentExperimentGroupId
      * @param experimentGroup
      * @return

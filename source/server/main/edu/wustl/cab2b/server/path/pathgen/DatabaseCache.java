@@ -131,6 +131,9 @@ public class DatabaseCache extends GraphPathFinderCache {
     }
 
     /**
+     * Returns path on ignoring nodes
+     * 
+     * @return collection of Path.
      * @see edu.wustl.cab2b.server.path.pathgen.GraphPathFinderCache#getPathsOnIgnoringNodes(edu.wustl.cab2b.server.path.pathgen.SourceDestinationPair,
      *      java.util.Set)
      */
@@ -154,6 +157,7 @@ public class DatabaseCache extends GraphPathFinderCache {
     }
 
     /**
+     * Cleans up this cache, and marks it dead.
      * @see edu.wustl.cab2b.server.path.pathgen.GraphPathFinderCache#cleanup()
      */
     void cleanup() {
@@ -292,6 +296,11 @@ public class DatabaseCache extends GraphPathFinderCache {
     }
 }
 
+/**
+ * 
+ * @author Chandrakant Talele
+ *
+ */
 class IdGenerator {
     static int id;
 

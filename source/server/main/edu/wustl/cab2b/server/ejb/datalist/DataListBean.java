@@ -29,6 +29,9 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
     private static final long serialVersionUID = 1234567890L;
 
     /**
+     * Retrieves annotation information for all the data lists stored.
+     * @return list of all available data list metadata.
+     * @throws RemoteException
      * @see DataListBusinessInterface#retrieveAllDataListMetadata()
      */
     public List<DataListMetadata> retrieveAllDataListMetadata(String dref, String selectedIdentityProvider)
@@ -42,8 +45,12 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
         }
         return new DataListMetadataOperations().retrieveAllDataListMetadata(userId);
     }
-
+    
     /**
+     * Returns a data list along with annotation.
+     * @param dataListId
+     * @return a data list.
+     * @throws RemoteException
      * @see DataListBusinessInterface#retreiveDataList(Long)
      */
     public DataList retrieveDataList(Long dataListId) throws RemoteException {
@@ -52,6 +59,10 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
     }
 
     /**
+     * Retrieves annotation for given datalist id.
+     * @param id
+     * @return data list metadata
+     * @throws RemoteException
      * @see DataListBusinessInterface#retrieveDataListMetadata(Long)
      */
     public DataListMetadata retrieveDataListMetadata(Long id) throws RemoteException {
@@ -59,6 +70,11 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
     }
 
     /**
+     * Saves the data list.
+     * @param dataList
+     * @param dref -Its serialized User Credential in String
+     * @return data list id.
+     * @throws RemoteException
      * @see DataListBusinessInterface#saveDataList(DataList)
      */
     public DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata, String dref,
@@ -75,10 +91,27 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
 
     }
 
+    /**
+     * Returns entity list.
+     * @param entityId
+     * @return
+     * @throws RemoteException
+     */
     public List<IRecord> getEntityRecord(Long entityId) throws RemoteException {
         return new DataListOperationsController().getEntityRecords(entityId);
     }
 
+    /**
+     * Returns saved data category.
+     * @param rootRecordDataRow
+     * @param dataListMetadata
+     * @param oldAttribute
+     * @param newAttributes
+     * @param dref - it is serialized User Credential in String
+     * @return Saved data category
+     * @throws RemoteException
+     * @throws CheckedException
+     */
     public DataListMetadata saveDataCategory(IDataRow rootRecordDataRow, DataListMetadata dataListMetadata,
                                              List<AttributeInterface> oldAttribute,
                                              List<AttributeInterface> newAttributes, String serializedRef,
@@ -95,6 +128,18 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
                                                                    oldAttribute, newAttributes);
     }
 
+    /**
+     * Returns saved custom data category
+     * @param rootEntityId
+     * @param selectedAttributeList
+     * @param string
+     * @param experiment
+     * @param dref
+     * @param selectedIdentityProvider
+     * @return Saved custom data category
+     * @throws RemoteException
+     * @throws CheckedException
+     */
     public DataListMetadata saveCustomDataCategory(IdName rootEntityId,
                                                    Collection<AttributeInterface> selectedAttributeList,
                                                    String string, Experiment experiment, String dref,

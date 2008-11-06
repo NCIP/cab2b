@@ -20,18 +20,37 @@ class MemoryCache extends GraphPathFinderCache {
 
         Map<Set<Node>, Set<Path>> ignoredNodesToPaths = new HashMap<Set<Node>, Set<Path>>();
 
+        /**
+         * Adds entry
+         * @param ignoredNodes
+         * @param paths
+         */
         public void addEntry(Set<Node> ignoredNodes, Set<Path> paths) {
             ignoredNodesToPaths.put(ignoredNodes, paths);
         }
 
+        /**
+         * Returns path on ignored nodes
+         * @param ignoredNodes
+         * @return
+         */
         public Set<Path> getPathsOnIgnoringNodes(Set<Node> ignoredNodes) {
             return ignoredNodesToPaths.get(ignoredNodes);
         }
 
+        /**
+         * Checks whether path is on ignored nodes or not.
+         * @param ignoredNodes
+         * @return
+         */
         public boolean containsPathOnIgnoringNodes(Set<Node> ignoredNodes) {
             return ignoredNodesToPaths.containsKey(ignoredNodes);
         }
 
+        /**
+         * Returns ignored nodes to paths.
+         * @return
+         */
         public Map<Set<Node>, Set<Path>> getAllEntries() {
             return ignoredNodesToPaths;
         }
@@ -39,6 +58,9 @@ class MemoryCache extends GraphPathFinderCache {
 
     private Map<SourceDestinationPair, PathsOnIgnoringNodes> calculatedPaths;
 
+    /**
+     * Default constructor for MemoryCache
+     */
     public MemoryCache() {
         super();
         this.calculatedPaths = new HashMap<SourceDestinationPair, PathsOnIgnoringNodes>();
@@ -81,6 +103,10 @@ class MemoryCache extends GraphPathFinderCache {
     }
 
     /**
+     * returns path on ignoring nodes.
+     * @param sdp
+     * @param ignoredNodes
+     * @return
      * @see edu.wustl.cab2b.server.path.pathgen.GraphPathFinderCache#getPathsOnIgnoringNodes(edu.wustl.cab2b.server.path.pathgen.SourceDestinationPair,
      *      java.util.Set)
      */
@@ -126,6 +152,9 @@ class MemoryCache extends GraphPathFinderCache {
         return this.calculatedPaths.get(sdp);
     }
 
+    /**
+     * Cleans up this cache, and marks it dead.
+     */
     public void cleanup() {
         checkAlive();
         this.calculatedPaths = null;

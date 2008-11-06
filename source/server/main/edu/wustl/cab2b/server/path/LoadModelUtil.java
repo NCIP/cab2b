@@ -6,6 +6,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
 
+/**
+ * 
+ * @author chandrakant_talele
+ *
+ */
 public class LoadModelUtil {
 
     /* Format of properties file
@@ -29,6 +34,11 @@ public class LoadModelUtil {
     model1.file=file1.xml
     model2.file=file2.xml 
      */
+	/**
+	 * Main method to load load model
+	 * @param args command line args
+	 * @throws Exception
+	 */
     public static void main(String[] args) throws Exception {
         if (args.length != 1 || args[0].trim().equals("")) {
             System.out.println("Please provide a property file");

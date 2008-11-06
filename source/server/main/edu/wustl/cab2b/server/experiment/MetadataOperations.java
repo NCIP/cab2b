@@ -10,7 +10,11 @@ import edu.wustl.common.dao.JDBCDAOImpl;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
 
-
+/**
+ * 
+ * @author chetan_bh
+ *
+ */
 public class MetadataOperations extends DefaultBizLogic
 {
 	/**

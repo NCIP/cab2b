@@ -546,6 +546,11 @@ public class PathBuilder {
         }
     }
 
+    /**
+     * Returns next path Id.
+     * @param connection
+     * @return Next path Id.
+     */
     public static long getNextPathId(Connection connection) {
         String[][] result = SQLQueryUtil.executeQuery("select MAX(PATH_ID) from PATH", connection);
         Long maxId;

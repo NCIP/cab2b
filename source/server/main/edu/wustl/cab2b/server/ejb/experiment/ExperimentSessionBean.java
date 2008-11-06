@@ -38,12 +38,27 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#addExperiment(java.lang.Object)
      */
+    /**
+     * Adds Experiment for expression.
+     * @param exp
+     * @throws BizLogicException
+     * @throws UserNotAuthorizedException
+     * @throws RemoteException
+     */
     public void addExperiment(Object exp) throws BizLogicException, UserNotAuthorizedException, RemoteException {
         (new ExperimentOperations()).addExperiment(exp);
     }
 
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#copy(java.lang.Object, java.lang.Object)
+     */
+    /**
+     * Copy given Experiment to target Experiment group.
+     * @param exp
+     * @param tarExpGrp
+     * @throws BizLogicException
+     * @throws UserNotAuthorizedException
+     * @throws RemoteException
      */
     public void copy(Object exp, Object tarExpGrp) throws BizLogicException, UserNotAuthorizedException,
             RemoteException {
@@ -52,6 +67,13 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
 
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#getExperimentHierarchy()
+     */
+    /**
+     * Returns list of experiment hierarchy.
+     * @return
+     * @throws ClassNotFoundException
+     * @throws DAOException
+     * @throws RemoteException
      */
     public Vector getExperimentHierarchy(String dref, String idP) throws ClassNotFoundException, DAOException,
             RemoteException {
@@ -70,6 +92,16 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#move(java.lang.Object, java.lang.Object, java.lang.Object)
      */
+    /**
+     * Moves a experiment from given Experiment group to a target Experiment group
+     * @param exp
+     * @param srcExpGrp
+     * @param tarExpGrp
+     * @throws DAOException
+     * @throws BizLogicException
+     * @throws UserNotAuthorizedException
+     * @throws RemoteException
+     */
     public void move(Object exp, Object srcExpGrp, Object tarExpGrp) throws DAOException, BizLogicException,
             UserNotAuthorizedException, RemoteException {
         (new ExperimentOperations()).move(exp, srcExpGrp, tarExpGrp);
@@ -78,12 +110,27 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#getExperiment(java.lang.Long)
      */
+    /**
+     * Returns experiment belongs to given id.
+     * @param id experiment id
+     * @return Experiment belongs to given id.
+     * @throws RemoteException
+     * @throws DAOException
+     */
     public Experiment getExperiment(Long id) throws RemoteException, DAOException {
         return (new ExperimentOperations()).getExperiment(id);
     }
 
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#getDataListEntitySet(edu.wustl.cab2b.common.domain.Experiment)
+     */
+    /**
+     * get a set of root entities for an experiment where each root entity
+     * represents a datalist
+     * 
+     * @param exp the experiment
+     * @return set of root entities for an experiment where each root entity
+     *         represents a datalist
      */
     public Set<Set<EntityInterface>> getDataListEntitySet(Experiment exp) throws RemoteException {
         return (new ExperimentOperations()).getDataListEntitySet(exp);
@@ -126,6 +173,12 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#addDataListToExperiment(java.lang.Long, java.lang.Long)
      */
+    /**
+     * Adds a data list to given experiment.
+     * @param experimentId data list to be added in this experiment
+     * @param dataListMetaDataId
+     * @throws RemoteException
+     */
     public void addDataListToExperiment(Long experimentId, Long dataListMataDataId) throws RemoteException {
         new ExperimentOperations().addDataListToExperiment(experimentId, dataListMataDataId);
     }
@@ -142,6 +195,13 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
 
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#getDataCategoryModel(edu.wustl.cab2b.common.domain.Experiment)
+     */
+    /**
+     * Returns data category data model
+     * @param experiment
+     * @return CustomDataCategoryModel
+     * @throws RemoteException
+     * @throws CheckedException
      */
     public CustomDataCategoryModel getDataCategoryModel(Experiment experiment) throws CheckedException {
         return new ExperimentOperations().getDataCategoryModel(experiment);
@@ -161,12 +221,25 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#getAllAttributes(java.lang.Long)
      */
+    /**
+     * Returns collection of all attributes for specified Experiment ID
+     * @param Id
+     * @return
+     * @throws RemoteException
+     * @throws CheckedException
+     */
     public Collection<AttributeInterface> getAllAttributes(Long id) throws RemoteException, CheckedException {
         return new ExperimentOperations().getAllAttributes(id);
     }
 
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#getExperimentsForUser(edu.wustl.cab2b.common.user.UserInterface)
+     */
+    /**
+     * Returns list of all experiments associated with specified user 
+     * @param user
+     * @return
+     * @throws RemoteException
      */
     public List<Experiment> getExperimentsForUser(UserInterface user, String dref, String idP)
             throws RemoteException {

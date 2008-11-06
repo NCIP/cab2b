@@ -202,7 +202,11 @@ public class DataListUtil {
             newEntity.addAttribute(newAttrib);
         }
     }
-    
+
+    /**
+     * Adds virtual attributes to Entity.
+     * @param entity
+     */
     public static void addVirtualAttributes(EntityInterface entity) {
         AttributeInterface idAttribute = getDomainObjectFactory().createStringAttribute();
         idAttribute.setName(DataListUtil.ID_ATTRIBUTE_NAME);
@@ -220,6 +224,11 @@ public class DataListUtil {
         return DomainObjectFactory.getInstance();
     }
     
+    /**
+     * Creates new Entity using a old Entity information.
+     * @param oldEntity
+     * @return
+     */
     public static  EntityInterface createNewEntity(EntityInterface oldEntity) {
         EntityInterface newEntity = getDomainObjectFactory().createEntity();
         EntityGroupInterface dataListEntityGroup = DataListUtil.getDatalistEntityGroup();

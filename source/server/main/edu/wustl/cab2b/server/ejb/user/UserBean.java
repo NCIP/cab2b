@@ -26,16 +26,37 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
     
     Logger logger = edu.wustl.common.util.logger.Logger.getLogger(UserBean.class);
 
+    /**
+     * Insert given user as a new user in database
+     * 
+     * @param user
+     * @throws RemoteException
+     */
     public UserInterface insertUser(String dref, String idP) throws RemoteException {
         String userId = getUserIdentifier(dref,idP);
         User user = new User(userId, null, false);
         return new UserOperations().insertUser(user);
     }
 
+    /**
+     * Update present user in database
+     * 
+     * @param user
+     * @throws RemoteException
+     */
     public void updateUser(UserInterface user) throws RemoteException {
         new UserOperations().updateUser(user);
     }
 
+    /**
+     * Get a map of entity group name vs related list of service urls for the given user
+     * 
+     * @param user
+     * @return
+     * @throws DynamicExtensionsSystemException
+     * @throws DynamicExtensionsApplicationException
+     * @throws RemoteException
+     */
     public Map<String, List<String>> getServiceUrlsForUser(UserInterface user)
             throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException, RemoteException {
         return new UserOperations().getServiceURLsForUser(user);
@@ -45,11 +66,25 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
      * @see edu.wustl.cab2b.common.ejb.user.UserBusinessInterface#getUserByName(java.lang.String)
      * If user not found, it returns null
      */
+    /**
+     * Get user by user name. If user of that name not found in database, it returns null.
+     * 
+     * @param user
+     * @return
+     * @throws RemoteException
+     */
     public UserInterface getUserByName(String dref, String idP) throws RemoteException {
         String userId = getUserIdentifier(dref,idP);
         return new UserOperations().getUserByName(userId);
     }
 
+    /**
+     * Returns globus credential
+     * @param dref
+     * @param idP
+     * @return
+     * @throws RemoteException
+     */
     public GlobusCredential getGlobusCredential(String dref , String idP) throws RemoteException {
         try {
             return UserOperations.getGlobusCredential(dref,idP);

@@ -16,37 +16,44 @@ import edu.wustl.common.querysuite.metadata.path.CuratedPath;
  * @author Chandrakant Talele
  */
 public interface UtilityBusinessInterface extends BusinessInterface {
+	
     /**
+     * Returns caB2B entity groups
      * @return
      * @throws RemoteException
      */
     Collection<EntityGroupInterface> getCab2bEntityGroups() throws RemoteException;
 
     /**
+     * Retunrs incoming intramodel associations
      * @return associations with given entity as the target entity.
      * @throws RemoteException EJB specific exception.
      */
     Collection<AssociationInterface> getIncomingIntramodelAssociations(Long entityId) throws RemoteException;
 
     /**
+     * Inserts cab2bObject
      * @param cab2bObject
      * @throws RemoteException
      */
     void insert(Object cab2bObject) throws RemoteException;
 
     /**
+     * Updates a cab2bObject
      * @param cab2bObject
      * @throws RemoteException
      */
     void update(Object cab2bObject) throws RemoteException;
 
     /**
+     * unregister for a given handle
      * @param handle
      * @throws RemoteException
      */
     void unregister(int handle) throws RemoteException;
 
     /**
+     * Returns a view for a given handle
      * @param handle
      * @param params
      * @return

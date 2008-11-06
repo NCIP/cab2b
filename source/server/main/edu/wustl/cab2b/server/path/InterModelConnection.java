@@ -30,9 +30,9 @@ class InterModelConnection {
     private Long rightAttributeId;
 
     /**
+     * 
      * @param leftEntity  Left side entity
      * @param rightEntity Right side entity
-     * @param allMatchingAttributePairs list of matching attribute pairs.
      */
     public InterModelConnection(AttributeInterface leftAttribute, AttributeInterface rightAttribute) {
         leftAttributeId = leftAttribute.getId();
@@ -86,6 +86,7 @@ class InterModelConnection {
 
     /**
      * To print something meaningful.
+     * @return String form of object
      * @see java.lang.Object#toString()
      */
     public String toString() {
@@ -98,6 +99,10 @@ class InterModelConnection {
     }
 
     @Override
+    /**
+     * Returns whether this object is equal to o  
+     * @return 
+     */
     public boolean equals(Object o) {
         if (o == this) {
             return true;
@@ -111,6 +116,10 @@ class InterModelConnection {
     }
 
     @Override
+    /**
+     * Returns hashcode
+     * @return hashCode
+     */
     public int hashCode() {
         return new HashCodeBuilder().append(leftEntityId).append(leftAttributeId).append(rightEntityId).append(
                                                                                                                rightAttributeId).toHashCode();

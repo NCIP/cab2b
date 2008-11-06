@@ -21,6 +21,10 @@ public class DefaultDataListRetriever extends AbstractDataListRetriever<IRecord>
      * Creates the basic {@link IRecord} using
      * {@link QueryResultFactory#createRecord(Set, RecordId)}.
      * 
+     * @param entity 
+     * @param attributes 
+     * @param id 
+     * @return Reference to IRecord
      * @see edu.wustl.cab2b.server.datalist.AbstractDataListRetriever#createRecord(edu.common.dynamicextensions.domaininterface.EntityInterface,
      *      java.util.Set, edu.wustl.cab2b.common.queryengine.result.RecordId)
      */

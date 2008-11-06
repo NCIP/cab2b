@@ -28,6 +28,9 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Utility
     private static final long serialVersionUID = 1L;
 
     /**
+     * Returns caB2B entity groups
+     * @return
+     * @throws RemoteException
      * @see edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface#getCab2bEntityGroups()
      */
     public Collection<EntityGroupInterface> getCab2bEntityGroups() throws RemoteException {
@@ -35,6 +38,7 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Utility
     }
 
     /**
+     * Retunrs incoming intramodel associations
      * @return associations with given entity as the target entity.
      * @throws RemoteException EJB specific exception.
      * @see edu.wustl.cab2b.common.ejb.path.PathFinderBusinessInterface#getIncomingIntramodelAssociations(Long)
@@ -46,6 +50,7 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Utility
     }
 
     /**
+     * Returns collection of associations
      * @param associations Association to process
      * @return Collection of Associations
      */
@@ -59,6 +64,9 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Utility
     }
 
     /**
+     * Inserts cab2bObject
+     * @param cab2bObject
+     * @throws RemoteException
      * @see edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface#insert(java.lang.Object)
      */
     public void insert(Object cab2bObject) throws RemoteException {
@@ -66,6 +74,9 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Utility
     }
 
     /**
+     * Updates a cab2bObject
+     * @param cab2bObject
+     * @throws RemoteException
      * @see edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface#update(java.lang.Object)
      */
     public void update(Object cab2bObject) throws RemoteException {
@@ -73,13 +84,21 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Utility
     }
 
     /**
+     * Returns a view for a given handle
+     * @param handle
+     * @param params
+     * @return
+     * @throws RemoteException
      * @see edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface#getView(int, edu.wustl.cab2b.common.queryengine.result.ILazyParams)
      */
     public IPartiallyInitializedRecord<?, ?> getView(int handle, ILazyParams params) throws RemoteException {
         return LazyInitializer.getView(handle, params);
     }
-
+    
     /**
+     * unregister for a given handle
+     * @param handle
+     * @throws RemoteException
      * @see edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface#unregister(int)
      */
     public void unregister(int handle) throws RemoteException {
@@ -98,7 +117,7 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Utility
     }
 
     /**
-     * Resreshes Path cache and EntityCache if boolean passed is true
+     * Refreshes Path cache and EntityCache if boolean passed is true
      * @param resheshEntityCache If to refresh entity cache
      * @throws RemoteException
      */
@@ -107,7 +126,7 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Utility
     }
 
     /**
-     * Resreshes Category cache and EntityCache.
+     * Refreshes Category cache and EntityCache.
      * @throws RemoteException
      */
     public void refreshCategoryAndEntityCache() throws RemoteException {

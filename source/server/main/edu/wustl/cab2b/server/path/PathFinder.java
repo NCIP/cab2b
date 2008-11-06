@@ -599,8 +599,14 @@ public class PathFinder {
         return EntityCache.getInstance();
     }
 
+    /**
+     * Returns path for associations
+     * @param associations
+     * @return
+     */
     public IPath getPathForAssociations(List<IIntraModelAssociation> associations) {
         StringBuffer buff = new StringBuffer();
+        
         if (associations.size() < 1) {
             throw new RuntimeException("Association list is empty");
         }
@@ -638,6 +644,12 @@ public class PathFinder {
         return interModelConnections.contains(imc);
     }
 
+    /**
+     * Checks whether intermodel connection exists or not
+     * @param attr1
+     * @param attr2
+     * @return true if intermodel connection exists otherwise false
+     */
     public boolean doesInterModelConnectionExist(AttributeInterface attr1, AttributeInterface attr2) {
         return doesInterModelConnectionExist(new InterModelConnection(attr1, attr2));
     }

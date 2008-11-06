@@ -38,15 +38,23 @@ import edu.wustl.cab2b.server.cache.DatalistCache;
 import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.common.util.dbManager.DBUtil;
 
+/**
+ * 
+ * @author lalit_chand, deepak_shingan, chetan_patil, srinath_k, hrshikesh_rajpathak
+ *
+ */
 public class DataListOperationsController {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(DataListOperationsController.class);
 
+    /**
+     * Default constructor for  DataListOperationsController
+     */
     public DataListOperationsController() {
 
     }
 
     /**
-     * Persists the data category (experiment context) or data list into the database depeneding on value 
+     * Persists the data category (experiment context) or data list into the database depending on value 
      * of isDataList parameter.
      * If isDataList is true data will be saved in datalist tables using datalist saver otherwise
      * data will be saved as data category with the help of DataCategorySaver.
@@ -235,6 +243,7 @@ public class DataListOperationsController {
     /**
      * Saves data list metadata.
      * 
+     * @param datalistMetadata
      * @see DataListBusinessInterface#saveDataListMetadata(DataListMetadata)
      */
     private void saveDataListMetadata(DataListMetadata datalistMetadata) {
@@ -460,11 +469,12 @@ public class DataListOperationsController {
     }
 
     /**
+     * Saves custom datalist metadata. 
      * @param entity
      * @param name
      * @param originalEntityId
      *            id of origianl root entoity
-     * @return
+     * @return DataListMetadata
      */
     private DataListMetadata saveCustomDataListMetaData(EntityInterface entity, String name, Long originalEntityId) {
         DataListMetadata dataList = new DataListMetadata();

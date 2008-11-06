@@ -6,7 +6,18 @@ import edu.wustl.cab2b.common.util.DataListUtil;
 import edu.wustl.cab2b.common.util.ResultConfigurationParser;
 import edu.wustl.cab2b.common.util.Utility;
 
+/**
+ * 
+ * @author srinath_k, juberahamad_patel
+ *
+ */
 public class DataListOperationsFactory {
+	
+	/**
+	 * Creates datalist saver.
+	 * @param entity
+	 * @return Reference to DatalistSaver.
+	 */
     public static DataListSaver<?> createDataListSaver(EntityInterface entity) {
         EntityInterface originEntity = DataListUtil.getOriginEntity(entity);
         try {
@@ -22,6 +33,11 @@ public class DataListOperationsFactory {
         }
     }
 
+    /**
+     * Creates datalist retriever.
+     * @param entity
+     * @return Reference to DataListRetriever
+     */
     public static DataListRetriever<?> createDataListRetriever(EntityInterface entity) {
         EntityInterface originEntity = DataListUtil.getOriginEntity(entity);
         try {

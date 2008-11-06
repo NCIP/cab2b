@@ -220,6 +220,8 @@ public class UserOperations extends DefaultBizLogic {
      * It retrieves the client GlobusCredential from the delegated reference 
      * 
      * @param dref
+     * @param serializedCredRef
+     * @param idP
      * @return GlobusCredential 
      * @throws GeneralSecurityException
      * @throws IOException

@@ -40,6 +40,14 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#executeQuery(edu.wustl.cab2b.common.queryengine.ICab2bQuery,
      *      org.globus.gsi.GlobusCredential)
      */
+    /**
+     * This method executes the given query if the given credential is authentic. 
+     * 
+     * @param query ICab2bQuery to be executed
+     * @param cred user crendential to be authenticated
+     * @return query result
+     * @throws RemoteException if authentication fails or query execution fails.
+     */
     public IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String dref, String idP)
             throws GeneralSecurityException, IOException, Exception {
         GlobusCredential cred = UserOperations.getGlobusCredential(dref, idP);
@@ -51,6 +59,11 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * (non-Javadoc)
      * 
      * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#saveQuery(edu.wustl.cab2b.common.queryengine.ICab2bQuery)
+     */
+    /**
+     * This method saves the given ICab2bQuery object.
+     * 
+     * @throws RemoteException if save process fails
      */
     public void saveQuery(ICab2bQuery query, String dref, String idP) throws RemoteException,
             GeneralSecurityException, IOException, Exception {
@@ -64,6 +77,11 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * 
      * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#updateQuery(edu.wustl.cab2b.common.queryengine.ICab2bQuery)
      */
+    /**
+     * This method updates the given ICab2bQuery object.
+     * 
+     * @throws RemoteException if updating fails
+     */
     public void updateQuery(ICab2bQuery query) throws RemoteException {
         new QueryBizLogic<ICab2bQuery>().updateQuery(query);
     }
@@ -72,6 +90,13 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * (non-Javadoc)
      * 
      * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#retrieveQueryById(java.lang.Long)
+     */
+    /**
+     * This method retrieves the query which has the given identifier. 
+     * 
+     * @param queryId identifier of the query
+     * @return ICab2bQuery object
+     * @throws RemoteException if retrieving fails
      */
     public ICab2bQuery retrieveQueryById(Long queryId) throws RemoteException {
         ICab2bQuery query = (ICab2bQuery) new QueryBizLogic<ICab2bQuery>().getQueryById(queryId);
@@ -84,6 +109,12 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * 
      * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#retrieveAllQueries()
      */
+    /**
+     * This method retrieves all the the queries. 
+     * 
+     * @return list of ICab2bQuery objects
+     * @throws RemoteException if retrieving fails
+     */
     public List<ICab2bQuery> retrieveAllQueries() throws RemoteException {
         return new QueryBizLogic<ICab2bQuery>().getAllQueries();
     }
@@ -92,6 +123,12 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * (non-Javadoc)
      * 
      * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#getAllQueryNameAndDescription()
+     */
+    /**
+     * This method returns all the queries with only their name and description populated.
+     * 
+     * @return list of IParameterizedQuery having only their name and description populated
+     * @throws RemoteException if retrieving fails
      */
     public Collection<IParameterizedQuery> getAllQueryNameAndDescription(String dref, String idP)
             throws RemoteException, IOException, GeneralSecurityException, Exception {
@@ -109,6 +146,14 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * (non-Javadoc)
      * 
      * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#isQueryNameDuplicate(java.lang.String)
+     */
+    /**
+     * This method checks whether the given query name has already been used or not.
+     * 
+     * @param queryName name of the query that is to be verified 
+     * @return true if the queryName is duplicate; false if not
+     * 
+     * @throws RemoteException if checking fails
      */
     public boolean isQueryNameDuplicate(String queryName) throws RemoteException {
         boolean isDuplicate = false;
@@ -129,6 +174,13 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
     /*
      * (non-Javadoc)
      * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#getDCQL(edu.wustl.cab2b.common.queryengine.ICab2bQuery)
+     */
+    /**
+     * This method returns the DCQL in tree format for the given query. Tree nodes consists of DCQL object
+     * that encapsulates Category/Entity name and its corresponding DCQL.
+     * 
+     * @param query query for which DCQl is to be generated
+     * @return TreeNode<DCQL>
      */
     public DCQL getDCQL(ICab2bQuery query) throws RemoteException {
         return new DCQLGenerator(query).generateDCQL();

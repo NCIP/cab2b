@@ -22,16 +22,41 @@ public class ExperimentGroupSessionBean extends AbstractStatelessSessionBean imp
 
     private static final long serialVersionUID = -5216059908579963838L;
 
+	/**
+	 * Adds a experiment group 
+	 * @param expGrp
+	 * @return Reference to ExperimentGroup
+	 * @throws BizLogicException
+	 * @throws UserNotAuthorizedException
+	 * @throws RemoteException
+	 */
     public ExperimentGroup addExperimentGroup(Object expGrp) throws BizLogicException, UserNotAuthorizedException,
             RemoteException {
         return (new ExperimentGroupOperations()).addExperimentGroup(expGrp);
     }
 
+
+    /**
+     * Returns ExperimentGroup reference
+     * @param identifier
+     * @return
+     * @throws DAOException
+     * @throws RemoteException
+     */
     public ExperimentGroup getExperimentGroup(Long identifier) throws DAOException, RemoteException {
         return (new ExperimentGroupOperations()).getExperimentGroup(identifier);
     }
-
+    
     /**
+     * Adds a experiment group to a given parent
+     * @param parentExperimentGroupId
+     * @param experimentGroup
+     * @param dref
+     * @param idP
+     * @return Reference to ExperimentGroup
+     * @throws BizLogicException
+     * @throws UserNotAuthorizedException
+     * @throws RemoteException
      * @throws DAOException 
      * @see edu.wustl.cab2b.common.experiment.ExperimentGroupBusinessInterface#addExperimentGroup(java.lang.Long, edu.wustl.cab2b.common.domain.ExperimentGroup)
      */

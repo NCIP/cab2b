@@ -32,6 +32,9 @@ enum DataType {
 
     STRING() {
         /**
+         * Creates and populates attribute from UMLAttribute
+         * @param umlAttribute
+         * @return
          * @see DataType#createAttribute(UMLAttribute)
          */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
@@ -55,6 +58,9 @@ enum DataType {
 
     INTEGER() {
         /**
+         * Creates and populates attribute from UMLAttribute
+         * @param umlAttribute
+         * @return 
          * @see DataType#createAttribute(UMLAttribute)
          */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
@@ -78,6 +84,9 @@ enum DataType {
 
     DATE() {
         /**
+         * Creates and populates attribute from UMLAttribute
+         * @param umlAttribute
+         * @return 
          * @see DataType#createAttribute(UMLAttribute)
          */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
@@ -103,6 +112,9 @@ enum DataType {
     },
     FLOAT() {
         /**
+         * Creates and populates attribute from UMLAttribute
+         * @param umlAttribute
+         * @return 
          * @see DataType#createAttribute(UMLAttribute)
          */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
@@ -125,6 +137,9 @@ enum DataType {
     },
     BOOLEAN() {
         /**
+         * Creates and populates attribute from UMLAttribute
+         * @param umlAttribute
+         * @return 
          * @see DataType#createAttribute(UMLAttribute)
          */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
@@ -150,6 +165,9 @@ enum DataType {
     },
     LONG() {
         /**
+         * Creates and populates attribute from UMLAttribute
+         * @param umlAttribute
+         * @return 
          * @see DataType#createAttribute(UMLAttribute)
          */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
@@ -172,6 +190,9 @@ enum DataType {
     },
     DOUBLE() {
         /**
+         * Creates and populates attribute from UMLAttribute
+         * @param umlAttribute
+         * @return 
          * @see DataType#createAttribute(UMLAttribute)
          */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
@@ -195,6 +216,9 @@ enum DataType {
     },
     SHORT() {
         /**
+         * Creates and populates attribute from UMLAttribute
+         * @param umlAttribute
+         * @return 
          * @see DataType#createAttribute(UMLAttribute)
          */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
@@ -217,6 +241,11 @@ enum DataType {
 
     },
     OBJECT() {
+        /**
+         * Creates and populates attribute from UMLAttribute
+         * @param umlAttribute
+         * @return 
+         */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createObjectAttribute();
             ValueDomain valueDomain = umlAttribute.getValueDomain();
@@ -286,6 +315,11 @@ enum DataType {
         return attribute;
     }
 
+    /**
+     * Creates and populates attribute from UMLAttribute
+     * @param umlAttribute
+     * @return 
+     */
     AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
         // TODO bypassing attributes, need to decide how to handle it.
         logger.error("found attribute with type" + umlAttribute.getDataTypeName() + ". Not storing it");

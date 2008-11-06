@@ -50,6 +50,7 @@ import org.apache.log4j.Logger;
 public class GraphPathFinder {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(GraphPathFinder.class);
 
+    /** Constant for memory cache */
     public static boolean MEM_CACHE = true;
 
     private Graph inputGraph;
@@ -71,7 +72,14 @@ public class GraphPathFinder {
         return getAllPaths(adjacencyMatrix, replicationNodes, conn, Integer.MAX_VALUE);
     }
 
+
     /**
+     * Returns all paths
+     * @param adjacencyMatrix
+     * @param replicationNodes
+     * @param conn
+     * @param maxLength
+     * @return
      * @throws IllegalArgumentException if <tt>maxLength < 2</tt>
      */
     public Set<Path> getAllPaths(boolean[][] adjacencyMatrix, Map<Integer, Set<Integer>> replicationNodes,

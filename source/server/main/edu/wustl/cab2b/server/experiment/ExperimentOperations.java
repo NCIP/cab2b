@@ -63,8 +63,6 @@ public class ExperimentOperations extends DefaultBizLogic {
      * 
      * @param exp
      *            experiment to persist.
-     * @param daoType
-     *            DAO Type to use.
      * @throws UserNotAuthorizedException
      * @throws BizLogicException
      */
@@ -76,10 +74,8 @@ public class ExperimentOperations extends DefaultBizLogic {
      * This method adds given experiment into goven experimentGroupId and
      * persist it.
      * 
-     * @param exp
-     *            experiment ot persist.
-     * @param daoType
-     *            DAO Type to use.
+     * @param experimentGroupId
+     * @param experiment           
      * @throws UserNotAuthorizedException
      * @throws BizLogicException
      * @throws DAOException
@@ -209,6 +205,7 @@ public class ExperimentOperations extends DefaultBizLogic {
 
     /**
      * Returns vector of Experiments and experiment metadata objects [ like ExperimentTreeNode ] 
+     * @param userId
      * @return Vector
      * @throws DAOException
      */
@@ -270,8 +267,12 @@ public class ExperimentOperations extends DefaultBizLogic {
         return returner;
     }
 
+
     /**
      * To recursively update the TreeNode similar to expGroup
+     * @param expGroup
+     * @param treeNode
+     * @param children
      */
     private void updateMetadataHierarchy(AdditionalMetadata expGroup, ExperimentTreeNode treeNode,
                                          Collection children) {
@@ -324,6 +325,14 @@ public class ExperimentOperations extends DefaultBizLogic {
     /* (non-Javadoc)
      * @see edu.wustl.common.bizlogic.DefaultBizLogic#validate(java.lang.Object, edu.wustl.common.dao.DAO, java.lang.String)
      *  A callback validation function.
+     */
+    /**
+     * Overiding method for validate
+     * @param obj
+     * @param dao
+     * @param operation
+     * @return
+     * @throws DAOException
      */
     protected boolean validate(Object obj, DAO dao, String operation) throws DAOException {
         Experiment exp = ((Experiment) obj);
@@ -685,6 +694,7 @@ public class ExperimentOperations extends DefaultBizLogic {
      * Returns all the experiments which have datalist id same as given.
      * 
      * @param id
+     * @param userId
      * @return
      * @throws HibernateException
      */

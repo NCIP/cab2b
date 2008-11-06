@@ -12,6 +12,11 @@ import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
 
+/**
+ * 
+ * @author lalit_chand, srinath_k
+ *
+ */
 public class DataListMetadataOperations extends DefaultBizLogic {
     /**
      * Returns a data list metadata.
@@ -34,6 +39,7 @@ public class DataListMetadataOperations extends DefaultBizLogic {
     /**
      * Returns a list of all available data list metadata.
      * 
+     * @param userId
      * @return list of data list metadata.
      */
     public List<DataListMetadata> retrieveAllDataListMetadata(String userId) {
@@ -50,6 +56,7 @@ public class DataListMetadataOperations extends DefaultBizLogic {
     /**
      * Saves data list metadata.
      * 
+     * @param datalistMetadata 
      * @see DataListBusinessInterface#saveDataListMetadata(DataListMetadata)
      */
     public Long saveDataListMetadata(DataListMetadata datalistMetadata) {

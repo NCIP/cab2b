@@ -186,17 +186,31 @@ class CategoryEntityTreeParser {
     }
 }
 
+/**
+ * 
+ * @author hrishikesh_rajpathak, srinath_k
+ *
+ */
 class EntityPair {
     private EntityInterface parentEntity;
 
     private EntityInterface childEntity;
 
+    /**
+     * Constructor for EntityPair
+     * @param parentEntity
+     * @param childEntity
+     */
     public EntityPair(EntityInterface parentEntity, EntityInterface childEntity) {
         this.parentEntity = parentEntity;
         this.childEntity = childEntity;
     }
 
     @Override
+    /**
+     * overided method
+     * @see java.lang.Object#equals(Object)
+     */
     public boolean equals(Object other) {
         if (this == other) {
             return true;
@@ -210,6 +224,9 @@ class EntityPair {
     }
 
     @Override
+    /**
+     * @see java.lang.Object#hashCode()
+     */
     public int hashCode() {
         return new HashCodeBuilder().append(parentEntity.getName()).append(childEntity.getName()).toHashCode();
     }

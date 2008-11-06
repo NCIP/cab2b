@@ -12,6 +12,11 @@ import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 
+/**
+ * 
+ * @author lalit_chand, deepak_shingan, chetan_bh, hrishikesh_rajpathak
+ *
+ */
 public interface DataListBusinessInterface extends BusinessInterface {
 
     /**

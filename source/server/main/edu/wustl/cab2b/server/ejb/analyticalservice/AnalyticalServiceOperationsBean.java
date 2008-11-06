@@ -19,6 +19,10 @@ public class AnalyticalServiceOperationsBean extends AbstractStatelessSessionBea
     private static final long serialVersionUID = 6783481698510254878L;
 
     /**
+     * Returns all services for an Entity
+     * @param entityId
+     * @return List of services for an Entity
+     * @throws RemoteException
      * @see edu.wustl.cab2b.common.ejb.analyticalservice.ServiceInvokerFactoryBusinessInterface#getApplicableAnalyticalServices(edu.common.dynamicextensions.domaininterface.EntityInterface)
      */
     public List<ServiceDetailsInterface> getApplicableAnalyticalServices(Long entityId)
@@ -27,6 +31,13 @@ public class AnalyticalServiceOperationsBean extends AbstractStatelessSessionBea
     }
 
     /**
+     * Invokes a analytical service and return results in a {@link edu.wustl.cab2b.common.queryengine.result.IRecord}
+     * @param serviceDetails 
+     * @param data input data for service 
+     * @param serviceParamSet parameters used for service
+     * @return Result after execution of service
+     * @throws RemoteException
+     * 
      * @see edu.wustl.cab2b.common.ejb.analyticalservice.ServiceInvokerFactoryBusinessInterface#invokeService(ServiceDetailsInterface, List, List)
      */
     public List<IRecord> invokeService(ServiceDetailsInterface serviceDetails, List<IRecord> data,

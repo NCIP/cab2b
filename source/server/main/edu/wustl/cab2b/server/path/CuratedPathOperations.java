@@ -79,6 +79,11 @@ public class CuratedPathOperations extends DefaultBizLogic {
         return (IPath) pathList.get(0);
     }
 
+    /**
+     * Checks whether path is duplicate or not.
+     * @param curatedPath
+     * @return Result whether this path is duplicate or not
+     */
     public boolean isDuplicate(ICuratedPath curatedPath) {
         boolean isDuplicate = false;
 
