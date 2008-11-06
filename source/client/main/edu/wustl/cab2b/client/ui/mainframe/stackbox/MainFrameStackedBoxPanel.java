@@ -54,7 +54,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
 
     public static Color UNCLICKED_COLOR = new Color(0x034E74);
 
-        private MainFrameStackedBoxPanel() {
+    private MainFrameStackedBoxPanel() {
 
     }
 
@@ -78,10 +78,10 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
      * @param mainFrame
      */
     /*public MainFrameStackedBoxPanel(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
-        initUI();
-    }
-    */
+     this.mainFrame = mainFrame;
+     initUI();
+     }
+     */
     /**
      * GUI initialising panel
      */
@@ -160,14 +160,14 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
     private ShowAllPanel getAllCategoryPanel() {
         Collection<CategoryPopularity> allPopularCategories = CommonUtils.getPopularCategoriesForShowAll();
         final Object objData[][] = new Object[allPopularCategories.size()][6];
-        final String headers[] = { ShowAllCategoryPanel.CATEGORY_NAME_TITLE, ShowAllCategoryPanel.CATEGORY_POPULARITY_TITLE, ShowAllCategoryPanel.CATEGORY_DATE_TITLE, ShowAllCategoryPanel.CATEGORY_DESCRIPTION_TITLE, " Category ID-Hidden" };
+        final String headers[] = { ShowAllCategoryPanel.CATEGORY_NAME_TITLE, ShowAllCategoryPanel.CATEGORY_POPULARITY_TITLE, ShowAllCategoryPanel.CATEGORY_DESCRIPTION_TITLE, ShowAllCategoryPanel.CATEGORY_DATE_TITLE, " Category ID-Hidden" };
         int i = 0;
         for (CategoryPopularity category : allPopularCategories) {
             EntityInterface entityInterface = AbstractEntityCache.getCache().getEntityById(category.getEntityId());
             objData[i][0] = Utility.getDisplayName(entityInterface);
             objData[i][1] = Long.toString(category.getPopularity());
-            objData[i][2] = entityInterface.getLastUpdated();
-            objData[i][3] = entityInterface.getDescription();
+            objData[i][2] = entityInterface.getDescription();
+            objData[i][3] = category.getDate();
             objData[i][4] = entityInterface;
             i++;
         }
@@ -182,7 +182,8 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
     private void addShowAllLink(Cab2bPanel panel, ActionListener actionClass, boolean enableLink) {
         Cab2bHyperlink hyperlink = new Cab2bHyperlink(true);
         hyperlink.setVisible(enableLink);
-        CommonUtils.setHyperlinkProperties(hyperlink, null, ApplicationProperties.getValue(HYPERLINK_SHOW_ALL), "", actionClass);
+        CommonUtils.setHyperlinkProperties(hyperlink, null, ApplicationProperties.getValue(HYPERLINK_SHOW_ALL),
+                                           "", actionClass);
         panel.add("br right", hyperlink);
     }
 
