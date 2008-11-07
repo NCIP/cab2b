@@ -52,7 +52,7 @@ public abstract class AbstractPager implements Pager {
 
     private String currentPageIndexStr = "";
     
-    /*
+    /**
      * This pageMap datastructure needs to be modified a little.
      * Right now it is a Map of String->Vector<PageElement>.
      * 
@@ -64,12 +64,13 @@ public abstract class AbstractPager implements Pager {
      */
     protected Map<String, Vector<PageElement>> pageMap;
 
-    /* 
+    /** 
      * TODO A vector of pageIndices is needed because the pageMap keyset is not ordered, 
      * but page Indices is a ordered list. 
      */
     protected Vector<String> pageIndices; // A vector of Strings which are key to pageMap.
 
+    /** A vector of rawData*/
     protected Vector<PageElement> rawData;
 
     // TODO this is a configurable parameter.
@@ -87,16 +88,27 @@ public abstract class AbstractPager implements Pager {
      */
     protected int elementsPerPage;
 
+    /** number of Pages*/
     protected int numberOfPages;
 
+    /**
+     * @param elements
+     */
     public AbstractPager(PageElement[] elements) {
         this(convertToVector(elements));
     }
 
+    /**
+     * @param data
+     */
     public AbstractPager(Vector<PageElement> data) {
         this(data, PaginationConstants.DEFAULT_ELEMENTS_PER_PAGE);
     }
 
+    /**
+     * @param rawData
+     * @param elementsPerPage
+     */
     public AbstractPager(Vector<PageElement> rawData, int elementsPerPage) {
         // This is needed for setElementsPerPAge setter method, otherwise this method has no access to rawData
         this.rawData = rawData;
@@ -109,6 +121,10 @@ public abstract class AbstractPager implements Pager {
     }
 
     //TODO page index starts from 1 unlike standard JAVA indexing which starts from 0.
+    /** Returns the Page Map for given Page Element
+     * @param rawData
+     * @return
+     */
     protected Map<String, Vector<PageElement>> getPageMap(Vector<PageElement> rawData) {
         Map<String, Vector<PageElement>> returner = new HashMap<String, Vector<PageElement>>();
         int pageCounter = 1;
@@ -135,10 +151,12 @@ public abstract class AbstractPager implements Pager {
         return returner;
     }
 
-    /*
+    /**
      * TODO Yet to Implement.
      * May be this method needs to be called automatically from page() method in Abstract classes or from page()
      * method overridden in subclasses like in Alphabetic pager.
+     * @param subData
+     * @return
      */
     protected final Map<String, Vector> subPage(Vector<PageElement> subData) {
         Map<String, Vector> returner = new HashMap<String, Vector>();
@@ -161,6 +179,8 @@ public abstract class AbstractPager implements Pager {
 
     /**
      * Returns a page.
+     * @param index of page
+     * @return Page
      */
     public Vector<PageElement> getPage(String index) {
         Vector<PageElement> page = pageMap.get(index);
@@ -179,6 +199,7 @@ public abstract class AbstractPager implements Pager {
 
     /**
      * Returns true if there a pages next to current page, else false.
+     * @return Boolean Value
      */
     public boolean hasNextPage() {
         boolean hasNextPage = false;
@@ -190,6 +211,7 @@ public abstract class AbstractPager implements Pager {
 
     /**
      * returns true if there are pages back to current page, else false.
+     * @return Boolean value
      */
     public boolean hasPreviousPage() {
         boolean hasPreviousPage = false;
@@ -201,6 +223,7 @@ public abstract class AbstractPager implements Pager {
 
     /**
      * Returns the first page in the current pagination.
+     * @return First Page
      */
     public Vector<PageElement> firstPage() {
         currentPageIndex = 0;
@@ -211,6 +234,7 @@ public abstract class AbstractPager implements Pager {
 
     /**
      * Returns the page next to the current page.
+     * @return Next Page
      */
     public Vector<PageElement> nextPage() {
         currentPageIndex++;
@@ -221,6 +245,7 @@ public abstract class AbstractPager implements Pager {
 
     /**
      * Returns the page previous to the current page. 
+     * @return Previous Page
      */
     public Vector<PageElement> previousPage() {
         currentPageIndex--;
@@ -231,11 +256,17 @@ public abstract class AbstractPager implements Pager {
 
     /**
      * Returns a collection of page indices.
+     * @return All Page indices
      */
     public Vector<String> getAllPageIndices() {
         return pageIndices;
     }
 
+    /**
+     * @see java.lang.Object#toString()
+     * Overrides toString
+     */
+    @Override
     public String toString() {
         return pageMap.toString();
     }
@@ -243,6 +274,7 @@ public abstract class AbstractPager implements Pager {
     /**
      * This method is needed for PageBarModel to decide on the next and previous
      * pageIndices in needed or not, to update fresh set of page indices.
+     * @return Current Page Index
      */
     public String getCurrentPageIndex() {
         return currentPageIndexStr;
@@ -250,6 +282,8 @@ public abstract class AbstractPager implements Pager {
 
     /**
      * Returns the page element in a particular page, else null..
+     * @param pageElemIndex
+     * @return Page Element or Null
      */
     public PageElement getPageElement(PageElementIndex pageElemIndex) {
         String pageIndex = pageElemIndex.getPageIndex();

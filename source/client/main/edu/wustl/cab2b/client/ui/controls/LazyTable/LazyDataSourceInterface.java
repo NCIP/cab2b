@@ -36,6 +36,9 @@ public interface LazyDataSourceInterface {
     Object getData(int rowNo, int columnNo); 
     
     
+    /**
+     * @return
+     */
     Page getCurrentPage();
 
 

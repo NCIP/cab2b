@@ -31,13 +31,13 @@ public class RadioButtonEditor extends DefaultCellEditor implements ItemListener
     }
 
     /** Gets CellEditorComponent for Table 
-     * @see javax.swing.DefaultCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
      * @param table
      * @param value
      * @param isSelected
      * @param row
      * @param column
      * @return component
+     * @see javax.swing.DefaultCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
      */
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
                                                  int column) {
@@ -49,8 +49,8 @@ public class RadioButtonEditor extends DefaultCellEditor implements ItemListener
     }
 
     /** 
-     * @see javax.swing.DefaultCellEditor#getCellEditorValue()
      * @return Object
+     * @see javax.swing.DefaultCellEditor#getCellEditorValue()
      */
     public Object getCellEditorValue() {
         button.removeItemListener(this);
@@ -58,8 +58,8 @@ public class RadioButtonEditor extends DefaultCellEditor implements ItemListener
     }
 
     /** Handle the Event of StateChanged Property
-     * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
      * @param e
+     * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
      */
     public void itemStateChanged(ItemEvent e) {
         super.fireEditingStopped();

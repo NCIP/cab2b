@@ -15,6 +15,7 @@ import org.jdesktop.swingx.JXHyperlink;
  * 
  * @author chetan_bh
  * @author Chandrakant Talele
+ * @param <T>
  */
 public class Cab2bHyperlink<T> extends JXHyperlink {
 
@@ -64,6 +65,7 @@ public class Cab2bHyperlink<T> extends JXHyperlink {
 
     /**
      * Returns user object associated with this hyperlink.
+     * @return UserObject
      */
     public T getUserObject() {
         return userObject;
@@ -71,6 +73,7 @@ public class Cab2bHyperlink<T> extends JXHyperlink {
 
     /**
      * Sets the user object.
+     * @param userObject
      */
     public void setUserObject(T userObject) {
         this.userObject = userObject;

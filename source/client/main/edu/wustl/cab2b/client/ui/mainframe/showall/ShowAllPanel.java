@@ -18,7 +18,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
  * Abstract panel class for Showing details in tabular format
  * @author deepak_shingan
  */
-abstract public class ShowAllPanel extends Cab2bPanel {
+public abstract class ShowAllPanel extends Cab2bPanel {
 
     private Cab2bTable table;
 
@@ -30,7 +30,6 @@ abstract public class ShowAllPanel extends Cab2bPanel {
 
     /**
      * Constructor
-     * @param action
      * @param tableHeader
      * @param data
      */
@@ -81,7 +80,7 @@ abstract public class ShowAllPanel extends Cab2bPanel {
     /**
      * Action method for each hyperlink click on the table
      */
-    abstract public void linkActionPerformed();
+    public abstract void linkActionPerformed();
 
     /**
      * Returns Cab2bTable associated with panel

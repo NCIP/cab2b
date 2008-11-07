@@ -183,7 +183,7 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
      * This method will search the user search string in every service's name and will
      * add the service inside the filterdServices collection .  
      * @param searchString
-     * @return
+     * 
      */
     private void searchResult(String searchString, Collection<EntityGroupInterface> filteredServices) {
         filteredServices.clear();

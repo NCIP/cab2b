@@ -3,7 +3,8 @@ package edu.wustl.cab2b.client.ui.controls.LazyTable;
 /**
  * Cache that data source can use.
  * 
- * @author rahul_ner *
+ * @author rahul_ner 
+ * @param <D>
  */
 public interface CacheInterface<D> {
 

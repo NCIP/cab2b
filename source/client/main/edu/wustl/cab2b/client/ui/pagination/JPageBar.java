@@ -158,7 +158,9 @@ public class JPageBar extends Cab2bPanel implements ActionListener {
         return indicesPanel;
     }
 
-    /** Replaces the current indices panel with the new panel which has different indices. */
+    /** Replaces the current indices panel with the new panel which has different indices.
+     * @param newIndicesPanel 
+     */
     protected void changeIndicesPanel(JXPanel newIndicesPanel) {
         this.remove(indicesPanel);
         indicesPanel = newIndicesPanel;
@@ -168,6 +170,7 @@ public class JPageBar extends Cab2bPanel implements ActionListener {
 
     /**
      * Action listener for page bar hyperlinks.
+     * @param e actionEvent
      */
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
@@ -207,6 +210,10 @@ public class JPageBar extends Cab2bPanel implements ActionListener {
         }
     }
 
+    /**
+     * @param index
+     * @return next or previous page index
+     */
     protected String sequentialNavigation(String index) {
         String currPageIndex = "";
 
@@ -244,6 +251,10 @@ public class JPageBar extends Cab2bPanel implements ActionListener {
         return currPageIndex;
     }
 
+    /**
+     * Displays the current page selection color
+     * @param currentPageIndex
+     */
     protected void displayLinkColor(String currentPageIndex) {
         /* If current page index is null or empty just return.
          * so that last time colored link remain the same. */
@@ -293,10 +304,16 @@ public class JPageBar extends Cab2bPanel implements ActionListener {
      frame.setVisible(true);
      }*/
 
+    /**
+     * @return Default's page text
+     */
     public String getNextPageText() {
         return PaginationConstants.DEFAULT_PAGE_NEXT_STRING;
     }
 
+    /**
+     * @return Default's page text
+     */
     public String getPreviousPageText() {
         return PaginationConstants.DEFAULT_PAGE_PREVIOUS_STRING;
     }

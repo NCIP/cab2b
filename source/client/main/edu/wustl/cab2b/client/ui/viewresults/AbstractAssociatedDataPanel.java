@@ -59,6 +59,9 @@ public abstract class AbstractAssociatedDataPanel extends Cab2bPanel {
         iniGUI();
     }
 
+    /**
+     * Initialize the GUI components
+     */
     protected void iniGUI() {
         setLayout(new RiverLayout(5, 5));
         addLabel();
@@ -71,14 +74,21 @@ public abstract class AbstractAssociatedDataPanel extends Cab2bPanel {
 
     abstract IQuery getQuery(IAssociation association) throws RemoteException;
 
+    /**
+     * Returns Associated Records
+     * @return
+     */
     public IRecord getAssociatedRecord() {
         return record;
     }
 
-    /*
+    /**
      * The method initializes the user object for the hyperlink, so that both
      * target and source entities for the association, as well as the
      * association itself are remembered by the link
+     * @param hyperLinkUserObject
+     * @param tooltip
+     * @return 
      */
     protected Cab2bHyperlink getHyperlink(HyperLinkUserObject hyperLinkUserObject, String tooltip) {
         Cab2bHyperlink<HyperLinkUserObject> hyperlink = new Cab2bHyperlink<HyperLinkUserObject>(true);

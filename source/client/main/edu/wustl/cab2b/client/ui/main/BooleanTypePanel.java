@@ -93,8 +93,8 @@ public class BooleanTypePanel extends AbstractTypePanel {
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getValues()
-     * @return ArrayList 
+     * @return ArrayList
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getValues() 
      */
     public ArrayList<String> getValues() {
         ArrayList<String> values = new ArrayList<String>();
@@ -109,8 +109,8 @@ public class BooleanTypePanel extends AbstractTypePanel {
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.main.IComponent#setValues(java.util.ArrayList)
      * @param values
+     * @see edu.wustl.cab2b.client.ui.main.IComponent#setValues(java.util.ArrayList)
      */
     public void setValues(ArrayList<String> values) {
         if (values.size() == 0) {
@@ -133,8 +133,8 @@ public class BooleanTypePanel extends AbstractTypePanel {
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#setComponentPreference(java.lang.String)
      * @param condition
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#setComponentPreference(java.lang.String)
      */
     public void setComponentPreference(String condition) {
     }

@@ -249,16 +249,16 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.main.IComponent#getConditionItem()
-     * @return String 
+     * @return String
+     * @see edu.wustl.cab2b.client.ui.main.IComponent#getConditionItem() 
      */
     public String getConditionItem() {
         return (String) conditionComboBox.getSelectedItem();
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.main.IComponent#setCondition(java.lang.String)
      * @param str
+     * @see edu.wustl.cab2b.client.ui.main.IComponent#setCondition(java.lang.String)
      */
     public void setCondition(String str) {
         int itemCount = conditionComboBox.getItemCount();
@@ -544,8 +544,8 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.main.IComponent#getValues()
      * @return ArrayList
+     * @see edu.wustl.cab2b.client.ui.main.IComponent#getValues()
      */
     public ArrayList<String> getValues() {
 

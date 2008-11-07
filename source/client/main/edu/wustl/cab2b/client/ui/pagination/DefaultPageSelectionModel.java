@@ -21,18 +21,37 @@ public class DefaultPageSelectionModel implements PageSelectionModel {
      * property changes like elementsPerPage, etc. */
     JPagination pagination;
 
+    /**
+     * @param newPagination
+     */
     public DefaultPageSelectionModel(JPagination newPagination) {
         pagination = newPagination;
     }
 
+    /**
+     * @return returns selection mode 
+     * @see edu.wustl.cab2b.client.ui.pagination.PageSelectionModel#getSelectionMode()
+     */
     public int getSelectionMode() {
         return selectionMode;
     }
 
+    /**
+     * Checks whether the page index is selected page index or not
+     * @param pageIndex
+     * @param index
+     * @return boolean value
+     * @see edu.wustl.cab2b.client.ui.pagination.PageSelectionModel#isSelectedIndex(java.lang.String, int)
+     */
     public boolean isSelectedIndex(String pageIndex, int index) {
         return false;
     }
 
+    /**
+     * Checks whether something is selected or not
+     * @return boolean values
+     * @see edu.wustl.cab2b.client.ui.pagination.PageSelectionModel#isSelectionEmpty()
+     */
     public boolean isSelectionEmpty() {
         if (getSelectionCount() == 0)
             return true;
@@ -41,6 +60,11 @@ public class DefaultPageSelectionModel implements PageSelectionModel {
 
     // TODO after setting selection mode appropraite Event should be fired to all 
     // listeners, one among many listeners is the JPagination listener.
+    /**
+     * Sets the selection mode for a page
+     * @param selectionMode
+     * @see edu.wustl.cab2b.client.ui.pagination.PageSelectionModel#setSelectionMode(int)
+     */
     public void setSelectionMode(int selectionMode) {
         switch (selectionMode) {
             case SINGLE_SELECTION:
@@ -54,6 +78,7 @@ public class DefaultPageSelectionModel implements PageSelectionModel {
 
     /**
      * Returns the count of selected page elements in all pages.
+     * @return integer value of selected pages
      */
     public int getSelectionCount() {
         int noOfSelections = 0;
@@ -132,6 +157,7 @@ public class DefaultPageSelectionModel implements PageSelectionModel {
 
     /**
      * Clears all the selections in the current displayed page.
+     * @param pageIndex
      */
     public void clearPage(String pageIndex) {
         final PaginationModel paginationModel = pagination.getPaginationModel();
@@ -142,7 +168,8 @@ public class DefaultPageSelectionModel implements PageSelectionModel {
     }
 
     /**
-     * Selects all the selections in the current page displayed. 
+     * Selects all the selections in the current page displayed.
+     * @param pageIndex 
      */
     public void selectPage(String pageIndex) {
         final PaginationModel paginationModel = pagination.getPaginationModel();
@@ -154,6 +181,7 @@ public class DefaultPageSelectionModel implements PageSelectionModel {
 
     /**
      * Inverts the selections in the current page.
+     * @param pageIndex
      */
     public void invertPageSelection(String pageIndex) {
         final PaginationModel paginationModel = pagination.getPaginationModel();
@@ -169,6 +197,7 @@ public class DefaultPageSelectionModel implements PageSelectionModel {
 
     /**
      * Returns a collection of selected page element's page indices.
+     * @return 
      */
     public Vector<PageElementIndex> getSelectedPageIndices() {
         final PaginationModel paginationModel = pagination.getPaginationModel();

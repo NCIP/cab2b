@@ -24,16 +24,16 @@ public class JSheetViewDataModel extends AbstractTableModel {
 	}
 
 	/**
-	 * @see javax.swing.table.TableModel#getRowCount()
 	 * @return row count
+     * @see javax.swing.table.TableModel#getRowCount()
 	 */
 	public int getRowCount() {
 		return tblData.getRowCount();
 	}
 
 	/**
-	 * @see javax.swing.table.TableModel#getColumnCount()
 	 * @return column Count
+	 * @see javax.swing.table.TableModel#getColumnCount()
 	 */
 	public int getColumnCount() {
 		return tblData.getColumnCount();
@@ -41,10 +41,10 @@ public class JSheetViewDataModel extends AbstractTableModel {
 	}
 
 	/**
-	 * @see javax.swing.table.TableModel#getValueAt(int, int)
 	 * @param rowIndex
 	 * @param columnIndex
 	 * @return Value of Cell
+	 * @see javax.swing.table.TableModel#getValueAt(int, int)
 	 */
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		return tblData.getValueAt(rowIndex, columnIndex);
@@ -75,10 +75,10 @@ public class JSheetViewDataModel extends AbstractTableModel {
 
 	/**
 	 * Checks whether Cell is Editable or not
-	 * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
 	 * @param viewRowIndex
 	 * @param viewColumnIndex
 	 * @return Boolean Value
+	 * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
 	 */
 	@Override
 	public boolean isCellEditable(int viewRowIndex, int viewColumnIndex) {
@@ -87,9 +87,9 @@ public class JSheetViewDataModel extends AbstractTableModel {
 
 	/**
 	 * Gets the Column Name
-	 * @see javax.swing.table.AbstractTableModel#getColumnName(int)
 	 * @param column
 	 * @return Column name
+	 * @see javax.swing.table.AbstractTableModel#getColumnName(int)
 	 */
 	@Override
 	public String getColumnName(int column) {

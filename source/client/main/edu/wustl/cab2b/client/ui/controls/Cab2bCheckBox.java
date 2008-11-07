@@ -5,6 +5,10 @@ import java.awt.Font;
 
 import javax.swing.JCheckBox;
 
+/**
+ * @author 
+ *
+ */
 public class Cab2bCheckBox extends JCheckBox {
 
     static Color defaultBgColor = Color.WHITE;

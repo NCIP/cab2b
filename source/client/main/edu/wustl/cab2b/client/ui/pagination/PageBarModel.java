@@ -25,34 +25,51 @@ public class PageBarModel {
     /** Count of broken page indices. */
     int noOfBrokenPageIndices = 0;
 
+    /**
+     * @param fullPageIndices
+     */
     public PageBarModel(Vector fullPageIndices) {
         brokenPageIndices = breakFullIndices(fullPageIndices);
     }
 
-    /** Returns true if there is next set of indices avalable, false otherwise. */
+    /** Returns true if there is next set of indices avalable, false otherwise. 
+     * @return 
+     */
     public boolean hasNextIndices() {
         if (currentPageIndices == brokenPageIndices.size() - 1)
             return false;
         return true;
     }
 
-    /** Returns true if there is previous set of indices available, false otherwise. */
+    /** Returns true if there is previous set of indices available, false otherwise. 
+     * @return true if current page is not first page
+     */
     public boolean hasPreviousIndices() {
         if (currentPageIndices == 0)
             return false;
         return true;
     }
 
-    /** Returns next set of page indices. */
+    /** Returns next set of page indices. 
+     * @return index of next page
+     */
     public Vector<String> nextIndices() {
         return brokenPageIndices.get(++currentPageIndices);
     }
 
-    /** Returns previous set of page indices. */
+    /** Returns previous set of page indices. 
+     * @return index of previous page
+     */
     public Vector<String> previousIndices() {
         return brokenPageIndices.get(--currentPageIndices);
     }
     
+    /**
+     * Overrides toString method
+     * @return string
+     * @see java.lang.Object#toString()
+     */
+    @Override
     public String toString() {
         return brokenPageIndices.toString();
     }

@@ -49,46 +49,46 @@ public class JSheet extends javax.swing.JPanel {
     Logger lgr = Logger.getLogger(getClass().getName());
 
     /** Event name that notifies that User has pressed Magnifying-Glass button...      */
-    public final static String EVENT_HEADER_ROW_DOUBLE_CLICKED = "EVENT_HEADER_ROW_DOUBLE_CLICKED";
+    public static final String EVENT_HEADER_ROW_DOUBLE_CLICKED = "EVENT_HEADER_ROW_DOUBLE_CLICKED";
 
     /** Event name that notifies that User has pressed Magnifying-Glass button...      */
-    public final static String EVENT_DATA_ROW_DOUBLE_CLICKED = "EVENT_DATA_ROW_DOUBLE_CLICKED";
+    public static final String EVENT_DATA_ROW_DOUBLE_CLICKED = "EVENT_DATA_ROW_DOUBLE_CLICKED";
 
     /** Added  by Deepak : Event name that notifies that User has selected some data...      */
-    public final static String EVENT_DATA_SINGLE_CLICKED = "EVENT_DATA_SINGLE_CLICKED";
+    public static final String EVENT_DATA_SINGLE_CLICKED = "EVENT_DATA_SINGLE_CLICKED";
 
     /** Event name that notifies that User is interested in details of some Row...      */
-    public final static String REQUESTED_SHOW_ROW_DETAILS = "REQUESTED_SHOW_ROW_DETAILS";
+    public static final String REQUESTED_SHOW_ROW_DETAILS = "REQUESTED_SHOW_ROW_DETAILS";
 
     /**
      * Copy menu button name
      */
-    public final static String MENU_BUTTON_COPY = "MENU_BUTTON_COPY";
+    public static final String MENU_BUTTON_COPY = "MENU_BUTTON_COPY";
 
     /**
      * Paste menu button name
      */
-    public final static String MENU_BUTTON_PASTE = "MENU_BUTTON_PASTE";
+    public static final String MENU_BUTTON_PASTE = "MENU_BUTTON_PASTE";
 
     /**
      * Add Column menu button name
      */
-    public final static String MENU_BUTTON_ADD_COLUMN = "MENU_BUTTON_ADD_COLUMN";
+    public static final String MENU_BUTTON_ADD_COLUMN = "MENU_BUTTON_ADD_COLUMN";
 
     /**
      * Properties menu button name
      */
-    public final static String MENU_BUTTON_PROPERTIES = "MENU_BUTTON_PROPERTIES";
+    public static final String MENU_BUTTON_PROPERTIES = "MENU_BUTTON_PROPERTIES";
 
     /**
      * Reset menu button name
      */
-    public final static String MENU_BUTTON_RESET = "MENU_BUTTON_RESET";
+    public static final String MENU_BUTTON_RESET = "MENU_BUTTON_RESET";
 
     /**
      * Clear menu button name
      */
-    public final static String MENU_BUTTON_CLEAR = "MENU_BUTTON_CLEAR";
+    public static final String MENU_BUTTON_CLEAR = "MENU_BUTTON_CLEAR";
 
     /**     Should I allow user to create new columns and allow cut/paste on them?      */
     boolean allowWrite = true;
@@ -324,7 +324,7 @@ public class JSheet extends javax.swing.JPanel {
 
     /**
      * Adds RowSelectionListener to the table
-     * @param ListSelectionListener lsl
+     * @param lsl
      */
     public void addRowSelectionListener(ListSelectionListener lsl) {
         consData.addTableRowSelectionListener(lsl);
@@ -332,7 +332,7 @@ public class JSheet extends javax.swing.JPanel {
 
     /**
      * Removes RowSelectionListener from Jsheet table
-     * @param ListSelectionListener lsl
+     * @param lsl
      */
     public void removeRowSelectionListener(ListSelectionListener lsl) {
         consData.removeTableRowSelectionListener(lsl);
@@ -340,7 +340,7 @@ public class JSheet extends javax.swing.JPanel {
 
     /**
      * Adds ColumnSelectionListener to the table
-     * @param ListSelectionListener lsl
+     * @param lsl
      */
     public void addColumnSelectionListener(ListSelectionListener lsl) {
         consData.addTableColSelectionListener(lsl);
@@ -348,7 +348,7 @@ public class JSheet extends javax.swing.JPanel {
 
     /**
      * Removes ColumnSelectionListener
-     * @param ListSelectionListener lsl
+     * @param lsl
      */
     public void removeColumnSelectionListener(ListSelectionListener lsl) {
         consData.removeTableColSelectionListener(lsl);
@@ -494,7 +494,7 @@ public class JSheet extends javax.swing.JPanel {
 
     /**
      * Creates new ColumnModel for JSheet
-     * @param int idx
+     * @param idx
      * @return SheetColumn
      */
     private SheetColumn createNewColumnModel(int idx) {

@@ -35,7 +35,6 @@ public class TextAreaRenderer extends JTextPane implements TableCellRenderer {
 
     /**
      * Gets CellRendererComponent for Table
-     * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int) 
      * @param table
      * @param value
      * @param isSelected
@@ -43,7 +42,7 @@ public class TextAreaRenderer extends JTextPane implements TableCellRenderer {
      * @param column
      * @param hasFocus
      * @return Component
-     * 
+     * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
      */
     public Component getTableCellRendererComponent(JTable table, Object obj, boolean isSelected, boolean hasFocus,
                                                    int row, int column) {

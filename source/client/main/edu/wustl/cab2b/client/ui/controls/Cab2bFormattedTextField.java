@@ -288,6 +288,10 @@ public class Cab2bFormattedTextField extends JFormattedTextField {
      */
     protected class DocumentFactory {
 
+        /**
+         * @param fieldType
+         * @return
+         */
         public PlainDocument getDocument(int fieldType) {
             //TODO 	if(fieldType == DATE_FILED)	{		}
             PlainDocument document = null;

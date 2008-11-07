@@ -38,7 +38,12 @@ public class ExperimentPanel extends Cab2bTitledPanel {
     ExperimentDetailsPanel expDetailsPanel;
 
     ExperimentHierarchyPanel expHierarchyPanel;
-    final static String title = ApplicationProperties.getValue(EXPERIMENT_FRAME_TITLE);
+    
+    static final String title = ApplicationProperties.getValue(EXPERIMENT_FRAME_TITLE);
+    
+    /**
+     * Default Constructor 
+     */
     public ExperimentPanel() {
         super();
         Cab2bLabel label = new Cab2bLabel(title);

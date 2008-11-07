@@ -32,7 +32,7 @@ import edu.wustl.cab2b.client.ui.controls.slider.BiSlider;
  * 
  *T refers to the column type which is associated to this column.
  * @author jasbir_sachdeva
- * @param T This Model only works on values that are natrually comparable.
+ * @param <T> This Model only works on values that are natrually comparable.
  * 
  */
 public class ColumnFilterModel<T extends Comparable> {
@@ -255,8 +255,8 @@ public class ColumnFilterModel<T extends Comparable> {
 
     /**     Creates a collection of unique and sorted values, based on full data set.
      * If Given a set of empty values, returns a empty non-null Set.
-     * @param allPossibleValues - list of all possibles that E may have.
-     * @return  Sorted set made of uniques values from provided input: allPossibleValues.
+     * @param <E> allPossibleValues - list of all possibles that E may have.
+     * @return Sorted set made of uniques values from provided input: allPossibleValues.
      */
     public static <E> TreeSet<E> createSampleSortedValues(ArrayList<E> allPossibleValues) {
         TreeSet<E> sortedSet = new TreeSet<E>();

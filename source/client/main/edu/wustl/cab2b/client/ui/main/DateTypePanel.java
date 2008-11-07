@@ -33,8 +33,8 @@ public class DateTypePanel extends AbstractTypePanel {
 
     /**
      * Gives first component in Panel
-     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getFirstComponent()
      * @return
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getFirstComponent()
      */
     public JComponent getFirstComponent() {
         DatePanel datePanel = new DatePanel();
@@ -57,8 +57,8 @@ public class DateTypePanel extends AbstractTypePanel {
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getValues()
      * @return ArrayList
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getValues()
      */
     public ArrayList<String> getValues() {
         ArrayList<String> values = new ArrayList<String>();
@@ -74,8 +74,8 @@ public class DateTypePanel extends AbstractTypePanel {
     }
 
     /** 
-     * @see edu.wustl.cab2b.client.ui.main.IComponent#setValues(java.util.ArrayList)
-     * @param values  
+     * @param values
+     * @see edu.wustl.cab2b.client.ui.main.IComponent#setValues(java.util.ArrayList)  
      */
     public void setValues(ArrayList<String> values) {
         if (values.size() == 1) {
@@ -135,6 +135,9 @@ class DatePanel extends Cab2bPanel {
      */
     private JLabel dateFormatLabel;
 
+    /**
+     * 
+     */
     public DatePanel() {
         initGUI();
     }

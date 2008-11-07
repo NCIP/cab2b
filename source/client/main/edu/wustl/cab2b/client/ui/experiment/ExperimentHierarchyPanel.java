@@ -50,6 +50,9 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
 
     private ExperimentDetailsPanel expDetailsPanel;
 
+    /**
+     * @param newExpDetailsPanel
+     */
     public ExperimentHierarchyPanel(ExperimentDetailsPanel newExpDetailsPanel) {
         expDetailsPanel = newExpDetailsPanel;
         initGUI();

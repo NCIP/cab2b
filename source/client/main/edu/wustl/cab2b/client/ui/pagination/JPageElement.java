@@ -102,6 +102,12 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
 
     private static int descLength = (int) ((MainFrame.getScreenDimesion().getWidth() / 1024f) * 110f);
 
+    /**
+     * @param pagination
+     * @param pageElement
+     * @param isSelectable
+     * @param pageElementIndex
+     */
     public JPageElement(
             JPagination pagination,
             PageElement pageElement,
@@ -122,10 +128,16 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         }
     }
 
+    /**
+     * @return Pagination instance
+     */
     public JPagination getPagination() {
         return pagination;
     }
 
+    /**
+     * @return Page Element
+     */
     public PageElement getPageElement() {
         return pageElement;
     }
@@ -179,6 +191,9 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         this.add("br tab", descriptionLabel);
     }
 
+    /**
+     * Resets the Hyperlink
+     */
     public void resetHyperLink() {
         removeAll();
         if (isSelectable && pagination != null) {
@@ -197,6 +212,9 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         this.add("br tab", descriptionLabel);
     }
 
+    /**
+     * Resets the Label
+     */
     public void resetLabel() {
         removeAll();
         if (isSelectable && pagination != null) {
@@ -226,6 +244,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
     /**
      * Capture events happening on JPageElements CheckBox 
      * Create a PageSelectionEvent and fire an selectionChangedEvent to JPagination.
+     * @param e
      */
     public void actionPerformed(ActionEvent e) {
         if (pageElement.isSelected()) {
@@ -238,22 +257,32 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
         pagination.fireSelectionValueChanged(selectionEvent);
     }
 
+    /**
+     * @param ae
+     */
     public void addHyperlinkActionListener(ActionListener ae) {
         hyperlink.addActionListener(ae);
     }
 
+    /**
+     * @param aes
+     */
     public void addHyperlinkActionListeners(Vector<ActionListener> aes) {
         for (ActionListener ae : aes) {
             hyperlink.addActionListener(ae);
         }
     }
 
+    /**
+     * @param ae 
+     */
     public void removeHyperlinkActionListener(ActionListener ae) {
         hyperlink.removeActionListener(ae);
     }
 
     /**
      * Property Change Listener, listens for specific changes in JPagination property change like "isSelectable" property.
+     * @param propChangeEvent
      */
     public void propertyChange(PropertyChangeEvent propChangeEvent) {
         String propertyName = propChangeEvent.getPropertyName();

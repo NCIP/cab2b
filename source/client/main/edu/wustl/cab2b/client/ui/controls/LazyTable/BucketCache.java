@@ -10,6 +10,7 @@ import edu.wustl.cab2b.client.cache.UserCache;
  * by this page.
  * 
  * @author Rahul Ner
+ * @param <D>
  */
 public class BucketCache<D> implements CacheInterface<D> {
 
@@ -35,6 +36,9 @@ public class BucketCache<D> implements CacheInterface<D> {
     }
 
     /**
+     * Checks whether a certain page is cached or not
+     * @param pageInfo
+     * @return boolean value
      * @see edu.wustl.cab2b.client.CacheInterface#isCached(edu.wustl.cab2b.client.PageInfo)
      */
     public boolean isCached(PageInfo pageInfo) {
@@ -45,6 +49,8 @@ public class BucketCache<D> implements CacheInterface<D> {
     }
 
     /**
+     * puts a certain page in cache
+     * @param page
      * @see edu.wustl.cab2b.client.CacheInterface#put(edu.wustl.cab2b.client.Page)
      */
     public void put(Page page) {
@@ -54,6 +60,8 @@ public class BucketCache<D> implements CacheInterface<D> {
     }
 
     /**
+     * @param pageInfo
+     * @return Checks a page information
      * @see edu.wustl.cab2b.client.CacheInterface#get(edu.wustl.cab2b.client.PageInfo)
      */
     public Page get(PageInfo pageInfo) {

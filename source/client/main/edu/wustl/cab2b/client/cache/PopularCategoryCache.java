@@ -12,6 +12,10 @@ import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
 import edu.wustl.cab2b.common.ejb.category.CategoryHomeInterface;
 
+/**
+ * @author hrishikesh_rajpathak
+ *
+ */
 public class PopularCategoryCache {
 
     private static PopularCategoryCache popularCategoryCache = null;

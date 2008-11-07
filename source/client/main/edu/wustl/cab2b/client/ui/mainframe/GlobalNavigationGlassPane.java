@@ -210,8 +210,8 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
     }
 
     /**
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      * @param e ActionEvent
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
         JButton button = (JButton) e.getSource();

@@ -107,8 +107,8 @@ public class SelectionHanger extends javax.swing.JPanel {
     }//GEN-LAST:event_formComponentResized
 
     /** Draws Magnifying glass inside the Component as per precomputed specifications...
+     * @param g Graphics
      * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
-     * @param g
      */
     @Override
     public void paintComponent(Graphics g) {

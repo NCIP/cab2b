@@ -31,15 +31,21 @@ public class SearchPanel extends Cab2bPanel implements ActionListener {
 
     private Cab2bTextField searchTextFld;
 
-    final private Cab2bHyperlink showAll = new Cab2bHyperlink();
+    private final Cab2bHyperlink showAll = new Cab2bHyperlink();
 
     private Cab2bButton searchBtn;
 
+    /**
+     * Default Constructor
+     */
     public SearchPanel() {
         super(new RiverLayout(5, 10));
         initGUI();
     }
 
+    /**
+     * @param objectList
+     */
     public SearchPanel(List<? extends Object> objectList) {
         super(new RiverLayout(5, 10));
         initGUI();
@@ -49,7 +55,8 @@ public class SearchPanel extends Cab2bPanel implements ActionListener {
      * This method will be called when user clicks on search button
      * showAll link will be activated if user enters some search string
      * If user entered the string this method will fire an SEARCH_EVENT
-     * & pass the search string as the event's new Value.   
+     * & pass the search string as the event's new Value.
+     * @param event   
      */
     public void actionPerformed(ActionEvent event) {
         final String searchString = searchTextFld.getText();

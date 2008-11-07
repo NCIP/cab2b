@@ -44,10 +44,10 @@ public class Cab2bDefaultTableModel extends DefaultTableModel {
      * editable.
      */
     /** Check whether Cell is Editable or not
-     * @see javax.swing.table.DefaultTableModel#isCellEditable(int, int)
      * @param row
      * @param col
      * @return boolean value
+     * @see javax.swing.table.DefaultTableModel#isCellEditable(int, int)
      */
     public boolean isCellEditable(int row, int col) {
         // If first column is check-box then only 

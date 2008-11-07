@@ -82,17 +82,17 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
     /** Each new Column is given name as: "New Col-1", "New Col-2", and so on. */
     private int columnAppendCount = 0;
 
-    /***/
-    public final static String EXT_COLUMNS_NAME_PREFIX = "N.Col-";
+    /** Column Names Prefix */
+    public static final String EXT_COLUMNS_NAME_PREFIX = "N.Col-";
 
     /** To be used by Table while laying out Columns... */
     int defaultColWidth = Toolkit.getDefaultToolkit().getScreenSize().width / 20;
 
     /** Events name, fired when some button is pressed. */
-    public final static String BUTTON_SELECT_ALL = "BUTTON_SELECT_ALL";
+    public static final String BUTTON_SELECT_ALL = "BUTTON_SELECT_ALL";
 
     /** Events name, fired when some button is reset. */
-    public final static String BUTTON_SELECTION_RESET = "BUTTON_SELECTION_RESET";
+    public static final String BUTTON_SELECTION_RESET = "BUTTON_SELECTION_RESET";
 
     TableRowSorter tblRowSorter = new TableRowSorter();
 
@@ -350,8 +350,8 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
     // Listeners...
     //
     /** Property Change Listener
-     * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
      * @param evt
+     * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
      */
     public void propertyChange(PropertyChangeEvent evt) {
 
@@ -1868,7 +1868,7 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
         }
 
         /**
-         * @returns: The newly created tableColumn. It NOT attached to the table
+         * @returns The newly created tableColumn. It NOT attached to the table
          *           yet.
          */
         private TableColumn createNewColumn() {

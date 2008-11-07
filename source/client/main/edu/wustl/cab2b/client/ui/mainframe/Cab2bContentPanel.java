@@ -10,15 +10,18 @@ public class Cab2bContentPanel extends ContentPanel {
 
 	private SearchPanel searchPanel;
 
+	/**
+	 *Default Constructor 
+	 */
 	public Cab2bContentPanel() {
 		super();
 		searchPanel = new SearchPanel(this);
 	}
 
 	/**
-	 * @see edu.wustl.cab2b.client.ui.searchDataWizard.ContentPanel#refresh(org.jdesktop.swingx.JXPanel[], java.lang.String)
 	 * @param arrPanel
 	 * @param strClassName
+	 * @see edu.wustl.cab2b.client.ui.searchDataWizard.ContentPanel#refresh(org.jdesktop.swingx.JXPanel[], java.lang.String)
 	 */
 	@Override
 	public void refresh(JXPanel[] arrPanel, String strClassName) {
@@ -27,8 +30,8 @@ public class Cab2bContentPanel extends ContentPanel {
 	}
 
 	/**
-	 * @see edu.wustl.cab2b.client.ui.searchDataWizard.ContentPanel#setSearchResultPanel(edu.wustl.cab2b.client.ui.searchDataWizard.SearchResultPanel)
 	 * @param searchResultPanel
+	 * @see edu.wustl.cab2b.client.ui.searchDataWizard.ContentPanel#setSearchResultPanel(edu.wustl.cab2b.client.ui.searchDataWizard.SearchResultPanel)
 	 */
 	@Override
 	public void setSearchResultPanel(SearchResultPanel searchResultPanel) {
@@ -36,8 +39,8 @@ public class Cab2bContentPanel extends ContentPanel {
 	}
 
 	/**
-	 * @see edu.wustl.cab2b.client.ui.searchDataWizard.ContentPanel#setSearchPanel(edu.wustl.cab2b.client.ui.searchDataWizard.SearchPanel)
 	 * @param panel
+	 * @see edu.wustl.cab2b.client.ui.searchDataWizard.ContentPanel#setSearchPanel(edu.wustl.cab2b.client.ui.searchDataWizard.SearchPanel)
 	 */
 	@Override
 	public void setSearchPanel(SearchPanel panel) {

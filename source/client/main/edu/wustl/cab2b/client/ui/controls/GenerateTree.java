@@ -35,8 +35,7 @@ public class GenerateTree {
 
     /**
      * Creates and returns the JTree from the vector of data nodes passed.
-     * @param dataVector the data vector.
-     * @param treeType the type of tree.
+     * @param rootNode 
      * @return the JTree from the vector of data nodes passed.
      */
     public JXTree createTree(TreeNode<?> rootNode) {
@@ -51,7 +50,7 @@ public class GenerateTree {
     /**
      * Creates the hierarchy of nodes under the parent node with the child nodes passed.
      * @param parentNode the parent node.
-     * @param dNodchildNodeses the child nodes.
+     * @param children the child nodes.
      */
     private void createHierarchy(DefaultMutableTreeNode parentNode, List<?> children) {
         Iterator<?> iterator = children.iterator();

@@ -216,8 +216,8 @@ public abstract class AbstractAmibuityResolver extends Cab2bPanel implements IDi
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.controls.IDialogInterface#setParentWindow(javax.swing.JDialog)
      * @param dialog
+     * @see edu.wustl.cab2b.client.ui.controls.IDialogInterface#setParentWindow(javax.swing.JDialog)
      */
     public void setParentWindow(JDialog dialog) {
         parentWindow = dialog;

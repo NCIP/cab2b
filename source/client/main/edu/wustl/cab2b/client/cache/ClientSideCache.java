@@ -91,6 +91,7 @@ public class ClientSideCache extends AbstractEntityCache {
 
     /**
      * @see edu.wustl.cab2b.common.cache.AbstractEntityCache#getCab2bEntityGroups()
+     * @return Cab2bEntityGroupInterface
      */
     @Override
     protected Collection<EntityGroupInterface> getCab2bEntityGroups() {

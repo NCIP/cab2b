@@ -47,6 +47,9 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
 
     private ExperimentOpenPanel expPanel = null;
 
+    /**
+     * Default Constructor
+     */
     public ExperimentDetailsPanel() {
         initGUI();
         tHeader.add("Title");
@@ -275,6 +278,9 @@ public class ExperimentDetailsPanel extends Cab2bPanel {
     class CellWrapRenderer extends JTextArea implements TableCellRenderer {
         private static final long serialVersionUID = 1L;
 
+        /**
+         * 
+         */
         public CellWrapRenderer() {
             setLineWrap(true);
             setWrapStyleWord(true);

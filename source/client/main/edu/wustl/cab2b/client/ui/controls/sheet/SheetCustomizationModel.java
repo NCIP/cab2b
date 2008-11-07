@@ -118,25 +118,25 @@ class SheetCustomizationModel extends AbstractTableModel {
     }
 
     /** Gets Row Count
-     * @see javax.swing.table.TableModel#getRowCount()
      * @return row count
+     * @see javax.swing.table.TableModel#getRowCount()
      */
     public int getRowCount() {
         return scRowInfoAL.size();
     }
 
     /** Gets Column Count
-     * @see javax.swing.table.TableModel#getColumnCount()
      * @return 4
+     * @see javax.swing.table.TableModel#getColumnCount()
      */
     public int getColumnCount() {
         return 4;
     }
 
     /** Gets Column Name
-     * @see javax.swing.table.AbstractTableModel#getColumnName(int)
      * @param columnIndex
      * @return Column Name
+     * @see javax.swing.table.AbstractTableModel#getColumnName(int)
      */
     @Override
     public String getColumnName(int columnIndex) {
@@ -154,9 +154,9 @@ class SheetCustomizationModel extends AbstractTableModel {
     }
 
     /** Gets Column Class
-     * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
      * @param columnIndex
      * @return Column Class
+     * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
      */
     @Override
     public Class<?> getColumnClass(int columnIndex) {
@@ -175,10 +175,10 @@ class SheetCustomizationModel extends AbstractTableModel {
 
     /**
      * Checks whether cell is editable or not
-     * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
      * @param rowIndex
      * @param columnIndex
      * @return Boolean Value
+     * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
      */
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -197,10 +197,10 @@ class SheetCustomizationModel extends AbstractTableModel {
 
     /** 
      * Gets the cell value of particular cell
-     * @see javax.swing.table.TableModel#getValueAt(int, int)
      * @param rowIndex
      * @param columnIndex
      * @return cell value
+     * @see javax.swing.table.TableModel#getValueAt(int, int)
      */
     public Object getValueAt(int rowIndex, int columnIndex) {
         SheetColumn sheetCol = scRowInfoAL.get(rowIndex);
@@ -218,10 +218,10 @@ class SheetCustomizationModel extends AbstractTableModel {
     }
 
     /** Sets the value of particular cell 
-     * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
      * @param aValue
      * @param rowIndex
      * @param columnIndex
+     * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
      */
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {

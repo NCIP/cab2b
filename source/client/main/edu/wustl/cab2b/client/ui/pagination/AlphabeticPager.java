@@ -33,9 +33,9 @@ public class AlphabeticPager extends AbstractPager {
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.pagination.AbstractPager#getPageMap(java.util.Vector)
      * @param data
      * @return Page map info
+     * @see edu.wustl.cab2b.client.ui.pagination.AbstractPager#getPageMap(java.util.Vector)
      */
     protected Map<String, Vector<PageElement>> getPageMap(Vector<PageElement> data) {
         Map<String, Vector<PageElement>> pageMap = new HashMap<String, Vector<PageElement>>();
@@ -66,8 +66,8 @@ public class AlphabeticPager extends AbstractPager {
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.pagination.Pager#getElementsPerPage()
      * @return elements Per page
+     * @see edu.wustl.cab2b.client.ui.pagination.Pager#getElementsPerPage()
      */
     public int getElementsPerPage() {
         return elementsPerPage;
@@ -76,16 +76,16 @@ public class AlphabeticPager extends AbstractPager {
     // TODO Yet to implement this method fully.
     // This will set elements per page for second level Numeric pager.
     /**
-     * @see edu.wustl.cab2b.client.ui.pagination.Pager#setElementsPerPage(int)
      * @param elementsPerPage
+     * @see edu.wustl.cab2b.client.ui.pagination.Pager#setElementsPerPage(int)
      */
     public void setElementsPerPage(int elementsPerPage) {
         this.elementsPerPage = elementsPerPage;
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.pagination.Pager#getPagerName()
      * @return Page Name
+     * @see edu.wustl.cab2b.client.ui.pagination.Pager#getPagerName()
      */
     public String getPagerName() {
         return pagerName;

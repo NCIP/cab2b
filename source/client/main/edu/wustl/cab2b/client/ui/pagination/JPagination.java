@@ -89,6 +89,8 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
      */
     private Vector<PageSelectionListener> pageSelectionListenerList = new Vector<PageSelectionListener>();
 
+
+    /** link EventListenerList */
     @Deprecated
     protected EventListenerList listenerList = new EventListenerList();
 
@@ -109,24 +111,47 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
 
     private Cab2bHyperlink invertSelectionHyperlink;
 
+    /**
+     * Default Constructor
+     */
     public JPagination() {
         this(null);
     }
 
+    /**
+     * @param data
+     */
     public JPagination(Vector<PageElement> data) {
         this(data, new NumericPager(data));
     }
 
+    /**
+     * @param data
+     * @param pager
+     */
     public JPagination(Vector<PageElement> data, Pager pager) {
         this(data, pager, null, false);
     }
 
+    /**
+     * @param data
+     * @param pager
+     * @param parentComponent
+     * @param autoPageResize
+     */
     public JPagination(Vector<PageElement> data, Pager pager, Component parentComponent, boolean autoPageResize) {
         preInitializeGUI(data, pager, parentComponent, autoPageResize);
         initGUI();
         addNewMouseWheelListener();
     }
     
+    /**
+     * @param data
+     * @param pager
+     * @param parentComponent
+     * @param autoPageResize
+     * @param selectable
+     */
     public JPagination(Vector<PageElement> data, Pager pager, Component parentComponent, boolean autoPageResize, boolean selectable) {
         preInitializeGUI(data, pager, parentComponent, autoPageResize);
         this.isSelectable=selectable;
@@ -188,10 +213,16 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
         this.validateTree();
     }
 
+    /**
+     * @param preferredSize
+     */
     public void setPrefSize(Dimension preferredSize) {
         super.setPreferredSize(preferredSize);
     }
 
+    /**
+     * @return
+     */
     public Dimension getPrefSize() {
         return this.getPreferredSize();
     }
@@ -203,6 +234,8 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
      * 
      * TODO this function should now take into account pageLayoutOrientation and pageDimension
      * attributes into account while laying out page elements in the page panel.
+     * @param pageElements
+     * @return JXPanel
      * 
      */
     public JXPanel getPagePanel(Vector<PageElement> pageElements) {
@@ -227,6 +260,9 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
         return pagePanel;
     }
 
+    /**
+     * @param actionListener
+     */
     public void addPageElementActionListener(ActionListener actionListener) {
         for (int i = 0; i < pagePanel.getComponentCount(); i++) {
             JPageElement pageElementComp = (JPageElement) pagePanel.getComponent(i);
@@ -238,6 +274,9 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
     //TODO This looks like not conforming to JavaBeans standards
     //     This should set actionlisteners of each pageelements actionlistener to null
     //     Just like previous function.
+    /**
+     * @param actionListener
+     */
     public void removePageElementActionListener(ActionListener actionListener) {
         pageElementActionListenerList.remove(actionListener);
         for (int i = 0; i < pagePanel.getComponentCount(); i++) {
@@ -403,6 +442,7 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
 
     /**
      * Property change listener method.
+     * @param pcEvent
      */
     public void propertyChange(PropertyChangeEvent pcEvent) {
         String propertyName = pcEvent.getPropertyName();
@@ -430,11 +470,19 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
         }
     }
 
+    /**
+     * PageSelectionListener
+     * @param pageSelectionListener
+     */
     public void addPageSelectionListener(PageSelectionListener pageSelectionListener) {
         if (pageSelectionListener != null)
             pageSelectionListenerList.add(pageSelectionListener);
     }
 
+    /**
+     * PageSelectionListener
+     * @param pageSelectionListener
+     */
     public void removePageSelectionListener(PageSelectionListener pageSelectionListener) {
         if (pageSelectionListener != null)
             pageSelectionListenerList.remove(pageSelectionListener);
@@ -598,6 +646,9 @@ public class JPagination extends Cab2bPanel implements PropertyChangeListener, M
         this.selectedJPageElement = selectedJPageElement;
     }
 
+    /**
+     *  Disables all links on page
+     */
     public void setPageLinksDisabled() {
         selectAllHyperlink.setEnabled(false);
         clearAllHyperlink.setEnabled(false);

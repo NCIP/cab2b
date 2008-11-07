@@ -47,7 +47,7 @@ public class MetadataSearch {
      * @param basedOn
      *            The based on fields.
      * @return The Matched class object containing all the entities found in the search.
-     * @throws RemoteException
+     * @throws CheckedException
      */
     public MatchedClass search(int[] searchTarget, String[] searchString, int basedOn) throws CheckedException {
         if (searchTarget == null || searchString == null) {

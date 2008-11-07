@@ -174,6 +174,10 @@ public class MThumbSliderAdditionalUI {
         return ((MThumbSliderAdditional) ui).getTrackRect();
     }
 
+    /**
+     * @author 
+     *
+     */
     public class ChangeHandler implements ChangeListener {
         public void stateChanged(ChangeEvent e) {
             if (!isDragging) {
@@ -183,6 +187,10 @@ public class MThumbSliderAdditionalUI {
         }
     }
 
+    /**
+     * @author 
+     *
+     */
     public class TrackListener extends MouseInputAdapter {
         protected transient int offset;
 
@@ -385,10 +393,20 @@ public class MThumbSliderAdditionalUI {
 
         }
 
+        /**
+         * Gives a value whether scroll is allowed or not in given direction
+         * @param direction
+         * @return
+         */
         public boolean shouldScroll(int direction) {
             return false;
         }
 
+        /**
+         * @param x
+         * @param y
+         * @return
+         */
         public boolean isValidPosition(int x, int y) {
             boolean isValidPosition = true;
             for (int i = 0; i < adjustingThumbIndex; i++) {

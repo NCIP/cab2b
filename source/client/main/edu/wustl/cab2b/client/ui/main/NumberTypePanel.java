@@ -32,16 +32,16 @@ public class NumberTypePanel extends AbstractTypePanel {
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getFirstComponent()
      * @return JComponent the first component in Number Panel
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getFirstComponent()
      */
     public JComponent getFirstComponent() {
         return getProperFormattedTextField();
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getSecondComponent()
      * @return JComponent the second component in Number Panel
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getSecondComponent()
      */
     public JComponent getSecondComponent() {
         return getProperFormattedTextField();
@@ -49,8 +49,8 @@ public class NumberTypePanel extends AbstractTypePanel {
 
     /**
      * Sets the values for Number Panel
-     * @see edu.wustl.cab2b.client.ui.main.IComponent#setValues(java.util.ArrayList)
      * @param values
+     * @see edu.wustl.cab2b.client.ui.main.IComponent#setValues(java.util.ArrayList)
      */
     public void setValues(ArrayList<String> values) {
         if (values.size() == 0) {
@@ -108,8 +108,8 @@ public class NumberTypePanel extends AbstractTypePanel {
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#setComponentPreference(java.lang.String)
      * @param condition
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#setComponentPreference(java.lang.String)
      */
     public void setComponentPreference(String condition) {
         if ((getConditionItem().compareToIgnoreCase("IN") == 0 || getConditionItem().compareToIgnoreCase("Not IN") == 0)) {

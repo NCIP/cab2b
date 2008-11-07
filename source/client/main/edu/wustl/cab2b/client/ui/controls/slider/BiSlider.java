@@ -33,7 +33,9 @@ public class BiSlider extends JPanel {
         mSlider = new MThumbSlider();
     }
 
-    /** parameterized Constructor */
+    /** parameterized Constructor
+     * @param data 
+     */
     public BiSlider(Vector data) {
         super();
         mSlider = new MThumbSlider(data, this);

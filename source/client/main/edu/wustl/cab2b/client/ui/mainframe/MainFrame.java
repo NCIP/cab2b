@@ -85,6 +85,10 @@ public class MainFrame extends JXFrame {
     private JDialog searchWizardDialog;
 
     // fields used by the status bar
+    /**
+     * @author
+     *
+     */
     public static enum Status {
         READY("Ready"), BUSY("Busy");
         private String textToShow;
@@ -101,9 +105,9 @@ public class MainFrame extends JXFrame {
         }
     };
 
-    static private Cab2bLabel status;
+    private static Cab2bLabel status;
 
-    static private Cab2bLabel statusMessage;
+    private static Cab2bLabel statusMessage;
 
     private JXStatusBar statusBar;
 

@@ -17,13 +17,20 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+/**
+ * @author
+ *
+ */
 public class TableColumnWidthSynchronizer {
 
 //    protected JViewport vpSPnlMainTable;
     JViewport vpTblColOwner;
     JViewport vpTblExtraOb;
+    /** Table Column*/
     protected TableColumn tcolObservable;
+    /** JTable */
     protected JTable tblColumnOwner;
+    /** JTable */
     protected JTable tblExtraObservable;
 
     /**
@@ -183,10 +190,16 @@ public class TableColumnWidthSynchronizer {
 
     class UnsupportedParentEcxeption extends RuntimeException {
 
+        /**
+         * 
+         */
         public UnsupportedParentEcxeption() {
             super();
         }
 
+        /**
+         * @param msg
+         */
         public UnsupportedParentEcxeption(String msg) {
             super(msg);
         }

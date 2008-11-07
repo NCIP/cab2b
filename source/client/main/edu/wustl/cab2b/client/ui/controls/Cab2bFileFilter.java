@@ -48,8 +48,8 @@ public class Cab2bFileFilter extends FileFilter {
     }
 
     /** gets the Description a file
-     * @see javax.swing.filechooser.FileFilter#getDescription()
      * @return String
+     * @see javax.swing.filechooser.FileFilter#getDescription()
      */
     @Override
     public String getDescription() {

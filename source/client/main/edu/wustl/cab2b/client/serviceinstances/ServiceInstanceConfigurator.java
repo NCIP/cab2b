@@ -60,7 +60,7 @@ public class ServiceInstanceConfigurator {
      * It gets all the service instance selected by user and add to user serviceURL collection
      * and updates the user. 
      * @param serviceURLObjects
-     * @param user
+     * @param entityGroupName
      * @throws RemoteException
      */
     public void saveServiceInstances(String entityGroupName, Collection<ServiceURL> serviceURLObjects)

@@ -38,8 +38,10 @@ public class SwingUIManager {
      * conditions and components for entering/showing the values.
      * 
      * @param parseFile
-     * @param entity
+     * @param attributeEntity
+     * @param maxLabelDimension
      * @return panel object
+     * @throws CheckedException
      */
     public static Object generateUIPanel(ParseXMLFile parseFile, AttributeInterface attributeEntity,
                                          Dimension maxLabelDimension) throws CheckedException {

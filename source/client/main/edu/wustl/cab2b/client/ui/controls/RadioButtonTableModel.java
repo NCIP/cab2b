@@ -23,10 +23,10 @@ public class RadioButtonTableModel extends DefaultTableModel {
 
     /** 
      * Checks whether Cell is Editable or not
-     * @see javax.swing.table.DefaultTableModel#isCellEditable(int, int)
      * @param row
      * @param col
      * @return Boolean Value
+     * @see javax.swing.table.DefaultTableModel#isCellEditable(int, int)
      */
     public boolean isCellEditable(int row, int col) {
         if (col == 0) {

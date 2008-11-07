@@ -26,16 +26,16 @@ public class EnumTypePanel extends AbstractTypePanel {
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getFirstComponent()
      * @return JComponent the first component in Enum Panel
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getFirstComponent()
      */
     public JComponent getFirstComponent() {
         return getComponent();
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getSecondComponent()
      * @return JComponent the second component in Enum Panel
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getSecondComponent()
      */
     public JComponent getSecondComponent() {
         return getComponent();
@@ -60,8 +60,8 @@ public class EnumTypePanel extends AbstractTypePanel {
 
     /**
      * Gets the values for Enum Panel
-     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getValues()
      * @return values
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getValues()
      */
     public ArrayList<String> getValues() {
         ArrayList<String> selected = new ArrayList<String>();
@@ -76,16 +76,16 @@ public class EnumTypePanel extends AbstractTypePanel {
 
     /**
      * Sets the values for Enum Panel
-     * @see edu.wustl.cab2b.client.ui.main.IComponent#setValues(java.util.ArrayList)
      * @param values
+     * @see edu.wustl.cab2b.client.ui.main.IComponent#setValues(java.util.ArrayList)
      */
     public void setValues(ArrayList<String> values) {
         ((Cab2bListBox) firstComponent).setSelectedValues(values);
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#setComponentPreference(java.lang.String)
      * @param condition
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#setComponentPreference(java.lang.String)
      */
     public void setComponentPreference(String condition) {
     }

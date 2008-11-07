@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 class BackgroundImagePanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
+    /** Background Image*/
     protected Image backgroundImage;
 
     /**
@@ -39,7 +40,9 @@ class BackgroundImagePanel extends JPanel {
         }
     }
 
-    /* (non-Javadoc)
+    /**
+     * Paints the component
+     * @param graphics 
      * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
      */
     protected void paintComponent(Graphics graphics) {

@@ -29,7 +29,12 @@ public class Cab2bHyperlinkUI extends BasicHyperlinkUI {
         this.usePlainFont = usePlainFont;
     }
 
-    /* (non-Javadoc)
+    /**
+     * Paints the given Text with given color
+     * @param graphics
+     * @param button
+     * @param textRect
+     * @param text
      * @see javax.swing.plaf.basic.BasicButtonUI#paintText(java.awt.Graphics, javax.swing.AbstractButton, java.awt.Rectangle, java.lang.String)
      */
 

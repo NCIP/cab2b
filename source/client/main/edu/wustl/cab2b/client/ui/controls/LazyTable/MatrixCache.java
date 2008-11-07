@@ -8,7 +8,7 @@ import edu.wustl.cab2b.client.cache.UserCache;
  * This cache implementation is extension to BucketCache with 2 dimensional bucket.
  * 
  * @author rahul_ner
- *
+ * @param <D>
  */
 public class MatrixCache<D> implements CacheInterface<D> {
 
@@ -34,6 +34,9 @@ public class MatrixCache<D> implements CacheInterface<D> {
     }
 
     /**
+     * Checks whether a page is cached or not
+     * @param pageInfo
+     * @return boolean value
      * @see edu.wustl.cab2b.client.CacheInterface#isCached(edu.wustl.cab2b.client.PageInfo)
      */
     public boolean isCached(PageInfo pageInfo) {
@@ -44,6 +47,8 @@ public class MatrixCache<D> implements CacheInterface<D> {
     }
 
     /**
+     * Puts a page in cache
+     * @param page
      * @see edu.wustl.cab2b.client.CacheInterface#put(edu.wustl.cab2b.client.Page)
      */
     public void put(Page page) {
@@ -55,6 +60,8 @@ public class MatrixCache<D> implements CacheInterface<D> {
     }
 
     /**
+     * @param pageInfo
+     * @return Page information whether cached or not
      * @see edu.wustl.cab2b.client.CacheInterface#get(edu.wustl.cab2b.client.PageInfo)
      */
     public Page get(PageInfo pageInfo) {

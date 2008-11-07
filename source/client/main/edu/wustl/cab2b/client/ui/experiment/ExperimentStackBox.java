@@ -135,12 +135,12 @@ public class ExperimentStackBox extends Cab2bPanel {
     /**
      * Index for category node  
      */
-    final static int CATEGORY_NODE_NO = 0;
+    static final int CATEGORY_NODE_NO = 0;
 
     /**
      * Index for custom category node
      */
-    final static int CUSTOM_CATEGORY_NODE_NO = 1;
+    static final int CUSTOM_CATEGORY_NODE_NO = 1;
 
     /**
      * Scroll bar for DataList tree
@@ -866,6 +866,7 @@ class FinishButtonActionListner implements ActionListener {
      * 
      * @param serviceDetails
      * @param dataEntity
+     * @param requiredEntity
      * @param experimentDataCategoryGridPanel
      */
     public FinishButtonActionListner(
@@ -880,9 +881,8 @@ class FinishButtonActionListner implements ActionListener {
         this.experimentDataCategoryGridPanel = experimentDataCategoryGridPanel;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
+     * @param actionEvent 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent actionEvent) {

@@ -32,49 +32,48 @@ public class CheckBoxTableModel extends AbstractTableModel {
     }
 
     /** Retunrs the column count of the given table
-     * @see javax.swing.table.TableModel#getColumnCount()
      * @return modelColumnNames.length
+     * @see javax.swing.table.TableModel#getColumnCount()
      */
     public int getColumnCount() {
         return modelColumnNames.length;
     }
 
     /** Returns the row count of the given Table
-     * @see javax.swing.table.TableModel#getRowCount()
      * @return tableData.length
+     * @see javax.swing.table.TableModel#getRowCount()
      */
     public int getRowCount() {
         return tableData.length;
     }
 
     /** Returns the ColumnName for given ColumnIndex
-     * @see javax.swing.table.AbstractTableModel#getColumnName(int)
      * @param col
      * @return ColumnName
+     * @see javax.swing.table.AbstractTableModel#getColumnName(int)
      */
     public String getColumnName(int col) {
         return modelColumnNames[col];
     }
 
     /** Returns the value for a particular cell in the table
-     * @see javax.swing.table.TableModel#getValueAt(int, int)
      * @param row
      * @param col
+     * @see javax.swing.table.TableModel#getValueAt(int, int)
      */
     public Object getValueAt(int row, int col) {
         return tableData[row][col];
     }
 
-    /*
+    /**
      * JTable uses this method to determine the default renderer/
      * editor for each cell.  If we didn't implement this method,
      * then the last column would contain text ("true"/"false"),
      * rather than a check box.
-     */
-    /** Returns the Class for given Column
-     * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+     * Returns the Class for given Column
      * @param c
      * @return Class
+     * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
      */
     public Class getColumnClass(int c) {
         return getValueAt(0, c).getClass();
@@ -85,10 +84,10 @@ public class CheckBoxTableModel extends AbstractTableModel {
      * editable.
      */
     /** 
-     * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
      * @param row
      * @param col
      * @return boolean value for CellEditable
+     * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int) 
      */
     public boolean isCellEditable(int row, int col) {
         //Note that the data/cell address is constant,
@@ -125,10 +124,10 @@ public class CheckBoxTableModel extends AbstractTableModel {
      */
     /**
      * Sets the value for corresponding Cell
-     * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
      * @param value
      * @param row
      * @param col
+     * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
      */
     public void setValueAt(Object value, int row, int col) {
         tableData[row][col] = value;

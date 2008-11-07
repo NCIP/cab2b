@@ -29,7 +29,7 @@ public class CategorialTablePanel extends JPanel {
 
     /**
      * This method initialises table and formats the categorialclasrecord as a table
-     *
+     * @param record
      */
     public void init(ICategorialClassRecord record) {
         Cab2bTable table = new Cab2bTable(new CategorialTableModel(record));

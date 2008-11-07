@@ -50,23 +50,34 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
 
     private Cab2bPanel myExperimentsPanel;
 
+    /** Clicked Color */
     public static Color CLICKED_COLOR = new Color(76, 41, 157);
 
+    /** UnClicked Color */
     public static Color UNCLICKED_COLOR = new Color(0x034E74);
 
     private MainFrameStackedBoxPanel() {
 
     }
 
+    /**
+     * @return MainFrameStackBoxPanel instance
+     */
     public static MainFrameStackedBoxPanel getInstance() {
         return mainFrameStackedBoxPanel;
     }
 
+    /**
+     * @return SavedQueryLinkPanel instance
+     */
     public SavedQueryLinkPanel getSavedQueryLinkPanel() {
         return this.mySearchQueriesPanel;
 
     }
 
+    /**
+     * @param mainFrame
+     */
     public void initialiseUI(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         initUI();
@@ -119,6 +130,8 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
      * This method returns panel with five most popular categories from database.
      * TODO: Currently getting all categories from database
      * @param data
+     * @param actionClass
+     * @return PopularSearchCategoryPanel
      */
     public Cab2bPanel getPopularSearchCategoriesPanel(Collection<CategoryPopularity> data,
                                                       ActionListener actionClass) {

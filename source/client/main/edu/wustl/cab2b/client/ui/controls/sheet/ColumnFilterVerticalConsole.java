@@ -212,6 +212,9 @@ public class ColumnFilterVerticalConsole extends javax.swing.JPanel {
 
         ArrayList alPossibleValues;
 
+        /**
+         * @param tsUsrSelection
+         */
         public void setPossibleValues(ArrayList tsUsrSelection) {
             alPossibleValues = tsUsrSelection;
         }

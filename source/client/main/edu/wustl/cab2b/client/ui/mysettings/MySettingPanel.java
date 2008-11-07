@@ -51,7 +51,7 @@ public class MySettingPanel extends Cab2bPanel {
 
     /**
      * 
-     * @param mainFrame - reference of the main frame
+     * @param parent - reference of the main frame
      */
     public MySettingPanel(final Frame parent) {
         super(new BorderLayout(10, 10));

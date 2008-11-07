@@ -102,8 +102,10 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
      */
     private Cab2bTable analysisTable;
 
-    final public String[] ANALYSIS_TABLE_HEADERS = new String[] { "Data Category", "Analysis Title", "Date", "Status" };
+    /** Table Header*/
+    public final String[] ANALYSIS_TABLE_HEADERS = new String[] { "Data Category", "Analysis Title", "Date", "Status" };
 
+    /** Values */ 
     public static ArrayList<String> values = new ArrayList<String>();
 
     // fields used by Save Data Category functionality
@@ -114,6 +116,9 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
     private DataListDetailedPanelInterface currentSpreadSheetViewPanel;
 
+    /**
+     * @param parent
+     */
     public ExperimentDataCategoryGridPanel(ExperimentOpenPanel parent) {
         this.experimentPanel = parent;
         initGUI();
@@ -149,7 +154,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     }
 
     /**
-     * @param visualizeDataPanel2
+     * @param currentChartPanel
      */
     public void setCurrentChartPanel(Cab2bPanel currentChartPanel) {
         this.currentChartPanel = currentChartPanel;
@@ -171,6 +176,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
     /**
      * Building/refreshing the table
+     * @param recordList
      */
     public void refreshTable(List<IRecord> recordList) {
         this.removeAll();
@@ -181,13 +187,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
     /**
      * This method refreshes analysis table
-     * 
-     * @param analysisTitle
-     * 
-     * @param columns
-     *            array of column names
-     * @param dataRecords
-     *            array of record values
+     * @param dataRecords array of record values
      */
     public void refreshAnalysisTable(final Object[][] dataRecords) {
         Experiment selectedExperiment = ((ExperimentOpenPanel) this.getParent().getParent()).getSelectedExperiment();
@@ -280,7 +280,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
      * @param userObjectWrapper
      *            the analyzed data
      */
-    final private void addAnalysisViewTabPanel(UserObjectWrapper<List<IRecord>> userObjectWrapper) {
+    private final void addAnalysisViewTabPanel(UserObjectWrapper<List<IRecord>> userObjectWrapper) {
         String tabTitle = userObjectWrapper.getDisplayName();
         Cab2bPanel analysisView = (Cab2bPanel) CommonUtils.getComponentByName(tabComponent, tabTitle);
         if (analysisView == null) {
@@ -314,6 +314,11 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         tabComponent.setSelectedComponent(analysisView);
     }
 
+    /**
+     * Adds Details tabs to Panel
+     * @param tabTitle
+     * @param component
+     */
     public void addDetailTabPanel(String tabTitle, final DefaultDetailedPanel component) {
         Cab2bPanel detailPanel = (Cab2bPanel) CommonUtils.getComponentByName(tabComponent, tabTitle);
         if (detailPanel == null) {
@@ -457,6 +462,9 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     class TableLinkAction extends LinkAction {
         private static final long serialVersionUID = 1L;
 
+        /**
+         * 
+         */
         public TableLinkAction() {
         }
 

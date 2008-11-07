@@ -33,6 +33,9 @@ public class ExperimentDataSelectionPanel extends Cab2bPanel {
 
     Vector expDataListVector;
 
+    /**
+     * @param myDataListVector
+     */
     public ExperimentDataSelectionPanel(Vector myDataListVector) {
         this.myDataListVector = myDataListVector;
         initGUI();

@@ -46,7 +46,6 @@ public class Cab2bCheckBoxHeader extends JCheckBox implements TableCellRenderer,
     }
 
     /** Gets the CellRenderer Component for given Table 
-     * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
      * @param table
      * @param value
      * @param isSelected
@@ -54,6 +53,7 @@ public class Cab2bCheckBoxHeader extends JCheckBox implements TableCellRenderer,
      * @param row
      * @param column
      * @return Component for given parameters
+     * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
      */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                                                    boolean hasFocus, int row, int column) {
@@ -110,8 +110,8 @@ public class Cab2bCheckBoxHeader extends JCheckBox implements TableCellRenderer,
     }
 
     /** Function to handle MouseClicked event
-     * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
      * @param e
+     * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
      */
     public void mouseClicked(MouseEvent e) {
         handleClickEvent(e);
@@ -120,31 +120,31 @@ public class Cab2bCheckBoxHeader extends JCheckBox implements TableCellRenderer,
     }
 
     /** Function to handle MousePressed event
-     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
      * @param e
+     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
      */
     public void mousePressed(MouseEvent e) {
         mousePressed = true;
     }
 
     /**Function to handle MouseReleased event
-     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
      * @param e
+     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
      */
     public void mouseReleased(MouseEvent e) {
 
     }
 
     /**Function to handle MouseEntered event
-     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
      * @param e
+     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
      */
     public void mouseEntered(MouseEvent e) {
     }
 
     /**Function to handle MouseExited event
-     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
      * @param e
+     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
      */
     public void mouseExited(MouseEvent e) {
     }

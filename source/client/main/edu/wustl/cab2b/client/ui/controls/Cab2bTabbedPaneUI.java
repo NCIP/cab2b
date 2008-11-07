@@ -83,18 +83,18 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
     // --------------------------------------------------
 
     /**
-     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#getTabRunCount(javax.swing.JTabbedPane)
-     * @param pane is paased whose tab count is to be known
+     * @param pane is passed whose tab count is to be known
      * @return 1
+     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#getTabRunCount(javax.swing.JTabbedPane)
      */
     public int getTabRunCount(JTabbedPane pane) {
         return 1;
     }
 
     /**
-     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#getContentBorderInsets(int)
      * @param tabPlacement
      * @return TAB_INSETS
+     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#getContentBorderInsets(int)
      */
     protected Insets getContentBorderInsets(int tabPlacement) {
         return TAB_INSETS;
@@ -102,11 +102,11 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
 
     /** 
      * Function calculates tab height based on input parameters of tabPlacement and fontHeight
-     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#calculateTabHeight(int, int, int)
      * @param tabPlacement
      * @param tabIndex
      * @param fontHeight
      * @return vHeight
+     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#calculateTabHeight(int, int, int)
      */
     protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
         int vHeight = fontHeight + 2;
@@ -117,11 +117,11 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
     }
 
     /**Function calculates tab width based on input parameters of tabPlacement and metrics
-     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#calculateTabWidth(int, int, java.awt.FontMetrics)
      * @param tabPlacement
      * @param tabIndex
      * @param metrics
      * @return tabWidth
+     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#calculateTabWidth(int, int, java.awt.FontMetrics)
      */
     protected int calculateTabWidth(int tabPlacement, int tabIndex, FontMetrics metrics) {
         return super.calculateTabWidth(tabPlacement, tabIndex, metrics) + metrics.getHeight();
@@ -136,7 +136,6 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
     // --------------------------------------------------------
 
     /**Function paints tab background based on input parameters of tabPlacement and tab co-ordinates
-     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintTabBackground(java.awt.Graphics, int, int, int, int, int, int, boolean)
      * @param g
      * @param tabPlacement
      * @param tabIndex
@@ -144,7 +143,8 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
      * @param y
      * @param w
      * @param h
-     * @param isSelected 
+     * @param isSelected
+     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintTabBackground(java.awt.Graphics, int, int, int, int, int, int, boolean) 
      */
     protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h,
                                       boolean isSelected) {
@@ -179,7 +179,6 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
     }
 
     /** Function paints tab border based on input parameters of tabPlacement and tab co-ordinates
-     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintTabBorder(java.awt.Graphics, int, int, int, int, int, int, boolean)
      * @param g
      * @param tabPlacement
      * @param tabIndex
@@ -188,6 +187,7 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
      * @param w
      * @param h
      * @param isSelected 
+     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintTabBorder(java.awt.Graphics, int, int, int, int, int, int, boolean)
      */
     protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h,
                                   boolean isSelected) {
@@ -212,7 +212,6 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
 
     /**
      * Function paints tab borderTopEdge based on input parameters of tabPlacement and tab co-ordinates
-     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintContentBorderTopEdge(java.awt.Graphics, int, int, int, int, int, int)
      * @param g
      * @param tabPlacement
      * @param selectedIndex
@@ -220,6 +219,7 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
      * @param y
      * @param w
      * @param h
+     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintContentBorderTopEdge(java.awt.Graphics, int, int, int, int, int, int)
      */
     protected void paintContentBorderTopEdge(Graphics g, int tabPlacement, int selectedIndex, int x, int y, int w,
                                              int h) {
@@ -235,7 +235,6 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
 
     /**
      * Function paints tab borderRightEdge based on input parameters of tabPlacement and tab co-ordinates
-     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintContentBorderRightEdge(java.awt.Graphics, int, int, int, int, int, int)
      * @param g
      * @param tabPlacement
      * @param selectedIndex
@@ -243,6 +242,7 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
      * @param y
      * @param w
      * @param h
+     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintContentBorderRightEdge(java.awt.Graphics, int, int, int, int, int, int)
      */
     protected void paintContentBorderRightEdge(Graphics g, int tabPlacement, int selectedIndex, int x, int y,
                                                int w, int h) {
@@ -251,7 +251,6 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
 
     /**
      * Function paints tab borderLeftEdge based on input parameters of tabPlacement and tab co-ordinates
-     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintContentBorderRightEdge(java.awt.Graphics, int, int, int, int, int, int)
      * @param g
      * @param tabPlacement
      * @param selectedIndex
@@ -259,6 +258,7 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
      * @param y
      * @param w
      * @param h
+     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintContentBorderRightEdge(java.awt.Graphics, int, int, int, int, int, int)
      */
     protected void paintContentBorderLeftEdge(Graphics g, int tabPlacement, int selectedIndex, int x, int y,
                                               int w, int h) {
@@ -267,7 +267,6 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
 
     /**
      * Function paints tab borderBottomEdge based on input parameters of tabPlacement and tab co-ordinates
-     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintContentBorderRightEdge(java.awt.Graphics, int, int, int, int, int, int)
      * @param g
      * @param tabPlacement
      * @param selectedIndex
@@ -275,6 +274,7 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
      * @param y
      * @param w
      * @param h
+     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintContentBorderRightEdge(java.awt.Graphics, int, int, int, int, int, int)
      */
     protected void paintContentBorderBottomEdge(Graphics g, int tabPlacement, int selectedIndex, int x, int y,
                                                 int w, int h) {
@@ -283,7 +283,6 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
 
     /**
      * Function paints focusIndicator based on input parameters of tabPlacement and Text orientation
-     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintContentBorderRightEdge(java.awt.Graphics, int, int, int, int, int, int)
      * @param g
      * @param tabPlacement
      * @param rects
@@ -291,6 +290,7 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
      * @param iconRect
      * @param textRect
      * @param isSelected
+     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintContentBorderRightEdge(java.awt.Graphics, int, int, int, int, int, int)
      */
     protected void paintFocusIndicator(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex,
                                        Rectangle iconRect, Rectangle textRect, boolean isSelected) {
@@ -299,7 +299,6 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
 
     /**
      * Function paints Text based on input parameters of tabPlacement and Text orientation and its Font
-     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintText(java.awt.Graphics, int, java.awt.Font, java.awt.FontMetrics, int, java.lang.String, java.awt.Rectangle, boolean)
      * @param g
      * @param tabPlacement
      * @param font
@@ -308,6 +307,7 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
      * @param title
      * @param textRect
      * @param isSelected
+     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintText(java.awt.Graphics, int, java.awt.Font, java.awt.FontMetrics, int, java.lang.String, java.awt.Rectangle, boolean)
      */
     protected void paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics, int tabIndex,
                              String title, Rectangle textRect, boolean isSelected) {
@@ -322,12 +322,11 @@ public class Cab2bTabbedPaneUI extends BasicTabbedPaneUI {
 
     /**
      * Function gives the tabLabel
-     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#getTabLabelShiftY(int, int, boolean)
      * @param tabPlacement
      * @param tabIndex
      * @param isSelected
      * @return 0
-     * 
+     * @see javax.swing.plaf.basic.BasicTabbedPaneUI#getTabLabelShiftY(int, int, boolean)
      */
     protected int getTabLabelShiftY(int tabPlacement, int tabIndex, boolean isSelected) {
         return 0;

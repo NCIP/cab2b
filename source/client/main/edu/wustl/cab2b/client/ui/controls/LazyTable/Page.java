@@ -16,8 +16,8 @@ public class Page<D> {
     private PageInfo pageInfo;
 
     /**
-     * @param startX
-     * @param startY
+     * @param pageInfo
+     * @param data
      */
     public Page(PageInfo pageInfo,D data) {
         this.pageInfo = pageInfo;

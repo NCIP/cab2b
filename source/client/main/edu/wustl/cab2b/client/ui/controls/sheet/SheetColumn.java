@@ -131,8 +131,8 @@ public class SheetColumn extends TableColumn {
     }
     
     /** Property Change Listener for Adding Property
-     * @see javax.swing.table.TableColumn#addPropertyChangeListener(java.beans.PropertyChangeListener)
      * @param pcl
+     * @see javax.swing.table.TableColumn#addPropertyChangeListener(java.beans.PropertyChangeListener)
      */
     @Override
     public void addPropertyChangeListener(PropertyChangeListener pcl) {
@@ -141,8 +141,8 @@ public class SheetColumn extends TableColumn {
     }
 
     /** Property Change Listener for remove Property
-     * @see javax.swing.table.TableColumn#removePropertyChangeListener(java.beans.PropertyChangeListener)
      * @param pcl
+     * @see javax.swing.table.TableColumn#removePropertyChangeListener(java.beans.PropertyChangeListener)
      */
     @Override
     public void removePropertyChangeListener(PropertyChangeListener pcl) {
@@ -152,6 +152,7 @@ public class SheetColumn extends TableColumn {
 
     /** override method toString 
      * @see java.lang.Object#toString()
+     * @return String
      */
     @Override
     public String toString(){

@@ -58,6 +58,10 @@ public class ColumnFilterConsoleTestFrame extends javax.swing.JFrame {
         cfm3.setSampleValues(sampleValues);
     }
 
+    /**
+     * @author deepak_shingan
+     *
+     */
     public class FilterChangeListener implements PropertyChangeListener {
 
         public void propertyChange(PropertyChangeEvent evt) {

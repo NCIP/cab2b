@@ -121,9 +121,10 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
 
     /**
      * Adds a new component to this <code>StackedBox</code>
-     * 
      * @param title
      * @param component
+     * @param iconFile
+     * @param toBeCollapsed
      */
     public void addBox(String title, Component component, String iconFile, boolean toBeCollapsed) {
         final JXCollapsiblePane collapsible = new JXCollapsiblePane();
@@ -152,6 +153,7 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
     }
 
     /**
+     * @return Dimension of preferred size
      * @see Scrollable#getPreferredScrollableViewportSize()
      */
     public Dimension getPreferredScrollableViewportSize() {
@@ -159,6 +161,10 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
     }
 
     /**
+     * @param visibleRect
+     * @param orientation
+     * @param direction
+     * @return 10
      * @see Scrollable#getScrollableBlockIncrement(java.awt.Rectangle, int, int)
      */
     public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
@@ -167,6 +173,7 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
     }
 
     /**
+     * @return boolean value
      * @see Scrollable#getScrollableTracksViewportHeight()
      */
     public boolean getScrollableTracksViewportHeight() {
@@ -177,6 +184,7 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
     }
 
     /**
+     * @return boolean value
      * @see Scrollable#getScrollableTracksViewportWidth()
      */
     public boolean getScrollableTracksViewportWidth() {
@@ -184,6 +192,10 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
     }
 
     /**
+     * @param visibleRect
+     * @param orientation
+     * @param direction
+     * @return 10
      * @see Scrollable#getScrollableUnitIncrement(java.awt.Rectangle, int, int)
      */
     public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {

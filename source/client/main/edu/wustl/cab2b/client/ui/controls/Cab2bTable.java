@@ -106,8 +106,8 @@ public class Cab2bTable extends JXTable {
     }
 
     /** Returns the indices of selected rows
-     * @see javax.swing.JTable#getSelectedRows()
      * @return indexes
+     * @see javax.swing.JTable#getSelectedRows()
      */
     public int[] getSelectedRows() {
         if (showCheckBox) {

@@ -50,30 +50,30 @@ public class CustomizableBorder extends AbstractBorder {
     }
 
     /** Checks for Opaque Border
-     * @see javax.swing.border.AbstractBorder#isBorderOpaque()
      * @return boolean value
+     * @see javax.swing.border.AbstractBorder#isBorderOpaque()
      */
     public boolean isBorderOpaque() {
         return isBorderOpaque;
     }
 
     /** returns border insets
-     * @see javax.swing.border.AbstractBorder#getBorderInsets(java.awt.Component)
      * @param c
      * @return insets
+     * @see javax.swing.border.AbstractBorder#getBorderInsets(java.awt.Component)
      */
     public Insets getBorderInsets(Component c) {
         return insets;
     }
 
     /** paints the border of given component
-     * @see javax.swing.border.AbstractBorder#paintBorder(java.awt.Component, java.awt.Graphics, int, int, int, int)
      * @param c
      * @param g
      * @param x
      * @param y
      * @param widht
      * @param height
+     * @see javax.swing.border.AbstractBorder#paintBorder(java.awt.Component, java.awt.Graphics, int, int, int, int)
      */
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
 

@@ -21,8 +21,13 @@ public class Cab2bBasicButtonUI extends BasicButtonUI {
 
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.swing.plaf.basic.BasicButtonUI#paintFocus(java.awt.Graphics, javax.swing.AbstractButton, java.awt.Rectangle, java.awt.Rectangle, java.awt.Rectangle)
+     * @param g
+     * @param b
+     * @param viewRect
+     * @param textRect
+     * @param iocnRect
      */
     protected void paintFocus(Graphics g, AbstractButton b, Rectangle viewRect, Rectangle textRect,
                               Rectangle iconRect) {

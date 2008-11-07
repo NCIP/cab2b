@@ -13,22 +13,41 @@ import java.util.Vector;
 public class NumericPager extends AbstractPager {
     private String pagerName = PaginationConstants.NUMERIC_PAGER;
 
+    /**
+     * @param data
+     */
     public NumericPager(Vector<PageElement> data) {
         super(data);
     }
 
+    /**
+     * @param data
+     * @param elementsPerPage
+     */
     public NumericPager(Vector<PageElement> data, int elementsPerPage) {
         super(data, elementsPerPage);
     }
 
+    /**
+     * @param elements
+     */
     public NumericPager(PageElement[] elements) {
         super(elements);
     }
 
+    /**
+     * @return no of elements per page
+     * @see edu.wustl.cab2b.client.ui.pagination.Pager#getElementsPerPage()
+     */
     public int getElementsPerPage() {
         return elementsPerPage;
     }
 
+    /**
+     * Sets no of elements per page
+     * @param newValue
+     * @see edu.wustl.cab2b.client.ui.pagination.Pager#setElementsPerPage(int)
+     */
     public void setElementsPerPage(int newValue) {
         if (this.elementsPerPage != newValue && newValue > 0) {
             this.elementsPerPage = newValue;

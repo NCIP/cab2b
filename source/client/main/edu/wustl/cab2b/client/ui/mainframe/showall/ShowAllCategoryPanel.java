@@ -67,7 +67,7 @@ public class ShowAllCategoryPanel extends ShowAllPanel {
 
     /**
      * Action method for category link  
-     * @param hyperLink
+     * @param category
      */
     public static final void categoryLinkAction(EntityInterface category) {
         MainSearchPanel mainSearchPanel = null;

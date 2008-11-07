@@ -16,6 +16,9 @@ public class ExperimentSummaryPanel extends Cab2bPanel {
 	
 	Map experimentSummary;
 	
+	/**
+	 * @param summary
+	 */
 	public ExperimentSummaryPanel(Map summary)
 	{
 		experimentSummary = summary;

@@ -47,40 +47,40 @@ public class IconButton extends JButton implements MouseListener {
     }
 
     /** Function to handle MouseClicked event
-     * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
      * @param arg0
+     * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
      */
     public void mouseClicked(MouseEvent arg0) {
 
     }
 
     /**Function to handle MouseEntered event
-     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
      * @param arg0
+     * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
      */
     public void mouseEntered(MouseEvent arg0) {
         setIcon(moButtonIcon);
     }
 
     /**Function to handle MouseExited event
-     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
-     * @param e
+     * @param arg0
+     * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
      */
     public void mouseExited(MouseEvent arg0) {
         this.setIcon(normalButtonIcon);
     }
 
     /** Function to handle MousePressed event
-     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
      * @param arg0
+     * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
      */
     public void mousePressed(MouseEvent arg0) {
 
     }
 
     /**Function to handle MouseReleased event
-     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
      * @param arg0
+     * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
      */
     public void mouseReleased(MouseEvent arg0) {
 

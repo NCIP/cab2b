@@ -30,6 +30,8 @@ public class PageInfo {
     }
 
     /**
+     * @param other
+     * @return boolean value
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public boolean equals(Object other) {
@@ -60,8 +62,10 @@ public class PageInfo {
     }
     
     /**
+     * @return string
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return "[" +  startX + " , " + startY + "]";
     }

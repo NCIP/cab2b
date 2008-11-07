@@ -7,34 +7,38 @@ import java.awt.Insets;
 
 import javax.swing.border.AbstractBorder;
 
+/**
+ * @author 
+ *
+ */
 public class CustomBorder extends AbstractBorder {
 	private static final long serialVersionUID = 1L;
 
 	/** Gets the Border Insets for a given Component
-	 * @see javax.swing.border.AbstractBorder#getBorderInsets(java.awt.Component)
 	 * @param c
 	 * @return Insets of a given component
+	 * @see javax.swing.border.AbstractBorder#getBorderInsets(java.awt.Component)
 	 */
 	public Insets getBorderInsets(Component c) {
 		return new Insets(1, 1, 1, 1);
 	}
 
 	/** Checks for Opaque Border
-	 * @see javax.swing.border.AbstractBorder#isBorderOpaque()
-	 * @return Boolean value 
+	 * @return Boolean value
+	 * @see javax.swing.border.AbstractBorder#isBorderOpaque() 
 	 */
 	public boolean isBorderOpaque() {
 		return true;
 	}
 
 	/** Paints the Border of Given component with given color
-	 * @see javax.swing.border.AbstractBorder#paintBorder(java.awt.Component, java.awt.Graphics, int, int, int, int)
 	 * @param c
 	 * @param g
 	 * @param x
 	 * @param y
 	 * @param widht
 	 * @param height
+	 * @see javax.swing.border.AbstractBorder#paintBorder(java.awt.Component, java.awt.Graphics, int, int, int, int)
 	 */
 	public void paintBorder(Component c, Graphics g, int x, int y, int width,
 			int height) {

@@ -46,6 +46,8 @@ public class RightPanel extends Cab2bPanel {
 
     /**
      * Default Constructor
+     * @param selectedServices
+     * @param entityURLMap
      */
     public RightPanel(Collection<EntityGroupInterface> selectedServices, Map<String, List<String>> entityURLMap) {
         super(new BorderLayout());

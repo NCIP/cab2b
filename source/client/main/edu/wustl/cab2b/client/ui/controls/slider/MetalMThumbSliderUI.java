@@ -51,7 +51,7 @@ public class MetalMThumbSliderUI extends MetalSliderUI implements MThumbSliderAd
 
     /**
      * Constructor
-     * @param JComponent b
+     * @param b
      */
     public MetalMThumbSliderUI(JSlider b) {
         //super(null);
@@ -59,8 +59,8 @@ public class MetalMThumbSliderUI extends MetalSliderUI implements MThumbSliderAd
 
     /**
      * Sets UI for given Component
-     * @see javax.swing.plaf.metal.MetalSliderUI#installUI(javax.swing.JComponent)
      * @param c JComponent
+     * @see javax.swing.plaf.metal.MetalSliderUI#installUI(javax.swing.JComponent)
      */
     public void installUI(JComponent c) {
         additonalUi = new MThumbSliderAdditionalUI(this);
@@ -71,8 +71,8 @@ public class MetalMThumbSliderUI extends MetalSliderUI implements MThumbSliderAd
 
     /**
      * Removes UI for given Component
-     * @see javax.swing.plaf.basic.BasicSliderUI#uninstallUI(javax.swing.JComponent)
      * @param c JComponenet
+     * @see javax.swing.plaf.basic.BasicSliderUI#uninstallUI(javax.swing.JComponent)
      */
     public void uninstallUI(JComponent c) {
         super.uninstallUI(c);
@@ -91,18 +91,18 @@ public class MetalMThumbSliderUI extends MetalSliderUI implements MThumbSliderAd
     }
 
     /** 
-     * @see javax.swing.plaf.basic.BasicSliderUI#createTrackListener(javax.swing.JSlider)
      * @param slider
      * @return null
+     * @see javax.swing.plaf.basic.BasicSliderUI#createTrackListener(javax.swing.JSlider)
      */
     protected TrackListener createTrackListener(JSlider slider) {
         return null;
     }
 
     /** 
-     * @see javax.swing.plaf.basic.BasicSliderUI#createChangeListener(javax.swing.JSlider)
      * @param slider
-     * @return 
+     * @return
+     * @see javax.swing.plaf.basic.BasicSliderUI#createChangeListener(javax.swing.JSlider) 
      */
     protected ChangeListener createChangeListener(JSlider slider) {
         return additonalUi.changeHandler;
@@ -110,8 +110,8 @@ public class MetalMThumbSliderUI extends MetalSliderUI implements MThumbSliderAd
 
     /**
      * Installs Listener
-     * @see javax.swing.plaf.basic.BasicSliderUI#installListeners(javax.swing.JSlider)
      * @param slider
+     * @see javax.swing.plaf.basic.BasicSliderUI#installListeners(javax.swing.JSlider)
      */
     protected void installListeners(JSlider slider) {
         slider.addMouseListener(mThumbTrackListener);
@@ -124,8 +124,8 @@ public class MetalMThumbSliderUI extends MetalSliderUI implements MThumbSliderAd
 
     /**
      * Removes Slider Listener
-     * @see javax.swing.plaf.basic.BasicSliderUI#uninstallListeners(javax.swing.JSlider)
      * @param slider
+     * @see javax.swing.plaf.basic.BasicSliderUI#uninstallListeners(javax.swing.JSlider)
      */
     protected void uninstallListeners(JSlider slider) {
         slider.removeMouseListener(mThumbTrackListener);
@@ -159,9 +159,9 @@ public class MetalMThumbSliderUI extends MetalSliderUI implements MThumbSliderAd
 
     /**
      * Paints the given component with given graphics
-     * @see javax.swing.plaf.basic.BasicSliderUI#paint(java.awt.Graphics, javax.swing.JComponent)
      * @param g Graphics
      * @param c JComponenet
+     * @see javax.swing.plaf.basic.BasicSliderUI#paint(java.awt.Graphics, javax.swing.JComponent)
      */
     public void paint(Graphics g, JComponent c) {
         Rectangle clip = g.getClipBounds();
@@ -242,8 +242,8 @@ public class MetalMThumbSliderUI extends MetalSliderUI implements MThumbSliderAd
 
     /**
      * paints the Thumb
-     * @see javax.swing.plaf.metal.MetalSliderUI#paintThumb(java.awt.Graphics)
      * @param g Graphics
+     * @see javax.swing.plaf.metal.MetalSliderUI#paintThumb(java.awt.Graphics)
      */
     public void paintThumb(Graphics g) {
         thumbRenderer.paintIcon(slider, g, thumbRect.x, thumbRect.y);
@@ -290,30 +290,30 @@ public class MetalMThumbSliderUI extends MetalSliderUI implements MThumbSliderAd
     }
 
     /**
-     * @see javax.swing.plaf.basic.BasicSliderUI#scrollByBlock(int)
      * @param direction
+     * @see javax.swing.plaf.basic.BasicSliderUI#scrollByBlock(int)
      */
     public void scrollByBlock(int direction) {
     }
 
     /**
-     * @see javax.swing.plaf.basic.BasicSliderUI#scrollByUnit(int)
      * @param direction
+     * @see javax.swing.plaf.basic.BasicSliderUI#scrollByUnit(int)
      */
     public void scrollByUnit(int direction) {
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.controls.slider.MThumbSliderAdditional#getTrackRect()
      * @return Rectangle
+     * @see edu.wustl.cab2b.client.ui.controls.slider.MThumbSliderAdditional#getTrackRect()
      */
     public Rectangle getTrackRect() {
         return trackRect;
     }
 
     /**
-     * @see javax.swing.plaf.metal.MetalSliderUI#getThumbSize()
      * @return Dimension
+     * @see javax.swing.plaf.metal.MetalSliderUI#getThumbSize()
      */
     public Dimension getThumbSize() {
         return super.getThumbSize();
@@ -321,9 +321,9 @@ public class MetalMThumbSliderUI extends MetalSliderUI implements MThumbSliderAd
 
     /**
      * Gets X Position
-     * @see javax.swing.plaf.basic.BasicSliderUI#xPositionForValue(int)
      * @param value
      * @return X position
+     * @see javax.swing.plaf.basic.BasicSliderUI#xPositionForValue(int)
      */
     public int xPositionForValue(int value) {
         return super.xPositionForValue(value);
@@ -331,9 +331,9 @@ public class MetalMThumbSliderUI extends MetalSliderUI implements MThumbSliderAd
 
     /**
      * Gets Y Position
-     * @see javax.swing.plaf.basic.BasicSliderUI#xPositionForValue(int)
      * @param value
      * @return Y position
+     * @see javax.swing.plaf.basic.BasicSliderUI#xPositionForValue(int)
      */
     public int yPositionForValue(int value) {
         return super.yPositionForValue(value);

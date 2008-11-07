@@ -121,6 +121,9 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
      */
     private Cab2bButton cancelButton;
 
+    /**
+     *  Default Constructor
+     */
     public NewExperimentDetailsPanel() {
         initGUIGBL();
     }
@@ -425,6 +428,10 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         this.updateUI();
     }
 
+    /**
+     * JDialog for showing component
+     * @return
+     */
     public JDialog showInDialog() {
         Dimension dimension = MainFrame.getScreenDimesion();
         dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), this, "Create New Experiment",
@@ -505,6 +512,15 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         }
     }
 
+    /**
+     * Gives Datalist Meta Data
+     * @param selectedIdentityProvider
+     * @return
+     * @throws RemoteException
+     * @throws DynamicExtensionsSystemException
+     * @throws DAOException
+     * @throws ClassNotFoundException
+     */
     public static List<DataListMetadata> getDataLlistMetadatas(String selectedIdentityProvider)
             throws RemoteException, DynamicExtensionsSystemException, DAOException, ClassNotFoundException {
         DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(

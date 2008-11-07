@@ -19,6 +19,11 @@ public class RepeatIcon implements Icon {
 
 	private int size;
 
+	/**
+	 * @param icon
+	 * @param direction
+	 * @param size
+	 */
 	public RepeatIcon(Icon icon, int direction, int size) {
 		this.icon = icon;
 		this.direction = direction;
@@ -27,6 +32,7 @@ public class RepeatIcon implements Icon {
 
 	/**
 	 * To get icon width
+	 * @return Icon Width
 	 */
 	public int getIconWidth() {
 
@@ -39,6 +45,7 @@ public class RepeatIcon implements Icon {
 
 	/**
 	 * To get icon height
+	 * @return Icon Height
 	 */
 	public int getIconHeight() {
 		if (this.direction == SwingConstants.HORIZONTAL) {
@@ -51,7 +58,10 @@ public class RepeatIcon implements Icon {
 	/**
 	 * To paint icon over the entire specified area both verically and
 	 * horizontally
-	 * 
+	 * @param c
+	 * @param g
+	 * @param x
+	 * @param y
 	 * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics,
 	 *      int, int)
 	 */

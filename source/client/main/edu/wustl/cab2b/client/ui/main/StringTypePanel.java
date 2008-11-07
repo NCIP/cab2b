@@ -24,8 +24,8 @@ public class StringTypePanel extends AbstractTypePanel {
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getFirstComponent()
      * @return JComponent first component of String Panel
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getFirstComponent()
      */
     public JComponent getFirstComponent() {
         return new Cab2bFormattedTextField(CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE,
@@ -33,8 +33,8 @@ public class StringTypePanel extends AbstractTypePanel {
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getSecondComponent()
      * @return JComponent second component of String Panel
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#getSecondComponent()
      */
     public JComponent getSecondComponent() {
         return new Cab2bFormattedTextField(CAB2B_FORMATTED_TEXT_FIELD_COLUMN_SIZE,
@@ -42,9 +42,8 @@ public class StringTypePanel extends AbstractTypePanel {
     }
 
     /** Method to set values in the component
-     * 
-     * @see edu.wustl.cab2b.client.ui.main.IComponent#setValues(java.util.ArrayList)
      * @param values
+     * @see edu.wustl.cab2b.client.ui.main.IComponent#setValues(java.util.ArrayList)
      */
     public void setValues(ArrayList<String> values) {
         if (values.size() == 0) {
@@ -63,8 +62,8 @@ public class StringTypePanel extends AbstractTypePanel {
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#setComponentPreference(java.lang.String)
      * @param condition
+     * @see edu.wustl.cab2b.client.ui.main.AbstractTypePanel#setComponentPreference(java.lang.String)
      */
     public void setComponentPreference(String condition) {
 
