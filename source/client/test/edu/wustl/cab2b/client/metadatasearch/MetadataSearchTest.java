@@ -1,10 +1,13 @@
 package edu.wustl.cab2b.client.metadatasearch;
 
+import java.util.Set;
+
 import junit.framework.TestCase;
-import edu.wustl.cab2b.client.cache.ClientSideCache;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.beans.MatchedClass;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.util.Constants;
+import edu.wustl.cab2b.server.cache.EntityCache;
 
 /**
  * @author Chandrakant Talele
@@ -12,47 +15,47 @@ import edu.wustl.cab2b.common.util.Constants;
 public class MetadataSearchTest extends TestCase {
     static MatchedClass resultMatchedClass = new MatchedClass();
 
-    static ClientSideCache entityCache = null;//ClientSideCache.getInstance();
+    static EntityCache entityCache = EntityCache.getInstance();
 
     static MetadataSearch metadataSearch = new MetadataSearch(entityCache);
-//    public void testSearchAttributeBasedOnConceptCode() {
-//        
-//        int[] searchTargetStatus = { Constants.ATTRIBUTE };
-//        String[] searchString = { "C45763" };
-//        int basedOn = Constants.BASED_ON_CONCEPT_CODE;
-//        try {
-//            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
-//        } catch (CheckedException e) {
-//            e.printStackTrace();
-//            fail();
-//        }
-//        Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
-//        boolean b = false;
-//        for (EntityInterface eI : entities) {
-//            String result = eI.getName();
-//            b = b || result.contains("Protein");
-//        }
-//        assertTrue(b);
-//    }
-//  public void testSearchEntityBasedOnConceptCode() {
-//    
-//            int[] searchTargetStatus = { Constants.CLASS };
-//            String[] searchString = { "C17021" };
-//            int basedOn = Constants.BASED_ON_CONCEPT_CODE;
-//            try {
-//                resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
-//            } catch (CheckedException e) {
-//                e.printStackTrace();
-//                fail();
-//            }
-//            Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
-//            boolean b = false;
-//            for (EntityInterface eI : entities) {
-//                String result = eI.getName();
-//                b = b || result.contains("Protein");
-//            }
-//            assertTrue(b);
-//        }
+    public void testSearchAttributeBasedOnConceptCode() {
+        
+        int[] searchTargetStatus = { Constants.ATTRIBUTE };
+        String[] searchString = { "C45763" };
+        int basedOn = Constants.BASED_ON_CONCEPT_CODE;
+        try {
+            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
+        } catch (CheckedException e) {
+            e.printStackTrace();
+            fail();
+        }
+        Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
+        boolean b = false;
+        for (EntityInterface eI : entities) {
+            String result = eI.getName();
+            b = b || result.contains("Protein");
+        }
+        assertTrue(b);
+    }
+  public void testSearchEntityBasedOnConceptCode() {
+    
+            int[] searchTargetStatus = { Constants.CLASS };
+            String[] searchString = { "C17021" };
+            int basedOn = Constants.BASED_ON_CONCEPT_CODE;
+            try {
+                resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
+            } catch (CheckedException e) {
+                e.printStackTrace();
+                fail();
+            }
+            Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
+            boolean b = false;
+            for (EntityInterface eI : entities) {
+                String result = eI.getName();
+                b = b || result.contains("Protein");
+            }
+            assertTrue(b);
+        }
     
     public void testSearchInvalidTarget() {
 
@@ -80,45 +83,45 @@ public class MetadataSearchTest extends TestCase {
         }
         assertTrue(gotException);
     }
-//    public void testSearchPvBasedOnText() {
-//
-//        int[] searchTargetStatus = { Constants.PV };
-//        String[] searchString = { "Romania" };
-//        int basedOn = Constants.BASED_ON_TEXT;
-//        try {
-//            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
-//        } catch (CheckedException e) {
-//            e.printStackTrace();
-//            fail();
-//        }
-//        Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
-//        boolean b = false;
-//        for (EntityInterface eI : entities) {
-//            String result = eI.getName();
-//            b = b || result.contains("Address");
-//        }
-//        assertTrue(b);
-//    }
-//    
-//    public void testSearchPvOnConceptCode() {
-//
-//        int[] searchTargetStatus = { Constants.PV };
-//        String[] searchString = { "C25402" ,"C43818"};
-//        int basedOn = Constants.BASED_ON_CONCEPT_CODE;
-//        try {
-//            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
-//        } catch (CheckedException e) {
-//            e.printStackTrace();
-//            fail();
-//        }
-//        Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
-//        boolean b = false;
-//        for (EntityInterface eI : entities) {
-//            String result = eI.getName();
-//            b = b || result.contains("GenBankAccession");
-//        }
-//        assertTrue(b);
-//    }
+    public void testSearchPvBasedOnText() {
+
+        int[] searchTargetStatus = { Constants.PV };
+        String[] searchString = { "Pre-Therapy" };
+        int basedOn = Constants.BASED_ON_TEXT;
+        try {
+            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
+        } catch (CheckedException e) {
+            e.printStackTrace();
+            fail();
+        }
+        Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
+        boolean b = false;
+        for (EntityInterface eI : entities) {
+            String result = eI.getName();
+            b = b || result.contains("SpecimenCollectionGroup");
+        }
+        assertTrue(b);
+    }
+    
+    public void testSearchPvOnConceptCode() {
+
+        int[] searchTargetStatus = { Constants.PV };
+        String[] searchString = { "C54731"};
+        int basedOn = Constants.BASED_ON_CONCEPT_CODE;
+        try {
+            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
+        } catch (CheckedException e) {
+            e.printStackTrace();
+            fail();
+        }
+        Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
+        boolean b = false;
+        for (EntityInterface eI : entities) {
+            String result = eI.getName();
+            b = b || result.contains("SpecimenCollectionGroup");
+        }
+        assertTrue(b);
+    }
 
     public void testsearchNullTargetString() {
 
