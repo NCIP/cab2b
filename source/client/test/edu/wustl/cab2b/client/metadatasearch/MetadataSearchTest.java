@@ -67,6 +67,19 @@ public class MetadataSearchTest extends TestCase {
         }
         assertTrue(gotException);
     }
+    public void testSearchInvalidTargetConceptCode() {
+
+        int[] searchTarget = { 1234 };
+        String[] searchString = { "C123" };
+        boolean gotException = false;
+        int basedOn = Constants.BASED_ON_CONCEPT_CODE;
+        try {
+            resultMatchedClass = metadataSearch.search(searchTarget, searchString, basedOn);
+        } catch (CheckedException e) {
+            gotException = true;
+        }
+        assertTrue(gotException);
+    }
 //    public void testSearchPvBasedOnText() {
 //
 //        int[] searchTargetStatus = { Constants.PV };
