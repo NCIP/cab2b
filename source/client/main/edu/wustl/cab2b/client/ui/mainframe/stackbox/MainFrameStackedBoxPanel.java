@@ -1,7 +1,7 @@
 package edu.wustl.cab2b.client.ui.mainframe.stackbox;
 
-import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.HYPERLINK_SHOW_ALL;
 import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.EXPERIMENT_BOX_TEXT;
+import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.HYPERLINK_SHOW_ALL;
 import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.POPULAR_CATEGORY_BOX_TEXT;
 import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.QUERY_BOX_TEXT;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.MY_EXPERIMENT_IMAGE;
@@ -160,14 +160,14 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
     private ShowAllPanel getAllCategoryPanel() {
         Collection<CategoryPopularity> allPopularCategories = CommonUtils.getPopularCategoriesForShowAll();
         final Object objData[][] = new Object[allPopularCategories.size()][6];
-        final String headers[] = { ShowAllCategoryPanel.CATEGORY_NAME_TITLE, ShowAllCategoryPanel.CATEGORY_POPULARITY_TITLE, ShowAllCategoryPanel.CATEGORY_DESCRIPTION_TITLE, ShowAllCategoryPanel.CATEGORY_DATE_TITLE, " Category ID-Hidden" };
+        final String headers[] = { ShowAllCategoryPanel.CATEGORY_NAME_TITLE, ShowAllCategoryPanel.CATEGORY_POPULARITY_TITLE, ShowAllCategoryPanel.CATEGORY_DATE_TITLE, ShowAllCategoryPanel.CATEGORY_DESCRIPTION_TITLE, " Category ID-Hidden" };
         int i = 0;
         for (CategoryPopularity category : allPopularCategories) {
             EntityInterface entityInterface = AbstractEntityCache.getCache().getEntityById(category.getEntityId());
             objData[i][0] = Utility.getDisplayName(entityInterface);
             objData[i][1] = Long.toString(category.getPopularity());
-            objData[i][2] = entityInterface.getDescription();
-            objData[i][3] = category.getDate();
+            objData[i][2] = category.getDate();
+            objData[i][3] = entityInterface.getDescription();
             objData[i][4] = entityInterface;
             i++;
         }
