@@ -114,32 +114,31 @@ public class ServiceURLOperations {
                 metadataObject.setServiceURLObject(serviceURLObj);
 
             }
-
-            String description = null;
             ServiceMetadata metaData = null;
             try {
                 metaData = MetadataUtils.getServiceMetadata(service);
             } catch (ResourcePropertyRetrievalException e) {
                 logger.info(e.getMessage(), e);
-                //  throw new RemoteException(e.getMessage());
             }
-
-            try {
-                description = metaData.getServiceDescription().getService().getDescription();
-                if (description == null || description.equals("")) {
-                    description = "* No description available";
+            String description = "* No description available";
+            String researchCenter = metadataObject.getServiceURL();
+            //null checks to avoid null pointers
+            if(metaData!=null) {
+                if(metaData.getServiceDescription()!=null && metaData.getServiceDescription().getService()!=null ){
+                    String desc = metaData.getServiceDescription().getService().getDescription();
+                    if (desc != null && !desc.equals("")) {
+                        description = desc;
+                    }
                 }
-                metadataObject.setSeviceDescription(description);
-                metadataObject.setHostingResearchCenter(metaData.getHostingResearchCenter().getResearchCenter().getDisplayName());
-            } catch (NullPointerException e) {
-                //TODO If metadata object is returned null, how to set the description and hosting research info
-                logger.info("No Description found", e);
-                metadataObject.setHostingResearchCenter(metadataObject.getServiceURL().toString());
-                if (description == null || description.equals("")) {
-                    description = "* No description available";
+                if(metaData.getHostingResearchCenter() !=null && metaData.getHostingResearchCenter().getResearchCenter()!=null) {
+                    String name = metaData.getHostingResearchCenter().getResearchCenter().getDisplayName();
+                    if (name != null && !name.equals("")) {
+                        researchCenter = name;
+                    }
                 }
-                metadataObject.setSeviceDescription(description);
-            }
+            } 
+            metadataObject.setSeviceDescription(description);
+            metadataObject.setHostingResearchCenter(researchCenter);
             metadataObject.setSeviceName(serviceName);
             metadataObjectService.add(metadataObject);
         }
