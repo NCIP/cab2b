@@ -170,7 +170,10 @@ public class CommonUtils {
             String errorCode = cab2bException.getErrorCode();
             if (errorCode != null) {
                 msgForUser = ErrorCodeHandler.getErrorMessage(errorCode);
-                msgForUser += msgToLog.substring(msgToLog.indexOf("http"), (msgToLog.indexOf("\n") - 1));
+                if (ErrorCodeConstants.QM_0004.equals(errorCode)) {
+                    msgForUser += msgToLog.substring(msgToLog.indexOf("http"), (msgToLog.indexOf("\n") - 1));
+                    msgForUser += "\nRemove it and query again";
+                }
                 msgToLog = errorCode + ":" + msgForUser;
             }
         }
@@ -261,6 +264,7 @@ public class CommonUtils {
             throws RuntimeException, RemoteException, Exception {
         return queryEngineBus.executeQuery(query, UserValidator.getSerializedDelegatedCredReference(),
                                            UserValidator.getIdP());
+
     }
 
     /**
