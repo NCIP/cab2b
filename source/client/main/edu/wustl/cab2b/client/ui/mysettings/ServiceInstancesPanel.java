@@ -290,7 +290,6 @@ public class ServiceInstancesPanel extends Cab2bPanel {
                 pageElement.setSelected(serviceInstance.isConfigured());
             }
             pageElementCollection.add(pageElement);
-
         }
 
         /* Initialize the pagination component. */
