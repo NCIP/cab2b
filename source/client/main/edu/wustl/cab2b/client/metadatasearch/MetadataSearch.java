@@ -50,11 +50,8 @@ public class MetadataSearch {
      * @throws RemoteException
      */
     public MatchedClass search(int[] searchTarget, String[] searchString, int basedOn) throws CheckedException {
-        if (searchTarget == null) {
-            throw new CheckedException("Search target cannot be null");
-        }
-        if (searchString == null) {
-            throw new CheckedException("Search string cannot be null");
+        if (searchTarget == null || searchString == null) {
+            throw new CheckedException("Search target/string cannot be null");
         }
         MatchedClass matchedClass = null;
         switch (basedOn) {
@@ -70,37 +67,6 @@ public class MetadataSearch {
         matchedClass.setEntityCollection(matchedClass.getSortedEntityCollection());
         return matchedClass;
     }
-
-    //    /**
-    //     * Searches the array of strings passed on the target based on the TEXT/CONCEPT CODE parameter. Returns the
-    //     * MatchedClass instance containing the matched entities in the search. Splits the search on the basis of
-    //     * "basedOn" parameter.
-    //     * 
-    //     * @param searchTarget
-    //     *            The target on which the search is to be performed.
-    //     * @param searchString
-    //     *            The string to be searched.
-    //     * @param basedOn
-    //     *            The search to be based on.
-    //     * @return the MatchedClass instance containing the matched entities in the search.
-    //     * @throws RemoteException
-    //     */
-    //    private MatchedClass searchSplit(int[] searchTarget, String[] searchString, int basedOn)
-    //            throws CheckedException {
-    //        MatchedClass matchedClass = null;
-    //        switch (basedOn) {
-    //            case Constants.BASED_ON_TEXT:
-    //                matchedClass = searchText(searchString, searchTarget);
-    //                break;
-    //            case Constants.BASED_ON_CONCEPT_CODE:
-    //                matchedClass = searchConceptCode(searchString, searchTarget);
-    //                break;
-    //            default:
-    //                throw new CheckedException("Search target does not exist : " + searchTarget);
-    //        }
-    //        matchedClass.setEntityCollection(matchedClass.getSortedEntityCollection());
-    //        return matchedClass;
-    //    }
 
     /**
      * Searches the TEXT for array of strings passed. Returns the MatchedClass instance containing the matched
