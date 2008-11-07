@@ -11,14 +11,17 @@ import java.sql.Connection;
 import junit.framework.TestCase;
 import edu.wustl.cab2b.server.path.PathConstants;
 
+/**
+ * @author chandrakant_talele
+ */
 public class MySqlLoaderTest extends TestCase {
     private static Connection con = TestConnectionUtil.getConnection();
-
+    private static String tableName = "T_"+System.currentTimeMillis();
     private File file = null;
 
     @Override
     protected void setUp() throws Exception {
-        String createTableSQL = "create table TEST_TABLE1 (ID BIGINT(38) NOT NULL, NAME VARCHAR(10) NULL,PRIMARY KEY (ID))";
+        String createTableSQL = "create table "+tableName+" (ID BIGINT(38) NOT NULL, NAME VARCHAR(10) NULL,PRIMARY KEY (ID))";
         SQLQueryUtil.executeUpdate(createTableSQL, con);
     }
 
@@ -44,10 +47,10 @@ public class MySqlLoaderTest extends TestCase {
             assertTrue("Unable to write to file " + fileName, false);
         }
         String columns = "(ID,NAME)";
-        String tableName = "TEST_TABLE1";
+        
         new MySqlLoader().loadDataFromFile(con, fileName, columns, tableName, null,PathConstants.FIELD_SEPARATOR);
 
-        String selectSQL = "SELECT ID,NAME FROM TEST_TABLE1";
+        String selectSQL = "SELECT ID,NAME FROM "+tableName;
         int recordCount = 0;
         String[][] rs = null;
 
@@ -72,7 +75,7 @@ public class MySqlLoaderTest extends TestCase {
         if (file != null) {
             file.delete();
         }
-        SQLQueryUtil.executeUpdate("DROP table TEST_TABLE1", con);
+        SQLQueryUtil.executeUpdate("DROP table "+tableName, con);
     }
 
     @Override

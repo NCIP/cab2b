@@ -11,18 +11,21 @@ import java.sql.Connection;
 import edu.wustl.cab2b.server.path.PathConstants;
 import junit.framework.TestCase;
 
+/**
+ * @author chandrakant_talele
+ */
 public class DataFileLoaderTest extends TestCase {
     private static Connection con = TestConnectionUtil.getConnection();
-
+    private static String tableName = "T_"+System.currentTimeMillis();
     private File file = null;
 
     @Override
     protected void setUp() throws Exception {
-        String createTableSQL = "create table TEST_TABLE1 (ID BIGINT(38) NOT NULL, NAME VARCHAR(10) NULL,PRIMARY KEY (ID))";
+        String createTableSQL = "create table "+tableName+" (ID BIGINT(38) NOT NULL, NAME VARCHAR(10) NULL,PRIMARY KEY (ID))";
         SQLQueryUtil.executeUpdate(createTableSQL, con);
     }
 
-    public void testMySqlLoader() {
+    public void testLoadDataFromFile() {
         assertTrue(true);
         String str = "SomeName";
         String home = System.getProperty("user.home");
@@ -44,11 +47,11 @@ public class DataFileLoaderTest extends TestCase {
             assertTrue("Unable to write to file " + fileName, false);
         }
         String columns = "(ID,NAME)";
-        String tableName = "TEST_TABLE1";
+
         Class<?>[] dataTypes = {Long.class,String.class};
         new DataFileLoader().loadDataFromFile(con, fileName, columns, tableName, dataTypes,PathConstants.FIELD_SEPARATOR);
 
-        String selectSQL = "SELECT ID,NAME FROM TEST_TABLE1";
+        String selectSQL = "SELECT ID,NAME FROM " +tableName;
         int recordCount = 0;
         String[][] rs = null;
 
@@ -73,7 +76,7 @@ public class DataFileLoaderTest extends TestCase {
         if (file != null) {
             file.delete();
         }
-        SQLQueryUtil.executeUpdate("DROP table TEST_TABLE1", con);
+        SQLQueryUtil.executeUpdate("DROP table " +tableName, con);
     }
 
     @Override
