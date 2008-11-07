@@ -5,6 +5,7 @@ import java.awt.Dimension;
 
 import javax.swing.JDialog;
 
+import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
@@ -47,11 +48,15 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
 
     public ParameterizedQueryMainPanel() {
         parameterizedQueryDataModel = new ParameterizedQueryDataModel();
+        Long userId = UserCache.getInstance().getCurrentUser().getUserId();
+        parameterizedQueryDataModel.setQueryUserId(userId);
         initGUI();
     }
 
     public ParameterizedQueryMainPanel(ParameterizedQueryDataModel queryModel) {
         parameterizedQueryDataModel = queryModel;
+        Long userId = UserCache.getInstance().getCurrentUser().getUserId();
+        parameterizedQueryDataModel.setQueryUserId(userId);
         initGUI();
     }
 
@@ -119,8 +124,9 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
 
     public void showInDialog() {
         Dimension dimension = MainFrame.getScreenDimesion();
-        dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), this, "Unsaved Condition", new Dimension(
-                (int) (dimension.width * 0.80), (int) (dimension.height * 0.75)), true, false);
+        dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), this, "Unsaved Condition",
+                                             new Dimension((int) (dimension.width * 0.80),
+                                                     (int) (dimension.height * 0.75)), true, false);
         dialog.setVisible(true);
 
     }

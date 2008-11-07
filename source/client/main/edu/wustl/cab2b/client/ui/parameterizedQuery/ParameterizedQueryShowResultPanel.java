@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -63,6 +64,8 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
      */
     public ParameterizedQueryShowResultPanel(ICab2bQuery query) {
         queryDataModel = new ParameterizedQueryDataModel(query);
+        Long userId = UserCache.getInstance().getCurrentUser().getUserId();
+        queryDataModel.setQueryUserId(userId);
         initGUI();
     }
 
@@ -145,8 +148,8 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
      * @param parseFile
      */
     private void addNonParameterizedConditions(Map<Integer, Collection<ICondition>> conditionMap,
-                                               Collection<ICondition> conditions,
-                                               ICab2bQuery cab2bParamQuery, ParseXMLFile parseFile) {
+                                               Collection<ICondition> conditions, ICab2bQuery cab2bParamQuery,
+                                               ParseXMLFile parseFile) {
         try {
             for (ICondition condition : conditions) {
                 AbstractTypePanel componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
@@ -171,8 +174,8 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
      * @param parseFile
      */
     private void addParameterizedConditions(Map<Integer, Collection<ICondition>> conditionMap,
-                                            Collection<ICondition> paramConditions,
-                                            ICab2bQuery cab2bParamQuery, ParseXMLFile parseFile) {
+                                            Collection<ICondition> paramConditions, ICab2bQuery cab2bParamQuery,
+                                            ParseXMLFile parseFile) {
         try {
             for (ICondition condition : paramConditions) {
                 AbstractTypePanel componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(

@@ -603,9 +603,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             queryURLList.addAll(entityURLMap.get(groupName));
             b2bquery.getOutputUrls().clear();
             b2bquery.getOutputUrls().addAll(queryURLList);
-
         }
-
     }
 
     /**
@@ -619,14 +617,15 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             ParameterizedQueryMainPanel parameterizedQueryMainPanel = null;
 
             Cab2bQuery query = (Cab2bQuery) mainSearchPanel.getQueryObject().getQuery();
+            Long userId = UserCache.getInstance().getCurrentUser().getUserId();
+            query.setUserId(userId);
             if (CommonUtils.isServiceURLConfigured(query, mainSearchPanel.getParent())) {
                 parameterizedQueryMainPanel = new ParameterizedQueryMainPanel(new ParameterizedQueryDataModel(
                         query));
                 parameterizedQueryMainPanel.showInDialog();
-                
             }
             // for updating queries on main frame
-            MainFrameStackedBoxPanel.getInstance().getSavedQueryLinkPanel().updateQueryLinkPanel(); 
+            MainFrameStackedBoxPanel.getInstance().getSavedQueryLinkPanel().updateQueryLinkPanel();
         }
     }
 
