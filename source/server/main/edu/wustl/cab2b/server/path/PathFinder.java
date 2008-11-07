@@ -380,7 +380,6 @@ public class PathFinder {
 
     /**
      * @param id Path id for which a path is expected.
-     * @param connection Database connection to use.
      * @return IPath object for given pathId
      */
     public IPath getPathById(Long id) {

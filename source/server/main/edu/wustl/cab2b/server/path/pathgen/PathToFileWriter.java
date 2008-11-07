@@ -22,6 +22,12 @@ import edu.wustl.cab2b.server.path.PathConstants;
  */
 public class PathToFileWriter {
 
+	/**
+	 * Write a set of paths to a file
+	 * @param paths
+	 * @param nodeTags
+	 * @param append
+	 */
     public static void writePathsToFile(Set<Path> paths, Object[] nodeTags, boolean append) {
         try {
             FileWriter writer = new FileWriter(new File(PathConstants.PATH_FILE_NAME), append);

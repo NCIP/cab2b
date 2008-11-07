@@ -97,11 +97,9 @@ public class ExperimentOperations extends DefaultBizLogic {
      *            source experiment group
      * @param tarExpGrp
      *            target experiment group.
-     * @param daoType
-     *            DAO type to use.
+     *            
      * @throws UserNotAuthorizedException
      * @throws BizLogicException
-     * @throws Exception
      */
     public void move(Object exp, Object srcExpGrp, Object tarExpGrp) throws BizLogicException,
             UserNotAuthorizedException {
@@ -150,11 +148,8 @@ public class ExperimentOperations extends DefaultBizLogic {
      *            experiment to copy.
      * @param tarExpGrp
      *            target experiment group.
-     * @param daoType
-     *            DAO type to use.
      * @throws BizLogicException
      * @throws UserNotAuthorizedException
-     * @throws Exception
      */
     public void copy(Object exp, Object tarExpGrp) throws BizLogicException, UserNotAuthorizedException {
         Experiment experiment = (Experiment) exp;
@@ -176,7 +171,8 @@ public class ExperimentOperations extends DefaultBizLogic {
     /**
      * Returns latest saved user experiments, 
      * TODO: Currently this method is returning all experiments from database
-     * @param userName
+     * @param user
+     * @param userIdentity
      * @return List<Experiment>
      */
     public List<Experiment> getLatestExperimentForUser(UserInterface user, String userIdentity) {
@@ -365,7 +361,7 @@ public class ExperimentOperations extends DefaultBizLogic {
     /**
      * Returns root Id of given datalist
      * 
-     * @param DataListMetadata
+     * @param dl
      * @return Long id
      * @throws HibernateException
      */
@@ -378,7 +374,7 @@ public class ExperimentOperations extends DefaultBizLogic {
 
     /**
      * Returns all the datalists in the system.
-     * 
+     * @param userId
      * @return Collection of datalists
      * @throws HibernateException
      */
@@ -558,6 +554,7 @@ public class ExperimentOperations extends DefaultBizLogic {
     /**
      * Returns a model created for custom data category
      * 
+     * @param experiment
      * @return CustomDataCategoryModel
      * @throws CheckedException
      */

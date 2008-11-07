@@ -24,7 +24,7 @@ public class ServiceURLBean extends AbstractStatelessSessionBean implements Serv
 
 	/**
 	 * This method returns a collection all the Application names present in the database
-	 * @return
+	 * @return Collection of all application names
 	 * @throws RemoteException
 	 */
     public Collection<String> getAllApplicationNames() throws RemoteException {
@@ -33,7 +33,7 @@ public class ServiceURLBean extends AbstractStatelessSessionBean implements Serv
 
     /**
      * This method returns a collection all the service instances present in the database
-     * @return
+     * @return Collection of all service urls.
      * @throws RemoteException
      */
     public Collection<ServiceURL> getAllServiceURLs() throws RemoteException {
@@ -46,7 +46,7 @@ public class ServiceURLBean extends AbstractStatelessSessionBean implements Serv
      * 
      * @param serviceName
      * @param user
-     * @return
+     * @return Instances by service names
      * @throws RemoteException
      */
     public Collection<AdminServiceMetadata> getInstancesByServiceName(String serviceName, UserInterface user)
@@ -57,7 +57,7 @@ public class ServiceURLBean extends AbstractStatelessSessionBean implements Serv
     /**
      * This method returns a map of service url string against the serviceURL object of all the serviceURLs present in the database only
      * @param serviceName
-     * @return
+     * @return All instacnes for service group
      * @throws RemoteException
      */
     public Map<String,? extends ServiceURLInterface> getAllInstancesForEntityGroup(String serviceName)

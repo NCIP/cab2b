@@ -52,6 +52,9 @@ public class CategoryPreprocessor {
 
     /**
      * The query object is modified appropriately.
+     * @param query
+     * @return Results from category preprocessor
+     * 
      */
     public CategoryPreprocessorResult processCategories(IQuery query) {
         clear();

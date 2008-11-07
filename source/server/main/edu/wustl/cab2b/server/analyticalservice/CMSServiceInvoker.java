@@ -16,7 +16,7 @@ public class CMSServiceInvoker implements ServiceInvokerInterface {
      * Invokes service
      * @param data
      * @param serviceParamSet
-     * @return
+     * @return Returns records
      */
     public List<IRecord> invokeService(List<IRecord> data, List<IRecord> serviceParamSet) {
         //TODO Real code to call service will go here 

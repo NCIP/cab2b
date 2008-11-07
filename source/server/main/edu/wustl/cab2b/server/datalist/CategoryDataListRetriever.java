@@ -15,6 +15,11 @@ import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 
+/**
+ * 
+ * @author srinath_k
+ *
+ */
 public class CategoryDataListRetriever extends AbstractDataListRetriever<ICategorialClassRecord> {
     private CategoryEntityTreeParser parser;
 

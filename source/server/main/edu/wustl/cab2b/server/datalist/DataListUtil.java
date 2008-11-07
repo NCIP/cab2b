@@ -149,7 +149,7 @@ public class DataListUtil {
      * Locates the {@link AttributeInterface} corresponding to attribute name in
      * the collection.
      * 
-     * @param entity
+     * @param attributes
      * @param attributeName
      * @return {@link AttributeInterface} if found; null if no attribute with
      *         given name is present in the collection.
@@ -227,7 +227,7 @@ public class DataListUtil {
     /**
      * Creates new Entity using a old Entity information.
      * @param oldEntity
-     * @return
+     * @return Reference to new created entity
      */
     public static  EntityInterface createNewEntity(EntityInterface oldEntity) {
         EntityInterface newEntity = getDomainObjectFactory().createEntity();

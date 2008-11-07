@@ -34,7 +34,7 @@ public class AnalyticalServiceOperationsBean extends AbstractStatelessSessionBea
      * Invokes a analytical service and return results in a {@link edu.wustl.cab2b.common.queryengine.result.IRecord}
      * @param serviceDetails 
      * @param data input data for service 
-     * @param serviceParamSet parameters used for service
+     * @param serviceParamList parameters used for service
      * @return Result after execution of service
      * @throws RemoteException
      * 

@@ -118,7 +118,7 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Utility
 
     /**
      * Refreshes Path cache and EntityCache if boolean passed is true
-     * @param resheshEntityCache If to refresh entity cache
+     * @param refreshEntityCache If to refresh entity cache
      * @throws RemoteException
      */
     public void refreshPathAndEntityCache(boolean refreshEntityCache) throws RemoteException {

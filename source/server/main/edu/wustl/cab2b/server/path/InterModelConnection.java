@@ -31,8 +31,8 @@ class InterModelConnection {
 
     /**
      * 
-     * @param leftEntity  Left side entity
-     * @param rightEntity Right side entity
+     * @param leftAttribute  Left side entity
+     * @param rightAttribute Right side entity
      */
     public InterModelConnection(AttributeInterface leftAttribute, AttributeInterface rightAttribute) {
         leftAttributeId = leftAttribute.getId();

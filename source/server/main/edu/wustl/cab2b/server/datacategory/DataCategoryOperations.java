@@ -41,8 +41,6 @@ public class DataCategoryOperations extends DefaultBizLogic {
 	 * 
 	 * @param dataCategory
 	 *            DataCategory to save.
-	 * @throws RemoteException
-	 *             EBJ specific Exception
 	 */
 	public void saveDataCategory(DataCategory dataCategory) {
 		try {
@@ -57,7 +55,7 @@ public class DataCategoryOperations extends DefaultBizLogic {
 	/**
 	 * Returns all the datacategories availble in the system.
 	 * 
-	 * @param con
+	 * @param connection
 	 *            Connection object reference
 	 * @return List of all datacategories.
 	 */
@@ -82,8 +80,6 @@ public class DataCategoryOperations extends DefaultBizLogic {
 	 * @param con
 	 *            Connection object reference
 	 * @return The Category for given id.
-	 * @throws RemoteException
-	 *             EBJ specific Exception
 	 */
 	public DataCategory getDataCategoryByDataCategoryId(Long categoryId,
 			Connection con) {

@@ -30,6 +30,9 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
 
     /**
      * Retrieves annotation information for all the data lists stored.
+     * 
+     * @param dref
+     * @param selectedIdentityProvider
      * @return list of all available data list metadata.
      * @throws RemoteException
      * @see DataListBusinessInterface#retrieveAllDataListMetadata()
@@ -71,7 +74,8 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
 
     /**
      * Saves the data list.
-     * @param dataList
+     * @param rootDataRow
+     * @param datalistMetadata
      * @param dref -Its serialized User Credential in String
      * @return data list id.
      * @throws RemoteException
@@ -94,7 +98,7 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
     /**
      * Returns entity list.
      * @param entityId
-     * @return
+     * @return entity record
      * @throws RemoteException
      */
     public List<IRecord> getEntityRecord(Long entityId) throws RemoteException {
@@ -107,7 +111,6 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
      * @param dataListMetadata
      * @param oldAttribute
      * @param newAttributes
-     * @param dref - it is serialized User Credential in String
      * @return Saved data category
      * @throws RemoteException
      * @throws CheckedException

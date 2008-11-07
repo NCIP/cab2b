@@ -51,10 +51,19 @@ public class Path {
         }
     }
 
+    /**
+     * checks whether this path contains node or not
+     * @param node
+     * @return
+     */
     public boolean containsNode(Node node) {
         return fromNode().equals(node) || toNode().equals(node) || getIntermediateNodes().contains(node);
     }
 
+    /**
+     * checks whether cycle present in current path or not.
+     * @return
+     */
     public boolean isCyclePresent() {
         if (getIntermediateNodes().isEmpty()) {
             return false;
@@ -65,6 +74,10 @@ public class Path {
         return nodesSet.size() < getIntermediateNodes().size() + 2;
     }
 
+    /**
+     * checks whether this edge is self edge or not.
+     * @return
+     */
     public boolean isSelfEdge() {
         return getIntermediateNodes().isEmpty() && fromNode().equals(toNode());
     }
@@ -99,22 +112,43 @@ public class Path {
         return new Path(fromNode(), toNode(), intermediateNodes);
     }
 
+    /**
+     * Returns intermediate nodes
+     * @return
+     */
     public List<Node> getIntermediateNodes() {
         return intermediateNodes;
     }
 
+    /**
+     * Returns source node
+     * @return
+     */
     public Node fromNode() {
         return sdp.getSrcNode();
     }
 
+    /**
+     * Returns destination node
+     * @return
+     */
     public Node toNode() {
         return sdp.getDestNode();
     }
 
+    /**
+     * Retrunrs no. of nodes
+     * @return
+     */
     public int numNodes() {
         return intermediateNodes.size() + 2;
     }
 
+    /**
+     * Returns whether this object is equal to obj or not
+     * @param obj
+     * @return
+     */
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -127,6 +161,10 @@ public class Path {
                 && otherPath.getIntermediateNodes().equals(getIntermediateNodes());
     }
 
+    /**
+     * Returns hashCode
+     * @return
+     */
     public int hashCode() {
         if (hashCode == 0) {
             hashCode = new HashCodeBuilder().append(fromNode()).append(toNode()).append(getIntermediateNodes()).toHashCode();
@@ -134,6 +172,10 @@ public class Path {
         return hashCode;
     }
 
+    /**
+     * String form of object
+     * @return
+     */
     public String toString() {
         String delim = "#";
         String s = fromNode().toString();

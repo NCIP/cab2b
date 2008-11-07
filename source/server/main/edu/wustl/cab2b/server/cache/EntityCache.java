@@ -50,7 +50,7 @@ public class EntityCache extends AbstractEntityCache {
      * Returns the Entity objects whose source classes fields match with the
      * respective not null fields in the passed entity object.
      * 
-     * @param entity The entity object.
+     * @param patternEntityCollection The entity object.
      * @return the Entity objects whose source classes fields match with the
      *         respective not null fields in the passed entity object.
      */
@@ -79,7 +79,7 @@ public class EntityCache extends AbstractEntityCache {
      * Returns the Entity objects whose attributes's source classes fields match
      * with the respective not null fields in the passed entity object.
      * 
-     * @param entity The entity object.
+     * @param patternAttributeCollection The entity object.
      * @return the Entity objects whose attributes's source classes fields match
      *         with the respective not null fields in the passed entity object.
      */

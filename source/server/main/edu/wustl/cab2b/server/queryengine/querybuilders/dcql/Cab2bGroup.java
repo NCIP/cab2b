@@ -15,6 +15,12 @@ import gov.nih.nci.cagrid.dcql.Association;
 import gov.nih.nci.cagrid.dcql.ForeignAssociation;
 import gov.nih.nci.cagrid.dcql.Group;
 
+
+/**
+ * 
+ * @author srinath_k
+ *
+ */
 class ImmutableCab2bGroup {
     private Group group;
 
@@ -31,6 +37,11 @@ class ImmutableCab2bGroup {
     }
 }
 
+/**
+ * 
+ * @author srinath_k
+ *
+ */
 public class Cab2bGroup extends ImmutableCab2bGroup {
     private List<Association> associations;
 
@@ -42,6 +53,9 @@ public class Cab2bGroup extends ImmutableCab2bGroup {
 
     private int numElements;
 
+    /**
+     * Default constructor for Cab2bGroup
+     */
     public Cab2bGroup() {
         super(new Group());
         // this.group = Group.Factory.newInstance();
@@ -53,6 +67,10 @@ public class Cab2bGroup extends ImmutableCab2bGroup {
         numElements = 0;
     }
 
+    /**
+     * Constructor initializes logicalOperator
+     * @param logicalOperator
+     */
     public Cab2bGroup(LogicalOperator logicalOperator) {
         this();
         setLogicRelation(logicalOperator);
@@ -100,6 +118,10 @@ public class Cab2bGroup extends ImmutableCab2bGroup {
         incNumElems();
     }
 
+    /**
+     * Adds constraint
+     * @param constraint
+     */
     public void addConstraint(DcqlConstraint constraint) {
         switch (constraint.getConstraintType()) {
             case Attribute:

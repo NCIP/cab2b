@@ -39,7 +39,7 @@ public class ExperimentGroupSessionBean extends AbstractStatelessSessionBean imp
     /**
      * Returns ExperimentGroup reference
      * @param identifier
-     * @return
+     * @return Returns experiment group
      * @throws DAOException
      * @throws RemoteException
      */

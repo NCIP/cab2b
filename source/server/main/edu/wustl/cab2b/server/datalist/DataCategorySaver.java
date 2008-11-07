@@ -18,6 +18,11 @@ public class DataCategorySaver extends AbstractDataListSaver {
 
     List<AttributeInterface> oldAttributes;
 
+    /**
+     * Cosnstructor for DataCategorySaver, initializes new attributes and old attributes
+     * @param newOnes
+     * @param oldOnes
+     */
     public DataCategorySaver(List<AttributeInterface> newOnes, List<AttributeInterface> oldOnes) {
         newAttributes = newOnes;
         oldAttributes = oldOnes;

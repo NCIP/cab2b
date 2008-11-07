@@ -54,7 +54,6 @@ public class CuratedPathOperations extends DefaultBizLogic {
     /**
      * This method persists the CuratedPath object
      * @param curatedPath
-     * @throws RemoteException
      */
     public final void saveCuratedPath(CuratedPath curatedPath) {
         try {

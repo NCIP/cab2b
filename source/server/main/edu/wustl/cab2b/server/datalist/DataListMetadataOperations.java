@@ -22,7 +22,7 @@ public class DataListMetadataOperations extends DefaultBizLogic {
      * Returns a data list metadata.
      * 
      * @param id
-     * @return
+     * @return Datalist metadata
      */
     public DataListMetadata retrieveDataListMetadata(Long id) {
         List<DataListMetadata> results = null;

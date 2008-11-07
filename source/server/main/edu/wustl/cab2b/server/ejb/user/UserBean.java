@@ -29,7 +29,9 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
     /**
      * Insert given user as a new user in database
      * 
-     * @param user
+     * @param dref
+     * @param idP
+     * @return User that has been inserted
      * @throws RemoteException
      */
     public UserInterface insertUser(String dref, String idP) throws RemoteException {
@@ -52,7 +54,7 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
      * Get a map of entity group name vs related list of service urls for the given user
      * 
      * @param user
-     * @return
+     * @return Service Urls for a user
      * @throws DynamicExtensionsSystemException
      * @throws DynamicExtensionsApplicationException
      * @throws RemoteException
@@ -69,7 +71,8 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
     /**
      * Get user by user name. If user of that name not found in database, it returns null.
      * 
-     * @param user
+     * @param dref
+     * @param idP
      * @return
      * @throws RemoteException
      */

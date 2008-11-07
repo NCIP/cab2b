@@ -61,6 +61,12 @@ class PathReplicationUtil {
         }
     }
 
+    /**
+     * Replicate paths from given inputPaths
+     * @param inputPaths
+     * @param replicationNodes
+     * @return 
+     */
     public static Set<Path> replicatePaths(Set<Path> inputPaths, Map<Integer, Set<Integer>> replicationNodes) {
         logger.info("Entered PathReplicationUtil...");
         logger.info("No. of input paths : " + inputPaths.size());

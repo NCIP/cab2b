@@ -43,8 +43,6 @@ public class CategoryOperations extends DefaultBizLogic {
 	 * 
 	 * @param category
 	 *            Category to save.
-	 * @throws RemoteException
-	 *             EBJ specific Exception
 	 */
 	public void saveCategory(Category category) {
 		try {
@@ -62,8 +60,6 @@ public class CategoryOperations extends DefaultBizLogic {
 	 * @param con
 	 *            Connection object reference
 	 * @return Category for corresponding to given category entity id.
-	 * @throws RemoteException
-	 *             EBJ specific Exception
 	 */
 	public Category getCategoryByEntityId(Long entityId, Connection con) {
 		List list = null;
@@ -84,8 +80,6 @@ public class CategoryOperations extends DefaultBizLogic {
 	 * @param con
 	 *            Connection object reference
 	 * @return The Category for given id.
-	 * @throws RemoteException
-	 *             EBJ specific Exception
 	 */
 	public Category getCategoryByCategoryId(Long categoryId, Connection con) {
 		List list = null;
@@ -224,7 +218,7 @@ public class CategoryOperations extends DefaultBizLogic {
 	/**
 	 * Returns all the categories availble in the system.
 	 * 
-	 * @param con
+	 * @param connection
 	 *            Connection object reference
 	 * @return List of all categories.
 	 */

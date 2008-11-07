@@ -67,6 +67,13 @@ public class GraphPathFinder {
         return cache;
     }
 
+    /**
+     * 
+     * @param adjacencyMatrix
+     * @param replicationNodes
+     * @param conn
+     * @return
+     */
     public Set<Path> getAllPaths(boolean[][] adjacencyMatrix, Map<Integer, Set<Integer>> replicationNodes,
                                  Connection conn) {
         return getAllPaths(adjacencyMatrix, replicationNodes, conn, Integer.MAX_VALUE);

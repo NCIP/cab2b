@@ -50,10 +50,11 @@ public interface DataListSaver<R extends IRecord> {
      * Initializes the saver based on the given entity. It is expected (but not
      * mandatory) that the new entity be created during this initialization
      * process.
+     * @param oldEntity the entity whose records are to be saved.
      * 
      * @throws IllegalArgumentException if the saver is incapable of saving the
      *             specified entity.
-     * @param oldEntity the entity whose records are to be saved.
+     * 
      */
     void initialize(EntityInterface oldEntity);
 

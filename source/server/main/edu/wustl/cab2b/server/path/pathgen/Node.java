@@ -12,6 +12,11 @@ public class Node {
         this.id = id;
     }
 
+    /**
+     * Checks whether this object is equal to given object
+     * @param obj
+     * @return
+     */
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -25,18 +30,34 @@ public class Node {
         return false;
     }
 
+    /**
+     * Returns hashCode
+     * @return hash code
+     */
     public int hashCode() {
         return id;
     }
 
+    /**
+     * Returns Id.
+     * @return
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Returns Id in string form
+     * @return
+     */
     public String getIdAsString() {
         return String.valueOf(getId());
     }
 
+    /**
+     * Returns object in string form
+     * @return This Object string
+     */
     public String toString() {
         return String.valueOf(id);
     }

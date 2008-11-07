@@ -40,7 +40,7 @@ public class InputCategorialAttribute {
     }
 
     /**
-     * @param dynamicExtAttributet The dynamicExtAttributet to set.
+     * @param dynamicExtAttribute The dynamicExtAttributet to set.
      */
     public void setDynamicExtAttribute(AttributeInterface dynamicExtAttribute) {
         this.dynamicExtAttribute = dynamicExtAttribute;

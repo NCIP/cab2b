@@ -179,7 +179,9 @@ public class Graph {
     }
 
     /**
-     * Overrides Object equals 
+     * Overrides Object equals. Returns 
+     * @param obj
+     * @return true if this object is equal to obj 
      * @see java.lang.Object#equals(Object)
      */
     public boolean equals(Object obj) {
@@ -194,6 +196,7 @@ public class Graph {
     }
 
     /**
+     * @return hash code
      * @see java.lang.Object#hashCode()
      */
     public int hashCode() {

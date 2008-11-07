@@ -75,6 +75,11 @@ public class QueryExecutor {
 
     private GlobusCredential cred;
 
+    /**
+     * Constructor initializes object with query and globus credentials
+     * @param query
+     * @param cred
+     */
     public QueryExecutor(ICab2bQuery query, GlobusCredential cred) {
         setQuery(query);
         this.transformer = QueryResultTransformerFactory.createTransformer(query.getOutputEntity(), IRecord.class,
@@ -110,7 +115,6 @@ public class QueryExecutor {
      * a class, then just set the target as the class name, and appropriate
      * constraints.
      * 
-     * @param query Query which needs to be executed.
      * @return Returns the IQueryResult
      */
     public IQueryResult<? extends IRecord> executeQuery() {

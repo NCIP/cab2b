@@ -8,6 +8,12 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.server.datalist.DataListUtil;
 
+/**
+ * 
+ * @author srinath_k
+ * @author rahul_ner
+ *
+ */
 public class DatalistCache {
     private Map<Long, EntityInterface> entityForId;
 
@@ -60,7 +66,7 @@ public class DatalistCache {
     /**
      * Checks whether entity corresponding to given id present or not. 
      * @param id
-     * @return
+     * @return true if entity is present otherwise false
      */
     public boolean isEntityPresent(Long id) {
         return entityForId.containsKey(id);

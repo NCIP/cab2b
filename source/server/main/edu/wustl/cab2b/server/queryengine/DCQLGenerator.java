@@ -37,15 +37,18 @@ public class DCQLGenerator {
 
     private CategoryPreprocessorResult categoryPreprocessorResult;
 
+    /**
+     * Constructor initializes {@link ICab2bQuery}
+     * @param query
+     */
     public DCQLGenerator(ICab2bQuery query) {
         this.query = query;
     }
 
     /**
      * This methods generates DCQL(s) for ICab2bQuery object
-     * 
-     * @param query Query which needs to be executed.
      * @return Returns the IQueryResult
+     * @throws RuntimeException
      */
     public DCQL generateDCQL() throws RuntimeException {
         logger.info("Entered DCQLGenerator...");
@@ -80,6 +83,14 @@ public class DCQLGenerator {
         return writer.toString();
     }
 
+    /**
+     * Creates DCQL query
+     * @param query
+     * @param outputName
+     * @param constraint
+     * @param outputUrls
+     * @return
+     */
     public static DCQLQuery createDCQLQuery(ICab2bQuery query, String outputName, DcqlConstraint constraint, String... outputUrls) {
         Object targetObject = new Object();
         targetObject.setName(outputName);

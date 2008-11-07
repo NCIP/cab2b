@@ -60,6 +60,9 @@ public class CategoryPreprocessorResult {
      */
     private Map<EntityInterface, Category> categoryForEntity;
 
+    /**
+     * Default constructor for CategoryPreprocessorResult
+     */
     public CategoryPreprocessorResult() {
         setRedundantExprs(new HashSet<IExpression>());
         setExprsSourcedFromCategories(new HashMap<EntityInterface, Set<TreeNode<IExpression>>>());
@@ -72,6 +75,11 @@ public class CategoryPreprocessorResult {
         return exprsSourcedFromCategories;
     }
 
+    /**
+     * Adds expression resource from category
+     * @param catEntity
+     * @param exprNode
+     */
     public void addExprSourcedFromCategory(EntityInterface catEntity,
                                            TreeNode<IExpression> exprNode) {
         Set<TreeNode<IExpression>> value = getExprsSourcedFromCategories().get(
@@ -83,24 +91,43 @@ public class CategoryPreprocessorResult {
         value.add(exprNode);
     }
 
+    /**
+     * Setter for expression sources from category
+     * @param exprsSourcedFromCategories
+     */
     public void setExprsSourcedFromCategories(
                                               Map<EntityInterface, Set<TreeNode<IExpression>>> exprsSourcedFromCategories) {
         this.exprsSourcedFromCategories = exprsSourcedFromCategories;
     }
 
+    /**
+     * Accessor for redundant expression
+     * @return
+     */
     public Set<IExpression> getRedundantExprs() {
         return redundantExprs;
     }
 
+    /**
+     * Setter for redundantExprs
+     * @param redundantExprs
+     */
     public void setRedundantExprs(Set<IExpression> redundantExprs) {
         this.redundantExprs = redundantExprs;
     }
 
+    /**
+     * clen up
+     */
     public void clear() {
         getExprsSourcedFromCategories().clear();
         getRedundantExprs().clear();
     }
 
+    /**
+     * Returns Set of output expressions
+     * @return
+     */
     public Set<TreeNode<IExpression>> getOutputExpressions() {
         Set<TreeNode<IExpression>> outputExpressions = new HashSet<TreeNode<IExpression>>();
         for (Set<TreeNode<IExpression>> treeNodeSet : getExprsSourcedFromCategories().values()) {
@@ -113,28 +140,52 @@ public class CategoryPreprocessorResult {
         return outputExpressions;
     }
 
+    /**
+     * Getter for category class of expressions
+     * @return
+     */
     public Map<IExpression, CategorialClass> getCatClassForExpr() {
         return catClassForExpr;
     }
 
+    /**
+     * Setter for Category class of expressions
+     * @param catClassForExpr
+     */
     public void setCatClassForExpr(
                                    Map<IExpression, CategorialClass> catClassForExpr) {
         this.catClassForExpr = catClassForExpr;
     }
 
+    /**
+     * Getter for List of CategorialClass
+     * @return
+     */
     public List<CategorialClass> getOriginallyRootCatClasses() {
         return originallyRootCatClasses;
     }
 
+    /**
+     * Setter for List of CategorialClass
+     * @param originallyRootCatClasses
+     */
     public void setOriginallyRootCatClasses(
                                             List<CategorialClass> originallyRootCatClasses) {
         this.originallyRootCatClasses = originallyRootCatClasses;
     }
 
+    /**
+     * Getter method for map between category and entity 
+     * @return
+     */
     public Map<EntityInterface, Category> getCategoryForEntity() {
         return categoryForEntity;
     }
 
+    /**
+     * Setter method for map between entity and category
+     * @param categoryForEntity
+     */
     public void setCategoryForEntity(
                                      Map<EntityInterface, Category> categoryForEntity) {
         this.categoryForEntity = categoryForEntity;

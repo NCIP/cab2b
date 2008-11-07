@@ -13,7 +13,7 @@ public interface ServiceInvokerInterface {
      * Invokes service
      * @param data
      * @param serviceParamSet
-     * @return 
+     * @return Returns records
      */
     List<IRecord> invokeService(List<IRecord> data, List<IRecord> serviceParamSet);
 

@@ -191,7 +191,7 @@ public class DataListOperationsController {
      * @param dataListMetadata
      * @param oldAttribute
      * @param newAttributes
-     * @return
+     * @return Datalist metadata
      */
     public DataListMetadata saveDataCategory(IDataRow rootRecordDataRow, DataListMetadata dataListMetadata,
                                              List<AttributeInterface> oldAttribute,
@@ -224,7 +224,7 @@ public class DataListOperationsController {
      * Returns records of the given entity. Delegates the operation to
      * appropriate {@link DataListRetriever}.
      * 
-     * @param Long entityId
+     * @param entityId
      * @return a EntityRecordResultInterface obj
      * @see DataListRetriever
      * @see DataListOperationsFactory
@@ -260,6 +260,7 @@ public class DataListOperationsController {
      * @param rootEntityIdName
      * @param selectedAttributeList    
      * @param name
+     * @param experiment
      * @return DataListMetadata
      * @throws CheckedException
      * @throws RemoteException

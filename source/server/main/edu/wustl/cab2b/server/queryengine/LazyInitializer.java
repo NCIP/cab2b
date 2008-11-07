@@ -49,6 +49,11 @@ public class LazyInitializer {
         return getFullyInitialializedRecord(handle).view(params, handle);
     }
 
+    /**
+     * Returns fully initialized record
+     * @param handle
+     * @return
+     */
     public static IFullyInitialializedRecord<?, ?> getFullyInitialializedRecord(int handle) {
         if (!map.containsKey(handle)) {
             throw new IllegalArgumentException("Invalid handle " + handle);

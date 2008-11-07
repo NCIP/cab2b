@@ -44,9 +44,12 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * This method executes the given query if the given credential is authentic. 
      * 
      * @param query ICab2bQuery to be executed
-     * @param cred user crendential to be authenticated
+     * @param dref
+     * @param idP
      * @return query result
-     * @throws RemoteException if authentication fails or query execution fails.
+     * @throws Exception if authentication fails or query execution fails.
+     * @throws GeneralSecurityException
+     * @throws IOException
      */
     public IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String dref, String idP)
             throws GeneralSecurityException, IOException, Exception {
@@ -62,7 +65,14 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      */
     /**
      * This method saves the given ICab2bQuery object.
+     *  
+     * @param query
+     * @param dref
+     * @param idP
      * 
+     * @throws Exception if authentication fails or query execution fails.
+     * @throws GeneralSecurityException
+     * @throws IOException
      * @throws RemoteException if save process fails
      */
     public void saveQuery(ICab2bQuery query, String dref, String idP) throws RemoteException,
@@ -79,6 +89,7 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      */
     /**
      * This method updates the given ICab2bQuery object.
+     * @param query
      * 
      * @throws RemoteException if updating fails
      */
@@ -126,8 +137,13 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      */
     /**
      * This method returns all the queries with only their name and description populated.
+     * @param dref
+     * @param idP
      * 
      * @return list of IParameterizedQuery having only their name and description populated
+     * @throws Exception if authentication fails or query execution fails.
+     * @throws GeneralSecurityException
+     * @throws IOException
      * @throws RemoteException if retrieving fails
      */
     public Collection<IParameterizedQuery> getAllQueryNameAndDescription(String dref, String idP)
@@ -181,6 +197,7 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * 
      * @param query query for which DCQl is to be generated
      * @return TreeNode<DCQL>
+     * @throws RemoteException
      */
     public DCQL getDCQL(ICab2bQuery query) throws RemoteException {
         return new DCQLGenerator(query).generateDCQL();

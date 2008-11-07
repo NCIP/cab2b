@@ -234,6 +234,11 @@ public class EntityToAnalyticalServiceMapper {
      * (non-Javadoc)
      * @see java.lang.Object#clone()
      */
+    /**
+     * Clones this object
+     * @return Cloned object
+     * @throws CloneNotSupportedException
+     */
     public Object clone() throws CloneNotSupportedException {
         throw new CloneNotSupportedException();
     }
