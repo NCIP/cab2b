@@ -102,16 +102,19 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
             PageElement pageElement = new PageElementImpl();
             pageElement.setDisplayName(Utility.getDisplayName(entityInterface));
             pageElement.setDescription(entityInterface.getDescription());
-
             pageElementCollection.add(pageElement);
+            
         }
         NumericPager numericPager = new NumericPager(pageElementCollection);
-
+        numericPager.setElementsPerPage(10);
+        
         // Initalize the pagination component
-        resultsPage = new JPagination(pageElementCollection, numericPager, this, true, false);
+        resultsPage = new JPagination(pageElementCollection, numericPager, this, false, false);
         resultsPage.resetAllLabels();
         resultsPage.setPageLinksDisabled();
-
+        resultsPage.setGroupActionEnabled(false);
+        resultsPage.setSelectableEnabled(false);
+        
         // Create a Panel for the center searchPanel, and add the pagination
         // component to that.
         JXPanel centerPanel = new Cab2bPanel(new RiverLayout(5, 5));
