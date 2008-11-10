@@ -18,6 +18,7 @@ import edu.common.dynamicextensions.domain.FloatAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.IntegerAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.LongAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.NumericAttributeTypeInformation;
+import edu.common.dynamicextensions.domain.ObjectAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.ShortAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.StringAttributeTypeInformation;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -82,7 +83,8 @@ public class SwingUIManager {
         String dataTypeString = null;
 
         if ((attributeTypeInformation instanceof StringAttributeTypeInformation)
-                || (attributeTypeInformation instanceof ByteArrayAttributeTypeInformation)) {
+                || (attributeTypeInformation instanceof ByteArrayAttributeTypeInformation)
+                || (attributeTypeInformation instanceof ObjectAttributeTypeInformation)) {
             dataTypeString = "string";
         } else if ((attributeTypeInformation instanceof IntegerAttributeTypeInformation)
                 || (attributeTypeInformation instanceof LongAttributeTypeInformation)
