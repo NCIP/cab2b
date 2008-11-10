@@ -76,8 +76,9 @@ public class ServiceInstancesPanel extends Cab2bPanel {
     private List<String> URLList;
 
     /**
-     * 
      * @param serviceName
+     * @param isForQuery
+     * @param URLList
      */
     public ServiceInstancesPanel(String serviceName, boolean isForQuery, List<String> URLList) {
         super(new BorderLayout());
@@ -308,7 +309,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
      * researchcenter's name and added to the result.
      * 
      * @param searchString
-     * @return
+     * 
      */
     private void searchResult(String searchString, final Collection<AdminServiceMetadata> filteredServiceInstances) {
         filteredServiceInstances.clear();
