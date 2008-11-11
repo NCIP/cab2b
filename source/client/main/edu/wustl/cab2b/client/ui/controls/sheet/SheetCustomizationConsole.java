@@ -90,11 +90,15 @@ public class SheetCustomizationConsole extends javax.swing.JPanel {
                 jButton3ActionPerformed(evt);
             }
         });
+    
+       
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.insets = new java.awt.Insets(1, 3, 1, 3);
         jPanel2.add(jButton3, gridBagConstraints);
 
-        cbShowFiltersHere.setText("Show Filters"); // NOI18N
+        //Commenting the checkbox for the bug fix : 7744
+        //Hiding the check box  
+      /*  cbShowFiltersHere.setText("Show Filters"); // NOI18N
         cbShowFiltersHere.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbShowFiltersHereActionPerformed(evt);
@@ -103,7 +107,7 @@ public class SheetCustomizationConsole extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.insets = new java.awt.Insets(1, 3, 1, 3);
         jPanel2.add(cbShowFiltersHere, gridBagConstraints);
-
+*/
         jPanel1.add(jPanel2, java.awt.BorderLayout.SOUTH);
 
         add(jPanel1, java.awt.BorderLayout.CENTER);
