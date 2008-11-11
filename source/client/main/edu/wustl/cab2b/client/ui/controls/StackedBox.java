@@ -89,7 +89,7 @@ public class StackedBox extends Cab2bPanel implements Scrollable {
 
     /**
      * Returns fore ground color
-     * @return
+     * @return titleForegroundColor
      */
     public Color getTitleForegroundColor() {
         return titleForegroundColor;
