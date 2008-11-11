@@ -16,7 +16,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 
 /**
  * Abstract panel class for Showing details in tabular format
- * @author deepak_shingan
+ * @author deepak_shingan,gaurav_mehta
  */
 public abstract class ShowAllPanel extends Cab2bPanel {
 
@@ -27,15 +27,23 @@ public abstract class ShowAllPanel extends Cab2bPanel {
     private Object[] tableHeader;
 
     private Object[][] data;
+    
+    private int hyperLinkColumnNumber;
 
     /**
      * Constructor
      * @param tableHeader
      * @param data
+     * @param columnName
      */
-    public ShowAllPanel(Object[] tableHeader, Object[][] data) {
+    public ShowAllPanel(Object[] tableHeader, Object[][] data,String columnName) {
         this.tableHeader = tableHeader;
         this.data = data;
+        for (int i = 0; i < tableHeader.length; i++) {
+            if(columnName.equals(tableHeader[i])) {
+                this.hyperLinkColumnNumber = i;
+            }
+        }
         linkAction = new ShowAllLinkActionClass();
         initGUI();
     }
@@ -47,8 +55,8 @@ public abstract class ShowAllPanel extends Cab2bPanel {
         setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
         if (data != null && tableHeader != null) {
             table = new Cab2bTable(false, data, tableHeader);
-            table.getColumn(1).setCellRenderer(new LinkRenderer(linkAction));
-            table.getColumn(1).setCellEditor(new LinkRenderer(linkAction));
+            table.getColumn(hyperLinkColumnNumber).setCellRenderer(new LinkRenderer(linkAction));
+            table.getColumn(hyperLinkColumnNumber).setCellEditor(new LinkRenderer(linkAction));
         } else
             table = new Cab2bTable();
         HighlighterPipeline highlighters = new HighlighterPipeline();
@@ -71,6 +79,11 @@ public abstract class ShowAllPanel extends Cab2bPanel {
      *
      */
     private class ShowAllLinkActionClass extends LinkAction {
+        
+        /**
+         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+         * @param e ActionEvent
+         */
         public void actionPerformed(ActionEvent e) {
             setVisited(true);
             linkActionPerformed();

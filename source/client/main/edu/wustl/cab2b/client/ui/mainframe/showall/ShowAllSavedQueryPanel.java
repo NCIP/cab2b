@@ -46,8 +46,8 @@ public class ShowAllSavedQueryPanel extends ShowAllPanel {
      * @param tableHeader
      * @param data
      */
-    public ShowAllSavedQueryPanel(Object[] tableHeader, Object[][] data) {
-        super(tableHeader, data);
+    public ShowAllSavedQueryPanel(Object[] tableHeader, Object[][] data,String columnName) {
+        super(tableHeader, data, columnName);
         //Hiding last column from table which contains query object having only
         //QueryID
         TableColumnModel colModel = getTable().getColumnModel();

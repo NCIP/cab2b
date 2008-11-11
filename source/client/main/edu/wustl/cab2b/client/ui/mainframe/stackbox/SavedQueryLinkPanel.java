@@ -161,6 +161,6 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
             objData[i][3] = paraQuery.getId();
             i++;
         }
-        return new ShowAllSavedQueryPanel(headers, objData);
+        return new ShowAllSavedQueryPanel(headers, objData,ShowAllSavedQueryPanel.QUERY_NAME_TITLE);
     }
 }

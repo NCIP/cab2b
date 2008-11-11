@@ -38,8 +38,8 @@ public class ShowAllCategoryPanel extends ShowAllPanel {
      * @param tableHeader
      * @param data
      */
-    public ShowAllCategoryPanel(Object[] tableHeader, Object[][] data) {
-        super(tableHeader, data);
+    public ShowAllCategoryPanel(Object[] tableHeader, Object[][] data,String columnName) {
+        super(tableHeader, data,columnName);
         //hiding last column from table which contains category object
         TableColumnModel colModel = getTable().getColumnModel();
         if (colModel.getColumnCount() > 4)

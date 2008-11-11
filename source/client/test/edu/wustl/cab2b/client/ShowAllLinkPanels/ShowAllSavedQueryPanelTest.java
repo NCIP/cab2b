@@ -17,7 +17,7 @@ public class ShowAllSavedQueryPanelTest extends TestCase {
      * Test method for {@link edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllSavedQueryPanel#ShowAllSavedQueryPanel(java.lang.Object[], java.lang.Object[][])}.
      */
     public final void testShowAllSavedQueryPanel() {
-        ShowAllSavedQueryPanel showAllSavedQueryPanel = new ShowAllSavedQueryPanel(null, null);
+        ShowAllSavedQueryPanel showAllSavedQueryPanel = new ShowAllSavedQueryPanel(null, null,null);
         assertNotNull(showAllSavedQueryPanel);
 
     }
@@ -26,7 +26,7 @@ public class ShowAllSavedQueryPanelTest extends TestCase {
      * Test method for {@link edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllSavedQueryPanel#queryLinkAction(java.lang.Long)}.
      */
     public final void testQueryLinkAction() {
-        ShowAllSavedQueryPanel panelRef = new ShowAllSavedQueryPanel(null, null);
+        ShowAllSavedQueryPanel panelRef = new ShowAllSavedQueryPanel(null, null,null);
         try {
             panelRef.queryLinkAction(null);
         } catch (Exception ex) {
@@ -38,7 +38,7 @@ public class ShowAllSavedQueryPanelTest extends TestCase {
      * Test method for {@link edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllPanel#getTable()}.
      */
     public final void testGetTable() {
-        ShowAllSavedQueryPanel panelRef = new ShowAllSavedQueryPanel(null, null);
+        ShowAllSavedQueryPanel panelRef = new ShowAllSavedQueryPanel(null, null,null);
         assertNotNull(panelRef.getTable());
     }
 
