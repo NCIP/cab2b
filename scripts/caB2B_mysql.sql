@@ -123,6 +123,7 @@ CREATE TABLE CAB2B_CATEGORY_POPULARITY (
   IDENTIFIER bigint(30) not null auto_increment,
   ENTITY_ID bigint(30) default null,
   POPULARITY bigint(30) not null default '0',
+  UPDATED_DATE timestamp not null,
   primary key  (IDENTIFIER)
 );
 
