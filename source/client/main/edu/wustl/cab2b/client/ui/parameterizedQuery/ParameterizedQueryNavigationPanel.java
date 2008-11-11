@@ -184,19 +184,19 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                 if (cab2bParameterizedQuery.getId() != null) {
                     queryEngineBusinessInterface.updateQuery(cab2bParameterizedQuery);
 
-                    message = "Query " + cab2bParameterizedQuery.getName() + " updated successfully.";
+                    message = "Query updated successfully.";
                 } else {
                     if (queryEngineBusinessInterface.isQueryNameDuplicate(cab2bParameterizedQuery.getName())) {
-                        JOptionPane.showMessageDialog(parameterizedQueryMainPanel, "Query with name '"
-                                + cab2bParameterizedQuery.getName()
-                                + "' already exist. Please try saving with different name.", "Error",
-                                                      JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(
+                                                      parameterizedQueryMainPanel,
+                                                      "Query with same name already exist. Please try saving with different name.",
+                                                      "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     queryEngineBusinessInterface.saveQuery(cab2bParameterizedQuery,
                                                            UserValidator.getSerializedDelegatedCredReference(),
                                                            UserValidator.getIdP());
-                    message = "Query " + cab2bParameterizedQuery.getName() + " saved successfully.";
+                    message = "Query saved successfully.";
                 }
                 SearchNavigationPanel.getMessageLabel().setText(message);
                 new SavedQueryLinkPanel().updateQueryLinkPanel();

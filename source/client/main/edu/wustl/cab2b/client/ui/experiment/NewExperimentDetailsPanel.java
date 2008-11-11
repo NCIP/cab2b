@@ -380,9 +380,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                     expBus.addExperiment(expGrpId, experiment,
                                          UserValidator.getSerializedDelegatedCredReference(),
                                          UserValidator.getIdP());
-                    SearchNavigationPanel.getMessageLabel().setText(
-                                                                    "* Experiment '" + experiment.getName()
-                                                                            + "' saved successfully .");
+                    SearchNavigationPanel.getMessageLabel().setText("* Experiment saved successfully *.");
                     MyExperimentLinkPanel.getInstance().updateMyExperimentPanel();
                     updateUI();
                 } catch (RemoteException e1) {

@@ -264,10 +264,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
                 @Override
                 protected void doUIUpdateLogic() throws RuntimeException {
                     if (isDataListSaved) {
-                        SearchNavigationPanel.getMessageLabel().setText(
-                                                                        "* Data list '"
-                                                                                + MainSearchPanel.getDataList().getDataListAnnotation().getName()
-                                                                                + "' saved successfully .");
+                        SearchNavigationPanel.getMessageLabel().setText("* Data list saved successfully *.");
                         updateUI();
                     }
                 }
