@@ -108,18 +108,18 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
         mySearchQueriesPanel.updateQueryLinkPanel();
 
         final String titleQuery = ApplicationProperties.getValue(QUERY_BOX_TEXT);
-        stackedBox.addBox(titleQuery, mySearchQueriesPanel, MY_SEARCH_QUERIES_IMAGE, true);
+        stackedBox.addBox(titleQuery, mySearchQueriesPanel, MY_SEARCH_QUERIES_IMAGE, false);
 
         popularSearchCategoryPanel = getPopularSearchCategoriesPanel(
                                                                      CommonUtils.getPopularSearchCategoriesForMainFrame(),
                                                                      new CategoryHyperlinkActionListener());
         final String titlePopularcategories = ApplicationProperties.getValue(POPULAR_CATEGORY_BOX_TEXT);
-        stackedBox.addBox(titlePopularcategories, popularSearchCategoryPanel, POPULAR_CATEGORIES_IMAGE, true);
+        stackedBox.addBox(titlePopularcategories, popularSearchCategoryPanel, POPULAR_CATEGORIES_IMAGE, false);
 
         myExperimentsPanel = MyExperimentLinkPanel.getInstance();
 
         final String titleExpr = ApplicationProperties.getValue(EXPERIMENT_BOX_TEXT);
-        stackedBox.addBox(titleExpr, myExperimentsPanel, MY_EXPERIMENT_IMAGE, true);
+        stackedBox.addBox(titleExpr, myExperimentsPanel, MY_EXPERIMENT_IMAGE, false);
 
         stackedBox.setPreferredSize(new Dimension(250, 500));
         stackedBox.setMinimumSize(new Dimension(250, 500));
@@ -184,7 +184,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
             objData[i][4] = entityInterface;
             i++;
         }
-        return new ShowAllCategoryPanel(headers, objData);
+        return new ShowAllCategoryPanel(headers, objData,ShowAllCategoryPanel.CATEGORY_NAME_TITLE);
     }
 
     /**
