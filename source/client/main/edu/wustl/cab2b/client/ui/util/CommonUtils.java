@@ -660,6 +660,12 @@ public class CommonUtils {
         boolean isServiceURLConfigured = true;
 
         Set<IQueryEntity> entitySet = query.getConstraints().getQueryEntities();
+        
+        //If user selected urls from 3rd step then return true
+        if(!query.getOutputUrls().isEmpty()){
+            return isServiceURLConfigured;
+        }
+        
         for (IQueryEntity queryEntity : entitySet) {
             EntityInterface entity = queryEntity.getDynamicExtensionsEntity();
             String[] urls = getServiceURLs(entity);

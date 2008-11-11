@@ -422,9 +422,14 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 searchCenterPanel.add(viewSearchResultsPanel, SearchCenterPanel.getStrViewSearchResultslbl());
                 showCard(true);
             }
-        } else {
-            gotoAddLimitPanel();
+        } 
+        
+        
+       /* Commenting for the bug fix 10490 
+        else {
+           gotoAddLimitPanel();
         }
+        */
     }
 
     /**
