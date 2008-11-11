@@ -57,69 +57,12 @@ public class PropertyLoader {
     }
 
     /**
-     * @param idP
-     * @return Dorian url for given idP
-     */
-    public static String getDorianUrl(String idP) {
-        return props.getProperty(idP + ".dorian.url");
-    }
-
-    /**
-     * @return all the names of identity providers to show in drop down of login frame
-     */
-    public static String[] getIdPNames() {
-        String allNames = props.getProperty("IdPs");
-        String[] idPNames = allNames.split(",");
-        return idPNames;
-    }
-
-    /**
      * @return all the index urls used to get the service information
      */
     public static String[] getIndexServiceUrls() {
         String allUrls = props.getProperty("indexurls");
         String[] urls = allUrls.split(",");
         return urls;
-    }
-
-    /**
-     * 
-     * @return the cdsdelegated url
-     */
-    public static String getCDSDelegatedUrl() {
-        String cdsUrl = props.getProperty("cdsdelegatedurl");
-        return cdsUrl;
-    }
-
-    /**
-     * 
-     * @return the CDS url for production grid and training grid
-     */
-    public static String getCDSUrl(String idP) {
-        return props.getProperty(idP + "_cds_url");
-
-    }
-
-    /**
-     * 
-     * @return the training grid cert location
-     */
-    public static String getGridCert(String idP) {
-        return props.getProperty(idP + "_grid_cert_location");
-
-    }
-
-    /**
-     * 
-     * @return the training grid key location
-     */
-    public static String getGridKey(String idP) {
-        return props.getProperty(idP + "_grid_key_location");
-
-    }
-
-    public static String getDelegetee(String idP) {
-        return props.getProperty(idP+"_delegetee_identifier");
     }
 
 }

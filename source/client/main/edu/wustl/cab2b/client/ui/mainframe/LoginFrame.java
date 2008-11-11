@@ -36,9 +36,9 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bComboBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
+import edu.wustl.cab2b.client.ui.util.ClientPropertyLoader;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
-import edu.wustl.cab2b.common.util.PropertyLoader;
 import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
@@ -228,7 +228,7 @@ public class LoginFrame extends JXFrame {
         idProvider.setFont(idProviderFont);
         idProvider.setOpaque(false);
         idProvider.setBorder(border);
-        String[] idPNames = PropertyLoader.getIdPNames();
+        String[] idPNames = ClientPropertyLoader.getIdPNames();
         int len = idPNames.length;
         for (int i = 0; i < len; i++) {
             idProvider.addItem(idPNames[i]);
@@ -348,6 +348,7 @@ public class LoginFrame extends JXFrame {
             mainThread.setPriority(Thread.NORM_PRIORITY);
             selfReference.dispose();
             mainThread.start();
+            //CommonUtils.initializeResources(); // Initialize all Resources
 
         } catch (Exception e) {
             credentialError.setText("  * Unable to authenticate: Invalid credentials");
@@ -369,7 +370,7 @@ public class LoginFrame extends JXFrame {
 
             ClientLauncher clientLauncher = ClientLauncher.getInstance();
             clientLauncher.launchClient();
-
+            
             MainFrame mainFrame = new MainFrame(ApplicationProperties.getValue(MAIN_FRAME_TITLE), true);
             mainFrame.pack();
             mainFrame.setVisible(true);

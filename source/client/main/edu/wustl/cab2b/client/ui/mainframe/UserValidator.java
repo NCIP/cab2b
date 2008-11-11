@@ -1,6 +1,11 @@
 package edu.wustl.cab2b.client.ui.mainframe;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -17,15 +22,17 @@ import org.cagrid.gaards.cds.common.Utils;
 import org.cagrid.gaards.cds.delegated.stubs.types.DelegatedCredentialReference;
 import org.globus.gsi.GlobusCredential;
 
+import edu.wustl.cab2b.client.ui.util.ClientPropertyLoader;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.cab2b.common.util.PropertyLoader;
 import gov.nih.nci.cagrid.authentication.bean.BasicAuthenticationCredential;
 import gov.nih.nci.cagrid.authentication.bean.Credential;
 import gov.nih.nci.cagrid.authentication.client.AuthenticationClient;
 import gov.nih.nci.cagrid.dorian.client.IFSUserClient;
 import gov.nih.nci.cagrid.dorian.ifs.bean.ProxyLifetime;
 import gov.nih.nci.cagrid.opensaml.SAMLAssertion;
+import gov.nih.nci.cagrid.syncgts.bean.SyncDescription;
+import gov.nih.nci.cagrid.syncgts.core.SyncGTS;
 
 /**
  * This class validates user and gets GlobusCredential from Dorian.
@@ -38,7 +45,7 @@ import gov.nih.nci.cagrid.opensaml.SAMLAssertion;
 public class UserValidator {
 
     private static String userName;
-    
+
     private static String idP;
 
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(UserValidator.class);
@@ -56,7 +63,10 @@ public class UserValidator {
      */
     public static void validateUser(String userName, String password, String idP) throws RemoteException {
         setUserName(userName);
-        String dorianUrl = PropertyLoader.getDorianUrl(idP);
+
+        generateGlobusCertificate(idP);
+
+        String dorianUrl = ClientPropertyLoader.getDorianUrl(idP);
 
         AuthenticationClient authClient = null;
         SAMLAssertion saml = null;
@@ -163,7 +173,7 @@ public class UserValidator {
      */
     private static DelegatedCredentialReference getDelegatedCredential(GlobusCredential credential, String idP)
             throws RemoteException, Exception {
-        String cdsURL = PropertyLoader.getCDSUrl(idP);
+        String cdsURL = ClientPropertyLoader.getCDSUrl(idP);
         //  String cdsURL = "https://localhost:8443/wsrf/services/cagrid/CredentialDelegationService";
         //Specifies the path length of the credential being delegate the minumum is 1.
         //"https://cagrid-cds.nci.nih.gov:8443/wsrf/services/cagrid/CredentialDelegationService";
@@ -193,7 +203,7 @@ public class UserValidator {
 
         List<String> parties = new ArrayList<String>(1);
 
-        String delegateeName = PropertyLoader.getDelegetee(idP);
+        String delegateeName = ClientPropertyLoader.getDelegetee(idP);
         parties.add(delegateeName);
         DelegationPolicy policy = Utils.createIdentityDelegationPolicy(parties);
 
@@ -225,7 +235,7 @@ public class UserValidator {
 
             gov.nih.nci.cagrid.common.Utils.serializeObject(
                                                             delegatedCredentialReference,
-                                                            new QName(PropertyLoader.getCDSDelegatedUrl(),
+                                                            new QName(ClientPropertyLoader.getCDSDelegatedUrl(),
                                                                     "DelegatedCredentialReference"),
                                                             stringWriter,
                                                             UserValidator.class.getClassLoader().getResourceAsStream(
@@ -261,5 +271,54 @@ public class UserValidator {
         UserValidator.idP = idP;
     }
 
-    
+    private static void copy(File src, File dst) throws IOException {
+        InputStream in = new FileInputStream(src);
+        OutputStream out = new FileOutputStream(dst);
+
+        // Transfer bytes from in to out
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
+    }
+
+    /**
+     * It generates the .globus Certificate  in User Home
+     */
+    public static void generateGlobusCertificate(String idP) {
+        try {
+
+            String gridCertDir = ClientPropertyLoader.getGridCertForGlobus(idP);
+            File dir = new File(gridCertDir);
+            if (dir.exists()) {
+                File[] list = dir.listFiles();
+                if (list != null) {
+                    for (int i = 0; i < list.length; i++) {
+                        if (list[i].isFile()) {
+                            File dest = new File(gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory()
+                                    + File.separator + list[i].getName());
+                            copy(list[i], dest);
+                        }
+                    }
+                }
+            } else {
+                logger.error("The source directory, " + dir.getAbsolutePath() + " does not exist.");
+
+            }
+            String pathToSyncDescription = ClientPropertyLoader.getSyncDesFile(idP);
+            SyncDescription description = (SyncDescription) gov.nih.nci.cagrid.common.Utils.deserializeDocument(
+                                                                                                                pathToSyncDescription,
+                                                                                                                SyncDescription.class);
+            SyncGTS.getInstance().syncOnce(description);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+    }
+
 }

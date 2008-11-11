@@ -60,4 +60,23 @@ public class ServerProperties {
         return props.getProperty("datasource.name");
     }
 
+    /**
+     * 
+     * @return the grid cert location
+     */
+    public static String getGridCert(String idP) {
+        return props.getProperty(idP + "_grid_cert_location");
+
+    }
+
+    /**
+     * 
+     * @return the grid key location
+     */
+    public static String getGridKey(String idP) {
+        return props.getProperty(idP + "_grid_key_location");
+
+    }
+
+   
 }

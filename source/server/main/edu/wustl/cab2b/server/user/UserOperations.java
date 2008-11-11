@@ -24,8 +24,8 @@ import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
-import edu.wustl.cab2b.common.util.PropertyLoader;
 import edu.wustl.cab2b.server.cache.EntityCache;
+import edu.wustl.cab2b.server.util.ServerProperties;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
@@ -53,7 +53,7 @@ public class UserOperations extends DefaultBizLogic {
     public UserInterface getUserByName(String value) {
         return getUser("userName", value);
     }
-    
+
     /**
      * This method returns user from database with given user name
      * @param name user name
@@ -230,8 +230,8 @@ public class UserOperations extends DefaultBizLogic {
     public static GlobusCredential getGlobusCredential(String serializedCredRef, String idP)
             throws GeneralSecurityException, IOException, Exception {
         String userHome = System.getProperty("user.home");
-        String certFileName = userHome + PropertyLoader.getGridCert(idP);
-        String keyFileName = userHome + PropertyLoader.getGridKey(idP);
+        String certFileName = userHome + ServerProperties.getGridCert(idP);
+        String keyFileName = userHome + ServerProperties.getGridKey(idP);
 
         X509Certificate cert = CertUtil.loadCertificate(certFileName);
         PrivateKey key = KeyUtil.loadPrivateKey(new File(keyFileName), null);
