@@ -27,8 +27,8 @@ public abstract class ShowAllPanel extends Cab2bPanel {
     private Object[] tableHeader;
 
     private Object[][] data;
-    
-    private int hyperLinkColumnNumber;
+
+    private int hyperLinkColumnNumber = -1;
 
     /**
      * Constructor
@@ -36,12 +36,14 @@ public abstract class ShowAllPanel extends Cab2bPanel {
      * @param data
      * @param columnName
      */
-    public ShowAllPanel(Object[] tableHeader, Object[][] data,String columnName) {
+    public ShowAllPanel(Object[] tableHeader, Object[][] data, String columnName) {
         this.tableHeader = tableHeader;
         this.data = data;
-        for (int i = 0; i < tableHeader.length; i++) {
-            if(columnName.equals(tableHeader[i])) {
-                this.hyperLinkColumnNumber = i;
+        if (!(null == columnName)) {
+            for (int i = 0; i < tableHeader.length; i++) {
+                if (columnName.equals(tableHeader[i])) {
+                    this.hyperLinkColumnNumber = i;
+                }
             }
         }
         linkAction = new ShowAllLinkActionClass();
@@ -55,8 +57,10 @@ public abstract class ShowAllPanel extends Cab2bPanel {
         setBorder(BorderFactory.createLineBorder(new Color(200, 200, 220)));
         if (data != null && tableHeader != null) {
             table = new Cab2bTable(false, data, tableHeader);
-            table.getColumn(hyperLinkColumnNumber).setCellRenderer(new LinkRenderer(linkAction));
-            table.getColumn(hyperLinkColumnNumber).setCellEditor(new LinkRenderer(linkAction));
+            if (hyperLinkColumnNumber != -1) {
+                table.getColumn(hyperLinkColumnNumber).setCellRenderer(new LinkRenderer(linkAction));
+                table.getColumn(hyperLinkColumnNumber).setCellEditor(new LinkRenderer(linkAction));
+            }
         } else
             table = new Cab2bTable();
         HighlighterPipeline highlighters = new HighlighterPipeline();
@@ -79,7 +83,7 @@ public abstract class ShowAllPanel extends Cab2bPanel {
      *
      */
     private class ShowAllLinkActionClass extends LinkAction {
-        
+
         /**
          * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
          * @param e ActionEvent
