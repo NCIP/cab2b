@@ -58,6 +58,7 @@ import edu.wustl.cab2b.client.ui.main.ParseXMLFile;
 import edu.wustl.cab2b.client.ui.main.SwingUIManager;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
+import edu.wustl.cab2b.client.ui.mainframe.Status;
 import edu.wustl.cab2b.client.ui.util.ClientConstants;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
@@ -886,7 +887,7 @@ class FinishButtonActionListner implements ActionListener {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent actionEvent) {
-        MainFrame.setStatus(MainFrame.Status.BUSY);
+        MainFrame.setStatus(Status.BUSY);
         MainFrame.setStatusMessage("Analysing the data...");
 
         Cab2bButton finishButton = (Cab2bButton) actionEvent.getSource();
@@ -925,7 +926,7 @@ class FinishButtonActionListner implements ActionListener {
                                             false);
             }
 
-            MainFrame.setStatus(MainFrame.Status.READY);
+            MainFrame.setStatus(Status.READY);
             MainFrame.setStatusMessage("Analysis finished");
         }
     }

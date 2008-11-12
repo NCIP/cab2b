@@ -38,6 +38,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.sheet.JSheet;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
+import edu.wustl.cab2b.client.ui.mainframe.Status;
 import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
@@ -384,7 +385,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     public void saveDataCategory(final String title) {
         dataCategoryTitle = title;
 
-        MainFrame.setStatus(MainFrame.Status.BUSY);
+        MainFrame.setStatus(Status.BUSY);
         MainFrame.setStatusMessage("saving data category '" + title + "'");
 
         CustomSwingWorker swingWorker = new CustomSwingWorker(ExperimentDataCategoryGridPanel.this.experimentPanel) {
@@ -449,7 +450,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                     // update the tree in the stack box
                     experimentPanel.addDataList(dataListMetadata);
                 }
-                MainFrame.setStatus(MainFrame.Status.READY);
+                MainFrame.setStatus(Status.READY);
                 MainFrame.setStatusMessage(dataCategoryTitle + " saved");
             }
         };
@@ -470,7 +471,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
         public void actionPerformed(ActionEvent actionEvent) {
             setVisited(true);
-            MainFrame.setStatus(MainFrame.Status.READY);
+            MainFrame.setStatus(Status.READY);
             MainFrame.setStatusMessage("Displaying the analyzed data");
 
             // getting the selected hyperlink row
