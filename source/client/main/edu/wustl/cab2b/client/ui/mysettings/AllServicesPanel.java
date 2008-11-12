@@ -193,7 +193,7 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
             }
             searchString = searchString.toLowerCase();
             for (EntityGroupInterface metadata : allServices) {
-                String serviceName = metadata.getName().toLowerCase();
+                String serviceName = metadata.getLongName().toLowerCase();
                 if (serviceName.contains(searchString)) {
                     filteredServices.add(metadata);
                 }
@@ -206,10 +206,10 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
         final Vector<PageElement> pageElementCollection = new Vector<PageElement>();
         for (EntityGroupInterface entityGroup : filteredServices) {
             // Create an instance of the PageElement. Initialize with the appropriate data
-            final StringBuilder displayString = new StringBuilder(entityGroup.getName());
+            final StringBuilder displayString = new StringBuilder(entityGroup.getLongName());
             final String version = entityGroup.getVersion();
             if (null != version && !version.isEmpty()) {
-                displayString.append(" V" + version);
+                displayString.append(" v" + version);
             }
             final PageElement pageElement = new PageElementImpl();
             pageElement.setDisplayName(displayString.toString());

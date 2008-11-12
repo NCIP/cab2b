@@ -60,11 +60,6 @@ public interface Constants {
     public static final String TYPE_CATEGORY = "Category";
 
     /**
-     * tagged key constant to identify project version of a entity group
-     */
-    public static final String PROJECT_VERSION = "ProjectVersion";
-
-    /**
      * tagged key constant to identify wthether a attribute OR an association is a derived one
      */
     public static final String TYPE_DERIVED = "derived";

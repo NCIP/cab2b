@@ -1,7 +1,6 @@
 package edu.wustl.cab2b.server.path;
 
 import static edu.wustl.cab2b.common.util.Constants.ORIGINAL_ASSOCIATION_POINTER;
-import static edu.wustl.cab2b.common.util.Constants.PROJECT_VERSION;
 import static edu.wustl.cab2b.common.util.Constants.TYPE_DERIVED;
 
 import java.util.ArrayList;
@@ -52,6 +51,7 @@ import gov.nih.nci.cagrid.metadata.dataservice.UMLAssociationEdge;
 
 public class DomainModelProcessor {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(DomainModelProcessor.class);
+
     /**
      * Map with KEY : EntityInterface VALUE: its index in adjacency matrix.
      */
@@ -87,17 +87,18 @@ public class DomainModelProcessor {
      * @throws DynamicExtensionsApplicationException 
      * @throws DynamicExtensionsSystemException 
      */
-    public DomainModelProcessor(DomainModelParser parser, String applicationName) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException {
+    public DomainModelProcessor(DomainModelParser parser, String applicationName)
+            throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException {
         logger.info("Creating entity group for application : " + applicationName);
 
         entityGroup = DynamicExtensionUtility.createEntityGroup();
         entityGroup.setShortName(applicationName);
-        entityGroup.setName(parser.getDomainModel().getProjectLongName());
+        entityGroup.setName(parser.getDomainModel().getProjectLongName() + "_v"
+                + parser.getDomainModel().getProjectVersion());
         entityGroup.setLongName(parser.getDomainModel().getProjectLongName());
         entityGroup.setDescription(parser.getDomainModel().getProjectDescription());
-        DynamicExtensionUtility.addTaggedValue(entityGroup, PROJECT_VERSION,
-                                               parser.getDomainModel().getProjectVersion());
-
+        entityGroup.setVersion(parser.getDomainModel().getProjectVersion());
+        
         UMLClass[] umlClasses = parser.getUmlClasses();
         int noOfClasses = umlClasses.length;
         umlClassIdVsEntity = new HashMap<String, EntityInterface>(noOfClasses);
@@ -141,7 +142,8 @@ public class DomainModelProcessor {
      */
     protected EntityInterface createEntity(UMLClass umlClass) {
         logger.debug("Creating entity for class : " + umlClass.getClassName());
-        String name = new StringBuilder().append(umlClass.getPackageName()).append(".").append(umlClass.getClassName()).toString();
+        String name = new StringBuilder().append(umlClass.getPackageName()).append(".").append(
+                                                                                               umlClass.getClassName()).toString();
         EntityInterface entity = deFactory.createEntity();
         entity.setName(name);
         entity.setDescription(umlClass.getDescription());
@@ -235,7 +237,7 @@ public class DomainModelProcessor {
         role.setAssociationsType(Constants.AssociationType.ASSOCIATION);
         role.setName(edge.getRoleName());
         //Bug# 10295: Workaround to fix the max cardinality = 0. Assuming these cases are MANY
-        if(maxCardinality == 0) {
+        if (maxCardinality == 0) {
             role.setMaximumCardinality(Constants.Cardinality.MANY);
         } else {
             role.setMaximumCardinality(getCardinality(maxCardinality));
@@ -460,7 +462,9 @@ public class DomainModelProcessor {
     DomainModelProcessor() {
 
     }
-    EntityGroupInterface saveEntityGroup(EntityGroupInterface eg) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException {
+
+    EntityGroupInterface saveEntityGroup(EntityGroupInterface eg) throws DynamicExtensionsSystemException,
+            DynamicExtensionsApplicationException {
         return DynamicExtensionUtility.persistEGroup(eg);
     }
 
