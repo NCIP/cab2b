@@ -51,7 +51,17 @@ public class UserOperations extends DefaultBizLogic {
      * @return User
      */
     public UserInterface getUserByName(String value) {
-        return getUser("userName", value);
+
+
+        UserInterface user = getUser("userName", value);
+        
+        // TODO This is a temporary check added to solve case insensitive hibernate query problem.
+        // This should be removed and and proper case sensitive query should be implemented
+        if (user==null||(!user.getUserName().equals(value))) {
+            return null;
+        }
+        
+        return user;
     }
 
     /**
@@ -97,12 +107,7 @@ public class UserOperations extends DefaultBizLogic {
         UserInterface user = null;
         if (userList != null && !userList.isEmpty()) {
             user = userList.get(0);
-            // TODO This is a temporary check added to solve case insensitive hibernate query problem.
-            // This should be removed and and proper case sensitive query should be implemented
-            if (!user.getUserName().equals(value)) {
-                return null;
-            }
-
+           
         }
         return user;
     }
