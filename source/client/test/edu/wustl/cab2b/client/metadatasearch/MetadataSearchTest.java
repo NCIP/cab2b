@@ -18,8 +18,89 @@ public class MetadataSearchTest extends TestCase {
     static EntityCache entityCache = EntityCache.getInstance();
 
     static MetadataSearch metadataSearch = new MetadataSearch(entityCache);
+
+    public void testSearchAttributeBasedOnAttrName() {
+
+        int[] searchTargetStatus = { Constants.ATTRIBUTE };
+        String[] searchString = { "ensemblPeptideId" };
+        int basedOn = Constants.BASED_ON_TEXT;
+        try {
+            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
+        } catch (CheckedException e) {
+            e.printStackTrace();
+            fail();
+        }
+        Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
+        boolean b = false;
+        for (EntityInterface eI : entities) {
+            String result = eI.getName();
+            b = b || result.contains("Protein");
+        }
+        assertTrue(b);
+    }
+
+    public void testSearchEntityBasedOnClassName() {
+
+        int[] searchTargetStatus = { Constants.CLASS };
+        String[] searchString = { "Protein" };
+        int basedOn = Constants.BASED_ON_TEXT;
+        try {
+            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
+        } catch (CheckedException e) {
+            e.printStackTrace();
+            fail();
+        }
+        Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
+        boolean b = false;
+        for (EntityInterface eI : entities) {
+            String result = eI.getName();
+            b = b || result.contains("Protein");
+        }
+        assertTrue(b);
+    }
+
+    public void testSearchAttributeBasedOnDesc() {
+
+        int[] searchTargetStatus = { Constants.ATTRIBUTE_WITH_DESCRIPTION };
+        String[] searchString = { "unique identifier assigned to a peptide by ENSEMBL" };
+        int basedOn = Constants.BASED_ON_TEXT;
+        try {
+            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
+        } catch (CheckedException e) {
+            e.printStackTrace();
+            fail();
+        }
+        Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
+        boolean b = false;
+        for (EntityInterface eI : entities) {
+            String result = eI.getName();
+            b = b || result.contains("Protein");
+        }
+        assertTrue(b);
+    }
+
+    public void testSearchEntityBasedOnDesc() {
+
+        int[] searchTargetStatus = { Constants.CLASS_WITH_DESCRIPTION };
+        String[] searchString = { "Contains protein genomic identifiers." };
+        int basedOn = Constants.BASED_ON_TEXT;
+        try {
+            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
+        } catch (CheckedException e) {
+            e.printStackTrace();
+            fail();
+        }
+        Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
+        boolean b = false;
+        for (EntityInterface eI : entities) {
+            String result = eI.getName();
+            b = b || result.contains("Protein");
+        }
+        assertTrue(b);
+    }
+
     public void testSearchAttributeBasedOnConceptCode() {
-        
+
         int[] searchTargetStatus = { Constants.ATTRIBUTE };
         String[] searchString = { "C45763" };
         int basedOn = Constants.BASED_ON_CONCEPT_CODE;
@@ -37,26 +118,27 @@ public class MetadataSearchTest extends TestCase {
         }
         assertTrue(b);
     }
-  public void testSearchEntityBasedOnConceptCode() {
-    
-            int[] searchTargetStatus = { Constants.CLASS };
-            String[] searchString = { "C17021" };
-            int basedOn = Constants.BASED_ON_CONCEPT_CODE;
-            try {
-                resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
-            } catch (CheckedException e) {
-                e.printStackTrace();
-                fail();
-            }
-            Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
-            boolean b = false;
-            for (EntityInterface eI : entities) {
-                String result = eI.getName();
-                b = b || result.contains("Protein");
-            }
-            assertTrue(b);
+
+    public void testSearchEntityBasedOnConceptCode() {
+
+        int[] searchTargetStatus = { Constants.CLASS };
+        String[] searchString = { "C17021" };
+        int basedOn = Constants.BASED_ON_CONCEPT_CODE;
+        try {
+            resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
+        } catch (CheckedException e) {
+            e.printStackTrace();
+            fail();
         }
-    
+        Set<EntityInterface> entities = resultMatchedClass.getEntityCollection();
+        boolean b = false;
+        for (EntityInterface eI : entities) {
+            String result = eI.getName();
+            b = b || result.contains("Protein");
+        }
+        assertTrue(b);
+    }
+
     public void testSearchInvalidTarget() {
 
         int[] searchTargetStatus = { 1234 };
@@ -70,6 +152,7 @@ public class MetadataSearchTest extends TestCase {
         }
         assertTrue(gotException);
     }
+
     public void testSearchInvalidTargetConceptCode() {
 
         int[] searchTarget = { 1234 };
@@ -83,6 +166,7 @@ public class MetadataSearchTest extends TestCase {
         }
         assertTrue(gotException);
     }
+
     public void testSearchPvBasedOnText() {
 
         int[] searchTargetStatus = { Constants.PV };
@@ -102,11 +186,11 @@ public class MetadataSearchTest extends TestCase {
         }
         assertTrue(b);
     }
-    
+
     public void testSearchPvOnConceptCode() {
 
         int[] searchTargetStatus = { Constants.PV };
-        String[] searchString = { "C54731"};
+        String[] searchString = { "C54731" };
         int basedOn = Constants.BASED_ON_CONCEPT_CODE;
         try {
             resultMatchedClass = metadataSearch.search(searchTargetStatus, searchString, basedOn);
