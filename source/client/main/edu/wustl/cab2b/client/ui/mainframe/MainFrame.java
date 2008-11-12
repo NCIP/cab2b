@@ -56,6 +56,9 @@ public class MainFrame extends JXFrame {
      */
     private static Dimension screenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
 
+    private static Cab2bLabel status;
+
+    private static Cab2bLabel statusMessage;
     /**
      * SearchDataWelcomePanel panel containing search data wizard link on HTML page
      */
@@ -83,31 +86,6 @@ public class MainFrame extends JXFrame {
     private JSplitPane splitPane;
 
     private JDialog searchWizardDialog;
-
-    // fields used by the status bar
-    /**
-     * @author
-     *
-     */
-    public static enum Status {
-        READY("Ready"), BUSY("Busy");
-        private String textToShow;
-
-        Status(String textToShow) {
-            this.textToShow = textToShow;
-        }
-
-        /**
-         * @return Text String
-         */
-        public String getTextToShow() {
-            return textToShow;
-        }
-    };
-
-    private static Cab2bLabel status;
-
-    private static Cab2bLabel statusMessage;
 
     private JXStatusBar statusBar;
 
@@ -203,7 +181,7 @@ public class MainFrame extends JXFrame {
     public void setExperimentHomePanel() {
         CustomSwingWorker swingWorker = new CustomSwingWorker(MainFrame.this.mainPanel) {
             @Override
-            protected void doNonUILogic() throws Exception {
+            protected void doNonUILogic() {
                 if (experimentPanel != null && experimentPanel.isVisible()) {
                     experimentPanel.removeAll();
                 }
@@ -216,7 +194,7 @@ public class MainFrame extends JXFrame {
             }
 
             @Override
-            protected void doUIUpdateLogic() throws Exception {
+            protected void doUIUpdateLogic() {
                 mainPanel.removeAll();
                 MainFrame.this.remove(mainPanel);
                 mainPanel.add(" hfill vfill ", experimentPanel);
@@ -233,7 +211,7 @@ public class MainFrame extends JXFrame {
 
         CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
             @Override
-            protected void doNonUILogic() throws Exception {
+            protected void doNonUILogic() {
                 if (htmlPanel == null) {
                     htmlPanel = new SearchDataWelcomePanel(MainFrame.this);
                 }
@@ -241,7 +219,7 @@ public class MainFrame extends JXFrame {
             }
 
             @Override
-            protected void doUIUpdateLogic() throws Exception {
+            protected void doUIUpdateLogic() {
                 setWelcomePanel();
             }
         };
@@ -255,7 +233,7 @@ public class MainFrame extends JXFrame {
 
         CustomSwingWorker swingWorker = new CustomSwingWorker(this) {
             @Override
-            protected void doNonUILogic() throws Exception {
+            protected void doNonUILogic() {
                 if (welcomePanel == null) {
                     welcomePanel = new NewWelcomePanel(MainFrame.this);
                 }
@@ -263,7 +241,7 @@ public class MainFrame extends JXFrame {
             }
 
             @Override
-            protected void doUIUpdateLogic() throws Exception {
+            protected void doUIUpdateLogic() {
                 setWelcomePanel();
             }
         };
@@ -278,11 +256,11 @@ public class MainFrame extends JXFrame {
         homePanel = panel;
         CustomSwingWorker swingWorker = new CustomSwingWorker(this, panel) {
             @Override
-            protected void doNonUILogic() throws Exception {
+            protected void doNonUILogic() {
             }
 
             @Override
-            protected void doUIUpdateLogic() throws Exception {
+            protected void doUIUpdateLogic() {
                 setWelcomePanel();
             }
         };
