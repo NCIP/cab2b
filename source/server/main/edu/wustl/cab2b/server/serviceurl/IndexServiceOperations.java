@@ -10,15 +10,11 @@ import org.apache.log4j.Logger;
 
 import edu.wustl.cab2b.common.util.PropertyLoader;
 import gov.nih.nci.cagrid.discovery.client.DiscoveryClient;
-import gov.nih.nci.cagrid.metadata.exceptions.QueryInvalidException;
-import gov.nih.nci.cagrid.metadata.exceptions.RemoteResourcePropertyRetrievalException;
 import gov.nih.nci.cagrid.metadata.exceptions.ResourcePropertyRetrievalException;
 
 /**
  * Handles all index service operations
- * 
  * @author hrishikesh_rajpathak
- * 
  */
 public class IndexServiceOperations {
     private final static Logger logger = Logger.getLogger(IndexServiceOperations.class);
@@ -38,16 +34,10 @@ public class IndexServiceOperations {
             EndpointReferenceType[] endpointReferenceType = null;
             try {
                 endpointReferenceType = client.discoverDataServicesByDomainModel(name);
-            } catch (RemoteResourcePropertyRetrievalException e) {
-                logger.error(e.getMessage(), e);
-                throw new RemoteException(e.getMessage());
-            } catch (QueryInvalidException e) {
-                logger.error(e.getMessage(), e);
-                throw new RemoteException(e.getMessage());
             } catch (ResourcePropertyRetrievalException e) {
                 logger.error(e.getMessage(), e);
                 throw new RemoteException(e.getMessage());
-            }
+            } 
 
             if (endpointReferenceType == null) {
                 return new EndpointReferenceType[0];
