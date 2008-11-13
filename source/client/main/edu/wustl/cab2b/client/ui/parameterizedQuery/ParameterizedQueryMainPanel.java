@@ -31,7 +31,7 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
     /**
      * panel required to display condition parameters of Query, Located at center in parameterizedQueryPanel  
      */
-    private ParameterizedQueryConditionPanel parameterConditionPanel;
+    ParameterizedQueryConditionPanel parameterConditionPanel;
 
     /**
      * panel located at bottom part of ParameterizedQueryMainPanel containing Nevigation 
