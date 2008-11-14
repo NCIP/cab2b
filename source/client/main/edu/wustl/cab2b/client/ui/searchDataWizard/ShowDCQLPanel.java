@@ -39,16 +39,19 @@ public class ShowDCQLPanel extends Cab2bPanel {
 
     // Cab2bPanel for showing Success and failure messages
     final Cab2bPanel messagePanel = new Cab2bPanel();
+    
+    private String dcqlString;
 
     /**
      * @param dcql 
      */
     public ShowDCQLPanel(DCQL dcql) {
-        initGUI(dcql);
+        this.dcqlString = dcql.getDcqlQuery();
+        initGUI();
     }
 
-    private void initGUI(DCQL dcql) {
-        String xmlText = new XmlParser().parseXml(dcql.getDcqlQuery());
+    private void initGUI() {
+        String xmlText = new XmlParser().parseXml(dcqlString);
 
         xmlTextPane.setText(xmlText);
         xmlTextPane.setBackground(Color.WHITE);
@@ -122,6 +125,7 @@ public class ShowDCQLPanel extends Cab2bPanel {
      * Action listener class for Export Button. It saves the XML file to user defined location in user defined format
      */
     class ExportButtonListner implements ActionListener {
+    	
         public void actionPerformed(ActionEvent actionEvent) {
             JFileChooser fileChooser = new JFileChooser();
 
@@ -130,7 +134,7 @@ public class ShowDCQLPanel extends Cab2bPanel {
 
             File file = fileChooser.getSelectedFile();
             // Function call for writing the File and saving it
-            boolean saveReturnValue = writeFile(file, xmlTextPane.getText());
+            boolean saveReturnValue = writeFile(file, dcqlString);
             if (saveReturnValue == true) {
                 Cab2bLabel successResultLabel = new Cab2bLabel("File Saved Successfully");
                 successResultLabel.setForeground(Color.GREEN);
