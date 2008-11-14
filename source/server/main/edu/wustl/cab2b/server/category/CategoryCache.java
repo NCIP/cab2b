@@ -62,7 +62,7 @@ public class CategoryCache {
 	public static synchronized CategoryCache getInstance() {
 		if (cache == null) {
 			throw new IllegalStateException(
-					"to get PathFinder with this method, it must be initialized using a connection before this call");
+					"to get Category with this method, it must be initialized using a connection before this call");
 		}
 		return cache;
 	}

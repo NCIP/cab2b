@@ -10,6 +10,7 @@ import javax.ejb.SessionContext;
 
 import edu.wustl.cab2b.server.cache.DatalistCache;
 import edu.wustl.cab2b.server.cache.EntityCache;
+import edu.wustl.cab2b.server.category.CategoryCache;
 import edu.wustl.cab2b.server.path.PathFinder;
 import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.common.util.logger.Logger;
@@ -61,6 +62,7 @@ public abstract class AbstractStatelessSessionBean implements SessionBean {
         Connection connection = ConnectionUtil.getConnection();
         try {
             PathFinder.getInstance(connection);
+            CategoryCache.getInstance(connection);
         } finally {
             ConnectionUtil.close(connection);
         }
