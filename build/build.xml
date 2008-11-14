@@ -779,7 +779,7 @@
 		</jar>
 
 		<!-- sign all the jars -->
-		<signjar alias="cab2b" storepass="cab2bv1.0" keystore="${keystore}">
+		<signjar alias="caB2Bv2.1" storepass="cab2b123" keystore="${keystore}">
 			<fileset dir="${webstart.client.dir}">
 				<include name="**/*.jar" />
 				<!-- exclude files which are already signed -->
