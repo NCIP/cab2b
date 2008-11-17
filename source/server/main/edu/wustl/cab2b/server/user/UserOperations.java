@@ -241,7 +241,7 @@ public class UserOperations extends DefaultBizLogic {
         X509Certificate cert = CertUtil.loadCertificate(certFileName);
         PrivateKey key = KeyUtil.loadPrivateKey(new File(keyFileName), null);
         GlobusCredential credential = new GlobusCredential(key, new X509Certificate[] { cert });
-
+        logger.debug("Generated Globus Credential for server");
         /*Create and Instance of the delegate credential client, specifying the DelegatedCredentialReference and the credential of the delegatee.
           The DelegatedCredentialReference specifies which credential to obtain. The delegatee's credential is required to authenticate with the CDS 
           such that the CDS may determing if the the delegatee has been granted access to the credential in which they wish to obtain.*/
@@ -254,6 +254,7 @@ public class UserOperations extends DefaultBizLogic {
         //Set the delegated credential as the default, the delegatee is now logged in as the delegator.
         ProxyUtil.saveProxyAsDefault(delegatedCredential);
 
+        logger.debug("Retrieved Client credential ");
         return delegatedCredential;
     }
 

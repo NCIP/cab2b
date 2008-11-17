@@ -28,6 +28,7 @@ import edu.wustl.cab2b.common.exception.RuntimeException;
 import gov.nih.nci.cagrid.authentication.bean.BasicAuthenticationCredential;
 import gov.nih.nci.cagrid.authentication.bean.Credential;
 import gov.nih.nci.cagrid.authentication.client.AuthenticationClient;
+import gov.nih.nci.cagrid.authentication.stubs.types.AuthenticationProviderFault;
 import gov.nih.nci.cagrid.dorian.client.IFSUserClient;
 import gov.nih.nci.cagrid.dorian.ifs.bean.ProxyLifetime;
 import gov.nih.nci.cagrid.opensaml.SAMLAssertion;
@@ -79,6 +80,9 @@ public class UserValidator {
         }
         try {
             saml = authClient.authenticate();
+        } catch (AuthenticationProviderFault apf) {
+            logger.error(apf.getStackTrace());
+            throw new RuntimeException(apf.getMessage());
         } catch (RemoteException e) {
             logger.error(e.getStackTrace());
             throw new RuntimeException("Invalid user name or password", ErrorCodeConstants.UR_0007);
@@ -86,6 +90,7 @@ public class UserValidator {
         GlobusCredential proxy = null;
         try {
             proxy = getGlobusCredentials(dorianUrl, saml);
+            logger.debug("getting globus credential");
 
         } catch (IOException e) {
             logger.error(e.getStackTrace());
@@ -96,6 +101,7 @@ public class UserValidator {
         try {
             // When the user gets authenticated successfully Then only its credential is delegated 
             UserValidator.delegatedCredentialReference = getDelegatedCredential(proxy, idP);
+            logger.debug("Credential delegated sucessfully");
             UserValidator.setIdP(idP);
         } catch (Exception e) {
             logger.error(e.getStackTrace());
@@ -174,9 +180,9 @@ public class UserValidator {
     private static DelegatedCredentialReference getDelegatedCredential(GlobusCredential credential, String idP)
             throws RemoteException, Exception {
         String cdsURL = ClientPropertyLoader.getCDSUrl(idP);
-        //  String cdsURL = "https://localhost:8443/wsrf/services/cagrid/CredentialDelegationService";
+
         //Specifies the path length of the credential being delegate the minumum is 1.
-        //"https://cagrid-cds.nci.nih.gov:8443/wsrf/services/cagrid/CredentialDelegationService";
+        logger.debug("Delegating Credential to " + cdsURL);
         int delegationPathLength = 1;
 
         org.cagrid.gaards.cds.common.ProxyLifetime delegationLifetime = new org.cagrid.gaards.cds.common.ProxyLifetime();
@@ -204,6 +210,7 @@ public class UserValidator {
         List<String> parties = new ArrayList<String>(1);
 
         String delegateeName = ClientPropertyLoader.getDelegetee(idP);
+        logger.debug("Delegatee Name :" + delegateeName);
         parties.add(delegateeName);
         DelegationPolicy policy = Utils.createIdentityDelegationPolicy(parties);
 
@@ -308,12 +315,18 @@ public class UserValidator {
                 logger.error("The source directory, " + dir.getAbsolutePath() + " does not exist.");
 
             }
+            logger.debug("getting sync-descriptor file for " + idP);
+
             String pathToSyncDescription = ClientPropertyLoader.getSyncDesFile(idP);
+            logger.debug("Trying to sync with GTS service ");
+
             SyncDescription description = (SyncDescription) gov.nih.nci.cagrid.common.Utils.deserializeDocument(
                                                                                                                 pathToSyncDescription,
                                                                                                                 SyncDescription.class);
             SyncGTS.getInstance().syncOnce(description);
 
+            logger.debug("Successfully sync with GTS service ");
+            logger.debug(".Globus credential generated successfully");
         } catch (Exception e) {
             e.printStackTrace();
 
