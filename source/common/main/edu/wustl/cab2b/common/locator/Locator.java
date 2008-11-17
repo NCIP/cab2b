@@ -28,9 +28,9 @@ public class Locator {
      * This is to enforce that Locator is a singleton class
      */
     protected Locator() {
-        System.setProperty("java.naming.provider.url", PropertyLoader.getJndiUrl());
-        System.setProperty("java.naming.factory.initial", "org.jnp.interfaces.NamingContextFactory");
-        System.setProperty("java.naming.factory.url.pkgs", "org.jboss.naming:org.jnp.interfaces");
+        System.setProperty(Context.PROVIDER_URL, PropertyLoader.getJndiUrl());
+        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
+        System.setProperty(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
     }
 
     /**
