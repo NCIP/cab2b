@@ -211,7 +211,7 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
             if (null != version && !version.isEmpty()) {
                 displayString.append(" v" + version);
             }
-            final PageElement pageElement = new PageElementImpl();
+            final PageElement pageElement = new PageElementImpl(displayString.toString(), entityGroup.getLongName());
             pageElement.setDisplayName(displayString.toString());
             pageElement.setDescription(entityGroup.getDescription());
             pageElement.setUserObject(entityGroup);
