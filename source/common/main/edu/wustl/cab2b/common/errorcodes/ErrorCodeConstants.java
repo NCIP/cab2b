@@ -132,6 +132,35 @@ public interface ErrorCodeConstants {
      * Error Regarding CDS service
      */
     public static final String CDS_001 = "CDS.001";
+
     public static final String CDS_002 = "CDS.002";
+
+    public static final String CDS_003 = "CDS.003";
+
+    public static final String CDS_004 = "CDS.004";
+
+    public static final String CDS_005 = "CDS.005";
+
+    public static final String CDS_006 = "CDS.006";
+
+    public static final String CDS_007 = "CDS.007";
+
+    public static final String CDS_008 = "CDS.008";
+
+    public static final String CDS_009 = "CDS.009";
+
+    public static final String CDS_010 = "CDS.010";
+
+    public static final String CDS_011 = "CDS.011";
+
+    public static final String CDS_012 = "CDS.012";
+
+    public static final String CDS_013 = "CDS.013";
+
+    public static final String CDS_014 = "CDS.014";
+
+    public static final String CDS_015 = "CDS.015";
+
+    public static final String CDS_016 = "CDS.016";
 
 }

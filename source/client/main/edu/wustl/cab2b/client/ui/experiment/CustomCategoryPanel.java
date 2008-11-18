@@ -210,7 +210,7 @@ public class CustomCategoryPanel extends JXFrame {
                                                                                  attributeList,
                                                                                  customDataCategoryText.getText(),
                                                                                  experiment,
-                                                                                 UserValidator.getSerializedDelegatedCredReference(),
+                                                                                 UserValidator.getSerializedDCR(),
                                                                                  UserValidator.getIdP());
                         } catch (RemoteException e1) {
                             CommonUtils.handleException(e1, CustomCategoryPanel.this, true, true, true, false);

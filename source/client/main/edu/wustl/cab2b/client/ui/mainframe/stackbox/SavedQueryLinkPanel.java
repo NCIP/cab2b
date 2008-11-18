@@ -78,7 +78,7 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
         try {
 
             Collection<IParameterizedQuery> cab2bQueries = queryEngine.getAllQueryNameAndDescription(
-                                                                                                     UserValidator.getSerializedDelegatedCredReference(),
+                                                                                                     UserValidator.getSerializedDCR(),
                                                                                                      UserValidator.getIdP());
             ArrayList<IParameterizedQuery> cab2bQueryList = new ArrayList<IParameterizedQuery>(cab2bQueries);
             Collections.sort(cab2bQueryList, new QueryComparator());
@@ -143,7 +143,7 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
         try {
 
             cab2bQueryCollection = queryEngine.getAllQueryNameAndDescription(
-                                                                             UserValidator.getSerializedDelegatedCredReference(),
+                                                                             UserValidator.getSerializedDCR(),
                                                                              UserValidator.getIdP());
         } catch (RemoteException exception) {
             CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);

@@ -164,7 +164,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                                                                                                                   EjbNamesConstants.EXPERIMENT,
                                                                                                                   ExperimentHome.class);
         try {
-            dataVector = expBus.getExperimentHierarchy(UserValidator.getSerializedDelegatedCredReference(),
+            dataVector = expBus.getExperimentHierarchy(UserValidator.getSerializedDCR(),
                                                        UserValidator.getIdP());
         } catch (RemoteException e1) {
             CommonUtils.handleException(e1, this, true, true, false, false);
@@ -378,7 +378,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
                 try {
                     expBus.addExperiment(expGrpId, experiment,
-                                         UserValidator.getSerializedDelegatedCredReference(),
+                                         UserValidator.getSerializedDCR(),
                                          UserValidator.getIdP());
                     SearchNavigationPanel.getMessageLabel().setText("* Experiment saved successfully *.");
                     MyExperimentLinkPanel.getInstance().updateMyExperimentPanel();
@@ -456,7 +456,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
             try {
                 newExpGrp = expGrpBus.addExperimentGroup(parentExpGrpID, newExpGrp,
-                                                         UserValidator.getSerializedDelegatedCredReference(),
+                                                         UserValidator.getSerializedDCR(),
                                                          UserValidator.getIdP());
                 logger.debug("returner expGrp id " + newExpGrp.getId());
             } catch (RemoteException e1) {
@@ -525,7 +525,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                                                                                                             EjbNamesConstants.DATALIST_BEAN,
                                                                                                             DataListHomeInterface.class);
         List<DataListMetadata> dataListMetadatas = dataListBI.retrieveAllDataListMetadata(
-                                                                                          UserValidator.getSerializedDelegatedCredReference(),
+                                                                                          UserValidator.getSerializedDCR(),
                                                                                           selectedIdentityProvider);
         return dataListMetadatas;
     }

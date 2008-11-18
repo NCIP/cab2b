@@ -183,10 +183,10 @@ public class ClientLauncher {
                                                                                                                    EjbNamesConstants.USER_BEAN,
                                                                                                                    UserHomeInterface.class);
             UserInterface user = userBusinessInterface.getUserByName(
-                                                                     UserValidator.getSerializedDelegatedCredReference(),
+                                                                     UserValidator.getSerializedDCR(),
                                                                      UserValidator.getIdP());
             if (user == null) {
-                user = userBusinessInterface.insertUser(UserValidator.getSerializedDelegatedCredReference(),
+                user = userBusinessInterface.insertUser(UserValidator.getSerializedDCR(),
                                                         UserValidator.getIdP());
             }
             UserCache.getInstance().init(user);

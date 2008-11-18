@@ -147,6 +147,16 @@ public class CommonUtils {
         return Locator.getInstance().locate(beanName, homeClassForBean);
     }
 
+    public static String getErrorMessage(Throwable t) {
+        String errorMessage = t.getMessage();
+        final String find = "Exception:";
+
+        if (errorMessage.contains(find)) {
+            errorMessage = errorMessage.substring(errorMessage.indexOf(find) + find.length() + 1);
+        }
+        return errorMessage;
+    }
+
     /**
      * A Utility method to handle exception, logging and showing it in a dialog.
      * @param e Exception to handle
@@ -158,23 +168,27 @@ public class CommonUtils {
      */
     public static void handleException(Exception e, Component parentComponent, boolean showErrorDialog,
                                        boolean logException, boolean logToConsole, boolean killApplication) {
-        String msgForUser = "Error";
         Exception exception = getOriginalException(e);
         if (exception != null) {
             e = exception;
         }
 
+        String msgForUser = "";
         String msgToLog = e.getMessage();
         if (e instanceof Cab2bExceptionInterface) {
             Cab2bExceptionInterface cab2bException = (Cab2bExceptionInterface) e;
             String errorCode = cab2bException.getErrorCode();
             if (errorCode != null) {
                 msgForUser = ErrorCodeHandler.getErrorMessage(errorCode);
+
                 if (ErrorCodeConstants.QM_0004.equals(errorCode)) {
                     msgForUser += msgToLog.substring(msgToLog.indexOf("http"), (msgToLog.indexOf("\n") - 1));
                     msgForUser += "\nRemove it and query again";
                 }
-                msgToLog = errorCode + ":" + msgForUser;
+
+                if (msgForUser.length() == 0) {
+                    msgForUser = getErrorMessage(e);
+                }
             }
         }
 
@@ -262,8 +276,7 @@ public class CommonUtils {
     public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query,
                                                                QueryEngineBusinessInterface queryEngineBus)
             throws RuntimeException, RemoteException, Exception {
-        return queryEngineBus.executeQuery(query, UserValidator.getSerializedDelegatedCredReference(),
-                                           UserValidator.getIdP());
+        return queryEngineBus.executeQuery(query, UserValidator.getSerializedDCR(), UserValidator.getIdP());
 
     }
 
@@ -536,7 +549,7 @@ public class CommonUtils {
         try {
 
             cab2bQueryCollection = queryEngineBusinessInterface.getAllQueryNameAndDescription(
-                                                                                              UserValidator.getSerializedDelegatedCredReference(),
+                                                                                              UserValidator.getSerializedDCR(),
                                                                                               UserValidator.getIdP());
         } catch (RemoteException exception) {
             CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);
@@ -567,7 +580,7 @@ public class CommonUtils {
                                                                                                             ExperimentHome.class);
         List<Experiment> experiments = null;
         try {
-            experiments = expBus.getExperimentsForUser(user, UserValidator.getSerializedDelegatedCredReference(),
+            experiments = expBus.getExperimentsForUser(user, UserValidator.getSerializedDCR(),
                                                        UserValidator.getIdP());
         } catch (RemoteException e) {
             handleException(e, comp, true, false, false, false);
@@ -660,12 +673,12 @@ public class CommonUtils {
         boolean isServiceURLConfigured = true;
 
         Set<IQueryEntity> entitySet = query.getConstraints().getQueryEntities();
-        
+
         //If user selected urls from 3rd step then return true
-        if(!query.getOutputUrls().isEmpty()){
+        if (!query.getOutputUrls().isEmpty()) {
             return isServiceURLConfigured;
         }
-        
+
         for (IQueryEntity queryEntity : entitySet) {
             EntityInterface entity = queryEntity.getDynamicExtensionsEntity();
             String[] urls = getServiceURLs(entity);

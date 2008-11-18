@@ -161,7 +161,7 @@ public class ServiceInstanceConfigurator {
                                                                                                        EjbNamesConstants.USER_BEAN,
                                                                                                        UserHomeInterface.class,
                                                                                                        null);
-        return userInterface.getUserByName(UserValidator.getSerializedDelegatedCredReference(),UserValidator .getIdP());
+        return userInterface.getUserByName(UserValidator.getSerializedDCR(),UserValidator .getIdP());
     }
 
 }

@@ -65,7 +65,7 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
             ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) Locator.getInstance().locate(
                                                                                                             edu.wustl.cab2b.common.ejb.EjbNamesConstants.EXPERIMENT,
                                                                                                             ExperimentHome.class);
-            dataVector = expBus.getExperimentHierarchy(UserValidator.getSerializedDelegatedCredReference(),
+            dataVector = expBus.getExperimentHierarchy(UserValidator.getSerializedDCR(),
                                                        UserValidator.getIdP());
         } catch (RemoteException e1) {
             CommonUtils.handleException(e1, this, true, true, false, false);

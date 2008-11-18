@@ -51,16 +51,14 @@ public class UserOperations extends DefaultBizLogic {
      * @return User
      */
     public UserInterface getUserByName(String value) {
-
-
         UserInterface user = getUser("userName", value);
-        
+
         // TODO This is a temporary check added to solve case insensitive hibernate query problem.
         // This should be removed and and proper case sensitive query should be implemented
-        if (user==null||(!user.getUserName().equals(value))) {
+        if (user == null || (!user.getUserName().equals(value))) {
             return null;
         }
-        
+
         return user;
     }
 
@@ -100,14 +98,13 @@ public class UserOperations extends DefaultBizLogic {
              */
             userList = (List<UserInterface>) retrieve(UserInterface.class.getName(), column, value);
         } catch (DAOException e) {
-            logger.error(e.getStackTrace());
+            logger.error(e.getMessage(), e);
             return null;
         }
 
         UserInterface user = null;
         if (userList != null && !userList.isEmpty()) {
             user = userList.get(0);
-           
         }
         return user;
     }
@@ -125,10 +122,10 @@ public class UserOperations extends DefaultBizLogic {
             try {
                 insert(user, Constants.HIBERNATE_DAO);
             } catch (UserNotAuthorizedException e) {
-                logger.error(e.getStackTrace());
+                logger.error(e.getMessage(), e);
                 throw new RuntimeException("Error while inserting user in database", ErrorCodeConstants.UR_0004);
             } catch (BizLogicException e) {
-                logger.error(e.getStackTrace());
+                logger.error(e.getMessage(), e);
                 throw new RuntimeException("Error while inserting user in database", ErrorCodeConstants.UR_0004);
             }
         }
@@ -144,11 +141,11 @@ public class UserOperations extends DefaultBizLogic {
         try {
             update(user, Constants.HIBERNATE_DAO);
         } catch (UserNotAuthorizedException e) {
-            logger.error(e.getStackTrace());
+            logger.error(e.getMessage(), e);
             throw new RuntimeException("Error while updating user information in database ",
                     ErrorCodeConstants.UR_0005);
         } catch (BizLogicException e) {
-            logger.error(e.getStackTrace());
+            logger.error(e.getMessage(), e);
             throw new RuntimeException("Error while updating user information in database ",
                     ErrorCodeConstants.UR_0005);
         }
@@ -242,10 +239,11 @@ public class UserOperations extends DefaultBizLogic {
         PrivateKey key = KeyUtil.loadPrivateKey(new File(keyFileName), null);
         GlobusCredential credential = new GlobusCredential(key, new X509Certificate[] { cert });
         logger.debug("Generated Globus Credential for server");
+
         /*Create and Instance of the delegate credential client, specifying the DelegatedCredentialReference and the credential of the delegatee.
-          The DelegatedCredentialReference specifies which credential to obtain. The delegatee's credential is required to authenticate with the CDS 
-          such that the CDS may determing if the the delegatee has been granted access to the credential in which they wish to obtain.*/
-        DelegatedCredentialReference dref = getDeleCredRef(serializedCredRef);
+          The DelegatedCredentialReference specifies which credential to obtain. The delegatee's credential is required to authenticate with 
+          the CDS such that the CDS may determining if the the delegatee has been granted access to the credential in which they wish to obtain.*/
+        DelegatedCredentialReference dref = getDelegatedCredentialReference(serializedCredRef);
         DelegatedCredentialUserClient client = new DelegatedCredentialUserClient(dref, credential);
 
         //The get credential method obtains a signed delegated credential from the CDS.
@@ -253,8 +251,8 @@ public class UserOperations extends DefaultBizLogic {
 
         //Set the delegated credential as the default, the delegatee is now logged in as the delegator.
         ProxyUtil.saveProxyAsDefault(delegatedCredential);
+        logger.debug("Retrieved Client credential");
 
-        logger.debug("Retrieved Client credential ");
         return delegatedCredential;
     }
 
@@ -263,7 +261,7 @@ public class UserOperations extends DefaultBizLogic {
      * @param serializedCredRef
      * @return DelegatedCredentialReference
      */
-    private static DelegatedCredentialReference getDeleCredRef(String serializedCredRef) {
+    private static DelegatedCredentialReference getDelegatedCredentialReference(String serializedCredRef) {
         DelegatedCredentialReference delegatedCredentialReference = null;
         try {
             delegatedCredentialReference = (DelegatedCredentialReference) Utils.deserializeObject(
@@ -273,6 +271,7 @@ public class UserOperations extends DefaultBizLogic {
                                                                                                   CaGridWebSSODelegationLookupFilter.class.getClassLoader().getResourceAsStream(
                                                                                                                                                                                 "cdsclient-config.wsdd"));
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new RuntimeException("Unable to deserialize the Delegation Reference", e);
         }
 

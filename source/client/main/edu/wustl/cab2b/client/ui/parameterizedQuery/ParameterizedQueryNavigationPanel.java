@@ -194,7 +194,7 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                         return;
                     }
                     queryEngineBusinessInterface.saveQuery(cab2bParameterizedQuery,
-                                                           UserValidator.getSerializedDelegatedCredReference(),
+                                                           UserValidator.getSerializedDCR(),
                                                            UserValidator.getIdP());
                     message = "Query saved successfully.";
                 }

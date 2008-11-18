@@ -326,7 +326,6 @@ public class LoginFrame extends JXFrame {
     }
 
     private void nonUILogic() {
-
         credentialError.setText(" ");
         final String userName = usrNameText.getText();
         char[] passwordArray = passText.getPassword();
@@ -339,7 +338,7 @@ public class LoginFrame extends JXFrame {
         final String selectedIdentityProvider = idProvider.getSelectedItem().toString();
 
         try {
-            UserValidator.validateUser(userName, password, selectedIdentityProvider);
+            new UserValidator(userName, selectedIdentityProvider).validateUser(password);
             Thread mainThread = new Thread() {
                 public void run() {
                     launchMainFrame();
@@ -348,15 +347,11 @@ public class LoginFrame extends JXFrame {
             mainThread.setPriority(Thread.NORM_PRIORITY);
             selfReference.dispose();
             mainThread.start();
-            //CommonUtils.initializeResources(); // Initialize all Resources
-
-        } catch (Exception e) {
-            credentialError.setText("  * Unable to authenticate: Invalid credentials");
+        } catch (RuntimeException e) {
+            String message = CommonUtils.getErrorMessage(e);
+            credentialError.setText("  * Unable to authenticate: " + message);
             credentialError.setForeground(Color.RED);
-            e.printStackTrace();
-            //CommonUtils.handleException(e, LoginFrame.this, true, true, true, true);
         }
-        // selfReference.dispose();
     }
 
     /**
@@ -367,10 +362,9 @@ public class LoginFrame extends JXFrame {
      */
     private void launchMainFrame() {
         try {
-
             ClientLauncher clientLauncher = ClientLauncher.getInstance();
             clientLauncher.launchClient();
-            
+
             MainFrame mainFrame = new MainFrame(ApplicationProperties.getValue(MAIN_FRAME_TITLE), true);
             mainFrame.pack();
             mainFrame.setVisible(true);

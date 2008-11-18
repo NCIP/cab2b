@@ -24,6 +24,7 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils.DagImages;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.exception.CheckedException;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.cab2b.server.util.TestUtil;
 
@@ -271,4 +272,14 @@ public class CommonUtilsTest extends TestCase {
         Component comp = CommonUtils.getComponentByName(frame, name);
         assertEquals(b, comp);
     }
+
+    public void testGetErrorMessage() {
+        final String errorMessage = "An unknown internal error ocurred at CDS while delegating the credentials";
+
+        RuntimeException e = new RuntimeException(errorMessage, ErrorCodeConstants.CDS_006);
+        String message = CommonUtils.getErrorMessage(e);
+
+        assertEquals(errorMessage, message);
+    }
+
 }
