@@ -51,7 +51,7 @@ public class DomainModelParserTest extends TestCase {
             e.printStackTrace();
             fail("Exception while writing domain model to file / constructing DomainModelParser using : " + path);
         }
-      
+
         Document doc = null;
         try {
             doc = new SAXBuilder().build(path);
@@ -64,8 +64,12 @@ public class DomainModelParserTest extends TestCase {
         }
         Element root = doc.getRootElement();
 
-        List<?> allClasses = executeXpath("//*[local-name()='exposedUMLClassCollection']//*[local-name()='UMLClass']", root);
-        List<?> allAssociation = executeXpath("//*[local-name()='exposedUMLAssociationCollection']//*[local-name()='UMLAssociation']", root);
+        List<?> allClasses = executeXpath(
+                                          "//*[local-name()='exposedUMLClassCollection']//*[local-name()='UMLClass']",
+                                          root);
+        List<?> allAssociation = executeXpath(
+                                              "//*[local-name()='exposedUMLAssociationCollection']//*[local-name()='UMLAssociation']",
+                                              root);
 
         assertNotNull(parser);
         assertNotNull(parser.getDomainModel());
@@ -127,7 +131,8 @@ public class DomainModelParserTest extends TestCase {
         UMLClass painter = get("Painter");
         UMLClass consolePainter = get("ConsolePainter");
         UMLClass[] umlClasses = new UMLClass[] { shape, triangle, equilateralTriangle, painter, consolePainter };
-        shape.setUmlAttributeCollection(new UMLClassUmlAttributeCollection(new UMLAttribute[] {getAttribute("id","int")}));
+        shape.setUmlAttributeCollection(new UMLClassUmlAttributeCollection(
+                new UMLAttribute[] { getAttribute("id", "int") }));
         UMLGeneralization[] generalization = new UMLGeneralization[3];
         generalization[0] = getGeneralization(shape, triangle);
         generalization[1] = getGeneralization(triangle, equilateralTriangle);
@@ -142,19 +147,22 @@ public class DomainModelParserTest extends TestCase {
         DomainModel model = new DomainModel();
         model.setExposedUMLClassCollection(new DomainModelExposedUMLClassCollection(umlClasses));
         model.setUmlGeneralizationCollection(new DomainModelUmlGeneralizationCollection(generalization));
-        model.setExposedUMLAssociationCollection(new DomainModelExposedUMLAssociationCollection(new UMLAssociation[] { assoc }));
+        model.setExposedUMLAssociationCollection(new DomainModelExposedUMLAssociationCollection(
+                new UMLAssociation[] { assoc }));
         return model;
     }
-private static UMLAttribute getAttribute(String name,String type) {
-    UMLAttribute a = new UMLAttribute();
-    a.setName(name);
-    a.setDataTypeName(type);
-    ValueDomain vd = new ValueDomain();
-    
-    vd.setEnumerationCollection(new ValueDomainEnumerationCollection(new Enumeration[]{}));
-    a.setValueDomain(vd);
-    return a;
-}
+
+    private static UMLAttribute getAttribute(String name, String type) {
+        UMLAttribute a = new UMLAttribute();
+        a.setName(name);
+        a.setDataTypeName(type);
+        ValueDomain vd = new ValueDomain();
+
+        vd.setEnumerationCollection(new ValueDomainEnumerationCollection(new Enumeration[] {}));
+        a.setValueDomain(vd);
+        return a;
+    }
+
     public static DomainModel getModelNoGeneralization() {
         UMLClass shape = get("Shape");
         UMLClass triangle = get("Triangle");
@@ -173,7 +181,8 @@ private static UMLAttribute getAttribute(String name,String type) {
         DomainModel model = new DomainModel();
         model.setExposedUMLClassCollection(new DomainModelExposedUMLClassCollection(umlClasses));
         model.setUmlGeneralizationCollection(new DomainModelUmlGeneralizationCollection(new UMLGeneralization[0]));
-        model.setExposedUMLAssociationCollection(new DomainModelExposedUMLAssociationCollection(new UMLAssociation[] { assoc }));
+        model.setExposedUMLAssociationCollection(new DomainModelExposedUMLAssociationCollection(
+                new UMLAssociation[] { assoc }));
         return model;
     }
 
@@ -187,6 +196,7 @@ private static UMLAttribute getAttribute(String name,String type) {
     private static UMLClassReference getClassRef(UMLClass clazz) {
         return new UMLClassReference(clazz.getId());
     }
+
     private List<?> executeXpath(String xpathExpression, Element modelElement) {
         List<?> list = null;
         try {
