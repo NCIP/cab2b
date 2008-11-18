@@ -61,6 +61,9 @@ public class OutgoingAssociationDataPanel extends AbstractAssociatedDataPanel {
             IIntraModelAssociation intraModelAssociation = (IIntraModelAssociation) QueryObjectFactory.createIntraModelAssociation(deAssociation);
 
             AssociationInterface associationInterface = intraModelAssociation.getDynamicExtensionsAssociation();
+            if(intraModelAssociation.isBidirectional()){
+                continue;
+            }
             RoleInterface role = associationInterface.getTargetRole();
             String roleName = role.getName();
             if (roleName == null || roleName.equals("")) {
