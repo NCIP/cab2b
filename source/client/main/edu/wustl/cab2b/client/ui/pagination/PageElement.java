@@ -34,4 +34,6 @@ public interface PageElement {
 	public void setExtraDisplayText(String extraDisplayText);
 	
 	public String getExtraDisplayText();
+
+    public String getActionCommand();
 }

@@ -13,6 +13,11 @@ public class PageElementImpl implements PageElement{
 	private String displayName;
 	
 	/**
+	 * Action Command
+	 */
+	private String actionCommand;
+	
+	/**
 	 * This text will be displayed next to display text but as a normal label & not as a hyperlink. 
 	 */
 	private String extraDisplayText;
@@ -45,13 +50,20 @@ public class PageElementImpl implements PageElement{
 	
 	public PageElementImpl()
 	{
-		this("");
+		this("","");
 	}
 
 	public PageElementImpl(String displayName)
 	{
-		this.displayName = displayName;
+		this(displayName, displayName);
+		
 	}
+	
+	public PageElementImpl(String displayName, String actionCommand)
+    {
+        this.displayName = displayName;
+        this.actionCommand = actionCommand;
+    }
 	
 	/**
 	 * Returns description.
@@ -153,6 +165,13 @@ public class PageElementImpl implements PageElement{
 	public void setExtraDisplayText(String extraDisplayText) {
         this.extraDisplayText = extraDisplayText;
     }
-	
-	
+
+    @Override
+    public String getActionCommand() {
+        return actionCommand;
+    }
+
+    public void setActionCommand(String actionCommand) {
+        this.actionCommand = actionCommand;
+    }
 }
