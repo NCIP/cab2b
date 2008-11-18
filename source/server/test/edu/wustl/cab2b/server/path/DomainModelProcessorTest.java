@@ -99,9 +99,11 @@ public class DomainModelProcessorTest extends TestCase {
 
     public void testWithInheritance() {
         String appName = "TestApplication";
+        String name = "projectLongName_v1";
         String longName = "projectLongName";
         DomainModel model = DomainModelParserTest.getModel();
         model.setProjectLongName(longName);
+        model.setProjectVersion("1");
         DomainModelParser p = new DomainModelParser(model);
         DomainModelProcessor processor = null;
         try {
@@ -113,7 +115,7 @@ public class DomainModelProcessorTest extends TestCase {
         }
         EntityGroupInterface eg = processor.getEntityGroup();
         assertEquals(appName, eg.getShortName());
-        assertEquals(longName, eg.getName());
+        assertEquals(name, eg.getName());
         assertEquals(longName, eg.getLongName());
         assertEquals(5, eg.getEntityCollection().size());
     }
