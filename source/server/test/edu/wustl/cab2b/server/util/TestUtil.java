@@ -73,6 +73,9 @@ public class TestUtil {
     public static AssociationInterface getAssociation(String srcEntityName, String targetEntityName) {
         EntityInterface src = getEntity(srcEntityName);
         EntityInterface target = getEntity(targetEntityName);
+        return getAssociation(src,target);
+    }
+    public static AssociationInterface getAssociation(EntityInterface src, EntityInterface target) {
 
         AssociationInterface association = deFactory.createAssociation();
         association.setName("AssociationName_" + src.getAssociationCollection().size() + 1);
@@ -84,7 +87,6 @@ public class TestUtil {
         association.setAssociationDirection(Constants.AssociationDirection.BI_DIRECTIONAL);
         return association;
     }
-
     private static RoleInterface getRole(String roleName) {
         RoleInterface role = deFactory.createRole();
         role.setAssociationsType(Constants.AssociationType.ASSOCIATION);
