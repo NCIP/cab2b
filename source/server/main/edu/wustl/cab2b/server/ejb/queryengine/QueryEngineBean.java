@@ -53,7 +53,11 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      */
     public IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String dref, String idP)
             throws GeneralSecurityException, IOException, Exception {
-        GlobusCredential cred = UserOperations.getGlobusCredential(dref, idP);
+        GlobusCredential cred = null;
+        boolean hasAnySecureService = Utility.hasAnySecureService(query);
+        if (hasAnySecureService) {
+            cred = UserOperations.getGlobusCredential(dref, idP);
+        }
         new PopularCategoryOperations().setPopularity(query);
         return new QueryExecutor(query, cred).executeQuery();
     }
@@ -75,8 +79,8 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * @throws IOException
      * @throws RemoteException if save process fails
      */
-    public void saveQuery(ICab2bQuery query, String dref, String idP) throws RemoteException,
-            GeneralSecurityException, IOException, Exception {
+    public void saveQuery(ICab2bQuery query, String dref, String idP) throws RemoteException, GeneralSecurityException,
+            IOException, Exception {
         UserOperations.getGlobusCredential(dref, idP);
         new HibernateCleanser(query).clean();
         new QueryBizLogic<ICab2bQuery>().saveQuery(query);

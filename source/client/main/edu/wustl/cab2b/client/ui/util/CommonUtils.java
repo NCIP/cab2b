@@ -276,7 +276,12 @@ public class CommonUtils {
     public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query,
                                                                QueryEngineBusinessInterface queryEngineBus)
             throws RuntimeException, RemoteException, Exception {
-        return queryEngineBus.executeQuery(query, UserValidator.getSerializedDCR(), UserValidator.getIdP());
+        boolean anySecureSevice = Utility.hasAnySecureService(query);
+        if(anySecureSevice) {
+            return queryEngineBus.executeQuery(query, UserValidator.getSerializedDCR(), UserValidator.getIdP());
+        } else {
+            return queryEngineBus.executeQuery(query, null,null);   
+        }
 
     }
 
