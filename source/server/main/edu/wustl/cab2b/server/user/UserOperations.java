@@ -45,6 +45,8 @@ import gov.nih.nci.cagrid.gridca.common.KeyUtil;
 public class UserOperations extends DefaultBizLogic {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(UserOperations.class);
 
+    private static GlobusCredential credential;
+
     /**
      * This method returns user from database with given user name
      * @param name user name
@@ -231,14 +233,9 @@ public class UserOperations extends DefaultBizLogic {
      */
     public static GlobusCredential getGlobusCredential(String serializedCredRef, String idP)
             throws GeneralSecurityException, IOException, Exception {
-        String userHome = System.getProperty("user.home");
-        String certFileName = userHome + ServerProperties.getGridCert(idP);
-        String keyFileName = userHome + ServerProperties.getGridKey(idP);
-
-        X509Certificate cert = CertUtil.loadCertificate(certFileName);
-        PrivateKey key = KeyUtil.loadPrivateKey(new File(keyFileName), null);
-        GlobusCredential credential = new GlobusCredential(key, new X509Certificate[] { cert });
-        logger.debug("Generated Globus Credential for server");
+        if (credential == null || credential.getTimeLeft() < 3600000) {
+            createGlobusCredential(idP);
+        }
 
         /*Create and Instance of the delegate credential client, specifying the DelegatedCredentialReference and the credential of the delegatee.
           The DelegatedCredentialReference specifies which credential to obtain. The delegatee's credential is required to authenticate with 
@@ -254,6 +251,28 @@ public class UserOperations extends DefaultBizLogic {
         logger.debug("Retrieved Client credential");
 
         return delegatedCredential;
+    }
+
+    private static void createGlobusCredential(String idP) {
+        logger.debug("Generating GlobusCredential for server");
+
+        String userHome = System.getProperty("user.home");
+        String certFileName = userHome + ServerProperties.getGridCert(idP);
+        String keyFileName = userHome + ServerProperties.getGridKey(idP);
+
+        X509Certificate cert = null;
+        PrivateKey key = null;
+        try {
+            cert = CertUtil.loadCertificate(certFileName);
+            key = KeyUtil.loadPrivateKey(new File(keyFileName), null);
+            credential = new GlobusCredential(key, new X509Certificate[] { cert });
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException("Certificate or key file not found", e);
+        } catch (GeneralSecurityException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException("Incorrect certificates found", e);
+        }
     }
 
     /**
