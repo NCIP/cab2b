@@ -698,19 +698,54 @@ public class Utility {
         return splitStrings;
     }
 
+    /**
+     * This method returns the current system date and time in default format
+     * @return
+     */
     public static String getFormattedSystemDate() {
         return getFormattedDate(new Date(), null);
     }
 
+    /**
+     * This method returns the date with default format.
+     * @param date
+     * @return
+     */
     public static String getFormattedDate(Date date) {
         return getFormattedDate(date, null);
     }
 
+    /**
+     * This method get the formatted date given the raw date and the string format.
+     * If not format is not specified then the default format will be dd/MM/yyyy HH:mm. For example, 01/01/1000 01:01
+     * 
+     * @param date
+     * @param dateFormat
+     * @return
+     */
     public static String getFormattedDate(Date date, String dateFormat) {
         if (null == dateFormat || dateFormat.length() == 0) {
             dateFormat = "dd/MM/yyyy HH:mm";
         }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
         return simpleDateFormat.format(date);
+    }
+
+    /**
+     * This method returns the model name constructed from it long name and the version.
+     * @param longName
+     * @param version
+     * @return
+     */
+    public static String createModelName(String longName, String version) {
+        StringBuffer projectName = new StringBuffer(longName);
+        projectName.append("_v");
+
+        if (version == null || version.length() == 0) {
+            version = "1";
+        }
+        projectName.append(version);
+
+        return projectName.toString();
     }
 }

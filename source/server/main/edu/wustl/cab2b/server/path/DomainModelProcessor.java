@@ -26,11 +26,13 @@ import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationExcept
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.common.dynamicextensions.util.global.Constants;
 import edu.common.dynamicextensions.util.global.Constants.AssociationDirection;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.cab2b.server.util.InheritanceUtil;
 import gov.nih.nci.cagrid.metadata.common.SemanticMetadata;
 import gov.nih.nci.cagrid.metadata.common.UMLAttribute;
 import gov.nih.nci.cagrid.metadata.common.UMLClass;
+import gov.nih.nci.cagrid.metadata.dataservice.DomainModel;
 import gov.nih.nci.cagrid.metadata.dataservice.UMLAssociation;
 import gov.nih.nci.cagrid.metadata.dataservice.UMLAssociationEdge;
 
@@ -91,14 +93,15 @@ public class DomainModelProcessor {
             throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException {
         logger.info("Creating entity group for application : " + applicationName);
 
+        DomainModel domainModel = parser.getDomainModel();
         entityGroup = DynamicExtensionUtility.createEntityGroup();
         entityGroup.setShortName(applicationName);
-        entityGroup.setName(parser.getDomainModel().getProjectLongName() + "_v"
-                + parser.getDomainModel().getProjectVersion());
-        entityGroup.setLongName(parser.getDomainModel().getProjectLongName());
-        entityGroup.setDescription(parser.getDomainModel().getProjectDescription());
-        entityGroup.setVersion(parser.getDomainModel().getProjectVersion());
-        
+        entityGroup.setName(Utility.createModelName(domainModel.getProjectLongName(),
+                                                    domainModel.getProjectVersion()));
+        entityGroup.setLongName(domainModel.getProjectLongName());
+        entityGroup.setDescription(domainModel.getProjectDescription());
+        entityGroup.setVersion(domainModel.getProjectVersion());
+
         UMLClass[] umlClasses = parser.getUmlClasses();
         int noOfClasses = umlClasses.length;
         umlClassIdVsEntity = new HashMap<String, EntityInterface>(noOfClasses);
