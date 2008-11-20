@@ -45,7 +45,9 @@ import gov.nih.nci.cagrid.gridca.common.KeyUtil;
 public class UserOperations extends DefaultBizLogic {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(UserOperations.class);
 
-    private static GlobusCredential credential;
+    private static GlobusCredential productionCredential;
+
+    private static GlobusCredential trainingCredential;
 
     /**
      * This method returns user from database with given user name
@@ -57,8 +59,8 @@ public class UserOperations extends DefaultBizLogic {
 
         // TODO This is a temporary check added to solve case insensitive hibernate query problem.
         // This should be removed and and proper case sensitive query should be implemented
-        if (user == null || (!user.getUserName().equals(value))) {
-            return null;
+        if (user != null && (!user.getUserName().equals(value))) {
+            user = null;
         }
 
         return user;
@@ -101,7 +103,7 @@ public class UserOperations extends DefaultBizLogic {
             userList = (List<UserInterface>) retrieve(UserInterface.class.getName(), column, value);
         } catch (DAOException e) {
             logger.error(e.getMessage(), e);
-            return null;
+            throw new RuntimeException("Error occurred while fetching User", ErrorCodeConstants.UR_0003);
         }
 
         UserInterface user = null;
@@ -184,11 +186,11 @@ public class UserOperations extends DefaultBizLogic {
                 absentEntityGroups.add(name);
             }
         }
-        if (absentEntityGroups.isEmpty()) {
-            return entityGroupByUrls;
-        } else {
-            return getAdminURLs(entityGroupByUrls, absentEntityGroups);
+
+        if (!absentEntityGroups.isEmpty()) {
+            entityGroupByUrls = getAdminURLs(entityGroupByUrls, absentEntityGroups);
         }
+        return entityGroupByUrls;
     }
 
     /**
@@ -221,6 +223,29 @@ public class UserOperations extends DefaultBizLogic {
     }
 
     /**
+     * 
+     * @param idP
+     * @return
+     */
+    private static GlobusCredential getGlobusCredentialCreated(String idP) {
+        GlobusCredential credential = null;
+        if ("Production".compareTo(idP) == 0) {
+            if (productionCredential == null || productionCredential.getTimeLeft() < 3600000) {
+                productionCredential = createGlobusCredential(idP);
+            } else {
+                credential = productionCredential;
+            }
+        } else if ("Training".compareTo(idP) == 0) {
+            if (trainingCredential == null || trainingCredential.getTimeLeft() < 3600000) {
+                trainingCredential = createGlobusCredential(idP);
+            } else {
+                credential = trainingCredential;
+            }
+        }
+        return credential;
+    }
+
+    /**
      * It retrieves the client GlobusCredential from the delegated reference 
      * 
      * @param dref
@@ -233,9 +258,7 @@ public class UserOperations extends DefaultBizLogic {
      */
     public static GlobusCredential getGlobusCredential(String serializedCredRef, String idP)
             throws GeneralSecurityException, IOException, Exception {
-        if (credential == null || credential.getTimeLeft() < 3600000) {
-            createGlobusCredential(idP);
-        }
+        GlobusCredential credential = getGlobusCredentialCreated(idP);
 
         /*Create and Instance of the delegate credential client, specifying the DelegatedCredentialReference and the credential of the delegatee.
           The DelegatedCredentialReference specifies which credential to obtain. The delegatee's credential is required to authenticate with 
@@ -253,13 +276,19 @@ public class UserOperations extends DefaultBizLogic {
         return delegatedCredential;
     }
 
-    private static void createGlobusCredential(String idP) {
+    /**
+     * 
+     * @param idP
+     * @return
+     */
+    private static GlobusCredential createGlobusCredential(String idP) {
         logger.debug("Generating GlobusCredential for server");
 
         String userHome = System.getProperty("user.home");
         String certFileName = userHome + ServerProperties.getGridCert(idP);
         String keyFileName = userHome + ServerProperties.getGridKey(idP);
 
+        GlobusCredential credential = null;
         X509Certificate cert = null;
         PrivateKey key = null;
         try {
@@ -273,6 +302,8 @@ public class UserOperations extends DefaultBizLogic {
             logger.error(e.getMessage(), e);
             throw new RuntimeException("Incorrect certificates found", e);
         }
+
+        return credential;
     }
 
     /**
