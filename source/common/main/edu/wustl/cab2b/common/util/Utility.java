@@ -47,6 +47,7 @@ import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.common.dynamicextensions.domaininterface.UserDefinedDEInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -747,5 +748,19 @@ public class Utility {
         projectName.append(version);
 
         return projectName.toString();
+    }
+    /**
+     * @param query caB2B query to check
+     * @return TRUE : if given query is being fired on at-least one service containing https 
+     */
+    public static boolean hasAnySecureService(ICab2bQuery query) {
+        boolean anySecureSevice = false;
+        for(String url :query.getOutputUrls() ) {
+            if(url.trim().toLowerCase().startsWith("https://")) {
+                anySecureSevice = true;
+                break;
+            }
+        }
+        return anySecureSevice;
     }
 }

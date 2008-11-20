@@ -1,5 +1,9 @@
 package edu.wustl.cab2b.common.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import junit.framework.TestCase;
 
 /**
@@ -30,5 +34,19 @@ public class UtilityTest extends TestCase {
 
     public void testCapitalizeStringAlreadyCapital() {
         assertEquals("Gene", Utility.capitalizeFirstCharacter("Gene"));
+    }
+    public void testHasAnySecureServiceforHttp() {
+        List<String> list = new ArrayList<String>(2);
+        list.add(" http://foo.bar/grid/service");
+        Cab2bQuery query = new Cab2bQuery();
+        query.setOutputUrls(list);
+        assertFalse(Utility.hasAnySecureService(query));
+    }
+    public void testHasAnySecureServiceforHttps() {
+        List<String> list = new ArrayList<String>(2);
+        list.add(" https://foo.bar/grid/service");
+        Cab2bQuery query = new Cab2bQuery();
+        query.setOutputUrls(list);
+        assertTrue(Utility.hasAnySecureService(query));
     }
 }
