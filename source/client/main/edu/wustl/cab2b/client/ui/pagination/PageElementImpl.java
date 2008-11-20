@@ -48,17 +48,29 @@ public class PageElementImpl implements PageElement{
 	private boolean selected;
 	
 	
+	/**
+	 * Default Constructor 
+	 */
 	public PageElementImpl()
 	{
 		this("","");
 	}
 
+	/**
+	 * Instantiates with display name
+	 * @param displayName
+	 */
 	public PageElementImpl(String displayName)
 	{
 		this(displayName, displayName);
 		
 	}
 	
+	/**
+	 * Instantiates with displayName and actionCommand
+	 * @param displayName
+	 * @param actionCommand
+	 */
 	public PageElementImpl(String displayName, String actionCommand)
     {
         this.displayName = displayName;
@@ -67,6 +79,7 @@ public class PageElementImpl implements PageElement{
 	
 	/**
 	 * Returns description.
+	 * @return 
 	 */
 	public String getDescription() {
 		return description;
@@ -74,6 +87,7 @@ public class PageElementImpl implements PageElement{
 	
 	/**
 	 * Sets Description.
+	 * @param description 
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -81,6 +95,7 @@ public class PageElementImpl implements PageElement{
 	
 	/**
 	 * Gets display name.
+	 * @return 
 	 */
 	public String getDisplayName() {
 		return displayName;
@@ -88,6 +103,7 @@ public class PageElementImpl implements PageElement{
 	
 	/**
 	 * Sets display name.
+	 * @param displayName 
 	 */
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
@@ -95,6 +111,7 @@ public class PageElementImpl implements PageElement{
 	
 	/**
 	 * Returns image location.
+	 * @return 
 	 */
 	public String getImageLocation() {
 		return imageLocation;
@@ -102,6 +119,7 @@ public class PageElementImpl implements PageElement{
 	
 	/**
 	 * Sets image location.
+	 * @param imageLocation 
 	 */
 	public void setImageLocation(String imageLocation) {
 		this.imageLocation = imageLocation;
@@ -109,6 +127,7 @@ public class PageElementImpl implements PageElement{
 	
 	/**
 	 * Rteturns url.
+	 * @return 
 	 */
 	public String getLinkURL() {
 		return linkURL;
@@ -116,6 +135,7 @@ public class PageElementImpl implements PageElement{
 	
 	/**
 	 * Sets url.
+	 * @param linkURL 
 	 */
 	public void setLinkURL(String linkURL) {
 		this.linkURL = linkURL;
@@ -123,6 +143,7 @@ public class PageElementImpl implements PageElement{
 	
 	/**
 	 * Returns user object.
+	 * @return 
 	 */
 	public Object getUserObject() {
 		return userObject;
@@ -130,23 +151,46 @@ public class PageElementImpl implements PageElement{
 	
 	/**
 	 * Sets user object.
+	 * @param userObject 
 	 */
 	public void setUserObject(Object userObject) {
 		this.userObject = userObject;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	/**
+	 * Overriding {@link Object#toString()}}
+	 * @return 
+	 * 
+	 */
 	public String toString()
 	{
 		return displayName;
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see edu.wustl.cab2b.client.ui.pagination.PageElement#isSelected()
+	 */
+	/**
+	 * Returns whether this is selected or not
+	 * @return
+	 */
 	public boolean isSelected()
 	{
 		return selected;
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see edu.wustl.cab2b.client.ui.pagination.PageElement#setSelected(boolean)
+	 */
+	/**
+	 * Sets boolean for selection.
+	 * @param selected
+	 */
 	public void setSelected(boolean selected)
 	{
 		this.selected = selected;
@@ -166,11 +210,20 @@ public class PageElementImpl implements PageElement{
         this.extraDisplayText = extraDisplayText;
     }
 
-    @Override
+    /* (non-Javadoc)
+     * @see edu.wustl.cab2b.client.ui.pagination.PageElement#getActionCommand()
+     */
+	/**
+	 * Returns action command
+	 * @return
+	 */
     public String getActionCommand() {
         return actionCommand;
     }
 
+    /**
+     * @param actionCommand
+     */
     public void setActionCommand(String actionCommand) {
         this.actionCommand = actionCommand;
     }
