@@ -34,6 +34,7 @@ import edu.wustl.common.util.global.Constants;
 import gov.nih.nci.cagrid.common.Utils;
 import gov.nih.nci.cagrid.common.security.ProxyUtil;
 import gov.nih.nci.cagrid.gridca.common.KeyUtil;
+import gov.nih.nci.cagrid.syncgts.bean.SyncReport;
 
 /**
  * User operations like saving user, retrieving user, validating user are
@@ -281,7 +282,7 @@ public class UserOperations extends DefaultBizLogic {
      * @param idP
      * @return
      */
-    private static GlobusCredential createGlobusCredential(String idP) {
+    private static synchronized GlobusCredential createGlobusCredential(String idP) {
         logger.debug("Generating GlobusCredential for server");
 
         String userHome = System.getProperty("user.home");
