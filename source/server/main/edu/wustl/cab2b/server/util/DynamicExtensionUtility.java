@@ -3,7 +3,10 @@ package edu.wustl.cab2b.server.util;
 import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DE_0003;
 import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DE_0004;
 import static edu.wustl.cab2b.common.util.Constants.CAB2B_ENTITY_GROUP;
-
+import static edu.wustl.cab2b.server.path.PathConstants.METADATA_ENTITY_GROUP;
+import static edu.wustl.cab2b.server.path.PathConstants.CREATE_TABLE_FOR_ENTITY;
+import static edu.wustl.cab2b.server.ServerConstants.LOAD_STATUS;
+import static edu.wustl.cab2b.server.ServerConstants.LOAD_FAILED;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,6 +36,7 @@ import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.common.dynamicextensions.domaininterface.UserDefinedDEInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.entitymanager.EntityManagerInterface;
+import edu.common.dynamicextensions.exception.BaseDynamicExtensionsException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.common.dynamicextensions.util.global.Constants.AssociationDirection;
@@ -41,14 +45,15 @@ import edu.common.dynamicextensions.util.global.Constants.Cardinality;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.cab2b.server.ServerConstants;
+
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.path.PathConstants;
 import edu.wustl.common.querysuite.queryobject.DataType;
 import gov.nih.nci.cagrid.metadata.common.SemanticMetadata;
 
 /**
- * This class decides whether to create a storage table for entity or not based on {@link edu.wustl.cab2b.server.path.PathConstants#CREATE_TABLE_FOR_ENTITY}
+ * This class decides whether to create a storage table for entity or not based on 
+ * {@link edu.wustl.cab2b.server.path.PathConstants#CREATE_TABLE_FOR_ENTITY}
  * To create a table for entity set this to TRUE before calling this code else set it to false.
  * @author Chandrakant Talele
  */
@@ -57,56 +62,47 @@ public class DynamicExtensionUtility {
 
     /**
      * Persist given entity using dynamic extension APIs.
-     * Whether to create dataspace (table) for this entity or not is decided by {@link PathConstants.CREATE_TABLE_FOR_ENTITY} 
+     * Whether to create data space (table) for this entity or not is decided by 
+     * {@link PathConstants.CREATE_TABLE_FOR_ENTITY} 
      * @param entity Entity to persist.
      * @return The saved entity
      */
     public static EntityInterface persistEntity(EntityInterface entity) {
         EntityManagerInterface entityManager = EntityManager.getInstance();
         try {
-            if (PathConstants.CREATE_TABLE_FOR_ENTITY) {
+            if (CREATE_TABLE_FOR_ENTITY) {
                 entity = entityManager.persistEntity(entity);
             } else {
                 entity = entityManager.persistEntityMetadata(entity, false, true);
             }
-        } catch (DynamicExtensionsSystemException e) {
+        } catch (BaseDynamicExtensionsException e) {
             throw new RuntimeException("Unable to persist Entity in Dynamic Extension", e,
                     ErrorCodeConstants.DE_0002);
-        } catch (DynamicExtensionsApplicationException e) {
-            throw new RuntimeException("Unable to persist Entity in Dynamic Extension", e,
-                    ErrorCodeConstants.DE_0002);
-        }
+        } 
         return entity;
     }
 
     /**
      * Persist given entity Group using dynamic extension APIs.
-     * Whether to store only metadata for this entity Group is decided by {@link PathConstants.CREATE_TABLE_FOR_ENTITY} 
+     * Whether to store only metadata for this entity Group is decided by 
+     * {@link PathConstants.CREATE_TABLE_FOR_ENTITY} 
      * @param entityGroup entity Group to persist.
      * @return The saved entity Group
      */
     public static EntityGroupInterface persistEntityGroup(EntityGroupInterface entityGroup) {
-        EntityManagerInterface entityManager = EntityManager.getInstance();
         try {
-            if (PathConstants.CREATE_TABLE_FOR_ENTITY) {
-                entityGroup = entityManager.persistEntityGroup(entityGroup);
-            } else {
-                entityGroup = entityManager.persistEntityGroupMetadata(entityGroup);
-            }
-        } catch (DynamicExtensionsSystemException e) {
+            entityGroup = persistEGroup(entityGroup);
+        } catch (BaseDynamicExtensionsException e) {
             throw new RuntimeException("Unable to persist Entity Group in Dynamic Extension", e,
                     ErrorCodeConstants.DE_0001);
-        } catch (DynamicExtensionsApplicationException e) {
-            throw new RuntimeException("Unable to persist Entity Group in Dynamic Extension", e,
-                    ErrorCodeConstants.DE_0001);
-        }
-
+        } 
         return entityGroup;
     }
 
     /**
      * Persist given entity Group using dynamic extension APIs.
-     * Whether to store only metadata for this entity Group is decided by {@link PathConstants.CREATE_TABLE_FOR_ENTITY} 
+     * Whether to store only metadata for this entity Group is decided by 
+     * {@link PathConstants.CREATE_TABLE_FOR_ENTITY} 
      * @param entityGroup entity Group to persist.
      * @return The saved entity Group
      * @throws DynamicExtensionsApplicationException 
@@ -116,7 +112,7 @@ public class DynamicExtensionUtility {
             throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException {
         EntityManagerInterface entityManager = EntityManager.getInstance();
 
-        if (PathConstants.CREATE_TABLE_FOR_ENTITY) {
+        if (CREATE_TABLE_FOR_ENTITY) {
             entityGroup = entityManager.persistEntityGroup(entityGroup);
         } else {
             entityGroup = entityManager.persistEntityGroupMetadata(entityGroup);
@@ -132,11 +128,9 @@ public class DynamicExtensionUtility {
     public static EntityInterface getEntityById(Long id) {
         try {
             return EntityManager.getInstance().getEntityByIdentifier(id);
-        } catch (DynamicExtensionsSystemException e) {
-            throw new RuntimeException("Expected associations are not found in the database", e, DE_0003);
-        } catch (DynamicExtensionsApplicationException e) {
-            throw new RuntimeException("Expected associations are not found in the database", e, DE_0003);
-        }
+        } catch (BaseDynamicExtensionsException e) {
+            throw new RuntimeException("Expected Entity is not found in database", e, DE_0003);
+        } 
     }
 
     /**
@@ -148,11 +142,9 @@ public class DynamicExtensionUtility {
         try {
             AssociationInterface association = EntityManager.getInstance().getAssociationByIdentifier(id);
             return association;
-        } catch (DynamicExtensionsSystemException e) {
-            throw new RuntimeException("Expected associations are not found in the database", e, DE_0003);
-        } catch (DynamicExtensionsApplicationException e) {
-            throw new RuntimeException("Expected associations are not found in the database", e, DE_0003);
-        }
+        } catch (BaseDynamicExtensionsException e) {
+            throw new RuntimeException("Expected association is not found in database", e, DE_0003);
+        } 
     }
 
     /**
@@ -166,7 +158,8 @@ public class DynamicExtensionUtility {
     }
 
     /**
-     * Returns the AttributeInterface whose name matches with given "attributeName" and whose parent name matches with "entityName" 
+     * Returns the AttributeInterface whose name matches with given "attributeName" and 
+     * whose parent name matches with "entityName" 
      * @param entityName name of parent entity.
      * @param attributeName name of required attribute.
      * @return Returns Attribute satisfying given conditions. 
@@ -174,14 +167,10 @@ public class DynamicExtensionUtility {
     public static AttributeInterface getAttribute(String entityName, String attributeName) {
         try {
             return EntityManager.getInstance().getAttribute(entityName, attributeName);
-        } catch (DynamicExtensionsSystemException e) {
+        } catch (BaseDynamicExtensionsException e) {
             throw new RuntimeException("Expected attribute not found in database : " + entityName + "-"
                     + attributeName, e, ErrorCodeConstants.DE_0003);
-        } catch (DynamicExtensionsApplicationException e) {
-            throw new RuntimeException("Expected attribute not found in database : " + entityName + "-"
-                    + attributeName, e, ErrorCodeConstants.DE_0003);
-        }
-
+        } 
     }
 
     /**
@@ -224,8 +213,8 @@ public class DynamicExtensionUtility {
      */
     public static void markMetadataEntityGroup(EntityGroupInterface eg) {
         TaggedValueInterface taggedValue = DomainObjectFactory.getInstance().createTaggedValue();
-        taggedValue.setKey(PathConstants.METADATA_ENTITY_GROUP);
-        taggedValue.setValue(PathConstants.METADATA_ENTITY_GROUP);
+        taggedValue.setKey(METADATA_ENTITY_GROUP);
+        taggedValue.setValue(METADATA_ENTITY_GROUP);
         eg.addTaggedValue(taggedValue);
     }
 
@@ -240,10 +229,7 @@ public class DynamicExtensionUtility {
         EntityGroupInterface entityGroup = null;
         try {
             entityGroup = EntityManager.getInstance().getEntityGroupByName(name);
-        } catch (DynamicExtensionsSystemException e) {
-            throw new RuntimeException("Got System exception from Dynamic Extension while fetching entity group",
-                    e, ErrorCodeConstants.DB_0001);
-        } catch (DynamicExtensionsApplicationException e) {
+        } catch (BaseDynamicExtensionsException e) {
             throw new RuntimeException("Got System exception from Dynamic Extension while fetching entity group",
                     e, ErrorCodeConstants.DB_0001);
         }
@@ -295,7 +281,8 @@ public class DynamicExtensionUtility {
                 attribute = domainObjectFactory.createStringAttribute();
                 if (dataEle instanceof UserDefinedDEInterface) {
                     UserDefinedDEInterface userDefinedDE = domainObjectFactory.createUserDefinedDE();
-                    for (PermissibleValueInterface val : ((UserDefinedDEInterface) dataEle).getPermissibleValueCollection()) {
+                    UserDefinedDEInterface userDe = (UserDefinedDEInterface) dataEle;
+                    for (PermissibleValueInterface val : userDe.getPermissibleValueCollection()) {
                         StringValueInterface value = domainObjectFactory.createStringValue();
                         value.setValue((String) val.getValueAsObject());
                         userDefinedDE.addPermissibleValue(value);
@@ -308,7 +295,8 @@ public class DynamicExtensionUtility {
                 attribute = domainObjectFactory.createDoubleAttribute();
                 if (dataEle instanceof UserDefinedDEInterface) {
                     UserDefinedDEInterface userDefinedDE = domainObjectFactory.createUserDefinedDE();
-                    for (PermissibleValueInterface val : ((UserDefinedDEInterface) dataEle).getPermissibleValueCollection()) {
+                    UserDefinedDEInterface userDe = (UserDefinedDEInterface) dataEle;
+                    for (PermissibleValueInterface val : userDe.getPermissibleValueCollection()) {
                         DoubleValueInterface value = domainObjectFactory.createDoubleValue();
                         value.setValue((Double) val.getValueAsObject());
                         userDefinedDE.addPermissibleValue(value);
@@ -321,7 +309,8 @@ public class DynamicExtensionUtility {
                 attribute = domainObjectFactory.createIntegerAttribute();
                 if (dataEle instanceof UserDefinedDEInterface) {
                     UserDefinedDEInterface userDefinedDE = domainObjectFactory.createUserDefinedDE();
-                    for (PermissibleValueInterface val : ((UserDefinedDEInterface) dataEle).getPermissibleValueCollection()) {
+                    UserDefinedDEInterface userDe = (UserDefinedDEInterface) dataEle;
+                    for (PermissibleValueInterface val : userDe.getPermissibleValueCollection()) {
                         IntegerValueInterface value = domainObjectFactory.createIntegerValue();
                         value.setValue((Integer) val.getValueAsObject());
                         userDefinedDE.addPermissibleValue(value);
@@ -334,7 +323,8 @@ public class DynamicExtensionUtility {
                 attribute = domainObjectFactory.createDateAttribute();
                 if (dataEle instanceof UserDefinedDEInterface) {
                     UserDefinedDEInterface userDefinedDE = domainObjectFactory.createUserDefinedDE();
-                    for (PermissibleValueInterface val : ((UserDefinedDEInterface) dataEle).getPermissibleValueCollection()) {
+                    UserDefinedDEInterface userDe = (UserDefinedDEInterface) dataEle;
+                    for (PermissibleValueInterface val : userDe.getPermissibleValueCollection()) {
                         DateValueInterface value = domainObjectFactory.createDateValue();
                         value.setValue((Date) val.getValueAsObject());
                         userDefinedDE.addPermissibleValue(value);
@@ -347,7 +337,8 @@ public class DynamicExtensionUtility {
                 attribute = domainObjectFactory.createFloatAttribute();
                 if (dataEle instanceof UserDefinedDEInterface) {
                     UserDefinedDEInterface userDefinedDE = domainObjectFactory.createUserDefinedDE();
-                    for (PermissibleValueInterface val : ((UserDefinedDEInterface) dataEle).getPermissibleValueCollection()) {
+                    UserDefinedDEInterface userDe = (UserDefinedDEInterface) dataEle;
+                    for (PermissibleValueInterface val : userDe.getPermissibleValueCollection()) {
                         FloatValueInterface value = domainObjectFactory.createFloatValue();
                         value.setValue((Float) val.getValueAsObject());
                         userDefinedDE.addPermissibleValue(value);
@@ -360,7 +351,8 @@ public class DynamicExtensionUtility {
                 attribute = domainObjectFactory.createBooleanAttribute();
                 if (dataEle instanceof UserDefinedDEInterface) {
                     UserDefinedDEInterface userDefinedDE = domainObjectFactory.createUserDefinedDE();
-                    for (PermissibleValueInterface val : ((UserDefinedDEInterface) dataEle).getPermissibleValueCollection()) {
+                    UserDefinedDEInterface userDe = (UserDefinedDEInterface) dataEle;
+                    for (PermissibleValueInterface val : userDe.getPermissibleValueCollection()) {
                         BooleanValueInterface value = domainObjectFactory.createBooleanValue();
                         value.setValue((Boolean) val.getValueAsObject());
                         userDefinedDE.addPermissibleValue(value);
@@ -373,7 +365,8 @@ public class DynamicExtensionUtility {
                 attribute = domainObjectFactory.createLongAttribute();
                 if (dataEle instanceof UserDefinedDEInterface) {
                     UserDefinedDEInterface userDefinedDE = domainObjectFactory.createUserDefinedDE();
-                    for (PermissibleValueInterface val : ((UserDefinedDEInterface) dataEle).getPermissibleValueCollection()) {
+                    UserDefinedDEInterface userDe = (UserDefinedDEInterface) dataEle;
+                    for (PermissibleValueInterface val : userDe.getPermissibleValueCollection()) {
                         LongValueInterface value = domainObjectFactory.createLongValue();
                         value.setValue((Long) val.getValueAsObject());
                         userDefinedDE.addPermissibleValue(value);
@@ -396,8 +389,8 @@ public class DynamicExtensionUtility {
      * @param semanticMetadataArr
      *            Semantic Metadata array to set.
      */
-    private static void copySemanticProperties(AbstractMetadataInterface copyFrom, AbstractMetadataInterface copyTo) {
-        for (SemanticPropertyInterface p : copyFrom.getSemanticPropertyCollection()) {
+    private static void copySemanticProperties(AbstractMetadataInterface from, AbstractMetadataInterface copyTo) {
+        for (SemanticPropertyInterface p : from.getSemanticPropertyCollection()) {
             SemanticPropertyInterface semanticProp = domainObjectFactory.createSemanticProperty();
             semanticProp.setTerm(p.getTerm());
             semanticProp.setConceptCode(p.getConceptCode());
@@ -446,15 +439,18 @@ public class DynamicExtensionUtility {
         return role;
     }
 
+    /**
+     * Returns Cab2b Entity Groups
+     * @return Cab2b Entity Groups
+     * @throws RemoteException
+     */
     public static Collection<EntityGroupInterface> getCab2bEntityGroups() throws RemoteException {
         List<EntityGroupInterface> entityGroups = new ArrayList<EntityGroupInterface>();
 
         Collection<EntityGroupInterface> allEntityGroups = new HashSet<EntityGroupInterface>();
         try {
             allEntityGroups = EntityManager.getInstance().getAllEntitiyGroups();
-        } catch (DynamicExtensionsSystemException e) {
-            throw new RemoteException(e.getMessage());
-        } catch (DynamicExtensionsApplicationException e) {
+        } catch (BaseDynamicExtensionsException e) {
             throw new RemoteException(e.getMessage());
         }
 
@@ -472,35 +468,29 @@ public class DynamicExtensionUtility {
      * @return
      */
     public static boolean isEntityGroupMetadata(EntityGroupInterface entityGroup) {
-        boolean isMetadata = false;
-
-        Collection<TaggedValueInterface> taggedValues = entityGroup.getTaggedValueCollection();
-        for (TaggedValueInterface taggedValue : taggedValues) {
-            String tagKey = taggedValue.getKey();
-            String tagValue = taggedValue.getValue();
-            if ((tagKey != null && tagValue != null)
-                    && (PathConstants.METADATA_ENTITY_GROUP.compareTo(tagKey) == 0 && PathConstants.METADATA_ENTITY_GROUP.compareTo(tagValue) == 0)) {
-                if (isSuccessfullyLoaded(taggedValues)) {
-                    isMetadata = true;
-                    break;
-                }
+        boolean hasMetadataTag = false;
+        Collection<TaggedValueInterface> tags = entityGroup.getTaggedValueCollection();
+        for (TaggedValueInterface tag : tags) {
+            if (METADATA_ENTITY_GROUP.equals(tag.getKey()) && METADATA_ENTITY_GROUP.equals(tag.getValue())) {
+                hasMetadataTag = true;
+                break;
             }
         }
-        return isMetadata;
+        return (hasMetadataTag && isSuccessfullyLoaded(tags));
     }
 
     private static boolean isSuccessfullyLoaded(Collection<TaggedValueInterface> taggedValues) {
         for (TaggedValueInterface taggedValue : taggedValues) {
             String taggedKey = taggedValue.getKey();
             String tagggedValue = taggedValue.getValue();
-            if ((taggedKey != null && tagggedValue != null)
-                    && (ServerConstants.LOAD_STATUS.compareTo(taggedKey) == 0 && ServerConstants.LOAD_FAILED.compareTo(tagggedValue) == 0))
+            if (LOAD_STATUS.equals(taggedKey)&& LOAD_FAILED.equals(tagggedValue)) {
                 return false;
+            }
         }
         return true;
     }
-
-    /** 
+    /**
+     * @param entityId Entity Id
      * @return associations with given entity as the target entity.
      */
     public static Collection<AssociationInterface> getIncomingIntramodelAssociations(Long entityId) {
