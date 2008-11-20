@@ -1,12 +1,23 @@
 package edu.wustl.cab2b.server.queryengine.resulttransformers;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import com.sun.org.apache.xerces.internal.parsers.DOMParser;
+
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
@@ -27,6 +38,7 @@ import gov.nih.nci.cagrid.data.utilities.CQLQueryResultsIterator;
  * @author srinath_k
  */
 final class DefaultQueryResultTransformer extends AbstractQueryResultTransformer<IRecord, ICategorialClassRecord> {
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(DefaultQueryResultTransformer.class);
 
     /**
      * Parses the {@link gov.nih.nci.cagrid.cqlresultset.CQLQueryResults} xml
@@ -44,9 +56,24 @@ final class DefaultQueryResultTransformer extends AbstractQueryResultTransformer
         AttributeInterface idAttribute = Utility.getIdAttribute(targetEntity);
         while (itr.hasNext()) {
             String singleRecordXml = (String) itr.next();
-            String id = getValueForAttribute(singleRecordXml, idAttribute);
+            DOMParser parser = new DOMParser();
+            try {
+                parser.parse(new InputSource(new StringReader(singleRecordXml)));
+            } catch (SAXException e) {
+                logger.error("Unable to build DOM, Malformed XML", e);
+                throw new RuntimeException("Unable to build DOM, Malformed XML", e, ErrorCodeConstants.QM_0004);
+            } catch (IOException e) {
+                logger.error("Unexpected IOException while generating DOM from CQLQueryResults", e);
+                throw new RuntimeException("Unexpected IOException while generating DOM from CQLQueryResults", e,
+                        ErrorCodeConstants.QM_0004);
+            }
+            Element oneRec = parser.getDocument().getDocumentElement();
+            String id = oneRec.getAttribute(idAttribute.getName());
             IRecord record = createRecord(attributes, new RecordId(id, url));
-            populateRecord(singleRecordXml, record);
+            for (AttributeInterface attr : attributes) {
+                String value = oneRec.getAttribute(attr.getName());
+                record.putStringValueForAttribute(attr, parseValueString(value));
+            }
             res.add(record);
         }
         return res;
@@ -56,32 +83,10 @@ final class DefaultQueryResultTransformer extends AbstractQueryResultTransformer
         return QueryResultFactory.createRecord(attributes, id);
     }
 
-    private void populateRecord(String singleRecordXml, IRecord record) {
-        for (AttributeInterface attribute : record.getAttributes()) {
-            String value = getValueForAttribute(singleRecordXml, attribute);
-            record.putStringValueForAttribute(attribute, value);
-            // TODO anything for dates??
-        }
-    }
-
-    private String getValueForAttribute(String singleRecordXml, AttributeInterface attribute) {
-        String searchStr = attribute.getName() + "=\"";
-        int attrStartIndex = singleRecordXml.indexOf(searchStr);
-        if (attrStartIndex == -1) {
-            return "";
-        }
-        // find the ending quote of the value...
-        int valStartIndex = attrStartIndex + searchStr.length();
-        int endQuoteIndex = singleRecordXml.indexOf("\"", valStartIndex);
-        String value = singleRecordXml.substring(valStartIndex, endQuoteIndex);
-        value = parseValueString(value);
-        return value;
-    }
-
     /**
-     * Replace special charactors found in string with appropriate values. 
+     * Replace special characters found in string with appropriate values. 
      * @param modify
-     * @return
+     * @return modified string
      */
     public String parseValueString(String modify) {
         modify = Utility.replaceAllWords(modify, "&amp", "&");
