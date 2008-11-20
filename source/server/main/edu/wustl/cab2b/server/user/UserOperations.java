@@ -34,7 +34,6 @@ import edu.wustl.common.util.global.Constants;
 import gov.nih.nci.cagrid.common.Utils;
 import gov.nih.nci.cagrid.common.security.ProxyUtil;
 import gov.nih.nci.cagrid.gridca.common.KeyUtil;
-import gov.nih.nci.cagrid.syncgts.bean.SyncReport;
 
 /**
  * User operations like saving user, retrieving user, validating user are
