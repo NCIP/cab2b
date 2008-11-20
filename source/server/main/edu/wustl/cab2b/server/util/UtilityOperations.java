@@ -75,17 +75,20 @@ public class UtilityOperations extends DefaultBizLogic {
         if (entityRecordList == null || entityRecordList.size() == 0) {
             return null;
         }
-
+        IRecord rec = entityRecordList.get(0);
         //initializing column value set
-        ArrayList<TreeSet<Comparable<?>>> entityRecordValues = new ArrayList<TreeSet<Comparable<?>>>();
-        for (int i = 0; i < entityRecordList.get(0).getAttributes().size(); i++) {
-            entityRecordValues.add(i, new TreeSet<Comparable<?>>());
-        }
-
+        List<TreeSet<Comparable<?>>> entityRecordValues = initEntityRecordValues(rec.getAttributes().size());
         for (IRecord entityRecord : entityRecordList) {
             process(entityRecord, entityRecordValues);
         }
         return entityRecordValues;
+    }
+    private List<TreeSet<Comparable<?>>> initEntityRecordValues(int size) {
+        List<TreeSet<Comparable<?>>> list = new ArrayList<TreeSet<Comparable<?>>>(size);
+        for (int i = 0; i < size; i++) {
+            list.add(i, new TreeSet<Comparable<?>>());
+        }
+        return list;
     }
 
     private void process(IRecord record, List<TreeSet<Comparable<?>>> entityRecordValues) {
