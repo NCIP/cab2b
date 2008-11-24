@@ -3,10 +3,11 @@ package edu.wustl.cab2b.server.util;
 import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DE_0003;
 import static edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DE_0004;
 import static edu.wustl.cab2b.common.util.Constants.CAB2B_ENTITY_GROUP;
-import static edu.wustl.cab2b.server.path.PathConstants.METADATA_ENTITY_GROUP;
-import static edu.wustl.cab2b.server.path.PathConstants.CREATE_TABLE_FOR_ENTITY;
-import static edu.wustl.cab2b.server.ServerConstants.LOAD_STATUS;
 import static edu.wustl.cab2b.server.ServerConstants.LOAD_FAILED;
+import static edu.wustl.cab2b.server.ServerConstants.LOAD_STATUS;
+import static edu.wustl.cab2b.server.path.PathConstants.CREATE_TABLE_FOR_ENTITY;
+import static edu.wustl.cab2b.server.path.PathConstants.METADATA_ENTITY_GROUP;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,9 +46,7 @@ import edu.common.dynamicextensions.util.global.Constants.Cardinality;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Utility;
-
 import edu.wustl.cab2b.server.cache.EntityCache;
-import edu.wustl.cab2b.server.path.PathConstants;
 import edu.wustl.common.querysuite.queryobject.DataType;
 import gov.nih.nci.cagrid.metadata.common.SemanticMetadata;
 
@@ -225,7 +224,7 @@ public class DynamicExtensionUtility {
      * @param name Name of the entity group.
      * @return Entity group with  given name
      */
-    public static EntityGroupInterface getEntityGroupByName(String name) {
+    public static synchronized EntityGroupInterface getEntityGroupByName(String name) {
         EntityGroupInterface entityGroup = null;
         try {
             entityGroup = EntityManager.getInstance().getEntityGroupByName(name);
