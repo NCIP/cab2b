@@ -36,7 +36,6 @@
 	<module><java>wsrf_core_stubs.jar</java></module>
 	<module><java>xalan.jar</java></module>
 	<module><java>xbean.jar</java></module>
-	<module><java>xercesImpl.jar</java></module>
 	<module><java>xmlpublic.jar</java></module>
     <module><java>commons-collections-3.2.jar</java></module>
     
@@ -69,16 +68,13 @@
         
    	<module><java>CaArraySvc-client.jar</java></module>
     <module><java>CaArraySvc-common.jar</java></module>
-
+	
     <module><java>caarray-client.jar</java></module>
     <module><java>CaArraySvc-stubs.jar</java></module>
 	<module><java>nci-commons-core-1.0.1.jar</java></module>
 
     <module><java>caarray-server-extensions.jar</java></module>    
     <module><java>caarray-common-extensions.jar</java></module>   
-
-    <module><java>postgresql-8.1-405.jdbc3.jar</java></module>
-    
     <module><java>csmapi.jar</java></module>
     
     <module><java>caGrid-authentication-service-client-1.2.jar</java></module>
@@ -99,7 +95,6 @@
     <module><java>commons-logging-1.1.jar</java></module>
     <module><java>cryptix32.jar</java></module>
     <module><java>cryptix-asn1.jar</java></module>
-    <module><java>log4j-1.2.14.jar</java></module>
     <module><java>puretls.jar</java></module>
     <module><java>xmlsec-1.4.0.jar</java></module>
 
