@@ -69,12 +69,8 @@
         
    	<module><java>CaArraySvc-client.jar</java></module>
     <module><java>CaArraySvc-common.jar</java></module>
-	<module><java>CaArraySvc-encoding.jar</java></module>    
-	<module><java>CaArraySvc-client-mageom.jar</java></module>
-	
 
     <module><java>caarray-client.jar</java></module>
-    <module><java>CaArraySvc-service.jar</java></module>
     <module><java>CaArraySvc-stubs.jar</java></module>
 	<module><java>nci-commons-core-1.0.1.jar</java></module>
 
