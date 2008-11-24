@@ -176,25 +176,7 @@ public class ExperimentOperations extends DefaultBizLogic {
      * @return List<Experiment>
      */
     public List<Experiment> getLatestExperimentForUser(UserInterface user, String userIdentity) {
-        //TODO Update code specific to user, currently returning each and every
-        //experiments from database
-        /*   String hql = "from Experiment as Exp order by Exp.lastUpdatedOn ";
-           DAO dao = DAOFactory.getInstance().getDAO(daoType);
-            List<Experiment> returner = null;
-            try {
-                ((AbstractDAO) dao).openSession(null);
-                returner = dao.executeQuery(hql, null, false, null);
-                ((AbstractDAO) dao).closeSession();
-            } catch (DAOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            return returner;
-        */
-        List idList = new ArrayList();
+        List idList = new ArrayList(1);
         idList.add(userIdentity);
         return (List<Experiment>) Utility.executeHQL("getLatestExperimentByUserName", idList);
     }
@@ -212,7 +194,7 @@ public class ExperimentOperations extends DefaultBizLogic {
         List returner = new ArrayList();
         returner = (List<Object>) Utility.executeHQL("getExperimentHierarchy", idList);
 
-        Vector expHierarchyData =null;
+        Vector expHierarchyData = null;
 
         expHierarchyData = getExperimentMetadataHierarchy(returner);
 
@@ -262,7 +244,6 @@ public class ExperimentOperations extends DefaultBizLogic {
         }
         return returner;
     }
-
 
     /**
      * To recursively update the TreeNode similar to expGroup
