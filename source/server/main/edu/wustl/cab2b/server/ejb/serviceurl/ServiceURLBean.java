@@ -49,9 +49,9 @@ public class ServiceURLBean extends AbstractStatelessSessionBean implements Serv
      * @return Instances by service names
      * @throws RemoteException
      */
-    public Collection<AdminServiceMetadata> getInstancesByServiceName(String serviceName, UserInterface user)
+    public Collection<AdminServiceMetadata> getInstancesByServiceName(String serviceName,String version, UserInterface user)
             throws RemoteException {
-        return new ServiceURLOperations().getInstancesByServiceName(serviceName, user);
+        return new ServiceURLOperations().getInstancesByServiceName(serviceName,version, user);
     }
 
     /**

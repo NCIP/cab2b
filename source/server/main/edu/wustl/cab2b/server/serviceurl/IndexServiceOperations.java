@@ -1,15 +1,14 @@
 package edu.wustl.cab2b.server.serviceurl;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
 import org.apache.log4j.Logger;
 
 import edu.wustl.cab2b.common.util.PropertyLoader;
-import gov.nih.nci.cagrid.discovery.client.DiscoveryClient;
+import gov.nih.nci.cagrid.metadata.ServiceMetadata;
 import gov.nih.nci.cagrid.metadata.exceptions.ResourcePropertyRetrievalException;
 
 /**
@@ -25,33 +24,21 @@ public class IndexServiceOperations {
      * @throws MalformedURIException in case of index service url not correct
      * @throws RemoteException 
      */
-    public EndpointReferenceType[] getServicesByNames(final String name) throws MalformedURIException,
-            RemoteException {
-        final List<EndpointReferenceType> list = new ArrayList<EndpointReferenceType>();
+    public Map<String, ServiceMetadata> getServicesByNames(final String name, String version)
+            throws MalformedURIException, RemoteException {
+        final Map<String, ServiceMetadata> serviceURLTometadata = new HashMap<String, ServiceMetadata>();
         String[] urls = PropertyLoader.getIndexServiceUrls();
         for (String url : urls) {
-            DiscoveryClient client = new DiscoveryClient(url);
-            EndpointReferenceType[] endpointReferenceType = null;
+            DiscoveryClientForMetaData client = new DiscoveryClientForMetaData(url);
             try {
-                endpointReferenceType = client.discoverDataServicesByDomainModel(name);
+                serviceURLTometadata.putAll(client.getServiceMetadataByDomainNameVersion(name, version));
             } catch (ResourcePropertyRetrievalException e) {
                 logger.error(e.getMessage(), e);
                 throw new RemoteException(e.getMessage());
-            } 
-
-            if (endpointReferenceType == null) {
-                return new EndpointReferenceType[0];
-            }
-
-            //There have been times when we got the EPRs null. So this check
-            for (EndpointReferenceType referenceType : endpointReferenceType) {
-                if (referenceType != null) {
-                    list.add(referenceType);
-                }
             }
         }
 
-        return list.toArray(new EndpointReferenceType[0]);
+        return serviceURLTometadata;
     }
 
 }
