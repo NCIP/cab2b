@@ -1,5 +1,8 @@
 package edu.wustl.cab2b.server.serviceurl;
+import gov.nih.nci.cagrid.metadata.ServiceMetadata;
+
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -10,9 +13,9 @@ public class IndexServiceOperationsTest extends TestCase {
 
     public void testGetServicesByNames() {
         IndexServiceOperations indexOperations = new IndexServiceOperations();
-        EndpointReferenceType[] eprArray = null;
+        Map<String, ServiceMetadata> eprArray = null;
         try {
-            eprArray = indexOperations.getServicesByNames("caNanoLab");
+            eprArray = indexOperations.getServicesByNames("caNanoLab",null);
         } catch (MalformedURIException e) {
             e.printStackTrace();
             assertFalse(true);
@@ -20,6 +23,6 @@ public class IndexServiceOperationsTest extends TestCase {
             e.printStackTrace();
             assertFalse(true);
         }
-        assertTrue(eprArray != null || eprArray.length > 0);
+        assertTrue(eprArray != null || eprArray.size() > 0);
     }
 }
