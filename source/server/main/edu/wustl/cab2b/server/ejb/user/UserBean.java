@@ -100,7 +100,7 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
     private String getUserIdentifier(String dref, String idP) throws RemoteException {
         String userId = null;
         try {
-            userId = UserOperations.getGlobusCredential(dref, idP).getIdentity();
+            userId = new UserOperations().getCredentialUserName(dref, idP);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RemoteException(e.getMessage(), e);
@@ -108,15 +108,13 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
         return userId;
     }
 
-/**
- * @return Anonymous User 
- */
-    
-    public UserInterface getAnonymousUser() throws RemoteException{
+    /**
+     * @return Anonymous User 
+     */
+
+    public UserInterface getAnonymousUser() throws RemoteException {
         return new UserOperations().getUserByName("Anonymous");
-        
+
     }
-
-
 
 }

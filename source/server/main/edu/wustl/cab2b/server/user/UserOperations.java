@@ -343,7 +343,7 @@ public class UserOperations extends DefaultBizLogic {
  */
     public String getCredentialUserName(String dref, String idP) throws GeneralSecurityException, IOException,
             Exception {
-        GlobusCredential gc = UserOperations.getGlobusCredential(dref, idP);
+        GlobusCredential gc = getGlobusCredential(dref, idP);
 
         String userName = null;
         if (gc == null) {
