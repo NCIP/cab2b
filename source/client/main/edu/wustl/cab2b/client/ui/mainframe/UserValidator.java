@@ -44,7 +44,6 @@ import gov.nih.nci.cagrid.dorian.stubs.types.InvalidProxyFault;
 import gov.nih.nci.cagrid.dorian.stubs.types.UserPolicyFault;
 import gov.nih.nci.cagrid.opensaml.SAMLAssertion;
 import gov.nih.nci.cagrid.syncgts.bean.SyncDescription;
-import gov.nih.nci.cagrid.syncgts.core.SyncGTS;
 
 /**
  * This class validates user and gets GlobusCredential from Dorian.

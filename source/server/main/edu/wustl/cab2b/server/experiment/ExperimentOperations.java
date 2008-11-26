@@ -32,7 +32,6 @@ import edu.wustl.cab2b.common.domain.ExperimentGroup;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.DataListUtil;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.DatalistCache;
@@ -69,7 +68,7 @@ public class ExperimentOperations extends DefaultBizLogic {
     public void addExperiment(Object exp) throws BizLogicException, UserNotAuthorizedException {
         insert(exp, daoType);
     }
-
+ 
     /**
      * This method adds given experiment into goven experimentGroupId and
      * persist it.
