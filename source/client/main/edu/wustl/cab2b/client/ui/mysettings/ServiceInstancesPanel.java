@@ -97,8 +97,17 @@ public class ServiceInstancesPanel extends Cab2bPanel {
         allServiceInstances = new ArrayList<AdminServiceMetadata>();
         UserInterface user = UserCache.getInstance().getCurrentUser();
         ServiceInstanceConfigurator configurator = new ServiceInstanceConfigurator();
-        Collection<AdminServiceMetadata> adminServiceMetadata = configurator.getServiceMetadataObjects(
-                                                                                                       serviceName,
+        String version = null;
+        String servicenameOnly = serviceName;
+        if(serviceName.indexOf("~")>-1)
+        {
+            String[] serviceVersion = serviceName.split("~");
+            servicenameOnly = serviceVersion[0];
+            version = serviceVersion[1];
+        }
+        
+        Collection<AdminServiceMetadata> adminServiceMetadata = configurator.getServiceMetadataObjects(servicenameOnly
+                                                                                                       ,version,
                                                                                                        user);
         allServiceInstances.addAll((adminServiceMetadata));
         filteredServiceInstances.addAll(allServiceInstances);

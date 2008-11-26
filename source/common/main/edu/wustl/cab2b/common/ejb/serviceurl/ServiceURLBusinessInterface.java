@@ -34,7 +34,7 @@ public interface ServiceURLBusinessInterface extends BusinessInterface {
      * @return
      * @throws RemoteException
      */
-    Collection<AdminServiceMetadata> getInstancesByServiceName(String serviceName, UserInterface user)
+    Collection<AdminServiceMetadata> getInstancesByServiceName(String serviceName,String version, UserInterface user)
             throws RemoteException;
 
     /**

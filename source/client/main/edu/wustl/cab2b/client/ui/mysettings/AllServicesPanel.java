@@ -201,6 +201,13 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
         }
     }
 
+    /**
+     * This method populates the page element objects  
+     * @param filteredServices
+     * @param serviceName
+     * @param status
+     * @return
+     */
     private Vector<PageElement> populatePageElements(Collection<EntityGroupInterface> filteredServices,
                                                      String serviceName, String status) {
         final Vector<PageElement> pageElementCollection = new Vector<PageElement>();
@@ -208,10 +215,13 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
             // Create an instance of the PageElement. Initialize with the appropriate data
             final StringBuilder displayString = new StringBuilder(entityGroup.getLongName());
             final String version = entityGroup.getVersion();
+            String actionCommand = entityGroup.getLongName();
             if (null != version && !version.isEmpty()) {
                 displayString.append(" v" + version);
+                actionCommand = actionCommand + "~" + version;
             }
-            final PageElement pageElement = new PageElementImpl(displayString.toString(), entityGroup.getLongName());
+
+            final PageElement pageElement = new PageElementImpl(displayString.toString(), actionCommand);
             pageElement.setDisplayName(displayString.toString());
             pageElement.setDescription(entityGroup.getDescription());
             pageElement.setUserObject(entityGroup);

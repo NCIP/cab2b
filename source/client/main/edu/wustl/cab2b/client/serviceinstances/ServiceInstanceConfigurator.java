@@ -119,7 +119,7 @@ public class ServiceInstanceConfigurator {
      * @param user
      * @return
      */
-    public Collection<AdminServiceMetadata> getServiceMetadataObjects(String serviceName, UserInterface user) {
+    public Collection<AdminServiceMetadata> getServiceMetadataObjects(String serviceName,String version, UserInterface user) {
         ServiceURLBusinessInterface serviceURLInterface = (ServiceURLBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                          EjbNamesConstants.SERVICE_URL_BEAN,
                                                                                                                          ServiceURLHomeInterface.class,
@@ -127,7 +127,7 @@ public class ServiceInstanceConfigurator {
         Collection<AdminServiceMetadata> serviceInstanceList = new ArrayList<AdminServiceMetadata>();
 
         try {
-            serviceInstanceList.addAll(serviceURLInterface.getInstancesByServiceName(serviceName, user));
+            serviceInstanceList.addAll(serviceURLInterface.getInstancesByServiceName(serviceName,version, user));
         } catch (RemoteException e) {
             logger.error(e.getStackTrace(), e);
             throw new RuntimeException(e.getMessage());
