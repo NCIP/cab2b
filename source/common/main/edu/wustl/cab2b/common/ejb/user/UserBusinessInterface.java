@@ -3,9 +3,7 @@
  */
 package edu.wustl.cab2b.common.ejb.user;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
-import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
 
@@ -67,5 +65,13 @@ public interface UserBusinessInterface extends BusinessInterface {
      * @throws RemoteException
      */
     GlobusCredential getGlobusCredential(String dref, String idP) throws RemoteException;
+    
+    /**
+     * 
+     * @return Anonymous User
+     * @throws RemoteException
+     */
+    UserInterface getAnonymousUser()throws RemoteException;
+    
 
 }

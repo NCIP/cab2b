@@ -64,8 +64,6 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
      */
     public ParameterizedQueryShowResultPanel(ICab2bQuery query) {
         queryDataModel = new ParameterizedQueryDataModel(query);
-        Long userId = UserCache.getInstance().getCurrentUser().getUserId();
-        queryDataModel.setQueryUserId(userId);
         initGUI();
     }
 

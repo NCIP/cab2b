@@ -164,8 +164,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                                                                                                                   EjbNamesConstants.EXPERIMENT,
                                                                                                                   ExperimentHome.class);
         try {
-            dataVector = expBus.getExperimentHierarchy(UserValidator.getSerializedDCR(),
-                                                       UserValidator.getIdP());
+            dataVector = expBus.getExperimentHierarchy(UserValidator.getSerializedDCR(), UserValidator.getIdP());
         } catch (RemoteException e1) {
             CommonUtils.handleException(e1, this, true, true, false, false);
         } catch (ClassNotFoundException e1) {
@@ -373,12 +372,10 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                 experiment.setCreatedOn(new Date());
                 experiment.setLastUpdatedOn(new Date());
                 experiment.setActivityStatus("active");
-                experiment.setUserId(UserCache.getInstance().getCurrentUser().getUserId());
                 experiment.getDataListMetadataCollection().add(MainSearchPanel.savedDataListMetadata);
 
                 try {
-                    expBus.addExperiment(expGrpId, experiment,
-                                         UserValidator.getSerializedDCR(),
+                    expBus.addExperiment(expGrpId, experiment, UserValidator.getSerializedDCR(),
                                          UserValidator.getIdP());
                     SearchNavigationPanel.getMessageLabel().setText("* Experiment saved successfully *.");
                     MyExperimentLinkPanel.getInstance().updateMyExperimentPanel();
@@ -452,12 +449,10 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
             newExpGrp.setDescription("");
             newExpGrp.setCreatedOn(new Date());
             newExpGrp.setLastUpdatedOn(new Date());
-            newExpGrp.setUserId(UserCache.getInstance().getCurrentUser().getUserId());
 
             try {
                 newExpGrp = expGrpBus.addExperimentGroup(parentExpGrpID, newExpGrp,
-                                                         UserValidator.getSerializedDCR(),
-                                                         UserValidator.getIdP());
+                                                         UserValidator.getSerializedDCR(), UserValidator.getIdP());
                 logger.debug("returner expGrp id " + newExpGrp.getId());
             } catch (RemoteException e1) {
                 CommonUtils.handleException(e1, this, true, true, false, false);

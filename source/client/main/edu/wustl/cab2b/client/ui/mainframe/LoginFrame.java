@@ -33,6 +33,7 @@ import org.jdesktop.swingx.JXErrorDialog;
 import org.jdesktop.swingx.JXFrame;
 
 import edu.wustl.cab2b.client.ui.controls.Cab2bComboBox;
+import edu.wustl.cab2b.client.ui.controls.Cab2bHyperlink;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
@@ -290,6 +291,10 @@ public class LoginFrame extends JXFrame {
         containerPanel.add("br tab", loginButton);
         containerPanel.add("tab", new Cab2bLabel("|"));
         containerPanel.add("tab", cancleButton);
+        Cab2bHyperlink<String> anonymousUserLink = new Cab2bHyperlink<String>(true);
+        anonymousUserLink.addActionListener(new AnonymousUserButtonListener());
+        anonymousUserLink.setText("Login as anonymous user");
+        containerPanel.add("br tab", anonymousUserLink);
 
         JPanel panel = getTransparentPanel();
         panel.setLayout(new BorderLayout(2, 60));
@@ -308,6 +313,27 @@ public class LoginFrame extends JXFrame {
     private class LoginButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             swingWorkerLogic();
+        }
+    }
+
+    /**
+     *  for anonymous link
+     *
+     */
+    private class AnonymousUserButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            CustomSwingWorker swingWorker = new CustomSwingWorker(LoginFrame.this) {
+                @Override
+                protected void doNonUILogic() {
+                    nonUILogicAnonymusUser();
+                }
+
+                @Override
+                protected void doUIUpdateLogic() throws Exception {
+                }
+            };
+            swingWorker.start();
+
         }
     }
 
@@ -352,6 +378,25 @@ public class LoginFrame extends JXFrame {
             credentialError.setText("  * Unable to authenticate: " + message);
             credentialError.setForeground(Color.RED);
         }
+    }
+
+    private void nonUILogicAnonymusUser() {
+        try {
+            new UserValidator(null, null);
+            Thread mainThread = new Thread() {
+                public void run() {
+                    launchMainFrame();
+                }
+            };
+            mainThread.setPriority(Thread.NORM_PRIORITY);
+            selfReference.dispose();
+            mainThread.start();
+        } catch (RuntimeException e) {
+            String message = CommonUtils.getErrorMessage(e);
+            credentialError.setText("  * Unable to login : " + message);
+            credentialError.setForeground(Color.RED);
+        }
+
     }
 
     /**

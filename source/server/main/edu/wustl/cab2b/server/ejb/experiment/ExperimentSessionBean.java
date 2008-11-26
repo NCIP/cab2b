@@ -1,12 +1,12 @@
 package edu.wustl.cab2b.server.ejb.experiment;
 
 import java.rmi.RemoteException;
+import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import org.globus.gsi.GlobusCredential;
 import org.hibernate.HibernateException;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -45,10 +45,10 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
      * @throws UserNotAuthorizedException
      * @throws RemoteException
      */
-    public void addExperiment(Object exp) throws BizLogicException, UserNotAuthorizedException, RemoteException {
+    /*public void addExperiment(Object exp) throws BizLogicException, UserNotAuthorizedException, RemoteException {
         (new ExperimentOperations()).addExperiment(exp);
     }
-
+*/
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#copy(java.lang.Object, java.lang.Object)
      */
@@ -80,15 +80,14 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
     public Vector getExperimentHierarchy(String dref, String idP) throws ClassNotFoundException, DAOException,
             RemoteException {
 
-        String userId = null;
+        String userName = null;
         try {
-            userId = UserOperations.getGlobusCredential(dref, idP).getIdentity();
+            userName = new UserOperations().getCredentialUserName(dref, idP);
 
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
         }
-
-        return (new ExperimentOperations()).getExperimentHierarchy(userId);
+        return (new ExperimentOperations()).getExperimentHierarchy(userName);
     }
 
     /* (non-Javadoc)
@@ -138,7 +137,7 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
     public Set<Set<EntityInterface>> getDataListEntitySet(Experiment exp) throws RemoteException {
         return (new ExperimentOperations()).getDataListEntitySet(exp);
     }
-    
+
     /**
      * Adds a given experiment to specific Experiment Group.
      * @param experimentGroupId
@@ -152,17 +151,19 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
      */
     public void addExperiment(Long experimentGroupId, Experiment experiment, String serializedCredRef, String idP)
             throws RemoteException, BizLogicException, UserNotAuthorizedException, DAOException {
-        try {
-            UserOperations.getGlobusCredential(serializedCredRef, idP).getIdentity();
 
+        Long userId = null;
+        UserOperations uop = new UserOperations();
+        try {
+
+            userId = uop.getUserByName(uop.getCredentialUserName(serializedCredRef, idP)).getUserId();
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
-
         }
 
+        experiment.setUserId(userId);
         (new ExperimentOperations()).addExperiment(experimentGroupId, experiment);
     }
-
 
     /**
      * save the given data as a data category
@@ -253,12 +254,17 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
      */
     public List<Experiment> getExperimentsForUser(UserInterface user, String dref, String idP)
             throws RemoteException {
-        try {
-            GlobusCredential cred = UserOperations.getGlobusCredential(dref, idP);
 
-            return new ExperimentOperations().getLatestExperimentForUser(user, cred.getIdentity());
-        } catch (Exception e) {
-            throw new RuntimeException("IO error occured ", e.getMessage());
+        String userName = null;
+        try {
+            userName = new UserOperations().getCredentialUserName(dref, idP);
+
+        }catch (GeneralSecurityException ge) {
+            throw new RuntimeException("General Security Exception", ge.getMessage());
         }
+        catch (Exception e) {
+            throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
+        }
+        return new ExperimentOperations().getLatestExperimentForUser(userName);
     }
 }

@@ -12,6 +12,7 @@ import org.hibernate.HibernateException;
 
 import edu.wustl.cab2b.common.domain.DCQL;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -60,6 +61,7 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
         }
         new PopularCategoryOperations().setPopularity(query);
         return new QueryExecutor(query, cred).executeQuery();
+
     }
 
     /*
@@ -79,9 +81,20 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * @throws IOException
      * @throws RemoteException if save process fails
      */
-    public void saveQuery(ICab2bQuery query, String dref, String idP) throws RemoteException, GeneralSecurityException,
-            IOException, Exception {
-        UserOperations.getGlobusCredential(dref, idP);
+    public void saveQuery(ICab2bQuery query, String dref, String idP) throws RemoteException,
+            GeneralSecurityException, IOException, Exception {
+        Long userId = null;
+        UserOperations uop = new UserOperations();
+        try {
+
+            userId = uop.getUserByName(uop.getCredentialUserName(dref, idP)).getUserId();
+        } catch (GeneralSecurityException ge) {
+            throw new RuntimeException("General Security Exception", ge.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
+        }
+        query.setUserId(userId);
+
         new HibernateCleanser(query).clean();
         new QueryBizLogic<ICab2bQuery>().saveQuery(query);
     }
@@ -152,14 +165,22 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      */
     public Collection<IParameterizedQuery> getAllQueryNameAndDescription(String dref, String idP)
             throws RemoteException, IOException, GeneralSecurityException, Exception {
+
+        String userName = null;
         try {
-            GlobusCredential cred = UserOperations.getGlobusCredential(dref, idP);
+            userName = new UserOperations().getCredentialUserName(dref, idP);
             List idList = new ArrayList(1);
-            idList.add(cred.getIdentity());
+            idList.add(userName);
             return (List<IParameterizedQuery>) Utility.executeHQL("getQueriesByUserName", idList);
+
         } catch (HibernateException e) {
             throw new RemoteException(e.getMessage());
+        } catch (GeneralSecurityException ge) {
+            throw new RuntimeException("General Security Exception", ge.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
         }
+
     }
 
     /*

@@ -296,7 +296,7 @@ public class DataListOperationsController {
         } catch (DynamicExtensionsApplicationException e1) {
             throw new CheckedException(e1);
         }
-        // popaulate data
+        // populate data
         Map<EntityInterface, CustomDataCategoryNode> entityToDataCategoryPathMap = new HashMap<EntityInterface, CustomDataCategoryNode>();
         for (AttributeInterface attribute : selectedAttributeList) {
             EntityInterface entity = attribute.getEntity();
@@ -307,7 +307,7 @@ public class DataListOperationsController {
             }
             dataCategoryPath.addAttribute(attribute);
         }
-        // recursive mathod to create an entire tree structure of entity, it's
+        // recursive method to create an entire tree structure of entity, it's
         // attributes and associations.
         joinTree(rootEntity, entityToDataCategoryPathMap);
         CustomDataCategoryNode rooDataCategoryNode = entityToDataCategoryPathMap.get(rootEntity);

@@ -106,7 +106,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     /** Table Header*/
     public final String[] ANALYSIS_TABLE_HEADERS = new String[] { "Data Category", "Analysis Title", "Date", "Status" };
 
-    /** Values */ 
+    /** Values */
     public static ArrayList<String> values = new ArrayList<String>();
 
     // fields used by Save Data Category functionality
@@ -400,7 +400,6 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                 dataListMetadata.setCreatedOn(new Date());
                 dataListMetadata.setLastUpdatedOn(new Date());
                 dataListMetadata.setCustomDataCategory(true);
-                dataListMetadata.setUserId(UserCache.getInstance().getCurrentUser().getUserId());
 
                 DataList customCategoryDataList = new DataList();
                 customCategoryDataList.setDataListAnnotation(dataListMetadata);

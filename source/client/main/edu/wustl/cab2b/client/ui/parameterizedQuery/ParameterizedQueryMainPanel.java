@@ -48,15 +48,11 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
 
     public ParameterizedQueryMainPanel() {
         parameterizedQueryDataModel = new ParameterizedQueryDataModel();
-        Long userId = UserCache.getInstance().getCurrentUser().getUserId();
-        parameterizedQueryDataModel.setQueryUserId(userId);
         initGUI();
     }
 
     public ParameterizedQueryMainPanel(ParameterizedQueryDataModel queryModel) {
         parameterizedQueryDataModel = queryModel;
-        Long userId = UserCache.getInstance().getCurrentUser().getUserId();
-        parameterizedQueryDataModel.setQueryUserId(userId);
         initGUI();
     }
 

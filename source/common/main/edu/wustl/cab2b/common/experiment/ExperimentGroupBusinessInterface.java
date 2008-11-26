@@ -18,9 +18,9 @@ public interface ExperimentGroupBusinessInterface extends BusinessInterface {
 	 * @throws UserNotAuthorizedException
 	 * @throws RemoteException
 	 */
-    public ExperimentGroup addExperimentGroup(Object expGrp) throws BizLogicException, UserNotAuthorizedException,
+    /*public ExperimentGroup addExperimentGroup(Object expGrp) throws BizLogicException, UserNotAuthorizedException,
             RemoteException;
-
+    */
     /**
      * Adds a experiment group to a given parent
      * @param parentExperimentGroupId
@@ -44,6 +44,6 @@ public interface ExperimentGroupBusinessInterface extends BusinessInterface {
      * @throws DAOException
      * @throws RemoteException
      */
-    public ExperimentGroup getExperimentGroup(Long identifier) throws DAOException, RemoteException;
+  //  public ExperimentGroup getExperimentGroup(Long identifier) throws DAOException, RemoteException;
 
 }

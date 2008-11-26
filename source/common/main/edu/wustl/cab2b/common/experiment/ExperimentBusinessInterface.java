@@ -26,7 +26,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @throws UserNotAuthorizedException
      * @throws RemoteException
      */
-    public void addExperiment(Object exp) throws BizLogicException, UserNotAuthorizedException, RemoteException;
+  //  public void addExperiment(Object exp) throws BizLogicException, UserNotAuthorizedException, RemoteException;
 
     /**
      * Adds a given experiment to specific Experiment Group.

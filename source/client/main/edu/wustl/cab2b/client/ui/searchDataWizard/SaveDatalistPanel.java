@@ -231,7 +231,6 @@ public class SaveDatalistPanel extends Cab2bPanel {
             dataListAnnotation.setDescription(dataListDesc);
             dataListAnnotation.setCreatedOn(new Date());
             dataListAnnotation.setLastUpdatedOn(new Date());
-            dataListAnnotation.setUserId(UserCache.getInstance().getCurrentUser().getUserId());
 
             final IDataRow newRootDataRow = processNode(MainSearchPanel.getDataList().getRootDataRow());
             MainSearchPanel.getDataList().setDataListAnnotation(dataListAnnotation);

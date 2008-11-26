@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.server.ejb.datalist;
 
 import java.rmi.RemoteException;
+import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,18 +38,20 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
      * @throws RemoteException
      * @see DataListBusinessInterface#retrieveAllDataListMetadata()
      */
-    public List<DataListMetadata> retrieveAllDataListMetadata(String dref, String selectedIdentityProvider)
-            throws RemoteException {
+    public List<DataListMetadata> retrieveAllDataListMetadata(String dref, String idP) throws RemoteException {
 
-        String userId = null;
+        String userName = null;
         try {
-            userId = UserOperations.getGlobusCredential(dref, selectedIdentityProvider).getIdentity();
+            userName = new UserOperations().getCredentialUserName(dref, idP);
+
+        } catch (GeneralSecurityException ge) {
+            throw new RuntimeException("General Security Exception", ge.getMessage());
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
         }
-        return new DataListMetadataOperations().retrieveAllDataListMetadata(userId);
+        return new DataListMetadataOperations().retrieveAllDataListMetadata(userName);
     }
-    
+
     /**
      * Returns a data list along with annotation.
      * @param dataListId
@@ -82,15 +85,20 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
      * @see DataListBusinessInterface#saveDataList(DataList)
      */
     public DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata, String dref,
-                                         String selectedIdentityProvider) throws RemoteException {
+                                         String idP) throws RemoteException {
 
+        Long userId = null;
+        UserOperations uop = new UserOperations();
         try {
-            UserOperations.getGlobusCredential(dref, selectedIdentityProvider).getIdentity();
 
+            userId = uop.getUserByName(uop.getCredentialUserName(idP, idP)).getUserId();
+        } catch (GeneralSecurityException ge) {
+            throw new RuntimeException("General Security Exception", ge.getMessage());
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
         }
 
+        datalistMetadata.setUserId(userId);
         return new DataListOperationsController().saveDataList(rootDataRow, datalistMetadata);
 
     }
@@ -118,15 +126,19 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
     public DataListMetadata saveDataCategory(IDataRow rootRecordDataRow, DataListMetadata dataListMetadata,
                                              List<AttributeInterface> oldAttribute,
                                              List<AttributeInterface> newAttributes, String serializedRef,
-                                             String selectedIdentityProvider) throws RemoteException,
-            CheckedException {
+                                             String idP) throws RemoteException, CheckedException {
 
+        Long userId = null;
+        UserOperations uop = new UserOperations();
         try {
-            UserOperations.getGlobusCredential(serializedRef, selectedIdentityProvider).getIdentity();
 
+            userId = uop.getUserByName(uop.getCredentialUserName(idP, idP)).getUserId();
+        } catch (GeneralSecurityException ge) {
+            throw new RuntimeException("General Security Exception", ge.getMessage());
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
         }
+        dataListMetadata.setUserId(userId);
         return new DataListOperationsController().saveDataCategory(rootRecordDataRow, dataListMetadata,
                                                                    oldAttribute, newAttributes);
     }
@@ -149,9 +161,8 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
                                                    String selectedIdentityProvider) throws RemoteException,
             CheckedException {
 
-        String userId = null;
         try {
-            userId = UserOperations.getGlobusCredential(dref, selectedIdentityProvider).getIdentity();
+            UserOperations.getGlobusCredential(dref, selectedIdentityProvider).getIdentity();
 
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());

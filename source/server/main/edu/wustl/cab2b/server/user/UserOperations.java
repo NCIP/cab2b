@@ -258,6 +258,11 @@ public class UserOperations extends DefaultBizLogic {
      */
     public static GlobusCredential getGlobusCredential(String serializedCredRef, String idP)
             throws GeneralSecurityException, IOException, Exception {
+
+        if (serializedCredRef == null && idP == null) {
+
+            return null;
+        }
         GlobusCredential credential = getGlobusCredentialCreated(idP);
 
         /*Create and Instance of the delegate credential client, specifying the DelegatedCredentialReference and the credential of the delegatee.
@@ -326,6 +331,28 @@ public class UserOperations extends DefaultBizLogic {
         }
 
         return delegatedCredentialReference;
+    }
+/**
+ * 
+ * @param dref
+ * @param idP
+ * @return It returns grid user name 
+ * @throws GeneralSecurityException
+ * @throws IOException
+ * @throws Exception
+ */
+    public String getCredentialUserName(String dref, String idP) throws GeneralSecurityException, IOException,
+            Exception {
+        GlobusCredential gc = UserOperations.getGlobusCredential(dref, idP);
+
+        String userName = null;
+        if (gc == null) {
+            userName = "Anonymous";
+        } else
+            userName = gc.getIdentity();
+
+        return userName;
+
     }
 
 }

@@ -270,9 +270,11 @@ public class UserValidator {
         DelegatedCredentialReference reference = null;
         try {
             logger.debug("Delegating Credential to " + cdsURL);
+
             DelegationUserClient client = new DelegationUserClient(cdsURL, credential);
             reference = client.delegateCredential(delegationLifetime, delegationPathLength, policy,
                                                   issuedCredentialLifetime, issuedCredentialPathLength, keySize);
+
         } catch (CDSInternalFault e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(
@@ -347,7 +349,8 @@ public class UserValidator {
             out.close();
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            throw new RuntimeException("Unable to copy CA certificates to [user.home]/.globus", ErrorCodeConstants.CDS_003);
+            throw new RuntimeException("Unable to copy CA certificates to [user.home]/.globus",
+                    ErrorCodeConstants.CDS_003);
         }
 
     }
@@ -382,7 +385,6 @@ public class UserValidator {
             SyncDescription description = (SyncDescription) gov.nih.nci.cagrid.common.Utils.deserializeDocument(
                                                                                                                 pathToSyncDescription,
                                                                                                                 SyncDescription.class);
-            SyncGTS.getInstance().syncOnce(description);
             logger.debug("Successfully syncronized with GTS service. Globus certificates generated.");
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

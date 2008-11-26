@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.server.ejb.experiment;
 
 import java.rmi.RemoteException;
+import java.security.GeneralSecurityException;
 
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
 import edu.wustl.cab2b.common.exception.RuntimeException;
@@ -22,20 +23,19 @@ public class ExperimentGroupSessionBean extends AbstractStatelessSessionBean imp
 
     private static final long serialVersionUID = -5216059908579963838L;
 
-	/**
-	 * Adds a experiment group 
-	 * @param expGrp
-	 * @return Reference to ExperimentGroup
-	 * @throws BizLogicException
-	 * @throws UserNotAuthorizedException
-	 * @throws RemoteException
-	 */
-    public ExperimentGroup addExperimentGroup(Object expGrp) throws BizLogicException, UserNotAuthorizedException,
-            RemoteException {
-        return (new ExperimentGroupOperations()).addExperimentGroup(expGrp);
-    }
-
-
+    /**
+     * Adds a experiment group 
+     * @param expGrp
+     * @return Reference to ExperimentGroup
+     * @throws BizLogicException
+     * @throws UserNotAuthorizedException
+     * @throws RemoteException
+     */
+    /* public ExperimentGroup addExperimentGroup(Object expGrp) throws BizLogicException, UserNotAuthorizedException,
+             RemoteException {
+         return (new ExperimentGroupOperations()).addExperimentGroup(expGrp);
+     }
+    */
     /**
      * Returns ExperimentGroup reference
      * @param identifier
@@ -43,10 +43,10 @@ public class ExperimentGroupSessionBean extends AbstractStatelessSessionBean imp
      * @throws DAOException
      * @throws RemoteException
      */
-    public ExperimentGroup getExperimentGroup(Long identifier) throws DAOException, RemoteException {
+ /*   public ExperimentGroup getExperimentGroup(Long identifier) throws DAOException, RemoteException {
         return (new ExperimentGroupOperations()).getExperimentGroup(identifier);
     }
-    
+*/
     /**
      * Adds a experiment group to a given parent
      * @param parentExperimentGroupId
@@ -64,13 +64,18 @@ public class ExperimentGroupSessionBean extends AbstractStatelessSessionBean imp
                                               String dref, String idP) throws BizLogicException,
             UserNotAuthorizedException, RemoteException, DAOException {
 
+        Long userId = null;
+        UserOperations uop = new UserOperations();
         try {
-            UserOperations.getGlobusCredential(dref, idP).getIdentity();
 
+            userId = uop.getUserByName(uop.getCredentialUserName(dref, idP)).getUserId();
+        } catch (GeneralSecurityException ge) {
+            throw new RuntimeException("General Security Exception", ge.getMessage());
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
         }
 
+        experimentGroup.setUserId(userId);
         return (new ExperimentGroupOperations()).addExperimentGroup(parentExperimentGroupId, experimentGroup);
     }
 

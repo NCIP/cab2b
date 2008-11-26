@@ -176,19 +176,25 @@ public class ClientLauncher {
      * Loads the client side cache. If fails, logs error and quits
      */
     private static void loadCache() {
-        try {// ClientSideCache MUST be instanciated before anything else.
+        try {// ClientSideCache MUST be instantiated before anything else.
             // Don't change order of below lines of code
             ClientSideCache.getInstance();
             UserBusinessInterface userBusinessInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                    EjbNamesConstants.USER_BEAN,
                                                                                                                    UserHomeInterface.class);
-            UserInterface user = userBusinessInterface.getUserByName(
-                                                                     UserValidator.getSerializedDCR(),
-                                                                     UserValidator.getIdP());
-            if (user == null) {
-                user = userBusinessInterface.insertUser(UserValidator.getSerializedDCR(),
-                                                        UserValidator.getIdP());
+            String str = UserValidator.getSerializedDCR();
+            UserInterface user = null;
+            if (str == null) {
+                user = userBusinessInterface.getAnonymousUser();
+            } else {
+                UserCache.getInstance().getCurrentUser();
+                user = userBusinessInterface.getUserByName(UserValidator.getSerializedDCR(),
+                                                                         UserValidator.getIdP());
+                if (user == null) {
+                    user = userBusinessInterface.insertUser(UserValidator.getSerializedDCR(),UserValidator.getIdP());
+                }
             }
+            
             UserCache.getInstance().init(user);
         } catch (LocatorException le) {
             CommonUtils.handleException(le, progressBar.getParent(), true, true, true, true);

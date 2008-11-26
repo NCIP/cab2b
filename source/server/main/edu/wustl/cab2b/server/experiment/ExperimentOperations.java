@@ -175,7 +175,7 @@ public class ExperimentOperations extends DefaultBizLogic {
      * @param userIdentity
      * @return List<Experiment>
      */
-    public List<Experiment> getLatestExperimentForUser(UserInterface user, String userIdentity) {
+    public List<Experiment> getLatestExperimentForUser(String userIdentity) {
         List idList = new ArrayList(1);
         idList.add(userIdentity);
         return (List<Experiment>) Utility.executeHQL("getLatestExperimentByUserName", idList);

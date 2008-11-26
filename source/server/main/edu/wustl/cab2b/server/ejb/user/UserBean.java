@@ -23,7 +23,7 @@ import edu.wustl.cab2b.server.user.UserOperations;
  */
 public class UserBean extends AbstractStatelessSessionBean implements UserBusinessInterface {
     private static final long serialVersionUID = -9088505042791608055L;
-    
+
     Logger logger = edu.wustl.common.util.logger.Logger.getLogger(UserBean.class);
 
     /**
@@ -35,7 +35,7 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
      * @throws RemoteException
      */
     public UserInterface insertUser(String dref, String idP) throws RemoteException {
-        String userId = getUserIdentifier(dref,idP);
+        String userId = getUserIdentifier(dref, idP);
         User user = new User(userId, null, false);
         return new UserOperations().insertUser(user);
     }
@@ -77,7 +77,7 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
      * @throws RemoteException
      */
     public UserInterface getUserByName(String dref, String idP) throws RemoteException {
-        String userId = getUserIdentifier(dref,idP);
+        String userId = getUserIdentifier(dref, idP);
         return new UserOperations().getUserByName(userId);
     }
 
@@ -88,9 +88,9 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
      * @return
      * @throws RemoteException
      */
-    public GlobusCredential getGlobusCredential(String dref , String idP) throws RemoteException {
+    public GlobusCredential getGlobusCredential(String dref, String idP) throws RemoteException {
         try {
-            return UserOperations.getGlobusCredential(dref,idP);
+            return UserOperations.getGlobusCredential(dref, idP);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RemoteException(e.getMessage(), e);
@@ -100,11 +100,23 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
     private String getUserIdentifier(String dref, String idP) throws RemoteException {
         String userId = null;
         try {
-            userId = UserOperations.getGlobusCredential(dref,idP).getIdentity();
+            userId = UserOperations.getGlobusCredential(dref, idP).getIdentity();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RemoteException(e.getMessage(), e);
         }
         return userId;
     }
+
+/**
+ * @return Anonymous User 
+ */
+    
+    public UserInterface getAnonymousUser() throws RemoteException{
+        return new UserOperations().getUserByName("Anonymous");
+        
+    }
+
+
+
 }
