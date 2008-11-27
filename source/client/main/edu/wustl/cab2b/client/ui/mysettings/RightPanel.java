@@ -124,7 +124,16 @@ public class RightPanel extends Cab2bPanel {
                                                                    public void propertyChange(
                                                                                               PropertyChangeEvent event) {
                                                                        List<String> newURLList = (List<String>) event.getNewValue();
-                                                                       entityToURLMap.put(serviceName, newURLList);
+                                                                       String entityGroupName = serviceName;
+                                                                       
+ 
+                                                                       if(serviceName.indexOf("~")>-1)
+                                                                       {
+                                                                           String nameVersion[] = serviceName.split("~");
+                                                                           entityGroupName =    nameVersion[0];
+                                                                       }
+                                                                       
+                                                                       entityToURLMap.put(entityGroupName, newURLList);
                                                                        String status = ApplicationProperties.getValue(SERVICE_URLS_SUCCESS);
                                                                        allServices.refreshPanel(serviceName,
                                                                                                 status);
