@@ -605,7 +605,10 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             final ICab2bQuery b2bquery = (ICab2bQuery) mainSearchPanel.queryObject.getQuery();
             EntityGroupInterface entityGroup = b2bquery.getOutputEntity().getEntityGroupCollection().iterator().next();
             String groupName = entityGroup.getLongName();
-            queryURLList.addAll(entityURLMap.get(groupName));
+            if(entityURLMap.get(groupName)!=null)
+            {
+                queryURLList.addAll(entityURLMap.get(groupName));
+            }
             b2bquery.getOutputUrls().clear();
             b2bquery.getOutputUrls().addAll(queryURLList);
         }
