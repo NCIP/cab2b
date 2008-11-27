@@ -162,7 +162,7 @@ public class ServiceURLOperations {
             metadataObject.setHostingResearchCenter(serviceURL);
             metadataObject.setSeviceName(service.getEntityGroupName());
             metadataObject.setServiceURLObject(service);
-            if (serviceURLS.contains(service.getUrlLocation())) {
+            if (serviceURLS!=null&&serviceURLS.contains(service.getUrlLocation())) {
                 metadataObject.setConfigured(true);
             }
             serviceURLMetadataMap.put(serviceURL, metadataObject);
