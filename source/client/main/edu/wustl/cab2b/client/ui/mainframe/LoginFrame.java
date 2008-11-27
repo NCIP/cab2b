@@ -375,14 +375,13 @@ public class LoginFrame extends JXFrame {
             mainThread.start();
         } catch (RuntimeException e) {
             String message = CommonUtils.getErrorMessage(e);
-            credentialError.setText("  * Unable to authenticate: " + message);
+            credentialError.setText("  * " + message);
             credentialError.setForeground(Color.RED);
         }
     }
 
     private void nonUILogicAnonymusUser() {
         try {
-            new UserValidator(null, null);
             Thread mainThread = new Thread() {
                 public void run() {
                     launchMainFrame();
@@ -393,7 +392,7 @@ public class LoginFrame extends JXFrame {
             mainThread.start();
         } catch (RuntimeException e) {
             String message = CommonUtils.getErrorMessage(e);
-            credentialError.setText("  * Unable to login : " + message);
+            credentialError.setText("  * " + message);
             credentialError.setForeground(Color.RED);
         }
 
