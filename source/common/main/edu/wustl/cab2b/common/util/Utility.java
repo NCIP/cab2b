@@ -277,14 +277,12 @@ public class Utility {
         buff.append(name.substring(name.lastIndexOf(".") + 1, name.length()));
         buff.append(" (");
         buff.append(projectName);
-        buff.append(" v");
 
         String version = eg.getVersion();
         if (version != null) {
+            buff.append(" v");
             buff.append(version);
-        } else {
-            buff.append('1');
-        }
+        } 
         buff.append(')');
 
         return buff.toString();
@@ -308,40 +306,35 @@ public class Utility {
      * @return Display string for given path
      */
     public static String getPathDisplayString(IPath path) {
-        String text = "<HTML><B>Path</B>:";
-        List<IAssociation> pathList = path.getIntermediateAssociations();
-        text = text.concat(Utility.getDisplayName(path.getSourceEntity()));
-        for (int i = 0; i < pathList.size(); i++) {
-            text = text.concat("<B>----></B>");
-            text = text.concat(Utility.getDisplayName(pathList.get(i).getTargetEntity()));
-        }
-        text = text.concat("</HTML>");
-        logger.debug(text);
+        String text = getHtmlRepresentation(path);
         StringBuffer sb = new StringBuffer();
         int textLength = text.length();
-        logger.debug(textLength);
         int currentStart = 0;
         String currentString = null;
-        int offset = 100;
+        final int offset = 100;
         int strLen = 0;
         int len = 0;
         while (currentStart < textLength && textLength > offset) {
-            currentString = text.substring(currentStart, (currentStart + offset));
+            int lastIndex = currentStart + offset;
+            currentString = text.substring(currentStart, lastIndex);
             strLen = strLen + currentString.length() + len;
             sb.append(currentString);
-            int index = text.indexOf("<B>----></B>", (currentStart + offset));
+            int index = text.indexOf("<B>----></B>", lastIndex);
             if (index == -1) {
-                index = text.indexOf(")", (currentStart + offset)) + 1;
+                int location = text.indexOf(")", lastIndex);
+                if(location!=-1) {
+                    index = location + 1;
+                }
             }
             if (index == -1) {
-                index = text.indexOf(",", (currentStart + offset));
+                index = text.indexOf(",", lastIndex);
             }
             if (index == -1) {
-                index = text.indexOf(" ", (currentStart + offset));
+                index = text.indexOf(" ", lastIndex);
             }
             if (index != -1) {
                 len = index - strLen;
-                currentString = text.substring((currentStart + offset), (currentStart + offset + len));
+                currentString = text.substring(lastIndex, (lastIndex + len));
                 sb.append(currentString);
                 sb.append("<P>");
             } else {
@@ -358,6 +351,17 @@ public class Utility {
         }
         sb.append(text.substring(currentStart));
         return sb.toString();
+    }
+    static String getHtmlRepresentation(IPath path) {
+        StringBuffer text = new StringBuffer("<HTML><B>Path</B>:");
+        List<IAssociation> pathList = path.getIntermediateAssociations();
+        text.append(Utility.getDisplayName(path.getSourceEntity()));
+        for (int i = 0; i < pathList.size(); i++) {
+            text.append("<B>----></B>");
+            text.append(Utility.getDisplayName(pathList.get(i).getTargetEntity()));
+        }
+        text.append("</HTML>");
+        return text.toString();
     }
 
     /**
