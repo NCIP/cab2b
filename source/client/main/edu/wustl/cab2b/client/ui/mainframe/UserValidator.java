@@ -59,9 +59,9 @@ public class UserValidator {
 
     private String userName;
 
-    private static String idP;
+    private static String idP = null;
 
-    private static String serializedDCR;
+    private static String serializedDCR = null;
 
     public UserValidator(final String userName, final String idP) {
         this.userName = userName;
