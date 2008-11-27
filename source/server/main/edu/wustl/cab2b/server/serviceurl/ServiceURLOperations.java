@@ -110,25 +110,26 @@ public class ServiceURLOperations {
 
             }
             ServiceMetadata metaData = services.get(serviceURL);
-            
+
             String description = "* No description available";
             String researchCenter = serviceURL;
             //null checks to avoid null pointers
-              if (metaData.getServiceDescription() != null
+            if (metaData != null) {
+                if (metaData.getServiceDescription() != null
                         && metaData.getServiceDescription().getService() != null) {
                     String desc = metaData.getServiceDescription().getService().getDescription();
-                    if (desc != null && desc.length()!=0) {
+                    if (desc != null && desc.length() != 0) {
                         description = desc;
                     }
                 }
                 if (metaData.getHostingResearchCenter() != null
                         && metaData.getHostingResearchCenter().getResearchCenter() != null) {
                     String name = metaData.getHostingResearchCenter().getResearchCenter().getDisplayName();
-                    if (name != null && name.length()!=0) {
+                    if (name != null && name.length() != 0) {
                         researchCenter = name;
                     }
                 }
-            
+            }
             metadataObject.setSeviceDescription(description);
             metadataObject.setHostingResearchCenter(researchCenter);
             metadataObject.setSeviceName(serviceName);
@@ -162,7 +163,7 @@ public class ServiceURLOperations {
             metadataObject.setHostingResearchCenter(serviceURL);
             metadataObject.setSeviceName(service.getEntityGroupName());
             metadataObject.setServiceURLObject(service);
-            if (serviceURLS!=null&&serviceURLS.contains(service.getUrlLocation())) {
+            if (serviceURLS != null && serviceURLS.contains(service.getUrlLocation())) {
                 metadataObject.setConfigured(true);
             }
             serviceURLMetadataMap.put(serviceURL, metadataObject);
