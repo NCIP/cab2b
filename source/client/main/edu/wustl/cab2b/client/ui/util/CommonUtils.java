@@ -148,13 +148,27 @@ public class CommonUtils {
     }
 
     public static String getErrorMessage(Throwable t) {
-        String errorMessage = t.getMessage();
-        final String find = "Exception:";
+        String msgForUser = "";
+        if (t instanceof Cab2bExceptionInterface) {
+            Cab2bExceptionInterface cab2bException = (Cab2bExceptionInterface) t;
+            String errorCode = cab2bException.getErrorCode();
+            if (errorCode != null) {
+                msgForUser = ErrorCodeHandler.getErrorMessage(errorCode);
 
-        if (errorMessage.contains(find)) {
-            errorMessage = errorMessage.substring(errorMessage.indexOf(find) + find.length() + 1);
+                String message = t.getMessage();
+                if (ErrorCodeConstants.QM_0004.equals(errorCode)) {
+                    msgForUser += message.substring(message.indexOf("http"), (message.indexOf("\n") - 1));
+                    msgForUser += "\nRemove it and query again";
+                }
+
+                final String find = "Exception:";
+                if (msgForUser.length() == 0 && message.contains(find)) {
+                    msgForUser = message.substring(message.indexOf(find) + find.length() + 1);
+                }
+            }
         }
-        return errorMessage;
+
+        return msgForUser;
     }
 
     /**
@@ -173,25 +187,9 @@ public class CommonUtils {
             e = exception;
         }
 
-        String msgForUser = "";
+        String msgForUser = getErrorMessage(e);
+        
         String msgToLog = e.getMessage();
-        if (e instanceof Cab2bExceptionInterface) {
-            Cab2bExceptionInterface cab2bException = (Cab2bExceptionInterface) e;
-            String errorCode = cab2bException.getErrorCode();
-            if (errorCode != null) {
-                msgForUser = ErrorCodeHandler.getErrorMessage(errorCode);
-
-                if (ErrorCodeConstants.QM_0004.equals(errorCode)) {
-                    msgForUser += msgToLog.substring(msgToLog.indexOf("http"), (msgToLog.indexOf("\n") - 1));
-                    msgForUser += "\nRemove it and query again";
-                }
-
-                if (msgForUser.length() == 0) {
-                    msgForUser = getErrorMessage(e);
-                }
-            }
-        }
-
         if (logException) {
             logger.error(msgToLog, e);
         }
@@ -277,10 +275,10 @@ public class CommonUtils {
                                                                QueryEngineBusinessInterface queryEngineBus)
             throws RuntimeException, RemoteException, Exception {
         boolean anySecureSevice = Utility.hasAnySecureService(query);
-        if(anySecureSevice) {
+        if (anySecureSevice) {
             return queryEngineBus.executeQuery(query, UserValidator.getSerializedDCR(), UserValidator.getIdP());
         } else {
-            return queryEngineBus.executeQuery(query, null,null);   
+            return queryEngineBus.executeQuery(query, null, null);
         }
 
     }
