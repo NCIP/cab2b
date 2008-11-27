@@ -226,7 +226,7 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
             pageElement.setDescription(entityGroup.getDescription());
             pageElement.setUserObject(entityGroup);
 
-            if (null != status && displayString.toString().equals(serviceName)) {
+            if (null != status && actionCommand.equals(serviceName)) {
                 pageElement.setExtraDisplayText(status);
             }
             pageElementCollection.add(pageElement);
