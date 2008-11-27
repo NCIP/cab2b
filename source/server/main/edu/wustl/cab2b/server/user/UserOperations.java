@@ -258,26 +258,26 @@ public class UserOperations extends DefaultBizLogic {
      */
     public static GlobusCredential getGlobusCredential(String serializedCredRef, String idP)
             throws GeneralSecurityException, IOException, Exception {
+        GlobusCredential delegatedCredential = null;
+        if (serializedCredRef != null && idP != null) {
+            GlobusCredential credential = getGlobusCredentialCreated(idP);
 
-        if (serializedCredRef == null && idP == null) {
+            /*
+             * Create and Instance of the delegate credential client, specifying the DelegatedCredentialReference and 
+             * the credential of the delegatee. The DelegatedCredentialReference specifies which credential to obtain.
+             * The delegatee's credential is required to authenticate with the CDS such that the CDS may determining 
+             * if the the delegatee has been granted access to the credential in which they wish to obtain.
+             */
+            DelegatedCredentialReference dref = getDelegatedCredentialReference(serializedCredRef);
+            DelegatedCredentialUserClient client = new DelegatedCredentialUserClient(dref, credential);
 
-            return null;
+            //The get credential method obtains a signed delegated credential from the CDS.
+            delegatedCredential = client.getDelegatedCredential();
+
+            //Set the delegated credential as the default, the delegatee is now logged in as the delegator.
+            //ProxyUtil.saveProxyAsDefault(delegatedCredential);
+            logger.debug("Retrieved Client credential");
         }
-        GlobusCredential credential = getGlobusCredentialCreated(idP);
-
-        /*Create and Instance of the delegate credential client, specifying the DelegatedCredentialReference and the credential of the delegatee.
-          The DelegatedCredentialReference specifies which credential to obtain. The delegatee's credential is required to authenticate with 
-          the CDS such that the CDS may determining if the the delegatee has been granted access to the credential in which they wish to obtain.*/
-        DelegatedCredentialReference dref = getDelegatedCredentialReference(serializedCredRef);
-        DelegatedCredentialUserClient client = new DelegatedCredentialUserClient(dref, credential);
-
-        //The get credential method obtains a signed delegated credential from the CDS.
-        GlobusCredential delegatedCredential = client.getDelegatedCredential();
-
-        //Set the delegated credential as the default, the delegatee is now logged in as the delegator.
-        ProxyUtil.saveProxyAsDefault(delegatedCredential);
-        logger.debug("Retrieved Client credential");
-
         return delegatedCredential;
     }
 
@@ -332,27 +332,28 @@ public class UserOperations extends DefaultBizLogic {
 
         return delegatedCredentialReference;
     }
-/**
- * 
- * @param dref
- * @param idP
- * @return It returns grid user name 
- * @throws GeneralSecurityException
- * @throws IOException
- * @throws Exception
- */
+
+    /**
+     * 
+     * @param dref
+     * @param idP
+     * @return It returns grid user name 
+     * @throws GeneralSecurityException
+     * @throws IOException
+     * @throws Exception
+     */
     public String getCredentialUserName(String dref, String idP) throws GeneralSecurityException, IOException,
             Exception {
-        GlobusCredential gc = getGlobusCredential(dref, idP);
+        //TODO This is very wrong. Just to get the user gridId, CDS is called to get the user's credential.
+        GlobusCredential credential = getGlobusCredential(dref, idP);
 
         String userName = null;
-        if (gc == null) {
+        if (credential == null) {
             userName = "Anonymous";
-        } else
-            userName = gc.getIdentity();
-
+        } else {
+            userName = credential.getIdentity();
+        }
         return userName;
-
     }
 
 }
