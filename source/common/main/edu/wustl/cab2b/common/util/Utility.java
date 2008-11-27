@@ -23,10 +23,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.axis.utils.XMLUtils;
 import org.apache.log4j.Logger;
+import org.globus.wsrf.encoding.ObjectDeserializer;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.w3c.dom.Document;
 
 import edu.common.dynamicextensions.domain.BooleanAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.DateAttributeTypeInformation;
@@ -740,27 +743,40 @@ public class Utility {
      */
     public static String createModelName(String longName, String version) {
         StringBuffer projectName = new StringBuffer(longName);
-        projectName.append("_v");
 
-        if (version == null || version.length() == 0) {
-            version = "1";
+        if (version != null && version.length() != 0) {
+            projectName.append("_v");
+            projectName.append(version);
         }
-        projectName.append(version);
 
         return projectName.toString();
     }
+
     /**
      * @param query caB2B query to check
      * @return TRUE : if given query is being fired on at-least one service containing https 
      */
     public static boolean hasAnySecureService(ICab2bQuery query) {
         boolean anySecureSevice = false;
-        for(String url :query.getOutputUrls() ) {
-            if(url.trim().toLowerCase().startsWith("https://")) {
+        for (String url : query.getOutputUrls()) {
+            if (url.trim().toLowerCase().startsWith("https://")) {
                 anySecureSevice = true;
                 break;
             }
         }
         return anySecureSevice;
+    }
+
+    /**
+     * 
+     * @param inputStream
+     * @param objectType
+     * @return
+     * @throws Exception
+     */
+    public static Object deserializeDocument(InputStream inputStream, Class objectType) throws Exception {
+        Document doc = XMLUtils.newDocument(inputStream);
+        Object obj = ObjectDeserializer.toObject(doc.getDocumentElement(), objectType);
+        return obj;
     }
 }
