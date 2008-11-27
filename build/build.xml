@@ -284,18 +284,18 @@
 				<include name="log4j.properties" />
 			</fileset>
 		</copy>
-		<mkdir dir="${client.setup.dir}/conf/CA_Cert/Production" />
-		<mkdir dir="${client.setup.dir}/conf/CA_Cert/Training" />
-		<copy todir="${client.setup.dir}/conf/CA_Cert/Production" >
-			<fileset dir="${conf.dir}/CA_Cert/Production">
-			<include name="*.*"/>
+		<mkdir dir="${client.setup.dir}/conf/Production" />
+		<mkdir dir="${client.setup.dir}/conf/Training" />
+		<copy todir="${client.setup.dir}/conf/Production">
+			<fileset dir="${conf.dir}/Production">
+				<include name="*.*" />
 			</fileset>
 		</copy>
-		<copy todir="${client.setup.dir}/conf/CA_Cert/Training" >
-					<fileset dir="${conf.dir}/CA_Cert/Training">
-					<include name="*.*"/>
-					</fileset>
-		</copy> 
+		<copy todir="${client.setup.dir}/conf/Training">
+			<fileset dir="${conf.dir}/Training">
+				<include name="*.*" />
+			</fileset>
+		</copy>
 
 		<copy todir="${client.setup.dir}/resources/images">
 			<fileset dir="resources/images">
@@ -373,9 +373,9 @@
 				<exclude name="jbossall-client.jar" />
 				<exclude name="commons-logging-1.0.4.jar" />
 				<exclude name="log4j-1.2.14.jar" />
-				
-				
-				
+
+
+
 			</fileset>
 			<fileset dir="lib/server">
 				<include name="**/*.jar" />
@@ -779,10 +779,6 @@
 		<signjar alias="caB2Bv2.1" storepass="cab2b123" keystore="${keystore}">
 			<fileset dir="${webstart.client.dir}">
 				<include name="**/*.jar" />
-				<!-- exclude files which are already signed 
-				<exclude name="**/org-netbeans-graph-vmd.jar" />
-				<exclude name="**/org-openide-util.jar" />
-				-->
 			</fileset>
 		</signjar>
 
@@ -795,6 +791,7 @@
 			</fileset>
 		</copy>
 		<copy todir="${webstart.war.dir}" file="${basedir}/webstart/index.html" />
+
 
 		<war destfile="${workArea.dir}/cab2b.war" webxml="${basedir}/webstart/web.xml">
 			<fileset dir="${basedir}/webstart">
