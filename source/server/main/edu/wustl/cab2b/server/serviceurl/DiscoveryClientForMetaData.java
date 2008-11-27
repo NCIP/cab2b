@@ -160,35 +160,10 @@ public class DiscoveryClientForMetaData extends DiscoveryClient {
         String queryString = DATA_MD_PATH + "[@projectShortName='" + modelName + "' or @projectLongName='"
                 + modelName + "']";
         if (version != null && version.length() > 0) {
-            queryString = DATA_MD_PATH + "[@projectShortName='" + modelName + "' or @projectLongName='"
-                    + modelName + "'] and " + DATA_MD_PATH + "/@projectVersion='" + version + "'";
+            queryString = queryString + " and " + DATA_MD_PATH + "/@projectVersion='" + version + "'";
         }
         return discoverByFilter(queryString);
     }
 
-    public static void main(String[] args) {
-        DiscoveryClientForMetaData client;
-        try {
-            client = new DiscoveryClientForMetaData(
-                    "http://cagrid-index.nci.nih.gov:8080/wsrf/services/DefaultIndexService");
-
-            client.getServiceMetadataByDomainNameVersion("caArray", "2");
-
-        } catch (RemoteResourcePropertyRetrievalException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (QueryInvalidException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ResourcePropertyRetrievalException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-
-        } catch (MalformedURIException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-    }
-
+   
 }
