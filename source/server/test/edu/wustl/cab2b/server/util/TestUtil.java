@@ -1,6 +1,10 @@
 package edu.wustl.cab2b.server.util;
 
 import static edu.wustl.cab2b.common.util.Constants.TYPE_DERIVED;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
@@ -10,6 +14,8 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.RoleInterface;
 import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.common.dynamicextensions.util.global.Constants;
+import edu.wustl.common.querysuite.metadata.associations.IAssociation;
+import edu.wustl.common.querysuite.metadata.path.Path;
 
 public class TestUtil {
    
@@ -127,5 +133,10 @@ public class TestUtil {
         
         e1.addEntityGroupInterface(eg);
         return e1;
+    }
+    public static Path getPath(IAssociation association) {
+        List<IAssociation> allAssociation = new ArrayList<IAssociation>(1);
+        allAssociation.add(association);
+        return new Path(association.getSourceEntity(), association.getTargetEntity(), allAssociation);
     }
 }

@@ -202,9 +202,7 @@ public class PathFinderTest extends TestCase {
     }
 
     private Path getPath(IAssociation association) {
-        List<IAssociation> allAssociation = new ArrayList<IAssociation>(1);
-        allAssociation.add(association);
-        return new Path(association.getSourceEntity(), association.getTargetEntity(), allAssociation);
+        return TestUtil.getPath(association);
     }
 
     private synchronized InterModelAssociation getAssociation() {
