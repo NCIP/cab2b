@@ -1,10 +1,17 @@
 package edu.wustl.cab2b.common.util;
-
+import static edu.wustl.cab2b.common.util.Constants.CAB2B_ENTITY_GROUP;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import junit.framework.TestCase;
+import edu.common.dynamicextensions.domaininterface.AssociationInterface;
+import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
+import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
+import edu.wustl.cab2b.server.util.TestUtil;
+import edu.wustl.common.querysuite.metadata.associations.impl.IntraModelAssociation;
+import edu.wustl.common.querysuite.metadata.path.Path;
 
 /**
  * @author deepak_shingan
@@ -48,5 +55,52 @@ public class UtilityTest extends TestCase {
         Cab2bQuery query = new Cab2bQuery();
         query.setOutputUrls(list);
         assertTrue(Utility.hasAnySecureService(query));
+    }
+    public void testGetPathDisplayStringJustAbove100() {
+
+        EntityGroupInterface eg = TestUtil.getEntityGroup("caNanoLab v1.4", 120L);
+        DynamicExtensionUtility.addTaggedValue(eg, CAB2B_ENTITY_GROUP, CAB2B_ENTITY_GROUP);
+        EntityInterface nanoparticleSample = TestUtil.getEntity("NanoparticleSample", 134L);
+        nanoparticleSample.addEntityGroupInterface(eg);
+        EntityInterface sampleComposition = TestUtil.getEntity("SampleComposition", 133L);
+        sampleComposition.addEntityGroupInterface(eg);
+        AssociationInterface a = TestUtil.getAssociation(nanoparticleSample, sampleComposition);
+
+        Path path = TestUtil.getPath(new IntraModelAssociation(a));
+        String str = Utility.getPathDisplayString(path);
+        String expected = "<HTML><B>Path</B>:NanoparticleSample (caNanoLab v1.4)<B>----></B>SampleComposition (caNanoLab v1.4)</HTML>";
+        assertEquals(expected, str);
+    }
+
+    public void testGetPathDisplayStringLessThan100() {
+
+        EntityGroupInterface eg = TestUtil.getEntityGroup("GeneConnect", 120L);
+        DynamicExtensionUtility.addTaggedValue(eg, CAB2B_ENTITY_GROUP, CAB2B_ENTITY_GROUP);
+        EntityInterface nanoparticleSample = TestUtil.getEntity("Gene", 134L);
+        nanoparticleSample.addEntityGroupInterface(eg);
+        EntityInterface sampleComposition = TestUtil.getEntity("Protein", 133L);
+        sampleComposition.addEntityGroupInterface(eg);
+        AssociationInterface a = TestUtil.getAssociation(nanoparticleSample, sampleComposition);
+
+        Path path = TestUtil.getPath(new IntraModelAssociation(a));
+        String str = Utility.getPathDisplayString(path);
+        String expected = "<HTML><B>Path</B>:Gene (GeneConnect)<B>----></B>Protein (GeneConnect)</HTML>";
+        assertEquals(expected, str);
+    }
+
+    public void testGetPathDisplayStringGreather100() {
+
+        EntityGroupInterface eg = TestUtil.getEntityGroup("caTissue_Core_1_2 v1.2", 120L);
+        DynamicExtensionUtility.addTaggedValue(eg, CAB2B_ENTITY_GROUP, CAB2B_ENTITY_GROUP);
+        EntityInterface nanoparticleSample = TestUtil.getEntity("Participant", 134L);
+        nanoparticleSample.addEntityGroupInterface(eg);
+        EntityInterface sampleComposition = TestUtil.getEntity("ParticipantMedicalIdentifier", 133L);
+        sampleComposition.addEntityGroupInterface(eg);
+        AssociationInterface a = TestUtil.getAssociation(nanoparticleSample, sampleComposition);
+
+        Path path = TestUtil.getPath(new IntraModelAssociation(a));
+        String str = Utility.getPathDisplayString(path);
+        String expected = "<HTML><B>Path</B>:Participant (caTissue_Core_1_2 v1.2)<B>----></B>ParticipantMedicalIdentifier (caTissue_Core_1_2 v1.2)<P></HTML>";
+        assertEquals(expected, str);
     }
 }
