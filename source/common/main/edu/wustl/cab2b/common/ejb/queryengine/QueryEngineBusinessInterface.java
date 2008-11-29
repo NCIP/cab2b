@@ -6,8 +6,6 @@ import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.List;
 
-import org.cagrid.gaards.cds.delegated.stubs.types.DelegatedCredentialReference;
-
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.domain.DCQL;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
