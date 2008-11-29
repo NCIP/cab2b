@@ -93,9 +93,20 @@ public abstract class ResultPanel extends Cab2bPanel {
         addToDataListButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
 
+            	List<IDataRow> dataRows = getSelectedDataRows();
+            	
+				// bugfix #5294
+				if (dataRows.size() <= 0) {
+					String defaultMessage = "Please select elements before clicking on 'Add to data list'";
+					showPertainMessageToNavigationLabel(defaultMessage);
+
+					return;
+				}
+				// bugfix ends #5294
+            	
                 m_applyAllButton.setEnabled(true);
 
-                List<IDataRow> dataRows = getSelectedDataRows();
+                
                 MainSearchPanel.getDataList().addDataRows(dataRows);
 
                 updateMyDataListPanel();
@@ -127,6 +138,12 @@ public abstract class ResultPanel extends Cab2bPanel {
             }
         });
     }
+    
+
+	private void showPertainMessageToNavigationLabel(String message) {
+
+		SearchNavigationPanel.getMessageLabel().setText(message);
+	}
 
     /**
      * Method to perform apply all action
