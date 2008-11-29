@@ -91,7 +91,7 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
         UserOperations uop = new UserOperations();
         try {
 
-            userId = uop.getUserByName(uop.getCredentialUserName(idP, idP)).getUserId();
+            userId = uop.getUserByName(uop.getCredentialUserName(dref, idP)).getUserId();
         } catch (GeneralSecurityException ge) {
             throw new RuntimeException("General Security Exception", ge.getMessage());
         } catch (Exception e) {
@@ -132,7 +132,7 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
         UserOperations uop = new UserOperations();
         try {
 
-            userId = uop.getUserByName(uop.getCredentialUserName(idP, idP)).getUserId();
+            userId = uop.getUserByName(uop.getCredentialUserName(serializedRef, idP)).getUserId();
         } catch (GeneralSecurityException ge) {
             throw new RuntimeException("General Security Exception", ge.getMessage());
         } catch (Exception e) {
