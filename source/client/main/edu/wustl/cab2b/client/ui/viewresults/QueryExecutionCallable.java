@@ -33,18 +33,14 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
 
     private IDataRow m_destinationEntity;
 
-    private QueryEngineBusinessInterface m_queryEngineBus;
-
     private List<IDataRow> m_childNodes;
 
     public QueryExecutionCallable(
             IDataRow sourceEntity,
             IDataRow destinationEntity,
-            QueryEngineBusinessInterface queryEngineBus,
             List<IDataRow> childNodes) {
         m_sourceEntity = sourceEntity;
         m_destinationEntity = destinationEntity;
-        m_queryEngineBus = queryEngineBus;
         m_childNodes = childNodes;
     }
 
@@ -52,7 +48,6 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
      * 
      */
     public QueryResultObject call() throws Exception {
-        // TODO Auto-generated method stub
         List<IDataRow> results = executeRelatedQuery();
         if (null != results) {
             QueryResultObject queryResult = new QueryResultObject(results, m_childNodes);
@@ -116,14 +111,14 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
     private List<IDataRow> getRecords(ICab2bQuery query) {
         IQueryResult<IRecord> relatedQueryResults = null;
         try {
-            relatedQueryResults = (IQueryResult<IRecord>) CommonUtils.executeQuery(query, m_queryEngineBus);
+            relatedQueryResults = (IQueryResult<IRecord>) CommonUtils.executeQuery(query);
         } catch (RuntimeException e) {
             logger.error("Error in exeuting query :" + e.getMessage());
             return null;
         } catch (RemoteException e) {
             logger.error("Error in exeuting query :" + e.getMessage());
             return null;
-        }catch(Exception e){
+        } catch (Exception e) {
             logger.error("Error in exeuting query :" + e.getMessage());
             return null;
         }

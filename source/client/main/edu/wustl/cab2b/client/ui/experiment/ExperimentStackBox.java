@@ -698,12 +698,12 @@ public class ExperimentStackBox extends Cab2bPanel {
         // final EntityInterface dataEntity = idName.getEntityInterface();
         ClientSideCache clientSideCache = ClientSideCache.getInstance();
         EntityInterface dataEntity = clientSideCache.getEntityById(idName.getOriginalEntityId());
-        AnalyticalServiceOperationsBusinessInterface analyticalServiceOperationsBusinessInterface = (AnalyticalServiceOperationsBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                                                                                    EjbNamesConstants.ANALYTICAL_SERVICE_BEAN,
-                                                                                                                                                                                    AnalyticalServiceOperationsHomeInterface.class,
-                                                                                                                                                                                    null);
         List<ServiceDetailsInterface> serviceDetailInterfaceList = null;
         try {
+            AnalyticalServiceOperationsBusinessInterface analyticalServiceOperationsBusinessInterface = (AnalyticalServiceOperationsBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                                                                                        EjbNamesConstants.ANALYTICAL_SERVICE_BEAN,
+                                                                                                                                                                                        AnalyticalServiceOperationsHomeInterface.class);
+
             serviceDetailInterfaceList = analyticalServiceOperationsBusinessInterface.getApplicableAnalyticalServices(idName.getOriginalEntityId());
             if (analyseDataPanel != null) {
                 analyseDataPanel.removeAll();
@@ -912,14 +912,13 @@ class FinishButtonActionListner implements ActionListener {
             List<IRecord> recordList = defaultSpreadSheetViewPanel.getSelectedRecords();
 
             List<IRecord> entityRecordList = null;
-            AnalyticalServiceOperationsBusinessInterface analyticalServiceOperationsBusinessInterface = (AnalyticalServiceOperationsBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                                                                                        EjbNamesConstants.ANALYTICAL_SERVICE_BEAN,
-                                                                                                                                                                                        AnalyticalServiceOperationsHomeInterface.class,
-                                                                                                                                                                                        null);
             try {
-                entityRecordList = analyticalServiceOperationsBusinessInterface.invokeService(serviceDetails,
-                                                                                              recordList,
-                                                                                              serviceParameterList);
+                AnalyticalServiceOperationsBusinessInterface analyticalServiceOperations = (AnalyticalServiceOperationsBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                                                                           EjbNamesConstants.ANALYTICAL_SERVICE_BEAN,
+                                                                                                                                                                           AnalyticalServiceOperationsHomeInterface.class);
+
+                entityRecordList = analyticalServiceOperations.invokeService(serviceDetails, recordList,
+                                                                             serviceParameterList);
                 updateAnalysisTable(analysisTitle, entityRecordList);
             } catch (RemoteException remoteException) {
                 CommonUtils.handleException(remoteException, NewWelcomePanel.getMainFrame(), true, true, true,

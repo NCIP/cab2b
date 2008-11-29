@@ -17,7 +17,6 @@ import javax.swing.JTextArea;
 
 import org.apache.log4j.Logger;
 
-import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -239,11 +238,10 @@ public class SaveDatalistPanel extends Cab2bPanel {
             CustomSwingWorker sw = new CustomSwingWorker(SaveDatalistPanel.this) {
                 @Override
                 protected void doNonUILogic() throws RuntimeException {
-                    DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                        EjbNamesConstants.DATALIST_BEAN,
-                                                                                                                        DataListHomeInterface.class,
-                                                                                                                        SaveDatalistPanel.this);
                     try {
+                        DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                            EjbNamesConstants.DATALIST_BEAN,
+                                                                                                                            DataListHomeInterface.class);
                         MainSearchPanel.savedDataListMetadata = dataListBI.saveDataList(
                                                                                         newRootDataRow,
                                                                                         dataListAnnotation,
@@ -254,7 +252,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
 
                         isDataListSaved = true;
                     } catch (RemoteException e) {
-                        CommonUtils.handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
+                        CommonUtils.handleException(e, SaveDatalistPanel.this, true, true, true, false);
                     } finally {
                         dialog.dispose();
                     }

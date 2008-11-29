@@ -70,13 +70,10 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
 
         this.removeAll();
         this.setLayout(new RiverLayout(5, 5));
-        QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                   EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                   QueryEngineHome.class,
-                                                                                                                   null);
-
         try {
-
+            QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                       EjbNamesConstants.QUERY_ENGINE_BEAN,
+                                                                                                                       QueryEngineHome.class);
             Collection<IParameterizedQuery> cab2bQueries = queryEngine.getAllQueryNameAndDescription(
                                                                                                      UserValidator.getSerializedDCR(),
                                                                                                      UserValidator.getIdP());
@@ -122,7 +119,6 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
                 label.setBackground(Color.blue);
                 this.add(label);
             }
-
         } catch (Exception exception) {
             CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);
         }
@@ -135,15 +131,12 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
      * @return
      */
     private ShowAllPanel getAllQueryPanel() {
-        QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                   EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                   QueryEngineHome.class,
-                                                                                                                   null);
         Collection<IParameterizedQuery> cab2bQueryCollection = null;
         try {
-
-            cab2bQueryCollection = queryEngine.getAllQueryNameAndDescription(
-                                                                             UserValidator.getSerializedDCR(),
+            QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                       EjbNamesConstants.QUERY_ENGINE_BEAN,
+                                                                                                                       QueryEngineHome.class);
+            cab2bQueryCollection = queryEngine.getAllQueryNameAndDescription(UserValidator.getSerializedDCR(),
                                                                              UserValidator.getIdP());
         } catch (RemoteException exception) {
             CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);
@@ -152,7 +145,7 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
 
         }
         final Object objData[][] = new Object[cab2bQueryCollection.size()][5];
-        final String headers[] = { ShowAllSavedQueryPanel.QUERY_NAME_TITLE, ShowAllSavedQueryPanel.QUERY_DATE_TITLE, ShowAllSavedQueryPanel.QUERY_DESCRIPTION_TITLE,  "Query ID-Hidden" };
+        final String headers[] = { ShowAllSavedQueryPanel.QUERY_NAME_TITLE, ShowAllSavedQueryPanel.QUERY_DATE_TITLE, ShowAllSavedQueryPanel.QUERY_DESCRIPTION_TITLE, "Query ID-Hidden" };
         int i = 0;
         for (IParameterizedQuery paraQuery : cab2bQueryCollection) {
             objData[i][0] = paraQuery.getName();
@@ -161,6 +154,6 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
             objData[i][3] = paraQuery.getId();
             i++;
         }
-        return new ShowAllSavedQueryPanel(headers, objData,ShowAllSavedQueryPanel.QUERY_NAME_TITLE);
+        return new ShowAllSavedQueryPanel(headers, objData, ShowAllSavedQueryPanel.QUERY_NAME_TITLE);
     }
 }

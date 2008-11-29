@@ -21,6 +21,9 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.datalist.DataRow;
 import edu.wustl.cab2b.common.datalist.IDataRow;
+import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
+import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
+import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -36,6 +39,7 @@ import edu.wustl.common.querysuite.queryobject.IQuery;
  */
 public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(SimpleSearchResultBreadCrumbPanel.class);
+
     private static final long serialVersionUID = 1L;
 
     //private HashMap<String, List<AttributeInterface>> mapResultLabel = new HashMap<String, List<AttributeInterface>>();
@@ -345,7 +349,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
                 IQueryResult queryResult = null;
 
                 protected void doNonUILogic() throws Exception {
-                    queryResult = CommonUtils.executeQuery((ICab2bQuery) query, (JComponent) breadCrumbPanel);
+                    queryResult = CommonUtils.executeQuery((ICab2bQuery) query);
                 }
 
                 protected void doUIUpdateLogic() throws RuntimeException {

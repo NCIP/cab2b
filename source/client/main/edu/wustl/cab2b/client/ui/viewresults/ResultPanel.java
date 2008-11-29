@@ -34,13 +34,9 @@ import edu.wustl.cab2b.client.ui.mainframe.GlobalNavigationPanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.SaveDatalistPanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.SearchNavigationPanel;
-import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.datalist.DataRow;
 import edu.wustl.cab2b.common.datalist.IDataRow;
-import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
-import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
-import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
@@ -48,6 +44,7 @@ import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 
 public abstract class ResultPanel extends Cab2bPanel {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ResultPanel.class);
+
     protected IQueryResult<IRecord> queryResult;
 
     protected Cab2bButton addToDataListButton;
@@ -90,7 +87,6 @@ public abstract class ResultPanel extends Cab2bPanel {
     }
 
     protected void initDataListButtons() {
-
         addToDataListButton = new Cab2bButton("Add To Data List");
         addToDataListButton.setPreferredSize(new Dimension(140, 22));
 
@@ -153,9 +149,6 @@ public abstract class ResultPanel extends Cab2bPanel {
                     return;
                 // For every selected entity fetch corresponding data
                 // from data services and add it to data list
-                QueryEngineBusinessInterface queryEngineBus = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                              EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                              QueryEngineHome.class);
                 List<IDataRow> parentRows = new ArrayList<IDataRow>();
                 for (int i = 0; i < selectedUserObjects.size(); i++) {
                     parentRows.add((IDataRow) selectedUserObjects.get(i));
@@ -166,18 +159,15 @@ public abstract class ResultPanel extends Cab2bPanel {
                     MainSearchPanel.getDataList().addDataRow(parentRows.get(i));
                     for (int j = 0; j < childRows.size(); j++) {
                         queryCallables.add(new QueryExecutionCallable(parentRows.get(i), childRows.get(j),
-                                queryEngineBus, childRows.get(j).getChildren()));
+                                childRows.get(j).getChildren()));
                     }
                 }
-                fetchApplyAllResults(queryCallables, queryEngineBus);
+                fetchApplyAllResults(queryCallables);
             }
 
             @Override
             protected void doUIUpdateLogic() throws RuntimeException {
-
                 updateMyDataListPanel();
-                /*  JOptionPane.showMessageDialog(component, "Apply All operation completed successfully", "Information",
-                 JOptionPane.INFORMATION_MESSAGE);*/
                 SearchNavigationPanel.getMessageLabel().setText("Apply All operation completed successfully");
             }
         };
@@ -187,8 +177,7 @@ public abstract class ResultPanel extends Cab2bPanel {
     /**
      * Method to fetch results for apply. This method spawns threads to execute each query seperately
      */
-    public void fetchApplyAllResults(Collection<Callable<QueryResultObject>> queryCallables,
-                                     QueryEngineBusinessInterface queryEngineBus) {
+    public void fetchApplyAllResults(Collection<Callable<QueryResultObject>> queryCallables) {
         do {
             ExecutorService executorService = Executors.newCachedThreadPool();
             try {
@@ -203,7 +192,7 @@ public abstract class ResultPanel extends Cab2bPanel {
                             MainSearchPanel.getDataList().addDataRow(parentRows.get(i));
                             for (int j = 0; j < childRows.size(); j++) {
                                 queryCallables.add(new QueryExecutionCallable(parentRows.get(i), childRows.get(j),
-                                        queryEngineBus, childRows.get(j).getChildren()));
+                                        childRows.get(j).getChildren()));
                             }
                         }
                     }
@@ -304,7 +293,6 @@ public abstract class ResultPanel extends Cab2bPanel {
             }
         });
         myDataListPanel.add("br ", selectedRootClassName);
-
     }
 
     /**

@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.rmi.RemoteException;
 import java.util.Date;
 
 import javax.swing.JOptionPane;
@@ -21,6 +20,8 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 
@@ -173,12 +174,12 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
          * Method to save parameterized query
          */
         private void saveQuery() {
-            QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                                        EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                                        QueryEngineHome.class,
-                                                                                                                                        parameterizedQueryMainPanel);
             ICab2bQuery cab2bParameterizedQuery = parameterizedQueryMainPanel.getParameterizedQueryDataModel().getQuery();
             try {
+                QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                                            EjbNamesConstants.QUERY_ENGINE_BEAN,
+                                                                                                                                            QueryEngineHome.class);
+
                 String message = null;
 
                 if (cab2bParameterizedQuery.getId() != null) {
@@ -202,13 +203,10 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                 new SavedQueryLinkPanel().updateQueryLinkPanel();
                 updateUI();
                 parameterizedQueryMainPanel.getDialog().dispose();
-            } catch (RemoteException exception) {
-                CommonUtils.handleException(new edu.wustl.cab2b.common.exception.RuntimeException(
-                        exception.getMessage(), edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants.DB_0005),
+            } catch (Exception e) {
+                CommonUtils.handleException(new RuntimeException(e.getMessage(), ErrorCodeConstants.DB_0005),
                                             parameterizedQueryMainPanel, true, true, true, false);
                 parameterizedQueryMainPanel.getDialog().dispose();
-            } catch (Exception exception) {
-                exception.getMessage();
             }
         }
     }

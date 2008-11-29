@@ -103,18 +103,18 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
             pageElement.setDisplayName(Utility.getDisplayName(entityInterface));
             pageElement.setDescription(entityInterface.getDescription());
             pageElementCollection.add(pageElement);
-            
+
         }
         NumericPager numericPager = new NumericPager(pageElementCollection);
         numericPager.setElementsPerPage(10);
-        
+
         // Initalize the pagination component
         resultsPage = new JPagination(pageElementCollection, numericPager, this, false, false);
         resultsPage.resetAllLabels();
         resultsPage.setPageLinksDisabled();
         resultsPage.setGroupActionEnabled(false);
         resultsPage.setSelectableEnabled(false);
-        
+
         // Create a Panel for the center searchPanel, and add the pagination
         // component to that.
         JXPanel centerPanel = new Cab2bPanel(new RiverLayout(5, 5));
@@ -171,6 +171,8 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         try {
             queryObject.setOutputForQuery(entity);
         } catch (RemoteException e) {
+            CommonUtils.handleException(e, searchCenterPanel, true, true, true, false);
+        } catch (Exception e) {
             CommonUtils.handleException(e, searchCenterPanel, true, true, true, false);
         }
     }
@@ -237,7 +239,9 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
                 protected void doNonUILogic() throws Exception {
                     ICab2bQuery query = ((Cab2bHyperlink<ICab2bQuery>) getAComponent()).getUserObject();
                     if (Utility.isCategory(query.getOutputEntity())) {
-                        JOptionPane.showMessageDialog(null, "Sorry, DCQL generation for Queries involving Category is not supported.",
+                        JOptionPane.showMessageDialog(
+                                                      null,
+                                                      "Sorry, DCQL generation for Queries involving Category is not supported.",
                                                       "Message", JOptionPane.INFORMATION_MESSAGE);
 
                     } else {

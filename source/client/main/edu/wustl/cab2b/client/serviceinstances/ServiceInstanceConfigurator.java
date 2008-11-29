@@ -119,15 +119,15 @@ public class ServiceInstanceConfigurator {
      * @param user
      * @return
      */
-    public Collection<AdminServiceMetadata> getServiceMetadataObjects(String serviceName,String version, UserInterface user) {
+    public Collection<AdminServiceMetadata> getServiceMetadataObjects(String serviceName, String version,
+                                                                      UserInterface user) {
         ServiceURLBusinessInterface serviceURLInterface = (ServiceURLBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                          EjbNamesConstants.SERVICE_URL_BEAN,
-                                                                                                                         ServiceURLHomeInterface.class,
-                                                                                                                         null);
+                                                                                                                         ServiceURLHomeInterface.class);
         Collection<AdminServiceMetadata> serviceInstanceList = new ArrayList<AdminServiceMetadata>();
 
         try {
-            serviceInstanceList.addAll(serviceURLInterface.getInstancesByServiceName(serviceName,version, user));
+            serviceInstanceList.addAll(serviceURLInterface.getInstancesByServiceName(serviceName, version, user));
         } catch (RemoteException e) {
             logger.error(e.getStackTrace(), e);
             throw new RuntimeException(e.getMessage());
@@ -145,8 +145,7 @@ public class ServiceInstanceConfigurator {
         if (user.getUserId() != null) {
             UserBusinessInterface userInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                            EjbNamesConstants.USER_BEAN,
-                                                                                                           UserHomeInterface.class,
-                                                                                                           null);
+                                                                                                           UserHomeInterface.class);
             userInterface.updateUser(user);
         }
     }
@@ -159,9 +158,8 @@ public class ServiceInstanceConfigurator {
     private UserInterface getCurrentUser() throws RemoteException {
         UserBusinessInterface userInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                        EjbNamesConstants.USER_BEAN,
-                                                                                                       UserHomeInterface.class,
-                                                                                                       null);
-        return userInterface.getUserByName(UserValidator.getSerializedDCR(),UserValidator .getIdP());
+                                                                                                       UserHomeInterface.class);
+        return userInterface.getUserByName(UserValidator.getSerializedDCR(), UserValidator.getIdP());
     }
 
 }

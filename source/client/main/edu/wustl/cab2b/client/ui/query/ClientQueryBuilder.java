@@ -49,8 +49,7 @@ public class ClientQueryBuilder extends ConstraintsObjectBuilder implements ICli
         if (Utility.isCategory(entity)) {
             CategoryBusinessInterface bus = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                          EjbNamesConstants.CATEGORY_BEAN,
-                                                                                                         CategoryHomeInterface.class,
-                                                                                                         null);
+                                                                                                         CategoryHomeInterface.class);
             Category cat = bus.getCategoryByEntityId(entity.getId());
             en = cat.getRootClass().getCategorialClassEntity();
         }

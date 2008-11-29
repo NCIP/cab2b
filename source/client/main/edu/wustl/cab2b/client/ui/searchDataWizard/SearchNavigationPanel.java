@@ -50,6 +50,9 @@ import edu.wustl.cab2b.client.ui.util.WindowUtilities;
 import edu.wustl.cab2b.client.ui.viewresults.DataListPanel;
 import edu.wustl.cab2b.client.ui.viewresults.ViewSearchResultsPanel;
 import edu.wustl.cab2b.common.datalist.IDataRow;
+import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
+import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
+import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
@@ -422,32 +425,20 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 searchCenterPanel.add(viewSearchResultsPanel, SearchCenterPanel.getStrViewSearchResultslbl());
                 showCard(true);
             }
-        } 
-        
-        
-       /* Commenting for the bug fix 10490 
-        else {
-           gotoAddLimitPanel();
         }
-        */
     }
 
     /**
      * @param clientQueryBuilder
      */
     private void executeQuery(IClientQueryBuilderInterface clientQueryBuilder) {
-
         try {
             ICab2bQuery cab2bQuery = (ICab2bQuery) clientQueryBuilder.getQuery();
             if (!CommonUtils.isServiceURLConfigured(cab2bQuery, mainSearchPanel)) {
                 queryResults = null;
             } else {
-
-                // Get the Functional class for root and update
-                // query
-                // object with it.
-                queryResults = CommonUtils.executeQuery((ICab2bQuery) clientQueryBuilder.getQuery(),
-                                                        mainSearchPanel);
+                // Get the Functional class for root and update query object with it.
+                queryResults = CommonUtils.executeQuery((ICab2bQuery) clientQueryBuilder.getQuery());
             }
         } catch (Exception e) {
             CommonUtils.handleException(e, SearchNavigationPanel.this.mainSearchPanel, true, false, false, false);
@@ -458,7 +449,6 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 return;
             }
         }
-
     }
 
     /**
@@ -605,8 +595,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             final ICab2bQuery b2bquery = (ICab2bQuery) mainSearchPanel.queryObject.getQuery();
             EntityGroupInterface entityGroup = b2bquery.getOutputEntity().getEntityGroupCollection().iterator().next();
             String groupName = entityGroup.getLongName();
-            if(entityURLMap.get(groupName)!=null)
-            {
+            if (entityURLMap.get(groupName) != null) {
                 queryURLList.addAll(entityURLMap.get(groupName));
             }
             b2bquery.getOutputUrls().clear();

@@ -32,7 +32,6 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.ejb.EJBHome;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -95,31 +94,6 @@ public class CommonUtils {
     public static enum DagImages {
         DocumentPaperIcon, PortImageIcon, ArrowSelectIcon, ArrowSelectMOIcon, SelectIcon, selectMOIcon, ParenthesisIcon, ParenthesisMOIcon
     };
-
-    /**
-     * Method to get BusinessInterface object for given bean name and home class
-     * object
-     * 
-     * @param beanName
-     *            Name of the bean class
-     * @param homeClassForBean
-     *            HomeClass object for this bean
-     * @param parentComponent
-     *            The parent component which will be parent for displaying
-     *            exception messages
-     * @return the businessInterface object for given bean name
-     */
-    public static BusinessInterface getBusinessInterface(String beanName,
-                                                         Class<? extends EJBHome> homeClassForBean,
-                                                         Component parentComponent) {
-        BusinessInterface businessInterface = null;
-        try {
-            businessInterface = Locator.getInstance().locate(beanName, homeClassForBean);
-        } catch (LocatorException e1) {
-            handleException(e1, parentComponent, true, true, false, false);
-        }
-        return businessInterface;
-    }
 
     /**
      * Method to disable all components from the specified container
@@ -188,7 +162,7 @@ public class CommonUtils {
         }
 
         String msgForUser = getErrorMessage(e);
-        
+
         String msgToLog = e.getMessage();
         if (logException) {
             logger.error(msgToLog, e);
@@ -231,56 +205,27 @@ public class CommonUtils {
      * The method executes the encapsulated B2B query. For this it uses the
      * Locator service to locate an instance of the QueryEngineBusinessInterface
      * and uses the interface to remotely execute the query.
-     */
-    public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, JComponent comp)
-            throws RemoteException {
-        QueryEngineBusinessInterface queryEngineBus = (QueryEngineBusinessInterface) getBusinessInterface(
-                                                                                                          EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                          QueryEngineHome.class,
-                                                                                                          comp);
-        return executeQuery(query, queryEngineBus, comp);
-    }
-
-    /**
-     * The method executes the encapsulated B2B query. For this it uses the
-     * Locator service to locate an instance of the QueryEngineBusinessInterface
-     * and uses the interface to remotely execute the query.
-     */
-    public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query,
-                                                               QueryEngineBusinessInterface queryEngineBus,
-                                                               JComponent comp) throws RemoteException {
-        IQueryResult<? extends IRecord> iQueryResult = null;
-        try {
-            iQueryResult = executeQuery(query, queryEngineBus);
-        } catch (RuntimeException re) {
-            handleException(re, comp, true, false, false, false);
-        } catch (Exception e) {
-            handleException(e, comp, true, false, false, false);
-        }
-
-        return iQueryResult;
-    }
-
-    /**
-     * The method executes the encapsulated B2B query. For this it uses the
-     * Locator service to locate an instance of the QueryEngineBusinessInterface
-     * and uses the interface to remotely execute the query.
      * 
      * @param query
      * @param queryEngineBus
      * @throws RuntimeException
      * @throws RemoteException
      */
-    public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query,
-                                                               QueryEngineBusinessInterface queryEngineBus)
+    public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query)
             throws RuntimeException, RemoteException, Exception {
         boolean anySecureSevice = Utility.hasAnySecureService(query);
+        
+        QueryEngineBusinessInterface queryEngineBus = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                      EjbNamesConstants.QUERY_ENGINE_BEAN,
+                                                                                                                      QueryEngineHome.class);
+        
+        IQueryResult<? extends IRecord> results = null;
         if (anySecureSevice) {
-            return queryEngineBus.executeQuery(query, UserValidator.getSerializedDCR(), UserValidator.getIdP());
+            results = queryEngineBus.executeQuery(query, UserValidator.getSerializedDCR(), UserValidator.getIdP());
         } else {
-            return queryEngineBus.executeQuery(query, null, null);
+            results = queryEngineBus.executeQuery(query, null, null);
         }
-
+        return results;
     }
 
     /**
@@ -544,12 +489,11 @@ public class CommonUtils {
          * QUERY support
          */
 
-        QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                                    EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                                    QueryEngineHome.class,
-                                                                                                                                    null);
         Collection<IParameterizedQuery> cab2bQueryCollection = null;
         try {
+            QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                                        EjbNamesConstants.QUERY_ENGINE_BEAN,
+                                                                                                                                        QueryEngineHome.class);
 
             cab2bQueryCollection = queryEngineBusinessInterface.getAllQueryNameAndDescription(
                                                                                               UserValidator.getSerializedDCR(),
@@ -577,12 +521,12 @@ public class CommonUtils {
      * @return All the experiments performed by the user.
      */
     public static Vector<Experiment> getExperiments(Component comp, UserInterface user) {
-
-        ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                            EjbNamesConstants.EXPERIMENT,
-                                                                                                            ExperimentHome.class);
         List<Experiment> experiments = null;
         try {
+            ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                EjbNamesConstants.EXPERIMENT,
+                                                                                                                ExperimentHome.class);
+
             experiments = expBus.getExperimentsForUser(user, UserValidator.getSerializedDCR(),
                                                        UserValidator.getIdP());
         } catch (RemoteException e) {
@@ -648,15 +592,14 @@ public class CommonUtils {
     private static String[] getServiceURLs(EntityInterface entity) {
         EntityInterface en = entity;
         if (edu.wustl.cab2b.common.util.Utility.isCategory(entity)) {
-            CategoryBusinessInterface bus = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                         EjbNamesConstants.CATEGORY_BEAN,
-                                                                                                         CategoryHomeInterface.class,
-                                                                                                         null);
             Category cat = null;
             try {
+                CategoryBusinessInterface bus = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                             EjbNamesConstants.CATEGORY_BEAN,
+                                                                                                             CategoryHomeInterface.class);
                 cat = bus.getCategoryByEntityId(entity.getId());
-            } catch (RemoteException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
             }
             en = cat.getRootClass().getCategorialClassEntity();
         }

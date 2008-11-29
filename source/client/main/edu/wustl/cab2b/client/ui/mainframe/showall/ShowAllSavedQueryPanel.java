@@ -46,7 +46,7 @@ public class ShowAllSavedQueryPanel extends ShowAllPanel {
      * @param tableHeader
      * @param data
      */
-    public ShowAllSavedQueryPanel(Object[] tableHeader, Object[][] data,String columnName) {
+    public ShowAllSavedQueryPanel(Object[] tableHeader, Object[][] data, String columnName) {
         super(tableHeader, data, columnName);
         //Hiding last column from table which contains query object having only
         //QueryID
@@ -78,12 +78,11 @@ public class ShowAllSavedQueryPanel extends ShowAllPanel {
      * @param queryID
      */
     public static final void queryLinkAction(Long queryID) {
-        QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                                    EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                                    QueryEngineHome.class,
-                                                                                                                                    null);
         ICab2bQuery cab2bQuery = null;
         try {
+            QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                                        EjbNamesConstants.QUERY_ENGINE_BEAN,
+                                                                                                                                        QueryEngineHome.class);
             cab2bQuery = queryEngineBusinessInterface.retrieveQueryById(queryID);
         } catch (RemoteException exception) {
             CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);

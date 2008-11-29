@@ -78,20 +78,13 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
         List<LazyParams.Range> rangeList = getRanges(uninitailisedRecord.getCube(), pageInfo.getStartX(),
                                                      pageInfo.getStartY());
         LazyParams lazyParams = new I3DDataRecord.LazyParams(rangeList);
-        UtilityBusinessInterface utilityBeanInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                    EjbNamesConstants.UTILITY_BEAN,
-                                                                                                                    UtilityHomeInterface.class,
-                                                                                                                    NewWelcomePanel.getMainFrame());
         try {
-            /*TODO casting to Object is needed due to bug in java compiler
-             Refer to http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6548436 for details
-             If Object casting is removed it will throw error : inconvertible types
-             found   : edu.wustl.cab2b.common.queryengine.result.IPartiallyInitializedRecord<capture#580 of ?,capture#393 of ?>
-             required: edu.wustl.cab2b.common.queryengine.result.IPartiallyInitialized3DRecord<?,?> */
+            UtilityBusinessInterface utilityBeanInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                        EjbNamesConstants.UTILITY_BEAN,
+                                                                                                                        UtilityHomeInterface.class);
             IPartiallyInitialized3DRecord<?, ?> newRecord = (IPartiallyInitialized3DRecord<?, ?>) (Object) utilityBeanInterface.getView(
                                                                                                                                         uninitailisedRecord.handle(),
                                                                                                                                         lazyParams);
-
             return new Page<IPartiallyInitialized3DRecord<?, ?>>(pageInfo, newRecord);
         } catch (RemoteException e) {
             CommonUtils.handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
@@ -176,17 +169,11 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
             rangeList.add(getCloumnRage(selectedColumns[i]));
         }
         LazyParams lazyParams = new I3DDataRecord.LazyParams(rangeList);
-        UtilityBusinessInterface utilityBeanInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                    EjbNamesConstants.UTILITY_BEAN,
-                                                                                                                    UtilityHomeInterface.class,
-                                                                                                                    NewWelcomePanel.getMainFrame());
+
         try {
-           
-            /*TODO casting to Object is needed due to bug in java compiler
-             Refer to http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6548436 for details
-             If Object casting is removed it will throw error : inconvertible types
-             found   : edu.wustl.cab2b.common.queryengine.result.IPartiallyInitializedRecord<capture#580 of ?,capture#393 of ?>
-             required: edu.wustl.cab2b.common.queryengine.result.IPartiallyInitialized3DRecord<?,?> */
+            UtilityBusinessInterface utilityBeanInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                        EjbNamesConstants.UTILITY_BEAN,
+                                                                                                                        UtilityHomeInterface.class);
             return (IPartiallyInitialized3DRecord<?, ?>) (Object) utilityBeanInterface.getView(
                                                                                                uninitailisedRecord.handle(),
                                                                                                lazyParams);
@@ -198,21 +185,20 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
     }
 
     public List<TreeSet<Comparable<?>>> getUniqueRecordValues() {
-
-        UtilityBusinessInterface utilityBeanInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                    EjbNamesConstants.UTILITY_BEAN,
-                                                                                                                    UtilityHomeInterface.class,
-                                                                                                                    NewWelcomePanel.getMainFrame());
+        List<TreeSet<Comparable<?>>> recordValues = null;
         Set<AttributeInterface> allAttributes = uninitailisedRecord.getAttributes();
         if (!allAttributes.isEmpty()) {
             Long entityId = allAttributes.iterator().next().getEntity().getId();
             try {
-                return utilityBeanInterface.getUniqueRecordValues(entityId);
+                UtilityBusinessInterface utilityBusinessInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                                EjbNamesConstants.UTILITY_BEAN,
+                                                                                                                                UtilityHomeInterface.class);
+                recordValues = utilityBusinessInterface.getUniqueRecordValues(entityId);
             } catch (RemoteException e) {
                 CommonUtils.handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
             }
         }
-        return null;
+        return recordValues;
     }
 
 }

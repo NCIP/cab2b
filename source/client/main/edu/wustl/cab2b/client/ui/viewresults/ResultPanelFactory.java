@@ -68,14 +68,6 @@ public class ResultPanelFactory {
             }
         }
 
-        PathFinderBusinessInterface pathFinder = (PathFinderBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                EjbNamesConstants.PATH_FINDER_BEAN,
-                                                                                                                PathFinderHomeInterface.class,
-                                                                                                                null);
-        UtilityBusinessInterface utilityBean = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                           EjbNamesConstants.UTILITY_BEAN,
-                                                                                                           UtilityHomeInterface.class,
-                                                                                                           null);
         Collection<AssociationInterface> incomingAssociationCollection = null;
         List<IInterModelAssociation> intraModelAssociationCollection = null;
         EntityInterface entity = null;
@@ -86,6 +78,12 @@ public class ResultPanelFactory {
         }
 
         try {
+            PathFinderBusinessInterface pathFinder = (PathFinderBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                    EjbNamesConstants.PATH_FINDER_BEAN,
+                                                                                                                    PathFinderHomeInterface.class);
+            UtilityBusinessInterface utilityBean = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                               EjbNamesConstants.UTILITY_BEAN,
+                                                                                                               UtilityHomeInterface.class);
             incomingAssociationCollection = utilityBean.getIncomingIntramodelAssociations(entity.getId());
             intraModelAssociationCollection = pathFinder.getInterModelAssociations(entity.getId());
         } catch (RemoteException re) {
