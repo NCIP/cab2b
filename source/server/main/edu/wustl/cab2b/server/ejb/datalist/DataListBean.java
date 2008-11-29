@@ -157,18 +157,21 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
      */
     public DataListMetadata saveCustomDataCategory(IdName rootEntityId,
                                                    Collection<AttributeInterface> selectedAttributeList,
-                                                   String string, Experiment experiment, String dref,
-                                                   String selectedIdentityProvider) throws RemoteException,
-            CheckedException {
+                                                   String string, Experiment experiment, String dref, String idP)
+            throws RemoteException, CheckedException {
 
+        Long userId = null;
+        UserOperations uop = new UserOperations();
         try {
-            UserOperations.getGlobusCredential(dref, selectedIdentityProvider).getIdentity();
 
+            userId = uop.getUserByName(uop.getCredentialUserName(dref, idP)).getUserId();
+        } catch (GeneralSecurityException ge) {
+            throw new RuntimeException("General Security Exception", ge.getMessage());
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
         }
-
+        
         return new DataListOperationsController().saveCustomDataCategory(rootEntityId, selectedAttributeList,
-                                                                         string, experiment);
+                                                                         string, experiment,userId);
     }
 }
