@@ -18,6 +18,8 @@ import org.cagrid.gaards.cds.delegated.stubs.types.DelegatedCredentialReference;
 import org.cagrid.gaards.websso.client.filter.CaGridWebSSODelegationLookupFilter;
 import org.globus.gsi.CertUtil;
 import org.globus.gsi.GlobusCredential;
+import org.hibernate.HibernateException;
+import org.hibernate.SQLQuery;
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
@@ -28,11 +30,11 @@ import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.util.ServerProperties;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.hibernate.HibernateUtil;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import gov.nih.nci.cagrid.common.Utils;
-import gov.nih.nci.cagrid.common.security.ProxyUtil;
 import gov.nih.nci.cagrid.gridca.common.KeyUtil;
 
 /**
@@ -55,14 +57,23 @@ public class UserOperations extends DefaultBizLogic {
      * @return User
      */
     public UserInterface getUserByName(String value) {
-        UserInterface user = getUser("userName", value);
+        List<UserInterface> userList = null;
+        try {
+            SQLQuery sqlQuery = HibernateUtil.getSessionFactory().openSession().createSQLQuery(
+                                                                                               "Select {User.*} from cab2b_user User where name ='"
+                                                                                                       + value
+                                                                                                       + "'");
+            userList = sqlQuery.addEntity("User", edu.wustl.cab2b.common.user.User.class).list();
 
-        // TODO This is a temporary check added to solve case insensitive hibernate query problem.
-        // This should be removed and and proper case sensitive query should be implemented
-        if (user != null && (!user.getUserName().equals(value))) {
-            user = null;
+        } catch (HibernateException hbe) {
+            logger.error(hbe.getMessage(), hbe);
+            throw new RuntimeException("Error occurred while fetching User", ErrorCodeConstants.UR_0003);
+
         }
-
+        UserInterface user = null;
+        if (userList != null && !userList.isEmpty()) {
+            user = userList.get(0);
+        }
         return user;
     }
 
@@ -80,7 +91,7 @@ public class UserOperations extends DefaultBizLogic {
      * @return Administrator 
      */
     public UserInterface getAdmin() {
-        return getUser("userName", "Admin");
+        return getUserByName("Admin");
     }
 
     /**
@@ -95,11 +106,6 @@ public class UserOperations extends DefaultBizLogic {
     private UserInterface getUser(String column, String value) {
         List<UserInterface> userList = null;
         try {
-            /*
-             * if (value == null) { userList = (List<User>)
-             * retrieve(User.class.getName(), column, "true"); } else { userList =
-             * (List<User>) retrieve(User.class.getName(), column, value); }
-             */
             userList = (List<UserInterface>) retrieve(UserInterface.class.getName(), column, value);
         } catch (DAOException e) {
             logger.error(e.getMessage(), e);
@@ -272,11 +278,12 @@ public class UserOperations extends DefaultBizLogic {
             DelegatedCredentialUserClient client = new DelegatedCredentialUserClient(dref, credential);
 
             //The get credential method obtains a signed delegated credential from the CDS.
+
             delegatedCredential = client.getDelegatedCredential();
 
             //Set the delegated credential as the default, the delegatee is now logged in as the delegator.
-            //ProxyUtil.saveProxyAsDefault(delegatedCredential);
             logger.debug("Retrieved Client credential");
+
         }
         return delegatedCredential;
     }
@@ -284,7 +291,7 @@ public class UserOperations extends DefaultBizLogic {
     /**
      * 
      * @param idP
-     * @return
+     * @return GlobusCredential for server 
      */
     private static synchronized GlobusCredential createGlobusCredential(String idP) {
         logger.debug("Generating GlobusCredential for server");
