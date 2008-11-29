@@ -60,7 +60,7 @@ public class UserOperations extends DefaultBizLogic {
         List<UserInterface> userList = null;
         try {
             SQLQuery sqlQuery = HibernateUtil.getSessionFactory().openSession().createSQLQuery(
-                                                                                               "Select {User.*} from cab2b_user User where name ='"
+                                                                                               "Select {User.*} from cab2b_user User where name COLLATE latin1_bin='"
                                                                                                        + value
                                                                                                        + "'");
             userList = sqlQuery.addEntity("User", edu.wustl.cab2b.common.user.User.class).list();
@@ -362,5 +362,5 @@ public class UserOperations extends DefaultBizLogic {
         }
         return userName;
     }
-
+   
 }
