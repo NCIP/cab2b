@@ -2,6 +2,7 @@ package edu.wustl.cab2b.client.ui.searchDataWizard;
 
 import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.MYSETTINGS_FRAME_TITLE;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.DIALOG_CLOSE_EVENT;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -50,9 +51,6 @@ import edu.wustl.cab2b.client.ui.util.WindowUtilities;
 import edu.wustl.cab2b.client.ui.viewresults.DataListPanel;
 import edu.wustl.cab2b.client.ui.viewresults.ViewSearchResultsPanel;
 import edu.wustl.cab2b.common.datalist.IDataRow;
-import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
-import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
-import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
@@ -82,7 +80,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
     private Cab2bButton saveDataListButton;
 
-    private Cab2bButton saveConditionButton;
+    private Cab2bButton saveQueryButton;
 
     private Cab2bButton addToExperimentButton;
 
@@ -144,9 +142,9 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         saveDataListButton.setPreferredSize(new Dimension(160, 22));
         saveDataListButton.addActionListener(this);
 
-        saveConditionButton = new Cab2bButton(saveQueryButtonStr);
-        saveConditionButton.setPreferredSize(new Dimension(160, 22));
-        saveConditionButton.addActionListener(new SaveConditionButtonActionListener());
+        saveQueryButton = new Cab2bButton(saveQueryButtonStr);
+        saveQueryButton.setPreferredSize(new Dimension(160, 22));
+        saveQueryButton.addActionListener(new SaveQueryButtonActionListener());
 
         serviceUrlButton = new Cab2bButton(serviceUrlButtonStr);
         serviceUrlButton.setPreferredSize(new Dimension(160, 22));
@@ -161,7 +159,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         buttonPanel = new Cab2bPanel();
         buttonPanel.setBackground(null);
         buttonPanel.setLayout(flowLayout);
-        buttonPanel.add(saveConditionButton);
+        buttonPanel.add(saveQueryButton);
         buttonPanel.add(serviceUrlButton);
         buttonPanel.add(previousButton);
         buttonPanel.add(nextButton);
@@ -251,9 +249,9 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             serviceUrlButton.setVisible(false);
 
         if (cardindex > 1 && cardindex < 4)
-            saveConditionButton.setVisible(true);
+            saveQueryButton.setVisible(true);
         else
-            saveConditionButton.setVisible(false);
+            saveQueryButton.setVisible(false);
 
         if (cardindex == 4) {
             saveDataListButton.setVisible(true);
@@ -609,13 +607,11 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
      * @author deepak_shingan
      * 
      */
-    private class SaveConditionButtonActionListener implements ActionListener {
+    private class SaveQueryButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
             ParameterizedQueryMainPanel parameterizedQueryMainPanel = null;
 
             Cab2bQuery query = (Cab2bQuery) mainSearchPanel.getQueryObject().getQuery();
-            Long userId = UserCache.getInstance().getCurrentUser().getUserId();
-            query.setUserId(userId);
             if (CommonUtils.isServiceURLConfigured(query, mainSearchPanel.getParent())) {
                 parameterizedQueryMainPanel = new ParameterizedQueryMainPanel(new ParameterizedQueryDataModel(
                         query));
