@@ -78,7 +78,7 @@ public class UserCache {
     public String[] getServiceURLs(EntityInterface entity) {
         String[] urls = new String[0];
         EntityGroupInterface eg = Utility.getEntityGroup(entity);
-        String name = eg.getLongName();
+        String name = eg.getName();
         if (entityGroupToURLs.containsKey(name)) {
             urls = entityGroupToURLs.get(name).toArray(new String[0]);
         } else {

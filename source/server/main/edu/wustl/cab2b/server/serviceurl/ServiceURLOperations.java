@@ -20,6 +20,7 @@ import edu.wustl.cab2b.common.user.AdminServiceMetadata;
 import edu.wustl.cab2b.common.user.ServiceURL;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.user.UserOperations;
 import edu.wustl.common.hibernate.HibernateDatabaseOperations;
 import edu.wustl.common.hibernate.HibernateUtil;
@@ -73,7 +74,7 @@ public class ServiceURLOperations {
             logger.info(remoteException.getMessage(), remoteException);
             throw new RemoteException(remoteException.getMessage());
         }
-        return getMetadataObjects(allServices, serviceName, user);
+        return getMetadataObjects(allServices, serviceName, version, user);
     }
 
     /**
@@ -85,13 +86,14 @@ public class ServiceURLOperations {
      * @throws RemoteException 
      */
     private List<AdminServiceMetadata> getMetadataObjects(final Map<String, ServiceMetadata> services,
-                                                          String serviceName, UserInterface user) {
+                                                          String serviceName, String version, UserInterface user) {
         final List<AdminServiceMetadata> metadataObjectService = new ArrayList<AdminServiceMetadata>();
         // final List<AdminServiceMetadata> tempMetadataObject = new ArrayList<AdminServiceMetadata>();
-        Map<String, AdminServiceMetadata> existingServiceURLMap = getExistingServiceURLs(serviceName, user);
+        String entityName = Utility.createModelName(serviceName, version);
+        Map<String, AdminServiceMetadata> existingServiceURLMap = getExistingServiceURLs(entityName, user);
 
         AdminServiceMetadata metadataObject = null;
-
+       
         for (String serviceURL : services.keySet()) {
 
             //  AttributedURI attributeUri = service.getAddress();
@@ -103,7 +105,8 @@ public class ServiceURLOperations {
                 metadataObject = new AdminServiceMetadata();
                 ServiceURL serviceURLObj = new ServiceURL();
                 serviceURLObj.setUrlLocation(serviceURL);
-                serviceURLObj.setEntityGroupName(serviceName);
+               
+                serviceURLObj.setEntityGroupName(entityName);
                 serviceURLObj.setAdminDefined(user.isAdmin());
                 metadataObject.setServiceURL(serviceURL);
                 metadataObject.setServiceURLObject(serviceURLObj);

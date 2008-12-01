@@ -539,7 +539,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
             Map<String, List<String>> entityNameToURL = UserCache.getInstance().getEntityGroupToURLs();
             for (EntityGroupInterface entityGroup : entityGruopCollection) {
-                String entityName = entityGroup.getLongName();
+                String entityName = entityGroup.getName();
                 List<String> urlList = entityNameToURL.get(entityName);
                 entityURLMap.put(entityName, urlList);
             }
@@ -588,13 +588,13 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         /**
          * This method updates the query urls when user selects the service urls 
          * by clicking on the service URL button. This method actually update only
-         * the root entity urls.   
+         * the root entity urls.   initialiseMap
          */
         private void updateQueryForURLS() {
             List<String> queryURLList = new ArrayList<String>();
             final ICab2bQuery b2bquery = (ICab2bQuery) mainSearchPanel.queryObject.getQuery();
             EntityGroupInterface entityGroup = b2bquery.getOutputEntity().getEntityGroupCollection().iterator().next();
-            String groupName = entityGroup.getLongName();
+            String groupName = entityGroup.getName();
             if (entityURLMap.get(groupName) != null) {
                 queryURLList.addAll(entityURLMap.get(groupName));
             }

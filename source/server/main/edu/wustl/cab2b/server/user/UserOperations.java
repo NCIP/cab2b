@@ -172,7 +172,9 @@ public class UserOperations extends DefaultBizLogic {
     public Map<String, List<String>> getServiceURLsForUser(UserInterface user) {
         Map<String, List<String>> entityGroupByUrls = new HashMap<String, List<String>>();
         Collection<ServiceURLInterface> userServiceCollection = user.getServiceURLCollection();
-
+        if(userServiceCollection==null){
+            userServiceCollection = new ArrayList<ServiceURLInterface>();
+        }
         for (ServiceURLInterface url : userServiceCollection) {
             String longName = url.getEntityGroupName();
             if (entityGroupByUrls.containsKey(longName)) {

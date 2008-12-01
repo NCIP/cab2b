@@ -18,6 +18,7 @@ import java.util.Map;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
@@ -125,15 +126,16 @@ public class RightPanel extends Cab2bPanel {
                                                                                               PropertyChangeEvent event) {
                                                                        List<String> newURLList = (List<String>) event.getNewValue();
                                                                        String entityGroupName = serviceName;
-                                                                       
+                                                                       String version = "";
  
                                                                        if(serviceName.indexOf("~")>-1)
                                                                        {
                                                                            String nameVersion[] = serviceName.split("~");
                                                                            entityGroupName =    nameVersion[0];
+                                                                           version = nameVersion[1];
                                                                        }
-                                                                       
-                                                                       entityToURLMap.put(entityGroupName, newURLList);
+                                                                       String entityName = Utility.createModelName(entityGroupName, version);
+                                                                       entityToURLMap.put(entityName, newURLList);
                                                                        String status = ApplicationProperties.getValue(SERVICE_URLS_SUCCESS);
                                                                        allServices.refreshPanel(serviceName,
                                                                                                 status);
