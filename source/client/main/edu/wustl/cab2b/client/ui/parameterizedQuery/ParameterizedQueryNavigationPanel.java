@@ -182,11 +182,11 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
 
                 String message = null;
 
-                if (cab2bParameterizedQuery.getId() != null) {
+                /*if (cab2bParameterizedQuery.getId() != null) {
                     queryEngineBusinessInterface.updateQuery(cab2bParameterizedQuery);
 
                     message = "Query updated successfully.";
-                } else {
+                } else {*/
                     if (queryEngineBusinessInterface.isQueryNameDuplicate(cab2bParameterizedQuery.getName())) {
                         JOptionPane.showMessageDialog(
                                                       parameterizedQueryMainPanel,
@@ -198,7 +198,7 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                                                            UserValidator.getSerializedDCR(),
                                                            UserValidator.getIdP());
                     message = "Query saved successfully.";
-                }
+                //}
                 SearchNavigationPanel.getMessageLabel().setText(message);
                 new SavedQueryLinkPanel().updateQueryLinkPanel();
                 updateUI();
