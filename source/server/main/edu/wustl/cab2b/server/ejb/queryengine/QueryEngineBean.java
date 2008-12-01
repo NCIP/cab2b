@@ -86,7 +86,6 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
         Long userId = null;
         UserOperations uop = new UserOperations();
         try {
-
             userId = uop.getUserByName(uop.getCredentialUserName(dref, idP)).getUserId();
         } catch (GeneralSecurityException ge) {
             throw new RuntimeException("General Security Exception", ge.getMessage());
