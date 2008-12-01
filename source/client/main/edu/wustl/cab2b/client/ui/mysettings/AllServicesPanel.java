@@ -9,6 +9,7 @@ import static edu.wustl.cab2b.client.ui.util.ClientConstants.SERVICE_SELECT_EVEN
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GradientPaint;
@@ -33,6 +34,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
+import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.client.ui.pagination.JPagination;
 import edu.wustl.cab2b.client.ui.pagination.NumericPager;
 import edu.wustl.cab2b.client.ui.pagination.PageElement;
@@ -121,6 +123,10 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
         Font font = serviceURL.getFont();
         serviceURL.setFont(new Font(font.getName(), Font.BOLD, font.getSize() + 2));
         serviceURL.setForeground(new Color(185, 211, 238));
+        
+        final Cab2bPanel serviceURLPanel = new Cab2bPanel(new RiverLayout(0,17));
+        serviceURLPanel.setPreferredSize(new Dimension(400,30));
+        serviceURLPanel.add(serviceURL);
 
         searchPanel.addPropertyChangeListener(SEARCH_EVENT, new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
@@ -136,9 +142,9 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
             }
         });
 
-        final JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.add(serviceURL, BorderLayout.NORTH);
-        topPanel.add(searchPanel, BorderLayout.CENTER);
+        final JPanel topPanel = new Cab2bPanel(new BorderLayout());
+        topPanel.add(serviceURLPanel, BorderLayout.CENTER);
+        topPanel.add(searchPanel, BorderLayout.SOUTH);
         topPanel.setBackground(Color.white);
         FlowLayout flowLayout = new FlowLayout(FlowLayout.RIGHT);
         flowLayout.setHgap(10);

@@ -25,6 +25,7 @@ import java.util.Set;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.jdesktop.swingx.JXPanel;
 
@@ -565,6 +566,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                                                                               mainPanel, title, dimension, true,
                                                                               true);
             final RightPanel rightPanel = new RightPanel(selectedEntityList, entityURLMap);
+            mainPanel.add(new JPanel(new BorderLayout(2,1)),BorderLayout.WEST);
             mainPanel.add(rightPanel, BorderLayout.CENTER);
             serviceInstanceDialog.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent arg0) {
