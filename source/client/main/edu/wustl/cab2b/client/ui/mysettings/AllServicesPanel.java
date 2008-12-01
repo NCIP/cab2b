@@ -107,7 +107,7 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
         }
 
         /* Now creating the title */
-        titledSearchResultsPanel = new Cab2bTitledPanel("Available Services(" + filteredServices.size() + ")");
+        titledSearchResultsPanel = new Cab2bTitledPanel("Available Models(" + filteredServices.size() + ")");
         GradientPaint gp = new GradientPaint(new Point2D.Double(.05d, 0), new Color(185, 211, 238),
                 new Point2D.Double(.95d, 0), Color.WHITE);
         titledSearchResultsPanel.setTitlePainter(new BasicGradientPainter(gp));
