@@ -274,7 +274,8 @@ public class CommonUtilsTest extends TestCase {
     }
 
     public void testGetErrorMessage() {
-        final String errorMessage = "An unknown internal error ocurred at CDS while delegating the credentials";
+        ErrorCodeHandler.initBundle("errorcodes");
+        final String errorMessage = "An unknown internal error occurred at CDS while delegating the credentials";
 
         RuntimeException e = new RuntimeException(errorMessage, ErrorCodeConstants.CDS_006);
         String message = CommonUtils.getErrorMessage(e);
