@@ -31,7 +31,6 @@ import org.jdesktop.swingx.LinkRenderer;
 import org.jdesktop.swingx.action.LinkAction;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
