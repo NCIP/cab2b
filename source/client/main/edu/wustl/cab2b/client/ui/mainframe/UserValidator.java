@@ -1,12 +1,6 @@
 package edu.wustl.cab2b.client.ui.mainframe;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.StringWriter;
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +37,6 @@ import gov.nih.nci.cagrid.dorian.stubs.types.InvalidAssertionFault;
 import gov.nih.nci.cagrid.dorian.stubs.types.InvalidProxyFault;
 import gov.nih.nci.cagrid.dorian.stubs.types.UserPolicyFault;
 import gov.nih.nci.cagrid.opensaml.SAMLAssertion;
-import gov.nih.nci.cagrid.syncgts.bean.SyncDescription;
-import gov.nih.nci.cagrid.syncgts.core.SyncGTS;
 
 /**
  * This class validates user and gets GlobusCredential from Dorian.
@@ -94,7 +86,7 @@ public class UserValidator {
      */
     public void validateUser(final String password) {
         logger.debug("Validating the user on grid...");
-        generateGlobusCertificate(idP);
+        Utility.generateGlobusCertificate(idP);
 
         String dorianUrl = ClientPropertyLoader.getDorianUrl(idP);
         Credential credential = createCredentials(userName, password);
@@ -120,7 +112,8 @@ public class UserValidator {
             throw new RuntimeException("Please check the authentication service URL", ErrorCodeConstants.UR_0006);
         } catch (RemoteException e) {
             logger.error("Unable to create the authentication client: " + e.getMessage(), e);
-            throw new RuntimeException("Unable to create the authentication client: " + e.getMessage(), ErrorCodeConstants.CDS_020);
+            throw new RuntimeException("Unable to create the authentication client: " + e.getMessage(),
+                    ErrorCodeConstants.CDS_020);
         }
 
         return authenticationClient;
@@ -139,10 +132,12 @@ public class UserValidator {
             throw new RuntimeException("User name or password is missing", ErrorCodeConstants.UR_0008);
         } catch (AuthenticationProviderFault e) {
             logger.error(e.getMessage(), e);
-            throw new RuntimeException("Error occurred at Authentication Provider service", ErrorCodeConstants.UR_0009);
+            throw new RuntimeException("Error occurred at Authentication Provider service",
+                    ErrorCodeConstants.UR_0009);
         } catch (RemoteException e) {
             logger.error("Unable to authenticate the user:" + e.getMessage(), e);
-            throw new RuntimeException("Unable to authenticate the user:" + e.getMessage(), ErrorCodeConstants.CDS_019);
+            throw new RuntimeException("Unable to authenticate the user:" + e.getMessage(),
+                    ErrorCodeConstants.CDS_019);
         }
 
         return saml;
@@ -216,7 +211,8 @@ public class UserValidator {
                     ErrorCodeConstants.CDS_015);
         } catch (RemoteException e) {
             logger.error("Unable to generate GlobusCredential: " + e.getMessage(), e);
-            throw new RuntimeException("Unable to generate GlobusCredential: " + e.getMessage(), ErrorCodeConstants.CDS_018);
+            throw new RuntimeException("Unable to generate GlobusCredential: " + e.getMessage(),
+                    ErrorCodeConstants.CDS_018);
         }
 
         return proxy;
@@ -243,7 +239,7 @@ public class UserValidator {
         issuedCredentialLifetime.setMinutes(0);
         issuedCredentialLifetime.setSeconds(0);
 
-        //Specifies the path length of the credential being delegate the minumum is 1.
+        //Specifies the path length of the credential being delegate the minimum is 1.
         final int delegationPathLength = 1;
 
         /*
@@ -293,10 +289,12 @@ public class UserValidator {
                     ErrorCodeConstants.CDS_009);
         } catch (RemoteException e) {
             logger.error("Unable to delegate the credential to CDS" + e.getMessage(), e);
-            throw new RuntimeException("Unable to delegate the credential to CDS" + e.getMessage(), ErrorCodeConstants.CDS_017);
+            throw new RuntimeException("Unable to delegate the credential to CDS" + e.getMessage(),
+                    ErrorCodeConstants.CDS_017);
         } catch (Exception e) {
             logger.error("Unable to delegate the credential to CDS" + e.getMessage(), e);
-            throw new RuntimeException("Unable to delegate the credential to CDS" + e.getMessage(), ErrorCodeConstants.CDS_017);
+            throw new RuntimeException("Unable to delegate the credential to CDS" + e.getMessage(),
+                    ErrorCodeConstants.CDS_017);
         }
         return reference;
     }
@@ -319,75 +317,4 @@ public class UserValidator {
         }
     }
 
-    private void copyCACertificates(URL inFileURL) {
-        InputStream in = null;
-        try {
-            in = inFileURL.openStream();
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException(inFileURL.getPath() + " file not found", ErrorCodeConstants.CDS_016);
-        }
-
-        File dest = null;
-        int index = inFileURL.getPath().lastIndexOf('/');
-        if (index > -1) {
-            String fileName = inFileURL.getPath().substring(index + 1).trim();
-            dest = new File(gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory() + File.separator
-                    + fileName);
-        }
-
-        byte[] buf = new byte[1024];
-        int len = 0;
-        try {
-            OutputStream out = new FileOutputStream(dest);
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-
-            in.close();
-            out.close();
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException("Unable to copy CA certificates to [user.home]/.globus",
-                    ErrorCodeConstants.CDS_003);
-        }
-    }
-
-    /**
-     * This method generates the globus certificate in user.home folder
-     * @param idP
-     */
-    private void generateGlobusCertificate(String idP) {
-        URL signingPolicy = null;
-        URL certificate = null;
-        if ("Production".compareTo(idP) == 0) {
-            signingPolicy = UserValidator.class.getClassLoader().getResource(idP + "/62f4fd66.signing_policy");
-            certificate = UserValidator.class.getClassLoader().getResource(idP + "/62f4fd66.0");
-        } else if ("Training".compareTo(idP) == 0) {
-            signingPolicy = UserValidator.class.getClassLoader().getResource(idP + "/68907d53.signing_policy");
-            certificate = UserValidator.class.getClassLoader().getResource(idP + "/68907d53.0");
-        }
-
-        if (signingPolicy != null || certificate != null) {
-            copyCACertificates(signingPolicy);
-            copyCACertificates(certificate);
-        } else {
-            logger.error("Could not find CA certificates");
-            throw new RuntimeException("Could not find CA certificates", ErrorCodeConstants.CDS_016);
-        }
-
-        logger.debug("Getting sync-descriptor.xml file for " + idP);
-        try {
-            logger.debug("Synchronizing with GTS service");
-            URL syncDescFile = UserValidator.class.getClassLoader().getResource(idP + "/sync-description.xml");
-            SyncDescription description = (SyncDescription) Utility.deserializeDocument(syncDescFile.openStream(),
-                                                                                        SyncDescription.class);
-            SyncGTS.getInstance().syncOnce(description);
-            logger.debug("Successfully syncronized with GTS service. Globus certificates generated.");
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException("Error occurred while generating globus certificates",
-                    ErrorCodeConstants.CDS_004);
-        }
-    }
 }
