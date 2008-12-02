@@ -80,6 +80,8 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
      * @param rootDataRow
      * @param datalistMetadata
      * @param dref -Its serialized User Credential in String
+     * @param serializedRef - client serialized reference
+     * @param idP - type of grid
      * @return data list id.
      * @throws RemoteException
      * @see DataListBusinessInterface#saveDataList(DataList)
@@ -119,6 +121,8 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
      * @param dataListMetadata
      * @param oldAttribute
      * @param newAttributes
+     * @param serializedRef
+     * @param idP
      * @return Saved data category
      * @throws RemoteException
      * @throws CheckedException
@@ -150,6 +154,7 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
      * @param string
      * @param experiment
      * @param dref
+     * @param idP
      * @param selectedIdentityProvider
      * @return Saved custom data category
      * @throws RemoteException
