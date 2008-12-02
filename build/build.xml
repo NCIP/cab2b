@@ -339,6 +339,22 @@
 				<include name="ResultConfiguration.xml" />
 			</fileset>
 		</copy>
+		
+		<mkdir dir="${server.jar.dir}/Production" />
+		<mkdir dir="${server.jar.dir}/Training" />
+		<copy todir="${server.jar.dir}/Production">
+				<fileset dir="${conf.dir}/Production">
+						<include name="*.*" />
+				</fileset>
+		</copy>
+		<copy todir="${server.jar.dir}/Training">
+				<fileset dir="${conf.dir}/Training">
+					<include name="*.*" />
+				</fileset>
+		</copy>
+		
+		
+		
 		<replace file="${server.jar.dir}/hibernate.cfg.xml" token="DS-NAME" value="${datasource.name}" />
 		<jar basedir="${server.jar.dir}" destfile="${server.jar.file}" />
 	</target>
@@ -467,6 +483,7 @@
 				<include name="server.properties" />
 				<include name="EntityToAnalyticalServiceMapping.xml" />
 				<include name="ResultConfiguration.xml" />
+				
 			</fileset>
 		</copy>
 
