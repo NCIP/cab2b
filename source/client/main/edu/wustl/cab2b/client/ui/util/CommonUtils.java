@@ -168,7 +168,7 @@ public class CommonUtils {
             logger.error(msgToLog, e);
         }
         if (showErrorDialog) {
-            JXErrorDialog.showDialog(parentComponent, "caB2B - Application Error", msgForUser);
+            JXErrorDialog.showDialog(parentComponent, "caB2B - Application Error", msgForUser,e);
         }
 
         if (logToConsole) {
