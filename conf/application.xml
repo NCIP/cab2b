@@ -107,4 +107,15 @@
     <module><java>caGrid-cds-client-1.2.jar</java></module>
     <module><java>caGrid-websso-client-1.2.jar</java></module>
     <module><java>caGrid-ServiceSecurityProvider-stubs-1.2.jar</java></module>
+    
+    
+    <module><java>caGrid-gts-client-1.2.jar</java></module>
+    <module><java>caGrid-gts-common-1.2.jar</java></module>
+    <module><java>caGrid-gts-stubs-1.2.jar</java></module>
+    <module><java>caGrid-syncgts-common-1.2.jar</java></module>
+    <module><java>caGrid-syncgts-client-1.2.jar</java></module>
+    <module><java>caGrid-syncgts-stubs-1.2.jar</java></module>
+    <module><java>mobius_common_client-1.1.jar</java></module>
+    <module><java>mobius_tools-1.1.jar</java></module>
+       
 </application>
