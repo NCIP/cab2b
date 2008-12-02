@@ -138,9 +138,9 @@ public class ShowDCQLPanel extends Cab2bPanel {
 			JFileChooser fileChooser = new JFileChooser();
 
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
-					"Xml File Format", "xml");
+					"Xml Document(*.xml)", "xml");
 			FileNameExtensionFilter filter1 = new FileNameExtensionFilter(
-					"Txt File Format", "txt");
+					"Text Document(*.txt)", "txt");
 			fileChooser.setAcceptAllFileFilterUsed(false);
 			fileChooser.setFileFilter(filter);
 			fileChooser.setFileFilter(filter1);
