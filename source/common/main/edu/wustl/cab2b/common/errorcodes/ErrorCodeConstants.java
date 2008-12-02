@@ -162,13 +162,22 @@ public interface ErrorCodeConstants {
     public static final String CDS_015 = "CDS.015";
 
     public static final String CDS_016 = "CDS.016";
-    
+
     public static final String CDS_017 = "CDS.017";
 
     public static final String CDS_018 = "CDS.018";
-    
+
     public static final String CDS_019 = "CDS.019";
-    
+
     public static final String CDS_020 = "CDS.020";
+
+    /* Experiment related error codes */
+    public static final String EX_001 = "EX.001";
+
+    public static final String EX_002 = "EX.002";
+
+    public static final String EX_003 = "EX.003";
+
+    public static final String EX_004 = "EX.004";
 
 }

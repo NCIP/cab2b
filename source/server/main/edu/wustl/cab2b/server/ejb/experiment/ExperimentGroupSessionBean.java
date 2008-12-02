@@ -24,42 +24,18 @@ public class ExperimentGroupSessionBean extends AbstractStatelessSessionBean imp
     private static final long serialVersionUID = -5216059908579963838L;
 
     /**
-     * Adds a experiment group 
-     * @param expGrp
-     * @return Reference to ExperimentGroup
-     * @throws BizLogicException
-     * @throws UserNotAuthorizedException
-     * @throws RemoteException
-     */
-    /* public ExperimentGroup addExperimentGroup(Object expGrp) throws BizLogicException, UserNotAuthorizedException,
-             RemoteException {
-         return (new ExperimentGroupOperations()).addExperimentGroup(expGrp);
-     }
+    * Adds a experiment group to a given parent
+    * @param parentExperimentGroupId
+    * @param experimentGroup
+    * @param dref
+    * @param idP
+    * @return Reference to ExperimentGroup
+    * @throws BizLogicException
+    * @throws UserNotAuthorizedException
+    * @throws RemoteException
+    * @throws DAOException 
+    * @see edu.wustl.cab2b.common.experiment.ExperimentGroupBusinessInterface#addExperimentGroup(java.lang.Long, edu.wustl.cab2b.common.domain.ExperimentGroup)
     */
-    /**
-     * Returns ExperimentGroup reference
-     * @param identifier
-     * @return Returns experiment group
-     * @throws DAOException
-     * @throws RemoteException
-     */
- /*   public ExperimentGroup getExperimentGroup(Long identifier) throws DAOException, RemoteException {
-        return (new ExperimentGroupOperations()).getExperimentGroup(identifier);
-    }
-*/
-    /**
-     * Adds a experiment group to a given parent
-     * @param parentExperimentGroupId
-     * @param experimentGroup
-     * @param dref
-     * @param idP
-     * @return Reference to ExperimentGroup
-     * @throws BizLogicException
-     * @throws UserNotAuthorizedException
-     * @throws RemoteException
-     * @throws DAOException 
-     * @see edu.wustl.cab2b.common.experiment.ExperimentGroupBusinessInterface#addExperimentGroup(java.lang.Long, edu.wustl.cab2b.common.domain.ExperimentGroup)
-     */
     public ExperimentGroup addExperimentGroup(Long parentExperimentGroupId, ExperimentGroup experimentGroup,
                                               String dref, String idP) throws BizLogicException,
             UserNotAuthorizedException, RemoteException, DAOException {
@@ -77,6 +53,16 @@ public class ExperimentGroupSessionBean extends AbstractStatelessSessionBean imp
 
         experimentGroup.setUserId(userId);
         return (new ExperimentGroupOperations()).addExperimentGroup(parentExperimentGroupId, experimentGroup);
+    }
+
+    /**
+     * This method returns false if ExperimentGroup with given name is not present in the database.
+     * It returns false otherwise.
+     * @param name
+     * @return
+     */
+    public boolean isExperimentGroupByNamePresent(String name) {
+        return new ExperimentGroupOperations().isExperimentGroupByNamePresent(name);
     }
 
 }

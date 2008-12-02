@@ -1,14 +1,20 @@
 package edu.wustl.cab2b.server.experiment;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.hibernate.HibernateException;
+
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.dbManager.HibernateUtility;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
 
@@ -18,7 +24,7 @@ import edu.wustl.common.util.global.Validator;
  *
  */
 public class ExperimentGroupOperations extends DefaultBizLogic {
-	
+
     /**
      * Hibernate DAO Type to use.
      */
@@ -88,5 +94,29 @@ public class ExperimentGroupOperations extends DefaultBizLogic {
         experimentGroup.setParentGroup(parentExperimentGroup);
 
         return addExperimentGroup(experimentGroup);
+    }
+
+    /**
+     * This method returns false if ExperimentGroup with given name is not present in the database.
+     * It returns false otherwise.
+     * @param name
+     * @return
+     */
+    public boolean isExperimentGroupByNamePresent(String name) {
+        List<Object> values = new ArrayList<Object>(1);
+        values.add(name);
+
+        Collection<ExperimentGroup> results = null;
+        try {
+            results = HibernateUtility.executeHQL("getExperimentGroupIdByName", values);
+        } catch (HibernateException e) {
+            throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.EX_004));
+        }
+
+        boolean present = false;
+        if (results != null && results.size() == 1) {
+            present = true;
+        }
+        return present;
     }
 }

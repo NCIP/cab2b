@@ -26,8 +26,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @throws UserNotAuthorizedException
      * @throws RemoteException
      */
-  //  public void addExperiment(Object exp) throws BizLogicException, UserNotAuthorizedException, RemoteException;
-
+    //  public void addExperiment(Object exp) throws BizLogicException, UserNotAuthorizedException, RemoteException;
     /**
      * Adds a given experiment to specific Experiment Group.
      * @param experimentGroupId
@@ -37,7 +36,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @throws DAOException
      * @throws RemoteException
      */
-    public void addExperiment(Long experimentGroupId, Experiment experiment, String dref, String idP)
+    void addExperiment(Long experimentGroupId, Experiment experiment, String dref, String idP)
             throws BizLogicException, UserNotAuthorizedException, DAOException, RemoteException;
 
     /**
@@ -50,7 +49,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @throws UserNotAuthorizedException
      * @throws RemoteException
      */
-    public void move(Object exp, Object srcExpGrp, Object tarExpGrp) throws DAOException, BizLogicException,
+    void move(Object exp, Object srcExpGrp, Object tarExpGrp) throws DAOException, BizLogicException,
             UserNotAuthorizedException, RemoteException;
 
     /**
@@ -61,8 +60,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @throws UserNotAuthorizedException
      * @throws RemoteException
      */
-    public void copy(Object exp, Object tarExpGrp) throws BizLogicException, UserNotAuthorizedException,
-            RemoteException;
+    void copy(Object exp, Object tarExpGrp) throws BizLogicException, UserNotAuthorizedException, RemoteException;
 
     /**
      * Returns list of experiment hierarchy.
@@ -71,7 +69,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @throws DAOException
      * @throws RemoteException
      */
-    public Vector getExperimentHierarchy(String dref, String idP) throws ClassNotFoundException, DAOException,
+    Vector getExperimentHierarchy(String dref, String idP) throws ClassNotFoundException, DAOException,
             RemoteException;
 
     /**
@@ -80,8 +78,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @return
      * @throws RemoteException
      */
-    public List<Experiment> getExperimentsForUser(UserInterface user, String dref, String idP)
-            throws RemoteException;
+    List<Experiment> getExperimentsForUser(UserInterface user, String dref, String idP) throws RemoteException;
 
     /**
      * Returns experiment belongs to given id.
@@ -90,7 +87,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @throws RemoteException
      * @throws DAOException
      */
-    public Experiment getExperiment(Long id) throws RemoteException, DAOException;
+    Experiment getExperiment(Long id) throws RemoteException, DAOException;
 
     /**
      * get a set of root entities for an experiment where each root entity
@@ -100,7 +97,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @return set of root entities for an experiment where each root entity
      *         represents a datalist
      */
-    public Set<Set<EntityInterface>> getDataListEntitySet(Experiment exp) throws RemoteException;
+    Set<Set<EntityInterface>> getDataListEntitySet(Experiment exp) throws RemoteException;
 
     /**
      * save the given data as a data category
@@ -110,7 +107,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @param data the data to be saved
      * @return the newly saved entity
      */
-    public EntityInterface saveDataCategory(String title, List<AttributeInterface> attributes, Object[][] data)
+    EntityInterface saveDataCategory(String title, List<AttributeInterface> attributes, Object[][] data)
             throws RemoteException;
 
     /**
@@ -128,8 +125,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @throws RemoteException
      * @throws CheckedException
      */
-    public CustomDataCategoryModel getDataCategoryModel(Experiment experiment) throws RemoteException,
-            CheckedException;
+    CustomDataCategoryModel getDataCategoryModel(Experiment experiment) throws RemoteException, CheckedException;
 
     /**
      * Returns collection of all attributes for specified Experiment ID
@@ -138,7 +134,15 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @throws RemoteException
      * @throws CheckedException
      */
-    public Collection<AttributeInterface> getAllAttributes(Long experimentID) throws RemoteException,
-            CheckedException;
+    Collection<AttributeInterface> getAllAttributes(Long experimentID) throws RemoteException, CheckedException;
+
+    /**
+     * This method returns false if Experiment with given name is not present in the database.
+     * It returns false otherwise.
+     * @param name
+     * @return
+     * @throws DAOException
+     */
+    boolean isExperimentByNamePresent(String name) throws RemoteException;
 
 }

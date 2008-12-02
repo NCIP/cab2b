@@ -19,6 +19,9 @@ import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.WindowUtilities;
+import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
+import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
+import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 
 /**
  * The panel to show dialog for saving a subset of the datalist as a category
@@ -76,6 +79,20 @@ public class SaveDataCategoryPanel extends Cab2bPanel {
             public void actionPerformed(ActionEvent event) {
                 String title = titleField.getText();
 
+                try {
+                    DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                        EjbNamesConstants.DATALIST_BEAN,
+                                                                                                                        DataListHomeInterface.class);
+                    if (dataListBI.isDataListByNamePresent(title)) {
+                        JOptionPane.showMessageDialog(SaveDataCategoryPanel.this, "DataList with " + title
+                                + " as title already exists.");
+                        return;
+                    }
+                } catch (Exception e) {
+                    CommonUtils.handleException(e, SaveDataCategoryPanel.this, true, true, false, false);
+                    return;
+                }
+
                 if (!CommonUtils.isNameValid(title)) {
                     JOptionPane.showMessageDialog(SaveDataCategoryPanel.this,
                                                   "Please enter valid name before saving.", "Error",
@@ -85,9 +102,7 @@ public class SaveDataCategoryPanel extends Cab2bPanel {
                     dialog.dispose();
                 }
             }
-
         });
-
     }
 
     private JDialog showAsDialog() {

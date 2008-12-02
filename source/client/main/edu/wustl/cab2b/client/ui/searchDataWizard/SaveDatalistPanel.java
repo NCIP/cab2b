@@ -12,6 +12,7 @@ import java.rmi.RemoteException;
 import java.util.Date;
 
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -223,6 +224,22 @@ public class SaveDatalistPanel extends Cab2bPanel {
             if (dataListName == null || dataListName.equals("")) {
                 dataListName = "" + new Date();
             }
+
+            try {
+                DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                    EjbNamesConstants.DATALIST_BEAN,
+                                                                                                                    DataListHomeInterface.class);
+
+                if (dataListBI.isDataListByNamePresent(dataListName)) {
+                    JOptionPane.showMessageDialog(SaveDatalistPanel.this, "DataList with " + dataListName
+                            + " as title already exists.");
+                    return;
+                }
+            } catch (RemoteException e) {
+                CommonUtils.handleException(e, SaveDatalistPanel.this, true, true, true, false);
+                return;
+            }
+            
             String dataListDesc = txtDesc.getText();
 
             final DataListMetadata dataListAnnotation = new DataListMetadata();

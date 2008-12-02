@@ -36,20 +36,6 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
     private static final long serialVersionUID = 782660710949035029L;
 
     /* (non-Javadoc)
-     * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#addExperiment(java.lang.Object)
-     */
-    /**
-     * Adds Experiment for expression.
-     * @param exp
-     * @throws BizLogicException
-     * @throws UserNotAuthorizedException
-     * @throws RemoteException
-     */
-    /*public void addExperiment(Object exp) throws BizLogicException, UserNotAuthorizedException, RemoteException {
-        (new ExperimentOperations()).addExperiment(exp);
-    }
-*/
-    /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#copy(java.lang.Object, java.lang.Object)
      */
     /**
@@ -259,12 +245,22 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
         try {
             userName = new UserOperations().getCredentialUserName(dref, idP);
 
-        }catch (GeneralSecurityException ge) {
+        } catch (GeneralSecurityException ge) {
             throw new RuntimeException("General Security Exception", ge.getMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
         }
         return new ExperimentOperations().getLatestExperimentForUser(userName);
+    }
+
+    /**
+     * This method returns false if Experiment with given name is not present in the database.
+     * It returns false otherwise.
+     * @param name
+     * @return
+     * @throws DAOException
+     */
+    public boolean isExperimentByNamePresent(String name) {
+        return new ExperimentOperations().isExperimentByNamePresent(name);
     }
 }

@@ -10,17 +10,6 @@ import edu.wustl.common.util.dbManager.DAOException;
 
 public interface ExperimentGroupBusinessInterface extends BusinessInterface {
 
-	/**
-	 * Adds a experiment group 
-	 * @param expGrp
-	 * @return Reference to ExperimentGroup
-	 * @throws BizLogicException
-	 * @throws UserNotAuthorizedException
-	 * @throws RemoteException
-	 */
-    /*public ExperimentGroup addExperimentGroup(Object expGrp) throws BizLogicException, UserNotAuthorizedException,
-            RemoteException;
-    */
     /**
      * Adds a experiment group to a given parent
      * @param parentExperimentGroupId
@@ -33,17 +22,15 @@ public interface ExperimentGroupBusinessInterface extends BusinessInterface {
      * @throws RemoteException
      * @throws DAOException
      */
-    public ExperimentGroup addExperimentGroup(Long parentExperimentGroupId, ExperimentGroup experimentGroup,
-                                              String dref, String idP) throws BizLogicException,
-            UserNotAuthorizedException, RemoteException, DAOException;
+    ExperimentGroup addExperimentGroup(Long parentExperimentGroupId, ExperimentGroup experimentGroup, String dref,
+                                       String idP) throws BizLogicException, UserNotAuthorizedException,
+            RemoteException, DAOException;
 
     /**
-     * Returns ExperimentGroup reference
-     * @param identifier
+     * This method returns false if ExperimentGroup with given name is not present in the database.
+     * It returns false otherwise.
+     * @param name
      * @return
-     * @throws DAOException
-     * @throws RemoteException
      */
-  //  public ExperimentGroup getExperimentGroup(Long identifier) throws DAOException, RemoteException;
-
+    boolean isExperimentGroupByNamePresent(String name) throws RemoteException;
 }

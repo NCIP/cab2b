@@ -26,15 +26,15 @@ public interface DataListBusinessInterface extends BusinessInterface {
      * @return data list id.
      * @throws RemoteException
      */
-    public DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata, String dref,
-                                         String selectedIdentityProvider) throws RemoteException;
+    DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata, String dref,
+                                  String selectedIdentityProvider) throws RemoteException;
 
     /**
      * Retrieves annotation information for all the data lists stored.
      * @return list of all available data list metadata.
      * @throws RemoteException
      */
-    public List<DataListMetadata> retrieveAllDataListMetadata(String dref, String selectedIdentityProvider)
+    List<DataListMetadata> retrieveAllDataListMetadata(String dref, String selectedIdentityProvider)
             throws RemoteException;
 
     /**
@@ -43,7 +43,7 @@ public interface DataListBusinessInterface extends BusinessInterface {
      * @return data list metadata
      * @throws RemoteException
      */
-    public DataListMetadata retrieveDataListMetadata(Long id) throws RemoteException;
+    DataListMetadata retrieveDataListMetadata(Long id) throws RemoteException;
 
     /**
      * Returns a data list along with annotation.
@@ -51,7 +51,7 @@ public interface DataListBusinessInterface extends BusinessInterface {
      * @return a data list.
      * @throws RemoteException
      */
-    public DataList retrieveDataList(Long dataListId) throws RemoteException;
+    DataList retrieveDataList(Long dataListId) throws RemoteException;
 
     /**
      * Returns entity list.
@@ -59,7 +59,7 @@ public interface DataListBusinessInterface extends BusinessInterface {
      * @return
      * @throws RemoteException
      */
-    public List<IRecord> getEntityRecord(Long entityId) throws RemoteException;
+    List<IRecord> getEntityRecord(Long entityId) throws RemoteException;
 
     /**
      * Returns saved data category.
@@ -72,11 +72,10 @@ public interface DataListBusinessInterface extends BusinessInterface {
      * @throws RemoteException
      * @throws CheckedException
      */
-    public DataListMetadata saveDataCategory(IDataRow rootRecordDataRow, DataListMetadata dataListMetadata,
-                                             List<AttributeInterface> oldAttribute,
-                                             List<AttributeInterface> newAttributes, String dref,
-                                             String selectedIdentityProvider) throws RemoteException,
-            CheckedException;
+    DataListMetadata saveDataCategory(IDataRow rootRecordDataRow, DataListMetadata dataListMetadata,
+                                      List<AttributeInterface> oldAttribute,
+                                      List<AttributeInterface> newAttributes, String dref,
+                                      String selectedIdentityProvider) throws RemoteException, CheckedException;
 
     /**
      * Returns saved custom data category
@@ -90,10 +89,16 @@ public interface DataListBusinessInterface extends BusinessInterface {
      * @throws RemoteException
      * @throws CheckedException
      */
-    public DataListMetadata saveCustomDataCategory(IdName rootEntityId,
-                                                   Collection<AttributeInterface> selectedAttributeList,
-                                                   String string, Experiment experiment, String dref,
-                                                   String selectedIdentityProvider) throws RemoteException,
-            CheckedException;
+    DataListMetadata saveCustomDataCategory(IdName rootEntityId,
+                                            Collection<AttributeInterface> selectedAttributeList, String string,
+                                            Experiment experiment, String dref, String selectedIdentityProvider)
+            throws RemoteException, CheckedException;
 
+    /**
+     * This method returns false if datalist with given name is not present in the database.
+     * It returns false otherwise.
+     * @param name
+     * @return
+     */
+    boolean isDataListByNamePresent(String name) throws RemoteException;
 }

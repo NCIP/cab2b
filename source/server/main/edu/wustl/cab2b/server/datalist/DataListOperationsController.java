@@ -490,5 +490,15 @@ public class DataListOperationsController {
 
         return dataList;
     }
+    
+    /**
+     * This method returns false if datalist with given name is not present in the database.
+     * It returns false otherwise.
+     * @param name
+     * @return
+     */
+    public boolean isDataListByNamePresent(String name){
+        return new DataListMetadataOperations().isDataListByNamePresent(name);
+    }
 
 }

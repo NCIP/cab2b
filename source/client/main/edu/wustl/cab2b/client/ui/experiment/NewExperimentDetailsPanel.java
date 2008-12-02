@@ -21,7 +21,6 @@ import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -39,7 +38,6 @@ import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTree;
 
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
-import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -67,7 +65,6 @@ import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.tree.ExperimentTreeNode;
 import edu.wustl.common.tree.GenerateTree;
 import edu.wustl.common.util.dbManager.DAOException;
-import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
  * This class shows a panel to create new experiments with GUI controls for
@@ -359,6 +356,18 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                     Date currentDate = new Date(System.currentTimeMillis());
                     experimentName = currentDate.toString();
                 }
+
+                try {
+                    if (expBus.isExperimentByNamePresent(experimentName)) {
+                        JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this, "Experiment with "
+                                + experimentName + " as title is already present.");
+                        return;
+                    }
+                } catch (Exception e1) {
+                    CommonUtils.handleException(e1, NewExperimentDetailsPanel.this, true, true, false, false);
+                    return;
+                }
+
                 String experimentDescription = expDescTextArea.getText();
                 if (experimentDescription == null || experimentDescription.length() > 255) {
                     JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this,
@@ -442,6 +451,17 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
         ExperimentGroupBusinessInterface expGrpBus = (ExperimentGroupBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                          EjbNamesConstants.EXPERIMENT_GROUP,
                                                                                                                          ExperimentGroupHome.class);
+        try {
+            if (expGrpBus.isExperimentGroupByNamePresent(expGrpName)) {
+                JOptionPane.showMessageDialog(NewExperimentDetailsPanel.this, "ExperimentGroup with " + expGrpName
+                        + " as name already exists.");
+                return;
+            }
+        } catch (Exception e) {
+            CommonUtils.handleException(e, NewExperimentDetailsPanel.this, true, true, false, false);
+            return;
+        }
+        
         Long parentExpGrpID = selectedExperimentNode.getIdentifier();
         if (expGrpName != null && !expGrpName.equals("")) {
             ExperimentGroup newExpGrp = new ExperimentGroup();

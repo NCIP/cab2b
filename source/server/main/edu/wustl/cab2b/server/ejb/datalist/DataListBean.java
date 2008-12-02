@@ -179,4 +179,14 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
         return new DataListOperationsController().saveCustomDataCategory(rootEntityId, selectedAttributeList,
                                                                          string, experiment,userId);
     }
+    
+    /**
+     * This method returns false if datalist with given name is not present in the database.
+     * It returns false otherwise.
+     * @param name
+     * @return
+     */
+    public boolean isDataListByNamePresent(String name){
+        return new DataListOperationsController().isDataListByNamePresent(name);
+    }
 }

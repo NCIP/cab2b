@@ -1,6 +1,10 @@
 package edu.wustl.cab2b.server.datalist;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import org.hibernate.HibernateException;
 
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
@@ -10,6 +14,7 @@ import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.dbManager.HibernateUtility;
 import edu.wustl.common.util.global.Constants;
 
 /**
@@ -46,7 +51,7 @@ public class DataListMetadataOperations extends DefaultBizLogic {
         List<DataListMetadata> allDataList = null;
 
         try {
-            allDataList = (List<DataListMetadata>) retrieve(DataListMetadata.class.getName(),"USER_ID",userId);
+            allDataList = (List<DataListMetadata>) retrieve(DataListMetadata.class.getName(), "USER_ID", userId);
         } catch (DAOException e) {
             throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DATALIST_RETRIEVE_ERROR));
         }
@@ -70,4 +75,27 @@ public class DataListMetadataOperations extends DefaultBizLogic {
         return datalistMetadata.getId();
     }
 
+    /**
+     * This method returns false if datalist with given name is not present in the database.
+     * It returns false otherwise.
+     * @param name
+     * @return
+     */
+    public boolean isDataListByNamePresent(String name) {
+        List<Object> values = new ArrayList<Object>(1);
+        values.add(name);
+        
+        Collection<DataListMetadata> results = null;
+        try {
+            results = HibernateUtility.executeHQL("getDataListIdByName", values);
+        } catch (HibernateException e) {
+            throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DATALIST_RETRIEVE_ERROR));
+        }
+
+        boolean present = false;
+        if (results != null && results.size() == 1) {
+            present = true;
+        }
+        return present;
+    }
 }

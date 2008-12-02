@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
@@ -43,6 +44,7 @@ import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.tree.ExperimentTreeNode;
 import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.dbManager.HibernateUtility;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
 
@@ -52,6 +54,8 @@ import edu.wustl.common.util.global.Validator;
  * @author lalit_chand
  */
 public class ExperimentOperations extends DefaultBizLogic {
+    static final private Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ExperimentOperations.class);
+
     /**
      * Hibernate DAO Type to use.
      */
@@ -68,7 +72,7 @@ public class ExperimentOperations extends DefaultBizLogic {
     public void addExperiment(Object exp) throws BizLogicException, UserNotAuthorizedException {
         insert(exp, daoType);
     }
- 
+
     /**
      * This method adds given experiment into goven experimentGroupId and
      * persist it.
@@ -103,15 +107,14 @@ public class ExperimentOperations extends DefaultBizLogic {
     public void move(Object exp, Object srcExpGrp, Object tarExpGrp) throws BizLogicException,
             UserNotAuthorizedException {
         Experiment experiment = (Experiment) exp;
-
         ExperimentGroup sourceExpGroup = (ExperimentGroup) srcExpGrp;
 
         if (!isExperimentContainedInGroup(experiment, sourceExpGroup)) {
             throw (new BizLogicException("Experiment doesn't belong to Experiment Group."));
         }
 
-        // Logger.out.info("sourceExpGroup.getExperimentCollection() : after
-        // "+sourceExpGroup.getExperimentCollection().size());
+        logger.info("sourceExpGroup.getExperimentCollection() : after "
+                + sourceExpGroup.getExperimentCollection().size());
 
         ExperimentGroup targetExpGroup = (ExperimentGroup) tarExpGrp;
         if (isExperimentContainedInGroup(experiment, targetExpGroup)) {
@@ -125,18 +128,15 @@ public class ExperimentOperations extends DefaultBizLogic {
         sourceExpGroup.getExperimentCollection().remove(experiment);
         targetExpGroup.getExperimentCollection().add(experiment);
 
-        // Logger.out.info("targetExpGroup.getExperimentCollection()
-        // "+targetExpGroup.getExperimentCollection().size());
+        logger.info("targetExpGroup.getExperimentCollection()" + targetExpGroup.getExperimentCollection().size());
 
-        // Logger.out.info("updating target source group collection");
-
+        logger.info("updating target source group collection");
         experiment.getExperimentGroupCollection().remove(sourceExpGroup);
         experiment.getExperimentGroupCollection().add(targetExpGroup);
 
         update(experiment, daoType);
         update(sourceExpGroup, daoType);
         update(targetExpGroup, daoType);
-
     }
 
     /**
@@ -187,7 +187,6 @@ public class ExperimentOperations extends DefaultBizLogic {
      * @throws DAOException
      */
     public Vector getExperimentHierarchy(String userId) throws DAOException {
-
         List idList = new ArrayList(1);
         idList.add(userId);
         List returner = new ArrayList();
@@ -206,8 +205,6 @@ public class ExperimentOperations extends DefaultBizLogic {
      * @return Vector
      */
     public Vector getExperimentMetadataHierarchy(Collection firstLevelRootNodes) {
-        //  
-        // "+firstLevelRootNodes);
         Vector returner = new Vector();
         Iterator iter = firstLevelRootNodes.iterator();
         while (iter.hasNext()) {
@@ -484,14 +481,12 @@ public class ExperimentOperations extends DefaultBizLogic {
             newEntity.addAbstractAttribute(newAttribute);
             // needed for persistData()
             newAtttributes.add(newAttribute);
-
         }
 
         try {
             // no need to persist new entity separately
             entityManager.persistEntity(parentEntity, false);
             persistData(newEntity, newAtttributes, data);
-
         } catch (DynamicExtensionsApplicationException e) {
             throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DATACATEGORY_SAVE_ERROR));
         } catch (DynamicExtensionsSystemException e) {
@@ -526,9 +521,7 @@ public class ExperimentOperations extends DefaultBizLogic {
             }
 
             entityManager.insertData(entity, attributeMap);
-
         }
-
     }
 
     /**
@@ -681,6 +674,31 @@ public class ExperimentOperations extends DefaultBizLogic {
         idList.add(userId);
 
         return Utility.executeHQL("getExperimentSimilarDataList", idList);
+    }
+
+    /**
+     * This method returns false if Experiment with given name is not present in the database.
+     * It returns false otherwise.
+     * @param name
+     * @return
+     * @throws DAOException
+     */
+    public boolean isExperimentByNamePresent(String name) {
+        List<Object> values = new ArrayList<Object>(1);
+        values.add(name);
+
+        Collection<Experiment> results = null;
+        try {
+            results = HibernateUtility.executeHQL("getExperimentIdByName", values);
+        } catch (HibernateException e) {
+            throw new RuntimeException(e.getMessage(), e, ErrorCodeConstants.EX_002);
+        }
+
+        boolean present = false;
+        if (results != null && results.size() == 1) {
+            present = true;
+        }
+        return present;
     }
 
 }
