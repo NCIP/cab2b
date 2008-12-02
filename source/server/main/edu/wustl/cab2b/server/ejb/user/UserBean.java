@@ -35,9 +35,10 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
      * @throws RemoteException
      */
     public UserInterface insertUser(String dref, String idP) throws RemoteException {
-        String userId = getUserIdentifier(dref, idP);
+        UserOperations uop = new UserOperations();
+        String userId = uop.getUserIdentifier(dref, idP);
         User user = new User(userId, null, false);
-        return new UserOperations().insertUser(user);
+        return uop.insertUser(user);
     }
 
     /**
@@ -77,8 +78,9 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
      * @throws RemoteException
      */
     public UserInterface getUserByName(String dref, String idP) throws RemoteException {
-        String userId = getUserIdentifier(dref, idP);
-        return new UserOperations().getUserByName(userId);
+        UserOperations uop = new UserOperations();
+        String userId = uop.getUserIdentifier(dref, idP);
+        return uop.getUserByName(userId);
     }
 
     /**
@@ -97,24 +99,11 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
         }
     }
 
-    private String getUserIdentifier(String dref, String idP) throws RemoteException {
-        String userId = null;
-        try {
-            userId = new UserOperations().getCredentialUserName(dref, idP);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new RemoteException(e.getMessage(), e);
-        }
-        return userId;
-    }
-
     /**
      * @return Anonymous User 
      */
-
     public UserInterface getAnonymousUser() throws RemoteException {
         return new UserOperations().getUserByName("Anonymous");
-
     }
 
 }
