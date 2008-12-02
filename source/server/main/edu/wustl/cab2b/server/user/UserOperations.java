@@ -17,8 +17,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 import org.cagrid.gaards.cds.client.DelegatedCredentialUserClient;
@@ -39,9 +37,9 @@ import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.util.ServerProperties;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;
-import edu.wustl.common.hibernate.HibernateUtil;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.dbManager.DBUtil;
 import edu.wustl.common.util.global.Constants;
 import gov.nih.nci.cagrid.common.Utils;
 import gov.nih.nci.cagrid.gridca.common.KeyUtil;
@@ -62,7 +60,7 @@ public class UserOperations extends DefaultBizLogic {
 
     private static GlobusCredential trainingCredential;
 
-    static {
+    /*static {
         Logger logger = edu.wustl.common.util.logger.Logger.getLogger(TimerTask.class);
 
         Timer timer = new Timer();
@@ -74,7 +72,7 @@ public class UserOperations extends DefaultBizLogic {
 
         logger.info("Sync  Started");
         timer.scheduleAtFixedRate(task, 0, 60000 * 60 * 10);
-    }
+    }*/
 
     /**
      * This method returns user from database with given user name
@@ -83,17 +81,14 @@ public class UserOperations extends DefaultBizLogic {
      */
     public UserInterface getUserByName(String value) {
         List<UserInterface> userList = null;
+        String query = new StringBuilder().append("Select {User.*} from cab2b_user User where name COLLATE latin1_bin='")
+        .append(value).append("'").toString();
         try {
-            SQLQuery sqlQuery = HibernateUtil.getSessionFactory().openSession().createSQLQuery(
-                                                                                               "Select {User.*} from cab2b_user User where name COLLATE latin1_bin='"
-                                                                                                       + value
-                                                                                                       + "'");
+            SQLQuery sqlQuery = DBUtil.currentSession().createSQLQuery(query);
             userList = sqlQuery.addEntity("User", edu.wustl.cab2b.common.user.User.class).list();
-
         } catch (HibernateException hbe) {
             logger.error(hbe.getMessage(), hbe);
             throw new RuntimeException("Error occurred while fetching User", ErrorCodeConstants.UR_0003);
-
         }
         UserInterface user = null;
         if (userList != null && !userList.isEmpty()) {
