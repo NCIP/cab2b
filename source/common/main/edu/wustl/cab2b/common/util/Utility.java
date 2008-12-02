@@ -4,8 +4,10 @@ import static edu.wustl.cab2b.common.util.Constants.CONNECTOR;
 import static edu.wustl.cab2b.common.util.Constants.TYPE_CATEGORY;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -57,6 +59,8 @@ import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.queryobject.DataType;
 import edu.wustl.common.util.dbManager.DBUtil;
+import gov.nih.nci.cagrid.syncgts.bean.SyncDescription;
+import gov.nih.nci.cagrid.syncgts.core.SyncGTS;
 
 /**
  * Utility Class contain general methods used through out the application.
@@ -783,4 +787,79 @@ public class Utility {
         Object obj = ObjectDeserializer.toObject(doc.getDocumentElement(), objectType);
         return obj;
     }
+    
+    /**
+     * This method generates the globus certificate in user.home folder
+     * @param idP
+     */
+    public static void generateGlobusCertificate(String idP) {
+        URL signingPolicy = null;
+        URL certificate = null;
+        if ("Production".compareTo(idP) == 0) {
+            signingPolicy = Utility.class.getClassLoader().getResource(idP + "/62f4fd66.signing_policy");
+            certificate = Utility.class.getClassLoader().getResource(idP + "/62f4fd66.0");
+        } else if ("Training".compareTo(idP) == 0) {
+            signingPolicy = Utility.class.getClassLoader().getResource(idP + "/68907d53.signing_policy");
+            certificate = Utility.class.getClassLoader().getResource(idP + "/68907d53.0");
+        }
+
+        if (signingPolicy != null || certificate != null) {
+            copyCACertificates(signingPolicy);
+            copyCACertificates(certificate);
+        } else {
+            logger.error("Could not find CA certificates");
+            throw new RuntimeException("Could not find CA certificates", ErrorCodeConstants.CDS_016);
+        }
+
+        logger.debug("Getting sync-descriptor.xml file for " + idP);
+        try {
+            logger.debug("Synchronizing with GTS service");
+            URL syncDescFile = Utility.class.getClassLoader().getResource(idP + "/sync-description.xml");
+            SyncDescription description = (SyncDescription) Utility.deserializeDocument(syncDescFile.openStream(),
+                                                                                        SyncDescription.class);
+            SyncGTS.getInstance().syncOnce(description);
+            logger.debug("Successfully syncronized with GTS service. Globus certificates generated.");
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException("Error occurred while generating globus certificates",
+                    ErrorCodeConstants.CDS_004);
+        }
+    }
+
+
+private static void copyCACertificates(URL inFileURL) {
+    InputStream in = null;
+    try {
+        in = inFileURL.openStream();
+    } catch (IOException e) {
+        logger.error(e.getMessage(), e);
+        throw new RuntimeException(inFileURL.getPath() + " file not found", ErrorCodeConstants.CDS_016);
+    }
+
+    File dest = null;
+    int index = inFileURL.getPath().lastIndexOf('/');
+    if (index > -1) {
+        String fileName = inFileURL.getPath().substring(index + 1).trim();
+        dest = new File(gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory() + File.separator
+                + fileName);
+    }
+
+    byte[] buf = new byte[1024];
+    int len = 0;
+    try {
+        OutputStream out = new FileOutputStream(dest);
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+
+        in.close();
+        out.close();
+    } catch (IOException e) {
+        logger.error(e.getMessage(), e);
+        throw new RuntimeException("Unable to copy CA certificates to [user.home]/.globus",
+                ErrorCodeConstants.CDS_003);
+    }
+}
+    
+    
 }
