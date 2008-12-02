@@ -1,8 +1,14 @@
 package edu.wustl.cab2b.server.user;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringReader;
+import java.rmi.RemoteException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
@@ -11,6 +17,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 import org.cagrid.gaards.cds.client.DelegatedCredentialUserClient;
@@ -26,6 +34,7 @@ import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.util.ServerProperties;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
@@ -40,8 +49,10 @@ import gov.nih.nci.cagrid.gridca.common.KeyUtil;
 /**
  * User operations like saving user, retrieving user, validating user are
  * handled by this class
+ * It also sync the globus certificate of server .
  * 
  * @author hrishikesh_rajpathak
+ * @author lalit_chand
  * 
  */
 public class UserOperations extends DefaultBizLogic {
@@ -50,6 +61,20 @@ public class UserOperations extends DefaultBizLogic {
     private static GlobusCredential productionCredential;
 
     private static GlobusCredential trainingCredential;
+
+    static {
+        Logger logger = edu.wustl.common.util.logger.Logger.getLogger(TimerTask.class);
+
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            public void run() {
+                syncGlobusCredential();
+            }
+        };
+
+        logger.info("Sync  Started");
+        timer.scheduleAtFixedRate(task, 0, 60000 * 60 * 10);
+    }
 
     /**
      * This method returns user from database with given user name
@@ -172,7 +197,7 @@ public class UserOperations extends DefaultBizLogic {
     public Map<String, List<String>> getServiceURLsForUser(UserInterface user) {
         Map<String, List<String>> entityGroupByUrls = new HashMap<String, List<String>>();
         Collection<ServiceURLInterface> userServiceCollection = user.getServiceURLCollection();
-        if(userServiceCollection==null){
+        if (userServiceCollection == null) {
             userServiceCollection = new ArrayList<ServiceURLInterface>();
         }
         for (ServiceURLInterface url : userServiceCollection) {
@@ -364,5 +389,92 @@ public class UserOperations extends DefaultBizLogic {
         }
         return userName;
     }
-   
+
+    public String getUserIdentifier(String dref, String idP) throws RemoteException {
+        String userId = null;
+        try {
+            userId = getCredentialUserName(dref, idP);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RemoteException(e.getMessage(), e);
+        }
+        return userId;
+    }
+
+    /**
+     * This method sync the globus credential of server
+     */
+    public static void syncGlobusCredential() {
+        File commonDir = new File(System.getProperty("user.home") + "\\commonDirCert");
+        try {
+            Utility.generateGlobusCertificate("Production");
+        } catch (RuntimeException re) {
+            logger.error("Cannot Create Production Grid Certificate", re);
+        }
+
+        copyToCommonPlace(commonDir);
+
+        try {
+            Utility.generateGlobusCertificate("Training");
+        } catch (RuntimeException re) {
+            logger.error("Cannot Create Training Grid Certificate", re);
+        }
+
+        File dir = gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory();
+
+        if (commonDir != null && commonDir.isDirectory()) {
+
+            for (File files : commonDir.listFiles())
+                copyFiles(files, dir);
+        }
+
+    }
+
+    private static void copyToCommonPlace(File commonDir) {
+        File dir = gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory();
+
+        commonDir.mkdir();
+        if (dir != null && dir.isDirectory()) {
+
+            for (File file : dir.listFiles())
+                copyFiles(file, commonDir);
+        }
+
+    }
+
+    private static void copyFiles(File file, File commonDir) {
+
+        try {
+            InputStream in = new FileInputStream(file);
+
+            int index = file.getPath().lastIndexOf('\\');
+            File dest = null;
+            if (index > -1) {
+                String fileName = file.getPath().substring(index + 1).trim();
+                dest = new File(commonDir + File.separator + fileName);
+            }
+
+            byte[] buf = new byte[1024];
+            int len = 0;
+            try {
+                OutputStream out = new FileOutputStream(dest);
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                in.close();
+                out.close();
+                file.delete();
+            } catch (FileNotFoundException e) {
+                logger.error(e.getMessage(), e);
+                throw new RuntimeException("File Not Found ", e.getMessage());
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+                throw new RuntimeException("IO Exception Occured ", e.getMessage());
+            }
+
+        } catch (FileNotFoundException fnf) {
+            throw new RuntimeException("File Not Found ", fnf.getMessage());
+        }
+    }
+
 }
