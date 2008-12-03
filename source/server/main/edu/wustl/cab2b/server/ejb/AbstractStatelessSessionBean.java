@@ -2,12 +2,15 @@ package edu.wustl.cab2b.server.ejb;
 
 import java.rmi.RemoteException;
 import java.sql.Connection;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.DatalistCache;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.category.CategoryCache;
@@ -67,5 +70,19 @@ public abstract class AbstractStatelessSessionBean implements SessionBean {
             ConnectionUtil.close(connection);
         }
         DatalistCache.getInstance();
+
+        //Creates a thread for synchronizing .globus credential for server in every 10 hr
+
+        final org.apache.log4j.Logger logger = Logger.getLogger(TimerTask.class);
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            public void run() {
+                logger.info("Thread Started for synchronizing .glous credential ");
+                Utility.syncGlobusCredential();
+
+            }
+        };
+        timer.scheduleAtFixedRate(task, 60000 * 50, 60000 * 60 * 10);
     }
+
 }

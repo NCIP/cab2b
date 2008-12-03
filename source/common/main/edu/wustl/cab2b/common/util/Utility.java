@@ -867,27 +867,30 @@ public class Utility {
      * This method sync the globus credential of server
      */
     public static void syncGlobusCredential() {
-        File commonDir = new File(System.getProperty("user.home") + "\\commonDirCert");
-        try {
-            generateGlobusCertificate("Production");
-        } catch (RuntimeException re) {
-            logger.error("Cannot Create Production Grid Certificate", re);
-        }
+        synchronized (Utility.class) {
 
-        copyToCommonPlace(commonDir);
+            File commonDir = new File(System.getProperty("user.home") + "\\commonDirCert");
+            try {
+                generateGlobusCertificate("Production");
+            } catch (RuntimeException re) {
+                logger.error("Cannot Create Production Grid Certificate", re);
+            }
 
-        try {
-            generateGlobusCertificate("Training");
-        } catch (RuntimeException re) {
-            logger.error("Cannot Create Training Grid Certificate", re);
-        }
+            copyToCommonPlace(commonDir);
 
-        File dir = gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory();
+            try {
+                generateGlobusCertificate("Training");
+            } catch (RuntimeException re) {
+                logger.error("Cannot Create Training Grid Certificate", re);
+            }
 
-        if (commonDir != null && commonDir.isDirectory()) {
+            File dir = gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory();
 
-            for (File files : commonDir.listFiles())
-                copyFiles(files, dir);
+            if (commonDir != null && commonDir.isDirectory()) {
+
+                for (File files : commonDir.listFiles())
+                    copyFiles(files, dir);
+            }
         }
 
     }
@@ -925,7 +928,7 @@ public class Utility {
                 }
                 in.close();
                 out.close();
-                file.delete();
+                //  file.delete();
             } catch (FileNotFoundException e) {
                 logger.error(e.getMessage(), e);
                 throw new RuntimeException("File Not Found ", e.getMessage());
