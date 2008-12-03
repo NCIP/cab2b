@@ -151,7 +151,7 @@ public class ShowDCQLPanel extends Cab2bPanel {
 			File file = fileChooser.getSelectedFile();
 			String fileName = file.toString();
 			FileFilter fileFilter = fileChooser.getFileFilter();
-			if (fileFilter.getDescription().equalsIgnoreCase("Txt File Format")) {
+			if (fileFilter.getDescription().equalsIgnoreCase("Text Document(*.txt)")) {
 				fileName = fileName + ".txt";
 			} else {
 				fileName = fileName + ".xml";
