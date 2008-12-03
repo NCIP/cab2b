@@ -1,12 +1,7 @@
 package edu.wustl.cab2b.server.user;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.StringReader;
 import java.rmi.RemoteException;
 import java.security.GeneralSecurityException;
@@ -32,7 +27,6 @@ import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
-import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.util.ServerProperties;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
@@ -60,20 +54,6 @@ public class UserOperations extends DefaultBizLogic {
 
     private static GlobusCredential trainingCredential;
 
-    /*static {
-        Logger logger = edu.wustl.common.util.logger.Logger.getLogger(TimerTask.class);
-
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
-            public void run() {
-                syncGlobusCredential();
-            }
-        };
-
-        logger.info("Sync  Started");
-        timer.scheduleAtFixedRate(task, 0, 60000 * 60 * 10);
-    }*/
-
     /**
      * This method returns user from database with given user name
      * @param name user name
@@ -81,11 +61,14 @@ public class UserOperations extends DefaultBizLogic {
      */
     public UserInterface getUserByName(String value) {
         List<UserInterface> userList = null;
-        String query = new StringBuilder().append("Select {User.*} from cab2b_user User where name COLLATE latin1_bin='")
-        .append(value).append("'").toString();
+        String query = new StringBuilder().append(
+                                                  "Select {User.*} from cab2b_user User where name COLLATE latin1_bin='").append(
+                                                                                                                                 value).append(
+                                                                                                                                               "'").toString();
         try {
             SQLQuery sqlQuery = DBUtil.currentSession().createSQLQuery(query);
             userList = sqlQuery.addEntity("User", edu.wustl.cab2b.common.user.User.class).list();
+            DBUtil.closeSession();
         } catch (HibernateException hbe) {
             logger.error(hbe.getMessage(), hbe);
             throw new RuntimeException("Error occurred while fetching User", ErrorCodeConstants.UR_0003);
@@ -394,82 +377,6 @@ public class UserOperations extends DefaultBizLogic {
             throw new RemoteException(e.getMessage(), e);
         }
         return userId;
-    }
-
-    /**
-     * This method sync the globus credential of server
-     */
-    public static void syncGlobusCredential() {
-        File commonDir = new File(System.getProperty("user.home") + "\\commonDirCert");
-        try {
-            Utility.generateGlobusCertificate("Production");
-        } catch (RuntimeException re) {
-            logger.error("Cannot Create Production Grid Certificate", re);
-        }
-
-        copyToCommonPlace(commonDir);
-
-        try {
-            Utility.generateGlobusCertificate("Training");
-        } catch (RuntimeException re) {
-            logger.error("Cannot Create Training Grid Certificate", re);
-        }
-
-        File dir = gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory();
-
-        if (commonDir != null && commonDir.isDirectory()) {
-
-            for (File files : commonDir.listFiles())
-                copyFiles(files, dir);
-        }
-
-    }
-
-    private static void copyToCommonPlace(File commonDir) {
-        File dir = gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory();
-
-        commonDir.mkdir();
-        if (dir != null && dir.isDirectory()) {
-
-            for (File file : dir.listFiles())
-                copyFiles(file, commonDir);
-        }
-
-    }
-
-    private static void copyFiles(File file, File commonDir) {
-
-        try {
-            InputStream in = new FileInputStream(file);
-
-            int index = file.getPath().lastIndexOf('\\');
-            File dest = null;
-            if (index > -1) {
-                String fileName = file.getPath().substring(index + 1).trim();
-                dest = new File(commonDir + File.separator + fileName);
-            }
-
-            byte[] buf = new byte[1024];
-            int len = 0;
-            try {
-                OutputStream out = new FileOutputStream(dest);
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-                in.close();
-                out.close();
-                file.delete();
-            } catch (FileNotFoundException e) {
-                logger.error(e.getMessage(), e);
-                throw new RuntimeException("File Not Found ", e.getMessage());
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
-                throw new RuntimeException("IO Exception Occured ", e.getMessage());
-            }
-
-        } catch (FileNotFoundException fnf) {
-            throw new RuntimeException("File Not Found ", fnf.getMessage());
-        }
     }
 
 }
