@@ -22,6 +22,7 @@ import edu.wustl.cab2b.common.user.ServiceURL;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.Constants;
+import edu.wustl.cab2b.common.util.Utility;
 
 /**
  * @author Hrishikesh Rajpathak
@@ -63,7 +64,7 @@ public class ServiceInstanceConfigurator {
      * @param entityGroupName
      * @throws RemoteException
      */
-    public void saveServiceInstances(String entityGroupName, Collection<ServiceURL> serviceURLObjects)
+    public void saveServiceInstances(String entityGroupName,String version, Collection<ServiceURL> serviceURLObjects)
             throws RemoteException {
         /*
          * If the user has clicked on admin configured urls,then collection will be empty
@@ -71,13 +72,13 @@ public class ServiceInstanceConfigurator {
          * service name is same as entityGroupName
          */
         UserInterface currentUser = getCurrentUser();
-
+        String entityName = Utility.createModelName(entityGroupName, version);  
         if (serviceURLObjects.isEmpty()) {
             Collection<ServiceURLInterface> serviceURLsToRemove = new HashSet<ServiceURLInterface>();
             Collection<ServiceURLInterface> allServiceURLLIst = currentUser.getServiceURLCollection();
             for (ServiceURLInterface serviceURL : allServiceURLLIst) {
                 String serviceName = serviceURL.getEntityGroupName();
-                if (serviceName.equalsIgnoreCase(entityGroupName)) {
+                if (serviceName.equalsIgnoreCase(entityName)) {
                     serviceURLsToRemove.add(serviceURL);
                 }
             }
@@ -94,7 +95,7 @@ public class ServiceInstanceConfigurator {
         Collection<ServiceURLInterface> serviceURLsToRemove = new HashSet<ServiceURLInterface>();
         for (ServiceURLInterface serviceURL : allServiceURLLIst) {
             String serviceName = serviceURL.getEntityGroupName();
-            if (serviceName.equalsIgnoreCase(entityGroupName)) {
+            if (serviceName.equalsIgnoreCase(entityName)) {
                 if (newServices.contains(serviceURL)) {
                     newServices.remove(serviceURL);
                 } else {

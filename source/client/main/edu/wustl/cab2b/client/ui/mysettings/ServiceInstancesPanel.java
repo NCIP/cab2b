@@ -70,6 +70,8 @@ public class ServiceInstancesPanel extends Cab2bPanel {
     private final Collection<AdminServiceMetadata> filteredServiceInstances = new ArrayList<AdminServiceMetadata>();
 
     private String serviceName;
+    
+    private String version;
 
     private boolean isForQuery;
 
@@ -97,7 +99,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
         allServiceInstances = new ArrayList<AdminServiceMetadata>();
         UserInterface user = UserCache.getInstance().getCurrentUser();
         ServiceInstanceConfigurator configurator = new ServiceInstanceConfigurator();
-        String version = null;
+        
        
         if(serviceName.indexOf("~")>-1)
         {
@@ -253,7 +255,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
         }
         try {
             ServiceInstanceConfigurator bizLogic = new ServiceInstanceConfigurator();
-            bizLogic.saveServiceInstances(serviceName, selectedInstances);
+            bizLogic.saveServiceInstances(serviceName,version, selectedInstances);
             firePropertyChange(UPDATE_EVENT, serviceName, status);
 
         } catch (RemoteException exception) {
