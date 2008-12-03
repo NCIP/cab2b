@@ -27,6 +27,7 @@ import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.util.ServerProperties;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
@@ -179,20 +180,21 @@ public class UserOperations extends DefaultBizLogic {
             userServiceCollection = new ArrayList<ServiceURLInterface>();
         }
         for (ServiceURLInterface url : userServiceCollection) {
-            String longName = url.getEntityGroupName();
-            if (entityGroupByUrls.containsKey(longName)) {
-                (entityGroupByUrls.get(longName)).add(url.getUrlLocation());
+            String entityName = url.getEntityGroupName();
+            if (entityGroupByUrls.containsKey(entityName)) {
+                (entityGroupByUrls.get(entityName)).add(url.getUrlLocation());
             } else {
                 ArrayList<String> list = new ArrayList<String>();
                 list.add(url.getUrlLocation());
-                entityGroupByUrls.put(longName, list);
+                entityGroupByUrls.put(entityName, list);
             }
         }
 
         Collection<EntityGroupInterface> allEntityGroups = EntityCache.getInstance().getEntityGroups();
         Collection<String> absentEntityGroups = new ArrayList<String>();
         for (EntityGroupInterface entityGroupInterface : allEntityGroups) {
-            String name = entityGroupInterface.getLongName();
+            String name = Utility.createModelName(entityGroupInterface.getLongName(),
+                                                  entityGroupInterface.getVersion());
             if (!entityGroupByUrls.containsKey(name)) {
                 absentEntityGroups.add(name);
             }
