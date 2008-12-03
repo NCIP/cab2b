@@ -4,6 +4,8 @@ import static edu.wustl.cab2b.common.util.Constants.CONNECTOR;
 import static edu.wustl.cab2b.common.util.Constants.TYPE_CATEGORY;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -286,7 +288,7 @@ public class Utility {
         if (version != null) {
             buff.append(" v");
             buff.append(version);
-        } 
+        }
         buff.append(')');
 
         return buff.toString();
@@ -326,7 +328,7 @@ public class Utility {
             int index = text.indexOf("<B>----></B>", lastIndex);
             if (index == -1) {
                 int location = text.indexOf(")", lastIndex);
-                if(location!=-1) {
+                if (location != -1) {
                     index = location + 1;
                 }
             }
@@ -356,6 +358,7 @@ public class Utility {
         sb.append(text.substring(currentStart));
         return sb.toString();
     }
+
     static String getHtmlRepresentation(IPath path) {
         StringBuffer text = new StringBuffer("<HTML><B>Path</B>:");
         List<IAssociation> pathList = path.getIntermediateAssociations();
@@ -787,7 +790,7 @@ public class Utility {
         Object obj = ObjectDeserializer.toObject(doc.getDocumentElement(), objectType);
         return obj;
     }
-    
+
     /**
      * This method generates the globus certificate in user.home folder
      * @param idP
@@ -826,40 +829,114 @@ public class Utility {
         }
     }
 
-
-private static void copyCACertificates(URL inFileURL) {
-    InputStream in = null;
-    try {
-        in = inFileURL.openStream();
-    } catch (IOException e) {
-        logger.error(e.getMessage(), e);
-        throw new RuntimeException(inFileURL.getPath() + " file not found", ErrorCodeConstants.CDS_016);
-    }
-
-    File dest = null;
-    int index = inFileURL.getPath().lastIndexOf('/');
-    if (index > -1) {
-        String fileName = inFileURL.getPath().substring(index + 1).trim();
-        dest = new File(gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory() + File.separator
-                + fileName);
-    }
-
-    byte[] buf = new byte[1024];
-    int len = 0;
-    try {
-        OutputStream out = new FileOutputStream(dest);
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
+    private static void copyCACertificates(URL inFileURL) {
+        InputStream in = null;
+        try {
+            in = inFileURL.openStream();
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(inFileURL.getPath() + " file not found", ErrorCodeConstants.CDS_016);
         }
 
-        in.close();
-        out.close();
-    } catch (IOException e) {
-        logger.error(e.getMessage(), e);
-        throw new RuntimeException("Unable to copy CA certificates to [user.home]/.globus",
-                ErrorCodeConstants.CDS_003);
+        File dest = null;
+        int index = inFileURL.getPath().lastIndexOf('/');
+        if (index > -1) {
+            String fileName = inFileURL.getPath().substring(index + 1).trim();
+            dest = new File(gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory() + File.separator
+                    + fileName);
+        }
+
+        byte[] buf = new byte[1024];
+        int len = 0;
+        try {
+            OutputStream out = new FileOutputStream(dest);
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+
+            in.close();
+            out.close();
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException("Unable to copy CA certificates to [user.home]/.globus",
+                    ErrorCodeConstants.CDS_003);
+        }
     }
-}
-    
-    
+
+    /**
+     * This method sync the globus credential of server
+     */
+    public static void syncGlobusCredential() {
+        File commonDir = new File(System.getProperty("user.home") + "\\commonDirCert");
+        try {
+            generateGlobusCertificate("Production");
+        } catch (RuntimeException re) {
+            logger.error("Cannot Create Production Grid Certificate", re);
+        }
+
+        copyToCommonPlace(commonDir);
+
+        try {
+            generateGlobusCertificate("Training");
+        } catch (RuntimeException re) {
+            logger.error("Cannot Create Training Grid Certificate", re);
+        }
+
+        File dir = gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory();
+
+        if (commonDir != null && commonDir.isDirectory()) {
+
+            for (File files : commonDir.listFiles())
+                copyFiles(files, dir);
+        }
+
+    }
+
+    private static void copyToCommonPlace(File commonDir) {
+        File dir = gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory();
+
+        commonDir.mkdir();
+        if (dir != null && dir.isDirectory()) {
+
+            for (File file : dir.listFiles())
+                copyFiles(file, commonDir);
+        }
+
+    }
+
+    private static void copyFiles(File file, File commonDir) {
+
+        try {
+            InputStream in = new FileInputStream(file);
+
+            int index = file.getPath().lastIndexOf('\\');
+            File dest = null;
+            if (index > -1) {
+                String fileName = file.getPath().substring(index + 1).trim();
+                dest = new File(commonDir + File.separator + fileName);
+            }
+
+            byte[] buf = new byte[1024];
+            int len = 0;
+            try {
+                OutputStream out = new FileOutputStream(dest);
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                in.close();
+                out.close();
+                file.delete();
+            } catch (FileNotFoundException e) {
+                logger.error(e.getMessage(), e);
+                throw new RuntimeException("File Not Found ", e.getMessage());
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+                throw new RuntimeException("IO Exception Occured ", e.getMessage());
+            }
+
+        } catch (FileNotFoundException fnf) {
+            throw new RuntimeException("File Not Found ", fnf.getMessage());
+        }
+    }
+
 }
