@@ -4,8 +4,6 @@ import static edu.wustl.cab2b.common.util.Constants.CONNECTOR;
 import static edu.wustl.cab2b.common.util.Constants.TYPE_CATEGORY;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -868,71 +866,4 @@ public class Utility {
                     ErrorCodeConstants.CDS_003);
         }
     }
-
-    /**
-     * This method sync the globus credential of server
-     */
-    public static void syncGlobusCredential() {
-        synchronized (Utility.class) {
-            File commonDir = new File(System.getProperty("user.home") + "\\commonDirCert");
-            try {
-                generateGlobusCertificate("Production");
-            } catch (RuntimeException re) {
-                logger.error("Cannot Create Production Grid Certificate", re);
-            }
-            copyToCommonPlace(commonDir);
-
-            try {
-                generateGlobusCertificate("Training");
-            } catch (RuntimeException re) {
-                logger.error("Cannot Create Training Grid Certificate", re);
-            }
-
-            File dir = gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory();
-            if (commonDir != null && commonDir.isDirectory()) {
-                for (File files : commonDir.listFiles())
-                    copyFiles(files, dir);
-            }
-        }
-    }
-
-    private static void copyToCommonPlace(File commonDir) {
-        File dir = gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory();
-        commonDir.mkdir();
-        if (dir != null && dir.isDirectory()) {
-            for (File file : dir.listFiles())
-                copyFiles(file, commonDir);
-        }
-    }
-
-    private static void copyFiles(File file, File commonDir) {
-        try {
-            InputStream in = new FileInputStream(file);
-
-            int index = file.getPath().lastIndexOf('\\');
-            File dest = null;
-            if (index > -1) {
-                String fileName = file.getPath().substring(index + 1).trim();
-                dest = new File(commonDir + File.separator + fileName);
-            }
-
-            byte[] buf = new byte[1024];
-            int len = 0;
-
-            OutputStream out = new FileOutputStream(dest);
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            in.close();
-            out.close();
-            //  file.delete();
-        } catch (FileNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException("File Not Found ", e.getMessage());
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException("IO Exception Occured ", e.getMessage());
-        }
-    }
-
 }
