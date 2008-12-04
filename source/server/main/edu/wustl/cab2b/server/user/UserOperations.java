@@ -3,7 +3,6 @@ package edu.wustl.cab2b.server.user;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.rmi.RemoteException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
@@ -281,17 +280,24 @@ public class UserOperations extends DefaultBizLogic {
              * The delegatee's credential is required to authenticate with the CDS such that the CDS may determining 
              * if the the delegatee has been granted access to the credential in which they wish to obtain.
              */
+            logger.debug("getting serialized ref ...");
+
             DelegatedCredentialReference dref = getDelegatedCredentialReference(serializedCredRef);
+
+            logger.debug("getting deserialized client ");
+
             DelegatedCredentialUserClient client = new DelegatedCredentialUserClient(dref, credential);
 
             //The get credential method obtains a signed delegated credential from the CDS.
+            logger.debug("getting client reference ...");
 
             delegatedCredential = client.getDelegatedCredential();
 
-            //Set the delegated credential as the default, the delegatee is now logged in as the delegator.
-            logger.debug("Retrieved Client credential");
-
         }
+
+        //Set the delegated credential as the default, the delegatee is now logged in as the delegator.
+        logger.debug("Retrieved Client credential");
+
         return delegatedCredential;
     }
 
@@ -368,17 +374,6 @@ public class UserOperations extends DefaultBizLogic {
             userName = credential.getIdentity();
         }
         return userName;
-    }
-
-    public String getUserIdentifier(String dref, String idP) throws RemoteException {
-        String userId = null;
-        try {
-            userId = getCredentialUserName(dref, idP);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new RemoteException(e.getMessage(), e);
-        }
-        return userId;
     }
 
 }
