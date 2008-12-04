@@ -15,13 +15,16 @@ public class TimerUtill {
     private static final org.apache.log4j.Logger logger = Logger.getLogger(TimerUtill.class);
 
     public static void initilizeSync() {
-        if (!flag) {
-            logger.info("Synchronizing 1st time...");
-            Utility.syncGlobusCredential();
-            flag = true;
-        } else if (!flagTimer) {
-            synchronizeCert();
+        synchronized (TimerUtill.class) {
+            if (!flag) {
+                logger.info("Synchronizing 1st time...");
+                Utility.syncGlobusCredential();
+                flag = true;
+            } else if (!flagTimer) {
+                synchronizeCert();
+            }
         }
+
     }
 
     private static void synchronizeCert() {
