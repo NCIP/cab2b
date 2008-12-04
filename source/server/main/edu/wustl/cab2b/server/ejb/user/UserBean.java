@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.server.ejb.user;
 
 import java.rmi.RemoteException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
 
@@ -36,9 +37,17 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
      */
     public UserInterface insertUser(String dref, String idP) throws RemoteException {
         UserOperations uop = new UserOperations();
-        String userId = uop.getUserIdentifier(dref, idP);
-        User user = new User(userId, null, false);
-        return uop.insertUser(user);
+        try {
+            String userId = uop.getCredentialUserName(dref, idP);
+            User user = new User(userId, null, false);
+            return uop.insertUser(user);
+        } catch (GeneralSecurityException ge) {
+            logger.error(ge.getMessage(), ge);
+            throw new RemoteException(ge.getMessage(), ge);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RemoteException(e.getMessage(), e);
+        }
     }
 
     /**
@@ -79,8 +88,16 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
      */
     public UserInterface getUserByName(String dref, String idP) throws RemoteException {
         UserOperations uop = new UserOperations();
-        String userId = uop.getUserIdentifier(dref, idP);
-        return uop.getUserByName(userId);
+        try {
+            String userId = uop.getCredentialUserName(dref, idP);
+            return uop.getUserByName(userId);
+        } catch (GeneralSecurityException ge) {
+            logger.error(ge.getMessage(), ge);
+            throw new RemoteException(ge.getMessage(), ge);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RemoteException(e.getMessage(), e);
+        }
     }
 
     /**
@@ -93,6 +110,9 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
     public GlobusCredential getGlobusCredential(String dref, String idP) throws RemoteException {
         try {
             return UserOperations.getGlobusCredential(dref, idP);
+        } catch (GeneralSecurityException ge) {
+            logger.error(ge.getMessage(), ge);
+            throw new RemoteException(ge.getMessage(), ge);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RemoteException(e.getMessage(), e);
