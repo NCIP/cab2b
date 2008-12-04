@@ -250,21 +250,17 @@ public class WindowUtilities {
      */
 
     public static final void centerWindow(Window parent, Window w) {
-        Dimension p_size, w_size, s_size;
-        int x, y;
+        Dimension windowSize = w.getSize(); 
+        Dimension parentSize = parent.getSize();
+        Point parentLocation = parent.getLocationOnScreen();
 
-        p_size = parent.getSize();
-        w_size = w.getSize();
-        s_size = w.getToolkit().getScreenSize();
-        Point p_loc = parent.getLocationOnScreen();
-
-        x = ((p_size.width - w_size.width) / 2) + p_loc.x;
-        y = ((p_size.height - w_size.height) / 2) + p_loc.y;
+        int x = ((parentSize.width - windowSize.width) / 2) + parentLocation.x;
+        int y = ((parentSize.height - windowSize.height) / 2) + parentLocation.y;
 
         // If placing the window at (x,y) would make part if it off-screen,
         // then center it in the middle of the screen instead.
-
-        if (((x + w_size.width) > s_size.width) || (x < 0) || ((y + w_size.height) > s_size.height) || (y < 0))
+        Dimension screenSize = w.getToolkit().getScreenSize();
+        if (((x + windowSize.width) > screenSize.width) || (x < 0) || ((y + windowSize.height) > screenSize.height) || (y < 0))
             centerWindow(w);
         else
             w.setLocation(x, y);
