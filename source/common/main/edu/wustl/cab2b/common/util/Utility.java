@@ -41,6 +41,8 @@ import edu.common.dynamicextensions.domain.DoubleAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.FloatAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.IntegerAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.LongAttributeTypeInformation;
+import edu.common.dynamicextensions.domain.ObjectAttributeTypeInformation;
+import edu.common.dynamicextensions.domain.ShortAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.StringAttributeTypeInformation;
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AbstractMetadataInterface;
@@ -211,8 +213,6 @@ public class Utility {
     public static DataType getDataType(AttributeTypeInformationInterface type) {
         if (type instanceof StringAttributeTypeInformation) {
             return DataType.String;
-        } else if (type instanceof DoubleAttributeTypeInformation) {
-            return DataType.Double;
         } else if (type instanceof IntegerAttributeTypeInformation) {
             return DataType.Integer;
         } else if (type instanceof DateAttributeTypeInformation) {
@@ -223,6 +223,12 @@ public class Utility {
             return DataType.Boolean;
         } else if (type instanceof LongAttributeTypeInformation) {
             return DataType.Long;
+        } else if (type instanceof DoubleAttributeTypeInformation) {
+            return DataType.Double;
+        } else if (type instanceof ShortAttributeTypeInformation) {
+            return DataType.Integer;//TODO define short in data type
+        } else if (type instanceof ObjectAttributeTypeInformation) {
+            return DataType.String;
         } else {
             throw new RuntimeException("Unknown Attribute type");
         }
