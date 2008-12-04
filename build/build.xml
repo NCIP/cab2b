@@ -931,7 +931,56 @@
 			</fileset>
 		</schemaexport>
 	</target>
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: empty.workarea                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="empty.workarea">
 
+		<mkdir dir="${workArea.dir}" />
+
+		<delete includeemptydirs="true">
+			<fileset dir="${workArea.dir}">
+				<include name="**/*" />
+			</fileset>
+		</delete>
+	</target>
+
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build.cab2b.installer                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="build.cab2b.installer" depends="empty.workarea" description="--> description">
+
+			<mkdir dir="temp" />
+			
+			<zip destfile="temp/cab2bInstaller.zip">
+				<fileset dir="." id="id">
+					<include name="**/*.*" />
+					<include name="workarea" />
+					<exclude name="docs/**/*"/>
+					<exclude name="temp/**/*"/>
+				</fileset>
+			</zip>
+	</target>
+
+
+	<!-- ================================= 
+          target: deploy.cab2b.war              
+         ================================= -->
+	<target name="deploy.cab2b.war" depends="build.cab2b.installer,build.client.setup.zip,build.client.webstart.war" description="--> description">
+
+		<war destfile="${workArea.dir}/cab2b.war" update="true">
+			<fileset dir="temp" id="id">
+				<include name="cab2bInstaller.zip" />
+			</fileset>
+			<fileset dir="${workArea.dir}/" id="id">
+				<include name="cab2bClientSetup.zip" />
+			</fileset>
+		</war>
+		
+		<delete dir="temp" />
+		<copy file="${workArea.dir}/cab2b.war" todir="${jboss.deploy.dir}" />
+	</target>
 </project>
 <!-- ==================================================================================
 DO NOT DELETE THIS COMMENT. 
