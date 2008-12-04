@@ -22,7 +22,7 @@
 	<property name="server.test" location="source/server/test" />
 
 	<property name="workArea.dir" location="workarea" />
-
+	<mkdir dir="${workArea.dir}"/>
 	<property name="client.classes.dir" location="${workArea.dir}/client/classes" />
 	<property name="server.classes.dir" location="${workArea.dir}/server/classes" />
 	<property name="common.classes.dir" location="${workArea.dir}/common/classes" />
