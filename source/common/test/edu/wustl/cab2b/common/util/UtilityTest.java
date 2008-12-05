@@ -10,6 +10,7 @@ import junit.framework.TestCase;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.cab2b.server.util.TestUtil;
@@ -135,5 +136,15 @@ public class UtilityTest extends TestCase {
 		DynamicExtensionUtility.addTaggedValue(entity, TYPE_CATEGORY, TYPE_CATEGORY);
 		String res = Utility.getOnlyEntityName(entity);
 		assertEquals("Gene", res);
+	}
+	public void testGetEntityGroup() {
+		EntityInterface entity = TestUtil.getEntity("Gene");
+		boolean gotException = false;
+		try {
+			Utility.getEntityGroup(entity);
+		} catch (RuntimeException e) {
+			gotException = true;
+		}
+		assertTrue(gotException);
 	}
 }
