@@ -36,33 +36,31 @@ import edu.wustl.cab2b.client.ui.controls.IDialogInterface;
  */
 public class WindowUtilities {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(WindowUtilities.class);
-    /** Tell system to use native look and feel.
-     * Metal (Java) LAF is the default otherwise.
+    /** 
+     * Tell system to use native look and feel.
      */
     public static void setNativeLookAndFeel() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            logger.error("Error setting native LAF: " + e);
-        }
+        setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     }
-
+    /** 
+     * Tell system to use java look and feel.
+     */
     public static void setJavaLookAndFeel() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (Exception e) {
-            logger.error("Error setting Java LAF: " + e);
-        }
+        setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
     }
-
+    /** 
+     * Tell system to use Motif look and feel.
+     */
     public static void setMotifLookAndFeel() {
-        try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
-        } catch (Exception e) {
-            logger.error("Error setting Motif LAF: " + e);
-        }
+        setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
     }
-
+    private static void setLookAndFeel(String lookAndFeel) {
+    	 try {
+             UIManager.setLookAndFeel(lookAndFeel);
+         } catch (Exception e) {
+             logger.error("Error setting Look and Feel : " +lookAndFeel + "  "+ e);
+         }
+    }
     /** A simplified way to see a JPanel or other Container.
      *  Pops up a JFrame with specified Container as the content pane.
      */
