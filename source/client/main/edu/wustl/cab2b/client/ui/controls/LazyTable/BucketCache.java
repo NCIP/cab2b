@@ -2,8 +2,6 @@ package edu.wustl.cab2b.client.ui.controls.LazyTable;
 
 import org.apache.log4j.Logger;
 
-import edu.wustl.cab2b.client.cache.UserCache;
-
 /**
  * This cache implementation based on buckets.
  * A page can be cached into a fixed bucket. If it is not present in that bucket, the existing page at that location is replaced
@@ -14,7 +12,7 @@ import edu.wustl.cab2b.client.cache.UserCache;
  */
 public class BucketCache<D> implements CacheInterface<D> {
 
-    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(UserCache.class);
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(BucketCache.class);
 
     private Page<D>[] pageCache;
 
