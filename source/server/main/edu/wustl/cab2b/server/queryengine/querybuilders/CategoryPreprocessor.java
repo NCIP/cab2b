@@ -131,8 +131,7 @@ public class CategoryPreprocessor {
     // protected for testing
     protected Category getCategoryFromEntity(EntityInterface catEntity) {
         Long entityId = catEntity.getId();
-        Connection connection = ConnectionUtil.getConnection();
-        return CategoryCache.getInstance(connection).getCategoryByEntityId(entityId);
+        return CategoryCache.getInstance().getCategoryByEntityId(entityId);
     }
 
     private Category pivot(Category category, EntityInterface requiredRoot) {

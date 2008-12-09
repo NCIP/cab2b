@@ -70,18 +70,18 @@ public interface UtilityBusinessInterface extends BusinessInterface {
      */
     List<TreeSet<Comparable<?>>> getUniqueRecordValues(Long entityId) throws RemoteException;
 
-    /**
-     * Resreshes Path cache and EntityCache if boolean passed is true
-     * @param resheshEntityCache If to refresh entity cache
-     * @throws RemoteException
-     */
-    void refreshPathAndEntityCache(boolean resheshEntityCache) throws RemoteException;
-
-    /**
-     * Resreshes Category cache and EntityCache.
-     * @throws RemoteException
-     */
-    void refreshCategoryAndEntityCache() throws RemoteException;
+//    /**
+//     * Resreshes Path cache and EntityCache if boolean passed is true
+//     * @param resheshEntityCache If to refresh entity cache
+//     * @throws RemoteException
+//     */
+//    void refreshPathAndEntityCache(boolean resheshEntityCache) throws RemoteException;
+//
+//    /**
+//     * Resreshes Category cache and EntityCache.
+//     * @throws RemoteException
+//     */
+//    void refreshCategoryAndEntityCache() throws RemoteException;
 
     /**
      * Adds curated path to cache.
@@ -89,4 +89,6 @@ public interface UtilityBusinessInterface extends BusinessInterface {
      * @throws RemoteException
      */
     void addCuretedPathToCache(CuratedPath curatedPath) throws RemoteException;
+    
+    void refreshCache() throws RemoteException;
 }

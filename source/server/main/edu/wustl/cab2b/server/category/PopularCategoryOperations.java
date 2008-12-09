@@ -1,6 +1,6 @@
 package edu.wustl.cab2b.server.category;
 
-import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -8,13 +8,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.category.CategoryPopularity;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.common.hibernate.HibernateDatabaseOperations;
 import edu.wustl.common.hibernate.HibernateUtil;
 import edu.wustl.common.querysuite.metadata.category.Category;
@@ -28,14 +28,16 @@ import edu.wustl.common.querysuite.queryobject.IExpression;
  */
 public class PopularCategoryOperations {
 
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(PopularCategoryOperations.class);
+
     /**
-     * This menthod returns list of objects of type CategoryPopularity. In other words, it returns all the entity ids with their respective 
+     * This method returns list of objects of type CategoryPopularity. In other words, it returns all the entity ids with their respective 
      * popularity count that are present in database.
      * 
      * @return list of all the objects of CategoryPopularity class present in database
      */
     public Collection<CategoryPopularity> getPopularityForAllCategories() {
-        Session session = HibernateUtil.newSession();
+        Session session = HibernateUtil.currentSession();
         Collection<CategoryPopularity> list = new HibernateDatabaseOperations<CategoryPopularity>(session).retrieve(CategoryPopularity.class.getName());
         return list;
     }
@@ -46,16 +48,17 @@ public class PopularCategoryOperations {
      * @param entities list of entities for which count is to be increased. 
      * @param object of HibernateDatabaseOperations
      * @param session
+     * @throws SQLException 
      */
-    private void persistPopularity(Collection<EntityInterface> entities,
-                                   HibernateDatabaseOperations<CategoryPopularity> hiberOp) {
+    private void persistPopularity(Collection<EntityInterface> entities) throws SQLException {
+        Session session = HibernateUtil.currentSession();
+        HibernateDatabaseOperations<CategoryPopularity> hiberOp = new HibernateDatabaseOperations<CategoryPopularity>(
+                session);
 
+        CategoryOperations categoryOperations = new CategoryOperations();
         for (EntityInterface entityInterface : entities) {
             if (Utility.isCategory(entityInterface)) {
-                Connection connection = ConnectionUtil.getConnection();
-                Category category = CategoryCache.getInstance(connection).getCategoryByEntityId(
-                                                                                                entityInterface.getId());
-                CategoryOperations categoryOperations = new CategoryOperations();
+                Category category = CategoryCache.getInstance().getCategoryByEntityId(entityInterface.getId());
                 Collection<EntityInterface> entityCollection = categoryOperations.getAllSourceClasses(category);
                 for (EntityInterface en : entityCollection) {
                     persistPopularity(en, hiberOp);
@@ -80,7 +83,7 @@ public class PopularCategoryOperations {
     }
 
     /**
-     * This menthod returns CategoryPopularity object for given entity. Before returning it increases its popularity by one
+     * This method returns CategoryPopularity object for given entity. Before returning it increases its popularity by one
      * If entity is not present in the database, it returns CategoryPopularity object with popularity set to 1
      * 
      * @param entity id for which the popularity count is needed
@@ -107,20 +110,19 @@ public class PopularCategoryOperations {
      * @param query Instance of ICab2bQuery
      */
     public void setPopularity(ICab2bQuery query) {
-        Session session = HibernateUtil.newSession();
+        Set<EntityInterface> entityList = new HashSet<EntityInterface>();
+        IConstraints constraints = query.getConstraints();
+        Iterator<IExpression> expression = constraints.iterator();
+        while (expression.hasNext()) {
+            EntityInterface entity = expression.next().getQueryEntity().getDynamicExtensionsEntity();
+            entityList.add(entity);
+        }
+
         try {
-            HibernateDatabaseOperations<CategoryPopularity> hiberOp = new HibernateDatabaseOperations<CategoryPopularity>(
-                    session);
-            Set<EntityInterface> entityList = new HashSet<EntityInterface>();
-            IConstraints constraints = query.getConstraints();
-            Iterator<IExpression> expression = constraints.iterator();
-            while (expression.hasNext()) {
-                EntityInterface entityInterface = expression.next().getQueryEntity().getDynamicExtensionsEntity();
-                entityList.add(entityInterface);
-            }
-            persistPopularity(entityList, hiberOp);
-        } finally {
-            session.close();
+            persistPopularity(entityList);
+        } catch (SQLException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

@@ -1,6 +1,5 @@
 package edu.wustl.cab2b.server.datalist;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,7 +14,6 @@ import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.category.CategoryCache;
-import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
 
@@ -177,8 +175,7 @@ class CategoryEntityTreeParser {
     }
 
     private Category getCategoryById(Long id) {
-        Connection connection = ConnectionUtil.getConnection();
-        return CategoryCache.getInstance(connection).getCategoryById(id);
+        return CategoryCache.getInstance().getCategoryById(id);
     }
 
     Map<EntityInterface, List<AssociationInterface>> getAssociationsForEntity() {

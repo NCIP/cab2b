@@ -64,12 +64,7 @@ public class CategoryBean extends AbstractStatelessSessionBean implements Catego
      * @return Set of all entities present in given categoty.
      */
     public Set<EntityInterface> getAllSourceClasses(Category category) throws RemoteException {
-        Connection con = ConnectionUtil.getConnection();
-        try {
-            return CategoryCache.getInstance(con).getAllSourceClasses(category);
-        } finally {
-            ConnectionUtil.close(con);
-        }
+        return CategoryCache.getInstance().getAllSourceClasses(category);
     }
 
     /**
@@ -89,12 +84,7 @@ public class CategoryBean extends AbstractStatelessSessionBean implements Catego
      * @throws RemoteException EBJ specific Exception
      */
     public List<Category> getAllCategories() throws RemoteException {
-        Connection con = ConnectionUtil.getConnection();
-        try {
-            return CategoryCache.getInstance(con).getCategories();
-        } finally {
-            ConnectionUtil.close(con);
-        }
+        return CategoryCache.getInstance().getCategories();
     }
 
     /**
@@ -104,12 +94,8 @@ public class CategoryBean extends AbstractStatelessSessionBean implements Catego
      * @throws RemoteException EBJ specific Exception
      */
     public Set<AttributeInterface> getAllSourceAttributes(Category category) throws RemoteException {
-        Connection con = ConnectionUtil.getConnection();
-        try {
-            return CategoryCache.getInstance(con).getAllSourceAttributes(category);
-        } finally {
-            ConnectionUtil.close(con);
-        }
+
+        return CategoryCache.getInstance().getAllSourceAttributes(category);
 
     }
 

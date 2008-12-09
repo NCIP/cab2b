@@ -1,6 +1,5 @@
 package edu.wustl.cab2b.server.datalist;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,7 +14,6 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.category.CategoryCache;
-import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
@@ -175,8 +173,7 @@ public class CategoryDataListSaver extends AbstractDataListSaver<ICategorialClas
     }
 
     private Category getCategoryByEntityId(Long id) {
-        Connection connection = ConnectionUtil.getConnection();
-        return CategoryCache.getInstance(connection).getCategoryByEntityId(id);
+        return CategoryCache.getInstance().getCategoryByEntityId(id);
     }
 
     private void tagWithCategory(EntityInterface entity, Category category) {

@@ -83,6 +83,7 @@ public class UtilityOperations extends DefaultBizLogic {
         }
         return entityRecordValues;
     }
+
     private List<TreeSet<Comparable<?>>> initEntityRecordValues(int size) {
         List<TreeSet<Comparable<?>>> list = new ArrayList<TreeSet<Comparable<?>>>(size);
         for (int i = 0; i < size; i++) {
@@ -104,32 +105,45 @@ public class UtilityOperations extends DefaultBizLogic {
         }
     }
 
-    /**
-     * Method to refresh Path and Entity cache. 
-     * 
-     * @param refreshEntityCache If true refreshes entity cache along with path. If false, only rereshes path cache.
-     */
-    public void refreshPathAndEntityCache(boolean refreshEntityCache) {
-        logger.info("Successful access on remote bean!!!!");
-        Connection connection = ConnectionUtil.getConnection();
-        PathFinder.refreshCache(connection, refreshEntityCache);
-    }
-
-    /**
-     * Method to refresh category cache.
-     */
-    public void refreshCategoryAndEntityCache() {
-        EntityCache.getInstance().refreshCache();
-        Connection connection = ConnectionUtil.getConnection();
-        CategoryCache.getInstance().refreshCategoryCache(connection);
-    }
+    //    /**
+    //     * Method to refresh Path and Entity cache. 
+    //     * 
+    //     * @param refreshEntityCache If true refreshes entity cache along with path. If false, only rereshes path cache.
+    //     */
+    //    public void refreshPathAndEntityCache(boolean refreshEntityCache) {
+    //        logger.info("Successful access on remote bean!!!!");
+    //        Connection connection = ConnectionUtil.getConnection();
+    //        PathFinder.refreshCache(connection, refreshEntityCache);
+    //    }
+    //
+    //    /**
+    //     * Method to refresh category cache.
+    //     */
+    //    public void refreshCategoryAndEntityCache() {
+    //        EntityCache.getInstance().refreshCache();
+    //        Connection connection = ConnectionUtil.getConnection();
+    //        CategoryCache.getInstance().refreshCategoryCache(connection);
+    //    }
 
     /**
      * Adds the curated path to cache
      * @param curatedPath path to be added to cache.
+     * @param con 
      */
-    public void addCuratedPathToCache(CuratedPath curatedPath) {
-        Connection connection = ConnectionUtil.getConnection();
-        PathFinder.getInstance(connection).addCuratedPath(curatedPath);
+    public void addCuratedPathToCache(CuratedPath curatedPath, Connection con) {
+        PathFinder.getInstance(con).addCuratedPath(curatedPath);
+    }
+
+    public synchronized static void refreshCache() {
+        logger.info("Refreshing cache initiated...");
+        EntityCache.getInstance().refreshCache();
+        Connection con = ConnectionUtil.getConnection();
+        try {
+            PathFinder.refreshCache(con, false);
+            CategoryCache.getInstance().refreshCategoryCache(con);
+        } finally {
+            ConnectionUtil.close(con);
+        }
+        logger.info("Cache refreshing sucessfull");
     }
 }

@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.server.ejb.utility;
 
 import java.rmi.RemoteException;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,6 +16,7 @@ import edu.wustl.cab2b.common.queryengine.result.IPartiallyInitializedRecord;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.queryengine.LazyInitializer;
+import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
 import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.common.querysuite.metadata.path.CuratedPath;
@@ -94,7 +96,7 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Utility
     public IPartiallyInitializedRecord<?, ?> getView(int handle, ILazyParams params) throws RemoteException {
         return LazyInitializer.getView(handle, params);
     }
-    
+
     /**
      * unregister for a given handle
      * @param handle
@@ -116,22 +118,22 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Utility
         return new UtilityOperations().getUniqueRecordValues(entityId);
     }
 
-    /**
-     * Refreshes Path cache and EntityCache if boolean passed is true
-     * @param refreshEntityCache If to refresh entity cache
-     * @throws RemoteException
-     */
-    public void refreshPathAndEntityCache(boolean refreshEntityCache) throws RemoteException {
-        new UtilityOperations().refreshPathAndEntityCache(refreshEntityCache);
-    }
-
-    /**
-     * Refreshes Category cache and EntityCache.
-     * @throws RemoteException
-     */
-    public void refreshCategoryAndEntityCache() throws RemoteException {
-        new UtilityOperations().refreshCategoryAndEntityCache();
-    }
+    //    /**
+    //     * Refreshes Path cache and EntityCache if boolean passed is true
+    //     * @param refreshEntityCache If to refresh entity cache
+    //     * @throws RemoteException
+    //     */
+    //    public void refreshPathAndEntityCache(boolean refreshEntityCache) throws RemoteException {
+    //        new UtilityOperations().refreshPathAndEntityCache(refreshEntityCache);
+    //    }
+    //
+    //    /**
+    //     * Refreshes Category cache and EntityCache.
+    //     * @throws RemoteException
+    //     */
+    //    public void refreshCategoryAndEntityCache() throws RemoteException {
+    //        new UtilityOperations().refreshCategoryAndEntityCache();
+    //    }
 
     /**
      * Adds curated path to cache.
@@ -139,6 +141,20 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Utility
      * @throws RemoteException
      */
     public void addCuretedPathToCache(CuratedPath curatedPath) throws RemoteException {
-        new UtilityOperations().addCuratedPathToCache(curatedPath);
+        Connection con = ConnectionUtil.getConnection();
+        try {
+            new UtilityOperations().addCuratedPathToCache(curatedPath, con);
+        } finally {
+            ConnectionUtil.close(con);
+        }
+    }
+
+    public void refreshCache() throws RemoteException {
+        Connection con = ConnectionUtil.getConnection();
+        try {
+            UtilityOperations.refreshCache();
+        } finally {
+            ConnectionUtil.close(con);
+        }
     }
 }
