@@ -53,7 +53,7 @@ public class UserValidator {
 
     private static String idP = null;
 
-    private static String serializedDCR = null;
+    static String serializedDCR = null;
 
     public UserValidator(final String userName, final String idP) {
         this.userName = userName;
