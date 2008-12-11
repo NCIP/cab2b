@@ -71,6 +71,11 @@ public class CategoryPreprocessorResult {
         setCategoryForEntity(new HashMap<EntityInterface, Category>());
     }
 
+    /**
+     * This method returns the Map of Expressions sourced form Categories.
+     * 
+     * @return Map of Entity -> Set of {TreeNode of Expression}
+     */
     public Map<EntityInterface, Set<TreeNode<IExpression>>> getExprsSourcedFromCategories() {
         return exprsSourcedFromCategories;
     }
@@ -101,8 +106,9 @@ public class CategoryPreprocessorResult {
     }
 
     /**
-     * Accessor for redundant expression
-     * @return
+     * This method returns the set of redundant expressions
+     * 
+     * @return Set of {Expressions}
      */
     public Set<IExpression> getRedundantExprs() {
         return redundantExprs;
@@ -117,7 +123,7 @@ public class CategoryPreprocessorResult {
     }
 
     /**
-     * clen up
+     * This method clears map and set
      */
     public void clear() {
         getExprsSourcedFromCategories().clear();
@@ -125,8 +131,9 @@ public class CategoryPreprocessorResult {
     }
 
     /**
-     * Returns Set of output expressions
-     * @return
+     * This method returns the Output Expressions
+     * 
+     * @return Set of {OutputExpressions}
      */
     public Set<TreeNode<IExpression>> getOutputExpressions() {
         Set<TreeNode<IExpression>> outputExpressions = new HashSet<TreeNode<IExpression>>();
@@ -141,8 +148,9 @@ public class CategoryPreprocessorResult {
     }
 
     /**
-     * Getter for category class of expressions
-     * @return
+     * This method returns category class of expressions.
+     * 
+     * @return Map of Expression -> CategorialClass
      */
     public Map<IExpression, CategorialClass> getCatClassForExpr() {
         return catClassForExpr;
@@ -158,8 +166,8 @@ public class CategoryPreprocessorResult {
     }
 
     /**
-     * Getter for List of CategorialClass
-     * @return
+     * This method returns the List of CategorialClass
+     * @return List of CateogrialClass
      */
     public List<CategorialClass> getOriginallyRootCatClasses() {
         return originallyRootCatClasses;
@@ -175,8 +183,9 @@ public class CategoryPreprocessorResult {
     }
 
     /**
-     * Getter method for map between category and entity 
-     * @return
+     * This method returns the map between category and entity 
+     * 
+     * @return Map of Entity -> Category
      */
     public Map<EntityInterface, Category> getCategoryForEntity() {
         return categoryForEntity;

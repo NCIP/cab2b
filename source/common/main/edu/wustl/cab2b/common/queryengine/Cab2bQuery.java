@@ -23,10 +23,17 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
 
     private Long userId;
 
+    /**
+     * Default constructor
+     */
     public Cab2bQuery() {
         super();
     }
 
+    /**
+     * Parameterized constructor
+     * @param query
+     */
     public Cab2bQuery(ICab2bQuery query) {
         super(query);
         outputEntity = query.getOutputEntity();
@@ -34,6 +41,7 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
     }
 
     /**
+     * This method returns the list of output URLs
      * @return the outputClassUrls.
      * 
      * @hibernate.list name="outputClassUrls" table="OUTPUT_CLASS_URLS" cascade="all-delete-orphan" inverse="false" lazy="false"
@@ -47,17 +55,26 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
     }
 
     /**
-     * @param outputClassUrls
-     *            the outputClassUrls to set.
+     * This method sets the list of output class URLs
+     * 
+     * @param outputClassUrls the outputClassUrls to set.
      */
     public void setOutputUrls(List<String> outputClassUrls) {
         this.outputClassUrls = outputClassUrls;
     }
 
+    /**
+     * This method returns the output entity
+     * @return output entity
+     */
     public EntityInterface getOutputEntity() {
         return outputEntity;
     }
 
+    /**
+     * This method sets the output entity
+     * @param outputEntity 
+     */
     public void setOutputEntity(EntityInterface outputEntity) {
         this.outputEntity = outputEntity;
     }
@@ -81,17 +98,27 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
     }
 
     /**
+     * This method returns the user id
      * @hibernate.property name="userId" column="USER_ID" type="long" length="30" not-null="true" 
-     * @return
+     * @return user id
      */
     public Long getUserId() {
         return userId;
     }
 
+    /**
+     * This method sets the user id
+     * @param userId 
+     * 
+     */
     public void setUserId(Long userId) {
         this.userId = userId;
     }
 
+    /**
+     * This method sets the user id of the given user
+     * @param user
+     */
     public void setUserId(UserInterface user) {
         userId = user.getUserId();
     }

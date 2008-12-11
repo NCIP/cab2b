@@ -34,6 +34,10 @@ public class CategoryPopularity implements CategoryPopularityInterface, Serializ
         return date;
     }
 
+    /**
+     * This method sets the given date
+     * @param date
+     */
     public void setDate(Date date) {
         this.date = date;
     }
@@ -62,14 +66,20 @@ public class CategoryPopularity implements CategoryPopularityInterface, Serializ
         this.entityId = entityId;
     }
 
+    
     /**
-     * @hibernate.property column="ENTITY_ID" type="long" length="30"
-     *                     not-null="true"
+     * This method returns the entity id
+     * @return entity id
+     * 
+     * @hibernate.property column="ENTITY_ID" type="long" length="30" not-null="true"
      */
     public long getEntityId() {
         return entityId;
     }
 
+    /**
+     * This method increments the popularity count by 1.
+     */
     public synchronized void incPopularity() {
         popularity++;
     }

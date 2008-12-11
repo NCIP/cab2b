@@ -30,9 +30,9 @@ public interface CategoryPopularityInterface {
     void setEntityId(long entityId);
 
     /**
-     * Get entity id
+     * This method returns the entity id
      * 
-     * @return
+     * @return entity identifier
      */
     long getEntityId();
 
