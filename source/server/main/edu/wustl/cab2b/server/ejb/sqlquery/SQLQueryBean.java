@@ -4,14 +4,10 @@ import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
-
 import edu.wustl.cab2b.common.ejb.sqlquery.SQLQueryBusinessInterface;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.cab2b.server.util.SQLQueryUtil;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * This provides utility methods to execute UPDATE and SELECT type of queries using Datasource.
