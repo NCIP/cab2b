@@ -6,7 +6,6 @@ import java.util.List;
 
 import edu.wustl.cab2b.common.category.DataCategory;
 import edu.wustl.cab2b.common.ejb.datacategory.DataCategoryBusinessInterface;
-import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.cab2b.server.datacategory.DataCategoryOperations;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.util.ConnectionUtil;
@@ -27,15 +26,13 @@ public class DataCategoryBean extends AbstractStatelessSessionBean implements Da
         new DataCategoryOperations().saveDataCategory(dataCategory);
 
     }
-    
+
     /**   
      * Returns all the datacategories present in system.
      * @return List of datacategories.
      * @throws RemoteException EBJ specific Exception
      */
-    public List<DataCategory> getAllDataCategories() throws RemoteException 
-    {
-     
+    public List<DataCategory> getAllDataCategories() throws RemoteException {
         Connection con = ConnectionUtil.getConnection();
         try {
             return new DataCategoryOperations().getAllDataCategories(con);
