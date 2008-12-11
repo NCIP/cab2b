@@ -357,11 +357,11 @@ public class CommonUtils {
     }
 
     /**
-     * This method takes the node string and traverses the tree till it finds
+     * This method takes the node string and traverses the tree till it finds 
      * the node matching the string. If the match is found the node is returned
      * else null is returned
-     * 
-     * @param nodeStr node string to search for
+     * @param rootNode node string to search for
+     * @param userObject user object
      * @return tree node
      */
     public static DefaultMutableTreeNode searchNode(DefaultMutableTreeNode rootNode, Object userObject) {
@@ -474,7 +474,8 @@ public class CommonUtils {
      * @return All popular categories.
      */
     public static Collection<CategoryPopularity> getPopularCategoriesForShowAll() {
-        Collection<CategoryPopularity> categoryList = PopularCategoryCache.getInstance().getPopularCategoriesCollection();
+        Collection<CategoryPopularity> categoryList = 
+                                    PopularCategoryCache.getInstance().getPopularCategoriesCollection();
         List<CategoryPopularity> attributeList = new ArrayList<CategoryPopularity>(categoryList);
         Collections.sort(attributeList, new CategoryPopularityComparator());
         return attributeList;
@@ -488,15 +489,12 @@ public class CommonUtils {
          * TODO These default UserSearchQueries will be removed later after SAVE
          * QUERY support
          */
-
         Collection<IParameterizedQuery> cab2bQueryCollection = null;
         try {
-            QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                                        EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                                        QueryEngineHome.class);
+            QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) 
+                            CommonUtils.getBusinessInterface(EjbNamesConstants.QUERY_ENGINE_BEAN,QueryEngineHome.class);
 
-            cab2bQueryCollection = queryEngineBusinessInterface.getAllQueryNameAndDescription(
-                                                                                              UserValidator.getSerializedDCR(),
+            cab2bQueryCollection = queryEngine.getAllQueryNameAndDescription(UserValidator.getSerializedDCR(),
                                                                                               UserValidator.getIdP());
         } catch (RemoteException exception) {
             CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);
@@ -505,27 +503,18 @@ public class CommonUtils {
         }
 
         return cab2bQueryCollection;
-
-        /*  Vector<String> userSearchQueries = new Vector<String>();
-          userSearchQueries.add("Prostate Cancer Microarray Data");
-          userSearchQueries.add("Glioblastoma Microarray Data");
-          userSearchQueries.add("High Quality RNA Biospecimens");
-          // userSearchQueries.add("Breast Cancer Microarrays (MOE430+2.0)");
-
-          userSearchQueries.add("Adenocarcinoma Specimens");
-          userSearchQueries.add("Lung Primary Tumor");
-          return userSearchQueries;*/
     }
 
     /**
+     * @param comp component
+     * @param user user
      * @return All the experiments performed by the user.
      */
     public static Vector<Experiment> getExperiments(Component comp, UserInterface user) {
         List<Experiment> experiments = null;
         try {
-            ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                EjbNamesConstants.EXPERIMENT,
-                                                                                                                ExperimentHome.class);
+            ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) 
+                                   CommonUtils.getBusinessInterface(EjbNamesConstants.EXPERIMENT,ExperimentHome.class);
 
             experiments = expBus.getExperimentsForUser(user, UserValidator.getSerializedDCR(),
                                                        UserValidator.getIdP());
@@ -565,6 +554,10 @@ public class CommonUtils {
         return getPopularCategoriesForShowAll();
     }
 
+    /**
+     * @param input String to parse
+     * @return updated string 
+     */
     public static String escapeString(String input) {
         if (input.indexOf(",") != -1) {
             input = "\"" + input + "\"";
@@ -594,9 +587,8 @@ public class CommonUtils {
         if (edu.wustl.cab2b.common.util.Utility.isCategory(entity)) {
             Category cat = null;
             try {
-                CategoryBusinessInterface bus = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                             EjbNamesConstants.CATEGORY_BEAN,
-                                                                                                             CategoryHomeInterface.class);
+                CategoryBusinessInterface bus = (CategoryBusinessInterface) 
+                    CommonUtils.getBusinessInterface(EjbNamesConstants.CATEGORY_BEAN,CategoryHomeInterface.class);
                 cat = bus.getCategoryByEntityId(entity.getId());
             } catch (Exception e) {
                 handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
@@ -716,6 +708,10 @@ public class CommonUtils {
         return imageMap;
     }
 
+    /**
+     * @param userIdentifier User Identifier
+     * @return display name
+     */
     public static String getDisplayUserName(String userIdentifier) {
         return userIdentifier.substring(userIdentifier.lastIndexOf("=") + 1);
     }
