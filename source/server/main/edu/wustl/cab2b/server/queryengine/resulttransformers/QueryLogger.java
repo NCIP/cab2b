@@ -25,9 +25,10 @@ import gov.nih.nci.cagrid.dcql.DCQLQuery;
  */
 public class QueryLogger {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(QueryLogger.class);
+
     private static final String LOG_BASE_DIR = System.getProperty("user.home") + "/cab2bQueries";
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy hh_mm_ss a");
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dMMMyyyy_hh_mm_ss_a");
 
     private static final String LOG_FILE_NAME_PREFIX = "query_";
 
