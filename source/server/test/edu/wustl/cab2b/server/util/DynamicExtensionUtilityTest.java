@@ -114,8 +114,8 @@ public class DynamicExtensionUtilityTest extends TestCase {
     }
 
     public void testGetAttributeCopy() {
-        AttributeInterface[] arr = { fact.createStringAttribute(), fact.createIntegerAttribute(), fact.createLongAttribute(), fact.createDoubleAttribute(), fact.createFloatAttribute(), fact.createDateAttribute(), fact.createBooleanAttribute() };
-        PermissibleValueInterface[] values = { fact.createStringValue(), fact.createIntegerValue(), fact.createLongValue(), fact.createDoubleValue(), fact.createFloatValue(), fact.createDateValue(), fact.createBooleanValue() };
+        AttributeInterface[] arr = { fact.createStringAttribute(), fact.createIntegerAttribute(), fact.createLongAttribute(), fact.createDoubleAttribute(), fact.createFloatAttribute(), fact.createDateAttribute(), fact.createBooleanAttribute(),fact.createShortAttribute(),fact.createObjectAttribute()};
+        PermissibleValueInterface[] values = { fact.createStringValue(), fact.createIntegerValue(), fact.createLongValue(), fact.createDoubleValue(), fact.createFloatValue(), fact.createDateValue(), fact.createBooleanValue(),fact.createIntegerValue(),fact.createStringValue()};
 
         for (int i = 0; i < arr.length; i++) {
             arr[i].setName("name" + i);
