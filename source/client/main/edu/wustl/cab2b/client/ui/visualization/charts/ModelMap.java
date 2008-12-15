@@ -10,7 +10,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import edu.wustl.cab2b.client.ui.util.ClientConstants;
-import edu.wustl.cab2b.common.util.PropertyLoader;
+import edu.wustl.cab2b.common.util.CommonPropertyLoader;
 import edu.wustl.cab2b.common.util.Utility;
 
 /**

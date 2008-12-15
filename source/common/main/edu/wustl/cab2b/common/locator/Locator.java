@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.cab2b.common.util.PropertyLoader;
+import edu.wustl.cab2b.common.util.CommonPropertyLoader;
 
 /**
  * This class is responsible for all bean look ups. <br>
@@ -28,7 +28,7 @@ public class Locator {
      * This is to enforce that Locator is a singleton class
      */
     protected Locator() {
-        System.setProperty(Context.PROVIDER_URL, PropertyLoader.getJndiUrl());
+        System.setProperty(Context.PROVIDER_URL, CommonPropertyLoader.getJndiUrl());
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
         System.setProperty(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
     }

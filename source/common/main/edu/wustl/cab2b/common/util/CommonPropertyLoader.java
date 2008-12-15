@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
  * @author Chandrakant_Talele
  * @author lalit_chand
  */
-public class PropertyLoader {
-    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(PropertyLoader.class);
+public class CommonPropertyLoader {
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(CommonPropertyLoader.class);
 
     private static final String propertyfile = "cab2b.properties";
 
@@ -64,5 +64,31 @@ public class PropertyLoader {
         String[] urls = allUrls.split(",");
         return urls;
     }
+    
+    /**
+	 * 
+	 * @param idP
+	 * @return returns the sys-description file for GTS
+	 */
+
+	public static String getSyncDesFile(String idP) {
+		return props.getProperty(idP + "_sync_description_file");
+	}
+	
+	/**
+	 * @param idP
+	 * @return signing policy for given idP
+	 */
+	public static String getSigningPolicy(String idP) {
+		return props.getProperty(idP + "_signing_policy");
+	}
+
+	/**
+	 * @param idP
+	 * @return certificate for given idP
+	 */
+	public static String getCertificate(String idP) {
+		return props.getProperty(idP + "_certificate");
+	}
 
 }

@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.axis.types.URI.MalformedURIException;
 import org.apache.log4j.Logger;
 
-import edu.wustl.cab2b.common.util.PropertyLoader;
+import edu.wustl.cab2b.common.util.CommonPropertyLoader;
 import gov.nih.nci.cagrid.metadata.ServiceMetadata;
 import gov.nih.nci.cagrid.metadata.exceptions.ResourcePropertyRetrievalException;
 
@@ -27,7 +27,7 @@ public class IndexServiceOperations {
     public Map<String, ServiceMetadata> getServicesByNames(final String name, String version)
             throws MalformedURIException, RemoteException {
         final Map<String, ServiceMetadata> serviceURLTometadata = new HashMap<String, ServiceMetadata>();
-        String[] urls = PropertyLoader.getIndexServiceUrls();
+        String[] urls = CommonPropertyLoader.getIndexServiceUrls();
         for (String url : urls) {
             DiscoveryClientForMetaData client = new DiscoveryClientForMetaData(url);
             try {

@@ -802,14 +802,9 @@ public class Utility {
     public static void generateGlobusCertificate(String idP) {
         URL signingPolicy = null;
         URL certificate = null;
-        if ("Production".compareTo(idP) == 0) {
-            signingPolicy = Utility.class.getClassLoader().getResource(idP + "/62f4fd66.signing_policy");
-            certificate = Utility.class.getClassLoader().getResource(idP + "/62f4fd66.0");
-        } else if ("Training".compareTo(idP) == 0) {
-            signingPolicy = Utility.class.getClassLoader().getResource(idP + "/68907d53.signing_policy");
-            certificate = Utility.class.getClassLoader().getResource(idP + "/68907d53.0");
-        }
-
+        signingPolicy = Utility.class.getClassLoader().getResource(CommonPropertyLoader.getSigningPolicy(idP));
+        certificate = Utility.class.getClassLoader().getResource(CommonPropertyLoader.getCertificate(idP));
+        
         if (signingPolicy != null || certificate != null) {
             copyCACertificates(signingPolicy);
             copyCACertificates(certificate);
@@ -821,7 +816,7 @@ public class Utility {
         logger.debug("Getting sync-descriptor.xml file for " + idP);
         try {
             logger.debug("Synchronizing with GTS service");
-            URL syncDescFile = Utility.class.getClassLoader().getResource(idP + "/sync-description.xml");
+            URL syncDescFile = Utility.class.getClassLoader().getResource(CommonPropertyLoader.getSyncDesFile(idP));
             SyncDescription description = (SyncDescription) Utility.deserializeDocument(syncDescFile.openStream(),
                                                                                         SyncDescription.class);
             SyncGTS.getInstance().syncOnce(description);
