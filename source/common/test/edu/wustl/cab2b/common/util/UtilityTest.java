@@ -147,4 +147,18 @@ public class UtilityTest extends TestCase {
 		}
 		assertTrue(gotException);
 	}
+    public void testGetFormattedString() {
+        String[] names = { "id", "geneName", "participantMedicalIdentifier", "name", "createdDate", "SomeAttribute", "genbankmRNAAsOutput" };
+        List<String> expected = new ArrayList<String>(names.length);
+        expected.add("Identifier");
+        expected.add("Gene Name"); 
+        expected.add("Participant Medical Identifier");
+        expected.add("Name");
+        expected.add("Created Date");
+        expected.add("Some Attribute");
+        expected.add("Genbankm RNA As Output");// Actually this should be "Genbank mRNA As Output"
+        for (int i = 0; i < names.length; i++) {
+            assertEquals(expected.get(i), Utility.getFormattedString(names[i]));
+        }
+    }
 }
