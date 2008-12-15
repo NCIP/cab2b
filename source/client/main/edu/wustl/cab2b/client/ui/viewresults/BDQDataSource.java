@@ -14,45 +14,68 @@ import edu.wustl.cab2b.client.ui.controls.LazyTable.PageDimension;
 import edu.wustl.cab2b.client.ui.controls.LazyTable.PageInfo;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
+import static edu.wustl.cab2b.common.ejb.EjbNamesConstants.UTILITY_BEAN;
+import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.ejb.utility.UtilityBusinessInterface;
 import edu.wustl.cab2b.common.ejb.utility.UtilityHomeInterface;
 import edu.wustl.cab2b.common.queryengine.result.I3DDataRecord;
 import edu.wustl.cab2b.common.queryengine.result.IPartiallyInitialized3DRecord;
+import edu.wustl.cab2b.common.queryengine.result.IPartiallyInitializedRecord;
 import edu.wustl.cab2b.common.queryengine.result.I3DDataRecord.LazyParams;
 
 /**
+ * BDQDataSource
  * @author rahul_ner
- *
  */
 public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3DRecord<?, ?>> {
 
     /**
      * this is required to find dimension of the cube
      */
-    private IPartiallyInitialized3DRecord<?, ?> uninitailisedRecord;
+    private IPartiallyInitialized3DRecord<?, ?> uninitializedRecord;
 
+    /**
+     * Constructor
+     * @param uninitializedRecord uninitialized record
+     * @param pageDimension page dimension
+     * @param cache
+     */
     public BDQDataSource(
-            IPartiallyInitialized3DRecord<?, ?> uninitailisedRecord,
+            IPartiallyInitialized3DRecord<?, ?> uninitializedRecord,
             PageDimension pageDimension,
             CacheInterface<?> cache) {
         super(pageDimension, cache);
-        this.uninitailisedRecord = uninitailisedRecord;
+        this.uninitializedRecord = uninitializedRecord;
     }
 
+    /** 
+     * Returns row count
+     * @return row count 
+     * @see edu.wustl.cab2b.client.ui.controls.LazyTable.AbstractLazyDataSource#getRowCount()
+     */
     public int getRowCount() {
-        return uninitailisedRecord.getDim3Labels().length;
+        return uninitializedRecord.getDim3Labels().length;
     }
 
+    /**      
+     * Returns column count
+     * @return column count 
+     * @see edu.wustl.cab2b.client.ui.controls.LazyTable.AbstractLazyDataSource#getColumnCount()
+     */
     public int getColumnCount() {
-        return uninitailisedRecord.getDim1Labels().length * uninitailisedRecord.getDim2Labels().length;
+        return uninitializedRecord.getDim1Labels().length * uninitializedRecord.getDim2Labels().length;
     }
 
-    public String getColumnName(int columnNo) {
-        int dim2Size = uninitailisedRecord.getDim2Labels().length;
+    /**
+     * @param columnNo column number
+     * @return column name
+     * @see edu.wustl.cab2b.client.ui.controls.LazyTable.AbstractLazyDataSource#getColumnName(int)
+     */
+    public String getColumnName(int columnNumber) {
+        int dim2Size = uninitializedRecord.getDim2Labels().length;
 
-        int dim1Index = columnNo / dim2Size;
-        int dim2Index = columnNo - dim1Index;
+        int dim1Index = columnNumber / dim2Size;
+        int dim2Index = columnNumber - dim1Index;
 
         return currentPage.getData().getDim2Labels()[dim2Index] + "_"
                 + currentPage.getData().getDim1Labels()[dim1Index];
@@ -60,31 +83,34 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
     }
 
     /**
+     * @param rowNo row number 
+     * @param columnNo column number
+     * @return Data
      * @see edu.wustl.cab2b.client.ui.controls.LazyTable.AbstractLazyDataSource#extractDataFromPage(int, int)
      */
-    public Object extractDataFromPage(int rowNo, int columnNo) {
+    public Object extractDataFromPage(int rowNumber, int columnNumber) {
         int dim2Size = currentPage.getData().getDim2Labels().length;
 
-        int dim1Index = columnNo / dim2Size;
-        int dim2Index = columnNo - dim1Index;
-        int dim3Index = rowNo;
+        int dim1Index = columnNumber / dim2Size;
+        int dim2Index = columnNumber - dim1Index;
+        int dim3Index = rowNumber;
         return currentPage.getData().getCube()[dim1Index][dim2Index][dim3Index];
     }
 
     /**
-     * @see edu.wustl.cab2b.client.ui.controls.LazyTable.AbstractLazyDataSource#fetchPageData(edu.wustl.cab2b.client.ui.controls.LazyTable.PageInfo)
+     * @param pageInfo Page Information
+     * @return IPartiallyInitialized3DRecord
+     * @see edu.wustl.cab2b.client.ui.controls.LazyTable.AbstractLazyDataSource
+     * #fetchPageData(edu.wustl.cab2b.client.ui.controls.LazyTable.PageInfo)
      */
     public Page<IPartiallyInitialized3DRecord<?, ?>> fetchPageData(PageInfo pageInfo) {
-        List<LazyParams.Range> rangeList = getRanges(uninitailisedRecord.getCube(), pageInfo.getStartX(),
+        List<LazyParams.Range> rangeList = getRanges(uninitializedRecord.getCube(), pageInfo.getStartX(),
                                                      pageInfo.getStartY());
         LazyParams lazyParams = new I3DDataRecord.LazyParams(rangeList);
         try {
-            UtilityBusinessInterface utilityBeanInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                        EjbNamesConstants.UTILITY_BEAN,
-                                                                                                                        UtilityHomeInterface.class);
-            IPartiallyInitialized3DRecord<?, ?> newRecord = (IPartiallyInitialized3DRecord<?, ?>) (Object) utilityBeanInterface.getView(
-                                                                                                                                        uninitailisedRecord.handle(),
-                                                                                                                                        lazyParams);
+            UtilityBusinessInterface utilityBean = getUtilityBean();
+            IPartiallyInitializedRecord<?, ?> record = utilityBean.getView(uninitializedRecord.handle(),lazyParams);
+            IPartiallyInitialized3DRecord<?, ?> newRecord = (IPartiallyInitialized3DRecord<?, ?>) record;
             return new Page<IPartiallyInitialized3DRecord<?, ?>>(pageInfo, newRecord);
         } catch (RemoteException e) {
             CommonUtils.handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
@@ -146,7 +172,7 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
      * @return
      */
     private LazyParams.Range getCloumnRage(int columnNo) {
-        Object[][][] cube = uninitailisedRecord.getCube();
+        Object[][][] cube = uninitializedRecord.getCube();
         int dimj = cube[0].length;
         int dimk = cube[0][0].length;
         int starti = columnNo / dimj;
@@ -159,8 +185,8 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
     }
 
     /**
-     * @param selectedColumns
-     * @return
+     * @param selectedColumns selectedColumns
+     * @return IPartiallyInitialized3DRecord
      */
     public IPartiallyInitialized3DRecord<?, ?> getColumnsData(int[] selectedColumns) {
 
@@ -171,12 +197,8 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
         LazyParams lazyParams = new I3DDataRecord.LazyParams(rangeList);
 
         try {
-            UtilityBusinessInterface utilityBeanInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                        EjbNamesConstants.UTILITY_BEAN,
-                                                                                                                        UtilityHomeInterface.class);
-            return (IPartiallyInitialized3DRecord<?, ?>) (Object) utilityBeanInterface.getView(
-                                                                                               uninitailisedRecord.handle(),
-                                                                                               lazyParams);
+            UtilityBusinessInterface utilityBean = getUtilityBean();
+            return (IPartiallyInitialized3DRecord<?, ?>) utilityBean.getView(uninitializedRecord.handle(),lazyParams);
         } catch (RemoteException e) {
             CommonUtils.handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
         }
@@ -184,15 +206,16 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
         return null;
     }
 
+    /**
+     * @return Unique Record Values
+     */
     public List<TreeSet<Comparable<?>>> getUniqueRecordValues() {
         List<TreeSet<Comparable<?>>> recordValues = null;
-        Set<AttributeInterface> allAttributes = uninitailisedRecord.getAttributes();
+        Set<AttributeInterface> allAttributes = uninitializedRecord.getAttributes();
         if (!allAttributes.isEmpty()) {
             Long entityId = allAttributes.iterator().next().getEntity().getId();
             try {
-                UtilityBusinessInterface utilityBusinessInterface = (UtilityBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                                EjbNamesConstants.UTILITY_BEAN,
-                                                                                                                                UtilityHomeInterface.class);
+                UtilityBusinessInterface utilityBusinessInterface = getUtilityBean();
                 recordValues = utilityBusinessInterface.getUniqueRecordValues(entityId);
             } catch (RemoteException e) {
                 CommonUtils.handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
@@ -200,5 +223,8 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
         }
         return recordValues;
     }
-
+    private UtilityBusinessInterface getUtilityBean() {
+        BusinessInterface bus =  CommonUtils.getBusinessInterface(UTILITY_BEAN,UtilityHomeInterface.class);
+        return (UtilityBusinessInterface)bus;
+    }
 }

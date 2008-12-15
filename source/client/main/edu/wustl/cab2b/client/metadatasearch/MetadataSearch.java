@@ -80,9 +80,7 @@ public class MetadataSearch {
      * @throws RemoteException
      */
     private MatchedClass searchText(String[] searchString, int[] searchTarget) throws CheckedException {
-
         MatchedClass resultantMatchedClass = new MatchedClass();
-
         for (int i = 0; i < searchTarget.length; i++) {
             MatchedClass matchedClass = null;
             Collection<EntityInterface> entityCollection = null;
@@ -218,7 +216,8 @@ public class MetadataSearch {
      *            the search string.
      * @return the Entity instance which is to be searched.
      */
-    private Collection<AttributeInterface> createSearchAttributeWithDesc(String[] searchString) throws CheckedException {
+    private Collection<AttributeInterface> createSearchAttributeWithDesc(String[] searchString)
+            throws CheckedException {
         Collection<AttributeInterface> attributeCollection = new HashSet<AttributeInterface>();
         for (int i = 0; i < searchString.length; i++) {
             AttributeInterface attribute = getAttribute(searchString[i], searchString[i]);
@@ -275,7 +274,6 @@ public class MetadataSearch {
      * @throws RemoteException
      */
     private MatchedClass searchConceptCode(String[] searchString, int[] searchTarget) throws CheckedException {
-
         MatchedClass resultantMatchedClass = new MatchedClass();
         for (int i = 0; i < searchTarget.length; i++) {
             MatchedClass matchedClass = null;
@@ -293,7 +291,8 @@ public class MetadataSearch {
                     resultantMatchedClass = createResultClass(resultantMatchedClass, matchedClass);
                     break;
                 case Constants.PV:
-                    Collection<PermissibleValueInterface> pvCollection = createSearchPermissibleValueConceptCode(searchString);
+                    Collection<PermissibleValueInterface> pvCollection = 
+                                        createSearchPermissibleValueConceptCode(searchString);
                     matchedClass = entityCache.getEntityOnPermissibleValueParameters(pvCollection);
                     resultantMatchedClass = createResultClass(resultantMatchedClass, matchedClass);
                     break;
@@ -312,7 +311,8 @@ public class MetadataSearch {
      *            the search string.
      * @return the Entity instance which is to be searched.
      */
-    private Collection<EntityInterface> createSearchEntityConceptCode(String[] searchString) throws CheckedException {
+    private Collection<EntityInterface> createSearchEntityConceptCode(String[] searchString)
+            throws CheckedException {
         Collection<EntityInterface> entityCollection = new HashSet<EntityInterface>();
         DomainObjectFactory deFactory = DomainObjectFactory.getInstance();
         for (int i = 0; i < searchString.length; i++) {

@@ -36,7 +36,7 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
     /**
      * Set FONT for title 
      */
-    protected static final Font titleFont = new Font("SansSerif", Font.BOLD, 16); // NOI18N
+    protected static final Font TITLE_FONT = new Font("SansSerif", Font.BOLD, 16); // NOI18N
 
     /**
      * Sets paper header default height
@@ -46,47 +46,42 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
     /**
      * Top panel color
      */
-    protected static final Color colorPaperTop = new Color(255, 255, 255);
+    protected static final Color TOP_PANEL_COLOR = new Color(255, 255, 255);
 
     /**
      * Top line color
      */
-    protected static final Color colorPaperTopLine = new Color(250, 232, 213);
+    protected static final Color TOP_LINE_COLOR = new Color(250, 232, 213);
 
     /**
      * Center panel color
      */
-    protected static final Color colorPaperCenter = new Color(252, 250, 245);
+    protected static final Color CENTER_PANEL_COLOR = new Color(252, 250, 245);
 
     /**
      * Top Label color
      */
-    protected static final Color colorPaperTopLabel = new Color(213, 211, 204);
-
-    /**
-     * Grid point color on DAG
-     */
-    protected static final Color colorPaperGridPoint = new Color(170, 164, 151);
+    protected static final Color TOP_LABEL_COLOR = new Color(213, 211, 204);
 
     /**
      * Node selection color 
      */
-    protected static final Color selectionBackground = new Color(0xEEEEEE);
+    protected static final Color SELECTION_BACKGROUND = new Color(0xEEEEEE);
 
     /**
      * Node Selection foreground color
      */
-    protected static final Color selectionForeground = Color.BLUE;//new Color (0xCDCDCD); // sanjeev
+    protected static final Color SELECTION_FOREGROUND = Color.BLUE;
 
     /**
      * Background color
      */
-    protected static final Color altBackground = new Color(0xEE4040);
+    protected static final Color ALTERNATE_BACKGROUND = new Color(0xEE4040);
 
     /**
      * Foreground color
      */
-    protected static final Color altForeground = new Color(0xCD0000);
+    protected static final Color ALTERNATE_FOREGROUND = new Color(0xCD0000);
 
     /**
      * Grid image
@@ -181,7 +176,7 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
     public static void renderSelectedRect(Graphics2D gr, Rectangle rect) {
         if (rect == null)
             return;
-        gr.setColor(selectionForeground);
+        gr.setColor(SELECTION_FOREGROUND);
         gr.draw(new Rectangle2D.Float(rect.x + 0.5f, rect.y + 0.5f, rect.width - 1, rect.height - 1));
     }
 
@@ -193,9 +188,9 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
     public static void renderAltRect(Graphics2D gr, Rectangle rect) {
         if (rect == null)
             return;
-        gr.setColor(altBackground);
+        gr.setColor(ALTERNATE_BACKGROUND);
         gr.fillRect(rect.x, rect.y, rect.width, rect.height);
-        gr.setColor(altForeground);
+        gr.setColor(ALTERNATE_FOREGROUND);
         gr.draw(new Rectangle2D.Float(rect.x + 0.5f, rect.y + 0.5f, rect.width - 1, rect.height - 1));
     }
 
@@ -204,7 +199,7 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
      * @return Color
      */
     public static Color getSelectionBackgroundColor() {
-        return selectionBackground;
+        return SELECTION_BACKGROUND;
     }
 
     /**
@@ -212,7 +207,7 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
      * @return Color
      */
     public static Color getSelectionForegroundColor() {
-        return selectionForeground;
+        return SELECTION_FOREGROUND;
     }
 
     /**
@@ -220,7 +215,7 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
      * @return Color
      */
     public static Color getPaperColor() {
-        return colorPaperCenter;
+        return CENTER_PANEL_COLOR;
     }
 
     /**
@@ -238,13 +233,13 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
      */
     protected void renderPaperHeader(Graphics2D gr) {
         if (title != null) {
-            gr.setColor(colorPaperTopLabel);
-            gr.setFont(titleFont);
+            gr.setColor(TOP_LABEL_COLOR);
+            gr.setFont(TITLE_FONT);
             gr.drawString(title, 40, (3 * PAPER_HEADER_DEFAULT_HEIGHT) / 4);
-            gr.setColor(colorPaperTop);
+            gr.setColor(TOP_PANEL_COLOR);
             Rectangle clip = gr.getClipBounds();
             gr.fillRect(clip.x, 0, clip.width, PAPER_HEADER_DEFAULT_HEIGHT + 1);
-            gr.setColor(colorPaperTopLine);
+            gr.setColor(TOP_LINE_COLOR);
             gr.fillRect(clip.x, PAPER_HEADER_DEFAULT_HEIGHT, clip.width, PAPER_HEADER_DEFAULT_HEIGHT + 1);
         }
     }
@@ -270,7 +265,7 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
                     gr.drawImage(IMAGE_PAPER_GRID, posx, posy, null);
         } else {
             int paperTopHeight = getPaperHeaderHeight(gr);
-            gr.setColor(colorPaperCenter);
+            gr.setColor(CENTER_PANEL_COLOR);
             gr.fillRect(clip.x, /*imagePaperWidth + */paperTopHeight + 1, clip.width, clip.y + clip.height);
         }
         renderPaperHeader(gr);
