@@ -34,7 +34,9 @@ import edu.wustl.common.querysuite.metadata.category.Category;
  */
 public abstract class AbstractEntityCache implements IEntityCache, Serializable {
     private static final long serialVersionUID = 1234567890L;
+
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(AbstractEntityCache.class);
+
     /**
      * List of all the categories loaded in caB2B local database.  
      */
@@ -105,7 +107,8 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
      * @throws RemoteException 
      */
     public final void refreshCache() {
-        logger.debug("Initialising cache, this may take few minutes...");
+        logger.info("Initialising cache, this may take few minutes...");
+
         Collection<EntityGroupInterface> entityGroups = null;
         try {
             entityGroups = getCab2bEntityGroups();
@@ -114,7 +117,8 @@ public abstract class AbstractEntityCache implements IEntityCache, Serializable 
             logger.error("Error while collecting caB2B entity groups. Error: " + e.getMessage());
         }
         createCache(entityGroups);
-        logger.debug("Initialising cache DONE");
+        
+        logger.info("Initialising cache DONE");
     }
 
     /**
