@@ -157,9 +157,9 @@ public class CommonUtilsTest extends TestCase {
 		list.add(a1);
 		list.add(a2);
 		list.add(a3);
-
+		list.add(TestUtil.getAttribute("entity", 3L,"geneSourceName", 4L));
 		Dimension d = CommonUtils.getMaximumLabelDimension(list);
-		assertEquals(new Dimension(110, 15), d);
+		assertEquals(new Dimension(118, 15), d);
 	}
 
 	public void testGetRelativeDimension() {
