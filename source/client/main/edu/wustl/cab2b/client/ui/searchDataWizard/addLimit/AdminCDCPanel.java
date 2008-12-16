@@ -38,7 +38,7 @@ public class AdminCDCPanel extends Cab2bPanel {
         AttributeSelectCDCPanel cdcPanel = new AttributeSelectCDCPanel();
         SearchPanel searchPanel = new SearchPanel(new Cab2bContentPanel(), cdcPanel);
         MainFrame.setScreenDimesion(Toolkit.getDefaultToolkit().getScreenSize());
-        Dimension dimension = MainFrame.getScreenDimesion();
+        Dimension dimension = MainFrame.getScreenDimension();
         searchPanel.setMinimumSize(new Dimension(270, dimension.height));
         searchPanel.srhTextField.setPreferredSize(new Dimension(175, 20));
 

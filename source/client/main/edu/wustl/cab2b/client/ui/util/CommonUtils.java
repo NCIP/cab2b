@@ -673,7 +673,7 @@ public class CommonUtils {
         // changed, but the variable still holds old resolution
         // size.
 
-        Dimension dimension = MainFrame.getScreenDimesion();
+        Dimension dimension = MainFrame.getScreenDimension();
         final String title = ApplicationProperties.getValue(SEARCH_FRAME_TITLE);
 
         // Clearing the data list

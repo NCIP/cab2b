@@ -100,7 +100,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
      */
     private JPagination pagination;
 
-    private static int descLength = (int) ((MainFrame.getScreenDimesion().getWidth() / 1024f) * 110f);
+    private static int descLength = (int) ((MainFrame.getScreenDimension().getWidth() / 1024f) * 110f);
 
     /**
      * @param pagination

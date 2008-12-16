@@ -68,7 +68,7 @@ public class SearchDataWelcomePanel extends Cab2bPanel {
         searchDataButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 GlobalNavigationPanel.setMainSearchPanel(new MainSearchPanel());
-                Dimension relDimension = CommonUtils.getRelativeDimension(MainFrame.getScreenDimesion(), 0.90f,
+                Dimension relDimension = CommonUtils.getRelativeDimension(MainFrame.getScreenDimension(), 0.90f,
                                                                           0.85f);
                 MainSearchPanel mainSearchPanel = GlobalNavigationPanel.getMainSearchPanel();
                 mainSearchPanel.setPreferredSize(relDimension);
@@ -79,7 +79,7 @@ public class SearchDataWelcomePanel extends Cab2bPanel {
                 // Update the variable for latest screen dimension from the toolkit, this is to handle the situations were
                 // Application is started and then screen resolution is changed, but the variable stiil holds old resolution size.
                 MainFrame.setScreenDimesion(Toolkit.getDefaultToolkit().getScreenSize());
-                Dimension dimension = MainFrame.getScreenDimesion();
+                Dimension dimension = MainFrame.getScreenDimension();
                 JDialog searchWizard = WindowUtilities.setInDialog(mainFrame, mainSearchPanel, title,
                                                                    new Dimension((int) (dimension.width * 0.90),
                                                                            (int) (dimension.height * 0.85)), true,

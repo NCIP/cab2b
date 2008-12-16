@@ -96,7 +96,7 @@ public class MySettingPanel extends Cab2bPanel {
        
 
         MainFrame.setScreenDimesion(Toolkit.getDefaultToolkit().getScreenSize());
-        Dimension screenDimesion = MainFrame.getScreenDimesion();
+        Dimension screenDimesion = MainFrame.getScreenDimension();
         final String title = ApplicationProperties.getValue(MYSETTINGS_FRAME_TITLE);
         Dimension dimension =  new Dimension((int) (screenDimesion.width * 0.90), (int) (screenDimesion.height * 0.85));
         mySettingDialog = WindowUtilities.setInDialog(parent, this, title, dimension, true, true);

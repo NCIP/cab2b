@@ -290,7 +290,7 @@ public class GlobalNavigationGlassPane extends JComponent implements ActionListe
      */
     public void initializeMainSearchPanel() {
         GlobalNavigationPanel.setMainSearchPanel(new MainSearchPanel());
-        Dimension relDimension = CommonUtils.getRelativeDimension(MainFrame.getScreenDimesion(), 0.90f, 0.85f);
+        Dimension relDimension = CommonUtils.getRelativeDimension(MainFrame.getScreenDimension(), 0.90f, 0.85f);
         GlobalNavigationPanel.getMainSearchPanel().setPreferredSize(relDimension);
         GlobalNavigationPanel.getMainSearchPanel().setSize(relDimension);
     }

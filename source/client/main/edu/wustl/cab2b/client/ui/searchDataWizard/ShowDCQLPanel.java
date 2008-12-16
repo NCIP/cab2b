@@ -106,7 +106,7 @@ public class ShowDCQLPanel extends Cab2bPanel {
 	 * @return
 	 */
 	public JDialog showInDialog() {
-		Dimension dimension = MainFrame.getScreenDimesion();
+		Dimension dimension = MainFrame.getScreenDimension();
 		dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(),
 				this, "DCQL Xml", new Dimension((int) (dimension.width * 0.77),
 						(int) (dimension.height * 0.65)), true, false);

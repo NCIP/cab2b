@@ -59,7 +59,7 @@ public class B2BTreeNode {
     }
 
     public JDialog showInDialog() {
-        Dimension dimension = MainFrame.getScreenDimesion();
+        Dimension dimension = MainFrame.getScreenDimension();
 
         B2BNewModel b2BNewModel = new B2BNewModel(this);
         JTreeTable treeTable = new JTreeTable(b2BNewModel);

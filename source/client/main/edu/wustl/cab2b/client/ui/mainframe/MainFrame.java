@@ -54,7 +54,7 @@ public class MainFrame extends JXFrame {
      * Everything related GUI's containers and its components size is relative
      * to this size.
      */
-    private static Dimension screenDimesion = Toolkit.getDefaultToolkit().getScreenSize();
+    private static Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
 
     private static Cab2bLabel status;
 
@@ -321,8 +321,8 @@ public class MainFrame extends JXFrame {
     /**
      * @return Returns the screenDimesion.
      */
-    public static Dimension getScreenDimesion() {
-        return screenDimesion;
+    public static Dimension getScreenDimension() {
+        return screenDimension;
     }
 
 
@@ -380,7 +380,7 @@ public class MainFrame extends JXFrame {
      * @param screenDimesion the screenDimesion to set
      */
     public static void setScreenDimesion(Dimension screenDimesion) {
-        MainFrame.screenDimesion = screenDimesion;
+        MainFrame.screenDimension = screenDimesion;
     }
 
 }

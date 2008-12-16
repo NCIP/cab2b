@@ -84,7 +84,7 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
      * Method to display paramaterizedQueryPreviewPanel in dialog box. 
      */
     public void showInDialog(final String dialogTitle) {
-        Dimension dimension = MainFrame.getScreenDimesion();
+        Dimension dimension = MainFrame.getScreenDimension();
         dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), this, dialogTitle, new Dimension(
                 (int) (dimension.width * 0.80), (int) (dimension.height * 0.75)), true, false);
         dialog.setVisible(true);
@@ -102,8 +102,8 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
             Cab2bPanel topPanelContainer = (Cab2bPanel) topConditionTitlePanel.getContentContainer();
             topPanelContainer.add(topScrollPane);
             topConditionTitlePanel.setMaximumSize(new Dimension(
-                    (int) (MainFrame.getScreenDimesion().width * 0.40),
-                    (int) (MainFrame.getScreenDimesion().height * 0.35)));
+                    (int) (MainFrame.getScreenDimension().width * 0.40),
+                    (int) (MainFrame.getScreenDimension().height * 0.35)));
             this.add(topConditionTitlePanel, BorderLayout.NORTH);
         }
     }

@@ -437,7 +437,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
      * @return
      */
     public JDialog showInDialog() {
-        Dimension dimension = MainFrame.getScreenDimesion();
+        Dimension dimension = MainFrame.getScreenDimension();
         dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), this, "Create New Experiment",
                                              new Dimension((int) (dimension.width * 0.43),
                                                      (int) (dimension.height * 0.60)), true, false);

@@ -194,7 +194,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
      * @return
      */
     public JDialog showInDialog() {
-        Dimension dimension = MainFrame.getScreenDimesion();
+        Dimension dimension = MainFrame.getScreenDimension();
         dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), this, "Save Data List",
                                              new Dimension((int) (dimension.width * 0.35),
                                                      (int) (dimension.height * 0.30)), true, false);

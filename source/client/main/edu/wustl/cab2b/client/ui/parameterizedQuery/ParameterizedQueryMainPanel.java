@@ -118,7 +118,7 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
     }
 
     public void showInDialog() {
-        Dimension dimension = MainFrame.getScreenDimesion();
+        Dimension dimension = MainFrame.getScreenDimension();
         dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), this, "Unsaved Condition",
                                              new Dimension((int) (dimension.width * 0.80),
                                                      (int) (dimension.height * 0.75)), true, false);

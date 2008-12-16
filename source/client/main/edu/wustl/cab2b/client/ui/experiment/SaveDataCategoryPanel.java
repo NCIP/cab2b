@@ -106,7 +106,7 @@ public class SaveDataCategoryPanel extends Cab2bPanel {
     }
 
     private JDialog showAsDialog() {
-        Dimension mainDimension = MainFrame.getScreenDimesion();
+        Dimension mainDimension = MainFrame.getScreenDimension();
         Dimension dialogDimension = new Dimension((int) (mainDimension.width * 0.35),
                 (int) (mainDimension.height * 0.15));
 

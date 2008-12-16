@@ -71,7 +71,7 @@ public class GlobalNavigationPanel extends Cab2bPanel {
 
 		JPanel cab2bPanel = new JPanel(new BorderLayout());
 		Icon logoIcon = new ImageIcon(loader.getResource("r_1p.gif"));
-		int width = MainFrame.getScreenDimesion().width;
+		int width = MainFrame.getScreenDimension().width;
 		width = width - 600;
 		RepeatIcon repeatIcon = new RepeatIcon(logoIcon, 0, width);
 		JLabel labelMiddle = new JLabel(repeatIcon);
