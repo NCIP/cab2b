@@ -109,8 +109,8 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
         LazyParams lazyParams = new I3DDataRecord.LazyParams(rangeList);
         try {
             UtilityBusinessInterface utilityBean = getUtilityBean();
-            IPartiallyInitializedRecord<?, ?> record = utilityBean.getView(uninitializedRecord.handle(),lazyParams);
-            IPartiallyInitialized3DRecord<?, ?> newRecord = (IPartiallyInitialized3DRecord<?, ?>) record;
+            IPartiallyInitialized3DRecord<?, ?> newRecord = (IPartiallyInitialized3DRecord<?, ?>) (Object) 
+                                                  utilityBean.getView(uninitializedRecord.handle(),lazyParams);
             return new Page<IPartiallyInitialized3DRecord<?, ?>>(pageInfo, newRecord);
         } catch (RemoteException e) {
             CommonUtils.handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
@@ -198,7 +198,8 @@ public class BDQDataSource extends AbstractLazyDataSource<IPartiallyInitialized3
 
         try {
             UtilityBusinessInterface utilityBean = getUtilityBean();
-            return (IPartiallyInitialized3DRecord<?, ?>) utilityBean.getView(uninitializedRecord.handle(),lazyParams);
+            return (IPartiallyInitialized3DRecord<?, ?>)(Object)  
+                                            utilityBean.getView(uninitializedRecord.handle(),lazyParams);
         } catch (RemoteException e) {
             CommonUtils.handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
         }
