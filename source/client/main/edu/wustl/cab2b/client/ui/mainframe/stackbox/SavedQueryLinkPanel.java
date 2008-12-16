@@ -5,7 +5,6 @@ import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.HYPERL
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -131,19 +130,7 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
      * @return
      */
     private ShowAllPanel getAllQueryPanel() {
-        Collection<IParameterizedQuery> cab2bQueryCollection = null;
-        try {
-            QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                       EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                       QueryEngineHome.class);
-            cab2bQueryCollection = queryEngine.getAllQueryNameAndDescription(UserValidator.getSerializedDCR(),
-                                                                             UserValidator.getIdP());
-        } catch (RemoteException exception) {
-            CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);
-        } catch (Exception exception) {
-            CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);
-
-        }
+        final Collection<IParameterizedQuery> cab2bQueryCollection = CommonUtils.getUserSearchQueries();
         final Object objData[][] = new Object[cab2bQueryCollection.size()][5];
         final String headers[] = { ShowAllSavedQueryPanel.QUERY_NAME_TITLE, ShowAllSavedQueryPanel.QUERY_DATE_TITLE, ShowAllSavedQueryPanel.QUERY_DESCRIPTION_TITLE, "Query ID-Hidden" };
         int i = 0;
