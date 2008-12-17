@@ -75,7 +75,7 @@ public class MySqlLoaderTest extends TestCase {
         if (file != null) {
             file.delete();
         }
-        SQLQueryUtil.executeUpdate("DROP table "+tableName, con);
+        //SQLQueryUtil.executeUpdate("DROP table "+tableName, con);
     }
 
     @Override
