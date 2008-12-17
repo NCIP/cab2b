@@ -1,6 +1,11 @@
 package edu.wustl.cab2b.common.util;
 
+import static edu.wustl.cab2b.common.util.Constants.ATTRIBUTE;
+import static edu.wustl.cab2b.common.util.Constants.ATTRIBUTE_WITH_DESCRIPTION;
+import static edu.wustl.cab2b.common.util.Constants.CLASS;
+import static edu.wustl.cab2b.common.util.Constants.CLASS_WITH_DESCRIPTION;
 import static edu.wustl.cab2b.common.util.Constants.CONNECTOR;
+import static edu.wustl.cab2b.common.util.Constants.PV;
 import static edu.wustl.cab2b.common.util.Constants.TYPE_CATEGORY;
 
 import java.io.File;
@@ -860,5 +865,44 @@ public class Utility {
             throw new RuntimeException("Unable to copy CA certificates to [user.home]/.globus",
                     ErrorCodeConstants.CDS_003);
         }
+    }
+    /**
+     * Prepares the array of search targets from the check box values selected by user.
+     * @param searchClass TRUE if class search is selected 
+     * @param searchAttribute TRUE if attribute search is selected 
+     * @param searchPv TRUE if permissible value search is selected 
+     * @param includeDesc TRUE if description is to be searched 
+     * @return Integer array of selections made by user.
+     */
+    public static int[] prepareSearchTarget(boolean searchClass, boolean searchAttribute, boolean searchPv, 
+            boolean includeDesc ) {
+        List<Integer> target = new ArrayList<Integer>();
+        if (searchClass && includeDesc) {
+            target.add(CLASS_WITH_DESCRIPTION);
+        } else if (searchClass) {
+            target.add(CLASS);
+        }
+        
+        if (searchAttribute && includeDesc) {
+            target.add(ATTRIBUTE_WITH_DESCRIPTION);
+        } else if (searchAttribute){
+            target.add(ATTRIBUTE);
+        }
+        
+        if (searchPv) {
+            target.add(PV);
+        }
+        return toIntArray(target);
+    }
+    /**
+     * @param list List of integers
+     * @return array of integers
+     */
+    public static int[] toIntArray(List<Integer> list) {
+        int[] array = new int[list.size()]; 
+        for (int i = 0; i < list.size(); i++) {
+            array [i] = list.get(i);
+        }
+        return array;
     }
 }

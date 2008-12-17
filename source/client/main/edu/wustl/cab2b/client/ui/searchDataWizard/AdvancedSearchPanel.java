@@ -18,6 +18,7 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bRadioButton;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.common.util.Constants;
+import edu.wustl.cab2b.common.util.Utility;
 
 /**
  * The abstract class that contains commonalities between the just the
@@ -153,53 +154,12 @@ public class AdvancedSearchPanel extends Cab2bPanel implements ItemListener {
 
     /**
      * Method to determine the targets for the search.
-     * 
      * @return int[] The int array, where each element is a constant defined for
      *         each target type.
-     * 
      */
     public int[] getSearchTargetStatus() {
-        /* Int array for all possible target types. */
-        int[] searchTargetStatus = new int[5];
-
-        int count = 0;
-        int index = 0;
-
-        if (m_chkPermissibleValues.isSelected()) {
-
-            searchTargetStatus[index++] = Constants.PV;
-            count++;
-
-        }
-        if (m_chkClass.isSelected()) {
-            if (m_chkClassDesc.isSelected()) {
-                searchTargetStatus[index++] = Constants.CLASS_WITH_DESCRIPTION;
-                count++;
-            } else {
-                searchTargetStatus[index++] = Constants.CLASS;
-                count++;
-            }
-        }
-
-        if (m_chkAttribute.isSelected()) {
-            if (m_chkClassDesc.isSelected()) {
-                searchTargetStatus[index++] = Constants.ATTRIBUTE_WITH_DESCRIPTION;
-                count++;
-            } else {
-                searchTargetStatus[index++] = Constants.ATTRIBUTE;
-                count++;
-            }
-        }
-
-        /* Int array of size depending on all the targets selectes. */
-        int searchTargets[] = new int[count];
-        count = 0;
-        for (int i = 0; i < searchTargetStatus.length; i++) {
-            if (searchTargetStatus[i] != 0) {
-                searchTargets[count++] = searchTargetStatus[i];
-            }
-        }
-        return searchTargets;
+        return Utility.prepareSearchTarget(m_chkClass.isSelected(), m_chkAttribute.isSelected(), 
+                m_chkPermissibleValues.isSelected(), m_chkClassDesc.isSelected());
     }
 
     /**
