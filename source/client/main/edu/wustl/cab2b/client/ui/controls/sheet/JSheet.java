@@ -140,9 +140,6 @@ public class JSheet extends javax.swing.JPanel {
      */
     private boolean mousePressed = false;
 
-    /** If true, magnifying glass is shown. Pressing on it will fire "Common.EVENT_MAGNIFYING_GLASS_CLICKED" event. */
-    private boolean showMG;
-
     /** refernce to oginal params setModel(...) , for RESET    */
     private TableModel tmROData;
 

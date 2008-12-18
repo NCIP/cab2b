@@ -70,9 +70,6 @@ public class ColumnFilterModel<T extends Comparable> {
     /** Values that may be used by Range Selection Slider   */
     private TreeSet<T> sampleSortedValues = new TreeSet();
 
-    /** Optional Sorter for sample values...*/
-    private Comparator valuesSorter;
-
     /**     Values used by Range filter to determine, if any cell value for this column qualifies filter criteria. */
     private T minBound;
 

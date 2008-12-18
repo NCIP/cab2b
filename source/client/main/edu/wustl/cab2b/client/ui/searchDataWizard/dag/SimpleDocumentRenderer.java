@@ -263,9 +263,11 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
             int fromy = (clip.y / gridY) * gridY;
             int toy = ((clip.y + clip.height) / gridY + 1) * gridY;
 
-            for (int posy = fromy; posy <= toy; posy += gridY)
-                for (int posx = fromx; posx <= tox; posx += gridX)
+            for (int posy = fromy; posy <= toy; posy += gridY) {
+                for (int posx = fromx; posx <= tox; posx += gridX) {
                     gr.drawImage(IMAGE_PAPER_GRID, posx, posy, null);
+                }
+            }
         } else {
             int paperTopHeight = getPaperHeaderHeight(gr);
             gr.setColor(CENTER_PANEL_COLOR);

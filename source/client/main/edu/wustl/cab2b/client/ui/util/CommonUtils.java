@@ -562,7 +562,7 @@ public class CommonUtils {
      * @return updated string 
      */
     public static String escapeString(String input) {
-        if (input.indexOf(",") != -1) {
+        if (input.indexOf(',') != -1) {
             input = "\"" + input + "\"";
         }
         return input;
@@ -719,6 +719,6 @@ public class CommonUtils {
      * @return display name
      */
     public static String getDisplayUserName(String userIdentifier) {
-        return userIdentifier.substring(userIdentifier.lastIndexOf("=") + 1);
+        return userIdentifier.substring(userIdentifier.lastIndexOf('=') + 1);
     }
 }

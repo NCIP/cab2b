@@ -162,7 +162,7 @@ public class JPageElement extends Cab2bPanel implements ActionListener, Property
             description = "";
         }
         descriptionLabel = new Cab2bLabel(description);
-        StringBuffer toolTipText = new StringBuffer();
+        StringBuffer toolTipText = new StringBuffer(20);
         toolTipText.append("<HTML><P>" + Utility.getWrappedText(description, 75) + "</P></HTML>");
         descriptionLabel.setToolTipText(toolTipText.toString());
 

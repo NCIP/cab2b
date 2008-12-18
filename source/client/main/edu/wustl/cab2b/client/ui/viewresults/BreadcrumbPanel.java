@@ -56,7 +56,7 @@ public class BreadcrumbPanel extends Cab2bPanel {
         for (int i = 0; i < size; i++) {
             // Get the text from the vector
             String strWholeText = m_breadCrumbs.get(i);
-            String strJustText = strWholeText.substring(strWholeText.indexOf("#") + 1);
+            String strJustText = strWholeText.substring(strWholeText.indexOf('#') + 1);
 
             if (i == size - 1) {
                 // if last element, add lable instead of hyperlink

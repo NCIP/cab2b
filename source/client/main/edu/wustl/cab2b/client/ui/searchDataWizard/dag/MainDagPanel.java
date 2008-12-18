@@ -698,7 +698,7 @@ public class MainDagPanel extends Cab2bPanel {
             }
         }
 
-        StringBuffer expressionString = new StringBuffer();
+        StringBuffer expressionString = new StringBuffer(60);
         expressionString.append("<HTML>Current expression : ");
         String nonConnectedExpressions = "";
         int totalNonConnectedExpressions = 0;
@@ -750,9 +750,8 @@ public class MainDagPanel extends Cab2bPanel {
         int expressionId = node.getExpressionId();
         List<IGraphPort> ports = node.getSourcePorts();
         if (ports.size() > 0) {
-            expressionString.append("( [").append(expressionId).append("] ").append(
-                                                                                    node.getOperatorBetAttrAndAss().toString()).append(
-                                                                                                                                       " ");
+            expressionString.append("( [").append(expressionId).append("] ");
+            expressionString.append(node.getOperatorBetAttrAndAss().toString()).append(' ');
             if (ports.size() > 1) {
                 expressionString.append("( ");
             }
@@ -760,7 +759,7 @@ public class MainDagPanel extends Cab2bPanel {
             for (int i = 0; i < ports.size(); i++) {
                 int associationNode = node.getLinkForSourcePort(ports.get(i)).getDestinationExpressionId();
                 if (i > 0 && !getNodeType(associationNode).equals(ClassNodeType.ViewOnlyNode)) {
-                    expressionString.append(" ").append(node.getLogicalOperator(ports.get(i))).append(" ");
+                    expressionString.append(" ").append(node.getLogicalOperator(ports.get(i))).append(' ');
                 }
 
                 if (expressionToStringMap.get(associationNode) != null) {

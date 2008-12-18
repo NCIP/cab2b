@@ -100,7 +100,7 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
                 Object object = objDetailsTable.getValueAt(i, j);
 
                 if (i != 0) {
-                    sb.append(",");
+                    sb.append(',');
                 }
 
                 if (object == null) {
@@ -112,7 +112,7 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
                     sb.append(text);
                 }
             }
-            sb.append("\n");
+            sb.append('\n');
         }
 
         return sb.toString();
@@ -132,9 +132,9 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
 
         //setting column header
         sb.append(getCSVTableHeader(rowHeaderTable));
-        sb.append(",");
+        sb.append(',');
         sb.append(getCSVTableHeader(table));
-        sb.append("\n");
+        sb.append('\n');
 
         // Write the actual column values to file
         for (int i = 0; i < table.getRowCount(); i++) {
@@ -147,7 +147,7 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
                 }
 
                 if (i != 0) {
-                    sb.append(",");
+                    sb.append(',');
                 }
 
                 if (object == null) {
@@ -159,7 +159,7 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
                     sb.append(text);
                 }
             }
-            sb.append("\n");
+            sb.append('\n');
         }
 
         return sb.toString();
@@ -172,7 +172,7 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
 
         for (int j = 0; j < table.getColumnCount(); j++) {
             if (j != 0) {
-                sb.append(",");
+                sb.append(',');
             }
             //If special character in the column name put it into double quotes
             String text = table.getModel().getColumnName(j);
@@ -193,7 +193,7 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
                 Object object = table.getValueAt(i, j);
 
                 if (i != 0) {
-                    sb.append(",");
+                    sb.append(',');
                 }
 
                 if (object == null) {
@@ -205,7 +205,7 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
                     sb.append(text);
                 }
             }
-            sb.append("\n");
+            sb.append('\n');
         }
 
         return sb.toString();

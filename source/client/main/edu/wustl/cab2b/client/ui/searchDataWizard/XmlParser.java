@@ -23,10 +23,12 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XmlParser extends DefaultHandler {
 
     // StringBUffer in which entire formatted XML is stored and then returned to display it on GUI
-    private StringBuffer xmlText = new StringBuffer("<HTML><BODY>\n");
+    private StringBuffer xmlText = new StringBuffer(123);
 
     // Count is used for indenting the XML as to show the hierarchy in XML 
     private int count = 0;
+
+    private final String black = "BLACK";
 
     /**
       * Default Constructor
@@ -43,6 +45,8 @@ public class XmlParser extends DefaultHandler {
      */
     public String parseXml(String dcqlQuery) throws RuntimeException {
         try {
+            xmlText.append("<HTML><BODY>\n");
+
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
             saxParser.parse(new InputSource(new StringReader(dcqlQuery)), this);
@@ -66,29 +70,30 @@ public class XmlParser extends DefaultHandler {
             xmlText.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
         }
 
-        xmlText.append(setColor("BLACK", "&lt"));
+        xmlText.append(setColor(black, "&lt"));
         xmlText.append(setColor("PURPLE", qName + " "));
         if (attributes != null) {
             for (int i = 0; i < attributes.getLength(); i++) {
                 if (i != 0 && (i % 2) == 0) {
                     xmlText.append("<br>");
-                    for (int j = 0; j < count + 1; j++)
+                    for (int j = 0; j < count + 1; j++) {
                         xmlText.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                    }
                 }
 
                 xmlText.append(setColor("OLIVE", attributes.getQName(i)));
-                xmlText.append(setColor("BLACK", "="));
-                xmlText.append(setColor("BLACK", String.valueOf('"')));
+                xmlText.append(setColor(black, "="));
+                xmlText.append(setColor(black, String.valueOf('"')));
                 xmlText.append(setColor("BLUE", attributes.getValue(i)));
 
                 if (i == (attributes.getLength() - 1)) {
-                    xmlText.append(setColor("BLACK", String.valueOf('"')));
+                    xmlText.append(setColor(black, String.valueOf('"')));
                 } else {
-                    xmlText.append(setColor("BLACK", String.valueOf('"') + " "));
+                    xmlText.append(setColor(black, String.valueOf('"') + " "));
                 }
             }
         }
-        xmlText.append(setColor("BLACK", ">"));
+        xmlText.append(setColor(black, ">"));
         xmlText.append("<br>");
 
         count++;
@@ -100,9 +105,9 @@ public class XmlParser extends DefaultHandler {
         for (int i = 0; i < count; i++) {
             xmlText.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
         }
-        xmlText.append(setColor("BLACK", "&lt/"));
+        xmlText.append(setColor(black, "&lt/"));
         xmlText.append(setColor("PURPLE", qName));
-        xmlText.append(setColor("BLACK", ">"));
+        xmlText.append(setColor(black, ">"));
         xmlText.append("<br>");
     }
 
@@ -134,7 +139,7 @@ public class XmlParser extends DefaultHandler {
         String htmlEnd = "</span>";
 
         int length = htmlStart.length();
-        if ("BLACK".equals(color)) {
+        if (black.equals(color)) {
             htmlStart = htmlStart.append("black'>");
             formattedText = formattedText.append(htmlStart).append(tag).append(htmlEnd);
             htmlStart.setLength(length);

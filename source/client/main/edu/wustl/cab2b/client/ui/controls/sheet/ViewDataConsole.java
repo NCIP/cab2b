@@ -70,15 +70,6 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
 
     // /** */
     // private Map<TableColumn, ColumnFilterModel> colExtraStateMap;
-    /**
-     * Collection of Hidden and Visible Table COlumns. Columns that are deleted
-     * are kept in removedTCols.
-     */
-    private Set<TableColumn> activeTableCols = new HashSet<TableColumn>(200);
-
-    /** References to Removed Column are kept here (in sets), for undo. */
-    private List<List<TableColumn>> removedTCols = new ArrayList<List<TableColumn>>();
-
     /** Each new Column is given name as: "New Col-1", "New Col-2", and so on. */
     private int columnAppendCount = 0;
 
@@ -1230,7 +1221,6 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
      * @return
      */
     public StringBuffer getTblSelectionData(boolean includeColHeaders, boolean isCommaSepatrated) {
-        StringBuffer sBuff = new StringBuffer();
         int[] rowsIdx = tblData.getSelectedRows();
         int[] colsIdx = tblData.getSelectedColumns();
         return getTblSelectionData(rowsIdx, colsIdx, includeColHeaders, isCommaSepatrated);
@@ -1278,7 +1268,7 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
                         if (isCommaSepatrated) {
                             sBuff.append(',');
                         } else {
-                            sBuff.append("\t");
+                            sBuff.append('\t');
                         }
                     }
 
@@ -1291,7 +1281,7 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
                         sBuff.append(forceEscapeComma || (strVal.indexOf(',') >= 0) ? '"' + strVal + '"' : strVal);
                     }
                 }
-                sBuff.append("\n");
+                sBuff.append('\n');
             }
         }
         return sBuff;

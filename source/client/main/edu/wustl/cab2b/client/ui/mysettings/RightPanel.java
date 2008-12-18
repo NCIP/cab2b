@@ -128,7 +128,7 @@ public class RightPanel extends Cab2bPanel {
                                                                        String entityGroupName = serviceName;
                                                                        String version = "";
  
-                                                                       if(serviceName.indexOf("~")>-1)
+                                                                       if(serviceName.indexOf('~')>-1)
                                                                        {
                                                                            String nameVersion[] = serviceName.split("~");
                                                                            entityGroupName =    nameVersion[0];

@@ -245,7 +245,7 @@ public class SimpleSearchResultBreadCrumbPanel extends Cab2bPanel {
              * Get the number from the hyperlink text and use that to show the
              * panel.
              */
-            String strIndex = hyperlinkText.substring(0, hyperlinkText.indexOf("#"));
+            String strIndex = hyperlinkText.substring(0, hyperlinkText.indexOf('#'));
             breadCrumbPanel.showPanel(strIndex);
 
             BreadcrumbPanel breadcrumbPanel = new BreadcrumbPanel(breadCrumbPanel.getBreadCrumbsAL(),

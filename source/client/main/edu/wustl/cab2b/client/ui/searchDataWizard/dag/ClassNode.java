@@ -11,7 +11,6 @@ import org.netbeans.graph.api.model.IGraphNode;
 import org.netbeans.graph.api.model.IGraphPort;
 
 import edu.wustl.cab2b.client.ui.util.ClientConstants;
-import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
@@ -229,7 +228,7 @@ public class ClassNode extends GenericNode {
      * @see org.netbeans.graph.api.model.ability.IDisplayable#getTooltipText()
      */
     public String getTooltipText() {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(60);
         IRule rule = null;
         if (!((IExpression) expression).containsRule()) {
             return "";
@@ -240,38 +239,45 @@ public class ClassNode extends GenericNode {
         String name = classNodeRenderer.getNameForToolTip();
         // Populate panels with corresponding value
         sb.append("<HTML>");
-        sb.append("<P> Condition(s) on  ").append(name).append("<P>");
+        sb.append("<P> Condition(s) on  ");
+        sb.append(name);
+        sb.append("<P>");
         for (int i = 0; i < totalConditions; i++) {
             ICondition condition = rule.getCondition(i);
             sb.append((i + 1)).append(") ");
 
             String formattedAttributeName = Utility.getFormattedString(condition.getAttribute().getName());
 
-            sb.append("<B>").append(formattedAttributeName).append("</B>").append(" ");
+            sb.append("<B>");
+            sb.append(formattedAttributeName);
+            sb.append("</B>");
+            sb.append(" ");
             List<String> values = condition.getValues();
             RelationalOperator operator = condition.getRelationalOperator();
-            sb.append(edu.wustl.cab2b.client.ui.query.Utility.displayStringForRelationalOperator(operator)).append(
-                                                                                                                   " ");
+            sb.append(edu.wustl.cab2b.client.ui.query.Utility.displayStringForRelationalOperator(operator));
+            sb.append(' ');
             int size = values.size();
             if (size > 0)// Special case for 'Not Equals and Equals
             {
                 if (size == 1) {
-                    sb.append("<B>").append(values.get(0)).append("</B>");
+                    sb.append("<B>");
+                    sb.append(values.get(0));
+                    sb.append("</B>");
                 } else {
                     sb.append("( <B>");
-                    if (values.get(0).indexOf(",") != -1) {
-                        sb.append("\"");
+                    if (values.get(0).indexOf(',') != -1) {
+                        sb.append('"');
                         sb.append(values.get(0));
-                        sb.append("\"");
+                        sb.append('"');
                     } else {
                         sb.append(values.get(0));
                     }
                     for (int j = 1; j < size; j++) {
                         sb.append(", ");
-                        if (values.get(j).indexOf(",") != -1) {
-                            sb.append("\"");
+                        if (values.get(j).indexOf(',') != -1) {
+                            sb.append('"');
                             sb.append(values.get(j));
-                            sb.append("\"");
+                            sb.append('"');
                         } else {
                             sb.append(values.get(j));
                         }

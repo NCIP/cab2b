@@ -392,12 +392,13 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
 
     public Object[][] getSelectedData() {
         Object data[][] = new Object[getSelectedRows().length][getSelectedColumns().length];
-        for (int rowIndex = 0; rowIndex < getSelectedRows().length; rowIndex++)
+        for (int rowIndex = 0; rowIndex < getSelectedRows().length; rowIndex++) {
             for (int columnIndex = 0; columnIndex < getSelectedColumns().length; columnIndex++) {
                 data[rowIndex][columnIndex] = getSpreadSheetDataModel().getValueAt(
                                                                                    getSelectedRows()[rowIndex],
                                                                                    getSelectedColumns()[columnIndex]);
             }
+        }
         return data;
     }
 

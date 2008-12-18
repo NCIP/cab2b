@@ -54,7 +54,7 @@ public class DCQL implements Serializable, Cloneable {
     }
 
     public String toString() {
-        return entityName.substring(entityName.lastIndexOf(".") + 1, entityName.length());
+        return entityName.substring(entityName.lastIndexOf('.') + 1, entityName.length());
     }
 
     public boolean equals(Object obj) {

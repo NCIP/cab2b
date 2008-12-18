@@ -40,7 +40,7 @@ public class DataFileLoader implements DataFileLoaderInterface {
         BufferedReader reader = readFile(fileName);
         int columnCount = columns.split(",").length;
         StringBuffer sql = new StringBuffer(400);
-        sql.append("insert into ").append(tableName).append(" ").append(columns).append(" values(");
+        sql.append("insert into ").append(tableName).append(' ').append(columns).append(" values(");
         for (int i = 0; i < columnCount; i++) {
             sql.append("?,");
         }

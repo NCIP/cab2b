@@ -165,13 +165,15 @@ public class Utility {
                     allConceptCode.append(conceptCode);
                     isFirst = false;
                 } else {
-                    allConceptCode.append(", " + conceptCode);
+                    allConceptCode.append(", ");
+                    allConceptCode.append(conceptCode);
                 }
             }
         }
 
         if (allConceptCode.length() > 0) {
-            tooltip.append("<B>Concept Code : </B>" + allConceptCode.toString());
+            tooltip.append("<B>Concept Code : </B>");
+            tooltip.append(allConceptCode.toString());
         }
 
         String tooltipString = null;

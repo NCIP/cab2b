@@ -213,10 +213,10 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
         StringBuffer sb = new StringBuffer();
 
         sb.append(super.getCSVData());
-        sb.append("\n");
+        sb.append('\n');
 
         sb.append(getCSVTableHeaderAndData(tableScrollPane));
-        sb.append("\n");
+        sb.append('\n');
 
         return sb.toString();
     }
@@ -253,12 +253,13 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
             totalRowCount = data.length;
         } else {
             data = new Object[threeDTable.getSelectedRows().length][threeDTable.getSelectedColumns().length];
-            for (int rowIndex = 0; rowIndex < threeDTable.getSelectedRows().length; rowIndex++)
+            for (int rowIndex = 0; rowIndex < threeDTable.getSelectedRows().length; rowIndex++) {
                 for (int columnIndex = 0; columnIndex < threeDTable.getSelectedColumns().length; columnIndex++) {
                     data[rowIndex][columnIndex] = threeDTable.getValueAt(
                                                                          threeDTable.getSelectedRows()[rowIndex],
                                                                          threeDTable.getSelectedColumns()[columnIndex]);
                 }
+            }
         }
         return data;
     }

@@ -113,8 +113,9 @@ public class Cab2bTable extends JXTable {
         if (showCheckBox) {
             Vector<Integer> values = ((Cab2bDefaultTableModel) this.getModel()).getCheckedRowIndexes();
             int[] indexes = new int[values.size()];
-            for (int i = 0; i < values.size(); i++)
+            for (int i = 0; i < values.size(); i++) {
                 indexes[i] = values.get(i).intValue();
+            }
             return indexes;
         } else {
             return super.getSelectedRows();

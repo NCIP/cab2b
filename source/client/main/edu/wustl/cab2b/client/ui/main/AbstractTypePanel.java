@@ -281,7 +281,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
             StringBuffer sb = new StringBuffer();
 
             // For first element append text qualifier if required
-            if (values.get(0).indexOf(",") != -1) {
+            if (values.get(0).indexOf(',') != -1) {
                 sb.append("\"");
                 sb.append(values.get(0));
                 sb.append("\"");
@@ -290,8 +290,8 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
             }
 
             for (int i = 1; i < values.size(); i++) {
-                sb.append(",");
-                if (values.get(i).indexOf(",") != -1) {
+                sb.append(',');
+                if (values.get(i).indexOf(',') != -1) {
                     sb.append("\"");
                     sb.append(values.get(i));
                     sb.append("\"");

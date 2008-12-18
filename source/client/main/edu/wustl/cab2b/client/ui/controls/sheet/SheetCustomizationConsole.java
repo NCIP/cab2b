@@ -19,9 +19,6 @@ public class SheetCustomizationConsole extends javax.swing.JPanel {
 
     ModelListener lsnModel = new ModelListener();
 
-    /** The default width of the first column.  */
-    private int defaultChkColumnWith = 75;
-
     TableColumn colFilter;
 
     /** Creates new form SheetCustomizationConsole */

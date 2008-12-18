@@ -289,7 +289,7 @@ public class Utility {
         }
 
         StringBuffer buff = new StringBuffer();
-        buff.append(name.substring(name.lastIndexOf(".") + 1, name.length()));
+        buff.append(name.substring(name.lastIndexOf('.') + 1, name.length()));
         buff.append(" (");
         buff.append(projectName);
 
@@ -311,7 +311,7 @@ public class Utility {
      */
     public static String getOnlyEntityName(EntityInterface entity) {
         String name = entity.getName();
-        String displayName = name.substring(name.lastIndexOf(".") + 1, name.length());
+        String displayName = name.substring(name.lastIndexOf('.') + 1, name.length());
         return displayName;
     }
 
@@ -336,16 +336,16 @@ public class Utility {
             sb.append(currentString);
             int index = text.indexOf("<B>----></B>", lastIndex);
             if (index == -1) {
-                int location = text.indexOf(")", lastIndex);
+                int location = text.indexOf(')', lastIndex);
                 if (location != -1) {
                     index = location + 1;
                 }
             }
             if (index == -1) {
-                index = text.indexOf(",", lastIndex);
+                index = text.indexOf(',', lastIndex);
             }
             if (index == -1) {
-                index = text.indexOf(" ", lastIndex);
+                index = text.indexOf(' ', lastIndex);
             }
             if (index != -1) {
                 len = index - strLen;
@@ -370,7 +370,8 @@ public class Utility {
     }
 
     static String getHtmlRepresentation(IPath path) {
-        StringBuffer text = new StringBuffer("<HTML><B>Path</B>:");
+        StringBuffer text = new StringBuffer(40);
+        text.append("<HTML><B>Path</B>:");
         List<IAssociation> pathList = path.getIntermediateAssociations();
         text.append(Utility.getDisplayName(path.getSourceEntity()));
         for (int i = 0; i < pathList.size(); i++) {
@@ -498,7 +499,7 @@ public class Utility {
 
                 Object value = values.get(counter);
                 String objectType = value.getClass().getName();
-                String onlyClassName = objectType.substring(objectType.lastIndexOf(".") + 1, objectType.length());
+                String onlyClassName = objectType.substring(objectType.lastIndexOf('.') + 1, objectType.length());
 
                 if (onlyClassName.equals("String")) {
                     q.setString(counter, (String) value);

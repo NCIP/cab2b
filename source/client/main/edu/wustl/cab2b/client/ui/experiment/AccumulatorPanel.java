@@ -177,8 +177,9 @@ public class AccumulatorPanel extends Cab2bPanel {
      */
     public Collection getSelectedObjects() {
         Collection returnSet = new ArrayList();
-        for (int i = 0; i < selectedAttributeModel.size(); i++)
+        for (int i = 0; i < selectedAttributeModel.size(); i++) {
             returnSet.add(selectedAttributeModel.get(i));
+        }
         return returnSet;
     }
 }

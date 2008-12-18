@@ -140,12 +140,14 @@ public class SimpleLinkRenderer implements IGraphLinkRenderer {
             if (a > 0) {
                 Point p0 = points[a - 1];
                 double ll = p0.distance(p1);
-                if (len < ll)
+                if (len < ll) {
                     ll = len;
+                }
                 ll /= 2;
                 double cll = CORNER_SIZE;
-                if (cll > ll)
+                if (cll > ll) {
                     cll = ll;
+                }
                 double direction = Math.atan2(p2.y - p1.y, p2.x - p1.x);
                 if (!Double.isNaN(direction)) {
                     newpointsX[newpointspos] = p1.x + (int) (cll * Math.cos(direction));
@@ -161,12 +163,14 @@ public class SimpleLinkRenderer implements IGraphLinkRenderer {
             if (a < maxpoints2) {
                 Point p3 = points[a + 2];
                 double ll = p2.distance(p3);
-                if (len < ll)
+                if (len < ll) {
                     ll = len;
+                }
                 ll /= 2;
                 double cll = CORNER_SIZE;
-                if (cll > ll)
+                if (cll > ll) {
                     cll = ll;
+                }
                 double direction = Math.atan2(p2.y - p1.y, p2.x - p1.x);
                 if (!Double.isNaN(direction)) {
                     newpointsX[newpointspos] = p2.x - (int) (cll * Math.cos(direction));
@@ -188,8 +192,9 @@ public class SimpleLinkRenderer implements IGraphLinkRenderer {
         if (hightlighted) {
             gr.setStroke(new BasicStroke(2));
         }
-        if (length <= 1)
+        if (length <= 1) {
             return;
+        }
 
         // WARNING - because the bug in jdk 1.4.2 (rendering gr.draw (new Line2D()) cause PRException), disabling antialiasing as a workaround
         Object originalAntialiasingRenderingHint = null;
@@ -202,8 +207,9 @@ public class SimpleLinkRenderer implements IGraphLinkRenderer {
         for (int i = length - 2; i >= 0; i--) {
             final int x = xs[i + 1] - xs[i];
             final int y = ys[i + 1] - ys[i];
-            if (x == 0 && y == 0)
+            if (x == 0 && y == 0) {
                 continue;
+            }
             direction = Math.atan2(y, x);
             break;
         }

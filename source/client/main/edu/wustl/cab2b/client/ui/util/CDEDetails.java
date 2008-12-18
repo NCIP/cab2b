@@ -140,7 +140,7 @@ public class CDEDetails {
                 if (conceptCodeList.toString().equals("")) {
                     conceptCodeList.append(semanticProperty.getConceptCode());
                 } else {
-                    conceptCodeList.append(", " + semanticProperty.getConceptCode());
+                    conceptCodeList.append(", ").append(semanticProperty.getConceptCode());
                 }
             }
             conceptCodeString = conceptCodeList.toString();

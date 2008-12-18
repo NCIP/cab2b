@@ -103,12 +103,12 @@ public class AmbiguityPathResolverPanel extends Cab2bPanel {
                 EntityInterface targetEntity = association.getTargetEntity();
                 String targetEntityName = Utility.parseClassName(targetEntity.getName());
 
-                fullPathNames.append(srourceEntityName + ">>" + targetEntityName);
+                fullPathNames.append(srourceEntityName).append(">>").append(targetEntityName);
             } else {
                 EntityInterface targetEntity = association.getTargetEntity();
                 String targetEntityName = Utility.parseClassName(targetEntity.getName());
 
-                fullPathNames.append(">>" + targetEntityName);
+                fullPathNames.append(">>").append(targetEntityName);
             }
         }
         return fullPathNames.toString();

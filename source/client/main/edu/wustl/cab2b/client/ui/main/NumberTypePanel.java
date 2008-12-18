@@ -65,7 +65,7 @@ public class NumberTypePanel extends AbstractTypePanel {
             ((Cab2bFormattedTextField) firstComponent).setCommaAllowed(false);
             String value = values.get(0);
             int index = -1;
-            if ((index = value.indexOf(",")) != -1) {
+            if ((index = value.indexOf(',')) != -1) {
                 value = value.substring(0, index);
             }
             ((Cab2bFormattedTextField) firstComponent).setText(value);
@@ -73,7 +73,7 @@ public class NumberTypePanel extends AbstractTypePanel {
             ((Cab2bFormattedTextField) firstComponent).setCommaAllowed(false);
             String value = values.get(0);
             int index = -1;
-            if ((index = value.indexOf(",")) != -1) {
+            if ((index = value.indexOf(',')) != -1) {
                 value = value.substring(0, index);
             }
             ((Cab2bFormattedTextField) firstComponent).setText(value);

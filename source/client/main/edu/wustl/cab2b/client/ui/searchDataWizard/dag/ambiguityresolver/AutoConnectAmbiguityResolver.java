@@ -128,7 +128,7 @@ public class AutoConnectAmbiguityResolver extends AbstractAmibuityResolver {
             Set<IPath> internalPaths = curatedPaths[i].getPaths();
             StringBuffer fullPathName = new StringBuffer();
             for (IPath internalPath : internalPaths) {
-                fullPathName.append(getFullPathNames(internalPath)).append("\n");
+                fullPathName.append(getFullPathNames(internalPath)).append('\n');
             }
             ambiguityTableData[rowIndex][1] = fullPathName.toString();
             ambiguityTableData[rowIndex][2] = pathPopularity + " %";

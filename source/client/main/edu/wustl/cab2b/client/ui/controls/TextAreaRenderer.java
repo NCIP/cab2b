@@ -76,8 +76,9 @@ public class TextAreaRenderer extends JTextPane implements TableCellRenderer {
      * @return
      */
     private String getDisplayValue(String cellValue) {
-        StringBuffer displayValue = new StringBuffer(
-                "<html><body><table height='100%' width='100%'><tr><td style='vertical-align: middle; font-family: Arial'>");
+        StringBuffer displayValue = new StringBuffer(141);
+        displayValue.append(
+        "<html><body><table height='100%' width='100%'><tr><td style='vertical-align: middle; font-family: Arial'>");
         final String redArrow = "<font color=\"red\"> >> </font>";
 
         String[] pathCrumbs = cellValue.split("\n");

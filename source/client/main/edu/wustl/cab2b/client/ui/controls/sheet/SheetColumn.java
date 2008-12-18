@@ -4,8 +4,12 @@
  */
 package edu.wustl.cab2b.client.ui.controls.sheet;
 
-import java.beans.*;
-import javax.swing.table.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 /**
@@ -155,14 +159,15 @@ public class SheetColumn extends TableColumn {
      */
     @Override
     public String toString() {
-        StringBuffer vapus = new StringBuffer();
+        StringBuffer vapus = new StringBuffer(24);
         vapus.append("[ ");
         vapus.append(getClass().getName());
         vapus.append(": ");
-        vapus.append("Visible=" + isVisible);
+        vapus.append("Visible=");
+        vapus.append(isVisible);
         vapus.append(", ModelIdx=");
         vapus.append(getModelIndex());
-        vapus.append("]");
+        vapus.append(']');
         //        vapus.append( "[ ");
         return vapus.toString();
     }

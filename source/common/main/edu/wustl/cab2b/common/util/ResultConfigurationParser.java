@@ -77,7 +77,7 @@ public class ResultConfigurationParser {
 
     private static final String DATALIST_RETRIEVER = "retriever";
 
-    private static final String DEFAULT_ELEMENT_KEY = new String("default");
+    private static final String DEFAULT_ELEMENT_KEY = "default";
 
     private static final String KEY_DELIM = ":_:_:";
 

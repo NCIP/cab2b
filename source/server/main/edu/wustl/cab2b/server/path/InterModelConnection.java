@@ -90,11 +90,11 @@ class InterModelConnection {
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        StringBuffer buff = new StringBuffer();
-        buff.append("Left Entity : " + leftEntityId);
-        buff.append("\tLeft Attribute : " + leftAttributeId);
-        buff.append("\tRight Entity : " + rightEntityId);
-        buff.append("\tRight Attribute : " + rightAttributeId);
+        StringBuffer buff = new StringBuffer(70);
+        buff.append("Left Entity : ").append(leftEntityId);
+        buff.append("\tLeft Attribute : ").append(leftAttributeId);
+        buff.append("\tRight Entity : ").append(rightEntityId);
+        buff.append("\tRight Attribute : ").append(rightAttributeId);
         return buff.toString();
     }
 

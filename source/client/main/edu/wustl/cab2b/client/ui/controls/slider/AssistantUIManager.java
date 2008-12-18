@@ -22,7 +22,7 @@ public class AssistantUIManager {
     public static ComponentUI createUI(JComponent c) {
         String componentName = c.getClass().getName();
 
-        int index = componentName.lastIndexOf(".") + 1;
+        int index = componentName.lastIndexOf('.') + 1;
         StringBuffer sb = new StringBuffer();
         sb.append(componentName.substring(0, index));
 
@@ -70,7 +70,7 @@ public class AssistantUIManager {
 
         if (uiClassName == null) {
             String componentName = c.getClass().getName();
-            int index = componentName.lastIndexOf(".") + 1;
+            int index = componentName.lastIndexOf('.') + 1;
             StringBuffer sb = new StringBuffer();
             sb.append(componentName.substring(0, index));
             String lookAndFeelName = UIManager.getLookAndFeel().getName();

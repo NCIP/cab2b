@@ -144,7 +144,7 @@ public class ViewSearchResultsSimplePanel extends ResultPanel {
                     Object value = record.getValueForAttribute(attributes.get(i));
                     if (value != null) {
                         if (i != 0) {
-                            descBuffer.append(",");
+                            descBuffer.append(',');
                         }
                         descBuffer.append(value);
                     }

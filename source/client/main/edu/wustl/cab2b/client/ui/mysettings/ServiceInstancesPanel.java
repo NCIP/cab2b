@@ -101,7 +101,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
         ServiceInstanceConfigurator configurator = new ServiceInstanceConfigurator();
         
        
-        if(serviceName.indexOf("~")>-1)
+        if(serviceName.indexOf('~')>-1)
         {
             String[] serviceVersion = serviceName.split("~");
             serviceName = serviceVersion[0];
