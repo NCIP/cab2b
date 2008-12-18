@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 import org.jdesktop.swingx.JXPanel;
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -42,7 +43,6 @@ import edu.wustl.cab2b.client.ui.mysettings.RightPanel;
 import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryDataModel;
 import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryMainPanel;
 import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
-import edu.wustl.cab2b.client.ui.query.Utility;
 import edu.wustl.cab2b.client.ui.searchDataWizard.addLimit.AddLimitPanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.dag.DagControlPanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.dag.MainDagPanel;
@@ -57,6 +57,7 @@ import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
@@ -112,6 +113,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     private final String addToExperimentButtonStr = "Add to Experiment";
 
     private Map<String, List<String>> entityURLMap = new HashMap<String, List<String>>();
+
+    private boolean serviceURLButtonFlag = true;
 
     public SearchNavigationPanel(MainSearchPanel panel) {
         this.mainSearchPanel = panel;
@@ -239,20 +242,23 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     private void setButtons() {
         int cardindex = mainSearchPanel.getCenterPanel().getSelectedCardIndex();
 
-        if (cardindex == 0)
+        if (cardindex == 0) {
             previousButton.setVisible(false);
-        else
+        } else {
             previousButton.setVisible(true);
+        }
 
-        if (cardindex == 2)
+        if (cardindex == 2 && !serviceURLButtonFlag) {
             serviceUrlButton.setVisible(true);
-        else
+        } else {
             serviceUrlButton.setVisible(false);
+        }
 
-        if (cardindex > 1 && cardindex < 4)
+        if (cardindex > 1 && cardindex < 4) {
             saveQueryButton.setVisible(true);
-        else
+        } else {
             saveQueryButton.setVisible(false);
+        }
 
         if (cardindex == 4) {
             saveDataListButton.setVisible(true);
@@ -285,12 +291,9 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     }
 
     /**
-     * Method to switch from view search result searchPanel to searchPanel data
-     * list searchPanel ...
-     * 
+     * Method to switch from view search result searchPanel to searchPanel data list searchPanel
      * @param datarow
      */
-
     public void gotoDataListPanel(final IDataRow datarow) {
         DataListPanel dataListPanel = (DataListPanel) searchCenterPanel.getArrCardElement(searchCenterPanel.getSelectedCardIndex() + 1);
         if (dataListPanel != null) {
@@ -322,6 +325,14 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 CustomSwingWorker swingWorker = new CustomSwingWorker(SearchNavigationPanel.this) {
                     @Override
                     protected void doNonUILogic() throws Exception {
+                        Collection<EntityInterface> entities = clientQueryBuilder.getEntities();
+                        for (EntityInterface entityInterface : entities) {
+                            serviceURLButtonFlag = Utility.isCategory(entityInterface);
+                            if (serviceURLButtonFlag) {
+                                break;
+                            }
+                        }
+
                         validateQueryAndMoveToAddLimitPanel(clientQueryBuilder);
                     }
 
@@ -368,8 +379,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             final IQuery b2bquery = mainSearchPanel.queryObject.getQuery();
 
             /*
-             * Get the root expression ID. If exception occurs
-             * show Error
+             * Get the root expression ID. If exception occurs show Error
              */
             try {
                 b2bquery.getConstraints().getRootExpression();
@@ -387,13 +397,10 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             AdvancedDefineViewPanel defineViewPanel = new AdvancedDefineViewPanel(searchCenterPanel);
             secPanel = defineViewPanel;
             searchCenterPanel.add(defineViewPanel, SearchCenterPanel.getStrDefineSearchResultslbl());
-            // Implies the next button was clicked. Call
-            // show card
-            // with boolean set to true.
+            // Implies the next button was clicked. Call show card with boolean
+            // set to true.
             showCard(true);
-
         }
-
     }
 
     /**
@@ -401,7 +408,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
      */
     private void showResult() {
         if (queryResults != null) {
-            int recordNo = Utility.getRecordNum(queryResults);
+            int recordNo = edu.wustl.cab2b.client.ui.query.Utility.getRecordNum(queryResults);
             if (recordNo == 0) {
                 JOptionPane.showMessageDialog(SearchNavigationPanel.this.mainSearchPanel.getParent(),
                                               "No result found.", "", JOptionPane.INFORMATION_MESSAGE);
@@ -435,7 +442,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             if (!CommonUtils.isServiceURLConfigured(cab2bQuery, mainSearchPanel)) {
                 queryResults = null;
             } else {
-                // Get the Functional class for root and update query object with it.
+                // Get the Functional class for root and update query object
+                // with it.
                 queryResults = CommonUtils.executeQuery((ICab2bQuery) clientQueryBuilder.getQuery());
             }
         } catch (Exception e) {
@@ -455,8 +463,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
      */
     private class PreviousButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
-            // Implies the previous button was clicked. Call show card with
-            // boolean set to false.
+            // Implies the previous button was clicked. Call show card with boolean set to false.
             SearchNavigationPanel.messageLabel.setText("");
             int cardIndex = searchCenterPanel.getSelectedCardIndex();
             if (cardIndex == 1) {
@@ -475,7 +482,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     }
 
     /**
-     * Method to display add limit Page on Search Data Wizard 
+     * Method to display add limit Page on Search Data Wizard
      */
     public void setAddLimitPanelInWizard() {
         addLimitPanel = searchCenterPanel.getAddLimitPanel();
@@ -511,9 +518,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
     class AddLimitPanelPCL implements PropertyChangeListener {
 
-        /* (non-Javadoc)
-         * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
-         */
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(DagControlPanel.EVENT_RESET_BUTTON_CLICKED)) {
                 mainSearchPanel.setQueryObject(null);
@@ -522,17 +527,18 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     }
 
     /**
-     * This class is the serviceurl button action listener 
-     *  
+     * This class is the service url button action listener
+     * 
      * @author atul_jawale
-     *
+     * 
      */
     private class ServiceURLButtonActionListener implements ActionListener {
 
         /**
-         * This method initialises the entityURLMapi.e. entityName against the url list which is by 
-         * default set to the service urls present already for user in the repository.This map is 
-         * used only for the present query and all the url configuration will be made to this map only.
+         * This method initialises the entityURLMapi.e. entityName against the
+         * url list which is by default set to the service urls present already
+         * for user in the repository.This map is used only for the present
+         * query and all the url configuration will be made to this map only.
          */
         private void initialiseMap(Collection<EntityGroupInterface> entityGruopCollection) {
 
@@ -545,9 +551,9 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         }
 
         /**
-         * This is the action listener for the service URL button which gets all the entities
-         * present in the query and sends it to the Right Panel constructor and shows the user
-         * service url screen  
+         * This is the action listener for the service URL button which gets all
+         * the entities present in the query and sends it to the Right Panel
+         * constructor and shows the user service url screen
          */
         public void actionPerformed(ActionEvent arg0) {
             Collection<EntityGroupInterface> selectedEntityList = getAllEntityGroups();
@@ -565,7 +571,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                                                                               mainPanel, title, dimension, true,
                                                                               true);
             final RightPanel rightPanel = new RightPanel(selectedEntityList, entityURLMap);
-            mainPanel.add(new JPanel(new BorderLayout(2,1)),BorderLayout.WEST);
+            mainPanel.add(new JPanel(new BorderLayout(2, 1)), BorderLayout.WEST);
             mainPanel.add(rightPanel, BorderLayout.CENTER);
             serviceInstanceDialog.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent arg0) {
@@ -585,9 +591,9 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         }
 
         /**
-         * This method updates the query urls when user selects the service urls 
-         * by clicking on the service URL button. This method actually update only
-         * the root entity urls.   initialiseMap
+         * This method updates the query urls when user selects the service urls
+         * by clicking on the service URL button. This method actually update
+         * only the root entity urls. initialiseMap
          */
         private void updateQueryForURLS() {
             List<String> queryURLList = new ArrayList<String>();
