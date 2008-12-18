@@ -117,8 +117,9 @@ public class MThumbSliderAdditionalUI {
                 int value = mSlider.getValueAt(i);
                 int valuePosition = ((MThumbSliderAdditional) ui).xPositionForValue(value);
 
-                if (i == 0)
+                if (i == 0) {
                     valuePosition = valuePosition - 5;
+                }
 
                 thumbRects[i].x = valuePosition - (thumbRects[i].width / 2);
                 thumbRects[i].y = trackRect.y;
@@ -158,11 +159,13 @@ public class MThumbSliderAdditionalUI {
         Rectangle rect = thumbRects[index];
         unionRect.setBounds(rect);
 
-        if (index == 0)
+        if (index == 0) {
             rect.setLocation(x, y);
+        }
 
-        else
+        else {
             rect.setLocation(x + 5, y);
+        }
         SwingUtilities.computeUnion(rect.x, rect.y, rect.width, rect.height, unionRect);
         mSlider.repaint(unionRect.x, unionRect.y, unionRect.width, unionRect.height);
     }
@@ -195,7 +198,7 @@ public class MThumbSliderAdditionalUI {
         protected transient int offset;
 
         protected transient int currentMouseX;
-        
+
         protected transient int currentMouseY;
 
         protected Rectangle adjustingThumbRect = null;
@@ -358,10 +361,11 @@ public class MThumbSliderAdditionalUI {
         }
 
         public void mouseMoved(MouseEvent e) {
-            if (slider.getOrientation() == JSlider.VERTICAL)
+            if (slider.getOrientation() == JSlider.VERTICAL) {
                 slider.currentInputValueIndex = ui.valueForYPosition(e.getY());
-            else
+            } else {
                 slider.currentInputValueIndex = ui.valueForXPosition(e.getX());
+            }
         }
 
         public void mouseReleased(MouseEvent e) {

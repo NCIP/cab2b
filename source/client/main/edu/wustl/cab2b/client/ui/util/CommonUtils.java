@@ -103,8 +103,9 @@ public class CommonUtils {
     public static void disableAllComponent(Container container) {
         for (int i = 0; i < container.getComponentCount(); i++) {
             container.getComponent(i).setEnabled(false);
-            if (container.getComponent(i) instanceof Container)
+            if (container.getComponent(i) instanceof Container) {
                 disableAllComponent((Container) container.getComponent(i));
+            }
         }
     }
 
@@ -168,7 +169,7 @@ public class CommonUtils {
             logger.error(msgToLog, e);
         }
         if (showErrorDialog) {
-            JXErrorDialog.showDialog(parentComponent, "caB2B - Application Error", msgForUser,e);
+            JXErrorDialog.showDialog(parentComponent, "caB2B - Application Error", msgForUser, e);
         }
 
         if (logToConsole) {
@@ -211,14 +212,14 @@ public class CommonUtils {
      * @throws RuntimeException
      * @throws RemoteException
      */
-    public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query)
-            throws RuntimeException, RemoteException, Exception {
+    public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query) throws RuntimeException,
+            RemoteException, Exception {
         boolean anySecureSevice = Utility.hasAnySecureService(query);
-        
+
         QueryEngineBusinessInterface queryEngineBus = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                       EjbNamesConstants.QUERY_ENGINE_BEAN,
                                                                                                                       QueryEngineHome.class);
-        
+
         IQueryResult<? extends IRecord> results = null;
         if (anySecureSevice) {
             results = queryEngineBus.executeQuery(query, UserValidator.getSerializedDCR(), UserValidator.getIdP());
@@ -236,8 +237,9 @@ public class CommonUtils {
     public static int getCountofOnBits(BitSet bitSet) {
         int count = 0;
         for (int i = 0; i < bitSet.size(); i++) {
-            if (bitSet.get(i))
+            if (bitSet.get(i)) {
                 count++;
+            }
         }
         return count;
     }
@@ -474,8 +476,7 @@ public class CommonUtils {
      * @return All popular categories.
      */
     public static Collection<CategoryPopularity> getPopularCategoriesForShowAll() {
-        Collection<CategoryPopularity> categoryList = 
-                                    PopularCategoryCache.getInstance().getPopularCategoriesCollection();
+        Collection<CategoryPopularity> categoryList = PopularCategoryCache.getInstance().getPopularCategoriesCollection();
         List<CategoryPopularity> attributeList = new ArrayList<CategoryPopularity>(categoryList);
         Collections.sort(attributeList, new CategoryPopularityComparator());
         return attributeList;
@@ -491,11 +492,12 @@ public class CommonUtils {
          */
         Collection<IParameterizedQuery> cab2bQueryCollection = null;
         try {
-            QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) 
-                            CommonUtils.getBusinessInterface(EjbNamesConstants.QUERY_ENGINE_BEAN,QueryEngineHome.class);
+            QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                       EjbNamesConstants.QUERY_ENGINE_BEAN,
+                                                                                                                       QueryEngineHome.class);
 
             cab2bQueryCollection = queryEngine.getAllQueryNameAndDescription(UserValidator.getSerializedDCR(),
-                                                                                              UserValidator.getIdP());
+                                                                             UserValidator.getIdP());
         } catch (RemoteException exception) {
             CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);
         } catch (Exception exception) {
@@ -513,8 +515,9 @@ public class CommonUtils {
     public static Vector<Experiment> getExperiments(Component comp, UserInterface user) {
         List<Experiment> experiments = null;
         try {
-            ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) 
-                                   CommonUtils.getBusinessInterface(EjbNamesConstants.EXPERIMENT,ExperimentHome.class);
+            ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                EjbNamesConstants.EXPERIMENT,
+                                                                                                                ExperimentHome.class);
 
             experiments = expBus.getExperimentsForUser(user, UserValidator.getSerializedDCR(),
                                                        UserValidator.getIdP());
@@ -587,8 +590,9 @@ public class CommonUtils {
         if (edu.wustl.cab2b.common.util.Utility.isCategory(entity)) {
             Category cat = null;
             try {
-                CategoryBusinessInterface bus = (CategoryBusinessInterface) 
-                    CommonUtils.getBusinessInterface(EjbNamesConstants.CATEGORY_BEAN,CategoryHomeInterface.class);
+                CategoryBusinessInterface bus = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                             EjbNamesConstants.CATEGORY_BEAN,
+                                                                                                             CategoryHomeInterface.class);
                 cat = bus.getCategoryByEntityId(entity.getId());
             } catch (Exception e) {
                 handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
@@ -622,13 +626,14 @@ public class CommonUtils {
             String[] urls = getServiceURLs(entity);
             if (urls == null || urls.length == 0) {
                 isServiceURLConfigured = false;
-            } else
+            } else {
                 for (String url : urls) {
                     if (url.equals("")) {
                         isServiceURLConfigured = false;
                         break;
                     }
                 }
+            }
         }
         if (!isServiceURLConfigured) {
             JOptionPane.showMessageDialog(container, ErrorCodeHandler.getErrorMessage(ErrorCodeConstants.DB_0007),
@@ -679,8 +684,9 @@ public class CommonUtils {
         // Clearing the data list
         SaveDatalistPanel.setDataListSaved(false);
         MainSearchPanel mainSearchPanel = GlobalNavigationPanel.getMainSearchPanel();
-        if (mainSearchPanel == null)
+        if (mainSearchPanel == null) {
             mainSearchPanel = new MainSearchPanel();
+        }
 
         GlobalNavigationPanel.setMainSearchPanel(mainSearchPanel);
         MainSearchPanel.getDataList().clear();

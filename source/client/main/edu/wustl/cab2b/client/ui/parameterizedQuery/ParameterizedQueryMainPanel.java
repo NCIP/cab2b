@@ -69,8 +69,9 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
      * @return parameterConditionPanel
      */
     public ParameterizedQueryConditionPanel getParameterConditionPanel() {
-        if (parameterConditionPanel == null)
+        if (parameterConditionPanel == null) {
             parameterConditionPanel = new ParameterizedQueryConditionPanel(parameterizedQueryDataModel, false);
+        }
 
         return parameterConditionPanel;
     }
@@ -80,8 +81,9 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
      * @return ParameterizedQueryInfoPanel
      */
     public ParameterizedQueryInfoPanel getInformationQueryPanel() {
-        if (informationQueryPanel == null)
+        if (informationQueryPanel == null) {
             informationQueryPanel = new ParameterizedQueryInfoPanel();
+        }
         return informationQueryPanel;
     }
 
@@ -90,8 +92,9 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
      * @return ParameterizedQueryNavigationPanel
      */
     private Cab2bPanel getparameterizedQueryNavigationPanel() {
-        if (parameterizedQueryNavigationPanel == null)
+        if (parameterizedQueryNavigationPanel == null) {
             parameterizedQueryNavigationPanel = new ParameterizedQueryNavigationPanel(this);
+        }
 
         return parameterizedQueryNavigationPanel;
     }

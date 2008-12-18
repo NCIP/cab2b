@@ -36,31 +36,36 @@ import edu.wustl.cab2b.client.ui.controls.IDialogInterface;
  */
 public class WindowUtilities {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(WindowUtilities.class);
+
     /** 
      * Tell system to use native look and feel.
      */
     public static void setNativeLookAndFeel() {
         setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     }
+
     /** 
      * Tell system to use java look and feel.
      */
     public static void setJavaLookAndFeel() {
         setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
     }
+
     /** 
      * Tell system to use Motif look and feel.
      */
     public static void setMotifLookAndFeel() {
         setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
     }
+
     private static void setLookAndFeel(String lookAndFeel) {
-    	 try {
-             UIManager.setLookAndFeel(lookAndFeel);
-         } catch (Exception e) {
-             logger.error("Error setting Look and Feel : " +lookAndFeel + "  "+ e);
-         }
+        try {
+            UIManager.setLookAndFeel(lookAndFeel);
+        } catch (Exception e) {
+            logger.error("Error setting Look and Feel : " + lookAndFeel + "  " + e);
+        }
     }
+
     /** A simplified way to see a JPanel or other Container.
      *  Pops up a JFrame with specified Container as the content pane.
      */
@@ -248,7 +253,7 @@ public class WindowUtilities {
      */
 
     public static final void centerWindow(Window parent, Window w) {
-        Dimension windowSize = w.getSize(); 
+        Dimension windowSize = w.getSize();
         Dimension parentSize = parent.getSize();
         Point parentLocation = parent.getLocationOnScreen();
 
@@ -258,10 +263,12 @@ public class WindowUtilities {
         // If placing the window at (x,y) would make part if it off-screen,
         // then center it in the middle of the screen instead.
         Dimension screenSize = w.getToolkit().getScreenSize();
-        if (((x + windowSize.width) > screenSize.width) || (x < 0) || ((y + windowSize.height) > screenSize.height) || (y < 0))
+        if (((x + windowSize.width) > screenSize.width) || (x < 0)
+                || ((y + windowSize.height) > screenSize.height) || (y < 0)) {
             centerWindow(w);
-        else
+        } else {
             w.setLocation(x, y);
+        }
     }
 
     /** Center a window within the bounds of a component's parent window.
@@ -275,10 +282,11 @@ public class WindowUtilities {
     public static final void centerWindow(Component c, Window w) {
         Window pw = SwingUtilities.windowForComponent(c);
 
-        if (pw == null)
+        if (pw == null) {
             centerWindow(w);
-        else
+        } else {
             centerWindow(pw, w);
+        }
     }
 
     /** Get the Frame parent of a component. This method searches upward in the
@@ -287,8 +295,9 @@ public class WindowUtilities {
 
     public static final Frame getFrameForComponent(Component c) {
         while ((c = c.getParent()) != null)
-            if (c instanceof Frame)
+            if (c instanceof Frame) {
                 return ((Frame) c);
+            }
 
         return (null);
     }
@@ -306,8 +315,9 @@ public class WindowUtilities {
         final Frame phantomFrame = new Frame();
         PrintJob pj = Toolkit.getDefaultToolkit().getPrintJob(phantomFrame, title, null);
 
-        if (pj == null)
+        if (pj == null) {
             return (false);
+        }
 
         int res = Toolkit.getDefaultToolkit().getScreenResolution();
         // Dimension d = pj.getPageDimension(); // buggy in JDK 1.1.x
@@ -372,12 +382,14 @@ public class WindowUtilities {
         if (componentToShow instanceof IDialogInterface) {
             ((IDialogInterface) componentToShow).setParentWindow(dialog);
         }
-        if (size == null)
+        if (size == null) {
             dialog.setSize(new Dimension(300, 150));
-        else
+        } else {
             dialog.setSize(size);
-        if (parentFrame != null && componentToShow != null)
+        }
+        if (parentFrame != null && componentToShow != null) {
             centerWindow(parentFrame, dialog);
+        }
         dialog.setResizable(isReSizable);
         return dialog;
     }

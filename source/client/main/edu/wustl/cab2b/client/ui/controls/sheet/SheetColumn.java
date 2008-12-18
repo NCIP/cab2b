@@ -17,13 +17,16 @@ public class SheetColumn extends TableColumn {
     /**     When ever associated Column Filter Model's bound peroperty changes, This event is fired.    
      * It wraps the original even from ColumnFilterModel is newValue of the passed event-object.    */
     public static final String FILTER_CHANGED = "FILTER_CHANGED";
-    
-    private Boolean isVisible = true;
-    private boolean isUserColumn = false;
-    private ColumnFilterModel cfmFilterCondition;
-    ColumnFilterChangesListener lsnColFilterModel = new ColumnFilterChangesListener();
-    PropertyChangeSupport pcs;
 
+    private Boolean isVisible = true;
+
+    private boolean isUserColumn = false;
+
+    private ColumnFilterModel cfmFilterCondition;
+
+    ColumnFilterChangesListener lsnColFilterModel = new ColumnFilterChangesListener();
+
+    PropertyChangeSupport pcs;
 
     SheetColumn() {
         super();
@@ -44,11 +47,10 @@ public class SheetColumn extends TableColumn {
         super(modelIndex, width, cellRenderer, cellEditor);
         initComponent();
     }
-    
+
     private void initComponent() {
-        pcs = new PropertyChangeSupport( this);
+        pcs = new PropertyChangeSupport(this);
     }
-    
 
     /**
      * @return Column Filter Condition
@@ -62,23 +64,22 @@ public class SheetColumn extends TableColumn {
      * @param cfmFilterCondition
      */
     public void setFilterCondition(ColumnFilterModel cfmFilterCondition) {
-        if( this.cfmFilterCondition != null)
-            this.cfmFilterCondition.removePropertyChangeListener( lsnColFilterModel);
+        if (this.cfmFilterCondition != null) {
+            this.cfmFilterCondition.removePropertyChangeListener(lsnColFilterModel);
+        }
         this.cfmFilterCondition = cfmFilterCondition;
-        cfmFilterCondition.addPropertyChangeListener( lsnColFilterModel);
+        cfmFilterCondition.addPropertyChangeListener(lsnColFilterModel);
     }
 
-//    @Override
-//    public void setModelIndex(int modelIndex) {
-//        super.setModelIndex(modelIndex);
-//        firePropertyChange
-//    }
-    
-    
+    //    @Override
+    //    public void setModelIndex(int modelIndex) {
+    //        super.setModelIndex(modelIndex);
+    //        firePropertyChange
+    //    }
 
-    private void accomodateAssociatedColumnFilterModelChanges( PropertyChangeEvent evt) {
+    private void accomodateAssociatedColumnFilterModelChanges(PropertyChangeEvent evt) {
         //  Relay Changes, a catch all proeprty, wrap detailed event in newValue...
-        pcs.firePropertyChange( FILTER_CHANGED, null, evt);
+        pcs.firePropertyChange(FILTER_CHANGED, null, evt);
     }
 
     /**
@@ -87,7 +88,7 @@ public class SheetColumn extends TableColumn {
     public boolean isVisible() {
         return isVisible.booleanValue();
     }
-    
+
     /**
      * @return Boolean Value
      */
@@ -102,8 +103,7 @@ public class SheetColumn extends TableColumn {
     public void setVisible(Boolean isVisible) {
         Boolean oldVal = this.isVisible;
         this.isVisible = isVisible;
-        pcs.firePropertyChange( Common.COLUMN_VISIBLITY_CHANGE_REQUESTED, 
-                null, this);
+        pcs.firePropertyChange(Common.COLUMN_VISIBLITY_CHANGE_REQUESTED, null, this);
     }
 
     /**
@@ -122,14 +122,13 @@ public class SheetColumn extends TableColumn {
         this.isUserColumn = isUserColumn;
     }
 
-
     class ColumnFilterChangesListener implements PropertyChangeListener {
 
         public void propertyChange(PropertyChangeEvent evt) {
-            accomodateAssociatedColumnFilterModelChanges( evt);
+            accomodateAssociatedColumnFilterModelChanges(evt);
         }
     }
-    
+
     /** Property Change Listener for Adding Property
      * @param pcl
      * @see javax.swing.table.TableColumn#addPropertyChangeListener(java.beans.PropertyChangeListener)
@@ -155,17 +154,17 @@ public class SheetColumn extends TableColumn {
      * @return String
      */
     @Override
-    public String toString(){
+    public String toString() {
         StringBuffer vapus = new StringBuffer();
-        vapus.append( "[ ");
-        vapus.append( getClass().getName());
-        vapus.append( ": ");
-        vapus.append( "Visible="+isVisible);
-        vapus.append( ", ModelIdx=");
-        vapus.append( getModelIndex() );
-        vapus.append( "]" );
-//        vapus.append( "[ ");
+        vapus.append("[ ");
+        vapus.append(getClass().getName());
+        vapus.append(": ");
+        vapus.append("Visible=" + isVisible);
+        vapus.append(", ModelIdx=");
+        vapus.append(getModelIndex());
+        vapus.append("]");
+        //        vapus.append( "[ ");
         return vapus.toString();
     }
-    
+
 }

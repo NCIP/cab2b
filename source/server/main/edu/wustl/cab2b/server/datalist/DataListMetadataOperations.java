@@ -36,8 +36,9 @@ public class DataListMetadataOperations extends DefaultBizLogic {
         } catch (DAOException e) {
             throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DATALIST_RETRIEVE_ERROR));
         }
-        if (results != null && results.size() > 0)
+        if (results != null && results.size() > 0) {
             return results.get(0);
+        }
         return null;
     }
 
@@ -84,7 +85,7 @@ public class DataListMetadataOperations extends DefaultBizLogic {
     public boolean isDataListByNamePresent(String name) {
         List<Object> values = new ArrayList<Object>(1);
         values.add(name);
-        
+
         Collection<DataListMetadata> results = null;
         try {
             results = HibernateUtility.executeHQL("getDataListIdByName", values);

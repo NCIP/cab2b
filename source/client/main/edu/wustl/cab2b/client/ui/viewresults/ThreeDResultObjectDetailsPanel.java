@@ -166,25 +166,29 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
                     boolean anchorSelected = selection.isSelectedIndex(anchor);
 
                     if (lead != -1) {
-                        if (anchorSelected)
+                        if (anchorSelected) {
                             selection.removeSelectionInterval(anchor, lead);
-                        else
+                        } else {
                             selection.addSelectionInterval(anchor, lead);
+                        }
                     }
 
-                    if (anchorSelected)
+                    if (anchorSelected) {
                         selection.addSelectionInterval(anchor, columnNumber);
-                    else
+                    } else {
                         selection.removeSelectionInterval(anchor, columnNumber);
+                    }
 
                     selection.setValueIsAdjusting(old);
-                } else
+                } else {
                     selection.setSelectionInterval(columnNumber, columnNumber);
+                }
             } else if (e.isControlDown()) {
-                if (selection.isSelectedIndex(columnNumber))
+                if (selection.isSelectedIndex(columnNumber)) {
                     selection.removeSelectionInterval(columnNumber, columnNumber);
-                else
+                } else {
                     selection.addSelectionInterval(columnNumber, columnNumber);
+                }
             } else {
                 selection.setSelectionInterval(columnNumber, columnNumber);
                 isWholeColumnSelected = true;
@@ -231,10 +235,11 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
 
     public List<String> getSelectedColumnNames() {
         List<String> selectedColumnsList = new ArrayList<String>();
-        if (threeDTable != null)
+        if (threeDTable != null) {
             for (int i = 0; i < threeDTable.getSelectedColumns().length; i++) {
                 selectedColumnsList.add(threeDTable.getColumnName(threeDTable.getSelectedColumns()[i]));
             }
+        }
         return selectedColumnsList;
     }
 

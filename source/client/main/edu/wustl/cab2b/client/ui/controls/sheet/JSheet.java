@@ -967,8 +967,9 @@ public class JSheet extends javax.swing.JPanel {
                     JOptionPane.showMessageDialog(this, message);
                 } finally {
                     try {
-                        if (null != out)
+                        if (null != out) {
                             out.close();
+                        }
                     } catch (Exception e) {
                         lgr.warning(String.format(
                                                   "Exception while closing file. Export may NOT have been successful.\nReason=%s",

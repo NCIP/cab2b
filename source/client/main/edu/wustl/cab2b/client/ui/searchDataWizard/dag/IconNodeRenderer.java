@@ -142,7 +142,7 @@ public class IconNodeRenderer implements IGraphNodeRenderer {
         IGraphPort[] ports = helper.getNodePorts(node);
 
         Point rightSidePoint = new Point((imageWidth / 2) + PORT_SPACE_2, -PORT_SPACE_2);
-        if (ports != null)
+        if (ports != null) {
             for (int i = ports.length - 1; i >= 0; i--) {
                 IGraphPort port = ports[i];
                 boolean isDefault = port == defaultPort;
@@ -155,6 +155,7 @@ public class IconNodeRenderer implements IGraphNodeRenderer {
                 }
                 helper.setPortRelativeLocation(port, loc);
             }
+        }
     }
 
     /* (non-Javadoc)
@@ -195,10 +196,11 @@ public class IconNodeRenderer implements IGraphNodeRenderer {
         layoutPortsLocationsCore(node, gr);
 
         Rectangle bounds = new Rectangle();
-        if (textRect != null)
+        if (textRect != null) {
             Rectangle2D.union(imageRect, textRect, bounds);
-        else
+        } else {
             bounds.setRect(imageRect);
+        }
         //sanjeev
         oldrect = bounds.getBounds();
         Rectangle2D.union(attributeRect, bounds, bounds);
@@ -244,8 +246,9 @@ public class IconNodeRenderer implements IGraphNodeRenderer {
             gr.draw(new Rectangle2D.Float(rect.x + 0.5f, rect.y + 0.5f, rect.width - 1, oldrect.height + 4));
             // now draw the attributes
             // sanjeev
-            if (helper.isComponentSelected(node))
+            if (helper.isComponentSelected(node)) {
                 SimpleDocumentRenderer.renderSelectedRect(gr, helper.getBounds(node));
+            }
         } else if (layer == LAYER_NODE) {
             String displayName = null;
             Image image = null;
@@ -264,8 +267,9 @@ public class IconNodeRenderer implements IGraphNodeRenderer {
                     gr.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.5f));
                     gr.drawImage(image, imageRect.x, imageRect.y, null);
                     gr.setComposite(composite);
-                } else
+                } else {
                     gr.drawImage(image, imageRect.x, imageRect.y, null);
+                }
             }
 
             gr.setFont(font);
@@ -297,8 +301,9 @@ public class IconNodeRenderer implements IGraphNodeRenderer {
      * @see org.netbeans.graph.api.control.IGraphNodeRenderer#getEditor(org.netbeans.graph.api.model.IGraphNode, java.awt.Point)
      */
     public IGraphEditor getEditor(IGraphNode node, Point position) {
-        if (this.textRect == null)
+        if (this.textRect == null) {
             return null;
+        }
         final Rectangle rectangle = new Rectangle(this.textRect);
         final Point location = helper.getNodeLocation(node);
         rectangle.translate(location.x, location.y);

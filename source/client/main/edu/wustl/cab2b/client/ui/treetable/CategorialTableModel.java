@@ -74,16 +74,18 @@ public class CategorialTableModel extends DefaultTableModel {
             columnValueMap.put(attributeName, attributeValue);
         }
         Map<CategorialClass, List<ICategorialClassRecord>> childrenCategorialClassRecord = record.getChildrenCategorialClassRecords();
-        if (childrenCategorialClassRecord.size() > 0)
+        if (childrenCategorialClassRecord.size() > 0) {
             isLeafCategoryClassRecord = false;
+        }
         for (CategorialClass categorialClass : childrenCategorialClassRecord.keySet()) {
             List<ICategorialClassRecord> categorialClassRecordList = childrenCategorialClassRecord.get(categorialClass);
             for (ICategorialClassRecord categorialClassRecord : categorialClassRecordList) {
                 getAllAttributes(categorialClassRecord);
             }
         }
-        if (isLeafCategoryClassRecord)
+        if (isLeafCategoryClassRecord) {
             newDataVector.add(getRowVector());
+        }
         for (AttributeInterface attribute : attributeList) {
             attributeName = attribute.getName();
             columnValueMap.remove(attributeName);

@@ -29,8 +29,9 @@ public class FiltersViewConsole extends javax.swing.JPanel {
     }
 
     void setModel(SheetCustomizationModel scm) {
-        if (null != this.scm)
+        if (null != this.scm) {
             this.scm.removePropertyChangeListener(filterListener);
+        }
         this.scm = scm;
         tblFiltersView.setModel(viewTableModel);
         scm.addPropertyChangeListener(filterListener);

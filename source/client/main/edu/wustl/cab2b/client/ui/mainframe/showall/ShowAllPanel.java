@@ -61,8 +61,9 @@ public abstract class ShowAllPanel extends Cab2bPanel {
                 table.getColumn(hyperLinkColumnNumber).setCellRenderer(new LinkRenderer(linkAction));
                 table.getColumn(hyperLinkColumnNumber).setCellEditor(new LinkRenderer(linkAction));
             }
-        } else
+        } else {
             table = new Cab2bTable();
+        }
         HighlighterPipeline highlighters = new HighlighterPipeline();
         highlighters.addHighlighter(new AlternateRowHighlighter());
         table.setHighlighters(highlighters);

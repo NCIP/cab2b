@@ -89,14 +89,18 @@ public class JPageBar extends Cab2bPanel implements ActionListener {
      */
     public JPageBar(Vector<String> indices, Vector subIndices, JPagination pagination, String[] navigationLinksText) {
         if (navigationLinksText != null && navigationLinksText.length == 4) {
-            if (navigationLinksText[0] != null && !(navigationLinksText[0].trim().equals("")))
+            if (navigationLinksText[0] != null && !(navigationLinksText[0].trim().equals(""))) {
                 PaginationConstants.DEFAULT_PAGE_INDICES_PREVIOUS_STRING = navigationLinksText[0];
-            if (navigationLinksText[1] != null && !(navigationLinksText[1].trim().equals("")))
+            }
+            if (navigationLinksText[1] != null && !(navigationLinksText[1].trim().equals(""))) {
                 PaginationConstants.DEFAULT_PAGE_PREVIOUS_STRING = navigationLinksText[1];
-            if (navigationLinksText[2] != null && !(navigationLinksText[2].trim().equals("")))
+            }
+            if (navigationLinksText[2] != null && !(navigationLinksText[2].trim().equals(""))) {
                 PaginationConstants.DEFAULT_PAGE_NEXT_STRING = navigationLinksText[2];
-            if (navigationLinksText[3] != null && !(navigationLinksText[3].trim().equals("")))
+            }
+            if (navigationLinksText[3] != null && !(navigationLinksText[3].trim().equals(""))) {
                 PaginationConstants.DEFAULT_PAGE_INDICES_NEXT_STRING = navigationLinksText[3];
+            }
         }
 
         this.indices = indices;
@@ -258,8 +262,9 @@ public class JPageBar extends Cab2bPanel implements ActionListener {
     protected void displayLinkColor(String currentPageIndex) {
         /* If current page index is null or empty just return.
          * so that last time colored link remain the same. */
-        if (currentPageIndex == null || currentPageIndex.equals(""))
+        if (currentPageIndex == null || currentPageIndex.equals("")) {
             return;
+        }
         for (int i = 0; i < indicesPanel.getComponentCount(); i++) {
             Cab2bHyperlink hyperLink = (Cab2bHyperlink) indicesPanel.getComponent(i);
             if (hyperLink.getText().equalsIgnoreCase(currentPageIndex)) {
@@ -277,8 +282,6 @@ public class JPageBar extends Cab2bPanel implements ActionListener {
         indicesPanel.updateUI();
         indicesPanel.repaint();
     }
-
-    
 
     /**
      * @param args

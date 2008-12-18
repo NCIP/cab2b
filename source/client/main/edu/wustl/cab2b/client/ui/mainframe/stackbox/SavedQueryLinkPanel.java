@@ -98,8 +98,9 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
                     }
                 });
                 this.add("br ", queryLink);
-                if (++queryCounter > 4)
+                if (++queryCounter > 4) {
                     break;
+                }
             }
 
             if (cab2bQueryList.size() > 5) {

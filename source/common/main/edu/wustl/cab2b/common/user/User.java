@@ -133,8 +133,9 @@ public class User implements UserInterface, Serializable {
 
     @Override
     public boolean equals(Object arg) {
-        if (this == arg)
+        if (this == arg) {
             return true;
+        }
 
         boolean isEqual = false;
         if (null != arg && arg instanceof User) {

@@ -51,8 +51,9 @@ public class ShowAllSavedQueryPanel extends ShowAllPanel {
         //Hiding last column from table which contains query object having only
         //QueryID
         TableColumnModel colModel = getTable().getColumnModel();
-        if (colModel.getColumnCount() > 3)
+        if (colModel.getColumnCount() > 3) {
             getTable().getColumnModel().removeColumn(colModel.getColumn(colModel.getColumnCount() - 1));
+        }
     }
 
     /** Link Action Perfomred Event

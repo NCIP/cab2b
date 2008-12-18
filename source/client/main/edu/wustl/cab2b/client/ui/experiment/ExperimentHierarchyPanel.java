@@ -65,8 +65,7 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
             ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) Locator.getInstance().locate(
                                                                                                             edu.wustl.cab2b.common.ejb.EjbNamesConstants.EXPERIMENT,
                                                                                                             ExperimentHome.class);
-            dataVector = expBus.getExperimentHierarchy(UserValidator.getSerializedDCR(),
-                                                       UserValidator.getIdP());
+            dataVector = expBus.getExperimentHierarchy(UserValidator.getSerializedDCR(), UserValidator.getIdP());
         } catch (RemoteException e1) {
             CommonUtils.handleException(e1, this, true, true, false, false);
         } catch (ClassNotFoundException e1) {
@@ -117,11 +116,14 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
                         expDetailsPanel.refreshDetails(selectedExpTreeNode);
                     }
                 } else if (userObject instanceof Experiment) {
-                    if (expDetailsPanel != null)
+                    if (expDetailsPanel != null) {
                         expDetailsPanel.refreshDetails((Experiment) userObject);
+                    }
+
                 } else if (userObject instanceof ExperimentGroup) {
-                    if (expDetailsPanel != null)
+                    if (expDetailsPanel != null) {
                         expDetailsPanel.refreshDetails((ExperimentGroup) userObject);
+                    }
                 }
             }
         });

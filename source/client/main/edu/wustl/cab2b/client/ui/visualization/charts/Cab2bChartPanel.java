@@ -81,11 +81,12 @@ public class Cab2bChartPanel extends Cab2bPanel {
             chart = scatterPlot.getChartPanel();
         }
 
-        if (chart != null)
+        if (chart != null) {
             this.add("br hfill vfill ", chart);
-        else
+        } else {
             throw new IllegalStateException("Unable to create chart component for charttype =" + chartType
                     + " Chart orientation =" + chartModel.getChartOrientation());
+        }
 
         updateUI();
     }
@@ -128,10 +129,10 @@ public class Cab2bChartPanel extends Cab2bPanel {
             String actionCommand = actionEvent.getActionCommand();
             if (actionCommand != null && actionCommand == "Row") {
                 chartModel.setChartOrientation(ChartOrientation.ROW_AS_CATEGORY);
-                 
+
             } else {
                 chartModel.setChartOrientation(ChartOrientation.COLUMN_AS_CATEGORY);
-                 
+
             }
             setChartPanel();
         }

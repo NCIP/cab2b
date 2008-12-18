@@ -36,8 +36,9 @@ public class PageBarModel {
      * @return 
      */
     public boolean hasNextIndices() {
-        if (currentPageIndices == brokenPageIndices.size() - 1)
+        if (currentPageIndices == brokenPageIndices.size() - 1) {
             return false;
+        }
         return true;
     }
 
@@ -45,8 +46,9 @@ public class PageBarModel {
      * @return true if current page is not first page
      */
     public boolean hasPreviousIndices() {
-        if (currentPageIndices == 0)
+        if (currentPageIndices == 0) {
             return false;
+        }
         return true;
     }
 
@@ -63,7 +65,7 @@ public class PageBarModel {
     public Vector<String> previousIndices() {
         return brokenPageIndices.get(--currentPageIndices);
     }
-    
+
     /**
      * Overrides toString method
      * @return string

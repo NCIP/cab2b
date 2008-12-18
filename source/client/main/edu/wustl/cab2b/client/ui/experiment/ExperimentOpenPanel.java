@@ -156,8 +156,9 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
                     experimentStackBox.setFilterPanel(tabComponent);
                     if (jSheet.getSelectedColumns().length > 0) {
                         experimentStackBox.setChartLinkEnable(true);
-                    } else
+                    } else {
                         experimentStackBox.setChartLinkEnable(false);
+                    }
                     experimentStackBox.setHeatMapLinkEnable(false);
                 }
 
@@ -192,8 +193,9 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
                 } else if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.ENABLE_HEATMAP_LINK)) {
                     experimentStackBox.setHeatMapLinkEnable(true);
                 }
-                if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.DISABLE_ANALYSIS_LINK))
+                if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.DISABLE_ANALYSIS_LINK)) {
                     experimentStackBox.setAnalysisLinkEnable(false);
+                }
             }
         });
         experimentDataCategoryGridPanel.setBorder(null);
@@ -225,10 +227,11 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
                                                                                                             ExperimentHome.class);
         Long expId;
 
-        if (selectedExperiment != null)
+        if (selectedExperiment != null) {
             expId = selectedExperiment.getId();
-        else
+        } else {
             expId = m_ExperimentTreeNodeObj.getIdentifier();
+        }
 
         try {
             selectedExperiment = expBus.getExperiment(expId);

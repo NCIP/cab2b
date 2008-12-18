@@ -361,8 +361,9 @@ public class Utility {
             }
 
             currentStart = currentStart + offset + len;
-            if ((currentStart + offset + len) > textLength)
+            if ((currentStart + offset + len) > textLength) {
                 break;
+            }
         }
         sb.append(text.substring(currentStart));
         return sb.toString();
@@ -639,15 +640,17 @@ public class Utility {
             char nextCharacter = 'x';
             char prevCharacter = chars[i - 1];
 
-            if ((i + 1) < chars.length)
+            if ((i + 1) < chars.length) {
                 nextCharacter = chars[i + 1];
+            }
 
             if ((Character.isUpperCase(character) && Character.isUpperCase(prevCharacter)
                     && Character.isLowerCase(nextCharacter) && i != chars.length - 1)
                     || (Character.isUpperCase(character) && Character.isLowerCase(prevCharacter) && Character.isUpperCase(nextCharacter))
-                    || (Character.isUpperCase(character) && Character.isLowerCase(prevCharacter) && Character.isLowerCase(nextCharacter)))
+                    || (Character.isUpperCase(character) && Character.isLowerCase(prevCharacter) && Character.isLowerCase(nextCharacter))) {
 
                 countOfCapitalLetters++;
+            }
         }
         return countOfCapitalLetters;
     }
@@ -809,7 +812,7 @@ public class Utility {
         URL certificate = null;
         signingPolicy = Utility.class.getClassLoader().getResource(CommonPropertyLoader.getSigningPolicy(idP));
         certificate = Utility.class.getClassLoader().getResource(CommonPropertyLoader.getCertificate(idP));
-        
+
         if (signingPolicy != null || certificate != null) {
             copyCACertificates(signingPolicy);
             copyCACertificates(certificate);
@@ -866,6 +869,7 @@ public class Utility {
                     ErrorCodeConstants.CDS_003);
         }
     }
+
     /**
      * Prepares the array of search targets from the check box values selected by user.
      * @param searchClass TRUE if class search is selected 
@@ -874,34 +878,35 @@ public class Utility {
      * @param includeDesc TRUE if description is to be searched 
      * @return Integer array of selections made by user.
      */
-    public static int[] prepareSearchTarget(boolean searchClass, boolean searchAttribute, boolean searchPv, 
-            boolean includeDesc ) {
+    public static int[] prepareSearchTarget(boolean searchClass, boolean searchAttribute, boolean searchPv,
+                                            boolean includeDesc) {
         List<Integer> target = new ArrayList<Integer>();
         if (searchClass && includeDesc) {
             target.add(CLASS_WITH_DESCRIPTION);
         } else if (searchClass) {
             target.add(CLASS);
         }
-        
+
         if (searchAttribute && includeDesc) {
             target.add(ATTRIBUTE_WITH_DESCRIPTION);
-        } else if (searchAttribute){
+        } else if (searchAttribute) {
             target.add(ATTRIBUTE);
         }
-        
+
         if (searchPv) {
             target.add(PV);
         }
         return toIntArray(target);
     }
+
     /**
      * @param list List of integers
      * @return array of integers
      */
     public static int[] toIntArray(List<Integer> list) {
-        int[] array = new int[list.size()]; 
+        int[] array = new int[list.size()];
         for (int i = 0; i < list.size(); i++) {
-            array [i] = list.get(i);
+            array[i] = list.get(i);
         }
         return array;
     }

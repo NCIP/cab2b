@@ -40,8 +40,9 @@ public class Cab2bFileFilter extends FileFilter {
         if (extnIndex != -1) {
             String actualExt = file.getName().substring(extnIndex + 1);
             for (int i = 0; i < extensionFilter.length; i++) {
-                if (extensionFilter[i].compareToIgnoreCase(actualExt) == 0)
+                if (extensionFilter[i].compareToIgnoreCase(actualExt) == 0) {
                     return true;
+                }
             }
         }
         return false;

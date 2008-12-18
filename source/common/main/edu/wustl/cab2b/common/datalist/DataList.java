@@ -40,13 +40,13 @@ public class DataList implements Serializable {
      * @param rootDataRow
      * @param dataListAnnotation
      */
-    public DataList(IDataRow rootDataRow,DataListMetadata dataListAnnotation) {
+    public DataList(IDataRow rootDataRow, DataListMetadata dataListAnnotation) {
         this.dataListAnnotation = dataListAnnotation;
         this.rootDataRow = rootDataRow;
     }
-    
+
     private void createRootNode() {
-        rootDataRow = new DataRow(null,null);
+        rootDataRow = new DataRow(null, null);
         rootDataRow.setData(false);
     }
 
@@ -98,8 +98,7 @@ public class DataList implements Serializable {
                 IDataRow parentData = dataRowList.get(i);
                 if (parentData.getEntity() != null) {
                     // If node type is same as the node to add
-                    if (true == parentData.getEntity().equals(
-                                                                                     dataRow.getEntity())) {
+                    if (true == parentData.getEntity().equals(dataRow.getEntity())) {
                         if (parentData.isData() == false) // means this node is not a data node
                         {
                             // If node is already added to datalist
@@ -160,7 +159,7 @@ public class DataList implements Serializable {
      * @return The group node for this dataRow
      */
     private IDataRow getTitleNode(IDataRow dataRow) {
-        IDataRow titleDataRow = new DataRow(null,dataRow.getEntity());
+        IDataRow titleDataRow = new DataRow(null, dataRow.getEntity());
         titleDataRow.setData(false);
         return titleDataRow;
     }
@@ -187,8 +186,9 @@ public class DataList implements Serializable {
          return entityDataList.get(i);
          }
          }*/
-        if (0 < entityDataList.size())
+        if (0 < entityDataList.size()) {
             return entityDataList.get(0);
+        }
         return null;
     }
 
@@ -220,8 +220,6 @@ public class DataList implements Serializable {
         }
     }
 
-
-
     /**
      * Method to get the tree containing the hirarchy for given entity
      * This tree will be used to fetch objects similar to the objects
@@ -242,7 +240,7 @@ public class DataList implements Serializable {
         //printTree(0, treeList);
         return treeList;
     }
-    
+
     /**
      * Returns this DataRow object from the data list.
      * @return this DataRow object from the data list.
@@ -252,8 +250,7 @@ public class DataList implements Serializable {
         for (int i = 0; i < currentDataList.size(); i++) {
             IDataRow currentRow = currentDataList.get(i);
             if (currentRow.isData() == true) {
-                if (true == currentRow.getEntity().equals(
-                                                                                 pathEnitites.get(pos).getEntity())) {
+                if (true == currentRow.getEntity().equals(pathEnitites.get(pos).getEntity())) {
                     // Found that path has been completely matched
                     if (pos == pathEnitites.size() - 1) {
                         listWithEntity.add(currentRow);
@@ -277,15 +274,14 @@ public class DataList implements Serializable {
         int posInList = -1;
         // Check if tree already have this path starting with given root
         for (int i = 0; i < treeList.size(); i++) {
-            if (true == treeList.get(i).getEntity().equals(
-                                                                                  rootNode.getEntity())) {
+            if (true == treeList.get(i).getEntity().equals(rootNode.getEntity())) {
                 posInList = i;
                 break;
             }
         }
         IDataRow dataRow;
         if (posInList == -1) {
-            dataRow = new DataRow(null,rootNode.getEntity());
+            dataRow = new DataRow(null, rootNode.getEntity());
             dataRow.setAssociation(rootNode.getAssociation());
             treeList.add(dataRow);
         } else {
@@ -300,17 +296,16 @@ public class DataList implements Serializable {
      * @param level the level of the node to print
      * @param treeList List containing tree hierarchy
      */
-//    private void printTree(int level, List<IDataRow> treeList) {
-//        for (int i = 0; i < treeList.size(); i++) {
-//             
-//            if (treeList.get(i).getAssociation() != null) {
-//                 
-//                        + treeList.get(i).getAssociation().toString());
-//            }
-//            printTree(level + 1, treeList.get(i).getChildren());
-//        }
-//    }
-
+    //    private void printTree(int level, List<IDataRow> treeList) {
+    //        for (int i = 0; i < treeList.size(); i++) {
+    //             
+    //            if (treeList.get(i).getAssociation() != null) {
+    //                 
+    //                        + treeList.get(i).getAssociation().toString());
+    //            }
+    //            printTree(level + 1, treeList.get(i).getChildren());
+    //        }
+    //    }
     /**
      * Recurrsive method to find location of perticular node in tree and return path for same
      * @param rootNode The root of the node from which to start search
@@ -328,15 +323,13 @@ public class DataList implements Serializable {
                     int pos = -1;
                     for (int j = 0; j < childNodes.size(); j++) {
                         // If this entity is already present
-                        if (true == childNodes.get(j).getEntity().equals(
-                                                                                                rootChildNodes.get(
-                                                                                                                   i).getEntity())) {
+                        if (true == childNodes.get(j).getEntity().equals(rootChildNodes.get(i).getEntity())) {
                             pos = j;
                             break;
                         }
                     }
                     if (pos == -1) {
-                        node = new DataRow(null,rootChildNodes.get(i).getEntity());
+                        node = new DataRow(null, rootChildNodes.get(i).getEntity());
                         node.setAssociation(rootChildNodes.get(i).getAssociation());
                         dataRow.getChildren().add(node);
                     } else {
@@ -355,8 +348,9 @@ public class DataList implements Serializable {
      * @return
      */
     public boolean isTreeEmpty() {
-        if (getRootDataRow().getChildren().size() > 0)
+        if (getRootDataRow().getChildren().size() > 0) {
             return false;
+        }
         return true;
     }
 

@@ -119,8 +119,9 @@ public class MThumbSlider extends JSlider {
         thumbRenderers = new Icon[2];
         fillColors = new Color[2];
         for (int i = 0; i < 2; i++) {
-            if (inputData != null || inputData.size() > 0)
+            if (inputData != null || inputData.size() > 0) {
                 sliderModels[i] = new DefaultBoundedRangeModel(0, 0, 0, inputData.size() - 1);
+            }
             thumbRenderers[i] = null;
             fillColors[i] = null;
         }

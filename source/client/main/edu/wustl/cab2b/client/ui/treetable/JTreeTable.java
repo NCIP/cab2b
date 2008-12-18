@@ -43,7 +43,7 @@ public class JTreeTable extends JXTable {
 
         setShowGrid(true);
         setIntercellSpacing(new Dimension(1, 1));
-        setBackground(Color.white);        
+        setBackground(Color.white);
     }
 
     /* Workaround for BasicTableUI anomaly. Make sure the UI never tries to 
@@ -82,10 +82,11 @@ public class JTreeTable extends JXTable {
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                                                        boolean hasFocus, int row, int column) {
-            if (isSelected)
+            if (isSelected) {
                 setBackground(table.getSelectionBackground());
-            else
+            } else {
                 setBackground(table.getBackground());
+            }
 
             visibleRow = row;
             updateUI();

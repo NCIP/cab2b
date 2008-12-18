@@ -19,7 +19,7 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
  *
  */
 public class ShowAllCategoryPanel extends ShowAllPanel {
-    
+
     private static final long serialVersionUID = 1L;
 
     /** Category Name of Category*/
@@ -38,12 +38,13 @@ public class ShowAllCategoryPanel extends ShowAllPanel {
      * @param tableHeader
      * @param data
      */
-    public ShowAllCategoryPanel(Object[] tableHeader, Object[][] data,String columnName) {
-        super(tableHeader, data,columnName);
+    public ShowAllCategoryPanel(Object[] tableHeader, Object[][] data, String columnName) {
+        super(tableHeader, data, columnName);
         //hiding last column from table which contains category object
         TableColumnModel colModel = getTable().getColumnModel();
-        if (colModel.getColumnCount() > 4)
+        if (colModel.getColumnCount() > 4) {
             getTable().getColumnModel().removeColumn(colModel.getColumn(colModel.getColumnCount() - 1));
+        }
     }
 
     /** Action Performed Event
@@ -72,8 +73,9 @@ public class ShowAllCategoryPanel extends ShowAllPanel {
     public static final void categoryLinkAction(EntityInterface category) {
         MainSearchPanel mainSearchPanel = null;
         try {
-            if (GlobalNavigationPanel.getMainSearchPanel() == null)
+            if (GlobalNavigationPanel.getMainSearchPanel() == null) {
                 mainSearchPanel = new MainSearchPanel();
+            }
             GlobalNavigationPanel.setMainSearchPanel(mainSearchPanel);
             mainSearchPanel.getSearchNavigationPanel().setAddLimitPanelInWizard();
             AddLimitPanel addLimitPanel = mainSearchPanel.getCenterPanel().getAddLimitPanel();

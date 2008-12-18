@@ -147,8 +147,9 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                                                                     panel.getCondition(
                                                                                        index,
                                                                                        ParameterizedQueryNavigationPanel.this));
-                    } else
+                    } else {
                         return;
+                    }
                 }
             }
 
@@ -161,9 +162,9 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
             ParameterizedQueryInfoPanel parameterizedQueryInfoPanel = parameterizedQueryMainPanel.getInformationQueryPanel();
             parameterizedQueryDataModel.setQueryDescription(parameterizedQueryInfoPanel.getQueryDecription());
 
-            if (!parameterizedQueryInfoPanel.getQueryName().equals(""))
+            if (!parameterizedQueryInfoPanel.getQueryName().equals("")) {
                 parameterizedQueryDataModel.setQueryName(parameterizedQueryInfoPanel.getQueryName());
-            else {
+            } else {
                 parameterizedQueryDataModel.setQueryName((new Date().toString()));
             }
 
@@ -187,17 +188,16 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
 
                     message = "Query updated successfully.";
                 } else {*/
-                    if (queryEngineBusinessInterface.isQueryNameDuplicate(cab2bParameterizedQuery.getName())) {
-                        JOptionPane.showMessageDialog(
-                                                      parameterizedQueryMainPanel,
-                                                      "Query with same name already exist. Please try saving with different name.",
-                                                      "Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    queryEngineBusinessInterface.saveQuery(cab2bParameterizedQuery,
-                                                           UserValidator.getSerializedDCR(),
-                                                           UserValidator.getIdP());
-                    message = "Query saved successfully.";
+                if (queryEngineBusinessInterface.isQueryNameDuplicate(cab2bParameterizedQuery.getName())) {
+                    JOptionPane.showMessageDialog(
+                                                  parameterizedQueryMainPanel,
+                                                  "Query with same name already exist. Please try saving with different name.",
+                                                  "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                queryEngineBusinessInterface.saveQuery(cab2bParameterizedQuery, UserValidator.getSerializedDCR(),
+                                                       UserValidator.getIdP());
+                message = "Query saved successfully.";
                 //}
                 SearchNavigationPanel.getMessageLabel().setText(message);
                 new SavedQueryLinkPanel().updateQueryLinkPanel();

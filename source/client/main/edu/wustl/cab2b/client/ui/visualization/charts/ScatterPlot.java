@@ -101,8 +101,9 @@ public class ScatterPlot extends AbstractChart {
             XYSeries xySeries = new XYSeries(seriesName);
             for (int j = 0; j < selectedColumnsNames.size(); j++) {
                 Object value = null;
-                if (chartModel.isWholeColumnSelected())
+                if (chartModel.isWholeColumnSelected()) {
                     value = chartModel.getValueAt(0, j);
+                }
 
                 xySeries.add(convertValue(selectedRowNames.get(j)), convertValue(value));
             }

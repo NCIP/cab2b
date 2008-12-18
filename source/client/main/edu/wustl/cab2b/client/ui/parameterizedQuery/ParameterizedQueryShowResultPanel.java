@@ -79,8 +79,9 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
      */
     @Override
     protected Cab2bPanel getNavigationPanel() {
-        if (navigationPanel == null)
+        if (navigationPanel == null) {
             navigationPanel = new Cab2bPanel();
+        }
 
         navigationPanel.removeAll();
         navigationPanel.setLayout(new RiverLayout(5, 10));

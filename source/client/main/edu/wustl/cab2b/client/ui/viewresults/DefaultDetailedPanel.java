@@ -50,10 +50,11 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
             Vector<Object> row = new Vector<Object>();
             row.add(formattedString);
             Object value = record.getValueForAttribute(attribute);
-            if (value == null)
+            if (value == null) {
                 row.add("");
-            else
-                row.add(value.toString());            
+            } else {
+                row.add(value.toString());
+            }
             tableData.add(row);
         }
 
@@ -66,7 +67,7 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
         objDetailsTable.setColumnSelectionAllowed(true);
         objDetailsTable.setDefaultRenderer(Boolean.class, objDetailsTable.getDefaultRenderer(Object.class));
         objDetailsTable.setEditable(false);
-        
+
         JScrollPane tableSP = new JScrollPane(objDetailsTable);
         if (isVFill) {
             this.add("br hfill vfill", tableSP);
@@ -98,8 +99,9 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
             for (int i = 0; i < objDetailsTable.getRowCount(); i++) {
                 Object object = objDetailsTable.getValueAt(i, j);
 
-                if (i != 0)
+                if (i != 0) {
                     sb.append(",");
+                }
 
                 if (object == null) {
                     sb.append("");
@@ -140,11 +142,13 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
                 Object object = table.getValueAt(i, j);
 
                 //adding row header value 
-                if (j == 0)
+                if (j == 0) {
                     sb.append(CommonUtils.escapeString(rowHeaderTable.getValueAt(i, 0).toString()));
+                }
 
-                if (i != 0)
+                if (i != 0) {
                     sb.append(",");
+                }
 
                 if (object == null) {
                     sb.append("");
@@ -167,8 +171,9 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
         StringBuffer sb = new StringBuffer();
 
         for (int j = 0; j < table.getColumnCount(); j++) {
-            if (j != 0)
+            if (j != 0) {
                 sb.append(",");
+            }
             //If special character in the column name put it into double quotes
             String text = table.getModel().getColumnName(j);
             text = CommonUtils.escapeString(text);
@@ -187,8 +192,9 @@ public class DefaultDetailedPanel<R extends IRecord> extends Cab2bPanel implemen
             for (int j = 0; j < table.getColumnCount(); j++) {
                 Object object = table.getValueAt(i, j);
 
-                if (i != 0)
+                if (i != 0) {
                     sb.append(",");
+                }
 
                 if (object == null) {
                     sb.append("");

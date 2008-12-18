@@ -99,8 +99,9 @@ public class ChooseCategoryPanel extends ContentPanel {
      */
     @Override
     public SearchPanel getSearchPanel() {
-        if (searchPanel == null)
+        if (searchPanel == null) {
             searchPanel = new SearchPanel(this);
+        }
         return searchPanel;
     }
 

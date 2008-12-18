@@ -355,17 +355,19 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
      */
     JSheet getJSheetChildIfExists(Container comp) {
         //method added
-        if (comp == null)
+        if (comp == null) {
             return null;
-        else if (comp instanceof JSheet)
+        } else if (comp instanceof JSheet) {
             return (JSheet) comp;
+        }
 
         for (int idx = comp.getComponentCount() - 1; idx >= 0; idx--) {
             Container childComp = (Container) comp.getComponent(idx);
-            if (childComp != null && childComp instanceof JSheet)
+            if (childComp != null && childComp instanceof JSheet) {
                 return (JSheet) childComp;
-            else
+            } else {
                 return getJSheetChildIfExists(childComp);
+            }
         }
 
         //  Not Found...
@@ -513,11 +515,13 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                         firePropertyChange(DefaultSpreadSheetViewPanel.DISABLE_HEATMAP_LINK, -1, 0);
 
                         if (tabPanel instanceof ThreeDResultObjectDetailsPanel) {
-                            if (((ThreeDResultObjectDetailsPanel) tabPanel).getIsWholeColumnSelected())
+                            if (((ThreeDResultObjectDetailsPanel) tabPanel).getIsWholeColumnSelected()) {
                                 firePropertyChange(DefaultSpreadSheetViewPanel.ENABLE_HEATMAP_LINK, -1, 0);
+                            }
                         }
-                    } else
+                    } else {
                         firePropertyChange(DefaultSpreadSheetViewPanel.DISABLE_CHART_LINK, -1, 0);
+                    }
                 } else {
                     component = CommonUtils.getComponentByName(selectedTabPanel, "cab2bChartPanel");
                     if (component != null && component instanceof Cab2bChartPanel) {

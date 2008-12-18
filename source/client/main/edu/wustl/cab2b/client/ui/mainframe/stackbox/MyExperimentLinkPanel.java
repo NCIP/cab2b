@@ -96,8 +96,9 @@ public class MyExperimentLinkPanel extends Cab2bPanel {
             CommonUtils.setHyperlinkProperties(hyperlink, experiment, experiment.getName(),
                                                experiment.getDescription(), actionListener);
             this.add("br", hyperlink);
-            if (++expCounter > 4)
+            if (++expCounter > 4) {
                 break;
+            }
         }
 
         ActionListener showAllExpAction = new ActionListener() {
@@ -108,7 +109,8 @@ public class MyExperimentLinkPanel extends Cab2bPanel {
 
         if (data.size() > 5) {
             Cab2bHyperlink showAllHyperlink = new Cab2bHyperlink(true);
-            CommonUtils.setHyperlinkProperties(showAllHyperlink, null, ApplicationProperties.getValue(HYPERLINK_SHOW_ALL), "",
+            CommonUtils.setHyperlinkProperties(showAllHyperlink, null,
+                                               ApplicationProperties.getValue(HYPERLINK_SHOW_ALL), "",
                                                showAllExpAction);
             this.add("br right", showAllHyperlink);
         } else if (expCounter == 0) {

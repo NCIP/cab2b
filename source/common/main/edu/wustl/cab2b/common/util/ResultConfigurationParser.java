@@ -80,6 +80,7 @@ public class ResultConfigurationParser {
     private static final String DEFAULT_ELEMENT_KEY = new String("default");
 
     private static final String KEY_DELIM = ":_:_:";
+
     /**
      * Constructor
      */
@@ -249,8 +250,9 @@ public class ResultConfigurationParser {
 
     public String getResultRenderer(String applicationName, String entityName) {
 
-        if (applicationEntityNameMap.get(applicationName + KEY_DELIM + entityName) != null)
+        if (applicationEntityNameMap.get(applicationName + KEY_DELIM + entityName) != null) {
             return applicationEntityNameMap.get(applicationName + KEY_DELIM + entityName).getResultRenderer();
+        }
 
         String res = getResultRenderer(applicationName);
         if (res == null) {
@@ -269,8 +271,9 @@ public class ResultConfigurationParser {
      */
     public String getResultTransformer(String applicationName, String entityName) {
 
-        if (applicationEntityNameMap.get(applicationName + KEY_DELIM + entityName) != null)
+        if (applicationEntityNameMap.get(applicationName + KEY_DELIM + entityName) != null) {
             return applicationEntityNameMap.get(applicationName + KEY_DELIM + entityName).getResultTransformer();
+        }
         String res = getResultTransformer(applicationName);
         if (res == null) {
             res = getDefault().getResultTransformer();
@@ -288,8 +291,9 @@ public class ResultConfigurationParser {
      * 
      */
     private DataListTransformer getDataListTransformer(String applicationName, String entityName) {
-        if (applicationEntityNameMap.get(applicationName + KEY_DELIM + entityName) != null)
+        if (applicationEntityNameMap.get(applicationName + KEY_DELIM + entityName) != null) {
             return applicationEntityNameMap.get(applicationName + KEY_DELIM + entityName).getDataListTransformer();
+        }
         DataListTransformer res = getDataListTransformer(applicationName);
         if (res == null) {
             res = getDefault().getDataListTransformer();
@@ -381,14 +385,14 @@ public class ResultConfigurationParser {
         }
     }
 
-//    public static void main(String[] args) {
-//        Logger.configure();
-//        ResultConfigurationParser entityServiceMapper = ResultConfigurationParser.getInstance();
-//        Logger.out.info(entityServiceMapper.getDataListSaver("CategoryEntityGroup", "foobar"));
-//        Logger.out.info(entityServiceMapper.getResultRenderer("caArray","gov.nih.nci.mageom.domain.BioAssayData.DerivedBioAssayData"));
-//        Logger.out.info(entityServiceMapper.getResultRenderer("caArray", "foobar"));
-//        Logger.out.info(entityServiceMapper.getResultRenderer(null, null));
-//        Logger.out.info(entityServiceMapper.getDataListRetriever("foo", "bar"));
-//        Logger.out.info(entityServiceMapper.getDataListRetriever(null, null));
-//    }
+    //    public static void main(String[] args) {
+    //        Logger.configure();
+    //        ResultConfigurationParser entityServiceMapper = ResultConfigurationParser.getInstance();
+    //        Logger.out.info(entityServiceMapper.getDataListSaver("CategoryEntityGroup", "foobar"));
+    //        Logger.out.info(entityServiceMapper.getResultRenderer("caArray","gov.nih.nci.mageom.domain.BioAssayData.DerivedBioAssayData"));
+    //        Logger.out.info(entityServiceMapper.getResultRenderer("caArray", "foobar"));
+    //        Logger.out.info(entityServiceMapper.getResultRenderer(null, null));
+    //        Logger.out.info(entityServiceMapper.getDataListRetriever("foo", "bar"));
+    //        Logger.out.info(entityServiceMapper.getDataListRetriever(null, null));
+    //    }
 }

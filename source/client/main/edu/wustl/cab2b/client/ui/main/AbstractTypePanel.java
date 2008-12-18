@@ -143,10 +143,11 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     public void createSimplePanel(AttributeInterface attribute) {
         this.attribute = attribute;
         if (displayName == null) {
-            if (!Utility.isCategory(attribute.getEntity()))
+            if (!Utility.isCategory(attribute.getEntity())) {
                 displayName = Utility.getFormattedString(attribute.getName());
-            else
+            } else {
                 displayName = attribute.getName();
+            }
         }
 
         nameLabel = new Cab2bLabel(displayName + " : ");
@@ -235,8 +236,9 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
      * @return
      */
     public boolean isAttributeCheckBoxSelected() {
-        if (attributeCheckBox != null)
+        if (attributeCheckBox != null) {
             return attributeCheckBox.isSelected();
+        }
         return false;
     }
 
@@ -411,8 +413,9 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
      * @return Attribute edited name
      */
     public String getAttributeDisplayName() {
-        if (attributeDisplayNameTextField != null)
+        if (attributeDisplayNameTextField != null) {
             displayName = attributeDisplayNameTextField.getText().trim();
+        }
         return displayName;
     }
 

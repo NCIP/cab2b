@@ -16,12 +16,19 @@ import javax.swing.*;
 public class SelectionHanger extends javax.swing.JPanel {
 
     double cH;
+
     double cW;
+
     Path2D hanger;
+
     Color hangerFillColor = new Color(100, 100, 175, 100);
+
     Color hangerBorderColor = Color.darkGray;
+
     Stroke hangerBorderStroke;
+
     double scaleFactor = 1;
+
     /** Selection Hanger Paint Mode for Selection. 
      * If true, Selections will be highlighted, else it will paint itself as normal, even if table says that this cell is selected. */
     private boolean isPaintSelection = true;
@@ -29,7 +36,7 @@ public class SelectionHanger extends javax.swing.JPanel {
     /** Creates new form SelectionHanger */
     public SelectionHanger() {
         initComponents();
-        setSelected( false);
+        setSelected(false);
 
         //  Original Drawing Guidelines...
         cH = 1000;
@@ -37,34 +44,33 @@ public class SelectionHanger extends javax.swing.JPanel {
 
         reset();
     }
-    
+
     /**
      * Sets Paint Selection
      * @param paintSelection
      */
-    public void setPaintSelection( boolean paintSelection){
+    public void setPaintSelection(boolean paintSelection) {
         isPaintSelection = paintSelection;
     }
-    
+
     /**
      * Checks for Paint Selection
      * @return Boolean Value
      */
-    public boolean isPaintSelection(){
+    public boolean isPaintSelection() {
         return isPaintSelection;
     }
-            
 
     /**     if true, draws this buton with RAISED border.
      * @param isSelected 
      */
     public void setSelected(boolean isSelected) {
-        if( isSelected && isPaintSelection)
+        if (isSelected && isPaintSelection) {
             setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        else
+        } else {
             setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        }
     }
-
 
     /**     Recomputes alll the  layout of the magnifying glass as per dimentions of this container ... */
     void reset() {
@@ -147,7 +153,7 @@ public class SelectionHanger extends javax.swing.JPanel {
         mf.getContentPane().setLayout(new FlowLayout());
         SelectionHanger sh = new SelectionHanger();
 
-        mf.getContentPane().setLayout( new BorderLayout());
+        mf.getContentPane().setLayout(new BorderLayout());
         mf.getContentPane().add(sh, BorderLayout.CENTER);
         mf.setVisible(true);
     }

@@ -197,8 +197,9 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
         for (int index = 0; index < topConditionPanel.getComponentCount(); index++) {
             if ((topConditionPanel.getComponent(index) instanceof AbstractTypePanel)) {
                 AbstractTypePanel panel = (AbstractTypePanel) topConditionPanel.getComponent(index);
-                if (panel.isAttributeCheckBoxSelected())
+                if (panel.isAttributeCheckBoxSelected()) {
                     panelMap.put(index, (AbstractTypePanel) topConditionPanel.getComponent(index));
+                }
             }
         }
         return panelMap;

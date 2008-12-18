@@ -319,8 +319,9 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
 
     private boolean isExtraColumnAdded() {
         for (int i = 0; i < spreadsheet.getJSheetTableModel().getColumnCount(); i++) {
-            if (isUserColumnDefined(i))
+            if (isUserColumnDefined(i)) {
                 return true;
+            }
         }
         return false;
     }

@@ -146,8 +146,9 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
                                                Utility.getDisplayName(entityInterface),
                                                entityInterface.getDescription(), actionClass);
             panel.add("br", hyperlink);
-            if (++categoryCounter > 4)
+            if (++categoryCounter > 4) {
                 break;
+            }
         }
 
         ActionListener showAllExpAction = new ActionListener() {
@@ -156,9 +157,9 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
                                                                                                     getAllCategoryPanel());
             }
         };
-        if (data.size() > 5)
+        if (data.size() > 5) {
             addShowAllLink(panel, showAllExpAction, true);
-        else if (categoryCounter == 0) {
+        } else if (categoryCounter == 0) {
             Cab2bLabel label = new Cab2bLabel("No saved categories.");
             label.setBackground(Color.blue);
             panel.add(label);
@@ -184,7 +185,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
             objData[i][4] = entityInterface;
             i++;
         }
-        return new ShowAllCategoryPanel(headers, objData,ShowAllCategoryPanel.CATEGORY_NAME_TITLE);
+        return new ShowAllCategoryPanel(headers, objData, ShowAllCategoryPanel.CATEGORY_NAME_TITLE);
     }
 
     /**

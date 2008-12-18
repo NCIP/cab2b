@@ -132,8 +132,9 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
                 pageElement.setDisplayName(className);
 
                 String description = entity.getDescription();
-                if (description == null || description.equals(""))
+                if (description == null || description.equals("")) {
                     description = "*No description available. ";
+                }
                 pageElement.setDescription(description);
 
                 pageElement.setUserObject(entity);
@@ -177,8 +178,9 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
      * Removing result panel
      */
     public void removeResultPanel() {
-        if (resultPanel != null)
+        if (resultPanel != null) {
             resultPanel.removeAll();
+        }
     }
 
     /**
@@ -393,9 +395,9 @@ public class SearchResultPanel extends Cab2bPanel implements ActionListener {
         for (int j = 0; j < componentPanel.length; j++) {
             AbstractTypePanel panel = (AbstractTypePanel) componentPanel[j];
             int conditionStatus = panel.isConditionValid(contentPanel);
-            if (conditionStatus < 0)
+            if (conditionStatus < 0) {
                 return;
-            else if (conditionStatus == 0) {
+            } else if (conditionStatus == 0) {
                 attributes.add(panel.getAttributeEntity());
                 conditions.add(panel.getConditionItem());
                 values.add(panel.getValues());

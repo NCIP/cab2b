@@ -249,8 +249,9 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
             public void actionPerformed(ActionEvent e) {
                 Object obj = null;
 
-                if (projectsTree.getSelectionCount() > 0)
+                if (projectsTree.getSelectionCount() > 0) {
                     obj = projectsTree.getSelectionPath().getLastPathComponent();
+                }
                 DefaultMutableTreeNode selectedTreeNode = (DefaultMutableTreeNode) obj;
                 // There's no selection. Default to the root node.
 
@@ -461,7 +462,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
             CommonUtils.handleException(e, NewExperimentDetailsPanel.this, true, true, false, false);
             return;
         }
-        
+
         Long parentExpGrpID = selectedExperimentNode.getIdentifier();
         if (expGrpName != null && !expGrpName.equals("")) {
             ExperimentGroup newExpGrp = new ExperimentGroup();

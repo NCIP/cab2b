@@ -93,20 +93,19 @@ public abstract class ResultPanel extends Cab2bPanel {
         addToDataListButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
 
-            	List<IDataRow> dataRows = getSelectedDataRows();
-            	
-				// bugfix #5294
-				if (dataRows.size() <= 0) {
-					String defaultMessage = "Please select elements before clicking on 'Add to data list'";
-					showPertainMessageToNavigationLabel(defaultMessage);
+                List<IDataRow> dataRows = getSelectedDataRows();
 
-					return;
-				}
-				// bugfix ends #5294
-            	
+                // bugfix #5294
+                if (dataRows.size() <= 0) {
+                    String defaultMessage = "Please select elements before clicking on 'Add to data list'";
+                    showPertainMessageToNavigationLabel(defaultMessage);
+
+                    return;
+                }
+                // bugfix ends #5294
+
                 m_applyAllButton.setEnabled(true);
 
-                
                 MainSearchPanel.getDataList().addDataRows(dataRows);
 
                 updateMyDataListPanel();
@@ -138,12 +137,11 @@ public abstract class ResultPanel extends Cab2bPanel {
             }
         });
     }
-    
 
-	private void showPertainMessageToNavigationLabel(String message) {
+    private void showPertainMessageToNavigationLabel(String message) {
 
-		SearchNavigationPanel.getMessageLabel().setText(message);
-	}
+        SearchNavigationPanel.getMessageLabel().setText(message);
+    }
 
     /**
      * Method to perform apply all action
@@ -162,8 +160,9 @@ public abstract class ResultPanel extends Cab2bPanel {
                     dataRow = dataRow.getParent();
                 }
                 List<IDataRow> entityTreetoFetch = MainSearchPanel.getDataList().getTreeForApplyAll(pathEnitites);
-                if (entityTreetoFetch.size() == 0)
+                if (entityTreetoFetch.size() == 0) {
                     return;
+                }
                 // For every selected entity fetch corresponding data
                 // from data services and add it to data list
                 List<IDataRow> parentRows = new ArrayList<IDataRow>();

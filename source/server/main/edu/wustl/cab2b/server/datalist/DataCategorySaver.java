@@ -34,14 +34,16 @@ public class DataCategorySaver extends AbstractDataListSaver {
     @Override
     protected void populateNewEntity(EntityInterface oldEntity) {
         DataListUtil.copyNonVirtualAttributes(newEntity, oldEntity);
-        if (oldAttributes != null)
+        if (oldAttributes != null) {
             for (AttributeInterface oldAttribute : oldAttributes)
                 newEntity.removeAttribute(oldAttribute);
+        }
 
-        if (newAttributes != null)
+        if (newAttributes != null) {
             for (AttributeInterface newAttribute : newAttributes) {
                 newEntity.addAttribute(newAttribute);
                 newAttribute.setEntity(newEntity);
             }
+        }
     }
 }

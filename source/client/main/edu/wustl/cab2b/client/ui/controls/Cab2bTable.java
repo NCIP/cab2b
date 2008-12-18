@@ -180,8 +180,9 @@ class HeaderItemListener implements ItemListener {
      */
     public void itemStateChanged(ItemEvent e) {
         Object source = e.getSource();
-        if (false == source instanceof AbstractButton)
+        if (false == source instanceof AbstractButton) {
             return;
+        }
         if (e.getStateChange() == ItemEvent.SELECTED) {
             m_tableModel.selectAllRows();
         } else {

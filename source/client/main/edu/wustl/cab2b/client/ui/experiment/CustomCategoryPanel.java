@@ -205,9 +205,7 @@ public class CustomCategoryPanel extends JXFrame {
                             DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                                 EjbNamesConstants.DATALIST_BEAN,
                                                                                                                                 DataListHomeInterface.class);
-                            dataListMetadata = dataListBI.saveCustomDataCategory(
-                                                                                 entityName,
-                                                                                 attributeList,
+                            dataListMetadata = dataListBI.saveCustomDataCategory(entityName, attributeList,
                                                                                  customDataCategoryText.getText(),
                                                                                  experiment,
                                                                                  UserValidator.getSerializedDCR(),
@@ -234,8 +232,9 @@ public class CustomCategoryPanel extends JXFrame {
                                                           "Please add attributes in 'Selected Attributes' list before saving.",
                                                           "Error", JOptionPane.ERROR_MESSAGE);
 
-                        } else
+                        } else {
                             dialog.dispose();
+                        }
                     }
                 }
 

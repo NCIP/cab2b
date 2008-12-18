@@ -70,8 +70,9 @@ class Common {
             //  We do NOT want to change color of Either JButton, or JSparator...
             //  so exit recursion chain...
             return;
-        } else
+        } else {
             comp.setBackground(java.awt.Color.WHITE);
+        }
 
         java.awt.Component[] childComp = comp.getComponents();
         for (int idx = 0; idx < childComp.length; idx++) {

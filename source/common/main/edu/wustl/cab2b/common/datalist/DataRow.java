@@ -69,24 +69,24 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable {
      * 
      */
     private IRecord record;
-    
+
     private DataRow() {
-        
+
     }
-    
+
     /**
      * @param record
      * @param entity
      * @param displayName
      */
-    private DataRow(IRecord record, EntityInterface entity,String displayName) {
+    private DataRow(IRecord record, EntityInterface entity, String displayName) {
         this.record = record;
         this.entityInterface = entity;
         this.className = displayName;
     }
 
     public DataRow(IRecord record, EntityInterface entity) {
-        this(record,entity,"");
+        this(record, entity, "");
 
         if (entity != null) {
             this.className = Utility.getDisplayName(entity);
@@ -209,11 +209,13 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable {
      */
     public int hashCode() {
         int i = 0;
-        if (getId() != null)
+        if (getId() != null) {
             i += getId().hashCode();
+        }
 
-        if (getClassName() != null)
+        if (getClassName() != null) {
             i += getClassName().hashCode();
+        }
         return i;
     }
 
@@ -222,13 +224,14 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable {
         String label = this.className;
         String cnt = "";
         int size = getChildren().size();
-        if(size!=0) {
-            cnt = " (" + size +")";
+        if (size != 0) {
+            cnt = " (" + size + ")";
         }
-        if (getId() != null)
+        if (getId() != null) {
             label = label + "_" + getId();
-        else
+        } else {
             label += cnt;
+        }
         return label;
     }
 
@@ -243,27 +246,27 @@ public class DataRow extends TreeNodeImpl implements IDataRow, Serializable {
     public IRecord getRecord() {
         return record;
     }
-   
+
     /**
      * @see edu.wustl.cab2b.common.datalist.IDataRow#getTitleNode()
      */
     public IDataRow getTitleNode() {
-        IDataRow titleDataRow = new DataRow(null,this.entityInterface,this.className);
+        IDataRow titleDataRow = new DataRow(null, this.entityInterface, this.className);
         titleDataRow.setData(false);
         return titleDataRow;
 
     }
-    
+
     /**
      * @see edu.wustl.cab2b.common.datalist.IDataRow#getCopy()
      */
     public IDataRow getCopy() {
-        IDataRow copiedDataRow = new DataRow(this.record,this.entityInterface,this.className);
+        IDataRow copiedDataRow = new DataRow(this.record, this.entityInterface, this.className);
         copiedDataRow.setData(this.isData);
         copiedDataRow.setAssociation(this.parentAssociation);
         return copiedDataRow;
     }
-    
+
     /**
      * @see edu.wustl.cab2b.common.datalist.IDataRow#addChild(edu.wustl.cab2b.common.datalist.IDataRow)
      */

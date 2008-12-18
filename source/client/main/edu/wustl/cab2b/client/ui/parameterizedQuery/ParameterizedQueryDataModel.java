@@ -68,8 +68,9 @@ public class ParameterizedQueryDataModel {
      * @return query name
      */
     public String getQueryName() {
-        if (query == null)
+        if (query == null) {
             return null;
+        }
         return query.getName();
     }
 
@@ -78,8 +79,9 @@ public class ParameterizedQueryDataModel {
      * @param queryName
      */
     public void setQueryName(String queryName) {
-        if (query == null)
+        if (query == null) {
             return;
+        }
         query.setName(queryName);
     }
 
@@ -87,8 +89,9 @@ public class ParameterizedQueryDataModel {
      * @return String QueryDescription
      */
     public String getQueryDescription() {
-        if (query == null)
+        if (query == null) {
             return null;
+        }
         return query.getDescription();
     }
 
@@ -97,8 +100,9 @@ public class ParameterizedQueryDataModel {
      * @param String description
      */
     public void setQueryDescription(String description) {
-        if (query == null)
+        if (query == null) {
             return;
+        }
         query.setDescription(description);
     }
 
@@ -106,8 +110,9 @@ public class ParameterizedQueryDataModel {
      * @return Collection<IQueryEntity> of query entities
      */
     public Collection<IQueryEntity> getQueryEntities() {
-        if (query == null)
+        if (query == null) {
             return null;
+        }
         return query.getConstraints().getQueryEntities();
     }
 
@@ -115,8 +120,9 @@ public class ParameterizedQueryDataModel {
      * @return Map<Integer, Collection<ICondition>> for All Selected Conditions
      */
     public Map<Integer, Collection<ICondition>> getConditions() {
-        if (query != null)
+        if (query != null) {
             return convert(QueryUtility.getAllSelectedConditions(query));
+        }
 
         return null;
     }
@@ -126,8 +132,9 @@ public class ParameterizedQueryDataModel {
      * @return
      */
     public Map<Integer, Collection<AttributeInterface>> getAllAttributes() {
-        if (query != null)
+        if (query != null) {
             return convert(QueryUtility.getAllAttributes(query));
+        }
         return null;
     }
 
@@ -152,8 +159,9 @@ public class ParameterizedQueryDataModel {
      * @param newCondition
      */
     public void removeCondition(int expressionID, ICondition newCondition) {
-        if (query == null || expressionID < 0 || newCondition == null)
+        if (query == null || expressionID < 0 || newCondition == null) {
             return;
+        }
 
         IExpression expression = query.getConstraints().getExpression(expressionID);
         int noOfOperand = expression.numberOfOperands();
@@ -181,8 +189,9 @@ public class ParameterizedQueryDataModel {
      * @param newCondition
      */
     public void addCondition(Integer expressionID, ICondition newCondition) {
-        if (query == null || expressionID == null || newCondition == null)
+        if (query == null || expressionID == null || newCondition == null) {
             return;
+        }
 
         IExpression expression = query.getConstraints().getExpression(expressionID);
         int noOfOperand = expression.numberOfOperands();

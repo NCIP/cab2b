@@ -167,10 +167,11 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
     private void layoutMinimizedNode(IGraphNode node, Graphics2D gr) {
         setRectangleFontMatrics(node, gr);
         String displayName = getDisplayNameForFontMatrics(node);
-        if (displayName.length() <= 5)
+        if (displayName.length() <= 5) {
             nodeTextRect.width += 20;
-        else
+        } else {
             nodeTextRect.width += 10;
+        }
         nodeTextRect.height += 10;
         nodeTextRect.x = numberRectangle.x + numberRectangle.width;
         nodeTextRect.y = numberRectangle.y;
@@ -224,8 +225,9 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
         final IDisplayable displayable = (IDisplayable) node.getLookup().lookup(IDisplayable.class);
         String displayName = displayable.getDisplayName();
         setNameForToolTip(displayName);
-        if (displayName.indexOf("(") != -1)
+        if (displayName.indexOf("(") != -1) {
             displayName = displayName.substring(0, displayName.indexOf("("));
+        }
 
         FontMetrics fontMetrics = gr.getFontMetrics(font);
 
@@ -244,10 +246,11 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
 
         // Class name area setup
         nodeTextRect = fontMetrics.getStringBounds(displayName, gr).getBounds();
-        if (displayName.length() <= 5)
+        if (displayName.length() <= 5) {
             nodeTextRect.width += 20;
-        else
+        } else {
             nodeTextRect.width += 10;
+        }
         layoutNodeRect(fontMetrics, gr);
 
         // If node has associations to display
@@ -347,8 +350,9 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
     private String getDisplayNameForFontMatrics(IGraphNode node) {
         //      Class name area setup
         String displayName = ((IDisplayable) node.getLookup().lookup(IDisplayable.class)).getDisplayName();
-        if (displayName.indexOf("(") != -1)
+        if (displayName.indexOf("(") != -1) {
             displayName = displayName.substring(0, displayName.indexOf("("));
+        }
         return displayName;
     }
 
@@ -491,8 +495,9 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
             String displayName = null;
             final IDisplayable displayable = (IDisplayable) node.getLookup().lookup(IDisplayable.class);
             displayName = displayable.getDisplayName();
-            if (displayName.indexOf("(") != -1)
+            if (displayName.indexOf("(") != -1) {
                 displayName = displayName.substring(0, displayName.indexOf("("));
+            }
             gr.setFont(font);
 
             // show node index rectangle
@@ -589,8 +594,9 @@ public class ClassNodeRenderer implements IGraphNodeRenderer {
             String displayName = null;
             final IDisplayable displayable = (IDisplayable) node.getLookup().lookup(IDisplayable.class);
             displayName = displayable.getDisplayName();
-            if (displayName.indexOf("(") != -1)
+            if (displayName.indexOf("(") != -1) {
                 displayName = displayName.substring(0, displayName.indexOf("("));
+            }
             gr.setFont(font);
 
             // show node index rectangle

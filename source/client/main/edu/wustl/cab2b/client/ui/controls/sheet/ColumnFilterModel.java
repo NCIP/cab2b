@@ -37,7 +37,6 @@ import edu.wustl.cab2b.client.ui.controls.slider.BiSlider;
  */
 public class ColumnFilterModel<T extends Comparable> {
 
-    
     /** Name of Event signifying Range Filter Changed  */
     public static final String PROPERTY_RANGE_FILTER_CHANGED = "PROPERTY_RANGE_FILTER_CHANGED";
 
@@ -330,8 +329,9 @@ public class ColumnFilterModel<T extends Comparable> {
         }
 
         if (FILTER_TYPE_RANGE.equals(activeFilterType)) {
-            if (null == value)
+            if (null == value) {
                 return false;
+            }
 
             //  null bounds means, infinity at that end...
             return (null == minBound || minBound.compareTo(value) <= 0)
@@ -348,8 +348,9 @@ public class ColumnFilterModel<T extends Comparable> {
     }
 
     private void setSampleValues$Post() {
-        if( sampleSortedValues.size() > 0)
+        if (sampleSortedValues.size() > 0) {
             setRangerBounds(sampleSortedValues.first(), sampleSortedValues.last());
+        }
         sampleSortedValuesAL = new ArrayList(sampleSortedValues);
     }
 

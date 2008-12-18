@@ -120,8 +120,9 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
         protected IGraphNode getRootNode(GraphHelper helper) {
             final Object[] selectedComponents = helper.getSelectedComponents();
             if (selectedComponents != null && selectedComponents.length == 1
-                    && selectedComponents[0] instanceof IGraphNode)
+                    && selectedComponents[0] instanceof IGraphNode) {
                 return (IGraphNode) selectedComponents[0];
+            }
             final IGraphNode[] nodes = helper.getNodes();
             return nodes != null && nodes.length > 0 ? nodes[0] : null;
         }
@@ -174,8 +175,9 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
      * @param rect
      */
     public static void renderSelectedRect(Graphics2D gr, Rectangle rect) {
-        if (rect == null)
+        if (rect == null) {
             return;
+        }
         gr.setColor(SELECTION_FOREGROUND);
         gr.draw(new Rectangle2D.Float(rect.x + 0.5f, rect.y + 0.5f, rect.width - 1, rect.height - 1));
     }
@@ -186,8 +188,9 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
      * @param rect
      */
     public static void renderAltRect(Graphics2D gr, Rectangle rect) {
-        if (rect == null)
+        if (rect == null) {
             return;
+        }
         gr.setColor(ALTERNATE_BACKGROUND);
         gr.fillRect(rect.x, rect.y, rect.width, rect.height);
         gr.setColor(ALTERNATE_FOREGROUND);
@@ -286,16 +289,19 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
      */
     public Rectangle getRelinkingRectangle(IGraphLink link, IGraphPort sourcePort, IGraphPort targetPort,
                                            Point sourcePoint, Point targetPoint) {
-        if (sourcePoint == null || targetPoint == null)
+        if (sourcePoint == null || targetPoint == null) {
             return null;
+        }
         Rectangle sourceRect = new Rectangle(sourcePoint);
         Rectangle targetRect = new Rectangle(targetPoint);
         Rectangle2D.union(sourceRect, targetRect, sourceRect);
         sourceRect.grow(8, 8);
-        if (sourceRect.width < 32)
+        if (sourceRect.width < 32) {
             sourceRect.grow(16, 0);
-        if (sourceRect.height < 32)
+        }
+        if (sourceRect.height < 32) {
             sourceRect.grow(0, 16);
+        }
         return sourceRect;
     }
 
@@ -304,12 +310,12 @@ public class SimpleDocumentRenderer implements IGraphDocumentRenderer {
      */
     public void renderRelinking(Graphics2D gr, IGraphLink link, IGraphPort sourcePort, IGraphPort targetPort,
                                 Point sourcePoint, Point targetPoint) {
-        if (sourcePoint == null || targetPoint == null)
-            return;
-        int[] xs = new int[] { sourcePoint.x, targetPoint.x };
-        int[] ys = new int[] { sourcePoint.y, targetPoint.y };
-        gr.setColor(SimpleLinkRenderer.relinkingColor);
-        SimpleLinkRenderer.paintLink(false, gr, xs, ys, 2);
+        if (sourcePoint == null || targetPoint == null) {
+            int[] xs = new int[] { sourcePoint.x, targetPoint.x };
+            int[] ys = new int[] { sourcePoint.y, targetPoint.y };
+            gr.setColor(SimpleLinkRenderer.relinkingColor);
+            SimpleLinkRenderer.paintLink(false, gr, xs, ys, 2);
+        }
     }
 
     /**

@@ -53,8 +53,9 @@ public class DefaultPageSelectionModel implements PageSelectionModel {
      * @see edu.wustl.cab2b.client.ui.pagination.PageSelectionModel#isSelectionEmpty()
      */
     public boolean isSelectionEmpty() {
-        if (getSelectionCount() == 0)
+        if (getSelectionCount() == 0) {
             return true;
+        }
         return false;
     }
 
@@ -89,8 +90,9 @@ public class DefaultPageSelectionModel implements PageSelectionModel {
             final Vector<PageElement> pageElementList = paginationModel.getPage(index);
 
             for (PageElement pageElement : pageElementList) {
-                if (pageElement.isSelected())
+                if (pageElement.isSelected()) {
                     noOfSelections++;
+                }
             }
         }
 

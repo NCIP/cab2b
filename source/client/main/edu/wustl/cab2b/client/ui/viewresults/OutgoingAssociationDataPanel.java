@@ -61,14 +61,15 @@ public class OutgoingAssociationDataPanel extends AbstractAssociatedDataPanel {
             IIntraModelAssociation intraModelAssociation = (IIntraModelAssociation) QueryObjectFactory.createIntraModelAssociation(deAssociation);
 
             AssociationInterface associationInterface = intraModelAssociation.getDynamicExtensionsAssociation();
-            if(intraModelAssociation.isBidirectional()){
+            if (intraModelAssociation.isBidirectional()) {
                 continue;
             }
             RoleInterface role = associationInterface.getTargetRole();
             String roleName = role.getName();
             if (roleName == null || roleName.equals("")) {
-                if (associationInterface.getSourceRole() != null)
+                if (associationInterface.getSourceRole() != null) {
                     roleName = associationInterface.getSourceRole().getName();
+                }
             }
             String tooTipText = "Target role name : " + roleName;
 

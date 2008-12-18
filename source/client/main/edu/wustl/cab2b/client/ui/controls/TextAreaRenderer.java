@@ -155,12 +155,14 @@ public class TextAreaRenderer extends JTextPane implements TableCellRenderer {
      */
     private int findMaximumRowSize(JTable table, int row) {
         Map<Integer, Map<Integer, Integer>> rows = cellSizes.get(table);
-        if (rows == null)
+        if (rows == null) {
             return 0;
+        }
 
         Map<Integer, Integer> rowHeightMap = rows.get(new Integer(row));
-        if (rowHeightMap == null)
+        if (rowHeightMap == null) {
             return 0;
+        }
 
         int maximum_height = 0;
         Set<Map.Entry<Integer, Integer>> rowHeightsEntrySet = rowHeightMap.entrySet();

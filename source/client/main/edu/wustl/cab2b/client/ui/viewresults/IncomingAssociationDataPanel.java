@@ -69,8 +69,9 @@ public class IncomingAssociationDataPanel extends AbstractAssociatedDataPanel {
             RoleInterface role = associationInterface.getSourceRole();
             String roleName = role.getName();
             if (roleName == null || roleName.equals("")) {
-                if (associationInterface.getSourceRole() != null)
+                if (associationInterface.getSourceRole() != null) {
                     roleName = associationInterface.getTargetRole().getName();
+                }
             }
 
             String tooTipText = "Target role name : " + roleName;

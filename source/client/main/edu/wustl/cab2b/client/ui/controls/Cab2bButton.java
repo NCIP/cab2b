@@ -60,8 +60,9 @@ public class Cab2bButton extends JButton {
         this.setPreferredSize(new Dimension(85, 22));
         /*Arial font in windows is mapped to the SansSerif logical name.*/
         this.setFont(textFont);
-        if (isSimpleButtonUI)
+        if (isSimpleButtonUI) {
             this.setUI(new Cab2bBasicButtonUI());
+        }
     }
 
     /**

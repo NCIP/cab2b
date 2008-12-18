@@ -302,12 +302,14 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
             tbarMain.remove(butPasteTB);
         } else if (menuName.equals(JSheet.MENU_BUTTON_COPY)) {
             tbarMain.remove(butCopyTB);
-        } else if (menuName.equals(JSheet.MENU_BUTTON_ADD_COLUMN))
+        } else if (menuName.equals(JSheet.MENU_BUTTON_ADD_COLUMN)) {
             tbarMain.remove(butAddUserColTB);
-        if (menuName.equals(JSheet.MENU_BUTTON_RESET))
+        }
+        if (menuName.equals(JSheet.MENU_BUTTON_RESET)) {
             tbarMain.remove(butResetTB);
-        else if (menuName.equals(JSheet.MENU_BUTTON_CLEAR))
+        } else if (menuName.equals(JSheet.MENU_BUTTON_CLEAR)) {
             tbarMain.remove(butClearSelectionTB);
+        }
     }
 
     /**
@@ -450,10 +452,10 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
             Object location = act.getValue("LOCATION_INDEX");
             JButton butInstalled;
 
-            if (null == location)
+            if (null == location) {
                 //  No location prefences, add at end...
                 butInstalled = tbarMain.add(act);
-            else {
+            } else {
                 int idxLocation = 0;
                 try {
                     idxLocation = Integer.parseInt(location.toString());
@@ -1257,8 +1259,9 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
         boolean forceEscapeComma = isCommaSepatrated;
         int startingRow = 0;
 
-        if (includeColHeaders)
+        if (includeColHeaders) {
             startingRow = -1;
+        }
 
         if (rowsIdx.length > 0) {
             for (int rIdx = startingRow; rIdx < rowsIdx.length; rIdx++) {
@@ -1987,10 +1990,10 @@ public class ViewDataConsole extends javax.swing.JPanel implements PropertyChang
         }
     }
 
-//    /** Test Run: Stand alone mode... */
-//    public static void main(String[] args) {
-//        SheetTestFrame.main(args);
-//    }
+    //    /** Test Run: Stand alone mode... */
+    //    public static void main(String[] args) {
+    //        SheetTestFrame.main(args);
+    //    }
 
     //
     // Grave-Yard...

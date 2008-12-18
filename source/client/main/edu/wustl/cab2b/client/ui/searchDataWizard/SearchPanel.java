@@ -227,8 +227,9 @@ public class SearchPanel extends Cab2bPanel {
     }
 
     public SearchResultPanel getSearchResultPanel() {
-        if (srhResultPanel == null)
+        if (srhResultPanel == null) {
             srhResultPanel = new SearchResultPanel(contentPanel, null);
+        }
         return srhResultPanel;
     }
 
@@ -316,10 +317,11 @@ public class SearchPanel extends Cab2bPanel {
      * @return AdvancedSearchPanel 
      */
     public AdvancedSearchPanel getAdvancedSearchPanel() {
-        if (advSearchPanel == null)
+        if (advSearchPanel == null) {
             return new AdvancedSearchPanel();
-        else
+        } else {
             return advSearchPanel;
+        }
     }
 
     public void setAdvancedSearchPanel(AdvancedSearchPanel advancedSearchPanel) {

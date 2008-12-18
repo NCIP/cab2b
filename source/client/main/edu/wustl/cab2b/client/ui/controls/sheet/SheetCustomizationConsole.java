@@ -16,9 +16,12 @@ import javax.swing.table.*;
 public class SheetCustomizationConsole extends javax.swing.JPanel {
 
     SheetCustomizationModel scm;
+
     ModelListener lsnModel = new ModelListener();
+
     /** The default width of the first column.  */
     private int defaultChkColumnWith = 75;
+
     TableColumn colFilter;
 
     /** Creates new form SheetCustomizationConsole */
@@ -28,7 +31,6 @@ public class SheetCustomizationConsole extends javax.swing.JPanel {
 
         setModel(scm);
     }
-
 
     /** Resets the internal staet attibutes of this instance, so
      * that it can be used as fresh. I.e is without any Rows.   */
@@ -58,16 +60,11 @@ public class SheetCustomizationConsole extends javax.swing.JPanel {
 
         tblSettings.setAutoCreateRowSorter(true);
         tblSettings.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
+                new Object[][] { { null, null, null, null },
+                                 { null, null, null, null }, 
+                                 { null, null, null, null }, 
+                                 { null, null, null, null } },
+                new String[] { "Title 1", "Title 2", "Title 3", "Title 4" }));
         jScrollPane1.setViewportView(tblSettings);
 
         jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -90,28 +87,28 @@ public class SheetCustomizationConsole extends javax.swing.JPanel {
                 jButton3ActionPerformed(evt);
             }
         });
-    
-       
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.insets = new java.awt.Insets(1, 3, 1, 3);
         jPanel2.add(jButton3, gridBagConstraints);
 
         //Commenting the checkbox for the bug fix : 7744
         //Hiding the check box  
-      /*  cbShowFiltersHere.setText("Show Filters"); // NOI18N
-        cbShowFiltersHere.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbShowFiltersHereActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.insets = new java.awt.Insets(1, 3, 1, 3);
-        jPanel2.add(cbShowFiltersHere, gridBagConstraints);
-*/
+        /*  cbShowFiltersHere.setText("Show Filters"); // NOI18N
+          cbShowFiltersHere.addActionListener(new java.awt.event.ActionListener() {
+              public void actionPerformed(java.awt.event.ActionEvent evt) {
+                  cbShowFiltersHereActionPerformed(evt);
+              }
+          });
+          gridBagConstraints = new java.awt.GridBagConstraints();
+          gridBagConstraints.insets = new java.awt.Insets(1, 3, 1, 3);
+          jPanel2.add(cbShowFiltersHere, gridBagConstraints);
+        */
         jPanel1.add(jPanel2, java.awt.BorderLayout.SOUTH);
 
         add(jPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
+
     private void btAddColActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddColActionPerformed
         // TODO add your handling code here:
         scm.requestAddUserColumn();
@@ -120,7 +117,7 @@ public class SheetCustomizationConsole extends javax.swing.JPanel {
     private void cbShowFiltersHereActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbShowFiltersHereActionPerformed
         // TODO add your handling code here:
         adjustFilterColVisibility();
-}//GEN-LAST:event_cbShowFiltersHereActionPerformed
+    }//GEN-LAST:event_cbShowFiltersHereActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
@@ -128,28 +125,34 @@ public class SheetCustomizationConsole extends javax.swing.JPanel {
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    
-//    /**
-//     * @param args the command line arguments
-//     */
-//    public static void main(String args[]) {
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//
-//            public void run() {
-//                new SheetTestFrame().setVisible(true);
-//            }
-//        });
-//    }
+    //    /**
+    //     * @param args the command line arguments
+    //     */
+    //    public static void main(String args[]) {
+    //        java.awt.EventQueue.invokeLater(new Runnable() {
+    //
+    //            public void run() {
+    //                new SheetTestFrame().setVisible(true);
+    //            }
+    //        });
+    //    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAddCol;
+
     private javax.swing.JCheckBox cbShowFiltersHere;
+
     private javax.swing.JButton jButton3;
+
     private javax.swing.JPanel jPanel1;
+
     private javax.swing.JPanel jPanel2;
+
     private javax.swing.JScrollPane jScrollPane1;
+
     private javax.swing.JTable tblSettings;
+
     // End of variables declaration//GEN-END:variables
-    
+
     void setModel(SheetCustomizationModel scm) {
         this.scm.removePropertyChangeListener(lsnModel);
         this.scm = scm;
@@ -162,39 +165,41 @@ public class SheetCustomizationConsole extends javax.swing.JPanel {
     }
 
     private void readjustColumnHeadersWidth() {
-        tblSettings.getColumnModel().getColumn(0).setMaxWidth( 25);
-        tblSettings.getColumnModel().getColumn(1).setWidth( 90);
-        tblSettings.getColumnModel().getColumn(2).setMaxWidth( 60);
+        tblSettings.getColumnModel().getColumn(0).setMaxWidth(25);
+        tblSettings.getColumnModel().getColumn(1).setWidth(90);
+        tblSettings.getColumnModel().getColumn(2).setMaxWidth(60);
         tblSettings.revalidate();
         tblSettings.repaint();
     }
-    
-    void adjustFilterColVisibility(){
-        if( cbShowFiltersHere.isSelected())
+
+    void adjustFilterColVisibility() {
+        if (cbShowFiltersHere.isSelected()) {
             showFilterColumn();
-        else
+        } else {
             hideFilterColumn();
+        }
     }
-    
-    
-    void hideFilterColumn(){
-        if( null != colFilter)
+
+    void hideFilterColumn() {
+        if (null != colFilter) {
             //  Already removed!
             return;
+        }
         colFilter = tblSettings.getColumnModel().getColumn(3);
-        tblSettings.getColumnModel().removeColumn( colFilter);
+        tblSettings.getColumnModel().removeColumn(colFilter);
         tblSettings.setRowHeight(16);
     }
-    
-    void showFilterColumn(){
-        if( null == colFilter)
+
+    void showFilterColumn() {
+        if (null == colFilter) {
             //  Nothing to Add!
             return;
-        tblSettings.getColumnModel().addColumn( colFilter);
+        }
+        tblSettings.getColumnModel().addColumn(colFilter);
         colFilter = null;
         tblSettings.setRowHeight(75);
     }
-    
+
     /** Listens to the Changes in the Underlying Data Model.
      * Possible change are Addition of Column, Change of Model index....
      */
@@ -210,15 +215,15 @@ public class SheetCustomizationConsole extends javax.swing.JPanel {
     class FilterColumnCellRenderer extends DefaultTableCellRenderer {
 
         ColumnFilterVerticalConsole columnFilterVerticalConsole = new ColumnFilterVerticalConsole();
-        
-        FilterColumnCellRenderer(){
+
+        FilterColumnCellRenderer() {
             //  to show in Table move some components...
             columnFilterVerticalConsole.setHeader(null);
         }
 
         @Override
         public JComponent getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                boolean hasFocus, int row, int column) {
+                                                        boolean hasFocus, int row, int column) {
             columnFilterVerticalConsole.setModel((ColumnFilterModel<Comparable>) value);
             columnFilterVerticalConsole.changeOrientationToHorizontal();
             return columnFilterVerticalConsole;
