@@ -90,9 +90,7 @@ public class UserValidator {
 
         String dorianUrl = ClientPropertyLoader.getDorianUrl(idP);
         Credential credential = createCredentials(userName, password);
-
-        AuthenticationClient authenticationClient = getAuthenticationClient(dorianUrl, credential);
-        SAMLAssertion saml = getSAMLAssertion(authenticationClient);
+        SAMLAssertion saml = autheticateUser(dorianUrl, credential);
 
         GlobusCredential proxy = getGlobusCredentials(dorianUrl, saml);
 
@@ -102,11 +100,11 @@ public class UserValidator {
         logger.debug("Credential delegated sucessfully");
     }
 
-    private AuthenticationClient getAuthenticationClient(String dorianUrl, Credential credential) {
+    private SAMLAssertion autheticateUser(String authenticationUrl, Credential credential) {
         AuthenticationClient authenticationClient = null;
         try {
             logger.debug("Getting authentication client...");
-            authenticationClient = new AuthenticationClient(dorianUrl, credential);
+            authenticationClient = new AuthenticationClient(authenticationUrl, credential);
         } catch (MalformedURIException e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException("Please check the authentication service URL", ErrorCodeConstants.UR_0006);
@@ -116,13 +114,9 @@ public class UserValidator {
                     ErrorCodeConstants.CDS_020);
         }
 
-        return authenticationClient;
-    }
-
-    private SAMLAssertion getSAMLAssertion(AuthenticationClient authenticationClient) {
         SAMLAssertion saml = null;
         try {
-            logger.debug("Getting SAMLAssertion...");
+            logger.debug("Authenticating the user...");
             saml = authenticationClient.authenticate();
         } catch (InvalidCredentialFault e) {
             logger.error(e.getMessage(), e);
