@@ -69,7 +69,7 @@ public class Utility {
      * @return string representation of given path
      */
     public static String getPathDisplayString(IPath path) {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(40);
         sb.append("<HTML><B>Path</B>:");
         sb.append(path.getSourceEntity().getName());
         for (IAssociation association : path.getIntermediateAssociations()) {
@@ -142,7 +142,7 @@ public class Utility {
     }
 
     public static String getAttributeCDEDetails(AttributeInterface attribute, int offset) {
-        StringBuffer tooltip = new StringBuffer();
+        StringBuffer tooltip = new StringBuffer(30);
 
         String attributeDescription = attribute.getDescription();
         String wrappedDescription = "";

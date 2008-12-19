@@ -238,20 +238,17 @@ public class ClassNode extends GenericNode {
         int totalConditions = rule.size();
         String name = classNodeRenderer.getNameForToolTip();
         // Populate panels with corresponding value
-        sb.append("<HTML>");
-        sb.append("<P> Condition(s) on  ");
+        sb.append("<HTML><P> Condition(s) on  ");
         sb.append(name);
         sb.append("<P>");
         for (int i = 0; i < totalConditions; i++) {
             ICondition condition = rule.getCondition(i);
-            sb.append((i + 1)).append(") ");
+            sb.append((i + 1)).append(") <B>");
 
             String formattedAttributeName = Utility.getFormattedString(condition.getAttribute().getName());
 
-            sb.append("<B>");
             sb.append(formattedAttributeName);
-            sb.append("</B>");
-            sb.append(" ");
+            sb.append("</B> ");
             List<String> values = condition.getValues();
             RelationalOperator operator = condition.getRelationalOperator();
             sb.append(edu.wustl.cab2b.client.ui.query.Utility.displayStringForRelationalOperator(operator));

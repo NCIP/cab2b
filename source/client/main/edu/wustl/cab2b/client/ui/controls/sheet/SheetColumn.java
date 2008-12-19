@@ -162,8 +162,7 @@ public class SheetColumn extends TableColumn {
         StringBuffer vapus = new StringBuffer(24);
         vapus.append("[ ");
         vapus.append(getClass().getName());
-        vapus.append(": ");
-        vapus.append("Visible=");
+        vapus.append(": Visible=");
         vapus.append(isVisible);
         vapus.append(", ModelIdx=");
         vapus.append(getModelIndex());

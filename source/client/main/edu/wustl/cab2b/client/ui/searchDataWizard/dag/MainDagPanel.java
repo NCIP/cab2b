@@ -61,7 +61,9 @@ import edu.wustl.common.querysuite.queryobject.impl.Expression;
  */
 public class MainDagPanel extends Cab2bPanel {
     private static final long serialVersionUID = 1L;
+
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(MainDagPanel.class);
+
     /**
      * view to be added to this panel
      */
@@ -489,8 +491,8 @@ public class MainDagPanel extends Cab2bPanel {
      */
     protected void linkTwoNode(final ClassNode sourceNode, final ClassNode destNode, final IPath path,
                                List<Integer> intermediateExpressionsIds, final boolean updateQueryRequired) {
-        logger.debug("Linking nodes: " + sourceNode.getID() + " and " + destNode.getID()
-                + "; Intermediate exps: " + intermediateExpressionsIds.toString());
+        logger.debug("Linking nodes: " + sourceNode.getID() + " and " + destNode.getID() + "; Intermediate exps: "
+                + intermediateExpressionsIds.toString());
 
         // Update query object to have this association path set
         if (updateQueryRequired) {
@@ -759,7 +761,7 @@ public class MainDagPanel extends Cab2bPanel {
             for (int i = 0; i < ports.size(); i++) {
                 int associationNode = node.getLinkForSourcePort(ports.get(i)).getDestinationExpressionId();
                 if (i > 0 && !getNodeType(associationNode).equals(ClassNodeType.ViewOnlyNode)) {
-                    expressionString.append(" ").append(node.getLogicalOperator(ports.get(i))).append(' ');
+                    expressionString.append(' ').append(node.getLogicalOperator(ports.get(i))).append(' ');
                 }
 
                 if (expressionToStringMap.get(associationNode) != null) {
