@@ -28,7 +28,7 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * @return query result
      * @throws RemoteException if authentication fails or query execution fails.
      */
-    IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String dref, String idP)
+    IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String dref, String gridType)
             throws RemoteException, GeneralSecurityException, IOException, Exception;
 
     /**
@@ -36,7 +36,7 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * 
      * @throws RemoteException if save process fails
      */
-    void saveQuery(ICab2bQuery query, String dref, String idP) throws RemoteException, GeneralSecurityException,
+    void saveQuery(ICab2bQuery query, String dref, String gridType) throws RemoteException, GeneralSecurityException,
             IOException, Exception;
 
     /**
@@ -79,7 +79,7 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * @return list of IParameterizedQuery having only their name and description populated
      * @throws RemoteException if retrieving fails
      */
-    Collection<IParameterizedQuery> getAllQueryNameAndDescription(String delegateCredRef, String idP)
+    Collection<IParameterizedQuery> getAllQueryNameAndDescription(String delegateCredRef, String gridType)
             throws RemoteException, GeneralSecurityException, IOException, Exception;
 
     /**

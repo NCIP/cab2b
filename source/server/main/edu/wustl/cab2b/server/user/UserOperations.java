@@ -236,20 +236,20 @@ public class UserOperations extends DefaultBizLogic {
 
     /**
      * 
-     * @param idP
+     * @param gridType
      * @return
      */
-    private static GlobusCredential getGlobusCredentialCreated(String idP) {
+    private static GlobusCredential getGlobusCredentialCreated(String gridType) {
         GlobusCredential credential = null;
-        if ("Production".compareTo(idP) == 0) {
+        if ("Production".compareTo(gridType) == 0) {
             if (productionCredential == null || productionCredential.getTimeLeft() < 3600000) {
-                productionCredential = createGlobusCredential(idP);
+                productionCredential = createGlobusCredential(gridType);
             } else {
                 credential = productionCredential;
             }
-        } else if ("Training".compareTo(idP) == 0) {
+        } else if ("Training".compareTo(gridType) == 0) {
             if (trainingCredential == null || trainingCredential.getTimeLeft() < 3600000) {
-                trainingCredential = createGlobusCredential(idP);
+                trainingCredential = createGlobusCredential(gridType);
             } else {
                 credential = trainingCredential;
             }
@@ -262,17 +262,17 @@ public class UserOperations extends DefaultBizLogic {
      * 
      * @param dref
      * @param serializedCredRef
-     * @param idP
+     * @param gridType
      * @return GlobusCredential 
      * @throws GeneralSecurityException
      * @throws IOException
      * @throws Exception
      */
-    public static GlobusCredential getGlobusCredential(String serializedCredRef, String idP)
+    public static GlobusCredential getGlobusCredential(String serializedCredRef, String gridType)
             throws GeneralSecurityException, IOException, Exception {
         GlobusCredential delegatedCredential = null;
-        if (serializedCredRef != null && idP != null) {
-            GlobusCredential credential = getGlobusCredentialCreated(idP);
+        if (serializedCredRef != null && gridType != null) {
+            GlobusCredential credential = getGlobusCredentialCreated(gridType);
 
             /*
              * Create and Instance of the delegate credential client, specifying the DelegatedCredentialReference and 
@@ -303,15 +303,15 @@ public class UserOperations extends DefaultBizLogic {
 
     /**
      * 
-     * @param idP
+     * @param gridType
      * @return GlobusCredential for server 
      */
-    private static synchronized GlobusCredential createGlobusCredential(String idP) {
+    private static synchronized GlobusCredential createGlobusCredential(String gridType) {
         logger.debug("Generating GlobusCredential for server");
 
         String userHome = System.getProperty("user.home");
-        String certFileName = userHome + ServerProperties.getGridCert(idP);
-        String keyFileName = userHome + ServerProperties.getGridKey(idP);
+        String certFileName = userHome + ServerProperties.getGridCert(gridType);
+        String keyFileName = userHome + ServerProperties.getGridKey(gridType);
 
         GlobusCredential credential = null;
         X509Certificate cert = null;
@@ -356,16 +356,16 @@ public class UserOperations extends DefaultBizLogic {
     /**
      * 
      * @param dref
-     * @param idP
+     * @param gridType
      * @return It returns grid user name 
      * @throws GeneralSecurityException
      * @throws IOException
      * @throws Exception
      */
-    public String getCredentialUserName(String dref, String idP) throws GeneralSecurityException, IOException,
+    public String getCredentialUserName(String dref, String gridType) throws GeneralSecurityException, IOException,
             Exception {
         //TODO This is very wrong. Just to get the user gridId, CDS is called to get the user's credential.
-        GlobusCredential credential = getGlobusCredential(dref, idP);
+        GlobusCredential credential = getGlobusCredential(dref, gridType);
 
         String userName = null;
         if (credential == null) {

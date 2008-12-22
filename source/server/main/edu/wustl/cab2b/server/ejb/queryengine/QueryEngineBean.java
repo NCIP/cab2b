@@ -52,12 +52,12 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * @throws GeneralSecurityException
      * @throws IOException
      */
-    public IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String dref, String idP)
+    public IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String dref, String gridType)
             throws GeneralSecurityException, IOException, Exception {
         GlobusCredential cred = null;
         boolean hasAnySecureService = Utility.hasAnySecureService(query);
         if (hasAnySecureService) {
-            cred = UserOperations.getGlobusCredential(dref, idP);
+            cred = UserOperations.getGlobusCredential(dref, gridType);
         }
         new PopularCategoryOperations().setPopularity(query);
         return new QueryExecutor(query, cred).executeQuery();
@@ -81,12 +81,12 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * @throws IOException
      * @throws RemoteException if save process fails
      */
-    public void saveQuery(ICab2bQuery query, String dref, String idP) throws RemoteException,
+    public void saveQuery(ICab2bQuery query, String dref, String gridType) throws RemoteException,
             GeneralSecurityException, IOException, Exception {
         Long userId = null;
         UserOperations uop = new UserOperations();
         try {
-            userId = uop.getUserByName(uop.getCredentialUserName(dref, idP)).getUserId();
+            userId = uop.getUserByName(uop.getCredentialUserName(dref, gridType)).getUserId();
         } catch (GeneralSecurityException ge) {
             throw new RuntimeException("General Security Exception", ge.getMessage());
         } catch (Exception e) {
@@ -162,16 +162,14 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * @throws IOException
      * @throws RemoteException if retrieving fails
      */
-    public Collection<IParameterizedQuery> getAllQueryNameAndDescription(String dref, String idP)
+    public Collection<IParameterizedQuery> getAllQueryNameAndDescription(String dref, String gridType)
             throws RemoteException, IOException, GeneralSecurityException, Exception {
-
         String userName = null;
         try {
-            userName = new UserOperations().getCredentialUserName(dref, idP);
+            userName = new UserOperations().getCredentialUserName(dref, gridType);
             List idList = new ArrayList(1);
             idList.add(userName);
             return (List<IParameterizedQuery>) Utility.executeHQL("getQueriesByUserName", idList);
-
         } catch (HibernateException e) {
             throw new RemoteException(e.getMessage());
         } catch (GeneralSecurityException ge) {
@@ -179,7 +177,6 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
         } catch (Exception e) {
             throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
         }
-
     }
 
     /*

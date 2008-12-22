@@ -62,21 +62,20 @@ public class ServerProperties {
 
     /**
      * 
+     * @param gridType
      * @return the grid cert location
      */
-    public static String getGridCert(String idP) {
-        return props.getProperty(idP + "_grid_cert_location");
-
+    public static String getGridCert(String gridType) {
+        return props.getProperty(gridType + "_grid_cert_location");
     }
 
     /**
      * 
+     * @param gridType
      * @return the grid key location
      */
-    public static String getGridKey(String idP) {
-        return props.getProperty(idP + "_grid_key_location");
-
+    public static String getGridKey(String gridType) {
+        return props.getProperty(gridType + "_grid_key_location");
     }
 
-   
 }
