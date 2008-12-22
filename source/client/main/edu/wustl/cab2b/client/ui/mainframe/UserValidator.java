@@ -51,20 +51,20 @@ public class UserValidator {
 
     private String userName;
 
-    private static String idP = null;
+    private static String gridType = null;
 
     static String serializedDCR = null;
 
     public UserValidator(final String userName, final String idP) {
         this.userName = userName;
-        UserValidator.idP = idP;
+        UserValidator.gridType = idP;
     }
 
     /**
      * @return
      */
     public static String getIdP() {
-        return idP;
+        return gridType;
     }
 
     /**
@@ -81,20 +81,21 @@ public class UserValidator {
      * 
      * @param userName
      * @param password
-     * @param idP
+     * @param gridType
      * @throws RemoteException
      */
     public void validateUser(final String password) {
         logger.debug("Validating the user on grid...");
-        Utility.generateGlobusCertificate(idP);
+        Utility.generateGlobusCertificate(gridType);
 
-        String dorianUrl = ClientPropertyLoader.getDorianUrl(idP);
+        String authenticationURL = ClientPropertyLoader.getAuthenticationURL(gridType);
         Credential credential = createCredentials(userName, password);
-        SAMLAssertion saml = autheticateUser(dorianUrl, credential);
+        SAMLAssertion saml = autheticateUser(authenticationURL, credential);
 
+        String dorianUrl = ClientPropertyLoader.getIdP(gridType);
         GlobusCredential proxy = getGlobusCredentials(dorianUrl, saml);
 
-        DelegatedCredentialReference dcr = getDelegatedCredentialReference(proxy, idP);
+        DelegatedCredentialReference dcr = getDelegatedCredentialReference(proxy, gridType);
         serializeDelegatedCredentialReference(dcr);
 
         logger.debug("Credential delegated sucessfully");

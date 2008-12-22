@@ -67,28 +67,28 @@ public class CommonPropertyLoader {
     
     /**
 	 * 
-	 * @param idP
+	 * @param gridType
 	 * @return returns the sys-description file for GTS
 	 */
 
-	public static String getSyncDesFile(String idP) {
-		return props.getProperty(idP + "_sync_description_file");
+	public static String getSyncDesFile(String gridType) {
+		return props.getProperty(gridType + "_sync_description_file");
 	}
 	
 	/**
-	 * @param idP
+	 * @param gridType
 	 * @return signing policy for given idP
 	 */
-	public static String getSigningPolicy(String idP) {
-		return props.getProperty(idP + "_signing_policy");
+	public static String getSigningPolicy(String gridType) {
+		return props.getProperty(gridType + "_signing_policy");
 	}
 
 	/**
-	 * @param idP
+	 * @param gridType
 	 * @return certificate for given idP
 	 */
-	public static String getCertificate(String idP) {
-		return props.getProperty(idP + "_certificate");
+	public static String getCertificate(String gridType) {
+		return props.getProperty(gridType + "_certificate");
 	}
 
 }

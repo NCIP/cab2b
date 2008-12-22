@@ -59,7 +59,7 @@ public class LoginFrame extends JXFrame {
 
     private static String providedPassword;
 
-    private Cab2bComboBox idProvider;
+    private Cab2bComboBox gridType;
 
     private Cab2bTextField usrNameText;
 
@@ -215,24 +215,24 @@ public class LoginFrame extends JXFrame {
     private JPanel getRightPanel() {
         Cab2bLabel userNameLabel = getLabel("User Name :");
         Cab2bLabel passWordLabel = getLabel("Password :");
-        Cab2bLabel idProviderLabel = getLabel("ID Provider :");
+        Cab2bLabel gridTypeLabel = getLabel("Grid :");
 
         usrNameText = getTextField("");
         usrNameText.setPreferredSize(new Dimension(160, 20));
 
         passText = getPasswordField();
 
-        idProvider = new Cab2bComboBox();
-        idProvider.setPreferredSize(new Dimension(160, 23));
-        Font idProviderFont = new Font(idProvider.getFont().getName(), Font.PLAIN,
-                idProvider.getFont().getSize() + 1);
-        idProvider.setFont(idProviderFont);
-        idProvider.setOpaque(false);
-        idProvider.setBorder(border);
-        String[] idPNames = ClientPropertyLoader.getIdPNames();
-        int len = idPNames.length;
+        gridType = new Cab2bComboBox();
+        gridType.setPreferredSize(new Dimension(160, 23));
+        Font idProviderFont = new Font(gridType.getFont().getName(), Font.PLAIN,
+                gridType.getFont().getSize() + 1);
+        gridType.setFont(idProviderFont);
+        gridType.setOpaque(false);
+        gridType.setBorder(border);
+        String[] gridTypes = ClientPropertyLoader.getGridTypes();
+        int len = gridTypes.length;
         for (int i = 0; i < len; i++) {
-            idProvider.addItem(idPNames[i]);
+            gridType.addItem(gridTypes[i]);
         }
 
         ImageIcon loginImage = getImageIcon("login_button.gif");
@@ -243,7 +243,7 @@ public class LoginFrame extends JXFrame {
 
         setKeyMap(usrNameText);
         setKeyMap(passText);
-        idProvider.addKeyListener(new KeyListener() {
+        gridType.addKeyListener(new KeyListener() {
             /**
              * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
              */
@@ -285,8 +285,8 @@ public class LoginFrame extends JXFrame {
         containerPanel.add("tab", usrNameText);
         containerPanel.add("br", passWordLabel);
         containerPanel.add("tab", passText);
-        containerPanel.add("br", idProviderLabel);
-        containerPanel.add("tab", idProvider);
+        containerPanel.add("br", gridTypeLabel);
+        containerPanel.add("tab", gridType);
         containerPanel.add("br", new Cab2bLabel());
         containerPanel.add("br tab", loginButton);
         containerPanel.add("tab", new Cab2bLabel("|"));
@@ -361,7 +361,7 @@ public class LoginFrame extends JXFrame {
             return;
         }
         String password = new String(passwordArray);
-        final String selectedIdentityProvider = idProvider.getSelectedItem().toString();
+        final String selectedIdentityProvider = gridType.getSelectedItem().toString();
 
         try {
             new UserValidator(userName, selectedIdentityProvider).validateUser(password);

@@ -13,11 +13,11 @@ public class ClientPropertyLoader {
 
 	/**
 	 * 
-	 * @param idP
+	 * @param gridType
 	 * @return it returns the delegetee .. means identifier of cab2b server
 	 */
-	public static String getDelegetee(String idP) {
-		return props.getProperty(idP + "_delegetee_identifier");
+	public static String getDelegetee(String gridType) {
+		return props.getProperty(gridType + "_delegetee_identifier");
 	}
 
 	/**
@@ -29,35 +29,44 @@ public class ClientPropertyLoader {
 	}
 
 	/**
+	 * @param gridType
 	 * @return the CDS url for production grid and training grid
 	 */
-	public static String getCDSUrl(String idP) {
-		return props.getProperty(idP + "_cds_url");
+	public static String getCDSUrl(String gridType) {
+		return props.getProperty(gridType + "_cds_url");
 	}
 
 	/**
-	 * @param idP
+	 * @param gridType
 	 * @return returns the target grid certificate ,needed for generating Globus
 	 *         certificate for user
 	 */
-	public static String getGridCertForGlobus(String idP) {
-		return props.getProperty(idP + "_grid_gloubus");
+	public static String getGridCertForGlobus(String gridType) {
+		return props.getProperty(gridType + "_grid_gloubus");
 	}
 
 	/**
-	 * @param idP
+	 * @param gridType
 	 * @return Dorian url for given idP
 	 */
-	public static String getDorianUrl(String idP) {
-		return props.getProperty(idP + ".dorian.url");
+	public static String getIdP(String gridType) {
+		return props.getProperty(gridType + ".idP.url");
+	}
+	
+	/**
+	 * @param idP
+     * @return Dorian url for given idP
+	 */
+	public static String getAuthenticationURL(String gridType) {
+	    return props.getProperty(gridType + ".authentication.url");
 	}
 
 	/**
 	 * @return all the names of identity providers to show in drop down of login
 	 *         frame
 	 */
-	public static String[] getIdPNames() {
-		String allNames = props.getProperty("IdPs");
+	public static String[] getGridTypes() {
+		String allNames = props.getProperty("grid.type");
 		String[] idPNames = allNames.split(",");
 		return idPNames;
 	}

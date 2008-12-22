@@ -806,13 +806,13 @@ public class Utility {
 
     /**
      * This method generates the globus certificate in user.home folder
-     * @param idP
+     * @param gridType
      */
-    public static void generateGlobusCertificate(String idP) {
+    public static void generateGlobusCertificate(String gridType) {
         URL signingPolicy = null;
         URL certificate = null;
-        signingPolicy = Utility.class.getClassLoader().getResource(CommonPropertyLoader.getSigningPolicy(idP));
-        certificate = Utility.class.getClassLoader().getResource(CommonPropertyLoader.getCertificate(idP));
+        signingPolicy = Utility.class.getClassLoader().getResource(CommonPropertyLoader.getSigningPolicy(gridType));
+        certificate = Utility.class.getClassLoader().getResource(CommonPropertyLoader.getCertificate(gridType));
 
         if (signingPolicy != null || certificate != null) {
             copyCACertificates(signingPolicy);
@@ -822,10 +822,10 @@ public class Utility {
             throw new RuntimeException("Could not find CA certificates", ErrorCodeConstants.CDS_016);
         }
 
-        logger.debug("Getting sync-descriptor.xml file for " + idP);
+        logger.debug("Getting sync-descriptor.xml file for " + gridType);
         try {
             logger.debug("Synchronizing with GTS service");
-            URL syncDescFile = Utility.class.getClassLoader().getResource(CommonPropertyLoader.getSyncDesFile(idP));
+            URL syncDescFile = Utility.class.getClassLoader().getResource(CommonPropertyLoader.getSyncDesFile(gridType));
             SyncDescription description = (SyncDescription) Utility.deserializeDocument(syncDescFile.openStream(),
                                                                                         SyncDescription.class);
             SyncGTS.getInstance().syncOnce(description);
