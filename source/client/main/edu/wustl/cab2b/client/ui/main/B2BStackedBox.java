@@ -65,8 +65,10 @@ public class B2BStackedBox extends Cab2bPanel {
         myCategories.add(myCategoryLabel);
         final String titleMyCategories = ApplicationProperties.getValue(CATEGORY_BOX_TEXT);
         box.addBox(titleMyCategories, myCategories, MY_CATEGORIES_IMAGE, false);
-
-        Cab2bLabel savedQueryLabel = new Cab2bLabel("This will be available in next release");
+        
+//        Decision pending on implementation of these boxes    
+        
+/*        Cab2bLabel savedQueryLabel = new Cab2bLabel("This will be available in next release");
         Cab2bPanel savedQueries = new Cab2bPanel();
         savedQueries.add(savedQueryLabel);
         final String titleQuery = ApplicationProperties.getValue(QUERY_BOX_TEXT);
@@ -76,7 +78,7 @@ public class B2BStackedBox extends Cab2bPanel {
         Cab2bPanel popularCategories = new Cab2bPanel();
         popularCategories.add(popularCategoryLabel);
         final String titlePopularcategories = ApplicationProperties.getValue(POPULAR_CATEGORY_BOX_TEXT);
-        box.addBox(titlePopularcategories, popularCategories, POPULAR_CATEGORIES_IMAGE, false);
+        box.addBox(titlePopularcategories, popularCategories, POPULAR_CATEGORIES_IMAGE, false); */
 
         this.setBorder(null);
 
