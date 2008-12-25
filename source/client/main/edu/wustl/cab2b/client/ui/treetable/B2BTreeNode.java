@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Vector;
 
-import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 
@@ -14,50 +13,82 @@ import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.WindowUtilities;
 
+/**
+ * B2BTreeNode
+ * @author Deepak Shingan
+ * @author Mahesh Iyer
+ */
 public class B2BTreeNode {
 
     private Vector<B2BTreeNode> children = new Vector<B2BTreeNode>();
 
-    private String strDisplayName;
+    private String displayName;
 
     private Object value;
 
+    /**
+     * @return all children
+     */
     public Vector<B2BTreeNode> getChildren() {
-
         return children;
     }
 
+    /**
+     * @return String representation
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
-        return strDisplayName;
+        return displayName;
     }
 
+    /**
+     * @return value 
+     */
     public Object getValue() {
         return value;
     }
 
+    /**
+     * @param child child to add
+     */
     public void addChild(B2BTreeNode child) {
         this.children.add(child);
     }
 
+    /**
+     * @param children child to set
+     */
     public void setChildren(Vector<B2BTreeNode> children) {
         this.children = children;
 
     }
 
-    public void setDisplayName(String strDisplayName) {
-        this.strDisplayName = strDisplayName;
+    /**
+     * @param strDisplayName name to set
+     */
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
 
     }
 
+    /**
+     * @return display name
+     */
     public String getDisplayName() {
-        return strDisplayName;
+        return displayName;
 
     }
 
+    /**
+     * @param value value
+     */
     public void setValue(Object value) {
         this.value = value;
     }
 
+    /**
+     * @return dialog
+     */
     public JDialog showInDialog() {
         Dimension dimension = MainFrame.getScreenDimension();
 
@@ -73,14 +104,12 @@ public class B2BTreeNode {
         return dialog;
     }
 
+    /**
+     * @return panel for category results
+     */
     public Cab2bPanel getCategoryResultPanel() {
-        //creating tree 
         JTreeTable treeTable = new JTreeTable(new B2BNewModel(this));
-
-        //setting header null
         treeTable.setTableHeader(null);
-
-        //adding to scrollpane
         JScrollPane jScrollPane = new JScrollPane(treeTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jScrollPane.setBackground(Color.WHITE);
@@ -89,7 +118,7 @@ public class B2BTreeNode {
         trePanel.add(jScrollPane);
         return trePanel;
     }
-
+/*
     public static void main(String arr[]) {
         B2BTreeNode rootNode = new B2BTreeNode();
         rootNode.setDisplayName("GENE");
@@ -225,4 +254,5 @@ public class B2BTreeNode {
         myTestPanel.add(myTestTable);
         WindowUtilities.showWithScrollingInFrame(myTestTable, "testMe");
     }
+    */
 }
