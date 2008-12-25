@@ -63,6 +63,14 @@ import gov.nih.nci.cagrid.dcql.Object;
 public class ConstraintsBuilder {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ConstraintsBuilder.class);
 
+    private static final String DCQL_WILDCARD = "%";
+
+    /**
+     * This is probably temporary (might be removed when multiple outputs are to
+     * be supported)
+     */
+    private static final boolean constrainByParentExpressions = true;
+    
     private ConstraintsBuilderResult result;
 
     private ICab2bQuery query;
@@ -70,14 +78,6 @@ public class ConstraintsBuilder {
     private CategoryPreprocessorResult categoryPreprocessorResult;
 
     private IExpression rootExpr;
-
-    private static final String DCQL_WILDCARD = "%";
-
-    /**
-     * This is probably temporary (might be removed when multiple outputs are to
-     * be supported)
-     */
-    private final static boolean constrainByParentExpressions = true;
 
     /**
      * @return the rootExpr.
@@ -128,8 +128,10 @@ public class ConstraintsBuilder {
      * @return
      */
     private Set<Integer> getCategoryOutputExpressionIds() {
-        Set<TreeNode<IExpression>> outputExpressions = getCategoryPreprocessorResult().getExprsSourcedFromCategories().get(
-                                                                                                                           getQuery().getOutputEntity());
+        Set<TreeNode<IExpression>> outputExpressions = getCategoryPreprocessorResult()
+                                                          .getExprsSourcedFromCategories()
+                                                          .get(getQuery().getOutputEntity()
+                                                       );
         Set<Integer> outputExpressionIds = new HashSet<Integer>(outputExpressions.size());
 
         for (TreeNode<IExpression> exprNode : outputExpressions) {
@@ -324,8 +326,8 @@ public class ConstraintsBuilder {
         return new LocalAssociationConstraint(association);
     }
 
-    private static ForeignAssociationConstraint createForeignAssociation(
-                                                                         IInterModelAssociation interModelAssociation) {
+    private static ForeignAssociationConstraint createForeignAssociation
+                        (IInterModelAssociation interModelAssociation) {
         // 1. create foreign object
         // TODO multiple urls...
         // String leftServiceUrl = interModelAssociation.getSourceServiceUrl();
@@ -504,37 +506,58 @@ public class ConstraintsBuilder {
     }
 
     /**
-     * @param result
-     *            the result to set.
+     * @param result the result to set.
      */
     private void setResult(ConstraintsBuilderResult result) {
         this.result = result;
     }
 
+    /**
+     * @return IConstraints
+     */
     public IConstraints getConstraints() {
         return getQuery().getConstraints();
     }
 
+    /**
+     * @return IJoinGraph
+     */
     private IJoinGraph getJoinGraph() {
         return getConstraints().getJoinGraph();
     }
 
+    /**
+     * @param expressionId expression Id
+     * @return IExpression
+     */
     private IExpression getExpression(int expressionId) {
         return getConstraints().getExpression(expressionId);
     }
 
+    /**
+     * @return category Preprocessor Result
+     */
     public CategoryPreprocessorResult getCategoryPreprocessorResult() {
         return categoryPreprocessorResult;
     }
 
+    /**
+     * @param categoryPreprocessorResult category Preprocessor Result to set
+     */
     public void setCategoryPreprocessorResult(CategoryPreprocessorResult categoryPreprocessorResult) {
         this.categoryPreprocessorResult = categoryPreprocessorResult;
     }
 
+    /**
+     * @return The ICab2bQuery
+     */
     public ICab2bQuery getQuery() {
         return query;
     }
 
+    /**
+     * @param query Query to set
+     */
     public void setQuery(ICab2bQuery query) {
         this.query = query;
     }

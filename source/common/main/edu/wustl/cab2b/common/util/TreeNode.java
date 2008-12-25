@@ -4,34 +4,53 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Tree node
+ * @author Chetan Patil
+ */
 public class TreeNode<T> implements Serializable, Cloneable {
+    private static final long serialVersionUID = -7880358558369168948L;
+
     private T value;
 
     private List<TreeNode<T>> children;
 
     private TreeNode<T> parent;
 
+    /**
+     * @param value value
+     */
     public TreeNode(T value) {
         setValue(value);
     }
 
+    /**
+     * @param value child value to add
+     * @return child node
+     */
     public TreeNode<T> addChildValue(T value) {
         TreeNode<T> child = new TreeNode<T>(value);
         addChild(child);
         return child;
     }
 
+    /**
+     * @return Value
+     */
     public T getValue() {
         return value;
     }
 
     /**
-     * @param group
+     * @param value value
      */
     private void setValue(T value) {
         this.value = value;
     }
 
+    /**
+     * @return All children
+     */
     public List<TreeNode<T>> getChildren() {
         if (children == null) {
             children = new ArrayList<TreeNode<T>>();
@@ -39,6 +58,9 @@ public class TreeNode<T> implements Serializable, Cloneable {
         return children;
     }
 
+    /**
+     * @param child child to add
+     */
     public void addChild(TreeNode<T> child) {
         getChildren().add(child);
         child.setParent(this);
@@ -55,18 +77,32 @@ public class TreeNode<T> implements Serializable, Cloneable {
         this.parent = parent;
     }
 
+    /**
+     * @return TRUE if this node is leaf
+     */
     public boolean isLeaf() {
         return (children == null) || (children.size() == 0);
     }
 
+    /**
+     * @return TRUE if this node is root
+     */
     public boolean isRoot() {
         return getParent() == null;
     }
     
+    /**
+     * @return String representation
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
         return value.toString();
     }
 
+    /**
+     * @return TRUE if equals
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     public boolean equals(Object obj) {
         boolean flag = false;
         if (!TreeNode.class.equals(obj.getClass())) {
@@ -80,7 +116,8 @@ public class TreeNode<T> implements Serializable, Cloneable {
         return flag;
     }
 
-    /* (non-Javadoc)
+    /**
+     * @return hash code
      * @see java.lang.Object#hashCode()
      */
     public int hashCode() {
