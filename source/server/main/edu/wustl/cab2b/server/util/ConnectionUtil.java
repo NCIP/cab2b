@@ -37,7 +37,7 @@ public class ConnectionUtil {
             try {
                 connection = dataSource.getConnection();
             } catch (SQLException e) {
-                throw new RuntimeException("Unable to create a connection from datasource.", e, ErrorCodeConstants.DB_0003);
+                throw new RuntimeException("Unable to create a connection from datasource.", e, ErrorCodeConstants.DB_0002);
             }
         } else {
             throw new RuntimeException("Datasource lookup failed, got null datasource", new RuntimeException(), ErrorCodeConstants.JN_0001);
