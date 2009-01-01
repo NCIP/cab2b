@@ -26,7 +26,7 @@ public class InterModelConnectionBizLogic {
      * @param imc
      */
     public void saveInterModelConnection(InterModelConnection imc) {
-        if (PathFinder.getInstance().doesInterModelConnectionExist(imc)) {
+        if (PathFinder.getInstance().isInterModelConnectionExist(imc)) {
             return;
         }
         Connection conn = ConnectionUtil.getConnection();
