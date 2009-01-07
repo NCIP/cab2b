@@ -63,13 +63,13 @@ public class PathFinderTest extends TestCase {
         Set<ICuratedPath> set = p.autoConnect(entitySet);
         assertTrue(set.isEmpty());
     }
-    public void testDoesInterModelConnectionExist() {
+    public void testIsInterModelConnectionExist() {
         AttributeInterface a1 = TestUtil.getAttribute("en1", 1L, "a1", 2L);
         AttributeInterface a2 = TestUtil.getAttribute("en2", 11L, "a2", 22L);
         PathFinder p = new PathFinder();
         p.setInterModelConnections(new HashSet<InterModelConnection>());
         p.addInterModelConnection(new InterModelConnection(a1, a2));
-        boolean res = p.doesInterModelConnectionExist(a1, a2);
+        boolean res = p.isInterModelConnectionExist(a1, a2);
         assertTrue(res);
     }
 
