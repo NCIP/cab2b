@@ -37,8 +37,10 @@
 	<module><java>xalan.jar</java></module>
 	<module><java>xbean.jar</java></module>
 	<module><java>xmlpublic.jar</java></module>
+	
     <module><java>commons-collections-3.2.jar</java></module>
-    
+    <module><java>commons-io-1.4.jar</java></module>
+
 	<module><java>caGrid-fqp-client-1.2.jar</java></module>
 	<module><java>caGrid-fqp-common-1.2.jar</java></module>
 	<module><java>caGrid-fqp-stubs-1.2.jar</java></module>
