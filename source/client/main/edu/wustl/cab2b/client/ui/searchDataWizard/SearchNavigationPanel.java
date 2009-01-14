@@ -442,8 +442,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             if (!CommonUtils.isServiceURLConfigured(cab2bQuery, mainSearchPanel)) {
                 queryResults = null;
             } else {
-                // Get the Functional class for root and update query object
-                // with it.
+                // Get the Functional class for root and update query object with it.
                 queryResults = CommonUtils.executeQuery((ICab2bQuery) clientQueryBuilder.getQuery());
             }
         } catch (Exception e) {
