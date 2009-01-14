@@ -112,12 +112,6 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
         IQueryResult<IRecord> relatedQueryResults = null;
         try {
             relatedQueryResults = (IQueryResult<IRecord>) CommonUtils.executeQuery(query);
-        } catch (RuntimeException e) {
-            logger.error("Error in exeuting query :" + e.getMessage());
-            return null;
-        } catch (RemoteException e) {
-            logger.error("Error in exeuting query :" + e.getMessage());
-            return null;
         } catch (Exception e) {
             logger.error("Error in exeuting query :" + e.getMessage());
             return null;
