@@ -212,8 +212,7 @@ public class CommonUtils {
      * @throws RuntimeException
      * @throws RemoteException
      */
-    public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query) throws RuntimeException,
-            RemoteException, Exception {
+    public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query) throws Exception {
         boolean anySecureSevice = Utility.hasAnySecureService(query);
 
         QueryEngineBusinessInterface queryEngineBus = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
@@ -222,7 +221,7 @@ public class CommonUtils {
 
         IQueryResult<? extends IRecord> results = null;
         if (anySecureSevice) {
-            results = queryEngineBus.executeQuery(query, UserValidator.getSerializedDCR(), UserValidator.getIdP());
+            results = queryEngineBus.executeQuery(query, UserValidator.getSerializedDCR(), UserValidator.getGridType());
         } else {
             results = queryEngineBus.executeQuery(query, null, null);
         }
@@ -497,11 +496,9 @@ public class CommonUtils {
                                                                                                                        QueryEngineHome.class);
 
             cab2bQueryCollection = queryEngine.getAllQueryNameAndDescription(UserValidator.getSerializedDCR(),
-                                                                             UserValidator.getIdP());
-        } catch (RemoteException exception) {
-            CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);
-        } catch (Exception exception) {
-            CommonUtils.handleException(exception, NewWelcomePanel.getMainFrame(), true, true, true, false);
+                                                                             UserValidator.getGridType());
+        } catch (Exception e) {
+            CommonUtils.handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
         }
 
         return cab2bQueryCollection;
@@ -520,7 +517,7 @@ public class CommonUtils {
                                                                                                                 ExperimentHome.class);
 
             experiments = expBus.getExperimentsForUser(user, UserValidator.getSerializedDCR(),
-                                                       UserValidator.getIdP());
+                                                       UserValidator.getGridType());
         } catch (RemoteException e) {
             handleException(e, comp, true, false, false, false);
         }
@@ -671,13 +668,10 @@ public class CommonUtils {
      * Method to launch caB2B Search data wizard.
      */
     public static void launchSearchDataWizard() {
-
-        // Update the variable for latest screen dimension from the
-        // toolkit, this is to handle the situations where
-        // application is started and then screen resolution is
-        // changed, but the variable still holds old resolution
-        // size.
-
+        /* Update the variable for latest screen dimension from the toolkit, this is to handle the situations where
+         * application is started and then screen resolution is changed, but the variable still holds old resolution
+         * size.
+         */
         Dimension dimension = MainFrame.getScreenDimension();
         final String title = ApplicationProperties.getValue(SEARCH_FRAME_TITLE);
 

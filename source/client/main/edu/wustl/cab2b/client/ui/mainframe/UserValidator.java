@@ -53,17 +53,17 @@ public class UserValidator {
 
     private static String gridType = null;
 
-    static String serializedDCR = null;
+    private static String serializedDCR = null;
 
-    public UserValidator(final String userName, final String idP) {
+    public UserValidator(final String userName, final String gridType) {
         this.userName = userName;
-        UserValidator.gridType = idP;
+        UserValidator.gridType = gridType;
     }
 
     /**
      * @return
      */
-    public static String getIdP() {
+    public static String getGridType() {
         return gridType;
     }
 
@@ -276,7 +276,7 @@ public class UserValidator {
                     ErrorCodeConstants.CDS_007);
         } catch (PermissionDeniedFault e) {
             logger.error(e.getMessage(), e);
-            throw new RuntimeException("The server doesn't have permission to acess the client's credentials.",
+            throw new RuntimeException("Client does not have permission to delegate the credential to CDS.",
                     ErrorCodeConstants.CDS_008);
         } catch (MalformedURIException e) {
             logger.error(e.getMessage(), e);
@@ -311,5 +311,4 @@ public class UserValidator {
                     ErrorCodeConstants.CDS_005);
         }
     }
-
 }

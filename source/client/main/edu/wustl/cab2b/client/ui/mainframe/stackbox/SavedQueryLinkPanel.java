@@ -66,7 +66,6 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
      * Method to update search query panel
      */
     public void updateQueryLinkPanel() {
-
         this.removeAll();
         this.setLayout(new RiverLayout(5, 5));
         try {
@@ -75,7 +74,7 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
                                                                                                                        QueryEngineHome.class);
             Collection<IParameterizedQuery> cab2bQueries = queryEngine.getAllQueryNameAndDescription(
                                                                                                      UserValidator.getSerializedDCR(),
-                                                                                                     UserValidator.getIdP());
+                                                                                                     UserValidator.getGridType());
             ArrayList<IParameterizedQuery> cab2bQueryList = new ArrayList<IParameterizedQuery>(cab2bQueries);
             Collections.sort(cab2bQueryList, new QueryComparator());
 

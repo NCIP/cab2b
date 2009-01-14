@@ -176,25 +176,23 @@ public class ClientLauncher {
      * Loads the client side cache. If fails, logs error and quits
      */
     private static void loadCache() {
-        try {// ClientSideCache MUST be instantiated before anything else.
-            // Don't change order of below lines of code
+        try {// ClientSideCache MUST be instantiated before anything else. Don't change order of below lines of code
             ClientSideCache.getInstance();
             UserBusinessInterface userBusinessInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                    EjbNamesConstants.USER_BEAN,
                                                                                                                    UserHomeInterface.class);
-            String str = UserValidator.getSerializedDCR();
+            String serializedDCR = UserValidator.getSerializedDCR();
             UserInterface user = null;
-            if (str == null) {
+            if (serializedDCR == null) {
                 user = userBusinessInterface.getAnonymousUser();
             } else {
                 UserCache.getInstance().getCurrentUser();
-                user = userBusinessInterface.getUserByName(UserValidator.getSerializedDCR(),
-                                                                         UserValidator.getIdP());
+                user = userBusinessInterface.getUserByName(serializedDCR, UserValidator.getGridType());
                 if (user == null) {
-                    user = userBusinessInterface.insertUser(UserValidator.getSerializedDCR(),UserValidator.getIdP());
+                    user = userBusinessInterface.insertUser(serializedDCR, UserValidator.getGridType());
                 }
             }
-            
+
             UserCache.getInstance().init(user);
         } catch (LocatorException le) {
             CommonUtils.handleException(le, progressBar.getParent(), true, true, true, true);

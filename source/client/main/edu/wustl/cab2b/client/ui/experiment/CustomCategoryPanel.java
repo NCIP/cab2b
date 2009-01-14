@@ -209,7 +209,7 @@ public class CustomCategoryPanel extends JXFrame {
                                                                                  customDataCategoryText.getText(),
                                                                                  experiment,
                                                                                  UserValidator.getSerializedDCR(),
-                                                                                 UserValidator.getIdP());
+                                                                                 UserValidator.getGridType());
                         } catch (RemoteException e1) {
                             CommonUtils.handleException(e1, CustomCategoryPanel.this, true, true, true, false);
                         } catch (CheckedException e1) {

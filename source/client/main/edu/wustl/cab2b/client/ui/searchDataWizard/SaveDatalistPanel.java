@@ -263,7 +263,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
                                                                                         newRootDataRow,
                                                                                         dataListAnnotation,
                                                                                         UserValidator.getSerializedDCR(),
-                                                                                        UserValidator.getIdP());
+                                                                                        UserValidator.getGridType());
                         logger.debug("data list saved successfully (in entity with id) : "
                                 + MainSearchPanel.savedDataListMetadata.getId());
 

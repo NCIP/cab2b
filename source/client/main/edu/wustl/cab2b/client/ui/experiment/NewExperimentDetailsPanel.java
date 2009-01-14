@@ -161,7 +161,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                                                                                                                   EjbNamesConstants.EXPERIMENT,
                                                                                                                   ExperimentHome.class);
         try {
-            dataVector = expBus.getExperimentHierarchy(UserValidator.getSerializedDCR(), UserValidator.getIdP());
+            dataVector = expBus.getExperimentHierarchy(UserValidator.getSerializedDCR(), UserValidator.getGridType());
         } catch (RemoteException e1) {
             CommonUtils.handleException(e1, this, true, true, false, false);
         } catch (ClassNotFoundException e1) {
@@ -386,7 +386,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
                 try {
                     expBus.addExperiment(expGrpId, experiment, UserValidator.getSerializedDCR(),
-                                         UserValidator.getIdP());
+                                         UserValidator.getGridType());
                     SearchNavigationPanel.getMessageLabel().setText("* Experiment saved successfully *.");
                     MyExperimentLinkPanel.getInstance().updateMyExperimentPanel();
                     updateUI();
@@ -473,7 +473,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
             try {
                 newExpGrp = expGrpBus.addExperimentGroup(parentExpGrpID, newExpGrp,
-                                                         UserValidator.getSerializedDCR(), UserValidator.getIdP());
+                                                         UserValidator.getSerializedDCR(), UserValidator.getGridType());
                 logger.debug("returner expGrp id " + newExpGrp.getId());
             } catch (RemoteException e1) {
                 CommonUtils.handleException(e1, this, true, true, false, false);

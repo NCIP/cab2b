@@ -24,10 +24,10 @@ public class UserValidatorTest extends TestCase {
 			e.printStackTrace();
 		}
 		String idP = "Training";
-		UserValidator userValiodator = new UserValidator(p
+		UserValidator userValidator = new UserValidator(p
 				.getProperty("username"), idP);
-		userValiodator.validateUser(p.getProperty("password"));
-		assertNotNull("serializedDCR in UserValidator might be null due to unappropriate certificates",userValiodator.serializedDCR);
+		userValidator.validateUser(p.getProperty("password"));
+		assertNotNull("serializedDCR in UserValidator might be null due to unappropriate certificates",userValidator.getSerializedDCR());
 
 	}
 }

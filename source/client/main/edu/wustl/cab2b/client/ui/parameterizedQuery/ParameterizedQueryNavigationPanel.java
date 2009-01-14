@@ -196,7 +196,7 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                     return;
                 }
                 queryEngineBusinessInterface.saveQuery(cab2bParameterizedQuery, UserValidator.getSerializedDCR(),
-                                                       UserValidator.getIdP());
+                                                       UserValidator.getGridType());
                 message = "Query saved successfully.";
                 //}
                 SearchNavigationPanel.getMessageLabel().setText(message);
@@ -204,7 +204,7 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                 updateUI();
                 parameterizedQueryMainPanel.getDialog().dispose();
             } catch (Exception e) {
-                CommonUtils.handleException(new RuntimeException(e.getMessage(), ErrorCodeConstants.DB_0005),
+                CommonUtils.handleException(new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DB_0005),
                                             parameterizedQueryMainPanel, true, true, true, false);
                 parameterizedQueryMainPanel.getDialog().dispose();
             }

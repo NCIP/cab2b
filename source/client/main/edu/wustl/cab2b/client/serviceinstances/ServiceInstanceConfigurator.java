@@ -160,7 +160,7 @@ public class ServiceInstanceConfigurator {
         UserBusinessInterface userInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                        EjbNamesConstants.USER_BEAN,
                                                                                                        UserHomeInterface.class);
-        return userInterface.getUserByName(UserValidator.getSerializedDCR(), UserValidator.getIdP());
+        return userInterface.getUserByName(UserValidator.getSerializedDCR(), UserValidator.getGridType());
     }
 
 }

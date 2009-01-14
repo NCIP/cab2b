@@ -432,7 +432,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                                                                    null,
                                                                    spreadSheetViewPanel.getUserDefinedAttributes(),
                                                                    UserValidator.getSerializedDCR(),
-                                                                   UserValidator.getIdP());
+                                                                   UserValidator.getGridType());
                     experimentPanel.getSelectedExperiment().addDataListMetadata(dataListMetadata);
                     ExperimentBI.addDataListToExperiment(experimentPanel.getSelectedExperiment().getId(),
                                                          dataListMetadata.getId());
