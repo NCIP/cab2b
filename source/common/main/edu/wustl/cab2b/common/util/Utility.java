@@ -9,10 +9,8 @@ import static edu.wustl.cab2b.common.util.Constants.PV;
 import static edu.wustl.cab2b.common.util.Constants.TYPE_CATEGORY;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -31,6 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.axis.utils.XMLUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.globus.wsrf.encoding.ObjectDeserializer;
 import org.hibernate.HibernateException;
@@ -563,7 +562,6 @@ public class Utility {
 
             properties = new Properties();
             properties.load(is);
-
         } catch (IOException e) {
             logger.error("Unable to load properties from : " + propertyfile);
             e.printStackTrace();
@@ -792,19 +790,6 @@ public class Utility {
     }
 
     /**
-     * 
-     * @param inputStream
-     * @param objectType
-     * @return
-     * @throws Exception
-     */
-    public static Object deserializeDocument(InputStream inputStream, Class objectType) throws Exception {
-        Document doc = XMLUtils.newDocument(inputStream);
-        Object obj = ObjectDeserializer.toObject(doc.getDocumentElement(), objectType);
-        return obj;
-    }
-
-    /**
      * This method generates the globus certificate in user.home folder
      * @param gridType
      */
@@ -825,9 +810,12 @@ public class Utility {
         logger.debug("Getting sync-descriptor.xml file for " + gridType);
         try {
             logger.debug("Synchronizing with GTS service");
-            URL syncDescFile = Utility.class.getClassLoader().getResource(CommonPropertyLoader.getSyncDesFile(gridType));
-            SyncDescription description = (SyncDescription) Utility.deserializeDocument(syncDescFile.openStream(),
-                                                                                        SyncDescription.class);
+            URL syncDescFile = Utility.class.getClassLoader().getResource(
+                                                                          CommonPropertyLoader.getSyncDesFile(gridType));
+
+            Document doc = XMLUtils.newDocument(syncDescFile.openStream());
+            Object obj = ObjectDeserializer.toObject(doc.getDocumentElement(), SyncDescription.class);
+            SyncDescription description = (SyncDescription) obj;
             SyncGTS.getInstance().syncOnce(description);
             logger.debug("Successfully syncronized with GTS service. Globus certificates generated.");
         } catch (Exception e) {
@@ -838,36 +826,19 @@ public class Utility {
     }
 
     private static void copyCACertificates(URL inFileURL) {
-        InputStream in = null;
-        try {
-            in = inFileURL.openStream();
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException(inFileURL.getPath() + " file not found", ErrorCodeConstants.CDS_016);
-        }
-
-        File dest = null;
         int index = inFileURL.getPath().lastIndexOf('/');
         if (index > -1) {
             String fileName = inFileURL.getPath().substring(index + 1).trim();
-            dest = new File(gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory() + File.separator
-                    + fileName);
-        }
+            File destination = new File(gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory()
+                    + File.separator + fileName);
 
-        byte[] buf = new byte[1024];
-        int len = 0;
-        try {
-            OutputStream out = new FileOutputStream(dest);
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
+            try {
+                FileUtils.copyURLToFile(inFileURL, destination);
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+                throw new RuntimeException("Unable to copy CA certificates to [user.home]/.globus",
+                        ErrorCodeConstants.CDS_003);
             }
-
-            in.close();
-            out.close();
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException("Unable to copy CA certificates to [user.home]/.globus",
-                    ErrorCodeConstants.CDS_003);
         }
     }
 
