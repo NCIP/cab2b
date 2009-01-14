@@ -1,7 +1,6 @@
 package edu.wustl.cab2b.server.ejb.experiment;
 
 import java.rmi.RemoteException;
-import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -15,12 +14,11 @@ import edu.wustl.cab2b.common.CustomDataCategoryModel;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.exception.CheckedException;
-import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.experiment.ExperimentOperations;
-import edu.wustl.cab2b.server.user.UserOperations;
+import edu.wustl.cab2b.server.util.UserUtility;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
@@ -63,16 +61,9 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
      * @throws DAOException
      * @throws RemoteException
      */
-    public Vector getExperimentHierarchy(String dref, String idP) throws ClassNotFoundException, DAOException,
-            RemoteException {
-
-        String userName = null;
-        try {
-            userName = new UserOperations().getCredentialUserName(dref, idP);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
-        }
+    public Vector getExperimentHierarchy(String serializedDCR, String gridType) throws ClassNotFoundException,
+            DAOException, RemoteException {
+        String userName = UserUtility.getUsersGridId(serializedDCR, gridType);
         return (new ExperimentOperations()).getExperimentHierarchy(userName);
     }
 
@@ -135,19 +126,11 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#addExperiment(java.lang.Long,
      *      edu.wustl.cab2b.common.domain.Experiment)
      */
-    public void addExperiment(Long experimentGroupId, Experiment experiment, String serializedCredRef, String idP)
+    public void addExperiment(Long experimentGroupId, Experiment experiment, String serializedDCR, String gridType)
             throws RemoteException, BizLogicException, UserNotAuthorizedException, DAOException {
-
-        Long userId = null;
-        UserOperations uop = new UserOperations();
-        try {
-
-            userId = uop.getUserByName(uop.getCredentialUserName(serializedCredRef, idP)).getUserId();
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
-        }
-
+        Long userId = UserUtility.getLocalUserId(serializedDCR, gridType);
         experiment.setUserId(userId);
+
         (new ExperimentOperations()).addExperiment(experimentGroupId, experiment);
     }
 
@@ -238,18 +221,9 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
      * @return List of experiments for <code>user</code>
      * @throws RemoteException
      */
-    public List<Experiment> getExperimentsForUser(UserInterface user, String dref, String idP)
+    public List<Experiment> getExperimentsForUser(UserInterface user, String serializedDCR, String gridType)
             throws RemoteException {
-
-        String userName = null;
-        try {
-            userName = new UserOperations().getCredentialUserName(dref, idP);
-
-        } catch (GeneralSecurityException ge) {
-            throw new RuntimeException("General Security Exception", ge.getMessage());
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
-        }
+        String userName = UserUtility.getUsersGridId(serializedDCR, gridType);
         return new ExperimentOperations().getLatestExperimentForUser(userName);
     }
 

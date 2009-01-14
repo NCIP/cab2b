@@ -1,7 +1,6 @@
 package edu.wustl.cab2b.server.ejb.user;
 
 import java.rmi.RemoteException;
-import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +14,7 @@ import edu.wustl.cab2b.common.user.User;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.user.UserOperations;
+import edu.wustl.cab2b.server.util.UserUtility;
 
 /**
  * This bean handles user based operations
@@ -35,19 +35,11 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
      * @return User that has been inserted
      * @throws RemoteException
      */
-    public UserInterface insertUser(String dref, String idP) throws RemoteException {
-        UserOperations uop = new UserOperations();
-        try {
-            String userId = uop.getCredentialUserName(dref, idP);
-            User user = new User(userId, null, false);
-            return uop.insertUser(user);
-        } catch (GeneralSecurityException ge) {
-            logger.error(ge.getMessage(), ge);
-            throw new RemoteException(ge.getMessage(), ge);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new RemoteException(e.getMessage(), e);
-        }
+    public UserInterface insertUser(String serializedDCR, String gridType) throws RemoteException {
+        String usersGridId = UserUtility.getUsersGridId(serializedDCR, gridType);
+        User user = new User(usersGridId, null, false);
+
+        return new UserOperations().insertUser(user);
     }
 
     /**
@@ -86,18 +78,9 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
      * @return
      * @throws RemoteException
      */
-    public UserInterface getUserByName(String dref, String idP) throws RemoteException {
-        UserOperations uop = new UserOperations();
-        try {
-            String userId = uop.getCredentialUserName(dref, idP);
-            return uop.getUserByName(userId);
-        } catch (GeneralSecurityException ge) {
-            logger.error(ge.getMessage(), ge);
-            throw new RemoteException(ge.getMessage(), ge);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new RemoteException(e.getMessage(), e);
-        }
+    public UserInterface getUserByName(String serializedDCR, String gridType) throws RemoteException {
+        String usersGridId = UserUtility.getUsersGridId(serializedDCR, gridType);
+        return new UserOperations().getUserByName(usersGridId);
     }
 
     /**
@@ -107,16 +90,8 @@ public class UserBean extends AbstractStatelessSessionBean implements UserBusine
      * @return
      * @throws RemoteException
      */
-    public GlobusCredential getGlobusCredential(String dref, String idP) throws RemoteException {
-        try {
-            return UserOperations.getGlobusCredential(dref, idP);
-        } catch (GeneralSecurityException ge) {
-            logger.error(ge.getMessage(), ge);
-            throw new RemoteException(ge.getMessage(), ge);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new RemoteException(e.getMessage(), e);
-        }
+    public GlobusCredential getGlobusCredential(String serializedDCR, String gridType) throws RemoteException {
+        return UserUtility.getGlobusCredential(serializedDCR, gridType);
     }
 
     /**

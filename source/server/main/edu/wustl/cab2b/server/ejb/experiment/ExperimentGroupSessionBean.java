@@ -1,14 +1,12 @@
 package edu.wustl.cab2b.server.ejb.experiment;
 
 import java.rmi.RemoteException;
-import java.security.GeneralSecurityException;
 
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
-import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.experiment.ExperimentGroupBusinessInterface;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.experiment.ExperimentGroupOperations;
-import edu.wustl.cab2b.server.user.UserOperations;
+import edu.wustl.cab2b.server.util.UserUtility;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
@@ -37,21 +35,11 @@ public class ExperimentGroupSessionBean extends AbstractStatelessSessionBean imp
     * @see edu.wustl.cab2b.common.experiment.ExperimentGroupBusinessInterface#addExperimentGroup(java.lang.Long, edu.wustl.cab2b.common.domain.ExperimentGroup)
     */
     public ExperimentGroup addExperimentGroup(Long parentExperimentGroupId, ExperimentGroup experimentGroup,
-                                              String dref, String idP) throws BizLogicException,
+                                              String serializedDCR, String gridType) throws BizLogicException,
             UserNotAuthorizedException, RemoteException, DAOException {
-
-        Long userId = null;
-        UserOperations uop = new UserOperations();
-        try {
-
-            userId = uop.getUserByName(uop.getCredentialUserName(dref, idP)).getUserId();
-        } catch (GeneralSecurityException ge) {
-            throw new RuntimeException("General Security Exception", ge.getMessage());
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
-        }
-
+        Long userId = UserUtility.getLocalUserId(serializedDCR, gridType);
         experimentGroup.setUserId(userId);
+
         return (new ExperimentGroupOperations()).addExperimentGroup(parentExperimentGroupId, experimentGroup);
     }
 

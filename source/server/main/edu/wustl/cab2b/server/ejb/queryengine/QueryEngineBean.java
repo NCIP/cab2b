@@ -1,8 +1,6 @@
 package edu.wustl.cab2b.server.ejb.queryengine;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -21,7 +19,7 @@ import edu.wustl.cab2b.server.category.PopularCategoryOperations;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.queryengine.DCQLGenerator;
 import edu.wustl.cab2b.server.queryengine.QueryExecutor;
-import edu.wustl.cab2b.server.user.UserOperations;
+import edu.wustl.cab2b.server.util.UserUtility;
 import edu.wustl.common.hibernate.HibernateCleanser;
 import edu.wustl.common.querysuite.bizlogic.QueryBizLogic;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
@@ -45,23 +43,22 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * This method executes the given query if the given credential is authentic. 
      * 
      * @param query ICab2bQuery to be executed
-     * @param dref
+     * @param serializedDCR
      * @param idP
      * @return query result
      * @throws Exception if authentication fails or query execution fails.
      * @throws GeneralSecurityException
      * @throws IOException
      */
-    public IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String dref, String gridType)
-            throws GeneralSecurityException, IOException, Exception {
-        GlobusCredential cred = null;
+    public IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String serializedDCR, String gridType)
+            throws RemoteException {
+        GlobusCredential globusCredential = null;
         boolean hasAnySecureService = Utility.hasAnySecureService(query);
         if (hasAnySecureService) {
-            cred = UserOperations.getGlobusCredential(dref, gridType);
+            globusCredential = UserUtility.getGlobusCredential(serializedDCR, gridType);
         }
         new PopularCategoryOperations().setPopularity(query);
-        return new QueryExecutor(query, cred).executeQuery();
-
+        return new QueryExecutor(query, globusCredential).executeQuery();
     }
 
     /*
@@ -73,7 +70,7 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * This method saves the given ICab2bQuery object.
      *  
      * @param query
-     * @param dref
+     * @param serializedDCR
      * @param idP
      * 
      * @throws Exception if authentication fails or query execution fails.
@@ -81,17 +78,8 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * @throws IOException
      * @throws RemoteException if save process fails
      */
-    public void saveQuery(ICab2bQuery query, String dref, String gridType) throws RemoteException,
-            GeneralSecurityException, IOException, Exception {
-        Long userId = null;
-        UserOperations uop = new UserOperations();
-        try {
-            userId = uop.getUserByName(uop.getCredentialUserName(dref, gridType)).getUserId();
-        } catch (GeneralSecurityException ge) {
-            throw new RuntimeException("General Security Exception", ge.getMessage());
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
-        }
+    public void saveQuery(ICab2bQuery query, String serializedDCR, String gridType) throws RemoteException {
+        Long userId = UserUtility.getLocalUserId(serializedDCR, gridType);
         query.setUserId(userId);
 
         new HibernateCleanser(query).clean();
@@ -126,9 +114,7 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * @throws RemoteException if retrieving fails
      */
     public ICab2bQuery retrieveQueryById(Long queryId) throws RemoteException {
-        ICab2bQuery query = (ICab2bQuery) new QueryBizLogic<ICab2bQuery>().getQueryById(queryId);
-        return query;
-
+        return (ICab2bQuery) new QueryBizLogic<ICab2bQuery>().getQueryById(queryId);
     }
 
     /*
@@ -153,7 +139,7 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      */
     /**
      * This method returns all the queries with only their name and description populated.
-     * @param dref
+     * @param serializedDCR
      * @param idP
      * 
      * @return list of IParameterizedQuery having only their name and description populated
@@ -162,20 +148,15 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * @throws IOException
      * @throws RemoteException if retrieving fails
      */
-    public Collection<IParameterizedQuery> getAllQueryNameAndDescription(String dref, String gridType)
-            throws RemoteException, IOException, GeneralSecurityException, Exception {
-        String userName = null;
+    public Collection<IParameterizedQuery> getAllQueryNameAndDescription(String serializedDCR, String gridType)
+            throws RemoteException {
+        String usersGridId = UserUtility.getUsersGridId(serializedDCR, gridType);
+        List idList = new ArrayList(1);
+        idList.add(usersGridId);
         try {
-            userName = new UserOperations().getCredentialUserName(dref, gridType);
-            List idList = new ArrayList(1);
-            idList.add(userName);
             return (List<IParameterizedQuery>) Utility.executeHQL("getQueriesByUserName", idList);
         } catch (HibernateException e) {
-            throw new RemoteException(e.getMessage());
-        } catch (GeneralSecurityException ge) {
-            throw new RuntimeException("General Security Exception", ge.getMessage());
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
+            throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
         }
     }
 
@@ -203,7 +184,7 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
                 }
             }
         } catch (HibernateException e) {
-            throw new RemoteException(e.getMessage());
+            throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
         }
         return isDuplicate;
     }

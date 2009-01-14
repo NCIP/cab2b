@@ -1,11 +1,5 @@
 package edu.wustl.cab2b.server.user;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.security.GeneralSecurityException;
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,11 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.cagrid.gaards.cds.client.DelegatedCredentialUserClient;
-import org.cagrid.gaards.cds.delegated.stubs.types.DelegatedCredentialReference;
-import org.cagrid.gaards.websso.client.filter.CaGridWebSSODelegationLookupFilter;
-import org.globus.gsi.CertUtil;
-import org.globus.gsi.GlobusCredential;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 
@@ -28,15 +17,12 @@ import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.EntityCache;
-import edu.wustl.cab2b.server.util.ServerProperties;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.DBUtil;
 import edu.wustl.common.util.global.Constants;
-import gov.nih.nci.cagrid.common.Utils;
-import gov.nih.nci.cagrid.gridca.common.KeyUtil;
 
 /**
  * User operations like saving user, retrieving user, validating user are
@@ -50,10 +36,6 @@ import gov.nih.nci.cagrid.gridca.common.KeyUtil;
 public class UserOperations extends DefaultBizLogic {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(UserOperations.class);
 
-    private static GlobusCredential productionCredential;
-
-    private static GlobusCredential trainingCredential;
-
     /**
      * This method returns user from database with given user name
      * @param name user name
@@ -61,10 +43,9 @@ public class UserOperations extends DefaultBizLogic {
      */
     public UserInterface getUserByName(String value) {
         List<UserInterface> userList = null;
-        String query = new StringBuilder().append(
-                                                  "Select {User.*} from cab2b_user User where name COLLATE latin1_bin='").append(
-                                                                                                                                 value).append(
-                                                                                                                                               "'").toString();
+
+        final String queryStr = "Select {User.*} from cab2b_user User where name COLLATE latin1_bin='";
+        String query = new StringBuilder().append(queryStr).append(value).append("'").toString();
         try {
             SQLQuery sqlQuery = DBUtil.currentSession().createSQLQuery(query);
             userList = sqlQuery.addEntity("User", edu.wustl.cab2b.common.user.User.class).list();
@@ -232,148 +213,6 @@ public class UserOperations extends DefaultBizLogic {
             }
         }
         return egGroupToUrlListMap;
-    }
-
-    /**
-     * 
-     * @param gridType
-     * @return
-     */
-    private static GlobusCredential getGlobusCredentialCreated(String gridType) {
-        GlobusCredential credential = null;
-        if ("Production".compareTo(gridType) == 0) {
-            if (productionCredential == null || productionCredential.getTimeLeft() < 3600000) {
-                productionCredential = createGlobusCredential(gridType);
-            } else {
-                credential = productionCredential;
-            }
-        } else if ("Training".compareTo(gridType) == 0) {
-            if (trainingCredential == null || trainingCredential.getTimeLeft() < 3600000) {
-                trainingCredential = createGlobusCredential(gridType);
-            } else {
-                credential = trainingCredential;
-            }
-        }
-        return credential;
-    }
-
-    /**
-     * It retrieves the client GlobusCredential from the delegated reference 
-     * 
-     * @param dref
-     * @param serializedCredRef
-     * @param gridType
-     * @return GlobusCredential 
-     * @throws GeneralSecurityException
-     * @throws IOException
-     * @throws Exception
-     */
-    public static GlobusCredential getGlobusCredential(String serializedCredRef, String gridType)
-            throws GeneralSecurityException, IOException, Exception {
-        GlobusCredential delegatedCredential = null;
-        if (serializedCredRef != null && gridType != null) {
-            GlobusCredential credential = getGlobusCredentialCreated(gridType);
-
-            /*
-             * Create and Instance of the delegate credential client, specifying the DelegatedCredentialReference and 
-             * the credential of the delegatee. The DelegatedCredentialReference specifies which credential to obtain.
-             * The delegatee's credential is required to authenticate with the CDS such that the CDS may determining 
-             * if the the delegatee has been granted access to the credential in which they wish to obtain.
-             */
-            logger.debug("getting serialized ref ...");
-
-            DelegatedCredentialReference dref = getDelegatedCredentialReference(serializedCredRef);
-
-            logger.debug("getting deserialized client ");
-
-            DelegatedCredentialUserClient client = new DelegatedCredentialUserClient(dref, credential);
-
-            //The get credential method obtains a signed delegated credential from the CDS.
-            logger.debug("getting client reference ...");
-
-            delegatedCredential = client.getDelegatedCredential();
-
-        }
-
-        //Set the delegated credential as the default, the delegatee is now logged in as the delegator.
-        logger.debug("Retrieved Client credential");
-
-        return delegatedCredential;
-    }
-
-    /**
-     * 
-     * @param gridType
-     * @return GlobusCredential for server 
-     */
-    private static synchronized GlobusCredential createGlobusCredential(String gridType) {
-        logger.debug("Generating GlobusCredential for server");
-
-        String userHome = System.getProperty("user.home");
-        String certFileName = userHome + ServerProperties.getGridCert(gridType);
-        String keyFileName = userHome + ServerProperties.getGridKey(gridType);
-
-        GlobusCredential credential = null;
-        X509Certificate cert = null;
-        PrivateKey key = null;
-        try {
-            cert = CertUtil.loadCertificate(certFileName);
-            key = KeyUtil.loadPrivateKey(new File(keyFileName), null);
-            credential = new GlobusCredential(key, new X509Certificate[] { cert });
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException("Certificate or key file not found", e);
-        } catch (GeneralSecurityException e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException("Incorrect certificates found", e);
-        }
-
-        return credential;
-    }
-
-    /**
-     * It deserialized the client serialized credential back to DelegatedCredentialReference 
-     * @param serializedCredRef
-     * @return DelegatedCredentialReference
-     */
-    private static DelegatedCredentialReference getDelegatedCredentialReference(String serializedCredRef) {
-        DelegatedCredentialReference delegatedCredentialReference = null;
-        try {
-            delegatedCredentialReference = (DelegatedCredentialReference) Utils.deserializeObject(
-                                                                                                  new StringReader(
-                                                                                                          serializedCredRef),
-                                                                                                  DelegatedCredentialReference.class,
-                                                                                                  CaGridWebSSODelegationLookupFilter.class.getClassLoader().getResourceAsStream(
-                                                                                                                                                                                "cdsclient-config.wsdd"));
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException("Unable to deserialize the Delegation Reference", e);
-        }
-
-        return delegatedCredentialReference;
-    }
-
-    /**
-     * 
-     * @param dref
-     * @param gridType
-     * @return It returns grid user name 
-     * @throws GeneralSecurityException
-     * @throws IOException
-     * @throws Exception
-     */
-    public String getCredentialUserName(String dref, String gridType) throws GeneralSecurityException, IOException,
-            Exception {
-        //TODO This is very wrong. Just to get the user gridId, CDS is called to get the user's credential.
-        GlobusCredential credential = getGlobusCredential(dref, gridType);
-
-        String userName = null;
-        if (credential == null) {
-            userName = "Anonymous";
-        } else {
-            userName = credential.getIdentity();
-        }
-        return userName;
     }
 
 }

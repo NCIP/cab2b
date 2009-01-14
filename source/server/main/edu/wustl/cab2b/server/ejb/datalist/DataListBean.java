@@ -1,7 +1,6 @@
 package edu.wustl.cab2b.server.ejb.datalist;
 
 import java.rmi.RemoteException;
-import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,12 +12,11 @@ import edu.wustl.cab2b.common.datalist.IDataRow;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.exception.CheckedException;
-import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.server.datalist.DataListMetadataOperations;
 import edu.wustl.cab2b.server.datalist.DataListOperationsController;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
-import edu.wustl.cab2b.server.user.UserOperations;
+import edu.wustl.cab2b.server.util.UserUtility;
 
 /**
  * This class has methods to perform various operations on data list, like save,
@@ -38,17 +36,9 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
      * @throws RemoteException
      * @see DataListBusinessInterface#retrieveAllDataListMetadata()
      */
-    public List<DataListMetadata> retrieveAllDataListMetadata(String dref, String idP) throws RemoteException {
-
-        String userName = null;
-        try {
-            userName = new UserOperations().getCredentialUserName(dref, idP);
-
-        } catch (GeneralSecurityException ge) {
-            throw new RuntimeException("General Security Exception", ge.getMessage());
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
-        }
+    public List<DataListMetadata> retrieveAllDataListMetadata(String serializedDCR, String gridType)
+            throws RemoteException {
+        String userName = UserUtility.getUsersGridId(serializedDCR, gridType);
         return new DataListMetadataOperations().retrieveAllDataListMetadata(userName);
     }
 
@@ -86,23 +76,12 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
      * @throws RemoteException
      * @see DataListBusinessInterface#saveDataList(DataList)
      */
-    public DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata, String dref,
-                                         String idP) throws RemoteException {
-
-        Long userId = null;
-        UserOperations uop = new UserOperations();
-        try {
-
-            userId = uop.getUserByName(uop.getCredentialUserName(dref, idP)).getUserId();
-        } catch (GeneralSecurityException ge) {
-            throw new RuntimeException("General Security Exception", ge.getMessage());
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
-        }
-
+    public DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata,
+                                         String serializedDCR, String gridType) throws RemoteException {
+        Long userId = UserUtility.getLocalUserId(serializedDCR, gridType);
         datalistMetadata.setUserId(userId);
-        return new DataListOperationsController().saveDataList(rootDataRow, datalistMetadata);
 
+        return new DataListOperationsController().saveDataList(rootDataRow, datalistMetadata);
     }
 
     /**
@@ -129,20 +108,11 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
      */
     public DataListMetadata saveDataCategory(IDataRow rootRecordDataRow, DataListMetadata dataListMetadata,
                                              List<AttributeInterface> oldAttribute,
-                                             List<AttributeInterface> newAttributes, String serializedRef,
-                                             String idP) throws RemoteException, CheckedException {
-
-        Long userId = null;
-        UserOperations uop = new UserOperations();
-        try {
-
-            userId = uop.getUserByName(uop.getCredentialUserName(serializedRef, idP)).getUserId();
-        } catch (GeneralSecurityException ge) {
-            throw new RuntimeException("General Security Exception", ge.getMessage());
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
-        }
+                                             List<AttributeInterface> newAttributes, String serializedDCR,
+                                             String gridType) throws RemoteException, CheckedException {
+        Long userId = UserUtility.getLocalUserId(serializedDCR, gridType);
         dataListMetadata.setUserId(userId);
+
         return new DataListOperationsController().saveDataCategory(rootRecordDataRow, dataListMetadata,
                                                                    oldAttribute, newAttributes);
     }
@@ -162,31 +132,20 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
      */
     public DataListMetadata saveCustomDataCategory(IdName rootEntityId,
                                                    Collection<AttributeInterface> selectedAttributeList,
-                                                   String string, Experiment experiment, String dref, String idP)
-            throws RemoteException, CheckedException {
-
-        Long userId = null;
-        UserOperations uop = new UserOperations();
-        try {
-
-            userId = uop.getUserByName(uop.getCredentialUserName(dref, idP)).getUserId();
-        } catch (GeneralSecurityException ge) {
-            throw new RuntimeException("General Security Exception", ge.getMessage());
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to deserialize client delegated ref", e.getMessage());
-        }
-        
+                                                   String string, Experiment experiment, String serializedDCR,
+                                                   String gridType) throws RemoteException, CheckedException {
+        Long userId = UserUtility.getLocalUserId(serializedDCR, gridType);
         return new DataListOperationsController().saveCustomDataCategory(rootEntityId, selectedAttributeList,
-                                                                         string, experiment,userId);
+                                                                         string, experiment, userId);
     }
-    
+
     /**
      * This method returns false if datalist with given name is not present in the database.
      * It returns false otherwise.
      * @param name
      * @return
      */
-    public boolean isDataListByNamePresent(String name){
+    public boolean isDataListByNamePresent(String name) {
         return new DataListOperationsController().isDataListByNamePresent(name);
     }
 }
