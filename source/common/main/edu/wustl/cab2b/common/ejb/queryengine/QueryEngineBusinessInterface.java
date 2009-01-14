@@ -1,8 +1,6 @@
 package edu.wustl.cab2b.common.ejb.queryengine;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
-import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,15 +27,14 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * @throws RemoteException if authentication fails or query execution fails.
      */
     IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String dref, String gridType)
-            throws RemoteException, GeneralSecurityException, IOException, Exception;
+            throws RemoteException;
 
     /**
      * This method saves the given ICab2bQuery object.
      * 
      * @throws RemoteException if save process fails
      */
-    void saveQuery(ICab2bQuery query, String dref, String gridType) throws RemoteException, GeneralSecurityException,
-            IOException, Exception;
+    void saveQuery(ICab2bQuery query, String dref, String gridType) throws RemoteException;
 
     /**
      * This method updates the given ICab2bQuery object.
@@ -79,8 +76,8 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * @return list of IParameterizedQuery having only their name and description populated
      * @throws RemoteException if retrieving fails
      */
-    Collection<IParameterizedQuery> getAllQueryNameAndDescription(String delegateCredRef, String gridType)
-            throws RemoteException, GeneralSecurityException, IOException, Exception;
+    Collection<IParameterizedQuery> getAllQueryNameAndDescription(String serializedDCR, String gridType)
+            throws RemoteException;
 
     /**
      * This method returns the DCQL in tree format for the given query. Tree nodes consists of DCQL object
