@@ -38,15 +38,6 @@ public class ClientPropertyLoader {
 
 	/**
 	 * @param gridType
-	 * @return returns the target grid certificate ,needed for generating Globus
-	 *         certificate for user
-	 */
-	public static String getGridCertForGlobus(String gridType) {
-		return props.getProperty(gridType + "_grid_gloubus");
-	}
-
-	/**
-	 * @param gridType
 	 * @return Dorian url for given idP
 	 */
 	public static String getIdP(String gridType) {
