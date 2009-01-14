@@ -1,7 +1,6 @@
 package edu.wustl.cab2b.server.ejb.category;
 
 import java.rmi.RemoteException;
-import java.sql.Connection;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -14,7 +13,6 @@ import edu.wustl.cab2b.server.category.CategoryCache;
 import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.cab2b.server.category.PopularCategoryOperations;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
-import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.common.querysuite.metadata.category.Category;
 
 public class CategoryBean extends AbstractStatelessSessionBean implements CategoryBusinessInterface {
@@ -36,12 +34,7 @@ public class CategoryBean extends AbstractStatelessSessionBean implements Catego
      * @throws RemoteException EBJ specific Exception
      */
     public Category getCategoryByEntityId(Long entityId) throws RemoteException {
-        Connection con = ConnectionUtil.getConnection();
-        try {
-            return new CategoryOperations().getCategoryByEntityId(entityId, con);
-        } finally {
-            ConnectionUtil.close(con);
-        }
+        return new CategoryOperations().getCategoryByEntityId(entityId);
     }
 
     /**
@@ -50,12 +43,7 @@ public class CategoryBean extends AbstractStatelessSessionBean implements Catego
      * @throws RemoteException EBJ specific Exception
      */
     public Category getCategoryByCategoryId(Long categoryId) throws RemoteException {
-        Connection con = ConnectionUtil.getConnection();
-        try {
-            return new CategoryOperations().getCategoryByCategoryId(categoryId, con);
-        } finally {
-            ConnectionUtil.close(con);
-        }
+        return new CategoryOperations().getCategoryByCategoryId(categoryId);
     }
 
     /**
@@ -94,9 +82,7 @@ public class CategoryBean extends AbstractStatelessSessionBean implements Catego
      * @throws RemoteException EBJ specific Exception
      */
     public Set<AttributeInterface> getAllSourceAttributes(Category category) throws RemoteException {
-
         return CategoryCache.getInstance().getAllSourceAttributes(category);
-
     }
 
     /**

@@ -73,18 +73,18 @@ public class QueryExecutor {
 
     private IQueryResultTransformer<IRecord, ICategorialClassRecord> transformer;
 
-    private GlobusCredential cred;
+    private GlobusCredential credential;
 
     /**
      * Constructor initializes object with query and globus credentials
      * @param query
      * @param cred
      */
-    public QueryExecutor(ICab2bQuery query, GlobusCredential cred) {
+    public QueryExecutor(ICab2bQuery query, GlobusCredential credential) {
         setQuery(query);
         this.transformer = QueryResultTransformerFactory.createTransformer(query.getOutputEntity(), IRecord.class,
                                                                            ICategorialClassRecord.class);
-        this.cred = cred;
+        this.credential = credential;
     }
 
     private CategoryPreprocessorResult preProcessCategories(IQuery query) {
@@ -144,7 +144,7 @@ public class QueryExecutor {
                 IQueryResult<ICategorialClassRecord> allRootExprCatRecs = transformer.getCategoryResults(
                                                                                                          rootDCQLQuery,
                                                                                                          catClassForRootExpr,
-                                                                                                         cred);
+                                                                                                         credential);
                 categoryResults.add(allRootExprCatRecs);
 
                 // process children in parallel.
@@ -165,7 +165,7 @@ public class QueryExecutor {
                                                                 getOutputEntity().getName(),
                                                                 this.constraintsBuilderResult.getDcqlConstraintForClass(getOutputEntity()));
 
-            queryResult = transformer.getResults(dcqlQuery, getOutputEntity(), cred);
+            queryResult = transformer.getResults(dcqlQuery, getOutputEntity(), credential);
         }
 
         logger.info("Exiting QueryExecutor.");
@@ -281,7 +281,7 @@ public class QueryExecutor {
                 if (catClassForChildExpr == null) {
                     // expr was formed for entity on path between catClasses...
                     IQueryResult<IRecord> childExprClassRecs = transformer.getResults(queryForChildExpr,
-                                                                                      childEntity, cred);
+                                                                                      childEntity, credential);
 
                     // only one url at a time; so directly do next();
                     for (IRecord record : childExprClassRecs.getRecords().values().iterator().next()) {
@@ -295,7 +295,7 @@ public class QueryExecutor {
                     IQueryResult<ICategorialClassRecord> childExprCatResult = transformer.getCategoryResults(
                                                                                                              queryForChildExpr,
                                                                                                              catClassForChildExpr,
-                                                                                                             cred);
+                                                                                                             credential);
 
                     List<ICategorialClassRecord> childExprCatRecs = childExprCatResult.getRecords().get(
                                                                                                         parentId.getUrl());

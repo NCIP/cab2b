@@ -1,6 +1,5 @@
 package edu.wustl.cab2b.server.category;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,34 +49,21 @@ public class CategoryCache {
      * @param conn 
      * @return Reference to CategoryCache
      */
-    public static synchronized CategoryCache getInstance(Connection conn) {
+    public static synchronized CategoryCache getInstance() {
         if (cache == null) {
             CategoryCache cacheInstance = new CategoryCache();
-            cacheInstance.init(conn);
+            cacheInstance.init();
             cache = cacheInstance;
         }
         return cache;
     }
 
-    /**
-     * Returns reference to CategoryCache
-     * @return Reference to CategoryCache
-     */
-    public static synchronized CategoryCache getInstance() {
-        if (cache == null) {
-            throw new IllegalStateException(
-                    "to get Category with this method, it must be initialized using a connection before this call");
-        }
-        return cache;
-    }
-
     private CategoryCache() {
-
     }
 
-    private void init(Connection conn) {
+    private void init() {
         CategoryOperations categoryOperations = new CategoryOperations();
-        categories = categoryOperations.getAllCategories(conn);
+        categories = categoryOperations.getAllCategories();
         categoryVsClasseSet = new HashMap<Long, Set<EntityInterface>>(categories.size());
         categoryVsAttributeSet = new HashMap<Long, Set<AttributeInterface>>(categories.size());
         for (Category category : categories) {
@@ -158,8 +144,8 @@ public class CategoryCache {
      * Refreshes Category cache 
      * @param connection
      */
-    public void refreshCategoryCache(Connection connection) {
+    public void refreshCategoryCache() {
         logger.info("Refreshing Category cahce...");
-        init(connection);
+        init();
     }
 }

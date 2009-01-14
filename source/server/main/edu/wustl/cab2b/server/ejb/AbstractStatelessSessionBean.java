@@ -59,17 +59,19 @@ public abstract class AbstractStatelessSessionBean implements SessionBean {
     public void setSessionContext(SessionContext sessionContext) throws EJBException, RemoteException {
         this.sessionContext = sessionContext;
         Logger.configure("caB2B.logger");
+        TimerUtill.initilizeSync();
+
         EntityCache.getInstance();
+
         Connection connection = ConnectionUtil.getConnection();
         try {
             PathFinder.getInstance(connection);
-            CategoryCache.getInstance(connection);
         } finally {
             ConnectionUtil.close(connection);
         }
-        DatalistCache.getInstance();
 
-        TimerUtill.initilizeSync();
+        CategoryCache.getInstance();
+        DatalistCache.getInstance();
     }
 
 }

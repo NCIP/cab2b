@@ -105,26 +105,6 @@ public class UtilityOperations extends DefaultBizLogic {
         }
     }
 
-    //    /**
-    //     * Method to refresh Path and Entity cache. 
-    //     * 
-    //     * @param refreshEntityCache If true refreshes entity cache along with path. If false, only rereshes path cache.
-    //     */
-    //    public void refreshPathAndEntityCache(boolean refreshEntityCache) {
-    //        logger.info("Successful access on remote bean!!!!");
-    //        Connection connection = ConnectionUtil.getConnection();
-    //        PathFinder.refreshCache(connection, refreshEntityCache);
-    //    }
-    //
-    //    /**
-    //     * Method to refresh category cache.
-    //     */
-    //    public void refreshCategoryAndEntityCache() {
-    //        EntityCache.getInstance().refreshCache();
-    //        Connection connection = ConnectionUtil.getConnection();
-    //        CategoryCache.getInstance().refreshCategoryCache(connection);
-    //    }
-
     /**
      * Adds the curated path to cache
      * @param curatedPath path to be added to cache.
@@ -137,13 +117,15 @@ public class UtilityOperations extends DefaultBizLogic {
     public synchronized static void refreshCache() {
         logger.info("Refreshing cache initiated...");
         EntityCache.getInstance().refreshCache();
+
         Connection con = ConnectionUtil.getConnection();
         try {
             PathFinder.refreshCache(con, false);
-            CategoryCache.getInstance().refreshCategoryCache(con);
         } finally {
             ConnectionUtil.close(con);
         }
+
+        CategoryCache.getInstance().refreshCategoryCache();
         logger.info("Cache refreshing sucessfull");
     }
 }
