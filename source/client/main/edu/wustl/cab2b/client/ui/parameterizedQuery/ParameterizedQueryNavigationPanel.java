@@ -188,7 +188,9 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
 
                     message = "Query updated successfully.";
                 } else {*/
-                if (queryEngineBusinessInterface.isQueryNameDuplicate(cab2bParameterizedQuery.getName())) {
+                if (queryEngineBusinessInterface.isQueryNameDuplicate(cab2bParameterizedQuery.getName(),
+                                                                      UserValidator.getSerializedDCR(),
+                                                                      UserValidator.getGridType())) {
                     JOptionPane.showMessageDialog(
                                                   parameterizedQueryMainPanel,
                                                   "Query with same name already exist. Please try saving with different name.",
