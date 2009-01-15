@@ -28,7 +28,7 @@
 	<module><java>axis.jar</java></module>
 	<module><java>castor-1.0.4-patched.jar</java></module>
 
-	<module><java>cog-jglobus.jar</java></module>
+	<!--  module><java>cog-jglobus.jar</java></module -->
 	<module><java>commons-discovery.jar</java></module>
 	
 	<module><java>saaj.jar</java></module>
@@ -64,7 +64,7 @@
     
     <module><java>commons-lang.jar</java></module>
    	<module><java>castor-1.0.4-patched.jar</java></module>
-    <module><java>jce-jdk13-125.jar</java></module>
+    <!-- module><java>jce-jdk13-125.jar</java></module -->
 
     <module><java>caGrid-sdkQuery-core-1.2.jar</java></module>        
         
@@ -92,12 +92,10 @@
     <module><java>caGrid-ServiceSecurityProvider-client-1.2.jar</java></module>
     <module><java>caGrid-ServiceSecurityProvider-common-1.2.jar</java></module>
    
-    
-    <module><java>cog-jglobus.jar</java></module>
     <module><java>commons-logging-1.1.jar</java></module>
-    <module><java>cryptix32.jar</java></module>
-    <module><java>cryptix-asn1.jar</java></module>
-    <module><java>puretls.jar</java></module>
+    <!-- module><java>cryptix32.jar</java></module -->
+    <!-- module><java>cryptix-asn1.jar</java></module -->
+    <!-- module><java>puretls.jar</java></module -->
     <module><java>xmlsec-1.4.0.jar</java></module>
 
     <module><java>metadata.jar</java></module>

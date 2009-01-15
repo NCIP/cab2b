@@ -352,9 +352,7 @@
 					<include name="*.*" />
 				</fileset>
 		</copy>
-		
-		
-		
+			
 		<replace file="${server.jar.dir}/hibernate.cfg.xml" token="DS-NAME" value="${datasource.name}" />
 		<jar basedir="${server.jar.dir}" destfile="${server.jar.file}" />
 	</target>
@@ -389,6 +387,12 @@
 				<exclude name="jbossall-client.jar" />
 				<exclude name="commons-logging-1.0.4.jar" />
 				<exclude name="log4j-1.2.14.jar" />
+				
+				<exclude name="cog-jglobus.jar" />
+				<exclude name="cryptix32.jar" />
+				<exclude name="cryptix-asn1.jar" />
+				<exclude name="jce-jdk13-125.jar" />
+				<exclude name="puretls.jar" />
 			</fileset>
 			<fileset dir="lib/server">
 				<include name="**/*.jar" />
@@ -415,6 +419,13 @@
 		<copy overwrite="true" file="lib/server/oracleDriver.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/server/mysql-connector-java-3.0.16-ga-bin.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/common/hibernate3.jar" todir="${jboss.common.lib.dir}" />
+		
+		<copy overwrite="true" file="lib/common/cog-jglobus.jar" todir="${jboss.common.lib.dir}" />
+		<copy overwrite="true" file="lib/common/cryptix32.jar" todir="${jboss.common.lib.dir}" />
+		<copy overwrite="true" file="lib/common/cryptix-asn1.jar" todir="${jboss.common.lib.dir}" />
+		<copy overwrite="true" file="lib/common/jce-jdk13-125.jar" todir="${jboss.common.lib.dir}" />
+		<copy overwrite="true" file="lib/common/puretls.jar" todir="${jboss.common.lib.dir}" />
+
 		<mkdir dir="${jboss.home}/server/default/log" />
 		<echo message="" file="${jboss.log.dir}/caB2B.log" append="false" />
 	</target>
