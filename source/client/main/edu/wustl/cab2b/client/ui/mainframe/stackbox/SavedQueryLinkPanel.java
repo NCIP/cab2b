@@ -22,8 +22,8 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
+import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
@@ -47,9 +47,9 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
     * @author deepak_shingan
     *
     */
-    class QueryComparator implements Comparator<IParameterizedQuery> {
+    class QueryComparator implements Comparator<ICab2bQuery> {
 
-        public int compare(IParameterizedQuery arg0, IParameterizedQuery arg1) {
+        public int compare(ICab2bQuery arg0, ICab2bQuery arg1) {
             int result = 0;
             long value = arg0.getId() - arg1.getId();
             if (value > 0) {
@@ -72,14 +72,14 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
             QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                        EjbNamesConstants.QUERY_ENGINE_BEAN,
                                                                                                                        QueryEngineHome.class);
-            Collection<IParameterizedQuery> cab2bQueries = queryEngine.getAllQueryNameAndDescription(
-                                                                                                     UserValidator.getSerializedDCR(),
-                                                                                                     UserValidator.getGridType());
-            ArrayList<IParameterizedQuery> cab2bQueryList = new ArrayList<IParameterizedQuery>(cab2bQueries);
+            Collection<ICab2bQuery> cab2bQueries = queryEngine.getUsersQueriesDetail(
+                                                                                     UserValidator.getSerializedDCR(),
+                                                                                     UserValidator.getGridType());
+            ArrayList<ICab2bQuery> cab2bQueryList = new ArrayList<ICab2bQuery>(cab2bQueries);
             Collections.sort(cab2bQueryList, new QueryComparator());
 
             int queryCounter = 0;
-            for (IParameterizedQuery query : cab2bQueryList) {
+            for (ICab2bQuery query : cab2bQueryList) {
                 String queryName = query.getName();
                 Cab2bHyperlink<Long> queryLink = new Cab2bHyperlink<Long>(true);
                 queryLink.setUserObject(query.getId());
@@ -130,15 +130,15 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
      * @return
      */
     private ShowAllPanel getAllQueryPanel() {
-        final Collection<IParameterizedQuery> cab2bQueryCollection = CommonUtils.getUserSearchQueries();
+        final Collection<ICab2bQuery> cab2bQueryCollection = CommonUtils.getUserSearchQueries();
         final Object objData[][] = new Object[cab2bQueryCollection.size()][5];
         final String headers[] = { ShowAllSavedQueryPanel.QUERY_NAME_TITLE, ShowAllSavedQueryPanel.QUERY_DATE_TITLE, ShowAllSavedQueryPanel.QUERY_DESCRIPTION_TITLE, "Query ID-Hidden" };
         int i = 0;
-        for (IParameterizedQuery paraQuery : cab2bQueryCollection) {
-            objData[i][0] = paraQuery.getName();
-            objData[i][1] = Utility.getFormattedDate(paraQuery.getCreatedDate());
-            objData[i][2] = paraQuery.getDescription();
-            objData[i][3] = paraQuery.getId();
+        for (ICab2bQuery query : cab2bQueryCollection) {
+            objData[i][0] = query.getName();
+            objData[i][1] = Utility.getFormattedDate(query.getCreatedDate());
+            objData[i][2] = query.getDescription();
+            objData[i][3] = query.getId();
             i++;
         }
         return new ShowAllSavedQueryPanel(headers, objData, ShowAllSavedQueryPanel.QUERY_NAME_TITLE);

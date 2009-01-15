@@ -78,7 +78,6 @@ import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.CategoryPopularityComparator;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.category.Category;
-import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.util.global.ApplicationProperties;
 
@@ -221,7 +220,8 @@ public class CommonUtils {
 
         IQueryResult<? extends IRecord> results = null;
         if (anySecureSevice) {
-            results = queryEngineBus.executeQuery(query, UserValidator.getSerializedDCR(), UserValidator.getGridType());
+            results = queryEngineBus.executeQuery(query, UserValidator.getSerializedDCR(),
+                                                  UserValidator.getGridType());
         } else {
             results = queryEngineBus.executeQuery(query, null, null);
         }
@@ -484,19 +484,19 @@ public class CommonUtils {
     /**
      * @return Recent search queries
      */
-    public static Collection<IParameterizedQuery> getUserSearchQueries() {
+    public static Collection<ICab2bQuery> getUserSearchQueries() {
         /*
          * TODO These default UserSearchQueries will be removed later after SAVE
          * QUERY support
          */
-        Collection<IParameterizedQuery> cab2bQueryCollection = null;
+        Collection<ICab2bQuery> cab2bQueryCollection = null;
         try {
             QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                        EjbNamesConstants.QUERY_ENGINE_BEAN,
                                                                                                                        QueryEngineHome.class);
 
-            cab2bQueryCollection = queryEngine.getAllQueryNameAndDescription(UserValidator.getSerializedDCR(),
-                                                                             UserValidator.getGridType());
+            cab2bQueryCollection = queryEngine.getUsersQueriesDetail(UserValidator.getSerializedDCR(),
+                                                                     UserValidator.getGridType());
         } catch (Exception e) {
             CommonUtils.handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
         }
@@ -573,7 +573,6 @@ public class CommonUtils {
         IDataRow rootNode = MainSearchPanel.getDataList().getRootDataRow();
         // This node is hidden node in the tree view
         return rootNode.getChildren().size();
-
     }
 
     /**
