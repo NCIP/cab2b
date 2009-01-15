@@ -58,6 +58,11 @@
 		edu.wustl.cab2b.common.domain.ExperimentGroup as expGrp where
 		expGrp.name = ?
 	</query>
-
+	
+	<query name="getUserQueriesDetails">
+		select new edu.wustl.cab2b.common.queryengine.Cab2bQuery (q.id, q.name, q.description, q.createdDate)
+		from edu.wustl.cab2b.common.queryengine.Cab2bQuery q
+		where q.userId = (Select u.userId from edu.wustl.cab2b.common.user.User u where u.userName = ?)
+	</query>
 
 </hibernate-mapping>

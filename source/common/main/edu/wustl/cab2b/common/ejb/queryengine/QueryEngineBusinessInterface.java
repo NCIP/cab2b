@@ -9,7 +9,6 @@ import edu.wustl.cab2b.common.domain.DCQL;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
-import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 
 /**
  * 
@@ -53,14 +52,6 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
     ICab2bQuery retrieveQueryById(Long queryId) throws RemoteException;
 
     /**
-     * This method retrieves all the the queries. 
-     * 
-     * @return list of ICab2bQuery objects
-     * @throws RemoteException if retrieving fails
-     */
-    List<ICab2bQuery> retrieveAllQueries() throws RemoteException;
-
-    /**
      * This method checks whether the given query name has already been used or not.
      * 
      * @param queryName name of the query that is to be verified 
@@ -68,7 +59,7 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * 
      * @throws RemoteException if checking fails
      */
-    boolean isQueryNameDuplicate(String queryName) throws RemoteException;
+    boolean isQueryNameDuplicate(String queryName, String serializedDCR, String gridType) throws RemoteException;
 
     /**
      * This method returns all the queries with only their name and description populated.
@@ -76,7 +67,7 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * @return list of IParameterizedQuery having only their name and description populated
      * @throws RemoteException if retrieving fails
      */
-    Collection<IParameterizedQuery> getAllQueryNameAndDescription(String serializedDCR, String gridType)
+    Collection<ICab2bQuery> getUsersQueriesDetail(String serializedDCR, String gridType)
             throws RemoteException;
 
     /**
@@ -87,4 +78,12 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * @return TreeNode<DCQL>
      */
     DCQL getDCQL(ICab2bQuery query) throws RemoteException;
+
+    /**
+     * This method retrieves all the the queries created by the given user. 
+     * 
+     * @return list of ICab2bQuery objects
+     * @throws RemoteException if retrieving fails
+     */
+    List<ICab2bQuery> retrieveAllQueriesByUser(String serializedDCR, String gridType) throws RemoteException;
 }

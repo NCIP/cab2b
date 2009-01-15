@@ -1,16 +1,13 @@
 package edu.wustl.cab2b.server.ejb.queryengine;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.globus.gsi.GlobusCredential;
-import org.hibernate.HibernateException;
 
 import edu.wustl.cab2b.common.domain.DCQL;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
-import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -19,11 +16,9 @@ import edu.wustl.cab2b.server.category.PopularCategoryOperations;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.queryengine.DCQLGenerator;
 import edu.wustl.cab2b.server.queryengine.QueryExecutor;
+import edu.wustl.cab2b.server.queryengine.QueryOperations;
 import edu.wustl.cab2b.server.util.UserUtility;
 import edu.wustl.common.hibernate.HibernateCleanser;
-import edu.wustl.common.querysuite.bizlogic.QueryBizLogic;
-import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
-import edu.wustl.common.util.dbManager.HibernateUtility;
 
 /**
  * Class for handling query related operations
@@ -33,14 +28,11 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
 
     private static final long serialVersionUID = 8416841912609836063L;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#executeQuery(edu.wustl.cab2b.common.queryengine.ICab2bQuery,
-     *      org.globus.gsi.GlobusCredential)
-     */
     /**
      * This method executes the given query if the given credential is authentic. 
+     *  
+     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#executeQuery(edu.wustl.cab2b.common.queryengine.ICab2bQuery,
+     *      org.globus.gsi.GlobusCredential)
      * 
      * @param query ICab2bQuery to be executed
      * @param serializedDCR
@@ -61,141 +53,90 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
         return new QueryExecutor(query, globusCredential).executeQuery();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#saveQuery(edu.wustl.cab2b.common.queryengine.ICab2bQuery)
-     */
     /**
      * This method saves the given ICab2bQuery object.
+     * 
+     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#saveQuery(edu.wustl.cab2b.common.queryengine.ICab2bQuery)
      *  
      * @param query
      * @param serializedDCR
-     * @param idP
+     * @param gridType
      * 
-     * @throws Exception if authentication fails or query execution fails.
-     * @throws GeneralSecurityException
-     * @throws IOException
-     * @throws RemoteException if save process fails
+     * @throws RemoteException if authentication fails or save process fails.
      */
     public void saveQuery(ICab2bQuery query, String serializedDCR, String gridType) throws RemoteException {
         Long userId = UserUtility.getLocalUserId(serializedDCR, gridType);
         query.setUserId(userId);
 
         new HibernateCleanser(query).clean();
-        new QueryBizLogic<ICab2bQuery>().saveQuery(query);
+        new QueryOperations().saveQuery(query);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#updateQuery(edu.wustl.cab2b.common.queryengine.ICab2bQuery)
-     */
     /**
      * This method updates the given ICab2bQuery object.
+     * 
+     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#updateQuery(edu.wustl.cab2b.common.queryengine.ICab2bQuery)
+     * 
      * @param query
      * 
      * @throws RemoteException if updating fails
      */
     public void updateQuery(ICab2bQuery query) throws RemoteException {
-        new QueryBizLogic<ICab2bQuery>().updateQuery(query);
+        new QueryOperations().updateQuery(query);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#retrieveQueryById(java.lang.Long)
-     */
     /**
      * This method retrieves the query which has the given identifier. 
+     * 
+     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#retrieveQueryById(java.lang.Long)
      * 
      * @param queryId identifier of the query
      * @return ICab2bQuery object
      * @throws RemoteException if retrieving fails
      */
     public ICab2bQuery retrieveQueryById(Long queryId) throws RemoteException {
-        return (ICab2bQuery) new QueryBizLogic<ICab2bQuery>().getQueryById(queryId);
+        return (ICab2bQuery) new QueryOperations().getQueryById(queryId);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#retrieveAllQueries()
-     */
-    /**
-     * This method retrieves all the the queries. 
-     * 
-     * @return list of ICab2bQuery objects
-     * @throws RemoteException if retrieving fails
-     */
-    public List<ICab2bQuery> retrieveAllQueries() throws RemoteException {
-        return new QueryBizLogic<ICab2bQuery>().getAllQueries();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#getAllQueryNameAndDescription()
-     */
     /**
      * This method returns all the queries with only their name and description populated.
+     * 
+     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#getAllQueryNameAndDescription()
+     * 
      * @param serializedDCR
      * @param idP
      * 
      * @return list of IParameterizedQuery having only their name and description populated
-     * @throws Exception if authentication fails or query execution fails.
-     * @throws GeneralSecurityException
-     * @throws IOException
-     * @throws RemoteException if retrieving fails
+     *
+     * @throws RemoteException if authentication fails or retreiving fails
      */
-    public Collection<IParameterizedQuery> getAllQueryNameAndDescription(String serializedDCR, String gridType)
+    public Collection<ICab2bQuery> getUsersQueriesDetail(String serializedDCR, String gridType)
             throws RemoteException {
         String usersGridId = UserUtility.getUsersGridId(serializedDCR, gridType);
-        List idList = new ArrayList(1);
-        idList.add(usersGridId);
-        try {
-            return (List<IParameterizedQuery>) Utility.executeHQL("getQueriesByUserName", idList);
-        } catch (HibernateException e) {
-            throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
-        }
+        return new QueryOperations().getUsersQueriesDetail(usersGridId);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#isQueryNameDuplicate(java.lang.String)
-     */
     /**
      * This method checks whether the given query name has already been used or not.
+     * 
+     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#isQueryNameDuplicate(java.lang.String)
      * 
      * @param queryName name of the query that is to be verified 
      * @return true if the queryName is duplicate; false if not
      * 
      * @throws RemoteException if checking fails
      */
-    public boolean isQueryNameDuplicate(String queryName) throws RemoteException {
-        boolean isDuplicate = false;
-        try {
-            Collection<IParameterizedQuery> queries = HibernateUtility.executeHQL(HibernateUtility.GET_PARAMETERIZED_QUERIES_DETAILS);
-            for (IParameterizedQuery query : queries) {
-                if (query.getName().equalsIgnoreCase(queryName)) {
-                    isDuplicate = true;
-                    break;
-                }
-            }
-        } catch (HibernateException e) {
-            throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
-        }
-        return isDuplicate;
+    public boolean isQueryNameDuplicate(String queryName, String serializedDCR, String gridType)
+            throws RemoteException {
+        String usersGridId = UserUtility.getUsersGridId(serializedDCR, gridType);
+        return new QueryOperations().isQueryNameDuplicate(queryName, usersGridId);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#getDCQL(edu.wustl.cab2b.common.queryengine.ICab2bQuery)
-     */
     /**
      * This method returns the DCQL in tree format for the given query. Tree nodes consists of DCQL object
      * that encapsulates Category/Entity name and its corresponding DCQL.
+     * 
+     * @see edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface#getDCQL(edu.wustl.cab2b.common.queryengine.ICab2bQuery)
      * 
      * @param query query for which DCQl is to be generated
      * @return TreeNode<DCQL>
@@ -203,5 +144,12 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      */
     public DCQL getDCQL(ICab2bQuery query) throws RemoteException {
         return new DCQLGenerator(query).generateDCQL();
+    }
+
+    @Override
+    public List<ICab2bQuery> retrieveAllQueriesByUser(String serializedDCR, String gridType)
+            throws RemoteException {
+        String usersGridId = UserUtility.getUsersGridId(serializedDCR, gridType);
+        return new QueryOperations().retrieveAllQueriesByUser(usersGridId);
     }
 }

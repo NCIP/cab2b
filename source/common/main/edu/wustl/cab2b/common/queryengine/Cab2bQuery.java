@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.common.queryengine;
 
+import java.util.Date;
 import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -38,6 +39,14 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
         super(query);
         outputEntity = query.getOutputEntity();
         outputClassUrls = query.getOutputUrls();
+    }
+    
+    /**
+     * Parameterized constructor
+     * @param query
+     */
+    public Cab2bQuery(Long id, String name, String description, Date createdDate) {
+        super(id, name, description, createdDate);
     }
 
     /**
