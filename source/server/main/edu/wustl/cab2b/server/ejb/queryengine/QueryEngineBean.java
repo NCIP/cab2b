@@ -146,7 +146,12 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
         return new DCQLGenerator(query).generateDCQL();
     }
 
-    @Override
+    /**
+     * This method retrieves all the the queries created by the given user. 
+     * 
+     * @return list of ICab2bQuery objects
+     * @throws RemoteException if retrieving fails
+     */
     public List<ICab2bQuery> retrieveAllQueriesByUser(String serializedDCR, String gridType)
             throws RemoteException {
         String usersGridId = UserUtility.getUsersGridId(serializedDCR, gridType);
