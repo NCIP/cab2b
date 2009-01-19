@@ -140,13 +140,15 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                                                                  panel.getExpressionId(),
                                                                  panel.getCondition(
                                                                                     index,
-                                                                                    ParameterizedQueryNavigationPanel.this));
+                                                                                    ParameterizedQueryNavigationPanel.this,
+                                                                                    panel.getAttributeDisplayName()));
                     } else if (conditionStatus == 1) {
                         parameterizedQueryDataModel.removeCondition(
                                                                     panel.getExpressionId(),
                                                                     panel.getCondition(
                                                                                        index,
-                                                                                       ParameterizedQueryNavigationPanel.this));
+                                                                                       ParameterizedQueryNavigationPanel.this,
+                                                                                       ""));
                     } else {
                         return;
                     }

@@ -94,39 +94,43 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     protected int expressionId;
 
     /**
-     * New edited attribute name for parameterized condition 
+     * New edited attribute name for parameterized condition
      */
     protected String displayName = null;
 
     /**
-     * Returns max label dimension 
+     * Returns max label dimension
      */
     protected Dimension maxLabelDimension;
 
     /**
      * Returns component used to set first value for the condition
+     * 
      * @return JComponent
      */
     protected abstract JComponent getFirstComponent();
 
     /**
-     * Returns component used to set second value for the condition  
-     * @return JComponent 
+     * Returns component used to set second value for the condition
+     * 
+     * @return JComponent
      */
     protected abstract JComponent getSecondComponent();
 
     /**
-     * @param condition String
+     * @param condition
+     *            String
      */
     protected abstract void setComponentPreference(String condition);
 
     /**
-     * Method to reset values and conditions 
+     * Method to reset values and conditions
      */
     public abstract void resetPanel();
 
     /**
      * Constructor
+     * 
      * @param conditionList
      * @param maxLabelDimension
      */
@@ -137,7 +141,8 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     }
 
     /**
-     * Create panel with only Attribute name and component for values   
+     * Create panel with only Attribute name and component for values
+     * 
      * @param attribute
      */
     public void createSimplePanel(AttributeInterface attribute) {
@@ -169,8 +174,10 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
         setSize(new Dimension(300, 100));
     }
 
-    /** 
-     * This method creates Abstarct type panel with operator using AttributeInterface
+    /**
+     * This method creates Abstarct type panel with operator using
+     * AttributeInterface
+     * 
      * @param attribute
      */
     public void createPanelWithOperator(AttributeInterface attribute) {
@@ -181,6 +188,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 
     /**
      * This method creates Abstarct type panel with operator using ICondition
+     * 
      * @param condition
      */
     public void createPanelWithOperator(ICondition condition) {
@@ -191,6 +199,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 
     /**
      * Method to create parameterized panel having checkbox and other components
+     * 
      * @param attribute
      */
     public void createParametrizedPanel(AttributeInterface attribute) {
@@ -211,6 +220,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 
     /**
      * Method to create parameterized condition panel using ICondition
+     * 
      * @param condition
      */
     public void createParametrizedPanel(ICondition condition) {
@@ -221,7 +231,8 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     }
 
     /**
-     * Sets checkbox in panel 
+     * Sets checkbox in panel
+     * 
      * @param selectCheckBox
      */
     public void setAttributeCheckBox(boolean selectCheckBox) {
@@ -232,7 +243,8 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
     }
 
     /**
-     * Returns true if checkbox is selected else false 
+     * Returns true if checkbox is selected else false
+     * 
      * @return
      */
     public boolean isAttributeCheckBoxSelected() {
@@ -244,6 +256,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 
     /**
      * Returns attribute
+     * 
      * @return AttributeInterface
      */
     public AttributeInterface getAttributeEntity() {
@@ -252,7 +265,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 
     /**
      * @return String
-     * @see edu.wustl.cab2b.client.ui.main.IComponent#getConditionItem() 
+     * @see edu.wustl.cab2b.client.ui.main.IComponent#getConditionItem()
      */
     public String getConditionItem() {
         return (String) conditionComboBox.getSelectedItem();
@@ -273,6 +286,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 
     /**
      * Set values only if selected condition is "IN" or "Not IN"
+     * 
      * @param values
      */
     protected void setMultipleValues(ArrayList<String> values) {
@@ -410,6 +424,7 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 
     /**
      * Returns attribute edited name
+     * 
      * @return Attribute edited name
      */
     public String getAttributeDisplayName() {
@@ -421,14 +436,12 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 
     /**
      * Sets the Display Name for corresponding Attribute
+     * 
      * @param displayName
      */
     public void setAttributeDisplayName(String displayName) {
         this.displayName = displayName;
         nameLabel.setText(displayName + " : ");
-        if (attributeDisplayNameTextField != null) {
-            attributeDisplayNameTextField.setText(displayName);
-        }
     }
 
     /**
@@ -444,11 +457,12 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
 
     /**
      * Returns valid condition from panel otherwise null
+     * 
      * @param parentPanel
      * @param index
      * @return
      */
-    public ICondition getCondition(int index, Cab2bPanel parentPanel) {
+    public ICondition getCondition(int index, Cab2bPanel parentPanel, String attributeDisplayName) {
         String conditionString = getConditionItem();
         ArrayList<String> conditionValues = getValues();
         RelationalOperator operator = RelationalOperator.getOperatorForStringRepresentation(conditionString);
@@ -470,10 +484,19 @@ public abstract class AbstractTypePanel extends Cab2bPanel implements IComponent
             }
         }
 
+        // Make a new parameterized condition
         if (isValid) {
-            // make a new parameterized condition
-            IParameter<?> parameter = QueryObjectFactory.createParameter(condition,
-                                                                         condition.getAttribute().getName());
+            IParameter<?> parameter = null;
+            /*
+             * Setting changed attribute Display Name
+             */
+            if (attributeDisplayName == "") {
+                parameter = QueryObjectFactory.createParameter(
+                                                               condition,
+                                                               edu.wustl.common.util.Utility.getDisplayLabel(condition.getAttribute().getName()));
+            } else {
+                parameter = QueryObjectFactory.createParameter(condition, attributeDisplayName);
+            }
             paramQuery.getParameters().add(parameter);
         }
         return condition;

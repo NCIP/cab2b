@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JOptionPane;
@@ -28,11 +29,13 @@ import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.IParameter;
 import edu.wustl.common.querysuite.utils.QueryUtility;
 
 /**
- * Panel generated for showing parameterized/non-paramerterized conditions when clicked on 
- * saved query link 
+ * Panel generated for showing parameterized/non-paramerterized conditions when
+ * clicked on saved query link
+ * 
  * @author deepak_shingan
  * 
  */
@@ -59,6 +62,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
 
     /**
      * Constructor
+     * 
      * @param query
      */
     public ParameterizedQueryShowResultPanel(ICab2bQuery query) {
@@ -68,13 +72,16 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
 
     /**
      * returns ParameterizedQueryDataModel
+     * 
      * @return
      */
     public ParameterizedQueryDataModel getQueryDataModel() {
         return queryDataModel;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryPreviewPanel#getNavigationPanel()
      */
     @Override
@@ -92,7 +99,9 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
         return navigationPanel;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryPreviewPanel#initGUI()
      */
     protected void initGUI() {
@@ -139,7 +148,8 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
     }
 
     /**
-     * Method to add non parameterized conditions in show result panel   
+     * Method to add non parameterized conditions in show result panel
+     * 
      * @param conditionMap
      * @param conditions
      * @param cab2bParamQuery
@@ -165,7 +175,8 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
     }
 
     /**
-     * Method to add  parameterized conditions in show result panel
+     * Method to add parameterized conditions in show result panel
+     * 
      * @param conditionMap
      * @param paramConditions
      * @param cab2bParamQuery
@@ -175,13 +186,20 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
                                             Collection<ICondition> paramConditions, ICab2bQuery cab2bParamQuery,
                                             ParseXMLFile parseFile) {
         try {
-            for (ICondition condition : paramConditions) {
+            List<IParameter<?>> paramterList = queryDataModel.getQuery().getParameters();
+            for (IParameter parameter : paramterList) {
+                ICondition condition = (ICondition) parameter.getParameterizedObject();
+
                 AbstractTypePanel componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
                                                                                                       parseFile,
                                                                                                       condition.getAttribute(),
                                                                                                       maxLabelDimension);
                 componentPanel.createPanelWithOperator(condition);
+                //Changes made by Deepak 
+                //For fixing bug 11056
+                componentPanel.setAttributeDisplayName(parameter.getName());
                 componentPanel.setExpressionId(getExpressionIdForCondition(condition, conditionMap));
+
                 topConditionPanel.add("br ", componentPanel);
             }
         } catch (CheckedException checkedException) {
@@ -191,6 +209,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
 
     /**
      * Method to experssion ID for conditions
+     * 
      * @param condition
      * @param conditionMap
      * @return
@@ -245,7 +264,9 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
             updateUI();
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
          */
         public void actionPerformed(ActionEvent arg0) {
@@ -258,12 +279,13 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
                         validCondition = true;
                         queryDataModel.addCondition(panel.getExpressionId(),
                                                     panel.getCondition(index,
-                                                                       ParameterizedQueryShowResultPanel.this));
+                                                                       ParameterizedQueryShowResultPanel.this, ""));
 
                     } else if (conditionStatus == 1) {
                         queryDataModel.removeCondition(panel.getExpressionId(),
                                                        panel.getCondition(index,
-                                                                          ParameterizedQueryShowResultPanel.this));
+                                                                          ParameterizedQueryShowResultPanel.this,
+                                                                          ""));
                     }
                 }
             }
