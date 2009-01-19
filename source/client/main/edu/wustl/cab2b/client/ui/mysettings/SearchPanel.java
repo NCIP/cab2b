@@ -60,7 +60,7 @@ public class SearchPanel extends Cab2bPanel implements ActionListener {
      */
     public void actionPerformed(ActionEvent event) {
         final String searchString = searchTextFld.getText();
-        if (null == searchString || searchString.isEmpty()) {
+        if (null == searchString || searchString.length()==0) {
             JOptionPane.showMessageDialog(this.getParent().getParent(), "Please enter the search String.");
             searchTextFld.requestFocus();
         } else {

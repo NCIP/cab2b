@@ -222,7 +222,7 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
             final StringBuilder displayString = new StringBuilder(entityGroup.getLongName());
             final String version = entityGroup.getVersion();
             String actionCommand = entityGroup.getLongName();
-            if (null != version && !version.isEmpty()) {
+            if (null != version && version.length()>0) {
                 displayString.append(" v" + version);
                 actionCommand = actionCommand + "~" + version;
             }
