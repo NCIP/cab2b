@@ -491,25 +491,29 @@ public class Utility {
      */
     public static Collection<?> executeHQL(String queryName, List<Object> values) throws HibernateException {
         Session session = DBUtil.currentSession();
-        Query q = session.getNamedQuery(queryName);
-
-        if (values != null) {
-            for (int counter = 0; counter < values.size(); counter++) {
-
-                Object value = values.get(counter);
-                String objectType = value.getClass().getName();
-                String onlyClassName = objectType.substring(objectType.lastIndexOf('.') + 1, objectType.length());
-
-                if (onlyClassName.equals("String")) {
-                    q.setString(counter, (String) value);
-                } else if (onlyClassName.equals("Integer")) {
-                    q.setInteger(counter, Integer.parseInt(value.toString()));
-                } else if (onlyClassName.equals("Long")) {
-                    q.setLong(counter, Long.parseLong(value.toString()));
+        try{
+            Query q = session.getNamedQuery(queryName);
+    
+            if (values != null) {
+                for (int counter = 0; counter < values.size(); counter++) {
+    
+                    Object value = values.get(counter);
+                    String objectType = value.getClass().getName();
+                    String onlyClassName = objectType.substring(objectType.lastIndexOf('.') + 1, objectType.length());
+    
+                    if (onlyClassName.equals("String")) {
+                        q.setString(counter, (String) value);
+                    } else if (onlyClassName.equals("Integer")) {
+                        q.setInteger(counter, Integer.parseInt(value.toString()));
+                    } else if (onlyClassName.equals("Long")) {
+                        q.setLong(counter, Long.parseLong(value.toString()));
+                    }
                 }
             }
+            return q.list();
+        } finally {
+            DBUtil.closeSession();
         }
-        return q.list();
     }
 
     /**

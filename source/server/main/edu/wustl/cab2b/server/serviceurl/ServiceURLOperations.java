@@ -186,15 +186,16 @@ public class ServiceURLOperations {
         Collection<ServiceURL> serviceURLList;
 
         Session session = HibernateUtil.newSession();
-        HibernateDatabaseOperations<ServiceURL> dbHandler = new HibernateDatabaseOperations<ServiceURL>(session);
-
-        serviceURLList = dbHandler.retrieve(ServiceURL.class.getName(), "entityGroupName", entityGroupName);
-
-        for (ServiceURL serviceURL : serviceURLList) {
-            serviceURLMap.put(serviceURL.getUrlLocation(), serviceURL);
+        try{ 
+            HibernateDatabaseOperations<ServiceURL> dbHandler = new HibernateDatabaseOperations<ServiceURL>(session);
+            serviceURLList = dbHandler.retrieve(ServiceURL.class.getName(), "entityGroupName", entityGroupName);
+            for (ServiceURL serviceURL : serviceURLList) {
+                serviceURLMap.put(serviceURL.getUrlLocation(), serviceURL);
+            }
+            return serviceURLMap;
+        } finally  {
+            session.close();
         }
-
-        return serviceURLMap;
     }
 
 }

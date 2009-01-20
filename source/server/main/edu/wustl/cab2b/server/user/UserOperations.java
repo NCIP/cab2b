@@ -49,10 +49,11 @@ public class UserOperations extends DefaultBizLogic {
         try {
             SQLQuery sqlQuery = DBUtil.currentSession().createSQLQuery(query);
             userList = sqlQuery.addEntity("User", edu.wustl.cab2b.common.user.User.class).list();
-            DBUtil.closeSession();
         } catch (HibernateException hbe) {
             logger.error(hbe.getMessage(), hbe);
             throw new RuntimeException("Error occurred while fetching User", ErrorCodeConstants.UR_0003);
+        } finally {
+            DBUtil.closeSession();
         }
         UserInterface user = null;
         if (userList != null && !userList.isEmpty()) {
