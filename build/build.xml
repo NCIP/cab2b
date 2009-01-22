@@ -81,6 +81,11 @@
 	<property name="server.lib.dir" value="${lib.dir}/server" />
 	<property name="hbm.dir" value="${server.src}/edu/wustl/cab2b/server/hbm" />
 
+
+	<!-- Properties for 1.5 compilation-->
+	<property name="client_1.5.classes.dir" location="${workArea.dir}/client_1.5/classes" />
+
+	
 	<path id="common.classpath">
 		<fileset dir="lib/common">
 			<include name="**/*.jar" />
@@ -192,7 +197,7 @@
 	<!-- ================================================================================== -->
 	<target name="compile.common" description="Compiles the common code without cleaning">
 		<mkdir dir="${common.classes.dir}" />
-		<javac srcdir="${common.src}" destdir="${common.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="common.classpath" failonerror="true" nowarn="on" />
+		<javac srcdir="${common.src}" target="1.5" destdir="${common.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="common.classpath" failonerror="true" nowarn="on" />
 	</target>
 	<!-- ================================================================================== -->
 	<target name="compile.client" depends="compile.common" description="Compiles the client code without cleaning">
@@ -212,7 +217,7 @@
 				<include name="**/*.class" />
 			</fileset>
 		</copy>
-		<javac srcdir="${server.src}" destdir="${server.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="server.classpath" failonerror="true" nowarn="on" />
+		<javac srcdir="${server.src}" target="1.5" destdir="${server.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="server.classpath" failonerror="true" nowarn="on" />
 
 		<copy todir="${server.classes.dir}">
 			<fileset dir="${server.src}">
@@ -658,16 +663,16 @@
 		</javadoc>
 	</target>
 	<!-- ================================================================================== -->
-	<target name="build.standalone.jar" depends="compile.all" description="Generate the jar of client,common and server classes which will in standalone manner">
+	<target name="build.standalone.jar" depends="compile.client_1.5,compile.server" description="Generate the jar of client,common and server classes which will in standalone manner">
 		<mkdir dir="${standAlone.jar.dir}" />
 		<copy todir="${standAlone.jar.dir}" overwrite="true">
-			<fileset dir="${workArea.dir}/common/classes">
+			<fileset dir="${common.classes.dir}">
 				<exclude name="**/ejb/**/*.*" />
 			</fileset>
-			<fileset dir="${workArea.dir}/client/classes">
+			<fileset dir="${client_1.5.classes.dir}">
 				<exclude name="**/ejb/**/*.*" />
 			</fileset>
-			<fileset dir="${workArea.dir}/server/classes">
+			<fileset dir="${server.classes.dir}">
 				<exclude name="**/ejb/**/*.*" />
 			</fileset>
 			<fileset dir="${conf.dir}">
@@ -681,7 +686,7 @@
 		</jar>
 	</target>
 	<!-- ================================================================================== -->
-	<target name="build.admin.ejb.jar" depends="compile.all" description="Generate the jar of client,common and server classes which will in standalone manner">
+	<target name="build.admin.ejb.jar" depends="compile.common" description="Generate the jar of client,common and server classes which will in standalone manner">
 		<mkdir dir="${cab2bEjb.jar.dir}" />
 		<copy todir="${cab2bEjb.jar.dir}" overwrite="true">
 			<fileset dir="${workArea.dir}/common/classes">
@@ -989,6 +994,48 @@
 		<delete dir="temp" />
 		<copy file="${workArea.dir}/cab2b.war" todir="${jboss.deploy.dir}" />
 	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: compile.client_1.5                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="compile.client_1.5" depends="compile.common">
+		<mkdir dir="${client_1.5.classes.dir}" />
+		<copy overwrite="true" todir="${client_1.5.classes.dir}">
+			<fileset dir="${common.classes.dir}">
+				<include name="**/*.class" />
+			</fileset>
+		</copy>
+
+		<javac srcdir="${client.src}" target="1.5" destdir="${client_1.5.classes.dir}"  fork="true" debug="on" deprecation="true" classpathref="client.classpath" failonerror="true" nowarn="on">
+
+			<exclude name="edu/wustl/cab2b/client/ui/controls/sheet/**/*.java" />
+			<exclude name="edu/wustl/cab2b/client/ui/experiment/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/ui/mainframe/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/ui/mysettings/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/ui/viewresults/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/ui/visualization/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/cache/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/ui/parameterizedQuery/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/ui/main/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/ui/pagination/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/ui/searchDataWizard/**/*.*" />
+			
+			<exclude name="**/ServiceInstanceConfigurator.java" />
+			<exclude name="**/MatrixCache.java" />
+			<exclude name="**/ClientQueryBuilder.java" />
+			<exclude name="**/TransformCategoryResult.java" />
+			<exclude name="**/B2BNewModel.java" />
+			<exclude name="**/B2BTreeNode.java" />
+			<exclude name="**/CommonUtils.java" />
+			<exclude name="**/CustomSwingWorker.java" />
+			
+			<exclude name="**/SearchNavigationPanel.java" />
+			<exclude name="**/ShowDCQLPanel.java" />
+		</javac>
+
+
+	</target>
+
 </project>
 <!-- ==================================================================================
 DO NOT DELETE THIS COMMENT. 
