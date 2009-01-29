@@ -17,6 +17,10 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
 
     private boolean isAdminDefined;
 
+    private String hostingCenterName;
+
+    private String description;
+
     /**
      * @return Returns the entityGroupId.
      * 
@@ -87,6 +91,40 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
         this.isAdminDefined = isAdminDefined;
     }
 
+    /**
+     * @param description
+     *        Sets the description of the URL  
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /** 
+     * @return Description of the URL
+     * @hibernate.id name="description" column="DESCRIPTION" type="String" not-null="false" 
+     * @see edu.wustl.cab2b.common.user.ServiceURLInterface#getDescription()
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param hostingCenterName
+     *        sets the Hosting Center Name of the URL  
+     */
+    public void setHostingCenterName(String hostingCenterName) {
+        this.hostingCenterName = hostingCenterName;
+    }
+
+    /**
+     * @return Hosting Center Name of the URL
+     * @hibernate.id name="hostingCenterName" column="HOSTING_CENTER_NAME" type="String" length="254" not-null="false"
+     * @see edu.wustl.cab2b.common.user.ServiceURLInterface#getHostingCenterName()
+     */
+    public String getHostingCenterName() {
+        return hostingCenterName;
+    }
+
     @Override
     public boolean equals(Object arg) {
         if (this == arg) {
@@ -111,4 +149,5 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
         }
         return hashCode;
     }
+
 }

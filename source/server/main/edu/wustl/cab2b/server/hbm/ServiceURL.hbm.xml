@@ -52,6 +52,25 @@
             column="ADMIN_DEFINED"
             not-null="true"
         />
+        
+        <property
+            name="hostingCenterName"
+            type="string"
+            update="true"
+            insert="true"
+            column="HOSTING_CENTER_NAME"
+            length="254"
+            not-null="false"
+        />
+        
+        <property
+            name="description"
+            type="string"
+            update="true"
+            insert="true"
+            column="DESCRIPTION"
+            not-null="false"
+        />
 
         <!--
             To add non XDoclet property mappings, create a file named

@@ -105,6 +105,8 @@ create table CAB2B_SERVICE_URL (
    ENTITY_GROUP_NAME text not null,
    URL text not null,
    ADMIN_DEFINED bit not null,
+   HOSTING_CENTER_NAME varchar(254) null,
+   DESCRIPTION text null,
    primary key (URL_ID)
 );
 create table CAB2B_USER (
