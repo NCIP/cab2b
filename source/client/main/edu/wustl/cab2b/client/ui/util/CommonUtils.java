@@ -456,17 +456,15 @@ public class CommonUtils {
      * @return Top five popular categories.
      */
     public static Collection<CategoryPopularity> getTopPopularCategories() {
-        List<CategoryPopularity> attributeList = (List<CategoryPopularity>) getAllPopularCategories();
-
-        Collection<CategoryPopularity> popularCategories = new ArrayList<CategoryPopularity>();
-        if (attributeList.size() > 4) {
-            for (int i = 0; i < attributeList.size(); i++) {
-                popularCategories.add(attributeList.get(i));
+        List<CategoryPopularity> categoryList = (List<CategoryPopularity>) getAllPopularCategories();
+        if (categoryList.size() > 4) {
+            List<CategoryPopularity> popularCategories = new ArrayList<CategoryPopularity>();
+            for (int i = 0; i < categoryList.size(); i++) {
+                popularCategories.add(categoryList.get(i));
             }
-            return popularCategories;
-        } else {
-            return attributeList;
+            categoryList = popularCategories;
         }
+        return categoryList;
     }
 
     /**
