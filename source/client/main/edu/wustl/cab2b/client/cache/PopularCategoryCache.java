@@ -20,7 +20,7 @@ public class PopularCategoryCache {
 
     private static PopularCategoryCache popularCategoryCache = null;
 
-    private static Collection<CategoryPopularity> popularCategoriesCollection;
+    private static Collection<CategoryPopularity> popularCategories;
 
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(CommonUtils.class);
 
@@ -40,39 +40,30 @@ public class PopularCategoryCache {
      *  Private constructor for singleton class
      */
     private PopularCategoryCache() {
-        getPopularCategories();
+        cachePopularCategories();
     }
 
     /**
      * Gets all the popular categories from database and sets it as the value of "popularCategoriesCollection"
      * 
      */
-    private void getPopularCategories() {
+    private void cachePopularCategories() {
         CategoryBusinessInterface categoryOperations = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                     EjbNamesConstants.CATEGORY_BEAN,
                                                                                                                     CategoryHomeInterface.class);
-        Collection<CategoryPopularity> popularCategories = null;
         try {
             popularCategories = categoryOperations.getPopularCategories();
         } catch (RemoteException e) {
             logger.error(e.getStackTrace());
             CommonUtils.handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, true);
         }
-        setPopularCategoriesCollection(popularCategories);
     }
 
     /**
      * @return Returns the popularCategoriesCollection.
      */
-    public Collection<CategoryPopularity> getPopularCategoriesCollection() {
-        return popularCategoriesCollection;
-    }
-
-    /**
-     * @param popularCategoriesCollection The popularCategoriesCollection to set.
-     */
-    private void setPopularCategoriesCollection(Collection<CategoryPopularity> popularCategoriesCollection) {
-        PopularCategoryCache.popularCategoriesCollection = popularCategoriesCollection;
+    public Collection<CategoryPopularity> getPopularCategories() {
+        return popularCategories;
     }
 
 }

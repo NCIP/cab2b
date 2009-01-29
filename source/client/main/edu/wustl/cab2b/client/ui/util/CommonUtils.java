@@ -475,7 +475,7 @@ public class CommonUtils {
      * @return All popular categories.
      */
     public static Collection<CategoryPopularity> getAllPopularCategories() {
-        Collection<CategoryPopularity> categoryList = PopularCategoryCache.getInstance().getPopularCategoriesCollection();
+        Collection<CategoryPopularity> categoryList = PopularCategoryCache.getInstance().getPopularCategories();
         List<CategoryPopularity> attributeList = new ArrayList<CategoryPopularity>(categoryList);
         Collections.sort(attributeList, new CategoryPopularityComparator());
         return attributeList;
