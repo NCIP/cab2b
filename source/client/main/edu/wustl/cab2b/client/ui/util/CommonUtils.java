@@ -455,8 +455,8 @@ public class CommonUtils {
      * 
      * @return Top five popular categories.
      */
-    public static Collection<CategoryPopularity> getPopularSearchCategoriesForMainFrame() {
-        List<CategoryPopularity> attributeList = (List<CategoryPopularity>) getPopularCategoriesForShowAll();
+    public static Collection<CategoryPopularity> getTopPopularCategories() {
+        List<CategoryPopularity> attributeList = (List<CategoryPopularity>) getAllPopularCategories();
 
         Collection<CategoryPopularity> popularCategories = new ArrayList<CategoryPopularity>();
         if (attributeList.size() > 4) {
@@ -474,7 +474,7 @@ public class CommonUtils {
      * 
      * @return All popular categories.
      */
-    public static Collection<CategoryPopularity> getPopularCategoriesForShowAll() {
+    public static Collection<CategoryPopularity> getAllPopularCategories() {
         Collection<CategoryPopularity> categoryList = PopularCategoryCache.getInstance().getPopularCategoriesCollection();
         List<CategoryPopularity> attributeList = new ArrayList<CategoryPopularity>(categoryList);
         Collections.sort(attributeList, new CategoryPopularityComparator());
@@ -551,7 +551,7 @@ public class CommonUtils {
      * @return Popular categories at this point
      */
     public static Collection<CategoryPopularity> getUserSearchCategories() {
-        return getPopularCategoriesForShowAll();
+        return getAllPopularCategories();
     }
 
     /**

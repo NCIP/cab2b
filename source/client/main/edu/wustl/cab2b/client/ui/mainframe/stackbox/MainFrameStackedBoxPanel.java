@@ -111,7 +111,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
         stackedBox.addBox(titleQuery, mySearchQueriesPanel, MY_SEARCH_QUERIES_IMAGE, false);
 
         popularSearchCategoryPanel = getPopularSearchCategoriesPanel(
-                                                                     CommonUtils.getPopularSearchCategoriesForMainFrame(),
+                                                                     CommonUtils.getTopPopularCategories(),
                                                                      new CategoryHyperlinkActionListener());
         final String titlePopularcategories = ApplicationProperties.getValue(POPULAR_CATEGORY_BOX_TEXT);
         stackedBox.addBox(titlePopularcategories, popularSearchCategoryPanel, POPULAR_CATEGORIES_IMAGE, false);
@@ -172,7 +172,7 @@ public class MainFrameStackedBoxPanel extends Cab2bPanel {
      * @return
      */
     private ShowAllPanel getAllCategoryPanel() {
-        Collection<CategoryPopularity> allPopularCategories = CommonUtils.getPopularCategoriesForShowAll();
+        Collection<CategoryPopularity> allPopularCategories = CommonUtils.getAllPopularCategories();
         final Object objData[][] = new Object[allPopularCategories.size()][6];
         final String headers[] = { ShowAllCategoryPanel.CATEGORY_NAME_TITLE, ShowAllCategoryPanel.CATEGORY_POPULARITY_TITLE, ShowAllCategoryPanel.CATEGORY_DATE_TITLE, ShowAllCategoryPanel.CATEGORY_DESCRIPTION_TITLE, " Category ID-Hidden" };
         int i = 0;
