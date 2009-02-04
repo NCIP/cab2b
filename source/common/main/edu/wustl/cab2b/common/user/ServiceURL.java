@@ -4,7 +4,9 @@ import java.io.Serializable;
 
 /**
  * @author Hrishikesh Rajpathak
+ * @author Gaurav Mehta
  * @hibernate.class table="CAB2B_SERVICE_URL"
+ * This claas is a HO of CAB2B_SERVICE_URL. 
  */
 public class ServiceURL implements ServiceURLInterface, Serializable {
     private static final long serialVersionUID = 1L;
@@ -20,6 +22,8 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
     private String hostingCenterName;
 
     private String description;
+
+    private boolean isConfigured;
 
     /**
      * @return Returns the entityGroupId.
@@ -100,11 +104,15 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
     }
 
     /** 
+     * this function returns (URL + description) if Hosting center name is present for that service url else description is empty
      * @return Description of the URL
      * @hibernate.id name="description" column="DESCRIPTION" type="String" not-null="false" 
      * @see edu.wustl.cab2b.common.user.ServiceURLInterface#getDescription()
      */
     public String getDescription() {
+        if(!hostingCenterName.isEmpty() &&  description.isEmpty()) {
+            return urlLocation + " Description : " + description;
+        } 
         return description;
     }
 
@@ -117,12 +125,30 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
     }
 
     /**
+     * this function returns URL if no hosting center name is associated with that URL else the original Hosting Center Name is returned.
      * @return Hosting Center Name of the URL
      * @hibernate.id name="hostingCenterName" column="HOSTING_CENTER_NAME" type="String" length="254" not-null="false"
      * @see edu.wustl.cab2b.common.user.ServiceURLInterface#getHostingCenterName()
      */
     public String getHostingCenterName() {
-        return hostingCenterName;
+        if(hostingCenterName!=null && ! hostingCenterName.isEmpty()) { 
+            return hostingCenterName;    
+        } 
+        return urlLocation; 
+    }
+
+    /**
+     * @return Returns the isAlive.
+     */
+    public boolean isConfigured() {
+        return this.isConfigured;
+    }
+
+    /**
+     * @param isAlive The isAlive to set.
+     */
+    public void setConfigured(final boolean isAlive) {
+        this.isConfigured = isAlive;
     }
 
     @Override

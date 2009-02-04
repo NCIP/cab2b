@@ -1,8 +1,12 @@
 package edu.wustl.cab2b.server.serviceurl;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import edu.wustl.cab2b.common.user.ServiceURL;
@@ -52,5 +56,46 @@ public class ServiceURLOperationsTest extends TestCase {
 		}
 		assertEquals(set, resultSet);
 		*/
+	}
+	
+	public void testMerge() {
+	    
+	    ServiceURL urlMetadatFromIndexService = new ServiceURL();
+	    ServiceURL urlMetadataFromDatabase = new ServiceURL();
+	    
+	    Map<String, ServiceURL> urlsFromDatabase = new HashMap<String, ServiceURL>();
+        Map<String, ServiceURL> urlsFromIndexService = new HashMap<String, ServiceURL>();
+        
+        List<ServiceURL> expectedOutput = new ArrayList<ServiceURL>();
+	    
+	    urlMetadatFromIndexService.setHostingCenterName("");
+	    urlMetadatFromIndexService.setAdminDefined(false);
+	    urlMetadatFromIndexService.setConfigured(false);
+	    urlMetadatFromIndexService.setDescription("Yes Description is Available");
+	    urlMetadatFromIndexService.setEntityGroupName("CaTissue_Core_1_2");
+	    urlMetadatFromIndexService.setUrlLocation("http://128.252.127.224");
+	    urlsFromIndexService.put("http://128.252.127.224", urlMetadatFromIndexService);
+	    
+	    urlMetadatFromIndexService.setHostingCenterName("WashU");
+        urlMetadatFromIndexService.setAdminDefined(false);
+        urlMetadatFromIndexService.setConfigured(false);
+        urlMetadatFromIndexService.setDescription("Yes Description is Available");
+        urlMetadatFromIndexService.setEntityGroupName("CaTissue_Core_1_2");
+        urlMetadatFromIndexService.setUrlLocation("http://128.132.127.224");
+        urlsFromIndexService.put("http://128.132.127.224", urlMetadatFromIndexService);
+        
+	    urlMetadataFromDatabase.setHostingCenterName("Washu");
+	    urlMetadataFromDatabase.setAdminDefined(true);
+	    urlMetadataFromDatabase.setConfigured(true);
+	    urlMetadataFromDatabase.setDescription("No Description Available");
+	    urlMetadataFromDatabase.setEntityGroupName("CaTissue_Core_1_2");
+	    urlMetadataFromDatabase.setUrlLocation("http://128.252.127.224");
+	    urlsFromDatabase.put("http://128.252.127.224", urlMetadataFromDatabase);
+	    
+	    ServiceURLOperations serviceURLOperations = new ServiceURLOperations();
+	    expectedOutput = serviceURLOperations.merge(urlsFromDatabase, urlsFromIndexService);
+	    
+	    assertEquals(expectedOutput.get(0).getDescription(), "Yes Description is Available");
+	    assertTrue(!expectedOutput.get(1).getDescription().isEmpty());
 	}
 }

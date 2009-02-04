@@ -17,7 +17,6 @@ import edu.wustl.cab2b.common.ejb.serviceurl.ServiceURLBusinessInterface;
 import edu.wustl.cab2b.common.ejb.serviceurl.ServiceURLHomeInterface;
 import edu.wustl.cab2b.common.ejb.user.UserBusinessInterface;
 import edu.wustl.cab2b.common.ejb.user.UserHomeInterface;
-import edu.wustl.cab2b.common.user.AdminServiceMetadata;
 import edu.wustl.cab2b.common.user.ServiceURL;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
@@ -27,6 +26,7 @@ import edu.wustl.cab2b.common.util.Utility;
 /**
  * @author Hrishikesh Rajpathak
  * @author atul_jawale
+ * @author Gaurav Mehta
  */
 public class ServiceInstanceConfigurator {
 
@@ -64,15 +64,15 @@ public class ServiceInstanceConfigurator {
      * @param entityGroupName
      * @throws RemoteException
      */
-    public void saveServiceInstances(String entityGroupName,String version, Collection<ServiceURL> serviceURLObjects)
-            throws RemoteException {
+    public void saveServiceInstances(String entityGroupName, String version,
+                                     Collection<ServiceURL> serviceURLObjects) throws RemoteException {
         /*
          * If the user has clicked on admin configured urls,then collection will be empty
          * so just removing all the service urls from user's service url collection whose
          * service name is same as entityGroupName
          */
         UserInterface currentUser = getCurrentUser();
-        String entityName = Utility.createModelName(entityGroupName, version);  
+        String entityName = Utility.createModelName(entityGroupName, version);
         if (serviceURLObjects.isEmpty()) {
             Collection<ServiceURLInterface> serviceURLsToRemove = new HashSet<ServiceURLInterface>();
             Collection<ServiceURLInterface> allServiceURLLIst = currentUser.getServiceURLCollection();
@@ -120,12 +120,11 @@ public class ServiceInstanceConfigurator {
      * @param user
      * @return
      */
-    public Collection<AdminServiceMetadata> getServiceMetadataObjects(String serviceName, String version,
-                                                                      UserInterface user) {
+    public Collection<ServiceURL> getServiceMetadataObjects(String serviceName, String version, UserInterface user) {
         ServiceURLBusinessInterface serviceURLInterface = (ServiceURLBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                          EjbNamesConstants.SERVICE_URL_BEAN,
                                                                                                                          ServiceURLHomeInterface.class);
-        Collection<AdminServiceMetadata> serviceInstanceList = new ArrayList<AdminServiceMetadata>();
+        Collection<ServiceURL> serviceInstanceList = new ArrayList<ServiceURL>();
 
         try {
             serviceInstanceList.addAll(serviceURLInterface.getInstancesByServiceName(serviceName, version, user));

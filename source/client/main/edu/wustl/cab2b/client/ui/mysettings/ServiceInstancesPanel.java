@@ -3,10 +3,10 @@ package edu.wustl.cab2b.client.ui.mysettings;
 import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.SERVICE_URLS_FAILURE;
 import static edu.wustl.cab2b.client.ui.util.ApplicationResourceConstants.SERVICE_URLS_SUCCESS;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.BACK_EVENT;
+import static edu.wustl.cab2b.client.ui.util.ClientConstants.DIALOG_CLOSE_EVENT;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.SEARCH_EVENT;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.UPDATE_EVENT;
 import static edu.wustl.cab2b.client.ui.util.ClientConstants.UPDATE_QUERYURLS_EVENT;
-import static edu.wustl.cab2b.client.ui.util.ClientConstants.DIALOG_CLOSE_EVENT;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -42,7 +42,6 @@ import edu.wustl.cab2b.client.ui.pagination.NumericPager;
 import edu.wustl.cab2b.client.ui.pagination.PageElement;
 import edu.wustl.cab2b.client.ui.pagination.PageElementImpl;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-import edu.wustl.cab2b.common.user.AdminServiceMetadata;
 import edu.wustl.cab2b.common.user.ServiceURL;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.common.util.global.ApplicationProperties;
@@ -63,14 +62,14 @@ public class ServiceInstancesPanel extends Cab2bPanel {
 
     private JPagination resultsPage;
 
-    private Collection<AdminServiceMetadata> allServiceInstances;
+    private Collection<ServiceURL> allServiceInstances;
 
     private final JXTitledPanel titledSearchResultsPanel = new Cab2bTitledPanel();
 
-    private final Collection<AdminServiceMetadata> filteredServiceInstances = new ArrayList<AdminServiceMetadata>();
+    private final Collection<ServiceURL> filteredServiceInstances = new ArrayList<ServiceURL>();
 
     private String serviceName;
-    
+
     private String version;
 
     private boolean isForQuery;
@@ -96,21 +95,18 @@ public class ServiceInstancesPanel extends Cab2bPanel {
      * @param serviceName
      */
     private void initGUI() {
-        allServiceInstances = new ArrayList<AdminServiceMetadata>();
+        allServiceInstances = new ArrayList<ServiceURL>();
         UserInterface user = UserCache.getInstance().getCurrentUser();
         ServiceInstanceConfigurator configurator = new ServiceInstanceConfigurator();
-        
-       
-        if(serviceName.indexOf('~')>-1)
-        {
+
+        if (serviceName.indexOf('~') > -1) {
             String[] serviceVersion = serviceName.split("~");
             serviceName = serviceVersion[0];
             version = serviceVersion[1];
         }
-        
-        Collection<AdminServiceMetadata> adminServiceMetadata = configurator.getServiceMetadataObjects(serviceName
-                                                                                                       ,version,
-                                                                                                       user);
+
+        Collection<ServiceURL> adminServiceMetadata = configurator.getServiceMetadataObjects(serviceName, version,
+                                                                                             user);
         allServiceInstances.addAll((adminServiceMetadata));
         filteredServiceInstances.addAll(allServiceInstances);
 
@@ -255,7 +251,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
         }
         try {
             ServiceInstanceConfigurator bizLogic = new ServiceInstanceConfigurator();
-            bizLogic.saveServiceInstances(serviceName,version, selectedInstances);
+            bizLogic.saveServiceInstances(serviceName, version, selectedInstances);
             firePropertyChange(UPDATE_EVENT, serviceName, status);
 
         } catch (RemoteException exception) {
@@ -283,19 +279,19 @@ public class ServiceInstancesPanel extends Cab2bPanel {
      * 
      * @param resultPanel
      */
-    private Cab2bPanel generateContentPanel(final Collection<AdminServiceMetadata> filteredServiceInstances) {
+    private Cab2bPanel generateContentPanel(final Collection<ServiceURL> filteredServiceInstances) {
         Cab2bPanel resultPanel = new Cab2bPanel();
         Vector<PageElement> pageElementCollection = new Vector<PageElement>();
-        for (AdminServiceMetadata serviceInstance : filteredServiceInstances) {
+        for (ServiceURL serviceInstance : filteredServiceInstances) {
             // Create an instance of the PageElement. Initialize with the
             // appropriate data
             PageElement pageElement = new PageElementImpl();
             // not able view NCICB completely it was appearing as NCICE so added
             // a space.
-            pageElement.setDisplayName(serviceInstance.getHostingResearchCenter() + " ");
-            pageElement.setDescription(serviceInstance.getSeviceDescription());
-            pageElement.setUserObject(serviceInstance.getServiceURLObject());
-            String serviceURL = serviceInstance.getServiceURL();
+            pageElement.setDisplayName(serviceInstance.getHostingCenterName() + " ");
+            pageElement.setDescription(serviceInstance.getDescription());
+            pageElement.setUserObject(serviceInstance);
+            String serviceURL = serviceInstance.getUrlLocation();
             if (URLList != null && URLList.contains(serviceURL)) {
                 pageElement.setSelected(true);
             } else {
@@ -322,15 +318,15 @@ public class ServiceInstancesPanel extends Cab2bPanel {
      * @param searchString
      * 
      */
-    private void searchResult(String searchString, final Collection<AdminServiceMetadata> filteredServiceInstances) {
+    private void searchResult(String searchString, final Collection<ServiceURL> filteredServiceInstances) {
         filteredServiceInstances.clear();
         if (allServiceInstances != null) {
             if ("ShowAll".equals(searchString)) {
                 filteredServiceInstances.addAll(allServiceInstances);
             }
             searchString = searchString.toLowerCase();
-            for (AdminServiceMetadata metadata : allServiceInstances) {
-                String hostingResearchCenter = metadata.getHostingResearchCenter().toLowerCase();
+            for (ServiceURL metadata : allServiceInstances) {
+                String hostingResearchCenter = metadata.getHostingCenterName().toLowerCase();
                 if (hostingResearchCenter.contains(searchString)) {
                     filteredServiceInstances.add(metadata);
                 }
