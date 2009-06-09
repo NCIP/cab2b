@@ -23,6 +23,7 @@ import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.searchDataWizard.dag.ClassNodeRenderer;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.WindowUtilities;
+import edu.wustl.cab2b.common.authentication.Authenticator;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.user.UserBusinessInterface;
 import edu.wustl.cab2b.common.ejb.user.UserHomeInterface;
@@ -181,15 +182,15 @@ public class ClientLauncher {
             UserBusinessInterface userBusinessInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                                    EjbNamesConstants.USER_BEAN,
                                                                                                                    UserHomeInterface.class);
-            String serializedDCR = UserValidator.getSerializedDCR();
+            String serializedDCR = Authenticator.getSerializedDCR();
             UserInterface user = null;
             if (serializedDCR == null) {
                 user = userBusinessInterface.getAnonymousUser();
             } else {
                 UserCache.getInstance().getCurrentUser();
-                user = userBusinessInterface.getUserByName(serializedDCR, UserValidator.getGridType());
+                user = userBusinessInterface.getUserByName(serializedDCR);
                 if (user == null) {
-                    user = userBusinessInterface.insertUser(serializedDCR, UserValidator.getGridType());
+                    user = userBusinessInterface.insertUser(serializedDCR);
                 }
             }
 

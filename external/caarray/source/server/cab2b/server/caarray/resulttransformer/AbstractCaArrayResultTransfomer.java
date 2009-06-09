@@ -1,6 +1,7 @@
 package cab2b.server.caarray.resulttransformer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,8 +16,8 @@ import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.cab2b.server.queryengine.resulttransformers.AbstractQueryResultTransformer;
 import edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
+import edu.wustl.common.util.Identifiable;
 import gov.nih.nci.cagrid.cqlresultset.CQLQueryResults;
-
 
 /**
  * Skeletal implementation for a query result transformer of caArray
@@ -99,18 +100,18 @@ public abstract class AbstractCaArrayResultTransfomer<R extends ICaArrayRecord>
      */
     protected R createRecordForObject(String url, Object objRec, EntityInterface outputEntity) {
         String id = executeMethods(objRec, GET_ID_METHOD_NAME)[0].toString();
-        List<AttributeInterface> attributes = new ArrayList<AttributeInterface>(
-                outputEntity.getAttributeCollection());
-        List<AssociationInterface> associations = new ArrayList<AssociationInterface>(
-                outputEntity.getAssociationCollection());
+        List<AttributeInterface> attributes =
+                new ArrayList<AttributeInterface>(outputEntity.getAttributeCollection());
+        List<AssociationInterface> associations =
+                new ArrayList<AssociationInterface>(outputEntity.getAssociationCollection());
         R rec = createCaArrayRecord(new HashSet<AttributeInterface>(attributes), new RecordId(id, url));
         String[] attributeGetters = getAttributeGettersNames(attributes);
         String[] associationGetters = getAssociationGettersNames(associations);
         Object[] attributesValues = executeMethods(objRec, attributeGetters);
         Object[] associationsValues = executeMethods(objRec, associationGetters);
         for (int i = 0; i < attributes.size(); i++) {
-            rec.putValueForAttribute(attributes.get(i), attributesValues[i] == null ? ""
-                    : attributesValues[i].toString());
+            rec.putValueForAttribute(attributes.get(i), attributesValues[i] == null ? "" : attributesValues[i]
+                .toString());
         }
         for (int i = 0; i < associations.size(); i++) {
             processAssociation(rec, associations.get(i), associationsValues[i]);
@@ -138,8 +139,8 @@ public abstract class AbstractCaArrayResultTransfomer<R extends ICaArrayRecord>
 
     private List<Object> getAssociatedObjects(Class<?> desiredType, Object associationValue) {
         Class<?> associatedClass = associationValue.getClass();
-
         List<Object> associatedObjects = new ArrayList<Object>();
+
         // if there is only one associated object, it is associationValue. If
         // there is more than one object, there is an array of these objects;
         // associationValue is then this array.
@@ -155,7 +156,15 @@ public abstract class AbstractCaArrayResultTransfomer<R extends ICaArrayRecord>
         // MeasuredBioAssayData objects should be returned.
         // Generalizing, the result of this method should contain objects of
         // only desiredType or its subclasses.
-        if (associatedClass.isArray()) {
+        if (associatedClass.getName().equals("java.util.ArrayList")
+                || associatedClass.getName().equals("java.util.HashSet")) {
+            Collection associatedObjectsArr = (Collection) associationValue;
+            for (Object associatedObj : associatedObjectsArr) {
+                if (desiredType.isAssignableFrom(associatedObj.getClass())) {
+                    associatedObjects.add(associatedObj);
+                }
+            }
+        } else if (associatedClass.isArray()) {
             Object[] associatedObjectsArr = (Object[]) associationValue;
             for (Object associatedObj : associatedObjectsArr) {
                 if (desiredType.isAssignableFrom(associatedObj.getClass())) {
@@ -184,21 +193,34 @@ public abstract class AbstractCaArrayResultTransfomer<R extends ICaArrayRecord>
 
     private boolean isIdentifiable(Class<?> associatedClass) {
         return true;
-//        return associatedClass.isArray() ? isIdentifiable(associatedClass.getComponentType())
-//                : Identifiable.class.isAssignableFrom(associatedClass);
+        //        return associatedClass.isArray() ? isIdentifiable(associatedClass.getComponentType())
+        //                : Identifiable.class.isAssignableFrom(associatedClass);
     }
 
-    private Object[] executeMethods(Object obj, String... methodNames) {    
-        Object[] result = new Object[methodNames.length];
+    private Object[] executeMethods(Object obj, String... methodNames) {
+        List<Object> result = new ArrayList<Object>();
         Class<?> clazz = obj.getClass();
         for (int i = 0; i < methodNames.length; i++) {
             try {
-                result[i] = clazz.getMethod(methodNames[i]).invoke(obj);
+                Object methodResultObj = clazz.getMethod(methodNames[i]).invoke(obj);
+                if (methodResultObj != null && Collection.class.isAssignableFrom(methodResultObj.getClass())) {
+                    Collection<Object> collectionObjects = (Collection<Object>) methodResultObj;
+                    Collection<Object> tempList = new ArrayList<Object>();
+                    for (Object co : collectionObjects) {
+                        if (co != null) {
+                            tempList.add(co);
+                        }
+                    }
+                    result.add(tempList);
+
+                } else {
+                    result.add(methodResultObj);
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
-        return result;
+        return result.toArray();
     }
 
     /**

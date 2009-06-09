@@ -14,9 +14,9 @@ import gov.nih.nci.cagrid.data.utilities.CQLQueryResultsIterator;
  */
 public class QueryResultTransformerUtilTest extends TestCase {
     public void testGetCQLResultsById() {
-        String className = "edu.wustl.fe.Gene";
+        String className = "edu.wustl.geneconnect.domain.Gene";
         String idAttrName = "id";
-        String url = "http://128.252.227.94:9094/wsrf/services/cagrid/CaFE";
+        String url = "http://128.252.227.94:9092/wsrf/services/cagrid/GeneConnect";
         String id = "3";
 
         QueryLogger queryLogger = new QueryLogger();
@@ -24,9 +24,10 @@ public class QueryResultTransformerUtilTest extends TestCase {
         CQLQueryResults cqlQueryResults = util.getCQLResultsById(className, idAttrName, id, url, null);
         CQLQueryResultsIterator itr = new CQLQueryResultsIterator(cqlQueryResults, true);
         int counter = 0;
-        String expected = "<ns2:Gene id=\"3\" symbol=\"A2MP\" name=\"alpha-2-macroglobulin pseudogene\" pubmedCount=\"6\" chromosomeMap=\"12p13.3-p12.3\" xmlns:ns2=\"gme://caCORE.cabig/3.0/edu.wustl.fe\"/>";
+        String expected = "<ns2:Gene id=\"3\" ensemblGeneId=\"ENSG00000125834\" entrezGeneId=\"140901\" unigeneClusterId=\"Hs.100057\" ensemblGeneAsOutput=\"true\" entrezGeneAsOutput=\"true\" unigeneAsOutput=\"true\" xmlns:ns2=\"gme://caCORE.cabig/3.0/edu.wustl.geneconnect.domain\"/>";
         while (itr.hasNext()) {
             String singleRecordXml = (String) itr.next();
+            System.out.println(singleRecordXml);
             assertEquals(expected, singleRecordXml);
             counter++;
         }
@@ -34,11 +35,11 @@ public class QueryResultTransformerUtilTest extends TestCase {
     }
 
     public void testGetAttributeResult() {
-        String className = "edu.wustl.fe.Gene";
+        String className = "edu.wustl.geneconnect.domain.Gene";
         String idAttrName = "id";
-        String[] attributeNames = { "name", "symbol" };
+        String[] attributeNames = { "entrezGeneId", "ensemblGeneId" };
         String[] ids = { "1", "2" };
-        String url = "http://128.252.227.94:9094/wsrf/services/cagrid/CaFE";
+        String url = "http://128.252.227.94:9092/wsrf/services/cagrid/GeneConnect";
 
         QueryLogger queryLogger = new QueryLogger();
         QueryResultTransformerUtil util = new QueryResultTransformerUtil(queryLogger);

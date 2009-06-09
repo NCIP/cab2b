@@ -6,7 +6,7 @@ import edu.wustl.cab2b.common.domain.ExperimentGroup;
 import edu.wustl.cab2b.common.experiment.ExperimentGroupBusinessInterface;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.experiment.ExperimentGroupOperations;
-import edu.wustl.cab2b.server.util.UserUtility;
+import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
@@ -31,13 +31,13 @@ public class ExperimentGroupSessionBean extends AbstractStatelessSessionBean imp
     * @throws BizLogicException
     * @throws UserNotAuthorizedException
     * @throws RemoteException
-    * @throws DAOException 
+    * @throws DAOException
     * @see edu.wustl.cab2b.common.experiment.ExperimentGroupBusinessInterface#addExperimentGroup(java.lang.Long, edu.wustl.cab2b.common.domain.ExperimentGroup)
     */
     public ExperimentGroup addExperimentGroup(Long parentExperimentGroupId, ExperimentGroup experimentGroup,
-                                              String serializedDCR, String gridType) throws BizLogicException,
+                                              String serializedDCR) throws BizLogicException,
             UserNotAuthorizedException, RemoteException, DAOException {
-        Long userId = UserUtility.getLocalUserId(serializedDCR, gridType);
+        Long userId = UtilityOperations.getLocalUserId(serializedDCR);
         experimentGroup.setUserId(userId);
 
         return (new ExperimentGroupOperations()).addExperimentGroup(parentExperimentGroupId, experimentGroup);

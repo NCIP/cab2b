@@ -11,20 +11,43 @@ import java.util.HashSet;
  */
 public class User implements UserInterface, Serializable {
 
+    /**
+     * Collection of service urls configured for the user. 
+     */
     private Collection<ServiceURLInterface> serviceURLCollection = new HashSet<ServiceURLInterface>();
 
+    /**
+     * Database user ID
+     */
     private Long userId;
 
+    /**
+     * Database user name
+     */
     private String userName;
 
+    /**
+     * password field.
+     */
     private String password;
 
+    /**
+     * Flag to identify admin status of user. 
+     */
     private boolean isAdmin;
 
+    /**
+     * Default constructor 
+     */
     public User() {
         super();
     }
 
+    /**
+     * @param userName
+     * @param password
+     * @param isAdmin
+     */
     public User(String userName, String password, boolean isAdmin) {
         this();
         this.userName = userName;
@@ -68,7 +91,7 @@ public class User implements UserInterface, Serializable {
     }
 
     /**
-     * @return Returns the serviceURLCollection.
+     * @return Returns all urls configured for the user
      * 
      * @hibernate.set name="serviceURLCollection" cascade="save-update" lazy="false" inverse="false" table="CAB2B_USER_URL_MAPPING"
      * @hibernate.collection-key column="USER_ID" 
@@ -102,13 +125,21 @@ public class User implements UserInterface, Serializable {
         this.password = password;
     }
 
-    public void addServiceURL(ServiceURL serviceURL) {
+    /**
+     * Adds service url as a configured for the user object.
+     * @param serviceURL
+     */
+    public void addServiceURL(ServiceURLInterface serviceURL) {
         if (serviceURL != null) {
             serviceURLCollection.add(serviceURL);
         }
     }
 
-    public void removeServiceURL(ServiceURL serviceURL) {
+    /**
+     * Removes service url from a configured url collection for the user object. 
+     * @param serviceURL
+     */
+    public void removeServiceURL(ServiceURLInterface serviceURL) {
         if (serviceURL != null) {
             serviceURLCollection.remove(serviceURL);
         }
@@ -131,6 +162,9 @@ public class User implements UserInterface, Serializable {
         this.isAdmin = isAdmin;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object arg) {
         if (this == arg) {
@@ -148,6 +182,9 @@ public class User implements UserInterface, Serializable {
         return isEqual;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
     @Override
     public int hashCode() {
         int hashCode = 1;

@@ -8,7 +8,6 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.client.ui.treetable.B2BTreeNode;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
-import edu.wustl.common.util.logger.Logger;
 
 public class TransformCategoryResult {
 

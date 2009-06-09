@@ -24,19 +24,19 @@ import edu.wustl.cab2b.client.ui.util.WindowUtilities;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 
 /**
- * Panel to preview conditions in Parameterized query 
+ * Panel to preview conditions in Parameterized query
  * @author deepak_shingan
  *
  */
 public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
 
     /**
-     * Top panel showing on parameterized conditions 
+     * Top panel showing on parameterized conditions
      */
     protected Cab2bPanel topConditionPanel;
 
@@ -56,17 +56,17 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
     protected Cab2bTitledPanel bottomConditionTitlePanel;
 
     /**
-     * Navigation panel containing "Show Results" and "Cancel" buttons   
+     * Navigation panel containing "Show Results" and "Cancel" buttons
      */
     protected Cab2bPanel navigationPanel;
 
     /**
-     * Max dimension of the attribute names  
+     * Max dimension of the attribute names
      */
     protected Dimension maxLabelDimension;
 
     /**
-     * Dialog box containing panel of Parameterized and non-parameterized saved contions for the query  
+     * Dialog box containing panel of Parameterized and non-parameterized saved contions for the query
      */
     protected JDialog dialog;
 
@@ -81,7 +81,7 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
     protected abstract Cab2bPanel getNavigationPanel();
 
     /**
-     * Method to display paramaterizedQueryPreviewPanel in dialog box. 
+     * Method to display paramaterizedQueryPreviewPanel in dialog box.
      */
     public void showInDialog(final String dialogTitle) {
         Dimension dimension = MainFrame.getScreenDimension();
@@ -91,7 +91,7 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
     }
 
     /**
-     * Creating UI for parameterized contiontion panel, placed at TOP side of page
+     * Creating UI for parameterized condition panel, placed at TOP side of page
      */
     protected void initTopConditionPanel() {
         if (topConditionPanel.getComponentCount() > 0) {
@@ -169,8 +169,8 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
     }
 
     /**
-     * This Method checks whether the given attribute is associated with any condition 
-     * and sets the condition values. 
+     * This Method checks whether the given attribute is associated with any condition
+     * and sets the condition values.
      * @param attribute
      * @return
      */
@@ -189,7 +189,7 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
     }
 
     /**
-     * Returns all selected attribute panels from the top-condition panels  
+     * Returns all selected attribute panels from the top-condition panels
      * @return
      */
     Map<Integer, AbstractTypePanel> getAllSelectedPanel() {

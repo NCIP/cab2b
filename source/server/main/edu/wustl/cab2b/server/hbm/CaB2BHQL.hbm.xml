@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!DOCTYPE hibernate-mapping PUBLIC
-    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
@@ -23,7 +23,7 @@
 
 	<query name="getQueriesByUserName">
 		from edu.wustl.cab2b.common.queryengine.Cab2bQuery cab2bQuery
-		where cab2bQuery.userId = (Select user.userId from
+		where cab2bQuery.createdBy = (Select user.userId from
 		edu.wustl.cab2b.common.user.User user where user.userName = ?)
 	</query>
 
@@ -46,23 +46,34 @@
 		edu.wustl.cab2b.common.domain.DataListMetadata as datalist where
 		datalist.name = ?
 	</query>
-	
+
 	<query name="getExperimentIdByName">
 		Select exp.id from
 		edu.wustl.cab2b.common.domain.Experiment as exp where
 		exp.name = ?
 	</query>
-	
+
 	<query name="getExperimentGroupIdByName">
 		Select expGrp.id from
 		edu.wustl.cab2b.common.domain.ExperimentGroup as expGrp where
 		expGrp.name = ?
 	</query>
-	
+
 	<query name="getUserQueriesDetails">
 		select new edu.wustl.cab2b.common.queryengine.Cab2bQuery (q.id, q.name, q.description, q.createdDate)
 		from edu.wustl.cab2b.common.queryengine.Cab2bQuery q
-		where q.userId = (Select u.userId from edu.wustl.cab2b.common.user.User u where u.userName = ?)
+		where q.createdBy = (Select u.userId from edu.wustl.cab2b.common.user.User u where u.userName = ?)
+	</query>
+
+	<query name="getServiceURLsByDomainModelnVersion">
+		from edu.wustl.cab2b.common.user.ServiceURL s
+		where s.domainModel = ? and s.version = ?)
+	</query>
+
+	<query name="getQueriesByTypeAndUserName">
+		from edu.wustl.cab2b.common.queryengine.Cab2bQuery cab2bQuery
+		where cab2bQuery.type = ? and cab2bQuery.createdBy = (Select user.userId from
+		edu.wustl.cab2b.common.user.User user where user.userName = ?)
 	</query>
 
 </hibernate-mapping>

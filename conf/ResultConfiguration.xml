@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <applications>
-<application name="caArray" >
+<application name="caArray_v2.1" >
 		<default>
 			  <result-transformer>cab2b.server.caarray.resulttransformer.DefaultCaArrayResultTransformer</result-transformer>
    		</default>
@@ -14,7 +14,6 @@
               	<retriever>edu.wustl.cab2b.server.datalist.CategoryDataListRetriever</retriever>
               </data-list-transformers>
 		</default>
-
 </application>
 
 <default>

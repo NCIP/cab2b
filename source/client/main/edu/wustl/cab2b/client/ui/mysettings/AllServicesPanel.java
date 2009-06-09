@@ -29,6 +29,7 @@ import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
+import edu.wustl.cab2b.client.cache.ClientSideCache;
 import edu.wustl.cab2b.client.serviceinstances.ServiceInstanceConfigurator;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
@@ -39,6 +40,7 @@ import edu.wustl.cab2b.client.ui.pagination.JPagination;
 import edu.wustl.cab2b.client.ui.pagination.NumericPager;
 import edu.wustl.cab2b.client.ui.pagination.PageElement;
 import edu.wustl.cab2b.client.ui.pagination.PageElementImpl;
+import edu.wustl.cab2b.common.util.ServiceURLUtility;
 
 /**
  * @author atul_jawale
@@ -68,7 +70,7 @@ public class AllServicesPanel extends Cab2bPanel implements ActionListener {
      */
     public AllServicesPanel() {
         super(new BorderLayout());
-        allServices.addAll(new ServiceInstanceConfigurator().getMetadataEntityGroups());
+        allServices.addAll(new ServiceURLUtility().getMetadataEntityGroups(ClientSideCache.getInstance()));
         initGUI();
     }
 

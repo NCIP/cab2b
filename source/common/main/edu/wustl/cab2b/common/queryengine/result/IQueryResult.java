@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.common.queryengine.result;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,8 @@ import edu.wustl.common.querysuite.queryobject.IBaseQueryObject;
  * records obtained from that service.
  * 
  * @author srinath_k
- * @param <R> represents the actual type of records contained in the query
+ * @param <R>
+ *            represents the actual type of records contained in the query
  *            result.
  */
 public interface IQueryResult<R extends IRecord> extends IBaseQueryObject {
@@ -31,4 +33,8 @@ public interface IQueryResult<R extends IRecord> extends IBaseQueryObject {
     List<R> addUrl(String url);
 
     EntityInterface getOutputEntity();
+
+    Collection<FailedTargetURL> getFailedURLs();
+
+    void setFailedURLs(Collection<FailedTargetURL> failedQueryUrls);
 }

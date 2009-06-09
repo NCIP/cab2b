@@ -44,12 +44,12 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
-import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.client.ui.mainframe.stackbox.MyExperimentLinkPanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.SearchNavigationPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.WindowUtilities;
+import edu.wustl.cab2b.common.authentication.Authenticator;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
@@ -69,10 +69,10 @@ import edu.wustl.common.util.dbManager.DAOException;
 /**
  * This class shows a panel to create new experiments with GUI controls for
  * specifying experiment name, description, parent experiment group, etc.
- * 
+ *
  * experiment create date, last modified date are implicit, which is the current
  * system date.
- * 
+ *
  * @author chetan_bh
  */
 public class NewExperimentDetailsPanel extends Cab2bPanel {
@@ -161,7 +161,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                                                                                                                   EjbNamesConstants.EXPERIMENT,
                                                                                                                   ExperimentHome.class);
         try {
-            dataVector = expBus.getExperimentHierarchy(UserValidator.getSerializedDCR(), UserValidator.getGridType());
+            dataVector = expBus.getExperimentHierarchy(Authenticator.getSerializedDCR());
         } catch (RemoteException e1) {
             CommonUtils.handleException(e1, this, true, true, false, false);
         } catch (ClassNotFoundException e1) {
@@ -385,8 +385,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
                 experiment.getDataListMetadataCollection().add(MainSearchPanel.savedDataListMetadata);
 
                 try {
-                    expBus.addExperiment(expGrpId, experiment, UserValidator.getSerializedDCR(),
-                                         UserValidator.getGridType());
+                    expBus.addExperiment(expGrpId, experiment, Authenticator.getSerializedDCR());
                     SearchNavigationPanel.getMessageLabel().setText("* Experiment saved successfully *.");
                     MyExperimentLinkPanel.getInstance().updateMyExperimentPanel();
                     updateUI();
@@ -473,7 +472,7 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
 
             try {
                 newExpGrp = expGrpBus.addExperimentGroup(parentExpGrpID, newExpGrp,
-                                                         UserValidator.getSerializedDCR(), UserValidator.getGridType());
+                                                         Authenticator.getSerializedDCR());
                 logger.debug("returner expGrp id " + newExpGrp.getId());
             } catch (RemoteException e1) {
                 CommonUtils.handleException(e1, this, true, true, false, false);
@@ -535,14 +534,12 @@ public class NewExperimentDetailsPanel extends Cab2bPanel {
      * @throws DAOException
      * @throws ClassNotFoundException
      */
-    public static List<DataListMetadata> getDataLlistMetadatas(String selectedIdentityProvider)
-            throws RemoteException, DynamicExtensionsSystemException, DAOException, ClassNotFoundException {
+    public static List<DataListMetadata> getDataLlistMetadatas() throws RemoteException,
+            DynamicExtensionsSystemException, DAOException, ClassNotFoundException {
         DataListBusinessInterface dataListBI = (DataListBusinessInterface) CommonUtils.getBusinessInterface(
                                                                                                             EjbNamesConstants.DATALIST_BEAN,
                                                                                                             DataListHomeInterface.class);
-        List<DataListMetadata> dataListMetadatas = dataListBI.retrieveAllDataListMetadata(
-                                                                                          UserValidator.getSerializedDCR(),
-                                                                                          selectedIdentityProvider);
+        List<DataListMetadata> dataListMetadatas = dataListBI.retrieveAllDataListMetadata(Authenticator.getSerializedDCR());
         return dataListMetadatas;
     }
 }

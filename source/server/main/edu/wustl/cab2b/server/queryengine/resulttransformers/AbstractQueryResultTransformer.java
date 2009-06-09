@@ -1,18 +1,25 @@
 package edu.wustl.cab2b.server.queryengine.resulttransformers;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
+import org.cagrid.fqp.execution.QueryExecutionParameters;
+import org.cagrid.fqp.execution.TargetDataServiceQueryBehavior;
 import org.globus.gsi.GlobusCredential;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.queryengine.result.FailedTargetURL;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -41,7 +48,10 @@ import gov.nih.nci.cagrid.fqp.processor.exceptions.FederatedQueryProcessingExcep
 public abstract class AbstractQueryResultTransformer<R extends IRecord, C extends ICategorialClassRecord>
         implements IQueryResultTransformer<R, C> {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(AbstractQueryResultTransformer.class);
+
     protected QueryLogger queryLogger;
+
+    private Collection<FailedTargetURL> failedQueryUrlList = new ArrayList<FailedTargetURL>();
 
     public AbstractQueryResultTransformer() {
         queryLogger = new QueryLogger();
@@ -50,7 +60,8 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
     /**
      * Subclasses can specify a custom dcql logger.
      * 
-     * @param dcqlLogger custom logger.
+     * @param dcqlLogger
+     *            custom logger.
      */
     protected AbstractQueryResultTransformer(QueryLogger queryLogger) {
         this.queryLogger = queryLogger;
@@ -72,31 +83,60 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      *      edu.common.dynamicextensions.domaininterface.EntityInterface)
      */
     public IQueryResult<R> getResults(DCQLQuery query, EntityInterface targetEntity, GlobusCredential cred) {
-        log(query);
-        Map<String, CQLQueryResults> queryResults = executeDcql(query, cred);
-        int numRecs = 0;
-        IQueryResult<R> result = createResult(targetEntity);
-        for (Map.Entry<String, CQLQueryResults> entry : queryResults.entrySet()) {
-            String url = entry.getKey();
-            CQLQueryResults cqlQueryResult = entry.getValue();
-            List<R> recs = createRecords(url, cqlQueryResult, targetEntity);
-            result.addRecords(url, recs);
-            numRecs += recs.size();
+        IQueryResult<R> result = null;
+        try {
+            log(query);
+            Map<String, CQLQueryResults> queryResults = executeDcql(query, cred);
+            int numRecs = 0;
+            result = createResult(targetEntity);
+            for (Map.Entry<String, CQLQueryResults> entry : queryResults.entrySet()) {
+                String url = entry.getKey();
+                CQLQueryResults cqlQueryResult = entry.getValue();
+                List<R> recs = createRecords(url, cqlQueryResult, targetEntity);
+                result.addRecords(url, recs);
+                numRecs += recs.size();
+            }
+            logger.info("No. of records found and transformed : " + numRecs);
+            logger.info("No. of failed URLS found : " + failedQueryUrlList.size());
+            result.setFailedURLs(failedQueryUrlList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(Utility.getStackTrace(e), ErrorCodeConstants.QM_0004);
         }
-        logger.info("No. of records found and transformed : " + numRecs);
         return result;
     }
 
+    /**
+     * Executes DCQL and transforms the results.
+     * @param query
+     * @param cred
+     * @return Map<String, CQLQueryResults>
+     */
     protected Map<String, CQLQueryResults> executeDcql(DCQLQuery query, GlobusCredential cred) {
         DCQLQueryResultsCollection queryResults = null;
         try {
-            FederatedQueryEngine federatedQueryEngine = new FederatedQueryEngine(cred);
+            QueryExecutionParameters queryParameter = new QueryExecutionParameters();
+            TargetDataServiceQueryBehavior targetBehaviour = new TargetDataServiceQueryBehavior();
+            targetBehaviour.setFailOnFirstError(false);
+            queryParameter.setTargetDataServiceQueryBehavior(targetBehaviour);
+            ExecutorService executor = Executors.newFixedThreadPool(query.getTargetServiceURL().length);
+            FederatedQueryEngine federatedQueryEngine = new FederatedQueryEngine(cred, queryParameter, executor);
+            FQPQueryListener listener = new FQPQueryListener(query);
+            federatedQueryEngine.addStatusListener(listener);
+
             logger.info("Executing DCQL... Target is : " + query.getTargetObject().getName());
             queryResults = federatedQueryEngine.execute(query);
+            failedQueryUrlList.addAll(listener.getFailedURLs().values());
+            for (FailedTargetURL url : listener.getFailedURLs().values()) {
+                logger.info("FailedURL : " + url.getTargetUrl());
+                logger.info("FailedURL Target Class : "
+                        + ((gov.nih.nci.cagrid.dcql.Object) url.getTargetObject()).getName());
+            }
             logger.info("Executed DCQL successfully.");
         } catch (FederatedQueryProcessingException e) {
+            e.printStackTrace();
             throw new RuntimeException(Utility.getStackTrace(e), ErrorCodeConstants.QM_0004);
-        }
+        }        
         Map<String, CQLQueryResults> res = new HashMap<String, CQLQueryResults>();
         for (DCQLResult dcqlQueryResult : queryResults.getDCQLResult()) {
             res.put(dcqlQueryResult.getTargetServiceURL(), dcqlQueryResult.getCQLQueryResultCollection());
@@ -155,9 +195,14 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             }
         }
         copyFromResult(catResult, classResults);
+        catResult.setFailedURLs(failedQueryUrlList);
+        logger.info("Category Failed URL number " + failedQueryUrlList.size());
         return catResult;
     }
 
+    /**
+     * @param dcqlQuery
+     */
     private void log(DCQLQuery dcqlQuery) {
         queryLogger.log(dcqlQuery);
     }
@@ -190,8 +235,10 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
     /**
      * Does nothing and is a hook for subclasses.
      * 
-     * @param catRec the categorialClassRecord.
-     * @param rec the record for the class obtained by executing DCQL.
+     * @param catRec
+     *            the categorialClassRecord.
+     * @param rec
+     *            the record for the class obtained by executing DCQL.
      */
     protected void copyFromRecord(C catRec, R rec) {
 
@@ -203,8 +250,10 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * <code>createResult</code> or <code>createCategoryResult</code>
      * methods.
      * 
-     * @param catResult the category results.
-     * @param classResults the class results.
+     * @param catResult
+     *            the category results.
+     * @param classResults
+     *            the class results.
      */
     protected void copyFromResult(IQueryResult<C> catResult, IQueryResult<R> classResults) {
 
@@ -214,19 +263,24 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * Returns a {@link List} of {@link IRecord}s that represent the given
      * {@link CQLQueryResults}.
      * 
-     * @param url the service url from which the cqlResults were obtained.
-     * @param cqlQueryResults the results obtained by executing DCQL.
-     * @param targetEntity the target entity.
+     * @param url
+     *            the service url from which the cqlResults were obtained.
+     * @param cqlQueryResults
+     *            the results obtained by executing DCQL.
+     * @param targetEntity
+     *            the target entity.
      * @return list of transformed records.
      */
     protected abstract List<R> createRecords(String url, CQLQueryResults cqlQueryResults,
                                              EntityInterface targetEntity);
 
     /**
-     * @param categorialClass the categorial class.
-     * @param categoryAttributes the attributes of the categorial class that are
-     *            to be present in the record.
-     * @param id the id of the record.
+     * @param categorialClass
+     *            the categorial class.
+     * @param categoryAttributes
+     *            the attributes of the categorial class that are to be present in the record.
+     * @param id
+     *            the id of the record.
      * @return a {@link ICategorialClassRecord}.
      */
     protected abstract C createCategoryRecord(CategorialClass categorialClass,

@@ -28,13 +28,13 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
-import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
 import edu.wustl.cab2b.client.ui.util.WindowUtilities;
 import edu.wustl.cab2b.common.CustomDataCategoryModel;
 import edu.wustl.cab2b.common.IdName;
+import edu.wustl.cab2b.common.authentication.Authenticator;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
@@ -208,8 +208,7 @@ public class CustomCategoryPanel extends JXFrame {
                             dataListMetadata = dataListBI.saveCustomDataCategory(entityName, attributeList,
                                                                                  customDataCategoryText.getText(),
                                                                                  experiment,
-                                                                                 UserValidator.getSerializedDCR(),
-                                                                                 UserValidator.getGridType());
+                                                                                 Authenticator.getSerializedDCR());
                         } catch (RemoteException e1) {
                             CommonUtils.handleException(e1, CustomCategoryPanel.this, true, true, true, false);
                         } catch (CheckedException e1) {
@@ -246,7 +245,7 @@ public class CustomCategoryPanel extends JXFrame {
     /**
      * Select category combobox listener, displays attributes for selected
      * category entity into "Available Attribute" list.
-     * 
+     *
      * @author deepak_shingan
      */
     class CategoryComboListener implements ItemListener {

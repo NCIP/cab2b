@@ -29,8 +29,8 @@ public class Locator {
      */
     protected Locator() {
         System.setProperty(Context.PROVIDER_URL, CommonPropertyLoader.getJndiUrl());
-        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
-        System.setProperty(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
+        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.naming.HttpNamingContextFactory");
+        //System.setProperty(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
     }
 
     /**

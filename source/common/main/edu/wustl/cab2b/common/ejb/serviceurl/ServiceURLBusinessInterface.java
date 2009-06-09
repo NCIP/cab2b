@@ -4,7 +4,6 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 
 import edu.wustl.cab2b.common.BusinessInterface;
-import edu.wustl.cab2b.common.user.ServiceURL;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 
@@ -37,7 +36,18 @@ public interface ServiceURLBusinessInterface extends BusinessInterface {
      * @return
      * @throws RemoteException
      */
-    Collection<ServiceURL> getInstancesByServiceName(String serviceName, String version, UserInterface user)
+    Collection<ServiceURLInterface> getInstancesByServiceName(String serviceName, String version, UserInterface user)
             throws RemoteException;
+    
+    /**
+     * This method saves the collection of user defined ServiceURL for a particular entityGroupName and for that user
+     * @param entityGroupName
+     * @param serviceMetadataObjects
+     * @param currentUser
+     * @return
+     * @throws RemoteException
+     */
+    UserInterface saveServiceInstances(String entityGroupName, Collection<ServiceURLInterface> serviceMetadataObjects,
+                              UserInterface currentUser) throws RemoteException ;
 
 }

@@ -23,9 +23,9 @@ import gov.nih.nci.cagrid.dcql.Object;
  */
 public class DefaultQueryResultTransformerTest extends TestCase {
     public void testGetResults() {
-        String name = "edu.wustl.fe.Gene";
+        String name = "edu.wustl.geneconnect.domain.Gene";
         String aName = "id";
-        String url = "http://128.252.227.94:9094/wsrf/services/cagrid/CaFE";
+        String url = "http://128.252.227.94:9092/wsrf/services/cagrid/GeneConnect";
         EntityInterface en = TestUtil.getEntity(name, aName);
 
         Attribute a = new Attribute();
@@ -50,6 +50,7 @@ public class DefaultQueryResultTransformerTest extends TestCase {
         assertTrue(map.containsKey(url));
 
         Set<String> ex = new HashSet<String>();
+        ex.add("0");
         ex.add("1");
         ex.add("2");
         for(IRecord rec : map.get(url)) {

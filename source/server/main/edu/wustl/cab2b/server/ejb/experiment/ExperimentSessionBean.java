@@ -11,6 +11,7 @@ import org.hibernate.HibernateException;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.CustomDataCategoryModel;
+import edu.wustl.cab2b.common.authentication.util.AuthenticationUtility;
 import edu.wustl.cab2b.common.domain.DataListMetadata;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.exception.CheckedException;
@@ -18,16 +19,16 @@ import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.experiment.ExperimentOperations;
-import edu.wustl.cab2b.server.util.UserUtility;
+import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
 
 /**
  * A class containing experiment related business logic.
- * 
+ *
  * @author chetan_bh
- * 
+ *
  */
 public class ExperimentSessionBean extends AbstractStatelessSessionBean implements ExperimentBusinessInterface {
 
@@ -61,9 +62,9 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
      * @throws DAOException
      * @throws RemoteException
      */
-    public Vector getExperimentHierarchy(String serializedDCR, String gridType) throws ClassNotFoundException,
+    public Vector getExperimentHierarchy(String serializedDCR) throws ClassNotFoundException,
             DAOException, RemoteException {
-        String userName = UserUtility.getUsersGridId(serializedDCR, gridType);
+        String userName = AuthenticationUtility.getUsersGridId(serializedDCR);
         return (new ExperimentOperations()).getExperimentHierarchy(userName);
     }
 
@@ -105,7 +106,7 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
     /**
      * get a set of root entities for an experiment where each root entity
      * represents a datalist
-     * 
+     *
      * @param exp the experiment
      * @return set of root entities for an experiment where each root entity
      *         represents a datalist
@@ -126,9 +127,9 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
      * @see edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface#addExperiment(java.lang.Long,
      *      edu.wustl.cab2b.common.domain.Experiment)
      */
-    public void addExperiment(Long experimentGroupId, Experiment experiment, String serializedDCR, String gridType)
+    public void addExperiment(Long experimentGroupId, Experiment experiment, String serializedDCR)
             throws RemoteException, BizLogicException, UserNotAuthorizedException, DAOException {
-        Long userId = UserUtility.getLocalUserId(serializedDCR, gridType);
+        Long userId = UtilityOperations.getLocalUserId(serializedDCR);
         experiment.setUserId(userId);
 
         (new ExperimentOperations()).addExperiment(experimentGroupId, experiment);
@@ -136,7 +137,7 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
 
     /**
      * save the given data as a data category
-     * 
+     *
      * @param title the title for the category
      * @param attributes list of attributes needed for the new entity
      * @param data the data to be saved
@@ -163,9 +164,9 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
     }
 
     /**
-     * Returns root Id of specified datalist 
+     * Returns root Id of specified datalist
      * @param dl
-     * @return long 
+     * @return long
      * @throws HibernateException
      */
     public long getRootId(DataListMetadata dl) throws HibernateException {
@@ -221,9 +222,9 @@ public class ExperimentSessionBean extends AbstractStatelessSessionBean implemen
      * @return List of experiments for <code>user</code>
      * @throws RemoteException
      */
-    public List<Experiment> getExperimentsForUser(UserInterface user, String serializedDCR, String gridType)
+    public List<Experiment> getExperimentsForUser(UserInterface user, String serializedDCR)
             throws RemoteException {
-        String userName = UserUtility.getUsersGridId(serializedDCR, gridType);
+        String userName = AuthenticationUtility.getUsersGridId(serializedDCR);
         return new ExperimentOperations().getLatestExperimentForUser(userName);
     }
 

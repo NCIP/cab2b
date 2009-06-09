@@ -66,11 +66,13 @@ public class UserOperationsTest extends TestCase {
 		}
 		assertFalse(gotException);
 	}
+	
 	public void testGetServiceURLsForUserForAdminUrls() {
 		UserOperations userOperations = new UserOperations();
 		UserInterface user = userOperations.getUserByName("Anonymous");
 
-		Map<String, List<String>> res = userOperations.getServiceURLsForUser(user);
-		assertTrue(res.isEmpty());
+		Map<String, List<String>> anonymousUser = userOperations.getServiceURLsForUser(user);
+		Map<String, List<String>> adminUser = userOperations.getServiceURLsForUser(userOperations.getAdmin());
+		assertEquals(anonymousUser.size(), adminUser.size());
 	}
 }

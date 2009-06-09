@@ -27,7 +27,7 @@ public class DataFileLoaderTest extends TestCase {
 
     public void testLoadDataFromFile() {
         assertTrue(true);
-        String str = "SomeName";
+        String str = "S";
         String home = System.getProperty("user.home");
         file = new File(home, "GeneratedFromDataFileLoaderTest.txt");
         String fileName = file.getAbsolutePath();

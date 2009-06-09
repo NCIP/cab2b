@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!DOCTYPE hibernate-mapping PUBLIC
-    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping auto-import="false" default-lazy="false">
@@ -23,8 +23,8 @@
             inverse="false"
             cascade="all-delete-orphan"
         >
-            <cache 
-                usage="read-write" 
+            <cache
+                usage="read-write"
              />
 
               <key
@@ -54,27 +54,6 @@
             length="30"
             not-null="true"
         />
-        
-        <property
-            name="userId"
-            type="long"
-            update="true"
-            insert="true"
-            column="USER_ID"
-            length="30"
-            not-null="true"
-        />
-    
-        <!-- many-to-one
-            name="user"
-            class="edu.wustl.cab2b.common.user.User"
-            cascade="none"
-            outer-join="auto"
-            update="true"
-            insert="true"
-            column="USER_ID"
-            not-null="true"
-        / -->
 
         </joined-subclass>
 

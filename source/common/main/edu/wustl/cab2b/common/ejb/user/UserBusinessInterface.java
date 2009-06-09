@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package edu.wustl.cab2b.common.ejb.user;
 
@@ -16,21 +16,21 @@ import edu.wustl.cab2b.common.user.UserInterface;
 
 /**
  * @author hrishikesh_rajpathak
- * 
+ *
  */
 public interface UserBusinessInterface extends BusinessInterface {
 
     /**
      * Insert given user as a new user in database
-     * 
+     *
      * @param user
      * @throws RemoteException
      */
-    UserInterface insertUser(String dref, String idP) throws RemoteException;
+    UserInterface insertUser(String dref) throws RemoteException;
 
     /**
      * Update present user in database
-     * 
+     *
      * @param user
      * @throws RemoteException
      */
@@ -38,7 +38,7 @@ public interface UserBusinessInterface extends BusinessInterface {
 
     /**
      * Get a map of entity group name vs related list of service urls for the given user
-     * 
+     *
      * @param user
      * @return
      * @throws DynamicExtensionsSystemException
@@ -50,12 +50,12 @@ public interface UserBusinessInterface extends BusinessInterface {
 
     /**
      * Get user by user name. If user of that name not found in database, it returns null.
-     * 
+     *
      * @param user
      * @return
      * @throws RemoteException
      */
-    UserInterface getUserByName(String user, String idP) throws RemoteException;
+    UserInterface getUserByName(String user) throws RemoteException;
 
     /**
      * Returns globus credential
@@ -64,14 +64,13 @@ public interface UserBusinessInterface extends BusinessInterface {
      * @return
      * @throws RemoteException
      */
-    GlobusCredential getGlobusCredential(String dref, String idP) throws RemoteException;
-    
+    GlobusCredential getGlobusCredential(String dref) throws RemoteException;
+
     /**
-     * 
+     *
      * @return Anonymous User
      * @throws RemoteException
      */
-    UserInterface getAnonymousUser()throws RemoteException;
-    
+    UserInterface getAnonymousUser() throws RemoteException;
 
 }

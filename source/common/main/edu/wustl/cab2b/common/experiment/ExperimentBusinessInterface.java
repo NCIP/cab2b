@@ -36,8 +36,8 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @throws DAOException
      * @throws RemoteException
      */
-    void addExperiment(Long experimentGroupId, Experiment experiment, String dref, String idP)
-            throws BizLogicException, UserNotAuthorizedException, DAOException, RemoteException;
+    void addExperiment(Long experimentGroupId, Experiment experiment, String dref) throws BizLogicException,
+            UserNotAuthorizedException, DAOException, RemoteException;
 
     /**
      * Moves a experiment from given Experiment group to a target Experiment group
@@ -69,16 +69,15 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
      * @throws DAOException
      * @throws RemoteException
      */
-    Vector getExperimentHierarchy(String dref, String idP) throws ClassNotFoundException, DAOException,
-            RemoteException;
+    Vector getExperimentHierarchy(String dref) throws ClassNotFoundException, DAOException, RemoteException;
 
     /**
-     * Returns list of all experiments associated with specified user 
+     * Returns list of all experiments associated with specified user
      * @param user
      * @return
      * @throws RemoteException
      */
-    List<Experiment> getExperimentsForUser(UserInterface user, String dref, String idP) throws RemoteException;
+    List<Experiment> getExperimentsForUser(UserInterface user, String dref) throws RemoteException;
 
     /**
      * Returns experiment belongs to given id.
@@ -92,7 +91,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
     /**
      * get a set of root entities for an experiment where each root entity
      * represents a datalist
-     * 
+     *
      * @param exp the experiment
      * @return set of root entities for an experiment where each root entity
      *         represents a datalist
@@ -101,7 +100,7 @@ public interface ExperimentBusinessInterface extends BusinessInterface {
 
     /**
      * save the given data as a data category
-     * 
+     *
      * @param title the title for the category
      * @param attributes list of attributes needed for the new entity
      * @param data the data to be saved

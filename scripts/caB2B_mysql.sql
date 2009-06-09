@@ -7,7 +7,7 @@ alter table CAB2B_QUERY drop foreign key FKCC34AD9DBC7298A9;
 alter table CAB2B_USER_URL_MAPPING drop foreign key FKC64BBF4AAEC86F2D;
 alter table CAB2B_USER_URL_MAPPING drop foreign key FKC64BBF4AB2004842;
 
-drop table if exists CURATED_PATH; 
+drop table if exists CURATED_PATH;
 drop table if exists CURATED_PATH_TO_PATH;
 drop table if exists PATH;
 drop table if exists INTER_MODEL_ASSOCIATION;
@@ -18,6 +18,7 @@ drop table if exists CAB2B_DATA_CATEGORY;
 drop table if exists DATA_CATEGORIAL_ATTRIBUTE;
 drop table if exists DATA_CATEGORIAL_CLASS;
 drop table if exists OUTPUT_CLASS_URLS;
+drop table if exists CAB2B_MODEL_GROUP;
 drop table if exists CAB2B_QUERY;
 drop table if exists CAB2B_SERVICE_URL;
 drop table if exists CAB2B_USER;
@@ -36,7 +37,7 @@ create table PATH(
 /* Possible values for ASSOCIATION_TYPE are 1 and 2
 ASSOCIATION_TYPE = 1 represents INTER_MODEL_ASSOCIATION.
 ASSOCIATION_TYPE = 2 represents INTRA_MODEL_ASSOCIATION.
-*/     
+*/
 create table ASSOCIATION(
     ASSOCIATION_ID    bigint    not null,
     ASSOCIATION_TYPE  INT(8)    not null ,
@@ -48,12 +49,12 @@ create table INTER_MODEL_ASSOCIATION(
     LEFT_ATTRIBUTE_ID   bigint  not null,
     RIGHT_ENTITY_ID     bigint  not null,
     RIGHT_ATTRIBUTE_ID  bigint  not null,
-    primary key (ASSOCIATION_ID) 
+    primary key (ASSOCIATION_ID)
 );
 create table INTRA_MODEL_ASSOCIATION(
     ASSOCIATION_ID    bigint    not null references ASSOCIATION(ASSOCIATION_ID),
     DE_ASSOCIATION_ID bigint    not null UNIQUE ,
-    primary key (ASSOCIATION_ID) 
+    primary key (ASSOCIATION_ID)
 );
 create table CAB2B_ID_TABLE(
     NEXT_ASSOCIATION_ID    bigint    not null,
@@ -71,8 +72,6 @@ create table CURATED_PATH_TO_PATH (
 	path_id BIGINT  references PATH (path_id),
 	primary key (curated_path_Id,path_id)
 );
-
-
 create table OUTPUT_CLASS_URLS (
    CAB2B_QUERY_ID bigint not null,
    OUTPUT_CLASS_URL varchar(255),
@@ -82,7 +81,6 @@ create table OUTPUT_CLASS_URLS (
 create table CAB2B_QUERY (
    IDENTIFIER bigint not null,
    ENTITY_ID bigint not null,
-   USER_ID bigint not null,
    primary key (IDENTIFIER)
 );
 create table CAB2B_DATA_CATEGORY (
@@ -100,13 +98,25 @@ create table DATA_CATEGORIAL_CLASS (
    ID bigint not null,
    primary key (ID)
 );
+create table CAB2B_MODEL_GROUP (
+	MODEL_ID bigint not null auto_increment,
+	MODEL_GROUP_NAME varchar(255) unique not null,
+	SECURED bit null,
+	DESCRIPTION text null,
+	ENTITY_GROUP_NAMES text not null,
+	primary key(MODEL_ID)
+);
 create table CAB2B_SERVICE_URL (
    URL_ID bigint not null auto_increment,
-   ENTITY_GROUP_NAME text not null,
+   DOMAIN_MODEL text not null,
+   VERSION text not null,
    URL text not null,
    ADMIN_DEFINED bit not null,
-   HOSTING_CENTER_NAME varchar(254) null,
+   HOSTING_CENTER varchar(254) null,
    DESCRIPTION text null,
+   CONTACT_NAME text null,
+   CONTACT_MAIL text null,
+   HOSTING_CENTER_SHORT_NAME text null,
    primary key (URL_ID)
 );
 create table CAB2B_USER (
@@ -139,6 +149,6 @@ alter table CAB2B_USER_URL_MAPPING add index FKC64BBF4AAEC86F2D (USER_ID), add c
 alter table CAB2B_USER_URL_MAPPING add index FKC64BBF4AB2004842 (SERVICE_URL_ID), add constraint FKC64BBF4AB2004842 foreign key (SERVICE_URL_ID) references CAB2B_SERVICE_URL (URL_ID);
 
 insert into CAB2B_ID_TABLE(NEXT_ASSOCIATION_ID) value(1);
-insert into CAB2B_user (USER_ID, NAME, PASSWORD, IS_ADMIN) values (1,'Admin', 'admin123', 1); 
+insert into CAB2B_user (USER_ID, NAME, PASSWORD, IS_ADMIN) values (1,'Admin','admin123',1);
 insert into CAB2B_user (USER_ID, NAME, IS_ADMIN) values (2,'Anonymous',0);
- 
+

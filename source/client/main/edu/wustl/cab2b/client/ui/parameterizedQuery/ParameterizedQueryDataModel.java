@@ -19,14 +19,14 @@ import edu.wustl.common.querysuite.utils.QueryUtility;
 import edu.wustl.common.util.ObjectCloner;
 
 /**
- * Datamodel class for Save query operations 
+ * Datamodel class for Save query operations
  * @author deepak_shingan
- * 
+ *
  */
 public class ParameterizedQueryDataModel {
 
     /**
-     * Cab2b Parameterized Query 
+     * Cab2b Parameterized Query
      */
     private ICab2bQuery query;
 
@@ -45,7 +45,7 @@ public class ParameterizedQueryDataModel {
         if (iQuery == null) {
             this.query = new Cab2bQuery();
         } else {
-            query = ObjectCloner.clone(iQuery);
+            query = new ObjectCloner().clone(iQuery);
         }
     }
 
@@ -68,10 +68,11 @@ public class ParameterizedQueryDataModel {
      * @return query name
      */
     public String getQueryName() {
-        if (query == null) {
-            return null;
+        String queryName = null;
+        if (query != null) {
+            queryName = query.getName();
         }
-        return query.getName();
+        return queryName;
     }
 
     /**
@@ -79,20 +80,20 @@ public class ParameterizedQueryDataModel {
      * @param queryName
      */
     public void setQueryName(String queryName) {
-        if (query == null) {
-            return;
+        if (query != null) {
+            query.setName(queryName);
         }
-        query.setName(queryName);
     }
 
     /**
      * @return String QueryDescription
      */
     public String getQueryDescription() {
-        if (query == null) {
-            return null;
+        String description = null;
+        if (query != null) {
+            description = query.getDescription();
         }
-        return query.getDescription();
+        return description;
     }
 
     /**
@@ -100,42 +101,53 @@ public class ParameterizedQueryDataModel {
      * @param String description
      */
     public void setQueryDescription(String description) {
-        if (query == null) {
-            return;
+        if (query != null) {
+            query.setDescription(description);
         }
-        query.setDescription(description);
+    }
+
+    /**
+     * This method sets if query query is marked for keyword search or not.
+     * @param isKeywordSearch
+     */
+    public void setIsKeywordSearch(Boolean isKeywordSearch) {
+        if (query != null) {
+            query.setIsKeywordSearch(isKeywordSearch);
+        }
     }
 
     /**
      * @return Collection<IQueryEntity> of query entities
      */
     public Collection<IQueryEntity> getQueryEntities() {
-        if (query == null) {
-            return null;
+        Collection<IQueryEntity> queryEntities = null;
+        if (query != null) {
+            queryEntities = query.getConstraints().getQueryEntities();
         }
-        return query.getConstraints().getQueryEntities();
+        return queryEntities;
     }
 
     /**
      * @return Map<Integer, Collection<ICondition>> for All Selected Conditions
      */
     public Map<Integer, Collection<ICondition>> getConditions() {
+        Map<Integer, Collection<ICondition>> conditionMap = null;
         if (query != null) {
-            return convert(QueryUtility.getAllSelectedConditions(query));
+            conditionMap = convert(QueryUtility.getAllSelectedConditions(query));
         }
-
-        return null;
+        return conditionMap;
     }
 
     /**
-     * Returns Map of expressionID and collection of AttributeInterface for the query      
+     * Returns Map of expressionID and collection of AttributeInterface for the query
      * @return
      */
     public Map<Integer, Collection<AttributeInterface>> getAllAttributes() {
+        Map<Integer, Collection<AttributeInterface>> attributeMap = null;
         if (query != null) {
-            return convert(QueryUtility.getAllAttributes(query));
+            attributeMap = convert(QueryUtility.getAllAttributes(query));
         }
-        return null;
+        return attributeMap;
     }
 
     /**
@@ -154,7 +166,7 @@ public class ParameterizedQueryDataModel {
 
     /**
      * Method to remove conditions from query
-     * 
+     *
      * @param expressionID
      * @param newCondition
      */
@@ -184,7 +196,7 @@ public class ParameterizedQueryDataModel {
 
     /**
      * Method to add/replace/change conditions from query
-     * 
+     *
      * @param expressionID
      * @param newCondition
      */
@@ -224,7 +236,7 @@ public class ParameterizedQueryDataModel {
      * This method sets the user id for query.
      * @param userId
      */
-    public void setQueryUserId(Long userId) {
-        query.setUserId(userId);
+    public void setQueryCreator(Long userId) {
+        query.setCreatedBy(userId);
     }
 }

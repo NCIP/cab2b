@@ -15,10 +15,10 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
-import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllPanel;
 import edu.wustl.cab2b.client.ui.mainframe.showall.ShowAllSavedQueryPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.common.authentication.Authenticator;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
@@ -29,21 +29,21 @@ import edu.wustl.common.util.global.ApplicationProperties;
 /**
  * The class used to display saved Query links on left hand side of
  * mainFrame panel
- * 
+ *
  * @author deepak_shingan
  * @author lalit_chand
- * 
- * 
+ *
+ *
  */
 public class SavedQueryLinkPanel extends Cab2bPanel {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
 
     /**
-    * Query comparator class used for descending ordering of queries based on Query.ID 
+    * Query comparator class used for descending ordering of queries based on Query.ID
     * @author deepak_shingan
     *
     */
@@ -73,8 +73,7 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
                                                                                                                        EjbNamesConstants.QUERY_ENGINE_BEAN,
                                                                                                                        QueryEngineHome.class);
             Collection<ICab2bQuery> cab2bQueries = queryEngine.getUsersQueriesDetail(
-                                                                                     UserValidator.getSerializedDCR(),
-                                                                                     UserValidator.getGridType());
+                                                                                     Authenticator.getSerializedDCR());
             ArrayList<ICab2bQuery> cab2bQueryList = new ArrayList<ICab2bQuery>(cab2bQueries);
             Collections.sort(cab2bQueryList, new QueryComparator());
 
@@ -126,7 +125,7 @@ public class SavedQueryLinkPanel extends Cab2bPanel {
 
     /**
      * Method returns panel containing all queries from database
-     * 
+     *
      * @return
      */
     private ShowAllPanel getAllQueryPanel() {

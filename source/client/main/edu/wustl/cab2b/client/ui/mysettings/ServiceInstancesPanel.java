@@ -42,8 +42,9 @@ import edu.wustl.cab2b.client.ui.pagination.NumericPager;
 import edu.wustl.cab2b.client.ui.pagination.PageElement;
 import edu.wustl.cab2b.client.ui.pagination.PageElementImpl;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
-import edu.wustl.cab2b.common.user.ServiceURL;
+import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
@@ -62,11 +63,11 @@ public class ServiceInstancesPanel extends Cab2bPanel {
 
     private JPagination resultsPage;
 
-    private Collection<ServiceURL> allServiceInstances;
+    private Collection<ServiceURLInterface> allServiceInstances;
 
     private final JXTitledPanel titledSearchResultsPanel = new Cab2bTitledPanel();
 
-    private final Collection<ServiceURL> filteredServiceInstances = new ArrayList<ServiceURL>();
+    private final Collection<ServiceURLInterface> filteredServiceInstances = new ArrayList<ServiceURLInterface>();
 
     private String serviceName;
 
@@ -95,7 +96,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
      * @param serviceName
      */
     private void initGUI() {
-        allServiceInstances = new ArrayList<ServiceURL>();
+        allServiceInstances = new ArrayList<ServiceURLInterface>();
         UserInterface user = UserCache.getInstance().getCurrentUser();
         ServiceInstanceConfigurator configurator = new ServiceInstanceConfigurator();
 
@@ -105,7 +106,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
             version = serviceVersion[1];
         }
 
-        Collection<ServiceURL> adminServiceMetadata = configurator.getServiceMetadataObjects(serviceName, version,
+        Collection<ServiceURLInterface> adminServiceMetadata = configurator.getServiceMetadataObjects(serviceName, version,
                                                                                              user);
         allServiceInstances.addAll((adminServiceMetadata));
         filteredServiceInstances.addAll(allServiceInstances);
@@ -173,7 +174,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
         saveButton.setPreferredSize(new Dimension(120, 22));
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                List<ServiceURL> selectedInstances = resultsPage.getSelectedPageElementsUserObjects();
+                List<ServiceURLInterface> selectedInstances = resultsPage.getSelectedPageElementsUserObjects();
                 saveButtonFunction(selectedInstances);
             }
         });
@@ -217,7 +218,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
      * This 
      * @param selectedInstances
      */
-    private void saveButtonFunction(List<ServiceURL> selectedInstances) {
+    private void saveButtonFunction(List<ServiceURLInterface> selectedInstances) {
         if (selectedInstances.size() == 0) {
             JOptionPane.showMessageDialog(this.getParent(), "Please select atleast 1 option");
         } else {
@@ -236,13 +237,13 @@ public class ServiceInstancesPanel extends Cab2bPanel {
      * 
      * @param selectedInstances
      */
-    private void saveServiceInstances(List<ServiceURL> selectedInstances) {
+    private void saveServiceInstances(List<ServiceURLInterface> selectedInstances) {
         String status = ApplicationProperties.getValue(SERVICE_URLS_SUCCESS);
         // if it is for the search data wizard 3rd step 
         // it will update the query object only 
         if (isForQuery) {
             List<String> urlList = new ArrayList<String>();
-            for (ServiceURL url : selectedInstances) {
+            for (ServiceURLInterface url : selectedInstances) {
                 urlList.add(url.getUrlLocation());
             }
             firePropertyChange(UPDATE_QUERYURLS_EVENT, serviceName, urlList);
@@ -251,9 +252,10 @@ public class ServiceInstancesPanel extends Cab2bPanel {
         }
         try {
             ServiceInstanceConfigurator bizLogic = new ServiceInstanceConfigurator();
-            bizLogic.saveServiceInstances(serviceName, version, selectedInstances);
+            String entityGroupName = Utility.createModelName(serviceName, version);
+            UserInterface currentUser = edu.wustl.cab2b.client.ui.query.Utility.getCurrentUser();
+            bizLogic.saveServiceInstances(entityGroupName, selectedInstances, currentUser);
             firePropertyChange(UPDATE_EVENT, serviceName, status);
-
         } catch (RemoteException exception) {
             CommonUtils.handleException(exception, titledSearchResultsPanel, true, true, false, false);
             status = ApplicationProperties.getValue(SERVICE_URLS_FAILURE);
@@ -267,7 +269,7 @@ public class ServiceInstancesPanel extends Cab2bPanel {
      * so as to remove all the user configurated urls from the serviceURLCollection 
      */
     private void adminDefaultSettings() {
-        List<ServiceURL> emptyList = new ArrayList<ServiceURL>();
+        List<ServiceURLInterface> emptyList = new ArrayList<ServiceURLInterface>();
         saveServiceInstances(emptyList);
         firePropertyChange(UPDATE_EVENT, serviceName, "( Admin Settings restored )");
     }
@@ -279,16 +281,16 @@ public class ServiceInstancesPanel extends Cab2bPanel {
      * 
      * @param resultPanel
      */
-    private Cab2bPanel generateContentPanel(final Collection<ServiceURL> filteredServiceInstances) {
+    private Cab2bPanel generateContentPanel(final Collection<ServiceURLInterface> filteredServiceInstances) {
         Cab2bPanel resultPanel = new Cab2bPanel();
         Vector<PageElement> pageElementCollection = new Vector<PageElement>();
-        for (ServiceURL serviceInstance : filteredServiceInstances) {
+        for (ServiceURLInterface serviceInstance : filteredServiceInstances) {
             // Create an instance of the PageElement. Initialize with the
             // appropriate data
             PageElement pageElement = new PageElementImpl();
             // not able view NCICB completely it was appearing as NCICE so added
             // a space.
-            pageElement.setDisplayName(serviceInstance.getHostingCenterName() + " ");
+            pageElement.setDisplayName(serviceInstance.getHostingCenter() + " ");
             pageElement.setDescription(serviceInstance.getDescription());
             pageElement.setUserObject(serviceInstance);
             String serviceURL = serviceInstance.getUrlLocation();
@@ -318,15 +320,15 @@ public class ServiceInstancesPanel extends Cab2bPanel {
      * @param searchString
      * 
      */
-    private void searchResult(String searchString, final Collection<ServiceURL> filteredServiceInstances) {
+    private void searchResult(String searchString, final Collection<ServiceURLInterface> filteredServiceInstances) {
         filteredServiceInstances.clear();
         if (allServiceInstances != null) {
             if ("ShowAll".equals(searchString)) {
                 filteredServiceInstances.addAll(allServiceInstances);
             }
             searchString = searchString.toLowerCase();
-            for (ServiceURL metadata : allServiceInstances) {
-                String hostingResearchCenter = metadata.getHostingCenterName().toLowerCase();
+            for (ServiceURLInterface metadata : allServiceInstances) {
+                String hostingResearchCenter = metadata.getHostingCenter().toLowerCase();
                 if (hostingResearchCenter.contains(searchString)) {
                     filteredServiceInstances.add(metadata);
                 }

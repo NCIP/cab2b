@@ -9,9 +9,9 @@
 	<!--property name="build.compiler" value="javac1.5" />
 	<property name="ant.build.javac.target" value="1.5" /-->
 
-	<property name="jboss.common.lib.dir" location="${jboss.home}/server/default/lib" />
-	<property name="jboss.deploy.dir" location="${jboss.home}/server/default/deploy" />
-	<property name="jboss.log.dir" location="${jboss.home}/server/default/log" />
+	<property name="jboss.common.lib.dir" location="${jboss.home}/server/${jboss.conf.name}/lib" />
+	<property name="jboss.deploy.dir" location="${jboss.home}/server/${jboss.conf.name}/deploy" />
+	<property name="jboss.log.dir" location="${jboss.home}/server/${jboss.conf.name}/log" />
 
 	<property name="common.src" location="source/common/main" />
 	<property name="client.src" location="source/client/main" />
@@ -22,7 +22,7 @@
 	<property name="server.test" location="source/server/test" />
 
 	<property name="workArea.dir" location="workarea" />
-	<mkdir dir="${workArea.dir}"/>
+	<mkdir dir="${workArea.dir}" />
 	<property name="client.classes.dir" location="${workArea.dir}/client/classes" />
 	<property name="server.classes.dir" location="${workArea.dir}/server/classes" />
 	<property name="common.classes.dir" location="${workArea.dir}/common/classes" />
@@ -85,7 +85,7 @@
 	<!-- Properties for 1.5 compilation-->
 	<property name="client_1.5.classes.dir" location="${workArea.dir}/client_1.5/classes" />
 
-	
+
 	<path id="common.classpath">
 		<fileset dir="lib/common">
 			<include name="**/*.jar" />
@@ -210,7 +210,7 @@
 		<javac srcdir="${client.src}" destdir="${client.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="client.classpath" failonerror="true" nowarn="on" />
 	</target>
 	<!-- ================================================================================== -->
-	<target name="compile.server" depends="compile.common" description="Compiles the serbver code without cleaning">
+	<target name="compile.server" depends="compile.common" description="Compiles the server code without cleaning">
 		<mkdir dir="${server.classes.dir}" />
 		<copy overwrite="true" todir="${server.classes.dir}">
 			<fileset dir="${common.classes.dir}">
@@ -250,7 +250,7 @@
 				<!-- attribute name="Built-By" value="${user.name}"/ -->
 				<!-- need to remove this hardcoding of MANIFEST's Class-Path settings -->
 				<attribute name="Main-Class" value="edu.wustl.cab2b.client.ui.mainframe.LoginFrame" />
-				<attribute name="Class-Path" value="conf/ forms-1.0.7.jar HeatMap.jar idw-gpl.jar jai_codec.jar jai_core.jar jama.jar jcalendar-1.3.2.jar jcommon-1.0.9.jar jfreechart-1.0.5.jar commons-io-1.4.jar jibble.jar org-netbeans-graph-vmd.jar org-netbeans-graph.jar org-openide-util.jar swingx-2006_10_08.jar ant-antlr-1.6.3.jar antlr-2.7.5H3.jar caarray-common-extensions.jar cog-jglobus.jar commonpackage.jar commons-collections-3.2.jar dom4j-1.6.jar DynamicExtensions.jar jboss-ejb3.jar jbossall-client.jar jce-jdk13-125.jar  metadata.jar odmg.jar query.jar struts.jar washu-commons.jar   -lang.jar caGrid-cds-common-1.2.jar caGrid-cds-stubs-1.2.jar caGrid-cds-service-1.2.jar caGrid-cds-client-1.2.jar caGrid-ServiceSecurityProvider-stubs-1.2.jar axis.jar caGrid-dorian-client-1.2.jar caGrid-authentication-service-stubs-1.2.jar caGrid-authentication-service-client-1.2.jar caGrid-authentication-service-common-1.2.jar wsrf_core.jar wsrf_core_stubs.jar caGrid-ServiceSecurityProvider-common-1.2.jar caGrid-ServiceSecurityProvider-client-1.2.jar addressing-1.0.jar cog-axis.jar commons-discovery.jar commons-lang.jar commons-logging.jar commons-logging-1.1.jar caGrid-metadata-security-1.2.jar wss4j.jar wsdl4j.jar caGrid-metadata-security-1.2.jar caGrid-metadata-common-1.2.jar puretls.jar cryptix32.jar cryptix-asn1.jar caGrid-opensaml-1.2.jar caGrid-dorian-stubs-1.2.jar caGrid-dorian-common-1.2.jar caGrid-gridca-1.2.jar caGrid-core-1.2.jar caGrid-1.1-Introduce-1.1-serviceTools.jar caGrid-gts-client-1.2.jar caGrid-gts-common-1.2.jar caGrid-gts-stubs-1.2.jar caGrid-syncgts-client-1.2.jar caGrid-syncgts-common-1.2.jar  caGrid-syncgts-stubs-1.2.jar  log4j-1.2.14.jar hibernate3.jar  mobius_common_client-1.1.jar mobius_tools-1.1.jar xercesImpl.jar  resources/images/" />
+				<attribute name="Class-Path" value="conf/ forms-1.0.7.jar HeatMap.jar idw-gpl.jar jai_codec.jar jai_core.jar jama.jar jcalendar-1.3.2.jar jcommon-1.0.9.jar jfreechart-1.0.5.jar commons-io-1.4.jar jibble.jar org-netbeans-graph-vmd.jar org-netbeans-graph.jar org-openide-util.jar swingx-2006_10_08.jar ant-antlr-1.6.3.jar antlr-2.7.5H3.jar caarray-common-extensions.jar cog-jglobus.jar commonpackage.jar commons-collections-3.2.jar dom4j-1.6.jar DynamicExtensions.jar jboss-ejb3.jar jbossall-client.jar jce-jdk13-125.jar  metadata.jar odmg.jar query.jar struts.jar washu-commons.jar   -lang.jar caGrid-cds-common-1.3.jar caGrid-cds-stubs-1.3.jar caGrid-gaards-core-1.3.jar caGrid-cds-client-1.3.jar caGrid-ServiceSecurityProvider-stubs-1.3.jar axis.jar caGrid-dorian-client-1.3.jar caGrid-authentication-service-stubs-1.3.jar caGrid-authentication-service-client-1.3.jar caGrid-authentication-service-common-1.3.jar wsrf_core.jar wsrf_core_stubs.jar caGrid-ServiceSecurityProvider-common-1.3.jar caGrid-ServiceSecurityProvider-client-1.3.jar addressing-1.0.jar cog-axis.jar commons-discovery.jar commons-lang.jar commons-logging.jar commons-logging-1.1.jar caGrid-metadata-security-1.3.jar wss4j.jar wsdl4j.jar caGrid-metadata-security-1.3.jar caGrid-metadata-common-1.3.jar puretls.jar cryptix32.jar cryptix-asn1.jar caGrid-opensaml-1.3.jar caGrid-dorian-stubs-1.2.jar caGrid-dorian-stubs-1.3.jar caGrid-dorian-common-1.3.jar caGrid-gridca-1.3.jar caGrid-core-1.3.jar caGrid-1.1-Introduce-1.1-serviceTools.jar caGrid-gts-client-1.3.jar caGrid-gts-common-1.3.jar caGrid-gts-stubs-1.3.jar caGrid-syncgts-client-1.3.jar caGrid-syncgts-common-1.3.jar  caGrid-syncgts-stubs-1.3.jar  log4j-1.2.14.jar hibernate3.jar  mobius_common_client-1.1.jar mobius_tools-1.1.jar xercesImpl.jar caGrid-metadatautils-1.3.jar caGrid-websso-client-1.3.jar  resources/images/" />
 			</manifest>
 		</jar>
 	</target>
@@ -279,6 +279,7 @@
 		<copy todir="${client.setup.dir}/conf">
 			<fileset dir="${conf.dir}">
 				<include name="Cab2bApplicationResources.properties" />
+				<include name="cagrid.properties" />
 				<include name="client.properties" />
 				<include name="cab2b.properties" />
 				<include name="dynamicUI.xml" />
@@ -342,22 +343,23 @@
 				<include name="server.properties" />
 				<include name="EntityToAnalyticalServiceMapping.xml" />
 				<include name="ResultConfiguration.xml" />
+				<include name="cagrid.properties" />
 			</fileset>
 		</copy>
-		
+
 		<mkdir dir="${server.jar.dir}/Production" />
 		<mkdir dir="${server.jar.dir}/Training" />
 		<copy todir="${server.jar.dir}/Production">
-				<fileset dir="${conf.dir}/Production">
-						<include name="*.*" />
-				</fileset>
+			<fileset dir="${conf.dir}/Production">
+				<include name="*.*" />
+			</fileset>
 		</copy>
 		<copy todir="${server.jar.dir}/Training">
-				<fileset dir="${conf.dir}/Training">
-					<include name="*.*" />
-				</fileset>
+			<fileset dir="${conf.dir}/Training">
+				<include name="*.*" />
+			</fileset>
 		</copy>
-			
+
 		<replace file="${server.jar.dir}/hibernate.cfg.xml" token="DS-NAME" value="${datasource.name}" />
 		<jar basedir="${server.jar.dir}" destfile="${server.jar.file}" />
 	</target>
@@ -392,12 +394,12 @@
 				<exclude name="jbossall-client.jar" />
 				<exclude name="commons-logging-1.0.4.jar" />
 				<exclude name="log4j-1.2.14.jar" />
-				
-				<exclude name="cog-jglobus.jar" />
+
+				<!--exclude name="cog-jglobus.jar" />
 				<exclude name="cryptix32.jar" />
 				<exclude name="cryptix-asn1.jar" />
 				<exclude name="jce-jdk13-125.jar" />
-				<exclude name="puretls.jar" />
+				<exclude name="puretls.jar" /-->
 			</fileset>
 			<fileset dir="lib/server">
 				<include name="**/*.jar" />
@@ -417,21 +419,21 @@
 	<target name="deploy.jboss" depends="clean.all,build.ear,update.server,replace.datasource" description="Deploys EAR file to JBoss application server" />
 	<!-- ================================================================================== -->
 	<target name="update.server">
-		<delete dir="${jboss.home}/server/default/tmp/deploy" />
+		<delete dir="${jboss.home}/server/${jboss.conf.name}/tmp/deploy" />
 		<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
 		<copy overwrite="true" file="${cab2bDS.file}" todir="${jboss.deploy.dir}" />
 		<copy overwrite="true" file="${jbossjca.service.xml}" todir="${jboss.deploy.dir}" />
 		<copy overwrite="true" file="lib/server/oracleDriver.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/server/mysql-connector-java-3.0.16-ga-bin.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/common/hibernate3.jar" todir="${jboss.common.lib.dir}" />
-		
+
 		<copy overwrite="true" file="lib/common/cog-jglobus.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/common/cryptix32.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/common/cryptix-asn1.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/common/jce-jdk13-125.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/common/puretls.jar" todir="${jboss.common.lib.dir}" />
 
-		<mkdir dir="${jboss.home}/server/default/log" />
+		<mkdir dir="${jboss.home}/server/${jboss.conf.name}/log" />
 		<echo message="" file="${jboss.log.dir}/caB2B.log" append="false" />
 	</target>
 
@@ -496,7 +498,7 @@
 				<include name="server.properties" />
 				<include name="EntityToAnalyticalServiceMapping.xml" />
 				<include name="ResultConfiguration.xml" />
-				
+
 			</fileset>
 		</copy>
 
@@ -521,7 +523,7 @@
 
 	<target name="run.cactus">
 		<mkdir dir="${cactusReports.dir}/cactusReports/Reports" />
-		<cactus earfile="${jboss.home}/server/default/deploy/cab2bServer.ear" fork="yes" failureproperty="cactus.failed" haltonerror="false">
+		<cactus earfile="${jboss.home}/server/${jboss.conf.name}/deploy/cab2bServer.ear" fork="yes" failureproperty="cactus.failed" haltonerror="false">
 			<classpath refid="cactus.classpath" />
 
 			<containerset>
@@ -571,7 +573,7 @@
 		</copy>
 
 
-		<cactifyear srcfile="${workArea.dir}/cab2bServer.ear" destfile="${jboss.home}/server/default/deploy/cab2bServer.ear">
+		<cactifyear srcfile="${workArea.dir}/cab2bServer.ear" destfile="${jboss.home}/server/${jboss.conf.name}/deploy/cab2bServer.ear">
 			<cactuswar context="/ejbTestFramework" version="2.3">
 
 				<classes dir="${client.classes.dir}">
@@ -621,7 +623,7 @@
 				<fileset dir="${jboss.home}/lib">
 					<include name="*.jar" />
 				</fileset>
-				<fileset dir="${jboss.home}/server/default/lib">
+				<fileset dir="${jboss.home}/server/${jboss.conf.name}/lib">
 					<include name="*.jar" />
 				</fileset>
 			</classpath>
@@ -677,6 +679,7 @@
 			</fileset>
 			<fileset dir="${conf.dir}">
 				<include name="cab2b.properties" />
+				<include name="cagrid.properties" />
 			</fileset>
 		</copy>
 		<jar basedir="${standAlone.jar.dir}" destfile="${caB2B.standalone.jar.file}">
@@ -841,7 +844,7 @@
 		</jar>
 	</target>
 
-	<target name="build.project.jar" depends="compile.all">
+	<target name="build.project.jar" depends="compile.server">
 		<jar basedir="${workArea.dir}/common/classes" destfile="cab2b-common.jar">
 			<include name="**/*.*" />
 		</jar>
@@ -964,16 +967,16 @@
          - - - - - - - - - - - - - - - - - -->
 	<target name="build.cab2b.installer" depends="empty.workarea" description="--> description">
 
-			<mkdir dir="temp" />
-			
-			<zip destfile="temp/cab2bInstaller.zip">
-				<fileset dir="." id="id">
-					<include name="**/*.*" />
-					<include name="workarea" />
-					<exclude name="docs/**/*"/>
-					<exclude name="temp/**/*"/>
-				</fileset>
-			</zip>
+		<mkdir dir="temp" />
+
+		<zip destfile="temp/cab2bInstaller.zip">
+			<fileset dir="." id="id">
+				<include name="**/*.*" />
+				<include name="workarea" />
+				<exclude name="docs/**/*" />
+				<exclude name="temp/**/*" />
+			</fileset>
+		</zip>
 	</target>
 
 
@@ -990,7 +993,7 @@
 				<include name="cab2bClientSetup.zip" />
 			</fileset>
 		</war>
-		
+
 		<delete dir="temp" />
 		<copy file="${workArea.dir}/cab2b.war" todir="${jboss.deploy.dir}" />
 	</target>
@@ -1006,7 +1009,7 @@
 			</fileset>
 		</copy>
 
-		<javac srcdir="${client.src}" target="1.5" destdir="${client_1.5.classes.dir}"  fork="true" debug="on" deprecation="true" classpathref="client.classpath" failonerror="true" nowarn="on">
+		<javac srcdir="${client.src}" target="1.5" destdir="${client_1.5.classes.dir}" fork="true" debug="on" deprecation="true" classpathref="client.classpath" failonerror="true" nowarn="on">
 
 			<exclude name="edu/wustl/cab2b/client/ui/controls/sheet/**/*.java" />
 			<exclude name="edu/wustl/cab2b/client/ui/experiment/**/*.*" />
@@ -1019,7 +1022,7 @@
 			<exclude name="edu/wustl/cab2b/client/ui/main/**/*.*" />
 			<exclude name="edu/wustl/cab2b/client/ui/pagination/**/*.*" />
 			<exclude name="edu/wustl/cab2b/client/ui/searchDataWizard/**/*.*" />
-			
+
 			<exclude name="**/ServiceInstanceConfigurator.java" />
 			<exclude name="**/MatrixCache.java" />
 			<exclude name="**/ClientQueryBuilder.java" />
@@ -1028,7 +1031,7 @@
 			<exclude name="**/B2BTreeNode.java" />
 			<exclude name="**/CommonUtils.java" />
 			<exclude name="**/CustomSwingWorker.java" />
-			
+
 			<exclude name="**/SearchNavigationPanel.java" />
 			<exclude name="**/ShowDCQLPanel.java" />
 		</javac>

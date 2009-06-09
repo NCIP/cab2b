@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
 
+import edu.wustl.common.util.logger.Logger;
+
 /**
  * 
  * @author chandrakant_talele
@@ -14,7 +16,7 @@ import java.util.Properties;
 public class LoadModelUtil {
 
     /* Format of properties file
-    db.driver=com.mysql.jdbc.Driver;
+    db.driver=com.mysql.jdbc.Driver
     db.server=10.99.88.100
     db.port=8080
     db.name=test_database
@@ -40,6 +42,7 @@ public class LoadModelUtil {
 	 * @throws Exception
 	 */
     public static void main(String[] args) throws Exception {
+        Logger.configure();
         if (args.length != 1 || args[0].trim().equals("")) {
             System.out.println("Please provide a property file");
             return;

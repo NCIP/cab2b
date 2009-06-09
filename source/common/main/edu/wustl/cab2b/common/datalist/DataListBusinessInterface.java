@@ -13,8 +13,8 @@ import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 
 /**
- * 
- * @author lalit_chand, deepak_shingan, chetan_bh, hrishikesh_rajpathak
+ *
+ * @author lalit_chand, deepak_shingan, chetan_bh, hrishikesh_rajpathak, chetan_patil
  *
  */
 public interface DataListBusinessInterface extends BusinessInterface {
@@ -26,16 +26,15 @@ public interface DataListBusinessInterface extends BusinessInterface {
      * @return data list id.
      * @throws RemoteException
      */
-    DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata, String dref,
-                                  String selectedIdentityProvider) throws RemoteException;
+    DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata, String dref)
+            throws RemoteException;
 
     /**
      * Retrieves annotation information for all the data lists stored.
      * @return list of all available data list metadata.
      * @throws RemoteException
      */
-    List<DataListMetadata> retrieveAllDataListMetadata(String dref, String selectedIdentityProvider)
-            throws RemoteException;
+    List<DataListMetadata> retrieveAllDataListMetadata(String dref) throws RemoteException;
 
     /**
      * Retrieves annotation for given datalist id.
@@ -74,8 +73,8 @@ public interface DataListBusinessInterface extends BusinessInterface {
      */
     DataListMetadata saveDataCategory(IDataRow rootRecordDataRow, DataListMetadata dataListMetadata,
                                       List<AttributeInterface> oldAttribute,
-                                      List<AttributeInterface> newAttributes, String dref,
-                                      String selectedIdentityProvider) throws RemoteException, CheckedException;
+                                      List<AttributeInterface> newAttributes, String dref) throws RemoteException,
+            CheckedException;
 
     /**
      * Returns saved custom data category
@@ -91,8 +90,8 @@ public interface DataListBusinessInterface extends BusinessInterface {
      */
     DataListMetadata saveCustomDataCategory(IdName rootEntityId,
                                             Collection<AttributeInterface> selectedAttributeList, String string,
-                                            Experiment experiment, String dref, String selectedIdentityProvider)
-            throws RemoteException, CheckedException;
+                                            Experiment experiment, String dref) throws RemoteException,
+            CheckedException;
 
     /**
      * This method returns false if datalist with given name is not present in the database.

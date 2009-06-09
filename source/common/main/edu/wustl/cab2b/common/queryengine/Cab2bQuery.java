@@ -5,15 +5,14 @@ import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.cache.AbstractEntityCache;
-import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery;
 
 /**
- * 
+ *
  * @author chetan_patil
  *
  * @hibernate.joined-subclass table="CAB2B_QUERY" extends="edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery"
- * @hibernate.joined-subclass-key column="IDENTIFIER" 
+ * @hibernate.joined-subclass-key column="IDENTIFIER"
  */
 public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
     private static final long serialVersionUID = -3676549385071170949L;
@@ -22,7 +21,7 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
 
     private EntityInterface outputEntity;
 
-    private Long userId;
+    private QUERY_TYPE queryType = QUERY_TYPE.ANDed;
 
     /**
      * Default constructor
@@ -40,7 +39,7 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
         outputEntity = query.getOutputEntity();
         outputClassUrls = query.getOutputUrls();
     }
-    
+
     /**
      * Parameterized constructor
      * @param query
@@ -52,7 +51,7 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
     /**
      * This method returns the list of output URLs
      * @return the outputClassUrls.
-     * 
+     *
      * @hibernate.list name="outputClassUrls" table="OUTPUT_CLASS_URLS" cascade="all-delete-orphan" inverse="false" lazy="false"
      * @hibernate.collection-key column="CAB2B_QUERY_ID"
      * @hibernate.collection-index column="POSITION" type="int"
@@ -65,7 +64,7 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
 
     /**
      * This method sets the list of output class URLs
-     * 
+     *
      * @param outputClassUrls the outputClassUrls to set.
      */
     public void setOutputUrls(List<String> outputClassUrls) {
@@ -82,7 +81,7 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
 
     /**
      * This method sets the output entity
-     * @param outputEntity 
+     * @param outputEntity
      */
     public void setOutputEntity(EntityInterface outputEntity) {
         this.outputEntity = outputEntity;
@@ -90,8 +89,8 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
 
     /**
      * @return the entityId
-     * 
-     * @hibernate.property name="entityId" column="ENTITY_ID" type="long" length="30" not-null="true" 
+     *
+     * @hibernate.property name="entityId" column="ENTITY_ID" type="long" length="30" not-null="true"
      */
     @SuppressWarnings("unused")
     private Long getEntityId() {
@@ -107,28 +106,39 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
     }
 
     /**
-     * This method returns the user id
-     * @hibernate.property name="userId" column="USER_ID" type="long" length="30" not-null="true" 
-     * @return user id
+     * This method returns true if the query is marked for keyword search; false otherwise.
+     * @return isKeywordSearch
      */
-    public Long getUserId() {
-        return userId;
+    public Boolean isKeywordSearch() {
+        Boolean isKeywordSearch = Boolean.FALSE;
+        if (QUERY_TYPE.ORed == queryType) {
+            isKeywordSearch = Boolean.TRUE;
+        } else if (QUERY_TYPE.ANDed == queryType) {
+            isKeywordSearch = Boolean.FALSE;
+        }
+        return isKeywordSearch;
     }
 
     /**
-     * This method sets the user id
-     * @param userId 
-     * 
+     * This method marks whether query is for keyword search or not.
+     * @param isKeywordSearch true if marked for keyword search; false if not.
      */
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setIsKeywordSearch(Boolean isKeywordSearch) {
+        if (isKeywordSearch) {
+            queryType = QUERY_TYPE.ORed;
+        } else {
+            queryType = QUERY_TYPE.ANDed;
+        }
+        type = queryType.toString();
     }
 
-    /**
-     * This method sets the user id of the given user
-     * @param user
-     */
-    public void setUserId(UserInterface user) {
-        userId = user.getUserId();
+    /* This setter method is required for Hibernate */
+    public void setType(String type) {
+        this.type = type;
+        if (QUERY_TYPE.ORed.toString().equals(type)) {
+            queryType = QUERY_TYPE.ORed;
+        } else if (QUERY_TYPE.ANDed.toString().equals(type)) {
+            queryType = QUERY_TYPE.ANDed;
+        }
     }
 }

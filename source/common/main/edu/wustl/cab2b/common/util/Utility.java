@@ -28,14 +28,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.axis.utils.XMLUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.globus.wsrf.encoding.ObjectDeserializer;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.w3c.dom.Document;
 
 import edu.common.dynamicextensions.domain.BooleanAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.DateAttributeTypeInformation;
@@ -65,12 +61,10 @@ import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.queryobject.DataType;
 import edu.wustl.common.util.dbManager.DBUtil;
-import gov.nih.nci.cagrid.syncgts.bean.SyncDescription;
-import gov.nih.nci.cagrid.syncgts.core.SyncGTS;
 
 /**
  * Utility Class contain general methods used through out the application.
- * 
+ *
  * @author Chandrakant Talele
  * @author Gautam Shetty
  */
@@ -79,7 +73,7 @@ public class Utility {
 
     /**
      * Checks whether passed attribute/association is inherited.
-     * 
+     *
      * @param abstractAttribute
      *            Attribute/Association to check.
      * @return TRUE if it is inherited else returns FALSE
@@ -96,10 +90,10 @@ public class Utility {
     /**
      * Generates unique string identifier for given association. It is generated
      * by concatenating
-     * 
+     *
      * sourceEntityName +{@link Constants#CONNECTOR} + sourceRoleName +{@link Constants#CONNECTOR} +
      * targetRoleName +{@link Constants#CONNECTOR} + TargetEntityName
-     * 
+     *
      * @param association
      *            Association
      * @return Unique string to represent given association
@@ -132,7 +126,7 @@ public class Utility {
      * Compares whether given searchPattern is present in passed searchString.
      * If it is present returns the position where match found. Otherwise it
      * returns -1.
-     * 
+     *
      * @param searchPattern
      * @param searchString
      * @return The position where match found, otherwise returns -1.
@@ -150,7 +144,7 @@ public class Utility {
 
     /**
      * Returns the entity group of given entity
-     * 
+     *
      * @param entity
      *            Entity to check
      * @return Returns parent Entity Group
@@ -195,7 +189,7 @@ public class Utility {
 
     /**
      * Checks whether passed Entity is a category or not.
-     * 
+     *
      * @param entity
      *            Entity to check
      * @return Returns TRUE if given entity is Category, else returns false.
@@ -207,7 +201,7 @@ public class Utility {
 
     /**
      * Converts DE data type to queryObject dataType.
-     * 
+     *
      * @param type
      *            the DE attribute type.
      * @return the DataType.
@@ -268,7 +262,7 @@ public class Utility {
     /**
      * Returns the display name if present as tagged value. Else returns the
      * actual name of the entity
-     * 
+     *
      * @param entity
      *            The entity to process
      * @return The display name.
@@ -304,7 +298,7 @@ public class Utility {
 
     /**
      * This method trims out package name form the entity name
-     * 
+     *
      * @param entity
      * @return
      */
@@ -416,7 +410,7 @@ public class Utility {
 
     /**
      * Converts attribute set into a alphabetically sorted list.
-     * 
+     *
      * @param inputAttributeSet
      *            Attribute set to sort
      * @return Sorted list of attributes
@@ -447,7 +441,7 @@ public class Utility {
 
     /**
      * This method converts stack trace to the string representation
-     * 
+     *
      * @param aThrowable
      *            throwable object
      * @return String representation of the stack trace
@@ -462,7 +456,7 @@ public class Utility {
     /**
      * Get the specified resource first look into the cab2b.home otherwise look
      * into the classpath
-     * 
+     *
      * @param resource
      *            the name of the resource
      * @return the URL for the resource
@@ -493,14 +487,14 @@ public class Utility {
         Session session = DBUtil.currentSession();
         try{
             Query q = session.getNamedQuery(queryName);
-    
+
             if (values != null) {
                 for (int counter = 0; counter < values.size(); counter++) {
-    
+
                     Object value = values.get(counter);
                     String objectType = value.getClass().getName();
                     String onlyClassName = objectType.substring(objectType.lastIndexOf('.') + 1, objectType.length());
-    
+
                     if (onlyClassName.equals("String")) {
                         q.setString(counter, (String) value);
                     } else if (onlyClassName.equals("Integer")) {
@@ -528,7 +522,7 @@ public class Utility {
     /**
      * This method replaces the occurrence of find string with replacement in
      * original string.
-     * 
+     *
      * @param original
      * @param find
      * @param replacement
@@ -550,7 +544,7 @@ public class Utility {
 
     /**
      * Loads properties from a file present in classpath to java objects.
-     * If any exception occurs, it is callers responsibility to handle it. 
+     * If any exception occurs, it is callers responsibility to handle it.
      * @param propertyfile Name of property file. It MUST be present in classpath
      * @return Properties loaded from given file.
      */
@@ -576,16 +570,16 @@ public class Utility {
 
     /**
      * Returns a fomatted string.
-     * 
+     *
      * Example : -------------------------------------------
      * -----Input-------|------Output------------- xaQaUtWsdkjsSbAd > Xa Qa Ut
      * Wsdkjs Sb Ad tomDickAndHarry > Tom Dick And Harry id > Identifier
      * pubmedCount > Pubmed Count organism > Organism chromosomeMap > Chromosome
      * Map pubmed5Count > Pubmed5 Count 1234 > 1234
      * ---------------------------------------------
-     * 
+     *
      * Note: first character should be in lower case.
-     * 
+     *
      * @param str
      *            String to format.
      * @return formatted string.
@@ -669,7 +663,7 @@ public class Utility {
     }
 
     /**
-     * 
+     *
      * @param str
      * @param countOfUpperCaseLetter
      * @return
@@ -748,7 +742,7 @@ public class Utility {
     /**
      * This method get the formatted date given the raw date and the string format.
      * If not format is not specified then the default format will be dd/MM/yyyy HH:mm. For example, 01/01/1000 01:01
-     * 
+     *
      * @param date
      * @param dateFormat
      * @return
@@ -780,7 +774,7 @@ public class Utility {
 
     /**
      * @param query caB2B query to check
-     * @return TRUE : if given query is being fired on at-least one service containing https 
+     * @return TRUE : if given query is being fired on at-least one service containing https
      */
     public static boolean hasAnySecureService(ICab2bQuery query) {
         boolean anySecureSevice = false;
@@ -794,64 +788,11 @@ public class Utility {
     }
 
     /**
-     * This method generates the globus certificate in user.home folder
-     * @param gridType
-     */
-    public static void generateGlobusCertificate(String gridType) {
-        URL signingPolicy = null;
-        URL certificate = null;
-        signingPolicy = Utility.class.getClassLoader().getResource(CommonPropertyLoader.getSigningPolicy(gridType));
-        certificate = Utility.class.getClassLoader().getResource(CommonPropertyLoader.getCertificate(gridType));
-
-        if (signingPolicy != null || certificate != null) {
-            copyCACertificates(signingPolicy);
-            copyCACertificates(certificate);
-        } else {
-            logger.error("Could not find CA certificates");
-            throw new RuntimeException("Could not find CA certificates", ErrorCodeConstants.CDS_016);
-        }
-
-        logger.debug("Getting sync-descriptor.xml file for " + gridType);
-        try {
-            logger.debug("Synchronizing with GTS service");
-            URL syncDescFile = Utility.class.getClassLoader().getResource(
-                                                                          CommonPropertyLoader.getSyncDesFile(gridType));
-
-            Document doc = XMLUtils.newDocument(syncDescFile.openStream());
-            Object obj = ObjectDeserializer.toObject(doc.getDocumentElement(), SyncDescription.class);
-            SyncDescription description = (SyncDescription) obj;
-            SyncGTS.getInstance().syncOnce(description);
-            logger.debug("Successfully syncronized with GTS service. Globus certificates generated.");
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException("Error occurred while generating globus certificates",
-                    ErrorCodeConstants.CDS_004);
-        }
-    }
-
-    private static void copyCACertificates(URL inFileURL) {
-        int index = inFileURL.getPath().lastIndexOf('/');
-        if (index > -1) {
-            String fileName = inFileURL.getPath().substring(index + 1).trim();
-            File destination = new File(gov.nih.nci.cagrid.common.Utils.getTrustedCerificatesDirectory()
-                    + File.separator + fileName);
-
-            try {
-                FileUtils.copyURLToFile(inFileURL, destination);
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
-                throw new RuntimeException("Unable to copy CA certificates to [user.home]/.globus",
-                        ErrorCodeConstants.CDS_003);
-            }
-        }
-    }
-
-    /**
      * Prepares the array of search targets from the check box values selected by user.
-     * @param searchClass TRUE if class search is selected 
-     * @param searchAttribute TRUE if attribute search is selected 
-     * @param searchPv TRUE if permissible value search is selected 
-     * @param includeDesc TRUE if description is to be searched 
+     * @param searchClass TRUE if class search is selected
+     * @param searchAttribute TRUE if attribute search is selected
+     * @param searchPv TRUE if permissible value search is selected
+     * @param includeDesc TRUE if description is to be searched
      * @return Integer array of selections made by user.
      */
     public static int[] prepareSearchTarget(boolean searchClass, boolean searchAttribute, boolean searchPv,

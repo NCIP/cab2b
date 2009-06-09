@@ -2,7 +2,7 @@
  * <p>Title: ExperimentDataCategoryGridPanel Class>
  * Copyright:    Copyright (c) year
  * Company: Washington University, School of Medicine, St. Louis.
- * @author Hrishikesh Rajpathak/Deepak Shingan/Chetan 
+ * @author Hrishikesh Rajpathak/Deepak Shingan/Chetan
  * @version 1.4
  */
 
@@ -38,7 +38,6 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bTable;
 import edu.wustl.cab2b.client.ui.controls.sheet.JSheet;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.Status;
-import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.util.UserObjectWrapper;
@@ -47,6 +46,7 @@ import edu.wustl.cab2b.client.ui.viewresults.DefaultDetailedPanel;
 import edu.wustl.cab2b.client.ui.viewresults.DefaultSpreadSheetViewPanel;
 import edu.wustl.cab2b.client.ui.viewresults.ThreeDResultObjectDetailsPanel;
 import edu.wustl.cab2b.client.ui.visualization.charts.Cab2bChartPanel;
+import edu.wustl.cab2b.common.authentication.Authenticator;
 import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
@@ -64,7 +64,7 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
 /**
  * This class displays the experiment table. Also provides filtering tool for
  * the class
- * 
+ *
  * @author hrishikesh_rajpathak
  * @author deepak_shingan
  * @author chetan_patil
@@ -276,7 +276,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
     /**
      * This method adds a dynamic tab that displays the analyzed data.
-     * 
+     *
      * @param userObjectWrapper
      *            the analyzed data
      */
@@ -349,7 +349,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
     }
 
     /**
-     * Method to get instance of JSheet from the container      
+     * Method to get instance of JSheet from the container
      * @param comp
      * @return
      */
@@ -379,7 +379,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
      * array of data and pass it to the server to make new entity this method is
      * called by the {@link SaveDataCategoryPanel} to save a subset of of a
      * datalist as a category
-     * 
+     *
      * @param title
      *            the title for the category
      */
@@ -431,8 +431,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
                                                                    dataListMetadata,
                                                                    null,
                                                                    spreadSheetViewPanel.getUserDefinedAttributes(),
-                                                                   UserValidator.getSerializedDCR(),
-                                                                   UserValidator.getGridType());
+                                                                   Authenticator.getSerializedDCR());
                     experimentPanel.getSelectedExperiment().addDataListMetadata(dataListMetadata);
                     ExperimentBI.addDataListToExperiment(experimentPanel.getSelectedExperiment().getId(),
                                                          dataListMetadata.getId());
@@ -464,7 +463,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
         private static final long serialVersionUID = 1L;
 
         /**
-         * 
+         *
          */
         public TableLinkAction() {
         }
@@ -488,7 +487,7 @@ public class ExperimentDataCategoryGridPanel extends Cab2bPanel {
 
     /**
      * This class sets the current table on the change of the tab.
-     * 
+     *
      * @author chetan_patil
      */
     class TabSelectListner implements ChangeListener {

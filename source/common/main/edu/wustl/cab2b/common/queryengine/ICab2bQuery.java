@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package edu.wustl.cab2b.common.queryengine;
 
@@ -14,6 +14,20 @@ import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
  *
  */
 public interface ICab2bQuery extends IParameterizedQuery, Serializable {
+    enum QUERY_TYPE {
+        ANDed("ANDed"), ORed("ORed");
+
+        private String type;
+
+        private QUERY_TYPE(String type) {
+            this.type = type;
+        }
+
+        public String toString() {
+            return type;
+        }
+    };
+
     // TODO need to be generalized for multiple outputs
     // TODO urls for intermodel categories
     /**
@@ -37,12 +51,14 @@ public interface ICab2bQuery extends IParameterizedQuery, Serializable {
     void setOutputEntity(EntityInterface outputEntity);
 
     /**
-     * @param userId
+     * This method returns true if the query is marked for keyword search; false otherwise.
+     * @return
      */
-    void setUserId(Long userId);
+    Boolean isKeywordSearch();
 
     /**
-     * @return user id
+     * This method marks whether query is for keyword search or not.
+     * @param isKeywordSearch true if marked for keyword search; false if not.
      */
-    Long getUserId();
+    void setIsKeywordSearch(Boolean isKeywordSearch);
 }

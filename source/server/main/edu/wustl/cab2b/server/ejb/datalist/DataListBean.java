@@ -6,6 +6,7 @@ import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.IdName;
+import edu.wustl.cab2b.common.authentication.util.AuthenticationUtility;
 import edu.wustl.cab2b.common.datalist.DataList;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.IDataRow;
@@ -16,12 +17,12 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.server.datalist.DataListMetadataOperations;
 import edu.wustl.cab2b.server.datalist.DataListOperationsController;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
-import edu.wustl.cab2b.server.util.UserUtility;
+import edu.wustl.cab2b.server.util.UtilityOperations;
 
 /**
  * This class has methods to perform various operations on data list, like save,
  * retrieve operations on data list and its metadata, etc.
- * 
+ *
  * @author chetan_bh
  */
 public class DataListBean extends AbstractStatelessSessionBean implements DataListBusinessInterface {
@@ -29,16 +30,15 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
 
     /**
      * Retrieves annotation information for all the data lists stored.
-     * 
+     *
      * @param dref
      * @param selectedIdentityProvider
      * @return list of all available data list metadata.
      * @throws RemoteException
      * @see DataListBusinessInterface#retrieveAllDataListMetadata()
      */
-    public List<DataListMetadata> retrieveAllDataListMetadata(String serializedDCR, String gridType)
-            throws RemoteException {
-        String userName = UserUtility.getUsersGridId(serializedDCR, gridType);
+    public List<DataListMetadata> retrieveAllDataListMetadata(String serializedDCR) throws RemoteException {
+        String userName = AuthenticationUtility.getUsersGridId(serializedDCR);
         return new DataListMetadataOperations().retrieveAllDataListMetadata(userName);
     }
 
@@ -77,8 +77,8 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
      * @see DataListBusinessInterface#saveDataList(DataList)
      */
     public DataListMetadata saveDataList(IDataRow rootDataRow, DataListMetadata datalistMetadata,
-                                         String serializedDCR, String gridType) throws RemoteException {
-        Long userId = UserUtility.getLocalUserId(serializedDCR, gridType);
+                                         String serializedDCR) throws RemoteException {
+        Long userId = UtilityOperations.getLocalUserId(serializedDCR);
         datalistMetadata.setUserId(userId);
 
         return new DataListOperationsController().saveDataList(rootDataRow, datalistMetadata);
@@ -108,9 +108,9 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
      */
     public DataListMetadata saveDataCategory(IDataRow rootRecordDataRow, DataListMetadata dataListMetadata,
                                              List<AttributeInterface> oldAttribute,
-                                             List<AttributeInterface> newAttributes, String serializedDCR,
-                                             String gridType) throws RemoteException, CheckedException {
-        Long userId = UserUtility.getLocalUserId(serializedDCR, gridType);
+                                             List<AttributeInterface> newAttributes, String serializedDCR)
+            throws RemoteException, CheckedException {
+        Long userId = UtilityOperations.getLocalUserId(serializedDCR);
         dataListMetadata.setUserId(userId);
 
         return new DataListOperationsController().saveDataCategory(rootRecordDataRow, dataListMetadata,
@@ -132,9 +132,9 @@ public class DataListBean extends AbstractStatelessSessionBean implements DataLi
      */
     public DataListMetadata saveCustomDataCategory(IdName rootEntityId,
                                                    Collection<AttributeInterface> selectedAttributeList,
-                                                   String string, Experiment experiment, String serializedDCR,
-                                                   String gridType) throws RemoteException, CheckedException {
-        Long userId = UserUtility.getLocalUserId(serializedDCR, gridType);
+                                                   String string, Experiment experiment, String serializedDCR)
+            throws RemoteException, CheckedException {
+        Long userId = UtilityOperations.getLocalUserId(serializedDCR);
         return new DataListOperationsController().saveCustomDataCategory(rootEntityId, selectedAttributeList,
                                                                          string, experiment, userId);
     }

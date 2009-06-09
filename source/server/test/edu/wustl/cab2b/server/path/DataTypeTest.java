@@ -35,6 +35,7 @@ public class DataTypeTest extends TestCase {
         assertEquals(DataType.STRING, DataType.get("string"));
         assertEquals(DataType.STRING, DataType.get("alphanumeric"));
         assertEquals(DataType.STRING, DataType.get("character"));
+        assertEquals(DataType.STRING, DataType.get("java.lang.character"));
         assertEquals(DataType.DATE, DataType.get("java.util.date"));
         assertEquals(DataType.DATE, DataType.get("date"));
         assertEquals(DataType.FLOAT, DataType.get("java.lang.float"));
@@ -48,6 +49,7 @@ public class DataTypeTest extends TestCase {
         assertEquals(DataType.OBJECT, DataType.get("3d_array"));
         assertEquals(DataType.SHORT, DataType.get("short"));
         assertEquals(DataType.SHORT, DataType.get("java.lang.short"));
+        
     }
 
     public void testForIntegerAttribute() {

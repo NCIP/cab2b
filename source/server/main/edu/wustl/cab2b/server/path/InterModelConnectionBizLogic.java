@@ -29,11 +29,16 @@ public class InterModelConnectionBizLogic {
         if (PathFinder.getInstance().isInterModelConnectionExist(imc)) {
             return;
         }
-        Connection conn = ConnectionUtil.getConnection();
-        long nextId = PathBuilder.getNextAssociationId(2, conn);
-        saveInterModelConnection(imc, nextId, conn);
-        saveInterModelConnection(imc.mirror(), nextId + 1, conn);
-        ConnectionUtil.close(conn);
+        Connection conn=null;
+        try {
+            conn = ConnectionUtil.getConnection();
+            long nextId = PathBuilder.getNextAssociationId(2, conn);
+            saveInterModelConnection(imc, nextId, conn);
+            saveInterModelConnection(imc.mirror(), nextId + 1, conn);
+        } finally{
+            ConnectionUtil.close(conn);
+        }
+        
     }
 
     private void saveInterModelConnection(InterModelConnection imc, long id, Connection conn) {

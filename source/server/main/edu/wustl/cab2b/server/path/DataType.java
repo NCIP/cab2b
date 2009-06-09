@@ -39,9 +39,7 @@ enum DataType {
          */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createStringAttribute();
-            ValueDomain valueDomain = umlAttribute.getValueDomain();
-
-            Enumeration[] arr = valueDomain.getEnumerationCollection().getEnumeration();
+            Enumeration[] arr = getEnumeration(umlAttribute);
             if (arr != null) {
                 UserDefinedDEInterface userDefinedDE = DomainObjectFactory.getInstance().createUserDefinedDE();
                 for (Enumeration e : arr) {
@@ -65,9 +63,7 @@ enum DataType {
          */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createIntegerAttribute();
-            ValueDomain valueDomain = umlAttribute.getValueDomain();
-
-            Enumeration[] arr = valueDomain.getEnumerationCollection().getEnumeration();
+            Enumeration[] arr = getEnumeration(umlAttribute);
             if (arr != null) {
                 UserDefinedDEInterface userDefinedDE = DomainObjectFactory.getInstance().createUserDefinedDE();
                 for (Enumeration e : arr) {
@@ -91,9 +87,7 @@ enum DataType {
          */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createDateAttribute();
-            ValueDomain valueDomain = umlAttribute.getValueDomain();
-
-            Enumeration[] arr = valueDomain.getEnumerationCollection().getEnumeration();
+            Enumeration[] arr = getEnumeration(umlAttribute);
             if (arr != null) {
                 UserDefinedDEInterface userDefinedDE = DomainObjectFactory.getInstance().createUserDefinedDE();
                 for (Enumeration e : arr) {
@@ -119,9 +113,7 @@ enum DataType {
          */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createFloatAttribute();
-            ValueDomain valueDomain = umlAttribute.getValueDomain();
-
-            Enumeration[] arr = valueDomain.getEnumerationCollection().getEnumeration();
+            Enumeration[] arr = getEnumeration(umlAttribute);
             if (arr != null) {
                 UserDefinedDEInterface userDefinedDE = DomainObjectFactory.getInstance().createUserDefinedDE();
                 for (Enumeration e : arr) {
@@ -144,9 +136,7 @@ enum DataType {
          */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createBooleanAttribute();
-            ValueDomain valueDomain = umlAttribute.getValueDomain();
-
-            Enumeration[] arr = valueDomain.getEnumerationCollection().getEnumeration();
+            Enumeration[] arr = getEnumeration(umlAttribute);
             if (arr != null) {
                 UserDefinedDEInterface userDefinedDE = DomainObjectFactory.getInstance().createUserDefinedDE();
                 for (Enumeration e : arr) {
@@ -172,9 +162,7 @@ enum DataType {
          */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createLongAttribute();
-            ValueDomain valueDomain = umlAttribute.getValueDomain();
-
-            Enumeration[] arr = valueDomain.getEnumerationCollection().getEnumeration();
+            Enumeration[] arr = getEnumeration(umlAttribute);
             if (arr != null) {
                 UserDefinedDEInterface userDefinedDE = DomainObjectFactory.getInstance().createUserDefinedDE();
                 for (Enumeration e : arr) {
@@ -197,9 +185,7 @@ enum DataType {
          */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createDoubleAttribute();
-            ValueDomain valueDomain = umlAttribute.getValueDomain();
-
-            Enumeration[] arr = valueDomain.getEnumerationCollection().getEnumeration();
+            Enumeration[] arr = getEnumeration(umlAttribute);
             if (arr != null) {
                 UserDefinedDEInterface userDefinedDE = DomainObjectFactory.getInstance().createUserDefinedDE();
                 for (Enumeration e : arr) {
@@ -223,9 +209,7 @@ enum DataType {
          */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createShortAttribute();
-            ValueDomain valueDomain = umlAttribute.getValueDomain();
-
-            Enumeration[] arr = valueDomain.getEnumerationCollection().getEnumeration();
+            Enumeration[] arr = getEnumeration(umlAttribute);
             if (arr != null) {
                 UserDefinedDEInterface userDefinedDE = DomainObjectFactory.getInstance().createUserDefinedDE();
                 for (Enumeration e : arr) {
@@ -248,19 +232,18 @@ enum DataType {
          */
         public AttributeInterface createAndPopulateAttribute(UMLAttribute umlAttribute) {
             AttributeInterface attribute = domainObjectFactory.createObjectAttribute();
-            ValueDomain valueDomain = umlAttribute.getValueDomain();
-            Enumeration[] arr = valueDomain.getEnumerationCollection().getEnumeration();
+            Enumeration[] arr = getEnumeration(umlAttribute);
             if (arr != null) {
                 for (Enumeration e : arr) {
                     //for the time being setting this as error to get all such attributes
-                    logger.error("For attribute of Object type found permissible value : " + e.getPermissibleValue());
+                    logger.error("For attribute of Object type found permissible value : "
+                            + e.getPermissibleValue());
                 }
             }
             return attribute;
         }
 
-    }
-    ;
+    };
 
     /**
      * Builds enumeration
@@ -281,6 +264,7 @@ enum DataType {
         dataTypeMap.put("string", DataType.STRING);
         dataTypeMap.put("alphanumeric", DataType.STRING);
         dataTypeMap.put("character", DataType.STRING);
+        dataTypeMap.put("java.lang.character", DataType.STRING);
         dataTypeMap.put("java.util.date", DataType.DATE);
         dataTypeMap.put("date", DataType.DATE);
         dataTypeMap.put("java.lang.float", DataType.FLOAT);
@@ -331,9 +315,11 @@ enum DataType {
         ValueDomain valueDomain = umlAttribute.getValueDomain();
         CaDSRValueDomainInfoInterface valueDomainInfo = domainObjectFactory.createCaDSRValueDomainInfo();
         valueDomainInfo.setDatatype(umlAttribute.getDataTypeName());
-        valueDomainInfo.setName(valueDomain.getLongName());
+        if (valueDomain != null) {
+            valueDomainInfo.setName(valueDomain.getLongName());
+        }
         valueDomainInfo.setValueDomainType(ValueDomainType.NON_ENUMERATED);
-        Enumeration[] arr = valueDomain.getEnumerationCollection().getEnumeration();
+        Enumeration[] arr = getEnumeration(umlAttribute);
         if (arr != null && arr.length != 0) {
             valueDomainInfo.setValueDomainType(ValueDomainType.ENUMERATED);
         }
@@ -357,4 +343,15 @@ enum DataType {
         return dataType;
     }
 
+    private static Enumeration[] getEnumeration(UMLAttribute umlAttribute) {
+        ValueDomain valueDomain = umlAttribute.getValueDomain();
+        Enumeration[] arr = null;
+        if (valueDomain != null) {
+            arr = valueDomain.getEnumerationCollection().getEnumeration();
+        }
+        // if (arr == null) {
+        // arr = new Enumeration[0];
+        // }
+        return arr;
+    }
 }

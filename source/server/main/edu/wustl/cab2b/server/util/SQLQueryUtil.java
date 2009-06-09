@@ -21,6 +21,7 @@ import edu.wustl.cab2b.common.exception.RuntimeException;
  */
 public class SQLQueryUtil {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(SQLQueryUtil.class);
+
     /**
      * This method executes given update SQL and returns either the row count for <br>
      * INSERT, UPDATE or DELETE statements, or 0 for SQL statements that return nothing. 
@@ -38,12 +39,13 @@ public class SQLQueryUtil {
             result = statement.executeUpdate(sql);
 
         } catch (SQLException e) {
-            throw new RuntimeException("SQL Exception while firing an Update Query",e,ErrorCodeConstants.DB_0004);
+            throw new RuntimeException("SQL Exception while firing an Update Query", e, ErrorCodeConstants.DB_0004);
         } finally {
             close(statement);
         }
         return result;
     }
+
     /**
      * This method executes the given SELECT SQL query using passes parameters.
      * It uses prepare statement and maintains a static map of those to reuse those if same query is fired again.
@@ -55,13 +57,13 @@ public class SQLQueryUtil {
      * The order of columns is same as that present in the passes SQL.   
      */
     public static String[][] executeQuery(String sql, Connection connection, Object... params) {
-        
+
         PreparedStatement prepareStatement = null;
         ResultSet rs = null;
         logger.debug("Executing the SQL :  " + sql);
         try {
-            prepareStatement = connection.prepareStatement(sql);    
-            
+            prepareStatement = connection.prepareStatement(sql);
+
             int index = 1;
             for (Object param : params) {
                 logger.debug("Param " + index + " : " + param);
@@ -81,10 +83,24 @@ public class SQLQueryUtil {
                 }
             }
             rs = prepareStatement.executeQuery();
-            return getResult(rs);
+            String[][] results = getResult(rs);
+            close(rs);
+            return results;
         } catch (SQLException e) {
-            throw new RuntimeException("Exception while firing Parameterized query.", e,ErrorCodeConstants.DB_0003);
+            throw new RuntimeException("Exception while firing Parameterized query.", e,
+                    ErrorCodeConstants.DB_0003);
         }
+    }
+
+    private static void close(ResultSet rs) {
+        assert rs != null;
+
+        try {
+            rs.close();
+        } catch (SQLException e) {
+            logger.fatal("Cannot close result set. this may cause cursor leaks in database.", e);
+        }
+
     }
 
     /**
@@ -102,7 +118,7 @@ public class SQLQueryUtil {
             }
         }
     }
-    
+
     /**
      * This method executes the given SELECT SQL query using passes parameters.
      * It uses prepare statement and maintains a static map of those to reuse those if same query is fired again.
@@ -116,10 +132,11 @@ public class SQLQueryUtil {
             ResultSet rs = prepareStatement.executeQuery();
             return getResult(rs);
         } catch (SQLException e) {
-            throw new RuntimeException("Exception while firing Parameterized query.", e,ErrorCodeConstants.DB_0003);
+            throw new RuntimeException("Exception while firing Parameterized query.", e,
+                    ErrorCodeConstants.DB_0003);
         }
     }
-    
+
     /**
      * @param rs Result set to process
      * @return String[][] created by getting all records of result set

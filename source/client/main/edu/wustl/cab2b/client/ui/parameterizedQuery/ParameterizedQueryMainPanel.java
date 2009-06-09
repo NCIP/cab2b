@@ -11,30 +11,25 @@ import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.WindowUtilities;
 
 /**
- * Class to create parameterized Query UI panel 
+ * Class to create parameterized Query UI panel
  * @author deepak_shingan
  *
  */
 public class ParameterizedQueryMainPanel extends Cab2bPanel {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     /**
-     * panel required to display Query info, Located at top in parameterizedQueryPanel  
+     * panel required to display Query info, Located at top in parameterizedQueryPanel
      */
     private ParameterizedQueryInfoPanel informationQueryPanel;
 
     /**
-     * panel required to display condition parameters of Query, Located at center in parameterizedQueryPanel  
+     * panel required to display condition parameters of Query, Located at center in parameterizedQueryPanel
      */
-    ParameterizedQueryConditionPanel parameterConditionPanel;
+    private ParameterizedQueryConditionPanel parameterConditionPanel;
 
     /**
-     * panel located at bottom part of ParameterizedQueryMainPanel containing Nevigation 
-     * buttons  
+     * panel located at bottom part of ParameterizedQueryMainPanel containing Navigation buttons
      */
     private ParameterizedQueryNavigationPanel parameterizedQueryNavigationPanel;
 
@@ -56,7 +51,7 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
     }
 
     /**
-     * Method to generate UI         
+     * Method to generate UI
      */
     private void initGUI() {
         this.setLayout(new BorderLayout());
@@ -77,7 +72,7 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
     }
 
     /**
-     * Returns informationQueryPanel 
+     * Returns informationQueryPanel
      * @return ParameterizedQueryInfoPanel
      */
     public ParameterizedQueryInfoPanel getInformationQueryPanel() {
@@ -88,7 +83,7 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
     }
 
     /**
-     * Returns parameterizedQueryNavigationPanel 
+     * Returns parameterizedQueryNavigationPanel
      * @return ParameterizedQueryNavigationPanel
      */
     private Cab2bPanel getparameterizedQueryNavigationPanel() {
@@ -106,20 +101,6 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
         return parameterizedQueryDataModel;
     }
 
-    /**
-     * @param parameterizedQueryDataModel the parameterizedQueryDataModel to set
-     */
-    public void setParameterizedQueryDataModel(ParameterizedQueryDataModel parameterizedQueryDataModel) {
-        this.parameterizedQueryDataModel = parameterizedQueryDataModel;
-    }
-
-    /**
-     * @param informationQueryPanel the informationQueryPanel to set
-     */
-    public void setInformationQueryPanel(ParameterizedQueryInfoPanel informationQueryPanel) {
-        this.informationQueryPanel = informationQueryPanel;
-    }
-
     public void showInDialog() {
         Dimension dimension = MainFrame.getScreenDimension();
         dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), this, "Unsaved Condition",
@@ -134,13 +115,6 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
      */
     public JDialog getDialog() {
         return dialog;
-    }
-
-    /**
-     * @param dialog the dialog to set
-     */
-    public void setDialog(JDialog dialog) {
-        this.dialog = dialog;
     }
 
 }

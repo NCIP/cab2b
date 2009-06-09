@@ -495,7 +495,7 @@ create table DYEXTN_SEMANTIC_PROPERTY (
    TERM varchar(255),
    THESAURAS_NAME varchar(255),
    SEQUENCE_NUMBER integer,
-   CONCEPT_DEFINITION varchar(255),
+   CONCEPT_DEFINITION varchar(1024),
    ABSTRACT_METADATA_ID bigint,
    ABSTRACT_VALUE_ID bigint,
    primary key (IDENTIFIER)

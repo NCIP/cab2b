@@ -22,8 +22,8 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
-import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.common.authentication.Authenticator;
 import edu.wustl.cab2b.common.domain.Experiment;
 import edu.wustl.cab2b.common.domain.ExperimentGroup;
 import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
@@ -35,9 +35,9 @@ import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
 
 /**
- * A panel to display experiment and experiment group hierarchies 
+ * A panel to display experiment and experiment group hierarchies
  * in a tree format, and an action button to create new experiment groups.
- *  
+ *
  * @author chetan_bh
  */
 public class ExperimentHierarchyPanel extends Cab2bPanel {
@@ -65,7 +65,7 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
             ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) Locator.getInstance().locate(
                                                                                                             edu.wustl.cab2b.common.ejb.EjbNamesConstants.EXPERIMENT,
                                                                                                             ExperimentHome.class);
-            dataVector = expBus.getExperimentHierarchy(UserValidator.getSerializedDCR(), UserValidator.getGridType());
+            dataVector = expBus.getExperimentHierarchy(Authenticator.getSerializedDCR());
         } catch (RemoteException e1) {
             CommonUtils.handleException(e1, this, true, true, false, false);
         } catch (ClassNotFoundException e1) {
@@ -144,12 +144,12 @@ public class ExperimentHierarchyPanel extends Cab2bPanel {
             expPanel = new ExperimentOpenPanel(expNodeObj, ExperimentHierarchyPanel.this);
         } else {
             //TODO
-            /*If user clicks on experimentGroup name then Refresh the table  
+            /*If user clicks on experimentGroup name then Refresh the table
              * and display all child nodes for selected experimentGroup */
         }
 
         if (expNodeObj.isExperimentGroup() == false) {
-            /*If user clicks on experiment name then Open experiment 
+            /*If user clicks on experiment name then Open experiment
              * in new ExperimentOpenPanel with details*/
             MainFrame mainframe = NewWelcomePanel.getMainFrame();
             mainframe.getExperimentPanel().removeAll();

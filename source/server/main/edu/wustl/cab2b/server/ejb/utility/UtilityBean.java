@@ -109,7 +109,7 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Utility
 
     /**
      * This method returns the list of tree set containing the unique record values for a given entity identifier.
-     * Tree set stores the values in sorted order. 
+     * Tree set stores the values in sorted order.
      * @param entityId
      * @return
      * @throws RemoteException
@@ -149,12 +149,10 @@ public class UtilityBean extends AbstractStatelessSessionBean implements Utility
         }
     }
 
+    /**
+     * This method refreshes the entity cache and is invoked by cab2b-admin to keep the cache of cab2b server in sync.
+     */
     public void refreshCache() throws RemoteException {
-        Connection con = ConnectionUtil.getConnection();
-        try {
-            UtilityOperations.refreshCache();
-        } finally {
-            ConnectionUtil.close(con);
-        }
+        UtilityOperations.refreshCache();
     }
 }

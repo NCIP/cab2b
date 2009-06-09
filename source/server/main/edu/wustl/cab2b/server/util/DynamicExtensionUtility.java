@@ -184,12 +184,18 @@ public class DynamicExtensionUtility {
         }
 
         for (int i = 0; i < semanticMetadataArr.length; i++) {
-            SemanticPropertyInterface semanticProp = domainObjectFactory.createSemanticProperty();
-            semanticProp.setSequenceNumber(i);
-            semanticProp.setConceptCode(semanticMetadataArr[i].getConceptCode());
-            semanticProp.setTerm(semanticMetadataArr[i].getConceptName());
-            semanticProp.setConceptDefinition(semanticMetadataArr[i].getConceptDefinition());
-            owner.addSemanticProperty(semanticProp);
+        	if(semanticMetadataArr[i]!=null) {
+        		SemanticPropertyInterface semanticProp = domainObjectFactory.createSemanticProperty();
+        		if(semanticMetadataArr[i].getOrder()!=null) {
+        			semanticProp.setSequenceNumber(semanticMetadataArr[i].getOrder());
+        		} else {
+        		    semanticProp.setSequenceNumber(i);
+        		}
+        		semanticProp.setConceptCode(semanticMetadataArr[i].getConceptCode());
+        		semanticProp.setTerm(semanticMetadataArr[i].getConceptName());
+        		semanticProp.setConceptDefinition(semanticMetadataArr[i].getConceptDefinition());
+        		owner.addSemanticProperty(semanticProp);
+        	}
         }
     }
 

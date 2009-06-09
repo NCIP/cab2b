@@ -22,9 +22,8 @@ public interface ExperimentGroupBusinessInterface extends BusinessInterface {
      * @throws RemoteException
      * @throws DAOException
      */
-    ExperimentGroup addExperimentGroup(Long parentExperimentGroupId, ExperimentGroup experimentGroup, String dref,
-                                       String idP) throws BizLogicException, UserNotAuthorizedException,
-            RemoteException, DAOException;
+    ExperimentGroup addExperimentGroup(Long parentExperimentGroupId, ExperimentGroup experimentGroup, String dref)
+            throws BizLogicException, UserNotAuthorizedException, RemoteException, DAOException;
 
     /**
      * This method returns false if ExperimentGroup with given name is not present in the database.

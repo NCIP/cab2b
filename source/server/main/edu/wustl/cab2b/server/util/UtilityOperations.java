@@ -8,13 +8,16 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.cab2b.common.authentication.util.AuthenticationUtility;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.category.CategoryCache;
 import edu.wustl.cab2b.server.datalist.DataListOperationsController;
 import edu.wustl.cab2b.server.path.PathFinder;
+import edu.wustl.cab2b.server.user.UserOperations;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.querysuite.metadata.path.CuratedPath;
@@ -114,12 +117,31 @@ public class UtilityOperations extends DefaultBizLogic {
         PathFinder.getInstance(con).addCuratedPath(curatedPath);
     }
 
+    /**
+     * This method returns the database identifier of the user, given the serialized DelegatedCredentialReference and
+     * the grid type
+     *
+     * @param serializedDCR
+     * @return user's database identifier
+     */
+    public static Long getLocalUserId(String serializedDCR) {
+        String userName = AuthenticationUtility.getUsersGridId(serializedDCR);
+        UserInterface user = new UserOperations().getUserByName(userName);
+    
+        Long userId = null;
+        if (user != null) {
+            userId = user.getUserId();
+        }
+        return userId;
+    }
+
     public synchronized static void refreshCache() {
         logger.info("Refreshing cache initiated...");
         EntityCache.getInstance().refreshCache();
 
-        Connection con = ConnectionUtil.getConnection();
+        Connection con = null;
         try {
+            con = ConnectionUtil.getConnection();
             PathFinder.refreshCache(con, false);
         } finally {
             ConnectionUtil.close(con);

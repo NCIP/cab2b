@@ -26,6 +26,7 @@ public class MySqlLoaderTest extends TestCase {
     }
 
     public void testMySqlLoader() {
+        final int size = 2;
         assertTrue(true);
         String str = "SomeName";
         String home = System.getProperty("user.home");
@@ -35,7 +36,7 @@ public class MySqlLoaderTest extends TestCase {
         try {
             file.createNewFile();
             BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file));
-            for (int i = 1; i < 101; i++) {
+            for (int i = 1; i < size; i++) {
                 fileWriter.write(Long.toString(i));
                 fileWriter.write(FIELD_SEPARATOR);
                 fileWriter.write(str + i);
@@ -60,10 +61,10 @@ public class MySqlLoaderTest extends TestCase {
             recordCount++;
             Long id = Long.parseLong(rs[i][0]);
             String name = (String) rs[i][1];
-            assertTrue(id > 0 && id < 101);
+            assertTrue(id > 0 && id < size);
             assertTrue(name.startsWith(str));
         }
-        assertEquals(100, recordCount);
+        assertEquals(size-1, recordCount);
         file.delete();
     }
 

@@ -13,10 +13,10 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.client.ui.main.AbstractTypePanel;
-import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.client.ui.mainframe.stackbox.SavedQueryLinkPanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.SearchNavigationPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.common.authentication.Authenticator;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
@@ -27,19 +27,19 @@ import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 
 /**
  * Panel situated at bottom side of ParameterizedQueryMainPanel
- * 
+ *
  * @author deepak_shingan
- * 
+ *
  */
 public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
 
     /**
-     * Button for ordering parameterized conditions 
+     * Button for ordering parameterized conditions
      */
     private Cab2bButton orderViewButton;
 
@@ -49,12 +49,12 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
     private Cab2bButton saveButton;
 
     /**
-     * Button for Canceling 
+     * Button for Canceling
      */
     private Cab2bButton cancelButton;
 
     /**
-     * ParameterizedQueryMainPanel referance used as parent component for exception handling
+     * ParameterizedQueryMainPanel reference used as parent component for exception handling
      */
     private ParameterizedQueryMainPanel parameterizedQueryMainPanel;
 
@@ -80,11 +80,14 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
     private void iniGUI() {
         this.setLayout(new RiverLayout(5, 10));
         this.setBackground(new Color(240, 240, 240));
+
         orderViewButton = new Cab2bButton("Order View");
         orderViewButton.addActionListener(new OrderViewButtonActionListener());
         orderViewButton.setPreferredSize(new Dimension(120, 22));
+
         saveButton = new Cab2bButton("Save");
         saveButton.addActionListener(new SaveButtonActionListener());
+
         cancelButton = new Cab2bButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
@@ -100,9 +103,9 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
 
     /**
      * Action class for order button
-     * 
+     *
      * @author deepak_shingan
-     * 
+     *
      */
     private class OrderViewButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
@@ -162,8 +165,9 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                 return;
             }
             ParameterizedQueryInfoPanel parameterizedQueryInfoPanel = parameterizedQueryMainPanel.getInformationQueryPanel();
-            parameterizedQueryDataModel.setQueryDescription(parameterizedQueryInfoPanel.getQueryDecription());
 
+            parameterizedQueryDataModel.setQueryDescription(parameterizedQueryInfoPanel.getQueryDecription());
+            parameterizedQueryDataModel.setIsKeywordSearch(parameterizedQueryInfoPanel.isKeywordSearch());
             if (!parameterizedQueryInfoPanel.getQueryName().equals("")) {
                 parameterizedQueryDataModel.setQueryName(parameterizedQueryInfoPanel.getQueryName());
             } else {
@@ -191,16 +195,14 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                     message = "Query updated successfully.";
                 } else {*/
                 if (queryEngineBusinessInterface.isQueryNameDuplicate(cab2bParameterizedQuery.getName(),
-                                                                      UserValidator.getSerializedDCR(),
-                                                                      UserValidator.getGridType())) {
+                                                                      Authenticator.getSerializedDCR())) {
                     JOptionPane.showMessageDialog(
                                                   parameterizedQueryMainPanel,
                                                   "Query with same name already exist. Please try saving with different name.",
                                                   "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                queryEngineBusinessInterface.saveQuery(cab2bParameterizedQuery, UserValidator.getSerializedDCR(),
-                                                       UserValidator.getGridType());
+                queryEngineBusinessInterface.saveQuery(cab2bParameterizedQuery, Authenticator.getSerializedDCR());
                 message = "Query saved successfully.";
                 //}
                 SearchNavigationPanel.getMessageLabel().setText(message);

@@ -9,15 +9,20 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.SemanticPropertyInterface;
 import edu.wustl.cab2b.client.ui.util.ClientConstants;
+import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.common.authentication.Authenticator;
 import edu.wustl.cab2b.common.category.DataCategory;
 import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
 import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
 import edu.wustl.cab2b.common.ejb.category.CategoryHomeInterface;
 import edu.wustl.cab2b.common.ejb.datacategory.DataCategoryBusinessInterface;
 import edu.wustl.cab2b.common.ejb.datacategory.DataCategoryHomeInterface;
+import edu.wustl.cab2b.common.ejb.user.UserBusinessInterface;
+import edu.wustl.cab2b.common.ejb.user.UserHomeInterface;
 import edu.wustl.cab2b.common.locator.Locator;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
@@ -34,7 +39,7 @@ import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 public class Utility {
 
     /**
-     * Returns the RelationalOperator, given the relational operator string. 
+     * Returns the RelationalOperator, given the relational operator string.
      * @param operator The relational operator string.
      * @return the RelationalOperator, given the relational operator string.
      */
@@ -44,14 +49,14 @@ public class Utility {
 
     /**
      * @param relationalOperator Input Relational Operator
-     * @return Display string for given operator 
+     * @return Display string for given operator
      */
     public static String displayStringForRelationalOperator(RelationalOperator relationalOperator) {
         return relationalOperator.getStringRepresentation();
     }
 
     /**
-     * Returns the LogicalOperator, given the logical operator string. 
+     * Returns the LogicalOperator, given the logical operator string.
      * @param operator The logical operator string.
      * @return the LogicalOperator, given the logical operator string.
      */
@@ -249,8 +254,18 @@ public class Utility {
             exception.printStackTrace();
             result = false;
         }
-
         return result;
+    }
+
+    /**
+     * @return current user
+     * @throws RemoteException
+     */
+    public static UserInterface getCurrentUser() throws RemoteException {
+        UserBusinessInterface userInterface = (UserBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                       EjbNamesConstants.USER_BEAN,
+                                                                                                       UserHomeInterface.class);
+        return userInterface.getUserByName(Authenticator.getSerializedDCR());
     }
 
 }

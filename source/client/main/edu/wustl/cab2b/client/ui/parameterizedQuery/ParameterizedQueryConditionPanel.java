@@ -33,9 +33,9 @@ import edu.wustl.common.querysuite.queryobject.ICondition;
 
 /**
  * Class to generate Parameterized Query Condition GUI
- * 
+ *
  * @author deepak_shingan
- * 
+ *
  */
 public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
     private static final long serialVersionUID = 1L;
@@ -56,8 +56,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
 
     private Dimension maxLabelDimension;
 
-    // Used as buffer to remember the sequence of the conditions on preview
-    // panel
+    /* Used as buffer to remember the sequence of the conditions on preview panel */
     private final List<AbstractTypePanel> panelIndexList = new ArrayList<AbstractTypePanel>();
 
     public ParameterizedQueryConditionPanel() {
@@ -74,7 +73,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
 
     /**
      * Method to get maximum dimension for specified attribute list
-     * 
+     *
      * @param allAttributes
      * @return Dimension maxLabelDimension
      */
@@ -112,19 +111,18 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
     }
 
     /**
-     * Method to generate panels for all attributes avaialble in dag node
+     * Method to generate panels for all attributes available in dag node
      */
     private void showAllAttributePanel() {
-        // Initially create separate panel for each attributes
-        // check/update that attribute values with show only condition panels
+        /* Initially create separate panel for each attributes check/update that attribute
+        values with show only condition panels */
         if (allAttributePanel == null) {
             allAttributePanel = new Cab2bPanel();
         }
         allAttributePanel.removeAll();
 
         if (definedAttributePanel != null) {
-            // Add checked/unchecked conditions from the show Only condition
-            // panel
+            // Add checked/unchecked conditions from the show Only condition panel
             TreeMap<Integer, AbstractTypePanel> panelMap = getAllConditionAttributePanels(definedAttributePanel);
 
             // first add only checked panels
@@ -158,8 +156,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
                         componentPanel.setExpressionId(exprId);
                         componentPanel.setAttributeDisplayName(exprId.intValue() + "."
                                 + componentPanel.getAttributeDisplayName());
-                        // check/update that attribute values with show only
-                        // condition panels
+                        // check/update that attribute values with show only condition panels
                         updatePanelStatus(componentPanel);
                         allAttributePanel.add("br ", componentPanel);
                     }
@@ -174,7 +171,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
     /**
      * This Method checks whether the given attribute is associated with any
      * condition and sets the condition values.
-     * 
+     *
      * @param attribute
      * @return
      */
@@ -194,7 +191,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
 
     /**
      * Method to return current condition panel
-     * 
+     *
      * @return
      */
     public Cab2bPanel getConditionPanel() {
@@ -313,10 +310,10 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
 
     /**
      * Method to create header panel
-     * 
+     *
      * @return Cab2b filterPanel
      */
-    public Cab2bPanel creatFilterPanel() {
+    private Cab2bPanel creatFilterPanel() {
         filterComboBox = new Cab2bComboBox();
         filterComboBox.addItem("Only defined");
         filterComboBox.addItem("Show All");
@@ -354,13 +351,13 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
             }
         }
 
-        this.setTitle("Set Condition Parameters");
-        // contentPanel
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.getViewport().add(contentPanel);
         scrollPane.getViewport().setBackground(Color.white);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        this.getContentContainer().add("hfill ", getFilterPanel());
+
+        this.setTitle("Set Condition Parameters");
+        this.getContentContainer().add("right ", getFilterPanel());
         this.getContentContainer().add("br hfill", getLabelHeaderPanel());
         this.getContentContainer().add("br hfill vfill", scrollPane);
     }
@@ -378,7 +375,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
 
     /**
      * Method to which will return all checked condition/non condition panel
-     * 
+     *
      * @return List<AbstractTypePanel>
      */
     public List<AbstractTypePanel> getUnCheckedAttributePanels() {
@@ -404,7 +401,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
 
     /**
      * Method to which will return all unchecked condition/non condition panel
-     * 
+     *
      * @return List<AbstractTypePanel>
      */
     public List<AbstractTypePanel> getCheckedAttributePanels(Container basePanel) {
@@ -439,9 +436,9 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
 
     /**
      * FilterComboBox ItemListener class
-     * 
+     *
      * @author deepak_shingan
-     * 
+     *
      */
     private class FilterComboBoxItemListener implements ItemListener {
         public void itemStateChanged(ItemEvent event) {

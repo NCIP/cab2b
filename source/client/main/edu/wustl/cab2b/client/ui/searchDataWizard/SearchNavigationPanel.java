@@ -56,16 +56,18 @@ import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.result.FailedTargetURL;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.util.global.ApplicationProperties;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author mahesh_iyer
- * 
+ *
  * The class represents the navigation searchPanel for the search dialog, and
  * also includes corresponding functionality.
  */
@@ -291,7 +293,9 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     }
 
     /**
-     * Method to switch from view search result searchPanel to searchPanel data list searchPanel
+     * Method to switch from view search result searchPanel to searchPanel data
+     * list searchPanel
+     *
      * @param datarow
      */
     public void gotoDataListPanel(final IDataRow datarow) {
@@ -304,7 +308,6 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         } else {
             dataListPanel = new DataListPanel(MainSearchPanel.getDataList(), datarow);
         }
-
         searchCenterPanel.setArrCardElement(dataListPanel, 4);
         searchCenterPanel.add(dataListPanel, SearchCenterPanel.getStrDataListlbl());
         showCard(true);
@@ -312,7 +315,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
     /**
      * Action listener for next button
-     * 
+     *
      */
     private class NextButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
@@ -339,7 +342,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                     @Override
                     protected void doUIUpdateLogic() throws Exception {
                         if (clientQueryBuilder == null || clientQueryBuilder.getVisibleExressionIds().size() == 0) {
-                            // Pop-up a dialog asking the user to add at least a rule.
+                            // Pop-up a dialog asking the user to add at least a
+                            // rule.
                             JOptionPane.showMessageDialog(mainSearchPanel.getParent(),
                                                           "Please add Limit(s) before proceeding",
                                                           "Cannot Proceed", JOptionPane.WARNING_MESSAGE);
@@ -404,7 +408,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     }
 
     /**
-     * 
+     *
      */
     private void showResult() {
         if (queryResults != null) {
@@ -442,12 +446,27 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             if (!CommonUtils.isServiceURLConfigured(cab2bQuery, mainSearchPanel)) {
                 queryResults = null;
             } else {
-                // Get the Functional class for root and update query object with it.
+                // Get the Functional class for root and update query object
+                // with it.
                 queryResults = CommonUtils.executeQuery((ICab2bQuery) clientQueryBuilder.getQuery());
+                Collection<FailedTargetURL> failedURLs = null;
+                if(queryResults != null) {
+                    failedURLs = queryResults.getFailedURLs();
+                }
+                
+                StringBuffer output = new StringBuffer();
+                //FQP 1.3 server code test
+                if (failedURLs != null) {
+                    for (FailedTargetURL url : failedURLs) {
+                        output = output.append("\n URL : " + url.getTargetUrl() + "\t Target Class obejct:"
+                                + ((gov.nih.nci.cagrid.dcql.Object) url.getTargetObject()).getName()
+                                + "\t Error msg : " + url.getErrorMessage());
+                    }
+                }
+                System.out.println("Failed URLS :" + output);
             }
         } catch (Exception e) {
             CommonUtils.handleException(e, SearchNavigationPanel.this.mainSearchPanel, true, false, false, false);
-
             queryResults = null;
             if (SearchNavigationPanel.this.mainSearchPanel.isParaQueryShowResultButtonPressed()) {
                 NewWelcomePanel.getMainFrame().closeSearchWizardDialog();
@@ -458,11 +477,12 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
     /**
      * Action listener for previous button
-     * 
+     *
      */
     private class PreviousButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
-            // Implies the previous button was clicked. Call show card with boolean set to false.
+            // Implies the previous button was clicked. Call show card with
+            // boolean set to false.
             SearchNavigationPanel.messageLabel.setText("");
             int cardIndex = searchCenterPanel.getSelectedCardIndex();
             if (cardIndex == 1) {
@@ -517,7 +537,6 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
     class AddLimitPanelPCL implements PropertyChangeListener {
 
-        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(DagControlPanel.EVENT_RESET_BUTTON_CLICKED)) {
                 mainSearchPanel.setQueryObject(null);
@@ -527,9 +546,9 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
     /**
      * This class is the service url button action listener
-     * 
+     *
      * @author atul_jawale
-     * 
+     *
      */
     private class ServiceURLButtonActionListener implements ActionListener {
 
@@ -609,9 +628,9 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
     /**
      * Save button action listener class
-     * 
+     *
      * @author deepak_shingan
-     * 
+     *
      */
     private class SaveQueryButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
@@ -636,7 +655,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     }
 
     /**
-     * @param messageLabel the messageLabel to set
+     * @param messageLabel
+     *            the messageLabel to set
      */
     public static void setMessageLabel(Cab2bLabel messageLabel) {
         SearchNavigationPanel.messageLabel = messageLabel;

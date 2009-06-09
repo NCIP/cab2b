@@ -40,6 +40,7 @@ import edu.wustl.cab2b.client.ui.controls.RiverLayout;
 import edu.wustl.cab2b.client.ui.util.ClientPropertyLoader;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
+import edu.wustl.cab2b.common.authentication.Authenticator;
 import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
@@ -78,11 +79,10 @@ public class LoginFrame extends JXFrame {
             providedUserName = args[0];
             providedPassword = args[1];
         }
-
+        initSystemProperties();
         try {
             CommonUtils.setHome();
             CommonUtils.initializeResources(); // Initialize all Resources
-
             LoginFrame loginFrame = new LoginFrame();
             loginFrame.setVisible(true);
         } catch (Throwable t) {
@@ -90,6 +90,10 @@ public class LoginFrame extends JXFrame {
             JXErrorDialog.showDialog(null, "caB2B Fatal Error", msg, t);
             System.exit(1);
         }
+    }
+
+    private static void initSystemProperties() {
+        System.setProperty("com.sun.xml.namespace.QName.useCompatibleSerialVersionUID", "1.0");
     }
 
     private static Font getTextFont() {
@@ -122,7 +126,6 @@ public class LoginFrame extends JXFrame {
         errorPanel.add(credentialError, BorderLayout.CENTER);
         errorPanel.add(new JLabel("   "), BorderLayout.SOUTH);
         errorPanel.setOpaque(false);
-
         centralPanel.add(errorPanel, BorderLayout.SOUTH);
 
         JPanel mainpanel = new JPanel();
@@ -160,7 +163,6 @@ public class LoginFrame extends JXFrame {
             field.setText(providedPassword);
         }
         return field;
-
     }
 
     private Point getStartPosition(int width, int height) {
@@ -196,12 +198,10 @@ public class LoginFrame extends JXFrame {
     }
 
     private void setKeyMap(JTextField txtField) {
-
         Keymap keyMap = JTextField.addKeymap("enter", txtField.getKeymap());
         KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         keyMap.addActionForKeyStroke(key, new AbstractAction() {
             private static final long serialVersionUID = 1L;
-
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
@@ -224,8 +224,7 @@ public class LoginFrame extends JXFrame {
 
         gridType = new Cab2bComboBox();
         gridType.setPreferredSize(new Dimension(160, 23));
-        Font idProviderFont = new Font(gridType.getFont().getName(), Font.PLAIN,
-                gridType.getFont().getSize() + 1);
+        Font idProviderFont = new Font(gridType.getFont().getName(), Font.PLAIN, gridType.getFont().getSize() + 1);
         gridType.setFont(idProviderFont);
         gridType.setOpaque(false);
         gridType.setBorder(border);
@@ -333,7 +332,6 @@ public class LoginFrame extends JXFrame {
                 }
             };
             swingWorker.start();
-
         }
     }
 
@@ -361,10 +359,9 @@ public class LoginFrame extends JXFrame {
             return;
         }
         String password = new String(passwordArray);
-        final String selectedIdentityProvider = gridType.getSelectedItem().toString();
-
-        try {
-            new UserValidator(userName, selectedIdentityProvider).validateUser(password);
+        //final String selectedIdentityProvider = gridType.getSelectedItem().toString();
+       try {
+            new Authenticator(userName).validateAndDelegate(password);
             Thread mainThread = new Thread() {
                 public void run() {
                     launchMainFrame();
@@ -395,12 +392,11 @@ public class LoginFrame extends JXFrame {
             credentialError.setText("  * " + message);
             credentialError.setForeground(Color.RED);
         }
-
     }
 
     /**
      * Method to launch caB2B client application.
-     * 
+     *
      * @param args
      *            Command line arguments. They will not be used.
      */
@@ -419,5 +415,4 @@ public class LoginFrame extends JXFrame {
             System.exit(1);
         }
     }
-
 }

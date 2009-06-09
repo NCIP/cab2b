@@ -24,10 +24,10 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
-import edu.wustl.cab2b.client.ui.mainframe.UserValidator;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.client.ui.util.WindowUtilities;
+import edu.wustl.cab2b.common.authentication.Authenticator;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
 import edu.wustl.cab2b.common.datalist.DataListHomeInterface;
 import edu.wustl.cab2b.common.datalist.IDataRow;
@@ -85,7 +85,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
     private Cab2bPanel bottomPanel;
 
     /**
-     * Scrollpane for panel 
+     * Scrollpane for panel
      */
     private JScrollPane srollPane;
 
@@ -100,7 +100,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
     MainSearchPanel mainSearchPanel;
 
     /**
-     * Flag  to indicate status of data list 
+     * Flag  to indicate status of data list
      */
     private static boolean isDataListSaved = false;
 
@@ -239,7 +239,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
                 CommonUtils.handleException(e, SaveDatalistPanel.this, true, true, true, false);
                 return;
             }
-            
+
             String dataListDesc = txtDesc.getText();
 
             final DataListMetadata dataListAnnotation = new DataListMetadata();
@@ -262,8 +262,7 @@ public class SaveDatalistPanel extends Cab2bPanel {
                         MainSearchPanel.savedDataListMetadata = dataListBI.saveDataList(
                                                                                         newRootDataRow,
                                                                                         dataListAnnotation,
-                                                                                        UserValidator.getSerializedDCR(),
-                                                                                        UserValidator.getGridType());
+                                                                                        Authenticator.getSerializedDCR());
                         logger.debug("data list saved successfully (in entity with id) : "
                                 + MainSearchPanel.savedDataListMetadata.getId());
 
@@ -288,9 +287,9 @@ public class SaveDatalistPanel extends Cab2bPanel {
 
         /**
          * This method takes a data row and makes copy of it.
-         * It then calls itself recursively on each child. If both (data row) and (child node) is not a title node then 
+         * It then calls itself recursively on each child. If both (data row) and (child node) is not a title node then
          * it adds a title node between itself and child.
-         *   
+         *
          * so final  structure of data list is always such that each node has title node.
          * @param dataRow
          * @return
