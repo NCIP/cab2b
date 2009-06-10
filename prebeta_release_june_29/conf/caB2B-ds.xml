@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ===================================================================== -->
+<!--                                                                       -->
+<!--  JBoss Server Configuration                                           -->
+<!--                                                                       -->
+<!-- ===================================================================== -->
+
+<!-- $Id$ -->
+<!-- ==================================================================== -->
+<!--  Datasource config for MySQL using 2.0.11 driver                     -->
+<!-- ==================================================================== -->
+<datasources>
+  <local-tx-datasource>
+      <jndi-name>cab2bDS</jndi-name>
+      <connection-url>jdbc:mysql://server-ip:port/database-name</connection-url>
+      <driver-class>com.mysql.jdbc.Driver</driver-class>
+      <user-name>user_name</user-name>
+      <password>user_password</password>
+      <use-java-context>true</use-java-context>
+      <min-pool-size>2</min-pool-size>
+      <max-pool-size>25</max-pool-size>
+      <check-valid-connection-sql>select count(*) from ID_TABLE</check-valid-connection-sql>
+  </local-tx-datasource>
+</datasources>

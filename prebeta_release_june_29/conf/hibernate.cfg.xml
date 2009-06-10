@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-2.0.dtd">
+
+<hibernate-configuration>
+	<session-factory>
+	   	<property name="show_sql">false</property>
+
+
+<!-- use data source    -->  
+    	  
+    	<property name="connection.datasource">java:/cab2bDS</property>
+
+  	  
+<!-- use Local Database 
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+       	<property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password"></property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/cab2b</property>
+  --> 
+
+    	<property name="hibernate.transaction.factory_class">net.sf.hibernate.transaction.JDBCTransactionFactory</property>
+	
+	 	<property name="dialect">net.sf.hibernate.dialect.MySQLDialect</property>	
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+       	<property name="hibernate.jdbc.batch_size">0</property>
+       	
+		<mapping resource="edu/wustl/common/hbm/CategorialAttribute.hbm.xml"/>
+		<mapping resource="edu/wustl/common/hbm/CategorialClass.hbm.xml"/>
+		<mapping resource="edu/wustl/common/hbm/Category.hbm.xml"/>
+		
+		<mapping resource="edu/wustl/cab2b/server/hbm/AbstractDomainObject.hbm.xml"/>
+		
+		
+	</session-factory>
+</hibernate-configuration>
