@@ -1,0 +1,53 @@
+package edu.wustl.cab2b.server.ejb.serviceurl;
+
+import java.rmi.RemoteException;
+import java.util.Collection;
+
+import edu.wustl.cab2b.common.ejb.serviceurl.ServiceURLBusinessInterface;
+import edu.wustl.cab2b.common.user.ServiceURL;
+import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
+import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
+
+/**
+ * 
+ * @author lalit_chand, atul_jawale , 
+ * @author Gaurav Mehta
+ *
+ */
+public class ServiceURLBean extends AbstractStatelessSessionBean implements ServiceURLBusinessInterface {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * This method returns a collection all the Application names present in the database
+     * @return Collection of all application names
+     * @throws RemoteException
+     */
+    public Collection<String> getAllApplicationNames() throws RemoteException {
+        return new ServiceURLOperations().getAllApplicationNames();
+    }
+
+    /**
+     * This method returns a collection all the service instances present in the database
+     * @return Collection of all service urls.
+     * @throws RemoteException
+     */
+    public Collection<ServiceURL> getAllServiceURLs() throws RemoteException {
+        return new ServiceURLOperations().getAllServiceURLs();
+    }
+
+    /**
+     * This method returns a collection of all the ServiceURL which is a union of 
+     * all the service instances present in the database and the running instances.  
+     * 
+     * @param serviceName
+     * @param user
+     * @return Instances by service names
+     * @throws RemoteException
+     */
+    public Collection<ServiceURL> getInstancesByServiceName(String serviceName, String version, UserInterface user)
+            throws RemoteException {
+        return new ServiceURLOperations().getInstancesByServiceName(serviceName, version, user);
+    }
+}
