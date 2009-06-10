@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Cab2bAdmin" basedir="..">
+
+	<property file="conf/server.properties" />
+	<property name="workarea.dir" location="workarea" />
+	<mkdir dir="${workarea.dir}"/>
+	<property name="standAlone.jar.dir" location="${workarea.dir}/cab2b-AdminStandAloneJar" />
+	<property name="target.dir" location="${workarea.dir}/war" />
+	<property name="source.dir" location="src" />
+	<property name="images.dir" location="images" />
+	<property name="jsp.dir" location="jsp" />
+	<property name="conf.dir" location="conf" />
+	<property name="flexclient.dir" location="flexclient" />
+	<property name="javascript.dir" location="javascript" />
+	<property name="css.dir" location="css" />
+	<property name="tlds.dir" location="tlds" />
+	<property name="lib.dir" location="lib" />
+	<property name="jboss.deploy.dir" location="${jboss.home}/server/default/deploy" />
+	<property name="war.file" location="${workarea.dir}/cab2badmin.war" />
+	<property name="classes.dir" location="${target.dir}/WEB-INF/classes" />
+	<property name="extra_lib.dir" value="extra_lib" />
+	<property name="APP_ROOT" value="flexclient" />
+	<property name="flex.dir" location="flex" />
+	<property name="db.scripts.dir" location="scripts" />
+	<property name="caB2B-Admin.standalone.jar.file" location="${workarea.dir}/cab2badminStandAlone.jar" />
+	<path id="source.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="xdoclet.classpath">
+		<path refid="source.classpath" />
+	</path>
+
+	<path id="dbscript.classpath">
+		<fileset dir="lib">
+			<include name="mysql-connector-java-3.0.16-ga-bin.jar" />
+		</fileset>
+	</path>
+
+	<!-- =============================================================================== -->
+	<target name="deploy.jboss" depends="war" description="clean up">
+		<!--echo message="${jboss.deploy.dir}" /-->
+		<copy overwrite="true" file="${lib.dir}/mysql-connector-java-3.0.16-ga-bin.jar" todir="${jboss.home}/server/default/lib" />
+		<copy overwrite="true" file="${lib.dir}/oracleDriver.jar" todir="${jboss.home}/server/default/lib" />
+		
+		<copy overwrite="true" file="${lib.dir}/cog-jglobus.jar" todir="${jboss.home}/server/default/lib" />
+		<copy overwrite="true" file="${lib.dir}/cryptix32.jar" todir="${jboss.home}/server/default/lib" />
+		<copy overwrite="true" file="${lib.dir}/cryptix-asn1.jar" todir="${jboss.home}/server/default/lib" />
+		<copy overwrite="true" file="${lib.dir}/jce-jdk13-125.jar" todir="${jboss.home}/server/default/lib" />
+		<copy overwrite="true" file="${lib.dir}/puretls.jar" todir="${jboss.home}/server/default/lib" />
+		
+		<copy overwrite="true" file="${war.file}" todir="${jboss.home}/server/default/deploy" />
+		<copy overwrite="true" file="${conf.dir}/caB2B-ds.xml" todir="${jboss.home}/server/default/deploy" />
+		<replace.db.properties.macro cfgfile="${jboss.deploy.dir}/caB2B-ds.xml" />
+	</target>
+	<!-- ================================================================================== -->
+	<macrodef name="replace.db.properties.macro">
+		<attribute name="cfgfile" />
+		<sequential>
+			<echo message="Putting database information in file @{cfgfile}" />
+			<replace file="@{cfgfile}" token="server-ip" value="${database.server.ip}" />
+			<replace file="@{cfgfile}" token="port" value="${database.server.port}" />
+			<replace file="@{cfgfile}" token="database-name" value="${database.name}" />
+			<replace file="@{cfgfile}" token="user_name" value="${database.username}" />
+			<replace file="@{cfgfile}" token="user_password" value="${database.password}" />
+			<replace file="@{cfgfile}" token="DS-NAME" value="${datasource.name}" />
+		</sequential>
+	</macrodef>
+	<!-- =============================================================================== -->
+	<target name="war" depends="clean.all,copy.all,compile.source" description="Creates the caB2Badmin.war in the workarea directory using deployment descriptor (web.xml) from conf directory">
+		<copy todir="${workarea.dir}">
+			<fileset file="${conf.dir}/web.xml" />
+		</copy>
+		<replace file="${workarea.dir}/web.xml" token="DS-NAME" value="${datasource.name}" />
+		<war destfile="${war.file}" webxml="${workarea.dir}/web.xml" update="true">
+			<zipfileset dir="${target.dir}/images" prefix="images" />
+			<zipfileset dir="${target.dir}/jsp" prefix="jsp" />
+			<zipfileset dir="${target.dir}/javascript" prefix="javascript" />
+			<zipfileset dir="${target.dir}/css" prefix="css" />
+			<zipfileset dir="${target.dir}/flexclient" prefix="flexclient" />
+			<webinf dir="${target.dir}/WEB-INF" />
+		</war>
+	</target>
+	<!-- =============================================================================== -->
+	<target name="build.standalone.jar" depends="compile.source" description="--> description">
+    	<mkdir dir="${standAlone.jar.dir}" />
+    	<copy todir="${standAlone.jar.dir}" overwrite="true">
+    		<fileset dir="${workarea.dir}/war/WEB-INF/classes/">
+    			<exclude name="**/action/**/*.*" />
+    		</fileset>
+    	</copy>
+    	<jar basedir="${standAlone.jar.dir}" destfile="${caB2B-Admin.standalone.jar.file}">
+    		<manifest>
+    			<attribute name="Built-At-" value="${TODAY} ${TSTAMP}" />
+    		</manifest>
+    	</jar>
+    </target>
+
+	<!-- =============================================================================== -->
+	
+	<target name="copy.all" description="Creates war directory structure, copies the required files to war-directory structure for caB2B-Admin">
+		<!-- Copies all the .css files from css directory to workarea/css/ -->
+		<copy overwrite="true" todir="${target.dir}/css">
+			<fileset dir="${css.dir}">
+				<include name="**/*.css" />
+			</fileset>
+		</copy>
+		<!-- Copies all the .js files from javascript directory to workarea/javascript/ -->
+		<copy overwrite="true" todir="${target.dir}/javascript">
+			<fileset dir="${javascript.dir}">
+				<include name="**/*.js" />
+			</fileset>
+		</copy>
+
+		<!-- Copies all the image files from images directory to workarea/images/ -->
+		<copy overwrite="true" todir="${target.dir}/images">
+			<fileset dir="${images.dir}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+
+		<copy overwrite="true" todir="${target.dir}/flexclient">
+			<fileset dir="${flexclient.dir}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+		<copy overwrite="true" todir="${target.dir}/WEB-INF/flex">
+			<fileset dir="${flex.dir}" />
+		</copy>
+		<!-- Copies all the jsp files(including subfolders) from jsp directory to workarea/jsp/ -->
+		<copy overwrite="true" todir="${target.dir}/jsp">
+			<fileset dir="${jsp.dir}">
+				<include name="**/*.jsp" />
+			</fileset>
+		</copy>
+
+		<!-- Copies the tiles.xml from conf directory to workarea/WEB-INF -->
+		<copy overwrite="true" todir="${target.dir}/WEB-INF/">
+			<fileset dir="${conf.dir}">
+				<include name="tiles.xml" />
+			</fileset>
+		</copy>
+
+		<!-- Copies all the property files from conf  directory(excluding tiles.xml & web.xml) to workarea/WEB-INF/classes/ -->
+		<copy overwrite="true" todir="${target.dir}/WEB-INF/classes">
+			<fileset dir="${conf.dir}">
+				<include name="**/*.*" />
+				<include name="ApplicationResources.properties" />
+				<exclude name="tiles.xml" />
+				<exclude name="web.xml" />
+				<exclude name="caB2B-ds.xml" />
+			</fileset>
+		</copy>
+		<replace file="${target.dir}/WEB-INF/classes/hibernate.cfg.xml" token="DS-NAME" value="${datasource.name}" />
+		<!-- Copies all the .tld files from tlds directory to workarea/WEB-INF/tlds -->
+		<copy overwrite="true" todir="${target.dir}/WEB-INF/tlds">
+			<fileset dir="${tlds.dir}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+
+		<!-- Copies all the .jar files from lib directory to workarea/WEB-INF/lib -->
+		<copy overwrite="true" todir="${target.dir}/WEB-INF/lib">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+				<exclude name="j2ee.jar" />
+				<exclude name="servlet-api.jar" />
+				<exclude name="log4j-1.2.14.jar" />
+				<exclude name="ant-antlr-1.6.3.jar" />
+				<exclude name="commons-logging-1.1.jar" />
+				<exclude name="jaxrpc.jar" />
+				<exclude name="oracleDriver.jar" />
+				<exclude name="mysql-connector-java-3.0.16-ga-bin.jar" />
+				
+				<exclude name="cog-jglobus.jar" />
+				<exclude name="cryptix32.jar" />
+				<exclude name="cryptix-asn1.jar" />
+				<exclude name="jce-jdk13-125.jar" />
+				<exclude name="puretls.jar" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- =============================================================================== -->
+	<target name="compile.source" description="Compile all the .java files and place them to /WEB-INF/classes directory">
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="${source.dir}" destdir="${classes.dir}" fork="yes" memoryMaximumSize="1024m" includes="**/*.java" debug="true" deprecation="true" classpathref="source.classpath" failonerror="true" nowarn="on" />
+		<copy todir="${classes.dir}" overwrite="true">
+			<fileset dir="${source.dir}">
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- =============================================================================== -->
+	<target name="clean.all" description="Deletes all the contents of  workarea directory">
+		<delete includeemptydirs="true" dir="${workarea.dir}" />
+		<mkdir dir="${workarea.dir}" />
+	</target>
+
+</project>
