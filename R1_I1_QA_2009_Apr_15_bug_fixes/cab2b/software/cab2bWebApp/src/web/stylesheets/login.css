@@ -1,0 +1,26 @@
+@import url("common.css"); 
+
+ #content
+{
+  position: relative; float: left; width: 48%; text-align: center; font-size: 40; font-style: italic; color: #bbb;
+}
+
+ #conceptimage
+{
+  width: 83%;
+}
+
+ #rightpanel
+{
+  float: right; width: 29%; height: 474; background-image: url('../images/vertical_separator.gif'); background-position: left; background-repeat: no-repeat;
+}
+
+ #loginpanel
+{
+  margin: 0 1% 0 3%;
+}
+
+ #loginpanelbody
+{
+  border-style: solid; border-width: 1px; border-color: #fff #ccc #ccc #ccc; padding: 12 10 10 6; 
+}

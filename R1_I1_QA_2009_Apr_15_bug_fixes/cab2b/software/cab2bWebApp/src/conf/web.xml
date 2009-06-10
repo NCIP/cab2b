@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+	<display-name>caBench to Bedside Web Client v1.0</display-name>
+
+	<!--  Filter Declarations -->
+	<filter>
+		<filter-name>AuthenticationFilter</filter-name>
+		<filter-class>
+			edu.wustl.cab2bwebapp.filters.AuthenticationFilter
+		</filter-class>
+		<init-param>
+			<param-name>Authentication-Exclusion</param-name>
+			<param-value>/Home.do,/DisplaySavedSearches.do,/Login.do,/DisplayServiceInstances.do</param-value>
+		</init-param>
+		<init-param>
+			<param-name>Cache-Control</param-name>
+			<param-value>private,no-cache,no-store</param-value>
+		</init-param>		
+	</filter>
+	
+	<!--  Filter Mappings -->
+	<filter-mapping>
+		<filter-name>AuthenticationFilter</filter-name>
+		<url-pattern>*.do</url-pattern>
+	</filter-mapping>		
+
+	<!-- Struts Action Servlet Declaration -->
+	<servlet>
+		<servlet-name>action</servlet-name>
+		<servlet-class>
+			org.apache.struts.action.ActionServlet
+		</servlet-class>
+		<init-param>
+			<param-name>config</param-name>
+			<param-value>/WEB-INF/struts-config.xml</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+
+	<!-- Standard Action Servlet Mapping -->
+	<servlet-mapping>
+		<servlet-name>action</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+
+	<listener>
+		<listener-class>
+			edu.wustl.cab2bwebapp.listener.cab2bWebAppContextListener
+		</listener-class>
+	</listener>
+
+	<!-- Struts Tag Library Descriptors -->
+    <taglib>
+		<taglib-uri>http://struts.apache.org/tags-html</taglib-uri>
+		<taglib-location>/WEB-INF/taglibs/struts-html.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>http://struts.apache.org/tags-bean</taglib-uri>
+		<taglib-location>/WEB-INF/taglibs/struts-bean.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>http://struts.apache.org/tags-logic</taglib-uri>
+		<taglib-location>/WEB-INF/taglibs/struts-logic.tld</taglib-location>
+	</taglib>	
+
+	<!-- Welcome File List -->
+	<welcome-file-list>
+		<welcome-file>pages/home.jsp</welcome-file>
+	</welcome-file-list>
+</web-app>
