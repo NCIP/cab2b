@@ -1,0 +1,36 @@
+@import url("common.css");
+
+ #toppanel
+{
+  background-color: #eee; padding: 0.4em 1% 0.4em 1%
+}
+ 
+ #leftpanel
+{
+  width: 55%; height: 500; float: left; padding: 1em 1% 1em 1%; background-image: url('../images/vertical_separator.gif'); background-position: right; background-repeat: no-repeat;
+}
+
+ #savedsearchespanelheaderexpand
+{
+  background-color: #eee; padding: 0.5em; margin-right: 2%; cursor: pointer; background-image: url('../images/expand.jpg'); background-position: right; background-repeat: no-repeat;
+}
+
+ #savedsearchespanelheadercontract
+{
+  background-color: #eee; padding: 0.5em; margin-right: 2%; cursor: pointer; background-image: url('../images/collapse.jpg'); background-position: right; background-repeat: no-repeat;
+}
+
+ #savedsearchespanelbody
+{
+   margin-right: 2%; border-style: solid; border-width: 1; border-color: #fff #eee #eee #eee; padding: 0.5em; line-height: 1.4em; display: none;
+}
+
+ #rightpanel
+{
+  width: 40%; float: right; padding: 1em 1% 1em 1%;
+}
+
+ #rightpanel .select
+{
+  margin-top: 1%; font-size: 0.95em; width: 100%; height: 420;
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.3//EN" "http://struts.apache.org/dtds/struts-config_1_3.dtd">
+<struts-config>
+	<!-- ========================== Form Bean Definitions ========================== -->
+	<form-beans>
+		<form-bean name="loginForm" type="edu.wustl.cab2bwebapp.actionform.LoginForm"/>
+	</form-beans>
+
+	<!-- ========================== Global Forwards ========================== -->
+	<global-forwards>
+		<forward name="home" path="/pages/index.jsp" />
+	</global-forwards>
+
+	<!-- ========================== Action Mappings ========================== -->
+	<action-mappings>
+		<action path="/Login"
+			type="edu.wustl.cab2bwebapp.action.LoginAction" name="loginForm"
+			scope="request" validate="false">
+			<forward name="success" path="/pages/search.jsp"/>
+			<forward name="failure" path="/pages/index.jsp"/>
+		</action>
+
+		<action path="/Logout"
+			type="edu.wustl.cab2bwebapp.action.LogoutAction" scope="request"
+			validate="false">
+		</action>
+		
+		<action path="/LoadModelRelatedDataAction"
+			type="edu.wustl.cab2bwebapp.action.LoadModelRelatedDataAction" scope="request"
+			validate="false">
+			<forward name="ServiceInstancePage" path="/pages/serviceinstances.jsp"/>
+			<forward name="SavedQueriesPage" path="/pages/savedsearches.jsp"/>
+		</action>
+	</action-mappings>
+	
+	<!-- ========================== Message Resource ========================== -->
+	<message-resources parameter="ApplicationResources"/>
+</struts-config>
