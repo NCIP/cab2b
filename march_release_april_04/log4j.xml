@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<!-- ===================================================================== -->
+<!--                                                                       -->
+<!--  Log4j Configuration                                                  -->
+<!--                                                                       -->
+<!-- ===================================================================== -->
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+
+  <!-- ============================================================================= -->  
+  <!-- Put below two tags in the log4j.xml file in JBoss/server/default/conf folder -->
+  <!-- ============================================================================= -->
+   	<appender name="CAB2B_LOGGER" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${jboss.server.home.dir}/log/caB2B.log" />
+		<param name="Append" value="true" />
+		<param name="MaxFileSize" value="10000KB"/>
+		<param name="MaxBackupIndex" value="10"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{dd MMM yyy HH:mm:ss}, %-6p %C:%M:%L %m %n" />
+		</layout>
+   	</appender>
+	
+	<category name="caB2B.logger">
+		<priority value="INFO" />
+		<appender-ref ref="CAB2B_LOGGER" />
+    </category>
+    
+    <root>
+        <level value="info"/>
+        <appender-ref ref="CAB2B_LOGGER"/>
+    </root>
+    
+</log4j:configuration>
