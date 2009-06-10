@@ -1,0 +1,14 @@
+.content_table {
+	height: 105%;
+	margin: 0px;
+	padding: 0px;
+	clear: both;
+	float: none;
+	position: static;
+	top: 80px;
+	clip: rect(auto,auto,auto,auto);
+}
+
+.newtr {
+	height: 10px;
+}
