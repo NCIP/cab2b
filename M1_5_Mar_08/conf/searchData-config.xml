@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<!-- Contains all the actions under the searchData Menu -->
+
+<struts>
+	
+	
+	
+
+
+     <package name="SearchData"  extends="tiles-default" >
+
+        <action name="LoadServiceModels" class="edu.wustl.cab2b.admin.searchdata.action.LoadServiceModels">
+           
+         
+            <result name="wait" >/jsp/wait.jsp  </result>
+            <result name="success" type="tiles">action.loadServiceModels</result>
+       </action>
+        
+        <action name="LoadModels" class="edu.wustl.cab2b.admin.searchdata.action.CaDSRLoadModel">
+	        <result name="failure" >/jsp/default.jsp</result>
+	        <result name="success" type="tiles">action.loadModels</result>
+		</action>
+        
+        <action name="LoadSelectedModels" class="edu.wustl.cab2b.admin.searchdata.action.LoadModel">
+           
+            <result name="failure" >/jsp/default.jsp</result>
+             <result name="details" >/jsp/searchData/ModelLoadDetails.jsp</result>
+            <result name="success" type="tiles" >action.confirmLoadModels</result>
+		</action>
+     
+        
+        
+        <action name="CreateCategoryInformation" class="edu.wustl.cab2b.admin.searchdata.action.CreateCategoryInformation">
+	        <result name="failure" >/jsp/default.jsp</result>
+		    <result name="success" type="tiles">action.createCategoryInformation</result>
+	     </action>
+	     
+	     <action name="CreateCategory" class="edu.wustl.cab2b.admin.searchdata.action.CreateCategory">
+	        <result name="failure" >/jsp/default.jsp</result>
+            <result name="success" type="tiles">action.createCategory</result>
+	     </action>
+	     
+	     <action name="AttributeOrder" class="edu.wustl.cab2b.admin.searchdata.action.CreateCategoryAttributeOrder">
+	        <result name="failure" type="tiles">action.categoryError</result>
+	        <result name="Pass" type="tiles">action.categorySuccess</result>
+            <result name="success" type="tiles">action.attributeOrder</result>
+	     </action>
+	     
+	      <action name="SearchCategory" class="edu.wustl.cab2b.admin.searchdata.action.SearchCategory">
+	        <result name="failure" >/jsp/default.jsp</result>
+            <result name="success" type="tiles">action.createCategory</result>
+	     </action>
+	     
+	     <action name="ValidateDAG" class="edu.wustl.cab2b.admin.searchdata.action.ValidateDAG">
+	        <result name="failure" >/jsp/default.jsp</result>
+            <result name="success" type="tiles">action.createCategory</result>
+	     </action>
+	     
+	     
+	<!--     
+	     <action name="ConnectCategory" class="edu.wustl.cab2b.admin.searchdata.action.ConnectCategory">
+	        <result name="failure" >/jsp/default.jsp</result>
+            <result name="success" type="tiles" >action.connectCategory</result>
+	     </action>
+	  -->   
+	     <action name="SearchServiceInstances" class="edu.wustl.cab2b.admin.searchdata.action.ServiceInstances">
+	        <interceptor-ref name="defaultStack"/>
+	        <result name="failure" >/jsp/default.jsp</result>
+	        <result name="success" type="tiles">action.loadServiceInstance</result>
+	     </action>
+	<!--     
+	      <action name="RecordNameSettings" class="edu.wustl.cab2b.admin.searchdata.action.ConnectCategory">
+	        <result name="failure" >/jsp/default.jsp</result>
+            <result name="success" type="tiles">action.loadServiceInstance</result>
+	     </action>
+	     
+	 -->      
+	     <action name="SaveServiceInstance" class="edu.wustl.cab2b.admin.searchdata.action.SaveServiceInstance">
+	        <result name="failure" >/jsp/default.jsp</result>
+            <result name="success" type="tiles">action.home</result>
+	     </action>
+	     
+    </package>
+    
+    
+
+</struts>
