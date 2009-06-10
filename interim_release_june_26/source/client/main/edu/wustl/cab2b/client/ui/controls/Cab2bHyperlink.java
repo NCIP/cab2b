@@ -1,0 +1,73 @@
+package edu.wustl.cab2b.client.ui.controls;
+
+import java.awt.Color;
+
+import javax.swing.Action;
+
+import org.jdesktop.swingx.JXHyperlink;
+
+/**
+ * By Default Cab2bHyperlink is underlined, unlike JXHyperlink,
+ * where hyperlinks are underlined only on mouse over.
+ * 
+ * To get JXHyperlink behaviour in Cab2bHyperlink call Cab2bHyperlink constructors
+ * with isHyperlinkUnderlined boolean set to false. 
+ * 
+ * @author chetan_bh
+ * @author Chandrakant Talele
+ */
+public class Cab2bHyperlink<T> extends JXHyperlink {
+
+    private static final long serialVersionUID = 8338180418321272388L;
+
+    private static final Color DEFAULT_CLICKED_COLOR = new Color(0x006699);
+
+    private static final Color DEFAULT_UNCLICKED_COLOR = new Color(0x034E74);
+
+    /**
+     * User object associated with this hyperlink.
+     */
+    private T userObject;
+
+    /**
+     * Default constructor. Creates hypelink object which will be painted with <b>Bold</b> text.
+     */
+    public Cab2bHyperlink() {
+        this(false);
+    }
+
+    /**
+     * @param usePlainFont TRUE if hyperlink is to be painted with plain text. 
+     *                     FALSEpa hyperlink is to be painted with <b>Bold</b> text
+     */
+    public Cab2bHyperlink(boolean usePlainFont) {
+        this(null, usePlainFont);
+    }
+
+    /**
+     * @param action Action to associate
+     * @param usePlainFont TRUE if hyperlink is to be painted with plain text. 
+     *                     FALSEpa hyperlink is to be painted with <b>Bold</b> text
+     */
+    public Cab2bHyperlink(Action action, boolean usePlainFont) {
+        super(action);
+        this.setClickedColor(DEFAULT_CLICKED_COLOR);
+        this.setUnclickedColor(DEFAULT_UNCLICKED_COLOR);
+        this.setUI(new Cab2bHyperlinkUI(usePlainFont));
+    }
+
+    /**
+     * Returns user object associated with this hyperlink.
+     */
+    public T getUserObject() {
+        return userObject;
+    }
+
+    /**
+     * Sets the user object.
+     */
+    public void setUserObject(T userObject) {
+        this.userObject = userObject;
+    }
+
+}

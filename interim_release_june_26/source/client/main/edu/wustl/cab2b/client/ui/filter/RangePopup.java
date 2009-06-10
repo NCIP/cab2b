@@ -1,0 +1,68 @@
+package edu.wustl.cab2b.client.ui.filter;
+
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+
+import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
+import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
+import edu.wustl.cab2b.client.ui.experiment.ApplyFilterPanel;
+
+/**
+ * This class generates a pop-up of Range filter type when clicked on a header
+ * of a table that displays selected Category records
+ * 
+ * @author hrishikesh_rajpathak
+ * 
+ */
+public class RangePopup extends Cab2bFilterPopup {
+	private static final long serialVersionUID = 1L;
+
+	private Cab2bLabel minLable, maxLable;
+
+	private Cab2bTextField minText, maxText;
+
+	private String columnName;
+
+	public RangePopup(ApplyFilterPanel applyFilterpanel, RangeFilter oldFilter, String colName, int colIndex) {
+		super(applyFilterpanel, colName, colIndex);
+		this.columnName = colName;
+		minLable = new Cab2bLabel("Minimum :");
+		maxLable = new Cab2bLabel("Maximum :");
+
+		minText = new Cab2bTextField();
+		maxText = new Cab2bTextField();
+		String min = "";
+		String max = "";
+
+		if (oldFilter != null) {
+			min = String.valueOf(oldFilter.minRange);
+			minText.setText(min);
+			max = String.valueOf(oldFilter.maxRange);
+			maxText.setText(max);
+		} else {
+			min = "0";
+			max = "0";
+		}
+		this.add("hfill ", minLable);
+		this.add("tab", minText);
+
+		this.add(" br ", maxLable);
+		this.add("tab", maxText);
+		this.add("br", okButton);
+
+		this.add("tab ", cancelButton);
+
+		this.setPreferredSize(new Dimension(250, 250));
+	}
+
+	/**
+	 * This method creates the filter taking its input from the text filed.
+	 */
+	protected CaB2BFilterInterface okActionPerformed(ActionEvent e) {
+		int minimum = Integer.parseInt(minText.getText());
+		int maximum = Integer.parseInt(maxText.getText());
+		return null;
+		//	return new RangeFilter(minimum, maximum, columnIndex, columnName);
+	}
+
+}
