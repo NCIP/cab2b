@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="caB2B" basedir=".." default="compile.all">
+	<!-- 
+	================================================================
+			Build file for caB2B project
+			Author : Chandrakant Talele
+	================================================================	-->
+	<property file="build/build.properties" />
+	<property file="build/unittest.properties" />
+
+	<property name="common.src" location="source/common/main" />
+	<property name="common.test" location="source/common/test" />
+
+	<property name="client.src" location="source/client/main" />
+	<property name="client.test" location="source/client/test" />
+
+	<property name="server.src" location="source/server/main" />
+	<property name="server.test" location="source/server/test" />
+
+	<property name="workArea.dir" location="workarea" />
+
+	<property name="Reports.dir" location="${workArea.dir}/reports" />
+	<property name="cactusReports.dir" location="${Reports.dir}/cactus" />
+	<property name="buildReports.dir" location="${Reports.dir}/build" />
+	<property name="javadoc.dir" location="${Reports.dir}/javadoc" />
+
+	<property name="XmlLogger.file" value="${buildReports.dir}\log.xml" />
+	<tstamp>
+	    <format property="TODAY" pattern="MMMM-dd-yyyy" locale="en"/>
+    </tstamp>
+
+	<property name="client.classes.dir" location="${workArea.dir}/client/classes" />
+	<property name="server.classes.dir" location="${workArea.dir}/server/classes" />
+	<property name="common.classes.dir" location="${workArea.dir}/common/classes" />
+	<property name="testcase.properties.folder" location="${workArea.dir}/TestCaseProperties" />
+
+	<property name="ear.dir" location="${workArea.dir}/ear" />
+	<property name="ear.file" location="${workArea.dir}/cab2bServer.ear" />
+	<property name="cab2bDS.file" location="conf/caB2B-ds.xml" />
+	<property name="jbossjca.service.xml" location="conf/jbossjca-service.xml" />
+
+	<property name="server.jar.dir" location="${workArea.dir}/jar" />
+	<property name="server.jar.file" location="${workArea.dir}/cab2bServer.jar" />
+	<property name="caB2B.standalone.jar.file" location="${workArea.dir}/cab2bStandAlone.jar" />
+
+	<property name="client.jar.dir" location="${workArea.dir}/jar" />
+	<property name="client.jar.file" location="${workArea.dir}/cab2bClient.jar" />
+	<property name="cab2bClientSetup.zip.file" location="${workArea.dir}/cab2bClientSetup.zip"/>
+	
+	<!-- properties used for Java Web Start -->
+	<!-- change the version values for every new release, 
+			otherwise webstart will not deliver the latest changes !! -->
+	<property name="webstart.dir" location="webstart" />
+	<property name="webstart.client.dir" location="${webstart.dir}/client" />
+	<property name="webstart.server.dir" location="${webstart.dir}/server" />
+	<property name="webstart.client.jar" location="${webstart.client.dir}/cab2b_client_webstart.jar" />
+	<property name="keystore" location="${webstart.dir}/cab2bKeyStore" />
+	<property name="webstart.client.version" value="1.0" />
+	<property name="webstart.server.version" value="1.0" />
+	
+
+	<path id="common.classpath">
+		<fileset dir="lib/common">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="client.classpath">
+		<path refid="common.classpath" />
+		<fileset dir="lib/client">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="server.classpath">
+		<path refid="common.classpath" />
+		<fileset dir="lib/server">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="cactus.classpath">
+		<path refid="server.classpath" />
+		<path refid="client.classpath" />
+		<fileset dir="lib/junitTest/">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement location="${testcase.properties.folder}" />
+		<pathelement location="${client.classes.dir}" />
+		<pathelement location="${server.classes.dir}" />
+		<pathelement location="${common.classes.dir}" />
+	</path>
+
+	<!-- ===========================================================================
+			Cleans Everything in work area folder
+	================================================================================ -->
+	<target name="clean.all" description="deletes all the classes, jar,ear">
+		<delete includeemptydirs="true">
+			<fileset dir="${workArea.dir}">
+				<include name="**/*" />
+			</fileset>
+		</delete>
+		<delete file="build\log.xml" />
+	</target>
+	<!-- ================================================================================== -->
+	<target name="compile.common" description="Compiles the common code without cleaning">
+		<mkdir dir="${common.classes.dir}" />
+		<javac srcdir="${common.src}" destdir="${common.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="common.classpath" failonerror="true" nowarn="on" />
+	</target>
+	<!-- ================================================================================== -->
+	<target name="compile.client" depends="compile.common" description="Compiles the client code without cleaning">
+		<mkdir dir="${client.classes.dir}" />
+		<copy overwrite="true" todir="${client.classes.dir}">
+			<fileset dir="${common.classes.dir}">
+				<include name="**/*.class" />
+			</fileset>
+		</copy>
+		<javac srcdir="${client.src}" destdir="${client.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="client.classpath" failonerror="true" nowarn="on" />
+	</target>
+	<!-- ================================================================================== -->
+	<target name="compile.server" depends="compile.common" description="Compiles the serbver code without cleaning">
+		<mkdir dir="${server.classes.dir}" />
+		<copy overwrite="true" todir="${server.classes.dir}">
+			<fileset dir="${common.classes.dir}">
+				<include name="**/*.class" />
+			</fileset>
+		</copy>
+		<javac srcdir="${server.src}" destdir="${server.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="server.classpath" failonerror="true" nowarn="on" />
+
+    	<copy todir="${server.classes.dir}">
+    		<fileset dir="${server.src}">
+    			<include name="**/*.hbm.xml"/>
+	    	</fileset>
+    	</copy>		
+	</target>
+	<!-- ================================================================================== -->
+	<target name="compile.all" depends="clean.all, compile.client,compile.server" />
+	<!-- ================================================================================== -->
+	<target name="client.jar" depends="clean.all, compile.client" description="Creates client jar file">
+		<mkdir dir="${client.jar.dir}" />
+
+		<delete includeemptydirs="true">
+			<fileset dir="${client.jar.dir}">
+				<include name="**/*" />
+			</fileset>
+		</delete>
+
+		<mkdir dir="${client.jar.dir}/META-INF" />
+
+		<!-- Need to move jndi.properties, ApplicationResources.properties, 
+			 dynamicUI.xml, and other files to either META-INF folder or to 
+			 root folder.
+		-->
+
+		<copy todir="${client.jar.dir}">
+			<fileset dir="${client.classes.dir}">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="source">
+				<include name="Cab2bApplicationResources.properties" />
+			</fileset>
+			<!-- fileset dir="conf">
+				<include name="jndi.properties" />
+			</fileset -->
+			<fileset dir=".">
+				<include name="dynamicUI.xml" />
+				<!-- include name="source/Cab2bApplicationResources.properties" / >
+				< include name="conf/jndi.properties"/ -->
+			</fileset >
+		</copy>
+
+		<copy todir="${client.jar.dir}">
+			<fileset dir="lib/common">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="lib/client">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- This is to create a jar of all required libraries for client code -->
+		<!-- jar basedir="${client.jar.dir}" destfile="clientDependencies.jar">
+			<include name="**/*.jar"/>
+		</jar -->
+
+		<jar basedir="${client.jar.dir}" destfile="${client.jar.file}">
+			<include name="**/*" />
+			<exclude name="**/*.jar" />
+			<manifest>
+				<!-- attribute name="Built-By" value="${user.name}"/ -->
+				<!-- need to remove this hardcoding of MANIFEST's Class-Path settings -->
+				<attribute name="Main-Class" value="edu.wustl.cab2b.client.ui.mainframe.MainFrame" />
+				<attribute name="Class-Path" value="jbossall-client.jar jcalendar-1.3.2.jar jcommon-1.0.9.jar jfreechart-1.0.5.jar
+					org-netbeans-graph.jar org-netbeans-graph-vmd.jar org-openide-util.jar swingx-2006_10_08.jar odmg.jar
+					commonpackage.jar commons-collections-3.2.jar commons-logging-1.0.4.jar DynamicExtensions.jar idw-gpl.jar
+	                log4j-1.2.9.jar struts.jar hibernate2.1.7c.jar caarray-common-extensions.jar  conf/ resources/images/" />
+			</manifest>
+		</jar>
+
+		<move todir="${client.jar.dir}" file="${client.jar.file}">
+		</move>
+		<delete dir="${workArea.dir}/jar/edu">
+		</delete>
+		<delete dir="${workArea.dir}/jar/META-INF">
+		</delete>
+		<delete file="${workArea.dir}/jar/Cab2bApplicationResources.properties">
+		</delete>
+		<delete file="${workArea.dir}/jar/jndi.properties">
+		</delete>
+		<!-- delete file="${workArea.dir}/jar/dynamicUI.xml"></delete -->
+		
+		<mkdir dir="${client.jar.dir}/conf"/>
+		<copy todir="${client.jar.dir}/conf">
+			<fileset dir="conf">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+		
+		<mkdir dir="${client.jar.dir}/resources"/>
+		<mkdir dir="${client.jar.dir}/resources/images"/>
+		<copy todir="${client.jar.dir}/resources/images">
+			<fileset dir="resources/images">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+		
+		<zip destfile="${cab2bClientSetup.zip.file}" basedir="${client.jar.dir}">
+			<!-- fileset dir=".">
+				<include name="${client.jar.file}"/>
+				<exclude name="**/*edu"/>
+				<exclude name="**/*.class"/>
+			</fileset -->
+		</zip >
+
+	</target>
+	<!-- ================================================================================== -->
+	<target name="server.jar" depends="compile.server">
+		<mkdir dir="${server.jar.dir}" />
+		<delete includeemptydirs="true">
+			<fileset dir="${server.jar.dir}">
+				<include name="**/*" />
+			</fileset>
+		</delete>
+
+		<mkdir dir="${server.jar.dir}/META-INF" />
+		<copy todir="${server.jar.dir}/META-INF">
+			<fileset dir="conf/ejb">
+				<include name="ejb-jar.xml" />
+				<include name="jboss.xml" />
+			</fileset>
+		</copy>
+		<copy todir="${server.jar.dir}">
+			<fileset dir="${server.classes.dir}">
+				<include name="**/*.class" />
+				<include name="**/*.hbm.xml" />
+				<exclude name="**/*Test.class" />
+			</fileset>
+		</copy>
+
+		<copy todir="${server.jar.dir}">
+			<fileset dir="conf">
+				<include name="*.wsdd" />
+				<include name="demo.properties" />
+				<include name="*.cfg.xml" />
+				<include name="dbutil.properties" />
+				<include name="EntityToAnalyticalServiceMapping.xml" />
+			</fileset>
+		</copy>
+
+		<jar basedir="${server.jar.dir}" destfile="${server.jar.file}">
+			<include name="**/*.*" />
+		</jar>
+	</target>
+
+	<!-- ==================================================================================
+					EAR structure
+    cab2bServer.ear 
+     |     
+     |__META-INF
+     |    |__ application.xml
+     |
+     |__cab2bServer.jar
+          |__ classes(this is not a dir)
+          |
+          |__ META-INF
+                |_ejb-jar.xml
+   =================================================================================-->
+	<target name="build.ear" depends="server.jar" description="Creates a deployable EAR file using server and common classes">
+		<mkdir dir="${ear.dir}" />
+		<delete includeemptydirs="true">
+			<fileset dir="${ear.dir}">
+				<include name="**/*" />
+			</fileset>
+		</delete>
+		<copy overwrite="true" file="${server.jar.file}" todir="${ear.dir}" />
+		<copy todir="${ear.dir}" overwrite="true">
+			<fileset dir="lib/common">
+				<include name="**/*.jar" />
+				<exclude name="j2ee.jar" />
+				<exclude name="jbossall-client.jar" />
+				<exclude name="commons-logging-1.0.4.jar" />
+				<exclude name="log4j-1.2.9.jar" />
+				<exclude name="jaxrpc.jar" />
+				<exclude name="oracleDriver.jar" />
+				<exclude name="mysql-connector-java-3.0.16-ga-bin.jar" />
+				
+			</fileset>
+			<fileset dir="lib/server">
+				<include name="**/*.jar" />
+				<exclude name="commons-logging.jar" />
+			</fileset>
+		</copy>
+		<ear basedir="${ear.dir}" destfile="${ear.file}" appxml="conf/application.xml" includes="**/*.*" />
+	</target>
+
+	<!-- ===========================================================================
+					Deploy
+	================================================================================ -->
+	<target name="deployToJboss" depends="clean.all,build.ear" description="Deploys EAR file to JBoss application server">
+		<delete dir="${jboss.home}/server/default/tmp/deploy" />
+		<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
+		<copy overwrite="true" file="${cab2bDS.file}" todir="${jboss.deploy.dir}" />
+		<copy overwrite="true" file="${jbossjca.service.xml}" todir="${jboss.deploy.dir}" />
+		<copy overwrite="true" file="lib/server/oracleDriver.jar" todir="${jboss.common.lib.dir}" />
+		<copy overwrite="true" file="lib/server/mysql-connector-java-3.0.16-ga-bin.jar" todir="${jboss.common.lib.dir}" />
+		<delete dir="${jboss.log.dir}"/>
+		<mkdir dir="${jboss.log.dir}"/>
+		<echo message="" file="${jboss.log.dir}/caB2B.log" append="false"/>
+	</target>
+
+
+	<!-- ============================================================================
+	 			Cactus TESTS
+	================================================================================= -->
+	<taskdef resource="cactus.tasks" classpathref="cactus.classpath" />
+
+	<target name="run.cactus">
+		<mkdir dir="${cactusReports.dir}/cactusReports/Reports" />
+		<cactus earfile="${jboss.home}/server/default/deploy/cab2bServer.ear" fork="yes" failureproperty="cactus.failed" haltonerror="false">
+			<classpath refid="cactus.classpath" />
+
+			<containerset>
+				<generic startuptarget="jboss.start" shutdowntarget="jboss.stop" name="cab2b" todir="${cactusReports.dir}/cactusReports" />
+			</containerset>
+
+			<formatter type="brief" usefile="false" />
+			<formatter type="xml" />
+
+			<batchtest>
+				<fileset dir="${server.classes.dir}" includes="${Test.Includes}" />
+				<fileset dir="${client.classes.dir}" includes="${Test.Includes}" />
+				<fileset dir="${common.classes.dir}" includes="${Test.Includes}" />
+			</batchtest>
+		</cactus>
+		<antcall target="Cactusreports" />
+	</target>
+
+	<target name="Cactusreports">
+		<mkdir dir="${cactusReports.dir}/cactusReports/Reports" />
+		<junitreport todir="${cactusReports.dir}/cactusReports/Reports">
+			<fileset dir="${cactusReports.dir}/cactusReports">
+				<include name="*.*" />
+			</fileset>
+			<report format="frames" todir="${cactusReports.dir}/cactusReports/Reports" />
+		</junitreport>
+		<!-- zip basedir="${cactusReports.dir}/cactusReports/Reports" destfile="${cactusReports.dir}/cactusreport.zip" /-->
+	</target>
+
+	<!-- Start JBoss, call the task & To be used during Devlopment -->
+	<target name="run.unittests" depends="compile.all,deployToJboss">
+	
+		<copy todir="${testcase.properties.folder}" overwrite="true">
+			<fileset dir="conf">
+				<include name="jndi.properties" />
+				<include name="demo.properties" />
+			</fileset>
+		</copy>
+
+		<javac srcdir="${server.test}" destdir="${server.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
+		<javac srcdir="${common.test}" destdir="${common.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
+		<javac srcdir="${client.test}" destdir="${client.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="cactus.classpath" failonerror="true" nowarn="on" />
+		<!-- for queryengine unit tests -->
+		<copy todir="${server.classes.dir}">
+			<fileset dir="${server.test}" includes="**/*.res" />
+		</copy>
+
+
+		<cactifyear srcfile="${workArea.dir}/cab2bServer.ear" destfile="${jboss.home}/server/default/deploy/cab2bServer.ear">
+			<cactuswar context="/ejbTestFramework" version="2.3" >
+
+				<classes dir="${client.classes.dir}">
+					<include name="**/*Test.class" />
+				</classes>
+				<classes dir="${common.classes.dir}">
+					<include name="**/*Test.class" />
+				</classes>
+				<classes dir="${server.classes.dir}">
+					<include name="**/*Test.class" />
+				</classes>
+			</cactuswar>
+		</cactifyear>
+
+		<runservertests testurl="http://localhost:8080/ejbTestFramework/" startTarget="jboss.start" stopTarget="jboss.stop" testTarget="cactus.verify" timeout="1000000" />
+	</target>
+	<target name="cactus.verify" depends="run.cactus" if="cactus.failed">
+		<!-- echo message="false" file="${MailLogger.junittest}" / -->
+	</target>
+	<!-- ================================================================================== -->
+	<target name="nightly.build" depends="clean.all,run.unittests,javadoc">
+		<property name="MailLogger.properties.file" value="build\Mail.properties" />
+	</target>
+	<!-- ================================================================================== -->
+	<target name="deploy.reports">
+		<mkdir dir="${buildReports.dir}" />
+		<copy file="build\log.xsl" tofile="${buildReports.dir}\log.xsl" />
+		<copy file="build\index.html" todir="${Reports.dir}" overwrite="true" />
+		<mkdir dir="${Reports.dir}/WEB-INF" />
+		<zip basedir="${workArea.dir}/reports" destfile="${workArea.dir}/${TODAY}.zip" />
+	</target>
+	<!-- ================================================================================== -->
+
+	<target name="jboss.start">
+		<java jar="${jboss.home}/bin/run.jar" fork="true">
+			<jvmarg value="-Xms256m" />
+			<jvmarg value="-Xmx1024m" />
+			<jvmarg value="-XX:MaxPermSize=256m" />
+			<jvmarg value="-Xss256k" />
+			<classpath>
+				<fileset dir="${jboss.home}/lib">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${jboss.home}/server/default/lib">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</java>
+	</target>
+	<!-- ================================================================================== -->
+
+	<target name="jboss.stop">
+		<java classname="org.jboss.Shutdown" fork="on">
+			<arg value="-S" />
+			<classpath>
+				<pathelement location="${jboss.home}/bin/shutdown.jar" />
+			</classpath>
+		</java>
+	</target>
+	<!-- ================================================================================== -->
+	<!-- If there is following error in javaDoc target 
+				java.util.MissingResourceException: 
+						Can't find resource for bundle 
+						com.sun.tools.doclets.formats.html.resources.standard, 
+						key doclet.malformed_html_link_tag
+		Its bug in JDK...please refer to 
+		http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5082928 for details-->
+
+	<target name="javadoc" description="Generate the documentation for entire caB2B source code">
+		<mkdir dir="${javadoc.dir}" />
+		<javadoc access="private" packagenames="edu.*" destdir="${javadoc.dir}" author="true" version="true" windowtitle="caB2B" maxmemory="512m" breakiterator="yes" useexternalfile="yes">
+
+			<fileset dir="source" defaultexcludes="yes">
+				<include name="common/main/edu/wustl/**/*.java" />
+				<include name="client/main/edu/wustl/**/*.java" />
+				<include name="server/main/edu/wustl/**/*.java" />
+			</fileset>
+			<bottom>
+				<![CDATA[<i>
+				<b>Copyright text will go here @ <br>ca Bench to Bedside.Some thing for javadoc</b>
+				</i>]]>
+			</bottom>
+		</javadoc>
+
+		<!--zip basedir="${javadoc.dir}" destfile="${javadoc.dir}/javadoc.zip" /-->
+	</target>
+	<target name="caB2B.standalone.jar" depends="compile.all" description="Generate the jar of client,common and server classes which will in standalone manner">
+		<mkdir dir="${workArea.dir}/cab2bStandAloneJar" />
+
+
+		<copy todir="${workArea.dir}/cab2bStandAloneJar" overwrite="true">
+			<fileset dir="${workArea.dir}/common/classes">
+				<exclude name="**/ejb/**/*.*" />
+			</fileset>
+		</copy>
+		<copy todir="${workArea.dir}/cab2bStandAloneJar" overwrite="true">
+			<fileset dir="${workArea.dir}/client/classes">
+				<exclude name="**/ejb/**/*.*" />
+			</fileset>
+		</copy>
+		<copy todir="${workArea.dir}/cab2bStandAloneJar" overwrite="true">
+			<fileset dir="${workArea.dir}/server/classes">
+				<exclude name="**/ejb/**/*.*" />
+			</fileset>
+		</copy>
+		<jar basedir="${workArea.dir}/cab2bStandAloneJar" destfile="${caB2B.standalone.jar.file}">
+			<include name="**/*.*" />
+		</jar>
+
+		<!-- jar basedir="${workArea.dir}" destfile="${caB2B.standalone.jar.file}">
+			<include name="/common/classes**/*.class" />
+			<include name="/client/classes**/*.class" />
+			<include name="/server/classes**/*.class" />
+			<exclude name="**/ejb/**.*" />
+		</jar -->
+	</target>
+	<target name="runClient" depends="compile.client" description="Run the sample Client">
+		<echo message="Running the java code" />
+		<java classname="edu.wustl.cab2b.client.ui.mainframe.MainFrame" classpathref="runClient.classpath" fork="no" />
+	</target>
+	
+	<!-- create the client jar for Java Web Start deployment -->
+	<!-- this jar includes contents of conf/ and images/ and is signed --> 
+	<target name="build.client.webstart.jar" depends="compile.client" description="create the client jar for Java Web Start deployment">
+		<mkdir dir="${client.jar.dir}" />
+
+		<delete includeemptydirs="true">
+			<fileset dir="${client.jar.dir}">
+				<include name="**/*" />
+			</fileset>
+		</delete>
+
+		<!-- <mkdir dir="${client.jar.dir}/META-INF" /> -->
+
+		<!-- Need to move jndi.properties, ApplicationResources.properties, 
+			 dynamicUI.xml, and other files to either META-INF folder or to 
+			 root folder.
+		-->
+
+		<copy todir="${client.jar.dir}">
+			<fileset dir="${client.classes.dir}">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="source">
+				<include name="Cab2bApplicationResources.properties" />
+			</fileset>
+			<!-- fileset dir="conf">
+				<include name="jndi.properties" />
+			</fileset -->
+			<fileset dir=".">
+				<include name="dynamicUI.xml" />
+				<!-- include name="source/Cab2bApplicationResources.properties" / >
+				< include name="conf/jndi.properties"/ -->
+			</fileset >
+		</copy>
+
+		<copy todir="${client.jar.dir}">
+			<fileset dir="lib/common">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="lib/client">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+		
+		<!--- copy the contents of conf and resources/imgaes at the top level of jar.dir -->
+		<copy todir="${client.jar.dir}">
+			<fileset dir="conf">
+				<include name="**/*.*" />
+			</fileset>
+			<fileset dir="resources/images">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+				
+		<!-- This is to create a jar of all required libraries for client code -->
+		<!-- jar basedir="${client.jar.dir}" destfile="clientDependencies.jar">
+			<include name="**/*.jar"/>
+		</jar -->
+
+		<delete dir="${webstart.client.dir}" includeemptydirs="true" />
+		<mkdir dir="${webstart.client.dir}" />
+		<jar basedir="${client.jar.dir}" destfile="${webstart.client.jar}">
+			<include name="**/*" />
+			<exclude name="**/*.jar" />
+			<!-- <manifest>
+				 <attribute name="Built-By" value="${user.name}"/ >
+				 need to remove this hardcoding of MANIFEST's Class-Path settings 
+				<attribute name="Main-Class" value="edu.wustl.cab2b.client.ui.mainframe.MainFrame" />
+				<attribute name="Class-Path" value="
+		                idw-gpl.jar
+		                jcalendar-1.3.2.jar
+		                jcommon-1.0.9.jar
+		                jfreechart-1.0.5.jar
+		                org-netbeans-graph.jar
+		                org-netbeans-graph-vmd.jar
+		                org-openide-util.jar
+		                swingx-2006_10_08.jar
+		                asm.jar 
+		                asm-attrs.jar
+		                c3p0-0.9.0.jar
+		                cglib-2.1.jar 
+		                commonpackage.jar 
+		                commons-collections-3.2.jar 
+		                commons-logging-1.0.4.jar
+		                dom4j-1.6.jar
+		                DynamicExtensions.jar
+		                ehcache-1.1.jar
+		                experiment-client.jar
+		                hibernate2.1.7c.jar
+		                j2ee.jar
+		                jbossall-client.jar
+		                log4j-1.2.9.jar
+		                lucene-core-2.0.0.jar
+		                mysql-connector-java-3.0.16-ga-bin.jar
+		                odmg.jar
+		                oracleDriver.jar
+		                struts.jar
+		                titli-washu-1.0.jar
+		                conf/ resources/images/
+        		" />
+			</manifest> -->
+		</jar>
+
+		<copy toDir="${webstart.client.dir}" >
+			<fileset dir="lib/client">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="lib/common">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+		
+		<!-- sign all the jars -->
+		<signjar alias="cab2b" storepass="roughpage" keystore="${keystore}" >  
+			<fileset dir="${webstart.client.dir}" >
+				<include name="**/*.jar" />
+			</fileset>
+		</signjar>
+		
+		<delete dir="${workArea.dir}/jar/edu">
+		</delete>
+		<delete dir="${workArea.dir}/jar/META-INF">
+		</delete>
+		<delete file="${workArea.dir}/jar/Cab2bApplicationResources.properties">
+		</delete>
+		<delete file="${workArea.dir}/jar/jndi.properties">
+		</delete>
+		<!-- delete file="${workArea.dir}/jar/dynamicUI.xml"></delete -->
+		
+	</target>
+		
+
+	<path id="runClient.classpath">
+		<path refid="client.classpath" />
+	 	<pathelement location="${workArea.dir}/common/classes" />
+		<pathelement location="${workArea.dir}/client/classes" />
+		<pathelement location="conf" />
+		<pathelement location="resources" />
+	</path>
+	
+	
+
+
+	<!-- ================================================================================== -->
+</project>
