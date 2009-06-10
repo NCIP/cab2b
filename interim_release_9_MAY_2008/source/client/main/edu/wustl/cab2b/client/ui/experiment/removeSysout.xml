@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<project name="Test" basedir="." default="remove.sysouts"> 
+        <target name="remove.sysouts"> 
+                <replaceregexp byline="true"> 
+                  <regexp pattern="System.out.print(.*)"/> 
+                  <substitution expression=" "/> 
+                        <fileset dir="E:/eclipse_workspace/cab2b/source"> 
+                                <include name= "*/**/*.java"/> 
+                        </fileset> 
+                 </replaceregexp> 
+        </target> 
+</project> 
