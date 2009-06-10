@@ -1,0 +1,39 @@
+.myselect {	
+	padding-right: 0.8em;
+}	
+
+.myselectbox {
+	border: 1px solid #666;		
+	height: 19px;		
+	width: 175px;		
+	background-image: url('../images/multiselect_expand.png');		
+	background-repeat: no-repeat;		
+	background-color: #fff;		
+	background-position: top right;		
+	overflow: hidden;		
+	cursor: pointer;
+}	
+
+.selectshow	{
+	height: 18px;
+	overflow: hidden;
+	font-size: 0.72em;
+	color: #000;
+	font-family: sans-serif, Arial, Helvetica;
+	padding: 1 0 0 2;	
+}	
+
+.myselectboxitems {	
+	position: absolute;
+	display: none;
+	width: 175px;	
+	border: 1px solid;
+	border-color: #000 #ccc #ccc #000;	
+	background-color: #fff;
+}
+
+.myselectboxitem label {
+	font-size: 0.72em;
+	color: #000;
+	font-family: sans-serif, Arial, Helvetica;
+}
