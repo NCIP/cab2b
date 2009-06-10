@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="caB2B Nightly build" basedir="." default="nightly.build">
+	
+	<!--property environment="env" />
+	<property name="tomcat.home" value"${env.CATALINA_HOME}"/-->
+	
+	<property file="build.properties" />
+	<property name="CVSROOT" value=":pserver:${cvs.user.name}:${cvs.user.password}@${cvs.machine.ip}:/CVS_HOME" />
+	<property name="caB2B.Home.dir" value="${caB2B.checkout.dir}/${cvs.project.name}" />
+
+  <target name="nightly.build" depends="delete,update,call.cab2b.nightly.build,copy.reports" />
+
+	<target name="delete">
+		<delete dir="${caB2B.Home.dir}/lib" />
+		<delete dir="${caB2B.Home.dir}/source" />
+		<delete dir="${caB2B.Home.dir}/build" />
+		<delete dir="${caB2B.Home.dir}/conf" />
+		<!--delete dir="${caB2B.Home.dir}/scripts" /-->
+		<!--delete>  <fileset dir="${caB2B.Home.dir}/build" excludes="build.properties" /> 	</delete-->
+		<!--delete>   <fileset dir="${caB2B.Home.dir}/conf" excludes = "demo.properties" /> 	</delete-->
+	</target>
+
+	<target name="update">
+		<cvs cvsroot="${CVSROOT}" dest="${caB2B.checkout.dir}" command="update -d" package="${cvs.project.name}" output="${cvs.log.file}" error="${cvs.log.file}" failonerror="true" />
+	</target>
+
+	<target name="call.cab2b.nightly.build">
+		<echo>Calling nightly.build......</echo>
+		<exec dir="${caB2B.Home.dir}/build" executable="${ant.command.name}">
+			<arg line="nightly.build,deploy.reports -k -buildfile build.xml -listener org.apache.tools.ant.XmlLogger -logger cab2b.logger.Cab2bMailLoggerForBuild" />
+		</exec>
+	</target>
+	
+	<target name="copy.reports">
+		<echo>deleting reports from tomcat...</echo>
+		<delete>
+	      <fileset dir="${tomcat.home}/webapps/reports" excludes="**/*.zip" />
+		</delete>
+		
+		<echo>copying latest reports to tomcat...</echo>
+		<copy todir="${tomcat.home}/webapps/reports" overwrite="true">
+			<fileset dir="${caB2B.Home.dir}/workarea/reports" />
+		</copy>
+		
+		<copy todir="${tomcat.home}/webapps/reports/OlderReports" overwrite="true">
+			<fileset dir="${caB2B.Home.dir}/workarea" includes="*.zip" />
+		</copy>
+	</target>
+
+	<!-- ======================================================================
+  	    Use "checkout" task for the very first time..after that use "update" 
+	       task to avoid checking out everything again
+       ======================================================================	 -->
+	<target name="checkout">
+		<delete dir="${caB2B.Home.dir}" />
+		<cvs cvsroot="${CVSROOT}" dest="${caB2B.checkout.dir}" command="checkout -d" package="${cvs.project.name}" output="${cvs.log.file}" error="${cvs.log.file}" failonerror="true" />
+	</target>
+
+	<target name="tomcat.start">
+		<echo message="Starting Tomcat...." />
+		<java dir="${tomcat.home}/bin/" jar="${tomcat.home}/bin/bootstrap.jar" fork="true">
+			<arg value="start" />
+		</java>
+	</target>
+
+	<target name="tomcat.stop">
+		<echo message="Stopping Tomcat..." />
+		<java dir="${tomcat.home}/bin/" jar="${tomcat.home}/bin/bootstrap.jar" fork="true">
+			<arg value="stop" />
+		</java>
+	</target>
+</project>
