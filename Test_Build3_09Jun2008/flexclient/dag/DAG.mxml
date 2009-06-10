@@ -1,0 +1,1244 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application  xmlns:mx="http://www.adobe.com/2006/mxml" 
+layout="vertical" dragEnter="doDragEnter(event)" dragDrop="onDragDrop(event)" 
+xmlns:Components="Components.*" xmlns:display="flash.display.*"
+creationComplete="initApp()"  width="100%" height="100%" paddingTop="0" paddingBottom="0" paddingLeft="0" paddingRight="0">
+<mx:Script>
+<![CDATA[
+	import Components.CuratePathAmbiguityPanel;
+	import mx.controls.Label;
+	import mx.utils.StringUtil;
+	import Components.DAGPath;
+	import mx.controls.ComboBase;
+	import Components.DAGConstants;
+	import mx.containers.HBox;
+	import mx.controls.ComboBox;
+    import mx.controls.ToolTip;
+    import mx.managers.ToolTipManager;
+	import mx.containers.VBox;
+	import mx.controls.Button;
+	import mx.utils.ArrayUtil;
+	import mx.controls.DataGrid;
+	import mx.containers.Accordion;
+	import mx.controls.List;
+	import Components.Association;
+	import Components.DAGPath;
+	import mx.collections.ArrayCollection;
+	import mx.states.SetEventHandler;
+	import mx.core.UIComponent;
+	import Components.DAGNode;
+	import mx.containers.Canvas;
+	import mx.core.IUIComponent;
+	import mx.controls.Alert;
+	import mx.events.DragEvent;
+	import mx.core.DragSource;
+	import mx.managers.DragManager;
+	import mx.events.MenuEvent;
+	import flash.external.ExternalInterface;
+	import mx.controls.Alert;
+	import mx.rpc.events.ResultEvent;
+	import mx.rpc.remoting.RemoteObject;
+	import mx.rpc.events.FaultEvent;
+	import flash.net.registerClassAlias;
+	import Components.AmbiguityPanel;
+	import mx.managers.PopUpManager;
+   	import mx.core.IFlexDisplayObject;
+   	import mx.containers.ControlBar;
+	import mx.collections.XMLListCollection;
+    import mx.controls.Spacer;
+    import mx.containers.ControlBar;
+   	import mx.controls.Menu;
+    import Util.HashMap;
+    import mx.managers.CursorManager;
+    
+	//------------------------
+	public var node1:String = "";
+	public var node2:String = "";
+	private var pathAndNodeMap:Object=null;
+	private var selectedLink:String = "";
+	private var selectedNode:DAGNode=null;
+    private var ambiguityPanel:AmbiguityPanel; 
+    private var title:String  = new String();
+    public var selectedNodeList:ArrayCollection = new ArrayCollection();
+    public var count:int = 0;
+    private var firstNode:String;
+    private var secondNode:String;
+ 	private var pathStr:String
+	private	var isBack:String = "false";
+	private var eNode:DAGNode;
+	public  var callingPage:String="";
+	public var readyTimer:Timer;
+	public var isOutputView:Boolean=false;
+	public var rpcService: RemoteObject;
+	public var view:String ="";
+	public var dagPathUIMap:HashMap;
+	public var totalNodes:ArrayCollection;
+	public var allPaths:ArrayCollection;
+	public var searchedTextForInterModelJoin:String;
+	public var lastNodeXValue:int=0;
+	public var lastNodeYValue:int=0;
+	public var numberOfNodes:int = 0;
+
+	
+
+	
+	/**
+	* Timer handler  to check container has been initialized.	
+	*/
+	private function timerHandler():void
+	{
+		if (isContainerReady())
+		{
+			// If the container is ready, register the SWF functions.
+			setUpCall();
+			readyTimer.stop();
+		}
+	}
+	/**
+	* Initilise call-back call to java script methods.
+	*/
+	public function setUpCall():void 
+	{
+		ExternalInterface.addCallback("createNode",createNode);		
+		ExternalInterface.addCallback("editLimit",editLimit);	
+		ExternalInterface.addCallback("isDAGEmpty",isDAGEmpty);
+		ExternalInterface.addCallback("showMessageOnDAG",showMessageOnDAG);		
+		ExternalInterface.addCallback("drawLine",drawLine);
+		ExternalInterface.addCallback("showMessageOnNotConnected",showMessageOnNotConnected);
+		ExternalInterface.addCallback("getModelAttributeInfo",getModelAttributeInfo);
+		ExternalInterface.addCallback("refreshDAG",refreshDAG);
+		ExternalInterface.addCallback("setSearchedTextForInterModel",setSearchedTextForInterModel);
+	}
+	
+	/**
+	* Setup the callback function so that HTML can call flex methods
+	* Checks wheather HTML page is loaded or not.
+	*/
+	private function isContainerReady():Boolean
+	{
+		var result:Boolean = ExternalInterface.call("isReady");
+		return result;
+	}
+	/**
+	* Function to check DAG empty on click of search
+	*/
+	public function isDAGEmpty():Boolean
+	{
+		if(totalNodes.length<2)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	/**
+	* Remote Call fault handler
+	*/	
+	private function faultHandler (event:FaultEvent):void
+	{
+		Alert.show(event.fault.faultString, 'Error');
+	}
+	/**
+	* To drag nodes on UI
+	*/
+	private function doDrag(event:MouseEvent):void
+	{
+		var dragInitiator:DAGNode = DAGNode(event.currentTarget);
+		var ds:DragSource = new DragSource();
+		
+		var canvasProxy:DAGNode = new DAGNode();
+		canvasProxy.nodeNumber = dragInitiator.nodeNumber;
+		canvasProxy.nodeName =dragInitiator.nodeName;
+				
+		var pointOffSet:Point = new Point(dragInitiator.mouseX,dragInitiator.mouseY);
+		ds.addData(pointOffSet,"point");
+		
+		DragManager.doDrag(dragInitiator,ds,event,canvasProxy,0,0);
+	}
+	/**
+	* To drag nodes on UI
+	*/
+	private function doDragEnter(event:DragEvent):void{
+		DragManager.acceptDragDrop(event.currentTarget as IUIComponent)
+	}
+	
+	/**
+	* To drag nodes on UI
+	*/	
+	private function onDragDrop(event:DragEvent):void{
+		var dagNode:DAGNode = DAGNode(event.dragInitiator) ;
+		var pointOffSet:Point = Point(event.dragSource.dataForFormat("point") );
+		
+		var pt:Point = new Point(event.stageX-pointOffSet.x, event.stageY-pointOffSet.y);
+		pt = mainPanel.globalToContent(pt);
+		
+		dagNode.x = pt.x;
+		dagNode.y = pt.y;
+
+		var ass:Association;
+		var inAssociations:ArrayCollection;
+		var inAsslength:int;
+		var outAssociations:ArrayCollection;
+		var outAsslength:int;
+		var displayoutAssociations:ArrayCollection=dagNode.displayoutAssociations;
+		var displaylength:int=displayoutAssociations.length
+		var path:DAGPath=null;
+		//Outgoing associations
+		var operatorIndex:int =0; 
+		outAssociations = dagNode.outAssociations;
+		outAsslength = outAssociations.length;
+		for(var i:int=0;i<outAsslength;i++)
+		{
+			ass = Association(outAssociations.getItemAt(i));
+			//dagNode.name)//src
+			mainPanel.removeChild(mainPanel.getChildByName(ass.associatedLink));
+			path = dagPathUIMap.getValue(ass.associatedLink);
+			dagPathUIMap.remove(ass.associatedLink);
+
+			dagNode.removeDisplayOutAssociation(ass.associatedNode,ass.associatedLink);
+			dagNode.removeOutAssociation(ass.associatedNode,ass.associatedLink);
+
+			DAGNode(mainPanel.getChildByName(ass.associatedNode)).removeInAssociation(dagNode.name,ass.associatedLink);
+			linkNodes(dagNode.name,ass.associatedNode,path);
+			
+		}
+		
+		//Incoming associations
+		inAssociations = dagNode.inAssociations;
+		inAsslength = inAssociations.length;
+		for(var k:int=0;k<inAsslength;k++)
+		{
+			ass = Association(inAssociations.getItemAt(k));
+			
+			mainPanel.removeChild(mainPanel.getChildByName(ass.associatedLink));
+			path = dagPathUIMap.getValue(ass.associatedLink);
+			dagPathUIMap.remove(ass.associatedLink);
+
+			dagNode.removeInAssociation(ass.associatedNode,ass.associatedLink);
+			DAGNode(mainPanel.getChildByName(ass.associatedNode)).removeDisplayOutAssociation(dagNode.name,ass.associatedLink);
+			DAGNode(mainPanel.getChildByName(ass.associatedNode)).removeOutAssociation(dagNode.name,ass.associatedLink);
+			linkNodes(ass.associatedNode,dagNode.name,path);
+		}
+
+	}
+	/**
+	* Initilization handler
+	*/		
+	private function initFlexInterfaceHandler(event: ResultEvent):void
+	{
+	
+		rpcService.removeEventListener(ResultEvent.RESULT,initFlexInterfaceHandler,false);
+	}
+	
+	/**
+	* Initilization of DAG
+	*/
+	private function initApp():void
+	{
+
+		registerClassAlias("edu.wustl.cab2b.admin.flex.DAGNode", DAGNode);
+		registerClassAlias("edu.wustl.cab2b.admin.flex.DAGLink", DAGPath);
+		rpcService= new RemoteObject();
+		rpcService.destination="cdeService";
+		isBack =Application.application.parameters.isBack;
+		view= Application.application.parameters.view;
+		dagPathUIMap = new HashMap();
+		totalNodes = new ArrayCollection();
+		allPaths = new ArrayCollection();
+		if (isContainerReady())
+			{
+			// If the container is ready, register the SWF functions.
+				setUpCall();
+			}
+			else
+			{
+				/* If the container is not ready, set up a Timer to call the
+				container at 100ms intervals. Once the container responds that
+				is ready, the timer will be stopped. */
+				readyTimer = new Timer(100);
+				readyTimer.addEventListener(TimerEvent.TIMER, timerHandler);
+				readyTimer.start();
+			}
+		
+			if(isBack=="true")
+				{
+					rpcService.addEventListener(ResultEvent.RESULT,repaintHandler);
+					rpcService.repaintDAG();
+				}
+
+			else{
+					rpcService.initCategoryDagPanel();
+					rpcService.addEventListener(ResultEvent.RESULT,initFlexInterfaceHandler);
+					rpcService.addEventListener(FaultEvent.FAULT, faultHandler);
+		  }
+			  
+	}
+	
+	/**
+	/**
+	 *Show validation messages. 
+	 */	
+	public function showValidationMessagesToUser(errorMessage:String):void
+	{
+		var paramArray:Array = new Array(errorMessage);
+		ExternalInterface.call("showValidationMessages",paramArray);
+	}
+	/**
+	* Adds node to DAG
+	* @param strToCreateQueyObject contraint string to create node
+	* @param entityName node name
+	*/
+	public function createNode(strToCreateQueyObject:String,entityName:String,callingPage:String):void
+	{	
+		this.callingPage=callingPage;
+		
+		if(callingPage=="InterModelJoin" && totalNodes.length==1)
+		{
+			ExternalInterface.call("setFlag","true");
+		}	
+		
+		if(callingPage=="InterModelJoin" && totalNodes.length>1)
+		{
+			Alert.show("Cannot Add More Than Two Classes");
+			ExternalInterface.call("setFlag","true");
+			return ;
+		}
+		
+		if(strToCreateQueyObject=="")	
+		{
+			showValidationMessagesToUser(DAGConstants.EMPTY_LIMIT_ERROR_MESSAGE);
+		}
+		else
+		{
+			rpcService.addEventListener(ResultEvent.RESULT,getNodeResultHandler);
+			rpcService.createNode(strToCreateQueyObject,entityName);
+		}
+	}
+
+	
+	/**
+	*	this method is called when InterModelJoin page comes only.
+	*/
+	public function setSearchedTextForInterModel(searchedText:String):void
+	{
+	this.searchedTextForInterModelJoin =searchedText;
+	
+	
+	}
+	public function showMessageOnDAG(validateMessage:String):void
+	{
+		Alert.show(validateMessage);
+	}
+
+
+	/**
+	* Link node Handler
+	*/
+	public function linkNodesHandler(event: ResultEvent):void
+	{
+		var selectedList:ArrayCollection =  event.result  as  ArrayCollection;
+
+		var path:DAGPath =null;
+		if(selectedList!=null)
+		{
+			if(selectedList.length!=0)
+			{
+				path = selectedList.getItemAt(0) as DAGPath;
+				linkNodes(firstNode,secondNode,path);
+				
+			}
+			else
+			{
+				Alert.show("Cannot connect selected nodes as it creates cycle in the query graph");
+			}
+				
+		}
+		else
+		{
+			
+			if(callingPage==null)
+				Alert.show("Cannot connect selected nodes as it will violate the tree constraint");				
+			else
+				Alert.show("Cannot connect selected nodes as it will create cycle in the graph");
+
+		}
+		rpcService.removeEventListener(ResultEvent.RESULT,linkNodesHandler,false);
+	}
+/*	//code for multiple association
+		if(selectedList.length > 0 )
+			{
+				
+				var numAssociation:int=selectedList.length
+				for(var i:int;i<numAssociation;i++)
+				{
+					
+					path = selectedList.getItemAt(i) as DAGPath;
+					path.operatorIndex=0;
+					linkNodes(firstNode,secondNode,path);
+				}
+				selectedList=null;
+			}
+			else
+			{
+				path = selectedList.getItemAt(0) as IDAGPath;
+				linkNodes(firstNode,secondNode,path);
+			}
+			//linkCount++;
+		}*/
+
+	
+	/**
+	*Add node handler
+	*/
+	public function getNodeResultHandler(event: ResultEvent):void
+	{
+		
+		var node:DAGNode = event.result as DAGNode;
+		if(node!=null)
+		{
+			if(node.errorMsg=="")
+			{
+				this.addNode(node);
+				showValidationMessagesToUser("");
+			}
+			else
+			{
+				showValidationMessagesToUser(node.errorMsg);
+				node.errorMsg="";
+			}
+		}
+		rpcService.removeEventListener(ResultEvent.RESULT,getNodeResultHandler,false);
+	}
+	/**
+	* Creates Ambiguity Popup
+	*/        
+	private function createPopUp(panel:IFlexDisplayObject):void {
+	    PopUpManager.addPopUp(panel,this,true);
+	    PopUpManager.centerPopUp(panel);  
+	    }
+	
+	/**
+	* Actula addition of node on DAG panel.
+	*/
+	private function addNode(node:DAGNode):void
+	{
+		var newNode:DAGNode = new DAGNode();
+		var toolTipStr:String="";
+		var x:int=0;
+		var y:int=0;
+		var nodeColor:int=0;
+		
+		if(isOutputView)
+		{
+			nodeColor =0xff8080;
+			toolTipStr="";
+		}
+		else
+		{
+			nodeColor =0xFFFFAA;
+			toolTipStr=node.toolTip;
+		}
+		if(mainPanel.getChildren().length==1)
+		{
+			x = 20;
+			y = (mainPanel.y+40);
+			this.lastNodeXValue=x;
+			this.lastNodeYValue=y;
+			this.numberOfNodes=1;
+			
+		}
+		
+		else
+		{ 
+			this.numberOfNodes++;
+			var length:int=mainPanel.getChildren().length;
+			
+			x= this.lastNodeXValue;
+			y= this.lastNodeYValue + this.numberOfNodes * 45; 
+//			x = 20;
+//			y = (mainPanel.y+50)+(40*length);
+		}
+		newNode.dagpathList = new ArrayCollection();			
+		newNode.initializeNode(node.nodeName,node.nodeType,node.expressionId,toolTipStr,x,y,nodeColor,node.entityId,node.attributesList);
+		newNode.addEventListener(MouseEvent.MOUSE_MOVE,doDrag);
+		newNode.addEventListener(MouseEvent.CLICK,updateNodeSelection);
+		mainPanel.addChild(newNode);
+		totalNodes.addItem(newNode);
+		currentExp.text =getExprssionString();
+	}
+	
+	public function showAlertMessage(text:String):void{
+		Alert.show(""+text);
+	}
+	
+	
+	
+	/**
+	 Draw link between 2 nodes. 
+	*/
+	private function drawLine():void{
+	
+	
+		if(selectedNodeList.length>2 ){
+			showAlertMessage("Please Select Only Two Nodes");
+			return;
+		}
+		
+		if(selectedNodeList.length==2){
+		
+		node1=selectedNodeList.getItemAt(0).name;
+		node2=selectedNodeList.getItemAt(1).name;
+	
+		CursorManager.setBusyCursor();
+		var dagNode1:DAGNode = DAGNode(mainPanel.getChildByName(node1));
+		var dagNode2:DAGNode = DAGNode(mainPanel.getChildByName(node2));
+			
+		if(dagNode1 == null || dagNode2 == null)
+		{
+			Alert.show("Please select two nodes to link");
+			 CursorManager.removeBusyCursor();	
+		}
+		else
+		{
+			if(dagNode1.getOutAssociation(node2) != null)
+			{
+				Alert.show("An association already exists between selected nodes");
+		  		 CursorManager.removeBusyCursor();   	   
+			}
+			else
+			{
+				link(node1,node2);
+			}
+		}
+	}
+	}
+	/**
+	Path handler.
+	*/
+	public function getPathHandler(event: ResultEvent):void
+	{
+		try
+		{
+		var dagpath:DAGPath = new DAGPath();
+		
+		callingPage=Application.application.parameters.callingPage;
+
+		if(callingPage=="CuratePath"){
+
+				var curatePathAmbiguityPanel:CuratePathAmbiguityPanel = new  CuratePathAmbiguityPanel();
+				curatePathAmbiguityPanel.title="Ambiguity resolver";
+				curatePathAmbiguityPanel.allPathsListMap= event.result as Object;
+				curatePathAmbiguityPanel.pathList= curatePathAmbiguityPanel.allPathsListMap[DAGConstants.GENERAL_PATH];	
+				curatePathAmbiguityPanel.curatedPathList=	curatePathAmbiguityPanel.allPathsListMap[DAGConstants.CURATED_PATH];	
+				curatePathAmbiguityPanel.selectedPathList=curatePathAmbiguityPanel.allPathsListMap[DAGConstants.SELECTED_PATH];	
+				curatePathAmbiguityPanel.callingPage=callingPage;
+		
+					
+				if(curatePathAmbiguityPanel.pathList==null || curatePathAmbiguityPanel.pathList.length==0)
+				{
+					Alert.show("No paths present.");
+				}
+				else
+				{
+					if(curatePathAmbiguityPanel.pathList.length>1)
+					{
+						curatePathAmbiguityPanel.nodeList=selectedNodeList;
+						createPopUp(curatePathAmbiguityPanel);
+					}
+					else
+					{
+						rpcService.removeEventListener(ResultEvent.RESULT,getPathHandler,false);
+						rpcService.addEventListener("result",linkNodesHandler);
+						rpcService.linkNodes(selectedNodeList,curatePathAmbiguityPanel.pathList.getItemAt(0));
+					
+						for(var i:int =0;i<selectedNodeList.length; ){
+							var currentDagNode:DAGNode = selectedNodeList.getItemAt(i)as DAGNode;
+							currentDagNode.unSelect();
+							}
+					
+					}
+					
+				}
+
+		}
+	
+		else{
+				ambiguityPanel = new  AmbiguityPanel();
+				
+				ambiguityPanel.title="Ambiguity resolver";
+			    
+				ambiguityPanel.allPathsListMap= event.result as Object;
+									
+				ambiguityPanel.pathList= ambiguityPanel.allPathsListMap[DAGConstants.GENERAL_PATH];	
+				
+				ambiguityPanel.curatedPathList=	ambiguityPanel.allPathsListMap[DAGConstants.CURATED_PATH];	
+				
+				ambiguityPanel.selectedPathList=ambiguityPanel.allPathsListMap[DAGConstants.SELECTED_PATH];	
+				ambiguityPanel.callingPage=callingPage;
+		
+					
+				if(ambiguityPanel.pathList==null || ambiguityPanel.pathList.length==0)
+				{
+					Alert.show("No paths present.");
+				}
+				else
+				{
+					if(ambiguityPanel.pathList.length>1)
+					{
+						ambiguityPanel.nodeList=selectedNodeList;
+						createPopUp(ambiguityPanel);
+					}
+					else
+					{
+						rpcService.removeEventListener(ResultEvent.RESULT,getPathHandler,false);
+						rpcService.addEventListener("result",linkNodesHandler);
+						rpcService.linkNodes(selectedNodeList,ambiguityPanel.pathList.getItemAt(0));
+						
+						for(var i:int =0;i<selectedNodeList.length; ){
+							var currentDagNode:DAGNode = selectedNodeList.getItemAt(i)as DAGNode;
+							currentDagNode.unSelect();
+							}
+					
+
+					}
+				}
+		}	
+		}catch(error:Error)
+		{
+			Alert.show("Error"+error.getStackTrace())
+		}
+		finally
+		{
+			rpcService.removeEventListener(ResultEvent.RESULT,getPathHandler,false);
+	        CursorManager.removeBusyCursor();
+		}
+	}
+	/**
+	Ambiguity panel cancel handler.
+	*/
+	public function cancelHandler(nodeList:ArrayCollection):void
+	{
+			node1="";
+			node2="";
+			var dagNode:DAGNode;
+			for(var i:int=0 ;i<nodeList.length;){
+				dagNode = nodeList.getItemAt(i) as DAGNode;
+				dagNode.unSelect();
+				
+			}
+			count=0;
+			rpcService.removeEventListener(ResultEvent.RESULT,linkNodesHandler,false);
+	}
+	/**
+	Link 2 nodes.
+	*/	
+	public function link(node1:String,node2:String):void
+	{
+	
+		firstNode=node1;
+		secondNode=node2;
+		if(callingPage=="InterModelJoin"){
+			var firstNode:DAGNode=DAGNode(mainPanel.getChildByName(node1));
+			var secondNode:DAGNode=DAGNode(mainPanel.getChildByName(node2));
+			rpcService.addEventListener("result",isSameEntityGroupHandler);
+			rpcService.isSameEntityGroup(firstNode.entityId,secondNode.entityId);
+
+		}
+		else{
+		rpcService.addEventListener("result",getPathHandler);
+		rpcService.getpaths(selectedNodeList);
+		
+		}
+		
+	}
+	
+	/**
+	This methos checks for sameEnityGroup.
+	*/	
+	public function isSameEntityGroupHandler(event:ResultEvent):void{
+	 var flag:Boolean = event.result as Boolean ;
+	 	if(flag){
+	 		Alert.show("Selected Classes are from same Model");
+	 		}
+	 	else{
+	 	ExternalInterface.call("checkForInterJoinClasses");
+	  
+	  	}
+		rpcService.removeEventListener("result",isSameEntityGroupHandler,false);
+	    CursorManager.removeBusyCursor();	
+	
+	}	
+	
+	public function getModelAttributeInfo(attributeString:String):void{
+			var firstDagNode:DAGNode=DAGNode(mainPanel.getChildByName(firstNode));
+			var secondDagNode:DAGNode=DAGNode(mainPanel.getChildByName(secondNode));
+			rpcService.addEventListener(ResultEvent.RESULT,createInterModelJoinHandler);
+			rpcService.createInterModelJoin(firstDagNode.expressionId,secondDagNode.expressionId,attributeString);
+		
+	}
+
+	/*
+		this method links the two nodes for InterModel Join
+
+	*/
+	
+	public function createInterModelJoinHandler(event:ResultEvent):void{
+		var dagPath:DAGPath = event.result as DAGPath;
+		linkNodes(firstNode,secondNode,dagPath);
+		for(var i:int=0; selectedNodeList.length;){
+		var dagNode:DAGNode=selectedNodeList.getItemAt(i)as DAGNode;
+		dagNode.unSelect();
+		
+		}
+	
+		rpcService.removeEventListener("result",createInterModelJoinHandler,false);
+	    CursorManager.removeBusyCursor();	
+	
+	
+	}
+	
+	
+	/**
+	Link 2 nodes.
+	*/	
+	public function linkNodes(firstNode:String,secondNode:String,path:DAGPath):void
+	{
+			var dagNode1:DAGNode = DAGNode(mainPanel.getChildByName(firstNode));
+			var dagNode2:DAGNode = DAGNode(mainPanel.getChildByName(secondNode));
+			if(dagNode2!=null)	
+			{
+				if (dagNode1.width==0)
+				{
+					dagNode1.width = 190;	
+				}
+				var fromX:int = dagNode1.x+dagNode1.width;
+				var fromY:int = dagNode1.y+(15);
+				var toX:int = dagNode2.x;
+				var toY:int = dagNode2.y+(15);
+				
+				var vBox:VBox = dagNode1.getChildByName("Association") as VBox;
+				vBox.visible=true;
+							
+				if(path!=null)			
+				{
+					
+					path.name = path.sourceExpId+"_"+path.destinationExpId;
+					path.setFromNode(dagNode1);
+					path.setToNode(dagNode2);
+					path.setX1(fromX);
+					path.setY1(fromY);
+					path.setX2(toX);
+					path.setY2(toY);
+					path.draw();
+					//-----
+					mainPanel.addChild(path);
+					dagPathUIMap.put(path.name,path);
+					
+					if(!allPaths.contains(path.name))
+					{
+						allPaths.addItem(path.name);
+					}
+								
+					dagNode1.attachedNodeMap.put(dagNode2.name,dagNode2);
+	   			}
+				
+				//removing selections
+			//	dagNode1.unSelect();
+			//	dagNode2.unSelect();
+			
+					var operatorIndex:int = path.operatorIndex;
+				 	dagNode1.addDisplayOutAssociation(secondNode,path.name,operatorIndex);
+					dagNode1.addOutAssociation(secondNode,path.name,operatorIndex);
+					dagNode2.addInAssociation(firstNode,path.name,operatorIndex);
+			}
+			currentExp.text = getExprssionString();
+	}
+							
+	/**
+	Selectin nodes on DAG
+	*/
+	public function updateNodeSelection(event:MouseEvent):void {
+
+		if(event.shiftKey)
+		{
+			var dagNode:DAGNode = DAGNode(mainPanel.getChildByName(event.currentTarget.name));
+			
+			if(dagNode.isSelected){
+				dagNode.unSelect();
+		//		var index:int =	selectedNodeList.getItemIndex(dagNode);
+		//		selectedNodeList.removeItemAt(index);
+			}
+			else{
+				dagNode.select();
+				}	
+		}
+		
+	}
+	/**
+	*Edit node 
+	*/
+	public function editNode(node:DAGNode):void
+	{
+		eNode=node;
+		rpcService.removeEventListener(ResultEvent.RESULT,getNodeResultHandler,false);
+		rpcService.getLimitUI(node.expressionId);
+		rpcService.addEventListener(ResultEvent.RESULT,limitUIHandler);
+		
+	}
+	/**
+	* Show entity information on editing UI
+	*/
+	public function limitUIHandler(event:ResultEvent):void
+	{
+		var htmlStr:String = event.result as String;
+		ExternalInterface.call("showAttributeForEdit",htmlStr);
+		rpcService.removeEventListener(ResultEvent.RESULT,limitUIHandler);
+	}	
+	/**
+	* Edits Limit 
+	* @param strToCreateQueyObject condition string on node
+	* @param entityName Entity name.
+	*/
+	public function editLimit(strToCreateQueyObject:String,entityName:String):void
+	{
+		
+		if(strToCreateQueyObject=="")	
+		{
+			showValidationMessagesToUser(DAGConstants.EMPTY_LIMIT_ERROR_MESSAGE);
+		}
+		else
+		{
+			rpcService.addEventListener(ResultEvent.RESULT,editNodeHandler);
+			rpcService.editNode(strToCreateQueyObject,entityName);
+		
+		}
+							
+	}
+	/**
+	* Edit node handler
+	*/
+	public function editNodeHandler(event:ResultEvent):void
+	{
+		var node:DAGNode = event.result as DAGNode;
+		if(node!=null)
+		{
+			if(node.errorMsg=="")
+			{
+				eNode.toolTip = node.toolTip;
+				
+				showValidationMessagesToUser(DAGConstants.EDIT_LIMITS_MESSAGE);
+			}
+			else
+			{
+				showValidationMessagesToUser(node.errorMsg);
+				node.errorMsg="";
+			}
+		}
+		rpcService.removeEventListener(ResultEvent.RESULT,editNodeHandler);
+	}
+	
+	
+	private function repaintHandler(event: ResultEvent):void
+	{
+		
+
+		this.pathAndNodeMap=event.result as Object;
+		var nodeList:ArrayCollection = this.pathAndNodeMap[DAGConstants.DAG_NODE_SET];
+		var pathList:ArrayCollection = this.pathAndNodeMap[DAGConstants.DAG_LINK_SET];
+		for(var i:int=0;i<nodeList.length;i++)
+		{
+			var node:DAGNode = nodeList.getItemAt(i) as DAGNode;
+			var xpos:int =0;
+			var ypos:int =0;
+			var nodeColor:int=0xFFFFAA;
+			
+			node.addEventListener(MouseEvent.MOUSE_MOVE,doDrag);
+			node.addEventListener(MouseEvent.CLICK,updateNodeSelection);	
+			var hideNodeFlag:Boolean=false;
+			xpos = node.x;
+			ypos = node.y;
+			node.initializeNode(node.nodeName,node.nodeType,node.expressionId,node.toolTip,xpos,ypos,nodeColor,node.entityId,node.attributesList);
+			mainPanel.addChild(node);
+			totalNodes.addItem(node);
+			
+		}
+		
+		
+		for(var i:int=0;i<pathList.length;i++){
+			
+			var path:DAGPath = pathList.getItemAt(i) as DAGPath;
+			var sourceDagNode:DAGNode;
+			var destinationDagNode:DAGNode;	
+			
+			for(var j:int=0;j<nodeList.length;j++){
+				var node:DAGNode = nodeList.getItemAt(j) as DAGNode;
+	
+				if(path.sourceExpId==node.expressionId){
+				sourceDagNode=node;
+				}
+				if(path.destinationExpId==node.expressionId){
+				destinationDagNode=node;
+				}
+		}
+		linkNodes(sourceDagNode.expressionId.toString(),destinationDagNode.expressionId.toString(),path);
+			
+		}
+		currentExp.text = getExprssionString();
+		rpcService.removeEventListener(ResultEvent.RESULT,repaintHandler,false)
+	}
+	
+	
+	
+	public function showMessageOnNotConnected():String{
+	
+		var expressionToStringMap:HashMap = new HashMap();
+        var expressionsCovered:HashMap = new HashMap();
+
+        for(var i:int = 0; i < totalNodes.length; i++)
+        {
+        	var dagNode:DAGNode = totalNodes.getItemAt(i)as DAGNode;
+        	var exprssIdStr:String	= dagNode.expressionId + "";
+            if (null == expressionToStringMap.getValue(exprssIdStr))
+            {
+                FormExpression(expressionToStringMap, expressionsCovered,dagNode);
+            }
+        }
+
+        var expressionString:String = "";
+        var nonConnectedExpressions:String = "";
+        var totalNonConnectedExpressions:int = 0;
+        
+         for(var i:int = 0; i < totalNodes.length; i++) {
+           var dagNode:DAGNode = totalNodes.getItemAt(i)as DAGNode;
+           var exprssIdStr:String	= dagNode.expressionId + "";
+     
+            if (expressionsCovered.containsKey(exprssIdStr) == false) {
+                if ((dagNode.displayoutAssociations.length == 0)&&(dagNode.nodeType!=DAGConstants.VIEW_ONLY_NODE))
+                 {
+                    nonConnectedExpressions += exprssIdStr;
+                    nonConnectedExpressions += " ";
+                    totalNonConnectedExpressions++;
+                } 
+            }
+        }
+
+        if (totalNonConnectedExpressions > 0) {
+            expressionString = expressionString+ "Expression " + nonConnectedExpressions;
+            if (totalNonConnectedExpressions == 1) {
+                expressionString = expressionString +" is not connected";
+            } else {
+                expressionString = expressionString+" are not connected";
+            }
+    		return expressionString;
+    	  }
+			return  "";
+		
+		
+	}
+	
+	
+	
+	/**
+	*Getting Current Expression
+	*/
+	public function getExprssionString():String
+	{
+        var expressionToStringMap:HashMap = new HashMap();
+        var expressionsCovered:HashMap = new HashMap();
+
+        for(var i:int = 0; i < totalNodes.length; i++)
+        {
+        	var dagNode:DAGNode = totalNodes.getItemAt(i)as DAGNode;
+        	var exprssIdStr:String	= dagNode.expressionId + "";
+            if (null == expressionToStringMap.getValue(exprssIdStr))
+            {
+                FormExpression(expressionToStringMap, expressionsCovered,dagNode);
+            }
+        }
+
+        var expressionString:String = "";
+	     expressionString =expressionString+"Current Expression:";
+        var nonConnectedExpressions:String = "";
+        var totalNonConnectedExpressions:int = 0;
+        
+         for(var i:int = 0; i < totalNodes.length; i++) {
+           var dagNode:DAGNode = totalNodes.getItemAt(i)as DAGNode;
+           var exprssIdStr:String	= dagNode.expressionId + "";
+     
+            if (expressionsCovered.containsKey(exprssIdStr) == false) {
+                if ((dagNode.displayoutAssociations.length == 0)&&(dagNode.nodeType!=DAGConstants.VIEW_ONLY_NODE))
+                 {
+                    nonConnectedExpressions += exprssIdStr;
+                    nonConnectedExpressions += " ";
+                    totalNonConnectedExpressions++;
+                } else {
+                    expressionString =expressionString +expressionToStringMap.getValue(exprssIdStr);
+                }
+            }
+        }
+
+        if (totalNonConnectedExpressions > 0) {
+            expressionString = expressionString+ "Expression " + nonConnectedExpressions;
+            if (totalNonConnectedExpressions == 1) {
+                expressionString = expressionString +" is not connected";
+            } else {
+                expressionString = expressionString+" are not connected";
+            }
+        }
+
+	   return expressionString;
+    }
+    /**
+    * Forming current expression
+    */
+    private function FormExpression(expressionToStringMap:HashMap,expressionsCovered:HashMap,node:DAGNode):String
+    {
+        var expressionString:String = "";
+       //If node is only in view and does not have constraints, its should not be a part of the expression string
+       if(node.nodeType == DAGConstants.VIEW_ONLY_NODE)
+		{
+       	    expressionToStringMap.put(node.expressionId+"", expressionString);
+            return expressionString;
+        }
+        
+         var expressionId:int = node.expressionId;
+			
+	     if(node.displayoutAssociations.length>0)
+		 {   
+		 	var assocation:Association = node.displayoutAssociations.getItemAt(0) as Association;
+		 	if(assocation.operatorIndex==0)
+            {
+			 	expressionString=expressionString +" (" + expressionId +" "+"AND"+" ";
+            }
+            else
+            {
+            	expressionString=expressionString +" (" + expressionId +" "+"OR"+" ";
+         	}
+
+		     if(node.displayoutAssociations.length>1)
+			{
+                 expressionString=expressionString + " (";
+            }
+
+            for (var i:int=0; i <node.displayoutAssociations.length; i++) 
+			{
+				assocation = node.displayoutAssociations.getItemAt(i) as Association;
+				var attachedNode:HashMap =node.attachedNodeMap as HashMap;
+				
+				var associationNode:DAGNode = attachedNode.getValue(assocation.associatedNode) as DAGNode; 
+				
+                if (i > 0 && (associationNode.nodeType!=DAGConstants.VIEW_ONLY_NODE)) 
+                {
+                	if(assocation.operatorIndex==0)
+                	{
+                     	expressionString=expressionString+" "+"AND"+" ";
+	                }
+	                else
+	                {
+                 	 	expressionString=expressionString+" "+"OR"+" ";
+	                }
+                }
+
+                if (expressionToStringMap.getValue(associationNode.name) != null)
+                {
+                     expressionString=expressionString+expressionToStringMap.getValue((associationNode.name));
+                }
+                else
+                {
+                     expressionString=expressionString +FormExpression(expressionToStringMap, expressionsCovered,associationNode);
+                }
+
+                expressionsCovered.put(associationNode.name,associationNode);
+            }
+
+	           if(node.displayoutAssociations.length>1)
+				{
+                expressionString=expressionString +") ";
+        	    }
+
+            	  expressionString=expressionString+") ";
+        } 
+        else
+        {
+           expressionString=expressionString + expressionId;
+		}
+        expressionToStringMap.put(node.expressionId+"",expressionString);
+   
+        return expressionString;
+        
+    }
+    
+    /**
+    *this method will change the lable name if it calls from InterModel Join Page
+    *
+    */
+	public function changeLabelName():void {
+	callingPage=Application.application.parameters.callingPage;
+	if(callingPage=="InterModelJoin"){
+		mannualConnect.label="Join Classes";
+		clearPath.visible=false;
+		autoConnect.visible=false;
+	}
+	if(callingPage=="CuratePath"){
+			autoConnect.visible=false;
+	}
+	
+	}    
+    
+    /**
+    *	Clear DAG
+    */
+    
+	public  function   refreshDAG():void{
+	
+	for(var i:int = 0; i < totalNodes.length; i++)
+        {
+        var dagNode:DAGNode = totalNodes.getItemAt(i)as DAGNode;
+		dagNode.deleteNode();
+	}	
+	
+	rpcService.initCategoryDagPanel();
+	rpcService.addEventListener(ResultEvent.RESULT,initFlexInterfaceHandler);
+	rpcService.addEventListener(FaultEvent.FAULT, faultHandler);
+
+	}
+    	
+	/*	this method shows the auto connect path */
+	
+    public function	showAutoConnectPath():void{
+    	
+ 	   if(selectedNodeList.length<1){
+			showAlertMessage("Please Select AtLeast Two Nodes ");
+			return;
+		}
+    	
+    	rpcService.removeEventListener(ResultEvent.RESULT,getAutoConnectPathHandler,false);
+		rpcService.addEventListener("result",getAutoConnectPathHandler);
+		rpcService.getAutoConnectPaths(selectedNodeList);
+    	
+    	}
+    
+    public function getAutoConnectPathHandler(event: ResultEvent):void{
+    	try{
+	    var autoConnectAmiguityPanel:CuratePathAmbiguityPanel = new  CuratePathAmbiguityPanel();
+		autoConnectAmiguityPanel.title="Ambiguity Resolver ";
+		autoConnectAmiguityPanel.isAutoConnect=true;
+		autoConnectAmiguityPanel.nodeList=selectedNodeList;
+		var xmlString : String =event.result as String;
+		if(xmlString == null){
+		showAlertMessage("No Paths Exists");	
+		return;
+		}
+		var xmlStr:String = "<node>" + xmlString + "</node>" ;
+		autoConnectAmiguityPanel.xmlData =   new XML(xmlStr);
+		autoConnectAmiguityPanel.callingPage=callingPage;
+	
+		
+		
+		if(autoConnectAmiguityPanel.xmlData.children().length()==1){
+			
+				var noOfchild:int = autoConnectAmiguityPanel.xmlData.ICurated.children().length();
+				var dagPathList:ArrayCollection = new ArrayCollection();
+				
+
+				for(var i :int =0 ; i<noOfchild-1;i++){
+					var dagPath:DAGPath = new DAGPath();
+					var pathId:String=autoConnectAmiguityPanel.xmlData.ICurated.children()[i].children()[0];
+					var sourceNodeId:int=autoConnectAmiguityPanel.xmlData.ICurated.children()[i].children()[1] ; 
+					var targetNodeId:int=autoConnectAmiguityPanel.xmlData.ICurated.children()[i].children()[2] ;
+					var toolTip:String =autoConnectAmiguityPanel.xmlData.ICurated.children()[i].children()[3];
+					dagPath.setPathId(pathId);
+					dagPath.setSourceNodeId(sourceNodeId);
+					dagPath.setDestinationNodeId(targetNodeId);
+					dagPath.setToolTip(toolTip);
+					dagPathList.addItem(dagPath);
+				
+				} 
+			
+			this.rpcService.updateAutoConnect(autoConnectAmiguityPanel.nodeList,dagPathList); 	
+			
+				for(var j:int=0;j< dagPathList.length;j++ ){
+					var sourceNode:DAGNode;
+					var targetNode:DAGNode;
+					var currentDagPath :DAGPath=dagPathList.getItemAt(j)as DAGPath;
+				
+							for(var i:int =0;i<autoConnectAmiguityPanel.nodeList.length;i++ ){
+							var currentDagNode:DAGNode = autoConnectAmiguityPanel.nodeList.getItemAt(i)as DAGNode;
+				
+							if(currentDagPath.getSourceNodeId()==currentDagNode.getExpressionId()){
+								sourceNode = currentDagNode;
+							}
+							
+							if(currentDagPath.getDestinationNodeId()==currentDagNode.getExpressionId()){
+								targetNode = currentDagNode;
+							}
+					
+					}
+					this.linkNodes(sourceNode.expressionId.toString(),targetNode.expressionId.toString(),currentDagPath);
+			
+				}
+				for(var i:int =0;i<autoConnectAmiguityPanel.nodeList.length; ){
+						var currentDagNode:DAGNode = autoConnectAmiguityPanel.nodeList.getItemAt(i)as DAGNode;
+						currentDagNode.unSelect();
+					}
+			
+		
+		
+			
+			}
+			
+		else{
+		createPopUp(autoConnectAmiguityPanel);
+		}
+		}catch(error:Error)
+		{
+			Alert.show("Error"+error.getStackTrace())
+		}
+		finally
+		{
+			rpcService.removeEventListener(ResultEvent.RESULT,getAutoConnectPathHandler,false);
+	        CursorManager.removeBusyCursor();
+		}
+    
+    
+	
+    }
+    
+    
+    
+    /**
+    * Clear all Paths in DAG
+    */
+	public function clearPaths():void
+	{
+		
+		
+		 for(var i:int=0;i<allPaths.length;i++)
+		 {
+			var key:String = allPaths.getItemAt(i) as String;
+			var dagPath:DAGPath = dagPathUIMap.getValue(key) as DAGPath;
+			if(dagPath!=null){
+				dagPath.deletePath(dagPath.getFromNode(),dagPath.getToNode());
+			}
+		 }
+		 dagPathUIMap.clear();
+	}
+	
+
+]]>
+</mx:Script>
+<mx:VBox width="100%" height="100%" backgroundColor="#708090">
+	<mx:Panel  id="mainPanel" backgroundColor="#f8f8ff" width="100%" height="100%" layout="absolute" title="Diagrammatic View" fontSize="11">
+		<mx:HBox  borderStyle="none" paddingBottom="5"  paddingLeft="5" paddingRight="5" paddingTop="5" width="350" height="39" x="0" y="0" creationComplete="{changeLabelName()}">
+			<mx:Button id="mannualConnect"   label="Manual Connect" click="drawLine()" fontSize="9"/>
+			<mx:Button id="clearPath"  label="Clear All Paths" click="clearPaths()" fontSize="9"/>
+			<mx:Button id="autoConnect"   label="Auto Connect" fontSize="9" enabled="true" click="showAutoConnectPath()"  />	
+		</mx:HBox>
+	</mx:Panel>
+	<mx:Label id="currentExp" fontFamily="Courier New" fontSize="11" fontWeight="bold"/>
+</mx:VBox>		
+</mx:Application>
+
