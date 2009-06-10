@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/tiles-config_2_0.dtd">
+
+<tiles-definitions>
+
+	<definition name="action.home" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/HomeHeader.jsp" />
+		<put-attribute name="body" value="/jsp/Home.jsp" />
+	</definition>
+
+	<definition name="action.notImplemented" template="/jsp/Layout.jsp">
+	   <put-attribute name="header" value="/jsp/HomeHeader.jsp"/>
+	   <put-attribute name="body" value="/jsp/DefaultActionPage.jsp"/>
+	</definition>
+	
+	<definition name="action.confirmLoadModels" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/SearchDataHeader.jsp" />
+		<put-attribute name="body" value="/jsp/searchData/LoadModelsHistory.jsp" />
+	</definition>
+
+	<definition name="action.loadServiceInstance" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/SearchDataHeader.jsp" />
+		<put-attribute name="body" value="/jsp/searchData/SearchServiceInstances.jsp" />
+	</definition>
+
+	<definition name="action.loadServiceModels" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/SearchDataHeader.jsp" />
+		<put-attribute name="body" value="/jsp/searchData/LoadServiceModels.jsp" />
+	</definition>
+
+	<definition name="action.loadModels" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/SearchDataHeader.jsp" />
+		<put-attribute name="body" value="/jsp/searchData/LoadModels.jsp" />
+	</definition>
+
+	<definition name="action.createCategoryInformation" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/SearchDataHeader.jsp" />
+		<put-attribute name="body" value="/jsp/searchData/CreateCategoryInformation.jsp" />
+	</definition>
+
+	<definition name="action.createCategory" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/SearchDataHeader.jsp" />
+		<put-attribute name="body" value="/jsp/searchData/CreateCategory.jsp" />
+	</definition>
+ 
+	<definition name="action.categoryError" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/SearchDataHeader.jsp" />
+		<put-attribute name="body" value="/jsp/searchData/CreateCategoryErrorPage.jsp" />
+	</definition>
+
+	<definition name="action.categorySuccess" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/SearchDataHeader.jsp" />
+		<put-attribute name="body" value="/jsp/searchData/CreateCategorySuccessPage.jsp" />
+	</definition>
+	
+	<definition name="action.createCategory2" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/SearchDataHeader.jsp" />
+		<put-attribute name="body" value="/jsp/searchData/AddLimits.jsp" />
+	</definition>
+
+	<definition name="action.CuratePaths" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/SearchDataHeader.jsp" />
+		<put-attribute name="body" value="/jsp/searchData/CuratePaths.jsp" />
+	</definition>
+
+	<definition name="action.ConnectCategory" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/SearchDataHeader.jsp" />
+		<put-attribute name="body" value="/jsp/searchData/ConnectCategory.jsp" />
+	</definition>
+
+	<definition name="action.attributeOrder" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/SearchDataHeader.jsp" />
+		<put-attribute name="body" value="/jsp/searchData/CreateCategoryAttributeOrder.jsp" />
+	</definition>
+
+</tiles-definitions>
