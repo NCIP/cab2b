@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 2.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+    
+ <hibernate-mapping>  
+
+	<query name="getRootIdForDataList">
+	  select dataListMetadata.rootEntityId
+		    from edu.wustl.cab2b.common.domain.DataListMetadata dataListMetadata
+ 			       		where dataListMetadata.id =  ? 
+	</query>
+	
+	
+	<query name="getAllDataLists">
+		    from edu.wustl.cab2b.common.domain.DataListMetadata
+ 	</query>
+ 	
+ 	<query name="getExperimentSimilarDataList">
+       select experiement
+ 			from Experiment experiement
+				join experiement.dataListMetadataCollection dataListMetadata
+						where dataListMetadata.id = ?
+ 	</query>
+	
+	
+</hibernate-mapping>
+    
