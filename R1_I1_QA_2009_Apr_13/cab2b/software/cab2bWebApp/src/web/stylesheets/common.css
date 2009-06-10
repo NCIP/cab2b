@@ -1,0 +1,164 @@
+ body
+{
+  margin: 0;
+}
+
+ #header
+{
+  width: 100%; margin-bottom: 8;
+}
+
+ #headerlogo
+{
+  position: absolute;
+}
+
+ #headerpanel
+{
+  height: 70; background-image: url('../images/orange_dot.gif'); background-position: bottom; background-repeat: repeat-x; text-align: right;
+}
+
+ #headerpanelbody
+{
+  position: relative; top: 42; right: 10;
+}
+
+ #leftpanel
+{
+  float: left; width: 21%; height: 474; background-image: url('../images/vertical_separator.gif'); background-position: right; background-repeat: no-repeat;
+}
+
+ #quicklinkspanel
+{
+  margin: 0 5% 0 1%;
+}
+
+ #quicklinkspanelbody
+{
+  border-style: solid; border-width: 1; border-color: #fff #ccc #ccc #ccc; height: 124; padding: 1 5 5 10; line-height: 1.6em;
+}
+
+ #certifiedbrowserspanel
+{
+  margin: 40% 6% 6% 6%; padding: 1;
+}
+
+ #optimalresolutionspanel
+{
+  margin: 6%; padding: 1;
+}
+
+ img.bullet
+{
+  float:left; position: relative; top:8; margin: 0 9 0 2;
+}
+
+ .titlebar
+{
+  background-image: url('../images/orange_dot.gif'); background-position: bottom; background-repeat: repeat-x;
+}
+
+ .titlebarheader
+{
+  background-image: url('../images/title_middle.gif'); background-repeat: repeat-x; width: 100%; height: 25; line-height: 1.8em;
+}
+
+ .titlebarleftcurve
+{
+  background: url('../images/title_leftcurve.gif') no-repeat;
+}
+
+ .titlebarrightcurve
+{
+  background: url('../images/title_rightcurve.gif') 100% 0 no-repeat; margin-left: 12;
+}
+
+ .titlebarexpanded
+{
+  cursor: pointer; background: url('../images/expand.jpg') 98% 0 no-repeat;
+}
+
+ .titlebarcollapsed
+{
+  cursor: pointer; background: url('../images/collapse.jpg') 98% 0 no-repeat;
+}
+
+ .title
+{
+  font-weight: bold; font-size: 0.85em; color: #145575; font-family: Arial, Helvetica, sans-serif;
+}
+
+ .text
+{
+  font-weight: normal; font-size: 0.88em; color: #000000; font-family: Arial, Helvetica, sans-serif;
+}
+
+ .link
+{
+  font-weight: bold; font-size: 0.79em; color: #2d8ac6; font-family: Arial, Helvetica, sans-serif;
+}
+
+ .label
+{
+  float:left; font-size: 0.85em; color: #000000; font-family: Arial; padding: 0.2em 10 0 0;
+}
+
+ .required
+{
+  background-image: url('../images/required_field.gif'); background-position: 97% 40%; background-repeat: no-repeat;
+}
+
+ input.button
+{
+  font-weight: bold; font-size: 0.75em; color: #2d8ac6; font-family: Arial, Helvetica, sans-serif;
+}
+
+ input.textbox
+{
+  font-size: 0.73em; font-family: Arial, Helvetica, sans-serif;
+}
+
+ .examplevalue
+{
+  color: #777; font-family: Arial, Helvetica, sans-serif;
+}
+
+ select
+{
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+ #notificationpanel
+{
+  padding: 0.4em;
+}
+
+ #messages
+{
+  text-align: center; font-size: 0.80em; color: #0070c0; font-family: Arial, Helvetica, sans-serif;
+}
+
+ #errors, .error
+{
+  text-align: center; font-size: 0.75em; color: #ff0000; font-family: Arial, Helvetica, sans-serif;
+}
+
+ .tooltip
+{
+  font-size: 0.80em; font-family: Arial, Helvetica, sans-serif;
+}
+
+ .hidden
+{
+  display: none;
+}
+
+ br
+{
+  clear: both; line-height: 1.8em;
+}
+
+ #footer
+{
+  clear: both; width: 100%; border-color: #eaeaea #fff #fff #fff; border-style: solid; border-left: none; border-right: none; border-width: 1; padding-top: 5; text-align: center;
+}
