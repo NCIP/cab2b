@@ -8,7 +8,7 @@ import java.util.Map;
 import org.apache.struts2.interceptor.SessionAware;
 
 import edu.wustl.cab2b.admin.util.AdminConstants;
-import edu.wustl.cab2b.admin.util.Utility;
+import edu.wustl.cab2b.server.util.UtilityOperations;
 
 /**
  * @author atul_jawale
@@ -38,7 +38,7 @@ public class Logout implements SessionAware {
      * @return result
      */
     public String execute() {
-        Utility.refreshCab2bCache();
+        UtilityOperations.refreshCache();
         return AdminConstants.SUCCESS;
     }
 }
