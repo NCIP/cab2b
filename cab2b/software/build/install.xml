@@ -353,6 +353,7 @@
 		<replace file="${jboss.home}/server/${jboss.server.name}/deploy/http-invoker.sar/META-INF/jboss-service.xml" token="8080" value="${jboss.server.port}" />
 		<!-- copy datasource file -->
 		<copy file="${jboss-conf.dir.dest}/${cab2b-webapp.ds.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
+		<delete file="${jboss.home}/server/${jboss.server.name}/deploy/jmxinvoker-service.xml" />
 		<!-- copy JBoss-web.xml file -->
 		<!--
 		<copy file="${jboss-conf.dir.dest}/${jboss.web.xml.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />

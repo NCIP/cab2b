@@ -1,163 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name = "caB2BWebApplication" basedir = "..">
+<project name="caB2BWebApplication" basedir=".">
 	
-	<property name = "build.dir" location = "build" />
-	<property name = "workarea.dir" location = "build/workarea" />
-	<property name = "source.dir" location = "src" />
-	<property name = "destination.dir" location = "${workarea.dir}/war" />
-	<property name = "classes.dir" location = "${destination.dir}/WEB-INF/classes" />
-	<property name = "lib.dir" location = "lib" />
-	<property name = "stylesheet.dir" location = "${source.dir}/web/stylesheets" />
-	<property name = "javascript.dir" location = "${source.dir}/web/javascripts" />
-	<property name = "images.dir" location = "${source.dir}/web/images" />
-	<property name = "pages.dir" location = "${source.dir}/web/pages" />
-	<property name = "taglibs.dir" location = "${source.dir}/web/taglibs" />
-	<property name = "conf.dir" location = "${source.dir}/conf" />
-	<property name = "war.file" location = "${workarea.dir}/cab2bWebApp.war" />
-	
-	<property file = "${conf.dir}/server.properties"/>
-	
-	<property name="jboss.deploy.dir" location="${jboss.home}/server/${jboss.conf.name}/deploy" />
-	<property name="jboss.lib.dir" location="${jboss.home}/server/${jboss.conf.name}/lib" />
-	<property name="cab2b_server_build" location="${cab2b_server_location}/build"/>
-		
-	<path id = "source.classpath" >
-		<fileset dir = "${lib.dir}" >
-			<include name = "**/*.jar" />
-		</fileset>
-		<fileset dir="${cab2b_server_location}/lib/common">
-			<include name = "**/*.jar"/>
-		</fileset>
-		<fileset dir="${cab2b_server_location}/lib/server">
-			<include name = "**/*.jar"/>
-		</fileset>
-		<fileset dir="${cab2b_server_location}/lib/extra">
-			<include name = "**/*.jar"/>
-		</fileset>
-		<fileset dir="${workarea.dir}">
-			<include name = "**/*.jar"/>
-		</fileset>
-	</path>
-	
+	<property name="source.dir" location="src/java" />
+	<property name="web.dir" location="src/web" />
+	<property name="conf.dir" location="src/conf" />
+	<property name="lib.dir" location="lib" />
+
+	<property name="stylesheet.dir" location="${web.dir}/stylesheets" />
+	<property name="javascript.dir" location="${web.dir}/javascripts" />
+	<property name="images.dir" location="${web.dir}/images" />
+	<property name="pages.dir" location="${web.dir}/pages" />
+	<property name="taglibs.dir" location="${web.dir}/taglibs" />
+
+	<property name="workarea.dir" location="build" />
+	<property name="war.dir" location="${workarea.dir}/war" />
+	<property name="classes.dir" location="${war.dir}/WEB-INF/classes" />
+	<property name="war.file" location="${workarea.dir}/cab2bWebApp.war" />
+
+	<property name="cab2b.location" location="../cab2b" />
+	<property name="cab2b.build.location" location="${cab2b.location}/build" />
+
+	<property name="cab2badmin.location" location="../cab2bAdmin" />
+	<property name="cab2badmin.build.location" location="${cab2badmin.location}/build" />
+
+	<property file="${conf.dir}/server.properties" />
+
 	<!-- =====================Target for cleaning workarea before compiling========================= -->
-	<target name = "clean.all" description = "Deletes all contents of workarea along with directory">
-		<delete includeemptydirs = "true" dir = "${workarea.dir}" />
-		<mkdir dir = "${workarea.dir}" />
+	<target name="clean.all">
+		<delete includeemptydirs="true" dir="${workarea.dir}" />
+		<mkdir dir="${workarea.dir}" />
 	</target>
 	<!-- =========================================================================================== -->
-	
+
 	<!-- =============Target for copying all resources for creating caB2BWebApplication war========= -->
-	<target name="copy.all" depends = "compile.all" description="Creates war directory structure and copies the files to war directory structure" >
+	<target name="copy.all" depends="compile.all">
 		<!-- Copies all the stylesheet files from stylesheet directory to workarea/stylesheet/ -->
-		<copy overwrite="true" todir="${destination.dir}/stylesheet">
+		<copy overwrite="true" todir="${war.dir}/stylesheet">
 			<fileset dir="${stylesheet.dir}">
 				<include name="**/*.css" />
 			</fileset>
 		</copy>
-		
+
 		<!-- Copies all the javascript files from javascript directory to workarea/javascript/ -->
-		<copy overwrite="true" todir="${destination.dir}/javascript">
+		<copy overwrite="true" todir="${war.dir}/javascript">
 			<fileset dir="${javascript.dir}">
 				<include name="**/*.js" />
 			</fileset>
 		</copy>
 
 		<!-- Copies all the image files from images directory to workarea/images/ -->
-		<copy overwrite="true" todir="${destination.dir}/images">
+		<copy overwrite="true" todir="${war.dir}/images">
 			<fileset dir="${images.dir}">
 				<include name="**/*.*" />
 			</fileset>
 		</copy>
 
 		<!-- Copies all the jsp pages from jsp directory to workarea/pages/ -->
-		<copy overwrite="true" todir="${destination.dir}/pages">
+		<copy overwrite="true" todir="${war.dir}/pages">
 			<fileset dir="${pages.dir}">
 				<include name="**/*.jsp" />
 			</fileset>
 		</copy>
-		
+
 		<!-- Copies all the taglibs from taglibs directory to workarea/taglibs/ -->
-		<copy overwrite="true" todir="${destination.dir}/WEB-INF/taglibs">
+		<copy overwrite="true" todir="${war.dir}/WEB-INF/taglibs">
 			<fileset dir="${taglibs.dir}">
 				<include name="**/*.tld" />
 			</fileset>
 		</copy>
-				
 
 		<!-- Copies all the property files from conf directory to workarea/WEB-INF/classes/ -->
-		<copy overwrite="false" todir="${destination.dir}/WEB-INF/classes">
+		<copy overwrite="false" todir="${war.dir}/WEB-INF/classes">
 			<fileset dir="${conf.dir}">
 				<include name="**/*.*" />
 				<exclude name="web.xml" />
 				<exclude name="tiles-defs.xml" />
 				<exclude name="chain-config.xml" />
 				<exclude name="struts-config.xml" />
-				<exclude name="caB2B-ds.xml" />
 			</fileset>
-		</copy> 
-		
+		</copy>
+
 		<!-- Copies the tiles.xml from conf directory to workarea/WEB-INF -->
-		<copy overwrite="true" todir="${destination.dir}/WEB-INF/">
+		<copy overwrite="true" todir="${war.dir}/WEB-INF/">
 			<fileset dir="${conf.dir}">
 				<include name="tiles-defs.xml" />
 				<include name="chain-config.xml" />
 				<include name="struts-config.xml" />
 			</fileset>
-		</copy> 
-					
+		</copy>
+
 		<!-- Copies all the .jar files from lib directory to workarea/WEB-INF/lib -->
-		<copy overwrite="true" todir="${destination.dir}/WEB-INF/lib">
+		<copy overwrite="true" todir="${war.dir}/WEB-INF/lib">
 			<fileset dir="${lib.dir}">
 				<include name="**/*.jar" />
-				<exclude name="j2ee.jar" />
-				<exclude name="mysql-connector-java-3.0.16-ga-bin.jar" />
-				<exclude name="log4j-1.2.9.jar" />
 			</fileset>
 		</copy>
 	</target>
 	<!-- =========================================================================================== -->
 
-	<!-- ======================Target for replacing databse related properties====================== -->
-	<macrodef name="replace.db.properties.macro">
-		<attribute name="cfgfile" />
-		<sequential>
-			<echo message="Putting database information in file @{cfgfile}" />
-			<replace file="@{cfgfile}" token="server-ip" value="${database.server.ip}" />
-			<replace file="@{cfgfile}" token="port" value="${database.server.port}" />
-			<replace file="@{cfgfile}" token="database-name" value="${database.name}" />
-			<replace file="@{cfgfile}" token="user_name" value="${database.username}" />
-			<replace file="@{cfgfile}" token="user_password" value="${database.password}" />
-			<replace file="@{cfgfile}" token="DS-NAME" value="${datasource.name}" />
-		</sequential>
-	</macrodef>
-	<!-- =========================================================================================== -->
-	
-	<!-- ======================Target for replacing Application.xml properties====================== -->
-	<macrodef name="replace.application.xml">
-		<attribute name="applicationfile"/>
-		<sequential>
-			<echo message="Editing Application.xml file"/>
-			<replace file="@{applicationfile}" token="&lt;application&gt;" value="&lt;application&gt;
-		   	&lt;module id=&quot;WebModule_1233568391515&quot;&gt;
-			&lt;web&gt;
-			&lt;web-uri&gt;cab2bWebApp.war&lt;/web-uri&gt;
-			&lt;context-root&gt;cab2bwebapp&lt;/context-root&gt;
-			&lt;/web&gt;
-			&lt;/module&gt; "/>
-		</sequential>
-	</macrodef>
-	<!-- =========================================================================================== -->
-	
 	<!-- ======================Target for compiling source code===================================== -->
-	<target name = "compile.all" depends = "" description = "Compiles all java files along with jsp">
-		<mkdir dir = "${classes.dir}" />
-		<ant antfile="${cab2b_server_build}/build.xml" dir="${cab2b_server_location}/" target="build.project.jar" inheritall="false"/>
-		<copy file="${cab2b_server_location}/cab2b-common.jar" todir="${workarea.dir}" />
-		<copy file="${cab2b_server_location}/cab2b-server.jar" todir="${workarea.dir}" />
-		<javac srcdir="${source.dir}/java" target="1.5" destdir="${classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="source.classpath" failonerror="true" nowarn="on" />
+	<target name="compile.all">
+		<mkdir dir="${classes.dir}" />
+		<copy file="${cab2b.location}/build/cab2b-common.jar" todir="${workarea.dir}" />
+		<copy file="${cab2b.location}/build/cab2b-server.jar" todir="${workarea.dir}" />
+		<!-- copy file="${cab2b.location}/build/cab2b-client.jar" todir="${workarea.dir}" / -->
+
+		<path id="source.classpath">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="${cab2b.location}/lib/common">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="${cab2b.location}/lib/server">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="${cab2b.location}/lib/extra">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="${workarea.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</path>
+
+		<javac srcdir="${source.dir}" target="1.5" destdir="${classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="source.classpath" failonerror="true" nowarn="on" />
 	</target>
 	<!-- =========================================================================================== -->
-	
+
 	<!-- ======================Target for creating war in workarea ================================= -->
 	<target name="war" depends="clean.all,copy.all,compile.all" description="Creates the cab2bWebApp.war in the workarea directory">
 		<copy todir="${workarea.dir}">
@@ -165,41 +134,19 @@
 		</copy>
 		<replace file="${workarea.dir}/web.xml" token="DS-NAME" value="${datasource.name}" />
 		<war destfile="${war.file}" webxml="${workarea.dir}/web.xml" update="true">
-			<zipfileset dir="${destination.dir}/images" prefix="images" />
-			<zipfileset dir="${destination.dir}/pages" prefix="pages" />
-			<zipfileset dir="${destination.dir}/javascript" prefix="javascript" />
-			<zipfileset dir="${destination.dir}/stylesheet" prefix="stylesheet" />
-			<zipfileset dir="${destination.dir}/WEB-INF/taglibs" prefix="taglibs" />
-			<webinf dir="${destination.dir}/WEB-INF" />
+			<zipfileset dir="${war.dir}/images" prefix="images" />
+			<zipfileset dir="${war.dir}/pages" prefix="pages" />
+			<zipfileset dir="${war.dir}/javascript" prefix="javascript" />
+			<zipfileset dir="${war.dir}/stylesheet" prefix="stylesheet" />
+			<zipfileset dir="${war.dir}/WEB-INF/taglibs" prefix="taglibs" />
+			<webinf dir="${war.dir}/WEB-INF" />
 		</war>
+
+		<delete>
+			<fileset dir="${workarea.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</delete>
 	</target>
 	<!-- =========================================================================================== -->
-	
-	<!-- ======================Target for deploying war into jboss server=========================== -->
-		<target name="deploy.jboss" depends="update.ear" description="clean up">
-			<delete includeemptydirs="true" dir="${jboss.home}/log" />
-			<delete includeemptydirs="true" dir="${jboss.home}/tmp" />
-			<delete includeemptydirs="true" dir="${jboss.home}/work" />
-			<copy file="${build.dir}/cab2bServer.ear" todir="${jboss.deploy.dir}"/>
-			<copy overwrite="true" file="${conf.dir}/caB2B-ds.xml" todir="${jboss.deploy.dir}" />
-			<copy overwrite="true" file="${cab2b_server_location}/lib/server/oracleDriver.jar" todir="${jboss.lib.dir}" />
-			<copy overwrite="true" file="${cab2b_server_location}/lib/server/mysql-connector-java-3.0.16-ga-bin.jar" todir="${jboss.lib.dir}" />
-			<copy overwrite="true" file="${cab2b_server_location}/lib/common/hibernate3.jar" todir="${jboss.lib.dir}" />
-			<replace.db.properties.macro cfgfile="${jboss.deploy.dir}/caB2B-ds.xml" />
-		</target>
-	<!-- =========================================================================================== -->
-	
-	<!-- ================Target for putting caB2BwebApp war into caB2B Server ear=================== -->
-		<target name="update.ear" depends="war" description="Updates the cab2bServer.ear with latest caB2BWebApp.war">
-			<ant antfile="${cab2b_server_build}/build.xml" dir="${cab2b_server_location}/" target="build.ear" inheritall="false"/>
-			<copy file="${cab2b_server_location}/workarea/cab2bServer.ear" todir="${build.dir}" />
-			
-			<unjar src="${build.dir}/cab2bServer.ear" dest="${build.dir}/cab2bServer"/>
-			<replace.application.xml applicationfile="${build.dir}/cab2bServer/META-INF/application.xml"/>
-			<copy file="${workarea.dir}/cab2bWebApp.war" todir="${build.dir}/cab2bServer"/>
-			<delete file="${build.dir}/cab2bServer.ear"/>
-			<ear basedir="${build.dir}/cab2bServer" destfile="${build.dir}/cab2bServer.ear" appxml="${build.dir}/cab2bServer/META-INF/application.xml" includes="**/*.*" />
-		</target>
-	<!-- =========================================================================================== -->
-
 </project>

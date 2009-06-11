@@ -13,7 +13,7 @@ import edu.common.dynamicextensions.util.DynamicExtensionsUtility;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.server.queryengine.QueryOperations;
-import edu.wustl.cab2bwebapp.util.ServerProperties;
+import edu.wustl.cab2b.server.util.ServerProperties;
 import edu.wustl.cab2bwebapp.util.Utility;
 import edu.wustl.common.hibernate.HibernateCleanser;
 

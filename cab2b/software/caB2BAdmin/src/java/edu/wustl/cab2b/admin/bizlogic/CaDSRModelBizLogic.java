@@ -18,7 +18,7 @@ import org.cagrid.mms.domain.UMLProjectIdentifer;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.admin.beans.CaDSRModelDetailsBean;
 import edu.wustl.cab2b.admin.beans.LoadModelResult;
-import edu.wustl.cab2b.admin.util.ServerProperties;
+import edu.wustl.cab2b.common.authentication.util.CagridPropertyLoader;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.path.DomainModelParser;
@@ -132,7 +132,7 @@ public class CaDSRModelBizLogic {
      */
     private CaDSRUMLModelService getCaDSRService() {
         CaDSRUMLModelService client = null;
-        String url = ServerProperties.getCadsrUrl();
+        String url = CagridPropertyLoader.getCaDSRUrl();
 
         try {
             client = new CaDSRUMLModelService(url);
@@ -157,7 +157,7 @@ public class CaDSRModelBizLogic {
      */
     private MetadataModelServiceClient getMMSServiceClient() {
         MetadataModelServiceClient client = null;
-        String url = ServerProperties.getMMSUrl();
+        String url = CagridPropertyLoader.getMMSUrl();
 
         try {
             client = new MetadataModelServiceClient(url);

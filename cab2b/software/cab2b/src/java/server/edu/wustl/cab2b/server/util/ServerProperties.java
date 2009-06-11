@@ -11,42 +11,7 @@ import edu.wustl.cab2b.common.util.Utility;
  */
 public class ServerProperties {
     protected static Properties properties = Utility.getPropertiesFromFile("server.properties");
-
-    /**
-     * @return The database IP
-     */
-    public static String getDatabaseIp() {
-        return properties.getProperty("database.server.ip");
-    }
-
-    /**
-     * @return The database port
-     */
-    public static String getDatabasePort() {
-        return properties.getProperty("database.server.port");
-    }
-
-    /**
-     * @return the name of the database
-     */
-    public static String getDatabaseName() {
-        return properties.getProperty("database.name");
-    }
-
-    /**
-     * @return the user to be used for connecting to the database
-     */
-    public static String getDatabaseUser() {
-        return properties.getProperty("database.username");
-    }
-
-    /**
-     * @return the password of database user
-     */
-    public static String getDatabasePassword() {
-        return properties.getProperty("database.password");
-    }
-
+    
     /**
      * @return The database loader to be used
      */
@@ -59,5 +24,13 @@ public class ServerProperties {
      */
     public static String getDatasourceName() {
         return properties.getProperty("datasource.name");
+    }
+    
+    /**
+     * Gives the default user mentioned in server.properties
+     * @return String user name
+     */
+    public static String getDefaultUser() {
+        return properties.getProperty("default.user");
     }
 }

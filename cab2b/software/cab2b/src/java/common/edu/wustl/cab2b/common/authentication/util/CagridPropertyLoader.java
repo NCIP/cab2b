@@ -98,5 +98,28 @@ public class CagridPropertyLoader {
     public static String getCertificate() {
         return properties.getProperty("certificate");
     }
+    
+    /**
+     * @return cadsr url
+     */
+    public static String getCaDSRUrl() {
+        return properties.getProperty("cadsr.url");
+    }
+    
+    /**
+     * @return cadsr url
+     */
+    public static String getMMSUrl() {
+        return properties.getProperty("mms.url");
+    }
+
+    /**
+     * returns CadsrRefreshTime
+     * 
+     * @return
+     */
+    public static String getCaDSRRefreshTime() {
+        return properties.getProperty("cadsr.refresh.time");
+    }
 
 }

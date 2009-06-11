@@ -292,63 +292,7 @@
 			</manifest>
 		</jar>
 	</target>
-	<!-- ======================Target for compiling client using JDK 1.5====================== -->
-	<target name="compile.client_1.5" depends="compile.common">
-		<mkdir dir="${client_1.5.classes.dir}" />
 
-		<javac srcdir="${client.src}" target="1.5" destdir="${client_1.5.classes.dir}" fork="true" debug="on" deprecation="true" classpathref="client.classpath" failonerror="true" nowarn="on">
-			<exclude name="edu/wustl/cab2b/client/ui/controls/sheet/**/*.java" />
-			<exclude name="edu/wustl/cab2b/client/ui/experiment/**/*.*" />
-			<exclude name="edu/wustl/cab2b/client/ui/mainframe/**/*.*" />
-			<exclude name="edu/wustl/cab2b/client/ui/mysettings/**/*.*" />
-			<exclude name="edu/wustl/cab2b/client/ui/viewresults/**/*.*" />
-			<exclude name="edu/wustl/cab2b/client/ui/visualization/**/*.*" />
-			<exclude name="edu/wustl/cab2b/client/cache/**/*.*" />
-			<exclude name="edu/wustl/cab2b/client/ui/parameterizedQuery/**/*.*" />
-			<exclude name="edu/wustl/cab2b/client/ui/main/**/*.*" />
-			<exclude name="edu/wustl/cab2b/client/ui/pagination/**/*.*" />
-			<exclude name="edu/wustl/cab2b/client/ui/searchDataWizard/**/*.*" />
-
-			<exclude name="**/ServiceInstanceConfigurator.java" />
-			<exclude name="**/MatrixCache.java" />
-			<exclude name="**/ClientQueryBuilder.java" />
-			<exclude name="**/TransformCategoryResult.java" />
-			<exclude name="**/B2BNewModel.java" />
-			<exclude name="**/B2BTreeNode.java" />
-			<exclude name="**/CommonUtils.java" />
-			<exclude name="**/CustomSwingWorker.java" />
-
-			<exclude name="**/SearchNavigationPanel.java" />
-			<exclude name="**/ShowDCQLPanel.java" />
-		</javac>
-	</target>
-	<!-- ================================================================================== -->
-	<target name="client_1.5.jar" depends="compile.client_1.5">
-		<mkdir dir="${client.jar.dir}" />
-		<mkdir dir="${client.jar.dir}/META-INF" />
-
-		<copy todir="${client_1.5.classes.dir}">
-			<fileset dir="${client.src}">
-				<include name="**/*.png" />
-			</fileset>
-		</copy>
-
-		<copy todir="${client.jar.dir}">
-			<fileset dir="${client_1.5.classes.dir}">
-				<include name="**/*.class" />
-				<include name="**/*.png" />
-			</fileset>
-		</copy>
-
-		<jar basedir="${client.jar.dir}" destfile="${client.jar.file}">
-			<manifest>
-				<!-- attribute name="Built-By" value="${user.name}"/ -->
-				<!-- need to remove this hardcoding of MANIFEST's Class-Path settings -->
-				<attribute name="Main-Class" value="edu.wustl.cab2b.client.ui.mainframe.LoginFrame" />
-				<attribute name="Class-Path" value="conf/ forms-1.0.7.jar HeatMap.jar idw-gpl.jar jai_codec.jar jai_core.jar jama.jar jcalendar-1.3.2.jar jcommon-1.0.9.jar jfreechart-1.0.5.jar commons-io-1.4.jar jibble.jar org-netbeans-graph-vmd.jar org-netbeans-graph.jar org-openide-util.jar swingx-2006_10_08.jar ant-antlr-1.6.3.jar antlr-2.7.5H3.jar caarray-common-extensions.jar cog-jglobus.jar commonpackage.jar commons-collections-3.2.jar dom4j-1.6.jar DynamicExtensions.jar jboss-ejb3.jar jbossall-client.jar jce-jdk13-125.jar  metadata.jar odmg.jar query.jar struts.jar washu-commons.jar   -lang.jar caGrid-cds-common-1.3.jar caGrid-cds-stubs-1.3.jar caGrid-gaards-core-1.3.jar caGrid-cds-client-1.3.jar caGrid-ServiceSecurityProvider-stubs-1.3.jar axis.jar caGrid-dorian-client-1.3.jar caGrid-authentication-service-stubs-1.3.jar caGrid-authentication-service-client-1.3.jar caGrid-authentication-service-common-1.3.jar wsrf_core.jar wsrf_core_stubs.jar caGrid-ServiceSecurityProvider-common-1.3.jar caGrid-ServiceSecurityProvider-client-1.3.jar addressing-1.0.jar cog-axis.jar commons-discovery.jar commons-lang.jar commons-logging.jar commons-logging-1.1.jar caGrid-metadata-security-1.3.jar wss4j.jar wsdl4j.jar caGrid-metadata-security-1.3.jar caGrid-metadata-common-1.3.jar puretls.jar cryptix32.jar cryptix-asn1.jar caGrid-opensaml-1.3.jar caGrid-dorian-stubs-1.2.jar caGrid-dorian-stubs-1.3.jar caGrid-dorian-common-1.3.jar caGrid-gridca-1.3.jar caGrid-core-1.3.jar caGrid-1.1-Introduce-1.1-serviceTools.jar caGrid-gts-client-1.3.jar caGrid-gts-common-1.3.jar caGrid-gts-stubs-1.3.jar caGrid-syncgts-client-1.3.jar caGrid-syncgts-common-1.3.jar  caGrid-syncgts-stubs-1.3.jar  log4j-1.2.14.jar hibernate3.jar  mobius_common_client-1.1.jar mobius_tools-1.1.jar xercesImpl.jar caGrid-metadatautils-1.3.jar caGrid-websso-client-1.3.jar  resources/images/" />
-			</manifest>
-		</jar>
-	</target>
 
 	<!-- ================================================================================== 
 			This target build the ZIP file for caB2B client. 
@@ -453,7 +397,7 @@
 			</fileset>
 		</copy>
 
-		<replace file="${server.jar.dir}/hibernate.cfg.xml" token="DS-NAME" value="${datasource.name}" />
+		<replace file="${server.jar.dir}/hibernate.cfg.xml" token="DS-NAME" value="${ds-name}" />
 		<jar basedir="${server.jar.dir}" destfile="${server.jar.file}" />
 	</target>
 	<!-- ==================================================================================
@@ -559,6 +503,7 @@
 		</sql>
 	</target>
 
+	<!-- ==================================================================================
 	<macrodef name="replace.db.properties.macro">
 		<attribute name="cfgfile" />
 		<sequential>
@@ -568,10 +513,10 @@
 			<replace file="@{cfgfile}" token="database-name" value="${database.name}" />
 			<replace file="@{cfgfile}" token="user_name" value="${database.username}" />
 			<replace file="@{cfgfile}" token="user_password" value="${database.password}" />
-			<replace file="@{cfgfile}" token="DS-NAME" value="${datasource.name}" />
+			<replace file="@{cfgfile}" token="DS-NAME" value="${ds-name}" />
 		</sequential>
 	</macrodef>
-	<!-- ================================================================================== -->
+	
 	<target name="build.paths" depends="create.database,clean.all,compile.server">
 		<copy todir="${server.classes.dir}">
 			<fileset dir="${conf.dir}">
@@ -597,6 +542,7 @@
 			<pathelement location="${workarea.dir}/server/classes" />
 		</path>
 	</target>
+	================================================================================== -->
 
 	<!-- ============================================================================
 	 			Cactus TESTS
@@ -677,6 +623,36 @@
 		</javadoc>
 	</target>
 
+	<!-- ======================Target for compiling client using JDK 1.5====================== -->
+	<target name="compile.client_1.5" depends="compile.common">
+		<mkdir dir="${client_1.5.classes.dir}" />
+
+		<javac srcdir="${client.src}" target="1.5" destdir="${client_1.5.classes.dir}" fork="true" debug="on" deprecation="true" classpathref="client.classpath" failonerror="true" nowarn="on">
+			<exclude name="edu/wustl/cab2b/client/ui/controls/sheet/**/*.java" />
+			<exclude name="edu/wustl/cab2b/client/ui/experiment/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/ui/mainframe/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/ui/mysettings/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/ui/viewresults/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/ui/visualization/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/cache/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/ui/parameterizedQuery/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/ui/main/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/ui/pagination/**/*.*" />
+			<exclude name="edu/wustl/cab2b/client/ui/searchDataWizard/**/*.*" />
+
+			<exclude name="**/ServiceInstanceConfigurator.java" />
+			<exclude name="**/MatrixCache.java" />
+			<exclude name="**/ClientQueryBuilder.java" />
+			<exclude name="**/TransformCategoryResult.java" />
+			<exclude name="**/B2BNewModel.java" />
+			<exclude name="**/B2BTreeNode.java" />
+			<exclude name="**/CommonUtils.java" />
+			<exclude name="**/CustomSwingWorker.java" />
+
+			<exclude name="**/SearchNavigationPanel.java" />
+			<exclude name="**/ShowDCQLPanel.java" />
+		</javac>
+	</target>
 	<!-- ================================================================================== -->
 	<target name="build.standalone.jar" depends="compile.client_1.5,compile.server" description="Generate the jar of client,common and server classes which will in standalone manner">
 		<mkdir dir="${standAlone.jar.dir}" />
@@ -819,14 +795,14 @@
 	</target>
 
 	<!-- ================================================================================== -->
-	<target name="build.project.jar" depends="clean.all,compile.client_1.5,compile.server">
+	<target name="build.project.jar" depends="clean.all,compile.client,compile.server">
 		<jar basedir="${workarea.dir}/common/classes" destfile="${workarea.dir}/cab2b-common.jar">
 			<include name="**/*.*" />
 		</jar>
 		<jar basedir="${workarea.dir}/server/classes" destfile="${workarea.dir}/cab2b-server.jar">
 			<include name="**/*.*" />
 		</jar>
-		<jar basedir="${workarea.dir}/client_1.5/classes" destfile="${workarea.dir}/cab2b-client.jar">
+		<jar basedir="${workarea.dir}/client/classes" destfile="${workarea.dir}/cab2b-client.jar">
 			<include name="**/*.*" />
 		</jar>
 		<copy file="${workarea.dir}/cab2b-client.jar" todir="${server.lib.dir}" />
@@ -973,11 +949,8 @@
 	<!-- ================Target for deploying all 3 modules of cab2b =============================== -->
 	<target name="dist" depends="initialize,build.project.jar,build.ear" description="Creates the distribution unit i.e., a complete cab2bServer.ear">
 		<ant inheritAll="false" inheritRefs="true" antfile="${cab2badmin.location}/build.xml" target="war" dir="${cab2badmin.location}">
-			<property name="datasource.name" value="${datasource.name}" />
+			<property name="ds-name" value="${ds-name}" />
 		</ant>
-
-
-		<!--ant antfile="${cab2badmin.location}/build.xml" dir="${cab2badmin.location}" target="war" inheritall="false" /-->
 		<echo message="Admin War Created" />
 
 		<ant antfile="${cab2bwebapp.location}/build.xml" dir="${cab2bwebapp.location}" target="war" inheritall="false" />
@@ -1016,9 +989,9 @@
 		<copy file="${lib.dir}/common/cryptix-asn1.jar" todir="${dist.dir}" />
 		<copy file="${lib.dir}/common/jce-jdk13-125.jar" todir="${dist.dir}" />
 		<copy file="${lib.dir}/common/puretls.jar" todir="${dist.dir}" />
-
 	</target>
 
+	<!-- ==================================================================================
 	<property name="cab2bDS.file.name" value="cab2b-ds.xml" />
 	<property name="cab2bDS.file" location="${conf.dir}/${cab2bDS.file.name}" />
 	<property name="jboss.common.lib.dir" location="${jboss.home}/server/default/lib" />
@@ -1053,7 +1026,7 @@
 
 		<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
 	</target>
-	<!-- ================================================================================== -->
+	
 	<target name="replace.datasource">
 		<replace.db.properties.macro cfgfile="${jboss.deploy.dir}/${cab2bDS.file.name}" />
 	</target>
@@ -1076,7 +1049,7 @@
 		<mkdir dir="${jboss.home}/server/default/log" />
 		<echo message="" file="${jboss.log.dir}/caB2B.log" append="false" />
 	</target>
-
+	================================================================================== -->
 </project>
 
 <!-- ==================================================================================
