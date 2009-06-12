@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.admin.util;
 
+import edu.wustl.cab2b.common.authentication.util.CagridPropertyLoader;
 import junit.framework.TestCase;
 
 /**
@@ -7,7 +8,7 @@ import junit.framework.TestCase;
  */
 public class ServerPropertiesTest extends TestCase {
     public void testGetCadsrRefreshTime() {
-        String str = ServerProperties.getCadsrRefreshTime();
+        String str = CagridPropertyLoader.getCaDSRRefreshTime();
         assertEquals(18000000L,Long.parseLong(str));
     }
 }
