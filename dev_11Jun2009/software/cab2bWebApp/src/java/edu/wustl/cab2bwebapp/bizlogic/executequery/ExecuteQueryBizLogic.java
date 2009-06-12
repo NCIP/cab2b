@@ -10,8 +10,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
+import org.globus.gsi.GlobusCredential;
+
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.FailedTargetURL;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
@@ -168,7 +171,7 @@ public class ExecuteQueryBizLogic {
     /**
      * @return the orderedAttributeList
      */
-    public final List<AttributeInterface> getOrderedAttributeList() {
+    public final Collection<AttributeInterface> getOrderedAttributeList() {
         return orderedAttributeList;
     }
 
@@ -198,8 +201,8 @@ public class ExecuteQueryBizLogic {
      * @param orderList
      * @return List<SearchResultDVO>
      */
-    public final List<List<SearchResultDVO>> getSearchResultsView(List<Map<AttributeInterface, Object>> finalResult) {        
-        if (finalResult != null) {
+    public final List<List<SearchResultDVO>> getSearchResultsView(List<Map<AttributeInterface, Object>> finalResult) {
+        if (finalResult != null && finalResult.size() > 0) {
             searchResultsView = new ArrayList<List<SearchResultDVO>>();
             for (int i = 0; i < finalResult.size(); i++) {
                 Map<AttributeInterface, Object> record = (Map<AttributeInterface, Object>) finalResult.get(i);
