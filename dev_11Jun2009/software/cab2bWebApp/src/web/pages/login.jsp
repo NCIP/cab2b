@@ -60,8 +60,7 @@
 					<DIV id="notificationpanel">												
 						<DIV class="error hidden" id="error_userName"><bean:message key="error.username.empty"/></DIV>
 						<DIV class="error hidden" id="error_password"><bean:message key="error.password.empty"/></DIV>
-						<DIV id="errors"><html:errors/><logic:present name="ErrorAuthentication"><bean:message key="error.authentication"/></logic:present></DIV>
-						<DIV id="messages"><html:messages id="SuccessLogout" message="true"><bean:write name="SuccessLogout"/></html:messages></DIV>
+						<DIV id="errors"><html:errors/></DIV>
 					</DIV>
 					<DIV style="text-align:center">
 						<A href="Home.do" class="link"><bean:message key="link.home"/></A> <SPAN class="title">|</SPAN> <A href="http://cagrid-portal.nci.nih.gov/web/guest/register" class="link" target="_blank"><bean:message key="link.register"/></A>

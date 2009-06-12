@@ -1,5 +1,5 @@
 <%@ page isErrorPage="true" %>
-<%@ taglib uri="http://struts.apache.org/tags-bean" prefix="html" %>
+<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
 
@@ -27,7 +27,10 @@
 		</DIV>
 		<DIV class="error" id="contentbody">
 			<IMG alt="<bean:message key="img.alt.error"/>" src="images/esclamation.jpg" align="middle">
-			<bean:message key="error.unexpected"/>
+			<bean:message key="error.unexpected"/><BR/>
+			<html:errors/><BR/>
+			${pageContext.exception}<BR/><BR/>
+			<INPUT type="button" class="button" value="<bean:message key="button.back"/>" onClick="history.go(-1)">&nbsp;&nbsp;<INPUT type="button" class="button" value="<bean:message key="button.home"/>" onClick="document.location='Home.do'">
 		</DIV>
 	</DIV>
 	<jsp:include page="footer.jsp"/>

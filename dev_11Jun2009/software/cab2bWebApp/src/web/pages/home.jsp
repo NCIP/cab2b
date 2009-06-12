@@ -1,4 +1,5 @@
 <%@ page errorPage="failure.jsp" %>
+<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
 
@@ -11,7 +12,65 @@
 <SCRIPT language="JavaScript" src="javascript/validator.js"></SCRIPT>
 <SCRIPT language="JavaScript" src="javascript/ajax.js"></SCRIPT>
 <SCRIPT language="JavaScript" src="javascript/multiselect.js"></SCRIPT>
-<BODY onLoad="<logic:present name="errorSessionTimeout">alert('<bean:message key="alert.sessioninvalidated"/>');</logic:present><logic:notPresent name="modelGroupDVOList">document.forms[0].action='Home.do';document.forms[0].submit();</logic:notPresent>setSelection(document.getElementsByName('modelGroups'));if(selectedItemsCount>0)processAJAXRequest('DisplaySavedSearches.do?modelGroups=' + document.getElementsByName('modelGroups')[singleSelectIndex].value, 'savedsearchespanelbody');if(selectedItemsCount==0)document.getElementById('savedsearchespanelbody').innerHTML = '';">
+<SCRIPT language="JavaScript">
+ function setPage()
+{
+  <html:messages id="successUserLogout" message="true">
+	alert('<bean:message key="success.user.logout"/>');
+  </html:messages>
+  <logic:present name="errorSessionTimeout">
+	alert('<bean:message key="alert.sessiontimeout"/>');
+  </logic:present>
+  <logic:notPresent name="modelGroupDVOList">
+	document.forms[0].action = 'Home.do';
+    document.forms[0].submit();
+  </logic:notPresent>
+  setSelection(document.getElementsByName('modelGroups'));
+   if(selectedItemsCount>0)
+  {
+    processAJAXRequest('DisplaySavedSearches.do?modelGroups=' + document.getElementsByName('modelGroups')[singleSelectIndex].value, 'savedsearchespanelbody');
+	 if(selectedItemsCount==0)
+     document.getElementById('savedsearchespanelbody').innerHTML = '';	
+  }
+}
+
+ function showSavedSearches(chkBoxObj, signInRequired)
+{
+   if(signInRequired)
+  {
+	chkBoxObj.checked = false;
+	alert('<bean:message key="alert.signinrequired"/>');
+	return;
+  }
+   else
+  {
+	if(selectedItemsCount==1)
+	document.getElementsByName('modelGroups')[singleSelectIndex].checked = false;
+  }
+  setSelection(document.getElementsByName('modelGroups'));
+  processAJAXRequest('DisplaySavedSearches.do?modelGroups=' + (chkBoxObj.checked?chkBoxObj.value:'null'), 'savedsearchespanelbody');
+}
+
+ function setKeywordSearchTextBox(textBoxObj, keywordSearchExampleText, option)
+{  
+   if(option=='focus')
+  {
+    if(keywordSearchExampleText=='')
+    keywordSearchExampleText = textBoxObj.value;
+    if(textBoxObj.value==keywordSearchExampleText)
+    textBoxObj.value = '';
+    textBoxObj.className = 'textbox'
+  }
+   else
+  {
+	if(textBoxObj.value=='')
+	textBoxObj.value = keywordSearchExampleText;
+	if(textBoxObj.value==keywordSearchExampleText)
+	textBoxObj.className = 'textbox exampleValue';
+  }
+}
+</SCRIPT>
+<BODY onLoad="setPage()">
 	<FORM method="post" action="KeywordSearch.do" onsubmit="return checkEmptyTextFileld('keyword', keywordSearchExample.value, true, '<bean:message key="error.keywordsearch.empty"/>')">
 		<jsp:include page="header.jsp"/>
 		<jsp:include page="leftpanel.jsp"/>				
@@ -30,7 +89,7 @@
 							<logic:present name="modelGroupDVOList">							
 								<logic:iterate name="modelGroupDVOList" id="modelGroupDVO" type="edu.wustl.cab2bwebapp.dvo.ModelGroupDVO" indexId="index">
 									<DIV class="myselectboxitem">
-										<INPUT type="checkbox" name="modelGroups" id="<bean:write name="modelGroupDVO" property="modelGroupName"/>" value="<bean:write name="modelGroupDVO" property="modelGroupName"/>" onClick="if(<bean:write name="modelGroupDVO" property="secured"/> <logic:notPresent name="userName">&& true</logic:notPresent><logic:present name="userName">&& false</logic:present>){this.checked=false;alert('<bean:message key="alert.signinrequired"/>');return;}else{if(selectedItemsCount==1)document.getElementsByName('modelGroups')[singleSelectIndex].checked=false;};setSelection(document.getElementsByName('modelGroups'));processAJAXRequest('DisplaySavedSearches.do?modelGroups=' + (this.checked?this.value:'null'), 'savedsearchespanelbody');" <logic:equal name="modelGroupDVO" property="selected" value="true">checked</logic:equal>>
+										<INPUT type="checkbox" name="modelGroups" id="<bean:write name="modelGroupDVO" property="modelGroupName"/>" value="<bean:write name="modelGroupDVO" property="modelGroupName"/>" onClick="showSavedSearches(this, <bean:write name="modelGroupDVO" property="secured"/> <logic:notPresent name="userName">&& true</logic:notPresent><logic:present name="userName">&& false</logic:present>)" <logic:equal name="modelGroupDVO" property="selected" value="true">checked</logic:equal>>
 										<LABEL><bean:write name="modelGroupDVO" property="modelGroupName"/></LABEL>										
 									</DIV>
 								</logic:iterate>
@@ -43,7 +102,7 @@
 				</DIV>
 			</DIV>
 			<DIV id="keywordsearchpanel">
-				<DIV class="label"><bean:message key="label.keywordsearch"/></DIV> <INPUT type="text" class="textbox examplevalue" name="keyword" value="<bean:message key="textbox.keywordsearch.examplevalue"/>" onFocus="if(keywordSearchExample.value=='')keywordSearchExample.value=this.value;if(this.value==keywordSearchExample.value)this.value='';this.className='textbox'" onBlur="if(this.value=='')this.value=keywordSearchExample.value;if(this.value==keywordSearchExample.value)this.className='textbox exampleValue'"><INPUT type="hidden" name="keywordSearchExample" value="<bean:message key="textbox.keywordsearch.examplevalue"/>"> <INPUT type="submit" class="button" value="<bean:message key="button.keywordsearch"/>">
+				<DIV class="label"><bean:message key="label.keywordsearch"/></DIV> <INPUT type="text" class="textbox examplevalue" name="keyword" value="<bean:message key="textbox.keywordsearch.examplevalue"/>" onFocus="setKeywordSearchTextBox(this, keywordSearchExample.value, 'focus')" onBlur="setKeywordSearchTextBox(this, keywordSearchExample.value, 'blur')"><INPUT type="hidden" name="keywordSearchExample" value="<bean:message key="textbox.keywordsearch.examplevalue"/>"> <INPUT type="submit" class="button" value="<bean:message key="button.keywordsearch"/>">
 			</DIV>			
 			<DIV id="savedsearchespanel">
 				<DIV class="titlebar">

@@ -3,7 +3,7 @@
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 
 <logic:present name="searchResultsView">
-	<display:table name="searchResultsView" uid="row" class="simple" sort="page" defaultsort="1" pagesize="20" export="true" requestURI="" cellspacing="1" cellpadding="4" htmlId="searchresultstable">
+	<display:table name="${sessionScope.searchResultsView}" uid="row" class="simple" sort="page" defaultsort="1" pagesize="20" export="true" requestURI="" cellspacing="1" cellpadding="4" htmlId="searchresultstable">
 		<logic:iterate name="row" id="column" type="edu.wustl.cab2bwebapp.dvo.SearchResultDVO">
 			<display:column title="${column.title}" value="${column.value}" sortable="true" media="${column.media}" headerClass="sortable" scope="sessionScope"/>
 			<display:setProperty name="export.pdf" value="true" />
