@@ -107,10 +107,12 @@
 					</SELECT>
 				</TD>
 				<logic:present name="failedServices">
-					<TD nowrap>
-						&nbsp;&nbsp;<A class="link" href="#this" onclick="document.getElementById('pageoverlay').style.display='block';document.getElementById('failedservicespanel').style.display='block';"><bean:message key="link.failedserviceinstances"/></A>
-						<SPAN class="text">(<bean:write name="failedServicesCount"/>)</SPAN>
-					</TD>
+					<logic:notEmpty name="failedServices">
+						<TD nowrap>
+							&nbsp;&nbsp;<A class="link" href="#this" onclick="document.getElementById('pageoverlay').style.display='block';document.getElementById('failedservicespanel').style.display='block';"><bean:message key="link.failedserviceinstances"/></A>
+							<SPAN class="text">(<bean:write name="failedServicesCount"/>)</SPAN>
+						</TD>
+					</logic:notEmpty>
 				</logic:present>
 			</TR>
 		</TABLE>
