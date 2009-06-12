@@ -53,21 +53,30 @@
 { 
   document.getElementById(responseReceiver).innerHTML = "<DIV style='text-align:center;'><IMG src='images/PageLoading.gif'></DIV>";
   var httpRequest = XMLHTTPObject();
-  httpRequest.open("GET", requestURL, true);
+  httpRequest.open("POST", requestURL, true);
   httpRequest.onreadystatechange = function(){ 
      if(httpRequest.readyState==4) 
     { 
-      results = httpRequest.status==200?httpRequest.responseText:""; //http.responseXML can be used to get an XML based response, if we need to have some XML output from a server file.
-	   if(httpRequest.status==500)
+       if(httpRequest.status==200) //http.responseXML can be used to get an XML based response, if we need to have some XML output from a server file.
 	  {
-  	    document.location = "Home.do?sessionTimeOut=true";
+	    results = httpRequest.responseText
 	  }
-	   else
+	   else if(httpRequest.status==500)
 	  {
-	    document.getElementById(responseReceiver).innerHTML = results;
+  	    results = "<SPAN class='error'>An unexpected error has occured while processing your request. Please contact helpdesk!</SPAN>";
+	  }
+	   else if(httpRequest.status==403)
+	  {
+  	    alert(httpRequest.responseText);
+		document.location = "Home.do";
+	  }
+	   if(httpRequest.status==200 || httpRequest.status==500)
+	  {
+        document.getElementById(responseReceiver).innerHTML = results;
 	  }
     }
   }
   httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  httpRequest.setRequestHeader("Ajax-Call", "true");
   httpRequest.send(null);
 }

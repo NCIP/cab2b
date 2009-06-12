@@ -213,7 +213,7 @@ var toggleRadio = "";
 // object will be modified accordingly.
  function createQueryString() 
 {
-  var attributeList = document.getElementById('attributesList').value;
+  var attributeList = document.getElementById('attributesList')!=null?document.getElementById('attributesList').value:null;
    if (attributeList != null) 
   {
 	var queryString = createStandardQueryString(attributeList);
