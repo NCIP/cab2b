@@ -13,7 +13,7 @@ import edu.common.dynamicextensions.util.DynamicExtensionsUtility;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.server.queryengine.QueryOperations;
-import edu.wustl.cab2b.server.util.ServerProperties;
+import edu.wustl.cab2bwebapp.util.ServerProperties;
 import edu.wustl.cab2bwebapp.util.Utility;
 import edu.wustl.common.hibernate.HibernateCleanser;
 
@@ -96,7 +96,7 @@ public class SavedQueryBizLogic {
      * @param entityGroups
      * @return
      */
-    public Collection<ICab2bQuery> getRegualarQueries(Collection<EntityGroupInterface> entityGroups) {
+    public Collection<ICab2bQuery> getRegularQueries(Collection<EntityGroupInterface> entityGroups) {
         Set<ICab2bQuery> allRegualarQueries = new HashSet<ICab2bQuery>(getRegularQueries());
 
         Set<ICab2bQuery> regualarQueries = new HashSet<ICab2bQuery>();
@@ -111,12 +111,11 @@ public class SavedQueryBizLogic {
                 }
             }
         }
-
         return regualarQueries;
     }
 
     /**
-     * This method returns all the keyword serach queries created by the default user for the given set of
+     * This method returns all the keyword search queries created by the default user for the given set of
      * entity groups.
      *
      * @param entityGroups
