@@ -1,6 +1,8 @@
 package edu.wustl.cab2bwebapp.filters;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ResourceBundle;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -10,6 +12,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import edu.wustl.cab2bwebapp.constants.Constants;
 
 /**
@@ -48,15 +51,25 @@ public class ApplicationFilter implements Filter {
             ServletException {
 
         HttpServletRequest request = (HttpServletRequest) req;
-        if ((request.getSession().isNew() && request.getRequestURL().indexOf(".do") != -1
-                && request.getRequestURL().indexOf("Home.do") == -1 && request.getRequestURL().indexOf("Login.do") == -1)
-                || request.getParameter("sessionTimeOut") != null) {
-            request.setAttribute(Constants.ERROR_SESSION_TIMEOUT, Constants.ERROR_SESSION_TIMEOUT);
-            request.getRequestDispatcher("/pages/home.jsp").forward(req, res);
-        }
         HttpServletResponse response = (HttpServletResponse) res;
-        response.addHeader("Cache-Control", fc.getInitParameter("Cache-Control"));
-        filterChain.doFilter(request, response);
+        if (request.getSession().isNew()) {
+            if (request.getHeader("Ajax-Call") != null) {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                PrintWriter pw = response.getWriter();
+                ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
+                pw.write(bundle.getString("alert.sessiontimeout"));
+                pw.close();
+            } else if (request.getRequestURL().indexOf(".") != -1
+                    && request.getRequestURL().indexOf("Home.do") == -1
+                    && request.getRequestURL().indexOf("Login.do") == -1) {
+                request.setAttribute(Constants.ERROR_SESSION_TIMEOUT, Constants.ERROR_SESSION_TIMEOUT);
+                request.getRequestDispatcher("/pages/home.jsp").forward(req, res);
+            } else {
+                filterChain.doFilter(request, response);
+            }
+        } else {
+            filterChain.doFilter(request, response);
+        }
     }
 
     /**
