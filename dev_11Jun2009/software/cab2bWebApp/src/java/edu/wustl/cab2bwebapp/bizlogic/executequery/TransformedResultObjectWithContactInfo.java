@@ -37,7 +37,7 @@ public class TransformedResultObjectWithContactInfo {
 	/**
 	 * List of attributes(columns) to be shown in result.
 	 */
-	private List<AttributeInterface> allowedAttributes = null;
+	private Collection<AttributeInterface> allowedAttributes = null;
 
 	/**
 	 * Default constructor. 
@@ -52,7 +52,7 @@ public class TransformedResultObjectWithContactInfo {
 	 * @param result
 	 */
 	public void addUrlAndResult(String url, List<Map<AttributeInterface, Object>> result) {
-
+		logger.info("Inside addUrlAndResult");
 		//Retrive ServiceURLInterface object from URL
 		//Adding service meta data inside result map
 		ServiceURLInterface serviceUrlMetadata;
@@ -67,19 +67,37 @@ public class TransformedResultObjectWithContactInfo {
 			AttributeInterface attributePC = null;
 			AttributeInterface attributeCE = null;
 			AttributeInterface attributeHI = null;
+			for (AttributeInterface attr : allowedAttributes) {
+				if (attr.getName().equals("Hosting Cancer Research Center"))
+					attributeHC = attr;
+				if (attr.getName().equals("Point of Contact"))
+					attributePC = attr;
+				if (attr.getName().equals("Contact eMail"))
+					attributeCE = attr;
+				if (attr.getName().equals("Hosting Institution"))
+					attributeHI = attr;
+			}
 
-			attributeHC = DomainObjectFactory.getInstance().createStringAttribute();
-			attributeHC.setName("Hosting Cancer Research Center");
-			attributePC = DomainObjectFactory.getInstance().createStringAttribute();
-			attributePC.setName("Point of Contact");
-			attributeCE = DomainObjectFactory.getInstance().createStringAttribute();
-			attributeCE.setName("Contact eMail");
-			attributeHI = DomainObjectFactory.getInstance().createStringAttribute();
-			attributeHI.setName("Hosting Institution");
-			allowedAttributes.add(attributeHC);
-			allowedAttributes.add(attributePC);
-			allowedAttributes.add(attributeCE);
-			allowedAttributes.add(attributeHI);
+			if (attributeHC == null) {
+				attributeHC = DomainObjectFactory.getInstance().createStringAttribute();
+				attributeHC.setName("Hosting Cancer Research Center");
+				allowedAttributes.add(attributeHC);
+			}
+			if (attributePC == null) {
+				attributePC = DomainObjectFactory.getInstance().createStringAttribute();
+				attributePC.setName("Point of Contact");
+				allowedAttributes.add(attributePC);
+			}
+			if (attributeCE == null) {
+				attributeCE = DomainObjectFactory.getInstance().createStringAttribute();
+				attributeCE.setName("Contact eMail");
+				allowedAttributes.add(attributeCE);
+			}
+			if (attributeHI == null) {
+				attributeHI = DomainObjectFactory.getInstance().createStringAttribute();
+				attributeHI.setName("Hosting Institution");
+				allowedAttributes.add(attributeHI);
+			}
 			for (Map<AttributeInterface, Object> recordMap : result) {
 				recordMap.put(attributeHC, serviceUrlMetadata.getHostingCenter());
 				recordMap.put(attributePC, serviceUrlMetadata.getContactName());
@@ -143,14 +161,14 @@ public class TransformedResultObjectWithContactInfo {
 	/**
 	 * @return the allowedAttributes
 	 */
-	public List<AttributeInterface> getAllowedAttributes() {
+	public Collection<AttributeInterface> getAllowedAttributes() {
 		return allowedAttributes;
 	}
 
 	/**
 	 * @param allowedAttributes the allowedAttributes to set
 	 */
-	public void setAllowedAttributes(List<AttributeInterface> allowedAttributes) {
+	public void setAllowedAttributes(Collection<AttributeInterface> allowedAttributes) {
 		this.allowedAttributes = allowedAttributes;
 	}
 }
