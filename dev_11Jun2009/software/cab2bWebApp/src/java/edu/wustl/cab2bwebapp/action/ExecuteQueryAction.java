@@ -57,24 +57,17 @@ public class ExecuteQueryAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
-        if (request.getMethod().equals("POST")) {
-            request.getSession().removeAttribute(Constants.SEARCH_RESULTS);
-            request.getSession().removeAttribute(Constants.SEARCH_RESULTS_VIEW);
-        }
-        String findForward = null;
-        if (request.getSession().getAttribute(Constants.SEARCH_RESULTS) != null) {
-            findForward = Constants.FORWARD_SEARCH_RESULTS;
-        } else {
-            String[] modelGroupNames = (String[]) request.getSession().getAttribute(Constants.MODEL_GROUP_NAMES);
-            request.getSession().removeAttribute(Constants.MODEL_GROUP_NAMES);
+        String actionForward = Constants.FORWARD_SEARCH_RESULTS;
+        try {
             HttpSession session = request.getSession();
-            SavedQueryBizLogic savedQueryBizLogic =
-                    (SavedQueryBizLogic) session.getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
-            ICab2bQuery query =
-                    savedQueryBizLogic.getQueryById(Long.parseLong(request.getParameter(Constants.QUERY_ID)));
-            UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
+            if (request.getQueryString() == null) {
+                String[] modelGroupNames = (String[]) request.getParameterValues(Constants.MODEL_GROUPS);
+                SavedQueryBizLogic savedQueryBizLogic =
+                        (SavedQueryBizLogic) session.getServletContext().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+                ICab2bQuery query =
+                        savedQueryBizLogic.getQueryById(Long.parseLong(request.getParameter(Constants.QUERY_ID)));
+                UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
 
-            try {
                 String conditionstr = request.getParameter("conditionList");
                 if (conditionstr == null) {
                     conditionstr = "";
@@ -93,10 +86,8 @@ public class ExecuteQueryAction extends Action {
                     ExecuteQueryBizLogic executeQueryBizLogic =
                             new ExecuteQueryBizLogic(queries, proxy, user, modelGroupNames);
                     List<Map<AttributeInterface, Object>> finalResult = executeQueryBizLogic.getFinalResult();
-                    if (!finalResult.isEmpty()) {
-                        session.setAttribute(Constants.SEARCH_RESULTS_VIEW, executeQueryBizLogic
-                            .getSearchResultsView(finalResult));
-                    }
+                    session.setAttribute(Constants.SEARCH_RESULTS_VIEW, executeQueryBizLogic
+                        .getSearchResultsView(finalResult));
                     Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults =
                             executeQueryBizLogic.getSearchResults();
                     Collection<ICab2bQuery> allQueries = searchResults.keySet();
@@ -108,28 +99,23 @@ public class ExecuteQueryAction extends Action {
                         savedQuery.setResultCount(searchResults.get(queryObj).getResultForAllUrls().size());
                         queryList.add(savedQuery);
                     }
-                    int failedServicesCount = executeQueryBizLogic.getFailedSercives().size();
+                    int failedServicesCount = executeQueryBizLogic.getFailedServices().size();
                     session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedServicesCount);
-                    session.setAttribute(Constants.FAILED_SERVICES, executeQueryBizLogic.getFailedSercives());
+                    session.setAttribute(Constants.FAILED_SERVICES, executeQueryBizLogic.getFailedServices());
                     session.setAttribute(Constants.SERVICE_INSTANCES, executeQueryBizLogic
                         .getUrlsForSelectedQueries());
                     session.setAttribute(Constants.SAVED_QUERIES, queryList);
                     session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
-                    findForward = Constants.FORWARD_SEARCH_RESULTS;
-                }             
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-                ActionErrors errors = new ActionErrors();
-                ActionError error = new ActionError("fatal.executeQuerySearch.failure");
-                errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, error);
-                saveErrors(request, errors);
-                findForward = Constants.FORWARD_FAILURE;
+                }
             }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            ActionErrors errors = new ActionErrors();
+            ActionError error = new ActionError("fatal.executeQuerySearch.failure");
+            errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, error);
+            saveErrors(request, errors);
+            actionForward = Constants.FORWARD_FAILURE;
         }
-        if (request.getSession().getAttribute(Constants.SEARCH_RESULTS_VIEW) != null) {
-			request.setAttribute(Constants.SEARCH_RESULTS_VIEW, request.getSession()
-					.getAttribute(Constants.SEARCH_RESULTS_VIEW));
-		}
-        return mapping.findForward(findForward);
+        return mapping.findForward(actionForward);
     }
 }

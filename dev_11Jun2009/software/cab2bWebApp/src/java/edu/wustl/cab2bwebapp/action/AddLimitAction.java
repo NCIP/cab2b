@@ -50,46 +50,35 @@ public class AddLimitAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
         String actionForward = null;
-        SavedQueryBizLogic savedQueryProvider =
-                (SavedQueryBizLogic) request.getSession().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
-
-        String queryID = request.getParameter(Constants.QUERY_ID);
-        if (request.getParameter(Constants.MODEL_GROUPS) == null) {
-            try {
-                Long queryId = Long.parseLong(queryID);
+        try {
+            SavedQueryBizLogic savedQueryProvider =
+                    (SavedQueryBizLogic) request.getSession().getServletContext().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+            if (request.getParameterValues(Constants.MODEL_GROUPS) != null) {
+                actionForward = Constants.FORWARD_ADD_LIMIT;
+                ActionForward forward = mapping.findForward(actionForward);
+                return new ActionForward(forward.getName(), forward.getPath(), false);
+            } else {
+                Long queryId = Long.parseLong(request.getParameter(Constants.QUERY_ID));
                 ICab2bQuery query = savedQueryProvider.getQueryById(queryId);
-
                 Collection<ICondition> nonPara = QueryUtility.getAllNonParameteriedConditions(query);
                 Collection<ICondition> paraCond = QueryUtility.getAllParameterizedConditions(query);
-
                 response.setContentType("text/html");
                 PrintWriter writer = response.getWriter();
-
-                if (nonPara != null && !nonPara.isEmpty() && (paraCond == null || paraCond.isEmpty())) {
-                    writer.write("");
-                    writer.close();
-                    actionForward = "";
-                } else {
-                    String html =
-                            new AddLimitHTMLGeneratorBizLogic(servlet.getServletContext()
-                                .getRealPath(Constants.ADD_LIMIT_XML_FILE_PATH)).getHTMLForSavedQuery(query);
-                    writer.write(html);
-                    writer.close();
-                }
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-                ActionErrors errors = new ActionErrors();
-                ActionError error = new ActionError("fatal.addlimit.failure");
-                errors.add(Constants.FATAL_ADD_LIMIT_FAILURE, error);
-                saveErrors(request, errors);
-                actionForward = Constants.FORWARD_FAILURE;
+                String html =
+                        (nonPara != null && !nonPara.isEmpty() && (paraCond == null || paraCond.isEmpty())) ? ""
+                                : new AddLimitHTMLGeneratorBizLogic(servlet.getServletContext()
+                                    .getRealPath(Constants.ADD_LIMIT_XML_FILE_PATH)).getHTMLForSavedQuery(query);
+                writer.write(html);
+                writer.close();
+                return null;
             }
-        } else {
-            String[] modelGroupNames = request.getParameterValues(Constants.MODEL_GROUPS);
-            request.getSession().setAttribute(Constants.MODEL_GROUP_NAMES, modelGroupNames);
-            actionForward = Constants.FORWARD_ADD_LIMIT;
-            ActionForward forward = mapping.findForward(actionForward);
-            return new ActionForward(forward.getName(), forward.getPath(), false);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            ActionErrors errors = new ActionErrors();
+            ActionError error = new ActionError("fatal.addlimit.failure");
+            errors.add(Constants.FATAL_ADD_LIMIT_FAILURE, error);
+            saveErrors(request, errors);
+            actionForward = Constants.FORWARD_FAILURE;
         }
         return mapping.findForward(actionForward);
     }

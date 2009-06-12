@@ -51,7 +51,7 @@ public class HomeAction extends Action {
                                  HttpServletResponse response) throws IOException, ServletException {
         HttpSession session = request.getSession();
         SavedQueryBizLogic savedQueryBizLogic =
-                (SavedQueryBizLogic) request.getSession().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+                (SavedQueryBizLogic) request.getSession().getServletContext().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
 
         String findForward = null;
         try {
@@ -67,7 +67,8 @@ public class HomeAction extends Action {
             session.setAttribute(Constants.USER, user);
             if (savedQueryBizLogic == null) {
                 savedQueryBizLogic = new SavedQueryBizLogic();
-                request.getSession().setAttribute(Constants.SAVED_QUERY_BIZ_LOGIC, savedQueryBizLogic);
+                request.getSession().getServletContext().setAttribute(Constants.SAVED_QUERY_BIZ_LOGIC,
+                                                                      savedQueryBizLogic);
             }
             if (session.getAttribute(Constants.MODEL_GROUP_DVO_LIST) == null) {
                 List<ModelGroupInterface> modelGroups = new ModelGroupBizLogic().getAllModelGroups();

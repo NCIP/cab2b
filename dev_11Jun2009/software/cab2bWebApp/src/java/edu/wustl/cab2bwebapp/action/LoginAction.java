@@ -56,7 +56,6 @@ public class LoginAction extends Action {
         String password = loginForm.getPassword();
 
         if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
-            request.setAttribute(Constants.LOGIN_PAGE, Constants.LOGIN_PAGE);
             return mapping.findForward(Constants.FORWARD_LOGIN);
         }
         HttpSession session = request.getSession();
@@ -77,8 +76,10 @@ public class LoginAction extends Action {
                 session.setAttribute(Constants.USER_NAME, userName);
             } catch (Exception e) {
                 logger.error(e.getMessage());
-                handleException(request, "error.login.invalid", Constants.ERROR_LOGIN_INVALID);
-                request.setAttribute(Constants.LOGIN_PAGE, Constants.LOGIN_PAGE);
+                ActionErrors errors = new ActionErrors();
+                ActionError error = new ActionError("error.login.invalid");
+                errors.add(Constants.ERROR_LOGIN_INVALID, error);
+                saveErrors(request, errors);
                 return mapping.findForward(Constants.FORWARD_LOGIN);
             }
         }
@@ -87,24 +88,20 @@ public class LoginAction extends Action {
             if (modelGroups != null && !modelGroups.isEmpty()) {
                 ModelGroupInterface modelGroup = modelGroups.iterator().next();
                 SavedQueryBizLogic savedQueryBizLogic =
-                        (SavedQueryBizLogic) request.getSession().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+                        (SavedQueryBizLogic) request.getSession().getServletContext().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
                 Collection<ICab2bQuery> savedSearches =
-                        savedQueryBizLogic.getRegualarQueries(modelGroup.getEntityGroupList());
+                        savedQueryBizLogic.getRegularQueries(modelGroup.getEntityGroupList());
                 request.setAttribute(Constants.MODEL_GROUPS, modelGroups);
                 request.setAttribute(Constants.SAVED_SEARCHES, savedSearches);
             }
             return mapping.findForward(Constants.FORWARD_HOME);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            handleException(request, "fatal.login.failure", Constants.FATAL_LOGIN_FAILURE);
+            ActionErrors errors = new ActionErrors();
+            ActionError error = new ActionError("fatal.login.failure");
+            errors.add(Constants.FATAL_LOGIN_FAILURE, error);
+            saveErrors(request, errors);
             return mapping.findForward(Constants.FORWARD_FAILURE);
         }
-    }
-
-    private void handleException(HttpServletRequest request, String errorKey, String errorConstant) {
-        ActionErrors errors = new ActionErrors();
-        ActionError error = new ActionError(errorKey);
-        errors.add(errorConstant, error);
-        saveErrors(request, errors);
     }
 }

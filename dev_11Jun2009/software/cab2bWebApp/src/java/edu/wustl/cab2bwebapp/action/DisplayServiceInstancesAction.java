@@ -47,7 +47,6 @@ public class DisplayServiceInstancesAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) {
-        logger.info("Inside ServiceInstanceAction");
         UserInterface user = (UserInterface) request.getSession().getAttribute(Constants.USER);
 
         String modelGroupName = request.getParameter(Constants.MODEL_GROUPS);
@@ -71,11 +70,9 @@ public class DisplayServiceInstancesAction extends Action {
                     }
                 }
             }
-
             //Adding currently selected modelGroupName/serviceInstances to user session.
             request.setAttribute(Constants.MODEL_GROUP_NAME, modelGroupName);
             request.setAttribute(Constants.SERVICE_INSTANCES, servicesForSingleModelGroup);
-
             ActionForward forward = mapping.findForward(Constants.FORWARD_SERVICE_INSTANCES);
             actionForward = new ActionForward(forward.getName(), forward.getPath(), false);
         } catch (Exception e) {
@@ -86,7 +83,6 @@ public class DisplayServiceInstancesAction extends Action {
             saveErrors(request, errors);
             actionForward = mapping.findForward(Constants.FORWARD_FAILURE);
         }
-        logger.info("Exiting ServiceInstanceAction");
         return actionForward;
     }
 }

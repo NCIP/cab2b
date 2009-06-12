@@ -51,17 +51,15 @@ public class DisplaySavedSearchesAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
         SavedQueryBizLogic savedQueryBizLogic =
-                (SavedQueryBizLogic) request.getSession().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+                (SavedQueryBizLogic) request.getSession().getServletContext().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
         String modelGroupName = (String) request.getParameter(Constants.MODEL_GROUPS);
         List<ModelGroupDVO> modelGroupDVOList =
                 (List<ModelGroupDVO>) request.getSession().getAttribute("modelGroupDVOList");
         for (int i = 0; i < modelGroupDVOList.size(); i++) {
             if (modelGroupDVOList.get(i).getModelGroupName().equals(modelGroupName)) {
                 modelGroupDVOList.get(i).setSelected(true);
-            }
-            else
-            {
-              modelGroupDVOList.get(i).setSelected(false);
+            } else {
+                modelGroupDVOList.get(i).setSelected(false);
             }
         }
         request.getSession().setAttribute(Constants.MODEL_GROUP_DVO_LIST, modelGroupDVOList);
@@ -70,11 +68,9 @@ public class DisplaySavedSearchesAction extends Action {
             if (!modelGroupName.equals("")) {
                 Collection<EntityGroupInterface> entityGroups =
                         new ModelGroupBizLogic().getEntityGroupsForModel(modelGroupName);
-                Collection<ICab2bQuery> savedSearches = savedQueryBizLogic.getRegualarQueries(entityGroups);
+                Collection<ICab2bQuery> savedSearches = savedQueryBizLogic.getRegularQueries(entityGroups);
                 List savedSearchesList = new java.util.ArrayList(savedSearches);
                 Collections.sort(savedSearchesList, new SavedSearchComparator());
-           
-
                 if (request.getParameter(Constants.FORWARD_ADD_LIMIT) != null) {
                     request.setAttribute(Constants.FORWARD_ADD_LIMIT, Constants.FORWARD_ADD_LIMIT);
                 }
