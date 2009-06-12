@@ -57,11 +57,11 @@
   httpRequest.onreadystatechange = function(){ 
      if(httpRequest.readyState==4) 
     { 
-       if(httpRequest.status==200) //http.responseXML can be used to get an XML based response, if we need to have some XML output from a server file.
+       if(httpRequest.status==200 && httpRequest.responseText.indexOf('Unexpected Error')==-1) //http.responseXML can be used to get an XML based response, if we need to have some XML output from a server file.
 	  {
-	    results = httpRequest.responseText
+	    results = httpRequest.responseText;
 	  }
-	   else if(httpRequest.status==500)
+	   else if(httpRequest.status==500 ||  httpRequest.responseText.indexOf('Unexpected Error')!=-1)
 	  {
   	    results = "<SPAN class='error'>An unexpected error has occured while processing your request. Please contact helpdesk!</SPAN>";
 	  }
