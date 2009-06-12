@@ -65,7 +65,7 @@ public class SaveServiceInstancesAction extends Action {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
-            ActionError error = new ActionError("fatal.addlimit.failure");
+            ActionError error = new ActionError("fatal.saveserviceinstances.failure");
             errors.add(Constants.FATAL_ADD_LIMIT_FAILURE, error);
             saveErrors(request, errors);
             return mapping.findForward(Constants.FORWARD_FAILURE);

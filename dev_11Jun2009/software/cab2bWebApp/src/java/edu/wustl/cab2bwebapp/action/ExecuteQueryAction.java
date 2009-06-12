@@ -111,7 +111,7 @@ public class ExecuteQueryAction extends Action {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
-            ActionError error = new ActionError("fatal.executeQuerySearch.failure");
+            ActionError error = new ActionError("fatal.executequery.failure");
             errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, error);
             saveErrors(request, errors);
             actionForward = Constants.FORWARD_FAILURE;
