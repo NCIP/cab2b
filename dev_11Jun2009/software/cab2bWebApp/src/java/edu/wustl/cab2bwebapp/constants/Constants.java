@@ -10,42 +10,30 @@ public interface Constants {
 
     /** Constant for model groups */
     public static final String MODEL_GROUPS = "modelGroups";
-    
+
     /** Constant for model group DVO list */
-    public static final String MODEL_GROUP_DVO_LIST = "modelGroupDVOList";    
+    public static final String MODEL_GROUP_DVO_LIST = "modelGroupDVOList";
 
     /** Constant for saved searches */
     public static final String SAVED_SEARCHES = "savedSearches";
-    
+
     /** Constant for saved searches */
     public static final String SAVED_QUERIES = "savedQueries";
 
     /** Constant for forward to home page */
     public static final String FORWARD_HOME = "home";
 
-    /** Constant for collection of model group */
-    public static final String FORWARD_MODEL_GROUP = "modelgroup";
-
     /** Constant for model group name */
     public static final String MODEL_GROUP_NAME = "modelGroupName";
-    
-    /** Constant for model group names */
-    public static final String MODEL_GROUP_NAMES = "modelGroupNames";    
 
     /** Constant for fatal failure on home page access */
     public static final String FATAL_HOME_FAILURE = "fatalHomeFailure";
-
-    /** Constant for model id */
-    public static final String MODEL_ID = "modelId";
 
     /** Constant for page forward to saved searches page */
     public static final String FORWARD_SAVED_SEARCHES = "savedsearches";
 
     /** Constant for load model associated data failure message */
     public static final String FATAL_DISPLAY_SAVED_SEARCHES_FAILURE = "fatalDisplaySavedSearchesFailure";
-
-    /** Constant for login page */
-    public static final String LOGIN_PAGE = "loginPage";
 
     /** Constant for globus credential */
     public static final String GLOBUS_CREDENTIAL = "globusCredential";
@@ -61,9 +49,9 @@ public interface Constants {
 
     /** Constant for invalid login error */
     public static final String ERROR_LOGIN_INVALID = "errorLoginInvalid";
-    
+
     /** Constant for session timeout error */
-    public static final String ERROR_SESSION_TIMEOUT = "errorSessionTimeout";    
+    public static final String ERROR_SESSION_TIMEOUT = "errorSessionTimeout";
 
     /** Constant for fatal login failure */
     public static final String FATAL_LOGIN_FAILURE = "fatalLoginFailure";
@@ -89,9 +77,6 @@ public interface Constants {
     /** Constant for display service instances failure message */
     public static final String FATAL_DISPLAY_SERVICE_INSTANCES_FAILURE = "fatalDisplayServiceInstancesFailure";
 
-    /** Constant for entity group collection */
-    public static final String ENTITY_GROUP_COLLECTION = "entityGroupCollection";
-
     /** Constant for query id */
     public static final String QUERY_ID = "queryId";
 
@@ -102,14 +87,8 @@ public interface Constants {
     public static final String FATAL_ADD_LIMIT_FAILURE = "fatalAddLimitFailure";
 
     /** Constant for add limit xml file path */
-    public static final String ADD_LIMIT_XML_FILE_PATH = "WEB-INF" + java.io.File.separator + "classes"
-            + java.io.File.separator + "add-limit.xml";
-
-    /** Constant for error in query execution */
-    public static final String ERROR_QUERY_EXECUTE = "errorQueryExecute";
-
-    /** Constant for attribute order */
-    public static final String ATTRIBUTE_ORDER = "attributeOrder";
+    public static final String ADD_LIMIT_XML_FILE_PATH =
+            "WEB-INF" + java.io.File.separator + "classes" + java.io.File.separator + "add-limit.xml";
 
     /** Constant for query result */
     public static final String SEARCH_RESULTS = "searchResults";
@@ -119,7 +98,7 @@ public interface Constants {
 
     /** Constant for forward to search results page */
     public static final String FORWARD_SEARCH_RESULTS = "searchresults";
-    
+
     /** Constant for forward to search results panel page */
     public static final String FORWARD_SEARCH_RESULTS_PANEL = "searchresultspanel";
 
@@ -128,10 +107,10 @@ public interface Constants {
 
     /** Constant for forward to failure page */
     public static final String FORWARD_FAILURE = "failure";
-    
+
     /** Constants for Failed Services */
-    public static final String FAILED_SERVICES = "failedServices"; 
-    
+    public static final String FAILED_SERVICES = "failedServices";
+
     /** Constants for Failed Services count */
     public static final String FAILED_SERVICES_COUNT = "failedServicesCount";
 }
