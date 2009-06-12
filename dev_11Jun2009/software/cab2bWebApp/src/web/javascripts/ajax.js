@@ -61,7 +61,7 @@
 	  {
 	    results = httpRequest.responseText;
 	  }
-	   else if(httpRequest.status==500 ||  httpRequest.responseText.indexOf('Unexpected Error')!=-1)
+	   else if(httpRequest.status==500 || httpRequest.responseText.indexOf('Unexpected Error')!=-1)
 	  {
   	    results = "<SPAN class='error'>An unexpected error has occured while processing your request. Please contact helpdesk!</SPAN>";
 	  }
