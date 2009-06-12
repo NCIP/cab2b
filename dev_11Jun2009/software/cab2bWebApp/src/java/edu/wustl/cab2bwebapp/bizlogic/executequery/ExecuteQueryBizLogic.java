@@ -10,11 +10,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
-import org.globus.gsi.GlobusCredential;
-
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.FailedTargetURL;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
@@ -35,7 +32,7 @@ public class ExecuteQueryBizLogic {
 
     private List<Map<AttributeInterface, Object>> finalResult = null;
 
-    private List<AttributeInterface> orderedAttributeList = null;
+    private Collection<AttributeInterface> orderedAttributeList = null;
 
     private Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults = null;
 
