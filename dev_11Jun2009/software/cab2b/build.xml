@@ -153,6 +153,11 @@
 
 	<!-- ================================================================================== -->
 	<target name="initialize">
+		<delete file="${conf.dir}/server.properties" />
+		<delete file="${conf.dir}/cagrid.properties" />
+		<delete file="${conf.dir}/client.properties" />
+		<delete file="${conf.dir}/cab2b.properties" />
+
 		<copy todir="${conf.dir}">
 			<fileset dir="${resource.dir}/properties">
 				<include name="*.properties" />
@@ -992,11 +997,20 @@
 	</target>
 
 	<!-- ==================================================================================
-	<property name="cab2bDS.file.name" value="cab2b-ds.xml" />
-	<property name="cab2bDS.file" location="${conf.dir}/${cab2bDS.file.name}" />
+				Developer's deployment target. This must be used by developers to 
+				install/deploy caB2B locally. Unlike BDA, this is not going to download
+				the JBoss on its own. It's developer's responsibility to setup JBoss and
+				define its path. 
+		================================================================================== -->
+	<property file="../build/install.properties" />
+	<property file="../build/project.properties" />
+
+	<property name="cab2b-ds.file.name" value="cab2b-ds.xml" />
+	<property name="cab2b-ds.file" location="${conf.dir}/${cab2b-ds.file.name}" />
 	<property name="jboss.common.lib.dir" location="${jboss.home}/server/default/lib" />
 	<property name="jboss.deploy.dir" location="${jboss.home}/server/default/deploy" />
 	<property name="jboss.log.dir" location="${jboss.home}/server/default/log" />
+
 	<target name="dev.deploy" depends="build.project.jar,build.ear,update.server,replace.datasource" description="Deploys EAR file to JBoss application server">
 		<ant antfile="${cab2badmin.location}/build.xml" dir="${cab2badmin.location}" target="war" inheritall="false" />
 		<echo message="Admin War Created" />
@@ -1026,7 +1040,7 @@
 
 		<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
 	</target>
-	
+
 	<target name="replace.datasource">
 		<replace.db.properties.macro cfgfile="${jboss.deploy.dir}/${cab2bDS.file.name}" />
 	</target>
@@ -1049,7 +1063,6 @@
 		<mkdir dir="${jboss.home}/server/default/log" />
 		<echo message="" file="${jboss.log.dir}/caB2B.log" append="false" />
 	</target>
-	================================================================================== -->
 </project>
 
 <!-- ==================================================================================
