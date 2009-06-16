@@ -17,6 +17,8 @@
    else
   {
     clearTimeout("updateView()");
+	document.getElementById("failedservicescount").innerHTML = document.getElementById("failedservicescountAJAX").innerHTML;    
+    document.getElementById("failedservicespanelbody").innerHTML = document.getElementById("failedservicesAJAX").innerHTML;    
     var spanObjs = document.getElementById("centerpanelcontent").getElementsByTagName('SPAN');
     var divObjs = document.getElementById("centerpanelcontent").getElementsByTagName('DIV');
      for(var i=0;i<spanObjs.length;i++)
@@ -110,7 +112,7 @@
 					<logic:notEmpty name="failedServices">
 						<TD nowrap>
 							&nbsp;&nbsp;<A class="link" href="#this" onclick="document.getElementById('pageoverlay').style.display='block';document.getElementById('failedservicespanel').style.display='block';"><bean:message key="link.failedserviceinstances"/></A>
-							<SPAN class="text">(<bean:write name="failedServicesCount"/>)</SPAN>
+							<SPAN class="text" id="failedservicescount"></SPAN>
 						</TD>
 					</logic:notEmpty>
 				</logic:present>
@@ -121,15 +123,6 @@
 	<DIV id="failedservicespanel">
 		<DIV id="failedservicespanelheader" class="title"><bean:message key="title.failedserviceinstances"/><IMG style='cursor:pointer;position:absolute;right:0.6em;' alt='Close' src='images/close.jpg' onmouseover=this.src='images/close_hover.jpg' onmouseout=this.src='images/close.jpg' onclick="document.getElementById('pageoverlay').style.display='none';document.getElementById('failedservicespanel').style.display='none'"></DIV>
 		<DIV id="failedservicespanelbody">
-			<logic:present name="failedServices">
-				<logic:iterate name="failedServices" id="failedServices" indexId="indexId" type="edu.wustl.cab2b.common.user.ServiceURLInterface">
-					<DIV class="${indexId%2==0?"odd":"even"}">
-						<DIV class="failedservice text"><bean:write name="failedServices" property="hostingCenter"/>
-						<BR/><bean:write name="failedServices" property="urlLocation"/></DIV>
-					</DIV>
-				</logic:iterate>
-			</logic:present>
-			<BR style="line-height:0.4em"/>
 		</DIV>
 	</DIV>
 </DIV>
