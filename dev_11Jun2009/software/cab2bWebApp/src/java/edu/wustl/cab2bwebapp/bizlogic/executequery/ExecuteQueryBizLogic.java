@@ -84,7 +84,15 @@ public class ExecuteQueryBizLogic {
             String keyword,
             UserInterface user,
             String[] modelGroupNames) throws Exception {
-        processResults(queries, proxy, keyword, user, modelGroupNames);
+        processResults(queries, proxy, keyword, user, modelGroupNames, null);
+    }
+
+    public ExecuteQueryBizLogic(
+            Collection<ICab2bQuery> queries,
+            String selectedQueryName,
+            Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults) throws Exception {
+        this.searchResults = searchResults;
+        processResults(queries, null, null, null, null, selectedQueryName);
     }
 
     /**
@@ -96,17 +104,22 @@ public class ExecuteQueryBizLogic {
      * @throws Exception
      */
     private void processResults(Collection<ICab2bQuery> queries, GlobusCredential proxy, String keyword,
-                                UserInterface user, String[] modelGroupNames) throws Exception {
+                                UserInterface user, String[] modelGroupNames, String selectedQueryName)
+            throws Exception {
 
-        queryNameList = Utility.getQueryNameList(queries);
-        List<String> urls = Utility.getUserConfiguredUrls(user, modelGroupNames);
-        for (ICab2bQuery regularQuery : queries) {
-            regularQuery.setOutputUrls(urls);
+        if (selectedQueryName == null) {
+            List<String> urls = Utility.getUserConfiguredUrls(user, modelGroupNames);
+            for (ICab2bQuery regularQuery : queries) {
+                regularQuery.setOutputUrls(urls);
+            }
+            executeQuery(queries, proxy, keyword);
         }
-        executeQuery(queries, proxy, keyword);
         Collection<FailedTargetURL> failedServiceURLs = new ArrayList<FailedTargetURL>();
+        queryNameList = Utility.getQueryNameList(queries);
         if (queryNameList != null && !queryNameList.isEmpty()) {
-            String selectedQueryName = queryNameList.get(0);
+            if (selectedQueryName == null) {
+                selectedQueryName = queryNameList.get(0);
+            }
             for (ICab2bQuery queryObj : queries) {
                 if (queryObj.getName().equals(selectedQueryName)) {
                     urlsForSelectedQueries = queryObj.getOutputUrls();
