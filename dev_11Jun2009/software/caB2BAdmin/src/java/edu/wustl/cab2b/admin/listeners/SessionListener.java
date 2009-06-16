@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import java.lang.Runnable;
 import edu.wustl.cab2b.admin.util.Utility;
+import edu.wustl.cab2b.server.util.UtilityOperations;
 
 /**
  * @author atul_jawale
@@ -44,7 +45,7 @@ public class SessionListener implements HttpSessionListener {
         //This will create a thread for cache update and allow user to logout.
         new Thread(new Runnable() {
             public void run() {
-                Utility.refreshCab2bCache();
+                UtilityOperations.refreshCache();
 
             }
         }).start();
