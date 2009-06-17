@@ -996,22 +996,39 @@
 		<copy file="${lib.dir}/common/puretls.jar" todir="${dist.dir}" />
 	</target>
 
-	<!-- ==================================================================================
-				Developer's deployment target. This must be used by developers to 
-				install/deploy caB2B locally. Unlike BDA, this is not going to download
-				the JBoss on its own. It's developer's responsibility to setup JBoss and
-				define its path. 
-		================================================================================== -->
-	<property file="../build/install.properties" />
+	<!--==========================================================================
+		Developer's deployment target. This must be used by developers to 
+		install/deploy caB2B locally. Unlike BDA, this is not going to download
+		the JBoss on its own. It's developer's responsibility to setup JBoss and
+		define its path. 
+	 ===========================================================================-->
 	<property file="../build/project.properties" />
+	<property file="../build/install.properties" />
+	
+	<!-- Set application.base.path based on platform -->
+	<condition property="application.base.path" value="${application.base.path.linux}">
+		<or>
+			<os family="unix" />
+			<os family="mac" />
+		</or>
+	</condition>
+	<condition property="application.base.path" value="${application.base.path.windows}">
+		<os family="windows" />
+	</condition>
+	<property name="jboss.home" value="${application.base.path}/${jboss.relative.path}" />
 
-	<property name="cab2b-ds.file.name" value="cab2b-ds.xml" />
-	<property name="cab2b-ds.file" location="${conf.dir}/${cab2b-ds.file.name}" />
-	<property name="jboss.common.lib.dir" location="${jboss.home}/server/default/lib" />
-	<property name="jboss.deploy.dir" location="${jboss.home}/server/default/deploy" />
-	<property name="jboss.log.dir" location="${jboss.home}/server/default/log" />
+	<property name="jboss.common.lib.dir" location="${jboss.home}/server/${jboss.server.name}/lib" />
+	<property name="jboss.deploy.dir" location="${jboss.home}/server/${jboss.server.name}/deploy" />
+	<property name="jboss.log.dir" location="${jboss.home}/server/${jboss.server.name}/log" />
 
-	<target name="dev.deploy" depends="build.project.jar,build.ear,update.server,replace.datasource" description="Deploys EAR file to JBoss application server">
+	<property name="cab2b.ds.file" value="cab2b-ds.xml" />
+	<property name="cab2b.ds.from.path" location="../common/resources/jboss-conf" />
+	<property name="cab2b.ds.to.path" location="${jboss.home}/server/${jboss.server.name}/deploy" />
+	
+	<property name="ds-name" value="${application.context.name}" />
+	<property name="server-port" value="${jboss.server.port}" />
+	
+	<target name="dev.deploy" depends="initialize,build.project.jar,build.ear,update.server,deploy.datasource" description="Deploys EAR file to JBoss application server">
 		<ant antfile="${cab2badmin.location}/build.xml" dir="${cab2badmin.location}" target="war" inheritall="false" />
 		<echo message="Admin War Created" />
 
@@ -1041,15 +1058,20 @@
 		<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
 	</target>
 
-	<target name="replace.datasource">
-		<replace.db.properties.macro cfgfile="${jboss.deploy.dir}/${cab2bDS.file.name}" />
+	<target name="deploy.datasource">
+		<copy file="${cab2b.ds.from.path}/${cab2b.ds.file}" todir="${cab2b.ds.to.path}" overwrite="true" />
+		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@application.context.name@" value="${application.context.name}" />
+		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.url@" value="${database.url}" />
+		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.user@" value="${database.user}" />
+		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.password@" value="${database.password}" />
+		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.driver@" value="com.mysql.jdbc.Driver" />
 	</target>
+
 	<target name="update.server">
 		<delete dir="${jboss.home}/server/default/tmp/deploy" />
 
-		<copy overwrite="true" file="${cab2bDS.file}" todir="${jboss.deploy.dir}" />
 		<copy overwrite="true" file="${jbossjca.service.xml}" todir="${jboss.deploy.dir}" />
-		<copy overwrite="true" file="${log4j.xml.file}" todir="${jboss.deploy.dir}" />
+		<copy overwrite="true" file="${log4j.xml.file}" todir="${jboss.deploy.dir}/conf" />
 		<copy overwrite="true" file="lib/server/oracleDriver.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/server/mysql-connector-java-5.0.8-bin.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/common/hibernate3.jar" todir="${jboss.common.lib.dir}" />
@@ -1060,7 +1082,7 @@
 		<copy overwrite="true" file="lib/common/jce-jdk13-125.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/common/puretls.jar" todir="${jboss.common.lib.dir}" />
 
-		<mkdir dir="${jboss.home}/server/default/log" />
+		<mkdir dir="${jboss.log.dir}" />
 		<echo message="" file="${jboss.log.dir}/caB2B.log" append="false" />
 	</target>
 </project>
