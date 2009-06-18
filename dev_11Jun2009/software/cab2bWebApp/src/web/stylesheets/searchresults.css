@@ -42,7 +42,7 @@ div #failedservicespanel {
 	display: none;
 	position: absolute;
 	width: 50%;
-	height: 30%;
+	height: 14em;
 	top: 30%;
 	left: 30%;
 	z-index: 1001;
@@ -54,6 +54,7 @@ div #failedservicespanel {
 }
 
 div #failedservicespanelheader {
+    height: 1em;
     font-weight: bold;
 	padding: 0.5em 0em 0.4em 0em;
 	text-align: center;
@@ -64,7 +65,7 @@ div #failedservicespanelheader {
 }
 
 div #failedservicespanelbody {
-	height: 88%;
+	height: 12em;
 	overflow: auto;
 }
 
