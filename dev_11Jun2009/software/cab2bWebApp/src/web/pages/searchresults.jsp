@@ -98,7 +98,7 @@
 					</DIV>	
 				</TD>
 				<TD>
-					<SELECT class="select" name="serviceInstances" disabled/>
+					<SELECT class="select" style="width:14em;" name="serviceInstances" disabled/>
 						<logic:present name="serviceInstances">
 							<logic:iterate name="serviceInstances" id="serviceInstance">
 								<OPTION value="<bean:write name="serviceInstance"/>">
