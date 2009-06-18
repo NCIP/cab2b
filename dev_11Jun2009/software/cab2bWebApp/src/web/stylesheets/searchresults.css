@@ -85,5 +85,6 @@ div.even {
 }
 
 div.failedservice {
-	padding: 0.5em;
+	padding: 0.5em 0em 0.5em 0em;
+	width: 100%;
 }
