@@ -76,6 +76,8 @@ public interface Constants {
 
     /** Constant for display service instances failure message */
     public static final String FATAL_DISPLAY_SERVICE_INSTANCES_FAILURE = "fatalDisplayServiceInstancesFailure";
+    
+    public static final String SERVICE_INSTANCES_NOT_CONFIGURED = "serviceInstancesNotConfigured";
 
     /** Constant for query id */
     public static final String QUERY_ID = "queryId";
