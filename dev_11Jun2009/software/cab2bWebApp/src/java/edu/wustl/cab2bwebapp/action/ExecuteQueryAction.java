@@ -63,7 +63,8 @@ public class ExecuteQueryAction extends Action {
             if (request.getQueryString() == null) {
                 String[] modelGroupNames = (String[]) request.getParameterValues(Constants.MODEL_GROUPS);
                 SavedQueryBizLogic savedQueryBizLogic =
-                        (SavedQueryBizLogic) session.getServletContext().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+                        (SavedQueryBizLogic) session.getServletContext()
+                            .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
                 ICab2bQuery query =
                         savedQueryBizLogic.getQueryById(Long.parseLong(request.getParameter(Constants.QUERY_ID)));
                 UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
@@ -111,10 +112,15 @@ public class ExecuteQueryAction extends Action {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
-            ActionError error = new ActionError("fatal.executequery.failure");
+            ActionError error =
+                    new ActionError(
+                            e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? "message.serviceinstancesnotconfigured"
+                                    : "fatal.executequery.failure");
             errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, error);
             saveErrors(request, errors);
-            actionForward = Constants.FORWARD_FAILURE;
+            actionForward =
+                    e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? Constants.FORWARD_HOME
+                            : Constants.FORWARD_FAILURE;
         }
         return mapping.findForward(actionForward);
     }

@@ -136,10 +136,15 @@ public class KeywordSearchAction extends Action {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
-            ActionError error = new ActionError("fatal.keywordsearch.failure");
+            ActionError error =
+                    new ActionError(
+                            e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? "message.serviceinstancesnotconfigured"
+                                    : "fatal.keywordsearch.failure");
             errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, error);
             saveErrors(request, errors);
-            actionForward = Constants.FORWARD_FAILURE;
+            actionForward =
+                    e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? Constants.FORWARD_HOME
+                            : Constants.FORWARD_FAILURE;
         }
         return mapping.findForward(actionForward);
     }
