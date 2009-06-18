@@ -29,8 +29,27 @@
    if(selectedItemsCount>0)
   {
     processAJAXRequest('DisplaySavedSearches.do?modelGroups=' + document.getElementsByName('modelGroups')[singleSelectIndex].value, 'savedsearchespanelbody');
-	 if(selectedItemsCount==0)
-     document.getElementById('savedsearchespanelbody').innerHTML = '';	
+	if(selectedItemsCount==0)
+    document.getElementById('savedsearchespanelbody').innerHTML = '';	
+  }
+  <html:messages id="serviceInstancesNotConfigured">  
+  	if(confirm('<bean:message key="message.serviceinstancesnotconfigured"/>'))
+   {
+     validateDataTypeSelection();
+   }
+  </html:messages>  
+}
+
+ function validateDataTypeSelection()
+{
+   if(selectedItemsCount>0)
+  {
+    document.forms[0].action='DisplayServiceInstances.do';
+    document.forms[0].submit()
+  }
+   else
+  {
+    alert('<bean:message key="alert.selectdatatype"/>');
   }
 }
 
@@ -97,7 +116,7 @@
 						</DIV>						
 					</DIV>		
 					<DIV>
-						<A href="#this" class="link" onClick="if(selectedItemsCount>0){document.forms[0].action='DisplayServiceInstances.do';document.forms[0].submit()}else{alert('<bean:message key="alert.selectdatatype"/>');}"><bean:message key="link.databasestosearch"/></A>
+						<A href="#this" class="link" onClick="validateDataTypeSelection()"><bean:message key="link.databasestosearch"/></A>
 					</DIV>
 				</DIV>
 			</DIV>
