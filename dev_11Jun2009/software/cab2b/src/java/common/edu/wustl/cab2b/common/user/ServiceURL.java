@@ -58,7 +58,7 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
      * @return hostingCenterName
      * @hibernate.id name="hostingResearchCenter" column="HOSTING_CENTER" type="String" length="254" not-null="false"
      */
-    private String getHostingResearchCenter() {
+    public String getHostingResearchCenter() {
         return hostingResearchCenter;
     }
 

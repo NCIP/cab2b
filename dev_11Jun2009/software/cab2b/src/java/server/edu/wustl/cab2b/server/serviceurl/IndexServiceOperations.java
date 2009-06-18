@@ -196,7 +196,7 @@ public class IndexServiceOperations {
     private static ServiceURLInterface merge(ServiceURLInterface urlsFromDatabase,
                                              ServiceURLInterface urlsFromIndexService) {
 
-        String hostingCenterName = urlsFromIndexService.getHostingCenter();
+        String hostingCenterName = urlsFromIndexService.getHostingResearchCenter();
         if (hostingCenterName != null && hostingCenterName.length() != 0) {
             urlsFromDatabase.setHostingCenter(hostingCenterName);
         }
