@@ -21,6 +21,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.globus.gsi.GlobusCredential;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -136,11 +137,11 @@ public class KeywordSearchAction extends Action {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
-            ActionError error =
-                    new ActionError(
+            ActionMessage message =
+                    new ActionMessage(
                             e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? "message.serviceinstancesnotconfigured"
                                     : "fatal.keywordsearch.failure");
-            errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, error);
+            errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, message);
             saveErrors(request, errors);
             actionForward =
                     e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? Constants.FORWARD_HOME

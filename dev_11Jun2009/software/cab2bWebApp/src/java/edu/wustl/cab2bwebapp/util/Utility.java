@@ -6,7 +6,6 @@ package edu.wustl.cab2bwebapp.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +25,7 @@ import edu.wustl.cab2b.server.user.UserOperations;
 import edu.wustl.cab2bwebapp.bizlogic.ApplicationBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.ModelGroupBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
+import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.common.querysuite.metadata.category.Category;
 
 /**
@@ -148,12 +148,10 @@ public class Utility {
                 if (!user.isAdmin()) {
                     selectedUrls = getUserConfiguredUrls(new UserOperations().getAdmin(), modelGroupNames);
                 } else {
-                    throw new Exception(
-                            "Neither User nor Administrator has configured any Service Instance for this Model Group");
+                    throw new Exception(Constants.SERVICE_INSTANCES_NOT_CONFIGURED);
                 }
             }
         }
         return selectedUrls;
     }
-
 }

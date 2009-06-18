@@ -17,11 +17,11 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.globus.gsi.GlobusCredential;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -112,11 +112,11 @@ public class ExecuteQueryAction extends Action {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
-            ActionError error =
-                    new ActionError(
+            ActionMessage message =
+                    new ActionMessage(
                             e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? "message.serviceinstancesnotconfigured"
                                     : "fatal.executequery.failure");
-            errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, error);
+            errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, message);
             saveErrors(request, errors);
             actionForward =
                     e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? Constants.FORWARD_HOME
