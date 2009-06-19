@@ -1,6 +1,5 @@
 package edu.wustl.cab2b.util;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
@@ -16,7 +15,7 @@ public class ServerProperties {
      * ResourceBundle for ServerProperties
      */
     protected Properties properties = new Properties();
-    
+
     public ServerProperties() {
         try {
             URL url = ServerProperties.class.getClassLoader().getResource("server.properties");
@@ -27,12 +26,12 @@ public class ServerProperties {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Gives the database server IP mentioned in server.properties
      * @return String user name
      */
-    public  String getDatabaseServer() {
+    public String getDatabaseServer() {
         return properties.getProperty("database.server.ip");
     }
 
@@ -40,7 +39,7 @@ public class ServerProperties {
      * Gives the database server Port mentioned in server.properties
      * @return String user name
      */
-    public  String getDatabaseServerPort() {
+    public String getDatabaseServerPort() {
         return properties.getProperty("database.server.port");
     }
 
@@ -48,7 +47,7 @@ public class ServerProperties {
      * Gives the database Name mentioned in server.properties
      * @return String user name
      */
-    public  String getDatabaseName() {
+    public String getDatabaseName() {
         return properties.getProperty("database.name");
     }
 
@@ -56,7 +55,7 @@ public class ServerProperties {
      * Gives the database User Name mentioned in server.properties
      * @return String user name
      */
-    public  String getDatabaseUserName() {
+    public String getDatabaseUserName() {
         return properties.getProperty("database.username");
     }
 
@@ -64,7 +63,7 @@ public class ServerProperties {
      * Gives the database User Password mentioned in server.properties
      * @return String user name
      */
-    public  String getDatabasePassword() {
+    public String getDatabasePassword() {
         return properties.getProperty("database.password");
     }
 }
