@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<!-- Contains all the actions under the searchData Menu -->
+
+<struts>
+    <package name="SearchData"  extends="tiles-default" >
+
+		<!-- this action is only for ajax call  -->	
+		<action name="CuratePath" class="edu.wustl.cab2b.admin.searchdata.action.CuratePath">
+      	  <result name="failure" >/jsp/default.jsp</result>
+          <result name="success" type="tiles">action.CuratePaths</result>
+       </action>
+	
+        <action name="LoadServiceModels" class="edu.wustl.cab2b.admin.searchdata.action.LoadServiceModels">
+            <result name="wait" >/jsp/wait.jsp  </result>
+            <result name="success" type="tiles">action.loadServiceModels</result>
+       </action>
+       
+       <action name="DefineModelGroups" class="edu.wustl.cab2b.admin.searchdata.action.DefineModelGroups">
+            <result name="success" type="tiles">action.defineModelGroups</result>
+       </action>
+       
+       <action name="SaveModelGroup" class="edu.wustl.cab2b.admin.searchdata.action.SaveModelGroup">
+            <result name="success" type="tiles">action.saveSuccessModelGroups</result>
+            <result name="failure" type="tiles">action.saveFailureModelGroups</result>
+            <result name="error" type="tiles">action.defineModelGroups</result>
+       </action>
+        
+        <action name="LoadModels" class="edu.wustl.cab2b.admin.searchdata.action.CaDSRLoadModel">
+	        <result name="failure" >/jsp/default.jsp</result>
+	        <result name="success" type="tiles">action.loadModels</result>
+		</action>
+        
+        <action name="LoadSelectedModels" class="edu.wustl.cab2b.admin.searchdata.action.LoadModel">
+            <result name="failure" >/jsp/default.jsp</result>
+             <result name="details" >/jsp/searchData/ModelLoadDetails.jsp</result>
+            <result name="success" type="tiles" >action.confirmLoadModels</result>
+		</action>
+        
+        <action name="CreateCategoryInformation" class="com.opensymphony.xwork2.ActionSupport">
+	        <result name="failure" >/jsp/default.jsp</result>
+		    <result name="success" type="tiles">action.createCategoryInformation</result>
+	     </action>
+	     
+	     <action name="CreateCategory" class="edu.wustl.cab2b.admin.searchdata.action.CreateCategory">
+	        <result name="failure" >/jsp/default.jsp</result>
+            <result name="success" type="tiles">action.createCategory</result>
+	     </action>
+	     
+	     <action name="AttributeOrder" class="edu.wustl.cab2b.admin.searchdata.action.CreateCategoryAttributeOrder">
+	        <result name="failure" type="tiles">action.categoryError</result>
+	        <result name="categoryErrorDetail" >/jsp/searchData/CategoryErrorDetail.jsp</result>
+	        <result name="Pass" type="tiles">action.categorySuccess</result>
+            <result name="success" type="tiles">action.attributeOrder</result>
+	     </action>
+	     
+	      <action name="SearchCategory" class="edu.wustl.cab2b.admin.searchdata.action.SearchCategory">
+	        <result name="failure" >/jsp/default.jsp</result>
+            <result name="success" type="tiles">action.createCategory</result>
+	     </action>
+	     
+	     
+	     <action name="CuratePaths" class="com.opensymphony.xwork2.ActionSupport">
+	        <result name="failure" >/jsp/default.jsp</result>
+            <result name="success" type="tiles" >action.CuratePaths</result>
+	     </action>
+	     
+	     <action name="SearchServiceInstances" class="edu.wustl.cab2b.admin.searchdata.action.ServiceInstances">
+	        <interceptor-ref name="defaultStack"/>
+	        <result name="failure" >/jsp/default.jsp</result>
+	        <result name="success" type="tiles">action.loadServiceInstance</result>
+	        <result name="exception" >/jsp/GlobalExceptionPage.jsp</result>
+	     </action>
+	<!--     
+	      <action name="RecordNameSettings" class="edu.wustl.cab2b.admin.searchdata.action.ConnectCategory">
+	        <result name="failure" >/jsp/default.jsp</result>
+            <result name="success" type="tiles">action.loadServiceInstance</result>
+	     </action>
+	     
+	 -->      
+	     
+	     <action name="ConnectCategory" class="com.opensymphony.xwork2.ActionSupport">
+	        <result name="failure" >/jsp/default.jsp</result>
+            <result name="success" type="tiles" >action.ConnectCategory</result>
+	     </action>
+	     	     
+	     <action name="SaveServiceInstance" class="edu.wustl.cab2b.admin.searchdata.action.SaveServiceInstance">
+	        <result name="failure" type="tiles">action.ShowFailedServiceInstance</result>
+            <result name="success" type="tiles">action.ShowSuccessServiceInstance</result>
+	     </action>
+	     
+	     <!-- AJAX action -->
+	     <action name="InterModelMatching" class="edu.wustl.cab2b.admin.searchdata.action.InterModelMatching">
+	     	<result name="failure" >/jsp/default.jsp</result>
+            <result name="success" >/jsp/searchData/InterModelMatchingPairs.jsp</result>
+	     </action>
+		<!--Ajax action -->
+		 <action name="PersistInterModel" class="edu.wustl.cab2b.admin.searchdata.action.PersistInterModel">
+	     	<result name="failure" >/jsp/default.jsp</result>
+            <result name="success" >/jsp/default.jsp</result>
+	     </action>
+    </package>
+</struts>
