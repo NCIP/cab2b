@@ -397,7 +397,7 @@
 
 		<mkdir dir="${server.jar.dir}/production" />
 		<copy todir="${server.jar.dir}/production">
-			<fileset dir="${conf.dir}/Production">
+			<fileset dir="${conf.dir}/production">
 				<include name="*.*" />
 			</fileset>
 		</copy>
