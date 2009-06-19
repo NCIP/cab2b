@@ -23,7 +23,7 @@
 
 	<property name="reports.dir" location="${workarea.dir}/reports" />
 	<property name="cactusReports.dir" location="${reports.dir}/cactus" />
-	<property name="build.log.dir" location="${reports.dir}/build" /> 
+	<property name="build.log.dir" location="${reports.dir}/build" />
 	<property name="javadoc.dir" location="${reports.dir}/javadoc" />
 	<property name="install.hibernate.cfg" value="installHibernate.cfg.xml" />
 
@@ -952,7 +952,9 @@
 	</macrodef>
 
 	<!-- ================Target for deploying all 3 modules of cab2b =============================== -->
-	<target name="dist" depends="initialize,build.project.jar,build.ear" description="Creates the distribution unit i.e., a complete cab2bServer.ear">
+	<target name="dist" depends="build.all,distribute" description="Creates the distribution unit and copy all ariticats to distribution folder" />
+
+	<target name="build.all" depends="initialize,build.project.jar,build.ear" description="Builds the distribution unit i.e., a complete cab2bServer.ear">
 		<ant inheritAll="false" inheritRefs="true" antfile="${cab2badmin.location}/build.xml" target="war" dir="${cab2badmin.location}">
 			<property name="ds-name" value="${ds-name}" />
 		</ant>
@@ -980,7 +982,9 @@
 		<copy file="${workarea.dir}/cab2b.war" todir="${workarea.dir}/cab2bServer" />
 		<delete file="${ear.file}" />
 		<ear basedir="${workarea.dir}/cab2bServer" destfile="${ear.file}" appxml="${workarea.dir}/cab2bServer/META-INF/application.xml" includes="**/*.*" />
+	</target>
 
+	<target name="distribute">
 		<copy file="${workarea.dir}/cab2bServer.ear" todir="${dist.dir}" />
 		<copy file="${jbossjca.service.xml}" todir="${dist.dir}" />
 		<copy file="${log4j.xml.file}" todir="${dist.dir}" />
@@ -1004,7 +1008,7 @@
 	 ===========================================================================-->
 	<property file="../build/project.properties" />
 	<property file="../build/install.properties" />
-	
+
 	<!-- Set application.base.path based on platform -->
 	<condition property="application.base.path" value="${application.base.path.linux}">
 		<or>
@@ -1024,50 +1028,11 @@
 	<property name="cab2b.ds.file" value="cab2b-ds.xml" />
 	<property name="cab2b.ds.from.path" location="../common/resources/jboss-conf" />
 	<property name="cab2b.ds.to.path" location="${jboss.home}/server/${jboss.server.name}/deploy" />
-	
+
 	<property name="ds-name" value="${application.context.name}" />
 	<property name="server-port" value="${jboss.server.port}" />
-	
-	<target name="dev.deploy" depends="initialize,build.project.jar,build.ear,update.server,deploy.datasource" description="Deploys EAR file to JBoss application server">
-		<ant antfile="${cab2badmin.location}/build.xml" dir="${cab2badmin.location}" target="war" inheritall="false" />
-		<echo message="Admin War Created" />
 
-		<ant antfile="${cab2bwebapp.location}/build.xml" dir="${cab2bwebapp.location}" target="war" inheritall="false" />
-		<echo message="caB2B Web App War Created" />
-
-		<delete>
-			<fileset dir="${workarea.dir}">
-				<include name="cab2b-common.jar" />
-				<include name="cab2b-server.jar" />
-				<include name="cab2b-client.jar" />
-			</fileset>
-		</delete>
-
-		<move file="${ear.file}" todir="." />
-		<antcall target="create.cab2b.war" />
-		<move file="./cab2bServer.ear" todir="${workarea.dir}" />
-
-		<unjar src="${ear.file}" dest="${workarea.dir}/cab2bServer" />
-		<replace.application.xml applicationfile="${workarea.dir}/cab2bServer/META-INF/application.xml" />
-		<copy file="${cab2badmin.location}/build/cab2badmin.war" todir="${workarea.dir}/cab2bServer" />
-		<copy file="${cab2bwebapp.location}/build/cab2bWebApp.war" todir="${workarea.dir}/cab2bServer" />
-		<copy file="${workarea.dir}/cab2b.war" todir="${workarea.dir}/cab2bServer" />
-		<delete file="${ear.file}" />
-		<ear basedir="${workarea.dir}/cab2bServer" destfile="${ear.file}" appxml="${workarea.dir}/cab2bServer/META-INF/application.xml" includes="**/*.*" />
-
-		<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
-	</target>
-
-	<target name="deploy.datasource">
-		<copy file="${cab2b.ds.from.path}/${cab2b.ds.file}" todir="${cab2b.ds.to.path}" overwrite="true" />
-		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@application.context.name@" value="${application.context.name}" />
-		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.url@" value="${database.url}" />
-		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.user@" value="${database.user}" />
-		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.password@" value="${database.password}" />
-		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.driver@" value="com.mysql.jdbc.Driver" />
-	</target>
-
-	<target name="update.server">
+	<target name="dev.deploy" depends="build.all" description="Deploys EAR file to JBoss application server">
 		<delete dir="${jboss.home}/server/default/tmp/deploy" />
 
 		<copy overwrite="true" file="${jbossjca.service.xml}" todir="${jboss.deploy.dir}" />
@@ -1084,6 +1049,15 @@
 
 		<mkdir dir="${jboss.log.dir}" />
 		<echo message="" file="${jboss.log.dir}/caB2B.log" append="false" />
+		
+		<copy file="${cab2b.ds.from.path}/${cab2b.ds.file}" todir="${cab2b.ds.to.path}" overwrite="true" />
+		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@application.context.name@" value="${application.context.name}" />
+		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.url@" value="${database.url}" />
+		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.user@" value="${database.user}" />
+		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.password@" value="${database.password}" />
+		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.driver@" value="com.mysql.jdbc.Driver" />
+
+		<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
 	</target>
 </project>
 
