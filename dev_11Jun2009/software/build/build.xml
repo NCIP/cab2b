@@ -697,3 +697,4 @@
 		<generate-uml uml.dir="${uml.dir}" src.java.dir="${cab2b-webapp.base.dir}/src/java" uml.source.path="cab2b.classpath.ref" />
 	</target>
 </project>
+
