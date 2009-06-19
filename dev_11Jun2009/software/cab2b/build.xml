@@ -23,7 +23,7 @@
 
 	<property name="reports.dir" location="${workarea.dir}/reports" />
 	<property name="cactusReports.dir" location="${reports.dir}/cactus" />
-	<property name="build.log.dir" location="${reports.dir}/build" />
+	<property name="build.log.dir" location="${reports.dir}/build" /> 
 	<property name="javadoc.dir" location="${reports.dir}/javadoc" />
 	<property name="install.hibernate.cfg" value="installHibernate.cfg.xml" />
 
