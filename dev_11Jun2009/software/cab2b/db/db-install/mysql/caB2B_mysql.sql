@@ -74,7 +74,7 @@ create table DATA_CATEGORIAL_CLASS (
 create table CAB2B_MODEL_GROUP (
 	MODEL_ID bigint not null auto_increment,
 	MODEL_GROUP_NAME varchar(255) unique not null,
-	SECURED bit null,
+	SECURED tinyint null,
 	DESCRIPTION text null,
 	ENTITY_GROUP_NAMES text not null,
 	primary key(MODEL_ID)
