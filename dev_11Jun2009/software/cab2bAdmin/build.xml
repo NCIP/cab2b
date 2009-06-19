@@ -34,7 +34,7 @@
 		<copy todir="${workarea.dir}">
 			<fileset file="${conf.dir}/web.xml" />
 		</copy>
-		<replace file="${workarea.dir}/web.xml" token="DS-NAME" value="${datasource.name}" />
+		<replace file="${workarea.dir}/web.xml" token="DS-NAME" value="${ds-name}" />
 		<war destfile="${war.file}" webxml="${workarea.dir}/web.xml" update="true">
 			<zipfileset dir="${target.dir}/images" prefix="images" />
 			<zipfileset dir="${target.dir}/jsp" prefix="jsp" />
