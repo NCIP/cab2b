@@ -17,7 +17,7 @@
 	</logic:notPresent>
 	<logic:present name="addlimit">
 		<logic:iterate name="savedSearches" id="savedSearch" type="edu.wustl.cab2b.common.queryengine.ICab2bQuery">
-			<A href="#this" class="link" title="<bean:write name="savedSearch" property="description"/>" name="savedquery" id="<bean:write name="savedSearch" property="id"/>" onClick="updateLinks(this);processAJAXRequest('AddLimit.do?queryId=<bean:write name="savedSearch" property="id"/>', 'definelimitspanelbody');"><bean:write name="savedSearch" property="name"/></A>
+			<A href="#this" class="link" title="<bean:write name="savedSearch" property="description"/>" name="savedquery" id="<bean:write name="savedSearch" property="id"/>" onClick="updateLinks(this);processAJAXRequest('AddLimit.do?queryId=<bean:write name="savedSearch" property="id"/>', 'definelimitspanelbody');setRowsStyle();"><bean:write name="savedSearch" property="name"/></A>
 			<DIV class="text" style="display: inline; line-height: 1.8em"></DIV><BR/>
 		</logic:iterate>
 	</logic:present>			

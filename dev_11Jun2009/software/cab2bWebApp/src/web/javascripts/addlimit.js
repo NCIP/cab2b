@@ -6,6 +6,7 @@
   var objs = document.getElementsByName("savedquery");
    if (objs.length > 0) 
   {
+    clearTimeout("showAddLimitForm()");
 	 for(var i = 0; i < objs.length; i++) 
 	{
 	   if (objs[i] && objs[i].id == document.getElementById("queryId").value) 
@@ -13,14 +14,36 @@
 		objs[i].className = 'selectedquery';
 		document.getElementById('queryname').innerHTML = objs[i].innerHTML;
 		processAJAXRequest('AddLimit.do?queryId=' + objs[i].id,	'definelimitspanelbody');
-		document.getElementById("queryId").value = objs[i].id;
-		clearTimeout("showAddLimitForm()");
+		document.getElementById("queryId").value = objs[i].id;		
  	  }
 	}
+	setRowsStyle();
   }
    else
   {
 	setTimeout("showAddLimitForm()", 1);
+  }
+}
+
+ function setRowsStyle()
+{
+   if (document.getElementById('definelimitspaneltable')) 
+  {
+	var rows = document.getElementById('definelimitspaneltable').getElementsByTagName('tr')
+	var className = 'formfieldspanel';
+	 for(var i=0;i<rows.length;i++)
+	{
+	   if(rows[i].innerHTML.length<3)
+	  {
+		continue;
+	  }
+	  rows[i].className = className;
+	  className = className=='formfieldspanel'?'formfieldspanelalternate':'formfieldspanel';
+	}
+  }
+   else
+  {
+	setTimeout("setRowsStyle()", 1);
   }
 }
 
