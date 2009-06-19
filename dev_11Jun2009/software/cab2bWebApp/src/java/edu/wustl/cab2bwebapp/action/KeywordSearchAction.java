@@ -7,6 +7,7 @@ package edu.wustl.cab2bwebapp.action;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -24,8 +24,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.globus.gsi.GlobusCredential;
 
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2bwebapp.actionform.KeywordSearchForm;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
@@ -34,7 +34,8 @@ import edu.wustl.cab2bwebapp.bizlogic.executequery.TransformedResultObjectWithCo
 import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.cab2bwebapp.dvo.SavedQueryDVO;
 import edu.wustl.cab2bwebapp.util.Utility;
-import edu.wustl.common.util.logger.Logger;
+import org.apache.log4j.Logger;
+
 
 /**
  * @author chetan_patil
@@ -43,7 +44,7 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class KeywordSearchAction extends Action {
 
-    private static final org.apache.log4j.Logger logger = Logger.getLogger(KeywordSearchAction.class);
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(KeywordSearchAction.class);
 
     /**
      * The execute method is called by the struts action flow and it calls the code to retrieve the 
@@ -60,11 +61,16 @@ public class KeywordSearchAction extends Action {
                                  HttpServletResponse response) throws IOException, ServletException {
         String actionForward = Constants.FORWARD_SEARCH_RESULTS;
         try {
-            HttpSession session = request.getSession();
+
+            ICab2bQuery selectedQueryObj = null;
+            Collection<ICab2bQuery> queries = null;
+            ExecuteQueryBizLogic executeQueryBizLogic = null;
             Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults = null;
+
+            HttpSession session = request.getSession();
+
             if (request.getQueryString() == null) {
                 KeywordSearchForm keywordSearchForm = (KeywordSearchForm) form;
-
                 SavedQueryBizLogic savedQueryBizLogic =
                         (SavedQueryBizLogic) session.getServletContext()
                             .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
@@ -72,16 +78,14 @@ public class KeywordSearchAction extends Action {
                         (GlobusCredential) session.getAttribute(Constants.GLOBUS_CREDENTIAL);
                 UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
                 String[] modelGroupNames = keywordSearchForm.getModelGroups();
-
-                Collection<ICab2bQuery> queries =
-                        Utility.verifyModelGroups(modelGroupNames, globusCredential, savedQueryBizLogic);
+                queries = Utility.verifyModelGroups(modelGroupNames, globusCredential, savedQueryBizLogic);
                 if (modelGroupNames == null) {
                     modelGroupNames = Utility.getModelGroups(globusCredential);
                 }
-                ExecuteQueryBizLogic executeQueryBizLogic =
+                executeQueryBizLogic =
                         new ExecuteQueryBizLogic(queries, globusCredential, keywordSearchForm.getKeyword(), user,
                                 modelGroupNames);
-                List<Map<AttributeInterface, Object>> finalResult = executeQueryBizLogic.getFinalResult();
+
                 searchResults = executeQueryBizLogic.getSearchResults();
                 Collection<ICab2bQuery> allQueries = searchResults.keySet();
                 List<SavedQueryDVO> queryList = new ArrayList<SavedQueryDVO>();
@@ -92,16 +96,24 @@ public class KeywordSearchAction extends Action {
                     savedQuery.setResultCount(searchResults.get(queryObj).getResultForAllUrls().size());
                     queryList.add(savedQuery);
                 }
-                session.setAttribute(Constants.FAILED_SERVICES, executeQueryBizLogic.getFailedServices());
-                session.setAttribute(Constants.FAILED_SERVICES_COUNT, executeQueryBizLogic.getFailedServices()
-                    .size());
                 session.setAttribute(Constants.SAVED_QUERIES, queryList);
-                session
-                    .setAttribute(Constants.SERVICE_INSTANCES, executeQueryBizLogic.getUrlsForSelectedQueries());
-                session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
-                session.setAttribute(Constants.SEARCH_RESULTS_VIEW, executeQueryBizLogic
-                    .getSearchResultsView(finalResult));
+                Iterator<ICab2bQuery> iter = allQueries.iterator();
+                if (iter.hasNext()) {
+                    selectedQueryObj = iter.next();
+                }
+                TransformedResultObjectWithContactInfo selectedQueryResult = searchResults.get(selectedQueryObj);
+                List<String> urlsForSelectedQueries = selectedQueryObj.getOutputUrls();
+                urlsForSelectedQueries.add(0, "All Hosting Institutions");
+                Collection<ServiceURLInterface> failedURLS =
+                        ExecuteQueryBizLogic.getFailedServiceUrls(selectedQueryResult.getFailedServiceUrl());
 
+                session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedURLS != null ? failedURLS.size() : 0);
+                session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
+                session.setAttribute(Constants.SERVICE_INSTANCES, urlsForSelectedQueries);
+                session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
+                session.setAttribute(Constants.SEARCH_RESULTS_VIEW, ExecuteQueryBizLogic
+                    .getSearchResultsView(selectedQueryResult.getResultForAllUrls(), selectedQueryResult
+                        .getAllowedAttributes()));
             } else {
                 String selectedQueryName = request.getParameter(Constants.SAVED_QUERIES);
                 if (selectedQueryName != null) {
@@ -120,16 +132,29 @@ public class KeywordSearchAction extends Action {
                         searchResults =
                                 (Map<ICab2bQuery, TransformedResultObjectWithContactInfo>) session
                                     .getAttribute(Constants.SEARCH_RESULTS);
-                        Collection<ICab2bQuery> queries = searchResults.keySet();
-                        ExecuteQueryBizLogic executeQueryBizLogic =
-                                new ExecuteQueryBizLogic(queries, selectedQueryName + "#", searchResults);
-                        session.setAttribute(Constants.SEARCH_RESULTS_VIEW, new ExecuteQueryBizLogic()
-                            .getSearchResultsView(executeQueryBizLogic.getFinalResult()));
-                        session.setAttribute(Constants.FAILED_SERVICES, executeQueryBizLogic.getFailedServices());
-                        session.setAttribute(Constants.FAILED_SERVICES_COUNT, executeQueryBizLogic
-                            .getFailedServices().size());
-                        session.setAttribute(Constants.SERVICE_INSTANCES, executeQueryBizLogic
-                            .getUrlsForSelectedQueries());
+                        queries = searchResults.keySet();
+                        for (ICab2bQuery queryObj : queries) {
+                            if (queryObj.getName().equals(selectedQueryName + "#")) {
+                                selectedQueryObj = queryObj;
+                                break;
+                            }
+                        }
+                        TransformedResultObjectWithContactInfo selectedQueryResult =
+                                searchResults.get(selectedQueryObj);
+                        List<String> urlsForSelectedQueries = selectedQueryObj.getOutputUrls();
+                        urlsForSelectedQueries.add(0, "All Hosting Institutions");
+                        Collection<ServiceURLInterface> failedURLS =
+                                ExecuteQueryBizLogic.getFailedServiceUrls(selectedQueryResult
+                                    .getFailedServiceUrl());
+
+                        session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedURLS != null ? failedURLS
+                            .size() : 0);
+                        session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
+                        session.setAttribute(Constants.SERVICE_INSTANCES, urlsForSelectedQueries);
+                        session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
+                        session.setAttribute(Constants.SEARCH_RESULTS_VIEW, ExecuteQueryBizLogic
+                            .getSearchResultsView(selectedQueryResult.getResultForAllUrls(), selectedQueryResult
+                                .getAllowedAttributes()));
                         actionForward = Constants.FORWARD_SEARCH_RESULTS_PANEL;
                     }
                 }

@@ -17,8 +17,11 @@
    else
   {
     clearTimeout("updateView()");
-	document.getElementById("failedservicescount").innerHTML = document.getElementById("failedservicescountAJAX").innerHTML;    
-    document.getElementById("failedservicespanelbody").innerHTML = document.getElementById("failedservicesAJAX").innerHTML;    
+	 if(document.getElementById("failedservicescount"))
+	{
+	  document.getElementById("failedservicescount").innerHTML = document.getElementById("failedservicescountAJAX").innerHTML;    
+      document.getElementById("failedservicespanelbody").innerHTML = document.getElementById("failedservicesAJAX").innerHTML;    
+	}
     var spanObjs = document.getElementById("centerpanelcontent").getElementsByTagName('SPAN');
     var divObjs = document.getElementById("centerpanelcontent").getElementsByTagName('DIV');
      for(var i=0;i<spanObjs.length;i++)
@@ -98,7 +101,7 @@
 					</DIV>	
 				</TD>
 				<TD>
-					<SELECT class="select" style="width:14em;" name="serviceInstances" disabled/>
+					<SELECT class="select" name="serviceInstances" disabled/>
 						<logic:present name="serviceInstances">
 							<logic:iterate name="serviceInstances" id="serviceInstance">
 								<OPTION value="<bean:write name="serviceInstance"/>">

@@ -47,11 +47,14 @@ import gov.nih.nci.cagrid.fqp.processor.exceptions.FederatedQueryProcessingExcep
  */
 public abstract class AbstractQueryResultTransformer<R extends IRecord, C extends ICategorialClassRecord>
         implements IQueryResultTransformer<R, C> {
-    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(AbstractQueryResultTransformer.class);
+    private static final Logger logger =
+            edu.wustl.common.util.logger.Logger.getLogger(AbstractQueryResultTransformer.class);
 
     protected QueryLogger queryLogger;
 
     private Collection<FailedTargetURL> failedQueryUrlList = new ArrayList<FailedTargetURL>();
+
+    private ExecutorService executor = Executors.newCachedThreadPool();
 
     public AbstractQueryResultTransformer() {
         queryLogger = new QueryLogger();
@@ -116,10 +119,12 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
         DCQLQueryResultsCollection queryResults = null;
         try {
             QueryExecutionParameters queryParameter = new QueryExecutionParameters();
+
             TargetDataServiceQueryBehavior targetBehaviour = new TargetDataServiceQueryBehavior();
             targetBehaviour.setFailOnFirstError(false);
+
             queryParameter.setTargetDataServiceQueryBehavior(targetBehaviour);
-            ExecutorService executor = Executors.newFixedThreadPool(query.getTargetServiceURL().length);
+
             FederatedQueryEngine federatedQueryEngine = new FederatedQueryEngine(cred, queryParameter, executor);
             FQPQueryListener listener = new FQPQueryListener(query);
             federatedQueryEngine.addStatusListener(listener);
@@ -127,16 +132,12 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             logger.info("Executing DCQL... Target is : " + query.getTargetObject().getName());
             queryResults = federatedQueryEngine.execute(query);
             failedQueryUrlList.addAll(listener.getFailedURLs().values());
-            for (FailedTargetURL url : listener.getFailedURLs().values()) {
-                logger.info("FailedURL : " + url.getTargetUrl());
-                logger.info("FailedURL Target Class : "
-                        + ((gov.nih.nci.cagrid.dcql.Object) url.getTargetObject()).getName());
-            }
+
             logger.info("Executed DCQL successfully.");
         } catch (FederatedQueryProcessingException e) {
             e.printStackTrace();
             throw new RuntimeException(Utility.getStackTrace(e), ErrorCodeConstants.QM_0004);
-        }        
+        }
         Map<String, CQLQueryResults> res = new HashMap<String, CQLQueryResults>();
         for (DCQLResult dcqlQueryResult : queryResults.getDCQLResult()) {
             res.put(dcqlQueryResult.getTargetServiceURL(), dcqlQueryResult.getCQLQueryResultCollection());
@@ -172,10 +173,8 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
     public IQueryResult<C> getCategoryResults(DCQLQuery query, CategorialClass categorialClass,
                                               GlobusCredential cred) {
         Set<AttributeInterface> categoryAttributes = new HashSet<AttributeInterface>();
-
         for (CategorialAttribute categorialAttr : categorialClass.getCategorialAttributeCollection()) {
-            AttributeInterface categoryAttribute = categorialAttr.getCategoryAttribute();
-            categoryAttributes.add(categoryAttribute);
+            categoryAttributes.add(categorialAttr.getCategoryAttribute());
         }
 
         IQueryResult<R> classResults = getResults(query, categorialClass.getCategorialClassEntity(), cred);
@@ -187,8 +186,8 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             for (R rec : entry.getValue()) {
                 C catRec = createCategoryRecord(categorialClass, categoryAttributes, rec.getRecordId());
                 for (CategorialAttribute catAttr : categorialClass.getCategorialAttributeCollection()) {
-                    catRec.putValueForAttribute(catAttr.getCategoryAttribute(),
-                                                rec.getValueForAttribute(catAttr.getSourceClassAttribute()));
+                    catRec.putValueForAttribute(catAttr.getCategoryAttribute(), rec.getValueForAttribute(catAttr
+                        .getSourceClassAttribute()));
                     copyFromRecord(catRec, rec);
                 }
                 catResult.addRecord(url, catRec);

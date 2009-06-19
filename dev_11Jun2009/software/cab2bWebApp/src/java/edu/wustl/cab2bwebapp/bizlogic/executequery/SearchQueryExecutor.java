@@ -26,8 +26,7 @@ import edu.wustl.common.querysuite.queryobject.IRule;
 public class SearchQueryExecutor {
 
     /**
-     * This method retrieves all keyword queries corresponding to the given entity groups and created/owned by the given
-     * user. Before execution, the provided keyword is replaced with the values of the conditions in all the queries.
+     * This method executes all the given regular queries
      *
      * @param keyword value to be searched
      * @param globusCredential prxoy certificate of the user
@@ -42,20 +41,13 @@ public class SearchQueryExecutor {
             }
         }
 
-        Map<ICab2bQuery, IQueryResult<? extends IRecord>> result =
-                new HashMap<ICab2bQuery, IQueryResult<? extends IRecord>>();
-        for (ICab2bQuery query : regularQueries) {
-            IQueryResult<? extends IRecord> queryResult =
-                    new QueryExecutor(query, globusCredential).executeQuery();
-            result.put(query, queryResult);
-        }
-
-        return transformResult(result);
+        return executeAll(regularQueries, globusCredential);
     }
 
     /**
-     * This method retrieves all keyword queries corresponding to the given entity groups and created/owned by the given
-     * user. Before execution, the provided keyword is replaced with the values of the conditions in all the queries.
+     * This method executes all the given keyword queries. Before execution, the provided keyword is replaced 
+     * with the values of the conditions in all the queries.
+     * 
      * @param keywordQueries
      * @param keyword
      * @param globusCredential
@@ -69,13 +61,17 @@ public class SearchQueryExecutor {
             if (!query.isKeywordSearch()) {
                 throw new IllegalStateException(query.getName() + " is not a keyword search query.");
             }
+            insertKeyword(query, keyword);
         }
 
+        return executeAll(keywordQueries, globusCredential);
+    }
+
+    private Map<ICab2bQuery, TransformedResultObjectWithContactInfo> executeAll(Collection<ICab2bQuery> queries,
+                                                                                GlobusCredential globusCredential) {
         Map<ICab2bQuery, IQueryResult<? extends IRecord>> result =
                 new HashMap<ICab2bQuery, IQueryResult<? extends IRecord>>();
-        for (ICab2bQuery query : keywordQueries) {
-            insertKeyword(query, keyword);
-
+        for (ICab2bQuery query : queries) {
             IQueryResult<? extends IRecord> queryResult =
                     new QueryExecutor(query, globusCredential).executeQuery();
             result.put(query, queryResult);
@@ -119,12 +115,13 @@ public class SearchQueryExecutor {
         Map<ICab2bQuery, TransformedResultObjectWithContactInfo> transformedResult =
                 new HashMap<ICab2bQuery, TransformedResultObjectWithContactInfo>();
 
-        SpreadSheetResultTransformer transformer = new SpreadSheetResultTransformer();
-        Set<ICab2bQuery> queries = rawResults.keySet();
-        for (ICab2bQuery query : queries) {
-            IQueryResult<? extends IRecord> originalResult = rawResults.get(query);
+        Set<Map.Entry<ICab2bQuery, IQueryResult<? extends IRecord>>> rawResultSet = rawResults.entrySet();
+        for (Map.Entry<ICab2bQuery, IQueryResult<? extends IRecord>> rawResult: rawResultSet) {
+            ICab2bQuery query = rawResult.getKey();
+            IQueryResult<? extends IRecord> originalResult = rawResult.getValue();
+            
             TransformedResultObjectWithContactInfo resultObj =
-                    transformer.transResultToSpreadSheetView(query, originalResult);
+                    new SpreadSheetResultTransformer(query, originalResult).transResultToSpreadSheetView();
             transformedResult.put(query, resultObj);
         }
         return transformedResult;

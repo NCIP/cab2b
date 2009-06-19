@@ -31,28 +31,9 @@ import edu.wustl.cab2bwebapp.util.Utility;
  */
 public class ExecuteQueryBizLogic {
 
-    private List<String> urlsForSelectedQueries = null;
-
-    private List<Map<AttributeInterface, Object>> finalResult = null;
-
-    private Collection<AttributeInterface> orderedAttributeList = null;
-
     private Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults = null;
 
-    private List<String> queryNameList = null;
-
-    private Collection<ServiceURLInterface> failedServices = new HashSet<ServiceURLInterface>();
-
-    private List<List<SearchResultDVO>> searchResultsView = null;
-
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ExecuteQueryAction.class);
-
-    /**
-     * No argument constructor
-     */
-    public ExecuteQueryBizLogic() {
-
-    }
 
     /**
      * Constructor
@@ -84,15 +65,7 @@ public class ExecuteQueryBizLogic {
             String keyword,
             UserInterface user,
             String[] modelGroupNames) throws Exception {
-        processResults(queries, proxy, keyword, user, modelGroupNames, null);
-    }
-
-    public ExecuteQueryBizLogic(
-            Collection<ICab2bQuery> queries,
-            String selectedQueryName,
-            Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults) throws Exception {
-        this.searchResults = searchResults;
-        processResults(queries, null, null, null, null, selectedQueryName);
+        processResults(queries, proxy, keyword, user, modelGroupNames);
     }
 
     /**
@@ -104,53 +77,12 @@ public class ExecuteQueryBizLogic {
      * @throws Exception
      */
     private void processResults(Collection<ICab2bQuery> queries, GlobusCredential proxy, String keyword,
-                                UserInterface user, String[] modelGroupNames, String selectedQueryName)
-            throws Exception {
-
-        if (selectedQueryName == null) {
-            List<String> urls = Utility.getUserConfiguredUrls(user, modelGroupNames);
-            for (ICab2bQuery regularQuery : queries) {
-                regularQuery.setOutputUrls(urls);
-            }
-            executeQuery(queries, proxy, keyword);
+                                UserInterface user, String[] modelGroupNames) throws Exception {
+        List<String> urls = Utility.getUserConfiguredUrls(user, modelGroupNames);
+        for (ICab2bQuery regularQuery : queries) {
+            regularQuery.setOutputUrls(urls);
         }
-        Collection<FailedTargetURL> failedServiceURLs = new ArrayList<FailedTargetURL>();
-        queryNameList = Utility.getQueryNameList(queries);
-        if (queryNameList != null && !queryNameList.isEmpty()) {
-            if (selectedQueryName == null) {
-                selectedQueryName = queryNameList.get(0);
-            }
-            for (ICab2bQuery queryObj : queries) {
-                if (queryObj.getName().equals(selectedQueryName)) {
-                    urlsForSelectedQueries = queryObj.getOutputUrls();
-                    urlsForSelectedQueries.add(0, "All Hosting Institutions");
-                    TransformedResultObjectWithContactInfo transformedResultObj = searchResults.get(queryObj);
-                    finalResult = transformedResultObj.getResultForAllUrls();
-                    orderedAttributeList = transformedResultObj.getAllowedAttributes();
-                    Collection<FailedTargetURL> failedUrl = transformedResultObj.getFailedServiceUrl();
-                    if (failedUrl != null) {
-                        failedServiceURLs.addAll(failedUrl);
-                    }
-                    break;
-                }
-            }
-            if (!failedServiceURLs.isEmpty()) {
-                for (FailedTargetURL failedurl : failedServiceURLs) {
-                    ServiceURLInterface serviceurl = null;
-                    try {
-                        serviceurl =
-                                new ServiceURLOperations().getServiceURLbyURLLocation(failedurl.getTargetUrl());
-                        if (serviceurl.getHostingCenter().contains("http")) {
-                            serviceurl.setHostingCenter("No Hosting Center Name Available.");
-                        }
-                    } catch (RemoteException e) {
-                        logger.info(e.getMessage(), e);
-                        throw new RuntimeException(e);
-                    }
-                    failedServices.add(serviceurl);
-                }
-            }
-        }
+        executeQuery(queries, proxy, keyword);
     }
 
     /**
@@ -168,34 +100,6 @@ public class ExecuteQueryBizLogic {
     }
 
     /**
-     * @return the urlsForSelectedQueries
-     */
-    public final List<String> getUrlsForSelectedQueries() {
-        return urlsForSelectedQueries;
-    }
-
-    /**
-     * @return the finalResult
-     */
-    public final List<Map<AttributeInterface, Object>> getFinalResult() {
-        return finalResult;
-    }
-
-    /**
-     * @return the orderedAttributeList
-     */
-    public final Collection<AttributeInterface> getOrderedAttributeList() {
-        return orderedAttributeList;
-    }
-
-    /**
-     * @return the failedSercives
-     */
-    public final Collection<ServiceURLInterface> getFailedServices() {
-        return failedServices;
-    }
-
-    /**
      * @return the searchResults
      */
     public final Map<ICab2bQuery, TransformedResultObjectWithContactInfo> getSearchResults() {
@@ -203,10 +107,35 @@ public class ExecuteQueryBizLogic {
     }
 
     /**
-     * @return the queryNameList
+     * @return the finalResult
      */
-    public final List<String> getQueryNameList() {
-        return queryNameList;
+    public final List<Map<AttributeInterface, Object>> getResultForAllUrls(ICab2bQuery selectedQuery) {
+        return searchResults.get(selectedQuery).getResultForAllUrls();
+    }
+
+    /**
+     * @param failedUrl
+     * @return
+     */
+    public static final Collection<ServiceURLInterface> getFailedServiceUrls(Collection<FailedTargetURL> failedUrl) {
+        Collection<ServiceURLInterface> failedServices = null;
+        if (failedUrl != null) {
+            failedServices = new HashSet<ServiceURLInterface>();
+            for (FailedTargetURL failedurl : failedUrl) {
+                ServiceURLInterface serviceurl = null;
+                try {
+                    serviceurl = new ServiceURLOperations().getServiceURLbyURLLocation(failedurl.getTargetUrl());
+                    if (serviceurl.getHostingCenter().contains("http")) {
+                        serviceurl.setHostingCenter("No Hosting Center Name Available.");
+                    }
+                } catch (RemoteException e) {
+                    logger.info(e.getMessage(), e);
+                    throw new RuntimeException(e);
+                }
+                failedServices.add(serviceurl);
+            }
+        }
+        return failedServices;
     }
 
     /**
@@ -214,7 +143,10 @@ public class ExecuteQueryBizLogic {
      * @param orderList
      * @return List<SearchResultDVO>
      */
-    public final List<List<SearchResultDVO>> getSearchResultsView(List<Map<AttributeInterface, Object>> finalResult) {
+    public static final List<List<SearchResultDVO>> getSearchResultsView(
+                                                                         List<Map<AttributeInterface, Object>> finalResult,
+                                                                         Collection<AttributeInterface> orderedAttributeList) {
+        List<List<SearchResultDVO>> searchResultsView = null;
         if (finalResult != null && finalResult.size() > 0) {
             searchResultsView = new ArrayList<List<SearchResultDVO>>();
             for (int i = 0; i < finalResult.size(); i++) {

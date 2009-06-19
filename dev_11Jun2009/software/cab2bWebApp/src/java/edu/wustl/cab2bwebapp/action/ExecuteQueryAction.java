@@ -24,8 +24,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.globus.gsi.GlobusCredential;
 
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.ExecuteQueryBizLogic;
@@ -86,27 +86,29 @@ public class ExecuteQueryAction extends Action {
                     GlobusCredential proxy = (GlobusCredential) session.getAttribute(Constants.GLOBUS_CREDENTIAL);
                     ExecuteQueryBizLogic executeQueryBizLogic =
                             new ExecuteQueryBizLogic(queries, proxy, user, modelGroupNames);
-                    List<Map<AttributeInterface, Object>> finalResult = executeQueryBizLogic.getFinalResult();
-                    session.setAttribute(Constants.SEARCH_RESULTS_VIEW, executeQueryBizLogic
-                        .getSearchResultsView(finalResult));
                     Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults =
                             executeQueryBizLogic.getSearchResults();
-                    Collection<ICab2bQuery> allQueries = searchResults.keySet();
-                    List<SavedQueryDVO> queryList = new ArrayList<SavedQueryDVO>();
 
-                    for (ICab2bQuery queryObj : allQueries) {
-                        SavedQueryDVO savedQuery = new SavedQueryDVO();
-                        savedQuery.setName(queryObj.getName());
-                        savedQuery.setResultCount(searchResults.get(queryObj).getResultForAllUrls().size());
-                        queryList.add(savedQuery);
-                    }
-                    int failedServicesCount = executeQueryBizLogic.getFailedServices().size();
-                    session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedServicesCount);
-                    session.setAttribute(Constants.FAILED_SERVICES, executeQueryBizLogic.getFailedServices());
-                    session.setAttribute(Constants.SERVICE_INSTANCES, executeQueryBizLogic
-                        .getUrlsForSelectedQueries());
+                    List<SavedQueryDVO> queryList = new ArrayList<SavedQueryDVO>();
+                    SavedQueryDVO savedQuery = new SavedQueryDVO();
+                    savedQuery.setName(query.getName());
+                    savedQuery.setResultCount(searchResults.get(query).getResultForAllUrls().size());
+                    queryList.add(savedQuery);
+
+                    TransformedResultObjectWithContactInfo selectedQueryResult = searchResults.get(query);
+                    List<String> urlsForSelectedQueries = query.getOutputUrls();
+                    urlsForSelectedQueries.add(0, "All Hosting Institutions");
+                    Collection<ServiceURLInterface> failedURLS =
+                            ExecuteQueryBizLogic.getFailedServiceUrls(selectedQueryResult.getFailedServiceUrl());
+                    session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedURLS != null ? failedURLS.size()
+                            : 0);
+                    session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
+                    session.setAttribute(Constants.SERVICE_INSTANCES, urlsForSelectedQueries);
                     session.setAttribute(Constants.SAVED_QUERIES, queryList);
                     session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
+                    session.setAttribute(Constants.SEARCH_RESULTS_VIEW, ExecuteQueryBizLogic
+                        .getSearchResultsView(selectedQueryResult.getResultForAllUrls(), selectedQueryResult
+                            .getAllowedAttributes()));
                 }
             }
         } catch (Exception e) {

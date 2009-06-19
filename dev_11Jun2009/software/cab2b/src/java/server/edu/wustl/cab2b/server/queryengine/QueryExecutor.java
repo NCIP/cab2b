@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -70,11 +69,7 @@ public class QueryExecutor {
 
     private final boolean MULTITHREAD = true;
 
-    private static final int GLOBAL_THREAD_POOL_SIZE = 1000;
-
-    /*private static int NO_OF_LIVE_THREADS = 0;
-    */
-    private static ExecutorService executorService = Executors.newCachedThreadPool();
+    private ExecutorService executorService = Executors.newCachedThreadPool();
 
     private ICab2bQuery query;
 
@@ -196,9 +191,7 @@ public class QueryExecutor {
         }
         if (MULTITHREAD) {
             try {
-                executorService.invokeAny(callables);
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+                executorService.invokeAll(callables);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -210,17 +203,16 @@ public class QueryExecutor {
         Category outputCategory = this.categoryPreprocessorResult.getCategoryForEntity().get(getOutputEntity());
         ICategoryResult<ICategorialClassRecord> res = QueryResultFactory.createCategoryResult(outputCategory);
         for (IQueryResult<ICategorialClassRecord> categoryResult : categoryResults) {
+            //Adding all failed urls Deepak : FQP 1.3 updates
+            Collection<FailedTargetURL> failedURLs = categoryResult.getFailedURLs();
+            if (failedURLs != null) {
+                failedURLs.addAll(categoryResult.getFailedURLs());                
+                res.setFailedURLs(failedURLs);
+            }
             for (Map.Entry<String, List<ICategorialClassRecord>> entry : categoryResult.getRecords().entrySet()) {
                 res.addRecords(entry.getKey(), entry.getValue());
-                //Adding all failed urls Deepak : FQP 1.3 updates
-                Collection<FailedTargetURL> failedURLs = categoryResult.getFailedURLs();
-                if (failedURLs != null) {
-                    failedURLs.addAll(categoryResult.getFailedURLs());
-                    logger.info("Category Failed URL number " + failedURLs.size());
-                    res.setFailedURLs(failedURLs);
-                }
             }
-        }
+        }        
         // TODO pivots the results around the original root and then merges
         // them...
         return res;
@@ -269,15 +261,6 @@ public class QueryExecutor {
             this.parentCatClassRec = parentCatClassRec;
             this.parentExprNode = parentExprNode;
             this.parentId = parentId;
-            /*if (NO_OF_LIVE_THREADS <= GLOBAL_THREAD_POOL_SIZE) {*/
-            logger.info("Active thread count:" + Thread.activeCount());
-            logger.info("Current thread name in constructor:" + Thread.currentThread().getName());
-
-            /*QueryExecutor.NO_OF_LIVE_THREADS++;*/
-            /*            } else
-                            throw new RuntimeException(
-                                    " Server is too busy, max limit reached. Unable to create any more threads. Please try after some time ");
-            */
         }
 
         /*
@@ -287,8 +270,6 @@ public class QueryExecutor {
          */
         public void run() {
             try {
-                logger.info("STARTED RUNNING : Active Thread Count : " + Thread.activeCount());
-                logger.info("Current thread name in Run method:" + Thread.currentThread().getName());
                 IExpression parentExpr = parentExprNode.getValue();
                 for (TreeNode<IExpression> childExprNode : parentExprNode.getChildren()) {
                     IExpression childExpr = childExprNode.getValue();
@@ -300,9 +281,10 @@ public class QueryExecutor {
                         parentIdConstraint = createAssociationConstraint(association.reverse());
                     } catch (Exception e) {
                         // caused by reverse on unidirectional association
-                        e.printStackTrace();
+                        logger.error(e.getMessage());
                         continue;
                     }
+
                     parentIdConstraint.addChildConstraint(createIdConstraint(getIdAttribute(childExpr
                         .getQueryEntity().getDynamicExtensionsEntity()), parentId.getId()));
                     DcqlConstraint constraintForChildExpr =
@@ -318,14 +300,12 @@ public class QueryExecutor {
                     CategorialClass catClassForChildExpr =
                             QueryExecutor.this.categoryPreprocessorResult.getCatClassForExpr().get(childExpr);
                     if (catClassForChildExpr == null) {
-                        // expr was formed for entity on path between
-                        // catClasses...
+                        // expr was formed for entity on path between catClasses...
                         IQueryResult<IRecord> childExprClassRecs =
                                 transformer.getResults(queryForChildExpr, childEntity, credential);
 
-                        Iterator<List<IRecord>> iter = childExprClassRecs.getRecords().values().iterator();
-                        while (iter.hasNext()) {
-                            List<IRecord> listRec = iter.next();
+                        Collection<List<IRecord>> records = childExprClassRecs.getRecords().values();
+                        for (List<IRecord> listRec : records) {
                             if (listRec.iterator().hasNext()) {
                                 IRecord record = listRec.iterator().next();
                                 childQueryExecList.add(new ChildQueryExecutor(parentCatClassRec, childExprNode,
@@ -352,9 +332,7 @@ public class QueryExecutor {
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
-            } finally {
-                /*QueryExecutor.NO_OF_LIVE_THREADS--;*/
-                logger.info("Thread count decreased: " + Thread.activeCount());
+                logger.error(e.getMessage());
             }
         }
     }
