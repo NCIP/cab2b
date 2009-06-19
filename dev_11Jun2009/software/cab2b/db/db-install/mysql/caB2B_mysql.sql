@@ -84,7 +84,7 @@ create table CAB2B_SERVICE_URL (
    DOMAIN_MODEL text not null,
    VERSION text not null,
    URL text not null,
-   ADMIN_DEFINED bit not null,
+   ADMIN_DEFINED tinyint not null,
    HOSTING_CENTER varchar(254) null,
    DESCRIPTION text null,
    CONTACT_NAME text null,
