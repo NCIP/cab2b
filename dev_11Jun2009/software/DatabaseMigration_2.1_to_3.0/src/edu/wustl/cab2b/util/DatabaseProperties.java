@@ -9,16 +9,16 @@ import java.util.Properties;
  * @author gaurav_mehta
  *
  */
-public class ServerProperties {
+public class DatabaseProperties {
 
     /**
      * ResourceBundle for ServerProperties
      */
     protected Properties properties = new Properties();
 
-    public ServerProperties() {
+    public DatabaseProperties() {
         try {
-            URL url = ServerProperties.class.getClassLoader().getResource("server.properties");
+            URL url = DatabaseProperties.class.getClassLoader().getResource("database.properties");
             properties.load(url.openStream());
         } catch (FileNotFoundException e) {
             e.printStackTrace();

@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import edu.wustl.cab2b.util.ServerProperties;
+import edu.wustl.cab2b.util.DatabaseProperties;
 
 public class DatabaseMigration {
 
@@ -23,9 +23,9 @@ public class DatabaseMigration {
 
     Calendar calendar = new GregorianCalendar();
     
-    ServerProperties serverProperties = new ServerProperties();
+    DatabaseProperties databaseProperties = new DatabaseProperties();
 
-    String databaseName = serverProperties.getDatabaseName();
+    String databaseName = databaseProperties.getDatabaseName();
 
     public void migrateDatabase(int oldVersion, int newVersion) throws SQLException {
         if (oldVersion == 2 && newVersion == 3) {

@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-import edu.wustl.cab2b.util.ServerProperties;
+import edu.wustl.cab2b.util.DatabaseProperties;
 
 
 
@@ -22,17 +22,17 @@ public class DatabaseConnection {
 
     private static DatabaseConnection databaseConnection = null;
     
-    ServerProperties serverProperties = new ServerProperties();
+    DatabaseProperties databaseProperties = new DatabaseProperties();
 
-    String databaseServer = serverProperties.getDatabaseServer();
+    String databaseServer = databaseProperties.getDatabaseServer();
 
-    String databaseServerPort = serverProperties.getDatabaseServerPort();
+    String databaseServerPort = databaseProperties.getDatabaseServerPort();
 
-    String databaseName = serverProperties.getDatabaseName();
+    String databaseName = databaseProperties.getDatabaseName();
 
-    String databaseUserName = serverProperties.getDatabaseUserName();
+    String databaseUserName = databaseProperties.getDatabaseUserName();
 
-    String databasePassword = serverProperties.getDatabasePassword();
+    String databasePassword = databaseProperties.getDatabasePassword();
 
     StringBuffer connectionUrl = new StringBuffer("jdbc:mysql://");
 
