@@ -14,23 +14,9 @@ import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
  *
  */
 public interface ICab2bQuery extends IParameterizedQuery, Serializable {
-    enum QUERY_TYPE {
-        ANDed("ANDed"), ORed("ORed");
-
-        private String type;
-
-        private QUERY_TYPE(String type) {
-            this.type = type;
-        }
-
-        public String toString() {
-            return type;
-        }
-    };
-
-    // TODO need to be generalized for multiple outputs
-    // TODO urls for intermodel categories
+    
     /**
+     * TODO need to be generalized for multiple outputs urls for intermodel categories
      * @return list of output URLs
      */
     List<String> getOutputUrls();
@@ -61,4 +47,5 @@ public interface ICab2bQuery extends IParameterizedQuery, Serializable {
      * @param isKeywordSearch true if marked for keyword search; false if not.
      */
     void setIsKeywordSearch(Boolean isKeywordSearch);
+    
 }

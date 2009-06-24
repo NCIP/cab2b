@@ -11,6 +11,7 @@ import org.hibernate.HibernateException;
 
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.QueryType;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.bizlogic.QueryBizLogic;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
@@ -70,7 +71,7 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
      * @return
      */
     public List<ICab2bQuery> getRegularQueriesByUserName(final String userName) {
-        return getQueriesByTypeAndUserName(ICab2bQuery.QUERY_TYPE.ANDed, userName);
+        return getQueriesByTypeAndUserName(QueryType.ANDed, userName);
     }
 
     /**
@@ -80,7 +81,7 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
      * @return
      */
     public List<ICab2bQuery> getKeywordQueriesByUserName(final String userName) {
-        return getQueriesByTypeAndUserName(ICab2bQuery.QUERY_TYPE.ORed, userName);
+        return getQueriesByTypeAndUserName(QueryType.ORed, userName);
     }
 
     /**
@@ -90,7 +91,7 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
      * @param userName creator/owner of the queries
      * @return
      */
-    private List<ICab2bQuery> getQueriesByTypeAndUserName(ICab2bQuery.QUERY_TYPE queryType, final String userName) {
+    private List<ICab2bQuery> getQueriesByTypeAndUserName(QueryType queryType, final String userName) {
         List<Object> paramList = new ArrayList<Object>(2);
         paramList.add(queryType.toString());
         paramList.add(userName);
