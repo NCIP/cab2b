@@ -8,7 +8,7 @@ package edu.wustl.cab2bwebapp.dvo;
 public class SearchResultDVO {
     String title = null;
 
-    String value = null;
+    Object value = null;
 
     String media = null;
 
@@ -29,14 +29,14 @@ public class SearchResultDVO {
     /**
      * @return String
      */
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
     /**
      * @param columnValue
      */
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
