@@ -3,6 +3,7 @@
  */
 package edu.wustl.cab2b.common.multimodelcategory.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -14,7 +15,9 @@ import edu.wustl.common.querysuite.metadata.path.IPath;
  * @author chetan_patil
  *
  */
-public class MultiModelCategoryBean {
+public class MultiModelCategoryBean implements Serializable {
+
+    private static final long serialVersionUID = -8886703360963442705L;
 
     private String name;
 
@@ -81,11 +84,7 @@ public class MultiModelCategoryBean {
      * @return IPath at the given index; otherwise, if no IPath is present at given index
      */
     public IPath getPath(int index) {
-        IPath path = null;
-        if (paths.size() > index) {
-            path = ((List<IPath>) paths).get(index);
-        }
-        return path;
+        return ((List<IPath>) paths).get(index);
     }
 
     /**
@@ -116,11 +115,7 @@ public class MultiModelCategoryBean {
      * @return
      */
     public MultiModelAttributeBean getMultiModelAttribute(int index) {
-        MultiModelAttributeBean multiModelAttributebean = null;
-        if (multiModelAttributes.size() > index) {
-            multiModelAttributebean = ((List<MultiModelAttributeBean>) multiModelAttributes).get(index);
-        }
-        return multiModelAttributebean;
+        return ((List<MultiModelAttributeBean>) multiModelAttributes).get(index);
     }
 
     /**
@@ -137,5 +132,4 @@ public class MultiModelCategoryBean {
     public void addMultiModelAttribute(MultiModelAttributeBean multiModelAttributeBean) {
         this.multiModelAttributes.add(multiModelAttributeBean);
     }
-
 }

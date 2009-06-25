@@ -3,6 +3,7 @@
  */
 package edu.wustl.cab2b.common.multimodelcategory.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,7 +14,8 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
  * @author chetan_patil
  *
  */
-public class MultiModelAttributeBean {
+public class MultiModelAttributeBean implements Serializable {
+    private static final long serialVersionUID = 1102217842111447910L;
 
     private String name;
 
@@ -59,11 +61,7 @@ public class MultiModelAttributeBean {
     }
 
     public AttributeInterface getSelectedAttribute(int index) {
-        AttributeInterface attribute = null;
-        if (selectedAttributes.size() > index) {
-            attribute = ((List<AttributeInterface>) selectedAttributes).get(index);
-        }
-        return attribute;
+        return ((List<AttributeInterface>) selectedAttributes).get(index);
     }
 
     /**
