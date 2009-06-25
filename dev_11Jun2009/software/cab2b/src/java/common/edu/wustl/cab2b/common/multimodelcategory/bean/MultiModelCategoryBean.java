@@ -134,7 +134,7 @@ public class MultiModelCategoryBean {
      * This method adds the given MultiModelAttributeBean to the MultiModelAttributeBean collection
      * @param multiModelAttributeBean
      */
-    public void setMultiModelAttribute(MultiModelAttributeBean multiModelAttributeBean) {
+    public void addMultiModelAttribute(MultiModelAttributeBean multiModelAttributeBean) {
         this.multiModelAttributes.add(multiModelAttributeBean);
     }
 

@@ -5,6 +5,7 @@ package edu.wustl.cab2b.common.multimodelcategory.bean;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 
@@ -13,13 +14,13 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
  *
  */
 public class MultiModelAttributeBean {
-    
+
     private String name;
-    
+
     private String description;
-    
+
     private Collection<AttributeInterface> selectedAttributes = new ArrayList<AttributeInterface>();
-    
+
     private boolean isVisible = true;
 
     /**
@@ -57,11 +58,27 @@ public class MultiModelAttributeBean {
         return selectedAttributes;
     }
 
+    public AttributeInterface getSelectedAttribute(int index) {
+        AttributeInterface attribute = null;
+        if (selectedAttributes.size() > index) {
+            attribute = ((List<AttributeInterface>) selectedAttributes).get(index);
+        }
+        return attribute;
+    }
+
     /**
      * @param selectedAttributes the selectedAttributes to set
      */
     public void setSelectedAttributes(Collection<AttributeInterface> selectedAttributes) {
         this.selectedAttributes = selectedAttributes;
+    }
+
+    /**
+     * This method adds the given attribute to the collection of the selected attributes
+     * @param attribute
+     */
+    public void addSelectedAttribute(AttributeInterface attribute) {
+        this.selectedAttributes.add(attribute);
     }
 
     /**
