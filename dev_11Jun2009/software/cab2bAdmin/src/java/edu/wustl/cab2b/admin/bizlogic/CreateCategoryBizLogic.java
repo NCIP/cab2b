@@ -49,21 +49,9 @@ public class CreateCategoryBizLogic {
 	 * @param description
 	 */
 	public void saveCategory(String name, String description) {
-		InputCategory inputCategory = new InputCategory();
-		inputCategory.setName(name);
-		inputCategory.setDescription(description);
-		inputCategory.setSubCategories(new ArrayList<InputCategory>());
-		List<InputCategorialClass> inputCategorialClass = getInputCategorialClass();
-		for (int i = 0; i < inputCategorialClass.size(); i++) {
-			if (inputCategorialClass.get(i).getPathFromParent() == -1L) {
-				inputCategory.setRootCategorialClass(inputCategorialClass
-						.get(i));
-				break;
-			}
-		}
 
 		Category category = new PersistCategory().persistCategory(
-				inputCategory, null);
+				getInputCategory(name, description), null);
 		new CategoryOperations().saveCategory(category);
 		// Utility.refreshCab2bCache(false);
 	}
