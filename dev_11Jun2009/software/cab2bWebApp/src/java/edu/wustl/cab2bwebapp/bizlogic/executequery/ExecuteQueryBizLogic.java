@@ -159,7 +159,7 @@ public class ExecuteQueryBizLogic {
                     Object value = record.get(a);
                     String title = edu.wustl.cab2b.common.util.Utility.getFormattedString(a.getName());
                     searchResultDVO.setTitle(title);
-                    searchResultDVO.setValue(value == null ? null : value.toString());
+                    searchResultDVO.setValue(value == null ? null : value);
                     searchResultDVO
                         .setMedia((!title.equals("Point of Contact")
                                 && !title.equals("Hosting Cancer Research Center") && !title
