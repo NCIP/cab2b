@@ -1036,7 +1036,7 @@
 		<delete dir="${jboss.home}/server/default/tmp/deploy" />
 
 		<copy overwrite="true" file="${jbossjca.service.xml}" todir="${jboss.deploy.dir}" />
-		<copy overwrite="true" file="${log4j.xml.file}" todir="${jboss.deploy.dir}/conf" />
+		<copy overwrite="true" file="${log4j.xml.file}" todir="${jboss.home}/server/${jboss.server.name}/conf" />
 		<copy overwrite="true" file="lib/server/oracleDriver.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/server/mysql-connector-java-5.0.8-bin.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/common/hibernate3.jar" todir="${jboss.common.lib.dir}" />

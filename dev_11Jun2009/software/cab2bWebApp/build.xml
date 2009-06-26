@@ -13,6 +13,7 @@
 	<property name="taglibs.dir" location="${web.dir}/taglibs" />
 
 	<property name="workarea.dir" location="build" />
+	<mkdir dir="${workarea.dir}" />
 	<property name="war.dir" location="${workarea.dir}/war" />
 	<property name="classes.dir" location="${war.dir}/WEB-INF/classes" />
 	<property name="war.file" location="${workarea.dir}/cab2bWebApp.war" />
