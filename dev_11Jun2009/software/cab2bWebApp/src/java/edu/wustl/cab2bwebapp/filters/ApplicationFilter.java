@@ -59,11 +59,15 @@ public class ApplicationFilter implements Filter {
                 ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
                 pw.write(bundle.getString("alert.sessiontimeout"));
                 pw.close();
-            } else if (request.getRequestURL().indexOf(".") != -1
-                    && request.getRequestURL().indexOf("Home.do") == -1
+            } else if (request.getRequestURL().indexOf("Home.do") == -1
                     && request.getRequestURL().indexOf("Login.do") == -1) {
-                request.setAttribute(Constants.ERROR_SESSION_TIMEOUT, Constants.ERROR_SESSION_TIMEOUT);
-                request.getRequestDispatcher("/pages/home.jsp").forward(req, res);
+                String tokens[] = request.getRequestURL().toString().split("/");
+                if (tokens[tokens.length - 1].indexOf(".") != -1) {
+                    request.setAttribute(Constants.ERROR_SESSION_TIMEOUT, Constants.ERROR_SESSION_TIMEOUT);
+                    request.getRequestDispatcher("/pages/home.jsp").forward(req, res);
+                } else {
+                    filterChain.doFilter(request, response);
+                }
             } else {
                 filterChain.doFilter(request, response);
             }
