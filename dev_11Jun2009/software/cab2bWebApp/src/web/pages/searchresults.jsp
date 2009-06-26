@@ -49,14 +49,18 @@
     document.getElementById("top").innerHTML = "<span class='pagebanner'>" + pagebanner + "<span style='float:right;position:absolute;right: 3.5em;'>" + pagelinks + "</span>" + "</span>";
     document.getElementById("bottom").innerHTML = exportlinks;
 	 if(navigator.appName.indexOf('Netscape')==-1)
-    {
-	  document.getElementById('centerpanelcontent').style.height = 250;
+    {	  
+      document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (350);
 	  document.getElementById('centerpanelcontent').style.overflow = 'auto';
 	  document.getElementById('searchresultstable').getElementsByTagName('thead')[0].getElementsByTagName('tr')[0].id = 'noscroll';
 	  document.getElementById('searchresultstable').getElementsByTagName('thead')[0].getElementsByTagName('tr')[0].style.backgroundColor = '#ccc';
 	  for(var i=0;i<document.getElementById('searchresultstable').getElementsByTagName('tbody')[0].getElementsByTagName('tr').length;i++)
 	  document.getElementById('searchresultstable').getElementsByTagName('tbody')[0].getElementsByTagName('tr')[i].height = 1;
     }
+	 else
+	{
+      document.getElementById('searchresultstable').getElementsByTagName('tbody')[0].style.height =  getScreenHeight() - (445);
+	}
   }
 }
 </SCRIPT>

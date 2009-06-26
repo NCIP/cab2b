@@ -34,10 +34,10 @@ chk = false;
     alert("<bean:message key="alert.selectserviceinstance"/>");
     return false;
   } 
-} 
+}
 </SCRIPT>
 </HEAD>
-<BODY>
+<BODY onLoad="document.getElementById('centerpanelcontent').style.height = getScreenHeight() - 280;">
 <FORM method="post" action="SaveServiceInstances.do" onSubmit="return validateSubmit()">
 <jsp:include page="header.jsp"/>
 <DIV id="content">
