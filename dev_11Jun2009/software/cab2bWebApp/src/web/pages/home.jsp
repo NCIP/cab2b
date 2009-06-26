@@ -58,8 +58,11 @@
    if(signInRequired)
   {
 	chkBoxObj.checked = false;
-	alert('<bean:message key="alert.signinrequired"/>');
-	return;
+	 if(confirm('<bean:message key="confirmation.signinrequired"/>'))
+	{
+	  document.location = 'Login.do';
+	}
+    return;
   }
    else
   {
