@@ -72,31 +72,19 @@ public class QueryConverter {
      */
     private void convertRule(IRule rule, int index) {
         IExpression expression = rule.getContainingExpression();
-        Collection<ICondition> conditions = getAllConditions(rule);
+        Collection<ICondition> conditions = getAllStringConditions(rule);
         expression.removeOperand(rule);
 
-        final int totalOperands = expression.numberOfOperands() + conditions.size() - 1;
+        IRule newRule = QueryObjectFactory.createRule();
         for (ICondition condition : conditions) {
-            AttributeInterface attribute = condition.getAttribute();
-            if (attribute.getAttributeTypeInformation() instanceof StringAttributeTypeInformation) {
-                condition.setRelationalOperator(RelationalOperator.Contains);
-                IRule newRule = QueryObjectFactory.createRule();
-                newRule.addCondition(condition);
-
-                if (index < totalOperands) {
-                    IConnector<LogicalOperator> connector = QueryObjectFactory.createLogicalConnector(
-                                                                                                      LogicalOperator.Or,
-                                                                                                      0);
-                    expression.addOperand(index++, newRule, connector);
-                } else {
-                    expression.addOperand(newRule);
-                }
-            }
+            condition.setRelationalOperator(RelationalOperator.Contains);
+            newRule.addCondition(condition);
         }
+        IConnector<LogicalOperator> connector = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or, 0);
+        expression.addOperand(index, newRule, connector);
     }
 
     private void convertSubExpression(IExpression expression, IExpressionOperand operand, int index) {
-
         IConnector<LogicalOperator> oldConnector = null;
         try {
             oldConnector = expression.getConnector(index, index + 1);
@@ -105,27 +93,28 @@ public class QueryConverter {
         }
 
         IConnector<LogicalOperator> orConnector = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or, 0);
-        IConnector<LogicalOperator> andConnector = QueryObjectFactory.createLogicalConnector(LogicalOperator.And,
-                                                                                             0);
-        if (andConnector.getOperator().equals(oldConnector.getOperator())) {
+        if (!LogicalOperator.Unknown.equals(oldConnector.getOperator())) {
             expression.removeOperand(operand);
             expression.addOperand(index, operand, orConnector);
         }
     }
 
     /**
-     * This method returns all the conditions from the given Rule.
+     * This method returns all the conditions having string type attribute from the given Rule.
      *
      * @param rule
      * @return
      */
-    private Collection<ICondition> getAllConditions(IRule rule) {
-        Collection<ICondition> conditions = new ArrayList<ICondition>(rule.size());
+    private Collection<ICondition> getAllStringConditions(IRule rule) {
+        Collection<ICondition> stringConditions = new ArrayList<ICondition>(rule.size());
         for (ICondition condition : rule) {
-            conditions.add(condition);
+            AttributeInterface attribute = condition.getAttribute();
+            if (attribute.getAttributeTypeInformation() instanceof StringAttributeTypeInformation) {
+                stringConditions.add(condition);
+            }
         }
 
-        return conditions;
+        return stringConditions;
     }
 
     /**
@@ -136,7 +125,8 @@ public class QueryConverter {
      */
     public Boolean isKeywordQuery(ICab2bQuery query) {
         boolean isORedQuery = Boolean.TRUE;
-        final IConnector<LogicalOperator> connectorOR = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or);
+        final IConnector<LogicalOperator> connectorOR =
+                QueryObjectFactory.createLogicalConnector(LogicalOperator.Or);
 
         IConstraints constraints = query.getConstraints();
 
@@ -186,7 +176,7 @@ public class QueryConverter {
             for (IExpressionOperand operand : expression) {
                 if (operand instanceof IRule) {
                     final IRule rule = (IRule) operand;
-                    isFeasible = isAnyStringCondition(getAllConditions(rule));
+                    isFeasible = !getAllStringConditions(rule).isEmpty();
                     if (isFeasible) {
                         break LOOP;
                     }
@@ -195,23 +185,6 @@ public class QueryConverter {
         }
 
         return isFeasible;
-    }
-
-    /**
-     * This method checks if there is any condition with String type attribute in given list
-     * @param conditions
-     * @return
-     */
-    private Boolean isAnyStringCondition(final Collection<ICondition> conditions) {
-        Boolean hasStringCondition = Boolean.FALSE;
-        for (ICondition condition : conditions) {
-            final AttributeInterface attribute = condition.getAttribute();
-            if (attribute.getAttributeTypeInformation() instanceof StringAttributeTypeInformation) {
-                hasStringCondition = Boolean.TRUE;
-                break;
-            }
-        }
-        return hasStringCondition;
     }
 
 }
