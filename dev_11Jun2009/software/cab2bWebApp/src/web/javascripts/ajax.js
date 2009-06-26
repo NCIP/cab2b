@@ -51,7 +51,7 @@
 
  function processAJAXRequest(requestURL, responseReceiver)
 { 
-  document.getElementById(responseReceiver).innerHTML = "<DIV style='text-align:center;'><IMG src='images/PageLoading.gif'></DIV>";
+  document.getElementById(responseReceiver).innerHTML = "<TABLE style='height:100%;width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'></TD></TR></TABLE>";
   var httpRequest = XMLHTTPObject();
   httpRequest.open("POST", requestURL, true);
   httpRequest.onreadystatechange = function(){ 
