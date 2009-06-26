@@ -131,7 +131,7 @@
                   </tr>
                   <tr>
                     <td class="font_blk_s"><img src="images/logo_windows.gif" alt="Windows " width="16" height="16" hspace="3" vspace="3" align="absmiddle" />Windows - 1024 X 768 <br />
-                        <img src="images/logo_mac.gif" alt="Mac" width="16" height="16" hspace="3" vspace="3" align="absmiddle" />Mac - 1440 X 900 <br /></td>
+                        <img src="images/logo_mac.gif" alt="Mac" width="16" height="16" hspace="3" vspace="3" align="absmiddle" />Mac - 1024 X 768 <br /></td>
                   </tr>
                 </table></td>
               </tr>
