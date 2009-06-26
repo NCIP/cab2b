@@ -5,6 +5,9 @@ package edu.wustl.cab2bwebapp.constants;
  * @author Chetan Pundhir
  */
 public interface Constants {
+    /** Constants for AJAX Call */
+    public static final String AJAX_CALL = "Ajax-Call";
+
     /** Constant for Saved Query Provider */
     public static final String SAVED_QUERY_BIZ_LOGIC = "savedQueryBizLogic";
 
@@ -35,7 +38,7 @@ public interface Constants {
     /** Constant for load model associated data failure message */
     public static final String FATAL_DISPLAY_SAVED_SEARCHES_FAILURE = "fatalDisplaySavedSearchesFailure";
 
-    /** Constant for globus credential */
+    /** Constant for globus_credential */
     public static final String GLOBUS_CREDENTIAL = "globusCredential";
 
     /** Constant for anonymous user */
@@ -76,7 +79,7 @@ public interface Constants {
 
     /** Constant for display service instances failure message */
     public static final String FATAL_DISPLAY_SERVICE_INSTANCES_FAILURE = "fatalDisplayServiceInstancesFailure";
-    
+
     public static final String SERVICE_INSTANCES_NOT_CONFIGURED = "serviceInstancesNotConfigured";
 
     /** Constant for query id */
@@ -88,9 +91,12 @@ public interface Constants {
     /** Constant for fatal add limit failure */
     public static final String FATAL_ADD_LIMIT_FAILURE = "fatalAddLimitFailure";
 
-    /** Constant for add limit xml file path */
+    /** Constant for add limit XML file path */
     public static final String ADD_LIMIT_XML_FILE_PATH =
             "WEB-INF" + java.io.File.separator + "classes" + java.io.File.separator + "add-limit.xml";
+    
+    /** Constant for all hosting institutions */
+    public static final String ALL_HOSTING_INSTITUTIONS = "All Hosting Institutions";    
 
     /** Constant for query result */
     public static final String SEARCH_RESULTS = "searchResults";
@@ -107,12 +113,12 @@ public interface Constants {
     /** Constant for fatal keyword search failure */
     public static final String FATAL_KYEWORD_SEARCH_FAILURE = "fatalKeywordSearchFailure";
 
-    /** Constant for forward to failure page */
-    public static final String FORWARD_FAILURE = "failure";
-
     /** Constants for Failed Services */
     public static final String FAILED_SERVICES = "failedServices";
 
     /** Constants for Failed Services count */
     public static final String FAILED_SERVICES_COUNT = "failedServicesCount";
+
+    /** Constant for forward to failure page */
+    public static final String FORWARD_FAILURE = "failure";
 }
