@@ -26,8 +26,7 @@ public class ServiceInstanceComparator implements Comparator<ServiceURLInterface
         } else if (!obj1.isConfigured() && obj2.isConfigured()) {
             return 1;
         } else {
-            obj1.getHostingCenter().compareTo(obj2.getHostingCenter());
+            return obj1.getHostingCenter().compareTo(obj2.getHostingCenter());
         }
-        return 0;
     }
 }
