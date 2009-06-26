@@ -2,7 +2,6 @@ package edu.wustl.cab2b.server.queryengine;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -206,13 +205,13 @@ public class QueryExecutor {
             //Adding all failed urls Deepak : FQP 1.3 updates
             Collection<FailedTargetURL> failedURLs = categoryResult.getFailedURLs();
             if (failedURLs != null) {
-                failedURLs.addAll(categoryResult.getFailedURLs());                
+                failedURLs.addAll(categoryResult.getFailedURLs());
                 res.setFailedURLs(failedURLs);
             }
             for (Map.Entry<String, List<ICategorialClassRecord>> entry : categoryResult.getRecords().entrySet()) {
                 res.addRecords(entry.getKey(), entry.getValue());
             }
-        }        
+        }
         // TODO pivots the results around the original root and then merges
         // them...
         return res;
@@ -220,7 +219,6 @@ public class QueryExecutor {
 
     private DcqlConstraint addParentIdConstraint(DcqlConstraint constraint, DcqlConstraint parentIdConstraint) {
         Cab2bGroup cab2bGroup = new Cab2bGroup(LogicalOperator.And);
-
         cab2bGroup.addConstraint(constraint);
         cab2bGroup.addConstraint(parentIdConstraint);
         return cab2bGroup.getDcqlConstraint();
