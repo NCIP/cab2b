@@ -53,7 +53,7 @@ public class ApplicationFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         if (request.getSession().isNew()) {
-            if (request.getHeader("Ajax-Call") != null) {
+            if (request.getHeader(Constants.AJAX_CALL) != null) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 PrintWriter pw = response.getWriter();
                 ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
