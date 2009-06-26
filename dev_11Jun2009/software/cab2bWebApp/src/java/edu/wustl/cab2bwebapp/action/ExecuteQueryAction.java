@@ -97,7 +97,7 @@ public class ExecuteQueryAction extends Action {
 
                     TransformedResultObjectWithContactInfo selectedQueryResult = searchResults.get(query);
                     List<String> urlsForSelectedQueries = query.getOutputUrls();
-                    urlsForSelectedQueries.add(0, "All Hosting Institutions");
+                    urlsForSelectedQueries.add(0, Constants.ALL_HOSTING_INSTITUTIONS);
                     Collection<ServiceURLInterface> failedURLS =
                             ExecuteQueryBizLogic.getFailedServiceUrls(selectedQueryResult.getFailedServiceUrl());
                     session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedURLS != null ? failedURLS.size()

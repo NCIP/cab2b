@@ -103,7 +103,7 @@ public class KeywordSearchAction extends Action {
                 }
                 TransformedResultObjectWithContactInfo selectedQueryResult = searchResults.get(selectedQueryObj);
                 List<String> urlsForSelectedQueries = selectedQueryObj.getOutputUrls();
-                urlsForSelectedQueries.add(0, "All Hosting Institutions");
+                urlsForSelectedQueries.add(0, Constants.ALL_HOSTING_INSTITUTIONS);
                 Collection<ServiceURLInterface> failedURLS =
                         ExecuteQueryBizLogic.getFailedServiceUrls(selectedQueryResult.getFailedServiceUrl());
 
@@ -117,7 +117,7 @@ public class KeywordSearchAction extends Action {
             } else {
                 String selectedQueryName = request.getParameter(Constants.SAVED_QUERIES);
                 if (selectedQueryName != null) {
-                    if (request.getHeader("Ajax-Call") == null) {
+                    if (request.getHeader(Constants.AJAX_CALL) == null) {
                         List<SavedQueryDVO> searchResult =
                                 (List<SavedQueryDVO>) session.getAttribute(Constants.SAVED_QUERIES);
                         for (int i = 0; i < searchResult.size(); i++) {
@@ -142,7 +142,7 @@ public class KeywordSearchAction extends Action {
                         TransformedResultObjectWithContactInfo selectedQueryResult =
                                 searchResults.get(selectedQueryObj);
                         List<String> urlsForSelectedQueries = selectedQueryObj.getOutputUrls();
-                        urlsForSelectedQueries.add(0, "All Hosting Institutions");
+                        urlsForSelectedQueries.add(0, Constants.ALL_HOSTING_INSTITUTIONS);
                         Collection<ServiceURLInterface> failedURLS =
                                 ExecuteQueryBizLogic.getFailedServiceUrls(selectedQueryResult
                                     .getFailedServiceUrl());
