@@ -50,7 +50,6 @@ th.order2 {
 }
 
 .simple tbody {
-	height: 250;
 	overflow: auto;
 	overflow-x: hidden;
 }
