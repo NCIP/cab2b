@@ -7,6 +7,7 @@
 <HTML>
 <HEAD>
 <TITLE><bean:message key="application.title"/></TITLE>
+<LINK rel="shortcut icon" href="../images/favicon.ico">
 <META http-equiv="Content-Type" content="text/html">
 <LINK rel="stylesheet" href="stylesheet/home.css" type="text/css">
 <SCRIPT language="JavaScript" src="javascript/validator.js"></SCRIPT>
