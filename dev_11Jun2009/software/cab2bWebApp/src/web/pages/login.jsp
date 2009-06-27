@@ -56,7 +56,7 @@
 					<DIV style="text-align:center">
 						<INPUT type="submit" value="<bean:message key="button.login"/>" class="button">
 						<SPAN style="margin:0.5em"></SPAN>
-						<INPUT type="button" value="<bean:message key="button.reset"/>" class="button" onclick="userName.value='';password.value='';document.getElementById('messages').style.display='none';document.getElementById('errors').style.display='none';userName.focus()">
+						<INPUT type="button" value="<bean:message key="button.reset"/>" class="button" onclick="userName.value='';password.value='';userName.focus()">
 					</DIV>
 					<DIV id="notificationpanel">												
 						<DIV class="error hidden" id="error_userName"><bean:message key="error.username.empty"/></DIV>
