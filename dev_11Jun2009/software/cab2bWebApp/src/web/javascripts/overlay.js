@@ -137,6 +137,18 @@ TogglePreloader(1);
   {
 	clearTimeout("document.getElementById('ImagePreloader').src = 'images/PageLoading.gif'");
   }
+   if(navigator.appName.indexOf('Netscape')==-1)
+  {
+	var IE6 = false /*@cc_on || @_jscript_version < 5.7 @*/;
+     if(IE6)
+	{
+	  var selectObjects = document.getElementsByTagName("SELECT");
+       for(var i=0;i<selectObjects.length;i++)
+      {
+        selectObjects[i].style.visibility = param?'hidden':'visible';
+      }
+	}
+  }
 }
 
  if(!window.onload)
