@@ -129,6 +129,14 @@ TogglePreloader(1);
       linkObjects[i].onmouseout = function(){TogglePreloader(0);};
     }
   }	
+   if(param)
+  {
+    setTimeout("document.getElementById('ImagePreloader').src = 'images/PageLoading.gif'", 1);
+  }
+   else
+  {
+	clearTimeout("document.getElementById('ImagePreloader').src = 'images/PageLoading.gif'");
+  }
 }
 
  if(!window.onload)
