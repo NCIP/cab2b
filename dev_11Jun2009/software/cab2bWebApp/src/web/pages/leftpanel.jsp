@@ -25,7 +25,7 @@
 			<DIV class="text"><IMG alt="<bean:message key="img.alt.browser.safari"/>" hspace="3" src="images/logo_safari.gif" align="absMiddle" vspace="3"><bean:message key="text.browser.safari"/></DIV>
 		</DIV>
 		<DIV id="optimalresolutionspanel">
-			<DIV class="title""><bean:message key="title.optimalresolutions"/></DIV>
+			<DIV class="title"><bean:message key="title.optimalresolutions"/></DIV>
 			<DIV class="text"><IMG alt="<bean:message key="img.alt.os.resolution.windows"/>" hspace=3 src="images/logo_windows.gif" align="absMiddle" vspace="3"><bean:message key="text.os.resolution.windows"/></DIV>
 			<DIV class="text"><IMG alt="<bean:message key="img.alt.os.resolution.mac"/>" hspace="3" src="images/logo_mac.gif" align="absMiddle" vspace="3"><bean:message key="text.os.resolution.mac"/></DIV>
 		</DIV>
