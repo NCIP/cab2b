@@ -146,8 +146,9 @@ img.bullet {
 input.button {
 	font-weight: bold;
 	font-size: 0.75em;
-	color: #2d8ac6;
+	color: #FFF;
 	font-family: sans-serif, Arial, Helvetica;
+	background-color: #81BEF7;
 }
 
 input.textbox {
