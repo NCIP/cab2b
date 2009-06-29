@@ -36,7 +36,6 @@ import edu.wustl.cab2bwebapp.dvo.SavedQueryDVO;
 import edu.wustl.cab2bwebapp.util.Utility;
 import org.apache.log4j.Logger;
 
-
 /**
  * @author chetan_patil
  * @author chetan_pundhir
@@ -165,7 +164,7 @@ public class KeywordSearchAction extends Action {
             ActionMessage message =
                     new ActionMessage(
                             e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? "message.serviceinstancesnotconfigured"
-                                    : "fatal.keywordsearch.failure");
+                                    : "fatal.keywordsearch.failure", e.getMessage());
             errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, message);
             saveErrors(request, errors);
             actionForward =

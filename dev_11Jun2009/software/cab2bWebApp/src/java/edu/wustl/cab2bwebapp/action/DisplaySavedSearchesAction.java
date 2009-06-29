@@ -81,10 +81,9 @@ public class DisplaySavedSearchesAction extends Action {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
-            ActionError error = new ActionError("fatal.displaysavedsearches.failure");
+            ActionError error = new ActionError("fatal.displaysavedsearches.failure", e.getMessage());
             errors.add(Constants.FATAL_DISPLAY_SAVED_SEARCHES_FAILURE, error);
             saveErrors(request, errors);
-
             findForward = Constants.FORWARD_FAILURE;
         }
         return mapping.findForward(findForward);

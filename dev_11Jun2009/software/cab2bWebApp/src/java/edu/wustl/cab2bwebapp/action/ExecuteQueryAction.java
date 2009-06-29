@@ -117,7 +117,7 @@ public class ExecuteQueryAction extends Action {
             ActionMessage message =
                     new ActionMessage(
                             e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? "message.serviceinstancesnotconfigured"
-                                    : "fatal.executequery.failure");
+                                    : "fatal.executequery.failure", e.getMessage());
             errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, message);
             saveErrors(request, errors);
             actionForward =

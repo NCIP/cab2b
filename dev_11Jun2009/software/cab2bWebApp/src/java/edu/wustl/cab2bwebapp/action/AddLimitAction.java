@@ -52,7 +52,8 @@ public class AddLimitAction extends Action {
         String actionForward = null;
         try {
             SavedQueryBizLogic savedQueryProvider =
-                    (SavedQueryBizLogic) request.getSession().getServletContext().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+                    (SavedQueryBizLogic) request.getSession().getServletContext()
+                        .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
             if (request.getParameterValues(Constants.MODEL_GROUPS) != null) {
                 actionForward = Constants.FORWARD_ADD_LIMIT;
                 ActionForward forward = mapping.findForward(actionForward);
@@ -75,7 +76,7 @@ public class AddLimitAction extends Action {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
-            ActionError error = new ActionError("fatal.addlimit.failure");
+            ActionError error = new ActionError("fatal.addlimit.failure", e.getMessage());
             errors.add(Constants.FATAL_ADD_LIMIT_FAILURE, error);
             saveErrors(request, errors);
             actionForward = Constants.FORWARD_FAILURE;

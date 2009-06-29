@@ -78,7 +78,7 @@ public class DisplayServiceInstancesAction extends Action {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
-            ActionError error = new ActionError("fatal.displayserviceinstances.failure");
+            ActionError error = new ActionError("fatal.displayserviceinstances.failure", e.getMessage());
             errors.add(Constants.FATAL_DISPLAY_SERVICE_INSTANCES_FAILURE, error);
             saveErrors(request, errors);
             actionForward = mapping.findForward(Constants.FORWARD_FAILURE);

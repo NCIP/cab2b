@@ -54,7 +54,7 @@ public class LogoutAction extends Action {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
-            ActionError error = new ActionError("fatal.logout.failure");
+            ActionError error = new ActionError("fatal.logout.failure", e.getMessage());
             errors.add(Constants.FATAL_LOGOUT_FAILURE, error);
             saveErrors(request, errors);
             return mapping.findForward(Constants.FORWARD_FAILURE);

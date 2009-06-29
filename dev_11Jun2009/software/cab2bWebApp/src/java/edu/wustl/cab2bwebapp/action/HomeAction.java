@@ -51,7 +51,8 @@ public class HomeAction extends Action {
                                  HttpServletResponse response) throws IOException, ServletException {
         HttpSession session = request.getSession();
         SavedQueryBizLogic savedQueryBizLogic =
-                (SavedQueryBizLogic) request.getSession().getServletContext().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+                (SavedQueryBizLogic) request.getSession().getServletContext()
+                    .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
 
         String findForward = null;
         try {
@@ -98,7 +99,7 @@ public class HomeAction extends Action {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
-            ActionError error = new ActionError("fatal.home.failure");
+            ActionError error = new ActionError("fatal.home.failure", e.getMessage());
             errors.add(Constants.FATAL_HOME_FAILURE, error);
             saveErrors(request, errors);
             findForward = Constants.FORWARD_FAILURE;

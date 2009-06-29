@@ -88,7 +88,8 @@ public class LoginAction extends Action {
             if (modelGroups != null && !modelGroups.isEmpty()) {
                 ModelGroupInterface modelGroup = modelGroups.iterator().next();
                 SavedQueryBizLogic savedQueryBizLogic =
-                        (SavedQueryBizLogic) request.getSession().getServletContext().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+                        (SavedQueryBizLogic) request.getSession().getServletContext()
+                            .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
                 Collection<ICab2bQuery> savedSearches =
                         savedQueryBizLogic.getRegularQueries(modelGroup.getEntityGroupList());
                 request.setAttribute(Constants.MODEL_GROUPS, modelGroups);
@@ -98,7 +99,7 @@ public class LoginAction extends Action {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
-            ActionError error = new ActionError("fatal.login.failure");
+            ActionError error = new ActionError("fatal.login.failure", e.getMessage());
             errors.add(Constants.FATAL_LOGIN_FAILURE, error);
             saveErrors(request, errors);
             return mapping.findForward(Constants.FORWARD_FAILURE);
