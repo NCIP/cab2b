@@ -88,12 +88,10 @@ img.bullet {
 }
 
 .titlebarexpanded {
-	cursor: pointer;
 	background: url('../images/expand.jpg') 98% 0 no-repeat;
 }
 
 .titlebarcollapsed {
-	cursor: pointer;
 	background: url('../images/collapse.jpg') 98% 0 no-repeat;
 }
 
