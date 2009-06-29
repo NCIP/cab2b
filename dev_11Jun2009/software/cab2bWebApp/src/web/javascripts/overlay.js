@@ -129,16 +129,16 @@ TogglePreloader(1);
       linkObjects[i].onmouseout = function(){TogglePreloader(0);};
     }
   }	
-   if(param)
-  {
-    setTimeout("document.getElementById('ImagePreloader').src = 'images/PageLoading.gif'", 1);
-  }
-   else
-  {
-	clearTimeout("document.getElementById('ImagePreloader').src = 'images/PageLoading.gif'");
-  }
    if(navigator.appName.indexOf('Netscape')==-1)
   {
+     if(param)
+    {
+      setTimeout("document.getElementById('ImagePreloader').src = 'images/PageLoading.gif'", 1);
+    }
+     else
+    {
+	  clearTimeout("document.getElementById('ImagePreloader').src = 'images/PageLoading.gif'");
+    }
 	var IE6 = false /*@cc_on || @_jscript_version < 5.7 @*/;
      if(IE6)
 	{
