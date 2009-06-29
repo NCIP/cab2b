@@ -70,6 +70,10 @@ img.bullet {
 	background-repeat: repeat-x;
 }
 
+.collapsible {
+	cursor: pointer;
+}
+
 .titlebarheader {
 	background-image: url('../images/title_middle.gif');
 	background-repeat: repeat-x;
