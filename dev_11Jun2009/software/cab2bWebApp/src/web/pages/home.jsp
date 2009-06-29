@@ -128,7 +128,7 @@
 				<DIV class="label"><bean:message key="label.keywordsearch"/></DIV> <INPUT type="text" class="textbox examplevalue" name="keyword" value="<bean:message key="textbox.keywordsearch.examplevalue"/>" onFocus="setKeywordSearchTextBox(this, keywordSearchExample.value, 'focus')" onBlur="setKeywordSearchTextBox(this, keywordSearchExample.value, 'blur')"><INPUT type="hidden" name="keywordSearchExample" value="<bean:message key="textbox.keywordsearch.examplevalue"/>"> <INPUT type="submit" class="button" value="<bean:message key="button.keywordsearch"/>">
 			</DIV>			
 			<DIV id="savedsearchespanel">
-				<DIV class="titlebar">
+				<DIV class="titlebar collapsible">
 					<DIV class="titlebarheader title">
 						<DIV class="titlebarleftcurve">
 							<DIV class="titlebarrightcurve">

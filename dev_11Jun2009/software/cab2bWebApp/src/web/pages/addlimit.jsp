@@ -18,7 +18,7 @@
 	<jsp:include page="header.jsp"/>
 	<DIV id="leftpanel" style="width: 24%;">
 		<DIV id="savedsearchespanel">
-			<DIV class="titlebar">
+			<DIV class="titlebar collapsible">
 				<DIV class="titlebarheader title">
 					<DIV class="titlebarleftcurve">
 						<DIV class="titlebarrightcurve">
