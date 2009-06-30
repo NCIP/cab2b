@@ -15,7 +15,6 @@ import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.server.queryengine.QueryOperations;
 import edu.wustl.cab2b.server.util.ServerProperties;
 import edu.wustl.cab2bwebapp.util.Utility;
-import edu.wustl.common.hibernate.HibernateCleanser;
 
 /**
  * This class fetches the saved searches.
@@ -64,12 +63,7 @@ public class SavedQueryBizLogic {
      * @return
      */
     public Collection<ICab2bQuery> getRegularQueries() {
-        Collection<ICab2bQuery> queries = new HashSet<ICab2bQuery>(regularQueries.size());
-        for (ICab2bQuery query : regularQueries) {
-            ICab2bQuery newQuery = (ICab2bQuery) DynamicExtensionsUtility.cloneObject(query);
-            queries.add(newQuery);
-        }
-        return queries;
+        return regularQueries;
     }
 
     /**
@@ -79,14 +73,7 @@ public class SavedQueryBizLogic {
      * @return
      */
     public Collection<ICab2bQuery> getKeywordQueries() {
-        Collection<ICab2bQuery> queries = new HashSet<ICab2bQuery>(keywordQueries.size());
-        for (ICab2bQuery query : keywordQueries) {
-            ICab2bQuery newQuery = (ICab2bQuery) DynamicExtensionsUtility.cloneObject(query);
-            new HibernateCleanser(newQuery).clean();
-
-            queries.add(newQuery);
-        }
-        return queries;
+        return keywordQueries;
     }
 
     /**
@@ -129,9 +116,8 @@ public class SavedQueryBizLogic {
             Iterator<ICab2bQuery> iterator = allKeywordQueries.iterator();
             while (iterator.hasNext()) {
                 ICab2bQuery query = iterator.next();
-
                 if (entityGroup.equals(Utility.getEntityGroup(query))) {
-                    keywordQueries.add(query);
+                    keywordQueries.add((ICab2bQuery) DynamicExtensionsUtility.cloneObject(query));
                     iterator.remove();
                 }
             }
