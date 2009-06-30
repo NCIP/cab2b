@@ -19,6 +19,8 @@ import org.apache.struts.action.ActionMapping;
 import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.authentication.Authenticator;
+import edu.wustl.cab2b.common.authentication.exception.AuthenticationException;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.user.User;
@@ -51,39 +53,41 @@ public class LoginAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
-        LoginForm loginForm = (LoginForm) form;
-        String userName = loginForm.getUserName();
-        String password = loginForm.getPassword();
+        try {
+            LoginForm loginForm = (LoginForm) form;
+            String userName = loginForm.getUserName();
+            String password = loginForm.getPassword();
 
-        if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
-            return mapping.findForward(Constants.FORWARD_LOGIN);
-        }
-        HttpSession session = request.getSession();
-        UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
-
-        if (user == null || user.getUserName().equals(Constants.ANONYMOUS)) {
-            UserOperations userOperations = new UserOperations();
-            try {
-                GlobusCredential globusCredential = new Authenticator(userName).validateUser(password);
-
+            if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
+                return mapping.findForward(Constants.FORWARD_LOGIN);
+            }
+            HttpSession session = request.getSession();
+            UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
+            if (user == null || user.getUserName().equals(Constants.ANONYMOUS)) {
+                UserOperations userOperations = new UserOperations();
+                GlobusCredential globusCredential = null;
+                try {
+                    globusCredential = new Authenticator(userName).validateUser(password);
+                } catch (AuthenticationException e) {
+                    logger.error(e.getMessage());
+                    if (e.getErrorCode().equals(ErrorCodeConstants.UR_0007)) {
+                        ActionErrors errors = new ActionErrors();
+                        ActionError error = new ActionError("error.login.invalid");
+                        errors.add(Constants.ERROR_LOGIN_INVALID, error);
+                        saveErrors(request, errors);
+                        return mapping.findForward(Constants.FORWARD_LOGIN);
+                    } else {
+                        throw e;
+                    }
+                }
                 user = userOperations.getUserByName(globusCredential.getIdentity());
                 if (user == null) {
                     user = userOperations.insertUser(new User(globusCredential.getIdentity(), null, false));
                 }
-
                 session.setAttribute(Constants.GLOBUS_CREDENTIAL, globusCredential);
                 session.setAttribute(Constants.USER, user);
                 session.setAttribute(Constants.USER_NAME, userName);
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-                ActionErrors errors = new ActionErrors();
-                ActionError error = new ActionError("error.login.invalid");
-                errors.add(Constants.ERROR_LOGIN_INVALID, error);
-                saveErrors(request, errors);
-                return mapping.findForward(Constants.FORWARD_LOGIN);
             }
-        }
-        try {
             List<ModelGroupInterface> modelGroups = new ModelGroupBizLogic().getAllModelGroups();
             if (modelGroups != null && !modelGroups.isEmpty()) {
                 ModelGroupInterface modelGroup = modelGroups.iterator().next();
