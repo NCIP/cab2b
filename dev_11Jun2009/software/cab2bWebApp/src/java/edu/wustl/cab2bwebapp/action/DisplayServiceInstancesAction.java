@@ -47,13 +47,11 @@ public class DisplayServiceInstancesAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) {
-        UserInterface user = (UserInterface) request.getSession().getAttribute(Constants.USER);
-
-        String modelGroupName = request.getParameter(Constants.MODEL_GROUPS);
-        ApplicationBizLogic appBizLogic = new ApplicationBizLogic();
-
         ActionForward actionForward = null;
         try {
+            UserInterface user = (UserInterface) request.getSession().getAttribute(Constants.USER);
+            String modelGroupName = request.getParameter(Constants.MODEL_GROUPS);
+            ApplicationBizLogic appBizLogic = new ApplicationBizLogic();
             //Note:  getApplicationInstances() method is returning results from database.
             List<ServiceURLInterface> servicesForSingleModelGroup =
                     appBizLogic.getApplicationInstances(user, modelGroupName);

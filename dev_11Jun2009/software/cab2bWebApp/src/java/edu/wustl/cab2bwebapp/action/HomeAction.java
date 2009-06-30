@@ -49,18 +49,12 @@ public class HomeAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
-        HttpSession session = request.getSession();
-        SavedQueryBizLogic savedQueryBizLogic =
-                (SavedQueryBizLogic) request.getSession().getServletContext()
-                    .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
-
-        String findForward = null;
+        String actionForward = null;
         try {
-            //Removing SEARCH_RESULTS attributes from session				
-            session.removeAttribute(Constants.SEARCH_RESULTS);
-            session.removeAttribute(Constants.SEARCH_RESULTS_VIEW);
-            session.removeAttribute(Constants.FAILED_SERVICES_COUNT);
-
+            HttpSession session = request.getSession();
+            SavedQueryBizLogic savedQueryBizLogic =
+                    (SavedQueryBizLogic) request.getSession().getServletContext()
+                        .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
             UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
             if (user == null) {
                 user = new UserOperations().getUserByName(Constants.ANONYMOUS);
@@ -95,15 +89,15 @@ public class HomeAction extends Action {
                     entityGroups.addAll(modelGroup.getEntityGroupList());
                 }
             }
-            findForward = Constants.FORWARD_HOME;
+            actionForward = Constants.FORWARD_HOME;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
             ActionError error = new ActionError("fatal.home.failure", e.getMessage());
             errors.add(Constants.FATAL_HOME_FAILURE, error);
             saveErrors(request, errors);
-            findForward = Constants.FORWARD_FAILURE;
+            actionForward = Constants.FORWARD_FAILURE;
         }
-        return mapping.findForward(findForward);
+        return mapping.findForward(actionForward);
     }
 }

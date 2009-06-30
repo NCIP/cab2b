@@ -50,22 +50,22 @@ public class DisplaySavedSearchesAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
-        SavedQueryBizLogic savedQueryBizLogic =
-                (SavedQueryBizLogic) request.getSession().getServletContext()
-                    .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
-        String modelGroupName = (String) request.getParameter(Constants.MODEL_GROUPS);
-        List<ModelGroupDVO> modelGroupDVOList =
-                (List<ModelGroupDVO>) request.getSession().getAttribute(Constants.MODEL_GROUP_DVO_LIST);
-        for (int i = 0; i < modelGroupDVOList.size(); i++) {
-            if (modelGroupDVOList.get(i).getModelGroupName().equals(modelGroupName)) {
-                modelGroupDVOList.get(i).setSelected(true);
-            } else {
-                modelGroupDVOList.get(i).setSelected(false);
-            }
-        }
-        request.getSession().setAttribute(Constants.MODEL_GROUP_DVO_LIST, modelGroupDVOList);
         String findForward = null;
         try {
+            SavedQueryBizLogic savedQueryBizLogic =
+                    (SavedQueryBizLogic) request.getSession().getServletContext()
+                        .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+            String modelGroupName = (String) request.getParameter(Constants.MODEL_GROUPS);
+            List<ModelGroupDVO> modelGroupDVOList =
+                    (List<ModelGroupDVO>) request.getSession().getAttribute(Constants.MODEL_GROUP_DVO_LIST);
+            for (int i = 0; i < modelGroupDVOList.size(); i++) {
+                if (modelGroupDVOList.get(i).getModelGroupName().equals(modelGroupName)) {
+                    modelGroupDVOList.get(i).setSelected(true);
+                } else {
+                    modelGroupDVOList.get(i).setSelected(false);
+                }
+            }
+            request.getSession().setAttribute(Constants.MODEL_GROUP_DVO_LIST, modelGroupDVOList);
             if (!modelGroupName.equals("")) {
                 Collection<EntityGroupInterface> entityGroups =
                         new ModelGroupBizLogic().getEntityGroupsForModel(modelGroupName);
