@@ -70,15 +70,16 @@ public class LoginAction extends Action {
                     globusCredential = new Authenticator(userName).validateUser(password);
                 } catch (AuthenticationException e) {
                     logger.error(e.getMessage());
+                    ActionErrors errors = new ActionErrors();
+                    ActionError error = null;
                     if (e.getErrorCode().equals(ErrorCodeConstants.UR_0007)) {
-                        ActionErrors errors = new ActionErrors();
-                        ActionError error = new ActionError("error.login.invalid");
-                        errors.add(Constants.ERROR_LOGIN_INVALID, error);
-                        saveErrors(request, errors);
-                        return mapping.findForward(Constants.FORWARD_LOGIN);
+                        error = new ActionError("error.login.invalid");
                     } else {
-                        throw e;
+                        error = new ActionError("error.login.failure", e.getMessage());
                     }
+                    errors.add(Constants.ERROR_LOGIN_INVALID, error);
+                    saveErrors(request, errors);
+                    return mapping.findForward(Constants.FORWARD_LOGIN);
                 }
                 user = userOperations.getUserByName(globusCredential.getIdentity());
                 if (user == null) {
