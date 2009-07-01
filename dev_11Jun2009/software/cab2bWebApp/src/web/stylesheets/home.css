@@ -9,11 +9,17 @@
 	padding-right: 0.5%;
 }
 
+.secure {
+	background: url('../images/lock.gif');
+	background-repeat: no-repeat;
+	background-position: 97.5% 50%;
+}
+
 #content .textbox {
 	width: 320px;
 	background-image: url('../images/search.jpg');
-	background-position: left;
 	background-repeat: no-repeat;
+	background-position: left;
 	padding-left: 21;
 	margin-right: 0.4em;
 }
