@@ -931,21 +931,21 @@
 				&lt;module id=&quot;adminModule_1233568391515&quot;&gt;
 				&lt;web&gt;
 				&lt;web-uri&gt;cab2badmin.war&lt;/web-uri&gt;
-				&lt;context-root&gt;cab2badmin&lt;/context-root&gt;
+				&lt;context-root&gt;cab2b/admin&lt;/context-root&gt;
 				&lt;/web&gt;
 				&lt;/module&gt;
 				
 				&lt;module id=&quot;WebModule_1233568391515&quot;&gt;
 				&lt;web&gt;
 				&lt;web-uri&gt;cab2bWebApp.war&lt;/web-uri&gt;
-				&lt;context-root&gt;cab2bwebapp&lt;/context-root&gt;
+				&lt;context-root&gt;cab2b&lt;/context-root&gt;
 				&lt;/web&gt;
 				&lt;/module&gt;
 				
 				&lt;module id=&quot;cab2b_1233568391515&quot;&gt;
 				&lt;web&gt;
 				&lt;web-uri&gt;cab2b.war&lt;/web-uri&gt;
-				&lt;context-root&gt;/&lt;/context-root&gt;
+				&lt;context-root&gt;cab2b/webpage&lt;/context-root&gt;
 				&lt;/web&gt;
 				&lt;/module&gt; " />
 		</sequential>
