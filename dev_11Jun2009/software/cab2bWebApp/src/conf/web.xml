@@ -104,16 +104,12 @@
 
 	<!-- Standard Error Page Declarations -->
 	<error-page>
-		<error-code>404</error-code>
-		<location>/pages/failure.jsp</location>
-	</error-page>
-	<error-page>
 		<error-code>500</error-code>
 		<location>/pages/failure.jsp</location>
 	</error-page>
 
 	<!-- Session Configuration Settings -->
 	<session-config>
-		<session-timeout>20</session-timeout>
+		<session-timeout>10</session-timeout>
 	</session-config>
 </web-app>
