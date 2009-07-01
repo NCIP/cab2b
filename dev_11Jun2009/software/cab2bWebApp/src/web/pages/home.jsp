@@ -111,9 +111,9 @@
 						<DIV class="myselectboxitems" id="myselectboxitems">
 							<logic:present name="modelGroupDVOList">							
 								<logic:iterate name="modelGroupDVOList" id="modelGroupDVO" type="edu.wustl.cab2bwebapp.dvo.ModelGroupDVO" indexId="index">
-									<DIV class="myselectboxitem<logic:equal name="modelGroupDVO" property="secured" value="true"> secure</logic:equal>" <logic:equal name="modelGroupDVO" property="secured" value="true">title="<bean:message key="div.title.secureservice"/>"</logic:equal>>
+									<DIV class="myselectboxitem">
 										<INPUT type="checkbox" name="modelGroups" id="<bean:write name="modelGroupDVO" property="modelGroupName"/>" value="<bean:write name="modelGroupDVO" property="modelGroupName"/>" onClick="showSavedSearches(this, <bean:write name="modelGroupDVO" property="secured"/> <logic:notPresent name="userName">&& true</logic:notPresent><logic:present name="userName">&& false</logic:present>)" <logic:equal name="modelGroupDVO" property="selected" value="true">checked</logic:equal>>
-										<LABEL><bean:write name="modelGroupDVO" property="modelGroupName"/></LABEL>										
+										<LABEL><bean:write name="modelGroupDVO" property="modelGroupName"/><logic:equal name="modelGroupDVO" property="secured" value="true">&nbsp;<IMG src="images/lock.gif" alt="<bean:message key="img.alt.secureservice"/>"></logic:equal></LABEL>										
 									</DIV>
 								</logic:iterate>
 							</logic:present>						
