@@ -109,20 +109,15 @@ public class SavedQueryBizLogic {
      * @return
      */
     public Collection<ICab2bQuery> getKeywordQueries(Set<EntityGroupInterface> entityGroups) {
-        Set<ICab2bQuery> allKeywordQueries = new HashSet<ICab2bQuery>(getKeywordQueries());
-
+        Collection<ICab2bQuery> allKeywordQueries = getKeywordQueries();
         Set<ICab2bQuery> keywordQueries = new HashSet<ICab2bQuery>();
         for (EntityGroupInterface entityGroup : entityGroups) {
-            Iterator<ICab2bQuery> iterator = allKeywordQueries.iterator();
-            while (iterator.hasNext()) {
-                ICab2bQuery query = iterator.next();
+            for (ICab2bQuery query : allKeywordQueries) {
                 if (entityGroup.equals(Utility.getEntityGroup(query))) {
                     keywordQueries.add((ICab2bQuery) DynamicExtensionsUtility.cloneObject(query));
-                    iterator.remove();
                 }
             }
         }
-
         return keywordQueries;
     }
 
