@@ -20,7 +20,7 @@
 				<DIV class="titlebarleftcurve">
 					<DIV class="titlebarrightcurve">
 						<DIV class="titlebarcollapsed" onClick="document.getElementById('contentbody').style.display=(document.getElementById('contentbody').style.display=='none'?'block':'none');this.className=(this.className=='titlebarexpanded'?'titlebarcollapsed':'titlebarexpanded');">
-							Unexpected Error
+							<bean:message key="title.unexpectederror"/>
 						</DIV>						
 					</DIV>
 				</DIV>
@@ -29,7 +29,7 @@
 		<DIV id="contentbody">
 			<IMG alt="<bean:message key="img.alt.error"/>" src="images/esclamation.jpg" align="middle"><BR/>
 			<DIV class="error">
-				UNABLE TO PROCESS YOUR REQUEST<BR/>
+				<bean:message key="error.unexpected"/><BR/>
 				${pageContext.exception}<html:errors/>
 				<BR/><BR/>				
 			</DIV>
