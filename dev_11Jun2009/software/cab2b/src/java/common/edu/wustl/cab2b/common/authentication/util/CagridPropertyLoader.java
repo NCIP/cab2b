@@ -54,7 +54,7 @@ public class CagridPropertyLoader {
      * @return the grid cert location
      */
     public static String getGridCert() {
-        return System.getProperty("user.home") + '/' + properties.getProperty("grid.cert");
+        return properties.getProperty("grid.cert");
     }
 
     /**
@@ -63,7 +63,7 @@ public class CagridPropertyLoader {
      * @return the grid key location
      */
     public static String getGridKey() {
-        return System.getProperty("user.home") + '/' + properties.getProperty("grid.key");
+        return properties.getProperty("grid.key");
     }
 
     /**
