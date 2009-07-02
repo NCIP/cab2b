@@ -14,8 +14,8 @@
 		<DIV id="quicklinkspanelbody">
 			<DIV>
 				<IMG alt="<bean:message key="img.alt.bullet"/>" src="images/arrow.jpg" class="bullet"><A href="https://cabig.nci.nih.gov/" class="link" target="_blank"><bean:message key="link.home.cabig"/></A><BR/>
-				<IMG alt="<bean:message key="img.alt.bullet"/>" src="images/arrow.jpg" class="bullet"><A href="http://cab2b.wustl.edu/" class="link" target="_blank"><bean:message key="link.webpage.cab2b"/></A><BR/>
-				<IMG alt="<bean:message key="img.alt.bullet"/>" src="images/arrow.jpg" class="bullet"><A href="http://cab2b.wustl.edu/cab2badmin/" class="link" target="_blank"><bean:message key="link.webpage.cab2badmin"/></A>
+				<IMG alt="<bean:message key="img.alt.bullet"/>" src="images/arrow.jpg" class="bullet"><A href="http://cab2b.wustl.edu/cab2b/webpage" class="link" target="_blank"><bean:message key="link.webpage.cab2b"/></A><BR/>
+				<IMG alt="<bean:message key="img.alt.bullet"/>" src="images/arrow.jpg" class="bullet"><A href="http://cab2b.wustl.edu/cab2b/admin/" class="link" target="_blank"><bean:message key="link.webpage.cab2badmin"/></A>
 			</DIV>
 		</DIV>
 		<DIV id="certifiedbrowserspanel">
