@@ -27,11 +27,13 @@
 			</DIV>
 		</DIV>
 		<DIV id="contentbody">
-			<IMG alt="<bean:message key="img.alt.error"/>" src="images/esclamation.jpg" align="middle"><BR/>
-			<DIV class="error">
-				<bean:message key="error.unexpected"/><BR/>
-				${pageContext.exception}<html:errors/>
-				<BR/><BR/>				
+			<DIV id="errornotificationpanel">
+				<IMG alt="<bean:message key="img.alt.error"/>" src="images/esclamation.jpg" align="middle"><BR/>
+				<SPAN class="error">
+					<bean:message key="error.unexpected"/><BR/>
+					${pageContext.exception}<html:errors/>
+					<BR/><BR/>				
+				</SPAN>
 			</DIV>
 			<INPUT type="button" class="button" value="<bean:message key="button.back"/>" onClick="history.go(-1)">&nbsp;&nbsp;
 			<INPUT type="button" class="button" value="<bean:message key="button.home"/>" onClick="document.location='Home.do'">

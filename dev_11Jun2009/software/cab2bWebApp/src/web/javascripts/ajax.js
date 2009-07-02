@@ -57,22 +57,30 @@
   httpRequest.onreadystatechange = function(){ 
      if(httpRequest.readyState==4) 
     { 
-       if(httpRequest.status==200 && httpRequest.responseText.indexOf('Unexpected Error')==-1) //http.responseXML can be used to get an XML based response, if we need to have some XML output from a server file.
+	  results = httpRequest.responseText;      
+	   if(httpRequest.status==500) //http.responseXML can be used to get an XML based response, if we need to have some XML output from a server file.
 	  {
-	    results = httpRequest.responseText;
+		var start = results.indexOf("<DIV id=\"errornotificationpanel\">");
+		results = results.substring(start, results.length-1);
+		var end = results.indexOf("</DIV>");
+		 if(start>0 && end>0)
+		{
+		  results = results.substring(0, end + 6);
+		}
+		 else
+		{
+		  results = "<SPAN class='error'>An unexpected error has occured while processing your request. Please contact helpdesk!</SPAN>";
+		}
+		results = "<DIV style='text-align:center'>" + results + "</DIV>";
 	  }
-	   else if(httpRequest.status==500 || httpRequest.responseText.indexOf('Unexpected Error')!=-1)
+	   if(httpRequest.status!=403)
 	  {
-  	    results = "<SPAN class='error'>An unexpected error has occured while processing your request. Please contact helpdesk!</SPAN>";
+        document.getElementById(responseReceiver).innerHTML = results;
 	  }
-	   else if(httpRequest.status==403)
+	   else
 	  {
   	    alert(httpRequest.responseText);
 		document.location = "Home.do";
-	  }
-	   if(httpRequest.status==200 || httpRequest.status==500)
-	  {
-        document.getElementById(responseReceiver).innerHTML = results;
 	  }
     }
   }
