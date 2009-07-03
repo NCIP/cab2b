@@ -71,6 +71,7 @@ public class SearchQueryExecutor {
             public void run() {
                 for (QueryExecutor queryExecutor : queryExecutorList) {
                     queryExecutor.executeQuery();
+                    queryExecutor.getCompleteResults();
                 }
             }
         }.start();
