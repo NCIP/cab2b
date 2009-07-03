@@ -1,15 +1,15 @@
-<%@ page errorPage="failure.jsp" %>
+<%@ page errorPage="failure.jsp"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <%
-	Long query_id = Long.parseLong(request.getParameter("queryId"));
-	if(query_id == null )
-	    query_id = (Long) session.getAttribute("queryId");
-	Boolean isFirstRequest = (Boolean) session.getAttribute("isFirstRequest");
-	if(isFirstRequest != null && isFirstRequest == true) 
-		session.setAttribute("isFirstRequest", false);
+  Long query_id = Long.parseLong(request.getParameter("queryId"));
+  if(query_id == null)
+  query_id = (Long) session.getAttribute("queryId");
+  Boolean isFirstRequest = (Boolean) session.getAttribute("isFirstRequest");
+  if(isFirstRequest != null && isFirstRequest == true) 
+  session.setAttribute("isFirstRequest", false);
 %>
 <HTML>
 <HEAD>
@@ -19,60 +19,30 @@
 <LINK rel="stylesheet" href="stylesheet/searchresults.css" type="text/css">
 <SCRIPT language="JavaScript" src="javascript/ajax.js"></SCRIPT>
 <SCRIPT language="javaScript">
-
-function getTransformedResults()
+ function executeQuery()
 {
-	//alert("ajax call posted");
-	var query_id = <%=query_id%>;
-	var url	='TransformQueryResultsAction.do?queryId='+query_id+'&transformationMaxLimit=100';
-	var request	=XMLHTTPObject();
-	if(request == null)
-	{
-		alert ("Your browser does not support AJAX!");
-		return;
-	}
-	var handlerFunction = getReadyStateHandler(request,updatedResultsResponseHandler,true); 
-	request.onreadystatechange = handlerFunction; 
-	request.open("POST",url,true);    
-	request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");	
-	request.send("");
+   if(<%=isFirstRequest%>==true)
+  {		
+    processAJAXRequest('ExecuteQuery.do?queryId=' + ${sessionScope.queryId});
+	getTransformedResults();	
+  }
 }
 
-function updatedResultsResponseHandler(response)
-{   
-
-	//alert("ajax response handler called");
-  
-		if(response == "stopAjax")	// if signal comes for Query Executor finished, stop recursion
-	{
-		//alert("Execution Completed..!");
-		//document.getElementById('centerpanelcontent').innerHTML = response;	
-	 //updateView();
-		return;
-	}
-	document.getElementById('centerpanelcontent').innerHTML = response;	
-	updateView();
-	getTransformedResults();
-	//setTimeout("getTransformedResults()", 5000);
-}
-
-function getReadyStateHandler(request,responseXmlHandler,isText)
+ function getTransformedResults()
 {
-	return function ()
-	{
-		//If the state has value  4 then full server response is received
-		if(request.readyState == 4)  
-		{
-			if(request.status == 200)
-			{
-		        if(isText==true)
-		        	responseXmlHandler(request.responseText);
-				else
-		        	responseXmlHandler(request.responseXml);
-			}
-		}
-    }
+  var url = 'TransformQueryResultsAction.do?queryId=' + ${sessionScope.queryId} + '&transformationMaxLimit=100';
+  processAJAXRequest(url, 'centerpanelcontent', 1);
+   if(document.getElementById("stopajax")!=null)
+  {
+    updateView();
+	return;
+  }
+   else
+  {
+    setTimeout("getTransformedResults()", 2000);
+  }
 }
+
  function updateView()
 {
   if(!document.getElementById('searchresultstable'))
@@ -126,31 +96,9 @@ function getReadyStateHandler(request,responseXmlHandler,isText)
 	}
   }
 }
-
-function executeQueryAndInstantiateAjax()
-{
-	if(<%=isFirstRequest%> == true)	// if its a first request , then only, give call to executequery and instantiate the ajax call, else let the refresh be done and do nothing
-	{
-		// Give ajax call to Execute Query which will ask QueryExecutor to start execution and do nothing in response
-		var query_id = <%=query_id%>;
-		var url	='ExecuteQuery.do?queryId='+query_id;
-		var request	=XMLHTTPObject();
-		if(request == null)
-		{
-			alert ("Your browser does not support AJAX!");
-			return;
-		}
-		request.open("POST",url,true);    
-		request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");	
-		request.send("");
-		
-		// instantiate recursive ajax call function for getting transformed results
-		getTransformedResults();	
-	}
-}
 </SCRIPT>
 </HEAD>
-<BODY onLoad="executeQueryAndInstantiateAjax();">
+<BODY onLoad="executeQuery();">
 <jsp:include page="header.jsp"/>
 <DIV style="text-align:center;">
 	<DIV id="toppanel">

@@ -2,6 +2,14 @@
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 
+<%
+  if(session.getAttribute("stopAjax")!=null)
+ {
+%>
+   <DIV id="stopajax"></DIV>
+<%
+ }
+%>
 <DIV style="display:none" id="failedservicesAJAX">
 	<logic:present name="failedServices">
 		<logic:iterate name="failedServices" id="failedServices" indexId="indexId" type="edu.wustl.cab2b.common.user.ServiceURLInterface">

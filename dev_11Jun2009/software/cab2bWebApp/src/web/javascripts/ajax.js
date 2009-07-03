@@ -49,9 +49,13 @@
   return xmlhttp;
 }
 
- function processAJAXRequest(requestURL, responseReceiver)
+var results = "";
+ function processAJAXRequest(requestURL, responseReceiver, param)
 { 
-  document.getElementById(responseReceiver).innerHTML = "<TABLE style='height:100%;width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'></TD></TR></TABLE>";
+   if(responseReceiver && !param)
+  {
+	document.getElementById(responseReceiver).innerHTML = "<TABLE style='height:100%;width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'></TD></TR></TABLE>";
+  }
   var httpRequest = XMLHTTPObject();
   httpRequest.open("POST", requestURL, true);
   httpRequest.onreadystatechange = function(){ 
@@ -73,11 +77,15 @@
 		}
 		results = "<DIV style='text-align:center'>" + results + "</DIV>";
 	  }
-	   if(httpRequest.status!=403)
+	   if(httpRequest.status!=403 && responseReceiver)
 	  {
+	     if(param)
+		{		  
+		  document.getElementById(responseReceiver).innerHTML = "<TABLE style='height:100%;width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'></TD></TR></TABLE>";
+		}
         document.getElementById(responseReceiver).innerHTML = results;
 	  }
-	   else
+	   else if(httpRequest.status==403)
 	  {
   	    alert(httpRequest.responseText);
 		document.location = "Home.do";
