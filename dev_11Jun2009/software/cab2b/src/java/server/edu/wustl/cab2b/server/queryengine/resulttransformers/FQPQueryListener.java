@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.cagrid.fqp.results.metadata.ProcessingStatus;
 import org.cagrid.fqp.results.metadata.ResultsRange;
 
@@ -21,8 +20,8 @@ import org.cagrid.fqp.results.metadata.ResultsRange;
  */
 public class FQPQueryListener implements FQPProcessingStatusListener, Serializable {
     private Map<String, FailedTargetURL> urlVsException = new HashMap<String, FailedTargetURL>();
-
-    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(FQPQueryListener.class);
+	
+	private static final long serialVersionUID = 1L;
 
     private DCQLQuery query = null;
 
@@ -48,7 +47,7 @@ public class FQPQueryListener implements FQPProcessingStatusListener, Serializab
      *            the urlVsException to set
      */
     public void processingStatusChanged(ProcessingStatus status, String message) {
-        logger.info("Processing status : " + status + "\t Message :" + message);
+       // logger.info("Processing status : " + status + "\t Message :" + message);
     }
 
     /* (non-Javadoc)
@@ -64,7 +63,7 @@ public class FQPQueryListener implements FQPProcessingStatusListener, Serializab
      * @see gov.nih.nci.cagrid.fqp.processor.FQPProcessingStatusListener#targetServiceOk(java.lang.String)
      */
     public void targetServiceOk(String serviceURL) {
-        logger.info("targetServiceOk : " + serviceURL);
+        //logger.info("targetServiceOk : " + serviceURL);
     }
 
     /* (non-Javadoc)
@@ -80,7 +79,7 @@ public class FQPQueryListener implements FQPProcessingStatusListener, Serializab
      * @see gov.nih.nci.cagrid.fqp.processor.FQPProcessingStatusListener#targetServiceReturnedResults(java.lang.String, org.cagrid.fqp.results.metadata.ResultsRange)
      */
     public void targetServiceReturnedResults(String serviceURL, ResultsRange range) {
-        logger.info("targetServiceReturnedResults : " + serviceURL + "\tRange P:" + range);
+        //logger.info("targetServiceReturnedResults : " + serviceURL + "\tRange P:" + range);
     }
 
     /* (non-Javadoc)

@@ -10,6 +10,9 @@ import java.io.Serializable;
  * @author deepak_shingan
  */
 public class FailedTargetURL implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private String targetUrl;
 
     private String errorMessage;
@@ -52,5 +55,21 @@ public class FailedTargetURL implements Serializable {
      */
     public Object getTargetObject() {
         return targetObject;
+    }
+    @Override
+    public int hashCode() {
+        return targetUrl.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if ((obj == null) || (obj.getClass() != targetUrl.getClass())) {
+            return false;
+        }
+        String url = (String) obj;
+        return targetUrl.equals(url);
     }
 }

@@ -20,7 +20,6 @@ import edu.wustl.cab2b.common.queryengine.result.FailedTargetURL;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
-import edu.wustl.cab2bwebapp.action.ExecuteQueryAction;
 import edu.wustl.cab2bwebapp.dvo.SearchResultDVO;
 import edu.wustl.cab2bwebapp.util.Utility;
 
@@ -31,9 +30,9 @@ import edu.wustl.cab2bwebapp.util.Utility;
  */
 public class ExecuteQueryBizLogic {
 
-    private Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults = null;
+    private SearchQueryExecutor searchQueryExecutor = null;
 
-    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ExecuteQueryAction.class);
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ExecuteQueryBizLogic.class);
 
     /**
      * Constructor
@@ -65,6 +64,7 @@ public class ExecuteQueryBizLogic {
             String keyword,
             UserInterface user,
             String[] modelGroupNames) throws Exception {
+        searchQueryExecutor = new SearchQueryExecutor();
         processResults(queries, proxy, keyword, user, modelGroupNames);
     }
 
@@ -93,25 +93,25 @@ public class ExecuteQueryBizLogic {
      */
     private void executeQuery(Collection<ICab2bQuery> queries, GlobusCredential proxy, String keyword) {
         if (keyword == null || keyword.equals("")) {
-            searchResults = new SearchQueryExecutor().execute(queries, proxy);
+            searchQueryExecutor.execute(queries, proxy);
         } else {
-            searchResults = new SearchQueryExecutor().execute(queries, keyword, proxy);
+            searchQueryExecutor.execute(queries, keyword, proxy) ;
         }
     }
 
     /**
      * @return the searchResults
      */
-    public final Map<ICab2bQuery, TransformedResultObjectWithContactInfo> getSearchResults() {
-        return searchResults;
+    public final Map<ICab2bQuery, TransformedResultObjectWithContactInfo> getSearchResults(int transformationMaxLimit) {
+        return searchQueryExecutor.transformResult(transformationMaxLimit);
     }
 
-    /**
-     * @return the finalResult
-     */
-    public final List<Map<AttributeInterface, Object>> getResultForAllUrls(ICab2bQuery selectedQuery) {
-        return searchResults.get(selectedQuery).getResultForAllUrls();
-    }
+    //    /**
+    //     * @return the finalResult
+    //     */
+    //    public final List<Map<AttributeInterface, Object>> getResultForAllUrls(ICab2bQuery selectedQuery) {
+    //        return searchResults.get(selectedQuery).getResultForAllUrls();
+    //    }
 
     /**
      * @param failedUrl
@@ -171,5 +171,9 @@ public class ExecuteQueryBizLogic {
             }
         }
         return searchResultsView;
+    }
+
+    public boolean isProcessingFinished() {
+        return searchQueryExecutor.isProcessingFinished();
     }
 }

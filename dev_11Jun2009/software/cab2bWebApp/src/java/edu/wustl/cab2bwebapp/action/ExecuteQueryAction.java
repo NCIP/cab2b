@@ -57,11 +57,10 @@ public class ExecuteQueryAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
-        String actionForward = Constants.FORWARD_SEARCH_RESULTS;
+      String actionForward = null;
         try {
-            HttpSession session = request.getSession();
-            if (request.getQueryString() == null) {
-                String[] modelGroupNames = (String[]) request.getParameterValues(Constants.MODEL_GROUPS);
+                HttpSession session = request.getSession();
+                String[] modelGroupNames = (String[]) session.getAttribute(Constants.MODEL_GROUPS);
                 SavedQueryBizLogic savedQueryBizLogic =
                         (SavedQueryBizLogic) session.getServletContext()
                             .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
@@ -69,7 +68,7 @@ public class ExecuteQueryAction extends Action {
                         savedQueryBizLogic.getQueryById(Long.parseLong(request.getParameter(Constants.QUERY_ID)));
                 UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
 
-                String conditionstr = request.getParameter("conditionList");
+                String conditionstr = (String) session.getAttribute(Constants.CONDITION_LIST);
                 if (conditionstr == null) {
                     conditionstr = "";
                 }
@@ -86,31 +85,8 @@ public class ExecuteQueryAction extends Action {
                     GlobusCredential proxy = (GlobusCredential) session.getAttribute(Constants.GLOBUS_CREDENTIAL);
                     ExecuteQueryBizLogic executeQueryBizLogic =
                             new ExecuteQueryBizLogic(queries, proxy, user, modelGroupNames);
-                    Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults =
-                            executeQueryBizLogic.getSearchResults();
-
-                    List<SavedQueryDVO> queryList = new ArrayList<SavedQueryDVO>();
-                    SavedQueryDVO savedQuery = new SavedQueryDVO();
-                    savedQuery.setName(query.getName());
-                    savedQuery.setResultCount(searchResults.get(query).getResultForAllUrls().size());
-                    queryList.add(savedQuery);
-
-                    TransformedResultObjectWithContactInfo selectedQueryResult = searchResults.get(query);
-                    List<String> urlsForSelectedQueries = query.getOutputUrls();
-                    urlsForSelectedQueries.add(0, Constants.ALL_HOSTING_INSTITUTIONS);
-                    Collection<ServiceURLInterface> failedURLS =
-                            ExecuteQueryBizLogic.getFailedServiceUrls(selectedQueryResult.getFailedServiceUrl());
-                    session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedURLS != null ? failedURLS.size()
-                            : 0);
-                    session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
-                    session.setAttribute(Constants.SERVICE_INSTANCES, urlsForSelectedQueries);
-                    session.setAttribute(Constants.SAVED_QUERIES, queryList);
-                    session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
-                    session.setAttribute(Constants.SEARCH_RESULTS_VIEW, ExecuteQueryBizLogic
-                        .getSearchResultsView(selectedQueryResult.getResultForAllUrls(), selectedQueryResult
-                            .getAllowedAttributes()));
-                }
-            }
+                    session.setAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT, executeQueryBizLogic);
+                   }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
@@ -123,7 +99,8 @@ public class ExecuteQueryAction extends Action {
             actionForward =
                     e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? Constants.FORWARD_HOME
                             : Constants.FORWARD_FAILURE;
+            return mapping.findForward(actionForward);
         }
-        return mapping.findForward(actionForward);
+        return null;
     }
 }

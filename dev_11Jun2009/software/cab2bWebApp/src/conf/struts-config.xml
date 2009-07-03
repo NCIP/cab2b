@@ -59,6 +59,18 @@
 
 		<action path="/ExecuteQuery"
 			type="edu.wustl.cab2bwebapp.action.ExecuteQueryAction">
+			<forward name="searchresultspanel"
+				path="/pages/searchresultspanel.jsp" />
+		</action>
+		
+		<action path="/PreExecuteQuery"
+			type="edu.wustl.cab2bwebapp.action.PreExecuteQueryAction">
+		</action>
+
+		<action path="/TransformQueryResultsAction"
+			type="edu.wustl.cab2bwebapp.action.TransformQueryResultsAction">
+			<forward name="searchresultspanel"
+				path="/pages/searchresultspanel.jsp" />
 		</action>
 
 		<action path="/KeywordSearch"

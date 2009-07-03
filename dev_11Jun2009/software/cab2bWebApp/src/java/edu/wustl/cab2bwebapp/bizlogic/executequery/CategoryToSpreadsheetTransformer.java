@@ -37,12 +37,15 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
      * @param records
      * @return List<Map<AttributeInterface, Object>>
      */
-    public List<Map<AttributeInterface, Object>> convert(List<ICategorialClassRecord> records) {
+    public List<Map<AttributeInterface, Object>> convert(List<ICategorialClassRecord> records, int transformationMaxLimit) {
         List<Map<AttributeInterface, Object>> list = new ArrayList<Map<AttributeInterface, Object>>();
         if (records != null) {
             for (ICategorialClassRecord record : records) {
                 List<LinkedHashMap<AttributeInterface, Object>> res = convert(record);
                 list.addAll(res);
+                if(list.size() >  transformationMaxLimit) {  
+                    break;
+                } 
             }
         }
         return list;

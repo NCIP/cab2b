@@ -14,7 +14,7 @@
 <SCRIPT language="JavaScript" src="javascript/calendar.js"></SCRIPT>
 </HEAD>
 <BODY onLoad="showAddLimitForm();if(navigator.appName.indexOf('Netscape')==-1)document.getElementById('savedsearchespanelbody').style.width='100%'">
-<FORM method="post" action="ExecuteQuery.do" onSubmit="if(createQueryString()){return true;}else{alert('<bean:message key="alert.definecondition"/>');return false;}">
+<FORM method="post" action="PreExecuteQuery.do" onSubmit="if(createQueryString()){return true;}else{alert('<bean:message key="alert.definecondition"/>');return false;}">
 	<jsp:include page="header.jsp"/>
 	<DIV id="leftpanel" style="width: 24%;">
 		<DIV id="savedsearchespanel">

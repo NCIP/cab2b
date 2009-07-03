@@ -10,6 +10,7 @@ import java.util.Collection;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
@@ -50,6 +51,18 @@ public class AddLimitAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
         String actionForward = null;
+        HttpSession session  = request.getSession();
+        session.removeAttribute(Constants.SEARCH_RESULTS);
+        session.removeAttribute(Constants.SEARCH_RESULTS_VIEW);
+        session.removeAttribute(Constants.FAILED_SERVICES_COUNT);
+        session.removeAttribute(Constants.SAVED_QUERIES);
+        session.removeAttribute(Constants.FAILED_SERVICES);
+        session.removeAttribute(Constants.QUERY_ID);
+        session.removeAttribute(Constants.SERVICE_INSTANCES);
+        session.removeAttribute(Constants.MODEL_GROUPS);
+        session.removeAttribute(Constants.CONDITION_LIST);
+        session.removeAttribute(Constants.IS_FIRST_REQUEST);
+        session.removeAttribute(Constants.STOP_AJAX);
         try {
             SavedQueryBizLogic savedQueryProvider =
                     (SavedQueryBizLogic) request.getSession().getServletContext()

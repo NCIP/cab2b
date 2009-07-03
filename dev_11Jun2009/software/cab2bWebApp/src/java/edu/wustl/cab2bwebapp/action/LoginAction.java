@@ -62,6 +62,17 @@ public class LoginAction extends Action {
                 return mapping.findForward(Constants.FORWARD_LOGIN);
             }
             HttpSession session = request.getSession();
+            session.removeAttribute(Constants.SEARCH_RESULTS);
+            session.removeAttribute(Constants.SEARCH_RESULTS_VIEW);
+            session.removeAttribute(Constants.FAILED_SERVICES_COUNT);
+            session.removeAttribute(Constants.SAVED_QUERIES);
+            session.removeAttribute(Constants.FAILED_SERVICES);
+            session.removeAttribute(Constants.QUERY_ID);
+            session.removeAttribute(Constants.SERVICE_INSTANCES);
+            session.removeAttribute(Constants.MODEL_GROUPS);
+            session.removeAttribute(Constants.CONDITION_LIST);
+            session.removeAttribute(Constants.IS_FIRST_REQUEST);
+            session.removeAttribute(Constants.STOP_AJAX);
             UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
             if (user == null || user.getUserName().equals(Constants.ANONYMOUS)) {
                 UserOperations userOperations = new UserOperations();

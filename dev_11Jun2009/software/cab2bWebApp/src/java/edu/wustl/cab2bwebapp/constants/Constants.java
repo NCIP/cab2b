@@ -7,6 +7,24 @@ package edu.wustl.cab2bwebapp.constants;
 public interface Constants {
     /** Constants for AJAX Call */
     public static final String AJAX_CALL = "Ajax-Call";
+        
+    /** Constant for forward to infeasibleURLs */
+    public static final String INFEASIBLE_URL = "infeasibleURL";
+      
+    /** Constants for isFirstRequest */
+    public static final String IS_FIRST_REQUEST = "isFirstRequest";
+    
+    /** Constants for conditionList */
+    public static final String CONDITION_LIST = "conditionList";
+    
+    /** Constants for stopAjax */
+    public static final String STOP_AJAX = "stopAjax";
+    
+    /** Constants for conditionList */
+    public static final String PROCESSING = "processing";
+    
+    /** Constants for ExecuteQueryBizLogicObject */
+    public static final String EXECUTE_QUERY_BIZ_LOGIC_OBJECT = "ExecuteQueryBizLogicObject";
 
     /** Constant for Saved Query Provider */
     public static final String SAVED_QUERY_BIZ_LOGIC = "savedQueryBizLogic";

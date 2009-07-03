@@ -21,6 +21,6 @@ public interface ICategoryToSpreadsheetTransformer {
      * @param records
      * @return
      */
-    public List<Map<AttributeInterface, Object>> convert(List<ICategorialClassRecord> records);
+    public List<Map<AttributeInterface, Object>> convert(List<ICategorialClassRecord> records, int transformationMaxLimit);
 
 }

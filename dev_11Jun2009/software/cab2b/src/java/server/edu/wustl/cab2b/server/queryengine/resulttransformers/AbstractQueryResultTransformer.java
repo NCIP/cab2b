@@ -54,7 +54,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
 
     private Collection<FailedTargetURL> failedQueryUrlList = new ArrayList<FailedTargetURL>();
 
-    private ExecutorService executor = Executors.newCachedThreadPool();
+    private ExecutorService executor = Executors.newFixedThreadPool(1);
 
     public AbstractQueryResultTransformer() {
         queryLogger = new QueryLogger();
@@ -129,7 +129,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             FQPQueryListener listener = new FQPQueryListener(query);
             federatedQueryEngine.addStatusListener(listener);
 
-            logger.info("Executing DCQL... Target is : " + query.getTargetObject().getName());
+            logger.info("Executing DCQL to get : " + query.getTargetObject().getName());
             queryResults = federatedQueryEngine.execute(query);
             failedQueryUrlList.addAll(listener.getFailedURLs().values());
 

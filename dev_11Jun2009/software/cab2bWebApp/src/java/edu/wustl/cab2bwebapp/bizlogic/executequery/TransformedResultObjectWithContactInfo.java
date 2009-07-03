@@ -4,8 +4,10 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -21,7 +23,7 @@ import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
  */
 public class TransformedResultObjectWithContactInfo {
 
-    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ServiceURLOperations.class);
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(TransformedResultObjectWithContactInfo.class);
 
     /**
      * Map for url to transformed query result.
@@ -35,6 +37,11 @@ public class TransformedResultObjectWithContactInfo {
     private Collection<FailedTargetURL> failedServiceUrl = null;
 
     /**
+     * URLs infeasible for transformation during query execution.
+     */
+    private Set<String> inFeasibleUrl = new HashSet<String>();
+
+    /**
      * List of attributes(columns) to be shown in result.
      */
     private Collection<AttributeInterface> allowedAttributes = null;
@@ -45,7 +52,7 @@ public class TransformedResultObjectWithContactInfo {
      * @param result
      */
     public void addUrlAndResult(String url, List<Map<AttributeInterface, Object>> result) {
-        logger.info("Inside addUrlAndResult");
+        //logger.info("Inside addUrlAndResult");
         //Retrive ServiceURLInterface object from URL
         ServiceURLInterface serviceUrlMetadata = null;
         try {
@@ -98,7 +105,10 @@ public class TransformedResultObjectWithContactInfo {
                 allowedAttributes.add(attributeHI);
             }
         }
-
+		//for failed URLs and even infeasible URL's, new ArrayList will be created
+        if(result == null) {
+            result = new ArrayList<Map<AttributeInterface, Object>>(1);
+        }
         //Adding service meta data inside result map
         for (Map<AttributeInterface, Object> recordMap : result) {
             recordMap.put(attributeHC, serviceUrlMetadata.getHostingCenter());
@@ -168,5 +178,18 @@ public class TransformedResultObjectWithContactInfo {
      */
     public void setAllowedAttributes(Collection<AttributeInterface> allowedAttributes) {
         this.allowedAttributes = allowedAttributes;
+    }
+
+    public void addInFeasibleUrls(String inFeasibleUrl)
+    {
+        this.getInFeasibleUrl().add(inFeasibleUrl);
+    }
+
+    public Set<String> getInFeasibleUrl() {
+        return inFeasibleUrl;
+    }
+
+    public void setInFeasibleUrl(Set<String> inFeasibleUrl) {
+        this.inFeasibleUrl = inFeasibleUrl;
     }
 }

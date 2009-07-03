@@ -7,10 +7,19 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.cab2b.common.queryengine.QueryExecutorPropertes;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 
+/**
+ * Record for a CategorialClass
+ * @author chandrakant_talele
+ */
 public class CategorialClassRecord extends Record implements ICategorialClassRecord {
     private static final long serialVersionUID = -7902568245257677861L;
+
+    private static long noOfObjectsPresent = 0;
+
+    private static final long totalObjectsAllowedGlobally = QueryExecutorPropertes.getGlobalAllowedRecords();
 
     private Map<CategorialClass, List<ICategorialClassRecord>> childrenCategorialClassRecords;
 
@@ -23,6 +32,11 @@ public class CategorialClassRecord extends Record implements ICategorialClassRec
         super(attributes, id);
         childrenCategorialClassRecords = new HashMap<CategorialClass, List<ICategorialClassRecord>>();
         this.categorialClass = categorialClass;
+        noOfObjectsPresent++;
+        if (noOfObjectsPresent > totalObjectsAllowedGlobally) {
+            throw new RuntimeException("No of ICategorialClassRecord present in memory exceeds global limit "
+                    + totalObjectsAllowedGlobally);
+        }
     }
 
     public CategorialClass getCategorialClass() {
@@ -44,14 +58,20 @@ public class CategorialClassRecord extends Record implements ICategorialClassRec
 
     public void addCategorialClassRecords(CategorialClass catClass, List<ICategorialClassRecord> catClassRecs) {
         List<ICategorialClassRecord> existingRecs = getChildrenCategorialClassRecords().get(catClass);
-        if (existingRecs == null) {        
-            synchronized (this) {  
-            	if(catClassRecs!=null){
-                getChildrenCategorialClassRecords().put(catClass, new ArrayList<ICategorialClassRecord>(catClassRecs));
-            	}
+        if (existingRecs == null) {
+            synchronized (this) {
+                if (catClassRecs != null) {
+                    getChildrenCategorialClassRecords().put(catClass,
+                                                            new ArrayList<ICategorialClassRecord>(catClassRecs));
+                }
             }
         } else {
             existingRecs.addAll(catClassRecs);
         }
+    }
+
+    protected void finalize() throws Throwable {
+        super.finalize();
+        noOfObjectsPresent--;
     }
 }

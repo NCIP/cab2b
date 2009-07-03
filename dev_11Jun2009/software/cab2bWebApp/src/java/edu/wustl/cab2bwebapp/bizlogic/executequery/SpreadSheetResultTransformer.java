@@ -5,7 +5,6 @@
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,6 +18,7 @@ import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
@@ -55,12 +55,12 @@ public class SpreadSheetResultTransformer {
      * @param query
      * @return List<Map<AttributeInterface, Object>>
      */
-    public TransformedResultObjectWithContactInfo transResultToSpreadSheetView() {
+    public TransformedResultObjectWithContactInfo transResultToSpreadSheetView(int transformationMaxLimit) {
         TransformedResultObjectWithContactInfo resultObj = null;
         if (query != null && queryResult != null) {
 
             if (Utility.isCategory(query.getOutputEntity())) {
-                resultObj = processCategoryQueryResult();
+                resultObj = processCategoryQueryResult(transformationMaxLimit);
             } else {
                 resultObj = processQueryResult();
             }
@@ -117,7 +117,7 @@ public class SpreadSheetResultTransformer {
      * @param urls
      * @return
      */
-    private TransformedResultObjectWithContactInfo processCategoryQueryResult() {
+    private TransformedResultObjectWithContactInfo processCategoryQueryResult(int transformationMaxLimit) {
         ICategoryResult<ICategorialClassRecord> result = (ICategoryResult<ICategorialClassRecord>) queryResult;
         Category cat = result.getCategory();
         attributeOrderList = getAttributesWithOrder(cat);
@@ -125,12 +125,18 @@ public class SpreadSheetResultTransformer {
         TransformedResultObjectWithContactInfo resultObject = new TransformedResultObjectWithContactInfo();
         resultObject.setAllowedAttributes(attributeOrderList);
 
-        ICategoryToSpreadsheetTransformer transformer = new CategoryToSpreadsheetTransformer();
         Map<String, List<ICategorialClassRecord>> map = result.getRecords();
         List<String> urls = query.getOutputUrls();
         for (String url : urls) {
             List<ICategorialClassRecord> recordList = map.get(url);
-            resultObject.addUrlAndResult(url, transformer.convert(recordList));
+            List<Map<AttributeInterface, Object>> transformedResult = null;
+            // identify infeasible URLs
+            if(QueryExecutorUtil.isURLFeasibleForConversion(recordList,transformationMaxLimit) && recordList!=null)
+                    resultObject.addInFeasibleUrls(url);
+            
+            ICategoryToSpreadsheetTransformer transformer = new CategoryToSpreadsheetTransformer();
+            transformedResult = transformer.convert(recordList,transformationMaxLimit);
+            resultObject.addUrlAndResult(url, transformedResult);
         }
 
         removeUnwantedAttributes(resultObject.getResultForAllUrls(), attributeOrderList);

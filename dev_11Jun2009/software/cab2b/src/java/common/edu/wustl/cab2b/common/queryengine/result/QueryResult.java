@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 
@@ -31,7 +33,7 @@ public class QueryResult<R extends IRecord> implements IQueryResult<R> {
     /**
      * Collection for failed query URLs
      */
-    private Collection<FailedTargetURL> failedQueryUrls = null;
+    private Set<FailedTargetURL> failedQueryUrls = new HashSet<FailedTargetURL>();
 
     /**
      *
@@ -109,7 +111,7 @@ public class QueryResult<R extends IRecord> implements IQueryResult<R> {
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.queryengine.result.IQueryResult#getFailedURLs()
      */
-    public Collection<FailedTargetURL> getFailedURLs() {
+    public Set<FailedTargetURL> getFailedURLs() {
         return failedQueryUrls;
     }
 
@@ -117,7 +119,7 @@ public class QueryResult<R extends IRecord> implements IQueryResult<R> {
      * @see edu.wustl.cab2b.common.queryengine.result.IQueryResult#setFailedURLs(java.util.Collection)
      */
     public void setFailedURLs(Collection<FailedTargetURL> failedQueryUrls) {
-        this.failedQueryUrls = failedQueryUrls;
+        this.failedQueryUrls.addAll(failedQueryUrls);
     }
 
     public Boolean getIsSystemGenerated() {

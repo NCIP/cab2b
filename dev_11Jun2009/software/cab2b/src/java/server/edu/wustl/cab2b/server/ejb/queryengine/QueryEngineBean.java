@@ -54,7 +54,9 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
             globusCredential = AuthenticationUtility.getGlobusCredential(serializedDCR);
         }
         new PopularCategoryOperations().setPopularity(query);
-        return new QueryExecutor(query, globusCredential).executeQuery();
+        QueryExecutor exe = new QueryExecutor(query, globusCredential);
+        exe.executeQuery();
+        return  exe.getCompleteResults();
     }
 
     /**

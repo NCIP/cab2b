@@ -84,8 +84,8 @@ public class KeywordSearchAction extends Action {
                 executeQueryBizLogic =
                         new ExecuteQueryBizLogic(queries, globusCredential, keywordSearchForm.getKeyword(), user,
                                 modelGroupNames);
-
-                searchResults = executeQueryBizLogic.getSearchResults();
+                int transformationMaxLimit = Integer.valueOf(request.getParameter("transformationMaxLimit"));
+                searchResults = executeQueryBizLogic.getSearchResults(transformationMaxLimit);
                 Collection<ICab2bQuery> allQueries = searchResults.keySet();
                 List<SavedQueryDVO> queryList = new ArrayList<SavedQueryDVO>();
 

@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.globus.gsi.GlobusCredential;
 
@@ -25,23 +24,22 @@ import edu.wustl.common.querysuite.queryobject.IRule;
  */
 public class SearchQueryExecutor {
 
+    private List<QueryExecutor> queryExecutorList = null;
+
     /**
      * This method executes all the given regular queries
      *
      * @param keyword value to be searched
-     * @param globusCredential prxoy certificate of the user
+     * @param globusCredential proxy certificate of the user
      * @return
      */
-    public Map<ICab2bQuery, TransformedResultObjectWithContactInfo> execute(
-                                                                            Collection<ICab2bQuery> regularQueries,
-                                                                            GlobusCredential globusCredential) {
+    public void execute(Collection<ICab2bQuery> regularQueries, GlobusCredential globusCredential) {
         for (ICab2bQuery query : regularQueries) {
             if (query.isKeywordSearch()) {
                 throw new IllegalStateException(query.getName() + " is not a regular query.");
             }
         }
-
-        return executeAll(regularQueries, globusCredential);
+        executeAll(regularQueries, globusCredential);
     }
 
     /**
@@ -53,31 +51,29 @@ public class SearchQueryExecutor {
      * @param globusCredential
      * @return
      */
-    public Map<ICab2bQuery, TransformedResultObjectWithContactInfo> execute(
-                                                                            Collection<ICab2bQuery> keywordQueries,
-                                                                            String keyword,
-                                                                            GlobusCredential globusCredential) {
+    public void execute(Collection<ICab2bQuery> keywordQueries, String keyword, GlobusCredential globusCredential) {
         for (ICab2bQuery query : keywordQueries) {
             if (!query.isKeywordSearch()) {
                 throw new IllegalStateException(query.getName() + " is not a keyword search query.");
             }
             insertKeyword(query, keyword);
         }
-
-        return executeAll(keywordQueries, globusCredential);
+        executeAll(keywordQueries, globusCredential);
     }
 
-    private Map<ICab2bQuery, TransformedResultObjectWithContactInfo> executeAll(Collection<ICab2bQuery> queries,
-                                                                                GlobusCredential globusCredential) {
-        Map<ICab2bQuery, IQueryResult<? extends IRecord>> result =
-                new HashMap<ICab2bQuery, IQueryResult<? extends IRecord>>();
+    private void executeAll(Collection<ICab2bQuery> queries, GlobusCredential globusCredential) {
+        queryExecutorList = new ArrayList<QueryExecutor>(queries.size());
         for (ICab2bQuery query : queries) {
-            IQueryResult<? extends IRecord> queryResult =
-                    new QueryExecutor(query, globusCredential).executeQuery();
-            result.put(query, queryResult);
+            QueryExecutor queryExecutor = new QueryExecutor(query, globusCredential);
+            queryExecutorList.add(queryExecutor);
         }
-
-        return transformResult(result);
+        new Thread() {
+            public void run() {
+                for (QueryExecutor queryExecutor : queryExecutorList) {
+                    queryExecutor.executeQuery();
+                }
+            }
+        }.start();
     }
 
     /**
@@ -110,20 +106,27 @@ public class SearchQueryExecutor {
      * @param queryName
      * @return List<Map<AttributeInterface, Object>>
      */
-    Map<ICab2bQuery, TransformedResultObjectWithContactInfo> transformResult(
-                                                                             Map<ICab2bQuery, IQueryResult<? extends IRecord>> rawResults) {
+    public synchronized Map<ICab2bQuery, TransformedResultObjectWithContactInfo> transformResult(int transformationMaxLimit) {
         Map<ICab2bQuery, TransformedResultObjectWithContactInfo> transformedResult =
                 new HashMap<ICab2bQuery, TransformedResultObjectWithContactInfo>();
 
-        Set<Map.Entry<ICab2bQuery, IQueryResult<? extends IRecord>>> rawResultSet = rawResults.entrySet();
-        for (Map.Entry<ICab2bQuery, IQueryResult<? extends IRecord>> rawResult: rawResultSet) {
-            ICab2bQuery query = rawResult.getKey();
-            IQueryResult<? extends IRecord> originalResult = rawResult.getValue();
-            
+        for (QueryExecutor executor : queryExecutorList) {
+            ICab2bQuery query = executor.getQuery();
+            IQueryResult<? extends IRecord> originalResult = executor.getPartialResult();
             TransformedResultObjectWithContactInfo resultObj =
-                    new SpreadSheetResultTransformer(query, originalResult).transResultToSpreadSheetView();
+                    new SpreadSheetResultTransformer(query, originalResult).transResultToSpreadSheetView(transformationMaxLimit);
             transformedResult.put(query, resultObj);
+
         }
         return transformedResult;
+    }
+
+    public boolean isProcessingFinished() {
+        for (QueryExecutor e : queryExecutorList) {
+            if (!e.isProcessingFinished()) {
+                return false;
+            }
+        }
+        return true;
     }
 }
