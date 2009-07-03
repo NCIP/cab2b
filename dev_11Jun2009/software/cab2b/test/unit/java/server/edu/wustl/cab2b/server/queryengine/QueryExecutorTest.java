@@ -70,7 +70,8 @@ public class QueryExecutorTest extends TestCase {
         query.setOutputUrls(urls);
         query.setConstraints(constraints);
         QueryExecutor executor = new QueryExecutor(query, null);
-        IQueryResult<? extends IRecord> res = executor.executeQuery();
+        executor.executeQuery();
+        IQueryResult<? extends IRecord> res = executor.getCompleteResults();
         //checking failed urls                
         assertEquals(2, res.getFailedURLs().size());
 
@@ -107,7 +108,8 @@ public class QueryExecutorTest extends TestCase {
         query.setConstraints(constraints);
 
         QueryExecutor executor = new QueryExecutor(query, null);
-        IQueryResult<? extends IRecord> res = executor.executeQuery();
+        executor.executeQuery();
+        IQueryResult<? extends IRecord> res = executor.getCompleteResults();
 
         Map<String, ?> urlVsRecords = res.getRecords();
         assertEquals(1, urlVsRecords.size());
@@ -172,7 +174,8 @@ public class QueryExecutorTest extends TestCase {
         query.setOutputUrls(Arrays.asList(url));
 
         QueryExecutor executor = new QueryExecutor(query, null);
-        IQueryResult<? extends IRecord> res = executor.executeQuery();
+        executor.executeQuery();
+        IQueryResult<? extends IRecord> res = executor.getCompleteResults();
 
         Map<String, ?> urlVsRecords = res.getRecords();
         assertEquals(1, urlVsRecords.size());

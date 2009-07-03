@@ -24,10 +24,11 @@ public class SpreadSheetResultTransformerTest extends TestCase {
     public void testTransResultToSpreadSheetView_QueryParameterIsNull() {
         ICab2bQuery query = new QueryOperationsTest().createQuery();
         QueryExecutor exe = new QueryExecutor(query, null);
-        IQueryResult<? extends IRecord> result = exe.executeQuery();
+        exe.executeQuery();
+        IQueryResult<? extends IRecord> result = exe.getCompleteResults();
 
         SpreadSheetResultTransformer trnsformer = new SpreadSheetResultTransformer(query, result);
-        TransformedResultObjectWithContactInfo transformedResult = trnsformer.transResultToSpreadSheetView();
+        TransformedResultObjectWithContactInfo transformedResult = trnsformer.transResultToSpreadSheetView(100);
         assertNull("Query object is null, should return null", transformedResult);
     }
 
@@ -39,7 +40,7 @@ public class SpreadSheetResultTransformerTest extends TestCase {
 
         ICab2bQuery query = new QueryOperationsTest().createQuery();
         SpreadSheetResultTransformer trnsformer = new SpreadSheetResultTransformer(query, null);
-        TransformedResultObjectWithContactInfo transformedResult = trnsformer.transResultToSpreadSheetView();
+        TransformedResultObjectWithContactInfo transformedResult = trnsformer.transResultToSpreadSheetView(100);
         assertNull("Query result object is null, method should return null", transformedResult);
     }
 
@@ -50,10 +51,11 @@ public class SpreadSheetResultTransformerTest extends TestCase {
     public void testTransResultToSpreadSheetView() {
         ICab2bQuery query = new QueryOperationsTest().createQuery();
         QueryExecutor exe = new QueryExecutor(query, null);
-        IQueryResult<? extends IRecord> result = exe.executeQuery();
+        exe.executeQuery();
+        IQueryResult<? extends IRecord> result = exe.getCompleteResults();
 
         SpreadSheetResultTransformer trnsformer = new SpreadSheetResultTransformer(query, result);
-        TransformedResultObjectWithContactInfo transformedResult = trnsformer.transResultToSpreadSheetView();
+        TransformedResultObjectWithContactInfo transformedResult = trnsformer.transResultToSpreadSheetView(100);
         assertNotNull("Valid input, method should not return null", transformedResult);
     }
 }

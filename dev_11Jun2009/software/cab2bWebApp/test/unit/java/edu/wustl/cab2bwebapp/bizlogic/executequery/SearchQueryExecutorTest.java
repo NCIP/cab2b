@@ -54,11 +54,15 @@ public class SearchQueryExecutorTest extends TestCase {
 
     public void testTransformResult() {
         ICab2bQuery query = new MockQueryObjects().createQuery_GenemRNAProtein();
-        IQueryResult<? extends IRecord> result = new QueryExecutor(query, null).executeQuery();
+        QueryExecutor exe = new QueryExecutor(query, null);
+        exe.executeQuery();
+        IQueryResult<? extends IRecord> result = exe.getCompleteResults();
 
-        Map<ICab2bQuery, IQueryResult<? extends IRecord>> rawResults = new HashMap<ICab2bQuery, IQueryResult<? extends IRecord>>();
+        Map<ICab2bQuery, IQueryResult<? extends IRecord>> rawResults =
+                new HashMap<ICab2bQuery, IQueryResult<? extends IRecord>>();
         rawResults.put(query, result);
-        Map<ICab2bQuery, TransformedResultObjectWithContactInfo> transformedResult = new SearchQueryExecutor().transformResult(rawResults);
+        Map<ICab2bQuery, TransformedResultObjectWithContactInfo> transformedResult =
+                new SearchQueryExecutor().transformResult(100);
 
         assertFalse(transformedResult.isEmpty());
     }
@@ -68,11 +72,9 @@ public class SearchQueryExecutorTest extends TestCase {
 
         Collection<ICab2bQuery> queries = new ArrayList<ICab2bQuery>();
         queries.add(query);
-        Map<ICab2bQuery, TransformedResultObjectWithContactInfo> result = new SearchQueryExecutor().execute(
-                                                                                                           queries,
-                                                                                                           null);
-
+        SearchQueryExecutor searchQueryExecutor = new SearchQueryExecutor();
+        searchQueryExecutor.execute(queries, null);
+        Map<ICab2bQuery, TransformedResultObjectWithContactInfo> result = searchQueryExecutor.transformResult(100);
         assertFalse(result.isEmpty());
     }
-
 }

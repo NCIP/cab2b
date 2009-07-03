@@ -49,7 +49,7 @@ public class CategoryToSpreadsheetTransformerTest extends TestCase {
         List<ICategorialClassRecord> list = createInput1();
 
         CategoryToSpreadsheetTransformer foo = new CategoryToSpreadsheetTransformer();
-        List<Map<AttributeInterface, Object>> masterList = foo.convert(list);
+        List<Map<AttributeInterface, Object>> masterList = foo.convert(list,100);
         assertEquals(7, masterList.size());
         write(masterList, 1);
 
@@ -62,7 +62,7 @@ public class CategoryToSpreadsheetTransformerTest extends TestCase {
         List<ICategorialClassRecord> list = createInput2();
 
         CategoryToSpreadsheetTransformer foo = new CategoryToSpreadsheetTransformer();
-        List<Map<AttributeInterface, Object>> masterList = foo.convert(list);
+        List<Map<AttributeInterface, Object>> masterList = foo.convert(list,100);
         assertEquals(16, masterList.size());
         write(masterList, 2);
 
@@ -75,7 +75,7 @@ public class CategoryToSpreadsheetTransformerTest extends TestCase {
         List<ICategorialClassRecord> list = createInput3();
 
         CategoryToSpreadsheetTransformer foo = new CategoryToSpreadsheetTransformer();
-        List<Map<AttributeInterface, Object>> masterList = foo.convert(list);
+        List<Map<AttributeInterface, Object>> masterList = foo.convert(list,100);
         assertEquals(0, masterList.size());
         write(masterList, 3);
 
