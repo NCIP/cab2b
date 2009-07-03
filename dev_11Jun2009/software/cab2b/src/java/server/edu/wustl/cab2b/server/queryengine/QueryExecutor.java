@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -76,8 +74,8 @@ public class QueryExecutor {
     private BlockingQueue<Runnable> waitingQueue =
             new ArrayBlockingQueue<Runnable>(QueryExecutorPropertes.getPerQueryMinThreadLimit());
 
-    private ThreadPoolExecutor threadPoolExecutor =
-            new ThreadPoolExecutor(QueryExecutorPropertes.getPerQueryMinThreadLimit(), QueryExecutorPropertes
+    private QueryExecutorThreadPool threadPoolExecutor =
+            new QueryExecutorThreadPool(QueryExecutorPropertes.getPerQueryMinThreadLimit(), QueryExecutorPropertes
                 .getPerQueryMaxThreadLimit(), 5, TimeUnit.SECONDS, waitingQueue);
 
     private ICab2bQuery query;
@@ -89,19 +87,14 @@ public class QueryExecutor {
     private IQueryResultTransformer<IRecord, ICategorialClassRecord> transformer;
 
     private GlobusCredential credential;
-
-    private List<ChildQueryExecutor> childQueryExecList = new ArrayList<ChildQueryExecutor>();
+    
+    private IQueryResult<ICategorialClassRecord> catQueryResult = null;
 
     private int noOfRecordsCreated = 0;
 
     private IQueryResult<? extends IRecord> queryResult = null;
 
-    private IQueryResult<ICategorialClassRecord> catQueryResult = null;
-
-    private boolean isProcessingFinished = false;
-
-    private List<String> urlWaitingList = null;
-    
+   
     private List<IQueryResult<ICategorialClassRecord>> categoryResults = null;
     /**
      * Constructor initializes object with query and globus credentials
@@ -115,7 +108,6 @@ public class QueryExecutor {
                 QueryResultTransformerFactory.createTransformer(query.getOutputEntity(), IRecord.class,
                                                                 ICategorialClassRecord.class);
         this.credential = credential;
-        urlWaitingList = new ArrayList<String>(query.getOutputUrls());
         
         threadPoolExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         threadPoolExecutor.allowCoreThreadTimeOut(true);
@@ -173,7 +165,6 @@ public class QueryExecutor {
             String output = getOutputEntity().getName();
             DCQLQuery dcqlQuery = DCQLGenerator.createDCQLQuery(query,output,constraints);
             queryResult = transformer.getResults(dcqlQuery, getOutputEntity(), credential);
-            setProcessingFinished(true);
         }
     }
     /**
@@ -207,51 +198,26 @@ public class QueryExecutor {
             queryResult = mergeCatResults(categoryResults, false);
             Map<String, List<ICategorialClassRecord>> urlToRecords = allRootExprCatRecs.getRecords();
             for (String url : urlToRecords.keySet()) {
-                int size = urlToRecords.get(url).size();
+                int noOfRecords = urlToRecords.get(url).size();
                 int blockSize = 1;
-                int range = Thread.MAX_PRIORITY - Thread.NORM_PRIORITY;
-                if (size > range) {
-                    blockSize = size / range;
+                int allowedPriorityRange = Thread.MAX_PRIORITY - Thread.NORM_PRIORITY;
+                if (noOfRecords > allowedPriorityRange) {
+                    blockSize = noOfRecords / allowedPriorityRange;
                 }
                 int currentPriority = Thread.MAX_PRIORITY - 1;
-                int i = 0;
+                int pointerInBlock = 0;
                 for (ICategorialClassRecord rootExprCatRec : urlToRecords.get(url)) {
-                    if (i == blockSize) {
-                        i = 0;
+                    if (pointerInBlock == blockSize) {
+                        pointerInBlock = 0;
                         currentPriority--;
                     }
-                    childQueryExecList.add(new ChildQueryExecutor(rootExprCatRec, rootOutputExprNode,
+                    threadPoolExecutor.execute(new ChildQueryExecutor(rootExprCatRec, rootOutputExprNode,
                             rootExprCatRec.getRecordId(), currentPriority, ""));
-                    i++;
+                    pointerInBlock++;
                 }
             }
         }
-        processRemainingQueries(query);
         return mergeCatResults(categoryResults, true);
-    }
-
-    private void processRemainingQueries(ICab2bQuery query) {
-        int taskNumber = 0;
-        while (taskNumber != childQueryExecList.size()) {        
-            int taskToBeExecuted = childQueryExecList.size() - taskNumber;
-            List<Callable<Object>> callables = new ArrayList<Callable<Object>>();
-            for (int i = 0; i < taskToBeExecuted; i++) {
-                callables.add(Executors.callable(childQueryExecList.get(taskNumber)));
-                taskNumber++;
-            }
-            if (!(Thread.activeCount() >= QueryExecutorPropertes.getGlobalThreadLimit())) {
-                try {
-                    threadPoolExecutor.invokeAll(callables);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException("Thread to get results was interrupted.",e);
-                }
-            } else {
-                logger.info("Threads have reached Global Thread Limit.Hence Furthur execution of Query :"
-                        + query.getName() + " has been stopped");
-                break;
-            }
-        }
     }
 
     private IQueryResult<ICategorialClassRecord> mergeCatResults(
@@ -317,8 +283,8 @@ public class QueryExecutor {
         }
     }
     private List<ICab2bQuery> getQueriesPerURL() {
-        List<ICab2bQuery> queriesWithSingleUrl = new ArrayList<ICab2bQuery>(urlWaitingList.size());
-        for (String url : urlWaitingList) {
+        List<ICab2bQuery> queriesWithSingleUrl = new ArrayList<ICab2bQuery>(query.getOutputUrls().size());
+        for (String url : query.getOutputUrls()) {
             ICab2bQuery queryWithSingleUrl = (ICab2bQuery) DynamicExtensionsUtility.cloneObject(query);
             List<String> targetUrls = new ArrayList<String>(1);
             targetUrls.add(url);
@@ -341,8 +307,7 @@ public class QueryExecutor {
         public void run() {
             IQueryResult<ICategorialClassRecord> resultWithSingleUrl = executeCategoryQuery(query);
             Map<String, List<ICategorialClassRecord>> recordMap = resultWithSingleUrl.getRecords();
-            urlWaitingList.removeAll(recordMap.keySet());
-
+            
             if (catQueryResult == null) {
                 catQueryResult = resultWithSingleUrl;
             } else {
@@ -350,8 +315,7 @@ public class QueryExecutor {
                     catQueryResult.addRecords(url, recordMap.get(url));
                 }
             }
-            setProcessingFinished(urlWaitingList.size() == 0 ? true : false);
-            if (isProcessingFinished) {
+            if (threadPoolExecutor.isProcessingFinished()) {
                 threadPoolExecutor.shutdown();
             }
             queryResult = catQueryResult;
@@ -425,7 +389,7 @@ public class QueryExecutor {
                         for (List<IRecord> listRec : records) {
                             if (listRec.iterator().hasNext()) {
                                 IRecord record = listRec.iterator().next();
-                                childQueryExecList.add(new ChildQueryExecutor(parentCatClassRec, childExprNode,
+                                threadPoolExecutor.execute(new ChildQueryExecutor(parentCatClassRec, childExprNode,
                                         record.getRecordId(), priority, ""));
                             }
                         }
@@ -443,7 +407,7 @@ public class QueryExecutor {
                                     childExprCatRecs.get(0).getCategorialClass().getChildren();
                             if (children != null && !children.isEmpty()) {
                                 for (ICategorialClassRecord childExprCatRec : childExprCatRecs) {
-                                    childQueryExecList.add(new ChildQueryExecutor(childExprCatRec, childExprNode,
+                                    threadPoolExecutor.execute(new ChildQueryExecutor(childExprCatRec, childExprNode,
                                             childExprCatRec.getRecordId(), priority, ""));
                                 }
                             }
@@ -492,14 +456,7 @@ public class QueryExecutor {
      * @return the isProcessingFinished
      */
     public boolean isProcessingFinished() {
-        return isProcessingFinished;
-    }
-
-    /**
-     * @param isProcessingFinished the isProcessingFinished to set
-     */
-    public void setProcessingFinished(boolean isProcessingFinished) {
-        this.isProcessingFinished = isProcessingFinished;
+        return threadPoolExecutor.isProcessingFinished();
     }
 
     /**
