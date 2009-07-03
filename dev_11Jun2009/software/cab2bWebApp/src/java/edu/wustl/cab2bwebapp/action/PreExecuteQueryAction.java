@@ -11,22 +11,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
+import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.TransformedResultObjectWithContactInfo;
 import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.cab2bwebapp.dvo.SavedQueryDVO;
+import edu.wustl.cab2bwebapp.util.Utility;
 
 /**
 * Action for populating things needed as prerequisites for searchresults.jsp .
 */
 public class PreExecuteQueryAction extends Action {
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(PreExecuteQueryAction.class);
 
    /**
     * The execute method is called by the struts action flow and it calls the code to retrieve the 
@@ -63,6 +69,24 @@ public class PreExecuteQueryAction extends Action {
            List<String> urlsForSelectedQueries          = query.getOutputUrls();
            urlsForSelectedQueries.add(0, Constants.ALL_HOSTING_INSTITUTIONS);
            
+           UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
+           try {
+               List<String> urls = Utility.getUserConfiguredUrls(user, modelGroupNames);
+           } catch (Exception e) {
+               logger.error(e.getMessage(), e);
+               ActionErrors errors = new ActionErrors();
+               ActionMessage message =
+                       new ActionMessage(
+                               e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? "message.serviceinstancesnotconfigured"
+                                       : "fatal.executequery.failure", e.getMessage());
+               errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, message);
+               saveErrors(request, errors);
+               actionForward =
+                       e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? Constants.FORWARD_HOME
+                               : Constants.FORWARD_FAILURE;
+               session.removeAttribute(Constants.IS_FIRST_REQUEST);
+               return mapping.findForward(actionForward);
+           }
            //set query name in dropdown
            SavedQueryDVO savedQuery = new SavedQueryDVO();
            savedQuery.setName(query.getName());
