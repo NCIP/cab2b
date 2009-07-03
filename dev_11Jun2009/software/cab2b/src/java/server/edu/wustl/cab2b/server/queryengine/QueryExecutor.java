@@ -94,8 +94,10 @@ public class QueryExecutor {
 
     private IQueryResult<? extends IRecord> queryResult = null;
 
-   
     private List<IQueryResult<ICategorialClassRecord>> categoryResults = null;
+    
+    private boolean normalQueryFinished = false;
+    
     /**
      * Constructor initializes object with query and globus credentials
      *
@@ -165,6 +167,7 @@ public class QueryExecutor {
             String output = getOutputEntity().getName();
             DCQLQuery dcqlQuery = DCQLGenerator.createDCQLQuery(query,output,constraints);
             queryResult = transformer.getResults(dcqlQuery, getOutputEntity(), credential);
+            normalQueryFinished = true;
         }
     }
     /**
@@ -456,7 +459,7 @@ public class QueryExecutor {
      * @return the isProcessingFinished
      */
     public boolean isProcessingFinished() {
-        return threadPoolExecutor.isProcessingFinished();
+        return threadPoolExecutor.isProcessingFinished() || normalQueryFinished;
     }
 
     /**

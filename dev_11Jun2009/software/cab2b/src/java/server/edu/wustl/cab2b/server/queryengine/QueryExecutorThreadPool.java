@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 class QueryExecutorThreadPool extends ThreadPoolExecutor {
     private int localThreadCount = 0;
 
+    private boolean incrementCalled = false;
     public QueryExecutorThreadPool(
             int corePoolSize,
             int maximumPoolSize,
@@ -36,7 +37,7 @@ class QueryExecutorThreadPool extends ThreadPoolExecutor {
      * @return the isProcessingFinished
      */
     public synchronized boolean isProcessingFinished() {
-        return (localThreadCount == 0);
+        return (localThreadCount == 0) && incrementCalled;
     }
 
     private synchronized void decrementLocalThreadCount() {
@@ -44,6 +45,7 @@ class QueryExecutorThreadPool extends ThreadPoolExecutor {
     }
 
     private synchronized void incrementLocalThreadCount() {
+        incrementCalled = true;
         localThreadCount++;
     }
 }
