@@ -9,6 +9,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -121,6 +122,7 @@ public class QueryExecutor {
         this.categoryPreprocessorResult = preProcessCategories();
         ConstraintsBuilder constraintsBuilder = new ConstraintsBuilder(query, categoryPreprocessorResult);
         this.constraintsBuilderResult = constraintsBuilder.buildConstraints();
+        threadPoolExecutor.setThreadFactory(new QueryExecutorThreadFactory());
     }
 
     private CategoryPreprocessorResult preProcessCategories() {
@@ -202,11 +204,25 @@ public class QueryExecutor {
             verifyRecordLimit(recordSize);
             categoryResults.add(allRootExprCatRecs);
             // process children in parallel.
-            for (Map.Entry<String, List<ICategorialClassRecord>> entry : allRootExprCatRecs.getRecords()
-                .entrySet()) {
-                for (ICategorialClassRecord rootExprCatRec : entry.getValue()) {
+            queryResult = mergeCatResults(categoryResults, false);
+            Map<String, List<ICategorialClassRecord>> urlToRecords = allRootExprCatRecs.getRecords();
+            for (String url : urlToRecords.keySet()) {
+                int size = urlToRecords.get(url).size();
+                int blockSize = 1;
+                int range = Thread.MAX_PRIORITY - Thread.NORM_PRIORITY;
+                if (size > range) {
+                    blockSize = size / range;
+                }
+                int currentPriority = Thread.MAX_PRIORITY - 1;
+                int i = 0;
+                for (ICategorialClassRecord rootExprCatRec : urlToRecords.get(url)) {
+                    if (i == blockSize) {
+                        i = 0;
+                        currentPriority--;
+                    }
                     childQueryExecList.add(new ChildQueryExecutor(rootExprCatRec, rootOutputExprNode,
-                            rootExprCatRec.getRecordId()));
+                            rootExprCatRec.getRecordId(), currentPriority, ""));
+                    i++;
                 }
             }
         }
@@ -348,13 +364,19 @@ public class QueryExecutor {
 
         private RecordId parentId;
 
+        private int priority;
+
+        private String name;
+
         public ChildQueryExecutor(
                 ICategorialClassRecord parentCatClassRec,
                 TreeNode<IExpression> parentExprNode,
-                RecordId parentId) {
+                RecordId parentId, int priority, String name) {
             this.parentCatClassRec = parentCatClassRec;
             this.parentExprNode = parentExprNode;
             this.parentId = parentId;
+            this.priority = priority;
+            this.name = name;
         }
 
         /*
@@ -404,7 +426,7 @@ public class QueryExecutor {
                             if (listRec.iterator().hasNext()) {
                                 IRecord record = listRec.iterator().next();
                                 childQueryExecList.add(new ChildQueryExecutor(parentCatClassRec, childExprNode,
-                                        record.getRecordId()));
+                                        record.getRecordId(), priority, ""));
                             }
                         }
                     } else {
@@ -422,7 +444,7 @@ public class QueryExecutor {
                             if (children != null && !children.isEmpty()) {
                                 for (ICategorialClassRecord childExprCatRec : childExprCatRecs) {
                                     childQueryExecList.add(new ChildQueryExecutor(childExprCatRec, childExprNode,
-                                            childExprCatRec.getRecordId()));
+                                            childExprCatRec.getRecordId(), priority, ""));
                                 }
                             }
                         }
@@ -433,6 +455,14 @@ public class QueryExecutor {
                 e.printStackTrace();
                 logger.error(e.getMessage());
             }
+        }
+
+        public int getPriority() {
+            return priority;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 
@@ -470,5 +500,25 @@ public class QueryExecutor {
      */
     public void setProcessingFinished(boolean isProcessingFinished) {
         this.isProcessingFinished = isProcessingFinished;
+    }
+
+    /**
+     * ThreadFactory designed to enable creation of priority based threads
+     * @author chandrakant_talele
+     */
+    class QueryExecutorThreadFactory implements ThreadFactory {
+
+        /**
+         * @see java.util.concurrent.ThreadFactory#newThread(java.lang.Runnable)
+         */
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(r);
+            if (r instanceof ChildQueryExecutor) {
+                ChildQueryExecutor exe = (ChildQueryExecutor) r;
+                t.setPriority(exe.getPriority());
+            }
+            return t;
+        }
+
     }
 }
