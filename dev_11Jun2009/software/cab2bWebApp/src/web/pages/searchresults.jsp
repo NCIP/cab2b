@@ -4,12 +4,18 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <%
-  Long query_id = Long.parseLong(request.getParameter("queryId"));
-  if(query_id == null)
-  query_id = (Long) session.getAttribute("queryId");
-  Boolean isFirstRequest = (Boolean) session.getAttribute("isFirstRequest");
-  if(isFirstRequest != null && isFirstRequest == true) 
-  session.setAttribute("isFirstRequest", false);
+  String queryId = request.getParameter("queryId");
+  Long query_id = null;
+  Boolean isFirstRequest = null;
+  if(queryId != null &&  !queryId.equals(""))
+  {
+  	query_id = Long.parseLong(queryId);
+  	if(query_id == null )
+  	    query_id = (Long) session.getAttribute("queryId");
+  	isFirstRequest = (Boolean) session.getAttribute("isFirstRequest");
+  	if(isFirstRequest != null && isFirstRequest == true) 
+  		session.setAttribute("isFirstRequest", false);
+  }
 %>
 <HTML>
 <HEAD>
@@ -19,25 +25,39 @@
 <LINK rel="stylesheet" href="stylesheet/searchresults.css" type="text/css">
 <SCRIPT language="JavaScript" src="javascript/ajax.js"></SCRIPT>
 <SCRIPT language="javaScript">
+
  function executeQuery()
 {
-   if(<%=isFirstRequest%>==true)
-  {		
-    processAJAXRequest('ExecuteQuery.do?queryId=' + ${sessionScope.queryId});
-	getTransformedResults();	
-  }
+	if(<%=queryId%> != null )
+		{  
+		if(<%=isFirstRequest%>==true)
+		{		
+			processAJAXRequest('ExecuteQuery.do?queryId=' + ${sessionScope.queryId});
+			getTransformedResults();	
+		}
+	}
 }
 
  function getTransformedResults()
 {
   var url = 'TransformQueryResultsAction.do?queryId=' + ${sessionScope.queryId} + '&transformationMaxLimit=100';
   processAJAXRequest(url, 'centerpanelcontent', 1);
-   if(document.getElementById("stopajax")!=null)
+
+  if(document.getElementById("partialQueryResultsAJAX")!=null)
   {
-    updateView();
+    document.getElementById('queryDropDown').innerHTML = document.getElementById("partialQueryResultsAJAX").innerHTML;
+  }
+  if(document.getElementById("stopajax")!=null)
+  {
+  	document.getElementById('queryDropDown').innerHTML = document.getElementById("partialQueryResultsAJAX").innerHTML;
 	return;
   }
-   else
+  if(results == "Exception") 
+  {
+	document.getElementById('centerpanelcontent').innerHTML = 'Exception occurred while executing your request.<br> Please contact administrator.';
+	return;	
+  }
+  else
   {
     setTimeout("getTransformedResults()", 2000);
   }
@@ -110,7 +130,7 @@
 					 </DIV>
 				</TD>
 				<TD <logic:notEmpty name="failedServices">colspan="2"</logic:notEmpty>>
-					<DIV>
+					<DIV id="queryDropDown">
 						<bean:size id="queryCount" name="savedQueries"/>
 						<logic:notEqual name="queryCount" value="1">
 							<SELECT class="select" name="savedQueries" onChange="document.getElementById('top').innerHTML='';document.getElementById('bottom').innerHTML='';processAJAXRequest('KeywordSearch.do?savedQueries=' + this.value + '&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent');updateView()"/>

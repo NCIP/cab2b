@@ -52,6 +52,7 @@ public class AddLimitAction extends Action {
                                  HttpServletResponse response) throws IOException, ServletException {
         String actionForward = null;
         HttpSession session  = request.getSession();
+        
         session.removeAttribute(Constants.SEARCH_RESULTS);
         session.removeAttribute(Constants.SEARCH_RESULTS_VIEW);
         session.removeAttribute(Constants.FAILED_SERVICES_COUNT);
@@ -63,6 +64,8 @@ public class AddLimitAction extends Action {
         session.removeAttribute(Constants.CONDITION_LIST);
         session.removeAttribute(Constants.IS_FIRST_REQUEST);
         session.removeAttribute(Constants.STOP_AJAX);
+        session.removeAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
+        
         try {
             SavedQueryBizLogic savedQueryProvider =
                     (SavedQueryBizLogic) request.getSession().getServletContext()

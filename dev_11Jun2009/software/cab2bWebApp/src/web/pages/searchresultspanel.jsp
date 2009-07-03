@@ -3,13 +3,34 @@
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 
 <%
-  if(session.getAttribute("stopAjax")!=null)
+ if(session.getAttribute("stopAjax")!=null)
  {
 %>
    <DIV id="stopajax"></DIV>
 <%
  }
 %>
+<DIV style="display:none" id="partialQueryResultsAJAX">
+	<logic:present name="savedQueries">
+		<bean:size id="queryCount" name="savedQueries"/>
+		<logic:notEqual name="queryCount" value="1">
+			<SELECT class="select" name="savedQueries" onChange="document.getElementById('top').innerHTML='';document.getElementById('bottom').innerHTML='';processAJAXRequest('KeywordSearch.do?savedQueries=' + this.value + '&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent');updateView()"/>
+				<logic:present name="savedQueries">
+					<logic:iterate name="savedQueries" id="savedSearch" type="edu.wustl.cab2bwebapp.dvo.SavedQueryDVO">
+						<OPTION value="<bean:write name="savedSearch" property="name"/>" <logic:equal name="savedSearch" property="selected" value="true">selected</logic:equal>>
+							<bean:write name="savedSearch" property="name"/>&nbsp;(<bean:write name="savedSearch" property="resultCount"/>)
+						</OPTION>
+					</logic:iterate>
+				</logic:present>
+			</SELECT>
+		</logic:notEqual>
+		<logic:equal name="queryCount" value="1">
+			<logic:iterate name="savedQueries" id="savedSearch">
+				<DIV class="text" style="font-size:0.9em;"><bean:write name="savedSearch" property="name"/>&nbsp;(<bean:write name="savedSearch" property="resultCount"/>)</DIV>
+			</logic:iterate>
+		</logic:equal>	 
+	</logic:present>
+</DIV>
 <DIV style="display:none" id="failedservicesAJAX">
 	<logic:present name="failedServices">
 		<logic:iterate name="failedServices" id="failedServices" indexId="indexId" type="edu.wustl.cab2b.common.user.ServiceURLInterface">
@@ -26,7 +47,7 @@
 </DIV>
 <logic:present name="searchResultsView">
 <logic:equal name="searchResultsView" value="processing">
-	<DIV id="messages"><IMG src="images/PageLoading.gif" width="30" height="30" alt="Loading Data">  Processing
+	<DIV id="messages"><IMG src="images/PageLoading.gif" width="30" height="30" alt="Loading Data">
 	</DIV>
 </logic:equal>
 <logic:notEqual name="searchResultsView" value="processing">

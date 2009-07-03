@@ -55,25 +55,14 @@ public class TransformQueryResultsAction extends Action {
         try {
             HttpSession session = request.getSession();
             Writer writer;
-            System.out.println();
-            if(session.getAttribute(Constants.STOP_AJAX) != null)
-             {
-                Boolean stopAjax = (Boolean) session.getAttribute(Constants.STOP_AJAX);
-                if(stopAjax)
-                {
-                    writer = response.getWriter();
-                    response.setContentType("text/xml");
-                    writer.write("stopAjax");
-                    return null;
-                }
-             }
-
+            
             ExecuteQueryBizLogic executeQueryBizLogic =
                     (ExecuteQueryBizLogic) session.getAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
             if (executeQueryBizLogic == null) {
                 writer = response.getWriter();
                 response.setContentType("text/xml");
-                writer.write("WaitingFor_ExecuteQueryBizLogicObject");
+                String processingImage = "<IMG style='position:relative;top:-20' src='images/PageLoading.gif'>";
+                writer.write(processingImage);
                 return null;
             }
 
@@ -114,12 +103,6 @@ public class TransformQueryResultsAction extends Action {
                 session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
                 if (savedQuery.getResultCount() >= transformationMaxLimit
                         || executeQueryBizLogic.isProcessingFinished()) {
-                    /* writer = response.getWriter();
-                     response.setContentType("text/xml");
-                     writer.write("StopAjax");
-                     return null;*/
-                    //response.setStatus(1000);
-                    //System.out.println((Boolean) session.getAttribute("stopAjax"));
                     session.setAttribute(Constants.STOP_AJAX, true);
                 }
             }
