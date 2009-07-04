@@ -1,6 +1,10 @@
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +12,9 @@ import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
+import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
+import edu.wustl.cab2b.common.user.ServiceURLInterface;
+import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 
 /**
@@ -31,21 +38,21 @@ import edu.wustl.common.querysuite.metadata.category.CategorialClass;
  *
  */
 public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetTransformer {
-
     /**
      * Converting <code>ICategorialClassRecord</code> records  
      * @param records
      * @return List<Map<AttributeInterface, Object>>
      */
-    public List<Map<AttributeInterface, Object>> convert(List<ICategorialClassRecord> records, int transformationMaxLimit) {
+    public List<Map<AttributeInterface, Object>> convert(List<ICategorialClassRecord> records,
+                                                         int transformationMaxLimit) {
         List<Map<AttributeInterface, Object>> list = new ArrayList<Map<AttributeInterface, Object>>();
         if (records != null) {
             for (ICategorialClassRecord record : records) {
-                List<LinkedHashMap<AttributeInterface, Object>> res = convert(record);
+                List<Map<AttributeInterface, Object>> res = convert(record);
                 list.addAll(res);
-                if(list.size() >  transformationMaxLimit) {  
+                if (list.size() > transformationMaxLimit) {
                     break;
-                } 
+                }
             }
         }
         return list;
@@ -57,16 +64,15 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
      * @param record
      * @return List<Map<AttributeInterface, Object>>
      */
-    private List<LinkedHashMap<AttributeInterface, Object>> convert(ICategorialClassRecord record) {
+    private List<Map<AttributeInterface, Object>> convert(ICategorialClassRecord record) {
         Set<CategorialClass> children = record.getCategorialClass().getChildren();
 
         //Attribute-Value pair of current record
-        LinkedHashMap<AttributeInterface, Object> avPairs = new LinkedHashMap<AttributeInterface, Object>();
+        Map<AttributeInterface, Object> avPairs = new HashMap<AttributeInterface, Object>();
         for (AttributeInterface a : record.getAttributes()) {
             avPairs.put(a, record.getValueForAttribute(a));
         }
-        List<LinkedHashMap<AttributeInterface, Object>> processedRecords =
-                new ArrayList<LinkedHashMap<AttributeInterface, Object>>();
+        List<Map<AttributeInterface, Object>> processedRecords = new ArrayList<Map<AttributeInterface, Object>>();
         if (children.size() == 0) {
             processedRecords.add(avPairs);
             return processedRecords;
@@ -75,8 +81,8 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
                 record.getChildrenCategorialClassRecords();
         boolean isRecordAdded = false;
         for (CategorialClass child : children) {
-            List<LinkedHashMap<AttributeInterface, Object>> processedChildRecords =
-                    new ArrayList<LinkedHashMap<AttributeInterface, Object>>();
+            List<Map<AttributeInterface, Object>> processedChildRecords =
+                    new ArrayList<Map<AttributeInterface, Object>>();
             List<ICategorialClassRecord> childRecords = childVsRecords.get(child);
             if (childRecords == null) {
                 continue;
@@ -90,13 +96,12 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
             if (processedRecords.isEmpty()) {
                 processedRecords = processedChildRecords;
             } else {
-                List<LinkedHashMap<AttributeInterface, Object>> tempProcessedRecords =
-                        new ArrayList<LinkedHashMap<AttributeInterface, Object>>();
+                List<Map<AttributeInterface, Object>> tempProcessedRecords =
+                        new ArrayList<Map<AttributeInterface, Object>>();
                 //cross product current child with all previously processed children
-                for (LinkedHashMap<AttributeInterface, Object> processedRecord : processedRecords) {
-                    for (LinkedHashMap<AttributeInterface, Object> childrenRecord : processedChildRecords) {
-                        LinkedHashMap<AttributeInterface, Object> newMap =
-                                new LinkedHashMap<AttributeInterface, Object>();
+                for (Map<AttributeInterface, Object> processedRecord : processedRecords) {
+                    for (Map<AttributeInterface, Object> childrenRecord : processedChildRecords) {
+                        Map<AttributeInterface, Object> newMap = new LinkedHashMap<AttributeInterface, Object>();
                         newMap.putAll(childrenRecord);
                         newMap.putAll(processedRecord);
                         tempProcessedRecords.add(newMap);
@@ -113,5 +118,68 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
             processedRecords.add(avPairs);
         }
         return processedRecords;
+    }
+
+    /**
+     * @see edu.wustl.cab2bwebapp.bizlogic.executequery.ICategoryToSpreadsheetTransformer#writeToCSV(edu.wustl.cab2b.common.queryengine.result.ICategoryResult)
+     */
+    public void writeToCSV(ICategoryResult<ICategorialClassRecord> result, String fileName, List<AttributeInterface> headers, String filePath) throws IOException {
+        FileWriter fstream = new FileWriter(filePath + fileName);
+        BufferedWriter out = new BufferedWriter(fstream);
+
+        for (AttributeInterface attribute : headers) {
+            out.append(attribute.getName());
+            out.append(',');
+        }
+        Map<String, List<ICategorialClassRecord>> urlToResultMap = result.getRecords();
+        out.append("Hosting Cancer Research Center");
+        out.append(',');
+        out.append("Point of Contact");
+        out.append(',');
+        out.append("Contact eMail");
+        out.append(',');
+        out.append("Hosting Institution");
+        out.append(',');
+        out.append('\n');
+        out.flush();
+
+        for (String url : urlToResultMap.keySet()) {
+            writeToCSV(urlToResultMap.get(url), url, headers, out);
+        }
+    }
+
+    private void writeToCSV(List<ICategorialClassRecord> records, String url, List<AttributeInterface> headers,
+                            BufferedWriter out) throws IOException {
+        if (records != null && records.size() != 0) {
+            ServiceURLInterface serviceUrlMetadata = new ServiceURLOperations().getServiceURLbyURLLocation(url);
+
+            for (ICategorialClassRecord record : records) {
+                List<Map<AttributeInterface, Object>> res = convert(record);
+                for (Map<AttributeInterface, Object> recordMap : res) {
+                    for (AttributeInterface attribute : headers) {
+                        String val = recordMap.get(attribute) == null ? " " : recordMap.get(attribute).toString();
+                        val = val.replace("\"", "\"\"");
+                        if(val.contains(",") || val.contains("\n")) {
+                            out.append('"');
+                            out.append(val);
+                            out.append('"');
+                        } else {
+                            out.append(val);
+                        }
+                        out.append(',');
+                    }
+                    out.append(serviceUrlMetadata.getHostingCenter());
+                    out.append(',');
+                    out.append(serviceUrlMetadata.getContactName());
+                    out.append(',');
+                    out.append(serviceUrlMetadata.getContactMailId());
+                    out.append(',');
+                    out.append(serviceUrlMetadata.getHostingCenterShortName());
+                    out.append(',');
+                    out.append('\n');
+                    out.flush();
+                }
+            }
+        }
     }
 }

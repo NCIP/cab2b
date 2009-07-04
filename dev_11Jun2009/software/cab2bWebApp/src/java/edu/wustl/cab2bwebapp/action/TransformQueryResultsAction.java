@@ -104,6 +104,11 @@ public class TransformQueryResultsAction extends Action {
                 session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
                 if (savedQuery.getResultCount() >= transformationMaxLimit
                         || executeQueryBizLogic.isProcessingFinished()) {
+                    session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
+                }
+                
+                if(executeQueryBizLogic.isProcessingFinished())
+                {
                     session.setAttribute(Constants.STOP_AJAX, true);
                 }
             }

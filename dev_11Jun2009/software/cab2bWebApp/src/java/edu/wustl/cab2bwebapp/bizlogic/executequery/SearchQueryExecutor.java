@@ -1,5 +1,6 @@
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -129,5 +130,18 @@ public class SearchQueryExecutor {
             }
         }
         return true;
+    }
+
+    public String exportToCSV(long queryId, String filePath) throws IOException {
+        String filename = null;
+        for (QueryExecutor executor : queryExecutorList) {
+            ICab2bQuery query = executor.getQuery();
+            if(queryId == query.getId()) {
+                IQueryResult<? extends IRecord> originalResult = executor.getCompleteResults();
+                SpreadSheetResultTransformer transformer = new SpreadSheetResultTransformer(query, originalResult);
+                filename= transformer.writeToCSV(filePath);
+            }
+        }
+        return filename;
     }
 }

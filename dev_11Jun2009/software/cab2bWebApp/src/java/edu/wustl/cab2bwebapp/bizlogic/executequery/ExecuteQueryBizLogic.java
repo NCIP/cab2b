@@ -4,6 +4,7 @@
 
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -175,5 +176,10 @@ public class ExecuteQueryBizLogic {
 
     public boolean isProcessingFinished() {
         return searchQueryExecutor.isProcessingFinished();
+    }
+
+    public String exportToCSV(long queryId, String filePath) throws IOException {
+        String fileName = searchQueryExecutor.exportToCSV(queryId, filePath);
+        return fileName;
     }
 }

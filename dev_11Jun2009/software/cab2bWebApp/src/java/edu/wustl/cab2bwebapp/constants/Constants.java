@@ -5,6 +5,11 @@ package edu.wustl.cab2bwebapp.constants;
  * @author Chetan Pundhir
  */
 public interface Constants {
+    /**
+     * Constant for FOUR_KILO_BYTES.
+     */
+    public static final int FOUR_KILO_BYTES = 4096;
+    
     /** Constants for AJAX Call */
     public static final String AJAX_CALL = "Ajax-Call";
         
@@ -19,6 +24,9 @@ public interface Constants {
     
     /** Constants for stopAjax */
     public static final String STOP_AJAX = "stopAjax";
+    
+    /** Constants for Finishing Query Execution */
+    public static final String UI_POPULATION_FINISHED = "UI_population_finished";
     
     /** Constants for conditionList */
     public static final String PROCESSING = "processing";

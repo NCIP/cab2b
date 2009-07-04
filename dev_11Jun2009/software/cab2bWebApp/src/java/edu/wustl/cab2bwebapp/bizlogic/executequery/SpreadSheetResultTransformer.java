@@ -4,6 +4,9 @@
 
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -17,8 +20,10 @@ import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
+import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
@@ -68,6 +73,90 @@ public class SpreadSheetResultTransformer {
             resultObj.setAllowedAttributes(attributeOrderList);
         }
         return resultObj;
+    }
+
+    /**
+     * Method to write IQueryResult to CSV file.   
+     * @throws IOException 
+     * 
+     */
+    public String writeToCSV(String filePath) throws IOException {
+        String fileName = query.getId() + "_" + System.currentTimeMillis()+".csv";
+        if (query != null && queryResult != null) {
+            if (Utility.isCategory(query.getOutputEntity())) {
+                writeCategoryResultToCSV(fileName, filePath);
+            } else {
+                writeQueryResultToCSV(fileName, filePath);
+            }
+        }
+        return fileName;
+    }
+
+    /**
+     * @return
+     * @throws IOException
+     */
+    private String writeQueryResultToCSV(String fileName, String filePath) throws IOException {
+        List<AttributeInterface> attributeOrder = new ArrayList<AttributeInterface>();
+        for (AttributeInterface attribute : query.getOutputEntity().getAttributeCollection()) {
+            if (AttributeFilter.isVisible(attribute)) {
+                attributeOrder.add(attribute);
+            }
+        }
+
+        FileWriter fstream = new FileWriter(filePath + fileName);
+        BufferedWriter out = new BufferedWriter(fstream);
+        Map<String, ?> urlVsRecords = queryResult.getRecords();
+        Set<String> urls = urlVsRecords.keySet();
+
+        //write column headers
+        for (AttributeInterface attribute : attributeOrder) {
+            out.append(attribute.getName());
+            out.append(',');
+        }
+        out.append("Hosting Cancer Research Center");
+        out.append(',');
+        out.append("Point of Contact");
+        out.append(',');
+        out.append("Contact eMail");
+        out.append(',');
+        out.append("Hosting Institution");
+        out.append(',');
+        out.append('\n');
+        out.flush();
+
+        for (String url : urls) {
+            List<IRecord> results = (List<IRecord>) urlVsRecords.get(url);
+            //Add metadata information based on url
+            if (results != null) {
+                ServiceURLInterface serviceUrlMetadata =
+                        new ServiceURLOperations().getServiceURLbyURLLocation(url);
+                for (IRecord record : results) {
+                    for (AttributeInterface a : attributeOrder) {
+                        out.append(record.getValueForAttribute(a).toString());
+                        out.append(',');
+                    }
+                    out.append(serviceUrlMetadata.getHostingCenter());
+                    out.append(',');
+                    out.append(serviceUrlMetadata.getContactName());
+                    out.append(',');
+                    out.append(serviceUrlMetadata.getContactMailId());
+                    out.append(',');
+                    out.append(serviceUrlMetadata.getHostingCenterShortName());
+                    out.append(',');
+                    out.append('\n');
+                    out.flush();
+                }
+            }
+        }
+        return fileName;
+    }
+
+    private void writeCategoryResultToCSV(String fileName, String filePath) throws IOException {
+        ICategoryResult<ICategorialClassRecord> result = (ICategoryResult<ICategorialClassRecord>) queryResult;
+        List<AttributeInterface> attributes = getAttributesWithOrder(result.getCategory());
+        ICategoryToSpreadsheetTransformer transformer = new CategoryToSpreadsheetTransformer();
+        transformer.writeToCSV(result, fileName,attributes, filePath);
     }
 
     /**
