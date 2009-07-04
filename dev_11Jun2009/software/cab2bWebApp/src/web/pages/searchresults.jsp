@@ -43,7 +43,7 @@
   var url = 'TransformQueryResultsAction.do?queryId=' + ${sessionScope.queryId};
   processAJAXRequest(url, 'centerpanelcontent', 1);
 
-  if(document.getElementById("partialQueryResultsAJAX")!=null)
+  if(document.getElementById("partialQueryResultsAJAX")!=null && document.getElementById("messages")==null)
   {
     document.getElementById('queryDropDown').innerHTML = document.getElementById("partialQueryResultsAJAX").innerHTML;
   }
