@@ -58,11 +58,11 @@ public class JNLPBuilder {
 
         NodeList list = templateDoc.getElementsByTagName("jnlp");
         Element jnlp = (Element) (list.item(0));
-        jnlp.setAttribute("href", "jnlp/" + name + ".jnlp");
+        jnlp.setAttribute("href", "cab2b/webpage/jnlp/" + name + ".jnlp");
 
         list = templateDoc.getElementsByTagName("jar");
         Element jar = (Element) (list.item(0));
-        jar.setAttribute("href", "client/" + name + ".jar");
+        jar.setAttribute("href", "cab2b/webpage/client/" + name + ".jar");
 
         //write the document using a "do nothing" transformer 
         //as there is no other way to save the document to a new file
@@ -72,7 +72,7 @@ public class JNLPBuilder {
         //make an 'extension' entry into the client JNLP 
         Element extension = clientJNLP.createElement("extension");
         extension.setAttribute("name", name);
-        extension.setAttribute("href", "jnlp/" + name + ".jnlp");
+        extension.setAttribute("href", "cab2b/webpage/jnlp/" + name + ".jnlp");
         Element resources = (Element) clientJNLP.getElementsByTagName("resources").item(0);
         resources.appendChild(extension);
 

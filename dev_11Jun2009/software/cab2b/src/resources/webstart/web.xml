@@ -1,9 +1,6 @@
 <jboss-web>
-   
-  <context-root />
-
+	<context-root>cab2b/webpage</context-root>
 </jboss-web>
- 
-							
-							
-		
+
+
+

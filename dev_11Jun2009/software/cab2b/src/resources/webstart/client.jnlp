@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp codebase="http://@server-address@" href="jnlp/cab2b_client_webstart.jnlp" spec="1.0+">
+<jnlp codebase="http://@server-address@" href="cab2b/webpage/jnlp/cab2b_client_webstart.jnlp" spec="1.0+">
 
 	<information>
 		<title>caB2B Client</title>
 		<vendor>WashU-Persistent</vendor>
-		<homepage href="http://cab2b.wustl.edu/"/> 
+		<homepage href="http://cab2b.wustl.edu/cab2b/webpage"/> 
 		<description>The client for caGrid</description>
 		<description kind="short"> Web Start installer for caB2B Client </description>
 		<!-- icon  href="CaB2B_48_48_bg.gif" / -->
@@ -30,7 +30,7 @@
 		<j2se href="http://java.sun.com/products/autodl/j2se" version="1.6+" initial-heap-size="256m" max-heap-size="512m"/>
 		
 		<!-- Specify all the jar resources this application is going to use -->
-		<jar href="client/cab2b_client_webstart.jar"/>
+		<jar href="cab2b/webpage/client/cab2b_client_webstart.jar"/>
 
 				
 	
