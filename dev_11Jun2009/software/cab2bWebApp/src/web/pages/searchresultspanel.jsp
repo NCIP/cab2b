@@ -51,7 +51,7 @@
 	</DIV>
 </logic:equal>
 <logic:notEqual name="searchResultsView" value="processing">
-	<display:table name="${sessionScope.searchResultsView}" uid="row" class="simple" sort="page" defaultsort="1" pagesize="150" export="true" requestURI="" cellspacing="1" cellpadding="4" htmlId="searchresultstable">
+	<display:table name="${sessionScope.searchResultsView}" uid="row" class="simple" pagesize="<%=edu.wustl.cab2b.common.queryengine.QueryExecutorPropertes.getUiPageLimit()%>"  export="true" requestURI="" cellspacing="1" cellpadding="4" htmlId="searchresultstable">
 		<logic:iterate name="row" id="column" type="edu.wustl.cab2bwebapp.dvo.SearchResultDVO">
 			<display:column title="${column.title}" value="${column.value}" sortable="false" media="${column.media}" headerClass="sortable" scope="sessionScope"/>
 			<display:setProperty name="export.pdf" value="true" />
