@@ -50,6 +50,7 @@
   if(document.getElementById("stopajax")!=null)
   {
   	document.getElementById('queryDropDown').innerHTML = document.getElementById("partialQueryResultsAJAX").innerHTML;
+  	document.getElementById('progressImage').innerHTML = "";
 	return;
   }
   if(results == "Exception") 
@@ -137,7 +138,7 @@
 								<logic:present name="savedQueries">
 									<logic:iterate name="savedQueries" id="savedSearch" type="edu.wustl.cab2bwebapp.dvo.SavedQueryDVO">
 										<OPTION value="<bean:write name="savedSearch" property="name"/>" <logic:equal name="savedSearch" property="selected" value="true">selected</logic:equal>>
-											<bean:write name="savedSearch" property="name"/>&nbsp;(<bean:write name="savedSearch" property="resultCount"/>)
+											<bean:write name="savedSearch" property="name"/>&nbsp;(<bean:write name="savedSearch" property="resultCount"/>)&nbsp;
 										</OPTION>
 									</logic:iterate>
 								</logic:present>

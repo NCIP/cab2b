@@ -26,10 +26,11 @@
 		</logic:notEqual>
 		<logic:equal name="queryCount" value="1">
 			<logic:iterate name="savedQueries" id="savedSearch">
-				<DIV class="text" style="font-size:0.9em;"><bean:write name="savedSearch" property="name"/>&nbsp;(<bean:write name="savedSearch" property="resultCount"/>)</DIV>
+				<DIV class="text" style="font-size:0.9em;"><bean:write name="savedSearch" property="name"/>&nbsp;(<bean:write name="savedSearch" property="resultCount"/>)<SPAN id="progressImage"><logic:notPresent name="stopajax">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <IMG height=15 src='images/PageLoading.gif'>&nbsp;&nbsp; Loading results . . . </logic:notPresent></SPAN></DIV>
 			</logic:iterate>
 		</logic:equal>	 
 	</logic:present>
+	
 </DIV>
 <DIV style="display:none" id="failedservicesAJAX">
 	<logic:present name="failedServices">
