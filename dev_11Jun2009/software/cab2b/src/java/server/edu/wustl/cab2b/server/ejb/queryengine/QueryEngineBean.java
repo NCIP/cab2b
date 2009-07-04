@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.globus.gsi.GlobusCredential;
 
+import edu.common.dynamicextensions.util.DynamicExtensionsUtility;
 import edu.wustl.cab2b.common.authentication.util.AuthenticationUtility;
 import edu.wustl.cab2b.common.domain.DCQL;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
@@ -74,10 +75,8 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
         Long userId = UtilityOperations.getLocalUserId(serializedDCR);
         query.setCreatedBy(userId);
 
-        new HibernateCleanser(query).clean();
-        if (query.isKeywordSearch()) { // First Save as keyword search
-            saveAsKeywordQuery(query);
-        }
+        // First Save as keyword search
+        saveAsKeywordQuery(query);
 
         // Reset as regular query and save.
         query.setIsKeywordSearch(Boolean.FALSE);
@@ -91,9 +90,14 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * @throws RemoteException
      */
     public void saveAsKeywordQuery(ICab2bQuery query) throws RemoteException {
-        QueryConverter queryConverter = new QueryConverter();
         if (query.isKeywordSearch()) {
-            ICab2bQuery oredQuery = queryConverter.convertToKeywordQuery(query);
+            ICab2bQuery oredQuery = (ICab2bQuery) DynamicExtensionsUtility.cloneObject(query);
+            if (oredQuery.getId() != null) {
+                new HibernateCleanser(oredQuery).clean();
+            }
+            oredQuery.setName(oredQuery.getName() + "#");
+
+            oredQuery = new QueryConverter().convertToKeywordQuery(oredQuery);
             new QueryOperations().saveQuery(oredQuery);
         }
     }

@@ -5,10 +5,8 @@ import java.util.Collection;
 
 import edu.common.dynamicextensions.domain.StringAttributeTypeInformation;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.common.dynamicextensions.util.DynamicExtensionsUtility;
 import edu.wustl.cab2b.common.exception.QueryConverterException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
-import edu.wustl.common.hibernate.HibernateCleanser;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.ICondition;
@@ -30,32 +28,23 @@ public class QueryConverter {
     /**
      * This method converts the query having ANDed conditions to Query having ORed conditions.
      *
-     * @param query
+     * @param oredQuery
      * @return
      */
-    public ICab2bQuery convertToKeywordQuery(ICab2bQuery query) {
-        ICab2bQuery oredQuery = query;
-        if (query.isKeywordSearch()) {
-            if (!isFeasibleToConvert(query)) {
-                throw new QueryConverterException(
-                        "Query must include at least one Condition having String Attribute.");
-            }
+    public ICab2bQuery convertToKeywordQuery(ICab2bQuery oredQuery) {
+        if (!isFeasibleToConvert(oredQuery)) {
+            throw new QueryConverterException("Query must include at least one Condition having String Attribute.");
+        }
+        oredQuery.setIsKeywordSearch(Boolean.TRUE);
 
-            oredQuery = (ICab2bQuery) DynamicExtensionsUtility.cloneObject(query);
-            if (oredQuery.getId() != null) {
-                new HibernateCleanser(oredQuery).clean();
-            }
-            oredQuery.setName(oredQuery.getName() + "#");
-
-            for (IExpression expression : oredQuery.getConstraints()) {
-                int noOfOperands = expression.numberOfOperands();
-                for (int index = 0; index < noOfOperands; index++) {
-                    IExpressionOperand operand = expression.getOperand(index);
-                    if (operand instanceof IRule) {
-                        convertRule((IRule) operand, index);
-                    } else if (operand instanceof IExpression) {
-                        convertSubExpression(expression, operand, index);
-                    }
+        for (IExpression expression : oredQuery.getConstraints()) {
+            int noOfOperands = expression.numberOfOperands();
+            for (int index = 0; index < noOfOperands; index++) {
+                IExpressionOperand operand = expression.getOperand(index);
+                if (operand instanceof IRule) {
+                    convertRule((IRule) operand, index);
+                } else if (operand instanceof IExpression) {
+                    convertSubExpression(expression, operand, index);
                 }
             }
         }
