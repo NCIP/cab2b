@@ -79,6 +79,14 @@
 			<forward name="searchresultspanel"
 				path="/pages/searchresultspanel.jsp" />
 		</action>
+		<action path="/ExportData"
+			type="edu.wustl.cab2bwebapp.action.ExportDataAction"
+			validate="false"
+			input="/pages/blank.jsp"
+			scope="request">
+			<forward name="success" path="/pages/blank.jsp" />
+			<forward name="failure" path="/pages/blank.jsp" />
+		</action>
 	</action-mappings>
 
 	<!-- ========================== Message Resource ========================== -->
