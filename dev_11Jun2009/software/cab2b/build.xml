@@ -1,4 +1,4 @@
-<project name="caB2B" basedir="." default="compile.all">
+<project name="caB2B" basedir="." default="compile.all"> 
 	<property name="src.dir" location="src" />
 	<property name="source.dir" location="${src.dir}/java" />
 	<property name="resource.dir" location="${src.dir}/resources" />
