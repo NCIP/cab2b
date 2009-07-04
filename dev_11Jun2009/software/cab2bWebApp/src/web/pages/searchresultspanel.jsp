@@ -3,10 +3,18 @@
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 
 <%
+ if(session.getAttribute("UI_population_finished")!=null)
+ {
+%>
+   <DIV id="UI_population_finished"></DIV>
+<%
+ }
+%>
+<%
  if(session.getAttribute("stopAjax")!=null)
  {
 %>
-   <DIV id="stopajax"></DIV>
+   <DIV id="stopAjax"></DIV>
 <%
  }
 %>

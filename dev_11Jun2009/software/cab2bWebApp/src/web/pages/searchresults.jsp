@@ -26,6 +26,15 @@
 <SCRIPT language="JavaScript" src="javascript/ajax.js"></SCRIPT>
 <SCRIPT language="javaScript">
 
+function exportdata()
+{
+document.getElementById('exportDiv').innerHTML = ' <IMG src="images/PageLoading.gif" width="30" height="30" alt="Loading Data">';
+var action='ExportData.do';
+mywindow=window.open(action,"Download","width=10,height=10");
+mywindow.moveTo(0,0);
+document.getElementById('exportDiv').innerHTML = 'Export data';
+}
+
  function executeQuery()
 {
 	if(<%=queryId%> != null )
@@ -47,12 +56,17 @@
   {
     document.getElementById('queryDropDown').innerHTML = document.getElementById("partialQueryResultsAJAX").innerHTML;
   }
-  if(document.getElementById("stopajax")!=null)
+  if(document.getElementById("UI_population_finished")!=null)
   {
   	document.getElementById('queryDropDown').innerHTML = document.getElementById("partialQueryResultsAJAX").innerHTML;
   	document.getElementById('progressImage').innerHTML = "";
+  }
+  if(document.getElementById("stopAjax")!=null)
+  {
+    document.getElementById('exportDiv').innerHTML = '<a href="javascript:exportdata();" > Export data </a>';
 	return;
   }
+  
   if(results == "Exception") 
   {
 	document.getElementById('centerpanelcontent').innerHTML = 'Exception occurred while executing your request.<br> Please contact administrator.';
@@ -197,6 +211,9 @@
 <DIV id="bottompanel">
 	<INPUT type="button" class="button" value="<bean:message key="button.home"/>" onClick="document.location='Home.do'">
 </DIV>
+<div id="exportDiv">
+	Export data
+</div>
 <jsp:include page="footer.jsp"/>
 </BODY>
 </HTML>
