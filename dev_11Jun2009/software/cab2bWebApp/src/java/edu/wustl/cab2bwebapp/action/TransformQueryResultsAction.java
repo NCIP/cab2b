@@ -22,6 +22,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.QueryExecutorPropertes;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.ExecuteQueryBizLogic;
@@ -70,7 +71,7 @@ public class TransformQueryResultsAction extends Action {
                     (SavedQueryBizLogic) session.getServletContext().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
             ICab2bQuery query =
                     savedQueryBizLogic.getQueryById(Long.parseLong(request.getParameter(Constants.QUERY_ID)));
-            int transformationMaxLimit = Integer.valueOf(request.getParameter("transformationMaxLimit"));
+            int transformationMaxLimit = QueryExecutorPropertes.getUiResultLimit();
             Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults =
                     executeQueryBizLogic.getSearchResults(transformationMaxLimit);
 

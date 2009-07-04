@@ -25,6 +25,7 @@ import org.apache.struts.action.ActionMessage;
 import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.QueryExecutorPropertes;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2bwebapp.actionform.KeywordSearchForm;
@@ -84,7 +85,7 @@ public class KeywordSearchAction extends Action {
                 executeQueryBizLogic =
                         new ExecuteQueryBizLogic(queries, globusCredential, keywordSearchForm.getKeyword(), user,
                                 modelGroupNames);
-                int transformationMaxLimit = 100;//Integer.valueOf(request.getParameter("transformationMaxLimit"));
+                int transformationMaxLimit = QueryExecutorPropertes.getUiResultLimit();
                 while(!executeQueryBizLogic.isProcessingFinished()) {
                     Thread.sleep(100);
                 }

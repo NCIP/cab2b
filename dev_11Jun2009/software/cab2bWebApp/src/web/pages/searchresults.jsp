@@ -40,7 +40,7 @@
 
  function getTransformedResults()
 {
-  var url = 'TransformQueryResultsAction.do?queryId=' + ${sessionScope.queryId} + '&transformationMaxLimit=100';
+  var url = 'TransformQueryResultsAction.do?queryId=' + ${sessionScope.queryId};
   processAJAXRequest(url, 'centerpanelcontent', 1);
 
   if(document.getElementById("partialQueryResultsAJAX")!=null)

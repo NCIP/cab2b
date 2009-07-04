@@ -25,6 +25,8 @@ public class QueryExecutorPropertes {
     private static int globalAllowedRecords = 60000;
 
     private static int perQueryAllowedRecords = 10000;
+    
+    private static int uiResultSize = 1000;
 
     static {
         String path = System.getProperty("user.home") + File.separator + fileName;
@@ -39,11 +41,14 @@ public class QueryExecutorPropertes {
                 perQueryMinThreadLimit = Integer.parseInt(pro.getProperty("per.query.min.thread.limit"));
                 globalAllowedRecords = Integer.parseInt(pro.getProperty("global.record.limit"));
                 perQueryAllowedRecords = Integer.parseInt(pro.getProperty("per.query.record.limit"));
+                uiResultSize = Integer.parseInt(pro.getProperty("ui.result.limit"));
+                
                 logger.info("GlobalThreadLimit " + globalThreadLimit);
-                logger.info("PerQueryMaxThreadLimit " + perQueryMaxThreadLimit);
-                logger.info("PerQueryMinThreadLimit " + perQueryMinThreadLimit);
-                logger.info("GlobalAllowedRecords " + globalAllowedRecords);
-                logger.info("PerQueryAllowedRecords " + perQueryAllowedRecords);
+                logger.info("Per Query Max Thread Limit : " + perQueryMaxThreadLimit);
+                logger.info("Per Query Min Thread Limit : " + perQueryMinThreadLimit);
+                logger.info("Global Allowed Records : " + globalAllowedRecords);
+                logger.info("PerQuery Allowed Records : " + perQueryAllowedRecords);
+                logger.info("Result Size : " + perQueryAllowedRecords);
             } catch (IOException e) {
                 logger.info("File " + path + " not found. Using default properties");
             }
@@ -88,5 +93,12 @@ public class QueryExecutorPropertes {
      */
     public static int getPerQueryMinThreadLimit() {
         return perQueryMinThreadLimit;
+    }
+    
+    /**
+     * @return result size for UI
+     */
+    public static int getUiResultLimit(){
+        return uiResultSize;
     }
 }
