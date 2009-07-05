@@ -98,6 +98,8 @@ public class QueryExecutor {
 
     private boolean normalQueryFinished = false;
 
+    private List<Thread> workerThreadList = new ArrayList<Thread>();
+
     /**
      * Constructor initializes object with query and globus credentials
      *
@@ -160,6 +162,7 @@ public class QueryExecutor {
             List<ICab2bQuery> queries = getQueriesPerURL();
             for (ICab2bQuery queryWithSingleUrl : queries) {
                 Thread workerThread = new WorkerThread(queryWithSingleUrl);
+                workerThreadList.add(workerThread);
                 workerThread.start();
             }
         } else {
@@ -305,21 +308,34 @@ public class QueryExecutor {
      * @author deepak_shingan
      */
     private class WorkerThread extends Thread {
-        ICab2bQuery query = null;
+        ICab2bQuery queryPerUrl = null;
 
-        WorkerThread(ICab2bQuery query) {
-            this.query = query;
+        WorkerThread(ICab2bQuery queryCopy) {
+            this.queryPerUrl = queryCopy;
         }
 
         public void run() {
-            IQueryResult<ICategorialClassRecord> resultWithSingleUrl = executeCategoryQuery(query);
+            IQueryResult<ICategorialClassRecord> resultWithSingleUrl = executeCategoryQuery(queryPerUrl);
             Map<String, List<ICategorialClassRecord>> recordMap = resultWithSingleUrl.getRecords();
 
             if (catQueryResult == null) {
                 catQueryResult = resultWithSingleUrl;
             } else {
+                if (recordMap.keySet().size() > 1) {
+                    throw new RuntimeException("More then one URL found in result even after splitting per URL");
+                }
                 for (String url : recordMap.keySet()) {
                     catQueryResult.addRecords(url, recordMap.get(url));
+                }
+                int recordSize = 0;
+                for (String url : catQueryResult.getRecords().keySet()) {
+                    List<ICategorialClassRecord> listOfRecords = catQueryResult.getRecords().get(url);
+                    recordSize = recordSize + listOfRecords.size();
+                }
+                verifyRecordLimit(recordSize);
+                Collection<FailedTargetURL> urls = resultWithSingleUrl.getFailedURLs();
+                if (urls != null) {
+                    catQueryResult.setFailedURLs(urls);
                 }
             }
             if (threadPoolExecutor.isProcessingFinished()) {
@@ -466,7 +482,17 @@ public class QueryExecutor {
      * @return the isProcessingFinished
      */
     public boolean isProcessingFinished() {
-        return threadPoolExecutor.isProcessingFinished() || normalQueryFinished;
+        boolean threadsDone = true;
+        for (Thread t : workerThreadList) {
+            if (t.getState() != Thread.State.TERMINATED) {
+                threadsDone = false;
+            }
+        }
+        if (threadsDone) {
+            return threadPoolExecutor.isProcessingFinished() || normalQueryFinished;
+        } else {
+            return false;
+        }
     }
 
     /**
