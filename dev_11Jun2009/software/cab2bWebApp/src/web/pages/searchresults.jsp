@@ -32,7 +32,7 @@ document.getElementById('exportDiv').innerHTML = ' <IMG src="images/PageLoading.
 var action='ExportData.do';
 mywindow=window.open(action,"Download","width=10,height=10");
 mywindow.moveTo(0,0);
-document.getElementById('exportDiv').innerHTML = 'Export data';
+document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="button" value="<bean:message key="button.exportData"/>" onClick="javascript:exportdata();" disabled>';
 }
 
  function executeQuery()
@@ -59,11 +59,13 @@ document.getElementById('exportDiv').innerHTML = 'Export data';
   if(document.getElementById("UI_population_finished")!=null)
   {
   	document.getElementById('queryDropDown').innerHTML = document.getElementById("partialQueryResultsAJAX").innerHTML;
-  	document.getElementById('progressImage').innerHTML = "";
+  	document.getElementById('exportDiv').style.display = 'block';
+  	if(document.getElementById('progressImage') != null)
+  	 document.getElementById('progressImage').innerHTML = "";
   }
   if(document.getElementById("stopAjax")!=null)
   {
-    document.getElementById('exportDiv').innerHTML = '<a href="javascript:exportdata();" > Export data </a>';
+    document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="button" value="<bean:message key="button.exportData"/>" onClick="javascript:exportdata();">';
 	return;
   }
   
@@ -192,6 +194,15 @@ document.getElementById('exportDiv').innerHTML = 'Export data';
 					</logic:notEmpty>
 				</logic:present>
 			</TR>
+			<TR>
+			<TD>
+      </TD>
+			<TD>
+				<DIV id="exportDiv" style="display:none" class="text">
+					<INPUT type="button" class="button" value="<bean:message key="button.exportData"/>" onClick="javascript:exportdata();" disabled> Query in progress. Export will be enabled after it finishes.
+				</DIV>
+				</TD>
+			</TR>
 		</TABLE>
 	</DIV>		
 	<DIV id="pageoverlay"></DIV>
@@ -211,9 +222,6 @@ document.getElementById('exportDiv').innerHTML = 'Export data';
 <DIV id="bottompanel">
 	<INPUT type="button" class="button" value="<bean:message key="button.home"/>" onClick="document.location='Home.do'">
 </DIV>
-<div id="exportDiv">
-	Export data
-</div>
 <jsp:include page="footer.jsp"/>
 </BODY>
 </HTML>
