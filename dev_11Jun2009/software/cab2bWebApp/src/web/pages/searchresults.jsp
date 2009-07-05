@@ -65,7 +65,21 @@ document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="bu
   }
   if(document.getElementById("stopAjax")!=null)
   {
+
+    document.getElementById('exportDiv').style.display = 'block';
     document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="button" value="<bean:message key="button.exportData"/>" onClick="javascript:exportdata();">';
+	
+	if(document.getElementById("failedservicesAJAX")!=null)
+	{
+	document.getElementById('failedServicesDiv').style.display = 'block';
+	  document.getElementById("failedservicescount").innerHTML = document.getElementById("failedservicescountAJAX").innerHTML;    
+      document.getElementById("failedservicespanelbody").innerHTML = document.getElementById("failedservicesAJAX").innerHTML;    
+	}
+	
+if(document.getElementById("messagesNotEmpty")!=null)
+  {
+	document.getElementById('messagesNotEmpty').style.display = 'block';
+	}
 	return;
   }
   
@@ -162,7 +176,7 @@ document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="bu
 						</logic:notEqual>
 						<logic:equal name="queryCount" value="1">
 							<logic:iterate name="savedQueries" id="savedSearch">
-								<DIV class="text" style="font-size:0.9em;"><bean:write name="savedSearch" property="name"/>&nbsp;(<bean:write name="savedSearch" property="resultCount"/>)</DIV>
+								<DIV class="text" style="font-size:0.9em;"><bean:write name="savedSearch" property="name"/>&nbsp;(<bean:write name="savedSearch" property="resultCount"/>) <SPAN id="progressImage"> </SPAN></DIV>
 							</logic:iterate>
 						</logic:equal>	 
 					</DIV>
@@ -185,14 +199,13 @@ document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="bu
 						</logic:present> 
 					</SELECT>
 				</TD>
-				<logic:present name="failedServices">
-					<logic:notEmpty name="failedServices">
 						<TD nowrap>
+				<DIV id= "failedServicesDiv" style="display:none">
 							&nbsp;&nbsp;<A class="link" href="#this" onclick="document.getElementById('pageoverlay').style.display='block';document.getElementById('failedservicespanel').style.display='block';"><bean:message key="link.failedserviceinstances"/></A>
 							<SPAN class="text" id="failedservicescount"></SPAN>
+				</DIV>
 						</TD>
-					</logic:notEmpty>
-				</logic:present>
+
 			</TR>
 			<TR>
 			<TD>
