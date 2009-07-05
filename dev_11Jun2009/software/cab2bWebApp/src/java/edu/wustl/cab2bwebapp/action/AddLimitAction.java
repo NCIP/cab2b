@@ -65,7 +65,7 @@ public class AddLimitAction extends Action {
         session.removeAttribute(Constants.IS_FIRST_REQUEST);
         session.removeAttribute(Constants.STOP_AJAX);
         session.removeAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
-        
+        session.removeAttribute(Constants.UI_POPULATION_FINISHED);
         try {
             SavedQueryBizLogic savedQueryProvider =
                     (SavedQueryBizLogic) request.getSession().getServletContext()
