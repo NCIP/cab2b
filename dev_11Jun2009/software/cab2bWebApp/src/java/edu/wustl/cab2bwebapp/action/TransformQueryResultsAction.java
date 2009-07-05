@@ -29,6 +29,7 @@ import edu.wustl.cab2bwebapp.bizlogic.executequery.ExecuteQueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.TransformedResultObjectWithContactInfo;
 import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.cab2bwebapp.dvo.SavedQueryDVO;
+import edu.wustl.cab2bwebapp.dvo.SearchResultDVO;
 
 /**
  * Action for executing query related operations.
@@ -50,8 +51,8 @@ public class TransformQueryResultsAction extends Action {
      * @throws IOException
      * @throws ServletException
      */
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                 HttpServletResponse response) throws IOException, ServletException {
+    public synchronized ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                              HttpServletResponse response) throws IOException, ServletException {
         String actionForward = Constants.FORWARD_SEARCH_RESULTS_PANEL;
         try {
             HttpSession session = request.getSession();
@@ -96,25 +97,50 @@ public class TransformQueryResultsAction extends Action {
                         ExecuteQueryBizLogic.getFailedServiceUrls(selectedQueryResult.getFailedServiceUrl());
                 session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedURLS != null ? failedURLS.size() : 0);
                 session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
-                session.setAttribute(Constants.SEARCH_RESULTS_VIEW, ExecuteQueryBizLogic
-                    .getSearchResultsView(selectedQueryResult.getResultForAllUrls(), selectedQueryResult
-                        .getAllowedAttributes()));
+
                 session.setAttribute(Constants.INFEASIBLE_URL, selectedQueryResult.getInFeasibleUrl());
-                session.setAttribute(Constants.SAVED_QUERIES, queryList);
-                session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
-                if (savedQuery.getResultCount() >= transformationMaxLimit
-                        || executeQueryBizLogic.isProcessingFinished()) {
-                    session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
-                }
-                
-                if(executeQueryBizLogic.isProcessingFinished())
-                {
+
+                List<List<SearchResultDVO>> val =
+                        ExecuteQueryBizLogic.getSearchResultsView(selectedQueryResult.getResultForAllUrls(),
+                                                                  selectedQueryResult.getAllowedAttributes());
+
+                boolean uiGotEnoughRecords = savedQuery.getResultCount() >= transformationMaxLimit;
+                boolean queryFinished = executeQueryBizLogic.isProcessingFinished();
+
+                if (uiGotEnoughRecords && queryFinished) {
                     session.setAttribute(Constants.STOP_AJAX, true);
+                    session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
+                    //session.setAttribute(Constants.SEARCH_RESULTS_VIEW, val);
+                    //session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
+                    //session.setAttribute(Constants.SAVED_QUERIES, queryList);
+                } else if (uiGotEnoughRecords && !queryFinished) {
+                    Boolean flag = (Boolean) session.getAttribute(Constants.UI_POPULATION_FINISHED);
+                    if (flag != null && flag) {
+                        session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
+                    } else {
+                        session.setAttribute(Constants.SEARCH_RESULTS_VIEW, val);
+                        session.setAttribute(Constants.SEARCH_RESULTS, searchResults); 
+                        session.setAttribute(Constants.SAVED_QUERIES, queryList);
+                    }
+                    session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
+                } else if (!uiGotEnoughRecords && queryFinished) {
+                    session.setAttribute(Constants.STOP_AJAX, true);
+                    session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
+                    session.setAttribute(Constants.SEARCH_RESULTS_VIEW, val);
+                    session.setAttribute(Constants.SEARCH_RESULTS, searchResults); 
+                    session.setAttribute(Constants.SAVED_QUERIES, queryList);
+                } else if (!uiGotEnoughRecords && !queryFinished) {
+                    session.setAttribute(Constants.SEARCH_RESULTS_VIEW, val);
+                    session.setAttribute(Constants.SEARCH_RESULTS, searchResults); 
+                    session.setAttribute(Constants.SAVED_QUERIES, queryList);
                 }
+            } else {
+                session.setAttribute(Constants.SEARCH_RESULTS, searchResults);    
+                session.setAttribute(Constants.SAVED_QUERIES, queryList);
             }
 
-            session.setAttribute(Constants.SAVED_QUERIES, queryList);
-            session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
+            
+            
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
