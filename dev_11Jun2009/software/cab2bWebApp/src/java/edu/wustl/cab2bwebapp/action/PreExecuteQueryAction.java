@@ -60,7 +60,7 @@ public class PreExecuteQueryAction extends Action {
        {
            Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults = null;
            List<SavedQueryDVO> queryList                = new ArrayList<SavedQueryDVO>();
-           Collection<ServiceURLInterface> failedURLS   = null;
+           //Collection<ServiceURLInterface> failedURLS   = null;
            SavedQueryBizLogic savedQueryBizLogic        =(SavedQueryBizLogic) session.getServletContext().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
            Long queryId                                 = Long.parseLong(request.getParameter(Constants.QUERY_ID));
            ICab2bQuery query                            = savedQueryBizLogic.getQueryById(queryId);
@@ -96,12 +96,12 @@ public class PreExecuteQueryAction extends Action {
            // to be saved in session
            session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
            session.setAttribute(Constants.SAVED_QUERIES, queryList);
-           session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
+          // session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
            session.setAttribute(Constants.QUERY_ID, queryId);
            session.setAttribute(Constants.SERVICE_INSTANCES, urlsForSelectedQueries);
            session.setAttribute(Constants.CONDITION_LIST, conditionstr);
            session.setAttribute(Constants.MODEL_GROUPS, modelGroupNames);
-           session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedURLS != null ? failedURLS.size(): 0);
+         //  session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedURLS != null ? failedURLS.size(): 0);
            session.setAttribute(Constants.SEARCH_RESULTS_VIEW, Constants.PROCESSING);   //1st request will say processing
        }
        return mapping.findForward(actionForward);   //else if its second request bcz of page refresh by display tag, just forward the page to the same jsp.
