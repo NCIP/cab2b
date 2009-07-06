@@ -229,12 +229,23 @@
 
 	<!-- ==============Cleans Everything in workarea folder=============== 	-->
 	<target name="clean.all">
-		<delete includeemptydirs="true">
-			<fileset dir="${workarea.dir}">
-				<include name="**/*" />
+		<ant inheritAll="false" inheritRefs="false" dir="${cab2badmin.location}" antfile="${cab2badmin.location}/build.xml" target="clean.all" />
+		<echo message="Cleaned Admin" />
+
+		<ant inheritall="false" inheritRefs="false" dir="${cab2bwebapp.location}" antfile="${cab2bwebapp.location}/build.xml" target="clean.all" />
+		<echo message="Cleaned WebApp" />
+
+		<delete includeemptydirs="true" dir="${workarea.dir}" />
+		<mkdir dir="${workarea.dir}" />
+		<delete>
+			<fileset dir="${conf.dir}">
+				<include name="cab2b.properties" />
+				<include name="cagrid.properties" />
+				<include name="client.properties" />
+				<include name="server.properties" />
 			</fileset>
 		</delete>
-		<delete file="build\log.xml" />
+		<echo message="Cleaned caB2B" />
 	</target>
 	<!-- ================================================================================== -->
 	<target name="compile.common">
@@ -920,8 +931,6 @@
 		</war>
 	</target>
 
-
-
 	<!-- =========================================================================================== -->
 	<macrodef name="replace.application.xml">
 		<attribute name="applicationfile" />
@@ -1049,7 +1058,7 @@
 
 		<mkdir dir="${jboss.log.dir}" />
 		<echo message="" file="${jboss.log.dir}/caB2B.log" append="false" />
-		
+
 		<copy file="${cab2b.ds.from.path}/${cab2b.ds.file}" todir="${cab2b.ds.to.path}" overwrite="true" />
 		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@application.context.name@" value="${application.context.name}" />
 		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.url@" value="${database.url}" />
