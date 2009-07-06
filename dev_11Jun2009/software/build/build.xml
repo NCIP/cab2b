@@ -3,7 +3,7 @@
 <project name="build-bda-template" default="build:all" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:cs="antlib:com.puppycrawl.tools.checkstyle">
 	<description>
 		This build file is part of the bda-build-template project.  This is the master build file for the project.  It should be placed in project/software/.  This script wrappers sub projects to build, test and inspect code.  Additionally this project manges creation of distributions and deployment locally or remotely.  Deployments will call the install.xml from the distribution to install or upgrade the application.  Lastly this script will run include targets that require manipulation of containers (selenium tests because they require starting the application server container (and require a fully deployed application which this process is responsible for). This build script assumes two sub-projects cab2b-webapp and cab2b-api. The API targets are commented out and can be removed if not needed.  Also support for both tomcat and jboss download, install and configure are included.  These scripts require Java, Ant, Database and SVN to work.
-	</description>  
+	</description>
 	<!-- Property file related properties and tasks -->
 	<property environment="env" />
 	<!-- The project.properties stores properties that are shared between both build.xml and install.xml. Typically properties that are related to the distribution directories, or files. -->
@@ -179,6 +179,7 @@
 		<diagnostics />
 	</target>
 	<target name="clean">
+		<ant inheritAll="false" inheritRefs="true" antfile="${cab2b-webapp.build.file}" target="clean.all" dir="${cab2b-webapp.base.dir}" />
 		<delete dir="${dist.dir}" />
 		<delete dir="${temp.dir}" />
 	</target>
@@ -268,12 +269,41 @@
 		-->
 	</target>
 	<target name="build:cab2b-webapp" depends="init, build:cab2b-api" description="Call webapp sub-projects build target to produce artifiacts">
+		<macrodef name="read-jboss-server-port">
+			<attribute name="jboss.server.ports.name" default="${jboss.server.ports.name}" />
+			<attribute name="jboss.server.bindingfile.location" default="${jboss.server.bindingfile.location}" />
+			<attribute name="jboss.server.port.property.name" default="jboss.server.port" />
+
+			<sequential>
+				<var name="jboss-read-ports.properties.list" value="@{jboss.server.port.property.name}" />
+				<var name="read.http.port" unset="true" />
+				<xmltask failWithoutMatch="true" source="@{jboss.server.bindingfile.location}" dest="@{jboss.server.bindingfile.location}">
+					<xmlcatalog refid="bda.xml.catalog" />
+					<copy path="/service-bindings/server[@name='@{jboss.server.ports.name}']/service-config[@name='jboss.web:service=WebServer']/binding/@port" property="read.http.port" attrValue="true" />
+				</xmltask>
+				<property name="@{jboss.server.port.property.name}" value="${read.http.port}" />
+				<var name="read.properties.list" value="${read.properties.list},${jboss-read-ports.properties.list}" />
+			</sequential>
+		</macrodef>
+		<if>
+			<isset property="jboss.ncicb-standard.port-config" />
+			<then>
+				<get src="${jboss-bindings.src.url}" dest="${basedir}/${jboss-bindings.file}" />
+				<read-jboss-server-port jboss.server.bindingfile.location="${basedir}/${jboss-bindings.file}" />
+				<property name="server-port" value="${jboss.server.port}" />
+				<echo message="HTTP port=${server-port}" />
+				<delete file="${basedir}/${jboss-bindings.file}" />
+			</then>
+			<else>
+				<property name="server-port" value="${jboss.server.port}" />
+			</else>
+		</if>
 		<!-- setting the property in the ant call overrides the property in the sub-project allowing the artifact to be produced where needed -->
 		<ant inheritAll="false" inheritRefs="true" antfile="${cab2b-webapp.build.file}" target="${cab2b-webapp.build.target}" dir="${cab2b-webapp.base.dir}">
 			<property name="dist.dir" value="${cab2b-webapp.dist.dir}" />
-      
+
 			<property name="server-host" value="${server-host}" />
-			<property name="server-port" value="${jboss.server.port}" />
+			<property name="server-port" value="${server-port}" />
 			<property name="grid-type" value="${grid-type}" />
 			<property name="ds-name" value="${application.context.name}" />
 			<property name="db-loader" value="${db-loader}" />
