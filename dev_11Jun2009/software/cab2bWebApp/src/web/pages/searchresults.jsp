@@ -32,7 +32,7 @@ document.getElementById('exportDiv').innerHTML = ' <IMG src="images/PageLoading.
 var action='ExportData.do';
 mywindow=window.open(action,"Download","width=10,height=10");
 mywindow.moveTo(0,0);
-document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="button" value="<bean:message key="button.exportData"/>" onClick="javascript:exportdata();" disabled>';
+document.getElementById('exportDiv').innerHTML = '<IMG style="border-top: 1px solid #cccccc; border-left:1px solid #cccccc;" src="images/ExportAll_Inactive.jpg" >';
 }
 
  function executeQuery()
@@ -59,26 +59,25 @@ document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="bu
   if(document.getElementById("UI_population_finished")!=null)
   {
   	document.getElementById('queryDropDown').innerHTML = document.getElementById("partialQueryResultsAJAX").innerHTML;
-  	document.getElementById('exportDiv').style.display = 'block';
+  	document.getElementById('exportDiv').style.display = 'block';	//make it visible only ( with the inactive image)
   	if(document.getElementById('progressImage') != null)
   	 document.getElementById('progressImage').innerHTML = "";
   }
   if(document.getElementById("stopAjax")!=null)
   {
-
-    document.getElementById('exportDiv').style.display = 'block';
+    document.getElementById('exportDiv').style.display = 'block'; // make it visible along with enabling it.
     document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="button" value="<bean:message key="button.exportData"/>" onClick="javascript:exportdata();"> Export all to view complete results';
 	
 	if(document.getElementById("failedservicesAJAX")!=null)
 	{
-	document.getElementById('failedServicesDiv').style.display = 'block';
+	  document.getElementById('failedServicesDiv').style.display = 'block';
 	  document.getElementById("failedservicescount").innerHTML = document.getElementById("failedservicescountAJAX").innerHTML;    
       document.getElementById("failedservicespanelbody").innerHTML = document.getElementById("failedservicesAJAX").innerHTML;    
 	}
 	
-if(document.getElementById("messagesNotEmpty")!=null)
-  {
-	document.getElementById('messagesNotEmpty').style.display = 'block';
+	if(document.getElementById("messagesNotEmpty")!=null)
+ 	{
+		document.getElementById('messagesNotEmpty').style.display = 'block';
 	}
 	return;
   }
@@ -211,7 +210,7 @@ if(document.getElementById("messagesNotEmpty")!=null)
 	      		</TD>
 				<TD nowrap style="padding-top:7px">
 					<DIV id="exportDiv" style="display:none" class="text">
-						<INPUT type="button" class="button" value="<bean:message key="button.exportData"/>" onClick="javascript:exportdata();" disabled> <IMG height=15 src='images/PageLoading.gif'> Query in progress...
+						<IMG style="border-top: 1px solid #cccccc; border-left:1px solid #cccccc;" src="images/ExportAll_Inactive.jpg" ><IMG height=15 src='images/PageLoading.gif'> Query in progress...
 					</DIV>
 				</TD>
 			</TR>
