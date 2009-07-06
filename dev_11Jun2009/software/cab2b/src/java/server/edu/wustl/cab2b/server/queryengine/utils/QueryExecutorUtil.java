@@ -32,10 +32,6 @@ public class QueryExecutorUtil {
                 int rootRecordCount = 1; // A1, A2,A3,A4
                 Map<CategorialClass, List<ICategorialClassRecord>> categorialclassVsRecordsMap =
                         rootRecord.getChildrenCategorialClassRecords();
-                if (categorialclassVsRecordsMap.isEmpty()) {
-                    finalSpreadSheetCount = finalSpreadSheetCount + rootRecordCount;
-                    continue;
-                }
                 for (CategorialClass categorialClass : categorialclassVsRecordsMap.keySet()) //B,C,F
                 {
                     int childLeavesCount = 0;
@@ -43,17 +39,17 @@ public class QueryExecutorUtil {
                         .get(categorialClass)) //B1,B2,C1,C2,F1,F2
                     {
                         childLeavesCount = childLeavesCount + countLeavesForEachChildRecord(categorialChildRecord);
-                        ;
                     }
                     rootRecordCount = rootRecordCount * childLeavesCount;
                 }
                 finalSpreadSheetCount = finalSpreadSheetCount + rootRecordCount;
             }
 
-            if (finalSpreadSheetCount < maxLimit)
+            if (finalSpreadSheetCount < maxLimit) {
                 return true; // feasible URL good enough to be transformed
-            else
+            } else {
                 return false; // infeasible URL, can't invoke transformer
+            }
         } else
             return false; //case of failed URL => num of records= 0, Transformer should not be invoked
     }
@@ -70,8 +66,9 @@ public class QueryExecutorUtil {
         Map<CategorialClass, List<ICategorialClassRecord>> categorialclassVsRecordsMap =
                 categorialChildRecord.getChildrenCategorialClassRecords();
 
-        if (categorialclassVsRecordsMap.isEmpty())
+        if (categorialclassVsRecordsMap.isEmpty()) {
             return 1; //if leaf has come, return 1; D,H,F
+        }
 
         for (CategorialClass categorialClass : categorialclassVsRecordsMap.keySet()) //G
         {
