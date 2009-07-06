@@ -489,6 +489,7 @@ public class QueryExecutor {
             }
         }
         if (threadsDone) {
+            normalQueryFinished = true;
             return threadPoolExecutor.isProcessingFinished() || normalQueryFinished;
         } else {
             return false;
