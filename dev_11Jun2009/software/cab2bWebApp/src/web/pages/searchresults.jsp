@@ -67,7 +67,7 @@ document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="bu
   {
 
     document.getElementById('exportDiv').style.display = 'block';
-    document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="button" value="<bean:message key="button.exportData"/>" onClick="javascript:exportdata();">';
+    document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="button" value="<bean:message key="button.exportData"/>" onClick="javascript:exportdata();"> Export all to view complete results';
 	
 	if(document.getElementById("failedservicesAJAX")!=null)
 	{
@@ -160,7 +160,7 @@ if(document.getElementById("messagesNotEmpty")!=null)
 						<bean:message key="label.savedsearchselect"/>
 					 </DIV>
 				</TD>
-				<TD <logic:notEmpty name="failedServices">colspan="2"</logic:notEmpty>>
+				<TD noWrap <logic:notEmpty name="failedServices">colspan="2"</logic:notEmpty>>
 					<DIV id="queryDropDown">
 						<bean:size id="queryCount" name="savedQueries"/>
 						<logic:notEqual name="queryCount" value="1">
@@ -199,21 +199,20 @@ if(document.getElementById("messagesNotEmpty")!=null)
 						</logic:present> 
 					</SELECT>
 				</TD>
-						<TD nowrap>
-				<DIV id= "failedServicesDiv" style="display:none">
-							&nbsp;&nbsp;<A class="link" href="#this" onclick="document.getElementById('pageoverlay').style.display='block';document.getElementById('failedservicespanel').style.display='block';"><bean:message key="link.failedserviceinstances"/></A>
-							<SPAN class="text" id="failedservicescount"></SPAN>
-				</DIV>
-						</TD>
-
+				<TD nowrap>
+					<DIV id= "failedServicesDiv" style="display:none">
+								&nbsp;&nbsp;<A class="link" href="#this" onclick="document.getElementById('pageoverlay').style.display='block';document.getElementById('failedservicespanel').style.display='block';"><bean:message key="link.failedserviceinstances"/></A>
+								<SPAN class="text" id="failedservicescount"></SPAN>
+					</DIV>
+				</TD>
 			</TR>
 			<TR>
-			<TD>
-      </TD>
-			<TD>
-				<DIV id="exportDiv" style="display:none" class="text">
-					<INPUT type="button" class="button" value="<bean:message key="button.exportData"/>" onClick="javascript:exportdata();" disabled> Query in progress. Export will be enabled after it finishes.
-				</DIV>
+				<TD>
+	      		</TD>
+				<TD nowrap style="padding-top:7px">
+					<DIV id="exportDiv" style="display:none" class="text">
+						<INPUT type="button" class="button" value="<bean:message key="button.exportData"/>" onClick="javascript:exportdata();" disabled> <IMG height=15 src='images/PageLoading.gif'> Query in progress...
+					</DIV>
 				</TD>
 			</TR>
 		</TABLE>
