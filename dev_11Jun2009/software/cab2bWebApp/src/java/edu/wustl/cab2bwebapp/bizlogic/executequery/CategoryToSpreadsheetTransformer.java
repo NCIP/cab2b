@@ -68,15 +68,17 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
         Set<CategorialClass> children = record.getCategorialClass().getChildren();
 
         //Attribute-Value pair of current record
-        Map<AttributeInterface, Object> avPairs = new HashMap<AttributeInterface, Object>();
+        Map<AttributeInterface, Object> avPairs = new HashMap<AttributeInterface, Object>(record.getAttributes().size());
         for (AttributeInterface a : record.getAttributes()) {
             avPairs.put(a, record.getValueForAttribute(a));
         }
-        List<Map<AttributeInterface, Object>> processedRecords = new ArrayList<Map<AttributeInterface, Object>>();
+        
         if (children.size() == 0) {
+            List<Map<AttributeInterface, Object>> processedRecords = new ArrayList<Map<AttributeInterface, Object>>(1);
             processedRecords.add(avPairs);
             return processedRecords;
         }
+        List<Map<AttributeInterface, Object>> processedRecords = new ArrayList<Map<AttributeInterface, Object>>();
         Map<CategorialClass, List<ICategorialClassRecord>> childVsRecords =
                 record.getChildrenCategorialClassRecords();
         boolean isRecordAdded = false;
@@ -101,7 +103,7 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
                 //cross product current child with all previously processed children
                 for (Map<AttributeInterface, Object> processedRecord : processedRecords) {
                     for (Map<AttributeInterface, Object> childrenRecord : processedChildRecords) {
-                        Map<AttributeInterface, Object> newMap = new LinkedHashMap<AttributeInterface, Object>();
+                        Map<AttributeInterface, Object> newMap = new LinkedHashMap<AttributeInterface, Object>(childrenRecord.size() + processedRecord.size());
                         newMap.putAll(childrenRecord);
                         newMap.putAll(processedRecord);
                         tempProcessedRecords.add(newMap);
