@@ -239,7 +239,6 @@
 		</delete>
 		<echo message="Cleaned caB2B" />
 	</target>
-	
 	<!-- ==============Cleans everything in workarea folder=============== 	-->
 	<target name="clean">
 		<ant inheritAll="false" inheritRefs="false" dir="${cab2badmin.location}" antfile="${cab2badmin.location}/build.xml" target="clean.all" />
@@ -817,7 +816,7 @@
 	</target>
 
 	<!-- ================================================================================== -->
-	<target name="build.project.jar" depends="clean.all,compile.client,compile.server">
+	<target name="build.project.jar" depends="clean,compile.client,compile.server">
 		<jar basedir="${workarea.dir}/common/classes" destfile="${workarea.dir}/cab2b-common.jar">
 			<include name="**/*.*" />
 		</jar>
