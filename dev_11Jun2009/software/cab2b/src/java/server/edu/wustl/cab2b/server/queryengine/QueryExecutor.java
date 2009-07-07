@@ -176,19 +176,16 @@ public class QueryExecutor {
  
 
     private IQueryResult<ICategorialClassRecord> mergeCatResults(
-                                                                 List<IQueryResult<ICategorialClassRecord>> categoryResults,
-                                                                 boolean isFinal) {
+                                                                 List<IQueryResult<ICategorialClassRecord>> categoryResults) {
         Category outputCategory = categoryPreprocessorResult.getCategoryForEntity().get(getOutputEntity());
         ICategoryResult<ICategorialClassRecord> res = QueryResultFactory.createCategoryResult(outputCategory);
         for (IQueryResult<ICategorialClassRecord> categoryResult : categoryResults) {
             //Adding all failed URLs: FQP 1.3 updates
-            if (isFinal) {
                 Collection<FailedTargetURL> failedURLs = categoryResult.getFailedURLs();
                 if (failedURLs != null) {
                     failedURLs.addAll(categoryResult.getFailedURLs());
                     res.setFailedURLs(failedURLs);
                 }
-            }
             for (Map.Entry<String, List<ICategorialClassRecord>> entry : categoryResult.getRecords().entrySet()) {
                 res.addRecords(entry.getKey(), entry.getValue());
             }
@@ -262,7 +259,7 @@ public class QueryExecutor {
         }
 
         public void run() {
-            executeCategoryQuery(queryPerUrl);
+            catQueryResult = executeCategoryQuery(queryPerUrl);
             if (threadPoolExecutor.noTasksToExecuteOrTerminated()) {
                 threadPoolExecutor.shutdown();
             }
@@ -296,7 +293,7 @@ public class QueryExecutor {
                 verifyRecordLimit(recordSize);
                 categoryResults.add(allRootExprCatRecs);
                 // process children in parallel.
-                queryResult = mergeCatResults(categoryResults, false);
+                queryResult = mergeCatResults(categoryResults);
                 Map<String, List<ICategorialClassRecord>> urlToRecords = allRootExprCatRecs.getRecords();
                 for (String url : urlToRecords.keySet()) {
                     int noOfRecords = urlToRecords.get(url).size();
@@ -318,7 +315,7 @@ public class QueryExecutor {
                     }
                 }
             }
-            return mergeCatResults(categoryResults, true);
+            return mergeCatResults(categoryResults);
         }
     }
 
@@ -417,7 +414,7 @@ public class QueryExecutor {
                         }
                     }
                 }
-                queryResult = mergeCatResults(categoryResults, false);
+                queryResult = mergeCatResults(categoryResults);
             } catch (Throwable e) {
                 e.printStackTrace();
                 logger.error(e.getMessage());
