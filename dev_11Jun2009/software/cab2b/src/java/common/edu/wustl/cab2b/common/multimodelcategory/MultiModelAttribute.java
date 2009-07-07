@@ -30,13 +30,5 @@ public interface MultiModelAttribute extends Serializable {
     Boolean isVisible();
 
     void setVisible(Boolean isVisible);
-    
-    String getName();
-    
-    void setName(String name);
-    
-    String getDescription();
-    
-    void setDescription(String description);
 
 }
