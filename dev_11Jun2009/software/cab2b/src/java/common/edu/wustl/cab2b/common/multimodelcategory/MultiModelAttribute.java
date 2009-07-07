@@ -33,10 +33,10 @@ public interface MultiModelAttribute extends Serializable {
     
     String getName();
     
-    void setName();
+    void setName(String name);
     
     String getDescription();
     
-    void setDescription();
+    void setDescription(String description);
 
 }
