@@ -86,7 +86,7 @@ public class TransformQueryResultsAction extends Action {
             }
 
             List<SavedQueryDVO> queryList = new ArrayList<SavedQueryDVO>();
-            if (searchResults != null && searchResults.get(selectedQueryObj) != null) {
+            if (searchResults.get(selectedQueryObj) != null) {
                 SavedQueryDVO savedQuery = new SavedQueryDVO();
                 savedQuery.setName(selectedQueryObj.getName());
                 savedQuery.setResultCount(searchResults.get(selectedQueryObj).getResultForAllUrls().size());
