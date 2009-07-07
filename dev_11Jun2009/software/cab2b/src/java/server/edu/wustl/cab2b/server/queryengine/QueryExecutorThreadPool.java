@@ -10,7 +10,15 @@ import java.util.concurrent.TimeUnit;
 class QueryExecutorThreadPool extends ThreadPoolExecutor {
     private int localThreadCount = 0;
 
-    private boolean incrementCalled = false;
+    /**This variable is introduced to ensure isProcessingFinished returns true 
+     * when threadPoolExecutor is terminated. This can happen when 
+     * threadPoolExecutor is shutDown due to per query thread limit exceeded or 
+     * global thread limit exceeded or per query ICR limit crossed or global 
+     * ICR limit crossed. In all these cases threadPoolExecutor should return 
+     * isProcessingFinished true so that UI does not wait infinitely 
+     * for isProcessingFinished to be set true */
+    private boolean isTerminated = false;
+
     public QueryExecutorThreadPool(
             int corePoolSize,
             int maximumPoolSize,
@@ -24,6 +32,7 @@ class QueryExecutorThreadPool extends ThreadPoolExecutor {
      * @see java.util.concurrent.ThreadPoolExecutor#afterExecute(java.lang.Runnable, java.lang.Throwable)
      */
     protected void afterExecute(Runnable r, Throwable t) {
+        super.afterExecute(r,t);
         decrementLocalThreadCount();
     }
 
@@ -36,8 +45,8 @@ class QueryExecutorThreadPool extends ThreadPoolExecutor {
     /**
      * @return the isProcessingFinished
      */
-    public synchronized boolean isProcessingFinished() {
-        return (localThreadCount == 0) && incrementCalled;
+    public synchronized boolean noTasksToExecuteOrTerminated() {
+        return localThreadCount == 0  || isTerminated;
     }
 
     private synchronized void decrementLocalThreadCount() {
@@ -45,7 +54,12 @@ class QueryExecutorThreadPool extends ThreadPoolExecutor {
     }
 
     private synchronized void incrementLocalThreadCount() {
-        incrementCalled = true;
         localThreadCount++;
+    }
+
+    @Override
+    protected void terminated() {
+        super.terminated();
+        isTerminated = true;
     }
 }
