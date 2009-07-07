@@ -1,7 +1,3 @@
-/**
- *
- */
-
 package edu.wustl.cab2bwebapp.action;
 
 import java.io.IOException;
@@ -85,38 +81,56 @@ public class KeywordSearchAction extends Action {
                 executeQueryBizLogic =
                         new ExecuteQueryBizLogic(queries, globusCredential, keywordSearchForm.getKeyword(), user,
                                 modelGroupNames);
+                Thread.sleep(200); 
+                //As each executor is invoked in a thread SearchQueryExecutor.executeAll()   
+                //the next call executeQueryBizLogic.isProcessingFinished() returns immediately as TRUE 
+                //This is because query execution hasn't even started. 
+                //Adding sleep to allow at least one query executing thread to run
                 int transformationMaxLimit = QueryExecutorPropertes.getUiResultLimit();
-                while(!executeQueryBizLogic.isProcessingFinished()) {
-                    Thread.sleep(100);
+                while (!executeQueryBizLogic.isProcessingFinished()) {
+                    Thread.sleep(100); // to ensure next lines are not executed before server finishes keyword query.
                 }
+
                 searchResults = executeQueryBizLogic.getSearchResults(transformationMaxLimit);
+
                 Collection<ICab2bQuery> allQueries = searchResults.keySet();
+                Iterator<ICab2bQuery> iter = allQueries.iterator();
+                if (iter.hasNext()) {
+                    selectedQueryObj = iter.next();
+                }
+                //TODO once the URL list is enabled, this should be uncommented.
+                //List<String> urlsForSelectedQueries = selectedQueryObj.getOutputUrls();
+                List<String> urlsForSelectedQueries = new ArrayList<String>(1+selectedQueryObj.getOutputUrls().size());
+                urlsForSelectedQueries.add(Constants.ALL_HOSTING_INSTITUTIONS);
+                urlsForSelectedQueries.addAll(selectedQueryObj.getOutputUrls());
+                if (searchResults.get(selectedQueryObj) != null) {
+                    TransformedResultObjectWithContactInfo selectedQueryResult =
+                            searchResults.get(selectedQueryObj);
+                    Collection<ServiceURLInterface> failedURLS =
+                            ExecuteQueryBizLogic.getFailedServiceUrls(selectedQueryResult.getFailedServiceUrl());
+
+                    session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedURLS != null ? failedURLS.size()
+                            : 0);
+                    session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
+                    session.setAttribute(Constants.SERVICE_INSTANCES, urlsForSelectedQueries);
+                    session.setAttribute(Constants.SEARCH_RESULTS_VIEW, ExecuteQueryBizLogic
+                        .getSearchResultsView(selectedQueryResult.getResultForAllUrls(), selectedQueryResult
+                            .getAllowedAttributes()));
+                }
+                session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
                 List<SavedQueryDVO> queryList = new ArrayList<SavedQueryDVO>();
 
                 for (ICab2bQuery queryObj : allQueries) {
                     SavedQueryDVO savedQuery = new SavedQueryDVO();
                     savedQuery.setName(queryObj.getName());
-                    savedQuery.setResultCount(searchResults.get(queryObj).getResultForAllUrls().size());
+                    TransformedResultObjectWithContactInfo res = searchResults.get(queryObj);
+                    if (res != null) {
+                        //It occurs in case of failed URLs
+                        savedQuery.setResultCount(res.getResultForAllUrls().size());
+                    }
                     queryList.add(savedQuery);
                 }
                 session.setAttribute(Constants.SAVED_QUERIES, queryList);
-                Iterator<ICab2bQuery> iter = allQueries.iterator();
-                if (iter.hasNext()) {
-                    selectedQueryObj = iter.next();
-                }
-                TransformedResultObjectWithContactInfo selectedQueryResult = searchResults.get(selectedQueryObj);
-                List<String> urlsForSelectedQueries = selectedQueryObj.getOutputUrls();
-                urlsForSelectedQueries.add(0, Constants.ALL_HOSTING_INSTITUTIONS);
-                Collection<ServiceURLInterface> failedURLS =
-                        ExecuteQueryBizLogic.getFailedServiceUrls(selectedQueryResult.getFailedServiceUrl());
-
-                session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedURLS != null ? failedURLS.size() : 0);
-                session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
-                session.setAttribute(Constants.SERVICE_INSTANCES, urlsForSelectedQueries);
-                session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
-                session.setAttribute(Constants.SEARCH_RESULTS_VIEW, ExecuteQueryBizLogic
-                    .getSearchResultsView(selectedQueryResult.getResultForAllUrls(), selectedQueryResult
-                        .getAllowedAttributes()));
             } else {
                 String selectedQueryName = request.getParameter(Constants.SAVED_QUERIES);
                 if (selectedQueryName != null) {
@@ -142,22 +156,26 @@ public class KeywordSearchAction extends Action {
                                 break;
                             }
                         }
+                        //TODO once the URL list is enabled, this should be uncommented.
+                        //List<String> urlsForSelectedQueries = selectedQueryObj.getOutputUrls();
+                        List<String> urlsForSelectedQueries = new ArrayList<String>(1+selectedQueryObj.getOutputUrls().size());
+                        urlsForSelectedQueries.add(Constants.ALL_HOSTING_INSTITUTIONS);
+                        urlsForSelectedQueries.addAll(selectedQueryObj.getOutputUrls());
                         TransformedResultObjectWithContactInfo selectedQueryResult =
                                 searchResults.get(selectedQueryObj);
-                        List<String> urlsForSelectedQueries = selectedQueryObj.getOutputUrls();
-                        urlsForSelectedQueries.add(0, Constants.ALL_HOSTING_INSTITUTIONS);
-                        Collection<ServiceURLInterface> failedURLS =
-                                ExecuteQueryBizLogic.getFailedServiceUrls(selectedQueryResult
-                                    .getFailedServiceUrl());
-
-                        session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedURLS != null ? failedURLS
-                            .size() : 0);
-                        session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
-                        session.setAttribute(Constants.SERVICE_INSTANCES, urlsForSelectedQueries);
                         session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
-                        session.setAttribute(Constants.SEARCH_RESULTS_VIEW, ExecuteQueryBizLogic
-                            .getSearchResultsView(selectedQueryResult.getResultForAllUrls(), selectedQueryResult
-                                .getAllowedAttributes()));
+                        session.setAttribute(Constants.SERVICE_INSTANCES, urlsForSelectedQueries);
+                        if (selectedQueryResult != null) {
+                            Collection<ServiceURLInterface> failedURLS =
+                                    ExecuteQueryBizLogic.getFailedServiceUrls(selectedQueryResult
+                                        .getFailedServiceUrl());
+                            session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedURLS != null ? failedURLS
+                                .size() : 0);
+                            session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
+                            session.setAttribute(Constants.SEARCH_RESULTS_VIEW, ExecuteQueryBizLogic
+                                .getSearchResultsView(selectedQueryResult.getResultForAllUrls(),
+                                                      selectedQueryResult.getAllowedAttributes()));
+                        }
                         actionForward = Constants.FORWARD_SEARCH_RESULTS_PANEL;
                     }
                 }
