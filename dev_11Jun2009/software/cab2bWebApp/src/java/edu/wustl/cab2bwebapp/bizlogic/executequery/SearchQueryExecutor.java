@@ -59,7 +59,16 @@ public class SearchQueryExecutor {
             }
             insertKeyword(query, keyword);
         }
-        executeAll(keywordQueries, globusCredential);
+        //executeAll(keywordQueries, globusCredential);
+        queryExecutorList = new ArrayList<QueryExecutor>(keywordQueries.size());
+        for (ICab2bQuery query : keywordQueries) {
+            QueryExecutor queryExecutor = new QueryExecutor(query, globusCredential);
+            queryExecutorList.add(queryExecutor);
+            queryExecutor.executeQuery();
+        }
+        for(QueryExecutor queryExecutor : queryExecutorList) {
+            queryExecutor.getCompleteResults();
+        }
     }
 
     private void executeAll(Collection<ICab2bQuery> queries, GlobusCredential globusCredential) {
