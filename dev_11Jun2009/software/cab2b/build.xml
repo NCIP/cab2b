@@ -1,4 +1,4 @@
-<project name="caB2B" basedir="." default="compile.all"> 
+<project name="caB2B" basedir="." default="compile.all">
 	<property name="src.dir" location="src" />
 	<property name="source.dir" location="${src.dir}/java" />
 	<property name="resource.dir" location="${src.dir}/resources" />
@@ -227,16 +227,8 @@
 		</pmd>
 	</target>
 
-	<!-- ==============Cleans Everything in workarea folder=============== 	-->
-	<target name="clean.all">
-		<ant inheritAll="false" inheritRefs="false" dir="${cab2badmin.location}" antfile="${cab2badmin.location}/build.xml" target="clean.all" />
-		<echo message="Cleaned Admin" />
-
-		<ant inheritall="false" inheritRefs="false" dir="${cab2bwebapp.location}" antfile="${cab2bwebapp.location}/build.xml" target="clean.all" />
-		<echo message="Cleaned WebApp" />
-
-		<delete includeemptydirs="true" dir="${workarea.dir}" />
-		<mkdir dir="${workarea.dir}" />
+	<!-- ==============Cleans all the artifacts generated=============== 	-->
+	<target name="clean.all" depends="clean">
 		<delete>
 			<fileset dir="${conf.dir}">
 				<include name="cab2b.properties" />
@@ -247,6 +239,20 @@
 		</delete>
 		<echo message="Cleaned caB2B" />
 	</target>
+	
+	<!-- ==============Cleans everything in workarea folder=============== 	-->
+	<target name="clean">
+		<ant inheritAll="false" inheritRefs="false" dir="${cab2badmin.location}" antfile="${cab2badmin.location}/build.xml" target="clean.all" />
+		<echo message="Cleaned Admin" />
+
+		<ant inheritall="false" inheritRefs="false" dir="${cab2bwebapp.location}" antfile="${cab2bwebapp.location}/build.xml" target="clean.all" />
+		<echo message="Cleaned WebApp" />
+
+		<delete includeemptydirs="true" dir="${workarea.dir}" />
+		<mkdir dir="${workarea.dir}" />
+		<echo message="Cleaned caB2B" />
+	</target>
+
 	<!-- ================================================================================== -->
 	<target name="compile.common">
 		<mkdir dir="${common.classes.dir}" />
