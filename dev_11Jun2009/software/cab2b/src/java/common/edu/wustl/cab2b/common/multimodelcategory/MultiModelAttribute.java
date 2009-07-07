@@ -3,6 +3,7 @@
  */
 package edu.wustl.cab2b.common.multimodelcategory;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -12,7 +13,7 @@ import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
  * @author chetan_patil
  *
  */
-public interface MultiModelAttribute {
+public interface MultiModelAttribute extends Serializable {
 
     AttributeInterface getAttribute();
 
@@ -28,6 +29,14 @@ public interface MultiModelAttribute {
 
     Boolean isVisible();
 
-    void setIsVisible(Boolean isVisible);
+    void setVisible(Boolean isVisible);
+    
+    String getName();
+    
+    void setName();
+    
+    String getDescription();
+    
+    void setDescription();
 
 }
