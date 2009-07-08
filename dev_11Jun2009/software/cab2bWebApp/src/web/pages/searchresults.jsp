@@ -28,11 +28,16 @@
 
 function exportdata()
 {
-document.getElementById('exportDiv').innerHTML = ' <IMG src="images/PageLoading.gif" width="30" height="30" alt="Loading Data">';
+document.getElementById('exportDiv').innerHTML = ' <IMG src="images/PageLoading.gif" width="30" height="30" alt="Loading Data"/>';
 var action='ExportData.do';
 mywindow=window.open(action,"Download","width=10,height=10");
 mywindow.moveTo(0,0);
-document.getElementById('exportDiv').innerHTML = '<IMG style="border-top: 1px solid #cccccc; border-left:1px solid #cccccc;" src="images/ExportAll_Inactive.jpg" >';
+document.getElementById('exportDiv').innerHTML = '<IMG style="border-top: 1px solid #cccccc; border-left:1px solid #cccccc;" src="images/ExportAll_Inactive.jpg" />';
+if(document.getElementById('queryUIPartialCount') != null)
+{
+	var queryUIPartialCount = document.getElementById('queryUIPartialCount').innerHTML;
+	document.getElementById('ExportAll_Message_Div').innerHTML ='Displaying first '+ queryUIPartialCount+' records.';
+}	
 }
 
  function executeQuery()
@@ -60,14 +65,27 @@ document.getElementById('exportDiv').innerHTML = '<IMG style="border-top: 1px so
   {
   	document.getElementById('queryDropDown').innerHTML = document.getElementById("partialQueryResultsAJAX").innerHTML;
   	document.getElementById('exportDiv').style.display = 'block';	//make it visible only ( with the inactive image)
+	
+	if(document.getElementById('queryUIPartialCount')!= null)
+	{
+		document.getElementById('ExportAll_Message_Div').style.display = 'block'; 
+		var queryUIPartialCount = document.getElementById('queryUIPartialCount').innerHTML;
+		document.getElementById('ExportAll_Message_Div').innerHTML ='Displaying first '+ queryUIPartialCount+' records. You can export all the records once the query is completed.';
+  	}
   	if(document.getElementById('progressImage') != null)
   	 document.getElementById('progressImage').innerHTML = "";
   }
   if(document.getElementById("stopAjax")!=null)
-  {
+  { 	
     document.getElementById('exportDiv').style.display = 'block'; // make it visible along with enabling it.
-    document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="button" value="<bean:message key="button.exportData"/>" onClick="javascript:exportdata();"> Export all to view complete results';
+    document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="button" value="<bean:message key="button.exportData"/>" onClick="javascript:exportdata();">';
 	
+	if(document.getElementById('queryUIPartialCount')!= null)
+	{
+		document.getElementById('ExportAll_Message_Div').style.display = 'block'; 
+		var queryUIPartialCount = document.getElementById('queryUIPartialCount').innerHTML;
+		document.getElementById('ExportAll_Message_Div').innerHTML ='Displaying first '+ queryUIPartialCount+' records. Export all to view complete records.';
+	}
 	if(document.getElementById("failedservicesAJAX")!=null)
 	{
 	  document.getElementById('failedServicesDiv').style.display = 'block';
@@ -209,22 +227,24 @@ document.getElementById('exportDiv').innerHTML = '<IMG style="border-top: 1px so
 				<TD>
 	      		</TD>
 				<TD nowrap style="padding-top:7px">
-					<DIV id="exportDiv" style="display:none" class="text">
-						<IMG style="border-top: 1px solid #cccccc; border-left:1px solid #cccccc;" src="images/ExportAll_Inactive.jpg" ><IMG height=15 src='images/PageLoading.gif'> Query in progress...
+					<DIV id="exportDiv" style="display:none" class="text">	
+						<IMG style="border-top: 1px solid #cccccc; border-left:1px solid #cccccc;" src="images/ExportAll_Inactive.jpg" />&nbsp;<IMG height=15 src='images/PageLoading.gif'/>&nbsp; Query in progress...					
 					</DIV>
 				</TD>
 			</TR>
 		</TABLE>
+		
 	</DIV>		
 	<DIV id="pageoverlay"></DIV>
 	<DIV id="failedservicespanel">
-		<DIV id="failedservicespanelheader" class="title"><bean:message key="title.failedserviceinstances"/><IMG style='cursor:pointer;position:absolute;right:0.6em;' alt='Close' src='images/close.jpg' onmouseover=this.src='images/close_hover.jpg' onmouseout=this.src='images/close.jpg' onclick="document.getElementById('pageoverlay').style.display='none';document.getElementById('failedservicespanel').style.display='none'"></DIV>
+		<DIV id="failedservicespanelheader" class="title"><bean:message key="title.failedserviceinstances"/><IMG style='cursor:pointer;position:absolute;right:0.6em;' alt='Close' src='images/close.jpg' onmouseover=this.src='images/close_hover.jpg' onmouseout=this.src='images/close.jpg' onclick="document.getElementById('pageoverlay').style.display='none';document.getElementById('failedservicespanel').style.display='none'"/></DIV>
 		<DIV id="failedservicespanelbody">
 		</DIV>
 	</DIV>
 </DIV>
 <DIV id="centerpanel">
 	<DIV id='top'></DIV>
+	<DIV id="ExportAll_Message_Div" style="display:none" class="text" valign="middle" Nowrap></DIV>
 	<DIV id="centerpanelcontent">
 		<%@ include file="searchresultspanel.jsp" %>
 	</DIV>
