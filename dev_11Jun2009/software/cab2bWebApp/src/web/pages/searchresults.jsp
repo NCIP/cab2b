@@ -32,12 +32,12 @@ document.getElementById('exportDiv').innerHTML = ' <IMG src="images/PageLoading.
 var action='ExportData.do';
 mywindow=window.open(action,"Download","width=10,height=10");
 mywindow.moveTo(0,0);
-document.getElementById('exportDiv').innerHTML = '<IMG style="border-top: 1px solid #cccccc; border-left:1px solid #cccccc;" src="images/ExportAll_Inactive.jpg" />';
-if(document.getElementById('queryUIPartialCount') != null)
-{
-	var queryUIPartialCount = document.getElementById('queryUIPartialCount').innerHTML;
-	document.getElementById('ExportAll_Message_Div').innerHTML ='Displaying first '+ queryUIPartialCount+' records.';
-}	
+document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="button" value="<bean:message key="button.exportData"/>" onClick="javascript:exportdata();">';
+//if(document.getElementById('queryUIPartialCount') != null)
+//{
+//	var queryUIPartialCount = document.getElementById('queryUIPartialCount').innerHTML;
+//	document.getElementById('ExportAll_Message_Div').innerHTML ='Displaying first '+ queryUIPartialCount+' records.';
+//}	
 }
 
  function executeQuery()
@@ -64,27 +64,31 @@ if(document.getElementById('queryUIPartialCount') != null)
   if(document.getElementById("UI_population_finished")!=null)
   {
   	document.getElementById('queryDropDown').innerHTML = document.getElementById("partialQueryResultsAJAX").innerHTML;
-  	document.getElementById('exportDiv').style.display = 'block';	//make it visible only ( with the inactive image)
-	
-	if(document.getElementById('queryUIPartialCount')!= null)
+	if(document.getElementById('queryUIPartialCount') != null)
 	{
-		document.getElementById('ExportAll_Message_Div').style.display = 'block'; 
 		var queryUIPartialCount = document.getElementById('queryUIPartialCount').innerHTML;
-		document.getElementById('ExportAll_Message_Div').innerHTML ='Displaying first '+ queryUIPartialCount+' records. You can export all the records once the query is completed.';
+		if(queryUIPartialCount != '0')	//Export message & button should not be visible for 0 results.
+		{
+		  	document.getElementById('exportDiv').style.display = 'block';	//make it visible only ( with the inactive image)
+			document.getElementById('ExportAll_Message_Div').style.display = 'block'; 
+			document.getElementById('ExportAll_Message_Div').innerHTML ='Displaying first '+ queryUIPartialCount+' records. You can export all the records once the query is completed.';
+  		}
   	}
   	if(document.getElementById('progressImage') != null)
   	 document.getElementById('progressImage').innerHTML = "";
   }
   if(document.getElementById("stopAjax")!=null)
   { 	
-    document.getElementById('exportDiv').style.display = 'block'; // make it visible along with enabling it.
-    document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="button" value="<bean:message key="button.exportData"/>" onClick="javascript:exportdata();">';
-	
 	if(document.getElementById('queryUIPartialCount')!= null)
 	{
-		document.getElementById('ExportAll_Message_Div').style.display = 'block'; 
 		var queryUIPartialCount = document.getElementById('queryUIPartialCount').innerHTML;
-		document.getElementById('ExportAll_Message_Div').innerHTML ='Displaying first '+ queryUIPartialCount+' records. Export all to view complete records.';
+		if(queryUIPartialCount != '0')	//Export message & button should not be visible for 0 results.
+		{
+			document.getElementById('ExportAll_Message_Div').style.display = 'block'; 
+	  	    document.getElementById('exportDiv').style.display = 'block'; // make it visible along with enabling it.
+	  	    document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="button" value="<bean:message key="button.exportData"/>" onClick="javascript:exportdata();">';
+			document.getElementById('ExportAll_Message_Div').innerHTML ='Displaying first '+ queryUIPartialCount+' records. Export all to view complete records.';
+		}
 	}
 	if(document.getElementById("failedservicesAJAX")!=null)
 	{
