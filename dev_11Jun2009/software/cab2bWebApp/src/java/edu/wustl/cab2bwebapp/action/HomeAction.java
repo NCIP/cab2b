@@ -1,5 +1,6 @@
 package edu.wustl.cab2bwebapp.action;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +70,21 @@ public class HomeAction extends Action {
             session.removeAttribute(Constants.STOP_AJAX);
             session.removeAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
             session.removeAttribute(Constants.UI_POPULATION_FINISHED);
+
+            //delete the file(exported by the user) from server , when user navigates to the home page
+            String filePath = (String) session.getAttribute(Constants.EXPORTED_FILE_PATH);
+            if (filePath != null && !filePath.equals("")) {
+                File file = new File(filePath);
+                if (file.exists()) {
+                    boolean isDeleted = file.delete();
+                    if (!isDeleted) {
+                        logger.info("Not able to delete file " + file.getName());
+                    } else {
+                        logger.info("File deleted successfully: " + file.getName());
+                    }
+                }
+                session.removeAttribute(Constants.EXPORTED_FILE_PATH);
+            }
 
             UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
             if (user == null) {
