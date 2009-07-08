@@ -37,5 +37,8 @@ public interface ModelGroupInterface {
     
     /** Sets the EntityGroupList for a particular Model Group */
     void setEntityGroupList(List<EntityGroupInterface> entityGroupList);
+    
+    /** Gets the model group de_entity id. */
+    Long getModelGroupId();
 
 }
