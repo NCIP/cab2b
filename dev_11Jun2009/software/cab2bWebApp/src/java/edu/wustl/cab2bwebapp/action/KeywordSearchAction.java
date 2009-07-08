@@ -138,6 +138,9 @@ public class KeywordSearchAction extends Action {
                     Collection<ServiceURLInterface> failedURLS =
                             ExecuteQueryBizLogic.getFailedServiceUrls(selectedQueryResult.getFailedServiceUrl());
 
+                    if (failedURLS != null && failedURLS.size() == 0) {
+                        failedURLS = null;
+                    }
                     session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedURLS != null ? failedURLS.size()
                             : 0);
                     session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
@@ -186,6 +189,9 @@ public class KeywordSearchAction extends Action {
                             Collection<ServiceURLInterface> failedURLS =
                                     ExecuteQueryBizLogic.getFailedServiceUrls(selectedQueryResult
                                         .getFailedServiceUrl());
+                            if (failedURLS != null && failedURLS.size() == 0) {
+                                failedURLS = null;
+                            }
                             session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedURLS != null ? failedURLS
                                 .size() : 0);
                             session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
