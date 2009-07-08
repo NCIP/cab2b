@@ -5,10 +5,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -71,12 +70,11 @@ import gov.nih.nci.cagrid.dcql.DCQLQuery;
 public class QueryExecutor {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(QueryExecutor.class);
 
-    private BlockingQueue<Runnable> waitingQueue =
-            new ArrayBlockingQueue<Runnable>(QueryExecutorPropertes.getPerQueryMinThreadLimit());
+    private BlockingQueue<Runnable> waitingQueue = new LinkedBlockingQueue<Runnable>();
 
     private QueryExecutorThreadPool threadPoolExecutor =
-            new QueryExecutorThreadPool(QueryExecutorPropertes.getPerQueryMinThreadLimit(), QueryExecutorPropertes
-                .getPerQueryMaxThreadLimit(), 5, TimeUnit.SECONDS, waitingQueue);
+            new QueryExecutorThreadPool(QueryExecutorPropertes.getPerQueryMaxThreadLimit(), QueryExecutorPropertes
+                .getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waitingQueue);
 
     private ICab2bQuery query;
 
@@ -111,7 +109,7 @@ public class QueryExecutor {
                                                                 ICategorialClassRecord.class);
         this.credential = credential;
 
-        threadPoolExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        //threadPoolExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         threadPoolExecutor.allowCoreThreadTimeOut(true);
         this.categoryPreprocessorResult = preProcessCategories();
         ConstraintsBuilder constraintsBuilder = new ConstraintsBuilder(query, categoryPreprocessorResult);
@@ -173,19 +171,17 @@ public class QueryExecutor {
         }
     }
 
- 
-
     private IQueryResult<ICategorialClassRecord> mergeCatResults(
                                                                  List<IQueryResult<ICategorialClassRecord>> categoryResults) {
         Category outputCategory = categoryPreprocessorResult.getCategoryForEntity().get(getOutputEntity());
         ICategoryResult<ICategorialClassRecord> res = QueryResultFactory.createCategoryResult(outputCategory);
         for (IQueryResult<ICategorialClassRecord> categoryResult : categoryResults) {
             //Adding all failed URLs: FQP 1.3 updates
-                Collection<FailedTargetURL> failedURLs = categoryResult.getFailedURLs();
-                if (failedURLs != null) {
-                    failedURLs.addAll(categoryResult.getFailedURLs());
-                    res.setFailedURLs(failedURLs);
-                }
+            Collection<FailedTargetURL> failedURLs = categoryResult.getFailedURLs();
+            if (failedURLs != null) {
+                failedURLs.addAll(categoryResult.getFailedURLs());
+                res.setFailedURLs(failedURLs);
+            }
             for (Map.Entry<String, List<ICategorialClassRecord>> entry : categoryResult.getRecords().entrySet()) {
                 res.addRecords(entry.getKey(), entry.getValue());
             }
@@ -252,6 +248,7 @@ public class QueryExecutor {
      */
     private class WorkerThread extends Thread {
         private static final int allowedPriorityRange = Thread.MAX_PRIORITY - Thread.NORM_PRIORITY;
+
         ICab2bQuery queryPerUrl = null;
 
         WorkerThread(ICab2bQuery queryCopy) {
@@ -265,6 +262,7 @@ public class QueryExecutor {
             }
             queryResult = catQueryResult;
         }
+
         /**
          * @param queryPerUrl
          * @return
@@ -298,7 +296,7 @@ public class QueryExecutor {
                 for (String url : urlToRecords.keySet()) {
                     int noOfRecords = urlToRecords.get(url).size();
                     int blockSize = 1;
-                    
+
                     if (noOfRecords > allowedPriorityRange) {
                         blockSize = noOfRecords / allowedPriorityRange;
                     }
@@ -309,8 +307,8 @@ public class QueryExecutor {
                             pointerInBlock = 0;
                             currentPriority--;
                         }
-                        threadPoolExecutor.execute(new ChildQueryExecutor(rootExprCatRec, rootOutputExprNode,
-                                rootExprCatRec.getRecordId(), currentPriority, ""));
+                        new ChildQueryExecutor(rootExprCatRec, rootOutputExprNode,
+                                rootExprCatRec.getRecordId(), currentPriority, "").run();
                         pointerInBlock++;
                     }
                 }
