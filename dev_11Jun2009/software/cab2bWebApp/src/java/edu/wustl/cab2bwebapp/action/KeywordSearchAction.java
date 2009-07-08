@@ -70,8 +70,7 @@ public class KeywordSearchAction extends Action {
             if (request.getQueryString() == null) {
                 KeywordSearchForm keywordSearchForm = (KeywordSearchForm) form;
                 SavedQueryBizLogic savedQueryBizLogic =
-                        (SavedQueryBizLogic) session.getServletContext()
-                            .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+                        (SavedQueryBizLogic) session.getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
                 GlobusCredential globusCredential =
                         (GlobusCredential) session.getAttribute(Constants.GLOBUS_CREDENTIAL);
                 UserInterface user = (UserInterface) session.getAttribute(Constants.USER);

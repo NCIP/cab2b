@@ -53,36 +53,35 @@ public class ExecuteQueryAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
-      String actionForward = null;
+        String actionForward = null;
         try {
-                HttpSession session = request.getSession();
-                String[] modelGroupNames = (String[]) session.getAttribute(Constants.MODEL_GROUPS);
-                SavedQueryBizLogic savedQueryBizLogic =
-                        (SavedQueryBizLogic) session.getServletContext()
-                            .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
-                ICab2bQuery query =
-                        savedQueryBizLogic.getQueryById(Long.parseLong(request.getParameter(Constants.QUERY_ID)));
-                UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
+            HttpSession session = request.getSession();
+            String[] modelGroupNames = (String[]) session.getAttribute(Constants.MODEL_GROUPS);
+            SavedQueryBizLogic savedQueryBizLogic =
+                    (SavedQueryBizLogic) session.getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+            ICab2bQuery query =
+                    savedQueryBizLogic.getQueryById(Long.parseLong(request.getParameter(Constants.QUERY_ID)));
+            UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
 
-                String conditionstr = (String) session.getAttribute(Constants.CONDITION_LIST);
-                if (conditionstr == null) {
-                    conditionstr = "";
-                }
+            String conditionstr = (String) session.getAttribute(Constants.CONDITION_LIST);
+            if (conditionstr == null) {
+                conditionstr = "";
+            }
 
-                //Update the IQuery according to parameterized conditions.
-                String errorMessage =
-                        new QueryUpdateBizLogic().setInputDataToQuery(conditionstr, query.getConstraints(), null,
-                                                                      query);
-                if (!errorMessage.equals("")) {
-                    throw new Exception(errorMessage);
-                } else {
-                    Collection<ICab2bQuery> queries = new ArrayList<ICab2bQuery>();
-                    queries.add(query);
-                    GlobusCredential proxy = (GlobusCredential) session.getAttribute(Constants.GLOBUS_CREDENTIAL);
-                    ExecuteQueryBizLogic executeQueryBizLogic =
-                            new ExecuteQueryBizLogic(queries, proxy, user, modelGroupNames);
-                    session.setAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT, executeQueryBizLogic);
-                   }
+            //Update the IQuery according to parameterized conditions.
+            String errorMessage =
+                    new QueryUpdateBizLogic().setInputDataToQuery(conditionstr, query.getConstraints(), null,
+                                                                  query);
+            if (!errorMessage.equals("")) {
+                throw new Exception(errorMessage);
+            } else {
+                Collection<ICab2bQuery> queries = new ArrayList<ICab2bQuery>();
+                queries.add(query);
+                GlobusCredential proxy = (GlobusCredential) session.getAttribute(Constants.GLOBUS_CREDENTIAL);
+                ExecuteQueryBizLogic executeQueryBizLogic =
+                        new ExecuteQueryBizLogic(queries, proxy, user, modelGroupNames);
+                session.setAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT, executeQueryBizLogic);
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
@@ -93,17 +92,17 @@ public class ExecuteQueryAction extends Action {
             writer.write("Exception");
             //Exception occurred while executing your request.<br> Please contact administrator.
 
-//            ActionErrors errors = new ActionErrors();
-//            ActionMessage message =
-//                    new ActionMessage(
-//                            e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? "message.serviceinstancesnotconfigured"
-//                                    : "fatal.executequery.failure", e.getMessage());
-//            errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, message);
-//            saveErrors(request, errors);
-//            actionForward =
-//                    e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? Constants.FORWARD_HOME
-//                            : Constants.FORWARD_FAILURE;
-//            return mapping.findForward(actionForward);
+            //            ActionErrors errors = new ActionErrors();
+            //            ActionMessage message =
+            //                    new ActionMessage(
+            //                            e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? "message.serviceinstancesnotconfigured"
+            //                                    : "fatal.executequery.failure", e.getMessage());
+            //            errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, message);
+            //            saveErrors(request, errors);
+            //            actionForward =
+            //                    e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? Constants.FORWARD_HOME
+            //                            : Constants.FORWARD_FAILURE;
+            //            return mapping.findForward(actionForward);
         }
         return null;
     }

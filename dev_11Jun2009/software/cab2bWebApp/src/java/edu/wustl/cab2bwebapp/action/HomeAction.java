@@ -54,8 +54,7 @@ public class HomeAction extends Action {
         try {
             HttpSession session = request.getSession();
             SavedQueryBizLogic savedQueryBizLogic =
-                    (SavedQueryBizLogic) request.getSession().getServletContext()
-                        .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+                    (SavedQueryBizLogic) session.getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
             //Removing SEARCH_RESULTS attributes from session               
             session.removeAttribute(Constants.SEARCH_RESULTS);
             session.removeAttribute(Constants.SEARCH_RESULTS_VIEW);
@@ -93,8 +92,7 @@ public class HomeAction extends Action {
             session.setAttribute(Constants.USER, user);
             if (savedQueryBizLogic == null) {
                 savedQueryBizLogic = new SavedQueryBizLogic();
-                request.getSession().getServletContext().setAttribute(Constants.SAVED_QUERY_BIZ_LOGIC,
-                                                                      savedQueryBizLogic);
+                request.getSession().setAttribute(Constants.SAVED_QUERY_BIZ_LOGIC, savedQueryBizLogic);
             }
             if (session.getAttribute(Constants.MODEL_GROUP_DVO_LIST) == null) {
                 List<ModelGroupInterface> modelGroups = new ModelGroupBizLogic().getAllModelGroups();

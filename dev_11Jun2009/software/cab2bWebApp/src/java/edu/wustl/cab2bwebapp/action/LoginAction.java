@@ -108,7 +108,7 @@ public class LoginAction extends Action {
             if (modelGroups != null && !modelGroups.isEmpty()) {
                 ModelGroupInterface modelGroup = modelGroups.iterator().next();
                 SavedQueryBizLogic savedQueryBizLogic =
-                        (SavedQueryBizLogic) request.getSession().getServletContext()
+                        (SavedQueryBizLogic) request.getSession()
                             .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
                 Collection<ICab2bQuery> savedSearches =
                         savedQueryBizLogic.getRegularQueries(modelGroup.getEntityGroupList());

@@ -70,7 +70,7 @@ public class TransformQueryResultsAction extends Action {
             }
 
             SavedQueryBizLogic savedQueryBizLogic =
-                    (SavedQueryBizLogic) session.getServletContext().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+                    (SavedQueryBizLogic) session.getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
             ICab2bQuery query =
                     savedQueryBizLogic.getQueryById(Long.parseLong(request.getParameter(Constants.QUERY_ID)));
             int transformationMaxLimit = QueryExecutorPropertes.getUiResultLimit();
