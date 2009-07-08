@@ -57,5 +57,5 @@
 </logic:notEqual>
 </logic:present>
 <logic:notPresent name="searchResultsView">
-	<DIV style="display:none" id="messagesNotEmpty"><bean:message key="text.resultsempty"/></DIV>
+	<DIV class="text" style="display:none" align="center" id="messagesNotEmpty"><bean:message key="text.resultsempty"/></DIV>
 </logic:notPresent>
