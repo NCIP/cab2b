@@ -38,7 +38,7 @@ public class ModelGroup implements ModelGroupInterface {
      *               unsaved-value="null" generator-class="native"
      * @hibernate.generator-param name="sequence" value="MODEL_GROUP_ID_SEQ"
      */
-    private Long getModelGroupId() {
+    public Long getModelGroupId() {
         return modelGroupId;
     }
 
