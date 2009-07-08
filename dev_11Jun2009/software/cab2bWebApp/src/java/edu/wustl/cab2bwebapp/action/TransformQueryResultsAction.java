@@ -73,8 +73,16 @@ public class TransformQueryResultsAction extends Action {
             ICab2bQuery query =
                     savedQueryBizLogic.getQueryById(Long.parseLong(request.getParameter(Constants.QUERY_ID)));
             int transformationMaxLimit = QueryExecutorPropertes.getUiResultLimit();
-            Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults =
-                    executeQueryBizLogic.getSearchResults(transformationMaxLimit);
+            
+            Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults = null;
+            //if UI_finished is true, transformer should not be invoked for re-transforming the same 100 records.Results should be taken from session
+            if (session.getAttribute(Constants.UI_POPULATION_FINISHED) == null) {  
+                searchResults = executeQueryBizLogic.getSearchResults(transformationMaxLimit);
+            } else {
+                searchResults =
+                        (Map<ICab2bQuery, TransformedResultObjectWithContactInfo>) session
+                            .getAttribute(Constants.SEARCH_RESULTS);
+            }
 
             ICab2bQuery selectedQueryObj = null;
             Set<ICab2bQuery> queries = searchResults.keySet();
