@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,18 +21,14 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
 import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
-import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.ExecuteQueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryUpdateBizLogic;
-import edu.wustl.cab2bwebapp.bizlogic.executequery.TransformedResultObjectWithContactInfo;
 import edu.wustl.cab2bwebapp.constants.Constants;
-import edu.wustl.cab2bwebapp.dvo.SavedQueryDVO;
 
 /**
  * Action for executing query related operations.
