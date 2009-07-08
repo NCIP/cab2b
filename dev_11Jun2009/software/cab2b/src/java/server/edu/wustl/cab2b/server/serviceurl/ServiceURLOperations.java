@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
-import edu.wustl.cab2b.common.user.ServiceURL;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.Utility;
@@ -32,6 +32,32 @@ import edu.wustl.common.util.dbManager.HibernateUtility;
 public class ServiceURLOperations {
 
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ServiceURLOperations.class);
+
+    private static Map<String, ServiceURLInterface> urlVsMetadata = new HashMap<String, ServiceURLInterface>();
+
+    static {
+        updateCache();
+    }
+
+    public static synchronized void updateCache() {
+        Session session = null;
+        try {
+            session = HibernateUtil.newSession();
+            HibernateDatabaseOperations<ServiceURLInterface> dbHandler =
+                    new HibernateDatabaseOperations<ServiceURLInterface>(session);
+
+            Collection<ServiceURLInterface> serviceURLs = dbHandler.retrieve(ServiceURLInterface.class.getName());
+            dbHandler.commit();
+            if (serviceURLs != null) {
+                for (ServiceURLInterface serviceUrl : serviceURLs) {
+                    urlVsMetadata.put(serviceUrl.getUrlLocation(), serviceUrl);
+                }
+            }
+        } finally {
+            session.flush();
+            session.close();
+        }
+    }
 
     /**
      * @return Names of all the Entity Group present in the database
@@ -54,21 +80,7 @@ public class ServiceURLOperations {
      * @throws RemoteException
      */
     public Collection<ServiceURLInterface> getAllServiceURLs() throws RemoteException {
-        Collection<ServiceURLInterface> serviceURLs;
-        Session session =null;
-        try {
-            serviceURLs = null;
-
-            session = HibernateUtil.newSession();
-            HibernateDatabaseOperations<ServiceURLInterface> dbHandler = new HibernateDatabaseOperations<ServiceURLInterface>(
-                    session);
-
-            serviceURLs = dbHandler.retrieve(ServiceURLInterface.class.getName());
-        } finally {
-            session.flush();
-            session.close();
-        }
-        return serviceURLs;
+        return urlVsMetadata.values();
     }
 
     /**
@@ -78,22 +90,7 @@ public class ServiceURLOperations {
      * @throws RemoteException
      */
     public ServiceURLInterface getServiceURLbyURLLocation(String serviceURLLocation) throws RemoteException {
-        Session session = null;
-        ServiceURLInterface serviceURL = null;
-        try {
-            session = HibernateUtil.newSession();
-            HibernateDatabaseOperations<ServiceURLInterface> dbHandler = new HibernateDatabaseOperations<ServiceURLInterface>(
-                    session);
-            Collection<ServiceURLInterface> serviceURLs = dbHandler.retrieve(ServiceURL.class.getName(),
-                                                                             "urlLocation", serviceURLLocation);
-            if (!serviceURLs.isEmpty()) {
-                serviceURL = serviceURLs.iterator().next();
-            }
-        } finally {
-            session.flush();
-            session.close();
-        }
-        return serviceURL;
+        return urlVsMetadata.get(serviceURLLocation);
     }
 
     /**
@@ -146,9 +143,9 @@ public class ServiceURLOperations {
     public List<ServiceURLInterface> getAllURLsForEntityGroup(String entityGroupName) {
         List<ServiceURLInterface> serviceURLs = new ArrayList<ServiceURLInterface>();
         try {
-            Collection<ServiceURLInterface> serviceURLList = HibernateUtility.executeHQL(
-                                                                                         "getServiceURLsByDomainModelnVersion",
-                                                                                         Arrays.asList((Object[]) entityGroupName.split("_v")));
+            Collection<ServiceURLInterface> serviceURLList =
+                    HibernateUtility.executeHQL("getServiceURLsByDomainModelnVersion", Arrays
+                        .asList((Object[]) entityGroupName.split("_v")));
             serviceURLs.addAll(serviceURLList);
         } catch (HibernateException e) {
             logger.info(e.getMessage(), e);
@@ -165,9 +162,10 @@ public class ServiceURLOperations {
         Session session = null;
         try {
             session = HibernateUtil.newSession();
-            HibernateDatabaseOperations<ServiceURLInterface> dbHandler = new HibernateDatabaseOperations<ServiceURLInterface>(
-                    session);
+            HibernateDatabaseOperations<ServiceURLInterface> dbHandler =
+                    new HibernateDatabaseOperations<ServiceURLInterface>(session);
             dbHandler.insertOrUpdate(serviceURL);
+            urlVsMetadata.put(serviceURL.getUrlLocation(), serviceURL);
         } finally {
             session.flush();
             session.close();
