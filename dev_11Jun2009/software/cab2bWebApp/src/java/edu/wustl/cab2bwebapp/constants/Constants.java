@@ -19,6 +19,9 @@ public interface Constants {
     /** Constants for isFirstRequest */
     public static final String IS_FIRST_REQUEST = "isFirstRequest";
     
+    /** Constants for exported_file_path */
+    public static final String EXPORTED_FILE_PATH = "exported_file_path";
+    
     /** Constants for conditionList */
     public static final String CONDITION_LIST = "conditionList";
     
