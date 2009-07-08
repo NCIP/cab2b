@@ -109,7 +109,7 @@ public class TransformQueryResultsAction extends Action {
                     failedURLS = null;
                 }
                 session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedURLS != null ? failedURLS.size() : 0);
-                session.setAttribute(Constants.FAILED_SERVICES, null);
+                session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
 
                 session.setAttribute(Constants.INFEASIBLE_URL, selectedQueryResult.getInFeasibleUrl());
 
