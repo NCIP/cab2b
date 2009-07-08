@@ -228,18 +228,7 @@
 	</target>
 
 	<!-- ==============Cleans all the artifacts generated=============== 	-->
-	<target name="clean.all" depends="clean">
-		<delete>
-			<fileset dir="${conf.dir}">
-				<include name="cab2b.properties" />
-				<include name="cagrid.properties" />
-				<include name="client.properties" />
-				<include name="server.properties" />
-			</fileset>
-		</delete>
-	</target>
-	<!-- ==============Cleans everything in workarea folder=============== 	-->
-	<target name="clean">
+	<target name="clean.all">
 		<ant inheritAll="false" inheritRefs="false" dir="${cab2badmin.location}" antfile="${cab2badmin.location}/build.xml" target="clean.all" />
 		<echo message="Cleaned Admin" />
 
@@ -247,7 +236,23 @@
 		<echo message="Cleaned WebApp" />
 
 		<delete includeemptydirs="true" dir="${workarea.dir}" />
-		<mkdir dir="${workarea.dir}" />
+		<delete>
+			<fileset dir="${conf.dir}">
+				<include name="cab2b.properties" />
+				<include name="cagrid.properties" />
+				<include name="client.properties" />
+				<include name="server.properties" />
+			</fileset>
+
+			<!-- Somehow this is not able to delete this file
+			fileset dir="${server.lib.dir}">
+				<include name="cab2b-client.jar" />
+			</fileset -->
+
+			<fileset dir="${webstart.src}">
+				<include name="*.class" />
+			</fileset>
+		</delete>
 		<echo message="Cleaned caB2B" />
 	</target>
 
@@ -815,7 +820,7 @@
 	</target>
 
 	<!-- ================================================================================== -->
-	<target name="build.project.jar" depends="clean,compile.client,compile.server">
+	<target name="build.project.jar" depends="clean.all,compile.client,compile.server">
 		<jar basedir="${workarea.dir}/common/classes" destfile="${workarea.dir}/cab2b-common.jar">
 			<include name="**/*.*" />
 		</jar>
