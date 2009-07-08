@@ -112,6 +112,18 @@ public interface ErrorCodeConstants {
 
     /** Error while retrieving category */
     static final String CATEGORY_RETRIEVE_ERROR = "CT.0002";
+    
+    /** Error while saving multimodel category */
+    static final String MULTIMODEL_CATEGORY_SAVE_ERROR = "MMC.0001";
+
+    /** Error while retrieving multimodel category */
+    static final String MULTIMODEL_CATEGORY_RETRIEVE_ERROR = "MMC.0002";
+    
+    /** Error while updating multimodel category */
+    static final String MULTIMODEL_CATEGORY_UPDATE_ERROR = "MMC.0003";
+
+    /** Error while deleting multimodel category */
+    static final String MULTIMODEL_CATEGORY_DELETE_ERROR = "MMC.0004";
 
     /** Can not create Custom Data Categories as Data List contains Admin defined categories */
     static final String CUSTOM_CATEGORY_ERROR = "CT.0003";
