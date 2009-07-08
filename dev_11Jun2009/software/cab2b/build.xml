@@ -237,7 +237,6 @@
 				<include name="server.properties" />
 			</fileset>
 		</delete>
-		<echo message="Cleaned caB2B" />
 	</target>
 	<!-- ==============Cleans everything in workarea folder=============== 	-->
 	<target name="clean">
