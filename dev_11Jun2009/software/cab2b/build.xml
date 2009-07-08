@@ -152,7 +152,7 @@
 	</path>
 
 	<!-- ================================================================================== -->
-	<target name="initialize">
+	<target name="initialize" depends="clean.all">
 		<delete file="${conf.dir}/server.properties" />
 		<delete file="${conf.dir}/cagrid.properties" />
 		<delete file="${conf.dir}/client.properties" />
@@ -820,7 +820,7 @@
 	</target>
 
 	<!-- ================================================================================== -->
-	<target name="build.project.jar" depends="clean.all,compile.client,compile.server">
+	<target name="build.project.jar" depends="compile.client,compile.server">
 		<jar basedir="${workarea.dir}/common/classes" destfile="${workarea.dir}/cab2b-common.jar">
 			<include name="**/*.*" />
 		</jar>
