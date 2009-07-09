@@ -71,7 +71,7 @@ document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="bu
 		{
 		  	document.getElementById('exportDiv').style.display = 'block';	//make it visible only ( with the inactive image)
 			document.getElementById('ExportAll_Message_Div').style.display = 'block'; 
-			document.getElementById('ExportAll_Message_Div').innerHTML ='Displaying first '+ queryUIPartialCount+' records. You can export all the records once the query is completed.';
+			document.getElementById('ExportAll_Message_Div').innerHTML ='Displaying first '+ queryUIPartialCount+' records. You can export all the records once the query is complete.';
   		}
   	}
   	if(document.getElementById('progressImage') != null)
