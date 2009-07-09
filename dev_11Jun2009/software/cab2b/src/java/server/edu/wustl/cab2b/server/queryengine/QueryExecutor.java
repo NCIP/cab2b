@@ -191,10 +191,11 @@ public class QueryExecutor {
     }
 
     private DcqlConstraint addParentIdConstraint(DcqlConstraint constraint, DcqlConstraint parentIdConstraint) {
-        Cab2bGroup cab2bGroup = new Cab2bGroup(LogicalOperator.And);
-        cab2bGroup.addConstraint(constraint);
-        cab2bGroup.addConstraint(parentIdConstraint);
-        return cab2bGroup.getDcqlConstraint();
+        //        Cab2bGroup cab2bGroup = new Cab2bGroup(LogicalOperator.And);
+        //        cab2bGroup.addConstraint(constraint);
+        //        cab2bGroup.addConstraint(parentIdConstraint);
+        //        return cab2bGroup.getDcqlConstraint();
+        return parentIdConstraint;
     }
 
     private AttributeConstraint createIdConstraint(AttributeInterface attribute, String id) {
