@@ -307,8 +307,8 @@ public class QueryExecutor {
                             pointerInBlock = 0;
                             currentPriority--;
                         }
-                        new ChildQueryExecutor(rootExprCatRec, rootOutputExprNode,
-                                rootExprCatRec.getRecordId(), currentPriority, "").run();
+                        threadPoolExecutor.execute(new ChildQueryExecutor(rootExprCatRec, rootOutputExprNode,
+                                rootExprCatRec.getRecordId(), currentPriority, ""));
                         pointerInBlock++;
                     }
                 }
@@ -348,8 +348,10 @@ public class QueryExecutor {
          */
         public void run() {
             try {
+                System.out.println("Active Thread Count : " + Thread.activeCount());
                 IExpression parentExpr = parentExprNode.getValue();
                 for (TreeNode<IExpression> childExprNode : parentExprNode.getChildren()) {
+                    System.out.println("Active Thread Count : " + Thread.activeCount());
                     IExpression childExpr = childExprNode.getValue();
                     IAssociation association =
                             getQuery().getConstraints().getJoinGraph().getAssociation(parentExpr, childExpr);
@@ -467,13 +469,15 @@ public class QueryExecutor {
          * @see java.util.concurrent.ThreadFactory#newThread(java.lang.Runnable)
          */
         public Thread newThread(Runnable r) {
-            Thread t = new Thread(r);
-            if (r instanceof ChildQueryExecutor) {
-                ChildQueryExecutor exe = (ChildQueryExecutor) r;
-                t.setPriority(exe.getPriority());
+            Thread t = null;
+            if (Thread.activeCount() < QueryExecutorPropertes.getGlobalThreadLimit()) {
+                t = new Thread(r);
+            } else {
+                threadPoolExecutor.shutdownNow();
+                logger.info("Maximum Thread Limit Reached. Shutting down Thread Pool Executor for the Query : "
+                        + query.getName());
             }
             return t;
         }
-
     }
 }
