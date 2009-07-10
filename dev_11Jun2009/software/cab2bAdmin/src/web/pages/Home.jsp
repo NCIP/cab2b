@@ -35,10 +35,6 @@
 					<td width="15" align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
 					<td class="font_blk_b"><a href="http://www.cagrid.org/mwiki/index.php?title=CaGrid" CLASS="set3">caGrid Wiki </a></td>
 				</tr>
-				<tr>
-					<td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
-					<td class="font_blk_b"><a href="http://cab2b.wustl.edu/" CLASS="set3">caB2B Webpage </a></td>
-				</tr>
 			</table>
 		</td>
 		<td align="center" valign="top"><img src="images/concept_image.jpg" width="500" height="500"></td>
