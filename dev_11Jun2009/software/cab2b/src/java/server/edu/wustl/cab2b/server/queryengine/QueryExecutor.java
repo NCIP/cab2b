@@ -353,10 +353,8 @@ public class QueryExecutor {
          */
         public void run() {
             try {
-                System.out.println("Active Thread Count : " + Thread.activeCount());
                 IExpression parentExpr = parentExprNode.getValue();
                 for (TreeNode<IExpression> childExprNode : parentExprNode.getChildren()) {
-                    System.out.println("Active Thread Count : " + Thread.activeCount());
                     IExpression childExpr = childExprNode.getValue();
                     IAssociation association = getQuery().getConstraints().getJoinGraph().getAssociation(
                                                                                                          parentExpr,
@@ -423,7 +421,7 @@ public class QueryExecutor {
                 }
                 queryResult = mergeCatResults(categoryResults);
             } catch (Throwable e) {
-                e.printStackTrace();
+                //e.printStackTrace();
                 logger.error(e.getMessage());
             }
         }
@@ -445,7 +443,7 @@ public class QueryExecutor {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
                 throw new RuntimeException("Thread to get CompleteResults was interrupted.", e);
             }
         }
