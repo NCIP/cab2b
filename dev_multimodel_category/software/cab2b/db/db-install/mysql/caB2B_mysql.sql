@@ -112,6 +112,23 @@ CREATE TABLE CAB2B_CATEGORY_POPULARITY (
   primary key  (IDENTIFIER)
 );
 
+CREATE TABLE CAB2B_MMC (                                
+             MMC_ID bigint(30) NOT NULL auto_increment,                
+             DE_ENTITY_ID bigint(30) NOT NULL,                     
+             MODEL_GRP_ID bigint(30) NOT NULL,                 
+             CATEGORY_IDS varchar(254) NOT NULL,          
+             PRIMARY KEY  (MMC_ID)                                     
+);
+
+CREATE TABLE CAB2B_MMA (                                
+             ID bigint(30) NOT NULL auto_increment,                
+             ISVISIBLE bit(1) NOT NULL,                            
+             DE_ATTRIBUTE_ID bigint(30) NOT NULL,                  
+             CATEGORIAL_ATTRIBUTE_IDS varchar(254) NOT NULL,
+	         MMC_ID bigint(30) NOT NULL references CAB2B_MMC (MMC_ID),
+             PRIMARY KEY  (ID)
+);
+
 alter table OUTPUT_CLASS_URLS add index FKE131CD69A638FEFD (CAB2B_QUERY_ID), add constraint FKE131CD69A638FEFD foreign key (CAB2B_QUERY_ID) references CAB2B_QUERY (IDENTIFIER);
 alter table CAB2B_QUERY add index FKCC34AD9DBC7298A9 (IDENTIFIER), add constraint FKCC34AD9DBC7298A9 foreign key (IDENTIFIER) references QUERY (IDENTIFIER);
 alter table CAB2B_DATA_CATEGORY add index FKFA70BDE8A2330820 (ID), add constraint FKFA70BDE8A2330820 foreign key (ID) references ABSTRACT_CATEGORY (ID);
