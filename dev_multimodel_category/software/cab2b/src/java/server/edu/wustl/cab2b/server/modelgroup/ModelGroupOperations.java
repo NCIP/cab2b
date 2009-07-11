@@ -13,6 +13,7 @@ import edu.wustl.cab2b.common.modelgroup.ModelGroup;
 import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
@@ -44,6 +45,8 @@ public class ModelGroupOperations extends DefaultBizLogic {
         return entityGroups;
     }
 
+
+
     /**
      * This method returns List of all ModelGroupInterface present in database 
      * @return List<ModelGroupInterface>
@@ -56,6 +59,32 @@ public class ModelGroupOperations extends DefaultBizLogic {
             throw new RuntimeException(e.getMessage(), e, ErrorCodeConstants.MG_001);
         }
         return modelGroups;
+    }
+    
+    /**
+     * This method returns List of all ModelGroupInterface present in database 
+     * @return List<ModelGroupInterface>
+     */
+    public ModelGroupInterface getModelGroupById(Long modelGroupId) {
+        List<ModelGroupInterface> modelGroups = new ArrayList<ModelGroupInterface>();
+        try {
+            modelGroups = retrieve(ModelGroupInterface.class.getName(), "modelGroupId", modelGroupId);
+        } catch (DAOException e) {
+            throw new RuntimeException(e.getMessage(), e, ErrorCodeConstants.MG_001);
+        }
+        ModelGroupInterface modelGrp = getModelGroupFromList(modelGroups);
+        return modelGrp;
+    }
+    
+
+    private ModelGroupInterface getModelGroupFromList(List modelGroups) {
+        if (modelGroups == null || modelGroups.isEmpty()) {
+            return null;
+        }
+        if (modelGroups.size() > 1) {
+            throw new RuntimeException("Problem in code; probably db schema");
+        }
+        return (ModelGroupInterface) modelGroups.get(0);
     }
 
     /**
