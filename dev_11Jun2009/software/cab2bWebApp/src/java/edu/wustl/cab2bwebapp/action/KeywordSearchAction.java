@@ -87,7 +87,7 @@ public class KeywordSearchAction extends Action {
                 //the next call executeQueryBizLogic.isProcessingFinished() returns immediately as TRUE 
                 //This is because query execution hasn't even started. 
                 //Adding sleep to allow at least one query executing thread to run
-                int transformationMaxLimit = QueryExecutorPropertes.getUiResultLimit();
+                int transformationMaxLimit = Integer.MAX_VALUE;
                 while (!executeQueryBizLogic.isProcessingFinished()) {
                     Thread.sleep(100); // to ensure next lines are not executed before server finishes keyword query.
                 }
