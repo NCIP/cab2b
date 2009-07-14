@@ -1122,7 +1122,7 @@
 
 		<copy file="${cab2b.ds.from.path}/${cab2b.ds.file}" todir="${cab2b.ds.to.path}" overwrite="true" />
 		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@application.context.name@" value="${application.context.name}" />
-		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.url@" value="${ds.database.url}" />
+		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.url@" value="${database.url}" />
 		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.user@" value="${database.user}" />
 		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.password@" value="${database.password}" />
 		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.driver@" value="com.mysql.jdbc.Driver" />
