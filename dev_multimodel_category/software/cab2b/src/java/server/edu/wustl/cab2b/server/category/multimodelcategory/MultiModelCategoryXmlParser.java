@@ -70,7 +70,7 @@ public class MultiModelCategoryXmlParser {
      * @param category The Document element which represents a MultiModel Category 
      * @return MultiModelCategory Object.
      */
-    private MultiModelCategoryBean populateMultiModelCategory(Document document) {
+    MultiModelCategoryBean populateMultiModelCategory(Document document) {
         Element mmcRoot = document.getRootElement();
         MultiModelCategoryBean mmc = new MultiModelCategoryBean();
 
@@ -102,7 +102,7 @@ public class MultiModelCategoryXmlParser {
         return mmc;
     }
 
-    private Map<String, List<Element>> getArrtribAndPaths(Element mmcRoot) {
+    Map<String, List<Element>> getArrtribAndPaths(Element mmcRoot) {
         List<Element> arrtribAndPathsElements = mmcRoot.elements();
         Map<String, List<Element>> arrtribAndPaths = new HashMap<String, List<Element>>(2);
         arrtribAndPaths.put("MultiModelCategoryAttributes", new ArrayList<Element>());
@@ -119,7 +119,7 @@ public class MultiModelCategoryXmlParser {
         return arrtribAndPaths;
     }
 
-    private Collection<MultiModelAttributeBean> populateMMCAttribs(List<Element> attributes) {
+    Collection<MultiModelAttributeBean> populateMMCAttribs(List<Element> attributes) {
         Collection<MultiModelAttributeBean> mmcAttribs = new ArrayList<MultiModelAttributeBean>();
         for (Element a : attributes) {
             MultiModelAttributeBean multiModelCategoryAttribute = new MultiModelAttributeBean();
@@ -155,7 +155,7 @@ public class MultiModelCategoryXmlParser {
         return mmcAttribs;
     }
 
-    private Collection<IPath> populateMMCPaths(List<Element> paths) {
+    Collection<IPath> populateMMCPaths(List<Element> paths) {
         Collection<IPath> iPaths = new ArrayList<IPath>();
         for (Element path : paths) {
             IPath iPath = PathFinder.getInstance().getPathById(Long.parseLong(path.attribute("id").getValue()));
