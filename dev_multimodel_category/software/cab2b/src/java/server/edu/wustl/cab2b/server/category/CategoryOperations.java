@@ -46,9 +46,9 @@ public class CategoryOperations extends DefaultBizLogic {
         try {
             insert(category, DAO_TYPE);
         } catch (BizLogicException e) {
-            throw new RuntimeException(ErrorCodeConstants.CATEGORY_SAVE_ERROR);
+            throw new RuntimeException("Unable to save the category", e, ErrorCodeConstants.CATEGORY_SAVE_ERROR);
         } catch (UserNotAuthorizedException e) {
-            throw new RuntimeException(ErrorCodeConstants.CATEGORY_SAVE_ERROR);
+            throw new RuntimeException("Unable to save the category", e, ErrorCodeConstants.CATEGORY_SAVE_ERROR);
         }
     }
 
@@ -85,14 +85,17 @@ public class CategoryOperations extends DefaultBizLogic {
         } catch (DAOException e) {
             throw new RuntimeException(ErrorCodeConstants.CATEGORY_RETRIEVE_ERROR);
         }
-        if (list == null || list.isEmpty()) {
-            return null;
+
+        Category category = null;
+        if (list != null && !list.isEmpty()) {
+            if (list.size() == 1) {
+                category = getCategoryFromList(list);
+                postRetrievalProcess(category, EntityCache.getInstance());
+            } else {
+                throw new RuntimeException("Problem in code; probably db schema");
+            }
         }
-        if (list.size() > 1) {
-            throw new RuntimeException("Problem in code; probably db schema");
-        }
-        Category category = getCategoryFromList(list);
-        postRetrievalProcess(category, EntityCache.getInstance());
+
         return category;
     }
 
@@ -132,12 +135,10 @@ public class CategoryOperations extends DefaultBizLogic {
      *            param.
      */
     private void getDeEntityIdsOfChildren(CategorialClass parentCategorialClass, Set<Long> idSet) {
-
         for (CategorialClass categorialClass : parentCategorialClass.getChildren()) {
             idSet.add(categorialClass.getDeEntityId());
             getDeEntityIdsOfChildren(categorialClass, idSet);
         }
-
     }
 
     private void postRetrievalProcess(Category category, EntityCache cache) {
@@ -167,7 +168,8 @@ public class CategoryOperations extends DefaultBizLogic {
             attribute.setSourceClassAttribute(attributeOfSrcClass);
 
             long categoryEntityAttributeId = attribute.getDeCategoryAttributeId();
-            AttributeInterface attributeOfCategoryEntity = categoryEntity.getAttributeByIdentifier(categoryEntityAttributeId);
+            AttributeInterface attributeOfCategoryEntity =
+                    categoryEntity.getAttributeByIdentifier(categoryEntityAttributeId);
             attribute.setCategoryAttribute(attributeOfCategoryEntity);
         }
 
@@ -185,8 +187,9 @@ public class CategoryOperations extends DefaultBizLogic {
     public List<EntityInterface> getAllRootCategories() {
         List<Category> allCategories = null;
         try {
-            allCategories = retrieve(Category.class.getName(), null, new String[] { "parentCategory" },
-                                     new String[] { "is null" }, new Object[0], null);
+            allCategories =
+                    retrieve(Category.class.getName(), null, new String[] { "parentCategory" },
+                             new String[] { "is null" }, new Object[0], null);
         } catch (DAOException e) {
             throw new RuntimeException("Error in fetching category", e, ErrorCodeConstants.CATEGORY_RETRIEVE_ERROR);
         }
@@ -251,5 +254,19 @@ public class CategoryOperations extends DefaultBizLogic {
             attributeSet.addAll(getAllChilrenCategorialClasses(child));
         }
         return attributeSet;
+    }
+
+    /**
+     * This method deletes the given category.
+     * @param category
+     */
+    public void deleteCategory(Category category) {
+        try {
+            delete(category, DAO_TYPE);
+        } catch (UserNotAuthorizedException e) {
+            throw new RuntimeException("Could not delete category", e, ErrorCodeConstants.CATEGORY_DELETE_ERROR);
+        } catch (BizLogicException e) {
+            throw new RuntimeException("Could not delete category", e, ErrorCodeConstants.CATEGORY_DELETE_ERROR);
+        }
     }
 }
