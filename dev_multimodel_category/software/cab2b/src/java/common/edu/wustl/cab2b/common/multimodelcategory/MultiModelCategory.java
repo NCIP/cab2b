@@ -15,6 +15,8 @@ import edu.wustl.common.querysuite.metadata.category.Category;
  */
 public interface MultiModelCategory {
     
+    Long getId();
+    
     EntityInterface getEntity();
     
     void setEntity(EntityInterface Entity);

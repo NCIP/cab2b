@@ -113,6 +113,9 @@ public interface ErrorCodeConstants {
     /** Error while retrieving category */
     static final String CATEGORY_RETRIEVE_ERROR = "CT.0002";
     
+    /** Error while deleting category */
+    static final String CATEGORY_DELETE_ERROR = "CT.0004";
+    
     /** Error while saving multimodel category */
     static final String MULTIMODEL_CATEGORY_SAVE_ERROR = "MMC.0001";
 

@@ -52,6 +52,11 @@ public interface Constants {
      * Name of Category Entity Group
      */
     public static final String CATEGORY_ENTITY_GROUP_NAME = "CategoryEntityGroup";
+    
+    /**
+     * Name of Category Entity Group
+     */
+    public static final String MMC_ENTITY_GROUP_NAME = "MMCEntityGroup";
 
     /**
      * Name of Data List Entity Group to exclude from Metadata search.
@@ -62,6 +67,11 @@ public interface Constants {
      * tagged key constant to identify a category entity.
      */
     public static final String TYPE_CATEGORY = "Category";
+    
+    /**
+     * tagged constant to identify a multi-model category entity.
+     */
+    public static final String MULTIMODELCATEGORY = "MMCategory";
 
     /**
      * tagged key constant to identify wthether a attribute OR an association is a derived one
