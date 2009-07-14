@@ -2,13 +2,11 @@ package edu.wustl.cab2b.server.category.multimodelcategory;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.multimodelcategory.MultiModelAttribute;
 import edu.wustl.cab2b.server.cache.EntityCache;
-import edu.wustl.cab2b.server.category.CategoryCache;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 
 /**
@@ -19,17 +17,11 @@ import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
  */
 public class MultiModelAttributeImpl implements MultiModelAttribute {
 
-    private static final String DELIMETER = "_";
-
     private Long id;
 
-    private AttributeInterface multiModelAttribute;
-
-    private Long attributeId;
+    private AttributeInterface attribute;
 
     private Collection<CategorialAttribute> selectedAttributes;
-
-    private String catAttrDelimitedIds;
 
     private Boolean isVisible;
 
@@ -37,12 +29,29 @@ public class MultiModelAttributeImpl implements MultiModelAttribute {
         selectedAttributes = new ArrayList<CategorialAttribute>();
     }
 
-    public void addCategorialAttribute(CategorialAttribute categorialAttribute) {
-        selectedAttributes.add(categorialAttribute);
+    /**
+     * @hibernate.id name="id" column="ID" type="long" length="30"
+     *               unsaved-value="null" generator-class="increment"
+     * @return
+     */
+    public Long getId() {
+        return id;
+    }
+
+    private void setId(Long id) {
+        this.id = id;
     }
 
     public AttributeInterface getAttribute() {
-        return multiModelAttribute;
+        return attribute;
+    }
+
+    public void setAttribute(AttributeInterface attribute) {
+        this.attribute = attribute;
+    }
+
+    public void addCategorialAttribute(CategorialAttribute categorialAttribute) {
+        selectedAttributes.add(categorialAttribute);
     }
 
     public CategorialAttribute getCategorialAttribute(int index) {
@@ -53,6 +62,10 @@ public class MultiModelAttributeImpl implements MultiModelAttribute {
         return selectedAttributes;
     }
 
+    public void setCategorialAttributes(Collection<CategorialAttribute> categorialAttributes) {
+        selectedAttributes.addAll(categorialAttributes);
+    }
+
     /**
      * @hibernate.property name="isVisible" column="ISVISIBLE" type="boolean" 
      *                     not-null="false"
@@ -61,67 +74,47 @@ public class MultiModelAttributeImpl implements MultiModelAttribute {
         return isVisible;
     }
 
-    public void setAttribute(AttributeInterface attribute) {
-        multiModelAttribute = attribute;
-    }
-
-    public void setCategorialAttributes(Collection<CategorialAttribute> categorialAttributes) {
-        selectedAttributes.addAll(categorialAttributes);
-    }
-
     public void setVisible(Boolean isVisible) {
         this.isVisible = isVisible;
     }
 
     /**
-     * @hibernate.property  name="multiModelAttribute" column="DE_ATTRIBUTE_ID" type="long" length="30" unsaved-value="null"
+     * @hibernate.property  name="attributeId" column="MMA_ATTRIBUTE_ID" type="long" length="30" unsaved-value="null"
      * @return
      */
-    Long getAttributeId() {
-        return multiModelAttribute.getId();
+    private Long getAttributeId() {
+        return attribute.getId();
     }
 
-    void setAttributeId(Long attributeId) {
-        this.attributeId = attributeId;
-        this.multiModelAttribute = EntityCache.getInstance().getAttributeById(attributeId);
+    private void setAttributeId(Long attributeId) {
+        this.attribute = EntityCache.getInstance().getAttributeById(attributeId);
     }
 
     /**
-     * @hibernate.property name="catAttrDelimitedIds" column="CATEGORIAL_ATTRIBUTE_IDS" type="string" length="254"  not-null="true"
+     * @hibernate.property name="categorialAttributeIds" column="CATEGORIAL_ATTRIBUTE_IDS" type="string" length="254"  not-null="true"
      */
-    private String getCatAttrDelimitedIds() {
-        StringBuffer delimIds = new StringBuffer();
-        for (CategorialAttribute ca : selectedAttributes) {
-            delimIds.append(ca.getId()).append(DELIMETER);
+    private String getCategorialAttributeIds() {
+        StringBuffer categorialAttributeIds = new StringBuffer();
+        int index = selectedAttributes.size();
+        for (CategorialAttribute categorialAttribute : selectedAttributes) {
+            categorialAttributeIds.append(categorialAttribute.getId());
+            if (--index > 0) {
+                categorialAttributeIds.append('_');
+            }
         }
 
-        catAttrDelimitedIds = delimIds.toString();
-        return catAttrDelimitedIds;
+        return categorialAttributeIds.toString();
     }
 
-    private void setCatAttrDelimitedIds(String catAttrDelimitedIds) {
-        this.catAttrDelimitedIds = catAttrDelimitedIds;
-
+    private void setCategorialAttributeIds(String categorialAttributeIds) {
         if (selectedAttributes.isEmpty()) {
-            for (String categorialAttrId : catAttrDelimitedIds.split(DELIMETER)) {
+            String[] tokenIds = categorialAttributeIds.split("_");
+            for (String categorialAttributeId : tokenIds) {
                 CategorialAttribute attribute = new CategorialAttribute();
-                attribute.setId(Long.parseLong(categorialAttrId));
+                attribute.setId(Long.parseLong(categorialAttributeId));
                 selectedAttributes.add(attribute);
             }
         }
     }
 
-    /**
-     * @hibernate.id name="id" column="ID" type="long" length="30"
-     *               unsaved-value="null" generator-class="native"
-     * @hibernate.generator-param name="sequence" value="ID_SEQ"
-     * @return
-     */
-    private Long getId() {
-        return id;
-    }
-
-    private void setId(Long id) {
-        this.id = id;
-    }
 }
