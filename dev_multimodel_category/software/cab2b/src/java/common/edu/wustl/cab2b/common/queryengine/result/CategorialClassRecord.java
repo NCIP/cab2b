@@ -74,4 +74,7 @@ public class CategorialClassRecord extends Record implements ICategorialClassRec
         super.finalize();
         noOfObjectsPresent--;
     }
+    public static long getNoOfObjectsPresent() {
+        return noOfObjectsPresent;
+    }
 }

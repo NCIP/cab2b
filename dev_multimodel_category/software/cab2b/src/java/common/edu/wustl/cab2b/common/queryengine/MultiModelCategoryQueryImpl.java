@@ -37,7 +37,7 @@ public class MultiModelCategoryQueryImpl extends Cab2bQuery implements MultiMode
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery#getSubQueries()
      */
-    @Override
+
     public Collection<ICab2bQuery> getSubQueries() {
         return subQueries;
     }
@@ -46,7 +46,6 @@ public class MultiModelCategoryQueryImpl extends Cab2bQuery implements MultiMode
      * (non-Javadoc)
      * @see edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery#addSubQueries(edu.wustl.cab2b.common.queryengine.ICab2bQuery)
      */
-    @Override
     public void addSubQueries(ICab2bQuery query) {
         subQueries.add(query);
     }

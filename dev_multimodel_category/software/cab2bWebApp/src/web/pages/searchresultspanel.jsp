@@ -21,7 +21,7 @@
 <DIV style="display:none" id="partialQueryResultsAJAX">
 	<logic:present name="savedQueries">
 			<logic:iterate name="savedQueries" id="savedSearch">
-				<DIV class="text" style="font-size:0.9em;"><bean:write name="savedSearch" property="name"/>&nbsp;(<bean:write name="savedSearch" property="resultCount"/>)<SPAN id="progressImage"><logic:notPresent name="stopajax">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <IMG height=15 src='images/PageLoading.gif'>&nbsp;&nbsp; Loading results . . . </logic:notPresent></SPAN></DIV>
+				<DIV class="text" style="font-size:0.9em;"><bean:write name="savedSearch" property="name"/>&nbsp;(<span id="queryUIPartialCount"><bean:write name="savedSearch" property="resultCount"/></span>)<SPAN id="progressImage"><logic:notPresent name="stopajax">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <IMG height=15 src='images/PageLoading.gif'>&nbsp;&nbsp; Loading results . . . </logic:notPresent></SPAN></DIV>
 			</logic:iterate>
 	</logic:present>
 </DIV>
@@ -57,5 +57,5 @@
 </logic:notEqual>
 </logic:present>
 <logic:notPresent name="searchResultsView">
-	<DIV style="display:none" id="messagesNotEmpty"><bean:message key="text.resultsempty"/></DIV>
+	<DIV class="text" style="display:none" align="center" id="messagesNotEmpty"><bean:message key="text.resultsempty"/></DIV>
 </logic:notPresent>

@@ -41,7 +41,8 @@
 	<property name="jbossjca.service.xml" location="${conf.dir}/jbossjca-service.xml" />
 	<property name="log4j.xml.file" location="${conf.dir}/log4j.xml" />
 	<property name="tomcat.web.xml.file" location="${conf.dir}/tomcat_web.xml" />
-
+	<property name="jboss.invoker.service.xml.file" location="${conf.dir}/invoker_jboss-service.xml" />
+	
 	<property name="db.scripts.dir" location="db" />
 
 	<property name="server.jar.dir" location="${workarea.dir}/serverJar" />
@@ -152,7 +153,7 @@
 	</path>
 
 	<!-- ================================================================================== -->
-	<target name="initialize">
+	<target name="initialize" depends="clean.all">
 		<delete file="${conf.dir}/server.properties" />
 		<delete file="${conf.dir}/cagrid.properties" />
 		<delete file="${conf.dir}/client.properties" />
@@ -164,6 +165,9 @@
 			</fileset>
 		</copy>
 
+		<replace file="${conf.dir}/cab2b.properties" token="@server.host@" value="${server-host}" />
+		<replace file="${conf.dir}/cab2b.properties" token="@server.port@" value="${server-port}" />
+		
 		<replace file="${conf.dir}/cab2b.properties" token="@server.host@" value="${server-host}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@server.port@" value="${server-port}" />
 
@@ -189,6 +193,8 @@
 		<replace file="${conf.dir}/cagrid.properties" token="@delegetee@" value="${delegetee-identifier}" />
 		<replace file="${conf.dir}/cagrid.properties" token="@grid.cert@" value="${grid-cert}" />
 		<replace file="${conf.dir}/cagrid.properties" token="@grid.key@" value="${grid-key}" />
+		
+		
 	</target>
 	<!-- ================================================================================== -->
 	<target name="pmd" description="PMD scan Java source code and looks for potential code problems.">
@@ -228,19 +234,7 @@
 	</target>
 
 	<!-- ==============Cleans all the artifacts generated=============== 	-->
-	<target name="clean.all" depends="clean">
-		<delete>
-			<fileset dir="${conf.dir}">
-				<include name="cab2b.properties" />
-				<include name="cagrid.properties" />
-				<include name="client.properties" />
-				<include name="server.properties" />
-			</fileset>
-		</delete>
-		<echo message="Cleaned caB2B" />
-	</target>
-	<!-- ==============Cleans everything in workarea folder=============== 	-->
-	<target name="clean">
+	<target name="clean.all">
 		<ant inheritAll="false" inheritRefs="false" dir="${cab2badmin.location}" antfile="${cab2badmin.location}/build.xml" target="clean.all" />
 		<echo message="Cleaned Admin" />
 
@@ -248,7 +242,23 @@
 		<echo message="Cleaned WebApp" />
 
 		<delete includeemptydirs="true" dir="${workarea.dir}" />
-		<mkdir dir="${workarea.dir}" />
+		<delete>
+			<fileset dir="${conf.dir}">
+				<include name="cab2b.properties" />
+				<include name="cagrid.properties" />
+				<include name="client.properties" />
+				<include name="server.properties" />
+			</fileset>
+
+			<!-- Somehow this is not able to delete this file
+			fileset dir="${server.lib.dir}">
+				<include name="cab2b-client.jar" />
+			</fileset -->
+
+			<fileset dir="${webstart.src}">
+				<include name="*.class" />
+			</fileset>
+		</delete>
 		<echo message="Cleaned caB2B" />
 	</target>
 
@@ -816,7 +826,7 @@
 	</target>
 
 	<!-- ================================================================================== -->
-	<target name="build.project.jar" depends="clean,compile.client,compile.server">
+	<target name="build.project.jar" depends="compile.client,compile.server">
 		<jar basedir="${workarea.dir}/common/classes" destfile="${workarea.dir}/cab2b-common.jar">
 			<include name="**/*.*" />
 		</jar>
@@ -1059,6 +1069,7 @@
 		<copy file="${jbossjca.service.xml}" todir="${dist.dir}" />
 		<copy file="${log4j.xml.file}" todir="${dist.dir}" />
 		<copy file="${tomcat.web.xml.file}" tofile="${dist.dir}/web.xml" />
+		<copy file="${jboss.invoker.service.xml.file}" tofile="${dist.dir}/jboss-service.xml" />
 		<copy file="${lib.dir}/server/oracleDriver.jar" todir="${dist.dir}" />
 		<copy file="${lib.dir}/server/mysql-connector-java-5.0.8-bin.jar" todir="${dist.dir}" />
 		<copy file="${lib.dir}/common/hibernate3.jar" todir="${dist.dir}" />
@@ -1068,6 +1079,7 @@
 		<copy file="${lib.dir}/common/cryptix-asn1.jar" todir="${dist.dir}" />
 		<copy file="${lib.dir}/common/jce-jdk13-125.jar" todir="${dist.dir}" />
 		<copy file="${lib.dir}/common/puretls.jar" todir="${dist.dir}" />
+		
 	</target>
 
 	<!--==========================================================================

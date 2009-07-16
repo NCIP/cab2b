@@ -148,6 +148,8 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
         for (String url : urlToResultMap.keySet()) {
             writeToCSV(urlToResultMap.get(url), url, headers, out);
         }
+        out.close();
+        fstream.close();
     }
 
     private void writeToCSV(List<ICategorialClassRecord> records, String url, List<AttributeInterface> headers,

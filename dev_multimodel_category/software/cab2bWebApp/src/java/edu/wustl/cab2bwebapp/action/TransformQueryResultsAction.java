@@ -57,24 +57,33 @@ public class TransformQueryResultsAction extends Action {
         try {
             HttpSession session = request.getSession();
             Writer writer;
-            
+
             ExecuteQueryBizLogic executeQueryBizLogic =
                     (ExecuteQueryBizLogic) session.getAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
             if (executeQueryBizLogic == null) {
                 writer = response.getWriter();
                 response.setContentType("text/xml");
-                String processingImage = "<TABLE style='width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'></TD></TR></TABLE>";
+                String processingImage =
+                        "<TABLE style='width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'></TD></TR></TABLE>";
                 writer.write(processingImage);
                 return null;
             }
 
             SavedQueryBizLogic savedQueryBizLogic =
-                    (SavedQueryBizLogic) session.getServletContext().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+                    (SavedQueryBizLogic) session.getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
             ICab2bQuery query =
                     savedQueryBizLogic.getQueryById(Long.parseLong(request.getParameter(Constants.QUERY_ID)));
             int transformationMaxLimit = QueryExecutorPropertes.getUiResultLimit();
-            Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults =
-                    executeQueryBizLogic.getSearchResults(transformationMaxLimit);
+
+            Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults = null;
+            //if UI_finished is true, transformer should not be invoked for re-transforming the same 100 records.Results should be taken from session
+            if (session.getAttribute(Constants.UI_POPULATION_FINISHED) == null) {
+                searchResults = executeQueryBizLogic.getSearchResults(transformationMaxLimit);
+            } else {
+                searchResults =
+                        (Map<ICab2bQuery, TransformedResultObjectWithContactInfo>) session
+                            .getAttribute(Constants.SEARCH_RESULTS);
+            }
 
             ICab2bQuery selectedQueryObj = null;
             Set<ICab2bQuery> queries = searchResults.keySet();
@@ -95,6 +104,10 @@ public class TransformQueryResultsAction extends Action {
                 TransformedResultObjectWithContactInfo selectedQueryResult = searchResults.get(selectedQueryObj);
                 Collection<ServiceURLInterface> failedURLS =
                         ExecuteQueryBizLogic.getFailedServiceUrls(selectedQueryResult.getFailedServiceUrl());
+
+                if (failedURLS != null && failedURLS.size() == 0) {
+                    failedURLS = null;
+                }
                 session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedURLS != null ? failedURLS.size() : 0);
                 session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
 
@@ -119,7 +132,7 @@ public class TransformQueryResultsAction extends Action {
                         session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
                     } else {
                         session.setAttribute(Constants.SEARCH_RESULTS_VIEW, val);
-                        session.setAttribute(Constants.SEARCH_RESULTS, searchResults); 
+                        session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
                         session.setAttribute(Constants.SAVED_QUERIES, queryList);
                     }
                     session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
@@ -127,21 +140,17 @@ public class TransformQueryResultsAction extends Action {
                     session.setAttribute(Constants.STOP_AJAX, true);
                     session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
                     session.setAttribute(Constants.SEARCH_RESULTS_VIEW, val);
-                    session.setAttribute(Constants.SEARCH_RESULTS, searchResults); 
+                    session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
                     session.setAttribute(Constants.SAVED_QUERIES, queryList);
                 } else if (!uiGotEnoughRecords && !queryFinished) {
                     session.setAttribute(Constants.SEARCH_RESULTS_VIEW, val);
-                    session.setAttribute(Constants.SEARCH_RESULTS, searchResults); 
+                    session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
                     session.setAttribute(Constants.SAVED_QUERIES, queryList);
                 }
             } else {
-                session.setAttribute(Constants.SEARCH_RESULTS, searchResults);    
+                session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
                 session.setAttribute(Constants.SAVED_QUERIES, queryList);
             }
-
-            
-            
-
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();

@@ -18,7 +18,6 @@ per.query.min.thread.limit=100
 global.record.limit=100000
 per.query.record.limit=5000
 ui.result.limit=1000
-ui.page.size=30
 
 #For LINUX
 #global.thread.limit=8700
@@ -42,10 +41,8 @@ public class QueryExecutorPropertes {
     private static int globalAllowedRecords = 60000;
 
     private static int perQueryAllowedRecords = 10000;
-    
+
     private static int uiResultLimit = 1000;
-    
-    private static int uiPageLimit = 30;
 
     static {
         String path = System.getProperty("user.home") + File.separator + fileName;
@@ -61,9 +58,11 @@ public class QueryExecutorPropertes {
                 globalAllowedRecords = Integer.parseInt(pro.getProperty("global.record.limit"));
                 perQueryAllowedRecords = Integer.parseInt(pro.getProperty("per.query.record.limit"));
                 uiResultLimit = Integer.parseInt(pro.getProperty("ui.result.limit"));
-                uiPageLimit = Integer.parseInt(pro.getProperty("ui.page.size"));
             } catch (IOException e) {
                 logger.info("File " + path + " not found. Using default properties");
+            } catch (Exception e) {
+                logger.warn("Exception while reading " + path + ". Using default properties");
+                e.printStackTrace();
             }
         } else {
             logger.info("File " + path + " not found. Using default properties");
@@ -74,7 +73,6 @@ public class QueryExecutorPropertes {
         logger.info("Global Allowed Records : " + globalAllowedRecords);
         logger.info("PerQuery Allowed Records : " + perQueryAllowedRecords);
         logger.info("UI Result Limit : " + uiResultLimit);
-        logger.info("UI Page Limit : " + uiPageLimit);
     }
 
     /**
@@ -114,17 +112,11 @@ public class QueryExecutorPropertes {
     public static int getPerQueryMinThreadLimit() {
         return perQueryMinThreadLimit;
     }
-    
+
     /**
      * @return result size for UI
      */
-    public static int getUiResultLimit(){
+    public static int getUiResultLimit() {
         return uiResultLimit;
-    }
-    /**
-     * @return result size for UI
-     */
-    public static int getUiPageLimit(){
-        return uiPageLimit;
     }
 }

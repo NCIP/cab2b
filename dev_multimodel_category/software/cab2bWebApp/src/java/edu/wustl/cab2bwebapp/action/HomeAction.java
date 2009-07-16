@@ -1,5 +1,6 @@
 package edu.wustl.cab2bwebapp.action;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +54,7 @@ public class HomeAction extends Action {
         try {
             HttpSession session = request.getSession();
             SavedQueryBizLogic savedQueryBizLogic =
-                    (SavedQueryBizLogic) request.getSession().getServletContext()
-                        .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+                    (SavedQueryBizLogic) session.getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
             //Removing SEARCH_RESULTS attributes from session               
             session.removeAttribute(Constants.SEARCH_RESULTS);
             session.removeAttribute(Constants.SEARCH_RESULTS_VIEW);
@@ -70,6 +70,21 @@ public class HomeAction extends Action {
             session.removeAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
             session.removeAttribute(Constants.UI_POPULATION_FINISHED);
 
+            //delete the file(exported by the user) from server , when user navigates to the home page
+            String filePath = (String) session.getAttribute(Constants.EXPORTED_FILE_PATH);
+            if (filePath != null && !filePath.equals("")) {
+                File file = new File(filePath);
+                if (file.exists()) {
+                    boolean isDeleted = file.delete();
+                    if (!isDeleted) {
+                        logger.info("Not able to delete file " + file.getName());
+                    } else {
+                        logger.info("File deleted successfully: " + file.getName());
+                    }
+                }
+                session.removeAttribute(Constants.EXPORTED_FILE_PATH);
+            }
+
             UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
             if (user == null) {
                 user = new UserOperations().getUserByName(Constants.ANONYMOUS);
@@ -77,8 +92,7 @@ public class HomeAction extends Action {
             session.setAttribute(Constants.USER, user);
             if (savedQueryBizLogic == null) {
                 savedQueryBizLogic = new SavedQueryBizLogic();
-                request.getSession().getServletContext().setAttribute(Constants.SAVED_QUERY_BIZ_LOGIC,
-                                                                      savedQueryBizLogic);
+                request.getSession().setAttribute(Constants.SAVED_QUERY_BIZ_LOGIC, savedQueryBizLogic);
             }
             if (session.getAttribute(Constants.MODEL_GROUP_DVO_LIST) == null) {
                 List<ModelGroupInterface> modelGroups = new ModelGroupBizLogic().getAllModelGroups();

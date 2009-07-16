@@ -75,14 +75,14 @@ function validate() {
 									
 									<TR>
 										<TD style="padding-top:0.8em;">
-											<DIV style="overflow:auto;height:320;padding-right:50em;">
+											<DIV style="overflow:auto;height:240;">
 												<logic:iterate name="allLoadedModels" id="entityGroup" type="edu.common.dynamicextensions.domaininterface.EntityGroupInterface">
 												<DIV style="padding:0.2em;">
 												&nbsp;&nbsp;<input type="checkbox" name="selectedEntityGroup" value="<bean:write name="entityGroup" property="longName"/>_v<bean:write name="entityGroup" property="version"/>"/>
 												<SPAN class="font_bl1_b"><bean:write name="entityGroup" property="longName"/>_v<bean:write name="entityGroup" property="version"/></SPAN>
 					`							</DIV>
-												<DIV style="padding:0.2em;margin-left:0.2em;">
-												&nbsp;&nbsp;<SPAN class="font_blk_s"><bean:write name="entityGroup" property="description"/></SPAN>
+												<DIV style="padding:0.2em;margin-left:2em;">
+												<SPAN class="font_blk_s"><bean:write name="entityGroup" property="description"/></SPAN>
 												</DIV>
 												</logic:iterate>												
 											</DIV>

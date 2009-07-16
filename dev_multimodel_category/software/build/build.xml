@@ -179,7 +179,6 @@
 		<diagnostics />
 	</target>
 	<target name="clean">
-		<ant inheritAll="false" inheritRefs="false" antfile="${cab2b-webapp.build.file}" target="clean.conf" dir="${cab2b-webapp.base.dir}" />
 		<ant inheritAll="false" inheritRefs="false" antfile="${cab2b-webapp.build.file}" target="clean.all" dir="${cab2b-webapp.base.dir}" />
 		<delete dir="${dist.dir}" />
 		<delete dir="${temp.dir}" />

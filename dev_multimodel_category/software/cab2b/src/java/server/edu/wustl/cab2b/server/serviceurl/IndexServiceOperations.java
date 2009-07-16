@@ -94,6 +94,7 @@ public class IndexServiceOperations {
         for (ServiceURLInterface serviceURL : refreshedURLMetadata) {
             serviceUrlOperation.saveServiceURL(serviceURL);
         }
+        serviceUrlOperation.updateCache();
     }
 
     /**

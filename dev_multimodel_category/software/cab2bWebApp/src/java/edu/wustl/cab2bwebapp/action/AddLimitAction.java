@@ -51,8 +51,8 @@ public class AddLimitAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
         String actionForward = null;
-        HttpSession session  = request.getSession();
-        
+        HttpSession session = request.getSession();
+
         session.removeAttribute(Constants.SEARCH_RESULTS);
         session.removeAttribute(Constants.SEARCH_RESULTS_VIEW);
         session.removeAttribute(Constants.FAILED_SERVICES_COUNT);
@@ -68,8 +68,7 @@ public class AddLimitAction extends Action {
         session.removeAttribute(Constants.UI_POPULATION_FINISHED);
         try {
             SavedQueryBizLogic savedQueryProvider =
-                    (SavedQueryBizLogic) request.getSession().getServletContext()
-                        .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+                    (SavedQueryBizLogic) request.getSession().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
             if (request.getParameterValues(Constants.MODEL_GROUPS) != null) {
                 actionForward = Constants.FORWARD_ADD_LIMIT;
                 ActionForward forward = mapping.findForward(actionForward);

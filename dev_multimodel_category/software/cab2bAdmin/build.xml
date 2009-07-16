@@ -157,7 +157,5 @@
 	<!-- =============================================================================== -->
 	<target name="clean.all">
 		<delete includeemptydirs="true" dir="${workarea.dir}" />
-		<mkdir dir="${workarea.dir}" />
 	</target>
-
 </project>

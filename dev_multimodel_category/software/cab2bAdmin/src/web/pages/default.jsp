@@ -14,17 +14,24 @@
 			var password = document.getElementById('password');
 			if(userName.value=='' || userName.value.length==0)
 			{
-			  alert('Please Enter UserName ');
+			  alert('Please enter user name ');
 			  userName.focus();
 			  return false;
 			}
 			if(password.value=='' || password.value.length==0)
 			{
-			  alert('Please Enter Password ');
+			  alert('Please enter password ');
 			  password.focus();
 			  return false;
 			}
-	
+			var iChars = "~!^?*|,\\\\/\":<>[]{}`\';()@&$#% ";
+      		for (var i = 0; i < userName.value.length; i++) {
+          		if (iChars.indexOf(userName.value.charAt(i)) != -1){
+              		alert ("User name should not contain special characters");
+              		userName.focus();
+              		return false; 
+    	    	}
+    		}
 	}
 
 </script>
