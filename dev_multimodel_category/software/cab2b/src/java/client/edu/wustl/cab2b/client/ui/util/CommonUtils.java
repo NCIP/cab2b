@@ -71,6 +71,7 @@ import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.cab2b.common.locator.Locator;
 import edu.wustl.cab2b.common.locator.LocatorException;
+import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategory;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -91,7 +92,8 @@ public class CommonUtils {
 
     /** Constant storing enumerated values for DAG-Images */
     public static enum DagImages {
-        DocumentPaperIcon, PortImageIcon, ArrowSelectIcon, ArrowSelectMOIcon, SelectIcon, selectMOIcon, ParenthesisIcon, ParenthesisMOIcon
+        DocumentPaperIcon, PortImageIcon, ArrowSelectIcon, ArrowSelectMOIcon, SelectIcon, selectMOIcon,
+        ParenthesisIcon, ParenthesisMOIcon
     };
 
     /**
@@ -214,9 +216,9 @@ public class CommonUtils {
     public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query) throws Exception {
         boolean anySecureSevice = Utility.hasAnySecureService(query);
 
-        QueryEngineBusinessInterface queryEngineBus = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                      EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                      QueryEngineHome.class);
+        QueryEngineBusinessInterface queryEngineBus =
+                (QueryEngineBusinessInterface) CommonUtils
+                    .getBusinessInterface(EjbNamesConstants.QUERY_ENGINE_BEAN, QueryEngineHome.class);
         IQueryResult<? extends IRecord> results = null;
         try {
 
@@ -492,9 +494,9 @@ public class CommonUtils {
          */
         Collection<ICab2bQuery> cab2bQueryCollection = null;
         try {
-            QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                       EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                       QueryEngineHome.class);
+            QueryEngineBusinessInterface queryEngine =
+                    (QueryEngineBusinessInterface) CommonUtils
+                        .getBusinessInterface(EjbNamesConstants.QUERY_ENGINE_BEAN, QueryEngineHome.class);
 
             cab2bQueryCollection = queryEngine.getUsersQueriesDetail(Authenticator.getSerializedDCR());
         } catch (Exception e) {
@@ -512,9 +514,9 @@ public class CommonUtils {
     public static Vector<Experiment> getExperiments(Component comp, UserInterface user) {
         List<Experiment> experiments = null;
         try {
-            ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                EjbNamesConstants.EXPERIMENT,
-                                                                                                                ExperimentHome.class);
+            ExperimentBusinessInterface expBus =
+                    (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.EXPERIMENT,
+                                                                                   ExperimentHome.class);
 
             experiments = expBus.getExperimentsForUser(user, Authenticator.getSerializedDCR());
         } catch (RemoteException e) {
@@ -581,20 +583,42 @@ public class CommonUtils {
      * @return String[]
      */
     private static String[] getServiceURLs(EntityInterface entity) {
-        EntityInterface en = entity;
+        Collection<String> URLs = new ArrayList<String>();
         if (edu.wustl.cab2b.common.util.Utility.isCategory(entity)) {
             Category cat = null;
             try {
-                CategoryBusinessInterface bus = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                             EjbNamesConstants.CATEGORY_BEAN,
-                                                                                                             CategoryHomeInterface.class);
+                CategoryBusinessInterface bus =
+                        (CategoryBusinessInterface) CommonUtils
+                            .getBusinessInterface(EjbNamesConstants.CATEGORY_BEAN, CategoryHomeInterface.class);
                 cat = bus.getCategoryByEntityId(entity.getId());
             } catch (Exception e) {
                 handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
             }
-            en = cat.getRootClass().getCategorialClassEntity();
+            consolidateURLs(cat, URLs);
+        } else if (edu.wustl.cab2b.common.util.Utility.isMultiModelCategory(entity)) {
+            MultiModelCategory mmc = null;
+            try {
+                CategoryBusinessInterface bus =
+                        (CategoryBusinessInterface) CommonUtils
+                            .getBusinessInterface(EjbNamesConstants.CATEGORY_BEAN, CategoryHomeInterface.class);
+                mmc = bus.getMultiModelCategoryByEntityId(entity.getId());
+            } catch (Exception e) {
+                handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
+            }
+            Collection<Category> categories = mmc.getCategories();
+            for (Category cat : categories) {
+                consolidateURLs(cat, URLs);
+            }
         }
-        return UserCache.getInstance().getServiceURLs(en);
+        return URLs.toArray(new String[0]);
+    }
+
+    private static void consolidateURLs(Category cat, Collection<String> URLs) {
+        EntityInterface entity = cat.getRootClass().getCategorialClassEntity();
+        String[] urls = UserCache.getInstance().getServiceURLs(entity);
+        for (String url : urls) {
+            URLs.add(url);
+        }
     }
 
     /**
@@ -645,8 +669,8 @@ public class CommonUtils {
             ErrorCodeHandler.initBundle(ERROR_CODE_FILE_NAME);
             ApplicationProperties.initBundle(APPLICATION_RESOURCES_FILE_NAME);
         } catch (MissingResourceException mre) {
-            CheckedException checkedException = new CheckedException(mre.getMessage(), mre,
-                    ErrorCodeConstants.IO_0002);
+            CheckedException checkedException =
+                    new CheckedException(mre.getMessage(), mre, ErrorCodeConstants.IO_0002);
             CommonUtils.handleException(checkedException, null, true, true, false, true);
         }
     }
@@ -683,8 +707,9 @@ public class CommonUtils {
         GlobalNavigationPanel.setMainSearchPanel(mainSearchPanel);
         MainSearchPanel.getDataList().clear();
         MainFrame mainFrame = NewWelcomePanel.getMainFrame();
-        JDialog searchDialog = WindowUtilities.setInDialog(mainFrame, mainSearchPanel, title, new Dimension(
-                (int) (dimension.width * 0.90), (int) (dimension.height * 0.85)), true, true);
+        JDialog searchDialog =
+                WindowUtilities.setInDialog(mainFrame, mainSearchPanel, title, new Dimension(
+                        (int) (dimension.width * 0.90), (int) (dimension.height * 0.85)), true, true);
         mainFrame.setSearchWizardDialog(searchDialog);
         searchDialog.setVisible(true);
         GlobalNavigationPanel.setMainSearchPanel(null);

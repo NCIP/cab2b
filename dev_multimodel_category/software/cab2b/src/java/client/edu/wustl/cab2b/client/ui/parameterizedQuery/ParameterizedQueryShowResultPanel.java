@@ -215,7 +215,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
      * @return
      */
     private int getExpressionIdForCondition(ICondition condition, Map<Integer, Collection<ICondition>> conditionMap) {
-        int expressionId = 0;
+        int expressionId = 1;
         for (Integer key : conditionMap.keySet()) {
             Collection<ICondition> conditions = conditionMap.get(key);
             if (conditions.contains(condition)) {

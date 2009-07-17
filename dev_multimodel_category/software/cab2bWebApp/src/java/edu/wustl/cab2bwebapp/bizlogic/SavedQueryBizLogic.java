@@ -85,19 +85,19 @@ public class SavedQueryBizLogic {
      */
     public Collection<ICab2bQuery> getRegularQueries(Collection<EntityGroupInterface> entityGroups) {
         Set<ICab2bQuery> allRegualarQueries = new HashSet<ICab2bQuery>(getRegularQueries());
-
         Set<ICab2bQuery> regualarQueries = new HashSet<ICab2bQuery>();
-        for (EntityGroupInterface entityGroup : entityGroups) {
-            Iterator<ICab2bQuery> iterator = allRegualarQueries.iterator();
-            while (iterator.hasNext()) {
-                ICab2bQuery query = iterator.next();
 
-                if (entityGroup.equals(Utility.getEntityGroup(query))) {
-                    regualarQueries.add(query);
-                    iterator.remove();
-                }
+        Iterator<ICab2bQuery> iterator = allRegualarQueries.iterator();
+        while (iterator.hasNext()) {
+            ICab2bQuery query = iterator.next();
+
+            Collection<EntityGroupInterface> queryEntityGroups = Utility.getEntityGroups(query);
+            if (entityGroups.containsAll(queryEntityGroups)) {
+                regualarQueries.add(query);
+                iterator.remove();
             }
         }
+
         return regualarQueries;
     }
 
@@ -111,13 +111,14 @@ public class SavedQueryBizLogic {
     public Collection<ICab2bQuery> getKeywordQueries(Set<EntityGroupInterface> entityGroups) {
         Collection<ICab2bQuery> allKeywordQueries = getKeywordQueries();
         Set<ICab2bQuery> keywordQueries = new HashSet<ICab2bQuery>();
-        for (EntityGroupInterface entityGroup : entityGroups) {
-            for (ICab2bQuery query : allKeywordQueries) {
-                if (entityGroup.equals(Utility.getEntityGroup(query))) {
-                    keywordQueries.add((ICab2bQuery) DynamicExtensionsUtility.cloneObject(query));
-                }
+
+        for (ICab2bQuery query : allKeywordQueries) {
+            Collection<EntityGroupInterface> queryEntityGroups = Utility.getEntityGroups(query);
+            if (entityGroups.containsAll(queryEntityGroups)) {
+                keywordQueries.add((ICab2bQuery) DynamicExtensionsUtility.cloneObject(query));
             }
         }
+
         return keywordQueries;
     }
 

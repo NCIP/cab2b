@@ -6,24 +6,15 @@ import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.List;
 
-import org.globus.gsi.GlobusCredential;
-
-import edu.common.dynamicextensions.util.DynamicExtensionsUtility;
 import edu.wustl.cab2b.common.authentication.util.AuthenticationUtility;
 import edu.wustl.cab2b.common.domain.DCQL;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
-import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.cab2b.server.category.PopularCategoryOperations;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.queryengine.DCQLGenerator;
-import edu.wustl.cab2b.server.queryengine.QueryConverter;
-import edu.wustl.cab2b.server.queryengine.QueryExecutor;
 import edu.wustl.cab2b.server.queryengine.QueryOperations;
-import edu.wustl.cab2b.server.util.UtilityOperations;
-import edu.wustl.common.hibernate.HibernateCleanser;
 
 /**
  * Class for handling query related operations
@@ -49,15 +40,7 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      */
     public IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String serializedDCR)
             throws RemoteException {
-        GlobusCredential globusCredential = null;
-        boolean hasAnySecureService = Utility.hasAnySecureService(query);
-        if (hasAnySecureService) {
-            globusCredential = AuthenticationUtility.getGlobusCredential(serializedDCR);
-        }
-        new PopularCategoryOperations().setPopularity(query);
-        QueryExecutor exe = new QueryExecutor(query, globusCredential);
-        exe.executeQuery();
-        return  exe.getCompleteResults();
+        return new QueryOperations().executeQuery(query, serializedDCR);
     }
 
     /**
@@ -72,34 +55,7 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * @throws RemoteException if authentication fails or save process fails.
      */
     public void saveQuery(ICab2bQuery query, String serializedDCR) throws RemoteException {
-        Long userId = UtilityOperations.getLocalUserId(serializedDCR);
-        query.setCreatedBy(userId);
-
-        // First Save as keyword search
-        saveAsKeywordQuery(query);
-
-        // Reset as regular query and save.
-        query.setIsKeywordSearch(Boolean.FALSE);
-        new QueryOperations().saveQuery(query);
-    }
-
-    /**
-     * This method save the given regular query as keyword search query.
-     *
-     * @param query
-     * @throws RemoteException
-     */
-    public void saveAsKeywordQuery(ICab2bQuery query) throws RemoteException {
-        if (query.isKeywordSearch()) {
-            ICab2bQuery oredQuery = (ICab2bQuery) DynamicExtensionsUtility.cloneObject(query);
-            if (oredQuery.getId() != null) {
-                new HibernateCleanser(oredQuery).clean();
-            }
-            oredQuery.setName(oredQuery.getName() + "#");
-
-            oredQuery = new QueryConverter().convertToKeywordQuery(oredQuery);
-            new QueryOperations().saveQuery(oredQuery);
-        }
+        new QueryOperations().saveCab2bQuery(query, serializedDCR);
     }
 
     /**
@@ -125,7 +81,7 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      * @throws RemoteException if retrieving fails
      */
     public ICab2bQuery retrieveQueryById(Long queryId) throws RemoteException {
-        return (ICab2bQuery) new QueryOperations().getQueryById(queryId);
+        return new QueryOperations().getQueryById(queryId);
     }
 
     /**

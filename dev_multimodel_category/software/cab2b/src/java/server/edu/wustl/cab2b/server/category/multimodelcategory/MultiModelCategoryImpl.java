@@ -21,6 +21,8 @@ import edu.wustl.common.querysuite.metadata.category.Category;
  */
 public class MultiModelCategoryImpl implements MultiModelCategory {
 
+    private static final long serialVersionUID = -8582301416038664078L;
+
     private Long id;
 
     private EntityInterface entity;

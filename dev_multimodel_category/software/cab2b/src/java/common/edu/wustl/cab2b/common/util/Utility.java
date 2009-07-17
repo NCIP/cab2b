@@ -7,6 +7,7 @@ import static edu.wustl.cab2b.common.util.Constants.CLASS_WITH_DESCRIPTION;
 import static edu.wustl.cab2b.common.util.Constants.CONNECTOR;
 import static edu.wustl.cab2b.common.util.Constants.PV;
 import static edu.wustl.cab2b.common.util.Constants.TYPE_CATEGORY;
+import static edu.wustl.cab2b.common.util.Constants.MULTIMODELCATEGORY;
 
 import java.io.File;
 import java.io.IOException;
@@ -196,6 +197,18 @@ public class Utility {
      */
     public static boolean isCategory(EntityInterface entity) {
         TaggedValueInterface tag = getTaggedValue(entity.getTaggedValueCollection(), TYPE_CATEGORY);
+        return tag != null;
+    }
+    
+    /**
+     * Checks whether passed Entity is a category or not.
+     *
+     * @param entity
+     *            Entity to check
+     * @return Returns TRUE if given entity is Category, else returns false.
+     */
+    public static boolean isMultiModelCategory(EntityInterface entity) {
+        TaggedValueInterface tag = getTaggedValue(entity.getTaggedValueCollection(), MULTIMODELCATEGORY);
         return tag != null;
     }
 

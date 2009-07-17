@@ -323,8 +323,9 @@ public class PersistMultiModelCategory {
         //save in database
         PathFinder.getInstance(TestConnectionUtil.getConnection());
         MultiModelCategoryOperations operations = new MultiModelCategoryOperations();
-        //MultiModelCategory mmCategory = operations.getMultiModelCategoryById(1L);
+        //MultiModelCategory mmCategory = operations.getMultiModelCategoryById(2L);
         //operations.deleteCategory(mmCategory);
         operations.saveMultiModelCategory(new PersistMultiModelCategory().persistMMC(mmcBean));
+        //System.out.println(mmCategory.getEntity().getName());
     }
 }

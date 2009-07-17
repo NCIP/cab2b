@@ -3,9 +3,9 @@
  */
 package edu.wustl.cab2b.common.queryengine;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 
 /**
  * @author chetan_patil
@@ -14,13 +14,20 @@ import java.util.Date;
 public class MultiModelCategoryQueryImpl extends Cab2bQuery implements MultiModelCategoryQuery {
     private static final long serialVersionUID = -7969272734716913783L;
 
-    private Collection<ICab2bQuery> subQueries = new ArrayList<ICab2bQuery>();
+    private Collection<ICab2bQuery> subQueries = new HashSet<ICab2bQuery>();
 
     /**
      * Default constructor
      */
     public MultiModelCategoryQueryImpl() {
         super();
+    }
+
+    /**
+     * Parameterized constructor
+     */
+    public MultiModelCategoryQueryImpl(ICab2bQuery query) {
+        super(query);
     }
 
     /**
@@ -46,8 +53,13 @@ public class MultiModelCategoryQueryImpl extends Cab2bQuery implements MultiMode
      * (non-Javadoc)
      * @see edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery#addSubQueries(edu.wustl.cab2b.common.queryengine.ICab2bQuery)
      */
-    public void addSubQueries(ICab2bQuery query) {
+    public void addSubQuery(ICab2bQuery query) {
         subQueries.add(query);
+    }
+
+    @Override
+    public void setSubQueries(Collection<ICab2bQuery> queries) {
+        subQueries.addAll(queries);
     }
 
 }

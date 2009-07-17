@@ -24,7 +24,9 @@ import org.apache.struts.action.ActionMapping;
 import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.server.queryengine.MultimodelCategoryQueryPreprocessor;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.ExecuteQueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryUpdateBizLogic;
@@ -76,7 +78,14 @@ public class ExecuteQueryAction extends Action {
                 throw new Exception(errorMessage);
             } else {
                 Collection<ICab2bQuery> queries = new ArrayList<ICab2bQuery>();
-                queries.add(query);
+                if (query instanceof MultiModelCategoryQuery) {
+                    MultiModelCategoryQuery mmcQuery = (MultiModelCategoryQuery) query;
+                    new MultimodelCategoryQueryPreprocessor().preprocessQuery(mmcQuery);
+                    queries.addAll(mmcQuery.getSubQueries());
+                } else {
+                    queries.add(query);
+                }
+
                 GlobusCredential proxy = (GlobusCredential) session.getAttribute(Constants.GLOBUS_CREDENTIAL);
                 ExecuteQueryBizLogic executeQueryBizLogic =
                         new ExecuteQueryBizLogic(queries, proxy, user, modelGroupNames);

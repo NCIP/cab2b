@@ -96,14 +96,15 @@ public class ExecuteQueryBizLogic {
         if (keyword == null || keyword.equals("")) {
             searchQueryExecutor.execute(queries, proxy);
         } else {
-            searchQueryExecutor.execute(queries, keyword, proxy) ;
+            searchQueryExecutor.execute(queries, keyword, proxy);
         }
     }
 
     /**
      * @return the searchResults
      */
-    public final Map<ICab2bQuery, TransformedResultObjectWithContactInfo> getSearchResults(int transformationMaxLimit) {
+    public final Map<ICab2bQuery, TransformedResultObjectWithContactInfo> getSearchResults(
+                                                                                           int transformationMaxLimit) {
         return searchQueryExecutor.transformResult(transformationMaxLimit);
     }
 

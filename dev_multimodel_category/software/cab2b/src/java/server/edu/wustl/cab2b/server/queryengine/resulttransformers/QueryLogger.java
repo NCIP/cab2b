@@ -51,7 +51,7 @@ public class QueryLogger {
     }
 
     private boolean isLogEnabled() {
-        return logger.isDebugEnabled();
+        return logger.isInfoEnabled();
     }
 
     /**

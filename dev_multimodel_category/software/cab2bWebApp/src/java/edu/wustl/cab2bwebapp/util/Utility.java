@@ -16,6 +16,7 @@ import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.cache.EntityCache;
@@ -39,13 +40,30 @@ public class Utility {
      * @param query
      * @return EntityGroupInterfcae object of query
      */
-    public static EntityGroupInterface getEntityGroup(ICab2bQuery query) {
+    public static Collection<EntityGroupInterface> getEntityGroups(ICab2bQuery query) {
+        Collection<EntityGroupInterface> entityGroups = new HashSet<EntityGroupInterface>();
+
         EntityInterface outputEntity = query.getOutputEntity();
         if (edu.wustl.cab2b.common.util.Utility.isCategory(outputEntity)) {
-            CategoryOperations categoryOperations = new CategoryOperations();
-            Category category = categoryOperations.getCategoryByEntityId(outputEntity.getId());
-            outputEntity = EntityCache.getInstance().getEntityById(category.getRootClass().getDeEntityId());
+            entityGroups.add(getEntityGroupForCategory(outputEntity));
+        } else if (edu.wustl.cab2b.common.util.Utility.isMultiModelCategory(outputEntity)) {
+            MultiModelCategoryQuery mmcQuery = (MultiModelCategoryQuery) query;
+            Collection<ICab2bQuery> subQueries = mmcQuery.getSubQueries();
+            for (ICab2bQuery subQuery : subQueries) {
+                outputEntity = subQuery.getOutputEntity();
+                entityGroups.add(getEntityGroupForCategory(outputEntity));
+            }
+        } else {
+            entityGroups.add(edu.wustl.cab2b.common.util.Utility.getEntityGroup(outputEntity));
         }
+
+        return entityGroups;
+    }
+
+    private static EntityGroupInterface getEntityGroupForCategory(EntityInterface outputEntity) {
+        CategoryOperations categoryOperations = new CategoryOperations();
+        Category category = categoryOperations.getCategoryByEntityId(outputEntity.getId());
+        outputEntity = EntityCache.getInstance().getEntityById(category.getRootClass().getDeEntityId());
 
         return edu.wustl.cab2b.common.util.Utility.getEntityGroup(outputEntity);
     }

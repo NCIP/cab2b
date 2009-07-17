@@ -97,7 +97,7 @@ public class MultiModelCategoryOperations {
                 CategorialAttribute catAttrFromMap = categorialAttributeMap.get(categorialAttribute.getId());
 
                 categorialAttribute.setCategorialClass(catAttrFromMap.getCategorialClass());
-                categorialAttribute.setCategoryAttribute(catAttrFromMap.getSourceClassAttribute());
+                categorialAttribute.setCategoryAttribute(catAttrFromMap.getCategoryAttribute());
                 categorialAttribute.setDeCategoryAttributeId(catAttrFromMap.getDeCategoryAttributeId());
                 categorialAttribute.setDeSourceClassAttributeId(catAttrFromMap.getDeSourceClassAttributeId());
                 categorialAttribute.setSourceClassAttribute(catAttrFromMap.getSourceClassAttribute());
