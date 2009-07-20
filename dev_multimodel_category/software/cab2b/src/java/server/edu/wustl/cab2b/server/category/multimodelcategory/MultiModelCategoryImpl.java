@@ -165,4 +165,9 @@ public class MultiModelCategoryImpl implements MultiModelCategory {
         }
     }
 
+    @Override
+    public String toString() {
+        return entity.getName();
+    }
+
 }
