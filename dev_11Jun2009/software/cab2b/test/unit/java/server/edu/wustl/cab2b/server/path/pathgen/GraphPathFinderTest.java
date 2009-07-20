@@ -237,7 +237,28 @@ public class GraphPathFinderTest extends TestCase {
             }
         }
     }
-
+    /*
+    public void testPathReplicationForBug5483() {
+        // A->B and C->D and C is parent of B
+        //A=0, B=1, C=2,D=3
+        boolean[][] matrix = new boolean[4][4];
+        matrix[0][1] = true; 
+        matrix[2][3] = true;
+        Map<Integer, Set<Integer>> replicationNodes= new HashMap<Integer, Set<Integer>>();
+        Set<Integer> set = new HashSet<Integer>();
+        set.add(1);
+        replicationNodes.put(2, set);
+        Set<Path> paths = new GraphPathFinder().getAllPaths(matrix,replicationNodes,null );
+        System.out.println(paths);
+        Set<Path> expected = new HashSet<Path>();
+        expected.add(new Path(new Node(0), new Node(1)));
+        expected.add(new Path(new Node(2), new Node(3)));
+        expected.add(new Path(new Node(1), new Node(3)));
+        expected.add(new Path(new Node(0), new Node(3)));
+        assertEquals(expected, paths);
+        
+    }
+    */
     public void testPathReplicationParentSelfEdge() {
         // 0th is parent of 1st
         // 0th is parent of 2nd
