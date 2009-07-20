@@ -42,19 +42,28 @@ document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="bu
 
  function executeQuery()
 {
-	if(<%=queryId%> != null )
-		{  
+	if('<%=queryId%>' != "" && '<%=queryId%>' != null  )
+	{  
 		if(<%=isFirstRequest%>==true)
 		{		
-			processAJAXRequest('ExecuteQuery.do?queryId=' + ${sessionScope.queryId});
+			processAJAXRequest('ExecuteQuery.do?queryId=' + '<%=query_id%>');
 			getTransformedResults();	
+		}
+	}
+	else	// in case of KeyWord Query, failed hosting institutions div should be made visible
+	{
+		if(document.getElementById("failedservicesAJAX")!=null)
+		{
+		  document.getElementById('failedServicesDiv').style.display = 'block';
+		  document.getElementById("failedservicescount").innerHTML = document.getElementById("failedservicescountAJAX").innerHTML;    
+	      document.getElementById("failedservicespanelbody").innerHTML = document.getElementById("failedservicesAJAX").innerHTML;    
 		}
 	}
 }
 
  function getTransformedResults()
 {
-  var url = 'TransformQueryResultsAction.do?queryId=' + ${sessionScope.queryId};
+  var url = 'TransformQueryResultsAction.do?queryId=' + '<%=query_id%>';
   processAJAXRequest(url, 'centerpanelcontent', 1);
 
   if(document.getElementById("partialQueryResultsAJAX")!=null && document.getElementById("messages")==null)
