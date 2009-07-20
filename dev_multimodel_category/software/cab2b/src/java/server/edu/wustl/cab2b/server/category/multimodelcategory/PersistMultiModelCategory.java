@@ -52,10 +52,10 @@ public class PersistMultiModelCategory {
     private Map<EntityInterface, Collection<InputCategorialAttribute>> entityInputCatagorialAttributeMap;
 
     private Map<Long, CategorialAttribute> attributeIDToCatAttr;
+    
+    private Map<MultiModelAttribute, Collection<Long>> multiModelAttributeToSelectedAttributeIds;
 
     private Collection<MultiModelAttribute> multiModelAttributes;
-
-    private HashMap<MultiModelAttribute, Collection<Long>> mmaToSelectedAttributeIds;
 
     private static final Logger logger =
             edu.wustl.common.util.logger.Logger.getLogger(PersistMultiModelCategory.class);
@@ -93,7 +93,7 @@ public class PersistMultiModelCategory {
 
     private void addCategorialAttrsToMMA() {
         for (MultiModelAttribute multiModelAttr : multiModelAttributes) {
-            for (Long attribute : mmaToSelectedAttributeIds.get(multiModelAttr)) {
+            for (Long attribute : multiModelAttributeToSelectedAttributeIds.get(multiModelAttr)) {
                 multiModelAttr.addCategorialAttribute(attributeIDToCatAttr.get(attribute));
             }
         }
@@ -164,7 +164,7 @@ public class PersistMultiModelCategory {
 
         entityInputCatagorialAttributeMap = new HashMap<EntityInterface, Collection<InputCategorialAttribute>>();
         multiModelAttributes = new HashSet<MultiModelAttribute>();
-        mmaToSelectedAttributeIds = new HashMap<MultiModelAttribute, Collection<Long>>();
+        multiModelAttributeToSelectedAttributeIds = new HashMap<MultiModelAttribute, Collection<Long>>();
 
         Collection<MultiModelAttributeBean> mmaBeans = mmcBean.getMultiModelAttributes();
         for (MultiModelAttributeBean mmaBean : mmaBeans) {
@@ -197,7 +197,7 @@ public class PersistMultiModelCategory {
                 }
                 inputCatagorialAttributes.add(inputCatagorialAttribute);
             }
-            mmaToSelectedAttributeIds.put(multiModelAttribute, selectedAttributesIds);
+            multiModelAttributeToSelectedAttributeIds.put(multiModelAttribute, selectedAttributesIds);
             multiModelAttributes.add(multiModelAttribute);
         }
     }
