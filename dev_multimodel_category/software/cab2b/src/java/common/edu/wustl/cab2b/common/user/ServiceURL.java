@@ -212,7 +212,7 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
     
     /**
      * This method gets the Name of contact Person
-     * @hibernate.property column="CONTACT_NAME" type="String" length="1024" not-null="true"
+     * @hibernate.property column="CONTACT_NAME" type="string" length="1024" not-null="true"
      * @return contact name
      */
     public String getContactName() {
