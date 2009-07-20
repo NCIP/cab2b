@@ -116,5 +116,9 @@ public class MultiModelAttributeImpl implements MultiModelAttribute {
             }
         }
     }
-
+    
+    @Override
+    public String toString() {
+        return attribute.getName();
+    }
 }
