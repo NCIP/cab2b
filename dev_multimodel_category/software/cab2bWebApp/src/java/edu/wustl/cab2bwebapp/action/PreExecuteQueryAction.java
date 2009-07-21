@@ -20,7 +20,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
-import edu.wustl.cab2b.common.user.ServiceURLInterface;
+import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.TransformedResultObjectWithContactInfo;
@@ -89,17 +89,34 @@ public class PreExecuteQueryAction extends Action {
                 session.removeAttribute(Constants.IS_FIRST_REQUEST);
                 return mapping.findForward(actionForward);
             }
+
             //set query name in dropdown
             SavedQueryDVO savedQuery = new SavedQueryDVO();
-            savedQuery.setName(query.getName());
-            savedQuery.setResultCount(0);
-            queryList.add(savedQuery);
 
-            // to be saved in session
+            int queryNumber = 0;
+            if (query instanceof MultiModelCategoryQuery) {
+                Collection<ICab2bQuery> queries = ((MultiModelCategoryQuery) query).getSubQueries();
+                for (ICab2bQuery MMCQuery : queries) {
+                    savedQuery.setName(MMCQuery.getName());
+                    savedQuery.setResultCount(0);
+                    queryList.add(savedQuery);
+                    if(queryNumber==0){
+                        queryNumber =1;
+                        session.setAttribute(Constants.QUERY_ID, MMCQuery.getId());
+                    }
+                }
+            } else {
+                savedQuery.setName(query.getName());
+                savedQuery.setResultCount(0);
+                queryList.add(savedQuery);
+                session.setAttribute(Constants.QUERY_ID,queryId);
+            }
+            
+             // to be saved in session
             session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
             session.setAttribute(Constants.SAVED_QUERIES, queryList);
             // session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
-            session.setAttribute(Constants.QUERY_ID, queryId);
+            
             session.setAttribute(Constants.SERVICE_INSTANCES, urlsForSelectedQueries);
             session.setAttribute(Constants.CONDITION_LIST, conditionstr);
             session.setAttribute(Constants.MODEL_GROUPS, modelGroupNames);
