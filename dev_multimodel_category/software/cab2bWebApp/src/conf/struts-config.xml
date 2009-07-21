@@ -62,9 +62,15 @@
 			<forward name="searchresultspanel"
 				path="/pages/searchresultspanel.jsp" />
 		</action>
-		
+
+		<action path="/MultiModelCategoryQueryAction"
+			type="edu.wustl.cab2bwebapp.action.MultiModelCategoryExecuteQueryAction">
+		</action>
+
 		<action path="/PreExecuteQuery"
 			type="edu.wustl.cab2bwebapp.action.PreExecuteQueryAction">
+			<forward name="MultiModelCategory"
+				path="/MultiModelCategoryQueryAction.do" />
 		</action>
 
 		<action path="/TransformQueryResultsAction"
@@ -79,11 +85,10 @@
 			<forward name="searchresultspanel"
 				path="/pages/searchresultspanel.jsp" />
 		</action>
+
 		<action path="/ExportData"
-			type="edu.wustl.cab2bwebapp.action.ExportDataAction"
-			validate="false"
-			input="/pages/blank.jsp"
-			scope="request">
+			type="edu.wustl.cab2bwebapp.action.ExportDataAction" validate="false"
+			input="/pages/blank.jsp" scope="request">
 			<forward name="success" path="/pages/blank.jsp" />
 			<forward name="failure" path="/pages/blank.jsp" />
 		</action>
