@@ -1,4 +1,4 @@
-package edu.wustl.cab2b.common.multimodelcategory;
+package edu.wustl.cab2b.server.multimodelcategory;
 
 import java.util.Collection;
 import java.util.HashSet;

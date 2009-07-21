@@ -1,4 +1,4 @@
-package edu.wustl.cab2b.server.category.multimodelcategory;
+package edu.wustl.cab2b.server.multimodelcategory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,7 +11,6 @@ import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.multimodelcategory.MultiModelAttribute;
 import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategory;
-import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategoryImpl;
 import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.common.hibernate.HibernateDatabaseOperations;
 import edu.wustl.common.hibernate.HibernateUtil;

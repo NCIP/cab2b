@@ -13,8 +13,8 @@ import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategory;
 import edu.wustl.cab2b.server.category.CategoryCache;
 import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.cab2b.server.category.PopularCategoryOperations;
-import edu.wustl.cab2b.server.category.multimodelcategory.MultiModelCategoryOperations;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
+import edu.wustl.cab2b.server.multimodelcategory.MultiModelCategoryOperations;
 import edu.wustl.common.querysuite.metadata.category.Category;
 
 public class CategoryBean extends AbstractStatelessSessionBean implements CategoryBusinessInterface {

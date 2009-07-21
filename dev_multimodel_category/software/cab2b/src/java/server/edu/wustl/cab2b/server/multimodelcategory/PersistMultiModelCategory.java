@@ -1,4 +1,4 @@
-package edu.wustl.cab2b.server.category.multimodelcategory;
+package edu.wustl.cab2b.server.multimodelcategory;
 
 import static edu.wustl.cab2b.common.util.Constants.MMC_ENTITY_GROUP_NAME;
 import static edu.wustl.cab2b.common.util.Constants.MULTIMODELCATEGORY;
@@ -25,9 +25,7 @@ import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.multimodelcategory.MultiModelAttribute;
-import edu.wustl.cab2b.common.multimodelcategory.MultiModelAttributeImpl;
 import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategory;
-import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategoryImpl;
 import edu.wustl.cab2b.common.multimodelcategory.bean.MultiModelAttributeBean;
 import edu.wustl.cab2b.common.multimodelcategory.bean.MultiModelCategoryBean;
 import edu.wustl.cab2b.server.cache.EntityCache;

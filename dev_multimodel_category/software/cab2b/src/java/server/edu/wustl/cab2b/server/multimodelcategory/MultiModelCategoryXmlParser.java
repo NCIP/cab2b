@@ -1,4 +1,4 @@
-package edu.wustl.cab2b.server.category.multimodelcategory;
+package edu.wustl.cab2b.server.multimodelcategory;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -16,7 +16,7 @@ import edu.wustl.cab2b.common.queryengine.Cab2bQueryObjectFactory;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQueryImpl;
-import edu.wustl.cab2b.server.category.multimodelcategory.MultiModelCategoryOperations;
+import edu.wustl.cab2b.server.multimodelcategory.MultiModelCategoryOperations;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.queryobject.ICondition;
