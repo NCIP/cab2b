@@ -15,7 +15,6 @@ import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
 import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.cab2bwebapp.util.ServiceInstanceComparator;
-import edu.wustl.cab2bwebapp.util.Utility;
 import edu.wustl.common.util.logger.Logger;
 
 /**
