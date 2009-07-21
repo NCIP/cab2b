@@ -86,4 +86,7 @@ public class ParameterizedQueryInfoPanel extends Cab2bTitledPanel {
         return keywordSearch.isSelected();
     }
 
+    public void setKeywordSearchDisabled() {
+        keywordSearch.setVisible(false);
+    }
 }

@@ -320,6 +320,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     private class NextButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
             final IClientQueryBuilderInterface clientQueryBuilder = mainSearchPanel.getQueryObject();
+
             SearchNavigationPanel.messageLabel.setText("");
 
             if (searchCenterPanel.getSelectedCardIndex() == 0) {
@@ -354,6 +355,17 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 };
                 swingWorker.start();
             } else if (searchCenterPanel.getSelectedCardIndex() == 2) {
+
+                ICab2bQuery query = (ICab2bQuery) clientQueryBuilder.getQuery();
+                if (Utility.isMultiModelCategory(query.getOutputEntity())) {
+                    JOptionPane
+                        .showMessageDialog(
+                                           mainSearchPanel.getParent(),
+                                           "Currently there is no support for \n Multimodel Category Query execution in caB2B client. \nPlease use web appplication for \n executing Multimodel category query.",
+                                           "Cannot Proceed", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
                 CustomSwingWorker swingWorker =
                         new CustomSwingWorker(SearchNavigationPanel.this,
                                 SearchNavigationPanel.this.mainSearchPanel) {
