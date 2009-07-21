@@ -12,11 +12,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import edu.wustl.cab2bwebapp.constants.Constants;
 
 /**
- * This filter class is used for disabling page caching.
+ * This filter class is used for disabling page caching and checking proper authentications.
  * @author chetan_pundhir
  */
 
@@ -52,6 +51,7 @@ public class ApplicationFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
+        response.addHeader("Cache-Control", fc.getInitParameter("Cache-Control"));
         if (request.getSession().isNew()) {
             if (request.getHeader(Constants.AJAX_CALL) != null) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -71,6 +71,9 @@ public class ApplicationFilter implements Filter {
             } else {
                 filterChain.doFilter(request, response);
             }
+        } else if (request.getSession().getAttribute(Constants.USER_NAME) != null
+                && request.getRequestURL().indexOf("Login.do") != -1) {
+            request.getRequestDispatcher("/pages/home.jsp").forward(req, res);
         } else {
             filterChain.doFilter(request, response);
         }
