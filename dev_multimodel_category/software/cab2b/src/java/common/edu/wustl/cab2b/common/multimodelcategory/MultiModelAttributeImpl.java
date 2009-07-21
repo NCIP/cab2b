@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.cab2b.common.multimodelcategory.MultiModelAttribute;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 

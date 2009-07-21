@@ -6,6 +6,8 @@ import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
+import edu.wustl.cab2b.common.multimodelcategory.MultiModelAttribute;
+import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategory;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.category.CategoryCache;
 import edu.wustl.cab2b.server.modelgroup.ModelGroupOperations;
