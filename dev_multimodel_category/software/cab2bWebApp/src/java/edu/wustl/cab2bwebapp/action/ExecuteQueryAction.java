@@ -24,9 +24,7 @@ import org.apache.struts.action.ActionMapping;
 import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
-import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.common.user.UserInterface;
-import edu.wustl.cab2b.server.queryengine.MultimodelCategoryQueryPreprocessor;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.ExecuteQueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryUpdateBizLogic;
@@ -55,7 +53,6 @@ public class ExecuteQueryAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
-        String actionForward = null;
         try {
             HttpSession session = request.getSession();
             String[] modelGroupNames = (String[]) session.getAttribute(Constants.MODEL_GROUPS);
@@ -78,13 +75,7 @@ public class ExecuteQueryAction extends Action {
                 throw new Exception(errorMessage);
             } else {
                 Collection<ICab2bQuery> queries = new ArrayList<ICab2bQuery>();
-                if (query instanceof MultiModelCategoryQuery) {
-                    MultiModelCategoryQuery mmcQuery = (MultiModelCategoryQuery) query;
-                    new MultimodelCategoryQueryPreprocessor().preprocessQuery(mmcQuery);
-                    queries.addAll(mmcQuery.getSubQueries());
-                } else {
-                    queries.add(query);
-                }
+                queries.add(query);
 
                 GlobusCredential proxy = (GlobusCredential) session.getAttribute(Constants.GLOBUS_CREDENTIAL);
                 ExecuteQueryBizLogic executeQueryBizLogic =
@@ -99,19 +90,6 @@ public class ExecuteQueryAction extends Action {
             Writer writer = response.getWriter();
             response.setContentType("text/xml");
             writer.write("Exception");
-            //Exception occurred while executing your request.<br> Please contact administrator.
-
-            //            ActionErrors errors = new ActionErrors();
-            //            ActionMessage message =
-            //                    new ActionMessage(
-            //                            e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? "message.serviceinstancesnotconfigured"
-            //                                    : "fatal.executequery.failure", e.getMessage());
-            //            errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, message);
-            //            saveErrors(request, errors);
-            //            actionForward =
-            //                    e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? Constants.FORWARD_HOME
-            //                            : Constants.FORWARD_FAILURE;
-            //            return mapping.findForward(actionForward);
         }
         return null;
     }

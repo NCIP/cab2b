@@ -64,12 +64,21 @@ public class PreExecuteQueryAction extends Action {
             //Collection<ServiceURLInterface> failedURLS   = null;
             SavedQueryBizLogic savedQueryBizLogic =
                     (SavedQueryBizLogic) session.getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+
             Long queryId = Long.parseLong(request.getParameter(Constants.QUERY_ID));
             ICab2bQuery query = savedQueryBizLogic.getQueryById(queryId);
+
             String conditionstr = request.getParameter(Constants.CONDITION_LIST);
             String[] modelGroupNames = (String[]) request.getParameterValues(Constants.MODEL_GROUPS);
             List<String> urlsForSelectedQueries = query.getOutputUrls();
             urlsForSelectedQueries.add(0, Constants.ALL_HOSTING_INSTITUTIONS);
+
+            if (query instanceof MultiModelCategoryQuery) {
+                request.setAttribute(Constants.QUERY_ID, queryId);
+                session.setAttribute(Constants.CONDITION_LIST, conditionstr);
+                session.setAttribute(Constants.MODEL_GROUPS, modelGroupNames);
+                return mapping.findForward("MultiModelCategory");
+            }
 
             UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
             try {
@@ -92,31 +101,16 @@ public class PreExecuteQueryAction extends Action {
 
             //set query name in dropdown
             SavedQueryDVO savedQuery = new SavedQueryDVO();
+            savedQuery.setName(query.getName());
+            savedQuery.setResultCount(0);
+            queryList.add(savedQuery);
+            session.setAttribute(Constants.QUERY_ID, queryId);
 
-            int queryNumber = 0;
-            if (query instanceof MultiModelCategoryQuery) {
-                Collection<ICab2bQuery> queries = ((MultiModelCategoryQuery) query).getSubQueries();
-                for (ICab2bQuery MMCQuery : queries) {
-                    savedQuery.setName(MMCQuery.getName());
-                    savedQuery.setResultCount(0);
-                    queryList.add(savedQuery);
-                    if(queryNumber==0){
-                        queryNumber =1;
-                        session.setAttribute(Constants.QUERY_ID, MMCQuery.getId());
-                    }
-                }
-            } else {
-                savedQuery.setName(query.getName());
-                savedQuery.setResultCount(0);
-                queryList.add(savedQuery);
-                session.setAttribute(Constants.QUERY_ID,queryId);
-            }
-            
-             // to be saved in session
+            // to be saved in session
             session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
             session.setAttribute(Constants.SAVED_QUERIES, queryList);
             // session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
-            
+
             session.setAttribute(Constants.SERVICE_INSTANCES, urlsForSelectedQueries);
             session.setAttribute(Constants.CONDITION_LIST, conditionstr);
             session.setAttribute(Constants.MODEL_GROUPS, modelGroupNames);
