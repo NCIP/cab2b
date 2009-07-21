@@ -65,7 +65,7 @@ public class MultimodelCategoryQueryProcessor {
             queryBuilder.addRule(attributes, operators, values, categoryEntity);
 
             StringBuffer subQueryName =
-                    new StringBuffer(mmcQuery.getName()).append('_').append(entityGroup.getLongName());
+                    new StringBuffer(mmcQuery.getName()).append('_').append(entityGroup.getName());
             StringBuffer subQueryDesc = new StringBuffer("This is a sub-query of ").append(mmcQuery.getName());
 
             ICab2bQuery subQuery = (ICab2bQuery) queryBuilder.getQuery();
