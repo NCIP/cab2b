@@ -11,6 +11,7 @@ import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.multimodelcategory.MultiModelAttribute;
 import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategory;
+import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategoryImpl;
 import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.common.hibernate.HibernateDatabaseOperations;
 import edu.wustl.common.hibernate.HibernateUtil;
@@ -121,7 +122,7 @@ public class MultiModelCategoryOperations {
         }
 
         for (CategorialClass childCategorialClass : categorialClass.getChildren()) {
-            generateMap(childCategorialClass);
+            categorialAttributeMap.putAll(generateMap(childCategorialClass));
         }
 
         return categorialAttributeMap;
