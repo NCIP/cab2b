@@ -6,7 +6,7 @@
 
 <hibernate-mapping default-lazy="false">
 	<class
-		name="edu.wustl.cab2b.server.category.multimodelcategory.MultiModelCategoryImpl"
+		name="edu.wustl.cab2b.server.multimodelcategory.MultiModelCategoryImpl"
 		table="CAB2B_MMC" dynamic-update="false" dynamic-insert="false">
 		<cache usage="read-write" />
 
@@ -19,7 +19,7 @@
 			inverse="false" cascade="all-delete-orphan" sort="unsorted">
 			<key column="MMC_ID" not-null="true" />
 			<one-to-many
-				class="edu.wustl.cab2b.server.category.multimodelcategory.MultiModelAttributeImpl" />
+				class="edu.wustl.cab2b.server.multimodelcategory.MultiModelAttributeImpl" />
 		</set>
 
 		<property name="entityId" type="long"

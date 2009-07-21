@@ -6,7 +6,7 @@
 
 <hibernate-mapping default-lazy="false">
 	<class
-		name="edu.wustl.cab2b.server.category.multimodelcategory.MultiModelAttributeImpl"
+		name="edu.wustl.cab2b.server.multimodelcategory.MultiModelAttributeImpl"
 		table="CAB2B_MMA" dynamic-update="false" dynamic-insert="false">
 		<cache usage="read-write" />
 
