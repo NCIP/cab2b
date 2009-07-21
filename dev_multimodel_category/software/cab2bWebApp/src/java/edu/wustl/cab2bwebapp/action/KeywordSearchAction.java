@@ -24,7 +24,6 @@ import org.apache.struts.action.ActionMessage;
 import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
-import edu.wustl.cab2b.common.queryengine.QueryExecutorPropertes;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2bwebapp.actionform.KeywordSearchForm;
@@ -169,7 +168,10 @@ public class KeywordSearchAction extends Action {
                                     .getAttribute(Constants.SEARCH_RESULTS);
                         queries = searchResults.keySet();
                         for (ICab2bQuery queryObj : queries) {
-                            if (queryObj.getName().equals(selectedQueryName + "#")) {
+                            if (queryObj.isKeywordSearch() && queryObj.getName().equals(selectedQueryName + "#")) {
+                                selectedQueryObj = queryObj;
+                                break;
+                            } else if (queryObj.getName().equals(selectedQueryName)) {
                                 selectedQueryObj = queryObj;
                                 break;
                             }
