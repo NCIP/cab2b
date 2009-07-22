@@ -6,8 +6,10 @@ package edu.wustl.cab2bwebapp.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.globus.gsi.GlobusCredential;
@@ -23,7 +25,6 @@ import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.cab2b.server.modelgroup.ModelGroupOperations;
 import edu.wustl.cab2b.server.user.UserOperations;
-import edu.wustl.cab2bwebapp.bizlogic.ApplicationBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.ModelGroupBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.cab2bwebapp.constants.Constants;
@@ -146,30 +147,37 @@ public class Utility {
      * @return List<String>
      * @throws Exception
      */
-    public static List<String> getUserConfiguredUrls(UserInterface user, String[] modelGroupNames)
+    public static Map<EntityGroupInterface, List<String>> getUserConfiguredUrls(UserInterface user,
+                                                                                String[] modelGroupNames)
             throws Exception {
-        List<String> selectedUrls = new ArrayList<String>();
+        Map<EntityGroupInterface, List<String>> entityGroupVsSelectedUrls =
+                new HashMap<EntityGroupInterface, List<String>>();
+
         if (modelGroupNames != null && modelGroupNames.length != 0) {
             Collection<ServiceURLInterface> userConfiguredUrls = user.getServiceURLCollection();
 
-            List<ServiceURLInterface> userSelectedModelGroupInstances = new ArrayList<ServiceURLInterface>();
-
-            for (int i = 0; i < modelGroupNames.length; i++) {
-                userSelectedModelGroupInstances.addAll(new ApplicationBizLogic()
-                    .getApplicationInstances(user, modelGroupNames[i]));
-            }
-            userSelectedModelGroupInstances.retainAll(userConfiguredUrls);
-            for (ServiceURLInterface serviceUrl : userSelectedModelGroupInstances) {
-                selectedUrls.add(serviceUrl.getUrlLocation());
-            }
-            if (selectedUrls.size() == 0) {
+            if (userConfiguredUrls == null || userConfiguredUrls.size() == 0) {
                 if (!user.isAdmin()) {
-                    selectedUrls = getUserConfiguredUrls(new UserOperations().getAdmin(), modelGroupNames);
+                    entityGroupVsSelectedUrls =
+                            getUserConfiguredUrls(new UserOperations().getAdmin(), modelGroupNames);
                 } else {
                     throw new Exception(Constants.SERVICE_INSTANCES_NOT_CONFIGURED);
                 }
+            } else {
+                for (ServiceURLInterface serviceUrl : userConfiguredUrls) {
+                    String entityGroupName = serviceUrl.getEntityGroupName();
+
+                    EntityGroupInterface entityGroup =
+                            EntityCache.getInstance().getEntityGroupByName(entityGroupName);
+                    List<String> urls = entityGroupVsSelectedUrls.get(entityGroup);
+                    if (urls == null) {
+                        urls = new ArrayList<String>();
+                        entityGroupVsSelectedUrls.put(entityGroup, urls);
+                    }
+                    urls.add(serviceUrl.getUrlLocation());
+                }
             }
         }
-        return selectedUrls;
+        return entityGroupVsSelectedUrls;
     }
 }

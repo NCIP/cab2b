@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.globus.gsi.GlobusCredential;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.FailedTargetURL;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
@@ -79,9 +80,16 @@ public class ExecuteQueryBizLogic {
      */
     private void processResults(Collection<ICab2bQuery> queries, GlobusCredential proxy, String keyword,
                                 UserInterface user, String[] modelGroupNames) throws Exception {
-        List<String> urls = Utility.getUserConfiguredUrls(user, modelGroupNames);
+        Map<EntityGroupInterface, List<String>> entityGroupURLsMap =
+                Utility.getUserConfiguredUrls(user, modelGroupNames);
         for (ICab2bQuery regularQuery : queries) {
-            regularQuery.setOutputUrls(urls);
+            Collection<EntityGroupInterface> queryEntityGroups = Utility.getEntityGroups(regularQuery);
+            for (EntityGroupInterface queryEntityGroup : queryEntityGroups) {
+                List<String> urls = entityGroupURLsMap.get(queryEntityGroup);
+                if (urls != null && !urls.isEmpty()) {
+                    regularQuery.setOutputUrls(urls);
+                }
+            }
         }
         executeQuery(queries, proxy, keyword);
     }
