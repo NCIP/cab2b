@@ -12,6 +12,9 @@ public interface Constants {
     
     /** Constants for AJAX Call */
     public static final String AJAX_CALL = "Ajax-Call";
+    
+    /** Constants for invalidRequest */
+    public static final String INVALID_REQUEST = "invalidRequest";
         
     /** Constant for forward to infeasibleURLs */
     public static final String INFEASIBLE_URL = "infeasibleURL";
