@@ -197,9 +197,12 @@ public class KeywordSearchAction extends Action {
                                 .size() : 0);
                             session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
                             session.setAttribute(Constants.SEARCH_RESULTS_VIEW, ExecuteQueryBizLogic
-                                .getSearchResultsView(selectedQueryResult.getResultForAllUrls(),
-                                                      selectedQueryResult.getAllowedAttributes()));
+                                                 .getSearchResultsView(selectedQueryResult.getResultForAllUrls(), selectedQueryResult
+                                                     .getAllowedAttributes()));
+                        } else {
+                            session.setAttribute(Constants.SEARCH_RESULTS_VIEW,null);
                         }
+                        
                         actionForward = Constants.FORWARD_SEARCH_RESULTS_PANEL;
                     }
                 }

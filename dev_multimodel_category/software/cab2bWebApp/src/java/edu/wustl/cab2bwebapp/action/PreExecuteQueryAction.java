@@ -82,7 +82,7 @@ public class PreExecuteQueryAction extends Action {
 
             UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
             try {
-                List<String> urls = Utility.getUserConfiguredUrls(user, modelGroupNames);
+                Utility.getUserConfiguredUrls(user, modelGroupNames);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
                 ActionErrors errors = new ActionErrors();
