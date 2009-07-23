@@ -63,7 +63,7 @@ chk = false;
 						<bean:write name="serviceInstance" property="hostingCenter"/>
 					</DIV>
 					<DIV class="text" style="margin-left: 1.7em">
-						<bean:write name="serviceInstance" property="description"/>
+						<bean:write name="serviceInstance" property="description"/>(<bean:write name="serviceInstance" property="entityGroupName"/>)
 					</DIV>
 				</DIV>
 			</logic:iterate>			
