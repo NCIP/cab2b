@@ -103,7 +103,7 @@ public class MultimodelCategoryQueryProcessor {
     }
 
     private MultiModelCategory getMultiModelCategory(EntityInterface deEntity) {
-        return new MultiModelCategoryOperations().getMultiModelCategoryByEntityId(deEntity.getId());
+        return new MultiModelCategoryOperations().getMultiModelCategoryByEntity(deEntity);
     }
 
     private void segregatQueryMetadata(MultiModelCategoryQuery mmcQuery, MultiModelCategory multiModelCategory) {

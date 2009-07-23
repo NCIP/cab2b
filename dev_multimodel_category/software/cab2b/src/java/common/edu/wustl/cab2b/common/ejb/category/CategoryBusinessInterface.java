@@ -77,5 +77,5 @@ public interface CategoryBusinessInterface extends BusinessInterface {
     
     MultiModelCategory getMultiModelCategoryById(Long mmcID) throws RemoteException;
     
-    MultiModelCategory getMultiModelCategoryByEntityId(Long entityID) throws  RemoteException;
+    MultiModelCategory getMultiModelCategoryByEntity(EntityInterface entity) throws  RemoteException;
 }

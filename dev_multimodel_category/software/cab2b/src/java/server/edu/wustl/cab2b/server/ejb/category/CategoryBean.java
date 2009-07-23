@@ -101,7 +101,7 @@ public class CategoryBean extends AbstractStatelessSessionBean implements Catego
         return new MultiModelCategoryOperations().getMultiModelCategoryById(mmcID);
     }
     
-    public MultiModelCategory getMultiModelCategoryByEntityId(Long entityID) throws  RemoteException{
-        return new MultiModelCategoryOperations().getMultiModelCategoryByEntityId(entityID);
+    public MultiModelCategory getMultiModelCategoryByEntity(EntityInterface entity) throws  RemoteException{
+        return new MultiModelCategoryOperations().getMultiModelCategoryByEntity(entity);
     }
 }
