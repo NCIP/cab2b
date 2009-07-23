@@ -128,9 +128,12 @@ CREATE TABLE CAB2B_MMA (
   IS_VISIBLE bit(1) NOT NULL,
   ATTRIBUTE_ID bigint(30) NOT NULL,
   CATEGORIAL_ATTRIBUTE_IDS varchar(254) NOT NULL,
-  MMC_ID bigint(30) NOT NULL references CAB2B_MMC (ID),
+  MMC_ID bigint(30) NOT NULL,
   PRIMARY KEY (ID)
 );
+
+alter table CAB2B_MMC add index cab2b_mmc_fk (APP_GROUP_ID), add constraint cab2b_mmc_fk foreign key (APP_GROUP_ID) references CAB2B_MODEL_GROUP (MODEL_ID);
+alter table CAB2B_MMA add index cab2b_mma_fk (MMC_ID), add constraint cab2b_mma_fk foreign key (MMC_ID) references CAB2B_MMC (ID);
 
 alter table CAB2B_MMC_QUERY add index FK3CB8F28177CDE7A2 (IDENTIFIER), add constraint FK3CB8F28177CDE7A2 foreign key (IDENTIFIER) references CAB2B_QUERY (IDENTIFIER);
 alter table CAB2B_QUERY add index FKCC34AD9D9AAF43D5 (MMC_QUERY_ID), add constraint FKCC34AD9D9AAF43D5 foreign key (MMC_QUERY_ID) references CAB2B_MMC_QUERY (IDENTIFIER);
