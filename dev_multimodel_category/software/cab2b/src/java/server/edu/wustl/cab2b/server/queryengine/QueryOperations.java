@@ -129,7 +129,9 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         }
 
         new PopularCategoryOperations().setPopularity(query);
-        return new QueryExecutor(query, globusCredential).getCompleteResults();
+        QueryExecutor queryExecutor = new QueryExecutor(query, globusCredential);
+        queryExecutor.executeQuery();
+        return queryExecutor.getCompleteResults();
     }
 
     /**
@@ -195,7 +197,8 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
 
         Boolean isTaggedMMC = Boolean.FALSE;
         for (TaggedValueInterface taggedValue : outputEntity.getTaggedValueCollection()) {
-            if (MULTIMODELCATEGORY.equals(taggedValue.getKey()) && MULTIMODELCATEGORY.equals(taggedValue.getValue())) {
+            if (MULTIMODELCATEGORY.equals(taggedValue.getKey())
+                    && MULTIMODELCATEGORY.equals(taggedValue.getValue())) {
                 isTaggedMMC = Boolean.TRUE;
                 break;
             }
