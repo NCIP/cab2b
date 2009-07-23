@@ -601,7 +601,7 @@ public class CommonUtils {
                 CategoryBusinessInterface bus =
                         (CategoryBusinessInterface) CommonUtils
                             .getBusinessInterface(EjbNamesConstants.CATEGORY_BEAN, CategoryHomeInterface.class);
-                mmc = bus.getMultiModelCategoryByEntityId(entity.getId());
+                mmc = bus.getMultiModelCategoryByEntity(entity);
             } catch (Exception e) {
                 handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
             }
