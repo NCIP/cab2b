@@ -24,7 +24,6 @@ import edu.wustl.cab2b.common.multimodelcategory.bean.MultiModelCategoryBean;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.modelgroup.ModelGroupOperations;
 import edu.wustl.cab2b.server.path.PathFinder;
-import edu.wustl.cab2b.server.util.TestConnectionUtil;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 
 /**
@@ -38,7 +37,6 @@ public class MultiModelCategoryXmlParser {
 
     MultiModelCategoryXmlParser() {
         entityCache = EntityCache.getInstance();
-        PathFinder.getInstance(TestConnectionUtil.getConnection());
     }
 
     /**
@@ -49,19 +47,33 @@ public class MultiModelCategoryXmlParser {
      * @return The MultiModelCategory for given MultiModel Category XML.
      */
     public MultiModelCategoryBean getMultiModelCategory(String xmlFileName) {
+        File xmlFile = new File(xmlFileName);
+        if (xmlFileName == null || !xmlFile.exists()) {
+            throw new RuntimeException(xmlFileName + "doesn't exists.");
+        }
+
+        return getMultiModelCategory(xmlFile);
+    }
+
+    /**
+     * This method reads the XML file and creates an object of MultiModelCategory for the same.
+     * This method does not perform any check for "well-form" of the XML.
+     * It is callers responsibility to do that.
+     * @param xmlFileName The full path of Category XML file.
+     * @return The MultiModelCategory for given MultiModel Category XML.
+     */
+    public MultiModelCategoryBean getMultiModelCategory(File xmlFile) {
         Document document = null;
         try {
-            if (xmlFileName == null || !new File(xmlFileName).exists())
-                return null;
-            File file = new File(xmlFileName);
-            FileInputStream fileInputStream = new FileInputStream(file);
+            FileInputStream fileInputStream = new FileInputStream(xmlFile);
             try {
                 document = new SAXReader().read(fileInputStream);
             } catch (DocumentException e) {
-                throw new RuntimeException("Unable to parse multi model category XML file: " + xmlFileName, e);
+                throw new RuntimeException("Unable to parse multi model category XML file: " + xmlFile.getName(),
+                        e);
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Given MMC XML file not found: " + xmlFile.getName(), e);
         }
         return populateMultiModelCategory(document);
     }
@@ -81,7 +93,7 @@ public class MultiModelCategoryXmlParser {
         mmc.setDescription(mmcDescription);
 
         List<ModelGroupInterface> modelGroups = new ModelGroupOperations().getAllModelGroups();
-        String modelGroupName = mmcRoot.attribute("modelGroup").getValue();
+        String modelGroupName = mmcRoot.attribute("applicationGroup").getValue();
         for (ModelGroupInterface modelGroup : modelGroups) {
             if (modelGroup.getModelGroupName().equals(modelGroupName)) {
                 mmc.setApplicationGroup(modelGroup);
@@ -143,7 +155,7 @@ public class MultiModelCategoryXmlParser {
 
                 String attribName = mappedClassAttrib.attribute("name").getValue();
                 for (AttributeInterface ai : attribs) {
-                    if (attribName.equalsIgnoreCase(ai.getName())) {
+                    if (attribName.equals(ai.getName())) {
                         mappedClassAttributes.add(ai);
                         break;
                     }
@@ -162,10 +174,5 @@ public class MultiModelCategoryXmlParser {
             iPaths.add(iPath);
         }
         return iPaths;
-    }
-
-    public static void main(String args[]) {
-        MultiModelCategoryXmlParser parser = new MultiModelCategoryXmlParser();
-        parser.getMultiModelCategory(args[0]);
     }
 }
