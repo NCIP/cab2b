@@ -81,7 +81,7 @@ public class ApplicationFilter implements Filter {
             request.getRequestDispatcher("/pages/home.jsp").forward(req, res);
         }
 
-        if (request.getSession().isNew()) {
+        else if (request.getSession().isNew()) {
             if (request.getHeader(Constants.AJAX_CALL) != null) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 PrintWriter pw = response.getWriter();
