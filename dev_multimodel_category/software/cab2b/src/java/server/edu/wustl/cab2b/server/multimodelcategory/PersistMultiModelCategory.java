@@ -3,6 +3,7 @@ package edu.wustl.cab2b.server.multimodelcategory;
 import static edu.wustl.cab2b.common.util.Constants.MMC_ENTITY_GROUP_NAME;
 import static edu.wustl.cab2b.common.util.Constants.MULTIMODELCATEGORY;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -25,7 +26,9 @@ import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.multimodelcategory.MultiModelAttribute;
+import edu.wustl.cab2b.common.multimodelcategory.MultiModelAttributeImpl;
 import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategory;
+import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategoryImpl;
 import edu.wustl.cab2b.common.multimodelcategory.bean.MultiModelAttributeBean;
 import edu.wustl.cab2b.common.multimodelcategory.bean.MultiModelCategoryBean;
 import edu.wustl.cab2b.server.cache.EntityCache;
@@ -34,7 +37,9 @@ import edu.wustl.cab2b.server.category.InputCategorialAttribute;
 import edu.wustl.cab2b.server.category.InputCategorialClass;
 import edu.wustl.cab2b.server.category.InputCategory;
 import edu.wustl.cab2b.server.category.PersistCategory;
+import edu.wustl.cab2b.server.path.PathFinder;
 import edu.wustl.cab2b.server.util.DynamicExtensionUtility;
+import edu.wustl.cab2b.server.util.TestConnectionUtil;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
@@ -42,7 +47,8 @@ import edu.wustl.common.querysuite.metadata.path.IPath;
 
 public class PersistMultiModelCategory {
 
-    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(PersistMultiModelCategory.class);
+    private static final Logger logger =
+            edu.wustl.common.util.logger.Logger.getLogger(PersistMultiModelCategory.class);
 
     private MultiModelCategoryBean mmcBean;
 
@@ -181,13 +187,14 @@ public class PersistMultiModelCategory {
                 selectedAttributesIds.add(selectedAttribute.getId());
 
                 InputCategorialAttribute inputCatagorialAttribute = new InputCategorialAttribute();
-                StringBuffer displayName = new StringBuffer(mmaBean.getName()).append('_').append(
-                                                                                                  selectedAttribute.getName());
+                StringBuffer displayName =
+                        new StringBuffer(mmaBean.getName()).append('_').append(selectedAttribute.getName());
                 inputCatagorialAttribute.setDisplayName(displayName.toString());
                 inputCatagorialAttribute.setDynamicExtAttribute(selectedAttribute);
 
                 EntityInterface entity = selectedAttribute.getEntity();
-                Collection<InputCategorialAttribute> inputCatagorialAttributes = entityInputCatagorialAttributeMap.get(entity);
+                Collection<InputCategorialAttribute> inputCatagorialAttributes =
+                        entityInputCatagorialAttributeMap.get(entity);
                 if (inputCatagorialAttributes == null) {
                     inputCatagorialAttributes = new ArrayList<InputCategorialAttribute>();
                     entityInputCatagorialAttributeMap.put(entity, inputCatagorialAttributes);
@@ -235,8 +242,8 @@ public class PersistMultiModelCategory {
         for (EntityInterface rootEntity : entities) {
             //Create InputCategorialClass
             InputCategorialClass rootClass = new InputCategorialClass();
-            rootClass.setAttributeList(new ArrayList<InputCategorialAttribute>(
-                    entityInputCatagorialAttributeMap.get(rootEntity)));
+            rootClass.setAttributeList(new ArrayList<InputCategorialAttribute>(entityInputCatagorialAttributeMap
+                .get(rootEntity)));
             rootClass.setChildren(processOutPaths(rootEntity));
             rootClass.setPathFromParent(-1);
 
@@ -246,8 +253,8 @@ public class PersistMultiModelCategory {
             StringBuffer name = new StringBuffer(mmcBean.getName()).append('_').append(rootEntity.getName());
             inputCategory.setName(name.toString());
 
-            StringBuffer description = new StringBuffer(mmcBean.getDescription()).append('_').append(
-                                                                                                     rootEntity.getDescription());
+            StringBuffer description =
+                    new StringBuffer(mmcBean.getDescription()).append('_').append(rootEntity.getDescription());
             inputCategory.setDescription(description.toString());
 
             inputCategory.setRootCategorialClass(rootClass);
@@ -311,19 +318,23 @@ public class PersistMultiModelCategory {
         return targetEntities;
     }
 
-    public static void main(String[] args) {
-        MultiModelCategoryBean mmcBean = new MultiModelCategoryXmlParser().
-        getMultiModelCategory("E:/Workspace/cab2b_MMC/software/cab2b/src/conf/MMC2.xml");
-        MultiModelCategory mmCategory = new PersistMultiModelCategory().persistMMC(mmcBean);
+    public static void main(String[] args) throws IOException {
+        PathFinder.getInstance(TestConnectionUtil.getConnection());
+        MultiModelCategoryOperations operations = new MultiModelCategoryOperations();
 
         //save in database
-        MultiModelCategoryOperations operations = new MultiModelCategoryOperations();
-        operations.saveMultiModelCategory(mmCategory);
+        /*File mmcDir = new File("D:/mmc");
+        File[] mmcFiles = mmcDir.listFiles();
+        MultiModelCategoryXmlParser parser = new MultiModelCategoryXmlParser();
+        for (File mmcFile : mmcFiles) {
+            MultiModelCategoryBean mmcBean = parser.getMultiModelCategory(mmcFile);
+            MultiModelCategory mmCategory = new PersistMultiModelCategory().persistMMC(mmcBean);
+            operations.saveMultiModelCategory(mmCategory);
+        }*/
 
         //delete from database
-        //MultiModelCategory mmCategory = operations.getMultiModelCategoryById(1L);
-        //operations.deleteMultiModelCategory(mmCategory);
-
+        MultiModelCategory mmCategory = operations.getMultiModelCategoryById(1L);
         System.out.println(mmCategory.getEntity().getName());
+        //operations.deleteMultiModelCategory(mmCategory);
     }
 }

@@ -1,12 +1,11 @@
-package edu.wustl.cab2b.server.multimodelcategory;
+package edu.wustl.cab2b.common.multimodelcategory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.wustl.cab2b.common.multimodelcategory.MultiModelAttribute;
-import edu.wustl.cab2b.server.cache.EntityCache;
+import edu.wustl.cab2b.common.cache.AbstractEntityCache;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 
 /**
@@ -16,6 +15,7 @@ import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
  * @hibernate.cache usage="read-write"
  */
 public class MultiModelAttributeImpl implements MultiModelAttribute {
+    private static final long serialVersionUID = 1L;
 
     private Long id;
 
@@ -87,7 +87,7 @@ public class MultiModelAttributeImpl implements MultiModelAttribute {
     }
 
     private void setAttributeId(Long attributeId) {
-        this.attribute = EntityCache.getInstance().getAttributeById(attributeId);
+        this.attribute = AbstractEntityCache.getCache().getAttributeById(attributeId);
     }
 
     /**
@@ -116,7 +116,7 @@ public class MultiModelAttributeImpl implements MultiModelAttribute {
             }
         }
     }
-    
+
     @Override
     public String toString() {
         return attribute.getName();

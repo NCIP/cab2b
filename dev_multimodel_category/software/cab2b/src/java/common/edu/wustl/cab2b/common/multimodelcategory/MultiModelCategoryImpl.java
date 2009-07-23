@@ -1,4 +1,4 @@
-package edu.wustl.cab2b.server.multimodelcategory;
+package edu.wustl.cab2b.common.multimodelcategory;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -6,11 +6,6 @@ import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
-import edu.wustl.cab2b.common.multimodelcategory.MultiModelAttribute;
-import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategory;
-import edu.wustl.cab2b.server.cache.EntityCache;
-import edu.wustl.cab2b.server.category.CategoryCache;
-import edu.wustl.cab2b.server.modelgroup.ModelGroupOperations;
 import edu.wustl.common.querysuite.metadata.category.Category;
 
 /**
@@ -32,6 +27,8 @@ public class MultiModelCategoryImpl implements MultiModelCategory {
     private Collection<MultiModelAttribute> multiModelAttributes;
 
     private Collection<Category> categories;
+
+    private String categoryIds;
 
     public MultiModelCategoryImpl() {
         multiModelAttributes = new HashSet<MultiModelAttribute>();
@@ -60,6 +57,13 @@ public class MultiModelCategoryImpl implements MultiModelCategory {
         entity = Entity;
     }
 
+    /**
+     * @hibernate
+     * @hibernate.id name="applicationGroup" column="MODEL_GROUP_ID" type="long" length="30"
+     *               unsaved-value="null" generator-class="native"
+     * @hibernate.generator-param name="sequence" value="ID_SEQ"
+     * @return
+     */
     public ModelGroupInterface getApplicationGroup() {
         return applicationGroup;
     }
@@ -108,61 +112,31 @@ public class MultiModelCategoryImpl implements MultiModelCategory {
     }
 
     /**
-     * @hibernate.property  name="entityId" column="ENTITY_ID"
-     * type="long" length="30" not-null="false"
-     * @return
-     */
-    private Long getEntityId() {
-        return entity.getId();
-    }
-
-    private void setEntityId(Long entityId) {
-        this.entity = EntityCache.getInstance().getEntityById(entityId);
-    }
-
-    /**
-     * @hibernate.property name="applicationGroupId" column="APP_GROUP_ID" type="long" not-null="false"
-     * @return
-     */
-    private Long getApplicationGroupId() {
-        return applicationGroup.getModelGroupId();
-    }
-
-    private void setApplicationGroupId(Long applicationGroupId) {
-        applicationGroup = new ModelGroupOperations().getModelGroupById(applicationGroupId);
-    }
-
-    /**
      * @hibernate.property name="categoryIds" column="CATEGORY_IDS" type="string" length="254"  not-null="true"
      * @return
      */
-    private String getCategoryIds() {
-        StringBuffer categoryIds = new StringBuffer();
-        int index = categories.size();
-        for (Category category : categories) {
-            categoryIds.append(category.getId());
-            if (--index > 0) {
-                categoryIds.append('_');
+    public String getCategoryIds() {
+        if (!categories.isEmpty()) {
+            StringBuffer categoryIds = new StringBuffer();
+            int index = categories.size();
+            for (Category category : categories) {
+                categoryIds.append(category.getId());
+                if (--index > 0) {
+                    categoryIds.append('_');
+                }
             }
+            this.categoryIds = categoryIds.toString();
         }
 
-        return categoryIds.toString();
+        return this.categoryIds;
     }
 
     /**
      * Hibernate uses this method to set the category ids
      * @param categoryIDs
      */
-    private void setCategoryIds(String categoryIDs) {
-        if (categories.isEmpty()) {
-            String[] tokenIDs = categoryIDs.split("_");
-
-            CategoryCache categoryCache = CategoryCache.getInstance();
-            for (String categoryId : tokenIDs) {
-                Category category = categoryCache.getCategoryById(Long.parseLong(categoryId));
-                categories.add(category);
-            }
-        }
+    public void setCategoryIds(String categoryIDs) {
+        this.categoryIds = categoryIDs;
     }
 
     @Override

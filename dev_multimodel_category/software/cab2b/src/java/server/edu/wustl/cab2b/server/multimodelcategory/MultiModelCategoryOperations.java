@@ -7,10 +7,13 @@ import java.util.Map;
 
 import org.hibernate.Session;
 
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.multimodelcategory.MultiModelAttribute;
 import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategory;
+import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategoryImpl;
+import edu.wustl.cab2b.server.category.CategoryCache;
 import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.common.hibernate.HibernateDatabaseOperations;
 import edu.wustl.common.hibernate.HibernateUtil;
@@ -34,8 +37,9 @@ public class MultiModelCategoryOperations {
                     new HibernateDatabaseOperations<MultiModelCategory>(session);
             dbHandler.insertOrUpdate(mmCategory);
         } catch (Exception e) {
-            deleteSubCategories(mmCategory.getCategories());
-            throw new RuntimeException("Unable to save MultiModelCategory", e, ErrorCodeConstants.MULTIMODEL_CATEGORY_SAVE_ERROR);
+            //deleteSubCategories(mmCategory.getCategories());
+            throw new RuntimeException("Unable to save MultiModelCategory", e,
+                    ErrorCodeConstants.MULTIMODEL_CATEGORY_SAVE_ERROR);
         } finally {
             session.close();
         }
@@ -89,18 +93,29 @@ public class MultiModelCategoryOperations {
     }
 
     private void postRetrievalProcess(MultiModelCategoryImpl multiModelCategory) {
-        Map<Long, CategorialAttribute> categorialAttributeMap = generateMap(multiModelCategory);
+        Collection<Category> categories = multiModelCategory.getCategories();
+        if (categories.isEmpty()) {
+            String[] tokenIDs = multiModelCategory.getCategoryIds().split("_");
 
-        for (MultiModelAttribute multiModelAttribute : multiModelCategory.getMultiModelAttributes()) {
-            Collection<CategorialAttribute> categorialAttributes = multiModelAttribute.getCategorialAttributes();
-            for (CategorialAttribute categorialAttribute : categorialAttributes) {
-                CategorialAttribute catAttrFromMap = categorialAttributeMap.get(categorialAttribute.getId());
+            CategoryCache cache = CategoryCache.getInstance();
+            for (String categoryId : tokenIDs) {
+                Category category = cache.getCategoryById(Long.parseLong(categoryId));
+                categories.add(category);
+            }
 
-                categorialAttribute.setCategorialClass(catAttrFromMap.getCategorialClass());
-                categorialAttribute.setCategoryAttribute(catAttrFromMap.getCategoryAttribute());
-                categorialAttribute.setDeCategoryAttributeId(catAttrFromMap.getDeCategoryAttributeId());
-                categorialAttribute.setDeSourceClassAttributeId(catAttrFromMap.getDeSourceClassAttributeId());
-                categorialAttribute.setSourceClassAttribute(catAttrFromMap.getSourceClassAttribute());
+            Map<Long, CategorialAttribute> categorialAttributeMap = generateMap(multiModelCategory);
+            for (MultiModelAttribute multiModelAttribute : multiModelCategory.getMultiModelAttributes()) {
+                Collection<CategorialAttribute> categorialAttributes =
+                        multiModelAttribute.getCategorialAttributes();
+                for (CategorialAttribute categorialAttribute : categorialAttributes) {
+                    CategorialAttribute catAttrFromMap = categorialAttributeMap.get(categorialAttribute.getId());
+
+                    categorialAttribute.setCategorialClass(catAttrFromMap.getCategorialClass());
+                    categorialAttribute.setCategoryAttribute(catAttrFromMap.getCategoryAttribute());
+                    categorialAttribute.setDeCategoryAttributeId(catAttrFromMap.getDeCategoryAttributeId());
+                    categorialAttribute.setDeSourceClassAttributeId(catAttrFromMap.getDeSourceClassAttributeId());
+                    categorialAttribute.setSourceClassAttribute(catAttrFromMap.getSourceClassAttribute());
+                }
             }
         }
     }
@@ -180,21 +195,22 @@ public class MultiModelCategoryOperations {
      * @param entityID
      * @return
      */
-    public MultiModelCategory getMultiModelCategoryByEntityId(Long entityID) {
+    public MultiModelCategory getMultiModelCategoryByEntity(EntityInterface entity) {
         List<MultiModelCategory> mmCategories = null;
         Session session = null;
         try {
             session = HibernateUtil.newSession();
             HibernateDatabaseOperations<MultiModelCategory> dbHandler =
                     new HibernateDatabaseOperations<MultiModelCategory>(session);
-            mmCategories = dbHandler.retrieve(MultiModelCategoryImpl.class.getName(), "entityId", entityID);
+            mmCategories = dbHandler.retrieve(MultiModelCategoryImpl.class.getName(), "entity", entity);
         } finally {
             session.close();
         }
 
         MultiModelCategory multiModelCategory = getMultiModelCategory(mmCategories);
-        postRetrievalProcess((MultiModelCategoryImpl) multiModelCategory);
-
+        if (multiModelCategory != null) {
+            postRetrievalProcess((MultiModelCategoryImpl) multiModelCategory);
+        }
         return multiModelCategory;
     }
 

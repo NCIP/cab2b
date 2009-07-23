@@ -6,7 +6,7 @@
 
 <hibernate-mapping default-lazy="false">
 	<class
-		name="edu.wustl.cab2b.server.multimodelcategory.MultiModelAttributeImpl"
+		name="edu.wustl.cab2b.common.multimodelcategory.MultiModelAttributeImpl"
 		table="CAB2B_MMA" dynamic-update="false" dynamic-insert="false">
 		<cache usage="read-write" />
 
@@ -17,9 +17,14 @@
 
 		<property name="visible" type="boolean" update="true"
 			insert="true" column="IS_VISIBLE" not-null="false" />
-
-		<property name="attributeId" type="long" update="true"
-			insert="true" column="ATTRIBUTE_ID" length="30" />
+			
+		<property name="attribute" column="ATTRIBUTE_ID" not-null="true">
+			<type name="edu.wustl.common.hibernate.CanonicalFormType">
+				<param name="canonical-form-provider">
+					edu.wustl.metadata.hibernate.AttributeCanonicalFormProvider
+				</param>
+			</type>
+		</property>
 
 		<property name="categorialAttributeIds" type="string"
 			update="true" insert="true" column="CATEGORIAL_ATTRIBUTE_IDS"
