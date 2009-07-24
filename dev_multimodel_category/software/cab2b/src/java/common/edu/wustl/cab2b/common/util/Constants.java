@@ -6,6 +6,10 @@ import java.awt.Dimension;
  * Constants class for the common
  * @author gautam_shetty
  */
+/**
+ * @author gaurav_mehta
+ *
+ */
 public interface Constants {
     
     /** Metadata search configuration parameter : Used when a class name is to be included in search*/
@@ -62,6 +66,11 @@ public interface Constants {
      * Name of Data List Entity Group to exclude from Metadata search.
      */
     public static final String DATALIST_ENTITY_GROUP_NAME = "DataListEntityGroup";
+    
+    /**
+     * Name of MultiModel Category Entity Group to exclude from Metadata search
+     */
+    public static final String MULTIMODELCATEGORY_ENTITY_GROUP = "MMCEntityGroup";
 
     /**
      * tagged key constant to identify a category entity.
