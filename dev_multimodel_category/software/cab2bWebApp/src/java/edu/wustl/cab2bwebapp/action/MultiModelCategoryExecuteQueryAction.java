@@ -21,6 +21,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
@@ -34,6 +35,7 @@ import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryUpdateBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.TransformedResultObjectWithContactInfo;
 import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.cab2bwebapp.dvo.SavedQueryDVO;
+import edu.wustl.cab2bwebapp.util.Utility;
 
 public class MultiModelCategoryExecuteQueryAction extends Action {
 
@@ -57,6 +59,23 @@ public class MultiModelCategoryExecuteQueryAction extends Action {
             String conditionstr = (String) session.getAttribute(Constants.CONDITION_LIST);
             if (conditionstr == null) {
                 conditionstr = "";
+            }
+            
+            try {
+                Utility.getUserConfiguredUrls(user, modelGroupNames);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+                ActionErrors errors = new ActionErrors();
+                ActionMessage message =
+                        new ActionMessage(
+                                e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? "message.serviceinstancesnotconfigured"
+                                        : "fatal.executequery.failure", e.getMessage());
+                errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, message);
+                saveErrors(request, errors);
+                actionForward =
+                        e.getMessage().equals(Constants.SERVICE_INSTANCES_NOT_CONFIGURED) ? Constants.FORWARD_HOME
+                                : Constants.FORWARD_FAILURE;
+                return mapping.findForward(actionForward);
             }
 
             //Update the IQuery according to parameterized conditions.
