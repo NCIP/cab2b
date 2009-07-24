@@ -23,7 +23,7 @@
 	alert('<bean:message key="alert.sessiontimeout"/>');
   </logic:present>
   <logic:present name="invalidRequest">
-	alert('<bean:message key="alert.invalidRequest"/>');
+	alert('<bean:message key="alert.invalidrequest"/>');
   </logic:present>
   <logic:notPresent name="modelGroupDVOList">
 	document.forms[0].action = 'Home.do';
