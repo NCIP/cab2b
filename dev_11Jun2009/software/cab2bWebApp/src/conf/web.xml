@@ -3,7 +3,7 @@
 	xmlns="http://java.sun.com/xml/ns/j2ee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-	<display-name>caBench to Bedside Web Client v1.0</display-name>
+	<display-name>caBench to Bedside Web Application</display-name>
 
 	<!-- Welcome File List -->
 	<welcome-file-list>
@@ -38,11 +38,7 @@
 	<!-- Filters Mapping -->
 	<filter-mapping>
 		<filter-name>ApplicationFilter</filter-name>
-		<url-pattern>*.do</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>ApplicationFilter</filter-name>
-		<url-pattern>*.jsp</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>ResponseOverrideFilter</filter-name>
