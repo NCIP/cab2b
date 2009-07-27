@@ -43,14 +43,14 @@
 						<bean:message key="label.username"/>
 					</DIV>
 					<DIV style="width:60%;float:right">
-						<html:text styleClass="textbox" property="userName"/>
+						<input type="textbox" class="textbox" name="userName" value="${loginForm.userName}" autocomplete="off"/>
 					</DIV>
 					<BR/>
 					<DIV class="label">
 						<bean:message key="label.password"/>
 					</DIV>
 					<DIV style="width:60%;float:right">
-						<html:password styleClass="textbox" property="password"/>
+						<input type="password" class="textbox" name="password" value="${loginForm.password}" autocomplete="off"/>
 					</DIV>
 					<BR style="line-height: 2em"/>
 					<DIV style="text-align:center">
