@@ -82,6 +82,34 @@ img.bullet {
 	line-height: 1.8em;
 }
 
+.titlebarfooter {
+	background-image: url('../images/title_middle.gif');
+	background-repeat: repeat-x;
+	width: 100%;
+	height: 25;
+	line-height: 1.8em;
+}
+
+.textfooter {
+	font-size: 12px;
+	font-weight: bold;
+	color: #145575;
+	font-family:Arial, Helvetica, sans-serif;
+	padding: 5px;
+	border: 1px;
+	vertical-align:top;
+}
+
+.exportlinks {
+	background-color: #ddd;
+	border: 1px solid #ccc;
+	padding: 2px 4px 2px 4px;
+	margin: 2px 0px 10px 4px;
+	width: 97%;
+	font-size: 0.85em;
+	font-family: sans-serif, Arial, Helvetica;
+}
+
 .titlebarleftcurve {
 	background: url('../images/title_leftcurve.gif') no-repeat;
 }
@@ -133,6 +161,15 @@ img.bullet {
 
 .label {
 	float: left;
+	font-size: 0.85em;
+	color: #000000;
+	font-family: Arial;
+	padding: 0.2em 10 0 0;
+}
+
+.label_bold {
+	float: left;
+	font-weight: bold;
 	font-size: 0.85em;
 	color: #000000;
 	font-family: Arial;
