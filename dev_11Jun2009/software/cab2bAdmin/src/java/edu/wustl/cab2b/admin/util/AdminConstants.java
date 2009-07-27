@@ -5,7 +5,10 @@ package edu.wustl.cab2b.admin.util;
  */
 public interface AdminConstants {
 
-	/** Constant for Load model Status */
+    /** Constant for Invalid Request */
+    public static final String INVALID_REQUEST = "invalidRequest";	
+    
+    /** Constant for Load model Status */
 	static final String LOAD_MODEL_STATUS_ACTION = "status";
 
 	/** Constant for Load Model Details */
