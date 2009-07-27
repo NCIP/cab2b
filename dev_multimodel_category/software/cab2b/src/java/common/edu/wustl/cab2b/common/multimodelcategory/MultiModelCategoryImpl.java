@@ -2,7 +2,6 @@ package edu.wustl.cab2b.common.multimodelcategory;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
@@ -58,10 +57,6 @@ public class MultiModelCategoryImpl implements MultiModelCategory {
     }
 
     /**
-     * @hibernate
-     * @hibernate.id name="applicationGroup" column="MODEL_GROUP_ID" type="long" length="30"
-     *               unsaved-value="null" generator-class="native"
-     * @hibernate.generator-param name="sequence" value="ID_SEQ"
      * @return
      */
     public ModelGroupInterface getApplicationGroup() {
@@ -74,10 +69,6 @@ public class MultiModelCategoryImpl implements MultiModelCategory {
 
     public void addMultiModelAttribute(MultiModelAttribute multiModelAttribute) {
         multiModelAttributes.add(multiModelAttribute);
-    }
-
-    public MultiModelAttribute getMultiModelAttribute(int index) {
-        return ((List<MultiModelAttribute>) multiModelAttributes).get(index);
     }
 
     /**
@@ -97,10 +88,6 @@ public class MultiModelCategoryImpl implements MultiModelCategory {
 
     public void addCategory(Category category) {
         categories.add(category);
-    }
-
-    public Category getCategory(int index) {
-        return ((List<Category>) categories).get(index);
     }
 
     public Collection<Category> getCategories() {

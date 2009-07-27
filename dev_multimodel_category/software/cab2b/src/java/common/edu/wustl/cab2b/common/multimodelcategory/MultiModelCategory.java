@@ -26,8 +26,6 @@ public interface MultiModelCategory extends Serializable {
 
     void setMultiModelAttributes(Collection<MultiModelAttribute> multiModelAttributes);
 
-    MultiModelAttribute getMultiModelAttribute(int index);
-
     void addMultiModelAttribute(MultiModelAttribute multiModelAttribute);
 
     ModelGroupInterface getApplicationGroup();
@@ -35,8 +33,6 @@ public interface MultiModelCategory extends Serializable {
     void setApplicationGroup(ModelGroupInterface applicationGroup);
 
     Collection<Category> getCategories();
-
-    Category getCategory(int index);
 
     void setCategories(Collection<Category> categories);
 

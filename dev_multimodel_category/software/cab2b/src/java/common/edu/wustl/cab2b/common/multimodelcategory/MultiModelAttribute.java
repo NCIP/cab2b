@@ -25,8 +25,6 @@ public interface MultiModelAttribute extends Serializable {
 
     void setCategorialAttributes(Collection<CategorialAttribute> categorialAttributes);
 
-    CategorialAttribute getCategorialAttribute(int index);
-
     void addCategorialAttribute(CategorialAttribute categorialAttribute);
 
     Boolean isVisible();

@@ -1,11 +1,9 @@
 package edu.wustl.cab2b.common.multimodelcategory;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.wustl.cab2b.common.cache.AbstractEntityCache;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 
 /**
@@ -26,7 +24,7 @@ public class MultiModelAttributeImpl implements MultiModelAttribute {
     private Boolean isVisible;
 
     public MultiModelAttributeImpl() {
-        selectedAttributes = new ArrayList<CategorialAttribute>();
+        selectedAttributes = new HashSet<CategorialAttribute>();
     }
 
     /**
@@ -54,10 +52,6 @@ public class MultiModelAttributeImpl implements MultiModelAttribute {
         selectedAttributes.add(categorialAttribute);
     }
 
-    public CategorialAttribute getCategorialAttribute(int index) {
-        return ((List<CategorialAttribute>) selectedAttributes).get(index);
-    }
-
     public Collection<CategorialAttribute> getCategorialAttributes() {
         return selectedAttributes;
     }
@@ -76,18 +70,6 @@ public class MultiModelAttributeImpl implements MultiModelAttribute {
 
     public void setVisible(Boolean isVisible) {
         this.isVisible = isVisible;
-    }
-
-    /**
-     * @hibernate.property  name="attributeId" column="MMA_ATTRIBUTE_ID" type="long" length="30" unsaved-value="null"
-     * @return
-     */
-    private Long getAttributeId() {
-        return attribute.getId();
-    }
-
-    private void setAttributeId(Long attributeId) {
-        this.attribute = AbstractEntityCache.getCache().getAttributeById(attributeId);
     }
 
     /**
