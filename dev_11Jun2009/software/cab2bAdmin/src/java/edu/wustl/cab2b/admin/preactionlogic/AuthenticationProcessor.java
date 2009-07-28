@@ -1,4 +1,4 @@
-package edu.wustl.cab2b.admin.preactionlogic; 
+package edu.wustl.cab2b.admin.preactionlogic;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -63,7 +63,7 @@ public class AuthenticationProcessor implements Filter {
                 String parameterVal = request.getParameter((String) e.nextElement());
                 if (XSSVulnerableDetector.isXssVulnerable(parameterVal)) {
                     request.setAttribute(AdminConstants.INVALID_REQUEST, AdminConstants.INVALID_REQUEST);
-                    request.getRequestDispatcher("/pages/default.jsp").forward(req, res);
+                    request.getRequestDispatcher("/jsp/default.jsp").forward(req, res);
                     return;
                 }
             }
