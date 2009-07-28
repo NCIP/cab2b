@@ -2,11 +2,11 @@
 <DIV id="footer">
 	<div id="footernavwrapper" >
 		<div id="footernav" class="titlebarfooter" align="center" cellspacing="6" cellpadding="6">
-			|<a class="textfooter" href="mailto:cab2b@bmi.wustl.edu">Contact Us</a>
-			|<a class="textfooter" href="http://www.nih.gov/about/privacy.htm" target="_blank">Privacy Notice</a>
-			|<a class="textfooter" href="http://www.nih.gov/about/disclaim.htm" target="_blank">Disclaimer</a>
-			|<!--<a class="textfooter" href="http://www3.cancer.gov/accessibility/nci508.htm" target="_blank">Accessibility</a>
-			|<a class="textfooter" href="http://nagarajanlab.wustl.edu/bugs/enter_bug.cgi?product=caGridClient" target="_blank" >caB2B Support</a>-->
+			|<a class="textfooter" href="mailto:cab2bsupport@bmi.wustl.edu">Contact Us</a>
+			|<a class="textfooter" href="http://cagrid-portal.nci.nih.gov/web/guest/privacy" target="_blank">Privacy Notice</a>
+			|<a class="textfooter" href="http://cagrid-portal.nci.nih.gov/web/guest/disclaimer" target="_blank">Disclaimer</a>
+			|<a class="textfooter" href="http://www3.cancer.gov/accessibility/nci508.htm" target="_blank">Accessibility</a>
+			|<!--<a class="textfooter" href="http://nagarajanlab.wustl.edu/bugs/enter_bug.cgi?product=caGridClient" target="_blank" >caB2B Support</a>-->
 		</div>
 	</div>
 	<A href="http://www.cancer.gov/" target="_blank"><IMG alt="<bean:message key="img.alt.nci"/>" hspace="5" src="images/nci.gif" border="0" align="absmiddle"></A>
