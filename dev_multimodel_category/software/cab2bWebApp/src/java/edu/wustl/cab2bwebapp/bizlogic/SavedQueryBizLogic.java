@@ -52,6 +52,12 @@ public class SavedQueryBizLogic {
         regularQueries.addAll(queryOperations.getRegularQueriesByUserName(defaultUser));
 
         for (ICab2bQuery query : regularQueries) {
+            query.getOutputUrls().clear();
+            idVsQuery.put(query.getId(), query);
+        }
+        
+        for (ICab2bQuery query : keywordQueries) {
+            query.getOutputUrls().clear();
             idVsQuery.put(query.getId(), query);
         }
     }
