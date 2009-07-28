@@ -5,6 +5,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <%
   String queryId = request.getParameter("queryId");
+  Long query_Id_Session = (Long) session.getAttribute("queryId");
+  
   Long query_id = null;
   Boolean isFirstRequest = null;
   if(queryId != null &&  !queryId.equals(""))
@@ -41,20 +43,29 @@ document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="bu
 }
 
  function executeQuery()
-{
-	if(<%=queryId%> != null )
-		{  
+{	//for keyword: queryId is "" & query_Id_Session is null,  for formbased: queryId and query_Id_Session is not null, for MMC query: queryId is not null and query_Id_Session is null.
+	if('<%=queryId%>' != "" && '<%=queryId%>' != null  && <%=query_Id_Session%> != null)	// form based query
+	{  
 		if(<%=isFirstRequest%>==true)
 		{		
-			processAJAXRequest('ExecuteQuery.do?queryId=' + ${sessionScope.queryId});
+			processAJAXRequest('ExecuteQuery.do?queryId=' + '<%=query_id%>');
 			getTransformedResults();	
+		}
+	}
+	else	//  KeyWord Query or MMC query case.
+	{
+		if(document.getElementById("failedservicesAJAX")!=null)
+		{
+		  document.getElementById('failedServicesDiv').style.display = 'block';
+		  document.getElementById("failedservicescount").innerHTML = document.getElementById("failedservicescountAJAX").innerHTML;    
+	      document.getElementById("failedservicespanelbody").innerHTML = document.getElementById("failedservicesAJAX").innerHTML;    
 		}
 	}
 }
 
  function getTransformedResults()
 {
-  var url = 'TransformQueryResultsAction.do?queryId=' + ${sessionScope.queryId};
+  var url = 'TransformQueryResultsAction.do?queryId=' + '<%=query_id%>';
   processAJAXRequest(url, 'centerpanelcontent', 1);
 
   if(document.getElementById("partialQueryResultsAJAX")!=null && document.getElementById("messages")==null)
