@@ -64,7 +64,7 @@ public class TransformQueryResultsAction extends Action {
                 writer = response.getWriter();
                 response.setContentType("text/xml");
                 String processingImage =
-                        "<TABLE style='width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'></TD></TR></TABLE>";
+                        "<TABLE style='width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'/></TD></TR></TABLE>";
                 writer.write(processingImage);
                 return null;
             }
