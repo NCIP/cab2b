@@ -1,6 +1,5 @@
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,7 +22,8 @@ import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
  */
 public class TransformedResultObjectWithContactInfo {
 
-    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(TransformedResultObjectWithContactInfo.class);
+    private static final Logger logger =
+            edu.wustl.common.util.logger.Logger.getLogger(TransformedResultObjectWithContactInfo.class);
 
     /**
      * Map for url to transformed query result.
@@ -54,13 +54,7 @@ public class TransformedResultObjectWithContactInfo {
     public void addUrlAndResult(String url, List<Map<AttributeInterface, Object>> result) {
         //logger.info("Inside addUrlAndResult");
         //Retrive ServiceURLInterface object from URL
-        ServiceURLInterface serviceUrlMetadata = null;
-        try {
-            serviceUrlMetadata = new ServiceURLOperations().getServiceURLbyURLLocation(url);
-        } catch (RemoteException e1) {
-            logger.info(e1.getMessage(), e1);
-            throw new RuntimeException(e1.getMessage(), e1);
-        }
+        ServiceURLInterface serviceUrlMetadata = new ServiceURLOperations().getServiceURLbyURLLocation(url);
 
         boolean addAttributesFlag = true;
         AttributeInterface attributeHC = null;
@@ -105,8 +99,8 @@ public class TransformedResultObjectWithContactInfo {
                 allowedAttributes.add(attributeHI);
             }
         }
-		//for failed URLs and even infeasible URL's, new ArrayList will be created
-        if(result == null) {
+        //for failed URLs and even infeasible URL's, new ArrayList will be created
+        if (result == null) {
             result = new ArrayList<Map<AttributeInterface, Object>>(1);
         }
         //Adding service meta data inside result map
@@ -180,8 +174,7 @@ public class TransformedResultObjectWithContactInfo {
         this.allowedAttributes = allowedAttributes;
     }
 
-    public void addInFeasibleUrls(String inFeasibleUrl)
-    {
+    public void addInFeasibleUrls(String inFeasibleUrl) {
         this.getInFeasibleUrl().add(inFeasibleUrl);
     }
 

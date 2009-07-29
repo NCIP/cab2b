@@ -63,7 +63,7 @@ public class ServiceURLOperations {
      * @return Names of all the Entity Group present in the database
      * @throws RemoteException
      */
-    public Collection<String> getAllApplicationNames() throws RemoteException {
+    public Collection<String> getAllApplicationNames() {
         Collection<ServiceURLInterface> serviceList = getAllServiceURLs();
         Collection<String> applicationNames = new HashSet<String>();
         for (ServiceURLInterface serviceURL : serviceList) {
@@ -79,7 +79,7 @@ public class ServiceURLOperations {
      * @return all the service URL present in the database
      * @throws RemoteException
      */
-    public Collection<ServiceURLInterface> getAllServiceURLs() throws RemoteException {
+    public Collection<ServiceURLInterface> getAllServiceURLs() {
         return urlVsMetadata.values();
     }
 
@@ -89,7 +89,7 @@ public class ServiceURLOperations {
      * @return
      * @throws RemoteException
      */
-    public ServiceURLInterface getServiceURLbyURLLocation(String serviceURLLocation) throws RemoteException {
+    public ServiceURLInterface getServiceURLbyURLLocation(String serviceURLLocation) {
         return urlVsMetadata.get(serviceURLLocation);
     }
 

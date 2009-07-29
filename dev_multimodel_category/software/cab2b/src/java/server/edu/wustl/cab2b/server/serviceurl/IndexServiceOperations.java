@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.common.authentication.util.CagridPropertyLoader;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.user.ServiceURL;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.util.ServiceURLUtility;
@@ -35,12 +36,6 @@ public class IndexServiceOperations {
     /** It allows only one time entry into the thread for refreshing ServiceURL database */
     private static AtomicBoolean isStarted = new AtomicBoolean(false);
 
-    /**
-     * Private Constructor of the class
-     */
-    private IndexServiceOperations() {
-    }
-
     /** As of now this method is invoked only by the context listeners of caB2B-Admin ,caB2BLite
      * and first EJB call of caB2B. This will be changed once all three are merged into one common war
      *  It starts the thread for refreshing the ServiceURL database.
@@ -51,15 +46,10 @@ public class IndexServiceOperations {
             TimerTask timerTask = new TimerTask() {
                 public void run() {
                     logger.info("Refreshing Database Started..........");
-                    Collection<EntityGroupInterface> entityCollection = new ServiceURLUtility().getMetadataEntityGroups(EntityCache.getInstance());
+                    Collection<EntityGroupInterface> entityCollection =
+                            new ServiceURLUtility().getMetadataEntityGroups(EntityCache.getInstance());
                     for (EntityGroupInterface entityGroup : entityCollection) {
-                        try {
-                            refreshServiceURLsMetadata(entityGroup.getLongName(), entityGroup.getVersion());
-                        } catch (MalformedURIException e) {
-                            logger.error(e.getMessage(), e);
-                        } catch (RemoteException e) {
-                            logger.error(e.getMessage(), e);
-                        }
+                        refreshServiceURLsMetadata(entityGroup.getLongName(), entityGroup.getVersion());
                     }
                     logger.info("Database has been refreshed and is in Sync with Index Service");
                 }
@@ -75,17 +65,16 @@ public class IndexServiceOperations {
      * @throws RemoteException 
      * @throws MalformedURIException 
      */
-    public static void refreshServiceURLsMetadata(String domainModel, String version)
-            throws MalformedURIException, RemoteException {
+    public static void refreshServiceURLsMetadata(String domainModel, String version) {
         String entityGroupName = Utility.createModelName(domainModel, version);
-
         logger.info("Refreshing Service Instances Metadata for " + entityGroupName + "..........");
-        ServiceURLOperations serviceUrlOperation = new ServiceURLOperations();
+
         Set<ServiceURLInterface> urlsfromIndexService = new HashSet<ServiceURLInterface>();
         Set<ServiceURLInterface> refreshedURLMetadata = new HashSet<ServiceURLInterface>();
 
-        Set<ServiceURLInterface> urlsfromDatabase = new HashSet<ServiceURLInterface>(
-                serviceUrlOperation.getAllURLsForEntityGroup(entityGroupName));
+        ServiceURLOperations serviceUrlOperation = new ServiceURLOperations();
+        Set<ServiceURLInterface> urlsfromDatabase =
+                new HashSet<ServiceURLInterface>(serviceUrlOperation.getAllURLsForEntityGroup(entityGroupName));
 
         urlsfromIndexService = getServiceURLsfromIndex(domainModel, version);
 
@@ -94,7 +83,7 @@ public class IndexServiceOperations {
         for (ServiceURLInterface serviceURL : refreshedURLMetadata) {
             serviceUrlOperation.saveServiceURL(serviceURL);
         }
-        serviceUrlOperation.updateCache();
+        ServiceURLOperations.updateCache();
     }
 
     /**
@@ -105,16 +94,14 @@ public class IndexServiceOperations {
      * @throws MalformedURIException
      * @throws RemoteException
      */
-    private static Set<ServiceURLInterface> getServiceURLsfromIndex(String domainModel, String version)
-            throws MalformedURIException, RemoteException {
-
+    private static Set<ServiceURLInterface> getServiceURLsfromIndex(String domainModel, String version) {
         String urls = CagridPropertyLoader.getIndexServiceUrl();
         Set<ServiceURLInterface> setofServiceURLs = new HashSet<ServiceURLInterface>();
-        DiscoveryClientForMetaData client = new DiscoveryClientForMetaData(urls);
-        EndpointReferenceType[] endPointRefTypeArray;
 
         try {
-            endPointRefTypeArray = client.discoverDataServicesByDomainModel(domainModel, version);
+            DiscoveryClientForMetaData client = new DiscoveryClientForMetaData(urls);
+            EndpointReferenceType[] endPointRefTypeArray =
+                    client.discoverDataServicesByDomainModel(domainModel, version);
             if (endPointRefTypeArray != null) {
                 for (EndpointReferenceType endPoint : endPointRefTypeArray) {
                     ServiceURLInterface serviceurl = new ServiceURL();
@@ -122,15 +109,18 @@ public class IndexServiceOperations {
                     setofServiceURLs.add(serviceurl);
                 }
             }
+        } catch (MalformedURIException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         } catch (RemoteResourcePropertyRetrievalException e) {
             logger.error(e.getMessage(), e);
-            throw new RemoteException(e.getMessage());
+            throw new RuntimeException(e.getMessage(), e);
         } catch (QueryInvalidException e) {
             logger.error(e.getMessage(), e);
-            throw new RemoteException(e.getMessage());
+            throw new RuntimeException(e.getMessage(), e);
         } catch (ResourcePropertyRetrievalException e) {
             logger.error(e.getMessage(), e);
-            throw new RemoteException(e.getMessage());
+            throw new RuntimeException(e.getMessage(), e);
         }
         return setofServiceURLs;
     }
@@ -138,6 +128,7 @@ public class IndexServiceOperations {
     /**
      * This method gets the latest metadata for the URLs from Index Service as well as from Database
      * for given Domain Model and Version and updates its metadata accordingly
+     * 
      * @param urlsfromDatabase
      * @param entityGroupName
      * @return
@@ -147,14 +138,8 @@ public class IndexServiceOperations {
         Set<ServiceURLInterface> refreshedMetadata = new HashSet<ServiceURLInterface>();
         for (ServiceURLInterface urlMetatadatafromDatabase : urlsfromDatabase) {
             String urlLocation = urlMetatadatafromDatabase.getUrlLocation();
-            ServiceURLInterface urlMetadatafromIndexService = new ServiceURL();
-            try {
-                urlMetadatafromIndexService = getMetadata(urlLocation, entityGroupName);
-            } catch (MalformedURIException e) {
-                logger.error(e.getMessage(), e);
-            } catch (RemoteException e) {
-                logger.error(e.getMessage(), e);
-            }
+            ServiceURLInterface urlMetadatafromIndexService = getMetadata(urlLocation, entityGroupName);
+
             refreshedMetadata.add(merge(urlMetatadatafromDatabase, urlMetadatafromIndexService));
         }
         return refreshedMetadata;
@@ -163,40 +148,43 @@ public class IndexServiceOperations {
     /**
      * This method gets the metadata from Index Service for a particular URL and converts it into
      * ServiceURL object from ServiceMetadata object
+     * 
      * @param serviceUrl
      * @param entityGroupName
      * @return
-     * @throws MalformedURIException
-     * @throws RemoteException
      */
-    private static ServiceURLInterface getMetadata(String serviceUrl, String entityGroupName)
-            throws MalformedURIException, RemoteException {
+    private static ServiceURLInterface getMetadata(String serviceUrl, String entityGroupName) {
         String urls = CagridPropertyLoader.getIndexServiceUrl();
-        DiscoveryClientForMetaData client = new DiscoveryClientForMetaData(urls);
-        ServiceMetadata metadata = new ServiceMetadata();
+
+        ServiceURLInterface serviceURL = null;
         try {
-            metadata = client.discoverDataServiceByURL(serviceUrl);
+            DiscoveryClientForMetaData client = new DiscoveryClientForMetaData(urls);
+            ServiceMetadata metadata = client.discoverDataServiceByURL(serviceUrl);
+            serviceURL = new ServiceMetadataProcessor().getServiceMetadata(metadata, serviceUrl, entityGroupName);
+        } catch (MalformedURIException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
         } catch (ResourcePropertyRetrievalException e) {
             logger.error(e.getMessage(), e);
-            throw new RemoteException(e.getMessage());
+            throw new RuntimeException(e.getMessage(), e);
         }
 
-        return new ServiceMetadataProcessor().getServiceMetadata(metadata, serviceUrl, entityGroupName);
+        return serviceURL;
     }
 
     /**
      * It performs a two way merging.
-     * If Service URL from Index Service contains Hosting Center Name and Description then Those are associated
-     * with that Service URL and returned. So changes are made in Database object and returned instead of Index Service
-     * object as Database object has UrlId associated with it saved in database which is not the case with Index Service
-     * URL.
+      * If Service URL from Index Service contains Hosting Center Name and Description then Those are associated
+      * with that Service URL and returned. So changes are made in Database object and returned instead of Index Service
+      * object as Database object has UrlId associated with it saved in database which is not the case with Index Service
+      * URL.
+      * 
      * @param urlsFromDatabase
      * @param urlsFromIndexService
-     * @return mergerd list of Service URLs
+     * @return
      */
     private static ServiceURLInterface merge(ServiceURLInterface urlsFromDatabase,
                                              ServiceURLInterface urlsFromIndexService) {
-
         String hostingCenterName = urlsFromIndexService.getHostingResearchCenter();
         if (hostingCenterName != null && hostingCenterName.length() != 0) {
             urlsFromDatabase.setHostingCenter(hostingCenterName);
