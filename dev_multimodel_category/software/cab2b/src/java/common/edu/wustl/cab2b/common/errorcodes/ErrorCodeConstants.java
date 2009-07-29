@@ -242,4 +242,7 @@ public interface ErrorCodeConstants {
     
     /** Error occur while modifying Model Group*/
     static final String MG_007 = "MG.007";
+    
+    /** Error code for incorrect service instance */
+    static final String MG_008 = "MG.008";
 }

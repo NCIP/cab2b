@@ -5,7 +5,6 @@
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -17,6 +16,8 @@ import org.globus.gsi.GlobusCredential;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.FailedTargetURL;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
@@ -82,12 +83,19 @@ public class ExecuteQueryBizLogic {
                                 UserInterface user, String[] modelGroupNames) throws Exception {
         Map<EntityGroupInterface, List<String>> entityGroupURLsMap =
                 Utility.getUserConfiguredUrls(user, modelGroupNames);
-        for (ICab2bQuery regularQuery : queries) {
-            Collection<EntityGroupInterface> queryEntityGroups = Utility.getEntityGroups(regularQuery);
+        for (ICab2bQuery query : queries) {
+            Collection<EntityGroupInterface> queryEntityGroups = Utility.getEntityGroups(query);
             for (EntityGroupInterface queryEntityGroup : queryEntityGroups) {
                 List<String> urls = entityGroupURLsMap.get(queryEntityGroup);
                 if (urls != null && !urls.isEmpty()) {
-                    regularQuery.setOutputUrls(urls);
+                    query.setOutputUrls(urls);
+                } else {
+                    EntityGroupInterface entityGroup =
+                            query.getOutputEntity().getEntityGroupCollection().iterator().next();
+                    StringBuffer errorMessage =
+                            new StringBuffer("Incorrect service instance configured for query ");
+                    errorMessage.append("having model as ").append(entityGroup.getName());
+                    throw new RuntimeException(errorMessage.toString(), ErrorCodeConstants.MG_008);
                 }
             }
         }
@@ -116,13 +124,6 @@ public class ExecuteQueryBizLogic {
         return searchQueryExecutor.transformResult(transformationMaxLimit);
     }
 
-    //    /**
-    //     * @return the finalResult
-    //     */
-    //    public final List<Map<AttributeInterface, Object>> getResultForAllUrls(ICab2bQuery selectedQuery) {
-    //        return searchResults.get(selectedQuery).getResultForAllUrls();
-    //    }
-
     /**
      * @param failedUrl
      * @return
@@ -132,15 +133,10 @@ public class ExecuteQueryBizLogic {
         if (failedUrl != null) {
             failedServices = new HashSet<ServiceURLInterface>();
             for (FailedTargetURL failedurl : failedUrl) {
-                ServiceURLInterface serviceurl = null;
-                try {
-                    serviceurl = new ServiceURLOperations().getServiceURLbyURLLocation(failedurl.getTargetUrl());
-                    if (serviceurl.getHostingCenter().contains("http")) {
-                        serviceurl.setHostingCenter("No Hosting Center Name Available.");
-                    }
-                } catch (RemoteException e) {
-                    logger.info(e.getMessage(), e);
-                    throw new RuntimeException(e);
+                ServiceURLInterface serviceurl =
+                        new ServiceURLOperations().getServiceURLbyURLLocation(failedurl.getTargetUrl());
+                if (serviceurl.getHostingCenter().contains("http")) {
+                    serviceurl.setHostingCenter("No Hosting Center Name Available.");
                 }
                 failedServices.add(serviceurl);
             }

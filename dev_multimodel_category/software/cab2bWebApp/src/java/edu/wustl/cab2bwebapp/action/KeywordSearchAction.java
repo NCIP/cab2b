@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -23,6 +24,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.globus.gsi.GlobusCredential;
 
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
@@ -58,7 +60,6 @@ public class KeywordSearchAction extends Action {
                                  HttpServletResponse response) throws IOException, ServletException {
         String actionForward = Constants.FORWARD_SEARCH_RESULTS;
         try {
-
             ICab2bQuery selectedQueryObj = null;
             Collection<ICab2bQuery> queries = null;
             ExecuteQueryBizLogic executeQueryBizLogic = null;
@@ -78,9 +79,19 @@ public class KeywordSearchAction extends Action {
                 if (modelGroupNames == null) {
                     modelGroupNames = Utility.getModelGroups(globusCredential);
                 }
-                executeQueryBizLogic =
-                        new ExecuteQueryBizLogic(queries, globusCredential, keywordSearchForm.getKeyword(), user,
-                                modelGroupNames);
+
+                try {
+                    executeQueryBizLogic =
+                            new ExecuteQueryBizLogic(queries, globusCredential, keywordSearchForm.getKeyword(),
+                                    user, modelGroupNames);
+                } catch (RuntimeException e) {
+                    logger.error(e.getMessage(), e);
+                    ActionErrors errors = new ActionErrors();
+                    ActionError error = new ActionError("fatal.home.failure", e.getMessage());
+                    errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, error);
+                    saveErrors(request, errors);
+                    return mapping.findForward(Constants.FORWARD_HOME);
+                }
                 Thread.sleep(200);
                 //As each executor is invoked in a thread SearchQueryExecutor.executeAll()   
                 //the next call executeQueryBizLogic.isProcessingFinished() returns immediately as TRUE 
@@ -197,12 +208,12 @@ public class KeywordSearchAction extends Action {
                                 .size() : 0);
                             session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
                             session.setAttribute(Constants.SEARCH_RESULTS_VIEW, ExecuteQueryBizLogic
-                                                 .getSearchResultsView(selectedQueryResult.getResultForAllUrls(), selectedQueryResult
-                                                     .getAllowedAttributes()));
+                                .getSearchResultsView(selectedQueryResult.getResultForAllUrls(),
+                                                      selectedQueryResult.getAllowedAttributes()));
                         } else {
-                            session.setAttribute(Constants.SEARCH_RESULTS_VIEW,null);
+                            session.setAttribute(Constants.SEARCH_RESULTS_VIEW, null);
                         }
-                        
+
                         actionForward = Constants.FORWARD_SEARCH_RESULTS_PANEL;
                     }
                 }
