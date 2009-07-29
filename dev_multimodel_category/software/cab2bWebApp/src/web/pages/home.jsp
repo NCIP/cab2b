@@ -38,7 +38,27 @@
    {
      validateDataTypeSelection();
    }
-  </html:messages>  
+  </html:messages>
+ <%
+	if(request.getAttribute("error")!=null) 
+	{
+%>
+	if(confirm('<bean:message key="message.incorrectserviceinstanceconfigured"/>'))
+   {
+     validateDataTypeSelection();
+   }
+<%
+	}
+%>
+	 <% if(request.getParameter("redirect")!=null)
+	{
+%>
+	document.body.style.display="none";
+	validateDataTypeSelection();
+
+<%
+	}
+%>
 }
 
  function validateDataTypeSelection()
@@ -126,7 +146,7 @@
 			</DIV>
 			<DIV id="keywordsearchpanel">
 				<DIV class="label"><bean:message key="label.keywordsearch"/></DIV> <INPUT type="text" class="textbox examplevalue" name="keyword" value="<bean:message key="textbox.keywordsearch.examplevalue"/>" onFocus="setKeywordSearchTextBox(this, keywordSearchExample.value, 'focus')" onBlur="setKeywordSearchTextBox(this, keywordSearchExample.value, 'blur')"><INPUT type="hidden" name="keywordSearchExample" value="<bean:message key="textbox.keywordsearch.examplevalue"/>"> <INPUT type="submit" class="button" value="<bean:message key="button.keywordsearch"/>">
-			</DIV>			
+			</DIV>		
 			<DIV id="savedsearchespanel">
 				<DIV class="titlebar collapsible">
 					<DIV class="titlebarheader title">

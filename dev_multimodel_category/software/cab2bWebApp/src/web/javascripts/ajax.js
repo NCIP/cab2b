@@ -61,8 +61,16 @@ var results = "";
   httpRequest.onreadystatechange = function(){ 
      if(httpRequest.readyState==4) 
     { 
-	  results = httpRequest.responseText;      
-	   if(httpRequest.status==500) //http.responseXML can be used to get an XML based response, if we need to have some XML output from a server file.
+	  results = httpRequest.responseText;  
+	  
+		if(results=="Exception")
+	  	{
+  		if(confirm('Incorrect service instance configured for query! Do you want to configure now?'))
+		   {
+		     document.location = "Home.do?redirect=true";
+		   }
+	  	}
+	   else if(httpRequest.status==500) //http.responseXML can be used to get an XML based response, if we need to have some XML output from a server file.
 	  {
 		var start = results.indexOf("<DIV id=\"errornotificationpanel\">");
 		results = results.substring(start, results.length-1);

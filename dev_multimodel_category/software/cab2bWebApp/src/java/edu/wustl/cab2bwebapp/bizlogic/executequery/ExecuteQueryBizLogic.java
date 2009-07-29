@@ -66,7 +66,7 @@ public class ExecuteQueryBizLogic {
             GlobusCredential proxy,
             String keyword,
             UserInterface user,
-            String[] modelGroupNames) throws Exception {
+            String[] modelGroupNames) throws RuntimeException {
         searchQueryExecutor = new SearchQueryExecutor();
         processResults(queries, proxy, keyword, user, modelGroupNames);
     }
@@ -80,7 +80,7 @@ public class ExecuteQueryBizLogic {
      * @throws Exception
      */
     private void processResults(Collection<ICab2bQuery> queries, GlobusCredential proxy, String keyword,
-                                UserInterface user, String[] modelGroupNames) throws Exception {
+                                UserInterface user, String[] modelGroupNames) throws RuntimeException {
         Map<EntityGroupInterface, List<String>> entityGroupURLsMap =
                 Utility.getUserConfiguredUrls(user, modelGroupNames);
         for (ICab2bQuery query : queries) {
