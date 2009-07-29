@@ -16,6 +16,7 @@ import org.globus.gsi.GlobusCredential;
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
@@ -148,8 +149,7 @@ public class Utility {
      * @throws Exception
      */
     public static Map<EntityGroupInterface, List<String>> getUserConfiguredUrls(UserInterface user,
-                                                                                String[] modelGroupNames)
-            throws Exception {
+                                                                                String[] modelGroupNames) {
         Map<EntityGroupInterface, List<String>> entityGroupVsSelectedUrls =
                 new HashMap<EntityGroupInterface, List<String>>();
 
@@ -161,7 +161,7 @@ public class Utility {
                     entityGroupVsSelectedUrls =
                             getUserConfiguredUrls(new UserOperations().getAdmin(), modelGroupNames);
                 } else {
-                    throw new Exception(Constants.SERVICE_INSTANCES_NOT_CONFIGURED);
+                    throw new RuntimeException(Constants.SERVICE_INSTANCES_NOT_CONFIGURED);
                 }
             } else {
                 for (ServiceURLInterface serviceUrl : userConfiguredUrls) {
@@ -179,5 +179,30 @@ public class Utility {
             }
         }
         return entityGroupVsSelectedUrls;
+    }
+
+    /**
+     * This method verifies whether all queries have services instances set or not.
+     * @param queries
+     * @param user
+     * @param modelGroupNames
+     * @return
+     */
+    public static Boolean verifyServiceInstances(Collection<ICab2bQuery> queries, UserInterface user,
+                                                 String[] modelGroupNames) {
+        Map<EntityGroupInterface, List<String>> entityGroupURLsMap =
+                Utility.getUserConfiguredUrls(user, modelGroupNames);
+
+        Boolean isValid = Boolean.TRUE;
+        for (ICab2bQuery query : queries) {
+            Collection<EntityGroupInterface> queryEntityGroups = Utility.getEntityGroups(query);
+            for (EntityGroupInterface queryEntityGroup : queryEntityGroups) {
+                List<String> urls = entityGroupURLsMap.get(queryEntityGroup);
+                if (urls == null || urls.isEmpty()) {
+                    isValid = Boolean.FALSE;
+                }
+            }
+        }
+        return isValid;
     }
 }
