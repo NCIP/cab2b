@@ -3,6 +3,7 @@ package edu.wustl.cab2b.server.multimodelcategory;
 import static edu.wustl.cab2b.common.util.Constants.MMC_ENTITY_GROUP_NAME;
 import static edu.wustl.cab2b.common.util.Constants.MULTIMODELCATEGORY;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -108,7 +109,6 @@ public class PersistMultiModelCategory {
      * @param catClass
      */
     private void mapAIToCatAttr(CategorialClass catClass) {
-
         for (CategorialAttribute catAttr : catClass.getCategorialAttributeCollection()) {
             Long ai = catAttr.getDeSourceClassAttributeId();
             attributeIDToCatAttr.put(ai, catAttr);
@@ -126,8 +126,6 @@ public class PersistMultiModelCategory {
         Set<EntityInterface> targetEntities = initEntityPathMapAndGetTargetEntities();
         //After removing all targets, 'entities' will only contain root categories
         entities.removeAll(targetEntities);
-
-        createInputCategories();
 
         return multiModelCategory;
     }
@@ -323,18 +321,18 @@ public class PersistMultiModelCategory {
         MultiModelCategoryOperations operations = new MultiModelCategoryOperations();
 
         //save in database
-        /*File mmcDir = new File("D:/mmc");
+        File mmcDir = new File("D:/mmc");
         File[] mmcFiles = mmcDir.listFiles();
         MultiModelCategoryXmlParser parser = new MultiModelCategoryXmlParser();
         for (File mmcFile : mmcFiles) {
             MultiModelCategoryBean mmcBean = parser.getMultiModelCategory(mmcFile);
             MultiModelCategory mmCategory = new PersistMultiModelCategory().persistMMC(mmcBean);
             operations.saveMultiModelCategory(mmCategory);
-        }*/
+        }
 
         //delete from database
-        MultiModelCategory mmCategory = operations.getMultiModelCategoryById(1L);
-        System.out.println(mmCategory.getEntity().getName());
+        //MultiModelCategory mmCategory = operations.getMultiModelCategoryById(1L);
+        //System.out.println(mmCategory.getEntity().getName());
         //operations.deleteMultiModelCategory(mmCategory);
     }
 }
