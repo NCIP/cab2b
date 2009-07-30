@@ -63,6 +63,7 @@ public class ExportDataAction extends Action {
     private static void writeToStream(HttpServletResponse response, File file) {
         BufferedInputStream bis = null;
         try {
+            response.setHeader("Cache-Control", "public");
             OutputStream opstream = response.getOutputStream();
             bis = new BufferedInputStream(new FileInputStream(file));
 
