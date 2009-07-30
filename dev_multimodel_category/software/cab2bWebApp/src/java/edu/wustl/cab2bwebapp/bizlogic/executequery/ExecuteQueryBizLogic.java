@@ -89,12 +89,12 @@ public class ExecuteQueryBizLogic {
                 List<String> urls = entityGroupURLsMap.get(queryEntityGroup);
                 if (urls != null && !urls.isEmpty()) {
                     query.setOutputUrls(urls);
+                } else if (query.getIsSystemGenerated()) {
+                    query.setOutputUrls(new ArrayList<String>(0));
                 } else {
-                    EntityGroupInterface entityGroup =
-                            query.getOutputEntity().getEntityGroupCollection().iterator().next();
                     StringBuffer errorMessage =
                             new StringBuffer("Incorrect service instance configured for query ");
-                    errorMessage.append("having model as ").append(entityGroup.getName());
+                    errorMessage.append("having model as ").append(queryEntityGroup.getName());
                     throw new RuntimeException(errorMessage.toString(), ErrorCodeConstants.MG_008);
                 }
             }

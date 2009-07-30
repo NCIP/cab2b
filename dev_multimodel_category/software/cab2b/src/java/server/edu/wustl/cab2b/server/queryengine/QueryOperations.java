@@ -9,6 +9,7 @@ import static edu.wustl.cab2b.common.util.Constants.MULTIMODELCATEGORY;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.globus.gsi.GlobusCredential;
@@ -73,11 +74,17 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
     public Collection<ICab2bQuery> getUsersQueriesDetail(String userName) {
         List<Object> idList = new ArrayList<Object>(1);
         idList.add(userName);
+
+        List<ICab2bQuery> queries = null;
         try {
-            return (List<ICab2bQuery>) Utility.executeHQL("getUserQueriesDetails", idList);
+            queries = (List<ICab2bQuery>) Utility.executeHQL("getUserQueriesDetails", idList);
+            postProcessMMCQueries(queries);
+            //filterSystemGeneratedSubQueries(queries);
         } catch (HibernateException e) {
             throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
         }
+
+        return queries;
     }
 
     /**
@@ -112,13 +119,15 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         paramList.add(queryType.toString());
         paramList.add(userName);
 
-        List<ICab2bQuery> result = null;
+        List<ICab2bQuery> queries = null;
         try {
-            result = (List<ICab2bQuery>) Utility.executeHQL("getQueriesByTypeAndUserName", paramList);
+            queries = (List<ICab2bQuery>) Utility.executeHQL("getQueriesByTypeAndUserName", paramList);
+            postProcessMMCQueries(queries);
+            //filterSystemGeneratedSubQueries(queries);
         } catch (HibernateException e) {
             throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
         }
-        return result;
+        return queries;
     }
 
     public IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String serializedDCR) {
@@ -213,4 +222,40 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         return isTaggedMMC && isMMC;
     }
 
+    public ICab2bQuery getQueryById(Long queryId) {
+        ICab2bQuery query = super.getQueryById(queryId);
+        postProcessMMCQuery(query);
+
+        return query;
+    }
+
+    private void postProcessMMCQueries(List<ICab2bQuery> queries) {
+        if (queries != null || !queries.isEmpty()) {
+            for (ICab2bQuery query : queries) {
+                postProcessMMCQuery(query);
+            }
+        }
+    }
+
+    private void postProcessMMCQuery(ICab2bQuery query) {
+        if (query != null && query instanceof MultiModelCategoryQuery) {
+            MultiModelCategoryQuery mmcQuery = (MultiModelCategoryQuery) query;
+            Collection<ICab2bQuery> subQueries = mmcQuery.getSubQueries();
+            for (ICab2bQuery subQuery : subQueries) {
+                subQuery.setIsSystemGenerated(Boolean.TRUE);
+            }
+        }
+    }
+
+    private void filterSystemGeneratedSubQueries(List<ICab2bQuery> queries) {
+        if (queries != null || !queries.isEmpty()) {
+            Iterator<ICab2bQuery> queryIterator = queries.iterator();
+            while (queryIterator.hasNext()) {
+                ICab2bQuery query = queryIterator.next();
+                if (query.getIsSystemGenerated()) {
+                    queryIterator.remove();
+                }
+            }
+        }
+    }
 }
