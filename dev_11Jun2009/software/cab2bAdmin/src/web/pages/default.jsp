@@ -130,7 +130,7 @@
 						<td align="left" valign="top">
 						<table width="100%" border="0" cellpadding="4" cellspacing="0">
 							<tr>
-								<td nowrap="nowrap" class="error_font_b" colspan="2">${requestScope.error}</td>
+								<td class="error_font_b" colspan="2">${requestScope.error}</td>
 							</tr>
 							<tr>
 								<td nowrap="nowrap" class="font_blk_b">User Name:</td>
@@ -162,11 +162,11 @@
 							<tr>
 								<td class="font_blk_s"><img src="images/logo_ie.gif"
 									alt="Internet Explorer 6.0" width="16" height="16" hspace="3"
-									vspace="3" align="absmiddle" />Internet Explorer 6.0 <br />
+									vspace="3" align="absmiddle" />Internet Explorer 7.0 <br />
 								<img src="images/logo_firefox.gif"
 									alt="Mozilla Firefox-2.0.0.3 " width="16" height="16"
 									hspace="3" vspace="3" align="absmiddle" />Mozilla
-								Firefox-2.0.0.3 <br />
+								Firefox 3.0<br />
 								<img src="images/logo_safari.gif" alt="Mac Safari 3.1.1 "
 									width="16" height="16" hspace="3" vspace="3" align="absmiddle" />Mac
 								Safari 3.1.1</td>
@@ -203,28 +203,14 @@
 		<!--end content area --></td>
 	</tr>
 	<tr>
-		<td valign="bottom"><!-- #BeginLibraryItem "library/footer.lbi" -->
-		<table width="100%" height="6%" border="0" align="center"
-			cellpadding="0" cellspacing="0">
-			<tr>
-				<td height="3%" bgcolor="#eaeaea"><span class="font_wh_b"><img
-					src="images/spacer.gif" width="1" height="1" align="absmiddle" /></span></td>
-			</tr>
-			<tr>
-				<td height="97%" align="center" valign="bottom"><img
-					src="images/firstgov.gif" alt="FirstGov" width="91" height="27"
-					hspace="5" align="absmiddle" /><img src="images/nci.gif"
-					alt="National Cancer Institute" width="59" height="37" hspace="5"
-					align="absmiddle" /></td>
-			</tr>
-		</table>
-		<!-- #EndLibraryItem --></td>
+		<td valign="bottom">
+			<jsp:include page="footer.jsp"/>
+		</td>
 	</tr>
 </table>
 </form>
 </body>
 <script type="text/JavaScript">
-
  document.getElementById('userName').focus();
 </script>
 </html>
