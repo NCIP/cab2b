@@ -25,16 +25,21 @@
 			<table width="100%" border="0" align="center" cellpadding="3" cellspacing="3">
 				<tr>
 					<td width="15" align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td> 
-					<td class="font_blk_b"><a href="https://cabig.nci.nih.gov/" CLASS="set3">caBIG Home </a></td>
+					<td class="font_blk_b"><a href="https://cabig.nci.nih.gov/" target="_blank" CLASS="set3">caBIG Home </a></td>
 				</tr>
 				<tr>
 					<td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
-					<td class="font_blk_b"><a href="http://ncicb.nci.nih.gov/" CLASS="set3">NCICB Home </a></td>
+					<td class="font_blk_b"><a href="http://ncicb.nci.nih.gov/" target="_blank" CLASS="set3">NCICB Home </a></td>
 				</tr>
 				<tr>
 					<td width="15" align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
-					<td class="font_blk_b"><a href="http://www.cagrid.org/mwiki/index.php?title=CaGrid" CLASS="set3">caGrid Wiki </a></td>
+					<td class="font_blk_b"><a href="http://cagrid.org/display/cagridhome/Home" target="_blank" CLASS="set3">caGrid Wiki </a></td>
 				</tr>
+					<tr>
+						<td align="right" valign="middle"><img src="images/arrow.gif"
+							width="12" height="11"></td>
+						<td class="font_blk_b"><A href="../webpage" target="_blank" CLASS="set3">caB2B Webpage </a></td>
+					</tr>
 			</table>
 		</td>
 		<td align="center" valign="top"><img src="images/concept_image.jpg" width="500" height="500"></td>
