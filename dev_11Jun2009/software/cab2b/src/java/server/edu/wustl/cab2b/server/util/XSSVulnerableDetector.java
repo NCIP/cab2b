@@ -6,9 +6,9 @@ import java.util.regex.Pattern;
 public class XSSVulnerableDetector {
 
     /**
-     * This is regular expression to check for XSS vulnerable characters e.g <, >, [, ] etc
+     * This is regular expression to check for XSS vulnerable characters and strings, e.g <, >, [, ], etc
      * */
-    private static final String REGEX_XSS_VULNERABLE = "[<>]";
+    private static final String REGEX_XSS_VULNERABLE = "([|<|>|])";
 
     /**
      * This is regular expression to check for XXS vulnerable strings like script, table etc.
@@ -29,7 +29,7 @@ public class XSSVulnerableDetector {
     public static boolean isXssVulnerable(String value) {
         boolean isXssVulnerable = false;
         if (value != null) {
-            Pattern p = Pattern.compile(REGEX_XSS_VULNERABLE);
+            Pattern p = Pattern.compile(REGEX_XSS_VULNERABLE, Pattern.CASE_INSENSITIVE);
             Matcher m = p.matcher(value);
             isXssVulnerable = m.find();
         }
@@ -46,12 +46,12 @@ public class XSSVulnerableDetector {
     public static boolean isXssSQLVulnerable(String value) {
         boolean isXssVulnerable = false;
         if (value != null) {
-            Pattern p = Pattern.compile(REGEX_SQLINJECTION_VULNERABLE);
+            Pattern p = Pattern.compile(REGEX_SQLINJECTION_VULNERABLE, Pattern.CASE_INSENSITIVE);
             Matcher m = p.matcher(value);
             isXssVulnerable = m.find();
 
             if (!isXssVulnerable) {
-                p = Pattern.compile(REGEX_XSS_VULNERABLE_KEYWORDS);
+                p = Pattern.compile(REGEX_XSS_VULNERABLE_KEYWORDS, Pattern.CASE_INSENSITIVE);
                 m = p.matcher(value);
                 isXssVulnerable = m.find();
             }
