@@ -77,13 +77,13 @@ public class TransformQueryResultsAction extends Action {
 
             Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults = null;
             //if UI_finished is true, transformer should not be invoked for re-transforming the same 100 records.Results should be taken from session
-            if (session.getAttribute(Constants.UI_POPULATION_FINISHED) == null) {
+            //if (session.getAttribute(Constants.UI_POPULATION_FINISHED) == null) {
                 searchResults = executeQueryBizLogic.getSearchResults(transformationMaxLimit);
-            } else {
+            /*} else {
                 searchResults =
                         (Map<ICab2bQuery, TransformedResultObjectWithContactInfo>) session
                             .getAttribute(Constants.SEARCH_RESULTS);
-            }
+            }*/
 
             ICab2bQuery selectedQueryObj = null;
             Set<ICab2bQuery> queries = searchResults.keySet();
@@ -98,7 +98,7 @@ public class TransformQueryResultsAction extends Action {
             if (searchResults.get(selectedQueryObj) != null) {
                 SavedQueryDVO savedQuery = new SavedQueryDVO();
                 savedQuery.setName(selectedQueryObj.getName());
-                savedQuery.setResultCount(searchResults.get(selectedQueryObj).getResultForAllUrls().size());
+               // savedQuery.setResultCount(searchResults.get(selectedQueryObj).getResultForAllUrls().size());
 
                 queryList.add(savedQuery);
                 TransformedResultObjectWithContactInfo selectedQueryResult = searchResults.get(selectedQueryObj);
@@ -116,7 +116,18 @@ public class TransformQueryResultsAction extends Action {
                 List<List<SearchResultDVO>> val =
                         ExecuteQueryBizLogic.getSearchResultsView(selectedQueryResult.getResultForAllUrls(),
                                                                   selectedQueryResult.getAllowedAttributes());
-
+                
+                
+                // if no of records are more than 100, retain only 100 records in the list to be shown on UI.
+                if(val != null) //for zero records or for failed URLs, val will be null
+                {
+                    if(val.size()> transformationMaxLimit)
+                    {
+                        val = val.subList(0, transformationMaxLimit);
+                    }
+                    savedQuery.setResultCount(val.size());
+                }
+                
                 boolean uiGotEnoughRecords = savedQuery.getResultCount() >= transformationMaxLimit;
                 boolean queryFinished = executeQueryBizLogic.isProcessingFinished();
 
@@ -129,13 +140,13 @@ public class TransformQueryResultsAction extends Action {
                 } else if (uiGotEnoughRecords && !queryFinished) {
                     Boolean flag = (Boolean) session.getAttribute(Constants.UI_POPULATION_FINISHED);
                     if (flag != null && flag) {
-                        session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
+                        //session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
                     } else {
                         session.setAttribute(Constants.SEARCH_RESULTS_VIEW, val);
                         session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
                         session.setAttribute(Constants.SAVED_QUERIES, queryList);
                     }
-                    session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
+                   // session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
                 } else if (!uiGotEnoughRecords && queryFinished) {
                     session.setAttribute(Constants.STOP_AJAX, true);
                     session.setAttribute(Constants.UI_POPULATION_FINISHED, true);

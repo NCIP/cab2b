@@ -66,13 +66,23 @@ document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="bu
  function getTransformedResults()
 {
   var url = 'TransformQueryResultsAction.do?queryId=' + '<%=query_id%>';
-  processAJAXRequest(url, 'centerpanelcontent', 1);
+  processAJAXRequest(url, 'centerpanelcontent', 5);
 
   if(document.getElementById("partialQueryResultsAJAX")!=null && document.getElementById("messages")==null)
   {
     document.getElementById('queryDropDown').innerHTML = document.getElementById("partialQueryResultsAJAX").innerHTML;
   }
-  if(document.getElementById("UI_population_finished")!=null)
+  if(document.getElementById('queryUIPartialCount') != null)
+	{
+		var queryUIPartialCount = document.getElementById('queryUIPartialCount').innerHTML;
+		if(queryUIPartialCount != '0')	//Export message & button should not be visible for 0 results.
+		{
+		  	document.getElementById('exportDiv').style.display = 'block';	//make it visible only ( with the inactive image)
+			document.getElementById('ExportAll_Message_Div').style.display = 'block'; 
+			document.getElementById('ExportAll_Message_Div').innerHTML ='Displaying first '+ queryUIPartialCount+' records. You can export all the records once the query is complete.';
+  		}
+  	}
+  /*if(document.getElementById("UI_population_finished")!=null)
   {
   	document.getElementById('queryDropDown').innerHTML = document.getElementById("partialQueryResultsAJAX").innerHTML;
 	if(document.getElementById('queryUIPartialCount') != null)
@@ -87,7 +97,7 @@ document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="bu
   	}
   	if(document.getElementById('progressImage') != null)
   	 document.getElementById('progressImage').innerHTML = "";
-  }
+  }*/
   if(document.getElementById("stopAjax")!=null)
   { 	
 	if(document.getElementById('queryUIPartialCount')!= null)
