@@ -62,7 +62,7 @@
 						<bean:message key="label.password"/>
 					</DIV>
 					<DIV style="width:60%;float:right">
-						<input type="password" class="textbox" name="password" value="${loginForm.password}" autocomplete="off"/>
+						<input type="password" class="textbox" name="password" value="" autocomplete="off"/>
 					</DIV>
 					<BR style="line-height: 2em"/>
 					<DIV style="text-align:center">
