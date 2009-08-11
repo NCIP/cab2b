@@ -84,6 +84,7 @@ public class PersistMultiModelCategory {
         for (InputCategory inCategory : inputCategories) {
             logger.debug("Saving category: " + inCategory);
             Category category = persistCategory.persistCategory(inCategory, null);
+            category.setSystemGenerated(Boolean.TRUE);
             mapAIToCatAttr(category.getRootClass());
             categoryOperations.saveCategory(category);
             categories.add(category);
@@ -321,7 +322,7 @@ public class PersistMultiModelCategory {
         MultiModelCategoryOperations operations = new MultiModelCategoryOperations();
 
         //save in database
-        File mmcDir = new File("D:/mmc");
+        File mmcDir = new File("D:/Project Related Material/MMC");
         File[] mmcFiles = mmcDir.listFiles();
         MultiModelCategoryXmlParser parser = new MultiModelCategoryXmlParser();
         for (File mmcFile : mmcFiles) {

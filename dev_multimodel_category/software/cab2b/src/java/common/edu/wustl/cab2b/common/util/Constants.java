@@ -81,6 +81,11 @@ public interface Constants {
      * tagged constant to identify a multi-model category entity.
      */
     public static final String MULTIMODELCATEGORY = "MMCategory";
+    
+    /**
+     * tagged constant to identify a multi-model sub-category entity.
+     */
+    public static final String MMC_SUBCATEGORY_ENTITY = "MMCSubCategoryEntity";
 
     /**
      * tagged key constant to identify wthether a attribute OR an association is a derived one

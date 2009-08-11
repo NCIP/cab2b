@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.server.category;
 
 import static edu.wustl.cab2b.common.util.Constants.CATEGORY_ENTITY_GROUP_NAME;
+import static edu.wustl.cab2b.common.util.Constants.MMC_SUBCATEGORY_ENTITY;
 import static edu.wustl.cab2b.common.util.Constants.TYPE_CATEGORY;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.RoleInterface;
+import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
@@ -84,6 +86,12 @@ public class PersistCategory {
             categoryEntity.addAssociation(association);
         }
         DynamicExtensionUtility.addTaggedValue(categoryEntity, TYPE_CATEGORY, TYPE_CATEGORY);
+        TaggedValueInterface taggedValue = DomainObjectFactory.getInstance().createTaggedValue();
+        taggedValue.setKey(MMC_SUBCATEGORY_ENTITY);
+        taggedValue.setValue(MMC_SUBCATEGORY_ENTITY);
+        categoryEntity.addTaggedValue(taggedValue);
+
+        
         categoryEntity = DynamicExtensionUtility.persistEntity(categoryEntity);
         category.setDeEntityId(categoryEntity.getId());
 
