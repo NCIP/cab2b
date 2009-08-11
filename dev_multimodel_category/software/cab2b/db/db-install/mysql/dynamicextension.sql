@@ -379,8 +379,8 @@ create table DYEXTN_TABLE_PROPERTIES (
 );
 create table DYEXTN_TAGGED_VALUE (
    IDENTIFIER bigint not null auto_increment,
-   T_KEY varchar(255),
-   T_VALUE varchar(255),
+   T_KEY varchar(1024),
+   T_VALUE varchar(1024),
    ABSTRACT_METADATA_ID bigint,
    primary key (IDENTIFIER)
 );
