@@ -33,11 +33,11 @@ import edu.wustl.common.querysuite.metadata.path.IPath;
  */
 public class MultiModelCategoryXmlParser {
 
-    private static EntityCache entityCache = null;
-
-    MultiModelCategoryXmlParser() {
-        entityCache = EntityCache.getInstance();
-    }
+//    private static EntityCache entityCache = null;
+//
+//    MultiModelCategoryXmlParser() {
+//        entityCache = EntityCache.getInstance();
+//    }
 
     /**
      * Reads the XML file and creates an object of MultiModelCategory for the same.
@@ -146,7 +146,7 @@ public class MultiModelCategoryXmlParser {
             List<Element> mappedClasseAttribs = a.elements();
             for (Element mappedClassAttrib : mappedClasseAttribs) {
                 String entityGroupName = mappedClassAttrib.attribute("model").getValue();
-                EntityGroupInterface entityGroup = entityCache.getEntityGroupByName(entityGroupName);
+                EntityGroupInterface entityGroup = EntityCache.getInstance().getEntityGroupByName(entityGroupName);
 
                 String entityName = mappedClassAttrib.attribute("class").getValue();
                 EntityInterface entity = entityGroup.getEntityByName(entityName);
