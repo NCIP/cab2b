@@ -26,10 +26,13 @@ import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.user.User;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.user.UserOperations;
+import edu.wustl.cab2b.server.util.XSSVulnerableDetector;
 import edu.wustl.cab2bwebapp.actionform.LoginForm;
 import edu.wustl.cab2bwebapp.bizlogic.ModelGroupBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.cab2bwebapp.constants.Constants;
+
+;
 
 /**
  * @author gaurav_mehta
@@ -61,8 +64,18 @@ public class LoginAction extends Action {
             if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
                 return mapping.findForward(Constants.FORWARD_LOGIN);
             }
+            if (XSSVulnerableDetector.isXssVulnerable(userName)
+                    || XSSVulnerableDetector.isXssKeywordVulnerable(userName)
+                    || XSSVulnerableDetector.isXssVulnerable(password)
+                    || XSSVulnerableDetector.isXssKeywordVulnerable(password)) {
+                request.setAttribute(Constants.INVALID_REQUEST, Constants.INVALID_REQUEST);
+                ActionForward actionForward = mapping.findForward(Constants.FORWARD_HOME);
+                ActionForward actionRedirect =
+                        new ActionForward(actionForward.getName(), actionForward.getPath(), false);
+                return actionRedirect;
+            }
             HttpSession session = request.getSession();
-            
+
             session.removeAttribute(Constants.SEARCH_RESULTS);
             session.removeAttribute(Constants.SEARCH_RESULTS_VIEW);
             session.removeAttribute(Constants.FAILED_SERVICES_COUNT);
@@ -76,7 +89,7 @@ public class LoginAction extends Action {
             session.removeAttribute(Constants.STOP_AJAX);
             session.removeAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
             session.removeAttribute(Constants.UI_POPULATION_FINISHED);
-            
+
             UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
             if (user == null || user.getUserName().equals(Constants.ANONYMOUS)) {
                 UserOperations userOperations = new UserOperations();
@@ -108,8 +121,7 @@ public class LoginAction extends Action {
             if (modelGroups != null && !modelGroups.isEmpty()) {
                 ModelGroupInterface modelGroup = modelGroups.iterator().next();
                 SavedQueryBizLogic savedQueryBizLogic =
-                        (SavedQueryBizLogic) request.getSession()
-                            .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+                        (SavedQueryBizLogic) request.getSession().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
                 Collection<ICab2bQuery> savedSearches =
                         savedQueryBizLogic.getRegularQueries(modelGroup.getEntityGroupList());
                 request.setAttribute(Constants.MODEL_GROUPS, modelGroups);
