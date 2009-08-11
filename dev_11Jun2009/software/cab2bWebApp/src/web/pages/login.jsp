@@ -14,6 +14,18 @@
 <SCRIPT language="JavaScript">
  function validate()
 {
+  var invalidChars = "~!^?*|,\\\\/\":<>[]{}`\';()@&$#% ";
+  var userName = document.getElementsByName("userName")[0];
+  var password = document.getElementsByName("password")[0];
+   for(var i=0;i<userName.value.length;i++)
+  {
+  	 if(invalidChars.indexOf(userName.value.charAt(i))!=-1)
+  	{
+      alert("User name should not contain special characters!");
+      userName.focus();
+      return false; 
+    }
+  }	  	
   var check1 = checkEmptyTextFileld('userName');
   var check2 = checkEmptyTextFileld('password');
   return check1 && check2;
