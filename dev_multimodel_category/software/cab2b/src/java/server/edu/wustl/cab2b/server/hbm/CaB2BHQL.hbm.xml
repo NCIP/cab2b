@@ -75,5 +75,17 @@
 		where cab2bQuery.type = ? and cab2bQuery.createdBy = (Select user.userId from
 		edu.wustl.cab2b.common.user.User user where user.userName = ?)
 	</query>
+	
+	<query name="getKeywordQueriesByUserName">
+		from edu.wustl.cab2b.common.queryengine.KeywordQueryImpl query
+		where query.createdBy = (Select user.userId from
+		edu.wustl.cab2b.common.user.User user where user.userName = ?)
+	</query>
+	
+	<query name="getMMCQueriesByUserName">
+		from edu.wustl.cab2b.common.queryengine.MultiModelCategoryQueryImpl query
+		where query.createdBy = (Select user.userId from
+		edu.wustl.cab2b.common.user.User user where user.userName = ?)
+	</query>
 
 </hibernate-mapping>
