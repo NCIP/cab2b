@@ -62,17 +62,19 @@ public class ApplicationFilter implements Filter {
 
             //There should not be any parameter appended in the URL (for Non AJAX GET requests).
             //If some parameters are appended in the URL and the call is not AJAX based, then redirect to home page.
-           // isXssVulnerable = request.getQueryString() != null && request.getHeader(Constants.AJAX_CALL) == null;
+            // isXssVulnerable = request.getQueryString() != null && request.getHeader(Constants.AJAX_CALL) == null;
 
             //Check each parameter in the request for XssVulnerability using RegEx=[<>] (useful for POST requests).
             //If any parameter is found to be XssVulnerable, then redirect to home page.
-            if (!isXssVulnerable) {
-                for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
-                    String parameterVal = request.getParameter((String) e.nextElement());
-                    if (XSSVulnerableDetector.isXssVulnerable(parameterVal)) {
-                        isXssVulnerable = true;
-                        break;
-                    }
+            for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
+                String parameter = (String) e.nextElement();
+                if (("password").equals(parameter)) {
+                    continue;
+                }
+                String parameterVal = request.getParameter(parameter);
+                if (XSSVulnerableDetector.isXssVulnerable(parameterVal)) {
+                    isXssVulnerable = true;
+                    break;
                 }
             }
             if (isXssVulnerable) { //If request is XssVulnerable, redirect to home page.
