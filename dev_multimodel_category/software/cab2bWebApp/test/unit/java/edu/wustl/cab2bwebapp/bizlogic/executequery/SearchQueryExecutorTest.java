@@ -1,19 +1,12 @@
-/**
- *
- */
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
-import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
-import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.server.queryengine.QueryConverter;
-import edu.wustl.cab2b.server.queryengine.QueryExecutor;
 import edu.wustl.cab2bwebapp.util.MockQueryObjects;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
@@ -26,7 +19,7 @@ import edu.wustl.common.querysuite.queryobject.IRule;
  */
 public class SearchQueryExecutorTest extends TestCase {
 
-    public void testInsetKeyword() {
+    public void testInsertKeyword() {
         ICab2bQuery query = new MockQueryObjects().createCaFEGeneQuery();
         ICab2bQuery keywordQuery = new QueryConverter().convertToKeywordQuery(query);
 
@@ -52,22 +45,26 @@ public class SearchQueryExecutorTest extends TestCase {
         assertTrue(flag);
     }
 
-    public void testTransformResult() {
+    public void testTransformResult() throws InterruptedException {
         ICab2bQuery query = new MockQueryObjects().createQuery_GenemRNAProtein();
-        QueryExecutor exe = new QueryExecutor(query, null);
-        exe.executeQuery();
-        IQueryResult<? extends IRecord> result = exe.getCompleteResults();
+        Collection<ICab2bQuery> queryList = new ArrayList<ICab2bQuery>(1);
+        queryList.add(query);
 
-        Map<ICab2bQuery, IQueryResult<? extends IRecord>> rawResults =
-                new HashMap<ICab2bQuery, IQueryResult<? extends IRecord>>();
-        rawResults.put(query, result);
+        SearchQueryExecutor searchQueryExecutor = new SearchQueryExecutor();
+        searchQueryExecutor.execute(queryList, null);
+
+        Thread.sleep(5000);
+        while (!searchQueryExecutor.isProcessingFinished()) {
+            Thread.sleep(5000);
+        }
+        Thread.sleep(5000);
         Map<ICab2bQuery, TransformedResultObjectWithContactInfo> transformedResult =
-                new SearchQueryExecutor().transformResult(100);
+                searchQueryExecutor.transformResult(100);
 
         assertFalse(transformedResult.isEmpty());
     }
 
-    public void testExecute() {
+    /*public void testExecute() {
         ICab2bQuery query = new MockQueryObjects().createQuery_Gene_mRNA_Protein();
 
         Collection<ICab2bQuery> queries = new ArrayList<ICab2bQuery>();
@@ -76,5 +73,5 @@ public class SearchQueryExecutorTest extends TestCase {
         searchQueryExecutor.execute(queries, null);
         Map<ICab2bQuery, TransformedResultObjectWithContactInfo> result = searchQueryExecutor.transformResult(100);
         assertFalse(result.isEmpty());
-    }
+    }*/
 }
