@@ -42,8 +42,10 @@
 	<property name="log4j.xml.file" location="${conf.dir}/log4j.xml" />
 	<property name="tomcat.web.xml.file" location="${conf.dir}/tomcat_web.xml" />
 	<property name="jboss.invoker.service.xml.file" location="${conf.dir}/invoker_jboss-service.xml" />
-	
+
 	<property name="db.scripts.dir" location="db" />
+	<property name="db.install.scripts.dir" location="${db.scripts.dir}/db-install" />
+	<property name="db.install.mysql.scripts.dir" location="${db.install.scripts.dir}/mysql" />
 
 	<property name="server.jar.dir" location="${workarea.dir}/serverJar" />
 	<property name="server.jar.file" location="${workarea.dir}/cab2bServer.jar" />
@@ -167,7 +169,7 @@
 
 		<replace file="${conf.dir}/cab2b.properties" token="@server.host@" value="${server-host}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@server.port@" value="${server-port}" />
-		
+
 		<replace file="${conf.dir}/cab2b.properties" token="@server.host@" value="${server-host}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@server.port@" value="${server-port}" />
 
@@ -193,9 +195,8 @@
 		<replace file="${conf.dir}/cagrid.properties" token="@delegetee@" value="${delegetee-identifier}" />
 		<replace file="${conf.dir}/cagrid.properties" token="@grid.cert@" value="${grid-cert}" />
 		<replace file="${conf.dir}/cagrid.properties" token="@grid.key@" value="${grid-key}" />
-		
-		
 	</target>
+	
 	<!-- ================================================================================== -->
 	<target name="pmd" description="PMD scan Java source code and looks for potential code problems.">
 		<path id="pmd.classpath">
@@ -499,24 +500,6 @@
 		<mkdir dir="${jboss.home}/server/default/log" />
 		<echo message="" file="${jboss.log.dir}/caB2B.log" append="false" />
 	</target-->
-
-	<!-- ================================================================================== 
-			"Drops existing database and create new database with schema"
-	================================================================================== 	-->
-	<target name="create.database">
-		<echo>Creating cab2b database...</echo>
-		<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${database.server.ip}:${database.server.port}/" userid="${database.username}" password="${database.password}" onerror="continue" classpathref="server.classpath">			
-			DROP DATABASE ${database.name};
-			CREATE DATABASE ${database.name};
-		</sql>
-
-		<echo>Creating schema in cab2b database...</echo>
-		<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${database.server.ip}:${database.server.port}/${database.name}" userid="${database.username}" password="${database.password}" onerror="continue" classpathref="server.classpath">
-			<fileset dir="${db.scripts.dir}">
-				<include name="*.sql" />
-			</fileset>
-		</sql>
-	</target>
 
 	<!-- ================================================================================== -->
 	<target name="create.metadata">
@@ -934,8 +917,8 @@
 			<fileset dir="${server.src}" includes="**/edu/wustl/cab2b/server/category/multimodelcategory/*.hbm.xml" />
 		</delete>
 	</target>
-	
-		<!-- ================================================================================== -->
+
+	<!-- ================================================================================== -->
 	<target name="generate.mmc.schema.mysql">
 		<taskdef name="schemaexport" classname="org.hibernate.tool.hbm2ddl.SchemaExportTask">
 			<classpath>
@@ -954,7 +937,7 @@
 			</fileset>
 		</schemaexport>
 	</target>
-	
+
 	<!-- ================================================================================== -->
 	<target name="generate.query.schema.mysql">
 		<taskdef name="schemaexport" classname="org.hibernate.tool.hbm2ddl.SchemaExportTask">
@@ -1079,7 +1062,6 @@
 		<copy file="${lib.dir}/common/cryptix-asn1.jar" todir="${dist.dir}" />
 		<copy file="${lib.dir}/common/jce-jdk13-125.jar" todir="${dist.dir}" />
 		<copy file="${lib.dir}/common/puretls.jar" todir="${dist.dir}" />
-		
 	</target>
 
 	<!--==========================================================================
@@ -1090,6 +1072,31 @@
 	 ===========================================================================-->
 	<property file="../build/project.properties" />
 	<property file="../build/install.properties" />
+
+	<!-- ================================================================================== 
+				"Drops existing database and create new database with schema"
+		================================================================================== 	-->
+	<target name="create.database">
+		<echo>Creating cab2b database...</echo>
+		<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${database.server}:${database.port}/" userid="${database.user}" password="${database.password}" onerror="continue" classpathref="server.classpath">			
+				DROP DATABASE ${database.name};
+				CREATE DATABASE ${database.name};
+		</sql>
+
+		<echo>Creating schema in cab2b database...</echo>
+		<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${database.server}:${database.port}/${database.name}" userid="${database.user}" password="${database.password}" onerror="continue" classpathref="server.classpath">
+			<fileset dir="${db.install.mysql.scripts.dir}">
+				<include name="dynamicextension.sql" />
+				<include name="experiment_module.sql" />
+				<include name="metadata.sql" />
+				<include name="query.sql" />
+				<exclude name="caB2B_mysql.sql" />
+			</fileset>
+			<fileset dir="${db.install.mysql.scripts.dir}">
+				<include name="caB2B_mysql.sql" />
+			</fileset>
+		</sql>
+	</target>
 
 	<!-- Set application.base.path based on platform -->
 	<condition property="application.base.path" value="${application.base.path.linux}">
