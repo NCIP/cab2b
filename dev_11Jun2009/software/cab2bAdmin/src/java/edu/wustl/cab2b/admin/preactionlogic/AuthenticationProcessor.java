@@ -61,8 +61,11 @@ public class AuthenticationProcessor implements Filter {
             //Check each parameter in the request for XssVulnerability using RegEx=[<>] (useful for POST requests).
             //If any parameter is found to be XssVulnerable, then redirect to home page.
             for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
-                String parameterVal = request.getParameter((String) e.nextElement());
-                if (XSSVulnerableDetector.isXssVulnerable(parameterVal)) {
+                String parameter = (String) e.nextElement();
+                if (("password").equals(parameter)) {
+                    continue;
+                }
+                if (XSSVulnerableDetector.isXssVulnerable(request.getParameter(parameter))) {
                     request.setAttribute(AdminConstants.INVALID_REQUEST, AdminConstants.INVALID_REQUEST);
                     request.getRequestDispatcher("/jsp/default.jsp").forward(req, res);
                     return;
