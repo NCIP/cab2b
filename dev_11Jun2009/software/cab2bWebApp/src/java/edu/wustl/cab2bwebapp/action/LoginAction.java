@@ -64,13 +64,7 @@ public class LoginAction extends Action {
             if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
                 return mapping.findForward(Constants.FORWARD_LOGIN);
             }
-            if (XSSVulnerableDetector.isXssKeywordVulnerable(userName)) {
-                request.setAttribute(Constants.INVALID_REQUEST, Constants.INVALID_REQUEST);
-                ActionForward actionForward = mapping.findForward(Constants.FORWARD_HOME);
-                ActionForward actionRedirect =
-                        new ActionForward(actionForward.getName(), actionForward.getPath(), false);
-                return actionRedirect;
-            }
+
             HttpSession session = request.getSession();
 
             session.removeAttribute(Constants.SEARCH_RESULTS);
