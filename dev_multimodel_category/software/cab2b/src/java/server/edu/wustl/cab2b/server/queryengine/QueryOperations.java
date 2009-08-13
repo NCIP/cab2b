@@ -1,6 +1,3 @@
-/**
- *
- */
 package edu.wustl.cab2b.server.queryengine;
 
 import static edu.wustl.cab2b.common.util.Constants.MMC_ENTITY_GROUP_NAME;
@@ -22,6 +19,7 @@ import edu.common.dynamicextensions.util.DynamicExtensionsUtility;
 import edu.wustl.cab2b.common.authentication.util.AuthenticationUtility;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.KeywordQuery;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.common.queryengine.QueryType;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
@@ -72,19 +70,10 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
      * @return list of IParameterizedQuery having only name, description and created date populated.
      */
     public Collection<ICab2bQuery> getUsersQueriesDetail(String userName) {
-        List<Object> idList = new ArrayList<Object>(1);
-        idList.add(userName);
+        List<Object> params = new ArrayList<Object>(1);
+        params.add(userName);
 
-        List<ICab2bQuery> queries = null;
-        try {
-            queries = (List<ICab2bQuery>) Utility.executeHQL("getQueriesByUserName", idList);
-            postProcessMMCQueries(queries);
-            filterSystemGeneratedSubQueries(queries);
-        } catch (HibernateException e) {
-            throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
-        }
-
-        return queries;
+        return getQueries("getUserQueriesDetails", params);
     }
 
     /**
@@ -94,7 +83,11 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
      * @return
      */
     public List<ICab2bQuery> getRegularQueriesByUserName(final String userName) {
-        return getQueriesByTypeAndUserName(QueryType.ANDed, userName);
+        List<Object> params = new ArrayList<Object>(2);
+        params.add(QueryType.ANDed.toString());
+        params.add(userName);
+
+        return getQueries("getQueriesByTypeAndUserName", params);
     }
 
     /**
@@ -103,25 +96,22 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
      * @param userName creator/owner of the queries
      * @return
      */
-    public List<ICab2bQuery> getKeywordQueriesByUserName(final String userName) {
-        return getQueriesByTypeAndUserName(QueryType.ORed, userName);
-    }
-
-    /**
-     * This method returns all the queries of the given type created by the given user.
-     *
-     * @param queryType type of the queries to be retrieved
-     * @param userName creator/owner of the queries
-     * @return
-     */
-    private List<ICab2bQuery> getQueriesByTypeAndUserName(QueryType queryType, final String userName) {
+    public List<KeywordQuery> getKeywordQueriesByUserName(final String userName) {
         List<Object> paramList = new ArrayList<Object>(2);
-        paramList.add(queryType.toString());
         paramList.add(userName);
 
+        List<ICab2bQuery> queries = getQueries("getKeywordQueriesByUserName", paramList);
+        List<KeywordQuery> keywordQueries = new ArrayList<KeywordQuery>(queries.size());
+        for (ICab2bQuery query : queries) {
+            keywordQueries.add((KeywordQuery) query);
+        }
+        return keywordQueries;
+    }
+
+    private List<ICab2bQuery> getQueries(final String hqlQuery, List<Object> params) {
         List<ICab2bQuery> queries = null;
         try {
-            queries = (List<ICab2bQuery>) Utility.executeHQL("getQueriesByTypeAndUserName", paramList);
+            queries = (List<ICab2bQuery>) Utility.executeHQL(hqlQuery, params);
             postProcessMMCQueries(queries);
             filterSystemGeneratedSubQueries(queries);
         } catch (HibernateException e) {
