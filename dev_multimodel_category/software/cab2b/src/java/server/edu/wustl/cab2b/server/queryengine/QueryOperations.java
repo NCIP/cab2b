@@ -77,9 +77,9 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
 
         List<ICab2bQuery> queries = null;
         try {
-            queries = (List<ICab2bQuery>) Utility.executeHQL("getUserQueriesDetails", idList);
+            queries = (List<ICab2bQuery>) Utility.executeHQL("getQueriesByUserName", idList);
             postProcessMMCQueries(queries);
-            //filterSystemGeneratedSubQueries(queries);
+            filterSystemGeneratedSubQueries(queries);
         } catch (HibernateException e) {
             throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
         }
@@ -123,7 +123,7 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         try {
             queries = (List<ICab2bQuery>) Utility.executeHQL("getQueriesByTypeAndUserName", paramList);
             postProcessMMCQueries(queries);
-            //filterSystemGeneratedSubQueries(queries);
+            filterSystemGeneratedSubQueries(queries);
         } catch (HibernateException e) {
             throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
         }
