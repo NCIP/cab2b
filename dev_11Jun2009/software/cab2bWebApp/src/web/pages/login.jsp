@@ -55,7 +55,7 @@
 						<bean:message key="label.username"/>
 					</DIV>
 					<DIV style="width:60%;float:right">
-						<input type="text" class="textbox" name="userName" value="${loginForm.userName}" autocomplete="off"/>
+						<input type="text" class="textbox" name="userName" value="" autocomplete="off"/>
 					</DIV>
 					<BR/>
 					<DIV class="label">
