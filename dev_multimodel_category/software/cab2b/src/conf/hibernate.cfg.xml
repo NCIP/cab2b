@@ -7,7 +7,7 @@
 	<session-factory>
 	   	<property name="show_sql">false</property>
 		
-	<!-- use data source  	-->
+	<!-- use data source -->	
     	<property name="connection.datasource">java:/DS-NAME</property>
   	
 	
@@ -36,6 +36,7 @@
 		<mapping resource="edu/wustl/cab2b/server/hbm/User.hbm.xml"/>
 		<mapping resource="edu/wustl/cab2b/server/hbm/CategoryPopularity.hbm.xml"/>
 		<mapping resource="edu/wustl/cab2b/server/hbm/ModelGroup.hbm.xml"/>
+ 		<mapping resource="edu/wustl/cab2b/server/hbm/AbstractStatus.hbm.xml"/>
  		
 		<mapping resource="edu/wustl/cab2b/server/hbm/MultiModelAttributeImpl.hbm.xml"/>
 		<mapping resource="edu/wustl/cab2b/server/hbm/MultiModelCategoryImpl.hbm.xml"/>

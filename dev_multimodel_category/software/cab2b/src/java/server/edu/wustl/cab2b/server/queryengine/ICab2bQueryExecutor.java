@@ -1,6 +1,6 @@
 package edu.wustl.cab2b.server.queryengine;
 
-import edu.wustl.cab2b.common.ejb.queryengine.querystatus.QueryStatus;
+import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatusImpl;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 
@@ -22,6 +22,6 @@ public interface ICab2bQueryExecutor {
      * Returns status of the query.
      * @return QueryStatus 
      */
-    QueryStatus getStatus();
+    QueryStatusImpl getStatus();
 
 }

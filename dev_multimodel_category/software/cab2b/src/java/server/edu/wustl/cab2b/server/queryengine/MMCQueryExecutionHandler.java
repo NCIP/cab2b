@@ -7,7 +7,7 @@ import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 
-import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
+import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatusImpl;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.UserInterface;
@@ -69,7 +69,7 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
      * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#getStatus()
      */
     @Override
-    public QueryStatus getStatus() {
+    public QueryStatusImpl getStatus() {
         // TODO Auto-generated method stub
         return null;
     }
