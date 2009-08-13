@@ -4,8 +4,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.globus.gsi.GlobusCredential;
 
-import edu.wustl.cab2b.common.ejb.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.UserInterface;
