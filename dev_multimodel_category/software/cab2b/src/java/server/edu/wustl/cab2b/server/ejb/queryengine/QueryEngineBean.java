@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
-import java.util.List;
 
 import edu.wustl.cab2b.common.authentication.util.AuthenticationUtility;
 import edu.wustl.cab2b.common.domain.DCQL;
@@ -128,30 +127,6 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      */
     public DCQL getDCQL(ICab2bQuery query) throws RemoteException {
         return new DCQLGenerator(query).generateDCQL();
-    }
-
-    /**
-     * This method returns all the regular queries created by the given user.
-     *
-     * @param serializedDCR End Point Reference for user's credential
-     * @return
-     * @throws RemoteException
-     */
-    public List<ICab2bQuery> getRegularQueriesByUserName(final String serializedDCR) throws RemoteException {
-        String usersGridId = AuthenticationUtility.getUsersGridId(serializedDCR);
-        return new QueryOperations().getRegularQueriesByUserName(usersGridId);
-    }
-
-    /**
-     * This method returns all the keyword search queries created by the given user.
-     *
-     * @param serializedDCR End Point Reference for user's credential
-     * @return
-     * @throws RemoteException
-     */
-    public List<ICab2bQuery> getKeywordQueriesByUserName(final String serializedDCR) throws RemoteException {
-        String usersGridId = AuthenticationUtility.getUsersGridId(serializedDCR);
-        return new QueryOperations().getKeywordQueriesByUserName(usersGridId);
     }
 
 }

@@ -2,7 +2,6 @@ package edu.wustl.cab2b.common.ejb.queryengine;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
-import java.util.List;
 
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.domain.DCQL;
@@ -76,22 +75,4 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * @return TreeNode<DCQL>
      */
     DCQL getDCQL(ICab2bQuery query) throws RemoteException;
-
-    /**
-     * This method returns all the regular queries created by the given user.
-     *
-     * @param serializedDCR End Point Reference for user's credential
-     * @return
-     * @throws RemoteException
-     */
-    List<ICab2bQuery> getRegularQueriesByUserName(final String serializedDCR) throws RemoteException;
-
-    /**
-     * This method returns all the keyword search queries created by the given user.
-     *
-     * @param serializedDCR End Point Reference for user's credential
-     * @return
-     * @throws RemoteException
-     */
-    List<ICab2bQuery> getKeywordQueriesByUserName(final String serializedDCR) throws RemoteException;
 }
