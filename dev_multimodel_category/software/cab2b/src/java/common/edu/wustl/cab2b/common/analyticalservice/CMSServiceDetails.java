@@ -14,7 +14,7 @@ import edu.common.dynamicextensions.domaininterface.UserDefinedDEInterface;
  */
 public class CMSServiceDetails implements ServiceDetailsInterface {
 
-    /* (non-Javadoc)
+    /* (non-Javadoc) 
      * @see edu.wustl.cab2b.common.analyticalservice.ServiceDetailsInterface#getDisplayName()
      */
     public String getDisplayName() {
