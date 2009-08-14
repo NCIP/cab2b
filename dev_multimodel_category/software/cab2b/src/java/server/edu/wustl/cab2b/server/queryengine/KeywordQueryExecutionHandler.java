@@ -68,14 +68,6 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
     }
 
     /* (non-Javadoc)
-     * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#exportResultToCSVFile(java.lang.String)
-     */
-    @Override
-    public void exportResultToCSVFile(String filePath) {
-        // TODO Auto-generated method stub
-    }
-
-    /* (non-Javadoc)
      * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#getResult()
      */
     @Override
