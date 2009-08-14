@@ -3,11 +3,14 @@
  */
 package edu.wustl.cab2b.server.queryengine;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.globus.gsi.GlobusCredential;
 
+import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
-
-import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatusImpl;
+import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.UserInterface;
@@ -17,6 +20,11 @@ import edu.wustl.cab2b.common.user.UserInterface;
  *
  */
 public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCategoryQuery> {
+    private MMCQueryResultConflator resultConflator;
+
+    private Collection<QueryExecutor> queryExecutors;
+
+    private IQueryResult<? extends IRecord> result;
 
     /**
      * @param queries
@@ -25,11 +33,13 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
      * @param modelGroupNames
      */
     public MMCQueryExecutionHandler(
-           MultiModelCategoryQuery query,
+            MultiModelCategoryQuery query,
             GlobusCredential proxy,
             UserInterface user,
             String[] modelGroupNames) {
         super(query, proxy, user, modelGroupNames);
+        resultConflator = new MMCQueryResultConflator(query);
+        queryExecutors = new ArrayList<QueryExecutor>(query.getSubQueries().size());
     }
 
     /* (non-Javadoc)
@@ -37,8 +47,19 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
      */
     @Override
     protected void executeQuery() {
-        // TODO Auto-generated method stub
+        Collection<ICab2bQuery> subQueries = query.getSubQueries();
+        for (ICab2bQuery query : subQueries) {
+            QueryExecutor queryExecutor = new QueryExecutor(query, proxy);
+            queryExecutors.add(queryExecutor);
+        }
 
+        new Thread() {
+            public void run() {
+                for (QueryExecutor queryExecutor : queryExecutors) {
+                    queryExecutor.executeQuery();
+                }
+            }
+        }.start();
     }
 
     /* (non-Javadoc)
@@ -46,7 +67,7 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
      */
     @Override
     public void exportResultToCSVFile(String filePath) {
-        // TODO Auto-generated method stub
+        
     }
 
     /* (non-Javadoc)
@@ -54,7 +75,8 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
      */
     @Override
     public IQueryResult<? extends IRecord> getResult() {
-        return null;
+        postProcessResults();
+        return result;
     }
 
     /* (non-Javadoc)
@@ -69,8 +91,10 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
      * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#getStatus()
      */
     @Override
-    public QueryStatusImpl getStatus() {
-        // TODO Auto-generated method stub
+    public QueryStatus getStatus() {
+        for (QueryExecutor queryExecutor : queryExecutors) {
+
+        }
         return null;
     }
 
@@ -79,7 +103,13 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
      */
     @Override
     protected void postProcessResults() {
-        // TODO Auto-generated method stub
+        Collection<IQueryResult<? extends IRecord>> queryResults =
+                new ArrayList<IQueryResult<? extends IRecord>>();
+        for (QueryExecutor queryExecutor : queryExecutors) {
+            queryResults.add(queryExecutor.getPartialResult());
+        }
+
+        result = resultConflator.conflate(queryResults);
     }
 
     /* (non-Javadoc)
@@ -87,7 +117,7 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
      */
     @Override
     protected void preProcessQuery() {
-        // TODO Auto-generated method stub
+        new MultimodelCategoryQueryPreprocessor().preprocessQuery(query);
     }
 
 }
