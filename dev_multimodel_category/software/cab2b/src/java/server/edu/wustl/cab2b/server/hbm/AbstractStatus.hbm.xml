@@ -61,8 +61,7 @@
 		<joined-subclass name="edu.wustl.cab2b.common.queryengine.querystatus.URLStatusImpl" dynamic-update="false"
 			dynamic-insert="false" table="CAB2B_URL_STATUS">
 			<key column="ID" />
-			<many-to-one name="url" column="URL" class="edu.wustl.cab2b.common.user.ServiceURL" update="true"
-				insert="true" not-null="true" cascade="none" />
+			<property name="url" column="URL" type="string" length="255" update="true" insert="true" not-null="true"/>
 		</joined-subclass>
 	</class>
 </hibernate-mapping>
