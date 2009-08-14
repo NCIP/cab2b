@@ -12,7 +12,7 @@ import edu.wustl.cab2b.common.user.UserInterface;
  * It extends AbstractStatusImpl for properties like : ID, Status, Message, ResultCount, Description
  * @author gaurav_mehta
  */
-public class QueryStatusImpl extends AbstractStatusImpl {
+public class QueryStatusImpl extends AbstractStatusImpl implements QueryStatus{
     private static final long serialVersionUID = 1L;
 
     /** This is the USer object who has executed the query in background */
@@ -37,7 +37,7 @@ public class QueryStatusImpl extends AbstractStatusImpl {
     /** This is the reference of child Queries being executed. This is not null in case of:
      * 1. MultiModel Category query
      * 2. Keyword query  */
-    private Collection<QueryStatusImpl> childrenQueryStatus = new HashSet<QueryStatusImpl>();
+    private Collection<QueryStatus> childrenQueryStatus = new HashSet<QueryStatus>();
 
     /** This is the set of all urls selected for a query */
     private Collection<URLStatusImpl> urlStatus = new HashSet<URLStatusImpl>();;
@@ -134,9 +134,9 @@ public class QueryStatusImpl extends AbstractStatusImpl {
      * Returns the set of QueryStatus for childQueries
      * @return the childrenQueryStatus
      * @hibernate.property name="childrenQueryStatus" column="PARENT_ID" 
-     * type="edu.wustl.cab2b.common.queryengine.querystatus.QueryStatusImpl" not-null="true"
+     * type="edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus" not-null="true"
      */
-    public Collection<QueryStatusImpl> getChildrenQueryStatus() {
+    public Collection<QueryStatus> getChildrenQueryStatus() {
         return childrenQueryStatus;
     }
 
@@ -144,7 +144,7 @@ public class QueryStatusImpl extends AbstractStatusImpl {
      * Sets the set of QueryStatus for childQueries
      * @param childrenQueryStatus the childrenQueryStatus to set
      */
-    public void setChildrenQueryStatus(Collection<QueryStatusImpl> childrenQueryStatus) {
+    public void setChildrenQueryStatus(Collection<QueryStatus> childrenQueryStatus) {
         this.childrenQueryStatus = childrenQueryStatus;
     }
 

@@ -7,7 +7,7 @@ import edu.wustl.cab2b.common.user.ServiceURLInterface;
  * It extends AbstractStatusImpl for properties like : ID, Status, Message, ResultCount, Description
  * @author gaurav_mehta
  */
-public class URLStatusImpl extends AbstractStatusImpl {
+public class URLStatusImpl extends AbstractStatusImpl implements URLStatus{
 
     private static final long serialVersionUID = 1L;
 
