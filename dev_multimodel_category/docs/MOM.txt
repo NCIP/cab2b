@@ -1,5 +1,5 @@
 -----------------------
-    MOM- 12 June 09
+    MOM- 12 June 09 
 -----------------------
 Issues Discussed:
     1.	Iteration 3 would be released in the next week and production release date is 10th  July.
@@ -18,7 +18,7 @@ Action Items:
     3.	Madhumita to investigate on the new query and if possible add it to Iteration 3 queries.
 
 -----------------------
-    MOM – 9 June 09
+    MOM – 9 June 09 
 -----------------------
 Issues Discussed:
     1.  Next iteration scope that is to be discussed with Stephen and Chris:
