@@ -11,7 +11,7 @@
 			<generator class="increment" />
 		</id>
 
-		<property name="status" column="STATUS" type="String" length="100" update="true" insert="true" not-null="true" />
+		<property name="status" column="STATUS" type="string" length="100" update="true" insert="true" not-null="true" />
 
 		<property name="resultCount" column="RESULT_COUNT" type="integer" length="30" update="true" insert="true"
 			not-null="true" />
