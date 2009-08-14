@@ -4,7 +4,7 @@
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping package="edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatusImpl">
+<hibernate-mapping package="edu.wustl.cab2b.common.queryengine.querystatus">
 	<class name="AbstractStatusImpl" table="CAB2B_ABSTRACT_STATUS">
 
 		<id name="id" column="ID" type="long" length="30" unsaved-value="null">
