@@ -46,11 +46,8 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
     public abstract IQueryResult<? extends IRecord> getResult();
 
     /**
-     * Returns results from all URLs 
-     * @param url
+     *  Starts query execution process if execution is not yet started.
      */
-    public abstract IQueryResult<? extends IRecord> getResult(String url);
-
     public void execute() {
         if (!isAlive.getAndSet(Boolean.TRUE)) {
             preProcessQuery();
@@ -58,12 +55,6 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
             postProcessResults();
         }
     }
-
-    /**
-     * writes query results to specified path
-     * @param filePath
-     */
-    public abstract void exportResultToCSVFile(String filePath);
 
     /**
      * @return QueryStatus

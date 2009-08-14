@@ -60,15 +60,7 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
                 }
             }
         }.start();
-    }
-
-    /* (non-Javadoc)
-     * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#exportResultToCSVFile(java.lang.String)
-     */
-    @Override
-    public void exportResultToCSVFile(String filePath) {
-        
-    }
+    }   
 
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#getResult()
@@ -78,15 +70,7 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
         postProcessResults();
         return result;
     }
-
-    /* (non-Javadoc)
-     * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#getResult(java.lang.String)
-     */
-    @Override
-    public IQueryResult<? extends IRecord> getResult(String url) {
-        return null;
-    }
-
+  
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#getStatus()
      */
