@@ -5,20 +5,25 @@ import java.util.Collection;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
-import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatusImpl;
+import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.common.hibernate.HibernateDatabaseOperations;
 import edu.wustl.common.hibernate.HibernateUtil;
 import edu.wustl.common.util.dbManager.HibernateUtility;
 
+/**
+ * Class for saving/updating query status properties.  
+ * @author  Chetan_pundhir
+ *
+ */
 public class QueryURLStatusOperations {
 
-    public void insertQueryStatus(QueryStatusImpl qs) {
+    public void insertQueryStatus(QueryStatus qs) {
         Session session = null;
         try {
             session = HibernateUtil.getSessionFactory().openSession();
-            HibernateDatabaseOperations<QueryStatusImpl> handler =
-                    new HibernateDatabaseOperations<QueryStatusImpl>(session);
+            HibernateDatabaseOperations<QueryStatus> handler =
+                    new HibernateDatabaseOperations<QueryStatus>(session);
             handler.insertOrUpdate(qs);
         } catch (Throwable e) {
             e.printStackTrace();
@@ -28,8 +33,8 @@ public class QueryURLStatusOperations {
         }
     }
 
-    public Collection<QueryStatusImpl> getQueryStatus(UserInterface user) {
-        Collection<QueryStatusImpl> queryStatus = null;
+    public Collection<QueryStatus> getQueryStatus(UserInterface user) {
+        Collection<QueryStatus> queryStatus = null;
         try {
             queryStatus = HibernateUtility.executeHQL("getQueryStatus");
         } catch (HibernateException e) {
