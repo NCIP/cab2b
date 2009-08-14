@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.server.queryengine;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.globus.gsi.GlobusCredential;
@@ -22,6 +23,8 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
     protected UserInterface user;
 
     protected String[] modelGroupNames;
+    
+    protected List<QueryExecutor> queryExecutorsList;
 
     public QueryExecutionHandler(T query, GlobusCredential proxy, UserInterface user, String[] modelGroupNames) {
         this.query = query;
