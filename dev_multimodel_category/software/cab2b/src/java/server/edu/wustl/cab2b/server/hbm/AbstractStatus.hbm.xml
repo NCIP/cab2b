@@ -4,7 +4,7 @@
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping package="edu.wustl.cab2b.common.ejb.queryengine.querystatus.AbstractStatusImpl">
+<hibernate-mapping package="edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatusImpl">
 	<class name="AbstractStatusImpl" table="CAB2B_ABSTRACT_STATUS">
 
 		<id name="id" column="ID" type="long" length="30" unsaved-value="null">
@@ -22,7 +22,7 @@
 		<property name="description" column="DESCRIPTION" type="string" length="255" update="true" insert="true"
 			not-null="true" />
 
-		<joined-subclass name="edu.wustl.cab2b.common.ejb.queryengine.querystatus.QueryStatusImpl" dynamic-update="false"
+		<joined-subclass name="edu.wustl.cab2b.common.queryengine.querystatus.QueryStatusImpl" dynamic-update="false"
 			dynamic-insert="false" table="CAB2B_QUERY_STATUS">
 			<key column="ID" />
 
@@ -48,17 +48,17 @@
 				cascade="all-delete-orphan">
 				<cache usage="read-write" />
 				<key column="PARENT_ID" />
-				<one-to-many class="edu.wustl.cab2b.common.ejb.queryengine.querystatus.QueryStatusImpl" />
+				<one-to-many class="edu.wustl.cab2b.common.queryengine.querystatus.QueryStatusImpl" />
 			</set>
 
 			<set name="urlStatus" table="CAB2B_QUERY_STATUS" lazy="false" inverse="false" cascade="all-delete-orphan">
 				<cache usage="read-write" />
 				<key column="URL_ID" />
-				<one-to-many class="edu.wustl.cab2b.common.ejb.queryengine.querystatus.URLStatusImpl" />
+				<one-to-many class="edu.wustl.cab2b.common.queryengine.querystatus.URLStatusImpl" />
 			</set>
 		</joined-subclass>
 
-		<joined-subclass name="edu.wustl.cab2b.common.ejb.queryengine.querystatus.URLStatusImpl" dynamic-update="false"
+		<joined-subclass name="edu.wustl.cab2b.common.queryengine.querystatus.URLStatusImpl" dynamic-update="false"
 			dynamic-insert="false" table="CAB2B_URL_STATUS">
 			<key column="ID" />
 			<many-to-one name="url" column="URL" class="edu.wustl.cab2b.common.user.ServiceURL" update="true"
