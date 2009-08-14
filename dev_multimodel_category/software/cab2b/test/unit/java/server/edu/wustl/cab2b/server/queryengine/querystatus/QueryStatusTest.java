@@ -97,12 +97,12 @@ public class QueryStatusTest extends TestCase {
         }
     }
 
-    public void testDeleteQueryStatus() {
+    /*public void testDeleteQueryStatus() {
         loadCache();
         QueryURLStatusOperations qo = new QueryURLStatusOperations();
         QueryStatus qss = qo.getQueryStatusById(1L);
         qo.deleteQueryStatus(qss);
-    }
+    }*/
 
     private void loadCache() {
         Connection con = TestConnectionUtil.getConnection();
