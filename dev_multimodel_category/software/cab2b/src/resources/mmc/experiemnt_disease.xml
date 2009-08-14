@@ -5,8 +5,8 @@
 			<Attribute name="title" model="caArray_v2" class="gov.nih.nci.caarray.domain.project.Experiment" />
 		</MultiModelCategoryAttribute>
 		<MultiModelCategoryAttribute name="Experiment Description" description="Experiment Description">
-			<Attribute name="Description" model="caArray_v2.1" class="gov.nih.nci.caarray.domain.project.Experiment" />
-			<Attribute name="Description" model="caArray_v2" class="gov.nih.nci.caarray.domain.project.Experiment" />
+			<Attribute name="description" model="caArray_v2.1" class="gov.nih.nci.caarray.domain.project.Experiment" />
+			<Attribute name="description" model="caArray_v2" class="gov.nih.nci.caarray.domain.project.Experiment" />
 		</MultiModelCategoryAttribute>
 		<MultiModelCategoryAttribute name="AssayType" description="AssayType">
 			<Attribute name="assayType" model="caArray_v2.1" class="gov.nih.nci.caarray.domain.project.Experiment" />
@@ -38,15 +38,15 @@
 		</MultiModelCategoryAttribute>
 	</MultiModelCategoryAttributes>
 	<Paths>
-		<Path id="325" />
-		<Path id="111952" />
-		<Path id="172" />
-		<Path id="112458" />
-		<Path id="5410" />
-		<Path id="112551" />
-		<Path id="994" />
-		<Path id="111717" />
-		<Path id="113" />
-		<Path id="110948" />
+		<Path id="17376" />
+		<Path id="298" />
+		<Path id="11918" />
+		<Path id="741" />
+		<Path id="15982" />
+		<Path id="687" />
+		<Path id="246" />
+		<Path id="11275" />
+		<Path id="9039" />
+		<Path id="1343" />
 	</Paths>
 </MultiModelCategory>
