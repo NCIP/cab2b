@@ -12,9 +12,6 @@ public interface AbstarctStatus {
     /** Gets the URL ID */
     public Long getId();
     
-    /** Sets the ID */
-    public void setId(Long id);
-    
     /** Gets the URL Status */
     public String getStatus();
     

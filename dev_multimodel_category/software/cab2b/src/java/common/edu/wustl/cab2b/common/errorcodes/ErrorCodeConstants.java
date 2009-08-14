@@ -245,4 +245,19 @@ public interface ErrorCodeConstants {
     
     /** Error code for incorrect service instance */
     static final String MG_008 = "MG.008";
+    
+    /** Error occur while saving Query Status */
+    static final String QS_001 = "QS.001";
+    
+    /** Error occur while retrieving Query Status */
+    static final String QS_002 = "QS.002";
+    
+    /** Error occur while deleting Query Status */
+    static final String QS_003 = "QS.003";
+    
+    /** Error occur while updating Query Status */
+    static final String QS_004 = "QS.004";
+    
+    /** Error occur while saving Query Status as user does not have rights */
+    static final String QS_005 = "QS.005";
 }

@@ -8,7 +8,9 @@
 	<class name="AbstractStatusImpl" table="CAB2B_ABSTRACT_STATUS">
 
 		<id name="id" column="ID" type="long" length="30" unsaved-value="null">
-			<generator class="increment" />
+			<generator class="native">
+                <param name="sequence">ABSTRACT_STATUS_SEQ</param>
+            </generator>
 		</id>
 
 		<property name="status" column="STATUS" type="string" length="100" update="true" insert="true" not-null="true" />
@@ -17,10 +19,10 @@
 			not-null="true" />
 
 		<property name="message" column="MESSAGE" type="string" length="255" update="true" insert="true"
-			not-null="true" />
+			not-null="false" />
 
 		<property name="description" column="DESCRIPTION" type="string" length="255" update="true" insert="true"
-			not-null="true" />
+			not-null="false" />
 
 		<joined-subclass name="edu.wustl.cab2b.common.queryengine.querystatus.QueryStatusImpl" dynamic-update="false"
 			dynamic-insert="false" table="CAB2B_QUERY_STATUS">
@@ -39,10 +41,12 @@
 				not-null="true" />
 
 			<property name="queryEndTime" column="END_TIME" type="timestamp" update="true" insert="true"
-				not-null="true" />
+				not-null="false" />
 
 			<property name="fileName" column="FILENAME" type="string" length="100" update="true" insert="true"
 				not-null="true" />
+				
+			<property name="visible" column="VISIBLE" type="boolean" update="true" insert="true" not-null="true"/>
 
 			<set name="childrenQueryStatus" table="CAB2B_QUERY_STATUS" lazy="false" inverse="false"
 				cascade="all-delete-orphan">
@@ -51,9 +55,9 @@
 				<one-to-many class="edu.wustl.cab2b.common.queryengine.querystatus.QueryStatusImpl" />
 			</set>
 
-			<set name="urlStatus" table="CAB2B_QUERY_STATUS" lazy="false" inverse="false" cascade="all-delete-orphan">
+			<set name="urlStatus" table="CAB2B_URL_STATUS" lazy="false" inverse="false" cascade="all-delete-orphan">
 				<cache usage="read-write" />
-				<key column="QUERY_ID" />
+				<key column="QUERY_STATUS_ID" not-null="true"/>
 				<one-to-many class="edu.wustl.cab2b.common.queryengine.querystatus.URLStatusImpl" />
 			</set>
 		</joined-subclass>

@@ -1,8 +1,8 @@
 package edu.wustl.cab2b.common.queryengine.querystatus;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Set;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.user.UserInterface;
@@ -37,13 +37,15 @@ public class QueryStatusImpl extends AbstractStatusImpl implements QueryStatus{
     /** This is the reference of child Queries being executed. This is not null in case of:
      * 1. MultiModel Category query
      * 2. Keyword query  */
-    private Collection<QueryStatus> childrenQueryStatus = new HashSet<QueryStatus>();
+    private Set<QueryStatus> childrenQueryStatus = new HashSet<QueryStatus>();
 
     /** This is the set of all urls selected for a query */
-    private Collection<URLStatusImpl> urlStatus = new HashSet<URLStatusImpl>();;
+    private Set<URLStatus> urlStatus = new HashSet<URLStatus>();;
 
     /** The name of the file in which the query results are going to be saved */
     private String fileName;
+    
+    private Boolean visible;
 
     /**
      * Gets the user object who had executed the query
@@ -136,7 +138,7 @@ public class QueryStatusImpl extends AbstractStatusImpl implements QueryStatus{
      * @hibernate.property name="childrenQueryStatus" column="PARENT_ID" 
      * type="edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus" not-null="true"
      */
-    public Collection<QueryStatus> getChildrenQueryStatus() {
+    public Set<QueryStatus> getChildrenQueryStatus() {
         return childrenQueryStatus;
     }
 
@@ -144,7 +146,7 @@ public class QueryStatusImpl extends AbstractStatusImpl implements QueryStatus{
      * Sets the set of QueryStatus for childQueries
      * @param childrenQueryStatus the childrenQueryStatus to set
      */
-    public void setChildrenQueryStatus(Collection<QueryStatus> childrenQueryStatus) {
+    public void setChildrenQueryStatus(Set<QueryStatus> childrenQueryStatus) {
         this.childrenQueryStatus = childrenQueryStatus;
     }
 
@@ -152,9 +154,9 @@ public class QueryStatusImpl extends AbstractStatusImpl implements QueryStatus{
      * Returns the set of URLStatus for Query being executed
      * @return the urlStatus
      * @hibernate.property name="urlStatus" column="URL_ID" 
-     * type="edu.wustl.cab2b.common.queryengine.querystatus.URLStatusImpl" not-null="true"
+     * type="edu.wustl.cab2b.common.queryengine.querystatus.URLStatus" not-null="true"
      */
-    public Collection<URLStatusImpl> getUrlStatus() {
+    public Set<URLStatus> getUrlStatus() {
         return urlStatus;
     }
 
@@ -162,7 +164,7 @@ public class QueryStatusImpl extends AbstractStatusImpl implements QueryStatus{
      * Sets the set of URLStatus for Query being executed
      * @param urlStatus the urlStatus to set
      */
-    public void setUrlStatus(Collection<URLStatusImpl> urlStatus) {
+    public void setUrlStatus(Set<URLStatus> urlStatus) {
         this.urlStatus = urlStatus;
     }
 
@@ -181,5 +183,23 @@ public class QueryStatusImpl extends AbstractStatusImpl implements QueryStatus{
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    /**
+     * Returns whether the Query Status is visible or not
+     * @return Boolean visible
+     * @hibernate.property name="isVisible" column="VISIBLE" type="boolean" not-null="true" default="false"
+     */
+    public Boolean isVisible() {
+        return visible;
+    }
+
+    /**
+     * Sets whether the Query Status should be visible or not
+     * @param visible
+     */
+    public void setVisible(Boolean visible) {
+       this.visible = visible;
+        
     }
 }
