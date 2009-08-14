@@ -18,7 +18,7 @@ Action Items:
     3.	Madhumita to investigate on the new query and if possible add it to Iteration 3 queries.
 
 -----------------------
-    MOM – 9 June 09 
+    MOM – 9 June 09
 -----------------------
 Issues Discussed:
     1.  Next iteration scope that is to be discussed with Stephen and Chris:
