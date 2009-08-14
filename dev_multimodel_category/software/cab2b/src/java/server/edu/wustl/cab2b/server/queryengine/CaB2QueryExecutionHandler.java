@@ -40,21 +40,18 @@ public class CaB2QueryExecutionHandler extends QueryExecutionHandler {
 
     @Override
     public QueryStatus getStatus() {
-        // TODO Auto-generated method stub
-        return null;
+        return queryExecutor.getStatus();
+
     }
 
     @Override
     protected void postProcessResults() {
-        // TODO Auto-generated method stub
         //No need
 
     }
 
     @Override
     protected void preProcessQuery() {
-        // TODO Auto-generated method stub
-        //NO need 
-
+        //No need
     }
 }
