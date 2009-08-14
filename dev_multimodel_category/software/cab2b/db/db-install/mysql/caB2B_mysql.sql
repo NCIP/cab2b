@@ -163,7 +163,7 @@ create table CAB2B_QUERY_STATUS (
 create table CAB2B_URL_STATUS (
   ID bigint not null, 
   URL varchar(255) not null, 
-  URL_ID bigint, 
+  QUERY_ID bigint, 
   primary key (ID)
 );
 
@@ -189,7 +189,7 @@ alter table CAB2B_QUERY_STATUS add index FKE587F8D4AEC86F2D (USER_ID), add const
 alter table CAB2B_QUERY_STATUS add index FKE587F8D4286B8D51 (PARENT_ID), add constraint FKE587F8D4286B8D51 foreign key (PARENT_ID) references CAB2B_QUERY_STATUS (ID);
 alter table CAB2B_QUERY_STATUS add index FKE587F8D4CEDB347A (QUERY_ID), add constraint FKE587F8D4CEDB347A foreign key (QUERY_ID) references CAB2B_QUERY (IDENTIFIER);
 alter table CAB2B_URL_STATUS add index FK8C4B750D9D65F450 (ID), add constraint FK8C4B750D9D65F450 foreign key (ID) references CAB2B_ABSTRACT_STATUS (ID);
-alter table CAB2B_URL_STATUS add index FK8C4B750D7B24DE6C (URL_ID), add constraint FK8C4B750D7B24DE6C foreign key (URL_ID) references CAB2B_QUERY_STATUS (ID);
+alter table CAB2B_URL_STATUS add index FK8C4B750D7B24DE6C (QUERY_ID), add constraint FK8C4B750D7B24DE6C foreign key (QUERY_ID) references CAB2B_QUERY_STATUS (ID);
 
 insert into CAB2B_ID_TABLE(NEXT_ASSOCIATION_ID) value(1);
 insert into CAB2B_user (USER_ID, NAME, PASSWORD, IS_ADMIN) values (1,'Admin','admin123',1);

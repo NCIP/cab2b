@@ -53,7 +53,7 @@
 
 			<set name="urlStatus" table="CAB2B_QUERY_STATUS" lazy="false" inverse="false" cascade="all-delete-orphan">
 				<cache usage="read-write" />
-				<key column="URL_ID" />
+				<key column="QUERY_ID" />
 				<one-to-many class="edu.wustl.cab2b.common.queryengine.querystatus.URLStatusImpl" />
 			</set>
 		</joined-subclass>
