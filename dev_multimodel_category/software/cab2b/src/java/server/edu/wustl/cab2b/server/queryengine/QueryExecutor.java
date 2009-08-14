@@ -19,6 +19,7 @@ import edu.common.dynamicextensions.util.DynamicExtensionsUtility;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.QueryExecutorPropertes;
+import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.result.FailedTargetURL;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
@@ -95,6 +96,8 @@ public class QueryExecutor {
     private List<IQueryResult<ICategorialClassRecord>> categoryResults = null;
 
     private boolean normalQueryFinished = false;
+    
+    private QueryStatus queryStatus = null;
 
     /**
      * Constructor initializes object with query and globus credentials
@@ -484,5 +487,9 @@ public class QueryExecutor {
             }
             return t;
         }
+    }
+
+    public QueryStatus getStatus() {
+        return queryStatus;
     }
 }
