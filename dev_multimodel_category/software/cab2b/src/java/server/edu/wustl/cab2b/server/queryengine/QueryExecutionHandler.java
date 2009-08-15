@@ -76,10 +76,6 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
         return query;
     }
 
-    public List<QueryExecutor> getQueryExecutorsList() {
-        return queryExecutorsList;
-    }
-    
     /**
      * Set query for background execution.
      * @param executeInBackground
@@ -113,5 +109,15 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
             }
         }
         return failedUrls;
+    }
+    
+    public boolean isProcessingFinished() {
+        List<QueryExecutor> queryExecutorsList = this.queryExecutorsList;
+        for (QueryExecutor e : queryExecutorsList) {
+            if (!e.isProcessingFinished()) {
+                return false;
+            }
+        }
+        return true;
     }
 }
