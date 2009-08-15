@@ -5,15 +5,22 @@ package edu.wustl.cab2b.server.queryengine;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.globus.gsi.GlobusCredential;
 
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
+import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.IRule;
 
 /**
  * @author chetan_patil
@@ -102,6 +109,10 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
     @Override
     protected void preProcessQuery() {
         new MultimodelCategoryQueryPreprocessor().preprocessQuery(query);
+    }
+    
+   public List<QueryExecutor> getQueryExecutorsList() {
+        return queryExecutorsList;
     }
 
 }
