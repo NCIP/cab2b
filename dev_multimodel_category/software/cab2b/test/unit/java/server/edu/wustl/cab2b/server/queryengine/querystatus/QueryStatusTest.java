@@ -30,6 +30,7 @@ import edu.wustl.cab2b.server.path.PathFinder;
 import edu.wustl.cab2b.server.queryengine.QueryOperations;
 import edu.wustl.cab2b.server.user.UserOperations;
 import edu.wustl.cab2b.server.util.TestConnectionUtil;
+import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
@@ -54,6 +55,9 @@ public class QueryStatusTest extends TestCase {
             ICab2bQuery query = createQuery();
             Set<URLStatus> urls = new HashSet<URLStatus>(1);
 
+            String queryConditions =
+                    new UtilityOperations().getStringRepresentationofConstraints(query.getConstraints());
+            System.out.println(queryConditions);
             URLStatus urStatus = new URLStatusImpl();
             urStatus.setStatus("In Progresss");
             urStatus.setResultCount(5);
@@ -68,11 +72,12 @@ public class QueryStatusTest extends TestCase {
 
             queryStatus.setQuery(query);
             queryStatus.setUser(user);
-            queryStatus.setQueryConditions(query.getConstraints().toString());
+
+            queryStatus.setQueryConditions(queryConditions);
             queryStatus.setQueryStartTime(new Date());
             queryStatus.setQueryEndTime(new Date());
             queryStatus.setFileName("Hello.xls");
-            queryStatus.setVisible(Boolean.FALSE);
+            queryStatus.setVisible(Boolean.TRUE);
             queryStatus.setChildrenQueryStatus(null);
             queryStatus.setUrlStatus(urls);
 
@@ -80,7 +85,7 @@ public class QueryStatusTest extends TestCase {
             queryURLStatusOperations.insertQueryStatus(queryStatus);
         } catch (Exception e) {
             logger.info(e.getMessage(), e);
-            throw new RuntimeException("Eoor occured while saving Query Status",e);
+            throw new RuntimeException("Eroor occured while saving Query Status", e);
         }
     }
 
@@ -91,6 +96,7 @@ public class QueryStatusTest extends TestCase {
 
         for (QueryStatus qs : qss) {
             System.out.println(qs.getId());
+            System.out.println(qs.getQueryConditions());
             for (URLStatus us : qs.getUrlStatus()) {
                 System.out.println("URL Status: " + us.getId());
             }
