@@ -148,12 +148,14 @@ public class UtilityOperations extends DefaultBizLogic {
      */
     public String getStringRepresentationofConstraints(IConstraints queryConstraints) {
         StringBuffer queryConditions = new StringBuffer();
-        for (IExpressionOperand opr : queryConstraints) {
-            if (opr instanceof IRule) {
-                IRule rule = (IRule) opr;
-                for (ICondition con : rule) {
-                    queryConditions.append(con.getAttribute().getName()).append("(")
-                        .append(con.getRelationalOperator()).append(")").append(con.getValue()).append(";");
+        for (IExpression query : queryConstraints) {
+            for (IExpressionOperand opr : query) {
+                if (opr instanceof IRule) {
+                    IRule rule = (IRule) opr;
+                    for (ICondition con : rule) {
+                        queryConditions.append(con.getAttribute().getName()).append("(")
+                            .append(con.getRelationalOperator()).append(")").append(con.getValue()).append(";");
+                    }
                 }
             }
         }
