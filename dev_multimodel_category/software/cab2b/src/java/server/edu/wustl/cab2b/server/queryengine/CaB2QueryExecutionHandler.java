@@ -19,7 +19,7 @@ public class CaB2QueryExecutionHandler extends QueryExecutionHandler {
 
     private QueryExecutor queryExecutor = null;
 
-    CaB2QueryExecutionHandler(
+    public CaB2QueryExecutionHandler(
             ICab2bQuery query,
             GlobusCredential proxy,
             UserInterface user,
