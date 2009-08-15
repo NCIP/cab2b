@@ -10,6 +10,7 @@ import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
 
 public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
     private AtomicBoolean isAlive = new AtomicBoolean(Boolean.FALSE);
@@ -23,7 +24,7 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
     protected UserInterface user;
 
     protected String[] modelGroupNames;
-    
+
     protected List<QueryExecutor> queryExecutorsList;
 
     public QueryExecutionHandler(T query, GlobusCredential proxy, UserInterface user, String[] modelGroupNames) {
@@ -64,4 +65,30 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
      */
     public abstract QueryStatus getStatus();
 
+    /**
+     * @return the query
+     */
+    public T getQuery() {
+        return query;
+    }
+
+    /**
+     * Set query for background execution.
+     * @param executeInBackground
+     */
+    public void executeInBackground() {
+        if (!getStatus().isVisible()) {
+            QueryStatus qStatus = getStatus();
+            qStatus.setVisible(true);
+            saveQueryStatus();
+        }
+    }
+
+    /**
+     * Save query status.
+     */
+    public void saveQueryStatus() {
+        QueryURLStatusOperations qso = new QueryURLStatusOperations();
+        qso.insertQueryStatus(getStatus());
+    }
 }
