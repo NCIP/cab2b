@@ -150,4 +150,10 @@ public interface Constants {
 
     /** Constant for forward to failure page */
     public static final String FORWARD_FAILURE = "failure";
+    
+    /** Constant for forward to dash board page */
+    public static final String FORWARD_DASHBOARD = "dashboard";
+    
+    /** Constant for fatal failure for displaying dash board */    
+    public static final String FATAL_DISPLAY_DASHBOARD_FAILURE = "fatalDisplayDashboardFailure";
 }
