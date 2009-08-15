@@ -83,7 +83,7 @@ public class PersistMultiModelCategory {
         Collection<InputCategory> inputCategories = createInputCategories();
         for (InputCategory inCategory : inputCategories) {
             logger.debug("Saving category: " + inCategory);
-            Category category = persistCategory.persistCategory(inCategory, null);
+            Category category = persistCategory.persistCategory(inCategory, null,true);
             category.setSystemGenerated(Boolean.TRUE);
             mapAIToCatAttr(category.getRootClass());
             categoryOperations.saveCategory(category);
