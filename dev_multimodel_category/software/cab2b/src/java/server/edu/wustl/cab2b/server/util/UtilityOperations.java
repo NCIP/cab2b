@@ -21,6 +21,11 @@ import edu.wustl.cab2b.server.user.UserOperations;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.querysuite.metadata.path.CuratedPath;
+import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.IConstraints;
+import edu.wustl.common.querysuite.queryobject.IExpression;
+import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
+import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.global.Constants;
 
@@ -127,12 +132,32 @@ public class UtilityOperations extends DefaultBizLogic {
     public static Long getLocalUserId(String serializedDCR) {
         String userName = AuthenticationUtility.getUsersGridId(serializedDCR);
         UserInterface user = new UserOperations().getUserByName(userName);
-    
+
         Long userId = null;
         if (user != null) {
             userId = user.getUserId();
         }
         return userId;
+    }
+
+    /**
+     * This method returns the String representation of given IConstraints in following format:
+     * Attribute(operator)value
+     * @param queryConstraints
+     * @return
+     */
+    public String getStringRepresentationofConstraints(IConstraints queryConstraints) {
+        StringBuffer queryConditions = new StringBuffer();
+        for (IExpressionOperand opr : queryConstraints) {
+            if (opr instanceof IRule) {
+                IRule rule = (IRule) opr;
+                for (ICondition con : rule) {
+                    queryConditions.append(con.getAttribute().getName()).append("(")
+                        .append(con.getRelationalOperator()).append(")").append(con.getValue()).append(";");
+                }
+            }
+        }
+        return queryConditions.toString();
     }
 
     public synchronized static void refreshCache() {
