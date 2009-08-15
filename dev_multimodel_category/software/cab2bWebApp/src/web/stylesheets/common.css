@@ -23,6 +23,7 @@ body {
 	position: relative;
 	top: 42;
 	right: 10;
+	line-height: 1.29em;	
 }
 
 #leftpanel {

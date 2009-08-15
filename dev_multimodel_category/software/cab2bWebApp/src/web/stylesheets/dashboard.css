@@ -1,0 +1,32 @@
+@import url("common.css");
+@import url("displaytag.css");
+
+#content {
+	padding: 0% 0.2% 0% 0.2%;
+}
+
+#toppanel {
+	padding: 0%;
+}
+
+#dashboardtable {
+	width: 99.5%;
+	text-align: left;
+	vertical-align: top;
+	font-size: 0.82em;
+	color: #000000;
+	background-color: #eee;
+	font-family: sans-serif, Arial, Helvetica;
+}
+
+#dashboardtable tr {
+	background-color: #ccc;
+}
+
+#dashboardtable .row {
+	background-color: #fff;
+}
+
+#bottompanel {
+	padding: 1% 0% 1% 0.8%;
+}
