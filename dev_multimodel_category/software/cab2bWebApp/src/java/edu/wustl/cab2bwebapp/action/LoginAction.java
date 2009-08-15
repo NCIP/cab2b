@@ -2,6 +2,7 @@ package edu.wustl.cab2bwebapp.action;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -16,6 +17,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.authentication.Authenticator;
@@ -23,8 +25,10 @@ import edu.wustl.cab2b.common.authentication.exception.AuthenticationException;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.user.User;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
 import edu.wustl.cab2b.server.user.UserOperations;
 import edu.wustl.cab2bwebapp.actionform.LoginForm;
 import edu.wustl.cab2bwebapp.bizlogic.ModelGroupBizLogic;
@@ -62,7 +66,7 @@ public class LoginAction extends Action {
                 return mapping.findForward(Constants.FORWARD_LOGIN);
             }
             HttpSession session = request.getSession();
-            
+
             session.removeAttribute(Constants.SEARCH_RESULTS);
             session.removeAttribute(Constants.SEARCH_RESULTS_VIEW);
             session.removeAttribute(Constants.FAILED_SERVICES_COUNT);
@@ -76,7 +80,7 @@ public class LoginAction extends Action {
             session.removeAttribute(Constants.STOP_AJAX);
             session.removeAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
             session.removeAttribute(Constants.UI_POPULATION_FINISHED);
-            
+
             UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
             if (user == null || user.getUserName().equals(Constants.ANONYMOUS)) {
                 UserOperations userOperations = new UserOperations();
@@ -104,12 +108,27 @@ public class LoginAction extends Action {
                 session.setAttribute(Constants.USER, user);
                 session.setAttribute(Constants.USER_NAME, userName);
             }
+            if (!user.getUserName().equals(Constants.ANONYMOUS)) {
+                int inProgressQueryCount = 0;
+                int completedQueryCount = 0;
+                QueryURLStatusOperations opr = new QueryURLStatusOperations();
+                Collection<QueryStatus> qsCollection = opr.getAllQueryStatusByUser(user);
+                Iterator<QueryStatus> i = qsCollection.iterator();
+                while (i.hasNext()) {
+                    QueryStatus qs = i.next();
+                    if (qs.getStatus().equals("In Progress"))
+                        inProgressQueryCount++;
+                    else
+                        completedQueryCount++;
+                }
+                session.setAttribute("completedQueryCount", completedQueryCount);
+                session.setAttribute("inProgressQueryCount", inProgressQueryCount);
+            }
             List<ModelGroupInterface> modelGroups = new ModelGroupBizLogic().getAllModelGroups();
             if (modelGroups != null && !modelGroups.isEmpty()) {
                 ModelGroupInterface modelGroup = modelGroups.iterator().next();
                 SavedQueryBizLogic savedQueryBizLogic =
-                        (SavedQueryBizLogic) request.getSession()
-                            .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+                        (SavedQueryBizLogic) request.getSession().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
                 Collection<ICab2bQuery> savedSearches =
                         savedQueryBizLogic.getRegularQueries(modelGroup.getEntityGroupList());
                 request.setAttribute(Constants.MODEL_GROUPS, modelGroups);
