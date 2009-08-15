@@ -57,6 +57,11 @@
 			<forward name="addlimit" path="/pages/addlimit.jsp" />
 		</action>
 
+		<action path="/DisplayDashboard"
+			type="edu.wustl.cab2bwebapp.action.DisplayDashboardAction">
+			<forward name="dashboard" path="/pages/dashboard.jsp" />		
+		</action>
+
 		<action path="/ExecuteQuery"
 			type="edu.wustl.cab2bwebapp.action.ExecuteQueryAction">
 			<forward name="searchresultspanel"
