@@ -25,21 +25,26 @@ public class ExportDataAction extends Action {
 
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws Exception {
-        String filePath = getServlet().getServletContext().getRealPath("/");
-        HttpSession session = request.getSession();
-        ExecuteQueryBizLogic executeQueryBizLogic =
-                (ExecuteQueryBizLogic) session.getAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
-        Long queryId = (Long) session.getAttribute(Constants.QUERY_ID);
-        if (queryId != null) {
-            String exported_file_path = (String) session.getAttribute(Constants.EXPORTED_FILE_PATH);
-            //file is getting exported (and thus built) first time.
-            if (exported_file_path == null && !((" ").equals(exported_file_path))) {
-                String newfilename = executeQueryBizLogic.exportToCSV(queryId, filePath);
-                exported_file_path = filePath + newfilename;
-                session.setAttribute(Constants.EXPORTED_FILE_PATH, exported_file_path);
+        if (request.getParameter("filePath") == null) {
+            String filePath = getServlet().getServletContext().getRealPath("/");
+            HttpSession session = request.getSession();
+            ExecuteQueryBizLogic executeQueryBizLogic =
+                    (ExecuteQueryBizLogic) session.getAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
+            Long queryId = (Long) session.getAttribute(Constants.QUERY_ID);
+            if (queryId != null) {
+                String exported_file_path = (String) session.getAttribute(Constants.EXPORTED_FILE_PATH);
+                //file is getting exported (and thus built) first time.
+                if (exported_file_path == null && !((" ").equals(exported_file_path))) {
+                    String newfilename = executeQueryBizLogic.exportToCSV(queryId, filePath);
+                    exported_file_path = filePath + newfilename;
+                    session.setAttribute(Constants.EXPORTED_FILE_PATH, exported_file_path);
+                }
+                // else take the file path from the session
+                sendFileToClient(response, exported_file_path, "ExportedData.csv", "application/download");
             }
-            // else take the file path from the session
-            sendFileToClient(response, exported_file_path, "ExportedData.csv", "application/download");
+        } else {
+            sendFileToClient(response, request.getParameter("filePath"), "SearchResults.csv",
+                             "application/download");
         }
         return null;
     }
