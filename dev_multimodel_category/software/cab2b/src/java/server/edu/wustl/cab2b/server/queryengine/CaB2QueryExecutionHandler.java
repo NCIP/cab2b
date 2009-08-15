@@ -3,12 +3,17 @@
  */
 package edu.wustl.cab2b.server.queryengine;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
 
 /**
  * Basic ICab2bQuery query handler 
@@ -17,29 +22,28 @@ import edu.wustl.cab2b.common.user.UserInterface;
  */
 public class CaB2QueryExecutionHandler extends QueryExecutionHandler {
 
-    private QueryExecutor queryExecutor = null;
-
     public CaB2QueryExecutionHandler(
             ICab2bQuery query,
             GlobusCredential proxy,
             UserInterface user,
             String[] modelGroupNames) {
         super(query, proxy, user, modelGroupNames);
-        queryExecutor = new QueryExecutor(query, proxy);
+        this.queryExecutorsList = new ArrayList<QueryExecutor>(1);
     }
 
     @Override
     protected void executeQuery() {
-        queryExecutor.executeQuery();
+        ((CaB2QueryExecutionHandler) queryExecutorsList.get(0)).executeQuery();
     }
 
     @Override
     public IQueryResult getResult() {
-        return queryExecutor.getPartialResult();
+        return ((QueryExecutor) queryExecutorsList.get(0)).getPartialResult();
     }
 
     @Override
     public QueryStatus getStatus() {
+        QueryExecutor queryExecutor = (QueryExecutor) queryExecutorsList.get(0);
         return queryExecutor.getStatus();
 
     }
@@ -53,5 +57,9 @@ public class CaB2QueryExecutionHandler extends QueryExecutionHandler {
     @Override
     protected void preProcessQuery() {
         //No need
+    }
+    
+    public List<QueryExecutor> getQueryExecutorsList() {
+        return queryExecutorsList;
     }
 }
