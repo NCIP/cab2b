@@ -42,6 +42,9 @@ public interface Constants {
     /** Tagged value key to store the name of original entity*/
     public static final String ENTITY_DISPLAY_NAME = "original_entity_display_name";
     
+    /** Constant for serviceInstancesNotConfigured*/
+    public static final String SERVICE_INSTANCES_NOT_CONFIGURED = "serviceInstancesNotConfigured";
+    
     /**Tagged value to indicate a data category is a filtered data category*/
     public static final String FILTERED = "filtered";
 
