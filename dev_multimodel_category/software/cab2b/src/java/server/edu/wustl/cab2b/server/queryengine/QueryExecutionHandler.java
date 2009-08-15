@@ -1,12 +1,16 @@
 package edu.wustl.cab2b.server.queryengine;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.querystatus.AbstarctStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
+import edu.wustl.cab2b.common.queryengine.querystatus.URLStatus;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.UserInterface;
@@ -90,5 +94,20 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
     public void saveQueryStatus() {
         QueryURLStatusOperations qso = new QueryURLStatusOperations();
         qso.insertQueryStatus(getStatus());
+    }
+
+    /**
+     * Returns set of failed urls.
+     * @return
+     */
+    public Set<String> getFailedUrls() {
+        Set<URLStatus> urlStatusSet = getStatus().getUrlStatus();
+        Set<String> failedUrls = new HashSet<String>();
+        for (URLStatus urlStatus : urlStatusSet) {
+            if (urlStatus.getStatus().equals(AbstarctStatus.Complete_With_Error)) {
+                failedUrls.add(urlStatus.getUrl());
+            }
+        }
+        return failedUrls;
     }
 }
