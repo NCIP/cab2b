@@ -415,7 +415,7 @@ public class SearchCategory extends BaseAction {
 			Set<EntityInterface> entityCollection = matchedClass.getEntityCollection();
 			List<EntityInterface> resultList = new ArrayList<EntityInterface>(entityCollection);
 			for (EntityInterface entity : resultList) {
-				if (!Utility.isCategory(entity)) {
+				if (!Utility.isCategory(entity) && !Utility.isMultiModelCategory(entity)) {
 					String entityName = Utility.getDisplayName(entity);
 					entityId = entity.getId().toString();
 					String description = entity.getDescription();
