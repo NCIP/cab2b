@@ -51,13 +51,6 @@ create table OUTPUT_CLASS_URLS (
    POSITION integer not null,
    primary key (CAB2B_QUERY_ID, POSITION)
 );
-create table CAB2B_MODEL_GROUP (
-  MODEL_ID bigint not null auto_increment, 
-  MODEL_GROUP_NAME varchar(255) unique not null, 
-  SECURED BOOLEAN, DESCRIPTION text, 
-  ENTITY_GROUP_NAMES text not null, 
-  primary key (MODEL_ID)
-);
 create table CAB2B_MMA (
   ID bigint not null auto_increment, 
   IS_VISIBLE BOOLEAN,  
@@ -73,25 +66,14 @@ create table CAB2B_MMC (
   CATEGORY_IDS varchar(254) not null,
   primary key (ID)
 );
-create table CAB2B_COMPOUND_QUERY (
-  IDENTIFIER bigint not null,
-  primary key (IDENTIFIER)
-);
-create table CAB2B_KEYWORD_QUERY (
-  IDENTIFIER bigint not null,
-  APP_GROUP_ID bigint, 
-  primary key (IDENTIFIER)
-);
-create table CAB2B_MMC_QUERY (
-  IDENTIFIER bigint not null,
-  primary key (IDENTIFIER)
-);
-create table CAB2B_QUERY (
-  IDENTIFIER bigint not null,
-  ENTITY_ID bigint not null,
-  COMPOUND_QUERY_ID bigint, 
-  primary key (IDENTIFIER)
-);
+
+create table CAB2B_COMPOUND_QUERY (IDENTIFIER bigint not null, primary key (IDENTIFIER));
+create table CAB2B_COMPOUND_QUERY_MAPPING (COMPOUND_QUERY_ID bigint not null, CAB2B_QUERY_ID bigint not null, primary key (COMPOUND_QUERY_ID, CAB2B_QUERY_ID));
+create table CAB2B_KEYWORD_QUERY (IDENTIFIER bigint not null, APP_GROUP_ID bigint, primary key (IDENTIFIER));
+create table CAB2B_MMC_QUERY (IDENTIFIER bigint not null, primary key (IDENTIFIER));
+create table CAB2B_MODEL_GROUP (MODEL_ID bigint not null auto_increment, MODEL_GROUP_NAME varchar(255) unique not null, SECURED BOOLEAN, DESCRIPTION text, ENTITY_GROUP_NAMES text not null, primary key (MODEL_ID));
+create table CAB2B_QUERY (IDENTIFIER bigint not null, ENTITY_ID bigint not null, primary key (IDENTIFIER));
+
 create table CAB2B_DATA_CATEGORY (
    ID bigint not null,
    description varchar(255),
@@ -168,14 +150,16 @@ create table CAB2B_URL_STATUS (
   primary key (ID)
 );
 
-alter table CAB2B_MMA add index FK2A9170D69EDCC3F8 (MMC_ID), add constraint FK2A9170D69EDCC3F8 foreign key (MMC_ID) references CAB2B_MMC (ID);
-alter table CAB2B_MMC add index FK2A9170D89A9FD6A2 (APP_GROUP_ID), add constraint FK2A9170D89A9FD6A2 foreign key (APP_GROUP_ID) references CAB2B_MODEL_GROUP (MODEL_ID);
 alter table CAB2B_COMPOUND_QUERY add index FK4DB047BF17568730 (IDENTIFIER), add constraint FK4DB047BF17568730 foreign key (IDENTIFIER) references CAB2B_QUERY (IDENTIFIER);
+alter table CAB2B_COMPOUND_QUERY_MAPPING add index FK20CF642E45C67BB0 (COMPOUND_QUERY_ID), add constraint FK20CF642E45C67BB0 foreign key (COMPOUND_QUERY_ID) references CAB2B_COMPOUND_QUERY (IDENTIFIER);
+alter table CAB2B_COMPOUND_QUERY_MAPPING add index FK20CF642E7ADD4524 (CAB2B_QUERY_ID), add constraint FK20CF642E7ADD4524 foreign key (CAB2B_QUERY_ID) references CAB2B_QUERY (IDENTIFIER);
 alter table CAB2B_KEYWORD_QUERY add index FK9A5BAA79A9FD6A2 (APP_GROUP_ID), add constraint FK9A5BAA79A9FD6A2 foreign key (APP_GROUP_ID) references CAB2B_MODEL_GROUP (MODEL_ID);
 alter table CAB2B_KEYWORD_QUERY add index FK9A5BAA7BC19CC53 (IDENTIFIER), add constraint FK9A5BAA7BC19CC53 foreign key (IDENTIFIER) references CAB2B_COMPOUND_QUERY (IDENTIFIER);
 alter table CAB2B_MMC_QUERY add index FK3CB8F281BC19CC53 (IDENTIFIER), add constraint FK3CB8F281BC19CC53 foreign key (IDENTIFIER) references CAB2B_COMPOUND_QUERY (IDENTIFIER);
-alter table CAB2B_QUERY add index FKCC34AD9D45C67BB0 (COMPOUND_QUERY_ID), add constraint FKCC34AD9D45C67BB0 foreign key (COMPOUND_QUERY_ID) references CAB2B_COMPOUND_QUERY (IDENTIFIER);
 alter table CAB2B_QUERY add index FKCC34AD9D1F030BCB (IDENTIFIER), add constraint FKCC34AD9D1F030BCB foreign key (IDENTIFIER) references QUERY_PARAMETERIZED_QUERY (IDENTIFIER);
+
+alter table CAB2B_MMA add index FK2A9170D69EDCC3F8 (MMC_ID), add constraint FK2A9170D69EDCC3F8 foreign key (MMC_ID) references CAB2B_MMC (ID);
+alter table CAB2B_MMC add index FK2A9170D89A9FD6A2 (APP_GROUP_ID), add constraint FK2A9170D89A9FD6A2 foreign key (APP_GROUP_ID) references CAB2B_MODEL_GROUP (MODEL_ID);
 
 alter table OUTPUT_CLASS_URLS add index FKE131CD69A638FEFD (CAB2B_QUERY_ID), add constraint FKE131CD69A638FEFD foreign key (CAB2B_QUERY_ID) references CAB2B_QUERY (IDENTIFIER);
 alter table CAB2B_DATA_CATEGORY add index FKFA70BDE8A2330820 (ID), add constraint FKFA70BDE8A2330820 foreign key (ID) references ABSTRACT_CATEGORY (ID);
