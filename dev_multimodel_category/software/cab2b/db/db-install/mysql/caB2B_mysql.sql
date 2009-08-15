@@ -142,7 +142,7 @@ create table CAB2B_CATEGORY_POPULARITY (
 create table CAB2B_ABSTRACT_STATUS (
   ID bigint not null auto_increment, 
   STATUS varchar(100) not null, 
-  RESULT_COUNT integer not null, 
+  RESULT_COUNT integer, 
   MESSAGE varchar(255), 
   DESCRIPTION varchar(255), 
   primary key (ID)
@@ -155,7 +155,7 @@ create table CAB2B_QUERY_STATUS (
   CONDITIONS varchar(1024) not null, 
   START_TIME datetime not null, 
   END_TIME datetime, 
-  FILENAME varchar(100) not null, 
+  FILENAME varchar(100), 
   PARENT_ID bigint,
   VISIBLE boolean not null default false,
   primary key (ID)

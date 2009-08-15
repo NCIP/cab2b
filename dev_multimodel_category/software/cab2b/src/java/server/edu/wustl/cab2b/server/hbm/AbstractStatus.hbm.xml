@@ -16,7 +16,7 @@
 		<property name="status" column="STATUS" type="string" length="100" update="true" insert="true" not-null="true" />
 
 		<property name="resultCount" column="RESULT_COUNT" type="integer" length="30" update="true" insert="true"
-			not-null="true" />
+			not-null="false" />
 
 		<property name="message" column="MESSAGE" type="string" length="255" update="true" insert="true"
 			not-null="false" />
@@ -44,7 +44,7 @@
 				not-null="false" />
 
 			<property name="fileName" column="FILENAME" type="string" length="100" update="true" insert="true"
-				not-null="true" />
+				not-null="false" />
 				
 			<property name="visible" column="VISIBLE" type="boolean" update="true" insert="true" not-null="true"/>
 
