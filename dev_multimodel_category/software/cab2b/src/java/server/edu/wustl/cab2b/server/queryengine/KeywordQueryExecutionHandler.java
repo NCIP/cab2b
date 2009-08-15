@@ -6,6 +6,7 @@ package edu.wustl.cab2b.server.queryengine;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.globus.gsi.GlobusCredential;
@@ -26,7 +27,7 @@ import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
 public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQuery> {
 
     private String keyword;
-    private Map<ICab2bQuery, IQueryResult<? extends IRecord>> queryVsResultMap;
+    private Map<KeywordQuery, IQueryResult<? extends IRecord>> queryVsResultMap;
 
     /**
      * @param queries
@@ -43,7 +44,7 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
         super(query, proxy, user, modelGroupNames);
         this.keyword = keyword;
         this.queryExecutorsList = new ArrayList<QueryExecutor>(query.getSubQueries().size());
-        this.queryVsResultMap = new HashMap<ICab2bQuery, IQueryResult<? extends IRecord>>(query.getSubQueries().size());
+        this.queryVsResultMap = new HashMap<KeywordQuery, IQueryResult<? extends IRecord>>(query.getSubQueries().size());
     }
 
     /* (non-Javadoc)
@@ -72,19 +73,18 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
      */
     @Override
     public IQueryResult<? extends IRecord> getResult() {
-        for (QueryExecutor executor : queryExecutorsList) {
-            IQueryResult<? extends IRecord> result = executor.getPartialResult();
-            ICab2bQuery query = executor.getQuery();
-            queryVsResultMap.put(query, result);
-        }
         return null;
     }
     
     /**
      * @return
      */
-    public Map<ICab2bQuery, IQueryResult<? extends IRecord>> getQueryVsResultMap() {
-        getResult();
+    public Map<KeywordQuery, IQueryResult<? extends IRecord>> getQueryVsResultMap() {
+        for (QueryExecutor executor : queryExecutorsList) {
+            IQueryResult<? extends IRecord> result = executor.getPartialResult();
+            KeywordQuery query = (KeywordQuery)executor.getQuery();
+            queryVsResultMap.put(query, result);
+        }
         return queryVsResultMap;
     }
 
@@ -116,5 +116,13 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
             QueryExecutorUtil.insertKeyword(query, this.keyword);
         }
         QueryExecutorUtil.insertURLConditions(queries, proxy, user, modelGroupNames);
+    }
+    
+    public KeywordQuery getQuery() {
+        return query;
+    }
+    
+    public List<QueryExecutor> getQueryExecutorsList() {
+        return queryExecutorsList;
     }
 }
