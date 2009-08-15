@@ -76,6 +76,10 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
         return query;
     }
 
+    public List<QueryExecutor> getQueryExecutorsList() {
+        return queryExecutorsList;
+    }
+    
     /**
      * Set query for background execution.
      * @param executeInBackground
