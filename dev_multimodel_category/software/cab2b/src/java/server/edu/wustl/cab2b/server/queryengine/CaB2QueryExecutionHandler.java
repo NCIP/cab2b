@@ -58,8 +58,4 @@ public class CaB2QueryExecutionHandler extends QueryExecutionHandler {
     protected void preProcessQuery() {
         //No need
     }
-    
-    public List<QueryExecutor> getQueryExecutorsList() {
-        return queryExecutorsList;
-    }
 }
