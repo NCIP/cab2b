@@ -37,7 +37,6 @@
 		<mapping resource="edu/wustl/cab2b/server/hbm/CategoryPopularity.hbm.xml"/>
 		<mapping resource="edu/wustl/cab2b/server/hbm/ModelGroup.hbm.xml"/>
  		<mapping resource="edu/wustl/cab2b/server/hbm/AbstractStatus.hbm.xml"/>
- 		
 		<mapping resource="edu/wustl/cab2b/server/hbm/MultiModelAttributeImpl.hbm.xml"/>
 		<mapping resource="edu/wustl/cab2b/server/hbm/MultiModelCategoryImpl.hbm.xml"/>
 	</session-factory>
