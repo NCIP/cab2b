@@ -33,7 +33,7 @@ public class CaB2QueryExecutionHandler extends QueryExecutionHandler {
 
     @Override
     protected void executeQuery() {
-        ((CaB2QueryExecutionHandler) queryExecutorsList.get(0)).executeQuery();
+        ((QueryExecutor) queryExecutorsList.get(0)).executeQuery();
     }
 
     @Override
