@@ -2,20 +2,11 @@ package edu.wustl.cab2b.common.queryengine.querystatus;
 
 import java.io.Serializable;
 
-public class AbstractStatusImpl implements Serializable, AbstarctStatus{
+public class AbstractStatusImpl implements Serializable, AbstarctStatus {
 
     private static final long serialVersionUID = 1L;
 
-    //TODO SET THE MESSAGES
-
-    /*public static final String Waiting_To_Begin = "Waiting To Begin";
-
-    public static final String Processing = "Processing";
-
-    public static final String Complete = "Complete";
-
-    public static final String Complete_With_Error = "Complete With Error";*/
-
+    //TODO SET THE MESSAGES  
     /** This is the Identifier for Query Status and URL Status */
     private Long id;
 
