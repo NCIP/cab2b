@@ -110,9 +110,4 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
     protected void preProcessQuery() {
         new MultimodelCategoryQueryPreprocessor().preprocessQuery(query);
     }
-    
-   public List<QueryExecutor> getQueryExecutorsList() {
-        return queryExecutorsList;
-    }
-
 }
