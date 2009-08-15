@@ -92,9 +92,11 @@ public class MultiModelAttributeImpl implements MultiModelAttribute {
         if (selectedAttributes.isEmpty()) {
             String[] tokenIds = categorialAttributeIds.split("_");
             for (String categorialAttributeId : tokenIds) {
-                CategorialAttribute attribute = new CategorialAttribute();
-                attribute.setId(Long.parseLong(categorialAttributeId));
-                selectedAttributes.add(attribute);
+                if (categorialAttributeId.length() > 0) {
+                    CategorialAttribute attribute = new CategorialAttribute();
+                    attribute.setId(Long.parseLong(categorialAttributeId));
+                    selectedAttributes.add(attribute);
+                }
             }
         }
     }
