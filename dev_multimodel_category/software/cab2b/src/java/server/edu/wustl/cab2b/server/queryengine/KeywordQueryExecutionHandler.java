@@ -121,8 +121,4 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
     public KeywordQuery getQuery() {
         return query;
     }
-    
-    public List<QueryExecutor> getQueryExecutorsList() {
-        return queryExecutorsList;
-    }
 }
