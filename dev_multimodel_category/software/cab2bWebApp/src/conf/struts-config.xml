@@ -61,6 +61,10 @@
 			type="edu.wustl.cab2bwebapp.action.DisplayDashboardAction">
 			<forward name="dashboard" path="/pages/dashboard.jsp" />		
 		</action>
+		
+		<action path="/BackgroundQuery"
+			type="edu.wustl.cab2bwebapp.action./BackgroundQueryAction">		
+		</action>
 
 		<action path="/ExecuteQuery"
 			type="edu.wustl.cab2bwebapp.action.ExecuteQueryAction">
