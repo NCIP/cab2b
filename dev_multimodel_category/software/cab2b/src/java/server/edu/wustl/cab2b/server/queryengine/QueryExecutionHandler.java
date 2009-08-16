@@ -70,7 +70,8 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
     public abstract QueryStatus getStatus();
 
     /**
-     * @return the query
+     * This method returns the query set for execution
+     * @return
      */
     public T getQuery() {
         return query;
