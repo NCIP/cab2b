@@ -1,6 +1,7 @@
 package edu.wustl.cab2bwebapp.action;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,10 +55,12 @@ public class BackgroundQueryAction extends Action {
                     (Map<UserInterface, Set<ExecuteQueryBizLogic>>) session
                         .getAttribute(Constants.USER_VS_EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
             Set<ExecuteQueryBizLogic> queryBizLogic = userToBackgroundQueries.get(user);
-            if (queryBizLogic != null) {
-                queryBizLogic.add(executeQueryBizLogic);
+            if (queryBizLogic == null) {
+                queryBizLogic = new HashSet<ExecuteQueryBizLogic>();
                 userToBackgroundQueries.put(user, queryBizLogic);
             }
+            queryBizLogic.add(executeQueryBizLogic);            
+
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
