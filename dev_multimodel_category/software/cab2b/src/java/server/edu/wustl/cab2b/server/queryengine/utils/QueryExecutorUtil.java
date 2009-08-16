@@ -13,6 +13,7 @@ import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.queryengine.CompoundQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
@@ -223,6 +224,24 @@ public class QueryExecutorUtil {
             }
         }
         return entityGroupVsSelectedUrls;
+    }
+
+    /**
+     * @param query
+     * @param proxy
+     * @param user
+     * @param modelGroupNames
+     * @throws RuntimeException
+     */
+    public static void insertURLConditions(CompoundQuery query, GlobusCredential proxy, UserInterface user,
+                                           String[] modelGroupNames) throws RuntimeException {
+        insertURLConditions(query.getSubQueries(), proxy, user, modelGroupNames);
+
+        List<String> urls = new ArrayList<String>();
+        for (ICab2bQuery subQuery : query.getSubQueries()) {
+            urls.addAll(subQuery.getOutputUrls());
+        }
+        query.setOutputUrls(urls);
     }
 
 }
