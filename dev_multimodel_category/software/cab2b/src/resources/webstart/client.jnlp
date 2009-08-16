@@ -27,7 +27,7 @@
 	<!-- Resource description sits here -->
 	<resources>
 		
-		<j2se href="http://java.sun.com/products/autodl/j2se" version="1.6+" initial-heap-size="256m" max-heap-size="512m"/>
+		<j2se href="http://java.sun.com/products/autodl/j2se" version="1.6+" initial-heap-size="256m" max-heap-size="1024m"/>
 		
 		<!-- Specify all the jar resources this application is going to use -->
 		<jar href="cab2b/webpage/client/cab2b_client_webstart.jar"/>
