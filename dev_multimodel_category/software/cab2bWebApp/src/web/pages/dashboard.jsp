@@ -36,34 +36,43 @@
 				<TH><bean:message key="heading.executedon"/></TH>
 				<TH><bean:message key="heading.actions"/></TH>
 			</TR>
-			<logic:iterate name="queryStatusDVOList" id="query" type="edu.wustl.cab2bwebapp.dvo.QueryStatusDVO">
-			<TR>
-				<TD class="row">
-					<bean:write name="query" property="title"/>
-				</TD>
-				<TD class="row">
-					<bean:write name="query" property="type"/>
-				</TD>
-				<TD class="row">
-					<bean:write name="query" property="status"/>
-				</TD>
-				<TD class="row">
-					<bean:write name="query" property="resultCount"/>
-				</TD>
-				<TD class="row">
-					<bean:write name="query" property="failedHostingInstitutions"/>
-				</TD>
-				<TD class="row">
-					<bean:write name="query" property="executedOn"/>
-				</TD>
-				<TD class="row">
-					<IMG src="images/view_results.jpg" title="<bean:message key="img.alt.viewqueryresults"/>" style="cursor:pointer">&nbsp;
-					<IMG src="images/form.gif" title="<bean:message key="img.alt.queryparameters" arg0="${query.failedHostingInstitutions}"/>" style="cursor:pointer">&nbsp;
-					<IMG src="images/ico_file_excel.png" title="<bean:message key="img.alt.exportqueryresults"/>" style="cursor:pointer" onClick="document.location='ExportData.do?filePath=<bean:write name="query" property="resultsFilePath"/>';TogglePreloader(0);">&nbsp;
-					<IMG src="images/cancel.gif" title="<bean:message key="img.alt.abortqueryexecution"/>" style="cursor:pointer">&nbsp;
-				</TD>
-			</TR>
-			</logic:iterate>
+			<logic:notEmpty name="queryStatusDVOList">
+				<logic:iterate name="queryStatusDVOList" id="query" type="edu.wustl.cab2bwebapp.dvo.QueryStatusDVO">
+				<TR>
+					<TD class="row">
+						<bean:write name="query" property="title"/>
+					</TD>
+					<TD class="row">
+						<bean:write name="query" property="type"/>
+					</TD>
+					<TD class="row">
+						<bean:write name="query" property="status"/>
+					</TD>
+					<TD class="row">
+						<bean:write name="query" property="resultCount"/>
+					</TD>
+					<TD class="row">
+						<bean:write name="query" property="failedHostingInstitutions"/>
+					</TD>
+					<TD class="row">
+						<bean:write name="query" property="executedOn"/>
+					</TD>
+					<TD class="row">
+						<IMG src="images/view_results.jpg" title="<bean:message key="img.alt.viewqueryresults"/>" style="cursor:pointer">&nbsp;
+						<IMG src="images/form.gif" title="<bean:message key="img.alt.queryparameters" arg0="${query.failedHostingInstitutions}"/>" style="cursor:pointer">&nbsp;
+						<IMG src="images/ico_file_excel.png" title="<bean:message key="img.alt.exportqueryresults"/>" style="cursor:pointer" onClick="document.location='ExportData.do?filePath=<bean:write name="query" property="resultsFilePath"/>';TogglePreloader(0);">&nbsp;
+						<IMG src="images/cancel.gif" title="<bean:message key="img.alt.abortqueryexecution"/>" style="cursor:pointer">&nbsp;
+					</TD>
+				</TR>
+				</logic:iterate>
+			</logic:notEmpty>
+			<logic:empty name="queryStatusDVOList">
+				<TR>
+					<TD class="text" colspan="7">
+						<bean:message key="text.offlinequeriesempty"/>
+					</TD>
+				</TR>
+			</logic:empty>
 		</TABLE>
 	</DIV>
 	<DIV id="bottompanel">
