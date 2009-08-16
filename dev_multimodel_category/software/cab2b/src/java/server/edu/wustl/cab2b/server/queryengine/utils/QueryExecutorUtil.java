@@ -18,6 +18,7 @@ import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.cab2b.server.user.UserOperations;
@@ -25,9 +26,7 @@ import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
-import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IRule;
-import edu.wustl.cab2b.common.util.Constants;
 
 /**
  * @author Deepak
@@ -142,27 +141,19 @@ public class QueryExecutorUtil {
      */
     public static Map<String, List<String>> getAttributeNameValuesMap(MultiModelCategoryQuery mmcQuery) {
         Map<String, List<String>> attributeNameValuesMap = new HashMap<String, List<String>>();
-        IRule rule = getOperand(mmcQuery);
-        for (ICondition condition : rule) {
-            attributeNameValuesMap.put(condition.getAttribute().getName(), condition.getValues());
+
+        IExpression expression = mmcQuery.getConstraints().getExpression(1);
+        try {
+            IRule rule = (IRule) expression.getOperand(0);
+            for (ICondition condition : rule) {
+                attributeNameValuesMap.put(condition.getAttribute().getName(), condition.getValues());
+            }
+        } catch (ClassCastException e) {
+            throw new IllegalStateException(
+                    "The MultiModelCategoryQuery should contain only a single operand of type Rule", e);
         }
+
         return attributeNameValuesMap;
-    }
-
-    /**
-     * @param query
-     * @return
-     */
-    public static IRule getOperand(ICab2bQuery query) {
-        IExpression expression = query.getConstraints().getExpression(1);
-        IExpressionOperand operand = expression.getOperand(0);
-
-        IRule rule = null;
-        if (operand instanceof IRule) {
-            rule = (IRule) operand;
-        }
-
-        return rule;
     }
 
     /**
@@ -173,7 +164,7 @@ public class QueryExecutorUtil {
      * @throws RuntimeException
      */
     public static void insertURLConditions(Collection<? extends ICab2bQuery> queries, GlobusCredential proxy,
-                                     UserInterface user, String[] modelGroupNames) throws RuntimeException {
+                                           UserInterface user, String[] modelGroupNames) throws RuntimeException {
         Map<EntityGroupInterface, List<String>> entityGroupURLsMap = getUserConfiguredUrls(user, modelGroupNames);
         for (ICab2bQuery query : queries) {
             Collection<EntityGroupInterface> queryEntityGroups = QueryExecutorUtil.getEntityGroups(query);
@@ -232,25 +223,6 @@ public class QueryExecutorUtil {
             }
         }
         return entityGroupVsSelectedUrls;
-    }
-    
-    /**
-     * This method replaces the values of the conditions of given query with the provided keyword.
-     * @param query
-     */
-    public static void insertKeyword(ICab2bQuery query, String keyword) {
-        for (IExpression expression : query.getConstraints()) {
-            for (IExpressionOperand operand : expression) {
-                if (operand instanceof IRule) {
-                    IRule rule = (IRule) operand;
-                    for (ICondition condition : rule) {
-                        List<String> values = new ArrayList<String>();
-                        values.add(keyword);
-                        condition.setValues(values);
-                    }
-                }
-            }
-        }
     }
 
 }
