@@ -21,9 +21,7 @@ import edu.wustl.cab2b.common.user.UserInterface;
  */
 public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCategoryQuery> {
     private MMCQueryResultConflator resultConflator;
-
-    private Collection<QueryExecutor> queryExecutors;
-
+    
     private IQueryResult<? extends IRecord> result;
 
     /**
@@ -39,7 +37,7 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
             String[] modelGroupNames) {
         super(query, proxy, user, modelGroupNames);
         resultConflator = new MMCQueryResultConflator(query);
-        queryExecutors = new ArrayList<QueryExecutor>(query.getSubQueries().size());
+        this.queryExecutorsList = new ArrayList<QueryExecutor>(query.getSubQueries().size());
     }
 
     /* (non-Javadoc)
@@ -50,12 +48,12 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
         Collection<ICab2bQuery> subQueries = query.getSubQueries();
         for (ICab2bQuery query : subQueries) {
             QueryExecutor queryExecutor = new QueryExecutor(query, proxy);
-            queryExecutors.add(queryExecutor);
+            this.queryExecutorsList.add(queryExecutor);
         }
 
         new Thread() {
             public void run() {
-                for (QueryExecutor queryExecutor : queryExecutors) {
+                for (QueryExecutor queryExecutor : queryExecutorsList) {
                     queryExecutor.executeQuery();
                 }
             }
@@ -76,7 +74,7 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
      */
     @Override
     public QueryStatus getStatus() {
-        for (QueryExecutor queryExecutor : queryExecutors) {
+        for (QueryExecutor queryExecutor : queryExecutorsList) {
 
         }
         return null;
@@ -89,7 +87,7 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
     protected void postProcessResults() {
         Collection<IQueryResult<? extends IRecord>> queryResults =
                 new ArrayList<IQueryResult<? extends IRecord>>();
-        for (QueryExecutor queryExecutor : queryExecutors) {
+        for (QueryExecutor queryExecutor : queryExecutorsList) {
             queryResults.add(queryExecutor.getPartialResult());
         }
 
