@@ -19,6 +19,10 @@ import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
+import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.IExpression;
+import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
+import edu.wustl.common.querysuite.queryobject.IRule;
 
 /**
  * @author pallavi_mistry
@@ -27,7 +31,6 @@ import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
 public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQuery> {
 
     private String keyword;
-    private Map<KeywordQuery, IQueryResult<? extends IRecord>> queryVsResultMap;
 
     /**
      * @param queries
@@ -44,7 +47,6 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
         super(query, proxy, user, modelGroupNames);
         this.keyword = keyword;
         this.queryExecutorsList = new ArrayList<QueryExecutor>(query.getSubQueries().size());
-        this.queryVsResultMap = new HashMap<KeywordQuery, IQueryResult<? extends IRecord>>(query.getSubQueries().size());
     }
 
     /* (non-Javadoc)
@@ -52,7 +54,6 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
      */
     @Override
     protected void executeQuery() {
-        // TODO Auto-generated method stub
         Collection<ICab2bQuery> subQueries = new ArrayList<ICab2bQuery>();
         subQueries.addAll(this.query.getSubQueries());
         for (ICab2bQuery query : subQueries) {
@@ -75,17 +76,19 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
     public IQueryResult<? extends IRecord> getResult() {
         return null;
     }
-    
+
     /**
      * @return
      */
-    public Map<KeywordQuery, IQueryResult<? extends IRecord>> getQueryVsResultMap() {
+    public Map<ICab2bQuery, IQueryResult<? extends IRecord>> getResults() {
+        Map<ICab2bQuery, IQueryResult<? extends IRecord>> results =
+                new HashMap<ICab2bQuery, IQueryResult<? extends IRecord>>(query.getSubQueries().size());
         for (QueryExecutor executor : queryExecutorsList) {
             IQueryResult<? extends IRecord> result = executor.getPartialResult();
-            KeywordQuery query = (KeywordQuery)executor.getQuery();
-            queryVsResultMap.put(query, result);
+            ICab2bQuery query = executor.getQuery();
+            results.put(query, result);
         }
-        return queryVsResultMap;
+        return results;
     }
 
     /* (non-Javadoc)
@@ -93,7 +96,6 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
      */
     @Override
     public QueryStatusImpl getStatus() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -109,16 +111,31 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
      * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#preProcessQuery()
      */
     @Override
-    protected void preProcessQuery() throws RuntimeException{
-        // TODO Auto-generated method stub
+    protected void preProcessQuery() throws RuntimeException {
         Collection<ICab2bQuery> queries = this.query.getSubQueries();
         for (ICab2bQuery query : queries) {
-            QueryExecutorUtil.insertKeyword(query, this.keyword);
+            insertKeyword(query, this.keyword);
         }
         QueryExecutorUtil.insertURLConditions(queries, proxy, user, modelGroupNames);
     }
-    
-    public KeywordQuery getQuery() {
-        return query;
+
+    /**
+     * This method replaces the values of the conditions of given query with the provided keyword.
+     * @param query
+     */
+    private void insertKeyword(ICab2bQuery query, String keyword) {
+        for (IExpression expression : query.getConstraints()) {
+            for (IExpressionOperand operand : expression) {
+                if (operand instanceof IRule) {
+                    IRule rule = (IRule) operand;
+                    for (ICondition condition : rule) {
+                        List<String> values = new ArrayList<String>();
+                        values.add(keyword);
+                        condition.setValues(values);
+                    }
+                }
+            }
+        }
     }
+
 }
