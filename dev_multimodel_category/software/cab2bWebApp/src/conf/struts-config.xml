@@ -63,7 +63,7 @@
 		</action>
 		
 		<action path="/BackgroundQuery"
-			type="edu.wustl.cab2bwebapp.action./BackgroundQueryAction">		
+			type="edu.wustl.cab2bwebapp.action.BackgroundQueryAction">		
 		</action>
 
 		<action path="/ExecuteQuery"

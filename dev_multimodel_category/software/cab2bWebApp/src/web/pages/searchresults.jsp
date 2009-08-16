@@ -250,7 +250,7 @@ document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="bu
 			</TR>
 			<TR>
 				<TD>
-					<INPUT type="button" value="<bean:message key="button.executeinbackground"/>" onClick="document.location=BackgroundQuery.do">
+					<INPUT type="button" value="<bean:message key="button.executeinbackground"/>" onClick="document.location='BackgroundQuery.do'">
 	      		</TD>
 				<TD nowrap style="padding-top:7px">
 					<DIV id="exportDiv" style="display:none" class="text">	
