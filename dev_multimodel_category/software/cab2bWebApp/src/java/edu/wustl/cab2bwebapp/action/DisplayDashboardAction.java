@@ -52,7 +52,6 @@ public class DisplayDashboardAction extends Action {
                                  HttpServletResponse response) throws IOException, ServletException {
         try {
             Collection<QueryStatusDVO> queryStatusDVOList = new ArrayList<QueryStatusDVO>();
-
             QueryURLStatusOperations opr = new QueryURLStatusOperations();
             Collection<QueryStatus> qsCollection =
                     opr.getAllQueryStatusByUser((UserInterface) request.getSession().getAttribute(Constants.USER));
