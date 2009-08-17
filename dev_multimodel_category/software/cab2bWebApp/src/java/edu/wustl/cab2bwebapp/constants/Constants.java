@@ -9,33 +9,36 @@ public interface Constants {
      * Constant for FOUR_KILO_BYTES.
      */
     public static final int FOUR_KILO_BYTES = 4096;
-    
+
     /** Constants for AJAX Call */
     public static final String AJAX_CALL = "Ajax-Call";
-        
+
     /** Constant for forward to infeasibleURLs */
     public static final String INFEASIBLE_URL = "infeasibleURL";
-      
+
     /** Constants for isFirstRequest */
     public static final String IS_FIRST_REQUEST = "isFirstRequest";
-    
+
     /** Constants for exported_file_path */
     public static final String EXPORTED_FILE_PATH = "exported_file_path";
-    
+
     /** Constants for conditionList */
     public static final String CONDITION_LIST = "conditionList";
-    
+
     /** Constants for stopAjax */
     public static final String STOP_AJAX = "stopAjax";
-    
+
     /** Constants for Finishing Query Execution */
     public static final String UI_POPULATION_FINISHED = "UI_population_finished";
-    
+
     /** Constants for conditionList */
     public static final String PROCESSING = "processing";
-    
+
     /** Constants for ExecuteQueryBizLogicObject */
     public static final String EXECUTE_QUERY_BIZ_LOGIC_OBJECT = "ExecuteQueryBizLogicObject";
+
+    /** Constants for User versus ExecuteQueryBizLogicObject used for maintaining background query execution map*/
+    public static final String USER_VS_EXECUTE_QUERY_BIZ_LOGIC_OBJECT = "UserVsExecuteQueryBizLogicObject";
 
     /** Constant for Saved Query Provider */
     public static final String SAVED_QUERY_BIZ_LOGIC = "savedQueryBizLogic";
@@ -123,9 +126,9 @@ public interface Constants {
     /** Constant for add limit XML file path */
     public static final String ADD_LIMIT_XML_FILE_PATH =
             "WEB-INF" + java.io.File.separator + "classes" + java.io.File.separator + "add-limit.xml";
-    
+
     /** Constant for all hosting institutions */
-    public static final String ALL_HOSTING_INSTITUTIONS = "All Hosting Institutions";    
+    public static final String ALL_HOSTING_INSTITUTIONS = "All Hosting Institutions";
 
     /** Constant for query result */
     public static final String SEARCH_RESULTS = "searchResults";
@@ -150,12 +153,10 @@ public interface Constants {
 
     /** Constant for forward to failure page */
     public static final String FORWARD_FAILURE = "failure";
-    
+
     /** Constant for forward to dash board page */
     public static final String FORWARD_DASHBOARD = "dashboard";
-    
-    /** Constant for fatal failure for displaying dash board */    
-    public static final String FATAL_DISPLAY_DASHBOARD_FAILURE = "fatalDisplayDashboardFailure";
 
-    public static final String USER_VS_EXECUTE_QUERY_BIZ_LOGIC_OBJECT = "USER_VS_EXECUTE_QUERY_BIZ_LOGIC_OBJECT";
+    /** Constant for fatal failure for displaying dash board */
+    public static final String FATAL_DISPLAY_DASHBOARD_FAILURE = "fatalDisplayDashboardFailure";
 }
