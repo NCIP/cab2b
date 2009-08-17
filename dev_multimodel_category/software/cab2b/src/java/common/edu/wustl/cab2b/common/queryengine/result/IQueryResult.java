@@ -34,7 +34,7 @@ public interface IQueryResult<R extends IRecord> extends IBaseQueryObject {
 
     EntityInterface getOutputEntity();
 
-    Collection<FailedTargetURL> getFailedURLs();
+    Collection<FQPUrlStatus> getFQPUrlStatus();
 
-    void setFailedURLs(Collection<FailedTargetURL> failedQueryUrls);
+    void setFQPUrlStatus(Collection<FQPUrlStatus> fqpQueryUrlStatus);
 }
