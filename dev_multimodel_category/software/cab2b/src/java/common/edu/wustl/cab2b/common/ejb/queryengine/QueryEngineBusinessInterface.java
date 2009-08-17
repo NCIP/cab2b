@@ -31,7 +31,14 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      *
      * @throws RemoteException if save process fails
      */
-    void saveQuery(ICab2bQuery query, String dref) throws RemoteException;
+    void saveFormQuery(ICab2bQuery query, String serializedDCR) throws RemoteException;
+
+    /**
+     * This method saves the given ICab2bQuery object as a sub-query of the appropriate keyword query.
+     *
+     * @throws RemoteException if save process fails
+     */
+    void saveKeywordQuery(ICab2bQuery query, String serializedDCR) throws RemoteException;
 
     /**
      * This method updates the given ICab2bQuery object.

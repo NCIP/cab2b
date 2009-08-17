@@ -15,9 +15,9 @@ import org.hibernate.HibernateException;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
-import edu.common.dynamicextensions.util.DynamicExtensionsUtility;
 import edu.wustl.cab2b.common.authentication.util.AuthenticationUtility;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.KeywordQuery;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
@@ -27,7 +27,6 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.category.PopularCategoryOperations;
 import edu.wustl.cab2b.server.util.UtilityOperations;
-import edu.wustl.common.hibernate.HibernateCleanser;
 import edu.wustl.common.querysuite.bizlogic.QueryBizLogic;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 
@@ -108,18 +107,23 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         return keywordQueries;
     }
 
-    private List<ICab2bQuery> getQueries(final String hqlQuery, List<Object> params) {
-        List<ICab2bQuery> queries = null;
-        try {
-            queries = (List<ICab2bQuery>) Utility.executeHQL(hqlQuery, params);
-            postProcessMMCQueries(queries);
-            filterSystemGeneratedSubQueries(queries);
-        } catch (HibernateException e) {
-            throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
-        }
-        return queries;
+    /*
+     * (non-Javadoc)
+     * @see edu.wustl.common.querysuite.bizlogic.QueryBizLogic#getQueryById(java.lang.Long)
+     */
+    public ICab2bQuery getQueryById(Long queryId) {
+        ICab2bQuery query = super.getQueryById(queryId);
+        postProcessMMCQuery(query);
+
+        return query;
     }
 
+    /**
+     * This method executes the given query and returns the result
+     * @param query
+     * @param serializedDCR
+     * @return
+     */
     public IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String serializedDCR) {
         GlobusCredential globusCredential = null;
         boolean hasAnySecureService = Utility.hasAnySecureService(query);
@@ -136,7 +140,7 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
     /**
      * This method saves the Cab2bQuery
      */
-    public void saveCab2bQuery(ICab2bQuery query, String serializedDCR) throws RemoteException {
+    public void saveFormQuery(ICab2bQuery query, String serializedDCR) throws RemoteException {
         Long userId = UtilityOperations.getLocalUserId(serializedDCR);
         query.setCreatedBy(userId);
 
@@ -144,12 +148,7 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
             query = new MultimodelCategoryQueryProcessor().process(query);
         }
 
-        // First Save as keyword search
-        saveAsKeywordQuery(query);
-
-        // Reset as regular query and save.
-        query.setIsKeywordSearch(Boolean.FALSE);
-        new QueryOperations().saveQuery(query);
+        saveQuery(query);
     }
 
     /**
@@ -158,32 +157,72 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
      * @param query
      * @throws RemoteException
      */
-    public void saveAsKeywordQuery(ICab2bQuery query) throws RemoteException {
-        if (query.isKeywordSearch()) {
-            ICab2bQuery oredQuery = (ICab2bQuery) DynamicExtensionsUtility.cloneObject(query);
-            if (oredQuery.getId() != null) {
-                new HibernateCleanser(oredQuery).clean();
-            }
-            oredQuery.setName(oredQuery.getName() + "#");
+    public void saveKeywordQuery(ICab2bQuery query, String serializedDCR) throws RemoteException {
+        Long userId = UtilityOperations.getLocalUserId(serializedDCR);
+        query.setCreatedBy(userId);
+        query.setName(query.getName() + "#");
 
-            QueryConverter converter = new QueryConverter();
-            if (isMultiModelCategoryQuery(query)) {
-                MultiModelCategoryQuery mmcQuery = (MultiModelCategoryQuery) query;
-                Collection<ICab2bQuery> subQueries = mmcQuery.getSubQueries();
-                List<ICab2bQuery> queries = new ArrayList<ICab2bQuery>(subQueries);
-                for (int index = 0; index < queries.size(); index++) {
-                    ICab2bQuery subQuery = queries.get(index);
-                    subQuery.setName(subQuery.getName() + "#");
-                    subQuery = converter.convertToKeywordQuery(subQuery);
-                    queries.set(index, subQuery);
-                }
-                mmcQuery.setSubQueries(queries);
-            } else {
-                oredQuery = converter.convertToKeywordQuery(oredQuery);
-            }
+        QueryConverter converter = new QueryConverter();
+        if (isMultiModelCategoryQuery(query)) {
+            query = new MultimodelCategoryQueryProcessor().process(query);
+            MultiModelCategoryQuery mmcQuery = (MultiModelCategoryQuery) query;
 
-            new QueryOperations().saveQuery(oredQuery);
+            Collection<ICab2bQuery> subQueries = mmcQuery.getSubQueries();
+            List<ICab2bQuery> queries = new ArrayList<ICab2bQuery>(subQueries);
+
+            for (int index = 0; index < queries.size(); index++) {
+                ICab2bQuery subQuery = queries.get(index);
+                subQuery.setName(subQuery.getName() + "#");
+                subQuery = converter.convertToKeywordQuery(subQuery);
+                queries.set(index, subQuery);
+            }
+            mmcQuery.setSubQueries(queries);
         }
+        query = converter.convertToKeywordQuery(query);
+
+        saveInKeywordQuery(query);
+    }
+
+    private void saveInKeywordQuery(ICab2bQuery query) {
+        Collection<ModelGroupInterface> modelGroups = null;
+
+        List<KeywordQuery> keywordQueries = new ArrayList<KeywordQuery>(modelGroups.size());
+        for (ModelGroupInterface modelGroup : modelGroups) {
+            List<Object> paramList = new ArrayList<Object>(2);
+            paramList.add(modelGroup);
+
+            List<ICab2bQuery> queries = getQueries("getKeywordQueriesByModelGroup", paramList);
+            if (queries != null && !queries.isEmpty()) {
+                if (queries.size() > 1) {
+                    throw new RuntimeException("Problem in code; probably database schema");
+                }
+                KeywordQuery keywordQuery = (KeywordQuery) queries.get(0);
+                keywordQueries.add(keywordQuery);
+            }
+        }
+
+        for (KeywordQuery keywordQuery : keywordQueries) {
+            keywordQuery.addSubQuery(query);
+            updateQuery(query);
+        }
+    }
+
+    /**
+     * This method returns the queries for the given HQL query string and the conditions
+     * @param hqlQuery
+     * @param params
+     * @return
+     */
+    private List<ICab2bQuery> getQueries(final String hqlQuery, List<Object> params) {
+        List<ICab2bQuery> queries = null;
+        try {
+            queries = (List<ICab2bQuery>) Utility.executeHQL(hqlQuery, params);
+            postProcessMMCQueries(queries);
+            filterSystemGeneratedSubQueries(queries);
+        } catch (HibernateException e) {
+            throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
+        }
+        return queries;
     }
 
     /**
@@ -194,11 +233,11 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
     private Boolean isMultiModelCategoryQuery(ICab2bQuery query) {
         EntityInterface outputEntity = query.getOutputEntity();
 
-        Boolean isTaggedMMC = Boolean.FALSE;
+        Boolean isTaggedAsMMC = Boolean.FALSE;
         for (TaggedValueInterface taggedValue : outputEntity.getTaggedValueCollection()) {
             if (MULTIMODELCATEGORY.equals(taggedValue.getKey())
                     && MULTIMODELCATEGORY.equals(taggedValue.getValue())) {
-                isTaggedMMC = Boolean.TRUE;
+                isTaggedAsMMC = Boolean.TRUE;
                 break;
             }
         }
@@ -209,16 +248,13 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
             isMMC = Boolean.TRUE;
         }
 
-        return isTaggedMMC && isMMC;
+        return isTaggedAsMMC && isMMC;
     }
 
-    public ICab2bQuery getQueryById(Long queryId) {
-        ICab2bQuery query = super.getQueryById(queryId);
-        postProcessMMCQuery(query);
-
-        return query;
-    }
-
+    /**
+     * This method process the given queries to set  the sub-queries as system-generated queires
+     * @param queries
+     */
     private void postProcessMMCQueries(List<ICab2bQuery> queries) {
         if (queries != null || !queries.isEmpty()) {
             for (ICab2bQuery query : queries) {
@@ -227,6 +263,10 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         }
     }
 
+    /**
+     * This method process the MMCQuery to set the sub-queries as system-generated queires
+     * @param query
+     */
     private void postProcessMMCQuery(ICab2bQuery query) {
         if (query != null && query instanceof MultiModelCategoryQuery) {
             MultiModelCategoryQuery mmcQuery = (MultiModelCategoryQuery) query;
@@ -237,12 +277,16 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         }
     }
 
+    /**
+     * This method filters the system generated queries from the collections.
+     * @param queries
+     */
     private void filterSystemGeneratedSubQueries(List<ICab2bQuery> queries) {
         if (queries != null || !queries.isEmpty()) {
             Iterator<ICab2bQuery> queryIterator = queries.iterator();
             while (queryIterator.hasNext()) {
                 ICab2bQuery query = queryIterator.next();
-                if (query.getIsSystemGenerated()) {
+                if (query.getIsSystemGenerated() && !(query instanceof KeywordQuery)) {
                     queryIterator.remove();
                 }
             }

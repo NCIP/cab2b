@@ -53,9 +53,14 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      *
      * @throws RemoteException if authentication fails or save process fails.
      */
-    public void saveQuery(ICab2bQuery query, String serializedDCR) throws RemoteException {
-        new QueryOperations().saveCab2bQuery(query, serializedDCR);
+    public void saveFormQuery(ICab2bQuery query, String serializedDCR) throws RemoteException {
+        new QueryOperations().saveFormQuery(query, serializedDCR);
     }
+    
+    public void saveKeywordQuery(ICab2bQuery query, String serializedDCR) throws RemoteException {
+        new QueryOperations().saveKeywordQuery(query, serializedDCR);
+    }
+    
 
     /**
      * This method updates the given ICab2bQuery object.
