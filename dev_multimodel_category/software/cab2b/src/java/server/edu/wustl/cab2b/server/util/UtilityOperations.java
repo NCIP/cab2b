@@ -100,6 +100,10 @@ public class UtilityOperations extends DefaultBizLogic {
         return entityRecordValues;
     }
 
+    /**
+     * @param size
+     * @return
+     */
     private List<TreeSet<Comparable<?>>> initEntityRecordValues(int size) {
         List<TreeSet<Comparable<?>>> list = new ArrayList<TreeSet<Comparable<?>>>(size);
         for (int i = 0; i < size; i++) {
@@ -108,6 +112,10 @@ public class UtilityOperations extends DefaultBizLogic {
         return list;
     }
 
+    /**
+     * @param record
+     * @param entityRecordValues
+     */
     private void process(IRecord record, List<TreeSet<Comparable<?>>> entityRecordValues) {
         int index = 0;
         List<AttributeInterface> attributeList = Utility.getAttributeList(record.getAttributes());
@@ -154,7 +162,7 @@ public class UtilityOperations extends DefaultBizLogic {
      * @param queryConstraints
      * @return
      */
-    public String getStringRepresentationofConstraints(IConstraints queryConstraints) {
+    public static String getStringRepresentationofConstraints(IConstraints queryConstraints) {
         StringBuffer queryConditions = new StringBuffer();
         for (IExpression query : queryConstraints) {
             for (IExpressionOperand opr : query) {
