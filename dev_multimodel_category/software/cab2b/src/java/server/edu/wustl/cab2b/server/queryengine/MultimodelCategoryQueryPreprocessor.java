@@ -35,7 +35,7 @@ public class MultimodelCategoryQueryPreprocessor {
                 AttributeInterface attribute = condition.getAttribute();
                 String[] nameToken = attribute.getName().split("_");
                 List<String> values = attributeNameValuesMap.get(nameToken[0]);
-                if (values != null) {
+                if (values != null && !values.isEmpty()) {
                     condition.setValues(values);
                 }else{
                     conditionIterator.remove();
