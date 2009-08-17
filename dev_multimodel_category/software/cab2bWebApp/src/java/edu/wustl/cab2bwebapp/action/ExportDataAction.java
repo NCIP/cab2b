@@ -17,7 +17,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import edu.wustl.cab2bwebapp.bizlogic.executequery.ExecuteQueryBizLogic;
+import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryBizLogic;
 import edu.wustl.cab2bwebapp.constants.Constants;
 
 public class ExportDataAction extends Action {
@@ -25,27 +25,19 @@ public class ExportDataAction extends Action {
 
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws Exception {
-        if (request.getParameter("filePath") == null) {
-            String filePath = getServlet().getServletContext().getRealPath("/");
-            HttpSession session = request.getSession();
-            ExecuteQueryBizLogic executeQueryBizLogic =
-                    (ExecuteQueryBizLogic) session.getAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
-            Long queryId = (Long) session.getAttribute(Constants.QUERY_ID);
-            if (queryId != null) {
-                String exported_file_path = (String) session.getAttribute(Constants.EXPORTED_FILE_PATH);
-                //file is getting exported (and thus built) first time.
-                if (exported_file_path == null && !((" ").equals(exported_file_path))) {
-                    String newfilename = executeQueryBizLogic.exportToCSV(queryId, filePath);
-                    exported_file_path = filePath + newfilename;
-                    session.setAttribute(Constants.EXPORTED_FILE_PATH, exported_file_path);
-                }
-                // else take the file path from the session
-                sendFileToClient(response, exported_file_path, "ExportedData.csv", "application/download");
+        String filePath = getServlet().getServletContext().getRealPath("/");
+        HttpSession session = request.getSession();
+       QueryBizLogic queryBizLogic =
+                (QueryBizLogic) session.getAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT);
+            String exported_file_path = (String) session.getAttribute(Constants.EXPORTED_FILE_PATH);
+            //file is getting exported (and thus built) first time.
+            if (exported_file_path == null && !((" ").equals(exported_file_path))) {
+                String newfilename = queryBizLogic.exportToCSV(filePath);
+                exported_file_path = filePath + newfilename;
+                session.setAttribute(Constants.EXPORTED_FILE_PATH, exported_file_path);
             }
-        } else {
-            sendFileToClient(response, request.getParameter("filePath"), "SearchResults.csv",
-                             "application/download");
-        }
+            // else take the file path from the session
+            sendFileToClient(response, exported_file_path, "ExportedData.csv", "application/download");
         return null;
     }
 
