@@ -19,7 +19,7 @@ public class QueryStatusUpdater {
     /** It allows only one time entry into the thread for refreshing ServiceURL database */
     private static AtomicBoolean isStarted = new AtomicBoolean(false);
 
-    public void refresQueryStatus() {
+    public void refreshQueryStatus() {
         if (!isStarted.getAndSet(true)) {
             Timer timer = new Timer();
             TimerTask timerTask = new TimerTask() {
