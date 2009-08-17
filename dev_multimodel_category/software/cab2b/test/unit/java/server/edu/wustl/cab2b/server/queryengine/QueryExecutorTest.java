@@ -73,7 +73,7 @@ public class QueryExecutorTest extends TestCase {
         executor.executeQuery();
         IQueryResult<? extends IRecord> res = executor.getCompleteResults();
         //checking failed urls                
-        assertEquals(2, res.getFailedURLs().size());
+        assertEquals(2, executor.getFailedURLs().size());
 
         //checking correct URLs 
         Map<String, ?> urlVsRecords = res.getRecords();
