@@ -50,24 +50,30 @@ public class MMCQueryResultConflator {
     public IQueryResult<? extends IRecord> conflate(Collection<IQueryResult<? extends IRecord>> queryResults) {
         IQueryResult<IRecord> conflatedResult = QueryResultFactory.createResult(mmcQuery.getOutputEntity());
 
+        boolean noResult = true;
         for (IQueryResult<? extends IRecord> queryResult : queryResults) {
             ICategoryResult<ICategorialClassRecord> categoryResult =
                     (ICategoryResult<ICategorialClassRecord>) queryResult;
+            Map<String, List<ICategorialClassRecord>> catRecords = categoryResult.getRecords();
+            if (catRecords != null && !catRecords.isEmpty()) {
+                noResult = false;
+                Set<Entry<String, List<ICategorialClassRecord>>> urlRecordEntries = catRecords.entrySet();
+                for (Entry<String, List<ICategorialClassRecord>> urlRecordEntry : urlRecordEntries) {
+                    String url = urlRecordEntry.getKey();
 
-            Set<Entry<String, List<ICategorialClassRecord>>> urlRecordEntries =
-                    categoryResult.getRecords().entrySet();
-            for (Entry<String, List<ICategorialClassRecord>> urlRecordEntry : urlRecordEntries) {
-                String url = urlRecordEntry.getKey();
-
-                List<IRecord> flattenedRecords = new ArrayList<IRecord>();
-                List<ICategorialClassRecord> catClassRecords = urlRecordEntry.getValue();
-                for (ICategorialClassRecord catClassRecord : catClassRecords) {
-                    flattenedRecords.addAll(generateIRecord(catClassRecord));
+                    List<IRecord> flattenedRecords = new ArrayList<IRecord>();
+                    List<ICategorialClassRecord> catClassRecords = urlRecordEntry.getValue();
+                    for (ICategorialClassRecord catClassRecord : catClassRecords) {
+                        flattenedRecords.addAll(generateIRecord(catClassRecord));
+                    }
+                    conflatedResult.addRecords(url, flattenedRecords);
                 }
-                conflatedResult.addRecords(url, flattenedRecords);
             }
         }
 
+        if (noResult) {
+            conflatedResult = null;
+        }
         return conflatedResult;
     }
 
@@ -80,14 +86,14 @@ public class MMCQueryResultConflator {
         for (MultiModelAttribute mmcAttribute : mmcAttributes) {
             Collection<CategorialAttribute> catAttributes = mmcAttribute.getCategorialAttributes();
             for (CategorialAttribute catAttribute : catAttributes) {
-                AttributeInterface sourceAttribute = catAttribute.getSourceClassAttribute();
+                AttributeInterface catDEAttribute = catAttribute.getCategoryAttribute();
 
                 Collection<AttributeInterface> attributes = attributeMapping.get(mmcAttribute.getAttribute());
                 if (attributes == null) {
                     attributes = new ArrayList<AttributeInterface>();
                     attributeMapping.put(mmcAttribute.getAttribute(), attributes);
                 }
-                attributes.add(sourceAttribute);
+                attributes.add(catDEAttribute);
             }
         }
 
@@ -99,15 +105,16 @@ public class MMCQueryResultConflator {
 
         List<Map<AttributeInterface, Object>> flattenedCatClassRecords = flattenCategoryRecord(catClassRecord);
         for (Map<AttributeInterface, Object> flattenedCatClassRecord : flattenedCatClassRecords) {
-            IRecord record =
-                    QueryResultFactory
-                        .createRecord(flattenedCatClassRecord.keySet(), catClassRecord.getRecordId());
-            Set<Entry<AttributeInterface, Object>> recordValues = flattenedCatClassRecord.entrySet();
-            for (Entry<AttributeInterface, Object> recordValue : recordValues) {
-                record.putValueForAttribute(recordValue.getKey(), recordValue.getValue());
-            }
+            Set<AttributeInterface> attributeSet = flattenedCatClassRecord.keySet();
+            if (!attributeSet.isEmpty()) {
+                IRecord record = QueryResultFactory.createRecord(attributeSet, catClassRecord.getRecordId());
+                Set<Entry<AttributeInterface, Object>> recordValues = flattenedCatClassRecord.entrySet();
+                for (Entry<AttributeInterface, Object> recordValue : recordValues) {
+                    record.putValueForAttribute(recordValue.getKey(), recordValue.getValue());
+                }
 
-            flattenedCategoryClassRecord.add(record);
+                flattenedCategoryClassRecord.add(record);
+            }
         }
 
         return flattenedCategoryClassRecord;
