@@ -22,7 +22,6 @@ import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
@@ -81,7 +80,7 @@ public class SpreadSheetResultTransformer {
      * 
      */
     public String writeToCSV(String filePath) throws IOException {
-        String fileName = query.getId() + "_" + System.currentTimeMillis()+".csv";
+        String fileName = query.getId() + "_" + System.currentTimeMillis() + ".csv";
         if (query != null && queryResult != null) {
             if (Utility.isCategory(query.getOutputEntity())) {
                 writeCategoryResultToCSV(fileName, filePath);
@@ -156,7 +155,7 @@ public class SpreadSheetResultTransformer {
         ICategoryResult<ICategorialClassRecord> result = (ICategoryResult<ICategorialClassRecord>) queryResult;
         List<AttributeInterface> attributes = getAttributesWithOrder(result.getCategory());
         ICategoryToSpreadsheetTransformer transformer = new CategoryToSpreadsheetTransformer();
-        transformer.writeToCSV(result, fileName,attributes, filePath);
+        transformer.writeToCSV(result, fileName, attributes, filePath);
     }
 
     /**
@@ -215,17 +214,25 @@ public class SpreadSheetResultTransformer {
         resultObject.setAllowedAttributes(attributeOrderList);
 
         Map<String, List<ICategorialClassRecord>> map = result.getRecords();
+        int spreadsheetRecordCount = 0;
         List<String> urls = query.getOutputUrls();
         for (String url : urls) {
             List<ICategorialClassRecord> recordList = map.get(url);
             List<Map<AttributeInterface, Object>> transformedResult = null;
             // identify infeasible URLs
-            if(QueryExecutorUtil.isURLFeasibleForConversion(recordList,transformationMaxLimit) && recordList!=null)
-                    resultObject.addInFeasibleUrls(url);
-            
+            /* if(QueryExecutorUtil.isURLFeasibleForConversion(recordList,transformationMaxLimit) && recordList!=null)
+                     resultObject.addInFeasibleUrls(url);*/
+
             ICategoryToSpreadsheetTransformer transformer = new CategoryToSpreadsheetTransformer();
-            transformedResult = transformer.convert(recordList,transformationMaxLimit);
+            transformedResult = transformer.convert(recordList, transformationMaxLimit);
+
+            //After transforming one URL results, we will check if TxLimit is reached or not.
+            //If reached, next URL should not be further sent for transformation. 
+            spreadsheetRecordCount = spreadsheetRecordCount + transformedResult.size();
             resultObject.addUrlAndResult(url, transformedResult);
+            if (spreadsheetRecordCount > transformationMaxLimit) {
+                break;
+            }
         }
 
         removeUnwantedAttributes(resultObject.getResultForAllUrls(), attributeOrderList);
@@ -281,7 +288,7 @@ public class SpreadSheetResultTransformer {
         orderAttr.removeAll(category.getCategoryEntity().getAllAttributes());
         orderAttrTwo.remove(orderAttr);
         orderAttr.addAll(0, orderAttrTwo);
-        
+
         /*List<AttributeInterface> list1 = getAttributes(category);
         Collection<AttributeInterface> list2 = category.getCategoryEntity().getAllAttributes();
         list1.removeAll(list2);        
