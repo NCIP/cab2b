@@ -2,20 +2,25 @@ package edu.wustl.cab2b.server.util;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.common.authentication.util.AuthenticationUtility;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.category.CategoryCache;
 import edu.wustl.cab2b.server.datalist.DataListOperationsController;
+import edu.wustl.cab2b.server.modelgroup.ModelGroupOperations;
 import edu.wustl.cab2b.server.path.PathFinder;
 import edu.wustl.cab2b.server.user.UserOperations;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
@@ -160,6 +165,23 @@ public class UtilityOperations extends DefaultBizLogic {
             }
         }
         return queryConditions.toString();
+    }
+    
+    /**
+     * Returs the collection of Model Groups which has given entityGroup as one of its entityGroup
+     * @param entityGroup
+     * @return
+     */
+    public static Collection<ModelGroupInterface>getModelGroups(EntityGroupInterface entityGroup){
+        Collection<ModelGroupInterface> modelGroups = new HashSet<ModelGroupInterface>();
+        Collection<ModelGroupInterface> allModelgroups = new ModelGroupOperations().getAllModelGroups();
+        for(ModelGroupInterface modelGroup : allModelgroups){
+            Collection<EntityGroupInterface> entityGroups = modelGroup.getEntityGroupList();
+            if(entityGroups.contains(entityGroup)){
+                modelGroups.add(modelGroup);
+            }
+        }
+        return modelGroups;
     }
 
     public synchronized static void refreshCache() {
