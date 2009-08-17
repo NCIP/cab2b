@@ -13,7 +13,6 @@ import edu.wustl.cab2b.common.modelgroup.ModelGroup;
 import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;
-import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
@@ -34,8 +33,8 @@ public class ModelGroupOperations extends DefaultBizLogic {
     public List<EntityGroupInterface> getEntityGroupsForModel(String modelGroupName) {
         List<EntityGroupInterface> entityGroups = new ArrayList<EntityGroupInterface>();
         try {
-            List<ModelGroupInterface> modelGroups = retrieve(ModelGroup.class.getName(), "modelGroupName",
-                                                             modelGroupName);
+            List<ModelGroupInterface> modelGroups =
+                    retrieve(ModelGroup.class.getName(), "modelGroupName", modelGroupName);
             for (ModelGroupInterface modelGroup : modelGroups) {
                 entityGroups.addAll(modelGroup.getEntityGroupList());
             }
@@ -44,10 +43,8 @@ public class ModelGroupOperations extends DefaultBizLogic {
         }
         return entityGroups;
     }
-
-
-
-    /**
+    
+   /**
      * This method returns List of all ModelGroupInterface present in database 
      * @return List<ModelGroupInterface>
      */
@@ -60,7 +57,7 @@ public class ModelGroupOperations extends DefaultBizLogic {
         }
         return modelGroups;
     }
-    
+
     /**
      * This method returns List of all ModelGroupInterface present in database 
      * @return List<ModelGroupInterface>
@@ -75,9 +72,8 @@ public class ModelGroupOperations extends DefaultBizLogic {
         ModelGroupInterface modelGrp = getModelGroupFromList(modelGroups);
         return modelGrp;
     }
-    
 
-    private ModelGroupInterface getModelGroupFromList(List modelGroups) {
+    private ModelGroupInterface getModelGroupFromList(List<ModelGroupInterface> modelGroups) {
         if (modelGroups == null || modelGroups.isEmpty()) {
             return null;
         }
