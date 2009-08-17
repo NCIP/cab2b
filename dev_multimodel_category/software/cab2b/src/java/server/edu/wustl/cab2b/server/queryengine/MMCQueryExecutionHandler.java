@@ -5,6 +5,7 @@ package edu.wustl.cab2b.server.queryengine;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.globus.gsi.GlobusCredential;
 
@@ -14,6 +15,7 @@ import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
 
 /**
  * @author chetan_patil
@@ -50,15 +52,16 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
             QueryExecutor queryExecutor = new QueryExecutor(query, proxy);
             this.queryExecutorsList.add(queryExecutor);
         }
-
-        new Thread() {
-            public void run() {
-                for (QueryExecutor queryExecutor : queryExecutorsList) {
-                    queryExecutor.executeQuery();
-                }
-            }
-        }.start();
-    }   
+		//making it serial temporarily
+        for (QueryExecutor queryExecutor : queryExecutorsList) {
+            queryExecutor.executeQuery();
+        }
+        /* new Thread() {
+             public void run() {
+                 
+             }
+         }.start();*/
+    }
 
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#getResult()
@@ -88,7 +91,10 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
         Collection<IQueryResult<? extends IRecord>> queryResults =
                 new ArrayList<IQueryResult<? extends IRecord>>();
         for (QueryExecutor queryExecutor : queryExecutorsList) {
-            queryResults.add(queryExecutor.getPartialResult());
+            IQueryResult<? extends IRecord> subQueryResult = queryExecutor.getPartialResult();
+            if (subQueryResult != null) {
+                queryResults.add(subQueryResult);
+            }
         }
 
         result = resultConflator.conflate(queryResults);
@@ -100,5 +106,6 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
     @Override
     protected void preProcessQuery() {
         new MultimodelCategoryQueryPreprocessor().preprocessQuery(query);
+        QueryExecutorUtil.insertURLConditions(query, proxy, user, modelGroupNames);
     }
 }
