@@ -56,7 +56,7 @@ import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
-import edu.wustl.cab2b.common.queryengine.result.FailedTargetURL;
+import edu.wustl.cab2b.common.queryengine.result.FQPUrlStatus;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
@@ -462,19 +462,19 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 // Get the Functional class for root and update query object
                 // with it.
                 queryResults = CommonUtils.executeQuery((ICab2bQuery) clientQueryBuilder.getQuery());
-                Collection<FailedTargetURL> failedURLs = null;
+                Collection<FQPUrlStatus> failedURLs = null;
                 if (queryResults != null) {
-                    failedURLs = queryResults.getFailedURLs();
+                    failedURLs = queryResults.getFQPUrlStatus();
                 }
 
                 StringBuffer output = new StringBuffer();
                 //FQP 1.3 server code test
                 if (failedURLs != null) {
-                    for (FailedTargetURL url : failedURLs) {
+                    for (FQPUrlStatus url : failedURLs) {
                         output =
                                 output.append("\n URL : " + url.getTargetUrl() + "\t Target Class obejct:"
                                         + ((gov.nih.nci.cagrid.dcql.Object) url.getTargetObject()).getName()
-                                        + "\t Error msg : " + url.getErrorMessage());
+                                        + "\t Error msg : " + url.getMessage());
                     }
                 }
                 System.out.println("Failed URLS :" + output);

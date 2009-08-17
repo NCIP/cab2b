@@ -23,6 +23,7 @@ import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.URLStatus;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
+import edu.wustl.cab2bwebapp.bizlogic.UserBackgroundQueries;
 import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.cab2bwebapp.dvo.QueryStatusDVO;
 
@@ -51,6 +52,9 @@ public class DisplayDashboardAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
         try {
+            //update all background query status in database
+            UserBackgroundQueries.getInstance().updateAllBackgroundQueryStatus();
+
             Collection<QueryStatusDVO> queryStatusDVOList = new ArrayList<QueryStatusDVO>();
             QueryURLStatusOperations opr = new QueryURLStatusOperations();
             UserInterface user = (UserInterface) request.getSession().getAttribute(Constants.USER);

@@ -19,7 +19,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.cab2b.common.queryengine.result.FailedTargetURL;
+import edu.wustl.cab2b.common.queryengine.result.FQPUrlStatus;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -52,7 +52,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
 
     protected QueryLogger queryLogger;
 
-    private Collection<FailedTargetURL> failedQueryUrlList = new ArrayList<FailedTargetURL>();
+    private Collection<FQPUrlStatus> urlStatusList = new ArrayList<FQPUrlStatus>();
 
     private ExecutorService executor = Executors.newFixedThreadPool(1);
 
@@ -100,8 +100,8 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
                 numRecs += recs.size();
             }
             logger.info("No. of records found and transformed : " + numRecs);
-            logger.info("No. of failed URLS found : " + failedQueryUrlList.size());
-            result.setFailedURLs(failedQueryUrlList);
+            logger.info("No. of URLS found : " + urlStatusList.size());
+            result.setFQPUrlStatus(urlStatusList);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(Utility.getStackTrace(e), ErrorCodeConstants.QM_0004);
@@ -131,7 +131,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
 
             logger.info("Executing DCQL to get : " + query.getTargetObject().getName());
             queryResults = federatedQueryEngine.execute(query);
-            failedQueryUrlList.addAll(listener.getFailedURLs().values());
+            urlStatusList.addAll(listener.getFQPUrlStatus().values());
 
             logger.info("Executed DCQL successfully.");
         } catch (FederatedQueryProcessingException e) {
@@ -194,8 +194,8 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             }
         }
         copyFromResult(catResult, classResults);
-        catResult.setFailedURLs(failedQueryUrlList);
-        logger.info("Category Failed URL number " + failedQueryUrlList.size());
+        catResult.setFQPUrlStatus(urlStatusList);
+        logger.info("Category URL status " + urlStatusList.size());
         return catResult;
     }
 

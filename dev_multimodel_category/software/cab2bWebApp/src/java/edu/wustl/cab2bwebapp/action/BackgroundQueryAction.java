@@ -1,14 +1,10 @@
 package edu.wustl.cab2bwebapp.action;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
@@ -18,7 +14,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryBizLogic;
 import edu.wustl.cab2bwebapp.constants.Constants;
 
@@ -47,19 +42,9 @@ public class BackgroundQueryAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
         try {
-            HttpSession session = request.getSession();
             QueryBizLogic executeQueryBizLogic =
-                    (QueryBizLogic) session.getAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT);
-            UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
-            Map<UserInterface, Set<QueryBizLogic>> userToBackgroundQueries =
-                    (Map<UserInterface, Set<QueryBizLogic>>) session.getServletContext()
-                        .getAttribute(Constants.USER_VS_QUERY_BIZ_LOGIC_OBJECT);            
-            Set<QueryBizLogic> queryBizLogic = userToBackgroundQueries.get(user);
-            if (queryBizLogic == null) {
-                queryBizLogic = new HashSet<QueryBizLogic>();
-                userToBackgroundQueries.put(user, queryBizLogic);
-            }
-            queryBizLogic.add(executeQueryBizLogic);
+                    (QueryBizLogic) request.getSession().getAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT);
+            executeQueryBizLogic.addQueryForExecuteInBackground();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
