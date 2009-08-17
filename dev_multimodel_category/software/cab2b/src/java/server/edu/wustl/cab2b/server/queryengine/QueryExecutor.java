@@ -644,4 +644,19 @@ public class QueryExecutor {
         }
     }
 
+    /**
+     * Returns set of failed urls.
+     * @return
+     */
+    public Set<String> getFailedURLs() {
+        Set<URLStatus> urlStatusSet = getStatus().getUrlStatus();
+        Set<String> failedUrls = new HashSet<String>();
+        for (URLStatus urlStatus : urlStatusSet) {
+            if (urlStatus.getStatus().equals(AbstarctStatus.Complete_With_Error)) {
+                failedUrls.add(urlStatus.getUrl());
+            }
+        }
+        return failedUrls;
+    }
+
 }
