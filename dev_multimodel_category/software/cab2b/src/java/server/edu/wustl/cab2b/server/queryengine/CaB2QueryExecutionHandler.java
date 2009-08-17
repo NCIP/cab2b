@@ -19,7 +19,7 @@ import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
  * @author deepak_shingan
  *
  */
-public class CaB2QueryExecutionHandler extends QueryExecutionHandler {
+public class CaB2QueryExecutionHandler extends QueryExecutionHandler<ICab2bQuery> {
 
     public CaB2QueryExecutionHandler(
             ICab2bQuery query,
