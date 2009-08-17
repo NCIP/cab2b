@@ -30,16 +30,19 @@ public interface Constants {
 
     /** Constants for Finishing Query Execution */
     public static final String UI_POPULATION_FINISHED = "UI_population_finished";
-
-    /** Constants for conditionList */
+    
+    /** Constants for processing */
     public static final String PROCESSING = "processing";
+    
+    /** Constants for keyword */
+    public static final String KEYWORD = "keyword";
+    
+    /** Constants for queryBizLogicObject */
+    public static final String QUERY_BIZ_LOGIC_OBJECT = "queryBizLogicObject";
 
-    /** Constants for ExecuteQueryBizLogicObject */
-    public static final String EXECUTE_QUERY_BIZ_LOGIC_OBJECT = "ExecuteQueryBizLogicObject";
-
-    /** Constants for User versus ExecuteQueryBizLogicObject used for maintaining background query execution map*/
-    public static final String USER_VS_EXECUTE_QUERY_BIZ_LOGIC_OBJECT = "UserVsExecuteQueryBizLogicObject";
-
+    /** Constants for User versus QueryBizLogicObject used for maintaining background query execution map*/
+    public static final String USER_VS_QUERY_BIZ_LOGIC_OBJECT = "UserVsQueryBizLogicObject";
+    
     /** Constant for Saved Query Provider */
     public static final String SAVED_QUERY_BIZ_LOGIC = "savedQueryBizLogic";
 
@@ -54,7 +57,10 @@ public interface Constants {
 
     /** Constant for saved searches */
     public static final String SAVED_QUERIES = "savedQueries";
-
+    
+    /** Constant for selectedQueryName */
+    public static final String SELECTED_QUERY_NAME = "selectedQueryName";
+    
     /** Constant for forward to home page */
     public static final String FORWARD_HOME = "home";
 
@@ -116,6 +122,9 @@ public interface Constants {
 
     /** Constant for query id */
     public static final String QUERY_ID = "queryId";
+    
+    /** Constant for keyWordQueryId */
+    public static final String KEYWORD_QUERY_ID = "keyWordQueryId";
 
     /** Constant for forward to add limit page */
     public static final String FORWARD_ADD_LIMIT = "addlimit";
