@@ -56,7 +56,6 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
      */
     @Override
     protected void executeQuery() {
-        // TODO Auto-generated method stub
         Collection<ICab2bQuery> subQueries = this.query.getSubQueries();
         for (ICab2bQuery query : subQueries) {
             QueryExecutor queryExecutor = new QueryExecutor(query, proxy);
@@ -113,12 +112,11 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
      */
     @Override
     protected void preProcessQuery() throws RuntimeException{
-        // TODO Auto-generated method stub
         Collection<ICab2bQuery> queries = this.query.getSubQueries();
         for (ICab2bQuery query : queries) {
             insertKeyword(query, this.keyword);
         }
-        QueryExecutorUtil.insertURLConditions(queries, proxy, user, modelGroupNames);
+        QueryExecutorUtil.insertURLConditions(query, proxy, user, modelGroupNames);
     }
     
     public KeywordQuery getQuery() {
