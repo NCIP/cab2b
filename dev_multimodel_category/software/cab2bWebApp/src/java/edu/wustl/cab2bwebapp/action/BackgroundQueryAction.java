@@ -19,7 +19,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.cab2b.common.user.UserInterface;
-import edu.wustl.cab2bwebapp.bizlogic.executequery.ExecuteQueryBizLogic;
+import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryBizLogic;
 import edu.wustl.cab2bwebapp.constants.Constants;
 
 /**
@@ -48,15 +48,15 @@ public class BackgroundQueryAction extends Action {
                                  HttpServletResponse response) throws IOException, ServletException {
         try {
             HttpSession session = request.getSession();
-            ExecuteQueryBizLogic executeQueryBizLogic =
-                    (ExecuteQueryBizLogic) session.getAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
+            QueryBizLogic executeQueryBizLogic =
+                    (QueryBizLogic) session.getAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT);
             UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
-            Map<UserInterface, Set<ExecuteQueryBizLogic>> userToBackgroundQueries =
-                    (Map<UserInterface, Set<ExecuteQueryBizLogic>>) session.getServletContext()
-                        .getAttribute(Constants.USER_VS_EXECUTE_QUERY_BIZ_LOGIC_OBJECT);            
-            Set<ExecuteQueryBizLogic> queryBizLogic = userToBackgroundQueries.get(user);
+            Map<UserInterface, Set<QueryBizLogic>> userToBackgroundQueries =
+                    (Map<UserInterface, Set<QueryBizLogic>>) session.getServletContext()
+                        .getAttribute(Constants.USER_VS_QUERY_BIZ_LOGIC_OBJECT);            
+            Set<QueryBizLogic> queryBizLogic = userToBackgroundQueries.get(user);
             if (queryBizLogic == null) {
-                queryBizLogic = new HashSet<ExecuteQueryBizLogic>();
+                queryBizLogic = new HashSet<QueryBizLogic>();
                 userToBackgroundQueries.put(user, queryBizLogic);
             }
             queryBizLogic.add(executeQueryBizLogic);
