@@ -27,7 +27,7 @@ import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.user.UserOperations;
 import edu.wustl.cab2bwebapp.bizlogic.ModelGroupBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
-import edu.wustl.cab2bwebapp.bizlogic.executequery.ExecuteQueryBizLogic;
+import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryBizLogic;
 import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.cab2bwebapp.dvo.ModelGroupDVO;
 
@@ -71,8 +71,10 @@ public class HomeAction extends Action {
             session.removeAttribute(Constants.CONDITION_LIST);
             session.removeAttribute(Constants.IS_FIRST_REQUEST);
             session.removeAttribute(Constants.STOP_AJAX);
-            session.removeAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
+            session.removeAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT);
             session.removeAttribute(Constants.UI_POPULATION_FINISHED);
+            session.removeAttribute(Constants.KEYWORD);
+            session.removeAttribute(Constants.SELECTED_QUERY_NAME);
 
             //delete the file(exported by the user) from server , when user navigates to the home page
             String filePath = (String) session.getAttribute(Constants.EXPORTED_FILE_PATH);
@@ -117,10 +119,10 @@ public class HomeAction extends Action {
                 session.setAttribute(Constants.MODEL_GROUP_DVO_LIST, modelGroupDVOList);
 
                 //Setting  USER_VS_EXECUTE_QUERY_BIZ_LOGIC_OBJECT at application level
-                if (session.getServletContext().getAttribute(Constants.USER_VS_EXECUTE_QUERY_BIZ_LOGIC_OBJECT) == null) {
-                    Map<UserInterface, Set<ExecuteQueryBizLogic>> userToBackgroundQueries =
-                            new HashMap<UserInterface, Set<ExecuteQueryBizLogic>>();
-                    session.getServletContext().setAttribute(Constants.USER_VS_EXECUTE_QUERY_BIZ_LOGIC_OBJECT,
+                if (session.getServletContext().getAttribute(Constants.USER_VS_QUERY_BIZ_LOGIC_OBJECT) == null) {
+                    Map<UserInterface, Set<QueryBizLogic>> userToBackgroundQueries =
+                            new HashMap<UserInterface, Set<QueryBizLogic>>();
+                    session.getServletContext().setAttribute(Constants.USER_VS_QUERY_BIZ_LOGIC_OBJECT,
                                                              userToBackgroundQueries);
                 }
 
