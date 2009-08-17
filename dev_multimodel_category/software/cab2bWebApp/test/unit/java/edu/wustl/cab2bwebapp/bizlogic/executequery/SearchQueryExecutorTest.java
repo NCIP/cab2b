@@ -1,17 +1,6 @@
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-
 import junit.framework.TestCase;
-import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
-import edu.wustl.cab2b.server.queryengine.QueryConverter;
-import edu.wustl.cab2bwebapp.util.MockQueryObjects;
-import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IExpression;
-import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
-import edu.wustl.common.querysuite.queryobject.IRule;
 
 /**
  * @author chetan_patil
@@ -19,7 +8,8 @@ import edu.wustl.common.querysuite.queryobject.IRule;
  */
 public class SearchQueryExecutorTest extends TestCase {
 
-    public void testInsertKeyword() {
+    //commented because searchqueryexecutor is no more present. its logic is moved to keywordqueryexecutionhandler.
+    /*public void testInsertKeyword() {
         ICab2bQuery query = new MockQueryObjects().createCaFEGeneQuery();
         ICab2bQuery keywordQuery = new QueryConverter().convertToKeywordQuery(query);
 
@@ -43,9 +33,9 @@ public class SearchQueryExecutorTest extends TestCase {
             }
         }
         assertTrue(flag);
-    }
+    }*/
 
-    public void testTransformResult() throws InterruptedException {
+   /* public void testTransformResult() throws InterruptedException {
         ICab2bQuery query = new MockQueryObjects().createQuery_GenemRNAProtein();
         Collection<ICab2bQuery> queryList = new ArrayList<ICab2bQuery>(1);
         queryList.add(query);
@@ -63,7 +53,7 @@ public class SearchQueryExecutorTest extends TestCase {
 
         assertFalse(transformedResult.isEmpty());
     }
-
+*/
     /*public void testExecute() {
         ICab2bQuery query = new MockQueryObjects().createQuery_Gene_mRNA_Protein();
 
