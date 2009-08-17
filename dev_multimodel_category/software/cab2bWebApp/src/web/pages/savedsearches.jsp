@@ -1,5 +1,6 @@
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
+<%@ page language="java" isELIgnored="false" %>
 
 <logic:empty name="savedSearches">
 	<DIV id="messages">
@@ -21,4 +22,7 @@
 			<DIV class="text" style="display: inline; line-height: 1.8em"></DIV><BR/>
 		</logic:iterate>
 	</logic:present>			
+</logic:present>
+<logic:present name="keyWordQueryId">
+	<INPUT type="hidden" name="keyWordQueryId" id="keyWordQueryId" value="${requestScope.keyWordQueryId}">
 </logic:present>
