@@ -156,4 +156,6 @@ public interface Constants {
     
     /** Constant for fatal failure for displaying dash board */    
     public static final String FATAL_DISPLAY_DASHBOARD_FAILURE = "fatalDisplayDashboardFailure";
+
+    public static final String USER_VS_EXECUTE_QUERY_BIZ_LOGIC_OBJECT = "USER_VS_EXECUTE_QUERY_BIZ_LOGIC_OBJECT";
 }
