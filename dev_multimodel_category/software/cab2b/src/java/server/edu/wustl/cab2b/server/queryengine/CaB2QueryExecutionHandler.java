@@ -57,6 +57,13 @@ public class CaB2QueryExecutionHandler extends QueryExecutionHandler {
 
     @Override
     protected void preProcessQuery() {
-        //No need
+        Collection<ICab2bQuery> queries = new ArrayList<ICab2bQuery>(1); //since it is a single query
+        queries.add(this.query);
+        QueryExecutorUtil.insertURLConditions(queries, proxy, user, modelGroupNames);
+
+    }
+    
+    public ICab2bQuery getQuery() {
+        return query;
     }
 }
