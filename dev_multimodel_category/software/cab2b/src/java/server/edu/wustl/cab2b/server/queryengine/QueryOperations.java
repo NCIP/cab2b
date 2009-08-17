@@ -20,6 +20,7 @@ import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.KeywordQuery;
+import edu.wustl.cab2b.common.queryengine.KeywordQueryImpl;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.common.queryengine.QueryType;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
@@ -180,25 +181,31 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         }
         query = converter.convertToKeywordQuery(query);
 
-        saveInKeywordQuery(query);
+        String userName = AuthenticationUtility.getUsersGridId(serializedDCR);
+        saveInKeywordQuery(query, userName);
     }
 
-    private void saveInKeywordQuery(ICab2bQuery query) {
-        Collection<ModelGroupInterface> modelGroups = null;
+    private void saveInKeywordQuery(ICab2bQuery query, String userName) {
+        Collection<ModelGroupInterface> modelGroups = UtilityOperations.getModelGroups(query.getOutputEntity());
 
         List<KeywordQuery> keywordQueries = new ArrayList<KeywordQuery>(modelGroups.size());
         for (ModelGroupInterface modelGroup : modelGroups) {
             List<Object> paramList = new ArrayList<Object>(2);
             paramList.add(modelGroup);
+            paramList.add(userName);
 
-            List<ICab2bQuery> queries = getQueries("getKeywordQueriesByModelGroup", paramList);
+            KeywordQuery keywordQuery = null;
+            List<ICab2bQuery> queries = getQueries("getKeywordQueriesByModelGroupAndUser", paramList);
             if (queries != null && !queries.isEmpty()) {
                 if (queries.size() > 1) {
                     throw new RuntimeException("Problem in code; probably database schema");
                 }
-                KeywordQuery keywordQuery = (KeywordQuery) queries.get(0);
-                keywordQueries.add(keywordQuery);
+                keywordQuery = (KeywordQuery) queries.get(0);
+            } else {
+                keywordQuery = new KeywordQueryImpl(query);
+                saveQuery(keywordQuery);
             }
+            keywordQueries.add(keywordQuery);
         }
 
         for (KeywordQuery keywordQuery : keywordQueries) {
