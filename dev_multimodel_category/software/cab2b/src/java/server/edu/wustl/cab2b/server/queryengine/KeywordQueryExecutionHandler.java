@@ -119,6 +119,9 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
         QueryExecutorUtil.insertURLConditions(query, proxy, user, modelGroupNames);
     }
     
+    /* (non-Javadoc)
+     * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#getQuery()
+     */
     public KeywordQuery getQuery() {
         return query;
     }
