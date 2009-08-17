@@ -33,10 +33,10 @@ import edu.wustl.cab2b.server.queryengine.CaB2QueryExecutionHandler;
 import edu.wustl.cab2b.server.queryengine.KeywordQueryExecutionHandler;
 import edu.wustl.cab2b.server.queryengine.MMCQueryExecutionHandler;
 import edu.wustl.cab2b.server.queryengine.QueryExecutionHandler;
-import edu.wustl.cab2b.server.queryengine.QueryExecutor;
 import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
+import edu.wustl.cab2bwebapp.bizlogic.UserBackgroundQueries;
 import edu.wustl.cab2bwebapp.dvo.SearchResultDVO;
 
 /**
@@ -47,7 +47,7 @@ public class QueryBizLogic {
 
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(QueryBizLogic.class);
 
-    QueryExecutionHandler queryExecutionHandler;
+    QueryExecutionHandler queryExecutionHandler = null;
 
     int transformationMaxLimit;
 
@@ -217,12 +217,12 @@ public class QueryBizLogic {
     }
 
     /**
+     * Returns failed URS for the query.
      * @return
      */
     public final Collection<ServiceURLInterface> getFailedServiceUrls() {
         Collection<ServiceURLInterface> failedServices = null;
-
-        Set<String> failedurls = null; //queryExecutionHandler.getFailedUrls();
+        Set<String> failedurls = queryExecutionHandler.getFailedUrls();
         if (failedurls != null) {
             failedServices = new HashSet<ServiceURLInterface>();
             for (String failedurl : failedurls) {
@@ -251,7 +251,7 @@ public class QueryBizLogic {
                         .getResult());
             fileName = transformer.writeToCSV(filePath);
         }
-       // updateDatabaseWithFileName(fileName); //To be uncommented once deepak code's is ready
+        updateDatabaseWithFileName(fileName);
         return fileName;
     }
 
@@ -261,9 +261,8 @@ public class QueryBizLogic {
      */
     private void updateDatabaseWithFileName(String fileName) {
         QueryStatus qStatus = queryExecutionHandler.getStatus();
-        QueryURLStatusOperations qStatusOperation = new QueryURLStatusOperations();
-        qStatusOperation.insertQueryStatus(qStatus);
         qStatus.setFileName(fileName);
+        new QueryURLStatusOperations().updateQueryStatus(qStatus);
     }
 
     /**
@@ -319,5 +318,19 @@ public class QueryBizLogic {
             throw new RuntimeException("Error while saving CSV ZIP file.", ErrorCodeConstants.IO_0001);
         }
         return zipFileName;
+    }
+
+    /**
+     * @return QueryStatus
+     */
+    public QueryStatus getStatus() {
+        return queryExecutionHandler.getStatus();
+    }
+
+    /**
+     * Adds currently running query for background execution for the current user and updating properties in database.
+     */
+    public void addQueryForExecuteInBackground() {
+        UserBackgroundQueries.getInstance().addBackgroundQuery(user, this);
     }
 }

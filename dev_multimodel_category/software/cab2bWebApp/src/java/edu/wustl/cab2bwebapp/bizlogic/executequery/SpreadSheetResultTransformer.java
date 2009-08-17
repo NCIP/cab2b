@@ -68,7 +68,7 @@ public class SpreadSheetResultTransformer {
             } else {
                 resultObj = processQueryResult();
             }
-            resultObj.setFailedServiceUrl(queryResult.getFailedURLs());
+            resultObj.setFailedServiceUrl(queryResult.getFQPUrlStatus());
             resultObj.setAllowedAttributes(attributeOrderList);
         }
         return resultObj;
@@ -225,7 +225,7 @@ public class SpreadSheetResultTransformer {
 
             ICategoryToSpreadsheetTransformer transformer = new CategoryToSpreadsheetTransformer();
             transformedResult = transformer.convert(recordList, transformationMaxLimit);
-
+            
             //After transforming one URL results, we will check if TxLimit is reached or not.
             //If reached, next URL should not be further sent for transformation. 
             spreadsheetRecordCount = spreadsheetRecordCount + transformedResult.size();
@@ -288,12 +288,6 @@ public class SpreadSheetResultTransformer {
         orderAttr.removeAll(category.getCategoryEntity().getAllAttributes());
         orderAttrTwo.remove(orderAttr);
         orderAttr.addAll(0, orderAttrTwo);
-
-        /*List<AttributeInterface> list1 = getAttributes(category);
-        Collection<AttributeInterface> list2 = category.getCategoryEntity().getAllAttributes();
-        list1.removeAll(list2);        
-        list1.addAll(0, list2);*/
-
         return orderAttr;
     }
 

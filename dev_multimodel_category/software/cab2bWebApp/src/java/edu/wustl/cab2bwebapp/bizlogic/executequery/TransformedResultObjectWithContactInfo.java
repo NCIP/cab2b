@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.wustl.cab2b.common.queryengine.result.FailedTargetURL;
+import edu.wustl.cab2b.common.queryengine.result.FQPUrlStatus;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
 
@@ -34,7 +34,7 @@ public class TransformedResultObjectWithContactInfo {
     /**
      * URLs failed during query execution.
      */
-    private Collection<FailedTargetURL> failedServiceUrl = null;
+    private Collection<FQPUrlStatus> failedServiceUrl = null;
 
     /**
      * URLs infeasible for transformation during query execution.
@@ -149,15 +149,15 @@ public class TransformedResultObjectWithContactInfo {
     /**
      * @return the failedServiceUrl
      */
-    public Collection<FailedTargetURL> getFailedServiceUrl() {
+    public Collection<FQPUrlStatus> getFailedServiceUrl() {
         return failedServiceUrl;
     }
 
     /**
-     * @param failedServiceUrl the failedServiceUrl to set
+     * @param collection the failedServiceUrl to set
      */
-    public void setFailedServiceUrl(Collection<FailedTargetURL> failedServiceUrl) {
-        this.failedServiceUrl = failedServiceUrl;
+    public void setFailedServiceUrl(Collection<FQPUrlStatus> collection) {
+        this.failedServiceUrl = collection;
     }
 
     /**
