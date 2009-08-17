@@ -114,7 +114,7 @@
 }
 </SCRIPT>
 <BODY onLoad="setPage()">
-	<FORM method="post" action="KeywordSearch.do" onsubmit="return checkEmptyTextFileld('keyword', keywordSearchExample.value, true, '<bean:message key="error.keywordsearch.empty"/>')">
+	<FORM method="post" action='PreExecuteQuery.do?queryId='+(document.getElementById("keyWordQueryId").value);" onsubmit="return checkEmptyTextFileld('keyword', keywordSearchExample.value, true, '<bean:message key="error.keywordsearch.empty"/>')">
 		<jsp:include page="header.jsp"/>
 		<jsp:include page="leftpanel.jsp"/>				
 		<DIV id="content">
