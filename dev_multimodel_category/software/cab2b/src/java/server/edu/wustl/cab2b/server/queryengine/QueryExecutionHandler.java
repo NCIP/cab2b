@@ -60,7 +60,7 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
         if (!isAlive.getAndSet(Boolean.TRUE)) {
             preProcessQuery();
             executeQuery();
-            postProcessResults();
+           // postProcessResults();
         }
     }
 
