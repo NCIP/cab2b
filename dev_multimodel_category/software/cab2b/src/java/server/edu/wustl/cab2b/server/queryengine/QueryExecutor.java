@@ -84,8 +84,9 @@ public class QueryExecutor {
 
     private BlockingQueue<Runnable> waitingQueue = new LinkedBlockingQueue<Runnable>();
 
-    private QueryExecutorThreadPool threadPoolExecutor = new QueryExecutorThreadPool(QueryExecutorPropertes.getPerQueryMaxThreadLimit(),
-QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waitingQueue);
+    private QueryExecutorThreadPool threadPoolExecutor =
+            new QueryExecutorThreadPool(QueryExecutorPropertes.getPerQueryMaxThreadLimit(), QueryExecutorPropertes
+                .getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waitingQueue);
 
     private ICab2bQuery query;
 
@@ -118,7 +119,7 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
      * @param cred
      */
     public QueryExecutor(ICab2bQuery query, GlobusCredential credential) {
-       // logger.info("Constructor");
+        // logger.info("Constructor");
         String userName = Constants.ANONYMOUS;
         if (credential != null) {
             userName = credential.getIdentity();
@@ -142,12 +143,12 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
      * @return
      */
     private CategoryPreprocessorResult preProcessCategories() {
-       // logger.info("enterd preProcessCategories");
+        // logger.info("enterd preProcessCategories");
         CategoryPreprocessorResult x = new CategoryPreprocessor().processCategories(query);
         if (query.isKeywordSearch()) {
             query = new QueryConverter().convertToKeywordQuery((ICab2bQuery) query);
         }
-      //  logger.info("exit preProcessCategories");
+        //  logger.info("exit preProcessCategories");
         return x;
     }
 
@@ -157,7 +158,7 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
      * @return ICab2bQuery object
      */
     public ICab2bQuery getQuery() {
-      //  logger.info("enterd  getQuery");
+        //  logger.info("enterd  getQuery");
         return query;
 
     }
@@ -168,7 +169,7 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
      *            ICab2bQuery object
      */
     public void setQuery(ICab2bQuery query) {
-       // logger.info("enterd  setQuery");
+        // logger.info("enterd  setQuery");
         this.query = query;
     }
 
@@ -218,7 +219,7 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
                 } else {
                     if (fqpUrl.getStatus().equals(ProcessingStatus._Waiting_To_Begin)) {
                         //setting query status as waiting
-                        qStatus.setStatus(AbstarctStatus.Waiting_To_Begin);
+                        qStatus.setStatus(AbstarctStatus.Processing);
                     } else if (fqpUrl.getStatus().equals(ProcessingStatus._Complete)) {
                         //setting query status as complete
                         qStatus.setStatus(AbstarctStatus.Complete);
@@ -264,7 +265,7 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
                 }
             }
         }
-       // logger.info("Returning null URLStatus for URL : " + url);
+        // logger.info("Returning null URLStatus for URL : " + url);
         return null;
     }
 
@@ -286,12 +287,12 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
         Set<URLStatus> urlStatusCollection = new HashSet<URLStatus>(outputUrlList.size());
         for (String url : outputUrlList) {
             URLStatus urlStatus = new URLStatusImpl();
-            urlStatus.setStatus(AbstarctStatus.Waiting_To_Begin);
+            urlStatus.setStatus(AbstarctStatus.Processing);
             urlStatus.setMessage(url + " url initilized.");
             urlStatus.setUrl(url);
             urlStatusCollection.add(urlStatus);
         }
-        qStatus.setUrlStatus(urlStatusCollection); 
+        qStatus.setUrlStatus(urlStatusCollection);
         QueryURLStatusOperations qso = new QueryURLStatusOperations();
         qso.insertQueryStatus(qStatus);
     }
@@ -395,19 +396,19 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
         ICab2bQuery queryPerUrl = null;
 
         WorkerThread(ICab2bQuery queryCopy) {
-          //  logger.info("WorkerThread constrr");
+            //  logger.info("WorkerThread constrr");
             this.queryPerUrl = queryCopy;
-         //   logger.info("exit WorkerThread constrr");
+            //   logger.info("exit WorkerThread constrr");
         }
 
         public void run() {
-          //  logger.info("Inside WorkerThread RUN");
+            //  logger.info("Inside WorkerThread RUN");
             catQueryResult = executeCategoryQuery(queryPerUrl);
             if (threadPoolExecutor.noTasksToExecuteOrTerminated()) {
                 threadPoolExecutor.shutdown();
             }
             queryResult = catQueryResult;
-          //  logger.info("exit WorkerThread RUN");
+            //  logger.info("exit WorkerThread RUN");
         }
 
         /**
@@ -415,7 +416,7 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
          * @return
          */
         private IQueryResult<ICategorialClassRecord> executeCategoryQuery(ICab2bQuery queryPerUrl) {
-          //  logger.info("Inside WorkerThread executeCategoryQuery RUN");
+            //  logger.info("Inside WorkerThread executeCategoryQuery RUN");
             Set<TreeNode<IExpression>> rootOutputExprNodes =
                     categoryPreprocessorResult.getExprsSourcedFromCategories().get(getOutputEntity());
             categoryResults = new ArrayList<IQueryResult<ICategorialClassRecord>>(rootOutputExprNodes.size());
@@ -430,7 +431,7 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
                         categoryPreprocessorResult.getCatClassForExpr().get(rootOutputExpr);
                 IQueryResult<ICategorialClassRecord> allRootExprCatRecs =
                         transformer.getCategoryResults(rootDCQLQuery, catClassForRootExpr, credential);
-             //   logger.info("Got category root results");
+                //   logger.info("Got category root results");
                 Map<String, List<ICategorialClassRecord>> records = allRootExprCatRecs.getRecords();
                 int recordSize = 0;
                 for (String url : records.keySet()) {
@@ -464,7 +465,7 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
             }
 
             IQueryResult<ICategorialClassRecord> res = mergeCatResults(categoryResults);
-          //  logger.info("Exiting WorkerThread executeCategoryQuery RUN");
+            //  logger.info("Exiting WorkerThread executeCategoryQuery RUN");
             return res;
         }
     }
@@ -491,7 +492,7 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
             this.parentId = parentId;
             this.priority = priority;
             this.name = name;
-           // logger.info("Inside ChildQueryExecutor Constr ");
+            // logger.info("Inside ChildQueryExecutor Constr ");
         }
 
         /*
@@ -501,7 +502,7 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
          */
         public void run() {
             try {
-           //     logger.info("Inside ChildQueryExecutor RUN ");
+                //     logger.info("Inside ChildQueryExecutor RUN ");
                 IExpression parentExpr = parentExprNode.getValue();
                 for (TreeNode<IExpression> childExprNode : parentExprNode.getChildren()) {
                     IExpression childExpr = childExprNode.getValue();
@@ -541,7 +542,7 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
                         for (List<IRecord> listRec : records) {
                             if (listRec.iterator().hasNext()) {
                                 IRecord record = listRec.iterator().next();
-                               // logger.info("inside ChildQueryExecutor calling ChildQueryExecutor recursion I");
+                                // logger.info("inside ChildQueryExecutor calling ChildQueryExecutor recursion I");
                                 threadPoolExecutor.execute(new ChildQueryExecutor(parentCatClassRec,
                                         childExprNode, record.getRecordId(), priority, ""));
                             }
@@ -560,8 +561,8 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
                                     childExprCatRecs.get(0).getCategorialClass().getChildren();
                             if (children != null && !children.isEmpty()) {
                                 for (ICategorialClassRecord childExprCatRec : childExprCatRecs) {
-                                  //  logger
-                                      //  .info("inside ChildQueryExecutor calling ChildQueryExecutor recursion II");
+                                    //  logger
+                                    //  .info("inside ChildQueryExecutor calling ChildQueryExecutor recursion II");
                                     threadPoolExecutor.execute(new ChildQueryExecutor(childExprCatRec,
                                             childExprNode, childExprCatRec.getRecordId(), priority, ""));
                                 }
@@ -570,7 +571,7 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
                     }
                 }
                 queryResult = mergeCatResults(categoryResults);
-             //   logger.info("Exitings ChildQueryExecutor RUN ");
+                //   logger.info("Exitings ChildQueryExecutor RUN ");
             } catch (Throwable e) {
                 //e.printStackTrace();
                 logger.error(e.getMessage());
@@ -590,7 +591,7 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
      * @return the queryResult
      */
     public IQueryResult<? extends IRecord> getCompleteResults() {
-     //   logger.info("inside getCompleteResults  ");
+        //   logger.info("inside getCompleteResults  ");
         while (!isProcessingFinished()) {
             try {
                 Thread.sleep(100);
@@ -599,7 +600,7 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
                 throw new RuntimeException("Thread to get CompleteResults was interrupted.", e);
             }
         }
-     //   logger.info("exiting getCompleteResults  ");
+        //   logger.info("exiting getCompleteResults  ");
         updateQueryStatus();
         return queryResult;
     }
@@ -608,7 +609,7 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
      * @return the queryResult
      */
     public IQueryResult<? extends IRecord> getPartialResult() {
-     //   logger.info("exiting getPartialResult  ");
+        //   logger.info("exiting getPartialResult  ");
         updateQueryStatus();
         return queryResult;
     }
@@ -617,7 +618,7 @@ QueryExecutorPropertes.getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waiting
      * @return the isProcessingFinished
      */
     public boolean isProcessingFinished() {
-     //   logger.info("inside isProcessingFinished  ");
+        //   logger.info("inside isProcessingFinished  ");
         return threadPoolExecutor.noTasksToExecuteOrTerminated() || normalQueryFinished;
     }
 
