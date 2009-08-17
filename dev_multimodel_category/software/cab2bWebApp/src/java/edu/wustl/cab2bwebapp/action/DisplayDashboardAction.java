@@ -53,8 +53,8 @@ public class DisplayDashboardAction extends Action {
         try {
             Collection<QueryStatusDVO> queryStatusDVOList = new ArrayList<QueryStatusDVO>();
             QueryURLStatusOperations opr = new QueryURLStatusOperations();
-            Collection<QueryStatus> qsCollection =
-                    opr.getAllQueryStatusByUser((UserInterface) request.getSession().getAttribute(Constants.USER));
+            UserInterface user = (UserInterface) request.getSession().getAttribute(Constants.USER);
+            Collection<QueryStatus> qsCollection = opr.getAllQueryStatusByUser(user);
             Iterator<QueryStatus> i = qsCollection.iterator();
             while (i.hasNext()) {
                 QueryStatus qs = (QueryStatus) i.next();
@@ -71,7 +71,10 @@ public class DisplayDashboardAction extends Action {
                 queryStatusDVO.setTitle(query.getName());
                 queryStatusDVO.setType(query.getType());
                 queryStatusDVO.setStatus(qs.getStatus());
-                queryStatusDVO.setResultCount(qs.getResultCount());
+                if (qs.getResultCount() == null)
+                    queryStatusDVO.setResultCount(0);
+                else
+                    queryStatusDVO.setResultCount(qs.getResultCount());
                 queryStatusDVO.setFailedHostingInstitutions(failedHostingInstitutionCount);
                 queryStatusDVO.setExecutedOn(qs.getQueryStartTime());
                 queryStatusDVO.setQueryConditions(qs.getQueryConditions());

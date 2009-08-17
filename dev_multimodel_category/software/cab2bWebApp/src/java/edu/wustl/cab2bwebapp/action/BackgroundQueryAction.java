@@ -52,15 +52,14 @@ public class BackgroundQueryAction extends Action {
                     (ExecuteQueryBizLogic) session.getAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
             UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
             Map<UserInterface, Set<ExecuteQueryBizLogic>> userToBackgroundQueries =
-                    (Map<UserInterface, Set<ExecuteQueryBizLogic>>) session
-                        .getAttribute(Constants.USER_VS_EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
+                    (Map<UserInterface, Set<ExecuteQueryBizLogic>>) session.getServletContext()
+                        .getAttribute(Constants.USER_VS_EXECUTE_QUERY_BIZ_LOGIC_OBJECT);            
             Set<ExecuteQueryBizLogic> queryBizLogic = userToBackgroundQueries.get(user);
             if (queryBizLogic == null) {
                 queryBizLogic = new HashSet<ExecuteQueryBizLogic>();
                 userToBackgroundQueries.put(user, queryBizLogic);
             }
-            queryBizLogic.add(executeQueryBizLogic);            
-
+            queryBizLogic.add(executeQueryBizLogic);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();

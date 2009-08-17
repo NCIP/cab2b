@@ -3,7 +3,10 @@ package edu.wustl.cab2bwebapp.action;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +27,7 @@ import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.user.UserOperations;
 import edu.wustl.cab2bwebapp.bizlogic.ModelGroupBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
+import edu.wustl.cab2bwebapp.bizlogic.executequery.ExecuteQueryBizLogic;
 import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.cab2bwebapp.dvo.ModelGroupDVO;
 
@@ -111,6 +115,14 @@ public class HomeAction extends Action {
                     modelGroupDVOList.add(modelGroupDVO);
                 }
                 session.setAttribute(Constants.MODEL_GROUP_DVO_LIST, modelGroupDVOList);
+
+                //Setting  USER_VS_EXECUTE_QUERY_BIZ_LOGIC_OBJECT at application level
+                if (session.getServletContext().getAttribute(Constants.USER_VS_EXECUTE_QUERY_BIZ_LOGIC_OBJECT) == null) {
+                    Map<UserInterface, Set<ExecuteQueryBizLogic>> userToBackgroundQueries =
+                            new HashMap<UserInterface, Set<ExecuteQueryBizLogic>>();
+                    session.getServletContext().setAttribute(Constants.USER_VS_EXECUTE_QUERY_BIZ_LOGIC_OBJECT,
+                                                             userToBackgroundQueries);
+                }
 
                 List<EntityGroupInterface> entityGroups = new ArrayList<EntityGroupInterface>();
                 if (!modelGroups.isEmpty()) {
