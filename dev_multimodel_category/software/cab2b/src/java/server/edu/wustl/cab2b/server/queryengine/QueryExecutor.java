@@ -197,7 +197,7 @@ public class QueryExecutor {
     }
 
     /**
-     * Method to update url status properties.
+     * Method to update url status properties. It will update only the in-memory query status.
      */
     private synchronized void updateQueryStatus() {
 
@@ -235,9 +235,6 @@ public class QueryExecutor {
                     logger.info("Updated record count for url:" + url + "  " + urlRecCount);
                 }
             }
-
-            QueryURLStatusOperations qso = new QueryURLStatusOperations();
-            qso.updateQueryStatus(qStatus);
         }
     }
 
@@ -595,6 +592,11 @@ public class QueryExecutor {
      */
     public IQueryResult<? extends IRecord> getPartialResult() {
         updateQueryStatus();
+        if (!(getStatus().getStatus().equals(AbstractStatus.Processing))) {
+            QueryURLStatusOperations qso = new QueryURLStatusOperations();
+            qso.updateQueryStatus(qStatus);
+        }
+
         return queryResult;
     }
 

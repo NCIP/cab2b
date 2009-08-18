@@ -35,12 +35,15 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
     protected String[] modelGroupNames;
 
     protected List<QueryExecutor> queryExecutorsList;
+    
+    protected boolean isExecuteInBackground ;
 
     public QueryExecutionHandler(T query, GlobusCredential proxy, UserInterface user, String[] modelGroupNames) {
         this.query = query;
         this.proxy = proxy;
         this.user = user;
         this.modelGroupNames = modelGroupNames;
+        this.isExecuteInBackground = false;
     }
 
     protected abstract void preProcessQuery();
@@ -129,5 +132,19 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
             }
         }
         return true;
+    }
+
+    /**
+     * @param isExecuteInBackground
+     */
+    public void setExecuteInBackground(boolean isExecuteInBackground) {
+        this.isExecuteInBackground = isExecuteInBackground;
+    }
+
+    /**
+     * @return
+     */
+    public boolean isExecuteInBackground() {
+        return isExecuteInBackground;
     }
 }

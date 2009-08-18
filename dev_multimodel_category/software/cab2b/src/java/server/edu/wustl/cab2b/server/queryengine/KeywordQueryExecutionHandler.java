@@ -31,6 +31,7 @@ import edu.wustl.common.querysuite.queryobject.IRule;
 public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQuery> {
 
     private String keyword;
+
     private Map<KeywordQuery, IQueryResult<? extends IRecord>> queryVsResultMap;
 
     /**
@@ -48,7 +49,8 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
         super(query, proxy, user, modelGroupNames);
         this.keyword = keyword;
         this.queryExecutorsList = new ArrayList<QueryExecutor>(query.getSubQueries().size());
-        this.queryVsResultMap = new HashMap<KeywordQuery, IQueryResult<? extends IRecord>>(query.getSubQueries().size());
+        this.queryVsResultMap =
+                new HashMap<KeywordQuery, IQueryResult<? extends IRecord>>(query.getSubQueries().size());
     }
 
     /* (non-Javadoc)
@@ -70,21 +72,32 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
         }.start();
     }
 
-    /* (non-Javadoc)
-     * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#getResult()
+    /**
+     * For keyword query, one needs to call getQueryVsResultMap() instead of getResult()
+     * because, we dont have consolidated result available for keyword query.
+     *  getResult() will return null.
      */
     @Override
     public IQueryResult<? extends IRecord> getResult() {
         return null;
     }
-    
+
     /**
+     * For keyword query, one needs to call getQueryVsResultMap() instead of getResult()
+     * because, we dont have consolidated result available for keyword query.
      * @return
      */
     public Map<KeywordQuery, IQueryResult<? extends IRecord>> getQueryVsResultMap() {
         for (QueryExecutor executor : queryExecutorsList) {
-            IQueryResult<? extends IRecord> result = executor.getPartialResult();
-            KeywordQuery query = (KeywordQuery)executor.getQuery();
+            IQueryResult<? extends IRecord> result = null;
+            //when query is sent to execute in background, then only query status (count, etc) will be updated in database.
+            //getResult() will update the DB, while getPartialResult() will only update the in-memory object.
+            if (isExecuteInBackground()) {
+                result = executor.getResult();
+            } else {
+                result = executor.getPartialResult();
+            }
+            KeywordQuery query = (KeywordQuery) executor.getQuery();
             queryVsResultMap.put(query, result);
         }
         return queryVsResultMap;
@@ -111,14 +124,14 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
      * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#preProcessQuery()
      */
     @Override
-    protected void preProcessQuery() throws RuntimeException{
+    protected void preProcessQuery() throws RuntimeException {
         Collection<ICab2bQuery> queries = this.query.getSubQueries();
         for (ICab2bQuery query : queries) {
             insertKeyword(query, this.keyword);
         }
         QueryExecutorUtil.insertURLConditions(query, proxy, user, modelGroupNames);
     }
-    
+
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#getQuery()
      */

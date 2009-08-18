@@ -5,7 +5,6 @@ package edu.wustl.cab2b.server.queryengine;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.globus.gsi.GlobusCredential;
 
@@ -23,7 +22,7 @@ import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
  */
 public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCategoryQuery> {
     private MMCQueryResultConflator resultConflator;
-    
+
     private IQueryResult<? extends IRecord> result;
 
     /**
@@ -52,7 +51,7 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
             QueryExecutor queryExecutor = new QueryExecutor(query, proxy);
             this.queryExecutorsList.add(queryExecutor);
         }
-		//making it serial temporarily
+        //making it serial temporarily
         for (QueryExecutor queryExecutor : queryExecutorsList) {
             queryExecutor.executeQuery();
         }
@@ -63,15 +62,16 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
          }.start();*/
     }
 
-    /* (non-Javadoc)
-     * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#getResult()
+    /**
+     * It will PostProcess the results firstly (i.e. consolidate in a single result) and then will return single result. 
+     * @return IQueryResult<? extends IRecord>
      */
     @Override
     public IQueryResult<? extends IRecord> getResult() {
         postProcessResults();
         return result;
     }
-  
+
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#getStatus()
      */
@@ -91,12 +91,18 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
         Collection<IQueryResult<? extends IRecord>> queryResults =
                 new ArrayList<IQueryResult<? extends IRecord>>();
         for (QueryExecutor queryExecutor : queryExecutorsList) {
-            IQueryResult<? extends IRecord> subQueryResult = queryExecutor.getPartialResult();
+            IQueryResult<? extends IRecord> subQueryResult = null;
+            //when query is sent to execute in background, then only query status (count, etc) will be updated in database.
+            //getResult() will update the DB, while getPartialResult() will only update the in-memory object.
+            if (isExecuteInBackground()) {
+                subQueryResult = queryExecutor.getResult();
+            } else {
+                subQueryResult = queryExecutor.getPartialResult();
+            }
             if (subQueryResult != null) {
                 queryResults.add(subQueryResult);
             }
         }
-
         result = resultConflator.conflate(queryResults);
     }
 
