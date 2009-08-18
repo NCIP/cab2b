@@ -1,6 +1,5 @@
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
-<%@ page language="java" isELIgnored="false" %>
 
 <logic:empty name="savedSearches">
 	<DIV id="messages">

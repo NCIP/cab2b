@@ -50,7 +50,7 @@
 						<bean:message key="label.password"/>
 					</DIV>
 					<DIV style="width:60%;float:right">
-						<html:password styleClass="textbox" property="password"/>
+						<INPUT type="password" class="textbox" name="password"/>
 					</DIV>
 					<BR style="line-height: 2em"/>
 					<DIV style="text-align:center">

@@ -1,7 +1,7 @@
 <%@ page errorPage="failure.jsp" %>
-<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
+<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
@@ -26,57 +26,22 @@
 		</DIV>
 	</DIV>
 	<DIV id="toppanel">
-		<TABLE id="dashboardtable" cellspacing="1" cellpadding="4">
-			<TR>
-				<TH><bean:message key="heading.querytitle"/></TH>
-				<TH><bean:message key="heading.querytype"/></TH>
-				<TH><bean:message key="heading.status"/></TH>
-				<TH><bean:message key="heading.recordcount"/></TH>
-				<TH><bean:message key="heading.failedhostinginstitutioncount"/></TH>
-				<TH><bean:message key="heading.executedon"/></TH>
-				<TH><bean:message key="heading.actions"/></TH>
-			</TR>
-			<logic:notEmpty name="queryStatusDVOList">
-				<logic:iterate name="queryStatusDVOList" id="query" type="edu.wustl.cab2bwebapp.dvo.QueryStatusDVO">
-				<TR>
-					<TD class="row">
-						<bean:write name="query" property="title"/>
-					</TD>
-					<TD class="row">
-						<bean:write name="query" property="type"/>
-					</TD>
-					<TD class="row">
-						<bean:write name="query" property="status"/>
-					</TD>
-					<TD class="row">
-						<bean:write name="query" property="resultCount"/>
-					</TD>
-					<TD class="row">
-						<bean:write name="query" property="failedHostingInstitutions"/>
-					</TD>
-					<TD class="row">
-						<bean:write name="query" property="executedOn"/>
-					</TD>
-					<TD class="row">
-						<IMG src="images/view_results.jpg" title="<bean:message key="img.alt.viewqueryresults"/>" style="cursor:pointer">&nbsp;
-						<IMG src="images/form.gif" title="<bean:message key="img.alt.queryparameters" arg0="${query.failedHostingInstitutions}"/>" style="cursor:pointer">&nbsp;
-						<IMG src="images/ico_file_excel.png" title="<bean:message key="img.alt.exportqueryresults"/>" style="cursor:pointer" onClick="document.location='ExportData.do?filePath=<bean:write name="query" property="resultsFilePath"/>';TogglePreloader(0);">&nbsp;
-						<IMG src="images/cancel.gif" title="<bean:message key="img.alt.abortqueryexecution"/>" style="cursor:pointer">&nbsp;
-					</TD>
-				</TR>
-				</logic:iterate>
-			</logic:notEmpty>
-			<logic:empty name="queryStatusDVOList">
-				<TR>
-					<TD class="text" colspan="7">
-						<bean:message key="text.offlinequeriesempty"/>
-					</TD>
-				</TR>
-			</logic:empty>
-		</TABLE>
+		<display:table class="simple" cellspacing="1" cellpadding="4" name="${requestScope.queryStatusDVOList}" uid="query" requestURI="">
+			<display:column title="Title" value="${query.title}" sortable="true" headerClass="sortable"/>
+			<display:column title="Type" value="${query.type}" sortable="true" headerClass="sortable"/>
+			<display:column title="Status" value="${query.status}" sortable="true" headerClass="sortable"/>
+			<display:column title="Result Count" value="${query.resultCount}" sortable="true" headerClass="sortable"/>
+			<display:column title="Executed On" value="${query.executedOn}" sortable="true" headerClass="sortable"/>	
+			<display:column title="Action(s)" sortable="false" headerClass="unsortable">
+				<IMG src="images/view_results.jpg" title="<bean:message key="img.alt.viewresults"/>" style="cursor:pointer">&nbsp;
+				<IMG src="images/form.jpg" title="<bean:message key="img.alt.parameters" arg0="${query.conditions}"/>" style="cursor:pointer">&nbsp;
+				<IMG src="images/ico_file_excel.png" title="<bean:message key="img.alt.exportresults"/>" style="cursor:pointer" onClick="document.location='ExportResults.do?filePath=<bean:write name="query" property="filePath"/>';TogglePreloader(0);">&nbsp;
+				<IMG src="images/stop.gif" title="<bean:message key="img.alt.abortexecution"/>" style="cursor:pointer;">&nbsp;
+			</display:column>
+		</display:table>
 	</DIV>
 	<DIV id="bottompanel">
-		<INPUT type="button" class="button" value="<bean:message key="button.back"/>" onClick="history.go(-1)">&nbsp;<INPUT type="submit" class="button" value="<bean:message key="button.refresh"/>" onClick="document.reload();">
+		<INPUT type="button" class="button" value="<bean:message key="button.home"/>" onClick="document.location='Home.do'">&nbsp;<INPUT type="submit" class="button" value="<bean:message key="button.refresh"/>" onClick="document.reload();">
 	</DIV>
 </DIV>
 <jsp:include page="footer.jsp"/>
