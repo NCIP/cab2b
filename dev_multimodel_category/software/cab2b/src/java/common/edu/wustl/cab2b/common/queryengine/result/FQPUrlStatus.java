@@ -19,15 +19,12 @@ public class FQPUrlStatus implements Serializable {
 
     private String description;
 
-    private Object targetObject;
-    
-    private String status;
+    private String status = "Waiting To Begin";
 
-    public FQPUrlStatus(String targetUrl, String errorMessage, String description, Object targetObject) {
+    public FQPUrlStatus(String targetUrl, String errorMessage, String description) {
         this.targetUrl = targetUrl;
         this.message = errorMessage;
         this.description = description;
-        this.targetObject = targetObject;
     }
 
     /**
@@ -36,14 +33,13 @@ public class FQPUrlStatus implements Serializable {
     public String getTargetUrl() {
         return targetUrl;
     }
-  
+
     /**
      * @return the errorMessage
      */
     public String getMessage() {
         return message;
     }
-  
 
     /**
      * @return the description
@@ -52,12 +48,6 @@ public class FQPUrlStatus implements Serializable {
         return description;
     }
 
-    /**
-     * @return the targetObject
-     */
-    public Object getTargetObject() {
-        return targetObject;
-    }
     @Override
     public int hashCode() {
         return targetUrl.hashCode();
@@ -87,5 +77,19 @@ public class FQPUrlStatus implements Serializable {
      */
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    /**
+     * @param message the message to set
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

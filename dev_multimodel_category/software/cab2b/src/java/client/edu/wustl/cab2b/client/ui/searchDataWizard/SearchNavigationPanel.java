@@ -472,8 +472,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 if (failedURLs != null) {
                     for (FQPUrlStatus url : failedURLs) {
                         output =
-                                output.append("\n URL : " + url.getTargetUrl() + "\t Target Class obejct:"
-                                        + ((gov.nih.nci.cagrid.dcql.Object) url.getTargetObject()).getName()
+                                output.append("\n URL : " + url.getTargetUrl()  
                                         + "\t Error msg : " + url.getMessage());
                     }
                 }
