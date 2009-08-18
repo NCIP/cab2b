@@ -52,13 +52,17 @@ public class DisplayDashboardAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
         try {
-            //update all background query status in database
-            UserBackgroundQueries.getInstance().updateAllBackgroundQueryStatus();
-
             Collection<QueryStatusDVO> queryStatusDVOList = new ArrayList<QueryStatusDVO>();
+
             QueryURLStatusOperations opr = new QueryURLStatusOperations();
             UserInterface user = (UserInterface) request.getSession().getAttribute(Constants.USER);
+
+            //Update all background query status in database for the logged user.            
+            UserBackgroundQueries.getInstance().updateBackgroundQueryStatusForUser(user);
+
+            //get query status updates from database
             Collection<QueryStatus> qsCollection = opr.getAllQueryStatusByUser(user);
+
             Iterator<QueryStatus> i = qsCollection.iterator();
             while (i.hasNext()) {
                 QueryStatus qs = (QueryStatus) i.next();
