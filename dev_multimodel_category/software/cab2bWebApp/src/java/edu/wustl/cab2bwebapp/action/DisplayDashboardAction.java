@@ -60,7 +60,7 @@ public class DisplayDashboardAction extends Action {
             //Update all background query status in database for the logged user.            
             UserBackgroundQueries.getInstance().updateBackgroundQueryStatusForUser(user);
 
-            //get query status updates from database
+            //Get query status updates from database.
             Collection<QueryStatus> qsCollection = opr.getAllQueryStatusByUser(user);
 
             Iterator<QueryStatus> i = qsCollection.iterator();
@@ -77,17 +77,23 @@ public class DisplayDashboardAction extends Action {
                 QueryStatusDVO queryStatusDVO = new QueryStatusDVO();
                 ICab2bQuery query = qs.getQuery();
                 queryStatusDVO.setTitle(query.getName());
-                queryStatusDVO.setType(query.getType());
+                queryStatusDVO.setType("ANDed".equalsIgnoreCase(query.getType()) ? "Saved Search" : "Keyword");
                 queryStatusDVO.setStatus(qs.getStatus());
-                if (qs.getResultCount() == null)
-                    queryStatusDVO.setResultCount(0);
-                else
+                if (qs.getResultCount() != null) {
                     queryStatusDVO.setResultCount(qs.getResultCount());
-                queryStatusDVO.setFailedHostingInstitutions(failedHostingInstitutionCount);
+                }
                 queryStatusDVO.setExecutedOn(qs.getQueryStartTime());
-                queryStatusDVO.setQueryConditions(qs.getQueryConditions());
-                queryStatusDVO.setResultsFilePath(qs.getFileName());
+                queryStatusDVO.setConditions(qs.getQueryConditions());
+                queryStatusDVO.setFilePath(qs.getFileName());
                 queryStatusDVOList.add(queryStatusDVO);
+                int inProgressQueryCount = 0;
+                int completedQueryCount = 0;
+                if (qs.getStatus().equals("Processing"))
+                    inProgressQueryCount++;
+                else
+                    completedQueryCount++;
+                request.getSession().setAttribute("completedQueryCount", completedQueryCount);
+                request.getSession().setAttribute("inProgressQueryCount", inProgressQueryCount);
             }
             request.setAttribute("queryStatusDVOList", queryStatusDVOList);
         } catch (Exception e) {
