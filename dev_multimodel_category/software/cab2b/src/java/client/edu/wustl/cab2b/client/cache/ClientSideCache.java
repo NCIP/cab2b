@@ -79,7 +79,8 @@ public class ClientSideCache extends AbstractEntityCache {
         ClientLauncher clientLauncher = ClientLauncher.getInstance();
         clientLauncher.showProgress(" Fetching data from caB2B Server....", length);
         try {
-            categories = categoryOperations.getAllCategories();
+            //categories = categoryOperations.getAllCategories();
+            categories = new ArrayList<Category>(0);
             int offset = 40;
             if (!categories.isEmpty()) {
                 offset = offset / categories.size();
