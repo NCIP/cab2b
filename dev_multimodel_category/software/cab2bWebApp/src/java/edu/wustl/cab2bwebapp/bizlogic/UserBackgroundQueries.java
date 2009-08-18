@@ -3,11 +3,14 @@
  */
 package edu.wustl.cab2bwebapp.bizlogic;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.querystatus.AbstarctStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.user.UserInterface;
@@ -22,6 +25,9 @@ public class UserBackgroundQueries {
     private Map<UserInterface, Set<QueryBizLogic>> userToBackgroundQueries = null;
 
     private static UserBackgroundQueries ref = null;
+
+    //TODO - take file path from a property file.
+    private final String filePath = "C:\\result\\";
 
     /**
      * private constructor for singleton class. 
@@ -70,19 +76,35 @@ public class UserBackgroundQueries {
     public synchronized void updateAllBackgroundQueryStatus() {
         Set<UserInterface> users = userToBackgroundQueries.keySet();
         for (UserInterface user : users) {
-            Set<QueryBizLogic> querieLogics = userToBackgroundQueries.get(user);
-            for (QueryBizLogic queryBizLogic : querieLogics) {
-                QueryStatus status = queryBizLogic.getStatus();
-
-                //updating query status in database.                
-                new QueryURLStatusOperations().updateQueryStatus(status);
-
-                //If query is complete remove it's reference from map 
-                if (status.equals(AbstarctStatus.Complete) || status.equals(AbstarctStatus.Complete_With_Error)) {
-                    querieLogics.remove(queryBizLogic);
-                }
-            }
+            updateBackgroundQueryStatusForUser(user);
         }
+    }
+
+    /**
+     * Call update in database for all queries executing in background for the given user.
+     * @param user
+     */
+    public synchronized void updateBackgroundQueryStatusForUser(UserInterface user) {
+
+        Set<QueryBizLogic> querieLogics = userToBackgroundQueries.get(user);
+        for (QueryBizLogic queryBizLogic : querieLogics) {
+            QueryStatus status = queryBizLogic.getStatus();
+
+            //If query is complete Write results into map and remove it's reference from map.
+            if (status.equals(AbstarctStatus.Complete) || status.equals(AbstarctStatus.Complete_With_Error)) {
+                try {
+                    String fileName = queryBizLogic.exportToCSV(filePath);
+                    status.setFileName(fileName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException("Error while saving CSV file.", ErrorCodeConstants.IO_0001);
+                }
+                querieLogics.remove(queryBizLogic);
+            }
+            //updating query status in database.                
+            new QueryURLStatusOperations().updateQueryStatus(status);
+        }
+
     }
 
 }
