@@ -81,7 +81,6 @@ public class LoginAction extends Action {
             session.removeAttribute(Constants.UI_POPULATION_FINISHED);
             session.removeAttribute(Constants.KEYWORD);
             session.removeAttribute(Constants.SELECTED_QUERY_NAME);
-            
 
             UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
             if (user == null || user.getUserName().equals(Constants.ANONYMOUS)) {
@@ -118,7 +117,7 @@ public class LoginAction extends Action {
                 Iterator<QueryStatus> i = qsCollection.iterator();
                 while (i.hasNext()) {
                     QueryStatus qs = i.next();
-                    if (qs.getStatus().equals("In Progress"))
+                    if (qs.getStatus().equals("Processing"))
                         inProgressQueryCount++;
                     else
                         completedQueryCount++;
