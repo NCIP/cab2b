@@ -5,9 +5,9 @@ import static edu.wustl.cab2b.common.util.Constants.ATTRIBUTE_WITH_DESCRIPTION;
 import static edu.wustl.cab2b.common.util.Constants.CLASS;
 import static edu.wustl.cab2b.common.util.Constants.CLASS_WITH_DESCRIPTION;
 import static edu.wustl.cab2b.common.util.Constants.CONNECTOR;
+import static edu.wustl.cab2b.common.util.Constants.MULTIMODELCATEGORY;
 import static edu.wustl.cab2b.common.util.Constants.PV;
 import static edu.wustl.cab2b.common.util.Constants.TYPE_CATEGORY;
-import static edu.wustl.cab2b.common.util.Constants.MULTIMODELCATEGORY;
 
 import java.io.File;
 import java.io.IOException;
@@ -100,8 +100,8 @@ public class Utility {
      * @return Unique string to represent given association
      */
     public static String generateUniqueId(AssociationInterface association) {
-        return concatStrings(association.getEntity().getName(), association.getSourceRole().getName(),
-                             association.getTargetRole().getName(), association.getTargetEntity().getName());
+        return concatStrings(association.getEntity().getName(), association.getSourceRole().getName(), association
+            .getTargetRole().getName(), association.getTargetEntity().getName());
     }
 
     /**
@@ -199,7 +199,7 @@ public class Utility {
         TaggedValueInterface tag = getTaggedValue(entity.getTaggedValueCollection(), TYPE_CATEGORY);
         return tag != null;
     }
-    
+
     /**
      * Checks whether passed Entity is a category or not.
      *
@@ -252,7 +252,8 @@ public class Utility {
      */
     public static boolean isEnumerated(AttributeInterface attribute) {
         if (attribute.getAttributeTypeInformation().getDataElement() instanceof UserDefinedDEInterface) {
-            UserDefinedDEInterface de = (UserDefinedDEInterface) attribute.getAttributeTypeInformation().getDataElement();
+            UserDefinedDEInterface de =
+                    (UserDefinedDEInterface) attribute.getAttributeTypeInformation().getDataElement();
             return de.getPermissibleValueCollection().size() != 0;
         }
         return false;
@@ -266,7 +267,8 @@ public class Utility {
      */
     public static Collection<PermissibleValueInterface> getPermissibleValues(AttributeInterface attribute) {
         if (isEnumerated(attribute)) {
-            UserDefinedDEInterface de = (UserDefinedDEInterface) attribute.getAttributeTypeInformation().getDataElement();
+            UserDefinedDEInterface de =
+                    (UserDefinedDEInterface) attribute.getAttributeTypeInformation().getDataElement();
             return de.getPermissibleValueCollection();
         }
         return new ArrayList<PermissibleValueInterface>(0);
@@ -498,7 +500,7 @@ public class Utility {
      */
     public static Collection<?> executeHQL(String queryName, List<Object> values) throws HibernateException {
         Session session = DBUtil.currentSession();
-        try{
+        try {
             Query q = session.getNamedQuery(queryName);
 
             if (values != null) {
@@ -506,7 +508,8 @@ public class Utility {
 
                     Object value = values.get(counter);
                     String objectType = value.getClass().getName();
-                    String onlyClassName = objectType.substring(objectType.lastIndexOf('.') + 1, objectType.length());
+                    String onlyClassName =
+                            objectType.substring(objectType.lastIndexOf('.') + 1, objectType.length());
 
                     if (onlyClassName.equals("String")) {
                         q.setString(counter, (String) value);
@@ -656,8 +659,10 @@ public class Utility {
 
             if ((Character.isUpperCase(character) && Character.isUpperCase(prevCharacter)
                     && Character.isLowerCase(nextCharacter) && i != chars.length - 1)
-                    || (Character.isUpperCase(character) && Character.isLowerCase(prevCharacter) && Character.isUpperCase(nextCharacter))
-                    || (Character.isUpperCase(character) && Character.isLowerCase(prevCharacter) && Character.isLowerCase(nextCharacter))) {
+                    || (Character.isUpperCase(character) && Character.isLowerCase(prevCharacter) && Character
+                        .isUpperCase(nextCharacter))
+                    || (Character.isUpperCase(character) && Character.isLowerCase(prevCharacter) && Character
+                        .isLowerCase(nextCharacter))) {
 
                 countOfCapitalLetters++;
             }
@@ -710,7 +715,8 @@ public class Utility {
                                 && Character.isLowerCase(nextCharacter)
                                 || Character.isLowerCase(previousCharacter)
                                 && Character.isUpperCase(nextCharacter)
-                                || (Character.isLowerCase(previousCharacter) && Character.isLowerCase(nextCharacter))) {
+                                || (Character.isLowerCase(previousCharacter) && Character
+                                    .isLowerCase(nextCharacter))) {
                             String split = str.substring(firstIndex, lastIndex);
                             if (splitStrCount == 0) {
                                 split = capitalizeFirstCharacter(split);

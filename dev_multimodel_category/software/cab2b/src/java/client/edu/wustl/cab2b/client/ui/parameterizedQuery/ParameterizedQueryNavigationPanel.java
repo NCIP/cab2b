@@ -8,6 +8,7 @@ import java.util.Date;
 
 import javax.swing.JOptionPane;
 
+import edu.common.dynamicextensions.util.DynamicExtensionsUtility;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -109,8 +110,10 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
      */
     private class OrderViewButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
-            if (parameterizedQueryMainPanel.getParameterConditionPanel().getCheckedAttributePanels(
-                                                                                                   parameterizedQueryMainPanel.getParameterConditionPanel().getConditionPanel()).size() > 1) {
+            if (parameterizedQueryMainPanel.getParameterConditionPanel()
+                .getCheckedAttributePanels(
+                                           parameterizedQueryMainPanel.getParameterConditionPanel()
+                                               .getConditionPanel()).size() > 1) {
                 ParameterizedQueryOrderPanel panel = new ParameterizedQueryOrderPanel(parameterizedQueryMainPanel);
                 parameterizedQueryMainPanel.getDialog().dispose();
                 panel.showInDialog("Unsaved Conditions");
@@ -130,8 +133,10 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
      */
     private class SaveButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
-            Cab2bPanel condtionPanel = parameterizedQueryMainPanel.getParameterConditionPanel().getConditionPanel();
-            ParameterizedQueryDataModel parameterizedQueryDataModel = parameterizedQueryMainPanel.getParameterizedQueryDataModel();
+            Cab2bPanel condtionPanel =
+                    parameterizedQueryMainPanel.getParameterConditionPanel().getConditionPanel();
+            ParameterizedQueryDataModel parameterizedQueryDataModel =
+                    parameterizedQueryMainPanel.getParameterizedQueryDataModel();
             boolean validCondition = false;
             for (int index = 0; index < condtionPanel.getComponentCount(); index++) {
                 if (condtionPanel.getComponent(index) instanceof AbstractTypePanel) {
@@ -139,19 +144,12 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                     int conditionStatus = panel.isConditionValidBeforeSaving(parameterizedQueryMainPanel);
                     if (conditionStatus == 0) {
                         validCondition = true;
-                        parameterizedQueryDataModel.addCondition(
-                                                                 panel.getExpressionId(),
-                                                                 panel.getCondition(
-                                                                                    index,
-                                                                                    ParameterizedQueryNavigationPanel.this,
-                                                                                    panel.getAttributeDisplayName()));
+                        parameterizedQueryDataModel.addCondition(panel.getExpressionId(), panel
+                            .getCondition(index, ParameterizedQueryNavigationPanel.this, panel
+                                .getAttributeDisplayName()));
                     } else if (conditionStatus == 1) {
-                        parameterizedQueryDataModel.removeCondition(
-                                                                    panel.getExpressionId(),
-                                                                    panel.getCondition(
-                                                                                       index,
-                                                                                       ParameterizedQueryNavigationPanel.this,
-                                                                                       ""));
+                        parameterizedQueryDataModel.removeCondition(panel.getExpressionId(), panel
+                            .getCondition(index, ParameterizedQueryNavigationPanel.this, ""));
                     } else {
                         return;
                     }
@@ -164,7 +162,8 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                                               JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            ParameterizedQueryInfoPanel parameterizedQueryInfoPanel = parameterizedQueryMainPanel.getInformationQueryPanel();
+            ParameterizedQueryInfoPanel parameterizedQueryInfoPanel =
+                    parameterizedQueryMainPanel.getInformationQueryPanel();
 
             parameterizedQueryDataModel.setQueryDescription(parameterizedQueryInfoPanel.getQueryDecription());
             parameterizedQueryDataModel.setIsKeywordSearch(parameterizedQueryInfoPanel.isKeywordSearch());
@@ -181,11 +180,12 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
          * Method to save parameterized query
          */
         private void saveQuery() {
-            ICab2bQuery cab2bParameterizedQuery = parameterizedQueryMainPanel.getParameterizedQueryDataModel().getQuery();
+            ICab2bQuery cab2bParameterizedQuery =
+                    parameterizedQueryMainPanel.getParameterizedQueryDataModel().getQuery();
             try {
-                QueryEngineBusinessInterface queryEngineBusinessInterface = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                                            EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                                            QueryEngineHome.class);
+                QueryEngineBusinessInterface queryEngineBusinessInterface =
+                        (QueryEngineBusinessInterface) CommonUtils
+                            .getBusinessInterface(EjbNamesConstants.QUERY_ENGINE_BEAN, QueryEngineHome.class);
 
                 String message = null;
 
@@ -196,15 +196,34 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                 } else {*/
                 if (queryEngineBusinessInterface.isQueryNameDuplicate(cab2bParameterizedQuery.getName(),
                                                                       Authenticator.getSerializedDCR())) {
-                    JOptionPane.showMessageDialog(
-                                                  parameterizedQueryMainPanel,
-                                                  "Query with same name already exist. Please try saving with different name.",
-                                                  "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane
+                        .showMessageDialog(
+                                           parameterizedQueryMainPanel,
+                                           "Query with same name already exist. Please try saving with different name.",
+                                           "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                queryEngineBusinessInterface.saveQuery(cab2bParameterizedQuery, Authenticator.getSerializedDCR());
+
+                ParameterizedQueryInfoPanel infoQueryPanel =
+                        parameterizedQueryMainPanel.getInformationQueryPanel();
+
+                if (infoQueryPanel.isKeywordSearch()) {
+                    queryEngineBusinessInterface.saveKeywordQuery(cab2bParameterizedQuery, Authenticator
+                        .getSerializedDCR());
+                } else if (infoQueryPanel.isFormAndKeywordSearch()) {
+                    ICab2bQuery keywordSubQuery =
+                            (ICab2bQuery) DynamicExtensionsUtility.cloneObject(cab2bParameterizedQuery);
+
+                    queryEngineBusinessInterface.saveFormQuery(cab2bParameterizedQuery, Authenticator
+                        .getSerializedDCR());
+                    queryEngineBusinessInterface.saveKeywordQuery(keywordSubQuery, Authenticator
+                        .getSerializedDCR());
+                } else {
+                    queryEngineBusinessInterface.saveFormQuery(cab2bParameterizedQuery, Authenticator
+                        .getSerializedDCR());
+                }
                 message = "Query saved successfully.";
-                //}
+
                 SearchNavigationPanel.getMessageLabel().setText(message);
                 new SavedQueryLinkPanel().updateQueryLinkPanel();
                 updateUI();
