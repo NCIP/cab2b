@@ -47,11 +47,11 @@ public class QueryBizLogic {
 
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(QueryBizLogic.class);
 
-    QueryExecutionHandler queryExecutionHandler = null;
+    private QueryExecutionHandler queryExecutionHandler = null;
 
-    int transformationMaxLimit;
+    private  int transformationMaxLimit;
 
-    UserInterface user;
+    private UserInterface user;
 
     /**
      * @param queryId
@@ -252,6 +252,7 @@ public class QueryBizLogic {
             fileName = transformer.writeToCSV(filePath);
         }
         updateDatabaseWithFileName(fileName);
+        logger.info("File saved at location:" + fileName);
         return fileName;
     }
 
@@ -317,6 +318,7 @@ public class QueryBizLogic {
             e.printStackTrace();
             throw new RuntimeException("Error while saving CSV ZIP file.", ErrorCodeConstants.IO_0001);
         }
+        logger.info("File saved at location:" + zipFileName);
         return zipFileName;
     }
 
