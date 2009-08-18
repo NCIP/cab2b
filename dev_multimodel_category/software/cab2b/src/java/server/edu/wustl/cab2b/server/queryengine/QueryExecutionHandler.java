@@ -16,6 +16,11 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
 
+/**
+ * @author deepak_shingan, chetan_patil
+ *
+ * @param <T>
+ */
 public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
     private AtomicBoolean isAlive = new AtomicBoolean(Boolean.FALSE);
 
@@ -60,7 +65,7 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
         if (!isAlive.getAndSet(Boolean.TRUE)) {
             preProcessQuery();
             executeQuery();
-           // postProcessResults();
+            // postProcessResults();
         }
     }
 
@@ -111,7 +116,11 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
         }
         return failedUrls;
     }
-    
+
+    /**
+     * Returns true if processing of each and every query is finished.
+     * @return
+     */
     public boolean isProcessingFinished() {
         List<QueryExecutor> queryExecutorsList = this.queryExecutorsList;
         for (QueryExecutor e : queryExecutorsList) {
