@@ -11,7 +11,7 @@ import java.util.Set;
 
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.cab2b.common.queryengine.querystatus.AbstarctStatus;
+import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
@@ -94,7 +94,7 @@ public class UserBackgroundQueries {
                 QueryStatus status = queryBizLogic.getStatus();
 
                 //If query is complete Write results into map and remove it's reference from map.
-                if (status.equals(AbstarctStatus.Complete) || status.equals(AbstarctStatus.Complete_With_Error)) {
+                if (status.equals(AbstractStatus.Complete) || status.equals(AbstractStatus.Complete_With_Error)) {
                     try {
                         String fileName = queryBizLogic.exportToCSV(filePath);
                         status.setFileName(fileName);
