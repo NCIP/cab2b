@@ -1,7 +1,5 @@
 package edu.wustl.cab2b.server.queryengine.resulttransformers;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -52,7 +50,8 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
 
     protected QueryLogger queryLogger;
 
-    private Collection<FQPUrlStatus> urlStatusList = new ArrayList<FQPUrlStatus>();
+    //This value is updated by FQPQueryListener
+    private Map<String, FQPUrlStatus> urlVsStatus = new HashMap<String, FQPUrlStatus>();
 
     private ExecutorService executor = Executors.newFixedThreadPool(1);
 
@@ -100,8 +99,8 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
                 numRecs += recs.size();
             }
             logger.info("No. of records found and transformed : " + numRecs);
-            logger.info("No. of URLS found : " + urlStatusList.size());
-            result.setFQPUrlStatus(urlStatusList);
+            logger.info("No. of URLS found : " + urlVsStatus.values().size());
+            result.setFQPUrlStatus(urlVsStatus.values());
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(Utility.getStackTrace(e), ErrorCodeConstants.QM_0004);
@@ -124,14 +123,12 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             targetBehaviour.setFailOnFirstError(false);
 
             queryParameter.setTargetDataServiceQueryBehavior(targetBehaviour);
-
             FederatedQueryEngine federatedQueryEngine = new FederatedQueryEngine(cred, queryParameter, executor);
-            FQPQueryListener listener = new FQPQueryListener(query);
+            FQPQueryListener listener = new FQPQueryListener(this);
             federatedQueryEngine.addStatusListener(listener);
 
             logger.info("Executing DCQL to get : " + query.getTargetObject().getName());
             queryResults = federatedQueryEngine.execute(query);
-            urlStatusList.addAll(listener.getFQPUrlStatus().values());
 
             logger.info("Executed DCQL successfully.");
         } catch (FederatedQueryProcessingException e) {
@@ -194,8 +191,8 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             }
         }
         copyFromResult(catResult, classResults);
-        catResult.setFQPUrlStatus(urlStatusList);
-        logger.info("Category URL status " + urlStatusList.size());
+        catResult.setFQPUrlStatus(urlVsStatus.values());
+        logger.info("Category URL status " + urlVsStatus.values().size());
         return catResult;
     }
 
@@ -284,4 +281,30 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      */
     protected abstract C createCategoryRecord(CategorialClass categorialClass,
                                               Set<AttributeInterface> categoryAttributes, RecordId id);
+
+    /**
+     * @param serviceURL
+     * @param status
+     */
+    protected void registerStatus(String serviceURL, FQPUrlStatus status) {
+        urlVsStatus.put(serviceURL, status);
+    }
+
+    /**
+     * Updates URL status.
+     * @param serviceURL
+     * @param message
+     * @param description
+     */
+    protected void updateStatus(String serviceURL, String message, String description, String status) {
+        FQPUrlStatus urlStatus = urlVsStatus.get(serviceURL);
+        if (urlStatus != null) {
+            urlStatus.setDescription(description);
+            urlStatus.setMessage(message);
+            urlStatus.setStatus(status);
+        } else {
+            urlStatus = new FQPUrlStatus(serviceURL, message, description);
+        }
+        registerStatus(serviceURL, urlStatus);
+    }
 }
