@@ -50,9 +50,9 @@
 }
 
 var results = "";
- function processAJAXRequest(requestURL, responseReceiver, param)
+ function processAJAXRequest(requestURL, responseReceiver, hideLoadingImage)
 { 
-   if(responseReceiver && !param)
+   if(responseReceiver && !hideLoadingImage)
   {
 	document.getElementById(responseReceiver).innerHTML = "<TABLE style='height:100%;width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'></TD></TR></TABLE>";
   }
@@ -61,39 +61,23 @@ var results = "";
   httpRequest.onreadystatechange = function(){ 
      if(httpRequest.readyState==4) 
     { 
-	  results = httpRequest.responseText;  
-	  
-		if(results=="Exception")
-	  	{
-  		if(confirm('Incorrect service instance configured for query! Do you want to configure now?'))
-		   {
-		     document.location = "Home.do?redirect=true";
-		   }
-	  	}
+	  results = httpRequest.responseText;  	  
+	   if(results=="Exception")
+	  {
+  	     if(confirm('Incorrect service instance configured for query! Do you want to configure now?'))
+		{
+		  document.location = "Home.do?redirect=true";
+		}
+	  }
 	   else if(httpRequest.status==500) //http.responseXML can be used to get an XML based response, if we need to have some XML output from a server file.
 	  {
-		var start = results.indexOf("<DIV id=\"errornotificationpanel\">");
-		results = results.substring(start, results.length-1);
-		var end = results.indexOf("</DIV>");
-		 if(start>0 && end>0)
-		{
-		  results = results.substring(0, end + 6);
-		}
-		 else
-		{
-		  results = "<SPAN class='error'>An unexpected error has occured while processing your request. Please contact helpdesk!</SPAN>";
-		}
 		results = "<DIV style='text-align:center'>" + results + "</DIV>";
 	  }
 	   if(httpRequest.status!=403 && responseReceiver)
 	  {
-	     if(param)
-		{		  
-		  document.getElementById(responseReceiver).innerHTML = "<TABLE style='height:100%;width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'></TD></TR></TABLE>";
-		}
         document.getElementById(responseReceiver).innerHTML = results;
 	  }
-	   else if(httpRequest.status==403)
+	   else if(httpRequest.status==403) //If user session timed out.
 	  {
   	    alert(httpRequest.responseText);
 		document.location = "Home.do";
