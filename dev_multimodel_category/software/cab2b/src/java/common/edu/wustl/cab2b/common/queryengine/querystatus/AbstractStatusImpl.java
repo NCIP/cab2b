@@ -2,7 +2,7 @@ package edu.wustl.cab2b.common.queryengine.querystatus;
 
 import java.io.Serializable;
 
-public class AbstractStatusImpl implements Serializable, AbstarctStatus {
+public class AbstractStatusImpl implements Serializable, AbstractStatus {
 
     private static final long serialVersionUID = 1L;
 

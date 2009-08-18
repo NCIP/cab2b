@@ -13,7 +13,7 @@ import edu.wustl.cab2b.common.user.UserInterface;
  * This is the Interface class for QueryStatusImpl concrete class
  * @author gaurav_mehta
  */
-public interface QueryStatus extends AbstarctStatus {
+public interface QueryStatus extends AbstractStatus {
 
     /** Gets the User who had executed the query */
     public UserInterface getUser();
