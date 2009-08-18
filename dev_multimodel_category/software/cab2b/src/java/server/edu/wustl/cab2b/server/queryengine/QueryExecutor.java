@@ -89,6 +89,8 @@ public class QueryExecutor {
                 .getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waitingQueue);
 
     private ICab2bQuery query;
+    
+    private boolean recordStatus;
 
     private ConstraintsBuilderResult constraintsBuilderResult;
 
@@ -119,6 +121,7 @@ public class QueryExecutor {
      * @param cred
      */
     public QueryExecutor(ICab2bQuery query, GlobusCredential credential) {
+        recordStatus = query.getId()!=null;
         String userName = Constants.ANONYMOUS;
         if (credential != null) {
             userName = credential.getIdentity();
@@ -269,7 +272,6 @@ public class QueryExecutor {
      * Method to initilise query status object. 
      */
     private void initilizeQueryStatus() {
-
         qStatus = new QueryStatusImpl();
         qStatus.setQuery(query);
         qStatus.setUser(user);
@@ -289,8 +291,10 @@ public class QueryExecutor {
             urlStatusCollection.add(urlStatus);
         }
         qStatus.setUrlStatus(urlStatusCollection);
-        QueryURLStatusOperations qso = new QueryURLStatusOperations();
-        qso.insertQueryStatus(qStatus);
+        if(recordStatus) {
+            QueryURLStatusOperations qso = new QueryURLStatusOperations();
+            qso.insertQueryStatus(qStatus);
+        }
     }
 
     /**
@@ -593,8 +597,7 @@ public class QueryExecutor {
     public IQueryResult<? extends IRecord> getPartialResult() {
         updateQueryStatus();
         if (!(getStatus().getStatus().equals(AbstractStatus.Processing))) {
-            QueryURLStatusOperations qso = new QueryURLStatusOperations();
-            qso.updateQueryStatus(qStatus);
+            updateStatus();
         }
 
         return queryResult;
@@ -649,9 +652,13 @@ public class QueryExecutor {
      */
     public IQueryResult<? extends IRecord> getResult() {
         updateQueryStatus();
-        QueryURLStatusOperations qso = new QueryURLStatusOperations();
-        qso.updateQueryStatus(qStatus);
+        updateStatus();
         return queryResult;
     }
-
+    private void updateStatus() {
+        if(recordStatus) {
+            QueryURLStatusOperations qso = new QueryURLStatusOperations();
+            qso.updateQueryStatus(qStatus);
+        }
+    }
 }
