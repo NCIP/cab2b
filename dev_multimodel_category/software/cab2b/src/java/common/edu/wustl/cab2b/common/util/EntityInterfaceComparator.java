@@ -3,6 +3,7 @@ package edu.wustl.cab2b.common.util;
 import java.util.Comparator;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.common.cache.CompareUtil;
 
 /**
  * Comparator for EntityInterface needed for metadata search 
@@ -17,11 +18,11 @@ public class EntityInterfaceComparator implements Comparator<EntityInterface> {
 		String className1 = edu.wustl.common.util.Utility.parseClassName(entity1.getName());
 		String className2 = edu.wustl.common.util.Utility.parseClassName(entity2.getName());
 		// If both the entities are categories then compare their names and return values accordingly
-		if (Utility.isCategory(entity1) && Utility.isCategory(entity2)) {
+		if (CompareUtil.isCategoryForMetadata(entity1) && CompareUtil.isCategoryForMetadata(entity2)) {
 			return (className1.compareToIgnoreCase(className2));
-		} else if (Utility.isCategory(entity1)) { // if first entity is category return it as smaller one
+		} else if (CompareUtil.isCategoryForMetadata(entity1)) { // if first entity is category return it as smaller one
 			return -1; 
-		} else if (Utility.isCategory(entity2)) { // else return as greater one
+		} else if (CompareUtil.isCategoryForMetadata(entity2)) { // else return as greater one
 			return 1;
 		} else { //If both the entities are classes then compare their names and return values accordingly
 			return (className1.compareTo(className2));
