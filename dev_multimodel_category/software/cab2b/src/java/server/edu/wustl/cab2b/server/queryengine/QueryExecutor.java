@@ -200,7 +200,6 @@ public class QueryExecutor {
      * Method to update url status properties.
      */
     private synchronized void updateQueryStatus() {
-        logger.info("Entered updateQueryStatus...");
 
         if (queryResult != null) {
             int totalRecCount = 0;
@@ -223,6 +222,7 @@ public class QueryExecutor {
                     }
                 }
                 qStatus.setStatus(status);
+                logger.info("Setting query status as :" + status);
                 String url = fqpUrl.getTargetUrl();
                 URLStatus uStatusObj = getStatusUrl(url);
                 uStatusObj.setStatus(status);
@@ -235,10 +235,10 @@ public class QueryExecutor {
                     logger.info("Updated record count for url:" + url + "  " + urlRecCount);
                 }
             }
+
             QueryURLStatusOperations qso = new QueryURLStatusOperations();
             qso.updateQueryStatus(qStatus);
         }
-        logger.info("exited updateQueryStatus...");
     }
 
     /* (non-Javadoc)
@@ -641,11 +641,11 @@ public class QueryExecutor {
         }
         return failedUrls;
     }
-    
+
     /**
      * @return
      */
-    public IQueryResult<? extends IRecord> getResult(){
+    public IQueryResult<? extends IRecord> getResult() {
         updateQueryStatus();
         QueryURLStatusOperations qso = new QueryURLStatusOperations();
         qso.updateQueryStatus(qStatus);

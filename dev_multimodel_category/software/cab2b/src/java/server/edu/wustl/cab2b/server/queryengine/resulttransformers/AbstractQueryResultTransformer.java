@@ -1,10 +1,12 @@
 package edu.wustl.cab2b.server.queryengine.resulttransformers;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -297,14 +299,24 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * @param description
      */
     protected void updateStatus(String serviceURL, String message, String description, String status) {
-        FQPUrlStatus urlStatus = urlVsStatus.get(serviceURL);
-        if (urlStatus != null) {
-            urlStatus.setDescription(description);
-            urlStatus.setMessage(message);
-            urlStatus.setStatus(status);
+        logger.info("Setting status in FQP url status:" + status);
+        if (serviceURL.equals("All")) {
+            Collection<FQPUrlStatus> urls = urlVsStatus.values();
+            if (urls != null) {
+                for (FQPUrlStatus url : urls) {
+                    url.setStatus(status);
+                }
+            }
         } else {
-            urlStatus = new FQPUrlStatus(serviceURL, message, description);
+            FQPUrlStatus urlStatus = urlVsStatus.get(serviceURL);
+            if (urlStatus != null) {
+                urlStatus.setDescription(description);
+                urlStatus.setMessage(message);
+                urlStatus.setStatus(status);
+            } else {
+                urlStatus = new FQPUrlStatus(serviceURL, message, description);
+            }
+            registerStatus(serviceURL, urlStatus);
         }
-        registerStatus(serviceURL, urlStatus);
     }
 }

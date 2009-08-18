@@ -49,7 +49,7 @@ public class QueryBizLogic {
 
     private QueryExecutionHandler queryExecutionHandler = null;
 
-    private  int transformationMaxLimit;
+    private int transformationMaxLimit;
 
     private UserInterface user;
 
@@ -114,6 +114,7 @@ public class QueryBizLogic {
      * @return
      */
     public boolean isProcessingFinished() {
+        logger.info("Processing finished...:" + queryExecutionHandler.isProcessingFinished());
         return queryExecutionHandler.isProcessingFinished();
     }
 

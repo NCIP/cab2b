@@ -36,6 +36,9 @@ public class FQPQueryListener implements FQPProcessingStatusListener, Serializab
     public void processingStatusChanged(ProcessingStatus statusObj, String message) {
         status = statusObj.getValue();
         logger.info("Status changed to :" + status);
+        if (queryResultTransformer != null) {
+            queryResultTransformer.updateStatus("All", message, message, status);
+        }
     }
 
     /* (non-Javadoc)
