@@ -119,7 +119,6 @@ public class QueryExecutor {
      * @param cred
      */
     public QueryExecutor(ICab2bQuery query, GlobusCredential credential) {
-        // logger.info("Constructor");
         String userName = Constants.ANONYMOUS;
         if (credential != null) {
             userName = credential.getIdentity();
@@ -136,19 +135,16 @@ public class QueryExecutor {
         ConstraintsBuilder constraintsBuilder = new ConstraintsBuilder(query, categoryPreprocessorResult);
         this.constraintsBuilderResult = constraintsBuilder.buildConstraints();
         threadPoolExecutor.setThreadFactory(new QueryExecutorThreadFactory());
-        //logger.info("exit Constructor");
     }
 
     /**
      * @return
      */
     private CategoryPreprocessorResult preProcessCategories() {
-        // logger.info("enterd preProcessCategories");
         CategoryPreprocessorResult x = new CategoryPreprocessor().processCategories(query);
         if (query.isKeywordSearch()) {
             query = new QueryConverter().convertToKeywordQuery((ICab2bQuery) query);
         }
-        //  logger.info("exit preProcessCategories");
         return x;
     }
 
@@ -158,7 +154,6 @@ public class QueryExecutor {
      * @return ICab2bQuery object
      */
     public ICab2bQuery getQuery() {
-        //  logger.info("enterd  getQuery");
         return query;
 
     }
@@ -169,7 +164,6 @@ public class QueryExecutor {
      *            ICab2bQuery object
      */
     public void setQuery(ICab2bQuery query) {
-        // logger.info("enterd  setQuery");
         this.query = query;
     }
 
@@ -209,33 +203,38 @@ public class QueryExecutor {
         logger.info("Entered updateQueryStatus...");
 
         if (queryResult != null) {
-            qStatus.setResultCount(queryResult.getRecords().size());
+            int totalRecCount = 0;
             Collection<FQPUrlStatus> fqpUrlStatus = queryResult.getFQPUrlStatus();
             Map<String, ?> mapUrlResult = queryResult.getRecords();
+            String status = "";
+
             for (FQPUrlStatus fqpUrl : fqpUrlStatus) {
-                if (fqpUrl.getStatus().equals(ProcessingStatus._Processing)) {
+                if (fqpUrl.getStatus().equals(ProcessingStatus._Processing)
+                        || fqpUrl.getStatus().equals(ProcessingStatus._Waiting_To_Begin)) {
                     //setting query status as active
-                    qStatus.setStatus(AbstarctStatus.Processing);
+                    status = AbstarctStatus.Processing;
                 } else {
-                    if (fqpUrl.getStatus().equals(ProcessingStatus._Waiting_To_Begin)) {
-                        //setting query status as waiting
-                        qStatus.setStatus(AbstarctStatus.Processing);
-                    } else if (fqpUrl.getStatus().equals(ProcessingStatus._Complete)) {
+                    if (fqpUrl.getStatus().equals(ProcessingStatus._Complete)) {
                         //setting query status as complete
-                        qStatus.setStatus(AbstarctStatus.Complete);
+                        status = AbstarctStatus.Complete;
                     } else {
                         //Setting query status as complete with error
-                        qStatus.setStatus(AbstarctStatus.Complete_With_Error);
+                        status = AbstarctStatus.Complete_With_Error;
                     }
                 }
+                qStatus.setStatus(status);
                 String url = fqpUrl.getTargetUrl();
                 URLStatus uStatusObj = getStatusUrl(url);
+                uStatusObj.setStatus(status);
                 List<? extends IRecord> resultPerUrl = (List<? extends IRecord>) mapUrlResult.get(url);
                 if (resultPerUrl != null) {
-                    uStatusObj.setResultCount(new Integer(resultPerUrl.size()));
+                    int urlRecCount = resultPerUrl.size();
+                    uStatusObj.setResultCount(new Integer(urlRecCount));
+                    totalRecCount = +urlRecCount;
+                    qStatus.setResultCount(totalRecCount);
+                    logger.info("Updated record count for url:" + url + "  " + urlRecCount);
                 }
             }
-            //Later move this code to QueryExecutorHandler
             QueryURLStatusOperations qso = new QueryURLStatusOperations();
             qso.updateQueryStatus(qStatus);
         }
@@ -396,19 +395,16 @@ public class QueryExecutor {
         ICab2bQuery queryPerUrl = null;
 
         WorkerThread(ICab2bQuery queryCopy) {
-            //  logger.info("WorkerThread constrr");
             this.queryPerUrl = queryCopy;
-            //   logger.info("exit WorkerThread constrr");
         }
 
         public void run() {
-            //  logger.info("Inside WorkerThread RUN");
+
             catQueryResult = executeCategoryQuery(queryPerUrl);
             if (threadPoolExecutor.noTasksToExecuteOrTerminated()) {
                 threadPoolExecutor.shutdown();
             }
             queryResult = catQueryResult;
-            //  logger.info("exit WorkerThread RUN");
         }
 
         /**
@@ -416,7 +412,6 @@ public class QueryExecutor {
          * @return
          */
         private IQueryResult<ICategorialClassRecord> executeCategoryQuery(ICab2bQuery queryPerUrl) {
-            //  logger.info("Inside WorkerThread executeCategoryQuery RUN");
             Set<TreeNode<IExpression>> rootOutputExprNodes =
                     categoryPreprocessorResult.getExprsSourcedFromCategories().get(getOutputEntity());
             categoryResults = new ArrayList<IQueryResult<ICategorialClassRecord>>(rootOutputExprNodes.size());
@@ -431,7 +426,6 @@ public class QueryExecutor {
                         categoryPreprocessorResult.getCatClassForExpr().get(rootOutputExpr);
                 IQueryResult<ICategorialClassRecord> allRootExprCatRecs =
                         transformer.getCategoryResults(rootDCQLQuery, catClassForRootExpr, credential);
-                //   logger.info("Got category root results");
                 Map<String, List<ICategorialClassRecord>> records = allRootExprCatRecs.getRecords();
                 int recordSize = 0;
                 for (String url : records.keySet()) {
@@ -465,7 +459,6 @@ public class QueryExecutor {
             }
 
             IQueryResult<ICategorialClassRecord> res = mergeCatResults(categoryResults);
-            //  logger.info("Exiting WorkerThread executeCategoryQuery RUN");
             return res;
         }
     }
@@ -492,7 +485,6 @@ public class QueryExecutor {
             this.parentId = parentId;
             this.priority = priority;
             this.name = name;
-            // logger.info("Inside ChildQueryExecutor Constr ");
         }
 
         /*
@@ -502,7 +494,6 @@ public class QueryExecutor {
          */
         public void run() {
             try {
-                //     logger.info("Inside ChildQueryExecutor RUN ");
                 IExpression parentExpr = parentExprNode.getValue();
                 for (TreeNode<IExpression> childExprNode : parentExprNode.getChildren()) {
                     IExpression childExpr = childExprNode.getValue();
@@ -542,7 +533,6 @@ public class QueryExecutor {
                         for (List<IRecord> listRec : records) {
                             if (listRec.iterator().hasNext()) {
                                 IRecord record = listRec.iterator().next();
-                                // logger.info("inside ChildQueryExecutor calling ChildQueryExecutor recursion I");
                                 threadPoolExecutor.execute(new ChildQueryExecutor(parentCatClassRec,
                                         childExprNode, record.getRecordId(), priority, ""));
                             }
@@ -561,8 +551,6 @@ public class QueryExecutor {
                                     childExprCatRecs.get(0).getCategorialClass().getChildren();
                             if (children != null && !children.isEmpty()) {
                                 for (ICategorialClassRecord childExprCatRec : childExprCatRecs) {
-                                    //  logger
-                                    //  .info("inside ChildQueryExecutor calling ChildQueryExecutor recursion II");
                                     threadPoolExecutor.execute(new ChildQueryExecutor(childExprCatRec,
                                             childExprNode, childExprCatRec.getRecordId(), priority, ""));
                                 }
@@ -571,7 +559,6 @@ public class QueryExecutor {
                     }
                 }
                 queryResult = mergeCatResults(categoryResults);
-                //   logger.info("Exitings ChildQueryExecutor RUN ");
             } catch (Throwable e) {
                 //e.printStackTrace();
                 logger.error(e.getMessage());
@@ -591,16 +578,14 @@ public class QueryExecutor {
      * @return the queryResult
      */
     public IQueryResult<? extends IRecord> getCompleteResults() {
-        //   logger.info("inside getCompleteResults  ");
+
         while (!isProcessingFinished()) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
-                //e.printStackTrace();
                 throw new RuntimeException("Thread to get CompleteResults was interrupted.", e);
             }
         }
-        //   logger.info("exiting getCompleteResults  ");
         updateQueryStatus();
         return queryResult;
     }
@@ -609,7 +594,6 @@ public class QueryExecutor {
      * @return the queryResult
      */
     public IQueryResult<? extends IRecord> getPartialResult() {
-        //   logger.info("exiting getPartialResult  ");
         updateQueryStatus();
         return queryResult;
     }
@@ -618,7 +602,6 @@ public class QueryExecutor {
      * @return the isProcessingFinished
      */
     public boolean isProcessingFinished() {
-        //   logger.info("inside isProcessingFinished  ");
         return threadPoolExecutor.noTasksToExecuteOrTerminated() || normalQueryFinished;
     }
 
@@ -657,6 +640,16 @@ public class QueryExecutor {
             }
         }
         return failedUrls;
+    }
+    
+    /**
+     * @return
+     */
+    public IQueryResult<? extends IRecord> getResult(){
+        updateQueryStatus();
+        QueryURLStatusOperations qso = new QueryURLStatusOperations();
+        qso.updateQueryStatus(qStatus);
+        return queryResult;
     }
 
 }
