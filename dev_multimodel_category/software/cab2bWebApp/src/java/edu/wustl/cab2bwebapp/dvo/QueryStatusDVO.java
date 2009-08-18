@@ -7,21 +7,19 @@ import java.util.Date;
  *
  */
 public class QueryStatusDVO {
-    private String title = null;
-    
-    private String type = null;
+    private String title;
 
-    private String status = null;
+    private String type;
 
-    long resultCount;
-    
-    int failedHostingInstitutions; 
+    private String status;
 
-    Date executedOn = null;
-    
-    String queryConditions = null;
-    
-    String resultsFilePath= null;
+    private long resultCount;
+
+    private Date executedOn;
+
+    private String conditions;
+
+    private String filePath;
 
     /**
      * @return String
@@ -67,25 +65,25 @@ public class QueryStatusDVO {
 
     /**
      * @return Date
-     */    
+     */
     public Date getExecutedOn() {
         return executedOn;
     }
-    
+
     /**
      * @param executedOn
      */
     public void setExecutedOn(Date executedOn) {
         this.executedOn = executedOn;
     }
-    
+
     /**
      * @return String
      */
     public String getType() {
         return type;
     }
-    
+
     /**
      * @param type
      */
@@ -94,44 +92,30 @@ public class QueryStatusDVO {
     }
 
     /**
-     * @return int
-     */    
-    public int getFailedHostingInstitutions() {
-        return failedHostingInstitutions;
+     * @return String
+     */
+    public String getConditions() {
+        return conditions;
     }
 
     /**
-     * @param failedHostingInstitutions
-     */    
-    public void setFailedHostingInstitutions(int failedHostingInstitutions) {
-        this.failedHostingInstitutions = failedHostingInstitutions;
+     * @param conditions
+     */
+    public void setConditions(String conditions) {
+        this.conditions = conditions;
     }
 
     /**
      * @return String
-     */    
-    public String getQueryConditions() {
-        return queryConditions;
+     */
+    public String getFilePath() {
+        return filePath;
     }
 
     /**
-     * @param failedHostingInstitutions
-     */     
-    public void setQueryConditions(String queryConditions) {
-        this.queryConditions = queryConditions;
+     * @param filePath
+     */
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
-
-    /**
-     * @return String
-     */     
-    public String getResultsFilePath() {
-        return resultsFilePath;
-    }
-
-    /**
-     * @param resultsFilePath
-     */    
-    public void setResultsFilePath(String resultsFilePath) {
-        this.resultsFilePath = resultsFilePath;
-    }    
 }
