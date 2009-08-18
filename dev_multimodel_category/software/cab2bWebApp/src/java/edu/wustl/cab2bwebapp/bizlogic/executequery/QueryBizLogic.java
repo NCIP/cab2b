@@ -334,6 +334,7 @@ public class QueryBizLogic {
      * Adds currently running query for background execution for the current user and updating properties in database.
      */
     public void addQueryForExecuteInBackground() {
+        queryExecutionHandler.setExecuteInBackground(true);
         UserBackgroundQueries.getInstance().addBackgroundQuery(user, this);
     }
 }
