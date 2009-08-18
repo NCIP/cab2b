@@ -3,7 +3,7 @@
 
 #toppanel {
 	width: 50%;
-	margin: 1em auto 0 auto;
+	margin: 1em auto 1em auto;
 	padding: 1%;
 }
 
@@ -12,7 +12,7 @@
 }
 
 #centerpanelcontent {
-	margin: 1em 0 1em 0;
+	margin: 0.1em 0 1em 0;
 }
 
 #bottompanel {

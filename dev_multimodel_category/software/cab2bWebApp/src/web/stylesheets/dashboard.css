@@ -6,27 +6,9 @@
 }
 
 #toppanel {
-	padding: 0%;
-}
-
-#dashboardtable {
-	width: 99.5%;
-	text-align: left;
-	vertical-align: top;
-	font-size: 0.82em;
-	color: #000000;
-	background-color: #eee;
-	font-family: sans-serif, Arial, Helvetica;
-}
-
-#dashboardtable tr {
-	background-color: #ccc;
-}
-
-#dashboardtable .row {
-	background-color: #fff;
+	margin: 2 0 0 0;
 }
 
 #bottompanel {
-	padding: 1% 0% 1% 0.8%;
+	padding: 1% 0% 1% 0.5%;
 }

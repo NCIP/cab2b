@@ -128,7 +128,13 @@ img.bullet {
 	font-family: sans-serif, Arial, Helvetica;
 }
 
-.link:hover {
+.linkfooter {
+	font-size: 0.75em;
+	color: #555;
+	font-family: sans-serif, Arial, Helvetica;
+}
+
+.link:hover, .linkfooter:hover {
 	text-decoration: none;
 }
 
@@ -183,11 +189,6 @@ select {
 	text-align: center;
 	font-size: 0.75em;
 	color: #ff0000;
-	font-family: sans-serif, Arial, Helvetica;
-}
-
-.tooltip {
-	font-size: 0.80em;
 	font-family: sans-serif, Arial, Helvetica;
 }
 
