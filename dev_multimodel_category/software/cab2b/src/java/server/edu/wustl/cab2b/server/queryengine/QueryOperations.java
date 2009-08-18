@@ -6,6 +6,7 @@ import static edu.wustl.cab2b.common.util.Constants.MULTIMODELCATEGORY;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,7 +30,10 @@ import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.category.PopularCategoryOperations;
 import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.common.querysuite.bizlogic.QueryBizLogic;
+import edu.wustl.common.querysuite.queryobject.IExpression;
+import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
+import edu.wustl.common.querysuite.queryobject.IRule;
 
 /**
  * @author chetan_patil
@@ -182,35 +186,60 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         query = converter.convertToKeywordQuery(query);
 
         String userName = AuthenticationUtility.getUsersGridId(serializedDCR);
-        saveInKeywordQuery(query, userName);
+        saveInKeywordQuery(query, userName, userId);
     }
 
-    private void saveInKeywordQuery(ICab2bQuery query, String userName) {
-        Collection<ModelGroupInterface> modelGroups = UtilityOperations.getModelGroups(query.getOutputEntity());
+    private void saveInKeywordQuery(ICab2bQuery query, String userName, Long userId) {
+        EntityInterface queryEntity = query.getOutputEntity();
+
+        Collection<ModelGroupInterface> modelGroups = UtilityOperations.getModelGroups(queryEntity);
+        List<KeywordQuery> queries = getKeywordQueriesByUserName(userName);
 
         List<KeywordQuery> keywordQueries = new ArrayList<KeywordQuery>(modelGroups.size());
         for (ModelGroupInterface modelGroup : modelGroups) {
-            List<Object> paramList = new ArrayList<Object>(2);
-            paramList.add(modelGroup);
-            paramList.add(userName);
+            //            List<Object> paramList = new ArrayList<Object>(2);
+            //            paramList.add(modelGroup);
+            //            paramList.add(userName);
 
-            KeywordQuery keywordQuery = null;
-            List<ICab2bQuery> queries = getQueries("getKeywordQueriesByModelGroupAndUser", paramList);
+            // List<ICab2bQuery> queries = getQueries("getKeywordQueriesByModelGroupAndUser", paramList);
             if (queries != null && !queries.isEmpty()) {
-                if (queries.size() > 1) {
-                    throw new RuntimeException("Problem in code; probably database schema");
+                Iterator<KeywordQuery> queryIterator = queries.iterator();
+                while (queryIterator.hasNext()) {
+                    KeywordQuery keywordQuery = queryIterator.next();
+                    String agName = keywordQuery.getApplicationGroup().getModelGroupName();
+                    if (modelGroup.getModelGroupName().equals(agName)) {
+                        keywordQueries.add(keywordQuery);
+                        queryIterator.remove();
+                        continue;
+                    }
                 }
-                keywordQuery = (KeywordQuery) queries.get(0);
             } else {
-                keywordQuery = new KeywordQueryImpl(query);
+                KeywordQuery keywordQuery = new KeywordQueryImpl(query);
+                keywordQuery.setName(modelGroup.getModelGroupName() + "_KeywordSearch");
+                keywordQuery.setCreatedBy(userId);
+                keywordQuery.setApplicationGroup(modelGroup);
+                keywordQuery.setCreatedDate(new Date());
+                keywordQuery.setIsSystemGenerated(Boolean.TRUE);
+                keywordQuery.setIsKeywordSearch(Boolean.TRUE);
+
+                for (IExpression exp : keywordQuery.getConstraints()) {
+                    for (IExpressionOperand opnd : exp) {
+                        if (opnd instanceof IRule) {
+                            ((IRule) opnd).removeAllConditions();
+                        }
+                    }
+
+                }
                 saveQuery(keywordQuery);
+                keywordQueries.add(keywordQuery);
             }
-            keywordQueries.add(keywordQuery);
+
         }
 
         for (KeywordQuery keywordQuery : keywordQueries) {
+            saveQuery(query);
             keywordQuery.addSubQuery(query);
-            updateQuery(query);
+            updateQuery(keywordQuery);
         }
     }
 

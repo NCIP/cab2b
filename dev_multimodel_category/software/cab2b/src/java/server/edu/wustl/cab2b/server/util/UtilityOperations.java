@@ -21,6 +21,7 @@ import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.category.CategoryCache;
+import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.cab2b.server.datalist.DataListOperationsController;
 import edu.wustl.cab2b.server.modelgroup.ModelGroupOperations;
 import edu.wustl.cab2b.server.multimodelcategory.MultiModelCategoryOperations;
@@ -28,6 +29,7 @@ import edu.wustl.cab2b.server.path.PathFinder;
 import edu.wustl.cab2b.server.user.UserOperations;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.metadata.path.CuratedPath;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
@@ -190,8 +192,12 @@ public class UtilityOperations extends DefaultBizLogic {
             MultiModelCategory mmc = new MultiModelCategoryOperations().getMultiModelCategoryByEntity(entity);
             modelGroups.add(mmc.getApplicationGroup());
         } else {
-            EntityGroupInterface entityGroup = entity.getEntityGroupCollection().iterator().next();
-
+            EntityGroupInterface entityGroup = null;
+            if (Utility.isCategory(entity)) {
+                entityGroup = getEntityGroupForCategory(entity);
+            } else {
+                entityGroup = entity.getEntityGroupCollection().iterator().next();
+            }
             Collection<ModelGroupInterface> allModelgroups = new ModelGroupOperations().getAllModelGroups();
             for (ModelGroupInterface modelGroup : allModelgroups) {
                 Collection<EntityGroupInterface> entityGroups = modelGroup.getEntityGroupList();
@@ -217,5 +223,18 @@ public class UtilityOperations extends DefaultBizLogic {
 
         CategoryCache.getInstance().refreshCategoryCache();
         logger.info("Cache refreshing sucessfull");
+    }
+
+    /**
+     * This method returns an original entity group of the given category entity
+     * @param outputEntity
+     * @return
+     */
+    public static EntityGroupInterface getEntityGroupForCategory(EntityInterface entity) {
+        CategoryOperations categoryOperations = new CategoryOperations();
+        Category category = categoryOperations.getCategoryByEntityId(entity.getId());
+        entity = EntityCache.getInstance().getEntityById(category.getRootClass().getDeEntityId());
+
+        return edu.wustl.cab2b.common.util.Utility.getEntityGroup(entity);
     }
 }

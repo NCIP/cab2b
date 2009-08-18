@@ -2,12 +2,13 @@ package edu.wustl.cab2b.client.ui.parameterizedQuery;
 
 import java.awt.Dimension;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import edu.wustl.cab2b.client.ui.controls.Cab2bCheckBox;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
+import edu.wustl.cab2b.client.ui.controls.Cab2bRadioButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTextField;
 import edu.wustl.cab2b.client.ui.controls.Cab2bTitledPanel;
 import edu.wustl.cab2b.client.ui.controls.RiverLayout;
@@ -27,7 +28,13 @@ public class ParameterizedQueryInfoPanel extends Cab2bTitledPanel {
     private JTextArea queryTextArea;
 
     /** Indicates if the query is for keyword search */
-    private Cab2bCheckBox keywordSearch;
+    private Cab2bRadioButton keywordSearch;
+
+    /** Indicates if the query is for Form Based search */
+    private Cab2bRadioButton formBasedSearch;
+
+    /** Indicates if the query is for Both types of search */
+    private Cab2bRadioButton formAndKeywordSearch;
 
     /** Default constructor */
     public ParameterizedQueryInfoPanel() {
@@ -47,8 +54,17 @@ public class ParameterizedQueryInfoPanel extends Cab2bTitledPanel {
         JScrollPane scrollPane = new JScrollPane(queryTextArea);
         scrollPane.setPreferredSize(new Dimension(225, 60));
 
-        keywordSearch = new Cab2bCheckBox();
-        keywordSearch.setText("Query for keyword search");
+        formBasedSearch = new Cab2bRadioButton("Saved search");
+
+        keywordSearch = new Cab2bRadioButton("Keyword search");
+
+        formAndKeywordSearch = new Cab2bRadioButton("Both");
+
+        ButtonGroup typesOfQueries = new ButtonGroup();
+        typesOfQueries.add(formBasedSearch);
+        typesOfQueries.add(keywordSearch);
+        typesOfQueries.add(formAndKeywordSearch);
+        formBasedSearch.setSelected(Boolean.TRUE);
 
         Cab2bPanel containerPanel = new Cab2bPanel(new RiverLayout(5, 5));
         containerPanel.add(titleLabel);
@@ -56,7 +72,9 @@ public class ParameterizedQueryInfoPanel extends Cab2bTitledPanel {
         containerPanel.add("br ", descriptionLabel);
         containerPanel.add("tab ", scrollPane);
         containerPanel.add("br ", new Cab2bLabel());
+        containerPanel.add("tab ", formBasedSearch);
         containerPanel.add("tab ", keywordSearch);
+        containerPanel.add("tab ", formAndKeywordSearch);
 
         this.setTitle("Information");
         this.setContentContainer(containerPanel);
@@ -84,6 +102,14 @@ public class ParameterizedQueryInfoPanel extends Cab2bTitledPanel {
      */
     public Boolean isKeywordSearch() {
         return keywordSearch.isSelected();
+    }
+
+    /**
+     * This method returns true if query is to be saved for both Searches : saved and keyword  
+     * @return
+     */
+    public Boolean isFormAndKeywordSearch() {
+        return formAndKeywordSearch.isSelected();
     }
 
     public void setKeywordSearchDisabled() {

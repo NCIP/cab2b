@@ -21,10 +21,9 @@ import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.server.cache.EntityCache;
-import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.cab2b.server.user.UserOperations;
+import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
-import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IRule;
@@ -113,27 +112,19 @@ public class QueryExecutorUtil {
 
         EntityInterface outputEntity = query.getOutputEntity();
         if (edu.wustl.cab2b.common.util.Utility.isCategory(outputEntity)) {
-            entityGroups.add(getEntityGroupForCategory(outputEntity));
+            entityGroups.add(UtilityOperations.getEntityGroupForCategory(outputEntity));
         } else if (edu.wustl.cab2b.common.util.Utility.isMultiModelCategory(outputEntity)) {
             MultiModelCategoryQuery mmcQuery = (MultiModelCategoryQuery) query;
             Collection<ICab2bQuery> subQueries = mmcQuery.getSubQueries();
             for (ICab2bQuery subQuery : subQueries) {
                 outputEntity = subQuery.getOutputEntity();
-                entityGroups.add(getEntityGroupForCategory(outputEntity));
+                entityGroups.add(UtilityOperations.getEntityGroupForCategory(outputEntity));
             }
         } else {
             entityGroups.add(edu.wustl.cab2b.common.util.Utility.getEntityGroup(outputEntity));
         }
 
         return entityGroups;
-    }
-
-    private static EntityGroupInterface getEntityGroupForCategory(EntityInterface outputEntity) {
-        CategoryOperations categoryOperations = new CategoryOperations();
-        Category category = categoryOperations.getCategoryByEntityId(outputEntity.getId());
-        outputEntity = EntityCache.getInstance().getEntityById(category.getRootClass().getDeEntityId());
-
-        return edu.wustl.cab2b.common.util.Utility.getEntityGroup(outputEntity);
     }
 
     /**
