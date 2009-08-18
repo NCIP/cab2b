@@ -12,6 +12,14 @@
 			<Attribute name="assayType" model="caArray_v2.1" class="gov.nih.nci.caarray.domain.project.Experiment" />
 			<Attribute name="assayType" model="caArray_v2" class="gov.nih.nci.caarray.domain.project.Experiment" />
 		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Identifier" description="Identifier">
+			<Attribute name="id" model="caArray_v2.1" class="gov.nih.nci.caarray.domain.project.Experiment" />
+			<Attribute name="id" model="caArray_v2" class="gov.nih.nci.caarray.domain.project.Experiment" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Public Identifier" description="Public Identifier">
+			<Attribute name="publicIdentifier" model="caArray_v2.1" class="gov.nih.nci.caarray.domain.project.Experiment" />
+			<Attribute name="publicIdentifier" model="caArray_v2" class="gov.nih.nci.caarray.domain.project.Experiment" />
+		</MultiModelCategoryAttribute>
 		<MultiModelCategoryAttribute name="Organism Common Name" description="Organism Common Name">
 			<Attribute name="commonName" model="caArray_v2.1" class="edu.georgetown.pir.Organism" />
 			<Attribute name="commonName" model="caArray_v2" class="edu.georgetown.pir.Organism" />

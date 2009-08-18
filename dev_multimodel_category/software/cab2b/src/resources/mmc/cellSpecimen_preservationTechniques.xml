@@ -1,4 +1,4 @@
-<MultiModelCategory name="Cell Specimen details" description="Cell Specimen Details" applicationGroup="Biospecimen Data">
+<MultiModelCategory name="Cell Specimen details based on preservation techniques" description="Cell Specimen details based on preservation techniques" applicationGroup="Biospecimen Data">
 	<MultiModelCategoryAttributes>
 		<MultiModelCategoryAttribute name="Pathological Status" description="Pathological Status">
 			<Attribute name="pathologicalStatus" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.CellSpecimen" />
