@@ -75,8 +75,10 @@ public class UserBackgroundQueries {
      */
     public synchronized void updateAllBackgroundQueryStatus() {
         Set<UserInterface> users = userToBackgroundQueries.keySet();
-        for (UserInterface user : users) {
-            updateBackgroundQueryStatusForUser(user);
+        if (users != null) {
+            for (UserInterface user : users) {
+                updateBackgroundQueryStatusForUser(user);
+            }
         }
     }
 
@@ -87,24 +89,25 @@ public class UserBackgroundQueries {
     public synchronized void updateBackgroundQueryStatusForUser(UserInterface user) {
 
         Set<QueryBizLogic> querieLogics = userToBackgroundQueries.get(user);
-        for (QueryBizLogic queryBizLogic : querieLogics) {
-            QueryStatus status = queryBizLogic.getStatus();
+        if (querieLogics != null) {
+            for (QueryBizLogic queryBizLogic : querieLogics) {
+                QueryStatus status = queryBizLogic.getStatus();
 
-            //If query is complete Write results into map and remove it's reference from map.
-            if (status.equals(AbstarctStatus.Complete) || status.equals(AbstarctStatus.Complete_With_Error)) {
-                try {
-                    String fileName = queryBizLogic.exportToCSV(filePath);
-                    status.setFileName(fileName);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException("Error while saving CSV file.", ErrorCodeConstants.IO_0001);
+                //If query is complete Write results into map and remove it's reference from map.
+                if (status.equals(AbstarctStatus.Complete) || status.equals(AbstarctStatus.Complete_With_Error)) {
+                    try {
+                        String fileName = queryBizLogic.exportToCSV(filePath);
+                        status.setFileName(fileName);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        throw new RuntimeException("Error while saving CSV file.", ErrorCodeConstants.IO_0001);
+                    }
+                    querieLogics.remove(queryBizLogic);
                 }
-                querieLogics.remove(queryBizLogic);
+                //updating query status in database.                
+                new QueryURLStatusOperations().updateQueryStatus(status);
             }
-            //updating query status in database.                
-            new QueryURLStatusOperations().updateQueryStatus(status);
         }
-
     }
 
 }
