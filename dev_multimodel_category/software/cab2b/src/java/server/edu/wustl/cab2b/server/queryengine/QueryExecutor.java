@@ -22,7 +22,7 @@ import edu.common.dynamicextensions.util.DynamicExtensionsUtility;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.QueryExecutorPropertes;
-import edu.wustl.cab2b.common.queryengine.querystatus.AbstarctStatus;
+import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatusImpl;
 import edu.wustl.cab2b.common.queryengine.querystatus.URLStatus;
@@ -211,14 +211,14 @@ public class QueryExecutor {
                 if (fqpUrl.getStatus().equals(ProcessingStatus._Processing)
                         || fqpUrl.getStatus().equals(ProcessingStatus._Waiting_To_Begin)) {
                     //setting query status as active
-                    status = AbstarctStatus.Processing;
+                    status = AbstractStatus.Processing;
                 } else {
                     if (fqpUrl.getStatus().equals(ProcessingStatus._Complete)) {
                         //setting query status as complete
-                        status = AbstarctStatus.Complete;
+                        status = AbstractStatus.Complete;
                     } else {
                         //Setting query status as complete with error
-                        status = AbstarctStatus.Complete_With_Error;
+                        status = AbstractStatus.Complete_With_Error;
                     }
                 }
                 qStatus.setStatus(status);
@@ -280,13 +280,13 @@ public class QueryExecutor {
         qStatus.setVisible(Boolean.FALSE);
         qStatus.setQueryConditions(UtilityOperations.getStringRepresentationofConstraints(query.getConstraints()));
         qStatus.setDescription(query.getName() + " Query Initialized.");
-        qStatus.setStatus(AbstarctStatus.Processing);
+        qStatus.setStatus(AbstractStatus.Processing);
 
         List<String> outputUrlList = query.getOutputUrls();
         Set<URLStatus> urlStatusCollection = new HashSet<URLStatus>(outputUrlList.size());
         for (String url : outputUrlList) {
             URLStatus urlStatus = new URLStatusImpl();
-            urlStatus.setStatus(AbstarctStatus.Processing);
+            urlStatus.setStatus(AbstractStatus.Processing);
             urlStatus.setMessage(url + " url initilized.");
             urlStatus.setUrl(url);
             urlStatusCollection.add(urlStatus);
@@ -635,7 +635,7 @@ public class QueryExecutor {
         Set<URLStatus> urlStatusSet = getStatus().getUrlStatus();
         Set<String> failedUrls = new HashSet<String>();
         for (URLStatus urlStatus : urlStatusSet) {
-            if (urlStatus.getStatus().equals(AbstarctStatus.Complete_With_Error)) {
+            if (urlStatus.getStatus().equals(AbstractStatus.Complete_With_Error)) {
                 failedUrls.add(urlStatus.getUrl());
             }
         }
