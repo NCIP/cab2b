@@ -77,7 +77,10 @@ document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="bu
   	 document.getElementById('progressImage').innerHTML = "";
   }*/
   if(document.getElementById("stopAjax")!=null)
-  { 	
+  { 
+	//once query execution is finished, executeinbackground button should be hidden.
+	document.getElementById('executeinbackground').style.display = 'none';
+	
 	if(document.getElementById('queryUIPartialCount')!= null)
 	{
 		var queryUIPartialCount = document.getElementById('queryUIPartialCount').innerHTML;
@@ -228,7 +231,7 @@ document.getElementById('exportDiv').innerHTML = '<INPUT type="button" class="bu
 			</TR>
 			<TR>
 				<TD>
-					<INPUT type="button" value="<bean:message key="button.executeinbackground"/>" onClick="document.location='BackgroundQuery.do'">
+					<INPUT id="executeinbackground" type="button" value="<bean:message key="button.executeinbackground"/>" onClick="document.location='BackgroundQuery.do'">
 	      		</TD>
 				<TD nowrap style="padding-top:7px">
 					<DIV id="exportDiv" style="display:none" class="text">	
