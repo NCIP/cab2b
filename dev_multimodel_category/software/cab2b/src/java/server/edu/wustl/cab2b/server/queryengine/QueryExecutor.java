@@ -203,7 +203,6 @@ public class QueryExecutor {
      * Method to update url status properties. It will update only the in-memory query status.
      */
     private synchronized void updateQueryStatus() {
-
         if (queryResult != null) {
             int totalRecCount = 0;
             Collection<FQPUrlStatus> fqpUrlStatus = queryResult.getFQPUrlStatus();
@@ -223,6 +222,7 @@ public class QueryExecutor {
                         //Setting query status as complete with error
                         status = AbstractStatus.Complete_With_Error;
                     }
+                    qStatus.setQueryEndTime(new Date());
                 }
                 qStatus.setStatus(status);
                 logger.info("Setting query status as :" + status);

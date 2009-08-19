@@ -21,13 +21,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.globus.gsi.GlobusCredential;
 
-import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
-import edu.wustl.cab2b.common.queryengine.KeywordQuery;
-import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.common.user.UserInterface;
-import edu.wustl.cab2b.server.queryengine.CaB2QueryExecutionHandler;
-import edu.wustl.cab2b.server.queryengine.KeywordQueryExecutionHandler;
-import edu.wustl.cab2b.server.queryengine.MMCQueryExecutionHandler;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryBizLogic;
 import edu.wustl.cab2bwebapp.constants.Constants;

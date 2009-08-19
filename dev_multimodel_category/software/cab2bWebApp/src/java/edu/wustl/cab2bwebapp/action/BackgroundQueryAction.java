@@ -44,7 +44,9 @@ public class BackgroundQueryAction extends Action {
         try {
             QueryBizLogic executeQueryBizLogic =
                     (QueryBizLogic) request.getSession().getAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT);
+            if(executeQueryBizLogic!=null){
             executeQueryBizLogic.addQueryForExecuteInBackground();
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();

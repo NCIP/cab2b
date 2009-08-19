@@ -12,7 +12,7 @@ import java.util.TimerTask;
  */
 public class PollingTask {
 
-    public void submitTask(TimerTask task, int timeInterval) {
+    public static void submitTask(TimerTask task, int timeInterval) {
         Timer timer = new Timer();
         timeInterval = timeInterval * 60000;
         timer.scheduleAtFixedRate(task,0, timeInterval);

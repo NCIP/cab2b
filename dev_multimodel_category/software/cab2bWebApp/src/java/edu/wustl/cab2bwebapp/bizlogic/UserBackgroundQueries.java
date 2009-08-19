@@ -3,11 +3,15 @@
  */
 package edu.wustl.cab2bwebapp.bizlogic;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
@@ -17,17 +21,28 @@ import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryBizLogic;
 
+
 /**
  * @author deepak_shingan
  *
  */
 public class UserBackgroundQueries {
+    private static final Logger logger =
+            edu.wustl.common.util.logger.Logger.getLogger(UserBackgroundQueries.class);
+
     private Map<UserInterface, Set<QueryBizLogic>> userToBackgroundQueries = null;
 
     private static UserBackgroundQueries ref = null;
 
-    //TODO - take file path from a property file.
-    private final String filePath = "C:\\result\\";
+    public static final String EXPORT_CSV_DIR = System.getProperty("user.home") + File.separator +"cab2bExportFiles";
+
+    static {
+        //Creating directory for saving CSV files on server.
+        new File(EXPORT_CSV_DIR).mkdir();
+
+        //Refreshing every query background query periodically.
+        QueryStatusUpdater.refreshQueryStatus();
+    }
 
     /**
      * private constructor for singleton class. 
@@ -94,17 +109,20 @@ public class UserBackgroundQueries {
                 QueryStatus status = queryBizLogic.getStatus();
 
                 //If query is complete Write results into map and remove it's reference from map.
-                if (status.equals(AbstractStatus.Complete) || status.equals(AbstractStatus.Complete_With_Error)) {
+                if (status.getStatus().equals(AbstractStatus.Complete)
+                        || status.getStatus().equals(AbstractStatus.Complete_With_Error)) {
                     try {
-                        String fileName = queryBizLogic.exportToCSV(filePath);
-                        status.setFileName(fileName);
+                        String fileName = queryBizLogic.exportToCSV();
+                        status.setFileName(EXPORT_CSV_DIR + File.separator + fileName);
+                        status.setQueryEndTime(new Date());
+                        logger.info(EXPORT_CSV_DIR + File.separator + fileName);
                     } catch (IOException e) {
                         e.printStackTrace();
                         throw new RuntimeException("Error while saving CSV file.", ErrorCodeConstants.IO_0001);
                     }
                     querieLogics.remove(queryBizLogic);
                 }
-                //updating query status in database.                
+                //updating query status in database.
                 new QueryURLStatusOperations().updateQueryStatus(status);
             }
         }
