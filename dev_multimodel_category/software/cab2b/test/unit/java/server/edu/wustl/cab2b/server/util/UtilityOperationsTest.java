@@ -22,7 +22,7 @@ public class UtilityOperationsTest extends TestCase {
         EntityGroupInterface entityGroup = cache.getEntityGroupByName("caTissue_Core_1_2_v1.2");
         Collection<ModelGroupInterface> modelGroups =
                 UtilityOperations.getModelGroups(entityGroup.getEntityCollection().iterator().next());
-        assertTrue(modelGroups.isEmpty());
+        assertTrue(modelGroups.size() > 0);
         for (ModelGroupInterface mg : modelGroups) {
             if (!mg.getEntityGroupList().contains(entityGroup)) {
                 assertFalse("Given Entity Group is not a part of Model group", Boolean.FALSE);
