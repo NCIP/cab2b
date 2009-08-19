@@ -27,21 +27,20 @@
 	</DIV>
 	<DIV id="toppanel">
 		<display:table class="simple" cellspacing="1" cellpadding="4" name="${requestScope.queryStatusDVOList}" uid="query" requestURI="">
-			<display:column title="Title" value="${query.title}" sortable="true" headerClass="sortable"/>
-			<display:column title="Type" value="${query.type}" sortable="true" headerClass="sortable"/>
+			<display:column title="Title" value="${query.title}" sortable="true" headerClass="sortable"/>			
 			<display:column title="Status" value="${query.status}" sortable="true" headerClass="sortable"/>
 			<display:column title="Result Count" value="${query.resultCount}" sortable="true" headerClass="sortable"/>
 			<display:column title="Executed On" value="${query.executedOn}" sortable="true" headerClass="sortable"/>	
 			<display:column title="Action(s)" sortable="false" headerClass="unsortable">
-				<IMG src="images/view_results.jpg" title="<bean:message key="img.alt.viewresults"/>" style="cursor:pointer">&nbsp;
+				<IMG src="images/view_results.jpg" title="<bean:message key="img.alt.viewresults"/>" style="cursor:pointer;display:none;">&nbsp;
 				<IMG src="images/form.jpg" title="<bean:message key="img.alt.parameters" arg0="${query.conditions}"/>" style="cursor:pointer">&nbsp;
 				<IMG src="images/ico_file_excel.png" title="<bean:message key="img.alt.exportresults"/>" style="cursor:pointer" onClick="document.location='ExportResults.do?fileName=<bean:write name="query" property="fileName"/>';TogglePreloader(0);">&nbsp;
-				<IMG src="images/stop.gif" title="<bean:message key="img.alt.abortexecution"/>" style="cursor:pointer;">&nbsp;
+				<IMG src="images/stop.gif" title="<bean:message key="img.alt.abortexecution"/>" style="cursor:pointer;display:none;">&nbsp;
 			</display:column>
 		</display:table>
 	</DIV>
 	<DIV id="bottompanel">
-		<INPUT type="button" class="button" value="<bean:message key="button.home"/>" onClick="document.location='Home.do'">&nbsp;<INPUT type="submit" class="button" value="<bean:message key="button.refresh"/>" onClick="document.reload();">
+		<INPUT type="submit" class="button" value="<bean:message key="button.refresh"/>" onClick="document.reload();">
 	</DIV>
 </DIV>
 <jsp:include page="footer.jsp"/>
