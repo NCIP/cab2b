@@ -33,7 +33,7 @@ public class FQPQueryListener implements FQPProcessingStatusListener, Serializab
      *            the urlVsException to set
      */
     public void processingStatusChanged(ProcessingStatus statusObj, String message) {
-        logger.info("Status changed to :" + statusObj.getValue();
+        logger.info("Status changed to :" + statusObj.getValue());
     }
 
     /* (non-Javadoc)
