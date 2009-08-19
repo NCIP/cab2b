@@ -229,20 +229,19 @@ public class QueryExecutor {
             qStatus.setResultCount(totalRecCount);
             //Deriving the query status from URL status
             qStatus.setStatus(AbstractStatus.Processing);
-            if (areAllUrlsFinished(fqpUrlStatus)) {
+            if (isProcessingFinished() && areAllUrlsFinished(fqpUrlStatus)) {
                 qStatus.setQueryEndTime(new Date());
                 boolean isEveryUrlWorked = true;
                 for (FQPUrlStatus fqpUrl : fqpUrlStatus) {
                     String urlStatus = fqpUrl.getStatus();
-                    if (urlStatus.equals(ProcessingStatus._Complete_With_Error) && isProcessingFinished()) {
+                    if (urlStatus.equals(ProcessingStatus._Complete_With_Error)) {
                         qStatus.setStatus(AbstractStatus.Complete_With_Error);
                         isEveryUrlWorked = false;
                         break;
                     }
                 }
                 if (isEveryUrlWorked) {
-                    if (isProcessingFinished())
-                        qStatus.setStatus(AbstractStatus.Complete);
+                    qStatus.setStatus(AbstractStatus.Complete);
                 }
             }
         }
