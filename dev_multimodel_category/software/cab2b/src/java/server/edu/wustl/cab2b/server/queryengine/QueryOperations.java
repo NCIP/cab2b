@@ -13,12 +13,14 @@ import java.util.List;
 import org.globus.gsi.GlobusCredential;
 import org.hibernate.HibernateException;
 
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.wustl.cab2b.common.authentication.util.AuthenticationUtility;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
+import edu.wustl.cab2b.common.queryengine.Cab2bQueryObjectFactory;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.KeywordQuery;
 import edu.wustl.cab2b.common.queryengine.KeywordQueryImpl;
@@ -30,10 +32,8 @@ import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.category.PopularCategoryOperations;
 import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.common.querysuite.bizlogic.QueryBizLogic;
-import edu.wustl.common.querysuite.queryobject.IExpression;
-import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
-import edu.wustl.common.querysuite.queryobject.IRule;
+import edu.wustl.common.querysuite.utils.ConstraintsObjectBuilder;
 
 /**
  * @author chetan_patil
@@ -191,56 +191,51 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
 
     private void saveInKeywordQuery(ICab2bQuery query, String userName, Long userId) {
         EntityInterface queryEntity = query.getOutputEntity();
-
         Collection<ModelGroupInterface> modelGroups = UtilityOperations.getModelGroups(queryEntity);
         List<KeywordQuery> queries = getKeywordQueriesByUserName(userName);
 
         List<KeywordQuery> keywordQueries = new ArrayList<KeywordQuery>(modelGroups.size());
         for (ModelGroupInterface modelGroup : modelGroups) {
-            //            List<Object> paramList = new ArrayList<Object>(2);
-            //            paramList.add(modelGroup);
-            //            paramList.add(userName);
-
-            // List<ICab2bQuery> queries = getQueries("getKeywordQueriesByModelGroupAndUser", paramList);
-            if (queries != null && !queries.isEmpty()) {
-                Iterator<KeywordQuery> queryIterator = queries.iterator();
-                while (queryIterator.hasNext()) {
-                    KeywordQuery keywordQuery = queryIterator.next();
-                    String agName = keywordQuery.getApplicationGroup().getModelGroupName();
-                    if (modelGroup.getModelGroupName().equals(agName)) {
-                        keywordQueries.add(keywordQuery);
-                        queryIterator.remove();
-                        continue;
-                    }
+            boolean isPresent = false;
+            for (KeywordQuery keywordQuery : queries) {
+                String appGroupName = keywordQuery.getApplicationGroup().getModelGroupName();
+                if (modelGroup.getModelGroupName().equals(appGroupName)) {
+                    keywordQueries.add(keywordQuery);
+                    isPresent = true;
                 }
-            } else {
-                KeywordQuery keywordQuery = new KeywordQueryImpl(query);
-                keywordQuery.setName(modelGroup.getModelGroupName() + "_KeywordSearch");
-                keywordQuery.setCreatedBy(userId);
-                keywordQuery.setApplicationGroup(modelGroup);
-                keywordQuery.setCreatedDate(new Date());
-                keywordQuery.setIsSystemGenerated(Boolean.TRUE);
-                keywordQuery.setIsKeywordSearch(Boolean.TRUE);
-
-                for (IExpression exp : keywordQuery.getConstraints()) {
-                    for (IExpressionOperand opnd : exp) {
-                        if (opnd instanceof IRule) {
-                            ((IRule) opnd).removeAllConditions();
-                        }
-                    }
-
-                }
-                saveQuery(keywordQuery);
-                keywordQueries.add(keywordQuery);
             }
 
+            if (!isPresent) {
+                KeywordQuery keywordQuery = createAndSaveKeywordQuery(query.getOutputEntity(), modelGroup, userId);
+                keywordQueries.add(keywordQuery);
+            }
         }
 
         for (KeywordQuery keywordQuery : keywordQueries) {
-            saveQuery(query);
             keywordQuery.addSubQuery(query);
             updateQuery(keywordQuery);
         }
+    }
+
+    private KeywordQuery createAndSaveKeywordQuery(EntityInterface en, ModelGroupInterface modelGroup, Long userId) {
+        ConstraintsObjectBuilder queryBuilder =
+                new ConstraintsObjectBuilder(Cab2bQueryObjectFactory.createCab2bQuery());
+        queryBuilder.addRule(new ArrayList<AttributeInterface>(0), new ArrayList<String>(0),
+                             new ArrayList<String>(0), new ArrayList<String>(0), en);
+        ICab2bQuery dummy =(ICab2bQuery) queryBuilder.getQuery();
+        dummy.setOutputEntity(en);
+
+        KeywordQuery keywordQuery = new KeywordQueryImpl(dummy);
+        keywordQuery.setName(modelGroup.getModelGroupName() + "_KeywordSearch");
+        keywordQuery.setCreatedBy(userId);
+        keywordQuery.setApplicationGroup(modelGroup);
+        keywordQuery.setCreatedDate(new Date());
+        keywordQuery.setIsSystemGenerated(Boolean.TRUE);
+        keywordQuery.setIsKeywordSearch(Boolean.TRUE);
+
+        saveQuery(keywordQuery);
+
+        return keywordQuery;
     }
 
     /**

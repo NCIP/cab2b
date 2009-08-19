@@ -23,7 +23,7 @@
 			dynamic-update="false" dynamic-insert="false">
 			<key column="IDENTIFIER" />
 
-			<set name="subQueries" table="CAB2B_COMPOUND_QUERY_MAPPING" lazy="false" inverse="false">
+			<set name="subQueries" table="CAB2B_COMPOUND_QUERY_MAPPING" lazy="false" inverse="false" cascade="all-delete-orphan">
 				<cache usage="read-write" />
 				<key column="COMPOUND_QUERY_ID" />
 				<many-to-many class="edu.wustl.cab2b.common.queryengine.Cab2bQuery" column="CAB2B_QUERY_ID" />
