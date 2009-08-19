@@ -31,17 +31,17 @@ public class ExportResultsAction extends Action {
             HttpSession session = request.getSession();
             QueryBizLogic queryBizLogic = (QueryBizLogic) session.getAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT);
             String exported_file_path = (String) session.getAttribute(Constants.EXPORTED_FILE_PATH);
-            //file is getting exported (and thus built) first time.
+            //File is getting exported (and thus built) first time.
             if (exported_file_path == null && !((" ").equals(exported_file_path))) {
                 String newfilename = queryBizLogic.exportToCSV();
                 exported_file_path = filePath + newfilename;
                 session.setAttribute(Constants.EXPORTED_FILE_PATH, exported_file_path);
             }
-            // else take the file path from the session
+            //else take the file path from the session
             sendFileToClient(response, exported_file_path, "ExportedData.csv", "application/download");
         } else {
-            sendFileToClient(response, request.getParameter("filePath"), "ExportedData.csv",
-                             "application/download");
+            sendFileToClient(response, UserBackgroundQueries.EXPORT_CSV_DIR + File.separator
+                    + request.getParameter("fileName"), "Results.csv", "application/download");
         }
         return null;
     }
