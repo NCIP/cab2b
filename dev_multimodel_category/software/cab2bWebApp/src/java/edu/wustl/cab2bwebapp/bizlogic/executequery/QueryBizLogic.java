@@ -1,5 +1,6 @@
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -260,7 +261,7 @@ public class QueryBizLogic {
                         .getResult());
             fileName = transformer.writeToCSV();
         }
-        updateDatabaseWithFileName(UserBackgroundQueries.EXPORT_CSV_DIR + "//" + fileName);
+        updateDatabaseWithFileName(fileName);
         logger.info("File saved at location:" + fileName);
         return fileName;
     }

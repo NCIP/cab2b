@@ -113,7 +113,7 @@ public class UserBackgroundQueries {
                         || status.getStatus().equals(AbstractStatus.Complete_With_Error)) {
                     try {
                         String fileName = queryBizLogic.exportToCSV();
-                        status.setFileName(EXPORT_CSV_DIR + File.separator + fileName);
+                        status.setFileName(fileName);
                         status.setQueryEndTime(new Date());
                         logger.info(EXPORT_CSV_DIR + File.separator + fileName);
                     } catch (IOException e) {
