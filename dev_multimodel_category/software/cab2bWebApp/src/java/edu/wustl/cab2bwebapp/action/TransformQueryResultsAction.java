@@ -60,7 +60,7 @@ public class TransformQueryResultsAction extends Action {
         String actionForward = Constants.FORWARD_SEARCH_RESULTS_PANEL;
         HttpSession session = request.getSession();
         try {
-            
+
             SavedQueryBizLogic savedQueryBizLogic =
                     (SavedQueryBizLogic) session.getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
             Long queryId = (Long) session.getAttribute(Constants.QUERY_ID);
@@ -73,11 +73,6 @@ public class TransformQueryResultsAction extends Action {
             // Processing image will be seen on the UI
             Writer writer;
             if (queryBizLogic == null) {
-                writer = response.getWriter();
-                response.setContentType("text/xml");
-                String processingImage =
-                        "<TABLE style='width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'/></TD></TR></TABLE>";
-                writer.write(processingImage);
                 return null;
             }
 
@@ -93,7 +88,7 @@ public class TransformQueryResultsAction extends Action {
                 session.setAttribute(Constants.SELECTED_QUERY_NAME, selectedQueryName);
             } else {
                 selectedQueryName = (String) session.getAttribute(Constants.SELECTED_QUERY_NAME);
-                if(selectedQueryName == null){
+                if (selectedQueryName == null) {
                     selectedQueryName = query.getName();
                 }
             }
@@ -121,8 +116,7 @@ public class TransformQueryResultsAction extends Action {
 
                 TransformedResultObjectWithContactInfo selectedQueryResult = searchResults.get(selectedQueryObj);
 
-                Collection<ServiceURLInterface> failedURLS =
-                        queryBizLogic.getFailedServiceUrls();
+                Collection<ServiceURLInterface> failedURLS = queryBizLogic.getFailedServiceUrls();
                 if (failedURLS != null && failedURLS.size() == 0) {
                     failedURLS = null;
                 }
@@ -143,12 +137,12 @@ public class TransformQueryResultsAction extends Action {
 
                 // populateSessionVariables as per the condition achieved of query
                 boolean uiGotEnoughRecords = savedQuery.getResultCount() >= transformationMaxLimit;
-                boolean queryFinished = queryBizLogic.isProcessingFinished(); 
+                boolean queryFinished = queryBizLogic.isProcessingFinished();
                 updateSessionVariables(uiGotEnoughRecords, queryFinished, searchResults, queryList,
-                                         searchResultsView, session);
+                                       searchResultsView, session);
             }
         } catch (Exception e) {
-            session.setAttribute(Constants.STOP_AJAX, true);    //if some exception occurs, Ajax from UI should stop
+            session.setAttribute(Constants.STOP_AJAX, true); //if some exception occurs, Ajax from UI should stop
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
             ActionMessage message =
@@ -173,9 +167,9 @@ public class TransformQueryResultsAction extends Action {
      * @param session
      */
     private void updateSessionVariables(boolean uiGotEnoughRecords, boolean queryFinished,
-                                          Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults,
-                                          List<SavedQueryDVO> queryList,
-                                          List<List<SearchResultDVO>> searchResultsView, HttpSession session) {
+                                        Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults,
+                                        List<SavedQueryDVO> queryList,
+                                        List<List<SearchResultDVO>> searchResultsView, HttpSession session) {
         if (uiGotEnoughRecords && queryFinished) {
             session.setAttribute(Constants.STOP_AJAX, true);
             session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
