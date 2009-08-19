@@ -26,7 +26,7 @@ public class ExportResultsAction extends Action {
 
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws Exception {
-        if (request.getParameter("filePath") == null) {
+        if (request.getParameter("fileName") == null) {
             String filePath = UserBackgroundQueries.EXPORT_CSV_DIR + File.separator;
             HttpSession session = request.getSession();
             QueryBizLogic queryBizLogic = (QueryBizLogic) session.getAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT);
