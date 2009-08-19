@@ -81,9 +81,8 @@ public class PreExecuteQueryAction extends Action {
 
             //KeyWord Query
             if (query instanceof KeywordQuery) {
-                KeywordSearchForm keywordSearchForm = (KeywordSearchForm) form;
-                modelGroupNames = keywordSearchForm.getModelGroups();
-                String keyword = keywordSearchForm.getKeyword();
+                modelGroupNames = (String[]) request.getParameterValues(Constants.MODEL_GROUPS);
+                String keyword = request.getParameter(Constants.KEYWORD);
                 session.setAttribute(Constants.KEYWORD, keyword);
 
                 //set Keyword subqueries name in dropdown
