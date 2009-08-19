@@ -14,7 +14,7 @@ import java.util.HashSet;
 public abstract class CompoundQueryImpl extends Cab2bQuery implements CompoundQuery {
     private static final long serialVersionUID = 8692891177510236676L;
 
-    private Collection<ICab2bQuery> subQueries = new HashSet<ICab2bQuery>();
+    private Collection<ICab2bQuery> subQueries = null;
 
     /**
      * 
@@ -44,6 +44,9 @@ public abstract class CompoundQueryImpl extends Cab2bQuery implements CompoundQu
      * @see edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery#getSubQueries()
      */
     public Collection<ICab2bQuery> getSubQueries() {
+        if (subQueries == null) {
+            subQueries = new HashSet<ICab2bQuery>();
+        }
         return subQueries;
     }
 
@@ -52,12 +55,12 @@ public abstract class CompoundQueryImpl extends Cab2bQuery implements CompoundQu
      * @see edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery#addSubQueries(edu.wustl.cab2b.common.queryengine.ICab2bQuery)
      */
     public void addSubQuery(ICab2bQuery query) {
-        subQueries.add(query);
+        getSubQueries().add(query);
     }
 
     @Override
     public void setSubQueries(Collection<ICab2bQuery> queries) {
-        subQueries.addAll(queries);
+        subQueries = queries;
     }
 
 }
