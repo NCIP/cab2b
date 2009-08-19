@@ -42,7 +42,7 @@
 				<DIV class="titlebarheader title">
 					<DIV class="titlebarleftcurve">
 						<DIV class="titlebarrightcurve">
-							<bean:message key="title.defineconditionsfor"/> <DIV id="queryname" style="display: inline"></DIV><INPUT type="hidden" name="queryId" id="queryId" value="<bean:parameter name="queryId" id="queryId"/><bean:write name="queryId"/>">
+							<bean:message key="title.defineconditionsfor"/> <DIV id="queryname" style="font-style:italic;display:inline;"></DIV><INPUT type="hidden" name="queryId" id="queryId" value="<bean:parameter name="queryId" id="queryId"/><bean:write name="queryId"/>">
 							<bean:parameter name="modelGroups" id="modelGroupsArray" multiple="true"/>
 							<logic:iterate name="modelGroupsArray" id="modelGroup">	
 								<INPUT type="hidden" name="modelGroups" value="<bean:write name="modelGroup"/>">
