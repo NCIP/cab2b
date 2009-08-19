@@ -36,7 +36,10 @@
   }
    if(document.getElementById("completeresultsmessage"))
   { 	
-    document.getElementById('executeinbackgroundbutton').disabled = true;      
+    if(document.getElementById('executeinbackgroundbutton'))
+    {
+   		document.getElementById('executeinbackgroundbutton').disabled = true;      
+    }
     document.getElementById('exportbutton').disabled = false;
     document.getElementById('exportbutton').className = 'button';
 	 if(document.getElementById("failedservicesAJAX"))
