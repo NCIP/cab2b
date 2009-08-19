@@ -38,7 +38,7 @@ chk = false;
 }
 </SCRIPT>
 </HEAD>
-<BODY onLoad="document.getElementById('centerpanelcontent').style.height = getScreenHeight() - 280;">
+<BODY onLoad="document.getElementById('centerpanelcontent').style.height = getScreenHeight() - 295;">
 <FORM method="post" action="SaveServiceInstances.do" onSubmit="return validateSubmit()">
 <jsp:include page="header.jsp"/>
 <DIV id="content">

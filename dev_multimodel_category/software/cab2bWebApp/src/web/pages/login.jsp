@@ -63,9 +63,6 @@
 						<DIV class="error hidden" id="error_password"><bean:message key="error.password.empty"/></DIV>
 						<DIV id="errors"><html:errors/></DIV>
 					</DIV>
-					<DIV style="text-align:center">
-						<A href="Home.do" class="link"><bean:message key="link.home"/></A> <SPAN class="title">|</SPAN> <A href="http://cagrid-portal.nci.nih.gov/web/guest/register" class="link" target="_blank"><bean:message key="link.register"/></A>
-					</DIV>
 				</DIV>
 			</html:form>
 		</DIV>

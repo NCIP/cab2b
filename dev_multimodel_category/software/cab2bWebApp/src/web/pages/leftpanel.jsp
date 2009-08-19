@@ -18,16 +18,5 @@
 				<IMG alt="<bean:message key="img.alt.bullet"/>" src="images/arrow.jpg" class="bullet"><A href="admin/" class="link" target="_blank"><bean:message key="link.webpage.cab2badmin"/></A>
 			</DIV>
 		</DIV>
-		<DIV id="certifiedbrowserspanel">
-			<DIV class="title"><bean:message key="title.certifiedbrowsers"/></DIV>
-			<DIV class="text"><IMG alt="<bean:message key="img.alt.browser.ie"/>" hspace="3" src="images/logo_ie.gif" align="absMiddle" vspace="3"><bean:message key="text.browser.ie"/></DIV>
-			<DIV class="text"><IMG alt="<bean:message key="img.alt.browser.mozilla"/>" hspace="3" src="images/logo_firefox.gif" align="absMiddle" vspace="3"><bean:message key="text.browser.mozilla"/></DIV>
-			<DIV class="text"><IMG alt="<bean:message key="img.alt.browser.safari"/>" hspace="3" src="images/logo_safari.gif" align="absMiddle" vspace="3"><bean:message key="text.browser.safari"/></DIV>
-		</DIV>
-		<DIV id="optimalresolutionspanel">
-			<DIV class="title"><bean:message key="title.optimalresolutions"/></DIV>
-			<DIV class="text"><IMG alt="<bean:message key="img.alt.os.resolution.windows"/>" hspace=3 src="images/logo_windows.gif" align="absMiddle" vspace="3"><bean:message key="text.os.resolution.windows"/></DIV>
-			<DIV class="text"><IMG alt="<bean:message key="img.alt.os.resolution.mac"/>" hspace="3" src="images/logo_mac.gif" align="absMiddle" vspace="3"><bean:message key="text.os.resolution.mac"/></DIV>
-		</DIV>
 	</DIV>
 </DIV>
