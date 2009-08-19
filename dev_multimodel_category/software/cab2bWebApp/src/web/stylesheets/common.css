@@ -48,16 +48,6 @@ body {
 	line-height: 1.6em;
 }
 
-#certifiedbrowserspanel {
-	margin: 50% 6% 6% 6%;
-	padding: 1;
-}
-
-#optimalresolutionspanel {
-	margin: 6%;
-	padding: 1;
-}
-
 img.bullet {
 	float: left;
 	position: relative;
@@ -118,6 +108,12 @@ img.bullet {
 	font-weight: normal;
 	font-size: 0.79em;
 	color: #000000;
+	font-family: sans-serif, Arial, Helvetica;
+}
+
+.textfooter {
+	font-size: 0.75em;
+	color: #555;
 	font-family: sans-serif, Arial, Helvetica;
 }
 
@@ -185,7 +181,7 @@ select {
 	font-family: sans-serif, Arial, Helvetica;
 }
 
-#errors,.error {
+#errors, .error {
 	text-align: center;
 	font-size: 0.75em;
 	color: #ff0000;
@@ -204,7 +200,7 @@ br {
 #footer {
 	clear: both;
 	width: 100%;
-	border-color: #eaeaea #fff #fff #fff;
+	border-color: #ddd #fff #fff #fff;
 	border-style: solid;
 	border-left: none;
 	border-right: none;

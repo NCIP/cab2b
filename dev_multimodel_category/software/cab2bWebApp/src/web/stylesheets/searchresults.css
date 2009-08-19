@@ -2,13 +2,18 @@
 @import url("displaytag.css");
 
 #toppanel {
-	width: 50%;
-	margin: 1em auto 1em auto;
-	padding: 1%;
+	background-color: #efefef;
+	border: 1px solid #ccc;
+	padding: 3px 4px 4px 4px;
+	width: 99%;
+	margin: 0px 0px 3px 0px;
+	display: block;
+	font-size: 1em;
+	font-family: sans-serif, Arial, Helvetica;
 }
 
 #centerpanel {
-	padding: 0% 1% 0% 1%;
+	padding: 3px 4px 4px 6px;
 }
 
 #centerpanelcontent {
