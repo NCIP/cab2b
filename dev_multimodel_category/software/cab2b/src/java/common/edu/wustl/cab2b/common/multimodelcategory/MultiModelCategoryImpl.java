@@ -108,10 +108,10 @@ public class MultiModelCategoryImpl implements MultiModelCategory {
      * @return
      */
     public String getCategoryIds() {
-        if (!categories.isEmpty()) {
+        if (!getCategories().isEmpty()) {
             StringBuffer categoryIds = new StringBuffer();
-            int index = categories.size();
-            for (Category category : categories) {
+            int index = getCategories().size();
+            for (Category category : getCategories()) {
                 categoryIds.append(category.getId());
                 if (--index > 0) {
                     categoryIds.append('_');

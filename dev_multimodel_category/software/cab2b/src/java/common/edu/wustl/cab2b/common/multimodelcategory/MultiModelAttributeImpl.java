@@ -83,8 +83,8 @@ public class MultiModelAttributeImpl implements MultiModelAttribute {
      */
     private String getCategorialAttributeIds() {
         StringBuffer categorialAttributeIds = new StringBuffer();
-        int index = selectedAttributes.size();
-        for (CategorialAttribute categorialAttribute : selectedAttributes) {
+        int index = getCategorialAttributes().size();
+        for (CategorialAttribute categorialAttribute : getCategorialAttributes()) {
             categorialAttributeIds.append(categorialAttribute.getId());
             if (--index > 0) {
                 categorialAttributeIds.append('_');
@@ -95,13 +95,13 @@ public class MultiModelAttributeImpl implements MultiModelAttribute {
     }
 
     private void setCategorialAttributeIds(String categorialAttributeIds) {
-        if (selectedAttributes.isEmpty()) {
+        if (getCategorialAttributes().isEmpty()) {
             String[] tokenIds = categorialAttributeIds.split("_");
             for (String categorialAttributeId : tokenIds) {
                 if (categorialAttributeId.length() > 0) {
                     CategorialAttribute attribute = new CategorialAttribute();
                     attribute.setId(Long.parseLong(categorialAttributeId));
-                    selectedAttributes.add(attribute);
+                    addCategorialAttribute(attribute);
                 }
             }
         }
