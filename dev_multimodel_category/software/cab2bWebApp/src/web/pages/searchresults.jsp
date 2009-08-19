@@ -32,19 +32,19 @@
   var resultCount = document.getElementById('resultcountAJAX')?document.getElementById('resultcountAJAX').innerHTML:'0';
    if(resultCount != '0')
   {
-    document.getElementById('top').innerHTML = document.getElementById('completeresultsmessage')!=null?document.getElementById('completeresultsmessage').innerHTML:(document.getElementById('partialresultsmessage')!=null?"document.getElementById('partialresultsmessage').innerHTML":"");
+    document.getElementById('toppanel').innerHTML += document.getElementById('completeresultsmessage')!=null?document.getElementById('completeresultsmessage').innerHTML:(document.getElementById('partialresultsmessage')!=null?"document.getElementById('partialresultsmessage').innerHTML":"");
   }
    if(document.getElementById("completeresultsmessage"))
   { 	
-    if(document.getElementById('executeinbackgroundbutton'))
-    {
-   		document.getElementById('executeinbackgroundbutton').disabled = true;      
-    }
+     if(document.getElementById('executeinbackgroundbutton'))
+	{
+	  document.getElementById('executeinbackgroundbutton').disabled = true;      
+	}
     document.getElementById('exportbutton').disabled = false;
     document.getElementById('exportbutton').className = 'button';
 	 if(document.getElementById("failedservicesAJAX"))
 	{
-	  document.getElementById('failedServicesDiv').style.display = 'block';
+	  document.getElementById('failedserviceslink').style.display = 'block';
 	  document.getElementById("failedservicescount").innerHTML = document.getElementById("failedservicescountAJAX").innerHTML;    
       document.getElementById("failedservicespanelbody").innerHTML = document.getElementById("failedservicesAJAX").innerHTML;    
 	}
@@ -57,7 +57,7 @@
 { 
    if(navigator.appName.indexOf('Netscape')==-1)
   {	  
-	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (310);
+	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (270);
     document.getElementById('centerpanelcontent').style.overflow = 'auto';
 	 if(document.getElementById('searchresultstable'))
     {
@@ -66,10 +66,10 @@
   }
    else
   {
-	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (320);
+	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (285);
 	 if(document.getElementById('searchresultstable'))
     {
-	  document.getElementById('searchresultstable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '380';
+	  document.getElementById('searchresultstable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '275';
 	}
   }
 }
@@ -101,10 +101,11 @@
 				</logic:iterate>
 			</logic:equal>	 
 		</DIV>
-		<DIV id="failedServicesDiv">
-			<A class="link" href="#this" onclick="document.getElementById('pageoverlay').style.display='block';document.getElementById('failedservicespanel').style.display='block';"><bean:message key="link.failedserviceinstances"/></A>
+		<DIV>
+			<A class="link" style="display:none;" id="failedserviceslink" href="#this" onclick="document.getElementById('pageoverlay').style.display='block';document.getElementById('failedservicespanel').style.display='block';"><bean:message key="link.failedserviceinstances"/></A>
 			<SPAN class="text" id="failedservicescount"></SPAN>
-		</DIV>			
+		</DIV>	
+		<IMG SRC="images/PageLoading.gif" style="height:1em;width:1em;">&nbsp;Fetching Results
 	</DIV>		
 	<DIV id="pageoverlay"></DIV>
 	<DIV id="failedservicespanel">
@@ -114,16 +115,13 @@
 	</DIV>
 </DIV>
 <DIV id="centerpanel">
-	<DIV>
-		<SPAN class="pagebanner" id="top"><IMG SRC="images/PageLoading.gif" style="height:1em;width:1em;">&nbsp;Fetching Results</SPAN>
-	</DIV>
 	<DIV id="centerpanelcontent">
 		<%@ include file="searchresultspanel.jsp" %>
 	</DIV>
 </DIV>
 <SCRIPT language="JavaScript">updateView();</SCRIPT>
 <DIV id="bottompanel">
-	<INPUT type="button" class="button" value="<bean:message key="button.home"/>" onClick="document.location='Home.do'">&nbsp;
+	<INPUT type="button" class="button" value="<bean:message key="button.back"/>" onClick="history.go(-1)">&nbsp;
 	<logic:present name="userName">
 		<INPUT type="button" class="button" id="executeinbackgroundbutton" value="<bean:message key="button.executeinbackground"/>" onClick="document.location='BackgroundQuery.do'">&nbsp;
 	</logic:present>
