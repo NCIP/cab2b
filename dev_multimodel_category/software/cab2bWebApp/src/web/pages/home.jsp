@@ -3,6 +3,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
 
+<logic:notPresent name="modelGroupDVOList"><jsp:forward page="/Home.do"/></logic:notPresent>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 <HEAD>
@@ -22,10 +23,6 @@
   <logic:present name="errorSessionTimeout">
 	alert('<bean:message key="alert.sessiontimeout"/>');
   </logic:present>
-  <logic:notPresent name="modelGroupDVOList">
-	document.forms[0].action = 'Home.do';
-    document.forms[0].submit();
-  </logic:notPresent>
   setSelection(document.getElementsByName('modelGroups'));
    if(selectedItemsCount>0)
   {
@@ -39,26 +36,24 @@
      validateDataTypeSelection();
    }
   </html:messages>
- <%
-	if(request.getAttribute("error")!=null) 
+  <%
+	 if(request.getAttribute("error")!=null) 
 	{
-%>
-	if(confirm('<bean:message key="message.incorrectserviceinstanceconfigured"/>'))
-   {
-     validateDataTypeSelection();
-   }
-<%
+  %>
+	   if(confirm('<bean:message key="message.incorrectserviceinstanceconfigured"/>'))
+      {
+        validateDataTypeSelection();
+      }
+  <%
 	}
-%>
-	 <% if(request.getParameter("redirect")!=null)
+     if(request.getParameter("redirect")!=null)
 	{
-%>
-	document.body.style.display="none";
-	validateDataTypeSelection();
-
-<%
+  %>
+	  document.body.style.display="none";
+	  validateDataTypeSelection();
+  <%
 	}
-%>
+  %>  
 }
 
  function validateDataTypeSelection()
@@ -115,7 +110,9 @@
 </SCRIPT>
 <BODY onLoad="setPage()">
 	<FORM method="post" action="PreExecuteQuery.do" onsubmit="return checkEmptyTextFileld('keyword', keywordSearchExample.value, true, '<bean:message key="error.keywordsearch.empty"/>')">
-		<jsp:include page="header.jsp"/>
+		<jsp:include page="header.jsp">
+			<jsp:param name="home" value="home"/>
+		</jsp:include>
 		<jsp:include page="leftpanel.jsp"/>				
 		<DIV id="content">
 			<DIV id="toppanel">
