@@ -64,6 +64,8 @@ public class DisplayDashboardAction extends Action {
             Collection<QueryStatus> qsCollection = opr.getAllQueryStatusByUser(user);
 
             Iterator<QueryStatus> i = qsCollection.iterator();
+            int inProgressQueryCount = 0;
+            int completedQueryCount = 0;
             while (i.hasNext()) {
                 QueryStatus qs = (QueryStatus) i.next();
                 Set<URLStatus> urlStatus = qs.getUrlStatus();
@@ -84,17 +86,15 @@ public class DisplayDashboardAction extends Action {
                 }
                 queryStatusDVO.setExecutedOn(qs.getQueryStartTime());
                 queryStatusDVO.setConditions(qs.getQueryConditions());
-                queryStatusDVO.setFilePath(qs.getFileName());
+                queryStatusDVO.setFileName(qs.getFileName());
                 queryStatusDVOList.add(queryStatusDVO);
-                int inProgressQueryCount = 0;
-                int completedQueryCount = 0;
                 if (qs.getStatus().equals("Processing"))
                     inProgressQueryCount++;
                 else
                     completedQueryCount++;
-                request.getSession().setAttribute("completedQueryCount", completedQueryCount);
-                request.getSession().setAttribute("inProgressQueryCount", inProgressQueryCount);
             }
+            request.getSession().setAttribute("completedQueryCount", completedQueryCount);
+            request.getSession().setAttribute("inProgressQueryCount", inProgressQueryCount);
             request.setAttribute("queryStatusDVOList", queryStatusDVOList);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
