@@ -211,7 +211,13 @@ public class Utility {
         TaggedValueInterface tag = getTaggedValue(entity.getTaggedValueCollection(), MULTIMODELCATEGORY);
         return tag != null;
     }
-
+    /**
+     * @param e
+     * @return TRUE of given entity in a cateory or multi model category
+     */
+    public static boolean isCategoryOrMMC(EntityInterface e) {
+        return (Utility.isCategory(e) || Utility.isMultiModelCategory(e));
+    }
     /**
      * Converts DE data type to queryObject dataType.
      *

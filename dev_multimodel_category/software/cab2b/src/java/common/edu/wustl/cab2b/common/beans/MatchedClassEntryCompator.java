@@ -4,7 +4,6 @@ import java.util.Comparator;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.beans.MatchedClassEntry.MatchCause;
-import edu.wustl.cab2b.common.cache.CompareUtil;
 import edu.wustl.cab2b.common.util.EntityInterfaceComparator;
 import edu.wustl.cab2b.common.util.Utility;
 
@@ -36,7 +35,7 @@ public class MatchedClassEntryCompator implements Comparator<MatchedClassEntry> 
         EntityInterface entity1 = entry1.getMatchedEntity();
         EntityInterface entity2 = entry2.getMatchedEntity();
         // If both the entities are categories then compare their names and return values accordingly
-        if(CompareUtil.isCategoryForMetadata(entity1) || CompareUtil.isCategoryForMetadata(entity2)) {
+        if(Utility.isCategoryOrMMC(entity1) || Utility.isCategoryOrMMC(entity2)) {
             return new EntityInterfaceComparator().compare(entity1, entity2);
         } else {
             return compareEntityName(entry1, entry2);

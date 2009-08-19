@@ -56,13 +56,6 @@ public class CompareUtil {
         return findMatch(map, cachedEntity);
     }
     /**
-     * @param e
-     * @return TRUE of given entity in a cateory or multi model category
-     */
-    public static boolean isCategoryForMetadata(EntityInterface e) {
-        return (Utility.isCategory(e) || Utility.isMultiModelCategory(e));
-    }
-    /**
      * Compares given pattern attribute with the cached attribute in following order
      *   1. Name
      *   2. Description
