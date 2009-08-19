@@ -1,6 +1,9 @@
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <DIV id="footer">
-	<DIV style="padding-bottom:0.4em">
+	<DIV class="textfooter" style="padding-bottom:0.3em">
+		<bean:message key="application.build" bundle="ServerResources"/>&nbsp;|&nbsp;<bean:message key="text.optimalviewinstruction"/>
+	</DIV>
+	<DIV style="padding-bottom:0.3em">
 		<SPAN class="title">|</SPAN>
 		<A class="linkfooter" href="mailto:cab2bsupport@bmi.wustl.edu"><bean:message key="link.contactus"/></A>
 		<SPAN class="title">|</SPAN>
