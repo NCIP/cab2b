@@ -300,23 +300,15 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      */
     protected void updateStatus(String serviceURL, String message, String description, String status) {
         logger.info("Setting status in FQP url status:" + status);
-        if (serviceURL.equals("All")) {
-            Collection<FQPUrlStatus> urls = urlVsStatus.values();
-            if (urls != null) {
-                for (FQPUrlStatus url : urls) {
-                    url.setStatus(status);
-                }
-            }
-        } else {
             FQPUrlStatus urlStatus = urlVsStatus.get(serviceURL);
             if (urlStatus != null) {
                 urlStatus.setDescription(description);
                 urlStatus.setMessage(message);
-                urlStatus.setStatus(status);
             } else {
                 urlStatus = new FQPUrlStatus(serviceURL, message, description);
             }
+            urlStatus.setStatus(status);
             registerStatus(serviceURL, urlStatus);
         }
-    }
+
 }

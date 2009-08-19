@@ -207,40 +207,50 @@ public class QueryExecutor {
             int totalRecCount = 0;
             Collection<FQPUrlStatus> fqpUrlStatus = queryResult.getFQPUrlStatus();
             Map<String, ?> mapUrlResult = queryResult.getRecords();
-            String status = "";
-
+            
             for (FQPUrlStatus fqpUrl : fqpUrlStatus) {
-                if (fqpUrl.getStatus().equals(ProcessingStatus._Processing)
-                        || fqpUrl.getStatus().equals(ProcessingStatus._Waiting_To_Begin)) {
-                    //setting query status as active
-                    status = AbstractStatus.Processing;
-                } else {
-                    if (fqpUrl.getStatus().equals(ProcessingStatus._Complete)) {
-                        //setting query status as complete
-                        status = AbstractStatus.Complete;
-                    } else {
-                        //Setting query status as complete with error
-                        status = AbstractStatus.Complete_With_Error;
-                    }
-                    qStatus.setQueryEndTime(new Date());
-                }
-                qStatus.setStatus(status);
-                logger.info("Setting query status as :" + status);
                 String url = fqpUrl.getTargetUrl();
                 URLStatus uStatusObj = getStatusUrl(url);
-                uStatusObj.setStatus(status);
+                uStatusObj.setStatus(fqpUrl.getStatus());
                 List<? extends IRecord> resultPerUrl = (List<? extends IRecord>) mapUrlResult.get(url);
                 if (resultPerUrl != null) {
                     int urlRecCount = resultPerUrl.size();
                     uStatusObj.setResultCount(new Integer(urlRecCount));
                     totalRecCount = +urlRecCount;
-                    qStatus.setResultCount(totalRecCount);
                     logger.info("Updated record count for url:" + url + "  " + urlRecCount);
                 }
             }
+            qStatus.setResultCount(totalRecCount);
+            //Deriving the query status from URL status
+            qStatus.setStatus(AbstractStatus.Processing);
+            if(areAllUrlsFinished(fqpUrlStatus)) {
+	            qStatus.setQueryEndTime(new Date());
+                boolean isEveryUrlWorked= true;
+                for (FQPUrlStatus fqpUrl : fqpUrlStatus) {
+                    String urlStatus = fqpUrl.getStatus();
+                    if (urlStatus.equals(ProcessingStatus._Complete_With_Error)) {
+                        qStatus.setStatus(AbstractStatus.Complete_With_Error);
+                        isEveryUrlWorked = false;
+                        break;
+                    } 
+                }
+                if(isEveryUrlWorked) {
+                    qStatus.setStatus(AbstractStatus.Complete);
+                }
+            } 
         }
     }
-
+    private boolean areAllUrlsFinished(Collection<FQPUrlStatus> fqpUrlStatus) {
+        boolean res = true;
+        for (FQPUrlStatus fqpUrl : fqpUrlStatus) {
+            String urlStatus = fqpUrl.getStatus();
+            if (urlStatus.equals(ProcessingStatus._Processing) || urlStatus.equals(ProcessingStatus._Waiting_To_Begin)) {
+                res = false;
+                break;
+            }
+        }
+        return res;
+    }
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.server.queryengine.ICab2bQueryExecutor#getStatus()
      */

@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.server.queryengine.resulttransformers;
 
+import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
 import gov.nih.nci.cagrid.fqp.processor.FQPProcessingStatusListener;
 import gov.nih.nci.cagrid.fqp.processor.exceptions.FederatedQueryProcessingException;
 
@@ -22,8 +23,6 @@ public class FQPQueryListener implements FQPProcessingStatusListener, Serializab
 
     private AbstractQueryResultTransformer queryResultTransformer = null;
 
-    private String status = null;
-
     protected FQPQueryListener(AbstractQueryResultTransformer queryResultTransformer) {
         this.queryResultTransformer = queryResultTransformer;
     }
@@ -34,11 +33,7 @@ public class FQPQueryListener implements FQPProcessingStatusListener, Serializab
      *            the urlVsException to set
      */
     public void processingStatusChanged(ProcessingStatus statusObj, String message) {
-        status = statusObj.getValue();
-        logger.info("Status changed to :" + status);
-        if (queryResultTransformer != null) {
-            queryResultTransformer.updateStatus("All", message, message, status);
-        }
+        logger.info("Status changed to :" + statusObj.getValue();
     }
 
     /* (non-Javadoc)
@@ -47,7 +42,7 @@ public class FQPQueryListener implements FQPProcessingStatusListener, Serializab
     public void targetServiceConnectionRefused(String serviceURL) {
         if (queryResultTransformer != null) {
             queryResultTransformer.updateStatus(serviceURL, "Target service connection refused.",
-                                                "Connection refused.", status);
+                                                "Connection refused.", AbstractStatus.Complete_With_Error);
         }
     }
 
@@ -55,9 +50,6 @@ public class FQPQueryListener implements FQPProcessingStatusListener, Serializab
      * @see gov.nih.nci.cagrid.fqp.processor.FQPProcessingStatusListener#targetServiceOk(java.lang.String)
      */
     public void targetServiceOk(String serviceURL) {
-        if (queryResultTransformer != null) {
-            queryResultTransformer.updateStatus(serviceURL, "targetServiceOk", "Target Service OK", status);
-        }
     }
 
     /* (non-Javadoc)
@@ -65,7 +57,7 @@ public class FQPQueryListener implements FQPProcessingStatusListener, Serializab
      */
     public void targetServiceReturnedInvalidResult(String serviceURL, FederatedQueryProcessingException ex) {
         if (queryResultTransformer != null) {
-            queryResultTransformer.updateStatus(serviceURL, ex.getMessage(), "Invalid result", status);
+            queryResultTransformer.updateStatus(serviceURL, ex.getMessage(), "Invalid result", AbstractStatus.Complete_With_Error );
         }
     }
 
@@ -75,7 +67,7 @@ public class FQPQueryListener implements FQPProcessingStatusListener, Serializab
     public void targetServiceReturnedResults(String serviceURL, ResultsRange range) {
         if (queryResultTransformer != null) {
             queryResultTransformer.updateStatus(serviceURL, "Succesfully Completed.", "Succesfully completed.",
-                                                status);
+                                                AbstractStatus.Complete);
         }
     }
 
@@ -84,7 +76,7 @@ public class FQPQueryListener implements FQPProcessingStatusListener, Serializab
      */
     public void targetServiceThrowsException(String serviceURL, Exception ex) {
         if (queryResultTransformer != null) {
-            queryResultTransformer.updateStatus(serviceURL, ex.getMessage(), "Service Throws exception", status);
+            queryResultTransformer.updateStatus(serviceURL, ex.getMessage(), "Service Throws exception", AbstractStatus.Complete_With_Error);
         }
     }
 
