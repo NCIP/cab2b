@@ -12,7 +12,7 @@ import edu.wustl.cab2b.common.user.UserInterface;
  * It extends AbstractStatusImpl for properties like : ID, Status, Message, ResultCount, Description
  * @author gaurav_mehta
  */
-public class QueryStatusImpl extends AbstractStatusImpl implements QueryStatus{
+public class QueryStatusImpl extends AbstractStatusImpl implements QueryStatus {
     private static final long serialVersionUID = 1L;
 
     /** This is the USer object who has executed the query in background */
@@ -37,14 +37,14 @@ public class QueryStatusImpl extends AbstractStatusImpl implements QueryStatus{
     /** This is the reference of child Queries being executed. This is not null in case of:
      * 1. MultiModel Category query
      * 2. Keyword query  */
-    private Set<QueryStatus> childrenQueryStatus = new HashSet<QueryStatus>();
+    private Set<QueryStatus> childrenQueryStatus;
 
     /** This is the set of all urls selected for a query */
-    private Set<URLStatus> urlStatus = new HashSet<URLStatus>();;
+    private Set<URLStatus> urlStatus = null;
 
     /** The name of the file in which the query results are going to be saved */
     private String fileName;
-    
+
     private Boolean visible;
 
     /**
@@ -139,6 +139,9 @@ public class QueryStatusImpl extends AbstractStatusImpl implements QueryStatus{
      * type="edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus" not-null="true"
      */
     public Set<QueryStatus> getChildrenQueryStatus() {
+        if (childrenQueryStatus == null) {
+            childrenQueryStatus = new HashSet<QueryStatus>();
+        }
         return childrenQueryStatus;
     }
 
@@ -157,6 +160,9 @@ public class QueryStatusImpl extends AbstractStatusImpl implements QueryStatus{
      * type="edu.wustl.cab2b.common.queryengine.querystatus.URLStatus" not-null="true"
      */
     public Set<URLStatus> getUrlStatus() {
+        if (urlStatus == null) {
+            urlStatus = new HashSet<URLStatus>();
+        }
         return urlStatus;
     }
 
@@ -199,7 +205,7 @@ public class QueryStatusImpl extends AbstractStatusImpl implements QueryStatus{
      * @param visible
      */
     public void setVisible(Boolean visible) {
-       this.visible = visible;
-        
+        this.visible = visible;
+
     }
 }
