@@ -23,8 +23,11 @@ public class MultiModelAttributeImpl implements MultiModelAttribute {
 
     private Boolean isVisible;
 
+    /**
+     * Default constructor
+     */
     public MultiModelAttributeImpl() {
-        selectedAttributes = new HashSet<CategorialAttribute>();
+
     }
 
     /**
@@ -49,15 +52,18 @@ public class MultiModelAttributeImpl implements MultiModelAttribute {
     }
 
     public void addCategorialAttribute(CategorialAttribute categorialAttribute) {
-        selectedAttributes.add(categorialAttribute);
+        getCategorialAttributes().add(categorialAttribute);
     }
 
     public Collection<CategorialAttribute> getCategorialAttributes() {
+        if (selectedAttributes == null) {
+            selectedAttributes = new HashSet<CategorialAttribute>();
+        }
         return selectedAttributes;
     }
 
     public void setCategorialAttributes(Collection<CategorialAttribute> categorialAttributes) {
-        selectedAttributes.addAll(categorialAttributes);
+        selectedAttributes = categorialAttributes;
     }
 
     /**

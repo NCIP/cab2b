@@ -30,8 +30,7 @@ public class MultiModelCategoryImpl implements MultiModelCategory {
     private String categoryIds;
 
     public MultiModelCategoryImpl() {
-        multiModelAttributes = new HashSet<MultiModelAttribute>();
-        categories = new HashSet<Category>();
+
     }
 
     /**
@@ -68,7 +67,7 @@ public class MultiModelCategoryImpl implements MultiModelCategory {
     }
 
     public void addMultiModelAttribute(MultiModelAttribute multiModelAttribute) {
-        multiModelAttributes.add(multiModelAttribute);
+        getMultiModelAttributes().add(multiModelAttribute);
     }
 
     /**
@@ -79,23 +78,29 @@ public class MultiModelCategoryImpl implements MultiModelCategory {
      *      class="edu.wustl.cab2b.server.category.multimodelcategory.MultiModelAttributeImpl" 
      */
     public Collection<MultiModelAttribute> getMultiModelAttributes() {
+        if (multiModelAttributes == null) {
+            multiModelAttributes = new HashSet<MultiModelAttribute>();
+        }
         return multiModelAttributes;
     }
 
     public void setMultiModelAttributes(Collection<MultiModelAttribute> multiModelAttributes) {
-        this.multiModelAttributes.addAll(multiModelAttributes);
+        this.multiModelAttributes = multiModelAttributes;
     }
 
     public void addCategory(Category category) {
-        categories.add(category);
+        getCategories().add(category);
     }
 
     public Collection<Category> getCategories() {
+        if (categories == null) {
+            categories = new HashSet<Category>();
+        }
         return categories;
     }
 
     public void setCategories(Collection<Category> categories) {
-        this.categories.addAll(categories);
+        this.categories = categories;
     }
 
     /**

@@ -27,7 +27,7 @@ public class MultiModelCategoryBean implements Serializable {
 
     private Collection<IPath> paths = new ArrayList<IPath>();
 
-    private Collection<MultiModelAttributeBean> multiModelAttributes = new ArrayList<MultiModelAttributeBean>();
+    private Collection<MultiModelAttributeBean> multiModelAttributes;
 
     /**
      * @return the name
@@ -106,16 +106,10 @@ public class MultiModelCategoryBean implements Serializable {
      * @return the multiModelAttributes
      */
     public Collection<MultiModelAttributeBean> getMultiModelAttributes() {
+        if (multiModelAttributes == null) {
+            multiModelAttributes = new ArrayList<MultiModelAttributeBean>();
+        }
         return multiModelAttributes;
-    }
-
-    /**
-     * 
-     * @param index
-     * @return
-     */
-    public MultiModelAttributeBean getMultiModelAttribute(int index) {
-        return ((List<MultiModelAttributeBean>) multiModelAttributes).get(index);
     }
 
     /**
@@ -130,6 +124,6 @@ public class MultiModelCategoryBean implements Serializable {
      * @param multiModelAttributeBean
      */
     public void addMultiModelAttribute(MultiModelAttributeBean multiModelAttributeBean) {
-        this.multiModelAttributes.add(multiModelAttributeBean);
+        getMultiModelAttributes().add(multiModelAttributeBean);
     }
 }
