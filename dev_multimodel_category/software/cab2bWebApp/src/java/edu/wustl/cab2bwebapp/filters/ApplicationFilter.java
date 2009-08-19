@@ -52,6 +52,7 @@ public class ApplicationFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
+        response.addHeader("Cache-Control", fc.getInitParameter("Cache-Control"));
         if (request.getSession().isNew()) {
             if (request.getHeader(Constants.AJAX_CALL) != null) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
