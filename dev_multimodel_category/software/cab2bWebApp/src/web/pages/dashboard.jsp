@@ -35,7 +35,7 @@
 			<display:column title="Action(s)" sortable="false" headerClass="unsortable">
 				<IMG src="images/view_results.jpg" title="<bean:message key="img.alt.viewresults"/>" style="cursor:pointer">&nbsp;
 				<IMG src="images/form.jpg" title="<bean:message key="img.alt.parameters" arg0="${query.conditions}"/>" style="cursor:pointer">&nbsp;
-				<IMG src="images/ico_file_excel.png" title="<bean:message key="img.alt.exportresults"/>" style="cursor:pointer" onClick="document.location='ExportResults.do?filePath=<bean:write name="query" property="filePath"/>';TogglePreloader(0);">&nbsp;
+				<IMG src="images/ico_file_excel.png" title="<bean:message key="img.alt.exportresults"/>" style="cursor:pointer" onClick="document.location='ExportResults.do?fileName=<bean:write name="query" property="fileName"/>';TogglePreloader(0);">&nbsp;
 				<IMG src="images/stop.gif" title="<bean:message key="img.alt.abortexecution"/>" style="cursor:pointer;">&nbsp;
 			</display:column>
 		</display:table>
