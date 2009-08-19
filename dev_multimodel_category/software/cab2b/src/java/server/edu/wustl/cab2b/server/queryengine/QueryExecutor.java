@@ -89,7 +89,7 @@ public class QueryExecutor {
                 .getPerQueryMaxThreadLimit(), 1, TimeUnit.SECONDS, waitingQueue);
 
     private ICab2bQuery query;
-    
+
     private boolean recordStatus;
 
     private ConstraintsBuilderResult constraintsBuilderResult;
@@ -121,7 +121,7 @@ public class QueryExecutor {
      * @param cred
      */
     public QueryExecutor(ICab2bQuery query, GlobusCredential credential) {
-        recordStatus = query.getId()!=null;
+        recordStatus = query.getId() != null;
         String userName = Constants.ANONYMOUS;
         if (credential != null) {
             userName = credential.getIdentity();
@@ -203,11 +203,17 @@ public class QueryExecutor {
      * Method to update url status properties. It will update only the in-memory query status.
      */
     private synchronized void updateQueryStatus() {
+        String status = qStatus.getStatus();
+        if (status != null
+                && (status.equals(AbstractStatus.Complete) || status.equals(AbstractStatus.Complete_With_Error))) {
+            return;
+        }
+
         if (queryResult != null) {
             int totalRecCount = 0;
             Collection<FQPUrlStatus> fqpUrlStatus = queryResult.getFQPUrlStatus();
             Map<String, ?> mapUrlResult = queryResult.getRecords();
-            
+
             for (FQPUrlStatus fqpUrl : fqpUrlStatus) {
                 String url = fqpUrl.getTargetUrl();
                 URLStatus uStatusObj = getStatusUrl(url);
@@ -223,35 +229,42 @@ public class QueryExecutor {
             qStatus.setResultCount(totalRecCount);
             //Deriving the query status from URL status
             qStatus.setStatus(AbstractStatus.Processing);
-            if(areAllUrlsFinished(fqpUrlStatus)) {
-	            qStatus.setQueryEndTime(new Date());
-                boolean isEveryUrlWorked= true;
+            if (areAllUrlsFinished(fqpUrlStatus)) {
+                qStatus.setQueryEndTime(new Date());
+                boolean isEveryUrlWorked = true;
                 for (FQPUrlStatus fqpUrl : fqpUrlStatus) {
                     String urlStatus = fqpUrl.getStatus();
                     if (urlStatus.equals(ProcessingStatus._Complete_With_Error) && isProcessingFinished()) {
                         qStatus.setStatus(AbstractStatus.Complete_With_Error);
                         isEveryUrlWorked = false;
                         break;
-                    } 
+                    }
                 }
-                if(isEveryUrlWorked) {
-                    if(isProcessingFinished())
-                    qStatus.setStatus(AbstractStatus.Complete);
+                if (isEveryUrlWorked) {
+                    if (isProcessingFinished())
+                        qStatus.setStatus(AbstractStatus.Complete);
                 }
-            } 
+            }
         }
     }
+
+    /**
+     * @param fqpUrlStatus
+     * @return
+     */
     private boolean areAllUrlsFinished(Collection<FQPUrlStatus> fqpUrlStatus) {
         boolean res = true;
         for (FQPUrlStatus fqpUrl : fqpUrlStatus) {
             String urlStatus = fqpUrl.getStatus();
-            if (urlStatus.equals(ProcessingStatus._Processing) || urlStatus.equals(ProcessingStatus._Waiting_To_Begin)) {
+            if (urlStatus.equals(ProcessingStatus._Processing)
+                    || urlStatus.equals(ProcessingStatus._Waiting_To_Begin)) {
                 res = false;
                 break;
             }
         }
         return res;
     }
+
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.server.queryengine.ICab2bQueryExecutor#getStatus()
      */
@@ -302,7 +315,7 @@ public class QueryExecutor {
             urlStatusCollection.add(urlStatus);
         }
         qStatus.setUrlStatus(urlStatusCollection);
-        if(recordStatus) {
+        if (recordStatus) {
             QueryURLStatusOperations qso = new QueryURLStatusOperations();
             qso.insertQueryStatus(qStatus);
         }
@@ -357,22 +370,42 @@ public class QueryExecutor {
                                                             DataType.String);
     }
 
+    /**
+     * @param entity
+     * @return
+     */
     private AttributeInterface getIdAttribute(EntityInterface entity) {
         return Utility.getIdAttribute(entity);
     }
 
+    /**
+     * @param association
+     * @return
+     */
     private AbstractAssociationConstraint createAssociationConstraint(IAssociation association) {
         return ConstraintsBuilder.createAssociation(association);
     }
 
+    /**
+     * Returns output entity for the query.
+     * @return EntityInterface
+     */
     private EntityInterface getOutputEntity() {
         return getQuery().getOutputEntity();
     }
 
+    /**
+     * Returns true if output is of category type.
+     * @return
+     */
     private boolean isCategoryOutput() {
         return Utility.isCategory(getOutputEntity());
     }
 
+    /**
+     * Method to verify record count. If exceeds limit throws exception.
+     * @param count
+     */
     private void verifyRecordLimit(int count) {
         noOfRecordsCreated = noOfRecordsCreated + count;
         if (noOfRecordsCreated > QueryExecutorPropertes.getPerQueryAllowedRecords()) {
@@ -386,6 +419,10 @@ public class QueryExecutor {
         }
     }
 
+    /**
+     * Method that splits  
+     * @return
+     */
     private List<ICab2bQuery> getQueriesPerURL() {
         List<ICab2bQuery> queriesWithSingleUrl = new ArrayList<ICab2bQuery>(query.getOutputUrls().size());
         for (String url : query.getOutputUrls()) {
@@ -484,8 +521,6 @@ public class QueryExecutor {
 
         private int priority;
 
-        private String name;
-
         public ChildQueryExecutor(
                 ICategorialClassRecord parentCatClassRec,
                 TreeNode<IExpression> parentExprNode,
@@ -496,7 +531,6 @@ public class QueryExecutor {
             this.parentExprNode = parentExprNode;
             this.parentId = parentId;
             this.priority = priority;
-            this.name = name;
         }
 
         /*
@@ -581,12 +615,10 @@ public class QueryExecutor {
             return priority;
         }
 
-        public String getName() {
-            return name;
-        }
     }
 
     /**
+     * Returns complete query results.
      * @return the queryResult
      */
     public IQueryResult<? extends IRecord> getCompleteResults() {
@@ -603,6 +635,7 @@ public class QueryExecutor {
     }
 
     /**
+     * Returns whatever results available in memory. 
      * @return the queryResult
      */
     public IQueryResult<? extends IRecord> getPartialResult() {
@@ -659,6 +692,7 @@ public class QueryExecutor {
     }
 
     /**
+     * Returns whatever results available and updates only query status in database.     
      * @return
      */
     public IQueryResult<? extends IRecord> getResult() {
@@ -666,8 +700,12 @@ public class QueryExecutor {
         updateStatus();
         return queryResult;
     }
+
+    /**
+     * Updates query status in database.
+     */
     private void updateStatus() {
-        if(recordStatus) {
+        if (recordStatus) {
             QueryURLStatusOperations qso = new QueryURLStatusOperations();
             qso.updateQueryStatus(qStatus);
         }

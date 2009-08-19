@@ -9,9 +9,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.log4j.Logger;
 
 import edu.wustl.cab2b.server.initializer.PollingTask;
-import edu.wustl.cab2bwebapp.bizlogic.UserBackgroundQueries;
 
 /**
+ * Class which will periodically save executing background query status in database.
  * @author deepak_shingan
  *
  */
@@ -30,7 +30,7 @@ public class QueryStatusUpdater {
                     logger.info("Database has been refreshed and is in Sync with background queries status");
                 }
             };
-            PollingTask.submitTask(timerTask, 10);
+            PollingTask.submitTask(timerTask, UserBackgroundQueries.BACKGROUND_QUERY_REFRESH_TIME_INTERVAL);
         }
     }
 }

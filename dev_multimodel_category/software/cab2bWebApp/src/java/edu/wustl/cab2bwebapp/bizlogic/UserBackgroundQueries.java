@@ -21,7 +21,6 @@ import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryBizLogic;
 
-
 /**
  * @author deepak_shingan
  *
@@ -30,11 +29,23 @@ public class UserBackgroundQueries {
     private static final Logger logger =
             edu.wustl.common.util.logger.Logger.getLogger(UserBackgroundQueries.class);
 
+    /**
+     * Map of user to queries executing in background. 
+     */
     private Map<UserInterface, Set<QueryBizLogic>> userToBackgroundQueries = null;
 
     private static UserBackgroundQueries ref = null;
 
-    public static final String EXPORT_CSV_DIR = System.getProperty("user.home") + File.separator +"cab2bExportFiles";
+    /**
+     * Directory for saving exported/CSV files.
+     */
+    public static final String EXPORT_CSV_DIR =
+            System.getProperty("user.home") + File.separator + "cab2bExportFiles";
+
+    /**
+     * Time interval for updating database for queries executing in background. 
+     */
+    public static final int BACKGROUND_QUERY_REFRESH_TIME_INTERVAL = 15;
 
     static {
         //Creating directory for saving CSV files on server.
