@@ -19,7 +19,7 @@ public class QueryStatusDVO {
 
     private String conditions;
 
-    private String filePath;
+    private String fileName;
 
     /**
      * @return String
@@ -108,14 +108,14 @@ public class QueryStatusDVO {
     /**
      * @return String
      */
-    public String getFilePath() {
-        return filePath;
+    public String getFileName() {
+        return fileName;
     }
 
     /**
-     * @param filePath
+     * @param fileName
      */
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }
