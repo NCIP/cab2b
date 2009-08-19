@@ -24,6 +24,7 @@ import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.KeywordQuery;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.common.queryengine.QueryExecutorPropertes;
+import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -137,14 +138,21 @@ public class QueryBizLogic {
 
     /**
      * @return
+     * @throws IOException 
      */
-    public Map<ICab2bQuery, TransformedResultObjectWithContactInfo> getSearchResults() {
+    public Map<ICab2bQuery, TransformedResultObjectWithContactInfo> getSearchResults() throws IOException {
 
         Map<ICab2bQuery, TransformedResultObjectWithContactInfo> transformedResult = null;
         if (queryExecutionHandler instanceof KeywordQueryExecutionHandler) {
             transformedResult = getKeywordSearchResults(transformationMaxLimit);
         } else {
             transformedResult = getSearchResults(transformationMaxLimit);
+        }
+        QueryStatus qs = getStatus();
+        if (queryExecutionHandler.isExecuteInBackground()
+                && (qs.getStatus().equals(AbstractStatus.Complete) || qs.getStatus()
+                    .equals(AbstractStatus.Complete_With_Error)) && isProcessingFinished()) {
+            exportToCSV();
         }
         return transformedResult;
     }
@@ -242,17 +250,17 @@ public class QueryBizLogic {
      * @return
      * @throws IOException
      */
-    public String exportToCSV(String filePath) throws IOException {
+    public String exportToCSV() throws IOException {
         String fileName = null;
         if (queryExecutionHandler instanceof KeywordQueryExecutionHandler) {
-            fileName = keyWordExportToCSV(filePath);
+            fileName = keyWordExportToCSV();
         } else {
             SpreadSheetResultTransformer transformer =
                     new SpreadSheetResultTransformer(queryExecutionHandler.getQuery(), queryExecutionHandler
                         .getResult());
-            fileName = transformer.writeToCSV(filePath);
+            fileName = transformer.writeToCSV();
         }
-        updateDatabaseWithFileName(fileName);
+        updateDatabaseWithFileName(UserBackgroundQueries.EXPORT_CSV_DIR + "//" + fileName);
         logger.info("File saved at location:" + fileName);
         return fileName;
     }
@@ -273,7 +281,7 @@ public class QueryBizLogic {
      * @return
      * @throws IOException 
      */
-    private String keyWordExportToCSV(String filePath) throws IOException {
+    private String keyWordExportToCSV() throws IOException {
         Set<String> fileNames = new HashSet<String>();
         KeywordQueryExecutionHandler handler = (KeywordQueryExecutionHandler) queryExecutionHandler;
         Map<KeywordQuery, IQueryResult<? extends IRecord>> qVsResultMap = handler.getQueryVsResultMap();
@@ -282,7 +290,7 @@ public class QueryBizLogic {
                     new SpreadSheetResultTransformer(keyValuePair.getKey(), keyValuePair.getValue());
             String fileName = null;
             try {
-                fileName = transformer.writeToCSV(filePath);
+                fileName = transformer.writeToCSV();
             } catch (IOException e) {
                 throw new RuntimeException("Error while saving CSV file.", ErrorCodeConstants.IO_0001);
             }

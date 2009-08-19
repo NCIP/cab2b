@@ -15,6 +15,7 @@ import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
+import edu.wustl.cab2bwebapp.bizlogic.UserBackgroundQueries;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 
 /**
@@ -68,13 +69,15 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
         Set<CategorialClass> children = record.getCategorialClass().getChildren();
 
         //Attribute-Value pair of current record
-        Map<AttributeInterface, Object> avPairs = new HashMap<AttributeInterface, Object>(record.getAttributes().size());
+        Map<AttributeInterface, Object> avPairs =
+                new HashMap<AttributeInterface, Object>(record.getAttributes().size());
         for (AttributeInterface a : record.getAttributes()) {
             avPairs.put(a, record.getValueForAttribute(a));
         }
-        
+
         if (children.size() == 0) {
-            List<Map<AttributeInterface, Object>> processedRecords = new ArrayList<Map<AttributeInterface, Object>>(1);
+            List<Map<AttributeInterface, Object>> processedRecords =
+                    new ArrayList<Map<AttributeInterface, Object>>(1);
             processedRecords.add(avPairs);
             return processedRecords;
         }
@@ -103,7 +106,9 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
                 //cross product current child with all previously processed children
                 for (Map<AttributeInterface, Object> processedRecord : processedRecords) {
                     for (Map<AttributeInterface, Object> childrenRecord : processedChildRecords) {
-                        Map<AttributeInterface, Object> newMap = new LinkedHashMap<AttributeInterface, Object>(childrenRecord.size() + processedRecord.size());
+                        Map<AttributeInterface, Object> newMap =
+                                new LinkedHashMap<AttributeInterface, Object>(childrenRecord.size()
+                                        + processedRecord.size());
                         newMap.putAll(childrenRecord);
                         newMap.putAll(processedRecord);
                         tempProcessedRecords.add(newMap);
@@ -125,8 +130,9 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
     /**
      * @see edu.wustl.cab2bwebapp.bizlogic.executequery.ICategoryToSpreadsheetTransformer#writeToCSV(edu.wustl.cab2b.common.queryengine.result.ICategoryResult)
      */
-    public void writeToCSV(ICategoryResult<ICategorialClassRecord> result, String fileName, List<AttributeInterface> headers, String filePath) throws IOException {
-        FileWriter fstream = new FileWriter(filePath + fileName);
+    public void writeToCSV(ICategoryResult<ICategorialClassRecord> result, String fileName,
+                           List<AttributeInterface> headers) throws IOException {
+        FileWriter fstream = new FileWriter(UserBackgroundQueries.EXPORT_CSV_DIR + "//" + fileName);
         BufferedWriter out = new BufferedWriter(fstream);
 
         for (AttributeInterface attribute : headers) {
@@ -163,7 +169,7 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
                     for (AttributeInterface attribute : headers) {
                         String val = recordMap.get(attribute) == null ? " " : recordMap.get(attribute).toString();
                         val = val.replace("\"", "\"\"");
-                        if(val.contains(",") || val.contains("\n")) {
+                        if (val.contains(",") || val.contains("\n")) {
                             out.append('"');
                             out.append(val);
                             out.append('"');

@@ -23,6 +23,7 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
+import edu.wustl.cab2bwebapp.bizlogic.UserBackgroundQueries;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
@@ -79,13 +80,13 @@ public class SpreadSheetResultTransformer {
      * @throws IOException 
      * 
      */
-    public String writeToCSV(String filePath) throws IOException {
+    public String writeToCSV() throws IOException {
         String fileName = query.getId() + "_" + System.currentTimeMillis() + ".csv";
         if (query != null && queryResult != null) {
             if (Utility.isCategory(query.getOutputEntity())) {
-                writeCategoryResultToCSV(fileName, filePath);
+                writeCategoryResultToCSV(fileName);
             } else {
-                writeQueryResultToCSV(fileName, filePath);
+                writeQueryResultToCSV(fileName);
             }
         }
         return fileName;
@@ -95,7 +96,7 @@ public class SpreadSheetResultTransformer {
      * @return
      * @throws IOException
      */
-    private String writeQueryResultToCSV(String fileName, String filePath) throws IOException {
+    private String writeQueryResultToCSV(String fileName) throws IOException {
         List<AttributeInterface> attributeOrder = new ArrayList<AttributeInterface>();
         for (AttributeInterface attribute : query.getOutputEntity().getAttributeCollection()) {
             if (AttributeFilter.isVisible(attribute)) {
@@ -103,7 +104,7 @@ public class SpreadSheetResultTransformer {
             }
         }
 
-        FileWriter fstream = new FileWriter(filePath + fileName);
+        FileWriter fstream = new FileWriter(UserBackgroundQueries.EXPORT_CSV_DIR + "//" + fileName);
         BufferedWriter out = new BufferedWriter(fstream);
         Map<String, ?> urlVsRecords = queryResult.getRecords();
         Set<String> urls = urlVsRecords.keySet();
@@ -151,11 +152,11 @@ public class SpreadSheetResultTransformer {
         return fileName;
     }
 
-    private void writeCategoryResultToCSV(String fileName, String filePath) throws IOException {
+    private void writeCategoryResultToCSV(String fileName) throws IOException {
         ICategoryResult<ICategorialClassRecord> result = (ICategoryResult<ICategorialClassRecord>) queryResult;
         List<AttributeInterface> attributes = getAttributesWithOrder(result.getCategory());
         ICategoryToSpreadsheetTransformer transformer = new CategoryToSpreadsheetTransformer();
-        transformer.writeToCSV(result, fileName, attributes, filePath);
+        transformer.writeToCSV(result, fileName, attributes);
     }
 
     /**
@@ -225,7 +226,7 @@ public class SpreadSheetResultTransformer {
 
             ICategoryToSpreadsheetTransformer transformer = new CategoryToSpreadsheetTransformer();
             transformedResult = transformer.convert(recordList, transformationMaxLimit);
-            
+
             //After transforming one URL results, we will check if TxLimit is reached or not.
             //If reached, next URL should not be further sent for transformation. 
             spreadsheetRecordCount = spreadsheetRecordCount + transformedResult.size();

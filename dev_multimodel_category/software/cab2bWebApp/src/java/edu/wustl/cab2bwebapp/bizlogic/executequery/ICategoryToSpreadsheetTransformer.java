@@ -32,5 +32,5 @@ public interface ICategoryToSpreadsheetTransformer {
      * @return
      * @throws IOException
      */
-    public void writeToCSV(ICategoryResult<ICategorialClassRecord> result, String fileName,List<AttributeInterface> attributes, String filePath) throws IOException;
+    public void writeToCSV(ICategoryResult<ICategorialClassRecord> result, String fileName,List<AttributeInterface> attributes) throws IOException;
 }

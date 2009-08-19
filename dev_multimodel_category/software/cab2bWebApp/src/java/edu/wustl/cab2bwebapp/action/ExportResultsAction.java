@@ -32,7 +32,7 @@ public class ExportResultsAction extends Action {
             String exported_file_path = (String) session.getAttribute(Constants.EXPORTED_FILE_PATH);
             //file is getting exported (and thus built) first time.
             if (exported_file_path == null && !((" ").equals(exported_file_path))) {
-                String newfilename = queryBizLogic.exportToCSV(filePath);
+                String newfilename = queryBizLogic.exportToCSV();
                 exported_file_path = filePath + newfilename;
                 session.setAttribute(Constants.EXPORTED_FILE_PATH, exported_file_path);
             }
