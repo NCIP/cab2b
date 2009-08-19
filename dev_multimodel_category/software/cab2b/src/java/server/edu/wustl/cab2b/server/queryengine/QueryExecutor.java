@@ -228,13 +228,14 @@ public class QueryExecutor {
                 boolean isEveryUrlWorked= true;
                 for (FQPUrlStatus fqpUrl : fqpUrlStatus) {
                     String urlStatus = fqpUrl.getStatus();
-                    if (urlStatus.equals(ProcessingStatus._Complete_With_Error)) {
+                    if (urlStatus.equals(ProcessingStatus._Complete_With_Error) && isProcessingFinished()) {
                         qStatus.setStatus(AbstractStatus.Complete_With_Error);
                         isEveryUrlWorked = false;
                         break;
                     } 
                 }
                 if(isEveryUrlWorked) {
+                    if(isProcessingFinished())
                     qStatus.setStatus(AbstractStatus.Complete);
                 }
             } 
