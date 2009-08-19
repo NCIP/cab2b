@@ -5,6 +5,7 @@
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -104,7 +105,7 @@ public class SpreadSheetResultTransformer {
             }
         }
 
-        FileWriter fstream = new FileWriter(UserBackgroundQueries.EXPORT_CSV_DIR + "//" + fileName);
+        FileWriter fstream = new FileWriter(UserBackgroundQueries.EXPORT_CSV_DIR + File.separator + fileName);
         BufferedWriter out = new BufferedWriter(fstream);
         Map<String, ?> urlVsRecords = queryResult.getRecords();
         Set<String> urls = urlVsRecords.keySet();

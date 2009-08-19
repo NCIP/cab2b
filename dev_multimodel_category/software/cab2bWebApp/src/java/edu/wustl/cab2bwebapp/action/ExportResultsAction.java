@@ -17,6 +17,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import edu.wustl.cab2bwebapp.bizlogic.UserBackgroundQueries;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryBizLogic;
 import edu.wustl.cab2bwebapp.constants.Constants;
 
@@ -26,7 +27,7 @@ public class ExportResultsAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws Exception {
         if (request.getParameter("filePath") == null) {
-            String filePath = getServlet().getServletContext().getRealPath("/");
+            String filePath = UserBackgroundQueries.EXPORT_CSV_DIR + File.separator;
             HttpSession session = request.getSession();
             QueryBizLogic queryBizLogic = (QueryBizLogic) session.getAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT);
             String exported_file_path = (String) session.getAttribute(Constants.EXPORTED_FILE_PATH);

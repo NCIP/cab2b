@@ -1,6 +1,7 @@
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -132,7 +133,7 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
      */
     public void writeToCSV(ICategoryResult<ICategorialClassRecord> result, String fileName,
                            List<AttributeInterface> headers) throws IOException {
-        FileWriter fstream = new FileWriter(UserBackgroundQueries.EXPORT_CSV_DIR + "//" + fileName);
+        FileWriter fstream = new FileWriter(UserBackgroundQueries.EXPORT_CSV_DIR + File.separator + fileName);
         BufferedWriter out = new BufferedWriter(fstream);
 
         for (AttributeInterface attribute : headers) {
