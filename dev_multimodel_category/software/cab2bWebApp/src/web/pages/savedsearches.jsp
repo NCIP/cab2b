@@ -12,7 +12,8 @@
 		<logic:iterate name="savedSearches" id="savedSearch" type="edu.wustl.cab2b.common.queryengine.ICab2bQuery">
 			<A href="#this" class="link" name="savedquery" id="<bean:write name="savedSearch" property="id"/>" onClick="document.forms[0].queryId.value=this.id;document.forms[0].action='AddLimit.do';document.forms[0].submit();"><bean:write name="savedSearch" property="name"/></A>
 			<DIV class="text" style="display: inline; line-height: 1.8em"><bean:write name="savedSearch" property="description"/>&nbsp;</DIV><BR/>			
-		</logic:iterate>		
+		</logic:iterate>
+		<logic:notPresent name="keyWordQueryId"><INPUT type="hidden" name="queryId"></logic:notPresent>
 	</logic:notPresent>
 	<logic:present name="addlimit">
 		<logic:iterate name="savedSearches" id="savedSearch" type="edu.wustl.cab2b.common.queryengine.ICab2bQuery">
@@ -21,4 +22,4 @@
 		</logic:iterate>
 	</logic:present>			
 </logic:present>
-<INPUT type="hidden" name="queryId" value="<logic:present name="keyWordQueryId">${requestScope.keyWordQueryId}</logic:present>">
+<logic:present name="keyWordQueryId"><INPUT type="hidden" name="queryId" id="keyWordQueryId" value="${requestScope.keyWordQueryId}"></logic:present>
