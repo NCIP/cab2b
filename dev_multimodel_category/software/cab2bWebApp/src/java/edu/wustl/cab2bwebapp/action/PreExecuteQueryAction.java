@@ -2,9 +2,6 @@ package edu.wustl.cab2bwebapp.action;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -26,12 +23,10 @@ import edu.wustl.cab2b.common.queryengine.KeywordQuery;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
-import edu.wustl.cab2bwebapp.actionform.KeywordSearchForm;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.TransformedResultObjectWithContactInfo;
 import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.cab2bwebapp.dvo.SavedQueryDVO;
-import edu.wustl.cab2bwebapp.util.Utility;
 
 /**
 * Action for populating things needed as prerequisites for searchresults.jsp .
@@ -71,10 +66,18 @@ public class PreExecuteQueryAction extends Action {
             List<SavedQueryDVO> savedQueries = new ArrayList<SavedQueryDVO>();
 
             String id = request.getParameter(Constants.QUERY_ID);
-            if ((id == null) || (id == "")) //By any case, if keyword Query Id comes as null, forward it back to home.jsp
+            if ((id == null) || (id == "")) //Keyword Query
             {
-                actionForward = Constants.FORWARD_HOME;
-                return mapping.findForward(actionForward);
+                //With each modelGroup, corresponding keyword Query Id will also be set on each change of ModelGroup
+                //It will be forwarded to searchresultspage when a keyword query is given for execution.
+                Long keywordID =
+                        savedQueryBizLogic.getKeywordQueryId(request.getParameter(Constants.MODEL_GROUPS));
+                if (keywordID!=null) {
+                    id = keywordID.toString();
+                }else{
+                    //TODO : show an error page
+                    logger.info("No keyword query present in database for selected ModelGroup.");
+                }
             }
             Long queryId = Long.parseLong(id);
             ICab2bQuery query = savedQueryBizLogic.getQueryById(queryId);

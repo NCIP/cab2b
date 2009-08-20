@@ -75,10 +75,6 @@ public class DisplaySavedSearchesAction extends Action {
                     request.setAttribute(Constants.FORWARD_ADD_LIMIT, Constants.FORWARD_ADD_LIMIT);
                 }
                 request.setAttribute(Constants.SAVED_SEARCHES, savedSearchesList);
-                //With each modelGroup, corresponding keyword Query Id will also be set on each change of ModelGroup
-                //It will be forwarded to searchresultspage when a keyword query is given for execution.
-                Long keyWordQueryId = savedQueryBizLogic.getKeywordQueryId(modelGroupName);
-                request.setAttribute(Constants.KEYWORD_QUERY_ID, keyWordQueryId);
             }
             findForward = Constants.FORWARD_SAVED_SEARCHES;
         } catch (Exception e) {
