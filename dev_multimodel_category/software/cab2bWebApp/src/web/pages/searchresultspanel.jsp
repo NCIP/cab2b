@@ -23,7 +23,7 @@
 	<logic:notEqual name="searchResultsView" value="processing">
 		<display:table class="simple" name="${sessionScope.searchResultsView}" cellspacing="1" cellpadding="4" uid="row" htmlId="searchresultstable">
 			<logic:iterate name="row" id="column" type="edu.wustl.cab2bwebapp.dvo.SearchResultDVO">
-				<display:column title="${column.title}" value="${column.value}" sortable="false" headerClass="unsortable"/>
+				<display:column title="${column.title}" value="${column.value}" media="${column.media}" sortable="false" headerClass="unsortable"/>
 			</logic:iterate>
 		</display:table>
 	</logic:notEqual>

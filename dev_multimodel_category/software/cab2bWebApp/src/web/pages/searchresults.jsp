@@ -17,12 +17,12 @@
   {		
 	processAJAXRequest('ExecuteQuery.do');
 	getTransformedResults();
+	<% session.setAttribute("isFirstRequest", false); %>
   }
 }
 
  function getTransformedResults()
 {
-  updateView();
   var url = 'TransformQueryResultsAction.do';
   processAJAXRequest(url, 'centerpanelcontent', 1);
    if(document.getElementById("resultcountAJAX"))
@@ -32,13 +32,14 @@
   var resultCount = document.getElementById('resultcountAJAX')?document.getElementById('resultcountAJAX').innerHTML:'0';
    if(resultCount != '0')
   {
-    document.getElementById('toppanel').innerHTML += document.getElementById('completeresultsmessage')!=null?document.getElementById('completeresultsmessage').innerHTML:(document.getElementById('partialresultsmessage')!=null?"document.getElementById('partialresultsmessage').innerHTML":"");
+    document.getElementById('resultsmessage').innerHTML = document.getElementById('completeresultsmessage')!=null?document.getElementById('completeresultsmessage').innerHTML:(document.getElementById('partialresultsmessage')!=null?"document.getElementById('partialresultsmessage').innerHTML":"");
+	document.getElementById('resultsmessage').style.textAlign = 'left';
   }
    if(document.getElementById("completeresultsmessage"))
   { 	
      if(document.getElementById('executeinbackgroundbutton'))
 	{
-	  document.getElementById('executeinbackgroundbutton').disabled = true;      
+	  document.getElementById('executeinbackgroundbutton').disabled = true;
 	}
     document.getElementById('exportbutton').disabled = false;
     document.getElementById('exportbutton').className = 'button';
@@ -57,7 +58,7 @@
 { 
    if(navigator.appName.indexOf('Netscape')==-1)
   {	  
-	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (270);
+	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (310);
     document.getElementById('centerpanelcontent').style.overflow = 'auto';
 	 if(document.getElementById('searchresultstable'))
     {
@@ -66,12 +67,13 @@
   }
    else
   {
-	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (285);
+	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (325);
 	 if(document.getElementById('searchresultstable'))
     {
-	  document.getElementById('searchresultstable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '275';
+	  document.getElementById('searchresultstable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '315';
 	}
   }
+  setTimeout("updateView()", 1);
 }
 </SCRIPT>
 </HEAD>
@@ -104,8 +106,8 @@
 		<DIV>
 			<A class="link" style="display:none;" id="failedserviceslink" href="#this" onclick="document.getElementById('pageoverlay').style.display='block';document.getElementById('failedservicespanel').style.display='block';"><bean:message key="link.failedserviceinstances"/></A>
 			<SPAN class="text" id="failedservicescount"></SPAN>
-		</DIV>	
-		<IMG SRC="images/PageLoading.gif" style="height:1em;width:1em;">&nbsp;Fetching Results
+		</DIV><BR style="line-height:0.2em;"><HR>	
+		<DIV style="font-size:0.85em;" id="resultsmessage"><IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"></DIV>
 	</DIV>		
 	<DIV id="pageoverlay"></DIV>
 	<DIV id="failedservicespanel">
