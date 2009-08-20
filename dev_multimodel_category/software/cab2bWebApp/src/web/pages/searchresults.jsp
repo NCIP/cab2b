@@ -122,8 +122,7 @@
 	</DIV>
 </DIV>
 <SCRIPT language="JavaScript">updateView();</SCRIPT>
-<DIV id="bottompanel">
-	<INPUT type="button" class="button" value="<bean:message key="button.back"/>" onClick="history.go(-1)">&nbsp;
+<DIV id="bottompanel">	
 	<logic:present name="userName">
 		<INPUT type="button" class="button" id="executeinbackgroundbutton" value="<bean:message key="button.executeinbackground"/>" onClick="document.location='BackgroundQuery.do'">&nbsp;
 	</logic:present>
