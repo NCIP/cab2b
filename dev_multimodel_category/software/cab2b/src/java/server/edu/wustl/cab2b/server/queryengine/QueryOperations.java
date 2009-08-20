@@ -77,7 +77,14 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         List<Object> params = new ArrayList<Object>(1);
         params.add(userName);
 
-        return getQueries("getUserQueriesDetails", params);
+        List<ICab2bQuery> queries = null;
+        try {
+            queries = (List<ICab2bQuery>) Utility.executeHQL("getUserQueriesDetails", params);
+        } catch (HibernateException e) {
+            throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
+        }
+
+        return queries;
     }
 
     /**
@@ -91,7 +98,15 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         params.add(QueryType.ANDed.toString());
         params.add(userName);
 
-        return getQueries("getQueriesByTypeAndUserName", params);
+        List<ICab2bQuery> queries = null;
+        try {
+            queries = (List<ICab2bQuery>) Utility.executeHQL("getQueriesByTypeAndUserName", params);
+            postProcessMMCQueries(queries);
+            filterSystemGeneratedSubQueries(queries);
+        } catch (HibernateException e) {
+            throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
+        }
+        return queries;
     }
 
     /**
@@ -101,14 +116,23 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
      * @return
      */
     public List<KeywordQuery> getKeywordQueriesByUserName(final String userName) {
-        List<Object> paramList = new ArrayList<Object>(2);
-        paramList.add(userName);
+        List<Object> params = new ArrayList<Object>(1);
+        params.add(userName);
 
-        List<ICab2bQuery> queries = getQueries("getKeywordQueriesByUserName", paramList);
-        List<KeywordQuery> keywordQueries = new ArrayList<KeywordQuery>(queries.size());
-        for (ICab2bQuery query : queries) {
-            keywordQueries.add((KeywordQuery) query);
+        List<KeywordQuery> keywordQueries = null;
+        try {
+            List<ICab2bQuery> queries =
+                    (List<ICab2bQuery>) Utility.executeHQL("getKeywordQueriesByUserName", params);
+            filterSystemGeneratedSubQueries(queries);
+
+            keywordQueries = new ArrayList<KeywordQuery>(queries.size());
+            for (ICab2bQuery query : queries) {
+                keywordQueries.add((KeywordQuery) query);
+            }
+        } catch (HibernateException e) {
+            throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
         }
+
         return keywordQueries;
     }
 
@@ -222,7 +246,7 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
                 new ConstraintsObjectBuilder(Cab2bQueryObjectFactory.createCab2bQuery());
         queryBuilder.addRule(new ArrayList<AttributeInterface>(0), new ArrayList<String>(0),
                              new ArrayList<String>(0), new ArrayList<String>(0), en);
-        ICab2bQuery dummy =(ICab2bQuery) queryBuilder.getQuery();
+        ICab2bQuery dummy = (ICab2bQuery) queryBuilder.getQuery();
         dummy.setOutputEntity(en);
 
         KeywordQuery keywordQuery = new KeywordQueryImpl(dummy);
@@ -236,24 +260,6 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         saveQuery(keywordQuery);
 
         return keywordQuery;
-    }
-
-    /**
-     * This method returns the queries for the given HQL query string and the conditions
-     * @param hqlQuery
-     * @param params
-     * @return
-     */
-    private List<ICab2bQuery> getQueries(final String hqlQuery, List<Object> params) {
-        List<ICab2bQuery> queries = null;
-        try {
-            queries = (List<ICab2bQuery>) Utility.executeHQL(hqlQuery, params);
-            postProcessMMCQueries(queries);
-            filterSystemGeneratedSubQueries(queries);
-        } catch (HibernateException e) {
-            throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
-        }
-        return queries;
     }
 
     /**
@@ -317,7 +323,7 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
             Iterator<ICab2bQuery> queryIterator = queries.iterator();
             while (queryIterator.hasNext()) {
                 ICab2bQuery query = queryIterator.next();
-                if (query.getIsSystemGenerated() && !(query instanceof KeywordQuery)) {
+                if (query.getIsSystemGenerated()) {
                     queryIterator.remove();
                 }
             }

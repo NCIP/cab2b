@@ -63,6 +63,8 @@
 		select new edu.wustl.cab2b.common.queryengine.Cab2bQuery (q.id, q.name, q.description, q.createdDate)
 		from edu.wustl.cab2b.common.queryengine.Cab2bQuery q
 		where q.createdBy = (Select u.userId from edu.wustl.cab2b.common.user.User u where u.userName = ?)
+		and q.id not in (select mmcq.subQueries.id from edu.wustl.cab2b.common.queryengine.MultiModelCategoryQueryImpl mmcq)
+		and q.id not in (select kq.id from edu.wustl.cab2b.common.queryengine.KeywordQueryImpl kq)
 	</query>
 
 	<query name="getServiceURLsByDomainModelnVersion">
