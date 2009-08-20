@@ -6,7 +6,6 @@ package edu.wustl.cab2b.common.multimodelcategory.bean;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
 import edu.wustl.common.querysuite.metadata.path.IPath;
@@ -25,7 +24,7 @@ public class MultiModelCategoryBean implements Serializable {
 
     private ModelGroupInterface applicationGroup;
 
-    private Collection<IPath> paths = new ArrayList<IPath>();
+    private Collection<IPath> paths;
 
     private Collection<MultiModelAttributeBean> multiModelAttributes;
 
@@ -75,16 +74,10 @@ public class MultiModelCategoryBean implements Serializable {
      * @return the paths
      */
     public Collection<IPath> getPaths() {
+        if (paths == null) {
+            paths = new ArrayList<IPath>();
+        }
         return paths;
-    }
-
-    /**
-     * This method returns the path present at the given index.
-     * @param index position in the collection
-     * @return IPath at the given index; otherwise, if no IPath is present at given index
-     */
-    public IPath getPath(int index) {
-        return ((List<IPath>) paths).get(index);
     }
 
     /**
@@ -99,7 +92,7 @@ public class MultiModelCategoryBean implements Serializable {
      * @param path
      */
     public void addPath(IPath path) {
-        paths.add(path);
+        getPaths().add(path);
     }
 
     /**

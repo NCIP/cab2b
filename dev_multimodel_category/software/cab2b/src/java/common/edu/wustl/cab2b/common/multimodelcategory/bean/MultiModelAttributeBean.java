@@ -74,7 +74,7 @@ public class MultiModelAttributeBean implements Serializable {
      * @param attribute
      */
     public void addSelectedAttribute(AttributeInterface attribute) {
-        this.selectedAttributes.add(attribute);
+        getSelectedAttributes().add(attribute);
     }
 
     /**
