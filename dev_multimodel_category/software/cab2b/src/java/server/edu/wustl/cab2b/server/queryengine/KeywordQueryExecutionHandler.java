@@ -32,7 +32,7 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
 
     private String keyword;
 
-    private Map<KeywordQuery, IQueryResult<? extends IRecord>> queryVsResultMap;
+    private Map<ICab2bQuery, IQueryResult<? extends IRecord>> queryVsResultMap;
 
     /**
      * @param queries
@@ -50,7 +50,7 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
         this.keyword = keyword;
         this.queryExecutorsList = new ArrayList<QueryExecutor>(query.getSubQueries().size());
         this.queryVsResultMap =
-                new HashMap<KeywordQuery, IQueryResult<? extends IRecord>>(query.getSubQueries().size());
+                new HashMap<ICab2bQuery, IQueryResult<? extends IRecord>>(query.getSubQueries().size());
     }
 
     /* (non-Javadoc)
@@ -87,7 +87,7 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
      * because, we dont have consolidated result available for keyword query.
      * @return
      */
-    public Map<KeywordQuery, IQueryResult<? extends IRecord>> getQueryVsResultMap() {
+    public Map<ICab2bQuery, IQueryResult<? extends IRecord>> getQueryVsResultMap() {
         for (QueryExecutor executor : queryExecutorsList) {
             IQueryResult<? extends IRecord> result = null;
             //when query is sent to execute in background, then only query status (count, etc) will be updated in database.
@@ -97,7 +97,7 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
             } else {
                 result = executor.getPartialResult();
             }
-            KeywordQuery query = (KeywordQuery) executor.getQuery();
+            ICab2bQuery query = (ICab2bQuery) executor.getQuery();
             queryVsResultMap.put(query, result);
         }
         return queryVsResultMap;

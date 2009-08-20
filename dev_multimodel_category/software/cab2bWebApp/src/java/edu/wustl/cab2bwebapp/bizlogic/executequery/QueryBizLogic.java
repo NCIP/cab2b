@@ -1,6 +1,5 @@
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -166,13 +165,13 @@ public class QueryBizLogic {
                                                                                              int transformationMaxLimit) {
         Map<ICab2bQuery, TransformedResultObjectWithContactInfo> transformedResult =
                 new HashMap<ICab2bQuery, TransformedResultObjectWithContactInfo>();
-        Map<KeywordQuery, IQueryResult<? extends IRecord>> queryVsResultMap =
+        Map<ICab2bQuery, IQueryResult<? extends IRecord>> queryVsResultMap =
                 ((KeywordQueryExecutionHandler) queryExecutionHandler).getQueryVsResultMap();
-        for (KeywordQuery keywordQuery : queryVsResultMap.keySet()) {
+        for (ICab2bQuery keywordSubQuery : queryVsResultMap.keySet()) {
             TransformedResultObjectWithContactInfo resultObj =
-                    new SpreadSheetResultTransformer(keywordQuery, queryVsResultMap.get(keywordQuery))
+                    new SpreadSheetResultTransformer(keywordSubQuery, queryVsResultMap.get(keywordSubQuery))
                         .transResultToSpreadSheetView(transformationMaxLimit);
-            transformedResult.put(keywordQuery, resultObj);
+            transformedResult.put(keywordSubQuery, resultObj);
         }
         return transformedResult;
     }
@@ -285,8 +284,8 @@ public class QueryBizLogic {
     private String keyWordExportToCSV() throws IOException {
         Set<String> fileNames = new HashSet<String>();
         KeywordQueryExecutionHandler handler = (KeywordQueryExecutionHandler) queryExecutionHandler;
-        Map<KeywordQuery, IQueryResult<? extends IRecord>> qVsResultMap = handler.getQueryVsResultMap();
-        for (Map.Entry<KeywordQuery, IQueryResult<? extends IRecord>> keyValuePair : qVsResultMap.entrySet()) {
+        Map<ICab2bQuery, IQueryResult<? extends IRecord>> qVsResultMap = handler.getQueryVsResultMap();
+        for (Map.Entry<ICab2bQuery, IQueryResult<? extends IRecord>> keyValuePair : qVsResultMap.entrySet()) {
             SpreadSheetResultTransformer transformer =
                     new SpreadSheetResultTransformer(keyValuePair.getKey(), keyValuePair.getValue());
             String fileName = null;
