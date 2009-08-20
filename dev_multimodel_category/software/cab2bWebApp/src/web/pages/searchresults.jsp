@@ -40,7 +40,7 @@
      if(document.getElementById('executeinbackgroundbutton'))
 	{
 	  document.getElementById('executeinbackgroundbutton').disabled = true;
-	  document.getElementById('exportbutton').className = 'buttondisabled';
+	  document.getElementById('executeinbackgroundbutton').className = 'buttondisabled';
 	}
     document.getElementById('exportbutton').disabled = false;
     document.getElementById('exportbutton').className = 'button';
