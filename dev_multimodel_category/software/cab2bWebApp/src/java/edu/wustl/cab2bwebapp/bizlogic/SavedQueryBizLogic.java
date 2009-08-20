@@ -13,6 +13,7 @@ import edu.common.dynamicextensions.util.DynamicExtensionsUtility;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.KeywordQuery;
+import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.server.queryengine.QueryOperations;
 import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
 import edu.wustl.cab2b.server.util.ServerProperties;
@@ -134,6 +135,18 @@ public class SavedQueryBizLogic {
             Collection<EntityGroupInterface> queryEntityGroups = QueryExecutorUtil.getEntityGroups(query);
             if (entityGroups.containsAll(queryEntityGroups)) {
                 regularQueriesFor.add(query);
+            } else {
+                if (query instanceof MultiModelCategoryQuery)//&& entityGroups.retainAll(queryEntityGroups)){
+                {
+                    for (EntityGroupInterface entityGroupInterface : entityGroups) {
+                        for (EntityGroupInterface queryEntityGroupInterface : queryEntityGroups) {
+                            if (entityGroupInterface.equals(queryEntityGroupInterface)) {
+                                regularQueriesFor.add(query);
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         }
         return regularQueriesFor;
