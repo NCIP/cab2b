@@ -156,6 +156,13 @@ input.button {
 	background-color: #DDD;
 }
 
+input.buttondisabled {
+	font-weight: bold;
+	font-size: 0.75em;
+	font-family: sans-serif, Arial, Helvetica;
+	background-color: #DDD;
+}
+
 input.textbox {
 	font-size: 0.73em;
 	font-family: sans-serif, Arial, Helvetica;

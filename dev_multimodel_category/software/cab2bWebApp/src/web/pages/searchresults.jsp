@@ -40,6 +40,7 @@
      if(document.getElementById('executeinbackgroundbutton'))
 	{
 	  document.getElementById('executeinbackgroundbutton').disabled = true;
+	  document.getElementById('exportbutton').className = 'buttondisabled';
 	}
     document.getElementById('exportbutton').disabled = false;
     document.getElementById('exportbutton').className = 'button';
@@ -128,7 +129,7 @@
 	<logic:present name="userName">
 		<INPUT type="button" class="button" id="executeinbackgroundbutton" value="<bean:message key="button.executeinbackground"/>" onClick="document.location='BackgroundQuery.do'">&nbsp;
 	</logic:present>
-	<INPUT type="button" style="font-size:0.75em;font-family:sans-serif, Arial, Helvetica;" id="exportbutton" value="<bean:message key="button.export"/>" onClick="document.location = 'ExportResults.do?queryId=<bean:write name="queryId"/>';TogglePreloader(0);" disabled>
+	<INPUT type="button" class="buttondisabled" id="exportbutton" value="<bean:message key="button.export"/>" onClick="document.location = 'ExportResults.do?queryId=<bean:write name="queryId"/>';TogglePreloader(0);" disabled>
 </DIV>
 <jsp:include page="footer.jsp"/>
 </BODY>
