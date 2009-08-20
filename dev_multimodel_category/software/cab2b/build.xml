@@ -4,7 +4,8 @@
 	<property name="resource.dir" location="${src.dir}/resources" />
 
 	<property name="conf.dir" location="${src.dir}/conf" />
-
+	<property file="../build/project.properties" />
+	<property file="../build/install.properties" />
 	<property file="${conf.dir}/server.properties" />
 
 	<property name="common.src" location="${source.dir}/common" />
@@ -29,7 +30,7 @@
 
 	<property name="XmlLogger.file" value="${build.log.dir}\log.xml" />
 	<tstamp>
-		<format property="TODAY" pattern="MMMM-dd-yyyy" locale="en" />
+		<format property="TODAY" pattern="d-MMMM-yyyy hh:mm aa" locale="en" />
 	</tstamp>
 
 	<property name="testcase.properties.folder" location="${workarea.dir}/TestCaseProperties" />
@@ -175,7 +176,7 @@
 
 		<replace file="${conf.dir}/client.properties" token="@grid.type@" value="${grid-type}" />
 
-		<replace file="${conf.dir}/server.properties" token="@application.build@" value="${application.build}" />
+		<replace file="${conf.dir}/server.properties" token="@application.build@" value="${application.build} Built at: ${TODAY}" />
 		<replace file="${conf.dir}/server.properties" token="@ds.name@" value="${ds-name}" />
 		<replace file="${conf.dir}/server.properties" token="@db.loader@" value="${db-loader}" />
 		<replace file="${conf.dir}/server.properties" token="@default.user@" value="${default-user}" />
@@ -1071,8 +1072,6 @@
 		the JBoss on its own. It's developer's responsibility to setup JBoss and
 		define its path. 
 	 ===========================================================================-->
-	<property file="../build/project.properties" />
-	<property file="../build/install.properties" />
 
 	<!-- ================================================================================== 
 				"Drops existing database and create new database with schema"
