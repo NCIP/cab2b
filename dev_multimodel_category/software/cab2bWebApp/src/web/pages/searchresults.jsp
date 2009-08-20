@@ -67,6 +67,8 @@
   }
    else
   {
+	document.getElementById('toppanel').style.marginLeft = "5";
+	document.getElementById('toppanel').style.width = "98%";
 	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (325);
 	 if(document.getElementById('searchresultstable'))
     {
