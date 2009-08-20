@@ -40,8 +40,11 @@
 	<property name="dbutil.properties.file" location="${conf.dir}/dbutil.properties" />
 	<property name="jbossjca.service.xml" location="${conf.dir}/jbossjca-service.xml" />
 	<property name="log4j.xml.file" location="${conf.dir}/log4j.xml" />
+	<property name="ejb.jboss.xml.file" location="${conf.dir}/conf/ssl_jboss.xml" />
 	<property name="tomcat.web.xml.file" location="${conf.dir}/tomcat_web.xml" />
+	<property name="jboss.invoker.web.xml.file" location="${conf.dir}/invoker_web.xml" />
 	<property name="jboss.invoker.service.xml.file" location="${conf.dir}/invoker_jboss-service.xml" />
+	<property name="jboss.invoker.ssl.service.xml.file" location="${conf.dir}/invoker_ssl_jboss-service.xml" />
 	
 	<property name="db.scripts.dir" location="db" />
 
@@ -167,6 +170,8 @@
 
 		<replace file="${conf.dir}/cab2b.properties" token="@server.host@" value="${server-host}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@server.port@" value="${server-port}" />
+		<replace file="${conf.dir}/cab2b.properties" token="@jndi.protocol@" value="${jndi.protocol}" />
+		<replace file="${conf.dir}/cab2b.properties" token="@jndi.invoker.url@" value="${jndi.invoker.url}" />
 		
 		<replace file="${conf.dir}/cab2b.properties" token="@server.host@" value="${server-host}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@server.port@" value="${server-port}" />
@@ -193,9 +198,8 @@
 		<replace file="${conf.dir}/cagrid.properties" token="@delegetee@" value="${delegetee-identifier}" />
 		<replace file="${conf.dir}/cagrid.properties" token="@grid.cert@" value="${grid-cert}" />
 		<replace file="${conf.dir}/cagrid.properties" token="@grid.key@" value="${grid-key}" />
-		
-		
 	</target>
+
 	<!-- ================================================================================== -->
 	<target name="pmd" description="PMD scan Java source code and looks for potential code problems.">
 		<path id="pmd.classpath">
@@ -345,8 +349,19 @@
 				<include name="**/*.jar" />
 			</fileset>
 		</copy>
-		<echo message="java -Xmx512m -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="false" />
-		<echo message="java -Xmx512m -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="false" />
+
+		<if>
+			<equals arg1="${jboss.ssl.enable}" arg2="true" />
+			<then>
+				<echo message="java -Xmx1024m -Djavax.net.ssl.trustStore=./jssecacerts -Dorg.jboss.security.ignoreHttpsHost=true -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="true" />
+				<echo message="java -Xmx1024m -Djavax.net.ssl.trustStore=./jssecacerts -Dorg.jboss.security.ignoreHttpsHost=true -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="true" />
+			</then> 
+			<else>
+				<echo message="java -Xmx1024m -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="true" />
+				<echo message="java -Xmx1024m -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="true" />
+			</else>
+		</if>
+
 		<copy todir="${client.setup.dir}/conf">
 			<fileset dir="${conf.dir}">
 				<include name="Cab2bApplicationResources.properties" />
@@ -392,10 +407,20 @@
 		</delete>
 
 		<mkdir dir="${server.jar.dir}/META-INF" />
+
+		<if>
+			<equals arg1="${jboss.ssl.enable}" arg2="true" />
+			<then>
+				<property name="ejb.jboss.xml.file" value="${conf.dir}/conf/ejb/ssl_jboss.xml" />
+			</then>
+			<else>
+				<property name="ejb.jboss.xml.file" value="${conf.dir}/conf/ejb/jboss.xml" />
+			</else>
+		</if>
 		<copy todir="${server.jar.dir}/META-INF">
 			<fileset dir="${conf.dir}/ejb">
 				<include name="ejb-jar.xml" />
-				<include name="jboss.xml" />
+				<include name="${ejb.jboss.xml.file}" />
 			</fileset>
 		</copy>
 
@@ -1013,7 +1038,19 @@
 		<copy file="${jbossjca.service.xml}" todir="${dist.dir}" />
 		<copy file="${log4j.xml.file}" todir="${dist.dir}" />
 		<copy file="${tomcat.web.xml.file}" tofile="${dist.dir}/web.xml" />
-		<copy file="${jboss.invoker.service.xml.file}" tofile="${dist.dir}/jboss-service.xml" />
+		<copy file="${jboss.invoker.web.xml.file}" tofile="${dist.dir}/invoker_web.xml" />
+
+		<if>
+			<equals arg1="${jboss.ssl.enable}" arg2="true" />
+			<then>
+				<copy file="${jboss.invoker.ssl.service.xml.file}" tofile="${dist.dir}/jboss-service.xml" />
+			</then>
+			<else>
+				<copy file="${jboss.invoker.service.xml.file}" tofile="${dist.dir}/jboss-service.xml" />
+			</else>
+		</if>
+
+
 		<copy file="${lib.dir}/server/oracleDriver.jar" todir="${dist.dir}" />
 		<copy file="${lib.dir}/server/mysql-connector-java-5.0.8-bin.jar" todir="${dist.dir}" />
 		<copy file="${lib.dir}/common/hibernate3.jar" todir="${dist.dir}" />
@@ -1023,7 +1060,6 @@
 		<copy file="${lib.dir}/common/cryptix-asn1.jar" todir="${dist.dir}" />
 		<copy file="${lib.dir}/common/jce-jdk13-125.jar" todir="${dist.dir}" />
 		<copy file="${lib.dir}/common/puretls.jar" todir="${dist.dir}" />
-		
 	</target>
 
 	<!--==========================================================================
@@ -1056,7 +1092,6 @@
 	<property name="cab2b.ds.to.path" location="${jboss.home}/server/${jboss.server.name}/deploy" />
 
 	<property name="ds-name" value="${application.context.name}" />
-	<property name="server-port" value="${jboss.server.port}" />
 
 	<target name="dev.deploy" depends="build.all" description="Deploys EAR file to JBoss application server">
 		<delete dir="${jboss.home}/server/default/tmp/deploy" />
