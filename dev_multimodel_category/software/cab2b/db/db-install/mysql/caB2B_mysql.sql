@@ -135,7 +135,7 @@ create table CAB2B_QUERY_STATUS (
   USER_ID bigint not null, 
   QUERY_ID bigint not null, 
   CONDITIONS varchar(1024) not null, 
-  START_TIME datetime not null, 
+  START_TIME datetime, 
   END_TIME datetime, 
   FILENAME varchar(100), 
   PARENT_ID bigint,
