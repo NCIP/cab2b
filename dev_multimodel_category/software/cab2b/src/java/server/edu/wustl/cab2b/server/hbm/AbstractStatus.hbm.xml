@@ -38,7 +38,7 @@
 			 insert="true" not-null="true" />
 
 			<property name="queryStartTime" column="START_TIME" type="timestamp" update="true" insert="true"
-				not-null="true" />
+				not-null="false" />
 
 			<property name="queryEndTime" column="END_TIME" type="timestamp" update="true" insert="true"
 				not-null="false" />
