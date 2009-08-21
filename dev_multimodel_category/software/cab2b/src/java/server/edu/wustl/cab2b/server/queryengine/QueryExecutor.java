@@ -138,6 +138,7 @@ public class QueryExecutor {
         ConstraintsBuilder constraintsBuilder = new ConstraintsBuilder(query, categoryPreprocessorResult);
         this.constraintsBuilderResult = constraintsBuilder.buildConstraints();
         threadPoolExecutor.setThreadFactory(new QueryExecutorThreadFactory());
+        initilizeQueryStatus();
     }
 
     /**
@@ -179,7 +180,7 @@ public class QueryExecutor {
      * @return Returns the IQueryResult
      */
     public void executeQuery() {
-        initilizeQueryStatus();
+        qStatus.setQueryStartTime(new Date());
         logger.info("Entered QueryExecutor...");
 
         if (isCategoryOutput()) {
@@ -297,8 +298,7 @@ public class QueryExecutor {
     private void initilizeQueryStatus() {
         qStatus = new QueryStatusImpl();
         qStatus.setQuery(query);
-        qStatus.setUser(user);
-        qStatus.setQueryStartTime(new Date());
+        qStatus.setUser(user);       
         qStatus.setVisible(Boolean.FALSE);
         qStatus.setQueryConditions(UtilityOperations.getStringRepresentationofConstraints(query.getConstraints()));
         qStatus.setDescription(query.getName() + " Query Initialized.");
