@@ -6,6 +6,7 @@ package edu.wustl.cab2b.server.queryengine;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.multimodelcategory.MultiModelAttribute;
 import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategory;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
+import edu.wustl.cab2b.common.queryengine.result.FQPUrlStatus;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
@@ -49,14 +51,15 @@ public class MMCQueryResultConflator {
      */
     public IQueryResult<? extends IRecord> conflate(Collection<IQueryResult<? extends IRecord>> queryResults) {
         IQueryResult<IRecord> conflatedResult = QueryResultFactory.createResult(mmcQuery.getOutputEntity());
+        Collection<FQPUrlStatus> fqpQueryUrlStatus = new HashSet<FQPUrlStatus>();
 
-        boolean noResult = true;
         for (IQueryResult<? extends IRecord> queryResult : queryResults) {
+
             ICategoryResult<ICategorialClassRecord> categoryResult =
                     (ICategoryResult<ICategorialClassRecord>) queryResult;
+            fqpQueryUrlStatus.addAll(categoryResult.getFQPUrlStatus());
             Map<String, List<ICategorialClassRecord>> catRecords = categoryResult.getRecords();
             if (catRecords != null && !catRecords.isEmpty()) {
-                noResult = false;
                 Set<Entry<String, List<ICategorialClassRecord>>> urlRecordEntries = catRecords.entrySet();
                 for (Entry<String, List<ICategorialClassRecord>> urlRecordEntry : urlRecordEntries) {
                     String url = urlRecordEntry.getKey();
@@ -70,10 +73,7 @@ public class MMCQueryResultConflator {
                 }
             }
         }
-
-        if (noResult) {
-            conflatedResult = null;
-        }
+        conflatedResult.setFQPUrlStatus(fqpQueryUrlStatus);
         return conflatedResult;
     }
 
