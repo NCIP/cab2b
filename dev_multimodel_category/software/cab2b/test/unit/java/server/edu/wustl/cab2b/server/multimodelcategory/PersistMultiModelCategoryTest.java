@@ -42,6 +42,8 @@ public class PersistMultiModelCategoryTest extends TestCase {
         mmaBean.addSelectedAttribute(a2);
         AttributeInterface a = p.getAttribute(mmaBean);
         assertTrue(a.getAttributeTypeInformation() instanceof IntegerAttributeTypeInformation);
+        DataElementInterface de = a.getAttributeTypeInformation().getDataElement();
+        assertNull(de);
     }
 
     public void testAttributeOfSameTypeDifferentPVs() {
@@ -65,7 +67,8 @@ public class PersistMultiModelCategoryTest extends TestCase {
         mmaBean.addSelectedAttribute(a2);
         AttributeInterface a = p.getAttribute(mmaBean);
         DataElementInterface de = a.getAttributeTypeInformation().getDataElement();
-        assertNull(de);
+        UserDefinedDEInterface userDefined = (UserDefinedDEInterface) de;
+        assertEquals(userDefined.getPermissibleValueCollection().size(),6);
     }
 
     public void testAttributeOfSameTypeSamePVs() {

@@ -17,11 +17,13 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
+import edu.common.dynamicextensions.domain.UserDefinedDE;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.DataElementInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
+import edu.common.dynamicextensions.domaininterface.StringValueInterface;
 import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.common.dynamicextensions.domaininterface.UserDefinedDEInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
@@ -88,7 +90,7 @@ public class PersistMultiModelCategory {
         Collection<InputCategory> inputCategories = createInputCategories();
         for (InputCategory inCategory : inputCategories) {
             logger.debug("Saving category: " + inCategory);
-            Category category = persistCategory.persistCategory(inCategory, null,true);
+            Category category = persistCategory.persistCategory(inCategory, null, true);
             category.setSystemGenerated(Boolean.TRUE);
             mapAIToCatAttr(category.getRootClass());
             categoryOperations.saveCategory(category);
@@ -321,46 +323,44 @@ public class PersistMultiModelCategory {
 
         return targetEntities;
     }
+
     AttributeInterface getAttribute(MultiModelAttributeBean mmaBean) {
         AttributeInterface attribute = null;
         Collection<AttributeInterface> attributes = mmaBean.getSelectedAttributes();
         if (areOfSameType(attributes)) {
-            //AttributeInterface singleAttribute = attributes.iterator().next();
-            DataType dataType =
-                Utility.getDataType(attributes.iterator().next().getAttributeTypeInformation());
-            if (areAllPvsSame(mmaBean.getSelectedAttributes())) {
-                attribute = DynamicExtensionUtility.getAttributeCopy(mmaBean.getSelectedAttributes().iterator().next()); 
-            } else {
-                attribute = createAttributeCopy(dataType);
-            }
+           attribute = createAttributeWithPVs(mmaBean.getSelectedAttributes());
         } else {
             attribute = DomainObjectFactory.getInstance().createStringAttribute();
         }
         return attribute;
     }
 
-    private boolean areAllPvsSame(Collection<AttributeInterface> allAttributes) {
+    private AttributeInterface createAttributeWithPVs(Collection<AttributeInterface> allAttributes) {
         Set<String> allPVs = new HashSet<String>();
-        for(AttributeInterface attribute : allAttributes) {
+        DataType dataType = null;
+        for (AttributeInterface attribute : allAttributes) {
             DataElementInterface dataElement = attribute.getAttributeTypeInformation().getDataElement();
             UserDefinedDEInterface userDefined = (UserDefinedDEInterface) dataElement;
-            if(dataElement==null || userDefined.getPermissibleValueCollection()==null) {
-                return false;
+            dataType = Utility.getDataType(attribute.getAttributeTypeInformation());
+            if (dataElement == null || userDefined.getPermissibleValueCollection() == null) {
+                return createAttributeCopy(dataType);
             }
             Collection<PermissibleValueInterface> allPermissibleValues = userDefined.getPermissibleValueCollection();
             for (PermissibleValueInterface pv : allPermissibleValues) {
                 allPVs.add(pv.getValueAsObject().toString());
             }
         }
-        DataElementInterface dataElement = allAttributes.iterator().next().getAttributeTypeInformation().getDataElement();
+        AttributeInterface attribute = createAttributeCopy(dataType);
+        DataElementInterface dataElement = attribute.getAttributeTypeInformation().getDataElement();
+        UserDefinedDE userDefinedDE = DomainObjectFactory.getInstance().createUserDefinedDE();
         UserDefinedDEInterface userDefined = (UserDefinedDEInterface) dataElement;
-        int pvSize = userDefined.getPermissibleValueCollection().size();
-        
-        if (allPVs.size() == pvSize) {
-            return Boolean.TRUE;
-        } else {
-            return Boolean.FALSE;
+        for(String pv : allPVs){
+            StringValueInterface value = DomainObjectFactory.getInstance().createStringValue();
+            value.setValue(pv);
+            userDefinedDE.addPermissibleValue(value);
         }
+        attribute.getAttributeTypeInformation().setDataElement(userDefinedDE);
+        return attribute;
     }
 
     private boolean areOfSameType(Collection<AttributeInterface> attributes) {
@@ -410,12 +410,13 @@ public class PersistMultiModelCategory {
         }
         return attribute;
     }
+
     public static void main(String[] args) throws IOException {
         PathFinder.getInstance(DBUtil.getConnection());
         MultiModelCategoryOperations operations = new MultiModelCategoryOperations();
 
         //save in database
-        File mmcDir = new File("C:/aa");
+        File mmcDir = new File("D:/Project Related Material/MMC");
         File[] mmcFiles = mmcDir.listFiles();
         MultiModelCategoryXmlParser parser = new MultiModelCategoryXmlParser();
         for (File mmcFile : mmcFiles) {
