@@ -77,6 +77,8 @@ public class PreExecuteQueryAction extends Action {
                 }else{
                     //TODO : show an error page
                     logger.info("No keyword query present in database for selected ModelGroup.");
+                    actionForward = Constants.FORWARD_HOME;
+                    return mapping.findForward(actionForward);
                 }
             }
             Long queryId = Long.parseLong(id);
