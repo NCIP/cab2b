@@ -31,7 +31,7 @@ public class QueryURLStatusOperations extends DefaultBizLogic {
         } catch (BizLogicException e) {
             throw new RuntimeException("Unable to save the QueryStatus", e, ErrorCodeConstants.QS_001);
         } catch (UserNotAuthorizedException e) {
-            throw new RuntimeException("Unable to save the QueryStatus", e,ErrorCodeConstants.QS_005);
+            throw new RuntimeException("Unable to save the QueryStatus", e, ErrorCodeConstants.QS_005);
         }
     }
 
