@@ -11,7 +11,6 @@
 <LINK rel="stylesheet" href="stylesheet/searchresults.css" type="text/css">
 <SCRIPT language="JavaScript" src="javascript/ajax.js"></SCRIPT>
 <SCRIPT language="javaScript">
- var ajaxTimeOutVar
  function executeQuery()
 {	
    if(${sessionScope.isFirstRequest})
@@ -24,20 +23,19 @@
 
  function getTransformedResults()
 {
-  var url = 'TransformQueryResultsAction.do';
-  processAJAXRequest(url, 'centerpanelcontent', 1);
+  processAJAXRequest('TransformQueryResultsAction.do', 'centerpanelcontent', 1);
    if(document.getElementById("resultcountAJAX"))
   {
-	if(document.getElementById('resultcount'))
-	{
-		document.getElementById('resultcount').innerHTML = document.getElementById("resultcountAJAX").innerHTML;
-	}
+    document.getElementById('resultcount').innerHTML = document.getElementById("resultcountAJAX").innerHTML;
   }
   var resultCount = document.getElementById('resultcountAJAX')?document.getElementById('resultcountAJAX').innerHTML:'0';
    if(resultCount != '0')
   {
-    document.getElementById('resultsmessage').innerHTML = document.getElementById('completeresultsmessage')!=null?document.getElementById('completeresultsmessage').innerHTML:(document.getElementById('partialresultsmessage')!=null?"(document.getElementById('partialresultsmessage').innerHTML + document.getElementById('resultsmessage').innerHTML)":"");
-	document.getElementById('resultsmessage').style.textAlign = 'left';
+    document.getElementById('resultsmessage').innerHTML = document.getElementById('completeresultsmessage')?document.getElementById('completeresultsmessage').innerHTML:(document.getElementById('partialresultsmessage')!=null?"(document.getElementById('partialresultsmessage').innerHTML + document.getElementById('resultsmessage').innerHTML)":document.getElementById('resultsmessage').innerHTML);
+	 if(document.getElementById('completeresultsmessage') || document.getElementById('partialresultsmessage'))
+	{
+	  document.getElementById('resultsmessage').style.textAlign = 'left';
+	}
   }
    if(document.getElementById("completeresultsmessage"))
   { 	
@@ -63,12 +61,7 @@
 	}
 	return;
   }
-  ajaxTimeOutVar = setTimeout("getTransformedResults()", 5000);
-}
-
-function clearPreviousAjaxTimeOut()
-{
-	clearTimeout(ajaxTimeOutVar);
+  t = setTimeout("getTransformedResults()", 5000);
 }
 
  function updateView()
@@ -106,7 +99,7 @@ function clearPreviousAjaxTimeOut()
 		<DIV id="queryDropDown">
 			<bean:size id="queryCount" name="savedQueries"/>
 			<logic:notEqual name="queryCount" value="1">
-				<SELECT class="select" name="savedQueries" onChange="clearPreviousAjaxTimeOut();processAJAXRequest('TransformQueryResultsAction.do?selectedQueryName=' + this.value + '&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent');"/>
+				<SELECT class="select" name="savedQueries" onChange="clearTimeout(t);processAJAXRequest('TransformQueryResultsAction.do?selectedQueryName=' + this.value + '&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent');"/>
 					<logic:present name="savedQueries">
 						<logic:iterate name="savedQueries" id="savedSearch" type="edu.wustl.cab2bwebapp.dvo.SavedQueryDVO">
 							<OPTION value="<bean:write name="savedSearch" property="name"/>" <logic:equal name="savedSearch" property="selected" value="true">selected</logic:equal>>
@@ -136,7 +129,7 @@ function clearPreviousAjaxTimeOut()
 	</DIV>
 </DIV>
 <DIV id="centerpanel">
-	<DIV id="centerpanelcontent">
+	<DIV id="centerpanelcontent" style="overflow:hidden;">
 		<%@ include file="searchresultspanel.jsp" %>
 	</DIV>
 </DIV>
