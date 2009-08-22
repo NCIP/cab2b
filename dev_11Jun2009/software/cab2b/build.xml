@@ -40,14 +40,9 @@
 	<property name="dbutil.properties.file" location="${conf.dir}/dbutil.properties" />
 	<property name="jbossjca.service.xml" location="${conf.dir}/jbossjca-service.xml" />
 	<property name="log4j.xml.file" location="${conf.dir}/log4j.xml" />
-	<property name="ejb.jboss.xml.file" location="${conf.dir}/conf/ssl_jboss.xml" />
 	<property name="tomcat.web.xml.file" location="${conf.dir}/tomcat_web.xml" />
-	<property name="jboss.invoker.web.xml.file" location="${conf.dir}/invoker_web.xml" />
-	<property name="jboss.invoker.service.xml.file" location="${conf.dir}/invoker_jboss-service.xml" />
-	<property name="jboss.invoker.ssl.service.xml.file" location="${conf.dir}/invoker_ssl_jboss-service.xml" />
-	
-	<property name="db.scripts.dir" location="db" />
 
+	<property name="db.scripts.dir" location="db" />
 	<property name="server.jar.dir" location="${workarea.dir}/serverJar" />
 	<property name="server.jar.file" location="${workarea.dir}/cab2bServer.jar" />
 	<property name="caB2B.standalone.jar.file" location="${workarea.dir}/cab2bStandAlone.jar" />
@@ -172,7 +167,7 @@
 		<replace file="${conf.dir}/cab2b.properties" token="@server.port@" value="${server-port}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@jndi.protocol@" value="${jndi.protocol}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@jndi.invoker.url@" value="${jndi.invoker.url}" />
-		
+
 		<replace file="${conf.dir}/cab2b.properties" token="@server.host@" value="${server-host}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@server.port@" value="${server-port}" />
 
@@ -350,17 +345,8 @@
 			</fileset>
 		</copy>
 
-		<if>
-			<equals arg1="${jboss.ssl.enable}" arg2="true" />
-			<then>
-				<echo message="java -Xmx1024m -Djavax.net.ssl.trustStore=./jssecacerts -Dorg.jboss.security.ignoreHttpsHost=true -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="true" />
-				<echo message="java -Xmx1024m -Djavax.net.ssl.trustStore=./jssecacerts -Dorg.jboss.security.ignoreHttpsHost=true -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="true" />
-			</then> 
-			<else>
-				<echo message="java -Xmx1024m -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="true" />
-				<echo message="java -Xmx1024m -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="true" />
-			</else>
-		</if>
+		<echo message="java -Xmx1024m -Djavax.net.ssl.trustStore=./jssecacerts -Dorg.jboss.security.ignoreHttpsHost=true -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="true" />
+		<echo message="java -Xmx1024m -Djavax.net.ssl.trustStore=./jssecacerts -Dorg.jboss.security.ignoreHttpsHost=true -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="true" />
 
 		<copy todir="${client.setup.dir}/conf">
 			<fileset dir="${conf.dir}">
@@ -397,8 +383,37 @@
 		<zip destfile="${client.setup.zip.file}" basedir="${client.setup.dir}" />
 	</target>
 
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: set.cab2b.secure.conf                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="set.cab2b.secure.conf" if="jboss.ssl.enable.true">
+		<property name="ejb.jboss.xml.file" location="${conf.dir}/ejb/ssl_jboss.xml" />
+		<property name="invoker.service.xml.file" location="${conf.dir}/invoker_ssl_jboss-service.xml" />
+		<property name="jboss.invoker.web.xml.file" location="${conf.dir}/invoker_ssl_web.xml" />
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: set.cab2b.insecure.conf                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="set.cab2b.insecure.conf" unless="jboss.ssl.enable.true">
+		<!-- Properties for non secure JBoss, these propertyies are changed in target 'set.cab2b.secure.conf' if the jboss.ssl.enable is true -->
+		<property name="ejb.jboss.xml.file" location="${conf.dir}/ejb/jboss.xml" />
+		<property name="jboss.invoker.web.xml.file" location="${conf.dir}/invoker_web.xml" />
+		<property name="invoker.service.xml.file" location="${conf.dir}/invoker_jboss-service.xml" />
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: set.condition                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="set.condition">
+		<condition property="jboss.ssl.enable.true">
+			<equals arg1="${jboss.ssl.enable}" arg2="true" />
+		</condition>
+	</target>
+
 	<!-- ================================================================================== -->
-	<target name="server.jar">
+	<target name="server.jar" depends="set.condition,set.cab2b.secure.conf,set.cab2b.insecure.conf">
+		<echo message="${jboss.ssl.enable.true}" />
 		<mkdir dir="${server.jar.dir}" />
 		<delete includeemptydirs="true">
 			<fileset dir="${server.jar.dir}">
@@ -408,21 +423,8 @@
 
 		<mkdir dir="${server.jar.dir}/META-INF" />
 
-		<if>
-			<equals arg1="${jboss.ssl.enable}" arg2="true" />
-			<then>
-				<property name="ejb.jboss.xml.file" value="${conf.dir}/conf/ejb/ssl_jboss.xml" />
-			</then>
-			<else>
-				<property name="ejb.jboss.xml.file" value="${conf.dir}/conf/ejb/jboss.xml" />
-			</else>
-		</if>
-		<copy todir="${server.jar.dir}/META-INF">
-			<fileset dir="${conf.dir}/ejb">
-				<include name="ejb-jar.xml" />
-				<include name="${ejb.jboss.xml.file}" />
-			</fileset>
-		</copy>
+		<copy file="${ejb.jboss.xml.file}" tofile="${server.jar.dir}/META-INF/jboss.xml" />
+		<copy file="${conf.dir}/ejb/ejb-jar.xml" tofile="${server.jar.dir}/META-INF/ejb-jar.xml" />
 
 		<copy todir="${server.jar.dir}">
 			<fileset dir="${server.classes.dir}">
@@ -1039,17 +1041,7 @@
 		<copy file="${log4j.xml.file}" todir="${dist.dir}" />
 		<copy file="${tomcat.web.xml.file}" tofile="${dist.dir}/web.xml" />
 		<copy file="${jboss.invoker.web.xml.file}" tofile="${dist.dir}/invoker_web.xml" />
-
-		<if>
-			<equals arg1="${jboss.ssl.enable}" arg2="true" />
-			<then>
-				<copy file="${jboss.invoker.ssl.service.xml.file}" tofile="${dist.dir}/jboss-service.xml" />
-			</then>
-			<else>
-				<copy file="${jboss.invoker.service.xml.file}" tofile="${dist.dir}/jboss-service.xml" />
-			</else>
-		</if>
-
+		<copy file="${invoker.service.xml.file}" tofile="${dist.dir}/jboss-service.xml" />
 
 		<copy file="${lib.dir}/server/oracleDriver.jar" todir="${dist.dir}" />
 		<copy file="${lib.dir}/server/mysql-connector-java-5.0.8-bin.jar" todir="${dist.dir}" />
