@@ -116,8 +116,7 @@
 			</logic:equal>	 
 		</DIV>
 		<DIV style="float:right;margin-top:0.12em;">
-			<A class="link" style="margin-top:0.3em;display:none;" id="failedserviceslink" href="#this" onclick="document.getElementById('pageoverlay').style.display='block';document.getElementById('failedservicespanel').style.display='block';"><bean:message key="link.failedserviceinstances"/></A>
-			<SPAN class="text" id="failedservicescount"></SPAN>
+			<A class="link" style="margin-top:0.3em;display:none;" id="failedserviceslink" href="#this" onclick="document.getElementById('pageoverlay').style.display='block';document.getElementById('failedservicespanel').style.display='block';"><bean:message key="link.failedserviceinstances"/>(<SPAN id="failedservicescount"></SPAN>)</A>			
 		</DIV><BR style="line-height:0.2em;"><HR style="height:1;color:#bbb">
 		<DIV style="font-size:0.85em;" id="resultsmessage"><IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"></DIV>
 	</DIV>		

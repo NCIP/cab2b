@@ -31,7 +31,7 @@
 		</logic:iterate>
 		<BR style="line-height:0.4em"/>
 	</DIV>
-	<DIV style="display:none" id="failedservicescountAJAX">(<bean:write name="failedServicesCount"/>)</DIV>
+	<DIV style="display:none" id="failedservicescountAJAX"><bean:write name="failedServicesCount"/></DIV>
 </logic:present>
 <DIV style="display:none">
 	<logic:present name="queryUIPartialCount">
