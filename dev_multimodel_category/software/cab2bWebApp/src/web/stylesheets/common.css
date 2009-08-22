@@ -195,6 +195,12 @@ select {
 	font-family: sans-serif, Arial, Helvetica;
 }
 
+.tooltip {
+	position: absolute;
+	border: 1px solid #2d8ac6;
+	display: none;
+}
+
 .hidden {
 	display: none;
 }
