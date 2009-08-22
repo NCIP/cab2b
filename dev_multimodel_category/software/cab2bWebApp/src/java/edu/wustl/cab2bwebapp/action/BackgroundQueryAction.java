@@ -44,8 +44,8 @@ public class BackgroundQueryAction extends Action {
         try {
             QueryBizLogic executeQueryBizLogic =
                     (QueryBizLogic) request.getSession().getAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT);
-            if(executeQueryBizLogic!=null){
-            executeQueryBizLogic.addQueryForExecuteInBackground();
+            if (executeQueryBizLogic != null) {
+                executeQueryBizLogic.addQueryForExecuteInBackground();
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -55,8 +55,6 @@ public class BackgroundQueryAction extends Action {
             saveErrors(request, errors);
             return mapping.findForward(Constants.FORWARD_FAILURE);
         }
-        ActionForward actionForward = mapping.findForward(Constants.FORWARD_HOME);
-        ActionForward actionRedirect = new ActionForward(actionForward.getName(), actionForward.getPath(), false);
-        return actionRedirect;
+        return mapping.findForward(Constants.FORWARD_DASHBOARD_ACTION);
     }
 }
