@@ -11,6 +11,7 @@
 <LINK rel="stylesheet" href="stylesheet/searchresults.css" type="text/css">
 <SCRIPT language="JavaScript" src="javascript/ajax.js"></SCRIPT>
 <SCRIPT language="javaScript">
+ var ajaxTimeOutVar
  function executeQuery()
 {	
    if(${sessionScope.isFirstRequest})
@@ -62,7 +63,12 @@
 	}
 	return;
   }
-  setTimeout("getTransformedResults()", 5000);
+  ajaxTimeOutVar = setTimeout("getTransformedResults()", 5000);
+}
+
+function clearPreviousAjaxTimeOut()
+{
+	clearTimeout(ajaxTimeOutVar);
 }
 
  function updateView()
@@ -100,7 +106,7 @@
 		<DIV id="queryDropDown">
 			<bean:size id="queryCount" name="savedQueries"/>
 			<logic:notEqual name="queryCount" value="1">
-				<SELECT class="select" name="savedQueries" onChange="processAJAXRequest('TransformQueryResultsAction.do?selectedQueryName=' + this.value + '&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent');"/>
+				<SELECT class="select" name="savedQueries" onChange="clearPreviousAjaxTimeOut();processAJAXRequest('TransformQueryResultsAction.do?selectedQueryName=' + this.value + '&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent');"/>
 					<logic:present name="savedQueries">
 						<logic:iterate name="savedQueries" id="savedSearch" type="edu.wustl.cab2bwebapp.dvo.SavedQueryDVO">
 							<OPTION value="<bean:write name="savedSearch" property="name"/>" <logic:equal name="savedSearch" property="selected" value="true">selected</logic:equal>>
