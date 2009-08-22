@@ -40,7 +40,7 @@
 						<display:column title="Value" value="${queryCondition.value}"/>
 					</display:table>
 				</DIV>
-				<IMG src="images/ico_file_excel.png" title="<bean:message key="img.alt.exportresults"/>" style="cursor:pointer" onClick="document.location='ExportResults.do?fileName=<bean:write name="query" property="fileName"/>';TogglePreloader(0);">&nbsp;
+				<IMG src="images/ico_file_excel.png" title="<bean:message key="img.alt.exportresults"/>" style="cursor:pointer;<logic:equal name="query" property="status" value="Processing">display:none;</logic:equal>" onClick="document.location='ExportResults.do?fileName=<bean:write name="query" property="fileName"/>';TogglePreloader(0);">&nbsp;
 				<IMG src="images/stop.gif" title="<bean:message key="img.alt.abortexecution"/>" style="cursor:pointer;display:none;">&nbsp;
 			</display:column>
 		</display:table>
