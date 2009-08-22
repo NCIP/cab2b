@@ -32,22 +32,4 @@
       </attribute>
    </mbean>
    
-      <!-- Expose the Naming service interface via clustered HTTP. This maps
-   to the ReadOnlyJNDIFactory servlet URL
-   -->
-   <mbean code="org.jboss.invocation.http.server.HttpProxyFactory"
-      name="jboss:service=invoker,type=http,target=Naming,readonly=true">
-      <attribute name="InvokerName">jboss:service=Naming</attribute>
-     <attribute name="InvokerURL">https://@server.host@:@server.port@/invoker/JMXInvokerServlet</attribute>
-      <attribute name="ExportedInterface">org.jnp.interfaces.Naming</attribute>
-      <attribute name="JndiName"></attribute>
-      <attribute name="ClientInterceptors">
-          <interceptors>
-             <interceptor>org.jboss.proxy.ClientMethodInterceptor</interceptor>
-             <interceptor>org.jboss.proxy.SecurityInterceptor</interceptor>
-             <interceptor>org.jboss.naming.interceptors.ExceptionInterceptor</interceptor>
-             <interceptor>org.jboss.invocation.InvokerInterceptor</interceptor>
-          </interceptors>
-      </attribute>
-   </mbean>
 </server>
