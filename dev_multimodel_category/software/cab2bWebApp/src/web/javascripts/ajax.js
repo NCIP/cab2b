@@ -49,10 +49,9 @@
   return xmlhttp;
 }
 
-var results = "";
  function processAJAXRequest(requestURL, responseReceiver, hideLoadingImage)
 { 
-   if(responseReceiver && !hideLoadingImage)
+   if(responseReceiver &&  hideLoadingImage!=1)
   {
 	document.getElementById(responseReceiver).innerHTML = "<TABLE style='height:100%;width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'></TD></TR></TABLE>";
   }
@@ -61,7 +60,7 @@ var results = "";
   httpRequest.onreadystatechange = function(){ 
      if(httpRequest.readyState==4) 
     { 
-	  results = httpRequest.responseText;  	  
+	  var results = httpRequest.responseText;  	  
 	   if(results=="Exception")
 	  {
   	     if(confirm('Incorrect service instance configured for query! Do you want to configure now?'))
@@ -69,7 +68,7 @@ var results = "";
 		  document.location = "Home.do?redirect=true";
 		}
 	  }
-	   else if(httpRequest.status==500) //http.responseXML can be used to get an XML based response, if we need to have some XML output from a server file.
+	   else if(httpRequest.status==500)
 	  {
 		results = "<DIV style='text-align:center'>" + results + "</DIV>";
 	  }
