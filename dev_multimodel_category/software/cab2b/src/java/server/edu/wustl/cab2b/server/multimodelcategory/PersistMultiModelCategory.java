@@ -17,15 +17,10 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
-import edu.common.dynamicextensions.domain.UserDefinedDE;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.common.dynamicextensions.domaininterface.DataElementInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
-import edu.common.dynamicextensions.domaininterface.StringValueInterface;
 import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
-import edu.common.dynamicextensions.domaininterface.UserDefinedDEInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
@@ -37,7 +32,6 @@ import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategory;
 import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategoryImpl;
 import edu.wustl.cab2b.common.multimodelcategory.bean.MultiModelAttributeBean;
 import edu.wustl.cab2b.common.multimodelcategory.bean.MultiModelCategoryBean;
-import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.cab2b.server.category.InputCategorialAttribute;
@@ -50,7 +44,6 @@ import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.metadata.path.IPath;
-import edu.wustl.common.querysuite.queryobject.DataType;
 import edu.wustl.common.util.dbManager.DBUtil;
 
 public class PersistMultiModelCategory {
@@ -178,7 +171,7 @@ public class PersistMultiModelCategory {
 
         Collection<MultiModelAttributeBean> mmaBeans = mmcBean.getMultiModelAttributes();
         for (MultiModelAttributeBean mmaBean : mmaBeans) {
-            AttributeInterface deAttribute = getAttribute(mmaBean);
+            AttributeInterface deAttribute = MmcAttributeGenerator.getAttribute(mmaBean);
             deAttribute.setName(mmaBean.getName());
             deAttribute.setDescription(mmaBean.getDescription());
 
@@ -322,93 +315,6 @@ public class PersistMultiModelCategory {
         }
 
         return targetEntities;
-    }
-
-    AttributeInterface getAttribute(MultiModelAttributeBean mmaBean) {
-        AttributeInterface attribute = null;
-        Collection<AttributeInterface> attributes = mmaBean.getSelectedAttributes();
-        if (areOfSameType(attributes)) {
-           attribute = createAttributeWithPVs(mmaBean.getSelectedAttributes());
-        } else {
-            attribute = DomainObjectFactory.getInstance().createStringAttribute();
-        }
-        return attribute;
-    }
-
-    private AttributeInterface createAttributeWithPVs(Collection<AttributeInterface> allAttributes) {
-        Set<String> allPVs = new HashSet<String>();
-        DataType dataType = null;
-        for (AttributeInterface attribute : allAttributes) {
-            DataElementInterface dataElement = attribute.getAttributeTypeInformation().getDataElement();
-            UserDefinedDEInterface userDefined = (UserDefinedDEInterface) dataElement;
-            dataType = Utility.getDataType(attribute.getAttributeTypeInformation());
-            if (dataElement == null || userDefined.getPermissibleValueCollection() == null) {
-                return createAttributeCopy(dataType);
-            }
-            Collection<PermissibleValueInterface> allPermissibleValues = userDefined.getPermissibleValueCollection();
-            for (PermissibleValueInterface pv : allPermissibleValues) {
-                allPVs.add(pv.getValueAsObject().toString());
-            }
-        }
-        AttributeInterface attribute = createAttributeCopy(dataType);
-        DataElementInterface dataElement = attribute.getAttributeTypeInformation().getDataElement();
-        UserDefinedDE userDefinedDE = DomainObjectFactory.getInstance().createUserDefinedDE();
-        UserDefinedDEInterface userDefined = (UserDefinedDEInterface) dataElement;
-        for(String pv : allPVs){
-            StringValueInterface value = DomainObjectFactory.getInstance().createStringValue();
-            value.setValue(pv);
-            userDefinedDE.addPermissibleValue(value);
-        }
-        attribute.getAttributeTypeInformation().setDataElement(userDefinedDE);
-        return attribute;
-    }
-
-    private boolean areOfSameType(Collection<AttributeInterface> attributes) {
-        Set<DataType> dataTypeValues = new HashSet<DataType>(attributes.size());
-        for (AttributeInterface attribute : attributes) {
-            DataType type = Utility.getDataType(attribute.getAttributeTypeInformation());
-            dataTypeValues.add(type);
-        }
-        if (dataTypeValues.size() == 1) {
-            return Boolean.TRUE;
-        } else {
-            return Boolean.FALSE;
-        }
-    }
-
-    private AttributeInterface createAttributeCopy(DataType attributeType) {
-        AttributeInterface attribute = null;
-        DomainObjectFactory domainObjectFactory = DomainObjectFactory.getInstance();
-        switch (attributeType) {
-            case String:
-                attribute = domainObjectFactory.createStringAttribute();
-                break;
-
-            case Double:
-                attribute = domainObjectFactory.createDoubleAttribute();
-                break;
-
-            case Integer:
-                attribute = domainObjectFactory.createIntegerAttribute();
-                break;
-
-            case Date:
-                attribute = domainObjectFactory.createDateAttribute();
-                break;
-
-            case Float:
-                attribute = domainObjectFactory.createFloatAttribute();
-                break;
-
-            case Boolean:
-                attribute = domainObjectFactory.createBooleanAttribute();
-                break;
-
-            case Long:
-                attribute = domainObjectFactory.createLongAttribute();
-                break;
-        }
-        return attribute;
     }
 
     public static void main(String[] args) throws IOException {
