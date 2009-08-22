@@ -1,6 +1,7 @@
 package edu.wustl.cab2bwebapp.dvo;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author chetan_pundhir
@@ -17,7 +18,7 @@ public class QueryStatusDVO {
 
     private Date executedOn;
 
-    private String conditions;
+    private List<QueryConditionDVO> conditions;
 
     private String fileName;
 
@@ -92,16 +93,16 @@ public class QueryStatusDVO {
     }
 
     /**
-     * @return String
+     * @return List<QueryConditionDVO>
      */
-    public String getConditions() {
+    public List<QueryConditionDVO> getConditions() {
         return conditions;
     }
 
     /**
      * @param conditions
      */
-    public void setConditions(String conditions) {
+    public void setConditions(List<QueryConditionDVO> conditions) {
         this.conditions = conditions;
     }
 
