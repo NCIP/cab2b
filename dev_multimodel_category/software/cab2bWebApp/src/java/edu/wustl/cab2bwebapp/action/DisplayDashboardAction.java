@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +28,7 @@ import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
 import edu.wustl.cab2bwebapp.bizlogic.UserBackgroundQueries;
 import edu.wustl.cab2bwebapp.constants.Constants;
+import edu.wustl.cab2bwebapp.dvo.QueryConditionDVO;
 import edu.wustl.cab2bwebapp.dvo.QueryStatusDVO;
 
 /**
@@ -85,7 +89,21 @@ public class DisplayDashboardAction extends Action {
                     queryStatusDVO.setResultCount(qs.getResultCount());
                 }
                 queryStatusDVO.setExecutedOn(qs.getQueryStartTime());
-                queryStatusDVO.setConditions(qs.getQueryConditions());
+                List<QueryConditionDVO> queryConditions = new ArrayList<QueryConditionDVO>();
+                String pattern = "(.*)\\((.*)\\)(.*)";
+                String values[] = qs.getQueryConditions().split(";");
+                Pattern p = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+                Matcher m = null;
+                for (int j = 0; j < values.length; j++) {
+                    QueryConditionDVO queryCondition = new QueryConditionDVO();
+                    m = p.matcher(values[j]);
+                    m.find();
+                    queryCondition.setParameter((m.group(1)));
+                    queryCondition.setCondition((m.group(2)));
+                    queryCondition.setValue((m.group(3)));
+                    queryConditions.add(queryCondition);
+                }
+                queryStatusDVO.setConditions(queryConditions);
                 queryStatusDVO.setFileName(qs.getFileName());
                 queryStatusDVOList.add(queryStatusDVO);
                 if (qs.getStatus().equals("Processing"))
