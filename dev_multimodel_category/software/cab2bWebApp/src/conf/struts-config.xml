@@ -31,6 +31,7 @@
 
 		<action path="/BackgroundQuery"
 			type="edu.wustl.cab2bwebapp.action.BackgroundQueryAction">
+			<forward name="dashboardaction" path="/DisplayDashboard.do" />
 		</action>
 
 		<action path="/DisplayDashboard"
