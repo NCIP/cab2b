@@ -66,7 +66,7 @@
 
  function updateView()
 { 
-   if(navigator.appName.indexOf('Netscape')==-1)
+   if(navigator.appName.indexOf('Netscape')==-1 || navigator.appVersion.indexOf('Apple')!=-1)
   {	  
 	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (310);
     document.getElementById('centerpanelcontent').style.overflow = 'auto';
