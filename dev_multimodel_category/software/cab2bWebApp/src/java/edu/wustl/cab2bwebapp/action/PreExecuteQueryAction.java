@@ -157,7 +157,10 @@ public class PreExecuteQueryAction extends Action {
             for (ICab2bQuery queryObj : ((KeywordQuery) query).getSubQueries()) {
                 SavedQueryDVO savedQuery = new SavedQueryDVO();
                 savedQuery.setName(queryObj.getName());
-                savedQuery.setResultCount(0);
+                    //Commenting it out bcz result count will not be updated for KeyWord Queries, 
+                    //Reason: with every 5 sec ajax, we needed to transform/traverse+count, all records to get the result-count.
+                    //Thus, drop down will be a static drop down without any result count.
+               // savedQuery.setResultCount(0); 
                 savedQueries.add(savedQuery);
             }
         } else { //Form basd or MMC query
