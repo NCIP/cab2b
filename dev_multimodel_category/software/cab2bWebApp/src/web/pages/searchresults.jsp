@@ -32,23 +32,30 @@
   var resultCount = document.getElementById('resultcountAJAX')?document.getElementById('resultcountAJAX').innerHTML:'0';
    if(resultCount != '0')
   {
-    document.getElementById('resultsmessage').innerHTML = document.getElementById('completeresultsmessage')!=null?document.getElementById('completeresultsmessage').innerHTML:(document.getElementById('partialresultsmessage')!=null?"document.getElementById('partialresultsmessage').innerHTML":"");
+    document.getElementById('resultsmessage').innerHTML = document.getElementById('completeresultsmessage')!=null?document.getElementById('completeresultsmessage').innerHTML:(document.getElementById('partialresultsmessage')!=null?"(document.getElementById('partialresultsmessage').innerHTML + document.getElementById('resultsmessage').innerHTML)":"");
 	document.getElementById('resultsmessage').style.textAlign = 'left';
   }
    if(document.getElementById("completeresultsmessage"))
   { 	
-     if(document.getElementById('executeinbackgroundbutton'))
-	{
-	  document.getElementById('executeinbackgroundbutton').disabled = true;
-	  document.getElementById('executeinbackgroundbutton').className = 'buttondisabled';
-	}
-    document.getElementById('exportbutton').disabled = false;
-    document.getElementById('exportbutton').className = 'button';
 	 if(document.getElementById("failedservicesAJAX"))
 	{
 	  document.getElementById('failedserviceslink').style.display = 'block';
 	  document.getElementById("failedservicescount").innerHTML = document.getElementById("failedservicescountAJAX").innerHTML;    
       document.getElementById("failedservicespanelbody").innerHTML = document.getElementById("failedservicesAJAX").innerHTML;    
+	}	
+	 if(document.getElementById('executeinbackgroundbutton'))
+	{
+	  document.getElementById('executeinbackgroundbutton').disabled = true;
+	  document.getElementById('executeinbackgroundbutton').className = 'buttondisabled';
+	}    
+	 if(resultCount=='0')
+	{
+	  document.getElementById('resultsmessage').innerHTML = "";
+	}
+	 else
+	{
+	  document.getElementById('exportbutton').disabled = false;
+      document.getElementById('exportbutton').className = 'button';
 	}
 	return;
   }
