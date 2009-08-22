@@ -82,25 +82,6 @@ $Id: web.xml 26202 2004-11-29 16:54:36Z starksm $
       <load-on-startup>2</load-on-startup>
     </servlet>
 
-    <servlet>
-        <servlet-name>JNDIFactorySSL</servlet-name>
-        <description>A servlet that exposes the JBoss JNDI Naming service stub
-        through http. The return content is a serialized
-        MarshalledValue containg the org.jnp.interfaces.Naming stub. This
-        configuration handles requests for the standard JNDI naming service.
-        </description>
-        <servlet-class>org.jboss.invocation.http.servlet.NamingFactoryServlet</servlet-class>
-        <init-param>
-            <param-name>namingProxyMBean</param-name>
-            <param-value>jboss:service=invoker,type=https,target=Naming</param-value>
-        </init-param>
-      <init-param>
-         <param-name>proxyAttribute</param-name>
-         <param-value>Proxy</param-value>
-      </init-param>
-      <load-on-startup>2</load-on-startup>
-    </servlet>
-
    <servlet>
        <servlet-name>ReadOnlyJNDIFactory</servlet-name>
        <description>A servlet that exposes the JBoss JNDI Naming service stub
@@ -126,10 +107,6 @@ $Id: web.xml 26202 2004-11-29 16:54:36Z starksm $
         <url-pattern>/JNDIFactory/*</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>JNDIFactorySSL</servlet-name>
-        <url-pattern>/JNDIFactorySSL/*</url-pattern>
-    </servlet-mapping>
     <!-- A mapping for the NamingFactoryServlet that only allows invocations
     of lookups under a read-only context. This is enforced by the
     ReadOnlyAccessFilter
