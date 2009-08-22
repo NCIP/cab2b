@@ -26,7 +26,10 @@
   processAJAXRequest('TransformQueryResultsAction.do', 'centerpanelcontent', 1);
    if(document.getElementById("resultcountAJAX"))
   {
-    document.getElementById('resultcount').innerHTML = document.getElementById("resultcountAJAX").innerHTML;
+	if(document.getElementById('resultcount'))
+	{
+		document.getElementById('resultcount').innerHTML = document.getElementById("resultcountAJAX").innerHTML;
+	}
   }
   var resultCount = document.getElementById('resultcountAJAX')?document.getElementById('resultcountAJAX').innerHTML:'0';
    if(resultCount != '0')
@@ -61,7 +64,7 @@
 	}
 	return;
   }
-  t = setTimeout("getTransformedResults()", 5000);
+  setTimeout("getTransformedResults()", 5000);
 }
 
  function updateView()
@@ -99,7 +102,7 @@
 		<DIV id="queryDropDown">
 			<bean:size id="queryCount" name="savedQueries"/>
 			<logic:notEqual name="queryCount" value="1">
-				<SELECT class="select" name="savedQueries" onChange="clearTimeout(t);processAJAXRequest('TransformQueryResultsAction.do?selectedQueryName=' + this.value + '&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent');"/>
+				<SELECT class="select" name="savedQueries" onChange="processAJAXRequest('TransformQueryResultsAction.do?selectedQueryName=' + this.value + '&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent');"/>
 					<logic:present name="savedQueries">
 						<logic:iterate name="savedQueries" id="savedSearch" type="edu.wustl.cab2bwebapp.dvo.SavedQueryDVO">
 							<OPTION value="<bean:write name="savedSearch" property="name"/>" <logic:equal name="savedSearch" property="selected" value="true">selected</logic:equal>>
