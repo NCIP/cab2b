@@ -101,7 +101,7 @@
 		<DIV class="label" style="font-weight:bold;padding-right:0.2em;">
 			<bean:message key="label.savedsearchselect"/>
 		 </DIV>
-		<DIV id="queryDropDown">
+		<DIV id="queryDropDown" style="text-align:left;">
 			<bean:size id="queryCount" name="savedQueries"/>
 			<logic:notEqual name="queryCount" value="1">
 				<SELECT class="select" name="savedQueries" onChange="processAJAXRequest('TransformQueryResultsAction.do?selectedQueryName=' + this.value + '&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent');"/>
