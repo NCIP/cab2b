@@ -81,7 +81,7 @@ public class UserBackgroundQueries {
     /**
      * Adds currently running query for background execution for the current user and updating properties in database.
      */
-    public void addBackgroundQuery(UserInterface user, QueryBizLogic queryBizLogic) {
+    public synchronized void addBackgroundQuery(UserInterface user, QueryBizLogic queryBizLogic) {
         //Update and saving to database.
         QueryStatus qStatus = queryBizLogic.getStatus();
         qStatus.setVisible(Boolean.TRUE);
