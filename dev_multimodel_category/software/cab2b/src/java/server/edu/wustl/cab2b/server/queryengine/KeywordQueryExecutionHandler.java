@@ -119,7 +119,6 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
      */
     @Override
     protected void preProcessQuery() throws RuntimeException {
-        query.setName("Keyword search for " + keyword + " on " + query.getApplicationGroup());
         Collection<ICab2bQuery> queries = this.query.getSubQueries();
         for (ICab2bQuery query : queries) {
             insertKeyword(query, this.keyword);
