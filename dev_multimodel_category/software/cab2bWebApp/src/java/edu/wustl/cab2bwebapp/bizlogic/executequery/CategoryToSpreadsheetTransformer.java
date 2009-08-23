@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,6 +42,53 @@ import edu.wustl.common.querysuite.metadata.category.CategorialClass;
  *
  */
 public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetTransformer {
+    private class RecordComparator implements Comparator<ICategorialClassRecord> {
+        Map<ICategorialClassRecord, Integer> recordVsCount;
+
+        public RecordComparator(Map<ICategorialClassRecord, Integer> recordVsCount) {
+            this.recordVsCount = recordVsCount;
+        }
+
+        public int compare(ICategorialClassRecord o1, ICategorialClassRecord o2) {
+            Integer d1 = recordVsCount.get(o1);
+            Integer d2 = recordVsCount.get(o2);
+            if (d1 == null || d2 == null) {
+                return 0;
+            }
+            if (d1 < d2) {
+                return 1;
+            }
+            if (d1 > d2) {
+                return -1;
+            }
+            return 0;
+        }
+
+    }
+
+    private int getDepth(ICategorialClassRecord o1) {
+        if(o1==null) {
+            return 0;
+        }
+        Set<CategorialClass> mapKeys = o1.getCategorialClass().getChildren();
+        if (mapKeys == null || mapKeys.isEmpty()) {
+            return 1;
+        }
+        Map<CategorialClass, List<ICategorialClassRecord>> children = o1.getChildrenCategorialClassRecords();
+        int max = 0;
+        for (CategorialClass ICCR : mapKeys) {
+            if (children != null && ICCR != null &&  children.get(ICCR)!=null) {
+                for (ICategorialClassRecord ccr : children.get(ICCR)) {
+                    int d = getDepth(ccr);
+                    if (max < d) {
+                        max = d;
+                    }
+                }
+            }
+        }
+        return max + 1;
+    }
+
     /**
      * Converting <code>ICategorialClassRecord</code> records  
      * @param records
@@ -47,6 +96,12 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
      */
     public List<Map<AttributeInterface, Object>> convert(List<ICategorialClassRecord> records,
                                                          int transformationMaxLimit) {
+        Map<ICategorialClassRecord, Integer> recordVsCount = new HashMap<ICategorialClassRecord, Integer>();
+        for (ICategorialClassRecord r : records) {
+            recordVsCount.put(r, getDepth(r));
+        }
+
+        Collections.sort(records, new RecordComparator(recordVsCount));
         List<Map<AttributeInterface, Object>> list = new ArrayList<Map<AttributeInterface, Object>>();
         if (records != null) {
             for (ICategorialClassRecord record : records) {
