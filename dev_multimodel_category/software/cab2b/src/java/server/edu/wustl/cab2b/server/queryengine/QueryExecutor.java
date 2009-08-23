@@ -98,14 +98,12 @@ public class QueryExecutor {
     private List<IQueryResult<ICategorialClassRecord>> categoryResults;
 
     private QueryStatus qStatus;
-    
+
     private boolean normalQueryFinished = false;
 
     private boolean recordStatus;
 
     private int noOfRecordsCreated = 0;
-    
-    
 
     /**
      * Constructor initializes object with query and globus credentials
@@ -268,8 +266,8 @@ public class QueryExecutor {
                         float maxPri = (float) (maxPriority - j * allowedPriorityRange);
                         float minPri = maxPri - allowedPriorityRange;
 
-                        executor.execute(new ChildQueryTask(rootExprCatRec, rootOutputExprNode,
-                                rootExprCatRec.getRecordId(), minPri, maxPri));
+                        executor.execute(new ChildQueryTask(rootExprCatRec, rootOutputExprNode, rootExprCatRec
+                            .getRecordId(), minPri, maxPri));
 
                     }
                 }
@@ -332,8 +330,7 @@ public class QueryExecutor {
                 DcqlConstraint constraintForChild = addParentIdConstraint(map.get(childExpr), parentIdConstraint);
 
                 String name = childEntity.getName();
-                DCQLQuery dcql =                    
-                        DCQLGenerator.createDCQLQuery(query, name, constraintForChild, parentId.getUrl());
+                DCQLQuery dcql = DCQLGenerator.createDCQLQuery(query, name, constraintForChild, parentId.getUrl());
 
                 CategorialClass catClassForChildExpr =
                         categoryPreprocessorResult.getCatClassForExpr().get(childExpr);
@@ -368,11 +365,12 @@ public class QueryExecutor {
                     IRecord record = listRec.iterator().next();
                     float max = (float) (maxPriority - k * range);
                     float min = max - range;
-                    executor.execute(new ChildQueryTask(parentCatClassRec, childExprNode, record
-                        .getRecordId(), min, max));
+                    executor.execute(new ChildQueryTask(parentCatClassRec, childExprNode, record.getRecordId(),
+                            min, max));
                 }
             }
         }
+
         /**
          * Expression is for a catClass; add recs to parentCatClassRec
          * @param dcql
@@ -395,12 +393,13 @@ public class QueryExecutor {
                         ICategorialClassRecord childExprCatRec = records.get(k);
                         float max = (float) (maxPriority - k * range);
                         float min = max - range;
-                        executor.execute(new ChildQueryTask(childExprCatRec, childExprNode,
-                                childExprCatRec.getRecordId(), min, max));
+                        executor.execute(new ChildQueryTask(childExprCatRec, childExprNode, childExprCatRec
+                            .getRecordId(), min, max));
                     }
                 }
             }
         }
+
         private DcqlConstraint addParentIdConstraint(DcqlConstraint constraint, DcqlConstraint parentIdConstraint) {
             DcqlConstraint dcqlConstraint = parentIdConstraint;
             if (!query.isKeywordSearch()) {
@@ -488,6 +487,7 @@ public class QueryExecutor {
         }
         return failedUrls;
     }
+
     /**
      * Returns whatever results available in memory. 
      * @return the queryResult
@@ -500,6 +500,7 @@ public class QueryExecutor {
 
         return result;
     }
+
     /**
      * @see edu.wustl.cab2b.server.queryengine.ICab2bQueryExecutor#getStatus()
      */
@@ -507,6 +508,7 @@ public class QueryExecutor {
         updateQueryStatus();
         return qStatus;
     }
+
     /**
      * Returns whatever results available and updates only query status in database.     
      * @return
@@ -516,6 +518,7 @@ public class QueryExecutor {
         saveStatusInDB();
         return result;
     }
+
     /**
      * Updates query status in database.
      */
@@ -534,6 +537,7 @@ public class QueryExecutor {
         return query;
 
     }
+
     /**
      * Method to update url status properties. It will update only the in-memory query status.
      */
@@ -570,7 +574,7 @@ public class QueryExecutor {
             boolean isEveryUrlWorked = true;
             for (FQPUrlStatus fqpUrl : fqpUrlStatus) {
                 String urlStatus = fqpUrl.getStatus();
-                if (urlStatus.equals(ProcessingStatus._Complete_With_Error)) {
+                if (urlStatus.equals(AbstractStatus.Complete_With_Error)) {
                     qStatus.setStatus(AbstractStatus.Complete_With_Error);
                     isEveryUrlWorked = false;
                     break;
@@ -609,8 +613,7 @@ public class QueryExecutor {
         boolean res = true;
         for (FQPUrlStatus fqpUrl : fqpUrlStatus) {
             String urlStatus = fqpUrl.getStatus();
-            if (urlStatus.equals(ProcessingStatus._Processing)
-                    || urlStatus.equals(ProcessingStatus._Waiting_To_Begin)) {
+            if (urlStatus.equals(AbstractStatus.Processing)) {
                 res = false;
                 break;
             }

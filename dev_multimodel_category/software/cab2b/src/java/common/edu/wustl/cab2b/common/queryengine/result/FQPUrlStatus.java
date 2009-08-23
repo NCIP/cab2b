@@ -5,6 +5,8 @@ package edu.wustl.cab2b.common.queryengine.result;
 
 import java.io.Serializable;
 
+import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
+
 /**
  * Class describing failed target urls for query. 
  * @author deepak_shingan
@@ -19,7 +21,7 @@ public class FQPUrlStatus implements Serializable {
 
     private String description;
 
-    private String status = "Waiting To Begin";
+    private String status = AbstractStatus.Processing;
 
     public FQPUrlStatus(String targetUrl, String errorMessage, String description) {
         this.targetUrl = targetUrl;
