@@ -34,15 +34,15 @@ public class QueryExecutorPropertes {
 
     private static int globalThreadLimit = 4000;
 
-    private static int perQueryMaxThreadLimit = 500;
+    private static int perQueryMaxThreadLimit = 100;
 
-    private static int perQueryMinThreadLimit = 50;
+    private static int perQueryMinThreadLimit = 100;
 
-    private static int globalAllowedRecords = 60000;
+    private static int globalAllowedRecords = 600000;
 
-    private static int perQueryAllowedRecords = 10000;
+    private static int perQueryAllowedRecords = 50000;
 
-    private static int uiResultLimit = 1000;
+    private static int uiResultLimit = 100;
 
     static {
         String path = System.getProperty("user.home") + File.separator + fileName;
