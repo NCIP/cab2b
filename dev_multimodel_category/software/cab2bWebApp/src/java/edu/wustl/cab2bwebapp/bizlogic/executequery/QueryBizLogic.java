@@ -66,7 +66,7 @@ public class QueryBizLogic {
             ICab2bQuery query,
             String conditionstr,
             String keyword,
-            UserInterface user2,
+            UserInterface user,
             GlobusCredential proxy,
             String[] modelGroupNames) {
         this.user = user;
