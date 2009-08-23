@@ -37,7 +37,6 @@ import edu.wustl.cab2b.server.queryengine.MMCQueryExecutionHandler;
 import edu.wustl.cab2b.server.queryengine.QueryExecutionHandler;
 import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
-import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.UserBackgroundQueries;
 import edu.wustl.cab2bwebapp.dvo.SearchResultDVO;
 
@@ -56,26 +55,23 @@ public class QueryBizLogic {
     private UserInterface user;
 
     /**
-     * @param queryId
+     * @param query
      * @param conditionstr
      * @param keyword
-     * @param savedQueryBizLogic
      * @param user
      * @param proxy
      * @param modelGroupNames
      */
     public QueryBizLogic(
-            Long queryId,
+            ICab2bQuery query,
             String conditionstr,
             String keyword,
-            SavedQueryBizLogic savedQueryBizLogic,
-            UserInterface user,
+            UserInterface user2,
             GlobusCredential proxy,
             String[] modelGroupNames) {
         this.user = user;
         this.transformationMaxLimit = QueryExecutorPropertes.getUiResultLimit();
-        initializeQueryExecutionHandler(queryId, conditionstr, keyword, savedQueryBizLogic, user, proxy,
-                                        modelGroupNames);
+        initializeQueryExecutionHandler(query, conditionstr, keyword, user, proxy, modelGroupNames);
     }
 
     /**
@@ -87,29 +83,21 @@ public class QueryBizLogic {
      * @param proxy
      * @param modelGroupNames
      */
-    private void initializeQueryExecutionHandler(Long queryId, String conditionstr, String keyword,
-                                                 SavedQueryBizLogic savedQueryBizLogic, UserInterface user,
-                                                 GlobusCredential proxy, String[] modelGroupNames) {
-        ICab2bQuery query = savedQueryBizLogic.getQueryById(queryId);
-        //KeyWord Query
-        if (query instanceof KeywordQuery) {
+    private void initializeQueryExecutionHandler(ICab2bQuery query, String conditionstr, String keyword,
+                                                 UserInterface user, GlobusCredential proxy,
+                                                 String[] modelGroupNames) {
+        if (query instanceof KeywordQuery) {//KeyWord Query
             queryExecutionHandler =
                     new KeywordQueryExecutionHandler((KeywordQuery) query, proxy, user, modelGroupNames, keyword);
-            queryExecutionHandler.execute();
-        }
-        //MMC Query
-        else if (query instanceof MultiModelCategoryQuery) {
+        } else if (query instanceof MultiModelCategoryQuery) {//MMC Query
             setInputDataToQuery((MultiModelCategoryQuery) query, conditionstr);
             queryExecutionHandler =
                     new MMCQueryExecutionHandler((MultiModelCategoryQuery) query, proxy, user, modelGroupNames);
-            queryExecutionHandler.execute();
-        }
-        //Form Based
-        else {
+        } else {//Form Based
             setInputDataToQuery(query, conditionstr);
             queryExecutionHandler = new CaB2QueryExecutionHandler(query, proxy, user, modelGroupNames);
-            queryExecutionHandler.execute();
         }
+        queryExecutionHandler.execute();
     }
 
     /**

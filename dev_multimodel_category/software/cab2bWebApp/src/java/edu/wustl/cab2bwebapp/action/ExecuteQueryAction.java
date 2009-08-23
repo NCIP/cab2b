@@ -21,6 +21,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.globus.gsi.GlobusCredential;
 
+import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryBizLogic;
@@ -60,9 +61,9 @@ public class ExecuteQueryAction extends Action {
             Long queryId = (Long) session.getAttribute(Constants.QUERY_ID);
             String keyword = (String) session.getAttribute(Constants.KEYWORD);
             String conditionstr = (String) session.getAttribute(Constants.CONDITION_LIST);
+            ICab2bQuery query = savedQueryBizLogic.getQueryById(queryId);
             QueryBizLogic queryBizLogic =
-                    new QueryBizLogic(queryId, conditionstr, keyword, savedQueryBizLogic, user, proxy,
-                            modelGroupNames);
+                    new QueryBizLogic(query, conditionstr, keyword, user, proxy, modelGroupNames);
             session.setAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT, queryBizLogic);
 
         } catch (RuntimeException e) {
