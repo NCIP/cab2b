@@ -95,19 +95,21 @@ public class DisplayDashboardAction extends Action {
                 String pattern = "(.*)\\((.*)\\)(.*)";
                 String values[] = qs.getQueryConditions().split(";");
                 Pattern p = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+                String conditionValue = null;
                 for (int j = 0; j < values.length; j++) {
                     QueryConditionDVO queryCondition = new QueryConditionDVO();
                     Matcher m = p.matcher(values[j]);
                     m.find();
                     queryCondition.setParameter(m.group(1));
                     queryCondition.setCondition(m.group(2));
-                    queryCondition.setValue(m.group(3));
+                    conditionValue = m.group(3);
+                    queryCondition.setValue(conditionValue);
                     queryConditions.add(queryCondition);
                 }
 
                 if (query instanceof KeywordQuery) {
                     KeywordQuery keywordQuery = (KeywordQuery) query;
-                    queryStatusDVO.setTitle("Keyword search for " + values[2] + " on "
+                    queryStatusDVO.setTitle("Keyword search for " + conditionValue + " on "
                             + keywordQuery.getApplicationGroup().getModelGroupName());
                 } else {
                     queryStatusDVO.setTitle(query.getName());
