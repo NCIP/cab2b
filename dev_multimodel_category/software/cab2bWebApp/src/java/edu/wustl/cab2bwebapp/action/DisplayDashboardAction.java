@@ -22,6 +22,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.KeywordQuery;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.URLStatus;
 import edu.wustl.cab2b.common.user.UserInterface;
@@ -82,27 +83,36 @@ public class DisplayDashboardAction extends Action {
                 }
                 QueryStatusDVO queryStatusDVO = new QueryStatusDVO();
                 ICab2bQuery query = qs.getQuery();
-                queryStatusDVO.setTitle(query.getName());
+
                 queryStatusDVO.setType("ANDed".equalsIgnoreCase(query.getType()) ? "Saved Search" : "Keyword");
                 queryStatusDVO.setStatus(qs.getStatus());
                 if (qs.getResultCount() != null) {
                     queryStatusDVO.setResultCount(qs.getResultCount());
                 }
                 queryStatusDVO.setExecutedOn(qs.getQueryStartTime());
+
                 List<QueryConditionDVO> queryConditions = new ArrayList<QueryConditionDVO>();
                 String pattern = "(.*)\\((.*)\\)(.*)";
                 String values[] = qs.getQueryConditions().split(";");
                 Pattern p = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-                Matcher m = null;
                 for (int j = 0; j < values.length; j++) {
                     QueryConditionDVO queryCondition = new QueryConditionDVO();
-                    m = p.matcher(values[j]);
+                    Matcher m = p.matcher(values[j]);
                     m.find();
-                    queryCondition.setParameter((m.group(1)));
-                    queryCondition.setCondition((m.group(2)));
-                    queryCondition.setValue((m.group(3)));
+                    queryCondition.setParameter(m.group(1));
+                    queryCondition.setCondition(m.group(2));
+                    queryCondition.setValue(m.group(3));
                     queryConditions.add(queryCondition);
                 }
+
+                if (query instanceof KeywordQuery) {
+                    KeywordQuery keywordQuery = (KeywordQuery) query;
+                    queryStatusDVO.setTitle("Keyword search for " + values[2] + " on "
+                            + keywordQuery.getApplicationGroup().getModelGroupName());
+                } else {
+                    queryStatusDVO.setTitle(query.getName());
+                }
+
                 queryStatusDVO.setConditions(queryConditions);
                 queryStatusDVO.setFileName(qs.getFileName());
                 queryStatusDVOList.add(queryStatusDVO);
