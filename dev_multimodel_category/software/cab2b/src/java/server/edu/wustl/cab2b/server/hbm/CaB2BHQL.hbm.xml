@@ -90,12 +90,13 @@
 		edu.wustl.cab2b.common.user.User user where user.userName = ?)
 	</query>
 	
-	<query name="getKeywordQueriesByModelGroupAndUser">
+	<query name="getKeywordQueriesByUserId">
 		from edu.wustl.cab2b.common.queryengine.KeywordQueryImpl query
-		where query.applicationGroup = ? and query.createdBy = (Select user.userId from
-		edu.wustl.cab2b.common.user.User user where user.userName = ?)
+		where query.createdBy = ?
 	</query>
 	
-	
-
+	<query name="getKeywordQueriesByModelGroupAndUserId">
+		from edu.wustl.cab2b.common.queryengine.KeywordQueryImpl query
+		where query.applicationGroup = ? and query.createdBy = ?
+	</query>
 </hibernate-mapping>

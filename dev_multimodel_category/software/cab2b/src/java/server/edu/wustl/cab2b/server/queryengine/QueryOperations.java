@@ -31,9 +31,11 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.category.PopularCategoryOperations;
 import edu.wustl.cab2b.server.util.UtilityOperations;
+import edu.wustl.common.hibernate.HibernateDatabaseOperations;
 import edu.wustl.common.querysuite.bizlogic.QueryBizLogic;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.querysuite.utils.ConstraintsObjectBuilder;
+import edu.wustl.common.util.dbManager.DBUtil;
 
 /**
  * @author chetan_patil
@@ -121,14 +123,27 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
 
         List<KeywordQuery> keywordQueries = null;
         try {
-            List<ICab2bQuery> queries =
-                    (List<ICab2bQuery>) Utility.executeHQL("getKeywordQueriesByUserName", params);
-            filterSystemGeneratedSubQueries(queries);
+            keywordQueries = (List<KeywordQuery>) Utility.executeHQL("getKeywordQueriesByUserName", params);
+        } catch (HibernateException e) {
+            throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
+        }
 
-            keywordQueries = new ArrayList<KeywordQuery>(queries.size());
-            for (ICab2bQuery query : queries) {
-                keywordQueries.add((KeywordQuery) query);
-            }
+        return keywordQueries;
+    }
+
+    /**
+     * This method returns all the keyword search queries created by the given user.
+     *
+     * @param userName creator/owner of the queries
+     * @return
+     */
+    public List<KeywordQuery> getKeywordQueriesByUserId(final Long userId) {
+        List<Object> params = new ArrayList<Object>(1);
+        params.add(userId);
+
+        List<KeywordQuery> keywordQueries = null;
+        try {
+            keywordQueries = (List<KeywordQuery>) Utility.executeHQL("getKeywordQueriesByUserId", params);
         } catch (HibernateException e) {
             throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
         }
@@ -197,26 +212,21 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
             MultiModelCategoryQuery mmcQuery = (MultiModelCategoryQuery) query;
 
             Collection<ICab2bQuery> subQueries = mmcQuery.getSubQueries();
-            List<ICab2bQuery> queries = new ArrayList<ICab2bQuery>(subQueries);
-
-            for (int index = 0; index < queries.size(); index++) {
-                ICab2bQuery subQuery = queries.get(index);
+            for (ICab2bQuery subQuery : subQueries) {
                 subQuery.setName(subQuery.getName() + "#");
                 subQuery = converter.convertToKeywordQuery(subQuery);
-                queries.set(index, subQuery);
             }
-            mmcQuery.setSubQueries(queries);
         }
         query = converter.convertToKeywordQuery(query);
 
-        String userName = AuthenticationUtility.getUsersGridId(serializedDCR);
-        saveInKeywordQuery(query, userName, userId);
+        //String userName = AuthenticationUtility.getUsersGridId(serializedDCR);
+        saveInKeywordQuery(query, userId);
     }
 
-    private void saveInKeywordQuery(ICab2bQuery query, String userName, Long userId) {
+    private void saveInKeywordQuery(ICab2bQuery query, Long userId) {
         EntityInterface queryEntity = query.getOutputEntity();
         Collection<ModelGroupInterface> modelGroups = UtilityOperations.getModelGroups(queryEntity);
-        List<KeywordQuery> queries = getKeywordQueriesByUserName(userName);
+        List<KeywordQuery> queries = getKeywordQueriesByUserId(userId);
 
         List<KeywordQuery> keywordQueries = new ArrayList<KeywordQuery>(modelGroups.size());
         for (ModelGroupInterface modelGroup : modelGroups) {
@@ -235,9 +245,15 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
             }
         }
 
-        for (KeywordQuery keywordQuery : keywordQueries) {
-            keywordQuery.addSubQuery(query);
-            updateQuery(keywordQuery);
+        try {
+            HibernateDatabaseOperations<KeywordQuery> dbopr =
+                    new HibernateDatabaseOperations<KeywordQuery>(DBUtil.currentSession());
+            for (KeywordQuery keywordQuery : keywordQueries) {
+                keywordQuery.addSubQuery(query);
+                dbopr.update(keywordQuery);
+            }
+        } catch (Exception e) {
+            DBUtil.closeSession();
         }
     }
 
@@ -250,7 +266,7 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         dummy.setOutputEntity(en);
 
         KeywordQuery keywordQuery = new KeywordQueryImpl(dummy);
-        keywordQuery.setName(modelGroup.getModelGroupName() + "_KeywordSearch");
+        keywordQuery.setName(modelGroup.getModelGroupName() + "_KeywordSearch_" + userId);
         keywordQuery.setCreatedBy(userId);
         keywordQuery.setApplicationGroup(modelGroup);
         keywordQuery.setCreatedDate(new Date());
