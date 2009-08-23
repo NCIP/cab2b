@@ -17,7 +17,6 @@ import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.server.queryengine.QueryOperations;
 import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
 import edu.wustl.cab2b.server.util.ServerProperties;
-import edu.wustl.cab2bwebapp.util.Utility;
 
 /**
  * This class fetches the saved searches.

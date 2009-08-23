@@ -288,7 +288,6 @@ public class QueryExecutor {
                 }
             }
         }
-        // logger.info("Returning null URLStatus for URL : " + url);
         return null;
     }
 

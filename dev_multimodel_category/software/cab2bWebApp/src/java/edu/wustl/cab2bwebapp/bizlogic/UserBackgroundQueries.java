@@ -45,7 +45,7 @@ public class UserBackgroundQueries {
     /**
      * Time interval for updating database for queries executing in background. 
      */
-    public static final int BACKGROUND_QUERY_REFRESH_TIME_INTERVAL = 15;
+    public static final int BACKGROUND_QUERY_REFRESH_TIME_INTERVAL = 5;
 
     static {
         //Creating directory for saving CSV files on server.
@@ -119,7 +119,7 @@ public class UserBackgroundQueries {
             for (QueryBizLogic queryBizLogic : querieLogics) {
                 QueryStatus status = queryBizLogic.getStatus();
 
-                //If query is complete Write results into map and remove it's reference from map.
+                //If query is complete Write results into CSV file and update map with file name.
                 if (status.getStatus().equals(AbstractStatus.Complete)
                         || status.getStatus().equals(AbstractStatus.Complete_With_Error)) {
                     try {
@@ -131,11 +131,40 @@ public class UserBackgroundQueries {
                         e.printStackTrace();
                         throw new RuntimeException("Error while saving CSV file.", ErrorCodeConstants.IO_0001);
                     }
+                }
+                //updating query status in database.
+                new QueryURLStatusOperations().updateQueryStatus(status);
+            }
+        }
+        removeCompletedQueriesFromBackground(user);
+    }
+
+    /**
+     * Removes all background completed queries from memomry. 
+     * @param user
+     */
+    private void removeCompletedQueriesFromBackground(UserInterface user) {
+        Set<QueryBizLogic> querieLogics = userToBackgroundQueries.get(user);
+        if (querieLogics != null) {
+            for (QueryBizLogic queryBizLogic : querieLogics) {
+                QueryStatus status = queryBizLogic.getStatus();
+
+                //If query is complete Write results into map and remove it's reference from map.
+                if (status.getStatus().equals(AbstractStatus.Complete)
+                        || status.getStatus().equals(AbstractStatus.Complete_With_Error)) {
+                    logger.info("Removing :" + queryBizLogic.getStatus().getQuery().getName() + " from user "
+                            + user.getUserName() + " mapping list.");
                     querieLogics.remove(queryBizLogic);
                 }
                 //updating query status in database.
                 new QueryURLStatusOperations().updateQueryStatus(status);
             }
+        } else {
+            //No queries running in background for the selected user.
+            //Remove user from map list
+            logger
+                .info("No queries running in background for the selected user.Removing user object (if present) from user to background query mapping.");
+            userToBackgroundQueries.remove(user);
         }
     }
 

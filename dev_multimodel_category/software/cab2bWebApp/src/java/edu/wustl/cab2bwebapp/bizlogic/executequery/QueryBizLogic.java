@@ -1,5 +1,6 @@
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -251,15 +252,17 @@ public class QueryBizLogic {
      * @throws IOException
      */
     public String exportToCSV() throws IOException {
-        String fileName = null;
+        Set<String> fileNames = null;
         if (queryExecutionHandler instanceof KeywordQueryExecutionHandler) {
-            fileName = keyWordExportToCSV();
+            fileNames = keyWordExportToCSV();
         } else {
+            fileNames = new HashSet<String>(1);
             SpreadSheetResultTransformer transformer =
                     new SpreadSheetResultTransformer(queryExecutionHandler.getQuery(), queryExecutionHandler
                         .getResult());
-            fileName = transformer.writeToCSV();
+            fileNames.add(transformer.writeToCSV());
         }
+        String fileName = zipAndSave(fileNames);
         updateDatabaseWithFileName(fileName);
         logger.info("File saved at location:" + fileName);
         return fileName;
@@ -281,7 +284,7 @@ public class QueryBizLogic {
      * @return
      * @throws IOException 
      */
-    private String keyWordExportToCSV() throws IOException {
+    private Set<String> keyWordExportToCSV() throws IOException {
         Set<String> fileNames = new HashSet<String>();
         KeywordQueryExecutionHandler handler = (KeywordQueryExecutionHandler) queryExecutionHandler;
         Map<ICab2bQuery, IQueryResult<? extends IRecord>> qVsResultMap = handler.getQueryVsResultMap();
@@ -296,7 +299,7 @@ public class QueryBizLogic {
             }
             fileNames.add(fileName);
         }
-        return zipAndSave(fileNames);
+        return fileNames;
     }
 
     /**
@@ -307,12 +310,15 @@ public class QueryBizLogic {
      */
     private String zipAndSave(Set<String> fileNames) throws IOException {
 
-        String zipFileName = this.user.getUserName() + "_" + System.currentTimeMillis() + ".zip";
+        String zipFileName = "Keyword_" + System.currentTimeMillis() + ".zip";
         try {
-            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFileName));
+            ZipOutputStream out =
+                    new ZipOutputStream(new FileOutputStream(UserBackgroundQueries.EXPORT_CSV_DIR + File.separator
+                            + zipFileName));
             // Add ZIP entry to output stream.
             for (String inFilename : fileNames) {
-                FileInputStream in = new FileInputStream(inFilename);
+                FileInputStream in =
+                        new FileInputStream(UserBackgroundQueries.EXPORT_CSV_DIR + File.separator + inFilename);
                 out.putNextEntry(new ZipEntry(inFilename));
                 byte[] buf = new byte[1024];
                 int len;
@@ -327,7 +333,7 @@ public class QueryBizLogic {
             e.printStackTrace();
             throw new RuntimeException("Error while saving CSV ZIP file.", ErrorCodeConstants.IO_0001);
         }
-        logger.info("File saved at location:" + zipFileName);
+        logger.info("Zip file saved at location:" + zipFileName);
         return zipFileName;
     }
 

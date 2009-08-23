@@ -38,10 +38,10 @@ public class ExportResultsAction extends Action {
                 session.setAttribute(Constants.EXPORTED_FILE_PATH, exported_file_path);
             }
             //else take the file path from the session
-            sendFileToClient(response, exported_file_path, "ExportedData.csv", "application/download");
+            sendFileToClient(response, exported_file_path, "Results.zip", "application/download");
         } else {
             sendFileToClient(response, UserBackgroundQueries.EXPORT_CSV_DIR + File.separator
-                    + request.getParameter("fileName"), "Results.csv", "application/download");
+                    + request.getParameter("fileName"), "Results.zip", "application/download");
         }
         return null;
     }

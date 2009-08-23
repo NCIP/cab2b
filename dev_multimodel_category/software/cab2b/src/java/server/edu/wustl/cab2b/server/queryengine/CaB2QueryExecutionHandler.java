@@ -9,10 +9,10 @@ import java.util.Collection;
 import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
-import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
 import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
 
 /**
@@ -34,17 +34,11 @@ public class CaB2QueryExecutionHandler extends QueryExecutionHandler<ICab2bQuery
             UserInterface user,
             String[] modelGroupNames) {
         super(query, proxy, user, modelGroupNames);
-        this.queryExecutorsList = new ArrayList<QueryExecutor>(1);
-    }
-
-    /* (non-Javadoc)
-     * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#executeQuery()
-     */
-    @Override
-    protected void executeQuery() {
+        preProcessQuery();
+        //Initilizing executor list.
         QueryExecutor queryExecutor = new QueryExecutor(query, proxy);
+        this.queryExecutorsList = new ArrayList<QueryExecutor>(1);
         queryExecutorsList.add(queryExecutor);
-        queryExecutor.executeQuery();
     }
 
     /* (non-Javadoc)
@@ -58,20 +52,12 @@ public class CaB2QueryExecutionHandler extends QueryExecutionHandler<ICab2bQuery
         //getResult() will update the DB, while getPartialResult() will only update the in-memory object.
         if (isExecuteInBackground()) {
             result = executor.getResult();
+            new QueryURLStatusOperations().updateQueryStatus(getStatus());
         } else {
             result = executor.getPartialResult();
         }
+        updateStatus();
         return result;
-    }
-
-    /* (non-Javadoc)
-     * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#getStatus()
-     */
-    @Override
-    public QueryStatus getStatus() {
-        QueryExecutor queryExecutor = (QueryExecutor) queryExecutorsList.get(0);
-        return queryExecutor.getStatus();
-
     }
 
     @Override
@@ -88,13 +74,5 @@ public class CaB2QueryExecutionHandler extends QueryExecutionHandler<ICab2bQuery
         Collection<ICab2bQuery> queries = new ArrayList<ICab2bQuery>(1); //since it is a single query
         queries.add(this.query);
         QueryExecutorUtil.insertURLConditions(queries, proxy, user, modelGroupNames);
-
-    }
-    
-    /* (non-Javadoc)
-     * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#getQuery()
-     */
-    public ICab2bQuery getQuery() {
-        return query;
     }
 }
