@@ -217,7 +217,8 @@ public class SpreadSheetResultTransformer {
 
         Map<String, List<ICategorialClassRecord>> map = result.getRecords();
         int spreadsheetRecordCount = 0;
-        List<String> urls = query.getOutputUrls();
+        //List<String> urls = query.getOutputUrls();
+        Set<String> urls = map.keySet();
         for (String url : urls) {
             List<ICategorialClassRecord> recordList = map.get(url);
             List<Map<AttributeInterface, Object>> transformedResult = null;
