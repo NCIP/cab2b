@@ -14,6 +14,8 @@ public interface AbstractStatus {
     public static final String Complete = "Complete";
 
     public static final String Complete_With_Error = "Complete With Error";
+    
+    public static final String FAILED = "Failed";
 
     
     /** Gets the URL ID */

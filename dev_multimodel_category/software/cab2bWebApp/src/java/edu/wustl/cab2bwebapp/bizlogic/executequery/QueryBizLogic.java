@@ -251,7 +251,7 @@ public class QueryBizLogic {
             fileNames.add(transformer.writeToCSV());
         }
         String fileName = zipAndSave(fileNames);
-        updateDatabaseWithFileName(fileName);
+        updateDatabaseWithFileName(fileName, queryExecutionHandler.getStatus());
         logger.info("File saved at location:" + fileName);
         return fileName;
     }
@@ -260,8 +260,7 @@ public class QueryBizLogic {
      * Updates Query Status properties in database with file name.  
      * @param fileName
      */
-    private void updateDatabaseWithFileName(String fileName) {
-        QueryStatus qStatus = queryExecutionHandler.getStatus();
+    private void updateDatabaseWithFileName(String fileName, QueryStatus qStatus) {
         qStatus.setFileName(fileName);
         new QueryURLStatusOperations().updateQueryStatus(qStatus);
     }
@@ -277,11 +276,18 @@ public class QueryBizLogic {
         KeywordQueryExecutionHandler handler = (KeywordQueryExecutionHandler) queryExecutionHandler;
         Map<ICab2bQuery, IQueryResult<? extends IRecord>> qVsResultMap = handler.getQueryVsResultMap();
         for (Map.Entry<ICab2bQuery, IQueryResult<? extends IRecord>> keyValuePair : qVsResultMap.entrySet()) {
+            ICab2bQuery subQuery = keyValuePair.getKey();
             SpreadSheetResultTransformer transformer =
                     new SpreadSheetResultTransformer(keyValuePair.getKey(), keyValuePair.getValue());
             String fileName = null;
             try {
                 fileName = transformer.writeToCSV();
+                Set<QueryStatus> subQueryStatus = queryExecutionHandler.getStatus().getChildrenQueryStatus();
+                for (QueryStatus queryStatus : subQueryStatus) {
+                    if (queryStatus.getQuery().equals(subQuery)) {
+                        updateDatabaseWithFileName(fileName, queryStatus);
+                    }
+                }
             } catch (IOException e) {
                 throw new RuntimeException("Error while saving CSV file.", ErrorCodeConstants.IO_0001);
             }
@@ -298,7 +304,7 @@ public class QueryBizLogic {
      */
     private String zipAndSave(Set<String> fileNames) throws IOException {
 
-        String zipFileName = "Keyword_" + System.currentTimeMillis() + ".zip";
+        String zipFileName = System.currentTimeMillis() + ".zip";
         try {
             ZipOutputStream out =
                     new ZipOutputStream(new FileOutputStream(UserBackgroundQueries.EXPORT_CSV_DIR + File.separator

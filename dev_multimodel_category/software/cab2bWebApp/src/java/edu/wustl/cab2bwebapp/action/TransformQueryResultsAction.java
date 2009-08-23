@@ -90,14 +90,18 @@ public class TransformQueryResultsAction extends Action {
                     if (query instanceof KeywordQuery) { //i.e. its the first time,results page is been opened.Thus, set it as first KSubquery.
                         List<SavedQueryDVO> savedQueries =
                                 (List<SavedQueryDVO>) session.getAttribute(Constants.SAVED_QUERIES);
-                        selectedQueryName = savedQueries.get(0).getName();
+                        if (savedQueries != null || savedQueries.size() != 0) {
+                            selectedQueryName = savedQueries.get(0).getName();
+                        }else{
+                            throw new RuntimeException("No keyword queries saved for selected application group.");
+                        }
                     } else { //MMC query or form based query
                         selectedQueryName = query.getName();
                     }
                 }
             }
             session.setAttribute(Constants.SELECTED_QUERY_NAME, selectedQueryName);
-            
+
             if (query instanceof KeywordQuery) {
                 for (ICab2bQuery queryObj : queries) {
                     if (queryObj.getName().equals(selectedQueryName + "#")) {

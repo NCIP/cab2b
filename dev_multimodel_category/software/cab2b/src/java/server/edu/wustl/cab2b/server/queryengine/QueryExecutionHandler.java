@@ -195,32 +195,37 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
                     .equals(AbstractStatus.Complete_With_Error))) {
             return;
         }
-        Integer resultCount = null;
-
+        int resultCount = 0;
+        boolean resultAvailable = false;
         for (QueryExecutor subQueryExecutor : queryExecutorsList) {
             Integer childResultCount = subQueryExecutor.getStatus().getResultCount();
             if (childResultCount != null) {
-                if (resultCount == null) {
-                    resultCount = new Integer(childResultCount);
-                }
-                resultCount = +childResultCount;
+                resultAvailable = true;
+                resultCount = resultCount + childResultCount.intValue();
             }
         }
-        status.setResultCount(resultCount);
+        if (resultAvailable) {
+            status.setResultCount(new Integer(resultCount));
+        }
         status.setStatus(AbstractStatus.Processing);
         Set<QueryStatus> childQueryStatus = status.getChildrenQueryStatus();
         if (isProcessingFinished() && areAllSubQueriesFinished(childQueryStatus)) {
             status.setQueryEndTime(new Date());
             boolean isEveryUrlWorked = true;
+            int failedUrlCount = 0;
             for (QueryStatus subQueryStatus : childQueryStatus) {
                 String urlStatus = subQueryStatus.getStatus();
                 if (urlStatus.equals(ProcessingStatus._Complete_With_Error)) {
                     status.setStatus(AbstractStatus.Complete_With_Error);
                     isEveryUrlWorked = false;
-                    break;
+                    failedUrlCount++;
                 }
             }
-            if (isEveryUrlWorked) {
+            if ((failedUrlCount != 0 && failedUrlCount == childQueryStatus.size())
+                    || (childQueryStatus.size() == 0 && getFailedUrls().size() == status.getUrlStatus().size())) {
+                //Every URL is failed. Set status as failed.
+                status.setStatus(AbstractStatus.FAILED);
+            } else if (isEveryUrlWorked && failedUrlCount == 0) {
                 status.setStatus(AbstractStatus.Complete);
             }
             //Query finished update in database.
