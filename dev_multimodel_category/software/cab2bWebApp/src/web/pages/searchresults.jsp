@@ -23,13 +23,10 @@
 
  function getTransformedResults()
 {
-  processAJAXRequest('TransformQueryResultsAction.do', 'centerpanelcontent', 1);
-   if(document.getElementById("resultcountAJAX"))
+  processAJAXRequest('TransformQueryResultsAction.do', (navigator.appName.indexOf('Netscape')==-1?'centerpanelcontent':'centerpanelcontentbuffer'), 1);
+   if(document.getElementById("resultcountAJAX") && document.getElementById('resultcount'))
   {
-	if(document.getElementById('resultcount'))
-	{
-		document.getElementById('resultcount').innerHTML = document.getElementById("resultcountAJAX").innerHTML;
-	}
+	document.getElementById('resultcount').innerHTML = document.getElementById("resultcountAJAX").innerHTML;
   }
   var resultCount = document.getElementById('resultcountAJAX')?document.getElementById('resultcountAJAX').innerHTML:'0';
    if(resultCount != '0')
@@ -87,6 +84,11 @@
     {
 	  document.getElementById('searchresultstable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '370';
 	}
+	 if(document.getElementById('centerpanelcontentbuffer').innerHTML!="")
+	{
+	  document.getElementById('centerpanelcontent').innerHTML = document.getElementById('centerpanelcontentbuffer').innerHTML;
+	  document.getElementById('centerpanelcontentbuffer').innerHTML = "";
+	}	
   }
   setTimeout("updateView()", 1);
 }
@@ -131,7 +133,8 @@
 	</DIV>
 </DIV>
 <DIV id="centerpanel">
-	<DIV id="centerpanelcontent" style="overflow:hidden;">
+	<DIV id="centerpanelcontentbuffer" style="display:none;"></DIV>
+	<DIV id="centerpanelcontent">
 		<%@ include file="searchresultspanel.jsp" %>
 	</DIV>
 </DIV>
