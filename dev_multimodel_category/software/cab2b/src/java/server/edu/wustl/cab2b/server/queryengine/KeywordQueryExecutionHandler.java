@@ -77,7 +77,7 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.server.queryengine.QueryExecutionHandler#execute()
      */
-    public void execute() {        
+    public void execute() {
         super.execute();
         status.setQueryConditions("Keyword(Search for)" + keyword);
     }
@@ -119,6 +119,7 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
      */
     @Override
     protected void preProcessQuery() throws RuntimeException {
+        query.setName("Keyword search for " + keyword + " on " + query.getApplicationGroup());
         Collection<ICab2bQuery> queries = this.query.getSubQueries();
         for (ICab2bQuery query : queries) {
             insertKeyword(query, this.keyword);
