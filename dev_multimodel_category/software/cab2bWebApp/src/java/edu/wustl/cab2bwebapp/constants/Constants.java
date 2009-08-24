@@ -166,6 +166,9 @@ public interface Constants {
     /** Constant for forward to dash board page */
     public static final String FORWARD_DASHBOARD = "dashboard";
     
+    /** Constant for forward to dash board panel page */
+    public static final String FORWARD_DASHBOARD_PANEL = "dashboardpanel";    
+    
     /** Constant for forward to dash board action class */
     public static final String FORWARD_DASHBOARD_ACTION = "dashboardaction";    
 
