@@ -134,7 +134,9 @@ public class DisplayDashboardAction extends Action {
             saveErrors(request, errors);
             return mapping.findForward(Constants.FORWARD_FAILURE);
         }
-        ActionForward actionForward = mapping.findForward(Constants.FORWARD_DASHBOARD);
+        ActionForward actionForward =
+                mapping.findForward(request.getHeader(Constants.AJAX_CALL) == null ? Constants.FORWARD_DASHBOARD
+                        : Constants.FORWARD_DASHBOARD_PANEL);
         ActionForward actionRedirect = new ActionForward(actionForward.getName(), actionForward.getPath(), false);
         return actionRedirect;
     }
