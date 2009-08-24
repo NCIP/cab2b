@@ -2,13 +2,9 @@
 @import url("displaytag.css");
 
 #content {
-	padding: 0% 0.2% 0% 0.2%;
+	padding: 0% 0.2% 0.5em 0.2%;
 }
 
 #toppanel {
 	margin: 2 0 0 0;
-}
-
-#bottompanel {
-	padding: 1% 0% 1% 0.5%;
 }
