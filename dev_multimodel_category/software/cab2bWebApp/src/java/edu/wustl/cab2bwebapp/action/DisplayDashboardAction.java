@@ -109,8 +109,12 @@ public class DisplayDashboardAction extends Action {
 
                 if (query instanceof KeywordQuery) {
                     KeywordQuery keywordQuery = (KeywordQuery) query;
-                    queryStatusDVO.setTitle("Keyword search for " + conditionValue + " on "
-                            + keywordQuery.getApplicationGroup().getModelGroupName());
+                    StringBuffer title =
+                            new StringBuffer("Keyword search for ").append('"').append(conditionValue).append('"')
+                                .append(" on ").append('"').append(
+                                                                   keywordQuery.getApplicationGroup()
+                                                                       .getModelGroupName()).append('"');
+                    queryStatusDVO.setTitle(title.toString());
                 } else {
                     queryStatusDVO.setTitle(query.getName());
                 }
