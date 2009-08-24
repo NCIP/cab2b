@@ -67,7 +67,7 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
     }
 
     private int getDepth(ICategorialClassRecord o1) {
-        if(o1==null) {
+        if (o1 == null) {
             return 0;
         }
         Set<CategorialClass> mapKeys = o1.getCategorialClass().getChildren();
@@ -77,7 +77,7 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
         Map<CategorialClass, List<ICategorialClassRecord>> children = o1.getChildrenCategorialClassRecords();
         int max = 0;
         for (CategorialClass ICCR : mapKeys) {
-            if (children != null && ICCR != null &&  children.get(ICCR)!=null) {
+            if (children != null && ICCR != null && children.get(ICCR) != null) {
                 for (ICategorialClassRecord ccr : children.get(ICCR)) {
                     int d = getDepth(ccr);
                     if (max < d) {
@@ -97,13 +97,12 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
     public List<Map<AttributeInterface, Object>> convert(List<ICategorialClassRecord> records,
                                                          int transformationMaxLimit) {
         Map<ICategorialClassRecord, Integer> recordVsCount = new HashMap<ICategorialClassRecord, Integer>();
-        for (ICategorialClassRecord r : records) {
-            recordVsCount.put(r, getDepth(r));
-        }
-
-        Collections.sort(records, new RecordComparator(recordVsCount));
         List<Map<AttributeInterface, Object>> list = new ArrayList<Map<AttributeInterface, Object>>();
         if (records != null) {
+            for (ICategorialClassRecord r : records) {
+                recordVsCount.put(r, getDepth(r));
+            }
+            Collections.sort(records, new RecordComparator(recordVsCount));
             for (ICategorialClassRecord record : records) {
                 List<Map<AttributeInterface, Object>> res = convert(record);
                 list.addAll(res);
