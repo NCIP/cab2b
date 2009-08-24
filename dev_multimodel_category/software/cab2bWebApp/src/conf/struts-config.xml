@@ -37,6 +37,8 @@
 		<action path="/DisplayDashboard"
 			type="edu.wustl.cab2bwebapp.action.DisplayDashboardAction">
 			<forward name="dashboard" path="/pages/dashboard.jsp" />
+			<forward name="dashboardpanel"
+				path="/pages/dashboardpanel.jsp" />
 		</action>
 
 		<action path="/DisplaySavedSearches"
