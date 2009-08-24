@@ -82,7 +82,11 @@
 	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (325);
 	 if(document.getElementById('searchresultstable'))
     {
-	  document.getElementById('searchresultstable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '370';
+	  document.location = "#scroller";
+	   if(document.body.scrollTop>0)
+	  {	  
+	    document.getElementById('searchresultstable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '370';
+	  }
 	}
 	 if(document.getElementById('centerpanelcontentbuffer').innerHTML!="")
 	{

@@ -41,3 +41,4 @@
 		<DIV id="completeresultsmessage"><bean:message key="message.completeresults" arg0="${savedSearch.resultCount}"/></DIV>
 	</logic:present>
 </DIV>
+<DIV id="scroller"></DIV
