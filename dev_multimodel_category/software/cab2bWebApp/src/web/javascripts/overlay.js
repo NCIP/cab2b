@@ -163,18 +163,3 @@ TogglePreloader(1);
 { 
   window.onbeforeunload = function(){TogglePreloader(1);}; 
 }
-
-if(document.all) 
-{
-  top.window.moveTo(0, 0);
-  top.window.resizeTo(screen.availWidth, screen.availHeight);
-}
- else if(document.layers||document.getElementById) 
-{
-   if(top.window.outerHeight<screen.availHeight || top.window.outerWidth<screen.availWidth)
-  {     
-    top.window.moveTo(0, 0);
-	top.window.outerHeight = screen.availHeight;
-    top.window.outerWidth = screen.availWidth;
-  }
-}

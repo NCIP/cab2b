@@ -804,9 +804,10 @@ jQuery.extend({
 				name = "float";
 
 			name = name.replace( /([A-Z])/g, "-$1" ).toLowerCase();
-
-			var computedStyle = defaultView.getComputedStyle( elem, null );
-
+			try{
+				var computedStyle = defaultView.getComputedStyle( elem, null );
+			}
+			catch(e){}
 			if ( computedStyle )
 				ret = computedStyle.getPropertyValue( name );
 
@@ -3979,6 +3980,7 @@ jQuery.fn.extend({
 			// Set the display of the elements in a second loop
 			// to avoid the constant reflow
 			for ( var i = 0, l = this.length; i < l; i++ ){
+				if(this[i].style)
 				this[i].style.display = "none";
 			}
 
@@ -4518,22 +4520,3 @@ jQuery.each([ "Height", "Width" ], function(i, name){
 
 });
 })();
-
-toolTipId = null;
-this.tooltipinvoker = function(){			
-	xOffset = 0;
-	yOffset = -175;			
-	$(".tooltipinvoker").hover(function(e){	
-		$(document.getElementById(toolTipId)).show();
-		$(document.getElementById(toolTipId))
-			.css("top",(e.pageY - xOffset) + "px")
-			.css("left",(e.pageX + yOffset) + "px")
-			.fadeIn("fast");		
-    },
-	function(){	
-		$(document.getElementById(toolTipId)).hide();
-    });			
-};
-$(document).ready(function(){
-	tooltipinvoker();
-});
