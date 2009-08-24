@@ -11,8 +11,59 @@
 <META http-equiv="Content-Type" content="text/html">
 <LINK rel="stylesheet" href="stylesheet/dashboard.css" type="text/css">
 <SCRIPT language="JavaScript" src="javascript/jquery.js"></SCRIPT>
+<SCRIPT language="javaScript">
+toolTipId = null;
+ this.tooltipinvoker = function()
+{			
+  xOffset = (navigator.appName.indexOf('Netscape')==-1?(100 - document.getElementById('toppanel').scrollTop):0);
+  yOffset = -175;			
+   $(".tooltipinvoker").hover(function(e)
+  {	
+	$(document.getElementById(toolTipId)).show();
+    $(document.getElementById(toolTipId))
+    .css("top",(e.pageY - xOffset) + "px")
+    .css("left",(e.pageX + yOffset) + "px")
+    .fadeIn("fast");		
+  }, 
+   function()
+  {	
+    $(document.getElementById(toolTipId)).hide();
+  });			
+};
+ function updateView()
+{ 
+   if(navigator.appName.indexOf('Netscape')==-1 || navigator.appVersion.indexOf('Apple')!=-1)
+  {	  
+	document.getElementById('toppanel').style.height = getScreenHeight() - (215);
+    document.getElementById('toppanel').style.overflow = 'auto';
+	 if(document.getElementById('dashboardtable'))
+    {
+      document.getElementById('dashboardtable').getElementsByTagName('thead')[0].getElementsByTagName('tr')[0].id = 'noscroll';
+	}
+  }
+   else
+  {
+	document.getElementById('toppanel').style.height = getScreenHeight() - (220);
+	 if(document.getElementById('dashboardtable'))
+    {	 
+	  document.location = "#scroller";
+	   if(document.body.scrollTop>0)
+	  {
+	    document.getElementById('dashboardtable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '265';	 
+	  }
+	}
+	 if(document.getElementById('toppanelbuffer').innerHTML!="")
+	{
+	  document.getElementById('toppanel').innerHTML = document.getElementById('toppanelbuffer').innerHTML;
+	  document.getElementById('toppanelbuffer').innerHTML = "";
+	}	
+  }
+  processAJAXRequest('DisplayDashboard.do', (navigator.appName.indexOf('Netscape')==-1?'toppanel':'toppanelbuffer'), 1);
+  tooltipinvoker();
+  t = setTimeout("updateView()", 5000);
+}
+</SCRIPT>
 <BODY>
-<FORM>
 <jsp:include page="header.jsp"/>		
 <DIV id="content">
 	<DIV class="titlebar">
@@ -24,32 +75,12 @@
 			</DIV>
 		</DIV>
 	</DIV>
+	<DIV id="toppanelbuffer" style="display:none;"></DIV>
 	<DIV id="toppanel">
-		<display:table class="simple" cellspacing="1" cellpadding="4" name="${requestScope.queryStatusDVOList}" uid="query" requestURI="" defaultsort="4"  defaultorder="descending">
-			<display:column title="Title" value="${query.title}" sortable="true" headerClass="sortable"/>			
-			<display:column title="Status" value="${query.status}" sortable="true" headerClass="sortable"/>
-			<display:column title="Result Count" value="${query.resultCount}" sortable="true" headerClass="sortable"/>
-			<display:column title="Executed On" value="${query.executedOn}" sortable="true" headerClass="sortable" format="{0,date,yyyy-MM-dd HH:mm}"/>	
-			<display:column title="Action(s)" sortable="false" headerClass="unsortable">
-				<IMG src="images/view_results.jpg" title="<bean:message key="img.alt.viewresults"/>" style="cursor:pointer;display:none;">&nbsp;
-				<IMG class="tooltipinvoker" src="images/form.jpg" style="cursor:pointer" onmouseover="toolTipId='${query.conditions}'">&nbsp;
-				<DIV class="tooltip" id="${query.conditions}" style="display:none">
-					<display:table class="simple" cellspacing="1" cellpadding="4" name="${query.conditions}" uid="queryCondition" requestURI="">
-						<display:column title="Parameter" value="${queryCondition.parameter}"/>
-						<display:column title="Condition" value="${queryCondition.condition}"/>
-						<display:column title="Value" value="${queryCondition.value}"/>
-					</display:table>
-				</DIV>
-				<IMG src="images/ico_file_excel.png" title="<bean:message key="img.alt.exportresults"/>" style="cursor:pointer;<logic:equal name="query" property="status" value="Processing">display:none;</logic:equal>" onClick="document.location='ExportResults.do?fileName=<bean:write name="query" property="fileName"/>';TogglePreloader(0);">&nbsp;
-				<IMG src="images/stop.gif" title="<bean:message key="img.alt.abortexecution"/>" style="cursor:pointer;display:none;">&nbsp;
-			</display:column>
-		</display:table>
+		<%@ include file="dashboardpanel.jsp" %>
 	</DIV>
-	<DIV id="bottompanel">
-		<INPUT type="submit" class="button" value="<bean:message key="button.refresh"/>" onClick="document.reload();">
-	</DIV>
+	<SCRIPT language="JavaScript">updateView();</SCRIPT>
 </DIV>
 <jsp:include page="footer.jsp"/>
-</FORM>
 </BODY>
 </HTML>
