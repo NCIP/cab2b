@@ -53,7 +53,12 @@
 	  validateDataTypeSelection();
   <%
 	}
-  %>  
+  %>
+  
+   if("${requestScope.keywordQueryNotPresent}")
+  {
+	alert('<bean:message key="alert.keywordquerynotpresent" arg0="${requestScope.modelGroups}"/>');
+  }
 }
 
  function validateDataTypeSelection()
@@ -107,9 +112,19 @@
 	textBoxObj.className = 'textbox exampleValue';
   }
 }
+
+function validateKeywordSearch(keywordSearchExample)
+{
+	if(selectedItemsCount==0) 
+	{
+		alert('<bean:message key="alert.selectdatatype"/>');
+		return false;
+	}
+	return checkEmptyTextFileld('keyword', keywordSearchExample , true, '<bean:message key="error.keywordsearch.empty"/>');
+}
 </SCRIPT>
 <BODY onLoad="setPage()">
-	<FORM method="post" action="PreExecuteQuery.do" onsubmit="return checkEmptyTextFileld('keyword', keywordSearchExample.value, true, '<bean:message key="error.keywordsearch.empty"/>')">
+	<FORM method="post" action="PreExecuteQuery.do" onsubmit="return validateKeywordSearch(keywordSearchExample.value); ">
 		<jsp:include page="header.jsp">
 			<jsp:param name="home" value="home"/>
 		</jsp:include>
