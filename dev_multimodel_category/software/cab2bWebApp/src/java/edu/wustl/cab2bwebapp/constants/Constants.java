@@ -48,7 +48,10 @@ public interface Constants {
 
     /** Constant for model groups */
     public static final String MODEL_GROUPS = "modelGroups";
-
+    
+    /** Constant for keywordQueryNotPresent */
+    public static final String KEYWORD_QUERY_NOT_PRESENT = "keywordQueryNotPresent";
+    
     /** Constant for model group DVO list */
     public static final String MODEL_GROUP_DVO_LIST = "modelGroupDVOList";
 
