@@ -254,8 +254,7 @@ public class QueryBizLogic {
             fileNames.add(transformer.writeToCSV());
         }
         String fileName = zipAndSave(fileNames);
-        updateDatabaseWithFileName(fileName, queryExecutionHandler.getStatus());
-        logger.info("File saved at location:" + fileName);
+        updateDatabaseWithFileName(fileName, queryExecutionHandler.getStatus());        
         return fileName;
     }
 

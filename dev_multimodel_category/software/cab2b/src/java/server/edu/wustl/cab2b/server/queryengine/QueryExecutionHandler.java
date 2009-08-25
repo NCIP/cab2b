@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
-import org.cagrid.fqp.results.metadata.ProcessingStatus;
 import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.queryengine.CompoundQuery;
@@ -78,8 +77,6 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
             new Thread() {
                 public void run() {
                     for (QueryExecutor queryExecutor : queryExecutorsList) {
-                        logger.info("Execution handler...Running executor for :"
-                                + queryExecutor.getQuery().getName() + "Query");
                         queryExecutor.executeQuery();
                     }
                     updateStatus();
@@ -131,8 +128,7 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
             if (!e.isProcessingFinished()) {
                 isProcessingFinished = false;
             }
-        }
-        logger.info("Queryhandler isProcessingFinished:" + isProcessingFinished);
+        }        
         return isProcessingFinished;
     }
 
@@ -172,8 +168,7 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
         status.setQuery(query);
         status.setUser(user);
         status.setVisible(Boolean.FALSE);
-        status.setQueryConditions(UtilityOperations.getStringRepresentationofConstraints(query.getConstraints()));
-        status.setDescription("Testing : Execution handler query status for '" + query.getName() + "' query.");
+        status.setQueryConditions(UtilityOperations.getStringRepresentationofConstraints(query.getConstraints()));        
         status.setStatus(AbstractStatus.Processing);
         status.setUrlStatus(queryURLStatusSet);
         status.setQueryStartTime(new Date());
@@ -188,7 +183,6 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
      */
     public void updateStatus() {
 
-        logger.info("Updaing Query handler query status.");
         String statusStr = status.getStatus();
         if (statusStr != null
                 && (statusStr.equals(AbstractStatus.Complete) || statusStr
@@ -231,8 +225,6 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
             //Query finished update in database.
             new QueryURLStatusOperations().updateQueryStatus(status);
         }
-        logger.info("Execution handler query  status.:" + status.getStatus());
-        logger.info("Execution handler query record count.:" + status.getResultCount());
     }
 
     /**

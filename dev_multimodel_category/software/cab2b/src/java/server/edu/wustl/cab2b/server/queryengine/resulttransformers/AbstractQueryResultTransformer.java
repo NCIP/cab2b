@@ -98,8 +98,6 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
                 result.addRecords(url, recs);
                 numRecs += recs.size();
             }
-            logger.info("No. of records found and transformed : " + numRecs);
-            logger.info("No. of URLS found : " + urlVsStatus.values().size());
             result.setFQPUrlStatus(urlVsStatus.values());
         } catch (Exception e) {
             e.printStackTrace();
@@ -126,11 +124,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             FederatedQueryEngine federatedQueryEngine = new FederatedQueryEngine(cred, queryParameter, executor);
             FQPQueryListener listener = new FQPQueryListener(this);
             federatedQueryEngine.addStatusListener(listener);
-
-            logger.info("Executing DCQL to get : " + query.getTargetObject().getName());
             queryResults = federatedQueryEngine.execute(query);
-
-            logger.info("Executed DCQL successfully.");
         } catch (FederatedQueryProcessingException e) {
             e.printStackTrace();
             throw new RuntimeException(Utility.getStackTrace(e), ErrorCodeConstants.QM_0004);
@@ -192,7 +186,6 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
         }
         copyFromResult(catResult, classResults);
         catResult.setFQPUrlStatus(urlVsStatus.values());
-        logger.info("Category URL status " + urlVsStatus.values().size());
         return catResult;
     }
 
@@ -297,16 +290,15 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * @param description
      */
     protected void updateStatus(String serviceURL, String message, String description, String status) {
-        logger.info("Setting status in FQP url status:" + status);
-            FQPUrlStatus urlStatus = urlVsStatus.get(serviceURL);
-            if (urlStatus != null) {
-                urlStatus.setDescription(description);
-                urlStatus.setMessage(message);
-            } else {
-                urlStatus = new FQPUrlStatus(serviceURL, message, description);
-            }
-            urlStatus.setStatus(status);
-            registerStatus(serviceURL, urlStatus);
+        FQPUrlStatus urlStatus = urlVsStatus.get(serviceURL);
+        if (urlStatus != null) {
+            urlStatus.setDescription(description);
+            urlStatus.setMessage(message);
+        } else {
+            urlStatus = new FQPUrlStatus(serviceURL, message, description);
         }
+        urlStatus.setStatus(status);
+        registerStatus(serviceURL, urlStatus);
+    }
 
 }

@@ -12,7 +12,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
-import org.cagrid.fqp.results.metadata.ProcessingStatus;
 import org.globus.gsi.GlobusCredential;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -187,7 +186,6 @@ public class QueryExecutor {
         qStatus.setUser(user);
         qStatus.setVisible(Boolean.FALSE);
         qStatus.setQueryConditions(UtilityOperations.getStringRepresentationofConstraints(query.getConstraints()));
-        qStatus.setDescription(query.getName() + " Query Initialized.");
         qStatus.setStatus(AbstractStatus.Processing);
 
         List<String> outputUrlList = query.getOutputUrls();
@@ -195,7 +193,6 @@ public class QueryExecutor {
         for (String url : outputUrlList) {
             URLStatus urlStatus = new URLStatusImpl();
             urlStatus.setStatus(AbstractStatus.Processing);
-            urlStatus.setMessage(url + " url initilized.");
             urlStatus.setUrl(url);
             urlStatusCollection.add(urlStatus);
         }
