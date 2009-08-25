@@ -252,7 +252,7 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
                     out.append(',');
                     out.append(serviceUrlMetadata.getContactMailId());
                     out.append(',');
-                    out.append(serviceUrlMetadata.getHostingCenterShortName());
+                    out.append(Utility.getHostingInstitutionName(serviceUrlMetadata));
                     out.append(',');
                     out.append('\n');
                     out.flush();

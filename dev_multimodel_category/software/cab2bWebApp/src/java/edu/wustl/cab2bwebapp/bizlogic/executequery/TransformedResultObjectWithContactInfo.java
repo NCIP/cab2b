@@ -77,7 +77,8 @@ public class TransformedResultObjectWithContactInfo {
                 attributeCE = attr;
             } else if (attributeName.equals(Constants.HOSTING_INSTITUTION)) {
                 attributeHI = attr;
-            } else if (attributeHC != null && attributePC != null && attributeCE != null && attributeHI != null) {
+            } else if (attributeHC != null && attributePC != null && attributeCE != null && attributeHI != null
+                    && attributeMN != null) {
                 addAttributesFlag = false;
                 break;
             }
@@ -121,7 +122,7 @@ public class TransformedResultObjectWithContactInfo {
             recordMap.put(attributeHC, serviceUrlMetadata.getHostingCenter());
             recordMap.put(attributePC, serviceUrlMetadata.getContactName());
             recordMap.put(attributeCE, serviceUrlMetadata.getContactMailId());
-            recordMap.put(attributeHI, serviceUrlMetadata.getHostingCenterShortName());
+            recordMap.put(attributeHI, Utility.getHostingInstitutionName(serviceUrlMetadata));
         }
         urlToResultMap.put(url, result);
     }

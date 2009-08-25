@@ -58,6 +58,7 @@ import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.queryobject.DataType;
@@ -211,6 +212,7 @@ public class Utility {
         TaggedValueInterface tag = getTaggedValue(entity.getTaggedValueCollection(), MULTIMODELCATEGORY);
         return tag != null;
     }
+
     /**
      * @param e
      * @return TRUE of given entity in a cateory or multi model category
@@ -218,6 +220,7 @@ public class Utility {
     public static boolean isCategoryOrMMC(EntityInterface e) {
         return (Utility.isCategory(e) || Utility.isMultiModelCategory(e));
     }
+
     /**
      * Converts DE data type to queryObject dataType.
      *
@@ -778,6 +781,27 @@ public class Utility {
         }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
         return simpleDateFormat.format(date);
+    }
+
+    /**
+     * This method returns short hosting institution name from ServiceURLInterface.
+     * If there is no short name available then it returns the institution long name and if
+     * that is also not available then the service URL is returned.
+     * @param serviceUrlMetadata
+     * @return short hosting institution name
+     */
+    public static String getHostingInstitutionName(ServiceURLInterface serviceUrlMetadata) {
+        String hostingCenter = serviceUrlMetadata.getHostingCenterShortName();
+        //If short name is null
+        if (hostingCenter == null || hostingCenter.isEmpty()) {
+            // set long name 
+            hostingCenter = serviceUrlMetadata.getHostingCenter();
+            if (hostingCenter == null || hostingCenter.isEmpty()) {
+                //if hosting long name is also null set url location
+                hostingCenter = serviceUrlMetadata.getUrlLocation();
+            } 
+        }
+        return hostingCenter;
     }
 
     /**
