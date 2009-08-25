@@ -176,7 +176,7 @@
 
 		<replace file="${conf.dir}/client.properties" token="@grid.type@" value="${grid-type}" />
 
-		<replace file="${conf.dir}/server.properties" token="@application.build@" value="${application.build} Built at: ${TODAY}" />
+		<replace file="${conf.dir}/server.properties" token="@application.build@" value="${application.build} Built on: ${TODAY}" />
 		<replace file="${conf.dir}/server.properties" token="@ds.name@" value="${ds-name}" />
 		<replace file="${conf.dir}/server.properties" token="@db.loader@" value="${db-loader}" />
 		<replace file="${conf.dir}/server.properties" token="@default.user@" value="${default-user}" />
