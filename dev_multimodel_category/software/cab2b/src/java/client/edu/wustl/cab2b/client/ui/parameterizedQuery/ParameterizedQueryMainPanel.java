@@ -42,11 +42,15 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
 
     private JDialog dialog;
 
+    /** This method creates an object of ParameteriszedQueryDataModel */
     public ParameterizedQueryMainPanel() {
         parameterizedQueryDataModel = new ParameterizedQueryDataModel();
         initGUI();
     }
 
+    /**
+     * @param queryModel
+     */
     public ParameterizedQueryMainPanel(ParameterizedQueryDataModel queryModel) {
         parameterizedQueryDataModel = queryModel;
         initGUI();
@@ -82,7 +86,7 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
             informationQueryPanel = new ParameterizedQueryInfoPanel();
             ICab2bQuery query = parameterizedQueryDataModel.getQuery();
             if (Utility.isMultiModelCategory(query.getOutputEntity())) {
-                informationQueryPanel.setKeywordSearchDisabled();
+                informationQueryPanel.setKeywordAndBothOptionDisabled();
             }
         }
         return informationQueryPanel;
@@ -107,6 +111,9 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
         return parameterizedQueryDataModel;
     }
 
+    /**
+     * 
+     */
     public void showInDialog() {
         Dimension dimension = MainFrame.getScreenDimension();
         dialog =

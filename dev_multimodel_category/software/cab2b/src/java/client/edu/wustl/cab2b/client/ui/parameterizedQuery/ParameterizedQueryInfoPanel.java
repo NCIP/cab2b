@@ -98,7 +98,7 @@ public class ParameterizedQueryInfoPanel extends Cab2bTitledPanel {
 
     /**
      * This method return true if query is marked for keyword search; false otherwise.
-     * @return
+     * @return Boolean
      */
     public Boolean isKeywordSearch() {
         return keywordSearch.isSelected();
@@ -106,13 +106,17 @@ public class ParameterizedQueryInfoPanel extends Cab2bTitledPanel {
 
     /**
      * This method returns true if query is to be saved for both Searches : saved and keyword  
-     * @return
+     * @return Boolean
      */
     public Boolean isFormAndKeywordSearch() {
         return formAndKeywordSearch.isSelected();
     }
 
-    public void setKeywordSearchDisabled() {
+    /**
+     * This method disables the keyword search and Both search option for MMC query 
+     */
+    public void setKeywordAndBothOptionDisabled() {
         keywordSearch.setVisible(false);
+        formAndKeywordSearch.setVisible(false);
     }
 }
