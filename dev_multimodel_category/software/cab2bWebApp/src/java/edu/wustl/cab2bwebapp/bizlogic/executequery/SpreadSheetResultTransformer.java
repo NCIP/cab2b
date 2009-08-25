@@ -25,6 +25,7 @@ import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
 import edu.wustl.cab2bwebapp.bizlogic.UserBackgroundQueries;
+import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
@@ -115,13 +116,15 @@ public class SpreadSheetResultTransformer {
             out.append(attribute.getName());
             out.append(',');
         }
-        out.append("Hosting Cancer Research Center");
+        out.append(Constants.MODEL_NAME);
         out.append(',');
-        out.append("Point of Contact");
+        out.append(Constants.HOSTING_CANCER_RESEARCH_CENTER);
         out.append(',');
-        out.append("Contact eMail");
+        out.append(Constants.POINT_OF_CONTACT);
         out.append(',');
-        out.append("Hosting Institution");
+        out.append(Constants.CONTACT_EMAIL);
+        out.append(',');
+        out.append(Constants.HOSTING_INSTITUTION);
         out.append(',');
         out.append('\n');
         out.flush();
@@ -134,9 +137,13 @@ public class SpreadSheetResultTransformer {
                         new ServiceURLOperations().getServiceURLbyURLLocation(url);
                 for (IRecord record : results) {
                     for (AttributeInterface a : attributeOrder) {
-                        out.append(record.getValueForAttribute(a).toString());
+                        out.append(record.getValueForAttribute(a) == null ? "" : record.getValueForAttribute(a)
+                            .toString());
                         out.append(',');
                     }
+                    out.append(Utility.createModelName(serviceUrlMetadata.getDomainModel(), serviceUrlMetadata
+                        .getVersion()));
+                    out.append(',');
                     out.append(serviceUrlMetadata.getHostingCenter());
                     out.append(',');
                     out.append(serviceUrlMetadata.getContactName());
