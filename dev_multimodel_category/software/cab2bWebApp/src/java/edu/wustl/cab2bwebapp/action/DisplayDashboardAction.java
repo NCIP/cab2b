@@ -101,7 +101,8 @@ public class DisplayDashboardAction extends Action {
                     Matcher m = p.matcher(values[j]);
                     m.find();
                     queryCondition.setParameter(m.group(1));
-                    queryCondition.setCondition(m.group(2));
+                    queryCondition
+                        .setCondition(edu.wustl.cab2b.common.util.Utility.getFormattedString(m.group(2)));
                     conditionValue = m.group(3);
                     queryCondition.setValue(conditionValue);
                     queryConditions.add(queryCondition);
