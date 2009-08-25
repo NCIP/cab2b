@@ -12,7 +12,7 @@
 				<IMG src="images/task_success.gif" title="<bean:message key="img.alt.task.complete"/>">
 			</logic:equal>
 			<logic:equal name="query" property="status" value="Failed">
-				<IMG src="images/task_failed.gif" title="<bean:message key="img.alt.task.failed"/>">
+				<IMG src="images/task_failure.gif" title="<bean:message key="img.alt.task.failed"/>">
 			</logic:equal>
 		</display:column>
 		<display:column title="Title" sortable="true" headerClass="sortable">
@@ -33,7 +33,7 @@
 				<display:table class="simple" cellspacing="1" cellpadding="4" name="${query.conditions}" uid="queryCondition" requestURI="">
 					<display:column title="Parameter" value="${queryCondition.parameter}"/>
 					<display:column title="Condition" value="${queryCondition.condition}"/>
-					<display:column title="Value" value="${queryCondition.value}"/>
+					<display:column title="Value" value="${queryCondition.value}" maxLength="5"/>
 				</display:table>
 			</DIV>
 			<logic:equal name="query" property="status" value="Complete">
