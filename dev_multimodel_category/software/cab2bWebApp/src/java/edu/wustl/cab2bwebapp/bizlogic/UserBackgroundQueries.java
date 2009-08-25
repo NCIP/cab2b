@@ -45,7 +45,7 @@ public class UserBackgroundQueries {
     /**
      * Time interval for updating database for queries executing in background. 
      */
-    public static final int BACKGROUND_QUERY_REFRESH_TIME_INTERVAL = 5;
+    public static final int BACKGROUND_QUERY_REFRESH_TIME_INTERVAL = 15;
 
     static {
         //Creating directory for saving CSV files on server.
