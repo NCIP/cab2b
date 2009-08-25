@@ -17,8 +17,10 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
 import edu.wustl.cab2bwebapp.bizlogic.UserBackgroundQueries;
+import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 
 /**
@@ -189,19 +191,20 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
                            List<AttributeInterface> headers) throws IOException {
         FileWriter fstream = new FileWriter(UserBackgroundQueries.EXPORT_CSV_DIR + File.separator + fileName);
         BufferedWriter out = new BufferedWriter(fstream);
-
         for (AttributeInterface attribute : headers) {
             out.append(attribute.getName());
             out.append(',');
         }
         Map<String, List<ICategorialClassRecord>> urlToResultMap = result.getRecords();
-        out.append("Hosting Cancer Research Center");
+        out.append(Constants.MODEL_NAME);
         out.append(',');
-        out.append("Point of Contact");
+        out.append(Constants.HOSTING_CANCER_RESEARCH_CENTER);
         out.append(',');
-        out.append("Contact eMail");
+        out.append(Constants.POINT_OF_CONTACT);
         out.append(',');
-        out.append("Hosting Institution");
+        out.append(Constants.CONTACT_EMAIL);
+        out.append(',');
+        out.append(Constants.HOSTING_INSTITUTION);
         out.append(',');
         out.append('\n');
         out.flush();
@@ -213,6 +216,13 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
         fstream.close();
     }
 
+    /**
+     * @param records
+     * @param url
+     * @param headers
+     * @param out
+     * @throws IOException
+     */
     private void writeToCSV(List<ICategorialClassRecord> records, String url, List<AttributeInterface> headers,
                             BufferedWriter out) throws IOException {
         if (records != null && records.size() != 0) {
@@ -233,6 +243,9 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
                         }
                         out.append(',');
                     }
+                    out.append(Utility.createModelName(serviceUrlMetadata.getDomainModel(), serviceUrlMetadata
+                        .getVersion()));
+                    out.append(',');
                     out.append(serviceUrlMetadata.getHostingCenter());
                     out.append(',');
                     out.append(serviceUrlMetadata.getContactName());

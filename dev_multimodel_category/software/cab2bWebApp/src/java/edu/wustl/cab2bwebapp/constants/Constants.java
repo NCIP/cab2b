@@ -30,19 +30,19 @@ public interface Constants {
 
     /** Constants for Finishing Query Execution */
     public static final String UI_POPULATION_FINISHED = "UI_population_finished";
-    
+
     /** Constants for processing */
     public static final String PROCESSING = "processing";
-    
+
     /** Constants for keyword */
     public static final String KEYWORD = "keyword";
-    
+
     /** Constants for queryBizLogicObject */
     public static final String QUERY_BIZ_LOGIC_OBJECT = "queryBizLogicObject";
 
     /** Constants for User versus QueryBizLogicObject used for maintaining background query execution map*/
     public static final String USER_VS_QUERY_BIZ_LOGIC_OBJECT = "UserVsQueryBizLogicObject";
-    
+
     /** Constant for Saved Query Provider */
     public static final String SAVED_QUERY_BIZ_LOGIC = "savedQueryBizLogic";
 
@@ -57,10 +57,10 @@ public interface Constants {
 
     /** Constant for saved searches */
     public static final String SAVED_QUERIES = "savedQueries";
-    
+
     /** Constant for selectedQueryName */
     public static final String SELECTED_QUERY_NAME = "selectedQueryName";
-    
+
     /** Constant for forward to home page */
     public static final String FORWARD_HOME = "home";
 
@@ -122,7 +122,7 @@ public interface Constants {
 
     /** Constant for query id */
     public static final String QUERY_ID = "queryId";
-    
+
     /** Constant for keyWordQueryId */
     public static final String KEYWORD_QUERY_ID = "keyWordQueryId";
 
@@ -138,6 +138,21 @@ public interface Constants {
 
     /** Constant for all hosting institutions */
     public static final String ALL_HOSTING_INSTITUTIONS = "All Hosting Institutions";
+
+    /** Constant for Hosting Cancer Research Center */
+    public static final String HOSTING_CANCER_RESEARCH_CENTER = "Hosting Cancer Research Center";
+
+    /** Constant for Point of Contact */
+    public static final String POINT_OF_CONTACT = "Point of Contact";
+
+    /** Constant for Contact eMail */
+    public static final String CONTACT_EMAIL = "Contact eMail";
+
+    /** Constant for Hosting Institution */
+    public static final String HOSTING_INSTITUTION = "Hosting Institution";
+    
+    /** Constant for Hosting Institution */
+    public static final String MODEL_NAME = "Model Name";
 
     /** Constant for query result */
     public static final String SEARCH_RESULTS = "searchResults";
@@ -165,12 +180,12 @@ public interface Constants {
 
     /** Constant for forward to dash board page */
     public static final String FORWARD_DASHBOARD = "dashboard";
-    
+
     /** Constant for forward to dash board panel page */
     public static final String FORWARD_DASHBOARD_PANEL = "dashboardpanel";    
     
     /** Constant for forward to dash board action class */
-    public static final String FORWARD_DASHBOARD_ACTION = "dashboardaction";    
+    public static final String FORWARD_DASHBOARD_ACTION = "dashboardaction";
 
     /** Constant for fatal failure for displaying dash board */
     public static final String FATAL_DISPLAY_DASHBOARD_FAILURE = "fatalDisplayDashboardFailure";

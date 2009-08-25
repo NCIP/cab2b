@@ -14,7 +14,9 @@ import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.result.FQPUrlStatus;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
+import edu.wustl.cab2bwebapp.constants.Constants;
 
 /**
  * Transformed query result object with service instance contact info.
@@ -26,7 +28,7 @@ public class TransformedResultObjectWithContactInfo {
             edu.wustl.common.util.logger.Logger.getLogger(TransformedResultObjectWithContactInfo.class);
 
     /**
-     * Map for url to transformed query result.
+     * Map for url to transformed query resu.lt.
      */
     private Map<String, List<Map<AttributeInterface, Object>>> urlToResultMap =
             new HashMap<String, List<Map<AttributeInterface, Object>>>();
@@ -57,19 +59,23 @@ public class TransformedResultObjectWithContactInfo {
         ServiceURLInterface serviceUrlMetadata = new ServiceURLOperations().getServiceURLbyURLLocation(url);
 
         boolean addAttributesFlag = true;
+        AttributeInterface attributeMN = null;
         AttributeInterface attributeHC = null;
         AttributeInterface attributePC = null;
         AttributeInterface attributeCE = null;
         AttributeInterface attributeHI = null;
+
         for (AttributeInterface attr : allowedAttributes) {
             String attributeName = attr.getName();
-            if (attributeName.equals("Hosting Cancer Research Center")) {
+            if (attributeName.equals(Constants.MODEL_NAME)) {
+                attributeMN = attr;
+            } else if (attributeName.equals(Constants.HOSTING_CANCER_RESEARCH_CENTER)) {
                 attributeHC = attr;
-            } else if (attributeName.equals("Point of Contact")) {
+            } else if (attributeName.equals(Constants.POINT_OF_CONTACT)) {
                 attributePC = attr;
-            } else if (attributeName.equals("Contact eMail")) {
+            } else if (attributeName.equals(Constants.CONTACT_EMAIL)) {
                 attributeCE = attr;
-            } else if (attributeName.equals("Hosting Institution")) {
+            } else if (attributeName.equals(Constants.HOSTING_INSTITUTION)) {
                 attributeHI = attr;
             } else if (attributeHC != null && attributePC != null && attributeCE != null && attributeHI != null) {
                 addAttributesFlag = false;
@@ -78,24 +84,29 @@ public class TransformedResultObjectWithContactInfo {
         }
 
         if (addAttributesFlag) {
+            if (attributeMN == null) {
+                attributeMN = DomainObjectFactory.getInstance().createObjectAttribute();
+                attributeMN.setName(Constants.MODEL_NAME);
+                allowedAttributes.add(attributeMN);
+            }
             if (attributeHC == null) {
                 attributeHC = DomainObjectFactory.getInstance().createObjectAttribute();
-                attributeHC.setName("Hosting Cancer Research Center");
+                attributeHC.setName(Constants.HOSTING_CANCER_RESEARCH_CENTER);
                 allowedAttributes.add(attributeHC);
             }
             if (attributePC == null) {
                 attributePC = DomainObjectFactory.getInstance().createStringAttribute();
-                attributePC.setName("Point of Contact");
+                attributePC.setName(Constants.POINT_OF_CONTACT);
                 allowedAttributes.add(attributePC);
             }
             if (attributeCE == null) {
                 attributeCE = DomainObjectFactory.getInstance().createStringAttribute();
-                attributeCE.setName("Contact eMail");
+                attributeCE.setName(Constants.CONTACT_EMAIL);
                 allowedAttributes.add(attributeCE);
             }
             if (attributeHI == null) {
                 attributeHI = DomainObjectFactory.getInstance().createStringAttribute();
-                attributeHI.setName("Hosting Institution");
+                attributeHI.setName(Constants.HOSTING_INSTITUTION);
                 allowedAttributes.add(attributeHI);
             }
         }
@@ -105,6 +116,8 @@ public class TransformedResultObjectWithContactInfo {
         }
         //Adding service meta data inside result map
         for (Map<AttributeInterface, Object> recordMap : result) {
+            recordMap.put(attributeMN, Utility.createModelName(serviceUrlMetadata.getDomainModel(),
+                                                               serviceUrlMetadata.getVersion()));
             recordMap.put(attributeHC, serviceUrlMetadata.getHostingCenter());
             recordMap.put(attributePC, serviceUrlMetadata.getContactName());
             recordMap.put(attributeCE, serviceUrlMetadata.getContactMailId());
