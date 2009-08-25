@@ -62,7 +62,7 @@ public class PreExecuteQueryAction extends Action {
             Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults = null;
             SavedQueryBizLogic savedQueryBizLogic =
                     (SavedQueryBizLogic) session.getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
-            String[] modelGroupNames = null;
+            String[] modelGroupNames = request.getParameterValues(Constants.MODEL_GROUPS);
             List<SavedQueryDVO> savedQueries = new ArrayList<SavedQueryDVO>();
 
             String id = request.getParameter(Constants.QUERY_ID);
@@ -75,7 +75,8 @@ public class PreExecuteQueryAction extends Action {
                 if (keywordID!=null) {
                     id = keywordID.toString();
                 }else{
-                    //TODO : show an error page
+                    request.setAttribute(Constants.KEYWORD_QUERY_NOT_PRESENT, "true");
+                    request.setAttribute(Constants.MODEL_GROUPS, modelGroupNames[0]);
                     logger.info("No keyword query present in database for selected ModelGroup.");
                     actionForward = Constants.FORWARD_HOME;
                     return mapping.findForward(actionForward);
@@ -86,7 +87,7 @@ public class PreExecuteQueryAction extends Action {
 
             //KeyWord Query
             if (query instanceof KeywordQuery) {
-                modelGroupNames = (String[]) request.getParameterValues(Constants.MODEL_GROUPS);
+                
                 String keyword = request.getParameter(Constants.KEYWORD);
                 session.setAttribute(Constants.KEYWORD, keyword);
 
@@ -96,7 +97,6 @@ public class PreExecuteQueryAction extends Action {
             //MMC Query
             else if (query instanceof MultiModelCategoryQuery) {
                 String conditionstr = request.getParameter(Constants.CONDITION_LIST);
-                modelGroupNames = (String[]) request.getParameterValues(Constants.MODEL_GROUPS);
                 session.setAttribute(Constants.CONDITION_LIST, conditionstr);
 
                 //set MMC query name in dropdown
@@ -105,7 +105,6 @@ public class PreExecuteQueryAction extends Action {
             //Form Based Query
             else {
                 String conditionstr = request.getParameter(Constants.CONDITION_LIST);
-                modelGroupNames = (String[]) request.getParameterValues(Constants.MODEL_GROUPS);
                 session.setAttribute(Constants.CONDITION_LIST, conditionstr);
 
                 //set Form based query name in dropdown
@@ -170,5 +169,6 @@ public class PreExecuteQueryAction extends Action {
             savedQueries.add(savedQuery);
         }
         session.setAttribute(Constants.SAVED_QUERIES, savedQueries);
+        session.setAttribute(Constants.SELECTED_QUERY_NAME, savedQueries.get(0));
     }
 }
