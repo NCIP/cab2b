@@ -38,6 +38,7 @@ import edu.wustl.cab2b.server.queryengine.QueryExecutionHandler;
 import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
 import edu.wustl.cab2bwebapp.bizlogic.UserBackgroundQueries;
+import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.cab2bwebapp.dvo.SearchResultDVO;
 
 /**
@@ -201,11 +202,13 @@ public class QueryBizLogic {
                     String title = edu.wustl.cab2b.common.util.Utility.getFormattedString(a.getName());
                     searchResultDVO.setTitle(title);
                     searchResultDVO.setValue(value == null ? null : value);
-                    searchResultDVO
-                        .setMedia((!title.equals("Point of Contact")
-                                && !title.equals("Hosting Cancer Research Center") && !title
-                            .equals("Contact e Mail")) ? "html"
-                                + (!title.equals("Hosting Institution") ? " csv excel pdf" : "") : "csv excel pdf");
+                    searchResultDVO.setMedia((!title.equals(Constants.POINT_OF_CONTACT)
+                            && !title.equals(Constants.HOSTING_CANCER_RESEARCH_CENTER)
+                            && !title.equals(edu.wustl.cab2b.common.util.Utility
+                                .getFormattedString(Constants.CONTACT_EMAIL)) && !title
+                        .equals(Constants.MODEL_NAME)) ? "html"
+                            + (!title.equals(Constants.HOSTING_INSTITUTION) ? " csv excel pdf" : "")
+                            : "csv excel pdf");
                     row.add(searchResultDVO);
                 }
                 searchResultsView.add(row);
