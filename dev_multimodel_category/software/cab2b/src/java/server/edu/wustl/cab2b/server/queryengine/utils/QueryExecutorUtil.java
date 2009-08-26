@@ -197,15 +197,15 @@ public class QueryExecutorUtil {
      * @param modelGroupNames
      * @throws RuntimeException
      */
-    public static void insertURLConditions(CompoundQuery query, GlobusCredential proxy, UserInterface user,
+    public static void setOutputURLs(CompoundQuery query, GlobusCredential proxy, UserInterface user,
                                            String[] modelGroupNames) throws RuntimeException {
         Iterator<ICab2bQuery> subQueriesIterator = query.getSubQueries().iterator();
         while (subQueriesIterator.hasNext()) {
             ICab2bQuery subQuery = subQueriesIterator.next();
             if (subQuery instanceof CompoundQuery) {
-                insertURLConditions((CompoundQuery) subQuery, proxy, user, modelGroupNames);
+                setOutputURLs((CompoundQuery) subQuery, proxy, user, modelGroupNames);
             } else {
-                insertURLConditions(subQuery, proxy, user, modelGroupNames);
+                setOutputURLs(subQuery, proxy, user, modelGroupNames);
             }
 
             if (subQuery.isKeywordSearch() && subQuery.getOutputUrls().isEmpty()) {
@@ -228,7 +228,7 @@ public class QueryExecutorUtil {
      * @param modelGroupNames
      * @throws RuntimeException
      */
-    public static void insertURLConditions(ICab2bQuery query, GlobusCredential proxy, UserInterface user,
+    public static void setOutputURLs(ICab2bQuery query, GlobusCredential proxy, UserInterface user,
                                            String[] modelGroupNames) throws RuntimeException {
         Map<EntityGroupInterface, List<String>> entityGroupURLsMap = getUserConfiguredUrls(user, modelGroupNames);
 

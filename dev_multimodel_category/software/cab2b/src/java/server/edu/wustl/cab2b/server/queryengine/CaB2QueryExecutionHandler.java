@@ -4,7 +4,6 @@
 package edu.wustl.cab2b.server.queryengine;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import org.globus.gsi.GlobusCredential;
 
@@ -71,8 +70,6 @@ public class CaB2QueryExecutionHandler extends QueryExecutionHandler<ICab2bQuery
      */
     @Override
     protected void preProcessQuery() {
-        Collection<ICab2bQuery> queries = new ArrayList<ICab2bQuery>(1); //since it is a single query
-        queries.add(this.query);
-        QueryExecutorUtil.insertURLConditions(queries, proxy, user, modelGroupNames);
+        QueryExecutorUtil.setOutputURLs(query, proxy, user, modelGroupNames);
     }
 }
