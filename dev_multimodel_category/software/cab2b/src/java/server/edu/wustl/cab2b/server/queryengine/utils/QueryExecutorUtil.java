@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -149,34 +150,6 @@ public class QueryExecutorUtil {
     }
 
     /**
-     * @param queries
-     * @param proxy
-     * @param user
-     * @param modelGroupNames
-     * @throws RuntimeException
-     */
-    public static void insertURLConditions(Collection<? extends ICab2bQuery> queries, GlobusCredential proxy,
-                                           UserInterface user, String[] modelGroupNames) throws RuntimeException {
-        Map<EntityGroupInterface, List<String>> entityGroupURLsMap = getUserConfiguredUrls(user, modelGroupNames);
-        for (ICab2bQuery query : queries) {
-            Collection<EntityGroupInterface> queryEntityGroups = QueryExecutorUtil.getEntityGroups(query);
-            for (EntityGroupInterface queryEntityGroup : queryEntityGroups) {
-                List<String> urls = entityGroupURLsMap.get(queryEntityGroup);
-                if (urls != null && !urls.isEmpty()) {
-                    query.setOutputUrls(urls);
-                } else if (query.getIsSystemGenerated()) {
-                    query.setOutputUrls(new ArrayList<String>(0));
-                } else {
-                    StringBuffer errorMessage =
-                            new StringBuffer("Incorrect service instance configured for query ");
-                    errorMessage.append("having model as ").append(queryEntityGroup.getName());
-                    throw new RuntimeException(errorMessage.toString(), ErrorCodeConstants.MG_008);
-                }
-            }
-        }
-    }
-
-    /**
      * This method returns the List of url's which are configured by user for that model group/entity group.
      * This method is required to set the url's in query
      * @param user
@@ -226,13 +199,52 @@ public class QueryExecutorUtil {
      */
     public static void insertURLConditions(CompoundQuery query, GlobusCredential proxy, UserInterface user,
                                            String[] modelGroupNames) throws RuntimeException {
-        insertURLConditions(query.getSubQueries(), proxy, user, modelGroupNames);
+        Iterator<ICab2bQuery> subQueriesIterator = query.getSubQueries().iterator();
+        while (subQueriesIterator.hasNext()) {
+            ICab2bQuery subQuery = subQueriesIterator.next();
+            if (subQuery instanceof CompoundQuery) {
+                insertURLConditions((CompoundQuery) subQuery, proxy, user, modelGroupNames);
+            } else {
+                insertURLConditions(subQuery, proxy, user, modelGroupNames);
+            }
+
+            if (subQuery.isKeywordSearch() && subQuery.getOutputUrls().isEmpty()) {
+                subQueriesIterator.remove();
+            }
+        }
 
         List<String> urls = new ArrayList<String>();
-        for (ICab2bQuery subQuery : query.getSubQueries()) {
+        while (subQueriesIterator.hasNext()) {
+            ICab2bQuery subQuery = subQueriesIterator.next();
             urls.addAll(subQuery.getOutputUrls());
         }
         query.setOutputUrls(urls);
+    }
+
+    /**
+     * @param queries
+     * @param proxy
+     * @param user
+     * @param modelGroupNames
+     * @throws RuntimeException
+     */
+    public static void insertURLConditions(ICab2bQuery query, GlobusCredential proxy, UserInterface user,
+                                           String[] modelGroupNames) throws RuntimeException {
+        Map<EntityGroupInterface, List<String>> entityGroupURLsMap = getUserConfiguredUrls(user, modelGroupNames);
+
+        Collection<EntityGroupInterface> queryEntityGroups = QueryExecutorUtil.getEntityGroups(query);
+        for (EntityGroupInterface queryEntityGroup : queryEntityGroups) {
+            List<String> urls = entityGroupURLsMap.get(queryEntityGroup);
+            if (urls != null && !urls.isEmpty()) {
+                query.setOutputUrls(urls);
+            } else if (query.getIsSystemGenerated()) {
+                query.setOutputUrls(new ArrayList<String>(0));
+            } else {
+                StringBuffer errorMessage = new StringBuffer("Incorrect service instance configured for query ");
+                errorMessage.append("having model as ").append(queryEntityGroup.getName());
+                throw new RuntimeException(errorMessage.toString(), ErrorCodeConstants.MG_008);
+            }
+        }
     }
 
 }
