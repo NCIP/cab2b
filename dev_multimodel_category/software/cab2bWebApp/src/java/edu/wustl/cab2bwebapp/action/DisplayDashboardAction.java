@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,8 +22,8 @@ import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.KeywordQuery;
+import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
-import edu.wustl.cab2b.common.queryengine.querystatus.URLStatus;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
 import edu.wustl.cab2bwebapp.bizlogic.UserBackgroundQueries;
@@ -73,14 +72,6 @@ public class DisplayDashboardAction extends Action {
             int completedQueryCount = 0;
             while (i.hasNext()) {
                 QueryStatus qs = (QueryStatus) i.next();
-                Set<URLStatus> urlStatus = qs.getUrlStatus();
-                int failedHostingInstitutionCount = 0;
-                for (URLStatus url : urlStatus) {
-                    String status = url.getStatus();
-                    if ("Failed".equalsIgnoreCase(status)) {
-                        failedHostingInstitutionCount++;
-                    }
-                }
                 QueryStatusDVO queryStatusDVO = new QueryStatusDVO();
                 ICab2bQuery query = qs.getQuery();
 
@@ -123,10 +114,11 @@ public class DisplayDashboardAction extends Action {
                 queryStatusDVO.setConditions(queryConditions);
                 queryStatusDVO.setFileName(qs.getFileName());
                 queryStatusDVOList.add(queryStatusDVO);
-                if (qs.getStatus().equals("Processing"))
+                if (qs.getStatus().equals(AbstractStatus.Processing)) {
                     inProgressQueryCount++;
-                else
+                } else {
                     completedQueryCount++;
+                }
             }
             request.getSession().setAttribute("completedQueryCount", completedQueryCount);
             request.getSession().setAttribute("inProgressQueryCount", inProgressQueryCount);
