@@ -169,6 +169,6 @@ public class PreExecuteQueryAction extends Action {
             savedQueries.add(savedQuery);
         }
         session.setAttribute(Constants.SAVED_QUERIES, savedQueries);
-        session.setAttribute(Constants.SELECTED_QUERY_NAME, savedQueries.get(0));
+        session.setAttribute(Constants.SELECTED_QUERY_NAME, savedQueries.get(0).getName());
     }
 }
