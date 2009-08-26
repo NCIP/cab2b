@@ -123,7 +123,7 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
         for (ICab2bQuery query : queries) {
             insertKeyword(query, this.keyword);
         }
-        QueryExecutorUtil.insertURLConditions(query, proxy, user, modelGroupNames);
+        QueryExecutorUtil.setOutputURLs(query, proxy, user, modelGroupNames);
     }
 
     /**

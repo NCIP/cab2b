@@ -93,6 +93,6 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
     @Override
     protected void preProcessQuery() {
         new MultimodelCategoryQueryPreprocessor().preprocessQuery(query);
-        QueryExecutorUtil.insertURLConditions(query, proxy, user, modelGroupNames);
+        QueryExecutorUtil.setOutputURLs(query, proxy, user, modelGroupNames);
     }
 }
