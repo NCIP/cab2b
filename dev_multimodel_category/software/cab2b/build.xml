@@ -4,7 +4,8 @@
 	<property name="resource.dir" location="${src.dir}/resources" />
 
 	<property name="conf.dir" location="${src.dir}/conf" />
-
+	<property file="../build/project.properties" />
+	<property file="../build/install.properties" />
 	<property file="${conf.dir}/server.properties" />
 
 	<property name="common.src" location="${source.dir}/common" />
@@ -29,7 +30,7 @@
 
 	<property name="XmlLogger.file" value="${build.log.dir}\log.xml" />
 	<tstamp>
-		<format property="TODAY" pattern="MMMM-dd-yyyy" locale="en" />
+				<format property="TODAY" pattern="d-MMMM-yyyy hh:mm aa" locale="en" />
 	</tstamp>
 
 	<property name="testcase.properties.folder" location="${workarea.dir}/TestCaseProperties" />
@@ -41,8 +42,11 @@
 	<property name="jbossjca.service.xml" location="${conf.dir}/jbossjca-service.xml" />
 	<property name="log4j.xml.file" location="${conf.dir}/log4j.xml" />
 	<property name="tomcat.web.xml.file" location="${conf.dir}/tomcat_web.xml" />
+	<property name="jboss.invoker.service.xml.file" location="${conf.dir}/invoker_jboss-service.xml" />
 
 	<property name="db.scripts.dir" location="db" />
+	<property name="db.install.scripts.dir" location="${db.scripts.dir}/db-install" />
+	<property name="db.install.mysql.scripts.dir" location="${db.install.scripts.dir}/mysql" />
 	<property name="server.jar.dir" location="${workarea.dir}/serverJar" />
 	<property name="server.jar.file" location="${workarea.dir}/cab2bServer.jar" />
 	<property name="caB2B.standalone.jar.file" location="${workarea.dir}/cab2bStandAlone.jar" />
@@ -173,6 +177,7 @@
 
 		<replace file="${conf.dir}/client.properties" token="@grid.type@" value="${grid-type}" />
 
+		<replace file="${conf.dir}/server.properties" token="@application.build@" value="${application.build} Built on: ${TODAY}" />
 		<replace file="${conf.dir}/server.properties" token="@ds.name@" value="${ds-name}" />
 		<replace file="${conf.dir}/server.properties" token="@db.loader@" value="${db-loader}" />
 		<replace file="${conf.dir}/server.properties" token="@default.user@" value="${default-user}" />
@@ -344,7 +349,6 @@
 				<include name="**/*.jar" />
 			</fileset>
 		</copy>
-
 		<echo message="java -Xmx1024m -Djavax.net.ssl.trustStore=./jssecacerts -Dorg.jboss.security.ignoreHttpsHost=true -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="true" />
 		<echo message="java -Xmx1024m -Djavax.net.ssl.trustStore=./jssecacerts -Dorg.jboss.security.ignoreHttpsHost=true -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="true" />
 
@@ -926,6 +930,61 @@
 		</delete>
 	</target>
 
+	<target name="generate.mmc.hbm" description="Generates Hibernate class descriptor files.">
+		<!-- Define the hibernatedoclet task -->
+		<taskdef name="hibernatedoclet" classname="xdoclet.modules.hibernate.HibernateDocletTask">
+			<classpath refid="xdoclet.classpath" />
+		</taskdef>
+
+		<!-- Execute the hibernatedoclet task -->
+		<hibernatedoclet destdir="${server.src}" excludedtags="@version,@author,@todo" force="${generateforce}" mergedir="${server.src}" verbose="false">
+			<fileset dir="${server.src}">
+				<include name="**/edu/wustl/cab2b/server/category/multimodelcategory/*.java" />
+			</fileset>
+			<hibernate version="2.0" />
+		</hibernatedoclet>
+
+		<!-- Upgrade grammar from Hibernate2 to Hibernate3 -->
+		<replace dir="${server.src}">
+			<include name="**/edu/wustl/cab2b/server/category/multimodelcategory/*hbm.xml" />
+
+			<replacefilter token="readonly=" value="inverse=" />
+			<replacefilter token="role=" value="name=" />
+			<replacefilter token="hibernate-mapping-2.0.dtd" value="hibernate-mapping-3.0.dtd" />
+			<replacefilter token="&lt;hibernate-mapping&gt;" value="&lt;hibernate-mapping default-lazy=&quot;false&quot;&gt;" />
+		</replace>
+
+		<copy todir="${hbm.dir}" overwrite="true">
+			<fileset dir="${server.src}/edu/wustl/cab2b/server/category/multimodelcategory">
+				<include name="*.hbm.xml" />
+			</fileset>
+		</copy>
+
+		<delete>
+			<fileset dir="${server.src}" includes="**/edu/wustl/cab2b/server/category/multimodelcategory/*.hbm.xml" />
+		</delete>
+	</target>
+
+	<!-- ================================================================================== -->
+	<target name="generate.mmc.schema.mysql">
+		<taskdef name="schemaexport" classname="org.hibernate.tool.hbm2ddl.SchemaExportTask">
+			<classpath>
+				<pathelement location="${server.classes.dir}" />
+				<fileset dir="${lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+				<path refid="xdoclet.classpath" />
+			</classpath>
+		</taskdef>
+
+		<schemaexport properties="conf/mysql_db.properties" quiet="yes" text="yes" delimiter=";" output="scripts/mmc_mysql.sql">
+			<fileset dir="${hbm.dir}">
+				<include name="MultiModelCategoryImpl.hbm.xml" />
+				<include name="MultiModelAttributeImpl.hbm.xml" />
+			</fileset>
+		</schemaexport>
+	</target>
+
 	<!-- ================================================================================== -->
 	<target name="generate.query.schema.mysql">
 		<taskdef name="schemaexport" classname="org.hibernate.tool.hbm2ddl.SchemaExportTask">
@@ -1060,9 +1119,7 @@
 		the JBoss on its own. It's developer's responsibility to setup JBoss and
 		define its path. 
 	 ===========================================================================-->
-	<property file="../build/project.properties" />
-	<property file="../build/install.properties" />
-
+	
 	<!-- Set application.base.path based on platform -->
 	<condition property="application.base.path" value="${application.base.path.linux}">
 		<or>
@@ -1084,6 +1141,8 @@
 	<property name="cab2b.ds.to.path" location="${jboss.home}/server/${jboss.server.name}/deploy" />
 
 	<property name="ds-name" value="${application.context.name}" />
+	<property name="server-port" value="${jboss.server.port}" />
+
 
 	<target name="dev.deploy" depends="build.all" description="Deploys EAR file to JBoss application server">
 		<delete dir="${jboss.home}/server/default/tmp/deploy" />
