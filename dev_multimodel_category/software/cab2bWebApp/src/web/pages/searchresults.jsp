@@ -99,7 +99,7 @@
 	  document.getElementById('centerpanelcontentbuffer').innerHTML = "";
 	}	
   }
-  setTimeout("updateView()", 1);
+  setTimeout("updateView()", 1000);
 }
 </SCRIPT>
 </HEAD>
