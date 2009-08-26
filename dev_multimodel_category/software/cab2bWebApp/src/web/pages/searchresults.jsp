@@ -31,7 +31,9 @@
   var resultCount = document.getElementById('resultcountAJAX')?document.getElementById('resultcountAJAX').innerHTML:'0';
    if(resultCount != '0')
   {
-    document.getElementById('resultsmessage').innerHTML = document.getElementById('completeresultsmessage')?document.getElementById('completeresultsmessage').innerHTML:(document.getElementById('partialresultsmessage')!=null?"(document.getElementById('partialresultsmessage').innerHTML + document.getElementById('resultsmessage').innerHTML)":document.getElementById('resultsmessage').innerHTML);
+    document.getElementById('resultsmessage').innerHTML = document.getElementById('completeresultsmessage')?document.getElementById('completeresultsmessage').innerHTML:document.getElementById('exportmessage').innerHTML;
+	
+	//(document.getElementById('partialresultsmessage')!=null?"(document.getElementById('partialresultsmessage').innerHTML + document.getElementById('resultsmessage').innerHTML)":document.getElementById('resultsmessage').innerHTML);
 	 if(document.getElementById('completeresultsmessage') || document.getElementById('partialresultsmessage'))
 	{
 	  document.getElementById('resultsmessage').style.textAlign = 'left';
@@ -127,8 +129,15 @@
 		<DIV style="float:right;margin-top:0.12em;">
 			<A class="link" style="margin-top:0.3em;display:none;" id="failedserviceslink" href="#this" onclick="document.getElementById('pageoverlay').style.display='block';document.getElementById('failedservicespanel').style.display='block';"><bean:message key="link.failedserviceinstances"/>(<SPAN id="failedservicescount"></SPAN>)</A>			
 		</DIV><BR style="line-height:0.2em;"><HR style="height:1;color:#bbb">
-		<DIV style="font-size:0.85em;" id="resultsmessage"><IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"></DIV>
-	</DIV>		
+		
+		<DIV style="font-size:0.85em;display:none" id="exportmessage"><IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"> <bean:message key="message.export"/></DIV>
+		<logic:notPresent name="keyword">
+			<DIV style="font-size:0.85em;" id="resultsmessage"><IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"> <bean:message key="message.partialresults.formbased" arg0="${sessionScope.selectedQueryName}"/></DIV>
+		</logic:notPresent>
+		<logic:present name="keyword">
+			<DIV style="font-size:0.85em;" id="resultsmessage"><IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"> <bean:message key="message.partialresults.keyword" arg0="${sessionScope.keyword}" arg1="${sessionScope.selectedQueryName}"/></DIV>
+		</logic:present>
+	</DIV>
 	<DIV id="pageoverlay"></DIV>
 	<DIV id="failedservicespanel">
 		<DIV id="failedservicespanelheader" class="title"><bean:message key="title.failedserviceinstances"/><IMG style='cursor:pointer;position:absolute;right:0.6em;' alt='Close' src='images/close.jpg' onmouseover=this.src='images/close_hover.jpg' onmouseout=this.src='images/close.jpg' onclick="document.getElementById('pageoverlay').style.display='none';document.getElementById('failedservicespanel').style.display='none'"/></DIV>
@@ -144,7 +153,11 @@
 </DIV>
 <SCRIPT language="JavaScript">updateView();</SCRIPT>
 <DIV id="bottompanel">	
+	<logic:notPresent name="userName">
+		<DIV class="text"><bean:message key="message.offlineexecution.anonymous.user"/></DIV>
+	</logic:notPresent>
 	<logic:present name="userName">
+		<DIV class="text"><bean:message key="message.offlineexecution.signedin.user"/> <A href="#" title="<bean:message key="message.offlineexecution.signedin.user.moreinfo"/>">(More info) </A></DIV>
 		<INPUT type="button" class="button" id="executeinbackgroundbutton" value="<bean:message key="button.executeinbackground"/>" onClick="document.location='BackgroundQuery.do'">&nbsp;
 	</logic:present>
 	<INPUT type="button" class="buttondisabled" id="exportbutton" value="<bean:message key="button.export"/>" onClick="document.location = 'ExportResults.do?queryId=<bean:write name="queryId"/>';TogglePreloader(0);" disabled>
