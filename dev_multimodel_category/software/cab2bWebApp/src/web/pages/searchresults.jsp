@@ -19,12 +19,16 @@
 	getTransformedResults();
 	<% session.setAttribute("isFirstRequest", false); %>
   }
+
+
 }
 
  function getTransformedResults()
 {
   processAJAXRequest('TransformQueryResultsAction.do', (navigator.appName.indexOf('Netscape')==-1?'centerpanelcontent':'centerpanelcontentbuffer'), 1);
    if(document.getElementById("resultcountAJAX") && document.getElementById('resultcount'))
+
+
   {
 	document.getElementById('resultcount').innerHTML = document.getElementById("resultcountAJAX").innerHTML;
   }

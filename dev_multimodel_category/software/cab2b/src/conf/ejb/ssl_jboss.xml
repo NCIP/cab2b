@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE jboss PUBLIC
+   "-//JBoss//DTD JBOSS 4.0//EN"
+   "http://www.jboss.org/j2ee/dtd/jboss_4_0.dtd">
+
+<!-- ===================================================================== -->
+<!--  JBoss EJB Configurations                                    -->
+<!-- ===================================================================== -->
+
+<jboss>
+
+  <invoker-proxy-bindings>  
+    <invoker-proxy-binding>
+      <name>stateless-https-invoker</name>
+      <invoker-mbean>jboss:service=invoker,type=https</invoker-mbean>
+      <proxy-factory>org.jboss.proxy.ejb.ProxyFactory</proxy-factory>
+      <proxy-factory-config>
+        <client-interceptors>
+          <home>
+            <interceptor>org.jboss.proxy.ejb.HomeInterceptor</interceptor>
+            <interceptor>org.jboss.proxy.SecurityInterceptor</interceptor>
+            <interceptor>org.jboss.proxy.TransactionInterceptor</interceptor>
+            <interceptor call-by-value="false">org.jboss.invocation.InvokerInterceptor</interceptor>
+            <interceptor call-by-value="true">org.jboss.invocation.MarshallingInvokerInterceptor</interceptor>
+          </home>
+          <bean>
+            <interceptor>org.jboss.proxy.ejb.StatelessSessionInterceptor</interceptor>
+            <interceptor>org.jboss.proxy.SecurityInterceptor</interceptor>
+            <interceptor>org.jboss.proxy.TransactionInterceptor</interceptor>
+            <interceptor call-by-value="false">org.jboss.invocation.InvokerInterceptor</interceptor>
+            <interceptor call-by-value="true">org.jboss.invocation.MarshallingInvokerInterceptor</interceptor>
+          </bean>
+        </client-interceptors>
+      </proxy-factory-config>
+    </invoker-proxy-binding>
+  </invoker-proxy-bindings>
+
+  <container-configurations>
+
+    <container-configuration>
+      <container-name>Standard Stateless SessionBean</container-name>
+      <call-logging>false</call-logging>
+      <invoker-proxy-binding-name>stateless-https-invoker</invoker-proxy-binding-name>
+      <container-interceptors>
+        <interceptor>org.jboss.ejb.plugins.ProxyFactoryFinderInterceptor</interceptor>
+        <interceptor>org.jboss.ejb.plugins.LogInterceptor</interceptor>
+        <interceptor>org.jboss.ejb.plugins.SecurityInterceptor</interceptor>
+        <!-- CMT -->
+        <interceptor transaction="Container">org.jboss.ejb.plugins.TxInterceptorCMT</interceptor>
+        <interceptor transaction="Container">org.jboss.ejb.plugins.CallValidationInterceptor</interceptor>
+        <interceptor transaction="Container">org.jboss.ejb.plugins.StatelessSessionInstanceInterceptor</interceptor>
+        <!-- BMT -->
+        <interceptor transaction="Bean">org.jboss.ejb.plugins.StatelessSessionInstanceInterceptor</interceptor>
+        <interceptor transaction="Bean">org.jboss.ejb.plugins.TxInterceptorBMT</interceptor>
+        <interceptor transaction="Bean">org.jboss.ejb.plugins.CallValidationInterceptor</interceptor>
+        <interceptor>org.jboss.resource.connectionmanager.CachedConnectionInterceptor</interceptor>
+      </container-interceptors>
+      <instance-pool>org.jboss.ejb.plugins.StatelessSessionInstancePool</instance-pool>
+      <instance-cache></instance-cache>
+      <persistence-manager></persistence-manager>
+      <container-pool-conf>
+        <MaximumSize>100</MaximumSize>
+      </container-pool-conf>
+    </container-configuration>
+
+  </container-configurations>
+
+</jboss>

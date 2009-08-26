@@ -61,6 +61,17 @@ public class TransformQueryResultsAction extends Action {
         HttpSession session = request.getSession();
         try {
 
+
+
+
+
+
+
+
+
+
+
+
             SavedQueryBizLogic savedQueryBizLogic =
                     (SavedQueryBizLogic) session.getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
             Long queryId = (Long) session.getAttribute(Constants.QUERY_ID);

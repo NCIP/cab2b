@@ -2,7 +2,7 @@ package edu.wustl.cab2bwebapp.action;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Iterator;
+ ximport java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -29,10 +29,13 @@ import edu.wustl.cab2b.common.user.User;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
 import edu.wustl.cab2b.server.user.UserOperations;
+
 import edu.wustl.cab2bwebapp.actionform.LoginForm;
 import edu.wustl.cab2bwebapp.bizlogic.ModelGroupBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.cab2bwebapp.constants.Constants;
+
+;
 
 /**
  * @author gaurav_mehta
@@ -64,6 +67,7 @@ public class LoginAction extends Action {
             if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
                 return mapping.findForward(Constants.FORWARD_LOGIN);
             }
+
             HttpSession session = request.getSession();
 
             session.removeAttribute(Constants.SEARCH_RESULTS);

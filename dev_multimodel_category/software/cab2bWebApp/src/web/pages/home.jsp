@@ -23,6 +23,13 @@
   <logic:present name="errorSessionTimeout">
 	alert('<bean:message key="alert.sessiontimeout"/>');
   </logic:present>
+  <logic:present name="invalidRequest">
+	alert('<bean:message key="alert.invalidrequest"/>');
+  </logic:present>
+  <logic:notPresent name="modelGroupDVOList">
+	document.forms[0].action = 'Home.do';
+    document.forms[0].submit();
+  </logic:notPresent>
   setSelection(document.getElementsByName('modelGroups'));
    if(selectedItemsCount>0)
   {

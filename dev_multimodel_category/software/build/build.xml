@@ -290,12 +290,28 @@
 			<then>
 				<get src="${jboss-bindings.src.url}" dest="${basedir}/${jboss-bindings.file}" />
 				<read-jboss-server-port jboss.server.bindingfile.location="${basedir}/${jboss-bindings.file}" />
-				<property name="server-port" value="${jboss.server.port}" />
+				<if>
+					<equals arg1="${jboss.ssl.enable}" arg2="true" />
+					<then>
+						<math result="server-port" operand1="${jboss.server.port}" operation="+" operand2="363" datatype="int" />
+					</then>
+					<else>
+						<property name="server-port" value="${jboss.server.port}" />
+					</else>
+				</if>
 				<echo message="HTTP port=${server-port}" />
 				<delete file="${basedir}/${jboss-bindings.file}" />
 			</then>
 			<else>
-				<property name="server-port" value="${jboss.server.port}" />
+				<if>
+					<equals arg1="${jboss.ssl.enable}" arg2="true" />
+					<then>
+						<math result="server-port" operand1="${jboss.server.port}" operation="+" operand2="363" datatype="int" />
+					</then>
+					<else>
+						<property name="server-port" value="${jboss.server.port}" />
+					</else>
+				</if>
 			</else>
 		</if>
 		<!-- setting the property in the ant call overrides the property in the sub-project allowing the artifact to be produced where needed -->

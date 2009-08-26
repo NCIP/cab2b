@@ -44,10 +44,10 @@ public class UserOperations extends DefaultBizLogic {
     public UserInterface getUserByName(String value) {
         List<UserInterface> userList = null;
 
-        final String queryStr = "Select {User.*} from cab2b_user User where name COLLATE latin1_bin='";
-        String query = new StringBuilder().append(queryStr).append(value).append("'").toString();
+        final String queryStr = "Select {User.*} from cab2b_user User where name COLLATE latin1_bin=?";
         try {
-            SQLQuery sqlQuery = DBUtil.currentSession().createSQLQuery(query);
+            SQLQuery sqlQuery = DBUtil.currentSession().createSQLQuery(queryStr);
+            sqlQuery.setString(0, value);
             userList = sqlQuery.addEntity("User", edu.wustl.cab2b.common.user.User.class).list();
         } catch (HibernateException hbe) {
             logger.error(hbe.getMessage(), hbe);
@@ -174,8 +174,8 @@ public class UserOperations extends DefaultBizLogic {
         Collection<EntityGroupInterface> allEntityGroups = EntityCache.getInstance().getEntityGroups();
         Collection<String> absentEntityGroups = new ArrayList<String>();
         for (EntityGroupInterface entityGroupInterface : allEntityGroups) {
-            String name = Utility.createModelName(entityGroupInterface.getLongName(),
-                                                  entityGroupInterface.getVersion());
+            String name =
+                    Utility.createModelName(entityGroupInterface.getLongName(), entityGroupInterface.getVersion());
             if (!entityGroupByUrls.containsKey(name)) {
                 absentEntityGroups.add(name);
             }
