@@ -137,8 +137,20 @@ public class SpreadSheetResultTransformer {
                         new ServiceURLOperations().getServiceURLbyURLLocation(url);
                 for (IRecord record : results) {
                     for (AttributeInterface a : attributeOrder) {
-                        out.append(record.getValueForAttribute(a) == null ? "" : record.getValueForAttribute(a)
+                        /*out.append(record.getValueForAttribute(a) == null ? "" : record.getValueForAttribute(a)
                             .toString());
+                        out.append(',');*/
+                        String val =
+                                record.getValueForAttribute(a) == null ? " " : record.getValueForAttribute(a)
+                                    .toString();
+                        val = val.replace("\"", "\"\"");
+                        if (val.contains(",") || val.contains("\n")) {
+                            out.append('"');
+                            out.append(val);
+                            out.append('"');
+                        } else {
+                            out.append(val);
+                        }
                         out.append(',');
                     }
                     out.append(Utility.createModelName(serviceUrlMetadata.getDomainModel(), serviceUrlMetadata
