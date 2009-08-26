@@ -349,8 +349,8 @@
 				<include name="**/*.jar" />
 			</fileset>
 		</copy>
-		<echo message="java -Xmx1024m -Djavax.net.ssl.trustStore=./jssecacerts -Dorg.jboss.security.ignoreHttpsHost=true -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="true" />
-		<echo message="java -Xmx1024m -Djavax.net.ssl.trustStore=./jssecacerts -Dorg.jboss.security.ignoreHttpsHost=true -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="true" />
+		<echo message="java -Xmx512m -Djavax.net.ssl.trustStore=./jssecacerts -Dorg.jboss.security.ignoreHttpsHost=true -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="true" />
+		<echo message="java -Xmx512m -Djavax.net.ssl.trustStore=./jssecacerts -Dorg.jboss.security.ignoreHttpsHost=true -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="true" />
 
 		<copy todir="${client.setup.dir}/conf">
 			<fileset dir="${conf.dir}">
