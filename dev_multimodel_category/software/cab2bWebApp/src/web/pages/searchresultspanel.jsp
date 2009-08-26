@@ -13,7 +13,7 @@
 </logic:present>
 <logic:notPresent name="searchResultsView">
 	<logic:present name="stopAjax">
-		<DIV class="text" align="center"><bean:message key="text.resultsempty"/></DIV>
+		<DIV class="text" align="center"><bean:message key="text.resultsempty" arg0="${sessionScope.selectedQueryName}"/></DIV>
 	</logic:present>
 </logic:notPresent>
 <logic:present name="savedQueries">
