@@ -144,6 +144,7 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         List<KeywordQuery> keywordQueries = null;
         try {
             keywordQueries = (List<KeywordQuery>) Utility.executeHQL("getKeywordQueriesByUserId", params);
+            postProcessKeywordQueries(keywordQueries);
         } catch (HibernateException e) {
             throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
         }
@@ -157,8 +158,9 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
      */
     public ICab2bQuery getQueryById(Long queryId) {
         ICab2bQuery query = super.getQueryById(queryId);
-        postProcessMMCQuery(query);
-
+        if (query != null && query instanceof MultiModelCategoryQuery) {
+            postProcessMMCQuery((MultiModelCategoryQuery) query);
+        }
         return query;
     }
 
@@ -219,10 +221,14 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         }
         query = converter.convertToKeywordQuery(query);
 
-        //String userName = AuthenticationUtility.getUsersGridId(serializedDCR);
         saveInKeywordQuery(query, userId);
     }
 
+    /**
+     * This method saves the given query as a subquery of the appropriate keyword query present in the system.
+     * @param query
+     * @param userId
+     */
     private void saveInKeywordQuery(ICab2bQuery query, Long userId) {
         EntityInterface queryEntity = query.getOutputEntity();
         Collection<ModelGroupInterface> modelGroups = UtilityOperations.getModelGroups(queryEntity);
@@ -257,6 +263,13 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         }
     }
 
+    /**
+     * This method create and save the keyword query
+     * @param en
+     * @param modelGroup
+     * @param userId
+     * @return
+     */
     private KeywordQuery createAndSaveKeywordQuery(EntityInterface en, ModelGroupInterface modelGroup, Long userId) {
         ConstraintsObjectBuilder queryBuilder =
                 new ConstraintsObjectBuilder(Cab2bQueryObjectFactory.createCab2bQuery());
@@ -305,13 +318,25 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
     }
 
     /**
+     * This method sends the MultiModelCategoryQuery for post processing, which is a child of the keyword query.
+     * @param keywordQueries
+     */
+    private void postProcessKeywordQueries(Collection<KeywordQuery> keywordQueries) {
+        for (KeywordQuery keywordQuery : keywordQueries) {
+            postProcessMMCQueries(keywordQuery.getSubQueries());
+        }
+    }
+
+    /**
      * This method process the given queries to set  the sub-queries as system-generated queires
      * @param queries
      */
-    private void postProcessMMCQueries(List<ICab2bQuery> queries) {
+    private void postProcessMMCQueries(Collection<ICab2bQuery> queries) {
         if (queries != null || !queries.isEmpty()) {
             for (ICab2bQuery query : queries) {
-                postProcessMMCQuery(query);
+                if (query instanceof MultiModelCategoryQuery) {
+                    postProcessMMCQuery((MultiModelCategoryQuery) query);
+                }
             }
         }
     }
@@ -320,13 +345,10 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
      * This method process the MMCQuery to set the sub-queries as system-generated queires
      * @param query
      */
-    private void postProcessMMCQuery(ICab2bQuery query) {
-        if (query != null && query instanceof MultiModelCategoryQuery) {
-            MultiModelCategoryQuery mmcQuery = (MultiModelCategoryQuery) query;
-            Collection<ICab2bQuery> subQueries = mmcQuery.getSubQueries();
-            for (ICab2bQuery subQuery : subQueries) {
-                subQuery.setIsSystemGenerated(Boolean.TRUE);
-            }
+    private void postProcessMMCQuery(MultiModelCategoryQuery mmcQuery) {
+        Collection<ICab2bQuery> subQueries = mmcQuery.getSubQueries();
+        for (ICab2bQuery subQuery : subQueries) {
+            subQuery.setIsSystemGenerated(Boolean.TRUE);
         }
     }
 
