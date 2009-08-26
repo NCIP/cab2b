@@ -26,9 +26,14 @@ import edu.wustl.common.querysuite.queryobject.DataType;
 
 /**
  * @author chandrakant_talele
+ * @author gaurav_mehta
  */
 public class MmcAttributeGenerator {
 
+    /**
+     * @param mmaBean
+     * @return AttributeInterface
+     */
     public static AttributeInterface getAttribute(MultiModelAttributeBean mmaBean) {
         Collection<AttributeInterface> allAttributes = mmaBean.getSelectedAttributes();
         Set<DataType> types = new HashSet<DataType>();
@@ -40,7 +45,9 @@ public class MmcAttributeGenerator {
         //if all attributes are of same type then create PV union
         if (types.size() == 1) {
             UserDefinedDE userDefinedDE = getPermissibleValueUnion(allAttributes, types.iterator().next());
-            attribute.getAttributeTypeInformation().setDataElement(userDefinedDE);
+            if(! userDefinedDE.getPermissibleValueCollection().isEmpty()) {
+                attribute.getAttributeTypeInformation().setDataElement(userDefinedDE);
+            }
         }
         return attribute;
     }
@@ -54,6 +61,11 @@ public class MmcAttributeGenerator {
         return createAttribute(type);
     }
 
+    /**
+     * @param first
+     * @param second
+     * @return Data Type
+     */
     public static DataType getDataType(DataType first, DataType second) {
         if (first == null || first == second) {
             return second;
@@ -103,7 +115,6 @@ public class MmcAttributeGenerator {
     }
 
     private static PermissibleValueInterface createPermissibleValue(DataType dataType, Object value) {
-        //PermissibleValueInterface permissibleValue = null;
         DomainObjectFactory domainObjectFactory = DomainObjectFactory.getInstance();
         switch (dataType) {
             case String:
