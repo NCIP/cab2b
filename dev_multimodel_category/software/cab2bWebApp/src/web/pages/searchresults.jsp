@@ -60,11 +60,10 @@
 	{
 	  document.getElementById('resultsmessage').innerHTML = "";
 	}
-	 else
-	{
-	  document.getElementById('exportbutton').disabled = false;
-      document.getElementById('exportbutton').className = 'button';
-	}
+	
+	 document.getElementById('exportbutton').disabled = false;
+     document.getElementById('exportbutton').className = 'button';
+	
 	return;
   }
   setTimeout("getTransformedResults()", 5000);
