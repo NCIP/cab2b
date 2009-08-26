@@ -19,16 +19,12 @@
 	getTransformedResults();
 	<% session.setAttribute("isFirstRequest", false); %>
   }
-
-
 }
 
  function getTransformedResults()
 {
   processAJAXRequest('TransformQueryResultsAction.do', (navigator.appName.indexOf('Netscape')==-1?'centerpanelcontent':'centerpanelcontentbuffer'), 1);
    if(document.getElementById("resultcountAJAX") && document.getElementById('resultcount'))
-
-
   {
 	document.getElementById('resultcount').innerHTML = document.getElementById("resultcountAJAX").innerHTML;
   }
@@ -36,8 +32,6 @@
    if(resultCount != '0')
   {
     document.getElementById('resultsmessage').innerHTML = document.getElementById('completeresultsmessage')?document.getElementById('completeresultsmessage').innerHTML:document.getElementById('exportmessage').innerHTML;
-	
-	//(document.getElementById('partialresultsmessage')!=null?"(document.getElementById('partialresultsmessage').innerHTML + document.getElementById('resultsmessage').innerHTML)":document.getElementById('resultsmessage').innerHTML);
 	 if(document.getElementById('completeresultsmessage') || document.getElementById('partialresultsmessage'))
 	{
 	  document.getElementById('resultsmessage').style.textAlign = 'left';
@@ -60,10 +54,8 @@
 	{
 	  document.getElementById('resultsmessage').innerHTML = "";
 	}
-	
-	 document.getElementById('exportbutton').disabled = false;
-     document.getElementById('exportbutton').className = 'button';
-	
+    document.getElementById('exportbutton').disabled = false;
+    document.getElementById('exportbutton').className = 'button';	
 	return;
   }
   setTimeout("getTransformedResults()", 5000);
@@ -87,11 +79,7 @@
 	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (325);
 	 if(document.getElementById('searchresultstable'))
     {
-	  document.location = "#scroller";
-	   if(document.body.scrollTop>0)
-	  {	  
-	    document.getElementById('searchresultstable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '370';
-	  }
+      document.getElementById('searchresultstable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '370';
 	}
 	 if(document.getElementById('centerpanelcontentbuffer').innerHTML!="")
 	{
