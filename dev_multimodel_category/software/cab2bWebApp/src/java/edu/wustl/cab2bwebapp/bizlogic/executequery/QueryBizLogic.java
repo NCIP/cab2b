@@ -108,7 +108,6 @@ public class QueryBizLogic {
      * @return
      */
     public boolean isProcessingFinished() {
-        logger.info("Processing finished...:" + queryExecutionHandler.isProcessingFinished());
         return queryExecutionHandler.isProcessingFinished();
     }
 

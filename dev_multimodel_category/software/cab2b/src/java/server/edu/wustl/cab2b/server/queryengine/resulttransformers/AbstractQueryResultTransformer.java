@@ -114,6 +114,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      */
     protected Map<String, CQLQueryResults> executeDcql(DCQLQuery query, GlobusCredential cred) {
         DCQLQueryResultsCollection queryResults = null;
+        logger.info("Executing DQCL to get " + query.getTargetObject().getName());
         try {
             QueryExecutionParameters queryParameter = new QueryExecutionParameters();
 

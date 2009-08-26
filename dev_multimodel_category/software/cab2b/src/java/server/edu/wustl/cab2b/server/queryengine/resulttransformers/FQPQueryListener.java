@@ -33,7 +33,6 @@ public class FQPQueryListener implements FQPProcessingStatusListener, Serializab
      *            the urlVsException to set
      */
     public void processingStatusChanged(ProcessingStatus statusObj, String message) {
-        logger.info("Status changed to :" + statusObj.getValue());
     }
 
     /* (non-Javadoc)
@@ -57,7 +56,8 @@ public class FQPQueryListener implements FQPProcessingStatusListener, Serializab
      */
     public void targetServiceReturnedInvalidResult(String serviceURL, FederatedQueryProcessingException ex) {
         if (queryResultTransformer != null) {
-            queryResultTransformer.updateStatus(serviceURL, ex.getMessage(), "Invalid result", AbstractStatus.Complete_With_Error );
+            queryResultTransformer.updateStatus(serviceURL, ex.getMessage(), "Invalid result",
+                                                AbstractStatus.Complete_With_Error);
         }
     }
 
@@ -76,7 +76,8 @@ public class FQPQueryListener implements FQPProcessingStatusListener, Serializab
      */
     public void targetServiceThrowsException(String serviceURL, Exception ex) {
         if (queryResultTransformer != null) {
-            queryResultTransformer.updateStatus(serviceURL, ex.getMessage(), "Service Throws exception", AbstractStatus.Complete_With_Error);
+            queryResultTransformer.updateStatus(serviceURL, ex.getMessage(), "Service Throws exception",
+                                                AbstractStatus.Complete_With_Error);
         }
     }
 
