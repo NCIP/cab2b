@@ -142,10 +142,10 @@ public class MmcValidator {
 
     private void print(IPath path) {
         String src = path.getSourceEntity().getName();
-        src = getName(src);
+        src = getName(src) +"(" +path.getSourceEntity().getEntityGroupCollection().iterator().next().getLongName() + ")";
 
         String target = path.getTargetEntity().getName();
-        target = getName(target);
+        target = getName(target)+"(" +path.getTargetEntity().getEntityGroupCollection().iterator().next().getLongName() + ")";
         System.out.println(src + "->" + target);
     }
 
@@ -232,6 +232,7 @@ public class MmcValidator {
         cache = EntityCache.getInstance();
     }
     private static void redirectConsoleToFile(String consoleFile) throws FileNotFoundException {
+        System.out.println("Redirecting console to " + consoleFile);
         PrintStream p = new PrintStream(new File(consoleFile));
         System.setOut(p);
         System.setErr(p);
