@@ -198,7 +198,7 @@ public class QueryExecutorUtil {
      * @throws RuntimeException
      */
     public static void setOutputURLs(CompoundQuery query, GlobusCredential proxy, UserInterface user,
-                                           String[] modelGroupNames) throws RuntimeException {
+                                     String[] modelGroupNames) throws RuntimeException {
         Iterator<ICab2bQuery> subQueriesIterator = query.getSubQueries().iterator();
         while (subQueriesIterator.hasNext()) {
             ICab2bQuery subQuery = subQueriesIterator.next();
@@ -208,15 +208,24 @@ public class QueryExecutorUtil {
                 setOutputURLs(subQuery, proxy, user, modelGroupNames);
             }
 
-            if (subQuery.isKeywordSearch() && subQuery.getOutputUrls().isEmpty()) {
+            List<String> urls = subQuery.getOutputUrls();
+            if (subQuery.isKeywordSearch() && (urls == null || urls.isEmpty())) {
                 subQueriesIterator.remove();
             }
         }
 
+        Collection<ICab2bQuery> subQueries = query.getSubQueries();
         List<String> urls = new ArrayList<String>();
-        while (subQueriesIterator.hasNext()) {
-            ICab2bQuery subQuery = subQueriesIterator.next();
-            urls.addAll(subQuery.getOutputUrls());
+        for (ICab2bQuery subQuery : subQueries) {
+            List<String> subQueryURLs = subQuery.getOutputUrls();
+            if (subQueryURLs != null) {
+                urls.addAll(subQuery.getOutputUrls());
+            }
+        }
+        
+        if(urls.isEmpty()){
+            StringBuffer errorMessage = new StringBuffer("Incorrect or no service instance configured.");
+            throw new RuntimeException(errorMessage.toString(), ErrorCodeConstants.MG_008);
         }
         query.setOutputUrls(urls);
     }
@@ -229,9 +238,10 @@ public class QueryExecutorUtil {
      * @throws RuntimeException
      */
     public static void setOutputURLs(ICab2bQuery query, GlobusCredential proxy, UserInterface user,
-                                           String[] modelGroupNames) throws RuntimeException {
+                                     String[] modelGroupNames) throws RuntimeException {
         Map<EntityGroupInterface, List<String>> entityGroupURLsMap = getUserConfiguredUrls(user, modelGroupNames);
 
+        query.setOutputUrls(null);
         Collection<EntityGroupInterface> queryEntityGroups = QueryExecutorUtil.getEntityGroups(query);
         for (EntityGroupInterface queryEntityGroup : queryEntityGroups) {
             List<String> urls = entityGroupURLsMap.get(queryEntityGroup);
@@ -239,7 +249,7 @@ public class QueryExecutorUtil {
                 query.setOutputUrls(urls);
             } else if (query.getIsSystemGenerated()) {
                 query.setOutputUrls(new ArrayList<String>(0));
-            } else {
+            } else if (!query.isKeywordSearch()) {
                 StringBuffer errorMessage = new StringBuffer("Incorrect service instance configured for query ");
                 errorMessage.append("having model as ").append(queryEntityGroup.getName());
                 throw new RuntimeException(errorMessage.toString(), ErrorCodeConstants.MG_008);
