@@ -5,11 +5,13 @@ package edu.wustl.cab2bwebapp.bizlogic;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 
@@ -32,7 +34,7 @@ public class UserBackgroundQueries {
     /**
      * Map of user to queries executing in background. 
      */
-    private Map<UserInterface, Set<QueryBizLogic>> userToBackgroundQueries = null;
+    private Map<UserInterface, Set<QueryBizLogic>> userToBackgroundQueries;
 
     private static UserBackgroundQueries ref = null;
 
@@ -45,7 +47,7 @@ public class UserBackgroundQueries {
     /**
      * Time interval for updating database for queries executing in background. 
      */
-    public static final int BACKGROUND_QUERY_REFRESH_TIME_INTERVAL = 15;
+    public static final int BACKGROUND_QUERY_REFRESH_TIME_INTERVAL = 1;
 
     static {
         //Creating directory for saving CSV files on server.
@@ -59,7 +61,7 @@ public class UserBackgroundQueries {
      * private constructor for singleton class. 
      */
     private UserBackgroundQueries() {
-        userToBackgroundQueries = new HashMap<UserInterface, Set<QueryBizLogic>>();
+        userToBackgroundQueries = Collections.synchronizedMap(new HashMap<UserInterface, Set<QueryBizLogic>>());
     }
 
     /**
@@ -87,23 +89,27 @@ public class UserBackgroundQueries {
         qStatus.setVisible(Boolean.TRUE);
         new QueryURLStatusOperations().updateQueryStatus(qStatus);
 
-        //Adding to user Vs background query map.
-        Set<QueryBizLogic> bizLogicSet = userToBackgroundQueries.get(user);
-        if (bizLogicSet == null) {
-            bizLogicSet = new HashSet<QueryBizLogic>();
-            userToBackgroundQueries.put(user, bizLogicSet);
+        synchronized (userToBackgroundQueries) {
+            //Adding to user Vs background query map.
+            Set<QueryBizLogic> bizLogicSet = userToBackgroundQueries.get(user);
+            if (bizLogicSet == null) {
+                bizLogicSet = new HashSet<QueryBizLogic>();
+                userToBackgroundQueries.put(user, bizLogicSet);
+            }
+            bizLogicSet.add(queryBizLogic);
         }
-        bizLogicSet.add(queryBizLogic);
     }
 
     /**
      * Call update in database for all queries executing in background. 
      */
     public synchronized void updateAllBackgroundQueryStatus() {
-        Set<UserInterface> users = userToBackgroundQueries.keySet();
-        if (users != null) {
-            for (UserInterface user : users) {
-                updateBackgroundQueryStatusForUser(user);
+        synchronized (userToBackgroundQueries) {
+            Set<UserInterface> users = userToBackgroundQueries.keySet();
+            if (users != null) {
+                for (UserInterface user : users) {
+                    updateBackgroundQueryStatusForUser(user);
+                }
             }
         }
     }
