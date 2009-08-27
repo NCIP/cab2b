@@ -26,6 +26,7 @@ import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DBUtil;
+import gov.nih.nci.cagrid.common.SchemaValidator;
 /**
  * Utility to validate and write XML files for Multi model categories.
  * This is used to find required paths and validate the XML. It is not invoked during normal application execution. 
@@ -46,6 +47,9 @@ public class MmcValidator {
      */
     public static void main(String[] args) throws Exception {
         System.out.println("Started....");
+        
+        SchemaValidator schemaValidator = new SchemaValidator("C:/abc.xsd");
+        schemaValidator.validate("C:/abc.xml");
         redirectConsoleToFile("c:/dbdump/mmc_paths1.txt");
         //new MmcValidator().validateXML("D:\\Project Related Material\\MMC\\experiemnt_disease.xml");
         new MmcValidator().getPathsForPair();
