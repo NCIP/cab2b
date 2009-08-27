@@ -44,7 +44,7 @@ public class MmcAttributeGeneratorTest extends TestCase {
         assertTrue(a.getAttributeTypeInformation() instanceof IntegerAttributeTypeInformation);
         DataElementInterface de = a.getAttributeTypeInformation().getDataElement();
         UserDefinedDE userDefinedDE = (UserDefinedDE) de;
-        assertTrue(userDefinedDE.getPermissibleValueCollection().isEmpty());
+        assertNull(userDefinedDE);
     }
 
     public void testAttributeOfSameTypeDifferentPVs() {
