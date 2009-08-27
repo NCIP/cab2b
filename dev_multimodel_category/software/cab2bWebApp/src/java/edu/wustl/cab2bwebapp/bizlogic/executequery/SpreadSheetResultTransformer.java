@@ -4,11 +4,9 @@
 
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,8 +22,6 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
-import edu.wustl.cab2bwebapp.bizlogic.UserBackgroundQueries;
-import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
@@ -105,73 +101,34 @@ public class SpreadSheetResultTransformer {
                 attributeOrder.add(attribute);
             }
         }
-
-        FileWriter fstream = new FileWriter(UserBackgroundQueries.EXPORT_CSV_DIR + File.separator + fileName);
-        BufferedWriter out = new BufferedWriter(fstream);
+        CsvWriter writeToCSV = new CsvWriter(attributeOrder, fileName);
         Map<String, ?> urlVsRecords = queryResult.getRecords();
         Set<String> urls = urlVsRecords.keySet();
-
-        //write column headers
-        for (AttributeInterface attribute : attributeOrder) {
-            out.append(attribute.getName());
-            out.append(',');
-        }
-        out.append(Constants.MODEL_NAME);
-        out.append(',');
-        out.append(Constants.HOSTING_CANCER_RESEARCH_CENTER);
-        out.append(',');
-        out.append(Constants.POINT_OF_CONTACT);
-        out.append(',');
-        out.append(Constants.CONTACT_EMAIL);
-        out.append(',');
-        out.append(Constants.HOSTING_INSTITUTION);
-        out.append(',');
-        out.append('\n');
-        out.flush();
-
         for (String url : urls) {
             List<IRecord> results = (List<IRecord>) urlVsRecords.get(url);
-            //Add metadata information based on url
             if (results != null) {
                 ServiceURLInterface serviceUrlMetadata =
                         new ServiceURLOperations().getServiceURLbyURLLocation(url);
+                List<Map<AttributeInterface, Object>> recordList =
+                        new ArrayList<Map<AttributeInterface, Object>>();
                 for (IRecord record : results) {
-                    for (AttributeInterface a : attributeOrder) {
-                        /*out.append(record.getValueForAttribute(a) == null ? "" : record.getValueForAttribute(a)
-                            .toString());
-                        out.append(',');*/
-                        String val =
-                                record.getValueForAttribute(a) == null ? " " : record.getValueForAttribute(a)
-                                    .toString();
-                        val = val.replace("\"", "\"\"");
-                        if (val.contains(",") || val.contains("\n")) {
-                            out.append('"');
-                            out.append(val);
-                            out.append('"');
-                        } else {
-                            out.append(val);
-                        }
-                        out.append(',');
+                    Map<AttributeInterface, Object> recordMap = new HashMap<AttributeInterface, Object>();
+                    for (AttributeInterface attribute : record.getAttributes()) {
+                        recordMap.put(attribute, record.getValueForAttribute(attribute));
                     }
-                    out.append(Utility.createModelName(serviceUrlMetadata.getDomainModel(), serviceUrlMetadata
-                        .getVersion()));
-                    out.append(',');
-                    out.append(serviceUrlMetadata.getHostingCenter());
-                    out.append(',');
-                    out.append(serviceUrlMetadata.getContactName());
-                    out.append(',');
-                    out.append(serviceUrlMetadata.getContactMailId());
-                    out.append(',');
-                    out.append(serviceUrlMetadata.getHostingCenterShortName());
-                    out.append(',');
-                    out.append('\n');
-                    out.flush();
+                    recordList.add(recordMap);
                 }
+                writeToCSV.writeData(recordList, serviceUrlMetadata);
             }
         }
+        writeToCSV.closeFile();
         return fileName;
     }
 
+    /**
+     * @param fileName
+     * @throws IOException
+     */
     private void writeCategoryResultToCSV(String fileName) throws IOException {
         ICategoryResult<ICategorialClassRecord> result = (ICategoryResult<ICategorialClassRecord>) queryResult;
         List<AttributeInterface> attributes = getAttributesWithOrder(result.getCategory());

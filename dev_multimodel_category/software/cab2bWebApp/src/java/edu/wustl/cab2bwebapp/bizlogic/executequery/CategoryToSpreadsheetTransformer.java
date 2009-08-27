@@ -1,8 +1,5 @@
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,10 +14,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
-import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
-import edu.wustl.cab2bwebapp.bizlogic.UserBackgroundQueries;
-import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 
 /**
@@ -188,76 +182,17 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
      * @see edu.wustl.cab2bwebapp.bizlogic.executequery.ICategoryToSpreadsheetTransformer#writeToCSV(edu.wustl.cab2b.common.queryengine.result.ICategoryResult)
      */
     public void writeToCSV(ICategoryResult<ICategorialClassRecord> result, String fileName,
-                           List<AttributeInterface> headers) throws IOException {
-        FileWriter fstream = new FileWriter(UserBackgroundQueries.EXPORT_CSV_DIR + File.separator + fileName);
-        BufferedWriter out = new BufferedWriter(fstream);
-        for (AttributeInterface attribute : headers) {
-            out.append(attribute.getName());
-            out.append(',');
-        }
+                           List<AttributeInterface> headers) throws IOException {        
+        CsvWriter writeToCSV = new CsvWriter(headers, fileName);
         Map<String, List<ICategorialClassRecord>> urlToResultMap = result.getRecords();
-        out.append(Constants.MODEL_NAME);
-        out.append(',');
-        out.append(Constants.HOSTING_CANCER_RESEARCH_CENTER);
-        out.append(',');
-        out.append(Constants.POINT_OF_CONTACT);
-        out.append(',');
-        out.append(Constants.CONTACT_EMAIL);
-        out.append(',');
-        out.append(Constants.HOSTING_INSTITUTION);
-        out.append(',');
-        out.append('\n');
-        out.flush();
-
         for (String url : urlToResultMap.keySet()) {
-            writeToCSV(urlToResultMap.get(url), url, headers, out);
-        }
-        out.close();
-        fstream.close();
-    }
-
-    /**
-     * @param records
-     * @param url
-     * @param headers
-     * @param out
-     * @throws IOException
-     */
-    private void writeToCSV(List<ICategorialClassRecord> records, String url, List<AttributeInterface> headers,
-                            BufferedWriter out) throws IOException {
-        if (records != null && records.size() != 0) {
+            List<ICategorialClassRecord> records = urlToResultMap.get(url);
             ServiceURLInterface serviceUrlMetadata = new ServiceURLOperations().getServiceURLbyURLLocation(url);
-
             for (ICategorialClassRecord record : records) {
-                List<Map<AttributeInterface, Object>> res = convert(record);
-                for (Map<AttributeInterface, Object> recordMap : res) {
-                    for (AttributeInterface attribute : headers) {
-                        String val = recordMap.get(attribute) == null ? " " : recordMap.get(attribute).toString();
-                        val = val.replace("\"", "\"\"");
-                        if (val.contains(",") || val.contains("\n")) {
-                            out.append('"');
-                            out.append(val);
-                            out.append('"');
-                        } else {
-                            out.append(val);
-                        }
-                        out.append(',');
-                    }
-                    out.append(Utility.createModelName(serviceUrlMetadata.getDomainModel(), serviceUrlMetadata
-                        .getVersion()));
-                    out.append(',');
-                    out.append(serviceUrlMetadata.getHostingCenter());
-                    out.append(',');
-                    out.append(serviceUrlMetadata.getContactName());
-                    out.append(',');
-                    out.append(serviceUrlMetadata.getContactMailId());
-                    out.append(',');
-                    out.append(Utility.getHostingInstitutionName(serviceUrlMetadata));
-                    out.append(',');
-                    out.append('\n');
-                    out.flush();
-                }
+                List<Map<AttributeInterface, Object>> recordList = convert(record);
+                writeToCSV.writeData(recordList, serviceUrlMetadata);
             }
         }
+        writeToCSV.closeFile();
     }
 }

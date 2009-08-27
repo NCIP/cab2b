@@ -796,7 +796,7 @@ public class Utility {
         if (hostingCenter == null || hostingCenter.isEmpty()) {
             // set long name 
             hostingCenter = serviceUrlMetadata.getHostingCenter();
-            if (hostingCenter == null || hostingCenter.isEmpty()) {
+            if (hostingCenter == null || hostingCenter.isEmpty() || hostingCenter.equals("No Hosting Center Name Available.")) {
                 //if hosting long name is also null set url location
                 hostingCenter = serviceUrlMetadata.getUrlLocation();
             } 

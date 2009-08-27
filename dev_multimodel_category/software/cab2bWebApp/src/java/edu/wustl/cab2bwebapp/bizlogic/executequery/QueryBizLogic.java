@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,8 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -255,7 +252,7 @@ public class QueryBizLogic {
                         .getResult());
             String fileName = transformer.writeToCSV();
             queryExecutionHandler.getStatus().setFileName(fileName);
-            addMetadataToFile(queryExecutionHandler.getStatus());
+            CsvWriter.addMetadataToFile(queryExecutionHandler.getStatus());
             fileNames.add(fileName);
         }
 
@@ -271,58 +268,6 @@ public class QueryBizLogic {
     private void updateDatabaseWithFileName(String fileName, QueryStatus qStatus) {
         qStatus.setFileName(fileName);
         new QueryURLStatusOperations().updateQueryStatus(qStatus);
-
-    }
-
-    private void addMetadataToFile(QueryStatus qStatus) {
-        ICab2bQuery query = qStatus.getQuery();
-        String queryTitle = "Query Title: " + query.getName() + "\n";
-        String querydescription =
-                '"' + "Query Description: " + query.getDescription().replaceAll("\"", "\"\"") + '"' + "\n";
-        String executionDate = "Execution Date: " + qStatus.getQueryStartTime() + "\n";
-        String executedBy = user.getUserName();
-        executedBy =
-                "Executed By: " + executedBy.substring(executedBy.lastIndexOf("=") + 1, executedBy.length())
-                        + "\n\n";
-        String queryConditions = "Conditions\n";
-        String pattern = "(.*)\\((.*)\\)(.*)";
-        String values[] = qStatus.getQueryConditions().split(";");
-        Pattern p = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-        queryConditions += "Parameter,Condition,Value\n";
-        for (int j = 0; j < values.length; j++) {
-            Matcher m = p.matcher(values[j]);
-            m.find();
-            queryConditions +=
-                    '"'
-                            + m.group(1).replaceAll("\"", "\"\"")
-                            + '"'
-                            + ","
-                            + '"'
-                            + edu.wustl.cab2b.common.util.Utility.getFormattedString(m.group(2))
-                                .replaceAll("\"", "\"\"")
-                            + '"'
-                            + ","
-                            + '"'
-                            + (m.group(3) == null || m.group(3).equals("null") ? "" : m.group(3)
-                                .replaceAll("\"", "\"\"")) + '"' + "\n";
-        }
-        queryConditions += "\n";
-        File file = new File(UserBackgroundQueries.EXPORT_CSV_DIR + File.separator + qStatus.getFileName());
-        byte fileContents[] = new byte[(int) file.length()];
-        String updatedFileContents = queryTitle + querydescription + executionDate + executedBy + queryConditions;
-
-        try {
-            RandomAccessFile rafin = new RandomAccessFile(file, "r");
-            rafin.readFully(fileContents);
-            rafin.close();
-            updatedFileContents += new String(fileContents);
-            RandomAccessFile rafout = new RandomAccessFile(file, "rw");
-            rafout.setLength(updatedFileContents.length());
-            rafout.writeBytes(updatedFileContents);
-            rafout.close();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**
@@ -346,7 +291,7 @@ public class QueryBizLogic {
                 for (QueryStatus queryStatus : subQueryStatus) {
                     if (queryStatus.getQuery().equals(subQuery)) {
                         updateDatabaseWithFileName(fileName, queryStatus);
-                        addMetadataToFile(queryStatus);
+                        CsvWriter.addMetadataToFile(queryStatus);
                     }
                 }
             } catch (IOException e) {
@@ -388,7 +333,6 @@ public class QueryBizLogic {
             e.printStackTrace();
             throw new RuntimeException("Error while saving CSV ZIP file.", ErrorCodeConstants.IO_0001);
         }
-        logger.info("Zip file saved at location:" + zipFileName);
         return zipFileName;
     }
 
