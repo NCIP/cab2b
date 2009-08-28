@@ -38,7 +38,13 @@
 		<DIV id="partialresultsmessage"><bean:message key="message.partialresults" arg0="${savedSearch.resultCount}"/></DIV>
 	</logic:present>
 	<logic:present name="stopAjax">
-		<DIV id="completeresultsmessage"><bean:message key="message.completeresults" arg0="${savedSearch.resultCount}"/></DIV>
+		<bean:define id="transformationMaxLimit" name="transformationMaxLimit" scope="request"></bean:define>
+		<logic:lessEqual name="transformationMaxLimit" value="${savedSearch.resultCount}">
+			<DIV id="completeresultsmessage"><bean:message key="message.completeresults.morethan.uilimit" arg0="${savedSearch.resultCount}"/></DIV>
+		</logic:lessEqual>
+		<logic:greaterThan name="transformationMaxLimit" value="${savedSearch.resultCount}">
+			<DIV id="completeresultsmessage"><bean:message key="message.completeresults.lessthan.uilimit" arg0="${savedSearch.resultCount}"/></DIV>
+		</logic:greaterThan>
 	</logic:present>
 </DIV>
 <DIV id="scroller"></DIV
