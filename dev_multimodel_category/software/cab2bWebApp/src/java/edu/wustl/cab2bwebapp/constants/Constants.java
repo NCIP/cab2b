@@ -52,6 +52,9 @@ public interface Constants {
     /** Constant for model groups */
     public static final String MODEL_GROUPS = "modelGroups";
     
+    /** Constant for transformation max UI limit */
+    public static final String TRANSFORMATION_MAX_LIMIT = "transformationMaxLimit";
+    
     /** Constant for keywordQueryNotPresent */
     public static final String KEYWORD_QUERY_NOT_PRESENT = "keywordQueryNotPresent";
     
