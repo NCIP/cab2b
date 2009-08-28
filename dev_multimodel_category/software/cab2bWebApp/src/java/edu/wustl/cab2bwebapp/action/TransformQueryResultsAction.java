@@ -61,17 +61,6 @@ public class TransformQueryResultsAction extends Action {
         HttpSession session = request.getSession();
         try {
 
-
-
-
-
-
-
-
-
-
-
-
             SavedQueryBizLogic savedQueryBizLogic =
                     (SavedQueryBizLogic) session.getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
             Long queryId = (Long) session.getAttribute(Constants.QUERY_ID);
@@ -103,7 +92,7 @@ public class TransformQueryResultsAction extends Action {
                                 (List<SavedQueryDVO>) session.getAttribute(Constants.SAVED_QUERIES);
                         if (savedQueries != null || savedQueries.size() != 0) {
                             selectedQueryName = savedQueries.get(0).getName();
-                        }else{
+                        } else {
                             throw new RuntimeException("No keyword queries saved for selected application group.");
                         }
                     } else { //MMC query or form based query
@@ -159,6 +148,9 @@ public class TransformQueryResultsAction extends Action {
                 // populateSessionVariables as per the condition achieved of query
                 boolean uiGotEnoughRecords = savedQuery.getResultCount() >= transformationMaxLimit;
                 boolean queryFinished = queryBizLogic.isProcessingFinished();
+                if (queryFinished) {
+                    request.setAttribute(Constants.TRANSFORMATION_MAX_LIMIT, transformationMaxLimit);
+                }
                 updateSessionVariables(uiGotEnoughRecords, queryFinished, searchResults, updatedSavedQueries,
                                        searchResultsView, session);
             }
