@@ -34,6 +34,7 @@ import edu.wustl.common.querysuite.queryobject.IRule;
  * @author pallavi_mistry
  */
 public class QueryExecutorUtil {
+
     /**
      * It takes list of root ICRs for a URL and count the resulting number of Total spreadsheet records.
      * On the basis of max limit for total spreadsheet records, it returns 
@@ -42,34 +43,17 @@ public class QueryExecutorUtil {
      * A->B->D          A is the root categorial class and B,C,F are the child categorial classes for A
      *  ->C->G->H
      *  ->F
-     * @param recordList
+     * @param recordList : List of root ICR's
      * @param maxLimit
      * @return
      */
     public static boolean isURLFeasibleForConversion(List<ICategorialClassRecord> recordList, int maxLimit) {
         if (recordList != null) {
-            if (recordList.size() > maxLimit) //if no of Root records exceed the limit, return false 
+            if (recordList.size() > maxLimit) //if no of Root records only exceed the limit, return false 
                 return false;
 
-            int finalSpreadSheetCount = 0;
-            for (ICategorialClassRecord rootRecord : recordList) {
-                int rootRecordCount = 1; // A1, A2,A3,A4
-                Map<CategorialClass, List<ICategorialClassRecord>> categorialclassVsRecordsMap =
-                        rootRecord.getChildrenCategorialClassRecords();
-                for (CategorialClass categorialClass : categorialclassVsRecordsMap.keySet()) //B,C,F
-                {
-                    int childLeavesCount = 0;
-                    for (ICategorialClassRecord categorialChildRecord : categorialclassVsRecordsMap
-                        .get(categorialClass)) //B1,B2,C1,C2,F1,F2
-                    {
-                        childLeavesCount = childLeavesCount + countLeavesForEachChildRecord(categorialChildRecord);
-                    }
-                    rootRecordCount = rootRecordCount * childLeavesCount;
-                }
-                finalSpreadSheetCount = finalSpreadSheetCount + rootRecordCount;
-            }
-
-            if (finalSpreadSheetCount < maxLimit) {
+            int spreadSheetCount = getSpreadSheetRecordsCount(recordList);
+            if (spreadSheetCount < maxLimit) {
                 return true; // feasible URL good enough to be transformed
             } else {
                 return false; // infeasible URL, can't invoke transformer
@@ -103,6 +87,39 @@ public class QueryExecutorUtil {
         return leavesCount; //if its not a leaf, while returning in the called stack, return 0 for the interleaved nodes.
     }
 
+    /**
+     * It takes list of root ICRs for a URL and count the resulting number of Total spreadsheet records.
+     * A->B->D          A is the root categorial class and B,C,F are the child categorial classes for A
+     *  ->C->G->H
+     *  ->F
+     * @param recordList : List of root ICR's
+     * @return currentSpreadsheetCount
+     */
+    public static int getSpreadSheetRecordsCount(List<ICategorialClassRecord> recordList) {
+        int currentSpreadsheetCount = 0;
+        if (recordList == null || recordList.size() == 0) {
+            return currentSpreadsheetCount;
+        }
+        for (ICategorialClassRecord rootRecord : recordList) {
+            int rootRecordCount = 1; // A1, A2,A3,A4
+            Map<CategorialClass, List<ICategorialClassRecord>> categorialclassVsRecordsMap =
+                    rootRecord.getChildrenCategorialClassRecords();
+            for (CategorialClass categorialClass : categorialclassVsRecordsMap.keySet()) //B,C,F
+            {
+                int childLeavesCount = 0;
+                for (ICategorialClassRecord categorialChildRecord : categorialclassVsRecordsMap
+                    .get(categorialClass)) //B1,B2,C1,C2,F1,F2
+                {
+                    childLeavesCount = childLeavesCount + countLeavesForEachChildRecord(categorialChildRecord);
+                }
+                rootRecordCount = rootRecordCount * childLeavesCount;
+            }
+            currentSpreadsheetCount = currentSpreadsheetCount + rootRecordCount;
+        }
+
+        return currentSpreadsheetCount;
+    }
+    
     /**
      * This method returns the EntityGroupInterface for given query
      * @param query

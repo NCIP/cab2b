@@ -26,6 +26,7 @@ import edu.wustl.cab2b.common.queryengine.querystatus.URLStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.URLStatusImpl;
 import edu.wustl.cab2b.common.queryengine.result.FQPUrlStatus;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
+import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
@@ -44,6 +45,7 @@ import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.DcqlCon
 import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
 import edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer;
 import edu.wustl.cab2b.server.queryengine.resulttransformers.QueryResultTransformerFactory;
+import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
 import edu.wustl.cab2b.server.user.UserOperations;
 import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -447,6 +449,13 @@ public class QueryExecutor {
     }
 
     /**
+     * Setting resources for background query execution. 
+     */
+    public void setQueryExecutionInBackground() {
+        executor.setCorePoolSize(10);
+    }
+
+    /**
      * Returns complete query results.
      * @return the queryResult
      */
@@ -548,22 +557,24 @@ public class QueryExecutor {
             return;
         }
 
-        int totalRecCount = 0;
+        int totalResultCount = 0;
         Collection<FQPUrlStatus> fqpUrlStatus = result.getFQPUrlStatus();
-        Map<String, ?> mapUrlResult = result.getRecords();
-
+        boolean isResultAvailable = false;
         for (FQPUrlStatus fqpUrl : fqpUrlStatus) {
             String url = fqpUrl.getTargetUrl();
             URLStatus uStatusObj = getStatusUrl(url);
             uStatusObj.setStatus(fqpUrl.getStatus());
-            List<? extends IRecord> resultPerUrl = (List<? extends IRecord>) mapUrlResult.get(url);
-            if (resultPerUrl != null) {
-                int urlRecCount = resultPerUrl.size();
-                uStatusObj.setResultCount(new Integer(urlRecCount));
-                totalRecCount = +urlRecCount;
+            int urlRecCount = getRecordCountForUrl(url);
+            if (urlRecCount != -1) {
+                isResultAvailable = true;
+                totalResultCount = +urlRecCount;
             }
         }
-        qStatus.setResultCount(totalRecCount);
+        
+        //sets total result count only if it is available
+        if (isResultAvailable) {
+            qStatus.setResultCount(totalResultCount);
+        }
         //Deriving the query status from URL status
         qStatus.setStatus(AbstractStatus.Processing);
         if (isProcessingFinished() && areAllUrlsFinished(fqpUrlStatus)) {
@@ -582,6 +593,30 @@ public class QueryExecutor {
             }
         }
 
+    }
+
+    /**
+     * Returns record counts for url.
+     * @param url
+     * @return
+     */
+    private int getRecordCountForUrl(String url) {
+        int urlRecCount = -1;
+        if (result instanceof ICategoryResult) {
+            ICategoryResult<ICategorialClassRecord> categoryResult = (ICategoryResult) result;
+            Map<String, List<ICategorialClassRecord>> urlToRecordMap = categoryResult.getRecords();
+            List<ICategorialClassRecord> records = urlToRecordMap.get(url);
+            if (records != null) {
+                urlRecCount = QueryExecutorUtil.getSpreadSheetRecordsCount(records);
+            }
+        } else {
+            IQueryResult<IRecord> queryResult = (IQueryResult) result;
+            List<IRecord> resultPerUrl = queryResult.getRecords().get(url);
+            if (resultPerUrl != null) {
+                urlRecCount = resultPerUrl.size();
+            }
+        }
+        return urlRecCount;
     }
 
     /**
