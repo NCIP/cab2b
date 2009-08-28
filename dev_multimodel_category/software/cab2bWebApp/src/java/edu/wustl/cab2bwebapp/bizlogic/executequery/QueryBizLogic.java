@@ -186,7 +186,7 @@ public class QueryBizLogic {
      */
     public static final List<List<SearchResultDVO>> getSearchResultsView(
                                                                          List<Map<AttributeInterface, Object>> finalResult,
-                                                                         Collection<AttributeInterface> orderedAttributeList) {
+                                                                         List<AttributeInterface> orderedAttributeList) {
         List<List<SearchResultDVO>> searchResultsView = null;
         if (finalResult != null && finalResult.size() > 0) {
             searchResultsView = new ArrayList<List<SearchResultDVO>>();

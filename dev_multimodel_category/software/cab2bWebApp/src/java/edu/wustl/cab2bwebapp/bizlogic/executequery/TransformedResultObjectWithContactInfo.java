@@ -46,7 +46,40 @@ public class TransformedResultObjectWithContactInfo {
     /**
      * List of attributes(columns) to be shown in result.
      */
-    private Collection<AttributeInterface> allowedAttributes = null;
+    private List<AttributeInterface> allowedAttributes = null;
+
+    /**
+     * Contact info String to AttributeInterface map.  
+     */
+    private Map<String, AttributeInterface> contactInfoMap;
+
+    public TransformedResultObjectWithContactInfo(List<AttributeInterface> allowedAttributes) {
+        contactInfoMap = new HashMap<String, AttributeInterface>(5);
+        this.allowedAttributes = allowedAttributes;
+        init();
+    }
+
+    private void init() {
+        AttributeInterface attributeMN = DomainObjectFactory.getInstance().createObjectAttribute();
+        attributeMN.setName(Constants.MODEL_NAME);
+        contactInfoMap.put(Constants.MODEL_NAME, attributeMN);
+
+        AttributeInterface attributeHC = DomainObjectFactory.getInstance().createObjectAttribute();
+        attributeHC.setName(Constants.HOSTING_CANCER_RESEARCH_CENTER);
+        contactInfoMap.put(Constants.HOSTING_CANCER_RESEARCH_CENTER, attributeHC);
+
+        AttributeInterface attributePC = DomainObjectFactory.getInstance().createStringAttribute();
+        attributePC.setName(Constants.POINT_OF_CONTACT);
+        contactInfoMap.put(Constants.POINT_OF_CONTACT, attributePC);
+
+        AttributeInterface attributeCE = DomainObjectFactory.getInstance().createStringAttribute();
+        attributeCE.setName(Constants.CONTACT_EMAIL);
+        contactInfoMap.put(Constants.CONTACT_EMAIL, attributeCE);
+
+        AttributeInterface attributeHI = DomainObjectFactory.getInstance().createStringAttribute();
+        attributeHI.setName(Constants.HOSTING_INSTITUTION);
+        contactInfoMap.put(Constants.HOSTING_INSTITUTION, attributeHI);
+    }
 
     /**
      * Adds Url and corresponding result.
@@ -84,33 +117,29 @@ public class TransformedResultObjectWithContactInfo {
             }
         }
 
-        if (addAttributesFlag) {
+        if (addAttributesFlag) {          
             if (attributeMN == null) {
-                attributeMN = DomainObjectFactory.getInstance().createObjectAttribute();
-                attributeMN.setName(Constants.MODEL_NAME);
+                attributeMN = contactInfoMap.get(Constants.MODEL_NAME);
                 allowedAttributes.add(attributeMN);
             }
             if (attributeHC == null) {
-                attributeHC = DomainObjectFactory.getInstance().createObjectAttribute();
-                attributeHC.setName(Constants.HOSTING_CANCER_RESEARCH_CENTER);
+                attributeHC = contactInfoMap.get(Constants.HOSTING_CANCER_RESEARCH_CENTER);
                 allowedAttributes.add(attributeHC);
             }
             if (attributePC == null) {
-                attributePC = DomainObjectFactory.getInstance().createStringAttribute();
-                attributePC.setName(Constants.POINT_OF_CONTACT);
+                attributePC = contactInfoMap.get(Constants.POINT_OF_CONTACT);
                 allowedAttributes.add(attributePC);
             }
             if (attributeCE == null) {
-                attributeCE = DomainObjectFactory.getInstance().createStringAttribute();
-                attributeCE.setName(Constants.CONTACT_EMAIL);
+                attributeCE = contactInfoMap.get(Constants.CONTACT_EMAIL);
                 allowedAttributes.add(attributeCE);
             }
             if (attributeHI == null) {
-                attributeHI = DomainObjectFactory.getInstance().createStringAttribute();
-                attributeHI.setName(Constants.HOSTING_INSTITUTION);
+                attributeHI = contactInfoMap.get(Constants.HOSTING_INSTITUTION);
                 allowedAttributes.add(attributeHI);
             }
         }
+
         //for failed URLs and even infeasible URL's, new ArrayList will be created
         if (result == null) {
             result = new ArrayList<Map<AttributeInterface, Object>>(1);
@@ -177,15 +206,8 @@ public class TransformedResultObjectWithContactInfo {
     /**
      * @return the allowedAttributes
      */
-    public Collection<AttributeInterface> getAllowedAttributes() {
+    public List<AttributeInterface> getAllowedAttributes() {
         return allowedAttributes;
-    }
-
-    /**
-     * @param allowedAttributes the allowedAttributes to set
-     */
-    public void setAllowedAttributes(Collection<AttributeInterface> allowedAttributes) {
-        this.allowedAttributes = allowedAttributes;
     }
 
     public void addInFeasibleUrls(String inFeasibleUrl) {

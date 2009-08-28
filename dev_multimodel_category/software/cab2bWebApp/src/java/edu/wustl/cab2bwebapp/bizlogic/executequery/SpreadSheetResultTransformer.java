@@ -68,7 +68,6 @@ public class SpreadSheetResultTransformer {
                 resultObj = processQueryResult();
             }
             resultObj.setFailedServiceUrl(queryResult.getFQPUrlStatus());
-            resultObj.setAllowedAttributes(attributeOrderList);
         }
         return resultObj;
     }
@@ -153,8 +152,8 @@ public class SpreadSheetResultTransformer {
         }
 
         Map<String, ?> urlVsRecords = queryResult.getRecords();
-        TransformedResultObjectWithContactInfo resultObj = new TransformedResultObjectWithContactInfo();
-        resultObj.setAllowedAttributes(attributeOrderList);
+        TransformedResultObjectWithContactInfo resultObj =
+                new TransformedResultObjectWithContactInfo(attributeOrderList);
 
         List<String> urls = query.getOutputUrls();
         for (String url : urls) {
@@ -170,10 +169,10 @@ public class SpreadSheetResultTransformer {
                     }
                     recordsForUrl.add(newRecord);
                 }
-                removeUnwantedAttributes(recordsForUrl, attributeOrderList);
                 resultObj.addUrlAndResult(url, recordsForUrl);
             }
         }
+        removeUnwantedAttributes(resultObj.getResultForAllUrls(), attributeOrderList);
         return resultObj;
     }
 
@@ -188,8 +187,8 @@ public class SpreadSheetResultTransformer {
         Category cat = result.getCategory();
         attributeOrderList = getAttributesWithOrder(cat);
 
-        TransformedResultObjectWithContactInfo resultObject = new TransformedResultObjectWithContactInfo();
-        resultObject.setAllowedAttributes(attributeOrderList);
+        TransformedResultObjectWithContactInfo resultObject =
+                new TransformedResultObjectWithContactInfo(attributeOrderList);
 
         Map<String, List<ICategorialClassRecord>> map = result.getRecords();
         int spreadsheetRecordCount = 0;
@@ -213,7 +212,6 @@ public class SpreadSheetResultTransformer {
                 break;
             }
         }
-
         removeUnwantedAttributes(resultObject.getResultForAllUrls(), attributeOrderList);
         return resultObject;
 
