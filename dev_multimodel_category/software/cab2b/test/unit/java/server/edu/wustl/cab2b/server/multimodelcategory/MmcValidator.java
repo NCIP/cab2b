@@ -48,10 +48,11 @@ public class MmcValidator {
     public static void main(String[] args) throws Exception {
         System.out.println("Started....");
         
-        SchemaValidator schemaValidator = new SchemaValidator("C:/abc.xsd");
-        schemaValidator.validate("C:/abc.xml");
-        redirectConsoleToFile("c:/dbdump/mmc_paths1.txt");
-        //new MmcValidator().validateXML("D:\\Project Related Material\\MMC\\experiemnt_disease.xml");
+        SchemaValidator schemaValidator = new SchemaValidator(args[0]);
+        schemaValidator.validate(new File(args[1]));
+        System.out.println("XML Validation Finished against Schema "+ args[0]+".... Structure is correct");
+        //redirectConsoleToFile("c:/dbdump/mmc_paths1.txt");
+        new MmcValidator().validateXML(args[1]);
         new MmcValidator().getPathsForPair();
         System.out.println("Finished....");
     }
