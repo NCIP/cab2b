@@ -209,7 +209,7 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
             int failedUrlCount = 0;
             for (QueryStatus subQueryStatus : childQueryStatus) {
                 String urlStatus = subQueryStatus.getStatus();
-                if (urlStatus.equals(AbstractStatus.Complete_With_Error)) {
+                if (urlStatus.equals(AbstractStatus.Complete_With_Error) && resultCount == 0) {
                     status.setStatus(AbstractStatus.Complete_With_Error);
                     isEveryUrlWorked = false;
                     failedUrlCount++;
