@@ -145,10 +145,10 @@
 <SCRIPT language="JavaScript">updateView();</SCRIPT>
 <DIV id="bottompanel">	
 	<logic:notPresent name="userName">
-		<DIV class="text"><bean:message key="message.offlineexecution.anonymous.user"/></DIV>
+		<DIV class="text" style="padding-bottom:5px;"><bean:message key="message.offlineexecution.anonymous.user"/></DIV>
 	</logic:notPresent>
 	<logic:present name="userName">
-		<DIV class="text"><bean:message key="message.offlineexecution.signedin.user"/> <A href="#" title="<bean:message key="message.offlineexecution.signedin.user.moreinfo"/>">(More info) </A></DIV>
+		<DIV class="text" style="padding-bottom:5px;"><bean:message key="message.offlineexecution.signedin.user"/> <A href="#" title="<bean:message key="message.offlineexecution.signedin.user.moreinfo"/>">(More info) </A></DIV>
 		<INPUT type="button" class="button" id="executeinbackgroundbutton" value="<bean:message key="button.executeinbackground"/>" onClick="document.location='BackgroundQuery.do'">&nbsp;
 	</logic:present>
 	<INPUT type="button" class="buttondisabled" id="exportbutton" value="<bean:message key="button.export"/>" onClick="document.location = 'ExportResults.do?queryId=<bean:write name="queryId"/>';TogglePreloader(0);" disabled>
