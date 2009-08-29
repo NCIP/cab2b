@@ -318,11 +318,17 @@ public class PersistMultiModelCategory {
     }
 
     public static void main(String[] args) throws IOException {
+        if(args == null || args.length == 0){
+            throw new java.lang.RuntimeException("Please specify the path to directory where multi model category XMLs are stored.");
+        }else if(!(new File(args[0])).isDirectory()){
+            throw new IllegalArgumentException("The directory specified in invalid. Please correct the path.");
+        }
+        
         PathFinder.getInstance(DBUtil.getConnection());
         MultiModelCategoryOperations operations = new MultiModelCategoryOperations();
 
         //save in database
-        File mmcDir = new File("D:/Project Related Material/MMC");
+        File mmcDir = new File(args[0]);
         File[] mmcFiles = mmcDir.listFiles();
         MultiModelCategoryXmlParser parser = new MultiModelCategoryXmlParser();
         for (File mmcFile : mmcFiles) {

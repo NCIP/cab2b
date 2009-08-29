@@ -2,6 +2,7 @@
 	<property name="src.dir" location="src" />
 	<property name="source.dir" location="${src.dir}/java" />
 	<property name="resource.dir" location="${src.dir}/resources" />
+	<property name="mmc.dir" location="${resource.dir}/mmc" /> 
 
 	<property name="conf.dir" location="${src.dir}/conf" />
 	<property file="../build/project.properties" />
@@ -30,7 +31,7 @@
 
 	<property name="XmlLogger.file" value="${build.log.dir}\log.xml" />
 	<tstamp>
-				<format property="TODAY" pattern="d-MMMM-yyyy hh:mm aa" locale="en" />
+		<format property="TODAY" pattern="d-MMMM-yyyy hh:mm aa" locale="en" />
 	</tstamp>
 
 	<property name="testcase.properties.folder" location="${workarea.dir}/TestCaseProperties" />
@@ -1144,7 +1145,6 @@
 	<property name="ds-name" value="${application.context.name}" />
 	<property name="server-port" value="${jboss.server.port}" />
 
-
 	<target name="dev.deploy" depends="build.all" description="Deploys EAR file to JBoss application server">
 		<delete dir="${jboss.home}/server/default/tmp/deploy" />
 
@@ -1171,6 +1171,10 @@
 		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.driver@" value="com.mysql.jdbc.Driver" />
 
 		<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
+	</target>
+	
+	<target name="load.mmcs" depends="compile.server" description="Loads the MultiModelCategories">
+		<java failonerror="true" classname="edu.wustl.cab2b.server.multimodelcategory.PersistMultiModelCategory" args="${mmc.dir}" classpathref="class.classpath" fork="yes" />
 	</target>
 </project>
 
