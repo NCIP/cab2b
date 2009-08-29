@@ -5,10 +5,13 @@ import static edu.wustl.common.util.global.Constants.HIBERNATE_DAO;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
+import edu.wustl.cab2b.common.queryengine.querystatus.URLStatus;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;
@@ -38,7 +41,7 @@ public class QueryURLStatusOperations extends DefaultBizLogic {
     /**
      * This method fetches all query status object for given user and query status is visible 
      * @param user
-     * @return
+     * @return {@link Collection}
      */
     public Collection<QueryStatus> getAllQueryStatusByUser(UserInterface user) {
         String[] columnNames = { "user", "visible" };
@@ -56,9 +59,29 @@ public class QueryURLStatusOperations extends DefaultBizLogic {
     }
 
     /**
+     * This method fetches all query status object for given user and query status is visible 
+     * @param status
+     * @return {@link Collection}
+     */
+    public Collection<QueryStatus> getAllQueryStatusByStatus(String status) {
+        String[] columnNames = { "status" };
+        String[] columnConditions = { "=" };
+        Object[] columnValues = { status };
+        Collection<QueryStatus> allQueryStatus = null;
+        try {
+            allQueryStatus =
+                    retrieve(QueryStatus.class.getName(), columnNames, columnConditions, columnValues,
+                             AND_JOIN_CONDITION);
+        } catch (DAOException e) {
+            throw new RuntimeException(ErrorCodeConstants.QS_002);
+        }
+        return allQueryStatus;
+    }
+
+    /**
      * This method returns Query Status for given Query Status ID
      * @param id
-     * @return
+     * @return {@link Collection}
      */
     public QueryStatus getQueryStatusById(Long id) {
         List<QueryStatus> allQueryStatus = null;
@@ -101,6 +124,36 @@ public class QueryURLStatusOperations extends DefaultBizLogic {
             throw new RuntimeException(ErrorCodeConstants.QS_004);
         } catch (UserNotAuthorizedException e) {
             throw new RuntimeException(ErrorCodeConstants.QS_005);
+        }
+    }
+
+    /**
+     * This method called at server start up so that all those queries and urls whose status is Processing
+     * is marked as Aborted as they would have been killed as server was shutdown due to some or other reason.
+     */
+    public static void changeQueryStatusToAbort() {
+        QueryURLStatusOperations queryURLStatusOperations = new QueryURLStatusOperations();
+        Collection<QueryStatus> allAbortedQueries =
+                queryURLStatusOperations.getAllQueryStatusByStatus(AbstractStatus.Processing);
+        for (QueryStatus query : allAbortedQueries) {
+            Set<QueryStatus> childQueries = query.getChildrenQueryStatus();
+            if (childQueries!=null && !childQueries.isEmpty()) {
+                for (QueryStatus childQuery : childQueries) {
+                    if (childQuery.getStatus().equals(AbstractStatus.Processing)) {
+                        childQuery.setStatus(AbstractStatus.SUSPENDED);
+                    }
+                }
+            }
+            Set<URLStatus> queryUrls = query.getUrlStatus();
+            if (queryUrls!=null && !queryUrls.isEmpty()) {
+                for (URLStatus url : queryUrls) {
+                    if (url.getStatus().equals(AbstractStatus.Processing)) {
+                        url.setStatus(AbstractStatus.SUSPENDED);
+                    }
+                }
+            }
+            query.setStatus(AbstractStatus.SUSPENDED);
+            queryURLStatusOperations.updateQueryStatus(query);
         }
     }
 }

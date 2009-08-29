@@ -7,13 +7,15 @@ import edu.wustl.cab2b.server.cache.DatalistCache;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.category.CategoryCache;
 import edu.wustl.cab2b.server.path.PathFinder;
+import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
 import edu.wustl.cab2b.server.serviceurl.IndexServiceOperations;
 import edu.wustl.cab2b.server.util.ConnectionUtil;
 import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author gaurav_mehta
- *
+ * This class is called at server start up. This is singleton class as it initializes 
+ * things required at server start up.
  */
 public class ApplicationInitializer {
 
@@ -23,6 +25,9 @@ public class ApplicationInitializer {
         initialize();
     }
 
+    /**
+     * @return Object of {@link ApplicationInitializer}
+     */
     public static ApplicationInitializer getInstance() {
         if (contextListener == null) {
             contextListener = new ApplicationInitializer();
@@ -46,5 +51,6 @@ public class ApplicationInitializer {
         CategoryCache.getInstance();
         DatalistCache.getInstance();
         IndexServiceOperations.refreshDatabase();
+        QueryURLStatusOperations.changeQueryStatusToAbort();
     }
 }
