@@ -119,7 +119,7 @@ public class QueryExecutorUtil {
 
         return currentSpreadsheetCount;
     }
-    
+
     /**
      * This method returns the EntityGroupInterface for given query
      * @param query
@@ -226,7 +226,7 @@ public class QueryExecutorUtil {
             }
 
             List<String> urls = subQuery.getOutputUrls();
-            if (subQuery.isKeywordSearch() && (urls == null || urls.isEmpty())) {
+            if (urls == null || urls.isEmpty()) {
                 subQueriesIterator.remove();
             }
         }
@@ -239,9 +239,9 @@ public class QueryExecutorUtil {
                 urls.addAll(subQuery.getOutputUrls());
             }
         }
-        
-        if(urls.isEmpty()){
-            StringBuffer errorMessage = new StringBuffer("Incorrect or no service instance configured.");
+
+        if (urls.isEmpty()) {
+            StringBuffer errorMessage = new StringBuffer("Incorrect or no database is configured.");
             throw new RuntimeException(errorMessage.toString(), ErrorCodeConstants.MG_008);
         }
         query.setOutputUrls(urls);
@@ -264,12 +264,6 @@ public class QueryExecutorUtil {
             List<String> urls = entityGroupURLsMap.get(queryEntityGroup);
             if (urls != null && !urls.isEmpty()) {
                 query.setOutputUrls(urls);
-            } else if (query.getIsSystemGenerated()) {
-                query.setOutputUrls(new ArrayList<String>(0));
-            } else if (!query.isKeywordSearch()) {
-                StringBuffer errorMessage = new StringBuffer("Incorrect service instance configured for query ");
-                errorMessage.append("having model as ").append(queryEntityGroup.getName());
-                throw new RuntimeException(errorMessage.toString(), ErrorCodeConstants.MG_008);
             }
         }
     }
