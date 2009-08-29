@@ -18,7 +18,7 @@
 		<path refid="lib.classpath"/>
 	</path>
 	
-	<target name="migrate.database" description="Migrates caB2B v2.1 database to caB2B v3.0">
+	<target name="migrate.db.2_1_to_3_0" description="Migrates caB2B v2.1 database to caB2B v3.0">
 		<echo>Creating Temporary Database...</echo>
 		<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${database.server.ip}:${database.server.port}/" userid="${database.username}" password="${database.password}" onerror="continue" classpathref="lib.classpath"> 
 			DROP DATABASE IF EXISTS CAB2B_TEMP; 
