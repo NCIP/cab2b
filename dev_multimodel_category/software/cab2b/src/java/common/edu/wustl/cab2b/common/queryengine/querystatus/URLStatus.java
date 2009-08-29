@@ -9,9 +9,13 @@ package edu.wustl.cab2b.common.queryengine.querystatus;
  */
 public interface URLStatus extends AbstractStatus {
 
-    /** Gets the ServiceURLInterface object for that url */
+    /** Gets the ServiceURLInterface object for that url
+     * @return url 
+     */
     public String getUrl();
 
-    /** sets the ServiceURL object for a url in a query */
+    /** sets the ServiceURL object for a url in a query 
+     * @param url
+     */
     public void setUrl(String url);
 }
