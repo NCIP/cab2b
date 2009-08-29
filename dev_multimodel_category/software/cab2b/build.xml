@@ -366,6 +366,7 @@
 				<include name="log4j.properties" />
 			</fileset>
 		</copy>
+		<copy file="${resource.dir}/certificate/cab2b-ssl.truststore" todir="${client.setup.dir}/conf" overwrite="true" />
 		<mkdir dir="${client.setup.dir}/conf/production" />
 		<mkdir dir="${client.setup.dir}/conf/training" />
 		<copy todir="${client.setup.dir}/conf/production">
