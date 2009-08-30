@@ -31,7 +31,7 @@
 		<display:column title="Executed On" value="${query.executedOn}" sortable="true" headerClass="sortable" format="{0,date,yyyy-MM-dd HH:mm:ss}"/>	
 		<display:column title="Action(s)" sortable="false" headerClass="unsortable">
 			<IMG class="tooltipinvoker" src="images/form.jpg" style="cursor:pointer" title="Query Parameters" onmouseover="clearTimeout(t);tooltipinvoker();toolTipId='${query.conditions}'" onmouseout="updateView();">&nbsp;
-			<DIV class="tooltip" id="${query.conditions}" style="display:none;">
+			<DIV class="tooltip" id="${query.conditions}">
 				<display:table class="simple" cellspacing="1" cellpadding="4" name="${query.conditions}" uid="queryCondition" requestURI="">
 					<display:column title="Parameter" value="${queryCondition.parameter}"/>
 					<display:column title="Condition" value="${queryCondition.condition}"/>
@@ -39,7 +39,7 @@
 				</display:table>
 			</DIV>
 			<IMG class="tooltipinvoker" src="images/service_instance.jpg" style="cursor:pointer;" title="Hosting Institutions" onmouseover="clearTimeout(t);tooltipinvoker();toolTipId='${query.serviceInstances}'" onmouseout="updateView();">&nbsp;
-			<DIV class="tooltip" id="${query.serviceInstances}" style="display:none;">
+			<DIV class="tooltip" id="${query.serviceInstances}">
 				<display:table class="simple" cellspacing="1" cellpadding="4" name="${query.serviceInstances}" uid="serviceInstance" requestURI="">
 					<display:column>
 						<logic:equal name="serviceInstance" property="status" value="Processing">
