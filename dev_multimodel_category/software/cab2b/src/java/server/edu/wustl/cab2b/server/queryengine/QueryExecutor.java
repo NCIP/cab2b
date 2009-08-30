@@ -150,9 +150,8 @@ public class QueryExecutor {
      *
      * @return Returns the IQueryResult
      */
-    public void executeQuery() {
+    public void executeQuery() {     
         qStatus.setQueryStartTime(new Date());
-        logger.info("Entered QueryExecutor...");
         if (Utility.isCategory(getOutputEntity())) {
             List<ICab2bQuery> queries = QueryExecutorHelper.splitQUeryPerUrl(query);
             float offset = 0.5f / queries.size();
@@ -503,7 +502,6 @@ public class QueryExecutor {
         if (!(getStatus().getStatus().equals(AbstractStatus.Processing))) {
             saveStatusInDB();
         }
-
         return result;
     }
 
@@ -564,13 +562,16 @@ public class QueryExecutor {
             String url = fqpUrl.getTargetUrl();
             URLStatus uStatusObj = getStatusUrl(url);
             uStatusObj.setStatus(fqpUrl.getStatus());
+            uStatusObj.setDescription(fqpUrl.getDescription());
+            uStatusObj.setMessage(fqpUrl.getMessage());
             int urlRecCount = getRecordCountForUrl(url);
             if (urlRecCount != -1) {
                 isResultAvailable = true;
                 totalResultCount = +urlRecCount;
+                uStatusObj.setResultCount(urlRecCount);
             }
         }
-        
+
         //sets total result count only if it is available
         if (isResultAvailable) {
             qStatus.setResultCount(totalResultCount);
