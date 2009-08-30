@@ -21,13 +21,19 @@ toolTipId = null;
 	$(document.getElementById(toolTipId))
     .css("top",(e.pageY - xOffset) + "px")
     .css("right",(getScreenWidth() - e.pageX) + "px")
-    .slideDown("fast");		
+    .show();		
   }, 
    function()
   {	
     $(document.getElementById(toolTipId)).hide();
   });			
 };
+
+ function getOfflineQueries()
+{
+  processAJAXRequest('DisplayDashboard.do', (navigator.appName.indexOf('Netscape')==-1?'toppanel':'toppanelbuffer'), 1, updateView);
+}
+
  function updateView()
 { 
    if(navigator.appName.indexOf('Netscape')==-1 || navigator.appVersion.indexOf('Apple')!=-1)
@@ -55,10 +61,9 @@ toolTipId = null;
 	  document.getElementById('toppanel').innerHTML = document.getElementById('toppanelbuffer').innerHTML;
 	  document.getElementById('toppanelbuffer').innerHTML = "";
 	}	
-  }
-  processAJAXRequest('DisplayDashboard.do', (navigator.appName.indexOf('Netscape')==-1?'toppanel':'toppanelbuffer'), 1);
+  }  
   tooltipinvoker();
-  t = setTimeout("updateView()", 5000);
+  t = setTimeout("getOfflineQueries()", 5000);
 }
 </SCRIPT>
 <BODY>
