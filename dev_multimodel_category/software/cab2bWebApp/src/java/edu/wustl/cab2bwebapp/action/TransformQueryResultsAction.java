@@ -55,7 +55,7 @@ public class TransformQueryResultsAction extends Action {
      * @throws IOException
      * @throws ServletException
      */
-    public synchronized ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                               HttpServletResponse response) throws IOException, ServletException {
         String actionForward = Constants.FORWARD_SEARCH_RESULTS_PANEL;
         HttpSession session = request.getSession();
