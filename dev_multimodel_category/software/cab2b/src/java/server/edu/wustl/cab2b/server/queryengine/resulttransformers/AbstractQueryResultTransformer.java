@@ -17,6 +17,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
 import edu.wustl.cab2b.common.queryengine.result.FQPUrlStatus;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
@@ -105,12 +106,30 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
                 result.addRecords(url, recs);
                 numRecs += recs.size();
             }
+
+            //FQP bug
+            postProcessResult(query);
             result.setFQPUrlStatus(urlVsStatus.values());
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(Utility.getStackTrace(e), ErrorCodeConstants.QM_0004);
         }
         return result;
+    }
+
+    /**
+     * 
+     * @param query
+     */
+    private void postProcessResult(DCQLQuery query) {
+        //FQP dosn't fire status update for urls which returns zero results
+        //This is a bug in FQP. In this case we are adding our own url with 
+        for (String url : query.getTargetServiceURL()) {
+            if (!urlVsStatus.containsKey(url)) {
+                updateStatus(url, "Completed with zero errors", "Completed with zero errors",
+                             AbstractStatus.Complete);
+            }
+        }
     }
 
     /**
@@ -197,6 +216,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             }
         }
         copyFromResult(catResult, classResults);
+        postProcessResult(query);
         catResult.setFQPUrlStatus(urlVsStatus.values());
         return catResult;
     }
@@ -301,7 +321,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * @param message
      * @param description
      */
-    protected void updateStatus(String serviceURL, String message, String description, String status) {
+    protected void updateStatus(String serviceURL, String message, String description, String status) {        
         FQPUrlStatus urlStatus = urlVsStatus.get(serviceURL);
         if (urlStatus != null) {
             urlStatus.setDescription(description);
