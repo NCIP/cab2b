@@ -47,4 +47,3 @@
 		</logic:greaterThan>
 	</logic:present>
 </DIV>
-<DIV id="scroller"></DIV
