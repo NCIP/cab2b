@@ -124,7 +124,7 @@ public class DisplayDashboardAction extends Action {
                     ServiceURLOperations serviceURLOpreration = new ServiceURLOperations();
                     ServiceURLInterface serviceURL =
                             serviceURLOpreration.getServiceURLbyURLLocation(urlStatus.getUrl());
-                    Utility.getHostingInstitutionName(serviceURL);
+                    sreviceInstance.setName(Utility.getHostingInstitutionName(serviceURL));
                     sreviceInstance.setStatus(urlStatus.getStatus());
                     sreviceInstance.setResultCount(urlStatus.getResultCount() == null ? 0 : urlStatus
                         .getResultCount());
