@@ -22,6 +22,8 @@ public class QueryStatusDVO {
 
     private String fileName;
 
+    private List<ServiceInstanceDVO> serviceInstances;
+
     /**
      * @return String
      */
@@ -118,5 +120,19 @@ public class QueryStatusDVO {
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    /**
+     * @return List<ServiceInstanceDVO>
+     */
+    public List<ServiceInstanceDVO> getServiceInstances() {
+        return serviceInstances;
+    }
+
+    /**
+     * @param serviceInstances
+     */
+    public void setServiceInstances(List<ServiceInstanceDVO> serviceInstances) {
+        this.serviceInstances = serviceInstances;
     }
 }
