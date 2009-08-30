@@ -163,8 +163,6 @@ public class UserBackgroundQueries {
                                 + user.getUserName() + " mapping list.");
                         querieLogics.remove(queryBizLogic);
                     }
-                    //updating query status in database.
-                    new QueryURLStatusOperations().updateQueryStatus(status);
                 }
             } else {
                 //No queries running in background for the selected user.
