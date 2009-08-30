@@ -41,6 +41,8 @@ import gov.nih.nci.cagrid.fqp.processor.exceptions.FederatedQueryProcessingExcep
  * the result.
  * 
  * @author srinath_k
+ * @param <R>
+ * @param <C>
  * @see edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer
  */
 public abstract class AbstractQueryResultTransformer<R extends IRecord, C extends ICategorialClassRecord>
@@ -55,6 +57,9 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
 
     private ExecutorService executor = Executors.newFixedThreadPool(1);
 
+    /**
+     * Default Constructor
+     */
     public AbstractQueryResultTransformer() {
         queryLogger = new QueryLogger();
     }
@@ -80,9 +85,11 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * For each {@link CQLQueryResults} obtained by executing the dcql, the
      * method <code>createRecords</code> is invoked. Concrete transformers are
      * required to implement the method <code>createRecords</code>.
+     * @param query
+     * @param targetEntity
+     * @param cred
+     * @return {@link IQueryResult}
      * 
-     * @see edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer#getResults(gov.nih.nci.cagrid.dcql.DCQLQuery,
-     *      edu.common.dynamicextensions.domaininterface.EntityInterface)
      */
     public IQueryResult<R> getResults(DCQLQuery query, EntityInterface targetEntity, GlobusCredential cred) {
         IQueryResult<R> result = null;
@@ -114,7 +121,6 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      */
     protected Map<String, CQLQueryResults> executeDcql(DCQLQuery query, GlobusCredential cred) {
         DCQLQueryResultsCollection queryResults = null;
-        logger.info("Executing DQCL to get " + query.getTargetObject().getName());
         try {
             QueryExecutionParameters queryParameter = new QueryExecutionParameters();
 
@@ -122,10 +128,14 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             targetBehaviour.setFailOnFirstError(false);
 
             queryParameter.setTargetDataServiceQueryBehavior(targetBehaviour);
+            String queryName = query.getTargetObject().getName();
+            String className = queryName.substring(queryName.lastIndexOf('.') + 1, queryName.length());
+            logger.info("Executing DQCL to get " + className);
             FederatedQueryEngine federatedQueryEngine = new FederatedQueryEngine(cred, queryParameter, executor);
             FQPQueryListener listener = new FQPQueryListener(this);
             federatedQueryEngine.addStatusListener(listener);
             queryResults = federatedQueryEngine.execute(query);
+            logger.info("Query for " + className + " Completed");
         } catch (FederatedQueryProcessingException e) {
             e.printStackTrace();
             throw new RuntimeException(Utility.getStackTrace(e), ErrorCodeConstants.QM_0004);
@@ -158,9 +168,10 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * </ol>
      * Finally <code>copyFromResult</code> is invoked. Subclasses can override
      * this method
-     * 
-     * @see edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer#getCategoryResults(gov.nih.nci.cagrid.dcql.DCQLQuery,
-     *      edu.wustl.common.querysuite.metadata.category.CategorialClass)
+     * @param query
+     * @param categorialClass
+     * @param cred
+     * @return {@link IQueryResult}
      */
     public IQueryResult<C> getCategoryResults(DCQLQuery query, CategorialClass categorialClass,
                                               GlobusCredential cred) {
