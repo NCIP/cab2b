@@ -131,6 +131,9 @@ public interface Constants {
 
     /** Constant for query id */
     public static final String QUERY_ID = "queryId";
+    
+    /** Constant for query conditions */    
+    public static final String QUERY_CONDITIONS = "queryConditions";
 
     /** Constant for keyWordQueryId */
     public static final String KEYWORD_QUERY_ID = "keyWordQueryId";
