@@ -19,7 +19,7 @@ import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
  * @author deepak_shingan
  *
  */
-public class CaB2QueryExecutionHandler extends QueryExecutionHandler<ICab2bQuery> {
+public class CaB2BQueryExecutionHandler extends QueryExecutionHandler<ICab2bQuery> {
 
     /**
      * @param query
@@ -27,7 +27,7 @@ public class CaB2QueryExecutionHandler extends QueryExecutionHandler<ICab2bQuery
      * @param user
      * @param modelGroupNames
      */
-    public CaB2QueryExecutionHandler(
+    public CaB2BQueryExecutionHandler(
             ICab2bQuery query,
             GlobusCredential proxy,
             UserInterface user,
