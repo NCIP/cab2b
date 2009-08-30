@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,9 +25,12 @@ import edu.wustl.cab2b.common.queryengine.KeywordQuery;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
+import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
+import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryUpdateBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.TransformedResultObjectWithContactInfo;
 import edu.wustl.cab2bwebapp.constants.Constants;
+import edu.wustl.cab2bwebapp.dvo.QueryConditionDVO;
 import edu.wustl.cab2bwebapp.dvo.SavedQueryDVO;
 
 /**
@@ -72,9 +77,9 @@ public class PreExecuteQueryAction extends Action {
                 //It will be forwarded to searchresultspage when a keyword query is given for execution.
                 Long keywordID =
                         savedQueryBizLogic.getKeywordQueryId(request.getParameter(Constants.MODEL_GROUPS));
-                if (keywordID!=null) {
+                if (keywordID != null) {
                     id = keywordID.toString();
-                }else{
+                } else {
                     request.setAttribute(Constants.KEYWORD_QUERY_NOT_PRESENT, "true");
                     request.setAttribute(Constants.MODEL_GROUPS, modelGroupNames[0]);
                     logger.info("No keyword query present in database for selected ModelGroup.");
@@ -87,7 +92,7 @@ public class PreExecuteQueryAction extends Action {
 
             //KeyWord Query
             if (query instanceof KeywordQuery) {
-                
+
                 String keyword = request.getParameter(Constants.KEYWORD);
                 session.setAttribute(Constants.KEYWORD, keyword);
 
@@ -134,7 +139,33 @@ public class PreExecuteQueryAction extends Action {
             List<String> urlsForSelectedQueries = query.getOutputUrls();
             urlsForSelectedQueries.add(0, Constants.ALL_HOSTING_INSTITUTIONS);
 
+            List<QueryConditionDVO> queryConditions = new ArrayList<QueryConditionDVO>();
+            try {
+                new QueryUpdateBizLogic().setInputDataToQuery(request.getParameter(Constants.CONDITION_LIST),
+                                                              query.getConstraints(), null, query);
+                String pattern = "(.*)\\((.*)\\)(.*)";
+                String qc = UtilityOperations.getStringRepresentationofConstraints(query.getConstraints());
+                String values[] = qc.split(";");
+                Pattern p = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+                String conditionValue = null;
+                for (int j = 0; j < values.length; j++) {
+                    QueryConditionDVO queryCondition = new QueryConditionDVO();
+                    Matcher m = p.matcher(values[j]);
+                    m.find();
+                    queryCondition.setParameter(m.group(1));
+                    queryCondition
+                        .setCondition(edu.wustl.cab2b.common.util.Utility.getFormattedString(m.group(2)));
+                    conditionValue = m.group(3);
+                    queryCondition.setValue(conditionValue);
+                    queryConditions.add(queryCondition);
+                }
+            } catch (Exception e) {
+                //This exception is not handled intentionally because it will be handled in next execute query action call.
+                e.printStackTrace();
+            }
+
             // to be saved in session
+            request.setAttribute(Constants.QUERY_CONDITIONS, queryConditions);
             session.setAttribute(Constants.QUERY_ID, queryId);
             session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
             session.setAttribute(Constants.SERVICE_INSTANCES, urlsForSelectedQueries);
@@ -156,10 +187,10 @@ public class PreExecuteQueryAction extends Action {
             for (ICab2bQuery queryObj : ((KeywordQuery) query).getSubQueries()) {
                 SavedQueryDVO savedQuery = new SavedQueryDVO();
                 savedQuery.setName(queryObj.getName());
-                    //Commenting it out bcz result count will not be updated for KeyWord Queries, 
-                    //Reason: with every 5 sec ajax, we needed to transform/traverse+count, all records to get the result-count.
-                    //Thus, drop down will be a static drop down without any result count.
-               // savedQuery.setResultCount(0); 
+                //Commenting it out bcz result count will not be updated for KeyWord Queries, 
+                //Reason: with every 5 sec ajax, we needed to transform/traverse+count, all records to get the result-count.
+                //Thus, drop down will be a static drop down without any result count.
+                // savedQuery.setResultCount(0); 
                 savedQueries.add(savedQuery);
             }
         } else { //Form basd or MMC query
