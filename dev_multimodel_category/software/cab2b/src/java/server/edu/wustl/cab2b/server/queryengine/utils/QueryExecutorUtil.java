@@ -259,7 +259,7 @@ public class QueryExecutorUtil {
         Map<EntityGroupInterface, List<String>> entityGroupURLsMap = getUserConfiguredUrls(user, modelGroupNames);
 
         query.setOutputUrls(null);
-        Collection<EntityGroupInterface> queryEntityGroups = QueryExecutorUtil.getEntityGroups(query);
+        Collection<EntityGroupInterface> queryEntityGroups = getEntityGroups(query);
         for (EntityGroupInterface queryEntityGroup : queryEntityGroups) {
             List<String> urls = entityGroupURLsMap.get(queryEntityGroup);
             if (urls != null && !urls.isEmpty()) {
