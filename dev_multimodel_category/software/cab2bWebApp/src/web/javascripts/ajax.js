@@ -49,7 +49,7 @@
   return xmlhttp;
 }
 
- function processAJAXRequest(requestURL, responseReceiver, hideLoadingImage)
+ function processAJAXRequest(requestURL, responseReceiver, hideLoadingImage, callbackFunction)
 { 
    if(responseReceiver &&  hideLoadingImage!=1)
   {
@@ -57,6 +57,9 @@
   }
   var httpRequest = XMLHTTPObject();
   httpRequest.open("POST", requestURL, true);
+  httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  httpRequest.setRequestHeader("Ajax-Call", "true");
+  httpRequest.send(null);
   httpRequest.onreadystatechange = function(){ 
      if(httpRequest.readyState==4) 
     { 
@@ -75,6 +78,10 @@
 	   if(httpRequest.status!=403 && responseReceiver)
 	  {
         document.getElementById(responseReceiver).innerHTML = results;
+		 if(callbackFunction)
+		{
+		  callbackFunction();
+		}
 	  }
 	   else if(httpRequest.status==403) //If user session timed out.
 	  {
@@ -83,7 +90,4 @@
 	  }
     }
   }
-  httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  httpRequest.setRequestHeader("Ajax-Call", "true");
-  httpRequest.send(null);
 }
