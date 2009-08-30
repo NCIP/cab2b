@@ -566,8 +566,8 @@ public class QueryExecutor {
             int urlRecCount = getRecordCountForUrl(url);
             if (urlRecCount != -1) {
                 isResultAvailable = true;
-                totalResultCount = +urlRecCount;
-                uStatusObj.setResultCount(urlRecCount);
+                totalResultCount += urlRecCount;                
+                uStatusObj.setResultCount(urlRecCount);               
             }
         }
 
