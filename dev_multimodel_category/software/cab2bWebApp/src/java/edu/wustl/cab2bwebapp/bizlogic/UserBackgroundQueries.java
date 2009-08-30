@@ -118,30 +118,31 @@ public class UserBackgroundQueries {
      * @param user
      */
     public synchronized void updateBackgroundQueryStatusForUser(UserInterface user) {
+        synchronized (userToBackgroundQueries) {
+            Set<QueryBizLogic> querieLogics = userToBackgroundQueries.get(user);
+            if (querieLogics != null) {
+                for (QueryBizLogic queryBizLogic : querieLogics) {
+                    QueryStatus status = queryBizLogic.getStatus();
 
-        Set<QueryBizLogic> querieLogics = userToBackgroundQueries.get(user);
-        if (querieLogics != null) {
-            for (QueryBizLogic queryBizLogic : querieLogics) {
-                QueryStatus status = queryBizLogic.getStatus();
-
-                //If query is complete Write results into CSV file and update map with file name.
-                if (status.getStatus().equals(AbstractStatus.Complete)
-                        || status.getStatus().equals(AbstractStatus.Complete_With_Error)) {
-                    try {
-                        String fileName = queryBizLogic.exportToCSV();
-                        status.setFileName(fileName);
-                        status.setQueryEndTime(new Date());
-                        logger.info(EXPORT_CSV_DIR + File.separator + fileName);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        throw new RuntimeException("Error while saving CSV file.", ErrorCodeConstants.IO_0001);
+                    //If query is complete Write results into CSV file and update map with file name.
+                    if (status.getStatus().equals(AbstractStatus.Complete)
+                            || status.getStatus().equals(AbstractStatus.Complete_With_Error)) {
+                        try {
+                            String fileName = queryBizLogic.exportToCSV();
+                            status.setFileName(fileName);
+                            status.setQueryEndTime(new Date());
+                            logger.info(EXPORT_CSV_DIR + File.separator + fileName);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            throw new RuntimeException("Error while saving CSV file.", ErrorCodeConstants.IO_0001);
+                        }
                     }
+                    //updating query status in database.
+                    new QueryURLStatusOperations().updateQueryStatus(status);
                 }
-                //updating query status in database.
-                new QueryURLStatusOperations().updateQueryStatus(status);
             }
+            removeCompletedQueriesFromBackground(user);
         }
-        removeCompletedQueriesFromBackground(user);
     }
 
     /**
@@ -149,28 +150,29 @@ public class UserBackgroundQueries {
      * @param user
      */
     private void removeCompletedQueriesFromBackground(UserInterface user) {
-        Set<QueryBizLogic> querieLogics = userToBackgroundQueries.get(user);
-        if (querieLogics != null) {
-            for (QueryBizLogic queryBizLogic : querieLogics) {
-                QueryStatus status = queryBizLogic.getStatus();
+        synchronized (userToBackgroundQueries) {
+            Set<QueryBizLogic> querieLogics = userToBackgroundQueries.get(user);
+            if (querieLogics != null) {
+                for (QueryBizLogic queryBizLogic : querieLogics) {
+                    QueryStatus status = queryBizLogic.getStatus();
 
-                //If query is complete Write results into map and remove it's reference from map.
-                if (status.getStatus().equals(AbstractStatus.Complete)
-                        || status.getStatus().equals(AbstractStatus.Complete_With_Error)) {
-                    logger.info("Removing :" + queryBizLogic.getStatus().getQuery().getName() + " from user "
-                            + user.getUserName() + " mapping list.");
-                    querieLogics.remove(queryBizLogic);
+                    //If query is complete Write results into map and remove it's reference from map.
+                    if (status.getStatus().equals(AbstractStatus.Complete)
+                            || status.getStatus().equals(AbstractStatus.Complete_With_Error)) {
+                        logger.info("Removing :" + queryBizLogic.getStatus().getQuery().getName() + " from user "
+                                + user.getUserName() + " mapping list.");
+                        querieLogics.remove(queryBizLogic);
+                    }
+                    //updating query status in database.
+                    new QueryURLStatusOperations().updateQueryStatus(status);
                 }
-                //updating query status in database.
-                new QueryURLStatusOperations().updateQueryStatus(status);
+            } else {
+                //No queries running in background for the selected user.
+                //Remove user from map list
+                logger
+                    .info("No queries running in background for the selected user.Removing user object (if present) from user to background query mapping.");
+                userToBackgroundQueries.remove(user);
             }
-        } else {
-            //No queries running in background for the selected user.
-            //Remove user from map list
-            logger
-                .info("No queries running in background for the selected user.Removing user object (if present) from user to background query mapping.");
-            userToBackgroundQueries.remove(user);
         }
     }
-
 }
