@@ -24,12 +24,17 @@ import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.KeywordQuery;
 import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
+import edu.wustl.cab2b.common.queryengine.querystatus.URLStatus;
+import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
+import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
 import edu.wustl.cab2bwebapp.bizlogic.UserBackgroundQueries;
 import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.cab2bwebapp.dvo.QueryConditionDVO;
 import edu.wustl.cab2bwebapp.dvo.QueryStatusDVO;
+import edu.wustl.cab2bwebapp.dvo.ServiceInstanceDVO;
 
 /**
  * @author chetan_pundhir
@@ -98,7 +103,6 @@ public class DisplayDashboardAction extends Action {
                     queryCondition.setValue(conditionValue);
                     queryConditions.add(queryCondition);
                 }
-
                 if (query instanceof KeywordQuery) {
                     KeywordQuery keywordQuery = (KeywordQuery) query;
                     StringBuffer title =
@@ -110,8 +114,24 @@ public class DisplayDashboardAction extends Action {
                 } else {
                     queryStatusDVO.setTitle(query.getName());
                 }
-
                 queryStatusDVO.setConditions(queryConditions);
+
+                List<ServiceInstanceDVO> serviceInstances = new ArrayList<ServiceInstanceDVO>();
+                Iterator<URLStatus> itr = qs.getUrlStatus().iterator();
+                while (itr.hasNext()) {
+                    URLStatus urlStatus = (URLStatus) itr.next();
+                    ServiceInstanceDVO sreviceInstance = new ServiceInstanceDVO();
+                    ServiceURLOperations serviceURLOpreration = new ServiceURLOperations();
+                    ServiceURLInterface serviceURL =
+                            serviceURLOpreration.getServiceURLbyURLLocation(urlStatus.getUrl());
+                    Utility.getHostingInstitutionName(serviceURL);
+                    sreviceInstance.setStatus(urlStatus.getStatus());
+                    sreviceInstance.setResultCount(urlStatus.getResultCount() == null ? 0 : urlStatus
+                        .getResultCount());
+                    serviceInstances.add(sreviceInstance);
+                }
+                queryStatusDVO.setServiceInstances(serviceInstances);
+
                 queryStatusDVO.setFileName(qs.getFileName());
                 queryStatusDVOList.add(queryStatusDVO);
                 if (qs.getStatus().equals(AbstractStatus.Processing)) {
@@ -120,6 +140,7 @@ public class DisplayDashboardAction extends Action {
                     completedQueryCount++;
                 }
             }
+
             request.getSession().setAttribute("completedQueryCount", completedQueryCount);
             request.getSession().setAttribute("inProgressQueryCount", inProgressQueryCount);
             request.setAttribute("queryStatusDVOList", queryStatusDVOList);
