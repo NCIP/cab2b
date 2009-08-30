@@ -144,7 +144,12 @@ public class PreExecuteQueryAction extends Action {
                 new QueryUpdateBizLogic().setInputDataToQuery(request.getParameter(Constants.CONDITION_LIST),
                                                               query.getConstraints(), null, query);
                 String pattern = "(.*)\\((.*)\\)(.*)";
-                String qc = UtilityOperations.getStringRepresentationofConstraints(query.getConstraints());
+                String qc = "";
+                if (query instanceof KeywordQuery) {
+                    qc = "Keyword(Search for)" + request.getParameter(Constants.KEYWORD);
+                } else {
+                    qc = UtilityOperations.getStringRepresentationofConstraints(query.getConstraints());
+                }
                 String values[] = qc.split(";");
                 Pattern p = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
                 String conditionValue = null;
