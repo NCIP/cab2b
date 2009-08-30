@@ -2,6 +2,7 @@ package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.apache.log4j.Logger;
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.result.FQPUrlStatus;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
@@ -28,7 +30,7 @@ public class TransformedResultObjectWithContactInfo {
             edu.wustl.common.util.logger.Logger.getLogger(TransformedResultObjectWithContactInfo.class);
 
     /**
-     * Map for url to transformed query resu.lt.
+     * Map for url to transformed query result.
      */
     private Map<String, List<Map<AttributeInterface, Object>>> urlToResultMap =
             new HashMap<String, List<Map<AttributeInterface, Object>>>();
@@ -117,7 +119,7 @@ public class TransformedResultObjectWithContactInfo {
             }
         }
 
-        if (addAttributesFlag) {          
+        if (addAttributesFlag) {
             if (attributeMN == null) {
                 attributeMN = contactInfoMap.get(Constants.MODEL_NAME);
                 allowedAttributes.add(attributeMN);
@@ -161,34 +163,32 @@ public class TransformedResultObjectWithContactInfo {
      * @param url
      * @return List<Map<AttributeInterface, Object>>
      */
-    public List<Map<AttributeInterface, Object>> getResultForUrl(String url) {
-        return urlToResultMap.get(url);
-    }
+    
+        /*public List<Map<AttributeInterface, Object>> getResultForUrl(String url) {
+            return urlToResultMap.get(url);
+        }*/
 
-    /**
-     * Returns collection of urls available.  
-     * @return Collection<String>
-     */
-    public Collection<String> getAllUrls() {
-        return urlToResultMap.keySet();
-    }
+        /**
+         * Returns collection of urls available.  
+         * @return Collection<String>
+         */
+    
+        public Collection<String> getAllUrls() {
+            return urlToResultMap.keySet();
+        }
 
     /**
      * Returns results for all urls.
      * @return List<Map<AttributeInterface, Object>>
      */
     public List<Map<AttributeInterface, Object>> getResultForAllUrls() {
-        List<Map<AttributeInterface, Object>> collectedResult = null;
-        Collection<List<Map<AttributeInterface, Object>>> collectionOfResults = urlToResultMap.values();
-        if (collectionOfResults != null) {
-            collectedResult = new ArrayList<Map<AttributeInterface, Object>>();
-            for (List<Map<AttributeInterface, Object>> result : collectionOfResults) {
-                collectedResult.addAll(result);
-            }
+        List<Map<AttributeInterface, Object>> collectedResult = new ArrayList<Map<AttributeInterface,Object>>();
+        for (List<Map<AttributeInterface, Object>> results : urlToResultMap.values()) {
+            collectedResult.addAll(results);
         }
+        Collections.sort(collectedResult, new ResultComparator());
         return collectedResult;
     }
-
     /**
      * @return the failedServiceUrl
      */

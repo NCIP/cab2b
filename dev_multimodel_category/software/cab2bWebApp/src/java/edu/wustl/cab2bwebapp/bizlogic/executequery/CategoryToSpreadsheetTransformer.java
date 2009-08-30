@@ -3,7 +3,6 @@ package edu.wustl.cab2bwebapp.bizlogic.executequery;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,30 +36,7 @@ import edu.wustl.common.querysuite.metadata.category.CategorialClass;
            
  *
  */
-public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetTransformer {
-    private class RecordComparator implements Comparator<ICategorialClassRecord> {
-        Map<ICategorialClassRecord, Integer> recordVsCount;
-
-        public RecordComparator(Map<ICategorialClassRecord, Integer> recordVsCount) {
-            this.recordVsCount = recordVsCount;
-        }
-
-        public int compare(ICategorialClassRecord o1, ICategorialClassRecord o2) {
-            Integer d1 = recordVsCount.get(o1);
-            Integer d2 = recordVsCount.get(o2);
-            if (d1 == null || d2 == null) {
-                return 0;
-            }
-            if (d1 < d2) {
-                return 1;
-            }
-            if (d1 > d2) {
-                return -1;
-            }
-            return 0;
-        }
-
-    }
+public class CategoryToSpreadsheetTransformer extends SpreadsheetTransformer {
 
     private int getDepth(ICategorialClassRecord o1) {
         if (o1 == null) {
@@ -88,11 +64,11 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
     /**
      * Converting <code>ICategorialClassRecord</code> records  
      * @param records
+     * @param transformationMaxLimit
      * @return List<Map<AttributeInterface, Object>>
      */
     public List<Map<AttributeInterface, Object>> convert(List<ICategorialClassRecord> records,
                                                          int transformationMaxLimit) {
-        Map<ICategorialClassRecord, Integer> recordVsCount = new HashMap<ICategorialClassRecord, Integer>();
         List<Map<AttributeInterface, Object>> list = new ArrayList<Map<AttributeInterface, Object>>();
         if (records != null) {
             for (ICategorialClassRecord r : records) {
@@ -179,10 +155,13 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
     }
 
     /**
-     * @see edu.wustl.cab2bwebapp.bizlogic.executequery.ICategoryToSpreadsheetTransformer#writeToCSV(edu.wustl.cab2b.common.queryengine.result.ICategoryResult)
+     * @param result
+     * @param fileName
+     * @param headers
+     * @throws IOException
      */
     public void writeToCSV(ICategoryResult<ICategorialClassRecord> result, String fileName,
-                           List<AttributeInterface> headers) throws IOException {        
+                           List<AttributeInterface> headers) throws IOException {
         CsvWriter writeToCSV = new CsvWriter(headers, fileName);
         Map<String, List<ICategorialClassRecord>> urlToResultMap = result.getRecords();
         for (String url : urlToResultMap.keySet()) {
