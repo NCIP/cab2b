@@ -1,6 +1,7 @@
 <%@ page errorPage="failure.jsp"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
+<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
@@ -10,6 +11,7 @@
 <META http-equiv="Content-Type" content="text/html">
 <LINK rel="stylesheet" href="stylesheet/searchresults.css" type="text/css">
 <SCRIPT language="JavaScript" src="javascript/ajax.js"></SCRIPT>
+<SCRIPT language="JavaScript" src="javascript/jquery.js"></SCRIPT>
 <SCRIPT language="javaScript">
  function executeQuery()
 {	
@@ -61,6 +63,22 @@
   setTimeout("getTransformedResults()", 5000);
 }
 
+toolTipId = null;
+ this.tooltipinvoker = function()
+{			
+  xOffset = 0;
+   $(".tooltipinvoker").hover(function(e)
+  {	
+	$(document.getElementById(toolTipId))
+    .css("top",(e.pageY - xOffset) + "px")
+    .css("left",(e.pageX) + "px")
+    .slideDown("fast");		
+  }, 
+   function()
+  {	
+    $(document.getElementById(toolTipId)).hide();
+  });			
+};
  function updateView()
 { 
    if(navigator.appName.indexOf('Netscape')==-1 || navigator.appVersion.indexOf('Apple')!=-1)
@@ -115,7 +133,15 @@
 				<logic:iterate name="savedQueries" id="savedSearch">
 					<DIV class="label"><bean:write name="savedSearch" property="name"/>&nbsp;(<SPAN id="resultcount"><bean:write name="savedSearch" property="resultCount"/></SPAN>)</DIV>
 				</logic:iterate>
-			</logic:equal>	 
+			</logic:equal>
+			<IMG class="tooltipinvoker" src="images/form.jpg" style="cursor:pointer;margin-top:0.2em;" title="Query Parameters" onmouseover="toolTipId='queryConditions'">&nbsp;
+			<DIV class="tooltip" id="queryConditions" style="display:none;">
+				<display:table class="simple" cellspacing="1" cellpadding="4" name="${requestScope.queryConditions}" uid="queryCondition" requestURI="">
+					<display:column title="Parameter" value="${queryCondition.parameter}"/>
+					<display:column title="Condition" value="${queryCondition.condition}"/>
+					<display:column title="Value" value="${queryCondition.value}"/>
+				</display:table>
+			</DIV>
 		</DIV>
 		<DIV style="float:right;margin-top:0.12em;">
 			<A class="link" style="margin-top:0.3em;display:none;" id="failedserviceslink" href="#this" onclick="document.getElementById('pageoverlay').style.display='block';document.getElementById('failedservicespanel').style.display='block';"><bean:message key="link.failedserviceinstances"/>(<SPAN id="failedservicescount"></SPAN>)</A>			
@@ -142,7 +168,7 @@
 		<%@ include file="searchresultspanel.jsp" %>
 	</DIV>
 </DIV>
-<SCRIPT language="JavaScript">updateView();</SCRIPT>
+<SCRIPT language="JavaScript">tooltipinvoker();updateView();</SCRIPT>
 <DIV id="bottompanel">	
 	<logic:notPresent name="userName">
 		<DIV class="text" style="padding-bottom:5px;"><bean:message key="message.offlineexecution.anonymous.user"/></DIV>
