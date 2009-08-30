@@ -16,14 +16,12 @@ toolTipId = null;
  this.tooltipinvoker = function()
 {			
   xOffset = (navigator.appName.indexOf('Netscape')==-1?(100 - document.getElementById('toppanel').scrollTop):0);
-  yOffset = -175;			
    $(".tooltipinvoker").hover(function(e)
   {	
-	$(document.getElementById(toolTipId)).show();
-    $(document.getElementById(toolTipId))
+	$(document.getElementById(toolTipId))
     .css("top",(e.pageY - xOffset) + "px")
-    .css("left",(e.pageX + yOffset) + "px")
-    .fadeIn("fast");		
+    .css("right",(getScreenWidth() - e.pageX) + "px")
+    .slideDown("fast");		
   }, 
    function()
   {	
