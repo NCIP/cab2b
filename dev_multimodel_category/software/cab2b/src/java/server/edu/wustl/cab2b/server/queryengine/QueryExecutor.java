@@ -180,11 +180,8 @@ public class QueryExecutor {
         if (credential != null) {
             userName = credential.getIdentity();
         }
-        UserInterface user = new UserOperations().getUserByName(userName);
-
         qStatus = new QueryStatusImpl();
         qStatus.setQuery(query);
-        qStatus.setUser(user);
         qStatus.setVisible(Boolean.FALSE);
         qStatus.setQueryConditions(UtilityOperations.getStringRepresentationofConstraints(query.getConstraints()));
         qStatus.setStatus(AbstractStatus.Processing);
@@ -199,6 +196,8 @@ public class QueryExecutor {
         }
         qStatus.setUrlStatus(urlStatusCollection);
         if (recordStatus) {
+            UserInterface user = new UserOperations().getUserByName(userName);
+            qStatus.setUser(user);
             QueryURLStatusOperations qso = new QueryURLStatusOperations();
             qso.insertQueryStatus(qStatus);
         }
