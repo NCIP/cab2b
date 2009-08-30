@@ -318,12 +318,13 @@ public class PersistMultiModelCategory {
     }
 
     public static void main(String[] args) throws IOException {
-        if(args == null || args.length == 0){
-            throw new java.lang.RuntimeException("Please specify the path to directory where multi model category XMLs are stored.");
-        }else if(!(new File(args[0])).isDirectory()){
+        if (args == null || args.length == 0) {
+            throw new java.lang.RuntimeException(
+                    "Please specify the path to directory where multi model category XMLs are stored.");
+        } else if (!(new File(args[0])).isDirectory()) {
             throw new IllegalArgumentException("The directory specified in invalid. Please correct the path.");
         }
-        
+
         PathFinder.getInstance(DBUtil.getConnection());
         MultiModelCategoryOperations operations = new MultiModelCategoryOperations();
 
@@ -332,9 +333,14 @@ public class PersistMultiModelCategory {
         File[] mmcFiles = mmcDir.listFiles();
         MultiModelCategoryXmlParser parser = new MultiModelCategoryXmlParser();
         for (File mmcFile : mmcFiles) {
-            MultiModelCategoryBean mmcBean = parser.getMultiModelCategory(mmcFile);
-            MultiModelCategory mmCategory = new PersistMultiModelCategory().persistMMC(mmcBean);
-            operations.saveMultiModelCategory(mmCategory);
+            try {
+                MultiModelCategoryBean mmcBean = parser.getMultiModelCategory(mmcFile);
+                MultiModelCategory mmCategory = new PersistMultiModelCategory().persistMMC(mmcBean);
+                operations.saveMultiModelCategory(mmCategory);
+            } catch (Exception e) {
+                System.out.println("Cannot parse and load " + mmcFile.getAbsolutePath() + "\nRoot cause: "
+                        + e.getMessage());
+            }
         }
 
         //delete from database

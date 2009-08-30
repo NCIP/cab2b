@@ -154,6 +154,13 @@
 			<include name="*.jar" />
 		</fileset>
 	</path>
+	
+	<path id="mmcloader.classpath">
+		<path refid="server.classpath" />
+		<pathelement location="${conf.dir}" />
+		<pathelement location="${server.classes.dir}" />
+		<pathelement location="${common.classes.dir}" />
+	</path>
 
 	<!-- ================================================================================== -->
 	<target name="initialize" depends="clean.all">
@@ -1174,7 +1181,10 @@
 	</target>
 	
 	<target name="load.mmcs" depends="compile.server" description="Loads the MultiModelCategories">
-		<java failonerror="true" classname="edu.wustl.cab2b.server.multimodelcategory.PersistMultiModelCategory" args="${mmc.dir}" classpathref="class.classpath" fork="yes" />
+		<java failonerror="true" classname="edu.wustl.cab2b.server.multimodelcategory.PersistMultiModelCategory" classpathref="mmcloader.classpath" fork="yes">
+			<jvmarg value="-Xmx768m"/>
+			<arg value="${mmc.dir}"/>
+		</java>
 	</target>
 </project>
 

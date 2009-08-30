@@ -33,12 +33,6 @@ import edu.wustl.common.querysuite.metadata.path.IPath;
  */
 public class MultiModelCategoryXmlParser {
 
-//    private static EntityCache entityCache = null;
-//
-//    MultiModelCategoryXmlParser() {
-//        entityCache = EntityCache.getInstance();
-//    }
-
     /**
      * Reads the XML file and creates an object of MultiModelCategory for the same.
      * This method does not perform any check for "well-form" of the XML.
@@ -47,6 +41,10 @@ public class MultiModelCategoryXmlParser {
      * @return The MultiModelCategory for given MultiModel Category XML.
      */
     public MultiModelCategoryBean getMultiModelCategory(String xmlFileName) {
+        if (!isXMLFile(xmlFileName)) {
+            throw new IllegalArgumentException("The parameter file must be a XML file");
+        }
+
         File xmlFile = new File(xmlFileName);
         if (xmlFileName == null || !xmlFile.exists()) {
             throw new RuntimeException(xmlFileName + "doesn't exists.");
@@ -63,19 +61,25 @@ public class MultiModelCategoryXmlParser {
      * @return The MultiModelCategory for given MultiModel Category XML.
      */
     public MultiModelCategoryBean getMultiModelCategory(File xmlFile) {
+        if (!isXMLFile(xmlFile.getName())) {
+            throw new IllegalArgumentException("The parameter file must be a XML file");
+        }
+
         Document document = null;
         try {
             FileInputStream fileInputStream = new FileInputStream(xmlFile);
-            try {
-                document = new SAXReader().read(fileInputStream);
-            } catch (DocumentException e) {
-                throw new RuntimeException("Unable to parse multi model category XML file: " + xmlFile.getName(),
-                        e);
-            }
+            document = new SAXReader().read(fileInputStream);
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Given MMC XML file not found: " + xmlFile.getName(), e);
+        } catch (DocumentException e) {
+            throw new RuntimeException("Unable to parse multi model category XML file: " + xmlFile.getName(), e);
         }
         return populateMultiModelCategory(document);
+    }
+
+    private boolean isXMLFile(String xmlFileName) {
+        String extension = xmlFileName.substring(xmlFileName.lastIndexOf('.') + 1);
+        return "xml".equalsIgnoreCase(extension);
     }
 
     /**
