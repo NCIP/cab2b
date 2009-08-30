@@ -31,7 +31,7 @@ import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
-import edu.wustl.cab2b.server.queryengine.CaB2QueryExecutionHandler;
+import edu.wustl.cab2b.server.queryengine.CaB2BQueryExecutionHandler;
 import edu.wustl.cab2b.server.queryengine.KeywordQueryExecutionHandler;
 import edu.wustl.cab2b.server.queryengine.MMCQueryExecutionHandler;
 import edu.wustl.cab2b.server.queryengine.QueryExecutionHandler;
@@ -96,7 +96,7 @@ public class QueryBizLogic {
                     new MMCQueryExecutionHandler((MultiModelCategoryQuery) query, proxy, user, modelGroupNames);
         } else {//Form Based
             setInputDataToQuery(query, conditionstr);
-            queryExecutionHandler = new CaB2QueryExecutionHandler(query, proxy, user, modelGroupNames);
+            queryExecutionHandler = new CaB2BQueryExecutionHandler(query, proxy, user, modelGroupNames);
         }
         queryExecutionHandler.execute();
     }
