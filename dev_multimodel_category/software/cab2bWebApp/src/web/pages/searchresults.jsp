@@ -17,7 +17,7 @@
 {	
    if(${sessionScope.isFirstRequest})
   {		
-	processAJAXRequest('ExecuteQuery.do');
+	processAJAXRequest('ExecuteQuery.do');	
 	getTransformedResults();
 	<% session.setAttribute("isFirstRequest", false); %>
   }
@@ -25,7 +25,35 @@
 
  function getTransformedResults()
 {
-  processAJAXRequest('TransformQueryResultsAction.do', (navigator.appName.indexOf('Netscape')==-1?'centerpanelcontent':'centerpanelcontentbuffer'), 1);
+  processAJAXRequest('TransformQueryResultsAction.do', (navigator.appName.indexOf('Netscape')==-1?'centerpanelcontent':'centerpanelcontentbuffer'), 1, updateView);
+}
+
+ function updateView()
+{  
+   if(navigator.appName.indexOf('Netscape')==-1 || navigator.appVersion.indexOf('Apple')!=-1)
+  {	  
+	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (335);
+    document.getElementById('centerpanelcontent').style.overflow = 'auto';
+	 if(document.getElementById('searchresultstable'))
+    {
+      document.getElementById('searchresultstable').getElementsByTagName('thead')[0].getElementsByTagName('tr')[0].id = 'noscroll';
+	}
+  }
+   else
+  {
+	document.getElementById('toppanel').style.marginLeft = "5";
+	document.getElementById('toppanel').style.width = "98%";
+	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (325);
+	 if(document.getElementById('searchresultstable'))
+    {
+      document.getElementById('searchresultstable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '370';
+	}
+	 if(document.getElementById('centerpanelcontentbuffer').innerHTML!="")
+	{
+	  document.getElementById('centerpanelcontent').innerHTML = document.getElementById('centerpanelcontentbuffer').innerHTML;
+	  document.getElementById('centerpanelcontentbuffer').innerHTML = "";
+	}	
+  }
    if(document.getElementById("resultcountAJAX") && document.getElementById('resultcount'))
   {
 	document.getElementById('resultcount').innerHTML = document.getElementById("resultcountAJAX").innerHTML;
@@ -62,7 +90,6 @@
   }
   setTimeout("getTransformedResults()", 5000);
 }
-
 toolTipId = null;
  this.tooltipinvoker = function()
 {			
@@ -72,41 +99,13 @@ toolTipId = null;
 	$(document.getElementById(toolTipId))
     .css("top",(e.pageY - xOffset) + "px")
     .css("left",(e.pageX) + "px")
-    .slideDown("fast");		
+    .show();		
   }, 
    function()
   {	
     $(document.getElementById(toolTipId)).hide();
   });			
 };
- function updateView()
-{ 
-   if(navigator.appName.indexOf('Netscape')==-1 || navigator.appVersion.indexOf('Apple')!=-1)
-  {	  
-	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (310);
-    document.getElementById('centerpanelcontent').style.overflow = 'auto';
-	 if(document.getElementById('searchresultstable'))
-    {
-      document.getElementById('searchresultstable').getElementsByTagName('thead')[0].getElementsByTagName('tr')[0].id = 'noscroll';
-	}
-  }
-   else
-  {
-	document.getElementById('toppanel').style.marginLeft = "5";
-	document.getElementById('toppanel').style.width = "98%";
-	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (325);
-	 if(document.getElementById('searchresultstable'))
-    {
-      document.getElementById('searchresultstable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '370';
-	}
-	 if(document.getElementById('centerpanelcontentbuffer').innerHTML!="")
-	{
-	  document.getElementById('centerpanelcontent').innerHTML = document.getElementById('centerpanelcontentbuffer').innerHTML;
-	  document.getElementById('centerpanelcontentbuffer').innerHTML = "";
-	}	
-  }
-  setTimeout("updateView()", 1000);
-}
 </SCRIPT>
 </HEAD>
 <BODY onLoad="executeQuery();">
@@ -116,10 +115,10 @@ toolTipId = null;
 		<DIV class="label" style="font-weight:bold;padding-right:0.2em;">
 			<bean:message key="label.savedsearchselect"/>
 		 </DIV>
-		<DIV id="queryDropDown" style="text-align:left;">
+		<DIV id="queryDropDown" style="float:left;">
 			<bean:size id="queryCount" name="savedQueries"/>
 			<logic:notEqual name="queryCount" value="1">
-				<SELECT class="select" name="savedQueries" onChange="processAJAXRequest('TransformQueryResultsAction.do?selectedQueryName=' + this.value + '&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent');"/>
+				<SELECT class="select" style="float:left;" name="savedQueries" onChange="processAJAXRequest('TransformQueryResultsAction.do?selectedQueryName=' + this.value + '&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent');"/>
 					<logic:present name="savedQueries">
 						<logic:iterate name="savedQueries" id="savedSearch" type="edu.wustl.cab2bwebapp.dvo.SavedQueryDVO">
 							<OPTION value="<bean:write name="savedSearch" property="name"/>" <logic:equal name="savedSearch" property="selected" value="true">selected</logic:equal>>
@@ -134,8 +133,10 @@ toolTipId = null;
 					<DIV class="label"><bean:write name="savedSearch" property="name"/>&nbsp;(<SPAN id="resultcount"><bean:write name="savedSearch" property="resultCount"/></SPAN>)</DIV>
 				</logic:iterate>
 			</logic:equal>
-			<IMG class="tooltipinvoker" src="images/form.jpg" style="cursor:pointer;margin-top:0.2em;" title="Query Parameters" onmouseover="toolTipId='queryConditions'">&nbsp;
-			<DIV class="tooltip" id="queryConditions" style="display:none;">
+			<DIV>
+				<IMG class="tooltipinvoker" src="images/form.jpg" style="cursor:pointer;margin-top:0.25em;" title="Query Parameters" onmouseover="toolTipId='queryConditions'">&nbsp;
+			</DIV>
+			<DIV class="tooltip" id="queryConditions" style="display:none;width:0%;">
 				<display:table class="simple" cellspacing="1" cellpadding="4" name="${requestScope.queryConditions}" uid="queryCondition" requestURI="">
 					<display:column title="Parameter" value="${queryCondition.parameter}"/>
 					<display:column title="Condition" value="${queryCondition.condition}"/>
@@ -145,8 +146,7 @@ toolTipId = null;
 		</DIV>
 		<DIV style="float:right;margin-top:0.12em;">
 			<A class="link" style="margin-top:0.3em;display:none;" id="failedserviceslink" href="#this" onclick="document.getElementById('pageoverlay').style.display='block';document.getElementById('failedservicespanel').style.display='block';"><bean:message key="link.failedserviceinstances"/>(<SPAN id="failedservicescount"></SPAN>)</A>			
-		</DIV><BR style="line-height:0.2em;"><HR style="height:1;color:#bbb">
-		
+		</DIV><BR style="line-height:0.2em;"><HR style="height:1;color:#bbb">		
 		<DIV style="font-size:0.85em;display:none" id="exportmessage"><IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"> <bean:message key="message.export"/></DIV>
 		<logic:notPresent name="keyword">
 			<DIV style="font-size:0.85em;" id="resultsmessage"><IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"> <bean:message key="message.partialresults.formbased" arg0="${sessionScope.selectedQueryName}"/></DIV>
@@ -168,7 +168,7 @@ toolTipId = null;
 		<%@ include file="searchresultspanel.jsp" %>
 	</DIV>
 </DIV>
-<SCRIPT language="JavaScript">tooltipinvoker();updateView();</SCRIPT>
+<SCRIPT language="JavaScript">updateView();tooltipinvoker();</SCRIPT>
 <DIV id="bottompanel">	
 	<logic:notPresent name="userName">
 		<DIV class="text" style="padding-bottom:5px;"><bean:message key="message.offlineexecution.anonymous.user"/></DIV>
