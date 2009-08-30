@@ -186,9 +186,9 @@ public class TransformQueryResultsAction extends Action {
         if (uiGotEnoughRecords && queryFinished) {
             session.setAttribute(Constants.STOP_AJAX, true);
             session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
-            //session.setAttribute(Constants.SEARCH_RESULTS_VIEW, searchResultsView);
+            session.setAttribute(Constants.SEARCH_RESULTS_VIEW, searchResultsView);
             //session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
-            //session.setAttribute(Constants.SAVED_QUERIES, queryList);
+            session.setAttribute(Constants.SAVED_QUERIES, updatedSavedQueries);
         } else if (uiGotEnoughRecords && !queryFinished) {
             Boolean flag = (Boolean) session.getAttribute(Constants.UI_POPULATION_FINISHED);
             if (flag != null && flag) {
