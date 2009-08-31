@@ -150,7 +150,7 @@ public class QueryExecutor {
      *
      * @return Returns the IQueryResult
      */
-    public void executeQuery() {     
+    public void executeQuery() {
         qStatus.setQueryStartTime(new Date());
         if (Utility.isCategory(getOutputEntity())) {
             List<ICab2bQuery> queries = QueryExecutorHelper.splitQUeryPerUrl(query);
@@ -180,11 +180,8 @@ public class QueryExecutor {
         if (credential != null) {
             userName = credential.getIdentity();
         }
-        UserInterface user = new UserOperations().getUserByName(userName);
-
         qStatus = new QueryStatusImpl();
         qStatus.setQuery(query);
-        qStatus.setUser(user);
         qStatus.setVisible(Boolean.FALSE);
         qStatus.setQueryConditions(UtilityOperations.getStringRepresentationofConstraints(query.getConstraints()));
         qStatus.setStatus(AbstractStatus.Processing);
@@ -199,6 +196,8 @@ public class QueryExecutor {
         }
         qStatus.setUrlStatus(urlStatusCollection);
         if (recordStatus) {
+            UserInterface user = new UserOperations().getUserByName(userName);
+            qStatus.setUser(user);
             QueryURLStatusOperations qso = new QueryURLStatusOperations();
             qso.insertQueryStatus(qStatus);
         }
@@ -304,7 +303,17 @@ public class QueryExecutor {
             try {
                 process();
             } catch (Throwable e) {
-                //e.printStackTrace();
+                setRevertException(e);
+            }
+        }
+
+        /**
+         * Changing exception message and logger properties in case of bidirectional conditions. 
+         */
+        private void setRevertException(Throwable e) {
+            if (e.getMessage().equals("Association ain't bidirectional... cannot reverse.")) {
+                logger.info("Can not get related data as path is unidirectional");
+            } else {
                 logger.error(e.getMessage());
             }
         }
@@ -318,8 +327,7 @@ public class QueryExecutor {
                     parentIdConstraint =
                             createAssociationConstraint(getAssociation(parentExpr, childExpr).reverse());
                 } catch (Exception e) {
-                    // caused by reverse on unidirectional association
-                    logger.error(e.getMessage());
+                    setRevertException(e);
                     continue;
                 }
                 EntityInterface childEntity = childExpr.getQueryEntity().getDynamicExtensionsEntity();
@@ -519,7 +527,7 @@ public class QueryExecutor {
      */
     public IQueryResult<? extends IRecord> getResult() {
         updateQueryStatus();
-        saveStatusInDB();
+        //saveStatusInDB();
         return result;
     }
 
@@ -567,8 +575,8 @@ public class QueryExecutor {
             int urlRecCount = getRecordCountForUrl(url);
             if (urlRecCount != -1) {
                 isResultAvailable = true;
-                totalResultCount += urlRecCount;                
-                uStatusObj.setResultCount(urlRecCount);               
+                totalResultCount += urlRecCount;
+                uStatusObj.setResultCount(urlRecCount);
             }
         }
 
