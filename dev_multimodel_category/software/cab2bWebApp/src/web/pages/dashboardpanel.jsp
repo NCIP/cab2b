@@ -23,7 +23,7 @@
 				<IMG src="images/form_search.jpg" title="Saved Search">
 			</logic:equal>
 			<logic:equal name="query" property="type" value="Keyword">
-				<IMG src="images/keyword_search.jpg" title="Keyword">
+				<IMG src="images/keyword_search.jpg" title="Keyword Search">
 			</logic:equal>
 			${query.title}
 		</display:column>
