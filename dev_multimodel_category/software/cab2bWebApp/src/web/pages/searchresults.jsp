@@ -30,6 +30,7 @@
   {	  
 	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (335);
     document.getElementById('centerpanelcontent').style.overflow = 'auto';
+	document.getElementById('queryConditions').style.width = '0%';
   }
    else
   {
@@ -111,7 +112,7 @@ toolTipId = null;
 		<DIV id="queryDropDown" style="float:left;">
 			<bean:size id="queryCount" name="savedQueries"/>
 			<logic:notEqual name="queryCount" value="1">
-				<SELECT class="select" style="float:left;margin-right:0.4em;" name="savedQueries" onChange="processAJAXRequest('TransformQueryResultsAction.do?selectedQueryName=' + this.value + '&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent');"/>
+				<SELECT class="select" style="float:left;margin-right:0.4em;" name="savedQueries" onChange="processAJAXRequest('TransformQueryResultsAction.do?selectedQueryName=' + this.value + '&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent', 0, updateView);"/>
 					<logic:present name="savedQueries">
 						<logic:iterate name="savedQueries" id="savedSearch" type="edu.wustl.cab2bwebapp.dvo.SavedQueryDVO">
 							<OPTION value="<bean:write name="savedSearch" property="name"/>" <logic:equal name="savedSearch" property="selected" value="true">selected</logic:equal>>
@@ -129,7 +130,7 @@ toolTipId = null;
 			<DIV style="float:left;">
 				<IMG class="tooltipinvoker" src="images/form.jpg" style="cursor:pointer;margin-top:0.25em;" onmouseover="toolTipId='queryConditions'">&nbsp;
 			</DIV>
-			<DIV class="tooltip" id="queryConditions" style="display:none;width:0%;">
+			<DIV class="tooltip" id="queryConditions" style="display:none;">
 				<display:table class="simple" cellspacing="1" cellpadding="4" name="${requestScope.queryConditions}" uid="queryCondition" requestURI="">
 					<display:column title="Parameter" value="${queryCondition.parameter}"/>
 					<display:column title="Condition" value="${queryCondition.condition}"/>
@@ -170,7 +171,7 @@ toolTipId = null;
 		<DIV class="text" style="padding-bottom:5px;"><bean:message key="message.offlineexecution.signedin.user"/> <A href="#" title="<bean:message key="message.offlineexecution.signedin.user.moreinfo"/>">(More info) </A></DIV>
 		<INPUT type="button" class="button" id="executeinbackgroundbutton" value="<bean:message key="button.executeinbackground"/>" onClick="document.location='BackgroundQuery.do'">&nbsp;
 	</logic:present>
-	<INPUT type="button" class="buttondisabled" id="exportbutton" value="<bean:message key="button.export"/>" onClick="document.location = 'ExportResults.do?queryId=<bean:write name="queryId"/>';TogglePreloader(0);" disabled>
+	<INPUT type="button" class="buttondisabled" id="exportbutton" value="<bean:message key="button.export"/>" onClick="document.location = 'ExportResults.do?queryId=<bean:write name="queryId"/>';setTimeout('TogglePreloader(0)', 1);" disabled>
 </DIV>
 <jsp:include page="footer.jsp"/>
 </BODY>
