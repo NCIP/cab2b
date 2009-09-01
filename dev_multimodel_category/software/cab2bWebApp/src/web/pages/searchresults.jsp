@@ -15,12 +15,8 @@
 <SCRIPT language="javaScript">
  function executeQuery()
 {	
-   if(${sessionScope.isFirstRequest})
-  {		
-	processAJAXRequest('ExecuteQuery.do');	
-	getTransformedResults();
-	<% session.setAttribute("isFirstRequest", false); %>
-  }
+  processAJAXRequest('ExecuteQuery.do');	
+  getTransformedResults();
 }
 
  function getTransformedResults()
@@ -30,14 +26,10 @@
 
  function updateView()
 {  
-   if(navigator.appName.indexOf('Netscape')==-1 || navigator.appVersion.indexOf('Apple')!=-1)
+   if(navigator.appName.indexOf('Netscape')==-1)
   {	  
 	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (335);
     document.getElementById('centerpanelcontent').style.overflow = 'auto';
-	 if(document.getElementById('searchresultstable'))
-    {
-      document.getElementById('searchresultstable').getElementsByTagName('thead')[0].getElementsByTagName('tr')[0].id = 'noscroll';
-	}
   }
    else
   {
