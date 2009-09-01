@@ -16,6 +16,7 @@ import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IRule;
+import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 
 /**
  * @author chetan_patil
@@ -23,8 +24,12 @@ import edu.wustl.common.querysuite.queryobject.IRule;
  */
 public class MultimodelCategoryQueryPreprocessor {
 
+    /**
+     * This method adds the user defined conditions in the sub-queries of the compound queries.
+     * @param mmcQuery
+     */
     public void preprocessQuery(MultiModelCategoryQuery mmcQuery) {
-        Map<String, List<String>> attributeNameValuesMap = getAttributeNameValuesMap(mmcQuery);
+        Map<String, UserDefinedCondition> attributeNameValuesMap = getAttributeNameValuesMap(mmcQuery);
 
         Collection<ICab2bQuery> subQueries = mmcQuery.getSubQueries();
         for (ICab2bQuery query : subQueries) {
@@ -34,21 +39,29 @@ public class MultimodelCategoryQueryPreprocessor {
                 ICondition condition = conditionIterator.next();
                 AttributeInterface attribute = condition.getAttribute();
                 String[] nameToken = attribute.getName().split("_");
-                List<String> values = attributeNameValuesMap.get(nameToken[0]);
-                if (values != null && !values.isEmpty()) {
-                    condition.setValues(values);
-                }else{
+                UserDefinedCondition userDefinedCondition = attributeNameValuesMap.get(nameToken[0]);
+
+                if (userDefinedCondition != null) {
+                    RelationalOperator relationaloperator = userDefinedCondition.getRelationalOperator();
+                    List<String> values = userDefinedCondition.getValues();
+                    if (values != null && !values.isEmpty()) {
+                        condition.setRelationalOperator(relationaloperator);
+                        condition.setValues(values);
+                    }
+                } else {
                     conditionIterator.remove();
                 }
             }
         }
     }
 
-    private Map<String, List<String>> getAttributeNameValuesMap(MultiModelCategoryQuery mmcQuery) {
-        Map<String, List<String>> attributeNameValuesMap = new HashMap<String, List<String>>();
+    private Map<String, UserDefinedCondition> getAttributeNameValuesMap(MultiModelCategoryQuery mmcQuery) {
+        Map<String, UserDefinedCondition> attributeNameValuesMap = new HashMap<String, UserDefinedCondition>();
         IRule rule = getOperand(mmcQuery);
         for (ICondition condition : rule) {
-            attributeNameValuesMap.put(condition.getAttribute().getName(), condition.getValues());
+            UserDefinedCondition userDefinedCondition =
+                    new UserDefinedCondition(condition.getRelationalOperator(), condition.getValues());
+            attributeNameValuesMap.put(condition.getAttribute().getName(), userDefinedCondition);
         }
         return attributeNameValuesMap;
     }
@@ -64,5 +77,31 @@ public class MultimodelCategoryQueryPreprocessor {
 
         return rule;
     }
+    
+    private class UserDefinedCondition {
+        private RelationalOperator relationalOperator;
+
+        private List<String> values;
+
+        private UserDefinedCondition(RelationalOperator relationalOperator, List<String> values) {
+            this.relationalOperator = relationalOperator;
+            this.values = values;
+        }
+
+        /**
+         * @return the relationalOperator
+         */
+        private RelationalOperator getRelationalOperator() {
+            return relationalOperator;
+        }
+
+        /**
+         * @return the values
+         */
+        private List<String> getValues() {
+            return values;
+        }
+    }
+
 
 }
