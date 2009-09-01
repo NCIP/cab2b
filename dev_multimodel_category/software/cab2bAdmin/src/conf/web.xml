@@ -213,7 +213,24 @@
 		<location>/jsp/GlobalExceptionPage.jsp</location>
 	</error-page>
 
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>*.*</web-resource-name>
+			<description>
+				An security config that only allows users with
+				the role "caB2B_User" to access the HTML cab2b web
+				application
+			</description>
+			<url-pattern>/*</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
 
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+
+	</security-constraint>
 
 
 </web-app>
