@@ -786,7 +786,7 @@
 				<include name="*.jnlp" />
 			</fileset>
 			<regexp pattern="@server-address@" />
-			<substitution expression="${webstart.server.host}:${webstart.server.port}" />
+			<substitution expression="${jndi.protocol}://${webstart.server.host}:${webstart.server.port}" />
 		</replaceregexp>
 		<!-- done replacing-->
 

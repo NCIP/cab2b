@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp codebase="http://@server-address@" href="cab2b/webpage/jnlp/cab2b_client_webstart.jnlp" spec="1.0+">
+<jnlp codebase="@server-address@" href="cab2b/webpage/jnlp/cab2b_client_webstart.jnlp" spec="1.0+">
 
 	<information>
 		<title>caB2B Client</title>
