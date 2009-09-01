@@ -92,11 +92,6 @@
 	}
     return;
   }
-   else
-  {
-	if(selectedItemsCount==1)
-	document.getElementsByName('modelGroups')[singleSelectIndex].checked = false;
-  }
   setSelection(document.getElementsByName('modelGroups'));
   processAJAXRequest('DisplaySavedSearches.do?modelGroups=' + (chkBoxObj.checked?chkBoxObj.value:'null'), 'savedsearchespanelbody');
 }
@@ -120,14 +115,14 @@
   }
 }
 
-function validateKeywordSearch(keywordSearchExample)
+ function validateKeywordSearch(keywordSearchExample)
 {
-	if(selectedItemsCount==0) 
-	{
-		alert('<bean:message key="alert.selectdatatype"/>');
-		return false;
-	}
-	return checkEmptyTextFileld('keyword', keywordSearchExample , true, '<bean:message key="error.keywordsearch.empty"/>');
+   if(selectedItemsCount==0) 
+  {
+	alert('<bean:message key="alert.selectdatatype"/>');
+	return false;
+  }
+  return checkEmptyTextFileld('keyword', keywordSearchExample , true, '<bean:message key="error.keywordsearch.empty"/>');
 }
 </SCRIPT>
 <BODY onLoad="setPage()">
@@ -150,9 +145,9 @@ function validateKeywordSearch(keywordSearchExample)
 						<DIV class="myselectboxitems" id="myselectboxitems">
 							<logic:present name="modelGroupDVOList">							
 								<logic:iterate name="modelGroupDVOList" id="modelGroupDVO" type="edu.wustl.cab2bwebapp.dvo.ModelGroupDVO" indexId="index">
-									<DIV class="myselectboxitem">
-										<INPUT type="checkbox" name="modelGroups" id="<bean:write name="modelGroupDVO" property="modelGroupName"/>" value="<bean:write name="modelGroupDVO" property="modelGroupName"/>" onClick="showSavedSearches(this, <bean:write name="modelGroupDVO" property="secured"/> <logic:notPresent name="userName">&& true</logic:notPresent><logic:present name="userName">&& false</logic:present>)" <logic:equal name="modelGroupDVO" property="selected" value="true">checked</logic:equal>>
-										<LABEL><bean:write name="modelGroupDVO" property="modelGroupName"/><logic:equal name="modelGroupDVO" property="secured" value="true">&nbsp;<IMG src="images/lock.gif" alt="<bean:message key="img.alt.secureservice"/>"></logic:equal></LABEL>										
+									<DIV class="myselectboxitem" style="border-style:solid;border-width:1;border-color:#fff;" onmouseover="this.style.borderColor='#ccc';this.style.backgroundColor='#eee';" onmouseout="this.style.borderColor='#fff';this.style.backgroundColor='#fff';" onClick="document.getElementById('<bean:write name="modelGroupDVO" property="modelGroupName"/>').checked=true;setDropDown(0);showSavedSearches(document.getElementById('<bean:write name="modelGroupDVO" property="modelGroupName"/>'), <bean:write name="modelGroupDVO" property="secured"/> <logic:notPresent name="userName">&& true</logic:notPresent><logic:present name="userName">&& false</logic:present>)">
+										<INPUT type="radio" style="display:none;" name="modelGroups" id="<bean:write name="modelGroupDVO" property="modelGroupName"/>" value="<bean:write name="modelGroupDVO" property="modelGroupName"/>" <logic:equal name="modelGroupDVO" property="selected" value="true">checked</logic:equal>>
+										<LABEL style="margin-left:0.3em;line-height:1.5em;"><bean:write name="modelGroupDVO" property="modelGroupName"/><logic:equal name="modelGroupDVO" property="secured" value="true">&nbsp;<IMG src="images/lock.gif" alt="<bean:message key="img.alt.secureservice"/>"></logic:equal></LABEL>										
 									</DIV>
 								</logic:iterate>
 							</logic:present>						
