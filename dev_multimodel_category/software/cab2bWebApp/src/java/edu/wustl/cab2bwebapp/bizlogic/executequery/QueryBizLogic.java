@@ -16,6 +16,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
+import org.exolab.castor.mapping.MappingException;
 import org.globus.gsi.GlobusCredential;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -24,13 +25,13 @@ import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.KeywordQuery;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
-import edu.wustl.cab2b.common.queryengine.QueryExecutorPropertes;
 import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.common.util.Cab2bServerProperty;
 import edu.wustl.cab2b.server.queryengine.CaB2BQueryExecutionHandler;
 import edu.wustl.cab2b.server.queryengine.KeywordQueryExecutionHandler;
 import edu.wustl.cab2b.server.queryengine.MMCQueryExecutionHandler;
@@ -71,7 +72,7 @@ public class QueryBizLogic {
             GlobusCredential proxy,
             String[] modelGroupNames) {
         this.user = user;
-        this.transformationMaxLimit = QueryExecutorPropertes.getUiResultLimit();
+        this.transformationMaxLimit = Cab2bServerProperty.getUiResultLimit();
         initializeQueryExecutionHandler(query, conditionstr, keyword, user, proxy, modelGroupNames);
     }
 
@@ -102,7 +103,7 @@ public class QueryBizLogic {
     }
 
     /**
-     * @return
+     * @return {@link Boolean}
      */
     public boolean isProcessingFinished() {
         return queryExecutionHandler.isProcessingFinished();
@@ -111,7 +112,7 @@ public class QueryBizLogic {
     /**
      * Sets conditionString to the query. It is called before query is sent to execution handler for execution.
      * @param query
-     * @param session
+     * @param conditionstr
      * @throws RuntimeException
      */
     public void setInputDataToQuery(ICab2bQuery query, String conditionstr) throws RuntimeException {
@@ -126,7 +127,7 @@ public class QueryBizLogic {
     }
 
     /**
-     * @return
+     * @return {@link Map}
      * @throws IOException 
      */
     public Map<ICab2bQuery, TransformedResultObjectWithContactInfo> getSearchResults() throws IOException {
@@ -175,7 +176,7 @@ public class QueryBizLogic {
 
     /**
      * @param finalResult
-     * @param orderList
+     * @param orderedAttributeList
      * @return List<SearchResultDVO>
      */
     public static final List<List<SearchResultDVO>> getSearchResultsView(
@@ -212,7 +213,7 @@ public class QueryBizLogic {
 
     /**
      * Returns failed URS for the query.
-     * @return
+     * @return {@link Collection}
      */
     public final Collection<ServiceURLInterface> getFailedServiceUrls() {
         Collection<ServiceURLInterface> failedServices = null;
@@ -231,9 +232,7 @@ public class QueryBizLogic {
     }
 
     /**
-     * @param filePath
-     * @return
-     * @throws IOException
+     * @return Name of file in which results are written
      */
     public String exportToCSV() {
         Set<String> fileNames = null;

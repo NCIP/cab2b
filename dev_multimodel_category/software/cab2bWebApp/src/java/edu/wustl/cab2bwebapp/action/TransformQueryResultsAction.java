@@ -23,10 +23,10 @@ import org.apache.struts.action.ActionMessage;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.KeywordQuery;
-import edu.wustl.cab2b.common.queryengine.QueryExecutorPropertes;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
+import edu.wustl.cab2b.common.util.Cab2bServerProperty;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.TransformedResultObjectWithContactInfo;
@@ -56,7 +56,7 @@ public class TransformQueryResultsAction extends Action {
      * @throws ServletException
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                              HttpServletResponse response) throws IOException, ServletException {
+                                 HttpServletResponse response) throws IOException, ServletException {
         String actionForward = Constants.FORWARD_SEARCH_RESULTS_PANEL;
         HttpSession session = request.getSession();
         try {
@@ -65,7 +65,7 @@ public class TransformQueryResultsAction extends Action {
                     (SavedQueryBizLogic) session.getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
             Long queryId = (Long) session.getAttribute(Constants.QUERY_ID);
             ICab2bQuery query = savedQueryBizLogic.getQueryById(queryId);
-            int transformationMaxLimit = QueryExecutorPropertes.getUiResultLimit();
+            int transformationMaxLimit = Cab2bServerProperty.getUiResultLimit();
             IQueryResult<? extends IRecord> queryResult = null;
 
             QueryBizLogic queryBizLogic = (QueryBizLogic) session.getAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT);
