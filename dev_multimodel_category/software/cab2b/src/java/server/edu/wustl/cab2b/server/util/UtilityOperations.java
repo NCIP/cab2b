@@ -171,8 +171,22 @@ public class UtilityOperations extends DefaultBizLogic {
                 if (opr instanceof IRule) {
                     IRule rule = (IRule) opr;
                     for (ICondition con : rule) {
+                        String conValues = null;
+                        if (con.getValues() == null || con.getValues().isEmpty()) {
+                            conValues = con.getValue();
+                        } else {
+                            //It is assumed that if con.getValues() is not null or not empty, it will 
+                            //definitely contains some permissible values.
+                            StringBuffer strValues = new StringBuffer();
+                            for (String value : con.getValues()) {
+                                strValues.append(value).append(",");
+                            }
+                            //Deleting last comma
+                            strValues.deleteCharAt(strValues.length() - 1);
+                            conValues = strValues.toString();
+                        }
                         queryConditions.append(con.getAttribute().getName()).append("(")
-                            .append(con.getRelationalOperator()).append(")").append(con.getValue()).append(";");
+                            .append(con.getRelationalOperator()).append(")").append(conValues).append(";");
                     }
                 }
             }
