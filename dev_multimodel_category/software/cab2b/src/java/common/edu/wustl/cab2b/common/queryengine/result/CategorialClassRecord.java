@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.wustl.cab2b.common.queryengine.QueryExecutorPropertes;
+import edu.wustl.cab2b.common.util.Cab2bServerProperty;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 
 /**
@@ -19,7 +19,7 @@ public class CategorialClassRecord extends Record implements ICategorialClassRec
 
     private static long noOfObjectsPresent = 0;
 
-    private static final long totalObjectsAllowedGlobally = QueryExecutorPropertes.getGlobalAllowedRecords();
+    private static final long totalObjectsAllowedGlobally = Cab2bServerProperty.getGlobalAllowedRecords();
 
     private Map<CategorialClass, List<ICategorialClassRecord>> childrenCategorialClassRecords;
 
@@ -39,23 +39,39 @@ public class CategorialClassRecord extends Record implements ICategorialClassRec
         }
     }
 
+    /**
+     * @return {@link CategorialClass}
+     */
     public CategorialClass getCategorialClass() {
         return categorialClass;
     }
 
+    /**
+     * @param categorialClass
+     */
     public void setCategorialClass(CategorialClass categorialClass) {
         this.categorialClass = categorialClass;
     }
 
+    /**
+     * @return {@link Map}
+     */
     public Map<CategorialClass, List<ICategorialClassRecord>> getChildrenCategorialClassRecords() {
         return childrenCategorialClassRecords;
     }
 
+    /**
+     * @param childrenCategorialClassRecords
+     */
     public void setChildrenCategorialClassRecords(
                                                   Map<CategorialClass, List<ICategorialClassRecord>> childrenCategorialClassRecords) {
         this.childrenCategorialClassRecords = childrenCategorialClassRecords;
     }
 
+    /**
+     * @param catClass
+     * @param catClassRecs
+     */
     public void addCategorialClassRecords(CategorialClass catClass, List<ICategorialClassRecord> catClassRecs) {
         List<ICategorialClassRecord> existingRecs = getChildrenCategorialClassRecords().get(catClass);
         if (existingRecs == null) {
@@ -74,6 +90,10 @@ public class CategorialClassRecord extends Record implements ICategorialClassRec
         super.finalize();
         noOfObjectsPresent--;
     }
+
+    /**
+     * @return number of objects
+     */
     public static long getNoOfObjectsPresent() {
         return noOfObjectsPresent;
     }

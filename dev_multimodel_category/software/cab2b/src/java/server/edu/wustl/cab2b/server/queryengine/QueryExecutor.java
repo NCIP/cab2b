@@ -18,7 +18,6 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
-import edu.wustl.cab2b.common.queryengine.QueryExecutorPropertes;
 import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatusImpl;
@@ -31,6 +30,7 @@ import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.common.util.Cab2bServerProperty;
 import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.common.util.TreeNode;
 import edu.wustl.cab2b.common.util.Utility;
@@ -109,7 +109,7 @@ public class QueryExecutor {
     /**
      * Constructor initializes object with query and globus credentials
      * @param query
-     * @param cred
+     * @param credential
      */
     public QueryExecutor(ICab2bQuery query, GlobusCredential credential) {
         this.gc = credential;
@@ -121,8 +121,8 @@ public class QueryExecutor {
                 QueryResultTransformerFactory.createTransformer(getOutputEntity(), IRecord.class,
                                                                 ICategorialClassRecord.class);
         PriorityBlockingQueue<Runnable> queue = new PriorityBlockingQueue<Runnable>(100);
-        int max = QueryExecutorPropertes.getPerQueryMaxThreadLimit();
-        int min = QueryExecutorPropertes.getPerQueryMaxThreadLimit();
+        int max = Cab2bServerProperty.getPerQueryMaxThreadLimit();
+        int min = Cab2bServerProperty.getPerQueryMaxThreadLimit();
         executor = new QueryExecutorThreadPool(max, min, 1, TimeUnit.SECONDS, queue);
         executor.allowCoreThreadTimeOut(true);
         executor.setThreadFactory(new QueryExecutorThreadFactory());
@@ -148,8 +148,6 @@ public class QueryExecutor {
      * results using appropriate {@link IQueryResultTransformer}. If output is
      * a class, then just set the target as the class name, and appropriate
      * constraints.
-     *
-     * @return Returns the IQueryResult
      */
     public void executeQuery() {
         qStatus.setQueryStartTime(new Date());
@@ -445,7 +443,7 @@ public class QueryExecutor {
          */
         public Thread newThread(Runnable r) {
             Thread t = null;
-            if (Thread.activeCount() < QueryExecutorPropertes.getGlobalThreadLimit()) {
+            if (Thread.activeCount() < Cab2bServerProperty.getGlobalThreadLimit()) {
                 t = new Thread(r);
             } else {
                 executor.shutdownNow();
@@ -491,7 +489,7 @@ public class QueryExecutor {
 
     /**
      * Returns set of failed urls.
-     * @return
+     * @return {@link Set}
      */
     public Set<String> getFailedURLs() {
         Set<URLStatus> urlStatusSet = getStatus().getUrlStatus();
@@ -505,7 +503,7 @@ public class QueryExecutor {
     }
 
     /**
-     * @see edu.wustl.cab2b.server.queryengine.ICab2bQueryExecutor#getStatus()
+     * @return {@link QueryStatus}
      */
     public QueryStatus getStatus() {
         updateQueryStatus();
@@ -514,7 +512,7 @@ public class QueryExecutor {
 
     /**
      * Returns whatever results available and updates only query status in database.     
-     * @return
+     * @return {@link IQueryResult}
      */
     public IQueryResult<? extends IRecord> getResult() {
         updateQueryStatus();
@@ -658,8 +656,8 @@ public class QueryExecutor {
      */
     private void verifyRecordLimit(int count) {
         noOfRecordsCreated = noOfRecordsCreated + count;
-        if (noOfRecordsCreated > QueryExecutorPropertes.getPerQueryAllowedRecords()) {
-            int limit = QueryExecutorPropertes.getPerQueryAllowedRecords();
+        if (noOfRecordsCreated > Cab2bServerProperty.getPerQueryAllowedRecords()) {
+            int limit = Cab2bServerProperty.getPerQueryAllowedRecords();
             logger.error("---------------------------------------------------------");
             logger.error("Given query exceeds max number of Records : " + limit);
             logger.error("Shutting down the executor..." + noOfRecordsCreated);
