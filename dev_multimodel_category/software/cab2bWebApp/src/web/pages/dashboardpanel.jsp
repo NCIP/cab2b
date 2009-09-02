@@ -2,8 +2,8 @@
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 
-<logic:notEmpty name="queryStatusDVOList">
-	<display:table class="simple" cellspacing="1" cellpadding="4" name="${requestScope.queryStatusDVOList}" uid="query" requestURI="" defaultsort="4"  defaultorder="descending" htmlId="dashboardtable">
+<logic:notEmpty name="queryStatusDVOSet">
+	<display:table class="simple" cellspacing="1" cellpadding="4" name="${sessionScope.queryStatusDVOSet}" uid="query" requestURI="" defaultsort="4"  defaultorder="descending" htmlId="dashboardtable">
 		<display:column sortable="false" headerClass="unsortable">
 			<logic:equal name="query" property="status" value="Processing">
 				<IMG src="images/task_progress.gif" title="<bean:message key="img.alt.task.inprogress"/>">
@@ -68,7 +68,7 @@
 		</display:column>
 	</display:table>
 </logic:notEmpty>
-<logic:empty name="queryStatusDVOList">
+<logic:empty name="queryStatusDVOSet">
 	<DIV class="text" style="text-align:center;"><bean:message key="text.offlinequeriesempty"/></DIV>
 </logic:empty>
 <DIV id="scroller"></DIV>
