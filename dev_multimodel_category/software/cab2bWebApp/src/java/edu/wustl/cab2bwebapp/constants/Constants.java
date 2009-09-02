@@ -12,10 +12,10 @@ public interface Constants {
 
     /** Constants for AJAX Call */
     public static final String AJAX_CALL = "Ajax-Call";
-    
+
     /** Constants for invalidRequest */
     public static final String INVALID_REQUEST = "invalidRequest";
-        
+
     /** Constant for forward to infeasibleURLs */
     public static final String INFEASIBLE_URL = "infeasibleURL";
 
@@ -46,18 +46,21 @@ public interface Constants {
     /** Constants for User versus QueryBizLogicObject used for maintaining background query execution map*/
     public static final String USER_VS_QUERY_BIZ_LOGIC_OBJECT = "UserVsQueryBizLogicObject";
 
+    /** Constant for queryStatusDVOSet object */
+    public static final String QUERY_STATUS_DVO_SET = "queryStatusDVOSet";
+
     /** Constant for Saved Query Provider */
     public static final String SAVED_QUERY_BIZ_LOGIC = "savedQueryBizLogic";
 
     /** Constant for model groups */
     public static final String MODEL_GROUPS = "modelGroups";
-    
+
     /** Constant for transformation max UI limit */
     public static final String TRANSFORMATION_MAX_LIMIT = "transformationMaxLimit";
-    
+
     /** Constant for keywordQueryNotPresent */
     public static final String KEYWORD_QUERY_NOT_PRESENT = "keywordQueryNotPresent";
-    
+
     /** Constant for model group DVO list */
     public static final String MODEL_GROUP_DVO_LIST = "modelGroupDVOList";
 
@@ -131,8 +134,8 @@ public interface Constants {
 
     /** Constant for query id */
     public static final String QUERY_ID = "queryId";
-    
-    /** Constant for query conditions */    
+
+    /** Constant for query conditions */
     public static final String QUERY_CONDITIONS = "queryConditions";
 
     /** Constant for keyWordQueryId */
@@ -162,7 +165,7 @@ public interface Constants {
 
     /** Constant for Hosting Institution */
     public static final String HOSTING_INSTITUTION = "Hosting Institution";
-    
+
     /** Constant for Hosting Institution */
     public static final String MODEL_NAME = "Model Name";
 
@@ -194,8 +197,8 @@ public interface Constants {
     public static final String FORWARD_DASHBOARD = "dashboard";
 
     /** Constant for forward to dash board panel page */
-    public static final String FORWARD_DASHBOARD_PANEL = "dashboardpanel";    
-    
+    public static final String FORWARD_DASHBOARD_PANEL = "dashboardpanel";
+
     /** Constant for forward to dash board action class */
     public static final String FORWARD_DASHBOARD_ACTION = "dashboardaction";
 
