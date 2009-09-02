@@ -3,6 +3,7 @@ package edu.wustl.cab2b.server.initializer;
 import java.sql.Connection;
 
 import edu.wustl.cab2b.common.authentication.GTSSyncScheduler;
+import edu.wustl.cab2b.common.util.Cab2bServerProperty;
 import edu.wustl.cab2b.server.cache.DatalistCache;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.category.CategoryCache;
@@ -37,6 +38,7 @@ public class ApplicationInitializer {
 
     private void initialize() {
         Logger.configure("caB2B.logger");
+        Boolean isClusterMaster = false;
         EntityCache.getInstance();
         final long start = 0L; //Start right away
         final long interval = 3600000 * 10; //10 hours
@@ -50,7 +52,10 @@ public class ApplicationInitializer {
         }
         CategoryCache.getInstance();
         DatalistCache.getInstance();
-        IndexServiceOperations.refreshDatabase();
-        QueryURLStatusOperations.changeQueryStatusToAbort();
+        isClusterMaster = Cab2bServerProperty.isMasterJBoss();
+        if (isClusterMaster) {
+            IndexServiceOperations.refreshDatabase();
+            QueryURLStatusOperations.changeQueryStatusToAbort();
+        }
     }
 }
