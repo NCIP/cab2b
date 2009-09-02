@@ -4,14 +4,22 @@
 package edu.wustl.cab2b.server.queryengine;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
+import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
+import edu.wustl.cab2b.common.queryengine.querystatus.URLStatus;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.UserInterface;
+import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
 import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
+import edu.wustl.cab2b.server.util.UtilityOperations;
 
 /**
  * Basic ICab2bQuery query handler 
@@ -63,5 +71,30 @@ public class CaB2BQueryExecutionHandler extends QueryExecutionHandler<ICab2bQuer
     @Override
     protected void preProcessQuery() {
         QueryExecutorUtil.setOutputURLs(query, proxy, user, modelGroupNames);
+    }
+
+    public void initializeQueryStatus() {
+        String conditions = UtilityOperations.getStringRepresentationofConstraints(query.getConstraints());
+
+        Set<URLStatus> queryURLStatusSet = new HashSet<URLStatus>();
+        Set<QueryStatus> childrenQueryStatus = new HashSet<QueryStatus>(1);
+        for (QueryExecutor queryExecutor : queryExecutorsList) {
+            QueryStatus subQueryStatus = queryExecutor.getStatus();
+            queryURLStatusSet.addAll(subQueryStatus.getUrlStatus());
+            childrenQueryStatus.add(subQueryStatus);
+            
+            conditions = queryExecutor.getStatus().getQueryConditions();
+        }
+        status.setQuery(query);
+        status.setUser(user);
+        status.setVisible(Boolean.FALSE);
+        status.setQueryConditions(conditions);
+        status.setStatus(AbstractStatus.Processing);
+        status.setUrlStatus(queryURLStatusSet);
+        status.setQueryStartTime(new Date());
+        status.setChildrenQueryStatus(childrenQueryStatus);
+
+        //Saving to database
+        new QueryURLStatusOperations().insertQueryStatus(status);
     }
 }
