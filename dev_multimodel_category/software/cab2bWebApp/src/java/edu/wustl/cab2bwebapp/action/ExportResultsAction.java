@@ -21,9 +21,16 @@ import edu.wustl.cab2bwebapp.bizlogic.UserBackgroundQueries;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryBizLogic;
 import edu.wustl.cab2bwebapp.constants.Constants;
 
+/**
+ * @author pallavi_mistry
+ *
+ */
 public class ExportResultsAction extends Action {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ExportResultsAction.class);
 
+    /* (non-Javadoc)
+     * @see org.apache.struts.action.Action#execute(org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws Exception {
         if (request.getParameter("fileName") == null) {
@@ -46,6 +53,12 @@ public class ExportResultsAction extends Action {
         return null;
     }
 
+    /**
+     * @param response
+     * @param filePath
+     * @param fileName
+     * @param contentType
+     */
     public static void sendFileToClient(HttpServletResponse response, String filePath, String fileName,
                                         String contentType) {
         if (filePath != null && (filePath.length() != 0)) {
@@ -61,9 +74,16 @@ public class ExportResultsAction extends Action {
         }
     }
 
+    /**
+     * @param response
+     * @param file
+     */
     private static void writeToStream(HttpServletResponse response, File file) {
         BufferedInputStream bis = null;
         try {
+            response.setHeader("Pragma", "public");
+            response.setHeader("Cache-Control", "max-age=0");
+
             OutputStream opstream = response.getOutputStream();
             bis = new BufferedInputStream(new FileInputStream(file));
 
