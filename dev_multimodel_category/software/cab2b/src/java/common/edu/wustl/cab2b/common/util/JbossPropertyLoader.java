@@ -49,7 +49,6 @@ public class JbossPropertyLoader {
             properties.load(is);
         } catch (IOException e) {
             logger.error("Unable to load properties from : " + propertyfile);
-            e.printStackTrace();
         }
         return properties;
     }

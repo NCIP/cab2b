@@ -17,11 +17,11 @@ public class Cab2bServerProperty {
 
     protected static Properties properties = JbossPropertyLoader.getPropertiesFromFile("cab2b_server.properties");;
 
-    private static int globalThreadLimit = 4000;
+    private static int globalThreadLimit = 2000;
 
-    private static int perQueryMaxThreadLimit = 100;
+    private static int perQueryMaxThreadLimit = 50;
 
-    private static int perQueryMinThreadLimit = 100;
+    private static int perQueryMinThreadLimit = 50;
 
     private static int globalAllowedRecords = 600000;
 
@@ -39,6 +39,10 @@ public class Cab2bServerProperty {
             globalAllowedRecords = Integer.parseInt(properties.getProperty("global.record.limit"));
             perQueryAllowedRecords = Integer.parseInt(properties.getProperty("per.query.record.limit"));
             uiResultLimit = Integer.parseInt(properties.getProperty("ui.result.limit"));
+            String isClusterMaster = properties.getProperty("cluster.master");
+            if ("true".equalsIgnoreCase(isClusterMaster)) {
+                clusterMaster = true;
+            }
 
         } else {
             logger.info("File not found. Using default properties");
@@ -55,10 +59,6 @@ public class Cab2bServerProperty {
      * @return True/False depending on whether the server is considered as main server or not
      */
     public static Boolean isMasterJBoss() {
-        String isClusterMaster = properties.getProperty("cluster.master");
-        if ("true".equalsIgnoreCase(isClusterMaster)) {
-            clusterMaster = true;
-        }
         return clusterMaster;
     }
 
