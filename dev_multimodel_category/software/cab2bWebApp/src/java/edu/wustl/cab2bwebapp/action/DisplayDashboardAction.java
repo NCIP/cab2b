@@ -3,8 +3,10 @@ package edu.wustl.cab2bwebapp.action;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,7 +27,6 @@ import edu.wustl.cab2b.common.queryengine.KeywordQuery;
 import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.URLStatus;
-import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
@@ -76,7 +77,7 @@ public class DisplayDashboardAction extends Action {
             int inProgressQueryCount = 0;
             int completedQueryCount = 0;
             while (i.hasNext()) {
-                QueryStatus qs = (QueryStatus) i.next();
+                QueryStatus qs = i.next();
                 QueryStatusDVO queryStatusDVO = new QueryStatusDVO();
                 ICab2bQuery query = qs.getQuery();
 
@@ -119,19 +120,19 @@ public class DisplayDashboardAction extends Action {
                 List<ServiceInstanceDVO> serviceInstances = new ArrayList<ServiceInstanceDVO>();
                 Iterator<URLStatus> itr = qs.getUrlStatus().iterator();
                 while (itr.hasNext()) {
-                    URLStatus urlStatus = (URLStatus) itr.next();
-                    ServiceInstanceDVO sreviceInstance = new ServiceInstanceDVO();
-                    ServiceURLOperations serviceURLOpreration = new ServiceURLOperations();
-                    ServiceURLInterface serviceURL =
-                            serviceURLOpreration.getServiceURLbyURLLocation(urlStatus.getUrl());
-                    sreviceInstance.setName(Utility.getHostingInstitutionName(serviceURL));
-                    sreviceInstance.setStatus(urlStatus.getStatus());
-                    sreviceInstance.setResultCount(urlStatus.getResultCount() == null ? 0 : urlStatus
+                    URLStatus urlStatus = itr.next();
+                    String hostingIntitutionname =
+                            Utility.getHostingInstitutionName(new ServiceURLOperations()
+                                .getServiceURLbyURLLocation(urlStatus.getUrl()));
+                    ServiceInstanceDVO serviceInstance = new ServiceInstanceDVO();
+                    serviceInstance.setName(hostingIntitutionname);
+                    serviceInstance.setStatus(urlStatus.getStatus());
+                    serviceInstance.setResultCount(urlStatus.getResultCount() == null ? 0 : urlStatus
                         .getResultCount());
-                    serviceInstances.add(sreviceInstance);
+                    serviceInstances.add(serviceInstance);
                 }
+                serviceInstances = merge(serviceInstances);
                 queryStatusDVO.setServiceInstances(serviceInstances);
-
                 queryStatusDVO.setFileName(qs.getFileName());
                 queryStatusDVOList.add(queryStatusDVO);
                 if (qs.getStatus().equals(AbstractStatus.Processing)) {
@@ -157,5 +158,33 @@ public class DisplayDashboardAction extends Action {
                         : Constants.FORWARD_DASHBOARD_PANEL);
         ActionForward actionRedirect = new ActionForward(actionForward.getName(), actionForward.getPath(), false);
         return actionRedirect;
+    }
+
+    private List<ServiceInstanceDVO> merge(List<ServiceInstanceDVO> serviceInstances) {
+        Map<String, ServiceInstanceDVO> map = new HashMap<String, ServiceInstanceDVO>();
+        for (ServiceInstanceDVO dvo : serviceInstances) {
+            if (map.containsKey(dvo.getName())) {
+                ServiceInstanceDVO oldDVO = map.get(dvo.getName());
+                oldDVO.setResultCount(oldDVO.getResultCount() + dvo.getResultCount());
+                oldDVO.setStatus(decide(oldDVO.getStatus(), dvo.getStatus()));
+            } else {
+                map.put(dvo.getName(), dvo);
+            }
+        }
+        return new ArrayList<ServiceInstanceDVO>(map.values());
+    }
+
+    private String decide(String s1, String s2) {
+        String status = "";
+        if (s1.equals(AbstractStatus.Processing) || s2.equals(AbstractStatus.Processing)) {
+            status = AbstractStatus.Processing;
+        } else if (s1.equals(AbstractStatus.Complete) && s2.equals(AbstractStatus.Complete)) {
+            status = AbstractStatus.Complete;
+        } else if (s1.equals(AbstractStatus.SUSPENDED) || s2.equals(AbstractStatus.SUSPENDED)) {
+            status = AbstractStatus.SUSPENDED;
+        } else {
+            status = AbstractStatus.Complete_With_Error;
+        }
+        return status;
     }
 }
