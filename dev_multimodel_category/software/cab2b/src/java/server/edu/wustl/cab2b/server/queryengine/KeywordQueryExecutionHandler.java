@@ -89,16 +89,7 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
      */
     public Map<ICab2bQuery, IQueryResult<? extends IRecord>> getQueryVsResultMap() {
         for (QueryExecutor executor : queryExecutorsList) {
-            IQueryResult<? extends IRecord> result = null;
-            //when query is sent to execute in background, then only query status (count, etc) will be updated in database.
-            //getResult() will update the DB, while getPartialResult() will only update the in-memory object.
-            if (isExecuteInBackground()) {
-                result = executor.getResult();
-                //Saving main wrapper query status values to database.
-                new QueryURLStatusOperations().updateQueryStatus(getStatus());
-            } else {
-                result = executor.getPartialResult();
-            }
+            IQueryResult<? extends IRecord>  result = executor.getResult();
             ICab2bQuery query = (ICab2bQuery) executor.getQuery();
             queryVsResultMap.put(query, result);
         }

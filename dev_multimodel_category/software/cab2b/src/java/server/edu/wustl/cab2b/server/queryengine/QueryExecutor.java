@@ -116,6 +116,7 @@ public class QueryExecutor {
         this.query = query;
 
         recordStatus = query.getId() != null;
+        initializeQueryStatus(credential);
         transformer =
                 QueryResultTransformerFactory.createTransformer(getOutputEntity(), IRecord.class,
                                                                 ICategorialClassRecord.class);
@@ -129,7 +130,7 @@ public class QueryExecutor {
         categoryPreprocessorResult = preProcessCategories();
         ConstraintsBuilder constraintsBuilder = new ConstraintsBuilder(query, categoryPreprocessorResult);
         constraintsBuilderResult = constraintsBuilder.buildConstraints();
-        initializeQueryStatus(credential);
+
     }
 
     /**
@@ -463,7 +464,8 @@ public class QueryExecutor {
     }
 
     /**
-     * Returns complete query results.
+     * Returns complete query results.  
+     * (Most of the times this function is called in getting result for queries coming from thick client)  
      * @return the queryResult
      */
     public IQueryResult<? extends IRecord> getCompleteResults() {
@@ -476,6 +478,7 @@ public class QueryExecutor {
             }
         }
         updateQueryStatus();
+        saveStatusInDB();
         return result;
     }
 
@@ -502,18 +505,6 @@ public class QueryExecutor {
     }
 
     /**
-     * Returns whatever results available in memory. 
-     * @return the queryResult
-     */
-    public IQueryResult<? extends IRecord> getPartialResult() {
-        updateQueryStatus();
-        if (!(getStatus().getStatus().equals(AbstractStatus.Processing))) {
-            saveStatusInDB();
-        }
-        return result;
-    }
-
-    /**
      * @see edu.wustl.cab2b.server.queryengine.ICab2bQueryExecutor#getStatus()
      */
     public QueryStatus getStatus() {
@@ -527,7 +518,6 @@ public class QueryExecutor {
      */
     public IQueryResult<? extends IRecord> getResult() {
         updateQueryStatus();
-        //saveStatusInDB();
         return result;
     }
 

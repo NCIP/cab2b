@@ -10,7 +10,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.log4j.Logger;
 import org.globus.gsi.GlobusCredential;
 
-import edu.wustl.cab2b.common.queryengine.CompoundQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
@@ -128,7 +127,7 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
             if (!e.isProcessingFinished()) {
                 isProcessingFinished = false;
             }
-        }        
+        }
         return isProcessingFinished;
     }
 
@@ -152,11 +151,7 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
      */
     public void initializeQueryStatus() {
         Set<URLStatus> queryURLStatusSet = new HashSet<URLStatus>();
-        Set<QueryStatus> childrenQueryStatus = null;
-        //if query is compound query then only set child query status values
-        if (query instanceof CompoundQuery) {
-            childrenQueryStatus = new HashSet<QueryStatus>(((CompoundQuery) query).getSubQueries().size());
-        }
+        Set<QueryStatus> childrenQueryStatus = new HashSet<QueryStatus>(queryExecutorsList.size());
         for (QueryExecutor queryExecutor : queryExecutorsList) {
             QueryStatus subQueryStatus = queryExecutor.getStatus();
             queryURLStatusSet.addAll(subQueryStatus.getUrlStatus());
@@ -164,11 +159,10 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
                 childrenQueryStatus.add(subQueryStatus);
             }
         }
-
         status.setQuery(query);
         status.setUser(user);
         status.setVisible(Boolean.FALSE);
-        status.setQueryConditions(UtilityOperations.getStringRepresentationofConstraints(query.getConstraints()));        
+        status.setQueryConditions(UtilityOperations.getStringRepresentationofConstraints(query.getConstraints()));
         status.setStatus(AbstractStatus.Processing);
         status.setUrlStatus(queryURLStatusSet);
         status.setQueryStartTime(new Date());

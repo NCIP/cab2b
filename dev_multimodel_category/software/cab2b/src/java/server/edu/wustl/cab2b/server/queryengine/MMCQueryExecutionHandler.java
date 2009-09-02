@@ -69,16 +69,7 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
         Collection<IQueryResult<? extends IRecord>> queryResults =
                 new ArrayList<IQueryResult<? extends IRecord>>();
         for (QueryExecutor queryExecutor : queryExecutorsList) {
-            IQueryResult<? extends IRecord> subQueryResult = null;
-            //when query is sent to execute in background, then only query status (count, etc) will be updated in database.
-            //getResult() will update the DB, while getPartialResult() will only update the in-memory object.
-            if (isExecuteInBackground()) {
-                subQueryResult = queryExecutor.getResult(); 
-                new QueryURLStatusOperations().updateQueryStatus(getStatus());
-                logger.info("Updating MMC Status in database: "+getStatus().getStatus());
-            } else {
-                subQueryResult = queryExecutor.getPartialResult();
-            }
+            IQueryResult<? extends IRecord> subQueryResult = queryExecutor.getResult();
             if (subQueryResult != null) {
                 queryResults.add(subQueryResult);
             }
