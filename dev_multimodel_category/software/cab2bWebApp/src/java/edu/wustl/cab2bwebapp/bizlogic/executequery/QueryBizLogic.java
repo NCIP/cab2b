@@ -137,12 +137,6 @@ public class QueryBizLogic {
         } else {
             transformedResult = getSearchResults(transformationMaxLimit);
         }
-        QueryStatus qs = getStatus();
-        if (queryExecutionHandler.isExecuteInBackground()
-                && (qs.getStatus().equals(AbstractStatus.Complete) || qs.getStatus()
-                    .equals(AbstractStatus.Complete_With_Error)) && isProcessingFinished()) {
-            exportToCSV();
-        }
         return transformedResult;
     }
 
@@ -241,23 +235,28 @@ public class QueryBizLogic {
      * @return
      * @throws IOException
      */
-    public String exportToCSV() throws IOException {
+    public String exportToCSV() {
         Set<String> fileNames = null;
-        if (queryExecutionHandler instanceof KeywordQueryExecutionHandler) {
-            fileNames = keyWordExportToCSV();
-        } else {
-            fileNames = new HashSet<String>(1);
-            SpreadSheetResultTransformer transformer =
-                    new SpreadSheetResultTransformer(queryExecutionHandler.getQuery(), queryExecutionHandler
-                        .getResult());
-            String fileName = transformer.writeToCSV();
-            queryExecutionHandler.getStatus().setFileName(fileName);
-            CsvWriter.addMetadataToFile(queryExecutionHandler.getStatus());
-            fileNames.add(fileName);
+        String fileName = null;
+        try {
+            if (queryExecutionHandler instanceof KeywordQueryExecutionHandler) {
+                fileNames = keyWordExportToCSV();
+            } else {
+                fileNames = new HashSet<String>(1);
+                SpreadSheetResultTransformer transformer =
+                        new SpreadSheetResultTransformer(queryExecutionHandler.getQuery(), queryExecutionHandler
+                            .getResult());
+                fileName = transformer.writeToCSV();
+                queryExecutionHandler.getStatus().setFileName(fileName);
+                CsvWriter.addMetadataToFile(queryExecutionHandler.getStatus());
+                fileNames.add(fileName);
+            }
+            fileName = zipAndSave(fileNames);
+            updateDatabaseWithFileName(fileName, queryExecutionHandler.getStatus());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
-
-        String fileName = zipAndSave(fileNames);
-        updateDatabaseWithFileName(fileName, queryExecutionHandler.getStatus());
         return fileName;
     }
 
@@ -340,7 +339,18 @@ public class QueryBizLogic {
      * @return QueryStatus
      */
     public QueryStatus getStatus() {
-        return queryExecutionHandler.getStatus();
+        QueryStatus qs = queryExecutionHandler.getStatus();
+        /*All operations related to background query execution are finished.  
+        Now if result file is created yet, create it. Update database with file name 
+        and remove the bizlogic object from user to background query map */
+        if (queryExecutionHandler.isExecuteInBackground()
+                && (qs.getStatus().equals(AbstractStatus.Complete) || qs.getStatus()
+                    .equals(AbstractStatus.Complete_With_Error)) && isProcessingFinished()
+                && qs.getFileName() == null) {
+            exportToCSV();
+            UserBackgroundQueries.getInstance().removeCompletedQueriesFromBackground(user);
+        }
+        return qs;
     }
 
     /**

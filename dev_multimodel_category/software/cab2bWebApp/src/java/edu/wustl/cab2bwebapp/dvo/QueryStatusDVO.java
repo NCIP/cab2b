@@ -8,6 +8,9 @@ import java.util.List;
  *
  */
 public class QueryStatusDVO {
+
+    private Long id;
+
     private String title;
 
     private String type;
@@ -135,4 +138,19 @@ public class QueryStatusDVO {
     public void setServiceInstances(List<ServiceInstanceDVO> serviceInstances) {
         this.serviceInstances = serviceInstances;
     }
+
+    /**
+     * @return the id
+     */
+    public long getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(long id) {
+        this.id = id;
+    }
+
 }

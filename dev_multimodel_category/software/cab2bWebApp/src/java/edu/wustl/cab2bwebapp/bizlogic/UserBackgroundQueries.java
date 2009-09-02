@@ -4,7 +4,6 @@
 package edu.wustl.cab2bwebapp.bizlogic;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,8 +13,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
-import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.user.UserInterface;
@@ -46,7 +43,7 @@ public class UserBackgroundQueries {
     /**
      * Time interval for updating database for queries executing in background. 
      */
-    public static final int BACKGROUND_QUERY_REFRESH_TIME_INTERVAL = 15;
+    public static final int BACKGROUND_QUERY_REFRESH_TIME_INTERVAL = 10;
 
     static {
         //Creating directory for saving CSV files on server.
@@ -127,15 +124,10 @@ public class UserBackgroundQueries {
                     //If query is complete Write results into CSV file and update map with file name.
                     if (status.getStatus().equals(AbstractStatus.Complete)
                             || status.getStatus().equals(AbstractStatus.Complete_With_Error)) {
-                        try {
-                            String fileName = queryBizLogic.exportToCSV();
-                            status.setFileName(fileName);
-                            status.setQueryEndTime(new Date());
-                            logger.info(EXPORT_CSV_DIR + File.separator + fileName);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            throw new RuntimeException("Error while saving CSV file.", ErrorCodeConstants.IO_0001);
-                        }
+                        String fileName = queryBizLogic.exportToCSV();
+                        status.setFileName(fileName);
+                        status.setQueryEndTime(new Date());
+                        logger.info(EXPORT_CSV_DIR + File.separator + fileName);
                     }
                     //updating query status in database.
                     new QueryURLStatusOperations().updateQueryStatus(status);
@@ -149,28 +141,43 @@ public class UserBackgroundQueries {
      * Removes all background completed queries from memomry. 
      * @param user
      */
-    private void removeCompletedQueriesFromBackground(UserInterface user) {
+    public void removeCompletedQueriesFromBackground(UserInterface user) {
         synchronized (userToBackgroundQueries) {
             Set<QueryBizLogic> querieLogics = userToBackgroundQueries.get(user);
             if (querieLogics != null) {
                 for (QueryBizLogic queryBizLogic : querieLogics) {
                     QueryStatus status = queryBizLogic.getStatus();
-
                     //If query is complete Write results into map and remove it's reference from map.
-                    if (status.getStatus().equals(AbstractStatus.Complete)
-                            || status.getStatus().equals(AbstractStatus.Complete_With_Error)) {
+                    if ((status.getStatus().equals(AbstractStatus.Complete) || status.getStatus()
+                        .equals(AbstractStatus.Complete_With_Error))
+                            && status.getFileName() != null) {
+                        querieLogics.remove(queryBizLogic);
                         logger.info("Removing :" + queryBizLogic.getStatus().getQuery().getName() + " from user "
                                 + user.getUserName() + " mapping list.");
-                        querieLogics.remove(queryBizLogic);
                     }
                 }
             } else {
                 //No queries running in background for the selected user.
-                //Remove user from map list
-                logger
-                    .info("No queries running in background for the selected user.Removing user object (if present) from user to background query mapping.");
+                //Remove user from map list               
                 userToBackgroundQueries.remove(user);
             }
         }
+    }
+
+    /**
+     * Returns set QueryStatus for live queries working in background.
+     * @param user
+     * @return
+     */
+    public Set<QueryStatus> getBackgroundQueriesForUser(UserInterface user) {
+        Set<QueryBizLogic> querieLogics = userToBackgroundQueries.get(user);
+        Set<QueryStatus> qSet = new HashSet<QueryStatus>(0);
+        if (querieLogics != null) {
+            qSet = new HashSet<QueryStatus>(querieLogics.size());
+            for (QueryBizLogic qBizLogic : querieLogics) {
+                qSet.add(qBizLogic.getStatus());
+            }
+        }
+        return qSet;
     }
 }
