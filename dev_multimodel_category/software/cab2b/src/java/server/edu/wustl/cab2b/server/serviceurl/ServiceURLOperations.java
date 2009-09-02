@@ -2,7 +2,6 @@ package edu.wustl.cab2b.server.serviceurl;
 
 import static edu.wustl.cab2b.common.util.Constants.CATEGORY_ENTITY_GROUP_NAME;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,6 +38,9 @@ public class ServiceURLOperations {
         updateCache();
     }
 
+    /**
+     * 
+     */
     public static synchronized void updateCache() {
         Session session = null;
         try {
@@ -61,7 +63,6 @@ public class ServiceURLOperations {
 
     /**
      * @return Names of all the Entity Group present in the database
-     * @throws RemoteException
      */
     public Collection<String> getAllApplicationNames() {
         Collection<ServiceURLInterface> serviceList = getAllServiceURLs();
@@ -77,7 +78,6 @@ public class ServiceURLOperations {
 
     /**
      * @return all the service URL present in the database
-     * @throws RemoteException
      */
     public Collection<ServiceURLInterface> getAllServiceURLs() {
         return urlVsMetadata.values();
@@ -86,8 +86,7 @@ public class ServiceURLOperations {
     /**
      * This method returns the ServiceURLInterface object for given URL Location
      * @param serviceURLLocation
-     * @return
-     * @throws RemoteException
+     * @return ServiceURLInterface
      */
     public ServiceURLInterface getServiceURLbyURLLocation(String serviceURLLocation) {
         return urlVsMetadata.get(serviceURLLocation);
@@ -101,7 +100,6 @@ public class ServiceURLOperations {
      * @param version
      * @param user
      * @return List of service URLs for a particular Entity Group from database and Index Service
-     * @throws RemoteException
      */
     public List<ServiceURLInterface> getInstancesByServiceName(String serviceName, String version,
                                                                UserInterface user) {
@@ -138,7 +136,7 @@ public class ServiceURLOperations {
      * This method will return a collection of all the service instances present in the database for that
      * domain model and version.
      * @param entityGroupName
-     * @return
+     * @return {@link List}
      */
     public List<ServiceURLInterface> getAllURLsForEntityGroup(String entityGroupName) {
         List<ServiceURLInterface> serviceURLs = new ArrayList<ServiceURLInterface>();
@@ -177,6 +175,7 @@ public class ServiceURLOperations {
      * @param entityGroupName
      * @param serviceURLObjects
      * @param currentUser
+     * @return UserInterface
      */
     public UserInterface saveServiceInstances(String entityGroupName,
                                               Collection<ServiceURLInterface> serviceURLObjects,
