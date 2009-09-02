@@ -123,10 +123,10 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      */
     private void postProcessResult(DCQLQuery query) {
         //FQP dosn't fire status update for urls which returns zero results
-        //This is a bug in FQP. In this case we are adding our own url with 
+        //This is a bug in FQP. In this case we are adding our own url with Complete as status.
         for (String url : query.getTargetServiceURL()) {
             if (!urlVsStatus.containsKey(url)) {
-                updateStatus(url, "Completed with zero errors", "Completed with zero errors",
+                updateStatus(url, "Completed with zero results.", "Completed with zero results.",
                              AbstractStatus.Complete);
             }
         }
@@ -142,10 +142,8 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
         DCQLQueryResultsCollection queryResults = null;
         try {
             QueryExecutionParameters queryParameter = new QueryExecutionParameters();
-
             TargetDataServiceQueryBehavior targetBehaviour = new TargetDataServiceQueryBehavior();
             targetBehaviour.setFailOnFirstError(false);
-
             queryParameter.setTargetDataServiceQueryBehavior(targetBehaviour);
             String queryName = query.getTargetObject().getName();
             String className = queryName.substring(queryName.lastIndexOf('.') + 1, queryName.length());
@@ -321,7 +319,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * @param message
      * @param description
      */
-    protected void updateStatus(String serviceURL, String message, String description, String status) {        
+    protected void updateStatus(String serviceURL, String message, String description, String status) {
         FQPUrlStatus urlStatus = urlVsStatus.get(serviceURL);
         if (urlStatus != null) {
             urlStatus.setDescription(description);
