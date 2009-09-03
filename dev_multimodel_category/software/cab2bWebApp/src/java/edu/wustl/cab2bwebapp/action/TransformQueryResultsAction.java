@@ -150,6 +150,7 @@ public class TransformQueryResultsAction extends Action {
                 boolean queryFinished = queryBizLogic.isProcessingFinished();
                 if (queryFinished) {
                     request.setAttribute(Constants.TRANSFORMATION_MAX_LIMIT, transformationMaxLimit);
+                    request.setAttribute(Constants.QUERY_RESULT_COUNT, savedQuery.getResultCount());
                 }
                 updateSessionVariables(uiGotEnoughRecords, queryFinished, searchResults, updatedSavedQueries,
                                        searchResultsView, session);
