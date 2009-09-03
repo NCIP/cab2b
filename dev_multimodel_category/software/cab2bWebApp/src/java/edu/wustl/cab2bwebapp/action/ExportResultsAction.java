@@ -13,10 +13,13 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2bwebapp.bizlogic.UserBackgroundQueries;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryBizLogic;
 import edu.wustl.cab2bwebapp.constants.Constants;
@@ -32,24 +35,35 @@ public class ExportResultsAction extends Action {
      * @see org.apache.struts.action.Action#execute(org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                 HttpServletResponse response) throws Exception {
-        if (request.getParameter("fileName") == null) {
-            String filePath = UserBackgroundQueries.EXPORT_CSV_DIR + File.separator;
-            HttpSession session = request.getSession();
-            QueryBizLogic queryBizLogic = (QueryBizLogic) session.getAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT);
-            String exported_file_path = (String) session.getAttribute(Constants.EXPORTED_FILE_PATH);
-            //File is getting exported (and thus built) first time.
-            if (exported_file_path == null && !((" ").equals(exported_file_path))) {
-                String newfilename = queryBizLogic.exportToCSV();
-                exported_file_path = filePath + newfilename;
-                session.setAttribute(Constants.EXPORTED_FILE_PATH, exported_file_path);
+                                 HttpServletResponse response) {
+        try {
+            if (request.getParameter("fileName") == null) {
+                String filePath = UserBackgroundQueries.EXPORT_CSV_DIR + File.separator;
+                HttpSession session = request.getSession();
+                QueryBizLogic queryBizLogic =
+                        (QueryBizLogic) session.getAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT);
+                String exported_file_path = (String) session.getAttribute(Constants.EXPORTED_FILE_PATH);
+                //File is getting exported (and thus built) first time.
+                if (exported_file_path == null && !((" ").equals(exported_file_path))) {
+                    String newfilename = queryBizLogic.exportToCSV();
+                    exported_file_path = filePath + newfilename;
+                    session.setAttribute(Constants.EXPORTED_FILE_PATH, exported_file_path);
+                }
+                //else take the file path from the session
+                sendFileToClient(response, exported_file_path, "Results.zip", "application/download");
+            } else {
+                sendFileToClient(response, UserBackgroundQueries.EXPORT_CSV_DIR + File.separator
+                        + request.getParameter("fileName"), "Results.zip", "application/download");
             }
-            //else take the file path from the session
-            sendFileToClient(response, exported_file_path, "Results.zip", "application/download");
-        } else {
-            sendFileToClient(response, UserBackgroundQueries.EXPORT_CSV_DIR + File.separator
-                    + request.getParameter("fileName"), "Results.zip", "application/download");
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            ActionErrors errors = new ActionErrors();
+            ActionError error = new ActionError("fatal.exportresults.failure", e.getMessage());
+            errors.add(Constants.FATAL_EXPORT_FAILURE, error);
+            saveErrors(request, errors);
+            return mapping.findForward(Constants.FORWARD_FAILURE);
         }
+
         return null;
     }
 
@@ -69,7 +83,8 @@ public class ExportResultsAction extends Action {
                 response.setContentLength((int) file.length());
                 writeToStream(response, file);
             } else {
-                logger.error("Sorry Cannot Download as fileName is null");
+                logger.error("Exported result file does not exist.");
+                throw new RuntimeException("Exported result file does not exist.");
             }
         }
     }
@@ -98,8 +113,10 @@ public class ExportResultsAction extends Action {
             opstream.close();
         } catch (FileNotFoundException ex) {
             logger.error("Exception in method sendFileToClient:" + ex.getMessage(), ex);
+            throw new RuntimeException("Error while exporting results file.");
         } catch (IOException ex) {
             logger.error("Exception in method sendFileToClient:" + ex.getMessage(), ex);
+            throw new RuntimeException("Error while doing file operations.");
         }
     }
 }
