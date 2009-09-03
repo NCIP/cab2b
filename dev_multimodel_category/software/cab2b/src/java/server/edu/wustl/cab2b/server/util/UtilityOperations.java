@@ -179,10 +179,10 @@ public class UtilityOperations extends DefaultBizLogic {
                             //definitely contains some permissible values.
                             StringBuffer strValues = new StringBuffer();
                             for (String value : con.getValues()) {
-                                strValues.append(value).append(",");
+                                strValues.append(value).append(", ");
                             }
-                            //Deleting last comma
-                            strValues.deleteCharAt(strValues.length() - 1);
+                            //Deleting last space and comma
+                            strValues.delete(strValues.length() - 2, strValues.length() - 1);
                             conValues = strValues.toString();
                         }
                         queryConditions.append(con.getAttribute().getName()).append("(")
