@@ -37,14 +37,19 @@
 	<logic:present name="queryUIPartialCount">
 		<DIV id="partialresultsmessage"><bean:message key="message.partialresults" arg0="${savedSearch.resultCount}"/></DIV>
 	</logic:present>
+	<logic:present name="keyword">
+		<DIV style="font-size:0.85em;" id="resultsmessageKeyword"><IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"> <bean:message key="message.partialresults.keyword" arg0="${sessionScope.keyword}" arg1="${sessionScope.selectedQueryName}"/></DIV>
+	</logic:present>
 	<logic:present name="stopAjax">
 		<logic:present name="transformationMaxLimit">
-			<logic:lessEqual name="transformationMaxLimit" value="${savedSearch.resultCount}">
-				<DIV id="completeresultsmessage"><bean:message key="message.completeresults.morethan.uilimit" arg0="${savedSearch.resultCount}"/></DIV>
-			</logic:lessEqual>
-			<logic:greaterThan name="transformationMaxLimit" value="${savedSearch.resultCount}">
-				<DIV id="completeresultsmessage"><bean:message key="message.completeresults.lessthan.uilimit" arg0="${savedSearch.resultCount}"/></DIV>
-			</logic:greaterThan>
+			<logic:present name="queryResultCount">
+				<logic:lessEqual name="transformationMaxLimit" value="${queryResultCount}">
+					<DIV id="completeresultsmessage"><bean:message key="message.completeresults.morethan.uilimit" arg0="${queryResultCount}"/></DIV>
+				</logic:lessEqual>
+				<logic:greaterThan name="transformationMaxLimit" value="${queryResultCount}">
+					<DIV id="completeresultsmessage"><bean:message key="message.completeresults.lessthan.uilimit" arg0="${queryResultCount}"/></DIV>
+				</logic:greaterThan>
+			</logic:present>
 		</logic:present>
 	</logic:present>
 </DIV>

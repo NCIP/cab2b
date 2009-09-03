@@ -60,6 +60,14 @@
 	  document.getElementById('resultsmessage').style.textAlign = 'left';
 	}
   }
+  else
+  {
+	if(document.getElementById('resultsmessageKeyword'))
+	{
+       document.getElementById('resultsmessage').innerHTML = document.getElementById('resultsmessageKeyword').innerHTML;
+	}
+  }
+  
    if(document.getElementById("completeresultsmessage"))
   { 	
 	 if(document.getElementById("failedservicesAJAX"))
@@ -142,12 +150,12 @@ toolTipId = null;
 			<A class="link" style="margin-top:0.3em;display:none;" id="failedserviceslink" href="#this" onclick="document.getElementById('pageoverlay').style.display='block';document.getElementById('failedservicespanel').style.display='block';"><bean:message key="link.failedserviceinstances"/>(<SPAN id="failedservicescount"></SPAN>)</A>			
 		</DIV><BR style="line-height:0.2em;"><HR style="height:1;color:#bbb">		
 		<DIV style="font-size:0.85em;display:none" id="exportmessage"><IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"> <bean:message key="message.export"/></DIV>
-		<logic:notPresent name="keyword">
-			<DIV style="font-size:0.85em;" id="resultsmessage"><IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"> <bean:message key="message.partialresults.formbased" arg0="${sessionScope.selectedQueryName}"/></DIV>
-		</logic:notPresent>
-		<logic:present name="keyword">
-			<DIV style="font-size:0.85em;" id="resultsmessage"><IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"> <bean:message key="message.partialresults.keyword" arg0="${sessionScope.keyword}" arg1="${sessionScope.selectedQueryName}"/></DIV>
-		</logic:present>
+		
+		<DIV style="font-size:0.85em;" id="resultsmessage">
+			<logic:notPresent name="keyword">
+				<IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"> <bean:message key="message.partialresults.formbased" arg0="${sessionScope.selectedQueryName}"/>
+			</logic:notPresent>
+		</DIV>
 	</DIV>
 	<DIV id="pageoverlay"></DIV>
 	<DIV id="failedservicespanel">
