@@ -25,9 +25,10 @@ public class JbossPropertyLoader {
     static {
         Map<String, String> environmentVariablesVsValues = System.getenv();
         String jbossHome = environmentVariablesVsValues.get("JBOSS_HOME");
-        StringBuffer confPropertyLocation = new StringBuffer(jbossHome);
-        confPropertyLocation.append(File.separator).append("server").append(File.separator).append("default");
-        confPropertyLocation.append("conf");
+        int endIndex = jbossHome.indexOf("bin");
+        StringBuffer confPropertyLocation = new StringBuffer(jbossHome.subSequence(0, endIndex));
+        confPropertyLocation.append("server").append(File.separator).append("default");
+        confPropertyLocation.append(File.separator).append("conf");
         jbossConfLocation = confPropertyLocation.toString();
     }
 
@@ -38,7 +39,7 @@ public class JbossPropertyLoader {
     public static Properties getPropertiesFromFile(String propertyfile) {
         Properties properties = null;
         try {
-            File file = new File(jbossConfLocation + "/" + propertyfile);
+            File file = new File(jbossConfLocation + File.separator + propertyfile);
             URL url = file.toURI().toURL();
             InputStream is = url.openStream();
             if (is == null) {
