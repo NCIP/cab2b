@@ -72,7 +72,10 @@ public interface Constants {
 
     /** Constant for selectedQueryName */
     public static final String SELECTED_QUERY_NAME = "selectedQueryName";
-
+    
+    /** Constant for queryResultCount */
+    public static final String QUERY_RESULT_COUNT = "queryResultCount";
+    
     /** Constant for forward to home page */
     public static final String FORWARD_HOME = "home";
 
@@ -183,6 +186,9 @@ public interface Constants {
 
     /** Constant for fatal keyword search failure */
     public static final String FATAL_KYEWORD_SEARCH_FAILURE = "fatalKeywordSearchFailure";
+    
+    /** Constant for fatal export failure */
+    public static final String FATAL_EXPORT_FAILURE = "fatalExportFailure";
 
     /** Constants for Failed Services */
     public static final String FAILED_SERVICES = "failedServices";
