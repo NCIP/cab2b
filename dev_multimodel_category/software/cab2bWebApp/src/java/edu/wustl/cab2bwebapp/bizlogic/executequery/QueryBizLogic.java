@@ -16,7 +16,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
-import org.exolab.castor.mapping.MappingException;
 import org.globus.gsi.GlobusCredential;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -254,7 +253,7 @@ public class QueryBizLogic {
             updateDatabaseWithFileName(fileName, queryExecutionHandler.getStatus());
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException("Error while exporting CSV ZIP file.", ErrorCodeConstants.IO_0001);
         }
         return fileName;
     }
@@ -338,18 +337,18 @@ public class QueryBizLogic {
      * @return QueryStatus
      */
     public QueryStatus getStatus() {
-        QueryStatus qs = queryExecutionHandler.getStatus();
-        /*All operations related to background query execution are finished.  
-        Now if result file is created yet, create it. Update database with file name 
-        and remove the bizlogic object from user to background query map */
-        if (queryExecutionHandler.isExecuteInBackground()
-                && (qs.getStatus().equals(AbstractStatus.Complete) || qs.getStatus()
-                    .equals(AbstractStatus.Complete_With_Error)) && isProcessingFinished()
-                && qs.getFileName() == null) {
-            exportToCSV();
-            UserBackgroundQueries.getInstance().removeCompletedQueriesFromBackground(user);
+        QueryStatus queryStatus = queryExecutionHandler.getStatus();
+        if ((queryStatus.getStatus().equals(AbstractStatus.Complete) || queryStatus.getStatus()
+            .equals(AbstractStatus.Complete_With_Error))
+                && isProcessingFinished()) {
+            if (queryExecutionHandler.isExecuteInBackground() && queryStatus.getFileName() == null) {
+                /*If all operations related to background query execution are finished  
+                and result file is not created yet, create it. Update database with file name*/
+                exportToCSV();
+            }
+            new QueryURLStatusOperations().updateQueryStatus(queryStatus);
         }
-        return qs;
+        return queryStatus;
     }
 
     /**
