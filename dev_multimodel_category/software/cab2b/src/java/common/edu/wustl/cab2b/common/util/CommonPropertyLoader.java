@@ -13,7 +13,10 @@ import org.apache.log4j.Logger;
 public class CommonPropertyLoader {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(CommonPropertyLoader.class);
 
-    private static Properties properties = Utility.getPropertiesFromFile("cab2b.properties");
+    public static final String propertyFileName = "cab2b.properties";
+    
+    private static Properties properties = Utility.getPropertiesFromFile(propertyFileName);
+    
 
     /**
      * @return The URL of JNDI service running on caB2B server
@@ -25,6 +28,15 @@ public class CommonPropertyLoader {
         String invokerURLSuffix = properties.getProperty("caB2B.server.jndi.invoker.url.suffix");
         return jndiProtocol+"://" + serverIP + ":" + jndiPort+invokerURLSuffix;
     }
+    
+    public static String getSSLTruststoreFileName(){
+        return properties.getProperty("caB2B.ssl.truststore.filename");
+    }
+    
+    public static String isIgnoreHttpHost(){
+        return properties.getProperty("org.jboss.security.ignoreHttpsHost");
+    }
+    
     
     //https://localhost:8443/invoker/JNDIFactorySSL
     //"jnp://" + serverIP + ":" + jndiPort;
