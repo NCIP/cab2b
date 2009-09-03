@@ -44,6 +44,7 @@
 	<property name="log4j.xml.file" location="${conf.dir}/log4j.xml" />
 	<property name="tomcat.web.xml.file" location="${conf.dir}/tomcat_web.xml" />
 	<property name="jboss.invoker.service.xml.file" location="${conf.dir}/invoker_jboss-service.xml" />
+	<property name="cab2b.runtime.properties" location="${conf.dir}/cab2b_server.properties" />
 
 	<property name="db.scripts.dir" location="db" />
 	<property name="db.install.scripts.dir" location="${db.scripts.dir}/db-install" />
@@ -1157,6 +1158,7 @@
 
 		<copy overwrite="true" file="${jbossjca.service.xml}" todir="${jboss.deploy.dir}" />
 		<copy overwrite="true" file="${log4j.xml.file}" todir="${jboss.home}/server/${jboss.server.name}/conf" />
+		<copy overwrite="true" file="${cab2b.runtime.properties}" todir="${jboss.home}/server/${jboss.server.name}/conf" />
 		<copy overwrite="true" file="lib/server/oracleDriver.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/server/mysql-connector-java-5.0.8-bin.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/common/hibernate3.jar" todir="${jboss.common.lib.dir}" />
