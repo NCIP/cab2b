@@ -2,11 +2,14 @@ package edu.wustl.cab2b.common.locator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
 
 import javax.ejb.EJBHome;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+
 import org.apache.log4j.Logger;
+
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
@@ -28,6 +31,23 @@ public class Locator {
      * This is to enforce that Locator is a singleton class
      */
     protected Locator() {
+        ClassLoader trustStoreRscrc = getClass().getClassLoader();
+        String trustStoreFileProperty = CommonPropertyLoader.getSSLTruststoreFileName();
+        URL rsrcURL = trustStoreRscrc.getResource(trustStoreFileProperty);
+
+        if (rsrcURL != null) {
+            String trustStoreFileName = rsrcURL.getFile();
+            System.setProperty("javax.net.ssl.trustStore", trustStoreFileName);
+            System.setProperty("org.jboss.security.ignoreHttpsHost", CommonPropertyLoader.isIgnoreHttpHost());
+        } else {
+            StringBuffer msg = new StringBuffer();
+            msg.append("No Truststore found for Truststore file name: ");
+            msg.append(trustStoreFileProperty);
+            msg.append(" in property file ");
+            msg.append(CommonPropertyLoader.propertyFileName);
+            logger.warn(msg.toString());
+        }
+
         System.setProperty(Context.PROVIDER_URL, CommonPropertyLoader.getJndiUrl());
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.naming.HttpNamingContextFactory");
         //System.setProperty(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
