@@ -177,7 +177,27 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
             globusCredential = AuthenticationUtility.getGlobusCredential(serializedDCR);
         }
 
+        //TODO may need to comment popularity for the time being
+        //This is causing connection issues in case of Apply Datalist where client calls EJB in multiple threads
+        //For each thread a new session is created due to ThreadLocal way of getting Session
         new PopularCategoryOperations().setPopularity(query);
+        QueryExecutor queryExecutor = new QueryExecutor(query, globusCredential);
+        queryExecutor.executeQuery();
+        return queryExecutor.getCompleteResults();
+    }
+    
+    /**
+     * This method executes the given query and returns the result
+     * @param query
+     * @param serializedDCR
+     * @return
+     */
+    public IQueryResult<? extends IRecord> executeQueryForApplyDatalist(ICab2bQuery query, String serializedDCR) {
+        GlobusCredential globusCredential = null;
+        boolean hasAnySecureService = Utility.hasAnySecureService(query);
+        if (hasAnySecureService) {
+            globusCredential = AuthenticationUtility.getGlobusCredential(serializedDCR);
+        }
         QueryExecutor queryExecutor = new QueryExecutor(query, globusCredential);
         queryExecutor.executeQuery();
         return queryExecutor.getCompleteResults();
