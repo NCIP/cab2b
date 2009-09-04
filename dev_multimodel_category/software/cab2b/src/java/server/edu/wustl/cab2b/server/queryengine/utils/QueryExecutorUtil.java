@@ -141,7 +141,6 @@ public class QueryExecutorUtil {
         } else {
             entityGroups.add(edu.wustl.cab2b.common.util.Utility.getEntityGroup(outputEntity));
         }
-
         return entityGroups;
     }
 

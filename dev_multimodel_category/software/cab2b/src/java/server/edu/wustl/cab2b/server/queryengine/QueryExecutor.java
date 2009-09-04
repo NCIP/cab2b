@@ -32,6 +32,7 @@ import edu.wustl.cab2b.common.queryengine.result.RecordId;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.Cab2bServerProperty;
 import edu.wustl.cab2b.common.util.Constants;
+import edu.wustl.cab2b.common.util.QueryStatusUtil;
 import edu.wustl.cab2b.common.util.TreeNode;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessor;
@@ -488,21 +489,6 @@ public class QueryExecutor {
     }
 
     /**
-     * Returns set of failed urls.
-     * @return {@link Set}
-     */
-    public Set<String> getFailedURLs() {
-        Set<URLStatus> urlStatusSet = getStatus().getUrlStatus();
-        Set<String> failedUrls = new HashSet<String>();
-        for (URLStatus urlStatus : urlStatusSet) {
-            if (urlStatus.getStatus().equals(AbstractStatus.Complete_With_Error)) {
-                failedUrls.add(urlStatus.getUrl());
-            }
-        }
-        return failedUrls;
-    }
-
-    /**
      * @return {@link QueryStatus}
      */
     public QueryStatus getStatus() {
@@ -545,9 +531,8 @@ public class QueryExecutor {
         if (result == null) {
             return;
         }
-        String status = qStatus.getStatus();
-        if (status != null
-                && (status.equals(AbstractStatus.Complete) || status.equals(AbstractStatus.Complete_With_Error))) {
+
+        if (QueryStatusUtil.isStatusProcessingDone(qStatus)) {
             return;
         }
 
@@ -556,7 +541,7 @@ public class QueryExecutor {
         boolean isResultAvailable = false;
         for (FQPUrlStatus fqpUrl : fqpUrlStatus) {
             String url = fqpUrl.getTargetUrl();
-            URLStatus uStatusObj = getStatusUrl(url);
+            URLStatus uStatusObj = QueryStatusUtil.getStatusUrlObject(url, qStatus);
             uStatusObj.setStatus(fqpUrl.getStatus());
             uStatusObj.setDescription(fqpUrl.getDescription());
             uStatusObj.setMessage(fqpUrl.getMessage());
@@ -567,29 +552,26 @@ public class QueryExecutor {
                 uStatusObj.setResultCount(urlRecCount);
             }
         }
-
         //sets total result count only if it is available
         if (isResultAvailable) {
             qStatus.setResultCount(totalResultCount);
         }
         //Deriving the query status from URL status
         qStatus.setStatus(AbstractStatus.Processing);
-        if (isProcessingFinished() && areAllUrlsFinished(fqpUrlStatus)) {
+        if (isProcessingFinished() && QueryStatusUtil.areAllUrlsFinished(qStatus)) {
             qStatus.setQueryEndTime(new Date());
-            boolean isEveryUrlWorked = true;
-            for (FQPUrlStatus fqpUrl : fqpUrlStatus) {
-                String urlStatus = fqpUrl.getStatus();
-                if (urlStatus.equals(AbstractStatus.Complete_With_Error)) {
-                    qStatus.setStatus(AbstractStatus.Complete_With_Error);
-                    isEveryUrlWorked = false;
-                    break;
+            String statusStr = AbstractStatus.Complete_With_Error;
+            if (QueryStatusUtil.isEveryUrlStatusEqualsTo(AbstractStatus.Complete_With_Error, qStatus)
+                    && !isResultAvailable) {
+                statusStr = AbstractStatus.FAILED;
+            } else {
+                if (QueryStatusUtil.isEveryUrlStatusEqualsTo(AbstractStatus.Complete, qStatus)) {
+                    statusStr = AbstractStatus.Complete;
                 }
             }
-            if (isEveryUrlWorked) {
-                qStatus.setStatus(AbstractStatus.Complete);
-            }
+            QueryStatusUtil.checkAndSetIfUrlFailedFor(qStatus);
+            qStatus.setStatus(statusStr);
         }
-
     }
 
     /**
@@ -597,7 +579,7 @@ public class QueryExecutor {
      * @param url
      * @return
      */
-    private int getRecordCountForUrl(String url) {
+    public int getRecordCountForUrl(String url) {
         int urlRecCount = -1;
         if (result instanceof ICategoryResult) {
             ICategoryResult<ICategorialClassRecord> categoryResult = (ICategoryResult) result;
@@ -614,40 +596,6 @@ public class QueryExecutor {
             }
         }
         return urlRecCount;
-    }
-
-    /**
-     * Method which returns corresponding URL object for given url string. 
-     * @param url
-     * @return
-     */
-    private URLStatus getStatusUrl(String url) {
-        if (qStatus != null) {
-            Collection<URLStatus> urlStatus = qStatus.getUrlStatus();
-            for (URLStatus uStatus : urlStatus) {
-                String fqpUrl = uStatus.getUrl();
-                if (fqpUrl != null && fqpUrl.equals(url)) {
-                    return uStatus;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @param fqpUrlStatus
-     * @return
-     */
-    private boolean areAllUrlsFinished(Collection<FQPUrlStatus> fqpUrlStatus) {
-        boolean res = true;
-        for (FQPUrlStatus fqpUrl : fqpUrlStatus) {
-            String urlStatus = fqpUrl.getStatus();
-            if (urlStatus.equals(AbstractStatus.Processing)) {
-                res = false;
-                break;
-            }
-        }
-        return res;
     }
 
     /**

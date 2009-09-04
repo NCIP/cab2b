@@ -65,11 +65,15 @@ public class DisplayDashboardAction extends Action {
             } else {
                 queryStatusDVOSet =
                         (Set<QueryStatusDVO>) request.getSession().getAttribute(Constants.QUERY_STATUS_DVO_SET);
-                //This is to ensure that we are showing query status that was added into DB after our first DB call.
-                Set<QueryStatus> queryStatusFromMemory =
-                        UserBackgroundQueries.getInstance().getBackgroundQueriesForUser(user);
-                queryStatusSet.addAll(queryStatusFromMemory);
             }
+            //This is to ensure that we are showing query status that was added into Memory after our first DB call.
+            Set<QueryStatus> queryStatusFromMemory =
+                    UserBackgroundQueries.getInstance().getBackgroundQueriesForUser(user);
+
+            //As a property of JAVA set interface if you want to update the object 
+            //we have to first remove the object from set and add again with its modified value.
+            queryStatusSet.removeAll(queryStatusFromMemory);
+            queryStatusSet.addAll(queryStatusFromMemory);
 
             DashBoardDvoUtility.updateStatusDVO(queryStatusSet, queryStatusDVOSet);
             int inProgressQueryCount =
