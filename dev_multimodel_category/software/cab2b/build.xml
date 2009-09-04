@@ -180,6 +180,8 @@
 		<replace file="${conf.dir}/cab2b.properties" token="@server.port@" value="${server-port}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@jndi.protocol@" value="${jndi.protocol}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@jndi.invoker.url@" value="${jndi.invoker.url}" />
+		<replace file="${conf.dir}/cab2b.properties" token="@ssl.truststore.filename@" value="${jboss.ssl.truststore.filename}" />
+		<replace file="${conf.dir}/cab2b.properties" token="org.jboss.security.ignoreHttpsHost" value="${jboss.ssl.enable}" />
 
 		<replace file="${conf.dir}/cab2b.properties" token="@server.host@" value="${server-host}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@server.port@" value="${server-port}" />
@@ -358,8 +360,8 @@
 				<include name="**/*.jar" />
 			</fileset>
 		</copy>
-		<echo message="java -Xmx512m -Djavax.net.ssl.trustStore=./jssecacerts -Dorg.jboss.security.ignoreHttpsHost=true -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="true" />
-		<echo message="java -Xmx512m -Djavax.net.ssl.trustStore=./jssecacerts -Dorg.jboss.security.ignoreHttpsHost=true -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="true" />
+		<echo message="java -Xmx512m -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="true" />
+		<echo message="java -Xmx512m -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="true" />
 
 		<copy todir="${client.setup.dir}/conf">
 			<fileset dir="${conf.dir}">
@@ -375,7 +377,7 @@
 				<include name="log4j.properties" />
 			</fileset>
 		</copy>
-		<copy file="${resource.dir}/certificate/cab2b-ssl.truststore" todir="${client.setup.dir}/conf" overwrite="true" />
+		<copy file="${jboss.ssl.truststore.location}" todir="${client.setup.dir}/conf" overwrite="true" />
 		<mkdir dir="${client.setup.dir}/conf/production" />
 		<mkdir dir="${client.setup.dir}/conf/training" />
 		<copy todir="${client.setup.dir}/conf/production">
