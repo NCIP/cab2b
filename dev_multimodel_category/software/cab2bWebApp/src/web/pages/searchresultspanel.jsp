@@ -64,7 +64,7 @@
 </logic:present>
 <DIV style="display:none">
 	<DIV id="exportbuttonAJAX" >
-		<IMG src="images/ico_file_excel.png" style="margin-top:0.3em;cursor:pointer;" title="<bean:message key="img.alt.exportresults"/>" onClick="document.location='ExportResults.do';setTimeout('TogglePreloader(0)', 1);">&nbsp;&nbsp;
+		<IMG src="images/export.jpg" style="margin-top:0.3em;cursor:pointer;" title="<bean:message key="img.alt.exportresults"/>" onClick="document.location='ExportResults.do';setTimeout('TogglePreloader(0)', 1);">&nbsp;&nbsp;
 	</DIV>
 	<logic:present name="queryUIPartialCount">
 		<DIV id="partialresultsmessage"><bean:message key="message.partialresults" arg0="${savedSearch.resultCount}"/></DIV>

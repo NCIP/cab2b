@@ -140,7 +140,7 @@ toolTipId = null;
 			<IMG src="images/service_instance.jpg"  style="margin-top:0.3em;cursor:pointer;" title="<bean:message key="link.failedserviceinstances"/>"/>&nbsp;&nbsp;
 		</DIV>
 		<DIV id="exportbutton" style="float:right;">
-			<IMG src="images/ico_file_excel.png" style="margin-top:0.3em;cursor:pointer;" title="<bean:message key="img.alt.exportresults"/>" />&nbsp;&nbsp;
+			<IMG src="images/export.jpg" style="margin-top:0.3em;cursor:pointer;" title="<bean:message key="img.alt.exportresults"/>" />&nbsp;&nbsp;
 		</DIV>
 				
 		<DIV style="float:right;">
