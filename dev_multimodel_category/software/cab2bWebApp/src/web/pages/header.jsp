@@ -19,8 +19,7 @@
 						<A href="Home.do" class="link">Home</A>
 					</logic:notEqual>
 				</logic:notPresent>
-				<logic:present name="userName">
-					<SCRIPT language="JavaScript"></SCRIPT>				
+				<logic:present name="userName">			
 					<SPAN class="title"><bean:write name="userName"/></SPAN>
 					<SPAN class="title">|</SPAN>
 					<A href="Logout.do" class="link"><bean:message key="link.signout"/></A><BR/>
@@ -28,7 +27,7 @@
 						<A href="Home.do" class="link">Home</A>
 						<SPAN class="title">|</SPAN>
 					</logic:notEqual>					
-					<A href="DisplayDashboard.do" class="link"><bean:message key="link.dashboard" arg0="${sessionScope.completedQueryCount}" arg1="${sessionScope.inProgressQueryCount}"/></A>					
+					<A href="DisplayDashboard.do" class="link" id="dashboardlink"><bean:message key="link.dashboard" arg0="${sessionScope.completedQueryCount}" arg1="${sessionScope.inProgressQueryCount}"/></A>					
 				</logic:present>
 			</logic:notPresent>
 		</DIV>
