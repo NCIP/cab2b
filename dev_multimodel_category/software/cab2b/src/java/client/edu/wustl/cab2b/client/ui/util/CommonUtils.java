@@ -213,24 +213,47 @@ public class CommonUtils {
      * @throws RuntimeException
      * @throws RemoteException
      */
-    public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query) throws Exception {
+    public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, boolean isApplyDatalist)
+            throws Exception {
         boolean anySecureSevice = Utility.hasAnySecureService(query);
 
-        QueryEngineBusinessInterface queryEngineBus =
-                (QueryEngineBusinessInterface) CommonUtils
-                    .getBusinessInterface(EjbNamesConstants.QUERY_ENGINE_BEAN, QueryEngineHome.class);
+        QueryEngineBusinessInterface queryEngineBus = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
+                                                                                                                      EjbNamesConstants.QUERY_ENGINE_BEAN,
+                                                                                                                      QueryEngineHome.class);
         IQueryResult<? extends IRecord> results = null;
         try {
 
             if (anySecureSevice) {
-                results = queryEngineBus.executeQuery(query, Authenticator.getSerializedDCR());
+                if (isApplyDatalist) {
+                    results = queryEngineBus.executeQueryForApplyDatalist(query, Authenticator.getSerializedDCR());
+                } else {
+                    results = queryEngineBus.executeQuery(query, Authenticator.getSerializedDCR());
+                }
             } else {
-                results = queryEngineBus.executeQuery(query, null);
+                if (isApplyDatalist) {
+                    results = queryEngineBus.executeQueryForApplyDatalist(query, null);
+                } else {
+                    results = queryEngineBus.executeQuery(query, null);
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return results;
+    }
+
+    /**
+     * The method executes the encapsulated B2B query. For this it uses the
+     * Locator service to locate an instance of the QueryEngineBusinessInterface
+     * and uses the interface to remotely execute the query.
+     *
+     * @param query
+     * @param queryEngineBus
+     * @throws RuntimeException
+     * @throws RemoteException
+     */
+    public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query) throws Exception {
+        return executeQuery(query, false);
     }
 
     /**
