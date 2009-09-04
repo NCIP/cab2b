@@ -66,7 +66,7 @@
 	  var results = httpRequest.responseText;  	  
 	   if(results=="Exception")
 	  {
-  	     if(confirm('Incorrect service instance configured for query! Do you want to configure now?'))
+  	     if(confirm('Incorrect databases to search configured for query! Do you want to re-configure now?'))
 		{
 		  document.location = "Home.do?redirect=true";
 		}
@@ -78,7 +78,7 @@
 	   if(httpRequest.status!=403 && responseReceiver)
 	  {
         document.getElementById(responseReceiver).innerHTML = results;
-		 if(callbackFunction)
+		 if(callbackFunction && httpRequest.status==200)
 		{
 		  callbackFunction();
 		}
