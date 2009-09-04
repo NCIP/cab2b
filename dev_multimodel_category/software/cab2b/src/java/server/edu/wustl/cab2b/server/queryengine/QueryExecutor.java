@@ -622,4 +622,12 @@ public class QueryExecutor {
     private EntityInterface getOutputEntity() {
         return getQuery().getOutputEntity();
     }
+
+    /**
+     * Returns set of failed urls.
+     * @return
+     */
+    public Set<String> getFailedURLs() {
+        return QueryStatusUtil.getFailedURLs(qStatus);
+    }
 }
