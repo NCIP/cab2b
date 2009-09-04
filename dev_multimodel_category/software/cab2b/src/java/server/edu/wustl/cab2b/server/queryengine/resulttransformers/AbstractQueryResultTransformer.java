@@ -147,12 +147,12 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             queryParameter.setTargetDataServiceQueryBehavior(targetBehaviour);
             String queryName = query.getTargetObject().getName();
             String className = queryName.substring(queryName.lastIndexOf('.') + 1, queryName.length());
-            logger.info("Executing DQCL to get " + className);
+            logger.debug("Executing DQCL to get " + className);
             FederatedQueryEngine federatedQueryEngine = new FederatedQueryEngine(cred, queryParameter, executor);
             FQPQueryListener listener = new FQPQueryListener(this);
             federatedQueryEngine.addStatusListener(listener);
             queryResults = federatedQueryEngine.execute(query);
-            logger.info("Query for " + className + " Completed");
+            logger.debug("Query for " + className + " Completed");
         } catch (FederatedQueryProcessingException e) {
             e.printStackTrace();
             throw new RuntimeException(Utility.getStackTrace(e), ErrorCodeConstants.QM_0004);
