@@ -7,9 +7,9 @@
 		<SPAN class="title">|</SPAN>
 		<A class="linkfooter" href="mailto:cab2bsupport@bmi.wustl.edu"><bean:message key="link.contactus"/></A>
 		<SPAN class="title">|</SPAN>
-		<A class="linkfooter" href="http://cagrid-portal.nci.nih.gov/web/guest/privacy" target="_blank"><bean:message key="link.privacynotice"/></A>
+		<A class="linkfooter" href="http://www.nih.gov/about/privacy.htm" target="_blank"><bean:message key="link.privacynotice"/></A>
 		<SPAN class="title">|</SPAN>
-		<A class="linkfooter" href="http://cagrid-portal.nci.nih.gov/web/guest/disclaimer" target="_blank"><bean:message key="link.disclaimer"/></A>
+		<A class="linkfooter" href="http://www.nih.gov/about/disclaim.htm" target="_blank"><bean:message key="link.disclaimer"/></A>
 		<SPAN class="title">|</SPAN>
 		<A class="linkfooter" href="http://www3.cancer.gov/accessibility/nci508.htm" target="_blank"><bean:message key="link.accessibility"/></A>
 		<SPAN class="title">|</SPAN>
