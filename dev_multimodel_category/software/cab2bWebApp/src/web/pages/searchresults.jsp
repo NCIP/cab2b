@@ -53,40 +53,35 @@
   }
   var resultCount = document.getElementById('resultcountAJAX')?document.getElementById('resultcountAJAX').innerHTML:'0';
    if(resultCount != '0')
-  {
-    document.getElementById('resultsmessage').innerHTML = document.getElementById('completeresultsmessage')?document.getElementById('completeresultsmessage').innerHTML:document.getElementById('exportmessage').innerHTML;
+  { document.getElementById('offlineExecutionButton').style.display = 'block';
+	document.getElementById('preResultsQueryInfoPanel').style.display = 'none';
+    document.getElementById('resultsmessage').innerHTML = document.getElementById('completeresultsmessage')?document.getElementById('completeresultsmessage').innerHTML:document.getElementById('queryInProgressMessage').innerHTML;
 	 if(document.getElementById('completeresultsmessage') || document.getElementById('partialresultsmessage'))
 	{
 	  document.getElementById('resultsmessage').style.textAlign = 'left';
 	}
-  }
-  else
-  {
-	if(document.getElementById('resultsmessageKeyword'))
-	{
-       document.getElementById('resultsmessage').innerHTML = document.getElementById('resultsmessageKeyword').innerHTML;
-	}
-  }
-  
+  }  
    if(document.getElementById("completeresultsmessage"))
   { 	
 	 if(document.getElementById("failedservicesAJAX"))
 	{
-	  document.getElementById('failedserviceslink').style.display = 'block';
-	  document.getElementById("failedservicescount").innerHTML = document.getElementById("failedservicescountAJAX").innerHTML;    
+	  document.getElementById('failedserviceslink').innerHTML = document.getElementById("failedserviceslinkAJAX").innerHTML;
+	  
       document.getElementById("failedservicespanelbody").innerHTML = document.getElementById("failedservicesAJAX").innerHTML;    
 	}	
-	 if(document.getElementById('executeinbackgroundbutton'))
+	 if(document.getElementById('offlineExecutionButton'))
 	{
-	  document.getElementById('executeinbackgroundbutton').disabled = true;
-	  document.getElementById('executeinbackgroundbutton').className = 'buttondisabled';
+	  document.getElementById('offlineExecutionButton').disabled = true;
+	  document.getElementById('offlineExecutionButton').className = 'buttondisabled';
 	}    
 	 if(resultCount=='0')
 	{
 	  document.getElementById('resultsmessage').innerHTML = "";
+	  document.getElementById('offlineExecutionButton').style.display = 'block';
+	  document.getElementById('preResultsQueryInfoPanel').style.display = 'none';
 	}
-    document.getElementById('exportbutton').disabled = false;
-    document.getElementById('exportbutton').className = 'button';	
+    document.getElementById('exportbutton').innerHTML = document.getElementById("exportbuttonAJAX").innerHTML;
+	
 	return;
   }
   setTimeout("getTransformedResults()", 5000);
@@ -94,13 +89,12 @@
 toolTipId = null;
  this.tooltipinvoker = function()
 {			
-  xOffset = -5;
-  yOffset = -5;
+  xOffset = (navigator.appName.indexOf('Netscape')==-1?(100 - document.getElementById('toppanel').scrollTop):0);
    $(".tooltipinvoker").hover(function(e)
   {	
 	$(document.getElementById(toolTipId))
     .css("top",(e.pageY - xOffset) + "px")
-    .css("left",(e.pageX - yOffset) + "px")
+    .css("right",(getScreenWidth() - e.pageX) + "px")
     .show();		
   }, 
    function()
@@ -135,27 +129,44 @@ toolTipId = null;
 					<DIV class="label"><bean:write name="savedSearch" property="name"/>&nbsp;(<SPAN id="resultcount"><bean:write name="savedSearch" property="resultCount"/></SPAN>)</DIV>
 				</logic:iterate>
 			</logic:equal>
-			<DIV style="float:left;">
-				<IMG class="tooltipinvoker" src="images/form.jpg" style="cursor:pointer;margin-top:0.25em;" onmouseover="toolTipId='queryConditions'">&nbsp;
-			</DIV>
-			<DIV class="tooltip" id="queryConditions" style="display:none;">
-				<display:table class="simple" cellspacing="1" cellpadding="4" name="${requestScope.queryConditions}" uid="queryCondition" requestURI="">
-					<display:column title="Parameter" value="${queryCondition.parameter}"/>
-					<display:column title="Condition" value="${queryCondition.condition}"/>
-					<display:column title="Value" value="${queryCondition.value}"/>
-				</display:table>
-			</DIV>
 		</DIV>
-		<DIV style="float:right;margin-top:0.12em;">
-			<A class="link" style="margin-top:0.3em;display:none;" id="failedserviceslink" href="#this" onclick="document.getElementById('pageoverlay').style.display='block';document.getElementById('failedservicespanel').style.display='block';"><bean:message key="link.failedserviceinstances"/>(<SPAN id="failedservicescount"></SPAN>)</A>			
-		</DIV><BR style="line-height:0.2em;"><HR style="height:1;color:#bbb">		
-		<DIV style="font-size:0.85em;display:none" id="exportmessage"><IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"> <bean:message key="message.export"/></DIV>
+
+		<DIV style="float:right;margin-top:0.3em;">
+			<logic:present name="userName">
+				<INPUT style="float:right;display:none;" type="button" class="button" id="offlineExecutionButton" value="<bean:message key="button.offlineexecution"/>" onClick="document.location='BackgroundQuery.do'">&nbsp;&nbsp;
+			</logic:present>	
+		</DIV>
+		<DIV id="failedserviceslink" style="float:right;">
+			<IMG src="images/service_instance.jpg"  style="margin-top:0.3em;cursor:pointer;" title="<bean:message key="link.failedserviceinstances"/>"/>&nbsp;&nbsp;
+		</DIV>
+		<DIV id="exportbutton" style="float:right;">
+			<IMG src="images/ico_file_excel.png" style="margin-top:0.3em;cursor:pointer;" title="<bean:message key="img.alt.exportresults"/>" />&nbsp;&nbsp;
+		</DIV>
+				
+		<DIV style="float:right;">
+			<IMG class="tooltipinvoker" src="images/form.jpg" style="margin-top:0.3em;cursor:pointer;" onmouseover="toolTipId='queryConditions'">&nbsp;&nbsp;
+		</DIV>
+		<DIV class="tooltip" id="queryConditions" style="display:none;">
+			<display:table class="simple" cellspacing="1" cellpadding="4" name="${requestScope.queryConditions}" uid="queryCondition" requestURI="">
+				<display:column title="Parameter" value="${queryCondition.parameter}"/>
+				<display:column title="Condition" value="${queryCondition.condition}"/>
+				<display:column title="Value" value="${queryCondition.value}"/>
+			</display:table>
+		</DIV>
 		
-		<DIV style="font-size:0.85em;" id="resultsmessage">
-			<logic:notPresent name="keyword">
-				<IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"> <bean:message key="message.partialresults.formbased" arg0="${sessionScope.selectedQueryName}"/>
+		<BR style="line-height:0.2em;">
+		<HR style="height:1;color:#bbb">	
+		
+		<DIV style="font-size:0.85em;display:none" id="queryInProgressMessage"><IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"/> 
+			<logic:notPresent name="userName">
+				<bean:message key="message.query.inprogress.anonymous.user"/>
 			</logic:notPresent>
+			<logic:present name="userName">
+				<bean:message key="message.query.inprogress.signedin.user"/>&nbsp;
+				<IMG style="height:1.3em;width:1.3em;" src="images/more_info.gif" title="<bean:message key="message.offlineexecution.signedin.user.moreinfo"/>" />
+			</logic:present>
 		</DIV>
+		<DIV style="font-size:0.85em;" id="resultsmessage"></DIV>
 	</DIV>
 	<DIV id="pageoverlay"></DIV>
 	<DIV id="failedservicespanel">
@@ -171,16 +182,8 @@ toolTipId = null;
 	</DIV>
 </DIV>
 <SCRIPT language="JavaScript">updateView();tooltipinvoker();</SCRIPT>
-<DIV id="bottompanel">	
-	<logic:notPresent name="userName">
-		<DIV class="text" style="padding-bottom:5px;"><bean:message key="message.offlineexecution.anonymous.user"/></DIV>
-	</logic:notPresent>
-	<logic:present name="userName">
-		<DIV class="text" style="padding-bottom:5px;"><bean:message key="message.offlineexecution.signedin.user"/> <A href="#" title="<bean:message key="message.offlineexecution.signedin.user.moreinfo"/>">(More info) </A></DIV>
-		<INPUT type="button" class="button" id="executeinbackgroundbutton" value="<bean:message key="button.executeinbackground"/>" onClick="document.location='BackgroundQuery.do'">&nbsp;
-	</logic:present>
-	<INPUT type="button" class="buttondisabled" id="exportbutton" value="<bean:message key="button.export"/>" onClick="document.location = 'ExportResults.do?queryId=<bean:write name="queryId"/>';setTimeout('TogglePreloader(0)', 1);" disabled>
+<DIV id="bottompanel">
+	<jsp:include page="footer.jsp"/>
 </DIV>
-<jsp:include page="footer.jsp"/>
 </BODY>
 </HTML>
