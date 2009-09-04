@@ -64,7 +64,7 @@
   
    if("${requestScope.keywordQueryNotPresent}")
   {
-	alert('<bean:message key="alert.keywordquerynotpresent" arg0="${requestScope.modelGroups}"/>');
+	alert('<bean:message key="alert.keywordquerynotpresent" arg0="${requestScope.modelGroups}" arg1="${requestScope.modelGroups}"/>');
   }
 }
 
