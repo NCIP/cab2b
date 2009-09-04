@@ -27,6 +27,17 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
     IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String dref) throws RemoteException;
 
     /**
+     * This method executes the given query if the given credential is authentic, for Apply Datalist operation.
+     *
+     * @param query ICab2bQuery to be executed
+     * @param cred user crendential to be authenticated
+     * @return query result
+     * @throws RemoteException if authentication fails or query execution fails.
+     */
+    IQueryResult<? extends IRecord> executeQueryForApplyDatalist(ICab2bQuery query, String dref) throws RemoteException;
+
+    
+    /**
      * This method saves the given ICab2bQuery object.
      *
      * @throws RemoteException if save process fails
