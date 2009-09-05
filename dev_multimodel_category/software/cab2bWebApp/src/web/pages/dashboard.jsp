@@ -36,7 +36,7 @@ toolTipId = null;
 
  function updateView()
 { 
-   if(navigator.appName.indexOf('Netscape')==-1 || navigator.appVersion.indexOf('Apple')!=-1)
+   if(navigator.appName.indexOf('Netscape')==-1)
   {	  
 	document.getElementById('toppanel').style.height = getScreenHeight() - (215);
     document.getElementById('toppanel').style.overflow = 'auto';
@@ -50,20 +50,20 @@ toolTipId = null;
 	document.getElementById('toppanel').style.height = getScreenHeight() - (220);
 	 if(document.getElementById('dashboardtable'))
     {	 
-	  document.location = "#scroller";
-	   if(document.body.scrollTop>0)
-	  {
-	    document.getElementById('dashboardtable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '265';	 
-	  }
+      document.getElementById('dashboardtable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '265';	 
 	}
 	 if(document.getElementById('toppanelbuffer').innerHTML!="")
 	{
 	  document.getElementById('toppanel').innerHTML = document.getElementById('toppanelbuffer').innerHTML;
 	  document.getElementById('toppanelbuffer').innerHTML = "";
 	}	
-  }  
+  } 
+   if(document.getElementById('dashboardlinkupdate'))
+  {
+    document.getElementById('dashboardlink').innerHTML = document.getElementById('dashboardlinkupdate').innerHTML;
+  }
   tooltipinvoker();
-  t = setTimeout("getOfflineQueries()", 5000);
+  t = setTimeout("getOfflineQueries()", 15000);   
 }
 </SCRIPT>
 <BODY>
