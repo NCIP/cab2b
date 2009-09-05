@@ -26,7 +26,7 @@ import gov.nih.nci.cagrid.dcql.DCQLQuery;
 public class QueryLogger {
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(QueryLogger.class);
 
-    private static final String LOG_BASE_DIR = System.getProperty("user.home") + "/cab2bQueries";
+    private static final String LOG_BASE_DIR = System.getProperty("jboss.server.log.dir") + "/cab2bQueries";
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dMMMyyyy_hh_mm_ss_a");
 
@@ -42,7 +42,9 @@ public class QueryLogger {
 
     public QueryLogger() {
         logFolderName = LOG_BASE_DIR + "/" + getCurrentTime();
-        new File(logFolderName).mkdir();
+        if(isLogEnabled()) {
+            new File(logFolderName).mkdir();
+        }
     }
 
     private String getCurrentTime() {
@@ -50,7 +52,7 @@ public class QueryLogger {
         return dateFormat.format(currDate);
     }
 
-    private boolean isLogEnabled() {
+    private static boolean isLogEnabled() {
         return logger.isDebugEnabled();
     }
 
