@@ -31,7 +31,7 @@ toolTipId = null;
 
  function getOfflineQueries()
 {
-  processAJAXRequest('DisplayDashboard.do', (navigator.appName.indexOf('Netscape')==-1?'toppanel':'toppanelbuffer'), 1, updateView);
+  processAJAXRequest('DisplayDashboard.do', 'toppanel', 1, updateView);
 }
 
  function updateView()
@@ -48,15 +48,15 @@ toolTipId = null;
    else
   {
 	document.getElementById('toppanel').style.height = getScreenHeight() - (220);
+	document.getElementById('toppanel').style.overflow = 'auto';
 	 if(document.getElementById('dashboardtable'))
     {	 
-      document.getElementById('dashboardtable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '265';	 
+	  document.getElementById('toppanel').scrollTop = 1;
+	   if(document.getElementById('toppanel').scrollTop && document.getElementById('toppanel').scrollTop>0)
+	  {
+	    document.getElementById('dashboardtable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '265';	 
+	  }
 	}
-	 if(document.getElementById('toppanelbuffer').innerHTML!="")
-	{
-	  document.getElementById('toppanel').innerHTML = document.getElementById('toppanelbuffer').innerHTML;
-	  document.getElementById('toppanelbuffer').innerHTML = "";
-	}	
   } 
    if(document.getElementById('dashboardlinkupdate'))
   {
@@ -78,7 +78,6 @@ toolTipId = null;
 			</DIV>
 		</DIV>
 	</DIV>
-	<DIV id="toppanelbuffer" style="display:none;"></DIV>
 	<DIV id="toppanel">
 		<%@ include file="dashboardpanel.jsp" %>
 	</DIV>
