@@ -181,7 +181,7 @@
 		<replace file="${conf.dir}/cab2b.properties" token="@jndi.protocol@" value="${jndi.protocol}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@jndi.invoker.url@" value="${jndi.invoker.url}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@ssl.truststore.filename@" value="${jboss.ssl.truststore.filename}" />
-		<replace file="${conf.dir}/cab2b.properties" token="org.jboss.security.ignoreHttpsHost" value="${jboss.ssl.enable}" />
+		<replace file="${conf.dir}/cab2b.properties" token="@ignoreHttpsHost@" value="${jboss.ssl.enable}" />
 
 		<replace file="${conf.dir}/cab2b.properties" token="@server.host@" value="${server-host}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@server.port@" value="${server-port}" />
