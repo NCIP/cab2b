@@ -53,8 +53,11 @@
   }
   var resultCount = document.getElementById('resultcountAJAX')?document.getElementById('resultcountAJAX').innerHTML:'0';
    if(resultCount != '0')
-  { document.getElementById('offlineExecutionButton').style.display = 'block';
-    document.getElementById('resultsmessage').innerHTML = document.getElementById('completeresultsmessage')?document.getElementById('completeresultsmessage').innerHTML:document.getElementById('queryInProgressMessage').innerHTML;
+  {  if(document.getElementById('offlineExecutionButton'))
+	{
+		document.getElementById('offlineExecutionButton').style.display = 'block';
+    }
+	document.getElementById('resultsmessage').innerHTML = document.getElementById('completeresultsmessage')?document.getElementById('completeresultsmessage').innerHTML:document.getElementById('queryInProgressMessage').innerHTML;
 	 if(document.getElementById('completeresultsmessage') || document.getElementById('partialresultsmessage'))
 	{
 	  document.getElementById('resultsmessage').style.textAlign = 'left';
@@ -83,7 +86,10 @@
 	 if(resultCount=='0')
 	{
 	  document.getElementById('resultsmessage').innerHTML = "";
-	  document.getElementById('offlineExecutionButton').style.display = 'block';
+	   if(document.getElementById('offlineExecutionButton'))
+	  {
+	  	document.getElementById('offlineExecutionButton').style.display = 'block';
+	  }
 	  document.getElementById('preResultsQueryInfoPanel').style.display = 'none';
 	}
     document.getElementById('exportbutton').innerHTML = document.getElementById("exportbuttonAJAX").innerHTML;
