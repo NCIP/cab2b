@@ -107,6 +107,8 @@ public class QueryExecutor {
 
     private int noOfRecordsCreated = 0;
 
+    private boolean hasQueryStarted = false;
+
     /**
      * Constructor initializes object with query and globus credentials
      * @param query
@@ -154,6 +156,7 @@ public class QueryExecutor {
         qStatus.setQueryStartTime(new Date());
         if (Utility.isCategory(getOutputEntity())) {
             List<ICab2bQuery> queries = QueryExecutorHelper.splitQUeryPerUrl(query);
+            hasQueryStarted = true;
             float offset = 0.5f / queries.size();
             for (int i = 0; i < queries.size(); i++) {
                 ICab2bQuery queryWithSingleUrl = queries.get(i);
@@ -164,6 +167,7 @@ public class QueryExecutor {
         } else {
             // if output is a class, then just set the target as the class name,
             // and appropriate constraints.
+            hasQueryStarted = true;
             String output = getOutputEntity().getName();
             DcqlConstraint constraints = constraintsBuilderResult.getDcqlConstraintForClass(getOutputEntity());
             DCQLQuery dcqlQuery = DCQLGenerator.createDCQLQuery(query, output, constraints);
@@ -485,7 +489,11 @@ public class QueryExecutor {
      * @return the isProcessingFinished
      */
     public boolean isProcessingFinished() {
-        return executor.noTasksToExecuteOrTerminated() || normalQueryFinished;
+        if (hasQueryStarted) {
+            return executor.noTasksToExecuteOrTerminated() || normalQueryFinished;
+        } else {
+            return hasQueryStarted;
+        }
     }
 
     /**
@@ -577,8 +585,9 @@ public class QueryExecutor {
     /**
      * Returns record counts for url.
      * @param url
-     * @return
+     * @return record count
      */
+    @SuppressWarnings("unchecked")
     public int getRecordCountForUrl(String url) {
         int urlRecCount = -1;
         if (result instanceof ICategoryResult) {
@@ -589,7 +598,7 @@ public class QueryExecutor {
                 urlRecCount = QueryExecutorUtil.getSpreadSheetRecordsCount(records);
             }
         } else {
-            IQueryResult<IRecord> queryResult = (IQueryResult) result;
+            IQueryResult<IRecord> queryResult = (IQueryResult<IRecord>) result;
             List<IRecord> resultPerUrl = queryResult.getRecords().get(url);
             if (resultPerUrl != null) {
                 urlRecCount = resultPerUrl.size();
@@ -625,7 +634,7 @@ public class QueryExecutor {
 
     /**
      * Returns set of failed urls.
-     * @return
+     * @return {@link Set}
      */
     public Set<String> getFailedURLs() {
         return QueryStatusUtil.getFailedURLs(qStatus);
