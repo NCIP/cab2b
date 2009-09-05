@@ -2,14 +2,14 @@
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 
-<DIV id="preResultsQueryInfoPanel" class="text" align="center" valign="middle">
+<DIV id="preResultsQueryInfoPanel" style="display:none;" class="text" align="center" valign="middle">
 	<logic:present name="keyword">
 		<br><br><br><br>
 		<IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"> <b style="font-size: 1.3em;"><bean:message key="message.preresults.keyword" arg0="${sessionScope.keyword}" arg1="${sessionScope.selectedQueryName}"/></b><br><br>
 		<logic:present name="userName">
 			<IMG style="height:1.3em;width:1.3em;" src="images/more_info.gif" title="<bean:message key="message.offlineexecution.signedin.user.moreinfo"/>" />
 			<bean:message key="message.preresults.signedin.user"/><br><br>
-			<INPUT type="button" class="button" value="<bean:message key="button.offlineexecution"/>" onClick="document.location='BackgroundQuery.do'">
+			<INPUT type="button" style="font-size:1em;" class="button" value="<bean:message key="button.offlineexecution"/>" onClick="document.location='BackgroundQuery.do'">
 		</logic:present>
 		<logic:notPresent name="userName">
 			<bean:message key="message.preresults.anonymous.user"/>
@@ -21,7 +21,7 @@
 		<logic:present name="userName">
 			<IMG style="height:1.3em;width:1.3em;" src="images/more_info.gif" title="<bean:message key="message.offlineexecution.signedin.user.moreinfo"/>" />
 			<bean:message key="message.preresults.signedin.user"/><br><br>
-			<INPUT type="button" class="button" value="<bean:message key="button.offlineexecution"/>" onClick="document.location='BackgroundQuery.do'">
+			<INPUT type="button" style="font-size:1em;" class="button" value="<bean:message key="button.offlineexecution"/>" onClick="document.location='BackgroundQuery.do'">
 		</logic:present>
 		<logic:notPresent name="userName">
 			<bean:message key="message.preresults.anonymous.user"/>

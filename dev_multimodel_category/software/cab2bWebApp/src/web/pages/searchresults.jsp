@@ -54,13 +54,19 @@
   var resultCount = document.getElementById('resultcountAJAX')?document.getElementById('resultcountAJAX').innerHTML:'0';
    if(resultCount != '0')
   { document.getElementById('offlineExecutionButton').style.display = 'block';
-	document.getElementById('preResultsQueryInfoPanel').style.display = 'none';
     document.getElementById('resultsmessage').innerHTML = document.getElementById('completeresultsmessage')?document.getElementById('completeresultsmessage').innerHTML:document.getElementById('queryInProgressMessage').innerHTML;
 	 if(document.getElementById('completeresultsmessage') || document.getElementById('partialresultsmessage'))
 	{
 	  document.getElementById('resultsmessage').style.textAlign = 'left';
 	}
-  }  
+  }
+   else
+   {
+	if(document.getElementById('preResultsQueryInfoPanel'))
+	{
+		document.getElementById('preResultsQueryInfoPanel').style.display = 'block';
+	}
+   }
    if(document.getElementById("completeresultsmessage"))
   { 	
 	 if(document.getElementById("failedservicesAJAX"))
@@ -131,9 +137,9 @@ toolTipId = null;
 			</logic:equal>
 		</DIV>
 
-		<DIV style="float:right;margin-top:0.3em;">
+		<DIV style="float:right;">
 			<logic:present name="userName">
-				<INPUT style="float:right;display:none;" type="button" class="button" id="offlineExecutionButton" value="<bean:message key="button.offlineexecution"/>" onClick="document.location='BackgroundQuery.do'">&nbsp;&nbsp;
+				<INPUT style="margin-top:0.3em;display:none;" type="button" class="button" id="offlineExecutionButton" value="<bean:message key="button.offlineexecution"/>" onClick="document.location='BackgroundQuery.do'">&nbsp;&nbsp;
 			</logic:present>	
 		</DIV>
 		<DIV id="failedserviceslink" style="float:right;">
