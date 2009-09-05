@@ -16,6 +16,11 @@ import edu.wustl.cab2b.server.initializer.PollingTask;
  *
  */
 public class QueryStatusUpdater {
+    /**
+     * Time interval for updating database for queries executing in background. 
+     */
+    private static final int BACKGROUND_QUERY_REFRESH_TIME_INTERVAL = 10;
+    
     private final static Logger logger = Logger.getLogger(QueryStatusUpdater.class);
 
     /** It allows only one time entry into the thread for refreshing query status database */
@@ -30,7 +35,7 @@ public class QueryStatusUpdater {
                     logger.info("Database has been refreshed and is in Sync with background queries status");
                 }
             };
-            PollingTask.submitTask(timerTask, UserBackgroundQueries.BACKGROUND_QUERY_REFRESH_TIME_INTERVAL);
+            PollingTask.submitTask(timerTask, BACKGROUND_QUERY_REFRESH_TIME_INTERVAL);
         }
     }
 }
