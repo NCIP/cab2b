@@ -2,7 +2,7 @@
 	<property name="src.dir" location="src" />
 	<property name="source.dir" location="${src.dir}/java" />
 	<property name="resource.dir" location="${src.dir}/resources" />
-	<property name="mmc.dir" location="${resource.dir}/mmc" /> 
+	<property name="mmc.dir" location="${resource.dir}/mmc" />
 
 	<property name="conf.dir" location="${src.dir}/conf" />
 	<property file="../build/project.properties" />
@@ -155,7 +155,7 @@
 			<include name="*.jar" />
 		</fileset>
 	</path>
-	
+
 	<path id="mmcloader.classpath">
 		<path refid="server.classpath" />
 		<pathelement location="${conf.dir}" />
@@ -1131,7 +1131,7 @@
 		the JBoss on its own. It's developer's responsibility to setup JBoss and
 		define its path. 
 	 ===========================================================================-->
-	
+
 	<!-- Set application.base.path based on platform -->
 	<condition property="application.base.path" value="${application.base.path.linux}">
 		<or>
@@ -1183,11 +1183,26 @@
 
 		<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
 	</target>
-	
+
 	<target name="load.mmcs" depends="compile.server" description="Loads the MultiModelCategories">
 		<java failonerror="true" classname="edu.wustl.cab2b.server.multimodelcategory.PersistMultiModelCategory" classpathref="mmcloader.classpath" fork="yes">
-			<jvmarg value="-Xmx768m"/>
-			<arg value="${mmc.dir}"/>
+			<jvmarg value="-Xmx768m" />
+			<arg value="${mmc.dir}" />
+		</java>
+	</target>
+
+	<target name="find.path.ids" depends="compile.server" description="Finds the path ids for the given list of entities">
+		<input message="Please enter Pairs XML path: " addproperty="piars.xml.file" />
+		<available file="${piars.xml.file}" property="isFileAvail" />
+		<fail unless="isFileAvail" message="File doesn't exist!" />
+
+		<input message="Please enter output file path: " addproperty="pairs.out.file" />
+		<delete file="${pairs.out.file}" failonerror="no" />
+		<java failonerror="true" classname="edu.wustl.cab2b.server.multimodelcategory.MmcValidator" classpathref="mmcloader.classpath" fork="yes">
+			<jvmarg value="-Xmx768m" />
+			<arg value="false" />
+			<arg value="${piars.xml.file}" />
+			<arg value="${pairs.out.file}" />
 		</java>
 	</target>
 </project>
