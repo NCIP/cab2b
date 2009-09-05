@@ -340,8 +340,9 @@ public class QueryBizLogic {
      */
     public QueryStatus getStatus() {
         QueryStatus queryStatus = queryExecutionHandler.getStatus();
-        if ((queryStatus.getStatus().equals(AbstractStatus.Complete) || queryStatus.getStatus()
-            .equals(AbstractStatus.Complete_With_Error))
+        if ((queryStatus.getStatus().equals(AbstractStatus.Complete)
+                || queryStatus.getStatus().equals(AbstractStatus.Complete_With_Error) || queryStatus.getStatus()
+            .equals(AbstractStatus.FAILED))
                 && isProcessingFinished()) {
             if (queryExecutionHandler.isExecuteInBackground() && queryStatus.getFileName() == null) {
                 /*If all operations related to background query execution are finished  
