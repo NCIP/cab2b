@@ -26,31 +26,21 @@ import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryBizLogic;
  *
  */
 public class UserBackgroundQueries {
+    /**
+     * Directory for saving exported/CSV files.
+     */
+    public static final String EXPORT_CSV_DIR = JbossPropertyLoader.getExportedResultsPath();
+
     private static final Logger logger =
             edu.wustl.common.util.logger.Logger.getLogger(UserBackgroundQueries.class);
-
+    
+    private static UserBackgroundQueries ref = null;
     /**
      * Map of user to queries executing in background. 
      */
     private Map<UserInterface, Set<QueryBizLogic>> userToBackgroundQueries;
 
-    private static UserBackgroundQueries ref = null;
-
-    /**
-     * Directory for saving exported/CSV files.
-     */
-    public static final String EXPORT_CSV_DIR =
-            JbossPropertyLoader.getExportedResultsPath() + File.separator + "cab2bExportFiles";
-
-    /**
-     * Time interval for updating database for queries executing in background. 
-     */
-    public static final int BACKGROUND_QUERY_REFRESH_TIME_INTERVAL = 10;
-
     static {
-        //Creating directory for saving CSV files on server.
-        new File(EXPORT_CSV_DIR).mkdir();
-
         //Refreshing every query background query periodically.
         QueryStatusUpdater.refreshQueryStatus();
     }
@@ -129,7 +119,7 @@ public class UserBackgroundQueries {
                         String fileName = queryBizLogic.exportToCSV();
                         status.setFileName(fileName);
                         status.setQueryEndTime(new Date());
-                        logger.info(EXPORT_CSV_DIR + File.separator + fileName);
+                        logger.debug(EXPORT_CSV_DIR + File.separator + fileName);
                     }
                     //updating query status in database.
                     new QueryURLStatusOperations().updateQueryStatus(status);

@@ -1,36 +1,19 @@
-/**
- * 
- */
 package edu.wustl.cab2b.common.util;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
 /**
  * @author gaurav_mehta
- *
  */
 public class JbossPropertyLoader {
 
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(JbossPropertyLoader.class);
-
-    private static String jbossConfLocation = null;
-
-    static {
-        Map<String, String> environmentVariablesVsValues = System.getenv();
-        String jbossHome = environmentVariablesVsValues.get("JBOSS_HOME");
-        int endIndex = jbossHome.indexOf("bin");
-        StringBuffer confPropertyLocation = new StringBuffer(jbossHome.subSequence(0, endIndex));
-        confPropertyLocation.append("server").append(File.separator).append("default");
-        confPropertyLocation.append(File.separator).append("conf");
-        jbossConfLocation = confPropertyLocation.toString();
-    }
 
     /**
      * @param propertyfile
@@ -38,18 +21,22 @@ public class JbossPropertyLoader {
      */
     public static Properties getPropertiesFromFile(String propertyfile) {
         Properties properties = null;
+        String jbossConfLocation = System.getProperty("jboss.server.config.url");
         try {
-            File file = new File(jbossConfLocation + File.separator + propertyfile);
-            URL url = file.toURI().toURL();
+            URL url = new URL(jbossConfLocation + File.separator + propertyfile);
             InputStream is = url.openStream();
             if (is == null) {
+                logger.error("------------------------------------------------------");
                 logger.error("Unable fo find property file : " + propertyfile
                         + "\n please put this file in JBoss Conf Folder");
+                logger.error("------------------------------------------------------");
             }
             properties = new Properties();
             properties.load(is);
         } catch (IOException e) {
+            logger.error("------------------------------------------------------");
             logger.error("Unable to load properties from : " + propertyfile);
+            logger.error("------------------------------------------------------");
         }
         return properties;
     }
@@ -58,7 +45,19 @@ public class JbossPropertyLoader {
      * @return result size for UI
      */
     public static String getExportedResultsPath() {
-        String filePath = new String(jbossConfLocation);
-        return filePath;
+        StringBuffer path = new StringBuffer();
+        path.append(System.getProperty("jboss.server.base.dir"));
+        path.append(File.separator);
+        path.append(System.getProperty("jboss.server.name"));
+        path.append(File.separator);
+        path.append("cab2bExportFiles");
+        path.append(File.separator);
+        String dirPath = path.toString();
+        File dir = new File(dirPath);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+        return dirPath;
+
     }
 }

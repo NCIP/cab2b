@@ -312,12 +312,11 @@ public class QueryBizLogic {
         String zipFileName = System.currentTimeMillis() + ".zip";
         try {
             ZipOutputStream out =
-                    new ZipOutputStream(new FileOutputStream(UserBackgroundQueries.EXPORT_CSV_DIR + File.separator
-                            + zipFileName));
+                    new ZipOutputStream(new FileOutputStream(UserBackgroundQueries.EXPORT_CSV_DIR + zipFileName));
             // Add ZIP entry to output stream.
             for (String inFilename : fileNames) {
                 FileInputStream in =
-                        new FileInputStream(UserBackgroundQueries.EXPORT_CSV_DIR + File.separator + inFilename);
+                        new FileInputStream(UserBackgroundQueries.EXPORT_CSV_DIR + inFilename);
                 out.putNextEntry(new ZipEntry(inFilename));
                 byte[] buf = new byte[1024];
                 int len;
@@ -331,6 +330,12 @@ public class QueryBizLogic {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             throw new RuntimeException("Error while saving CSV ZIP file.", ErrorCodeConstants.IO_0001);
+        }
+        for(String file : fileNames) {
+            boolean success = new File(UserBackgroundQueries.EXPORT_CSV_DIR + file).delete();
+            if(!success) {
+                logger.warn("Unable to delete file : " + file);
+            }
         }
         return zipFileName;
     }
