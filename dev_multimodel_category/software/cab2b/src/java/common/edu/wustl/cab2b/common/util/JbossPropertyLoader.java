@@ -53,4 +53,12 @@ public class JbossPropertyLoader {
         }
         return properties;
     }
+
+    /**
+     * @return result size for UI
+     */
+    public static String getExportedResultsPath() {
+        String filePath = new String(jbossConfLocation);
+        return filePath;
+    }
 }
