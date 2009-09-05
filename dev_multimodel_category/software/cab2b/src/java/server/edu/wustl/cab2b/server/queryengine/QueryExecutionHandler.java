@@ -48,6 +48,8 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
 
     protected QueryStatus status = null;
 
+    protected boolean isQueryStatusCompleteAndSavedInDB = false;
+
     public QueryExecutionHandler(T query, GlobusCredential proxy, UserInterface user, String[] modelGroupNames) {
         this.query = query;
         this.proxy = proxy;
@@ -55,7 +57,6 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
         this.modelGroupNames = modelGroupNames;
         this.isExecuteInBackground = false;
         status = new QueryStatusImpl();
-
     }
 
     protected abstract void preProcessQuery();
@@ -90,7 +91,6 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
     public QueryStatus getStatus() {
         updateStatus();
         return status;
-
     }
 
     /**
@@ -186,8 +186,11 @@ public abstract class QueryExecutionHandler<T extends ICab2bQuery> {
             }
             status.setStatus(statusString);
             status.setQueryEndTime(new Date());
-            //Query finished update in database.
-            new QueryURLStatusOperations().updateQueryStatus(status);
+            if (!isQueryStatusCompleteAndSavedInDB) {
+                //Query finished update in database.
+                new QueryURLStatusOperations().updateQueryStatus(status);
+                isQueryStatusCompleteAndSavedInDB = true;
+            }
         }
     }
 

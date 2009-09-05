@@ -55,6 +55,8 @@ public class QueryBizLogic {
 
     private UserInterface user;
 
+    private boolean queryStatusCompleteAndSavedInDB = false;
+
     /**
      * @param query
      * @param conditionstr
@@ -345,8 +347,12 @@ public class QueryBizLogic {
                 /*If all operations related to background query execution are finished  
                 and result file is not created yet, create it. Update database with file name*/
                 exportToCSV();
+                queryStatusCompleteAndSavedInDB = true;
             }
-            new QueryURLStatusOperations().updateQueryStatus(queryStatus);
+            if (!queryStatusCompleteAndSavedInDB) {
+                new QueryURLStatusOperations().updateQueryStatus(queryStatus);
+                queryStatusCompleteAndSavedInDB = true;
+            }
         }
         return queryStatus;
     }
