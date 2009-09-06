@@ -329,6 +329,9 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 CustomSwingWorker swingWorker = new CustomSwingWorker(SearchNavigationPanel.this) {
                     @Override
                     protected void doNonUILogic() throws Exception {
+                        if (!isLimitAdded()) {
+                            return;
+                        }
                         Collection<EntityInterface> entities = clientQueryBuilder.getEntities();
                         for (EntityInterface entity : entities) {
                             serviceURLButtonFlag =
@@ -337,20 +340,26 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                                 break;
                             }
                         }
-
                         validateQueryAndMoveToAddLimitPanel(clientQueryBuilder);
                     }
 
                     @Override
                     protected void doUIUpdateLogic() throws Exception {
+                    }
+
+                    /**
+                     * @return
+                     */
+                    private boolean isLimitAdded() {
                         if (clientQueryBuilder == null || clientQueryBuilder.getVisibleExressionIds().size() == 0) {
                             // Pop-up a dialog asking the user to add at least a
                             // rule.
                             JOptionPane.showMessageDialog(mainSearchPanel.getParent(),
                                                           "Please add Limit(s) before proceeding",
                                                           "Cannot Proceed", JOptionPane.WARNING_MESSAGE);
-                            return;
+                            return false;
                         }
+                        return true;
                     }
                 };
                 swingWorker.start();
@@ -462,16 +471,16 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 // Get the Functional class for root and update query object
                 // with it.
                 queryResults = CommonUtils.executeQuery((ICab2bQuery) clientQueryBuilder.getQuery());
-                Collection<FQPUrlStatus> failedURLs = null;
+                /*Collection<FQPUrlStatus> failedURLs = null;
                 if (queryResults != null) {
                     failedURLs = queryResults.getFQPUrlStatus();
                 }
-                /*StringBuffer output = new StringBuffer();
+                StringBuffer output = new StringBuffer();
                 //FQP 1.3 server code test
                 if (failedURLs != null) {
                     for (FQPUrlStatus url : failedURLs) {
                         output =
-                                output.append("\n URL : " + url.getTargetUrl() + "  status:  "+url.getStatus() + "\t Message : "
+                                output.append("\n URL : " + url.getTargetUrl() + "\t Error msg : "
                                         + url.getMessage());
                     }
                 }
