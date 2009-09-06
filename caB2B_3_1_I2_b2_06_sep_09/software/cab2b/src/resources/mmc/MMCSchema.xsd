@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/MMCSchema" xmlns:tns="http://www.example.org/MMCSchema" elementFormDefault="qualified">
+
+    <element name="MultiModelCategory" type="tns:MultiModelCategoryType"></element>
+
+    <element name="MultiModelCategoryAttributes" type="tns:MultiModelCategoryAttributesType"></element>
+
+    <element name="MultiModelCategoryAttribute" type="tns:MultiModelCategoryAttributeType"></element>
+
+    <element name="Attribute" type="tns:AttributeType"></element>
+
+    <complexType name="MultiModelCategoryType">
+    	<sequence>
+    		<element ref="tns:MultiModelCategoryAttributes" maxOccurs="unbounded"></element>
+    		<element ref="tns:Paths" maxOccurs="unbounded"></element>
+    	</sequence>
+    	<attribute name="name" type="string" use="required"></attribute>
+    	<attribute name="description" type="string"></attribute>
+    	<attribute name="applicationGroup" type="string"
+    		use="required">
+    	</attribute>
+    </complexType>
+
+    <complexType name="MultiModelCategoryAttributesType">
+    	<sequence>
+    		<element ref="tns:MultiModelCategoryAttribute" maxOccurs="unbounded"></element>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="MultiModelCategoryAttributeType">
+    	<sequence>
+    		<element ref="tns:Attribute" maxOccurs="unbounded"></element>
+    	</sequence>
+    	<attribute name="name" type="string" use="required"></attribute>
+    	<attribute name="description" type="string"></attribute>
+    </complexType>
+
+
+    <complexType name="AttributeType">
+    	<attribute name="name" type="string" use="required"></attribute>
+    	<attribute name="model" type="string" use="required"></attribute>
+    	<attribute name="class" type="string" use="required"></attribute>
+    </complexType>
+
+    <element name="Paths" type="tns:PathsType"></element>
+
+    <complexType name="PathsType">
+    	<sequence>
+    		<element ref="tns:Path" maxOccurs="unbounded"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="PathType">
+    	<attribute name="id" type="int"></attribute>
+    </complexType>
+
+    <element name="Path" type="tns:PathType"></element>
+</schema>
