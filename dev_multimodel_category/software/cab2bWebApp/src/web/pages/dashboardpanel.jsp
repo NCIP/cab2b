@@ -65,9 +65,6 @@
 					<display:column title="Result Count" value="${serviceInstance.resultCount}"/>
 				</display:table>
 			</DIV>
-			<logic:notEqual name="query" property="status" value="Complete">
-				<IMG src="images/stop.gif" style="cursor:pointer;display:none;" title="<bean:message key="img.alt.abortexecution"/>">&nbsp;
-			</logic:notEqual>
 			<logic:notEqual name="query" property="status" value="Processing">
 				<logic:notEqual name="query" property="status" value="Suspended">
 					<IMG src="images/export.jpg" style="cursor:pointer;" title="<bean:message key="img.alt.exportresults"/>" onClick="document.location='ExportResults.do?fileName=<bean:write name="query" property="fileName"/>';TogglePreloader(0);">&nbsp;
