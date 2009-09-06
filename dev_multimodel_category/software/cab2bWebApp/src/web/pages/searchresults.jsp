@@ -21,15 +21,16 @@
 
  function getTransformedResults()
 {
-  processAJAXRequest('TransformQueryResultsAction.do', (navigator.appName.indexOf('Netscape')==-1?'centerpanelcontent':'centerpanelcontentbuffer'), 1, updateView);
+  processAJAXRequest('TransformQueryResultsAction.do', (navigator.appName.indexOf('Netscape')==-1 || navigator.appVersion.indexOf('Apple')?'centerpanelcontent':'centerpanelcontentbuffer'), 1, updateView);
 }
 
  function updateView()
 {  
-   if(navigator.appName.indexOf('Netscape')==-1)
+   if(navigator.appName.indexOf('Netscape')==-1 || navigator.appVersion.indexOf('Apple')!=-1)
   {	  
 	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (335);
     document.getElementById('centerpanelcontent').style.overflow = 'auto';
+	document.getElementById('centerpanelcontent').style.width = '100%';
 	document.getElementById('queryConditions').style.width = '0%';
   }
    else
