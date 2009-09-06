@@ -633,7 +633,7 @@ public class CommonUtils {
                 consolidateURLs(cat, URLs);
             }
         }
-        return URLs.toArray(new String[0]);
+        return UserCache.getInstance().getServiceURLs(entity);
     }
 
     private static void consolidateURLs(Category cat, Collection<String> URLs) {
