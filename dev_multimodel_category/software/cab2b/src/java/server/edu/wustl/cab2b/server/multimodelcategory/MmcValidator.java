@@ -28,6 +28,8 @@ import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.path.PathFinder;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
+import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
+import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DBUtil;
@@ -249,7 +251,7 @@ public class MmcValidator {
         boolean isFirstAssociation = true;
         //buff.append("Path id : ").append(path.getPathId()).append('\t');
         for (IAssociation association : associationList) {
-            roleName = edu.wustl.cab2b.client.ui.query.Utility.getRoleName(association);
+            roleName = getRoleName(association);
             if (isFirstAssociation) {
                 EntityInterface srcEntity = association.getSourceEntity();
                 EntityInterface tarEntity = association.getTargetEntity();
@@ -281,6 +283,20 @@ public class MmcValidator {
         System.setErr(p);
 
     }
+    
+    private static String getRoleName(IAssociation association) {
+        String roleName = "";
+        if (association instanceof IIntraModelAssociation) {
+            IIntraModelAssociation intraModel = (IIntraModelAssociation) association;
+            roleName = intraModel.getDynamicExtensionsAssociation().getTargetRole().getName();
+        } else {
+            IInterModelAssociation interModel = (IInterModelAssociation) association;
+            roleName = interModel.getSourceAttribute().getName() + " = "
+                    + interModel.getTargetAttribute().getName();
+        }
+        return roleName;
+    }
+
 }
 
 /**
