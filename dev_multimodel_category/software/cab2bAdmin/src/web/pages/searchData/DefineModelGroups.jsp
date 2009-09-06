@@ -19,7 +19,7 @@ function validate() {
 		return true;
 		}
 	}
-	alert('Please select atleast one Entity Group');
+	alert('Please select at least one model');
 	return false;
 }
 </SCRIPT>
