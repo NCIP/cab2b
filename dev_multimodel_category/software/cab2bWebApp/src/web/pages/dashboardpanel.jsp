@@ -54,7 +54,7 @@
 						<logic:equal name="serviceInstance" property="status" value="Complete With Error">
 							<IMG src="images/task_failure.gif" title="<bean:message key="img.alt.task.completewitherror"/>">
 						</logic:equal>
-						<logic:equal name="query" property="status" value="Failed">
+						<logic:equal name="serviceInstance" property="status" value="Failed">
 							<IMG src="images/task_failure.gif" title="<bean:message key="img.alt.task.failed"/>">
 						</logic:equal>
 						<logic:equal name="serviceInstance" property="status" value="Suspended">
