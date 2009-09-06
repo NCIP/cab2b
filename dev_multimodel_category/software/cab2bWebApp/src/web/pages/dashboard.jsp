@@ -22,6 +22,7 @@ toolTipId = null;
     .css("top",(e.pageY - xOffset) + "px")
     .css("right",(getScreenWidth() - e.pageX) + "px")
     .show();		
+	document.getElementById(toolTipId).style.width = '50%';
   }, 
    function()
   {	
