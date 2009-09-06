@@ -466,17 +466,16 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 if (queryResults != null) {
                     failedURLs = queryResults.getFQPUrlStatus();
                 }
-
-                StringBuffer output = new StringBuffer();
+                /*StringBuffer output = new StringBuffer();
                 //FQP 1.3 server code test
                 if (failedURLs != null) {
                     for (FQPUrlStatus url : failedURLs) {
                         output =
-                                output.append("\n URL : " + url.getTargetUrl()  
-                                        + "\t Error msg : " + url.getMessage());
+                                output.append("\n URL : " + url.getTargetUrl() + "  status:  "+url.getStatus() + "\t Message : "
+                                        + url.getMessage());
                     }
                 }
-                System.out.println("Failed URLS :" + output);
+                System.out.println("Failed URLS :" + output);*/
             }
         } catch (Exception e) {
             CommonUtils.handleException(e, SearchNavigationPanel.this.mainSearchPanel, true, false, false, false);
