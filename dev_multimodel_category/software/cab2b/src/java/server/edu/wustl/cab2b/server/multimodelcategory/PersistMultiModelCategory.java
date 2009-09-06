@@ -20,7 +20,6 @@ import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
@@ -46,6 +45,15 @@ import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.util.dbManager.DBUtil;
 
+/**
+ * This class takes in the MultiModelCategoryBean and generates the MultiModelCategogry out of it and finally
+ * persists it into database. MultiModelCategoryBean is expected to get populated from UI where user/admin selects
+ * or sets the appropriate values.
+ * 
+ * @author chetan_patil
+ * @author rajesh_vyas
+ * 
+ */
 public class PersistMultiModelCategory {
 
     private static final Logger logger =
@@ -66,7 +74,20 @@ public class PersistMultiModelCategory {
     private Set<MultiModelAttribute> multiModelAttributes;
 
     /**
-     * This method assumes that MultiModelCategoryBean is well populated, so this class can create InputCategory objects.
+     * Default constructor
+     */
+    public PersistMultiModelCategory() {
+        attributeIDToCatAttr = new HashMap<Long, CategorialAttribute>();
+        sourceEntityToPaths = new HashMap<EntityInterface, Collection<IPath>>();
+        entityInputCatagorialAttributeMap = new HashMap<EntityInterface, Collection<InputCategorialAttribute>>();
+        multiModelAttributes = new HashSet<MultiModelAttribute>();
+        multiModelAttributeToSelectedAttributeIds = new HashMap<MultiModelAttribute, Collection<Long>>();
+    }
+
+    /**
+     * This method assumes that MultiModelCategoryBean is well populated, so this class can create InputCategory
+     * objects.
+     * 
      * @param mmcBean
      * @return
      */
@@ -75,12 +96,11 @@ public class PersistMultiModelCategory {
 
         MultiModelCategory multiModelCategory = initialize();
 
-        attributeIDToCatAttr = new HashMap<Long, CategorialAttribute>();
-        Collection<Category> categories = new ArrayList<Category>();
         PersistCategory persistCategory = new PersistCategory();
-
         CategoryOperations categoryOperations = new CategoryOperations();
+
         Collection<InputCategory> inputCategories = createInputCategories();
+        Collection<Category> categories = new ArrayList<Category>(inputCategories.size());
         for (InputCategory inCategory : inputCategories) {
             logger.debug("Saving category: " + inCategory);
             Category category = persistCategory.persistCategory(inCategory, null, true);
@@ -97,6 +117,10 @@ public class PersistMultiModelCategory {
         return multiModelCategory;
     }
 
+    /**
+     * This method adds categorial attributes form category saved into MultiModelAttributes. Basically, it maps the
+     * attributes of categories saved to MultiModelAttribute.
+     */
     private void addCategorialAttrsToMMA() {
         for (MultiModelAttribute multiModelAttr : multiModelAttributes) {
             for (Long attribute : multiModelAttributeToSelectedAttributeIds.get(multiModelAttr)) {
@@ -106,7 +130,9 @@ public class PersistMultiModelCategory {
     }
 
     /**
-     * Recursive call so all children are processed. This Maps AttributeInterface to CategorialAttribute. So mmaToSelectedAI can be used, to derive MMA -> CategorialAttribute 
+     * This method is recursively called so that all children are processed. It generates map of
+     * AttributeInterface->CategorialAttribute, so mmaToSelectedAI can be used, to derive MMA->CategorialAttribute
+     * 
      * @param catClass
      */
     private void mapAIToCatAttr(CategorialClass catClass) {
@@ -120,17 +146,28 @@ public class PersistMultiModelCategory {
         }
     }
 
+    /**
+     * This method initializes and generates MultiModelCategory
+     * 
+     * @return
+     */
     private MultiModelCategory initialize() {
         MultiModelCategory multiModelCategory = createMultiModelCategory();
 
         entities = new HashSet<EntityInterface>(entityInputCatagorialAttributeMap.keySet());
         Set<EntityInterface> targetEntities = initEntityPathMapAndGetTargetEntities();
+
         //After removing all targets, 'entities' will only contain root categories
         entities.removeAll(targetEntities);
 
         return multiModelCategory;
     }
 
+    /**
+     * This method creates MultiModelCategory
+     * 
+     * @return
+     */
     private MultiModelCategory createMultiModelCategory() {
         EntityInterface mmcEntity = initMMCEntity();
 
@@ -141,6 +178,11 @@ public class PersistMultiModelCategory {
         return multiModelCategory;
     }
 
+    /**
+     * This method creates DynamicExtension's entity for MultiModelCategory
+     * 
+     * @return
+     */
     private EntityInterface initMMCEntity() {
         EntityInterface mmcEntity = DomainObjectFactory.getInstance().createEntity();
         mmcEntity.setName(mmcBean.getName());
@@ -148,11 +190,7 @@ public class PersistMultiModelCategory {
         mmcEntity.setCreatedDate(new Date());
         mmcEntity.addEntityGroupInterface(getMMCEntityGroup());
 
-        TaggedValueInterface taggedValue = DomainObjectFactory.getInstance().createTaggedValue();
-        taggedValue.setKey(MULTIMODELCATEGORY);
-        taggedValue.setValue(MULTIMODELCATEGORY);
-        mmcEntity.addTaggedValue(taggedValue);
-
+        DynamicExtensionUtility.addTaggedValue(mmcEntity, MULTIMODELCATEGORY, MULTIMODELCATEGORY);
         initAttributes(mmcEntity);
 
         mmcEntity = DynamicExtensionUtility.persistEntity(mmcEntity);
@@ -161,13 +199,14 @@ public class PersistMultiModelCategory {
         return mmcEntity;
     }
 
+    /**
+     * This method initializes the attributes into MultiModelCategory's DE entity.
+     * 
+     * @param mmcEntity
+     */
     private void initAttributes(EntityInterface mmcEntity) {
         assert mmcBean != null;
         assert mmcBean.getMultiModelAttributes() != null;
-
-        entityInputCatagorialAttributeMap = new HashMap<EntityInterface, Collection<InputCategorialAttribute>>();
-        multiModelAttributes = new HashSet<MultiModelAttribute>();
-        multiModelAttributeToSelectedAttributeIds = new HashMap<MultiModelAttribute, Collection<Long>>();
 
         Collection<MultiModelAttributeBean> mmaBeans = mmcBean.getMultiModelAttributes();
         for (MultiModelAttributeBean mmaBean : mmaBeans) {
@@ -181,8 +220,9 @@ public class PersistMultiModelCategory {
             multiModelAttribute.setVisible(mmaBean.isVisible());
             multiModelAttribute.setAttribute(deAttribute);
 
-            Collection<Long> selectedAttributesIds = new ArrayList<Long>();
-            for (AttributeInterface selectedAttribute : mmaBean.getSelectedAttributes()) {
+            Collection<AttributeInterface> selectedMMCAttributes = mmaBean.getSelectedAttributes();
+            Collection<Long> selectedAttributesIds = new ArrayList<Long>(selectedMMCAttributes.size());
+            for (AttributeInterface selectedAttribute : selectedMMCAttributes) {
                 selectedAttributesIds.add(selectedAttribute.getId());
 
                 InputCategorialAttribute inputCatagorialAttribute = new InputCategorialAttribute();
@@ -207,6 +247,7 @@ public class PersistMultiModelCategory {
 
     /**
      * This method retrieves the MMC_Entity_Group if exists otherwise creates a new one.
+     * 
      * @return
      */
     private EntityGroupInterface getMMCEntityGroup() {
@@ -234,10 +275,15 @@ public class PersistMultiModelCategory {
         return entityGroup;
     }
 
+    /**
+     * This method generates input categories which are needed for saving actual categories
+     * 
+     * @return
+     */
     private Collection<InputCategory> createInputCategories() {
         assert entities != null;
 
-        Collection<InputCategory> inputCategories = new ArrayList<InputCategory>();
+        Collection<InputCategory> inputCategories = new ArrayList<InputCategory>(entities.size());
         for (EntityInterface rootEntity : entities) {
             //Create InputCategorialClass
             InputCategorialClass rootClass = new InputCategorialClass();
@@ -265,7 +311,7 @@ public class PersistMultiModelCategory {
     }
 
     /**
-     * Recursive method instantiate Complete hierarchy for CategorialClass.
+     * This method recursively instantiate complete hierarchy for CategorialClass.
      */
     private InputCategorialClass createInputCategorialClass(IPath outPath) {
         EntityInterface targetEntity = outPath.getTargetEntity();
@@ -280,6 +326,12 @@ public class PersistMultiModelCategory {
         return inputCategorialClass;
     }
 
+    /**
+     * This method processes out going paths
+     * 
+     * @param sourceEntity
+     * @return
+     */
     private List<InputCategorialClass> processOutPaths(EntityInterface sourceEntity) {
         assert sourceEntityToPaths != null;
 
@@ -294,10 +346,13 @@ public class PersistMultiModelCategory {
         return childrenICCs;
     }
 
+    /**
+     * This method initializes Entity->Paths map and returns the set of target entities.
+     * 
+     * @return
+     */
     private Set<EntityInterface> initEntityPathMapAndGetTargetEntities() {
         assert entities != null;
-
-        sourceEntityToPaths = new HashMap<EntityInterface, Collection<IPath>>();
 
         Set<EntityInterface> targetEntities = new HashSet<EntityInterface>();
         Collection<IPath> paths = mmcBean.getPaths();
@@ -317,6 +372,13 @@ public class PersistMultiModelCategory {
         return targetEntities;
     }
 
+    /**
+     * This method takes the path where where all the multi-model category XML files are stored and convert them to
+     * MultiModelCategory objects to saves them into database.
+     * 
+     * @param args
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
         if (args == null || args.length == 0) {
             throw new java.lang.RuntimeException(
