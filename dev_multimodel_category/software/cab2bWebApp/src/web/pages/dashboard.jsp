@@ -17,12 +17,15 @@ toolTipId = null;
 {			
   xOffset = (navigator.appName.indexOf('Netscape')==-1?(100 - document.getElementById('toppanel').scrollTop):0);
    $(".tooltipinvoker").hover(function(e)
-  {	
+  {		
+	 if(navigator.appVersion.indexOf('Apple')!=-1)
+	{
+	  document.getElementById(toolTipId).style.width = "50%";
+	}	
 	$(document.getElementById(toolTipId))
     .css("top",(e.pageY - xOffset) + "px")
     .css("right",(getScreenWidth() - e.pageX) + "px")
-    .show();		
-	document.getElementById(toolTipId).style.width = '50%';
+    .show();
   }, 
    function()
   {	
@@ -37,7 +40,7 @@ toolTipId = null;
 
  function updateView()
 { 
-   if(navigator.appName.indexOf('Netscape')==-1)
+   if(navigator.appName.indexOf('Netscape')==-1 || navigator.appVersion.indexOf('Apple')!=-1)
   {	  
 	document.getElementById('toppanel').style.height = getScreenHeight() - (215);
     document.getElementById('toppanel').style.overflow = 'auto';
