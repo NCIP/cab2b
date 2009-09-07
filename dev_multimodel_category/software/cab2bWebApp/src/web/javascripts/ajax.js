@@ -66,9 +66,13 @@
 	  var results = httpRequest.responseText;  	  
 	   if(results=="Exception")
 	  {
-  	     if(confirm('Incorrect databases to search configured for query! Do you want to re-configure now?'))
+  	     if(confirm('Incorrect or no databases to search configured for query! Do you want to re-configure now?'))
 		{
 		  document.location = "Home.do?redirect=true";
+		}
+		else
+		{
+		  document.location = "Home.do";
 		}
 	  }
 	   else if(httpRequest.status==500)
