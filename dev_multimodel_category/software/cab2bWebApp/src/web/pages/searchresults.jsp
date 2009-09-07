@@ -105,8 +105,12 @@ toolTipId = null;
   xOffset = (navigator.appName.indexOf('Netscape')==-1?(100 - document.getElementById('toppanel').scrollTop):0);
    $(".tooltipinvoker").hover(function(e)
   {	
+    if(navigator.appVersion.indexOf('Apple')!=-1)
+	{
+	  document.getElementById(toolTipId).style.width = "50%";
+	}	
 	$(document.getElementById(toolTipId))
-    .css("top",(e.pageY - xOffset) + "px")
+    .css("top",(e.pageY) + "px")
     .css("right",(getScreenWidth() - e.pageX) + "px")
     .show();		
   }, 
@@ -146,14 +150,14 @@ toolTipId = null;
 
 		<DIV style="float:right;">
 			<logic:present name="userName">
-				<INPUT style="margin-top:0.3em;display:none;" type="button" class="button" id="offlineExecutionButton" value="<bean:message key="button.offlineexecution"/>" onClick="document.location='BackgroundQuery.do'">&nbsp;&nbsp;
+				<INPUT style="margin-top:0.3em;display:none;" type="button" class="button" id="offlineExecutionButton" value="<bean:message key="button.offlineexecution"/>" onClick="document.location='BackgroundQuery.do'">
 			</logic:present>	
 		</DIV>
 		<DIV id="failedserviceslink" style="float:right;">
-			<IMG src="images/service_instance.jpg"  style="margin-top:0.3em;cursor:pointer;" title="<bean:message key="link.failedserviceinstances"/>"/>&nbsp;&nbsp;
+			<IMG src="images/service_instance_disabled.jpg"  style="margin-top:0.3em;" title="<bean:message key="link.failedserviceinstances"/>"/>&nbsp;&nbsp;
 		</DIV>
 		<DIV id="exportbutton" style="float:right;">
-			<IMG src="images/export.jpg" style="margin-top:0.3em;cursor:pointer;" title="<bean:message key="img.alt.exportresults"/>" />&nbsp;&nbsp;
+			<IMG src="images/export.jpg" style="margin-top:0.3em;" title="<bean:message key="img.alt.exportresults"/>" />&nbsp;&nbsp;
 		</DIV>
 				
 		<DIV style="float:right;">
