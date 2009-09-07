@@ -67,7 +67,7 @@
 			</DIV>
 			<logic:notEqual name="query" property="status" value="Processing">
 				<logic:notEqual name="query" property="status" value="Suspended">
-					<IMG src="images/export.jpg" style="cursor:pointer;" title="<bean:message key="img.alt.exportresults"/>" onClick="document.location='ExportResults.do?fileName=<bean:write name="query" property="fileName"/>';TogglePreloader(0);">&nbsp;
+					<IMG src="images/export.jpg" style="cursor:pointer;" title="<bean:message key="img.alt.exportresults"/>" onClick="document.location='ExportResults.do?fileName=<bean:write name="query" property="fileName"/>';setTimeout('TogglePreloader(0)', 1);">&nbsp;
 				</logic:notEqual>
 			</logic:notEqual>
 		</display:column>
