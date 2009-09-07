@@ -52,7 +52,7 @@
 							<IMG src="images/task_success.gif" title="<bean:message key="img.alt.task.complete"/>">
 						</logic:equal>
 						<logic:equal name="serviceInstance" property="status" value="Complete With Error">
-							<IMG src="images/task_failure.gif" title="<bean:message key="img.alt.task.completewitherror"/>">
+							<IMG src="images/task_complete_with_error.gif" title="<bean:message key="img.alt.task.completewitherror"/>">
 						</logic:equal>
 						<logic:equal name="serviceInstance" property="status" value="Failed">
 							<IMG src="images/task_failure.gif" title="<bean:message key="img.alt.task.failed"/>">
