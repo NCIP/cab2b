@@ -30,6 +30,7 @@
 	<!-- =====================Target for cleaning workarea before compiling========================= -->
 	<target name="clean.all">
 		<delete includeemptydirs="true" dir="${workarea.dir}" />
+		<delete file="${conf.dir}/web.xml" />
 	</target>
 	<!-- =========================================================================================== -->
 

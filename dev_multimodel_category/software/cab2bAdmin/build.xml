@@ -201,5 +201,6 @@
 	<!-- =============================================================================== -->
 	<target name="clean.all">
 		<delete includeemptydirs="true" dir="${workarea.dir}" />
+		<delete file="${conf.dir}/web.xml" />
 	</target>
 </project>
