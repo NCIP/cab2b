@@ -45,6 +45,7 @@
 	<property name="tomcat.web.xml.file" location="${conf.dir}/tomcat_web.xml" />
 	<property name="jboss.invoker.service.xml.file" location="${conf.dir}/invoker_jboss-service.xml" />
 	<property name="cab2b.runtime.properties" location="${conf.dir}/cab2b_server.properties" />
+	<property name="ejb.jboss.xml.file" location="${conf.dir}/ejb/jboss.xml" />
 
 	<property name="db.scripts.dir" location="db" />
 	<property name="db.install.scripts.dir" location="${db.scripts.dir}/db-install" />
@@ -165,11 +166,7 @@
 
 	<!-- ================================================================================== -->
 	<target name="initialize" depends="clean.all">
-		<delete file="${conf.dir}/server.properties" />
-		<delete file="${conf.dir}/cagrid.properties" />
-		<delete file="${conf.dir}/client.properties" />
-		<delete file="${conf.dir}/cab2b.properties" />
-
+		<copy file="${resource.dir}/ejb/jboss.xml" todir="${conf.dir}/ejb" />
 		<copy todir="${conf.dir}">
 			<fileset dir="${resource.dir}/properties">
 				<include name="*.properties" />
@@ -180,8 +177,7 @@
 		<replace file="${conf.dir}/cab2b.properties" token="@server.port@" value="${server-port}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@jndi.protocol@" value="${jndi.protocol}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@jndi.invoker.url@" value="${jndi.invoker.url}" />
-		<replace file="${conf.dir}/cab2b.properties" token="@ssl.truststore.filename@" value="${jboss.ssl.truststore.filename}" />
-		<replace file="${conf.dir}/cab2b.properties" token="@ignoreHttpsHost@" value="${jboss.ssl.enable}" />
+		<antcall target="set.cab2b.nontrusted.ca.conf" />
 
 		<replace file="${conf.dir}/cab2b.properties" token="@server.host@" value="${server-host}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@server.port@" value="${server-port}" />
@@ -258,23 +254,16 @@
 
 		<delete includeemptydirs="true" dir="${workarea.dir}" />
 		<delete>
-			<fileset dir="${conf.dir}">
-				<include name="cab2b.properties" />
-				<include name="cagrid.properties" />
-				<include name="client.properties" />
-				<include name="server.properties" />
-			</fileset>
-
-			<!-- Somehow this is not able to delete this file
-			fileset dir="${server.lib.dir}">
-				<include name="cab2b-client.jar" />
-			</fileset -->
-
 			<fileset dir="${webstart.src}">
 				<include name="*.class" />
 			</fileset>
 		</delete>
 		<echo message="Cleaned caB2B" />
+		<delete file="${conf.dir}/server.properties" />
+		<delete file="${conf.dir}/cagrid.properties" />
+		<delete file="${conf.dir}/client.properties" />
+		<delete file="${conf.dir}/cab2b.properties" />
+		<delete file="${conf.dir}/ejb/jboss.xml" />
 	</target>
 
 	<!-- ================================================================================== -->
@@ -377,7 +366,7 @@
 				<include name="log4j.properties" />
 			</fileset>
 		</copy>
-		<copy file="${jboss.ssl.truststore.location}" todir="${client.setup.dir}/conf" overwrite="true" />
+		<antcall target="set.cab2b.nontrusted.ca.files" />
 		<mkdir dir="${client.setup.dir}/conf/production" />
 		<mkdir dir="${client.setup.dir}/conf/training" />
 		<copy todir="${client.setup.dir}/conf/production">
@@ -400,36 +389,67 @@
 	</target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
+          target: set.cab2b.nontrusted.ca.files                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="set.cab2b.nontrusted.ca.files" depends="set.ssl.enable.condition" if="jboss.ssl.enable.true" unless="jboss.ssl.trusted.ca.true">
+		<copy file="${jboss.ssl.truststore.location}" todir="${client.setup.dir}/conf" overwrite="true" />
+	</target>
+
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: set.cab2b.nontrusted.ca.conf                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="set.cab2b.nontrusted.ca.conf" depends="set.ssl.enable.condition" if="jboss.ssl.enable.true" unless="jboss.ssl.trusted.ca.true">
+		<echo message="caB2B.ssl.truststore.filename=${jboss.ssl.truststore.filename}${line.separator}" file="${conf.dir}/cab2b.properties" append="true" />
+		<echo message="org.jboss.security.ignoreHttpsHost=${jboss.ssl.enable}" file="${conf.dir}/cab2b.properties" append="true" />
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: set.trusted.ca.condition                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="set.trusted.ca.condition">
+		<condition property="jboss.ssl.trusted.ca.true">
+			<equals arg1="${jboss.ssl.trusted.ca}" arg2="true" />
+		</condition>
+	</target>
+
+
+	<!-- - - - - - - - - - - - - - - - - - 
           target: set.cab2b.secure.conf                      
          - - - - - - - - - - - - - - - - - -->
-	<target name="set.cab2b.secure.conf" if="jboss.ssl.enable.true">
-		<property name="ejb.jboss.xml.file" location="${conf.dir}/ejb/ssl_jboss.xml" />
+	<target name="set.cab2b.secure.conf" depends="set.ssl.enable.condition" if="jboss.ssl.enable.true">
 		<property name="invoker.service.xml.file" location="${conf.dir}/invoker_ssl_jboss-service.xml" />
 		<property name="jboss.invoker.web.xml.file" location="${conf.dir}/invoker_ssl_web.xml" />
 	</target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
+          target: replace.secure.conf.file.contents                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="replace.secure.conf.file.contents" depends="set.ssl.enable.condition" if="jboss.ssl.enable.true">
+		<replace file="${conf.dir}/ejb/jboss.xml" token="type=http" value="type=https" />
+	</target>
+
+
+	<!-- - - - - - - - - - - - - - - - - - 
           target: set.cab2b.insecure.conf                      
          - - - - - - - - - - - - - - - - - -->
-	<target name="set.cab2b.insecure.conf" unless="jboss.ssl.enable.true">
+	<target name="set.cab2b.insecure.conf" depends="set.ssl.enable.condition" unless="jboss.ssl.enable.true">
 		<!-- Properties for non secure JBoss, these propertyies are changed in target 'set.cab2b.secure.conf' if the jboss.ssl.enable is true -->
-		<property name="ejb.jboss.xml.file" location="${conf.dir}/ejb/jboss.xml" />
 		<property name="jboss.invoker.web.xml.file" location="${conf.dir}/invoker_web.xml" />
 		<property name="invoker.service.xml.file" location="${conf.dir}/invoker_jboss-service.xml" />
 	</target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
-          target: set.condition                      
+          target: set.ssl.enable.condition                      
          - - - - - - - - - - - - - - - - - -->
-	<target name="set.condition">
+	<target name="set.ssl.enable.condition">
 		<condition property="jboss.ssl.enable.true">
 			<equals arg1="${jboss.ssl.enable}" arg2="true" />
 		</condition>
 	</target>
 
 	<!-- ================================================================================== -->
-	<target name="server.jar" depends="set.condition,set.cab2b.secure.conf,set.cab2b.insecure.conf">
-		<echo message="${jboss.ssl.enable.true}" />
+	<target name="server.jar" depends="set.cab2b.secure.conf,replace.secure.conf.file.contents">
 		<mkdir dir="${server.jar.dir}" />
 		<delete includeemptydirs="true">
 			<fileset dir="${server.jar.dir}">
@@ -1079,10 +1099,13 @@
 	<target name="build.all" depends="initialize,build.project.jar,build.ear" description="Builds the distribution unit i.e., a complete cab2bServer.ear">
 		<ant inheritAll="false" inheritRefs="true" antfile="${cab2badmin.location}/build.xml" target="war" dir="${cab2badmin.location}">
 			<property name="ds-name" value="${ds-name}" />
+			<property name="jboss.ssl.enable" value="${jboss.ssl.enable}" />
 		</ant>
 		<echo message="Admin War Created" />
 
-		<ant antfile="${cab2bwebapp.location}/build.xml" dir="${cab2bwebapp.location}" target="war" inheritall="false" />
+		<ant inheritRefs="true"  antfile="${cab2bwebapp.location}/build.xml" dir="${cab2bwebapp.location}" target="war" inheritall="false">
+			<property name="jboss.ssl.enable" value="${jboss.ssl.enable}" />
+		</ant>
 		<echo message="caB2B Web App War Created" />
 
 		<delete>
