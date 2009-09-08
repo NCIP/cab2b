@@ -36,11 +36,10 @@ import edu.wustl.common.util.dbManager.DBUtil;
 import gov.nih.nci.cagrid.common.SchemaValidator;
 
 /**
- * Utility to validate and write XML files for Multi model categories.
- * This is used to find required paths and validate the XML. It is not invoked during normal application execution. 
- * To use this update hibernate.cfg.xml with database information
- * Ensure hibernate.cfg.xml is present in classpath
- *      
+ * Utility to validate and write XML files for Multi model categories. This is used to find required paths and
+ * validate the XML. It is not invoked during normal application execution. To use this update hibernate.cfg.xml
+ * with database information Ensure hibernate.cfg.xml is present in classpath
+ * 
  * @author chandrakant_talele
  */
 public class MmcValidator {
@@ -50,8 +49,9 @@ public class MmcValidator {
 
     /**
      * Main method to run this utility
+     * 
      * @param args program arguments
-     * @throws Exception Any exception thrown 
+     * @throws Exception Any exception thrown
      */
     public static void main(String[] args) throws Exception {
         if ("true".equalsIgnoreCase(args[0])) {
@@ -77,7 +77,7 @@ public class MmcValidator {
             Document document = new SAXReader().read(fileInputStream);
 
             Element pairsElement = document.getRootElement();
-            List<Element> pairElements = (List<Element>)pairsElement.elements("pair");
+            List<Element> pairElements = (List<Element>) pairsElement.elements("pair");
             for (Element pairElement : pairElements) {
                 Element source = pairElement.element("source");
                 Element target = pairElement.element("target");
@@ -131,7 +131,7 @@ public class MmcValidator {
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Given path for console file in incorrect." + pairsFileName, e);
         }
-        
+
         Collection<EntityGroupInterface> groups = cache.getEntityGroups();
         for (EntityGroupInterface eg : groups) {
             for (ClassPair pair : pairs) {
@@ -141,10 +141,11 @@ public class MmcValidator {
     }
 
     /**
-     * Validates attribute entities present in given MMC XML file. 
-     * Also prints paths which are used to build graph to ensure classes are connected properly  
-     * @param fileName MMC XML 
-     * @throws Exception Any exception thrown 
+     * Validates attribute entities present in given MMC XML file. Also prints paths which are used to build graph
+     * to ensure classes are connected properly
+     * 
+     * @param fileName MMC XML
+     * @throws Exception Any exception thrown
      */
     private void validateXML(String fileName) throws Exception {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -219,21 +220,13 @@ public class MmcValidator {
     }
 
     private void getPaths(EntityGroupInterface eg, ClassPair pair) {
-        EntityInterface sourceClass = null;
-        EntityInterface targetClass = null;
+        EntityInterface sourceClass = eg.getEntityByName(pair.getSource());
+        EntityInterface targetClass = eg.getEntityByName(pair.getTarget());
 
-        for (EntityInterface en : eg.getEntityCollection()) {
-            String name = en.getName();
-            if (pair.getSource().equals(name)) {
-                sourceClass = en;
-            } else if (pair.getTarget().equals(name)) {
-                targetClass = en;
-            }
-        }
         if (sourceClass == null || targetClass == null) {
-            //System.out.println("\n====================================\n Null Source OR Target. ");
             return;
         }
+
         List<IPath> paths = new ArrayList<IPath>(0);
         System.out.println("--------------------------------------------------");
         System.out.println("Searching model : " + eg.getName());
@@ -283,7 +276,7 @@ public class MmcValidator {
         System.setErr(p);
 
     }
-    
+
     private static String getRoleName(IAssociation association) {
         String roleName = "";
         if (association instanceof IIntraModelAssociation) {
@@ -291,8 +284,8 @@ public class MmcValidator {
             roleName = intraModel.getDynamicExtensionsAssociation().getTargetRole().getName();
         } else {
             IInterModelAssociation interModel = (IInterModelAssociation) association;
-            roleName = interModel.getSourceAttribute().getName() + " = "
-                    + interModel.getTargetAttribute().getName();
+            roleName =
+                    interModel.getSourceAttribute().getName() + " = " + interModel.getTargetAttribute().getName();
         }
         return roleName;
     }
@@ -301,6 +294,7 @@ public class MmcValidator {
 
 /**
  * Class to represent source and target
+ * 
  * @author chandrakant_talele
  */
 class ClassPair {
