@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="caB2BWebApplication" basedir=".">
+	
+	<property name="source.dir" location="src/java" />
+	<property name="web.dir" location="src/web" />
+	<property name="conf.dir" location="src/conf" />
+	<property name="resource.dir" location="src/resources" />
+	<property name="lib.dir" location="lib" />
+
+	<property name="stylesheet.dir" location="${web.dir}/stylesheets" />
+	<property name="javascript.dir" location="${web.dir}/javascripts" />
+	<property name="images.dir" location="${web.dir}/images" />
+	<property name="pages.dir" location="${web.dir}/pages" />
+	<property name="taglibs.dir" location="${web.dir}/taglibs" />
+
+	<property name="workarea.dir" location="build" />
+	<mkdir dir="${workarea.dir}" />
+	<property name="war.dir" location="${workarea.dir}/war" />
+	<property name="classes.dir" location="${war.dir}/WEB-INF/classes" />
+	<property name="war.file" location="${workarea.dir}/cab2bWebApp.war" />
+
+	<property name="cab2b.location" location="../cab2b" />
+	<property name="cab2b.build.location" location="${cab2b.location}/build" />
+
+	<property name="cab2badmin.location" location="../cab2bAdmin" />
+	<property name="cab2badmin.build.location" location="${cab2badmin.location}/build" />
+
+	<property file="${conf.dir}/server.properties" />
+
+	<!-- =====================Target for cleaning workarea before compiling========================= -->
+	<target name="clean.all">
+		<delete includeemptydirs="true" dir="${workarea.dir}" />
+	</target>
+	<!-- =========================================================================================== -->
+
+	<!-- =============Target for copying all resources for creating caB2BWebApplication war========= -->
+	<target name="copy.all" depends="compile.all">
+		<delete file="${conf.dir}/web.xml" />
+		<copy file="${resource.dir}/web.xml" todir="${conf.dir}" />
+		
+		<!-- Copies all the stylesheet files from stylesheet directory to workarea/stylesheet/ -->
+		<copy overwrite="true" todir="${war.dir}/stylesheet">
+			<fileset dir="${stylesheet.dir}">
+				<include name="**/*.css" />
+			</fileset>
+		</copy>
+
+		<!-- Copies all the javascript files from javascript directory to workarea/javascript/ -->
+		<copy overwrite="true" todir="${war.dir}/javascript">
+			<fileset dir="${javascript.dir}">
+				<include name="**/*.js" />
+			</fileset>
+		</copy>
+
+		<!-- Copies all the image files from images directory to workarea/images/ -->
+		<copy overwrite="true" todir="${war.dir}/images">
+			<fileset dir="${images.dir}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+
+		<!-- Copies all the jsp pages from jsp directory to workarea/pages/ -->
+		<copy overwrite="true" todir="${war.dir}/pages">
+			<fileset dir="${pages.dir}">
+				<include name="**/*.jsp" />
+			</fileset>
+		</copy>
+
+		<!-- Copies all the taglibs from taglibs directory to workarea/taglibs/ -->
+		<copy overwrite="true" todir="${war.dir}/WEB-INF/taglibs">
+			<fileset dir="${taglibs.dir}">
+				<include name="**/*.tld" />
+			</fileset>
+		</copy>
+
+		<!-- Copies all the property files from conf directory to workarea/WEB-INF/classes/ -->
+		<copy overwrite="false" todir="${war.dir}/WEB-INF/classes">
+			<fileset dir="${conf.dir}">
+				<include name="**/*.*" />
+				<exclude name="web.xml" />
+				<exclude name="tiles-defs.xml" />
+				<exclude name="chain-config.xml" />
+				<exclude name="struts-config.xml" />
+			</fileset>
+		</copy>
+
+		<!-- Copies the tiles.xml from conf directory to workarea/WEB-INF -->
+		<copy overwrite="true" todir="${war.dir}/WEB-INF/">
+			<fileset dir="${conf.dir}">
+				<include name="tiles-defs.xml" />
+				<include name="chain-config.xml" />
+				<include name="struts-config.xml" />
+			</fileset>
+		</copy>
+
+		<!-- Copies all the .jar files from lib directory to workarea/WEB-INF/lib -->
+		<copy overwrite="true" todir="${war.dir}/WEB-INF/lib">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+	</target>
+	<!-- =========================================================================================== -->
+
+	<!-- ======================Target for compiling source code===================================== -->
+	<target name="compile.all">
+		<mkdir dir="${classes.dir}" />
+		<copy file="${cab2b.location}/build/cab2b-common.jar" todir="${workarea.dir}" />
+		<copy file="${cab2b.location}/build/cab2b-server.jar" todir="${workarea.dir}" />
+		<!-- copy file="${cab2b.location}/build/cab2b-client.jar" todir="${workarea.dir}" / -->
+
+		<path id="source.classpath">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="${cab2b.location}/lib/common">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="${cab2b.location}/lib/server">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="${cab2b.location}/lib/extra">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="${workarea.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</path>
+
+		<javac srcdir="${source.dir}" target="1.5" destdir="${classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" classpathref="source.classpath" failonerror="true" nowarn="on" />
+	</target>
+	<!-- =========================================================================================== -->
+
+	<!-- ======================Target for creating war in workarea ================================= -->
+	<target name="war" depends="clean.all,copy.all,compile.all,set.cab2b.secure.conf" description="Creates the cab2bWebApp.war in the workarea directory">
+		<copy todir="${workarea.dir}">
+			<fileset file="${conf.dir}/web.xml" />
+		</copy>
+		<replace file="${workarea.dir}/web.xml" token="DS-NAME" value="${datasource.name}" />
+		<war destfile="${war.file}" webxml="${workarea.dir}/web.xml" update="true">
+			<zipfileset dir="${war.dir}/images" prefix="images" />
+			<zipfileset dir="${war.dir}/pages" prefix="pages" />
+			<zipfileset dir="${war.dir}/javascript" prefix="javascript" />
+			<zipfileset dir="${war.dir}/stylesheet" prefix="stylesheet" />
+			<zipfileset dir="${war.dir}/WEB-INF/taglibs" prefix="taglibs" />
+			<webinf dir="${war.dir}/WEB-INF" />
+		</war>
+
+		<delete>
+			<fileset dir="${workarea.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</delete>
+	</target>
+	<!-- =========================================================================================== -->
+
+	<!-- =========================================================================================== -->
+	<macrodef name="replace.web.xml">
+		<attribute name="webfile" />
+		<sequential>
+			<echo message="Editing web.xml file" />
+			<replace file="@{webfile}" token="&lt;/web-app&gt;" value="&lt;security-constraint&gt;
+					&lt;web-resource-collection&gt;
+						&lt;web-resource-name&gt;*.*&lt;/web-resource-name&gt;
+						&lt;description&gt;
+							An security config that only allows users with
+							the role caB2B User to access the HTML cab2b web
+							application
+						&lt;/description&gt;
+						&lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+						&lt;http-method&gt;GET&lt;/http-method&gt;
+						&lt;http-method&gt;POST&lt;/http-method&gt;
+					&lt;/web-resource-collection&gt;
+					&lt;user-data-constraint&gt;
+						&lt;transport-guarantee&gt;CONFIDENTIAL&lt;/transport-guarantee&gt;
+					&lt;/user-data-constraint&gt;
+				&lt;/security-constraint&gt;
+			&lt;/web-app&gt;" />
+		</sequential>
+	</macrodef>
+	
+		<!-- - - - - - - - - - - - - - - - - - 
+          target: set.cab2b.secure.conf                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="set.cab2b.secure.conf" depends="set.ssl.enable.condition" if="jboss.ssl.enable.true">
+		<replace.web.xml webfile="${conf.dir}/web.xml" />
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: set.ssl.enable.condition                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="set.ssl.enable.condition">
+		<condition property="jboss.ssl.enable.true">
+			<equals arg1="${jboss.ssl.enable}" arg2="true" />
+		</condition>
+	</target>
+
+</project>
