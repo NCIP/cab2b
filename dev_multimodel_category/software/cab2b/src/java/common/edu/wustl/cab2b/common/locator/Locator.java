@@ -33,19 +33,30 @@ public class Locator {
     protected Locator() {
         ClassLoader trustStoreRscrc = getClass().getClassLoader();
         String trustStoreFileProperty = CommonPropertyLoader.getSSLTruststoreFileName();
-        URL rsrcURL = trustStoreRscrc.getResource(trustStoreFileProperty);
 
-        if (rsrcURL != null) {
+        if (trustStoreFileProperty != null) {
+            URL rsrcURL = trustStoreRscrc.getResource(trustStoreFileProperty);
             String trustStoreFileName = rsrcURL.getFile();
-            System.setProperty("javax.net.ssl.trustStore", trustStoreFileName);
-            System.setProperty("org.jboss.security.ignoreHttpsHost", CommonPropertyLoader.isIgnoreHttpHost());
+            if (!trustStoreFileName.isEmpty()) {
+                logger.debug("Trustore file name : "
+                        + trustStoreFileName
+                        + ", Server must have keystore which has certificates that is contianed by this truststore");
+                System.setProperty("javax.net.ssl.trustStore", trustStoreFileName);
+                System.setProperty("org.jboss.security.ignoreHttpsHost", CommonPropertyLoader.isIgnoreHttpHost());
+                logger.info("Setting up SSL communication using trust store : " + trustStoreFileName);
+            } else {
+                logger.warn("No file found for name : " + trustStoreFileName+". Server should have trusted CA");
+            }
         } else {
             StringBuffer msg = new StringBuffer();
-            msg.append("No Truststore found for Truststore file name: ");
+            msg.append("Please set system property -Djavax.net.ssl.trustStore and -Dorg.jboss.security.ignoreHttpsHost");
+            msg.append("if certificates are not issued to Server, or ");
+            msg.append("caB2B server must have trusted CA in order to communicate with client. No Truststore"
+                    + " found for Truststore file name: ");
             msg.append(trustStoreFileProperty);
             msg.append(" in property file ");
             msg.append(CommonPropertyLoader.propertyFileName);
-            logger.warn(msg.toString());
+            logger.debug(msg.toString());
         }
 
         System.setProperty(Context.PROVIDER_URL, CommonPropertyLoader.getJndiUrl());
@@ -88,10 +99,10 @@ public class Locator {
             obj = ctx.lookup(ejbName);
 
         } catch (Throwable e) {
-            if(e instanceof Exception) {
-                throw new LocatorException(e.getMessage(),(Exception) e, ErrorCodeConstants.SR_0001);
+            if (e instanceof Exception) {
+                throw new LocatorException(e.getMessage(), (Exception) e, ErrorCodeConstants.SR_0001);
             } else {
-                throw new RuntimeException(e.getMessage(),e, ErrorCodeConstants.SR_0001);
+                throw new RuntimeException(e.getMessage(), e, ErrorCodeConstants.SR_0001);
             }
         }
 
