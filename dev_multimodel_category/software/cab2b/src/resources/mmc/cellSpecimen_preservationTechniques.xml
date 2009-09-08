@@ -8,7 +8,7 @@
 			<Attribute name="type" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.CellSpecimen" />
 			<Attribute name="specimenType" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.CellSpecimen" />
 		</MultiModelCategoryAttribute>
-		<MultiModelCategoryAttribute name="Cell Specimen Available" description="Cell Specimen Available">
+		<MultiModelCategoryAttribute name="Cell Specimen Availability" description="Cell Specimen Available">
 			<Attribute name="available" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.CellSpecimen" />
 			<Attribute name="isAvailable" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.CellSpecimen" />
 		</MultiModelCategoryAttribute>
@@ -48,11 +48,11 @@
 			<Attribute name="clinicalStatus" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissueCore.domain.SpecimenCollectionGroup" />
 			<Attribute name="clinicalStatus" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.SpecimenCollectionGroup" />
 		</MultiModelCategoryAttribute>
-		<MultiModelCategoryAttribute name="Tissue side" description="Tissue side">
+		<MultiModelCategoryAttribute name="Tissue Side" description="Tissue side">
 			<Attribute name="tissueSide" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.SpecimenCharacteristics" />
 			<Attribute name="tissueSide" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.SpecimenCharacteristics" />
 		</MultiModelCategoryAttribute>
-		<MultiModelCategoryAttribute name="Tissue site" description="Tissue site">
+		<MultiModelCategoryAttribute name="Tissue Site" description="Tissue site">
 			<Attribute name="tissueSite" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.SpecimenCharacteristics" />
 			<Attribute name="tissueSite" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.SpecimenCharacteristics" />
 		</MultiModelCategoryAttribute>
@@ -63,7 +63,7 @@
 			<Attribute name="fixationType" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.FixedEventParameters" />
 			<Attribute name="fixationType" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.FixedEventParameters" />
 		</MultiModelCategoryAttribute>
-		<MultiModelCategoryAttribute name="Freezing method" description="Freezing method">
+		<MultiModelCategoryAttribute name="Freezing Method" description="Freezing method">
 			<Attribute name="method" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.FrozenEventParameters" />
 			<Attribute name="method" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.FrozenEventParameters" />
 		</MultiModelCategoryAttribute>
@@ -76,9 +76,9 @@
 		<Path id="223156" />
 		<Path id="185838" />
 		<Path id="171664" />
-		<path id="224150" />
-		<path id="172133" />
-		<path id="224546" />
-		<path id="171643" />
+		<Path id="224150" />
+		<Path id="172133" />
+		<Path id="224546" />
+		<Path id="171643" />
 	</Paths>
 </MultiModelCategory>

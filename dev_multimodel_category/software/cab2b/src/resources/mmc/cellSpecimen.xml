@@ -8,7 +8,7 @@
 			<Attribute name="type" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.CellSpecimen" />
 			<Attribute name="specimenType" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.CellSpecimen" />
 		</MultiModelCategoryAttribute>
-		<MultiModelCategoryAttribute name="Cell Specimen Available" description="Cell Specimen Available">
+		<MultiModelCategoryAttribute name="Cell Specimen Availability" description="Cell Specimen Available">
 			<Attribute name="available" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.CellSpecimen" />
 			<Attribute name="isAvailable" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.CellSpecimen" />
 		</MultiModelCategoryAttribute>
@@ -48,11 +48,11 @@
 			<Attribute name="clinicalStatus" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissueCore.domain.SpecimenCollectionGroup" />
 			<Attribute name="clinicalStatus" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.SpecimenCollectionGroup" />
 		</MultiModelCategoryAttribute>
-		<MultiModelCategoryAttribute name="Tissue side" description="Tissue side">
+		<MultiModelCategoryAttribute name="Tissue Side" description="Tissue side">
 			<Attribute name="tissueSide" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.SpecimenCharacteristics" />
 			<Attribute name="tissueSide" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.SpecimenCharacteristics" />
 		</MultiModelCategoryAttribute>
-		<MultiModelCategoryAttribute name="Tissue site" description="Tissue site">
+		<MultiModelCategoryAttribute name="Tissue Site" description="Tissue site">
 			<Attribute name="tissueSite" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.SpecimenCharacteristics" />
 			<Attribute name="tissueSite" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.SpecimenCharacteristics" />
 		</MultiModelCategoryAttribute>
