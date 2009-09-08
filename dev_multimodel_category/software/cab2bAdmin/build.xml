@@ -3,6 +3,7 @@
 	
 	<property name="src.dir" location="src" />
 	<property name="conf.dir" location="src/conf" />
+	<property name="resource.dir" location="${src.dir}/resources" />
 	<property file="${conf.dir}/server.properties" />
 
 	<property name="source.dir" location="${src.dir}/java" />
@@ -29,8 +30,8 @@
 	<property name="target.dir" location="${workarea.dir}/war" />
 	<property name="classes.dir" location="${target.dir}/WEB-INF/classes" />
 
-	<!-- =============================================================================== -->
-	<target name="war" depends="clean.all,copy.all,compile.all" description="Creates the caB2Badmin.war in the workarea directory using deployment descriptor (web.xml) from conf directory">
+	<!-- ===============================================================================-->
+	<target name="war" depends="clean.all,copy.all,compile.all,set.cab2b.secure.conf" description="Creates the caB2Badmin.war in the workarea directory using deployment descriptor (web.xml) from conf directory">
 		<copy todir="${workarea.dir}">
 			<fileset file="${conf.dir}/web.xml" />
 		</copy>
@@ -52,6 +53,8 @@
 	</target>
 	<!-- =============================================================================== -->
 	<target name="copy.all">
+		<delete file="${conf.dir}/web.xml" />
+		<copy file="${resource.dir}/web.xml" todir="${conf.dir}" />
 		<!-- Copies all the .css files from css directory to workarea/css/ -->
 		<copy overwrite="true" todir="${target.dir}/css">
 			<fileset dir="${css.dir}">
@@ -152,6 +155,47 @@
 				<include name="**/*.xml" />
 			</fileset>
 		</copy>
+	</target>
+	
+	<!-- ===========================================================================================-->
+	<macrodef name="replace.web.xml">
+		<attribute name="webfile" />
+		<sequential>
+			<echo message="Editing web.xml file" />
+			<replace file="@{webfile}" token="&lt;/web-app&gt;" value="&lt;security-constraint&gt;
+					&lt;web-resource-collection&gt;
+						&lt;web-resource-name&gt;*.*&lt;/web-resource-name&gt;
+						&lt;description&gt;
+							An security config that only allows users with
+							the role caB2B User to access the HTML cab2b web
+							application
+						&lt;/description&gt;
+						&lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+						&lt;http-method&gt;GET&lt;/http-method&gt;
+						&lt;http-method&gt;POST&lt;/http-method&gt;
+					&lt;/web-resource-collection&gt;
+					&lt;user-data-constraint&gt;
+						&lt;transport-guarantee&gt;CONFIDENTIAL&lt;/transport-guarantee&gt;
+					&lt;/user-data-constraint&gt;
+				&lt;/security-constraint&gt;
+			&lt;/web-app&gt;" />
+		</sequential>
+	</macrodef>
+	
+		<!-- - - - - - - - - - - - - - - - - - 
+          target: set.cab2b.secure.conf                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="set.cab2b.secure.conf" depends="set.ssl.enable.condition" if="jboss.ssl.enable.true">
+		<replace.web.xml webfile="${conf.dir}/web.xml" />
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: set.ssl.enable.condition                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="set.ssl.enable.condition">
+		<condition property="jboss.ssl.enable.true">
+			<equals arg1="${jboss.ssl.enable}" arg2="true" />
+		</condition>
 	</target>
 
 	<!-- =============================================================================== -->
