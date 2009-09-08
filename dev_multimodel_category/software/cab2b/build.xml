@@ -264,6 +264,7 @@
 		<delete file="${conf.dir}/client.properties" />
 		<delete file="${conf.dir}/cab2b.properties" />
 		<delete file="${conf.dir}/ejb/jboss.xml" />
+		<delete file="${conf.dir}/${jboss.ssl.truststore.filename}" />
 	</target>
 
 	<!-- ================================================================================== -->
@@ -393,6 +394,8 @@
          - - - - - - - - - - - - - - - - - -->
 	<target name="set.cab2b.nontrusted.ca.files" depends="set.ssl.enable.condition" if="jboss.ssl.enable.true" unless="jboss.ssl.trusted.ca.true">
 		<copy file="${jboss.ssl.truststore.location}" todir="${client.setup.dir}/conf" overwrite="true" />
+		<!-- Copying jboss.ssl.truststore.location to cab2b/conf for webstart -->
+		<copy todir="${conf.dir}" file="${jboss.ssl.truststore.location}"/> 
 	</target>
 
 
@@ -790,6 +793,7 @@
 	<!-- create the client jar for Java Web Start deployment.      -->
 	<!-- ==========================================================-->
 	<target name="build.client.webstart.war">
+		<delete dir="${webstart.dir}"/>
 		<mkdir dir="${client.jar.dir}" />
 		<mkdir dir="${webstart.client.dir}" />
 		<mkdir dir="${webstart.jnlp.dir}" />
