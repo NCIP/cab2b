@@ -177,7 +177,6 @@
 		<replace file="${conf.dir}/cab2b.properties" token="@server.port@" value="${server-port}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@jndi.protocol@" value="${jndi.protocol}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@jndi.invoker.url@" value="${jndi.invoker.url}" />
-		<antcall target="set.cab2b.nontrusted.ca.conf" />
 
 		<replace file="${conf.dir}/cab2b.properties" token="@server.host@" value="${server-host}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@server.port@" value="${server-port}" />
@@ -264,7 +263,6 @@
 		<delete file="${conf.dir}/client.properties" />
 		<delete file="${conf.dir}/cab2b.properties" />
 		<delete file="${conf.dir}/ejb/jboss.xml" />
-		<delete file="${conf.dir}/${jboss.ssl.truststore.filename}" />
 	</target>
 
 	<!-- ================================================================================== -->
@@ -367,7 +365,7 @@
 				<include name="log4j.properties" />
 			</fileset>
 		</copy>
-		<antcall target="set.cab2b.nontrusted.ca.files" />
+		<antcall target="set.cab2b.nontrusted.ca.conf" />
 		<mkdir dir="${client.setup.dir}/conf/production" />
 		<mkdir dir="${client.setup.dir}/conf/training" />
 		<copy todir="${client.setup.dir}/conf/production">
@@ -390,21 +388,12 @@
 	</target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
-          target: set.cab2b.nontrusted.ca.files                      
-         - - - - - - - - - - - - - - - - - -->
-	<target name="set.cab2b.nontrusted.ca.files" depends="set.ssl.enable.condition" if="jboss.ssl.enable.true" unless="jboss.ssl.trusted.ca.true">
-		<copy file="${jboss.ssl.truststore.location}" todir="${client.setup.dir}/conf" overwrite="true" />
-		<!-- Copying jboss.ssl.truststore.location to cab2b/conf for webstart -->
-		<copy todir="${conf.dir}" file="${jboss.ssl.truststore.location}"/> 
-	</target>
-
-
-	<!-- - - - - - - - - - - - - - - - - - 
           target: set.cab2b.nontrusted.ca.conf                      
          - - - - - - - - - - - - - - - - - -->
-	<target name="set.cab2b.nontrusted.ca.conf" depends="set.ssl.enable.condition" if="jboss.ssl.enable.true" unless="jboss.ssl.trusted.ca.true">
-		<echo message="caB2B.ssl.truststore.filename=${jboss.ssl.truststore.filename}${line.separator}" file="${conf.dir}/cab2b.properties" append="true" />
-		<echo message="org.jboss.security.ignoreHttpsHost=${jboss.ssl.enable}" file="${conf.dir}/cab2b.properties" append="true" />
+	<target name="set.cab2b.nontrusted.ca.conf" depends="set.ssl.enable.condition,set.trusted.ca.condition" if="jboss.ssl.enable.true" unless="jboss.ssl.trusted.ca.true">
+		<echo message="java -Djavax.net.ssl.trustStore=./conf/${jboss.ssl.truststore.filename} -Djavax.net.ssl.trustStorePassword=${jboss.ssl.truststore.password} -Dorg.jboss.security.ignoreHttpsHost=${org.jboss.security.ignoreHttpsHost} -Xmx512m -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="false" />
+		<echo message="java -Djavax.net.ssl.trustStore=./conf/${jboss.ssl.truststore.filename} -Djavax.net.ssl.trustStorePassword=${jboss.ssl.truststore.password} -Dorg.jboss.security.ignoreHttpsHost=${org.jboss.security.ignoreHttpsHost} -Xmx512m -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="false" />
+		<copy file="${jboss.ssl.truststore.location}" todir="${client.setup.dir}/conf" overwrite="true" />
 	</target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -452,7 +441,7 @@
 	</target>
 
 	<!-- ================================================================================== -->
-	<target name="server.jar" depends="set.cab2b.secure.conf,replace.secure.conf.file.contents">
+	<target name="server.jar" depends="set.cab2b.secure.conf,set.cab2b.insecure.conf,replace.secure.conf.file.contents">
 		<mkdir dir="${server.jar.dir}" />
 		<delete includeemptydirs="true">
 			<fileset dir="${server.jar.dir}">
