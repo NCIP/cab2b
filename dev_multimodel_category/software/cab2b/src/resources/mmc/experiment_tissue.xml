@@ -13,7 +13,7 @@
 		<MultiModelCategoryAttribute name="AssayType" description="AssayType">
 			<Attribute name="assayType" model="caArray_v2.1" class="gov.nih.nci.caarray.domain.project.Experiment" />
 			<Attribute name="assayType" model="caArray_v2" class="gov.nih.nci.caarray.domain.project.Experiment" />
-			<Attribute name="assayType" model="caArray Internal_v2.3" class="gov.nih.nci.caarray.domain.project.AssayType" />
+			<Attribute name="name" model="caArray Internal_v2.3" class="gov.nih.nci.caarray.domain.project.AssayType" />
 		</MultiModelCategoryAttribute>
 		<MultiModelCategoryAttribute name="Identifier" description="Identifier">
 			<Attribute name="id" model="caArray_v2.1" class="gov.nih.nci.caarray.domain.project.Experiment" />
