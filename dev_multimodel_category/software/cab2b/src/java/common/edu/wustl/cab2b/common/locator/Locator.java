@@ -2,14 +2,11 @@ package edu.wustl.cab2b.common.locator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
 
 import javax.ejb.EJBHome;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-
 import org.apache.log4j.Logger;
-
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
@@ -31,34 +28,6 @@ public class Locator {
      * This is to enforce that Locator is a singleton class
      */
     protected Locator() {
-        ClassLoader trustStoreRscrc = getClass().getClassLoader();
-        String trustStoreFileProperty = CommonPropertyLoader.getSSLTruststoreFileName();
-
-        if (trustStoreFileProperty != null) {
-            URL rsrcURL = trustStoreRscrc.getResource(trustStoreFileProperty);
-            String trustStoreFileName = rsrcURL.getFile();
-            if (!trustStoreFileName.isEmpty()) {
-                logger.debug("Trustore file name : "
-                        + trustStoreFileName
-                        + ", Server must have keystore which has certificates that is contianed by this truststore");
-                System.setProperty("javax.net.ssl.trustStore", trustStoreFileName);
-                System.setProperty("org.jboss.security.ignoreHttpsHost", CommonPropertyLoader.isIgnoreHttpHost());
-                logger.info("Setting up SSL communication using trust store : " + trustStoreFileName);
-            } else {
-                logger.warn("No file found for name : " + trustStoreFileName+". Server should have trusted CA");
-            }
-        } else {
-            StringBuffer msg = new StringBuffer();
-            msg.append("Please set system property -Djavax.net.ssl.trustStore and -Dorg.jboss.security.ignoreHttpsHost");
-            msg.append("if certificates are not issued to Server, or ");
-            msg.append("caB2B server must have trusted CA in order to communicate with client. No Truststore"
-                    + " found for Truststore file name: ");
-            msg.append(trustStoreFileProperty);
-            msg.append(" in property file ");
-            msg.append(CommonPropertyLoader.propertyFileName);
-            logger.debug(msg.toString());
-        }
-
         System.setProperty(Context.PROVIDER_URL, CommonPropertyLoader.getJndiUrl());
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.naming.HttpNamingContextFactory");
         //System.setProperty(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
@@ -99,10 +68,10 @@ public class Locator {
             obj = ctx.lookup(ejbName);
 
         } catch (Throwable e) {
-            if (e instanceof Exception) {
-                throw new LocatorException(e.getMessage(), (Exception) e, ErrorCodeConstants.SR_0001);
+            if(e instanceof Exception) {
+                throw new LocatorException(e.getMessage(),(Exception) e, ErrorCodeConstants.SR_0001);
             } else {
-                throw new RuntimeException(e.getMessage(), e, ErrorCodeConstants.SR_0001);
+                throw new RuntimeException(e.getMessage(),e, ErrorCodeConstants.SR_0001);
             }
         }
 
