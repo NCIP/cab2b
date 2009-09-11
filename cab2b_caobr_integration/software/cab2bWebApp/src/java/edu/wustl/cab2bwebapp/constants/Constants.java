@@ -147,4 +147,18 @@ public interface Constants {
 
     /** Constant for forward to failure page */
     public static final String FORWARD_FAILURE = "failure";
+    
+    public static final String DISPLAY_RESOURCE = "displayresource";
+
+    public static final String ANNOTAION_RESULT_VIEW = "annotationview";
+
+    public static final String DISPLAY_ANNOTATION = "displayannotation";
+
+    public static final String SELECTED_RESOURCE_DES = "selectedResourceDescription";
+
+    public static final String SELECTED_RESOURCE_IMAGE = "selectedRresourceImage";
+    
+    public static final String RESOURCE_MAP = "resourceMap";
+    
+    public static final String PARSED_RESULT = "parsedResult";
 }
