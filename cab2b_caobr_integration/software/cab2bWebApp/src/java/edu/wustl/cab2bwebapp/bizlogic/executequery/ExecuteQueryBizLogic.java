@@ -150,22 +150,28 @@ public class ExecuteQueryBizLogic {
         List<List<SearchResultDVO>> searchResultsView = null;
         if (finalResult != null && finalResult.size() > 0) {
             searchResultsView = new ArrayList<List<SearchResultDVO>>();
-            for (int i = 0; i < finalResult.size(); i++) {
+             for (int i = 0; i < finalResult.size(); i++) {
                 Map<AttributeInterface, Object> record = (Map<AttributeInterface, Object>) finalResult.get(i);
-                Collection<AttributeInterface> keys =
-                        orderedAttributeList == null ? record.keySet() : orderedAttributeList;
+                Collection<AttributeInterface> keys = orderedAttributeList == null ? record.keySet()
+                        : orderedAttributeList;
                 ArrayList<SearchResultDVO> row = new ArrayList<SearchResultDVO>();
+
+                SearchResultDVO searchResultDVO = new SearchResultDVO();
+                
+                searchResultDVO.setTitle("Select: <input type='checkbox' onClick='checkAll()'>");
+                searchResultDVO.setValue("<input type='checkbox' id='" + i + "' name='checkBox'>");
+                row.add(searchResultDVO);
+
                 for (AttributeInterface a : keys) {
-                    SearchResultDVO searchResultDVO = new SearchResultDVO();
+                    searchResultDVO = new SearchResultDVO();
                     Object value = record.get(a);
                     String title = edu.wustl.cab2b.common.util.Utility.getFormattedString(a.getName());
                     searchResultDVO.setTitle(title);
                     searchResultDVO.setValue(value == null ? null : value);
-                    searchResultDVO
-                        .setMedia((!title.equals("Point of Contact")
-                                && !title.equals("Hosting Cancer Research Center") && !title
-                            .equals("Contact e Mail")) ? "html"
-                                + (!title.equals("Hosting Institution") ? " csv excel pdf" : "") : "csv excel pdf");
+                    searchResultDVO.setMedia((!title.equals("Point of Contact")
+                            && !title.equals("Hosting Cancer Research Center") && !title.equals("Contact e Mail")) ? "html"
+                            + (!title.equals("Hosting Institution") ? " csv excel pdf" : "")
+                            : "csv excel pdf");
                     row.add(searchResultDVO);
                 }
                 searchResultsView.add(row);
