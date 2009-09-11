@@ -18,6 +18,7 @@
 		<forward name="login" path="/pages/login.jsp" />
 		<forward name="failure" path="/pages/failure.jsp" />
 		<forward name="searchresults" path="/pages/searchresults.jsp" />
+<forward name="searchresultspanel" path="/pages/searchresultspanel.jsp" />
 	</global-forwards>
 
 	<!-- ========================== Action Mappings ========================== -->
@@ -87,6 +88,22 @@
 			<forward name="success" path="/pages/blank.jsp" />
 			<forward name="failure" path="/pages/blank.jsp" />
 		</action>
+		
+			<action path="/Annotate"
+			type="edu.wustl.cab2bwebapp.action.AnnotateAction">
+		</action>
+		
+		<action path="/AnnotationResult"
+			type="edu.wustl.cab2bwebapp.action.AnnotationResultAction">
+			<forward name="displayresource" path="/pages/displayResources.jsp" />
+		</action>
+		
+		<action path="/ShowAnnotation"
+			type="edu.wustl.cab2bwebapp.action.ShowAnnotationAction">
+			<forward name="displayannotation" path="/pages/displayAnnotation.jsp" />
+		</action>
+		
+		
 	</action-mappings>
 
 	<!-- ========================== Message Resource ========================== -->
