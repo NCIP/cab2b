@@ -66,6 +66,7 @@
   }
    else
    {
+    document.getElementById('resultsmessage').innerHTML = "";
 	if(document.getElementById('preResultsQueryInfoPanel'))
 	{
 		document.getElementById('preResultsQueryInfoPanel').style.display = 'block';
