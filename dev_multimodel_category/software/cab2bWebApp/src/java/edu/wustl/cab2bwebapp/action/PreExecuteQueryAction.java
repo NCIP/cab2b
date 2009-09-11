@@ -19,7 +19,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.globus.gsi.GlobusCredential;
 
+import edu.wustl.cab2b.common.queryengine.CompoundQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.KeywordQuery;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
@@ -95,6 +97,10 @@ public class PreExecuteQueryAction extends Action {
 
                 String keyword = request.getParameter(Constants.KEYWORD);
                 session.setAttribute(Constants.KEYWORD, keyword);
+                
+                GlobusCredential proxy = (GlobusCredential) session.getAttribute(Constants.GLOBUS_CREDENTIAL);
+                UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
+                QueryExecutorUtil.setOutputURLs((CompoundQuery)query, proxy, user, modelGroupNames);
 
                 //set Keyword subqueries name in dropdown
                 setQueriesInDropDown(query, session);
