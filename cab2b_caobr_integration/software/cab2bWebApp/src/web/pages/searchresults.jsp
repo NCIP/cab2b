@@ -26,6 +26,7 @@
 <SCRIPT language="JavaScript" src="javascript/ajax.js"></SCRIPT>
 <SCRIPT language="javaScript">
 
+ var checkFlag = false;
 function exportdata()
 {
 document.getElementById('exportDiv').innerHTML = ' <IMG src="images/PageLoading.gif" width="30" height="30" alt="Loading Data">';
@@ -35,6 +36,65 @@ mywindow.moveTo(0,0);
 document.getElementById('exportDiv').innerHTML = '<IMG style="border-top: 1px solid #cccccc; border-left:1px solid #cccccc;" src="images/ExportAll_Inactive.jpg" >';
 }
 
+
+function checkAll(){
+ 	var obj = document.getElementsByName('checkBox');
+	if(checkFlag){
+		checkFlag = false;
+	}
+	else {
+		checkFlag = true;
+	}
+
+ 	for(var i =0; i< obj.length;i++){
+		 obj[i].checked=checkFlag;
+	}
+	}
+
+
+function changeText(){
+	var obj = document.getElementById('LabelPreloader');
+	
+	obj.innerHTML="<SPAN ID='LabelPreloader' STYLE='font-size:11px'><STRONG>Please Wait ..    </STRONG><BR> Searching  Annotation ..</SPAN>"
+}
+
+
+function isChecked(){
+	var obj = document.getElementsByName('checkBox');
+	var flag=false;
+
+ 	for(var i =0; i< obj.length;i++){
+		 flag=obj[i].checked;
+		 if(flag==true){
+		 break;
+		 }
+	}
+	if(flag==false){
+	alert("Please Select the checkbox for getting Annotation")
+	}
+	
+if(flag){
+	document.getElementById('top').innerHTML='';
+	document.getElementById('bottom').innerHTML='';
+	changeText();
+	TogglePreloader(1);
+	processAJAXRequest('Annotate.do?index='+getIndex()+'&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent',true);
+	updateView();
+	}
+	}
+
+
+function getIndex(){
+ 	index ='';
+	var obj = document.getElementsByName('checkBox');
+	
+ 	for(var i =0; i< obj.length;i++){
+ 		if(obj[i].checked){
+ 			index += obj[i].id+'sep';
+ 		 }
+		} 
+	return index;
+}
  function executeQuery()
 {
 	if(<%=queryId%> != null )
@@ -232,6 +292,7 @@ document.getElementById('exportDiv').innerHTML = '<IMG style="border-top: 1px so
 </DIV>
 <DIV id="bottompanel">
 	<INPUT type="button" class="button" value="<bean:message key="button.home"/>" onClick="document.location='Home.do'">
+	<INPUT type="button" class="button" value="<bean:message key="button.annotate"/>"onClick="isChecked();">
 </DIV>
 <jsp:include page="footer.jsp"/>
 </BODY>
