@@ -84,6 +84,7 @@ var results = "";
 		  document.getElementById(responseReceiver).innerHTML = "<TABLE style='height:100%;width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'></TD></TR></TABLE>";
 		}
         document.getElementById(responseReceiver).innerHTML = results;
+        TogglePreloader(0);  
 	  }
 	   else if(httpRequest.status==403)
 	  {
