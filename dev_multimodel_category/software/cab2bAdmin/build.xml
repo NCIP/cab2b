@@ -31,7 +31,7 @@
 	<property name="classes.dir" location="${target.dir}/WEB-INF/classes" />
 
 	<!-- ===============================================================================-->
-	<target name="war" depends="clean.all,copy.all,compile.all,set.cab2b.secure.conf" description="Creates the caB2Badmin.war in the workarea directory using deployment descriptor (web.xml) from conf directory">
+	<target name="war" depends="clean.all,set.cab2b.secure.conf,set.cab2b.nonsecure.conf,copy.all,compile.all" description="Creates the caB2Badmin.war in the workarea directory using deployment descriptor (web.xml) from conf directory">
 		<copy todir="${workarea.dir}">
 			<fileset file="${conf.dir}/web.xml" />
 		</copy>
@@ -53,8 +53,6 @@
 	</target>
 	<!-- =============================================================================== -->
 	<target name="copy.all">
-		<delete file="${conf.dir}/web.xml" />
-		<copy file="${resource.dir}/web.xml" todir="${conf.dir}" />
 		<!-- Copies all the .css files from css directory to workarea/css/ -->
 		<copy overwrite="true" todir="${target.dir}/css">
 			<fileset dir="${css.dir}">
@@ -186,7 +184,22 @@
           target: set.cab2b.secure.conf                      
          - - - - - - - - - - - - - - - - - -->
 	<target name="set.cab2b.secure.conf" depends="set.ssl.enable.condition" if="jboss.ssl.enable.true">
+		<copy file="${resource.dir}/web.xml" todir="${conf.dir}" />
 		<replace.web.xml webfile="${conf.dir}/web.xml" />
+		<copy file="${resource.dir}/HTTPS_DAG.swf" tofile="${flexclient.dir}/dag/DAG.swf" />
+		<copy file="${resource.dir}/remoting-config.xml" tofile="${flex.dir}/remoting-config.xml" />
+		<replace file="${flex.dir}/remoting-config.xml" token="@channel_config@" value="&lt;channel ref=&quot;my-secure-amf&quot;/&gt;
+        &lt;channel ref=&quot;my-amf&quot;/&gt;" />
+	</target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: set.cab2b.nonsecure.conf                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="set.cab2b.nonsecure.conf" depends="set.ssl.enable.condition" unless="jboss.ssl.enable.true">
+		<copy file="${resource.dir}/web.xml" todir="${conf.dir}" />
+		<copy file="${resource.dir}/HTTP_DAG.swf" tofile="${flexclient.dir}/dag/DAG.swf" />
+		<copy file="${resource.dir}/remoting-config.xml" tofile="${flex.dir}/remoting-config.xml" />
+		<replace file="${flex.dir}/remoting-config.xml" token="@channel_config@" value="&lt;channel ref=&quot;my-amf&quot;/&gt;" />
 	</target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -202,5 +215,7 @@
 	<target name="clean.all">
 		<delete includeemptydirs="true" dir="${workarea.dir}" />
 		<delete file="${conf.dir}/web.xml" />
+		<delete file="${flex.dir}/remoting-config.xml" />
+		<delete file="${flexclient.dir}/dag/DAG.SWF" />
 	</target>
 </project>
