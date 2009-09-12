@@ -317,6 +317,7 @@
 		<copy file="${cab2b-webapp.dir.dist}/jboss-service.xml" todir="${jboss.home}/server/${jboss.server.name}/deploy/http-invoker.sar/META-INF/" />
 		<copy file="${cab2b-webapp.dir.dist}/invoker_web.xml" tofile="${jboss.home}/server/${jboss.server.name}/deploy/http-invoker.sar/invoker.war/WEB-INF/web.xml" />
 		<copy file="${cab2b-webapp.dir.dist}/log4j.xml" todir="${jboss.home}/server/${jboss.server.name}/conf" />
+		<copy file="${cab2b-webapp.dir.dist}/cab2b_server.properties" todir="${jboss.home}/server/${jboss.server.name}/conf" />
 		<copy file="${cab2b-webapp.dir.dist}/web.xml" todir="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/conf" />
 		<copy file="${cab2b-webapp.dir.dist}/oracleDriver.jar" todir="${jboss.home}/server/${jboss.server.name}/lib" />
 		<copy file="${cab2b-webapp.dir.dist}/mysql-connector-java-5.0.8-bin.jar" todir="${jboss.home}/server/${jboss.server.name}/lib" />
