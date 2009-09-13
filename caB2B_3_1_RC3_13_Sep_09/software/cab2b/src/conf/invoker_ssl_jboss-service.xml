@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE server>
+<!-- $Id: jboss-service.xml 26202 2004-11-29 16:54:36Z starksm $ -->
+
+<server>
+    <!-- The HTTPS invoker service configration  -->
+  <mbean code="org.jboss.invocation.http.server.HttpInvoker"
+    name="jboss:service=invoker,type=https">
+     <!-- Use a URL of the form http://<hostname>:80/invoker/EJBInvokerServlet
+      where <hostname> is InetAddress.getHostname value on which the server
+      is running.
+      -->
+     <attribute name="InvokerURL">https://@server.host@:@server.port@/invoker/EJBInvokerServlet</attribute>
+  </mbean>
+
+   <!-- Expose the Naming service interface via HTTPS -->
+   <mbean code="org.jboss.invocation.http.server.HttpProxyFactory"
+      name="jboss:service=invoker,type=https,target=Naming">
+      <!-- The Naming service we are proxying -->
+      <attribute name="InvokerName">jboss:service=Naming</attribute>
+      <!-- Compose the invoker URL from the cluster node address -->
+     <attribute name="InvokerURL">https://@server.host@:@server.port@/invoker/JMXInvokerServlet</attribute>
+      <attribute name="ExportedInterface">org.jnp.interfaces.Naming</attribute>
+      <attribute name="JndiName"></attribute>
+      <attribute name="ClientInterceptors">
+          <interceptors>
+             <interceptor>org.jboss.proxy.ClientMethodInterceptor</interceptor>
+             <interceptor>org.jboss.proxy.SecurityInterceptor</interceptor>
+             <interceptor>org.jboss.naming.interceptors.ExceptionInterceptor</interceptor>
+             <interceptor>org.jboss.invocation.InvokerInterceptor</interceptor>
+          </interceptors>
+      </attribute>
+   </mbean>
+   
+</server>

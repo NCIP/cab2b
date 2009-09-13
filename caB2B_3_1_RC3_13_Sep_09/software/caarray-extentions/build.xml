@@ -1,0 +1,12 @@
+<project name="caarray-extensions" basedir=".." default="jar">
+	<!-- TODO compile to workarea and then jar -->
+	<target name="jar">
+		<jar basedir="bin" destfile="caarray-server-extensions.jar">
+			<include name="**/server/**/*.*" />
+			<include name="*.wsdd" />
+		</jar>
+		<jar basedir="bin" destfile="caarray-common-extensions.jar">
+			<include name="**/common/**/*.*" />
+		</jar>
+	</target>
+</project>
