@@ -71,6 +71,10 @@
 	{
 		document.getElementById('preResultsQueryInfoPanel').style.display = 'block';
 	}
+	if(document.getElementById('offlineExecutionButton'))
+	  {
+	  	document.getElementById('offlineExecutionButton').style.display = 'none';
+	  }
    }
    if(document.getElementById("completeresultsmessage"))
   { 	
