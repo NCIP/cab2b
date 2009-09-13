@@ -98,7 +98,7 @@
 	
 	return;
   }
-  setTimeout("getTransformedResults()", 5000);
+  t = setTimeout("getTransformedResults()", 5000);
 }
 toolTipId = null;
  this.tooltipinvoker = function()
@@ -132,7 +132,7 @@ toolTipId = null;
 		<DIV id="queryDropDown" style="float:left;">
 			<bean:size id="queryCount" name="savedQueries"/>
 			<logic:notEqual name="queryCount" value="1">
-				<SELECT class="select" style="float:left;margin-right:0.4em;" name="savedQueries" onChange="processAJAXRequest('TransformQueryResultsAction.do?selectedQueryName=' + this.value + '&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent', 0, updateView);"/>
+				<SELECT class="select" style="float:left;margin-right:0.4em;" name="savedQueries" onChange="clearTimeout(t);processAJAXRequest('TransformQueryResultsAction.do?selectedQueryName=' + this.value + '&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent', 0, updateView);"/>
 					<logic:present name="savedQueries">
 						<logic:iterate name="savedQueries" id="savedSearch" type="edu.wustl.cab2bwebapp.dvo.SavedQueryDVO">
 							<OPTION value="<bean:write name="savedSearch" property="name"/>" <logic:equal name="savedSearch" property="selected" value="true">selected</logic:equal>>
