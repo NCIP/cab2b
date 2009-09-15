@@ -197,6 +197,8 @@ public class DashBoardDvoUtility {
             status = AbstractStatus.Complete;
         } else if (s1.equals(AbstractStatus.SUSPENDED) || s2.equals(AbstractStatus.SUSPENDED)) {
             status = AbstractStatus.SUSPENDED;
+        } else if (s1.equals(AbstractStatus.FAILED) && s2.equals(AbstractStatus.FAILED)) {
+            status = AbstractStatus.FAILED;
         } else {
             status = AbstractStatus.Complete_With_Error;
         }
