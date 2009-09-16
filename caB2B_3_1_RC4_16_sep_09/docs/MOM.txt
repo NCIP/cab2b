@@ -1,0 +1,244 @@
+-----------------------
+    MOM- 12 June 09 
+-----------------------
+Issues Discussed:
+    1.	Iteration 3 would be released in the next week and production release date is 10th  July.
+    2.	Adding a new query for caTissue,  to find all specimens collected for a protocol at an institution[Mukesh Sharma] .  Don't add it yet-just let me know if we can save/execute this query using caB2B for caTissue core and caTissue Suite.
+    3.	Investigation on the quick fix that was proposed to improve the performance of the server.
+    4.	The quick fix for optimization of huge datasets which was proposed earlier would not be possible for the iteration 3 as it would be take more time to apply that fix.
+    5.	Heap space encountered while executing the results 
+    6.	Status of the caB2B end user manual, admin manual and the installation guide.
+    7.	Next week tasks.
+    8.	Mukesh pointed out that we should not add multiple domain selection as we are not able to executes multiple queries due to heap space error, instead we can add the grouping by service instances story. 
+
+
+Action Items:
+    1.	Pooja to send all three documents for review .
+    2.	Rajesh to raise a request for more memory on the WashU development machine, so as to increase the heap space.
+    3.	Madhumita to investigate on the new query and if possible add it to Iteration 3 queries.
+
+-----------------------
+    MOM – 9 June 09
+-----------------------
+Issues Discussed:
+    1.  Next iteration scope that is to be discussed with Stephen and Chris:
+        a. Multi-model categories- story ID: 564,631,1396
+        b. Optimization of huge data sets-story ID 1391
+        c. LSD compliance testing
+        d. Multi select of model groups
+        e. Intermodel queries with single class output – story ID 1660
+    
+    2.  Chandrakant explained the scope of story “Optimization of huge data sets”. And suggested to include following in next iteration
+        a. Add a limit on max number of resources used by each query and overall application. This will avoid server running out of resource and stop responding in case of too many record
+        b. Ability to show partial results to user as soon as they arrive, instead of waiting for full results
+        c. Stopping query execution if user stops processing (by closing browser, by navigating from result page, by clicking stop processing)
+    
+    3.  Discussed about the issue in querying caTissueSuite
+    4.  Currently, either caTissueCore or caTissueSuite would be available for querying.
+    5.  Discussed over scope of supporting Intermodel queries for web app
+
+Action Items:
+    1.  Add description for Optimization story phase 1. Done
+    2.  Provide estimates for stopping query after N threads and  showing partial result with message
+    3.  Work on multi-domain search wireframe
+    4.  Add a story for intermodel queries in web app. Done, story ID 1660
+    5.  Mail Rakesh and Mukesh after talking to Srikanth and Sachin about the caTissue grid service fix. Done
+    6.  Find out what queries can be done currently with caTissue service. In progress
+    7.  In the queries document, add the limits that actually fetch the results.
+    
+-----------------------
+    MOM - 8 June 09
+-----------------------
+Issues Discussed:
+    1.  Delay in release date due to the SVN Merging of the 3 modules of the application
+    2.  Discussion on what all stories can be included in next iteration.
+    3.  Due to delay in LSD release, we can have two more iterations.
+
+Action Items:
+    1.  Mail Chris and Stephen about the delay in the release of iteration 3 - Done
+    2.  Compile the steps that can be addressed in the huge datasets optimization -Done
+
+----------------------------------------------
+    MOM - 1 June 09 SVN internal Meeting
+----------------------------------------------
+Just to summarize today's meeting:
+
+1) There are two ways by which we can restructure the BDA'fied projects (as of now caB2B).
+    ?	Taking dumps of all old projects and creating a new repository with structured project imported to it.
+    ?	Modifying the existing structure and deleting unused components.
+    ?	This activity will be done for all BDA'fied projects, hence proper testing/prototyping is needed.
+    Pulkit to check both the options in lab environment and come up with a stable solution. 
+2) Pulkit to properly evaluating the sync utility (master and slave concept) before proposing the same to client.
+3) SVN version and connection type (e.g. http/https) used at WashU side to be confirmed by Chandrakant.
+4) BDA'fication MPP of the projects (e.g. approx duration per project, resource allocation etc.) to be prepared after taking a call with Srikanth next week.
+
+-----------------------
+    MOM - 14 May 09
+-----------------------
+ Please find below the MOM for 05/14 meeting : 
+
+1.	Determine different versions of application which are to be supported and mention in front of the story name.
+2.	Databases to search for multiple domain search.
+3.	Keyword search time out.
+4.	Decide on multiple domain to be searched for keyword or NOT.
+5.	Export all will depend on keyword search.
+6.	Review of documentation by Stephen and Chris.
+7.	Ask DNT for timeslot for review of our documents.
+8.	Show the count of results to user before and retrieving the results – add in backlog.
+9.	Instance level join (Washu caArray, catissue).
+10.	Thick client changes such that thick client should not break.
+11.	Decide on scope of changes in thick client and then discuss with mukesh and Stephen.
+12.	Check story 630 and 631 ,preferably keep story 631.
+13.	Add description for story 1065.
+14.	Story 1058 seems to be duplicate of story 638 ,need to be revisited.
+
+-----------------------
+    MOM - 7 May 09
+-----------------------
+•	Export All option should not be in 1.0 release
+•	Export All option should be available only for excel
+•	Get the user feedback on UI and for now stick with the current plan
+•	Next Thrusday meeting - planning of Iteration 3
+-----------------------
+    MOM - 29 April 09
+-----------------------
+•	Send the server document with comments to mukesh.
+•	Ticket for the development machine – Next Iteration to be released on that machine.
+•	Suggest final date by when  development machine should be ready.
+•	Requirement doc of new machines –The way carrie suggested
+•	Presentation of the server requirements to Rakesh.
+•	Presentation to Rakesh for moving everything on new production machine.
+•	caB2B3 will consist of only Xplanner and prototype.
+•	create NCIA queries on cab2b3 for mukesh’s demo.
+•	bug #12268: Not to be fixed now
+•	Chandrakant to talk to salil regarding FE and update Mukesh.
+
+ICR
+•	Rajesh to sit with Srinath to understand the overlap tool’s change and to implement the change in 4weeks time.
+
+----------------------------------------------
+    MOM - 22 April 09 - Washu Sysads
+----------------------------------------------
+
+MOM held during 22nd April with Daniel and Fares
+
+Following are the points we discussed with Daniel and Fares and concluded. Please go over them and add to the list if I’m missing anything.
+1.	Machine cab2b.wustl.edu will be used as production server for cab2b releases.
+2.	Machine cab2btest.wustl.edu will be used as test server for cab2b releases. This machine should be identical to production machine.
+3.	Machine cab2b3.wustl.edu will be used as host machine for xplanner and ca2b2 web application prototype only.
+4.	Machine cab2b3dev.wustl.edu will be setup as development machine for ca2b2 and iteration releases.
+5.	Production server is to be cleaned to setup clean environment for new production releases. This will wipe out the old release. 
+6.	New release must provide patch for old db to new db migration.
+
+-----------------------
+    MOM - 22 April 09
+-----------------------
+•	Update JBOSS information on wiki – Chetan Patil
+•	Update Xplanner information on wiki – Chetan Patil
+•	Link Xplanner to caB2B server.
+•	Full release (cab2b admin, web app and thick client) on existing production server only , no new server.
+•	Withdraw the ticket for new server –Chetan Patil
+•	Updating production as per changes because of caGrid 1.3 change.
+•	Migration script required
+•	All the documents to be updated and approved before final release.
+•	Story 635: edit the name, tasks and description of story from simple search to both keyword search and saved search - Madhumita
+•	Add description to every task before starting.
+•	Model groups to be added in admin module.
+•	Admin would be able to save model group between multiple applications but they would not be visible in web application.
+•	Final deployment package of iteration 1 to Chris –Rajesh
+•	Update current week’s task in Xplanner 
+•	Send mukesh the plan for next week – Madhumita
+
+-----------------------
+    MOM - 13 April 09
+-----------------------
+MOM of 4/13 call with Stephen and Chris
+
+•	Everybody agreed on the having 80% stories compulsory in Iteration 2 and 20% optional.
+•	Checked the roadmap to make sure that we are on the right track
+•	Goals for iteration 2 - 
+    o	Result Page with export and sorting, 
+    o	Queries for caarray and NCIA 
+    o	Performance enhancements.
+•	Stories to be added – 
+    o	Deploying caB2B web application at the NCI server
+    o	QA story
+    o	Multiple domain search for simple search
+    o	HTML redesign
+    o	Final deployment package
+•	Tasks to be added to story id 476-
+    o	Sorting of results.
+•	Create a story based on the demo of Friday.
+•	Look back to the release 1.0 features to make sure that none of the features that we started with are missed in the iterations.
+•	Come with the estimations for all the stories.
+•	Stephen concluded that we look to be on time with the schedule.
+-----------------------
+    MOM - 9 April 09
+-----------------------
+1.	Mukesh to send Xplanner account credentials to Chris and Stephen. 
+2.	Chandrakant to update XPlanner by 04/10
+3.	Iteration 1-release to Mukesh by 04/13 evening or 04/14 morning.
+4.	Chandrakant and Mukesh to plan for Iteration 2 on 04/13 evening
+5.	Send out the updated plan to Chris and Stephen before 04/16
+6.	Discuss the iteration 2 plan with Chris and Stephen on the weekly Meeting -04/16
+7.	Demo to Chris and Stephen on 04/17 
+8.	Mukesh to check with Chris and Stephen the time for demo –preferably 7.30 Pm
+9.	Chandrakant to talk to srikanth regarding the UI changes.
+10.	Begin with the implementation of first page(home page).
+11.	Chandrakant to add story for  prototype for multiselect option.
+-----------------------
+    MOM - 4 April 09
+-----------------------
+
+Things discussed:
+1.	Keyword Query-We need to define the queries which would be executed for keyword search. These queries need to be saved separately as these would be different from the normal queries as all the attributes in such queries would be ORed and not ANDed.
+2.	Error page for any unexpected exception.
+3.	UI changes to incorporate the modifications in query execution of thick client due to new version of FQP.
+4.	Problem while saving service URL at the third step of the query in the thick client.
+5.	Querying NCIA and AIM using the intermodel join.
+6.	caArray queries which can be used for keyword search.
+7.	Implications of grid deprecation plan.
+
+Action Items:
+1.	The keyword query would be saved as detailed below:
+a.	Add a checkbox to the save query screen to select if the query would be used for keyword search.
+b.	The query would be saved as a regular query, in addition, the AND between all the attributes and classes would be changed to OR 
+c.	This query would be visible in the thick client(enhancement added to bugzilla(#12017) to hide this from thick client as well) but not in web application
+d.	The checkbox would be visible to all the users.
+2.	The error page would be a simple page which is available in Admin module. Added an enhancement in bugzilla(#12016) to make it more informative.--Done
+3.	The thick client would show partial results which are returned as a result of new FQP implementation. The results would be shown from the services which are queriable. There would not be any message about the services which have not returned results as they are down. Added an enhancement to Bugzilla(#12015) to show proper messages.--Done
+4.	Added the third step service URL bug to bugzilla(#12013).--Done
+5.	Mail the AIM folks to provide the domainmodel.xml, then load this to test server. Query the caB2B application to get the results---To be done by April 7th.
+6.	Madhumita to mail Mukesh the queries that can be executed for caArray.
+7.	Mukesh to remind Chris and Stephen that the keyword search would not be across applications and that links to external sites would not be provided in web application.
+8.	Chandu to send Stories for iteration 1 and 2 and mark the roadmap document for iteration 1 and 2.
+
+-----------------------
+    MOM - 12 March 09
+-----------------------
+caB2B web application Status meeting (3/12/09)
+
+Meeting Attendees-
+    Stephen Goldstein
+    Chris Piepenbring
+    Chandrakanth Talele
+    Mukesh Sharma
+    Srikanth Adiga
+ 
+    •	Stephen suggested that in architecture we should consider query non-DCQL caGrid services like analytical service, but it is low priority and need not be done in future. 
+    •	Chris suggested there should be standard way to query non-DCQL services; so as not to clutter the server and hamper its performance. Mukesh suggested that if any new tool/method is invented as a fix or workaround for existing application for accessing non-standard caGrid APIs, it should be contributed back to the caGrid. 
+    •	Chandrakant explained that in caB2B, grid credential (for non-anonymous user) is always passed to FQP independent of whether it is querying secure service or not. So even if in future caArray secures its grid service in caGrid manner, there won’t be any changes needed on caB2B side to access updated service. 
+    •	Need and importance of one click installation is discussed.
+    •	caGrid 1.3 FQP investigation by caB2B team is discussed.
+    •	Stephen talked about the problem that CQL can be used to bring server down by some heavy queries.  This was brought to Stephen’s attention by the caArray team.  
+ 
+Action Items 
+    1. Mukesh to send out the wireframes (updated as per user feedback) by next week.  Done
+    2. Stephen to send another set of comments he got, on architecture document.  Done
+    3. Chandrakant to address Architecture document comments.  Done
+ 
+Action Items from previous call (5 March)
+    4. Chris to talk to caGrid team to get the release date of caGrid 1.3. Done.  Release date is 23 March, 2009.
+    5. Mukesh to send out the NCIA reply to Chris. Done
+    6. Chris will talk to BDA team, to check what they support and how to use it for projects, not developed in NCI.  In Progress
+    7. Chris to help on XPlanner report generation tool. In Progress
