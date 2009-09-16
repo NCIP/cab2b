@@ -1129,7 +1129,7 @@
 		<copy file="${tomcat.web.xml.file}" tofile="${dist.dir}/web.xml" />
 		<copy file="${jboss.invoker.web.xml.file}" tofile="${dist.dir}/invoker_web.xml" />
 		<copy file="${invoker.service.xml.file}" tofile="${dist.dir}/jboss-service.xml" />
-		<copy file="${cab2b.runtime.properties}" todir="$${dist.dir}/cab2b_server.properties" />
+		<copy file="${cab2b.runtime.properties}" tofile="${dist.dir}/cab2b_server.properties" />
 		<copy file="${lib.dir}/server/oracleDriver.jar" todir="${dist.dir}" />
 		<copy file="${lib.dir}/server/mysql-connector-java-5.0.8-bin.jar" todir="${dist.dir}" />
 		<copy file="${lib.dir}/common/hibernate3.jar" todir="${dist.dir}" />
