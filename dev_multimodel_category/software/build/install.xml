@@ -471,7 +471,7 @@
 				<isset property="exclude.start.servers" />
 			</not>
 			<then>
-				<validate-post-install />
+				<validate-post-install propertyfile.backup.location="${user.home}" />
 			</then>
 		</if>
 	</target>
@@ -523,11 +523,11 @@
 		</ear>  
 		-->
 	</target>
-	<target name="upgrade:jboss" description="Wrapper target to call all targets required to upgrade jboss container." unless="exclude.jboss" depends="init:upgrade,init:common,upgrade-dac:jboss">
+	<target name="upgrade:jboss" description="Wrapper target to call all targets required to upgrade jboss container." unless="exclude.jboss" depends="init:upgrade,init:common,upgrade-ncm:jboss">
 	</target>
-	<target name="upgrade" description="Upgrades JBoss and Database" depends="init:upgrade,init:common,upgrade-dac">
+	<target name="upgrade" description="Upgrades JBoss and Database" depends="init:upgrade,init:common,upgrade-ncm">
 	</target>
-	<target name="upgrade-with-dbinstall" description="Upgrades JBoss and Database" depends="init:upgrade,init:common,upgrade-dac:with-dbinstall">
+	<target name="upgrade-with-dbinstall" description="Upgrades JBoss and Database" depends="init:upgrade,init:common,upgrade-ncm:with-dbinstall">
 	</target>
 	<target name="upgrade-dac:jboss" description="Wrapper target to call all targets required to upgrade jboss container." unless="exclude.jboss" depends="
 		init:upgrade,
@@ -779,7 +779,7 @@
 	</target>
 	<target name="init:readers:bda" unless="install.running">
 		<!-- Make sure the ${properties.file} has at least the following props -->
-		<properties-exist properties.list="application.base.path,jboss.home,tomcat.home,jboss.server.name" />
+		<properties-exist properties.list="application.base.path,jboss.home,jboss.server.name" />
 		<!-- Set these -->
 		<osfamily property="os.family" />
 		<if>
@@ -846,23 +846,11 @@
 			<then>
 			</then>
 		</if>
-		<tomcat-read-ports />
-		<tomcat-read-ssl copied.keystore.dir="${tomcat.ssl.keystore.dir}" />
-		<tomcat-read-external-hostname />
-		<grid-read-index-url grid.wsrf.dir="${tomcat.home}/webapps/wsrf" />
-		<tomcat-read-grid-secure copied.keystore.dir="${tomcat.ssl.keystore.dir}" />
-		<!--
-		<grid-copy-service-metadata
-			grid.wsrf.dir="${tomcat.home}/webapps/wsrf"
-			copied.service-metadata.dir="${copied.service-metadata.dir1}"
-			/>
-		-->
-		<grid-read-poc grid.wsrf.dir="${tomcat.home}/webapps/wsrf" grid.service.name="Sample" />
 		<!-- Fail if any read properties are not set -->
 		<echo message="All properties after readers" />
-		<properties-print properties.list="${read.properties.list},jboss.server.hostname,tomcat.hostname" />
-		<properties-exist properties.list="${read.properties.list},jboss.server.hostname,tomcat.hostname" />
-		<properties-write properties.list="${read.properties.list},jboss.server.hostname,tomcat.hostname" />
+		<properties-print properties.list="${read.properties.list},jboss.server.hostname" />
+		<properties-exist properties.list="${read.properties.list},jboss.server.hostname" />
+		<properties-write properties.list="${read.properties.list},jboss.server.hostname" />
 	</target>
 	<target name="upgrade:post:jboss">
 		<copy file="${copied.jboss.log4j.dir}/log4j.xml" todir="${jboss.home}/server/${jboss.server.name}/conf" />
