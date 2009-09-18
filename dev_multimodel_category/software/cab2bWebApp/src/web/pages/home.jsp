@@ -64,7 +64,7 @@
   
    if("${requestScope.keywordQueryNotPresent}")
   {
-	alert('<bean:message key="alert.keywordquerynotpresent" arg0="${requestScope.modelGroups}" arg1="${requestScope.modelGroups}"/>');
+	alert('<bean:message key="alert.keywordquerynotpresent"/>');
   }
 }
 
@@ -139,8 +139,7 @@
 				<DIV>
 					<DIV class="myselect" style="float:left" onmouseover="setDropDown(1);" onmouseout="setDropDown(0);">		
 						<DIV class="myselectbox" onclick="setDropDown(1)">
-							<DIV id="selectshow" class="selectshow"><bean:message key="select.datatype"/></DIV>
-							<INPUT type="hidden" name="selectinfo" id="selectinfo"/>							
+							<DIV id="selectshow" class="selectshow"><bean:message key="select.datatype"/></DIV>							
 						</DIV>
 						<DIV class="myselectboxitems" id="myselectboxitems">
 							<logic:present name="modelGroupDVOList">							
