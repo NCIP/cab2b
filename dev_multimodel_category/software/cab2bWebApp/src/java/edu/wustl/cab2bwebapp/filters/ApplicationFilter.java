@@ -72,6 +72,12 @@ public class ApplicationFilter implements Filter {
                     continue;
                 }
                 String parameterVal = request.getParameter(parameter);
+                if ((Constants.KEYWORD).equals(parameter)
+                        && !parameterVal.equals("(Eg: Adenocarcinoma, Malignant, GBM)")
+                        && XSSVulnerableDetector.isXssSQLVulnerable(parameterVal)) {
+                    isXssVulnerable = true;
+                    break;
+                }
                 if (XSSVulnerableDetector.isXssVulnerable(parameterVal)) {
                     isXssVulnerable = true;
                     break;
