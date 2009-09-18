@@ -1,0 +1,35 @@
+@import url("common.css");
+
+#content {
+	padding: 0% 0.2% 0% 0.2%;
+}
+
+#toppanel {
+	font-weight: bold;
+	border-style: solid;
+	border-width: 1;
+	border-color: #fff #ddd #fff #ddd;
+	padding: 1%;
+}
+
+#centerpanel {
+	border-style: solid;
+	border-width: 1;
+	border-color: #fff #ddd #fff #ddd;
+	padding: 0% 1% 0% 1%;
+}
+
+#centerpanelcontent {
+	border-style: solid;
+	border-width: 1;
+	border-color: #ddd #fff #ddd #fff;
+	height: 360;
+	overflow: auto;
+}
+
+#bottompanel {
+	border-style: solid;
+	border-width: 1;
+	border-color: #fff #ddd #fff #ddd;
+	padding: 1%;
+}
