@@ -163,7 +163,7 @@
 		<pathelement location="${server.classes.dir}" />
 		<pathelement location="${common.classes.dir}" />
 	</path>
-
+	
 	<!-- ================================================================================== -->
 	<target name="initialize" depends="clean.all">
 		<copy file="${resource.dir}/ejb/jboss.xml" todir="${conf.dir}/ejb" />
@@ -1206,6 +1206,16 @@
 			<arg value="${mmc.dir}" />
 		</java>
 	</target>
+	
+	<!-- ================================= 
+          target: load.model              
+         ================================= -->
+    <target name="load.model" depends="" description="Loads given model from backend">
+    	<java failonerror="true" classname="edu.wustl.cab2b.server.path.LoadModelUtil" classpathref="mmcloader.classpath" fork="yes">
+    		<jvmarg value="-Xmx1024m"/>
+    	</java>
+    	<echo>Model Loaded Successfully !!!</echo>
+    </target>
 
 	<target name="find.path.ids" depends="compile.server" description="Finds the path ids for the given list of entities">
 		<input message="Please enter Pairs XML path: " addproperty="piars.xml.file" />
