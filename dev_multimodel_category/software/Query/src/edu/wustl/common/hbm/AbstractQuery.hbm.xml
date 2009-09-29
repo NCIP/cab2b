@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-lazy="false">
+	<class name="edu.wustl.common.querysuite.queryobject.impl.AbstractQuery"
+		table="QUERY_ABSTRACT_QUERY" dynamic-update="false" dynamic-insert="false">
+		<cache usage="read-write" />
+
+		<id name="id" column="IDENTIFIER" type="long" length="30"
+			unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">QUERY_SEQ</param>
+			</generator>
+		</id>
+
+		<property
+			name="name"
+			type="string"
+			update="true"
+			insert="true"
+			column="QUERY_NAME"
+			length="255"
+			unique="true" />
+
+		<property
+			name="type"
+			type="string"
+			update="true"
+			insert="true"
+			column="QUERY_TYPE"
+			length="30" />
+
+		<property
+			name="description"
+			type="string"
+			update="true"
+			insert="true"
+			column="DESCRIPTION"
+			length="1024" />
+
+		<property
+			name="createdDate"
+			type="timestamp"
+			update="true"
+			insert="true"
+			column="CREATED_DATE"
+			not-null="true" />
+
+		<property
+            name="createdBy"
+            type="long"
+            update="true"
+            insert="true"
+            column="CREATED_BY"
+            length="30"
+            not-null="true"
+        />
+
+	<joined-subclass
+			name="edu.wustl.common.querysuite.queryobject.impl.Query"
+			table="QUERY" dynamic-update="false"
+			dynamic-insert="false">
+			<key column="IDENTIFIER" />
+
+		<many-to-one name="constraints"
+			class="edu.wustl.common.querysuite.queryobject.impl.Constraints"
+			cascade="all" outer-join="auto" update="true" insert="true"
+			column="CONSTRAINTS_ID" unique="true" />
+
+		<list name="outputTerms" cascade="all-delete-orphan"
+			table="QUERY_TO_OUTPUT_TERMS">
+			<cache usage="read-write" />
+			<key column="QUERY_ID" />
+			<index column="POSITION" />
+			<many-to-many column="OUTPUT_TERM_ID" unique="true"
+				class="edu.wustl.common.querysuite.queryobject.impl.OutputTerm" />
+		</list>
+		<joined-subclass
+			name="edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery"
+			table="QUERY_PARAMETERIZED_QUERY" dynamic-update="false"
+			dynamic-insert="false">
+			<key column="IDENTIFIER" />
+
+			<list name="outputAttributeList" table="QUERY_OUTPUT_ATTRIBUTE"
+				lazy="false" inverse="false" cascade="all-delete-orphan">
+				<cache usage="read-write" />
+				<key column="PARAMETERIZED_QUERY_ID" />
+				<index column="POSITION" type="int" />
+				<one-to-many
+					class="edu.wustl.common.querysuite.queryobject.impl.OutputAttribute" />
+			</list>
+			<list name="parameters" cascade="all-delete-orphan"
+				table="QUERY_TO_PARAMETERS">
+				<cache usage="read-write" />
+				<key column="QUERY_ID" />
+				<index column="POSITION" />
+				<many-to-many column="PARAMETER_ID" unique="true"
+					class="edu.wustl.common.querysuite.queryobject.impl.Parameter" />
+			</list>
+		</joined-subclass>
+	</joined-subclass>
+
+	<joined-subclass
+			name="edu.wustl.common.querysuite.queryobject.impl.CompositeQuery"
+			table="QUERY_COMPOSITE_QUERY" dynamic-update="false"
+			dynamic-insert="false">
+			<key column="IDENTIFIER" />
+
+		<many-to-one
+           name="operation"
+	       class="edu.wustl.common.querysuite.queryobject.impl.Operation"
+	       cascade="save-update"
+	       update="true"
+           insert="true"
+           column="OPERATION_ID"
+       />
+	</joined-subclass>
+	</class>
+
+</hibernate-mapping>

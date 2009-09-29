@@ -1,0 +1,316 @@
+<?xml version='1.0'?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-lazy="false">
+    <class
+        name="edu.common.dynamicextensions.domain.userinterface.Control"
+        table="DYEXTN_CONTROL"
+        dynamic-update="false"
+        dynamic-insert="false"
+    >
+
+        <id
+            name="id"
+            column="IDENTIFIER"
+            type="long"
+            length="30"
+            unsaved-value="null"
+        >
+            <generator class="native">
+                <param name="sequence">DYEXTN_CONTROL_SEQ</param>
+            </generator>
+        </id>
+
+        <property
+            name="caption"
+            type="string"
+            update="true"
+            insert="true"
+            column="CAPTION"
+        />
+
+        <property
+            name="cssClass"
+            type="string"
+            update="true"
+            insert="true"
+            column="CSS_CLASS"
+        />
+
+        <property
+            name="isHidden"
+            type="boolean"
+            update="true"
+            insert="true"
+            column="HIDDEN"
+        />
+
+        <property
+            name="name"
+            type="string"
+            update="true"
+            insert="true"
+            column="NAME"
+        />
+
+        <property
+            name="sequenceNumber"
+            type="integer"
+            update="true"
+            insert="true"
+            column="SEQUENCE_NUMBER"
+        />
+
+        <property
+            name="tooltip"
+            type="string"
+            update="true"
+            insert="true"
+            column="TOOLTIP"
+        />
+
+        <many-to-one
+            name="abstractAttribute"
+            class="edu.common.dynamicextensions.domain.AbstractAttribute"
+            cascade="save-update"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="ABSTRACT_ATTRIBUTE_ID"
+        />
+
+        <many-to-one
+            name="parentContainer"
+            class="edu.common.dynamicextensions.domain.userinterface.Container"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="CONTAINER_ID"
+        />
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-Control.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.userinterface.DataGrid"
+            table="DYEXTN_DATA_GRID"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.userinterface.ContainmentAssociationControl"
+            table="DYEXTN_CONTAINMENT_CONTROL"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        <many-to-one
+            name="container"
+            class="edu.common.dynamicextensions.domain.userinterface.Container"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="DISPLAY_CONTAINER_ID"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.userinterface.RadioButton"
+            table="DYEXTN_RADIOBUTTON"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.userinterface.TextField"
+            table="DYEXTN_TEXTFIELD"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+        <property
+            name="columns"
+            type="integer"
+            update="true"
+            insert="true"
+            column="NO_OF_COLUMNS"
+        />
+
+        <property
+            name="isPassword"
+            type="boolean"
+            update="true"
+            insert="true"
+            column="IS_PASSWORD"
+        />
+
+        <property
+            name="isUrl"
+            type="boolean"
+            update="true"
+            insert="true"
+            column="IS_URL"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.userinterface.FileUploadControl"
+            table="DYEXTN_FILE_UPLOAD"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        <property
+            name="columns"
+            type="integer"
+            update="true"
+            insert="true"
+            column="NO_OF_COLUMNS"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.userinterface.SelectControl"
+            table="DYEXTN_SELECT_CONTROL"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        <set
+            name="associationDisplayAttributeCollection"
+            table="DYEXTN_ASSO_DISPLAY_ATTR"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            sort="unsorted"
+        >
+
+              <key
+                  column="SELECT_CONTROL_ID"
+              />
+
+              <one-to-many
+                  class="edu.common.dynamicextensions.domain.AssociationDisplayAttribute"
+              />
+        </set>
+
+        <property
+            name="separator"
+            type="string"
+            update="true"
+            insert="true"
+            column="SEPARATOR_STRING"
+        />
+
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.userinterface.ListBox"
+            table="DYEXTN_LIST_BOX"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        <property
+            name="isMultiSelect"
+            type="boolean"
+            update="true"
+            insert="true"
+            column="MULTISELECT"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.userinterface.ComboBox"
+            table="DYEXTN_COMBOBOX"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        </joined-subclass>
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.userinterface.DatePicker"
+            table="DYEXTN_DATEPICKER"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.userinterface.TextArea"
+            table="DYEXTN_TEXTAREA"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+        <property
+            name="columns"
+            type="integer"
+            update="true"
+            insert="true"
+            column="TEXTAREA_COLUMNS"
+        />
+
+        <property
+            name="rows"
+            type="integer"
+            update="true"
+            insert="true"
+            column="TEXTAREA_ROWS"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.userinterface.CheckBox"
+            table="DYEXTN_CHECK_BOX"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        </joined-subclass>
+
+    </class>
+
+</hibernate-mapping>
