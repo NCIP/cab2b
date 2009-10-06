@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 2.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-lazy="false" auto-import="false">
+    <class
+        name="edu.wustl.common.querysuite.metadata.path.Path"
+        table="PATH"
+        dynamic-update="false"
+        dynamic-insert="false"
+    >
+        <cache usage="read-write" />
+
+        <id
+            name="pathId"
+            column="PATH_ID"
+            type="long"
+            length="30"
+            unsaved-value="null"
+        >
+            <generator class="native">
+                <param name="sequence">PATH_SEQ</param>
+            </generator>
+        </id>
+
+        <property
+            name="sourceEntityId"
+            type="long"
+            update="true"
+            insert="true"
+            column="FIRST_ENTITY_ID"
+            length="30"
+        />
+
+        <property
+            name="targetEntityId"
+            type="long"
+            update="true"
+            insert="true"
+            column="LAST_ENTITY_ID"
+            length="30"
+        />
+
+        <property
+            name="intermediatePaths"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            column="INTERMEDIATE_PATH"
+            length="150"
+        />
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-Path.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+    </class>
+
+</hibernate-mapping>
