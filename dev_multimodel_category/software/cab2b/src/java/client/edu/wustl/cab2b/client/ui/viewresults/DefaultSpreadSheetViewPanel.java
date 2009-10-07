@@ -63,17 +63,7 @@ public class DefaultSpreadSheetViewPanel extends Cab2bPanel implements DataListD
     /**
      * Property name for ENABLE_CHART_LINK event
      */
-    public static final String ENABLE_CHART_LINK = "ENABLE_CHART_LINK";
-
-    /**
-     * Property name for ENABLE_HEATMAP_LINK event
-     */
-    public static final String ENABLE_HEATMAP_LINK = "ENABLE_HEATMAP_LINK";
-
-    /**
-     * Property name for DISABLE_HEATMAP_LINK event
-     */
-    public static final String DISABLE_HEATMAP_LINK = "DISABLE_HEATMAP_LINK";
+    public static final String ENABLE_CHART_LINK = "ENABLE_CHART_LINK";    
 
     /**
      * Property name for DISABLE_ANALYSIS_LINK event
