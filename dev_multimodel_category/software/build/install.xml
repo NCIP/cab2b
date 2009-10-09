@@ -97,7 +97,8 @@
 	<mkdir dir="${working.dir}" />
 	<!-- Targets begin -->
 	<target name="init:common">
-		<property name="application.url" value="http://${jboss.server.hostname}:${jboss.server.port}/${cab2b-webapp.name}" />
+		<property name="application.url" value="http://${jboss.server.hostname}:${jboss.server.port}/cab2b" />
+
 		<!-- Conditionals -->
 		<available file="${jboss.home}/server/${jboss.server.name}/conf/jboss-service.xml" property="jboss.exists" />
 		<!-- cab2b-webapp can use either Oracle or MySQL or PostgreSQL as its database platform, this is controled by the database.type property.  Based on the value of this property sent several variables for use during install -->
