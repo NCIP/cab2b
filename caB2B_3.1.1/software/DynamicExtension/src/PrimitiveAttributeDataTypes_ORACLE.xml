@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Primitive-Attributes>
+    <Primitive-Attribute>
+		  <name>String</name>
+	  	  <database-datatype>varchar2(4000)</database-datatype>
+    </Primitive-Attribute>
+    
+    <Primitive-Attribute>
+		  <name>Boolean</name>
+	  	  <database-datatype>NUMBER(1,0)</database-datatype>
+    </Primitive-Attribute>
+    
+     <Primitive-Attribute>
+		  <name>Integer</name>
+	  	  <database-datatype>Number(38,0)</database-datatype>
+    </Primitive-Attribute>
+    
+     <Primitive-Attribute>
+		  <name>Long</name>
+	  	  <database-datatype>Number(38)</database-datatype>
+    </Primitive-Attribute>
+    
+    <Primitive-Attribute>
+		  <name>Double</name>
+	  	  <database-datatype>DOUBLE PRECISION</database-datatype>
+    </Primitive-Attribute>
+    
+    <Primitive-Attribute>
+		  <name>Float</name>
+	  	  <database-datatype>Float(126)</database-datatype>
+    </Primitive-Attribute>
+    
+    <Primitive-Attribute>
+		  <name>Short</name>
+	  	  <database-datatype>Number(19)</database-datatype>
+    </Primitive-Attribute>
+    
+     <Primitive-Attribute>
+		  <name>Date</name>
+	  	  <database-datatype>Date</database-datatype>
+    </Primitive-Attribute>
+    
+    <Primitive-Attribute>
+		  <name>DateTime</name>
+	  	  <database-datatype>Date</database-datatype>
+    </Primitive-Attribute>
+	
+	<Primitive-Attribute>
+		  <name>File</name>
+	  	  <database-datatype>blob</database-datatype>
+    </Primitive-Attribute>
+    
+    <Primitive-Attribute>
+		  <name>Object</name>
+	  	  <database-datatype>blob</database-datatype>
+    </Primitive-Attribute>    
+    
+</Primitive-Attributes>

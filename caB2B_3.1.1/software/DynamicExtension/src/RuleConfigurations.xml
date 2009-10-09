@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<validator-rules>
+  <validation-rule display-label="eav.rule.required" rule-name="required" rule-class="edu.common.dynamicextensions.validation.RequiredValidator">
+    <error-key name="eav.validation.required" />    
+  </validation-rule>
+  
+  <validation-rule display-label="eav.rule.textlength" rule-name="textLength" rule-class="edu.common.dynamicextensions.validation.TextLengthValidator">
+  	<error-key name="eav.validation.textLength" />    
+  </validation-rule>
+  
+  <validation-rule display-label="eav.rule.range" rule-name="range" rule-class="edu.common.dynamicextensions.validation.RangeValidator">
+    <error-key name="eav.validation.range" />
+    <param param-name="min" param-label="Min. Value" />
+    <param param-name="max" param-label="Max. Value" />
+  </validation-rule>
+  
+  <validation-rule display-label="eav.rule.number" rule-name="number" rule-class="edu.common.dynamicextensions.validation.NumberValidator">
+    <error-key name="eav.validation.number" />
+  </validation-rule>
+  
+  <validation-rule display-label="eav.rule.date" rule-name="date" rule-class="edu.common.dynamicextensions.validation.DateValidator">
+    <error-key name="eav.validation.date" />
+  </validation-rule>
+  
+  <validation-rule display-label="eav.rule.unique" rule-name="unique" rule-class="edu.common.dynamicextensions.validation.UniqueValidator">
+    <error-key name="eav.validation.unique" />
+  </validation-rule>
+  
+  <validation-rule display-label="eav.rule.daterange" rule-name="dateRange" rule-class="edu.common.dynamicextensions.validation.DateRangeValidator">
+    <error-key name="eav.validation.dateRange" />
+    <param param-name="min" param-label="Min. Date" />
+    <param param-name="max" param-label="Max. Date" />
+  </validation-rule>
+</validator-rules>

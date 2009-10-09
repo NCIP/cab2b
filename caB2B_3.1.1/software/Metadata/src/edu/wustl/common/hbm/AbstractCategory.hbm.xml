@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+    
+<hibernate-mapping auto-import="false" default-lazy="false">
+    <class
+        name="edu.wustl.common.querysuite.metadata.category.AbstractCategory"
+        table="ABSTRACT_CATEGORY"
+        dynamic-update="false"
+        dynamic-insert="false"
+    >
+        <cache usage="read-write" />
+
+        <id
+            name="id"
+            column="ID"
+            type="long"
+            length="30"
+            unsaved-value="null"
+        >
+            <generator class="native">
+                <param name="sequence">ABSTRACT_CATEGORY_SEQ</param>
+            </generator>
+        </id>
+
+        <many-to-one
+            name="parentCategory"
+            class="edu.wustl.common.querysuite.metadata.category.AbstractCategory"
+            cascade="all"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="PARENT_CATEGORY_ID"
+            unique="true"
+        />
+
+        <set
+            name="subCategories"
+            table="ABSTRACT_CATEGORY"
+            lazy="false"
+            inverse="false"
+            cascade="none"
+            sort="unsorted"
+        >
+            <cache 
+                usage="read-write" 
+             />
+
+              <key
+                  column="PARENT_CATEGORY_ID"
+              />
+
+              <one-to-many
+                  class="edu.wustl.common.querysuite.metadata.category.AbstractCategory"
+              />
+        </set>
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-AbstractCategory.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+        <joined-subclass
+            name="edu.wustl.common.querysuite.metadata.category.Category"
+            table="CATEGORY"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="ID"
+        />
+
+        <property
+            name="deEntityId"
+            type="long"
+            update="true"
+            insert="true"
+            column="DE_ENTITY_ID"
+            length="30"
+        />
+
+        <many-to-one
+            name="rootClass"
+            class="edu.wustl.common.querysuite.metadata.category.CategorialClass"
+            cascade="all"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="ROOT_CLASS_ID"
+            unique="true"
+        />
+
+        </joined-subclass>            
+
+    </class>
+
+</hibernate-mapping>
