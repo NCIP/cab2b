@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="metadata" basedir="." default="build.jar">
+	<property name="workarea.dir" location="workarea" />
+	<property name="classes.dir" location="${workarea.dir}/classes" />
+	<property name="src.dir" location="src" />
+	<property name="hbm.dir" value="${src.dir}/edu/wustl/common/hbm" />
+	<target name="clean">
+		<delete includeemptydirs="true" dir="${workarea.dir}" />
+	</target>
+
+	<path id="compile.classpath">
+		<pathelement location="conf" />
+		<fileset dir="lib" includes="**/*.jar" />
+	</path>
+	<target name="compile" depends="clean">
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" fork="true" memoryMaximumSize="1200m" includes="**/*.java" debug="on" deprecation="true" classpathref="compile.classpath" failonerror="true" nowarn="on" target="1.5" />
+		<copy todir="${classes.dir}">
+			<fileset dir="${src.dir}" includes="**/*.hbm.xml" />
+		</copy>
+	</target>
+
+	<target name="build.jar" depends="compile">
+		<tstamp />
+		<jar jarfile="${workarea.dir}/metadata.jar" basedir="${classes.dir}">
+			<manifest>
+				<attribute name="Built-At" value="${TODAY} ${TSTAMP}" />
+			</manifest>
+		</jar>
+	</target>
+
+</project>
