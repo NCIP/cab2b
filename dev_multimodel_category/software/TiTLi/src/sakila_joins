@@ -1,8 +1,0 @@
-address.city_id  city.city_id
-
-city.country_id  country.country_id
-
-customer.store_id  store.store_id
-customer.address_id  address.address_id
-
-film.original_language_id  language.language_id
