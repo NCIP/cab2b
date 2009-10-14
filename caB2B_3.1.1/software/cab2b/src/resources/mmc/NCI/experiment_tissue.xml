@@ -1,0 +1,77 @@
+<MultiModelCategory name="Microarray Information based on tissue site" description="Microarray Information based on tissue site" applicationGroup="Microarray Data">
+	<MultiModelCategoryAttributes>
+		<MultiModelCategoryAttribute name="Experiment Title" description="Experiment title">
+			<Attribute name="title" model="caArray_v2.1" class="gov.nih.nci.caarray.domain.project.Experiment" />
+			<Attribute name="title" model="caArray_v2" class="gov.nih.nci.caarray.domain.project.Experiment" />
+			<Attribute name="title" model="caArray Internal_v2.3" class="gov.nih.nci.caarray.domain.project.Experiment" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Experiment Description" description="Experiment Description">
+			<Attribute name="description" model="caArray_v2.1" class="gov.nih.nci.caarray.domain.project.Experiment" />
+			<Attribute name="description" model="caArray_v2" class="gov.nih.nci.caarray.domain.project.Experiment" />
+			<Attribute name="description" model="caArray Internal_v2.3" class="gov.nih.nci.caarray.domain.project.Experiment" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="AssayType" description="AssayType">
+			<Attribute name="assayType" model="caArray_v2.1" class="gov.nih.nci.caarray.domain.project.Experiment" />
+			<Attribute name="assayType" model="caArray_v2" class="gov.nih.nci.caarray.domain.project.Experiment" />
+			<Attribute name="name" model="caArray Internal_v2.3" class="gov.nih.nci.caarray.domain.project.AssayType" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Identifier" description="Identifier">
+			<Attribute name="id" model="caArray_v2.1" class="gov.nih.nci.caarray.domain.project.Experiment" />
+			<Attribute name="id" model="caArray_v2" class="gov.nih.nci.caarray.domain.project.Experiment" />
+			<Attribute name="id" model="caArray Internal_v2.3" class="gov.nih.nci.caarray.domain.project.Experiment" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Public Identifier" description="Public Identifier">
+			<Attribute name="publicIdentifier" model="caArray_v2.1" class="gov.nih.nci.caarray.domain.project.Experiment" />
+			<Attribute name="publicIdentifier" model="caArray_v2" class="gov.nih.nci.caarray.domain.project.Experiment" />
+			<Attribute name="publicIdentifier" model="caArray Internal_v2.3" class="gov.nih.nci.caarray.domain.project.Experiment" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Organism Common Name" description="Organism Common Name">
+			<Attribute name="commonName" model="caArray_v2.1" class="edu.georgetown.pir.Organism" />
+			<Attribute name="commonName" model="caArray_v2" class="edu.georgetown.pir.Organism" />
+			<Attribute name="commonName" model="caArray Internal_v2.3" class="edu.georgetown.pir.Organism" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Organism Scientific name" description="Organism Scientific name">
+			<Attribute name="scientificName" model="caArray_v2.1" class="edu.georgetown.pir.Organism" />
+			<Attribute name="scientificName" model="caArray_v2" class="edu.georgetown.pir.Organism" />
+			<Attribute name="scientificName" model="caArray Internal_v2.3" class="edu.georgetown.pir.Organism" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Array Type" description="Array Type">
+			<Attribute name="name" model="caArray_v2.1" class="gov.nih.nci.caarray.domain.array.ArrayDesign" />
+			<Attribute name="name" model="caArray_v2" class="gov.nih.nci.caarray.domain.array.ArrayDesign" />
+			<Attribute name="name" model="caArray Internal_v2.3" class="gov.nih.nci.caarray.domain.array.ArrayDesign" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Array Provider" description="Array Provider">
+			<Attribute name="name" model="caArray_v2.1" class="gov.nih.nci.caarray.domain.contact.Organization" />
+			<Attribute name="name" model="caArray_v2" class="gov.nih.nci.caarray.domain.contact.Organization" />
+			<Attribute name="name" model="caArray Internal_v2.3" class="gov.nih.nci.caarray.domain.contact.Organization" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Source name" description="Source name">
+			<Attribute name="name" model="caArray_v2.1" class="gov.nih.nci.caarray.domain.sample.Source" />
+			<Attribute name="name" model="caArray_v2" class="gov.nih.nci.caarray.domain.sample.Source" />
+			<Attribute name="name" model="caArray Internal_v2.3" class="gov.nih.nci.caarray.domain.sample.Source" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Tissue Site" description="Tissue Site">
+			<Attribute name="value" model="caArray_v2.1" class="gov.nih.nci.caarray.domain.vocabulary.Term" />
+			<Attribute name="value" model="caArray_v2" class="gov.nih.nci.caarray.domain.vocabulary.Term" />
+			<Attribute name="value" model="caArray Internal_v2.3" class="gov.nih.nci.caarray.domain.vocabulary.Term" />
+		</MultiModelCategoryAttribute>
+	</MultiModelCategoryAttributes>
+	<Paths>
+			<Path id="161956" />
+		<Path id="160095" />
+		<Path id="161774" />
+		<Path id="158761" />
+		<Path id="3869" />
+		<Path id="4375" />
+		<Path id="3634" />
+		<Path id="4468" />
+		<Path id="176905" />
+		<Path id="174124" />
+		<Path id="176327" />
+		<Path id="180753" />
+		<Path id="159372" />
+		<Path id="182113" />
+		<Path id="2867" />
+		<Path id="161827" />
+	</Paths>
+</MultiModelCategory>
