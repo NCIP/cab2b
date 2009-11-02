@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="false" default-lazy="false">
+	<joined-subclass
+            name="edu.wustl.cab2b.common.queryengine.Cab2bQuery"
+            extends="edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery"
+            table="CAB2B_QUERY"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        <list
+            name="outputUrls"
+            table="OUTPUT_CLASS_URLS"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+        >
+            <cache
+                usage="read-write"
+             />
+
+              <key
+                  column="CAB2B_QUERY_ID"
+              />
+
+              <index
+                  column="POSITION"
+                  type="int"
+              />
+
+              <element
+                  column="OUTPUT_CLASS_URL"
+                  type="string"
+                  not-null="false"
+                  unique="false"
+              />
+
+        </list>
+
+        <property
+            name="entityId"
+            type="long"
+            update="true"
+            insert="true"
+            column="ENTITY_ID"
+            length="30"
+            not-null="true"
+        />
+
+        </joined-subclass>
+
+</hibernate-mapping>
