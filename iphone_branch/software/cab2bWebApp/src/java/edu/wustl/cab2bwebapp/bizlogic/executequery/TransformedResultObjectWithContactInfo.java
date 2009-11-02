@@ -163,19 +163,18 @@ public class TransformedResultObjectWithContactInfo {
      * @param url
      * @return List<Map<AttributeInterface, Object>>
      */
-    
-        /*public List<Map<AttributeInterface, Object>> getResultForUrl(String url) {
-            return urlToResultMap.get(url);
-        }*/
+    public List<Map<AttributeInterface, Object>> getResultForUrl(String url) {
+        return urlToResultMap.get(url);
+    }
 
-        /**
-         * Returns collection of urls available.  
-         * @return Collection<String>
-         */
-    
-        public Collection<String> getAllUrls() {
-            return urlToResultMap.keySet();
-        }
+    /**
+     * Returns collection of urls available.  
+     * @return Collection<String>
+     */
+
+    public Collection<String> getAllUrls() {
+        return urlToResultMap.keySet();
+    }
 
     /**
      * Returns results for all urls.
