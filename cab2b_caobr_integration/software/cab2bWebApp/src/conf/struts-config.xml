@@ -6,35 +6,38 @@
 <struts-config>
 	<!-- ========================== Form Bean Definitions ========================== -->
 	<form-beans>
-		<form-bean name="loginForm"
-			type="edu.wustl.cab2bwebapp.actionform.LoginForm" />
 		<form-bean name="keywordSearchForm"
 			type="edu.wustl.cab2bwebapp.actionform.KeywordSearchForm" />
+		<form-bean name="loginForm"
+			type="edu.wustl.cab2bwebapp.actionform.LoginForm" />
 	</form-beans>
 
 	<!-- ========================== Global Forwards ========================== -->
 	<global-forwards>
+		<forward name="failure" path="/pages/failure.jsp" />
 		<forward name="home" path="/pages/home.jsp" />
 		<forward name="login" path="/pages/login.jsp" />
-		<forward name="failure" path="/pages/failure.jsp" />
 		<forward name="searchresults" path="/pages/searchresults.jsp" />
-<forward name="searchresultspanel" path="/pages/searchresultspanel.jsp" />
+		<forward name="searchresultspanel" path="/pages/searchresultspanel.jsp" />
 	</global-forwards>
 
 	<!-- ========================== Action Mappings ========================== -->
 	<action-mappings>
-		<action path="/Home"
-			type="edu.wustl.cab2bwebapp.action.HomeAction">
+		<action path="/AddLimit"
+			type="edu.wustl.cab2bwebapp.action.AddLimitAction">
+			<forward name="addlimit" path="/pages/addlimit.jsp" />
 		</action>
 
-		<action path="/Login"
-			type="edu.wustl.cab2bwebapp.action.LoginAction" name="loginForm"
-			scope="request" validate="false">
-			<forward name="search" path="/pages/search.jsp" />
+		<action path="/BackgroundQuery"
+			type="edu.wustl.cab2bwebapp.action.BackgroundQueryAction">
+			<forward name="dashboardaction" path="/DisplayDashboard.do" />
 		</action>
 
-		<action path="/Logout"
-			type="edu.wustl.cab2bwebapp.action.LogoutAction">
+		<action path="/DisplayDashboard"
+			type="edu.wustl.cab2bwebapp.action.DisplayDashboardAction">
+			<forward name="dashboard" path="/pages/dashboard.jsp" />
+			<forward name="dashboardpanel"
+				path="/pages/dashboardpanel.jsp" />
 		</action>
 
 		<action path="/DisplaySavedSearches"
@@ -49,46 +52,49 @@
 				path="/pages/serviceinstances.jsp" />
 		</action>
 
-		<action path="/SaveServiceInstances"
-			type="edu.wustl.cab2bwebapp.action.SaveServiceInstancesAction">
-		</action>
-
-		<action path="/AddLimit"
-			type="edu.wustl.cab2bwebapp.action.AddLimitAction">
-			<forward name="addlimit" path="/pages/addlimit.jsp" />
-		</action>
-
 		<action path="/ExecuteQuery"
 			type="edu.wustl.cab2bwebapp.action.ExecuteQueryAction">
-			<forward name="searchresultspanel"
-				path="/pages/searchresultspanel.jsp" />
-		</action>
-		
-		<action path="/PreExecuteQuery"
-			type="edu.wustl.cab2bwebapp.action.PreExecuteQueryAction">
 		</action>
 
-		<action path="/TransformQueryResultsAction"
-			type="edu.wustl.cab2bwebapp.action.TransformQueryResultsAction">
-			<forward name="searchresultspanel"
-				path="/pages/searchresultspanel.jsp" />
+		<action path="/ExportResults"
+			type="edu.wustl.cab2bwebapp.action.ExportResultsAction">
+		</action>
+
+		<action path="/Home"
+			type="edu.wustl.cab2bwebapp.action.HomeAction">
 		</action>
 
 		<action path="/KeywordSearch"
 			type="edu.wustl.cab2bwebapp.action.KeywordSearchAction"
 			name="keywordSearchForm" scope="request" validate="false">
-			<forward name="searchresultspanel"
-				path="/pages/searchresultspanel.jsp" />
 		</action>
-		<action path="/ExportData"
-			type="edu.wustl.cab2bwebapp.action.ExportDataAction"
-			validate="false"
-			input="/pages/blank.jsp"
-			scope="request">
-			<forward name="success" path="/pages/blank.jsp" />
-			<forward name="failure" path="/pages/blank.jsp" />
+
+		<action path="/Login"
+			type="edu.wustl.cab2bwebapp.action.LoginAction" name="loginForm"
+			scope="request" validate="false">
 		</action>
-		
+
+		<action path="/Logout"
+			type="edu.wustl.cab2bwebapp.action.LogoutAction">
+		</action>
+
+		<action path="/MultiModelCategoryQueryAction"
+			type="edu.wustl.cab2bwebapp.action.MultiModelCategoryExecuteQueryAction">
+		</action>
+
+		<action path="/PreExecuteQuery"
+			type="edu.wustl.cab2bwebapp.action.PreExecuteQueryAction">
+			<forward name="MultiModelCategory"
+				path="/MultiModelCategoryQueryAction.do" />
+		</action>
+
+		<action path="/SaveServiceInstances"
+			type="edu.wustl.cab2bwebapp.action.SaveServiceInstancesAction">
+		</action>
+
+		<action path="/TransformQueryResultsAction"
+			type="edu.wustl.cab2bwebapp.action.TransformQueryResultsAction">
+		</action>
 			<action path="/Annotate"
 			type="edu.wustl.cab2bwebapp.action.AnnotateAction">
 		</action>
@@ -102,10 +108,9 @@
 			type="edu.wustl.cab2bwebapp.action.ShowAnnotationAction">
 			<forward name="displayannotation" path="/pages/displayAnnotation.jsp" />
 		</action>
-		
-		
 	</action-mappings>
 
 	<!-- ========================== Message Resource ========================== -->
 	<message-resources parameter="ApplicationResources" />
+	<message-resources parameter="server" key="ServerResources" />
 </struts-config>
