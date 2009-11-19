@@ -75,7 +75,7 @@ public class QueryUpdateBizLogic {
      * @param queryString
      * @return Map<String, String[]>
      */
-    public Map<String, String[]> createConditionsMap(String queryString) {
+    private Map<String, String[]> createConditionsMap(String queryString) {
         Map<String, String[]> conditionsMap = new HashMap<String, String[]>();
         String[] conditions = queryString.split(AddLimitConstants.QUERY_CONDITION_DELIMITER);
         String[] attrParams;

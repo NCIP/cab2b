@@ -1,8 +1,8 @@
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,9 +13,12 @@ import org.apache.log4j.Logger;
 
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.wustl.cab2b.common.queryengine.result.FailedTargetURL;
+import edu.wustl.cab2b.common.queryengine.result.FQPUrlStatus;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
+import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
+import edu.wustl.cab2bwebapp.constants.Constants;
 
 /**
  * Transformed query result object with service instance contact info.
@@ -23,7 +26,8 @@ import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
  */
 public class TransformedResultObjectWithContactInfo {
 
-    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(TransformedResultObjectWithContactInfo.class);
+    private static final Logger logger =
+            edu.wustl.common.util.logger.Logger.getLogger(TransformedResultObjectWithContactInfo.class);
 
     /**
      * Map for url to transformed query result.
@@ -34,7 +38,7 @@ public class TransformedResultObjectWithContactInfo {
     /**
      * URLs failed during query execution.
      */
-    private Collection<FailedTargetURL> failedServiceUrl = null;
+    private Collection<FQPUrlStatus> failedServiceUrl = null;
 
     /**
      * URLs infeasible for transformation during query execution.
@@ -44,7 +48,40 @@ public class TransformedResultObjectWithContactInfo {
     /**
      * List of attributes(columns) to be shown in result.
      */
-    private Collection<AttributeInterface> allowedAttributes = null;
+    private List<AttributeInterface> allowedAttributes = null;
+
+    /**
+     * Contact info String to AttributeInterface map.  
+     */
+    private Map<String, AttributeInterface> contactInfoMap;
+
+    public TransformedResultObjectWithContactInfo(List<AttributeInterface> allowedAttributes) {
+        contactInfoMap = new HashMap<String, AttributeInterface>(5);
+        this.allowedAttributes = allowedAttributes;
+        init();
+    }
+
+    private void init() {
+        AttributeInterface attributeMN = DomainObjectFactory.getInstance().createObjectAttribute();
+        attributeMN.setName(Constants.MODEL_NAME);
+        contactInfoMap.put(Constants.MODEL_NAME, attributeMN);
+
+        AttributeInterface attributeHC = DomainObjectFactory.getInstance().createObjectAttribute();
+        attributeHC.setName(Constants.HOSTING_CANCER_RESEARCH_CENTER);
+        contactInfoMap.put(Constants.HOSTING_CANCER_RESEARCH_CENTER, attributeHC);
+
+        AttributeInterface attributePC = DomainObjectFactory.getInstance().createStringAttribute();
+        attributePC.setName(Constants.POINT_OF_CONTACT);
+        contactInfoMap.put(Constants.POINT_OF_CONTACT, attributePC);
+
+        AttributeInterface attributeCE = DomainObjectFactory.getInstance().createStringAttribute();
+        attributeCE.setName(Constants.CONTACT_EMAIL);
+        contactInfoMap.put(Constants.CONTACT_EMAIL, attributeCE);
+
+        AttributeInterface attributeHI = DomainObjectFactory.getInstance().createStringAttribute();
+        attributeHI.setName(Constants.HOSTING_INSTITUTION);
+        contactInfoMap.put(Constants.HOSTING_INSTITUTION, attributeHI);
+    }
 
     /**
      * Adds Url and corresponding result.
@@ -54,67 +91,69 @@ public class TransformedResultObjectWithContactInfo {
     public void addUrlAndResult(String url, List<Map<AttributeInterface, Object>> result) {
         //logger.info("Inside addUrlAndResult");
         //Retrive ServiceURLInterface object from URL
-        ServiceURLInterface serviceUrlMetadata = null;
-        try {
-            serviceUrlMetadata = new ServiceURLOperations().getServiceURLbyURLLocation(url);
-        } catch (RemoteException e1) {
-            logger.info(e1.getMessage(), e1);
-            throw new RuntimeException(e1.getMessage(), e1);
-        }
+        ServiceURLInterface serviceUrlMetadata = new ServiceURLOperations().getServiceURLbyURLLocation(url);
 
         boolean addAttributesFlag = true;
+        AttributeInterface attributeMN = null;
         AttributeInterface attributeHC = null;
         AttributeInterface attributePC = null;
         AttributeInterface attributeCE = null;
         AttributeInterface attributeHI = null;
+
         for (AttributeInterface attr : allowedAttributes) {
             String attributeName = attr.getName();
-            if (attributeName.equals("Hosting Cancer Research Center")) {
+            if (attributeName.equals(Constants.MODEL_NAME)) {
+                attributeMN = attr;
+            } else if (attributeName.equals(Constants.HOSTING_CANCER_RESEARCH_CENTER)) {
                 attributeHC = attr;
-            } else if (attributeName.equals("Point of Contact")) {
+            } else if (attributeName.equals(Constants.POINT_OF_CONTACT)) {
                 attributePC = attr;
-            } else if (attributeName.equals("Contact eMail")) {
+            } else if (attributeName.equals(Constants.CONTACT_EMAIL)) {
                 attributeCE = attr;
-            } else if (attributeName.equals("Hosting Institution")) {
+            } else if (attributeName.equals(Constants.HOSTING_INSTITUTION)) {
                 attributeHI = attr;
-            } else if (attributeHC != null && attributePC != null && attributeCE != null && attributeHI != null) {
+            } else if (attributeHC != null && attributePC != null && attributeCE != null && attributeHI != null
+                    && attributeMN != null) {
                 addAttributesFlag = false;
                 break;
             }
         }
 
         if (addAttributesFlag) {
+            if (attributeMN == null) {
+                attributeMN = contactInfoMap.get(Constants.MODEL_NAME);
+                allowedAttributes.add(attributeMN);
+            }
             if (attributeHC == null) {
-                attributeHC = DomainObjectFactory.getInstance().createObjectAttribute();
-                attributeHC.setName("Hosting Cancer Research Center");
+                attributeHC = contactInfoMap.get(Constants.HOSTING_CANCER_RESEARCH_CENTER);
                 allowedAttributes.add(attributeHC);
             }
             if (attributePC == null) {
-                attributePC = DomainObjectFactory.getInstance().createStringAttribute();
-                attributePC.setName("Point of Contact");
+                attributePC = contactInfoMap.get(Constants.POINT_OF_CONTACT);
                 allowedAttributes.add(attributePC);
             }
             if (attributeCE == null) {
-                attributeCE = DomainObjectFactory.getInstance().createStringAttribute();
-                attributeCE.setName("Contact eMail");
+                attributeCE = contactInfoMap.get(Constants.CONTACT_EMAIL);
                 allowedAttributes.add(attributeCE);
             }
             if (attributeHI == null) {
-                attributeHI = DomainObjectFactory.getInstance().createStringAttribute();
-                attributeHI.setName("Hosting Institution");
+                attributeHI = contactInfoMap.get(Constants.HOSTING_INSTITUTION);
                 allowedAttributes.add(attributeHI);
             }
         }
-		//for failed URLs and even infeasible URL's, new ArrayList will be created
-        if(result == null) {
+
+        //for failed URLs and even infeasible URL's, new ArrayList will be created
+        if (result == null) {
             result = new ArrayList<Map<AttributeInterface, Object>>(1);
         }
         //Adding service meta data inside result map
         for (Map<AttributeInterface, Object> recordMap : result) {
+            recordMap.put(attributeMN, Utility.createModelName(serviceUrlMetadata.getDomainModel(),
+                                                               serviceUrlMetadata.getVersion()));
             recordMap.put(attributeHC, serviceUrlMetadata.getHostingCenter());
             recordMap.put(attributePC, serviceUrlMetadata.getContactName());
             recordMap.put(attributeCE, serviceUrlMetadata.getContactMailId());
-            recordMap.put(attributeHI, serviceUrlMetadata.getHostingCenterShortName());
+            recordMap.put(attributeHI, Utility.getHostingInstitutionName(serviceUrlMetadata));
         }
         urlToResultMap.put(url, result);
     }
@@ -124,64 +163,54 @@ public class TransformedResultObjectWithContactInfo {
      * @param url
      * @return List<Map<AttributeInterface, Object>>
      */
-    public List<Map<AttributeInterface, Object>> getResultForUrl(String url) {
-        return urlToResultMap.get(url);
-    }
+    
+        /*public List<Map<AttributeInterface, Object>> getResultForUrl(String url) {
+            return urlToResultMap.get(url);
+        }*/
 
-    /**
-     * Returns collection of urls available.  
-     * @return Collection<String>
-     */
-    public Collection<String> getAllUrls() {
-        return urlToResultMap.keySet();
-    }
+        /**
+         * Returns collection of urls available.  
+         * @return Collection<String>
+         */
+    
+        public Collection<String> getAllUrls() {
+            return urlToResultMap.keySet();
+        }
 
     /**
      * Returns results for all urls.
      * @return List<Map<AttributeInterface, Object>>
      */
     public List<Map<AttributeInterface, Object>> getResultForAllUrls() {
-        List<Map<AttributeInterface, Object>> collectedResult = null;
-        Collection<List<Map<AttributeInterface, Object>>> collectionOfResults = urlToResultMap.values();
-        if (collectionOfResults != null) {
-            collectedResult = new ArrayList<Map<AttributeInterface, Object>>();
-            for (List<Map<AttributeInterface, Object>> result : collectionOfResults) {
-                collectedResult.addAll(result);
-            }
+        List<Map<AttributeInterface, Object>> collectedResult = new ArrayList<Map<AttributeInterface,Object>>();
+        for (List<Map<AttributeInterface, Object>> results : urlToResultMap.values()) {
+            collectedResult.addAll(results);
         }
+        Collections.sort(collectedResult, new ResultComparator());
         return collectedResult;
     }
-
     /**
      * @return the failedServiceUrl
      */
-    public Collection<FailedTargetURL> getFailedServiceUrl() {
+    public Collection<FQPUrlStatus> getFailedServiceUrl() {
         return failedServiceUrl;
     }
 
     /**
-     * @param failedServiceUrl the failedServiceUrl to set
+     * @param collection the failedServiceUrl to set
      */
-    public void setFailedServiceUrl(Collection<FailedTargetURL> failedServiceUrl) {
-        this.failedServiceUrl = failedServiceUrl;
+    public void setFailedServiceUrl(Collection<FQPUrlStatus> collection) {
+        this.failedServiceUrl = collection;
     }
 
     /**
      * @return the allowedAttributes
      */
-    public Collection<AttributeInterface> getAllowedAttributes() {
+    public List<AttributeInterface> getAllowedAttributes() {
         return allowedAttributes;
     }
 
-    /**
-     * @param allowedAttributes the allowedAttributes to set
-     */
-    public void setAllowedAttributes(Collection<AttributeInterface> allowedAttributes) {
-        this.allowedAttributes = allowedAttributes;
-    }
-
-    public void addInFeasibleUrls(String inFeasibleUrl)
-    {
+    public void addInFeasibleUrls(String inFeasibleUrl) {
         this.getInFeasibleUrl().add(inFeasibleUrl);
     }
 

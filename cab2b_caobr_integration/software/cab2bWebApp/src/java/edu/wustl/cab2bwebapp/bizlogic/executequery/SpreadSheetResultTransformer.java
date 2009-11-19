@@ -4,10 +4,10 @@
 
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,7 +22,6 @@ import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.util.Utility;
-import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
@@ -34,7 +33,7 @@ import edu.wustl.common.querysuite.metadata.category.Category;
  * @author deepak_shingan
  *
  */
-public class SpreadSheetResultTransformer {
+public class SpreadSheetResultTransformer extends SpreadsheetTransformer {
 
     private ICab2bQuery query;
 
@@ -47,6 +46,8 @@ public class SpreadSheetResultTransformer {
 
     /**
      * Parameterized constructor
+     * @param query
+     * @param queryResult
      */
     public SpreadSheetResultTransformer(ICab2bQuery query, IQueryResult<? extends IRecord> queryResult) {
         this.query = query;
@@ -56,9 +57,8 @@ public class SpreadSheetResultTransformer {
     /**
      * Main method that converts query results in <code>IQueryResult</code> format
      * into spreadsheet data-model format.
-     * @param queryResult
-     * @param query
-     * @return List<Map<AttributeInterface, Object>>
+     * @param transformationMaxLimit
+     * @return {@link TransformedResultObjectWithContactInfo}
      */
     public TransformedResultObjectWithContactInfo transResultToSpreadSheetView(int transformationMaxLimit) {
         TransformedResultObjectWithContactInfo resultObj = null;
@@ -67,26 +67,25 @@ public class SpreadSheetResultTransformer {
             if (Utility.isCategory(query.getOutputEntity())) {
                 resultObj = processCategoryQueryResult(transformationMaxLimit);
             } else {
-                resultObj = processQueryResult();
+                resultObj = processQueryResult(transformationMaxLimit);
             }
-            resultObj.setFailedServiceUrl(queryResult.getFailedURLs());
-            resultObj.setAllowedAttributes(attributeOrderList);
+            resultObj.setFailedServiceUrl(queryResult.getFQPUrlStatus());
         }
         return resultObj;
     }
 
     /**
-     * Method to write IQueryResult to CSV file.   
+     * Method to write IQueryResult to CSV file. 
+     * @return FileName in which results are written  
      * @throws IOException 
-     * 
      */
-    public String writeToCSV(String filePath) throws IOException {
-        String fileName = query.getId() + "_" + System.currentTimeMillis()+".csv";
+    public String writeToCSV() throws IOException {
+        String fileName = query.getId() + "_" + System.currentTimeMillis() + ".csv";
         if (query != null && queryResult != null) {
             if (Utility.isCategory(query.getOutputEntity())) {
-                writeCategoryResultToCSV(fileName, filePath);
+                writeCategoryResultToCSV(fileName);
             } else {
-                writeQueryResultToCSV(fileName, filePath);
+                writeQueryResultToCSV(fileName);
             }
         }
         return fileName;
@@ -96,78 +95,55 @@ public class SpreadSheetResultTransformer {
      * @return
      * @throws IOException
      */
-    private String writeQueryResultToCSV(String fileName, String filePath) throws IOException {
+    private String writeQueryResultToCSV(String fileName) throws IOException {
         List<AttributeInterface> attributeOrder = new ArrayList<AttributeInterface>();
         for (AttributeInterface attribute : query.getOutputEntity().getAttributeCollection()) {
             if (AttributeFilter.isVisible(attribute)) {
                 attributeOrder.add(attribute);
             }
         }
-
-        FileWriter fstream = new FileWriter(filePath + fileName);
-        BufferedWriter out = new BufferedWriter(fstream);
+        CsvWriter writeToCSV = new CsvWriter(attributeOrder, fileName);
         Map<String, ?> urlVsRecords = queryResult.getRecords();
         Set<String> urls = urlVsRecords.keySet();
-
-        //write column headers
-        for (AttributeInterface attribute : attributeOrder) {
-            out.append(attribute.getName());
-            out.append(',');
-        }
-        out.append("Hosting Cancer Research Center");
-        out.append(',');
-        out.append("Point of Contact");
-        out.append(',');
-        out.append("Contact eMail");
-        out.append(',');
-        out.append("Hosting Institution");
-        out.append(',');
-        out.append('\n');
-        out.flush();
-
         for (String url : urls) {
             List<IRecord> results = (List<IRecord>) urlVsRecords.get(url);
-            //Add metadata information based on url
             if (results != null) {
                 ServiceURLInterface serviceUrlMetadata =
                         new ServiceURLOperations().getServiceURLbyURLLocation(url);
+                List<Map<AttributeInterface, Object>> recordList =
+                        new ArrayList<Map<AttributeInterface, Object>>();
                 for (IRecord record : results) {
-                    for (AttributeInterface a : attributeOrder) {
-                        out.append(record.getValueForAttribute(a).toString());
-                        out.append(',');
+                    Map<AttributeInterface, Object> recordMap = new HashMap<AttributeInterface, Object>();
+                    for (AttributeInterface attribute : record.getAttributes()) {
+                        recordMap.put(attribute, record.getValueForAttribute(attribute));
                     }
-                    out.append(serviceUrlMetadata.getHostingCenter());
-                    out.append(',');
-                    out.append(serviceUrlMetadata.getContactName());
-                    out.append(',');
-                    out.append(serviceUrlMetadata.getContactMailId());
-                    out.append(',');
-                    out.append(serviceUrlMetadata.getHostingCenterShortName());
-                    out.append(',');
-                    out.append('\n');
-                    out.flush();
+                    recordList.add(recordMap);
                 }
+                writeToCSV.writeData(recordList, serviceUrlMetadata);
             }
         }
+        writeToCSV.closeFile();
         return fileName;
     }
 
-    private void writeCategoryResultToCSV(String fileName, String filePath) throws IOException {
+    /**
+     * @param fileName
+     * @throws IOException
+     */
+    private void writeCategoryResultToCSV(String fileName) throws IOException {
         ICategoryResult<ICategorialClassRecord> result = (ICategoryResult<ICategorialClassRecord>) queryResult;
         List<AttributeInterface> attributes = getAttributesWithOrder(result.getCategory());
-        ICategoryToSpreadsheetTransformer transformer = new CategoryToSpreadsheetTransformer();
-        transformer.writeToCSV(result, fileName,attributes, filePath);
+        CategoryToSpreadsheetTransformer transformer = new CategoryToSpreadsheetTransformer();
+        transformer.writeToCSV(result, fileName, attributes);
     }
 
     /**
      * Method to process query result (DO NOT USE for query containing any
      * categories).
-     * @param query
-     * @param result
-     * @param urls
-     * @return List<Map<AttributeInterface, Object>>
+     * @param transformationMaxLimit
+     * @return {@link TransformedResultObjectWithContactInfo}
      */
-    private TransformedResultObjectWithContactInfo processQueryResult() {
+    private TransformedResultObjectWithContactInfo processQueryResult(int transformationMaxLimit) {
         attributeOrderList = new ArrayList<AttributeInterface>();
         for (AttributeInterface attribute : query.getOutputEntity().getAttributeCollection()) {
             if (AttributeFilter.isVisible(attribute)) {
@@ -176,10 +152,20 @@ public class SpreadSheetResultTransformer {
         }
 
         Map<String, ?> urlVsRecords = queryResult.getRecords();
-        TransformedResultObjectWithContactInfo resultObj = new TransformedResultObjectWithContactInfo();
-        resultObj.setAllowedAttributes(attributeOrderList);
+        TransformedResultObjectWithContactInfo resultObj =
+                new TransformedResultObjectWithContactInfo(attributeOrderList);
 
         List<String> urls = query.getOutputUrls();
+        for (String url : urls) {
+            List<IRecord> records = (List<IRecord>) urlVsRecords.get(url);
+            if (records != null) {
+                for (IRecord record : records) {
+                    recordVsCount.put(record, getDepth(record));
+                }
+                Collections.sort(records, new RecordComparator(recordVsCount));
+            }
+        }
+
         for (String url : urls) {
             List<IRecord> results = (List<IRecord>) urlVsRecords.get(url);
             if (results != null) {
@@ -192,12 +178,27 @@ public class SpreadSheetResultTransformer {
                         newRecord.put(a, value);
                     }
                     recordsForUrl.add(newRecord);
+                    if (recordsForUrl.size() > transformationMaxLimit) {
+                        removeUnwantedAttributes(recordsForUrl, attributeOrderList);
+                        break;
+                    }
                 }
-                removeUnwantedAttributes(recordsForUrl, attributeOrderList);
                 resultObj.addUrlAndResult(url, recordsForUrl);
             }
         }
+        removeUnwantedAttributes(resultObj.getResultForAllUrls(), attributeOrderList);
         return resultObj;
+    }
+
+    private int getDepth(IRecord record) {
+        int depth = 0;
+        for (AttributeInterface attribute : record.getAttributes()) {
+            Object value = record.getValueForAttribute(attribute);
+            if (value != null && !value.toString().isEmpty()) {
+                depth++;
+            }
+        }
+        return depth;
     }
 
     /**
@@ -211,26 +212,24 @@ public class SpreadSheetResultTransformer {
         Category cat = result.getCategory();
         attributeOrderList = getAttributesWithOrder(cat);
 
-        TransformedResultObjectWithContactInfo resultObject = new TransformedResultObjectWithContactInfo();
-        resultObject.setAllowedAttributes(attributeOrderList);
+        TransformedResultObjectWithContactInfo resultObject =
+                new TransformedResultObjectWithContactInfo(attributeOrderList);
 
         Map<String, List<ICategorialClassRecord>> map = result.getRecords();
-        List<String> urls = query.getOutputUrls();
+        //List<String> urls = query.getOutputUrls();
+        Set<String> urls = map.keySet();
         for (String url : urls) {
             List<ICategorialClassRecord> recordList = map.get(url);
             List<Map<AttributeInterface, Object>> transformedResult = null;
-            // identify infeasible URLs
-            if(QueryExecutorUtil.isURLFeasibleForConversion(recordList,transformationMaxLimit) && recordList!=null)
-                    resultObject.addInFeasibleUrls(url);
-            
-            ICategoryToSpreadsheetTransformer transformer = new CategoryToSpreadsheetTransformer();
-            transformedResult = transformer.convert(recordList,transformationMaxLimit);
+            CategoryToSpreadsheetTransformer transformer = new CategoryToSpreadsheetTransformer();
+            transformedResult = transformer.convert(recordList, transformationMaxLimit);
+            /** After implementing Priority in query executor the results for each URL is transformed till limit
+             * Once this is done then the result for each url are combined and trimmed up to limit  
+             */
             resultObject.addUrlAndResult(url, transformedResult);
         }
-
         removeUnwantedAttributes(resultObject.getResultForAllUrls(), attributeOrderList);
         return resultObject;
-
     }
 
     /**
@@ -281,12 +280,6 @@ public class SpreadSheetResultTransformer {
         orderAttr.removeAll(category.getCategoryEntity().getAllAttributes());
         orderAttrTwo.remove(orderAttr);
         orderAttr.addAll(0, orderAttrTwo);
-        
-        /*List<AttributeInterface> list1 = getAttributes(category);
-        Collection<AttributeInterface> list2 = category.getCategoryEntity().getAllAttributes();
-        list1.removeAll(list2);        
-        list1.addAll(0, list2);*/
-
         return orderAttr;
     }
 
