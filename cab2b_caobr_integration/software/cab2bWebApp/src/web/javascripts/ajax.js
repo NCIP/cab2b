@@ -49,51 +49,50 @@
   return xmlhttp;
 }
 
-var results = "";
- function processAJAXRequest(requestURL, responseReceiver, param)
+ function processAJAXRequest(requestURL, responseReceiver, hideLoadingImage, callbackFunction)
 { 
-   if(responseReceiver && !param)
+   if(responseReceiver &&  hideLoadingImage!=1)
   {
 	document.getElementById(responseReceiver).innerHTML = "<TABLE style='height:100%;width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'></TD></TR></TABLE>";
   }
   var httpRequest = XMLHTTPObject();
   httpRequest.open("POST", requestURL, true);
+  httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  httpRequest.setRequestHeader("Ajax-Call", "true");
+  httpRequest.send(null);
   httpRequest.onreadystatechange = function(){ 
      if(httpRequest.readyState==4) 
     { 
-	  results = httpRequest.responseText;      
-	   if(httpRequest.status==500) //http.responseXML can be used to get an XML based response, if we need to have some XML output from a server file.
+	  var results = httpRequest.responseText;  	  
+	   if(results=="Exception")
 	  {
-		var start = results.indexOf("<DIV id=\"errornotificationpanel\">");
-		results = results.substring(start, results.length-1);
-		var end = results.indexOf("</DIV>");
-		 if(start>0 && end>0)
+  	     if(confirm('Incorrect or no databases to search configured for query! Do you want to re-configure now?'))
 		{
-		  results = results.substring(0, end + 6);
+		  document.location = "Home.do?redirect=true";
 		}
-		 else
+		else
 		{
-		  results = "<SPAN class='error'>An unexpected error has occured while processing your request. Please contact helpdesk!</SPAN>";
+		  document.location = "Home.do";
 		}
+	  }
+	   else if(httpRequest.status==500)
+	  {
 		results = "<DIV style='text-align:center'>" + results + "</DIV>";
 	  }
 	   if(httpRequest.status!=403 && responseReceiver)
 	  {
-	     if(param)
-		{		  
-		  document.getElementById(responseReceiver).innerHTML = "<TABLE style='height:100%;width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'></TD></TR></TABLE>";
-		}
         document.getElementById(responseReceiver).innerHTML = results;
-        TogglePreloader(0);  
+ 		TogglePreloader(0);  
+		 if(callbackFunction && httpRequest.status==200)
+		{
+		  callbackFunction();
+		}
 	  }
-	   else if(httpRequest.status==403)
+	   else if(httpRequest.status==403) //If user session timed out.
 	  {
   	    alert(httpRequest.responseText);
 		document.location = "Home.do";
 	  }
     }
   }
-  httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  httpRequest.setRequestHeader("Ajax-Call", "true");
-  httpRequest.send(null);
 }

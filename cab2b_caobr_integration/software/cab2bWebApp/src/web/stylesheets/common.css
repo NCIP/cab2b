@@ -23,6 +23,7 @@ body {
 	position: relative;
 	top: 42;
 	right: 10;
+	line-height: 1.29em;	
 }
 
 #leftpanel {
@@ -45,16 +46,6 @@ body {
 	height: 100;
 	padding: 6 5 5 10;
 	line-height: 1.6em;
-}
-
-#certifiedbrowserspanel {
-	margin: 50% 6% 6% 6%;
-	padding: 1;
-}
-
-#optimalresolutionspanel {
-	margin: 6%;
-	padding: 1;
 }
 
 img.bullet {
@@ -120,6 +111,12 @@ img.bullet {
 	font-family: sans-serif, Arial, Helvetica;
 }
 
+.textfooter {
+	font-size: 0.75em;
+	color: #555;
+	font-family: sans-serif, Arial, Helvetica;
+}
+
 .link {
 	font-weight: bold;
 	font-size: 0.79em;
@@ -127,7 +124,13 @@ img.bullet {
 	font-family: sans-serif, Arial, Helvetica;
 }
 
-.link:hover {
+.linkfooter {
+	font-size: 0.75em;
+	color: #555;
+	font-family: sans-serif, Arial, Helvetica;
+}
+
+.link:hover, .linkfooter:hover {
 	text-decoration: none;
 }
 
@@ -149,6 +152,13 @@ input.button {
 	font-weight: bold;
 	font-size: 0.75em;
 	color: #145575;
+	font-family: sans-serif, Arial, Helvetica;
+	background-color: #DDD;
+}
+
+input.buttondisabled {
+	font-weight: bold;
+	font-size: 0.75em;
 	font-family: sans-serif, Arial, Helvetica;
 	background-color: #DDD;
 }
@@ -178,7 +188,7 @@ select {
 	font-family: sans-serif, Arial, Helvetica;
 }
 
-#errors,.error {
+#errors, .error {
 	text-align: center;
 	font-size: 0.75em;
 	color: #ff0000;
@@ -186,8 +196,9 @@ select {
 }
 
 .tooltip {
-	font-size: 0.80em;
-	font-family: sans-serif, Arial, Helvetica;
+	position: absolute;
+	border: 1px solid #2d8ac6;
+	display: none;
 }
 
 .hidden {
@@ -202,7 +213,7 @@ br {
 #footer {
 	clear: both;
 	width: 100%;
-	border-color: #eaeaea #fff #fff #fff;
+	border-color: #ddd #fff #fff #fff;
 	border-style: solid;
 	border-left: none;
 	border-right: none;

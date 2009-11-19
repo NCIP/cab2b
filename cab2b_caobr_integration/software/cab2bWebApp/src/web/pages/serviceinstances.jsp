@@ -38,7 +38,7 @@ chk = false;
 }
 </SCRIPT>
 </HEAD>
-<BODY onLoad="document.getElementById('centerpanelcontent').style.height = getScreenHeight() - 280;">
+<BODY onLoad="document.getElementById('centerpanelcontent').style.height = getScreenHeight() - 295;">
 <FORM method="post" action="SaveServiceInstances.do" onSubmit="return validateSubmit()">
 <jsp:include page="header.jsp"/>
 <DIV id="content">
@@ -63,7 +63,7 @@ chk = false;
 						<bean:write name="serviceInstance" property="hostingCenter"/>
 					</DIV>
 					<DIV class="text" style="margin-left: 1.7em">
-						<bean:write name="serviceInstance" property="description"/>
+						<bean:write name="serviceInstance" property="description"/>&nbsp;(<bean:write name="serviceInstance" property="entityGroupName"/>)
 					</DIV>
 				</DIV>
 			</logic:iterate>			

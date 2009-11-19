@@ -3,6 +3,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
 
+<logic:notPresent name="modelGroupDVOList"><jsp:forward page="/Home.do"/></logic:notPresent>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 <HEAD>
@@ -22,6 +23,9 @@
   <logic:present name="errorSessionTimeout">
 	alert('<bean:message key="alert.sessiontimeout"/>');
   </logic:present>
+  <logic:present name="invalidRequest">
+	alert('<bean:message key="alert.invalidrequest"/>');
+  </logic:present>
   <logic:notPresent name="modelGroupDVOList">
 	document.forms[0].action = 'Home.do';
     document.forms[0].submit();
@@ -38,7 +42,30 @@
    {
      validateDataTypeSelection();
    }
-  </html:messages>  
+  </html:messages>
+  <%
+	 if(request.getAttribute("error")!=null) 
+	{
+  %>
+	   if(confirm('<bean:message key="message.incorrectserviceinstanceconfigured"/>'))
+      {
+        validateDataTypeSelection();
+      }
+  <%
+	}
+     if(request.getParameter("redirect")!=null)
+	{
+  %>
+	  document.body.style.display="none";
+	  validateDataTypeSelection();
+  <%
+	}
+  %>
+  
+   if("${requestScope.keywordQueryNotPresent}")
+  {
+	alert('<bean:message key="alert.keywordquerynotpresent" arg0="${requestScope.modelGroups}" arg1="${requestScope.modelGroups}"/>');
+  }
 }
 
  function validateDataTypeSelection()
@@ -65,11 +92,6 @@
 	}
     return;
   }
-   else
-  {
-	if(selectedItemsCount==1)
-	document.getElementsByName('modelGroups')[singleSelectIndex].checked = false;
-  }
   setSelection(document.getElementsByName('modelGroups'));
   processAJAXRequest('DisplaySavedSearches.do?modelGroups=' + (chkBoxObj.checked?chkBoxObj.value:'null'), 'savedsearchespanelbody');
 }
@@ -92,10 +114,22 @@
 	textBoxObj.className = 'textbox exampleValue';
   }
 }
+
+ function validateKeywordSearch(keywordSearchExample)
+{
+   if(selectedItemsCount==0) 
+  {
+	alert('<bean:message key="alert.selectdatatype"/>');
+	return false;
+  }
+  return checkEmptyTextFileld('keyword', keywordSearchExample , true, '<bean:message key="error.keywordsearch.empty"/>');
+}
 </SCRIPT>
 <BODY onLoad="setPage()">
-	<FORM method="post" action="KeywordSearch.do" onsubmit="return checkEmptyTextFileld('keyword', keywordSearchExample.value, true, '<bean:message key="error.keywordsearch.empty"/>')">
-		<jsp:include page="header.jsp"/>
+	<FORM method="post" action="PreExecuteQuery.do" onsubmit="return validateKeywordSearch(keywordSearchExample.value); ">
+		<jsp:include page="header.jsp">
+			<jsp:param name="home" value="home"/>
+		</jsp:include>
 		<jsp:include page="leftpanel.jsp"/>				
 		<DIV id="content">
 			<DIV id="toppanel">
@@ -111,9 +145,9 @@
 						<DIV class="myselectboxitems" id="myselectboxitems">
 							<logic:present name="modelGroupDVOList">							
 								<logic:iterate name="modelGroupDVOList" id="modelGroupDVO" type="edu.wustl.cab2bwebapp.dvo.ModelGroupDVO" indexId="index">
-									<DIV class="myselectboxitem">
-										<INPUT type="checkbox" name="modelGroups" id="<bean:write name="modelGroupDVO" property="modelGroupName"/>" value="<bean:write name="modelGroupDVO" property="modelGroupName"/>" onClick="showSavedSearches(this, <bean:write name="modelGroupDVO" property="secured"/> <logic:notPresent name="userName">&& true</logic:notPresent><logic:present name="userName">&& false</logic:present>)" <logic:equal name="modelGroupDVO" property="selected" value="true">checked</logic:equal>>
-										<LABEL><bean:write name="modelGroupDVO" property="modelGroupName"/><logic:equal name="modelGroupDVO" property="secured" value="true">&nbsp;<IMG src="images/lock.gif" alt="<bean:message key="img.alt.secureservice"/>"></logic:equal></LABEL>										
+									<DIV class="myselectboxitem" style="border-style:solid;border-width:1;border-color:#fff;" onmouseover="this.style.borderColor='#ccc';this.style.backgroundColor='#eee';" onmouseout="this.style.borderColor='#fff';this.style.backgroundColor='#fff';" onClick="document.getElementById('<bean:write name="modelGroupDVO" property="modelGroupName"/>').checked=true;setDropDown(0);showSavedSearches(document.getElementById('<bean:write name="modelGroupDVO" property="modelGroupName"/>'), <bean:write name="modelGroupDVO" property="secured"/> <logic:notPresent name="userName">&& true</logic:notPresent><logic:present name="userName">&& false</logic:present>)">
+										<INPUT type="radio" style="display:none;" name="modelGroups" id="<bean:write name="modelGroupDVO" property="modelGroupName"/>" value="<bean:write name="modelGroupDVO" property="modelGroupName"/>" <logic:equal name="modelGroupDVO" property="selected" value="true">checked</logic:equal>>
+										<LABEL style="margin-left:0.3em;line-height:1.5em;"><bean:write name="modelGroupDVO" property="modelGroupName"/><logic:equal name="modelGroupDVO" property="secured" value="true">&nbsp;<IMG src="images/lock.gif" alt="<bean:message key="img.alt.secureservice"/>"></logic:equal></LABEL>										
 									</DIV>
 								</logic:iterate>
 							</logic:present>						
@@ -126,7 +160,7 @@
 			</DIV>
 			<DIV id="keywordsearchpanel">
 				<DIV class="label"><bean:message key="label.keywordsearch"/></DIV> <INPUT type="text" class="textbox examplevalue" name="keyword" value="<bean:message key="textbox.keywordsearch.examplevalue"/>" onFocus="setKeywordSearchTextBox(this, keywordSearchExample.value, 'focus')" onBlur="setKeywordSearchTextBox(this, keywordSearchExample.value, 'blur')"><INPUT type="hidden" name="keywordSearchExample" value="<bean:message key="textbox.keywordsearch.examplevalue"/>"> <INPUT type="submit" class="button" value="<bean:message key="button.keywordsearch"/>">
-			</DIV>			
+			</DIV>		
 			<DIV id="savedsearchespanel">
 				<DIV class="titlebar collapsible">
 					<DIV class="titlebarheader title">

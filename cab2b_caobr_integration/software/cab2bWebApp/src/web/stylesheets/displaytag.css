@@ -1,6 +1,6 @@
 .simple {
-	width: 97%;
-	margin: 0px 0px 0px 4px !important;
+	width: 99.5%;
+	margin: 0px 0px 0px 0px !important;
 	text-align: left;
 	vertical-align: top;
 	font-size: 0.82em;
@@ -9,7 +9,7 @@
 	font-family: sans-serif, Arial, Helvetica;
 }
 
-table.simple th.sortable {
+table.simple th.sortable, th.unsortable {
 	background-color: #eee;
 }
 
@@ -56,7 +56,7 @@ th.order2 {
 
 .simple #noscroll {
 	position: relative;
-	top: expression(this.offsetParent.scrollTop);
+	top: expression(this.offsetParent.scrollTop - 1);
 }
 
 tr.odd {

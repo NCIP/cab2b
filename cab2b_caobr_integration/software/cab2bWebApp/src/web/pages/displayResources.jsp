@@ -13,14 +13,14 @@
 <SCRIPT language="javaScript">
 
 function showWindow(key){
-	var url = "ShowAnnotation.do?key="+key
+	var url = "ShowAnnotation.do?key="+key;
 
 	window.open(url,'name','width=700,height=400,scrollbars=no');
 }
 
 function checkImageSize()
    {
-	var imageObj=document.getElementById("searchresultstable").getElementsByTagName('img');
+	var imageObj=document.getElementById("annotationTable").getElementsByTagName('img');
 		  
 	  for(var i=0;i<imageObj.length;i++)
 		{
@@ -28,7 +28,7 @@ function checkImageSize()
 			imageObj[i].width='150';
 			imageObj[i].height='50';
 		}
-	var widthObj=document.getElementById("searchresultstable").getElementsByTagName('td');
+	var widthObj=document.getElementById("annotationTable").getElementsByTagName('td');
 
 		for(var i=0;i<widthObj.length;i=i+2)
 		{	
@@ -40,7 +40,7 @@ function checkImageSize()
 
 	function changeBackgoundColor(){
 
-	var imageObj=document.getElementById("searchresultstable").getElementsByTagName('td');
+	var imageObj=document.getElementById("annotationTable").getElementsByTagName('td');
 	
 	 for(var i=0;i<imageObj.length;i++)
 		{
@@ -57,17 +57,17 @@ function checkImageSize()
   {	  
 	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (310);
     document.getElementById('centerpanelcontent').style.overflow = 'auto';
-	 if(document.getElementById('searchresultstable'))
+	 if(document.getElementById('annotationTable'))
     {
-      document.getElementById('searchresultstable').getElementsByTagName('thead')[0].getElementsByTagName('tr')[0].id = 'noscroll';
+      document.getElementById('annotationTable').getElementsByTagName('thead')[0].getElementsByTagName('tr')[0].id = 'noscroll';
 	}
   }
    else
   {
 	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (325);
-	 if(document.getElementById('searchresultstable'))
+	 if(document.getElementById('annotationTable'))
     {
-	  document.getElementById('searchresultstable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '370';
+	  document.getElementById('annotationTable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '370';
 	}
   }
   setTimeout("updateView()", 1);
@@ -93,13 +93,9 @@ function checkImageSize()
 </DIV>
 <DIV id="centerpanel">
 <DIV id='top'></DIV>
-<DIV id="centerpanelcontent"><%@ include
-	file="searchresultspanel.jsp"%></DIV>
+<DIV id="centerpanelcontent"><%@ include file="annotationresultspanel.jsp"%></DIV>
 <DIV id='bottom'></DIV>
 </DIV>
-<DIV id="bottompanel"><INPUT type="button" class="button"
-	value="<bean:message key="button.home"/>"
-	onClick="document.location='Home.do'" /></DIV>
 <jsp:include page="footer.jsp" />
 </BODY>
 </HTML>

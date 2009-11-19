@@ -55,13 +55,13 @@ function checkImageSize()
 		<TABLE cellspacing="1" cellpadding="1" width="100%" style="background-color: #ddd;">
 			<TR>
 			<TD width="20%" >
-				<logic:notEmpty name="selectedRresourceImage">
-				<img src="${sessionScope.selectedRresourceImage}"</td></logic:notEmpty>			
+				<logic:notEmpty name="selectedRresourceImage">	<img src="${sessionScope.displayallannotation.resourceLogoURl}"</td>
+				</logic:notEmpty>			
 				
 			</TD>
 			<TD width="100%">
 				<DIV class="label" style="padding-left:1em;">
-					<logic:notEmpty name="selectedRresourceImage">${sessionScope.selectedResourceDescription} </logic:notEmpty>
+					<logic:notEmpty name="selectedRresourceImage">${sessionScope.displayallannotation.resourceDescription} </logic:notEmpty>
 				</DIV>
 			</TD>
 
@@ -78,9 +78,12 @@ function checkImageSize()
 		</TD>
 	</TR>
 	<TR>
-		<TD>
-		<logic:notEmpty name="selectedRresourceImage">${sessionScope.displayannotation}</logic:notEmpty>			
-	</TD>
+	 	<TD>
+		<logic:iterate name="${sessionScope.displayallannotation.list)" id="eachRow" type="edu.wustl.cab2bwebapp.dvo.AnnotationElementDVO">
+				
+		</logic:iterate>
+					
+	    </TD>
 		</TR>
 </TABLE>
 </div>
