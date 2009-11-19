@@ -7,8 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import obr.ClientUtility;
-
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionError;
@@ -16,6 +14,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.cagrid.caObr.client.CaObrClient;
 
 import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.cab2bwebapp.dvo.SearchResultDVO;
@@ -38,6 +37,7 @@ public class AnnotateAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
         String actionForward = null;
+        CaObrClient client = new CaObrClient("http://ps4266:8080/wsrf/services/cagrid/CaObr");
         try {
             String index = request.getParameter("index");
             String[] indexs = index.split("sep");
@@ -47,20 +47,35 @@ public class AnnotateAction extends Action {
 
             for (String intex : indexs) {
                 List<SearchResultDVO> searchResultDVOList = searchResultview.get(Integer.parseInt(intex));
-                int i = 0;
                 for (SearchResultDVO dvo : searchResultDVOList) {
-                    if (i == 0) {
-                        dvo.setValue("<input type='checkbox' id='" + i + "' name='checkBox' checked>");
-                    }
-                    Object tokens = dvo.getValue();
-                    if (tokens instanceof String) {
-                        dvo.setValue(ClientUtility.getConcepts((String)tokens));
-                    }
-                    i++;
-                }
-            }
-            actionForward = Constants.FORWARD_SEARCH_RESULTS_PANEL;
+                    Object values = dvo.getValue();
+                    StringBuilder stb = new StringBuilder();
+                    if (values instanceof String) {
 
+                        String tokens[] = ((String) values).split(" ");
+                        boolean[] flags = client.isConceptsInAllOntologies(tokens);
+
+                        int i = 0;
+                        for (String token : tokens) {
+                            if (flags[i]) {
+                                token = (new StringBuilder("<a class='link' href='AnnotationResult.do?token=")).append(
+                                                                                                                       token).append(
+                                                                                                                                     "'>").append(
+                                                                                                                                                  token).append(
+                                                                                                                                                                "</a>").toString();
+                            }
+                            if (i == tokens.length - 1) {
+                                stb.append(token);
+                            }
+                            stb.append(token).append(" ");
+                            i++;
+
+                        }
+                    }
+                    dvo.setValue(stb.toString());
+                }
+                actionForward = Constants.FORWARD_SEARCH_RESULTS_PANEL;
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
@@ -71,9 +86,4 @@ public class AnnotateAction extends Action {
         }
         return mapping.findForward(actionForward);
     }
-
-    public static void main(String[] args) {
-        System.out.println(ClientUtility.getResources().length);
-    }
-
 }

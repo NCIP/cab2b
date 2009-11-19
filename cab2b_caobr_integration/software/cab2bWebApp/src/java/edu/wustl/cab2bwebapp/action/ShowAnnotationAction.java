@@ -1,6 +1,7 @@
 package edu.wustl.cab2bwebapp.action;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.cab2bwebapp.constants.Constants;
+import edu.wustl.cab2bwebapp.dvo.AnnotationDVO;
+import edu.wustl.cab2bwebapp.dvo.AnnotationElementDVO;
 
 public class ShowAnnotationAction extends Action {
 
@@ -40,39 +43,13 @@ public class ShowAnnotationAction extends Action {
         HttpSession session = request.getSession();
         ActionForward actionForward = null;
         try {
-            String key = (String) request.getParameter("key");
+            String resourceId = (String) request.getParameter("key");
 
-            Map<String, List<String>> parsedResult = (Map<String, List<String>>) session.getAttribute(Constants.PARSED_RESULT);
+            Map<String, AnnotationDVO> resourceAnnotationDVOMap = (Map<String, AnnotationDVO>) session.getAttribute(Constants.RESOURCE_ANNOTATIONMAPS);
 
-            List<String> elementIds = parsedResult.get(key);
-            String keyValues[] = key.split("custom_separator");
-            String resourceDescription = keyValues[1];
-            String resourceLogo = keyValues[2];
-
-            StringBuilder temp = new StringBuilder();
-
-            for (String val : elementIds) {
-                String values[] = val.split("custom_separator");
-                String elementId = values[0];
-                String elementDesc = values[1];
-                String resourceUrl = values[2];
-
-                int length = elementDesc.length();
-                String desc = "";
-                if (length < 75) {
-                    desc = elementDesc +"....<br>";
-                } else
-                    desc = elementDesc.substring(0, 75) + "....<br>";
-
-                temp = temp.append(
-                                   "<a class='link' href='" + resourceUrl + "' target='_blank'" + "title='"
-                                           + elementDesc + "'>" + elementId + "</a>").append(
-                                                                                             ": &nbsp;&nbsp;&nbsp;&nbsp;").append(
-                                                                                                                                  desc);
-            }
-            session.setAttribute(Constants.DISPLAY_ANNOTATION, temp.toString());
-            session.setAttribute(Constants.SELECTED_RESOURCE_DES, resourceDescription);
-            session.setAttribute(Constants.SELECTED_RESOURCE_IMAGE, resourceLogo);
+            AnnotationDVO annotationDVO =resourceAnnotationDVOMap.get(resourceId);
+            
+            session.setAttribute(Constants.DISPLAY_All_ANNOTATION, annotationDVO);
             ActionForward forward = mapping.findForward(Constants.DISPLAY_ANNOTATION);
             actionForward = new ActionForward(forward.getName(), forward.getPath(), false);
 
