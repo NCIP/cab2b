@@ -39,14 +39,21 @@ public class ModelGroupOperationsTest extends TestCase {
     }
 
     public void testDeleteModelGroup() {
-        Collection<ModelGroupInterface> allModelGroup = new ModelGroupOperations().getAllModelGroups();
-        if (allModelGroup.size() != 0) {
-            ModelGroupOperations modelGroupOperations = new ModelGroupOperations();
-            for (ModelGroupInterface modelGroup : allModelGroup) {
-                modelGroupOperations.deleteModelGroup(modelGroup);
-            }
+        ModelGroupInterface modelGroupInstance = new ModelGroup();
+
+        List<EntityGroupInterface> entitygroupList = new ArrayList<EntityGroupInterface>();
+        entitygroupList.addAll(entityCache.getEntityGroups());
+
+        modelGroupInstance.setModelGroupName("TestModelGroup" + System.currentTimeMillis());
+        modelGroupInstance.setSecured(false);
+        modelGroupInstance.setEntityGroupList(entitygroupList);
+        ModelGroupOperations opr = new ModelGroupOperations();
+        try {
+            opr.saveModelGroup(modelGroupInstance);
+            opr.deleteModelGroup(modelGroupInstance);
+        } catch (RuntimeException e) {
+            assertTrue(false);
         }
-        System.out.println("All Model Groups Deleted");
     }
 
     public void testSaveModelGroup() {
@@ -56,7 +63,7 @@ public class ModelGroupOperationsTest extends TestCase {
         List<EntityGroupInterface> entitygroupList = new ArrayList<EntityGroupInterface>();
         entitygroupList.addAll(entityCache.getEntityGroups());
 
-        modelGroupInstance.setModelGroupName("TestModelGroup1");
+        modelGroupInstance.setModelGroupName("TestModelGroup1" + System.currentTimeMillis());
         modelGroupInstance.setSecured(false);
         modelGroupInstance.setEntityGroupList(entitygroupList);
 

@@ -50,7 +50,7 @@ public class CreateCategoryBizLogic {
      * @param description
      */
     public void saveCategory(String name, String description) {
-        Category category = new PersistCategory().persistCategory(getInputCategory(name, description), null);
+        Category category = new PersistCategory().persistCategory(getInputCategory(name, description), null,false);
         new CategoryOperations().saveCategory(category);
     }
 

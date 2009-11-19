@@ -33,7 +33,7 @@ public class QueryResult<R extends IRecord> implements IQueryResult<R> {
     /**
      * Collection for failed query URLs
      */
-    private Set<FailedTargetURL> failedQueryUrls = new HashSet<FailedTargetURL>();
+    private Set<FQPUrlStatus> fqpUrlStatus = new HashSet<FQPUrlStatus>();
 
     /**
      *
@@ -111,15 +111,15 @@ public class QueryResult<R extends IRecord> implements IQueryResult<R> {
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.queryengine.result.IQueryResult#getFailedURLs()
      */
-    public Set<FailedTargetURL> getFailedURLs() {
-        return failedQueryUrls;
+    public Set<FQPUrlStatus> getFQPUrlStatus() {
+        return fqpUrlStatus;
     }
 
     /* (non-Javadoc)
      * @see edu.wustl.cab2b.common.queryengine.result.IQueryResult#setFailedURLs(java.util.Collection)
      */
-    public void setFailedURLs(Collection<FailedTargetURL> failedQueryUrls) {
-        this.failedQueryUrls.addAll(failedQueryUrls);
+    public void setFQPUrlStatus(Collection<FQPUrlStatus> failedQueryUrls) {
+        this.fqpUrlStatus.addAll(failedQueryUrls);
     }
 
     public Boolean getIsSystemGenerated() {

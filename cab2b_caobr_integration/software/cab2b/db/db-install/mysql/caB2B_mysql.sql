@@ -51,11 +51,28 @@ create table OUTPUT_CLASS_URLS (
    POSITION integer not null,
    primary key (CAB2B_QUERY_ID, POSITION)
 );
-create table CAB2B_QUERY (
-   IDENTIFIER bigint not null,
-   ENTITY_ID bigint not null,
-   primary key (IDENTIFIER)
+create table CAB2B_MMA (
+  ID bigint not null auto_increment, 
+  IS_VISIBLE BOOLEAN,  
+  ATTRIBUTE_ID bigint not null,
+  CATEGORIAL_ATTRIBUTE_IDS varchar(254) not null,
+  MMC_ID bigint not null,
+  primary key (ID)
 );
+create table CAB2B_MMC (
+  ID bigint not null auto_increment,
+  ENTITY_ID bigint not null,
+  APP_GROUP_ID bigint not null, 
+  CATEGORY_IDS varchar(254) not null,
+  primary key (ID)
+);
+
+create table CAB2B_COMPOUND_QUERY (IDENTIFIER bigint not null, primary key (IDENTIFIER));
+create table CAB2B_KEYWORD_QUERY (IDENTIFIER bigint not null, APP_GROUP_ID bigint, primary key (IDENTIFIER));
+create table CAB2B_MMC_QUERY (IDENTIFIER bigint not null, primary key (IDENTIFIER));
+create table CAB2B_MODEL_GROUP (MODEL_ID bigint not null auto_increment, MODEL_GROUP_NAME text not null, SECURED BOOLEAN, DESCRIPTION text, ENTITY_GROUP_NAMES text not null, primary key (MODEL_ID));
+create table CAB2B_QUERY (IDENTIFIER bigint not null, ENTITY_ID bigint not null, COMPOUND_QUERY_ID bigint, primary key (IDENTIFIER));
+
 create table CAB2B_DATA_CATEGORY (
    ID bigint not null,
    description varchar(255),
@@ -70,14 +87,6 @@ create table DATA_CATEGORIAL_ATTRIBUTE (
 create table DATA_CATEGORIAL_CLASS (
    ID bigint not null,
    primary key (ID)
-);
-create table CAB2B_MODEL_GROUP (
-	MODEL_ID bigint not null auto_increment,
-	MODEL_GROUP_NAME varchar(255) unique not null,
-	SECURED tinyint null,
-	DESCRIPTION text null,
-	ENTITY_GROUP_NAMES text not null,
-	primary key(MODEL_ID)
 );
 create table CAB2B_SERVICE_URL (
    URL_ID bigint not null auto_increment,
@@ -104,16 +113,53 @@ create table CAB2B_USER_URL_MAPPING (
    USER_ID bigint not null,
    primary key (USER_ID, SERVICE_URL_ID)
 );
-CREATE TABLE CAB2B_CATEGORY_POPULARITY (
+create table CAB2B_CATEGORY_POPULARITY (
   IDENTIFIER bigint(30) not null auto_increment,
   ENTITY_ID bigint(30) default null,
   POPULARITY bigint(30) not null default '0',
   UPDATED_DATE timestamp not null,
   primary key  (IDENTIFIER)
 );
+create table CAB2B_ABSTRACT_STATUS (
+  ID bigint not null auto_increment, 
+  STATUS varchar(100) not null, 
+  RESULT_COUNT integer, 
+  MESSAGE varchar(255), 
+  DESCRIPTION varchar(255), 
+  primary key (ID)
+);
+
+create table CAB2B_QUERY_STATUS (
+  ID bigint not null, 
+  USER_ID bigint not null, 
+  QUERY_ID bigint not null, 
+  CONDITIONS varchar(1024) not null, 
+  START_TIME datetime, 
+  END_TIME datetime, 
+  FILENAME varchar(100), 
+  PARENT_ID bigint,
+  VISIBLE boolean not null default false,
+  primary key (ID)
+);
+
+create table CAB2B_URL_STATUS (
+  ID bigint not null, 
+  URL varchar(255) not null, 
+  QUERY_STATUS_ID bigint not null default 0, 
+  primary key (ID)
+);
+
+alter table CAB2B_COMPOUND_QUERY add index FK4DB047BF17568730 (IDENTIFIER), add constraint FK4DB047BF17568730 foreign key (IDENTIFIER) references CAB2B_QUERY (IDENTIFIER);
+alter table CAB2B_KEYWORD_QUERY add index FK9A5BAA79A9FD6A2 (APP_GROUP_ID), add constraint FK9A5BAA79A9FD6A2 foreign key (APP_GROUP_ID) references CAB2B_MODEL_GROUP (MODEL_ID);
+alter table CAB2B_KEYWORD_QUERY add index FK9A5BAA7BC19CC53 (IDENTIFIER), add constraint FK9A5BAA7BC19CC53 foreign key (IDENTIFIER) references CAB2B_COMPOUND_QUERY (IDENTIFIER);
+alter table CAB2B_MMC_QUERY add index FK3CB8F281BC19CC53 (IDENTIFIER), add constraint FK3CB8F281BC19CC53 foreign key (IDENTIFIER) references CAB2B_COMPOUND_QUERY (IDENTIFIER);
+alter table CAB2B_QUERY add index FKCC34AD9D45C67BB0 (COMPOUND_QUERY_ID), add constraint FKCC34AD9D45C67BB0 foreign key (COMPOUND_QUERY_ID) references CAB2B_COMPOUND_QUERY (IDENTIFIER);
+alter table CAB2B_QUERY add index FKCC34AD9D1F030BCB (IDENTIFIER), add constraint FKCC34AD9D1F030BCB foreign key (IDENTIFIER) references QUERY_PARAMETERIZED_QUERY (IDENTIFIER);
+
+alter table CAB2B_MMA add index FK2A9170D69EDCC3F8 (MMC_ID), add constraint FK2A9170D69EDCC3F8 foreign key (MMC_ID) references CAB2B_MMC (ID);
+alter table CAB2B_MMC add index FK2A9170D89A9FD6A2 (APP_GROUP_ID), add constraint FK2A9170D89A9FD6A2 foreign key (APP_GROUP_ID) references CAB2B_MODEL_GROUP (MODEL_ID);
 
 alter table OUTPUT_CLASS_URLS add index FKE131CD69A638FEFD (CAB2B_QUERY_ID), add constraint FKE131CD69A638FEFD foreign key (CAB2B_QUERY_ID) references CAB2B_QUERY (IDENTIFIER);
-alter table CAB2B_QUERY add index FKCC34AD9DBC7298A9 (IDENTIFIER), add constraint FKCC34AD9DBC7298A9 foreign key (IDENTIFIER) references QUERY (IDENTIFIER);
 alter table CAB2B_DATA_CATEGORY add index FKFA70BDE8A2330820 (ID), add constraint FKFA70BDE8A2330820 foreign key (ID) references ABSTRACT_CATEGORY (ID);
 alter table CAB2B_DATA_CATEGORY add index FKFA70BDE8DF75106F (ROOT_CLASS_ID), add constraint FKFA70BDE8DF75106F foreign key (ROOT_CLASS_ID) references DATA_CATEGORIAL_CLASS (ID);
 alter table DATA_CATEGORIAL_ATTRIBUTE add index FK782EFCCB34ED55B7 (ID), add constraint FK782EFCCB34ED55B7 foreign key (ID) references ABSTRACT_CATEGORIAL_ATTRIBUTE (ID);
@@ -121,7 +167,13 @@ alter table DATA_CATEGORIAL_CLASS add index FK13067327F94A5493 (ID), add constra
 alter table CAB2B_USER_URL_MAPPING add index FKC64BBF4AAEC86F2D (USER_ID), add constraint FKC64BBF4AAEC86F2D foreign key (USER_ID) references CAB2B_USER (USER_ID);
 alter table CAB2B_USER_URL_MAPPING add index FKC64BBF4AB2004842 (SERVICE_URL_ID), add constraint FKC64BBF4AB2004842 foreign key (SERVICE_URL_ID) references CAB2B_SERVICE_URL (URL_ID);
 
+alter table CAB2B_QUERY_STATUS add index FKE587F8D49D65F450 (ID), add constraint FKE587F8D49D65F450 foreign key (ID) references CAB2B_ABSTRACT_STATUS (ID);
+alter table CAB2B_QUERY_STATUS add index FKE587F8D4AEC86F2D (USER_ID), add constraint FKE587F8D4AEC86F2D foreign key (USER_ID) references CAB2B_USER (USER_ID);
+alter table CAB2B_QUERY_STATUS add index FKE587F8D4286B8D51 (PARENT_ID), add constraint FKE587F8D4286B8D51 foreign key (PARENT_ID) references CAB2B_QUERY_STATUS (ID);
+alter table CAB2B_QUERY_STATUS add index FKE587F8D4CEDB347A (QUERY_ID), add constraint FKE587F8D4CEDB347A foreign key (QUERY_ID) references CAB2B_QUERY (IDENTIFIER);
+alter table CAB2B_URL_STATUS add index FK8C4B750D9D65F450 (ID), add constraint FK8C4B750D9D65F450 foreign key (ID) references CAB2B_ABSTRACT_STATUS (ID);
+alter table CAB2B_URL_STATUS add index FK8C4B750D7B24DE6C (QUERY_STATUS_ID);
+
 insert into CAB2B_ID_TABLE(NEXT_ASSOCIATION_ID) value(1);
 insert into CAB2B_user (USER_ID, NAME, PASSWORD, IS_ADMIN) values (1,'Admin','admin123',1);
 insert into CAB2B_user (USER_ID, NAME, IS_ADMIN) values (2,'Anonymous',0);
-

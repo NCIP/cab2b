@@ -228,11 +228,12 @@ public class LoginFrame extends JXFrame {
         gridType.setFont(idProviderFont);
         gridType.setOpaque(false);
         gridType.setBorder(border);
-        String[] gridTypes = ClientPropertyLoader.getGridTypes();
+        gridType.addItem("Production");
+        /*String[] gridTypes = ClientPropertyLoader.getGridTypes();
         int len = gridTypes.length;
         for (int i = 0; i < len; i++) {
             gridType.addItem(gridTypes[i]);
-        }
+        }*/
 
         ImageIcon loginImage = getImageIcon("login_button.gif");
         JButton loginButton = new JButton(loginImage);

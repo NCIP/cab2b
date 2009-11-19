@@ -11,7 +11,6 @@ import static edu.wustl.cab2b.admin.util.AdminConstants.LIST_OF_MODELS;
 import static edu.wustl.cab2b.admin.util.AdminConstants.LOAD_MODEL_DETAILS_ACTION;
 import static edu.wustl.cab2b.admin.util.AdminConstants.LOAD_MODEL_STATUS_ACTION;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,14 +19,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.axis.types.URI.MalformedURIException;
 import org.apache.log4j.Logger;
 
 import edu.wustl.cab2b.admin.action.BaseAction;
 import edu.wustl.cab2b.admin.beans.CaDSRModelDetailsBean;
 import edu.wustl.cab2b.admin.beans.LoadModelResult;
 import edu.wustl.cab2b.admin.bizlogic.CaDSRModelBizLogic;
-import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.server.serviceurl.IndexServiceOperations;
 
 /**
@@ -67,20 +64,14 @@ public class LoadModel extends BaseAction {
      * @return map of modelName Vs LoadModelResult
      */
     public Map<String, LoadModelResult> load() {
-        Collection<CaDSRModelDetailsBean> modelsToLoad = (Collection<CaDSRModelDetailsBean>) 
-                                                            session.get("ListOfUserModels");
+        Collection<CaDSRModelDetailsBean> modelsToLoad =
+                (Collection<CaDSRModelDetailsBean>) session.get("ListOfUserModels");
         Map<String, LoadModelResult> loadModelResultList = caDSR.persistDomainModel(modelsToLoad);
-        try {
-            for (CaDSRModelDetailsBean caDSRModelDetails : modelsToLoad) {
-                IndexServiceOperations.refreshServiceURLsMetadata(caDSRModelDetails.getLongName(),
-                                                                  caDSRModelDetails.getVersion());
-            }
-        } catch (MalformedURIException e) {
-           throw new RuntimeException(e.getMessage(),e);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
 
+        for (CaDSRModelDetailsBean caDSRModelDetails : modelsToLoad) {
+            IndexServiceOperations.refreshServiceURLsMetadata(caDSRModelDetails.getLongName(), caDSRModelDetails
+                .getVersion());
+        }
         session.remove("ListOfUserModels");
         session.remove(ALL_AVAILABLE_MODELS_TO_LOAD);
         session.remove(FILTERED_AVAILABLE_MODELS_TO_LOAD);
@@ -96,7 +87,8 @@ public class LoadModel extends BaseAction {
      * @param loadModelResultList
      */
     public void removeLoadedModelsFromList(Map<String, LoadModelResult> loadModelResultList) {
-        List<CaDSRModelDetailsBean> allModelList = (List<CaDSRModelDetailsBean>) servletContext.getAttribute(LIST_OF_MODELS);
+        List<CaDSRModelDetailsBean> allModelList =
+                (List<CaDSRModelDetailsBean>) servletContext.getAttribute(LIST_OF_MODELS);
         Collection<LoadModelResult> loadModelResults = loadModelResultList.values();
         for (LoadModelResult loadModelResult : loadModelResults) {
             CaDSRModelDetailsBean cadsrbean = loadModelResult.getModelDetails();
@@ -123,8 +115,10 @@ public class LoadModel extends BaseAction {
     @SuppressWarnings("unchecked")
     private Collection<CaDSRModelDetailsBean> getAllModelNames() {
         Collection<CaDSRModelDetailsBean> listOfModelsToLoad = new HashSet<CaDSRModelDetailsBean>();
-        List<CaDSRModelDetailsBean> allAvaliableModelsList = (List<CaDSRModelDetailsBean>) session.get(ALL_AVAILABLE_MODELS_TO_LOAD);
-        Map<String, List<String>> allSelectedModelList = (Map<String, List<String>>) session.get(ALL_SELECTED_MODELS_LIST);
+        List<CaDSRModelDetailsBean> allAvaliableModelsList =
+                (List<CaDSRModelDetailsBean>) session.get(ALL_AVAILABLE_MODELS_TO_LOAD);
+        Map<String, List<String>> allSelectedModelList =
+                (Map<String, List<String>>) session.get(ALL_SELECTED_MODELS_LIST);
         if (allSelectedModelList != null) {
             for (String key : allSelectedModelList.keySet()) {
                 List<String> selectedModelNameList = (List<String>) allSelectedModelList.get(key);
@@ -190,8 +184,8 @@ public class LoadModel extends BaseAction {
     public String execute() {
         Map<String, String> modelsVsStatus = new HashMap<String, String>();
         if (getAction() == null) {
-            Map<String, List<String>> allSelectedModelList = (Map<String, List<String>>) getSession().get(
-                                                                                                          ALL_SELECTED_MODELS_LIST);
+            Map<String, List<String>> allSelectedModelList =
+                    (Map<String, List<String>>) getSession().get(ALL_SELECTED_MODELS_LIST);
             if (allSelectedModelList != null) {
                 for (String key : allSelectedModelList.keySet()) {
                     List<String> modelNameList = (List<String>) allSelectedModelList.get(key);

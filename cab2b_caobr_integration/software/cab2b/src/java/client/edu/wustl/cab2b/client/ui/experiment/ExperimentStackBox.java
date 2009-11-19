@@ -510,7 +510,7 @@ public class ExperimentStackBox extends Cab2bPanel {
      * @param active
      */
     public void setAnalysisLinkEnable(boolean active) {
-        if (analyseDataPanel == null) {
+        if (analyseDataPanel == null || analyseDataPanel.getComponentCount() < 1 ) {
             return;
         }
 

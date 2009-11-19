@@ -1,8 +1,13 @@
 package edu.wustl.cab2b.client.metadatasearch;
 
+import static edu.wustl.cab2b.common.util.Constants.MMC_SUBCATEGORY_ENTITY;
+
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domain.SemanticAnnotatableInterface;
@@ -11,6 +16,7 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
 import edu.common.dynamicextensions.domaininterface.SemanticPropertyInterface;
 import edu.common.dynamicextensions.domaininterface.StringValueInterface;
+import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.wustl.cab2b.common.beans.MatchedClass;
 import edu.wustl.cab2b.common.beans.MatchedClassEntry;
 import edu.wustl.cab2b.common.cache.IEntityCache;
@@ -115,13 +121,44 @@ public class MetadataSearch {
                     resultantMatchedClass = createResultClass(resultantMatchedClass, matchedClass);
                     break;
                 case Constants.PV:
-                    Collection<PermissibleValueInterface> pvCollection = createSearchPermissibleValue(searchString);
+                    Collection<PermissibleValueInterface> pvCollection =
+                            createSearchPermissibleValue(searchString);
                     matchedClass = entityCache.getEntityOnPermissibleValueParameters(pvCollection);
                     resultantMatchedClass = createResultClass(resultantMatchedClass, matchedClass);
                     break;
                 default:
                     throw new CheckedException("Search target does not exist : " + searchTarget[i]);
             }
+        }
+
+        Set<EntityInterface> entityCollection = resultantMatchedClass.getEntityCollection();
+        Iterator<EntityInterface> entityIterator = entityCollection.iterator();
+        while (entityIterator.hasNext()) {
+            EntityInterface resultEntity = entityIterator.next();
+            Collection<TaggedValueInterface> taggedValueCollection = resultEntity.getTaggedValueCollection();
+            Iterator<TaggedValueInterface> taggedValueIterator = taggedValueCollection.iterator();
+            while (taggedValueIterator.hasNext()) {
+                TaggedValueInterface taggedValue = taggedValueIterator.next();
+                if (taggedValue.getKey().equalsIgnoreCase(MMC_SUBCATEGORY_ENTITY)) {
+                    entityIterator.remove();
+                }
+            }
+        }
+
+        List<MatchedClassEntry> matchedClassEntires = resultantMatchedClass.getMatchedClassEntries();
+        Iterator<MatchedClassEntry> matchedClassEntiresIterator = matchedClassEntires.iterator();
+        while (matchedClassEntiresIterator.hasNext()) {
+            MatchedClassEntry matchedClass = matchedClassEntiresIterator.next();
+            EntityInterface matchedEntity = matchedClass.getMatchedEntity();
+            Collection<TaggedValueInterface> taggedValueCollection = matchedEntity.getTaggedValueCollection();
+            Iterator<TaggedValueInterface> taggedValueIterator = taggedValueCollection.iterator();
+            while (taggedValueIterator.hasNext()) {
+                TaggedValueInterface taggedValue = taggedValueIterator.next();
+                if (taggedValue.getKey().equalsIgnoreCase(MMC_SUBCATEGORY_ENTITY)) {
+                    matchedClassEntiresIterator.remove();
+                }
+            }
+
         }
         return resultantMatchedClass;
     }
@@ -252,7 +289,8 @@ public class MetadataSearch {
      */
     private Collection<PermissibleValueInterface> createSearchPermissibleValue(String[] searchString)
             throws CheckedException {
-        Collection<PermissibleValueInterface> permissibleValueCollection = new HashSet<PermissibleValueInterface>();
+        Collection<PermissibleValueInterface> permissibleValueCollection =
+                new HashSet<PermissibleValueInterface>();
         DomainObjectFactory deFactory = DomainObjectFactory.getInstance();
         for (int i = 0; i < searchString.length; i++) {
             StringValueInterface value = deFactory.createStringValue();
@@ -291,8 +329,8 @@ public class MetadataSearch {
                     resultantMatchedClass = createResultClass(resultantMatchedClass, matchedClass);
                     break;
                 case Constants.PV:
-                    Collection<PermissibleValueInterface> pvCollection = 
-                                        createSearchPermissibleValueConceptCode(searchString);
+                    Collection<PermissibleValueInterface> pvCollection =
+                            createSearchPermissibleValueConceptCode(searchString);
                     matchedClass = entityCache.getEntityOnPermissibleValueParameters(pvCollection);
                     resultantMatchedClass = createResultClass(resultantMatchedClass, matchedClass);
                     break;
@@ -363,7 +401,8 @@ public class MetadataSearch {
      */
     private Collection<PermissibleValueInterface> createSearchPermissibleValueConceptCode(String[] searchString)
             throws CheckedException {
-        Collection<PermissibleValueInterface> permissibleValueCollection = new HashSet<PermissibleValueInterface>();
+        Collection<PermissibleValueInterface> permissibleValueCollection =
+                new HashSet<PermissibleValueInterface>();
         DomainObjectFactory deFactory = DomainObjectFactory.getInstance();
         for (int i = 0; i < searchString.length; i++) {
             PermissibleValueInterface value = deFactory.createStringValue();

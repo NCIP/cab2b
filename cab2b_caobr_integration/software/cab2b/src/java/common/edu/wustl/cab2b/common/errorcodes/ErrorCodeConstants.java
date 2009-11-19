@@ -112,6 +112,21 @@ public interface ErrorCodeConstants {
 
     /** Error while retrieving category */
     static final String CATEGORY_RETRIEVE_ERROR = "CT.0002";
+    
+    /** Error while deleting category */
+    static final String CATEGORY_DELETE_ERROR = "CT.0004";
+    
+    /** Error while saving multimodel category */
+    static final String MULTIMODEL_CATEGORY_SAVE_ERROR = "MMC.0001";
+
+    /** Error while retrieving multimodel category */
+    static final String MULTIMODEL_CATEGORY_RETRIEVE_ERROR = "MMC.0002";
+    
+    /** Error while updating multimodel category */
+    static final String MULTIMODEL_CATEGORY_UPDATE_ERROR = "MMC.0003";
+
+    /** Error while deleting multimodel category */
+    static final String MULTIMODEL_CATEGORY_DELETE_ERROR = "MMC.0004";
 
     /** Can not create Custom Data Categories as Data List contains Admin defined categories */
     static final String CUSTOM_CATEGORY_ERROR = "CT.0003";
@@ -227,4 +242,22 @@ public interface ErrorCodeConstants {
     
     /** Error occur while modifying Model Group*/
     static final String MG_007 = "MG.007";
+    
+    /** Error code for incorrect service instance */
+    static final String MG_008 = "MG.008";
+    
+    /** Error occur while saving Query Status */
+    static final String QS_001 = "QS.001";
+    
+    /** Error occur while retrieving Query Status */
+    static final String QS_002 = "QS.002";
+    
+    /** Error occur while deleting Query Status */
+    static final String QS_003 = "QS.003";
+    
+    /** Error occur while updating Query Status */
+    static final String QS_004 = "QS.004";
+    
+    /** Error occur while saving Query Status as user does not have rights */
+    static final String QS_005 = "QS.005";
 }

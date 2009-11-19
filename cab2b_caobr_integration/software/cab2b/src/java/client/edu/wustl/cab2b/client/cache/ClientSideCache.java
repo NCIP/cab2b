@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.common.dynamicextensions.domaininterface.PermissibleValueInterface;
 import edu.wustl.cab2b.client.ui.mainframe.ClientLauncher;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.BusinessInterface;
@@ -40,13 +41,14 @@ public class ClientSideCache extends AbstractEntityCache {
     /**
      * This is Map with KEY: category and VALUE: set of classes used in forming the category 
      */
-    private Map<Category, Set<EntityInterface>> categoryVsClasseSet = new HashMap<Category, Set<EntityInterface>>();
+    private Map<Category, Set<EntityInterface>> categoryVsClasseSet =
+            new HashMap<Category, Set<EntityInterface>>();
 
     /**
      * This is Map with KEY: category and VALUE: set of attributes used in forming the category 
      */
-    private Map<Category, Set<AttributeInterface>> categoryVsAttributeSet 
-                                                   = new HashMap<Category, Set<AttributeInterface>>();
+    private Map<Category, Set<AttributeInterface>> categoryVsAttributeSet =
+            new HashMap<Category, Set<AttributeInterface>>();
 
     /**
      * @return the singleton instance of the EntityCache class.
@@ -77,7 +79,8 @@ public class ClientSideCache extends AbstractEntityCache {
         ClientLauncher clientLauncher = ClientLauncher.getInstance();
         clientLauncher.showProgress(" Fetching data from caB2B Server....", length);
         try {
-            categories = categoryOperations.getAllCategories();
+            //categories = categoryOperations.getAllCategories();
+            categories = new ArrayList<Category>(0);
             int offset = 40;
             if (!categories.isEmpty()) {
                 offset = offset / categories.size();
@@ -127,16 +130,17 @@ public class ClientSideCache extends AbstractEntityCache {
         MatchedClass matchedClass = new MatchedClass();
         for (Entry<Category, Set<EntityInterface>> entry : categoryVsClasseSet.entrySet()) {
             Category category = entry.getKey();
-            Set<EntityInterface> classesInCategory = entry.getValue();
-
-            for (EntityInterface classInCategory : classesInCategory) {
-                for (EntityInterface patternEntity : patternEntityCollection) {
-                    MatchedClassEntry matchedClassEntry = CompareUtil.compare(classInCategory, patternEntity);
-                    if (matchedClassEntry != null) {
-                        long deEntityID = category.getDeEntityId();
-                        EntityInterface entityInterface = getEntityById(deEntityID);
-                        matchedClass.getEntityCollection().add(entityInterface);
-                        matchedClass.addMatchedClassEntry(matchedClassEntry);
+            if (!category.isSystemGenerated()) {
+                Set<EntityInterface> classesInCategory = entry.getValue();
+                for (EntityInterface classInCategory : classesInCategory) {
+                    for (EntityInterface patternEntity : patternEntityCollection) {
+                        MatchedClassEntry matchedClassEntry = CompareUtil.compare(classInCategory, patternEntity);
+                        if (matchedClassEntry != null) {
+                            long deEntityID = category.getDeEntityId();
+                            EntityInterface entityInterface = getEntityById(deEntityID);
+                            matchedClass.getEntityCollection().add(entityInterface);
+                            matchedClass.addMatchedClassEntry(matchedClassEntry);
+                        }
                     }
                 }
             }
@@ -156,21 +160,29 @@ public class ClientSideCache extends AbstractEntityCache {
         MatchedClass matchedClass = new MatchedClass();
         for (Entry<Category, Set<AttributeInterface>> entry : categoryVsAttributeSet.entrySet()) {
             Category category = entry.getKey();
-            Set<AttributeInterface> attributesInCategory = entry.getValue();
-
-            for (AttributeInterface attributeInCategory : attributesInCategory) {
-                for (AttributeInterface patternAttribute : patternAttributeCollection) {
-                    MatchedClassEntry matchedClassEntry = CompareUtil.compare(attributeInCategory,
-                                                                              patternAttribute);
-                    if (matchedClassEntry != null) {
-                        long deEntityID = category.getDeEntityId();
-                        EntityInterface entityInterface = getEntityById(deEntityID);
-                        matchedClass.getEntityCollection().add(entityInterface);
-                        matchedClass.addMatchedClassEntry(matchedClassEntry);
+            if (!category.isSystemGenerated()) {
+                Set<AttributeInterface> attributesInCategory = entry.getValue();
+                for (AttributeInterface attributeInCategory : attributesInCategory) {
+                    for (AttributeInterface patternAttribute : patternAttributeCollection) {
+                        MatchedClassEntry matchedClassEntry =
+                                CompareUtil.compare(attributeInCategory, patternAttribute);
+                        if (matchedClassEntry != null) {
+                            long deEntityID = category.getDeEntityId();
+                            EntityInterface entityInterface = getEntityById(deEntityID);
+                            matchedClass.getEntityCollection().add(entityInterface);
+                            matchedClass.addMatchedClassEntry(matchedClassEntry);
+                        }
                     }
                 }
             }
         }
         return matchedClass;
+    }
+    
+    public MatchedClass getEntityOnPermissibleValueParameters(
+                                                              Collection<PermissibleValueInterface> patternPermissibleValueCollection) {
+        MatchedClass matchedClass = super.getEntityOnPermissibleValueParameters(patternPermissibleValueCollection);
+        
+        return matchedClass; 
     }
 }

@@ -71,6 +71,7 @@ import edu.wustl.cab2b.common.experiment.ExperimentBusinessInterface;
 import edu.wustl.cab2b.common.experiment.ExperimentHome;
 import edu.wustl.cab2b.common.locator.Locator;
 import edu.wustl.cab2b.common.locator.LocatorException;
+import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategory;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -83,6 +84,7 @@ import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
  * Utility for UI side classes
+ * 
  * @author Chetan B H
  * @author Mahesh Iyer
  */
@@ -91,12 +93,13 @@ public class CommonUtils {
 
     /** Constant storing enumerated values for DAG-Images */
     public static enum DagImages {
-        DocumentPaperIcon, PortImageIcon, ArrowSelectIcon, ArrowSelectMOIcon, SelectIcon, selectMOIcon, ParenthesisIcon, ParenthesisMOIcon
+        DocumentPaperIcon, PortImageIcon, ArrowSelectIcon, ArrowSelectMOIcon, SelectIcon, selectMOIcon,
+        ParenthesisIcon, ParenthesisMOIcon
     };
 
     /**
      * Method to disable all components from the specified container
-     *
+     * 
      * @param container
      */
     public static void disableAllComponent(Container container) {
@@ -110,7 +113,7 @@ public class CommonUtils {
 
     /**
      * Method to get BusinessInterface object for given bean name and home class object
-     *
+     * 
      * @param beanName Name of the bean class
      * @param homeClassForBean HomeClass object for this bean
      * @return the businessInterface object for given bean name
@@ -147,6 +150,7 @@ public class CommonUtils {
 
     /**
      * A Utility method to handle exception, logging and showing it in a dialog.
+     * 
      * @param e Exception to handle
      * @param parentComponent parent component
      * @param showErrorDialog TRUE if you want to display a error dialog to user with exception details
@@ -162,7 +166,6 @@ public class CommonUtils {
         }
 
         String msgForUser = getErrorMessage(e);
-
         String msgToLog = e.getMessage();
         if (logException) {
             logger.error(msgToLog, e);
@@ -181,11 +184,10 @@ public class CommonUtils {
     }
 
     /**
-     * This method traverses the whole hierarchy of the given exception to check
-     * whether there is any exception which is {@link CheckedException} OR
-     * {@link LocatorException} OR{@link RuntimeException} If yes it returns it
-     * otherwise it returns the original passed exception.
-     *
+     * This method traverses the whole hierarchy of the given exception to check whether there is any exception
+     * which is {@link CheckedException} OR {@link LocatorException} OR{@link RuntimeException} If yes it returns
+     * it otherwise it returns the original passed exception.
+     * 
      * @param cause exception to verify
      * @return The root exception
      */
@@ -202,28 +204,36 @@ public class CommonUtils {
     }
 
     /**
-     * The method executes the encapsulated B2B query. For this it uses the
-     * Locator service to locate an instance of the QueryEngineBusinessInterface
-     * and uses the interface to remotely execute the query.
-     *
+     * The method executes the encapsulated B2B query. For this it uses the Locator service to locate an instance
+     * of the QueryEngineBusinessInterface and uses the interface to remotely execute the query.
+     * 
      * @param query
      * @param queryEngineBus
      * @throws RuntimeException
      * @throws RemoteException
      */
-    public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query) throws Exception {
+    public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, boolean isApplyDatalist)
+            throws Exception {
         boolean anySecureSevice = Utility.hasAnySecureService(query);
 
-        QueryEngineBusinessInterface queryEngineBus = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                      EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                      QueryEngineHome.class);
+        QueryEngineBusinessInterface queryEngineBus =
+                (QueryEngineBusinessInterface) CommonUtils
+                    .getBusinessInterface(EjbNamesConstants.QUERY_ENGINE_BEAN, QueryEngineHome.class);
         IQueryResult<? extends IRecord> results = null;
         try {
 
             if (anySecureSevice) {
-                results = queryEngineBus.executeQuery(query, Authenticator.getSerializedDCR());
+                if (isApplyDatalist) {
+                    results = queryEngineBus.executeQueryForApplyDatalist(query, Authenticator.getSerializedDCR());
+                } else {
+                    results = queryEngineBus.executeQuery(query, Authenticator.getSerializedDCR());
+                }
             } else {
-                results = queryEngineBus.executeQuery(query, null);
+                if (isApplyDatalist) {
+                    results = queryEngineBus.executeQueryForApplyDatalist(query, null);
+                } else {
+                    results = queryEngineBus.executeQuery(query, null);
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -232,7 +242,21 @@ public class CommonUtils {
     }
 
     /**
+     * The method executes the encapsulated B2B query. For this it uses the Locator service to locate an instance
+     * of the QueryEngineBusinessInterface and uses the interface to remotely execute the query.
+     * 
+     * @param query
+     * @param queryEngineBus
+     * @throws RuntimeException
+     * @throws RemoteException
+     */
+    public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query) throws Exception {
+        return executeQuery(query, false);
+    }
+
+    /**
      * Method to get count of bit 1 set in given BitSet
+     * 
      * @param bitSet The BitSet object in which to find count
      * @return The count of 1 bit in BitSet
      */
@@ -247,8 +271,7 @@ public class CommonUtils {
     }
 
     /**
-     * Utility method to find the number of occurrence of a particular character
-     * in the String
+     * Utility method to find the number of occurrence of a particular character in the String
      */
     public static int countCharacterIn(String str, char character) {
         int count = 0;
@@ -262,7 +285,7 @@ public class CommonUtils {
 
     /**
      * Utility method to get a Dimension relative to a reference Dimension.
-     *
+     * 
      * @param referenceDimnesion
      * @param percentageWidth
      * @param percentageHeight
@@ -288,7 +311,7 @@ public class CommonUtils {
 
     /**
      * Splits the string with qualifier
-     *
+     * 
      * @param string
      * @param textQualifier
      * @param seperator
@@ -338,9 +361,9 @@ public class CommonUtils {
     }
 
     /**
-     * Removes any continuous space characters(2 or more) that may appear at the
-     * beginning, end or in between to words.
-     *
+     * Removes any continuous space characters(2 or more) that may appear at the beginning, end or in between to
+     * words.
+     * 
      * @param str string with continuous space characters.
      * @return processed string with no continuous space characters.
      */
@@ -361,15 +384,14 @@ public class CommonUtils {
     }
 
     /**
-     * This method takes the node string and traverses the tree till it finds
-     * the node matching the string. If the match is found the node is returned
-     * else null is returned
+     * This method takes the node string and traverses the tree till it finds the node matching the string. If the
+     * match is found the node is returned else null is returned
+     * 
      * @param rootNode node string to search for
      * @param userObject user object
      * @return tree node
      */
     public static DefaultMutableTreeNode searchNode(DefaultMutableTreeNode rootNode, Object userObject) {
-
         Enumeration<DefaultMutableTreeNode> benum = rootNode.breadthFirstEnumeration();
         while (benum.hasMoreElements()) {
             DefaultMutableTreeNode node = benum.nextElement();
@@ -382,6 +404,7 @@ public class CommonUtils {
 
     /**
      * Method to get identifier attribute index for given list of attributes
+     * 
      * @param attributes Ordered list of attributes
      * @return index of Id attribute
      */
@@ -399,6 +422,7 @@ public class CommonUtils {
 
     /**
      * check the if the specified string is a valid name for an experiment, category etc.
+     * 
      * @param name the name
      * @return true if name is valid otherwise false
      */
@@ -410,10 +434,9 @@ public class CommonUtils {
     }
 
     /**
-     * This method returns the Component form the parent Container given the
-     * name of the Component
-     *
-     * @param parentContainer  the parent Container
+     * This method returns the Component form the parent Container given the name of the Component
+     * 
+     * @param parentContainer the parent Container
      * @param panelName name of the Component
      * @return the desired Component if present; null otherwise
      */
@@ -431,9 +454,8 @@ public class CommonUtils {
     }
 
     /**
-     * This Method returns the maximum dimension required to generate the label
-     * for the given attributes.
-     *
+     * This Method returns the maximum dimension required to generate the label for the given attributes.
+     * 
      * @param attributeList
      * @return Dimension
      */
@@ -455,7 +477,7 @@ public class CommonUtils {
 
     /**
      * Top five popular categories are returned by this method to display on main page
-     *
+     * 
      * @return Top five popular categories.
      */
     public static Collection<CategoryPopularity> getTopPopularCategories() {
@@ -472,7 +494,7 @@ public class CommonUtils {
 
     /**
      * All popular categories are returned by this method to display on the click of show all link.
-     *
+     * 
      * @return All popular categories.
      */
     public static Collection<CategoryPopularity> getAllPopularCategories() {
@@ -492,9 +514,9 @@ public class CommonUtils {
          */
         Collection<ICab2bQuery> cab2bQueryCollection = null;
         try {
-            QueryEngineBusinessInterface queryEngine = (QueryEngineBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                       EjbNamesConstants.QUERY_ENGINE_BEAN,
-                                                                                                                       QueryEngineHome.class);
+            QueryEngineBusinessInterface queryEngine =
+                    (QueryEngineBusinessInterface) CommonUtils
+                        .getBusinessInterface(EjbNamesConstants.QUERY_ENGINE_BEAN, QueryEngineHome.class);
 
             cab2bQueryCollection = queryEngine.getUsersQueriesDetail(Authenticator.getSerializedDCR());
         } catch (Exception e) {
@@ -512,9 +534,9 @@ public class CommonUtils {
     public static Vector<Experiment> getExperiments(Component comp, UserInterface user) {
         List<Experiment> experiments = null;
         try {
-            ExperimentBusinessInterface expBus = (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                                EjbNamesConstants.EXPERIMENT,
-                                                                                                                ExperimentHome.class);
+            ExperimentBusinessInterface expBus =
+                    (ExperimentBusinessInterface) CommonUtils.getBusinessInterface(EjbNamesConstants.EXPERIMENT,
+                                                                                   ExperimentHome.class);
 
             experiments = expBus.getExperimentsForUser(user, Authenticator.getSerializedDCR());
         } catch (RemoteException e) {
@@ -529,7 +551,7 @@ public class CommonUtils {
 
     /**
      * Method to set hyper-link property values
-     *
+     * 
      * @param hyperlink
      * @param obj
      * @param hyperlinkText
@@ -566,6 +588,7 @@ public class CommonUtils {
 
     /**
      * It will return number of elements in current data list
+     * 
      * @return return number of elements in current data list
      */
     public static int getDataListSize() {
@@ -576,39 +599,63 @@ public class CommonUtils {
 
     /**
      * This method verifies whether service URLs are available for give entity.
-     *
+     * 
      * @param entity
      * @return String[]
      */
     private static String[] getServiceURLs(EntityInterface entity) {
-        EntityInterface en = entity;
         if (edu.wustl.cab2b.common.util.Utility.isCategory(entity)) {
+            Collection<String> URLs = new ArrayList<String>();
             Category cat = null;
             try {
-                CategoryBusinessInterface bus = (CategoryBusinessInterface) CommonUtils.getBusinessInterface(
-                                                                                                             EjbNamesConstants.CATEGORY_BEAN,
-                                                                                                             CategoryHomeInterface.class);
+                CategoryBusinessInterface bus =
+                        (CategoryBusinessInterface) CommonUtils
+                            .getBusinessInterface(EjbNamesConstants.CATEGORY_BEAN, CategoryHomeInterface.class);
                 cat = bus.getCategoryByEntityId(entity.getId());
             } catch (Exception e) {
                 handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
             }
-            en = cat.getRootClass().getCategorialClassEntity();
+            consolidateURLs(cat, URLs);
+            return URLs.toArray(new String[0]);
         }
-        return UserCache.getInstance().getServiceURLs(en);
+        if (edu.wustl.cab2b.common.util.Utility.isMultiModelCategory(entity)) {
+            Collection<String> URLs = new ArrayList<String>();
+            MultiModelCategory mmc = null;
+            try {
+                CategoryBusinessInterface bus =
+                        (CategoryBusinessInterface) CommonUtils
+                            .getBusinessInterface(EjbNamesConstants.CATEGORY_BEAN, CategoryHomeInterface.class);
+                mmc = bus.getMultiModelCategoryByEntity(entity);
+            } catch (Exception e) {
+                handleException(e, NewWelcomePanel.getMainFrame(), true, true, true, false);
+            }
+            Collection<Category> categories = mmc.getCategories();
+            for (Category cat : categories) {
+                consolidateURLs(cat, URLs);
+            }
+            return URLs.toArray(new String[0]);
+        }
+        return UserCache.getInstance().getServiceURLs(entity);
+    }
+
+    private static void consolidateURLs(Category cat, Collection<String> URLs) {
+        EntityInterface entity = cat.getRootClass().getCategorialClassEntity();
+        String[] urls = UserCache.getInstance().getServiceURLs(entity);
+        for (String url : urls) {
+            URLs.add(url);
+        }
     }
 
     /**
-     * This method checks whether service URL is configured for the given query.
-     * If service url is not available it shows an ERROR dialog and returns
-     * false, otherwise returns true.
-     *
+     * This method checks whether service URL is configured for the given query. If service url is not available it
+     * shows an ERROR dialog and returns false, otherwise returns true.
+     * 
      * @param query
      * @param container
      * @return boolean
      */
     public static boolean isServiceURLConfigured(ICab2bQuery query, Container container) {
         boolean isServiceURLConfigured = true;
-
         Set<IQueryEntity> entitySet = query.getConstraints().getQueryEntities();
 
         //If user selected urls from 3rd step then return true
@@ -645,8 +692,8 @@ public class CommonUtils {
             ErrorCodeHandler.initBundle(ERROR_CODE_FILE_NAME);
             ApplicationProperties.initBundle(APPLICATION_RESOURCES_FILE_NAME);
         } catch (MissingResourceException mre) {
-            CheckedException checkedException = new CheckedException(mre.getMessage(), mre,
-                    ErrorCodeConstants.IO_0002);
+            CheckedException checkedException =
+                    new CheckedException(mre.getMessage(), mre, ErrorCodeConstants.IO_0002);
             CommonUtils.handleException(checkedException, null, true, true, false, true);
         }
     }
@@ -655,9 +702,7 @@ public class CommonUtils {
      * set the caB2B Home used to keep edit-able configurations, application logs etc.
      */
     public static void setHome() {
-
         String userHome = System.getProperty("user.home");
-
         File cab2bHome = new File(userHome, "cab2b");
         System.setProperty("cab2b.home", cab2bHome.getAbsolutePath());
     }
@@ -683,8 +728,9 @@ public class CommonUtils {
         GlobalNavigationPanel.setMainSearchPanel(mainSearchPanel);
         MainSearchPanel.getDataList().clear();
         MainFrame mainFrame = NewWelcomePanel.getMainFrame();
-        JDialog searchDialog = WindowUtilities.setInDialog(mainFrame, mainSearchPanel, title, new Dimension(
-                (int) (dimension.width * 0.90), (int) (dimension.height * 0.85)), true, true);
+        JDialog searchDialog =
+                WindowUtilities.setInDialog(mainFrame, mainSearchPanel, title, new Dimension(
+                        (int) (dimension.width * 0.90), (int) (dimension.height * 0.85)), true, true);
         mainFrame.setSearchWizardDialog(searchDialog);
         searchDialog.setVisible(true);
         GlobalNavigationPanel.setMainSearchPanel(null);

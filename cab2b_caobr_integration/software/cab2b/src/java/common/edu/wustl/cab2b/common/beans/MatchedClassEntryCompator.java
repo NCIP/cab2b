@@ -35,7 +35,7 @@ public class MatchedClassEntryCompator implements Comparator<MatchedClassEntry> 
         EntityInterface entity1 = entry1.getMatchedEntity();
         EntityInterface entity2 = entry2.getMatchedEntity();
         // If both the entities are categories then compare their names and return values accordingly
-        if(Utility.isCategory(entity1) || Utility.isCategory(entity2)) {
+        if(Utility.isCategoryOrMMC(entity1) || Utility.isCategoryOrMMC(entity2)) {
             return new EntityInterfaceComparator().compare(entity1, entity2);
         } else {
             return compareEntityName(entry1, entry2);

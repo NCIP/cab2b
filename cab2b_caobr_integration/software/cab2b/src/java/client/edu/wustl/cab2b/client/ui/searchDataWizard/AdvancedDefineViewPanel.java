@@ -70,11 +70,15 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         return allEntities;
     }
 
+    /**
+     * @param searchCenterPanel
+     */
     public AdvancedDefineViewPanel(SearchCenterPanel searchCenterPanel) {
         this.searchCenterPanel = searchCenterPanel;
         initGUI();
     }
 
+    @SuppressWarnings("unchecked")
     private void initGUI() {
         this.setLayout(new BorderLayout());
 
@@ -219,6 +223,9 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
         return returner;
     }
 
+    /**
+     * @return {@link EntityInterface}
+     */
     public EntityInterface getRootEntity() {
         return this.rootEntity;
     }
@@ -229,6 +236,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
      *
      */
     private class DCQLListener implements ActionListener {
+        @SuppressWarnings("unchecked")
         public void actionPerformed(ActionEvent e) {
             Cab2bHyperlink<ICab2bQuery> dcqlLink = (Cab2bHyperlink<ICab2bQuery>) e.getSource();
 
@@ -238,7 +246,7 @@ public class AdvancedDefineViewPanel extends Cab2bPanel {
                 @Override
                 protected void doNonUILogic() throws Exception {
                     ICab2bQuery query = ((Cab2bHyperlink<ICab2bQuery>) getAComponent()).getUserObject();
-                    if (Utility.isCategory(query.getOutputEntity())) {
+                    if (Utility.isCategoryOrMMC(query.getOutputEntity())) {
                         JOptionPane.showMessageDialog(
                                                       null,
                                                       "Sorry, DCQL generation for Queries involving Category is not supported.",

@@ -6,7 +6,6 @@ package edu.wustl.cab2b.common.multimodelcategory.bean;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 
@@ -21,7 +20,7 @@ public class MultiModelAttributeBean implements Serializable {
 
     private String description;
 
-    private Collection<AttributeInterface> selectedAttributes = new ArrayList<AttributeInterface>();
+    private Collection<AttributeInterface> selectedAttributes;
 
     private boolean isVisible = true;
 
@@ -57,11 +56,10 @@ public class MultiModelAttributeBean implements Serializable {
      * @return the selectedAttributes
      */
     public Collection<AttributeInterface> getSelectedAttributes() {
+        if (selectedAttributes == null) {
+            selectedAttributes = new ArrayList<AttributeInterface>();
+        }
         return selectedAttributes;
-    }
-
-    public AttributeInterface getSelectedAttribute(int index) {
-        return ((List<AttributeInterface>) selectedAttributes).get(index);
     }
 
     /**
@@ -76,7 +74,7 @@ public class MultiModelAttributeBean implements Serializable {
      * @param attribute
      */
     public void addSelectedAttribute(AttributeInterface attribute) {
-        this.selectedAttributes.add(attribute);
+        getSelectedAttributes().add(attribute);
     }
 
     /**

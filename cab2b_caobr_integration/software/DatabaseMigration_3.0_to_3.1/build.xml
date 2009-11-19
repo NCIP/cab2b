@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Database Migration 3.0 to 3.1" basedir=".">
+	<property file="conf/database.properties" />
+
+	<property name="migration.db.2_1to3_0.dir" location="../DatabaseMigration_2.1_to_3.0" />
+	<property name="conf.dir" location="conf" />
+	<property name="migration.scripts.dir" location="resources" />
+
+	<path id="lib.classpath">
+		<fileset dir="../cab2b/lib/server">
+			<include name="mysql-connector-java-5.0.8-bin.jar" />
+		</fileset>
+	</path>
+
+	<target name="migrate.db.3_0_to_3_1" description="Migrates caB2B v3.0 database to caB2B v3.1">
+		<echo>Migrating form caB2b 3.0 to caB2B 3.1...</echo>
+		<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${database.server.ip}:${database.server.port}/${database.name}" userid="${database.username}" password="${database.password}" onerror="continue" classpathref="lib.classpath">
+			<fileset dir="${migration.scripts.dir}">
+				<include name="*.sql" />
+			</fileset>
+		</sql>
+		<echo>Database Migrated Successfully</echo>
+	</target>
+
+	<target name="migrate.db.2_1_to_3_1" description="Migrates caB2B v2.1 database to caB2B v3.1">
+		<echo>Migrating form caB2b 2.1 to caB2B 3.1...</echo>
+		<ant inheritAll="false" inheritRefs="false" antfile="build.xml" target="migrate.db.2_1_to_3_0" dir="${migration.db.2_1to3_0.dir}" />
+		<antcall target="migrate.db.3_0_to_3_1" />
+		<echo>Database Migrated Successfully</echo>
+	</target>
+</project>

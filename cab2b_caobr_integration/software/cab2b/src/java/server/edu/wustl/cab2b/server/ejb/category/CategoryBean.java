@@ -9,10 +9,12 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.category.CategoryPopularity;
 import edu.wustl.cab2b.common.ejb.category.CategoryBusinessInterface;
+import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategory;
 import edu.wustl.cab2b.server.category.CategoryCache;
 import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.cab2b.server.category.PopularCategoryOperations;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
+import edu.wustl.cab2b.server.multimodelcategory.MultiModelCategoryOperations;
 import edu.wustl.common.querysuite.metadata.category.Category;
 
 public class CategoryBean extends AbstractStatelessSessionBean implements CategoryBusinessInterface {
@@ -93,5 +95,13 @@ public class CategoryBean extends AbstractStatelessSessionBean implements Catego
      */
     public Collection<CategoryPopularity> getPopularCategories() throws RemoteException {
         return new PopularCategoryOperations().getPopularityForAllCategories();
+    }
+
+    public MultiModelCategory getMultiModelCategoryById(Long mmcID) throws RemoteException {
+        return new MultiModelCategoryOperations().getMultiModelCategoryById(mmcID);
+    }
+    
+    public MultiModelCategory getMultiModelCategoryByEntity(EntityInterface entity) throws  RemoteException{
+        return new MultiModelCategoryOperations().getMultiModelCategoryByEntity(entity);
     }
 }

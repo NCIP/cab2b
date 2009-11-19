@@ -81,21 +81,27 @@ public class QueryOperationsTest extends TestCase {
         AttributeInterface attribute2 = null;
         AttributeInterface attribute3 = null;
         Collection<EntityGroupInterface> entityGroups = EntityCache.getInstance().getEntityGroups();
-        if (!entityGroups.isEmpty()) {
-            Collection<EntityInterface> entities = entityGroups.iterator().next().getEntityCollection();
-            if (!entities.isEmpty()) {
-                entity = entities.iterator().next();
-
-                Collection<AttributeInterface> attributes = entity.getAttributeCollection();
+        for (EntityGroupInterface eg : entityGroups) {
+            Collection<EntityInterface> entities = eg.getEntityCollection();
+            for (EntityInterface en : entities) {
+                Collection<AttributeInterface> attributes = en.getAttributeCollection();
                 if (attributes.size() >= 3) {
                     Iterator<AttributeInterface> iterator = attributes.iterator();
                     attribute1 = iterator.next();
                     attribute2 = iterator.next();
                     attribute3 = iterator.next();
+                    entity = en;
+                    break;
                 }
+            }
+            if (attribute1 != null && attribute2 != null && attribute3 != null) {
+                break;
             }
         }
 
+        if (attribute1 == null || attribute2 == null || attribute3 == null) {
+            fail("NO entity with 3 attributes found !!!. This testcase needs it");
+        }
         List<ICondition> conditions = new ArrayList<ICondition>();
         ICondition condition1 = getCondition(attribute2, RelationalOperator.Contains, "true");
         ICondition condition2 = getCondition(attribute1, RelationalOperator.Contains, "123");

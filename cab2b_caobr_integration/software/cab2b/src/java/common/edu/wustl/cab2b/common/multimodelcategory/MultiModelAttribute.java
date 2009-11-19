@@ -14,6 +14,8 @@ import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
  *
  */
 public interface MultiModelAttribute extends Serializable {
+    
+    Long getId();
 
     AttributeInterface getAttribute();
 
@@ -22,8 +24,6 @@ public interface MultiModelAttribute extends Serializable {
     Collection<CategorialAttribute> getCategorialAttributes();
 
     void setCategorialAttributes(Collection<CategorialAttribute> categorialAttributes);
-
-    CategorialAttribute getCategorialAttribute(int index);
 
     void addCategorialAttribute(CategorialAttribute categorialAttribute);
 

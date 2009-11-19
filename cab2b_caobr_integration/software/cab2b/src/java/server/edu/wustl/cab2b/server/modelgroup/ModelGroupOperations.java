@@ -33,8 +33,8 @@ public class ModelGroupOperations extends DefaultBizLogic {
     public List<EntityGroupInterface> getEntityGroupsForModel(String modelGroupName) {
         List<EntityGroupInterface> entityGroups = new ArrayList<EntityGroupInterface>();
         try {
-            List<ModelGroupInterface> modelGroups = retrieve(ModelGroup.class.getName(), "modelGroupName",
-                                                             modelGroupName);
+            List<ModelGroupInterface> modelGroups =
+                    retrieve(ModelGroup.class.getName(), "modelGroupName", modelGroupName);
             for (ModelGroupInterface modelGroup : modelGroups) {
                 entityGroups.addAll(modelGroup.getEntityGroupList());
             }
@@ -43,8 +43,8 @@ public class ModelGroupOperations extends DefaultBizLogic {
         }
         return entityGroups;
     }
-
-    /**
+    
+   /**
      * This method returns List of all ModelGroupInterface present in database 
      * @return List<ModelGroupInterface>
      */
@@ -56,6 +56,31 @@ public class ModelGroupOperations extends DefaultBizLogic {
             throw new RuntimeException(e.getMessage(), e, ErrorCodeConstants.MG_001);
         }
         return modelGroups;
+    }
+
+    /**
+     * This method returns List of all ModelGroupInterface present in database 
+     * @return List<ModelGroupInterface>
+     */
+    public ModelGroupInterface getModelGroupById(Long modelGroupId) {
+        List<ModelGroupInterface> modelGroups = new ArrayList<ModelGroupInterface>();
+        try {
+            modelGroups = retrieve(ModelGroupInterface.class.getName(), "modelGroupId", modelGroupId);
+        } catch (DAOException e) {
+            throw new RuntimeException(e.getMessage(), e, ErrorCodeConstants.MG_001);
+        }
+        ModelGroupInterface modelGrp = getModelGroupFromList(modelGroups);
+        return modelGrp;
+    }
+
+    private ModelGroupInterface getModelGroupFromList(List<ModelGroupInterface> modelGroups) {
+        if (modelGroups == null || modelGroups.isEmpty()) {
+            return null;
+        }
+        if (modelGroups.size() > 1) {
+            throw new RuntimeException("Problem in code; probably db schema");
+        }
+        return (ModelGroupInterface) modelGroups.get(0);
     }
 
     /**

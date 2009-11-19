@@ -113,38 +113,25 @@ public class QueryConverter {
      * @return true if ORed; false otherwise
      */
     public Boolean isKeywordQuery(ICab2bQuery query) {
-        boolean isORedQuery = Boolean.TRUE;
-        final IConnector<LogicalOperator> connectorOR =
-                QueryObjectFactory.createLogicalConnector(LogicalOperator.Or);
-
         IConstraints constraints = query.getConstraints();
-
-        IExpression rootExpression = null;
         try {
-            rootExpression = constraints.getRootExpression();
+            constraints.getRootExpression();
         } catch (MultipleRootsException e) {
             throw new QueryConverterException(e.getMessage(), e);
         }
 
-        if (rootExpression != null) {
-            LOOP: for (IExpression expression : constraints) {
-                int noOfOperands = expression.numberOfOperands();
-                for (int i = 0; i < noOfOperands; i++) {
-                    IExpressionOperand operand = expression.getOperand(i);
-                    if (operand instanceof IRule) {
-                        IRule rule = (IRule) expression.getOperand(i);
-                        if (rule.size() > 1) {
-                            isORedQuery = Boolean.FALSE;
-                            break LOOP;
-                        }
-                    }
+        Boolean isORedQuery = query.isKeywordSearch();
+        final IConnector<LogicalOperator> connectorOR =
+                QueryObjectFactory.createLogicalConnector(LogicalOperator.Or);
 
-                    if (i + 1 < noOfOperands) {
-                        IConnector<LogicalOperator> connector = expression.getConnector(i, i + 1);
-                        if (!connector.equals(connectorOR)) {
-                            isORedQuery = Boolean.FALSE;
-                            break LOOP;
-                        }
+        LOOP: for (IExpression expression : constraints) {
+            int noOfOperands = expression.numberOfOperands();
+            for (int i = 0; i < noOfOperands; i++) {
+                if ((i + 1) < noOfOperands) {
+                    IConnector<LogicalOperator> connector = expression.getConnector(i, i + 1);
+                    if (!connectorOR.equals(connector)) {
+                        isORedQuery = Boolean.FALSE;
+                        break LOOP;
                     }
                 }
             }

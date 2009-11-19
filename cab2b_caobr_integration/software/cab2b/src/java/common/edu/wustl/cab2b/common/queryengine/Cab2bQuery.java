@@ -36,6 +36,8 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
      */
     public Cab2bQuery(ICab2bQuery query) {
         super(query);
+        createdDate = query.getCreatedDate();
+        createdBy = query.getCreatedBy();
         outputEntity = query.getOutputEntity();
         outputClassUrls = query.getOutputUrls();
     }
