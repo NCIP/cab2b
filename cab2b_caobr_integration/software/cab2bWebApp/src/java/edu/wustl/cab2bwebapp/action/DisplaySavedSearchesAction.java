@@ -53,8 +53,7 @@ public class DisplaySavedSearchesAction extends Action {
         String findForward = null;
         try {
             SavedQueryBizLogic savedQueryBizLogic =
-                    (SavedQueryBizLogic) request.getSession().getServletContext()
-                        .getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+                    (SavedQueryBizLogic) request.getSession().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
             String modelGroupName = (String) request.getParameter(Constants.MODEL_GROUPS);
             List<ModelGroupDVO> modelGroupDVOList =
                     (List<ModelGroupDVO>) request.getSession().getAttribute(Constants.MODEL_GROUP_DVO_LIST);

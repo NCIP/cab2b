@@ -22,17 +22,21 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
-import edu.wustl.cab2b.common.queryengine.QueryExecutorPropertes;
+import edu.wustl.cab2b.common.queryengine.KeywordQuery;
+import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
+import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
+import edu.wustl.cab2b.common.util.Cab2bServerProperty;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
-import edu.wustl.cab2bwebapp.bizlogic.executequery.ExecuteQueryBizLogic;
+import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.executequery.TransformedResultObjectWithContactInfo;
 import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.cab2bwebapp.dvo.SavedQueryDVO;
 import edu.wustl.cab2bwebapp.dvo.SearchResultDVO;
 
 /**
- * Action for executing query related operations.
+ * Action for retrieving the query results
+ * @author pallavi_mistry
  */
 public class TransformQueryResultsAction extends Action {
 
@@ -51,98 +55,108 @@ public class TransformQueryResultsAction extends Action {
      * @throws IOException
      * @throws ServletException
      */
-    public synchronized ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                              HttpServletResponse response) throws IOException, ServletException {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                 HttpServletResponse response) throws IOException, ServletException {
         String actionForward = Constants.FORWARD_SEARCH_RESULTS_PANEL;
+        HttpSession session = request.getSession();
         try {
-            HttpSession session = request.getSession();
+
+            SavedQueryBizLogic savedQueryBizLogic =
+                    (SavedQueryBizLogic) session.getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+            Long queryId = (Long) session.getAttribute(Constants.QUERY_ID);
+            ICab2bQuery query = savedQueryBizLogic.getQueryById(queryId);
+            int transformationMaxLimit = Cab2bServerProperty.getUiResultLimit();
+            IQueryResult<? extends IRecord> queryResult = null;
+
+            QueryBizLogic queryBizLogic = (QueryBizLogic) session.getAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT);
+            //While the variable queryBizLogic is not set in the session by executeQueryAction
+            // Processing image will be seen on the UI
             Writer writer;
-            
-            ExecuteQueryBizLogic executeQueryBizLogic =
-                    (ExecuteQueryBizLogic) session.getAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
-            if (executeQueryBizLogic == null) {
-                writer = response.getWriter();
-                response.setContentType("text/xml");
-                String processingImage = "<TABLE style='width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'></TD></TR></TABLE>";
-                writer.write(processingImage);
+            if (queryBizLogic == null) {
                 return null;
             }
 
-            SavedQueryBizLogic savedQueryBizLogic =
-                    (SavedQueryBizLogic) session.getServletContext().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
-            ICab2bQuery query =
-                    savedQueryBizLogic.getQueryById(Long.parseLong(request.getParameter(Constants.QUERY_ID)));
-            int transformationMaxLimit = QueryExecutorPropertes.getUiResultLimit();
-            Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults =
-                    executeQueryBizLogic.getSearchResults(transformationMaxLimit);
+            Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults = null;
+            searchResults = queryBizLogic.getSearchResults();
 
-            ICab2bQuery selectedQueryObj = null;
             Set<ICab2bQuery> queries = searchResults.keySet();
-            for (ICab2bQuery queryObj : queries) {
-                if (queryObj.getName().equals(query.getName())) {
-                    selectedQueryObj = queryObj;
-                    break;
+            ICab2bQuery selectedQueryObj = null;
+
+            //selectedQueryName will only be available in request at: onChange of drop down of keyword Search Results.
+            String selectedQueryName = request.getParameter(Constants.SELECTED_QUERY_NAME);
+            if (selectedQueryName == null) {
+                selectedQueryName = (String) session.getAttribute(Constants.SELECTED_QUERY_NAME);
+                if (selectedQueryName == null) {
+                    if (query instanceof KeywordQuery) { //i.e. its the first time,results page is been opened.Thus, set it as first KSubquery.
+                        List<SavedQueryDVO> savedQueries =
+                                (List<SavedQueryDVO>) session.getAttribute(Constants.SAVED_QUERIES);
+                        if (savedQueries != null || savedQueries.size() != 0) {
+                            selectedQueryName = savedQueries.get(0).getName();
+                        } else {
+                            throw new RuntimeException("No keyword queries saved for selected application group.");
+                        }
+                    } else { //MMC query or form based query
+                        selectedQueryName = query.getName();
+                    }
                 }
             }
+            session.setAttribute(Constants.SELECTED_QUERY_NAME, selectedQueryName);
 
-            List<SavedQueryDVO> queryList = new ArrayList<SavedQueryDVO>();
+            if (query instanceof KeywordQuery) {
+                for (ICab2bQuery queryObj : queries) {
+                    if (queryObj.getName().equals(selectedQueryName + "#")) {
+                        selectedQueryObj = queryObj;
+                        break;
+                    }
+                }
+            } else {
+                for (ICab2bQuery queryObj : queries) {
+                    if (queryObj.getName().equals(selectedQueryName)) {
+                        selectedQueryObj = queryObj;
+                        break;
+                    }
+                }
+            }
+            List<SavedQueryDVO> updatedSavedQueries = new ArrayList<SavedQueryDVO>();
             if (searchResults.get(selectedQueryObj) != null) {
+
                 SavedQueryDVO savedQuery = new SavedQueryDVO();
                 savedQuery.setName(selectedQueryObj.getName());
-                savedQuery.setResultCount(searchResults.get(selectedQueryObj).getResultForAllUrls().size());
 
-                queryList.add(savedQuery);
                 TransformedResultObjectWithContactInfo selectedQueryResult = searchResults.get(selectedQueryObj);
-                Collection<ServiceURLInterface> failedURLS =
-                        ExecuteQueryBizLogic.getFailedServiceUrls(selectedQueryResult.getFailedServiceUrl());
+
+                Collection<ServiceURLInterface> failedURLS = queryBizLogic.getFailedServiceUrls();
+                if (failedURLS != null && failedURLS.size() == 0) {
+                    failedURLS = null;
+                }
                 session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedURLS != null ? failedURLS.size() : 0);
                 session.setAttribute(Constants.FAILED_SERVICES, failedURLS);
 
-                session.setAttribute(Constants.INFEASIBLE_URL, selectedQueryResult.getInFeasibleUrl());
-
-                List<List<SearchResultDVO>> val =
-                        ExecuteQueryBizLogic.getSearchResultsView(selectedQueryResult.getResultForAllUrls(),
-                                                                  selectedQueryResult.getAllowedAttributes());
-
-                boolean uiGotEnoughRecords = savedQuery.getResultCount() >= transformationMaxLimit;
-                boolean queryFinished = executeQueryBizLogic.isProcessingFinished();
-
-                if (uiGotEnoughRecords && queryFinished) {
-                    session.setAttribute(Constants.STOP_AJAX, true);
-                    session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
-                    //session.setAttribute(Constants.SEARCH_RESULTS_VIEW, val);
-                    //session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
-                    //session.setAttribute(Constants.SAVED_QUERIES, queryList);
-                } else if (uiGotEnoughRecords && !queryFinished) {
-                    Boolean flag = (Boolean) session.getAttribute(Constants.UI_POPULATION_FINISHED);
-                    if (flag != null && flag) {
-                        session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
-                    } else {
-                        session.setAttribute(Constants.SEARCH_RESULTS_VIEW, val);
-                        session.setAttribute(Constants.SEARCH_RESULTS, searchResults); 
-                        session.setAttribute(Constants.SAVED_QUERIES, queryList);
+                List<List<SearchResultDVO>> searchResultsView =
+                        queryBizLogic.getSearchResultsView(selectedQueryResult.getResultForAllUrls(),
+                                                           selectedQueryResult.getAllowedAttributes());
+                // if no of records are more than 100, retain only 100 records in the list to be shown on UI.
+                if (searchResultsView != null) //for zero records or for failed URLs, searchResultsView will be null
+                {
+                    if (searchResultsView.size() > transformationMaxLimit) {
+                        searchResultsView = searchResultsView.subList(0, transformationMaxLimit);
                     }
-                    session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
-                } else if (!uiGotEnoughRecords && queryFinished) {
-                    session.setAttribute(Constants.STOP_AJAX, true);
-                    session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
-                    session.setAttribute(Constants.SEARCH_RESULTS_VIEW, val);
-                    session.setAttribute(Constants.SEARCH_RESULTS, searchResults); 
-                    session.setAttribute(Constants.SAVED_QUERIES, queryList);
-                } else if (!uiGotEnoughRecords && !queryFinished) {
-                    session.setAttribute(Constants.SEARCH_RESULTS_VIEW, val);
-                    session.setAttribute(Constants.SEARCH_RESULTS, searchResults); 
-                    session.setAttribute(Constants.SAVED_QUERIES, queryList);
+                    savedQuery.setResultCount(searchResultsView.size());
                 }
-            } else {
-                session.setAttribute(Constants.SEARCH_RESULTS, searchResults);    
-                session.setAttribute(Constants.SAVED_QUERIES, queryList);
+                updatedSavedQueries.add(savedQuery);
+
+                // populateSessionVariables as per the condition achieved of query
+                boolean uiGotEnoughRecords = savedQuery.getResultCount() >= transformationMaxLimit;
+                boolean queryFinished = queryBizLogic.isProcessingFinished();
+                if (queryFinished) {
+                    request.setAttribute(Constants.TRANSFORMATION_MAX_LIMIT, transformationMaxLimit);
+                    request.setAttribute(Constants.QUERY_RESULT_COUNT, savedQuery.getResultCount());
+                }
+                updateSessionVariables(uiGotEnoughRecords, queryFinished, searchResults, updatedSavedQueries,
+                                       searchResultsView, session);
             }
-
-            
-            
-
         } catch (Exception e) {
+            session.setAttribute(Constants.STOP_AJAX, true); //if some exception occurs, Ajax from UI should stop
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
             ActionMessage message =
@@ -156,5 +170,46 @@ public class TransformQueryResultsAction extends Action {
                             : Constants.FORWARD_FAILURE;
         }
         return mapping.findForward(actionForward);
+    }
+
+    /**
+     * @param uiGotEnoughRecords
+     * @param queryFinished
+     * @param searchResults
+     * @param queryList
+     * @param searchResultsView
+     * @param session
+     */
+    private void updateSessionVariables(boolean uiGotEnoughRecords, boolean queryFinished,
+                                        Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults,
+                                        List<SavedQueryDVO> updatedSavedQueries,
+                                        List<List<SearchResultDVO>> searchResultsView, HttpSession session) {
+        if (uiGotEnoughRecords && queryFinished) {
+            session.setAttribute(Constants.STOP_AJAX, true);
+            session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
+            session.setAttribute(Constants.SEARCH_RESULTS_VIEW, searchResultsView);
+            //session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
+            session.setAttribute(Constants.SAVED_QUERIES, updatedSavedQueries);
+        } else if (uiGotEnoughRecords && !queryFinished) {
+            Boolean flag = (Boolean) session.getAttribute(Constants.UI_POPULATION_FINISHED);
+            if (flag != null && flag) {
+                //session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
+            } else {
+                session.setAttribute(Constants.SEARCH_RESULTS_VIEW, searchResultsView);
+                session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
+                session.setAttribute(Constants.SAVED_QUERIES, updatedSavedQueries);
+            }
+            // session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
+        } else if (!uiGotEnoughRecords && queryFinished) {
+            session.setAttribute(Constants.STOP_AJAX, true);
+            session.setAttribute(Constants.UI_POPULATION_FINISHED, true);
+            session.setAttribute(Constants.SEARCH_RESULTS_VIEW, searchResultsView);
+            session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
+            session.setAttribute(Constants.SAVED_QUERIES, updatedSavedQueries);
+        } else if (!uiGotEnoughRecords && !queryFinished) {
+            session.setAttribute(Constants.SEARCH_RESULTS_VIEW, searchResultsView);
+            session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
+            session.setAttribute(Constants.SAVED_QUERIES, updatedSavedQueries);
+        }
     }
 }

@@ -3,11 +3,10 @@
  */
 package edu.wustl.cab2bwebapp.action;
 
-import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,6 +22,7 @@ import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2bwebapp.bizlogic.ApplicationBizLogic;
 import edu.wustl.cab2bwebapp.constants.Constants;
+import edu.wustl.cab2bwebapp.util.ServiceInstanceComparator;
 
 /**
  * Action class for showing service instances
@@ -42,8 +42,6 @@ public class DisplayServiceInstancesAction extends Action {
      * @param request
      * @param response
      * @return ActionForward
-     * @throws IOException
-     * @throws ServletException
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) {
@@ -57,17 +55,17 @@ public class DisplayServiceInstancesAction extends Action {
                     appBizLogic.getApplicationInstances(user, modelGroupName);
             //For All service URLs in this list, configured is equal to true.
             Collection<ServiceURLInterface> allServiceInstanceFromUserObject = user.getServiceURLCollection();
-            if (allServiceInstanceFromUserObject != null && allServiceInstanceFromUserObject.size() != 0) {
-                if (user.getUserName().equals(Constants.ANONYMOUS)) {
-                    for (ServiceURLInterface service : servicesForSingleModelGroup) {
-                        if (allServiceInstanceFromUserObject.contains(service)) {
-                            service.setConfigured(true);
-                        } else {
-                            service.setConfigured(false);
-                        }
+
+            if (allServiceInstanceFromUserObject != null && !allServiceInstanceFromUserObject.isEmpty()) {
+                for (ServiceURLInterface service : servicesForSingleModelGroup) {
+                    if (allServiceInstanceFromUserObject.contains(service)) {
+                        service.setConfigured(true);
+                    } else {
+                        service.setConfigured(false);
                     }
                 }
             }
+            Collections.sort(servicesForSingleModelGroup, new ServiceInstanceComparator());
             //Adding currently selected modelGroupName/serviceInstances to user session.
             request.setAttribute(Constants.MODEL_GROUP_NAME, modelGroupName);
             request.setAttribute(Constants.SERVICE_INSTANCES, servicesForSingleModelGroup);
