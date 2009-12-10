@@ -72,10 +72,10 @@ public interface Constants {
 
     /** Constant for selectedQueryName */
     public static final String SELECTED_QUERY_NAME = "selectedQueryName";
-    
+
     /** Constant for queryResultCount */
     public static final String QUERY_RESULT_COUNT = "queryResultCount";
-    
+
     /** Constant for forward to home page */
     public static final String FORWARD_HOME = "home";
 
@@ -151,8 +151,8 @@ public interface Constants {
     public static final String FATAL_ADD_LIMIT_FAILURE = "fatalAddLimitFailure";
 
     /** Constant for add limit XML file path */
-    public static final String ADD_LIMIT_XML_FILE_PATH =
-            "WEB-INF" + java.io.File.separator + "classes" + java.io.File.separator + "add-limit.xml";
+    public static final String ADD_LIMIT_XML_FILE_PATH = "WEB-INF" + java.io.File.separator + "classes"
+            + java.io.File.separator + "add-limit.xml";
 
     /** Constant for all hosting institutions */
     public static final String ALL_HOSTING_INSTITUTIONS = "All Hosting Institutions";
@@ -186,7 +186,7 @@ public interface Constants {
 
     /** Constant for fatal keyword search failure */
     public static final String FATAL_KYEWORD_SEARCH_FAILURE = "fatalKeywordSearchFailure";
-    
+
     /** Constant for fatal export failure */
     public static final String FATAL_EXPORT_FAILURE = "fatalExportFailure";
 
@@ -199,20 +199,20 @@ public interface Constants {
     /** Constant for forward to failure page */
     public static final String FORWARD_FAILURE = "failure";
 
-	 public static final String DISPLAY_RESOURCE = "displayresource";
+    public static final String DISPLAY_RESOURCE = "displayresource";
 
     public static final String ANNOTAION_RESULT_VIEW = "annotationview";
 
     public static final String DISPLAY_ANNOTATION = "displayannotation";
-    
+
     public static final String DISPLAY_All_ANNOTATION = "displayallannotation";
 
     public static final String SELECTED_RESOURCE_DES = "selectedResourceDescription";
 
     public static final String SELECTED_RESOURCE_IMAGE = "selectedRresourceImage";
-    
+
     public static final String RESOURCE_MAP = "resourceMap";
-    
+
     public static final String RESOURCE_ANNOTATIONMAPS = "annotationMap";
 
     /** Constant for forward to dash board page */
@@ -226,4 +226,6 @@ public interface Constants {
 
     /** Constant for fatal failure for displaying dash board */
     public static final String FATAL_DISPLAY_DASHBOARD_FAILURE = "fatalDisplayDashboardFailure";
+
+    public static final String SERVICE_URL = "http://caobr.wustl.edu:8080/wsrf/services/cagrid/CaObr";
 }
