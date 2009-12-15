@@ -648,7 +648,7 @@ public class AddLimitHTMLGeneratorBizLogic {
         String radioButtonFalseId = componentId + "_false";
 
         html.append("\n<td valign='top' class='" + cssClass + "' >");
-        if (values == null) {
+        if (values == null || values.isEmpty()) {
             html.append("\n<input type='radio' id = '" + componentId
                     + "_true' value='true' onclick=\"resetOptionButton('" + radioButtonTrueId + "',this)\" name='"
                     + componentName + "'/><font class='" + cssClass + "'>True</font>");

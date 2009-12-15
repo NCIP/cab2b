@@ -179,6 +179,7 @@
 		<diagnostics />
 	</target>
 	<target name="clean">
+		<ant inheritAll="false" inheritRefs="false" antfile="${cab2b-webapp.build.file}" target="clean.all" dir="${cab2b-webapp.base.dir}" />
 		<delete dir="${dist.dir}" />
 		<delete dir="${temp.dir}" />
 	</target>
@@ -268,12 +269,57 @@
 		-->
 	</target>
 	<target name="build:cab2b-webapp" depends="init, build:cab2b-api" description="Call webapp sub-projects build target to produce artifiacts">
+		<macrodef name="read-jboss-server-port">
+			<attribute name="jboss.server.ports.name" default="${jboss.server.ports.name}" />
+			<attribute name="jboss.server.bindingfile.location" default="${jboss.server.bindingfile.location}" />
+			<attribute name="jboss.server.port.property.name" default="jboss.server.port" />
+
+			<sequential>
+				<var name="jboss-read-ports.properties.list" value="@{jboss.server.port.property.name}" />
+				<var name="read.http.port" unset="true" />
+				<xmltask failWithoutMatch="true" source="@{jboss.server.bindingfile.location}" dest="@{jboss.server.bindingfile.location}">
+					<xmlcatalog refid="bda.xml.catalog" />
+					<copy path="/service-bindings/server[@name='@{jboss.server.ports.name}']/service-config[@name='jboss.web:service=WebServer']/binding/@port" property="read.http.port" attrValue="true" />
+				</xmltask>
+				<property name="@{jboss.server.port.property.name}" value="${read.http.port}" />
+				<var name="read.properties.list" value="${read.properties.list},${jboss-read-ports.properties.list}" />
+			</sequential>
+		</macrodef>
+		<if>
+			<isset property="jboss.ncicb-standard.port-config" />
+			<then>
+				<get src="${jboss-bindings.src.url}" dest="${basedir}/${jboss-bindings.file}" />
+				<read-jboss-server-port jboss.server.bindingfile.location="${basedir}/${jboss-bindings.file}" />
+				<if>
+					<equals arg1="${jboss.ssl.enable}" arg2="true" />
+					<then>
+						<math result="server-port" operand1="${jboss.server.port}" operation="+" operand2="363" datatype="int" />
+					</then>
+					<else>
+						<property name="server-port" value="${jboss.server.port}" />
+					</else>
+				</if>
+				<echo message="HTTP port=${server-port}" />
+				<delete file="${basedir}/${jboss-bindings.file}" />
+			</then>
+			<else>
+				<if>
+					<equals arg1="${jboss.ssl.enable}" arg2="true" />
+					<then>
+						<math result="server-port" operand1="${jboss.server.port}" operation="+" operand2="363" datatype="int" />
+					</then>
+					<else>
+						<property name="server-port" value="${jboss.server.port}" />
+					</else>
+				</if>
+			</else>
+		</if>
 		<!-- setting the property in the ant call overrides the property in the sub-project allowing the artifact to be produced where needed -->
 		<ant inheritAll="false" inheritRefs="true" antfile="${cab2b-webapp.build.file}" target="${cab2b-webapp.build.target}" dir="${cab2b-webapp.base.dir}">
 			<property name="dist.dir" value="${cab2b-webapp.dist.dir}" />
-      
+
 			<property name="server-host" value="${server-host}" />
-			<property name="server-port" value="${jboss.server.port}" />
+			<property name="server-port" value="${server-port}" />
 			<property name="grid-type" value="${grid-type}" />
 			<property name="ds-name" value="${application.context.name}" />
 			<property name="db-loader" value="${db-loader}" />
@@ -697,3 +743,4 @@
 		<generate-uml uml.dir="${uml.dir}" src.java.dir="${cab2b-webapp.base.dir}/src/java" uml.source.path="cab2b.classpath.ref" />
 	</target>
 </project>
+

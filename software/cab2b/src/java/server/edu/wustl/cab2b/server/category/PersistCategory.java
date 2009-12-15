@@ -1,6 +1,7 @@
 package edu.wustl.cab2b.server.category;
 
 import static edu.wustl.cab2b.common.util.Constants.CATEGORY_ENTITY_GROUP_NAME;
+import static edu.wustl.cab2b.common.util.Constants.MMC_SUBCATEGORY_ENTITY;
 import static edu.wustl.cab2b.common.util.Constants.TYPE_CATEGORY;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.RoleInterface;
+import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
@@ -54,7 +56,7 @@ public class PersistCategory {
      *            for root category.
      * @return Returns the Category for given parameters.
      */
-    public Category persistCategory(InputCategory inputCategory, Category parentCategry) {
+    public Category persistCategory(InputCategory inputCategory, Category parentCategry, boolean isPartOfMMC) {
         categoryEntity = DomainObjectFactory.getInstance().createEntity();
         List<EntityInterface> subCategoryEntities = new ArrayList<EntityInterface>();
         Category category = new Category();
@@ -63,7 +65,7 @@ public class PersistCategory {
         Set<Category> subCategories = new HashSet<Category>();
         for (InputCategory subCategory : inputCategory.getSubCategories()) {
             PersistCategory p = new PersistCategory();
-            subCategories.add(p.persistCategory(subCategory, category));
+            subCategories.add(p.persistCategory(subCategory, category,isPartOfMMC));
             subCategoryEntities.add(p.getCategoryEntity());
         }
         category.setSubCategories(subCategories);
@@ -84,6 +86,13 @@ public class PersistCategory {
             categoryEntity.addAssociation(association);
         }
         DynamicExtensionUtility.addTaggedValue(categoryEntity, TYPE_CATEGORY, TYPE_CATEGORY);
+        if(isPartOfMMC) {
+            TaggedValueInterface taggedValue = DomainObjectFactory.getInstance().createTaggedValue();
+            taggedValue.setKey(MMC_SUBCATEGORY_ENTITY);
+            taggedValue.setValue(MMC_SUBCATEGORY_ENTITY);
+            categoryEntity.addTaggedValue(taggedValue);
+        }
+        
         categoryEntity = DynamicExtensionUtility.persistEntity(categoryEntity);
         category.setDeEntityId(categoryEntity.getId());
 
@@ -186,17 +195,17 @@ public class PersistCategory {
         return role;
     }
 
-    /**
-     * @param fileNames the complete path of the files.
-     */
-    public static void persistCategories(String[] fileNames) {
-        for (String fileName : fileNames) {
-            InputCategory inputCategory = new CategoryXmlParser().getInputCategory(fileName);
-            Category category = new PersistCategory().persistCategory(inputCategory, null);
-            new CategoryOperations().saveCategory(category);
-            logger.info("Stored Category : " + inputCategory.getName());
-        }
-    }
+//    /**
+//     * @param fileNames the complete path of the files.
+//     */
+//    public static void persistCategories(String[] fileNames) {
+//        for (String fileName : fileNames) {
+//            InputCategory inputCategory = new CategoryXmlParser().getInputCategory(fileName);
+//            Category category = new PersistCategory().persistCategory(inputCategory, null,false);
+//            new CategoryOperations().saveCategory(category);
+//            logger.info("Stored Category : " + inputCategory.getName());
+//        }
+//    }
     // DON'T delete this code. It is used to load categories from backend 
     //    public static void main(String[] args) {
     //        Logger.configure();

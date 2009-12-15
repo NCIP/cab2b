@@ -1,7 +1,5 @@
 package edu.wustl.cab2b.server.queryengine.resulttransformers;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +17,8 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
-import edu.wustl.cab2b.common.queryengine.result.FailedTargetURL;
+import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
+import edu.wustl.cab2b.common.queryengine.result.FQPUrlStatus;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -43,16 +42,25 @@ import gov.nih.nci.cagrid.fqp.processor.exceptions.FederatedQueryProcessingExcep
  * the result.
  * 
  * @author srinath_k
+ * @param <R>
+ * @param <C>
  * @see edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer
  */
 public abstract class AbstractQueryResultTransformer<R extends IRecord, C extends ICategorialClassRecord>
         implements IQueryResultTransformer<R, C> {
-    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(AbstractQueryResultTransformer.class);
+    private static final Logger logger =
+            edu.wustl.common.util.logger.Logger.getLogger(AbstractQueryResultTransformer.class);
 
     protected QueryLogger queryLogger;
 
-    private Collection<FailedTargetURL> failedQueryUrlList = new ArrayList<FailedTargetURL>();
+    //This value is updated by FQPQueryListener
+    private Map<String, FQPUrlStatus> urlVsStatus = new HashMap<String, FQPUrlStatus>();
 
+    private ExecutorService executor = Executors.newFixedThreadPool(1);
+
+    /**
+     * Default Constructor
+     */
     public AbstractQueryResultTransformer() {
         queryLogger = new QueryLogger();
     }
@@ -78,9 +86,11 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * For each {@link CQLQueryResults} obtained by executing the dcql, the
      * method <code>createRecords</code> is invoked. Concrete transformers are
      * required to implement the method <code>createRecords</code>.
+     * @param query
+     * @param targetEntity
+     * @param cred
+     * @return {@link IQueryResult}
      * 
-     * @see edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer#getResults(gov.nih.nci.cagrid.dcql.DCQLQuery,
-     *      edu.common.dynamicextensions.domaininterface.EntityInterface)
      */
     public IQueryResult<R> getResults(DCQLQuery query, EntityInterface targetEntity, GlobusCredential cred) {
         IQueryResult<R> result = null;
@@ -96,14 +106,30 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
                 result.addRecords(url, recs);
                 numRecs += recs.size();
             }
-            logger.info("No. of records found and transformed : " + numRecs);
-            logger.info("No. of failed URLS found : " + failedQueryUrlList.size());
-            result.setFailedURLs(failedQueryUrlList);
+
+            //FQP bug
+            postProcessResult(query);
+            result.setFQPUrlStatus(urlVsStatus.values());
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(Utility.getStackTrace(e), ErrorCodeConstants.QM_0004);
         }
         return result;
+    }
+
+    /**
+     * 
+     * @param query
+     */
+    private void postProcessResult(DCQLQuery query) {
+        //FQP dosn't fire status update for urls which returns zero results
+        //This is a bug in FQP. In this case we are adding our own url with Complete as status.
+        for (String url : query.getTargetServiceURL()) {
+            if (!urlVsStatus.containsKey(url)) {
+                updateStatus(url, "Completed with zero results.", "Completed with zero results.",
+                             AbstractStatus.Complete);
+            }
+        }
     }
 
     /**
@@ -119,24 +145,18 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             TargetDataServiceQueryBehavior targetBehaviour = new TargetDataServiceQueryBehavior();
             targetBehaviour.setFailOnFirstError(false);
             queryParameter.setTargetDataServiceQueryBehavior(targetBehaviour);
-            ExecutorService executor = Executors.newFixedThreadPool(query.getTargetServiceURL().length);
+            String queryName = query.getTargetObject().getName();
+            String className = queryName.substring(queryName.lastIndexOf('.') + 1, queryName.length());
+            logger.debug("Executing DQCL to get " + className);
             FederatedQueryEngine federatedQueryEngine = new FederatedQueryEngine(cred, queryParameter, executor);
-            FQPQueryListener listener = new FQPQueryListener(query);
+            FQPQueryListener listener = new FQPQueryListener(this);
             federatedQueryEngine.addStatusListener(listener);
-
-            logger.info("Executing DCQL... Target is : " + query.getTargetObject().getName());
             queryResults = federatedQueryEngine.execute(query);
-            failedQueryUrlList.addAll(listener.getFailedURLs().values());
-            for (FailedTargetURL url : listener.getFailedURLs().values()) {
-                logger.info("FailedURL : " + url.getTargetUrl());
-                logger.info("FailedURL Target Class : "
-                        + ((gov.nih.nci.cagrid.dcql.Object) url.getTargetObject()).getName());
-            }
-            logger.info("Executed DCQL successfully.");
+            logger.debug("Query for " + className + " Completed");
         } catch (FederatedQueryProcessingException e) {
             e.printStackTrace();
             throw new RuntimeException(Utility.getStackTrace(e), ErrorCodeConstants.QM_0004);
-        }        
+        }
         Map<String, CQLQueryResults> res = new HashMap<String, CQLQueryResults>();
         for (DCQLResult dcqlQueryResult : queryResults.getDCQLResult()) {
             res.put(dcqlQueryResult.getTargetServiceURL(), dcqlQueryResult.getCQLQueryResultCollection());
@@ -165,17 +185,16 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * </ol>
      * Finally <code>copyFromResult</code> is invoked. Subclasses can override
      * this method
-     * 
-     * @see edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer#getCategoryResults(gov.nih.nci.cagrid.dcql.DCQLQuery,
-     *      edu.wustl.common.querysuite.metadata.category.CategorialClass)
+     * @param query
+     * @param categorialClass
+     * @param cred
+     * @return {@link IQueryResult}
      */
     public IQueryResult<C> getCategoryResults(DCQLQuery query, CategorialClass categorialClass,
                                               GlobusCredential cred) {
         Set<AttributeInterface> categoryAttributes = new HashSet<AttributeInterface>();
-
         for (CategorialAttribute categorialAttr : categorialClass.getCategorialAttributeCollection()) {
-            AttributeInterface categoryAttribute = categorialAttr.getCategoryAttribute();
-            categoryAttributes.add(categoryAttribute);
+            categoryAttributes.add(categorialAttr.getCategoryAttribute());
         }
 
         IQueryResult<R> classResults = getResults(query, categorialClass.getCategorialClassEntity(), cred);
@@ -187,16 +206,16 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             for (R rec : entry.getValue()) {
                 C catRec = createCategoryRecord(categorialClass, categoryAttributes, rec.getRecordId());
                 for (CategorialAttribute catAttr : categorialClass.getCategorialAttributeCollection()) {
-                    catRec.putValueForAttribute(catAttr.getCategoryAttribute(),
-                                                rec.getValueForAttribute(catAttr.getSourceClassAttribute()));
+                    catRec.putValueForAttribute(catAttr.getCategoryAttribute(), rec.getValueForAttribute(catAttr
+                        .getSourceClassAttribute()));
                     copyFromRecord(catRec, rec);
                 }
                 catResult.addRecord(url, catRec);
             }
         }
         copyFromResult(catResult, classResults);
-        catResult.setFailedURLs(failedQueryUrlList);
-        logger.info("Category Failed URL number " + failedQueryUrlList.size());
+        postProcessResult(query);
+        catResult.setFQPUrlStatus(urlVsStatus.values());
         return catResult;
     }
 
@@ -285,4 +304,31 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      */
     protected abstract C createCategoryRecord(CategorialClass categorialClass,
                                               Set<AttributeInterface> categoryAttributes, RecordId id);
+
+    /**
+     * @param serviceURL
+     * @param status
+     */
+    protected void registerStatus(String serviceURL, FQPUrlStatus status) {
+        urlVsStatus.put(serviceURL, status);
+    }
+
+    /**
+     * Updates URL status.
+     * @param serviceURL
+     * @param message
+     * @param description
+     */
+    protected void updateStatus(String serviceURL, String message, String description, String status) {
+        FQPUrlStatus urlStatus = urlVsStatus.get(serviceURL);
+        if (urlStatus != null) {
+            urlStatus.setDescription(description);
+            urlStatus.setMessage(message);
+        } else {
+            urlStatus = new FQPUrlStatus(serviceURL, message, description);
+        }
+        urlStatus.setStatus(status);
+        registerStatus(serviceURL, urlStatus);
+    }
+
 }

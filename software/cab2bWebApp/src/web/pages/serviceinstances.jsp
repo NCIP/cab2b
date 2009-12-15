@@ -6,6 +6,7 @@
 <HTML>
 <HEAD>
 <TITLE><bean:message key="application.title"/></TITLE>
+<LINK rel="shortcut icon" href="../images/favicon.ico">
 <META http-equiv="Content-Type" content="text/html">
 <LINK rel="stylesheet" href="stylesheet/serviceinstances.css" type="text/css">
 <SCRIPT language="JavaScript" src="javascript/utils.js"></SCRIPT>
@@ -34,10 +35,10 @@ chk = false;
     alert("<bean:message key="alert.selectserviceinstance"/>");
     return false;
   } 
-} 
+}
 </SCRIPT>
 </HEAD>
-<BODY>
+<BODY onLoad="document.getElementById('centerpanelcontent').style.height = getScreenHeight() - 295;">
 <FORM method="post" action="SaveServiceInstances.do" onSubmit="return validateSubmit()">
 <jsp:include page="header.jsp"/>
 <DIV id="content">
@@ -62,7 +63,7 @@ chk = false;
 						<bean:write name="serviceInstance" property="hostingCenter"/>
 					</DIV>
 					<DIV class="text" style="margin-left: 1.7em">
-						<bean:write name="serviceInstance" property="description"/>
+						<bean:write name="serviceInstance" property="description"/>&nbsp;(<bean:write name="serviceInstance" property="entityGroupName"/>)
 					</DIV>
 				</DIV>
 			</logic:iterate>			

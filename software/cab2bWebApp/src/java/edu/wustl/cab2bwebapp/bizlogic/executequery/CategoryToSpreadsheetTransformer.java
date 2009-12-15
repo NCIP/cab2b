@@ -1,6 +1,9 @@
 package edu.wustl.cab2bwebapp.bizlogic.executequery;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +11,9 @@ import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
+import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
+import edu.wustl.cab2b.common.user.ServiceURLInterface;
+import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 
 /**
@@ -30,19 +36,51 @@ import edu.wustl.common.querysuite.metadata.category.CategorialClass;
            
  *
  */
-public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetTransformer {
+public class CategoryToSpreadsheetTransformer extends SpreadsheetTransformer {
+
+    private int getDepth(ICategorialClassRecord o1) {
+        if (o1 == null) {
+            return 0;
+        }
+        Set<CategorialClass> mapKeys = o1.getCategorialClass().getChildren();
+        if (mapKeys == null || mapKeys.isEmpty()) {
+            return 1;
+        }
+        Map<CategorialClass, List<ICategorialClassRecord>> children = o1.getChildrenCategorialClassRecords();
+        int max = 0;
+        for (CategorialClass ICCR : mapKeys) {
+            if (children != null && ICCR != null && children.get(ICCR) != null) {
+                for (ICategorialClassRecord ccr : children.get(ICCR)) {
+                    int d = getDepth(ccr);
+                    if (max < d) {
+                        max = d;
+                    }
+                }
+            }
+        }
+        return max + 1;
+    }
 
     /**
      * Converting <code>ICategorialClassRecord</code> records  
      * @param records
+     * @param transformationMaxLimit
      * @return List<Map<AttributeInterface, Object>>
      */
-    public List<Map<AttributeInterface, Object>> convert(List<ICategorialClassRecord> records) {
+    public List<Map<AttributeInterface, Object>> convert(List<ICategorialClassRecord> records,
+                                                         int transformationMaxLimit) {
         List<Map<AttributeInterface, Object>> list = new ArrayList<Map<AttributeInterface, Object>>();
         if (records != null) {
+            for (ICategorialClassRecord r : records) {
+                recordVsCount.put(r, getDepth(r));
+            }
+            Collections.sort(records, new RecordComparator(recordVsCount));
             for (ICategorialClassRecord record : records) {
-                List<LinkedHashMap<AttributeInterface, Object>> res = convert(record);
+                List<Map<AttributeInterface, Object>> res = convert(record);
                 list.addAll(res);
+                if (list.size() > transformationMaxLimit) {
+                    break;
+                }
             }
         }
         return list;
@@ -54,26 +92,29 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
      * @param record
      * @return List<Map<AttributeInterface, Object>>
      */
-    private List<LinkedHashMap<AttributeInterface, Object>> convert(ICategorialClassRecord record) {
+    private List<Map<AttributeInterface, Object>> convert(ICategorialClassRecord record) {
         Set<CategorialClass> children = record.getCategorialClass().getChildren();
 
         //Attribute-Value pair of current record
-        LinkedHashMap<AttributeInterface, Object> avPairs = new LinkedHashMap<AttributeInterface, Object>();
+        Map<AttributeInterface, Object> avPairs =
+                new HashMap<AttributeInterface, Object>(record.getAttributes().size());
         for (AttributeInterface a : record.getAttributes()) {
             avPairs.put(a, record.getValueForAttribute(a));
         }
-        List<LinkedHashMap<AttributeInterface, Object>> processedRecords =
-                new ArrayList<LinkedHashMap<AttributeInterface, Object>>();
+
         if (children.size() == 0) {
+            List<Map<AttributeInterface, Object>> processedRecords =
+                    new ArrayList<Map<AttributeInterface, Object>>(1);
             processedRecords.add(avPairs);
             return processedRecords;
         }
+        List<Map<AttributeInterface, Object>> processedRecords = new ArrayList<Map<AttributeInterface, Object>>();
         Map<CategorialClass, List<ICategorialClassRecord>> childVsRecords =
                 record.getChildrenCategorialClassRecords();
         boolean isRecordAdded = false;
         for (CategorialClass child : children) {
-            List<LinkedHashMap<AttributeInterface, Object>> processedChildRecords =
-                    new ArrayList<LinkedHashMap<AttributeInterface, Object>>();
+            List<Map<AttributeInterface, Object>> processedChildRecords =
+                    new ArrayList<Map<AttributeInterface, Object>>();
             List<ICategorialClassRecord> childRecords = childVsRecords.get(child);
             if (childRecords == null) {
                 continue;
@@ -87,13 +128,14 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
             if (processedRecords.isEmpty()) {
                 processedRecords = processedChildRecords;
             } else {
-                List<LinkedHashMap<AttributeInterface, Object>> tempProcessedRecords =
-                        new ArrayList<LinkedHashMap<AttributeInterface, Object>>();
+                List<Map<AttributeInterface, Object>> tempProcessedRecords =
+                        new ArrayList<Map<AttributeInterface, Object>>();
                 //cross product current child with all previously processed children
-                for (LinkedHashMap<AttributeInterface, Object> processedRecord : processedRecords) {
-                    for (LinkedHashMap<AttributeInterface, Object> childrenRecord : processedChildRecords) {
-                        LinkedHashMap<AttributeInterface, Object> newMap =
-                                new LinkedHashMap<AttributeInterface, Object>();
+                for (Map<AttributeInterface, Object> processedRecord : processedRecords) {
+                    for (Map<AttributeInterface, Object> childrenRecord : processedChildRecords) {
+                        Map<AttributeInterface, Object> newMap =
+                                new LinkedHashMap<AttributeInterface, Object>(childrenRecord.size()
+                                        + processedRecord.size());
                         newMap.putAll(childrenRecord);
                         newMap.putAll(processedRecord);
                         tempProcessedRecords.add(newMap);
@@ -110,5 +152,26 @@ public class CategoryToSpreadsheetTransformer implements ICategoryToSpreadsheetT
             processedRecords.add(avPairs);
         }
         return processedRecords;
+    }
+
+    /**
+     * @param result
+     * @param fileName
+     * @param headers
+     * @throws IOException
+     */
+    public void writeToCSV(ICategoryResult<ICategorialClassRecord> result, String fileName,
+                           List<AttributeInterface> headers) throws IOException {
+        CsvWriter writeToCSV = new CsvWriter(headers, fileName);
+        Map<String, List<ICategorialClassRecord>> urlToResultMap = result.getRecords();
+        for (String url : urlToResultMap.keySet()) {
+            List<ICategorialClassRecord> records = urlToResultMap.get(url);
+            ServiceURLInterface serviceUrlMetadata = new ServiceURLOperations().getServiceURLbyURLLocation(url);
+            for (ICategorialClassRecord record : records) {
+                List<Map<AttributeInterface, Object>> recordList = convert(record);
+                writeToCSV.writeData(recordList, serviceUrlMetadata);
+            }
+        }
+        writeToCSV.closeFile();
     }
 }

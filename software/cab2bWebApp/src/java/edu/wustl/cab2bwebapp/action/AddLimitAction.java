@@ -10,6 +10,7 @@ import java.util.Collection;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
@@ -50,46 +51,54 @@ public class AddLimitAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
         String actionForward = null;
-        SavedQueryBizLogic savedQueryProvider =
-                (SavedQueryBizLogic) request.getSession().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+        HttpSession session = request.getSession();
 
-        String queryID = request.getParameter(Constants.QUERY_ID);
-        if (request.getParameter(Constants.MODEL_GROUPS) == null) {
-            try {
-                Long queryId = Long.parseLong(queryID);
+        session.removeAttribute(Constants.SEARCH_RESULTS);
+        session.removeAttribute(Constants.SEARCH_RESULTS_VIEW);
+        session.removeAttribute(Constants.FAILED_SERVICES_COUNT);
+        session.removeAttribute(Constants.SAVED_QUERIES);
+        session.removeAttribute(Constants.FAILED_SERVICES);
+        session.removeAttribute(Constants.QUERY_ID);
+        session.removeAttribute(Constants.SERVICE_INSTANCES);
+        session.removeAttribute(Constants.MODEL_GROUPS);
+        session.removeAttribute(Constants.CONDITION_LIST);
+        session.removeAttribute(Constants.IS_FIRST_REQUEST);
+        session.removeAttribute(Constants.STOP_AJAX);
+        session.removeAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT);
+        session.removeAttribute(Constants.UI_POPULATION_FINISHED);
+        session.removeAttribute(Constants.KEYWORD);
+        session.removeAttribute(Constants.SELECTED_QUERY_NAME);
+
+        
+        try {
+            SavedQueryBizLogic savedQueryProvider =
+                    (SavedQueryBizLogic) request.getSession().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+            if (request.getParameterValues(Constants.MODEL_GROUPS) != null) {
+                actionForward = Constants.FORWARD_ADD_LIMIT;
+                ActionForward forward = mapping.findForward(actionForward);
+                return new ActionForward(forward.getName(), forward.getPath(), false);
+            } else {
+                Long queryId = Long.parseLong(request.getParameter(Constants.QUERY_ID));
                 ICab2bQuery query = savedQueryProvider.getQueryById(queryId);
-
                 Collection<ICondition> nonPara = QueryUtility.getAllNonParameteriedConditions(query);
                 Collection<ICondition> paraCond = QueryUtility.getAllParameterizedConditions(query);
-
                 response.setContentType("text/html");
                 PrintWriter writer = response.getWriter();
-
-                if (nonPara != null && !nonPara.isEmpty() && (paraCond == null || paraCond.isEmpty())) {
-                    writer.write("");
-                    writer.close();
-                    actionForward = "";
-                } else {
-                    String html =
-                            new AddLimitHTMLGeneratorBizLogic(servlet.getServletContext()
-                                .getRealPath(Constants.ADD_LIMIT_XML_FILE_PATH)).getHTMLForSavedQuery(query);
-                    writer.write(html);
-                    writer.close();
-                }
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-                ActionErrors errors = new ActionErrors();
-                ActionError error = new ActionError("fatal.addlimit.failure");
-                errors.add(Constants.FATAL_ADD_LIMIT_FAILURE, error);
-                saveErrors(request, errors);
-                actionForward = Constants.FORWARD_FAILURE;
+                String html =
+                        (nonPara != null && !nonPara.isEmpty() && (paraCond == null || paraCond.isEmpty())) ? ""
+                                : new AddLimitHTMLGeneratorBizLogic(servlet.getServletContext()
+                                    .getRealPath(Constants.ADD_LIMIT_XML_FILE_PATH)).getHTMLForSavedQuery(query);
+                writer.write(html);
+                writer.close();
+                return null;
             }
-        } else {
-            String[] modelGroupNames = request.getParameterValues(Constants.MODEL_GROUPS);
-            request.getSession().setAttribute(Constants.MODEL_GROUP_NAMES, modelGroupNames);
-            actionForward = Constants.FORWARD_ADD_LIMIT;
-            ActionForward forward = mapping.findForward(actionForward);
-            return new ActionForward(forward.getName(), forward.getPath(), false);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            ActionErrors errors = new ActionErrors();
+            ActionError error = new ActionError("fatal.addlimit.failure", e.getMessage());
+            errors.add(Constants.FATAL_ADD_LIMIT_FAILURE, error);
+            saveErrors(request, errors);
+            actionForward = Constants.FORWARD_FAILURE;
         }
         return mapping.findForward(actionForward);
     }

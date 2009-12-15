@@ -5,38 +5,85 @@ package edu.wustl.cab2bwebapp.constants;
  * @author Chetan Pundhir
  */
 public interface Constants {
+    /**
+     * Constant for FOUR_KILO_BYTES.
+     */
+    public static final int FOUR_KILO_BYTES = 4096;
+
+    /** Constants for AJAX Call */
+    public static final String AJAX_CALL = "Ajax-Call";
+
+    /** Constants for invalidRequest */
+    public static final String INVALID_REQUEST = "invalidRequest";
+
+    /** Constant for forward to infeasibleURLs */
+    public static final String INFEASIBLE_URL = "infeasibleURL";
+
+    /** Constants for isFirstRequest */
+    public static final String IS_FIRST_REQUEST = "isFirstRequest";
+
+    /** Constants for exported_file_path */
+    public static final String EXPORTED_FILE_PATH = "exported_file_path";
+
+    /** Constants for conditionList */
+    public static final String CONDITION_LIST = "conditionList";
+
+    /** Constants for stopAjax */
+    public static final String STOP_AJAX = "stopAjax";
+
+    /** Constants for Finishing Query Execution */
+    public static final String UI_POPULATION_FINISHED = "UI_population_finished";
+
+    /** Constants for processing */
+    public static final String PROCESSING = "processing";
+
+    /** Constants for keyword */
+    public static final String KEYWORD = "keyword";
+
+    /** Constants for queryBizLogicObject */
+    public static final String QUERY_BIZ_LOGIC_OBJECT = "queryBizLogicObject";
+
+    /** Constants for User versus QueryBizLogicObject used for maintaining background query execution map*/
+    public static final String USER_VS_QUERY_BIZ_LOGIC_OBJECT = "UserVsQueryBizLogicObject";
+
+    /** Constant for queryStatusDVOSet object */
+    public static final String QUERY_STATUS_DVO_SET = "queryStatusDVOSet";
+
     /** Constant for Saved Query Provider */
     public static final String SAVED_QUERY_BIZ_LOGIC = "savedQueryBizLogic";
 
     /** Constant for model groups */
     public static final String MODEL_GROUPS = "modelGroups";
-    
+
+    /** Constant for transformation max UI limit */
+    public static final String TRANSFORMATION_MAX_LIMIT = "transformationMaxLimit";
+
+    /** Constant for keywordQueryNotPresent */
+    public static final String KEYWORD_QUERY_NOT_PRESENT = "keywordQueryNotPresent";
+
     /** Constant for model group DVO list */
-    public static final String MODEL_GROUP_DVO_LIST = "modelGroupDVOList";    
+    public static final String MODEL_GROUP_DVO_LIST = "modelGroupDVOList";
 
     /** Constant for saved searches */
     public static final String SAVED_SEARCHES = "savedSearches";
-    
+
     /** Constant for saved searches */
     public static final String SAVED_QUERIES = "savedQueries";
 
+    /** Constant for selectedQueryName */
+    public static final String SELECTED_QUERY_NAME = "selectedQueryName";
+    
+    /** Constant for queryResultCount */
+    public static final String QUERY_RESULT_COUNT = "queryResultCount";
+    
     /** Constant for forward to home page */
     public static final String FORWARD_HOME = "home";
 
-    /** Constant for collection of model group */
-    public static final String FORWARD_MODEL_GROUP = "modelgroup";
-
     /** Constant for model group name */
     public static final String MODEL_GROUP_NAME = "modelGroupName";
-    
-    /** Constant for model group names */
-    public static final String MODEL_GROUP_NAMES = "modelGroupNames";    
 
     /** Constant for fatal failure on home page access */
     public static final String FATAL_HOME_FAILURE = "fatalHomeFailure";
-
-    /** Constant for model id */
-    public static final String MODEL_ID = "modelId";
 
     /** Constant for page forward to saved searches page */
     public static final String FORWARD_SAVED_SEARCHES = "savedsearches";
@@ -44,10 +91,7 @@ public interface Constants {
     /** Constant for load model associated data failure message */
     public static final String FATAL_DISPLAY_SAVED_SEARCHES_FAILURE = "fatalDisplaySavedSearchesFailure";
 
-    /** Constant for login page */
-    public static final String LOGIN_PAGE = "loginPage";
-
-    /** Constant for globus credential */
+    /** Constant for globus_credential */
     public static final String GLOBUS_CREDENTIAL = "globusCredential";
 
     /** Constant for anonymous user */
@@ -61,9 +105,9 @@ public interface Constants {
 
     /** Constant for invalid login error */
     public static final String ERROR_LOGIN_INVALID = "errorLoginInvalid";
-    
+
     /** Constant for session timeout error */
-    public static final String ERROR_SESSION_TIMEOUT = "errorSessionTimeout";    
+    public static final String ERROR_SESSION_TIMEOUT = "errorSessionTimeout";
 
     /** Constant for fatal login failure */
     public static final String FATAL_LOGIN_FAILURE = "fatalLoginFailure";
@@ -89,11 +133,16 @@ public interface Constants {
     /** Constant for display service instances failure message */
     public static final String FATAL_DISPLAY_SERVICE_INSTANCES_FAILURE = "fatalDisplayServiceInstancesFailure";
 
-    /** Constant for entity group collection */
-    public static final String ENTITY_GROUP_COLLECTION = "entityGroupCollection";
+    public static final String SERVICE_INSTANCES_NOT_CONFIGURED = "serviceInstancesNotConfigured";
 
     /** Constant for query id */
     public static final String QUERY_ID = "queryId";
+
+    /** Constant for query conditions */
+    public static final String QUERY_CONDITIONS = "queryConditions";
+
+    /** Constant for keyWordQueryId */
+    public static final String KEYWORD_QUERY_ID = "keyWordQueryId";
 
     /** Constant for forward to add limit page */
     public static final String FORWARD_ADD_LIMIT = "addlimit";
@@ -101,15 +150,27 @@ public interface Constants {
     /** Constant for fatal add limit failure */
     public static final String FATAL_ADD_LIMIT_FAILURE = "fatalAddLimitFailure";
 
-    /** Constant for add limit xml file path */
-    public static final String ADD_LIMIT_XML_FILE_PATH = "WEB-INF" + java.io.File.separator + "classes"
-            + java.io.File.separator + "add-limit.xml";
+    /** Constant for add limit XML file path */
+    public static final String ADD_LIMIT_XML_FILE_PATH =
+            "WEB-INF" + java.io.File.separator + "classes" + java.io.File.separator + "add-limit.xml";
 
-    /** Constant for error in query execution */
-    public static final String ERROR_QUERY_EXECUTE = "errorQueryExecute";
+    /** Constant for all hosting institutions */
+    public static final String ALL_HOSTING_INSTITUTIONS = "All Hosting Institutions";
 
-    /** Constant for attribute order */
-    public static final String ATTRIBUTE_ORDER = "attributeOrder";
+    /** Constant for Hosting Cancer Research Center */
+    public static final String HOSTING_CANCER_RESEARCH_CENTER = "Hosting Cancer Research Center";
+
+    /** Constant for Point of Contact */
+    public static final String POINT_OF_CONTACT = "Point of Contact";
+
+    /** Constant for Contact eMail */
+    public static final String CONTACT_EMAIL = "Contact eMail";
+
+    /** Constant for Hosting Institution */
+    public static final String HOSTING_INSTITUTION = "Hosting Institution";
+
+    /** Constant for Hosting Institution */
+    public static final String MODEL_NAME = "Model Name";
 
     /** Constant for query result */
     public static final String SEARCH_RESULTS = "searchResults";
@@ -119,19 +180,34 @@ public interface Constants {
 
     /** Constant for forward to search results page */
     public static final String FORWARD_SEARCH_RESULTS = "searchresults";
-    
+
     /** Constant for forward to search results panel page */
     public static final String FORWARD_SEARCH_RESULTS_PANEL = "searchresultspanel";
 
     /** Constant for fatal keyword search failure */
     public static final String FATAL_KYEWORD_SEARCH_FAILURE = "fatalKeywordSearchFailure";
+    
+    /** Constant for fatal export failure */
+    public static final String FATAL_EXPORT_FAILURE = "fatalExportFailure";
+
+    /** Constants for Failed Services */
+    public static final String FAILED_SERVICES = "failedServices";
+
+    /** Constants for Failed Services count */
+    public static final String FAILED_SERVICES_COUNT = "failedServicesCount";
 
     /** Constant for forward to failure page */
     public static final String FORWARD_FAILURE = "failure";
-    
-    /** Constants for Failed Services */
-    public static final String FAILED_SERVICES = "failedServices"; 
-    
-    /** Constants for Failed Services count */
-    public static final String FAILED_SERVICES_COUNT = "failedServicesCount";
+
+    /** Constant for forward to dash board page */
+    public static final String FORWARD_DASHBOARD = "dashboard";
+
+    /** Constant for forward to dash board panel page */
+    public static final String FORWARD_DASHBOARD_PANEL = "dashboardpanel";
+
+    /** Constant for forward to dash board action class */
+    public static final String FORWARD_DASHBOARD_ACTION = "dashboardaction";
+
+    /** Constant for fatal failure for displaying dash board */
+    public static final String FATAL_DISPLAY_DASHBOARD_FAILURE = "fatalDisplayDashboardFailure";
 }

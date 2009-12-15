@@ -9,6 +9,8 @@ import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
 import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.WindowUtilities;
+import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.util.Utility;
 
 /**
  * Class to create parameterized Query UI panel
@@ -40,11 +42,15 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
 
     private JDialog dialog;
 
+    /** This method creates an object of ParameteriszedQueryDataModel */
     public ParameterizedQueryMainPanel() {
         parameterizedQueryDataModel = new ParameterizedQueryDataModel();
         initGUI();
     }
 
+    /**
+     * @param queryModel
+     */
     public ParameterizedQueryMainPanel(ParameterizedQueryDataModel queryModel) {
         parameterizedQueryDataModel = queryModel;
         initGUI();
@@ -78,6 +84,10 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
     public ParameterizedQueryInfoPanel getInformationQueryPanel() {
         if (informationQueryPanel == null) {
             informationQueryPanel = new ParameterizedQueryInfoPanel();
+            ICab2bQuery query = parameterizedQueryDataModel.getQuery();
+            if (Utility.isMultiModelCategory(query.getOutputEntity())) {
+                informationQueryPanel.setKeywordAndBothOptionDisabled();
+            }
         }
         return informationQueryPanel;
     }
@@ -101,11 +111,15 @@ public class ParameterizedQueryMainPanel extends Cab2bPanel {
         return parameterizedQueryDataModel;
     }
 
+    /**
+     * 
+     */
     public void showInDialog() {
         Dimension dimension = MainFrame.getScreenDimension();
-        dialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), this, "Unsaved Condition",
-                                             new Dimension((int) (dimension.width * 0.80),
-                                                     (int) (dimension.height * 0.75)), true, false);
+        dialog =
+                WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), this, "Unsaved Condition",
+                                            new Dimension((int) (dimension.width * 0.80),
+                                                    (int) (dimension.height * 0.75)), true, false);
         dialog.setVisible(true);
 
     }

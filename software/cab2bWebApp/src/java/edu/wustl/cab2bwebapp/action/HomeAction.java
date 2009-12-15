@@ -1,8 +1,12 @@
 package edu.wustl.cab2bwebapp.action;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +27,7 @@ import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.user.UserOperations;
 import edu.wustl.cab2bwebapp.bizlogic.ModelGroupBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
+import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryBizLogic;
 import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.cab2bwebapp.dvo.ModelGroupDVO;
 
@@ -49,16 +54,42 @@ public class HomeAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
-        HttpSession session = request.getSession();
-        SavedQueryBizLogic savedQueryBizLogic =
-                (SavedQueryBizLogic) request.getSession().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
-
-        String findForward = null;
+        String actionForward = null;
         try {
-            //Removing SEARCH_RESULTS attributes from session				
+            HttpSession session = request.getSession();
+            SavedQueryBizLogic savedQueryBizLogic =
+                    (SavedQueryBizLogic) session.getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+            //Removing SEARCH_RESULTS attributes from session               
             session.removeAttribute(Constants.SEARCH_RESULTS);
             session.removeAttribute(Constants.SEARCH_RESULTS_VIEW);
             session.removeAttribute(Constants.FAILED_SERVICES_COUNT);
+            session.removeAttribute(Constants.SAVED_QUERIES);
+            session.removeAttribute(Constants.FAILED_SERVICES);
+            session.removeAttribute(Constants.QUERY_ID);
+            session.removeAttribute(Constants.SERVICE_INSTANCES);
+            session.removeAttribute(Constants.MODEL_GROUPS);
+            session.removeAttribute(Constants.CONDITION_LIST);
+            session.removeAttribute(Constants.IS_FIRST_REQUEST);
+            session.removeAttribute(Constants.STOP_AJAX);
+            session.removeAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT);
+            session.removeAttribute(Constants.UI_POPULATION_FINISHED);
+            session.removeAttribute(Constants.KEYWORD);
+            session.removeAttribute(Constants.SELECTED_QUERY_NAME);
+
+            //delete the file(exported by the user) from server , when user navigates to the home page
+            String filePath = (String) session.getAttribute(Constants.EXPORTED_FILE_PATH);
+            if (filePath != null && !filePath.equals("")) {
+                File file = new File(filePath);
+                if (file.exists()) {
+                    boolean isDeleted = file.delete();
+                    if (!isDeleted) {
+                        logger.info("Not able to delete file " + file.getName());
+                    } else {
+                        logger.info("File deleted successfully: " + file.getName());
+                    }
+                }
+                session.removeAttribute(Constants.EXPORTED_FILE_PATH);
+            }
 
             UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
             if (user == null) {
@@ -87,21 +118,29 @@ public class HomeAction extends Action {
                 }
                 session.setAttribute(Constants.MODEL_GROUP_DVO_LIST, modelGroupDVOList);
 
+                //Setting  USER_VS_EXECUTE_QUERY_BIZ_LOGIC_OBJECT at application level
+                if (session.getServletContext().getAttribute(Constants.USER_VS_QUERY_BIZ_LOGIC_OBJECT) == null) {
+                    Map<UserInterface, Set<QueryBizLogic>> userToBackgroundQueries =
+                            new HashMap<UserInterface, Set<QueryBizLogic>>();
+                    session.getServletContext().setAttribute(Constants.USER_VS_QUERY_BIZ_LOGIC_OBJECT,
+                                                             userToBackgroundQueries);
+                }
+
                 List<EntityGroupInterface> entityGroups = new ArrayList<EntityGroupInterface>();
                 if (!modelGroups.isEmpty()) {
                     ModelGroupInterface modelGroup = modelGroups.iterator().next();
                     entityGroups.addAll(modelGroup.getEntityGroupList());
                 }
             }
-            findForward = Constants.FORWARD_HOME;
+            actionForward = Constants.FORWARD_HOME;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
-            ActionError error = new ActionError("fatal.home.failure");
+            ActionError error = new ActionError("fatal.home.failure", e.getMessage());
             errors.add(Constants.FATAL_HOME_FAILURE, error);
             saveErrors(request, errors);
-            findForward = Constants.FORWARD_FAILURE;
+            actionForward = Constants.FORWARD_FAILURE;
         }
-        return mapping.findForward(findForward);
+        return mapping.findForward(actionForward);
     }
 }

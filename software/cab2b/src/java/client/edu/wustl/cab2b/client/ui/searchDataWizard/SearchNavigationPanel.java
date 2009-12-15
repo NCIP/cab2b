@@ -56,14 +56,13 @@ import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
-import edu.wustl.cab2b.common.queryengine.result.FailedTargetURL;
+import edu.wustl.cab2b.common.queryengine.result.FQPUrlStatus;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.util.global.ApplicationProperties;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author mahesh_iyer
@@ -299,7 +298,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
      * @param datarow
      */
     public void gotoDataListPanel(final IDataRow datarow) {
-        DataListPanel dataListPanel = (DataListPanel) searchCenterPanel.getArrCardElement(searchCenterPanel.getSelectedCardIndex() + 1);
+        DataListPanel dataListPanel =
+                (DataListPanel) searchCenterPanel.getArrCardElement(searchCenterPanel.getSelectedCardIndex() + 1);
         if (dataListPanel != null) {
             searchCenterPanel.remove(dataListPanel);
         }
@@ -320,6 +320,7 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     private class NextButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
             final IClientQueryBuilderInterface clientQueryBuilder = mainSearchPanel.getQueryObject();
+
             SearchNavigationPanel.messageLabel.setText("");
 
             if (searchCenterPanel.getSelectedCardIndex() == 0) {
@@ -328,42 +329,64 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 CustomSwingWorker swingWorker = new CustomSwingWorker(SearchNavigationPanel.this) {
                     @Override
                     protected void doNonUILogic() throws Exception {
+                        if (!isLimitAdded()) {
+                            return;
+                        }
                         Collection<EntityInterface> entities = clientQueryBuilder.getEntities();
-                        for (EntityInterface entityInterface : entities) {
-                            serviceURLButtonFlag = Utility.isCategory(entityInterface);
+                        for (EntityInterface entity : entities) {
+                            serviceURLButtonFlag =
+                                    Utility.isCategory(entity) || Utility.isMultiModelCategory(entity);
                             if (serviceURLButtonFlag) {
                                 break;
                             }
                         }
-
                         validateQueryAndMoveToAddLimitPanel(clientQueryBuilder);
                     }
 
                     @Override
                     protected void doUIUpdateLogic() throws Exception {
+                    }
+
+                    /**
+                     * @return
+                     */
+                    private boolean isLimitAdded() {
                         if (clientQueryBuilder == null || clientQueryBuilder.getVisibleExressionIds().size() == 0) {
                             // Pop-up a dialog asking the user to add at least a
                             // rule.
                             JOptionPane.showMessageDialog(mainSearchPanel.getParent(),
                                                           "Please add Limit(s) before proceeding",
                                                           "Cannot Proceed", JOptionPane.WARNING_MESSAGE);
-                            return;
+                            return false;
                         }
+                        return true;
                     }
                 };
                 swingWorker.start();
             } else if (searchCenterPanel.getSelectedCardIndex() == 2) {
-                CustomSwingWorker swingWorker = new CustomSwingWorker(SearchNavigationPanel.this,
-                        SearchNavigationPanel.this.mainSearchPanel) {
 
-                    protected void doNonUILogic() throws Exception {
-                        executeQuery(clientQueryBuilder);
-                    }
+                ICab2bQuery query = (ICab2bQuery) clientQueryBuilder.getQuery();
+                if (Utility.isMultiModelCategory(query.getOutputEntity())) {
+                    JOptionPane
+                        .showMessageDialog(
+                                           mainSearchPanel.getParent(),
+                                           "Currently there is no support for \n Multimodel Category Query execution in caB2B client. \nPlease use web appplication for \n executing Multimodel category query.",
+                                           "Cannot Proceed", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
 
-                    protected void doUIUpdateLogic() {
-                        showResult();
-                    }
-                };
+                CustomSwingWorker swingWorker =
+                        new CustomSwingWorker(SearchNavigationPanel.this,
+                                SearchNavigationPanel.this.mainSearchPanel) {
+
+                            protected void doNonUILogic() throws Exception {
+                                executeQuery(clientQueryBuilder);
+                            }
+
+                            protected void doUIUpdateLogic() {
+                                showResult();
+                            }
+                        };
                 swingWorker.start();
             } else if (searchCenterPanel.getSelectedCardIndex() == 3) {
                 gotoDataListPanel(null);
@@ -388,9 +411,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             try {
                 b2bquery.getConstraints().getRootExpression();
             } catch (MultipleRootsException e) {
-                JOptionPane.showMessageDialog(mainSearchPanel.getParent(),
-                                              ErrorCodeHandler.getErrorMessage(ErrorCodeConstants.QM_0003),
-                                              "Connect Nodes.", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(mainSearchPanel.getParent(), ErrorCodeHandler
+                    .getErrorMessage(ErrorCodeConstants.QM_0003), "Connect Nodes.", JOptionPane.WARNING_MESSAGE);
                 gotoAddLimitPanel();
                 return;
             }
@@ -424,8 +446,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                     gotoAddLimitPanel();
                 }
             } else {
-                ViewSearchResultsPanel viewSearchResultsPanel = new ViewSearchResultsPanel(queryResults,
-                        mainSearchPanel);
+                ViewSearchResultsPanel viewSearchResultsPanel =
+                        new ViewSearchResultsPanel(queryResults, mainSearchPanel);
                 JXPanel panelThree = searchCenterPanel.getArrCardElement(3);
                 if (searchCenterPanel.getArrCardElement(3) != null) {
                     searchCenterPanel.remove(panelThree);
@@ -449,21 +471,20 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
                 // Get the Functional class for root and update query object
                 // with it.
                 queryResults = CommonUtils.executeQuery((ICab2bQuery) clientQueryBuilder.getQuery());
-                Collection<FailedTargetURL> failedURLs = null;
-                if(queryResults != null) {
-                    failedURLs = queryResults.getFailedURLs();
+                /*Collection<FQPUrlStatus> failedURLs = null;
+                if (queryResults != null) {
+                    failedURLs = queryResults.getFQPUrlStatus();
                 }
-                
                 StringBuffer output = new StringBuffer();
                 //FQP 1.3 server code test
                 if (failedURLs != null) {
-                    for (FailedTargetURL url : failedURLs) {
-                        output = output.append("\n URL : " + url.getTargetUrl() + "\t Target Class obejct:"
-                                + ((gov.nih.nci.cagrid.dcql.Object) url.getTargetObject()).getName()
-                                + "\t Error msg : " + url.getErrorMessage());
+                    for (FQPUrlStatus url : failedURLs) {
+                        output =
+                                output.append("\n URL : " + url.getTargetUrl() + "\t Error msg : "
+                                        + url.getMessage());
                     }
                 }
-                System.out.println("Failed URLS :" + output);
+                System.out.println("Failed URLS :" + output);*/
             }
         } catch (Exception e) {
             CommonUtils.handleException(e, SearchNavigationPanel.this.mainSearchPanel, true, false, false, false);
@@ -583,11 +604,11 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
             MainFrame.setScreenDimesion(Toolkit.getDefaultToolkit().getScreenSize());
             Dimension screenDimesion = MainFrame.getScreenDimension();
             final String title = ApplicationProperties.getValue(MYSETTINGS_FRAME_TITLE);
-            Dimension dimension = new Dimension((int) (screenDimesion.width * 0.90),
-                    (int) (screenDimesion.height * 0.85));
-            final JDialog serviceInstanceDialog = WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(),
-                                                                              mainPanel, title, dimension, true,
-                                                                              true);
+            Dimension dimension =
+                    new Dimension((int) (screenDimesion.width * 0.90), (int) (screenDimesion.height * 0.85));
+            final JDialog serviceInstanceDialog =
+                    WindowUtilities.setInDialog(NewWelcomePanel.getMainFrame(), mainPanel, title, dimension, true,
+                                                true);
             final RightPanel rightPanel = new RightPanel(selectedEntityList, entityURLMap);
             mainPanel.add(new JPanel(new BorderLayout(2, 1)), BorderLayout.WEST);
             mainPanel.add(rightPanel, BorderLayout.CENTER);
@@ -616,7 +637,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
         private void updateQueryForURLS() {
             List<String> queryURLList = new ArrayList<String>();
             final ICab2bQuery b2bquery = (ICab2bQuery) mainSearchPanel.queryObject.getQuery();
-            EntityGroupInterface entityGroup = b2bquery.getOutputEntity().getEntityGroupCollection().iterator().next();
+            EntityGroupInterface entityGroup =
+                    b2bquery.getOutputEntity().getEntityGroupCollection().iterator().next();
             String groupName = entityGroup.getName();
             if (entityURLMap.get(groupName) != null) {
                 queryURLList.addAll(entityURLMap.get(groupName));
@@ -638,8 +660,8 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
             Cab2bQuery query = (Cab2bQuery) mainSearchPanel.getQueryObject().getQuery();
             if (CommonUtils.isServiceURLConfigured(query, mainSearchPanel.getParent())) {
-                parameterizedQueryMainPanel = new ParameterizedQueryMainPanel(new ParameterizedQueryDataModel(
-                        query));
+                parameterizedQueryMainPanel =
+                        new ParameterizedQueryMainPanel(new ParameterizedQueryDataModel(query));
                 parameterizedQueryMainPanel.showInDialog();
             }
             // for updating queries on main frame

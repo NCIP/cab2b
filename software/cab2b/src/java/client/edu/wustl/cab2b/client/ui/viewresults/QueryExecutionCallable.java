@@ -15,8 +15,6 @@ import edu.wustl.cab2b.client.ui.query.ClientQueryBuilder;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.common.datalist.DataRow;
 import edu.wustl.cab2b.common.datalist.IDataRow;
-import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
-import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -111,7 +109,7 @@ public class QueryExecutionCallable implements Callable<QueryResultObject> {
     private List<IDataRow> getRecords(ICab2bQuery query) {
         IQueryResult<IRecord> relatedQueryResults = null;
         try {
-            relatedQueryResults = (IQueryResult<IRecord>) CommonUtils.executeQuery(query);
+            relatedQueryResults = (IQueryResult<IRecord>) CommonUtils.executeQuery(query, true);
         } catch (Exception e) {
             logger.error("Error in exeuting query :" + e.getMessage());
             return null;

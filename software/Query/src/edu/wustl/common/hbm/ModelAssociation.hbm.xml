@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-lazy="false">
+	<class
+		name="edu.wustl.common.querysuite.metadata.associations.impl.ModelAssociation"
+		table="QUERY_MODEL_ASSOCIATION" dynamic-update="false"
+		dynamic-insert="false">
+		<cache usage="read-write" />
+
+		<id name="id" column="IDENTIFIER" type="long" length="30"
+			unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">QUERY_MODEL_ASSOCIATION_SEQ</param>
+			</generator>
+		</id>
+
+
+		<joined-subclass
+			name="edu.wustl.common.querysuite.metadata.associations.impl.IntraModelAssociation"
+			table="QUERY_INTRA_MODEL_ASSOCIATION">
+			<key column="IDENTIFIER" />
+			<property name="dynamicExtensionsAssociation"
+				column="DE_ASSOCIATION_ID" not-null="true">
+				<type name="edu.wustl.common.hibernate.CanonicalFormType">
+					<param name="canonical-form-provider">
+						edu.wustl.metadata.hibernate.AssociationCanonicalFormProvider
+					</param>
+				</type>
+			</property>
+		</joined-subclass>
+
+		<joined-subclass
+			name="edu.wustl.common.querysuite.metadata.associations.impl.InterModelAssociation"
+			table="QUERY_INTER_MODEL_ASSOCIATION">
+			<key column="IDENTIFIER" />
+			<property name="sourceServiceUrl" type="string"
+				column="SOURCE_SERVICE_URL" not-null="true" />
+
+			<property name="targetServiceUrl" type="string"
+				column="TARGET_SERVICE_URL" not-null="true" />
+
+			<property name="sourceAttribute" column="SOURCE_ATTRIBUTE_ID"
+				not-null="true">
+				<type name="edu.wustl.common.hibernate.CanonicalFormType">
+					<param name="canonical-form-provider">
+						edu.wustl.metadata.hibernate.AttributeCanonicalFormProvider
+					</param>
+				</type>
+			</property>
+
+			<property name="targetAttribute" column="TARGET_ATTRIBUTE_ID"
+				not-null="true">
+				<type name="edu.wustl.common.hibernate.CanonicalFormType">
+					<param name="canonical-form-provider">
+						edu.wustl.metadata.hibernate.AttributeCanonicalFormProvider
+					</param>
+				</type>
+			</property>
+
+		</joined-subclass>
+
+	</class>
+
+</hibernate-mapping>

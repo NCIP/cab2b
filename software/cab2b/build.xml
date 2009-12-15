@@ -2,9 +2,11 @@
 	<property name="src.dir" location="src" />
 	<property name="source.dir" location="${src.dir}/java" />
 	<property name="resource.dir" location="${src.dir}/resources" />
+	<property name="mmc.dir" location="${resource.dir}/mmc" />
 
 	<property name="conf.dir" location="${src.dir}/conf" />
-
+	<property file="../build/project.properties" />
+	<property file="../build/install.properties" />
 	<property file="${conf.dir}/server.properties" />
 
 	<property name="common.src" location="${source.dir}/common" />
@@ -29,7 +31,7 @@
 
 	<property name="XmlLogger.file" value="${build.log.dir}\log.xml" />
 	<tstamp>
-		<format property="TODAY" pattern="MMMM-dd-yyyy" locale="en" />
+		<format property="TODAY" pattern="d-MMMM-yyyy hh:mm aa" locale="en" />
 	</tstamp>
 
 	<property name="testcase.properties.folder" location="${workarea.dir}/TestCaseProperties" />
@@ -41,9 +43,13 @@
 	<property name="jbossjca.service.xml" location="${conf.dir}/jbossjca-service.xml" />
 	<property name="log4j.xml.file" location="${conf.dir}/log4j.xml" />
 	<property name="tomcat.web.xml.file" location="${conf.dir}/tomcat_web.xml" />
+	<property name="jboss.invoker.service.xml.file" location="${conf.dir}/invoker_jboss-service.xml" />
+	<property name="cab2b.runtime.properties" location="${conf.dir}/cab2b_server.properties" />
+	<property name="ejb.jboss.xml.file" location="${conf.dir}/ejb/jboss.xml" />
 
 	<property name="db.scripts.dir" location="db" />
-
+	<property name="db.install.scripts.dir" location="${db.scripts.dir}/db-install" />
+	<property name="db.install.mysql.scripts.dir" location="${db.install.scripts.dir}/mysql" />
 	<property name="server.jar.dir" location="${workarea.dir}/serverJar" />
 	<property name="server.jar.file" location="${workarea.dir}/cab2bServer.jar" />
 	<property name="caB2B.standalone.jar.file" location="${workarea.dir}/cab2bStandAlone.jar" />
@@ -151,8 +157,16 @@
 		</fileset>
 	</path>
 
+	<path id="mmcloader.classpath">
+		<path refid="server.classpath" />
+		<pathelement location="${conf.dir}" />
+		<pathelement location="${server.classes.dir}" />
+		<pathelement location="${common.classes.dir}" />
+	</path>
+	
 	<!-- ================================================================================== -->
-	<target name="initialize">
+	<target name="initialize" depends="clean.all">
+		<copy file="${resource.dir}/ejb/jboss.xml" todir="${conf.dir}/ejb" />
 		<copy todir="${conf.dir}">
 			<fileset dir="${resource.dir}/properties">
 				<include name="*.properties" />
@@ -161,9 +175,15 @@
 
 		<replace file="${conf.dir}/cab2b.properties" token="@server.host@" value="${server-host}" />
 		<replace file="${conf.dir}/cab2b.properties" token="@server.port@" value="${server-port}" />
+		<replace file="${conf.dir}/cab2b.properties" token="@jndi.protocol@" value="${jndi.protocol}" />
+		<replace file="${conf.dir}/cab2b.properties" token="@jndi.invoker.url@" value="${jndi.invoker.url}" />
+
+		<replace file="${conf.dir}/cab2b.properties" token="@server.host@" value="${server-host}" />
+		<replace file="${conf.dir}/cab2b.properties" token="@server.port@" value="${server-port}" />
 
 		<replace file="${conf.dir}/client.properties" token="@grid.type@" value="${grid-type}" />
 
+		<replace file="${conf.dir}/server.properties" token="@application.build@" value="Build: ${application.build} ${TODAY}" />
 		<replace file="${conf.dir}/server.properties" token="@ds.name@" value="${ds-name}" />
 		<replace file="${conf.dir}/server.properties" token="@db.loader@" value="${db-loader}" />
 		<replace file="${conf.dir}/server.properties" token="@default.user@" value="${default-user}" />
@@ -185,6 +205,7 @@
 		<replace file="${conf.dir}/cagrid.properties" token="@grid.cert@" value="${grid-cert}" />
 		<replace file="${conf.dir}/cagrid.properties" token="@grid.key@" value="${grid-key}" />
 	</target>
+
 	<!-- ================================================================================== -->
 	<target name="pmd" description="PMD scan Java source code and looks for potential code problems.">
 		<path id="pmd.classpath">
@@ -222,15 +243,28 @@
 		</pmd>
 	</target>
 
-	<!-- ==============Cleans Everything in workarea folder=============== 	-->
+	<!-- ==============Cleans all the artifacts generated=============== 	-->
 	<target name="clean.all">
-		<delete includeemptydirs="true">
-			<fileset dir="${workarea.dir}">
-				<include name="**/*" />
+		<ant inheritAll="false" inheritRefs="false" dir="${cab2badmin.location}" antfile="${cab2badmin.location}/build.xml" target="clean.all" />
+		<echo message="Cleaned Admin" />
+
+		<ant inheritall="false" inheritRefs="false" dir="${cab2bwebapp.location}" antfile="${cab2bwebapp.location}/build.xml" target="clean.all" />
+		<echo message="Cleaned WebApp" />
+
+		<delete includeemptydirs="true" dir="${workarea.dir}" />
+		<delete>
+			<fileset dir="${webstart.src}">
+				<include name="*.class" />
 			</fileset>
 		</delete>
-		<delete file="build\log.xml" />
+		<echo message="Cleaned caB2B" />
+		<delete file="${conf.dir}/server.properties" />
+		<delete file="${conf.dir}/cagrid.properties" />
+		<delete file="${conf.dir}/client.properties" />
+		<delete file="${conf.dir}/cab2b.properties" />
+		<delete file="${conf.dir}/ejb/jboss.xml" />
 	</target>
+
 	<!-- ================================================================================== -->
 	<target name="compile.common">
 		<mkdir dir="${common.classes.dir}" />
@@ -314,8 +348,9 @@
 				<include name="**/*.jar" />
 			</fileset>
 		</copy>
-		<echo message="java -Xmx512m -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="false" />
-		<echo message="java -Xmx512m -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="false" />
+		<echo message="java -Xmx512m -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="true" />
+		<echo message="java -Xmx512m -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="true" />
+
 		<copy todir="${client.setup.dir}/conf">
 			<fileset dir="${conf.dir}">
 				<include name="Cab2bApplicationResources.properties" />
@@ -330,6 +365,7 @@
 				<include name="log4j.properties" />
 			</fileset>
 		</copy>
+		<antcall target="set.cab2b.nontrusted.ca.conf" />
 		<mkdir dir="${client.setup.dir}/conf/production" />
 		<mkdir dir="${client.setup.dir}/conf/training" />
 		<copy todir="${client.setup.dir}/conf/production">
@@ -351,8 +387,61 @@
 		<zip destfile="${client.setup.zip.file}" basedir="${client.setup.dir}" />
 	</target>
 
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: set.cab2b.nontrusted.ca.conf                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="set.cab2b.nontrusted.ca.conf" depends="set.ssl.enable.condition,set.trusted.ca.condition" if="jboss.ssl.enable.true" unless="jboss.ssl.trusted.ca.true">
+		<echo message="java -Djavax.net.ssl.trustStore=./conf/${jboss.ssl.truststore.filename} -Djavax.net.ssl.trustStorePassword=${jboss.ssl.truststore.password} -Dorg.jboss.security.ignoreHttpsHost=${org.jboss.security.ignoreHttpsHost} -Xmx512m -jar cab2bClient.jar " file="${client.setup.dir}/run.bat" append="false" />
+		<echo message="java -Djavax.net.ssl.trustStore=./conf/${jboss.ssl.truststore.filename} -Djavax.net.ssl.trustStorePassword=${jboss.ssl.truststore.password} -Dorg.jboss.security.ignoreHttpsHost=${org.jboss.security.ignoreHttpsHost} -Xmx512m -jar cab2bClient.jar " file="${client.setup.dir}/run.sh" append="false" />
+		<copy file="${jboss.ssl.truststore.location}" todir="${client.setup.dir}/conf" overwrite="true" />
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: set.trusted.ca.condition                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="set.trusted.ca.condition">
+		<condition property="jboss.ssl.trusted.ca.true">
+			<equals arg1="${jboss.ssl.trusted.ca}" arg2="true" />
+		</condition>
+	</target>
+
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: set.cab2b.secure.conf                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="set.cab2b.secure.conf" depends="set.ssl.enable.condition" if="jboss.ssl.enable.true">
+		<property name="invoker.service.xml.file" location="${conf.dir}/invoker_ssl_jboss-service.xml" />
+		<property name="jboss.invoker.web.xml.file" location="${conf.dir}/invoker_ssl_web.xml" />
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: replace.secure.conf.file.contents                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="replace.secure.conf.file.contents" depends="set.ssl.enable.condition" if="jboss.ssl.enable.true">
+		<replace file="${conf.dir}/ejb/jboss.xml" token="type=http" value="type=https" />
+	</target>
+
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: set.cab2b.insecure.conf                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="set.cab2b.insecure.conf" depends="set.ssl.enable.condition" unless="jboss.ssl.enable.true">
+		<!-- Properties for non secure JBoss, these propertyies are changed in target 'set.cab2b.secure.conf' if the jboss.ssl.enable is true -->
+		<property name="jboss.invoker.web.xml.file" location="${conf.dir}/invoker_web.xml" />
+		<property name="invoker.service.xml.file" location="${conf.dir}/invoker_jboss-service.xml" />
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: set.ssl.enable.condition                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="set.ssl.enable.condition">
+		<condition property="jboss.ssl.enable.true">
+			<equals arg1="${jboss.ssl.enable}" arg2="true" />
+		</condition>
+	</target>
+
 	<!-- ================================================================================== -->
-	<target name="server.jar">
+	<target name="server.jar" depends="set.cab2b.secure.conf,set.cab2b.insecure.conf,replace.secure.conf.file.contents">
 		<mkdir dir="${server.jar.dir}" />
 		<delete includeemptydirs="true">
 			<fileset dir="${server.jar.dir}">
@@ -361,12 +450,9 @@
 		</delete>
 
 		<mkdir dir="${server.jar.dir}/META-INF" />
-		<copy todir="${server.jar.dir}/META-INF">
-			<fileset dir="${conf.dir}/ejb">
-				<include name="ejb-jar.xml" />
-				<include name="jboss.xml" />
-			</fileset>
-		</copy>
+
+		<copy file="${ejb.jboss.xml.file}" tofile="${server.jar.dir}/META-INF/jboss.xml" />
+		<copy file="${conf.dir}/ejb/ejb-jar.xml" tofile="${server.jar.dir}/META-INF/ejb-jar.xml" />
 
 		<copy todir="${server.jar.dir}">
 			<fileset dir="${server.classes.dir}">
@@ -392,7 +478,7 @@
 
 		<mkdir dir="${server.jar.dir}/production" />
 		<copy todir="${server.jar.dir}/production">
-			<fileset dir="${conf.dir}/Production">
+			<fileset dir="${conf.dir}/production">
 				<include name="*.*" />
 			</fileset>
 		</copy>
@@ -696,6 +782,7 @@
 	<!-- create the client jar for Java Web Start deployment.      -->
 	<!-- ==========================================================-->
 	<target name="build.client.webstart.war">
+		<delete dir="${webstart.dir}"/>
 		<mkdir dir="${client.jar.dir}" />
 		<mkdir dir="${webstart.client.dir}" />
 		<mkdir dir="${webstart.jnlp.dir}" />
@@ -715,7 +802,7 @@
 				<include name="*.jnlp" />
 			</fileset>
 			<regexp pattern="@server-address@" />
-			<substitution expression="${webstart.server.host}:${webstart.server.port}" />
+			<substitution expression="${jndi.protocol}://${webstart.server.host}:${webstart.server.port}" />
 		</replaceregexp>
 		<!-- done replacing-->
 
@@ -795,7 +882,7 @@
 	</target>
 
 	<!-- ================================================================================== -->
-	<target name="build.project.jar" depends="clean.all,compile.client,compile.server">
+	<target name="build.project.jar" depends="compile.client,compile.server">
 		<jar basedir="${workarea.dir}/common/classes" destfile="${workarea.dir}/cab2b-common.jar">
 			<include name="**/*.*" />
 		</jar>
@@ -868,6 +955,61 @@
 		</delete>
 	</target>
 
+	<target name="generate.mmc.hbm" description="Generates Hibernate class descriptor files.">
+		<!-- Define the hibernatedoclet task -->
+		<taskdef name="hibernatedoclet" classname="xdoclet.modules.hibernate.HibernateDocletTask">
+			<classpath refid="xdoclet.classpath" />
+		</taskdef>
+
+		<!-- Execute the hibernatedoclet task -->
+		<hibernatedoclet destdir="${server.src}" excludedtags="@version,@author,@todo" force="${generateforce}" mergedir="${server.src}" verbose="false">
+			<fileset dir="${server.src}">
+				<include name="**/edu/wustl/cab2b/server/category/multimodelcategory/*.java" />
+			</fileset>
+			<hibernate version="2.0" />
+		</hibernatedoclet>
+
+		<!-- Upgrade grammar from Hibernate2 to Hibernate3 -->
+		<replace dir="${server.src}">
+			<include name="**/edu/wustl/cab2b/server/category/multimodelcategory/*hbm.xml" />
+
+			<replacefilter token="readonly=" value="inverse=" />
+			<replacefilter token="role=" value="name=" />
+			<replacefilter token="hibernate-mapping-2.0.dtd" value="hibernate-mapping-3.0.dtd" />
+			<replacefilter token="&lt;hibernate-mapping&gt;" value="&lt;hibernate-mapping default-lazy=&quot;false&quot;&gt;" />
+		</replace>
+
+		<copy todir="${hbm.dir}" overwrite="true">
+			<fileset dir="${server.src}/edu/wustl/cab2b/server/category/multimodelcategory">
+				<include name="*.hbm.xml" />
+			</fileset>
+		</copy>
+
+		<delete>
+			<fileset dir="${server.src}" includes="**/edu/wustl/cab2b/server/category/multimodelcategory/*.hbm.xml" />
+		</delete>
+	</target>
+
+	<!-- ================================================================================== -->
+	<target name="generate.mmc.schema.mysql">
+		<taskdef name="schemaexport" classname="org.hibernate.tool.hbm2ddl.SchemaExportTask">
+			<classpath>
+				<pathelement location="${server.classes.dir}" />
+				<fileset dir="${lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+				<path refid="xdoclet.classpath" />
+			</classpath>
+		</taskdef>
+
+		<schemaexport properties="conf/mysql_db.properties" quiet="yes" text="yes" delimiter=";" output="scripts/mmc_mysql.sql">
+			<fileset dir="${hbm.dir}">
+				<include name="MultiModelCategoryImpl.hbm.xml" />
+				<include name="MultiModelAttributeImpl.hbm.xml" />
+			</fileset>
+		</schemaexport>
+	</target>
+
 	<!-- ================================================================================== -->
 	<target name="generate.query.schema.mysql">
 		<taskdef name="schemaexport" classname="org.hibernate.tool.hbm2ddl.SchemaExportTask">
@@ -915,8 +1057,6 @@
 		</war>
 	</target>
 
-
-
 	<!-- =========================================================================================== -->
 	<macrodef name="replace.application.xml">
 		<attribute name="applicationfile" />
@@ -926,34 +1066,39 @@
 				&lt;module id=&quot;adminModule_1233568391515&quot;&gt;
 				&lt;web&gt;
 				&lt;web-uri&gt;cab2badmin.war&lt;/web-uri&gt;
-				&lt;context-root&gt;cab2badmin&lt;/context-root&gt;
+				&lt;context-root&gt;cab2b/admin&lt;/context-root&gt;
 				&lt;/web&gt;
 				&lt;/module&gt;
 				
 				&lt;module id=&quot;WebModule_1233568391515&quot;&gt;
 				&lt;web&gt;
 				&lt;web-uri&gt;cab2bWebApp.war&lt;/web-uri&gt;
-				&lt;context-root&gt;cab2bwebapp&lt;/context-root&gt;
+				&lt;context-root&gt;cab2b&lt;/context-root&gt;
 				&lt;/web&gt;
 				&lt;/module&gt;
 				
 				&lt;module id=&quot;cab2b_1233568391515&quot;&gt;
 				&lt;web&gt;
 				&lt;web-uri&gt;cab2b.war&lt;/web-uri&gt;
-				&lt;context-root&gt;/&lt;/context-root&gt;
+				&lt;context-root&gt;cab2b/webpage&lt;/context-root&gt;
 				&lt;/web&gt;
 				&lt;/module&gt; " />
 		</sequential>
 	</macrodef>
 
 	<!-- ================Target for deploying all 3 modules of cab2b =============================== -->
-	<target name="dist" depends="initialize,build.project.jar,build.ear" description="Creates the distribution unit i.e., a complete cab2bServer.ear">
+	<target name="dist" depends="build.all,distribute" description="Creates the distribution unit and copy all ariticats to distribution folder" />
+
+	<target name="build.all" depends="initialize,build.project.jar,build.ear" description="Builds the distribution unit i.e., a complete cab2bServer.ear">
 		<ant inheritAll="false" inheritRefs="true" antfile="${cab2badmin.location}/build.xml" target="war" dir="${cab2badmin.location}">
 			<property name="ds-name" value="${ds-name}" />
+			<property name="jboss.ssl.enable" value="${jboss.ssl.enable}" />
 		</ant>
 		<echo message="Admin War Created" />
 
-		<ant antfile="${cab2bwebapp.location}/build.xml" dir="${cab2bwebapp.location}" target="war" inheritall="false" />
+		<ant inheritRefs="true"  antfile="${cab2bwebapp.location}/build.xml" dir="${cab2bwebapp.location}" target="war" inheritall="false">
+			<property name="jboss.ssl.enable" value="${jboss.ssl.enable}" />
+		</ant>
 		<echo message="caB2B Web App War Created" />
 
 		<delete>
@@ -975,11 +1120,16 @@
 		<copy file="${workarea.dir}/cab2b.war" todir="${workarea.dir}/cab2bServer" />
 		<delete file="${ear.file}" />
 		<ear basedir="${workarea.dir}/cab2bServer" destfile="${ear.file}" appxml="${workarea.dir}/cab2bServer/META-INF/application.xml" includes="**/*.*" />
+	</target>
 
+	<target name="distribute">
 		<copy file="${workarea.dir}/cab2bServer.ear" todir="${dist.dir}" />
 		<copy file="${jbossjca.service.xml}" todir="${dist.dir}" />
 		<copy file="${log4j.xml.file}" todir="${dist.dir}" />
 		<copy file="${tomcat.web.xml.file}" tofile="${dist.dir}/web.xml" />
+		<copy file="${jboss.invoker.web.xml.file}" tofile="${dist.dir}/invoker_web.xml" />
+		<copy file="${invoker.service.xml.file}" tofile="${dist.dir}/jboss-service.xml" />
+		<copy file="${cab2b.runtime.properties}" tofile="${dist.dir}/cab2b_server.properties" />
 		<copy file="${lib.dir}/server/oracleDriver.jar" todir="${dist.dir}" />
 		<copy file="${lib.dir}/server/mysql-connector-java-5.0.8-bin.jar" todir="${dist.dir}" />
 		<copy file="${lib.dir}/common/hibernate3.jar" todir="${dist.dir}" />
@@ -991,51 +1141,42 @@
 		<copy file="${lib.dir}/common/puretls.jar" todir="${dist.dir}" />
 	</target>
 
-	<!-- ==================================================================================
-	<property name="cab2bDS.file.name" value="cab2b-ds.xml" />
-	<property name="cab2bDS.file" location="${conf.dir}/${cab2bDS.file.name}" />
-	<property name="jboss.common.lib.dir" location="${jboss.home}/server/default/lib" />
-	<property name="jboss.deploy.dir" location="${jboss.home}/server/default/deploy" />
-	<property name="jboss.log.dir" location="${jboss.home}/server/default/log" />
-	<target name="dev.deploy" depends="build.project.jar,build.ear,update.server,replace.datasource" description="Deploys EAR file to JBoss application server">
-		<ant antfile="${cab2badmin.location}/build.xml" dir="${cab2badmin.location}" target="war" inheritall="false" />
-		<echo message="Admin War Created" />
+	<!--==========================================================================
+		Developer's deployment target. This must be used by developers to 
+		install/deploy caB2B locally. Unlike BDA, this is not going to download
+		the JBoss on its own. It's developer's responsibility to setup JBoss and
+		define its path. 
+	 ===========================================================================-->
 
-		<ant antfile="${cab2bwebapp.location}/build.xml" dir="${cab2bwebapp.location}" target="war" inheritall="false" />
-		<echo message="caB2B Web App War Created" />
+	<!-- Set application.base.path based on platform -->
+	<condition property="application.base.path" value="${application.base.path.linux}">
+		<or>
+			<os family="unix" />
+			<os family="mac" />
+		</or>
+	</condition>
+	<condition property="application.base.path" value="${application.base.path.windows}">
+		<os family="windows" />
+	</condition>
+	<property name="jboss.home" value="${application.base.path}/${jboss.relative.path}" />
 
-		<delete>
-			<fileset dir="${workarea.dir}">
-				<include name="cab2b-common.jar" />
-				<include name="cab2b-server.jar" />
-				<include name="cab2b-client.jar" />
-			</fileset>
-		</delete>
+	<property name="jboss.common.lib.dir" location="${jboss.home}/server/${jboss.server.name}/lib" />
+	<property name="jboss.deploy.dir" location="${jboss.home}/server/${jboss.server.name}/deploy" />
+	<property name="jboss.log.dir" location="${jboss.home}/server/${jboss.server.name}/log" />
 
-		<move file="${ear.file}" todir="." />
-		<antcall target="create.cab2b.war" />
-		<move file="./cab2bServer.ear" todir="${workarea.dir}" />
+	<property name="cab2b.ds.file" value="cab2b-ds.xml" />
+	<property name="cab2b.ds.from.path" location="../common/resources/jboss-conf" />
+	<property name="cab2b.ds.to.path" location="${jboss.home}/server/${jboss.server.name}/deploy" />
 
-		<unjar src="${ear.file}" dest="${workarea.dir}/cab2bServer" />
-		<replace.application.xml applicationfile="${workarea.dir}/cab2bServer/META-INF/application.xml" />
-		<copy file="${cab2badmin.location}/build/cab2badmin.war" todir="${workarea.dir}/cab2bServer" />
-		<copy file="${cab2bwebapp.location}/build/cab2bWebApp.war" todir="${workarea.dir}/cab2bServer" />
-		<copy file="${workarea.dir}/cab2b.war" todir="${workarea.dir}/cab2bServer" />
-		<delete file="${ear.file}" />
-		<ear basedir="${workarea.dir}/cab2bServer" destfile="${ear.file}" appxml="${workarea.dir}/cab2bServer/META-INF/application.xml" includes="**/*.*" />
+	<property name="ds-name" value="${application.context.name}" />
+	<property name="server-port" value="${jboss.server.port}" />
 
-		<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
-	</target>
-	
-	<target name="replace.datasource">
-		<replace.db.properties.macro cfgfile="${jboss.deploy.dir}/${cab2bDS.file.name}" />
-	</target>
-	<target name="update.server">
+	<target name="dev.deploy" depends="build.all" description="Deploys EAR file to JBoss application server">
 		<delete dir="${jboss.home}/server/default/tmp/deploy" />
 
-		<copy overwrite="true" file="${cab2bDS.file}" todir="${jboss.deploy.dir}" />
 		<copy overwrite="true" file="${jbossjca.service.xml}" todir="${jboss.deploy.dir}" />
-		<copy overwrite="true" file="${log4j.xml.file}" todir="${jboss.deploy.dir}" />
+		<copy overwrite="true" file="${log4j.xml.file}" todir="${jboss.home}/server/${jboss.server.name}/conf" />
+		<copy overwrite="true" file="${cab2b.runtime.properties}" todir="${jboss.home}/server/${jboss.server.name}/conf" />
 		<copy overwrite="true" file="lib/server/oracleDriver.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/server/mysql-connector-java-5.0.8-bin.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/common/hibernate3.jar" todir="${jboss.common.lib.dir}" />
@@ -1046,10 +1187,50 @@
 		<copy overwrite="true" file="lib/common/jce-jdk13-125.jar" todir="${jboss.common.lib.dir}" />
 		<copy overwrite="true" file="lib/common/puretls.jar" todir="${jboss.common.lib.dir}" />
 
-		<mkdir dir="${jboss.home}/server/default/log" />
+		<mkdir dir="${jboss.log.dir}" />
 		<echo message="" file="${jboss.log.dir}/caB2B.log" append="false" />
+
+		<copy file="${cab2b.ds.from.path}/${cab2b.ds.file}" todir="${cab2b.ds.to.path}" overwrite="true" />
+		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@application.context.name@" value="${application.context.name}" />
+		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.url@" value="${database.url}" />
+		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.user@" value="${database.user}" />
+		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.password@" value="${database.password}" />
+		<replace file="${cab2b.ds.to.path}/${cab2b.ds.file}" token="@database.driver@" value="com.mysql.jdbc.Driver" />
+
+		<copy overwrite="true" file="${ear.file}" todir="${jboss.deploy.dir}" />
 	</target>
-	================================================================================== -->
+
+	<target name="load.mmcs" depends="compile.server" description="Loads the MultiModelCategories">
+		<java failonerror="true" classname="edu.wustl.cab2b.server.multimodelcategory.PersistMultiModelCategory" classpathref="mmcloader.classpath" fork="yes">
+			<jvmarg value="-Xmx768m" />
+			<arg value="${mmc.dir}" />
+		</java>
+	</target>
+	
+	<!-- ================================= 
+          target: load.model              
+         ================================= -->
+    <target name="load.model" depends="" description="Loads given model from backend">
+    	<java failonerror="true" classname="edu.wustl.cab2b.server.path.LoadModelUtil" classpathref="mmcloader.classpath" fork="yes">
+    		<jvmarg value="-Xmx1024m"/>
+    	</java>
+    	<echo>Model Loaded Successfully !!!</echo>
+    </target>
+
+	<target name="find.path.ids" depends="compile.server" description="Finds the path ids for the given list of entities">
+		<input message="Please enter Pairs XML path: " addproperty="piars.xml.file" />
+		<available file="${piars.xml.file}" property="isFileAvail" />
+		<fail unless="isFileAvail" message="File doesn't exist!" />
+
+		<input message="Please enter output file path: " addproperty="pairs.out.file" />
+		<delete file="${pairs.out.file}" failonerror="no" />
+		<java failonerror="true" classname="edu.wustl.cab2b.server.multimodelcategory.MmcValidator" classpathref="mmcloader.classpath" fork="yes">
+			<jvmarg value="-Xmx768m" />
+			<arg value="false" />
+			<arg value="${piars.xml.file}" />
+			<arg value="${pairs.out.file}" />
+		</java>
+	</target>
 </project>
 
 <!-- ==================================================================================

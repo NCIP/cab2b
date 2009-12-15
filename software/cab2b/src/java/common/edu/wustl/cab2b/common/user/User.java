@@ -10,11 +10,12 @@ import java.util.HashSet;
  * 
  */
 public class User implements UserInterface, Serializable {
+    private static final long serialVersionUID = -4517981233726527311L;
 
     /**
      * Collection of service urls configured for the user. 
      */
-    private Collection<ServiceURLInterface> serviceURLCollection = new HashSet<ServiceURLInterface>();
+    private Collection<ServiceURLInterface> serviceURLCollection;
 
     /**
      * Database user ID
@@ -98,6 +99,9 @@ public class User implements UserInterface, Serializable {
      * @hibernate.collection-many-to-many class="edu.wustl.cab2b.common.user.ServiceURL" column="SERVICE_URL_ID"
      */
     public Collection<ServiceURLInterface> getServiceURLCollection() {
+        if (serviceURLCollection == null) {
+            serviceURLCollection = new HashSet<ServiceURLInterface>();
+        }
         return serviceURLCollection;
     }
 
@@ -130,9 +134,7 @@ public class User implements UserInterface, Serializable {
      * @param serviceURL
      */
     public void addServiceURL(ServiceURLInterface serviceURL) {
-        if (serviceURL != null) {
-            serviceURLCollection.add(serviceURL);
-        }
+        getServiceURLCollection().add(serviceURL);
     }
 
     /**
@@ -140,9 +142,7 @@ public class User implements UserInterface, Serializable {
      * @param serviceURL
      */
     public void removeServiceURL(ServiceURLInterface serviceURL) {
-        if (serviceURL != null) {
-            serviceURLCollection.remove(serviceURL);
-        }
+        getServiceURLCollection().remove(serviceURL);
     }
 
     /**

@@ -49,25 +49,49 @@
   return xmlhttp;
 }
 
- function processAJAXRequest(requestURL, responseReceiver)
+ function processAJAXRequest(requestURL, responseReceiver, hideLoadingImage, callbackFunction)
 { 
-  document.getElementById(responseReceiver).innerHTML = "<DIV style='text-align:center;'><IMG src='images/PageLoading.gif'></DIV>";
+   if(responseReceiver &&  hideLoadingImage!=1)
+  {
+	document.getElementById(responseReceiver).innerHTML = "<TABLE style='height:100%;width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'></TD></TR></TABLE>";
+  }
   var httpRequest = XMLHTTPObject();
-  httpRequest.open("GET", requestURL, true);
+  httpRequest.open("POST", requestURL, true);
+  httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  httpRequest.setRequestHeader("Ajax-Call", "true");
+  httpRequest.send(null);
   httpRequest.onreadystatechange = function(){ 
      if(httpRequest.readyState==4) 
     { 
-      results = httpRequest.status==200?httpRequest.responseText:""; //http.responseXML can be used to get an XML based response, if we need to have some XML output from a server file.
-	   if(httpRequest.status==500)
+	  var results = httpRequest.responseText;  	  
+	   if(results=="Exception")
 	  {
-  	    document.location = "Home.do?sessionTimeOut=true";
+  	     if(confirm('Incorrect or no databases to search configured for query! Do you want to re-configure now?'))
+		{
+		  document.location = "Home.do?redirect=true";
+		}
+		else
+		{
+		  document.location = "Home.do";
+		}
 	  }
-	   else
+	   else if(httpRequest.status==500)
 	  {
-	    document.getElementById(responseReceiver).innerHTML = results;
+		results = "<DIV style='text-align:center'>" + results + "</DIV>";
+	  }
+	   if(httpRequest.status!=403 && responseReceiver)
+	  {
+        document.getElementById(responseReceiver).innerHTML = results;
+		 if(callbackFunction && httpRequest.status==200)
+		{
+		  callbackFunction();
+		}
+	  }
+	   else if(httpRequest.status==403) //If user session timed out.
+	  {
+  	    alert(httpRequest.responseText);
+		document.location = "Home.do";
 	  }
     }
   }
-  httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  httpRequest.send(null);
 }

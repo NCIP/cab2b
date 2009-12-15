@@ -55,14 +55,14 @@
 						<bean:message key="label.username"/>
 					</DIV>
 					<DIV style="width:60%;float:right">
-						<input type="text" class="textbox" name="userName" value="" autocomplete="off"/>
+						<INPUT type="text" class="textbox" name="userName" autocomplete="off"/>
 					</DIV>
 					<BR/>
 					<DIV class="label">
 						<bean:message key="label.password"/>
 					</DIV>
 					<DIV style="width:60%;float:right">
-						<input type="password" class="textbox" name="password" value="" autocomplete="off"/>
+						<INPUT type="password" class="textbox" name="password" autocomplete="off"/>
 					</DIV>
 					<BR style="line-height: 2em"/>
 					<DIV style="text-align:center">
@@ -74,9 +74,6 @@
 						<DIV class="error hidden" id="error_userName"><bean:message key="error.username.empty"/></DIV>
 						<DIV class="error hidden" id="error_password"><bean:message key="error.password.empty"/></DIV>
 						<DIV id="errors"><html:errors/></DIV>
-					</DIV>
-					<DIV style="text-align:center">
-						<A href="Home.do" class="link"><bean:message key="link.home"/></A> <SPAN class="title">|</SPAN> <A href="http://cagrid-portal.nci.nih.gov/web/guest/register" class="link" target="_blank"><bean:message key="link.register"/></A>
 					</DIV>
 				</DIV>
 			</html:form>

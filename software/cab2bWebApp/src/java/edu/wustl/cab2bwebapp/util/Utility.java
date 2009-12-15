@@ -4,29 +4,11 @@
 
 package edu.wustl.cab2bwebapp.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import org.globus.gsi.GlobusCredential;
-
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
-import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
-import edu.wustl.cab2b.common.user.ServiceURLInterface;
-import edu.wustl.cab2b.common.user.UserInterface;
-import edu.wustl.cab2b.server.cache.EntityCache;
-import edu.wustl.cab2b.server.category.CategoryOperations;
-import edu.wustl.cab2b.server.modelgroup.ModelGroupOperations;
-import edu.wustl.cab2b.server.user.UserOperations;
-import edu.wustl.cab2bwebapp.bizlogic.ApplicationBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.ModelGroupBizLogic;
-import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
-import edu.wustl.common.querysuite.metadata.category.Category;
 
 /**
  * @author gaurav_mehta
@@ -39,16 +21,35 @@ public class Utility {
      * @param query
      * @return EntityGroupInterfcae object of query
      */
-    public static EntityGroupInterface getEntityGroup(ICab2bQuery query) {
-        EntityInterface outputEntity = query.getOutputEntity();
-        if (edu.wustl.cab2b.common.util.Utility.isCategory(outputEntity)) {
-            CategoryOperations categoryOperations = new CategoryOperations();
-            Category category = categoryOperations.getCategoryByEntityId(outputEntity.getId());
-            outputEntity = EntityCache.getInstance().getEntityById(category.getRootClass().getDeEntityId());
-        }
+    //Moved to edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil
+    /*   public static Collection<EntityGroupInterface> getEntityGroups(ICab2bQuery query) {
+           Collection<EntityGroupInterface> entityGroups = new HashSet<EntityGroupInterface>();
 
-        return edu.wustl.cab2b.common.util.Utility.getEntityGroup(outputEntity);
-    }
+           EntityInterface outputEntity = query.getOutputEntity();
+           if (edu.wustl.cab2b.common.util.Utility.isCategory(outputEntity)) {
+               entityGroups.add(getEntityGroupForCategory(outputEntity));
+           } else if (edu.wustl.cab2b.common.util.Utility.isMultiModelCategory(outputEntity)) {
+               MultiModelCategoryQuery mmcQuery = (MultiModelCategoryQuery) query;
+               Collection<ICab2bQuery> subQueries = mmcQuery.getSubQueries();
+               for (ICab2bQuery subQuery : subQueries) {
+                   outputEntity = subQuery.getOutputEntity();
+                   entityGroups.add(getEntityGroupForCategory(outputEntity));
+               }
+           } else {
+               entityGroups.add(edu.wustl.cab2b.common.util.Utility.getEntityGroup(outputEntity));
+           }
+
+           return entityGroups;
+       }*/
+
+    //Moved to edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil
+    /*   private static EntityGroupInterface getEntityGroupForCategory(EntityInterface outputEntity) {
+           CategoryOperations categoryOperations = new CategoryOperations();
+           Category category = categoryOperations.getCategoryByEntityId(outputEntity.getId());
+           outputEntity = EntityCache.getInstance().getEntityById(category.getRootClass().getDeEntityId());
+
+           return edu.wustl.cab2b.common.util.Utility.getEntityGroup(outputEntity);
+       }*/
 
     /**
      * This method returns a set of the entity groups that collectively forms one of the the given model groups names.
@@ -70,90 +71,104 @@ public class Utility {
      * @param queries
      * @return Collection<String>
      */
-    public static List<String> getQueryNameList(Collection<ICab2bQuery> queries) {
-        List<String> queryNameList = null;
-        if (queries != null) {
-            queryNameList = new ArrayList<String>();
-            for (ICab2bQuery query : queries) {
-                queryNameList.add(query.getName());
-            }
-        }
-        return queryNameList;
-    }
-
-    /**
-     * Method to verify model groups.
-     * @param modelGroupNames
-     * @param globusCredential
-     * @param savedQueryBizLogic
-     * @return Collection<ICab2bQuery>
-     */
-    public static Collection<ICab2bQuery> verifyModelGroups(String[] modelGroupNames,
-                                                            GlobusCredential globusCredential,
-                                                            SavedQueryBizLogic savedQueryBizLogic) {
-        if (modelGroupNames == null || modelGroupNames.length == 0) {
-            modelGroupNames = getModelGroups(globusCredential);
-        }
-        Set<EntityGroupInterface> entityGroups = Utility.getEntityGroupsForModelGroups(modelGroupNames);
-        Collection<ICab2bQuery> keywordSearches = savedQueryBizLogic.getKeywordQueries(entityGroups);
-        return keywordSearches;
-    }
+    /*   public static List<String> getQueryNameList(Collection<ICab2bQuery> queries) {
+           List<String> queryNameList = null;
+           if (queries != null) {
+               queryNameList = new ArrayList<String>();
+               for (ICab2bQuery query : queries) {
+                   queryNameList.add(query.getName());
+               }
+           }
+           return queryNameList;
+       }*/
 
     /**
      * Method to get all model groups.
-     * @param globusCredential
+     * @param isSecureMode
      * @return String[]
      */
-    public static String[] getModelGroups(GlobusCredential globusCredential) {
+    //Commented as it was not used from anywhere.
+    /*   public static String[] getModelGroups(Boolean isSecureMode) {
+           ModelGroupOperations modelGroupOperations = new ModelGroupOperations();
+           List<ModelGroupInterface> modelGroups = new ArrayList<ModelGroupInterface>();
+           if (isSecureMode) {
+               modelGroups.addAll(modelGroupOperations.getAllModelGroups());
+           } else {
+               modelGroups.addAll(modelGroupOperations.getAllNonSecuredModelGroups());
+           }
+           String[] modelGroupNames = new String[modelGroups.size()];
+           for (int i = 0; i < modelGroups.size(); i++) {
+               modelGroupNames[i] = modelGroups.get(i).getModelGroupName();
+           }
+           return modelGroupNames;
+       }*/
 
-        ModelGroupOperations modelGroupOperations = new ModelGroupOperations();
-        List<ModelGroupInterface> modelGroups = new ArrayList<ModelGroupInterface>();
-        if (globusCredential == null) {
-            modelGroups.addAll(modelGroupOperations.getAllNonSecuredModelGroups());
-        } else {
-            modelGroups.addAll(modelGroupOperations.getAllModelGroups());
-        }
-        String[] modelGroupNames = new String[modelGroups.size()];
-        for (int i = 0; i < modelGroups.size(); i++) {
-            modelGroupNames[i] = modelGroups.get(i).getModelGroupName();
-        }
-        return modelGroupNames;
-    }
+    //Moved to edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil
+    /*    *//**
+         * This method returns the List of url's which are configured by user for that model group/entity group.
+         * This method is required to set the url's in query
+         * @param user
+         * @param entityGroups
+         * @return List<String>
+         * @throws Exception
+         */
+    /*
+        public static Map<EntityGroupInterface, List<String>> getUserConfiguredUrls(UserInterface user,
+                                                                                    String[] modelGroupNames) {
+            Map<EntityGroupInterface, List<String>> entityGroupVsSelectedUrls =
+                    new HashMap<EntityGroupInterface, List<String>>();
 
-    /**
-     * This method returns the List of url's which are configured by user for that model group/entity group.
-     * This method is required to set the url's in query
-     * @param user
-     * @param entityGroups
-     * @return List<String>
-     * @throws Exception
-     */
-    public static List<String> getUserConfiguredUrls(UserInterface user, String[] modelGroupNames)
-            throws Exception {
-        List<String> selectedUrls = new ArrayList<String>();
-        if (modelGroupNames != null && modelGroupNames.length != 0) {
-            Collection<ServiceURLInterface> userConfiguredUrls = user.getServiceURLCollection();
+            if (modelGroupNames != null && modelGroupNames.length != 0) {
+                Collection<ServiceURLInterface> userConfiguredUrls = user.getServiceURLCollection();
 
-            List<ServiceURLInterface> userSelectedModelGroupInstances = new ArrayList<ServiceURLInterface>();
-
-            for (int i = 0; i < modelGroupNames.length; i++) {
-                userSelectedModelGroupInstances.addAll(new ApplicationBizLogic()
-                    .getApplicationInstances(user, modelGroupNames[i]));
-            }
-            userSelectedModelGroupInstances.retainAll(userConfiguredUrls);
-            for (ServiceURLInterface serviceUrl : userSelectedModelGroupInstances) {
-                selectedUrls.add(serviceUrl.getUrlLocation());
-            }
-            if (selectedUrls.size() == 0) {
-                if (!user.isAdmin()) {
-                    selectedUrls = getUserConfiguredUrls(new UserOperations().getAdmin(), modelGroupNames);
+                if (userConfiguredUrls == null || userConfiguredUrls.size() == 0) {
+                    if (!user.isAdmin()) {
+                        entityGroupVsSelectedUrls =
+                                getUserConfiguredUrls(new UserOperations().getAdmin(), modelGroupNames);
+                    } else {
+                        throw new RuntimeException(Constants.SERVICE_INSTANCES_NOT_CONFIGURED);
+                    }
                 } else {
-                    throw new Exception(
-                            "Neither User nor Administrator has configured any Service Instance for this Model Group");
+                    for (ServiceURLInterface serviceUrl : userConfiguredUrls) {
+                        String entityGroupName = serviceUrl.getEntityGroupName();
+
+                        EntityGroupInterface entityGroup =
+                                EntityCache.getInstance().getEntityGroupByName(entityGroupName);
+                        List<String> urls = entityGroupVsSelectedUrls.get(entityGroup);
+                        if (urls == null) {
+                            urls = new ArrayList<String>();
+                            entityGroupVsSelectedUrls.put(entityGroup, urls);
+                        }
+                        urls.add(serviceUrl.getUrlLocation());
+                    }
                 }
             }
-        }
-        return selectedUrls;
-    }
+            return entityGroupVsSelectedUrls;
+        }*/
 
+    /**
+     * This method verifies whether all queries have services instances set or not.
+     * @param queries
+     * @param user
+     * @param modelGroupNames
+     * @return
+     */
+    //Commented as it was not used from anywhere.
+    /*    public static Boolean verifyServiceInstances(Collection<ICab2bQuery> queries, UserInterface user,
+                                                     String[] modelGroupNames) {
+            Map<EntityGroupInterface, List<String>> entityGroupURLsMap =
+                    Utility.getUserConfiguredUrls(user, modelGroupNames);
+
+            Boolean isValid = Boolean.TRUE;
+            for (ICab2bQuery query : queries) {
+                Collection<EntityGroupInterface> queryEntityGroups = Utility.getEntityGroups(query);
+                for (EntityGroupInterface queryEntityGroup : queryEntityGroups) {
+                    List<String> urls = entityGroupURLsMap.get(queryEntityGroup);
+                    if (urls == null || urls.isEmpty()) {
+                        isValid = Boolean.FALSE;
+                    }
+                }
+            }
+            return isValid;
+        }*/
 }

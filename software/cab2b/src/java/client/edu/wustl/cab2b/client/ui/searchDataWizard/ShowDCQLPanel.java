@@ -34,8 +34,10 @@ import edu.wustl.cab2b.common.domain.DCQL;
  */
 public class ShowDCQLPanel extends Cab2bPanel {
 
+    private static final long serialVersionUID = -4482900109037028524L;
+
     /* JDialog in which the Panel is displayed */
-    private JDialog dialog;
+    private JDialog dialog; 
 
     // Cab2bLabel in which the entire XML is
     final private Cab2bLabel xmlTextPane = new Cab2bLabel();
@@ -101,7 +103,7 @@ public class ShowDCQLPanel extends Cab2bPanel {
     /**
      * JDialog for showing DCQL XML Details Panel
      *
-     * @return
+     * @return {@link JDialog}
      */
     public JDialog showInDialog() {
         Dimension dimension = MainFrame.getScreenDimension();

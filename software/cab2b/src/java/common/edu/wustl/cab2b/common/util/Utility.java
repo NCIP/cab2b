@@ -5,6 +5,7 @@ import static edu.wustl.cab2b.common.util.Constants.ATTRIBUTE_WITH_DESCRIPTION;
 import static edu.wustl.cab2b.common.util.Constants.CLASS;
 import static edu.wustl.cab2b.common.util.Constants.CLASS_WITH_DESCRIPTION;
 import static edu.wustl.cab2b.common.util.Constants.CONNECTOR;
+import static edu.wustl.cab2b.common.util.Constants.MULTIMODELCATEGORY;
 import static edu.wustl.cab2b.common.util.Constants.PV;
 import static edu.wustl.cab2b.common.util.Constants.TYPE_CATEGORY;
 
@@ -57,6 +58,7 @@ import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
+import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.querysuite.queryobject.DataType;
@@ -99,8 +101,8 @@ public class Utility {
      * @return Unique string to represent given association
      */
     public static String generateUniqueId(AssociationInterface association) {
-        return concatStrings(association.getEntity().getName(), association.getSourceRole().getName(),
-                             association.getTargetRole().getName(), association.getTargetEntity().getName());
+        return concatStrings(association.getEntity().getName(), association.getSourceRole().getName(), association
+            .getTargetRole().getName(), association.getTargetEntity().getName());
     }
 
     /**
@@ -200,6 +202,26 @@ public class Utility {
     }
 
     /**
+     * Checks whether passed Entity is a category or not.
+     *
+     * @param entity
+     *            Entity to check
+     * @return Returns TRUE if given entity is Category, else returns false.
+     */
+    public static boolean isMultiModelCategory(EntityInterface entity) {
+        TaggedValueInterface tag = getTaggedValue(entity.getTaggedValueCollection(), MULTIMODELCATEGORY);
+        return tag != null;
+    }
+
+    /**
+     * @param e
+     * @return TRUE of given entity in a cateory or multi model category
+     */
+    public static boolean isCategoryOrMMC(EntityInterface e) {
+        return (Utility.isCategory(e) || Utility.isMultiModelCategory(e));
+    }
+
+    /**
      * Converts DE data type to queryObject dataType.
      *
      * @param type
@@ -239,7 +261,8 @@ public class Utility {
      */
     public static boolean isEnumerated(AttributeInterface attribute) {
         if (attribute.getAttributeTypeInformation().getDataElement() instanceof UserDefinedDEInterface) {
-            UserDefinedDEInterface de = (UserDefinedDEInterface) attribute.getAttributeTypeInformation().getDataElement();
+            UserDefinedDEInterface de =
+                    (UserDefinedDEInterface) attribute.getAttributeTypeInformation().getDataElement();
             return de.getPermissibleValueCollection().size() != 0;
         }
         return false;
@@ -253,7 +276,8 @@ public class Utility {
      */
     public static Collection<PermissibleValueInterface> getPermissibleValues(AttributeInterface attribute) {
         if (isEnumerated(attribute)) {
-            UserDefinedDEInterface de = (UserDefinedDEInterface) attribute.getAttributeTypeInformation().getDataElement();
+            UserDefinedDEInterface de =
+                    (UserDefinedDEInterface) attribute.getAttributeTypeInformation().getDataElement();
             return de.getPermissibleValueCollection();
         }
         return new ArrayList<PermissibleValueInterface>(0);
@@ -485,7 +509,7 @@ public class Utility {
      */
     public static Collection<?> executeHQL(String queryName, List<Object> values) throws HibernateException {
         Session session = DBUtil.currentSession();
-        try{
+        try {
             Query q = session.getNamedQuery(queryName);
 
             if (values != null) {
@@ -493,7 +517,8 @@ public class Utility {
 
                     Object value = values.get(counter);
                     String objectType = value.getClass().getName();
-                    String onlyClassName = objectType.substring(objectType.lastIndexOf('.') + 1, objectType.length());
+                    String onlyClassName =
+                            objectType.substring(objectType.lastIndexOf('.') + 1, objectType.length());
 
                     if (onlyClassName.equals("String")) {
                         q.setString(counter, (String) value);
@@ -643,8 +668,10 @@ public class Utility {
 
             if ((Character.isUpperCase(character) && Character.isUpperCase(prevCharacter)
                     && Character.isLowerCase(nextCharacter) && i != chars.length - 1)
-                    || (Character.isUpperCase(character) && Character.isLowerCase(prevCharacter) && Character.isUpperCase(nextCharacter))
-                    || (Character.isUpperCase(character) && Character.isLowerCase(prevCharacter) && Character.isLowerCase(nextCharacter))) {
+                    || (Character.isUpperCase(character) && Character.isLowerCase(prevCharacter) && Character
+                        .isUpperCase(nextCharacter))
+                    || (Character.isUpperCase(character) && Character.isLowerCase(prevCharacter) && Character
+                        .isLowerCase(nextCharacter))) {
 
                 countOfCapitalLetters++;
             }
@@ -697,7 +724,8 @@ public class Utility {
                                 && Character.isLowerCase(nextCharacter)
                                 || Character.isLowerCase(previousCharacter)
                                 && Character.isUpperCase(nextCharacter)
-                                || (Character.isLowerCase(previousCharacter) && Character.isLowerCase(nextCharacter))) {
+                                || (Character.isLowerCase(previousCharacter) && Character
+                                    .isLowerCase(nextCharacter))) {
                             String split = str.substring(firstIndex, lastIndex);
                             if (splitStrCount == 0) {
                                 split = capitalizeFirstCharacter(split);
@@ -753,6 +781,27 @@ public class Utility {
         }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
         return simpleDateFormat.format(date);
+    }
+
+    /**
+     * This method returns short hosting institution name from ServiceURLInterface.
+     * If there is no short name available then it returns the institution long name and if
+     * that is also not available then the service URL is returned.
+     * @param serviceUrlMetadata
+     * @return short hosting institution name
+     */
+    public static String getHostingInstitutionName(ServiceURLInterface serviceUrlMetadata) {
+        String hostingCenter = serviceUrlMetadata.getHostingCenterShortName();
+        //If short name is null
+        if (hostingCenter == null || hostingCenter.isEmpty()) {
+            // set long name 
+            hostingCenter = serviceUrlMetadata.getHostingCenter();
+            if (hostingCenter == null || hostingCenter.isEmpty() || hostingCenter.equals("No Hosting Center Name Available.")) {
+                //if hosting long name is also null set url location
+                hostingCenter = serviceUrlMetadata.getUrlLocation();
+            } 
+        }
+        return hostingCenter;
     }
 
     /**

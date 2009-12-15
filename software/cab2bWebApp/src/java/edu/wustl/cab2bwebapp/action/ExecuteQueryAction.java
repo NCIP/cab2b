@@ -5,10 +5,7 @@
 package edu.wustl.cab2bwebapp.action;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.io.Writer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,29 +21,23 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.globus.gsi.GlobusCredential;
 
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
-import edu.wustl.cab2bwebapp.bizlogic.executequery.ExecuteQueryBizLogic;
-import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryUpdateBizLogic;
-import edu.wustl.cab2bwebapp.bizlogic.executequery.TransformedResultObjectWithContactInfo;
+import edu.wustl.cab2bwebapp.bizlogic.executequery.QueryBizLogic;
 import edu.wustl.cab2bwebapp.constants.Constants;
-import edu.wustl.cab2bwebapp.dvo.SavedQueryDVO;
 
 /**
  * Action for executing query related operations.
- * @author deepak_shingan
- * @author chetan_patil
- * @author chetan_pundhir
+ * @author pallavi_mistry
+ * 
  */
 public class ExecuteQueryAction extends Action {
 
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ExecuteQueryAction.class);
 
     /**
-     * The execute method is called by the struts action flow and it calls the code to retrieve the 
-     * query results.
+     * The execute method is called via ajax by searchresults.jsp, it calls the code to execute the query
      * @param mapping
      * @param form
      * @param request
@@ -55,81 +46,35 @@ public class ExecuteQueryAction extends Action {
      * @throws IOException
      * @throws ServletException
      */
+    /* (non-Javadoc)
+     * @see org.apache.struts.action.Action#execute(org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
-        if (request.getMethod().equals("POST")) {
-            request.getSession().removeAttribute(Constants.SEARCH_RESULTS);
-            request.getSession().removeAttribute(Constants.SEARCH_RESULTS_VIEW);
-        }
-        String findForward = null;
-        if (request.getSession().getAttribute(Constants.SEARCH_RESULTS) != null) {
-            findForward = Constants.FORWARD_SEARCH_RESULTS;
-        } else {
-            String[] modelGroupNames = (String[]) request.getSession().getAttribute(Constants.MODEL_GROUP_NAMES);
-            request.getSession().removeAttribute(Constants.MODEL_GROUP_NAMES);
+        try {
             HttpSession session = request.getSession();
+            String[] modelGroupNames = (String[]) session.getAttribute(Constants.MODEL_GROUPS);
             SavedQueryBizLogic savedQueryBizLogic =
                     (SavedQueryBizLogic) session.getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
-            ICab2bQuery query =
-                    savedQueryBizLogic.getQueryById(Long.parseLong(request.getParameter(Constants.QUERY_ID)));
+            GlobusCredential proxy = (GlobusCredential) session.getAttribute(Constants.GLOBUS_CREDENTIAL);
             UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
+            Long queryId = (Long) session.getAttribute(Constants.QUERY_ID);
+            String keyword = (String) session.getAttribute(Constants.KEYWORD);
+            String conditionstr = (String) session.getAttribute(Constants.CONDITION_LIST);
+            ICab2bQuery query = savedQueryBizLogic.getQueryById(queryId);
+            QueryBizLogic queryBizLogic =
+                    new QueryBizLogic(query, conditionstr, keyword, user, proxy, modelGroupNames);
+            session.setAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT, queryBizLogic);
 
-            try {
-                String conditionstr = request.getParameter("conditionList");
-                if (conditionstr == null) {
-                    conditionstr = "";
-                }
-
-                //Update the IQuery according to parameterized conditions.
-                String errorMessage =
-                        new QueryUpdateBizLogic().setInputDataToQuery(conditionstr, query.getConstraints(), null,
-                                                                      query);
-                if (!errorMessage.equals("")) {
-                    throw new Exception(errorMessage);
-                } else {
-                    Collection<ICab2bQuery> queries = new ArrayList<ICab2bQuery>();
-                    queries.add(query);
-                    GlobusCredential proxy = (GlobusCredential) session.getAttribute(Constants.GLOBUS_CREDENTIAL);
-                    ExecuteQueryBizLogic executeQueryBizLogic =
-                            new ExecuteQueryBizLogic(queries, proxy, user, modelGroupNames);
-                    List<Map<AttributeInterface, Object>> finalResult = executeQueryBizLogic.getFinalResult();
-                    if (!finalResult.isEmpty()) {
-                        session.setAttribute(Constants.SEARCH_RESULTS_VIEW, executeQueryBizLogic
-                            .getSearchResultsView(finalResult));
-                    }
-                    Map<ICab2bQuery, TransformedResultObjectWithContactInfo> searchResults =
-                            executeQueryBizLogic.getSearchResults();
-                    Collection<ICab2bQuery> allQueries = searchResults.keySet();
-                    List<SavedQueryDVO> queryList = new ArrayList<SavedQueryDVO>();
-
-                    for (ICab2bQuery queryObj : allQueries) {
-                        SavedQueryDVO savedQuery = new SavedQueryDVO();
-                        savedQuery.setName(queryObj.getName());
-                        savedQuery.setResultCount(searchResults.get(queryObj).getResultForAllUrls().size());
-                        queryList.add(savedQuery);
-                    }
-                    int failedServicesCount = executeQueryBizLogic.getFailedSercives().size();
-                    session.setAttribute(Constants.FAILED_SERVICES_COUNT, failedServicesCount);
-                    session.setAttribute(Constants.FAILED_SERVICES, executeQueryBizLogic.getFailedSercives());
-                    session.setAttribute(Constants.SERVICE_INSTANCES, executeQueryBizLogic
-                        .getUrlsForSelectedQueries());
-                    session.setAttribute(Constants.SAVED_QUERIES, queryList);
-                    session.setAttribute(Constants.SEARCH_RESULTS, searchResults);
-                    findForward = Constants.FORWARD_SEARCH_RESULTS;
-                }             
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-                ActionErrors errors = new ActionErrors();
-                ActionError error = new ActionError("fatal.executeQuerySearch.failure");
-                errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, error);
-                saveErrors(request, errors);
-                findForward = Constants.FORWARD_FAILURE;
-            }
+        } catch (RuntimeException e) {
+            logger.error(e.getMessage(), e);
+            ActionErrors errors = new ActionErrors();
+            ActionError error = new ActionError("fatal.home.failure", e.getMessage());
+            errors.add(Constants.FATAL_KYEWORD_SEARCH_FAILURE, error);
+            Writer writer = response.getWriter();
+            response.setContentType("text/xml");
+            writer.write("Exception");
         }
-        if (request.getSession().getAttribute(Constants.SEARCH_RESULTS_VIEW) != null) {
-			request.setAttribute(Constants.SEARCH_RESULTS_VIEW, request.getSession()
-					.getAttribute(Constants.SEARCH_RESULTS_VIEW));
-		}
-        return mapping.findForward(findForward);
+        return null;
     }
 }

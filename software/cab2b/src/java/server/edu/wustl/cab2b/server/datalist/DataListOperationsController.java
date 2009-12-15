@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +17,8 @@ import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.AttributeTypeInformationInterface;
+import edu.common.dynamicextensions.domaininterface.DateTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
@@ -136,6 +139,7 @@ public class DataListOperationsController {
 
                 for (IDataRow recordDataRow : classDataRow.getChildren()) {
                     Map<AbstractAttributeInterface, Object> recordsMap = saver.getRecordAsMap(recordDataRow.getRecord());
+                    convertDateAttributes(recordsMap);
                     dataRowToRecordsMap.put(recordDataRow, recordsMap);
 
                     Map<AbstractAttributeInterface, Object> parentRecordsMap = dataRowToRecordsMap.get(parentRecordDataRow);
@@ -170,6 +174,23 @@ public class DataListOperationsController {
         } catch (DynamicExtensionsApplicationException e) {
             logger.error(e.getMessage(), e);
             throw (new RuntimeException(e.getMessage(), e, ErrorCodeConstants.DATALIST_SAVE_ERROR));
+        }
+    }
+
+    private void convertDateAttributes(Map<AbstractAttributeInterface, Object> recordMap) {
+        Set<AbstractAttributeInterface> allAttirbutes = recordMap.keySet();
+        Set<AbstractAttributeInterface> modifiedAttributes = new HashSet<AbstractAttributeInterface>();
+        for (AbstractAttributeInterface attribute : allAttirbutes) {
+            AttributeInterface attributeObject = (AttributeInterface) attribute;
+            AttributeTypeInformationInterface attributeTypeInformation = attributeObject.getAttributeTypeInformation();
+            if (attributeTypeInformation instanceof DateTypeInformationInterface) {
+                modifiedAttributes.add(attribute);
+            }
+        }
+        for (AbstractAttributeInterface attribute : modifiedAttributes) {
+            String value = "";
+            recordMap.remove(attribute);
+            recordMap.put(attribute, (Object) value);
         }
     }
 
@@ -489,14 +510,14 @@ public class DataListOperationsController {
 
         return dataList;
     }
-    
+
     /**
      * This method returns false if datalist with given name is not present in the database.
      * It returns false otherwise.
      * @param name
      * @return
      */
-    public boolean isDataListByNamePresent(String name){
+    public boolean isDataListByNamePresent(String name) {
         return new DataListMetadataOperations().isDataListByNamePresent(name);
     }
 

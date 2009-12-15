@@ -3,35 +3,38 @@ package edu.wustl.cab2bwebapp.bizlogic;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.util.DynamicExtensionsUtility;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.KeywordQuery;
+import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.server.queryengine.QueryOperations;
+import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
 import edu.wustl.cab2b.server.util.ServerProperties;
-import edu.wustl.cab2bwebapp.util.Utility;
-import edu.wustl.common.hibernate.HibernateCleanser;
 
 /**
  * This class fetches the saved searches.
  *
  * @author gaurav_mehta
  * @author chetan_patil
+ * @author pallavi_mistry
  */
 public class SavedQueryBizLogic {
 
-    /** All keyword search queries */
-    private Collection<ICab2bQuery> keywordQueries = new ArrayList<ICab2bQuery>();
+    /** All keyword search queries:  map of modelgroupName and corresponding keyword query id */
+    private Map<String, Long> modelVsKeywordQueryId = new HashMap<String, Long>();
 
-    /** All regular queries */
-    private Collection<ICab2bQuery> regularQueries = new ArrayList<ICab2bQuery>();
-
+    /** MAp of id vs its query    */
     private Map<Long, ICab2bQuery> idVsQuery = new HashMap<Long, ICab2bQuery>();
+
+    /** All regular (ANDed) queries */
+    private List<ICab2bQuery> regularQueries = new ArrayList<ICab2bQuery>();
 
     /**
      * Default Constructor
@@ -49,96 +52,24 @@ public class SavedQueryBizLogic {
         String defaultUser = ServerProperties.getDefaultUser();
         QueryOperations queryOperations = new QueryOperations();
 
-        keywordQueries.addAll(queryOperations.getKeywordQueriesByUserName(defaultUser));
-        regularQueries.addAll(queryOperations.getRegularQueriesByUserName(defaultUser));
-
-        for (ICab2bQuery query : regularQueries) {
+        // putting all the Keyword queries id and the model group Name in the modelVsKeywordQueryId map
+        List<KeywordQuery> keywordQueries = queryOperations.getKeywordQueriesByUserName(defaultUser);
+        for (KeywordQuery keywordQuery : keywordQueries) {
+            this.modelVsKeywordQueryId.put(keywordQuery.getApplicationGroup().getModelGroupName(), keywordQuery
+                .getId());
+        }
+        //putting all the Keyword queries (ORed) in the idvsquery map
+        for (ICab2bQuery query : keywordQueries) {
+            query.getOutputUrls().clear();
             idVsQuery.put(query.getId(), query);
         }
-    }
 
-    /**
-     * This method returns all the regular queries created by the default user.
-     * The original queries are cloned as these queries are modified before they can be executed.
-     *
-     * @return
-     */
-    public Collection<ICab2bQuery> getRegularQueries() {
-        Collection<ICab2bQuery> queries = new HashSet<ICab2bQuery>(regularQueries.size());
+        this.regularQueries = queryOperations.getRegularQueriesByUserName(defaultUser);
+        // putting all the regular queries (ANDed) in the idvsquery map
         for (ICab2bQuery query : regularQueries) {
-            ICab2bQuery newQuery = (ICab2bQuery) DynamicExtensionsUtility.cloneObject(query);
-            queries.add(newQuery);
+            query.getOutputUrls().clear();
+            idVsQuery.put(query.getId(), query);
         }
-        return queries;
-    }
-
-    /**
-     * This method returns all the keyword queries created by the default user.
-     * The original queries are cloned as these queries are modified before they can be executed.
-     *
-     * @return
-     */
-    public Collection<ICab2bQuery> getKeywordQueries() {
-        Collection<ICab2bQuery> queries = new HashSet<ICab2bQuery>(keywordQueries.size());
-        for (ICab2bQuery query : keywordQueries) {
-            ICab2bQuery newQuery = (ICab2bQuery) DynamicExtensionsUtility.cloneObject(query);
-            new HibernateCleanser(newQuery).clean();
-
-            queries.add(newQuery);
-        }
-        return queries;
-    }
-
-    /**
-     * This method returns all the regular queries created by the default user for the given set of 
-     * entity groups.
-     *
-     * @param entityGroups
-     * @return
-     */
-    public Collection<ICab2bQuery> getRegualarQueries(Collection<EntityGroupInterface> entityGroups) {
-        Set<ICab2bQuery> allRegualarQueries = new HashSet<ICab2bQuery>(getRegularQueries());
-
-        Set<ICab2bQuery> regualarQueries = new HashSet<ICab2bQuery>();
-        for (EntityGroupInterface entityGroup : entityGroups) {
-            Iterator<ICab2bQuery> iterator = allRegualarQueries.iterator();
-            while (iterator.hasNext()) {
-                ICab2bQuery query = iterator.next();
-
-                if (entityGroup.equals(Utility.getEntityGroup(query))) {
-                    regualarQueries.add(query);
-                    iterator.remove();
-                }
-            }
-        }
-
-        return regualarQueries;
-    }
-
-    /**
-     * This method returns all the keyword serach queries created by the default user for the given set of
-     * entity groups.
-     *
-     * @param entityGroups
-     * @return
-     */
-    public Collection<ICab2bQuery> getKeywordQueries(Set<EntityGroupInterface> entityGroups) {
-        Set<ICab2bQuery> allKeywordQueries = new HashSet<ICab2bQuery>(getKeywordQueries());
-
-        Set<ICab2bQuery> keywordQueries = new HashSet<ICab2bQuery>();
-        for (EntityGroupInterface entityGroup : entityGroups) {
-            Iterator<ICab2bQuery> iterator = allKeywordQueries.iterator();
-            while (iterator.hasNext()) {
-                ICab2bQuery query = iterator.next();
-
-                if (entityGroup.equals(Utility.getEntityGroup(query))) {
-                    keywordQueries.add(query);
-                    iterator.remove();
-                }
-            }
-        }
-
-        return keywordQueries;
     }
 
     /**
@@ -152,5 +83,71 @@ public class SavedQueryBizLogic {
             throw new RuntimeException("No query present for id: " + id);
         }
         return (ICab2bQuery) DynamicExtensionsUtility.cloneObject(query);
+    }
+
+    /**
+     * This method returns all the regular queries created by the default user.
+     * @return
+     */
+    private List<ICab2bQuery> getRegularQueries() {
+        return regularQueries;
+    }
+
+    /**
+     * This method returns the corresponding keyword query id for the given ModelGroupName
+     * @param ModelGroupName
+     * @return
+     */
+    public Long getKeywordQueryId(String ModelGroupName) {
+        return modelVsKeywordQueryId.get(ModelGroupName);
+    }
+
+    /**
+     * This method returns the corresponding keyword queries for the given Model group names.
+     * @param modelGroupNames
+     * @return
+     */
+    public List<KeywordQuery> getKeywordQueries(String[] modelGroupNames) {
+        List<KeywordQuery> keywordQueriesFor = new ArrayList<KeywordQuery>();
+        for (String modelGroupName : modelGroupNames) {
+            Set<Entry<String, Long>> modelVsKeywordQueryIdEntries = modelVsKeywordQueryId.entrySet();
+            for (Entry<String, Long> modelVsKeywordQueryIdEntry : modelVsKeywordQueryIdEntries) {
+                if (modelGroupName.equals(modelVsKeywordQueryIdEntry.getKey())) {
+                    keywordQueriesFor.add((KeywordQuery) idVsQuery.get(modelVsKeywordQueryIdEntry.getValue()));
+                }
+            }
+        }
+        return keywordQueriesFor;
+    }
+
+    /**
+     * This method returns all the regular queries created by the default user for the given set of 
+     * entity groups.
+     *
+     * @param entityGroups
+     * @return
+     */
+    public List<ICab2bQuery> getRegularQueries(Collection<EntityGroupInterface> entityGroups) {
+        List<ICab2bQuery> regularQueriesFor = new ArrayList<ICab2bQuery>();
+
+        for (ICab2bQuery query : getRegularQueries()) {
+            Collection<EntityGroupInterface> queryEntityGroups = QueryExecutorUtil.getEntityGroups(query);
+            if (entityGroups.containsAll(queryEntityGroups)) {
+                regularQueriesFor.add(query);
+            } else {
+                if (query instanceof MultiModelCategoryQuery)//&& entityGroups.retainAll(queryEntityGroups)){
+                {
+                    for (EntityGroupInterface entityGroupInterface : entityGroups) {
+                        for (EntityGroupInterface queryEntityGroupInterface : queryEntityGroups) {
+                            if (entityGroupInterface.equals(queryEntityGroupInterface)) {
+                                regularQueriesFor.add(query);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return regularQueriesFor;
     }
 }
