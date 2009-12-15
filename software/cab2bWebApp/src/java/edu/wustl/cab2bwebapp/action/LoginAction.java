@@ -19,15 +19,20 @@ import org.apache.struts.action.ActionMapping;
 import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.authentication.Authenticator;
+import edu.wustl.cab2b.common.authentication.exception.AuthenticationException;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.user.User;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.user.UserOperations;
+import edu.wustl.cab2b.server.util.XSSVulnerableDetector;
 import edu.wustl.cab2bwebapp.actionform.LoginForm;
 import edu.wustl.cab2bwebapp.bizlogic.ModelGroupBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.cab2bwebapp.constants.Constants;
+
+;
 
 /**
  * @author gaurav_mehta
@@ -51,60 +56,76 @@ public class LoginAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
-        LoginForm loginForm = (LoginForm) form;
-        String userName = loginForm.getUserName();
-        String password = loginForm.getPassword();
+        try {
+            LoginForm loginForm = (LoginForm) form;
+            String userName = loginForm.getUserName();
+            String password = loginForm.getPassword();
 
-        if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
-            request.setAttribute(Constants.LOGIN_PAGE, Constants.LOGIN_PAGE);
-            return mapping.findForward(Constants.FORWARD_LOGIN);
-        }
-        HttpSession session = request.getSession();
-        UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
+            if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
+                return mapping.findForward(Constants.FORWARD_LOGIN);
+            }
 
-        if (user == null || user.getUserName().equals(Constants.ANONYMOUS)) {
-            UserOperations userOperations = new UserOperations();
-            try {
-                GlobusCredential globusCredential = new Authenticator(userName).validateUser(password);
+            HttpSession session = request.getSession();
 
+            session.removeAttribute(Constants.SEARCH_RESULTS);
+            session.removeAttribute(Constants.SEARCH_RESULTS_VIEW);
+            session.removeAttribute(Constants.FAILED_SERVICES_COUNT);
+            session.removeAttribute(Constants.SAVED_QUERIES);
+            session.removeAttribute(Constants.FAILED_SERVICES);
+            session.removeAttribute(Constants.QUERY_ID);
+            session.removeAttribute(Constants.SERVICE_INSTANCES);
+            session.removeAttribute(Constants.MODEL_GROUPS);
+            session.removeAttribute(Constants.CONDITION_LIST);
+            session.removeAttribute(Constants.IS_FIRST_REQUEST);
+            session.removeAttribute(Constants.STOP_AJAX);
+            session.removeAttribute(Constants.EXECUTE_QUERY_BIZ_LOGIC_OBJECT);
+            session.removeAttribute(Constants.UI_POPULATION_FINISHED);
+
+            UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
+            if (user == null || user.getUserName().equals(Constants.ANONYMOUS)) {
+                UserOperations userOperations = new UserOperations();
+                GlobusCredential globusCredential = null;
+                try {
+                    globusCredential = new Authenticator(userName).validateUser(password);
+                } catch (AuthenticationException e) {
+                    logger.error(e.getMessage());
+                    ActionErrors errors = new ActionErrors();
+                    ActionError error = null;
+                    if (e.getErrorCode().equals(ErrorCodeConstants.UR_0007)) {
+                        error = new ActionError("error.login.invalid");
+                    } else {
+                        error = new ActionError("error.login.failure", e.getMessage());
+                    }
+                    errors.add(Constants.ERROR_LOGIN_INVALID, error);
+                    saveErrors(request, errors);
+                    return mapping.findForward(Constants.FORWARD_LOGIN);
+                }
                 user = userOperations.getUserByName(globusCredential.getIdentity());
                 if (user == null) {
                     user = userOperations.insertUser(new User(globusCredential.getIdentity(), null, false));
                 }
-
                 session.setAttribute(Constants.GLOBUS_CREDENTIAL, globusCredential);
                 session.setAttribute(Constants.USER, user);
                 session.setAttribute(Constants.USER_NAME, userName);
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-                handleException(request, "error.login.invalid", Constants.ERROR_LOGIN_INVALID);
-                request.setAttribute(Constants.LOGIN_PAGE, Constants.LOGIN_PAGE);
-                return mapping.findForward(Constants.FORWARD_LOGIN);
             }
-        }
-        try {
             List<ModelGroupInterface> modelGroups = new ModelGroupBizLogic().getAllModelGroups();
             if (modelGroups != null && !modelGroups.isEmpty()) {
                 ModelGroupInterface modelGroup = modelGroups.iterator().next();
                 SavedQueryBizLogic savedQueryBizLogic =
                         (SavedQueryBizLogic) request.getSession().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
                 Collection<ICab2bQuery> savedSearches =
-                        savedQueryBizLogic.getRegualarQueries(modelGroup.getEntityGroupList());
+                        savedQueryBizLogic.getRegularQueries(modelGroup.getEntityGroupList());
                 request.setAttribute(Constants.MODEL_GROUPS, modelGroups);
                 request.setAttribute(Constants.SAVED_SEARCHES, savedSearches);
             }
             return mapping.findForward(Constants.FORWARD_HOME);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            handleException(request, "fatal.login.failure", Constants.FATAL_LOGIN_FAILURE);
+            ActionErrors errors = new ActionErrors();
+            ActionError error = new ActionError("fatal.login.failure", e.getMessage());
+            errors.add(Constants.FATAL_LOGIN_FAILURE, error);
+            saveErrors(request, errors);
             return mapping.findForward(Constants.FORWARD_FAILURE);
         }
-    }
-
-    private void handleException(HttpServletRequest request, String errorKey, String errorConstant) {
-        ActionErrors errors = new ActionErrors();
-        ActionError error = new ActionError(errorKey);
-        errors.add(errorConstant, error);
-        saveErrors(request, errors);
     }
 }

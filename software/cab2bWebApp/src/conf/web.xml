@@ -3,7 +3,7 @@
 	xmlns="http://java.sun.com/xml/ns/j2ee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-	<display-name>caBench to Bedside Web Client v1.0</display-name>
+	<display-name>caBench to Bedside Web Application</display-name>
 
 	<!-- Welcome File List -->
 	<welcome-file-list>
@@ -23,6 +23,10 @@
 		<filter-class>
 			edu.wustl.cab2bwebapp.filters.ApplicationFilter
 		</filter-class>
+		<init-param>
+			<param-name>Cache-Control</param-name>
+			<param-value>private,no-cache,no-store</param-value>
+		</init-param>
 	</filter>
 	<filter>
 		<filter-name>ResponseOverrideFilter</filter-name>
@@ -39,7 +43,7 @@
 	<filter-mapping>
 		<filter-name>ApplicationFilter</filter-name>
 		<url-pattern>*.jsp</url-pattern>
-	</filter-mapping>
+	</filter-mapping>	
 	<filter-mapping>
 		<filter-name>ResponseOverrideFilter</filter-name>
 		<url-pattern>*.do</url-pattern>
@@ -104,16 +108,12 @@
 
 	<!-- Standard Error Page Declarations -->
 	<error-page>
-		<error-code>404</error-code>
-		<location>/pages/failure.jsp</location>
-	</error-page>
-	<error-page>
 		<error-code>500</error-code>
 		<location>/pages/failure.jsp</location>
 	</error-page>
 
 	<!-- Session Configuration Settings -->
 	<session-config>
-		<session-timeout>20</session-timeout>
+		<session-timeout>90</session-timeout>
 	</session-config>
 </web-app>

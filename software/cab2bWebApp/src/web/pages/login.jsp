@@ -6,6 +6,7 @@
 <HTML>
 <HEAD>
 <TITLE><bean:message key="application.title"/></TITLE>
+<LINK rel="shortcut icon" href="../images/favicon.ico">
 <META http-equiv="Content-Type" content="text/html">
 <LINK rel="stylesheet" href="stylesheet/login.css" type="text/css">
 <SCRIPT language="JavaScript" src="javascript/validator.js"></SCRIPT>
@@ -13,6 +14,18 @@
 <SCRIPT language="JavaScript">
  function validate()
 {
+  var invalidChars = "~!^?*|,\\\\/\":<>[]{}`\';()@&$#% ";
+  var userName = document.getElementsByName("userName")[0];
+  var password = document.getElementsByName("password")[0];
+   for(var i=0;i<userName.value.length;i++)
+  {
+  	 if(invalidChars.indexOf(userName.value.charAt(i))!=-1)
+  	{
+      alert("User name should not contain special characters!");
+      userName.focus();
+      return false; 
+    }
+  }	  	
   var check1 = checkEmptyTextFileld('userName');
   var check2 = checkEmptyTextFileld('password');
   return check1 && check2;
@@ -42,26 +55,25 @@
 						<bean:message key="label.username"/>
 					</DIV>
 					<DIV style="width:60%;float:right">
-						<html:text styleClass="textbox" property="userName"/>
+						<input type="text" class="textbox" name="userName" value="" autocomplete="off"/>
 					</DIV>
 					<BR/>
 					<DIV class="label">
 						<bean:message key="label.password"/>
 					</DIV>
 					<DIV style="width:60%;float:right">
-						<html:password styleClass="textbox" property="password"/>
+						<input type="password" class="textbox" name="password" value="" autocomplete="off"/>
 					</DIV>
 					<BR style="line-height: 2em"/>
 					<DIV style="text-align:center">
 						<INPUT type="submit" value="<bean:message key="button.login"/>" class="button">
 						<SPAN style="margin:0.5em"></SPAN>
-						<INPUT type="button" value="<bean:message key="button.reset"/>" class="button" onclick="userName.value='';password.value='';document.getElementById('messages').style.display='none';document.getElementById('errors').style.display='none';userName.focus()">
+						<INPUT type="button" value="<bean:message key="button.reset"/>" class="button" onclick="userName.value='';password.value='';userName.focus()">
 					</DIV>
 					<DIV id="notificationpanel">												
 						<DIV class="error hidden" id="error_userName"><bean:message key="error.username.empty"/></DIV>
 						<DIV class="error hidden" id="error_password"><bean:message key="error.password.empty"/></DIV>
-						<DIV id="errors"><html:errors/><logic:present name="ErrorAuthentication"><bean:message key="error.authentication"/></logic:present></DIV>
-						<DIV id="messages"><html:messages id="SuccessLogout" message="true"><bean:write name="SuccessLogout"/></html:messages></DIV>
+						<DIV id="errors"><html:errors/></DIV>
 					</DIV>
 					<DIV style="text-align:center">
 						<A href="Home.do" class="link"><bean:message key="link.home"/></A> <SPAN class="title">|</SPAN> <A href="http://cagrid-portal.nci.nih.gov/web/guest/register" class="link" target="_blank"><bean:message key="link.register"/></A>
