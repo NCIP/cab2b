@@ -76,8 +76,7 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
                 model.getValueAt(0, 0);
                 threeDTable.setModel(model);
                 threeDTable.addMouseListener(new java.awt.event.MouseAdapter() {
-                    public void mouseClicked(java.awt.event.MouseEvent evt) {
-                        firePropertyChange(DefaultSpreadSheetViewPanel.DISABLE_HEATMAP_LINK, -1, 0);
+                    public void mouseClicked(java.awt.event.MouseEvent evt) {                        
                         firePropertyChange(JSheet.EVENT_DATA_SINGLE_CLICKED, -1, 0);
                     }
                 });
@@ -192,8 +191,7 @@ public class ThreeDResultObjectDetailsPanel extends DefaultDetailedPanel<I3DData
             } else {
                 selection.setSelectionInterval(columnNumber, columnNumber);
                 isWholeColumnSelected = true;
-                firePropertyChange(DefaultSpreadSheetViewPanel.ENABLE_CHART_LINK, -1, 0);
-                firePropertyChange(DefaultSpreadSheetViewPanel.ENABLE_HEATMAP_LINK, -1, 0);
+                firePropertyChange(DefaultSpreadSheetViewPanel.ENABLE_CHART_LINK, -1, 0);                
                 //this is needed to select the cell and activate the focus listener 
                 threeDTable.setRowSelectionInterval(1, 1);
             }

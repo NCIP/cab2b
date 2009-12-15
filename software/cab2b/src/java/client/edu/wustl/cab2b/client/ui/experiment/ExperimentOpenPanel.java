@@ -159,7 +159,6 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
                     } else {
                         experimentStackBox.setChartLinkEnable(false);
                     }
-                    experimentStackBox.setHeatMapLinkEnable(false);
                 }
 
                 if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.SPREADSHEET_MODEL_UNINSTALLED)) {
@@ -178,20 +177,13 @@ public class ExperimentOpenPanel extends Cab2bTitledPanel {
 
                 if (evt.getPropertyName().equals(JSheet.EVENT_DATA_SINGLE_CLICKED)) {
                     experimentStackBox.setChartLinkEnable(true);
-                    experimentStackBox.setHeatMapLinkEnable(false);
                     experimentStackBox.setAnalysisLinkEnable(true);
                 } else if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.DISABLE_CHART_LINK)) {
                     experimentStackBox.setChartLinkEnable(false);
                     experimentStackBox.setAnalysisLinkEnable(false);
                 } else if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.ENABLE_CHART_LINK)) {
                     experimentStackBox.setChartLinkEnable(true);
-                    experimentStackBox.setHeatMapLinkEnable(false);
                     experimentStackBox.setAnalysisLinkEnable(true);
-                }
-                if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.DISABLE_HEATMAP_LINK)) {
-                    experimentStackBox.setHeatMapLinkEnable(false);
-                } else if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.ENABLE_HEATMAP_LINK)) {
-                    experimentStackBox.setHeatMapLinkEnable(true);
                 }
                 if (evt.getPropertyName().equals(DefaultSpreadSheetViewPanel.DISABLE_ANALYSIS_LINK)) {
                     experimentStackBox.setAnalysisLinkEnable(false);

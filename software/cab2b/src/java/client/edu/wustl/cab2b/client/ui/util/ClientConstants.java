@@ -136,10 +136,7 @@ public interface ClientConstants {
      */
     public static String SCATTER_GRAPH = "graph_scatter.gif";
 
-    /**
-     * Heat map image icon
-     */
-    public static String HEAT_MAP = "heatmap.jpg";
+   
 
     /**
      * Gene Annotation image icon
@@ -219,12 +216,7 @@ public interface ClientConstants {
     /**
      * chart string name
      */
-    public static final String CHART = "Chart";
-
-    /**
-     * Heat map string name
-     */
-    public static final String HEATMAP = "Heatmap";
+    public static final String CHART = "Chart";   
 
     /**
      * Logout button icon 

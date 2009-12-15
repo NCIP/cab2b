@@ -317,7 +317,8 @@
 		<!-- setting the property in the ant call overrides the property in the sub-project allowing the artifact to be produced where needed -->
 		<ant inheritAll="false" inheritRefs="true" antfile="${cab2b-webapp.build.file}" target="${cab2b-webapp.build.target}" dir="${cab2b-webapp.base.dir}">
 			<property name="dist.dir" value="${cab2b-webapp.dist.dir}" />
-
+			<property name="security.dist.dir" value="${security.dist.relative.dir}" />
+			
 			<property name="server-host" value="${server-host}" />
 			<property name="server-port" value="${server-port}" />
 			<property name="grid-type" value="${grid-type}" />

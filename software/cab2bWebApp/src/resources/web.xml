@@ -72,6 +72,17 @@
 		<url-pattern>*.do</url-pattern>
 	</servlet-mapping>
 
+    <!-- REST API Servlet Mapping -->
+    <servlet>
+        <servlet-name>JSONRESTService</servlet-name>
+        <servlet-class>edu.wustl.cab2bwebapp.action.JSONRESTService</servlet-class>            
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>JSONRESTService</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+    
 	<!-- Struts Tag Library Descriptors -->
 	<jsp-config>
 		<taglib>

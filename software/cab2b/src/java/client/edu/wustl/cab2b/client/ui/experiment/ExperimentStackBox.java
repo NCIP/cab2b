@@ -68,8 +68,6 @@ import edu.wustl.cab2b.client.ui.viewresults.DataListDetailedPanelInterface;
 import edu.wustl.cab2b.client.ui.viewresults.DefaultSpreadSheetViewPanel;
 import edu.wustl.cab2b.client.ui.visualization.charts.Cab2bChartPanel;
 import edu.wustl.cab2b.client.ui.visualization.charts.ChartModel;
-import edu.wustl.cab2b.client.ui.visualization.heatmap.HeatMapModel;
-import edu.wustl.cab2b.client.ui.visualization.heatmap.HeatMapPanel;
 import edu.wustl.cab2b.common.IdName;
 import edu.wustl.cab2b.common.analyticalservice.ServiceDetailsInterface;
 import edu.wustl.cab2b.common.datalist.DataListBusinessInterface;
@@ -157,11 +155,6 @@ public class ExperimentStackBox extends Cab2bPanel {
      * Chart panel index 
      */
     private static int chartIndex = 0;
-
-    /**
-     * Heatmap panel index
-     */
-    private static int heatMapIndex = 0;
 
     /**
      * Button for custom category 
@@ -356,7 +349,6 @@ public class ExperimentStackBox extends Cab2bPanel {
         setBarChartLink();
         setLineChartLink();
         setScatterPlotLink();
-        setHeatmapLink();
         stackedBox.addBox("Visualize Data ", visualiseDataPanel, VISUALIZE_DATA, true);
 
         // Adding Analyse data panel
@@ -468,14 +460,6 @@ public class ExperimentStackBox extends Cab2bPanel {
     }
 
     /**
-     * sets heat map link
-     */
-    private void setHeatmapLink() {
-        URL url = this.getClass().getClassLoader().getResource(ClientConstants.HEAT_MAP);
-        setVisulaizationToolLink(ClientConstants.HEATMAP, url, new LinkActionListener(ClientConstants.HEATMAP));
-    }
-
-    /**
      * Method to set chart links enable/disable 
      * @param active
      */
@@ -489,20 +473,6 @@ public class ExperimentStackBox extends Cab2bPanel {
                 ((Cab2bHyperlink) visualiseDataPanel.getComponent(i)).setEnabled(active);
             }
         }
-    }
-
-    /**
-     * Method to set Heat map links enable/disable 
-     * @param active
-     */
-    public void setHeatMapLinkEnable(boolean active) {
-        if (visualiseDataPanel == null) {
-            return;
-        }
-        if (visualiseDataPanel.getComponent(visualiseDataPanel.getComponentCount() - 1) instanceof Cab2bHyperlink) {
-            ((Cab2bHyperlink) visualiseDataPanel.getComponent(visualiseDataPanel.getComponentCount() - 1)).setEnabled(active);
-        }
-
     }
 
     /**
@@ -570,8 +540,6 @@ public class ExperimentStackBox extends Cab2bPanel {
                     if (toolType.equals(ClientConstants.BAR_CHART) || toolType.equals(ClientConstants.LINE_CHART)
                             || toolType.equals(ClientConstants.SCATTER_PLOT)) {
                         showChartAction(actionCommand);
-                    } else if (toolType.equals(ClientConstants.HEATMAP)) {
-                        showHeatmapAction();
                     }
                 }
 
@@ -633,34 +601,6 @@ public class ExperimentStackBox extends Cab2bPanel {
         visualizationTabPanel.add("right ", closeButton);
 
         return visualizationTabPanel;
-    }
-
-    /**
-     * This method displays the chart selected in the Chart tab.
-     * 
-     * @param linkClicked
-     *            the name of the chart to be displayed
-     */
-    private void showHeatmapAction() {
-        final JTabbedPane tabComponent = expCategoryGridPanel.getTabComponent();
-        Cab2bPanel currentHeatMapPanel = expCategoryGridPanel.getCurrentHeatMapPanel();
-        if (currentHeatMapPanel == null) {
-            final Cab2bPanel visualizationTabPanel = createVisualizationTabPanel(tabComponent);
-
-            HeatMapModel heatMapModel = new HeatMapModel();
-            HeatMapPanel heatMapPanel = new HeatMapPanel();
-            heatMapModel.addObserver(heatMapPanel);
-
-            DataListDetailedPanelInterface dataListDetailedPanel = expCategoryGridPanel.getCurrentSpreadSheetViewPanel();
-            heatMapModel.setData(dataListDetailedPanel);
-
-            visualizationTabPanel.add("br hfill vfill ", heatMapPanel);
-            expCategoryGridPanel.setCurrentChartPanel(visualizationTabPanel);
-            tabComponent.add("HeatMap" + ++heatMapIndex, visualizationTabPanel);
-            tabComponent.setSelectedComponent(visualizationTabPanel);
-        } else {
-            tabComponent.setSelectedComponent(currentHeatMapPanel);
-        }
     }
 
     /**
