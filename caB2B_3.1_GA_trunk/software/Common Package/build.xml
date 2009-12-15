@@ -1,0 +1,444 @@
+<?xml version ="1.0"?>
+
+<!--Ant Script for create Build for Common package-->
+<project name="CommonPackage" default="compile">
+
+	<!--define require dir and Properties -->
+	<property name="base.dir" value="." />
+	<property name="src.dir" value="${base.dir}/src" />
+	<property name="test.dir" value="${base.dir}/test" />
+	<property name="target.dir" value="${base.dir}/classes" />
+	<property name="lib.dir" value="${base.dir}/lib" />
+	<property name="build.dir" value="${base.dir}/build" />
+	<property name="sql.dir" value="${base.dir}/SQL" />
+	<property name="applet.dir" value="${base.dir}/Applet" />
+	<property name="hbm.dir" value="${src.dir}/edu/wustl/common/hbm" />
+	<property name="extra_lib.dir" value="${base.dir}/extra_lib" />
+	<property name="generateforce" value="true" />
+	<property name="junit.dir" value="${base.dir}/junit" />
+	<property name="junit.report.dir" value="${junit.dir}/reports" />
+	<property name="junit.classes.dir" value="${junit.dir}/classes" />
+
+	<property name="metadatatest.dir" value="${base.dir}/metadataTestReport" />
+	<property name="metadatatest.report.dir" value="${metadatatest.dir}/Report" />
+
+	<path id="app.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<path id="xdoclet.classpath">
+		<path refid="app.classpath" />
+		<pathelement location="${extra_lib.dir}/commons-net-1.2.2.jar" />
+		<pathelement location="${extra_lib.dir}/hibernate-tools.jar" />
+		<pathelement location="${extra_lib.dir}/servlet-api.jar" />
+		<pathelement location="${extra_lib.dir}/xdoclet-1.2.3.jar" />
+		<pathelement location="${extra_lib.dir}/xdoclet-hibernate-module-1.2.jar" />
+		<pathelement location="${extra_lib.dir}/xdoclet-xdoclet-module-1.2.jar" />
+		<pathelement location="${extra_lib.dir}/xerces.jar" />
+		<pathelement location="${extra_lib.dir}/xjavadoc-1.1-j5-v4.jar" />
+		<pathelement location="${extra_lib.dir}/xsdlib.jar" />
+		<pathelement location="${test.dir}" />
+	</path>
+
+
+
+	<path id="junit.classpath">
+		<path refid="app.classpath" />
+		<pathelement location="${target.dir}" />
+	</path>
+
+	<!-- sub tasks -->
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp />
+		<!-- Create the build directory structure used by compile -->
+		<delete dir="${target.dir}" />
+		<mkdir dir="${target.dir}" />
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${applet.dir}" />
+		<delete dir="${junit.dir}" />
+		<mkdir dir="${junit.dir}" />
+	</target>
+
+	<!-- Compile all files, generated and hand-written -->
+	<target name="compile" depends="init">
+		<javac destdir="${target.dir}" includes="**/*.*" debug="on" includeAntRuntime="false" target="1.5">
+			<src path="${src.dir}" />
+			<src path="${test.dir}" />
+			<classpath>
+				<fileset dir="${lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+		<copy todir="${target.dir}">
+			<fileset dir="${src.dir}">
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+				<include name="**/*.hbm.xml" />
+				<include name="**/*.ser" />
+				<exclude name="**/cab2b.properties"/>
+			</fileset>
+			<fileset dir="${test.dir}">
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+				<include name="**/*.hbm.xml" />
+				<include name="**/*.ser" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="compileTest" depends="compile">
+		<mkdir dir="${junit.classes.dir}" />
+		<javac destdir="${junit.classes.dir}" includes="**/*.*" includeAntRuntime="false">
+			<src path="${test.dir}" />
+			<classpath>
+				<fileset dir="${lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+				<pathelement location="${target.dir}" />
+			</classpath>
+		</javac>
+	</target>
+	<!-- Create the Applet JAR Begins-->
+	<!--target name="AppletJAR" depends="compile" >
+    	<delete>
+            <fileset dir="${applet.dir}">
+	            <exclude name="**/CVS*"/>
+	            <exclude name="**/java.policy.applet*"/>
+            </fileset>
+        </delete>
+        
+        <copy todir="${applet.dir}/edu/wustl/common/treeApplet">
+        	<fileset dir="${target.dir}/edu/wustl/common/treeApplet">
+            	<include name="**/*.class"/>
+        	</fileset>
+        </copy>
+        <copy todir="${applet.dir}/edu/wustl/common/tree">
+        	<fileset dir="${target.dir}/edu/wustl/common/tree">
+	    	    <include name="**/*.class"/>
+    		</fileset>
+    	</copy>
+		
+        <jar taskname="BuildJar" jarfile="${applet.dir}/TreeApplet.jar">
+            <fileset dir="${applet.dir}">
+	            <exclude name="**/CVS*"/>
+	            <exclude name="**/java.policy.applet*"/>
+            </fileset>
+        </jar>
+		
+		<delete dir="${applet.dir}/edu"/>
+    </target-->
+	<!-- Create the Applet JAR Ends-->
+
+
+
+	<!-- Compile all files, generated and hand-written -->
+	<target name="applet_compile" depends="init">
+		<delete>
+			<fileset dir="${applet.dir}">
+				<exclude name="**/CVS*" />
+				<exclude name="**/java.policy.applet*" />
+			</fileset>
+		</delete>
+
+		<javac destdir="${applet.dir}" includeAntRuntime="false" fork="yes" executable="C:/jdk1.3.1_18/bin/javac" compiler="javac1.3">
+			<src path="${src.dir}" />
+
+			<include name="**/edu/wustl/common/tree/*.java" />
+			<include name="**/edu/wustl/common/treeApplet/*.java" />
+			<classpath>
+				<fileset dir="${lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+
+	<!-- Create the Applet JAR Begins-->
+	<target name="AppletJAR" depends="applet_compile">
+
+		<delete>
+			<fileset dir="${applet.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</delete>
+
+		<copy todir="${applet.dir}/images">
+			<fileset dir="${base.dir}/images">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<copy todir="${applet.dir}">
+			<fileset dir="${lib.dir}">
+				<include name="**/swingx-2006_10_08.jar" />
+			</fileset>
+		</copy>
+
+		<jar taskname="buildJar" jarfile="${applet.dir}/TreeApplet.jar">
+			<manifest>
+				<attribute name="Class-Path" value="swingx-2006_10_08.jar" />
+			</manifest>
+			<fileset dir="${applet.dir}">
+				<exclude name="**/CVS*" />
+				<exclude name="**/java.policy.applet*" />
+			</fileset>
+		</jar>
+	</target>
+	<!-- Create the Applet JAR Ends-->
+
+
+	<!-- Generate the hbm files from the XDoclet -->
+	<target name="GenerateHBM" description="Generates Hibernate class descriptor files.">
+		<!-- Define the hibernatedoclet task -->
+		<taskdef name="hibernatedoclet" classname="xdoclet.modules.hibernate.HibernateDocletTask">
+			<classpath refid="xdoclet.classpath" />
+		</taskdef>
+
+		<!-- Execute the hibernatedoclet task -->
+		<hibernatedoclet destdir="${src.dir}" excludedtags="@version,@author,@todo" force="${generateforce}" mergedir="${src.dir}" verbose="false">
+			<fileset dir="${src.dir}">
+				<include name="**/domain/*.java" />
+				<include name="**/cde/*.java" />
+				<include name="**/category/*.java" />
+			</fileset>
+			<hibernate version="2.0" />
+		</hibernatedoclet>
+
+		<!-- Upgrade grammar from Hibernate1 to Hibernate2 -->
+		<replace dir="${src.dir}">
+			<include name="**/domain/*.hbm.xml" />
+			<include name="**/cde/*.hbm.xml" />
+			<include name="**/category/*hbm.xml" />
+			<replacefilter token="readonly=" value="inverse=" />
+			<replacefilter token="role=" value="name=" />
+			<replacefilter token="hibernate-mapping.dtd" value="hibernate-mapping-2.0.dtd" />
+		</replace>
+
+		<delete>
+			<fileset dir="${hbm.dir}" includes="*.hbm.xml" />
+		</delete>
+
+		<copy todir="${hbm.dir}">
+			<fileset dir="${src.dir}/edu/wustl/common/domain">
+				<include name="*.hbm.xml" />
+			</fileset>
+			<fileset dir="${src.dir}/edu/wustl/common/cde">
+				<include name="*.hbm.xml" />
+			</fileset>
+		</copy>
+
+		<delete>
+			<fileset dir="${src.dir}/edu/wustl/common/domain" includes="*.hbm.xml" />
+			<fileset dir="${src.dir}/edu/wustl/common/cde" includes="*.hbm.xml" />
+		</delete>
+	</target>
+
+	<!-- Generate the hbm files from the XDoclet -->
+	<target name="GenerateQueryHBM" description="Generates Hibernate class descriptor files.">
+		<!-- Define the hibernatedoclet task -->
+		<taskdef name="hibernatedoclet" classname="xdoclet.modules.hibernate.HibernateDocletTask">
+			<classpath refid="xdoclet.classpath" />
+		</taskdef>
+
+		<!-- Execute the hibernatedoclet task -->
+		<hibernatedoclet destdir="${src.dir}" excludedtags="@version,@author,@todo" force="${generateforce}" mergedir="${src.dir}" verbose="false">
+			<fileset dir="${src.dir}">
+				<include name="**/querysuite/metadata/associations/impl/*.java" />
+				<include name="**/querysuite/metadata/category/*.java" />
+				<include name="**/querysuite/queryobject/impl/*.java" />
+			</fileset>
+			<hibernate version="2.0" />
+		</hibernatedoclet>
+
+		<!-- Upgrade grammar from Hibernate1 to Hibernate2 -->
+		<replace dir="${src.dir}">
+			<include name="**/querysuite/metadata/associations/impl/*hbm.xml" />
+			<include name="**/querysuite/metadata/category/*.java" />
+			<include name="**/querysuite/queryobject/impl/*hbm.xml" />
+			<replacefilter token="readonly=" value="inverse=" />
+			<replacefilter token="role=" value="name=" />
+			<replacefilter token="hibernate-mapping.dtd" value="hibernate-mapping-2.0.dtd" />
+		</replace>
+
+		<delete>
+			<fileset dir="${hbm.dir}" includes="*.hbm.xml" />
+		</delete>
+
+		<copy todir="${hbm.dir}">
+			<fileset dir="${src.dir}/edu/wustl/common/querysuite/metadata/associations/impl">
+				<include name="*.hbm.xml" />
+			</fileset>
+			<fileset dir="${src.dir}/edu/wustl/common/querysuite/metadata/category">
+				<include name="*.hbm.xml" />
+			</fileset>
+			<fileset dir="${src.dir}/edu/wustl/common/querysuite/queryobject/impl">
+				<include name="*.hbm.xml" />
+			</fileset>
+		</copy>
+
+		<delete>
+			<fileset dir="${src.dir}/edu/wustl/common/querysuite/metadata/category" includes="*.hbm.xml" />
+			<fileset dir="${src.dir}/edu/wustl/common/querysuite/metadata/associations/impl" includes="*.hbm.xml" />
+			<fileset dir="${src.dir}/edu/wustl/common/querysuite/queryobject/impl" includes="*.hbm.xml" />
+		</delete>
+	</target>
+
+	<target name="build_code_zip" depends="compile">
+		<zip destfile="${build.dir}/commonpackage-src.zip">
+			<fileset dir="${src.dir}" includes="**/*" />
+		</zip>
+	</target>
+
+	<target name="build_jar" depends="compile">
+		<delete>
+			<fileset dir="${build.dir}" includes="**/*" />
+		</delete>
+		<tstamp />
+		<jar taskname="build_jar" jarfile="${build.dir}/commonpackage.jar">
+			<fileset dir="${target.dir}">
+				<include name="**/*" />
+				<exclude name="**/SqlGeneratorTestCase*" />
+				<exclude name="**/ExpressionTestCases*" />
+				<exclude name="**/JoinGraphTestCase*" />
+			</fileset>
+			<fileset dir="${base.dir}" includes="**/ExceptionFormatter.properties" />
+			<manifest>
+				<attribute name="Built-At-Time" value="${TODAY} ${TSTAMP}" />
+			</manifest>
+		</jar>
+
+		<antcall target="build_code_zip" />
+	</target>
+
+	<target name="Generate-Schema" depends="build_jar">
+		<java classname="edu.wustl.common.util.dbManager.GenerateSchema">
+			<arg value="false" />
+			<classpath>
+				<pathelement location="${build.dir}/catissuecore.jar" />
+				<pathelement location="${build.dir}/commonpackage.jar" />
+				<fileset dir="${lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="GenerateQuerySchemaMySQL">
+		<taskdef name="schemaexport" classname="org.hibernate.tool.hbm2ddl.SchemaExportTask">
+			<classpath>
+				<pathelement location="${build.dir}/commonpackage.jar" />
+				<fileset dir="${lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+				<path refid="xdoclet.classpath"/>
+			</classpath>
+		</taskdef>
+
+		<schemaexport properties="mysql_db.properties" quiet="yes" text="yes" delimiter=";" output="${sql.dir}/MySQL/query_schema_script.sql" >
+			<fileset dir="${hbm.dir}">
+				<include name="*.hbm.xml" />
+			</fileset>
+		</schemaexport>
+	</target>
+	
+	<target name="GenerateQuerySchemaOracle">
+		<taskdef name="schemaexport" classname="org.hibernate.tool.hbm2ddl.SchemaExportTask">
+			<classpath>
+				<pathelement location="${build.dir}/commonpackage.jar" />
+				<fileset dir="${lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+				<path refid="xdoclet.classpath"/>
+			</classpath>
+		</taskdef>
+		
+		<schemaexport properties="oracle_db.properties" quiet="yes" text="yes" delimiter=";" output="${sql.dir}/Oracle/query_schema_script.sql" >
+			<fileset dir="${hbm.dir}">
+				<include name="*.hbm.xml" />
+			</fileset>
+		</schemaexport>
+	</target>
+	
+	<target name="runJunit" depends="compileTest">
+		<mkdir dir="${junit.report.dir}" />
+		<delete>
+			<fileset dir="${junit.report.dir}" includes="**/*" />
+		</delete>
+		<junit printsummary="yes" haltonerror="no" haltonfailure="no" fork="yes">
+			<test name="edu.wustl.common.querysuite.TestAll" outfile="${junit.report.dir}/Junit_report_CommonPackage" />
+			<formatter type="plain" />
+			<!--batchtest todir="${junit.report.dir}">
+      			<fileset dir="${test.dir}">
+					<include name="**/TestAll.java"/>
+			    </fileset>
+			</batchtest-->
+			<classpath>
+				<pathelement location="${junit.classes.dir}" />
+				<pathelement location="${target.dir}" />
+				<fileset dir="${lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</junit>
+	</target>
+
+	<target name="executeQueries">
+		<delete dir="${junit.classes.dir}" />
+		<mkdir dir="${junit.classes.dir}" />
+		<javac srcdir="${test.dir}" destdir="${junit.classes.dir}">
+			<include name="edu/wustl/common/querysuite/ExecuteQueries.java" />
+			<!--include name="**/ExecuteQueries.java"/-->
+			<classpath refid="app.classpath" />
+		</javac>
+
+		<property file="queryDetails.properties" />
+		<echo message="Database Settings:" />
+		<echo message="Database Type: ${database.type}" />
+		<echo message="Database Host: ${database.host}" />
+		<echo message="Database Host: ${database.port}" />
+		<echo message="Database Name: ${database.name}" />
+		<echo message="Database User name: ${database.username}" />
+		<echo message="Database Password: ${database.password}" />
+		<echo message="SQL File: ${base.dir}/${sql.fileName}" />
+
+		<java classname="edu.wustl.common.querysuite.ExecuteQueries" fork="true">
+			<arg value="${database.type}" />
+			<arg value="${database.host}" />
+			<arg value="${database.port}" />
+			<arg value="${database.name}" />
+			<arg value="${database.username}" />
+			<arg value="${database.password}" />
+			<arg value="${base.dir}/${sql.fileName}" />
+			<arg value="${databse.tableNames}" />
+			<classpath>
+				<pathelement location="${junit.classes.dir}" />
+				<fileset dir="${lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+			<classpath refid="app.classpath" />
+		</java>
+	</target>
+
+	<!-- Metadata Report Generation task -->
+	<target name="QueryMetadataTestReport" depends="compileTest">
+		<delete dir="${metadatatest.report.dir}" />
+		<mkdir dir="${metadatatest.report.dir}" />
+
+		<java classname="edu.wustl.common.querysuite.MetadataTestReportGenerator" fork="true">
+			<arg value="${metadatatest.report.dir}" />
+			<classpath>
+				<pathelement location="${metadatatest.dir}" />
+				<pathelement location="${target.dir}" />
+				<fileset dir="${lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+			<classpath refid="app.classpath" />
+		</java>
+	</target>
+</project>
