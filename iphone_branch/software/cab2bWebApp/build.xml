@@ -163,7 +163,7 @@
 			<replace file="@{webfile}" token="&lt;/web-app&gt;" value="&lt;security-constraint&gt;
         &lt;web-resource-collection&gt;
                 &lt;web-resource-name&gt;JSON API&lt;/web-resource-name&gt;
-                &lt;url-pattern&gt;/api&lt;/url-pattern&gt;
+                &lt;url-pattern&gt;/api/*&lt;/url-pattern&gt;
         &lt;/web-resource-collection&gt;
         &lt;user-data-constraint&gt;
                 &lt;transport-guarantee&gt;NONE&lt;/transport-guarantee&gt;
