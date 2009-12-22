@@ -1,6 +1,5 @@
 package edu.wustl.cab2bwebapp.bizlogic.caNanoLab;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,14 +7,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.axis.types.URI.MalformedURIException;
-import org.cagrid.caObr.client.CaObrClient;
-
-import per.edu.wustl.Annotation;
-import per.edu.wustl.Resource;
 import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.cab2bwebapp.dvo.AnnotationDVO;
 import edu.wustl.cab2bwebapp.dvo.AnnotationElementDVO;
+import edu.wustl.cab2bwebapp.util.caObr.ServiceInvoker;
+import edu.wustl.caobr.Annotation;
+import edu.wustl.caobr.Resource;
 
 public class DisplayResourceBizlogic {
 
@@ -26,16 +23,15 @@ public class DisplayResourceBizlogic {
         Map<String, Resource> resourceMap = new HashMap<String, Resource>();
         Map<String, AnnotationDVO> resourceAnnotationDVOMap = new HashMap<String, AnnotationDVO>();
 
-        CaObrClient client;
+        ServiceInvoker serviceInvoker = null;
         Resource[] resources = null;
-        try {
-            client = new CaObrClient("http://ps4266:8080/wsrf/services/cagrid/CaObr");
-            resources = client.getAllResources();
 
-        } catch (MalformedURIException e) {
-            e.printStackTrace();
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        resources = (Resource[]) session.getAttribute(Constants.RESOURCES);
+
+        if (resources == null) {
+            serviceInvoker = new ServiceInvoker();
+            resources = serviceInvoker.getResources();
+            session.setAttribute(Constants.RESOURCES, resources);
         }
 
         for (Resource resource : resources) {
@@ -45,7 +41,7 @@ public class DisplayResourceBizlogic {
         for (Annotation annotation : annotations) {
             Resource resource = annotation.getResource().getResource();
 
-            if (resourceAnnotationMap.get(resource.getResourceId()) == null) {
+            if (!resourceAnnotationMap.containsKey(resource.getResourceId())) {
                 resourceAnnotationMap.put(resource.getResourceId(), new ArrayList<Annotation>());
             }
             resourceAnnotationMap.get(resource.getResourceId()).add(annotation);
@@ -94,7 +90,6 @@ public class DisplayResourceBizlogic {
                 dvoList.add(annDvo);
             }
         }
-
         return dvoList;
     }
 
