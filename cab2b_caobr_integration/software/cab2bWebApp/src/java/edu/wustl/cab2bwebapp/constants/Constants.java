@@ -199,20 +199,16 @@ public interface Constants {
     /** Constant for forward to failure page */
     public static final String FORWARD_FAILURE = "failure";
 
-    public static final String DISPLAY_RESOURCE = "displayresource";
+    /** Constant for forward to displaylimitedannotation page */
+    public static final String DISPLAY_LIMITED_ANNOTATION = "displaylimitedannotation";
 
-    public static final String ANNOTAION_RESULT_VIEW = "annotationview";
+    /** constant for saving all annotation dvo in session ,it is used only in the view */
+    public static final String SAVE_ANNOTATION = "savedannotation";
 
-    public static final String DISPLAY_ANNOTATION = "displayannotation";
-
+    /** Constant for forward to displayallannotation page */
     public static final String DISPLAY_All_ANNOTATION = "displayallannotation";
 
-    public static final String SELECTED_RESOURCE_DES = "selectedResourceDescription";
-
-    public static final String SELECTED_RESOURCE_IMAGE = "selectedRresourceImage";
-
-    public static final String RESOURCE_MAP = "resourceMap";
-
+    /** Constant used  for key used in saving annotation in Map*/
     public static final String RESOURCE_ANNOTATIONMAPS = "annotationMap";
 
     /** Constant for forward to dash board page */
@@ -227,5 +223,19 @@ public interface Constants {
     /** Constant for fatal failure for displaying dash board */
     public static final String FATAL_DISPLAY_DASHBOARD_FAILURE = "fatalDisplayDashboardFailure";
 
-    public static final String SERVICE_URL = "http://caobr.wustl.edu:8080/wsrf/services/cagrid/CaObr";
+    /** Constant for resourceId in session*/
+    public static final String RESOURCE_ID = "resourceId";
+
+    /** Constant for user selected token */
+    public static final String TOKEN = "token";
+
+    /** Constant for all resources in session */
+    public static final String RESOURCES = "resources";
+
+    /** Constant for parameter "index" */
+    public static final String INDEX = "index";
+
+    /** Constant for index separator in session */
+    public static final String INDEX_SEPEARATOR = "sep";
+
 }
