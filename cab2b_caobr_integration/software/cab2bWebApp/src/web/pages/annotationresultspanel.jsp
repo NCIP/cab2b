@@ -5,14 +5,13 @@
 
 <% int j = 0; 
 List<edu.wustl.cab2bwebapp.dvo.AnnotationElementDVO> dvoElement = null;
-List<edu.wustl.cab2bwebapp.dvo.AnnotationDVO> dvoList=(List<edu.wustl.cab2bwebapp.dvo.AnnotationDVO>)session.getAttribute("displayannotation");
-out.println("size "+dvoList.size());
+List<edu.wustl.cab2bwebapp.dvo.AnnotationDVO> dvoList=(List<edu.wustl.cab2bwebapp.dvo.AnnotationDVO>)session.getAttribute("savedannotation");
 %>
-<logic:present name="displayannotation">
-	<display:table class="simple" name="${sessionScope.displayannotation}" cellspacing="1" cellpadding="4" uid="row" id="row" htmlId="annotationTable">
+<logic:present name="savedannotation">
+	<display:table class="simple" name="${sessionScope.savedannotation}" cellspacing="1" cellpadding="4" uid="row" id="row" htmlId="annotationTable">
 		<display:column title="Resource">
-			<img src='${row.resourceLogoURl}' title='${row.resourceDescription}'/><br>
-            <span style="font-weight:bold">${row.resourceName}</span>
+			<div style="text-align:center;font-weight:bold"><img style="align:center" src='${row.resourceLogoURl}' title='${row.resourceDescription}'/>
+			<br> ${row.resourceName}</div>
 		</display:column>
 		<display:column title="Annotation Found">
 		<% 
@@ -29,7 +28,7 @@ out.println("size "+dvoList.size());
 			else{
 				%>
 				   <a class='link' href='javascript:void(0)' onClick='showWindow("<%=dvoList.get(j).getResourceId()%>")'><span style="float:right;margin-right: 2em;">
-				   View All( Annotation:<%=dvoElement.size()%>) </span></a>";
+				   View All( Annotation:<%=dvoElement.size()%>) </span></a>
 			<%
 			break;
 			}
@@ -38,7 +37,7 @@ out.println("size "+dvoList.size());
 			
 			if(dvoList.get(j).getList().size()==0){
 			%>
-			<span style='color: blue;'>No Annotation Found </span>
+			<span style='color:black;font-weight:bold'>No Annotation Found </span>
 			<%
 			}
 		 j++;

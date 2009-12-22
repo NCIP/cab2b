@@ -49,17 +49,43 @@ function isChecked(){
 		 }
 	}
 	if(flag==false){
-	alert("Please Select the checkbox for getting Annotation")
+	alert("Please select the record for getting annotation")
 	}
 	
 if(flag){
 	changeText();
 	TogglePreloader(1);
 	checkUpdateFlag=true;
-	processAJAXRequest('Annotate.do?index='+getIndex()+'&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent',true);
-	
+	processAJAXRequest('CheckConcept.do?index='+getIndex()+'&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent',true,showConcepts);
 	}
 	}
+
+function showConcepts(){
+
+if(navigator.appName.indexOf('Netscape')==-1 || navigator.appVersion.indexOf('Apple')!=-1)
+  {	  
+	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (335);
+    document.getElementById('centerpanelcontent').style.overflow = 'auto';
+	document.getElementById('centerpanelcontent').style.width = '100%';
+	document.getElementById('queryConditions').style.width = '0%';
+  }
+   else
+  {
+	document.getElementById('toppanel').style.marginLeft = "5";
+	document.getElementById('toppanel').style.width = "98%";
+	document.getElementById('centerpanelcontent').style.height = getScreenHeight() - (340);
+	 if(document.getElementById('searchresultstable'))
+    {
+      document.getElementById('searchresultstable').getElementsByTagName('tbody')[0].style.height = getScreenHeight() - '370';
+	}
+	 if(document.getElementById('centerpanelcontentbuffer').innerHTML!="")
+	{
+	  document.getElementById('centerpanelcontent').innerHTML = document.getElementById('centerpanelcontentbuffer').innerHTML;
+	  document.getElementById('centerpanelcontentbuffer').innerHTML = "";
+	}	
+  }
+
+}
 
 
 function getIndex(){
