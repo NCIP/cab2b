@@ -95,18 +95,18 @@
 		<action path="/TransformQueryResultsAction"
 			type="edu.wustl.cab2bwebapp.action.TransformQueryResultsAction">
 		</action>
-			<action path="/Annotate"
-			type="edu.wustl.cab2bwebapp.action.AnnotateAction">
+			<action path="/CheckConcept"
+			type="edu.wustl.cab2bwebapp.action.CheckConceptAction">
 		</action>
 		
-		<action path="/AnnotationResult"
-			type="edu.wustl.cab2bwebapp.action.AnnotationResultAction">
-			<forward name="displayresource" path="/pages/displayResources.jsp" />
+		<action path="/ShowLimitedAnnotationResult"
+			type="edu.wustl.cab2bwebapp.action.ShowLimitedAnnotationResultAction">
+			<forward name="displaylimitedannotation" path="/pages/displaylimitedannotation.jsp" />
 		</action>
 		
-		<action path="/ShowAnnotation"
-			type="edu.wustl.cab2bwebapp.action.ShowAnnotationAction">
-			<forward name="displayannotation" path="/pages/displayAnnotation.jsp" />
+		<action path="/ShowAllAnnotation"
+			type="edu.wustl.cab2bwebapp.action.ShowAllAnnotationAction">
+			<forward name="displayallannotation" path="/pages/displayallannotation.jsp" />
 		</action>
 	</action-mappings>
 
