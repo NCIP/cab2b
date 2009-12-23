@@ -350,10 +350,10 @@ public class ConstraintsBuilder {
         return group.getDcqlConstraint();
     }
 
-    private AttributeConstraint createAttribute(String attributeName, RelationalOperator operator,
-                                                DataType dataType) {
-        return createAttributeConstraint(attributeName, operator, null, dataType);
-    }
+//    private AttributeConstraint createAttribute(String attributeName, RelationalOperator operator,
+//                                                DataType dataType) {
+//        return createAttributeConstraint(attributeName, operator, null, dataType);
+//    }
 
     /**
      * Returns AttributeConstraint
@@ -461,7 +461,7 @@ public class ConstraintsBuilder {
         DataType dataType = Utility.getDataType(condition.getAttribute().getAttributeTypeInformation());
 
         if (operator.numberOfValuesRequired() == 0) {
-            return createAttribute(attributeName, operator, dataType);
+            return createAttributeConstraint(attributeName, operator, "", dataType);
         }
         if (operator.numberOfValuesRequired() == 1) {
             return createAttributeConstraint(attributeName, operator, condition.getValue(), dataType);
