@@ -15,7 +15,7 @@
 function showWindow(resourceId){
 	var url = "ShowAllAnnotation.do?resourceId="+resourceId;
 
-	window.open(url,'name','width=800,height=400,scrollbars=no');
+	window.open(url,'name','width=800,height=400,scrollbars=yes');
 }
 
 function checkImageSize()

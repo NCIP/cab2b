@@ -27,8 +27,6 @@ function checkImageSize()
 			}
 	}
 
-	var link=document.getElementsByTagName('a');
-	
     }
 
 

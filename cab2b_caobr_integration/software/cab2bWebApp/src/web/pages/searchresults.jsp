@@ -14,7 +14,6 @@
 <SCRIPT language="JavaScript" src="javascript/jquery.js"></SCRIPT>
 <SCRIPT language="javaScript">
 checkFlag = false;
-checkUpdateFlag=false;
 
 function checkAll(){
  	var obj = document.getElementsByName('checkBox');
@@ -34,7 +33,7 @@ function checkAll(){
 function changeText(){
 	var obj = document.getElementById('LabelPreloader');
 	
-	obj.innerHTML="<SPAN ID='LabelPreloader' STYLE='font-size:11px'><STRONG>Please Wait ..    </STRONG><BR> Searching  Annotation ..</SPAN>"
+	obj.innerHTML="<SPAN ID='LabelPreloader' STYLE='font-size:11px'><STRONG>Please Wait ..   </STRONG><BR> Searching  Concepts ..</SPAN>"
 }
 
 
@@ -55,7 +54,6 @@ function isChecked(){
 if(flag){
 	changeText();
 	TogglePreloader(1);
-	checkUpdateFlag=true;
 	processAJAXRequest('CheckConcept.do?index='+getIndex()+'&id=' + Math.floor(Math.random()*1000), 'centerpanelcontent',true,showConcepts);
 	}
 	}
@@ -193,8 +191,7 @@ function getIndex(){
 	
 	return;
   }
-  if(checkUpdateFlag==false)
-  t = setTimeout("getTransformedResults()", 5000);
+   t = setTimeout("getTransformedResults()", 5000);
 }
 toolTipId = null;
  this.tooltipinvoker = function()
