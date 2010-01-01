@@ -1,16 +1,18 @@
 package edu.wustl.cab2bwebapp.bizlogic.caNanoLab;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
 import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.cab2bwebapp.dvo.AnnotationDVO;
 import edu.wustl.cab2bwebapp.dvo.AnnotationElementDVO;
-import edu.wustl.cab2bwebapp.util.caObr.ServiceInvoker;
 import edu.wustl.caobr.Annotation;
 import edu.wustl.caobr.Resource;
 
@@ -23,16 +25,7 @@ public class DisplayResourceBizlogic {
         Map<String, Resource> resourceMap = new HashMap<String, Resource>();
         Map<String, AnnotationDVO> resourceAnnotationDVOMap = new HashMap<String, AnnotationDVO>();
 
-        ServiceInvoker serviceInvoker = null;
-        Resource[] resources = null;
-
-        resources = (Resource[]) session.getAttribute(Constants.RESOURCES);
-
-        if (resources == null) {
-            serviceInvoker = new ServiceInvoker();
-            resources = serviceInvoker.getResources();
-            session.setAttribute(Constants.RESOURCES, resources);
-        }
+        Resource[] resources = (Resource[]) session.getAttribute(Constants.RESOURCES);
 
         for (Resource resource : resources) {
             resourceMap.put(resource.getResourceId(), resource);
@@ -56,8 +49,9 @@ public class DisplayResourceBizlogic {
             annDvo.setResourceName(resource.getName());
             annDvo.setResourceDescription(resource.getDescription());
             annDvo.setResourceId(resource.getResourceId());
-
+            Set<AnnotationElementDVO> tempSet = new HashSet<AnnotationElementDVO>();
             for (Annotation annotation : anno) {
+
                 AnnotationElementDVO eleDVO = new AnnotationElementDVO();
                 eleDVO.setElementId(annotation.getElementId());
                 eleDVO.setResourceURL(annotation.getUrl());
@@ -71,8 +65,9 @@ public class DisplayResourceBizlogic {
                 } else {
                     eleDVO.setDescription(fullDescription.substring(0, 145));
                 }
-                annDvo.setList(eleDVO);
+                tempSet.add(eleDVO);
             }
+            annDvo.setList(Arrays.asList(tempSet.toArray(new AnnotationElementDVO[0])));
             resourceAnnotationDVOMap.put(annDvo.getResourceId(), annDvo);
             dvoList.add(annDvo);
         }

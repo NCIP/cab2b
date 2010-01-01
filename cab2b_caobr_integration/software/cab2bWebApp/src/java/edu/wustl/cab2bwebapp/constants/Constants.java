@@ -232,6 +232,9 @@ public interface Constants {
     /** Constant for all resources in session */
     public static final String RESOURCES = "resources";
 
+    /** Constant for all resources in session */
+    public static final String ONTOLOGIES = "ontologies";
+
     /** Constant for parameter "index" */
     public static final String INDEX = "index";
 

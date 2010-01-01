@@ -50,8 +50,28 @@ public class ShowLimitedAnnotationResultAction extends Action {
             Annotation annotations[] = null;
 
             logger.info("Fetching All Annotation");
-            ServiceInvoker service = new ServiceInvoker();
-            annotations = getAnnotation(service.getOntologies(), service.getResources(), token);
+
+            Resource[] resources = null;
+            resources = (Resource[]) session.getAttribute(Constants.RESOURCES);
+
+            if (resources == null) {
+                ServiceInvoker serviceInvoker = new ServiceInvoker();
+                serviceInvoker = new ServiceInvoker();
+                resources = serviceInvoker.getResources();
+                session.setAttribute(Constants.RESOURCES, resources);
+            }
+
+            Ontology[] ontologies = null;
+            ontologies = (Ontology[]) session.getAttribute(Constants.ONTOLOGIES);
+
+            if (ontologies == null) {
+                ServiceInvoker serviceInvoker = new ServiceInvoker();
+                serviceInvoker = new ServiceInvoker();
+                ontologies = serviceInvoker.getOntologies();
+                session.setAttribute(Constants.ONTOLOGIES, ontologies);
+            }
+
+            annotations = getAnnotation(ontologies, resources, token);
             if (annotations != null) {
                 resourceListDVO = DisplayResourceBizlogic.getResult(annotations, session);
             }

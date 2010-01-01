@@ -12,11 +12,11 @@ public class AnnotationDVO {
     String resourceLogoURl;
 
     String resourceName;
-    
+
     String resourceDescription;
-    
+
     String resourceId;
-    
+
     List<AnnotationElementDVO> list = new ArrayList<AnnotationElementDVO>();
 
     public String getResourceLogoURl() {
@@ -39,8 +39,8 @@ public class AnnotationDVO {
         return list;
     }
 
-    public void setList(AnnotationElementDVO dvo) {
-        list.add(dvo);
+    public void setList(List<AnnotationElementDVO> dvo) {
+        this.list = dvo;
     }
 
     public String getResourceDescription() {
