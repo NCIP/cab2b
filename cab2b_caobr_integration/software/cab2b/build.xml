@@ -1063,12 +1063,26 @@
 		<sequential>
 			<echo message="Editing Application.xml file" />
 			<replace file="@{applicationfile}" token="&lt;application&gt;" value="&lt;application&gt;
-				&lt;module id=&quot;WebModule_1233568391515&quot;&gt;
-				&lt;web&gt;
-				&lt;web-uri&gt;cab2bWebApp.war&lt;/web-uri&gt;
-				&lt;context-root&gt;cab2b&lt;/context-root&gt;
-				&lt;/web&gt;
-				&lt;/module&gt;" />
+							&lt;module id=&quot;adminModule_1233568391515&quot;&gt;
+							&lt;web&gt;
+							&lt;web-uri&gt;cab2badmin.war&lt;/web-uri&gt;
+							&lt;context-root&gt;cab2b/admin&lt;/context-root&gt;
+							&lt;/web&gt;
+							&lt;/module&gt;
+							
+							&lt;module id=&quot;WebModule_1233568391515&quot;&gt;
+							&lt;web&gt;
+							&lt;web-uri&gt;cab2bWebApp.war&lt;/web-uri&gt;
+							&lt;context-root&gt;cab2b&lt;/context-root&gt;
+							&lt;/web&gt;
+							&lt;/module&gt;
+							
+							&lt;module id=&quot;cab2b_1233568391515&quot;&gt;
+							&lt;web&gt;
+							&lt;web-uri&gt;cab2b.war&lt;/web-uri&gt;
+							&lt;context-root&gt;cab2b/webpage&lt;/context-root&gt;
+							&lt;/web&gt;
+							&lt;/module&gt; " />
 		</sequential>
 	</macrodef>
 
@@ -1076,30 +1090,37 @@
 	<target name="dist" depends="build.all,distribute" description="Creates the distribution unit and copy all ariticats to distribution folder" />
 
 	<target name="build.all" depends="initialize,build.project.jar,build.ear" description="Builds the distribution unit i.e., a complete cab2bServer.ear">
-		
-		<ant inheritRefs="true"  antfile="${cab2bwebapp.location}/build.xml" dir="${cab2bwebapp.location}" target="war" inheritall="false">
-			<property name="jboss.ssl.enable" value="${jboss.ssl.enable}" />
-		</ant>
-		<echo message="caB2B Web App War Created" />
+			<ant inheritAll="false" inheritRefs="true" antfile="${cab2badmin.location}/build.xml" target="war" dir="${cab2badmin.location}">
+				<property name="ds-name" value="${ds-name}" />
+				<property name="jboss.ssl.enable" value="${jboss.ssl.enable}" />
+			</ant>
+			<echo message="Admin War Created" />
 
-		<delete>
-			<fileset dir="${workarea.dir}">
-				<include name="cab2b-common.jar" />
-				<include name="cab2b-server.jar" />
-				<include name="cab2b-client.jar" />
-			</fileset>
-		</delete>
+			<ant inheritRefs="true"  antfile="${cab2bwebapp.location}/build.xml" dir="${cab2bwebapp.location}" target="war" inheritall="false">
+				<property name="jboss.ssl.enable" value="${jboss.ssl.enable}" />
+			</ant>
+			<echo message="caB2B Web App War Created" />
 
-		<move file="${ear.file}" todir="." />
-		<antcall target="create.cab2b.war" />
-		<move file="./cab2bServer.ear" todir="${workarea.dir}" />
+			<delete>
+				<fileset dir="${workarea.dir}">
+					<include name="cab2b-common.jar" />
+					<include name="cab2b-server.jar" />
+					<include name="cab2b-client.jar" />
+				</fileset>
+			</delete>
 
-		<unjar src="${ear.file}" dest="${workarea.dir}/cab2bServer" />
-		<replace.application.xml applicationfile="${workarea.dir}/cab2bServer/META-INF/application.xml" />
-		<copy file="${cab2bwebapp.location}/build/cab2bWebApp.war" todir="${workarea.dir}/cab2bServer" />
-		<delete file="${ear.file}" />
-		<ear basedir="${workarea.dir}/cab2bServer" destfile="${ear.file}" appxml="${workarea.dir}/cab2bServer/META-INF/application.xml" includes="**/*.*" />
-	</target>
+			<move file="${ear.file}" todir="." />
+			<antcall target="create.cab2b.war" />
+			<move file="./cab2bServer.ear" todir="${workarea.dir}" />
+
+			<unjar src="${ear.file}" dest="${workarea.dir}/cab2bServer" />
+			<replace.application.xml applicationfile="${workarea.dir}/cab2bServer/META-INF/application.xml" />
+			<copy file="${cab2badmin.location}/build/cab2badmin.war" todir="${workarea.dir}/cab2bServer" />
+			<copy file="${cab2bwebapp.location}/build/cab2bWebApp.war" todir="${workarea.dir}/cab2bServer" />
+			<copy file="${workarea.dir}/cab2b.war" todir="${workarea.dir}/cab2bServer" />
+			<delete file="${ear.file}" />
+			<ear basedir="${workarea.dir}/cab2bServer" destfile="${ear.file}" appxml="${workarea.dir}/cab2bServer/META-INF/application.xml" includes="**/*.*" />
+		</target>
 
 	<target name="distribute">
 		<copy file="${workarea.dir}/cab2bServer.ear" todir="${dist.dir}" />
